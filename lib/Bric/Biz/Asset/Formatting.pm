@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:19 $
+$Date: 2003-03-15 18:36:05 $
 
 =head1 SYNOPSIS
 
@@ -171,7 +171,8 @@ use constant COLS       => qw( name
                                expire_date
                                workflow__id
                                desk__id
-                               active);
+                               active
+                               site__id);
 
 use constant VERSION_COLS => qw( formatting__id
                                  version
@@ -194,7 +195,8 @@ use constant FIELDS     => qw( name
                                expire_date
                                workflow_id
                                desk_id
-                               _active);
+                               _active
+                               site_id);
 
 use constant VERSION_FIELDS => qw( id
                                    version
@@ -250,6 +252,7 @@ use constant PARAM_WHERE_MAP =>
       id                    => 'f.id = ?',
       active                => 'f.active = ?',
       inactive              => 'f.active = ?',
+      site__id              => 'f.site__id = ?',
       workflow__id          => 'f.workflow__id = ?',
       _null_workflow__id    => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
@@ -283,6 +286,7 @@ use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
+      site__id            => 'site__id',
       workflow__id        => 'workflow__id',
       element__id         => 'element__id',
       output_channel__id  => 'output_channel__id',

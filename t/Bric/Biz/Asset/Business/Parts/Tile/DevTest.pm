@@ -25,6 +25,7 @@ sub get_story {
                                  element       => $self->get_elem,
                                  user__id      => $self->user_id,
                                  source__id    => 1,
+                                 site_id       => 100,
                                });
    $story->add_categories([1]);
    $story->set_primary_category(1);

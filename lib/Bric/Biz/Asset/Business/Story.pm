@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:20 $
+$Date: 2003-03-15 18:36:06 $
 
 =head1 SYNOPSIS
 
@@ -179,6 +179,7 @@ use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::DA;
 use Bric::Biz::Asset::Business;
 use Bric::Biz::Keyword;
+use Bric::Biz::Site;
 
 #==============================================================================#
 # Inheritance                          #
@@ -220,7 +221,8 @@ use constant COLS       => qw( priority
                                publish_status
                                primary_uri
                                active
-                               desk__id);
+                               desk__id
+                               site__id);
 
 use constant VERSION_COLS => qw( name
                                  description
@@ -244,7 +246,8 @@ use constant FIELDS =>  qw( priority
                             publish_status
                             primary_uri
                             _active
-                            desk_id);
+                            desk_id
+                            site_id);
 
 use constant VERSION_FIELDS => qw( name
                                    description
@@ -315,6 +318,7 @@ use constant PARAM_WHERE_MAP =>
       id                     => 's.id = ?',
       active                 => 's.active = ?',
       inactive               => 's.active = ?',
+      site__id               => 's.site__id = ?',
       workflow__id           => 's.workflow__id = ?',
       _null_workflow__id     => 's.workflow__id IS NULL',
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
@@ -361,6 +365,7 @@ use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
+      site__id            => 'site__id',
       workflow__id        => 'workflow__id',
       primary_uri         => 'primary_uri',
       element__id         => 'element__id',

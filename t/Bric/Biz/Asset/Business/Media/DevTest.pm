@@ -42,6 +42,7 @@ sub new_args {
       file_name     => 'fun.foo',
       source__id    => 1,
       primary_oc_id => 1,
+      site_id       => 100,
     )
 }
 
@@ -167,7 +168,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[0]->save();
@@ -201,7 +203,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[1]->set_category__id($OBJ->{category}->[1]->get_id());
     $media[1]->save();
@@ -238,7 +241,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
     $media[2]->save();
@@ -278,7 +282,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[3]->set_category__id( $OBJ->{category}->[0]->get_id() );
     $media[3]->save();
@@ -334,7 +339,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
@@ -377,7 +383,8 @@ sub test_select_methods: Test(41) {
                                source__id  => 1,
                                user__id    => $admin_id,
                                element     => $element, 
-                               checked_out => 1
+                               checked_out => 1,
+                               site_id     => 100,
                            });
     $media[5]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );

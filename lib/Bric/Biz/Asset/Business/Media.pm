@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:19 $
+$Date: 2003-03-15 18:36:05 $
 
 =head1 SYNOPSIS
 
@@ -87,7 +87,8 @@ use constant COLS           => qw( element__id
                                    workflow__id
                                    desk__id
                                    publish_status
-                                   active);
+                                   active
+                                   site__id);
 
 use constant VERSION_COLS   => qw( name
                                    description
@@ -115,7 +116,8 @@ use constant FIELDS         => qw( element__id
                                    workflow_id
                                    desk_id
                                    publish_status
-                                   _active);
+                                   _active
+                                   site_id);
 
 use constant VERSION_FIELDS => qw( name
                                    description
@@ -184,6 +186,7 @@ use constant PARAM_WHERE_MAP =>
       id                    => 'mt.id = ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
+      site__id              => 'mt.site__id = ?',
       workflow__id          => 'mt.workflow__id = ?',
       _null_workflow__id    => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
@@ -228,6 +231,7 @@ use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
+      site__id            => 'site__id',
       workflow__id        => 'workflow__id',
       primary_uri         => 'primary_uri',
       element__id         => 'element__id',

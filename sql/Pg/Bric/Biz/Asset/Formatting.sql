@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-05 21:25:47 $
+-- $Date: 2003-03-15 18:36:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -68,6 +68,7 @@ CREATE TABLE formatting (
                                        DEFAULT 1
                                        CONSTRAINT ck_formatting__active
                                          CHECK (active IN (0,1)),
+    site__id            NUMERIC(10,0)  NOT NULL,
     CONSTRAINT pk_formatting__id PRIMARY KEY (id)
 );
 
@@ -179,6 +180,7 @@ CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
 CREATE INDEX fkx_element__formatting ON formatting(element__id);
 CREATE INDEX fkx_category__formatting ON formatting(category__id);
 CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id);
+CREATE INDEX fkx_site__formatting ON formatting(site__id);
 
 -- formatting_instance.
 CREATE INDEX fkx_usr__formatting_instance ON formatting_instance(usr__id);

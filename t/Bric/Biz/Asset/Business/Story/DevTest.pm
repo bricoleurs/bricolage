@@ -49,6 +49,7 @@ sub new_args {
       source__id    => 1,
       primary_oc_id => 1,
       description   => 'foo',
+      site_id       => 100,
     )
 }
 
@@ -76,6 +77,7 @@ sub test_clone : Test(15) {
         name          => 'Victor', 
         slug          => 'hugo',
         source__id    => 1,
+        site_id       => 100,
       }), "Construct story" );
 
     $story->add_categories( [ $CATEGORY ] );
@@ -229,6 +231,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
@@ -265,6 +268,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[1]->add_categories( $OBJ->{category} );
     $story[1]->set_primary_category( $OBJ->{category}->[1] );
@@ -306,6 +310,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
@@ -346,6 +351,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
     $story[3]->set_primary_category( $OBJ->{category}->[0] );
@@ -402,6 +408,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
@@ -445,6 +452,7 @@ sub test_select_methods: Test(44) {
                                                        slug        => 'test',
                                                        user__id    => $admin_id,
                                                        element     => $element, 
+                                                       site_id     => 100,
                                                    });
     $story[5]->add_categories([ $OBJ->{category}->[0] ]);
     $story[5]->set_primary_category($OBJ->{category}->[0]);

@@ -35,7 +35,8 @@ sub new_args {
     ( output_channel__id => 1,
       user__id           => $self->user_id,
       category_id        => 1,
-      name               => 'foodoo'
+      name               => 'foodoo',
+      site_id            => 100,
     )
 }
 
@@ -420,6 +421,7 @@ sub test_select_b_new_objs: Test(32) {
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
+                               site_id            => 100,
                            });
     $formatting[0]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[0]->get_id();
@@ -457,6 +459,7 @@ sub test_select_b_new_objs: Test(32) {
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
+                               site_id            => 100,
                            });
     $formatting[1]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[1]->get_id();
@@ -500,6 +503,7 @@ sub test_select_b_new_objs: Test(32) {
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
+                               site_id            => 100,
                            });
     $formatting[2]->save();
     push @{$OBJ_IDS->{formatting}}, $formatting[2]->get_id();
@@ -559,6 +563,7 @@ sub test_select_b_new_objs: Test(32) {
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
+                               site_id            => 100,
                            });
     $formatting[3]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $formatting[3]->save();
@@ -608,6 +613,7 @@ sub test_select_b_new_objs: Test(32) {
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
+                               site_id            => 100,
                            });
     $formatting[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $formatting[4]->set_current_desk( $OBJ->{desk}->[0] );

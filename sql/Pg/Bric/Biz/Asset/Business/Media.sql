@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-07 05:26:41 $
+-- $Date: 2003-03-15 18:36:07 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -69,6 +69,7 @@ CREATE TABLE media (
                                       DEFAULT 1
                                       CONSTRAINT ck_media__active
                                         CHECK (active IN (0,1)),
+    site__id          NUMERIC(10,0)   NOT NULL,
     CONSTRAINT pk_media__id PRIMARY KEY (id)
 );
 
@@ -277,6 +278,7 @@ CREATE INDEX idx_media__cover_date ON media(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
 CREATE INDEX fkx_element__media ON media(element__id);
+CREATE INDEX fkx_site_id__media ON media(site__id);
 
 -- media_instance
 CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));

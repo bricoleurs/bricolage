@@ -31,7 +31,7 @@ sub test_const : Test(5) {
 # Test class methods.
 ##############################################################################
 # Test my_meths().
-sub test_my_meths : Test(11) {
+sub test_my_meths : Test(6) {
     ok( my $meths = Bric::Biz::Workflow->my_meths, "Get my_meths" );
     isa_ok($meths, 'HASH', "my_meths is a hash" );
     is( $meths->{name}{type}, 'short', "Check name type" );
@@ -39,13 +39,14 @@ sub test_my_meths : Test(11) {
     isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
     (is $meths->[0]->{name}, 'name', "Check first meth name" );
 
+    # Disabled because this isn't an identifier anymore
     # Try the identifier methods.
-    ok( my $wf = Bric::Biz::Workflow->new({ name => 'NewFoo' }),
-        "Create workflow" );
-    ok( my @meths = $wf->my_meths(0, 1), "Get ident meths" );
-    is( scalar @meths, 1, "Check for 1 meth" );
-    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
-    is( $meths[0]->{get_meth}->($wf), 'NewFoo', "Check name 'NewFoo'" );
+#    ok( my $wf = Bric::Biz::Workflow->new({ name => 'NewFoo' }),
+#        "Create workflow" );
+#    ok( my @meths = $wf->my_meths(0, 1), "Get ident meths" );
+#    is( scalar @meths, 1, "Check for 1 meth" );
+#    is( $meths[0]->{name}, 'name', "Check for 'name' meth" );
+#    is( $meths[0]->{get_meth}->($wf), 'NewFoo', "Check name 'NewFoo'" );
 }
 
 1;

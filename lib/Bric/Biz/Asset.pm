@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 05:16:19 $
+$Date: 2003-03-15 18:36:05 $
 
 =head1 SYNOPSIS
 
@@ -36,6 +36,9 @@ $Date: 2003-03-15 05:16:19 $
  $description = $asset->get_description()
  $priority        = $asset->get_priority()
  $asset           = $asset->set_priority($priority)
+
+ $site_id     = $asset->get_site_id()
+ $asset       = $asset->set_site_id($site_id)
 
  # User information
  $usr_id      = $asset->get_user__id()
@@ -145,7 +148,7 @@ use constant DEBUG => 0;
 #--------------------------------------#
 # Private Class Fields
 my $meths;
-my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active);
+my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active site_id);
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
@@ -171,6 +174,7 @@ BEGIN {
                         checked_out       => Bric::FIELD_READ,
                         workflow_id       => Bric::FIELD_RDWR,
                         desk_id           => Bric::FIELD_READ,
+                        site_id           => Bric::FIELD_RDWR,
 
                         # Private Fields
                         _checkin          => Bric::FIELD_NONE,
@@ -706,6 +710,19 @@ sub my_meths {
                              type     => 'short',
                              props    => { type => 'checkbox' }
                             },
+              site_id     => {
+                              get_meth => sub { shift->get_site_id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_site_id(@_) },
+                              set_args => [],
+                              name     => 'site_id',
+                              disp     => 'Site',
+                              len      => 10,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {}
+                             },
+
              };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
@@ -793,6 +810,34 @@ NONE
 B<Notes:>
 
 NONE
+
+=cut
+
+################################################################################
+
+=item $site_id = $workflow->get_site_id
+
+Returns the ID of the site this Workflow is a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+################################################################################
+
+=item $workflow = $workflow->set_site_id($site_id)
+
+Set the ID of the site this Workflow should be a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
