@@ -486,92 +486,126 @@ with a minimum of hassle.
 
 =item 1
 
-Determine if the branch checkout has been merged before. To do so, execute
-this cvs command in the branch checkout:
+Make sure that both the branch you are merging from and the trunk are updated
+and have no uncommitted changes. You can check for these differences by using
+the Subversion <status> and <update> commands. Running C<svn status> will tell
+you if there have been any uncommitted changes to the local copy of the branch
+or trunk. Running C<svn update> will merge in any updates from the copy on the
+Subversion server. So we recommend runing both of these commands in both the
+branch and the trunk and committing any necessary chaanges before continuing.
 
-  cd bricolage-branch-checkout/
-  cvs -qz3 status -v README
+  % cd bricolage-trunk
+  % svn status
+  % svn update
+  At revision 6123.
 
-This command will output the status of the F<README> file, something like
-this:
-
-  ===================================================================
-  File: README            Status: Up-to-date
-
-     Working revision:    1.16.2.1
-     Repository revision: 1.16.2.1        /cvsroot/bricolage/bricolage/README,v
-     Sticky Tag:          rev_1_4 (branch: 1.16.2)
-     Sticky Date:         (none)
-     Sticky Options:      (none)
-
-     Existing Tags:
-          rev_1_4                   (branch: 1.16.2)
-          rev_1_4_merge-2002-08-31  (revision: 1.16.2.1)
-          dev_1_3_3                 (revision: 1.10)
-          rev_1_2_merge-2002-04-03  (revision: 1.2.2.4)
-          rel_1_2_3                 (revision: 1.2.2.4)
-
-
-From this output, you can see that, for this branch (rev_1_4), the file was
-tagged with the merge tag "rev_1_4_merge-2002-08-31". Thus we can tell that
-the branch was last merged on August 31, 2002. If there had not been a tag
-with the same version number as the branch, then we could determine that it
-hadn't been merged before.
+  % cd bricolage-branch-checkout
+  % svn status
+  % svn update
+  At revision 6123.
 
 =item 2
 
-If the branch has not been merged into the trunk before, C<cd> into a checkout
-from HEAD, make sure it's fully up-to-date, and do a simple merge:
+To merge the changes from the branch into the trunk, you need to tell the
+Subversion <merge> command to use the difference between two revisions in the
+I<branch> to update the trunk. The two revisions to compare are, on the one
+hand, either the revision when the branch was created, or the revision when
+the branch was last merged into the trunk; and on the other hand, the current
+revision in the branch.
 
-  cd bricolage-head-checkout/
-  cvs -qz3 update
-  cvs -qz3 update -d -kk -j rev_1_4
+For the latter number, you can simply use the C<HEAD> keyword, which
+represents the latest revision number in the branch.
 
-Otherwise, do a merge from the most recently-dated merge tag. In the above
-example, that would be "rev_1_4_merge-2002-08-31".
+For the former number, Bricolage has implemented a standard way of recording a
+merge: we create a new tag for the branch. In Subversion, branches and tags
+are exactly the same, the difference is only in convention. So the convention
+for Bricolage is to store tags in the F<tags> subdirectory of the project
+directory, and branches in the F<branches> subdirectory. The other half of the
+convention is that no one should ever commit changes to a tag after it has
+been created.
 
-  cd bricolage-head-checkout/
-  cvs -qz3 update
-  cvs -qz3 update -d -kk -j rev_1_4_merge-2002-08-31 -j rev_1_4
+Tags are named for the branch name, the word "merge", and the revision number
+up to which the merge was made. For example, if a merge was committed to the
+trunk from the rev_1_8 branch in Subversion revision # 5694, the branch would
+be tagged "rev_1_8_merge_5694".
 
-The C<-d> option will allow new directories and their contents added to the
-branch to be merged into HEAD. Note also the use of the C<-kk> option. This
-option tells CVS not to evaluate keywords in the files. This is crucial for
-merges, since keywords such as C<$Revision $> B<will> be different. Not to
-worry, though; the keyword values are always restored before releasing a new
-version. See L<Creating Distributions|"CREATING DISTRIBUTIONS"> below.
+So get the revision number of the last merge, look in the Bricolage ViewCVS
+interface for the last merge tag created for the branch. Or use the Subversion
+C<list> command to find it:
+
+  % svn list http://svn.bricolage.cc/bricolage/tags | grep rev_1_8
+  rev_1_8_merge_5694
+  rev_1_8_merge_5825
+  rev_1_8_merge_5902
+  rev_1_8_merge_5995
+
+So now we know that we want to update the trunk with all of the changes
+between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
+to find out at what revision number the branch was created and use that
+number.
 
 =item 3
 
-Resolve any conflicts (hopefully none, but they do happen occasionally) and
-then rebuild the database and run all of the tests:
+Now simply switch to the trunk checkout and perform the merge. Using the above
+examples, the merge would look like this:
 
-  make devtest
+  % cd bricolage-trunk
+  % svn merge -r 5995:HEAD http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  U  lib/Bric/App/ApacheConfig.pm
+  C  lib/Bric/Hacker.pod
 
-If there are any test failures, you'll need to fix those, too.
+If you're nervous about doing the merge (don't be, it's just your local copy
+you're updating at this point), you can use the C<--dry-run> option to see
+what files would change without changing them. Or run C<svn diff> with the
+same arguments to see what the differences are:
+
+  % svn merge -r 5995:HEAD http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    > test.diff
 
 =item 4
 
-And finally, commit the changes to the trunk.
-
-  cvs -qz3 commit
+Resolve any conflicts (hopefully none, but they do happen occasionally).
+Notice above that the result of the merge is a conflict in
+F<lib/Bric/Hacker.pod>. To resolve the conflicts, follow the directions in the
+Subversion book, published online here:
+L<http://svnbook.red-bean.com/svnbook/ch03s05.html#svn-ch-3-sect-4.4>.
 
 =item 5
 
-Tag the branch with today's date, so that future merges can decide to merge
-only from this date on.
+Rebuild the database and run all of the tests:
 
-  cd bricolage-branch-checkout/
-  cvs -qz3 tag rev_1_4_merge-CCYY-MM-DD
+  % make devtest TEST_VERBOSE=1
+
+If there are any test failures, you'll need to fix those, too.
+
+=item 6
+
+Commit the changes to the trunk. Be sure to specify what revisions were merged
+in, and what the new tag you'll create in the branch will be named. The final
+revision number (represented by HEAD) happened to have been printed out when
+we ran C<svn update> in step one, so it's easy to find and use:
+
+  % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8_merge_6123.'
+
+=item 5
+
+Tag the branch with the last revision, so that future merges can decide to
+merge only from thiat revision on.
+
+  % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123
 
 =back
 
 By following this methodology we should be able to minimize the number of
-conflicts we get between merges. See the Karl Fogel and Moshe Bar's book "Open
-Source Development with CVS, 2nd Edition", chapter 2, for a more detailed
-explanation of the whys and wheres of this approach to merging CVS branches.
+conflicts we get between merges. See book "Version Control with Subversion,"
+chapter 4 at L<http://svnbook.red-bean.com/svnbook/ch04.html>, for a more
+detailed explanation of the whys and wheres of this approach to merging
+Subversion branches.
 
 =head1 CREATING DISTRIBUTIONS
+
+B<Note: To be updated to reflect use of Subvesion!>
 
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
