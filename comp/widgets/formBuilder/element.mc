@@ -30,6 +30,7 @@ return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_oc_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
+
 # Instantiate the element object and grab its name.
 my $comp = $obj;
 my $name = "&quot;$param->{name}&quot;";
@@ -79,6 +80,12 @@ if ($param->{delete} &&
     } elsif ($field eq "$widget|add_oc_id_cb" && ! $comp->get_primary_oc_id) {
         # They're adding the first one. Make it the primary.
         $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"});
+    } elsif (! exists $param->{element_type_id} and !$comp->get_primary_oc_id
+             and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
+             ->get_top_level) {
+        # They need to add an output channel.
+        $no_save = 1;
+        add_msg("Element must be associated with at least one output channel.")
     }
 
     # Update existing attributes. Get them from the Parts::Data class rather than from
@@ -202,14 +209,6 @@ if ($param->{delete} &&
         $comp->set_primary_oc_id($oc->get_id) if $oc;
     }
 
-    if (!$comp->get_primary_oc_id
-            and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
-            ->get_top_level) {
-        # They need to add an output channel.
-        $no_save = 1;
-        add_msg("Element must be associated with at least one output channel.")
-    }
-
     # Save the element.
     $comp->save unless $no_save;
     $param->{element_id} = $comp->get_id;
@@ -248,11 +247,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2002-12-08 20:16:29 $
+$Date: 2002-12-09 01:45:02 $
 
 =head1 SYNOPSIS
 
