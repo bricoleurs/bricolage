@@ -48,6 +48,7 @@ sub test_list : Test(30) {
         ok( $desk->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids($desk->get_id);
+        $self->add_del_ids($desk->get_asset_grp, 'grp');
         $grp->add_member({ obj => $desk }) if $n % 2;
     }
 
@@ -121,6 +122,7 @@ sub test_list_ids : Test(23) {
         ok( $desk->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids($desk->get_id);
+        $self->add_del_ids($desk->get_asset_grp, 'grp');
         $grp->add_member({ obj => $desk }) if $n % 2;
     }
 
