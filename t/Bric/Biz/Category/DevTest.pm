@@ -19,7 +19,7 @@ sub table { 'category' }
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(9) {
+sub test_lookup : Test(17) {
     my $self = shift;
 
     ok (my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}");
@@ -42,6 +42,28 @@ sub test_lookup : Test(9) {
 
     # Make sure we've got the ad string.
     is ($cat->get_ad_string, 'foo', 'Check adstring');
+
+    # Make sure we've got an asset group.
+    ok( my $ag = Bric::Util::Grp::Asset->lookup({
+        id => $cat->get_asset_grp_id
+      }), "Look up asset group");
+
+    ok($ag->is_active, "Check asset group is active" );
+
+    # Now deactivate the category.
+    ok( $cat->deactivate, "Deactivate category" );
+    ok( $cat->save, "Save deactivated category" );
+
+    # Check that it and the asset group are both deactivated in the database.
+    ok($cat = Bric::Biz::Category->lookup({id => $id}),
+       "Look up deactivated $cat{name}");
+    ok(! $cat->is_active, "Check category is still deactivated" );
+
+    ok( $ag = Bric::Util::Grp::Asset->lookup({
+        id => $cat->get_asset_grp_id
+      }), "Look up deactivated asset group");
+
+    ok(!$ag->is_active, "Check asset group is deactivated" );
 }
 
 ##############################################################################

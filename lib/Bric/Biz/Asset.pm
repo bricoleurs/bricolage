@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:07 $
+$Date: 2004-02-16 08:17:04 $
 
 =head1 SYNOPSIS
 
@@ -332,13 +332,13 @@ sub list_ids {
     # clean the params
     $param = clean_params($pkg, $param);
     delete $param->{Order};
-    my $cols = $pkg->ID_COL;
+    my $cols = 'DISTINCT ' . $pkg->ID_COL;
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
     # choose the query type, without grp_ids is faster
     my $sql = build_query($pkg, $cols, '', $tables, $where, $order);
-    my $select = prepare_ca($sql, undef);
+    my $select = prepare_ca($$sql, undef);
     my $return = col_aref($select, @$args);
     return unless $return->[0];
     return wantarray ? @{ $return } : $return;
@@ -1480,10 +1480,10 @@ sub add_note {
 
         my $note_index = $self->get_version();
 
-        $self->_set_attr({ 
-                        subsys => 'notes', 
+        $self->_set_attr({
+                        subsys => 'notes',
                         name => $note_index,
-                        sql_type => 'short', 
+                        sql_type => 'short',
                         value => $note
                 });
 
@@ -1773,7 +1773,7 @@ sub _set_attr {
         my $dirty = $self->_get__dirty();
 
         # check to see if we have an id, get attr obj if we do
-        # otherwise put it into a cache 
+        # otherwise put it into a cache
         if ($self->_get('id') ) {
                 my $attr_obj = $self->_get_attribute_object();
 

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:39 $
+$Date: 2004-02-16 08:17:04 $
 
 =head1 SYNOPSIS
 
@@ -152,6 +152,8 @@ BEGIN {
                          'grp_ids'         => Bric::FIELD_READ,
 
                          # Private Fields
+                         '_active'           => Bric::FIELD_NONE,
+                         '_grp_active'       => Bric::FIELD_NONE,
                          '_attr_obj'         => Bric::FIELD_NONE,
                          '_attr'             => Bric::FIELD_NONE,
                          '_meta'             => Bric::FIELD_NONE,
@@ -1393,7 +1395,8 @@ sub activate {
     my ($param) = @_;
     my $recurse = $param->{'recurse'};
 
-    $self->_set(['_active'], [1]);
+    $self->_set([qw(_active _grp_active)] => [1, 1])
+      unless $self->_get('_active');
 
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
@@ -1419,7 +1422,8 @@ sub deactivate {
     my $id = $self->get_id;
     return if not defined $id || $self->is_root_category;
 
-    $self->_set(['_active'], [0]);
+    $self->_set([qw(_active _grp_active)] => [0, 0])
+      if $self->_get('_active');
 
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
@@ -1701,12 +1705,13 @@ sub _update_category {
 
     execute($sth, $self->_get(@props), $self->get_id);
 
+    my $ag;
     if ($new_uri) {
         # Change the URI in the asset group description.
-        my $agid = $self->_get('asset_grp_id');
-        my $ag = Bric::Util::Grp::Asset->lookup({ id => $agid });
+        $ag = Bric::Util::Grp::Asset->lookup({
+            id => $self->_get('asset_grp_id')
+        });
         $ag->set_description($new_uri);
-        $ag->save;
 
         # Update the subcategory URIs.
         for my $subcat ($self->get_children) {
@@ -1714,6 +1719,18 @@ sub _update_category {
             $subcat->_update_category;
         }
     }
+
+    my $gact = $self->_get('_grp_active');
+    if (defined $gact) {
+        # Deactivate the asset group.
+        $ag ||= Bric::Util::Grp::Asset->lookup({
+            id => $self->_get('asset_grp_id')
+        });
+        $ag->deactivate;
+        $self->_set(['_grp_active'] => [undef]);
+    }
+
+    $ag->save if $ag;
 }
 
 =item _insert_category

@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-08 18:50:30 $
+$Date: 2004-02-16 08:17:18 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,6 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
-use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::Biz::Asset::Formatting;
 use Bric::Config qw(:ftp);
 use Bric::Biz::AssetType;
@@ -121,6 +120,8 @@ sub get {
 
   print STDERR __PACKAGE__, "::get() : $filename\n" if FTP_DEBUG;
 
+  my $deploy = $filename =~ s/\.deploy$//i;
+
   # look for a template by that name
   my $list = Bric::Biz::Asset::Formatting->list({
       site_id            => $site_id,
@@ -142,6 +143,7 @@ sub get {
         $site_id,
         $oc_id,
         $category_id,
+        $deploy,
     )
       # Allow access only to template if the user has READ access to it.
       if $self->{ftps}{user_obj}->can_do($template, READ);
@@ -233,6 +235,8 @@ sub open {
       return undef;
   }
 
+  my $deploy = $filename =~ s/\.deploy$//i;
+
   # find filename
   my $list = Bric::Biz::Asset::Formatting->list({
       site_id            => $site_id,
@@ -253,7 +257,8 @@ sub open {
                                             $template,
                                             $site_id,
                                             $oc_id,
-                                            $category_id
+                                            $category_id,
+                                            $deploy,
                                            )->open($mode)
       if $self->{ftps}{user_obj}->can_do($template, READ);
   }
@@ -296,23 +301,14 @@ sub open {
        'output_channel__id' => $oc_id,
        'category_id'        => $category_id,
        'priority'           => 3,
-       'name'               => ($at ? lc $at->get_key_name : undef),
+       'name'               => ($at ? lc $at->get_key_name : $name),
        'user__id'           => $self->{ftps}{user_obj}->get_id,
    });
 
-  # find a template workflow.  Might be nice if
-  # Bric::Biz::Workflow->list too a type key...
-  foreach my $workflow (Bric::Biz::Workflow->list()) {
-      if ($workflow->get_type == TEMPLATE_WORKFLOW) {
-          $template->set_workflow_id($workflow->get_id());
-          $template->checkin();
-          last;
-      }
-  }
+  $self->{ftps}->move_into_workflow($template);
 
   # send to the database
-  $template->activate();
-  $template->save();
+  $template->save;
 
   # now pass off to FileHandle
   return Bric::Util::FTP::FileHandle->new($self->{ftps},

@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =pod
 
@@ -73,6 +73,8 @@ use Bric::Biz::Person::User;
 use Net::FTPServer;
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::FTP::DirHandle;
+use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 ################################################################################
 # Inheritance
@@ -155,6 +157,65 @@ sub system_error_hook {
   return delete $self->{error}
     if exists $self->{error};
   return "Unknown error occurred.";
+}
+
+sub move_into_workflow {
+    my ($self, $template) = @_;
+    my $user = $self->{user_obj};
+    my $site_id = $template->get_site_id;
+    for my $wf (Bric::Biz::Workflow->list({ site_id => $site_id,
+                                            type => TEMPLATE_WORKFLOW })) {
+
+        next unless $user->can_do($wf, READ);
+        my $desk = $wf->get_start_desk;
+        next unless $user->can_do($desk, READ);
+
+        # We have a workflow and desk.
+        $template->set_workflow_id($wf->get_id);
+        # Save it if we need to.
+        $template->save unless $template->get_id;
+
+        # Log it.
+        Bric::Util::Event->new({ key_name => 'formatting_add_workflow',
+                                 obj      => $template,
+                                 user     => $user
+                             });
+
+        $self->move_onto_desk($template, $desk);
+    }
+
+    # Make sure we got it.
+    warn "No workflow available to checkout template"
+      unless $template->get_workflow_id;
+    return $template;
+}
+
+sub move_onto_desk {
+    my ($self, $template, $desk) = @_;
+    my $user = $self->{user_obj};
+
+    unless ($desk) {
+        if (my $wf = Bric::Biz::Workflow->lookup({ id => $template->getworkflow_id})) {
+            $desk = $wf->get_start_desk;
+        } else {
+            warn "No workflow available to checkout template";
+            return;
+        }
+    }
+
+    # Put this template on the start desk.
+    $desk->accept({ asset => $template});
+    $desk->checkout($template, $user->get_id);
+    $desk->save;
+    Bric::Util::Event->new({ key_name => 'formatting_moved',
+                             obj      => $template,
+                             user     => $user,
+                             attr     => { Desk => $desk->get_name }
+                         });
+    Bric::Util::Event->new({ key_name => 'formatting_checkout',
+                             obj      => $template,
+                             user     => $user
+                         });
 }
 
 1;

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.86 $
+$Revision: 1.87 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.86 $ )[-1];
+our $VERSION = (qw$Revision: 1.87 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-12 00:03:14 $
+$Date: 2004-02-16 08:17:02 $
 
 =head1 SYNOPSIS
 
@@ -120,9 +120,11 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
                     ENABLE_FTP_SERVER
+                    FTP_DEPLOY_ON_UPLOAD
                     FTP_PORT
                     FTP_ADDRESS
                     FTP_LOG
+                    FTP_PID_FILE
                     FTP_DEBUG
                     DISABLE_NAV_LAYER
                     TEMP_DIR
@@ -241,9 +243,11 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT)],
                     ftp       => [qw(ENABLE_FTP_SERVER
+                                     FTP_DEPLOY_ON_UPLOAD
                                      FTP_PORT
                                      FTP_ADDRESS
                                      FTP_LOG
+                                     FTP_PID_FILE
                                      FTP_DEBUG)],
                     temp      => [qw(TEMP_DIR)],
                     profile   => [qw(PROFILE)],
@@ -320,10 +324,12 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         # While these default to 0.
         foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ENABLE_SFTP_V2
-                    ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL ALLOW_WORKFLOW_TRANSFER
-                    ALLOW_ALL_SITES_CX STORY_URI_WITH_FILENAME
-                    ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS))
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
+                    ENABLE_SFTP_V2 ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL
+                    ALLOW_WORKFLOW_TRANSFER ALLOW_ALL_SITES_CX
+                    STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
+                    ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
+                    FTP_DEPLOY_ON_UPLOAD))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -518,11 +524,14 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # FTP Settings
     use constant ENABLE_FTP_SERVER => $config->{ENABLE_FTP_SERVER} || 0;
+    use constant FTP_DEPLOY_ON_UPLOAD => $config->{FTP_DEPLOY_ON_UPLOAD} || 0;
     use constant FTP_ADDRESS       => $config->{FTP_ADDRESS}       || "";
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
       catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
+    use constant FTP_PID_FILE      => $config->{FTP_PID_FILE}      ||
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.pid');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
@@ -554,7 +563,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
         my $pkg = TEMPLATE_BURN_PKG;
-        eval "package $pkg; $config->{PERL_LOADER}";
+        eval qq{package $pkg;
+                use Bric::Util::DBI qw(:junction);
+                $config->{PERL_LOADER};
+        };
     }
 
     # Set the MOD_PERL constant.

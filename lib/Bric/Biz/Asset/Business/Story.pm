@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.81 $
+$Revision: 1.82 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.81 $ )[-1];
+our $VERSION = (qw$Revision: 1.82 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:07 $
+$Date: 2004-02-16 08:17:16 $
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ use constant TABLE      => 'story';
 
 use constant VERSION_TABLE => 'story_instance';
 
-use constant ID_COL => 'DISTINCT s.id';
+use constant ID_COL => 's.id';
 
 use constant COLS       => qw( priority
                                source__id
@@ -273,8 +273,8 @@ use constant WHERE => 's.id = i.story__id '
   . 'AND c.id = sc.category__id '
   . 'AND s.workflow__id = w.id';
 
-use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS);
+use constant COLUMNS => join(', s.', 's.id', COLS) . ', '
+            . join(', i.', 'i.id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
@@ -399,7 +399,7 @@ use constant PARAM_ORDER_MAP =>
       title               => 'name',
       description         => 'description',
       version             => 'version',
-      version_id          => 'version_id',
+      version_id          => 'i.id',
       slug                => 'slug',
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
@@ -565,161 +565,171 @@ lookup keys are:
 
 =over 4
 
-=item *
+=item title
 
-name - the same as the title field
+The title of the story. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-title
+Same as C<title>.
 
-=item *
+=item description
 
-description
+Story description. May use C<ANY> for a list of possible values.
 
-=item *
+=item id
 
-id - the story id
+The story ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item version
 
-version
+The story version number. May use C<ANY> for a list of possible values.
 
-=item *
+=item slug
 
-slug
+The story slug. May use C<ANY> for a list of possible values.
 
-=item *
+=item user__id
 
-user__id - returns the versions that are checked out by the user, otherwise
-returns the most recent version
+Returns the versions that are checked out by the user, otherwise returns the
+most recent version. May use C<ANY> for a list of possible values.
 
-=item *
+=item return_versions
 
-return_versions - returns past version objects as well
+Boolean indicating whether to return pass version objects for each story
+listed.
 
-=item *
+=item active
 
-active - Will default to 1
+Boolean indicating whether to return active or inactive stories.
 
-=item *
+=item inactive
 
-inactive - Returns only inactive objects
+Returns only inactive stories.
 
-=item *
+=item category_id
 
-category_id
+Returns a list os stories in the category represented by a category ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item keyword
 
-keyword - a string (not an object)
+Returns stories associated with a given keyword string (not object).
 
-=item *
+=item workflow__id
 
-workflow__id - workflow containing the story.  Set to undef to return
-stories with no workflow.
+Return a list of stories in the workflow represented by the workflow ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item primary_uri
 
-primary_uri
+Returns a list of stories with a given primary URI. May use C<ANY> for a list
+of possible values.
 
-=item *
+=item category_uri
 
-category_uri
+Returns a list of stories with a given category URI. May use C<ANY> for a list
+of possible values. May use C<ANY> for a list of possible values.
 
-=item *
+=item story.category
 
-story.category - Pass in a story ID, and a list of stories in the same
-categories as the story with that ID will be returned, minus the story with
-that ID. This parameter triggers a complex join, which can slow the query time
-significantly on underpowered servers or systems with a large number of
-stories. Still, it can be very useful in templates that want to create a list
-of stories in all of the categories the current story is in. But be sure to
-use the <Limit> parameter!
+Pass in a story ID, and a list of stories in the same categories as the story
+with that ID will be returned, minus the story with that ID. This parameter
+triggers a complex join, which can slow the query time significantly on
+underpowered servers or systems with a large number of stories. Still, it can
+be very useful in templates that want to create a list of stories in all of
+the categories the current story is in. But be sure to use the <Limit>
+parameter!
 
-=item *
+=item element__id
 
-element__id
+Returns a list of stories associated with a given element ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item source__id
 
-source__id
+Returns a list of stories associated with a given source ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item output_channel_id
 
-output_channel_id
+Returns a list of stories associated with a given output channel ID. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item primary_oc_id
 
-primary_oc_id
+Returns a list of stories associated with a given primary output channel
+ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item priority
 
-priority
+Returns a list of stories associated with a given priority value. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item contrib_id
 
-contrib_id
+Returns a list of stories associated with a given contributor ID. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item publish_status
 
-publish_status - set to 1 to only return stories that have been published
+Boolean value indicating whether to return published or unpublished stories.
 
-=item *
+=item first_publish_date_start
 
-first_publish_date_start - if end is left blank will return everything after the arg
+Returns a list of stories first published on or after a given date/time.
 
-=item *
+=item first_publish_date_end
 
-first_publish_date_end - if start is left blank will return everything before the arg
+Returns a list of stories first published on or before a given date/time.
 
-=item *
+=item publish_date_start
 
-publish_date_start - if end is left blank will return everything after the arg
+Returns a list of stories last published on or after a given date/time.
 
-=item *
+=item publish_date_end
 
-publish_date_end - if start is left blank will return everything before the arg
+Returns a list of stories last published on or before a given date/time.
 
-=item *
+=item cover_date_start
 
-cover_date_start - if end is left blank will return everything after the arg
+Returns a list of stories with a cover date on or after a given date/time.
 
-=item *
+=item cover_date_end
 
-cover_date_end - if start is left blank will return everything before the arg
+Returns a list of stories with a cover date on or before a given date/time.
 
-=item *
+=item expire_date_start
 
-expire_date_start - if end is left blank will return everything after the arg
+Returns a list of stories with a expire date on or after a given date/time.
 
-=item *
+=item expire_date_end
 
-expire_date_end - if start is left blank will return everything before the arg
+Returns a list of stories with a expire date on or before a given date/time.
 
-=item *
+=item Order
 
-Order - A property name to order by.
+A property name to order by.
 
-=item *
+=item OrderDirection
 
-OrderDirection - The direction in which to order the records, either "ASC" for
-ascending (the default) or "DESC" for descending.
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending.
 
-=item *
+=item Limit
 
-Limit - A maximum number of objects to return. If not specified, all objects
-that match the query will be returned.
+A maximum number of objects to return. If not specified, all objects that
+match the query will be returned.
 
-=item *
+=item Offset
 
-Offset - The number of objects to skip before listing the remaining objcts or
-the number of objects specified by C<Limit>.
+The number of objects to skip before listing the remaining objcts or the
+number of objects specified by C<Limit>.
 
-=item *
+=item simple
 
-simple - a single OR search that hits title, description, primary_uri
-and keywords.
+Triggers a single OR search that hits title, description, primary_uri and
+keywords.
 
 =back
 

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.140 $
+$Revision: 1.141 $
 
 =head1 DATE
 
-$Date: 2004-02-08 00:36:11 $
+$Date: 2004-02-16 08:16:59 $
 
 =head1 DESCRIPTION
 
@@ -1492,9 +1492,19 @@ for programmers working on templates. Many editors provide FTP modes that make
 editing files via FTP almost as easy as editing files locally (ange-ftp for
 Emacs, for example).
 
-There are security risks to consider - FTP sends passwords unencrypted over the
-network. If you are running Bricolage behind a firewall this might not be a
-problem.
+Whenever a user uploads a template via the FTP server, the template is checked
+out to her and put on her workspace and in her sandbox for testing. Repeated
+uploads of the template merely save it and redploy it to her sandbox. Once a
+user is satisfied that a template is ready for production and she wishes to
+deploy it, she merely has to upload it via the FTP server with the string
+".deploy" appended to the file name. This behavior allows users to safely make
+changes to a template and test those changes without interfering with the
+publication of live documents until a user is sure a template is ready for
+production.
+
+There are security risks to consider with the Bricolage virtual FTP server:
+FTP sends passwords unencrypted over the network. If you are running Bricolage
+behind a firewall this might not be a problem.
 
 To enable the FTP server you'll need to install the Net::FTPServer Perl module.
 After that you can configure the FTP server with the following options:
@@ -1521,7 +1531,20 @@ bind to the specified address.
 =item *
 
 B<FTP_LOG:> Set this to the file where you want to FTP logs written
-to. Defaults to F<$BRICOLAGE_ROOT/ftp.log> if not set.
+to. Defaults to C<$BRICOLAGE_ROOT/ftp.log> if not set.
+
+=item *
+
+B<FTP_PID_FILE:> Set this to the file where you want to the FTP daemon PID
+stored. Defaults to C<$BRICOLAGE_ROOT/ftp.pid> if not set.
+
+=item *
+
+B<FTP_DEPLOY_ON_UPLOAD:> Prior to Bricolage. 1.8.0, the virtual FTP server
+deployed a template whenever it was uploaded. Beginning with Bricolage 1.8.0,
+templates are checked out to the user and put on her workspace and in her
+sandbox for testing, but they are not deployed. Enable this directive to
+restore the pre-1.8.0 behavior.
 
 =item *
 

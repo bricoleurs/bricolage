@@ -16,6 +16,31 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.7.3 ()
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+The virtual FTP server now moves templates into workflow when they're uploaded
+and puts them into the user's sandbox. This behavior allows the user to test
+the template changes without imposing possible bugs upon other Bricolage
+users. This approach is much safer than the previous behavior, which simply
+checked in and deployed a template upon upload. Teamplates can still be
+deployed via the virtual FTP server by appending ".deploy" to their names. The
+original behavior of always deploying templates upon upload can be restored by
+enabling the C<FTP_DEPLOY_ON_UPLOAD> F<bricolage.conf> directive. [David]
+
+=item *
+
+Added C<ANY> fuction to be used with select parameters to story, media, and
+template (formatting) list. Pass a list of values to this function to have any
+of of them match for a given parameter. This is especially useful for matching
+on, say, a list of URIs or category IDs. This function is automatically
+available in templates. [David]
+
+=back
+
 =head2 Improvements
 
 =over 4
@@ -47,9 +72,43 @@ of fetching data from the database. Suggested by Josh Berkus. [David]
 
 Thanks to the aggregation of group IDs into a single row for each story, media
 and template object, the C<Offset> and C<Limit> parameters to the C<list()>
-methods of the story, media, and template (formatting) classes is now handled
+methods of the story, media, and template (formatting) classes are now handled
 by the database back end, instead of in Perl space. This makes using these
 parameters much more efficient.
+
+=item *
+
+Added C<-k> option to F<bric_ftpd> to kill a currently running virtual FTP
+server. This is made possible by the addition of the new C<FTP_PID_FILE>
+F<bricolage.conf> directive. [David]
+
+=item *
+
+Asset groups associated with categories are now activated or deactivated
+whenever their corresponding categories are now activated or deactivated.
+This prevents them from showing up in the permissions interface. [David]
+
+=item *
+
+Added a check box to the permissions interface to enable the display of
+inactive groups. This is primarily so that permissions can be modified on
+inactive category groups, since they still affect access to any documents and
+templates in those categories, even after they're deactivated. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The virtual FTP server now correctly creates a utility template when a
+template with an unknown name is uploaded. [David]
+
+=item *
+
+The virtual FTP server now pays proper attention to all permissions. [David]
 
 =back
 

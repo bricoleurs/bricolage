@@ -16,6 +16,7 @@ use constant VERSION_TABLE => 'story_instance';
 use constant WHERE => 's.id = i.story__id';
 
 use constant FROM => VERSION_TABLE . ' i, member m';
+use constant ID_COL => 't.id';
 
 use constant PARAM_FROM_MAP =>
     {
@@ -112,9 +113,9 @@ sub test_build_query: Test(2) {
                     GROUP BY cols
                     order
                  };
-    $got =~ s/\s+/ /gm; # ignore whitespace
+    $$got =~ s/\s+/ /gm; # ignore whitespace
     $expected =~ s/\s+/ /gm; # ignore whitespace
-    is( $got, $expected, 'check the normal query builder' );
+    is( $$got, $expected, 'check the normal query builder' );
 }
 
 sub test_where: Test(70) {
@@ -347,16 +348,16 @@ sub test_order_by: Test(6) {
             'bad order throws exception');
 
     $got = order_by($CLASS, undef);
-    is( $got, 'ORDER BY id' ,'missing order orders by ID');
+    is( $got, 'ORDER BY t.id' ,'missing order orders by ID');
 
     $got = order_by($CLASS, { Order => 'slug' });
-    is( $got, 'ORDER BY slug ASC, id', 'order works');
+    is( $got, 'ORDER BY slug ASC, t.id', 'order works');
 
     $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'ASC' });
-    is( $got, 'ORDER BY slug ASC, id','order works with ASC');
+    is( $got, 'ORDER BY slug ASC, t.id','order works with ASC');
 
     $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'DESC' });
-    is( $got, 'ORDER BY slug DESC, id', 'order works with DESC');
+    is( $got, 'ORDER BY slug DESC, t.id', 'order works with DESC');
 
 }
 

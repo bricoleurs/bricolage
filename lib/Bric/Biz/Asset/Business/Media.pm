@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.75 $
+$Revision: 1.76 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.75 $ )[-1];
+our $VERSION = (qw$Revision: 1.76 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:07 $
+$Date: 2004-02-16 08:17:06 $
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ use constant TABLE  => 'media';
 
 use constant VERSION_TABLE => 'media_instance';
 
-use constant ID_COL => 'DISTINCT mt.id';
+use constant ID_COL => 'mt.id';
 
 use constant COLS           => qw( element__id
                                    priority
@@ -162,8 +162,8 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND at.id = e.type__id '
   . 'AND mt.workflow__id = w.id';
 
-use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS);
+use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', '
+            . join(', i.', 'i.id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
@@ -274,7 +274,7 @@ use constant PARAM_ORDER_MAP =>
       title               => 'name',
       description         => 'description',
       version             => 'version',
-      version_id          => 'version_id',
+      version_id          => 'i.id',
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
@@ -439,141 +439,161 @@ Supported Keys:
 
 =over 4
 
-=item *
+=item title
 
-name - the same as the title field
+The title of the media document. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-title
+Same as C<title>.
 
-=item *
+=item description
 
-description
+Media Document description. May use C<ANY> for a list of possible values.
 
-=item *
+=item id
 
-uri
+The media document ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item version
 
-file_name - the name of the file uploaded into this object
+The media document version number. May use C<ANY> for a list of possible values.
 
-=item *
+=item file_name
 
-source__id
+The media document file name. May use C<ANY> for a list of possible values.
 
-=item *
+=item user__id
 
-id - the media id
+Returns the versions that are checked out by the user, otherwise returns the
+most recent version. May use C<ANY> for a list of possible values.
 
-=item *
+=item return_versions
 
-version
+Boolean indicating whether to return pass version objects for each media document
+listed.
 
-=item *
+=item active
 
-user__id - returns the versions that are checked out by the user, otherwise
-returns the most recent version
+Boolean indicating whether to return active or inactive stories.
 
-=item *
+=item inactive
 
-return_versions - returns past version objects as well
+Returns only inactive stories.
 
-=item *
+=item category_id
 
-active - Will default to 1
+Returns a list os stories in the category represented by a category ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item keyword
 
-inactive - Returns only inactive objects
+Returns stories associated with a given keyword string (not object).
 
-=item *
+=item workflow__id
 
-workflow__id
+Return a list of stories in the workflow represented by the workflow ID. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item uri
 
-element__id
+Returns a list of stories with a given URI. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item category_uri
 
-output_channel_id
+Returns a list of stories with a given category URI. May use C<ANY> for a list
+of possible values. May use C<ANY> for a list of possible values.
 
-=item *
+=item element__id
 
-primary_oc_id
+Returns a list of stories associated with a given element ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item source__id
 
-priority
+Returns a list of stories associated with a given source ID. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item output_channel_id
 
-contrib_id
+Returns a list of stories associated with a given output channel ID. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item primary_oc_id
 
-publish_status
+Returns a list of stories associated with a given primary output channel
+ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item priority
 
-first_publish_date_start - if end is left blank will return everything after the arg
+Returns a list of stories associated with a given priority value. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item contrib_id
 
-first_publish_date_end - if start is left blank will return everything before the arg
+Returns a list of stories associated with a given contributor ID. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item publish_status
 
-publish_date_start - if end is left blank will return everything after the arg
+Boolean value indicating whether to return published or unpublished stories.
 
-=item *
+=item first_publish_date_start
 
-publish_date_end - if start is left blank will return everything before the arg
+Returns a list of stories first published on or after a given date/time.
 
-=item *
+=item first_publish_date_end
 
-cover_date_start - if end is left blank will return everything after the arg
+Returns a list of stories first published on or before a given date/time.
 
-=item *
+=item publish_date_start
 
-cover_date_end - if start is left blank will return everything before the arg
+Returns a list of stories last published on or after a given date/time.
 
-=item *
+=item publish_date_end
 
-expire_date_start - if end is left blank will return everything after the arg
+Returns a list of stories last published on or before a given date/time.
 
-=item *
+=item cover_date_start
 
-expire_date_end - if start is left blank will return everything before the arg
+Returns a list of stories with a cover date on or after a given date/time.
 
-=item *
+=item cover_date_end
 
-Order - A property name to order by.
+Returns a list of stories with a cover date on or before a given date/time.
 
-=item *
+=item expire_date_start
 
-OrderDirection - The direction in which to order the records, either "ASC" for
-ascending (the default) or "DESC" for descending.
+Returns a list of stories with a expire date on or after a given date/time.
 
-=item *
+=item expire_date_end
 
-Limit - A maximum number of objects to return. If not specified, all objects
-that match the query will be returned.
+Returns a list of stories with a expire date on or before a given date/time.
 
-=item *
+=item Order
 
-Offset - The number of objects to skip before listing the remaining objcts or
-the number of objects specified by C<Limit>.
+A property name to order by.
 
-=item *
+=item OrderDirection
 
-simple - a single OR search that hits name, description and uri.
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending.
 
-=item *
+=item Limit
 
-category__id - the category id of the media object
+A maximum number of objects to return. If not specified, all objects that
+match the query will be returned.
+
+=item Offset
+
+The number of objects to skip before listing the remaining objcts or the
+number of objects specified by C<Limit>.
+
+=item simple
+
+Triggers a single OR search that hits title, description, primary_uri and
+keywords.
 
 =back
 

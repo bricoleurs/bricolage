@@ -22,9 +22,11 @@ if ($is_user) {
              'indent'  => 140,
              'width'   => 500,
              'value' => $perm_type,
-             'js' => qq{onChange="location.href='} . $r->uri .
-                     "?perm_type=' + " .
-                     qq{escape(this.options[this.selectedIndex].value)"},
+             'js' => qq{onChange="location.href='} . $r->uri
+                     . "?perm_type=' + "
+                     . qq{escape(this.options[this.selectedIndex].value)}
+                     . qq{ + '&show_inactive=' + this.form.show_inactive.checked"}
+
     );
     $m->comp('/widgets/profile/hidden.mc',
          'name' => 'perm_type',
@@ -47,6 +49,14 @@ if ($is_user) {
         }
     }
 }
+
+$m->comp('/widgets/profile/checkbox.mc',
+    disp    => 'Show inactive groups',
+    checked => $show_inactive,
+    value   => 1,
+    name    => 'show_inactive'
+);
+$m->out('<p></p>');
 
 if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
@@ -154,6 +164,7 @@ if ($perm_type eq 'category' || $perm_type eq 'all') {
 
     foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
                                               Order => 'description',
+                                              active => ($show_inactive ? undef : 1),
                                               all  => 1 })) {
 	my $gid = $cat_grp->get_id;
 	$m->comp($row_comp,
@@ -204,8 +215,9 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
 %#--- Arguments ---#
 <%args>
 $grp
-$num       => undef
-$read_only => undef
+$num           => undef
+$read_only     => undef
+$show_inactive => undef
 </%args>
 %#--- Once ---#
 <%once>;
@@ -260,6 +272,11 @@ $no_edit = $read_only;
 my $curr_key = $class_obj->get_key_name;
 my $is_user = $curr_key eq 'user_grp' ? 1 : 0;
 my $perm_type = $ARGS{'perm_type'} || 'usrgrp';
+$show_inactive = $show_inactive eq 'true' || $show_inactive eq 1
+  ? 1
+  : 0
+  if defined $show_inactive;
+
 </%init>
 
 %#-- Shared Section --#

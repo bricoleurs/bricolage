@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:07 $
+$Date: 2004-02-16 08:17:05 $
 
 =head1 SYNOPSIS
 
@@ -156,7 +156,7 @@ use constant UTILITY_TEMPLATE => 3;
 # constants for the Database
 use constant TABLE      => 'formatting';
 use constant VERSION_TABLE => 'formatting_instance';
-use constant ID_COL => 'DISTINCT f.id';
+use constant ID_COL => 'f.id';
 use constant COLS       => qw( name
                                priority
                                description
@@ -228,8 +228,8 @@ use constant WHERE => 'f.id = i.formatting__id '
   . 'AND c.id = f.category__id '
   . 'AND f.workflow__id = w.id';
 
-use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS);
+use constant COLUMNS => join(', f.', 'f.id', COLS) . ', '
+            . join(', i.', 'i.id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
@@ -305,7 +305,7 @@ use constant PARAM_ORDER_MAP =>
       title               => 'name',
       description         => 'description',
       version             => 'version',
-      version_id          => 'version_id',
+      version_id          => 'i.id',
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       category_id         => 'category_id',

@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-16 12:14:05 $
+$Date: 2004-02-16 08:17:17 $
 
 =head1 SYNOPSIS
 
@@ -309,10 +309,15 @@ object.
 
 A group parent ID.
 
+=item active
+
+Pass in a true value to return only active groups (the default) or 0 to return
+only inactive groups. Pass C<undef> to get a list of active and inactive
+groups.
+
 =item inactive
 
-Inactive groups will be returned if this parameter is true. Otherwise, only
-active groups will be returned.
+Inactive groups will be returned if this parameter is true.
 
 =item all
 
@@ -2879,9 +2884,13 @@ sub _do_list {
     if ( $criteria->{inactive} ) {
         push @wheres, 'g.active = ?';
         push @params, 0;
-    } elsif (! defined $criteria->{id}) {
+    } elsif (! defined $criteria->{id} && !exists $criteria->{active}) {
         push @wheres, 'g.active = ?';
         push @params, 1;
+    } elsif (exists $criteria->{active} && defined $criteria->{active} ) {
+        # Undef active means return all active and inactive groups.
+        push @wheres, 'g.active = ?';
+        push @params, $criteria->{active} ? 1 : 0;
     }
 
     unless ( $criteria->{all} ) {

@@ -67,7 +67,7 @@ sub test_fetch_objects: Test(4) {
                  GROUP BY one, two, three, four, five, six, seven, eight
                  ORDER BY one, eight ASC };
     my $fields = [ qw( one two three four five six seven eight nine ) ];
-    my $stories = fetch_objects('Bric', $sql, $fields, 4, undef, undef, undef);
+    my $stories = fetch_objects('Bric', \$sql, $fields, 4, undef, undef, undef);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     my $expect = [
              bless( {
@@ -123,7 +123,7 @@ sub test_fetch_objects: Test(4) {
               'Checking that _fetch_objects produces the correct object structure');
     # test limit
     $sql .= ' LIMIT 2';
-    $stories = fetch_objects('Bric', $sql, $fields, 4, undef, 2, undef);
+    $stories = fetch_objects('Bric', \$sql, $fields, 4, undef, 2, undef);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {
@@ -155,7 +155,7 @@ sub test_fetch_objects: Test(4) {
     # test offset
     $sql =~ s/LIMIT 2//;
     $sql .= ' OFFSET 2';
-    $stories = fetch_objects('Bric', $sql, $fields, 4, undef);
+    $stories = fetch_objects('Bric', \$sql, $fields, 4, undef);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {
@@ -187,7 +187,7 @@ sub test_fetch_objects: Test(4) {
     # test limit and offset together
     $sql =~ s/OFFSET 2/OFFSET 1/;
     $sql .= ' LIMIT 2';
-    $stories = fetch_objects('Bric', $sql, $fields, 4, undef, 2, 1);
+    $stories = fetch_objects('Bric', \$sql, $fields, 4, undef, 2, 1);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {

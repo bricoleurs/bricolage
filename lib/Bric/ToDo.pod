@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.127 $
+$Revision: 1.128 $
 
 =head1 DATE
 
-$Date: 2004-02-08 02:22:14 $
+$Date: 2004-02-16 08:17:03 $
 
 =head1 DESCRIPTION
 
@@ -264,11 +264,6 @@ and/or the Contributor Profile).
 
 Add preferences for listManagers to indicate whether they should default to
 expand or narrow behavior.
-
-=item *
-
-Add command-line argument to F<bric_ftpd> that will kill the currently-running
-instance.
 
 =item *
 

@@ -7,6 +7,9 @@
 <hr />
 % }
 
+<h2>Heya!</h2>
+<h2>na, na, hey!</h2>
+
 %# Display all the pages of this story
 % $burner->display_pages('page');
 

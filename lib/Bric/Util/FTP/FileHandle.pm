@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-08 01:56:34 $
+$Date: 2004-02-16 08:17:18 $
 
 =head1 DESCRIPTION
 
@@ -66,10 +66,10 @@ our @ISA = qw(Net::FTPServer::FileHandle);
 
 =item new($ftps, $template, $site_id, $oc_id, $category_id)
 
-Creates a new Bric::Util::FTP::FileHandle object.  Requires three
-arguments - the Bric::Util::FTP::Server object, the
-Bric::Biz::Asset::Formatting object that this filehandle represents
-(aka the template object), and the category_id which this file is in.
+Creates a new Bric::Util::FTP::FileHandle object. Requires three arguments:
+the Bric::Util::FTP::Server object, the Bric::Biz::Asset::Formatting object
+that this filehandle represents (aka the template object), and the category_id
+for the category that thetemplate is in.
 
 =cut
 
@@ -80,18 +80,20 @@ sub new {
   my $site_id     = shift;
   my $oc_id       = shift;
   my $category_id = shift;
+  my $deploy      = shift;
 
   my $filename =  $template->get_file_name;
   $filename = substr($filename, rindex($filename, '/') + 1);
 
   # Create object.
-  my $self = Net::FTPServer::FileHandle->new ($ftps, $filename);
+  my $self = Net::FTPServer::FileHandle->new($ftps, $filename);
 
   $self->{template}    = $template;
   $self->{category_id} = $category_id;
   $self->{oc_id}       = $oc_id;
   $self->{site_id}     = $site_id;
   $self->{filename}    = $filename;
+  $self->{deploy}     = $deploy || FTP_DEPLOY_ON_UPLOAD;
 
   print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n"
     if FTP_DEBUG;
@@ -145,7 +147,7 @@ sub open {
     # create a tied scalar and return an IO::Scalar attached to it
     my $data;
     tie $data, 'Bric::Util::FTP::FileHandle::SCALAR',
-	$template, $self->{ftps}{user_obj};
+	$template, $self->{ftps}{user_obj}, @{$self}{qw(ftps deploy)};
     my $handle = new IO::Scalar \$data;
 
     # seek if appending
@@ -216,9 +218,14 @@ sub status {
   if (defined $owner) {
 
     # if checked out, get the username return read-only
-    my $user = Bric::Biz::Person::User->lookup({id => $owner});
-    my $login = defined $user ? $user->get_login : "unknown";
-    return ( 'f', 0444, 1, $login, "co", $size,  $date);
+    my $login = 'nobody';
+    my $mode = 0444;
+    if (my $user = Bric::Biz::Person::User->lookup({id => $owner})) {
+        $login = $user->get_login;
+        $mode = 0777 if $user->get_id == $self->{ftps}{user_obj}->get_id;
+    }
+
+    return ( 'f', $mode, 1, $login, "co", $size,  $date);
 
   } else {
     # otherwise check for write privs - can't use chk_authz because it
@@ -282,8 +289,6 @@ sub delete {
   Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
-                           timestamp => strfdate(),
-                           attr      => undef,
                          });
 
   # undeploy and deactivate
@@ -296,8 +301,6 @@ sub delete {
   Bric::Util::Event->new({ key_name  => 'formatting_deact',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
-                           timestamp => strfdate(),
-                           attr      => undef,
                          });
 
   return 1;
@@ -359,12 +362,19 @@ use warnings;
 use Bric::Config qw(FTP_DEBUG);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Event;
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 sub TIESCALAR {
   my $pkg = shift;
   my $template = shift;
   my $user = shift;
-  my $self = { template => $template, user => $user };
+  my $ftps = shift;
+  my $deploy = shift;
+  my $self = { template => $template,
+               user     => $user,
+               ftps     => $ftps,
+               deploy   => $deploy };
+
   print STDERR __PACKAGE__, "::TIESCALAR()\n" if FTP_DEBUG;
   return bless $self, $pkg;
 }
@@ -375,63 +385,115 @@ sub FETCH {
   return $self->{template}->get_data();
 }
 
+# This method can only be called if the mode is "w" (writeable).
 sub STORE {
-  my $self = shift;
-  my $data = shift;
-  my $template = $self->{template};
-  my $user = $self->{user};
-  print STDERR __PACKAGE__, "::STORE()\n" if FTP_DEBUG;
+    my $self = shift;
+    my $data = shift;
+    my $template = $self->{template};
+    my $user = $self->{user};
+    print STDERR __PACKAGE__, "::STORE()\n" if FTP_DEBUG;
 
-  # checkout the template
-  $template->checkout({ user__id => $user->get_id });
+    # Put the template into workflow.
+    if (not $template->get_workflow_id) {
+        # Recall it into workflow.
+        $self->{ftps}->move_into_workflow($template)
+    } elsif (not $template->get_desk_id) {
+        # Move it to the start desk and check it out.
+        $self->{ftps}->move_onto_desk($template)
+    }
 
-  # save the new code
-  $template->set_data($data);
-  $template->save();
+    # save the new code
+    $template->set_data($data);
+    $template->save;
 
-  # log the save
-  Bric::Util::Event->new({ key_name  => 'formatting_save',
-                           obj       => $template,
-                           user      => $user,
-                           timestamp => strfdate(),
-                           attr      => undef,
+    # log the save
+    Bric::Util::Event->new({ key_name  => 'formatting_save',
+                             obj       => $template,
+                             user      => $user,
                          });
 
-  # checkin the template
-  $template->checkin();
+    if ($self->{deploy}) {
+        # checkin the template
+        $template->checkin;
 
-  # get a new burner
-  my $burner = Bric::Util::Burner->new;
+        # remove from desk
+        my $cur_desk = $template->get_current_desk;
+        unless ($cur_desk && $cur_desk->can_publish) {
+            # Find a desk to deploy from.
+            my $wf = Bric::Biz::Workflow->lookup({
+                id => $template->get_workflow_id
+            });
+            my $pub_desk;
+            foreach my $d ($wf->allowed_desks) {
+                $pub_desk = $d and last if $d->can_publish
+                  && $self->{ftps}{user_obj}->can_do($d, READ);
+            }
 
-  # deploy and save
-  $burner->deploy($template);
-  $template->set_deploy_date(strfdate());
-  $template->set_deploy_status(1);
-  $template->set_published_version($template->get_current_version);
-  $template->save;
+            # Transfer the template to the publish desk.
+            if ($cur_desk) {
+                $cur_desk->transfer({ to    => $pub_desk,
+                                      asset => $template });
+                $cur_desk->save;
+            } else {
+                $pub_desk->accept({ asset => $template });
+            }
 
-  # log the deploy
-  Bric::Util::Event->new({ key_name  => $template->get_deploy_status
-                                        ? 'formatting_redeploy'
-                                        : 'formatting_deploy',
-                           obj       => $template,
-                           user      => $user,
-                           timestamp => strfdate(),
-                           attr      => undef,
-                         });
+            # Save the deploy desk and log it.
+            $pub_desk->save;
+            Bric::Util::Event->new({ key_name  => "formatting_moved",
+                                     obj       => $template,
+                                     user      => $user,
+                                     attr      => { Desk => $pub_desk->get_name },
+                                 });
+        }
 
-  # get the current desk
-  my $desk = $template->get_current_desk;
+        # Make sure they have permission to deploy (publish).
+        unless ($self->{ftps}{user_obj}->can_do($template, PUBLISH)) {
+            warn "Cannot publish ", $template->get_name,
+              ": permission denied\n";
+            return;
+        }
 
-  # remove from desk
-  if ($desk) {
-    $desk->remove_asset($template);
-    $desk->save;
-  }
+        # Now remove it!
+        $cur_desk->remove_asset($template);
+        $cur_desk->save;
 
-  # clear the workflow ID
-  $template->set_workflow_id(undef);
-  $template->save;
+        # clear the workflow ID
+        if ($template->get_workflow_id) {
+            $template->set_workflow_id(undef);
+              Bric::Util::Event->new({ key_name  => "formatting_rem_workflow",
+                                       obj       => $template,
+                                       user      => $user,
+                                   });
+        }
+
+        $template->save;
+        # get a new burner
+        my $burner = Bric::Util::Burner->new;
+
+        # deploy and save
+        $burner->deploy($template);
+        $template->set_deploy_date(strfdate());
+        $template->set_deploy_status(1);
+        $template->set_published_version($template->get_current_version);
+        $template->save;
+
+        # Be sure to undeploy it from the user's sandbox.
+        my $sb = Bric::Util::Burner->new({user_id => $user->get_id });
+        $sb->undeploy($template);
+
+        # log the deploy
+        Bric::Util::Event->new({ key_name  => $template->get_deploy_status
+                                              ? 'formatting_redeploy'
+                                              : 'formatting_deploy',
+                                 obj       => $template,
+                                 user      => $user,
+                             });
+    } else {
+        # Simply deploy it to the user's sandbox.
+        my $burner = Bric::Util::Burner->new({user_id => $user->get_id });
+        $burner->deploy($template);
+    }
   return $data;
 }
 

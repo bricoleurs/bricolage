@@ -4,7 +4,7 @@ use warnings;
 use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Test::Exception;
-use Bric::Util::DBI qw(:standard);
+use Bric::Util::DBI qw(:standard :junction);
 use Bric::Biz::ATType;
 use Bric::Biz::AssetType;
 use Bric::Biz::Asset::Business::Story;
@@ -92,7 +92,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(97) {
+sub test_select_methods: Test(101) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -548,7 +548,7 @@ sub test_select_methods: Test(97) {
                              Order            => 'name' }),
         'lets do a search by element_key_name' );
 
-    # check the ids
+   # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id;
         push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
@@ -584,6 +584,14 @@ sub test_select_methods: Test(97) {
     undef @got_ids;
     undef @got_grp_ids;
 
+    # Try the ANY operator.
+    ok( $got = $self->class->list({ slug => ANY("test" . ($z - 1), "test$z")}),
+        "List by slug => ANY");
+    is( scalar @$got, 2, 'Check for two stories');
+    is( $got->[0]->get_id, $story[-2]->get_id, "Check first story" );
+    is( $got->[1]->get_id, $story[-1]->get_id, "Check last story" );
+
+    # Try primary_uri + Order by title.
     ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }),
         'lets do a search by primary uri' );
     # check the ids

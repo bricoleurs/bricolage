@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-14 19:15:10 $
+$Date: 2004-02-16 08:17:16 $
 
 =head1 SYNOPSIS
 
@@ -125,7 +125,7 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    clean_params bind_columns bind_col bind_param begin commit
 		    rollback finish is_num row_array all_aref fetch_objects
 		    order_by build_query build_simple_query where_clause
-		    tables);
+		    tables ANY);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
@@ -133,6 +133,7 @@ our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
                                     execute next_key last_key bind_columns
                                     finish)],
 		    trans => [qw(begin commit rollback)],
+                    junction => [qw(ANY)],
 		    all => \@EXPORT_OK);
 
 # Disconnect! Will be ignored by Apache::DBI.
@@ -295,6 +296,17 @@ NONE.
 =head2 Functions
 
 =over 4
+
+=item ANY
+
+  my @p = Bric::Biz::Person->list({ lname => ANY( 'wall', 'conway') });
+
+Use this function when you want to perform a query comparing more than one
+value, and you want objects returned that match any of the values passed.
+
+=cut
+
+sub ANY { bless \@_, 'Bric::Util::DBI::ANY' }
 
 =item my $bool = is_num(@values)
 
@@ -658,39 +670,12 @@ sub rollback {
 
 ##############################################################################
 
-=item fetch_objects( $pkg, $sql, $fields, $args )
+=item fetch_objects( $pkg, $sql, $fields, $grp_col_cnt, $args )
 
-fetch_objects takes a package name, a sql statement, an arrayref of fields,
-and a list of arguments. It uses the results from the sql statement to
-construct objects of the specified package, in which the final column is
-variable over a number of lines in which the other columns are the same. Like
-this:
-
-    1 1 1
-    1 1 2
-    1 1 3
-    2 2 1
-    2 2 2
-    2 2 3
-
-which would, given the package name of Bric, and fields [ qw( one two three) ]
-assemble the following objects:
-
-    [
-        bless ( {
-                one   => 1,
-                two   => 1,
-                three => [ 1, 2, 3 ],
-              }, 'Bric' ),
-        bless ( {
-                one   => 2,
-                two   => 2,
-                three => [ 1, 2, 3 ],
-              }, 'Bric' ),
-    ]
-
-In practice this is used for the grp_ids aggregation of Asset objects.
-
+This function takes a package name, a reference to an SQL statement, an
+arrayref of fields, a count of the number of columns containing lists of group
+IDs, a list of arguments. It uses the results from the SQL statement to
+construct objects of the specified package.
 
 B<Throws:>
 
@@ -724,8 +709,10 @@ sub fetch_objects {
     my ($pkg, $sql, $fields, $grp_col_cnt, $args) =  @_;
     my (@objs, @d, $grp_ids);
 
+    print STDERR "$$sql\n\n@$args\n\n" if $ENV{PRINT};
+
     # Prepare and execute the query
-    my $select = prepare_ca($sql, undef);
+    my $select = prepare_ca($$sql, undef);
     execute($select, @$args);
     bind_columns($select, \@d[0 .. $#$fields + $grp_col_cnt - 1]);
 
@@ -775,7 +762,7 @@ sub build_query {
     # Strip out any AS clauses, just leaving the alias.
     my $grp_by = '';
     if ($grp_cols) {
-        ($grp_by = 'GROUP  BY ' . $cols) =~ s/,[^,]*AS\s+/, /g;
+        $grp_by = "GROUP  BY $cols";
         $cols .= ", $grp_cols";
     }
 
@@ -790,7 +777,7 @@ sub build_query {
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
 
-    return $sql;
+    return \$sql;
 }
 
 =item $params = clean_params($params)
@@ -908,8 +895,13 @@ sub where_clause {
     while (my ($k, $v) = each %$param) {
         next unless defined $v;
         my $sql = $pkg->PARAM_WHERE_MAP->{$k} or next;
-        $where .= " AND $sql";
-        push @args, ($v) x $sql =~ s/\?//g;
+        if (UNIVERSAL::isa($v, 'Bric::Util::DBI::ANY')) {
+            $where .= ' AND (' . join(' OR ', ($sql) x @$v) . ')';
+            push @args, (@$v) x  $sql =~ s/\?//g;
+        } else {
+            $where .= " AND $sql";
+            push @args, ($v) x $sql =~ s/\?//g;
+        }
     }
     return $where, \@args;
 }
@@ -935,8 +927,10 @@ NONE
 sub order_by {
     my ($pkg, $param) = @_;
 
+    my $id_col = $pkg->ID_COL;
+
     # Default to returning ID.
-    return "ORDER BY id" unless $param->{Order};
+    return "ORDER BY $id_col" unless $param->{Order};
 
     # Grab the order map.
     my $map = $pkg->PARAM_ORDER_MAP;
@@ -956,7 +950,7 @@ sub order_by {
         $dir = $param->{OrderDirection};
     }
     # Return the ORDER BY clause with the ID column.
-    return "ORDER BY $ord $dir, id";
+    return "ORDER BY $ord $dir, $id_col";
 }
 
 

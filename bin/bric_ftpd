@@ -6,11 +6,11 @@ bric_ftpd - Bricolage virtual FTP server
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-02-18 20:26:40 $
+$Date: 2004-02-16 08:16:53 $
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,12 @@ bind to the specified address.
 =item *
 
 B<FTP_LOG:> Set this to the file where you want to FTP logs written
-to. Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
+to. Defaults to C<$BRICOLAGE_ROOT/ftp.log> if not set.
+
+=item *
+
+B<FTP_PID_FILE:> Set this to the file where you want to the FTP daemon PID
+stored. Defaults to C<$BRICOLAGE_ROOT/ftp.pid> if not set.
 
 =item *
 
@@ -76,6 +81,10 @@ possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and start
 editing templates. For more information see
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
+
+To kill the FTP server in daemon mode, use the C<-k> option:
+
+  su nobody -c bric_ftpd -k"
 
 =head1 AUTHOR
 
@@ -124,6 +133,21 @@ END
 
 use Bric::Config qw(:ftp);
 
+# Kill the server if -k is passed.
+if (grep { $_ eq '-k' } @ARGV) {
+    unless (-e FTP_PID_FILE) {
+        print "\nCannot find ", FTP_PID_FILE, "; no bric_ftpd running?\n\n";
+        exit 1
+    }
+    open PID, FTP_PID_FILE or die "Cannot open ", FTP_PID_FILE, ": $!\n";
+    my $pid = <PID>;
+    chomp $pid;
+    close PID;
+    system "kill", $pid and exit;
+    unlink FTP_PID_FILE;
+    exit;
+}
+
 # make sure FTP is enabled
 BEGIN {
   unless (ENABLE_FTP_SERVER) {
@@ -131,6 +155,13 @@ BEGIN {
       "for instructions on how to setup the FTP server.\n";
     exit 1;
   }
+}
+
+# Make sure there isn't a server running already.
+if (-e FTP_PID_FILE) {
+    print "\nFile '", FTP_PID_FILE,
+      "' exits. Is another bric_ftpd already running?\n";
+    exit 1;
 }
 
 # load the server
@@ -147,8 +178,9 @@ if (FTP_ADDRESS() ne "") {
   push(@ARGV, '-o', 'local address=' . FTP_ADDRESS);
 }
 
-# setup log
-push(@ARGV, '-o', 'error log=' . FTP_LOG);
+# setup log and PID file.
+push(@ARGV, '-o', 'error log=' => FTP_LOG,
+            '-P', => FTP_PID_FILE);
 
 # set debug mode
 if (FTP_DEBUG) {
