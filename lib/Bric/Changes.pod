@@ -173,10 +173,11 @@ Users must still exist in Bricolage, however. [David]
 
 =item *
 
-Added support for multiple WYSIWYG editors.  C<ENABLE_HTMLAREA> has been 
-replaced by C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>.  You can now choose between
-htmlArea 3 and the new Xinha, a more active fork of htmlArea (recommended).
-More editors possibly coming soon. See Bric::Admin for details. [Marshall]
+Added support for multiple WYSIWYG editors. The C<ENABLE_HTMLAREA>
+F<bricolage.conf> directive has been replaced by the C<ENABLE_WYSIWYG> and
+C<WYSIWYG_EDITOR> directives. You can now choose between htmlArea 3 and the
+new Xinha, a more active fork of htmlArea (recommended). More editors possibly
+coming soon. See L<Bric::Admin|Bric::Admin> for details. [Marshall]
 
 =back
 
