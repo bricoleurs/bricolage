@@ -59,7 +59,7 @@ sub deactivate : Callback {
 
     foreach my $id (@{ mk_aref($self->value) }) {
         my $grp = $class->lookup({ id => $id }) || next;
-        if (chk_authz($grp, EDIT)) {
+        if (chk_authz($grp, EDIT, 1)) {
             if ($grp->get_permanent) {
                 # Disallow deletion of permanent groups.
                 add_msg("$disp_name cannot be deleted.");
