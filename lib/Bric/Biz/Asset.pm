@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 18:36:05 $
+$Date: 2003-03-16 13:28:52 $
 
 =head1 SYNOPSIS
 
@@ -252,8 +252,8 @@ sub lookup {
                                       $order);
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    'grp_ids' ];
-    # we have to send the args 4 times for the query with grp ids
-    $args = [ @$args, @$args, @$args, @$args ];
+    # Send so many arguments as we have relations
+    $args = [ (@$args) x @{$pkg->RELATIONS} ];
     my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit},
                              $param->{Offset});
     return unless $obj[0];
