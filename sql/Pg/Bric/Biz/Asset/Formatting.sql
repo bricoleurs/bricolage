@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2004-02-11 06:15:06 $
+-- $Date: 2004-02-11 06:46:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -176,6 +176,7 @@ CREATE UNIQUE INDEX udx_formatting__file_name__oc
        ON formatting(file_name, output_channel__id);
 CREATE INDEX idx_formatting__name ON formatting(LOWER(name));
 CREATE INDEX idx_formatting__file_name ON formatting(LOWER(file_name));
+CREATE INDEX idx_formatting__description ON formatting(LOWER(description));
 CREATE INDEX idx_formatting__deploy_date ON formatting(deploy_date);
 CREATE INDEX fkx_usr__formatting ON formatting(usr__id);
 CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
@@ -215,6 +216,3 @@ CREATE INDEX idx_attr_frmt_meta__name ON attr_formatting_meta(LOWER(name));
 
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_frmt__attr_frmt_meta ON attr_formatting_meta(attr__id);
-
-
-

@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =head1 DATE
 
-$Date: 2004-01-13 09:36:25 $
+$Date: 2004-02-11 06:46:27 $
 
 =head1 DESCRIPTION
 

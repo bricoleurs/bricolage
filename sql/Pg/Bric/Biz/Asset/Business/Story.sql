@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2004-02-11 06:15:06 $
+-- $Date: 2004-02-11 06:46:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -238,6 +238,7 @@ CREATE INDEX fdx_alias_id__story ON story(alias_id);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
+CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);

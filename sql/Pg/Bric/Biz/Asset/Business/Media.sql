@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
--- $Date: 2004-02-11 06:15:06 $
+-- $Date: 2004-02-11 06:46:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -248,6 +248,7 @@ CREATE INDEX fdx_alias_id__media ON media(alias_id);
 
 -- media_instance
 CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));
+CREATE INDEX idx_media_instance__description ON media_instance(LOWER(description));
 CREATE INDEX idx_media_instance__file_name ON media_instance(LOWER(file_name));
 CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
 CREATE INDEX fkx_media__media_instance ON media_instance(media__id);

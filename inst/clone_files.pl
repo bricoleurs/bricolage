@@ -6,11 +6,11 @@ clone.pl - installation script to copy files for clone distributions
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-07-28 00:05:13 $
+$Date: 2004-02-11 06:46:26 $
 
 =head1 DESCRIPTION
 
@@ -35,13 +35,14 @@ use File::Spec::Functions qw(:ALL);
 
 our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
+do "./clone.db" or die "Failed to read clone.db : $!";
 
 print "\n\n==> Cloning Bricolage Files <==\n\n";
 
 # copy comp, dist and conf from target
 system("cp -pR $CONFIG->{MASON_COMP_ROOT} dist");
 system("cp -pR $CONFIG->{MASON_DATA_ROOT} dist");
-system("cp -pR $CONFIG->{BRICOLAGE_ROOT}/conf dist");
+system("cp -pR $CLONE->{CONFIG_DIR} dist");
 
 # remove conf/install.db
 unlink("dist/conf/install.db");

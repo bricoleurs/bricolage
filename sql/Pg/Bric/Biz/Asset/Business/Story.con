@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2003-08-08 06:07:11 $
+-- $Date: 2004-02-11 06:46:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -29,6 +29,10 @@ ADD CONSTRAINT fk_site__story FOREIGN KEY (site__id)
 ALTER TABLE story
 ADD CONSTRAINT fk_story__story_id FOREIGN KEY (alias_id)
 	REFERENCES story(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_desk__story FOREIGN KEY (desk__id)
+	REFERENCES desk(id) ON DELETE SET NULL;
 
 -- Story Instance Constraints
 ALTER TABLE story_instance

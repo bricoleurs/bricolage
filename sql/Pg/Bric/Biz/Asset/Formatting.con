@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-15 18:36:07 $
+-- $Date: 2004-02-11 06:46:27 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -32,6 +32,10 @@ ALTER TABLE formatting
 ALTER TABLE formatting
     ADD CONSTRAINT fk_site__formatting FOREIGN KEY (site__id)
     REFERENCES site(id) ON DELETE RESTRICT;
+
+ALTER TABLE formatting
+	ADD CONSTRAINT fk_desk__formatting FOREIGN KEY (desk__id)
+	REFERENCES desk(id) ON DELETE SET NULL;
 
 -- -----------------------------------------------------------------------------
 -- Table: formatting_instance
