@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 05:07:07 $
+$Date: 2004-02-26 23:40:40 $
 
 =head1 SYNOPSIS
 
@@ -214,7 +214,7 @@ The exception message.
 
 Extra error information, e.g., from C<$!> or C<$@>.
 
-=item maaktext
+=item maketext
 
 Supported by Bric::Util::Fault::Error and its subclasses. An array reference
 suitable for passing to Bric::Util::Language's C<maketext()> method.

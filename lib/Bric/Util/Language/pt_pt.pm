@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-24 22:02:02 $
+$Date: 2004-02-26 23:40:41 $
 
 =head1 SYNOPSIS
 
@@ -702,6 +702,7 @@ To translate:
   'First Published' => 'First Published',
   'You do not have permission to add "[_1]" objects'
   'Remaining' => 'Remaining',
+  'Could not create thumbnail image. It looks like you have not installed the image libraries to handle the "[_1]" image format.'
 
 =end comment
 

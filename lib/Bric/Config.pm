@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.90 $
+$Revision: 1.91 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.90 $ )[-1];
+our $VERSION = (qw$Revision: 1.91 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-20 15:05:33 $
+$Date: 2004-02-26 23:40:39 $
 
 =head1 SYNOPSIS
 
@@ -101,6 +101,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENABLE_SFTP_V2
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
+                    USE_THUMBNAILS
+                    THUMBNAIL_SIZE
                     SMTP_SERVER
                     ALERT_FROM
                     ALERT_TO_METH
@@ -244,6 +246,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MANUAL_APACHE)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT)],
+                    thumb     => [qw(USE_THUMBNAILS
+                                     THUMBNAIL_SIZE)],
                     ftp       => [qw(ENABLE_FTP_SERVER
                                      FTP_DEPLOY_ON_UPLOAD
                                      FTP_PORT
@@ -331,7 +335,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     ALLOW_WORKFLOW_TRANSFER ALLOW_ALL_SITES_CX
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
-                    FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE))
+                    FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
+                    USE_THUMBNAILS))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -496,6 +501,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MEDIA_URI_ROOT => '/data/media';
     use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
                                            'data', 'media');
+
+    # Are we using thumbnails and how big are they ?
+    use constant USE_THUMBNAILS => $config->{USE_THUMBNAILS};
+    use constant THUMBNAIL_SIZE => $config->{THUMBNAIL_SIZE} || 75;
 
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 5;

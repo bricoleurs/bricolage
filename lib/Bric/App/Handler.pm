@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-26 01:38:32 $
+$Date: 2004-02-26 23:40:39 $
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,7 @@ use MasonX::Interp::WithCallbacks;
 
     # Load all modules to be used from elements.
     use Apache::Util qw(escape_html escape_uri);
-    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa);
+    use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;
     use Bric::Biz::Asset::Business::Media::Image;
@@ -181,6 +181,14 @@ use MasonX::Interp::WithCallbacks;
     use HTTP::BrowserDetect;
     eval { require Text::Levenshtein };
     require Text::Soundex if $@;
+
+    if (USE_THUMBNAILS) {
+       eval "use Imager";
+       Carp::croak("\nYou have set USE_THUMBNAILS in your config but the ",
+                   "required Perl module Imager was not found.\n\n")
+         if $@;
+    }
+
 
     use vars qw($c $widget_dir $lang $lang_key $ct);
 

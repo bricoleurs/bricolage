@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
@@ -54,6 +54,8 @@ use strict;
 # use Bric;
 
 use base qw( Bric::Biz::Asset::Business::Media );
+use Bric::Config qw(:media :thumb);
+use Bric::Util::Fault qw(throw_error throw_gen);
 
 #==============================================================================#
 # Function Prototypes           #
@@ -104,7 +106,7 @@ BEGIN {
 
 =head1 INTERFACE
 
-=head2 Constructrs
+=head2 Constructors
 
 =over 4
 
@@ -296,7 +298,122 @@ sub get_class_id {
 
 ################################################################################
 
+=item my $thumbnail_info =  Bric::Biz::Asset::Business::Media::Image->thumbnail_info()
 
+Returns either a reference to a hash containing the URI, width, and height for
+a correctly produced image thumbnail. On encountering an error,
+C<thumbnail_info()> returns a scalar error message.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub thumbnail_info {
+    my $self = shift;
+    my %objhash = ('uri'=>'', 'width'=>'', 'height'=>'');
+    my $loc = $self->get_location;
+
+    # thumbnail should be in same place as orig but with _thumb in filename
+    $loc =~ s/(\..+)$/_thumb$1/g;
+    my $thumbfile = Bric::Util::Trans::FS->cat_file(MEDIA_FILE_ROOT,  $loc);
+
+    # if thumb doesn't exist then create_thumbnail and return message if fails
+    unless (-e $thumbfile) {
+        my $check = $self->create_thumbnail;
+        return "Can't make thumbnail" unless $check == 1;
+    }
+
+    # get the width and height and return them along with the uri
+    my $info = Image::Info::image_info($thumbfile);
+    ($objhash{'width'}, $objhash{'height'}) = Image::Info::dim($info);
+    $objhash{'uri'} = Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,  $loc);
+    return \%objhash;
+}
+
+###################################################################### ##########
+
+=item my $created_ok =  Bric::Biz::Asset::Business::Media::Image->create_thumbnail()
+
+Creates a thumbnail image from the supplied image object. Returns 1 on
+successful completion or error string if it fails.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub create_thumbnail {
+    my $self = shift;
+    my $format;
+    my $img = Imager->new;
+    # this will fail if image type not supported
+    eval { $img->open(file => $self->get_path) };
+    return $@ if $@;
+    my $thumbfile = $self->get_location;
+
+    # save thumb to same place as image but append _thumb to filename
+    $thumbfile =~ s/(\..+)$/_thumb$1/g;
+    $thumbfile = Bric::Util::Trans::FS->cat_file(MEDIA_FILE_ROOT,  $thumbfile);
+
+    # Create smaller version by scaling largest side to THUMBNAIL_SIZE
+    my $thumb = $img->scale(xpixels => THUMBNAIL_SIZE,
+                            ypixels => THUMBNAIL_SIZE,
+                            type    => 'min');
+
+    # save the image or return $! if fail
+    $thumb->write(file => $thumbfile) or return $!;
+    return 1;
+}
+
+################################################################################
+
+=item ($imgs || @imgs) =  Bric::Biz::Asset::Business::Media::Image->upload_file()
+
+Overrides the C<upload_file()> method in the parent class and then makes a
+call to the C<create_thumbnail()> method.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub upload_file {
+    my $self = shift;
+    $self->SUPER::upload_file(@_);
+    if (USE_THUMBNAILS && $self->get_path) { # ie file saved okay
+        my $check = $self->create_thumbnail;
+        # If the required library isn't loaded then warn gracefully
+        if ($check =~ /locate auto\/Imager/) {
+            throw_error
+              msg      => "Could not create thumbnail image. It looks like "
+                        . "you have not installed the image libraries to "
+                        . qq{handle the "$check" image format.},
+              maketext => ["Could not create thumbnail image. It looks like "
+                           . "you have not installed the image libraries to "
+                           . 'handle the "[_1]" image format.', $check ];
+        } elsif ($check != 1) {
+            # otherwise throw a full on exception
+            throw_gen $check;
+        }
+    }
+    return $self;
+}
 
 ################################################################################
 
@@ -315,6 +432,8 @@ B<Notes:> NONE.
 #sub key_name { 'image' }
 
 ################################################################################
+
+
 
 =item my_meths()
 

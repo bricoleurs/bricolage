@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.80 $
+$Revision: 1.81 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.80 $ )[-1];
+our $VERSION = (qw$Revision: 1.81 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 14:13:37 $
+$Date: 2004-02-26 23:40:40 $
 
 =head1 SYNOPSIS
 
@@ -715,6 +715,25 @@ B<Notes:> NONE.
 =cut
 
 sub key_name { 'media' }
+
+################################################################################
+
+=item my $hashref = Bric::Biz::Asset::Business::Media->thumbnail_info()
+
+This is a placeholder method that may be overridden by subclasses that can
+generate thumbnails. Subclasses should return a hash reference containing the
+URI, height, and width of the thumbnail to display. See
+Bric::Biz::Asset::Business::Media::Image for implementation.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub thumbnail_info { undef }
 
 ################################################################################
 

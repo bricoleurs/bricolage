@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2004-02-06 00:40:57 $
+$Date: 2004-02-26 23:40:38 $
 
 =head1 SYNOPSIS
 
@@ -25,8 +25,10 @@ $Date: 2004-02-06 00:40:57 $
 </%args>
 
 <%once>;
+
+
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
-		qw(story media formatting) };
+                qw(story media formatting) };
 
 my ($start_desk_ok, $desk_chk);
 my ($type, $work_id, $widg, $alt);
@@ -37,9 +39,9 @@ my $profile = sub {
     my $id = $o->get_id;
     my $ret;
     if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
-	$ret = [['Edit', "/workflow/profile/$alt/$id?checkout=1&return=search", '']];
+        $ret = [['Edit', "/workflow/profile/$alt/$id?checkout=1&return=search", '']];
     } else {
-	$ret = [['View', "/workflow/profile/$alt/$id?return=search", '']];
+        $ret = [['View', "/workflow/profile/$alt/$id?return=search", '']];
     }
     push @$ret, [ 'Log', "/admin/events/$type/$id", ''];
     return $ret;
@@ -69,6 +71,23 @@ my $addition = sub {
     return;
 };
 
+my $thumburi = sub {
+    my ($selfobj, $fieldname) = @_;
+    return unless $fieldname eq 'thumb';
+
+    # If we get a thumbnail info, we have an image. Otherwise, simply return
+    # a space to fill the column properly because we aren't an image object
+    # but USE_THUMBNAILS is on
+    my $thumbinfo = $selfobj->thumbnail_info or return '&nbsp;';
+
+    # If there is no thumbnail, just return the error.
+    return $lang->maketext($thumbinfo) unless ref $thumbinfo;
+
+    # If we get here, just return the img tag.
+    return qq{ <img src="$thumbinfo->{uri}" height="$thumbinfo->{height}" }
+          . qq{ width="$thumbinfo->{width}" />};
+};
+
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 
 my $alter = { publish_status => sub {
@@ -88,6 +107,13 @@ my $fields = { formatting => [qw(file_name version output_channel_name publish_s
                story      => [ qw(title version cover_date publish_status site) ],
                media      => [ qw(title version cover_date publish_status site) ],
              };
+
+my $sort_by = { formatting => 'file_name',
+                story      => 'title',
+                media      => 'title' };
+
+unshift @{$fields->{'media'}}, 'thumb' if USE_THUMBNAILS;
+
 </%once>
 <%init>;
 # Get the workflow ID.
@@ -117,23 +143,20 @@ $wf = $wf->get_name;
 
 <form method="post" action="<% $r->uri %>" name="$type\_manager">
 <& '/widgets/listManager/listManager.mc',
-	object    => $type,
-	sortBy    => $fields->{$type}[0],
-        fields    => $fields->{$type},
-        alter     => $alter,
-        exclude   => $exclude,
-	profile   => $profile,
-        title     => $lang->maketext('%n Found'),
-        addition  => $addition,
-  	select    => $select,
-        behavior  => 'expand',
-     field_titles => { version => $lang->maketext('V.'), },
+    object    => $type,
+    sortBy    => $sort_by->{$type},
+    fields    => $fields->{$type},
+    alter     => $alter,
+    exclude   => $exclude,
+    profile   => $profile,
+    title     => $lang->maketext('%n Found'),
+    addition  => $addition,
+    select    => $select,
+    behavior  => 'expand',
+    field_values => $thumburi,
+    field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
 <p></p>
 <input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="Checkout" value="Checkout">
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-
-
