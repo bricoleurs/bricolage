@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-19 17:34:15 $
+$Date: 2004-03-15 17:49:32 $
 
 =head1 SYNOPSIS
 
@@ -135,7 +135,7 @@ sub uri_handler {
 	# Grab the URI and break it up into its constituent parts.
 	my $uri = $r->uri;
 	my @dirs = $fs->split_uri($uri);
-	# Let the request continue if the file exits.
+	# Let the request continue if the file exists.
 	return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
 	# Let the request continue (with a 404) if the file doesn't exist in the
 	# preview directory.
