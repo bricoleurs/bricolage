@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-02 22:49:17 $
+$Date: 2002-07-02 23:42:44 $
 
 =head1 SYNOPSIS
 
@@ -589,16 +589,16 @@ sub _load_category {
 		my $parent = $paths{$parent_path};
 		die __PACKAGE__ . " : couldn't find category object for path ".
 		    "\"$parent_path\"\n" unless $parent;
-	
+
 		# set directory
 		$category->set_directory($directory);
 
-		# have to save here to setup parent
-		$category->save;
-
-		# setup parent
+		# setup parent - needed before save() will succeed
 		$parent->add_child([$category]);
 		$parent->save;
+
+		# save category
+		$category->save;                
 	    }
 	}
 	
