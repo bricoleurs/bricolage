@@ -16,7 +16,7 @@ use IO::Scalar;
 use MIME::Base64;
 
 use Bric::SOAP::Util qw(category_path_to_id 
-			xs_date_to_pg_date pg_date_to_xs_date
+			xs_date_to_db_date db_date_to_xs_date
 			parse_asset_document
 			serialize_elements
                         deserialize_elements
@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-22 20:19:57 $
+$Date: 2002-02-27 02:50:34 $
 
 =head1 SYNOPSIS
 
@@ -224,7 +224,7 @@ sub list_ids {
     
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
-	my $date = xs_date_to_pg_date($args->{$name});
+	my $date = xs_date_to_db_date($args->{$name});
 	die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
 	    "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
 		unless defined $date;
@@ -620,10 +620,10 @@ sub _load_media {
 	for my $name qw(cover_date expire_date publish_date) {
 	    my $date = $mdata->{$name};
 	    next unless $date; # skip missing date
-	    my $pg_date = xs_date_to_pg_date($date);
+	    my $db_date = xs_date_to_db_date($date);
 	    die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-		unless defined $pg_date;
-	    $init{$name} = $pg_date;
+		unless defined $db_date;
+	    $init{$name} = $db_date;
 	}
 
 	# assign catgeory__id
@@ -822,7 +822,7 @@ sub _serialize_media {
     for my $name qw(cover_date expire_date publish_date) {
 	my $date = $media->_get($name);
 	next unless $date; # skip missing date
-	my $xs_date = pg_date_to_xs_date($date);
+	my $xs_date = db_date_to_xs_date($date);
 	die __PACKAGE__ . "::export : bad date format for $name : $date\n"
 	    unless defined $xs_date;
 	$writer->dataElement($name, $xs_date);

@@ -7,6 +7,7 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Util::Time qw(db_date local_date strfdate);
 
 use XML::Simple qw(XMLin);
 
@@ -14,11 +15,14 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
 		    category_path_to_id 
-		    xs_date_to_pg_date pg_date_to_xs_date
+		    xs_date_to_db_date db_date_to_xs_date
 		    parse_asset_document
 		    serialize_elements
 		    deserialize_elements
 		   );
+
+# set to 1 to see debugging output on STDERR
+use constant DEBUG => 0;
 
 =head1 NAME
 
@@ -26,15 +30,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 22:57:47 $
+$Date: 2002-02-27 02:50:34 $
 
 =head1 SYNOPSIS
 
@@ -75,9 +79,9 @@ sub category_path_to_id {
   return undef;
 }
 
-=item * $pg_date = xs_date_to_pg_date($xs_date)
+=item * $db_date = xs_date_to_db_date($xs_date)
 
-Transforms an XML Schema dateTime format date to a Postgres format
+Transforms an XML Schema dateTime format date to a database format
 date.  Returns undef if the input date is invalid.
 
 Throws: NONE
@@ -88,22 +92,22 @@ Notes: NONE
 
 =cut
 
-sub xs_date_to_pg_date {
+sub xs_date_to_db_date {
     my $xs = shift;
 
-    my ($CC, $YY, $MM, $DD, $hh, $mm, $ss, $tz) = $xs =~
-	/^(\d\d)(\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(.*)$/;
-    return undef unless $CC;
-    $tz = 'UTC' if defined $tz and $tz eq 'Z';
+    # extract time-zone if present from end of ISO 8601 date
+    my ($tz) = $xs =~ /([A-Za-z]+)$/;
+    $tz = 'UTC' unless defined $tz and $tz ne 'Z';
 	
-    return "${CC}${YY}-${MM}-${DD} ${hh}:${mm}:${ss}" .
-	(defined $tz ? (' ' . $tz) : '');
+    my $db = db_date($xs, undef, $tz);
+    print STDERR "xs_date_to_db_date:\n  $xs\n  $db\n\n" if DEBUG;
+    return $db;
 }    
 
-=item * $xs_date = pg_date_to_xs_date($pg_date)
+=item * $xs_date = db_date_to_xs_date($db_date)
 
-Transforms an a Postgres format date into an XML Schema dataTime
-format date.  Returns undef if the input date is invalid.
+Transforms a database format date into an XML Schema dataTime format
+date.  Returns undef if the input date is invalid.
 
 Throws: NONE
 
@@ -113,25 +117,11 @@ Notes: NONE
 
 =cut
 
-sub pg_date_to_xs_date {
-    my $pg = shift;
-
-    my ($CC, $YY, $MM, $DD, $hh, $mm, $ss, $tz) =  $pg =~
-	/^(\d\d)(\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(.*)$/;
-    return undef unless $CC;
-	
-    # translate timezone 
-    if ($tz) {
-	if ($tz eq "+00") {
-	    $tz = 'Z';
-	} elsif ($tz =~ /^\+\d\d$/) {
-	    $tz .= ':00';
-	}
-    } else {
-	$tz = "";
-    }
-	
-    return "${CC}${YY}-${MM}-${DD}T${hh}:${mm}:${ss}$tz";
+sub db_date_to_xs_date {
+    my $db = shift;
+    my $xs = strfdate(local_date($db, "epoch"), "%G-%m-%dT%TZ", 1);
+    print STDERR "db_date_to_xs_date:\n  $db\n  $xs\n\n" if DEBUG;
+    return $xs;
 }
 
 =item * $data = parse_asset_document($document)

@@ -15,7 +15,7 @@ use XML::Writer;
 use IO::Scalar;
 
 use Bric::SOAP::Util qw(category_path_to_id 
-			xs_date_to_pg_date pg_date_to_xs_date
+			xs_date_to_db_date db_date_to_xs_date
 			parse_asset_document
                         serialize_elements
                         deserialize_elements
@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-22 20:19:57 $
+$Date: 2002-02-27 02:50:34 $
 
 =head1 SYNOPSIS
 
@@ -271,7 +271,7 @@ sub list_ids {
     
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
-	my $date = xs_date_to_pg_date($args->{$name});
+	my $date = xs_date_to_db_date($args->{$name});
 	die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
 	    "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
 		unless defined $date;
@@ -752,10 +752,10 @@ sub _load_stories {
 	for my $name qw(cover_date expire_date publish_date) {
 	    my $date = $sdata->{$name};
 	    next unless $date; # skip missing date
-	    my $pg_date = xs_date_to_pg_date($date);
+	    my $db_date = xs_date_to_db_date($date);
 	    die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-		unless defined $pg_date;
-	    $story->_set([$name],[$pg_date]);
+		unless defined $db_date;
+	    $story->_set([$name],[$db_date]);
 	}
 
 	# remove all categories if updating
@@ -971,7 +971,7 @@ sub _serialize_story {
     for my $name qw(cover_date expire_date publish_date) {
 	my $date = $story->_get($name);
 	next unless $date; # skip missing date
-	my $xs_date = pg_date_to_xs_date($date);
+	my $xs_date = db_date_to_xs_date($date);
 	die __PACKAGE__ . "::export : bad date format for $name : $date\n"
 	    unless defined $xs_date;
 	$writer->dataElement($name, $xs_date);
