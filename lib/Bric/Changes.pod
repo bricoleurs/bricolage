@@ -191,6 +191,12 @@ than that defined by its documtent type element, preview will now correctly
 use the document's primary output channel instead of the element's primary
 output channel. [David]
 
+=item *
+
+Returning to a desk from editing an asset that was selected for editing from
+that desk no longer triggers an error. Thanks to Clive Jones for the spot!
+[David]
+
 =back
 
 =head1 VERSION 1.6.1

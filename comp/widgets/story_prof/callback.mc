@@ -148,7 +148,8 @@ my $handle_delete = sub {
     $story->deactivate;
     $story->save;
     log_event("story_deact", $story);
-    add_msg($lang->maketext("Story [_1] deleted.","&quot;" . $story->get_title . "&quot;"));
+    add_msg($lang->maketext("Story [_1] deleted.","&quot;" . $story->get_title
+                            . "&quot;"));
 };
 
 ################################################################################
@@ -171,7 +172,8 @@ my $handle_revert = sub {
     my $version = $param->{"$widget|version"};
     $story->revert($version);
     $story->save();
-    add_msg($lang->maketext("Story [_1] reverted to V.[_2].","&quot;" . $story->get_title . "&quot;",$version));
+    add_msg($lang->maketext("Story [_1] reverted to V.[_2].","&quot;" .
+                            $story->get_title . "&quot;",$version));
     clear_state($widget);
 };
 
@@ -184,6 +186,8 @@ my $handle_save = sub {
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
+    my $workflow_id = $story->get_workflow_id;
+
     if ($param->{"$widget|delete"}) {
         # Delete the story.
         $handle_delete->($story);
@@ -191,7 +195,8 @@ my $handle_save = sub {
         # Save the story.
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
-        add_msg($lang->maketext("Story [_1] saved.","&quot;" . $story->get_title . "&quot;"));
+        add_msg($lang->maketext("Story [_1] saved.","&quot;" .
+                                $story->get_title . "&quot;"));
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -200,15 +205,12 @@ my $handle_save = sub {
     clear_state($widget);
 
     if ($return eq 'search') {
-        my $workflow_id = $story->get_workflow_id();
         my $url = $SEARCH_URL . $workflow_id . '/';
         set_redirect($url);
     } elsif ($return eq 'active') {
-        my $workflow_id = $story->get_workflow_id();
         my $url = $ACTIVE_URL . $workflow_id;
         set_redirect($url);
     } elsif ($return =~ /\d+/) {
-        my $workflow_id = $story->get_workflow_id();
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
         set_redirect($url);
     } else {
