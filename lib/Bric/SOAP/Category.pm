@@ -26,15 +26,15 @@ Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 21:42:16 $
+$Date: 2004-03-24 17:08:20 $
 
 =head1 SYNOPSIS
 
@@ -154,11 +154,6 @@ sub list_ids {
     $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
       if exists $args->{site};
 
-   # handle site => site_id conversion
-    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
-      if exists $args->{site};
- 
-   
     # perform emulated searches
     if ($args->{parent} or $args->{path}) {
         my $to_find = $args->{parent} ? $args->{parent} : $args->{path};
