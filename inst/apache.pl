@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-09-02 05:34:37 $
 
 =head1 DESCRIPTION
 
@@ -213,7 +213,12 @@ sub check_modules {
             # potential paths for modules
             foreach my $path (catdir($AP{HTTPD_ROOT}, "modules"),
                               catdir($AP{HTTPD_ROOT}, "libexec"),
-                              "/usr/lib/apache/1.3"              ) {
+                              "/usr/lib/apache/1.3",
+                              "/usr/lib/apache/modules",
+                              "/usr/lib/apache/libexec",
+                              "/usr/local/lib/apache/modules",
+                              "/usr/local/lib/apache/libexec",
+                             ) {
 
                 # perl uses libfoo.so format filenames
                 if ($mod eq 'perl') {

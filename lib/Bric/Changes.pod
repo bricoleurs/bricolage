@@ -123,6 +123,12 @@ All of the POD documentation in the API classes has been cleaned up, and
 converting them to man and HTML no longer generates any error
 messages. [David]
 
+=item *
+
+The install process will now find Apache modules in
+/usr/lib/apache/modules, which is where they are in OpenBSD. Thanks to
+Mark Johnson for his help tracking this one down.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.3
