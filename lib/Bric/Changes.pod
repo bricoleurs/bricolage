@@ -22,9 +22,9 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Bricolage SOAP interface partially implemented.  Bric::SOAP::Story and
-Bric::SOAP::Media are fully implemented and tested.  The command-line
-client - bric_soap - is complete. [Sam]
+Bricolage SOAP interface partially implemented.  Bric::SOAP::Story,
+Bric::SOAP::Media and Bric::SOAP::Template are fully implemented and
+tested.  The command-line client - bric_soap - is complete. [Sam]
 
 =back
 
