@@ -1844,7 +1844,7 @@ they can all be used in a C<< <%once> >> block like this:
 
   <%once>;
   unless ($burner->get_mode == SYNTAX_MODE) {
-      # Do stuff with $story or $template.
+      # Do stuff with $story or $element.
   }
   </%once>
 
