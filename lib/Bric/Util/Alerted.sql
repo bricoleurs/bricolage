@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:50 $
+-- $Date: 2001-09-26 14:54:23 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -27,10 +27,10 @@ CREATE TABLE alerted(
 
 CREATE TABLE alerted__contact_value(
     alerted__id	            NUMERIC(10, 0)  NOT NULL,
-    contact_value__id       NUMERIC(10, 0)  NOT NULL,
+    contact__id             NUMERIC(10, 0)  NOT NULL,
     contact_value__value    VARCHAR(256)    NOT NULL,
     sent_time               TIMESTAMP,
-    CONSTRAINT pk_alerted__contact_value PRIMARY KEY (alerted__id, contact_value__id, contact_value__value)
+    CONSTRAINT pk_alerted__contact_value PRIMARY KEY (alerted__id, contact__id, contact_value__value)
 );
 
 -- 
@@ -52,12 +52,18 @@ CREATE INDEX fkx_usr__alerted ON alerted(usr__id);
 CREATE INDEX idx_ac_value__sent_time ON alerted__contact_value(sent_time);
 CREATE INDEX idx_ac_value__cv__value ON alerted__contact_value(contact_value__value);
 CREATE INDEX fkx_alerted__alerted__contact ON alerted__contact_value(alerted__id);
-CREATE INDEX fkx_contact_val__alerted__cont ON alerted__contact_value(contact_value__id);
+CREATE INDEX fkx_contact__alerted__cont ON alerted__contact_value(contact__id);
 
 /*
 Change Log:
 $Log: Alerted.sql,v $
-Revision 1.1  2001-09-06 21:54:50  wheeler
-Initial revision
+Revision 1.2  2001-09-26 14:54:23  wheeler
+Fixed a bug where the wrong information was getting entered into the database
+regarding an alert. Instead of the contact type ID getting in, the contact value
+ID was getting in. This has been fixed, so now the proper contact type is always
+referenced, and the contact value is copied over.
+
+Revision 1.1.1.1  2001/09/06 21:54:50  wheeler
+Upload to SourceForge.
 
 */

@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:50 $
+$Date: 2001-09-26 14:54:23 $
 
 =head1 SYNOPSIS
 
@@ -1152,14 +1152,15 @@ $get_em = sub {
 
     $" = ', ';
     my @qry_cols = $ids ? ('DISTINCT a.id') : (@cols, @by_cols);
-    my $sel = prepare_c(qq{
+#my @by_cols = qw(c.type v.contact_value__value v.sent_time);
+#my @by_props = qw(type value sent_time); 
+   my $sel = prepare_c(qq{
         SELECT @qry_cols
-        FROM   alerted a, alerted__contact_value v, contact c, contact_value cv,
+        FROM   alerted a, alerted__contact_value v, contact c,
                alert b
         WHERE  a.id = v.alerted__id
                AND b.id = a.alert__id
-               AND v.contact_value__id = cv.id
-               AND cv.contact__id = c.id
+               AND v.contact__id = c.id
                $where
         ORDER BY a.id
     }, undef, DEBUG);
@@ -1250,8 +1251,14 @@ Bric::Util::Event(5)
 =head1 REVISION HISTORY
 
 $Log: Alerted.pm,v $
-Revision 1.1  2001-09-06 21:54:50  wheeler
-Initial revision
+Revision 1.2  2001-09-26 14:54:23  wheeler
+Fixed a bug where the wrong information was getting entered into the database
+regarding an alert. Instead of the contact type ID getting in, the contact value
+ID was getting in. This has been fixed, so now the proper contact type is always
+referenced, and the contact value is copied over.
+
+Revision 1.1.1.1  2001/09/06 21:54:50  wheeler
+Upload to SourceForge.
 
 =cut
 

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:54:48 $
+-- $Date: 2001-09-26 14:54:23 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -30,16 +30,22 @@ ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_alerted__alerted__contact
     REFERENCES alerted(id) ON DELETE CASCADE
 ;
 
-ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_contact_val__alerted__cont 
-    FOREIGN KEY (contact_value__id)
-    REFERENCES contact_value(id) ON DELETE CASCADE
+ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_contact__alerted__cont 
+    FOREIGN KEY (contact__id)
+    REFERENCES contact(id) ON DELETE CASCADE
 ;
 
 
 /*
 Change Log:
 $Log: Alerted.con,v $
-Revision 1.1  2001-09-06 21:54:48  wheeler
-Initial revision
+Revision 1.2  2001-09-26 14:54:23  wheeler
+Fixed a bug where the wrong information was getting entered into the database
+regarding an alert. Instead of the contact type ID getting in, the contact value
+ID was getting in. This has been fixed, so now the proper contact type is always
+referenced, and the contact value is copied over.
+
+Revision 1.1.1.1  2001/09/06 21:54:48  wheeler
+Upload to SourceForge.
 
 */

@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:43 $
+$Date: 2001-09-26 14:54:23 $
 
 =head1 SYNOPSIS
 
@@ -296,7 +296,7 @@ sub new {
     my $sth = prepare_c(qq{
 	INSERT INTO alert (@cols)
         VALUES ($fields)
-        });
+        }, undef, DEBUG);
     execute($sth, @{$init}{@props[1..$#props]});
     # Grab its new ID.
     $init->{id} = last_key('alert');
@@ -1308,14 +1308,14 @@ $send_em = sub {
     my $ins_alerted = prepare_c(qq{
         INSERT INTO alerted (id, usr__id, alert__id)
         VALUES (${\next_key('alerted')}, ?, ?)
-    });
+    }, undef, DEBUG);
 
     # Use this sth to insert each contact by which a user was alerted.
     my $insert_by = prepare_c(qq{
         INSERT INTO alerted__contact_value
-               (alerted__id, contact_value__id, contact_value__value, sent_time)
+               (alerted__id, contact__id, contact_value__value, sent_time)
         VALUES (?, ?, ?, ?)
-    });
+    }, undef, DEBUG);
 
     my %alerted;
     my %ctypes = Bric::Biz::Contact->href_alertable_type_ids;
@@ -1383,8 +1383,14 @@ Bric::Util::Event(5)
 =head1 REVISION HISTORY
 
 $Log: Alert.pm,v $
-Revision 1.1  2001-09-06 21:54:43  wheeler
-Initial revision
+Revision 1.2  2001-09-26 14:54:23  wheeler
+Fixed a bug where the wrong information was getting entered into the database
+regarding an alert. Instead of the contact type ID getting in, the contact value
+ID was getting in. This has been fixed, so now the proper contact type is always
+referenced, and the contact value is copied over.
+
+Revision 1.1.1.1  2001/09/06 21:54:43  wheeler
+Upload to SourceForge.
 
 =cut
 
