@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-09-21 02:45:02 $
+$Date: 2001-09-25 09:28:26 $
 
 =head1 DESCRIPTION
 
@@ -39,10 +39,9 @@ task with the goal of helping you to create an element infrastructure that
 matches the needs of your organization while creating an intuitive and
 easy-to-use interface for your editors and producers.
 
-B<Note:> I shall be using stories in all ove the examples below, but by and
-large the same concepts apply to media objects. The difference lies mainly in
-the likelihood that you'll use far fewer subelements (if any) in your media
-objects.
+B<Note:> I shall be using stories in all of the examples below, but by and large
+the same concepts apply to media objects. The difference lies mainly in the
+likelihood that you'll use far fewer subelements (if any) in your media objects.
 
 =head1 PLANNING
 
@@ -50,10 +49,9 @@ Once you have become familiar with how Bricolage works, it's important to start
 thinking about how you plan to use it within your organization. Aspects that
 deserve some thought include Workflow and Desk design, Category Administration,
 Output Channel Administration, Contributor Type Administration, Destinations,
-and user groups and permissions. Each of these administrative design functions
-are covered in separate documents [or will be, eventually!], but the most
-important bit to think about, from your users' point of view, is Element
-Administration.
+and user groups and permissions. Each of these administrative functions are
+covered in separate documents [or will be, eventually!], but the most important
+bit to think about, from your users' point of view, is Element Administration.
 
 The planning stage of element administration requires that you think about how
 stories in your environment are constructed. Here are some of the issues that
@@ -65,7 +63,7 @@ need to be addressed:
 
 What kinds of stories do you have? Are there different types of stories for
 different parts of your site? For different sites managed from within Bricolage?
-At a minimum, you will likey want to consider using two different types of
+At a minimum, you will likely want to consider using two different types of
 stories: B<covers>, which include content summarizing and pointing to other
 stories, and B<stories>, which make up the bulk of the content for your site.
 
@@ -81,7 +79,8 @@ element constititute an element's data points.
 
 Individual elements can be associated with one story or with one media object.
 These relationships are useful for creating links to other stories, and for
-displaying images within a story.
+displaying images within a story. Plus, stories can be associated with
+contributors -- the people who provide their content.
 
 =back
 
@@ -182,12 +181,13 @@ One or more pull quotes.
 
 =head2 Establishing the Hierarchy
 
-The next step is to build a hierarchy of parts based on our description of
-covers and stories. Think about the hierarchies in terms of two different types
-of parts: items that contain other parts, and items that contain data. These two
-types translate roughly into the concepts of B<elements> and B<fields>, and can
-be represented fairly well in an outline format. Here is an example of the
-hierarchies of the examples described above:
+Once we have identified the kinds of stories you will be creating, the next step
+is to build a hierarchy of parts based on our description of covers and stories.
+Think about the hierarchies in terms of two different types of parts: items that
+contain other parts, and items that contain data. These two types translate
+roughly into the Bricolage concepts of B<elements> and B<fields>, and can be
+represented fairly well in an outline format. Here is an example of the
+hierarchies for the examples described above:
 
 =over
 
@@ -427,6 +427,56 @@ related contexts are either included in the related item itself, or in a field
 specific to the related context. [I hope that last sentence wasn't as clear as
 mud!]
 
+=head2 Pulling it all Together
+
+Given the above considerations, it's time to map out the element types,
+elements, and fields that will need to be created. Fortunately, this is a
+logical step from what has already been done, with the exception of element
+types. These latter items are basically groupings of elements, where certain
+properties of all of the elements of that type are set. Based on the above
+examples, here's the breakdown of element types and elements:
+
+Element Type: Covers
+
+Element: Cover
+
+Element Type: Columns
+
+Elements: Column One
+Column Two
+Column Three
+
+Element Type: Navs
+
+Element: Navigation
+
+Element Type: Story Lists
+Element: Stories of the Day
+
+Element Type: Related Stories
+
+Elements: Top Story
+Linked Story
+
+Element Type: Ads
+
+Element Type: Advertisement
+
+Element Type: Content
+
+Element: Story
+   Field: Title
+   Field: Deck
+   Field: Teaser
+   Field: Coverline
+
+Element Type: Pages
+
+Element: Page
+   Field: Subtitle
+   Field: Paragraph
+   Field: Pull Quote
+
 
 =head1 ADMINISTRATION
 
@@ -492,7 +542,7 @@ options are dependent on this property.
 
 =back
 
-Now thate the Element Type has been defined, we need to create an actual "Cover"
+Now that the Element Type has been defined, we need to create an actual "Cover"
 Element. In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt> Elements.
 Here again you'll find a default Element that will do the trick: "Cover." Click
 the "Edit" link for this item. Here you'll find all the properties you'll need
@@ -519,7 +569,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ElementAdmin.pod,v $
-Revision 1.2  2001-09-21 02:45:02  wheeler
+Revision 1.3  2001-09-25 09:28:26  wheeler
+Checkpoint.
+
+Revision 1.2  2001/09/21 02:45:02  wheeler
 In progress. Made good progress today, actually. Hope to finish it either later
 tonight or in the morning.
 
