@@ -46,7 +46,7 @@ sub masquerade : Callback {
     my ($res, $msg) = Bric::App::Auth::masquerade($r, $un);
 
     if ($res) {
-	set_redirect('/');
+	$self->set_redirect('/');
     } else {
 	add_msg($msg);
 	$r->log_reason($msg);

@@ -38,7 +38,7 @@ sub save : Callback {
         log_event('job_save', $job);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
     }
-    set_redirect('/admin/manager/job');
+    $self->set_redirect('/admin/manager/job');
 }
 
 

@@ -35,7 +35,7 @@ sub save : Callback {
         log_event('dest_deact', $dest);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
-        set_redirect("/admin/manager/dest");
+        $self->set_redirect("/admin/manager/dest");
         return;
     }
     my $dest_id = $param->{"${type}_id"};
@@ -98,7 +98,7 @@ sub save : Callback {
             # Send a message to the browser.
             add_msg("$disp_name profile \"[_1]\" saved.", $name);
             # Set the redirection.
-            set_redirect("/admin/manager/dest");
+            $self->set_redirect("/admin/manager/dest");
         } else {
             # It's a new destination. Let them add Actions and Servers.
             $param->{'obj'} = $dest;

@@ -33,7 +33,7 @@ sub save : Callback {
         $self->$expire_wf_cache($param->{"${type}_id"});
         log_event("${type}_deact", $desk);
         add_msg("$disp_name profile \"[_1]\" deleted from all workflows.", $name);
-        set_redirect(defined $param->{workflow_id} ?
+        $self->set_redirect(defined $param->{workflow_id} ?
                        "/admin/profile/workflow/$param->{workflow_id}"
                          : last_page());
     } else {
@@ -79,9 +79,9 @@ sub save : Callback {
             $wf->save;
             $self->cache->set('__WORKFLOWS__', 0);
             log_event('workflow_add_desk', $wf, { Desk => $desk->get_name });
-            set_redirect("/admin/profile/workflow/$param->{workflow_id}");
+            $self->set_redirect("/admin/profile/workflow/$param->{workflow_id}");
         } else {
-            set_redirect(last_page());
+            $self->set_redirect(last_page());
         }
     }
 }

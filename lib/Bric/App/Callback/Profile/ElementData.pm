@@ -80,7 +80,7 @@ sub save : Callback {
 
     # Save changes and redirect back to the manager.
     $ed->save();
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
 }
 
 

@@ -33,7 +33,7 @@ sub save : Callback {
         $mt->save;
         log_event("${type}_deact", $mt);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
-        set_redirect("/admin/manager/$type");
+        $self->set_redirect("/admin/manager/$type");
         return;
     } else {
         my $mt_id = $param->{"${type}_id"};
@@ -124,7 +124,7 @@ sub save : Callback {
             } else {
                 log_event($type . '_save', $mt);
             }
-            set_redirect("/admin/manager/$type");
+            $self->set_redirect("/admin/manager/$type");
             return;
         }
     }

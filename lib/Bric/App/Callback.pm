@@ -15,5 +15,6 @@ my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 sub lang { $lang }
 sub cache { $cache }
+sub set_redirect { shift->redirect(shift, 1) }
 
 1;

@@ -86,7 +86,7 @@ $base_handler = sub {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg("Changes not saved: permission denied.");
-        set_redirect(last_page());
+        $self->set_redirect(last_page());
     } else {
         # Process its data
         my $name = $param->{'name'};
@@ -97,7 +97,7 @@ $base_handler = sub {
             $obj->save();
             add_msg("$disp_name profile \"[_1]\" deleted.", $name);
             log_event("${key}_deact", $obj);
-            set_redirect("/admin/manager/$key");
+            $self->set_redirect("/admin/manager/$key");
         } else {
             if ($key eq 'contrib_type') {
                 $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
@@ -198,7 +198,7 @@ $do_contrib_type = sub {
             my $msg = defined $param->{"$key\_id"} ? "$key\_save" : "$key\_new";
             log_event($msg, $obj);
             # Redirect back to the manager.
-            set_redirect("/admin/manager/$key");
+            $self->set_redirect("/admin/manager/$key");
         }
     }
 
@@ -540,7 +540,7 @@ $save_element_etc = sub {
     unless ($no_save) {
         if ($cb_key eq 'save' || $cb_key eq 'save_n_stay') {
             if ($param->{'isNew'}) {
-                set_redirect("/admin/profile/$key/" .$param->{"$key\_id"} );
+                $self->set_redirect("/admin/profile/$key/" .$param->{"$key\_id"} );
             } else {
                 # log the event
                 my $msg = $key . (defined $param->{"$key\_id"} ? '_save' : '_new');
@@ -548,11 +548,11 @@ $save_element_etc = sub {
                 # Record a message and redirect if we're saving.
                 add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 # return to profile if creating new object
-                set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
+                $self->set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
             }
         } elsif ($cb_key eq 'addElement') {
             # redirect, and tack object id onto path
-            set_redirect("/admin/manager/$key/" . $param->{"$key\_id"});
+            $self->set_redirect("/admin/manager/$key/" . $param->{"$key\_id"});
         }
     }
 };

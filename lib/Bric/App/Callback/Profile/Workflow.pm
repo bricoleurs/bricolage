@@ -31,7 +31,7 @@ sub save : Callback {
         $wf->save;
         $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
         log_event("${type}_deact", $wf);
-        set_redirect('/admin/manager/workflow');
+        $self->set_redirect('/admin/manager/workflow');
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         my $wf_id = $param->{"${type}_id"};
@@ -118,7 +118,7 @@ sub save : Callback {
                 $self->cache->set("__WORKFLOWS__$site_id", 0);
                 add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 log_event($type . '_save', $wf);
-                set_redirect('/admin/manager/workflow');
+                $self->set_redirect('/admin/manager/workflow');
             }
         }
     }

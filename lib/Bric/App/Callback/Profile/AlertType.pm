@@ -32,7 +32,7 @@ sub save : Callback {
 	$at->save;
 	log_event("${type}_del", $at);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
-	set_redirect('/admin/manager/alert_type');
+	$self->set_redirect('/admin/manager/alert_type');
     } else {
 	# Just save it.
 	my $ret = &$save($param, $at, $name, $self);
@@ -41,7 +41,7 @@ sub save : Callback {
             return;
         }
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
-	set_redirect('/admin/manager/alert_type');
+	$self->set_redirect('/admin/manager/alert_type');
     }
 }
 
@@ -61,7 +61,7 @@ sub recip : Callback {
         return;
     }
     set_state_name('alert_type', $self->value);
-    set_redirect("/admin/profile/$type/recip/$param->{alert_type_id}");
+    $self->set_redirect("/admin/profile/$type/recip/$param->{alert_type_id}");
 }
 
 sub edit_recip : Callback {
@@ -78,7 +78,7 @@ sub edit_recip : Callback {
     $at->del_groups( $param->{ctype}, @{ mk_aref($param->{del_groups}) } );
     $at->save;
     add_msg("[_1] recipients changed.", $param->{ctype});
-    set_redirect("/admin/profile/alert_type/$param->{alert_type_id}");
+    $self->set_redirect("/admin/profile/alert_type/$param->{alert_type_id}");
 }
 
 

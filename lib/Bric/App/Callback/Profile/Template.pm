@@ -55,15 +55,15 @@ sub save : Callback {
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return eq 'active') {
         my $url = $ACTIVE_URL . $workflow_id;
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return =~ /\d+/) {
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } else {
-        set_redirect("/");
+        $self->set_redirect("/");
     }
 }
 
@@ -88,7 +88,7 @@ sub save_and_stay : Callback {
         # Delete the template.
         $delete_fa->($self, $fa);
         # Get out of here, since we've blow it away!
-        set_redirect("/");
+        $self->set_redirect("/");
         pop_page();
         clear_state($widget);
     } else {
@@ -119,7 +119,7 @@ sub view : Callback {
     my $fa      = get_state_data($widget, 'fa');
     my $version = $self->params->{"$widget|version"};
     my $id      = $fa->get_id;
-    set_redirect("/workflow/profile/templates/$id/?version=$version");
+    $self->set_redirect("/workflow/profile/templates/$id/?version=$version");
 }
 
 sub cancel : Callback {
@@ -132,7 +132,7 @@ sub cancel : Callback {
        $sb->undeploy($fa);
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
-    set_redirect("/");
+    $self->set_redirect("/");
     add_msg('Template "[_1]" check out canceled.', $fa->get_name);
 }
 
@@ -150,7 +150,7 @@ sub notes : Callback {
     &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
 
     # Set a redirection to the code page to be enacted later.
-    set_redirect("/workflow/profile/templates/${action}_notes.html?id=$id");
+    $self->set_redirect("/workflow/profile/templates/${action}_notes.html?id=$id");
 }
 
 sub trail : Callback {
@@ -162,7 +162,7 @@ sub trail : Callback {
     my $id = $fa->get_id;
 
     # Set a redirection to the code page to be enacted later.
-    set_redirect("/workflow/trail/formatting/$id");
+    $self->set_redirect("/workflow/trail/formatting/$id");
 }
 
 sub create_next : Callback {
@@ -191,7 +191,7 @@ sub return : Callback {
     if ($version_view) {
         my $fa_id = $fa->get_id;
         clear_state($widget);
-        set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
+        $self->set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
     } else {
         my $url;
         my $return = get_state_data($widget, 'return') || '';
@@ -209,7 +209,7 @@ sub return : Callback {
 
         # Clear the state and send 'em home.
         clear_state($widget);
-        set_redirect($url);
+        $self->set_redirect($url);
     }
 
     # Remove this page from the stack.
@@ -253,11 +253,11 @@ sub recall : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         # Go to the profile screen
         my ($o_id, $w_id) = split('\|', $ids->[0]);
-        set_redirect('/workflow/profile/templates/'.$o_id.'?checkout=1');
+        $self->set_redirect('/workflow/profile/templates/'.$o_id.'?checkout=1');
     }
 }
 
@@ -282,10 +282,10 @@ sub checkout : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         # Go to the profile screen
-        set_redirect('/workflow/profile/templates/' . $ids->[0] . '?checkout=1');
+        $self->set_redirect('/workflow/profile/templates/' . $ids->[0] . '?checkout=1');
     }
 }
 
@@ -422,7 +422,7 @@ $checkin = sub {
 
     # Clear the state out, set redirect, and return.
     clear_state($widget);
-    set_redirect("/");
+    $self->set_redirect("/");
     return $fa;
 };
 
@@ -536,7 +536,7 @@ $create_fa = sub {
     set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
-    set_redirect("/workflow/profile/templates/?checkout=1");
+    $self->set_redirect("/workflow/profile/templates/?checkout=1");
 
     # As far as history is concerned, this page should be part of the template
     # profile stuff.

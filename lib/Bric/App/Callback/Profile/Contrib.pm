@@ -31,7 +31,7 @@ sub save : Callback {
         $contrib->save;
         log_event("${type}_deact", $contrib);
         add_msg("$disp_name profile \"[_1]\" deleted.", $contrib->get_name);
-        set_redirect('/admin/manager/contrib');
+        $self->set_redirect('/admin/manager/contrib');
         return;
     } else {                    # Roll in the changes.
         # update name elements
@@ -56,7 +56,7 @@ sub save : Callback {
 
             # Log that we've created a new contributor.
             log_event("${type}_new", $member);
-            set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id}
+            $self->set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id}
                            . '/' . '_MEMBER_SUBSYS' );
             $param->{'obj'} = $member;
             return;
@@ -104,14 +104,14 @@ sub save : Callback {
                 add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 log_event("${type}_save", $contrib);
                 clear_state("contrib_profile");
-                set_redirect('/admin/manager/contrib');
+                $self->set_redirect('/admin/manager/contrib');
             }
         } elsif ($param->{mode} eq "extend") {
             # We're creating a new contributor based on an existing one.
             # Change the mode for the next screen.
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 1 } );
-            set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
+            $self->set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
             log_event("${type}_ext", $contrib);
             $param->{'obj'} = $contrib;
@@ -119,7 +119,7 @@ sub save : Callback {
         } elsif ($param->{mode} eq 'preEdit') {
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 0 } );
-            set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
+            $self->set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
             $param->{'obj'} = $contrib;
             return;

@@ -84,7 +84,7 @@ sub save : Callback {
     }
     $ct->save;
     $param->{"${type}_id"} = $ct->get_id unless defined $param->{"${type}_id"};
-    set_redirect('/admin/manager/element_type');
+    $self->set_redirect('/admin/manager/element_type');
 }
 
 

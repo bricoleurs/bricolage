@@ -134,7 +134,7 @@ $save_sub = sub {
             add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         }
         # Set redirection back to the manager.
-        set_redirect($redir);
+        $self->set_redirect($redir);
 	return;
     }
     # Roll in the changes.
@@ -170,7 +170,7 @@ $save_sub = sub {
             add_msg("$disp_name profile \"[_1]\" saved.", $name);
         }
 	# Redirect back to the manager.
-	set_redirect($redir);
+	$self->set_redirect($redir);
         # Reset the cache.
         $reset_cache->($grp, $class, $self);
 	return;

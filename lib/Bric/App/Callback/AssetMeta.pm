@@ -38,11 +38,11 @@ sub add_note : Callback {
           (defined $cid && defined $id && $id == $cid);
     }
     # Use the page history to go back to the page that called us.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
 }
 
 sub return : Callback {
-    set_redirect(last_page());
+    shift->set_redirect(last_page());
 }
 
 

@@ -16,22 +16,22 @@ my $msg_redirect;
 sub ack : Callback {
     my $self = shift;
     my $ids = mk_aref($self->params->{'recip_id'});
-    $msg_redirect->($ids);
+    $msg_redirect->($self, $ids);
 }
 
 sub ack_all : Callback {
     my $self = shift;
     my $ids = $class->list_ids({ user_id => get_user_id(), ack_time => undef });
-    $msg_redirect->($ids);
+    $msg_redirect->($self, $ids);
 }
 
 
 $msg_redirect = sub {
-    my $ids = shift;
+    my ($self, $ids) = @_;
     $class->ack_by_id(@$ids);
     my $c = @$ids;
     add_msg("[quant,_1,$disp_name] acknowledged.", $c) if $c;
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
 };
 
 

@@ -24,7 +24,7 @@ sub save : Callback {
     $pref->save;
     log_event('pref_save', $pref);
     add_msg("$disp_name \"[_1]\" updated.", $name);
-    set_redirect('/admin/manager/pref');
+    $self->set_redirect('/admin/manager/pref');
 }
 
 

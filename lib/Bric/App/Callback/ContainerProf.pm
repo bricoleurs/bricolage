@@ -52,11 +52,11 @@ sub edit : Callback {
     # Don't redirect if we're already on the right page.
     if ($tile->get_object_type eq 'media') {
         unless ($r->uri eq "$MEDIA_CONT/edit.html") {
-            set_redirect("$MEDIA_CONT/edit.html");
+            $self->set_redirect("$MEDIA_CONT/edit.html");
         }
     } else {
         unless ($r->uri eq "$CONT_URL/edit.html") {
-            set_redirect("$CONT_URL/edit.html");
+            $self->set_redirect("$CONT_URL/edit.html");
         }
     }
 }
@@ -90,7 +90,7 @@ sub bulk_edit : Callback {
     set_state_name($self->class_key, $state_name);
 
     my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-    set_redirect("$uri/$state_name.html");
+    $self->set_redirect("$uri/$state_name.html");
 }
 
 sub view : Callback {
@@ -110,9 +110,9 @@ sub view : Callback {
     $self->_push_tile_stack($view_tile);
 
     if ($tile->get_object_type eq 'media') {
-        set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
+        $self->set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
     } else {
-        set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
+        $self->set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
     }
 }
 
@@ -162,10 +162,10 @@ sub add_element : Callback {
 
             if ($key eq 'story') {
                 # Don't redirect if we're already at the edit page.
-                set_redirect("$CONT_URL/edit.html")
+                $self->set_redirect("$CONT_URL/edit.html")
                   unless $r->uri eq "$CONT_URL/edit.html";
             } else {
-                set_redirect("$MEDIA_CONT/edit.html")
+                $self->set_redirect("$MEDIA_CONT/edit.html")
                   unless $r->uri eq "$MEDIA_CONT/edit.html";
             }
 
@@ -201,7 +201,7 @@ sub pick_related_media : Callback {
     my $tile = get_state_data($self->class_key, 'tile');
     my $object_type = $tile->get_object_type();
     my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-    set_redirect("$uri/edit_related_media.html");
+    $self->set_redirect("$uri/edit_related_media.html");
 }
 
 sub relate_media : Callback {
@@ -235,7 +235,7 @@ sub pick_related_story : Callback {
     my $tile = get_state_data($self->class_key, 'tile');
     my $object_type = $tile->get_object_type();
     my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-    set_redirect("$uri/edit_related_story.html");
+    $self->set_redirect("$uri/edit_related_story.html");
 }
 
 sub relate_story : Callback {
@@ -446,7 +446,7 @@ sub bulk_edit_this : Callback {
     my $tile = get_state_data($self->class_key, 'tile');
     my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
 
-    set_redirect("$uri/$state_name.html");
+    $self->set_redirect("$uri/$state_name.html");
 }
 
 sub bulk_save : Callback {
@@ -536,12 +536,12 @@ sub _pop_and_redirect {
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
-        set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
+        $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
     # If our tile doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
-        set_redirect($uri);
+        $self->set_redirect($uri);
     }
 }
 
@@ -562,12 +562,12 @@ sub _delete_element {
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
-        set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
+        $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
     # If our tile doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
-        set_redirect($uri);
+        $self->set_redirect($uri);
     }
 
     add_msg('Element "[_1]" deleted.', $tile->get_name);
@@ -658,12 +658,12 @@ sub _handle_related_up {
         my $page = get_state_name($self->class_key) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
-        set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
+        $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
     # If our tile doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
-        set_redirect($uri);
+        $self->set_redirect($uri);
     }
     pop_page();
 }

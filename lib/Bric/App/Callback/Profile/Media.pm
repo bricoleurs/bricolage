@@ -119,7 +119,7 @@ sub view : Callback {
     my $media = get_state_data($widget, 'media');
     my $version = $self->params->{"$widget|version"};
     my $id = $media->get_id();
-    set_redirect("/workflow/profile/media/$id/?version=$version");
+    $self->set_redirect("/workflow/profile/media/$id/?version=$version");
 }
 
 ################################################################################
@@ -165,15 +165,15 @@ sub save : Callback {
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return eq 'active') {
         my $url = $ACTIVE_URL . $workflow_id;
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return =~ /\d+/) {
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } else {
-        set_redirect("/");
+        $self->set_redirect("/");
     }
 
 }
@@ -301,7 +301,7 @@ sub checkin : Callback {
 
     # Clear the state out and set redirect.
     clear_state($widget);
-    set_redirect("/");
+    $self->set_redirect("/");
 }
 
 ################################################################################
@@ -324,7 +324,7 @@ sub save_and_stay : Callback {
         # Delete the media.
         $handle_delete->($media, $self);
         # Get out of here, since we've blown it away!
-        set_redirect("/");
+        $self->set_redirect("/");
         pop_page();
         clear_state($widget);
     } else {
@@ -348,7 +348,7 @@ sub cancel : Callback {
     $media->save;
     log_event('media_cancel_checkout', $media);
     clear_state($self->class_key);
-    set_redirect("/");
+    $self->set_redirect("/");
     add_msg('Media "[_1]" check out canceled.', $media->get_name);
 }
 
@@ -363,7 +363,7 @@ sub return : Callback {
     if ($version_view) {
         my $media_id = $media->get_id();
         clear_state($widget);
-        set_redirect("/workflow/profile/media/$media_id/?checkout=1");
+        $self->set_redirect("/workflow/profile/media/$media_id/?checkout=1");
     } else {
         my $state = get_state_name($widget);
         my $url;
@@ -383,7 +383,7 @@ sub return : Callback {
 
         # Clear the state and send 'em home.
         clear_state($widget);
-        set_redirect($url);
+        $self->set_redirect($url);
     }
 }
 
@@ -446,7 +446,7 @@ sub create : Callback {
     set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
-    set_redirect('/workflow/profile/media/'.$media->get_id.'/');
+    $self->set_redirect('/workflow/profile/media/'.$media->get_id.'/');
 
     # As far as history is concerned, this page should be part of the media
     # profile stuff.
@@ -457,7 +457,7 @@ sub create : Callback {
 
 sub contributors : Callback {
     my $self = shift;
-    set_redirect("/workflow/profile/media/contributors.html");
+    $self->set_redirect("/workflow/profile/media/contributors.html");
 }
 
 ##############################################################################
@@ -484,7 +484,7 @@ sub assoc_contrib : Callback {
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
         set_state_data($self->class_key, 'contrib', $contrib);
-        set_redirect("/workflow/profile/media/contributor_role.html");
+        $self->set_redirect("/workflow/profile/media/contributor_role.html");
     } else {
         $media->add_contributor($contrib);
         log_event('media_add_contrib', $media, { Name => $contrib->get_name });
@@ -505,7 +505,7 @@ sub assoc_contrib_role : Callback {
     $media->add_contributor($contrib, $role);
     log_event('media_add_contrib', $media, { Name => $contrib->get_name });
     # Go back to the main contributor pick screen.
-    set_redirect(last_page);
+    $self->set_redirect(last_page);
     # Remove this page from the stack.
     pop_page;
 }
@@ -530,7 +530,7 @@ sub save_contrib : Callback {
     my $self = shift;
     $save_contrib->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    $self->set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
 }
@@ -547,7 +547,7 @@ sub save_and_stay_contrib : Callback {
 sub leave_contrib : Callback {
     my $self = shift;
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    $self->set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
 }
@@ -560,7 +560,7 @@ sub notes : Callback {
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
     my $action = $self->params->{"$widget|notes_cb"};
-    set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
+    $self->set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
 }
 
 ################################################################################
@@ -569,7 +569,7 @@ sub trail : Callback {
     my $self = shift;
     my $media = get_state_data($self->class_key, 'media');
     my $id = $media->get_id();
-    set_redirect("/workflow/trail/media/$id");
+    $self->set_redirect("/workflow/trail/media/$id");
 }
 
 ################################################################################
@@ -606,11 +606,11 @@ sub recall : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         my ($o_id, $w_id) = split('\|', $ids->[0]);
         # Go to the profile screen
-        set_redirect('/workflow/profile/media/'.$o_id.'?checkout=1');
+        $self->set_redirect('/workflow/profile/media/'.$o_id.'?checkout=1');
     }
 }
 
@@ -636,10 +636,10 @@ sub checkout : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         # Go to the profile screen
-        set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
+        $self->set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
     }
 }
 
@@ -648,7 +648,7 @@ sub checkout : Callback {
 sub keywords : Callback {
     my $self = shift;
     my $id = get_state_data($self->class_key, 'media')->get_id;
-    set_redirect("/workflow/profile/media/keywords.html");
+    $self->set_redirect("/workflow/profile/media/keywords.html");
 }
 
 ################################################################################
@@ -682,7 +682,7 @@ sub add_kw : Callback {
     # Save the changes
     set_state_data($self->class_key, 'media', $media);
 
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
 
     add_msg("Keywords saved.");
 
@@ -695,7 +695,7 @@ sub add_kw : Callback {
 sub category : Callback {
     my $self = shift;
     my $id = get_state_data($self->class_key, 'media')->get_id;
-    set_redirect("/workflow/profile/media/category.html");
+    $self->set_redirect("/workflow/profile/media/category.html");
 }
 
 ################################################################################
@@ -704,7 +704,7 @@ sub save_category : Callback {
     my $self = shift;
     $save_category->($self->class_key, $self->request_args, $self);
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    $self->set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
 }
@@ -721,7 +721,7 @@ sub save_and_stay_category : Callback {
 sub leave_category : Callback {
     my $self = shift;
     # Set a redirect for the previous page.
-    set_redirect(last_page);
+    $self->set_redirect(last_page);
     # Pop this page off the stack.
     pop_page();
 }

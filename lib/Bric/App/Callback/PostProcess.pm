@@ -12,12 +12,5 @@ __PACKAGE__->register_subclass;
 
 sub do_redirect : PostCallback {
     my $self = shift;
-    if ($self->apache_req->uri !~ /sideNav.mc$/) {
-        # Do a redirect if there is one.
-        if (my $url = del_redirect()) {
-            $self->redirect($url);
-        }
-        # Otherwise, log the history.
-        log_history();
-    }
+    log_history() unless $self->apache_req->uri =~ /sideNav.mc$/;
 }

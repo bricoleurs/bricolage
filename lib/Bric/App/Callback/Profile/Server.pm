@@ -36,7 +36,7 @@ sub save : Callback {
         log_event('server_del', $s);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
-        set_redirect("/admin/profile/dest/$param->{dest_id}");
+        $self->set_redirect("/admin/profile/dest/$param->{dest_id}");
         return;
     }
 
@@ -81,7 +81,7 @@ sub save : Callback {
         log_event($type . (defined $param->{server_id} ? '_save' : '_new'), $s);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
         # Set the redirection.
-        set_redirect("/admin/profile/dest/$param->{dest_id}");
+        $self->set_redirect("/admin/profile/dest/$param->{dest_id}");
     }
 }
 

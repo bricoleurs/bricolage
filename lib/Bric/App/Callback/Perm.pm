@@ -22,8 +22,9 @@ my ($do_save);
 
 
 sub save : Callback {
-    my $gid = &$do_save;
-    set_redirect("/admin/profile/grp/$gid");
+    my $self = shift;
+    my $gid = $do_save->($self);
+    $self->set_redirect("/admin/profile/grp/$gid");
 }
 
 sub save_and_stay : Callback {
@@ -33,7 +34,7 @@ sub save_and_stay : Callback {
 sub cancel : Callback {
     my $self = shift;
     my $gid = $self->params->{'grp_id'};
-    set_redirect("/admin/profile/grp/$gid");
+    $self->set_redirect("/admin/profile/grp/$gid");
 }
 
 ###

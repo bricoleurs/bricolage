@@ -43,7 +43,7 @@ $do_callback = sub {
         log_event('output_channel_deact', $oc);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         $oc->save;
-        set_redirect('/admin/manager/output_channel');
+        $self->set_redirect('/admin/manager/output_channel');
     } else {
         my $oc_id = $param->{"${type}_id"};
         $oc->set_site_id($param->{site_id})
@@ -134,7 +134,7 @@ $do_callback = sub {
             $oc->save;
             log_event('output_channel_save', $oc);
             add_msg("$disp_name profile \"[_1]\" saved.", $name);
-            set_redirect('/admin/manager/output_channel');
+            $self->set_redirect('/admin/manager/output_channel');
         } else {
             $oc->save;
             log_event('output_channel_new', $oc);

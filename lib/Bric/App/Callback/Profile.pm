@@ -42,7 +42,7 @@ sub new {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg("Changes not saved: permission denied.");
-        set_redirect(last_page());
+        $self->set_redirect(last_page());
         $self->has_perms(0);
     } else {
         $self->has_perms(1);

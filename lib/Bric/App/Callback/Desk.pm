@@ -72,7 +72,7 @@ sub checkout : Callback {
         $profile = '/workflow/profile/story';
     }
 
-    set_redirect("$profile/$a_id/?checkout=1");
+    $self->set_redirect("$profile/$a_id/?checkout=1");
 }
 
 sub move : Callback {
@@ -214,7 +214,7 @@ sub publish : Callback {
           );
         $pub->publish();
     } else {
-        set_redirect('/workflow/profile/publish');
+        $self->set_redirect('/workflow/profile/publish');
     }
 }
 

@@ -32,7 +32,7 @@ sub save : Callback {
         $self->cache->set('__SITES__', 0);
         $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
         log_event("${type}_deact", $site);
-        set_redirect('/admin/manager/site');
+        $self->set_redirect('/admin/manager/site');
         add_msg("$disp_name profile \"[_1]\" deleted.", $param->{name});
         return;
     }
@@ -48,7 +48,7 @@ sub save : Callback {
     log_event($type . '_save', $site);
 
     $param->{obj} = $site;
-    set_redirect('/admin/manager/site');
+    $self->set_redirect('/admin/manager/site');
     return;
 }
 

@@ -26,7 +26,7 @@ sub addElement : Callback {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg("Changes not saved: permission denied.");
-        set_redirect(last_page());
+        $self->set_redirect(last_page());
     } else {
         my $value  = $self->value;
         my $elements = (ref $value eq 'ARRAY') ? $value : [ $value ];
@@ -50,9 +50,9 @@ sub doRedirect : Callback {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg("Changes not saved: permission denied.");
-        set_redirect(last_page());
+        $self->set_redirect(last_page());
     } else {
-        set_redirect('/admin/profile/element/' . $param->{element_id});
+        $self->set_redirect('/admin/profile/element/' . $param->{element_id});
         $param->{obj} = $obj;
     }
 }

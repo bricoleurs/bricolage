@@ -36,7 +36,7 @@ sub view : Callback {
     return unless &$save_data($self, $self->params, $widget, $story);
     my $version = $self->params->{"$widget|version"};
     my $id = $story->get_id();
-    set_redirect("/workflow/profile/story/$id/?version=$version");
+    $self->set_redirect("/workflow/profile/story/$id/?version=$version");
 }
 
 sub revert : Callback {
@@ -77,15 +77,15 @@ sub save : Callback {
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return eq 'active') {
         my $url = $ACTIVE_URL . $workflow_id;
-        set_redirect($url);
+        $self->set_redirect($url);
     } elsif ($return =~ /\d+/) {
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-        set_redirect($url);
+        $self->set_redirect($url);
     } else {
-        set_redirect("/");
+        $self->set_redirect("/");
     }
 }
 
@@ -209,7 +209,7 @@ sub checkin : Callback {
 
     # Clear the state out and set redirect.
     clear_state($widget);
-    set_redirect("/");
+    $self->set_redirect("/");
 }
 
 sub save_and_stay : Callback {
@@ -225,7 +225,7 @@ sub save_and_stay : Callback {
         # Delete the story.
         return unless $handle_delete->($story, $self);
         # Get out of here, since we've blow it away!
-        set_redirect("/");
+        $self->set_redirect("/");
         clear_state($widget);
     } else {
         # Make sure the story is activated and then save it.
@@ -244,7 +244,7 @@ sub cancel : Callback {
     $story->save;
     log_event('story_cancel_checkout', $story);
     clear_state($self->class_key);
-    set_redirect("/");
+    $self->set_redirect("/");
     add_msg('Story "[_1]" check out canceled.', $story->get_title);
 }
 
@@ -258,7 +258,7 @@ sub return : Callback {
     if ($version_view) {
         my $story_id = $story->get_id();
         clear_state($widget);
-        set_redirect("/workflow/profile/story/$story_id/?checkout=1");
+        $self->set_redirect("/workflow/profile/story/$story_id/?checkout=1");
     } else {
         my $url;
         my $return = get_state_data($widget, 'return') || '';
@@ -277,7 +277,7 @@ sub return : Callback {
 
         # Clear the state and send 'em home.
         clear_state($widget);
-        set_redirect($url);
+        $self->set_redirect($url);
     }
 }
 
@@ -373,7 +373,7 @@ sub create : Callback {
     set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
-    set_redirect("/workflow/profile/story/");
+    $self->set_redirect("/workflow/profile/story/");
 
     # As far as history is concerned, this page should be part of the story
     # profile stuff.
@@ -390,7 +390,7 @@ sub notes : Callback {
     my $story = get_state_data($widget, 'story');
     my $id    = $story->get_id();
     my $action = $param->{$widget.'|notes_cb'};
-    set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
+    $self->set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
 }
 
 sub delete_cat : Callback {
@@ -454,7 +454,7 @@ sub view_notes : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    set_redirect("/workflow/profile/story/comments.html?id=$id");
+    $self->set_redirect("/workflow/profile/story/comments.html?id=$id");
 }
 
 sub trail : Callback {
@@ -465,7 +465,7 @@ sub trail : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    set_redirect("/workflow/trail/story/$id");
+    $self->set_redirect("/workflow/trail/story/$id");
 }
 
 sub view_trail : Callback {
@@ -473,7 +473,7 @@ sub view_trail : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    set_redirect("/workflow/trail/story/$id");
+    $self->set_redirect("/workflow/trail/story/$id");
 }
 
 sub update : Callback(priority => 1) {
@@ -490,14 +490,14 @@ sub keywords : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    set_redirect("/workflow/profile/story/keywords.html");
+    $self->set_redirect("/workflow/profile/story/keywords.html");
 }
 
 sub contributors : Callback {
     my $self = shift;
     # Return if there were data errors
     return unless &$save_data($self, $self->params, $self->class_key);
-    set_redirect("/workflow/profile/story/contributors.html");
+    $self->set_redirect("/workflow/profile/story/contributors.html");
 }
 
 sub assoc_contrib : Callback {
@@ -510,7 +510,7 @@ sub assoc_contrib : Callback {
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
         set_state_data($self->class_key, 'contrib', $contrib);
-        set_redirect("/workflow/profile/story/contributor_role.html");
+        $self->set_redirect("/workflow/profile/story/contributor_role.html");
     } else {
         $story->add_contributor($contrib);
         log_event('story_add_contrib', $story, { Name => $contrib->get_name });
@@ -530,7 +530,7 @@ sub assoc_contrib_role : Callback {
     log_event('story_add_contrib', $story, { Name => $contrib->get_name });
 
     # Go back to the main contributor pick screen.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
 
     # Remove this page from the stack.
     pop_page();
@@ -556,7 +556,7 @@ sub save_contrib : Callback {
 
     $save_contrib->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }
@@ -570,7 +570,7 @@ sub leave_contrib : Callback {
     my $self = shift;
 
     # Set a redirect for the previous page.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }
@@ -580,7 +580,7 @@ sub exit : Callback {
 
     set_state($self->class_key, {});
     # Set the redirect to the page we were at before here.
-    set_redirect(last_page() || "/workflow/search/story/");
+    $self->set_redirect(last_page() || "/workflow/search/story/");
     # Remove this page from history.
     pop_page();
 }
@@ -612,7 +612,7 @@ sub add_kw : Callback {
 
     # Save the changes.
     set_state_data($self->class_key, 'story', $story);
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
     add_msg("Keywords saved.");
     # Take this page off the stack.
     pop_page();
@@ -639,10 +639,10 @@ sub checkout : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         # Go to the profile screen
-        set_redirect('/workflow/profile/story/'.$ids->[0].'?checkout=1');
+        $self->set_redirect('/workflow/profile/story/'.$ids->[0].'?checkout=1');
     }
 }
 
@@ -684,11 +684,11 @@ sub recall : Callback {
 
     if (@$ids > 1) {
         # Go to 'my workspace'
-        set_redirect("/");
+        $self->set_redirect("/");
     } else {
         my ($o_id, $w_id) = split('\|', $ids->[0]);
         # Go to the profile screen
-        set_redirect('/workflow/profile/story/'.$o_id.'?checkout=1');
+        $self->set_redirect('/workflow/profile/story/'.$o_id.'?checkout=1');
     }
 }
 
@@ -696,7 +696,7 @@ sub categories : Callback {
     my $self = shift;
     # Return if there were data errors
     return unless &$save_data($self, $self->params, $self->class_key);
-    set_redirect("/workflow/profile/story/categories.html");
+    $self->set_redirect("/workflow/profile/story/categories.html");
 }
 
 sub assoc_category : Callback {
@@ -716,7 +716,7 @@ sub save_category : Callback {
 
     $save_category->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }
@@ -730,7 +730,7 @@ sub leave_category : Callback {
     my $self = shift;
 
     # Set a redirect for the previous page.
-    set_redirect(last_page());
+    $self->set_redirect(last_page());
     # Pop this page off the stack.
     pop_page();
 }

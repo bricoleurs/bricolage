@@ -68,7 +68,7 @@ sub save : Callback {
         }
     }
     # Save changes and redirect back to the manager.
-    set_redirect('/admin/manager/source');
+    $self->set_redirect('/admin/manager/source');
 }
 
 

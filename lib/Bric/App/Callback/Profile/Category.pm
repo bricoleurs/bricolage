@@ -171,7 +171,7 @@ sub save : Callback {
     }
     # Redirect back to the manager.
 
-    set_redirect('/admin/manager/category');
+    $self->set_redirect('/admin/manager/category');
     $param->{'obj'} = $cat;
     return;
 }

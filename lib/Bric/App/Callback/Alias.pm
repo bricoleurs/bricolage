@@ -53,7 +53,7 @@ sub make_alias : Callback {
     # If we got here, we'll let 'em create the alias. But first, let's see if
     # there are any related assets that they might want to alias, as well.
     set_state_data($self->class_key, 'aliased_id', $aliased_id);
-    set_redirect("/workflow/profile/alias/pick_cats.html");
+    $self->set_redirect("/workflow/profile/alias/pick_cats.html");
     return;
 }
 
@@ -93,7 +93,7 @@ sub pick_cats : Callback {
     set_state_data("$class_key\_prof", $class_key, $ba);
 
     # Prepare to head for the main edit screen.
-    set_redirect("/workflow/profile/$class_key/");
+    $self->set_redirect("/workflow/profile/$class_key/");
 
     $handle_asset->('story', $param, $cat_ids, $site_id, $self, $site, $wf_id, $wf);
     $handle_asset->('media', $param, $cat_ids, $site_id, $self, $site, $wf_id, $wf);
