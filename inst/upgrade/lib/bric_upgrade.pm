@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.8 $
+$Revision: 1.12.6.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-15 19:58:10 $
+$Date: 2003-10-15 23:24:14 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,7 @@ END
 
 # Load Bricolage DBI library.
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Config qw(DBI_USER);
+use Bric::Config qw(DBI_USER);
 
 ##############################################################################
 # Start a transaction. Everyting the script that loads this module
@@ -126,7 +126,7 @@ $SIG{__DIE__} = sub {
         print STDERR "\n\n", ('#') x 70, "\n",
           "ERROR: DATABASE UPDATE FAILED!\n\n",
           "The database was not affected. Please address this ",
-          "issue before continuing.\n\nThe error encountered was:\n\n";
+          "issue before continuing.\n\nThe error encountered was:\n\n@_";
         $rolled_back = 1;
     }
     die @_;
