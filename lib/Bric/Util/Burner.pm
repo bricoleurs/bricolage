@@ -992,8 +992,8 @@ sub publish {
     my $baid = $ba->get_id;
 
     # Determine if we've published before. Set the expire date if we haven't.
-    my ($repub, $exp_date) = $ba->get_publish_status ?
-      (1, undef) : (undef, $ba->get_expire_date(ISO_8601_FORMAT));
+    my $repub = $ba->get_publish_status;
+    my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
 
     # Get a list of the relevant categories.
     my @cats = $key eq 'story' ? $ba->get_categories : ();
@@ -1072,20 +1072,28 @@ sub publish {
 
         # Set up an expire job, if necessary.
         if ($exp_date and my @res = $job->get_resources) {
-            # We'll need to expire it.
-            my $expname = 'Expire "' . $ba->get_name .
-              '" from "' . $oc->get_name . '"';
-            my $exp_job = Bric::Util::Job::Dist->new({
-                sched_time   => $exp_date,
-                user_id      => $user_id,
-                server_types => $bat,
-                name         => $expname,
-                resources    => \@res,
-                type         => 1,
-                priority     => $ba->get_priority,
-            });
-            $exp_job->save;
-            log_event('job_new', $exp_job);
+            # Make sure we haven't expired this asset on that date already.
+            # XXX There could potentially be some files missed because of
+            # changes between versions, but that should be extremely uncommon.
+            unless (Bric::Util::Job::Dist->list_ids({ sched_time  => $exp_date,
+                                                      resource_id => $res[0]->get_id,
+                                                      type        => 1,
+                                                  })->[0]) {
+                # We'll need to expire it.
+                my $expname = 'Expire "' . $ba->get_name .
+                  '" from "' . $oc->get_name . '"';
+                my $exp_job = Bric::Util::Job::Dist->new({
+                    sched_time   => $exp_date,
+                    user_id      => $user_id,
+                    server_types => $bat,
+                    name         => $expname,
+                    resources    => \@res,
+                    type         => 1,
+                    priority     => $ba->get_priority,
+                });
+                $exp_job->save;
+                log_event('job_new', $exp_job);
+            }
         }
 
         # Expire stale resources, if necessary.

@@ -94,6 +94,17 @@ a template, rather than having to rename it locally to append ".deploy", one
 can simply move in FTP to its new name with ".deploy" on appended to the new
 name. [JoE<atilde>o Pedro]
 
+=item *
+
+Document expirations are now somewhat more intelligent. Rather than just
+scheduling an expiration job only if there is an expiration date the first
+time a document is published, Bricolage will now always schedule an expiration
+job for a document provided that one does not already exist (scheduled or
+completed) for the same time and for one of the file resources for the
+document. This should allow people to more easily and arbitrarily expire
+content whenever necessary. Thanks to John Greene for the discussion that
+finally motivated this change. [David]
+
 =back
 
 =head2 Bug Fixes
