@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7.8.1 $
+$Revision: 1.7.8.2 $
 
 =head1 DATE
 
-$Date: 2003-06-10 12:57:31 $
+$Date: 2003-07-03 18:09:03 $
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ use Bric::App::Callback::Publish;
 my $pub = Bric::App::Callback::Publish->new(
     'ah'          => $m->ah,
     'apache_req'  => $r,
-    'request_args => {
+    'request_args' => {
         %ARGS,
         'oc_id' => $oc_id,
         "$class\_id" => $id,
