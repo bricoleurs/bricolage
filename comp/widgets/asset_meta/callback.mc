@@ -1,7 +1,7 @@
 <%once>;
 my %types = ('Bric::Biz::Asset::Formatting' => ['tmpl_prof', 'fa'],
 	     'Bric::Biz::Asset::Business::Story' => ['story_prof', 'story'],
-	     'Bric::Biz::Asste::Business::Media' => ['media_prof', 'media']);
+	     'Bric::Biz::Asset::Business::Media' => ['media_prof', 'media']);
 </%once>
 <%args>
 $widget
