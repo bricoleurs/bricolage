@@ -5,7 +5,6 @@ __PACKAGE__->register_subclass('class_key' => 'profile');
 use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Callback::Util qw(parse_uri);
 use Bric::App::Util qw(:all);
 
 use Bric::App::Callback::Profile::Action;

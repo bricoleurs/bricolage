@@ -3,7 +3,6 @@ package Bric::App::Callback::Profile::FormBuilder;
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'formBuilder');
 use strict;
-use Bric::App::Callback::Util qw(parse_uri);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:all);
