@@ -444,6 +444,11 @@ the UI. [Mark]
 
 Fixed bug with the execution of jobs in F<bric_queued>. [Mark]
 
+=item *
+
+Attempting to create a new desk with the same name as a deactivated desk
+no longer returns an SQL error, but a more informative error.
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

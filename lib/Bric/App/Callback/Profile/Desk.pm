@@ -41,7 +41,10 @@ sub save : Callback {
         # Make sure the name isn't already in use.
         my $used;
         if ($param->{name}) {
-            my @desks = $class->list_ids({ name => $param->{name} });
+            my @desks = $class->list_ids({
+                name   => $param->{name},
+                active => undef,
+            });
             if (@desks > 1) {
                 $used = 1;
             } elsif (@desks == 1 && !defined $desk_id) {
