@@ -281,7 +281,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
     checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
-    _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
+    _not_checked_out      => "i.checked_out = '0' AND f.id not in "
                            . '(SELECT formatting__id FROM formatting_instance '
                            . 'WHERE f.id = formatting_instance.formatting__id '
                            . "AND formatting_instance.checked_out = '1')",
