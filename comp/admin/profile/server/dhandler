@@ -18,7 +18,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 </%perl>
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
-   no_del => $no_del, no_save => $no_edit,
+   no_del => $no_del, no_save => $no_edit, widget => $type,
    return => "/admin/profile/dest?id=$dest_id" &>
 
 </form>
@@ -78,11 +78,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2003-06-10 10:20:12 $
 
 =head1 DESCRIPTION
 

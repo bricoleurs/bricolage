@@ -3,14 +3,17 @@ package Bric::App::Callback::Profile::Server;
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'server');
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
-my $dest_name = get_disp_name('dest');
 my $class = get_package_name($type);
+my $dest_name = get_disp_name('dest');
+my $dest_class = get_package_name('dest');
 eval "require $class";
+eval "require $dest_class";
 
 
 sub save : Callback {
@@ -76,6 +79,22 @@ sub save : Callback {
         add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
         # Set the redirection.
         set_redirect("/admin/profile/dest/$param->{dest_id}");
+    }
+}
+
+
+# strictly speaking, this is a Manager (not a Profile) callback
+
+sub delete : Callback {
+    my $self = shift;
+
+    my $dest = $dest_class->lookup({ 'id' => $self->request_args->{dest_id} });
+    chk_authz($dest, EDIT);
+    foreach my $id (@{ mk_aref($self->value) }) {
+        my $s = $class->lookup({'id' => $id}) || next;
+        $s->del();
+        $s->save();
+        log_event('server_del', $s);
     }
 }
 
