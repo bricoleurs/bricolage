@@ -4,6 +4,10 @@
    context => "Admin | Profile | $wf_disp | &quot;" . $wf->get_name . "&quot;"
               . "| $disp | $crumb"
 &>
+
+% # Prevent the workflow profile redirect here when our cancel button is pushed
+% # and then the workflow profile's cancel button is pushed.
+% pop_page;
 <form method="post" action="<% $r->uri %>" name="desk_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $wid, name => 'workflow_id')
@@ -105,11 +109,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6.4.3 $
+$Revision: 1.6.4.4 $
 
 =head1 DATE
 
-$Date: 2004-01-04 06:18:05 $
+$Date: 2004-01-04 17:02:43 $
 
 =head1 DESCRIPTION
 

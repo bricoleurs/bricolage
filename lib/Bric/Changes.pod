@@ -69,6 +69,11 @@ Start desks can no longer be removed from workflows. This prevents workflows
 from having no desks, thus avoiding problems adding desks to such
 workflows. Reported by Patrick Walsh. [David]
 
+=item *
+
+Pushing the cancel button in a desk profile and then in a workflow profile
+no longer redirects back to the desk profile. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
