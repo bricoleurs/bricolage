@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =head1 DATE
 
-$Date: 2002-03-15 22:55:02 $
+$Date: 2002-03-20 20:25:39 $
 
 =head1 DESCRIPTION
 
@@ -92,10 +92,6 @@ interface to select from existing keywords for associating with assets.
 =item *
 
 Add regression test suite.
-
-=item *
-
-Add URI Case preference.
 
 =item *
 
