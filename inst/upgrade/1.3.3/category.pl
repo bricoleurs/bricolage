@@ -6,6 +6,8 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
+# check if we're already upgraded.
+exit if (fetch_sql(q{ SELECT uri FROM category }));
 
 # add the new fields and indexes,
 do_sql(q{ ALTER TABLE category ADD COLUMN uri VARCHAR(256) },
@@ -14,8 +16,8 @@ do_sql(q{ ALTER TABLE category ADD COLUMN uri VARCHAR(256) },
        q{ CREATE UNIQUE INDEX idx_category__lower_uri ON category(LOWER(uri)) },
        q{ CREATE INDEX idx_category__parent_id ON category(parent_id) },
        q{ CREATE INDEX fkx_subcat_grp__category ON category(category_grp_id) },
-      )
-  unless (fetch_sql(q{ SELECT uri FROM category }));
+      );
+
 
 update_kids(0, 0, "", 0);
 
