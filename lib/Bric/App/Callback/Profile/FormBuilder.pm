@@ -100,9 +100,6 @@ $base_handler = sub {
             log_event("${key}_deact", $obj);
             set_redirect("/admin/manager/$key");
         } else {
-            $obj->activate();
-            $obj->set_description($param->{'description'});
-
             if ($key eq 'contrib_type') {
                 $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
             } elsif ($key eq 'element') {
@@ -122,7 +119,9 @@ $do_contrib_type = sub {
       ? sprintf('&quot;%s&quot;', $param->{'key_name'})
       : '';
 
+    $obj->activate();
     $obj->set_name($param->{'name'});
+    $obj->set_description($param->{'description'});
 
     my $data_href = $obj->get_member_attr_hash || {};
     $data_href = { map { lc($_) => 1 } keys %$data_href };
@@ -235,9 +234,11 @@ $do_element = sub {
     # Roll in the changes.
 
     $obj = $get_obj->($class, $param, $key, $obj);
-
+    $obj->activate();
     $obj->set_name($param->{'name'});   # must come after $get_obj !
+
     $set_key_name->($obj, $param) unless $no_save;
+    $obj->set_description($param->{'description'});
     $obj->set_burner($param->{burner}) if defined $param->{burner};
 
     # side-effect: returns enabled-OCs hashref.
