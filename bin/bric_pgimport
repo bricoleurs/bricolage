@@ -14,7 +14,7 @@ $Date$
 
 =head1 SYNOPSIS
 
- $prog [options]
+  bric_pgimport [options]
 
 =head1 DESCRIPTION
 
@@ -89,7 +89,6 @@ Print this help message.
 Quiet mode.
 
 =back
-
 
 =head1 AUTHORS
 
