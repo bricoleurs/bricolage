@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:22 $
+$Date: 2002-04-16 22:19:32 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,7 @@ and their use.
 #--------------------------------------#
 # Standard Dependencies
 use strict;
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(catdir tmpdir);
 use Apache::ConfigFile;
 
 #--------------------------------------#
@@ -389,7 +389,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
 
     # Temp Dir Setting
-    use constant TEMP_DIR        => $config->{TEMP_DIR};
+    use constant TEMP_DIR        => $config->{TEMP_DIR} || tmpdir();
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {
