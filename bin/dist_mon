@@ -1,9 +1,14 @@
 #!/usr/bin/perl -w
 
 use strict;
-use lib '/usr/local/bricolage/lib';
+BEGIN {
+    use File::Spec::Functions ();
+    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+    unshift(@INC, File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
+};
+
 use Bric::Dist::Client;
-use Bric::BL::Auth;
+use Bric::App::Auth;
 use Getopt::Std;
 use Unix::Syslog qw(:subs :macros);
 use POSIX qw(:sys_wait_h);
@@ -20,7 +25,7 @@ our ($opt_i, $opt_U, $opt_h, $opt_d, $opt_c, $opt_f, $opt_v, $opt_u, $opt_p,
 getopts('i:u:p:hdcvf:U:P:a:');
 
 # Get the version number.
-our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.2 $, 10, -1);
 
 # Get the program name.
 my $prog = substr $0, rindex($0, '/') + 1;
