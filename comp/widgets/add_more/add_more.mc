@@ -181,11 +181,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:59 $
+$Date: 2001-10-09 20:54:37 $
 
 =head1 SYNOPSIS
 
@@ -361,11 +361,5 @@ each anonymous has in the objs anonymous array. See /widgets/add_more/index.html
 for an example.
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: add_more.mc,v $
-Revision 1.1  2001-09-06 21:51:59  wheeler
-Initial revision
 
 </%doc>

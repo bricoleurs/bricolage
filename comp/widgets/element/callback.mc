@@ -34,11 +34,11 @@ $param->{obj} = $m->comp("$key.mc", %ARGS, obj => $obj, class => $class);
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -50,11 +50,5 @@ return;
 =head1 DESCRIPTION
 
 Callback element for formBuilder.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
 
 </%doc>

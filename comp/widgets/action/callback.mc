@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:58 $
+$Date: 2001-10-09 20:54:37 $
 
 =head1 SYNOPSIS
 
@@ -21,12 +21,6 @@ $Date: 2001-09-06 21:51:58 $
 
 This element is called by submits from the Distribution Profile, where one or
 more actions have been marked for deletion.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:51:58  wheeler
-Initial revision
 
 </%doc>
 

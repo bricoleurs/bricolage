@@ -27,11 +27,11 @@ status_msg.mc - Sends messages to the browser in real-time
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:58 $
+$Date: 2001-10-09 20:54:37 $
 
 =head1 SYNOPSIS
 
@@ -49,11 +49,5 @@ draw in below the status messages.
 =head1 AUTHOR
 
 David Wheeler <david@wheeler.net>
-
-=head1 CHANGE LOG
-
-$Log: status_msg.mc,v $
-Revision 1.1  2001-09-06 21:51:58  wheeler
-Initial revision
 
 </%doc>

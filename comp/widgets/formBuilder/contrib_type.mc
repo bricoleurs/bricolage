@@ -139,11 +139,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:03:42 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -153,17 +153,5 @@ $Date: 2001-10-05 20:03:42 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the User Profile page.
-
-=head1 REVISION HISTORY
-$Log: contrib_type.mc,v $
-Revision 1.2  2001-10-05 20:03:42  samtregar
-Merged changes from Release_1_0
-
-Revision 1.1.1.1.2.1  2001/10/05 15:28:20  wheeler
-Changed formBuilder fields that accept multiple values (select lists, radio
-buttons, etc.) can take single values per line.
-
-Revision 1.1.1.1  2001/09/06 21:52:08  wheeler
-Upload to SourceForge.
 
 </%doc>

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:09 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -21,12 +21,6 @@ $Date: 2001-09-06 21:52:09 $
 
 This element is called by submits from the Job Manager, where one or more
 jobs have been marked for cancellation.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:09  wheeler
-Initial revision
 
 </%doc>
 

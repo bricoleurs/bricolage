@@ -8,11 +8,11 @@ search - A search widget
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:24 $
+$Date: 2001-10-09 20:54:39 $
 
 =head1 SYNOPSIS
 
@@ -93,9 +93,4 @@ $m->comp("$type.html", widget       => $widget,
 
 %#--- Log History ---#
 
-<%doc>
-$Log: search.mc,v $
-Revision 1.1  2001-09-06 21:52:24  wheeler
-Initial revision
 
-</%doc>

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:21 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -21,12 +21,6 @@ $Date: 2001-09-06 21:52:21 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Source Profile page.
-
-=head1 REVISION HISTORY
-
-$Log: source.mc,v $
-Revision 1.1  2001-09-06 21:52:21  wheeler
-Initial revision
 
 </%doc>
 <%once>;

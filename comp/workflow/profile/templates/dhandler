@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:40 $
+$Date: 2001-10-09 20:54:41 $
 
 =head1 DESCRIPTION
 
@@ -63,9 +63,4 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
 
 %#-- End HTML --#
 
-<%doc>
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:40  wheeler
-Initial revision
 
-</%doc>

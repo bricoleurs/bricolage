@@ -434,10 +434,4 @@ my $delete_fa = sub {
 
 %#--- Log History ---#
 
-<%doc>
-$Log: callback.mc,v $
-Revision 1.7  2001-10-05 20:03:42  samtregar
-Merged changes from Release_1_0
 
-
-</%doc>

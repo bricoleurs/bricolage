@@ -11,11 +11,11 @@ perm - A widget for displaying permissions.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:16 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -43,11 +43,5 @@ num - The number to put into the table_top box. Defaults to undef.
 read_only - Disables the form inputs and outputs only text data instead.
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: perm.mc,v $
-Revision 1.1  2001-09-06 21:52:16  wheeler
-Initial revision
 
 </%doc>

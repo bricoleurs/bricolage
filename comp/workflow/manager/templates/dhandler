@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:38 $
+$Date: 2001-10-09 20:54:40 $
 
 =head1 SYNOPSIS
 
@@ -101,10 +101,5 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 
 <& /widgets/wrappers/sharky/footer.mc &>
 
-<%doc>
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:38  wheeler
-Initial revision
 
-</%doc>
 

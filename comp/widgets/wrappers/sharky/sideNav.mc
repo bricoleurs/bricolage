@@ -443,19 +443,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-09-24 08:58:58 $
-
-=head1 LOG
-
-$Log: sideNav.mc,v $
-Revision 1.2  2001-09-24 08:58:58  wheeler
-Fixed bug where workflow names with spaces wouldn't work.
-
-Revision 1.1.1.1  2001/09/06 21:52:38  wheeler
-Upload to SourceForge.
+$Date: 2001-10-09 20:54:39 $
 
 </%doc>

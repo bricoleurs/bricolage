@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-09-20 21:23:33 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -21,17 +21,6 @@ $Date: 2001-09-20 21:23:33 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Destination Profile page.
-
-=head1 REVISION HISTORY
-
-$Log: dest.mc,v $
-Revision 1.2  2001-09-20 21:23:33  wheeler
-Added "Next" button to new destinations. This puts the user back on the
-destination screen after creating the initial values so that they can add
-actions and servers.
-
-Revision 1.1.1.1  2001/09/06 21:52:18  wheeler
-Upload to SourceForge.
 
 </%doc>
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:39 $
+$Date: 2001-10-09 20:54:40 $
 
 =head1 DESCRIPTION
 
@@ -66,9 +66,4 @@ $m->comp('/widgets/profile/formButtons.mc',
 
 %#-- End HTML --#
 
-<%doc>
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:39  wheeler
-Initial revision
 
-</%doc>

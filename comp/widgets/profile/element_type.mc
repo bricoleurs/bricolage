@@ -8,11 +8,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:20 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -22,12 +22,6 @@ $Date: 2001-09-06 21:52:20 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the element Type Profile page.
-
-=head1 REVISION HISTORY
-
-$Log: element_type.mc,v $
-Revision 1.1  2001-09-06 21:52:20  wheeler
-Initial revision
 
 </%doc>
 <%once>;

@@ -190,11 +190,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:03:42 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -204,12 +204,5 @@ $Date: 2001-10-05 20:03:42 $
 
 This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the Element Profile page.
-
-=head1 REVISION HISTORY
-
-$Log: element.mc,v $
-Revision 1.4  2001-10-05 20:03:42  samtregar
-Merged changes from Release_1_0
-
 
 </%doc>

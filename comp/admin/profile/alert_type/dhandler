@@ -295,20 +295,14 @@ $no_edit => 0
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:47 $
+$Date: 2001-10-09 20:54:35 $
 
 =head1 DESCRIPTION
 
 Simple interface for managing global preferences.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:47  wheeler
-Initial revision
 
 </%doc>

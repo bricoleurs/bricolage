@@ -8,16 +8,16 @@ getList.mc - generate an array of hashes to be displayed by /widgets/listManager
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:56 $
+$Date: 2001-10-09 20:54:36 $
 
 =head1 SYNOPSIS
 
@@ -74,9 +74,4 @@ $m->abort(302);
 </%perl>
 
 
-<%doc>
-$Log: handleDelete.mc,v $
-Revision 1.1  2001-09-06 21:51:56  wheeler
-Initial revision
 
-</%doc>

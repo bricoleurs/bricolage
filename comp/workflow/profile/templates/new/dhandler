@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:41 $
+$Date: 2001-10-09 20:54:41 $
 
 =head1 DESCRIPTION
 
@@ -56,9 +56,4 @@ chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 
 %#-- End HTML --#
 
-<%doc>
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:41  wheeler
-Initial revision
 
-</%doc>

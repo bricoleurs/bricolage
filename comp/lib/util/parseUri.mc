@@ -8,15 +8,15 @@ calling element.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:57 $
+$Date: 2001-10-09 20:54:37 $
 
 =head1 SYNOPSIS
 
@@ -25,11 +25,6 @@ $Date: 2001-09-06 21:51:57 $
 Returns $section (ie. admin), $mode (ie. manager, profile) and $type (ie. user,
 media, etc). This is centralized here in case it becomes a complicated thing to
 do. And, centralizing is nice.
-
-=head1 REVISION HISTORY
-$Log: parseUri.mc,v $
-Revision 1.1  2001-09-06 21:51:57  wheeler
-Initial revision
 
 </%doc>
 

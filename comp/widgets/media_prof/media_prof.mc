@@ -8,11 +8,11 @@ media_prof.mc - Profile for templates
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:15 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -139,9 +139,4 @@ $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 
 %#--- Log History ---#
 
-<%doc>
-$Log: media_prof.mc,v $
-Revision 1.1  2001-09-06 21:52:15  wheeler
-Initial revision
 
-</%doc>

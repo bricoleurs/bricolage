@@ -7,11 +7,11 @@ new.html -- The Mason for creating new Media Assets
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:39 $
+$Date: 2001-10-09 20:54:40 $
 
 =head1 DESCRIPTION
 
@@ -61,10 +61,5 @@ chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
 %#-- End HTML --#
 
-<%doc>
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:39  wheeler
-Initial revision
-
-</%doc> 
+ 
 

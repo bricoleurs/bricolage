@@ -64,11 +64,11 @@ $m->comp('/widgets/listManager/listManager.mc',
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:00 $
+$Date: 2001-10-09 20:54:37 $
 
 =head1 SYNOPSIS
 
@@ -114,11 +114,5 @@ optional, and is provided in case you've already instantiated the alert object,
 so that alertList won't instantiate it again.
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: alertList.mc,v $
-Revision 1.1  2001-09-06 21:52:00  wheeler
-Initial revision
 
 </%doc>

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:02:31 $
+$Date: 2001-10-09 20:54:39 $
 
 =head1 SYNOPSIS
 
@@ -263,15 +263,6 @@ while (my $txt = next_msg) {
 
 
 
-<%doc>
 
-$Log: header.mc,v $
-Revision 1.5  2001-10-05 20:02:31  samtregar
-Added call to widget/help/help.mc and merged changes from Release_1_0.
-Next time I'll be smart and commit merged changes before I commit real
-changes!
-
-
-</%doc>
 
 

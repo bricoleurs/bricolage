@@ -5,16 +5,16 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:19 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -25,11 +25,6 @@ fieldsUsed => \@fieldsUsed);
 
 Called by /admin/profile/user/dhandler (or any profile dhandler) to display
 fields not explicitly displayed by profile element.
-
-=head1 REVISION HISTORY
-$Log: dumpRemainingFields.mc,v $
-Revision 1.1  2001-09-06 21:52:19  wheeler
-Initial revision
 
 </%doc>
 <%args>

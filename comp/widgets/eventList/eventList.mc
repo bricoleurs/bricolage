@@ -66,11 +66,11 @@ $fmt = get_pref('List Name Format');
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -108,11 +108,5 @@ given event. The link to Alerts will only be present for those events that have
 alerts associated with them.
 
 =back
-
-=head1 REVISION HISTORY
-
-$Log: eventList.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
 
 </%doc>

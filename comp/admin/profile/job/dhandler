@@ -102,11 +102,11 @@ my $no_del = !$id || $no_edit;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:51:51 $
+$Date: 2001-10-09 20:54:36 $
 
 =head1 SYNOPSIS
 
@@ -115,11 +115,5 @@ $Date: 2001-09-06 21:51:51 $
 =head1 DESCRIPTION
 
 This element displays Distribution Job profiles for editing.
-
-=head1 REVISION HISTORY
-
-$Log: dhandler,v $
-Revision 1.1  2001-09-06 21:51:51  wheeler
-Initial revision
 
 </%doc>

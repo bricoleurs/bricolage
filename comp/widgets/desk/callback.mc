@@ -187,9 +187,4 @@ elsif ($field eq "$widget|deploy_cb") {
 
 %#--- Log History ---#
 
-<%doc>
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:04  wheeler
-Initial revision
 
-</%doc>

@@ -90,11 +90,11 @@ set_redirect("/admin/profile/grp/$gid");
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:16 $
+$Date: 2001-10-09 20:54:38 $
 
 =head1 SYNOPSIS
 
@@ -104,11 +104,5 @@ $Date: 2001-09-06 21:52:16 $
 
 This element is called by submits from the Permissions screen of the Group
 Manager.
-
-=head1 REVISION HISTORY
-
-$Log: callback.mc,v $
-Revision 1.1  2001-09-06 21:52:16  wheeler
-Initial revision
 
 </%doc>
