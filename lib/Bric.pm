@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.4';
 
 =item Date
 
-$Date: 2004-03-16 18:31:02 $
+$Date: 2004-03-16 19:35:43 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.51 2004-03-16 18:31:02 wheeler Exp $
+$Id: Bric.pm,v 1.52 2004-03-16 19:35:43 wheeler Exp $
 
 =back
 
@@ -434,9 +434,8 @@ B<Throws:>
 
 sub AUTOLOAD {
     my $self = $_[0];
-    my ($op, $field);
-    my $pkg = ref($self);
-    my ($perm, $msg);
+    my $pkg = ref $self or throw_gen "$self is not an object";
+    my ($op, $field, $perm, $msg);
 
     # Get method name
     our $AUTOLOAD;
