@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:26 $
+$Date: 2003-06-03 22:23:50 $
 
 =head1 SYNOPSIS
 
@@ -796,15 +796,41 @@ sub add_container {
 
 ################################################################################
 
-=item $string = $tile->get_data($name, $obj_order)
+=item $string = $element->get_data_element($name, $obj_order)
 
-=item $string = $tile->get_data($name, $obj_order, $date_format)
+This method will search the contained elements for one with the coresponding name
+ane object order field. It will then return data element.
 
-This method will search the contained tiles for one with the coresponding name
-ane object order field. It will then return the data from that data tile. Pass
-in the optional C<$date_format> argument if you expect the data returned from
-C<$name> to be of the date type, and you\'d like a format other than that set
-in the "Date Format" preference.
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_data_element {
+    my ($self, $name, $obj_order) = @_;
+    $obj_order = 1 unless defined $obj_order;
+    foreach my $t ($self->_get_tiles) {
+        return $t if not $t->is_container
+          and $t->has_key_name($name)
+          and $t->get_object_order == $obj_order;
+    }
+    return;
+}
+
+################################################################################
+
+=item $string = $element->get_data($name, $obj_order)
+
+=item $string = $element->get_data($name, $obj_order, $date_format)
+
+This method will search the contained elements for one with the coresponding
+name ane object order field. It will then return the data from that data
+element. Pass in the optional C<$date_format> argument if you expect the data
+returned from C<$name> to be of the date type, and you\'d like a format other
+than that set in the "Date Format" preference.
 
 B<Throws:> NONE.
 
@@ -827,17 +853,8 @@ sub get_data {
         Bric::App::Util::add_msg($msg);
         Carp::cluck($msg);
     }
-
-    $obj_order = 1 unless defined $obj_order;
-
-    foreach my $t ($self->_get_tiles) {
-        return $t->get_data($dt_fmt) if not $t->is_container    and
-                                        $t->has_key_name($name) and
-                                        $t->get_object_order == $obj_order;
-    }
-
-    # Well, I suppose that there were no matches.
-    return;
+    my $delem = $self->get_data_element($name, $obj_order) or return;
+    return $delem->get_data($dt_fmt);
 }
 
 ################################################################################
