@@ -587,6 +587,7 @@ function confirmChanges(obj) {
     }
     confirming = false
     submitting = ret
+    return ret
 }
 
 function inArray(what, arr) {
