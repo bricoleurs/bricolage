@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 21:11:45 $
+$Date: 2003-09-15 21:15:49 $
 
 =head1 SYNOPSIS
 
@@ -346,8 +346,12 @@ sub handle_err {
     # Clear out redirects so that they won't be triggered.
     del_redirect();
 
+    # Exception::Class::Base provides as_string, but as_text is not
+    # guaranteed.
+    my $text = $err->can('as_text') ? $err->as_text : $err->as_string;
+
     # Send the error to the apache error log.
-    $r->log->error($err->as_text() . ($more_err ? "\n$more_err\n" : ''));
+    $r->log->error($text . ($more_err ? "\n$more_err\n" : ''));
 
     # Make sure we go back to translating character sets, or we'll be
     # screwed on the next request.
