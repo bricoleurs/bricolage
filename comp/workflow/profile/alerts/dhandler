@@ -8,7 +8,7 @@
 $m->comp('/widgets/listManager/listManager.mc',
 	 object => 'recip',
 	 constrain => {user_id => $u->get_id, ack_time => undef },
-	 fields => [qw(subject message)],
+	 fields => [qw(timestamp subject message)],
 	 profile => undef,
 	 addition => undef,
 	 title => "Unacknowledged $pl_disp",
@@ -42,11 +42,11 @@ my $u = get_user_object();
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:38 $
+$Date: 2001-09-27 10:35:44 $
 
 =head1 DESCRIPTION
 
@@ -55,7 +55,10 @@ This element handles the display of alerts sent to the user.
 =head1 REVISION HISTORY
 
 $Log: dhandler,v $
-Revision 1.1  2001-09-06 21:52:38  wheeler
-Initial revision
+Revision 1.2  2001-09-27 10:35:44  wheeler
+Added timestamp to the display.
+
+Revision 1.1.1.1  2001/09/06 21:52:38  wheeler
+Upload to SourceForge.
 
 </%doc>
