@@ -1,29 +1,29 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- Test values.
 --
 
-DELETE FROM category        WHERE id IN (1, 2, 3, 4);
-DELETE FROM grp             WHERE id IN (701, 702, 703, 704);
-DELETE FROM member          WHERE id IN (702, 703, 704);
-DELETE FROM category_member WHERE id IN (702, 703, 704);
+--DELETE FROM category        WHERE id IN (11, 12, 13, 14);
+--DELETE FROM grp             WHERE id IN (701, 702, 703, 704);
+--DELETE FROM member          WHERE id IN (702, 703, 704);
+--DELETE FROM category_member WHERE id IN (702, 703, 704);
 
 -- -----------------------------------------------------------------------------
 -- Science
 
 INSERT INTO category (id, directory, uri, site__id, parent_id, name,
                       description, asset_grp_id)
-VALUES (1, 'science', '/science', 100, 0, 'Science', 'All things sciencey', 53);
+VALUES (11, 'science', '/science', 100, 0, 'Science', 'All things sciencey', 53);
 
 -- -----------------------------------------------------------------------------
 -- Material
 
 INSERT INTO category (id, directory, uri, site__id, parent_id, name,
                       description, asset_grp_id)
-VALUES (2, 'material', '/science/material', 100, 1, 'Material',
+VALUES (12, 'material', '/science/material', 100, 1, 'Material',
         'The study of new materials', 54);
 
 -- -----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ VALUES (2, 'material', '/science/material', 100, 1, 'Material',
 
 INSERT INTO category (id, directory, uri, site__id, parent_id, name,
                       description, asset_grp_id)
-VALUES (3, 'physical', '/science/physical', 100, 1, 'Physical',
+VALUES (13, 'physical', '/science/physical', 100, 1, 'Physical',
         'General macro level science', 55);
 
 -- -----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ VALUES (3, 'physical', '/science/physical', 100, 1, 'Physical',
 
 INSERT INTO category (id, directory, uri, site__id, parent_id, name,
                       description, asset_grp_id)
-VALUES (4, 'biological', '/science/biological', 100, 1, 'Biological',
+VALUES (14, 'biological', '/science/biological', 100, 1, 'Biological',
         'Bugs, bats and bees.', 56);
 
 -- -----------------------------------------------------------------------------
@@ -58,13 +58,13 @@ INSERT INTO member (id, grp__id, class__id, active)
 VALUES (51, 51, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (51, 1, 51); 
+VALUES (51, 11, 51); 
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (52, 51, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (52, 3, 52); 
+VALUES (52, 13, 52); 
 
 -- Bio Science.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret)
@@ -80,7 +80,7 @@ INSERT INTO member (id, grp__id, class__id, active)
 VALUES (53, 52, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (53, 4, 53); 
+VALUES (53, 14, 53); 
 
 -- Asset groups.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
@@ -124,22 +124,22 @@ INSERT INTO member (id, grp__id, class__id, active)
 VALUES (54, 26, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (57, 1, 54); 
+VALUES (57, 11, 54); 
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (55, 26, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (58, 2, 55); 
+VALUES (58, 12, 55); 
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (56, 26, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (59, 3, 56); 
+VALUES (59, 13, 56); 
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (57, 26, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
-VALUES (60, 4, 57); 
+VALUES (60, 14, 57); 
