@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 21:06:22 $
+$Date: 2003-09-15 21:09:38 $
 
 =head1 SYNOPSIS
 
@@ -240,6 +240,8 @@ my ($ah, $ct);
     $ah = HTML::Mason::ApacheHandler->new(%args);
 }
 
+# This ApacheHandler object will only be used to server components
+# that handle errors.
 my $gah = HTML::Mason::ApacheHandler->new(comp_root    => MASON_COMP_ROOT,
                                           data_dir     => MASON_DATA_ROOT,
                                           decline_dirs => 0,
