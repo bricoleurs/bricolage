@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.12.6.1 $
+$Revision: 1.12.6.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 16:58:56 $
+$Date: 2003-08-09 20:48:42 $
 
 =head1 SYNOPSIS
 
@@ -57,7 +57,7 @@ user with administrative permissions.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_sql fetch_sql);
+our @EXPORT_OK = qw(do_sql test_sql fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir);
@@ -247,6 +247,29 @@ sub do_sql {
     } else {
 	commit();
     }
+}
+
+=head2 fetch_sql()
+
+  if (db_version() ge '7.3') {
+      do_sql "ALTER TABLE foo DROP bar";
+  }
+
+This function returns the the version number of the database server we're
+connected to. It can be used to determine what functionality is available in
+order to perform different tasks. For example, PostgreSQL 7.3 and later
+support dropping columns. Thus, the above exmple demonstrates checking that
+the server is 7.3 or later before executing dropping a column.
+
+=cut
+
+my $version;
+
+sub db_version {
+    return $version if $version;
+    $version = col_aref("SELECT version()")->[0];
+    $version =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
+    return $version;
 }
 
 1;
