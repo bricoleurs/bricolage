@@ -61,9 +61,10 @@ The current development team consists of:
 
 =item David Wheeler <david@kineticode.com>
 
-=item Scott Lanning <slanning@theworld.com>
+=item Scott Lanning <lannings@who.int>
 
-=item Mark Jaroski <mark@geekhive.net>
+=item Marshall Roch <marshall@exclupen.com>
+
 
 =back
 
@@ -91,7 +92,9 @@ Emeritus Developers:
 
 =item David Gantenbein <fretlessbass@attbi.com>
 
-=item Sam Tregar <stregar@about-inc.com>
+=item Sam Tregar <sam@stregar.com>
+
+=item Mark Jaroski <mark@geekhive.net>
 
 =back
 
@@ -166,8 +169,6 @@ Folks who have submitted patches include:
 =item Simon Myers
 
 =item Serge Sozonoff
-
-=item Marshall Roch
 
 =item Paul Orrock
 
