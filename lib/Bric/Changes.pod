@@ -105,7 +105,7 @@ display about a a subelement. Thanks to Chris Jantzen for the spot. [David]
 Bulk editing a field without first going through the element profile and
 without adding or removing or reordering field elements now preserves the
 data. This is another bug that has been in the code since the beginning of
-time, and was only recently identifyed. Thanks to Rachel Murray for the spot!
+time, and was only recently identifyed. Thanks to Rachel Murray for the spot.
 [David]
 
 =item *
@@ -119,6 +119,12 @@ London Perl M[ou]ngers. [David]
 =item *
 
 Minor JavaScript fix for Opera users, thanks to Kevin White. [David]
+
+=item *
+
+The "multi" installation method now defaults the "Bricolage Root Directory"
+setting to F</usr/local/bricolage> instead of "NONE". This seems to be less
+annoying to people. [David]
 
 =back
 
@@ -245,19 +251,7 @@ Includes addition of new C<--publish-date> option to F<bric_soap>. [David]
 
 =item *
 
-A number of default groups where not properly added to the "All Groups"
-group. Now they are. [David]
-
-=item *
-
 Added WebDAV mover. [JoE<atilde>o Pedro]
-
-=item *
-
-Fixed the description of the root category in the permissions profile for user
-groups so that it properly displays its URI instead of its name. This only
-affects the display of the root category in the permisisons profile for people
-who installed (rather than upgraded to) Bricolage 1.4.5 or later. [David]
 
 =item *
 
@@ -447,7 +441,7 @@ operations.
 =item *
 
 Bric::App::Session now has an C<instance()> public class method to return the
-C<%HTML::Mason::Commands::session> hash. [Scott]
+current C<%session> hash. [Scott]
 
 =item *
 
@@ -497,9 +491,21 @@ error. [JoE<atilde>o Pedro]
 
 =item *
 
+A number of default groups where not properly added to the "All Groups"
+group. Now they are. [David]
+
+=item *
+
 Bricolage now does more to determine the media type of uploaded media by using
 both the Apache media type determination and, failing that, a file name
 extension. Thanks to Todd Tyree for the spot. [David]
+
+=item *
+
+Fixed the description of the root category in the permissions profile for user
+groups so that it properly displays its URI instead of its name. This only
+affects the display of the root category in the permisisons profile for people
+who installed (rather than upgraded to) Bricolage 1.4.5 or later. [David]
 
 =item *
 
@@ -708,7 +714,7 @@ associations for new business assets. [David]
 
 =item *
 
-Adds a new property to templates: template types. This property can have one
+Added a new property to templates: template types. This property can have one
 of three value that correspond to different template types: "Element
 Templates" (those associated with elements); Category Templates" (autohandlers
 in Mason parlance, category templates to HTML::Template users, and until now
@@ -718,11 +724,11 @@ with anything, but can be used as includes). [David]
 =item *
 
 Templates are now guaranteed to have unique file name/output channel
-combintations at the API and database levels. [David]
+combinations at the API and database levels. [David]
 
 =item *
 
-For stories on My Workspace, Replaced "Trail" with "Clone". Clicking this link
+For stories on My Workspace, replaced "Trail" with "Clone". Clicking this link
 will make an exact copy of the story with the words "Clone of " prepended to
 the story title. [David]
 

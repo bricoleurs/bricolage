@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.7.4.1 $
+$Revision: 1.7.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-21 18:50:26 $
+$Date: 2003-04-21 20:51:34 $
 
 =head1 DESCRIPTION
 
@@ -107,7 +107,7 @@ END
 
     } else {
         # multi system defaults
-        $CONFIG{BRICOLAGE_ROOT}     = "NONE"; # no default
+        $CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
 
         # evaluated after BRICOLAGE_ROOT is set
         $CONFIG{TEMP_DIR}         = '$CONFIG{BRICOLAGE_ROOT}/tmp';
