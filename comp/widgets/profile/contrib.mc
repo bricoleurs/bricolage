@@ -62,13 +62,19 @@ if ($param->{delete}) {
  	$obj->save;
 
 	# Update attributes.
-	foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
+	# We'll need this to get the SQL type of attributes.
+	my $mem_attr = Bric::Util::Attribute::Grp->new({ id => $contrib->get_grp_id });
 
+	foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
+	    # Grab the SQL type.
+	    my $sqltype = $mem_attr->get_sqltype({ name => $aname,
+						   subsys => $param->{subsys} });
+	    # Set the attribute.
 	    $contrib->set_attr( {
 				 subsys   => $param->{subsys},
 				 name     => $aname,
 				 value    => $param->{"attr|$aname"},
-				 sql_type => 'short'
+				 sql_type => $sqltype
 				}
 			      );
 	}
@@ -114,11 +120,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:38 $
+$Date: 2001-10-23 18:29:08 $
 
 =head1 SYNOPSIS
 
