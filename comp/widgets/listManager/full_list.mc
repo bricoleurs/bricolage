@@ -45,9 +45,9 @@
 
           if (($sortBy eq $f) && ($sortOrder !~ /^reverse$/)) {
               $sortsign = '-';
-              $sortsymbol = '<img src="/media/images/listsort_down.gif" border="0">';
+              $sortsymbol = qq{<img src="/media/images/listsort_down_$sscolor.gif" border="0">};
           } elsif ($sortBy eq $f) {
-              $sortsymbol = '<img src="/media/images/listsort_up.gif" border="0">';
+              $sortsymbol = qq{<img src="/media/images/listsort_up_$sscolor.gif" border="0">};
           }
           $m->out(qq{<a class="$aclass" href="$url?listManager|sortBy_cb=$sortsign$f">} .
                   ($disp || "") . "&nbsp;$sortsymbol</a>");
@@ -193,12 +193,14 @@ my $sort_col  = 0;
 
 # Figure out where we are.
 my ($section) = $m->comp('/lib/util/parseUri.mc');
-my ($tab, $curve_left, $curve_right, $sort_class, $scolor, $ccolor);
+my ($tab, $curve_left, $curve_right, $sort_class, $scolor, $ccolor, $sscolor);
 
 if ($section eq 'admin') {
-    ($ccolor, $scolor, $sort_class) = (qw(CC6633 CC6633 redHeader));
+    ($ccolor, $scolor, $sort_class, $sscolor) =
+      (qw(CC6633 CC6633 redHeader red));
 } else {
-    ($ccolor, $scolor, $sort_class) = (qw(669999 006666 tealHeader));
+    ($ccolor, $scolor, $sort_class, $sscolor) =
+      (qw(669999 006666 tealHeader teal));
 }
 
 if ($number) {
