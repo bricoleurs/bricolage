@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.1 $
+$Revision: 1.7.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-19 00:43:57 $
+$Date: 2003-04-10 01:10:31 $
 
 =head1 DESCRIPTION
 
@@ -43,7 +43,7 @@ I dunno. [compare to mod_perl, CGI, static, other CMSs ... ?]
 
 It has received praise for being as good as or better than commercial
 alternatives. For example, see
-L<http:E<sol>E<sol>www.eweek.comE<sol>article2E<sol>0,3959,652977,00.asp>
+L<http://www.eweek.com/article2/0,3959,652977,00.asp>
 
 =head3 Who uses Bricolage?
 
@@ -53,23 +53,27 @@ Some that we know of are:
 
 =item *
 
-The PIRT Group - L<http:E<sol>E<sol>thepirtgroup.comE<sol>>
+The PIRT Group - L<http://thepirtgroup.com/>
 
 =item *
 
-World Health Organization - L<http:E<sol>E<sol>www.who.intE<sol>>
+World Health Organization - L<http://www.who.int/>
 
 =item *
 
-DFA - L<http:E<sol>E<sol>dfafunds.comE<sol>>
+DFA - L<http://dfafunds.com/>
 
 =item *
 
-Macworld - L<http:E<sol>E<sol>www.macworld.comE<sol>>
+Macworld - L<http://www.macworld.com/>
 
 =item *
 
-Ad Council - L<http:E<sol>E<sol>www.adcouncil.orgE<sol>>
+Ad Council - L<http://www.adcouncil.org/>
+
+=item *
+
+Open Forum Europe - L<http://www.openforumeurope.org/>
 
 =back
 
@@ -83,25 +87,25 @@ DSO. Weird things tend to happen. That's not to say that some haven't set it
 up as a DSO and just had it work, but we've seen all sorts of unexplainable
 problems just evaporate when users have switched from a DSO to a static
 mod_perl. And it's not Bricolage so much as Mason where the problems are
-noticed. The Mason site (L<http:E<sol>E<sol>www.masonhq.comE<sol>>) has a
+noticed. The Mason site (L<http://www.masonhq.com/>) has a
 couple of FAQs that mention the issue:
 
 =over 4
 
 =item *
 
-L<http:E<sol>E<sol>www.masonhq.comE<sol>docsE<sol>faqE<sol>#why_am_i_getting_segmentation_fa>
+L<http://www.masonhq.com/docs/faq/#why_am_i_getting_segmentation_fa>
 
 =item *
 
-L<http:E<sol>E<sol>www.masonhq.comE<sol>docsE<sol>faqE<sol>#does_mason_leak_memory>
+L<http://www.masonhq.com/docs/faq/#does_mason_leak_memory>
 
 =back
 
 You can also search the Mason Users list archives
-(L<http:E<sol>E<sol>marc.theaimsgroup.comE<sol>?l=mason>) and the mod_perl
+(L<http://marc.theaimsgroup.com/?l=mason>) and the mod_perl
 Users list
-archives (L<http:E<sol>E<sol>marc.theaimsgroup.comE<sol>?l=apache-modperl>) for some
+archives (L<http://marc.theaimsgroup.com/?l=apache-modperl>) for some
 discussions of this issue.
 
 =head2 Error Messages
@@ -204,7 +208,7 @@ See the "About" section of the online help.
 Read the F<README> document in the directory where you unpacked Bricolage to
 learn about other documents on specific things like Bricolage administration,
 usage, or hacking. The project's website is
-L<http:E<sol>E<sol>www.bricolage.ccE<sol>>. The
+L<http://www.bricolage.cc/>. The
 website lists information about mailing lists.
 
 =head1 AUTHOR
@@ -214,7 +218,7 @@ Scott Lanning <slanning@theworld.com>
 =head1 SEE ALSO
 
 F<README>,
-L<http:E<sol>E<sol>bricolage.ccE<sol>>,
+L<http://bricolage.cc/>,
 L<Bric::Admin|Bric::Admin>
 
 =cut
