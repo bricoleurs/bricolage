@@ -6,26 +6,32 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 19:16:53 $
+$Date: 2003-02-18 19:22:44 $
 
 =head1 SYNOPSIS
 
-See L<Bric::Test::Runner|Bric::Test::Runner>.
+  make devtest
+
+  perl inst/runtests.pl t/Bric/Test/PodTest.pm
+
+  perl inst/runtests.pl t/Bric/Test/PodTest.pm | grep '***'
 
 =head1 DESCRIPTION
 
 This test class uses Pod::Checker to parse the POD in all of the modules in
 the F<lib>, F<bin>, and F<t/Bric/Test> directories to make sure that they
-contain no POD errors.
+contain no POD errors. It is run by C<make devtest>, but can also be run
+individually, as shown in the synopsis. To just see output of errors and
+warnings, pipe the test through C<grep>, as shown in the synopsis.
 
 =cut
 
