@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-05-16 18:33:53 $
+$Date: 2002-05-16 19:49:12 $
 
 =head1 DESCRIPTION
 
@@ -153,8 +153,8 @@ component files:
   (require 'mmm-mode)
   (require 'mmm-mason)
   (setq mmm-global-mode 'maybe)
-  (add-to-list 'auto-mode-alist '("/usr/local/bricolage/comp" . html-mode))
-  (mmm-add-mode-ext-class 'html-mode "/usr/local/bricolage/comp" 'mason)
+  (add-to-list 'auto-mode-alist '("/usr/local/bricolage/comp" . sgml-mode))
+  (mmm-add-mode-ext-class 'sgml-mode "/usr/local/bricolage/comp" 'mason)
 
 And if you need to examine the Mason object files created by Bricolage in
 order to chase down bugs and such, you can use the C<cperl-mode> in those
