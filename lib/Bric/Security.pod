@@ -4,18 +4,18 @@ Bric::Security - Bricolage Security Guide.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-12-13 02:31:09 $
+$Date: 2004-02-07 23:47:14 $
 
 =head1 DESCRIPTION
 
-This guide describes the security features of Bricolage. These features comprise
-three parts: B<authentication>, B<encryption>, and B<authorization>.
+This guide describes the security features of Bricolage. These features
+comprise three parts: B<authentication>, B<encryption>, and B<authorization>.
 Authentication is the process that allows users to login to Bricolage.
-Authorization is the process that checks the permissions on individual objects
+Authorization is the process that checks permissions on individual objects
 before allowing users to access them. And encryption allows users to securely
 connect to Bricolage.
 
@@ -24,20 +24,21 @@ connect to Bricolage.
 Bricolage's authentication procedure is designed to be simple yet flexible. To
 login to Bricolage, simply hit any URL on the server. If you have not already
 logged in and cached a session, you will be prompted to login. Bricolage
-remembers your URL, so that when you successfully login, it will redirect you to
-the URL you'd originally attempted to hit. To login, simply enter your username
-and password, and then click "Login". Note that the username is
+remembers your URL, so that when you successfully login, it will redirect you
+to the URL you'd originally attempted to hit. To login, simply enter your
+username and password, and then click "Login". Note that the username is
 case-insensitive, while the password is case-sensitive. If you enter the wrong
 username and/or password, you'll be prompted to login again. Once you have
 successfully logged in, you may begin using Bricolage.
 
-When you are done using Bricolage, you should always log out. While your session
-will eventually expire, it's always best to logout and quit your browser to
-prevent others from accessing Bricolage in your name. To logout, simply click
-the "Logout" button that's available at the top of every Bricolage screen. Once
-you've logged out, you'll be presented with the login screen again so that you
-can relogin if you need to. But to prevent others from using the back button and
-other clever (and not-so-clever) tricks to view your data.
+When you are done using Bricolage, you should always log out. While your
+session will eventually expire, it's always best to logout and quit your
+browser to prevent others from accessing Bricolage in your name. To logout,
+simply click the "Logout" button that's available at the top of every
+Bricolage screen. Once you've logged out, you'll be presented with the login
+screen again so that you can relogin if you need to. But do be sure to loggout
+to prevent others from using the back button and other clever (and
+not-so-clever) tricks to view your data.
 
 =head2 Authentication Settings
 
@@ -45,92 +46,103 @@ There are a couple of system configuration directives that affect user
 authentication. All System directives are documented in Bric::Admin; however,
 we'll discuss a few that are relevant to authentication here.
 
-First, the directives B<LOGIN_LENGTH> and B<PASSWD_LENGTH> affect the minimum
+First, the directives C<LOGIN_LENGTH> and C<PASSWD_LENGTH> affect the minimum
 lengths of usernames and passwords, respectively. These lengths are then
-enforced in the application UI. The more important of these is PASSWD_LENGTH,
-since the longer the password, the more difficult it is to crack. Be sure to set
-this directive to as high as users will bear -- preferably 8 or higher (the
-default is 6).
+enforced in the application UI. The more important of these is
+C<PASSWD_LENGTH>, since the longer the password, the more difficult it is to
+crack. Be sure to set this directive to as high as users will bear --
+preferably 8 or higher (the default for both C<LOGIN_LENGTH> and
+C<PASSWD_LENGTH> is 5).
 
 Note that there is no I<maximum> password length. Passwords can be any length
-and contain any characters. This is because Bric passwords are stored in MD5
-hashes, rather than the simple C<crypt> format used by other applications. Users
-are thus encouraged to use passI<phrases> rather than simple passwords. Again,
-you can enforce this to some degree using the PASSWD_LENGTH configuration
-directive. We have set an arbitrary limit of 1024 characters on the password
-length in the UI, on the simple assumption that no one is going to use an essay
-for a password. There is no such actual limitation in the API.
+and contain any characters. This is because Bricolage passwords are stored in
+MD5 hashes, rather than the simple C<crypt> format used by other applications.
+Users are thus encouraged to use passI<phrases> rather than simple passwords.
+Again, you can enforce this to some degree using the C<PASSWD_LENGTH>
+configuration directive. We have set an arbitrary limit of 1024 characters on
+the password length in the UI, on the simple assumption that no one is going
+to use an essay for a password. There is no such actual limitation in the API.
 
 The maximum login length, on the other hand, is 128 characters. We made it this
 long to accommodate those environments where email addresses (which are
 potentially quite long) must serve as logins. We expect that most users would
 never user more than ten characters.
 
-The other two authentication directives, B<AUTH_TTL> and B<AUTH_SECRET>, affect
-how a user's login session is maintained. AUTH_TTL is the length of time, expressed
-in seconds, that an idle user remains logged in to Bricolage. That is, if a user
-is logged in, but is idle for longer than the time allowed by AUTH_TTL, when
-next the user tries to use Bric, he/she will be forced to reauthenticate. This
-feature helps prevent unauthorized access by people using a computer when a user
-has neglected to logout. We recommend you set it for some reasonably low period
-of time -- two hours or less. The default is 8 hours.
+The other two authentication directives, C<AUTH_TTL> and C<AUTH_SECRET>,
+affect how a user's login session is maintained. C<AUTH_TTL> is the length of
+time, expressed in seconds, that an idle user remains logged in to Bricolage.
+That is, if a user is logged in, but is idle for longer than the time allowed
+by C<AUTH_TTL>, when next the user tries to use Bricolage, he/she will be
+forced to reauthenticate. This feature helps prevent unauthorized access by
+people using a computer when a user has neglected to logout. We recommend you
+set it for some reasonably low period of time -- two hours or less. The
+default is 8 hours.
 
-AUTH_SECRET is a random string of characters that is used to encrypt a user's
-login session in a login cookie. The login session is encrypted to prevent
-malicious people from figuring out from cookie data how to login to a system. If
-such a person were to discover the the value of the data stored in AUTH_SECRET,
-that precaution would be compromised. We therefore recommend that you change
-this value periodically -- say every couple of days or once a week.
+C<AUTH_SECRET> is a random string of characters that is used to encrypt a
+user's login session in a login cookie. The login session is encrypted to
+prevent malicious people from figuring out from cookie data how to login to a
+system. If such a person were to discover the the value of the data stored in
+C<AUTH_SECRET>, that precaution would be compromised. We therefore recommend
+that you change this value periodically -- say every couple of days or once a
+week.
 
 =head1 ENCRYPTION
 
-Bricolage can use the industry-standard Secure Socket Layer (SSL) for connection
-encryption.  See L<Bric::Admin> for information about enabling SSL in Bricolage.
-With SSL enabled, Bricolage automatically uses SSL for all logins and for all
-user profiles. By doing so, Bricolage assures that users' passwords are never
-sent over the Internet in the clear. When users login to Bricolage, their
-passwords are encrypted, and when users and administrators edit User profiles
-within the application itself, the profiles are edited via SSL so as to ensure
-that any password changes are also sent via encrypted channels.
+Bricolage can use the industry-standard Secure Socket Layer (SSL) for
+connection encryption. See L<Bric::Admin> for information about enabling SSL
+in Bricolage. With SSL enabled, Bricolage automatically uses SSL for all
+logins and for all user profiles. By doing so, Bricolage assures that users'
+passwords are never sent over the Internet in the clear. When users login to
+Bricolage, their passwords are encrypted, and when users and administrators
+edit User profiles within the application itself, the profiles are edited via
+SSL so as to ensure that any password changes are also sent via encrypted
+channels.
 
-All other parts of Bricolage use simple HTTP rather than SSL (HTTPS) for sending
-data to and from the browser. SSL is not preferred in the application in
-general because encryption incurs a significant performance overhead. A lot of
-processor time has to go into encrypting and decrypting all data sent to and from
-the browser when using SSL; and in some Bricolage profiles, that can be a lot of
-data!
+All other parts of Bricolage use simple HTTP rather than SSL (HTTPS) for
+sending data to and from the browser. SSL is not preferred in the application
+in general because encryption incurs a significant performance overhead. A lot
+of processor time has to go into encrypting and decrypting all data sent to
+and from the browser when using SSL; and in some Bricolage profiles, that can
+be a lot of data!
 
-There may be times, however, when you wish to use SSL everywhere in Bricolage.
-Perhaps someone is working on a sensitive story via the Internet, rather than on
-a LAN, and the story data needs to be encrypted. Or perhaps company policy
-dictates an emphasis on high levels of security (such as may be the case with
-patient data in health care), and therefore preventing data from ever being sent
-in the clear over the Internet. Bricolage makes it a simple process to use SSL
-for connecting to and using Bricolage at all times.
+There may be times, however, when you wish to use SSL everywhere in
+Bricolage. Perhaps someone is working on a sensitive story via the Internet,
+rather than on a LAN, and the story data needs to be encrypted. Or perhaps
+company policy dictates an emphasis on high levels of security (such as may be
+the case with patient data in health care), and therefore preventing data from
+ever being sent in the clear over the Internet. Bricolage makes it a simple
+process to use SSL for connecting to and using Bricolage at all times.
 
 The simplest way to enable an encrypted connection is to check the "Use SSL"
-checkbox on the login screen. Checking this button causes Bricolage to maintain
-an SSL connection to the browser even after login. But it's not necessary to use
-this checkbox. If at any given time you wish to establish an encrypted
-connection to Bricolage, simply change the address in you browser from "http://"
-to "https://". That's all you need to do to turn on encryption. Note, however,
-that if you use this approach and then you edit a user profile, once you have
-saved the changes to the user profile, Bricolage will return you to a normal,
-unencrypted connection. This is because Bric checks the status of the "Use SSL"
-checkbox to determine whether or not a user has been using SSL before editing
-the user profile. Thus the preferred way to establish a secure connection is to
-check the "Use SSL" checkbox. To return to a normal, unencrypted connection,
-logout, and then log back in with the "User SSL" checkbox unchecked.
+checkbox on the login screen. Checking this button causes Bricolage to
+maintain an SSL connection to the browser even after login. But it's not
+necessary to use this checkbox. If at any given time you wish to establish an
+encrypted connection to Bricolage, simply change the address in you browser
+from "http://" to "https://". That's all you need to do to turn on
+encryption. Note, however, that if you use this approach and then you edit a
+user profile, once you have saved the changes to the user profile, Bricolage
+will return you to a normal, unencrypted connection. This is because Bricolage
+checks the status of the "Use SSL" checkbox to determine whether or not a user
+has been using SSL before editing the user profile. Thus the preferred way to
+establish a secure connection is to check the "Use SSL" checkbox. To return to
+a normal, unencrypted connection, logout, and then log back in with the "User
+SSL" checkbox unchecked.
+
+And finally, if needs dictate that all users must always use SSL, you can
+enable the C<ALWAYS_USE_SSL> F<bricolage.conf> directive and restart
+Bricolage. This directive forces Bricolage to always use SSL throughout the
+entire applications, and thus ensures that all communications (including with
+the distribution and SOAP servers) are always encrypted.
 
 =head1 AUTHORIZATION
 
-The authorization features of Bricolage comprise two parts: authorization itself
-and permissions management. The Bricolage authorization system is designed to be
-relatively simple to use and understand, although its emphasis on groups of
-objects rather than objects themselves can cause a little consternation until
-the idea clicks. Here we discuss the philosophy and functionality of
-authorization in detail, so that you can always return to this document if
-you're having trouble.
+The authorization features of Bricolage comprise two parts: authorization
+itself and permissions management. The Bricolage authorization system is
+designed to be relatively simple to use and understand, although its emphasis
+on groups of objects rather than objects themselves can cause a little
+consternation until the idea clicks. Here we discuss the philosophy and
+functionality of authorization in detail, so that you can always return to
+this document if you're having trouble.
 
 =head2 How Authorization Works
 
@@ -139,17 +151,17 @@ to also save processing time during authorization checking--we designed
 Bricolage to have only one kind of permission. That permission is best
 expressed by this sentence:
 
-B<"Grant permission to the members of a I<group of users> to access the members
-of a I<group of objects>.">
+B<"Grant permission to the members of a I<group of users> to access the
+members of a I<group of objects>.">
 
-The advantage of this approach is that all permissions are stored in one place,
-and therefore can be quickly looked up, thus saving processor time when checking
-for authorizations. The disadvantage is that one cannot simply grant an individual
-user permission to an individual object or group. One can, however, create
-a user group with one member, and an object group with one member, and then
-grant the single user group permission to access the single object group.
-So the granularity can still be achieved, but without violating the elegance of
-the model.
+The advantage of this approach is that all permissions are stored in one
+place, and therefore can be quickly looked up, thus saving processor time when
+checking for authorizations. The disadvantage is that one cannot simply grant
+an individual user permission to an individual object or group. One can,
+however, create a user group with one member, and an object group with one
+member, and then grant the single user group permission to access the member
+of the single object group. So the granularity can still be achieved, but
+without violating the elegance of the model.
 
 =begin comment
 
@@ -164,18 +176,71 @@ functionality is really in demand.
 
 =end comment
 
-Bricolage supports four permission levels: READ, EDIT, CREATE, and DENY. B<READ>
-permission allows users to view the contents of objects, but not edit them.
-B<EDIT> permission allows users to both view and edit the contents of objects
-and to delete objects, but not create them. B<CREATE> permission allows users to
-view, edit, delete, and create objects. Note that the B<CREATE> permission can
-only be granted for objects in the "All *" series of groups, as an object is
-automatically a member of its respective "All" group, but can't be added to any
-other group until it has already been created. And finally, B<DENY> permission
-prevents users from accessing objects at all.
+In addition to the standard object groups, there are a number of special
+groups that may contain documents and templates. These are categories,
+workflows, and desks. To a certain extent, these objects may themselves be
+thought of as groups, in that they contain other objects. For example, a two
+stories may be associated with a category. That category may then be
+considered to be a group of two stories. Likewise, a desk with 4 media
+documents and 2 stories on it may be thought of as a group of 4 media
+documents and 2 stories.
 
-As you can see, the permissions cascade. EDIT assumes READ, CREATE assumes EDIT
-and READ, and DENY overrides all the rest.
+The upshot of all this semantic gerrymandering is that you can grant
+permissions to user groups to access the documents and templates in
+categories, workflows, and on desks. This functionality makes possible highly
+flexible workflow modeling, so that you can ensure that the right users can
+access the right content at the right time, in the right place.
+
+=head2 Permission Levels
+
+Bricolage supports six permission levels:
+
+=over 4
+
+=item READ
+
+B<READ> permission allows users to view the contents of objects, but not edit
+them.
+
+=item EDIT
+
+B<EDIT> permission allows users to both view and edit the contents of objects
+and to delete objects, but not create them.
+
+=item RECALL
+
+B<RECALL> permission allows users to recall documents or templates from the
+Bricolage library, pulling them into workflows and checking them out for
+editing. Note that the B<RECALL> permission can only be granted to user groups
+to access groups of stories, media or templates, since those are the only
+objects that can be recalled into workflow.
+
+=item CREATE
+
+B<CREATE> permission allows users to view, edit, delete, and create
+objects. It also allows them to recall documents or templates from the
+library. Note that the B<CREATE> permission can only be granted for objects in
+the "All *" series of groups and to start desks, as an object is automatically
+a member of its respective "All" group or the start desk, but can't be added
+to any other group until it has already been created.
+
+=item PUBLISH
+
+B<PUBLISH> permission allows users to publish documents and deploy
+templates. It also allows them to recall, view, edit, delete, and create
+documents and templates. Note that the B<RECALL> permission can only be
+granted to user groups to access groups of stories, media or templates, since
+those are the only objects that can be published or deployed from workflow.
+
+=item DENY
+
+And finally, B<DENY> permission prevents users from accessing objects at all.
+
+=back
+
+As you can see, the permissions cascade: EDIT assumes READ; RECALL assumes
+EDIT and READ; CREATE assumes RECALL, EDIT and READ; PUBLISH assumes CREATE,
+RECALL, EDIT and READ; and DENY overrides all the rest.
 
 Naturally, users may have more than one permission granted to access an object
 due to their membership in multiple groups. Likewise, a particular object may
@@ -185,7 +250,7 @@ groups. This crossing of permissions requires permission reconciliation. The
 way multiple permissions are reconciled basically follows the cascading nature
 of the permissions themselves: the most permissive permission wins. Thus if a
 user has both READ and EDIT permission to an object, the user will have EDIT
-access to the object. Likewise, if a user is granted CREATE and EDIT
+access to the object. Likewise, if a user is granted CREATE and RECALL
 permission, she will have CREATE access to the object. And of course, the user
 with no permissions at all will have no access to the object at all.
 
@@ -199,9 +264,9 @@ permission with care.
 
 =head2 Permissions Example
 
-So let's look at a few examples. Let us assume that we're working with a system
-with 3 users, 3 user groups, 2 story groups, and 3 stories. Here's how they're
-organized:
+So let's look at a few examples. Let us assume that we're working with a
+system with 3 users, 3 user groups, 2 story groups, and 3 stories. Here's how
+they're organized:
 
   Users        All Users     Story Admins    Evildoers
   ----------------------------------------------------
@@ -209,86 +274,97 @@ organized:
   Mcnibblet       x
   DrEvil          x               x              x
 
+User Theory is a member of the "All Users" and "Story Admins" user group. User
+Mcnibblet is a member of the "All Users" user group. And user DrEvil is a
+member of the "All Users", "Story Admins", and "Evildoers" user groups.
 
-  Story                        All Stories  Good Stories
-  ------------------------------------------------------
+
+  Story                        All Stories  Publish Desk
+  -------------------------------------------------------
   Dubbya Celebrates Birthday       x
   Second Matrix Movie Debuts       x             x
   Black Hole Destroys Earth        x             x
 
+The first story is a member of the "All Stories" group. The other two stories
+are members of the "All Stories" group and are on the "Publish Desk", and thus
+members of its group.
 
 Now, let us assign permissions:
 
-                    All Stories    Good Stories
+                    All Stories    Publish Desk
   ---------------------------------------------
   All Users           READ            EDIT
   ---------------------------------------------
-  Story Admins       CREATE
+  Story Admins       PUBLISH
   ---------------------------------------------
   Evildoers                           DENY
   ---------------------------------------------
 
 The way Bricolage works with these permissions is that, when a user tries to
 access a particular object (here a story object), Bricolage finds out what
-groups the object is in, what user groups have been granted permissions on those
-groups, and which user groups the user in question is a member of. Then, once it
-has aggregated all of the permissions that trickle down to the user in
+groups the object is in, what user groups have been granted permissions on
+those groups, and which user groups the user in question is a member of. Then,
+once it has aggregated all of the permissions that trickle down to the user in
 question, it decides which one wins, following the criteria outlined above.
 
-So let's say that user "Theory" wants to create a new story. Bricolage sees that
-the new story is in the "All Stories" group, and that the user groups "All
-Users," "Story Admins," and "Evildoers" have been granted permissions to that
-group. It turns out that Theory is a member of the "All Users" and "Story
+So let's say that user "Theory" wants to create a new story. Bricolage sees
+that the new story is in the "All Stories" group, and that the user groups
+"All Users," "Story Admins," and "Evildoers" have been granted permissions to
+that group. It turns out that Theory is a member of the "All Users" and "Story
 Admins" user groups. The permissions granted to these groups to access members
-of the "All Stories" group are "READ" and "CREATE," respectively. Bricolage
-determines that CREATE is the highest-value permission, and so user Theory has
-that permission, and therefore the ability to create a new story.
+of the "All Stories" group are "READ" and "PUBLISH," respectively. Bricolage
+determines that PUBLISH is the highest-value permission, and so user Theory
+has that permission, and therefore the ability to create a new story.
 
 Another example. Let's say that user "Mcnibblet" wishes to edit the "Dubbya
-Celebrates Birthday" story. Bricolage determines that this story is a member of
-only one story group, "All Stories," to which the user groups "All Users,"
-"Story Admins," and "Evildoers" have been granted permissions. Mcnibblet, being
-the member of only one of these groups, "All Users", has just the one
-permission: READ. Thus, Mcnibblet has READ permission to the "Dubbya Celebrates
-Birthday" story, and no other permission. Since Mcnibblet wishes to edit the
-story, and he does not have EDIT or CREATE permission, he is prevented from
-editing the story. Should he choose to view it, however, he'd be able to do so.
+Celebrates Birthday" story. Bricolage determines that this story is a member
+of only one story group, "All Stories," to which the user groups "All Users,"
+"Story Admins," and "Evildoers" have been granted permissions. Mcnibblet,
+being the member of only one of these groups, "All Users", has just the one
+permission: READ. Thus, Mcnibblet has READ permission to the "Dubbya
+Celebrates Birthday" story, and no other permission. Since Mcnibblet wishes to
+edit the story, and he does not have EDIT, RECALL, CREATE, or PUBLISH
+permission, he is prevented from editing the story. Should he choose to view
+it, however, he'd be able to do so.
 
-Now let's look at "DrEvil." This fine user wishes to view the story "Black Hole
-Destroys Earth," it being that it appeals to his aesthetic tastes. Bricolage
-determines that this story is a member of the "All Stories" and "Good Stories"
-story groups, and that all three user groups have been granted permissions to
-"All Stories," and "All Users" has been granted permission to "Good Stories".
-DrEvil, in turn, is a member of all three groups. Thus, the permissions for
-DrEvil to access the "Black Hole Destroys Earth" story are READ, CREATE, EDIT,
-and DENY. Comparing these permissions, Bricolage would normally award the most
-permissive permission, CREATE (which encompasses READ and EDIT permissions, as
-well). However, the DENY permission trumps all others. Thus, regardless of
-DrEvil's membership in the "Story Admins" group, with its CREATE permission to
-access the story, his membership in the "Evildoers" group denies him permission
-to access the story at all!
+Now let's look at "DrEvil." This fine user wishes to view the story "Black
+Hole Destroys Earth," it being that it appeals to his aesthetic tastes.
+
+Bricolage determines that this story is a member of the "All Stories" and
+"Publish Desk" story groups, that all three user groups have been granted
+permissions to "All Stories," and that "All Users" has been granted permission
+to "Publish Desk". DrEvil, in turn, is a member of all three groups. Thus, the
+permissions for DrEvil to access the "Black Hole Destroys Earth" story are
+READ, PUBLISH, EDIT, and DENY. Comparing these permissions, Bricolage would
+normally award the most permissive permission, PUBLISH (which encompasses
+READ, EDIT, RECALL, and CREATE permissions, as well). However, the DENY
+permission trumps all others. Thus, regardless of DrEvil's membership in the
+"Story Admins" group, with its PUBLISH permission to access the story, his
+membership in the "Evildoers" group denies him permission to access the story
+at all!
 
 Here's a breakdown of how all the permissions will manifest for each user trying
 to access each story. Compare this table with the tables above to figure out how
 the permissions were determined.
 
-  Story                        Theory  Mcnibblet  DrEvil
-  ------------------------------------------------------
-  Dubbya Celebrates Birthday   CREATE    READ     CREATE
-  Second Matrix Movie Debuts   CREATE    EDIT      DENY
-  Black Hole Destroys Earth    CREATE    EDIT      DENY
+  Story                        Theory   Mcnibblet   DrEvil
+  --------------------------------------------------------
+  Dubbya Celebrates Birthday   PUBLISH    READ     PUBLISH
+  Second Matrix Movie Debuts   PUBLISH    EDIT      DENY
+  Black Hole Destroys Earth    PUBLISH    EDIT      DENY
 
 =head2 The Global Admins Group
 
 One Bricolage user group is special, B<Global Admins>. Members of this group
-automatically have CREATE rights to every object in Bricolage, regardless of
-other group memberships and permissions -- B<including DENY!> In fact,
-permissions aren't even checked for members of this group - CREATE permission
-is simply always assumed and granted. The name and permissions of the Global
-Admins group cannot be edited, either - only the membership. Thus membership
-in this group should be limited to just those users who are responsible for
-administering the whole of the Bricolage application. Use the other Admin
-groups to parcel out the rights to Administer particular parts of Bricolage.
+automatically have PUBLISH or CREATE rights to every object in Bricolage,
+regardless of other group memberships and permissions -- B<including DENY!> In
+fact, permissions aren't even checked for members of this group - PUBLISH
+permission is simply always assumed and granted. The name and permissions of
+the Global Admins group cannot be edited, either - only the membership. Thus
+membership in this group should be limited to just those users who are
+responsible for administering the whole of the Bricolage application. Use the
+other Admin groups to parcel out the rights to Administer particular parts of
+Bricolage.
 
 =head2 Permissions Management
 
@@ -296,35 +372,37 @@ Now that we've explained how the permissions system works, let's examine the
 interface, and how to use it to configure permissions for your users.
 
 All permissions management takes place within group profiles. As you can tell
-from the above discussion, there are two slightly different kinds of groups, at
-least as far as permissions management is concerned. The two types are B<User
-Groups> and B<Object Groups>. All groups in the system are object groups. These
-are the groups to which user groups are granted permissions. Thus even user
-groups are object groups, since there need to be permissions granted to manage
-users, too.
+from the above discussion, there are two slightly different kinds of groups,
+at least as far as permissions management is concerned. The two types are
+B<User Groups> and B<Object Groups>. All groups in the system are object
+groups. These are the groups to which user groups are granted
+permissions. Thus even user groups are object groups, since there need to be
+permissions granted to manage users, too.
 
 So let's browse the interface. Make sure that you're a member of the Global
-Admins group. Then, in the side navigation bar, select ADMIN -> SYSTEM ->
-Groups. You will be presented with a list of all the groups in the
-system. Bricolage ships with only User groups, but if you look at the "Or Pick
-a Type" select list, you can see that it supports all kinds of object
-groups. (Note that the special "All *" groups are not editable.) Click "Edit"
-to edit one of the user groups, say "Distribution Admins" (note that you must
-have permission to edit groups to do this!). The interface provides fields to
-edit the name and description of the group, plus a double list manager that
-allows you to move objects (users, in this case) in and out of the group. The
-double list manager allows you to assign members to the group.
+Admins group. Then, in the side navigation bar, select ADMIN -E<gt> SYSTEM
+-E<gt> Groups. You will be presented with a list of all the groups in the
+system. Bricolage ships with only User groups and "All *" groups. If you look
+at the "Or Pick a Type" select list, you can see that it supports all kinds of
+object groups. Click "Edit" to edit one of the user groups, say "Distribution
+Admins" (note that you must have permission to edit groups to do this!). The
+interface provides fields to edit the name and description of the group, plus
+a double list manager that allows you to move objects (users, in this case) in
+and out of the group. The double list manager allows you to assign members to
+the group. (Note that the attributes of the special "All *" groups are not
+editable, although their permissions are.)
 
 Since we're most interested in permissions management, however, click the
-'Permissions" button. This interface allows you to edit all of the permissions
+"Permissions" button. This interface allows you to edit all of the permissions
 granted to the the members of the group, plus the permissions granted to other
 groups to access the members of this group. If you're looking at the
 "Distribution Admins" group, you'll be presented with a section for managing
-permissions to grant to user groups to access the objects in the Distribution
-Admins group. The "Pick a Permissions Type" select list at the top of the page
-allows you to access three other sections of permissions. (Non-user groups
-only have the one type of permission interface, for granting permission to
-groups of users to access the members of the group you're editing.)
+permissions to grant user group members permission to access the objects in
+the Distribution Admins group. The "Pick a Permissions Type" select list at
+the top of the page allows you to access three other permissions sections.
+(Non-user groups only have the one type of permission interface, for granting
+permission to groups of users to access the members of the group you're
+editing.)
 
 User Group Permissions are the permissions granted to the members of user
 groups to access the members of the Distribution Admins group. By default,
@@ -342,8 +420,9 @@ Buttons" to the alternative, "Select List." This setting will cause Bricolage
 to offer select lists for each row of the Permissions page, rather than radio
 buttons. To change the preference, simply edit the "Permissions Widget"
 profile in the Preferences Manager. Be sure you have permission to edit
-preferences, and remember that they are global and will affect how I<all>
-users see the Permissions interface!
+preferences, and remember that, unless the "Can be Overridden" checkbox is
+checked, they are global and will affect how I<all> users see the Permissions
+interface!
 
 Now, select "Object Groups" from the select list. This selection allows you to
 grant permission to the members of the Distribution Admins group to access the
@@ -359,23 +438,32 @@ members of the current group (Distribution Admins) to access the documents
 within particular workflows. This feature is useful to allow certain groups of
 users to access documents only in certain workflows.
 
-And finally, the "Desks" option allows you to grant permission to the members
-of the current group (Distribution Admins) to access the documents on
-particular desks. This feature is useful to allow certain groups of users to
-access documents only on certain desks. It is also the means by which users
-can be granted permission to CREATE new documents, by granting the CREATE
-permission to the relevant start desk.
+The "Desks" option allows you to grant permission to the members of the
+current group (Distribution Admins) to access the documents on particular
+desks. This feature is useful to allow certain groups of users to access
+documents only on certain desks. It is also the means by which users can be
+granted permission to CREATE new documents, by granting the CREATE permission
+to the relevant start desk, or to RECALL existing documents from the library,
+by granting the RECALL psermission to the relevant start desk. This view also
+allows you to grant members of the group permission to PUBLISH documents, by
+granting the PUBLISH permission to the relevant publish desk.
 
-These last three selections will likely be your most used, but they appear
-only when editing the permissions of user groups. The "User Groups" selection
-is the only option in the permissions management screen for non-user group
+And finally, the "Categories" option allows you to grant permission to the
+members of the current group (Distribution Admins) to access the documents
+in a particular category. Again, because category permissions are applied
+only to documents and templates (the members of the group), you can grant
+RECALL and PUBLISH permissions.
+
+These last four selections will likely be your most used, but they appear only
+when editing the permissions of user groups. The "User Groups" selection is
+the only option in the permissions management screen for non-user group
 profiles. We believe that this section will be most useful when creating a new
 group, when it makes more sense to associate the group with user groups all at
 once, rather than edit the user group profiles individually to grant
 permissions on your new group.
 
 Once you click "Save," and return to the group profile, the new permissions
-setting will have been saved. Click "Save" again to keep any changes made to
+settings will have been saved. Click "Save" again to keep any changes made to
 the group profile name, description, or membership. From this point on, the
 permissions will be set and all users will be updated. They do not have to
 login again in order to gain new permissions.
@@ -394,10 +482,10 @@ permissions. This is, in fact, the way Bricolage worked prior to version
 
 However, things could not remain so simple, unfortunately. This is because,
 under the old approach, a member of the System Admins group had full access to
-the Global Admins group, meaning that that user could add himself to the
-Global Admins group. But it doesn't seem like a good idea to allow any user to
-be able to give himself higher permissions; only another user with those
-higher permissions should be able to grant them to the first user.
+the Global Admins group, meaning that a user could add himself to the Global
+Admins group. But it doesn't seem like a good idea to allow any user to be
+able to give himself higher permissions; only another user with those higher
+permissions should be able to grant them to the first user.
 
 So a new approach was implemented. Now a user with EDIT permssion to a group
 cannot give himself more power than he already has. This was accomplished by
@@ -432,18 +520,20 @@ If a user has edit permission to I<any> group, he cannot change its
 permissions unless he has permission to access the members of the group. That
 is, he must be a member of a user group that has at least READ permission to
 the members of the group he's editing. Furthermore, the permissions he can
-grant to the group are limited to those he helself has to the members of the
+grant to the group are limited to those he himself has to the members of the
 group. So if he has READ permission, he can grant only READ or DENY
 permission. If he has EDIT permission, he can grant READ, EDIT, or DENY. If he
-has CREATE permission to the members, he can grant any permission. And, of
-course, if he has no permission or DENY permission, he can grant no
-permissions at all.
+has RECALL permission to the members, he can grant READ, EDIT, RECALL, or
+DENY. If he has CREATE permission to the members, he can grant READ, EDIT,
+RECALL, CREATE, or DENY. If he has PUBLISH permission to the members, he can
+grant READ, EDIT, RECALL, CREATE, PUBLISH, or DENY. And, of course, if he has
+no permission or DENY permission, he can grant no permissions at all.
 
 =back
 
 The overarching rule of thumb on which these rules were based is that a user
-can never grant any other user greater permissions than he herself has, either
-through group membership or through permission changes.
+can never grant himself or any other user greater permissions than he himself
+has, either through group membership or through permission changes.
 
 The upshot of all this for you is that, while it's easy to manage permissions
 as a member of the Global Admins group, it's not so easy for members of other
@@ -459,9 +549,9 @@ Ability to EDIT the group itself.
 
 =item *
 
-Ability to READ, EDIT, or CREATE members of the group (depending on how high
-a permission you want to allow them to grant to other user groups to access
-the members of the group).
+Ability to READ, EDIT, or CREATE members of the group (depending on how high a
+permission you want to allow them to grant to other user groups to access the
+members of the group).
 
 =item *
 
