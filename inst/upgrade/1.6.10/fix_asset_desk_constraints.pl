@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_constraint 'story', 'fk_desk__story';
+exit if test_foreign_key 'story', 'fk_desk__story';
 
 my @sql;
 
