@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-09-27 12:39:45 $
+$Date: 2001-09-27 14:36:36 $
 
 =head1 DESCRIPTION
 
@@ -221,7 +221,7 @@ hierarchies for the examples described above:
 
 =back
 
-=item Stories of the Day
+=item Current Stories
 
 =over
 
@@ -948,6 +948,17 @@ or subelements. Thus they can easily be created by following these criteria:
   Top Story                 The top story.               Linked Stories
   Navigation                Navigation element.          Nav
 
+=head3 Current Stories and Recent Stories
+
+The "Current Stories" and "Recent Stories" Elements inherit from the "Story
+Lists" Element Type. These, too, are simple, but each contain a Subelelement.
+Create them as follows:
+
+  Name             Type         Subelements
+  ---------------  -----------  ------------------------
+  Current Stories  Story Lists  Linked Story with Teaser
+  Recent Stories   Story Lists  Linked Story
+
 =head3 Column One
 
 This Element has no fields, but does contain subelements. Follow these steps to
@@ -991,8 +1002,25 @@ Elements that simply contain subelements and no fields. Here are the specs
 for the remaining column fields:
 
   Name          Type     Subelements
-  Column Two    Columns  Current Stories <<<<<<<<<<<<Add this!
-  Column Three  Columns  Recent Stories <<<<<<<<<<Add this!, Advertisement
+  ------------  -------  -----------------------------
+  Column Two    Columns  Current Stories
+  Column Three  Columns  Recent Stories, Advertisement
+
+=head1 CONCLUSION
+
+And that's it! You're now ready to start editing stories using the Element
+structure we've created here. I suggest you do so, to get a feel for how the
+Element structure we've created here influences the interface for editing
+stories.
+
+But the main point I hope to have highlighted here is how important it is to
+carefully analyze what you need for your site and content, and then figure out
+what Element Types, Elements, and fields you need before you ever create them.
+You might even find it useful to sketch out what you expect your site content to
+look like on your site and then using that sketch to decompose it into its basic
+parts.
+
+Good luck!
 
 =head1 AUTHOR
 
@@ -1006,7 +1034,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ElementAdmin.pod,v $
-Revision 1.6  2001-09-27 12:39:45  wheeler
+Revision 1.7  2001-09-27 14:36:36  wheeler
+It's done, it's done!
+
+Revision 1.6  2001/09/27 12:39:45  wheeler
 I'm nearly done! Going to a meeting, but wanted to get the most recent changes
 commited. It *will* be done today.
 
