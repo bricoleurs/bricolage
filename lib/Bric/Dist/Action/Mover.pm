@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::App::Event qw(log_event);
-use Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault qw(throw_ap);
 use Bric::Util::Trans::FS;
 use Bric::Util::Trans::FTP;
 use Bric::Config qw(:dist);
@@ -73,7 +73,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $ap = 'Bric::Util::Fault::Exception::AP';
 
 ################################################################################
 
@@ -156,20 +155,14 @@ sub do_it {
     my $class = $st->_get_mover_class;
 
     unless (ENABLE_SFTP_MOVER or $class !~ /::SFTP$/) {
-        die $ap->new({
-            msg => "Output channel is associated with SFTP " .
-                   "but SFTP Mover is disabled."
-        });
+        throw_ap(error => "Output channel is associated with SFTP " .
+                 "but SFTP Mover is disabled.");
     }
 
     unless (ENABLE_WEBDAV_MOVER or $class !~ /::WebDAV$/) {
-        die $ap->new({
-            msg => "Output channel is associated with WebDAV".
-                   "but WebDAV Mover is disabled."
-        });
+        throw_ap(error => "Output channel is associated with WebDAV" .
+                   "but WebDAV Mover is disabled.");
     }
-
-
 
     $class->put_res($res, $st);
     # Log the move.

@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:21 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -109,7 +109,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref prepare_ca);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Biz::Person::User;
 use Bric::Util::Event;
 use Bric::Util::Coll::Rule;
@@ -311,8 +311,8 @@ sub lookup {
 
     $at = $get_em->($pkg, @_);
     # We want @$at to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::AlertType objects found.' }) if @$at > 1;
+    throw_dp(error => 'Too many Bric::Util::AlertType objects found.')
+      if @$at > 1;
     return @$at ? $at->[0] : undef;
 }
 

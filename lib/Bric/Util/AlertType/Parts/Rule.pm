@@ -6,16 +6,16 @@ Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -232,8 +232,7 @@ sub lookup {
 
     $rule = $get_em->($pkg, @_);
     # We want @$rule to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::AlertType::Parts::Rule objects found.' })
+    throw_dp(error => 'Too many Bric::Util::AlertType::Parts::Rule objects found.')
       if @$rule > 1;
     return @$rule ? $rule->[0] : undef;
 }

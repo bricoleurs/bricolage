@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:27 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -47,9 +47,7 @@ use strict;
 # Programatic Dependencies
 
 use HTML::Mason::Interp;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_gen throw_ap rethrow_exception);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
@@ -81,9 +79,6 @@ use base qw(Bric::Util::Burner);
 
 #--------------------------------------#
 # Private Class Fields
-my $mni = 'Bric::Util::Fault::Exception::MNI';
-my $ap = 'Bric::Util::Fault::Exception::AP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
 my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::Mason::XMLWriterHandle->new
   : undef;
@@ -263,10 +258,14 @@ sub burn_one {
     while (1) {
         # Run the biz asset through the template
         eval { $retval = $interp->exec($template) if $template };
-        die ref $@ ? $@ :
-          $ap->new({ msg     => "Error executing template '$template'.",
-                     payload => $@ })
-          if $@;
+        if ($@) {
+            if (isa_exception($@) {
+                rethrow_exception($@);
+            } else {
+                throw_ap(error => "Error executing template '$template'.",
+                         payload => $@);
+            }
+        }
 
         # End the page if there is still content in the buffer.
         $self->end_page if $outbuf !~ /^\s*$/;
@@ -611,8 +610,8 @@ sub end_page {
 
     # Save the page we've created so far.
     open(OUT, ">$file")
-      || die $gen->new({ msg => "Unable to open '$file' for writing",
-                         payload => $! });
+      || throw_gen(error => "Unable to open '$file' for writing",
+                   payload => $!);
     print OUT $$buf;
     close(OUT);
 
@@ -695,15 +694,17 @@ sub _load_template_element {
 
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)
-      || die $ap->new({ msg     => "Unable to find template '$tmpl_name'",
-                        payload => { class   => __PACKAGE__,
-                                     action  => 'load template',
-                                     context => { oc   => $self->get_oc,
-                                                  cat  => $self->get_cat,
-                                                  elem => $element
-                                                }
-                                   }
-                      });
+      || throw_ap(error => "Unable to find template '$tmpl_name'",
+                  payload => {
+                      class   => __PACKAGE__,
+                      action  => 'load template',
+                      context => {
+                          oc   => $self->get_oc,
+                          cat  => $self->get_cat,
+                          elem => $element,
+                      },
+                  }
+         );
     return $tmpl;
 }
 
@@ -871,22 +872,23 @@ sub _create_dhandler {
 
     # Now just write it out to the file system.
     open(DH, ">$file")
-      || die $gen->new({ msg => "Unable to open '$file' for writing",
-                         payload => $! });
-        print DH q{<%once>;
-my $ap = 'Bric::Util::Fault::Exception::AP';
-</%once>
-<%init>;
+      || throw_gen(error => "Unable to open '$file' for writing",
+                   payload => $!);
+        print DH q{<%init>;
 my $template = $burner->find_template($m->current_comp->dir_path,
                                       $m->dhandler_arg . '.mc')
-  || die $ap->new({ msg     => "Unable to find template '"
-                               . $m->dhandler_arg . "\.mc'",
-                    payload => { class   => __PACKAGE__,
-                                 action  => 'load template',
-                                 context => { oc   => $burner->get_oc,
-                                              cat  => $burner->get_cat,
-                                              elem => $element }}
-                   });
+  || throw_ap(error => "Unable to find template '"
+                . $m->dhandler_arg . "\.mc'",
+              payload => {
+                  class   => __PACKAGE__,
+                  action  => 'load template',
+                  context => {
+                      oc   => $burner->get_oc,
+                      cat  => $burner->get_cat,
+                      elem => $element,
+                  },
+               }
+     );
 $m->comp($template);
 </%init>
 };

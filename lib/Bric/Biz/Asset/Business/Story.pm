@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -419,8 +419,6 @@ use constant DEFAULT_ORDER => 'cover_date';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord);
-my $gen = 'Bric::Util::Fault::Exception::GEN';
-my $da = 'Bric::Util::Fault::Exception::DA';
 
 #--------------------------------------#
 # Instance Fields
@@ -1042,21 +1040,21 @@ sub get_uri {
         $cat = Bric::Biz::Category->lookup({ id => $cat})
           unless ref $cat;
         my $cats = $self->_get_categories();
-        die $da->new({ msg => "Category '" . $cat->get_uri . "' not " .
-                       "associated with story '" . $self->get_name . "'" })
+        throw_da(error => "Category '" . $cat->get_uri . "' not " .
+                 "associated with story '" . $self->get_name . "'")
           unless exists $cats->{$cat->get_id};
     } else {
         $cat = $self->get_primary_category;
     }
 
-    die $da->new({ msg => "There is no category associated with story." }) unless $cat;
+    throw_da(error => "There is no category associated with story.") unless $cat;
 
     # Get the output channel object.
     if ($oc) {
         $oc = Bric::Biz::OutputChannel->lookup({ id => $oc })
           unless ref $oc;
-        die $da->new({ msg => "Output channel '" . $oc->get_name . "' not " .
-                       "associated with story '" . $self->get_name . "'" })
+        throw_da(error => "Output channel '" . $oc->get_name . "' not " .
+                 "associated with story '" . $self->get_name . "'")
           unless $self->get_output_channels($oc->get_id);
     } else {
         $oc = $self->get_primary_oc;
@@ -1465,7 +1463,7 @@ NONE
 
 sub revert {
     my ($self, $version) = @_;
-    die $gen->new({ msg => "May not revert a non checked out version" })
+    throw_gen(error => "May not revert a non checked out version")
       unless $self->_get('checked_out');
 
     my $revert_obj;
@@ -1477,7 +1475,7 @@ sub revert {
         }
     }
 
-    die $gen->new({ msg => "The requested version does not exist" })
+    throw_gen(error => "The requested version does not exist")
       unless $revert_obj;
 
     # Clone the basic properties of the story.
@@ -1644,7 +1642,7 @@ sub save {
 
     if (my $err = $@) {
         rollback();
-        die $err;
+        rethrow_exception($err);
     }
 
     return $self;

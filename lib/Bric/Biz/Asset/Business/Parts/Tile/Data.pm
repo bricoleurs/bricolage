@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:12 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -50,7 +50,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use Bric::Biz::AssetType::Parts::Data;
 
 #==============================================================================#
@@ -228,7 +228,7 @@ sub new {
             $init->{'object_type'} = 'story';
         } else {
             my $err_msg = 'Object of type $class not allowed';
-            die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+            throw_gen(error => $err_msg);
         }
     }
 
@@ -244,7 +244,7 @@ sub new {
 
     unless ($init->{'object_type'}) {
         my $err_msg = "Required parameter 'object_type' missing";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        throw_gen(error => $err_msg);
     }
 
     $self = bless {}, $self unless ref $self;
@@ -277,7 +277,7 @@ sub lookup {
 
     unless ($param->{'id'} && ($param->{'obj'} ||$param->{'object_type'})) {
         my $err_msg = 'Improper criteria passed to lookup';
-        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        throw_gen(error => $err_msg);
     }
 
     # Determine the short name for this object.
@@ -746,7 +746,7 @@ sub _do_list {
 
     unless ($param->{'object'} || $param->{'object_type'}) {
         my $err_msg = "Improper arguments for method 'list'";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        throw_gen(error => $err_msg);
     }
 
     # Get the object type and object ID.
@@ -971,7 +971,7 @@ sub _get_table_name {
         return M_TABLE;
     } else {
         my $err_msg = "Object of type '$type' not allowed";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+        throw_gen(error => $err_msg);
     }
 }
 

@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-30 20:24:38 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -131,9 +131,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_gen throw_ap);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
@@ -169,9 +167,6 @@ use constant SYNTAX_MODE => 3;
 
 #--------------------------------------#
 # Private Class Fields
-my $mni = 'Bric::Util::Fault::Exception::MNI';
-my $ap = 'Bric::Util::Fault::Exception::AP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
 
 #--------------------------------------#
@@ -494,7 +489,8 @@ sub deploy {
     # Create the directory path and write the file.
     $fs->mk_path($dir);
     open (MC, ">$file")
-      or die $ap->new({ msg => "Could not open '$file'", payload => $! });
+      or throw_ap(error => "Could not open '$file'",
+                  payload => $!);
     print MC $fa->get_data;
     close(MC);
 }
@@ -724,14 +720,12 @@ sub publish {
 
         # Make sure we have some destinations.
         unless (@$bat) {
-            $die_err
-              ? die "Cannot publish asset &quot;" . $ba->get_name
+            my $errstr = "Cannot publish asset &quot;" . $ba->get_name
               . "&quot; to &quot;" . $oc->get_name . "&quot; because there "
-              . "are no Destinations associated with this output channel."
-              : add_msg("Cannot publish asset &quot;" . $ba->get_name
-                        . "&quot; to &quot;" . $oc->get_name 
-                        . "&quot; because there are no Destinations "
-                        . "associated with this output channel.");
+              . "are no Destinations associated with this output channel.";
+            $die_err
+              ? throw_gen(error => $errstr)
+              : add_msg($errstr);
             next;
         }
 
@@ -926,7 +920,7 @@ actually a page in the story. Caveat templator.
 sub page_file {
     my ($self, $number) = @_;
     return unless defined $number;
-    die $gen->new({ msg => "Page number '$number' not greater than zero" })
+    throw_gen(error => "Page number '$number' not greater than zero")
       unless $number > 0;
     my ($fn, $ext) = $self->_get(qw(output_filename output_ext));
     $number = $number == 1 ? '' : $number - 1;
@@ -1129,10 +1123,11 @@ sub _get_subclass {
     if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
         # Easy to get it
         my $b = $at->get_burner || BURNER_MASON;
-        $burner_class .=
-            $b == BURNER_MASON ? 'Mason' :
-                $b == BURNER_TEMPLATE ? 'Template' :
-                    die $gen->new({ msg => 'Cannot determine template burner subclass.'});
+        $burner_class .= $b == BURNER_MASON
+          ? 'Mason'
+          : $b == BURNER_TEMPLATE
+            ? 'Template'
+            : throw_gen(error => 'Cannot determine template burner subclass.');
 
         # Instantiate the proper subclass.
         return ($burner_class->new($self), $at);
@@ -1140,7 +1135,7 @@ sub _get_subclass {
     } else {
         # There is no asset type. It could be a template. Find out.
         $asset->key_name eq 'formatting'
-            || die $gen->new({msg => 'No element associated with asset.'});
+          || throw_gen(error => 'No element associated with asset.');
         # Okay, it's a template. Figure out the proper burner from the file name.
         my $file_name = $asset->get_file_name;
         if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
@@ -1150,7 +1145,7 @@ sub _get_subclass {
             # It's an HTML::Template template.
             $burner_class .= 'Template';
         } else {
-            die $gen->new({msg => 'Cannot determine template burner subclass.'});
+            throw_gen(error => 'Cannot determine template burner subclass.');
         }
 
         # Instantiate the proper subclass.

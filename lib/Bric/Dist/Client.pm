@@ -7,16 +7,16 @@ distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:26 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -56,7 +56,7 @@ use strict;
 use Bric::Dist::Job;
 use Bric::Util::DBI qw(:standard);
 use Bric::Util::Time qw(:all);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use LWP::UserAgent;
 use HTTP::Request;
 
@@ -83,7 +83,6 @@ use constant TIMEOUT => 30;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $ua = LWP::UserAgent->new;
 $ua->timeout(TIMEOUT);
 
@@ -506,16 +505,16 @@ sub send {
 
         # Make sure that the URL is correct, that we actually hit a
         # Bricolage distribution server.
-        die "Failed to connect to Bricolage distribution server. " .
-          "Be sure that " . $self->_get('url') . ' is the proper URL'
-          unless $res->header('BricolageDist');
+        my $errstr = "Failed to connect to Bricolage distribution server. " .
+          "Be sure that " . $self->_get('url') . ' is the proper URL';
+        throw_gen(error => $errstr) unless $res->header('BricolageDist');
 
         if (my $c = $res->content) {
             # There was an error.
-            die $c;
+            throw_gen(error => $c);
         } elsif (not $res->is_success) {
             # Something else is amiss.
-            die $res->status_line;
+            throw_gen(error => $res->status_line);
         }
 
         # The request was successful, just return.
@@ -523,8 +522,9 @@ sub send {
 
     };
 
-    die $gen->new({ msg => "Error sending jobs to distributor.",
-		    payload => $@ }) if $@;
+    throw_gen(error => "Error sending jobs to distributor.",
+              payload => $@)
+      if $@;
 }
 
 ################################################################################

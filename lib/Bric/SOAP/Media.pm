@@ -9,6 +9,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
@@ -42,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -200,7 +201,7 @@ sub list_ids {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
           unless exists $allowed{$_};
     }
 
@@ -208,9 +209,9 @@ sub list_ids {
     if (exists $args->{workflow}) {
         my ($workflow_id) = Bric::Biz::Workflow->list_ids(
                                 { name => $args->{workflow} });
-        die __PACKAGE__ . "::list_ids : no workflow found matching " .
-            "(workflow => \"$args->{workflow}\")\n"
-                unless defined $workflow_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no workflow found matching "
+                   . "(workflow => \"$args->{workflow}\")")
+          unless defined $workflow_id;
         $args->{workflow__id} = $workflow_id;
         delete $args->{workflow};
     }
@@ -219,9 +220,9 @@ sub list_ids {
     if (exists $args->{element}) {
         my ($element_id) = Bric::Biz::AssetType->list_ids(
                               { name => $args->{element}, media => 1 });
-        die __PACKAGE__ . "::list_ids : no element found matching " .
-            "(element => \"$args->{element}\")\n"
-                unless defined $element_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no element found matching "
+                   . "(element => \"$args->{element}\")")
+          unless defined $element_id;
         $args->{element__id} = $element_id;
         delete $args->{element};
     }
@@ -229,9 +230,9 @@ sub list_ids {
     # handle category => category_id conversion
     if (exists $args->{category}) {
         my $category_id = category_path_to_id($args->{category});
-        die __PACKAGE__ . "::list_ids : no category found matching " .
-            "(category => \"$args->{category}\")\n"
-                unless defined $category_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no category found matching "
+                   . "(category => \"$args->{category}\")")
+          unless defined $category_id;
         $args->{category__id} = $category_id;
         delete $args->{category};
     }
@@ -243,9 +244,10 @@ sub list_ids {
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
         my $date = xs_date_to_db_date($args->{$name});
-        die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
-            "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
-                unless defined $date;
+        throw_ap(error => __PACKAGE__ . "::list_ids : bad date format for $name"
+                   . " parameter \"$args->{$name}\" : must be proper XML Schema"
+                   . " parameter dateTime format.")
+          unless defined $date;
         $args->{$name} = $date;
     }
 
@@ -312,18 +314,18 @@ sub export {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # media_id is sugar for a one-element media_ids arg
     $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
 
     # make sure media_ids is an array
-    die __PACKAGE__ . "::export : missing required media_id(s) setting.\n"
-        unless defined $args->{media_ids};
-    die __PACKAGE__ . "::export : malformed media_id(s) setting.\n"
-        unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::export : missing required media_id(s) setting.")
+      unless defined $args->{media_ids};
+    throw_ap(error => __PACKAGE__ . "::export : malformed media_id(s) setting.")
+      unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
 
     # setup XML::Writer
     my $document        = "";
@@ -396,12 +398,12 @@ sub create {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::create : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
       unless $args->{document};
 
     # setup empty update_ids arg to indicate create state
@@ -466,21 +468,20 @@ sub update {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::update : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
       unless $args->{document};
 
     # make sure we have an update_ids array
-    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
       unless $args->{update_ids};
-    die __PACKAGE__ . 
-        "::update : malformed update_ids parameter - must be an array.\n"
-            unless ref $args->{update_ids} and 
-                   ref $args->{update_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ .
+               "::update : malformed update_ids parameter - must be an array.")
+      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
 
     # call _load_media
     return $pkg->_load_media($args);
@@ -526,7 +527,7 @@ sub delete {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
           unless exists $allowed{$_};
     }
 
@@ -534,9 +535,9 @@ sub delete {
     $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
 
     # make sure media_ids is an array
-    die __PACKAGE__ . "::delete : missing required media_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::delete : missing required media_id(s) setting.")
       unless defined $args->{media_ids};
-    die __PACKAGE__ . "::delete : malformed media_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::delete : malformed media_id(s) setting.")
       unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
 
     # delete the media
@@ -550,9 +551,9 @@ sub delete {
         unless ($media) {
             # settle for a non-checked-out version and check it out
             $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
-            die __PACKAGE__ . "::delete : no media found for id \"$media_id\"\n"
+            throw_ap(error => __PACKAGE__ . "::delete : no media found for id \"$media_id\"")
               unless $media;
-            die __PACKAGE__ . "::delete : access denied for media \"$media_id\".\n"
+            throw_ap(error => __PACKAGE__ . "::delete : access denied for media \"$media_id\".")
               unless chk_authz($media, CREATE, 1);
             $media->checkout({ user__id => get_user_id });
             log_event("media_checkout", $media);
@@ -604,11 +605,11 @@ sub _load_media {
     # parse and catch erros
     unless ($data) {
         eval { $data = parse_asset_document($document) };
-        die __PACKAGE__ . " : problem parsing asset document : $@\n"
-            if $@;
-        die __PACKAGE__ .
-            " : problem parsing asset document : no media found!\n"
-                unless ref $data and ref $data eq 'HASH' and exists $data->{media};
+        throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
+          if $@;
+        throw_ap(error => __PACKAGE__ .
+                   " : problem parsing asset document : no media found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{media};
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
@@ -638,8 +639,9 @@ sub _load_media {
             unless ($melems{$mdata->{element}}) {
                 my $e = (Bric::Biz::AssetType->list
                          ({ name => $mdata->{element}, media => 1 }))[0]
-                           or die __PACKAGE__ . "::create : no media element found " .
-                             "matching (element => \"$mdata->{element}\")\n";
+                           or throw_ap(error => __PACKAGE__ .
+                                         "::create : no media element found " .
+                                         "matching (element => \"$mdata->{element}\")");
                 $melems{$mdata->{element}} =
                   [ $e->get_id,
                     { map { $_->get_name => $_ } $e->get_output_channels } ];
@@ -653,15 +655,15 @@ sub _load_media {
             $init{alias_id} = $mdata->{alias_id};
         } else {
             # It's bogus.
-            die __PACKAGE__ . "::create: No media element or alias ID found";
+            throw_ap(error => __PACKAGE__ . "::create: No media element or alias ID found");
         }
 
         # get source__id from source
         ($init{source__id}) = Bric::Biz::Org::Source->list_ids
           ({ source_name => $mdata->{source} });
-        die __PACKAGE__ . "::create : no source found matching " .
-            "(source => \"$mdata->{source}\")\n"
-                unless defined $init{source__id};
+        throw_ap(error => __PACKAGE__ . "::create : no source found matching " .
+                   "(source => \"$mdata->{source}\")")
+          unless defined $init{source__id};
 
         # setup simple fields
         $init{priority} = $mdata->{priority};
@@ -672,30 +674,30 @@ sub _load_media {
             my $date = $mdata->{$name};
             next unless $date; # skip missing date
             my $db_date = xs_date_to_db_date($date);
-            die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-                unless defined $db_date;
+            throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+              unless defined $db_date;
             $init{$name} = $db_date;
         }
 
         # assign catgeory__id
         $init{category__id} = category_path_to_id($mdata->{category}[0]);
-        die __PACKAGE__ . "::create : no category found matching " .
-            "(category => \"$mdata->{category}[0]\")\n"
-                unless defined $init{category__id};
+        throw_ap(error => __PACKAGE__ . "::create : no category found matching " .
+                   "(category => \"$mdata->{category}[0]\")")
+          unless defined $init{category__id};
 
         # get base media object
         my $media;
         unless ($update) {
             # create empty media
             $media = Bric::Biz::Asset::Business::Media->new(\%init);
-            die __PACKAGE__ . "::create : failed to create empty media object."
-                unless $media;
+            throw_ap(error => __PACKAGE__ . "::create : failed to create empty media object.")
+              unless $media;
             print STDERR __PACKAGE__ . "::create : created empty media object\n"
                 if DEBUG;
 
             # is this is right way to check create access for media?
-            die __PACKAGE__ . " : access denied.\n"
-                unless chk_authz($media, CREATE, 1);
+            throw_ap(error => __PACKAGE__ . " : access denied.")
+              unless chk_authz($media, CREATE, 1);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -717,18 +719,18 @@ sub _load_media {
                                                                });
             if ($media) {
                 # make sure it's ours
-                die __PACKAGE__ .
-                    "::update : media \"$id\" is checked out to another user.\n"
-                        unless $media->get_user__id == get_user_id;
-                die __PACKAGE__ . " : access denied.\n"
-                    unless chk_authz($media, CREATE, 1);
+                throw_ap(error => __PACKAGE__ .
+                           "::update : media \"$id\" is checked out to another user.")
+                  unless $media->get_user__id == get_user_id;
+                throw_ap(error => __PACKAGE__ . " : access denied.")
+                  unless chk_authz($media, CREATE, 1);
             } else {
                 # try a non-checked out version
                 $media = Bric::Biz::Asset::Business::Media->lookup({ id => $id });
-                die __PACKAGE__ . "::update : no media found for \"$id\"\n"
-                    unless $media;
-                die __PACKAGE__ . " : access denied.\n"
-                    unless chk_authz($media, CREATE, 1);
+                throw_ap(error => __PACKAGE__ . "::update : no media found for \"$id\"")
+                  unless $media;
+                throw_ap(error => __PACKAGE__ . " : access denied.")
+                  unless chk_authz($media, CREATE, 1);
 
                 # FIX: race condition here - between lookup and checkout
                 #      someone else could checkout...
@@ -771,10 +773,10 @@ sub _load_media {
                                 lname => $c->{lname});
                     my ($contrib) =
                       Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
-                    die __PACKAGE__ . "::create : no contributor found matching " .
-                      "(contributer => " .
-                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
-                          unless defined $contrib;
+                    throw_ap(error => __PACKAGE__ . "::create : no contributor found matching "
+                               . "(contributer => "
+                               . join(', ', map { "$_ => $c->{$_}" } keys %$c))
+                      unless defined $contrib;
                 $media->add_contributor($contrib, $c->{role});
                     log_event('media_add_contrib', $media,
                               { Name => $contrib->get_name });
@@ -789,9 +791,9 @@ sub _load_media {
                 my $fh       = new IO::Scalar \$data;
 
                 # empty or non-numeric size causes an SQL error
-                die __PACKAGE__ . 
-                  "::create : bad data found in file size element.\n"
-                    unless defined $size and $size =~ /^\d+$/;
+                throw_ap(error => __PACKAGE__ .
+                           "::create : bad data found in file size element.")
+                  unless defined $size and $size =~ /^\d+$/;
 
                 # new objects must be saved to have an id
                 $media->save;
@@ -832,10 +834,10 @@ sub _load_media {
           if $mdata->{output_channels}{output_channel};
 
         # sanity checks
-        die __PACKAGE__ . "::create : no output channels defined!"
-            unless $media->get_output_channels;
-        die __PACKAGE__ . "::create : no primary output channel defined!"
-            unless defined $media->get_primary_oc_id;
+        throw_ap(error => __PACKAGE__ . "::create : no output channels defined!")
+          unless $media->get_output_channels;
+        throw_ap(error => __PACKAGE__ . "::create : no primary output channel defined!")
+          unless defined $media->get_primary_oc_id;
 
         # remove all keywords if updating
         $media->del_keywords($media->get_keywords) if $update;
@@ -916,11 +918,11 @@ sub _serialize_media {
     my $writer   = $options{writer};
 
     my $media = Bric::Biz::Asset::Business::Media->lookup({id => $media_id});
-    die __PACKAGE__ . "::export : media_id \"$media_id\" not found.\n"
-        unless $media;
+    throw_ap(error => __PACKAGE__ . "::export : media_id \"$media_id\" not found.")
+      unless $media;
 
-    die __PACKAGE__ . "::export : access denied for media \"$media_id\".\n"
-        unless chk_authz($media, READ, 1);
+    throw_ap(error => __PACKAGE__ . "::export : access denied for media \"$media_id\".")
+      unless chk_authz($media, READ, 1);
 
     # open a media element
     my $alias_id = $media->get_alias_id;
@@ -944,8 +946,8 @@ sub _serialize_media {
 
     # get source name
     my $src = Bric::Biz::Org::Source->lookup({id => $media->get_source__id });
-    die __PACKAGE__ . "::export : unable to find source\n"
-        unless $src;
+    throw_ap(error => __PACKAGE__ . "::export : unable to find source")
+      unless $src;
     $writer->dataElement(source => $src->get_source_name);
 
     # get dates and output them in dateTime format
@@ -953,8 +955,8 @@ sub _serialize_media {
         my $date = $media->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);
-        die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-            unless defined $xs_date;
+        throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+          unless defined $xs_date;
         $writer->dataElement($name, $xs_date);
     }
 

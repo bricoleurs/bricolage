@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-19 00:14:27 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -228,7 +228,7 @@ sub burn_one {
     # Return a list of the resources we just burned.
     my $ret = $self->_get('_res') || return;
 
-    die $ap->new({msg => "No files burnt!"})
+    throw_ap(error => "No files burnt!")
 	unless @$ret;
 
     return wantarray ? @$ret : $ret;
@@ -345,8 +345,7 @@ sub run_script {
   my $template_root = $fs->cat_dir($self->get_comp_dir,
 				   ('oc_' . $self->get_oc->get_id));
 
-  die $ap->new({msg => __PACKAGE__ .
-		"::run_script() requires an \$element argument."})
+  throw_ap(error => __PACKAGE__ . "::run_script() requires an \$element argument.")
     unless $element;
 
   print STDERR __PACKAGE__, "::run_script() called.\n"
@@ -384,7 +383,7 @@ sub run_script {
   my $sub = "";
   print STDERR __PACKAGE__, "::run_script() : reading $script.\n"
     if DEBUG;
-  open(SCRIPT, $script) or die "Unable to read $script : $!";
+  open(SCRIPT, $script) or throw_gen(error => "Unable to read $script : $!");
   while(read(SCRIPT, $sub, 102400, length($sub))) {};
   close(SCRIPT);
 
@@ -420,7 +419,7 @@ END
       undef &{"$package\::_run_script"}; #avoid warnings
       my $result = _compile($code);
       unless ($result) {
-	  die $ap->new({msg => "Error compiling script.<br>\n<pre>\n$@\n</pre>"})
+	  throw_ap(error => "Error compiling script.<br>\n<pre>\n$@\n</pre>")
 	      if $@;
       }
 
@@ -444,7 +443,7 @@ END
   if ($@) {
       $@ =~ s/</&lt;/g;
       $@ =~ s/>/&gt;/g;
-      die $ap->new({msg => "Error running script.<br>\n<pre>\n$@\n</pre>"});
+      throw_ap(error => "Error running script.<br>\n<pre>\n$@\n</pre>");
   }
   return $output;
 }
@@ -530,8 +529,8 @@ sub new_template {
 	if DEBUG;
 
     # load args
-    die $ap->new({msg => "new_template called with odd number of arguments - "
-		         . "args should be a list of key-value pairs"})
+    throw_ap(error => "new_template called with odd number of arguments - "
+               . "args should be a list of key-value pairs")
       if (@_ % 2);
     my %args = @_;
 
@@ -563,8 +562,8 @@ sub new_template {
     if ($element and not exists $args{filename}) {
 	# find element template file
 	my $file = $self->_find_file($element, '.tmpl');
-	die $ap->new({ msg => "Unable to find HTML::Template template file ("
-		       . _element_filename($element) . ".tmpl)" })
+	throw_ap(error => "Unable to find HTML::Template template file ("
+                   . _element_filename($element) . ".tmpl)")
 	    unless defined $file;
 
 	print STDERR __PACKAGE__, "::new_template() : found template file ",
@@ -951,7 +950,8 @@ sub _write_pages {
 		if DEBUG;
 
 	    # open new file and write to it
-	    open(OUT, ">$filename") or die "Unable to open $filename : $!";
+	    open(OUT, ">$filename")
+              or throw_gen(error => "Unable to open $filename : $!");
 	    print OUT $$header;
 	    print OUT $pages[$page];
 	    print OUT $$footer;
@@ -969,7 +969,7 @@ sub _write_pages {
 	  "::_write_pages() : opening single page $filename\n" if DEBUG;
 
 	# open new file and write to it
-	open(OUT, ">$filename") or die "Unable to open $filename : $!";
+	open(OUT, ">$filename") or throw_gen(error => "Unable to open $filename : $!");
 	print OUT $$header;
 	print OUT $$output;
 	print OUT $$footer;

@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-12 05:59:02 $
+$Date: 2003-08-11 09:33:35 $
 
 
 =head1 SYNOPSIS
@@ -80,7 +80,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Grp::Desk;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 #==============================================================================#
 # Inheritance                          #
@@ -272,8 +272,7 @@ sub lookup {
 
     $desk = $get_em->($pkg, @_);
     # We want @$desk to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$desk > 1;
     return @$desk ? $desk->[0] : undef;
 }
@@ -722,8 +721,7 @@ sub checkout {
                                         '_asset_grp_obj');
 
     # Throw an exception if this asset isn't already on the desk.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Cannot checkout asset not on desk' })
+    throw_dp(error => 'Cannot checkout asset not on desk')
       unless $asset_grp->has_member({ obj => $a_obj });
 
     # Checkout the asset.
@@ -852,7 +850,7 @@ sub accept {
 
         # Throw an error if we could not create the group.
         my $err_msg = 'Could not create a new Grp object';
-        die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
+        throw_dp(error => $err_msg)
           unless $asset_grp_obj;
 
         $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
@@ -1111,8 +1109,7 @@ sub save {
 
             # Throw an error if we could not create the group.
             my $err_msg = 'Could not create a new Grp object';
-            die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
-              unless $asset_grp_obj;
+            throw_dp(error => $err_msg) unless $asset_grp_obj;
 
             $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
             $self->_set__dirty($dirty);

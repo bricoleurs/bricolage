@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Bric::App::Auth;
+use Bric::Util::Fault qw(throw_ap);
 use Apache;
 use Apache::Constants qw(OK FORBIDDEN);
 
@@ -22,15 +23,15 @@ Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -86,9 +87,9 @@ sub login {
   my $r = Apache->request;
 
   # check for required args
-  die __PACKAGE__ . "::login : missing required parameter 'username'\n"
+  throw_ap(error => __PACKAGE__ . "::login : missing required parameter 'username'")
     unless exists $args->{username};
-  die __PACKAGE__ . "::login : missing required parameter 'password'\n"
+  throw_ap(error => __PACKAGE__ . "::login : missing required parameter 'password'")
     unless exists $args->{password};
 
   print STDERR __PACKAGE__ . "::login : login attempt : $args->{username}\n"
@@ -106,7 +107,7 @@ sub login {
                                             $password);
 
   return name(result => 1) if $bool;
-  die __PACKAGE__ . "::login : login failed : $msg\n"; 
+  throw_ap(error => __PACKAGE__ . "::login : login failed : $msg");
 }
 
 =back

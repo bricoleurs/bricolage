@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:28 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Net::FTP;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
 
 ################################################################################
@@ -61,7 +61,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
 
 ################################################################################
@@ -153,15 +152,15 @@ sub put_res {
         my $is_win = $s->get_os eq 'Win32';
         # Instantiate an FTP object, login, and change to binary mode.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-          || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
-                             payload => $@ });
+          || throw_gen(error => "Unable to connect to remote server '$hn'.",
+                       payload => $@);
         $ftp->login($s->get_login, $s->get_password)
-          || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
-                             payload => $ftp->message });
+          || throw_gen(error => "Unable to login to remote server '$hn'.",
+                       payload => $ftp->message);
         $ftp->binary
-          || die $gen->new({ msg => 'Unable to change to binary mode on ' .
-                                    "remote server '$hn'.",
-                             payload => $ftp->message });
+          || throw_gen(error => 'Unable to change to binary mode on ' .
+                         "remote server '$hn'.",
+                       payload => $ftp->message);
 
         # Get the FTP and document roots.
         my $ftp_root = $ftp->pwd || '/';
@@ -184,11 +183,11 @@ sub put_res {
                         # Create each one if it doesn't exist.
                         unless ($ftp->cwd($dir)) {
                             $ftp->mkdir($dir);
-                            $ftp->cwd($dir) || die $gen->new
-                              ({ msg => "Unable to create directory '$dir' " .
-                                        "in path '$dest_dir' on remote server " .
-                                        "'$hn'.",
-                                 payload => $ftp->message });
+                            my $errstr = "Unable to create directory '$dir' "
+                              . "in path '$dest_dir' on remote server '$hn'.";
+                            $ftp->cwd($dir)
+                              || throw_gen(error => $errstr,
+                                           payload => $ftp->message);
                         }
                     }
                 }
@@ -198,32 +197,29 @@ sub put_res {
                 $ftp->cwd($ftp_root);
             }
 
-            # Delete any existing copy of the temp file if the FTP server is
-            # Windows.
+            # Delete any existing copy of the temp file if the FTP server is Windows.
             my $tmpdest = $dest . '.tmp';
             $ftp->delete($tmpdest) if $is_win;
 
             # Now, put the file on the server.
-            $ftp->put($src, $tmpdest) || die $gen->new
-              ({ msg => "Unable to put file '$tmpdest' on remote server " .
-                        "'$hn'",
-                 payload => $ftp->message });
+            $ftp->put($src, $tmpdest)
+              || throw_gen(error => "Unable to put file '$tmpdest' on remote server '$hn'",
+                           payload => $ftp->message);
 
-            # Delete any existing copy of the file if the FTP server is
-            # Windows.
+            # Delete any existing copy of the file if the FTP server is Windows.
             $ftp->delete($dest) if $is_win;
 
             # Rename the temporary file.
-            $ftp->rename($tmpdest, $dest) || die $gen->new
-              ({ msg => "Unable to rename file '$tmpdest' to '$dest' on " .
-                         "remote server '$hn'.",
-                 payload => $ftp->message });
+            $ftp->rename($tmpdest, $dest)
+              || throw_gen(error => "Unable to rename file '$tmpdest' to '$dest' on " .
+                             "remote server '$hn'.",
+                           payload => $ftp->message);
         }
         # Log off.
-        $ftp->quit || die $gen->new
-          ({ msg => 'Unable to properly close connection to remote server ' .
-                    "'$hn'.",
-             payload => $ftp->message });
+        $ftp->quit
+          || throw_gen(error => 'Unable to properly close connection to '
+                         . "remote server '$hn'.",
+                       payload => $ftp->message);
     }
     return 1;
 }
@@ -271,10 +267,10 @@ sub del_res {
         my $hn = $s->get_host_name;
         # Instantiate an FTP object and login.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-          || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
-                             payload => $@ });
+          || throw_gen(error => "Unable to connect to remote server '$hn'.",
+                       payload => $@);
         $ftp->login($s->get_login, $s->get_password)
-          || die $gen->new({ msg => "Unable to login to remote server '$hn'." });
+          || throw_gen(error => "Unable to login to remote server '$hn'.");
 
         # Get the document root.
         my $doc_root = $s->get_doc_root;
@@ -284,13 +280,13 @@ sub del_res {
             if ($ftp->ls($file)) {
                 # It exists. Delete it.
                 $ftp->delete($file)
-                  || die $gen->new({ msg => "Unable to delete resource '$file' "
-                                            . "from remote server '$hn'." });
+                  || throw_gen(error => "Unable to delete resource '$file' "
+                                 . "from remote server '$hn'.");
             }
         }
         $ftp->quit
-          || die $gen->new({ msg => 'Unable to properly close connection to '
-                                    . "remote server '$hn'." });
+          || throw_gen(error => 'Unable to properly close connection to '
+                         . "remote server '$hn'.");
     }
     return 1;
 }

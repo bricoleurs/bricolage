@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:14 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -90,8 +90,7 @@ use Bric::Config qw(:oc);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
 use Bric::Util::Coll::OCInclude;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_gen throw_dp);
 
 #==============================================================================
 ## Inheritance                         #
@@ -135,8 +134,6 @@ use constant DEFAULT_USE_SLUG => 0;
 #--------------------------------------#
 # Private Class Fields
 my $METHS;
-my $gen = 'Bric::Util::Fault::Exception::GEN';
-my $dp  = 'Bric::Util::Fault::Exception::DP';
 
 my $TABLE = 'output_channel';
 my $SEL_TABLES = "$TABLE oc, member m, output_channel_member sm";
@@ -355,8 +352,7 @@ B<Notes:> NONE.
 
 sub lookup {
     my ($class, $params) = @_;
-    die $gen->new
-      ({ msg => "Missing required parameter 'id' or 'name'/'site_id'" })
+    throw_gen(error => "Missing required parameter 'id' or 'name'/'site_id'")
       unless $params->{id} or ($params->{name} and $params->{site_id});
 
     my $oc = $class->cache_lookup($params);
@@ -365,8 +361,8 @@ sub lookup {
     $oc = $class->_do_list($params);
 
     # We want @$person to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::OutputChannel objects found.' }) if @$oc > 1;
+    throw_dp(error => 'Too many Bric::Biz::OutputChannel objects found.')
+      if @$oc > 1;
     return @$oc ? $oc->[0] : undef;
 }
 
@@ -2014,8 +2010,7 @@ $parse_uri_format = sub {
     my %toks = map { $_ => 1 } qw(categories day month year slug);
 
     # Throw an exception for an empty or bogus format.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => "No $name value specified" })
+    throw_dp(error => "No $name value specified")
       if not $format or $format =~ /^\s*$/;
 
     # Parse the format for invalid tokens.
@@ -2031,8 +2026,7 @@ $parse_uri_format = sub {
     if (my $c = @bad) {
         my $pl = $c > 1 ? 's' : '';
         my $bad = join ', ', @bad;
-        die Bric::Util::Fault::Exception::DP->new
-          ({ msg => "Invalid $name token$pl: $bad" });
+        throw_dp(error => "Invalid $name token$pl: $bad");
     }
 
     # Return the format.

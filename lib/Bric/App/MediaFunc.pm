@@ -6,16 +6,16 @@ Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 06:46:44 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -36,7 +36,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Image::Info ();
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -59,7 +59,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
 
 ################################################################################
 
@@ -311,9 +310,10 @@ sub _get_image_info {
     my $info = $self->_get('_image_info');
     return $info if $info;
     $info = Image::Info::image_info( $self->_get('_path'));
-    die $dp->new({ msg => 'Error retrieving data from image.',
-		   payload => $info->{error} }) if $info->{error};
-    $self->_set( { '_image_info' => $info });
+    throw_dp(error => 'Error retrieving data from image.',
+             payload => $info->{error})
+      if $info->{error};
+    $self->_set({ '_image_info' => $info });
     return $info;
 }
 

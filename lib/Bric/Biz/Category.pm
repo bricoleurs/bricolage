@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-30 18:34:19 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -83,8 +83,7 @@ use strict;
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Coll::Keyword;
@@ -120,8 +119,6 @@ use constant key_name => 'category';
 
 #--------------------------------------#
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
-my $dp = 'Bric::Util::Fault::Exception::DP';
 my $table = 'category';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
@@ -260,8 +257,7 @@ sub lookup {
 
     $cat = $pkg->_do_list(@_);
     # We want @$cat to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$cat > 1;
     return @$cat ? $cat->[0] : undef;
 }
@@ -675,7 +671,7 @@ sub site_root_category {
 
     unless ($site_id) {
         my $msg = 'Could not determine the site ID for the current site';
-        die $dp->new({msg => $msg});
+        throw_dp(error => $msg);
     }
 
     my $sr = $class->list({parent_id => 0,
@@ -837,7 +833,7 @@ NONE
 sub set_directory {
     my ($self, $dir) = @_;
     my $id = $self->_get('id');
-    die $dp->new({ msg => "Cannot change the directory of the root category" })
+    throw_dp(error => "Cannot change the directory of the root category")
       if $self->is_root_category;
     $self->_set(['directory', '_update_uri'], [$dir, 1]);
 }
@@ -867,9 +863,9 @@ sub set_parent_id {
     my ($self, $pid) = @_;
     my $id = $self->_get('id');
     if (defined $id) {
-        die $dp->new({ msg => "Cannot change the parent of the root category" })
+        throw_dp(error => "Cannot change the parent of the root category")
           if $self->is_root_category;
-        die $dp->new({ msg => "Categories cannot be their own parent" })
+        throw_dp(error => "Categories cannot be their own parent")
           if $id == $pid;
     }
     $self->_set(['parent_id', '_update_uri'], [$pid, 1]);
@@ -1669,7 +1665,7 @@ sub _load_grp {
     # HACK: This should throw an error object.
     unless ($obj) {
         my $err_msg = 'Failed to instantiate group';
-        die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg});
+        throw_dp(error => $err_msg);
     }
 
     $self->_set([$obj_field],[$obj]);

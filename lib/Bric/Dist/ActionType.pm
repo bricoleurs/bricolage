@@ -6,16 +6,16 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -63,7 +63,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -87,7 +87,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
 my @cols = qw(a.id a.name a.description a.active t.name);
 my @props = qw(id name description _active medias_href);
 my @ord = qw(name description);
@@ -176,7 +175,7 @@ sub lookup {
 
     $at = $get_em->($pkg, @_);
     # We want @$at to have only one value.
-    die $dp->new({  msg => 'Too many Bric::Dist::ActionType objects found.' })
+    throw_dp(error => 'Too many Bric::Dist::ActionType objects found.')
       if @$at > 1;
     return @$at ? $at->[0] : undef;
 }

@@ -7,15 +7,15 @@ Bric::Util::Grp::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -71,8 +71,8 @@ assets.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
+use Bric::Util::Fault qw(throw_mni);
 
 
 #==============================================================================#
@@ -517,8 +517,7 @@ sub remove {
 
     # Implement when a remove method is added to the parent.
 
-    # HACK: This should throw an error object.
-    die __PACKAGE__.":remove - Method not implemented\n";
+    throw_mni(error => 'Method not implemented');
 }
 
 #==============================================================================#

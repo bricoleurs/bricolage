@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:51 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -96,8 +96,7 @@ use Bric::Util::Grp::Person;
 use Bric::Biz::Org::Person;
 use Bric::Util::Coll::Contact;
 use Bric::Util::Pref;
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -283,8 +282,7 @@ sub lookup {
 
     $person = $get_em->($pkg, @_);
     # We want @$person to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$person > 1;
     return @$person ? $person->[0] : undef;
 }

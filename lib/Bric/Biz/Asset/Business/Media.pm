@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -294,8 +294,6 @@ use constant DEFAULT_ORDER => 'cover_date';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord);
-my $da = 'Bric::Util::Fault::Exception::DA';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Instance Fields
@@ -1067,8 +1065,8 @@ sub get_uri {
     # Make sure we have a valid output channel.
     $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
       unless ref $oc;
-    die $da->new({ msg => "Output channel '" . $oc->get_name . "' not " .
-                   "associated with media '" . $self->get_name . "'" })
+    throw_da(error => "Output channel '" . $oc->get_name . "' not " .
+                   "associated with media '" . $self->get_name . "'")
       unless $self->get_output_channels($oc->get_id);
 
     return Bric::Util::Trans::FS->cat_uri
@@ -1166,7 +1164,7 @@ sub upload_file {
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
     open FILE, ">$path"
-      or die $gen->new({ msg => "Unable to open '$path': $!" });
+      or throw_gen(error => "Unable to open '$path': $!");
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
@@ -1241,7 +1239,7 @@ sub get_file {
     my $self = shift;
     my $path = $self->get_path || return;
     my $fh;
-    open $fh, $path or die $gen->new({ msg => "Cannot open '$path': $!" });
+    open $fh, $path or throw_gen(error => "Cannot open '$path': $!");
     return $fh;
 }
 
@@ -1298,7 +1296,7 @@ B<Notes:> NONE.
 
 sub revert {
     my ($self, $version) = @_;
-    die $gen->new({ msg => "May not revert a non checked out version" })
+    throw_gen(error => "May not revert a non checked out version")
       unless $self->_get('checked_out');
 
     my $revert_obj;
@@ -1310,7 +1308,7 @@ sub revert {
         }
     }
 
-    die $gen->new({ msg => "The requested version does not exist" })
+    throw_gen(error => "The requested version does not exist")
       unless $revert_obj;
 
     # Delete existing contributors.
@@ -1441,7 +1439,7 @@ sub save {
 
     if (my $err = $@) {
         rollback();
-        die $err;
+        rethrow_exception($err);
     }
 
     return $self;

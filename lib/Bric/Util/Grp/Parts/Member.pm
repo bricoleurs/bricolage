@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:16 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -62,8 +62,7 @@ use strict;
 use Bric::Util::Class;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::Member;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_gen);
 
 #==============================================================================#
 # Inheritance                          #
@@ -1176,8 +1175,7 @@ sub save {
         my ($id, $gid, $grp, $del) = $self->_get(qw(id grp_id grp _delete));
         unless (defined $gid) {
             $gid = $grp->get_id if $grp;
-            die Bric::Util::Fault::Exception::GEN->new
-              ({ msg => 'The grp_id or grp property is required'})
+            throw_gen(error => 'The grp_id or grp property is required')
               unless defined $gid;
             $self->_set(['grp_id'], [$gid]);
         }
@@ -1405,8 +1403,7 @@ NONE
 sub _get_class_id {
     my ( $self, $pkg ) = @_;
     my $class_id = Bric::Util::Class->lookup( { pkg_name => lc $pkg } )->get_id;
-    die Bric::Util::Fault::Exception::GEN->new(
-        { msg => "Not a Supported Bricolage Class" } )
+    throw_gen(error => "Not a Supported Bricolage Class")
       unless $class_id;
     return $class_id;
 }

@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -95,9 +95,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::MNI;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_dp throw_mni throw_gen);
 use Bric::Dist::Resource;
 use Bric::Util::Attribute::Action;
 
@@ -128,9 +126,6 @@ my %nmap = ( id => 'a.id = ?',
 my %tmap = ( type => 'LOWER(t.name) LIKE ?',
              description => 'LOWER(t.description) LIKE ?' );
 
-my $mni = 'Bric::Util::Fault::Exception::MNI';
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my @ord = qw(type ord description active);
 my $meths;
 
@@ -143,7 +138,7 @@ while (my $l = <DATA>) {
     my ($key, $class) = split / => /, $l, 2;
     $acts->{$key} = $class;
     eval "require $class";
-    die $@ if $@;
+    throw_gen(error => $@) if $@;
 }
 
 ################################################################################
@@ -294,7 +289,7 @@ sub lookup {
 
     $act = $get_em->($pkg, @_);
     # We want @$act to have only one value.
-    die $dp->new({ msg => 'Too many Bric::Dist::Action objects found.' })
+    throw_dp(error => 'Too many Bric::Dist::Action objects found.')
       if @$act > 1;
     return @$act ? $act->[0] : undef;
 }
@@ -1381,7 +1376,7 @@ B<Notes:> NONE.
 sub do_it {
     # Look up the type. If it's "Put" or "Delete", then call the put() or del()
     # functions in the Mover class associated with the ServerType.
-    die $mni->new({ msg => __PACKAGE__ . '::do_it method not implemented.'});
+    throw_mni(error => __PACKAGE__ . '::do_it method not implemented.');
 }
 
 ################################################################################
@@ -1574,8 +1569,7 @@ $get_em = sub {
             push @wheres, 'a.active = ?';
             push @params, $v ? 1 : 0;
         } else {
-            die $gen->new({ msg =>
-              "Invalid parameter '$k' passed to constructor method." });
+            throw_gen(error => "Invalid parameter '$k' passed to constructor method.");
         }
     }
 
@@ -1662,8 +1656,9 @@ $make_obj = sub {
     if ($init->[4]) {
         $pkg = $acts->{$init->[4]} ||= "Bric::Dist::Action::$init->[4]";
         eval "require $acts->{$init->[4]}";
-        die $gen->new({ msg => "Unable to load $acts->{$init->[4]} action subclass.",
-                        payload => $@ }) if $@;
+        throw_gen(error => "Unable to load $acts->{$init->[4]} action subclass.",
+                  payload => $@)
+          if $@;
     }
     my $self = bless {}, $pkg;
     $self->SUPER::new;
@@ -1764,7 +1759,7 @@ $reorder = sub {
     begin();
     eval { foreach (@ord) { execute($upd, ++$i, $_) } };
     # If there was an error, rollback and die. Otherwise, commit.
-    $@ ? rollback() && die $@ : commit();
+    $@ ? rollback() && throw_gen(error => $@) : commit();
     return 1;
 };
 

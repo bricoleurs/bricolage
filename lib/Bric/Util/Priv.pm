@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-26 02:01:14 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -61,8 +61,7 @@ use strict;
 use Bric::Util::DBI qw(:standard prepare prepare_ca);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Priv::Parts::Const qw(:all);
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_ap throw_dp);
 use Bric::Util::Grp;
 use Bric::Util::Grp::User;
 
@@ -196,9 +195,8 @@ B<Notes:> NONE.
 
 sub new {
     my ($pkg, $init) = @_;
-    die Bric::Util::Fault::Exception::AP->new(
-      { msg => "Must pass user group and object group to "
-               .__PACKAGE__."::new()" })
+    throw_ap(error => "Must pass user group and object group to "
+             .__PACKAGE__."::new()")
       unless $init->{usr_grp} && $init->{obj_grp};
 
     # Grab the object group ID.
@@ -272,8 +270,8 @@ sub lookup {
 
     $priv = $get_em->($pkg, @_);
     # We want @$priv to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::Priv objects found.' }) if @$priv > 1;
+    throw_dp(error => 'Too many Bric::Util::Priv objects found.')
+      if @$priv > 1;
     return @$priv ? $priv->[0] : undef;
 }
 
@@ -1160,8 +1158,8 @@ B<Notes:> NONE.
 sub set_value {
     my $self = shift;
     my $val = shift;
-    die Bric::Util::Fault::Exception::AP->new(
-      { msg => "Not a valid privilege value" }) unless $vals{$val};
+    throw_ap(error => "Not a valid privilege value")
+      unless $vals{$val};
     $self->_set(['value'], [$val]);
 }
 

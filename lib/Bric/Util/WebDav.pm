@@ -7,15 +7,15 @@ Bric::Util::WebDav - Placeholder for Bricolage DAV support.
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:21 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
@@ -121,8 +121,8 @@ token. Returns success_code and body or error_code.
 
 use strict;
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
+use Bric::Util::Fault qw(rethrow_exception throw_mni);
 
 #=============================================================================#
 # Inheritance                          #
@@ -140,8 +140,8 @@ BEGIN {
 	%HANDLER = (
 	);
 	foreach my $pkg (values %HANDLER){
-		eval " require $pkg ";
-		die "$@\n" if ($@);
+            eval " require $pkg ";
+            rethrow_exception($@) if $@;
 	}
 }
 
@@ -286,7 +286,7 @@ sub new {
 }
 
 sub list {
-	die "Method Not implemented\n";
+    throw_mni(error => 'Method Not implemented');
 }
 
 #--------------------------------------#

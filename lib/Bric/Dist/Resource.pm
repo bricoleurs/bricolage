@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-07 00:35:11 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::MediaType;
 use Bric::App::Event qw(log_event);
-use Bric::Util::Fault qw(throw_gen);
+use Bric::Util::Fault qw(throw_gen throw_dp throw_da);
 
 ################################################################################
 # Inheritance
@@ -259,8 +259,8 @@ sub lookup {
 
     $res = $get_em->($pkg, @_);
     # We want @$res to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Dist::Resource objects found.' }) if @$res > 1;
+    throw_dp(error => 'Too many Bric::Dist::Resource objects found.')
+      if @$res > 1;
     return @$res ? $res->[0] : undef;
 }
 
@@ -827,8 +827,7 @@ get_path() and set_path() methods using File::Spec.
 sub set_path {
     my ($self, $path) = @_;
     # Throw an error if the path has already been looaded in the database.
-    die Bric::Util::Fault::Exception::GEN->new({
-      msg => "Cannot change path in existing " . __PACKAGE__ . " object" })
+    throw_gen(error => "Cannot change path in existing " . __PACKAGE__ . " object")
       if $self->get_id;
     &$stat($self, $path);
 }
@@ -1006,8 +1005,7 @@ sub stat_me {
     my $self = shift;
     # Throw an error if the path propery has not been set.
     my ($path, $media) = $self->_get(qw(path media_type));
-    die Bric::Util::Fault::Exception::DA->new({
-      msg => __PACKAGE__ . '::stat_me() requires the path property to be set'})
+    throw_da(error => __PACKAGE__ . '::stat_me() requires the path property to be set')
       unless $path;
     &$stat($self, $path);
 }
@@ -1486,8 +1484,7 @@ B<Notes:> NONE.
 
 sub add_file_ids {
     my $self = shift;
-    die Bric::Util::Fault::Exception::GEN->new({
-      msg => "Cannot associate file resources with another file resource" })
+    throw_gen(error => "Cannot associate file resources with another file resource")
       unless $self->is_dir;
     &$add_ids($self, 'file', @_);
 }
@@ -2090,8 +2087,7 @@ B<Notes:>
 $stat = sub {
     my ($self, $path) = @_;
     # Throw an error if the path doesn't exist on the file system.
-    die Bric::Util::Fault::Exception::GEN->new({
-      msg => "Path '$path' does not exist." }) unless -e $path;
+    throw_gen(error => "Path '$path' does not exist.") unless -e $path;
 
     # Chop off trailing '/'. May need to change this later to be platform
     # independent.

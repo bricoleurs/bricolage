@@ -7,16 +7,16 @@ distributed.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:26 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -79,8 +79,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Dist::ServerType;
 
 ################################################################################
@@ -123,8 +122,6 @@ my @cols = qw(id server_type__id host_name os doc_root login password cookie
               active);
 my @props = qw(id server_type_id host_name os doc_root login password cookie
                _active);
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my @ord = qw(host_name os doc_root login password cookie active);
 my $meths;
 
@@ -274,7 +271,7 @@ sub lookup {
 
     $server = $get_em->($pkg, @_);
     # We want @$server to have only one value.
-    die $dp->new({ msg => 'Too many Bric::Dist::Server objects found.' })
+    throw_dp(error => 'Too many Bric::Dist::Server objects found.')
       if @$server > 1;
     return @$server ? $server->[0] : undef;
 }
@@ -973,7 +970,7 @@ B<Notes:> NONE.
 
 sub set_os {
     my ($self, $os) = @_;
-    die $gen->new({ msg => "Not a supported operating system: $os" })
+    throw_gen(error => "Not a supported operating system: $os")
       unless $OS{$os};
     $self->_set(['os'], [$os]);
 }

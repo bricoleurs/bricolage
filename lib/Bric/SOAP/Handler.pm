@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -200,7 +200,6 @@ sub handle_err {
     $commit = 0;
 
     # Create an exception object unless we already have one.
-    # (is it okay to assume there are no Mason exceptions in SOAP?)
     $err = Bric::Util::Fault::Exception::AP->new
         ( error => "Error executing SOAP command", payload => $err || $string )
         unless isa_bric_exception($err);

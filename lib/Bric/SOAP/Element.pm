@@ -9,6 +9,7 @@ use Bric::Biz::ATType;
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::App::Event    qw(log_event);
+use Bric::Util::Fault   qw(throw_ap);
 use IO::Scalar;
 use XML::Writer;
 
@@ -29,15 +30,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -131,17 +132,17 @@ sub list_ids {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # handle type => type__id mapping
     if (exists $args->{type}) {
         my ($type_id) = Bric::Biz::ATType->list_ids(
                                  { name => $args->{type} });
-        die __PACKAGE__ . "::list_ids : no type found matching " .
-            "(type => \"$args->{type}\")\n"
-                unless defined $type_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no type found matching " .
+                   "(type => \"$args->{type}\")")
+          unless defined $type_id;
         $args->{type__id} = $type_id;
         delete $args->{type};
     }
@@ -150,9 +151,9 @@ sub list_ids {
     if (exists $args->{output_channel}) {
         my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
                                 { name => $args->{output_channel} });
-        die __PACKAGE__ . "::list_ids : no output_channel found matching " .
-            "(output_channel => \"$args->{output_channel}\")\n"
-                unless defined $output_channel_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no output_channel found matching "
+                   . "(output_channel => \"$args->{output_channel}\")")
+          unless defined $output_channel_id;
 
         # strangely, AssetType->list() calls this output_channel, not
         # output_channel__id like the rest of Bric
@@ -217,8 +218,8 @@ sub export {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # element_id is sugar for a one-element element_ids arg
@@ -226,10 +227,10 @@ sub export {
       if exists $args->{element_id};
 
     # make sure element_ids is an array
-    die __PACKAGE__ . "::export : missing required element_id(s) setting.\n"
-        unless defined $args->{element_ids};
-    die __PACKAGE__ . "::export : malformed element_id(s) setting.\n"
-        unless ref $args->{element_ids} and ref $args->{element_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::export : missing required element_id(s) setting.")
+      unless defined $args->{element_ids};
+    throw_ap(error => __PACKAGE__ . "::export : malformed element_id(s) setting.")
+      unless ref $args->{element_ids} and ref $args->{element_ids} eq 'ARRAY';
 
     # setup XML::Writer
     my $document        = "";
@@ -303,12 +304,12 @@ sub create {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::create : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
       unless $args->{document};
 
     # setup empty update_ids arg to indicate create state
@@ -373,21 +374,20 @@ sub update {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::update : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
       unless $args->{document};
 
     # make sure we have an update_ids array
-    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
       unless $args->{update_ids};
-    die __PACKAGE__ . 
-        "::update : malformed update_ids parameter - must be an array.\n"
-            unless ref $args->{update_ids} and 
-                   ref $args->{update_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ .
+               "::update : malformed update_ids parameter - must be an array.")
+      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
 
     # call _load_element
     return $pkg->_load_element($args);
@@ -432,8 +432,8 @@ sub delete {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # element_id is sugar for a one-element element_ids arg
@@ -441,11 +441,10 @@ sub delete {
         if exists $args->{element_id};
 
     # make sure element_ids is an array
-    die __PACKAGE__ . "::delete : missing required element_id(s) setting.\n"
-        unless defined $args->{element_ids};
-    die __PACKAGE__ . "::delete : malformed element_id(s) setting.\n"
-        unless ref $args->{element_ids} and
-               ref $args->{element_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::delete : missing required element_id(s) setting.")
+      unless defined $args->{element_ids};
+    throw_ap(error => __PACKAGE__ . "::delete : malformed element_id(s) setting.")
+      unless ref $args->{element_ids} and ref $args->{element_ids} eq 'ARRAY';
 
     # delete the element
     foreach my $element_id (@{$args->{element_ids}}) {
@@ -455,12 +454,12 @@ sub delete {
 
         # lookup element
         my $element = Bric::Biz::AssetType->lookup({ id => $element_id });
-        die __PACKAGE__ .
-            "::delete : no element found for id \"$element_id\"\n"
-                unless $element;
-        die __PACKAGE__ .
-            "::delete : access denied for element \"$element_id\".\n"
-                unless chk_authz($element, CREATE, 1);
+        throw_ap(error => __PACKAGE__ .
+            "::delete : no element found for id \"$element_id\"")
+          unless $element;
+        throw_ap(error => __PACKAGE__ .
+                   "::delete : access denied for element \"$element_id\".")
+          unless chk_authz($element, CREATE, 1);
 
         # delete the element
         $element->deactivate;
@@ -499,12 +498,11 @@ sub _load_element {
                                             'subelement',
                                             'field',
                                            ) };
-        die __PACKAGE__ . " : problem parsing asset document : $@\n"
-            if $@;
-        die __PACKAGE__ .
-            " : problem parsing asset document : no element found!\n"
-                unless ref $data and ref $data eq 'HASH'
-                    and exists $data->{element};
+        throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
+          if $@;
+        throw_ap(error => __PACKAGE__ .
+                   " : problem parsing asset document : no element found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{element};
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
@@ -516,9 +514,9 @@ sub _load_element {
 
         # handle type => type__id mapping
         my ($type) = Bric::Biz::ATType->list({ name => $edata->{type} });
-        die __PACKAGE__ . " : no type found matching " .
-            "(type => \"$edata->{type}\")\n"
-                unless defined $type;
+        throw_ap(error => __PACKAGE__ . " : no type found matching " .
+                   "(type => \"$edata->{type}\")")
+          unless defined $type;
         my $type_id = $type->get_id;
 
         # handler burner mapping
@@ -528,8 +526,8 @@ sub _load_element {
         } elsif ($edata->{burner} eq "HTML::Template") {
             $burner = Bric::Biz::AssetType::BURNER_TEMPLATE;
         } else {
-            die __PACKAGE__ . "::export : unknown burner \"$edata->{burner}\"".
-                " for element \"$id\".\n";
+            throw_ap(error => __PACKAGE__ . "::export : unknown burner"
+                       . "\"$edata->{burner}\" for element \"$id\".");
         }
 
         # are we updating?
@@ -539,12 +537,12 @@ sub _load_element {
         my @list = Bric::Biz::AssetType->list_ids({ name => $edata->{name},
                                                     active => 0 });
         if (@list) {
-            die "Unable to create element \"$id\" named \"$edata->{name}\" : " .
-                "that name is already taken.\n"
-                    unless $update;
-            die "Unable to update element \"$id\" to have name " .
-                "$edata->{name}\" : that name is already taken.\n"
-                    unless $list[0] == $id;
+            throw_ap(error => "Unable to create element \"$id\" named \"$edata->{name}\" : "
+                       . "that name is already taken.")
+              unless $update;
+            throw_ap(error => "Unable to update element \"$id\" to have name " .
+                       "$edata->{name}\" : that name is already taken.")
+              unless $list[0] == $id;
         }
 
         my $element;
@@ -554,8 +552,8 @@ sub _load_element {
         } else {
             # load element
             $element = Bric::Biz::AssetType->lookup({ id => $id });
-            die __PACKAGE__ . "::update : unable to find element \"$id\".\n"
-                unless $element;
+            throw_ap(error => __PACKAGE__ . "::update : unable to find element \"$id\".")
+              unless $element;
 
             # update type__id and zap cached type object (ugh)
             $element->_set(['type__id', '_att_obj'], [$type_id, undef]);
@@ -587,9 +585,9 @@ sub _load_element {
                 my $name = ref $ocdata ? $ocdata->{content} : $ocdata;
                 my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
                                              {name => $name});
-                die __PACKAGE__ ."::create : no output_channel found matching".
-                    " (output_channel => \"$name\")\n"
-                        unless defined $output_channel_id;
+                throw_ap(error => __PACKAGE__ ."::create : no output_channel found"
+                           . " matching (output_channel => \"$name\")")
+                  unless defined $output_channel_id;
 
                 push(@ocids, $output_channel_id);
                 $primary_ocid = $output_channel_id 
@@ -597,10 +595,10 @@ sub _load_element {
             }
 
             # sanity checks
-            die __PACKAGE__ . " : no output_channels defined!"
-                unless @ocids;
-            die __PACKAGE__ . " : no primary output_channel defined!"
-                unless defined $primary_ocid;
+            throw_ap(error => __PACKAGE__ . " : no output_channels defined!")
+              unless @ocids;
+            throw_ap(error => __PACKAGE__ . " : no primary output_channel defined!")
+              unless defined $primary_ocid;
 
             # add output_channels to element
             $element->add_output_channels(\@ocids);
@@ -746,10 +744,10 @@ sub _load_element {
 
         foreach my $sub_name (@{$fixup{$element_name}}) {
             my ($sub_id) = Bric::Biz::AssetType->list_ids({name => $sub_name});
-            die __PACKAGE__ . " : no subelement found matching " .
-                "(subelement => \"$sub_name\") ".
-                    "for element \"$element_name\".\n"
-                       unless defined $sub_id;
+            throw_ap(error => __PACKAGE__ . " : no subelement found matching "
+                       . "(subelement => \"$sub_name\") "
+                       . "for element \"$element_name\".")
+              unless defined $sub_id;
             push @sub_ids, $sub_id;
         }
         $element->add_containers(\@sub_ids);
@@ -773,12 +771,12 @@ sub _serialize_element {
     my $writer      = $options{writer};
 
     my $element = Bric::Biz::AssetType->lookup({id => $element_id});
-    die __PACKAGE__ . "::export : element_id \"$element_id\" not found.\n"
-        unless $element;
+    throw_ap(error => __PACKAGE__ . "::export : element_id \"$element_id\" not found.")
+      unless $element;
 
-    die __PACKAGE__ .
-        "::export : access denied for element \"$element_id\".\n"
-            unless chk_authz($element, READ, 1);
+    throw_ap(error => __PACKAGE__ .
+        "::export : access denied for element \"$element_id\".")
+      unless chk_authz($element, READ, 1);
 
     # open a element element
     $writer->startTag("element", id => $element_id);
@@ -797,8 +795,8 @@ sub _serialize_element {
     } elsif ($burner_id == Bric::Biz::AssetType::BURNER_TEMPLATE) {
         $writer->dataElement(burner => "HTML::Template");
     } else {
-        die __PACKAGE__ . "::export : unknown burner \"$burner_id\" ".
-            "for element \"$element_id\".\n";
+        throw_ap(error => __PACKAGE__ . "::export : unknown burner \"$burner_id\""
+                   . " for element \"$element_id\".");
     }
 
     # get type name

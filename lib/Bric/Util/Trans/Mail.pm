@@ -8,15 +8,15 @@ Bric::Util::Trans::Mail - Utility class for sending email.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -48,7 +48,7 @@ use strict;
 # Programmatic Dependences
 use Net::SMTP;
 use MIME::Entity;
-use Bric::Util::Fault qw(throw_dp);
+use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Config qw(:email);
 
 ################################################################################
@@ -864,7 +864,7 @@ sub send {
 
         # Package it up and send it out!
 	my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
-	  or die "Unable to create Net::SMTP object for '$smtp'";
+	  or throw_gen(error => "Unable to create Net::SMTP object for '$smtp'");
 	$smtp->mail($fromre);
         # Send it to everyone.
 	$smtp->to( map { $_ ? @$_ : () }

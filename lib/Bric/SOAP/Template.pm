@@ -11,6 +11,7 @@ use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use Bric::App::Event    qw(log_event);
+use Bric::Util::Fault   qw(throw_ap);
 use IO::Scalar;
 use XML::Writer;
 use Bric::Biz::Person::User;
@@ -39,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -181,7 +182,7 @@ sub list_ids {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
             unless exists $allowed{$_};
     }
 
@@ -189,9 +190,9 @@ sub list_ids {
     if (exists $args->{workflow}) {
         my ($workflow_id) = Bric::Biz::Workflow->list_ids(
                                 { name => $args->{workflow} });
-        die __PACKAGE__ . "::list_ids : no workflow found matching " .
-            "(workflow => \"$args->{workflow}\")\n"
-                unless defined $workflow_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no workflow found matching "
+                   . "(workflow => \"$args->{workflow}\")")
+          unless defined $workflow_id;
         $args->{workflow__id} = $workflow_id;
         delete $args->{workflow};
     }
@@ -200,9 +201,9 @@ sub list_ids {
     if (exists $args->{output_channel}) {
         my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
                                 { name => $args->{output_channel} });
-        die __PACKAGE__ . "::list_ids : no output_channel found matching " .
-            "(output_channel => \"$args->{output_channel}\")\n"
-                unless defined $output_channel_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no output_channel found matching "
+                   . "(output_channel => \"$args->{output_channel}\")")
+          unless defined $output_channel_id;
         $args->{output_channel__id} = $output_channel_id;
         delete $args->{output_channel};
     }
@@ -210,9 +211,9 @@ sub list_ids {
     # handle category => category_id conversion
     if (exists $args->{category}) {
         my $category_id = category_path_to_id($args->{category});
-        die __PACKAGE__ . "::list_ids : no category found matching " .
-            "(category => \"$args->{category}\")\n"
-                unless defined $category_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no category found matching "
+                   . "(category => \"$args->{category}\")")
+          unless defined $category_id;
         $args->{category_id} = $category_id;
         delete $args->{category};
     }
@@ -220,9 +221,9 @@ sub list_ids {
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
         my $date = xs_date_to_db_date($args->{$name});
-        die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
-            "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
-                unless defined $date;
+        throw_ap(error => __PACKAGE__ . "::list_ids : bad date format for $name parameter "
+                   . "\"$args->{$name}\" : must be proper XML Schema dateTime format.")
+          unless defined $date;
         $args->{$name} = $date;
     }
 
@@ -288,7 +289,7 @@ sub export {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
             unless exists $allowed{$_};
     }
 
@@ -297,9 +298,9 @@ sub export {
       if exists $args->{template_id};
 
     # make sure template_ids is an array
-    die __PACKAGE__ . "::export : missing required template_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::export : missing required template_id(s) setting.")
         unless defined $args->{template_ids};
-    die __PACKAGE__ . "::export : malformed template_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::export : malformed template_id(s) setting.")
         unless ref $args->{template_ids} and ref $args->{template_ids} eq 'ARRAY';
 
     # setup XML::Writer
@@ -372,12 +373,12 @@ sub create {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
             unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::create : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
       unless $args->{document};
 
     # setup empty update_ids arg to indicate create state
@@ -443,21 +444,20 @@ sub update {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
             unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::update : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
       unless $args->{document};
 
     # make sure we have an update_ids array
-    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
       unless $args->{update_ids};
-    die __PACKAGE__ .
-        "::update : malformed update_ids parameter - must be an array.\n"
-            unless ref $args->{update_ids} and 
-                   ref $args->{update_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ .
+               "::update : malformed update_ids parameter - must be an array.")
+      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
 
     # call _load_template
     return $pkg->_load_template($args);
@@ -502,7 +502,7 @@ sub delete {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
           unless exists $allowed{$_};
     }
 
@@ -511,11 +511,10 @@ sub delete {
       if exists $args->{template_id};
 
     # make sure template_ids is an array
-    die __PACKAGE__ . "::delete : missing required template_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::delete : missing required template_id(s) setting.")
       unless defined $args->{template_ids};
-    die __PACKAGE__ . "::delete : malformed template_id(s) setting.\n"
-      unless ref $args->{template_ids} and
-        ref $args->{template_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::delete : malformed template_id(s) setting.")
+      unless ref $args->{template_ids} and ref $args->{template_ids} eq 'ARRAY';
 
     # delete the template
     foreach my $template_id (@{$args->{template_ids}}) {
@@ -531,11 +530,11 @@ sub delete {
             # settle for a non-checked-out version and check it out
             $template = Bric::Biz::Asset::Formatting->lookup
               ({ id => $template_id });
-            die __PACKAGE__ .
-              "::delete : no template found for id \"$template_id\"\n"
+            throw_ap(error => __PACKAGE__ .
+                       "::delete : no template found for id \"$template_id\"")
                 unless $template;
-            die __PACKAGE__ .
-              "::delete : access denied for template \"$template_id\".\n"
+            throw_ap(error => __PACKAGE__ .
+                       "::delete : access denied for template \"$template_id\".")
                 unless chk_authz($template, CREATE, 1);
             $template->checkout({ user__id => get_user_id });
             log_event("formatting_checkout", $template);
@@ -587,12 +586,11 @@ sub _load_template {
     # parse and catch errors
     unless ($data) {
         eval { $data = parse_asset_document($document) };
-        die __PACKAGE__ . " : problem parsing asset document : $@\n"
+        throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
             if $@;
-        die __PACKAGE__ .
-            " : problem parsing asset document : no template found!\n"
-                unless ref $data and ref $data eq 'HASH'
-                    and exists $data->{template};
+        throw_ap(error => __PACKAGE__ .
+                   " : problem parsing asset document : no template found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{template};
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
@@ -613,9 +611,9 @@ sub _load_template {
         # handle output_channel => output_channel__id mapping
         ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids(
                                       { name => $tdata->{output_channel} });
-        die __PACKAGE__ . " : no output_channel found matching ".
-            "(output_channel => \"$tdata->{output_channel}\")\n"
-                unless defined $init{output_channel__id};
+        throw_ap(error => __PACKAGE__ . " : no output_channel found matching "
+                   . "(output_channel => \"$tdata->{output_channel}\")")
+          unless defined $init{output_channel__id};
 
         # figure out file_type
         if ($tdata->{file_name} =~ /\.(\w+)$/) {
@@ -623,27 +621,27 @@ sub _load_template {
         } elsif ($tdata->{file_name} =~ /autohandler$/) {
             $init{file_type} = 'mc';
         } else {
-            die __PACKAGE__ .
-                " : unable to determine file_type for file_name " .
-                    \"$tdata->{file_name}\".\n";
+            throw_ap(error => __PACKAGE__ .
+                       " : unable to determine file_type for file_name " .
+                       "\"$tdata->{file_name}\".");
         }
 
         # get element and name for asset type unless this generic
         unless ($tdata->{generic}) {
             my ($element) = Bric::Biz::AssetType->list(
                           { name => $tdata->{element}[0] });
-            die __PACKAGE__ . " : no element found matching " .
-                "(element => \"$tdata->{element}[0]\")\n"
-                    unless defined $element;
+            throw_ap(error => __PACKAGE__ . " : no element found matching " .
+                       "(element => \"$tdata->{element}[0]\")")
+              unless defined $element;
             $init{element__id} = $element->get_id;
             $init{name}        = $element->get_name;
         }
 
         # assign catgeory_id (not category__id, for some reason...)
         $init{category_id} = category_path_to_id($tdata->{category}[0]);
-        die __PACKAGE__ . " : no category found matching " .
-            "(category => \"$tdata->{category}[0]\")\n"
-                unless defined $init{category_id};
+        throw_ap(error => __PACKAGE__ . " : no category found matching " .
+                   "(category => \"$tdata->{category}[0]\")")
+          unless defined $init{category_id};
 
         # setup data
         if ($tdata->{data}[0]) {
@@ -657,7 +655,7 @@ sub _load_template {
             my $date = $tdata->{$name};
             next unless $date; # skip missing date
             my $db_date = xs_date_to_db_date($date);
-            die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+            throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
                 unless defined $db_date;
             $init{$name} = $db_date;
         }
@@ -671,15 +669,15 @@ sub _load_template {
         unless ($update) {
             # create empty template
             $template = Bric::Biz::Asset::Formatting->new(\%init);
-            die __PACKAGE__ .
-                "::create : failed to create empty template object.\n"
-                    unless $template;
+            throw_ap(error => __PACKAGE__ .
+                       "::create : failed to create empty template object.")
+              unless $template;
             print STDERR __PACKAGE__ .
                 "::create : created empty template object\n"
                     if DEBUG;
 
             # is this is right way to check create access for template?
-            die __PACKAGE__ . " : access denied.\n"
+            throw_ap(error => __PACKAGE__ . " : access denied.")
                 unless chk_authz($template, CREATE, 1);
 
             # check that there isn't already an active template with the same
@@ -710,10 +708,10 @@ sub _load_template {
                 }
             }
 
-            die __PACKAGE__ . "::create : found duplicate template for ".
-                "file_name \"$file_name\" and " .
-                    "output channel \"$tdata->{output_channel}\".\n"
-                        if $found_dup and not ALLOW_DUPLICATE_TEMPLATES;
+            throw_ap(error => __PACKAGE__ . "::create : found duplicate template for "
+                       . "file_name \"$file_name\" and "
+                       . "output channel \"$tdata->{output_channel}\".")
+              if $found_dup and not ALLOW_DUPLICATE_TEMPLATES;
 
             log_event('formatting_new', $template);
         } else {
@@ -723,19 +721,19 @@ sub _load_template {
                                                              });
             if ($template) {
                 # make sure it's ours
-                die __PACKAGE__ . "::update : template \"$id\" ".
-                    "is checked out to another user: ",
-                        $template->get_user__id, ".\n"
-                            if defined $template->get_user__id and
-                                $template->get_user__id != get_user_id;
-                die __PACKAGE__ . " : access denied.\n"
+                throw_ap(error => __PACKAGE__ . "::update : template \"$id\" "
+                           . "is checked out to another user: "
+                           . $template->get_user__id . ".")
+                  if defined $template->get_user__id
+                    and $template->get_user__id != get_user_id;
+                throw_ap(error => __PACKAGE__ . " : access denied.")
                     unless chk_authz($template, CREATE, 1);
             } else {
                 # try a non-checked out version
                 $template = Bric::Biz::Asset::Formatting->lookup({id => $id});
-                die __PACKAGE__ . "::update : no template found for \"$id\"\n"
+                throw_ap(error => __PACKAGE__ . "::update : no template found for \"$id\"")
                     unless $template;
-                die __PACKAGE__ . " : access denied.\n"
+                throw_ap(error => __PACKAGE__ . " : access denied.")
                     unless chk_authz($template, CREATE, 1);
 
                 # FIX: race condition here - between lookup and checkout
@@ -802,12 +800,12 @@ sub _serialize_template {
     my $writer      = $options{writer};
 
     my $template = Bric::Biz::Asset::Formatting->lookup({id => $template_id});
-    die __PACKAGE__ . "::export : template_id \"$template_id\" not found.\n"
+    throw_ap(error => __PACKAGE__ . "::export : template_id \"$template_id\" not found.")
         unless $template;
 
-    die __PACKAGE__ .
-        "::export : access denied for template \"$template_id\".\n"
-            unless chk_authz($template, READ, 1);
+    throw_ap(error => __PACKAGE__ .
+               "::export : access denied for template \"$template_id\".")
+      unless chk_authz($template, READ, 1);
 
     # open a template element
     $writer->startTag("template", id => $template_id);
@@ -838,7 +836,7 @@ sub _serialize_template {
     # get output channel
     my $oc = Bric::Biz::OutputChannel->lookup({
                         id => $template->get_output_channel__id });
-    die __PACKAGE__ . "::export : unable to find output channel\n"
+    throw_ap(error => __PACKAGE__ . "::export : unable to find output channel")
         unless $oc;
     $writer->dataElement(output_channel => $oc->get_name);
 
@@ -847,7 +845,7 @@ sub _serialize_template {
         my $date = $template->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);
-        die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+        throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
             unless defined $xs_date;
         $writer->dataElement($name, $xs_date);
     }

@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-06 19:20:15 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ use Net::SFTP;
 use Net::SFTP::Attributes;
 use Net::SFTP::Constants qw(:flags :status);
 use Net::SFTP::Util qw(fx2txt);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:dist);
 
@@ -66,7 +66,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
 
 ################################################################################
@@ -141,7 +140,7 @@ sub put_res {
                                   ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
 				  user => $s->get_login,
 				  password => $s->get_password)
-	  || die $gen->new({msg => "Unable to login to remote server '$hn'." });
+	  || throw_gen(error => "Unable to login to remote server '$hn'.");
 	# Get the document root.
 	my $doc_root = $s->get_doc_root;
 
@@ -181,7 +180,7 @@ sub put_res {
 			    unless (defined $status && $status == SSH2_FX_OK) {
 				my $msg = "Unable to create directory '$subdir' on"
 				  . " remote server '$hn'";
-				die $gen->new({ msg => $msg });
+				throw_gen(error => $msg);
 			    }
 			} else {
                             $sftp->do_close($dirhandle);
@@ -200,7 +199,7 @@ sub put_res {
 	    unless (defined $status && $status == SSH2_FX_OK) {
 		my $msg = "Unable to put file '$dest_file' on remote host '$hn',"
 		  . " status '" . fx2txt($status) . "'";
-		die $gen->new({ msg => $msg });
+		throw_gen(error => $msg);
 	    }
 	}
 	# how do you logout???
@@ -247,7 +246,7 @@ sub del_res {
                                   ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
 				  user => $s->get_login,
 				  password => $s->get_password)
-	  || die $gen->new({ msg => "Unable to login to remote server '$hn'." });
+	  || throw_gen(error => "Unable to login to remote server '$hn'.");
 	# Get the document root.
 	my $doc_root = $s->get_doc_root;
 	foreach my $r (@$res) {
@@ -266,7 +265,7 @@ sub del_res {
 		unless (defined $status && $status == SSH2_FX_OK) {
 		    my $msg = "Unable to delete resource '$file' from"
                       . "remote host '$hn', status '" . fx2txt($status) . "'.";
-		    die $gen->new({ msg =>  $msg});
+		    throw_gen(error => $msg);
 		}
 	    }
 	}

@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:26 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -111,7 +111,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Coll::Server;
 use Bric::Util::Coll::Action;
 use Bric::Util::Coll::OutputChannel;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Dest;
 use Bric::Config qw(:dist);
 
@@ -297,8 +297,7 @@ sub lookup {
 
     $st = $get_em->($pkg, @_);
     # We want @$st to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$st > 1;
     return @$st ? $st->[0] : undef;
 }

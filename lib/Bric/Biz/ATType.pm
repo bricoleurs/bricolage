@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:40 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::ElementType;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 #==============================================================================#
 # Inheritance                          #
@@ -271,8 +271,7 @@ sub lookup {
 
     $att = $get_em->($pkg, @_);
     # We want @$att to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$att > 1;
     return @$att ? $att->[0] : undef;
 }

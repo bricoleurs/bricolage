@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:27 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref prepare_ca);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::App::Cache;
 use Bric::Util::Grp::MediaType;
 
@@ -66,7 +66,6 @@ use constant INSTANCE_GROUP_ID => 48;
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
 my $SEL_COLS = 'a.id, a.name, a.description, a.active, e.extension, m.grp__id';
 my @mcols = qw(id name description active);
 my @mprops = qw(id name description _active);
@@ -212,7 +211,7 @@ sub lookup {
 
     $mt = $get_em->($pkg, @_);
     # We want @$mt to have only one value.
-    die $dp->new({  msg => 'Too many Bric::Util::MediaType objects found.' })
+    throw_dp(error => 'Too many Bric::Util::MediaType objects found.' )
       if @$mt > 1;
     return @$mt ? $mt->[0] : undef;
 }

@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-07-28 00:05:13 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -41,7 +41,7 @@ into other Bricolage packages and classes.
 use strict;
 use Time::Local;
 use Bric::Config qw(:time);
-use Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault qw(throw_ap throw_gen);
 use Bric::Util::DBI qw(db_date_parts DB_DATE_FORMAT);
 use Bric::Util::Pref;
 
@@ -74,7 +74,7 @@ $ENV{TZ} = 'UTC';
 BEGIN {
     if ($ENV{MOD_PERL}) {
 	require Apache::Util;
-	die $@ if $@;
+	throw_gen(error => $@) if $@;
 	$fsub = sub {
 	    my ($t, $f) = @_;
 	    $t ||= time;
@@ -83,8 +83,8 @@ BEGIN {
 	    eval {
 		$time = Apache::Util::ht_time($t, $f, 0);
 	    };
-	    die Bric::Util::Fault::Exception::AP->new(
-             { msg => "Unable to format date.", payload => $@ }) if $@;
+            throw_ap(error => "Unable to format date.", payload => $@)
+              if $@;
 	    return $time;
 	};
     } else {
@@ -97,8 +97,8 @@ BEGIN {
 	    eval {
 	     $time = POSIX::strftime($f || ISO_8601_FORMAT, localtime($t));
 	    };
-	    die Bric::Util::Fault::Exception::AP->new(
-             { msg => "Unable to format date.", payload => $@ }) if $@;
+	    throw_ap(error => "Unable to format date.", payload => $@)
+              if $@;
 	    return $time;
 	};
     }
@@ -112,8 +112,8 @@ my $iso_parts = sub {
     # the database driver module.
     my @t;
     eval { @t = unpack($ISO_TEMPLATE, shift) };
-    die Bric::Util::Fault::Exception::AP->new(
-      { msg => "Unable to unpack date.", payload => $@ }) if $@;
+    throw_ap(error => "Unable to unpack date.", payload => $@)
+      if $@;
     $t[0] -= 1900;
     $t[1] -= 1;
     return reverse @t;

@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:25 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref prepare_ca);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_gen throw_dp);
 
 ################################################################################
 # Inheritance
@@ -286,8 +286,8 @@ sub lookup {
 
     $addr = $get_em->($pkg, @_);
     # We want @$addr to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::Org::Parts::Addr objects found.' }) if @$addr > 1;
+    throw_dp(error => 'Too many Bric::Biz::Org::Parts::Addr objects found.')
+      if @$addr > 1;
     return @$addr ? $addr->[0] : undef;
 }
 
@@ -617,7 +617,8 @@ sub del_parts {
 
     foreach my $line (@_) {
         # Throw an error here!
-        die "Cannot delete the 'Line' address part" if $line eq 'Line';
+        throw_gen(error => "Cannot delete the 'Line' address part")
+          if $line eq 'Line';
         execute($upd, 0, $line);
     }
     return 1;

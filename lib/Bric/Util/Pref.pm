@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::App::Cache;
 # Use require to prevent circular conflicts.
 require Bric::Util::Grp::Pref;
@@ -100,8 +100,6 @@ use constant INSTANCE_GROUP_ID => 22;
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
-
 my $SEL_COLS = 'p.id, p.name, p.description, p.def, p.value, p.manual, ' .
   'p.opt_type, o.description, m.grp__id';
 my @SEL_PROPS = qw(id name description default value manual opt_type val_name
@@ -206,7 +204,7 @@ sub lookup {
 
     $pref = $get_em->($pkg, @_);
     # We want @$pref to have only one value.
-    die $dp->new({ msg => 'Too many Bric::Util::Pref objects found.' })
+    throw_dp(error => 'Too many Bric::Util::Pref objects found.')
       if @$pref > 1;
     return @$pref ? $pref->[0] : undef;
 }
@@ -1096,7 +1094,8 @@ sub save {
     my $self = shift;
     return unless $self->_get__dirty;
     my ($id, $name, $value) = $self->_get(qw(id name value));
-    die $dp->new({ msg => "Cannot create a new preference." }) unless $id;
+    throw_dp(error => "Cannot create a new preference.")
+      unless $id;
     my $upd = prepare_c(qq{
         UPDATE pref
         SET    value = ?

@@ -8,15 +8,15 @@ Data object to a formatting Asset
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:10 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -50,7 +50,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_mni);
 
 #==============================================================================#
 # Inheritance                          #
@@ -202,8 +202,7 @@ NONE
 =cut
 
 sub list {
-    my $err_msg = "Method not Implemented";
-    die Bric::Util::Fault::Exception::MNI->new({'msg' => $err_msg});
+    throw_mni(error => 'Method not Implemented');
 }
 
 ################################################################################
@@ -446,9 +445,7 @@ NONE
 =cut
 
 sub list_ids {
-        Bric::Util::Fault::Exception::MNI->new( {
-                        msg => "Method Not Implemented"
-                });
+    throw_mni(error => 'Method Not Implemented');
 }
 
 ################################################################################

@@ -6,6 +6,7 @@ use warnings;
 
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
+use Bric::Util::Fault qw(throw_ap);
 use Bric::Util::Time qw(db_date local_date strfdate);
 use Bric::Config qw(:time);
 use Bric::App::Event    qw(log_event);
@@ -39,15 +40,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -97,7 +98,7 @@ Notes: NONE
 sub site_to_id {
     my ($pkg, $site) = @_;
     my ($site_id) = Bric::Biz::Site->list_ids({ name => $site });
-    die qq{$pkg::list_ids: no site found matching (site => "$site")\n}
+    throw_ap(error => qq{$pkg::list_ids: no site found matching (site => "$site")})
         unless defined $site_id;
     return $site_id;
 }
@@ -292,9 +293,9 @@ sub load_ocs {
             # We have to add the new output channel to the media. Grab the
             # OC object from the element.
             $oc = $elem_ocs->{$ocname} or
-              die __PACKAGE__ . "::create : output channel matching " .
-                "(name => \"$ocname\") not allowed or cannot be found\n";
-                $asset->add_output_channels($oc);
+              throw_ap(error => __PACKAGE__ . "::create : output channel matching " .
+                         "(name => \"$ocname\") not allowed or cannot be found");
+            $asset->add_output_channels($oc);
             log_event("${key}_add_oc", $asset,
                       { 'Output Channel' => $oc->get_name });
         }
@@ -380,10 +381,10 @@ sub _deserialize_tile {
     if ($data->{data}) {
         foreach my $d (@{$data->{data}}) {
             my $at = $valid_data{$d->{element}};
-            die "Error loading data element for " .
-                $element->get_key_name .
-                    " cannot add data element $d->{element} here.\n"
-                        unless $at;
+            throw_ap(error => "Error loading data element for " .
+                       $element->get_key_name .
+                       " cannot add data element $d->{element} here.")
+              unless $at;
 
             if ($at->get_sql_type eq 'date') {
                 # add date data to container
@@ -407,10 +408,10 @@ sub _deserialize_tile {
     if ($data->{container}) {
         foreach my $c (@{$data->{container}}) {
             my $at = $valid_container{$c->{element}};
-            die "Error loading container element for " .
-                $element->get_key_name .
-                    " cannot add data element $c->{element} here.\n"
-                        unless $at;
+            throw_ap(error => "Error loading container element for " .
+                       $element->get_key_name .
+                       " cannot add data element $c->{element} here.")
+              unless $at;
 
             # setup container object
             my $container = $element->add_container($at);

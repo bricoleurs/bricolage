@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -109,8 +109,7 @@ use strict;
 #--------------------------------------#
 # Programmatic Dependencies              
 
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_gen throw_mni);
 use Bric::Biz::Workflow;
 use Bric::Util::Time qw(:all);
 use Bric::Util::DBI qw(:all);
@@ -149,7 +148,6 @@ use constant DEBUG => 0;
 # Private Class Fields
 my $meths;
 my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active site_id);
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Instance Fields                       
@@ -234,10 +232,9 @@ NONE
 sub lookup {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    die $gen->new({ msg => "Missing Required Parameters id or version_id" })
+    throw_gen(error => "Missing Required Parameters id or version_id")
       unless $param->{id} || $param->{version_id};
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => 'Must call list on Story, Media, or Formatting'})
+    throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);
     # we generally want the newest version. will use order to get it
@@ -283,8 +280,7 @@ B<See Also:>
 sub list {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => 'Must call list on Story, Media, or Formatting'})
+    throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LIST;
     $param = clean_params($pkg, $param);
     my $tables = tables($pkg, $param);
@@ -325,8 +321,7 @@ B<See Also:>
 sub list_ids {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => 'Must call list on Story, Media, or Formatting'})
+    throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LIST_IDS;
     # clean the params
     $param = clean_params($pkg, $param);
@@ -1639,8 +1634,7 @@ B<Notes:> NONE.
 
 sub checkin {
     my $self = shift;
-    die Bric::Util::Fault::Exception::GEN->new
-      ({ msg => "Cannot checkin non checked out versions" })
+    throw_gen(error => "Cannot checkin non checked out versions")
       unless $self->_get('checked_out');
 
     my $version = $self->_get('version');

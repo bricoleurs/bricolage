@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:18 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -84,8 +84,7 @@ use Bric::Util::DBI qw(:standard row_aref prepare_ca col_aref);
 use Bric::Util::Grp::User;
 use Bric::Config qw(:admin);
 use Digest::MD5 qw(md5_hex);
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Util::Priv;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(db_date);
@@ -126,8 +125,6 @@ my @props = (@uprops, @pprops, qw(grp_ids _inserted));
 
 my $secret = '$8fFidf*34;,a(o};"?i8J<*/#1qE3 $*23kf3K4;-+3f#\'Qz-4feI3rfe}%:e';
 my ($meths, @ord);
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 ################################################################################
 
@@ -296,8 +293,7 @@ sub lookup {
 
     $user = $get_em->($pkg, @_);
     # We want @$user to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$user > 1;
     return @$user ? $user->[0] : undef;
 }
@@ -783,7 +779,7 @@ B<Notes:> NONE.
 
 sub set_person {
     my ($self, $p) = @_;
-    die $dp->new({msg => "Cannot change ID of existing user."})
+    throw_dp(error => "Cannot change ID of existing user.")
       if $self->_get('_inserted');
     $self->_set([ qw(id lname fname mname prefix suffix) ],
                 [ $p->_get( qw(id lname fname mname prefix suffix) ) ]);
@@ -1143,8 +1139,8 @@ sub activate {
     # Okay, we're reactivating an inactive login. Let's make sure the login
     # is available.
     my $login = $self->_get('login');
-    die $gen->new({msg => "Cannot activate user - login '$login' already in" .
-                   " use."}) unless $self->login_avail($login);
+    throw_gen(error => "Cannot activate user - login '$login' already in use.")
+      unless $self->login_avail($login);
 
     # If we get here, we can reactivate it.
     $self->_set(['_active'], [1]);
@@ -1333,9 +1329,8 @@ sub save {
                 $login = $c->get_value;
                 last;
             }
-            die Bric::Util::Fault::Exception::DP->new(
-              { msg => 'User must have a login or primary email address before '
-                       . 'saving' }) unless $login;
+            throw_dp(error => 'User must have a login or primary email address '
+                     . 'before saving') unless $login;
             $self->_set(['login'], [$login]);
         }
         local $" = ', ';

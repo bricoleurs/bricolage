@@ -8,6 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::Util::Fault qw(rethrow_exception);
 
 my $disp_name = get_disp_name(CLASS_KEY);
 my $class = get_package_name(CLASS_KEY);
@@ -62,7 +63,7 @@ sub save : Callback {
 
     my $err = $@ or return $ret;
     # Catch Error exceptions and turn them into error messages.
-    die $err unless isa_bric_exception($err, 'Error');
+    rethrow_exception($err) unless isa_bric_exception($err, 'Error');
     add_msg($self->lang->maketext($err->maketext));
     $param->{'obj'} = $act;
     return;

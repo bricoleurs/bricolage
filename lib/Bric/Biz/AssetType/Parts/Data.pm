@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-08-11 09:33:34 $
 
 
 =head1 SYNOPSIS
@@ -102,10 +102,8 @@ use strict;
 # Programatic Dependencies              
 
 use Bric::Util::DBI qw(:all);
-
 use Bric::Util::Attribute::AssetTypeData;
-
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 
 #==============================================================================#
 # Inheritance                          #
@@ -823,7 +821,7 @@ NONE
 sub get_name {
     my ($pkg,$file,$line) = caller;
     my $msg = "WARNING: [$file:$line] called the deprecated method 'get_name'";
-    die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
+    throw_gen(error => $msg);
 }
 
 #------------------------------------------------------------------------------#

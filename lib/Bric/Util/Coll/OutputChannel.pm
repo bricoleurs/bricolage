@@ -8,15 +8,15 @@ Channels.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:39 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Biz::OutputChannel;
 use Bric::Util::DBI qw(:standard);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -249,8 +249,7 @@ sub save {
                 VALUES (?, ?)
             });
         } else {
-            die Bric::Util::Fault::Exception::DP->new
-              ({ msg => "Invalid key '$type'" });
+            throw_dp(error => "Invalid key '$type'");
         }
 
         foreach my $oc (@$new_objs) {

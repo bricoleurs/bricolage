@@ -6,16 +6,16 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:24 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:standard col_aref);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Biz::Person::User;
 use Bric::Util::Alert;
 use Bric::Util::Alerted::Parts::Sent;
@@ -185,8 +185,8 @@ sub lookup {
 
     $alerted = $get_em->($pkg, @_);
     # We want @$alerted to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::Alerted objects found.' }) if @$alerted > 1;
+    throw_dp(error => 'Too many Bric::Util::Alerted objects found.')
+      if @$alerted > 1;
     return @$alerted ? $alerted->[0] : undef;
 }
 

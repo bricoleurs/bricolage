@@ -6,16 +6,16 @@ Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 07:21:38 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use HTTP::DAV;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
 
 ################################################################################
@@ -61,7 +61,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::DP';
 my $fs = Bric::Util::Trans::FS->new;
 
 ################################################################################
@@ -163,17 +162,17 @@ sub put_res {
 
         # Instantiate an HTTP::DAV object, define credentials and login.
         my $d = HTTP::DAV->new()
-          || die $gen->new({ msg => "Unable to create DAV object.",
-                     payload => $@ });
+          || throw_gen(error => "Unable to create DAV object.",
+                       payload => $@);
 
         $d->credentials( -user => $s->get_login, 
                          -pass => $s->get_password,
                          -url  => $base_url);
-    
+
         $d->open( -url => $base_url )
-          || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
-                                     payload => $d->message });
- 
+          || throw_gen(error => "Unable to login to remote server '$hn'.",
+                       payload => $d->message);
+
         # Now, put each file on the remote server.
         my %dirs;
         foreach my $r (@$res) {
@@ -192,16 +191,16 @@ sub put_res {
                     unless ($d->cwd( -url => $dir)) {
 
                         if(length($dir)) {
-                            $d->mkcol( -url => $dir) || die $gen->new 
-                                  ({ msg => "Unable to create directory '$dir' " .
-                                            "in path '$dest_dir' on remote server " .
-                                            "'$hn'.", payload => $d->message });
+                            $d->mkcol( -url => $dir)
+                              || throw_gen(error => "Unable to create directory '$dir' " .
+                                             "in path '$dest_dir' on remote server " .
+                                             "'$hn'.", payload => $d->message);
 
-                            $d->cwd($dir) || die $gen->new
-                                  ({ msg => "Unable to change to directory '$dir' " .
-                                            "in path '$dest_dir' on remote server " .
-                                            "'$hn'.",
-                                     payload => $d->message });
+                            $d->cwd($dir)
+                              || throw_gen(error => "Unable to change to directory '$dir' " .
+                                             "in path '$dest_dir' on remote server " .
+                                             "'$hn'.",
+                                           payload => $d->message });
                         }
                     }
                 }
@@ -214,15 +213,15 @@ sub put_res {
 
             # Now, put the file on the server, using a temporary name.
             my $tmpdest =  $dest . '.tmp';
-            $d->put( -local => $src, -url => $tmpdest) || die $gen->new
-                  ({ msg => "Unable to put $src as file '$tmpdest' on remote server '$hn'.",
-                     payload => $d->message });
+            $d->put( -local => $src, -url => $tmpdest)
+              || throw_gen(error => "Unable to put $src as file '$tmpdest' on remote server '$hn'.",
+                           payload => $d->message);
 
             # Rename the temporary file
-            $d->move(-url => $tmpdest, -dest => $dest) || die $gen->new
-                    ({ msg => "Unable to rename file '$tmpdest' " .
-                              "to '$dest' on remote server '$hn'.",
-                       payload => $d->message });
+            $d->move(-url => $tmpdest, -dest => $dest)
+              || throw_gen(error => "Unable to rename file '$tmpdest' " .
+                             "to '$dest' on remote server '$hn'.",
+                           payload => $d->message);
 
         }
     }
@@ -269,50 +268,49 @@ sub del_res {
     my ($pkg, $res, $st) = @_;
     foreach my $s ($st->get_servers) {
     # Skip inactive servers.
-    next unless $s->is_active;
-    my $hn = $s->get_host_name;
+        next unless $s->is_active;
+        my $hn = $s->get_host_name;
 
+        # Unless specified, hostname is prefixed by http://
+        # this should allow a user to user DAV over SSL
+        # by using https://hostname/ in Server Profile.
 
-    # Unless specified, hostname is prefixed by http://
-    # this should allow a user to user DAV over SSL
-    # by using https://hostname/ in Server Profile.
-
-    unless($hn =~ m#^http(s)?://#) {
-        $hn = 'http://' . $hn;
-    }
-
-    # Get the document root.
-    my $doc_root = $s->get_doc_root;
-
-    # Convert it into an url.
-    $doc_root = $hn . '/'. $doc_root;
-
-    # Instantiate an HTTP::DAV object, define credentials and login.
-    my $d = HTTP::DAV->new()
-      || die $gen->new({ msg => "Unable to create DAV object.",
-                 payload => $@ });
-
-    $d->credentials( -user => $s->get_login, 
-                     -pass => $s->get_password,
-                     -url  => $doc_root);
-    
-    $d->open( -url => $doc_root )
-      || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
-                                 payload => $d->message });
-
-    foreach my $r (@$res) {
-        # Get the name of the file to be deleted.
-        my $file = $fs->cat_uri($doc_root, $r->get_uri);
-
-        my $resource = $d->propfind( -url => $file);
-        if ($resource && $resource->get_property("getcontentlength") > -1) {
-        # It exists. Delete it.
-        $d->delete(-url => $file)
-          || die $gen->new({ msg => "Unable to delete resource '$file' "
-                            . "from remote server '$hn'.",
-                              payload => $d->message });
+        unless($hn =~ m#^http(s)?://#) {
+            $hn = 'http://' . $hn;
         }
-    }
+
+        # Get the document root.
+        my $doc_root = $s->get_doc_root;
+
+        # Convert it into an url.
+        $doc_root = $hn . '/'. $doc_root;
+
+        # Instantiate an HTTP::DAV object, define credentials and login.
+        my $d = HTTP::DAV->new()
+          || throw_gen(error => "Unable to create DAV object.",
+                       payload => $@);
+
+        $d->credentials( -user => $s->get_login, 
+                         -pass => $s->get_password,
+                         -url  => $doc_root);
+
+        $d->open( -url => $doc_root )
+          || throw_gen(error => "Unable to login to remote server '$hn'.",
+                       payload => $d->message);
+
+        foreach my $r (@$res) {
+            # Get the name of the file to be deleted.
+            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+
+            my $resource = $d->propfind( -url => $file);
+            if ($resource && $resource->get_property("getcontentlength") > -1) {
+                # It exists. Delete it.
+                $d->delete(-url => $file)
+                  || throw_gen(error => "Unable to delete resource '$file' "
+                                 . "from remote server '$hn'.",
+                               payload => $d->message);
+            }
+        }
     }
     return 1;
 }

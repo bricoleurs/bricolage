@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:50 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -246,8 +246,7 @@ sub lookup {
 
     $contact = $get_em->($pkg, @_);
     # We want @$contact to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::Contact objects found.' }) if @$contact > 1;
+    throw_dp(error => 'Too many Bric::Biz::Contact objects found.') if @$contact > 1;
     return @$contact ? $contact->[0] : undef;
 }
 

@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-02 08:16:21 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -73,8 +73,7 @@ use strict;
 
 ##############################################################################
 # Programmatic Dependences
-use Bric::Util::Fault::Exception::MNI;
-use Bric::Util::Fault::Exception::DA;
+use Bric::Util::Fault qw(throw_mni throw_da);
 use Bric::Config qw(:qa);
 
 ##############################################################################
@@ -193,8 +192,7 @@ B<Notes:> NONE.
 =cut
 
 sub lookup {
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => __PACKAGE__."::lookup() method not implemented." });
+    throw_mni(error => __PACKAGE__."::lookup() method not implemented.");
 }
 
 ##############################################################################
@@ -220,8 +218,7 @@ B<Notes:> NONE.
 =cut
 
 sub list {
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => __PACKAGE__."::list() method not implemented." });
+    throw_mni(error => __PACKAGE__."::list() method not implemented.");
 }
 
 ##############################################################################
@@ -275,8 +272,7 @@ B<Notes:> NONE.
 =cut
 
 sub list_ids {
-    die Bric::Util::Fault::Exception::MNI->new
-      ({ msg => __PACKAGE__."::list_ids() method not implemented." });
+    throw_mni(error => __PACKAGE__."::list_ids() method not implemented.");
 }
 
 ##############################################################################
@@ -303,8 +299,7 @@ B<Notes:> Method must be overridden by subclasses.
 =cut
 
 sub class_name {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::class_name() method not implemented."});
+    throw_mni(error => __PACKAGE__."::class_name() method not implemented.");
     # Example:
     # return 'Bric::Biz::Person::Parts::Addr';
 }
@@ -565,8 +560,7 @@ sub del_objs {
             # Grab the ID.
             my $id = ref $o ? $o->get_id : $o;
             # Do some error checking if we're in QA_MODE.
-            die Bric::Util::Fault::Exception::DA->new
-              ({ msg => "Object '$o' not in collection"})
+            throw_da(error => "Object '$o' not in collection")
               if QA_MODE && ! $objs->{$id};
             # Add the object to be deleted to the del_obj hash.
             $del_objs->{$id} = delete $objs->{$id} if $objs->{$id};
@@ -620,8 +614,7 @@ B<Notes:> Method must be overridden by subclasses.
 =cut
 
 sub save {
-    die Bric::Util::Fault::Exception::MNI->new(
-      {msg => __PACKAGE__."::save() method not implemented."});
+    throw_mni(error => __PACKAGE__."::save() method not implemented.");
 }
 
 ##############################################################################

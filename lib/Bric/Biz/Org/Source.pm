@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:54 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Source;
 
 ################################################################################
@@ -101,7 +101,6 @@ use constant INSTANCE_GROUP_ID => 5;
 
 ################################################################################
 # Private Class Fields
-my $dp = 'Bric::Util::Fault::Exception::DP';
 my @SCOLS = qw(id org__id name description expire active);
 my @PROPS = qw(src_id id source_name description expire _active);
 
@@ -258,7 +257,7 @@ sub lookup {
 
     $src = $get_em->($pkg, @_);
     # We want @$src to have only one value.
-    die $dp->new({  msg => 'Too many Bric::Biz::Org::Source objects found.' })
+    throw_dp(error => 'Too many Bric::Biz::Org::Source objects found.')
       if @$src > 1;
     return @$src ? $src->[0] : undef;
 }
@@ -1236,7 +1235,7 @@ $get_em = sub {
             push @params, $v;
         } else {
             # We're horked.
-            die $dp->new({ msg => "Invalid property '$k'."});
+            throw_dp(error => "Invalid property '$k'.");
         }
     }
 

@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-07-19 00:37:50 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -59,6 +59,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
+use Bric:Util:Fault qw(throw_gen);
 use Carp ();
 
 #==============================================================================#
@@ -231,8 +232,7 @@ sub new {
         } elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
             $init->{'object_type'} = 'story';
         } else {
-            die Bric::Util::Fault::Exception::GEN->new( {
-              msg => "Object of type $class not allowed"});
+            throw_gen(error => "Object of type $class not allowed");
         }
         $init->{'_object'} = delete $init->{'object'};
     }
@@ -255,8 +255,7 @@ sub new {
     # prepopulate from the asset type object
     my $parts = $init->{'_element_obj'}->get_data();
     unless ($init->{'object_type'}) {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => "Cannot create with out object type." });
+        throw_gen(error => "Cannot create with out object type.");
     }
 
     foreach (@$parts) {
@@ -308,11 +307,9 @@ sub lookup {
     $self = bless {}, $class;
 
     # Check for the proper args
-    die Bric::Util::Fault::Exception::GEN->new
-      ({ msg => "Missing required Parameter 'id'" })
+    throw_gen(error => "Missing required Parameter 'id'")
         unless defined $param->{'id'};
-    die Bric::Util::Fault::Exception::GEN->new
-      ({ 'msg' => "Missing required Parameter 'object_type' or 'object'"})
+    throw_gen(error => "Missing required Parameter 'object_type' or 'object'")
         unless $param->{'object'} || $param->{'object_type'};
 
     if ($param->{'obj'}) {
@@ -328,8 +325,7 @@ sub lookup {
             $self->_set( { object_type => 'media',
                            _object     => $param->{'obj'} });
         } else {
-            die Bric::Util::Fault::Exception::GEN->new
-              ({ msg => 'Improper type of object passed to lookup' });
+            throw_gen(error => 'Improper type of object passed to lookup');
         } # end the if obj block
     } else {
         $self->_set( { 'object_type' => $param->{'object_type'} } );
@@ -976,7 +972,7 @@ sub add_tile {
     # Die if an ID is passed rather than an object.
     unless (ref $tile) {
         my $msg = 'Must pass objects, not IDs';
-        die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+        throw_gen(error => $msg);
     }
 
     # Set the place for this part.  This will be updated when its added.
@@ -1038,7 +1034,7 @@ sub delete_tiles {
 
     foreach (@$tiles_arg) {
         if (ref $_ eq 'HASH') {
-            die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg})
+            throw_gen(error => $err_msg)
               unless (exists $_->{'id'} && exists $_->{'type'});
 
             if ($_->{'type'} eq 'data') {
@@ -1046,14 +1042,14 @@ sub delete_tiles {
             } elsif ($_->{'type'} eq 'container') {
                 $del_cont{$_->{'id'}} = undef;
             } else {
-                die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+                throw_gen(error => $err_msg);
             }
         } elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Data') {
             $del_data{$_->get_id()} = undef;
         } elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Container') {
             $del_cont{$_->get_id()} = undef;
         } else {
-            die Bric::Util::Fault::Exception::GEN->new({msg => $err_msg});
+            throw_gen(error => $err_msg);
         }
     }
 
@@ -1163,8 +1159,7 @@ sub reorder_tiles {
 
     # make sure then number of elements passed is the same as what we have
     if (scalar @$tiles != scalar @$new_order ) {
-        die Bric::Util::Fault::Exception::GEN->new( {
-          msg => 'Improper number of args to reorder_tiles().' });
+        throw_gen(error => 'Improper number of args to reorder_tiles().');
     }
 
     # Order the tiles in the order they are listed in $new_order
@@ -1301,8 +1296,7 @@ B<Notes:> NONE.
 
 sub _do_list {
     my ($class, $param, $ids) = @_;
-    die Bric::Util::Fault::Exception::GEN->new( {
-                        msg => "improper args for list" })
+    throw_gen(error => "improper args for list")
       unless ($param->{'object'} || $param->{'object_type'});
 
     my ($obj_type, $obj_id, $table);
@@ -1316,8 +1310,7 @@ sub _do_list {
             $table = M_TABLE;
             $obj_type = 'media';
         } else {
-            die Bric::Util::Fault::Exception::GEN->new(
-              { msg => "Object of type $obj_class not allowed to be tiled" });
+            throw_gen(error => "Object of type $obj_class not allowed to be tiled");
         }
         $obj_id = $param->{'object'}->get_version_id();
 
@@ -1329,7 +1322,7 @@ sub _do_list {
         } else {
             my $msg = "Object of type $param->{'object_type'} not allowed ".
               "to be tiled";
-            die Bric::Util::Fault::Exception::GEN->new( { msg => $msg });
+            throw_gen(error => $msg);
         }
     }
 
@@ -1455,8 +1448,7 @@ sub _select_container {
 
     } else {
         # this is here just in case
-        die Bric::Util::Fault::Exception->new
-          ({ msg => "Improper Object type has been defined" });
+        throw_gen(error => "Improper Object type has been defined");
     }
 
     $sql .= " WHERE $where";
@@ -1526,8 +1518,7 @@ sub _do_insert {
     } elsif ($type eq 'media') {
         $table =  M_TABLE
     } else {
-        die Bric::Util::Fault::Exception::GEN->new
-          ({ 'msq' => 'Object must be a media or story to add tiles' });
+        throw_gen(error => 'Object must be a media or story to add tiles');
     }
 
     my $sql = "INSERT INTO $table " .
@@ -1567,8 +1558,7 @@ sub _do_update {
     } elsif ($short eq 'media') {
         $table = M_TABLE;
     } else {
-        die Bric::Util::Fault::Exception::GEN->new
-          ({ msg => 'only story and media objects may have tiles' });
+        throw_gen(error => 'only story and media objects may have tiles');
     }
 
     my $sql = "UPDATE $table " .

@@ -8,18 +8,18 @@ Bric::Util::DBD::Oracle - The Bricolage Oracle Driver
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -85,6 +85,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use DBD::Oracle qw(:ora_types);
+use Bric::Util::Fault qw(throw_ap);
 
 ################################################################################
 # Constants
@@ -156,8 +157,7 @@ sub db_date_parts {
     # Bric::Util::Time::strfdate().
     my @t;
     eval { @t = unpack('a4 x a2 x a2 x a2 x a2 x a2', shift) };
-    die Bric::Util::Fault::Exception::AP->new(
-      { msg => "Unable to unpack date: $@" }) if $@;
+    throw_ap(error => "Unable to unpack date: $@") if $@;
     $t[0] -= 1900;
     $t[1] -= 1;
     return reverse @t;

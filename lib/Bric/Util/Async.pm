@@ -6,16 +6,16 @@ Bric::Util::Async - This will handle all the async events
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the version #
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:04 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -57,6 +57,7 @@ use strict;
 # Programmatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Async::Parts::Event;
+use Bric::Util::Fault qw(throw_gen);
 
 ################################################################################
 # Inheritance
@@ -206,9 +207,8 @@ sub lookup {
         my $self = $class->cache_lookup($param);
         return $self if $self;
 
-        die Bric::Util::Fault::Exception::GEN->new(
-                { 'msg' => "Missing required parameter 'id'" })
-                        unless $param->{'id'};
+        throw_gen(error => "Missing required parameter 'id'")
+          unless $param->{'id'};
 
         $self = _select_async('id=?', $param->{'id'} );
 
@@ -813,11 +813,11 @@ sub _generate_file {
         my ($file, $parts) = $self->_get('file_name', '_events');
 
         rename $file, "$file.BAK"
-                or die Bric::Util::Fault::Exception::GEN->new(
-                        { msg => 'Could not Back up cron File', payload => $! });
+          or throw_gen(error => 'Could not Back up cron File',
+                       payload => $!);
 
         eval {
-                open FILE, ">$file" or die $!;
+                open FILE, ">$file" or throw_gen(error => $!);
                 flock FILE, 2;
                 foreach (keys %$parts) {
                         my $obj = $parts->{$_};
@@ -835,8 +835,7 @@ sub _generate_file {
         };
         if ($@) {
                 rename "$file.BAK", $file;
-                die Bric::Util::Fault::Exception::GEN->new(
-                        { msg => "Error Writing File: $@" });
+                throw_gen(error => "Error Writing File: $@");
         } else {
                 unlink "$file.BAK";
         }

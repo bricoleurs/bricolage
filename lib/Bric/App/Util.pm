@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:10 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -49,6 +49,7 @@ use HTML::Mason::Request;
 use Apache::Constants qw(HTTP_OK);
 use HTTP::BrowserDetect;
 use Bric::Util::Language;
+use Bric::Util::Fault qw(throw_gen);
 
 #==============================================================================#
 # Inheritance                          #
@@ -136,7 +137,6 @@ use constant MAX_HISTORY => 10;
 
 #--------------------------------------#
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $login_marker = LOGIN_MARKER .'='. LOGIN_MARKER;
 
 #------------------------------------------------------------------------------#
@@ -409,7 +409,7 @@ sub get_class_info {
     my $key = shift;
     my $class = Bric::Util::Class->lookup({ id => $key, key_name => $key,
                                           pkg_name => $key })
-      || die $gen->new({ msg => "No such class key '$key'." });
+      || throw_gen(error => "No such class key '$key'.");
     return $class;
 }
 

@@ -10,6 +10,7 @@ use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel;
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
@@ -43,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -247,17 +248,17 @@ sub list_ids {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # handle workflow => workflow__id mapping
     if (exists $args->{workflow}) {
         my ($workflow_id) = Bric::Biz::Workflow->list_ids(
                                 { name => $args->{workflow} });
-        die __PACKAGE__ . "::list_ids : no workflow found matching " .
-            "(workflow => \"$args->{workflow}\")\n"
-                unless defined $workflow_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no workflow found matching "
+                   . "(workflow => \"$args->{workflow}\")")
+          unless defined $workflow_id;
         $args->{workflow__id} = $workflow_id;
         delete $args->{workflow};
     }
@@ -272,9 +273,9 @@ sub list_ids {
     if (exists $args->{element}) {
         my ($element_id) = Bric::Biz::AssetType->list_ids(
                               { name => $args->{element}, media => 0 });
-        die __PACKAGE__ . "::list_ids : no story element found matching " .
-            "(element => \"$args->{element}\")\n"
-                unless defined $element_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no story element found matching "
+                   . "(element => \"$args->{element}\")")
+          unless defined $element_id;
         $args->{element__id} = $element_id;
         delete $args->{element};
     }
@@ -282,9 +283,9 @@ sub list_ids {
     # handle category => category_id conversion
     if (exists $args->{category}) {
         my $category_id = category_path_to_id($args->{category});
-        die __PACKAGE__ . "::list_ids : no category found matching " .
-            "(category => \"$args->{category}\")\n"
-                unless defined $category_id;
+        throw_ap(error => __PACKAGE__ . "::list_ids : no category found matching "
+                   . "(category => \"$args->{category}\")")
+          unless defined $category_id;
         $args->{category_id} = $category_id;
         delete $args->{category};
     }
@@ -296,9 +297,9 @@ sub list_ids {
     # translate dates into proper format
     for my $name (grep { /_date_/ } keys %$args) {
         my $date = xs_date_to_db_date($args->{$name});
-        die __PACKAGE__ . "::list_ids : bad date format for $name parameter " .
-            "\"$args->{$name}\" : must be proper XML Schema dateTime format.\n"
-                unless defined $date;
+        throw_ap(error => __PACKAGE__ . "::list_ids : bad date format for $name parameter "
+                   . "\"$args->{$name}\" : must be proper XML Schema dateTime format.")
+          unless defined $date;
         $args->{$name} = $date;
     }
 
@@ -379,18 +380,18 @@ sub export {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # story_id is sugar for a one-element story_ids arg
     $args->{story_ids} = [ $args->{story_id} ] if exists $args->{story_id};
 
     # make sure story_ids is an array
-    die __PACKAGE__ . "::export : missing required story_id(s) setting.\n"
-        unless defined $args->{story_ids};
-    die __PACKAGE__ . "::export : malformed story_id(s) setting.\n"
-        unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::export : missing required story_id(s) setting.")
+      unless defined $args->{story_ids};
+    throw_ap(error => __PACKAGE__ . "::export : malformed story_id(s) setting.")
+      unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
 
     # setup XML::Writer
     my $document        = "";
@@ -490,12 +491,12 @@ sub create {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::create : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
       unless $args->{document};
 
     # setup empty update_ids arg to indicate create state
@@ -560,21 +561,20 @@ sub update {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::update : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
       unless $args->{document};
 
     # make sure we have an update_ids array
-    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
       unless $args->{update_ids};
-    die __PACKAGE__ .
-        "::update : malformed update_ids parameter - must be an array.\n"
-            unless ref $args->{update_ids} and
-                   ref $args->{update_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ .
+               "::update : malformed update_ids parameter - must be an array.")
+      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
 
     # call _load_stories
     return $pkg->_load_stories($args);
@@ -620,7 +620,7 @@ sub delete {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
+        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
           unless exists $allowed{$_};
     }
 
@@ -628,9 +628,9 @@ sub delete {
     $args->{story_ids} = [ $args->{story_id} ] if exists $args->{story_id};
 
     # make sure story_ids is an array
-    die __PACKAGE__ . "::delete : missing required story_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::delete : missing required story_id(s) setting.")
       unless defined $args->{story_ids};
-    die __PACKAGE__ . "::delete : malformed story_id(s) setting.\n"
+    throw_ap(error => __PACKAGE__ . "::delete : malformed story_id(s) setting.")
       unless ref $args->{story_ids} and ref $args->{story_ids} eq 'ARRAY';
 
     # delete the stories
@@ -644,9 +644,9 @@ sub delete {
         unless ($story) {
             # settle for a non-checked-out version and check it out
             $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
-            die __PACKAGE__ . "::delete : no story found for id \"$story_id\"\n"
+            throw_ap(error => __PACKAGE__ . "::delete : no story found for id \"$story_id\"")
               unless $story;
-            die __PACKAGE__ . "::delete : access denied for story \"$story_id\".\n"
+            throw_ap(error => __PACKAGE__ . "::delete : access denied for story \"$story_id\".")
               unless chk_authz($story, CREATE, 1);
             $story->checkout({ user__id => get_user_id });
             log_event("story_checkout", $story);
@@ -697,10 +697,10 @@ sub _load_stories {
     # parse and catch erros
     my $data;
     eval { $data = parse_asset_document($document) };
-    die __PACKAGE__ . " : problem parsing asset document : $@\n"
-        if $@;
-    die __PACKAGE__ . " : problem parsing asset document : no stories found!\n"
-        unless ref $data and ref $data eq 'HASH' and exists $data->{story};
+    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
+      if $@;
+    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : no stories found!")
+      unless ref $data and ref $data eq 'HASH' and exists $data->{story};
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
     # loop over stories, filling in %story_ids and @relations
@@ -731,8 +731,9 @@ sub _load_stories {
             unless ($selems{$sdata->{element}}) {
                 my $e = (Bric::Biz::AssetType->list
                          ({ name => $sdata->{element}, media => 0 }))[0]
-                           or die __PACKAGE__ . "::create : no story element found " .
-                             "matching (element => \"$sdata->{element}\")\n";
+                           or throw_ap(error => __PACKAGE__ . "::create : no story"
+                                         . " element found matching (element => "
+                                         . "\"$sdata->{element}\")");
                 $selems{$sdata->{element}} =
                   [ $e->get_id,
                     { map { $_->get_name => $_ } $e->get_output_channels } ];
@@ -746,29 +747,29 @@ sub _load_stories {
             $init{alias_id} = $sdata->{alias_id};
         } else {
             # It's bogus.
-            die __PACKAGE__ . "::create: No story element or alias ID found";
+            throw_ap(error => __PACKAGE__ . "::create: No story element or alias ID found");
         }
 
         # get source__id from source
         ($init{source__id}) = Bric::Biz::Org::Source->list_ids
           ({ source_name => $sdata->{source} });
-        die __PACKAGE__ . "::create : no source found matching " .
-            "(source => \"$sdata->{source}\")\n"
-                unless defined $init{source__id};
+        throw_ap(error => __PACKAGE__ . "::create : no source found matching "
+                   . "(source => \"$sdata->{source}\")")
+          unless defined $init{source__id};
 
         # get base story object
         my $story;
         unless ($update) {
             # create empty story
             $story = Bric::Biz::Asset::Business::Story->new(\%init);
-            die __PACKAGE__ . "::create : failed to create empty story object."
-                unless $story;
+            throw_ap(error => __PACKAGE__ . "::create : failed to create empty story object.")
+              unless $story;
             print STDERR __PACKAGE__ . "::create : created empty story object\n"
                 if DEBUG;
 
             # is this is right way to check create access for stories?
-            die __PACKAGE__ . " : access denied.\n"
-                unless chk_authz($story, CREATE, 1);
+            throw_ap(error => __PACKAGE__ . " : access denied.")
+              unless chk_authz($story, CREATE, 1);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -790,18 +791,18 @@ sub _load_stories {
                                                                });
             if ($story) {
                 # make sure it's ours
-                die __PACKAGE__ .
-                    "::update : story \"$id\" is checked out to another user.\n"
-                        unless $story->get_user__id == get_user_id;
-                die __PACKAGE__ . " : access denied.\n"
-                    unless chk_authz($story, CREATE, 1);
+                throw_ap(error => __PACKAGE__ .
+                           "::update : story \"$id\" is checked out to another user.")
+                  unless $story->get_user__id == get_user_id;
+                throw_ap(error => __PACKAGE__ . " : access denied.")
+                  unless chk_authz($story, CREATE, 1);
             } else {
                 # try a non-checked out version
                 $story = Bric::Biz::Asset::Business::Story->lookup({ id => $id });
-                die __PACKAGE__ . "::update : no story found for \"$id\"\n"
-                    unless $story;
-                die __PACKAGE__ . " : access denied.\n"
-                    unless chk_authz($story, CREATE, 1);
+                throw_ap(error => __PACKAGE__ . "::update : no story found for \"$id\"")
+                  unless $story;
+                throw_ap(error => __PACKAGE__ . " : access denied.")
+                  unless chk_authz($story, CREATE, 1);
 
                 # FIX: race condition here - between lookup and checkout
                 #      someone else could checkout...
@@ -831,8 +832,8 @@ sub _load_stories {
             my $date = $sdata->{$name};
             next unless $date; # skip missing date
             my $db_date = xs_date_to_db_date($date);
-            die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-                unless defined $db_date;
+            throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+              unless defined $db_date;
             $story->_set([$name],[$db_date]);
         }
 
@@ -855,8 +856,8 @@ sub _load_stories {
             # get cat id
             my $path = ref $cdata ? $cdata->{content} : $cdata;
             my $cat = Bric::Biz::Category->lookup({ uri => $path });
-            die __PACKAGE__ . "::create : no category found matching " .
-              "(category => \"$path\")\n"
+            throw_ap(error => __PACKAGE__ . "::create : no category found matching "
+                       . "(category => \"$path\")")
               unless defined $cat;
 
             my $category_id = $cat->get_id;
@@ -870,10 +871,10 @@ sub _load_stories {
         }
 
         # sanity checks
-        die __PACKAGE__ . "::create : no categories defined!"
-            unless @cids;
-        die __PACKAGE__ . "::create : no primary category defined!"
-            unless defined $primary_cid;
+        throw_ap(error => __PACKAGE__ . "::create : no categories defined!")
+          unless @cids;
+        throw_ap(error => __PACKAGE__ . "::create : no primary category defined!")
+          unless defined $primary_cid;
 
         # add categories to story
         $story->add_categories(\@cids);
@@ -898,10 +899,10 @@ sub _load_stories {
                                 lname => defined $c->{lname} ? $c->{lname} : "");
                     my ($contrib) =
                       Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
-                    die __PACKAGE__ . "::create : no contributor found matching " .
-                      "(contributer => " . 
-                        join(', ', map { "$_ => $c->{$_}" } keys %$c)
-                          unless defined $contrib;
+                    throw_ap(error => __PACKAGE__ . "::create : no contributor found matching "
+                               . "(contributer => "
+                               . join(', ', map { "$_ => $c->{$_}" } keys %$c))
+                      unless defined $contrib;
                     $story->add_contributor($contrib, $c->{role});
                     log_event('story_add_contrib', $story,
                               { Name => $contrib->get_name });
@@ -921,10 +922,10 @@ sub _load_stories {
           if $sdata->{output_channels}{output_channel};
 
         # sanity checks
-        die __PACKAGE__ . "::create : no output channels defined!"
-            unless $story->get_output_channels;
-        die __PACKAGE__ . "::create : no primary output channel defined!"
-            unless defined $story->get_primary_oc_id;
+        throw_ap(error => __PACKAGE__ . "::create : no output channels defined!")
+          unless $story->get_output_channels;
+        throw_ap(error => __PACKAGE__ . "::create : no primary output channel defined!")
+          unless defined $story->get_primary_oc_id;
 
         # remove all keywords if updating
         $story->del_keywords($story->get_keywords) if $update;
@@ -1002,32 +1003,32 @@ sub _load_stories {
         if ($r->{relative}) {
             # handle relative links
             if ($r->{story_id}) {
-                die __PACKAGE__ .
-                    " : Unable to find related story by relative id ".
-                        "\"$r->{story_id}\""
-                            unless exists $story_ids{$r->{story_id}};
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related story by relative id " .
+                           "\"$r->{story_id}\"")
+                  unless exists $story_ids{$r->{story_id}};
                 $r->{container}->
                     set_related_instance_id($story_ids{$r->{story_id}});
             } else {
-                die __PACKAGE__ .
-                    " : Unable to find related media by relative id ".
-                        "\"$r->{media_id}\""
-                            unless exists $media_ids{$r->{media_id}};
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related media by relative id " .
+                           "\"$r->{media_id}\"")
+                  unless exists $media_ids{$r->{media_id}};
                 $r->{container}->
                     set_related_media($media_ids{$r->{media_id}});
             }
         } else {
             # handle absolute links
             if ($r->{story_id}) {
-                die __PACKAGE__ . " : related story_id \"$r->{story_id}\" ".
-                    "not found.\n"
-                        unless Bric::Biz::Asset::Business::Story->lookup(
+                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Story->lookup(
                                                   {id => $r->{story_id}});
                 $r->{container}->set_related_instance_id($r->{story_id});
             } else {
-                die __PACKAGE__ . " : related media_id \"$r->{media_id}\" ".
-                    "not found.\n"
-                        unless Bric::Biz::Asset::Business::Media->lookup(
+                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Media->lookup(
                                                   {id => $r->{media_id}});
                 $r->{container}->set_related_media($r->{media_id});
             }
@@ -1058,11 +1059,11 @@ sub _serialize_story {
     my @related;
 
     my $story = Bric::Biz::Asset::Business::Story->lookup({id => $story_id});
-    die __PACKAGE__ . "::export : story_id \"$story_id\" not found.\n"
-        unless $story;
+    throw_ap(error => __PACKAGE__ . "::export : story_id \"$story_id\" not found.")
+      unless $story;
 
-    die __PACKAGE__ . "::export : access denied for story \"$story_id\".\n"
-        unless chk_authz($story, READ, 1);
+    throw_ap(error => __PACKAGE__ . "::export : access denied for story \"$story_id\".")
+      unless chk_authz($story, READ, 1);
 
     # open a story element
     my $alias_id = $story->get_alias_id;
@@ -1086,8 +1087,8 @@ sub _serialize_story {
 
     # get source name
     my $src = Bric::Biz::Org::Source->lookup({id => $story->get_source__id });
-    die __PACKAGE__ . "::export : unable to find source\n"
-        unless $src;
+    throw_ap(error => __PACKAGE__ . "::export : unable to find source")
+      unless $src;
     $writer->dataElement(source => $src->get_source_name);
 
     # get dates and output them in dateTime format
@@ -1095,10 +1096,9 @@ sub _serialize_story {
         my $date = $story->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);
-        die __PACKAGE__ . "::export : bad date format for $name : $date\n"
-            unless defined $xs_date;
+        throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+          unless defined $xs_date;
         $writer->dataElement($name, $xs_date);
-
     }
 
     # output categories

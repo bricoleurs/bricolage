@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:28 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp;
 use Bric::Biz::Person;
 
@@ -144,8 +144,9 @@ sub lookup {
 
     $job = $pkg->_do_list(@_);
     # We want @$job to have only one value.
-    die $dp->new({ msg => 'Too many Bric::Util::Grp::Parts::Member::Contrib'
-                          . ' objects found.' }) if @$job > 1;
+    throw_dp(error => 'Too many Bric::Util::Grp::Parts::Member::Contrib'
+               . ' objects found.')
+      if @$job > 1;
     return @$job ? $job->[0] : undef;
 }
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -2506,7 +2506,7 @@ sub _update_uris {
 
     if (my $err = $@) {
         # Just die if its any exception other than the one we're interested in.
-        die $err unless $err->get_payload =~
+        rethrow_exception($err) unless $err->get_payload =~
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
         # There's a URI conflict. Rollback the database changes if we're in
         # mod_perl (otherwise, save() will roll it back for us.

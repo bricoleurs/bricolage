@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:18 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -532,8 +532,7 @@ sub new {
     $init->{grp_ids} = [$init->{site_id}, $self->INSTANCE_GROUP_ID];
 
     # Check for required output_channel__id.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Missing required output channel parameter' })
+    throw_dp(error => 'Missing required output channel parameter')
       unless defined $init->{'output_channel'}
         || defined $init->{'output_channel__id'};
 
@@ -549,8 +548,7 @@ sub new {
         } elsif ($t == UTILITY_TEMPLATE) {
             $name = $set_util->($init);
         } else {
-            die Bric::Util::Fault::Exception::DP->new
-              ({ msg => "Invalid tplate_type parameter '$t'"});
+            throw_dp(error => "Invalid tplate_type parameter '$t'");
         }
     } else {
         # No tplate_type name argument. So figure it out based on context.
@@ -580,8 +578,7 @@ sub new {
           Bric::Biz::Category->lookup({ id => $init->{category_id} });
         push @grp_ids, $init->{category}->get_asset_grp_id();
     } else {
-        die Bric::Util::Fault::Exception::DP->new
-          ({ msg => "Missing required parameter 'category' or 'category_id'"});
+        throw_dp(error => "Missing required parameter 'category' or 'category_id'");
     }
     my $cat = $init->{category};
 
@@ -1562,18 +1559,15 @@ sub checkout {
 
         # make sure that this version is the most current
         unless ($self->_get('version') == $self->_get('current_version') ) {
-                die Bric::Util::Fault::Exception::GEN->new( { msg => 
-                                "Unable to checkout old_versions" });
+            throw_gen(error => "Unable to checkout old_versions");
         }
         # Make sure that the object is not already checked out
         if (defined $self->_get('user__id')) {
-                die Bric::Util::Fault::Exception::GEN->new( {
-                        msg => "Already Checked Out" });
+            throw_gen(error => "Already Checked Out");
         }
         unless (defined $param->{'user__id'}) {
-                die Bric::Util::Fault::Exception::GEN->new( { msg =>
-                        "Must be checked out to users" });
-        }       
+            throw_gen(error => "Must be checked out to users");
+        }
 
         $self->_set({'user__id'    => $param->{'user__id'} ,
                      'modifier'    => $param->{'user__id'},
@@ -1639,7 +1633,7 @@ sub cancel {
     if (not defined $self->get_user__id) {
         # this is not checked out, it can not be deleted
         my $msg = 'Cannot cancel an asset that is not checked out';
-        die Bric::Util::Fault::Exception::AP->new({'msg' => $msg});
+        throw_ap(error => $msg);
     }
 
     $self->_set(['_cancel'], [1]);
@@ -1674,8 +1668,7 @@ sub revert {
         my ($self, $version) = @_;
 
         if (!$self->_get('checked_out')) {
-                die Bric::Util::Fault::Exception::GEN->new( { 
-                        msg => "May not revert a non checked out version" });
+            throw_gen(error => "May not revert a non checked out version");
         }
 
         my @prior_versions = __PACKAGE__->list( {
@@ -1691,9 +1684,7 @@ sub revert {
         }
 
         unless ($revert_obj) {
-                die Bric::Util::Fault::Exception::GEN->new( {
-                        msg => "The requested version does not exist"
-                });
+            throw_gen(error => "The requested version does not exist");
         }
 
         $self->_set(['data'], [$revert_obj->get_data]);
@@ -2170,8 +2161,7 @@ sub _build_file_name {
 
     # Get the name and category object.
     $cat  ||= $self->_get_category_object
-      or die Bric::Util::Fault::Exception::DP->new
-      ({ msg => "Templates must be associated with a category" });
+      or throw_dp(error => "Templates must be associated with a category");
     $name ||= $self->_get('name');
     $oc_id ||= $self->_get('output_channel__id');
 
@@ -2198,9 +2188,8 @@ sub _build_file_name {
             output_channel__id => $oc_id,
             active => 0,
         });
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => "The template '$fn' already exists in output " .
-      "channel '" . $self->get_output_channel_name . "'" })
+    throw_dp(error => "The template '$fn' already exists in output " .
+             "channel '" . $self->get_output_channel_name . "'")
       if @existing != 0;
 
     # If we get here, just return the file name.
@@ -2242,9 +2231,8 @@ $set_elem = sub {
         $init->{element} =
           Bric::Biz::AssetType->lookup({ id => $init->{element__id} });
     } else {
-        die Bric::Util::Fault::Exception::DP->new
-          ({ msg => "Missing required parameter 'element' or " .
-             "'element__id'"});
+        throw_dp(error => "Missing required parameter 'element' or " .
+                 "'element__id'");
     }
 
     return $init->{element}->get_key_name;
@@ -2279,9 +2267,8 @@ $set_cat = sub {
              $init->{file_type} eq 'tmpl') {
         return 'category';
     } else {
-        die Bric::Util::Fault::Exception::DP->new
-          ({ msg => "Invalid file_type parameter " .
-                    "'$init->{file_type}'"});
+        throw_dp(error => "Invalid file_type parameter " .
+                 "'$init->{file_type}'");
     }
 };
 
@@ -2309,8 +2296,7 @@ B<Notes:> NONE.
 $set_util = sub {
     my $init = shift;
     my $name = delete $init->{name}
-      or die Bric::Util::Fault::Exception::DP->new
-        ({ msg => "Missing required parameter 'name'"});
+      or throw_dp(error => "Missing required parameter 'name'");
     return $name;
 };
 

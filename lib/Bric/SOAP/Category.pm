@@ -13,6 +13,7 @@ use IO::Scalar;
 use XML::Writer;
 
 use Bric::SOAP::Util qw(parse_asset_document);
+use Bric::Util::Fault qw(throw_ap);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -29,15 +30,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:31 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -139,17 +140,17 @@ sub list_ids {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::list_ids : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # check for path or parent combined with other searches
-    die __PACKAGE__ . "::list_ids : illegal combination of parent search ".
-        "with other search terms.\n"
-            if $args->{parent} and keys(%$args) > 1;
-    die __PACKAGE__ . "::list_ids : illegal combination of path search ".
-        "with other search terms.\n"
-            if $args->{path} and keys(%$args) > 1;
+    throw_ap(error => __PACKAGE__ . "::list_ids : illegal combination of parent search "
+               . "with other search terms.")
+      if $args->{parent} and keys(%$args) > 1;
+    throw_ap(error => __PACKAGE__ . "::list_ids : illegal combination of path search "
+               . "with other search terms.")
+      if $args->{path} and keys(%$args) > 1;
 
     # perform emulated searches
     if ($args->{parent} or $args->{path}) {
@@ -224,8 +225,8 @@ sub export {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::export : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # category_id is sugar for a one-category category_ids arg
@@ -233,11 +234,10 @@ sub export {
       if exists $args->{category_id};
 
     # make sure category_ids is an array
-    die __PACKAGE__ . "::export : missing required category_id(s) setting.\n"
-        unless defined $args->{category_ids};
-    die __PACKAGE__ . "::export : malformed category_id(s) setting.\n"
-        unless ref $args->{category_ids} and 
-            ref $args->{category_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::export : missing required category_id(s) setting.")
+      unless defined $args->{category_ids};
+    throw_ap(error => __PACKAGE__ . "::export : malformed category_id(s) setting.")
+      unless ref $args->{category_ids} and ref $args->{category_ids} eq 'ARRAY';
 
     # setup XML::Writer
     my $document        = "";
@@ -309,12 +309,12 @@ sub create {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::create : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::create : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
       unless $args->{document};
 
     # setup empty update_ids arg to indicate create state
@@ -377,21 +377,20 @@ sub update {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::update : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # make sure we have a document
-    die __PACKAGE__ . "::update : missing required document parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
       unless $args->{document};
 
     # make sure we have an update_ids array
-    die __PACKAGE__ . "::update : missing required update_ids parameter.\n"
+    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
       unless $args->{update_ids};
-    die __PACKAGE__ . 
-        "::update : malformed update_ids parameter - must be an array.\n"
-            unless ref $args->{update_ids} and 
-                   ref $args->{update_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__
+               . "::update : malformed update_ids parameter - must be an array.")
+      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
 
     # call _load_category
     return $pkg->_load_category($args);
@@ -436,8 +435,8 @@ sub delete {
 
     # check for bad parameters
     for (keys %$args) {
-        die __PACKAGE__ . "::delete : unknown parameter \"$_\".\n"
-            unless exists $allowed{$_};
+        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
+          unless exists $allowed{$_};
     }
 
     # category_id is sugar for a one-element category_ids arg
@@ -445,11 +444,10 @@ sub delete {
         if exists $args->{category_id};
 
     # make sure category_ids is an array
-    die __PACKAGE__ . "::delete : missing required category_id(s) setting.\n"
-        unless defined $args->{category_ids};
-    die __PACKAGE__ . "::delete : malformed category_id(s) setting.\n"
-        unless ref $args->{category_ids} and 
-               ref $args->{category_ids} eq 'ARRAY';
+    throw_ap(error => __PACKAGE__ . "::delete : missing required category_id(s) setting.")
+      unless defined $args->{category_ids};
+    throw_ap(error => __PACKAGE__ . "::delete : malformed category_id(s) setting.")
+      unless ref $args->{category_ids} and ref $args->{category_ids} eq 'ARRAY';
 
     # delete the category
     foreach my $category_id (@{$args->{category_ids}}) {
@@ -459,17 +457,17 @@ sub delete {
 
         # lookup category
         my $category = Bric::Biz::Category->lookup({ id => $category_id });
-        die __PACKAGE__ . 
-            "::delete : no category found for id \"$category_id\"\n"
-                unless $category;
-        die __PACKAGE__ . 
-            "::delete : access denied for category \"$category_id\".\n"
-                unless chk_authz($category, CREATE, 1);
+        throw_ap(error => __PACKAGE__
+                   . "::delete : no category found for id \"$category_id\"")
+          unless $category;
+        throw_ap(error => __PACKAGE__
+                   . "::delete : access denied for category \"$category_id\".")
+          unless chk_authz($category, CREATE, 1);
 
         # make sure we're not trying to delete the root category
-        die __PACKAGE__ . "::delete : cannot delete root category: ".
-            "\"$category_id\"\n"
-                if $category->is_root_category;
+        throw_ap(error => __PACKAGE__ . "::delete : cannot delete root category: "
+                   . "\"$category_id\"")
+          if $category->is_root_category;
 
         # delete the category
         $category->deactivate;
@@ -503,12 +501,11 @@ sub _load_category {
     # parse and catch erros
     unless ($data) {
         eval { $data = parse_asset_document($document) };
-        die __PACKAGE__ . " : problem parsing asset document : $@\n"
-            if $@;
-        die __PACKAGE__ .
-            " : problem parsing asset document : no category found!\n"
-                unless ref $data and ref $data eq 'HASH'
-                    and exists $data->{category};
+        throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
+          if $@;
+        throw_ap(error => __PACKAGE__
+                   . " : problem parsing asset document : no category found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{category};
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
@@ -536,19 +533,19 @@ sub _load_category {
         unless ($update) {
             # create empty category
             $category = Bric::Biz::Category->new;
-            die __PACKAGE__ . " : failed to create empty category object.\n"
-                unless $category;
+            throw_ap(error => __PACKAGE__ . " : failed to create empty category object.")
+              unless $category;
             print STDERR __PACKAGE__ . " : created empty category object\n"
                 if DEBUG;
-            die __PACKAGE__ . " : access denied.\n"
-                unless chk_authz($category, CREATE, 1);
+            throw_ap(error => __PACKAGE__ . " : access denied.")
+              unless chk_authz($category, CREATE, 1);
         } else {
             # updating - first look for a checked out version
             $category = Bric::Biz::Category->lookup({ id => $id });
-            die __PACKAGE__ . "::update : no category found for \"$id\"\n"
-                unless $category;
-            die __PACKAGE__ . " : access denied.\n"
-                unless chk_authz($category, CREATE, 1);
+            throw_ap(error => __PACKAGE__ . "::update : no category found for \"$id\"")
+              unless $category;
+            throw_ap(error => __PACKAGE__ . " : access denied.")
+              unless chk_authz($category, CREATE, 1);
         }
 
         # set simple fields
@@ -562,9 +559,9 @@ sub _load_category {
             my $path = $cdata->{path};
 
             # check that the requested path doesn't already exist.
-            die __PACKAGE__ . " : requested path \"$cdata->{path}\" " .
-              "is already in use." if $paths{$path} ||=
-              Bric::Biz::Category->lookup({ uri => $path });
+            throw_ap(error => __PACKAGE__ . " : requested path \"$cdata->{path}\""
+                       . " is already in use.")
+              if $paths{$path} ||= Bric::Biz::Category->lookup({ uri => $path });
 
             # special-case root category
             if ($path eq '/') {
@@ -572,15 +569,17 @@ sub _load_category {
             } else {
                 # get directory and parent
                 my ($parent_path, $directory) = $path =~ m!(.*)/([^/]+)$!;
-                die __PACKAGE__ . " : failed to extract directory from path ".
-                    "\"$path\"" unless defined $directory;
+                throw_ap(error => __PACKAGE__ . " : failed to extract directory from"
+                           . " path \"$path\"")
+                  unless defined $directory;
                 $parent_path = '/' unless length $parent_path;
 
                 # make sure we've got a parent
                 my $parent = $paths{$parent_path} ||=
                   Bric::Biz::Category->lookup({ uri => $parent_path });
-                die __PACKAGE__ . " : couldn't find category object for path ".
-                    "\"$parent_path\"\n" unless $parent;
+                throw_ap(error => __PACKAGE__ . " : couldn't find category object "
+                           . "for path \"$parent_path\"")
+                  unless $parent;
 
                 # Set directory and parent ID.
                 $category->set_directory($directory);
@@ -638,12 +637,12 @@ sub _serialize_category {
     my $writer      = $options{writer};
 
     my $category = Bric::Biz::Category->lookup({id => $category_id});
-    die __PACKAGE__ . "::export : category_id \"$category_id\" not found.\n"
-        unless $category;
+    throw_ap(error => __PACKAGE__ . "::export : category_id \"$category_id\" not found.")
+      unless $category;
 
-    die __PACKAGE__ .
-        "::export : access denied for category \"$category_id\".\n"
-            unless chk_authz($category, READ, 1);
+    throw_ap(error => __PACKAGE__ .
+               "::export : access denied for category \"$category_id\".")
+      unless chk_authz($category, READ, 1);
 
     # open a category category
     $writer->startTag("category", id => $category_id);

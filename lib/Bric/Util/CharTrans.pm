@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:20 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -47,6 +47,7 @@ and from Unicode UTF-8 to a target character set.
 ################################################################################
 # Standard Dependencies
 use strict;
+use Bric::Util::Fault qw(throw_gen rethrow_exception);
 use Text::Iconv; # requires v1.1, not 1.0 which is on CPAN
 
 ################################################################################
@@ -135,7 +136,7 @@ sub new {
     my $self = bless {}, ref $pkg || $pkg;
 
     my $charset  = $args;
-    die "Unspecified charset" unless ($charset);
+    throw_gen(error => "Unspecified charset") unless ($charset);
 
     $self->charset($charset);
 
@@ -303,19 +304,19 @@ sub charset {
     # also returns the validity of the conversion object right away..
 
     eval {
-		my $cvt = Text::Iconv->new($new_charset, UTF8);
-		$cvt->raise_error(1);
-		$self->{'_to_utf8_converter'} = $cvt;
+        my $cvt = Text::Iconv->new($new_charset, UTF8);
+        $cvt->raise_error(1);
+        $self->{'_to_utf8_converter'} = $cvt;
     };
 
-   die $@ if $@;
+    rethrow_exception($@) if $@;
 
     eval {
-		my $cvt = Text::Iconv->new(UTF8, $new_charset);
-		$cvt->raise_error(1);
-		$self->{'_from_utf8_converter'} = $cvt;
+        my $cvt = Text::Iconv->new(UTF8, $new_charset);
+        $cvt->raise_error(1);
+        $self->{'_from_utf8_converter'} = $cvt;
     };
-    die $@ if $@;
+    rethrow_exception($@) if $@;
 
     $self->{'_charset'} = $new_charset;
 

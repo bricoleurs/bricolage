@@ -8,15 +8,15 @@ Bric::Util::Trans::Jabber - Utility class for sending instant messages.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 20:10:54 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 #use Net::Jabber;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -385,8 +385,7 @@ sub send {
 	# Do Jabber stuff in here.
     };
     return $self unless $@;
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => "Unable to send instant message: $@"});
+    throw_dp(error => "Unable to send instant message: $@");
 }
 
 ################################################################################

@@ -6,16 +6,16 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -61,7 +61,7 @@ use strict;
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Grp::Event;
 use Bric::Biz::Person::User;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -177,8 +177,8 @@ sub lookup {
 
     $et = $get_em->($pkg, @_);
     # We want @$et to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::EventType objects found.' }) if @$et > 1;
+    throw_dp(error => 'Too many Bric::Util::EventType objects found.')
+      if @$et > 1;
     return @$et ? $et->[0] : undef;
 }
 

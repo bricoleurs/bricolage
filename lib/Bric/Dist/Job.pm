@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:59 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -82,8 +82,7 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Trans::FS;
 use Bric::Util::Coll::Resource;
 use Bric::Util::Coll::ServerType;
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_dp throw_gen rethrow_exception);
 use Bric::Util::Grp::Job;
 use Bric::App::Event qw(log_event);
 use File::Spec::Functions qw(catdir);
@@ -122,8 +121,6 @@ my @SEL_PROPS = (@PROPS, 'grp_ids');
 
 my @SCOL_ARGS = ('Bric::Util::Coll::ServerType', '_server_types');
 my @RCOL_ARGS = ('Bric::Util::Coll::Resource', '_resources');
-my $dp = 'Bric::Util::Fault::Exception::DP';
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $meths;
 
 ################################################################################
@@ -302,7 +299,7 @@ sub lookup {
 
     $job = $get_em->($pkg, @_);
     # We want @$job to have only one value.
-    die $dp->new({ msg => 'Too many Bric::Dist::Job objects found.' })
+    throw_dp(error => 'Too many Bric::Dist::Job objects found.')
       if @$job > 1;
     return @$job ? $job->[0] : undef;
 }
@@ -918,9 +915,9 @@ B<Notes:> NONE.
 
 sub set_sched_time {
     my ($self, $time) = @_;
-    die $gen->new({ msg => "Cannot change scheduled time on completed job." })
+    throw_gen(error => "Cannot change scheduled time on completed job.")
       if $self->_get('comp_time');
-    die $gen->new({ msg => "Cannot change scheduled time on pending job." })
+    throw_gen(error => "Cannot change scheduled time on pending job.")
       if $self->_get('_pending');
     $self->_set( ['sched_time'], [db_date($time)] );
 }
@@ -1093,9 +1090,9 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 
 sub add_resources {
     my $self = shift;
-    die $gen->new({ msg => "Cannot add resources to a completed job." })
+    throw_gen(error => "Cannot add resources to a completed job.")
       if $self->_get('comp_time');
-    die $gen->new({ msg => "Cannot add resources to a pending job." })
+    throw_gen(error => "Cannot add resources to a pending job.")
       if $self->_get('_pending');
     my $col = &$get_coll($self, @RCOL_ARGS);
     $col->add_new_objs(@_);
@@ -1167,9 +1164,9 @@ B<Notes:> NONE.
 
 sub del_resources {
     my $self = shift;
-    die $gen->new({ msg => "Cannot delete resources from a completed job." })
+    throw_gen(error => "Cannot delete resources from a completed job.")
       if $self->_get('comp_time');
-    die $gen->new({ msg => "Cannot delete resources from a pending job." })
+    throw_gen(error => "Cannot delete resources from a pending job.")
       if $self->_get('_pending');
     my $col = &$get_coll($self, @RCOL_ARGS);
     $col->del_objs(@_);
@@ -1281,9 +1278,9 @@ B<Notes:> Uses Bric::Util::Coll::Server internally.
 
 sub add_server_types {
     my $self = shift;
-    die $gen->new({ msg => "Cannot add server types to a completed job." })
+    throw_gen(error => "Cannot add server types to a completed job.")
       if $self->_get('comp_time');
-    die $gen->new({ msg => "Cannot add server types to a pending job." })
+    throw_gen(error => "Cannot add server types to a pending job.")
       if $self->_get('_pending');
     my $col = &$get_coll($self, @SCOL_ARGS);
     $col->add_new_objs(@_);
@@ -1355,9 +1352,9 @@ B<Notes:> NONE.
 
 sub del_server_types {
     my $self = shift;
-    die $gen->new({ msg => "Cannot delete server types from a completed job." })
+    throw_gen(error => "Cannot delete server types from a completed job.")
       if $self->_get('comp_time');
-    die $gen->new({ msg => "Cannot delete server types from a pending job." })
+    throw_gen(error => "Cannot delete server types from a pending job.")
       if $self->_get('_pending');
     my $col = &$get_coll($self, @SCOL_ARGS);
     $col->del_objs(@_);
@@ -1433,9 +1430,9 @@ B<Notes:> NONE.
 
 sub cancel {
     my $self = shift;
-    die $gen->({ msg => "Cannot cancel completed job." })
+    throw_gen(error => "Cannot cancel completed job.")
       if $self->_get('_comp_time');
-    die $gen->new({ msg => "Cannot cancel pending job." })
+    throw_gen(error => "Cannot cancel pending job.")
       if $self->_get('_pending');
     $self->_set({_cancel => 1 });
 }
@@ -1600,14 +1597,14 @@ B<Notes:> NONE.
 sub execute_me {
     my $self = shift;
     # Check to make sure we can actually do this.
-    die $gen->new({ msg => "Cannot execute job before its scheduled time."})
+    throw_gen(error => "Cannot execute job before its scheduled time.")
       if $self->get_sched_time('epoch') > time;
-    die $gen->new({msg => "Cannot execute job that has already been executed."})
+    throw_gen(error => "Cannot execute job that has already been executed.")
       if $self->get_comp_time;
 
     # Mark this job pending.
-    &$set_pend($self, 1) || die
-      $dp->new({msg => "Can't get a lock on job No. " . $self->get_id . '.' });
+    &$set_pend($self, 1)
+      || throw_dp(error => "Can't get a lock on job No. " . $self->get_id . '.');
 
     eval {
         # Grab all of the resources.
@@ -1669,9 +1666,9 @@ sub execute_me {
             # We're gonna try again. Unlock the job.
             $self->_set([qw(_pending)], [0]);
         }
-        # Save our changes and proceed with the die.
+        # Save our changes and rethrow exception
         $self->save;
-        die $err;
+        rethrow_exception($err);
     }
     # Mark it complete, unlock it, and we're done!
     $self->_set([qw(comp_time _pending)], [db_date(0, 1), 0]);

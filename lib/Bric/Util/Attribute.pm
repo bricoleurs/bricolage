@@ -7,15 +7,15 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -176,7 +176,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 use Bric::Util::DBI qw(:standard prepare_ca);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen throw_mni);
 
 use Storable;
 
@@ -342,8 +342,7 @@ sub new {
 sub lookup {
    # This is just a placeholder. There is no obvious use for a lookup function
    # here.
-   die Bric::Util::Fault::Exception::MNI->new
-     ({ msg => "lookup method not implemented" });
+   throw_mni(error => "lookup method not implemented");
 }
 
 #------------------------------------------------------------------------------#
@@ -351,8 +350,7 @@ sub lookup {
 sub list {
    # This is just a placeholder. There is no obvious use for a list function
    # here.
-   die Bric::Util::Fault::Exception::MNI->new
-     ({ msg => "list method not implemented" });
+   throw_mni(error => "list method not implemented");
 }
 
 
@@ -402,9 +400,7 @@ Values for this method look like 'grp' given a full object type of
 =cut
 
 sub short_object_type {
-   die Bric::Util::Fault::Exception::MNI->new
-     ({ msg => "Short object type not defined" });
-    #return 'table name';
+    throw_mni(error => "Short object type not defined");
 }
 
 #--------------------------------------#
@@ -536,7 +532,8 @@ B<Notes:>
 
 sub set_object_id {
     my ($self, $obj_id) = @_;
-    die "Cannot assign new object ID" if defined $self->_get('object_id');
+    throw_gen(error => "Cannot assign new object ID")
+      if defined $self->_get('object_id');
     $self->_set(['object_id'], [$obj_id]);
 }
 
@@ -1364,8 +1361,7 @@ sub _table_info {
     my ($type, $name) = @_;
 
     # Throw an error if we don't get an argument we expect.
-    die Bric::Util::Fault::Exception::GEN({'msg' => 'Bad arguments'}) 
-      unless exists TABLES->{$type};
+    throw_gen(error => 'Bad arguments') unless exists TABLES->{$type};
 
     return (TABLES->{$type}->{'name'}->($name),
             TABLES->{$type}->{'abbr'},

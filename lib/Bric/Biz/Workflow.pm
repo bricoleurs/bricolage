@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-08-11 09:33:34 $
 
 =head1 SYNOPSIS
 
@@ -71,8 +71,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Workflow;
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault qw(throw_dp throw_ap);
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Biz::Site;
 #==============================================================================#
@@ -293,8 +292,7 @@ sub lookup {
 
     $wf = $get_em->($pkg, @_);
     # We want @$wf to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$wf > 1;
     return @$wf ? $wf->[0] : undef;
 }
@@ -1168,7 +1166,7 @@ sub save {
     unless ($self->get_start_desk) {
         my $err_msg = 'No start desk: A start desk must be defined using '.
                       "'set_start_desk' before 'save' is called";
-        die Bric::Util::Fault::Exception::AP->new({'msg' => $err_msg});
+        throw_ap(error => $err_msg);
     }
 
     unless ($self->_get('_remove')) {

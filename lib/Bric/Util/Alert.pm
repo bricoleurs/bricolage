@@ -6,16 +6,16 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:15 $
+$Date: 2003-08-11 09:33:35 $
 
 =head1 SYNOPSIS
 
@@ -68,7 +68,7 @@ use Bric::Util::Event;
 use Bric::Util::Time qw(:all);
 use Bric::Util::Trans::Mail;
 #use Bric::Util::Trans::Jabber;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -254,10 +254,10 @@ sub new {
     my $init = {};
 
     # Make sure we have all the parts we need.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => __PACKAGE__ . '::new() requires a Bricolage object, a Bric::Biz::Person::User'
-             . ' object, a Bric::Util::AlertType object, and a Bric::Util::Event'
-             . ' object' }) unless $event && $at && $obj && $user;
+    my $errstr = __PACKAGE__ . '::new() requires a Bricolage object, '
+      . 'a Bric::Biz::Person::User object, a Bric::Util::AlertType object, '
+      . 'and a Bric::Util::Event object';
+    throw_dp(error => $errstr) unless $event && $at && $obj && $user;
 
     # Get the attributes of this event, if any. Make sure they're lowercase and
     # have variable-specific keys.
@@ -362,8 +362,8 @@ sub lookup {
 
     $alert = $get_em->($pkg, @_);
     # We want @$alert to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::Alert objects found.' }) if @$alert > 1;
+    throw_dp(error => 'Too many Bric::Util::Alert objects found.')
+      if @$alert > 1;
     return @$alert ? $alert->[0] : undef;
 }
 

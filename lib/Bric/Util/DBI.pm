@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:26 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -79,7 +79,7 @@ use strict;
 ################################################################################
 use Bric::Config qw(:dbi);
 use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
-use Bric::Util::Fault::Exception::DA;
+use Bric::Util::Fault qw(throw_da);
 use DBI qw(looks_like_number);
 use Time::HiRes qw(gettimeofday);
 use Digest::MD5 qw(md5_hex);
@@ -372,8 +372,7 @@ sub prepare {
     _connect();
     my $sth;
     eval { $sth = $dbh->prepare(@_[0..1]) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
+    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
@@ -420,8 +419,7 @@ sub prepare_c {
     _connect();
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1]) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
+    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
@@ -468,8 +466,7 @@ sub prepare_ca {
     _connect();
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1], 1) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
+    throw_da(error => "Unable to prepare SQL statement\n\n$_[0]", payload => $@)
       if $@;
     _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
@@ -488,7 +485,7 @@ sub prepare_ca {
   };
   if ($@) {
       rollback();
-      die $@;
+      rethrow_exception($@);
   }
 
 Sets $dbh->{AutoCommit} = 0. Use before a series of database transactions so
@@ -526,8 +523,8 @@ sub begin {
     _connect();
     my $ret;
     eval { $ret = $dbh->{AutoCommit} = 0 };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to turn AutoCommit off", payload => $@ }) if $@;
+    throw_da(error => "Unable to turn AutoCommit off", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -569,11 +566,11 @@ sub commit {
     _connect();
     my $ret;
     eval { $ret = $dbh->commit };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to commit transactions", payload => $@ }) if $@;
+    throw_da(error => "Unable to commit transactions", payload => $@)
+      if $@;
     eval { $ret = $dbh->{AutoCommit} = 1 };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to turn AutoCommit on", payload => $@ }) if $@;
+    throw_da(error => "Unable to turn AutoCommit on", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -897,15 +894,13 @@ sub order_by {
 
         # Make sure it's legit.
         my $ord = $map->{$param->{Order}}
-          or die Bric::Util::Fault::Exception::DA->new
-          ({ msg => "Bad Order parameter '$param->{Order}'" });
+          or throw_da(error => "Bad Order parameter '$param->{Order}'");
 
         # Set up the order direction.
         my $dir = 'ASC';
         if ($param->{OrderDirection}) {
             # Make sure it's legit.
-            die Bric::Util::Fault::Exception::DA->new
-              ({ msg => 'OrderDirection parameter must either ASC or DESC.' })
+            throw_da(error => 'OrderDirection parameter must either ASC or DESC.')
                 if $param->{OrderDirection} ne 'ASC'
                   and $param->{OrderDirection} ne 'DESC';
             # Grab it.
@@ -958,11 +953,11 @@ sub rollback {
     _connect();
     my $ret;
     eval { $ret = $dbh->rollback };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to rollback transactions", payload => $@ }) if $@;
+    throw_da(error => "Unable to rollback transactions", payload => $@)
+      if $@;
     eval { $ret = $dbh->{AutoCommit} = 1 };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to turn AutoCommit on", payload => $@ }) if $@;
+    throw_da(error => "Unable to turn AutoCommit on", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -997,8 +992,8 @@ sub execute {
     my $ret;
 
     eval { $ret = $sth->execute(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to execute SQL statement", payload => $@ }) if $@;
+    throw_da(error => "Unable to execute SQL statement", payload => $@)
+      if $@;
     _profile_stop()           if DBI_PROFILE;
     return $ret;
 }
@@ -1031,9 +1026,9 @@ sub bind_columns {
     my $sth = shift;
     my $ret;
     eval { $ret = $sth->bind_columns(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to bind to columns to statement handle",
-	payload => $@ }) if $@;
+    throw_da(error => "Unable to bind to columns to statement handle",
+             payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -1065,9 +1060,9 @@ sub bind_col {
     my $sth = shift;
     my $ret;
     eval { $ret = $sth->bind_col(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to bind to column to statement handle",
-	payload => $@ }) if $@;
+    throw_da(error => "Unable to bind to column to statement handle",
+             payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -1099,9 +1094,8 @@ sub bind_param {
     my $sth = shift;
     my $ret;
     eval { $ret = $sth->bind_param(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to bind parameters to columns in statement handle",
-	payload => $@ })
+    throw_da(error => "Unable to bind parameters to columns in statement handle",
+             payload => $@)
       if $@;
     return $ret;
 }
@@ -1133,8 +1127,8 @@ sub fetch {
     my $sth = shift;
     my $ret;
     eval { $ret = $sth->fetch(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to fetch row from statement handle", payload => $@ })
+    throw_da(error => "Unable to fetch row from statement handle",
+             payload => $@)
       if $@;
     return $ret;
 }
@@ -1170,8 +1164,8 @@ sub finish {
     my $sth = shift;
     my $ret;
     eval { $ret = $sth->finish(@_) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to finish statement handle", payload => $@ }) if $@;
+    throw_da(error => "Unable to finish statement handle", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -1396,8 +1390,8 @@ sub row_aref {
     _profile_start() if DBI_PROFILE;
     my $aref;
     eval { $aref = $dbh->selectrow_arrayref($qry, undef, @params) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to select row", payload => $@ }) if $@;
+    throw_da(error => "Unable to select row", payload => $@)
+      if $@;
     _profile_stop() if DBI_PROFILE;
     return $aref;
 } # row_aref()
@@ -1440,8 +1434,8 @@ sub row_array {
     _profile_start() if DBI_PROFILE;
     my @array;
     eval { @array = $dbh->selectrow_array($qry, undef, @params) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to select row", payload => $@ }) if $@;
+    throw_da(error => "Unable to select row", payload => $@)
+      if $@;
     _profile_stop() if DBI_PROFILE;
     return @array;
 } # row_array()
@@ -1489,8 +1483,8 @@ sub all_aref {
     _profile_start() if DBI_PROFILE;
     my $aref;
     eval { $aref = $dbh->selectall_arrayref($qry, undef, @params) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to select all", payload => $@ }) if $@;
+    throw_da(error => "Unable to select all", payload => $@)
+      if $@;
     _profile_stop() if DBI_PROFILE;
     return $aref;
 } # all_aref()
@@ -1534,8 +1528,8 @@ sub col_aref {
     _profile_start() if DBI_PROFILE;
     my $col;
     eval { $col = $dbh->selectcol_arrayref($qry, undef, @params) };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to select column into arrayref", payload => $@ }) if $@;
+    throw_da(error => "Unable to select column into arrayref", payload => $@)
+      if $@;
     _profile_stop() if DBI_PROFILE;
     return $col;
 } # col_aref()
@@ -1658,8 +1652,8 @@ sub _connect {
 				DBI_USER, DBI_PASS, $ATTR);
 	}
     };
-    die Bric::Util::Fault::Exception::DA->new(
-        { msg => "Unable to connect to database", payload => $@ }) if $@;
+    throw_da(error => "Unable to connect to database", payload => $@)
+      if $@;
 }
 
 =item _disconnect()
@@ -1677,8 +1671,8 @@ sub _disconnect {
 	    $dbh->disconnect;
 	}
     };
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => "Unable to disconnect from database", payload => $@ }) if $@;
+    throw_da(error => "Unable to disconnect from database", payload => $@)
+      if $@;
 }
 
 =item _debug_prepare(\$sql)

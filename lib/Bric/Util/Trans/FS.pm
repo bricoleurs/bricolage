@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 18:11:02 $
+$Date: 2003-08-11 09:33:37 $
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ use File::Copy qw(cp mv);
 use File::Find qw(find);
 use File::Spec::Functions ();
 use File::Spec::Unix;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 
 ################################################################################
 # Inheritance
@@ -88,7 +88,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $osen = { mac => 'MacOS',
              macos => 'MacOS',
              os2 => 'os2',
@@ -123,11 +122,11 @@ BEGIN {
     # Set up the best escape_uri() function.
     if ($ENV{MOD_PERL}) {
         require Apache::Util;
-        die $@ if $@;
+        rethrow_exception($@) if $@;
         $escape_uri = \&Apache::Util::escape_uri;
     } else {
         require URI::Escape;
-        die $@ if $@;
+        rethrow_exception($@) if $@;
         $escape_uri = \&URI::Escape::uri_escape;
     }
 }
@@ -595,7 +594,8 @@ sub mk_path {
     my $ret;
     File::Basename::fileparse_set_fstype( $^O );
     eval { $ret = mkpath @_ };
-    die $gen->new({ msg => "Error creating path @_.", payload => $@ }) if $@;
+    throw_gen(error => "Error creating path @_.", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -626,7 +626,8 @@ sub del {
     my $self = shift;
     my $ret;
     eval { $ret = rmtree [@_] };
-    die $gen->new({ msg => "Error deleting paths @_.", payload => $@ }) if $@;
+    throw_gen(error => "Error deleting paths @_.", payload => $@)
+      if $@;
     return $ret;
 }
 
@@ -966,7 +967,7 @@ B<Notes:> Uses File::Copy::copy() internally.
 
 $cp = sub {
     cp(@_) ||
-      die $gen->new({ msg => "Error copying $_[0] to $_[1].", payload => $! });
+      throw_gen(error => "Error copying $_[0] to $_[1].", payload => $!);
 };
 
 ################################################################################
@@ -993,7 +994,7 @@ B<Notes:> Uses File::Copy::move() internally.
 
 $mv = sub {
     mv(@_) ||
-      die $gen->new({ msg => "Error moving $_[0] to $_[1].", payload => $! });
+      throw_gen(error => "Error moving $_[0] to $_[1].", payload => $!);
 };
 
 ################################################################################
@@ -1056,8 +1057,8 @@ B<Notes:> Uses &$cp() internally.
 $glob = sub {
     my ($src_dir, $dst_dir) = @_;
     opendir DIR, $src_dir
-      || die $gen->new({ msg => "Error opening directory $src_dir",
-                         payload => $!});
+      || throw_gen(error => "Error opening directory $src_dir",
+                   payload => $!);
     foreach my $src ( grep { ! -d $_ } map { cat_dir(__PACKAGE__, $src_dir, $_) }
                                                readdir (DIR) ) {
         &$cp($src, $dst_dir);

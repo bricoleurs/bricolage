@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:27 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -112,8 +112,7 @@ use Bric::Config qw(:admin);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::Parts::Member;
 use Bric::Util::Attribute::Grp;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::Class;
 use Bric::Util::Coll::Member;
 
@@ -274,8 +273,7 @@ sub lookup {
     $params->{all} = 1;
     $grp = _do_list($class, $params);
     # We want @$grp to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$grp > 1;
     return @$grp ? $grp->[0] : undef;
 }
@@ -1138,8 +1136,7 @@ sub deactivate {
     my $self = shift;
     my ($id, $perm) = $self->_get(qw(id permanent));
         if ($perm || $id == ADMIN_GRP_ID) {
-            die Bric::Util::Fault::Exception::GEN->new
-              ({ msg => 'Cannot deactivate permanent group.' });
+            throw_gen(error => 'Cannot deactivate permanent group.');
         }
     $self->_set( { '_active' => 0 } );
     return $self;
@@ -1234,7 +1231,7 @@ sub add_member {
         $id      = $param->{id};
     } else {
         my $msg = "Missing required parameters 'obj' or 'id' & 'package'";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
+        throw_gen(error => $msg);
     }
 
     # Grab the member collection and then see if it already has the new
@@ -1249,7 +1246,7 @@ sub add_member {
     if ($supported && (not exists $supported->{$package})) {
         my $msg = "$package object not allowed in Group '" .
           $self->_get('name') . "'";
-        die Bric::Util::Fault::Exception::GEN->new({msg => $msg});
+        throw_gen(error => $msg);
     }
 
     # Create a new member object for this object.

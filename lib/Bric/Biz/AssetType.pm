@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-28 00:05:13 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -113,7 +113,7 @@ use strict;
 # Programatic Dependencies
 
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::Grp::AssetType;
 use Bric::Util::Grp::Element;
 use Bric::Biz::AssetType::Parts::Data;
@@ -124,7 +124,6 @@ use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
 use Bric::Util::Coll::Site;
-use Bric::Util::Fault qw(throw_dp);
 use Bric::App::Cache;
 
 #==============================================================================#
@@ -358,8 +357,7 @@ sub lookup {
 
     $elem = $pkg->_do_list(@_);
     # We want @$cat to have only one value.
-    die Bric::Util::Fault::Exception::DP->new
-      ({ msg => 'Too many ' . __PACKAGE__ . ' objects found.' })
+    throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')
       if @$elem > 1;
     return @$elem ? $elem->[0] : undef;
 }
@@ -1879,7 +1877,7 @@ sub add_data {
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
 	    my $msg = 'Must pass AssetType field or container objects, not IDs';
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+	    throw_gen(error => $msg);
 	}
 
 	# Get the ID if we were passed an object.
@@ -2000,7 +1998,7 @@ sub copy_data {
     unless ($f_obj) {
 	unless ($at) {
 	    my $msg = 'Insufficient argurments';
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+	    throw_gen(error => $msg);
 	}
 
 	$f_obj = $at->get_data($f);
@@ -2048,7 +2046,7 @@ sub del_data {
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
 	    my $msg = 'Must pass AssetType field or container objects, not IDs';
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+	    throw_gen(error => $msg);
 	}
 
 	# Get the ID if we were passed an object.

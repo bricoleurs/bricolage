@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:46 $
+$Date: 2003-08-11 09:33:33 $
 
 =head1 SYNOPSIS
 
@@ -72,8 +72,7 @@ use strict;
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Coll::Addr;
 use Bric::Util::Grp::Org;
-use Bric::Util::Fault::Exception::DP;
-use Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault qw(throw_dp);
 
 ################################################################################
 # Inheritance
@@ -244,8 +243,7 @@ sub lookup {
 
     $org = $get_em->($pkg, @_);
     # We want @$org to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Biz::Org objects found.' }) if @$org > 1;
+    throw_dp(error => 'Too many Bric::Biz::Org objects found.') if @$org > 1;
     return @$org ? $org->[0] : undef;
 }
 
@@ -903,8 +901,7 @@ sub add_object {
     @init{qw(name long_name org_id obj)} =
       ($self->_get(qw(name long_name id)), $obj);
     eval { $ret = $class->new(\%init) };
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => "Unable to instantiate new $class object: $@." }) if $@;
+    throw_dp(error => "Unable to instantiate new $class object: $@.") if $@;
     return $ret;
 }
 

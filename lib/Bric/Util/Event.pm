@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:39 $
+$Date: 2003-08-11 09:33:36 $
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,7 @@ use Bric::Util::EventType;
 use Bric::Util::AlertType;
 #use Bric::Util::Grp::Event;
 use Bric::Biz::Person::User;
-use Bric::Util::Fault::Exception::DP;
+use Bric::Util::Fault qw(throw_dp);
 
 ##############################################################################
 # Inheritance
@@ -124,10 +124,6 @@ my %TXT_MAP = (key_name      => 'LOWER(t.key_name)',
                description   => 'LOWER(t.description)',
                class         => 'LOWER(c.pkg_name)'
               );
-
-my $dp = 'Bric::Util::Fault::Exception::DP';
-
-##############################################################################
 
 ##############################################################################
 # Instance Fields
@@ -288,25 +284,23 @@ sub new {
         } elsif ($init->{key_name}) {
             $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
         } else {
-            die Bric::Util::Fault::Exception::DP->new({
-              msg => "No Bric::Util::EventType object, ID, or name passed to " .
-                     __PACKAGE__ . '::new()' });
+            throw_dp(error => "No Bric::Util::EventType object, ID, or name passed to "
+                     . __PACKAGE__ . '::new()');
         }
     }
 
     my ($class, $et_id) = ($et->_get('class', 'id'));
     # Die if the object we're logging against isn't in the right class.
     my $obj = $init->{obj};
-    $obj->isa($class) || die Bric::Util::Fault::Exception::DP->new
-      ({ msg => "Event type '" . $et->get_key_name . "' expects an object " .
-                "of type $class" });
+    $obj->isa($class)
+      || throw_dp(error => "Event type '" . $et->get_key_name . "' expects an object " .
+                  "of type $class");
 
     # Die if no user has been passed.
     my $user = $init->{user};
     $user->isa('Bric::Biz::Person::User') ||
-      die Bric::Util::Fault::Exception::DP->new({
-        msg => "No Bric::Biz::Person::User object passed to " .
-               __PACKAGE__ . '::new()' });
+      throw_dp(error => "No Bric::Biz::Person::User object passed to " .
+               __PACKAGE__ . '::new()');
 
     # Inititialize the standard Bric::Util::Event properties.
     $self->SUPER::new({event_type_id => $et_id,
@@ -391,8 +385,8 @@ sub lookup {
 
     $event = $get_em->($pkg, @_);
     # We want @$event to have only one value.
-    die Bric::Util::Fault::Exception::DP->new({
-      msg => 'Too many Bric::Util::Event objects found.' }) if @$event > 1;
+    throw_dp(error => 'Too many Bric::Util::Event objects found.')
+      if @$event > 1;
     return @$event ? $event->[0] : undef;
 }
 
@@ -1398,7 +1392,7 @@ $get_em = sub {
 #            push @params, $v;
         } else {
             # We're horked.
-            die $dp->new({ msg => "Invalid property '$k'."});
+            throw_dp(error => "Invalid property '$k'.");
         }
     }
 
