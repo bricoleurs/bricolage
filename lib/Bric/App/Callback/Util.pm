@@ -7,6 +7,8 @@ use base qw(Exporter);
 our @EXPORT_OK = qw(parse_uri detect_agent);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
+my $statmsg_key = '_status_msg_';
+
 
 sub parse_uri {
     my $uri = shift;
@@ -102,6 +104,23 @@ sub detect_agent {
     return $ua;
 }
 
+sub status_msg {
+    my @msgs = @_;
+
+    my $old_autoflush = $m->autoflush;   # autoflush is restored below
+    $m->autoflush(1);
+
+    unless ($r->pnotes($statmsg_key)) {
+        $m->out("<br />\n" x 2);
+    }
+
+    my $space = '&nbsp;' x 20;
+    map $m->out(qq{$space<span class="errorMsg">$_</span><br />\n}), @msgs;
+    $m->flush_buffer;
+    $m->autoflush($old_autoflush);
+    $r->pnotes($statmsg_key, 1);
+}
+
 
 1;
 
@@ -163,3 +182,14 @@ In the event that a field cannot be recognized, the string "Unknown" is
 returned. This may occur in the browser, version, and os fields.
 
 Note: was comp/widgets/util/detectAgent.mc
+
+=head1 status_msg
+
+Sometimes there's a long process executing, and you want to send status messages
+to the browser so that the user knows what's happening. This element will do
+this for you. Call it each time you want to send one or more status messages,
+and it'll take care of the rest for you. When you're done, you can either
+redirect to another page, or simply finish drawing the current page. It will
+draw in below the status messages.
+
+Note: was comp/lib/util/status_msg.mc
