@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.4.2
+=head1 VERSION 1.4.3
 
 =head2 Bug Fixes
 
