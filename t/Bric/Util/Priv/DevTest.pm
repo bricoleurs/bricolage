@@ -107,7 +107,7 @@ sub test_list : Test(8) {
     is( scalar @privs, 25, "Check for 25 privs" );
     ok( @privs = Bric::Util::Priv->list({ value => READ }),
         "Look up by value 'READ'" );
-    is( scalar @privs, 9, "Check for 9 privs" );
+    is( scalar @privs, 12, "Check for 12 privs" );
 }
 
 ##############################################################################
