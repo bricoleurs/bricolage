@@ -1,0 +1,16 @@
+Description:
+  Prints out elements and their subelements and custom fields
+  using the output from `bric_soap element export`.
+
+Usage:
+  $ bric_soap element list_ids | bric_soap element export - > elements.xml
+  $ ./element-tree.pl elements.xml
+  See also the comments in the script.
+
+Todo:
+  Show output channels for top-level elements.
+  Maybe show the description.
+  Maybe not show isolated non-top-level elements, like utility templates.
+
+Author:
+  o  Scott Lanning, 2004-12-17
