@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-06-24 22:10:25 $
 
 =head1 SYNOPSIS
 
@@ -815,9 +815,9 @@ sub _load_stories {
 	# add contributors, if any
 	if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
 	    foreach my $c (@{$sdata->{contributors}{contributor}}) {
-		my %init = (fname => $c->{fname}, 
-			    mname => $c->{mname},
-			    lname => $c->{lname});
+		my %init = (fname => defined $c->{fname} ? $c->{fname} : "", 
+			    mname => defined $c->{mname} ? $c->{mname} : "",
+			    lname => defined $c->{lname} ? $c->{lname} : "");
 		my ($contrib) = 
 		    Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
 		die __PACKAGE__ . "::create : no contributor found matching " .
