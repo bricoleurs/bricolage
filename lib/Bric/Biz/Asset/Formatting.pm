@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$Revision: 1.64 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.63 $ )[-1];
+our $VERSION = (qw$Revision: 1.64 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:05 $
+$Date: 2004-02-20 15:26:28 $
 
 =head1 SYNOPSIS
 
@@ -940,7 +940,7 @@ The number of columns to format in a textarea field.
 
 =item vals
 
-An anonymous hash of key/value pairs reprsenting the values and display names
+An anonymous hash of key/value pairs representing the values and display names
 to use in a select list.
 
 =back
