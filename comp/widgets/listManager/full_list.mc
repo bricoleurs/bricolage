@@ -59,7 +59,7 @@
 
   # Adjust the table size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;"></th>');
+      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">&nbsp;</th>');
   }
 </%perl>
 
@@ -88,7 +88,8 @@
 
   # Fill out the rest of the columns.
   foreach ((@{$data->[$r]}+1)..$cols) {
-      $m->out("<td>&nbsp;</td>\n");
+      $m->out(qq{<td style="border-style:solid; border-color:#cccc99;">} .
+              qq{&nbsp;</td>\n});
   }
 
 </%perl>
@@ -102,7 +103,7 @@
 % # If there were no results (and thus none of the above is output) tell the user
 % if ($rows == 1) {
 %     if ($empty_search) {
-  <tr><td colspan="<% scalar @$fields %>"></td></tr>
+  <tr><td colspan="<% scalar @$fields %>"></td>&nbsp;</tr>
 %     } else {
   <tr><td colspan="<% scalar @$fields %>">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
 %     }

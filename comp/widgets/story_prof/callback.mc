@@ -841,7 +841,8 @@ my $handle_checkout = sub {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg("Permission to checkout &quot;" . $ba->get_name . "&quot; denied");
+            add_msg("Permission to checkout &quot;" . $ba->get_name .
+                    "&quot; denied");
         }
     }
 

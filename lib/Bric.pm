@@ -10,7 +10,7 @@ Release Version: 1.5.0 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.0";
 
 =head1 DATE
 
-$Date: 2002-09-06 22:30:13 $
+$Date: 2002-09-26 00:17:35 $
 
 =head1 SYNOPSIS
 

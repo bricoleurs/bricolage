@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-09-21 00:52:10 $
+$Date: 2002-09-26 00:17:36 $
 
 
 =head1 SYNOPSIS

@@ -218,12 +218,14 @@ elsif ($field eq "$widget|checkout_cb") {
 
     foreach my $t_id (@$ids) {
 	my $t_obj = Bric::Biz::Asset::Formatting->lookup({'id' => $t_id});
-	my $d     = $t_obj->get_current_desk;
-
-	$d->checkout($t_obj, get_user_id);
-	$d->save;
-
-	log_event("formatting_checkout", $t_obj);
+        if (chk_authz($t_obj, EDIT, 1)) {
+            $t_obj->checkout({ user__id => get_user_id });
+            $t_obj->save;
+            log_event("formatting_checkout", $t_obj);
+        } else {
+            add_msg("Permission to checkout &quot;" . $t_obj->get_file_name .
+                    "&quot; denied");
+        }
     }
 
     if (@$ids > 1) {

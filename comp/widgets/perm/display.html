@@ -5,7 +5,7 @@ if ($is_user) {
     # We need grant to the members of this current user group permissions to
     # other groups.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "Object Group Permissions");
+             caption => "Object Group Permissions", border => 0);
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access the members of these $grp_pl.");
@@ -27,12 +27,12 @@ if ($is_user) {
 		 perm => $perms{$gid});
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 
     # We need to do it for workflows, desks, and categories, too.
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "$wf_disp Permissions");
+             caption => "$wf_disp Permissions", border => 0);
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access assets in these $wf_pl.");
@@ -49,11 +49,11 @@ if ($is_user) {
 		 name => $wf->get_name);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 
     # Now do the desks.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "$dsk_disp Permissions");
+             caption => "$dsk_disp Permissions", border => 0);
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access assets on these $dsk_pl.");
@@ -69,11 +69,11 @@ if ($is_user) {
 		 name => $dsk->get_name);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 
     # And finally, do it for categories.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "$cat_disp Permissions");
+             caption => "$cat_disp Permissions", border => 0);
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access assets in these $cat_pl.");
@@ -89,13 +89,14 @@ if ($is_user) {
 		);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 }
 
 # Now get the permissions on this group that are granted to user groups.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => "$usr_grp_disp Permissions",
-	 number => $num);
+	 number => $num,
+         border => 0);
 
 $m->comp($head_comp, "Grant the members of the following $grp_pl permission "
 	 . "to access the members of the &quot;$name&quot; $grp_disp.");
@@ -117,7 +118,7 @@ foreach my $grp ($usr_grp_pkg->list) {
 	     perm => $perms{$gid});
 }
 $m->out(qq{</table>\n});
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 </%perl>
 
 %#--- Arguments ---#
@@ -188,15 +189,15 @@ my (%users, $no_edit);
 
 
 <%def .radio_head>
-<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99">
+<table border="1" cellpadding="2" cellspacing="0" width="580" style="border-style:solid; border-color:#cccc99;">
 % if ($_[0]) {
     <tr>
-    <td colspan="<% @$vals_aref + 1 %>"><% $_[0] %></td>
+    <td style="border-style:solid; border-color:#cccc99;" colspan="<% @$vals_aref + 1 %>"><% $_[0] %></td>
     </tr>
 % } # if
     <tr class="medHeader">
-        <th>Group</th>
-% $m->out(qq{        <th>$_->[1]</th>\n}) for @$vals_aref;
+        <th style="border-style:solid; border-color:#cccc99;">Group</th>
+% $m->out(qq{        <th style="border-style:solid; border-color:#cccc99;">$_->[1]</th>\n}) for @$vals_aref;
     </tr>
 </%def>
 
@@ -218,20 +219,20 @@ if ($perm) {
 }
 </%init>
 <tr>
-    <td width="340"><span class="label"><% $name %></span>
+    <td width="340" style="border-style:solid; border-color:#cccc99;"><span class="label"><% $name %></span>
         <& '/widgets/profile/hidden.mc', value => $pid, name => "${type}_perm_id" &>
         <& '/widgets/profile/hidden.mc', value => $gid, name => "${type}_grp_id" &>
     </td>
 % if ($no_edit) {
 %     foreach my $v (@$vals_aref) {
-    <td align="middle" height="20" width="60"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
+    <td style="border-style:solid; border-color:#cccc99;" align="middle" height="20" width="60"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
 %     } # foreach
 % } else {
 %     foreach my $v (@$vals_aref) {
 %         if ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
-    <td align="middle" valign="top" height="20" width="60">&nbsp;</td>
+    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
 % } else {
-    <td align="middle" valign="top" height="20" width="60">
+    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">
         <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
     </td>
 %         } # if
@@ -241,15 +242,15 @@ if ($perm) {
 </%def>
 
 <%def .select_head>
-<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99">
+<table border="1" cellpadding="2" cellspacing="0" width="580" style="border-style:solid; border-color:#cccc99;">
 % if ($_[0]) {
     <tr>
-    <td colspan="2"><% $_[0] %></td>
+    <td style="border-style:solid; border-color:#cccc99;" colspan="2"><% $_[0] %></td>
     </tr>
 % } # if
     <tr class="medHeader">
-        <th>Group</th>
-        <th>Permission</th>
+        <th style="border-style:solid; border-color:#cccc99;">Group</th>
+        <th style="border-style:solid; border-color:#cccc99;">Permission</th>
     </tr>
 </%def>
 
@@ -273,14 +274,14 @@ my $opts = $create || ($type ne 'usr' && $grp->get_permanent) ?
   $vals_aref : $vals_aref2;
 </%init>
 <tr>
-    <td width="340"><span class="label"><% $name %></span>
+    <td style="border-style:solid; border-color:#cccc99;" width="340"><span class="label"><% $name %></span>
         <& '/widgets/profile/hidden.mc', value => $pid, name => "${type}_perm_id" &>
         <& '/widgets/profile/hidden.mc', value => $gid, name => "${type}_grp_id" &>
     </td>
 % if ($no_edit) {
-    <td height="20"><% $vals_href->{$val} %></td>
+    <td style="border-style:solid; border-color:#cccc99;" height="20"><% $vals_href->{$val} %></td>
 % } else {
-    <td height="20"><& '/widgets/profile/select.mc', name => "$type|$gid", value => $val,
+    <td style="border-style:solid; border-color:#cccc99;" height="20"><& '/widgets/profile/select.mc', name => "$type|$gid", value => $val,
            options => $opts, useTable => 0 &>
     </td>
 % } # if

@@ -71,7 +71,8 @@ elsif ($field eq "$widget|move_cb") {
 	my ($a_id,$from_id,$to_id,$a_class) = split('-', $a);
 
 	# Do not move assets where the user has not chosen a next desk.
-	next unless $to_id;
+        # And where the desk ID is the same.
+	next unless $to_id and $to_id != $from_id;
 
 	my $pkg   = get_package_name($a_class);
 	my $a_obj = $pkg->lookup({'id' => $a_id});

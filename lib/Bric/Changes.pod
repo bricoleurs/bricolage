@@ -307,6 +307,34 @@ Removed the C<checkin()> method from Bric::Biz::Asset::Formatting and
 Bric::Biz::Asset::Business and put it into Bric::Biz::Asset, instead, since
 it's exactly the same for all assets. [David]
 
+=item *
+
+Fixed the display of permissions settings to be more consistent with the
+design and layout of the rest of the application. Also neatened listManager
+display a bit. [David]
+
+=item *
+
+Fixed misnamed database constraint. [David]
+
+=item *
+
+Templates can once again be retreived from the library and checked out for
+revising. [David]
+
+=item *
+
+Assets on a desk now no longer have the current desk listed in the "Move to"
+select list. Even if they did, selecting the current desk would no longer
+remove an asset from workflow! Thanks to Andrew Baio for the spot. [David]
+
+=item *
+
+The installer is now much more intelligent about prompting for SSL
+information. It won't ask if you want to use SSL if it can't find mod_ssl or
+apache_ssl, and will only prompt you to pick one or the other if it can find
+both. [David]
+
 =back
 
 =head1 VERSION 1.4.0

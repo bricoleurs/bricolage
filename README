@@ -66,11 +66,6 @@ those platforms -- Mozilla seems to work great on all platforms. Complete
 details are available via the Bugzilla bug report at
 http://bugzilla.bricolage.cc/show_bug.cgi?id=190.
 
-* When doing a search in Bricolage, entering the text to search for and
-hitting the return or enter keys fails to submit the search string. The
-workaround is to click the "Search" button, instead. See the details in the
-bug report at http://bugzilla.bricolage.cc/show_bug.cgi?id=216.
-
 * Users who have been given the rights, via membership, to edit groups and/or
 users effectively have complete access to the system. This is because they can
 add themselves to any group they want, including "Global Admins." Solving this
