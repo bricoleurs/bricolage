@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.65 $ )[-1];
+our $VERSION = (qw$Revision: 1.66 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-19 05:12:15 $
+$Date: 2004-03-20 19:12:31 $
 
 =head1 SYNOPSIS
 
@@ -180,8 +180,6 @@ use MasonX::Interp::WithCallbacks;
 
     use HTML::Mason::Exceptions;
     use HTTP::BrowserDetect;
-    eval { require Text::Levenshtein };
-    require Text::Soundex if $@;
 
     use vars qw($c $widget_dir $lang $lang_key $ct);
 

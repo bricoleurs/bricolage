@@ -26,6 +26,11 @@ Bricolage no longer tries to display thumbnails for related stories, since
 stories don't have thumbnails and would therefore create an error. [Eric
 Sellers]
 
+=item *
+
+Text::Levenshtein is again correctly loaded as an optional module, not a
+required module. Reported by Marshall Roch. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)

@@ -13,9 +13,8 @@ use Bric::Biz::AssetType;
 use Bric::Biz::AssetType::Parts::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
-use Text::Levenshtein;
-use Text::Soundex;
-
+eval { require Text::Levenshtein };
+require Text::Soundex if $@;
 
 my $STORY_URL = '/workflow/profile/story';
 my $CONT_URL  = '/workflow/profile/story/container';
