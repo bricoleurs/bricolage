@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-23 05:43:31 $
+$Date: 2003-01-25 01:56:17 $
 
 =head1 SYNOPSIS
 
@@ -1734,7 +1734,7 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'job a, member m, job_member c';
-    my $wheres = 'a.id = c.object_id and m.id = c.member__id';
+    my $wheres = 'a.id = c.object_id AND m.id = c.member__id';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -1806,7 +1806,6 @@ $get_em = sub {
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
-    $pkg = ref $pkg || $pkg;
     execute($sel, @params);
     my (@d, @jobs, $grp_ids);
     $pkg = ref $pkg || $pkg;

@@ -7,15 +7,15 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 19:06:54 $
+$Date: 2003-01-25 01:56:17 $
 
 =head1 SYNOPSIS
 
@@ -121,20 +121,17 @@ use constant DEBUG => 0;
 ################################################################################
 # Private Class Fields
 
-my @po_cols = qw(id org__id person__id role department title active);
-my @po_props = qw(id org_id person_id role department title _active);
+my @PO_COLS = qw(id org__id person__id role department title active);
+my @PO_PROPS= qw(id org_id person_id role department title _active);
 
-my @org_cols = qw(name long_name personal active);
-my @org_props = qw(name long_name _personal _org_active);
+my $SEL_COLS = 'po.id, po.org__id, po.person__id, po.role, po.department, ' .
+  'po.title, po.active, o.name, o.long_name, o.personal, o.active, m.grp__id';
 
-my @cols = qw(po.id po.org__id po.person__id po.role po.department po.title
-	      po.active o.name o.long_name o.personal o.active);
+my @SEL_PROPS = (@PO_PROPS, qw(name long_name _personal _org_active grp_ids));
 
-my @props = (@po_props, @org_props);
-
-my %txt_map = qw(name o.name long_name o.long_name role po.role department
+my %TXT_MAP = qw(name o.name long_name o.long_name role po.role department
 		  po.department title po.title);
-my %num_map = qw(id po.id org_id po.org__id person_id po.person__id);
+my %NUM_MAP = qw(id po.id org_id po.org__id person_id po.person__id);
 
 ################################################################################
 
@@ -326,6 +323,14 @@ supported lookup keys are:
 
 =item *
 
+name
+
+=item *
+
+long_name
+
+=item *
+
 org_id
 
 =item *
@@ -343,6 +348,10 @@ title
 =item *
 
 department
+
+=item *
+
+grp_id
 
 =back
 
@@ -387,7 +396,7 @@ sub list { wantarray ? @{ &$get_em(@_) } : &$get_em(@_) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head2 Destructors
 
@@ -574,11 +583,35 @@ No AUTOLOAD method.
 
 =back
 
-B<Side Effects:> NONE.
+B<Side Effects:> If called by Bric::Util::Grp or Bric::Util::Grp::Parts::Member
+or a subclass of either, this method will return the same value as
+C<get_org_id()>. This is because it is the Org ID that is used for group
+membership, rather than the Org::Person ID.
 
 B<Notes:> If the Bric::Biz::Org::Person object has been instantiated via the new()
 constructor and has not yet been C<save>d, the object will not yet have an ID,
 so this method call will return undef.
+
+=cut
+
+sub get_id {
+    my $self = shift;
+    # HACK. We should change it so that the person_org id is the same as the
+    # org_id. Such is how User works in relation to Person. Then this method
+    # wouldn't need to be written at all -- Bric.pm would handle it.
+    my $caller = caller;
+    if (UNIVERSAL::isa($caller, 'Bric::Util::Grp') or
+        UNIVERSAL::isa($caller, 'Bric::Util::Grp::Parts::Member')) {
+        # Return the org ID. Or, if there isn't one, return the ID on the
+        # assumption that this method is actually being called during
+        # save(), in which case the super class is adding the org to a group
+        # and the id is actually the org_id, at least temporarily. See save()
+        # for how the org_id and Id are juggled. Bleh!
+        return $self->_get('org_id') || $self->_get('id');
+    } else {
+        return $self->_get('id');
+    }
+}
 
 =item my $org_id = $porg->get_org_id
 
@@ -1247,23 +1280,23 @@ sub save {
 	local $" = ' = ?, '; # Simple way to create placeholders with an array.
 	my $upd = prepare_c(qq{
             UPDATE person_org
-            SET    @po_cols = ?
+            SET    @PO_COLS = ?
             WHERE  id = ?
         }, undef, DEBUG);
-	execute($upd, $self->_get(@po_props), $id);
+	execute($upd, $self->_get(@PO_PROPS), $id);
     } else {
 	# It's a new porg. Insert it.
 	$self->_set(['id'], [$self->_get('org_id')]);
 	$self->SUPER::save;
 	$self->_set([qw(org_id _org_active)], [$self->_get(qw(id _active))]);
 	local $" = ', ';
-	my $fields = join ', ', next_key('org'), ('?') x $#po_cols;
+	my $fields = join ', ', next_key('org'), ('?') x $#PO_COLS;
 	my $ins = prepare_c(qq{
-            INSERT INTO person_org (@po_cols)
+            INSERT INTO person_org (@PO_COLS)
             VALUES ($fields)
         }, undef, DEBUG);
 	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@po_props[1..$#po_props]));
+	execute($ins, $self->_get(@PO_PROPS[1..$#PO_PROPS]));
 	# Now grab the ID.
 	$self->_set({id => last_key('org')});
     }
@@ -1273,7 +1306,7 @@ sub save {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -1334,50 +1367,63 @@ B<Notes:> NONE.
 =cut
 
 $get_em = sub {
-    my ($pkg, $args, $ids) = @_;
-    my (@txt_wheres, @num_wheres, @params);
-    while (my ($k, $v) = each %$args) {
-	if ($num_map{$k}) {
-	    push @num_wheres, $num_map{$k};
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = 'person_org po, org o, member m, org_member c';
+    my $wheres = 'po.org__id = o.id AND o.id = c.object_id ' .
+      'AND m.id = c.member__id';
+    my @params;
+    while (my ($k, $v) = each %$params) {
+	if ($NUM_MAP{$k}) {
+            $wheres .= " AND $NUM_MAP{$k} = ?";
 	    push @params, $v;
-	} elsif ($txt_map{$k}) {
-	    push @txt_wheres, "LOWER($txt_map{$k})";
+	} elsif ($TXT_MAP{$k}) {
+            $wheres .= " AND LOWER($TXT_MAP{$k}) LIKE ?";
 	    push @params, lc $v;
-	}
+	} elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, org_member c2";
+            $wheres .= " AND o.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
+        }
     }
 
-    my $where = defined $args->{id} ? '' : 'po.active = 1 ';
-    local $" = ' = ? AND ';
-    $where .= $where ? "AND @num_wheres = ?" : "@num_wheres = ?" if @num_wheres;
-    local $" = ' LIKE ? AND ';
-    $where .= $where ? "AND @txt_wheres LIKE ?" : "@txt_wheres LIKE ?"
-      if @txt_wheres;
+    # Make sure it's active unless and ID has been passed.
+    $wheres .= "AND po.active = 1" unless defined $params->{id};
 
-    local $" = ', ';
-    my @qry_cols = $ids ? ('id') : @cols;
+    # Assemble and prepare the query.
+    my $qry_cols = $ids ? \'DISTINCT po.id' : \$SEL_COLS;
     my $sel = prepare_c(qq{
-        SELECT @qry_cols
-        FROM   org o, person_org po
-        WHERE  o.id = po.org__id
-               AND $where
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY o.id
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @porgs);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @orgs, $grp_ids);
     $pkg = ref $pkg || $pkg;
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @porgs, $self
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new org object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @orgs, $self;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
     }
-    finish($sel);
-    return \@porgs;
+    return \@orgs;
 };
 
 =item my $addr_col = &$get_addr_coll($self)

@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 18:55:06 $
+$Date: 2003-01-25 01:56:16 $
 
 =head1 SYNOPSIS
 
@@ -1700,13 +1700,13 @@ sub save {
 	$self->_set(['id'], [$id]);
 
 	# Now be sure to create a personal org for this person.
-	my $org = Bric::Biz::Org::Person->new(
-            # Should probably use the preferred name format supplied by the
-            # customer.
-          { name => $self->format_name(Bric::Util::Pref->lookup_val('Name Format')),
-	    role => 'Personal',
-	    _personal => 1,
-	    person_id => $id });
+	my $org = Bric::Biz::Org::Person->new
+          ({ name => $self->format_name
+             (Bric::Util::Pref->lookup_val('Name Format')),
+             role => 'Personal',
+             _personal => 1,
+             person_id => $id
+           });
 	$org->save;
 
 	# And finally, register this person in the "All Persons" group.

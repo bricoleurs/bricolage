@@ -15,8 +15,7 @@ use Bric::Util::MediaType;
 
 sub table {'job '}
 
-my $job_one = 1;
-my $date        = '2003-01-22 14:43:23';
+my $date = '2003-01-22 14:43:23';
 
 my %job = ( name => 'Test Job',
             user_id => __PACKAGE__->user_id,
@@ -174,7 +173,7 @@ sub test_list : Test(44) {
 ##############################################################################
 # Test class methods.
 ##############################################################################
-# Test the list() method.
+# Test the list_ids() method.
 sub test_list_ids : Test(21) {
     my $self = shift;
 

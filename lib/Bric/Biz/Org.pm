@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-22 05:36:03 $
+$Date: 2003-01-25 01:56:16 $
 
 =head1 SYNOPSIS
 
@@ -99,10 +99,14 @@ use constant INSTANCE_GROUP_ID => 3;
 
 ################################################################################
 # Private Class Fields
-my @cols = qw(id name long_name personal active);
-my @props = qw(id name long_name _personal _active);
-my @ord = qw(name long_name active);
-my $meths;
+my @COLS = qw(id name long_name personal active);
+my @PROPS = qw(id name long_name _personal _active);
+
+my $SEL_COLS = 'a.id, a.name, a.long_name, a.personal, a.active, m.grp__id';
+my @SEL_PROPS = (@PROPS, 'grp_ids');
+
+my @ORD = qw(name long_name active);
+my $METHS;
 
 ################################################################################
 
@@ -114,6 +118,7 @@ BEGIN {
 			 id =>  Bric::FIELD_READ,
 			 name => Bric::FIELD_RDWR,
 			 long_name => Bric::FIELD_RDWR,
+			 grp_ids => Bric::FIELD_READ,
 
 			 # Private Fields
 			 _personal => Bric::FIELD_NONE,
@@ -261,6 +266,10 @@ long_name
 =item *
 
 personal
+
+=item *
+
+grp_id
 
 =back
 
@@ -516,11 +525,11 @@ sub my_meths {
     my ($pkg, $ord) = @_;
 
     # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}]
+      if $METHS;
 
     # We don't got 'em. So get 'em!
-    $meths = {
+    $METHS = {
 	      name      => {
 			    name     => 'name',
 			    get_meth => sub { shift->get_name(@_) },
@@ -568,7 +577,7 @@ sub my_meths {
 			    props    => { type => 'checkbox' }
 			   },
 	     };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    return !$ord ? $METHS : wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
 }
 
 ################################################################################
@@ -1136,10 +1145,10 @@ sub save {
 	local $" = ' = ?, '; # Simple way to create placeholders with an array.
 	my $upd = prepare_c(qq{
             UPDATE org
-            SET   @cols = ?
+            SET   @COLS = ?
             WHERE  id = ?
-        });
-	execute($upd, $self->_get(@props, 'id'));
+        }, undef, DEBUG);
+	execute($upd, $self->_get(@PROPS, 'id'));
 	unless ($self->_get('active')) {
 	    # Deactivate all group memberships if we've deactivated the org.
 	    foreach my $grp (Bric::Util::Grp::Org->list({ obj => $self })) {
@@ -1153,13 +1162,13 @@ sub save {
     } else {
 	# It's a new org. Insert it.
 	local $" = ', ';
-	my $fields = join ', ', next_key('org'), ('?') x $#cols;
+	my $fields = join ', ', next_key('org'), ('?') x $#COLS;
 	my $ins = prepare_c(qq{
-            INSERT INTO org (@cols)
+            INSERT INTO org (@COLS)
             VALUES ($fields)
         }, undef, DEBUG);
 	# Don't try to set ID - it will fail!
-	execute($ins, $self->_get(@props[1..$#props]));
+	execute($ins, $self->_get(@PROPS[1..$#PROPS]));
 	# Now grab the ID.
 	$id = last_key('org');
 	$self->_set(['id'], [$id]);
@@ -1232,52 +1241,68 @@ B<Notes:> NONE.
 =cut
 
 $get_em = sub {
-    my ($pkg, $args, $ids) = @_;
-    my (@txt_wheres, @num_wheres, @params);
-    while (my ($k, $v) = each %$args) {
+    my ($pkg, $params, $ids, $href) = @_;
+    my $tables = 'org a, member m, org_member c';
+    my $wheres = 'a.id = c.object_id AND m.id = c.member__id';
+    my @params;
+    while (my ($k, $v) = each %$params) {
 	if ($k eq 'id') {
-	    push @num_wheres, $k;
+            # Simple numeric comparison.
+            $wheres .= " AND a.id = ?";
 	    push @params, $v;
 	} elsif ($k eq 'personal') {
-	    push @num_wheres, $k;
+            # Simple boolean numeric comparison.
+            $wheres .= " AND a.personal = ?";
 	    push @params, $v ? 1 : 0;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, org_member c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
 	} else {
-	    push @txt_wheres, "LOWER($k)";
+            # Simple string comparison.
+            $wheres .= " AND LOWER(a.$k) LIKE ?";
 	    push @params, lc $v;
 	}
     }
 
-    my $where = defined $args->{id} ? '' : 'active = 1 ';
-    local $" = ' = ? AND ';
-    $where .= $where ? "AND @num_wheres = ?" : "@num_wheres = ?" if @num_wheres;
-    local $" = ' LIKE ? AND ';
-    $where .= $where ? "AND @txt_wheres LIKE ?" : "@txt_wheres LIKE ?"
-      if @txt_wheres;
+    # Make sure it's active unless and ID has been passed.
+    $wheres .= "AND a.active = 1" unless defined $params->{id};
 
-    local $" = ', ';
-    my @qry_cols = $ids ? ('id') : @cols;
+    # Assemble and prepare the query.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.personal, a.long_name, a.id');
     my $sel = prepare_c(qq{
-        SELECT @qry_cols
-        FROM   org
-        WHERE  $where
-        ORDER BY personal, long_name
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @orgs);
-    bind_columns($sel, \@d[0..$#cols]);
+    my (@d, @orgs, $grp_ids);
     $pkg = ref $pkg || $pkg;
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @orgs, $self
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new org object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @orgs, $self;
+        } else {
+            push @$grp_ids, $d[$#d];
+        }
     }
-    finish($sel);
     return \@orgs;
 };
 
