@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.99 $
+$Revision: 1.100 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:57:00 $
+$Date: 2003-04-24 23:57:38 $
 
 =head1 DESCRIPTION
 
@@ -94,7 +94,7 @@ Write context-sensitive help for those pages that are still missing it.
 =item *
 
 Resolve the "Adding Element and hitting Cancel" issue (See
-L<http:E<sol>E<sol>bugzilla.bricolage.ccE<sol>show_bug.cgi?id=3>).
+L<http://bugzilla.bricolage.cc/show_bug.cgi?id=3>).
 
 =item *
 
@@ -216,7 +216,7 @@ character set.
 =item *
 
 Revamp the element system. See the proposed functional specification here:
-L<http:E<sol>E<sol>bricolage.ccE<sol>docsE<sol>designE<sol>ElementRevision.html>.
+L<http://bricolage.cc/docs/design/ElementRevision.html>.
 
 =item *
 
@@ -495,7 +495,7 @@ Integrate with WebDAV (Slide? mod_dav?).
 =item *
 
 Add full-text indexing of the database. See
-L<http:E<sol>E<sol>techdocs.postgresql.orgE<sol>techdocsE<sol>fulltextindexing.php>
+L<http://techdocs.postgresql.org/techdocs/fulltextindexing.php>
 for one approach using PostgreSQL.
 
 =item *

@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-26 05:08:28 $
+$Date: 2003-04-24 23:57:38 $
 
 =head1 SYNOPSIS
 
@@ -885,9 +885,8 @@ B<Notes:> NONE.
 sub chk_syntax {
     my $self = shift;
     my ($burner) = $self->_get_subclass($_[0]);
-    $self->_set(['mode'], [SYNTAX_MODE]);
+    $burner->_set(['mode'], [SYNTAX_MODE]);
     my $ret = $burner->chk_syntax(@_);
-    $self->_set(['mode'], [undef]);
     return $ret;
 }
 

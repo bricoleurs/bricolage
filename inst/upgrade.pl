@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-06-25 21:50:41 $
+$Date: 2003-04-24 23:57:37 $
 
 =head1 DESCRIPTION
 
@@ -134,10 +134,10 @@ END
 
     # save todo list for later
     $UPGRADE{TODO} = \@todo;
-    
+
     # note the plan of action
     print "Found existing version $INSTALL->{VERSION}.\n";
-    print "Will run database upgrade scripts for version(s) ", 
+    print "Will run database upgrade scripts for version(s) ",
       join(', ', @todo), "\n"
         if @todo;
 }
@@ -149,7 +149,7 @@ sub confirm_paths {
 		\$INSTALL->{CONFIG}{MODULE_DIR});
     ask_confirm("Bricolage Executable Directory",
 		\$INSTALL->{CONFIG}{BIN_DIR});
-    ask_confirm("Bricolage Man-Page Directory",
+    ask_confirm("Bricolage Man-Page Directory (! to skip)",
 		\$INSTALL->{CONFIG}{MAN_DIR});
     ask_confirm("Mason Component Directory",
 		\$INSTALL->{CONFIG}{MASON_COMP_ROOT});

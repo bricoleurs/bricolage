@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.104 $
+$Revision: 1.105 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:00 $
+$Date: 2003-04-24 23:57:38 $
 
 =head1 DESCRIPTION
 
@@ -324,7 +324,7 @@ Installation of mod_ssl follows the usual conventions. Here's an example:
 
 =item *
 
-Download the mod_ssl source tarball from L<http:E<sol>E<sol>www.modssl.orgE<sol>>.
+Download the mod_ssl source tarball from L<http://www.modssl.org/>.
 
 =item *
 
@@ -357,7 +357,7 @@ compiled into Apache.
 =item *
 
 Download the apache_ssl source tarball from
-L<http:E<sol>E<sol>www.apache-ssl.orgE<sol>>.
+L<http://www.apache-ssl.org/>.
 
 =item *
 
@@ -690,7 +690,7 @@ installation system.
 
 =item *
 
-Download the latest Bricolage sources from L<http:E<sol>E<sol>bricolage.ccE<sol>>.
+Download the latest Bricolage sources from L<http://bricolage.cc/>.
 
 =item *
 
@@ -722,7 +722,7 @@ Install Bricolage (as root):
 =back
 
 If you run into problem, please file a bug report at
-L<http:E<sol>E<sol>bugzilla.bricolage.ccE<sol>>. Include a copy of all
+L<http://bugzilla.bricolage.cc/>. Include a copy of all
 F<*.db> files generated
 by the Makefile as well as a complete description of where the process
 failed. Then, either wait for us to fix the problem or try the manual
@@ -739,7 +739,7 @@ Here's how to install Bricolage manually.
 
 =item *
 
-Download the latest Bricolage sources from L<http:E<sol>E<sol>bricolage.ccE<sol>>.
+Download the latest Bricolage sources from L<http://bricolage.cc/>.
 Decompress them into /usr/local/bricolage.
 
 =item *
@@ -1328,7 +1328,7 @@ from Bricolage. Please note that currently due to restrictions in the perl www
 client library (LWP), a resource must be fully loaded into memory before being
 uploaded to the WebDAV server. It's recommended not to use the WebDAV
 transport to transfer large files, such as movies. Check
-L<http:E<sol>E<sol>www.webdav.orgE<sol>> for information on the WebDAV protocol.
+L<http://www.webdav.org/> for information on the WebDAV protocol.
 
 =back
 

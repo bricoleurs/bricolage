@@ -41,5 +41,6 @@ WriteMakefile(NAME           => 'Bric',
                 ( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) :
                 ()),
               ( exists $CONFIG->{MAN_DIR} ?
-                ( INSTALLMAN3DIR => "$CONFIG->{MAN_DIR}/man3" ) :
+                ( INSTALLMAN3DIR => "$CONFIG->{MAN_DIR}/man3",
+                  INSTALLSITEMAN3DIR => "$CONFIG->{MAN_DIR}/man3") :
                 ()));

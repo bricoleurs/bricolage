@@ -136,7 +136,7 @@ my $update_parts = sub {
 
         # Grab the tile we're looking for
         local $^W = undef;
-        $locate_tile = $t if $id == $locate_id;
+        $locate_tile = $t if $id == $locate_id and $t->is_container;
         if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
                            $param->{"$widget|delete_data$id"})) {
 

@@ -9,9 +9,7 @@
 
 <p class="header"><% $lang->maketext('The URL you requested, <b>[_1]</b>, was not found on this server',$r->uri)%>.</p>
 
-<p class="header"><% $lang->maketext('Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please no 
-ify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival  
-ere.')%></p>
+<p class="header"><% $lang->maketext('Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.')%></p>
 
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 % $m->abort;

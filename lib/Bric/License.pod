@@ -4,7 +4,7 @@ Bricolage::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2002 About.com
+Copyright (c) 2001-2003 About.com
 
 All rights reserved.
 
@@ -127,6 +127,8 @@ Folks who have submitted patches include:
 =item ClE<aacute>udio Valente
 
 =item Eldar Kononov
+
+=item Kevin White
 
 =back
 

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:56:54 $
+$Date: 2003-04-24 23:57:35 $
 
 =head1 SYNOPSIS
 
@@ -69,6 +69,16 @@ my $alter = { publish_status => sub {
                   my ($val, $obj) = @_;
                   return unless $val;
                   $m->comp('/widgets/desk/publish_status.mc', asset => $obj);
+              },
+              title => sub {
+                  my ($title, $obj) = @_;
+                  my $id = $obj->get_id;
+                  my $uid = $obj->get_user__id;
+                  my $co = defined $uid && $uid == get_user_id;
+                  return $title unless $co || $obj->get_version;
+                  qq{<a href="/workflow/profile/preview/media/$id?checkout=$co" } .
+                    qq{class="blackMedUnderlinedLink" target="preview_} .
+                    SERVER_WINDOW_NAME . qq{">$title</a>};
               }
             };
 
@@ -98,14 +108,15 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
 <& '/widgets/listManager/listManager.mc',
   object   => $object,
   title    => '%n Found',
-  sortBy   => 'name',
+  sortBy   => 'title',
   profile  => $profile,
-  fields   => [ qw(id name cover_date publish_status) ],
+  fields   => [ qw(title version cover_date publish_status) ],
   alter    => $alter,
   addition => $addition,
   select   => $select,
   exclude  => $exclude,
   behavior => 'expand',
+  field_titles => { version => $lang->maketext('V.'), },
 &>
 <p></p>
 <input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="Checkout" value="Checkout">
