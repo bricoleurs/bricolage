@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-09-23 17:25:57 $
+$Date: 2003-10-28 16:06:43 $
 
 =head1 SYNOPSIS
 
@@ -232,7 +232,7 @@ the parameters you pass!
 
 behavior
 
-Dictates generally how this listManager behaves.  Currently this limited to 
+Dictates generally how this listManager behaves.  Currently this is limited to
 whether this list shows all existing objects and a search will narrow this list,
 or whether this list begins empty and searches expand the objects listed.  
 The first behavior is default but can be explicitly set as:
