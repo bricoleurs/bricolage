@@ -284,7 +284,34 @@ separate host. [Thorston Biel]
 
 =back
 
-=head1 VERSION 1.6.6 ()
+=head1 VERSION 1.6.7 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed C<bric_soap> to accept a C<--server> argument starting with "https",
+which is more friendly to an SSI environment. [Geoff Richards]
+
+=item *
+
+The PostgreSQL admin username and password arguments were reversed during
+C<make upgrade>. [Thorston Biel]
+
+=item *
+
+Fixed broken foreign key index on element table. [Dave Rolsky]
+
+=item *
+
+Added partial index to speed queries against the job table, and thus to speed
+distribution. [Mark]
+
+=back
+
+=head1 VERSION 1.6.6 (2003-10-03)
 
 =head2 New Features
 
@@ -346,7 +373,7 @@ Removed some unnecessary JavaScript validation. [David]
 
 Bug fix when deploying to multiple output channels. If the output channel IDs
 matched each other partly, it could cause a file to be removed after it just
-had been uploaded. [Arthur / Fotango]
+had been uploaded. [Arthur/Fotango]
 
 =item *
 

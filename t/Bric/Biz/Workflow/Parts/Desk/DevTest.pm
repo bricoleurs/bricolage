@@ -4,6 +4,9 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Grp::Desk;
+use Bric::Biz::Asset::Business::Story::DevTest;
+use Bric::Biz::Asset::Business::Media::DevTest;
+use Bric::Biz::Asset::Formatting::DevTest;
 use Test::More;
 
 sub table { 'desk' };
@@ -182,6 +185,42 @@ sub test_save : Test(8) {
     # Restore the original name!
     ok( $desk->set_name($old_name), "Set its name back to '$old_name'" );
     ok( $desk->save, "Save it again" );
+}
+
+##############################################################################
+# Make sure that we can put different assets on a desk and get them back.
+sub test_assets : Test(16) {
+    my $self = shift;
+    ok( my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
+        ({ id => $edit_desk_id }),
+        "Look up story workflow" );
+
+    # Create a story and put it on the desk.
+    ok( my $s = Bric::Biz::Asset::Business::Story::DevTest->construct,
+        "Create new story" );
+    ok( $s->save, "Save story" );
+    $self->add_del_ids($s->get_id, 'story');
+    ok( $desk->accept({ asset => $s }), "Check story into desk" );
+    ok( $desk->save, "Save desk" );
+
+    # Check the assets.
+    ok( my $assets = $desk->get_assets_href, "Get assets href" );
+    is( scalar keys %$assets, 1, "Check for one type of asset" );
+    is( scalar @{$assets->{story}}, 1, "Check for one story asset" );
+
+    # Create a media and put it on the desk.
+    ok( my $m = Bric::Biz::Asset::Business::Media::DevTest->construct,
+        "Create new media" );
+    ok( $m->save, "Save media" );
+    $self->add_del_ids($m->get_id, 'media');
+    ok( $desk->accept({ asset => $m }), "Check media into desk" );
+    ok( $desk->save, "Save desk" );
+
+    # Check the assets again.
+    ok( $assets = $desk->get_assets_href, "Get assets href again" );
+    is( scalar keys %$assets, 2, "Check for two types of asset" );
+    is( scalar @{$assets->{story}}, 1, "Check for one story asset" );
+    is( scalar @{$assets->{media}}, 1, "Check for one media asset" );
 }
 
 1;

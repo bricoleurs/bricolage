@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-10-06 15:04:11 $
+$Date: 2003-10-14 00:36:41 $
 
 
 =head1 SYNOPSIS
@@ -1142,6 +1142,7 @@ sub save {
         $asset_grp_obj->deactivate and $asset_grp_obj->save if $asset_grp_obj;
         $self->_remove_desk;
     }
+    return $self;
 }
 
 #==============================================================================#
