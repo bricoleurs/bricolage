@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2001-12-23 17:30:33 $
+$Date: 2001-12-23 18:50:41 $
 
 =head1 DESCRIPTION
 
@@ -242,7 +242,13 @@ page.
 
 =item *
 
-Dumper Bric::App::ReqCache. Use $r->pnotes() instead.
+Dump Bric::App::ReqCache. Use $r->pnotes() instead.
+
+=item *
+
+Fix search interfaces so that when a search term is entered and the user hits
+Return/Enter rather than clicking the "Search" button, the search is actually
+carried out.
 
 =item *
 
