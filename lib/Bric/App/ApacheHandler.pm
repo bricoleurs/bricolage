@@ -6,16 +6,16 @@ Bric::App::ApacheHandler - subclass of MasonX::ApacheHandler::WithCallbacks
 
 =head1 VERSION
 
-$Revision: 1.2.6.2 $
+$Revision: 1.2.6.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.6.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.6.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-16 10:14:47 $
+$Date: 2003-07-02 08:30:21 $
 
 =head1 DESCRIPTION
 
@@ -76,7 +76,8 @@ my $ct = Bric::Util::CharTrans->new(CHAR_SET);
 
 sub new {
     my $class = shift;
-    my $self = $class->SUPER::new(@_, cb_classes => 'ALL');
+    my $self = $class->SUPER::new(@_, cb_classes => 'ALL',
+                                  exec_null_cb_values => 0);
     return $self;
 }
 
