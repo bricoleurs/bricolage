@@ -32,8 +32,9 @@ return unless $param->{$field}; # prevent multiple calls to this file
 
 
 # Instantiate the element object and grab its name.
-my $comp = $obj;
-my $name = "&quot;$param->{name}&quot;";
+my $comp     = $obj;
+my $name     = "&quot;$param->{name}&quot;";
+my $key_name = "&quot;$param->{key_name}&quot;";
 
 my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
 
@@ -49,28 +50,32 @@ if ($param->{delete} &&
 }  else {
     # Make sure the name isn't already in use.
     my $no_save;
-    #### Bug. I'm passing active => 0 here because Bric::Biz::AssetType has a bug
-    # where it ignores the active argument if passed a false value. Really, it should
-    # check for when active is set to 0. However, since what I want to do is ignore
-    # the active column, this will work for now. Eventually, AssetType should be
-    # fixed, and then this call will have to be changed to do a call with active => 1
-    # and active => 0, and the resulting list grepped to get rid of duplicate IDs.
-    # I would do it now, but I don't want to break anything else that may be relying
-    # on the bug in AssetType.
-    my @cs = $class->list_ids({ name => $param->{name}, active => 0 });
-    if (@cs > 1) { $no_save = 1 }
+    # AssetType has been updated to take an existing but undefined 'active'
+    # flag as meaning, "list both active and inactive"
+    my @cs = $class->list_ids({key_name => $param->{key_name},
+                               active   => undef});
+
+    # Check if we need to inhibit a save based on some special conditions
+    if    (@cs > 1)                                   { $no_save = 1 }
     elsif (@cs == 1 && !defined $param->{element_id}) { $no_save = 1 }
-    elsif (@cs == 1 && defined $param->{element_id}
-	   && $cs[0] != $param->{element_id}) {
-	$no_save = 1 }
-    add_msg($lang->maketext('The name [_1] is already used by another [_2].',$name ,$disp_name)) if $no_save;
+    elsif (@cs == 1 && 
+           defined $param->{element_id} && 
+           $cs[0] != $param->{element_id})            { $no_save = 1 }
+
+    add_msg($lang->maketext('The key name [_1] is already used by another [_2].',$key_name ,$disp_name)) if $no_save;
 
     # Roll in the changes. Create a new object if we need to pass in an Element
     # Type ID.
     $comp = $class->new({ type__id => $param->{element_type_id} })
       if exists $param->{element_type_id} && !defined $param->{element_id};
     $comp->activate;
-    $comp->set_name($param->{name}) unless $no_save;
+    $comp->set_name($param->{name});
+
+    # Normalize the key name
+    my $kn = lc($param->{key_name});
+    $kn =~ y/a-z0-9/_/cs;
+
+    $comp->set_key_name($kn) unless $no_save;
     $comp->set_description($param->{description});
     $comp->set_burner($param->{burner}) if defined $param->{burner};
 
@@ -247,11 +252,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.22.2.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:17 $
+$Date: 2003-03-03 01:07:19 $
 
 =head1 SYNOPSIS
 
