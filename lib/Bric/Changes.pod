@@ -186,6 +186,11 @@ display a bit. [David]
 
 Fixed misnamed database constraint. [David]
 
+=item *
+
+Templates can once again be retreived from the library and checked out for
+revising. [David]
+
 =back
 
 =head1 VERSION 1.4.0
