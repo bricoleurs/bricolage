@@ -43,6 +43,12 @@ Fixed bug where a fixed story's slug was getting used in its URI. [David]
 Fixed broken image autopopulation fields (compression, height, width, etc.)
 [David]
 
+=item *
+
+Fixed broken support for audio and video files. These can be set up by the Media
+Type menu in Element Types. Eventually these should arrange for some fields to
+be auto-populated (e.g., bit rate, frame size, length, encoding, etc.).
+
 =back
 
 =head1 VERSION 1.2.1
