@@ -26,9 +26,9 @@ Added a missing space to the breadcrumb in the header. [Marshall Roch].
 
 =item *
 
-inst/upgrade/1.7.0/data_tile_key_name.pl will skip upgrading "key_name"
-if it would be no different than "name". This can save a lot of time
-during upgrade if your database is large. [Scott]
+The F<inst/upgrade/1.7.0/data_tile_key_name.pl> upgrade script now skips
+upgrading "key_name" if it would be no different than "name". This can save a
+lot of time during upgrade if your database is large. [Scott]
 
 =back
 
@@ -40,6 +40,10 @@ during upgrade if your database is large. [Scott]
 
 The new C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive now actually works.
 [David]
+
+=item *
+
+The group profile works again for element groups [David]
 
 =back
 
