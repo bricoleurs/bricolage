@@ -20,6 +20,7 @@ use Bric::SOAP::Util qw(category_path_to_id
 			parse_asset_document
                         serialize_elements
 		       );
+use Bric::SOAP::Media;
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -36,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-08 01:05:30 $
+$Date: 2002-02-09 00:19:25 $
 
 =head1 SYNOPSIS
 
@@ -401,7 +402,15 @@ sub export {
       }
     }
 
-    # FIX: call out to serialize media here...
+    # serialize related media if we have any
+    %done = ();
+    foreach my $media_id (@media_ids) {
+      next if $done{$media_id};
+      Bric::SOAP::Media->_serialize_media(media_id => $media_id,
+					  writer   => $writer,
+					  args     => {});
+      $done{$media_id} = 1;
+    }
 
     # end the assets element and end the document
     $writer->endTag("assets");
@@ -1076,7 +1085,7 @@ sub _serialize_story {
 
     # output elements
     @related = serialize_elements(writer => $writer, 
-				  args   => \%options,
+				  args   => $options{args},
 				  object => $story);
     
     # close the story

@@ -25,15 +25,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-08 01:05:31 $
+$Date: 2002-02-09 00:19:25 $
 
 =head1 SYNOPSIS
 
@@ -247,7 +247,7 @@ sub _serialize_tile {
 	    $attr{related_media_id} = $related_media->get_id;
 	    if ($options{args}{export_related_media}) {
 		$attr{relative} = 1;
-		push(@related, [ media => $attr{related_story_id} ]);
+		push(@related, [ media => $attr{related_media_id} ]);
 	    }
 	}
 	

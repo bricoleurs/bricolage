@@ -64,7 +64,8 @@ Set this to the password for the USER account.
 =item DEBUG
 
 Set this to 1 to see debugging text including the full XML for every
-SOAP method call and response.  Highly educational.
+SOAP method call and response.  Highly educational.  Defaults to the
+value of the DEBUG environment variable or 0.
 
 =item DELETE_TEST_STORIES
 
@@ -81,7 +82,7 @@ Sam Tregar <stregar@about-inc.com>
 =cut
 
 use strict;
-use constant DEBUG => 0;
+use constant DEBUG => $ENV{DEBUG} || 0;
 use constant DELETE_TEST_STORIES => 1;
 
 use constant USER     => 'admin';
