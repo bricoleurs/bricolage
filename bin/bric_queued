@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-=head1 NAME 
+=head1 NAME
 
-Bricolage jobs queue daemon
+bric_queued - Bricolage jobs queue daemon
 
 =head1 SYNOPSIS
 
