@@ -6,16 +6,16 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:36 $
+$Date: 2002-12-06 07:32:18 $
 
 =head1 SYNOPSIS
 
@@ -149,7 +149,7 @@ sub chk_authz {
 	my $id = $obj->get_id;
 	$id = '' unless defined $id;
 	my $key = "_AUTHZ_:$ref:$id";
-        my $r = $HTML::Mason::Commands::r;
+        my $r = Apache::Request->instance(Apache->request);
         unless (defined ($perm = $r->pnotes($key))) {
 	    $perm = get_user_object()->what_can($obj, @gids);
             $r->pnotes($key, $perm);
