@@ -23,12 +23,17 @@ This document lists the Changes to Bricolage introduced with each release.
 =item *
 
 Fixed error message generated from Bric::SOAP::Template->update() to
-properly display the category name, rather than "ARRAY(0x9cf43bc)".  [Sam]
+properly display the category name, rather than "ARRAY(0x9cf43bc)". [Sam]
 
 =item *
 
 The Bricolage SOAP interface will no longer allow the creation of
-stories and media with duplicate URIs.  [Sam]
+stories and media with duplicate URIs. [Sam]
+
+=item *
+
+Fixed circular dependency issues when Bricolage modules are used in the
+C<PERL_LOADER> F<bricolage.conf> directive. [David]
 
 =back
 
