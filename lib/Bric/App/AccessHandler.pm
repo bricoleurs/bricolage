@@ -2,8 +2,7 @@ package Bric::App::AccessHandler;
 
 =head1 NAME
 
-Bric::App::AccessHandler - Handles Authentication and Session setup during the
-Apache Access phase.
+Bric::App::AccessHandler - Handles Authentication and Session setup during the Apache Access phase.
 
 =head1 VERSION
 
