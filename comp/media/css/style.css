@@ -27,7 +27,7 @@ body {
 #bricLogo         { padding: 8px 8px 2px 8px; background: white; }
 #mainContainer    { position: relative; margin: 0 8px 8px 8px; }
 #navContainer     { position: absolute; top: 0; left: 0; width: 150px; }
-#contentContainer { padding-left: 158px; width: 580px; }
+#contentContainer { position: relative; left: 158px; width: 580px; }
 
 .adminBox,
 .workflowBox,
@@ -35,33 +35,43 @@ body {
 .searchBox                     { margin-bottom: 10px; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
-#headerContainer .loginBox     { margin-bottom: 0; }
+#headerContainer .loginBox     { width: 100%; margin-bottom: 0; }
 
-.header           { position: relative; background-color: #CCCC99; }
+.header           { position: relative; }
+.header .caption  { background-color: #CCCC99; }
 .fullHeader       { position: relative; color: white; font-weight: bold; }
 .fullHeader a     { color: white; }
-.adminBox .fullHeader    { background-color: #CC6633; }
-.workflowBox .fullHeader { background-color: #006666; }
-.loginBox .fullHeader    { background-color: #006666; }
-.searchBox .fullHeader   { background-color: #666633; }
+.adminBox .fullHeader .caption    { background-color: #CC6633; }
+.workflowBox .fullHeader .caption { background-color: #006666; }
+.loginBox .fullHeader .caption    { background-color: #006666; }
+.searchBox .fullHeader .caption   { background-color: #666633; }
 
 .number { 
-    float: left;
+    position: absolute;
+    top: 0;
+    left: 0;
     background-image: url("/media/images/curve_left.gif");
     background-repeat: no-repeat;
     background-position: top left; 
     color: white;
     line-height: 2em;
+    height: 2em;
     width: 2.5em;
     text-align: center;
     font-weight: bold;
-    margin-right: 5px;
 }
-.fullHeader .number          { width: 7px; }
+.fullHeader .number,
+.fullHeader .rightText       { width: 7px; background-color: #006666; }
 .workflowBox .header .number { background-color: #669999; }
 .adminBox .header .number    { background-color: #D7713E; }
-.caption                     { text-transform: uppercase; line-height: 2em; }
-#headerContainer .caption    { text-transform: none; font-size: 1.2em; }
+.caption                     { 
+    text-transform: uppercase; 
+    line-height: 2em; 
+    height: 2em; 
+    padding-left: 3em;
+}
+.fullHeader .caption         { padding-left: 14px; }
+#headerContainer .caption    { padding-left: 14px; text-transform: none; font-size: 1.2em; }
 .rightText { 
     position: absolute;
     top: 0;
