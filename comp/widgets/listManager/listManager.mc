@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.32.2.1 $
+$Revision: 1.32.2.2 $
 
 =head1 DATE
 
-$Date: 2004-04-18 15:28:01 $
+$Date: 2004-04-20 17:59:48 $
 
 =head1 SYNOPSIS
 
@@ -568,10 +568,11 @@ my $output_select_controls = sub {
     my $vals = ref $select eq 'CODE' ? $select->($o, $flags) : $select;
     return unless $vals;
     # Just return the value if it's not a reference.
-    my $ref = ref $vals or return $vals;
+    return $vals unless ref $vals;
 
     # Turn this value into an array of arrays if it isn't already.
-    $vals = $ref eq 'ARRAY' ? $vals : [$vals];
+    $vals = ref $vals->[0] eq 'ARRAY' ? $vals : [$vals];
+    use Data::Dumper; warn "Dump: ", Dumper $vals;
 
     my @cntl;
     foreach my $v (@$vals) {
