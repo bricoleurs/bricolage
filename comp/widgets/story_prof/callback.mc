@@ -68,9 +68,12 @@ my $save_data = sub {
       if exists $param->{"$widget|source_id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
-    $story->set_site_id($param->{site_id})
-      if exists $param->{site_id};
 
+    my $site_id = Bric::Biz::Workflow->lookup
+      ({ id => get_state_data($widget, 'work_id')})->
+        get_site_id;
+
+    $story->set_site_id($site_id);
 
     # Delete output channels.
     if ($param->{rem_oc}) {
