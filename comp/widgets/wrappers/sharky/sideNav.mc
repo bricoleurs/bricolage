@@ -148,8 +148,9 @@ foreach my $wf (@$workflows) {
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
     my $esc_name = escape_html($wf->{name});
 
+    $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
+
     if ( $nav->{"workflow-". $esc_name} ) { # show open workflow
-        $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
 	$m->out("<tr class=sideNavInactiveCell>\n");
 	$m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
 	$m->out("<td valign=middle $tabHeight width=15>");
@@ -203,6 +204,7 @@ foreach my $wf (@$workflows) {
 	    </table>
 	<%perl>
     } else { # closed state
+	$m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
 	$m->out("<tr class=sideNavInactiveCell>\n");
 	$m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
 	$m->out("<td valign=middle $tabHeight width=140>");
@@ -443,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-06-10 22:28:34 $
+$Date: 2002-06-12 17:38:19 $
 
 </%doc>
