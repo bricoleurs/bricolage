@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.7.4.2 $
+$Revision: 1.7.4.3 $
 
 =head1 DATE
 
-$Date: 2003-04-21 20:51:34 $
+$Date: 2003-06-29 23:47:37 $
 
 =head1 DESCRIPTION
 
@@ -139,6 +139,7 @@ sub confirm_settings {
   if (-e $CONFIG{BRICOLAGE_ROOT} and
       -e catfile($CONFIG{BRICOLAGE_ROOT}, "conf", "bricolage.conf")) {
       print "That directory already contains a Bricolage installation.\n";
+      print "Consider running `make upgrade`, instead.\n";
       exit 1 unless ask_yesno("Continue and overwrite existing installation? ".
                               "[no] ", 0);
   }
