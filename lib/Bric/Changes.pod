@@ -58,7 +58,8 @@ as I had thought. Reported by Kevin Elliott. [David]
 
 =item *
 
-Vastly improved the speed of the query that lists events. [Mark]
+Vastly improved the speed of the query that lists events, and added an index
+to help it along, as well. [Mark]
 
 =back
 

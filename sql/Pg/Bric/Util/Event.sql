@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-08-15 17:02:10 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -45,6 +45,7 @@ CREATE TABLE event_attr (
 CREATE INDEX fkx_event_type__event ON event(event_type__id);
 CREATE INDEX fkx_usr__event ON event(usr__id);
 CREATE INDEX idx_event__timestamp ON event(timestamp);
+CREATE INDEX idx_event__obj_id ON event(obj_id);
 
 CREATE INDEX fkx_event__event_attr ON event_attr(event__id);
 CREATE INDEX fkx_event_type_attr__event_attr ON event_attr(event_type_attr__id);
