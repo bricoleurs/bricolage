@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.49.2.1 $
 
 =head1 DATE
 
-$Date: 2004-03-18 21:33:09 $
+$Date: 2004-05-06 03:59:53 $
 
 =head1 DESCRIPTION
 
@@ -626,6 +626,54 @@ tarball. Use C<make uninstall> to clean up the mess. If you have to go back
 and make any changes, be sure to update the tag of any files you change and
 commit to CVS, then do the whole thing over again. Once everything appears to
 be working properly, release!
+
+=head2 Where to Send Notices
+
+=head3 Mail Lists
+
+=over 4
+
+=item bricolage-announce@lists.sourceforge.net
+
+=item bricolage-general@lists.sourceforge.net
+
+=item bricolage-devel@lists.sourceforge.net
+
+=item mason-announce@lists.sourceforge.net
+
+=item mason-users@lists.sourceforge.net
+
+=item pgsql-announce@postgresql.org
+
+=item pgsql-general@postgresql.org
+
+=item announce@perl.apache.org
+
+=item modperl@perl.apache.org
+
+=item html-template-users@lists.sourceforge.net
+
+=item temlates-announce@template-toolkit.org
+
+=item temlates@template-toolkit.org
+
+=item general@oscom.org
+
+=back
+
+=head3 Web Sites
+
+=over 4
+
+=item L<http://www.bricolage.cc/>
+
+=item L<http://www.cmsmatrix.org/>
+
+=item L<http://freshmeat.net/projects/bricolage/>
+
+=item L<http://use.perl.org/>
+
+=back
 
 =head1 AUTHORS
 
