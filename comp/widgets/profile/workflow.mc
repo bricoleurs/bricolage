@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:03 $
+$Date: 2001-10-10 20:14:04 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,8 @@ if ($param->{delete}) {
     my $wf_id = $param->{"${type}_id"};
     # Make sure the name isn't already in use.
     my $used;
-    my @wfs = $class->list_ids({ name => $param->{name} });
+    my @wfs = ($class->list_ids({ name => $param->{name} }),
+	       $class->list_ids({ name => $param->{name}, active => 0 }) );
     if (@wfs > 1) { $used = 1 }
     elsif (@wfs == 1 && !defined $wf_id) { $used = 1 }
     elsif (@wfs == 1 && defined $wf_id
@@ -81,7 +82,9 @@ if ($param->{delete}) {
 	      Bric::Biz::Workflow::Parts::Desk->lookup({ id => $param->{first_desk} })->get_name;
 	}
 	unless ($used) {
+	    $wf->deactivate;
 	    $wf->save;
+	    $param->{id} = $wf->get_id;
 	    $c->set('__WORKFLOWS__', 0);
 	    log_event("${type}_add_desk", $wf, { Desk => $param->{new_desk_name} });
 	    log_event($type . '_new', $wf);
@@ -112,6 +115,7 @@ if ($param->{delete}) {
 	if ($used) {
 	    return $wf;
 	} else {
+	    $wf->activate;
 	    $wf->save;
 	    $c->set('__WORKFLOWS__', 0);
 	    add_msg("$disp_name profile $name saved.");
