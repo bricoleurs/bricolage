@@ -29,22 +29,21 @@ if ($field eq "$widget|save_cb") {
     # Clear out our application state and send 'em home.
     clear_state($widget);
 
-	if ($return eq 'search') {
-		my $workflow_id = $fa->get_workflow_id();
-		my $url = $SEARCH_URL . $workflow_id . '/';
-		set_redirect($url);
-	} elsif ($return eq 'active') {
-		my $workflow_id = $fa->get_workflow_id();
-		my $url = $ACTIVE_URL . $workflow_id;
-		set_redirect($url);
-	} elsif ($return =~ /\d+/) {
-		my $workflow_id = $fa->get_workflow_id();
-		my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-		set_redirect($url);
-	} else {
-		set_redirect("/");
-	}
-
+    if ($return eq 'search') {
+	my $workflow_id = $fa->get_workflow_id();
+	my $url = $SEARCH_URL . $workflow_id . '/';
+	set_redirect($url);
+    } elsif ($return eq 'active') {
+	my $workflow_id = $fa->get_workflow_id();
+	my $url = $ACTIVE_URL . $workflow_id;
+	set_redirect($url);
+    } elsif ($return =~ /\d+/) {
+	my $workflow_id = $fa->get_workflow_id();
+	my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+	set_redirect($url);
+    } else {
+	set_redirect("/");
+    }
 }
 
 elsif ($field eq "$widget|checkin_cb") {
@@ -52,15 +51,13 @@ elsif ($field eq "$widget|checkin_cb") {
 }
 
 elsif ($field eq "$widget|checkin_deploy_cb") {
-
     my $fa = $checkin->($widget, $param);
-
     $param->{'desk|formatting_pub_ids'} = $fa->get_id;
 
     # Call the deploy callback in the desk widget.
-    $m->comp('/widgets/desk/callback.mc', 
-	     widget => 'desk', 
-	     field  => 'desk|deploy_cb', 
+    $m->comp('/widgets/desk/callback.mc',
+	     widget => 'desk',
+	     field  => 'desk|deploy_cb',
 	     param  => $param);
 }
 
@@ -89,33 +86,26 @@ elsif ($field eq "$widget|save_and_stay_cb") {
 elsif ($field eq "$widget|revert_cb") {
     my $fa      = get_state_data($widget, 'fa');
     my $version = $param->{"$widget|version"};
-
     $fa->revert($version);
     $fa->save();
-
     clear_state($widget);
 }
 
 elsif ($field eq "$widget|view_cb") {
     my $fa      = get_state_data($widget, 'fa');
-
     my $version = $param->{"$widget|version"};
     my $id      = $fa->get_id();
-
     set_redirect("/workflow/profile/templates/$id/?version=$version");
 }
 
 elsif ($field eq "$widget|cancel_cb") {
     my $fa = get_state_data($widget, 'fa');
-
     $fa->cancel_checkout();
     $fa->save();
-
+    log_event('formatting_cancel_checkout', $fa);
     clear_state($widget);
-
     set_redirect("/");
-    add_msg("Template &quot;" . $fa->get_name . "&quot; check out cancelled.");
-    pop_page;
+    add_msg("Template &quot;" . $fa->get_name . "&quot; check out canceled.");
 }
 
 elsif ($field eq "$widget|notes_cb") {
@@ -160,7 +150,7 @@ elsif ($field eq "$widget|create_cb") {
 
     # Create a new formatting asset.
     my $fa = Bric::Biz::Asset::Formatting->new(
-				{'element'     		=> $at,
+			    {'element'     		=> $at,
 			     'output_channel__id' 	=> $oc_id,
 			     'category_id'        	=> $cat_id,
 			     'priority'           	=> $param->{priority},
@@ -235,6 +225,7 @@ elsif ($field eq "$widget|recall_cb") {
 
 	    # Put this formatting asset into the current workflow
 	    $fa->set_workflow_id($w_id);
+	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
 
 	    # Get the start desk for this workflow.
 	    my $start_desk = $wf->get_start_desk;
@@ -243,6 +234,7 @@ elsif ($field eq "$widget|recall_cb") {
 	    $start_desk->accept({'asset' => $fa});
 	    $start_desk->checkout($fa, get_user_id);
 	    $start_desk->save;
+	    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
 	} else {
 	    add_msg("Permission to checkout &quot;" . $fa->get_name
 		    . "&quot; denied");
@@ -350,9 +342,9 @@ my $checkin = sub {
 	my $work_id = get_state_data($widget, 'work_id');
 
 	if ($work_id) {
-		$fa->set_workflow_id($work_id);
-		my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-		log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
+	    $fa->set_workflow_id($work_id);
+	    my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
+	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
 	}
 	$fa->checkin();
 	$fa->activate();
@@ -360,23 +352,22 @@ my $checkin = sub {
 
 	my $desk_id = $param->{"$widget|desk"};
 	my $desk    = Bric::Biz::Workflow::Parts::Desk->lookup({id => $desk_id});
-
 	my $cur_desk = $fa->get_current_desk();
 
 	my $no_log;
 	if ($cur_desk) {
-		if ($cur_desk->get_id() == $desk_id) {
-			$no_log = 1;
-		} else {
-			# Send this story to the next desk
-			$cur_desk->transfer({
-					to    => $desk,
-					asset => $fa
-				});
-			$cur_desk->save();
-		}
+	    if ($cur_desk->get_id() == $desk_id) {
+		$no_log = 1;
+	    } else {
+		# Send this story to the next desk
+		$cur_desk->transfer({
+				     to    => $desk,
+				     asset => $fa
+				    });
+		$cur_desk->save();
+	    }
 	} else {
-		$desk->accept( { 'asset' => $fa });
+	    $desk->accept( { 'asset' => $fa });
 	}
 
 	$desk->save;
@@ -444,7 +435,10 @@ my $delete_fa = sub {
 
 <%doc>
 $Log: callback.mc,v $
-Revision 1.3  2001-09-27 10:10:16  wheeler
+Revision 1.4  2001-09-28 12:20:25  wheeler
+Added canceled checkout event logging, plus some missing template event logging.
+
+Revision 1.3  2001/09/27 10:10:16  wheeler
 Now collecting the workflow ID from the state (as saved by
 workflow/manager/autohandler) so that we can be sure to always *have* a workflow
 ID when redirecting.

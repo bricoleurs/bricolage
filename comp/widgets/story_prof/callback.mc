@@ -292,7 +292,10 @@ my $handle_cancel = sub {
     my $story = get_state_data($widget, 'story');
     $story->cancel_checkout();
     $story->save();
+    log_event('story_cancel_checkout', $story);
+    clear_state($widget);
     set_redirect("/");
+    add_msg("Story &quot;" . $story->get_title . "&quot; check out canceled.");
 };
 
 ################################################################################

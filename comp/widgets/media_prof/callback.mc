@@ -268,12 +268,14 @@ my $handle_save_stay = sub {
 ################################################################################
 
 my $handle_cancel = sub {
-	my ($widget, $field, $param) = @_;
-	my $media = get_state_data($widget, 'media');
-	$media->cancel_checkout();
-	$media->save();
-	set_redirect("/");
-	pop_page;
+    my ($widget, $field, $param) = @_;
+    my $media = get_state_data($widget, 'media');
+    $media->cancel_checkout();
+    $media->save();
+    log_event('media_cancel_checkout', $media);
+    clear_state($widget);
+    set_redirect("/");
+    add_msg("Media &quot;" . $media->get_name . "&quot; check out canceled.");
 };
 
 ################################################################################
