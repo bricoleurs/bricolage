@@ -85,7 +85,7 @@ do_sql
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (200, 0, 8, 'Default Site READ Users', '__Site 100 Users__', 1,
-             0)},
+             1)},
 
   qq{INSERT INTO member (id, grp__id, class__id, active)
      VALUES (700, 3, 6, 1)},
@@ -98,7 +98,7 @@ do_sql
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
     VALUES (201, 0, 8, 'Default Site EDIT Users', '__Site 100 Users__', 1,
-            0)},
+            1)},
 
   qq{INSERT INTO member (id, grp__id, class__id, active)
      VALUES (701, 3, 6, 1)},
@@ -111,7 +111,7 @@ do_sql
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (202, 0, 8, 'Default Site CREATE Users', '__Site 100 Users__', 1,
-             0)},
+             1)},
 
   qq{INSERT INTO member (id, grp__id, class__id, active)
      VALUES (702, 3, 6, 1)},
@@ -124,7 +124,7 @@ do_sql
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
      VALUES (203, 0, 8, 'Default Site DENY Users', '__Site 100 Users__', 1,
-             0)},
+             1)},
 
   qq{INSERT INTO member (id, grp__id, class__id, active)
      VALUES (703, 3, 6, 1)},

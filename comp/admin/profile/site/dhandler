@@ -38,7 +38,7 @@ foreach my $grp ( Bric::Util::Grp::Site->list({ obj => $site }) ) {
                     description => $grp->get_name };
 }
 
-# Get all user groups for double-list manager.
+# Get all site groups for double-list manager.
 foreach my $grp ( Bric::Util::Grp::Site->list ) {
     push @$left, { value       => $grp->get_id,
                    description => $grp->get_name };
@@ -62,12 +62,15 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 ##############################################################################
-# Output the special user groups configuration.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => "User Groups",
-	 number  => 1);
-
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+# Output the special user groups configuration. To be added later. Probably
+# should include a list of all non-secret user groups and associated
+# permissions. The special secret permanent groups associated with the site
+# should also be displayed, but not editable.
+#$m->comp("/widgets/wrappers/sharky/table_top.mc",
+#         caption => "User Groups",
+#	 number  => 1);
+#
+#$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 ##############################################################################
 # Output the form buttons.
@@ -127,11 +130,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.1.2.2 $
+$Revision: 1.1.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-08 04:11:37 $
+$Date: 2003-03-08 22:39:32 $
 
 =head1 DESCRIPTION
 

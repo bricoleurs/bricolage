@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.7 $
+$Revision: 1.1.2.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.8 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-08 04:11:37 $
+$Date: 2003-03-08 22:39:33 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.7 2003-03-08 04:11:37 wheeler Exp $
+$Id: Site.pm,v 1.1.2.8 2003-03-08 22:39:33 wheeler Exp $
 
 =back
 
@@ -623,6 +623,7 @@ sub list_priv_grps {
     my $self = shift;
     my ($id, $old, $new) = $self->_get(qw(id _rename name));
     Bric::Util::Grp::User->list({ description => "__Site $id Users__",
+                                  permanent   => 1,
                                   all         => 1 });
 }
 
