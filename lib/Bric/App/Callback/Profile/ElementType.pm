@@ -61,7 +61,7 @@ sub save : Callback {
                 $ct->save;
                 log_event($type . '_new', $ct);
             }
-            return $ct;
+            $param->{'obj'} = $ct;
         } else {
             # If we get here, it's an existing type.
             $ct->set_paginated(defined $param->{paginated} ? 1 : 0);
@@ -75,7 +75,10 @@ sub save : Callback {
         }
     }
     # Save changes and redirect back to the manager.
-    return $ct if $used;
+    if ($used) {
+        $param->{'obj'} = $ct;
+        return;
+    }
     $ct->save;
     $param->{"${type}_id"} = $ct->get_id unless defined $param->{"${type}_id"};
     set_redirect('/admin/manager/element_type');

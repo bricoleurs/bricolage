@@ -28,7 +28,10 @@ sub save : Callback {
         $act->set_server_type_id($param->{dest_id});
         $act->set_ord($param->{ord});
         $act->save;
-        return $act if $act->has_more;
+        if ($act->has_more) {
+            $param->{'obj'} = $act;
+            return;
+        }
     }
 
     # Set the redirection.

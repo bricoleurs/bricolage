@@ -35,7 +35,6 @@ sub save : Callback {
         set_redirect('/admin/manager/contrib');
         return;
     } else {                    # Roll in the changes.
-
         # update name elements
         my $meths = $contrib->my_meths;
         $meths->{fname}{set_meth}->($contrib, $param->{fname});
@@ -60,8 +59,8 @@ sub save : Callback {
             log_event("${type}_new", $member);
             set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id}
                            . '/' . '_MEMBER_SUBSYS' );
-            return $member;
-
+            $param->{'obj'} = $member;
+            return;
         } elsif ($param->{mode} eq "edit") {
             # We must be dealing with an existing contributor object
 
@@ -108,7 +107,6 @@ sub save : Callback {
                 clear_state("contrib_profile");
                 set_redirect('/admin/manager/contrib');
             }
-
         } elsif ($param->{mode} eq "extend") {
             # We're creating a new contributor based on an existing one.
             # Change the mode for the next screen.
@@ -117,16 +115,16 @@ sub save : Callback {
             set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
             log_event("${type}_ext", $contrib);
-            return $contrib;
-
+            $param->{'obj'} = $contrib;
+            return;
         } elsif ($param->{mode} eq 'preEdit') {
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 0 } );
             set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
-            return $contrib;
+            $param->{'obj'} = $contrib;
+            return;
         }
-
     }
 }
 

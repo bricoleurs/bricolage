@@ -36,7 +36,10 @@ sub save : Callback {
     } else {
 	# Just save it.
 	my $ret = &$save($param, $at, $name, $self);
-	return $ret if $ret;
+        if ($ret) {
+            $param->{'obj'} = $ret;
+            return;
+        }
         add_msg($self->lang->maketext("[_1] profile [_2] saved.", $disp_name, $name));
 	set_redirect('/admin/manager/alert_type');
     }
@@ -53,7 +56,10 @@ sub recip : Callback {
     # Save it and let them edit recipients.
     my $name = $param->{name} ? "&quot;$param->{name}&quot;" : '';
     my $ret = &$save($param, $at, $name, $self);
-    return $ret if $ret;
+    if ($ret) {
+        $param->{'obj'} = $ret;
+        return;
+    }
     set_state_name('alert_type', $self->value);
     set_redirect("/admin/profile/$type/recip/$param->{alert_type_id}");
 }

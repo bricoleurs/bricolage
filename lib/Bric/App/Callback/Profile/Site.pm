@@ -82,7 +82,8 @@ sub save : Callback {
     # Catch Error exceptions and turn them into error messages.
     rethrow_exception($err) unless isa_bric_exception($err, 'Error');
     add_msg($self->lang->maketext($err->maketext));
-    return $site;
+    $param->{'obj'} = $site;
+    return;
 }
 
 

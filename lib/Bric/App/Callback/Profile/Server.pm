@@ -74,7 +74,8 @@ sub save : Callback {
     $s->set_password($param->{password}) if $param->{password};
     $s->set_cookie($param->{cookie});
     if ($used) {
-        return $s;
+        $param->{'obj'} = $s;
+        return;
     } else {
         $s->set_host_name($param->{host_name});
         $s->save;

@@ -78,7 +78,8 @@ sub save : Callback {
                     add_msg($self->lang->maketext("Extension [_1] ignored.","'$extension'"));
                 }
             }
-            return $usedext;
+            $param->{'obj'} = $usedext;
+            return;
         };
 
         $used_ext = 0;
@@ -113,7 +114,8 @@ sub save : Callback {
 
         # Save changes and redirect back to the manager.
         if ($used || $used_ext) {
-            return $mt;
+            $param->{'obj'} = $mt;
+            return;
         } else {
             $mt->activate();
             $mt->save();

@@ -128,7 +128,10 @@ sub save : Callback {
 
     # They weren't trying to change the password, so just save the
     # changes unless there's some other reason not to.
-    return $user if $no_save;
+    if ($no_save) {
+        $param->{'obj'} = $user;
+        return;
+    }
     $user->save;
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
     my $name = "&quot;" . $user->get_name . "&quot;";
@@ -169,7 +172,6 @@ sub save : Callback {
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
       : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
-    return;
 }
 
 

@@ -65,7 +65,8 @@ sub save : Callback {
             log_event($type . (defined $param->{desk_id} ? '_save' : '_new'), $desk);
         } else {
             $param->{new_desk} = 1;
-            return $desk;
+            $param->{'obj'} = $desk;
+            return;
         }
         if (defined $param->{workflow_id}) {
             # It's a new desk for this profile. Add it.

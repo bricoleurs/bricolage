@@ -86,7 +86,8 @@ sub save : Callback {
                 log_event("${type}_add_desk", $wf, { Desk => $param->{new_desk_name} });
                 log_event($type . '_new', $wf);
             }
-            return $wf;
+            $param->{'obj'} = $wf;
+            return;
         } else {
             # It's an existing desk. Check to see if we're removing any desks.
             if ($param->{remove_desk}) {
@@ -110,7 +111,8 @@ sub save : Callback {
 
             # Save changes and redirect back to the manager.
             if ($used) {
-                return $wf;
+                $param->{'obj'} =  $wf;
+                return;
             } else {
                 $wf->activate;
                 $wf->save;

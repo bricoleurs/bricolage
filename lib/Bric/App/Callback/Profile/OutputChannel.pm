@@ -81,9 +81,15 @@ $do_callback = sub {
         eval { $oc->set_fixed_uri_format($param->{fixed_uri_format}) };
         $bad_uri = 1 && add_msg($@->get_msg) if $@;
 
-        return $oc if $used;
+        if ($used) {
+            $param->{'obj'} = $oc;
+            return;
+        }
         $oc->set_name($param->{name});
-        return $oc if $bad_uri;
+        if ($bad_uri) {
+            $param->{'obj'} = $oc;
+            return;
+        }
 
         if ($oc_id) {
             if ($param->{include_id}) {
@@ -122,7 +128,8 @@ $do_callback = sub {
                 # Add includes.
                 $oc->add_includes($class->lookup({ id => $self->value }));
                 $oc->save;
-                return $oc;
+                $param->{'obj'} = $oc;
+                return;
             }
 
             $oc->save;
@@ -132,7 +139,8 @@ $do_callback = sub {
         } else {
             $oc->save;
             log_event('output_channel_new', $oc);
-            return $oc;
+            $param->{'obj'} = $oc;
+            return;
         }
     }
 };

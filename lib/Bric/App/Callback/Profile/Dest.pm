@@ -89,7 +89,8 @@ sub save : Callback {
     }
 
     if ($used) {
-        return $dest;
+        $param->{'obj'} = $dest;
+        return;
     } else {
         # Save it!
         $dest->save;
@@ -101,7 +102,8 @@ sub save : Callback {
             set_redirect("/admin/manager/dest");
         } else {
             # It's a new destination. Let them add Actions and Servers.
-            return $dest;
+            $param->{'obj'} = $dest;
+            return;
         }
     }
 }

@@ -29,8 +29,8 @@ sub save : Callback {
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
-    return &$save_sub($self, $type, $param, $self->trigger_key, $grp, $class, $name,
-                      '/admin/manager/grp');
+    $param->{'obj'} = &$save_sub($self, $type, $param, $self->trigger_key,
+                                 $grp, $class, $name, '/admin/manager/grp');
 }
 
 sub permissions : Callback {
@@ -45,8 +45,9 @@ sub permissions : Callback {
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
-    return &$save_sub($self, $type, $param, $self->trigger_key, $grp, $class, $name,
-                      "/admin/profile/grp/perm/$param->{grp_id}", 1);
+    $param->{'obj'} = &$save_sub($self, $type, $param, $self->trigger_key,
+                                 $grp, $class, $name,
+                                 "/admin/profile/grp/perm/$param->{grp_id}", 1);
 }
 
 

@@ -58,7 +58,8 @@ sub save : Callback {
         $source->set_description($param->{description});
         $source->set_expire($param->{expire});
         if ($used) {
-            return $source;
+            $param->{'obj'} = $source;
+            return;
         } else {
             $source->set_source_name($param->{source_name});
             $source->save;

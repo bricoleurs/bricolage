@@ -37,7 +37,8 @@ sub save : Callback {
             # You can't deactivate the root category!
             add_msg($self->lang->maketext("$disp_name [_1] cannot be deleted.",
                                     $name));
-            return $cat;
+            $param->{'obj'} = $cat;
+            return;
         }
         my ($arg, $msg, $key);
         if ($param->{delete_cascade}) {
@@ -82,7 +83,8 @@ sub save : Callback {
                     or grep $_->get_id == $p_id, $cat->children) {
                     add_msg("Parent cannot choose itself or its child as"
                             . " its parent. Try a different parent.");
-                    return $cat;
+                    $param->{'obj'} = $cat;
+                    return;
                 }
 
                 if (@{ $class->list({ directory => $param->{directory},
@@ -94,13 +96,15 @@ sub save : Callback {
                             ('URI [_1] is already in use. Please ' .
                              'try a different directory name or ' .
                              'parent category.', $uri ));
-                    return $cat;
+                    $param->{'obj'} = $cat;
+                    return;
                 }
                 if ($param->{directory} =~ /[^\w.-]+/) {
                     add_msg($self->lang->maketext("Directory name [_1] contains "
                             . "invalid characters. Please try a different "
                             . "directory name.","'$param->{directory}'"));
-                    return $cat;
+                    $param->{'obj'} = $cat;
+                    return;
                 } else {
                     $cat->set_directory($param->{directory});
                 }
@@ -175,7 +179,8 @@ sub save : Callback {
     # Redirect back to the manager.
 
     set_redirect('/admin/manager/category');
-    return $cat;
+    $param->{'obj'} = $cat;
+    return;
 }
 
 
