@@ -58,9 +58,10 @@ yet translated, but there they are. [David]
 
 =item *
 
-Selecting a checkbox to delete an output channel and then clicking a button
-other than the output channel "Delete" button or the "Save" or "Save and Stay"
-buttons no longer causes an error. Reported by Delfim Machado. [David]
+Selecting a checkbox to delete an output channel in a story or media profile
+and then clicking a button other than the output channel "Delete" button or
+the "Save" or "Save and Stay" buttons no longer causes an error. Reported by
+Delfim Machado. [David]
 
 =back
 

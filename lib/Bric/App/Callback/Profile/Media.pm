@@ -69,7 +69,7 @@ sub update : Callback(priority => 1) {
                 add_msg("Cannot both delete and make primary a single output channel.");
                 $param->{__data_errors__} = 1;
             } else {
-                my ($oc) = $media->get_output_channels($delid);
+                my $oc = Bric::Biz::OutputChannel->lookup({ id => $delid });
                 $media->del_output_channels($delid);
                 log_event('media_del_oc', $media,
                           { 'Output Channel' => $oc->get_name });
