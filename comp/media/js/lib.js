@@ -572,7 +572,7 @@ function confirmChanges(obj) {
             for (var k in [0, 1]) {
                 var obj = Objs[k];
                 if (movedItems[obj.id]) {
-                    // mark all moved items as selected
+                    // mark all moved items as selected and all others unselected.
                     for (var j=0; j < obj.length; j++) {
                         if (movedItems[obj.id][obj[j].value]) {
                             obj[j].selected = true;
@@ -645,7 +645,9 @@ function move_item(formName, fromObj, toObj) {
                 }
 
                 if (!found) {
-                    movedItems[to.id][from.options[i].value] = 1;
+                    // Might we have a use for the index (length-1) someday?
+                    // Not using the actual index because 0 is false.
+                    movedItems[to.id][from.options[i].value] = to.length;
                 }
 
                 from.options[i]=null;
