@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.83 $
+$Revision: 1.84 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.83 $ )[-1];
+our $VERSION = (qw$Revision: 1.84 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 03:57:43 $
+$Date: 2004-03-04 21:17:45 $
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,7 @@ use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
-use Bric::Config qw(:media);
+use Bric::Config qw(:media :thumb MASON_COMP_ROOT);
 use Bric::Util::Fault qw(:all);
 
 #==============================================================================#
@@ -65,6 +65,12 @@ use base qw( Bric::Biz::Asset::Business );
 #==============================================================================#
 # Constants                            #
 #======================================#
+
+use constant MIME_FILE_ROOT => Bric::Util::Trans::FS->cat_dir(
+    MASON_COMP_ROOT->[0][1], qw(media mime)
+);
+
+use constant MIME_URI_ROOT => Bric::Util::Trans::FS->cat_uri('', qw(media mime));
 
 use constant DEBUG => 0;
 
@@ -720,10 +726,13 @@ sub key_name { 'media' }
 
 =item my $hashref = Bric::Biz::Asset::Business::Media->thumbnail_uri()
 
-This is a placeholder method that may be overridden by subclasses that can
-generate thumbnails. Subclasses should return a URI pointing to an image
-thumbnail for display in the UI. See Bric::Biz::Asset::Business::Media::Image
-for implementation.
+This method returns a local URI pointing to an icon representing the media type
+of the media document. If no file has been uploaded to the media document,
+C<thumbnail_uri()> will return C<undef>.
+
+This method is only enabled if the C<USE_THUMBNAILS> F<bricolage.conf>
+directive is enabled. It may be overridden in subclasses to return a different
+URI value (See Bric::Biz::Asset::Business::Media::Image for an example).
 
 B<Throws:> NONE.
 
@@ -733,7 +742,28 @@ B<Notes:> NONE.
 
 =cut
 
-sub thumbnail_uri { undef }
+sub thumbnail_uri {
+    return unless USE_THUMBNAILS;
+    my $self = shift;
+    return unless $self->get_path;
+
+    # Just return the default icon if there is no media type (unlikely).
+    my $mime = $self->get_media_type or return
+      Bric::Util::Trans::FS->cat_uri(MIME_URI_ROOT, 'none.png');
+    $mime = $mime->get_name;
+    my ($cat, $type) = split '/', $mime, 2;
+
+    # If there's a PNG file for this media type, return its URI.
+    return Bric::Util::Trans::FS->cat_uri(MIME_URI_ROOT, "$mime.png")
+      if -e Bric::Util::Trans::FS->cat_file(MIME_FILE_ROOT, $cat, "$type.png");
+
+    # If there's a PNG file for the media type category, return its URI.
+    return Bric::Util::Trans::FS->cat_uri(MIME_URI_ROOT, "$cat.png")
+      if -e Bric::Util::Trans::FS->cat_file(MIME_FILE_ROOT, "$cat.png");
+
+    # Otherwise, just return the default icon.
+    return Bric::Util::Trans::FS->cat_uri(MIME_URI_ROOT, 'none.png');
+}
 
 ################################################################################
 

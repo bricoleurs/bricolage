@@ -1,0 +1,98 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Spec::Functions qw(catdir catfile);
+
+=pod
+
+=head1 NAME
+
+copy_gnome_icons
+
+=head1 SYNOPSIS
+
+  copy_gnome_icons *.png
+
+=head1 DESCRIPTION
+
+This script is designed to convert a collection of GNOME MIME type icons to
+the Bricoalge root and to the naming convention used by Bricolage. The icons
+will then be used by the Bricolage UI, assuming that the C<USE_THUMBNAILS>
+F<bricolage.conf> directive has been enabled.
+
+Be sure to set the C<$BRICOLAGE_ROOT> environment variable if it is anything
+other than F</usr/local/bricolage>. The icons will bee installed into the
+F<comp/media/mime> directory under the Bricolage root.
+
+The icons are named exactly as the corresponding MIME types are named, with
+the resulting PNG files installed in appropriate subdirectories. For example,
+an icon named "gnome-text-html.png" will be copied to
+F<comp/media/mime/text/html.png>.
+
+This script was developed using the GNOME MIME type icons downloaded from
+L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>. (linked to
+from L<http://developer.ximian.com/themes/icons/>). Updates happily accepted.
+
+=head1 AUTHOR
+
+David Wheeler <david@kineticode.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2004 Kineticode, Inc. See L<Bric::License|Bric::License> for
+complete license terms and conditions.
+
+=cut
+
+BEGIN {
+    # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
+    $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+
+    # use $BRICOLAGE_ROOT/lib if exists
+    my $lib = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    if (-e $lib) {
+        $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
+          "$ENV{PERL5LIB}:$lib" : $lib;
+        unshift @INC, $lib;
+    }
+
+    # make sure Bric is found
+    eval { require Bric };
+    die <<"   END" if $@;
+   ##################################################################
+
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
+
+   #####################################################################
+   END
+}
+
+use File::Path qw(mkpath);
+use File::Copy qw(cp);
+use Bric::Config qw(MASON_COMP_ROOT);
+
+my $mime_dir = catdir($ENV{BRICOLAGE_ROOT}, qw(comp media mime));
+
+my %seen;
+for my $file (@ARGV) {
+    $_ = $file;
+    s/\.png$// or next;
+    my ($gnome, $cat, $type) = split /-/, $_, 3;
+    if ($type) {
+        mkpath catdir($mime_dir, $cat) unless $seen{$cat}++;
+        cp $file, catfile($mime_dir, $cat, "$type.png");
+    } else {
+        cp $file, catfile($mime_dir, "$cat.png");
+    }
+}
+
+
+
+__END__

@@ -1,0 +1,32 @@
+NAME
+    copy_gnome_icons
+
+SYNOPSIS
+      copy_gnome_icons *.png
+
+DESCRIPTION
+    This script is designed to convert a collection of GNOME MIME type icons
+    to the Bricoalge root and to the naming convention used by Bricolage.
+    The icons will then be used by the Bricolage UI, assuming that the
+    "USE_THUMBNAILS" bricolage.conf directive has been enabled.
+
+    Be sure to set the $BRICOLAGE_ROOT environment variable if it is
+    anything other than /usr/local/bricolage. The icons will bee installed
+    into the comp/media/mime directory under the Bricolage root.
+
+    The icons are named exactly as the corresponding MIME types are named,
+    with the resulting PNG files installed in appropriate subdirectories.
+    For example, an icon named "gnome-text-html.png" will be copied to
+    comp/media/mime/text/html.png.
+
+    This script was developed using the GNOME MIME type icons downloaded
+    from <http://developer.ximian.com/images/art-devel/mime-icons.tgz>.
+    Updates happily accepted.
+
+AUTHOR
+    David Wheeler <david@kineticode.com>
+
+COPYRIGHT AND LICENSE
+    Copyright (c) 2004 Kineticode, Inc. See Bric::License for complete
+    license terms and conditions.
+

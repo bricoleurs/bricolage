@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
@@ -357,8 +357,9 @@ B<Notes:> NONE.
 sub thumbnail_uri {
     return unless USE_THUMBNAILS;
     my $self = shift;
-    my $loc = $self->_thumb_location or return;
-    return unless -e $self->_thumb_file || $self->create_thumbnail;
+    my $loc = $self->_thumb_location or return $self->SUPER::thumbnail_uri;
+    return $self->SUPER::thumbnail_uri
+      unless -e $self->_thumb_file || $self->create_thumbnail;
     return Bric::Util::Trans::FS->cat_uri(
         MEDIA_URI_ROOT,
         Bric::Util::Trans::FS->dir_to_uri($loc)
@@ -412,7 +413,7 @@ sub create_thumbnail {
 
     my $img = Imager->new;
     $img->open(file => $path, type => $format)
-      or throw_gen msg     => "Imager cannot open '$path'",
+      or throw_gen error   => "Imager cannot open '$path'",
                    payload => $img->errstr;
 
     # Create smaller version by scaling largest side to THUMBNAIL_SIZE
@@ -423,7 +424,7 @@ sub create_thumbnail {
     # Save the image or die.
     my $thumbfile = $self->_thumb_file;
     $thumb->write(file => $thumbfile)
-      or throw_gen msg     => "Imager cannot write '$thumbfile'",
+      or throw_gen error   => "Imager cannot write '$thumbfile'",
                    payload => $img->errstr;
     return $self;
 }
@@ -485,7 +486,7 @@ C<undef> if the image has no location.
 sub _thumb_location {
     my $self = shift;
     my $loc = $self->get_location or return;
-    $loc =~ s/(\..+)$/_thumb$1/g;
+    $loc =~ s/(\..+)$/_thumb$1/g or $loc .= '_thumb';
     return $loc;
 }
 

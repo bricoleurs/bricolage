@@ -41,6 +41,18 @@ use the Gimp to generate localized buttons for the Bricolage UI based on the
 contents of an input file. See F<contrib/button_gen/README> for details.
 [Florian Rossol]
 
+=item *
+
+Added support for icons for all media documents when the C<USE_THUMBNAILS>
+F<bricolage.conf> directive is enabled. These rely on the presence of PNG icon
+files for each MIME type in F<comp/media/mime>. Only one such icons is
+distributed with Bricolage, F<comp/media/mime/none.png> (borrowed from the KDE
+project under L<http://artist.kde.org/new/license.html#others>), which is the
+default icon when the MIME type of a media file is unknown or when no icon
+file exists for the MIME type of the media file. Administrators are free to
+add their own icons, and the C<copy_gnome_icons> script in F<contrib> makes it
+easy to use GNOME icons. [David]
+
 =back
 
 =head2 Improvements
