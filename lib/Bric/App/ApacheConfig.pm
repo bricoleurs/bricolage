@@ -45,6 +45,10 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 =cut
 
+package Apache::ReadConfig;
+use strict;
+use warnings;
+
 # start Apache::DB if we're debugging.  This is done here so that
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
@@ -56,9 +60,39 @@ BEGIN {
   }
 }
 
-package Apache::ReadConfig;
-use strict;
-use warnings;
+BEGIN {
+    # set up profiling with Devel::Profiler - this installs a
+    # ChildInitHandler.  It needs to be setup as early as possible to
+    # enable the CORE::GLOBAL::caller override to be used by the
+    # profiled modules.
+    use Bric::Config qw(PROFILE QA_MODE);
+    if (PROFILE) {
+        # exclude upper-case subs, which are mostly constants in Bric anyway
+        my $sub_filter = sub {
+            return 0 if $_[1] =~ /^[A-Z_]+$/;
+            return 1;
+        };
+
+        # exclude Bric::Util::Fault and some misbehavin' packages used
+        # by Bric
+        my $pkg_filter = sub {
+            return 0 if ($_[0] =~ /^Bric::Util::Fault/ or
+                         $_[0] =~ /^XML::Parser/       or
+                         $_[0] =~ /^SOAP/);
+            return 1;
+        };
+
+        require Devel::Profiler::Apache;
+        Devel::Profiler::Apache->import(sub_filter     => $sub_filter,
+                                        package_filter => $pkg_filter);
+
+        # profiling with QA_MODE on is inadvisable
+        print STDERR "WARNING: Both PROFILE and QA_MODE options activated.\n",
+                     "         PROFILE results will be skewed.\n\n"
+            if QA_MODE;
+    }
+}
+
 use Bric::Config qw(:conf :sys_user :qa :temp :profile :proc_size);
 use Bric::App::Handler;
 use Bric::App::AccessHandler;
@@ -103,35 +137,6 @@ do {
 	    if MAX_UNSHARED_SIZE > 0;
 
         $config{PerlFixupHandler} = 'Apache::SizeLimit';
-    }
-
-    # set up profiling with Devel::Profiler - this installs a
-    # ChildInitHandler
-    if (PROFILE) {
-        require Devel::Profiler::Apache;
-
-        # exclude upper-case subs, which are mostly constants in Bric anyway
-        my $sub_filter = sub {
-            return 0 if $_[1] =~ /^[A-Z_]+$/;
-            return 1;
-        };
-
-        # exclude Bric::Util::Fault and some misbehavin' packages used
-        # by Bric
-        my $pkg_filter = sub {
-            return 0 if ($_[0] =~ /^Bric::Util::Fault/ or
-                         $_[0] =~ /^XML::Parser/       or
-                         $_[0] =~ /^SOAP/);
-            return 1;
-        };
-
-        Devel::Profiler::Apache->import(sub_filter     => $sub_filter,
-                                        package_filter => $pkg_filter);
-
-        # profiling with QA_MODE on is inadvisable
-        print STDERR "WARNING: Both PROFILE and QA_MODE options activated.\n",
-                     "         PROFILE results will be skewed.\n\n"
-            if QA_MODE;
     }
 
     if (PREVIEW_LOCAL) {
