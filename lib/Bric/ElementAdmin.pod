@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:51 $
+$Date: 2001-09-21 02:45:02 $
 
 =head1 DESCRIPTION
 
@@ -28,30 +28,35 @@ dependent on how well thought-out and designed Element Administration has been.
 Elements are the building blocks of stories in Bricolage. Each story is based on
 a single element that defines its story type, and subelements of the story are
 available if they have been designated as available within the story type. In
-turn, each subelement can have subelemens, and the depth of the subelements can
+turn, each subelement can have subelements, and the depth of the subelements can
 be arbitrarily deep.
 
 Since by default there are only a few elements available in Bricolage to get you
-started, it's important to think about how you'd like to use Bric within your
-organization, and to think about how your stories and media are constructed, to
-come up with a design for your element hierarchy. This document will assist you
-in this task with the goal of helping you to create an element infrastructure
-that matches the needs of your organization while creating an intuitive and
+started, it's important to think about how you'd like to use Bricolage within
+your organization and how your stories and media are constructed, and to come up
+with a design for your element hierarchy. This document will assist you in this
+task with the goal of helping you to create an element infrastructure that
+matches the needs of your organization while creating an intuitive and
 easy-to-use interface for your editors and producers.
+
+B<Note:> I shall be using stories in all ove the examples below, but by and
+large the same concepts apply to media objects. The difference lies mainly in
+the likelihood that you'll use far fewer subelements (if any) in your media
+objects.
 
 =head1 PLANNING
 
 Once you have become familiar with how Bricolage works, it's important to start
 thinking about how you plan to use it within your organization. Aspects that
 deserve some thought include Workflow and Desk design, Category Administration,
-Output Channel Administration, Contributor Type Administration, and user groups
-and permissions. Each of these administrative design functions are covered in
-separate documents [or will be, eventually!], but the most important bit to
-think about, from your users' point of view, is Element Administration.
+Output Channel Administration, Contributor Type Administration, Destinations,
+and user groups and permissions. Each of these administrative design functions
+are covered in separate documents [or will be, eventually!], but the most
+important bit to think about, from your users' point of view, is Element
+Administration.
 
 The planning stage of element administration requires that you think about how
-stories (and media, though media element administration will typically be less
-complex) in your environment are constructed. Here are some of the issues that
+stories in your environment are constructed. Here are some of the issues that
 need to be addressed:
 
 =over 4
@@ -61,30 +66,36 @@ need to be addressed:
 What kinds of stories do you have? Are there different types of stories for
 different parts of your site? For different sites managed from within Bricolage?
 At a minimum, you will likey want to consider using two different types of
-stories: B<Covers>, which include content summarizing and pointing to other
-stories, and B<Stories>, which make up the bulk of the content for your site.
+stories: B<covers>, which include content summarizing and pointing to other
+stories, and B<stories>, which make up the bulk of the content for your site.
 
 =item Construction
 
 For each type of story you define for your organization, think about what
 constitutes each story of that type. There are two aspects of this level of the
-design: Subelement available for each story, and data fields within each of
-those elements. Elements are the building blocks of a story, while the fields in
-an element constititute an element's data points.
+design: elements available for each story, and data fields within each of those
+elements. Elements are the building blocks of a story, while the fields in an
+element constititute an element's data points.
 
 =item Relationships
 
-All individual elements can be associated with one other story or with one media
-object. These relationships are useful for creating links to other stories, and
-for displaying images within a story.
+Individual elements can be associated with one story or with one media object.
+These relationships are useful for creating links to other stories, and for
+displaying images within a story.
 
 =back
 
-Let's start with a couple of simple examples. Say that there are two basic types
-of stories on your site, cover stories and content stories. The cover stories
-might have the following features:
+=head2 The Examples
 
-=over
+Let's start with a couple of simple examples. Say that there are two basic types
+of stories on your site, covers (also known as index pages) and stories (which
+contain the bulk of the content).
+
+=head3 Cover
+
+Each cover on your site might have the following features:
+
+=over 4
 
 =item *
 
@@ -102,22 +113,322 @@ Three columns of content. The columns are defined as follows:
 
 =item 1
 
-Column One Contains navigaion to other sections of the site.
+Column One Contains navigation to other sections of the site.
 
 =item 2
 
-Column Two features a the title of the cover and link to the top story of the
-day with an image, as well as links to other stories that are related to the
-first.
+Column Two features the title of the cover and link to the top story of the day
+(based on its title) with an image, teaser, and byline from that story, as well
+as links to other stories (with their title, teasers, and bylines) that are
+related to the first.
 
 =item 3
 
-Column Three features a list of links to recent stories on your site and a section
-containing advertizing.
+Column Three features a list of links to recent stories (with their bylines
+listed) on your site and a section containing advertising.
 
 =back
 
 =back
+
+=head3 Story
+
+Each story might have the following features:
+
+=over 4
+
+=item *
+
+A Title.
+
+=item *
+
+A Deck (A brief summary of what the story is about).
+
+=item *
+
+A byline.
+
+=item *
+
+A coverline.
+
+=item *
+
+A main image.
+
+=item *
+
+Multiple pages. Each individual page may contain, in addition to any of the
+above items:
+
+=over 4
+
+=item *
+
+A Subtitle.
+
+=item *
+
+Multiple paragraphs of body copy.
+
+=item *
+
+One or more pull quotes.
+
+=back
+
+=back
+
+=head2 Establishing the Hierarchy
+
+The next step is to build a hierarchy of parts based on our description of
+covers and stories. Think about the hierarchies in terms of two different types
+of parts: items that contain other parts, and items that contain data. These two
+types translate roughly into the concepts of B<elements> and B<fields>, and can
+be represented fairly well in an outline format. Here is an example of the
+hierarchies of the examples described above:
+
+=over
+
+=item Cover
+
+=over
+
+=item Column One
+
+=over
+
+=item Navigation
+
+=back
+
+=item Column Two
+
+=over
+
+=item Top Story
+
+=over
+
+=item Image
+
+=item Title
+
+=item Teaser
+
+=item Byline
+
+=back
+
+=item Stories of the Day
+
+=over
+
+=item Story
+
+=over
+
+=item Title
+
+=item Teaser
+
+=item Byline
+
+=back
+
+=back
+
+=back
+
+=item Column Three
+
+=over
+
+=item Recent Stories
+
+=over
+
+=item Story
+
+=over
+
+=item Title
+
+=item Byline
+
+=back
+
+=back
+
+=item Advertisement
+
+=back
+
+=back
+
+=item
+
+=item Story
+
+=over
+
+=item Title
+
+=item Deck
+
+=item Byline
+
+=over
+
+=item Writer Name
+
+=item Source
+
+=back
+
+=item Coverline
+
+=item Main Image
+
+=item Page
+
+=over
+
+=item Subtitle
+
+=item Paragraph
+
+=item Pull Quote
+
+=back
+
+=back
+
+=back
+
+This hierarchical format nicely illustrates the B<construction> of covers and
+stories, as the term is used above. Items in the outline that have sub-items
+are elements, while items that have no sub-items are fields.
+
+=head2 Establishing Relationships
+
+The exception to the last statement is relationships. While quite a few of the
+items listed in the above hierarchies are specific to a particular story (e.g.,
+Title, Deck, Page, Paragraph, etc.), several are specific to other Bricolage
+objects. In the above examples, these are Image, Linked Story, and Byline.
+
+In addition to stories, objects that users will frequently use are Media and
+conributors, and these can be linked to from a given story -- a relationship can
+be created. So starting with the cover page, we see that it consists mainly of
+links to stories. The upshot is that while most of the fields can be created for
+a particular element (say, "Top Story," which has the fields "Image," "Title,"
+"Teaser," and "Byline"), the truth is that if a link is created to the top
+story, then all of those data fields will be available from the top story itself
+(provided they've been associated with the Story type!). Thus all you have
+to do is link to the story itself, not enter in all of those fields again!
+
+B<Note:> You may decide to include them, anyway, if you wanted, for example, to
+override the values in the story itself. Such an override would have to take
+place in the templates that format the story, however.
+
+What this calls for, then, is a reorganization of the hierarchy of the Cover and
+Story story types. Because fields are in stories, they don't have to be included
+in the element that links to them:
+
+=over
+
+=item Cover
+
+=over
+
+=item Column One
+
+=over
+
+=item Navigation
+
+=back
+
+=item Column Two
+
+=over
+
+=item Top Story (Linked)
+
+=item Stories of the Day
+
+=over
+
+=item Story (Linked)
+
+=back
+
+=back
+
+=item Column Three
+
+=over
+
+=item Recent Stories
+
+=over
+
+=item Story (Linked)
+
+=back
+
+=item Advertisement
+
+=back
+
+=back
+
+=item
+
+=item Story
+
+=over
+
+=item Title
+
+=item Deck
+
+=item Coverline
+
+=item Main Image
+
+=item Contributor (Linked)
+
+=item Page
+
+=over
+
+=item Subtitle
+
+=item Paragraph
+
+=item Pull Quote
+
+=back
+
+=back
+
+=back
+
+Note that virtually all of the fields are removed from the linked stories in
+both Cover and Story, because those fields are available from the linked stories
+themselves -- that is, they've been defined in the Story story type. Similary,
+I've removed the Byline element, because all stories can have any number of
+contributors associated with them, and custom fields can be created for
+contributor types (see [documentation forthcoming]). Clearly, the relationships
+offer powerful specialization. Just be sure that any fields that you require in
+related contexts are either included in the related item itself, or in a field
+specific to the related context. [I hope that last sentence wasn't as clear as
+mud!]
+
+
+=head1 ADMINISTRATION
 
 The first thing you'll need to do is to edit or create a new Element Type to
 manage your cover story type. By default, Bricolage ships with the Element Type
@@ -208,7 +519,11 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ElementAdmin.pod,v $
-Revision 1.1  2001-09-06 21:52:51  wheeler
-Initial revision
+Revision 1.2  2001-09-21 02:45:02  wheeler
+In progress. Made good progress today, actually. Hope to finish it either later
+tonight or in the morning.
+
+Revision 1.1.1.1  2001/09/06 21:52:51  wheeler
+Upload to SourceForge.
 
 =cut
