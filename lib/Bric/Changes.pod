@@ -147,6 +147,12 @@ The C<PREVIEW_MASON> configuration directive no longer is no longer defaulting
 to on in one context and off in another. It is now off by default. Thanks to
 Michael Slattery for the spot! [David]
 
+=item *
+
+Eliminated the password field type from the formBuilder interface used for
+contributor types and elements. Its inclusion up to now may be considered a
+bug. [David]
+
 =back
 
 =head1 VERSION 1.3.2

@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-07-06 01:30:36 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -206,35 +206,6 @@ checkbox_table    += '</td></tr>'
 checkbox_table    += '</table>'
 checkbox_table    += '</form>&nbsp;'
 
-var password_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=password>"
-password_table     += '<table width=340 cellpadding=3>'
-password_table     += '<tr><td valign=top width=170>'
-password_table     += '		<span class=label>Name:</span><br />'
-password_table     += '		<input type=text name=fb_name>'
-password_table     += '</td><td valign=top width=170>'
-password_table     += '		<span class=label>Size of box:</span><br />'
-password_table     += '		<input type=text name=fb_size value=32 size=3>'
-password_table     += '</td></tr>'
-password_table     += '</table><table width=340 cellpadding=3>'
-password_table     += '<tr><td valign=top width=170>'
-password_table     += '		<span class=label>Label:</span><br />'
-password_table     += '		<input type=text name=fb_disp>'
-password_table     += '</td><td valign=top width=170>'
-password_table     += '		<span class=label>Maximum size of input:</span><br />'
-password_table     += '		<input type=text name=fb_maxlength value=32 size=3>'
-password_table     += "</td></tr>"
-password_table     += '</table><table width=340 cellpadding=3>'
-password_table     += '<tr><td>'
-password_table     += '		<% $numFieldsTxt %>'
-password_table     += '    </td><td>'
-% $m->out ( qq {password_table     += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
-password_table     += '    </td><td>'
-% $m->out ( qq {password_table     += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
-password_table     += "    </td></tr>"
-password_table     += '</table>'
-password_table     += '</form>&nbsp;'
-
-
 var pulldown_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 pulldown_table     += '<table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td valign=top width=170>'
@@ -382,12 +353,6 @@ date_table     += '</td></tr></table></form>&nbsp;'
 	<td>
 	<input type=radio name=formElement value=checkbox onClick="showForm('checkbox')">
 	<b>Checkbox</b>
-	</td>
-</tr>
-<tr>
-	<td>
-	<input type=radio name=formElement value=password onClick="showForm('password')">
-	<b>Password</b>
 	</td>
 </tr>
 <tr>
