@@ -49,7 +49,5 @@ sub field { $_[0]->trigger_key }
 
 sub param { $_[0]->request_args }
 
-sub param_field { $_[0]->param->{$_[0]->field} }
-
 
 1;
