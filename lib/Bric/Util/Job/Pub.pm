@@ -6,16 +6,16 @@ Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:09 $
+$Date: 2004-02-12 00:04:46 $
 
 =head1 SYNOPSIS
 
@@ -179,33 +179,32 @@ B<Notes:> NONE.
 
 sub execute_me {
     my $self = shift;
-    $self = $self->SUPER::execute_me();
+    $self = $self->SUPER::execute_me;
     # Check to see if we have story or media id
-    if (my $sid = $self->get_story_id()) {
+    if (my $sid = $self->get_story_id) {
         my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the story.
         my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-        eval { 
-            $b->publish($s, 'story', 
-              $self->get_user_id(), $self->get_sched_time, 1); 
+        eval {
+            $b->publish($s, 'story', $self->get_user_id,
+                        $self->get_sched_time, 1);
         };
-    } elsif (my $mid = $self->get_media_id()) {
+    } elsif (my $mid = $self->get_media_id) {
         my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the media.
         my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-        eval { 
-            $b->publish($m, 'media', 
-              $self->get_user_id(), $self->get_sched_time, 1); 
+        eval {
+            $b->publish($m, 'media', $self->get_user_id,
+                        $self->get_sched_time, 1);
         };
     }
 
-    if ($@) {
-        $self->handle_error($@) if $@;
-    } else {
-        # Mark it complete, unlock it, and we're done!
-        $self->_set([qw(comp_time _executing)], [db_date(0, 1), 0]);
-        $self->save;
-    }
+    # Throw any exceptions.
+    $self->handle_error($@) if $@;
+
+    # Mark it complete, unlock it, and we're done!
+    $self->_set([qw(comp_time _executing)], [db_date(0, 1), 0]);
+    $self->save;
 }
 
 __END__
