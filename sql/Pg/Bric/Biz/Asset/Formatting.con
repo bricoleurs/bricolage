@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2004-02-10 02:42:31 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -28,6 +28,10 @@ ALTER TABLE formatting
 ALTER TABLE formatting
 	ADD CONSTRAINT fk_workflow__formatting FOREIGN KEY (workflow__id)
 	REFERENCES workflow(id) ON DELETE SET NULL;
+
+ALTER TABLE formatting
+	ADD CONSTRAINT fk_desk__formatting FOREIGN KEY (desk__id)
+	REFERENCES desk(id) ON DELETE SET NULL;
 
 -- -----------------------------------------------------------------------------
 -- Table: formatting_instance

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.4.1 $
+-- VERSION: $Revision: 1.1.4.2 $
 --
--- $Date: 2003-05-29 20:48:39 $
+-- $Date: 2004-02-10 02:42:31 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -21,6 +21,10 @@ ADD CONSTRAINT fk_element__media FOREIGN KEY (element__id)
 ALTER TABLE media
 ADD CONSTRAINT fk_workflow__media FOREIGN KEY (workflow__id)
 	REFERENCES workflow(id) ON DELETE SET NULL;
+
+ALTER TABLE media
+ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)
+	REFERENCES desk(id) ON DELETE SET NULL;
 
 -- -----------------------------------------------------------------------------
 -- Table media_instance

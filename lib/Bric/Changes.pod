@@ -20,20 +20,25 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added missing index to the C<workflow__id> column of the story, media, and
-formatting (template) tables. [David]
+Added missing index to the C<workflow__id> column of the C<story>, C<media>,
+and C<formatting> (template) tables. [David]
 
 =item *
 
-Made index on the C<desk__id> column of the story, media, and formatting
-(template) tables a partial index, since the column will usually be
-NULL. [David]
+Made index on the C<desk__id> column of the C<story>, C<media>, and
+C<formatting> (template) tables a partial index, since the column will usually
+be NULL. [David]
 
 =item *
 
-Added an index to the description column of the story_instance,
-media_instance, and formatting (template) tables to speed up simple
+Added an index to the description column of the C<story_instance>,
+C<media_instance>, and C<formatting> (template) tables to speed up simple
 searches. [David]
+
+=item *
+
+Added missing foreign key constraints for the C<desk_id> column of the
+C<story>, C<media>, and C<formatting> (template) tables. [David]
 
 =head1 VERSION 1.6.9 (2004-02-06)
 
