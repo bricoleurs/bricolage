@@ -201,5 +201,4 @@ var is_unix  = ((agt.indexOf("x11")!=-1) || is_sun || is_irix || is_hpux ||
 	     is_dec || is_sinix || is_aix || is_linux || is_bsd || is_freebsd);
 
 var is_vms   = ((agt.indexOf("vax")!=-1) || (agt.indexOf("openvms")!=-1));
-
 // stop hiding -->
