@@ -36,6 +36,11 @@ the spot! [David]
 Eliminated the need for the Apache::ConfigFile module, and thus some annoying
 problems with the CPAN indexer when trying to install it. [David]
 
+=item *
+
+Fixed order of SQL statement execution upon installation so that dependencies
+are properly handled. [Mark]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
