@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-09-19 00:59:17 $
+$Date: 2002-09-19 17:08:46 $
 
 =head1 SYNOPSIS
 
@@ -75,7 +75,7 @@ use Test::Harness qw(runtests $verbose);
 use Getopt::Std;
 
 # Add the requisite library paths to @INC.
-unshift @INC, 'lib', File::Spec->catdir('t', 'lib');
+unshift @INC, 'lib', File::Spec->catdir('t');
 
 # Get arguments.
 my %opts;
