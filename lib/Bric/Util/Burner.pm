@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-09 17:40:26 $
+$Date: 2002-10-24 21:46:09 $
 
 =head1 SYNOPSIS
 
@@ -576,15 +576,9 @@ sub publish {
     my $published=0;
     $ba->set_publish_date($publish_date);
 
-    my ($repub, $exp_date);
-
-    if ($ba->get_publish_status) {
-        $repub = 1;
-    } else {
-        # This puppy hasn't been published before. Mark it.
-        $ba->set_publish_status(1);
-        $exp_date = $ba->get_expire_date(ISO_8601_FORMAT),
-    }
+    # Determine if we've published before. Set the expire date if we haven't.
+    my ($repub, $exp_date) = $ba->get_publish_status ?
+      (1, undef) : (undef, $ba->get_expire_date(ISO_8601_FORMAT));
 
     # Get a list of the relevant categories.
     my @cats = $key eq 'story' ? $ba->get_categories : ();
@@ -671,8 +665,9 @@ sub publish {
     }
 
     if ($published) {
+        $ba->set_publish_status(1);
         # Set published version
-        $ba->set_published_version($ba->get_current_version());
+        $ba->set_published_version($ba->get_current_version);
         # Now log that we've published and get it out of workflow.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
         my $d = $ba->get_current_desk;
