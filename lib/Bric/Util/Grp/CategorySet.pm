@@ -3,19 +3,19 @@ package Bric::Util::Grp::CategorySet;
 
 =head1 NAME
 
-  Bric::Util::Grp::CategorySet - A module to hold sets of categories.
+Bric::Util::Grp::CategorySet - A module to hold sets of categories.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:46 $
+$Date: 2003-01-16 00:24:21 $
 
 =head1 SYNOPSIS
 
@@ -25,9 +25,9 @@ $Date: 2002-08-17 23:49:46 $
 
 =head1 DESCRIPTION
 
-Allows assets to be grouped into categories.  In addition to assets a category 
+Allows assets to be grouped into categories. In addition to assets a category
 can contain other categories, allowing a hierarchical layout of categories and
-assets. 
+assets.
 
 =cut
 
@@ -36,19 +36,16 @@ assets.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:standard);
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
 use base qw( Bric::Util::Grp );
 
 #=============================================================================#
@@ -68,20 +65,18 @@ use constant PACKAGE => 'Bric::Biz::CategorySet';
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-
+# Public Class Fields
 
 #--------------------------------------#
 # Private Class Fields
 my ($class, $mem_class);
 
-
-
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# This method of Bricolage will call 'use fields' for you and set some
+# permissions.
+
 BEGIN {
     Bric::register_fields({
 			 # Public Fields
@@ -98,13 +93,6 @@ BEGIN {
 =head2 Constructors
 
 =over 4
-
-=cut
-
-#--------------------------------------#
-# Constructors                          
-
-#------------------------------------------------------------------------------#
 
 =item $obj = new Bric::Util::Grp::CategorySet($init);
 
@@ -140,8 +128,8 @@ NONE
 
 B<Notes:>
 
-This is the default lookup constructor which should be overrided in all derived 
-classes even if it just calls 'die'.
+This is the default lookup constructor which should be overrided in all
+derived classes even if it just calls 'die'.
 
 =cut
 
@@ -163,11 +151,15 @@ B<Notes:>
 
 NONE
 
-=cut
-
-#--------------------------------------#
+=back
 
 =head2 Destructors
+
+=over 4
+
+=item $self->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
 
 =cut
 
@@ -176,11 +168,13 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+##############################################################################
+
+=back
 
 =head2 Public Class Methods
 
-################################################################################
+=over 4
 
 =item my $class = Bric::Util::Grp::CategorySet->my_class()
 
@@ -220,17 +214,17 @@ sub member_class {
 
 ################################################################################
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $class_id = Bric::Util::Grp::CategorySet->get_class_id()
 
-This will return the class id that this group is associated with
-it should have an id that maps to the class object instance that is
-associated with the class of the grp ie Bric::Util::Grp::AssetVersion
+This will return the class id that this group is associated with it should
+have an id that maps to the class object instance that is associated with the
+class of the grp ie Bric::Util::Grp::AssetVersion
 
 B<Throws:>
 
@@ -292,15 +286,7 @@ NONE
 
 =cut
 
-sub get_supported_classes {
-#    { 
-#	&PACKAGE => 'keyword',
-#    }
-
-	{ 'Bric::Biz::Category' => 'category' }
-}	
-
-#------------------------------------------------------------------------------#
+sub get_supported_classes { { 'Bric::Biz::Category' => 'category' } }
 
 ################################################################################
 
@@ -321,25 +307,15 @@ sub get_secret { 0 }
 
 #==============================================================================#
 
+=back
+
 =head2 Private Methods
 
 NONE
 
-=cut
-
-#--------------------------------------#
-
 =head2 Private Class Methods
 
 NONE
-
-=cut
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
 
 =head2 Private Instance Methods
 
@@ -347,14 +323,8 @@ NONE
 
 =cut
 
-# Add methods here that apply to an instantiated object, but should not be 
-# called directly (e.g. utility functions for instance methods).
-# Use same POD comment style as above for 'new'.
-
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -362,8 +332,7 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
