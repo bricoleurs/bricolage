@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 19:52:31 $
+$Date: 2002-09-20 21:29:53 $
 
 =head1 SYNOPSIS
 
@@ -1521,6 +1521,47 @@ sub cancel_checkout {
 		});
 
 	return $self;
+}
+
+##############################################################################
+
+=item $asset = $asset->checkin
+
+Checks the asset in.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot checkin non checked out versions.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub checkin {
+    my $self = shift;
+
+    die Bric::Util::Fault::Exception::GEN->new
+      ({ msg => "Cannot checkin non checked out versions" })
+      unless $self->_get('checked_out');
+
+    my $version = $self->_get('version');
+    $version++;
+    $self->_set({ user__id => undef,
+                  version   => $version,
+                  current_version => $version,
+                  checked_out => 0,
+                  _checkin => 1
+                });
+
+    return $self;
 }
 
 ################################################################################

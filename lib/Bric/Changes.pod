@@ -147,6 +147,35 @@ and I only just noticed it! [David]
 Slightly improved handling of assets that have forgotten where they
 are. [David]
 
+=item *
+
+Checked-out templates are now displayed only once (instead of twice) in the
+"Find Templates" manager. [David]
+
+=item *
+
+Added C<get_new_objs()> method to Bric::Util::Coll so that Bric::Util::Grp's
+C<has_member()> method can see a member even if it hasn't been saved to the
+database. Also changed Bric::Util::Grp to check for members in this way, of
+course. [David]
+
+=item *
+
+Assets retrieved from the library now appear on the desk they're checked out
+into only once (instead of twice). This thanks to the above-noted changes to
+Bric::Util::Grp. [David]
+
+=item *
+
+Added upgrade script F<inst/upgrade/1.4.1/clean_desks.pl> to clean up existing
+duplicate listings of assets on desks. [David]
+
+=item *
+
+Removed the C<checkin()> method from Bric::Biz::Asset::Formatting and
+Bric::Biz::Asset::Business and put it into Bric::Biz::Asset, instead, since
+it's exactly the same for all assets. [David]
+
 =back
 
 =head1 VERSION 1.4.0

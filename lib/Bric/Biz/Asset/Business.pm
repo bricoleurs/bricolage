@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.18.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-26 06:03:47 $
+$Date: 2002-09-20 21:29:53 $
 
 =head1 SYNOPSIS
 
@@ -1667,53 +1667,6 @@ sub checkout {
 	});
 
 	$self->_set( { '_update_contributors' => 1 }) if $contribs;
-
-	return $self;
-}
-
-##############################################################################
-
-=item $biz = $biz->checkin()
-
-Checks the asset in
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Cannot checkin non checked out versions.
-
-=back
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-Need to add tile stuff here (maybe)
-
-=cut
-
-sub checkin {
-	my ($self) = @_;
-
-	die Bric::Util::Fault::Exception::GEN->new( 
-		{ msg => "Cannot checkin non checked out versions"
-		}) unless $self->_get('checked_out');
-
-	my $version = $self->_get('version');
-
-	$version++;
-	$self->_set( {
-		user__id => undef,
-		version   => $version,
-		current_version => $version,
-		checked_out => 0,
-		_checkin => 1
-	});
 
 	return $self;
 }
