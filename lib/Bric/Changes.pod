@@ -58,7 +58,7 @@ graphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
 
 =item *
 
-The media simple search now searched by URI again. [Mark]
+The media simple search now searches by URI again. [Mark]
 
 =item *
 
