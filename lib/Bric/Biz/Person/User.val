@@ -1,15 +1,15 @@
 
 -- Project:      Bricolage Business API
 -- File:    User.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2001-09-06 21:54:15 $
+-- $Date: 2002-02-19 23:53:44 $
 -- Author: David Wheeler <david@wheeler.net>
 
--- Administrator. Password: 'c@st3l!@n'.
+-- Administrator. Password: 'change me now!'.
 
 INSERT INTO usr (id, login, password, active)
-VALUES (0, 'admin', '0a3e416ccf73bcfe645f05791f77caf6', 1);
+VALUES (0, 'admin', 'd901271082743310476e5e7245e42120', 1);
 
 -- Add 'em to the 'All Users' Group.
 INSERT INTO member (id, grp__id, class__id, active)

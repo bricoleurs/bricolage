@@ -1,0 +1,58 @@
+## httpd.conf -- Bricolage Apache configuration file.
+##
+## VERSION: $Revision: 1.3 $
+## $Date: 2002-02-20 01:36:26 $
+
+################################################################################
+# These are the basic, general settings to get going.
+################################################################################
+ServerType           standalone
+ServerName           localhost
+ServerRoot           /usr/local/apache/htdocs
+ServerAdmin          root@localhost
+ServerSignature      Email
+PidFile              %PID_FILE%
+DocumentRoot         /usr/local/apache/htdocs
+Listen               80
+User                 nobody
+Group                nobody
+KeepAlive            Off
+MaxKeepAliveRequests 100
+KeepAliveTimeout     15
+MinSpareServers      2
+MaxSpareServers      6
+StartServers         2
+MaxClients           150
+MaxRequestsPerChild  0
+ErrorLog             /usr/local/apache/logs/error_log
+LogLevel             info
+LogFormat            "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" \"%{Cookie}i\" \"%v:%p\"" combined
+CustomLog            /usr/local/apache/logs/access_log combined
+TypesConfig          /usr/local/apache/conf/mime.types
+UseCanonicalName     On
+HostNameLookups      Off
+Timeout              30
+
+################################################################################
+# Use this section if SSL_ENABLE is on in bricolage.conf.
+################################################################################
+<IfDefine SSL>
+    Listen 443
+    SSLPassPhraseDialog    builtin
+    SSLSessionCache        dbm:/usr/local/apache/logs/ssl_scache
+    SSLSessionCacheTimeout 300
+    SSLMutex               file:/usr/local/apache/logs/ssl_mutex
+    SSLLog                 /usr/local/apache/logs/ssl_engine_log
+    SSLLogLevel            info
+    SSLRandomSeed          startup builtin
+    SSLRandomSeed          connect builtin
+    SSLCipherSuite         ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+    SSLCertificateFile     /usr/local/apache/conf/ssl.crt/server.crt
+    SSLCertificateKeyFile  /usr/local/apache/conf/ssl.key/server.key
+</IfDefine>
+
+################################################################################
+# This is where Bricolage actuall gets configured.
+################################################################################
+PerlPassEnv BRICOLAGE_ROOT
+PerlModule Bric::App::ApacheConfig

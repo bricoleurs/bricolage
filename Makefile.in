@@ -1,4 +1,4 @@
-# settings
+# standard
 SHELL = /bin/sh
 
 # Programatic dependancies
@@ -12,15 +12,44 @@ GZIP = @GZIP@
 MKDIR = @MKDIR@
 FIND = @FIND@
 CTAGS = @CTAGS@
+PSQL = @PSQL@
+PG_CONFIG = @PG_CONFIG@
+
 
 # directories
 BIN = bin
 COMP = comp
 CONF = conf
+BLIB = blib
 DATA = data
 LIB = lib
 DOC = doc
-INST = install
+INST = inst
+HTML = ${DOC}/html
+MAN = ${DOC}/man
+
+
+# Bricolage configuration info
+APACHE_USER = @APACHE_USER@
+APACHE_GROUP = @APACHE_GROUP@
+APACHE_CONF = @APACHE_CONF@
+DB_NAME = @DB_NAME@
+DBI_USER = @DBI_USER@
+DBI_PASS = @DBI_PASS@
+POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
+POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
+POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
+HAVE_SSL = @HAVE_SSL@
+HOSTNAME = @HOSTNAME@
+PID_FILE = @PID_FILE@
+PGHOME = @PGHOME@
+MISSING_MODULES = @MISSING_MOD@
+DROPDB = @DROPDB@
+DROPUSER = @DROPUSER@
+CREATEDB = @CREATEDB@
+CONFIG_STRING = @CONFIG_STRING@
+CPAN_WORKS = @CPAN_WORKS@
+
 
 # Installation related variables
 # Most of these are standard --with-switches
@@ -30,109 +59,287 @@ exec_prefix  = @exec_prefix@
 bindir  = @bindir@
 datadir  = @datadir@
 compdir = @compdir@
-sysconfdir  = @sysconfdir@
-libdir  = @libdir@
-libexecdir  = @libexecdir@
+confdir = @sysconfdir@
+htmldir = @htmldir@
 mandir  = @mandir@
-infodir  = @infodir@
-sbindir  = @sbindir@
-localstatedir  = @localstatedir@
-sharedstatedir  = @sharedstatedir@
+docdir  = @docdir@
 VPATH = @srcdir@
 
 
-# now we'll use some perl and some builtin 
+# now we'll use some builtin 
 # regex to get a list of targets
 # and sources
-BIN_FILES = $(shell cd ${BIN} && ls | sed -e 's/CVS//')
+# bin is easy
+BIN_FILES = $(filter-out CVS,$(shell cd ${BIN} && ls))
 BIN_TARGETS = $(addprefix ${bindir}/,${BIN_FILES})
-CONF_FILES = $(shell cd ${CONF} && ls | sed -e 's/CVS//')
-CONF_TARGETS = $(addprefix ${confdir}/,${CONF_FILES})
-COMP_FILES = $(shell cd ${COMP} && ls | sed -e 's/CVS//')
-COMP_TARGETS = $(addprefix ${compdir}/,${COMP_FILES})
-DATA_FILES = $(shell cd ${DATA} && ls | sed -e 's/CVS//')
-DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
-LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-LIB_FILES = $(shell cd ${LIB} && ls | sed -e 's/CVS//')
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-DOC_FILES = $(shell cd ${DOC} && ls | sed -e 's/CVS//')
-DOC_TARGETS = $(addprefix ${libdir}/,${DOC_FILES})
+HTML_FILES = $(filter-out CVS,$(shell cd ${HTML} && ls))
+HTML_TARGETS = $(addprefix ${htmldir}/,${HTML_FILES})
+MAN_FILES = $(filter-out CVS,$(shell cd ${MAN} && ls))
+MAN_TARGETS = $(addprefix ${mandir}/,${MAN_FILES})
 
-# these are standard variable that a lot of people 
+# the conf files have to be handled more gingerly
+CONF_BRIC = ${CONF}/bricolage.tmp.conf
+CONF_BRIC_TARGET = ${confdir}/bricolage.conf
+CONF_HTTPD = ${CONF}/httpd.tmp.conf
+CONF_HTTPD_TARGET = ${confdir}/httpd.conf
+CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET}
+
+
+# And the various doc files in text form
+DOC_TARGETS = ${docdir}/Changes \
+			  ${docdir}/License ${docdir}/TODO \
+			  ${docdir}/configure_options
+
+
+# now the heart of the matter.  We are just copying
+# we need to produce a list of directories to make
+# and a list of files to put in them, matched with 
+# the originals, so we can check timestamps...
+# TODO: I should be able to define these as functions
+# 		to minimise the repetition...
+COMP_SUBDIRS = $(subst ./,, \
+					$(shell cd ${COMP} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+COMP_FILES = $(foreach dir, \
+				${COMP_SUBDIRS} ., \
+					$(shell cd ${COMP} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
+COMP_TARGETS = $(addprefix ${compdir}/,${COMP_FILES})
+## again
+DATA_SUBDIRS = $(subst ./,, \
+					$(shell cd ${DATA} && \
+						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
+DATA_FILES = $(foreach dir, \
+				${DATA_SUBDIRS} ., \
+					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
+DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
+
+
+# Canned sequence for installation
+
+define install-files
+@$(NORMAL_INSTALL)  # Normal commands follow.
+${INST}/mkinstalldirs $(@D)
+cp $^ $@
+@echo $@ >>${INST}/install.log
+endef
+
+
+# Set up the option string for the database
+# Documenation in bin/bric_importdb --help
+PSQL_OPTIONS :=
+ifneq (${POSTGRES_ROOT_USER},${POSTGRES_SYSTEM_USER})
+PSQL_OPTIONS += -U ${POSTGRES_ROOT_USER}
+endif
+ifneq (${POSTGRES_ROOT_PASS},none)
+PSQL_OPTIONS += -p ${POSTGRES_ROOT_PASS}
+endif
+PSQL_OPTIONS += -d ${DB_NAME}
+
+
+# Now we'll define the installed files according to our log
+# this is because there may be files installed which are not 
+# relevant to the current checkout, so we can't just use our 
+# targets.  Also we prefer to leave the user's data alone.
+INSTALLED_FILES = $(shell cat ${INST}/install.log | sort -u)
+
+# we don't have to be so careful with dirs, since we're only 
+# going to be removing empty ones.  sort removes duplicates, 
+# so it appears here just in case execprefix and prefix are 
+# the same.
+INSTALLED_DIRS = ${bindir} ${datadir} \
+                 ${compdir} ${confdir} \
+                 ${htmldir} ${mandir} \
+				 $(sort ${execprefix} ${prefix})
+
+
+
+# These are standard variable that a lot of people 
 # use in automagical build routines.  Bascially they
-# allow an admin to define what is going to get done by the 
-# standard targets below
-NORMAL_INSTALL = ${BIN_TARGETS} ${COMP_TARGETS} \
-				 ${CONF_TARGETS} ${DATA_TARGETS} \
-				 ${LIB_TARGETS} ${DOC_TARGETS}
+# allow someone to cause this makefile to produce a 
+# script which will do certain parts of the installation
+# but not other parts.  They have to stay undefined here.
+NORMAL_INSTALL = :
 PRE_INSTALL = :
-POST_INSTALL = :
+POST_INSTALL = : 
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
-# Bricolage configuration info
-APACHE_USER = @APACHE_USER@
-APACHE_GROUP = @APACHE_GROUP@
-DB_NAME = @DB_NAME@
-DBI_USER = @DBI_USER@
-DBI_PASS = @DBI_PASS@
-POSTGRES_ROOT_USER = @POSTGRES_ROOT_USER@
-POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
-POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
-
-# A list of any missing modules
-MISSING_MODULES = @MISSING_MOD@
-MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${mod}" ;)
-
+# ****************************************************************
+# *  RULES follow
+# ****************************************************************
 # Standard targets follow.  These are discussed at length
-# in the GNU Make manual: http://www.gnu.org/manuals/make
-all:  doc
+# in the GNU Make manual: http://www.gnu.org/manual/
+all:  doc config libs database
+
+libs:
+	cd ${LIB} &&  make
 
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html
-installdirs:
-	${INST}/mkinstalldirs 	${prefix} ${exec_prefix} \
-							${bindir} ${datadir} \
-							${sysconfdir} ${libdir} \
-							${libexecdir} ${includedir} \
-							${oldincludedir} ${mandir} \
-							${infodir} ${sbindir} \
-							${localstatedir} ${sharedstatedir} \
-							${compdir} ${docdir} \
-							${htmldir} ${mandir}
+		 install-man install-html chowndirs chmoddirs \
+		 ${INST}/installed-database
 
-# specific install targets including the list
-# determined by find/perl/etc up above
+installdirs:
+	@$(NORMAL_INSTALL)  # Normal commands follow.
+	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
+                           ${bindir} ${datadir} \
+                           ${confdir} ${compdir} \
+                           ${htmldir} ${mandir} ${compdir}/data
+chowndirs:
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir}/data ${datadir} 
+chmoddirs:
+	chmod -R a+r ${htmldir} ${docdir} ${bindir}
+	chmod -R a+x ${bindir}
+uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean
+uninstall-lib:
+	-cd ${LIB} && make uninstall
+uninstalldirs:
+	@$(NORMAL_UNINSTALL)  # Normal commands follow.
+	@echo removing installed dirs 
+	-@for D in ${INSTALLED_DIRS} ; do \
+		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
+	done
+uninstallfiles:
+	@$(NORMAL_UNINSTALL)  # Normal commands follow.
+	@echo removing previously installed files
+	-@rm -f ${INSTALLED_FILES}
+uninstalldatabase:
+	-${BIN}/bric_apachectl stop
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
+
+
+# specific install and uninstall targets including the list
+# determined by find up above
+# BIN is pretty easy
+#
+# The main hurdle in understanding what's  
+# going on here is to understand that make is checking 
+# timestamps for targets and their dependencies, and then
+# deciding what to copy based on that.
+# for CONF we have to do it by hand more or less.
+install-conf: ${CONF_TARGETS}
+${CONF_BRIC_TARGET}: ${CONF_BRIC}
+	${install-files}
+${CONF_HTTPD_TARGET}: ${CONF_HTTPD}
+	${install-files}
+
+
+# MakeMaker handles this stuff for us
+install-lib: 
+	cd ${LIB} && make install
+
+# From here on down we're going to do them basically the
+# same way.  It's pretty simple really. Just a matter of
+# finding the original file for every target in the 
+# target list, and giving that to make as the dependency.
+install-comp: ${COMP_TARGETS}
+${COMP_TARGETS}: ${compdir}%: ${COMP}% 
+	${install-files}
+install-data: ${DATA_TARGETS}
+${DATA_TARGETS}: ${datadir}%: ${DATA}%
+	${install-files}
+install-man: ${MAN_TARGETS}
+${MAN_TARGETS}: ${mandir}%: ${MAN}%
+	${install-files}
+install-html: ${HTML_TARGETS}
+${HTML_TARGETS}: ${htmldir}%: ${HTML}%
+	${install-files}
 install-bin: ${BIN_TARGETS}
-${BIN_TARGETS}: 
-	@echo $@
-#${BIN_TARGETS}: ${ORIG}
-#	echo ${BIN}${ORIG} ${dindir}/
-#	cp ${BIN}/${ORIG} ${bindir}/
-install-comp:
-install-conf:
-install-data:
-install-lib:
-install-doc:
-install-man:
-install-html:
+${BIN_TARGETS}: ${bindir}%: ${BIN}%
+	${install-files}
+install-doc: ${DOC_TARGETS}
+${DOC_TARGETS}: ${docdir}/%: %
+	${install-files}
+
+# this target drops and creates the user and database
+# and then installs the datafiles.  NOTE: This is a real
+# target which timestamps a file of the same name.  This
+# will allow those of us using CVS to do installs without
+# wiping out an old db.
+${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
+	perl -pi -e 's/nobody/${DBI_USER}/g' ${INST}/bricolage.sql
+	@${POST_INSTALL}
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
+	su -c '${CREATEDB} -E unicode ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
+	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
+
+# This makes the grant script
+${INST}/grants.sql: ${INST}/bricolage.sql
+	${INST}/bric_pggrant -u ${DBI_USER} -f $< -o $@
+	chmod a+r $@
+
+# This makes a simple create user script
+${INST}/pguser.sql:
+	echo "create user ${DBI_USER} with password '${DBI_PASS}';" > $@
+	chmod a+r $@
+
+# This is here for those of us running from CVS.  The 
+# distributed version will have this done by the distutils
+# script, and therefor there will be "nothing to do for" this target
+${INST}/bricolage.sql:
+	find ${LIB} -name '*.sql' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.val' | xargs cat | cat >> ${INST}/bricolage.sql
+	find ${LIB} -name '*.con' | xargs cat | cat >> ${INST}/bricolage.sql
+	chmod a+r $@
+
 
 # obviously we depend on the cpan stuff
 dep: cpan
-cpan:
-	${INSTALL_MISSING}
-	echo Installed ${MISSING_MODULES} >>${INST}install.log
+
+# This now tries to install Bundle:Bricolage every time
+# provided we have net access...
+cpan: ${INST}/missing_modules
+ifeq (CPAN_WORKS,yes)
+	export POSTGRES_INCLUDE=`${PG_CONFIG} --includedir`
+	export POSTGRES_LIB=`${PG_CONFIG} --libdir`
+	${PERL} -MCPAN -e 'install Bundle::Bricolage' 
+endif
+
+${INST}/missing_modules:
+	for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
+	
+# These targets are unused for the moment
+${CPAN_TARGETS}:
+	#${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
+	touch $@
+
+# This is where we do our config files
+
+config: ${CONF_BRIC} ${CONF_HTTPD} lib/Makefile 
+
+${CONF_BRIC}: ${CONF_BRIC}.in
+	cp $^ $@
+	perl -pi -e 's/%HOSTNAME%/${HOSTNAME}/g' $@
+	perl -pi -e 's,%APACHE%,${APACHE},g' $@
+	perl -pi -e 's,%APACHE_CONF%,${APACHE_CONF},g' $@
+	perl -pi -e 's/%APACHE_USER%/${APACHE_USER}/g' $@
+	perl -pi -e 's/%APACHE_GROUP%/${APACHE_GROUP}/g' $@
+	perl -pi -e 's,%FID_FILE%,${PID_FILE},g' $@
+	perl -pi -e 's/%DB_NAME%/${DB_NAME}/g' $@
+	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
+	perl -pi -e 's/%DBI_PASS%/${DBI_PASS}/g' $@
+	perl -pi -e 's,%compdir%,${compdir},g' $@
+	perl -pi -e 's,%datadir%,${datadir},g' $@
+	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
 
 
+${CONF_HTTPD}: ${CONF_HTTPD}.in
+	cp $^ $@
+	perl -pi -e 's,%PID_FILE%,${PID_FILE},g' $@
 
-doc: Changes INSTALL TODO License
+
+lib/Makefile:
+	cd ${LIB} && perl Makefile.PL
+
+
+# and here are our document files.
+doc: Changes TODO License configure_options
 	cd ${DOC} && ${MAKE} -e
-
-INSTALL:
-	${POD2TEXT} lib/Bric/Admin.pod >$@
 
 TODO:
 	${POD2TEXT} lib/Bric/ToDo.pod >$@
@@ -143,25 +350,40 @@ Changes:
 License:
 	${POD2TEXT} lib/Bric/License.pod >$@
 
+test:
+	cd ${LIB} && make test
+
+configure_options:
+	echo ${CONFIG_STRING} > $@
 
 
-# TODO: Make this recursively generate tags files in all directories
+# TODO: Make this recursively generate tag files in all directories
 tags:
 ifdef CTAGS
 	${CTAGS} -R
 endif
 
 
-
 clean: docclean
-	${RM} -f Changes INSTALL TODO License tags
+	--${RM} -f 	Changes TODO License tags conf/bricolage.tmp.conf \
+				${INST}/bric.sql ${INST}/configuration
+	--cd ${LIB} && make clean
 
+dist-clean: 
+	--${RM} -rf ${INST}/install.log ${INST}/installed-database ${INST}/pguser.sql ${BLIB}
 
 docclean:
 	cd $(DOC) && ${MAKE} -e clean
 
 
-.PHONY : clean dep clean cpan doc install installdirs \
+
+.PHONY : clean dep clean cpan doc libs install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 ${BIN_TARGETS}
+		 uninstall uninstalldirs config database \
+		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
+		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
+
+
+# vim: sw=4
+# vim: ts=4

@@ -8,8 +8,7 @@ $media_id => undef
 <%once>;
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
-my $comp_root = $m->interp->comp_root;
-$comp_root = $comp_root->[0][1] if PREVIEW_MASON;
+my $comp_root = $m->interp->comp_root->[0][1];
 </%once>
 
 <%init>;
@@ -38,9 +37,20 @@ if ($field eq 'preview') {
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     } else {
-	my $s = get_state_data('story_prof', 'story');
-	unless ($s && defined $story_id && $s->get_id != $story_id) {
-	    $s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	# get the checked in version
+	my $story_ci = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	# and the checked out version
+	my $story_co = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id, checkout => 1 });
+
+	# if they're the same version and the checked out version is
+	# checked out by this user then use the checked out version
+	my $s;
+	if ($story_co and $story_ci and
+	    $story_ci->get_version == $story_co->get_version and
+	    $story_co->get_user__id() == get_user_id()) {
+	    $s = $story_co;
+	} else {
+	    $s = $story_ci;
 	}
 
 	# Get all the related media to be previewed as well
@@ -135,8 +145,12 @@ my $publish = sub {
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $bats = {};
     my $res = [];
+    my $ocs = $field eq 'preview'
+      ? [ Bric::Biz::OutputChannel->lookup({ id => $at->get_primary_oc_id }) ]
+	: $at->get_output_channels;
+
     # Iterate through each output channel.
-    foreach my $oc ($at->get_output_channels) {
+    foreach my $oc (@$ocs) {
 	&$send_msg("Writing files to &quot;" . $oc->get_name
 		   . '&quot; Output Channel.');
 	my $ocid = $oc->get_id;

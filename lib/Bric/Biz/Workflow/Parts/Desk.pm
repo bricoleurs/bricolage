@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2002-02-19 23:53:44 $
 
 
 =head1 SYNOPSIS
@@ -288,19 +288,19 @@ Returns a list of desk objects based on $param.  Keys of $param are:
 
 =over 4
 
-=init *
+=item *
 
 name
 
 Return all desks matching a certain name
 
-=init *
+=item *
 
 description
 
 Return all desks with a matching description.
 
-=init *
+=item *
 
 active
 

@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-02-19 23:53:36 $
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,10 @@ my $cached_assets = sub {
 	if ($sort_by) {
 	    # Check for READ permission and sort them.
 	    my ($sort_get, $sort_arg) = @{$meths->{$sort_by}}{'get_meth', 'get_args'};
-	    @$curr_objs = sort { $sort_get->($a, @$sort_arg) cmp $sort_get->($b, @$sort_arg) }
+	    @$curr_objs = $sort_by eq 'id' ?
+	      sort { $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg) }
+	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs :
+	      sort { lc($sort_get->($a, @$sort_arg)) cmp lc($sort_get->($b, @$sort_arg)) }
 	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
 	} else {
 	    # Just check for READ permission.
@@ -169,14 +172,14 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths, $sort_by
 	} else {
 	    # It's 'My Workspace'.
 	    $desk = $obj->get_current_desk;
-	    $desk_id = $desk->get_id;
+	    $desk_id = $desk->get_id;	   	    
 	    $label = 'Check In to ' . $desk->get_name;
 	    $action = 'checkin_cb';
 	    if ($can_edit) {
-	        $vlabel = 'Edit';
-	        $pub = $m->scomp('/widgets/profile/checkbox.mc',
-		          name  => "${class}_del_ids",
-		          value => $aid) . 'Delete';
+		$vlabel = 'Edit';
+		$pub = $m->scomp('/widgets/profile/checkbox.mc',
+				 name  => "${class}_del_ids",
+				 value => $aid) . 'Delete';
 	    }
         }
 	my $elink = $user ? $user : $label ? qq{<a href="} . $r->uri . "?" .

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-02-19 23:53:40 $
 
 =head1 SYNOPSIS
 
@@ -296,19 +296,19 @@ Return a list of all known workflow types.  Keys of $param are:
 
 =over 4
 
-=init *
+=item *
 
 name
 
 Return all workflows matching a certain name
 
-=init *
+=item *
 
 description
 
 Return all workflows with a matching description.
 
-=init *
+=item *
 
 active
 
@@ -641,13 +641,13 @@ Add a desk to this workflow.  Keys to param are:
 
 =over 4
 
-=init *
+=item *
 
 allowed
 
 Add a list of desks as part of the allowed desks.
 
-=init *
+=item *
 
 required
 

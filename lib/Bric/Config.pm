@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-08 21:26:56 $
+$Date: 2002-02-19 23:53:38 $
 
 =head1 SYNOPSIS
 
@@ -40,6 +40,7 @@ and their use.
 # Standard Dependencies
 use strict;
 use File::Spec::Functions qw(catdir);
+use Apache::ConfigFile;
 
 #--------------------------------------#
 # Programatic Dependencies
@@ -63,39 +64,14 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    FIELD_INDENT
 		    SYS_USER
 		    SYS_GROUP
-		    SERVER_NAME
 		    SERVER_WINDOW_NAME
-		    SERVER_ADMIN
-		    APACHE_SERVER_ROOT
+		    APACHE_BIN
+		    APACHE_CONF
 		    PID_FILE
-		    DOCUMENT_ROOT
-                    KEEP_ALIVE
-		    MAX_KEEP_ALIVE_REQUESTS
-		    KEEP_ALIVE_TIMEOUT
-		    MIN_SPARE_SERVERS
-		    MAX_SPARE_SERVERS
-                    START_SERVERS
-		    MAX_CLIENTS
-		    MAX_REQUESTS_PER_CHILD
-		    ERROR_LOG
-		    LOG_LEVEL
-		    LOG_FORMAT
-		    CUSTOM_LOG
-		    SCORE_BOARD_FILE
-		    TYPES_CONFIG
-                    HOST_NAME_LOOKUPS
-		    SERVER_SIGNATURE
-		    USE_CANONICAL_NAME
+                    LISTEN_PORT
+		    NAME_VHOST
+		    VHOST_SERVER_NAME
                     SSL_ENABLE
-		    SSL_SESSION_CACHE
-		    SSL_SESSION_CACHE_TIMEOUT
-		    SSL_MUTEX
-		    SSL_LOG
-		    SSL_LOG_LEVEL
-                    SSL_CERTIFICATE_FILE
-                    SSL_CERTIFICATE_KEY_FILE
-		    SSL_CIPHER_SUITE
-		    SSL_PASS_PHRASE_DIALOG
 		    CHAR_SET
 		    AUTH_TTL
 		    AUTH_SECRET
@@ -134,97 +110,77 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_DEBUG
 		   );
 
-our %EXPORT_TAGS = (all => \@EXPORT_OK,
-		    dbi => [qw(DBD_PACKAGE
-			       DBD_TYPE
-			       DSN_STRING
-			       DBI_USER
-			       DBI_PASS
-			       DBI_DEBUG
-			       DBI_CALL_TRACE)],
-		    mason => [qw(MASON_COMP_ROOT
-				 MASON_DATA_ROOT
-				 MASON_ARGS_METHOD)],
-		    burn => [qw(BURN_ROOT
-				STAGE_ROOT
-				PREVIEW_ROOT
-				BURN_COMP_ROOT
-			        BURN_DATA_ROOT
-                                TEMPLATE_BURN_PKG
-                                DEFAULT_FILENAME
-                                INCLUDE_XML_WRITER
-             		        XML_WRITER_ARGS
-                                DEFAULT_FILE_EXT
-				BURN_ARGS_METHOD)],
-                    oc => [qw(DEFAULT_FILENAME
-                              DEFAULT_FILE_EXT)],
-		    sys_user => [qw(SYS_USER
-				    SYS_GROUP)],
-		    auth => [qw(AUTH_TTL
-			        AUTH_SECRET)],
-		    auth_len => [qw(PASSWD_LENGTH
-				    LOGIN_LENGTH)],
-		    prev => [qw(PREVIEW_LOCAL
-                                STAGE_ROOT
-                                PREVIEW_ROOT
-				DOCUMENT_ROOT
-				PREVIEW_MASON)],
-		    dist => [qw(ENABLE_DIST
-                                DEF_MEDIA_TYPE
-				DIST_ATTEMPTS
-				PREVIEW_LOCAL)],
-		    qa => [qw(QA_MODE)],
-		    err => [qw(ERROR_URI)],
-		    char => [qw(CHAR_SET)],
-		    ui => [qw(FIELD_INDENT
-                              SERVER_WINDOW_NAME)],
-		    email => [qw(SMTP_SERVER)],
-		    admin => [qw(ADMIN_GRP_ID)],
-		    time => [qw(ISO_8601_FORMAT)],
-		    alert => [qw(ALERT_FROM
-				 ALERT_TO_METH)],
-		    conf    => [qw(APACHE_SERVER_ROOT
-				   PID_FILE
-				   SERVER_NAME
-				   SERVER_ADMIN
-				   DOCUMENT_ROOT
-				   KEEP_ALIVE
-				   MAX_KEEP_ALIVE_REQUESTS
-				   KEEP_ALIVE_TIMEOUT
-				   MIN_SPARE_SERVERS
-				   MAX_SPARE_SERVERS
-				   START_SERVERS
-				   MAX_CLIENTS
-				   MAX_REQUESTS_PER_CHILD
-				   ERROR_LOG
-				   LOG_LEVEL
-				   LOG_FORMAT
-				   CUSTOM_LOG
-				   SCORE_BOARD_FILE
-				   TYPES_CONFIG
-				   HOST_NAME_LOOKUPS
-				   SERVER_SIGNATURE
-				   USE_CANONICAL_NAME
-				   PREVIEW_LOCAL
-				   PREVIEW_MASON)],
-		    ssl => [qw(SSL_ENABLE
-			       SSL_SESSION_CACHE
-			       SSL_SESSION_CACHE_TIMEOUT
-			       SSL_MUTEX
-			       SSL_LOG
-			       SSL_LOG_LEVEL
-			       SSL_CERTIFICATE_FILE
-			       SSL_CERTIFICATE_KEY_FILE
-			       SSL_CIPHER_SUITE
-			       SSL_PASS_PHRASE_DIALOG)],
-		    media => [qw(MEDIA_URI_ROOT
-                                 MEDIA_FILE_ROOT)],
-                    search => [qw(FULL_SEARCH)],
-                    ftp    => [qw(ENABLE_FTP_SERVER
-                                  FTP_PORT
-                                  FTP_ADDRESS
-                                  FTP_LOG
-                                  FTP_DEBUG)],
+our %EXPORT_TAGS = (all       => \@EXPORT_OK,
+		    dbi       => [qw(DBD_PACKAGE
+				     DBD_TYPE
+				     DSN_STRING
+				     DBI_USER
+				     DBI_PASS
+				     DBI_DEBUG
+				     DBI_CALL_TRACE)],
+		    mason     => [qw(MASON_COMP_ROOT
+				     MASON_DATA_ROOT
+				     MASON_ARGS_METHOD)],
+		    burn      => [qw(BURN_ROOT
+				     STAGE_ROOT
+				     PREVIEW_ROOT
+				     BURN_COMP_ROOT
+				     BURN_DATA_ROOT
+				     TEMPLATE_BURN_PKG
+				     DEFAULT_FILENAME
+				     INCLUDE_XML_WRITER
+				     XML_WRITER_ARGS
+				     DEFAULT_FILE_EXT
+				     BURN_ARGS_METHOD)],
+                    oc        => [qw(DEFAULT_FILENAME
+				     DEFAULT_FILE_EXT)],
+		    sys_user  => [qw(SYS_USER
+				     SYS_GROUP)],
+		    auth      => [qw(AUTH_TTL
+				     AUTH_SECRET)],
+		    auth_len  => [qw(PASSWD_LENGTH
+				     LOGIN_LENGTH)],
+		    prev      => [qw(PREVIEW_LOCAL
+				     STAGE_ROOT
+				     PREVIEW_ROOT
+				     MASON_COMP_ROOT
+				     PREVIEW_MASON)],
+		    dist      => [qw(ENABLE_DIST
+				     DEF_MEDIA_TYPE
+				     DIST_ATTEMPTS
+				     PREVIEW_LOCAL)],
+		    qa        => [qw(QA_MODE)],
+		    err       => [qw(ERROR_URI)],
+		    char      => [qw(CHAR_SET)],
+		    ui        => [qw(FIELD_INDENT
+				     SERVER_WINDOW_NAME)],
+		    email     => [qw(SMTP_SERVER)],
+		    admin     => [qw(ADMIN_GRP_ID)],
+		    time      => [qw(ISO_8601_FORMAT)],
+		    alert     => [qw(ALERT_FROM
+				     ALERT_TO_METH)],
+		    apachectl => [qw(APACHE_BIN
+				     APACHE_CONF
+				     PID_FILE
+				     SSL_ENABLE)],
+		    ssl       => [qw(SSL_ENABLE
+				     LISTEN_PORT)],
+		    conf      => [qw(SSL_ENABLE
+				     LISTEN_PORT
+				     ENABLE_DIST
+				     NAME_VHOST
+				     VHOST_SERVER_NAME
+				     MASON_COMP_ROOT
+				     PREVIEW_LOCAL
+				     PREVIEW_MASON)],
+		    media     => [qw(MEDIA_URI_ROOT
+				     MEDIA_FILE_ROOT)],
+                    search    => [qw(FULL_SEARCH)],
+                    ftp       => [qw(ENABLE_FTP_SERVER
+				     FTP_PORT
+				     FTP_ADDRESS
+				     FTP_LOG
+				     FTP_DEBUG)],
 		   );
 
 #=============================================================================#
@@ -236,7 +192,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 #======================================#
 {
     # We'll store the settings loaded from the configuration file here.
-    my $config;
+    my ($config, $aconf);
 
     BEGIN {
 	# Load the configuration file, if it exists.
@@ -256,17 +212,12 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 	    }
 	    close CONF;
 
-	    # Invent a server name, if necessary.
-	    $config->{SERVER_NAME} ||= do {
-		my $h = `hostname -f`;
-#		my $d = `dnsdomainname`;
-		chomp $h;
-		$h;
-#		$d ? "$h.$d" : $h;
-	    };
+	    # Set the default VHOST_SERVER_NAME.
+	    $config->{VHOST_SERVER_NAME} ||= '_default_';
 
 	    # Set up the server window name (because Netscape is retarted!).
-	    ($config->{SERVER_WINDOW_NAME} = $config->{SERVER_NAME}) =~ s/\W+/_/g;
+	    ($config->{SERVER_WINDOW_NAME} =
+	     $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
 	}
 	# Process boolean directives here. These default to 1.
@@ -281,71 +232,33 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 	}
 
 	# Set the Mason component root to its default here.
-	$config->{MASON_COMP_ROOT} ||= catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
+	$config->{MASON_COMP_ROOT} ||=
+	  catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
+
+	# Grab the Apache configuration file.
+	$config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
+	$aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
+					 ignore_case => 1);
     }
 
     # Apache Settings.
-    use constant SERVER_NAME             => $config->{SERVER_NAME};
     use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
 
-    use constant SERVER_ADMIN            => $config->{SERVER_ADMIN}
-      || 'root@' . SERVER_NAME;
-    use constant DOCUMENT_ROOT           => $config->{DOCUMENT_ROOT}
-      || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
-    use constant MIN_SPARE_SERVERS       => $config->{MIN_SPARE_SERVERS} || 2;
-    use constant MAX_SPARE_SERVERS       => $config->{MAX_SPARE_SERVERS} || 6;
-    use constant START_SERVERS           => $config->{START_SERVERS} || 2;
-    use constant MAX_REQUESTS_PER_CHILD  => $config->{MAX_REQUESTS_PER_CHILD}
-      || 0;
-    use constant MAX_CLIENTS             => $config->{MAX_CLIENTS} || 150;
-    use constant KEEP_ALIVE              => $config->{KEEP_ALIVE} || 'Off';
-    use constant MAX_KEEP_ALIVE_REQUESTS => $config->{MAX_KEEP_ALIVE_REQUESTS}
-      || 100;
-    use constant KEEP_ALIVE_TIMEOUT      => $config->{KEEP_ALIVE_TIMEOUT} || 15;
-    use constant ERROR_LOG               => $config->{ERROR_LOG}
-      || '/usr/local/apache/logs/error_log';
-    use constant LOG_LEVEL               => $config->{LOG_LEVEL} || 'info';
-    use constant LOG_FORMAT              => $config->{LOG_FORMAT}
-      || qq{'"%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined};
-    use constant CUSTOM_LOG              => $config->{CUSTOM_LOG}
-      || '/usr/local/apache/logs/access_log combined';
-    use constant APACHE_SERVER_ROOT      => $config->{APACHE_SERVER_ROOT}
-      || '/usr/local/apache';
-    use constant PID_FILE                => $config->{PID_FILE}
+    use constant APACHE_BIN              => $config->{APACHE_BIN}
+      || '/usr/local/apache/bin/httpd';
+    use constant APACHE_CONF             => $config->{APACHE_CONF};
+
+    use constant PID_FILE                => $aconf->pidfile
       || '/usr/local/apache/logs/httpd.pid';
-    use constant SCORE_BOARD_FILE        => $config->{SCORE_BOARD_FILE};
-    use constant TYPES_CONFIG            => $config->{TYPES_CONFIG}
-      || '/usr/local/apache/conf/mime.types';
-    use constant HOST_NAME_LOOKUPS       => $config->{HOST_NAME_LOOKUPS}
-      || 'Off';
-    use constant SERVER_SIGNATURE        => $config->{SERVER_SIGNATURE}
-      || 'Email';
-    use constant TIMEOUT                 => $config->{TIMEOUT}
-      || 30;
-    use constant USE_CANONICAL_NAME      => $config->{USE_CANONICAL_NAME}
-      || 'On';
 
-    # mod_ssl Settings.
+    use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
+    use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
+    use constant VHOST_SERVER_NAME       => $config->{VHOST_SERVER_NAME};
+
+    # mod_ssl Setting.
     use constant SSL_ENABLE              => $config->{SSL_ENABLE};
-    use constant SSL_SESSION_CACHE       => $config->{SSL_SESSION_CACHE}
-      || 'dbm:/usr/local/apache/logs/ssl_scache';
-    use constant SSL_SESSION_CACHE_TIMEOUT =>
-      $config->{SSL_SESSION_CACHE_TIMEOUT} || 300;
-
-    use constant SSL_MUTEX               => $config->{SSL_MUTEX}
-    || 'file:/usr/local/apache/logs/ssl_mutex';
-    use constant SSL_LOG                 => $config->{SSL_LOG} ||
-      '/usr/local/apache/logs/ssl_engine_log';
-    use constant SSL_LOG_LEVEL           => $config->{SSL_LOG_LEVEL}
-      || 'info';
-    use constant SSL_CERTIFICATE_FILE    => $config->{SSL_CERTIFICATE_FILE}
-      || '/usr/local/apache/conf/ssl.crt/server.crt';
-    use constant SSL_CERTIFICATE_KEY_FILE => $config->{SSL_CERTIFICATE_KEY_FILE}
-      || '/usr/local/apache/conf/ssl.key/server.key';
-    use constant SSL_CIPHER_SUITE        => $config->{SSL_CIPHER_SUITE}
-      || 'ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL';
-    use constant SSL_PASS_PHRASE_DIALOG  => $config->{SSL_PASS_PHRASE_DIALOG}
-      || 'builtin';
+    die "LISTEN_PORT directive must be set to 80 when SSL_ENABLE is on\n"
+      if SSL_ENABLE && LISTEN_PORT != 80;
 
     # DBI Settings.
     use constant DBD_PACKAGE             => 'Bric::Util::DBD::Pg';
@@ -368,7 +281,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
       [[bric_ui => $config->{MASON_COMP_ROOT}],
        [bric_preview => catdir($config->{MASON_COMP_ROOT}, PREVIEW_LOCAL)]]
-	: $config->{MASON_COMP_ROOT};
+	: [[bric_ui => $config->{MASON_COMP_ROOT}]];
 
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
       || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'data');
@@ -412,7 +325,8 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 
     # the base directory that will store media assets
     use constant MEDIA_URI_ROOT => '/data/media';
-    use constant MEDIA_FILE_ROOT => catdir(DOCUMENT_ROOT, 'data', 'media');
+    use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
+					   'data', 'media');
 
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 6;
@@ -422,10 +336,11 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
     use constant ERROR_URI => QA_MODE ? '/errors/error.html' : '/errors/500.mc';
 
     # Email Settings.
-    use constant SMTP_SERVER => $config->{SMTP_SERVER} || SERVER_NAME;
+    use constant SMTP_SERVER => $config->{SMTP_SERVER}
+      || $config->{VHOST_SERVER_NAME};
 
     # Alert Settings.
-    use constant ALERT_FROM => $config->{ALERT_FROM} || SERVER_ADMIN;
+    use constant ALERT_FROM => $config->{ALERT_FROM};
     use constant ALERT_TO_METH => lc $config->{ALERT_TO_METH} || 'bcc';
 
     # UI Settings.
@@ -533,7 +448,9 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
+Garth Webb  E<lt>garth@perijove.comE<gt>
+
+David Wheeler E<lt>david@wheeler.netE<gt>
 
 =head1 SEE ALSO
 

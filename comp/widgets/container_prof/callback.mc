@@ -79,7 +79,7 @@ my $pop_and_redirect = sub {
     # If our tile has parents, show the regular edit screen.
     if ($tile->get_parent_id) {
 	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-	my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+	my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
 	#  Don't redirect if we're already at the right URI
 	set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
@@ -102,7 +102,7 @@ my $delete_element = sub {
     # if our tile has parents, show the regular edit screen.
     if ($parent->get_parent_id) {
         my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-        my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+        my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
         set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
@@ -157,7 +157,9 @@ my $update_parts = sub {
 		set_state_data($widget, '__NO_SAVE__', 1);
 	    } else {
 		# Truncate the value, if necessary, then set it.
-		my $max = $_->get_element_data_obj->get_meta('html_info')->{maxlength};
+		my $info = $_->get_element_data_obj->get_meta('html_info');
+		$val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
+		my $max = $info->{maxlength};
 		$val = substr($val, 0, $max) if $max && length $val > $max;
 		$_->set_data($val);
 	    }
@@ -381,7 +383,7 @@ my $handle_related_up = sub {
     # If our tile has parents, show the regular edit screen.
     if ($tile->get_parent_id) {
 	my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
-	my $page = get_state_name($widget) eq 'view' ? '' : 'edit';
+	my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
 	#  Don't redirect if we're already at the right URI
 	set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";

@@ -72,11 +72,17 @@ $fontSizeMed   = "font-size:11pt;";
 $fontSizeLarge = "font-size:12pt;";
 
 if ($agent->{browser} eq 'Mozilla') {
+    if ($agent->{os} eq 'SomeNix') {
 	$fontSizeSmall = "font-size:9.5pt;";
 	$fontSizeMed   = "font-size:10pt;";
 	$fontSizeLarge = "font-size:11pt;";
-} elsif ($agent->{os} =~ /^Windows/) { # windows fonts one size smaller
+    } else {
 	$fontSizeSmall = "font-size:7.5pt;";
+	$fontSizeMed   = "font-size:8pt;";
+	$fontSizeLarge = "font-size:10pt;";
+    }
+} elsif ($agent->{os} =~ /^Windows/) { # windows fonts one size smaller
+	$fontSizeSmall = "font-size:8pt;";
 	$fontSizeMed   = "font-size:8.5pt;";
 	$fontSizeLarge = "font-size:10pt;";
 } elsif ($agent->{os} eq "MacOS") { # mac fonts one size bigger
@@ -212,11 +218,11 @@ TH         <% $header %>
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-02-19 23:53:37 $
 
 =head1 SYNOPSIS
 

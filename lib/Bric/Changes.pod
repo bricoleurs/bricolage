@@ -14,6 +14,207 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.3.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Bricolage SOAP interface partially implemented.  Bric::SOAP::Story,
+Bric::SOAP::Media and Bric::SOAP::Template are fully implemented and
+tested.  The command-line client - bric_soap - is complete. [Sam]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed numerous cases where user_ids were being used as booleans.
+Since user_id 0 is the Adminstrator's user_id this can cause problems. [Sam]
+
+=item *
+
+Fixed problem where deleting an asset would fail with the "cannot
+check-in non checked-out version" error. [Sam]
+
+=item *
+
+Fixed bug in HTML::Template burner when an element name had more than
+one space in it. [Sam]
+
+=item *
+
+Fixed bug in database that prevented element names over 32 characters
+from working properly. [Sam]
+
+=item *
+
+All fixes in the soon-to-be-released 1.2.1 version.  See below for details.
+
+=back
+
+=head1 VERSION 1.2.1 (unreleased)
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Created new method of configuring Bricolage in Apache. [David]
+
+=item *
+
+Added support for Mozilla (and there was much rejoicing!). [David]
+
+=item *
+
+Changed password for the default "admin" user to "change me now!" [David]
+
+=item *
+
+The slug is stored in the database for both fixed and non-fixed stories. This is
+in anticipation of adding the ability to use the slug for fixed story URIs later
+on. Thanks to Darren Graves for the patch.
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Turned off the PREVIW_MASON configuration directive in bricolage.conf. It should
+be off by default. [David]
+
+=item *
+
+Deleted Output Channels now properly don't show up in the Output Channel manager
+again. Thanks to Sara for the spot! [David]
+
+=item *
+
+All previews now preview assets in the primary Output Channel only. Previously,
+the previews were in the Output Channel whose name came first alphabetically.
+Thanks to Sara Wood for catching this bug. [David]
+
+=item *
+
+Fixed bug where templates often couldn't be found by the Mason burner if the
+output channel had a post_path. [David]
+
+=item *
+
+Fixed bug where templates often couldn't be found by the HTML::Template burner
+if the output channel had a post_path. [Sam]
+
+=item *
+
+Fixed some problems with the sideNav menus under Netscape. [David]
+
+=item *
+
+Fixed broken "Preview" button in Read-only story profile and in related story
+elements. [Matt Vella]
+
+=item *
+
+Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
+Tregar for the spot. [David]
+
+=item *
+
+Fixed problem with Element names containing non-alphanumeric characters. [Sam]
+
+=item *
+
+Checking out media assets from "Find Media" now redirects you to the media
+profile if you've checked out one media asset, or My Workspace if you've checked
+out more than one. This puts it in line with how "Find Stories" and "Find
+Templates" work. Thanks to Sam for the report. [David]
+
+=item *
+
+Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
+[David]
+
+=item *
+
+In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
+properly. Also, get_all_keywords() now also returns the category keywords as
+well as the story keywords. Thanks to Darren Graves for the patch.
+
+=item *
+
+Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
+Darren Graves for the spot. [David]
+
+=item *
+
+Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
+numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
+spot. [David]
+
+=item *
+
+Fixed an obscure bug where, for files uploaded as part of a Media file,
+Bricolage attempted to create a path on its own file system using path
+delimiters for another file system. Thanks to Mike Slattery for the spot.
+[David]
+
+=item *
+
+Required content fields in stories and elements are now displayed in the order
+specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
+
+=item *
+
+All assets now start with the version number 0 until the first time they are
+checked in. Also, they will show up on desks and in the Find views after the
+first time they are saved. It was inconsistent before, and some items could not
+be seen in the desk and Find views until they were checked in. Thanks to Sam for
+spotting the inconsistency. [David]
+
+=item *
+
+The bric_clean_tmp script has been changed to avoid deleting the Bricolage
+cache file.  [Sam]
+
+=item *
+
+Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
+
+=item *
+
+Fixed multiple select custom fields for Elements and Contributors. Thanks to
+Mike Slattery for the spot. [David]
+
+=item *
+
+Fixed ugly bug where deleting a "Media Type" Element would delete all the media
+objects of that type. Thanks to Sam for the spot (though not for the bug!).
+[David]
+
+=item *
+
+Fixed bric_pgimport so that it uses DBI to drop and create the database, rather
+than relying on a hard-coded location for pgsql binaries. [David]
+
+=item *
+
+Fixed permission granting in bric_pgimport so that the Bricolage database use
+has DELETE permissions on all objects in the Bricolage database. It looks like
+this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
+shown up a long time ago! [David]
+
+=back
+
 =head1 VERSION 1.2.0
 
 =head2 New Features

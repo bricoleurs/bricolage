@@ -33,7 +33,7 @@ if ($type eq 'grp') {
 			   indent  => 140,
 			   width   => 500,
 			   value => $ARGS{grp_type} || 'all',
-			   js => qq{onChange="document.location='} . $r->uri .
+			   js => qq{onChange="location.href='} . $r->uri .
                                  "?grp_type=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -67,7 +67,7 @@ if ($type eq 'grp') {
 			   indent  => 140,
 			   width   => 500,
 			   selected => $ctype,
-			   js => qq{onChange="document.location='} . $r->uri .
+			   js => qq{onChange="location.href='} . $r->uri .
                                  "?ctype=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -159,8 +159,11 @@ $sel_label = $type eq 'job' ? 'Cancel' : 'Delete';
 my $prefix = '';
 if ($type eq 'user') {
     # We'll probbly need to redirect them to ssl if its enabled
-    $prefix = (SSL_ENABLE ? 'https://' : 'http://') . $r->hostname 
-	if get_state_name('login') ne 'ssl';
+    if (get_state_name('login') ne 'ssl') {
+	my ($http, $p) = SSL_ENABLE ? ('https://', '')
+	  : ('http://', $port);
+	$prefix = $http . $r->hostname . $p;
+    }
 }
 
 # We'll use this coderef to display the proper profile link labels.
@@ -237,6 +240,9 @@ my $owner_sub = sub {
     $u->format_name($fmt);
 };
 
+# We'll use these variables for redirection relative to the user profiles.
+my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
+
 # Define the look and feel for each type of manager.
 my $def = {
 	   user           => { list_fields => [qw(lname fname login)],
@@ -281,7 +287,7 @@ my $def = {
 	   output_channel => { list_fields => [qw(name description)],
 			       srch_field => 'name',
 			       behavior => 'narrow',
-	                       constrain => {},
+	                       constrain => {active => 1},
 			       select => $sel_sub },
 	   source         => { list_fields => [qw(source_name description expire)],
 			       srch_field => 'source_name',
@@ -351,11 +357,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:37 $
+$Date: 2002-02-19 23:53:36 $
 
 =head1 SYNOPSIS
 

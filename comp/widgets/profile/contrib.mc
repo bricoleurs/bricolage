@@ -79,6 +79,8 @@ if ($param->{delete}) {
 	    # Truncate the value, if necessary.
 	    my $max = $all->{$aname}{meta}{maxlength}{value};
 	    my $value = $param->{"attr|$aname"};
+	    $value = join('__OPT__', @$value)
+	      if $all->{$aname}{meta}{multiple}{value} && ref $value;
 	    $value = substr($value, 0, $max) if $max && length $value > $max;
 
 	    # Set the attribute.
@@ -130,11 +132,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-02-19 23:53:37 $
 
 =head1 SYNOPSIS
 

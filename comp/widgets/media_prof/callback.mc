@@ -114,6 +114,7 @@ my $handle_save = sub {
 
     if ($work_id) {
 	$media->set_workflow_id($work_id);
+	$media->activate;
 
 	# Figure out what desk this story should be in.
 	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
@@ -200,7 +201,6 @@ my $handle_checkin = sub {
     log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
 
     # make sure that the media is active
-    $media->activate();
     $media->save();
 
     log_event('media_checkin', $media);
@@ -588,6 +588,13 @@ my $handle_checkout = sub {
 					$ba->get_name . "&quot; denied");
 		}
 	}
+    if (@$ids > 1) {
+	# Go to 'my workspace'
+	set_redirect("/");
+    } else {
+	# Go to the profile screen
+	set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
+    }
 };
 
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-05 18:52:06 $
+$Date: 2002-02-19 23:53:42 $
 
 =head1 SYNOPSIS
 
@@ -424,7 +424,7 @@ Returns an object that matches the parameters
 
 Suported Keys
 
-=over4
+=over 4
 
 =item id
 
@@ -1365,7 +1365,7 @@ sub checkout {
 				"Unable to checkout old_versions" });
 	}
 	# Make sure that the object is not already checked out
-	if ($self->_get('user__id')) {
+	if (defined $self->_get('user__id')) {
 		die Bric::Util::Fault::Exception::GEN->new( {
 			msg => "Already Checked Out" });
 	}
@@ -1473,7 +1473,7 @@ sub cancel {
     my ($self) = @_;
     my $dirty = $self->_get__dirty;
 
-    if (not $self->get_user__id) {
+    if (not defined $self->get_user__id) {
 	# this is not checked out, it can not be deleted
 	my $msg = 'Cannot cancel an asset that is not checked out';
 	die Bric::Util::Fault::Exception::AP->new({'msg' => $msg});
@@ -2150,7 +2150,7 @@ sub _build_file_name {
 
     # Add the name, mangling as necessary
     my $file = lc $name;
-    $file    =~ s/\W+/_/g;
+    $file    =~ y/a-z0-9/_/cs;
     $file   .= ".$file_type" unless $name eq 'autohandler';
 
     # Return the filename.

@@ -1,17 +1,30 @@
 if (is_nav6up) {
     var ss = document.styleSheets[0];
     var i = 0;
+    var size = '8.5pt';
+    var height = '12pt';
+    var smSize = '7pt';
+    var lgSize = '10pt';
+    var lgHeight = '13pt';
+    if (is_unix) {
+        size = '10pt';
+        height = '16pt';
+        smSize = '8.5pt';
+        lgSize = '12pt';
+        lgHeight = '17pt';
+    }
+
     ss.insertRule("body { background:white; font-family:Verdana,Helvetica,Arial,sans-serif; }", i++);
-    ss.insertRule(".tab { background:#006666; color:white; font-weight:bold; font-size:10pt; }", i++);
-    ss.insertRule(".light { background:#cccc99; font-size:7pt; }", i++);
-    ss.insertRule(".context { background:#999966; font-size:7.5pt; line-height:12pt; }", i++);
-    ss.insertRule("h3 { font-size:10pt; line-height:13pt; }", i++);
-    ss.insertRule("p { font-size:8.5pt; line-height:12pt; }", i++);
+    ss.insertRule(".tab { background:#006666; color:white; font-weight:bold; font-size:" + lgSize + "; }", i++);
+    ss.insertRule(".light { background:#cccc99; font-size:" + smSize + "; }", i++);
+    ss.insertRule(".context { background:#999966; font-size:" + smSize + "; }", i++);
+    ss.insertRule("h3 { font-size:" + lgSize + "; line-height:" + lgHeight + "; }", i++);
+    ss.insertRule("p { font-size:" + size + "; line-height:" + height + "; }", i++);
     ss.insertRule(".redLink { color:#993300; }", i++);
-    ss.insertRule("td { font-size:8.5pt; line-height:12pt; }", i++);
-    ss.insertRule("dt {  font-size:8.5pt; line-height:13pt; font-weight:bold; }", i++);
-    ss.insertRule("dd { font-size:8.5pt; line-height:12pt; }", i++);
-    ss.insertRule("li { font-size:8.5pt; line-height:12pt; }", i++);
+    ss.insertRule("td { font-size:" + size + "; line-height:" + height + "; }", i++);
+    ss.insertRule("dt {  font-size:" + size + "; line-height:" + lgHeight + "; font-weight:bold; }", i++);
+    ss.insertRule("dd { font-size:" + size + "; line-height:" + height + "; }", i++);
+    ss.insertRule("li { font-size:" + size + "; line-height:" + height + "; }", i++);
 } else if (is_nav4up) {
     var ss = document.classes;
     var tags = document.tags;

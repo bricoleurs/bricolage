@@ -1,10 +1,20 @@
 #!/usr/bin/perl -w
 use strict;
 
-use File::Spec::Functions ();
 BEGIN {
-  $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-  unshift(@INC, File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
+    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+    eval { require Bric };
+    if ($@) {
+	# We need to set PERL5LIB.
+	require File::Spec::Functions;
+	my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
+	unshift @INC, $lib;
+	$ENV{PERL5LIB} = $lib;
+
+	# Try again.
+	eval { require Bric };
+	die "Cannot locate Bricolage libraries.\n" if $@;
+    }
 };
 
 use Bric::Config qw(:ftp);

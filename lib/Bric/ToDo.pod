@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.45 $
 
 =head1 DATE
 
-$Date: 2002-01-09 17:53:53 $
+$Date: 2002-02-19 23:53:38 $
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,7 @@ Create installation makefile [Mark].
 
 =item *
 
-Mention PERL_LOADER paramenter in Bric::AdvTemplate [Daviid].
+Mention PERL_LOADER paramenter in Bric::AdvTemplate [David].
 
 =item *
 
@@ -87,6 +87,15 @@ having an existing person record as an existing contributor or user. [David]
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Write context-sensitive help for those pages that are still missing it.
+
+=item *
+
+Pare down number of default User groups. I suggest eliminating those that relate
+to only a single admin menu item.
 
 =item *
 
@@ -160,9 +169,8 @@ Add ability to "undeploy" templates without deactivating them.
 
 =item *
 
-Add a check that a user has selected at least one output channel when
-creating a new element.  Elements without output channels cause
-Bricolage indigestion.
+Add a check that a user has selected at least one output channel when creating a
+new element. Elements without output channels cause Bricolage indigestion.
 
 =back
 
@@ -222,15 +230,11 @@ published. Suggested method name: needs_publish().
 
 =item *
 
-Add support for Mozilla/Netscape 6. Essentially, the JavaScript needs to be
-updated.
-
-=item *
-
 Modify JavaScript and CSS to work entirely in JavaScript, rather than rely on
 server-side client identification. This way, the script files can just be sent
 to the browser once, rather than re-executing the Mason versions of these files
-for every request.
+for every request. Note that this is how the CSS for the help pages currently
+works.
 
 =item *
 
@@ -302,6 +306,25 @@ Add pagination to listManager (maybe).
 
 Add command-line argument to bric_ftpd that will kill the currently-runnining
 instance.
+
+=item *
+
+Add autopopulation of video media type properties, such as codec, bit rate, fps,
+length, etc. Use a tool such as RIFF::Info.
+
+=item *
+
+Change template deployment to not append the output-channel post_path to the
+template filename. Currently the burners have hacks in them to look in the
+post_path for templates but ultimately this should be fixed the right way. If
+you choose to accept this mission you'll need to write an upgrade script to
+correct template entries in the database and move deployed templates on the
+filesystem.
+
+=item *
+
+Add interface for editing Media Types (a.k.a. MIME types) so that new ones can
+be added.
 
 =back
 
@@ -510,8 +533,8 @@ Add support for skins -- different colors, etc, probably via preferences.
 
 =item *
 
-Add support for creating PDFs in templates (is there something on CPAN for
-this?).
+Add support for creating PDFs in templates. PDF support is available from the
+CPAN: http://search.cpan.org/search?mode=module&query=PDF.
 
 =item *
 
@@ -524,7 +547,7 @@ levels.
 
 =item *
 
-Version element individually, separate from stories?
+Version elements individually, separate from stories?
 
 =item *
 

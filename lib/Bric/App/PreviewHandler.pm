@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-02-19 23:53:39 $
 
 =head1 SYNOPSIS
 
@@ -63,7 +63,7 @@ use Apache::Log;
 # Constants
 ################################################################################
 use constant ERROR_FILE =>
-  Bric::Util::Trans::FS->cat_dir(DOCUMENT_ROOT,
+  Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
 			       Bric::Util::Trans::FS->split_uri(ERROR_URI));
 
 ################################################################################
@@ -138,10 +138,11 @@ sub uri_handler {
 	my $uri = $r->uri;
 	my @dirs = $fs->split_uri($uri);
 	# Let the request continue if the file exits.
-	return DECLINED if -e $fs->cat_dir(DOCUMENT_ROOT, @dirs);
+	return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
 	# Let the request continue (with a 404) if the file doesn't exist in the
 	# preview directory.
-	return DECLINED unless -e $fs->cat_dir(DOCUMENT_ROOT, PREVIEW_LOCAL, @dirs);
+	return DECLINED
+	  unless -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs);
 	# If we're here, it exits inthe preview directory. Point the request to it.
 	$r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
 	return DECLINED;

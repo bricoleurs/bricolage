@@ -71,7 +71,11 @@ AC_DEFUN([AC_PROG_PERL],[
   # guaranties that perl is a working perl executable.
   #
   changequote(<<, >>)dnl
-  PERL_VERSION=`${$1} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+  # this will work with older perls
+  #PERL_VERSION=`${$1} -v | grep 'This is perl' | sed -e 's;.* v\([0-9\.][0-9\.]*\).*;\1;'`
+  # David Wheeler suggests using this if we already know we have perl 5.6
+  # or better.
+  PERL_VERSION=`${PERL} -e 'printf "%vd", $^V'`
   changequote([, ])dnl
   if test -z "$PERL_VERSION" ; then
       AC_MSG_ERROR("could not determine perl version number");
@@ -110,7 +114,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -139,7 +143,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -235,6 +239,8 @@ AC_DEFUN([AC_PROG_POSTGRES],[
  # set user specified variable to our $PGHOME
  #
  AC_SUBST($1,$PGHOME) 
+ # write out pg_config location while we're at it
+ AC_SUBST(PG_CONFIG)
 ])
 
 dnl @synopsis AC_POSTGRES_ENCODING(ENCODING[,PATH_TO_PGCONFIG])
@@ -242,7 +248,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -373,39 +379,40 @@ AC_DEFUN([AC_PROG_APACHE],
 
 dnl @author Mark Ethan Trostler <trostler@juniper.net> 
 AC_DEFUN([CHECK_SSL],
-[AC_MSG_CHECKING(if ssl is wanted)
-AC_ARG_WITH(ssl,[
-  --with-ssl              enable ssl [will check /usr/local/ssl
-                            /usr/lib/ssl /usr/ssl /usr/pkg 
-                            /usr/local /usr ]
-],
-[   AC_MSG_RESULT(yes)
-    for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
-        ssldir="$dir"
-        if test -f "$dir/include/openssl/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
-            break;
-        fi
-        if test -f "$dir/include/ssl.h"; then
-            found_ssl="yes";
-            CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
-            break
-        fi
-    done
-    if test x_$found_ssl != x_yes; then
-        AC_MSG_ERROR(Cannot find ssl libraries)
-    else
-        printf "OpenSSL found in $ssldir\n";
-        LIBS="$LIBS -lssl -lcrypto";
-        LDFLAGS="$LDFLAGS -L$ssldir/lib";
-        HAVE_SSL=yes
-    fi
-    AC_SUBST(HAVE_SSL)
-],
-[
-    AC_MSG_RESULT(no)
-])
+  HAVE_SSL=no
+  [AC_MSG_CHECKING(if ssl is wanted)
+  AC_ARG_WITH(ssl,[
+	--with-ssl              enable ssl [will check /usr/local/ssl
+							  /usr/lib/ssl /usr/ssl /usr/pkg 
+							  /usr/local /usr ]
+  ],
+  [   AC_MSG_RESULT(yes)
+	  for dir in $withval /usr/local/ssl /usr/lib/ssl /usr/ssl /usr/pkg /usr/local /usr; do
+		  ssldir="$dir"
+		  if test -f "$dir/include/openssl/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/openssl -DHAVE_SSL";
+			  break;
+		  fi
+		  if test -f "$dir/include/ssl.h"; then
+			  found_ssl="yes";
+			  CFLAGS="$CFLAGS -I$ssldir/include/ -DHAVE_SSL";
+			  break
+		  fi
+	  done
+	  if test x_$found_ssl != x_yes; then
+		  AC_MSG_ERROR(Cannot find ssl libraries)
+	  else
+		  printf "OpenSSL found in $ssldir\n";
+		  LIBS="$LIBS -lssl -lcrypto";
+		  LDFLAGS="$LDFLAGS -L$ssldir/lib";
+		  HAVE_SSL=yes
+	  fi
+	  AC_SUBST(HAVE_SSL)
+  ],
+  [
+	  AC_MSG_RESULT(no)
+  ])
 ])
 
 
@@ -437,7 +444,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -458,12 +465,40 @@ if test "$ac_cv_user_prompt_$1" != "none"; then
 fi
 ]) dnl
 
+dnl @synopsis AC_PROMPT_USER_NO_DEFINE(VARIABLENAME,QUESTION,[DEFAULT])
+dnl
+dnl Asks a QUESTION and puts the results in VARIABLENAME with an optional
+dnl DEFAULT value if the user merely hits return.
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
+dnl
+AC_DEFUN([AC_PROMPT_USER_NO_DEFINE],
+dnl changequote(<<, >>) dnl
+dnl <<
+[
+if test "x$defaults" = "xno"; then
+echo $ac_n "$2 ($3): $ac_c"
+read tmpinput
+if test "$tmpinput" = "" -a "$3" != ""; then
+  tmpinput="$3"
+fi
+eval $1=\"$tmpinput\"
+else
+tmpinput="$3"
+eval $1=\"$tmpinput\"
+fi
+]
+
+dnl >>
+dnl changequote([, ])
+) dnl done AC_PROMPT_USER
 dnl @synopsis CHECK_FOR_PGPASS
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -475,6 +510,7 @@ AC_DEFUN([CHECK_FOR_PGPASS],[
                           (Some systems are set up this way for security)],[
       if test "$withval" = "yes" ;then
 		PG_NO_PASS="true"
+		PG_ROOT_PASS="none"
 		AC_MSG_RESULT(yes)
 	  else 
 		PG_NO_PASS="false"
@@ -499,16 +535,152 @@ AC_DEFUN([CHECK_FOR_PGPASS],[
 
 dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
-dnl when installing a PostgreSQL db we'll need to know if 
+dnl This is for setting Makefile variables with command line
+dnl switches instead of passing them in the environment.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
 AC_ARG_WITH($2,AC_HELP_STRING([
-  --with-$2],[defaults to '$3']),
+  --with-$2=VALUE      ],[defaults to $3]),
   $1=${withval},
   $1=$3)
 AC_SUBST($1)
 
+])
+
+dnl @synopsis AC_CHECK_SYS_USER(VAR,username)
+dnl
+dnl Check to see if a user exists.  VAR will be set
+dnl to "yes" on success, "no" on failure.
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_SYS_USER],[
+	AC_MSG_CHECKING(for user "$2")
+	if id $2 >/dev/null ; then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	else
+		$1='no'
+    AC_MSG_RESULT(no)
+	fi
+])
+
+
+dnl @synopsis AC_CHECK_SYS_GROUP(VAR,group,user)
+dnl
+dnl Check to see if a group exists.  VAR will be set
+dnl to "yes" on success, "no" on failure.  user should
+dnl a user id which is known to exist, and should be in this 
+dnl group.
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_SYS_GROUP],[
+	AC_MSG_CHECKING(for group "$2")
+	touch /tmp/ac_group_test
+	# if we are able to change the group of our file then
+	# we must have a valid group
+	if chgrp $2 /tmp/ac_group_test 2>/dev/null ; then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	# or if we have a match when we look at the user ID
+	elif id $3 |grep $2 2>&1 >/dev/null ; then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	# or if we try to change our file and are told that 
+	# we haven't got permission then the group exists, 
+	# otherwise we would be told that the group is invalid
+	elif chgrp $2 /tmp/ac_group_test 2>&1 | grep 'not permitted' >/dev/null ; then
+		$1='yes'
+    	AC_MSG_RESULT(yes)
+	else
+		$1='no'
+		AC_MSG_RESULT(no)
+	fi
+])
+
+dnl @synopsis AC_POD2HTML(VAR)
+dnl
+dnl Try to figure out which pod2html we're working with
+dnl the variable will be set to Christiansen, McDougall, 
+dnl or none, depending on which pod2html is found.
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_POD2HTML],[
+	AC_MSG_CHECKING(which pod2html we have)
+	if pod2html --help 2>&1 | grep "\-\-libpods" >/dev/null ; then
+		$1='Christiansen'
+	elif pod2html --help 2>&1 | grep "Unknown option: help" ;then
+		$1='McDougall'
+	else 
+		$1='none'
+	fi
+	AC_SUBST($1)
+	AC_MSG_RESULT(${$1})
+])
+
+
+dnl @synopsis AC_CHECK_APACHE_MOD_PERL(VAR,APACHE_BIN)
+dnl
+dnl Checks to see if the indicated apache binary has 
+dnl mod_perl compiled in.  Returns "yes" or "no" in 
+dnl VAR.
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_APACHE_MOD_PERL],[
+	AC_MSG_CHECKING(if apache was compiled with modperl)
+	if ${$2} -l | grep -q mod_perl.c ; then
+		AC_MSG_RESULT(yes)
+		$1=yes
+	else
+		AC_MSG_RESULT(no)
+		$1=no
+	fi
+])
+
+dnl @synopsis AC_CHECK_CPAN(VAR)
+dnl
+dnl Checks to see if CPAN Module is functional
+dnl and has the correct web access. Returns yes 
+dnl or no in VAR.  
+dnl
+dnl @version $Id: aclocal.m4,v 1.16 2002-02-20 18:50:58 wheeler Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_CPAN],[
+ AC_MSG_CHECKING(whether CPAN works and has net access)	
+ $1=''  # make sure we're not seeing old info
+ #first check to see that we have the CPAN Module
+ if perl -MCPAN -e '' ; then
+ 	# We'll be satisfed that this is all good if 
+	# cpan works and we can ping ftp.cpan.org
+	# other wise we'll have to check to see if 
+	# we're behind a firewall.
+ 	if ping -c 3 ftp.cpan.org >/dev/null ; then
+		AC_MSG_RESULT(yes)
+		$1=yes
+	# as a last resort we'll have to actually try to get CPAN to do
+	# something.  This might take a long time, but it's the only
+	# way to tell if CPAN works in the case that we're behind a
+	# firewall.  Uglier still the output can't be redirected,
+	# because there's a chance that this will go interactive if
+	# CPAN is installed but not configured.
+	elif perl -MCPAN -e "CPAN::Shell->reload('index')" ; then
+		AC_MSG_RESULT(yes)
+		$1=yes
+	fi
+ else 
+  AC_MSG_RESULT(no)
+  $1=no
+ fi
+ AC_SUBST($1)
 ])

@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-27 23:52:41 $
+$Date: 2002-01-31 00:17:45 $
 
 =head1 DESCRIPTION
 
@@ -211,7 +211,7 @@ sub status {
   }
 
   my $owner = $template->get_user__id;
-  if ($owner) {
+  if (defined $owner) {
 
     # if checked out, get the username return read-only
     my $user = Bric::Biz::Person::User->lookup({id => $owner});

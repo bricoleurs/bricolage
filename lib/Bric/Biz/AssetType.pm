@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-02-19 23:53:39 $
 
 =head1 SYNOPSIS
 
@@ -1589,7 +1589,8 @@ sub get_data {
 	return $val;
     } else {
 	# Return all the fields.
-	return wantarray ? @all : \@all;
+	return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
+	  [ sort { $a->get_place <=> $b->get_place } @all ];
     }
 }
 
@@ -2226,6 +2227,9 @@ sub _do_list {
     }
 
     # Check active
+    # Bug. This should test for exists (as should type__id below). Note that
+    # when this is fixed, we'll have to fix comp/widgets/formBuilder/element.mc,
+    # as well. Maybe other places, too.
     if ($param->{'active'}) {
 	push @where, 'a.active=?';
 	push @bind, $param->{'active'};
@@ -2318,8 +2322,9 @@ sub _is_referenced {
     my $self = shift;
     my $rows;
 
-    # Make sure this isn't referenced from a story
-    my $sql  = 'SELECT COUNT(*) FROM story WHERE element__id = ?';
+    # Make sure this isn't referenced from an asset.
+    my $table = $self->is_media ? 'media' : 'story';
+    my $sql  = "SELECT COUNT(*) FROM $table WHERE element__id = ?";
     my $sth  = prepare_c($sql, undef, DEBUG);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
@@ -2762,8 +2767,9 @@ sub _get_parts {
     return $parts if substr(%$parts, 0, index(%$parts, '/'));
 
     my $cont = Bric::Biz::AssetType::Parts::Data->list(
-				          {'element__id' => $self->get_id,
-					   'active'        => 1}
+				          { element__id => $self->get_id,
+					    order_by    => 'place',
+					    active      => 1 }
 							);
     my $p_table = {map { $_->get_id => $_ } (@$cont)};
 

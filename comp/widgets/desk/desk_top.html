@@ -9,7 +9,7 @@
                          width  => 100,
                          options => $sort_by->{$class},
                          name => $class . '_sort_by',
-			 js => qq{onChange="document.location='} . $r->uri . "?${class}_sort_by=' + " . qq{escape(this.options[this.selectedIndex].value)"},
+			 js => qq{onChange="location.href='} . $r->uri . "?${class}_sort_by=' + " . qq{escape(this.options[this.selectedIndex].value)"},
 			 &></td>
     <td align="right" width=288>&nbsp;
 % if ($link1) {

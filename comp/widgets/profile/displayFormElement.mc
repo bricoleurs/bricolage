@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-02-19 23:53:37 $
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ my $opt_sub = sub {
     $v = escape_html($v) if $v;
     my $out = qq{<option value="$k"};
     # select it if there's a match
-    $out .= " selected" if $k eq $value;
+    $out .= " selected" if (ref $value && $value->{$k}) || $k eq $value;
     return "$out>$v</option>\n";
 };
 
@@ -340,17 +340,23 @@ my %formSubs = (
 	    }
 	    $out .= $name ? qq{<span class="$label">$name:</span>} : '';
 	    $out .= "<br />" if (!$useTable && $name);
-	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />} if ($useTable);# && $agent->{browser} eq "Netscape");
+	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
+	      if ($useTable); # && $agent->{browser} eq "Netscape");
 	    $out .= &$rem_sub($width-4, $indent) if $useTable;
 	    $key = escape_html($key) if $key;
 
 	    if (!$readOnly) {
 		$js = $js ? " $js" : '';
 		$out .= qq{<select name="$key" };
-		$out .= 'size="' . ($vals->{props}{size} || 1) . '"';
+		$out .= 'size="' . ($vals->{props}{size} ||
+		  ($vals->{props}{multiple} ? 5 : 1)) . '"';
 		$out .= ' multiple' if $vals->{props}{multiple};
 		$out .= "$js>\n";
 	    }
+
+	    # Make the values a reference if this is a multiple select list.
+	    $value = { map { $_ => 1 } split /__OPT__/, $value }
+	      if $vals->{props}{multiple};
 
 	    # Iterate through values to create options.
 	    my $values = $vals->{props}{vals};
