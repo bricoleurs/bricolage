@@ -23,6 +23,9 @@ my $handle_update = sub {
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
+    # Make sure it's active.
+    $media->activate;
+
     # set the source
     $media->set_source__id($param->{"$widget|source__id"})
       if $param->{"$widget|source__id"};
@@ -184,15 +187,15 @@ my $handle_checkin = sub {
 
 	my $no_log;
     if ($cur_desk) {
-		if ($cur_desk->get_id() == $desk_id) {
+	if ($cur_desk->get_id() == $desk_id) {
             $no_log = 1;
         } else {
-			$cur_desk->transfer({
-			     to    => $desk,
-			     asset => $media
-			    });
-			$cur_desk->save();
-		}
+	    $cur_desk->transfer({
+				 to    => $desk,
+				 asset => $media
+				});
+	    $cur_desk->save();
+	}
     } else {
 	$desk->accept({'asset' => $media});
     }
