@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,8 @@ use strict;
 #--------------------------------------#
 # Programmatic Dependencies
 #use CGI::Cookie;
-#use Bric::Config qw(:qa);
+#use Bric::Config qw(:qa :cookies);
+use Bric::Config qw(:cookies);
 use Bric::Util::Class;
 use Bric::Util::Pref;
 
@@ -49,55 +50,55 @@ use Bric::Util::Pref;
 use base qw( Exporter );
 
 our @EXPORT_OK = qw(
-		    add_msg
-		    get_msg
-		    next_msg
-		    num_msg
-		    clear_msg
+                    add_msg
+                    get_msg
+                    next_msg
+                    num_msg
+                    clear_msg
 
-		    get_pref
+                    get_pref
 
-		    get_package_name
-		    get_class_info
-		    get_disp_name
-		    get_class_description
+                    get_package_name
+                    get_class_info
+                    get_disp_name
+                    get_class_description
 
-		    set_redirect
-		    get_redirect
-		    del_redirect
-		    do_queued_redirect
-		    redirect
-		    redirect_onload
+                    set_redirect
+                    get_redirect
+                    del_redirect
+                    do_queued_redirect
+                    redirect
+                    redirect_onload
 
-		    log_history
-		    last_page
-		    pop_page
+                    log_history
+                    last_page
+                    pop_page
 
-		    mk_aref
-		   );
+                    mk_aref
+                   );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
-		    msg     => [qw(add_msg
-				   get_msg
-				   next_msg
-				   num_msg
-				   clear_msg)],
-		    redir   => [qw(set_redirect
-				   get_redirect
-				   del_redirect
-				   do_queued_redirect
-				   redirect
-				   redirect_onload)],
-		    history => [qw(log_history
-				   last_page
-				   pop_page)],
-		    pref    => ['get_pref'],
-		    pkg     => [qw(get_package_name
-				   get_disp_name
-				   get_class_description
-				   get_class_info)],
-		    aref    => ['mk_aref']
-		   );
+                    msg     => [qw(add_msg
+                                   get_msg
+                                   next_msg
+                                   num_msg
+                                   clear_msg)],
+                    redir   => [qw(set_redirect
+                                   get_redirect
+                                   del_redirect
+                                   do_queued_redirect
+                                   redirect
+                                   redirect_onload)],
+                    history => [qw(log_history
+                                   last_page
+                                   pop_page)],
+                    pref    => ['get_pref'],
+                    pkg     => [qw(get_package_name
+                                   get_disp_name
+                                   get_class_description
+                                   get_class_info)],
+                    aref    => ['mk_aref']
+                   );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -126,6 +127,10 @@ use constant MAX_HISTORY => 10;
 #--------------------------------------#
 # Private Class Fields                  
 my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $login_marker = LOGIN_MARKER .'='. LOGIN_MARKER;
+
+#------------------------------------------------------------------------------#
+
 
 #--------------------------------------#
 # Instance Fields                       
@@ -224,9 +229,9 @@ sub get_msg {
     my $msg = $HTML::Mason::Commands::session{'_msg'};
 
     if (defined $num) {
-	return $msg->[$num];
+        return $msg->[$num];
     } else {
-	return wantarray ? @$msg : $msg;
+        return wantarray ? @$msg : $msg;
     }
 }
 
@@ -419,7 +424,7 @@ sub get_class_description { get_class_info($_[0])->get_description }
 sub get_class_info {
     my $key = shift;
     my $class = Bric::Util::Class->lookup({ id => $key, key_name => $key,
-					  pkg_name => $key })
+                                          pkg_name => $key })
       || die $gen->new({ msg => "No such class key '$key'." });
     return $class;
 }
@@ -458,9 +463,37 @@ This only works with pages that use the 'header.mc' element.
 
 sub set_redirect { $HTML::Mason::Commands::session{_redirect} = shift }
 
+# Unused as of 1.2.2
 sub get_redirect { $HTML::Mason::Commands::session{_redirect} }
 
-sub del_redirect { delete $HTML::Mason::Commands::session{_redirect} }
+sub del_redirect {
+    my $rv = delete $HTML::Mason::Commands::session{_redirect};
+    # Behave normally if not login
+    return $rv unless $rv =~ /$login_marker/o;
+
+    # Work-around to allow multi port http / https operation by propagating
+    # cookies to 2nd server build hash of cookies from blessed reference into
+    # Apache::Tables
+    my %cookies;
+    $HTML::Mason::Commands::r->err_headers_out->do(sub {
+            my($k,$v) = @_;     # foreach key matching Set-Cookie
+            ($k,$v) = split('=',$v,2);
+            $cookies{$k} = $v;
+            1;
+        }, 'Set-Cookie');
+
+    # get the current authorization cookie
+    return $rv unless $cookies{&AUTH_COOKIE};
+    my $qsv = AUTH_COOKIE .'='. URI::Escape::uri_escape($cookies{&AUTH_COOKIE});
+    # Add current session ID which should not need to be escaped. For now, the
+    # path is always "/", since that's what AccessHandler sets it to. If that
+    # changes in the future, we'll need to change it here, too, by adding code
+    # to attach the proper query string to the URI.
+    $qsv .= '&'. COOKIE .'='. $HTML::Mason::Commands::session{_session_id} .
+        URI::Escape::uri_escape('; path=/');
+    $rv =~ s/$login_marker/$qsv/;
+    return $rv;
+}
 
 #------------------------------------------------------------------------------#
 
@@ -483,7 +516,7 @@ NONE
 =cut
 
 sub do_queued_redirect {
-    my $loc = delete $HTML::Mason::Commands::session{'_redirect'} || return;
+    my $loc = del_redirect() || return;
     redirect($loc);
 }
 
@@ -575,14 +608,14 @@ sub log_history {
 
     # Only push this URI onto the stack if it is different than the top value
     if (!$history->[0] || $curr ne $history->[0]) {
-	# Push the current URI onto the stack.
-	unshift @$history, $curr;
+        # Push the current URI onto the stack.
+        unshift @$history, $curr;
 
-	# Pop the last item off the list if we've grown beyond our max.
-	pop @$history if scalar(@$history) > MAX_HISTORY;
+        # Pop the last item off the list if we've grown beyond our max.
+        pop @$history if scalar(@$history) > MAX_HISTORY;
 
-	# Save the history back.
-	$HTML::Mason::Commands::session{'_history'} = $history;
+        # Save the history back.
+        $HTML::Mason::Commands::session{'_history'} = $history;
     }
 }
 

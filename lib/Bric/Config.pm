@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 14:44:12 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -69,6 +69,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SYS_USER
                     SYS_GROUP
                     SERVER_WINDOW_NAME
+                    NO_TOOLBAR
                     APACHE_BIN
                     APACHE_CONF
                     PID_FILE
@@ -77,11 +78,15 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     VHOST_SERVER_NAME
                     ALWAYS_USE_SSL
                     SSL_ENABLE
+                    SSL_PORT
                     SSL_CERTIFICATE_FILE
                     SSL_CERTIFICATE_KEY_FILE
                     CHAR_SET
                     AUTH_TTL
                     AUTH_SECRET
+                    AUTH_COOKIE
+                    COOKIE
+                    LOGIN_MARKER
                     QA_MODE
                     TEMPLATE_QA_MODE
                     ADMIN_GRP_ID
@@ -129,6 +134,9 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
+                    cookies   => [qw(AUTH_COOKIE
+                                     COOKIE
+                                     LOGIN_MARKER)],
                     dbi       => [qw(DBD_PACKAGE
                                      DB_NAME
                                      DB_HOST
@@ -177,7 +185,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     char      => [qw(CHAR_SET)],
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
-                                     SERVER_WINDOW_NAME)],
+                                     SERVER_WINDOW_NAME
+                                     NO_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
                     time      => [qw(ISO_8601_FORMAT)],
@@ -188,11 +197,13 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PID_FILE
                                      SSL_ENABLE)],
                     ssl       => [qw(SSL_ENABLE
+                                     SSL_PORT
                                      ALWAYS_USE_SSL
                                      LISTEN_PORT)],
                     conf      => [qw(SSL_ENABLE
                                      SSL_CERTIFICATE_FILE
                                      SSL_CERTIFICATE_KEY_FILE
+                                     SSL_PORT
                                      LISTEN_PORT
                                      ENABLE_DIST
                                      NAME_VHOST
@@ -268,7 +279,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL)) {
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -311,6 +322,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Apache Settings.
     use constant MANUAL_APACHE           => $config->{MANUAL_APACHE};
     use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
+    use constant NO_TOOLBAR              => $config->{NO_TOOLBAR};
 
     use constant APACHE_BIN              => $config->{APACHE_BIN}
       || '/usr/local/apache/bin/httpd';
@@ -329,9 +341,13 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       $config->{SSL_CERTIFICATE_FILE} || '';
     use constant SSL_CERTIFICATE_KEY_FILE =>
       $config->{SSL_CERTIFICATE_KEY_FILE} || '';
-    use constant ALWAYS_USE_SSL		 => $config->{ALWAYS_USE_SSL};
-    croak "LISTEN_PORT directive must be set to 80 when SSL_ENABLE is on\n"
-      if SSL_ENABLE && LISTEN_PORT != 80;
+    use constant ALWAYS_USE_SSL          => $config->{ALWAYS_USE_SSL};
+    use constant SSL_PORT                => $config->{SSL_PORT} || 443;
+
+    # cookie Settings
+    use constant AUTH_COOKIE             => 'BRICOLAGE_AUTH';
+    use constant COOKIE                  => 'BRICOLAGE';
+    use constant LOGIN_MARKER            => 'BRIC_LOGIN_MARKER';
 
     # DBI Settings.
     use constant DBD_TYPE                => 'Pg';

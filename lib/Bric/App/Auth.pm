@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-24 00:19:35 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -52,12 +52,13 @@ use strict;
 use Apache::Constants qw(:common);
 use Apache::Log;
 use Apache::Cookie;
-use Bric::Config qw(:auth);
+use Bric::Config qw(:auth :cookies);
 use Bric::App::Session qw(:user);
 use Bric::App::Cache;
+use Bric::App::Util qw(:redir);
 use Bric::Biz::Person::User;
 use Digest::MD5 qw(md5_hex);
-
+use URI::Escape;
 use base qw( Exporter );
 
 our @EXPORT_OK = qw(auth login logout);
@@ -75,7 +76,6 @@ my ($make_cookie, $make_hash, $fail);
 ################################################################################
 # Constants
 ################################################################################
-use constant AUTH_COOKIE => 'BRICOLAGE_AUTH';
 
 ################################################################################
 # Fields
@@ -145,23 +145,23 @@ sub auth {
     my ($hash, $exp, $ip, $lul) = &$make_hash($r, @val{qw(user exp ip lmu)});
 
     if ( $hash ne $val{hash}) {
-	# Oh-oh, someone's been monkeying with the cookie (or maybe the secret
-	# changed?).
-	my $c = $r->connection;
-	$ip = $c->remote_ip;
-	my $host = $c->remote_host;
-	return &$fail($r, "Cookie hash mismatch from $ip (Hostname '$host') "
-		      . "for user '$val{user}.'");
+        # Oh-oh, someone's been monkeying with the cookie (or maybe the secret
+        # changed?).
+        my $c = $r->connection;
+        $ip = $c->remote_ip;
+        my $host = $c->remote_host;
+        return &$fail($r, "Cookie hash mismatch from $ip (Hostname '$host') "
+                      . "for user '$val{user}.'");
     }
     $c ||= Bric::App::Cache->new;
     my $u = get_user_object();
     if ( !$u || $c->get_lmu_time || 0 > $lul) {
-	# There have been changes to the users. Reload this user from the
-	# database.
-	return &$fail($r, 'User does not exist or is disabled.') unless
-	  $u = Bric::Biz::Person::User->lookup({ login => $val{user} });
-	set_user($r, $u);
-	$lul = time;
+        # There have been changes to the users. Reload this user from the
+        # database.
+        return &$fail($r, 'User does not exist or is disabled.') unless
+          $u = Bric::Biz::Person::User->lookup({ login => $val{user} });
+        set_user($r, $u);
+        $lul = time;
     }
     &$make_cookie($r, $val{user}, $lul);
 }
@@ -195,6 +195,15 @@ sub login {
     # cookie.
     set_user($r, $u);
     &$make_cookie($r, $un, time);
+    # Work around to redirect cookies to second server
+    my $lm = LOGIN_MARKER;
+    return 1 if ($_ = $r->args) =~ /$lm/;
+    # The presumption is made that any redirect passed to login will properly
+    # terminate a trailing directory with '/', otherwise all bets are off!
+    my $redirect = del_redirect() || '/'; # root if no redirect
+    $redirect .= ($redirect =~ /\?/) ? '&' : '?';
+    #       : ($redirect =~ m|/$|) ? '?' : '/?';
+    set_redirect($redirect . $lm .'='. $lm); # return true
 }
 
 sub masquerade {
@@ -203,7 +212,7 @@ sub masquerade {
 
     # Do not continue unless they are already logged in as an admin.
     unless (user_is_admin()) {
-	return (undef, "You must be an administrator to use this function");
+        return (undef, "You must be an administrator to use this function");
     }
 
     # Authentication succeeded. Set up session data and the authentication
@@ -271,21 +280,21 @@ $make_cookie = sub {
     my ($r, $un, $lul) = @_;
     my ($hash, $exp, $ip) = &$make_hash($r, $un, undef, undef, $lul);
     my @args = ( -name    => AUTH_COOKIE,
-		 -expires => "+" . AUTH_TTL . "S",
-		 -path    => '/',
-		 -value   => { ip => $ip,
-			       user => $un,
-			       hash => $hash,
-			       exp => $exp,
-			       lmu => $lul
-			     }
-	       );
+                 -expires => "+" . AUTH_TTL . "S",
+                 -path    => '/',
+                 -value   => { ip => $ip,
+                               user => $un,
+                               hash => $hash,
+                               exp => $exp,
+                               lmu => $lul
+                             }
+               );
     if ($ENV{MOD_PERL}) {
-	my $cookie = $cookie_class->new($r, @args);
-	$cookie->bake;
-	return 1;
+        my $cookie = $cookie_class->new($r, @args);
+        $cookie->bake;
+        return 1;
     } else {
-	return $cookie_class->new(@args);
+        return $cookie_class->new(@args);
     }
 };
 
@@ -310,8 +319,8 @@ $make_hash = sub {
     $lul ||= $time;
     $exp ||= $time + AUTH_TTL;
     unless ($ip) {
-	$ip = $r->connection->remote_ip;
-	$ip = substr($ip, 0, rindex($ip, '.'));
+        $ip = $r->connection->remote_ip;
+        $ip = substr($ip, 0, rindex($ip, '.'));
     }
     
     # work around Perl bug where utf-8 strings result in different md5
@@ -322,7 +331,7 @@ $make_hash = sub {
     $un  = "$un";
 
     my $hash = md5_hex(AUTH_SECRET .
-		       md5_hex(join ':', AUTH_SECRET, $ip, $exp, $un, $lul));
+                       md5_hex(join ':', AUTH_SECRET, $ip, $exp, $un, $lul));
     return ($hash, $exp, $ip, $lul);
 };
 

@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 DESCRIPTION
 
@@ -189,15 +189,15 @@ roughly into the Bricolage concepts of B<Elements> and B<fields>, and can be
 represented fairly well in an outline format. Here is an example of the
 hierarchies for the examples described above:
 
-=over
+=over 4
 
 =item Cover
 
-=over
+=over 4
 
 =item Column One
 
-=over
+=over 4
 
 =item Navigation
 
@@ -205,11 +205,11 @@ hierarchies for the examples described above:
 
 =item Column Two
 
-=over
+=over 4
 
 =item Top Story
 
-=over
+=over 4
 
 =item Image
 
@@ -219,15 +219,15 @@ hierarchies for the examples described above:
 
 =item Byline
 
-=back
+=back 4
 
 =item Current Stories
 
-=over
+=over 4
 
 =item Story
 
-=over
+=over 4
 
 =item Title
 
@@ -243,15 +243,15 @@ hierarchies for the examples described above:
 
 =item Column Three
 
-=over
+=over 4
 
 =item Recent Stories
 
-=over
+=over 4
 
 =item Story
 
-=over
+=over 4
 
 =item Title
 
@@ -271,7 +271,7 @@ hierarchies for the examples described above:
 
 =item Story
 
-=over
+=over 4
 
 =item Title
 
@@ -279,7 +279,7 @@ hierarchies for the examples described above:
 
 =item Byline
 
-=over
+=over 4
 
 =item Writer Name
 
@@ -293,7 +293,7 @@ hierarchies for the examples described above:
 
 =item Page
 
-=over
+=over 4
 
 =item Subtitle
 
@@ -336,29 +336,29 @@ What this calls for, then, is a reorganization of the hierarchy of the Cover and
 Story story types. Because fields are in stories, they don't have to be included
 in the Element that links to them:
 
-=over
+=over 4
 
 =item Cover
 
-=over
+=over 4
 
 =item Column One
 
-=over
+=over 4
 
 =item Navigation
 
-=back
+=back 4
 
 =item Column Two
 
-=over
+=over 4
 
 =item Top Story (Linked)
 
 =item Current Stories
 
-=over
+=over 4
 
 =item Story (Linked)
 
@@ -368,11 +368,11 @@ in the Element that links to them:
 
 =item Column Three
 
-=over
+=over 4
 
 =item Recent Stories
 
-=over
+=over 4
 
 =item Story (Linked)
 
@@ -402,7 +402,7 @@ in the Element that links to them:
 
 =item Page
 
-=over
+=over 4
 
 =item Subtitle
 

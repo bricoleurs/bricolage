@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2002-05-08 19:46:55 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ $title   => "Bricolage"
 $jsInit  => ""
 $context
 $useSideNav => 1
-$no_toolbar => 1
+$no_toolbar => NO_TOOLBAR
 $no_hist => 0
 $debug => undef
 </%args>

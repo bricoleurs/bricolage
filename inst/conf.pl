@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-07-06 23:18:50 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 DESCRIPTION
 
@@ -82,6 +82,7 @@ sub create_bricolage_conf {
     # simple settings
     set_bric_conf_var(\$conf, APACHE_BIN      => $REQ->{APACHE_EXE});
     set_bric_conf_var(\$conf, LISTEN_PORT     => $AP->{port});
+    set_bric_conf_var(\$conf, SSL_PORT        => $AP->{ssl_port});
     set_bric_conf_var(\$conf, SSL_ENABLE      => $AP->{ssl} ? $AP->{ssl} : 'Off');
     set_bric_conf_var(\$conf, SSL_CERTIFICATE_FILE	=> $AP->{ssl_cert});
     set_bric_conf_var(\$conf, SSL_CERTIFICATE_KEY_FILE	=> $AP->{ssl_key});
@@ -94,8 +95,7 @@ sub create_bricolage_conf {
 
     # path settings
     my $root = $CONFIG->{BRICOLAGE_ROOT};
-    set_bric_conf_var(\$conf, APACHE_CONF     => catfile($root, "conf", 
-							 "httpd.conf"));
+    set_bric_conf_var(\$conf, APACHE_CONF     => catfile($root, "conf", "httpd.conf"));
     set_bric_conf_var(\$conf, MASON_COMP_ROOT => $CONFIG->{MASON_COMP_ROOT});
     set_bric_conf_var(\$conf, MASON_DATA_ROOT => $CONFIG->{MASON_DATA_ROOT});
     set_bric_conf_var(\$conf, BURN_ROOT       => catdir($CONFIG->{MASON_DATA_ROOT}, "burn"));
@@ -135,11 +135,13 @@ sub create_httpd_conf {
     my $httpd = join('',<HTTPD>);
     close(HTTPD);
 
+
     # lots of regexes to come
     study($httpd);
 
     # simple settings
-    set_httpd_var(\$httpd, Listen       => $AP->{port});
+    my $listen80 = set_httpd_var(\$httpd,
+			   Listen       => $AP->{port});
     set_httpd_var(\$httpd, User         => $AP->{user});
     set_httpd_var(\$httpd, Group        => $AP->{group});
     set_httpd_var(\$httpd, ServerName   => $AP->{server_name});
@@ -158,6 +160,14 @@ sub create_httpd_conf {
     set_httpd_var(\$httpd, CustomLog       => catfile($log,
 						      "access_log combined"));
 
+    # httpsd must listen on another port
+
+    if ($AP->{ssl}) {
+	my $rm = '_random_marker_123454321_' . $$;
+	$httpd =~ s/$listen80/$rm/;
+	set_httpd_var(\$httpd, Listen => $AP->{ssl_port}, 'set all of them');
+	$httpd =~ s/$rm/$listen80/;
+    }
 
     # take a stab at SSL settings if ssl is on.  This stuff is
     # probably wrong and probably needs to be probed for explicitly
@@ -219,10 +229,14 @@ sub create_httpd_conf {
     close HTTPD;
 }
 
-# changes the setting of a single httpd var in $$conf
+# changes the setting of multiple or single httpd vars in $$httpd
 sub set_httpd_var {
-    my ($httpd, $var, $val) = @_;
-    unless ($$httpd =~ s/^(\s*$var\s+).*$/$1$val/mi) {
+    my ($httpd, $var, $val, $global) = @_;
+    if ($global && $$httpd =~ s/^(\s*$var\s+).*$/$1$val/gmi) {
+	return $1.$val;
+    } elsif ($$httpd =~ s/^(\s*$var\s+).*$/$1$val/mi) {
+	return $1.$val;
+    } else {
 	hard_fail("Unable to set httpd.conf variable $var to \"$val\".");
     }
 }

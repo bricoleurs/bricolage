@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-06 23:18:50 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -55,12 +55,12 @@ use strict;
 
 ################################################################################
 # Programmatic Dependencies
-use Apache::Constants qw(:common);
+use Apache::Constants qw(:common :http);
 use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl);
+use Bric::Config qw(:err :ssl :cookies);
 
 ################################################################################
 # Inheritance
@@ -83,6 +83,7 @@ use Bric::Config qw(:err :ssl);
 # Private Class Fields
 my $ap = 'Bric::Util::Fault::Exception::AP';
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
+my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 ################################################################################
 
@@ -129,32 +130,66 @@ sub handler {
     my $r = shift;
 
     my $ret = eval {
-	# Silently zap foolish user access to http when SSL is always required
-	# by web master.
-	if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
-	    $r->custom_response(FORBIDDEN, 'https://'. $r->hostname . '/logout');
-	    return FORBIDDEN;
-	}
-	# Set up the user's session data.
-	Bric::App::Session::setup_user_session($r);
-	my ($res, $msg) = auth($r);
-	return OK if $res;
+        # Silently zap foolish user access to http when SSL is always required
+        # by web master.
+        if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
+            $r->custom_response(FORBIDDEN, 'https://'. $r->hostname .
+                                $ssl_port . '/logout');
+            return FORBIDDEN;
+        }
 
-	# If we're here, the user needs to authenticate. Figure out where they
-	# wanted to go so we can redirect them there after they've logged in.
-	$r->log_reason($msg);
-#	my $uri = $r->uri;
-#	my $args = $r->args;
-#	$uri = "$uri?$args" if $args;
-#	set_redirect($uri);
-	set_redirect('/');
-	my $hostname = $r->hostname;
-	if (SSL_ENABLE) {
-	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
-	} else {
-	    $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
-	}
-	return FORBIDDEN;
+        # Propagate SESSION and AUTH cookies if we switched server ports
+        my %qs = $r->args;
+        my %cookies = Apache::Cookie->fetch;
+        # work around multiple servers if login event
+        if ( exists $qs{&AUTH_COOKIE} && ! $cookies{&AUTH_COOKIE} ) {
+            foreach(&COOKIE, &AUTH_COOKIE) {
+                if (exists $qs{$_} && $qs{$_}) {
+                    # hmmm.... Apache is in @INC or we would not have $r
+                    my $cook = Apache::unescape_url($qs{$_});
+                    $cookies{$_} = $cook;           # insert / overwrite value
+                    # propagate this particular cookie back to the browser with
+                    # all properties
+                    $r->err_headers_out->add('Set-Cookie',$_ . '=' . $cook);
+                }
+            }
+            my $http_cook = '';
+            while(my($k,$v) = each %cookies) {
+                # Reconstitute the input cookie
+                $http_cook .= '; ' if $http_cook;
+                $v = (split('; ',$v))[0];
+                $http_cook .= $k .'='. $v;
+            }
+            $r->header_in('Cookie', $http_cook);
+            # Replacement HTTP_COOKIE string
+        }
+        # Continue, the session is not the wiser about inserted cookies IN.
+
+        # Set up the user's session data.
+        Bric::App::Session::setup_user_session($r);
+        my ($res, $msg) = auth($r);
+        return OK if $res;
+
+        # If we're here, the user needs to authenticate. Figure out where they
+        # wanted to go so we can redirect them there after they've logged in.
+        $r->log_reason($msg);
+#       my $uri = $r->uri;
+#       my $args = $r->args;
+#       $uri = "$uri?$args" if $args;
+#       set_redirect($uri);
+        # Commented out the above and set the login to always redirect to "/".
+        # This is becaues the session might otherwise get screwed up. The
+        # del_redirect() function in Bric::App::Util depends on this
+        # knowledge, so if we ever change this, we'll need to make sure we fix
+        # that function, too.
+        set_redirect('/');
+        my $hostname = $r->hostname;
+        if (SSL_ENABLE) {
+            $r->custom_response(FORBIDDEN, "https://$hostname$ssl_port/login");
+        } else {
+            $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
+        }
+        return FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -177,21 +212,34 @@ sub logout_handler {
     my $r = shift;
 
     my $ret = eval {
-	# Set up the user's session data.
-	Bric::App::Session::setup_user_session($r);
-	# Logout.
-	logout($r);
-	# Expire the user's session.
-	Bric::App::Session::expire_session($r);
+        # Set up the user's session data.
+        Bric::App::Session::setup_user_session($r);
+        # Logout.
+        logout($r);
+        # Expire the user's session.
+        Bric::App::Session::expire_session($r);
 
-	# Redirect to the login page.
-	my $hostname = $r->hostname;
-	if (SSL_ENABLE) {
-	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
-	} else {
-	    $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
-	}
-	return FORBIDDEN;
+        # Redirect to the login page.
+        my $hostname = $r->hostname;
+        if (SSL_ENABLE) {
+            # if SSL and logging out of server #1, make sure and logout of
+            # server #2
+            if (scalar $r->args =~ /goodbye/) {
+                $r->custom_response(FORBIDDEN,
+                                    "https://$hostname$ssl_port/login");
+            } elsif ($r->get_server_port == &SSL_PORT) {
+                $r->custom_response(HTTP_MOVED_TEMPORARILY,
+                                    "http://$hostname$port/logout?goodbye");
+                return HTTP_MOVED_TEMPORARILY;
+            } else {
+                $r->custom_response(HTTP_MOVED_TEMPORARILY,
+                                    "https://$hostname$ssl_port/logout?goodbye");
+                return HTTP_MOVED_TEMPORARILY;
+            }
+        } else {
+            $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
+        }
+        return FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -214,9 +262,9 @@ B<Notes:> NONE.
 sub okay {
     my $r = shift;
     my $ret = eval {
-	# Set up the user's session data.
-	Bric::App::Session::setup_user_session($r);
-	return OK;
+        # Set up the user's session data.
+        Bric::App::Session::setup_user_session($r);
+        return OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }

@@ -139,6 +139,23 @@ systems with multiple versions of each available. [Sam]
 Added "make clone" command to the installation system to create
 distributions based on existing Bricolage systems.  [Sam]
 
+=item *
+
+Added F<bricolage.conf> directive to enable/disable the browser toolbar for
+debugging and development. Documented in L<Bric::Hacker|Bric::Hacker>.
+[Michael Robinton]
+
+=item *
+
+Added support for running Bricolage with SSL support on arbitrary ports.
+Previous versions required https support to use only port 80 for http and port
+443 for https. With this release, Bricolage fully supports http and https
+service on any ports. This allows the Apache daemon supporting Bricolage to be
+run with a minimum number of children while still allowing normal http and
+https service on the standard ports with a light-weight Apache daemon. See the
+F<INSTALL> file (or L<Bric::Admin|Bric::Admin>) for full details and an
+example installation procedure. [Michael Robinton]
+
 =back
 
 =head2 Bug Fixes

@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 SYNOPSIS
 
@@ -43,8 +43,8 @@ $Date: 2002-05-20 03:22:00 $
 =head1 DESCRIPTION
 
 This module provides all the necessary functions for maintaining state within
-widgets.  This includes setting a global state variable $session as well as 
-accessor methods for setting the state name of a widget and state data of a 
+widgets. This includes setting a global state variable $session as well as
+accessor methods for setting the state name of a widget and state data of a
 widget.
 
 =cut
@@ -62,7 +62,7 @@ use strict;
 # Programmatic Dependencies              
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
-use Bric::Config qw(:sys_user :admin :temp);
+use Bric::Config qw(:sys_user :admin :temp :cookies);
 use Apache::Session::File;
 use Bric::Util::Trans::FS;
 
@@ -76,41 +76,41 @@ use Apache::Cookie;
 use base qw( Exporter );
 
 our @EXPORT_OK = qw(clear_state
-		    init_state
-		    init_state_name
-		    init_state_data
-		    reset_state
-		    get_state
-		    get_state_data
-		    get_state_name
-		    get_user_login
-		    get_user_id
-		    set_state
-		    set_state_data
-		    set_state_name
-		    set_user
-		    get_user_login
-		    get_user_id
-		    get_user_object
-		    user_is_admin);
+                    init_state
+                    init_state_name
+                    init_state_data
+                    reset_state
+                    get_state
+                    get_state_data
+                    get_state_name
+                    get_user_login
+                    get_user_id
+                    set_state
+                    set_state_data
+                    set_state_name
+                    set_user
+                    get_user_login
+                    get_user_id
+                    get_user_object
+                    user_is_admin);
 
 our %EXPORT_TAGS = (state => [qw(clear_state
-				 init_state
-				 init_state_name
-				 init_state_data
-				 reset_state
-				 get_state
-				 get_state_data
-				 get_state_name
-				 set_state
-				 set_state_data
-				 set_state_name)],
-		    user => [qw(set_user
-				user_is_admin
-				get_user_login
-				get_user_id
-				get_user_object)],
-		   );
+                                 init_state
+                                 init_state_name
+                                 init_state_data
+                                 reset_state
+                                 get_state
+                                 get_state_data
+                                 get_state_name
+                                 set_state
+                                 set_state_data
+                                 set_state_name)],
+                    user => [qw(set_user
+                                user_is_admin
+                                get_user_login
+                                get_user_id
+                                get_user_object)],
+                   );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -122,7 +122,6 @@ our %EXPORT_TAGS = (state => [qw(clear_state
 # Constants                            #
 #======================================#
 
-use constant COOKIE   => 'BRICOLAGE';
 use constant MAX_HISTORY => 10;
 
 use constant SESS_DIR =>
@@ -132,8 +131,8 @@ use constant LOCK_DIR =>
   Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage', 'lock');
 
 use constant OPTS     => { Directory     => SESS_DIR,
-			   LockDirectory => LOCK_DIR,
-			   Transaction   => 1 };
+                           LockDirectory => LOCK_DIR,
+                           Transaction   => 1 };
 
 # Whether to cache the user object or not.
 #use constant CACHE_USER  => 1;
@@ -216,7 +215,7 @@ sub setup_user_session {
 
     # Try to tie the session variable to a session file.
     eval { tie %HTML::Mason::Commands::session,
-	     'Apache::Session::File', ($cookie ? $cookie->value : undef), OPTS; };
+             'Apache::Session::File', ($cookie ? $cookie->value : undef), OPTS; };
 
     # Test to see if the tie succeeded.
     if ($@) {
@@ -226,10 +225,10 @@ sub setup_user_session {
                 'Apache::Session::File', undef, OPTS;
             undef $cookie;
         }
-	# We can't recover so throw an exception.
-	else {
-	    die $gen->new({ msg => "Difficulties tie'ing the session hash to " .
-			    "file '".OPTS->{Directory}."'\n", payload => $@});
+        # We can't recover so throw an exception.
+        else {
+            die $gen->new({ msg => "Difficulties tie'ing the session hash to " .
+                            "file '".OPTS->{Directory}."'\n", payload => $@});
         }
     }
 
@@ -240,8 +239,8 @@ sub setup_user_session {
                          -value   => $HTML::Mason::Commands::session{_session_id},
                          -path    => '/');
 
-	# Send this cookie out with the headers.
-	$cookie->bake;
+        # Send this cookie out with the headers.
+        $cookie->bake;
     }
 }
 
@@ -280,7 +279,7 @@ NONE
 sub sync_user_session {
     untie %HTML::Mason::Commands::session ||
       die $gen->new({ msg => 'Unable to synchronize user session.',
-		      payload => $@ });
+                      payload => $@ });
 }
 
 =item expire_session()
@@ -317,7 +316,7 @@ sub expire_session {
     my $r = shift;
     eval { tied(%HTML::Mason::Commands::session)->delete };
     die $gen->new({ msg => 'Unable to expire user session.',
-		    payload => $@ }) if $@;
+                    payload => $@ }) if $@;
 
     # Expire the session cookie.
     my $cookie = Apache::Cookie->new($r,
@@ -389,68 +388,68 @@ sub handle_callbacks {
     my (@delay_cb, @priority);
 
     eval {
-	foreach my $field (keys %$param) {
-	    # Strip off the '.x' that an input type="image" tag creates. Yes,
-	    # the RegEx is actually faster than using substr(), even when the
-	    # $field doesn't have '.x' on its end -- I benchmarked it!
-	    (my $key = $field) =~ s/\.x$//;
- 	    # Determine whether this is a priority callback or a regular one.
-	    my $ext = substr($key, -3);
+        foreach my $field (keys %$param) {
+            # Strip off the '.x' that an input type="image" tag creates. Yes,
+            # the RegEx is actually faster than using substr(), even when the
+            # $field doesn't have '.x' on its end -- I benchmarked it!
+            (my $key = $field) =~ s/\.x$//;
+            # Determine whether this is a priority callback or a regular one.
+            my $ext = substr($key, -3);
 
-	    # Delay execution of regular callbacks.
-	    if ($ext eq '_cb') {
-		if ($key ne $field) {
-		    # Some browsers (notably Mozilla) will submit $key as
-		    # well as $key.x and $key.y. So skip it if that's true
-		    # here.
-		    next if exists $param->{$key};
-		    # Otherwise, add the unadorned key to $param.
-		    $param->{$key} = $param->{$field}
-		}
+            # Delay execution of regular callbacks.
+            if ($ext eq '_cb') {
+                if ($key ne $field) {
+                    # Some browsers (notably Mozilla) will submit $key as
+                    # well as $key.x and $key.y. So skip it if that's true
+                    # here.
+                    next if exists $param->{$key};
+                    # Otherwise, add the unadorned key to $param.
+                    $param->{$key} = $param->{$field}
+                }
 
-		# Skip callbacks that aren't given a value.
-		next if $param->{$key} eq '';
+                # Skip callbacks that aren't given a value.
+                next if $param->{$key} eq '';
 
-		my $widget = substr($key, 0, index($key, '|'));
-		my $cb = "/$w_dir/$widget/callback.mc";
+                my $widget = substr($key, 0, index($key, '|'));
+                my $cb = "/$w_dir/$widget/callback.mc";
 
-		if ($m->comp_exists($cb)) {
-		    # Save the callbacks as sub refs in an array to call later
-		    push @delay_cb, sub {
-			$m->comp($cb, 'widget' => $widget, 'field'  => $key,
-				 'param'  => $param, __CB_DONE => 1);
-		    };
-		}
-	    }
-	    # Call priority callbacks first.
-	    elsif ($ext eq '_pc' || $ext eq '_p0') {
-		my $stack = $ext eq '_pc' ? \@delay_cb : \@priority;
-		$param->{$key} = $param->{$field} unless $key eq $field;
-		# Skip callbacks that aren't given a value.
-		next if $param->{$key} eq '';
+                if ($m->comp_exists($cb)) {
+                    # Save the callbacks as sub refs in an array to call later
+                    push @delay_cb, sub {
+                        $m->comp($cb, 'widget' => $widget, 'field'  => $key,
+                                 'param'  => $param, __CB_DONE => 1);
+                    };
+                }
+            }
+            # Call priority callbacks first.
+            elsif ($ext eq '_pc' || $ext eq '_p0') {
+                my $stack = $ext eq '_pc' ? \@delay_cb : \@priority;
+                $param->{$key} = $param->{$field} unless $key eq $field;
+                # Skip callbacks that aren't given a value.
+                next if $param->{$key} eq '';
 
-		my $widget = substr($key, 0, index($key, '|'));
-		my $cb = "/$w_dir/$widget/callback.mc";
-		if ($m->comp_exists($cb)) {
-		    # Save these callbacks, first - ensures that all the '_cb.x'
-		    # fields will be properly named '_cb' instead.
-		    unshift @$stack, sub {
-			$m->comp($cb, 'widget' => $widget, 'field'  => $key,
-				 'param'  => $param, __CB_DONE => 1);
-		    };
-		}
-	    }
-	}
+                my $widget = substr($key, 0, index($key, '|'));
+                my $cb = "/$w_dir/$widget/callback.mc";
+                if ($m->comp_exists($cb)) {
+                    # Save these callbacks, first - ensures that all the '_cb.x'
+                    # fields will be properly named '_cb' instead.
+                    unshift @$stack, sub {
+                        $m->comp($cb, 'widget' => $widget, 'field'  => $key,
+                                 'param'  => $param, __CB_DONE => 1);
+                    };
+                }
+            }
+        }
 
-	# Execute the callbacks.
-	foreach my $cb (@priority, @delay_cb) { &$cb }
+        # Execute the callbacks.
+        foreach my $cb (@priority, @delay_cb) { &$cb }
     };
 
     # Do error processing, if necessary.
     if (my $err = $@) {
-	die $err if ref $err;
-	# Create an exception object unless we already have one.
-	die $ap->new({msg => "Error handling callbacks.", payload => $err});
+        die $err if ref $err;
+        # Create an exception object unless we already have one.
+        die $ap->new({msg => "Error handling callbacks.", payload => $err});
     }
     return 1;
 }
@@ -500,7 +499,7 @@ sub init_state_name {
     my ($widget, $name) = @_;
 
     unless (defined get_state_name($widget)) {
-	return set_state_name($widget, $name);
+        return set_state_name($widget, $name);
     }
 
     return;
@@ -510,7 +509,7 @@ sub init_state_data {
     my ($widget, $name, $value) = @_;
     
     unless (defined get_state_data($widget, $name)) {
-	return set_state_data($widget, $name, $value);
+        return set_state_data($widget, $name, $value);
     }
 
     return;
@@ -522,7 +521,7 @@ sub reset_state {
     $key = '' unless defined $key;
     my $reset = get_state_data($widget, '_reset_key') || '';
     if ($key ne $reset) {
-	return set_state($widget, undef, {'_reset_key' => $key});
+        return set_state($widget, undef, {'_reset_key' => $key});
     }
 
     return;
@@ -624,19 +623,19 @@ sub set_state_data {
     return unless $widget and $data;
 
     if (ref $data) {
-	my $s = $HTML::Mason::Commands::session{$widget};
-	$s->{'data'} = $data;
+        my $s = $HTML::Mason::Commands::session{$widget};
+        $s->{'data'} = $data;
 
-	$HTML::Mason::Commands::session{$widget} = $s;
+        $HTML::Mason::Commands::session{$widget} = $s;
     
-	return $HTML::Mason::Commands::session{$widget}->{'data'};
-    } else {	
-	my $s = $HTML::Mason::Commands::session{$widget};
-	$s->{'data'}->{$data} = $value;
+        return $HTML::Mason::Commands::session{$widget}->{'data'};
+    } else {    
+        my $s = $HTML::Mason::Commands::session{$widget};
+        $s->{'data'}->{$data} = $value;
 
-	$HTML::Mason::Commands::session{$widget} = $s;
-	
-	return $HTML::Mason::Commands::session{$widget}->{'data'}->{$data};
+        $HTML::Mason::Commands::session{$widget} = $s;
+        
+        return $HTML::Mason::Commands::session{$widget}->{'data'}->{$data};
     }
 }
 
@@ -646,9 +645,9 @@ sub get_state_data {
     return unless $widget;
 
     if (defined $key) {
-	return $HTML::Mason::Commands::session{$widget}->{'data'}->{$key};
+        return $HTML::Mason::Commands::session{$widget}->{'data'}->{$key};
     } else {
-	return $HTML::Mason::Commands::session{$widget}->{'data'};
+        return $HTML::Mason::Commands::session{$widget}->{'data'};
     }
 }
 
@@ -693,11 +692,11 @@ sub set_state {
     return unless $widget;
     
     set_state_name($widget, $state) if $state;
-	
+        
     set_state_data($widget, $data) if $data;
 
     return [$HTML::Mason::Commands::session{$widget}->{'state'},
-	    $HTML::Mason::Commands::session{$widget}->{'data'}];
+            $HTML::Mason::Commands::session{$widget}->{'data'}];
 }
 
 sub get_state {
@@ -706,7 +705,7 @@ sub get_state {
     return unless $widget;
 
     return [$HTML::Mason::Commands::session{$widget}->{'state'},
-	    $HTML::Mason::Commands::session{$widget}->{'data'}];
+            $HTML::Mason::Commands::session{$widget}->{'data'}];
 }
 
 #------------------------------------------------------------------------------#
@@ -776,9 +775,9 @@ sub set_user {
     # Create a new session if the user has changed.
     setup_user_session($r, 1) if defined $curr_id && $uid != $curr_id;
     my $bric_user = { login  => $user->get_login,
-		    id     => $uid,
-		    object => $user
-		  };
+                    id     => $uid,
+                    object => $user
+                  };
     $HTML::Mason::Commands::session{_bric_user} = $bric_user;
     return 1;
 }

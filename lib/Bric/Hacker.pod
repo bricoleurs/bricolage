@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-08-18 23:43:19 $
 
 =head1 DESCRIPTION
 
@@ -206,6 +206,11 @@ PerlWarn (use warnings) and causes error messages to include more
 information.  QA_MODE also enables Apache::Status at the URL
 /perl-status which you can use to examine the state of the Perl
 interpreter inside Apache.
+
+=item *
+
+Set the C<NO_TOOLBAR> directive to "0" or "Off" in F<bricolage.conf> to keep
+Bricolage from popping up a new browser window without a toolbar.
 
 =item *
 

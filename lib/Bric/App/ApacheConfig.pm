@@ -164,7 +164,7 @@ do {
     $VirtualHost_lcl{NAME_VHOST . ':' . LISTEN_PORT} = \%config;
 
     if (SSL_ENABLE) {
-	push @NameVirtualHost_lcl, [ NAME_VHOST . ':443' ];
+	push @NameVirtualHost_lcl, [ NAME_VHOST . ':' . SSL_PORT ];
 	my %ssl_config = (%config,
 		SSLCertificateFile	=> &SSL_CERTIFICATE_FILE,
 		SSLCertificateKeyFile	=> &SSL_CERTIFICATE_KEY_FILE);
@@ -199,7 +199,7 @@ do {
 	    );
 	    $ssl_config{'IfModule apache_ssl.c'} = \%apache_ssl;
 	}
-	$VirtualHost_lcl{NAME_VHOST . ':443'} = \%ssl_config;
+	$VirtualHost_lcl{NAME_VHOST . ':' . SSL_PORT} = \%ssl_config;
       }
 
     if ($silent_config) {
