@@ -1,6 +1,6 @@
 =head1 NAME
 
-Bricolage::License - The Bricolage License.
+Bric::License - The Bricolage License.
 
 =head1 LICENSE
 

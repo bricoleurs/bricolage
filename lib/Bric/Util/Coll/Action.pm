@@ -3,8 +3,7 @@ package Bric::Util::Coll::Action;
 
 =head1 NAME
 
-Bric::Util::Coll::Action - Interface for managing collections of distribution
-actions.
+Bric::Util::Coll::Action - Interface for managing collections of distribution actions.
 
 =head1 VERSION
 
