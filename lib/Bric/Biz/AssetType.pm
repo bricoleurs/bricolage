@@ -8,16 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
-
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-11-29 18:52:22 $
 
 =head1 SYNOPSIS
 
@@ -1617,9 +1616,9 @@ NONE
 sub add_data {
     my $self = shift;
     my ($parts_arg) = @_;
-    my ($parts, $new_parts, $del_parts) = $self->_get('_parts',
-						      '_new_parts',
-						      '_del_parts');
+    my $parts = $self->_get_parts();
+    my ($new_parts, $del_parts) = $self->_get('_new_parts',
+				             '_del_parts');
 
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
@@ -1786,10 +1785,10 @@ NONE
 
 sub del_data {
     my $self = shift;
-    my ($parts_arg) = @_;
-    my ($parts, $new_parts, $del_parts) = $self->_get('_parts',
-						      '_new_parts',
-						      '_del_parts');
+    my ($parts_arg) = @_; 
+    my $parts = $self->_get_parts();
+    my ($new_parts, $del_parts) = $self->_get('_new_parts',
+					      '_del_parts');
 
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
@@ -2454,9 +2453,9 @@ sub _sync_output_channels {
 
 sub _sync_parts {
     my $self = shift;
-    my ($parts, $new_parts, $del_parts) = $self->_get('_parts',
-						      '_new_parts',
-						      '_del_parts');
+    my $parts = $self->_get_parts();
+    my ($new_parts, $del_parts) = $self->_get('_new_parts',
+					      '_del_parts');
 
     # Pull of the newly created parts.
     my $created = delete $new_parts->{-1};
