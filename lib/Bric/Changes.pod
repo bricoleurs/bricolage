@@ -35,6 +35,11 @@ error. Reported by Christian Hauser. [David]
 Errors in the C<PERL_LOADER> F<bricolage.conf> directive no longer silently
 fails. [David]
 
+=item *
+
+A successful login no longer redirects back to the login page, thus no longer
+forcing a second redirect in such cases. Reportec by Marshall Roch. [David]
+
 =back
 
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
