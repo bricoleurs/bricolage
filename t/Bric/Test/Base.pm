@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 02:48:50 $
+$Date: 2004-02-12 00:04:15 $
 
 =head1 SYNOPSIS
 
@@ -75,6 +75,8 @@ BEGIN {
     $ENV{BRIC_TEMP_DIR} = File::Spec->catdir
       (File::Spec->tmpdir, 'bricolage-test');
     File::Path::mkpath($ENV{BRIC_TEMP_DIR}, 0, 0777);
+    $ENV{BRIC_STAGE_ROOT} = File::Spec->catdir
+      ($ENV{BRIC_TEMP_DIR}, 'stage');
 }
 
 # Remove the temp directory. END blocks run in LIFO, so this block will run

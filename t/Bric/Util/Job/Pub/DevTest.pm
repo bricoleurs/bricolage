@@ -25,7 +25,7 @@ sub table {'job '}
 
 my $date = '2003-01-22 14:43:23';
 
-my %job = ( 
+my %job = (
             name => 'Test Job',
             user_id => __PACKAGE__->user_id,
             sched_time => $date
@@ -111,7 +111,7 @@ sub c_test_list : Test(45) {
             source__id  => 1,
             slug        => 'test',
             user__id    => $self->user_id(),
-            element     => $element, 
+            element     => $element,
             site_id     => 100,
         });
     my $cat = Bric::Biz::Category->lookup({ id => 1 });
@@ -403,7 +403,7 @@ Page 1
 
 ##############################################################################
 # Test execute_me error_handling.
-sub h_test_execute_me : Test(9) {
+sub h_test_execute_me : Test(10) {
     my $self = shift;
 
     my $elem = Bric::Biz::AssetType->new({
@@ -431,7 +431,9 @@ sub h_test_execute_me : Test(9) {
 
     # Create a burner.
     my $fs = Bric::Util::Trans::FS->new;
-    my $burner = Bric::Util::Burner->new;
+    ok( my $burner = Bric::Util::Burner->new
+        ({ comp_dir => $fs->cat_dir(TEMP_DIR, 'comp') }),
+        "Create burner" );
 
     # Check in an deploy the template
     $tmpl->checkin;
@@ -500,9 +502,6 @@ sub h_test_execute_me : Test(9) {
     dies_ok {$job->execute_me} "Try again.";
     is($job->get_tries, 3, "... should have three tries now.");
     is($job->has_failed, 1, "... has_failed should now return true.");
-
-    # Undeploy the template.
-    $burner->undeploy($tmpl);
 }
 
 1;
