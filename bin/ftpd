@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+use strict;
+
+use File::Spec::Functions ();
+BEGIN {
+  $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+  unshift(@INC, File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
+};
+
+use Bric::Config qw(:ftp);
+
+# make sure FTP is enabled
+BEGIN {  
+  unless (ENABLE_FTP_SERVER) {
+    print "\nENABLE_FTP_SERVER is off!  Please read Bric::Admin for instructions on how to setup the FTP server.\n";
+    exit 1;
+  }
+}
+
+# load the server
+use Bric::Util::FTP::Server;
+
+# setup parameters
+
+# no conf file used
+push(@ARGV, '-C', '/dev/null');
+
+# set port and address if specified
+push(@ARGV, '-p', FTP_PORT);
+if (FTP_ADDRESS() ne "") {
+  push(@ARGV, '-o', 'ip address=' . FTP_ADDRESS);
+}
+
+# setup log
+push(@ARGV, '-o', 'error log=' . FTP_LOG);
+
+# set debug mode
+if (FTP_DEBUG) {
+  push(@ARGV, '-d');
+}
+    
+Bric::Util::FTP::Server->run;

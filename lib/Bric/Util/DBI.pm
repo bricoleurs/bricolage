@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-09-06 21:55:05 $
+$Date: 2001-10-02 16:23:59 $
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,6 @@ $Date: 2001-09-06 21:55:05 $
 
   my @cols = qw(id lname fname mname title email phone foo bar bletch);
 
-  local $" = ', ';
   my $select = prepare_c(qq{
       SELECT @cols
       FROM   person
@@ -118,7 +117,7 @@ use base qw(Exporter);
 our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref col_aref
 		    last_key next_key db_date_parts DB_DATE_FORMAT
 		    bind_columns bind_col bind_param begin commit rollback
-		    finish is_num);
+		    finish is_num row_array all_aref);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
@@ -1107,13 +1106,6 @@ sub row_aref {
     return $aref;
 } # row_aref()
 
-=begin comment
-
-To re-enable this function, delete "=begin comment" and delete this text, and
-delete "=end comment" after the sub. Then add "row_array" to @EXPORT_OK above.
-
-################################################################################
-
 =pod
 
 =item my @row = row_array($select, @params)
@@ -1155,15 +1147,6 @@ sub row_array {
     return @array;
 } # row_array()
 
-=end comment
-
-=begin comment
-
-To re-enable this function, delete "=begin comment" and delete this text, and
-delete "=end comment" after the sub. Then add "all_aref" to @EXPORT_OK above.
-
-################################################################################
-
 =pod
 
 =item my $data = all_aref($select, @params)
@@ -1200,7 +1183,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub all_ref {
+sub all_aref {
     my ($qry, @params) = @_;
     &$connect();
     my $aref;
@@ -1209,10 +1192,6 @@ sub all_ref {
       { msg => "Unable to select all", payload => $@ }) if $@;
     return $aref;
 } # all_aref()
-
-################################################################################
-
-=end comment
 
 =pod
 
@@ -1375,7 +1354,10 @@ perl(1), DBI(2), Bric (3), Bric::Util::Time(4), Bric::Util::DBD::Oracle(5).
 =head1 REVISION HISTORY
 
 $Log: DBI.pm,v $
-Revision 1.1  2001-09-06 21:55:05  wheeler
-Initial revision
+Revision 1.2  2001-10-02 16:23:59  samtregar
+Added FTP interface to templates
+
+Revision 1.1.1.1  2001/09/06 21:55:05  wheeler
+Upload to SourceForge.
 
 =cut

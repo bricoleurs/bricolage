@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 15:41:46 $
+$Date: 2001-10-02 16:23:59 $
 
 =head1 SYNOPSIS
 
@@ -112,6 +112,11 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FULL_SEARCH
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
+                    ENABLE_FTP_SERVER
+                    FTP_PORT
+                    FTP_ADDRESS
+                    FTP_LOG
+                    FTP_DEBUG
 		   );
 
 our %EXPORT_TAGS = (all => [qw(:dbi
@@ -204,6 +209,11 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 		    media => [qw(MEDIA_URI_ROOT
                                  MEDIA_FILE_ROOT)],
                     search => [qw(FULL_SEARCH)],
+                    ftp    => [qw(ENABLE_FTP_SERVER
+                                  FTP_PORT
+                                  FTP_ADDRESS
+                                  FTP_LOG
+                                  FTP_DEBUG)],
 		   );
 
 #=============================================================================#
@@ -274,8 +284,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || '/usr/local/apache/logs/error_log';
     use constant LOG_LEVEL               => $config->{LOG_LEVEL} || 'info';
     use constant LOG_FORMAT              => $config->{LOG_FORMAT}
-      || qq{'"%h %l %u %t "%r" %>s %b "%{Referer}i"} .
-	 qq{ "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined};
+      || qq{'"%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined};
     use constant CUSTOM_LOG              => $config->{CUSTOM_LOG}
       || '/usr/local/apache/logs/access_log combined';
     use constant APACHE_SERVER_ROOT      => $config->{APACHE_SERVER_ROOT}
@@ -396,6 +405,14 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
+
+    # FTP Settings
+    use constant ENABLE_FTP_SERVER => $config->{ENABLE_FTP_SERVER} || 0;
+    use constant FTP_ADDRESS       => $config->{FTP_ADDRESS}       || "";
+    use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
+    use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
+    use constant FTP_LOG           => $config->{FTP_LOG}           || 
+                                      catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
 }
 
 #==============================================================================#
@@ -487,7 +504,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.6  2001-09-27 15:41:46  wheeler
+Revision 1.7  2001-10-02 16:23:59  samtregar
+Added FTP interface to templates
+
+Revision 1.6  2001/09/27 15:41:46  wheeler
 Added filename and file_ext columns to OutputChannel API. Also added a
 configuration directive to CE::Config to specify the default filename and
 extension for the system. Will need to document later that these can be set, or
