@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-28 00:08:24 $
+$Date: 2003-11-08 00:01:56 $
 
 =head1 SYNOPSIS
 
@@ -2508,8 +2508,12 @@ sub _update_uris {
 
     if (my $err = $@) {
         # Just die if its any exception other than the one we're interested in.
-        # XXX This isn't really compatable with non-7.3 PostgreSQLs. Fix.
-        rethrow_exception($err) unless $err->get_payload =~
+        rethrow_exception($err)
+          # Check for PostgreSQL 7.4 error message.
+          unless $err->get_payload =~
+          /duplicate key violates unique constraint "udx_$key\_uri__site_id__uri"/
+          # Check for PostgreSQL 7.3, 7.2, or 7.2 error message.
+          or $err->get_payload =~
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
         my $things = $key eq 'media'
           ? 'category, or file name'
