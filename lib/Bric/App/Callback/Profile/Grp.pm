@@ -78,10 +78,6 @@ sub deactivate : Callback {
 }
 
 
-# XXX: there's also an empty else clause in grp.mc
-# so there might be other grp callbacks to handle
-
-
 ###
 
 my $reset_cache = sub {

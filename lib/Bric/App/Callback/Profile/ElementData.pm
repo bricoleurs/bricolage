@@ -78,13 +78,6 @@ sub save : Callback {
 
     # Save changes and redirect back to the manager.
     $ed->save();
-
-    # something like this if the Element Datum Manager is ever used
-    # (XXX: not working)
-    #set_redirect(defined $param->{"${type}_id"}
-    #               ? "/admin/manager/$type/" . $param->{"${type}_id"}
-    #               : last_page());
-
     set_redirect(last_page());
 }
 
