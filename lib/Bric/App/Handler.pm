@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-26 01:21:29 $
+$Date: 2004-02-26 01:38:32 $
 
 =head1 SYNOPSIS
 
@@ -300,8 +300,6 @@ sub handler {
     my ($r) = @_;
     # Handle the request.
     my $status;
-    use Bric::Util::Fault qw(throw_ap);
-    $SIG{__DIE__} = \&throw_ap;
 
     my $lang_name = get_pref('Language');
     my $char_set  = get_pref('Character Set');
