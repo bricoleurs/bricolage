@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-10-28 00:35:50 $
+$Date: 2003-12-03 06:43:56 $
 
 =head1 SYNOPSIS
 
@@ -97,11 +97,11 @@ $alt = $widg = $type;
 
 # Grab the workflow and start desk permissions.
 my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-my $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
-                                   chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
-                 map { [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]] }
-                 $wf->allowed_desks
-               };
+$desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
+                                chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
+              map { [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]] }
+              $wf->allowed_desks
+            };
 $start_desk_ok = $desk_chk->{$wf->get_head_desk_id};
 $wf = $wf->get_name;
 </%init>
