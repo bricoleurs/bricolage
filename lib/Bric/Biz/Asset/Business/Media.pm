@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-20 20:57:44 $
+$Date: 2002-08-26 06:03:47 $
 
 =head1 SYNOPSIS
 
@@ -1074,12 +1074,26 @@ sub revert {
 	});
     }
 
+    # Delete existing contributors.
+    $self->delete_contributors([keys %{ $self->_get_contributors }]);
+
+    # Set up contributors to revert to.
+    my $contrib;
+    my $revert_contrib = $revert_obj->_get_contributors;
+    while (my ($cid, $c) = each %$revert_contrib) {
+        $c->{action} = 'insert';
+        $contrib->{$cid} = $c;
+    }
+
     # clone information from the tables
-    $self->_set( { category__id  => $revert_obj->get_category__id(),
-		   media_type_id => $revert_obj->get_media_type_id(),
-		   size          => $revert_obj->get_size(),
-		   file_name     => $revert_obj->get_file_name(),
-		   uri           => $revert_obj->get_uri()
+    $self->_set( { category__id         => $revert_obj->get_category__id,
+		   media_type_id        => $revert_obj->get_media_type_id,
+		   size                 => $revert_obj->get_size,
+		   file_name            => $revert_obj->get_file_name,
+                   _contributors        => $contrib,
+                   _update_contributors => 1,
+                   _queried_contrib     => 1,
+		   uri                  => $revert_obj->get_uri
     });
 
     # Copy THE FILE HERE

@@ -357,6 +357,11 @@ created. [David]
 Deleting a a contributor immediately after adding one no longer causes all of
 the contributors to be deleted on check-in. [David]
 
+=item *
+
+Contributors are now properly reverted when stories and media are
+reverted. [David]
+
 =back
 
 =head1 VERSION 1.3.2

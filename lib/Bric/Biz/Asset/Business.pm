@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-26 03:13:35 $
+$Date: 2002-08-26 06:03:47 $
 
 =head1 SYNOPSIS
 
@@ -1991,35 +1991,35 @@ NONE
 =cut
 
 sub _sync_contributors {
-	my ($self) = @_;
+    my $self = shift;
+    return $self unless $self->_get('_update_contributors');
 
-	return $self unless $self->_get('_update_contributors');
+    my $contribs = $self->_get_contributors();
+    my ($del_contribs, $vid) = $self->_get(qw(_del_contrib version_id));
 
-	my $contribs = $self->_get_contributors();
-	my $del_contribs = $self->_get('_del_contrib');
-        my $vid = $self->_get('version_id');
-	foreach my $id (keys %$contribs) {
-		my $role = $contribs->{$id}->{'role'};
-		my $place = $contribs->{$id}->{'place'};
-		if ($contribs->{$id}->{'action'} eq 'insert') {
-			$self->_insert_contributor($id, $role, $place);
-		} elsif ($contribs->{$id}->{'action'} eq 'update') {
-			$self->_update_contributor($id, $role, $place);
-		}
-		delete $contribs->{$id}->{'action'};
-	}
-	foreach (keys %$del_contribs) {
-		$self->_delete_contributor($_);
-		delete $del_contribs->{$_};
-	}
+    foreach (keys %$del_contribs) {
+        $self->_delete_contributor($_);
+        delete $del_contribs->{$_};
+    }
 
-	$self->_set( {
-		'_del_contrib'	=> $del_contribs,
-		'_update_contributors' => undef,
-		'_contributors' => $contribs
-	});
+    foreach my $id (keys %$contribs) {
+        my $role = $contribs->{$id}->{'role'};
+        my $place = $contribs->{$id}->{'place'};
+        if ($contribs->{$id}->{'action'} eq 'insert') {
+            $self->_insert_contributor($id, $role, $place);
+        } elsif ($contribs->{$id}->{'action'} eq 'update') {
+            $self->_update_contributor($id, $role, $place);
+        }
+        delete $contribs->{$id}->{'action'};
+    }
 
-	return $self;
+    $self->_set( {
+                  '_del_contrib'	=> $del_contribs,
+                  '_update_contributors' => undef,
+                  '_contributors' => $contribs
+                 });
+
+    return $self;
 }
 
 ################################################################################

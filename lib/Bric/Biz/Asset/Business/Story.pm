@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-19 19:26:30 $
+$Date: 2002-08-26 06:03:47 $
 
 =head1 SYNOPSIS
 
@@ -1400,8 +1400,8 @@ sub revert {
     die $gen->new({ msg => "May not revert a non checked out version" })
       unless $self->_get('checked_out');
 
-    my @prior_versions = __PACKAGE__->list( { id => $self->_get_id,
-                                              return_versions => 1 });
+    my @prior_versions = __PACKAGE__->list({ id => $self->_get_id,
+                                               return_versions => 1 });
 
     my $revert_obj;
     foreach (@prior_versions) {
@@ -1414,16 +1414,32 @@ sub revert {
       unless $revert_obj;
 
     # clone information from the tables
-    $self->_set( { slug => $revert_obj->get_slug });
+    $self->_set({ slug => $revert_obj->get_slug });
 
     # clone the tiles
     # get rid of current tiles
-    my $tile = $self->get_tile();
-    $tile->do_delete();
-    my $new_tile = $revert_obj->get_tile();
-    $new_tile->prepare_clone();
-    $self->_set( { _delete_tile => $tile,
-                   _tile        => $new_tile });
+    my $tile = $self->get_tile;
+    $tile->do_delete;
+    my $new_tile = $revert_obj->get_tile;
+
+    # Delete existing contributors.
+    $self->delete_contributors([keys %{ $self->_get_contributors }]);
+
+    # Set up contributors to revert to.
+    my $contrib;
+    my $revert_contrib = $revert_obj->_get_contributors;
+    while (my ($cid, $c) = each %$revert_contrib) {
+        $c->{action} = 'insert';
+        $contrib->{$cid} = $c;
+    }
+
+    $new_tile->prepare_clone;
+    $self->_set({ _delete_tile         => $tile,
+                  _contributors        => $contrib,
+                  _update_contributors => 1,
+                  _queried_contrib     => 1,
+                  _tile                => $new_tile
+                });
 
     $self->_set__dirty(1);
     return $self;
