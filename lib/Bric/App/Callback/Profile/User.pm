@@ -1,14 +1,16 @@
 package Bric::App::Callback::Profile::User;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'user');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'user';
+
 use strict;
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Person::User;
-use Bric::Config qw(LISTEN_PORT :auth_len);
+use Bric::Config qw(:auth_len LISTEN_PORT);
 use Bric::Util::Grp;
 
 my $type = CLASS_KEY;
@@ -24,6 +26,7 @@ sub save : Callback {
 
     my $param = $self->request_args;
     my $user = $self->obj;
+    my $r = $self->apache_req;
 
     if ($param->{delete}) {
         # Deactivate it.
@@ -129,7 +132,7 @@ sub save : Callback {
     $user->save;
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
     my $name = "&quot;" . $user->get_name . "&quot;";
-    my $arg = "$disp_name profile [_1] saved.";
+    my $msg = "$disp_name profile [_1] saved.";
     add_msg($self->lang->maketext($msg, $name));
 
     # Take care of group managment.

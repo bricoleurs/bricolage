@@ -1,7 +1,9 @@
 package Bric::App::Callback::Element;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'element');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'element';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:all);

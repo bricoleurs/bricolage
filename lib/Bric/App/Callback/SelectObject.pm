@@ -1,13 +1,16 @@
 package Bric::App::Callback::SelectObject;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'select_object');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'select_object';
+
 use strict;
 use Bric::App::Session qw(:state);
 
 
 sub save_selected_id : Callback {
     my $self = shift;
+    my $param = $self->request_args;
 
     my $object = $self->value;
     my $sub_widget = CLASS_KEY . '.' . $object;

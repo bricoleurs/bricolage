@@ -1,7 +1,9 @@
 package Bric::App::Callback::Alias;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'alias');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'alias';
+
 use strict;
 use Bric::App::Authz;
 use Bric::App::Session qw(:state :user);
@@ -25,6 +27,9 @@ my %dispmap = (
     'story' => get_disp_name('story'),
     'media' => get_disp_name('media'),
 );
+
+my ($get_dynamic, $work_it, $handle_asset);
+
 
 sub make_alias : Callback {
     my $self = shift;
@@ -59,7 +64,7 @@ sub pick_cats : Callback {
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
 
     # Grab the asset to be aliased.
-    my $aliased_id = get_state_data($widget, 'aliased_id');
+    my $aliased_id = get_state_data(CLASS_KEY, 'aliased_id');
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
     # Alias it.
@@ -82,7 +87,7 @@ sub pick_cats : Callback {
 
     # Save it and move it into workflow.
     $ba->save();
-    $work_it->($class_key, $site, $ba, $wf_id, $wf, $aliased, $cat);
+    $work_it->($class_key, $site, $ba, $wf_id, $wf, $aliased, $cat, $self);
 
     # Add it to the profile's session.
     set_state_name("$class_key\_prof", 'edit');
@@ -91,12 +96,12 @@ sub pick_cats : Callback {
     # Prepare to head for the main edit screen.
     set_redirect("/workflow/profile/$class_key/");
 
-    $handle_asset->('story', $param, $cat_ids, $site_id);
-    $handle_asset->('media', $param, $cat_ids, $site_id);
+    $handle_asset->('story', $param, $cat_ids, $site_id, $self, $site, $wf_id, $wf);
+    $handle_asset->('media', $param, $cat_ids, $site_id, $self, $site, $wf_id, $wf);
 }
 
 
-my $get_dynamic = sub {
+$get_dynamic = sub {
     my $class_key = get_state_data(CLASS_KEY, 'class_key');
     my $wf_id = get_state_data(CLASS_KEY, 'wf_id');
     my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
@@ -106,8 +111,8 @@ my $get_dynamic = sub {
     return ($class_key, $wf_id, $wf, $gid, $site_id, $site);
 };
 
-my $work_it = sub {
-    my ($class_key, $site, $ba, $wf_id, $wf, $aliased, $cat) = @_;
+$work_it = sub {
+    my ($class_key, $site, $ba, $wf_id, $wf, $aliased, $cat, $self) = @_;
 
     # Move it into workflow.
     $ba->set_workflow_id($wf_id);
@@ -133,8 +138,8 @@ my $work_it = sub {
                             "&quot;" . $ba->get_title() . "&quot;"));
 };
 
-my $handle_asset = sub {
-    my ($type, $param, $cat_ids, $site_id) = @_;
+$handle_asset = sub {
+    my ($type, $param, $cat_ids, $site_id, $self, $site, $wf_id, $wf) = @_;
     my $cat = '';
 
     foreach my $id (@{ mk_aref($param->{"$type\_id"}) }) {
@@ -164,7 +169,7 @@ my $handle_asset = sub {
 
         # Save it and move it into workflow.
         $ba->save();
-        $work_it->($type, $site, $ba, $wf_id, $wf, $a, $cat);
+        $work_it->($type, $site, $ba, $wf_id, $wf, $a, $cat, $self);
     }
 };
 

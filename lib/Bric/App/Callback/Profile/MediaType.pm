@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::MediaType;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'media_type');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'media_type';
+
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
@@ -84,7 +86,7 @@ sub save : Callback {
             if (my $ext = $mtids->[$i]) {
                 my @delexts = @{[$ext]};
                 unless ($mt->del_exts(@delexts)) {
-                    add_msg($self->lang->maketext("Problem deleting [_1]","'@addexts'"));
+                    add_msg($self->lang->maketext("Problem deleting [_1]","'@delexts'"));
                 }
                 my $extension = $param->{extension}[$i];
                 $used_ext += $addext_sub->($mt, $extension, $name);

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Media;
 
-use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'media_prof');
+use base qw(Bric::App::Callback);     # not subclassing Profile
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'media_prof';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
@@ -18,10 +20,13 @@ use Bric::Util::DBI;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
+use HTTP::BrowserDetect;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
 my $DESK_URL = '/workflow/profile/desk/';
+
+my ($save_contrib, $handle_delete);
 
 
 sub update : Callback {
@@ -87,7 +92,7 @@ sub update : Callback {
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
-        my $agent = detect_agent();
+        my $agent = new HTTP::BrowserDetect;
         my $filename = Bric::Util::Trans::FS->base_name($upload->filename, $agent->os_string);
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
@@ -154,7 +159,7 @@ sub save : Callback {
 
     if ($self->request_args->{"$widget|delete"}) {
         # Delete the media.
-        $handle_delete->($media);
+        $handle_delete->($media, $self);
     } else {
         # Make sure the media is activated and then save it.
         $media->activate();
@@ -353,7 +358,7 @@ sub save_stay : Callback {
 
     if ($self->request_args->{"$widget|delete"}) {
         # Delete the media.
-        $handle_delete->($media);
+        $handle_delete->($media, $self);
         # Get out of here, since we've blown it away!
         set_redirect("/");
         pop_page();
@@ -533,6 +538,7 @@ sub assoc_contrib : Callback {
 sub assoc_contrib_role : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
+    my $param = $self->request_args;
     my $media   = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
     my $contrib = get_state_data($widget, 'contrib');
@@ -562,8 +568,8 @@ sub unassoc_contrib : Callback {
 
 ################################################################################
 
-my $save_contrib = sub {
-    my ($widget, $param) = @_;
+$save_contrib = sub {
+    my ($widget, $param, $self) = @_;
     # get the contribs to delete
     my $media = get_state_data($widget, 'media');
     my $existing;
@@ -609,13 +615,13 @@ my $save_contrib = sub {
 
     my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $media->reorder_contributors(@no);
-}
+};
 
 ################################################################################
 
 sub save_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->request_args);
+    $save_contrib->(CLASS_KEY, $self->request_args, $self);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
@@ -626,7 +632,7 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->(CLASS_KEY, $self->request_args);
+    $save_contrib->(CLASS_KEY, $self->request_args, $self);
 }
 
 ###############################################################################
@@ -783,8 +789,8 @@ sub add_kw : Callback {
 
 ### end of callbacks ###
 
-my $handle_delete = sub {
-    my $media = shift;
+$handle_delete = sub {
+    my ($media, $self) = @_;
     my $desk = $media->get_current_desk;
     $desk->checkin($media);
     $desk->remove_asset($media);

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::ElementData;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'element_data');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'element_data';
+
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Login;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'login');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'login';
+
 use strict;
 use Bric::App::Auth qw(login);
 use Bric::App::Session qw(:state);

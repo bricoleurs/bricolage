@@ -1,15 +1,20 @@
 package Bric::App::Callback::Profile::Grp;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'grp');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'grp';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::Config qw(ADMIN_GRP_ID);
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
+
+my ($reset_cache, $save_sub);
 
 
 sub save : Callback {
@@ -24,7 +29,7 @@ sub save : Callback {
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
-    return &$save_sub($type, $param, $self->trigger_key, $grp, $class, $name,
+    return &$save_sub($self, $type, $param, $self->trigger_key, $grp, $class, $name,
                       '/admin/manager/grp');
 }
 
@@ -40,7 +45,7 @@ sub permissions : Callback {
     my $name = "&quot;$param->{name}&quot;";
 
     # Make the changes and save them.
-    return &$save_sub($type, $param, $self->trigger_key, $grp, $class, $name,
+    return &$save_sub($self, $type, $param, $self->trigger_key, $grp, $class, $name,
                       "/admin/profile/grp/perm/$param->{grp_id}", 1);
 }
 
@@ -55,7 +60,7 @@ sub deactivate : Callback {
         if (chk_authz($grp, EDIT)) {
             if ($grp->get_permanent) {
                 # Disallow deletion of permanent groups.
-                $msg = '[_1] cannot be deleted';
+                my $msg = '[_1] cannot be deleted';
                 add_msg($self->lang->maketext($msg, $disp_name));
             } else {
                 # Deactivate it.
@@ -80,8 +85,8 @@ sub deactivate : Callback {
 
 ###
 
-my $reset_cache = sub {
-    my $class = shift;
+$reset_cache = sub {
+    my ($class, $self) = @_;
     if ($class eq 'Bric::Util::Grp::User') {
         # Note that a user has been updated to force all users logged
         # into the system to reload their user objects from the
@@ -104,8 +109,8 @@ my $reset_cache = sub {
     }
 };
 
-my $save_sub = sub {
-    my ($widget, $param, $field, $grp, $class, $name, $redir, $no_log) = @_;
+$save_sub = sub {
+    my ($self, $widget, $param, $field, $grp, $class, $name, $redir, $no_log) = @_;
     if ($param->{delete} && !$no_log) {
         if ($grp->get_permanent) {
             # Dissallow deletion of permanent groups.
@@ -116,7 +121,7 @@ my $save_sub = sub {
             $grp->save;
 	    log_event('grp_deact', $grp);
             # Reset the cache.
-            $reset_cache->($class);
+            $reset_cache->($class, $self);
             add_msg($self->lang->maketext("$disp_name profile [_1] deleted.", $name));
         }
         # Set redirection back to the manager.
@@ -158,7 +163,7 @@ my $save_sub = sub {
 	# Redirect back to the manager.
 	set_redirect($redir);
         # Reset the cache.
-        $reset_cache->($class);
+        $reset_cache->($class, $self);
 	return;
     } else {
 	# Save the group.

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Site;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'site');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'site';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);

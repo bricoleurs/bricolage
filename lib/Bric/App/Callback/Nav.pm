@@ -1,9 +1,13 @@
 package Bric::App::Callback::Nav;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'nav');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'nav';
+
 use strict;
 use Bric::App::Session qw(:state);
+
+my ($do_callback);
 
 
 sub workflow : Callback {
@@ -34,7 +38,7 @@ sub distSystem : Callback {
 
 ###
 
-my $do_callback = sub {
+$do_callback = sub {
     set_state_data($_[0]->class_key, $_[0]->cb_key, $_[0]->value);
 };
 

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Perm;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'perm');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'perm';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);

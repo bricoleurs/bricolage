@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Contrib;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'contrib');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'contrib';
+
 use strict;
 use Apache::Util qw(escape_uri);
 use Bric::App::Callback::Util::Contact qw(update_contacts);
@@ -112,7 +114,7 @@ sub save : Callback {
             # Change the mode for the next screen.
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 1 } );
-            set_redirect('/admin/profile/contrib/edit/' . $obj->get_id . '/'
+            set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
             log_event("${type}_ext", $contrib);
             return $contrib;
@@ -120,7 +122,7 @@ sub save : Callback {
         } elsif ($param->{mode} eq 'preEdit') {
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 0 } );
-            set_redirect('/admin/profile/contrib/edit/' . $obj->get_id . '/'
+            set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
                            . escape_uri($param->{subsys}) );
             return $contrib;
         }

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Alert;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'alert');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'alert';
+
 use strict;
 use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:all);
@@ -22,6 +24,7 @@ my %num = (
     9 => 'Nine',
     10 => 'Ten',
 );
+my $msg_redirect;
 
 sub ack : Callback {
     my $self = shift;
@@ -36,7 +39,7 @@ sub ack_all : Callback {
 }
 
 
-my $msg_redirect = sub {
+$msg_redirect = sub {
     my $ids = shift;
     $class->ack_by_id(@$ids);
     my $c = @$ids;

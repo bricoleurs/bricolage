@@ -1,7 +1,9 @@
 package Bric::App::Callback::SelectTime;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'select_time');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'select_time';
+
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
@@ -11,6 +13,8 @@ my $defs = {
     hour => '00',
     day  => '01',
 };
+
+my ($is_clear_state);
 
 
 sub refresh : Callback(priority => 0) {
@@ -84,7 +88,7 @@ sub clear : Callback {
 
 ###
 
-my $is_clear_state = sub {
+$is_clear_state = sub {
     my ($param) = @_;
     my $trigger = $param->{CLASS_KEY . '|clear_cb'} || return;
     return $param->{$trigger};

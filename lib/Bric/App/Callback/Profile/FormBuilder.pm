@@ -1,8 +1,11 @@
 package Bric::App::Callback::Profile::FormBuilder;
 
-use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'formBuilder');
+use base qw(Bric::App::Callback);   # not subclassing Profile
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'formBuilder';
+
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:all);
@@ -33,6 +36,12 @@ my %conf = (
     },
 );
 
+my ($base_handler, $do_contrib_type, $do_element, $clean_param,
+    $delete_ocs, $delete_sites, $check_save_element, $get_obj,
+    $set_key_name, $update_element_attrs, $get_data_href,
+    $delete_element_attrs, $set_primary_ocs, $add_new_attrs,
+    $save_element_etc);
+
 
 sub save : Callback {
     return unless $_[0]->value;      # already handled
@@ -61,7 +70,7 @@ sub add_site_id : Callback {
 
 ###
 
-my $base_handler = sub {
+$base_handler = sub {
     my $self = shift;
     my $param = $self->request_args;
 
@@ -73,7 +82,7 @@ my $base_handler = sub {
     my $obj = defined $id ? $class->lookup({ id => $id }) : $class->new;
 
     # Check the permissions.
-    unless (chk_authz($obj, $id ? EDIT : CREATE, 1) {
+    unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg($self->lang->maketext("Changes not saved: permission denied."));
@@ -97,13 +106,14 @@ my $base_handler = sub {
 
             NO_STRICT: {
                 no strict 'refs';
+                # $do_contrib_type or $do_element
                 $param->{'obj'} = ${"do_$key"}->($self, $obj, $key, $class);
             }
         }
     }
 };
 
-my $do_contrib_type = sub {
+$do_contrib_type = sub {
     my ($self, $obj, $key, $class) = @_;
     my $param = $self->request_args;
     my $name = sprintf('&quot;%s&quot;', $param->{'name'});
@@ -195,7 +205,7 @@ my $do_contrib_type = sub {
     $param->{"$key\_id"} ||= $obj->get_id;
 };
 
-my $do_element = sub {
+$do_element = sub {
     my ($self, $obj, $key, $class) = @_;
     my $param = $self->request_args;
     my $name = sprintf('&quot;%s&quot;', $param->{'name'});
@@ -223,7 +233,7 @@ my $do_element = sub {
 
     # Roll in the changes.
 
-    $obj = $get_obj->($class, $param, $key);
+    $obj = $get_obj->($class, $param, $key, $obj);
 
     $set_key_name->($obj, $param) unless $no_save;
     $obj->set_burner($param->{burner}) if defined $param->{burner};
@@ -236,8 +246,8 @@ my $do_element = sub {
 
     $update_element_attrs->(\%del_attrs, $param, $data_href);
 
-    $add_new_attrs->($self, $obj, $key, $data_href);
-    $delete_element_attrs->($obj, $param, $key, $cb_key, $data_href);
+    $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
+    $delete_element_attrs->($obj, $param, $key, $cb_key, \%del_attrs, $data_href);
 
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
@@ -270,13 +280,13 @@ my $do_element = sub {
         }
     }
 
-    $save_element_etc->($self, $obj, $key, $no_save);
+    $save_element_etc->($self, $obj, $key, $no_save, $disp_name, $name);
 
     return $obj;
 };
 
 
-my $clean_param = sub {
+$clean_param = sub {
     my $param = shift;
 
     # Clean any select/radio values.
@@ -294,7 +304,7 @@ my $clean_param = sub {
     return $param;
 };
 
-my $delete_ocs = sub {
+$delete_ocs = sub {
     my ($obj, $param) = @_;
 
     # Delete output channels.
@@ -304,7 +314,7 @@ my $delete_ocs = sub {
     }
 };
 
-my $delete_sites = sub {
+$delete_sites = sub {
     my ($obj, $param, $self) = @_;
 
     # Delete sites.
@@ -318,7 +328,7 @@ my $delete_sites = sub {
     }
 };
 
-my $check_save_element = sub {
+$check_save_element = sub {
     my ($cs, $param, $key) = @_;
 
     my $no_save = 0;
@@ -331,15 +341,17 @@ my $check_save_element = sub {
     return $no_save;
 };
 
-my $get_obj = sub {
-    my ($class, $param, $key) = @_;
+$get_obj = sub {
+    my ($class, $param, $key, $obj) = @_;
 
     # Create a new object if we need to pass in an Element Type ID
     $obj = $class->new({ type__id => $param->{"$key\_type_id"} })
       if exists $param->{"$key\_type_id"} && !defined $param->{"$key\_id"};
+
+    return $obj;
 };
 
-my $set_key_name = sub {
+$set_key_name = sub {
     my ($obj, $param) = @_;
 
     # Normalize the key name
@@ -349,7 +361,7 @@ my $set_key_name = sub {
     $obj->set_key_name($kn);
 };
 
-my $update_element_attrs = sub {
+$update_element_attrs = sub {
     my ($del_attrs, $param, $data_href) = @_;
 
     # Update existing attributes.
@@ -368,7 +380,7 @@ my $update_element_attrs = sub {
     }
 };
 
-my $get_data_href = sub {
+$get_data_href = sub {
     my ($param, $key) = @_;
 
     # Get existing attrs from the Parts::Data class rather than from
@@ -378,15 +390,15 @@ my $get_data_href = sub {
       { element__id => $param->{"$key\_id"} });
     my $data_href = { map { lc ($_->get_key_name) => $_ } @$all_data };
     return $data_href;
-}
+};
 
-my $delete_element_attrs = sub {
-    my ($obj, $param, $key, $cb_key, $data_href) = @_;
+$delete_element_attrs = sub {
+    my ($obj, $param, $key, $cb_key, $del_attrs, $data_href) = @_;
 
     # Delete any attributes that are no longer needed.
     if ($param->{delete_attr} && ($cb_key eq 'save' || $cb_key eq 'save_n_stay')) {
         my $del = [];
-        foreach my $attr (keys %del_attrs) {
+        foreach my $attr (keys %$del_attrs) {
             my $atd = $data_href->{lc $attr};
             push @$del, $atd;
             log_event("$key\_attr_del", $obj, { Name => $attr });
@@ -396,7 +408,7 @@ my $delete_element_attrs = sub {
     }
 };
 
-my $set_primary_ocs = sub {
+$set_primary_ocs = sub {
     my ($self, $obj, $no_save) = @_;    # $no_save is a scalar ref
     my $param = $self->request_args;
     my $cb_key = $self->cb_key;
@@ -446,8 +458,8 @@ my $set_primary_ocs = sub {
     return \%enabled;
 };
 
-my $add_new_attrs = sub {
-    my ($self, $obj, $key, $data_href) = @_;
+$add_new_attrs = sub {
+    my ($self, $obj, $key, $data_href, $no_save) = @_;   # $no_save scalar_ref
     my $param = $self->request_args;
 
     # Add in any new attributes.
@@ -459,7 +471,7 @@ my $add_new_attrs = sub {
                      . 'Please try another name.';
             my $arg = sprintf('&quot;%s&quot;', $param->{'fb_name'});
             add_msg($self->lang->maketext($msg, $arg));
-            $no_save = 1;
+            $$no_save = 1;
         } else {
             my $sqltype = $param->{'fb_type'} eq 'date' ? 'date'
               : $param->{'fb_type'} eq 'textarea'
@@ -500,8 +512,8 @@ my $add_new_attrs = sub {
     }
 };
 
-my $save_element_etc = sub {
-    my ($self, $obj, $key, $no_save) = @_;
+$save_element_etc = sub {
+    my ($self, $obj, $key, $no_save, $disp_name, $name) = @_;
     my $param = $self->request_args;
     my $cb_key = $self->cb_key;
 

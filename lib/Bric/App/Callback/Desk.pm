@@ -3,7 +3,9 @@ package Bric::App::Callback::Desk;
 use base qw(Bric::App::Callback);
 # Note special name 'desk_asset' so it doesn't conflict
 # with 'desk' in Profile/Desk.pm
-__PACKAGE__->register_subclass(class_key => 'desk_asset');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'desk_asset';
+
 use strict;
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);

@@ -1,7 +1,9 @@
 package Bric::App::Callback::AssetMeta;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'asset_meta');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'asset_meta';
+
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);

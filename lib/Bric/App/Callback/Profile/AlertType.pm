@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::AlertType;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'alert_type');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'alert_type';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
@@ -11,6 +13,8 @@ use Bric::App::Util qw(:all);
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
 my $class = get_package_name(CLASS_KEY);
+
+my ($save);
 
 
 sub save : Callback {
@@ -31,7 +35,7 @@ sub save : Callback {
 	set_redirect('/admin/manager/alert_type');
     } else {
 	# Just save it.
-	my $ret = &$save($param, $at, $name);
+	my $ret = &$save($param, $at, $name, $self);
 	return $ret if $ret;
         add_msg($self->lang->maketext("[_1] profile [_2] saved.", $disp_name, $name));
 	set_redirect('/admin/manager/alert_type');
@@ -44,10 +48,11 @@ sub recip : Callback {
     return unless $self->has_perms;
 
     my $param = $self->request_args;
+    my $at = $self->obj;
 
     # Save it and let them edit recipients.
     my $name = $param->{name} ? "&quot;$param->{name}&quot;" : '';
-    my $ret = &$save($param, $at, $name);
+    my $ret = &$save($param, $at, $name, $self);
     return $ret if $ret;
     set_state_name('alert_type', $self->value);
     set_redirect("/admin/profile/$type/recip/$param->{alert_type_id}");
@@ -59,6 +64,7 @@ sub edit_recip : Callback {
     return unless $self->has_perms;
 
     my $param = $self->request_args;
+    my $at = $self->obj;
 
     $at->add_users( $param->{ctype}, @{ mk_aref($param->{add_users}) } );
     $at->del_users( $param->{ctype}, @{ mk_aref($param->{del_users}) } );
@@ -74,6 +80,7 @@ sub edit_recip : Callback {
 
 sub delete : Callback {
     my $self = shift;
+    my $at = $self->obj;
 
     my $msg = 'Permission to delete [_1] denied.';
     foreach my $id (@{ mk_aref($self->value) }) {
@@ -92,8 +99,8 @@ sub delete : Callback {
 
 ###
 
-my $save = sub {
-    my ($param, $at, $name) = @_;
+$save = sub {
+    my ($param, $at, $name, $self) = @_;
     # Roll in the changes.
     $at->set_name($param->{name});
     $at->set_owner_id($param->{owner_id});

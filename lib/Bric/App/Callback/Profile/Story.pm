@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Story;
 
-use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'story_prof');
+use base qw(Bric::App::Callback);   # not subclassing Profile
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'story_prof';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
@@ -14,6 +16,7 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Config qw(ISO_8601_FORMAT);
 use Bric::Util::DBI;
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
@@ -22,13 +25,15 @@ my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL = '/workflow/profile/desk/';
 
+my ($save_contrib, $unique_msgs, $save_data, $handle_delete);
+
 
 sub view : Callback {
     my $self = shift;
     my $widget = CLASS_KEY;
     my $story = get_state_data($widget, 'story');
     # Abort this save if there were any errors.
-    return unless &$save_data($self->request_args, $widget, $story);
+    return unless &$save_data($self, $self->request_args, $widget, $story);
     my $version = $self->request_args->{"$widget|version"};
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/$id/?version=$version");
@@ -57,7 +62,7 @@ sub save : Callback {
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        $handle_delete->($story);
+        $handle_delete->($story, $self);
     } else {
         # Save the story.
         $story->save;
@@ -94,7 +99,7 @@ sub checkin : Callback {
     my $story = get_state_data($widget, 'story');
     my $param = $self->request_args;
     # Abort this save if there were any errors.
-    return unless &$save_data($param, $widget, $story);
+    return unless &$save_data($self, $param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -208,7 +213,7 @@ sub checkin : Callback {
             'ah' => $self->ah,
             'apache_req' => $self->apache_req,
             'request_args' => {
-                'story_pub' => { $media->get_id => $media },
+                'story_pub' => { $story->get_id => $story },
             },
         );
         $pub->publish();
@@ -229,7 +234,7 @@ sub save_stay : Callback {
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        $handle_delete->($story);
+        $handle_delete->($story, $self);
         # Get out of here, since we've blow it away!
         set_redirect("/");
         clear_state($widget);
@@ -354,7 +359,7 @@ sub create : Callback {
     $start_desk->save;
 
     # Save everything else unless there were data errors
-    return unless &$save_data($param, $widget, $story);
+    return unless &$save_data($self, $param, $widget, $story);
     $story->save;
 
     # Log that a new story has been created and generally handled.
@@ -383,7 +388,7 @@ sub notes : Callback {
     my $widget = CLASS_KEY;
     my $param = $self->request_args;
     # Return if there were data errors.
-    return unless &$save_data($param, $widget);
+    return unless &$save_data($self, $param, $widget);
 
     my $story = get_state_data($widget, 'story');
     my $id    = $story->get_id();
@@ -411,7 +416,7 @@ sub delete_cat : Callback {
 }
 
 sub update_primary : Callback {
-    my $self = shift
+    my $self = shift;
     my $widget = CLASS_KEY;
     my $story   = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
@@ -472,7 +477,7 @@ sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($self->request_args, CLASS_KEY);
+    return unless &$save_data($self, $self->request_args, CLASS_KEY);
 
     my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
@@ -490,7 +495,7 @@ sub view_trail : Callback {
 sub update : Callback {
     my $self = shift;
 
-    &$save_data($self->request_args, CLASS_KEY);
+    &$save_data($self, $self->request_args, CLASS_KEY);
 }
 
 sub keywords : Callback {
@@ -498,7 +503,7 @@ sub keywords : Callback {
 
 
     # Return if there were data errors
-    return unless &$save_data($self->request_args, CLASS_KEY);
+    return unless &$save_data($self, $self->request_args, CLASS_KEY);
 
     my $story = get_state_data(CLASS_KEY, 'story');
     my $id = $story->get_id();
@@ -510,7 +515,7 @@ sub contributors : Callback {
 
 
     # Return if there were data errors
-    return unless &$save_data($self->request_args, CLASS_KEY);
+    return unless &$save_data($self, $self->request_args, CLASS_KEY);
     set_redirect("/workflow/profile/story/contributors.html");
 }
 
@@ -568,7 +573,7 @@ sub unassoc_contrib : Callback {
 sub save_contrib : Callback {
     my $self = shift;
 
-    $save_contrib->(CLASS_KEY, $self->request_args);
+    $save_contrib->(CLASS_KEY, $self->request_args, $self);
     # Set a redirect for the previous page.
     set_redirect(last_page());
     # Pop this page off the stack.
@@ -578,7 +583,7 @@ sub save_contrib : Callback {
 sub save_and_stay_contrib : Callback {
     my $self = shift;
 
-    $save_contrib->(CLASS_KEY, $self->request_args);
+    $save_contrib->(CLASS_KEY, $self->request_args, $self);
 }
 
 sub leave_contrib : Callback {
@@ -721,8 +726,8 @@ sub clone : Callback {
 
 ###
 
-my $save_contrib = sub {
-    my ($widget, $param) = @_;
+$save_contrib = sub {
+    my ($widget, $param, $self) = @_;
 
     # get the contribs to delete
     my $story = get_state_data($widget, 'story');
@@ -767,7 +772,7 @@ my $save_contrib = sub {
 };
 
 # removes repeated error messages
-my $unique_msgs = sub {
+$unique_msgs = sub {
     my (%seen, @msgs);
     while (my $msg = next_msg()) {
         push @msgs, $msg unless $seen{$msg}++;
@@ -775,11 +780,11 @@ my $unique_msgs = sub {
     add_msg($_) for @msgs;
 };
 
-my $save_data = sub {
-    my ($param, $widget, $story) = @_;
+$save_data = sub {
+    my ($self, $param, $widget, $story) = @_;
     my $data_errors = 0;
 
-    my $story = get_state_data($widget, 'story');
+    $story ||= get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
     # Make sure the story is active.
@@ -806,7 +811,7 @@ my $save_data = sub {
                 } else {
                     my $langmsg = "The slug, category and cover date you selected "
                       . "would have caused this story to have a URI "
-                      . "conflicting with that of story [_1]."
+                      . "conflicting with that of story [_1].";
                     add_msg($self->lang->maketext($langmsg, "'$msg'"));
                 }
                 $data_errors = 1;
@@ -891,8 +896,8 @@ my $save_data = sub {
     return not $data_errors;
 };
 
-my $handle_delete = sub {
-    my $story = shift;
+$handle_delete = sub {
+    my ($story, $self) = @_;
     my $desk = $story->get_current_desk();
     $desk->checkin($story);
     $desk->remove_asset($story);

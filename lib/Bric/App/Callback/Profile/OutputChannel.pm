@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::OutputChannel;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'output_channel');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'output_channel';
+
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
@@ -10,6 +12,8 @@ use Bric::Biz::OutputChannel;
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
+
+my ($do_callback);
 
 
 sub save : Callback {
@@ -25,7 +29,7 @@ sub include_oc_id : Callback {
 
 ###
 
-my $do_callback = sub {
+$do_callback = sub {
     my $self = shift;
     my $param = $self->request_args;
     my $oc = $self->obj;

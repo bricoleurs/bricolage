@@ -1,14 +1,16 @@
 package Bric::App::Callback::Profile::Action;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'action');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'action';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
 my $disp_name = get_disp_name(CLASS_KEY);
-my $class = get_package_name(CLASS_KEY)
+my $class = get_package_name(CLASS_KEY);
 my $dest_class = get_package_name('dest');
 
 
@@ -58,6 +60,7 @@ sub save : Callback {
 
 sub delete : Callback {
     my $self = shift;
+    my $param = $self->request_args;
 
     my $dest = $dest_class->lookup({ 'id' => $param->{'dest_id'} });
     chk_authz($dest, EDIT);

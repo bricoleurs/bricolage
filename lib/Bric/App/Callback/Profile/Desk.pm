@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Desk;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'desk');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'desk';
+
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

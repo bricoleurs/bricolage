@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Template;
 
-use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'tmpl_prof');
+use base qw(Bric::App::Callback);    # not subclassing Profile
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'tmpl_prof';
+
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
@@ -14,10 +16,12 @@ use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Burner;
 use Bric::Util::Fault qw(rethrow_exception);
 
-
 my $DESK_URL = '/workflow/profile/desk/';
 my $SEARCH_URL = '/workflow/manager/templates/';
 my $ACTIVE_URL = '/workflow/active/templates/';
+
+my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
+    $delete_fa, $create_fa);
 
 
 sub save : Callback {
@@ -29,10 +33,10 @@ sub save : Callback {
 
     if ($self->request_args->{"$widget|delete"}) {
         # Delete the fa.
-        $delete_fa->($fa);
+        $delete_fa->($self, $fa);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget, $fa);
+        return unless $check_syntax->($self, $widget, $fa);
         # Save it.
         $fa->save;
         log_event('formatting_save', $fa);
@@ -68,8 +72,8 @@ sub checkin : Callback {
 
     my $fa = get_state_data($widget, 'fa');
     $save_meta->($self->request_args, $widget, $fa);
-    return unless $check_syntax->($widget, $fa);
-    $checkin->($widget, $self->request_args, $fa);
+    return unless $check_syntax->($self, $widget, $fa);
+    $checkin->($self, $widget, $self->request_args, $fa);
 }
 
 sub save_and_stay : Callback {
@@ -81,14 +85,14 @@ sub save_and_stay : Callback {
 
     if ($self->request_args->{"$widget|delete"}) {
         # Delete the template.
-        $delete_fa->($fa);
+        $delete_fa->($self, $fa);
         # Get out of here, since we've blow it away!
         set_redirect("/");
         pop_page();
         clear_state($widget);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget, $fa);
+        return unless $check_syntax->($self, $widget, $fa);
         # Save the template.
         $fa->save;
         log_event('formatting_save', $fa);
@@ -166,13 +170,13 @@ sub create_next : Callback {
     my $ttype = $self->request_args->{tplate_type};
 
     # Just create it if CATEGORY template was selected.
-    $create_fa->(CLASS_KEY, $self->request_args)
+    $create_fa->($self, CLASS_KEY, $self->request_args)
       if $ttype == Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
 }
 
 sub create : Callback {
     my $self = shift;
-    $create_fa->(CLASS_KEY, $self->request_args);
+    $create_fa->($self, CLASS_KEY, $self->request_args);
 }
 
 sub return : Callback {
@@ -286,7 +290,7 @@ sub checkout : Callback {
 
 ###
 
-my $save_meta = sub {
+$save_meta = sub {
     my ($param, $widget, $fa) = @_;
     $fa ||= get_state_data($widget, 'fa');
     chk_authz($fa, EDIT);
@@ -298,7 +302,7 @@ my $save_meta = sub {
     return set_state_data($widget, 'fa', $fa);
 };
 
-my $save_code = sub {
+$save_code = sub {
     my ($param, $widget, $fa) = @_;
     $fa ||= get_state_data($widget, 'fa');
     chk_authz($fa, EDIT);
@@ -306,14 +310,14 @@ my $save_code = sub {
     return set_state_data($widget, 'fa', $fa);
 };
 
-my $save_object = sub {
+$save_object = sub{
     my ($widget, $param) = @_;
     my $fa = get_state_data($widget, 'fa');
     $save_meta->($param, $widget, $fa);
 };
 
-my $checkin = sub {
-    my ($widget, $param, $fa) = @_;
+$checkin = sub {
+    my ($self, $widget, $param, $fa) = @_;
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($param, $widget, $fa);
 
@@ -419,8 +423,8 @@ my $checkin = sub {
     return $fa;
 };
 
-my $check_syntax = sub {
-    my ($widget, $fa) = @_;
+$check_syntax = sub {
+    my ($self, $widget, $fa) = @_;
     my $burner = Bric::Util::Burner->new;
     my $err;
     # Return success if the syntax checks out.
@@ -430,8 +434,8 @@ my $check_syntax = sub {
     return 0
 };
 
-my $delete_fa = sub {
-    my $fa = shift;
+$delete_fa = sub {
+    my ($self, $fa) = @_;
     my $desk = $fa->get_current_desk;
     $desk->checkin($fa);
     $desk->remove_asset($fa);
@@ -447,8 +451,8 @@ my $delete_fa = sub {
     add_msg($self->lang->maketext("Template [_1] deleted.", $arg));
 };
 
-my $create_fa = sub {
-    my ($widget, $param) = @_;
+$create_fa = sub {
+    my ($self, $widget, $param) = @_;
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
     my $cat_id = $param->{$widget.'|cat_id'};

@@ -1,11 +1,15 @@
 package Bric::App::Callback::Search;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'search');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'search';
+
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH);
+
+my ($build_fields, $build_date_fields, $init_state);
 
 
 sub substr : Callback {
@@ -172,7 +176,7 @@ sub unset_advanced : Callback {
 
 ###
 
-my $build_fields = sub {
+$build_fields = sub {
     my ($widget, $param, $field, $crit, $add) = @_;
 
     foreach my $f (@$add) {
@@ -189,7 +193,7 @@ my $build_fields = sub {
     }
 };
 
-my $build_date_fields = sub {
+$build_date_fields = sub {
     my ($widget, $param, $field, $crit, $add) = @_;
 
     foreach my $f (@$add) {
@@ -212,7 +216,7 @@ my $build_date_fields = sub {
     }
 };
 
-my $init_state {
+$init_state = sub {
     my $r = $_[0]->apache_req;
 
     # Set the uri for use in expiring the search criteria.
@@ -220,6 +224,6 @@ my $init_state {
 
     # reset search paging offset to start at the first record
     set_state_data('listManager', 'offset', 0);
-}
+};
 
 1;

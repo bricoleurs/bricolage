@@ -1,12 +1,15 @@
 package Bric::App::Callback::Publish;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'publish');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'publish';
+
 use strict;
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
+use Bric::Config qw(:prev);
 use Bric::Util::Burner;
 
 

@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile::Pref;
 
-use base qw(Bric::App::Callback::Package);
-__PACKAGE__->register_subclass(class_key => 'pref');
+use base qw(Bric::App::Callback::Profile);
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'pref';
+
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);

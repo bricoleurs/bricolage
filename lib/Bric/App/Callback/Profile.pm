@@ -1,7 +1,9 @@
 package Bric::App::Callback::Profile;
 
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'profile');
+__PACKAGE__->register_subclass;
+use constant CLASS_KEY => 'profile';
+
 use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
 use Bric::App::Authz qw(:all);
@@ -31,6 +33,8 @@ use Bric::App::Callback::Profile::User;
 use Bric::App::Callback::Profile::Workflow;
 
 my $excl = {'desk' => 1, 'action' => 1, 'server' => 1};
+
+my ($get_class);
 
 
 # each subclass of Profile inherits this constructor,
@@ -75,7 +79,7 @@ sub new {
 
 ###
 
-my $get_class = sub {
+$get_class = sub {
     my ($param, $type) = @_;
 
     my $key = $type;
