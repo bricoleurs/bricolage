@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-03 21:57:40 $
+$Date: 2003-01-10 21:58:28 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::App::Event qw(log_event);
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Trans::FS;
 use Bric::Util::Trans::FTP;
 use Bric::Config qw(:dist);
@@ -70,7 +70,7 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $ap = 'Bric::Util::Fault::Exception::AP';
 
 ################################################################################
 
@@ -151,6 +151,14 @@ B<Notes:> NONE.
 sub do_it {
     my ($self, $res, $st) = @_;
     my $class = $st->_get_mover_class;
+
+    unless (ENABLE_SFTP_MOVER or $class !~ /::SFTP$/) {
+        die $ap->new({
+            msg => "Output channel is associated with SFTP " .
+                   "but SFTP Mover is disabled."
+        });
+    }
+
     $class->put_res($res, $st);
     # Log the move.
     my $move_meth = $st->get_move_method;
@@ -163,7 +171,7 @@ sub do_it {
 
 =item $act->undo_it($job, $resources, $server_type)
 
-Undes $action via the method specified for the Bric::Dist::ServerType of which
+Undoes $action via the method specified for the Bric::Dist::ServerType of which
 this action is a part.
 
 B<Throws:>
