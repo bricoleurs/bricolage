@@ -213,7 +213,6 @@ L<Bric::Templates|Bric::Templates> and
 L<Bric::AdvTemplates|Bric::AdvTemplates> documents to reflect these
 additions. [David]
 
-
 =item *
 
 Added C<source__id> to list of criteria by which stories can be searched via
@@ -303,6 +302,14 @@ Added search by Category URI to Find Stories. Although one could use the
 search by URI feature for this before, it didn't allow for search by secondary
 categories. Now stories can be searhed for in both primary and secondary
 categories. [David]
+
+=item *
+
+Added the methods C<page_file()> and C<page_uri()> to
+Bric::Util::Burner::Mason. When passed a page number argument, these methods
+return the strings representing the file names or URIs of the given page in
+the curently-burning story and, in the case of the C<page_uri()> method,
+appropriate to the currently-burning Output Channel. [David]
 
 =back
 

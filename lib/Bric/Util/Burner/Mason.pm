@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-06 16:57:48 $
+$Date: 2002-12-09 00:11:28 $
 
 =head1 SYNOPSIS
 
@@ -557,6 +557,81 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+##############################################################################
+
+=item my $page_file = $b->page_file($number)
+
+  % my $page = $burner->page_file($number);
+
+Returns the file name for a page in a story as the story is being burned. The
+page number must be greater than 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Page number not greater than zero.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method does not check to see if the page number passed in is
+actually a page in the story. Caveat templator.
+
+=cut
+
+sub page_file {
+    my ($self, $number) = @_;
+    return unless defined $number;
+    die $gen->new({ msg => "Page number '$number' not greater than zero" })
+      unless $number > 0;
+    my ($page, $story, $oc) = $self->_get(qw(page story oc));
+    $number = $number == 1 ? '' : $number - 1;
+    my $fn = $oc->get_filename($story);
+    my $ext = $oc->get_file_ext;
+    return "$fn$number.$ext";
+}
+
+##############################################################################
+
+=item my $page_file = $b->page_uri($number)
+
+  % my $page = $burner->page_uri($number);
+
+Returns the URI for a page in a story as the story is being burned. The
+page number must be greater than 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Page number not greater than zero.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method does not check to see if the page number passed in is
+actually a page in the story. Caveat templator.
+
+=cut
+
+sub page_uri {
+    my $self = shift;
+    my $filename = $self->page_file(@_) or return;
+    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
+    # The URI minus the page name.
+    my $base_uri = $story->get_uri($cat, $oc);
+    # The complete URI
+    return $fs->cat_uri($base_uri, $filename);
+}
+
 
 ##############################################################################
 
