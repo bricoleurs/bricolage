@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-08-09 18:41:38 $
+$Date: 2002-08-09 18:43:35 $
 
 =head1 DESCRIPTION
 
@@ -123,7 +123,7 @@ sub extract_module_list {
   }
   # read in modules
   while (<ADM>) {
-    if (/^=item\s+(\S+)(?:\s+(\S+))?(?:\s+(\(optional\)))/) {
+    if (/^=item\s+(\S+)(?:\s+([\d\.]+))?(?:\s+(\(optional\)))?/) {
       push @MOD, { name             => $1,
 		   req_version      => $2,
                    optional         => defined $3 ? 1 : 0,
