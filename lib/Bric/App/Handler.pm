@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 20:45:35 $
+$Date: 2003-09-15 21:06:22 $
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,6 @@ $Date: 2003-09-15 20:45:35 $
   use lib '/usr/local/bricolage/lib';
   </Perl>
   PerlModule Bric::App::Handler
-  PerlFreshRestart    On
   DocumentRoot "/usr/local/bricolage/comp"
   <Directory "/usr/local/bricolage/comp">
       Options Indexes FollowSymLinks MultiViews
