@@ -1,10 +1,8 @@
-<help page="Events Trail">
+<help page="Ereignisspur">
 
-<p>The &#8216;Trail&#8217; for an asset shows which desks it has been
- moved to in the past.  This is similar to a &#8216;log&#8217; for an
- asset, except that only movements to different desks are shown.</p>
+<p>Die &#8216;Spur&#8217; eines Gutes zeigt, in welche B&uuml;ros es bisher verschoben wurde. Dies &auml;hnelt dem &#8216;Protokoll&#8217; des Gutes mit der Ausnahme, da&szlig; nur die verschiebungen zu verschiedenen B&uuml;ros gezeigt werden.</p>
 
-<p>For more details see the
- <a href="/help/workflow/events/">help on event logs</a>.</p>
+<p>Weitere Details finden Sie in der
+ <a href="/help/workflow/events/">Hilfe zu Ereignisprotokollen</a>.</p>
 
 </help>
