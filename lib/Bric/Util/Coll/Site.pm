@@ -8,15 +8,15 @@ Bric::Biz::Site objects.
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 17:48:33 $
+$Date: 2003-03-11 22:50:34 $
 
 =head1 SYNOPSIS
 
@@ -196,7 +196,7 @@ sub save {
                    site__id    = ?
         },undef, DEBUG);
         execute($sel, $element_id, $site->get_id);
-        my $state = $sel->fetchrow_arrayref;
+        my $state = fetch($sel);
         if ($state) {
             my $upd = prepare_c( qq {
                 UPDATE element__site
