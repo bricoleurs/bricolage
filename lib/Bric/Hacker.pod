@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:58 $
+$Date: 2003-03-24 02:41:15 $
 
 =head1 DESCRIPTION
 
@@ -535,9 +535,28 @@ option with C<export> so that the version numbers are all properly populated.
 
 This will create a distribution tarball in the bricolage directory. Copy this
 tarbal somewhere, and do a full test with it, to make sure that Bricolage does
-indeed build and properly install itself. If you have to go back and make any
-changes, be sure to update the tag of any files you change and commit to
-CVS. Once everything appears to be working properly, release!
+indeed build and properly install itself.
+
+  cp bricolage-1.x.x.tar.gz /tmp/src
+  cd /tmp/src
+  tar zxvf bricolage-1.x.x.tar.gz
+  cd bricolage-1.x.x
+  perl Makefile.PL
+  make
+  # Shut down PostgreSQL.
+  make test
+  # Start PostgreSQL.
+  sudo make install
+  make devtest
+  sudo make uninstall
+
+Be sure to run C<make devtest> after everything is installed to make sure that
+it is all functioning correctly. Users won't be running these tests, as they
+muck up the database. But that's okay for our validation of the release
+tarball. Use C<make uninstall> to clean up the mess. If you have to go back
+and make any changes, be sure to update the tag of any files you change and
+commit to CVS, then do the whole thing over again. Once everything appears to
+be working properly, release!
 
 =head1 AUTHOR
 

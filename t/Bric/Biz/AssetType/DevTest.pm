@@ -22,6 +22,29 @@ sub table { 'element' };
 ##############################################################################
 # Test constructors.
 ##############################################################################
+# Test new().
+sub test_const : Test(8) {
+    my $self = shift;
+
+    my %elem = ( name => 'Test Element',
+                 description => 'Testing Element API',
+                 burner => Bric::Biz::AssetType->BURNER_MASON,
+                 type__id => 1,
+                 reference => 0);
+
+    ok( my $elem = Bric::Biz::AssetType->new, "Create empty element" );
+    isa_ok($elem, 'Bric::Biz::AssetType');
+    isa_ok($elem, 'Bric');
+
+    ok( $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
+    # Check a few of the attributes.
+    is( $elem->get_name, $elem{name}, "Check name" );
+    is( $elem->get_description, $elem{description}, "Check description" );
+    is( $elem->get_burner, $elem{burner}, "Check burner" );
+    is( $elem->get_type__id, $elem{type__id}, "Check type__id" );
+}
+
+##############################################################################
 # Test the lookup() method.
 sub test_lookup : Test(2) {
     my $self = shift;

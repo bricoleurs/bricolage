@@ -6,11 +6,11 @@ done.pl - installation script to give the user some final instructions
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2003-03-24 02:41:15 $
 
 =head1 DESCRIPTION
 
@@ -74,8 +74,10 @@ your server:
 
   $url
 
-Login in as "admin" with the default password "change me now!".  Your
-first action should be changing this password.
+Login in as "admin" with the default password "change me now!". Your
+first action should be changing this password. Navigate into the ADMIN ->
+SYSTEM -> Users menu, search for the "admin" user, click the "Edit"
+link, and change the password.
 
 =========================================================================
 =========================================================================

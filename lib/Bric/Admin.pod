@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.101 $
+$Revision: 1.102 $
 
 =head1 DATE
 
-$Date: 2003-03-23 06:56:59 $
+$Date: 2003-03-24 02:41:15 $
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,9 @@ Install PostgreSQL 7.1 or greater.
 
 In the Bricolage source directory:
 
+  perl Makefile.PL
   make
+  make tests
 
 And then as root:
 
