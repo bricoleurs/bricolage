@@ -110,7 +110,7 @@ if (defined $id) {
     # Add the buttons.
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "grp_profile",
-	     callback => "$widget|permissions_cb",
+	     callback => "$type|permissions_cb",
 	     image    => "permissions_dgreen",
              vspace   => 3
 	    ) unless $id == ADMIN_GRP_ID;
@@ -200,11 +200,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10.2.1 $
+$Revision: 1.10.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-10 09:43:21 $
+$Date: 2003-07-04 13:28:59 $
 
 =head1 DESCRIPTION
 
