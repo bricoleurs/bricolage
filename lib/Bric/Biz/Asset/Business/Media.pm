@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-22 03:42:21 $
+$Date: 2003-10-29 23:58:14 $
 
 =head1 SYNOPSIS
 
@@ -1027,7 +1027,7 @@ sub set_cover_date {
         $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
         my $oc = $self->get_primary_oc;
         if ($cat and $oc) {
-            my $uri = Bric::Util::Trans::FS->cat_uri
+            $uri = Bric::Util::Trans::FS->cat_uri
               ($self->_construct_uri($cat, $oc), $fn);
         }
     }
