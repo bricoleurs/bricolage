@@ -10,7 +10,8 @@ my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
-  image    => %{ $story->get_notes } ? 'note_fill' : "note"
+  image    =>  %{ $story->get_notes } ? 'note_fill' : "note",
+  value    => 'edit'
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",

@@ -50,6 +50,13 @@ Checking in a template from a template profile now performs a syntax
 check of the temlate just as saving the template does. [Joao Pedro
 Goncalves]
 
+=item *
+
+Notes attached to stories and media are now once again editable from
+the desk and profile views if they're checked out to the current user,
+and only viewable otherwise. Thanks to Tracey Largay for the
+spot. [David]
+
 =back
 
 =head1 Version 1.2.3
