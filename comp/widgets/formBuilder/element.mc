@@ -32,7 +32,6 @@ return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_site_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
-
 # Instantiate the element object and grab its name.
 my $comp     = $obj;
 my $name     = "&quot;$param->{name}&quot;";
@@ -83,26 +82,34 @@ if ($param->{delete} &&
     $comp->set_description($param->{description});
     $comp->set_burner($param->{burner}) if defined $param->{burner};
 
-    # Set the primary output channel ID.
-    if ($param->{primary_oc_id}) {
-        $comp->set_primary_oc_id($param->{primary_oc_id});
-    } elsif ($field eq "$widget|add_oc_id_cb" && ! $comp->get_primary_oc_id) {
-        # They're adding the first one. Make it the primary.
-        $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"});
-    } elsif (! exists $param->{element_type_id} and !$comp->get_primary_oc_id
-             and Bric::Biz::ATType->lookup({ id => $comp->get_type__id })
-             ->get_top_level) {
-        # They need to add an output channel.
-        $no_save = 1;
-        add_msg("Element must be associated with at least one output channel.")
-    }
-
     # Set the primary output channel ID per site
-    if ($field eq 'save_cb') {
+    if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb") &&
+         $comp->get_top_level) {
+        my %oc_ids;
+        @oc_ids{map { $_->get_id } $comp->get_sites} = ();
+
         foreach my $key (keys %$param) {
             next unless $key =~/primary_oc_site(\d+)_cb/;
             my $siteid = $1;
-            $comp->set_primary_oc_id($param->{$field});
+            $comp->set_primary_oc_id($param->{$key}, $siteid);
+            $oc_ids{$siteid} = $param->{$key};
+        }
+
+        foreach my $siteid (keys %oc_ids) {
+            unless ($oc_ids{$siteid}) {
+                $no_save = 1;
+                my $site = Bric::Biz::Site->lookup({id => $siteid});
+                add_msg("Site '" . $site->get_name . "' does not have a",
+                        "primary output channel");
+            }
+        }
+    } elsif($field eq "$widget|add_oc_id_cb") {
+        my $oc = Bric::Biz::OutputChannel::Element->lookup({
+            id => $param->{"$widget|add_oc_id_cb"}});
+        my $siteid = $oc->get_site_id;
+        unless ( $comp->get_primary_oc_id($siteid) ) {
+            # They're adding the first one. Make it the primary.
+            $comp->set_primary_oc_id($param->{"$widget|add_oc_id_cb"}, $siteid);
         }
     }
 
@@ -197,13 +204,11 @@ if ($param->{delete} &&
 	$comp->del_data($del);
     }
 
+
     # Delete output channels.
     if ($param->{rem_oc}) {
-        my $primoc = $comp->get_primary_oc_id;
         my $del_oc_ids = mk_aref($param->{rem_oc});
-        for (@$del_oc_ids) {
-            $comp->set_primary_oc_id(undef) and last if $_ == $primoc;
-        }
+
 
         # workaround because of wierd relationship
         # between OutputChannel and OutputChannel::Element
@@ -211,7 +216,7 @@ if ($param->{delete} &&
         # this forces them to be loaded first by the
         # href function, seems like O::E needs a _do_list 
         # /Arthur
-        $comp->get_output_channels();        
+        $comp->get_output_channels();
 
         $comp->delete_output_channels($del_oc_ids);
     }
@@ -225,6 +230,8 @@ if ($param->{delete} &&
             $comp->remove_sites($del_site_ids);
         }
     }
+
+
 
     # Enable output channels.
     my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
@@ -246,14 +253,23 @@ if ($param->{delete} &&
     }
 
     # Force a primary output channel ID if we don't have one but we have OCs.
-    unless ($comp->get_primary_oc_id) {
-        my $oc = ($comp->get_output_channels)[0];
-        $comp->set_primary_oc_id($oc->get_id) if $oc;
+#    unless ($comp->get_primary_oc_id) {
+#        my $oc = ($comp->get_output_channels)[0];
+#        $comp->set_primary_oc_id($oc->get_id) if $oc;
+#    }
+
+    #If it is a new element and top level we must add a site
+    if($param->{isNew} && $comp->get_top_level) {
+        # Try to get the primary site
+        if ($c->get_user_cx(get_user_id)) {
+            $comp->add_site($c->get_user_cx(get_user_id));
+        } else {
+            # Else we must do it some other way!
+            my @sites = Bric::Biz::Site->list();
+            $comp->add_site($sites[0]);
+        }
     }
 
-
-    $comp->add_site($c->get_user_cx(get_user_id)) 
-        if $param->{isNew} && $comp->get_top_level;
 
     # Save the element.
     $comp->save unless $no_save;
@@ -295,11 +311,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =head1 DATE
 
-$Date: 2003-03-12 17:24:48 $
+$Date: 2003-03-13 11:26:30 $
 
 =head1 SYNOPSIS
 
