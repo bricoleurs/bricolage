@@ -498,7 +498,7 @@ sub copy {
         # copied to $dst doesn't already exist as a directory. However, neither
         # opition is very appealing, and the current implementation matches what
         # cp -r does.
-    my $newdir = cat_dir($self, $dst,$src_base);
+        my $newdir = cat_dir($self, $dst,$src_base);
         # Get rid of any existing file or directory inside $dst.
         del($self, $newdir) if -e $newdir;
         # Create a new path to $newdir.

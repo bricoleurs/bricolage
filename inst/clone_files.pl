@@ -32,6 +32,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
+use File::Path qw(mkpath);
 
 our ($CONFIG, $CLONE);
 do "./config.db" or die "Failed to read config.db : $!";
@@ -44,15 +45,24 @@ system("cp -pR $CONFIG->{MASON_COMP_ROOT} dist");
 system("cp -pR $CONFIG->{MASON_DATA_ROOT} dist");
 system("cp -pR $CLONE->{CONFIG_DIR} dist");
 
+# Copy lib from target.
+my $libdir = catdir curdir, 'dist', 'lib';
+mkpath $libdir;
+system("cp -pR $CONFIG->{MODULE_DIR}/Bric* $libdir");
+
+# Copy bin from target.
+my $bindir = catdir curdir, 'dist', 'bin';
+mkpath $bindir;
+system("cp -pR $CONFIG->{BIN_DIR}/bric_* $bindir");
+
 # remove conf/install.db
 unlink("dist/conf/install.db");
 
 # copy everything else from source
 opendir(CUR, '.') or die $!;
+my %exclude = map { $_ => 1 } qw(. .. dist comp data conf bin lib);
 foreach my $d (readdir(CUR))  {
-    next if $d eq '.' or $d eq '..';
-    next if $d =~ /.db$/;
-    next if $d eq 'dist' or $d eq 'comp' or $d eq 'data' or $d eq 'conf';
+    next if $exclude{$d} or $d =~ /.db$/;
     system("cp -pR $d dist");
 }
 close(CUR);

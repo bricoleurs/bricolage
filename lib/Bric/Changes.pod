@@ -26,6 +26,13 @@ More complete Traditional Chinese and Simplified Chinese localizations. Also,
 the Mandarin localization now simply inherits from the Traditional Chinese
 localization. [Kang-min Liu]
 
+=item *
+
+C<make clone> now copies the F<lib> directory and all of the F<bin> scripts
+from the target to the clone, rather than from the sources. This allows any
+changes that have been made to scripts and classes to be properly cloned.
+[David]
+
 =back
 
 =head2 Bug Fixes
