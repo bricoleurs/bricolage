@@ -147,6 +147,8 @@ Folks who have submitted patches include:
 
 =item Kang-min Liu
 
+=item Clive Jones
+
 =back
 
 Friends who have spotted bugs include:

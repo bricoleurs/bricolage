@@ -145,6 +145,11 @@ Fixed deleting an Alert Type Rule. Also fixed Editing Alert Type Recipients.
 
 Notes are once again saved with a document. Thanks to Scott for the spot! [David]
 
+=item *
+
+Fixed an issue with FTP distribution where the incorrect FTP root was used an
+invalid path. [Clive Jones]
+
 =back
 
 =head1 VERSION 1.6.1
