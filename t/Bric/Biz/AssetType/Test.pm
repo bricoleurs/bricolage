@@ -15,7 +15,7 @@ sub _test_load : Test(2) {
 ##############################################################################
 # Test the constructor.
 ##############################################################################
-sub test_const : Test(9) {
+sub test_const : Test(10) {
     my $self = shift;
 
     my %elem = (name          => 'Test Element',
