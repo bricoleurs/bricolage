@@ -160,13 +160,6 @@ do_sql
 
   q{INSERT INTO site_member (id, object_id, member__id)
     VALUES (1, 100, 59)},
-
-  # Add it to the default site secret group.
-  qq{INSERT INTO member (id, grp__id, class__id, active)
-     VALUES (60, 100, 75, 1)},
-
-  q{INSERT INTO site_member (id, object_id, member__id)
-    VALUES (2, 100, 60)},
   ;
 
 1;

@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    Site.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2003-03-12 09:00:58 $
+-- $Date: 2003-12-18 01:17:54 $
 -- Author: David Wheeler <david@wheeler.net>
 
 -- Default site.
@@ -17,11 +17,4 @@ VALUES (59, 47, 75, 1);
 
 INSERT INTO site_member (id, object_id, member__id)
 VALUES (1, 100, 59);
-
--- Add it to the default site secret group.
-INSERT INTO member (id, grp__id, class__id, active)
-VALUES (60, 100, 75, 1);
-
-INSERT INTO site_member (id, object_id, member__id)
-VALUES (2, 100, 60);
-
+ 
