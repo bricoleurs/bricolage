@@ -7,15 +7,15 @@ Bric::Util::Grp::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.8.2.1 $
+$Revision: 1.8.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.8.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 03:59:49 $
+$Date: 2003-05-29 20:48:38 $
 
 =head1 SYNOPSIS
 
@@ -284,9 +284,9 @@ sub get_supported_classes {
     return { &STORY_PKG  => 'story',
 	     &MEDIA_PKG  => 'media',
 	     &FORMAT_PKG => 'formatting',
-	     &AUDIO_PKG  => 'audio',
+	     &AUDIO_PKG  => 'media',
 	     &IMAGE_PKG  => 'media',
-	     &VIDEO_PKG  => 'video'
+	     &VIDEO_PKG  => 'media'
 	   }
 }
 

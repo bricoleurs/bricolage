@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.14.4.1 $
+$Revision: 1.14.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-25 19:13:15 $
+$Date: 2003-05-29 20:48:39 $
 
 =head1 SYNOPSIS
 
@@ -1255,14 +1255,18 @@ sub _do_list {
         # we can create a joined query!
         if ($force) {
             # All members are in one member table
-            my $member_table = _get_member_table( { id => $force } );
+            my $member_table =
+              _get_member_table({ grp_pkg => $param->{grp_package},
+                                  id => $force });
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
                 $param->{all}, $ids );
         }
         else {
             foreach ( keys %$supported ) {
-                my $member_table = _get_member_table( { pkg_name => $_ } );
+                my $member_table =
+                  _get_member_table({ grp_pkg => $param->{grp_package},
+                                      pkg_name => $_ });
 
                 push @objs,
                   _do_joined_select(
@@ -1275,7 +1279,9 @@ sub _do_list {
     }
     else {
         if ( $package && $object_id ) {
-            my $member_table = _get_member_table( { pkg_name => $package } );
+            my $member_table =
+              _get_member_table({ grp_pkg => $param->{grp_package},
+                                  pkg_name => $package });
 
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
@@ -1309,7 +1315,12 @@ sub _do_list {
 }
 
 sub _get_member_table {
-    return Bric::Util::Class->lookup(shift)->get_key_name . '_member';
+    my $params = shift;
+    my $grp_pkg = delete $params->{grp_pkg};
+    my $pkg = $params->{pkg_name} ||
+      Bric::Util::Class->lookup($params)->get_pkg_name;
+    my $short = $grp_pkg->get_supported_classes->{$pkg};
+    return $short . '_member';
 }
 
 sub _do_joined_select {
@@ -1419,16 +1430,14 @@ NONE
 =cut
 
 sub _get_map_table_name {
-    my ($self) = @_;
-
-    my ( $cid, $pkg ) = $self->_get(qw(_object_class_id object_package));
-    my $short =
-      Bric::Util::Class->lookup( { id => $cid, pkg_name => $pkg } )
-      ->get_key_name;
+    my $self = shift;
+    my ($cid, $pkg, $grp) =
+      $self->_get(qw(_object_class_id object_package grp));
+    my $short = $grp->get_supported_classes->{$pkg};
     return $short . '_member';
 }
 
-=item $package = $self->_get_package($class_id) 
+=item $package = $self->_get_package($class_id)
 
 Returns the package name for a given class id
 

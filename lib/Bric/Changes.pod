@@ -97,6 +97,12 @@ Various localization fixes. [Scott]
 
 Fixed event logging for element fields. [David]
 
+=item *
+
+Media assets that are based on "Image", "Audio", and "Video" element types now
+properly show up on desks. Note that existing media assets missing from desks
+should be checked out via "Active Media" and moved to a new desk. [David]
+
 =back
 
 =head1 VERSION 1.6.0
