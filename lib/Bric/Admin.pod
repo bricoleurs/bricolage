@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.5 $
+$Revision: 1.31.2.6 $
 
 =head1 DATE
 
-$Date: 2002-02-05 16:56:14 $
+$Date: 2002-02-08 20:46:59 $
 
 =head1 DESCRIPTION
 
@@ -725,22 +725,6 @@ B<APACHE_CONF:> This directive sets the location of the Apache server
 configuration file. Defaults to C</usr/local/apache/conf/httpd.conf> if not
 specified. This isn't portable, so we recommend you set it! Used only in
 bric_apachectl.
-
-=item *
-
-B<PID_FILE:> Sets the file to which the server records the process id of the
-daemon. If the filename does not begin with a slash (/) then it is assumed to be
-relative to the ServerRoot. Defaults to "/usr/local/apache/logs/httpd.pid" if
-not specified. This isn't portable, so we recommend you set it. Used only in
-bric_apachectl.
-
-=item *
-
-B<SERVER_NAME:> The DNS name or IP address of the Bricolage server. If this
-configuration is not specified, Bricolage will use the unix-specific system
-tools C<hostname> and C<dnsdomainname> to try to establish the server name.
-Needless to say, these tools are not portable, so we highly recommend that you
-set this configuration directive in bricolage.conf.
 
 =item *
 
