@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-02-20 21:04:57 $
 
 =head1 SYNOPSIS
 
@@ -1035,8 +1035,8 @@ NONE
 sub get_children {
     my $self = shift;
     my $id = $self->_get('id');
-    return unless defined $id && $id != ROOT_CATEGORY_ID;
-    return Bric::Biz::Category->list({parent_id => $id});
+    return unless defined $id;
+    return Bric::Biz::Category->list({ parent_id => $id });
 }
 
 *children = \&get_children;
@@ -1350,6 +1350,11 @@ sub _do_list {
             # It's a simple numeric comparison.
 	    push @wheres, "a.$k = ?";
 	    push @params, $v;
+            if ($k eq 'parent_id' and $v == ROOT_CATEGORY_ID) {
+                # We want to prevent the root category from returning itself
+                push @wheres, "a.id <> ?";
+                push @params, ROOT_CATEGORY_ID;
+            }
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $extra_tables = ", $mem_table m2, $map_table c2";

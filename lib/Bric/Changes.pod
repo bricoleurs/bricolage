@@ -206,6 +206,11 @@ Fixed broken index on media type extensions. It was duplicating the index on
 the media type names. It has been changed to uniquely index the media type
 file name extensions. [David]
 
+=item *
+
+Bric::Biz::Category->get_children now properly returns the children for the
+root category. Thanks to Sam for the spot! [David]
+
 =back
 
 =head1 VERSION 1.5.0
