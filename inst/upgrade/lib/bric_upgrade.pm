@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.4 $
+$Revision: 1.12.6.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-15 16:59:37 $
+$Date: 2003-09-10 23:23:59 $
 
 =head1 SYNOPSIS
 
@@ -68,8 +68,8 @@ our ($opt_u, $opt_p);
 BEGIN{
     getopts('u:p:');
     # Set the db admin user and password to some reasonable defaults.
-    $ENV{DBI_PASS} ||= $opt_u || 'postgres';
-    $ENV{DBI_USER} ||= $opt_p || 'postgres';
+    $ENV{BRIC_DBI_PASS} ||= $opt_u || 'postgres';
+    $ENV{BRIC_DBI_USER} ||= $opt_p || 'postgres';
 }
 
 # Make sure we can load the Bricolage libraries.
@@ -77,19 +77,22 @@ BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
 
-    # use $BRICOLAGE_ROOT/lib if exists 
+    # use $BRICOLAGE_ROOT/lib if exists
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
     unshift(@INC, $_) if -e $_;
 
     # make sure Bric is found
     eval "use Bric";
-    die <<'END' if $@;
+    die <<"END" if $@;
 ######################################################################
 
-Cannot locate Bricolage libraries.  Please set the environment
+Cannot locate Bricolage libraries. Please set the environment
 variable BRICOLAGE_ROOT to the location of your Bricolage
 installation or set the environment variable PERL5LIB to the
-directory where Bricolage's libraries are installed.
+directory where Bricolage's libraries are installed. The error
+encountered was:
+
+$@
 
 ######################################################################
 END
