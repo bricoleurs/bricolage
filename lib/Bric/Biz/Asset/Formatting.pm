@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.68 $
+$Revision: 1.69 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.68 $ )[-1];
+our $VERSION = (qw$Revision: 1.69 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 19:52:47 $
+$Date: 2004-03-18 19:55:20 $
 
 =head1 SYNOPSIS
 
@@ -303,7 +303,7 @@ use constant PARAM_ORDER_MAP =>
       expire_date         => 'expire_date',
       name                => 'name',
       title               => 'name',
-      file_name           => 'file_name',
+      file_name           => 'f.file_name',
       description         => 'description',
       version             => 'version',
       version_id          => 'i.id',
