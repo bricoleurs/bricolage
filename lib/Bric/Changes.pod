@@ -425,6 +425,15 @@ to lock up with an impossible query for hours at a time. [David]
 Restored foreign keys and constraints missing on the "job" table and related
 tables since version 1.8.0. [David]
 
+=item *
+
+The error message for failed distribution jobs is now properly displayed in
+the UI. [Mark]
+
+=item *
+
+Fixed bug with the execution of jobs in F<bric_queued>. [Mark]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

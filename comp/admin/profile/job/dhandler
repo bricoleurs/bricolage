@@ -15,7 +15,10 @@ if ($job->has_failed) {
       . $lang->maketext('This job has failed')
       . '</b></span><p>'
       .  $lang->maketext(q{ The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.})
-      . '</p>');
+      . '</p>'
+      . '<pre>'
+      .  $job->get_error_message
+      . '</pre>');
 }
 
 # Display the Basics.
