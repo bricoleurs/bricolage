@@ -118,19 +118,19 @@ sub test_build_query: Test(2) {
     # with grp_ids
     my $got = build_query_with_unions('Bric::Util::DBI::Test', 'cols', 'tables', 'where', 'order');
     my $expected = q{  SELECT DISTINCT cols
-                       FROM   tables, story_member sm
+                       FROM   tables ,story_member sm
                        WHERE  where AND sm.object_id = s.id AND m.id = sm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables, story__category sc, category_member cm
+                       FROM   tables ,story__category sc, category_member cm
                        WHERE  where AND sc.story_instance__id = i.id AND cm.object_id = sc.category__id AND m.id = cm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables, desk_member dm
+                       FROM   tables ,desk_member dm
                        WHERE  where AND dm.object_id = s.desk__id AND m.id = dm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables, workflow_member wm
+                       FROM   tables ,workflow_member wm
                        WHERE  where AND wm.object_id = s.workflow__id AND m.id = wm.member__id
                        order};
     $got =~ s/[\t ]+/ /gm; # ignore whitespace
