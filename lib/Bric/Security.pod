@@ -4,11 +4,11 @@ Bric::Security - Bricolage Security Guide.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 DESCRIPTION
 
@@ -84,13 +84,14 @@ this value periodically -- say every couple of days or once a week.
 
 =head1 ENCRYPTION
 
-Bricolage uses the industry-standard Secure Socket Layer (SSL) for connection
-encryption. Bricolage automatically uses SSL for all logins and for all user
-profiles. By doing so, Bricolage assures that users' passwords are never sent
-over the Internet in the clear. When users login to Bricolage, their passwords
-are encrypted, and when users and administrators edit User profiles within the
-application itself, the profiles are edited via SSL so as to ensure that any
-password changes are also sent via encrypted channels.
+Bricolage can use the industry-standard Secure Socket Layer (SSL) for connection
+encryption.  See L<Bric::Admin> for information about enabling SSL in Bricolage. 
+With SSL enabled, Bricolage automatically uses SSL for all logins and for all 
+user profiles. By doing so, Bricolage assures that users' passwords are never 
+sent over the Internet in the clear. When users login to Bricolage, their 
+passwords are encrypted, and when users and administrators edit User profiles 
+within the application itself, the profiles are edited via SSL so as to ensure 
+that any password changes are also sent via encrypted channels.
 
 All other parts of Bricolage use simple HTTP rather than SSL (HTTPS) for sending
 data to and from the browser. SSL is not preferred in the application in

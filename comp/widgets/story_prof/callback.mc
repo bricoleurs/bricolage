@@ -401,7 +401,8 @@ my $handle_notes = sub {
 
     my $story = get_state_data($widget, 'story');
     my $id    = $story->get_id();
-    set_redirect("/workflow/profile/story/edit_notes.html?id=$id");
+    my $action = $param->{$widget.'|notes_cb'};
+    set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
 };
 
 ################################################################################

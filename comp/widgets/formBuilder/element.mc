@@ -205,11 +205,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2001-11-29 18:50:53 $
+$Date: 2001-12-04 18:17:40 $
 
 =head1 SYNOPSIS
 

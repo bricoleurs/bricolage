@@ -141,11 +141,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:28:51 $
+$Date: 2001-12-04 18:17:40 $
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-30 22:21:27 $
+$Date: 2001-12-04 18:17:44 $
 
 =head1 SYNOPSIS
 

@@ -19,7 +19,7 @@ my $widget = 'asset_meta';
 
 my %types = ('Bric::Biz::Asset::Formatting' => 'formatting',
 	     'Bric::Biz::Asset::Business::Story' => 'story',
-	     'Bric::Biz::Asste::Business::Media' => 'media');
+	     'Bric::Biz::Asset::Business::Media' => 'media');
 </%once>
 
 <%init>
@@ -29,12 +29,22 @@ if ($object) {
     $type = $types{ref $object} || 'story';
 } elsif ($type && defined $id) {
     if ($type eq 'story') {
-	$object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
-    } elsif ($type eq 'template') {
-	$object = Bric::Biz::Asset::Formatting->lookup({ 'id' => $id });
-    } elsif ($type eq 'media') {
-	$object = Bric::Biz::Asset::Business::Media->lookup({ 'id' => $id });
+	$object = get_state_data('story_prof', 'story');
+	unless ($object && $object->get_id != $id) {
+	    $object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
 	}
+    } elsif ($type eq 'template') {
+	$object = get_state_data('tmpl_prof', 'fa');
+	unless ($object && $object->get_id != $id) {
+	    $object = Bric::Biz::Asset::Formatting->lookup({ 'id' => $id });
+	}
+
+    } elsif ($type eq 'media') {
+	$object = get_state_data('media_prof', 'media');
+	unless ($object && $object->get_id != $id) {
+	    $object = Bric::Biz::Asset::Business::Media->lookup({ 'id' => $id });
+	}
+    }
 
     set_state_data($widget, 'id', $id);
 }

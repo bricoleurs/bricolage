@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-12-04 18:17:44 $
 
 =head1 SYNOPSIS
 

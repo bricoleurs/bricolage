@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 SYNOPSIS
 
@@ -79,6 +79,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     HOST_NAME_LOOKUPS
 		    SERVER_SIGNATURE
 		    USE_CANONICAL_NAME
+                    SSL_ENABLE
 		    SSL_SESSION_CACHE
 		    SSL_SESSION_CACHE_TIMEOUT
 		    SSL_MUTEX
@@ -203,7 +204,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 				   USE_CANONICAL_NAME
 				   PREVIEW_LOCAL
 				   PREVIEW_MASON)],
-		    ssl => [qw(SSL_SESSION_CACHE
+		    ssl => [qw(SSL_ENABLE
+			       SSL_SESSION_CACHE
 			       SSL_SESSION_CACHE_TIMEOUT
 			       SSL_MUTEX
 			       SSL_LOG
@@ -319,6 +321,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || 'On';
 
     # mod_ssl Settings.
+    use constant SSL_ENABLE              => $config->{SSL_ENABLE} || 0;
     use constant SSL_SESSION_CACHE       => $config->{SSL_SESSION_CACHE}
       || 'dbm:/usr/local/apache/logs/ssl_scache';
     use constant SSL_SESSION_CACHE_TIMEOUT =>

@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-03 17:55:25 $
+$Date: 2001-12-04 18:17:44 $
 
 =head1 SYNOPSIS
 

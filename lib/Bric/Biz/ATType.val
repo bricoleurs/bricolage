@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- ATType.val
 --
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
 -- This is the SQL that will create initial value for the at_type table
 --

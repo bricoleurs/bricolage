@@ -8,18 +8,18 @@ Bric::Util::DBD::Pg - The Bricolage PostgreSQL Driver
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:46 $
+$Date: 2001-12-04 18:17:46 $
 
 =head1 SYNOPSIS
 

@@ -125,6 +125,8 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 ($can_del, $users, $ets) = ();
 </%perl>
 <%init>;
+use Bric::Config qw(:ssl);
+
 # Figure out where we are.
 my ($section, $moe, $type) = $m->comp("/lib/util/parseUri.mc");
 
@@ -156,8 +158,9 @@ $sel_label = $type eq 'job' ? 'Cancel' : 'Delete';
 
 my $prefix = '';
 if ($type eq 'user') {
-    # We'll probbly need to redirect them to ssl.
-    $prefix = 'https://' . $r->hostname if get_state_name('login') ne 'ssl';
+    # We'll probbly need to redirect them to ssl if its enabled
+    $prefix = (SSL_ENABLE ? 'https://' : 'http://') . $r->hostname 
+	if get_state_name('login') ne 'ssl';
 }
 
 # We'll use this coderef to display the proper profile link labels.
@@ -348,11 +351,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:28:48 $
+$Date: 2001-12-04 18:17:37 $
 
 =head1 SYNOPSIS
 

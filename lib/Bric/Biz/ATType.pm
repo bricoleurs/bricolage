@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-12-04 18:17:44 $
 
 =head1 SYNOPSIS
 

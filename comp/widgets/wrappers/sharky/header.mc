@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:28:53 $
+$Date: 2001-12-04 18:17:42 $
 
 =head1 SYNOPSIS
 
@@ -116,7 +116,6 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     history.forward(1);
 }
 % } # if
-
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>

@@ -9,16 +9,16 @@ package Bric::Biz::Asset::Business::Parts::Tile;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-12-04 18:17:44 $
 
 
 =head1 SYNOPSIS

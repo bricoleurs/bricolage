@@ -3,14 +3,14 @@
 <%perl>
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
-  callback => $widget . "|notes_cb",
-  image    => "view_notes_teal"
-);
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal"
+) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
-  callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  callback => $widget . "|notes_cb",
+  image    => %{ $media->get_notes } ? 'note_fill' : "note"
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -35,6 +35,14 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_element_name() %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+  <td width="470">&nbsp;<% $media->get_uri %></td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>

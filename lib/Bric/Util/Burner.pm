@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-27 18:28:38 $
+$Date: 2001-12-04 18:17:45 $
 
 =head1 SYNOPSIS
 
@@ -130,6 +130,7 @@ use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn);
 use Bric::Biz::AssetType;
 
+
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -156,6 +157,8 @@ my $mni = 'Bric::Util::Fault::Exception::MNI';
 my $ap = 'Bric::Util::Fault::Exception::AP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
+my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::XMLWriterHandle->new
+  : undef;
 
 #--------------------------------------#
 # Instance Fields
@@ -418,6 +421,13 @@ sub burn_one {
 }
 
 1;
+
+package Bric::Util::Burner::XMLWriterHandle;
+
+sub new { bless {} }
+
+sub print { $HTML::Mason::Commands::m->out(@_[1..$#_]) }
+
 __END__
 
 =back

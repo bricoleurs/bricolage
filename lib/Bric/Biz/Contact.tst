@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Contact.tst
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2001-10-11 00:34:53 $
+-- $Date: 2001-12-04 18:17:44 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 --DELETE FROM map_contact_value;

@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 BACKGROUND
 

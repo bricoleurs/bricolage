@@ -6,16 +6,16 @@ Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:44 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 SYNOPSIS
 

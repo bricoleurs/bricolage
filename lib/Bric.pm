@@ -10,7 +10,7 @@ Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-11-20 00:02:43 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 SYNOPSIS
 
@@ -714,7 +714,6 @@ sub _set {
     # Disable warnings to prevent "Use of uninitialized value in string ne"
     # messages.
     local $^W = undef;
-
     for my $i (0..$#$k) {
 	eval {
 	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2001-11-29 19:21:00 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 DESCRIPTION
 
@@ -41,19 +41,9 @@ in mind as long term goals further down the line.
 
 =head2 VERSION 1.0.2
 
-Estimated ship date: 8 December 2001.
+Estimated ship date: 11 December 2001.
 
 =over 4
-
-=item *
-
-Add name of Output Channel to list of Templates in Find Templates interface
-[Michele].
-
-=item *
-
-Limit rendering of Workflows and Desks in the leftNav by permissions. If a user
-doesn't have READ permission on a Desk or Workflow, don't display it [Michele].
 
 =item *
 
@@ -64,29 +54,11 @@ bad [David].
 
 =item *
 
-Create different "Notes" icon (different color) for when there actually B<are>
-notes in an asset. This way users won't have to go to the Notes screen just to
-find out if they have notes [Michele].
-
-=item *
-
 Write distribution documentation [David].
 
 =item *
 
 Change the term "attribute" to "field" in the UI [Michele].
-
-=item *
-
-Make SSL optional (and off by default) [David or Sam].
-
-=item *
-
-Add URI to all media profile views [Michele].
-
-=item *
-
-Add ability to change the category association in Templates [David].
 
 =back
 

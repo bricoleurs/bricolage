@@ -4,11 +4,11 @@ Bric::Alert - Bricolage Alert Management Guide.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-12-04 18:17:43 $
 
 =head1 DESCRIPTION
 

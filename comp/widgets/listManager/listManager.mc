@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-11-29 00:52:05 $
+$Date: 2001-12-04 18:17:40 $
 
 =head1 SYNOPSIS
 
@@ -446,6 +446,7 @@ my $widget = 'listManager';
 
 my $get_my_meths = sub {
     my ($pkg, $field_titles, $field_values) = @_;
+
     my $meths = $pkg->my_meths;
 
     # Just return the package meths unless there are titles or values to be
