@@ -1,6 +1,6 @@
 ## httpd.conf -- Bricolage Apache configuration file.
 ##
-## VERSION: $Revision: 1.9.2.3 $
+## VERSION: $Revision: 1.1.2.1 $
 ## $Date: 2002-02-01 17:03:18 $
 
 ################################################################################
@@ -11,7 +11,7 @@ ServerName           localhost
 ServerRoot           /usr/local/apache/htdocs
 ServerAdmin          root@localhost
 ServerSignature      Email
-PidFile              %APACHE_PID%
+PidFile              %PID_FILE%
 DocumentRoot         /usr/local/apache/htdocs
 Listen               80
 User                 nobody

@@ -1,2 +1,2 @@
 use ExtUtils::MakeMaker;
-WriteMakefile( 	NAME => "Bric" );
+WriteMakefile( 	NAME => "Bric");

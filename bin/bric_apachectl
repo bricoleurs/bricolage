@@ -47,7 +47,7 @@ my $httpd = APACHE_BIN . " -f " . APACHE_CONF;
 $httpd .= ' -DSSL' if SSL_ENABLE;
 
 # the pid file
-my $pid_file = PID_FILE;
+my $pid_file = '/var/run/apache-perl.pid';
 
 # get status
 my $running = 0;

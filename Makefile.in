@@ -255,7 +255,7 @@ ${CPAN_TARGETS}:
 	touch $@
 
 # This is where we do our config files
-config: inst/bric.sql conf/bricolage.tmp.conf lib/Makefile
+config: inst/bric.sql conf/httpd.conf conf/bricolage.tmp.conf lib/Makefile
 
 inst/bric.sql: inst/bric.sql.in
 	cp $^ $@

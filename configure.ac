@@ -115,6 +115,8 @@ CHECK_CPAN_MODULE(MISSING_MOD, HTML::Mason, 1.03)
 CHECK_CPAN_MODULE(MISSING_MOD, DBD::Pg, 1.00)
 CHECK_CPAN_MODULE(MISSING_MOD, Net::FTPServer)
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::Session, 1.53)
+# FIXME: if there's a version requirement please note it here
+CHECK_CPAN_MODULE(MISSING_MOD, HTML::Template)
 # Apache::libapreq does not define $Apache::libapreq::VERSION
 # so we can't check for it here
 CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq) 
