@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 19:06:23 $
+$Date: 2002-05-17 22:05:10 $
 
 =head1 SYNOPSIS
 
@@ -567,11 +567,10 @@ sub new_template {
 	$element = ${"$calling_package\::element"};
     }
 
-    # need to setup path if filename set
-    if (exists $args{filename}) {
-      $args{path} ||= [];
-      push(@{$args{path}}, $self->_get_template_path());
-    }
+    # need to setup path for includes
+    $args{path} ||= [];
+    push(@{$args{path}}, $self->_get_template_path());
+    $args{search_path_on_include} = 1;
 
     # autofil defaults on
     my $autofill = exists $args{autofill} ? $args{autofill} : 1;
@@ -580,7 +579,7 @@ sub new_template {
     delete $args{element};
     delete $args{autofill};
 
-    if ($element) {
+    if ($element and not exists $args{filename}) {
 	# find element template file
 	my $file = $self->_find_file($element, '.tmpl');
 	die $ap->new({ msg => "Unable to find HTML::Template template file ("
@@ -725,7 +724,7 @@ sub _build_element_vars {
     my %element_loop_exists;
     if (@$path) {
 	%element_loop_exists = map { $_ => 1 } $template->query(loop => [ @$path, 'element_loop' ]);
-    } else {
+    } elsif ($template->param('element_loop')) {
 	%element_loop_exists = map { $_ => 1 } $template->param('element_loop');
     }
 
@@ -884,9 +883,11 @@ sub _get_template_path {
 
     # search up category hierarchy
     my @cats = $self->get_cat->ancestry;
+    shift @cats; # shift off root category
     my @path;
     do {
-	push @path, $fs->cat_dir($template_root, @cats);
+	push @path, $fs->cat_dir($template_root, 
+                                 map { $_->get_directory } @cats);
     } while(pop @cats);
 
     # return path setting

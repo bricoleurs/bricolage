@@ -155,6 +155,11 @@ functionality.  I've put it back now.  [Mark]
 
 Fixed button javascript to work correctly in Mozilla.  [Matt]
 
+=item *
+
+Fixed bug in HTML::Template burner that prevented <tmpl_include>s from
+working in some cases.  [Sam]
+
 =back
 
 =head2 New Features
