@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-20 21:48:05 $
+$Date: 2002-02-14 03:22:11 $
 
 =head1 SYNOPSIS
 
@@ -696,9 +696,16 @@ sub multisort {
     my $sort_by               = shift @sort_list;
     my ($sort_get, $sort_arg) = @{$meth->{$sort_by}}{'get_meth', 'get_args'};
 
-    # Do the case insensitive comparison
-    my $val = lc($sort_get->($a, @$sort_arg)) cmp
-              lc($sort_get->($b, @$sort_arg));
+    my $val;
+    if ($sort_by eq 'id') {
+	# Do a numeric sorting.
+	$val = $sort_get->($a, @$sort_arg) <=>
+	  $sort_get->($b, @$sort_arg);
+    } else {
+	# Do the case insensitive comparison
+	$val = lc($sort_get->($a, @$sort_arg)) cmp
+	  lc($sort_get->($b, @$sort_arg));
+    }
 
     # See if we need to do more comparisons or not.
     if (scalar(@sort_list) > 0) {

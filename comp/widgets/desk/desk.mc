@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-02-14 03:22:11 $
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,10 @@ my $cached_assets = sub {
 	if ($sort_by) {
 	    # Check for READ permission and sort them.
 	    my ($sort_get, $sort_arg) = @{$meths->{$sort_by}}{'get_meth', 'get_args'};
-	    @$curr_objs = sort { $sort_get->($a, @$sort_arg) cmp $sort_get->($b, @$sort_arg) }
+	    @$curr_objs = $sort_by eq 'id' ?
+	      sort { $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg) }
+	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs :
+	      sort { lc($sort_get->($a, @$sort_arg)) cmp lc($sort_get->($b, @$sort_arg)) }
 	      map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
 	} else {
 	    # Just check for READ permission.
