@@ -96,7 +96,7 @@ LIB_SUBDIRS = $(subst ./,, \
 					$(shell cd ${LIB} && \
 						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
 LIB_FILES = $(foreach dir, \
-				${LIB_SUBDIRS}, \
+				${LIB_SUBDIRS} ., \
 					$(shell cd ${LIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
 # same thing we did with LIB
@@ -104,7 +104,7 @@ COMP_SUBDIRS = $(subst ./,, \
 					$(shell cd ${COMP} && \
 						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
 COMP_FILES = $(foreach dir, \
-				${COMP_SUBDIRS}, \
+				${COMP_SUBDIRS} ., \
 					$(shell cd ${COMP} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 COMP_TARGETS = $(addprefix ${compdir}/,${COMP_FILES})
 ## again
@@ -112,7 +112,7 @@ DATA_SUBDIRS = $(subst ./,, \
 					$(shell cd ${DATA} && \
 						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
 DATA_FILES = $(foreach dir, \
-				${DATA_SUBDIRS}, \
+				${DATA_SUBDIRS} ., \
 					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
 
@@ -172,7 +172,7 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 all:  doc
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html chowndirs
+		 install-man install-html chowndirs chownpg
 installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
@@ -181,7 +181,11 @@ installdirs:
                            ${compdir} ${blibdir} \
                            ${htmldir} ${mandir}
 chowndirs:
-	chown -R ${APACHE_USER}.${APACHE_GROUP} ${blibdir} ${compdir} ${datadir}
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${blibdir} ${compdir} ${datadir} 
+chmoddirs:
+	chmod -R a+r ${htmldir}
+chownpg:
+	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
 uninstall: uninstallfiles uninstalldirs dist-clean
 uninstalldirs:
 	$(NORMAL_UNINSTALL)  # Normal commands follow.
