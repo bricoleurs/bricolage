@@ -95,6 +95,19 @@ inactive groups. This is primarily so that permissions can be modified on
 inactive category groups, since they still affect access to any documents and
 templates in those categories, even after they're deactivated. [David]
 
+=item *
+
+Updated documentation to reflect the reality that one should really only use
+Perl 5.8.0 and later if one needs to use any characters outside of ASCII.
+[Andrea Rota]
+
+=item *
+
+Added C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf> directive. This forces the
+FTP mover to unlink an older version of a file before renaming the new version
+to that name. This is necessary for some FTP servers that won't disallow
+renaming a file to replace an existing file. [Andrea Rota]
+
 =back
 
 =head2 Bug Fixes
