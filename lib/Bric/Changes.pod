@@ -76,6 +76,16 @@ Optimized SQL queries for key names or that order by string values to use
 indexes in the C<list()> and C<list_ids()> methods of the story, media, and
 template classes. [David]
 
+=item *
+
+The installer will now fail to install if the version of Apache is greater
+than version 1--that is, it will refuse to install under Apache 2 (for now).
+[David]
+
+=item *
+
+Added Russian localization. [Sergey Samoilenko].
+
 =back
 
 =head2 Bug Fixes
