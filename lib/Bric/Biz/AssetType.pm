@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-10 03:57:08 $
+$Date: 2003-01-16 02:33:11 $
 
 =head1 SYNOPSIS
 
@@ -240,13 +240,6 @@ BEGIN {
 
 =over 4
 
-=cut
-
-#--------------------------------------#
-# Constructors                          
-
-#------------------------------------------------------------------------------#
-
 =item $element = Bric::Biz::AssetType->new($init)
 
 Will return a new asset type object with the optional initial state
@@ -255,28 +248,31 @@ Supported Keys:
 
 =over 4
 
+=item name
+
+=item description
+
+=item primary_oc_id
+
+=item reference
+
 =back
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub new {
-    my $class = shift;
-    my ($init) = @_;
+    my ($class, $init) = @_;
 
-    my $self = bless {}, $class;
+    my $self = bless {}, ref $class || $class;
 
-    # Set active to 1 unless it was explicitly passed.
-    $init->{'_active'} = exists $init->{'active'} ? delete $init->{'active'}
-                                                  : 1;
+    $init->{_active} = 1;
+
     # Set reference unless explicitly set.
     $init->{reference} = $init->{reference} ? 1 : 0;
 
@@ -480,7 +476,11 @@ sub list_ids {
 
 #--------------------------------------#
 
+=back
+
 =head2 Destructors
+
+=over 4
 
 =item $self->DESTROY
 
@@ -495,20 +495,18 @@ sub DESTROY {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Class Methods
 
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $meths = Bric::Biz::AssetType->my_meths
 
 =item (@meths || $meths_aref) = Bric::Biz::AssetType->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
-a true argument, it will return an ordered list or anonymous array of
+Returns an anonymous hash of instrospection data for this object. If called
+with a true argument, it will return an ordered list or anonymous array of
 intrspection data. The format for each introspection item introspection is as
 follows:
 
@@ -517,39 +515,39 @@ for a hash key is another anonymous hash containing the following keys:
 
 =over 4
 
-=item *
+=item name
 
-name - The name of the property or attribute. Is the same as the hash key when
-an anonymous hash is returned.
+The name of the property or attribute. Is the same as the hash key when an
+anonymous hash is returned.
 
-=item *
+=item disp
 
-disp - The display name of the property or attribute.
+The display name of the property or attribute.
 
-=item *
+=item get_meth
 
-get_meth - A reference to the method that will retrieve the value of the
-property or attribute.
+A reference to the method that will retrieve the value of the property or
+attribute.
 
-=item *
+=item get_args
 
-get_args - An anonymous array of arguments to pass to a call to get_meth in
-order to retrieve the value of the property or attribute.
+An anonymous array of arguments to pass to a call to get_meth in order to
+retrieve the value of the property or attribute.
 
-=item *
+=item set_meth
 
-set_meth - A reference to the method that will set the value of the
-property or attribute.
+A reference to the method that will set the value of the property or
+attribute.
 
-=item *
+=item set_args
 
-set_args - An anonymous array of arguments to pass to a call to set_meth in
-order to set the value of the property or attribute.
+An anonymous array of arguments to pass to a call to set_meth in order to set
+the value of the property or attribute.
 
-=item *
+=item type
 
-type - The type of value the property or attribute contains. There are only
-three types:
+The type of value the property or attribute contains. There are only three
+types:
 
 =over 4
 
@@ -561,29 +559,31 @@ three types:
 
 =back
 
-=item *
+=item len
 
-len - If the value is a 'short' value, this hash key contains the length of the
+If the value is a 'short' value, this hash key contains the length of the
 field.
 
-=item *
+=item search
 
-search - The property is searchable via the list() and list_ids() methods.
+The property is searchable via the list() and list_ids() methods.
 
-=item *
+=item req
 
-req - The property or attribute is required.
+The property or attribute is required.
 
-=item *
+=item props
 
-props - An anonymous hash of properties used to display the property or attribute.
-Possible keys include:
+An anonymous hash of properties used to display the property or
+attribute. Possible keys include:
 
 =over 4
 
-=item *
+=item type
 
-type - The display field type. Possible values are
+The display field type. Possible values are
+
+=over 4
 
 =item text
 
@@ -601,27 +601,28 @@ type - The display field type. Possible values are
 
 =back
 
-=item *
+=item length
 
-length - The Length, in letters, to display a text or password field.
+The Length, in letters, to display a text or password field.
 
-=item *
+=item maxlength
 
-maxlength - The maximum length of the property or value - usually defined by the
-SQL DDL.
+The maximum length of the property or value - usually defined by the SQL DDL.
 
-=item *
+=back
 
-rows - The number of rows to format in a textarea field.
+=item rows
 
-=item
+The number of rows to format in a textarea field.
 
-cols - The number of columns to format in a textarea field.
+=item cols
 
-=item *
+The number of columns to format in a textarea field.
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
-names to use in a select list.
+=item vals
+
+An anonymous hash of key/value pairs reprsenting the values and display names
+to use in a select list.
 
 =back
 
@@ -723,11 +724,11 @@ sub my_meths {
 
 #--------------------------------------#
 
+=back
+
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $id = $element->get_id()
 
@@ -742,7 +743,7 @@ NONE
 B<Notes:>
 NONE
 
-=cut 
+=cut
 
 #------------------------------------------------------------------------------#
 
@@ -2126,13 +2127,14 @@ sub save {
 
 #==============================================================================#
 
+=back
+
 =head1 PRIVATE
 
-=cut
 
-#--------------------------------------#
+=head2 Private Class Methods
 
-=head2 Private Class Methods                 
+=over 4
 
 =item _do_list 
 
@@ -2267,11 +2269,17 @@ sub _do_list {
     }
 }
 
-=cut
-
 #--------------------------------------#
 
-=head2 Private Instance Methods              
+=back
+
+=head2 Private Instance Methods
+
+These need documenting.
+
+=over 4
+
+=item _is_referenced
 
 =cut
 
@@ -2308,6 +2316,10 @@ sub _is_referenced {
     return 0;
 }
 
+=item _get_attr_obj
+
+=cut
+
 sub _get_attr_obj {
     my $self = shift;
     my $attr_obj = $self->_get('_attr_obj');
@@ -2323,6 +2335,10 @@ sub _get_attr_obj {
     return $attr_obj;
 }
 
+=item _get_at_type_obj
+
+=cut
+
 sub _get_at_type_obj {
     my $self = shift;
     my $att_id  = $self->get_type__id;
@@ -2337,6 +2353,10 @@ sub _get_at_type_obj {
 
     return $att_obj;
 }
+
+=item _save_attr
+
+=cut
 
 sub _save_attr {
     my $self = shift;
@@ -2366,6 +2386,10 @@ sub _save_attr {
     $a_obj->save;
 }
 
+=item _get_asset_type_grp
+
+=cut
+
 sub _get_asset_type_grp {
     my $self = shift;
     my $atg_id  = $self->get_at_grp__id;
@@ -2386,6 +2410,10 @@ sub _get_asset_type_grp {
 
     return $atg_obj;
 }
+
+=item _sync_parts
+
+=cut
 
 sub _sync_parts {
     my $self = shift;
@@ -2594,6 +2622,8 @@ sub _get_parts {
 }
 
 ##############################################################################
+
+=back
 
 =head2 Private Functions
 
