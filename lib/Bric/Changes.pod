@@ -32,10 +32,6 @@ Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 
 =item *
 
-Bug fix when deploying to multiple output channels. If the output channel ids matched each other partly, it could cause a file to be removed after it just had been uploaded. [Arthur / Fotango]
-
-=item *
-
 When an asset is published or deployed directly from the asset profile, it is
 now properly removed from the publish or deploy desk. Repoted by Andy Baio's
 coworker. [David]
@@ -75,6 +71,18 @@ spot. [David]
 =item *
 
 Removed some unnecessary JavaScript validation. [David]
+
+=item *
+
+Bug fix when deploying to multiple output channels. If the output channel IDs
+matched each other partly, it could cause a file to be removed after it just
+had been uploaded. [Arthur / Fotango]
+
+=item *
+
+Users with CREATE access to a start desk can once again create stories on that
+desk even when they don't have CREATE access to "All Stories." Reported by
+Simon Wilcox. [David]
 
 =back
 
