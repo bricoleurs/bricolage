@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2002-11-27 20:46:44 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -39,16 +39,28 @@ my $ieSpacer = $agent->{os} ne "SomeNix" ?
   qq{width="5" height="5" /></td></tr>}
   : '';
 
+my ($type, $pkg);
+if ($widget eq 'story_prof') {
+    $type = 'story';
+    $pkg = get_package_name($type);
+} elsif ($widget eq 'media_prof') {
+    $type = 'media';
+    $pkg = get_package_name($type);
+} else {
+    $type = 'fa';
+    $pkg = get_package_name('formatting');
+}
+
 my $deskText = qq{<select name="$widget|desk">};
 my $can_pub;
-
 if ($desks) {
-    foreach (@$desks) {
-        my $id = $_->get_id;
+    foreach my $d (@$desks) {
+        my $id = $d->get_id;
         $deskText .= qq{<option value="$id"};
         $deskText .= " selected" if $id == $cd->get_id;
-        $deskText .= ">to " .  $_->get_name . "</option>";
-        $can_pub = 1 if $_->can_publish and chk_authz($_, EDIT, 1);
+        $deskText .= ">to " .  $d->get_name . "</option>";
+        $can_pub = 1 if $d->can_publish and
+          chk_authz($pkg, EDIT, 1, $d->get_asset_grp);
     }
 
     # Set up choice to remove from workflow.
@@ -99,17 +111,6 @@ if ($versions) {
 <%perl>;
 my $wf;
 my $work_id = get_state_data($widget, 'work_id');
-my ($type, $pkg);
-if ($widget eq 'story_prof') {
-    $type = 'story';
-    $pkg = get_package_name($type);
-} elsif ($widget eq 'media_prof') {
-    $type = 'media';
-    $pkg = get_package_name($type);
-} else {
-    $type = 'fa';
-    $pkg = get_package_name('formatting');
-}
 
 my $asset = get_state_data($widget, $type);
 if ($work_id) {
