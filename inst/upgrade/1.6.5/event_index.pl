@@ -15,15 +15,21 @@ BEGIN {
     # version to any post-1.6.5 version, this will cover them, as well.
     my $old;
     if (-e 'config.db') {
+        # Use the installation configuration file.
         do "./config.db" or die "Failed to read config.db: $!";
         $old = catfile $CONFIG->{MODULE_DIR}, qw(Bric Config.pm);
     } else {
+        # Try to use the installed configuration file.
         $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
         my $instdb = catfile $ENV{BRICOLAGE_ROOT}, qw(conf install.db);
-        die "Cannot find installed configuration data file $instdb.\n"
-          unless -e $instdb;
-        do "$instdb" or die "Failed to read $instdb: $!";
-        $old = catfile $INSTALL->{CONFIG}{MODULE_DIR}, qw(Bric Config.pm);
+        if (-e $instdb) {
+            # Use the installed configuration file.
+            do "$instdb" or die "Failed to read $instdb: $!";
+            $old = catfile $INSTALL->{CONFIG}{MODULE_DIR}, qw(Bric Config.pm);
+        } else {
+            # Just try to find the file directly (CVS install).
+            $old = catfile $ENV{BRICOLAGE_ROOT}, qw(lib Bric Config.pm);
+        }
     }
 
     die "File '$old' should exist but doesn't.\n" unless -e $old;
