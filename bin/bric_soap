@@ -161,20 +161,20 @@ L<Bric::SOAP>
 use Getopt::Long;
 use Pod::Usage;
 
-our $module;
-our $command;
-our %search;
-our $with_related_stories = 0;
-our $with_related_media   = 0;
-our $to_preview           = 0;
-our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
-our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
-our $server                 = 'http://localhost';
-our $verbose                = 0;
-our $desk;
-our $workflow;
-our ($help, $man);
 BEGIN {
+    our $module;
+    our $command;
+    our %search;
+    our $with_related_stories = 0;
+    our $with_related_media   = 0;
+    our $to_preview           = 0;
+    our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
+    our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
+    our $server                 = 'http://localhost';
+    our $verbose;
+    our $desk;
+    our $workflow;
+    our ($help, $man);
     GetOptions("help"                   => \$help,
 	       "man"                    => \$man,
 	       "verbose+"               => \$verbose,
@@ -195,6 +195,8 @@ BEGIN {
     pod2usage(-verbose => 2) if $man;
     $verbose ||= 0;
 }
+our ($module, $command, %search, $with_related_stories, $with_related_media,
+     $to_preview, $username, $password, $server, $verbose, $desk, $workflow);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
