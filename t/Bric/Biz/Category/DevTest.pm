@@ -46,7 +46,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(30) {
+sub test_list : Test(31) {
     my $self = shift;
 
     # Create a new category group.
@@ -87,6 +87,10 @@ sub test_list : Test(30) {
         'Look up site with ID 100');
     # We get 6 because of the default category
     is( scalar @cats, 6, "Check for 6 categories" );
+
+    # Try a bogus site_id.
+    @cats = Bric::Biz::Category->list({site__id => -1});
+    is( scalar @cats, 0, "Check for 0 categories" );
 
     # Try grp_id.
     ok( @cats = Bric::Biz::Category->list({ grp_id => $grp_id }),
