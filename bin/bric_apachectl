@@ -45,7 +45,7 @@ BEGIN {
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
     unshift(@INC, 
 	    $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:$_" : $_)
-	if -e;
+	if -e $_;
     
     # make sure Bric is found
     eval "use Bric";

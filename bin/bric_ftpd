@@ -9,7 +9,7 @@ BEGIN {
 
     # use $BRICOLAGE_ROOT/lib if exists 
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
-    unshift(@INC, $_) if -e;
+    unshift(@INC, $_) if -e $_;
     
     # make sure Bric is found
     eval "use Bric";
