@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql(qq{SELECT 1 FROM event_type WHERE key = 'keyword_new'});
+exit if fetch_sql(qq{SELECT 1 FROM event_type WHERE key = 'keyword_new'});
 
 do_sql
 
