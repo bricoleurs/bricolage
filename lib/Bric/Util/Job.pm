@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 14:51:56 $
+$Date: 2004-02-23 16:01:27 $
 
 =head1 SYNOPSIS
 
@@ -40,7 +40,7 @@ $Date: 2004-02-19 14:51:56 $
 
   my $sched_time = $job->get_sched_time($format);
   $job = $job->set_sched_time($sched_time);
-  my $comp_time = $job->get_comp_timeget_comp_time($format);
+  my $comp_time = $job->get_comp_time($format);
 
   my @resources = $job->get_resources;
   my @resource_ids = $job->get_resource_ids;
