@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-02-22 02:57:12 $
 
 =head1 SYNOPSIS
 
@@ -510,16 +510,13 @@ sub get_acl {
     my ($pkg, $user) = @_;
     my $sel = prepare_c(qq{
         SELECT gm.grp__id, gp.value, gp.mtime
-        FROM   grp_priv gp, grp_priv__grp_member gm
+        FROM   grp_priv gp, grp_priv__grp_member gm, grp g, member m,
+               user_member mo
         WHERE  gp.id = gm.grp_priv__id
-               AND gp.grp__id in (
-                   SELECT g.id
-                   FROM   grp g, member m, user_member mo
-                   WHERE  g.id = m.grp__id
-                          AND m.id = mo.member__id
-                          AND m.active = 1
-                          AND mo.object_id = ?
-               )
+               AND gp.grp__id = g.id
+               AND m.id = mo.member__id
+               AND m.active = 1
+               AND mo.object_id = ?
     }, undef, DEBUG);
 
     execute($sel, ref $user ? $user->get_id : $user);
@@ -571,16 +568,14 @@ sub get_acl_mtime {
     my ($pkg, $user) = @_;
     my $sel = prepare_ca(qq{
         SELECT MAX(gp.mtime)
-        FROM   grp_priv gp, grp_priv__grp_member gm
+        FROM   grp_priv gp, grp_priv__grp_member gm, grp g, member m,
+               user_member mo
         WHERE  gp.id = gm.grp_priv__id
-               AND gp.grp__id in (
-                   SELECT g.id
-                   FROM   grp g, member m, user_member mo
-                   WHERE  g.id = m.grp__id
-                          AND m.id = mo.member__id
-                          AND m.active = 1
-                          AND mo.object_id = ?
-               )
+               AND gp.grp__id = g.id
+               AND  g.id = m.grp__id
+               AND m.id = mo.member__id
+               AND m.active = 1
+               AND mo.object_id = ?
     }, undef, DEBUG);
     return row_aref($sel, ref $user ? $user->get_id : $user)->[0];
 }

@@ -155,6 +155,12 @@ Added Italian translation. [Marco Ghezzi]
 
 Documented F<bric_dist_mon> and F<bric_ftpd>. [David]
 
+=item *
+
+Optimized and added tests for Bric::Util::Priv's C<get_acl()> and
+C<get_acl_mtime()> methods. These should make the looking up of a user's
+access control list faster. [David]
+
 =back
 
 =head2 Bug Fixes
