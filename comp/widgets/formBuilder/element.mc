@@ -119,6 +119,10 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 		$atd->set_meta('html_info', $k, $param->{$v});
 	    }
 
+	    # Checkboxes need a default value.
+	    $atd->set_meta('html_info', 'value', 1)
+	      if $param->{fb_type} eq 'checkbox';
+
 	    # Log that we've created it.
 	    log_event("${type}_attr_add", $comp, { Name => $param->{fb_name} });
 	}
@@ -181,11 +185,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:08 $
+$Date: 2001-10-03 12:43:42 $
 
 =head1 SYNOPSIS
 
@@ -198,7 +202,11 @@ processed was submitted from the Element Profile page.
 
 =head1 REVISION HISTORY
 $Log: element.mc,v $
-Revision 1.1  2001-09-06 21:52:08  wheeler
-Initial revision
+Revision 1.1.1.1.2.1  2001-10-03 12:43:42  wheeler
+Always giving checkboxes a default value of 1. Part of resolution of
+http://bricolage-bugzilla.about.com/show_bug.cgi?id=9.
+
+Revision 1.1.1.1  2001/09/06 21:52:08  wheeler
+Upload to SourceForge.
 
 </%doc>
