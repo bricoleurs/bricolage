@@ -20,7 +20,6 @@ COMP = comp
 CONF = conf
 DATA = data
 LIB = lib
-BLIB = blib
 DOC = doc
 INST = inst
 HTML = ${DOC}/html
@@ -39,6 +38,7 @@ POSTGRES_SYSTEM_USER = @POSTGRES_SYSTEM_USER@
 POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
 HAVE_SSL = @HAVE_SSL@
 HOSTNAME = @HOSTNAME@
+PID_FILE = @PID_FILE@
 
 
 # Installation related variables
@@ -50,13 +50,10 @@ bindir  = @bindir@
 datadir  = @datadir@
 compdir = @compdir@
 confdir = @sysconfdir@
-blibdir = @blibdir@
-libdir = @libdir@
 htmldir = @htmldir@
 mandir  = @mandir@
 docdir  = @docdir@
 VPATH = @srcdir@
-
 
 
 # now we'll use some builtin 
@@ -92,14 +89,6 @@ DOC_TARGETS = ${docdir}/Changes \
 # the originals, so we can check timestamps...
 # TODO: I should be able to define these as functions
 # 		to minimise the repetition...
-LIB_SUBDIRS = $(subst ./,, \
-					$(shell cd ${LIB} && \
-						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
-LIB_FILES = $(foreach dir, \
-				${LIB_SUBDIRS} ., \
-					$(shell cd ${LIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
-LIB_TARGETS = $(addprefix ${libdir}/,${LIB_FILES})
-# same thing we did with LIB
 COMP_SUBDIRS = $(subst ./,, \
 					$(shell cd ${COMP} && \
 						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
@@ -140,7 +129,6 @@ INSTALLED_FILES = $(shell cat ${INST}/install.log | sort -u)
 # the same.
 INSTALLED_DIRS = ${bindir} ${datadir} \
                  ${compdir} ${confdir} \
-                 ${blibdir} ${libdir} \
                  ${htmldir} ${mandir} \
 				 $(sort ${execprefix} ${prefix})
 
@@ -169,7 +157,11 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 # ****************************************************************
 # Standard targets follow.  These are discussed at length
 # in the GNU Make manual: http://www.gnu.org/manual/
-all:  doc config
+all:  doc config libs
+
+libs:
+	cd ${LIB} &&  make
+
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
 		 install-man install-html chowndirs chownpg chmoddirs
@@ -177,16 +169,17 @@ installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
                            ${bindir} ${datadir} \
-                           ${confdir} ${libdir} \
-                           ${compdir} ${blibdir} \
+                           ${confdir} ${compdir} \
                            ${htmldir} ${mandir}
 chowndirs:
-	chown -R ${APACHE_USER}.${APACHE_GROUP} ${blibdir} ${compdir} ${datadir} 
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir} ${datadir} 
 chmoddirs:
 	chmod -R a+r ${htmldir}
 chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
-uninstall: uninstallfiles uninstalldirs dist-clean
+uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
+uninstall-lib:
+	cd ${LIB} && make uninstall
 uninstalldirs:
 	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
@@ -224,13 +217,16 @@ ${CONF_APACHE_TARGET}:
 	@echo $@ >>${INST}/install.log
 endif
 
-# From lib on down we're going to do them basically the
+
+# MakeMaker handles this stuff for us
+install-lib: 
+	cd ${LIB} && make install
+
+
+# From here on down we're going to do them basically the
 # same way.  It's pretty simple really. Just a matter of
 # finding the original file for every target in the 
 # target list, and giving that to make as the dependency.
-install-lib: ${LIB_TARGETS}
-${LIB_TARGETS}: ${libdir}%: ${LIB}%
-	${install-files}
 install-comp: ${COMP_TARGETS}
 ${COMP_TARGETS}: ${compdir}%: ${COMP}% 
 	${install-files}
@@ -259,7 +255,7 @@ ${CPAN_TARGETS}:
 	touch $@
 
 # This is where we do our config files
-config: inst/bric.sql conf/bricolage.tmp.conf
+config: inst/bric.sql conf/bricolage.tmp.conf lib/Makefile
 
 inst/bric.sql: inst/bric.sql.in
 	cp $^ $@
@@ -273,11 +269,21 @@ conf/bricolage.tmp.conf: conf/bricolage.tmp.conf.in
 	perl -pi -e 's,%APACHE_CONF%,${APACHE_CONF},g' $@
 	perl -pi -e 's/%APACHE_USER%/${APACHE_USER}/g' $@
 	perl -pi -e 's/%APACHE_GROUP%/${APACHE_GROUP}/g' $@
+	perl -pi -e 's,%FID_FILE%,${PID_FILE},g' $@
 	perl -pi -e 's/%DB_NAME%/${DB_NAME}/g' $@
 	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
 	perl -pi -e 's/%DBI_PASS%/${DBI_PASS}/g' $@
 	perl -pi -e 's,%compdir%,${compdir},g' $@
 	perl -pi -e 's,%datadir%,${datadir},g' $@
+
+
+conf/httpd.conf: conf/httpd.conf.in
+	cp $^ $@
+	perl -pi -e 's,%PID_FILE%,${PID_FILE},g' $@
+
+
+lib/Makefile:
+	cd ${LIB} && perl Makefile.PL
 
 
 # and here are our document files.
@@ -304,17 +310,17 @@ endif
 
 clean: docclean
 	${RM} -f Changes TODO License tags conf/bricolage.tmp.conf inst/bric.sql
+	cd ${LIB} && make clean
 
 dist-clean: 
 	${RM} -f ${INST}/install.log 
-
 
 docclean:
 	cd $(DOC) && ${MAKE} -e clean
 
 
 
-.PHONY : clean dep clean cpan doc install installdirs \
+.PHONY : clean dep clean cpan doc libs install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
 		 uninstall uninstalldirs config \
