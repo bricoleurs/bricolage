@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:35:58 $
+$Date: 2002-12-06 07:40:14 $
 
 =head1 SYNOPSIS
 
@@ -42,6 +42,8 @@ use strict;
 use Bric::Config qw(:cookies);
 use Bric::Util::Class;
 use Bric::Util::Pref;
+use Apache;
+use Apache::Request;
 
 #==============================================================================#
 # Inheritance                          #

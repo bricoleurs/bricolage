@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-02 00:50:34 $
+$Date: 2002-12-06 07:40:14 $
 
 =head1 SYNOPSIS
 
@@ -53,12 +53,12 @@ widget.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
+# Standard Dependencies
 
 use strict;
 
 #--------------------------------------#
-# Programmatic Dependencies              
+# Programmatic Dependencies
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
 use Bric::Config qw(:sys_user :admin :temp :cookies);
@@ -67,6 +67,8 @@ use Bric::Util::Trans::FS;
 
 use File::Path qw(mkpath);
 use Apache::Cookie;
+use Apache;
+use Apache::Request;
 
 #==============================================================================#
 # Inheritance                          #
@@ -510,7 +512,7 @@ sub init_state_name {
 
 sub init_state_data {
     my ($widget, $name, $value) = @_;
-    
+
     unless (defined get_state_data($widget, $name)) {
         return set_state_data($widget, $name, $value);
     }
@@ -562,7 +564,7 @@ NONE
 
 sub set_state_name {
     my ($widget, $name) = @_;
-    
+
     # Don't do anything if a widget name is not passed.
     return unless $widget and $name;
 
@@ -577,7 +579,7 @@ sub set_state_name {
 
 sub get_state_name {
     my ($widget) = @_;
-    
+
     # Don't do anything if a widget name is not passed.
     return unless $widget;
 
@@ -597,7 +599,7 @@ Get or set the state data.  The set function takes either a hash or a key/value.
 Given a hash the set function will overwrite the state data.  Given a key/value
 pair, it will set that key in the state data to that value.
 
-The get function will return the whole state data hash if given just a widget. 
+The get function will return the whole state data hash if given just a widget.
 If passed a name it will return the value for the state data with that name.
 
 B<Throws:>
@@ -622,7 +624,7 @@ NONE
 
 sub set_state_data {
     my ($widget, $data, $value) = @_;
-    
+
     return unless $widget and $data;
 
     if (ref $data) {
@@ -630,21 +632,21 @@ sub set_state_data {
         $s->{'data'} = $data;
 
         $HTML::Mason::Commands::session{$widget} = $s;
-    
+
         return $HTML::Mason::Commands::session{$widget}->{'data'};
-    } else {    
+    } else {
         my $s = $HTML::Mason::Commands::session{$widget};
         $s->{'data'}->{$data} = $value;
 
         $HTML::Mason::Commands::session{$widget} = $s;
-        
+
         return $HTML::Mason::Commands::session{$widget}->{'data'}->{$data};
     }
 }
 
 sub get_state_data {
     my ($widget, $key) = @_;
-    
+
     return unless $widget;
 
     if (defined $key) {
@@ -693,9 +695,9 @@ sub set_state {
     my ($widget, $state, $data) = @_;
 
     return unless $widget;
-    
+
     set_state_name($widget, $state) if $state;
-        
+
     set_state_data($widget, $data) if $data;
 
     return [$HTML::Mason::Commands::session{$widget}->{'state'},
@@ -801,12 +803,12 @@ sub user_is_admin {
 
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 
 
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 
 
