@@ -101,6 +101,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MEDIA_FILE_ROOT
                     MEDIA_UNIQUE_FILENAME
                     MEDIA_FILENAME_PREFIX
+                    MEDIA_UPLOAD_LIMIT
                     USE_THUMBNAILS
                     THUMBNAIL_SIZE
                     SMTP_SERVER
@@ -266,6 +267,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ENABLE_GZIP)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT
+                                     MEDIA_UPLOAD_LIMIT
                                      MEDIA_UNIQUE_FILENAME
                                      MEDIA_FILENAME_PREFIX)],
                     thumb     => [qw(USE_THUMBNAILS
@@ -557,6 +559,9 @@ require Bric; our $VERSION = Bric->VERSION;
     # Prefix to append to media id if required.
     use constant MEDIA_UNIQUE_FILENAME    => $config->{MEDIA_UNIQUE_FILENAME};
     use constant MEDIA_FILENAME_PREFIX    => $config->{MEDIA_FILENAME_PREFIX} || '';
+
+    # Media upload limit.
+    use constant MEDIA_UPLOAD_LIMIT      => $config->{MEDIA_UPLOAD_LIMIT} || 0;
 
     # Are we using thumbnails and how big are they ?
     use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};

@@ -130,6 +130,11 @@ accurate way to add a bunch of output channels to a clone at once. Users must
 have READ access to each listed output channel group. Sponsored by Alinghi.
 [David]
 
+=item *
+
+Added C<MEDIA_UPLOAD_LIMIT> F<bricolage.conf> directive for setting a size
+limit on uploaded media files. [Scott]
+
 =back
 
 =head2 Improvements

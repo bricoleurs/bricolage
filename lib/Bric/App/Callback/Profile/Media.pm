@@ -16,7 +16,9 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Config qw(:media);
 use Bric::Util::DBI;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
@@ -90,6 +92,14 @@ sub update : Callback(priority => 1) {
     # Check for file
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
+
+        # Prevent big media uploads
+        if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
+            my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
+            add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
+            return;
+        }
+
         my $fh = $upload->fh;
         my $agent = HTTP::BrowserDetect->new;
         my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
@@ -122,11 +132,11 @@ sub delete_media : Callback {
 
     # Make sure it's active.
     $media->activate;
-    
+
     $media->delete_file($media);
-    
+
     log_event('media_del_file', $media);
-    
+
     set_state_data($widget, 'media', $media);
 }
 
