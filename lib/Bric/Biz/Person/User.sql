@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:45 $
+-- $Date: 2001-12-18 22:53:57 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -26,7 +26,7 @@ CREATE TABLE usr (
 );
 
 --
--- FUNCTION: login_avil
+-- FUNCTION: login_avail
 --
 -- This function is used by the table constraint ck_usr__login below to
 -- determine whether the login can be used. The rule is that there can be any
