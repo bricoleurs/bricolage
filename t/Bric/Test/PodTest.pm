@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 19:15:20 $
+$Date: 2003-02-18 19:16:53 $
 
 =head1 SYNOPSIS
 
@@ -65,7 +65,7 @@ sub test_mods : Test(no_plan) {
         if ($errstr =~ m/^\*\*\*/) {
             # There are warnings or errors. So print error string via diag.
             $errstr =~ s/\(unknown\)/$module/g;
-            diag( $errstr )
+            diag( "\n", $errstr )
         }
     }
 }
