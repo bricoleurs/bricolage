@@ -71,6 +71,11 @@ non-unique URI in a story. Thanks to Rachel Murray for the spot! [David]
 Fixed C<has_keyword> for stories and media, which was always returning
 C<undef>. Spotted by Clare Parkinson. [Scott]
 
+=item *
+
+Now requiring Exception::Class 1.20, as its Classes method moved in a
+backwards-incompatible way. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

@@ -119,7 +119,7 @@ BEGIN {
     #     [ $_[2], $_[4], escape_html($_[1]->error) ];
     # }
 
-    foreach my $ec (Exception::Class::Base->Classes) {
+    foreach my $ec (Exception::Class::Classes) {
         $ec =~ s/::/__/g;
         eval qq{sub SOAP::Serializer::as_$ec {
             [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
