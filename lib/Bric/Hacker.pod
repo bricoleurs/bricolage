@@ -597,7 +597,7 @@ Resolve any conflicts (hopefully none, but they do happen occasionally).
 Notice above that the result of the merge is a conflict in
 F<lib/Bric/Hacker.pod>. To resolve the conflicts, follow the directions in the
 Subversion book, published online here:
-L<http://svnbook.red-bean.com/svnbook/ch03s05.html#svn-ch-3-sect-4.4>.
+L<http://svnbook.red-bean.com/en/1.1/ch03s05.html#svn-ch-3-sect-5.4>.
 
 =item 5
 
