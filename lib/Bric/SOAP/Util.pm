@@ -20,6 +20,7 @@ our @EXPORT_OK = qw(
                     parse_asset_document
                     serialize_elements
                     deserialize_elements
+                    do_output_channels
                    );
 
 # set to 1 to see debugging output on STDERR
@@ -31,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 22:58:53 $
+$Date: 2002-11-20 20:52:07 $
 
 =head1 SYNOPSIS
 
@@ -148,7 +149,7 @@ sub parse_asset_document {
     return XMLin($document,
                  keyattr       => [],
                  suppressempty => '',
-                 forcearray    => [qw( contributor category
+                 forcearray    => [qw( contributor category output_channel
                                        keyword element container
                                        data story media template ),
                                    @extra_force_array
@@ -196,6 +197,47 @@ sub serialize_elements {
 
     $writer->endTag("elements");
     return @related;
+}
+
+sub do_output_channels {
+    my ($asset, $ocdata, $elem_ocs, $key, $update) = @_;
+        my %ocs;
+        if ($update) {
+            # Note the current output channels.
+            %ocs =  map { $_->get_name => $_ } $asset->get_output_channels;
+        } else {
+            # Delete the existing output channels.
+            $asset->del_output_channels;
+            $asset->set_primary_oc_id;
+        }
+
+        # Update the output channels.
+        foreach my $ocdata (@$ocdata) {
+            # Construct the output channel.
+            my $ocname = ref $ocdata ? $ocdata->{content} : $ocdata;
+            my $oc = delete $ocs{$ocname};
+            unless ($oc) {
+                # We have to add the new output channel to the media. Grab the
+                # OC object from the element.
+                $oc = $elem_ocs->{$ocname} or
+                  die __PACKAGE__ . "::create : output channel matching " .
+                  "(name => \"$ocname\") not allowed or cannot be found\n";
+                $asset->add_output_channels($oc);
+                log_event("${key}_add_oc", $asset,
+                          { 'Output Channel' => $oc->get_name });
+            }
+
+            # Set the primary OC ID, if necessary.
+            $asset->set_primary_oc_id($oc->get_id)
+              if ref $ocdata and $ocdata->{primary};
+        }
+
+        # Delete any remaining output channels.
+        foreach my $oc (values %ocs) {
+            log_event("${key}_del_oc", $asset,
+                      { 'Output Channel' => $oc->get_name });
+            $asset->del_output_channels($oc->get_id);
+        }
 }
 
 =item @relations = deseralize_elements(object => $story, data => $data,

@@ -280,6 +280,11 @@ Changed the code in Bric::Util::Burner::Mason to allow for new Mason burners
 to be constructed and used to publish stories from within templates. This is
 useful for generating tables of contents and such. [David]
 
+=item *
+
+Added support for the association between business assets and output channels
+to the SOAP interface. [David]
+
 =back
 
 =head1 VERSION 1.4.5

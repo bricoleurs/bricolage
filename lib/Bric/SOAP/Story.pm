@@ -7,6 +7,7 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Biz::OutputChannel;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
@@ -20,6 +21,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        do_output_channels
                        );
 use Bric::SOAP::Media;
 
@@ -38,15 +40,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 06:02:09 $
+$Date: 2002-11-20 20:52:06 $
 
 =head1 SYNOPSIS
 
@@ -206,7 +208,7 @@ ascending (the default) or "DESC" for descending.
 A maximum number of objects to return. If not specified, all objects
 that match the query will be returned.
 
-=item Offset 
+=item Offset
 
 The number of objects to skip before listing the number of objects
 specified by "Limit". Not used if "Limit" is not defined, and when
@@ -224,13 +226,13 @@ Notes: NONE
 
 {
 # hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(title description slug category 
-                                 keyword simple primary_uri priority
-                                 workflow no_workflow publish_status element
-                                 publish_date_start publish_date_end
-                                 cover_date_start cover_date_end
-                                 expire_date_start expire_date_end
-                                 Order OrderDirection Limit Offset);
+my %allowed = map { $_ => 1 } qw(title description slug category keyword simple
+                                 primary_uri priority workflow no_workflow
+                                 publish_status element publish_date_start
+                                 publish_date_end cover_date_start
+                                 cover_date_end expire_date_start
+                                 expire_date_end Order OrderDirection Limit
+                                 Offset);
 
 sub list_ids {
     my $self = shift;
@@ -695,7 +697,7 @@ sub _load_stories {
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
     # loop over stories, filling in %story_ids and @relations
-    my (%story_ids, @story_ids, @relations);
+    my (%story_ids, @story_ids, @relations, %selems);
     foreach my $sdata (@{$data->{story}}) {
         my $id = $sdata->{id};
 
@@ -708,12 +710,18 @@ sub _load_stories {
         # get user__id from Bric::App::Session
         $init{user__id} = get_user_id;
 
+        unless ($selems{$sdata->{element}}) {
+            my $e = (Bric::Biz::AssetType->list
+              ({ name => $sdata->{element}, media => 0 }))[0]
+                or die __PACKAGE__ . "::create : no story element found " .
+                "matching (element => \"$sdata->{element}\")\n";
+            $selems{$sdata->{element}} =
+              [ $e->get_id,
+                { map { $_->get_name => $_ } $e->get_output_channels } ];
+        }
+
         # get element__id from story element
-        ($init{element__id}) = Bric::Biz::AssetType->list_ids(
-                                 { name => $sdata->{element}, media => 0 });
-        die __PACKAGE__ . "::create : no story element found matching " .
-            "(element => \"$sdata->{element}\")\n"
-                unless defined $init{element__id};
+        $init{element__id} = $selems{$sdata->{element}}->[0];
 
         # get source__id from source
         ($init{source__id}) = Bric::Biz::Org::Source->list_ids(
@@ -870,6 +878,16 @@ sub _load_stories {
         # unsaved story, strangely.
         $story->deactivate;
         $story->save;
+
+        # Manage the output channels.
+        do_output_channels($story, $sdata->{output_channels}{output_channel},
+                           $selems{$sdata->{element}}->[1], 'story', $update);
+
+        # sanity checks
+        die __PACKAGE__ . "::create : no output channels defined!"
+            unless $story->get_output_channels;
+        die __PACKAGE__ . "::create : no primary output channel defined!"
+            unless defined $story->get_primary_oc_id;
 
         # remove all keywords if updating
         $story->delete_keywords([ $story->get_keywords ])
@@ -1048,6 +1066,17 @@ sub _serialize_story {
         $writer->dataElement(category => $cat->ancestry_path);
     }
     $writer->endTag("categories");
+
+    # Output output channels.
+    $writer->startTag("output_channels");
+    my $poc = $story->get_primary_oc;
+    $writer->dataElement(output_channel => $poc->get_name, primary => 1);
+    my $pocid = $poc->get_id;
+    foreach my $oc ($story->get_output_channels) {
+        next if $oc->get_id == $pocid;
+        $writer->dataElement(output_channel => $oc->get_name);
+    }
+    $writer->endTag("output_channels");
 
     # output keywords
     $writer->startTag("keywords");

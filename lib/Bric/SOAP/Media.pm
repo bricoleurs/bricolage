@@ -21,6 +21,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        do_output_channels
                        );
 
 use SOAP::Lite;
@@ -38,15 +39,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:45 $
+$Date: 2002-11-20 20:52:06 $
 
 =head1 SYNOPSIS
 
@@ -117,7 +118,7 @@ A single OR search that hits title, description and uri.
 
 =item category
 
-The category containing the story, given as the complete category path
+The category containing the media, given as the complete category path
 from the root.  Example: "/news/linux".
 
 =item workflow
@@ -605,7 +606,7 @@ sub _load_media {
     }
 
     # loop over media, filling in @media_ids
-    my @media_ids;
+    my (@media_ids, %melems);
     foreach my $mdata (@{$data->{media}}) {
         my $id = $mdata->{id};
 
@@ -618,12 +619,19 @@ sub _load_media {
         # get user__id from Bric::App::Session
         $init{user__id} = get_user_id;
 
+        unless ($melems{$mdata->{element}}) {
+            my $e = (Bric::Biz::AssetType->list
+              ({ name => $mdata->{element}, media => 1 }))[0]
+                or die __PACKAGE__ . "::create : no media element found " .
+                "matching (element => \"$mdata->{element}\")\n";
+            $melems{$mdata->{element}} =
+              [ $e->get_id,
+                { map { $_->get_name => $_ } $e->get_output_channels } ];
+        }
+
+
         # get element object for asset type
-        ($init{element__id}) = Bric::Biz::AssetType->list_ids(
-                                 { name => $mdata->{element}, media => 1 });
-        die __PACKAGE__ . "::create : no media element found matching " .
-            "(element => \"$mdata->{element}\")\n"
-                unless defined $init{element__id};
+        $init{element__id} = $melems{$mdata->{element}}->[0];
 
         # get source__id from source
         ($init{source__id}) = Bric::Biz::Org::Source->list_ids(
@@ -777,6 +785,16 @@ sub _load_media {
         $media->deactivate;
         $media->save;
 
+        # Manage the output channels.
+        do_output_channels($media, $mdata->{output_channels}{output_channel},
+                           $melems{$mdata->{element}}->[1], 'media', $update);
+
+        # sanity checks
+        die __PACKAGE__ . "::create : no output channels defined!"
+            unless $media->get_output_channels;
+        die __PACKAGE__ . "::create : no primary output channel defined!"
+            unless defined $media->get_primary_oc_id;
+
         # updates are in-place, no need to futz with workflows and desks
         my $desk;
         unless ($update) {
@@ -872,6 +890,17 @@ sub _serialize_media {
 
     # output categories
     $writer->dataElement(category => $media->get_category->ancestry_path);
+
+    # Output output channels.
+    $writer->startTag("output_channels");
+    my $poc = $media->get_primary_oc;
+    $writer->dataElement(output_channel => $poc->get_name, primary => 1);
+    my $pocid = $poc->get_id;
+    foreach my $oc ($media->get_output_channels) {
+        next if $oc->get_id == $pocid;
+        $writer->dataElement(output_channel => $oc->get_name);
+    }
+    $writer->endTag("output_channels");
 
     # output contributors
     $writer->startTag("contributors");
