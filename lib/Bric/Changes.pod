@@ -108,6 +108,12 @@ FTP mover to unlink an older version of a file before renaming the new version
 to that name. This is necessary for some FTP servers that won't disallow
 renaming a file to replace an existing file. [Andrea Rota]
 
+=item *
+
+Updated zh-cn and zh-tw localizations, translating all untranslated
+mesages and JavaScript messages. [Kang-min Liu]
+
+
 =back
 
 =head2 Bug Fixes

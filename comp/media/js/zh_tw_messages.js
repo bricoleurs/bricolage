@@ -1,5 +1,5 @@
 var slug_chars_msg =
-  "slug 的內容只能事字母或者數字！（A-Z,0-9,- 與 _）";
+  "slug 的內容只能是字母或者數字！（A-Z,0-9,- 與 _）";
 var role_msg = "你必須替這個角色取個獨特的名字！";
 var login_msg1 = "使用者名稱至少要 ";
 var login_msg2 = " 個字元！";
@@ -12,4 +12,5 @@ var days_msg = "這個日期根本不存在！它已經被改為 ";
 var data_msg =  "你必須將所有欄位都填上資料！";
 var empty_field_msg = "你必須給定這個的值 ";
 var illegal_chars_msg = " 內含非法字元！";
-var warn_delete_msg = "You are about to permanently delete items! Do you wish to continue?"
+var warn_delete_msg = "這樣會把好些內容都刪除了，您確定要繼續？"
+

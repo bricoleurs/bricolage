@@ -6,14 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if fetch_sql q{
-        SELECT 1
-        FROM   pg_class c, pg_constraint r
-        WHERE  r.conrelid = c.oid
-               AND c.relname = 'story'
-               AND r.contype = 'c'
-               AND r.conname = 'fk_desk__story'
-};
+exit if test_constraint 'story', 'fk_desk__story';
 
 my @sql;
 
