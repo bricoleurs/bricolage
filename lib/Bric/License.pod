@@ -227,6 +227,8 @@ Friends who have spotted bugs include:
 
 =item Earle Martin
 
+=item Alexander Ling
+
 =back
 
 Bricolage's translation team:

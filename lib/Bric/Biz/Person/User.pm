@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-09-16 04:44:46 $
+$Date: 2003-11-26 15:21:08 $
 
 =head1 SYNOPSIS
 
@@ -1428,13 +1428,17 @@ $get_em = sub {
             $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
+        } elsif ($k eq 'active') {
+            $wheres .= " AND u.$k = ?";
+            push @params, $v ? 1 : 0;
         } else {
             $wheres .= " AND LOWER(p.$k) LIKE ?";
             push @params, lc $v;
         }
     }
 
-    $wheres .= ' AND u.active = 1' unless defined $args->{id};
+    $wheres .= ' AND u.active = 1' unless defined $args->{id}
+      or exists $args->{active};
     my ($qry_cols, $order) = $ids ? (\'DISTINCT u.id', 'u.id') :
       (\$sel_cols, 'LOWER(p.lname), LOWER(p.fname), LOWER(p.mname), u.id');
 

@@ -147,6 +147,11 @@ elements can type in the key name field. Thanks to Arthur for the spot!
 The Template toolkit burner now correctly uses element key names instead of
 names to find corresponding templates. [David]
 
+=item *
+
+Management of user groups in a double list manager UI no longer causes an SQL
+error. Spotted by Alexander Ling. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
