@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.89 $
+$Revision: 1.90 $
 
 =head1 DATE
 
-$Date: 2003-02-19 19:00:31 $
+$Date: 2003-02-19 19:05:46 $
 
 =head1 DESCRIPTION
 
@@ -194,6 +194,10 @@ Modify C<< Grp->get_objects() >> to use use the C<grp_id> parameter to
 C<list()>, once support for that parameter has been added to all classes. Go
 through all the code and make sure that it uses this approach, rather than
 constructing the relevant objects one-at-a-time from each Member object.
+
+=item *
+
+Move callbacks to modules that subclass MasonX::CallbackHandler.
 
 =item *
 
