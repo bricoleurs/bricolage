@@ -125,7 +125,7 @@ once. It neatly replaces code such as this:
 
 With this:
 
-  for my $x ($element->get_containers('quote')) {
+  for my $quote ($element->get_containers('quote')) {
       $burner->display_element($quote);
   }
 
