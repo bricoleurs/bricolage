@@ -114,7 +114,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -143,7 +143,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -246,7 +246,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -442,7 +442,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -468,7 +468,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -480,6 +480,7 @@ AC_DEFUN([CHECK_FOR_PGPASS],[
                           (Some systems are set up this way for security)],[
       if test "$withval" = "yes" ;then
 		PG_NO_PASS="true"
+		PG_ROOT_PASS="none"
 		AC_MSG_RESULT(yes)
 	  else 
 		PG_NO_PASS="false"
@@ -506,7 +507,7 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
@@ -523,7 +524,7 @@ dnl
 dnl Check to see if a user exists.  VAR will be set
 dnl to "yes" on success, "no" on failure.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_USER],[
@@ -545,7 +546,7 @@ dnl to "yes" on success, "no" on failure.  user should
 dnl a user id which is known to exist, and should be in this 
 dnl group.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_GROUP],[
@@ -578,7 +579,7 @@ dnl Try to figure out which pod2html we're working with
 dnl the variable will be set to Christiansen, McDougall, 
 dnl or none, depending on which pod2html is found.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POD2HTML],[
@@ -601,7 +602,7 @@ dnl Checks to see if the indicated apache binary has
 dnl mod_perl compiled in.  Returns "yes" or "no" in 
 dnl VAR.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.12 2002-02-12 15:59:28 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.13 2002-02-12 17:04:10 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_APACHE_MOD_PERL],[
