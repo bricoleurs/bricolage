@@ -549,7 +549,7 @@ $save_element_etc = sub {
                 # If this is a top-level element, make sure it as one site and one
                 # OC associated with it.
                 if ($obj->get_top_level) {
-                    unless ($obj->get_sites->[0] and $obj->get_primary_oc ) {
+                    unless ($obj->get_sites->[0] and $obj->get_primary_oc_id ) {
                         add_msg("Element must be associated with at least " .
                                 "one site and one output channel.");
                         return;
