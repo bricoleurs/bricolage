@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.98 $
+$Revision: 1.99 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.98 $ )[-1];
+our $VERSION = (qw$Revision: 1.99 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-19 05:12:15 $
+$Date: 2004-03-24 03:02:53 $
 
 =head1 SYNOPSIS
 
@@ -364,9 +364,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
 
-        $config->{LOAD_LANGUAGES} = [ split /\s*;\s*/,
+        $config->{LOAD_LANGUAGES} = [ split /\s+/,
                                       $config->{LOAD_LANGUAGES} || 'en_us' ];
-        $config->{LOAD_CHAR_SETS} = [ split /\s*;\s*/,
+        $config->{LOAD_CHAR_SETS} = [ split /\s+/,
                                       $config->{LOAD_CHAR_SETS} || 'UTF-8' ];
 
         # Special case for the SSL_ENABLE configuration directive.

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.151 $
+$Revision: 1.152 $
 
 =head1 DATE
 
-$Date: 2004-03-18 00:21:51 $
+$Date: 2004-03-24 03:02:52 $
 
 =head1 DESCRIPTION
 
@@ -1378,7 +1378,6 @@ creates a temporary file, than moves this temp file over the existing,
 older file, overwriting it. Some servers do not support renaming to existing
 files, so the original one must be deleted first.
 
-
 =back
 
 =head2 UI Configuration
@@ -1426,6 +1425,14 @@ control how many years before and after the current year to display in the
 list of years in the date and time select widget. The default values are 10
 for each, meaning that if the current year is 2003, then the date span will be
 from 1993 to 2013.
+
+=item *
+
+B<ENABLE_CATEGORY_BROWSER:> Category browser setting. Enable this directive to
+make the Media and Story profiles use the category browserb. This is useful if
+you have a lot of categories, as it prevents them all from being loaded into a
+big select list each time you edit a Media or Story document. Disabled by
+default.
 
 =item *
 
@@ -1543,6 +1550,25 @@ The default value for C<HTMLAREA_TOOLBAR> is:
    'superscript', 'separator', 'copy', 'cut', 'paste', 'space', 'undo',
    'redo', 'createlink', 'htmlmode', 'separator', 'popupeditor', 'separator',
    'showhelp', 'about']
+
+=back
+
+=head2 Language Configuration
+
+Bricolage offers full support for editing documents in multiple languages and
+character sets. These directives can help Bricolage to be more efficient in
+its use of Language resources.
+
+=over 4
+
+=item *
+
+B<LOAD_LANGUAGES and B<LOAD_CHAR_SETS:> Tell Bricolage which languages and
+character sets to pre-load. If you plan on using multiple languages and/or
+character sets, you can save some memory by pre-loading them at server
+startup. Otherwise, they will be loaded on demand. Multiple entries should be
+separated by spaces. C<LOAD_LANGUAGES> defaults to "en_us" and
+C<LOAD_CHAR_SETS> defaults to "UTF-8".
 
 =back
 

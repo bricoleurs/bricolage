@@ -88,6 +88,11 @@ The Story, Template, and Media SOAP C<list_ids() intefaces now properly look
 up categories, output channels, and workflows with the C<site> paremeter, if
 there is one. [David]
 
+=item *
+
+The C<LOAD_LANGUGES> and C<LOAD_CHAR_SETS> directives are now space delimited,
+to better match other F<bricolage.conf> options. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
