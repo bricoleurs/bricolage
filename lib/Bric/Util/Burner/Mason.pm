@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-24 06:13:44 $
+$Date: 2004-02-25 05:30:50 $
 
 =head1 SYNOPSIS
 
@@ -84,7 +84,8 @@ use base qw(Bric::Util::Burner);
 #--------------------------------------#
 # Private Class Fields
 my $fs = Bric::Util::Trans::FS->new;
-my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::Mason::XMLWriterHandle->new
+my $xml_fh = INCLUDE_XML_WRITER
+  ? Bric::Util::Burner::Mason::XMLWriterHandle->new
   : undef;
 
 #--------------------------------------#
