@@ -38,9 +38,10 @@ if ($field eq 'preview') {
         }
 
         # Move out the story and then redirect to preview.
-        my $url = $b->preview($media, 'media', get_user_id(), $m, $oc_id);
-        &$send_msg("Redirecting to preview.");
-        redirect_onload($url);
+        if (my $url = $b->preview($media, 'media', get_user_id(), $m, $oc_id)) {
+            &$send_msg("Redirecting to preview.");
+            redirect_onload($url);
+        }
     } else {
         my $s = get_state_data('story_prof', 'story');
         unless ($s && defined $story_id && $s->get_id == $story_id) {
@@ -55,15 +56,18 @@ if ($field eq 'preview') {
 
             # Make sure this media object isn't checked out.
             if ($r->get_checked_out) {
-                add_msg($lang->maketext('Cannot auto-publish related media [_1] because it is checked out','&quot;'.$r->get_title.'&quot;'));
+                add_msg($lang->maketext('Cannot auto-publish related media ' .
+                                        '[_1] because it is checked out',
+                                        '&quot;'.$r->get_title.'&quot;'));
                 next;
             }
             $b->preview($r, 'media', get_user_id(), $m, $oc_id);
         }
         # Move out the story and then redirect to preview.
-        my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id);
-        &$send_msg("Redirecting to preview.");
-        redirect_onload($url);
+        if (my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id)) {
+            &$send_msg("Redirecting to preview.");
+            redirect_onload($url);
+        }
     }
 } else {
     # Instantiate the Burner object.

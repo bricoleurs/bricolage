@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.5 $
+$Revision: 1.32.4.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-21 21:16:10 $
+$Date: 2003-07-21 22:08:26 $
 
 =head1 SYNOPSIS
 
@@ -638,6 +638,11 @@ sub preview {
     # We don't need to exeucte the job if it has already been executed.
     $job->execute_me unless ENABLE_DIST;
     if (PREVIEW_LOCAL) {
+        # Make sure there are some files to redirect to.
+        unless (@$res) {
+            $send_msg->("No output to preview.");
+            return;
+        }
         # Copy the files for previewing locally.
         foreach my $rsrc (@$res) {
             $fs->copy($rsrc->get_path,

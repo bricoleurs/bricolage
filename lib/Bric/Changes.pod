@@ -197,6 +197,11 @@ Returning to a desk from editing an asset that was selected for editing from
 that desk no longer triggers an error. Thanks to Clive Jones for the spot!
 [David]
 
+=item *
+
+An attempt to preview a story where its templates output no content no longer
+results in an error. Reported by Eldar Kononov. [David]
+
 =back
 
 =head1 VERSION 1.6.1
