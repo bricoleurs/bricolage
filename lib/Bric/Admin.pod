@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-02-20 01:47:22 $
 
 =head1 DESCRIPTION
 
@@ -194,9 +194,15 @@ Change to the source directory and execute these commands:
 
 =head2 Perl Modules
 
-There are quite a few Perl modules required by Bricolage (see "PACKAGES" above for a
-list). Installation of these modules follows the usual perl module installation
-process:
+There are quite a few Perl modules required by Bricolage (see "PACKAGES" above
+for a list). The easiest way to install them all is to use CPAN.pm to download
+the latest Bundle::Bricolage package from the CPAN and use it to install all the
+required packages:
+
+  perl -MCPAN -e install Bundle::Bricolage
+
+However, manual installation of each of the required modules follows the usual
+perl module installation process:
 
 =over 4
 
@@ -589,8 +595,45 @@ And now PostgreSQL is ready to go!
 
 =head2 Bricolage
 
+With the 1.4.0 release, Bricolage can be installed using the new configure system:
+
+=over
+
+=item *
+
+Download the latest Bricolage sources from L<http://bricolage.sourceforge.net/>.
+
+=item *
+
+Decompress the Bricolage sources into a directory of your choice and chnage into
+that directory.
+
+=item *
+
+Read the configure options and determine which you need to install Bricolage:
+
+  ./configure --help
+
+=item *
+
+Install Bricolage:
+
+  ./configure [options]
+  make
+  make install
+
+=back
+
+If you run into problem, please file a bug report at
+L<http://bricolage-bugzilla.thepirtgroup.com> and then try the manual
+installation instructions below.
+
+=head2 Bricolage (Manual Installation)
+
 When all of the basic software components have been insalled, start PostgreSQL.
 You can use one of the scripts in startup/ if you like.
+
+=over
 
 =item *
 
