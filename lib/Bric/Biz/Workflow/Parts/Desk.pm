@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-09-28 00:09:25 $
+$Date: 2003-01-10 03:35:24 $
 
 
 =head1 SYNOPSIS
@@ -776,15 +776,17 @@ sub transfer {
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
 					    '_asset_grp_obj');
 
-    # If we don't have an asset_grp_obj there shouldn't be anything to transfer!
+    # If we don't have an asset_grp_obj there shouldn't be anything to
+    # transfer!
     return unless $asset_grp_obj;
 
     # Do the pre-desk rule checks
     return unless $desk->accept({'asset' => $asset,
 				 'from'  => $self});
 
-    # If the asset was accepted and we get here, remove this asset from the desk
-    $asset_grp_obj->delete_members([{'package' => ref $asset, 'id' => $asset->get_id}]);
+    # If the asset was accepted and we get here, remove this asset from the
+    # desk
+    $asset_grp_obj->delete_member({ obj => $asset });
 
     return $self
 }
