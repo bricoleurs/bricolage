@@ -16,18 +16,17 @@ here:
 Download the files "apreq.tar.gz" and "apreq.patch".
 
 If you're planning to use mod_ssl for secure connections to your Mac OS X
-Bricolage server, you'll also need to download a patch that allows the
-compiler to properly find libdbm while configuring Apache. The patch can
-be found here:
+Bricolage server, you'll also need to download a couple of patches that help
+mod_ssl to find Mac OS X's OpenSSL libraries and allow the compiler to
+properly find libdbm while configuring Apache. The patches can be found here:
 
   http://david.wheeler.net/macosx/apache_dbm.patch
+  http://david.wheeler.net/macosx/mod_ssl_dylib.patch
 
 Other files and libraries you'll need to download are as follows:
 
 From http://www.apache.org/dist/httpd/, download the latest Apache 1.3
 sources.
-
-From http://www.openssl.org/source/, download the latest OpenSSL sources.
 
 From http://www.modssl.org/source/ download the mod_ssl sources. Make sure
 that the second half of the version number is the same as the version of
@@ -107,19 +106,13 @@ Or, for Perl 5.6.1, do this:
   % patch -p0 < /usr/local/src/apache_dbm.patch
   % patch -p0 < /usr/local/src/apreq.patch
   
-5. Install OpenSSL (Optional -- Required for SSL support):
-
-  % cd openssl-VERSION/
-  % ./config
-  % make
-  % make install # Optional -- Mac OS X already has its own.
-
-6. Configure mod_ssl (Optional -- Required for SSL support):
+5. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
+  % patch -p0 < /usr/local/src/mod_ssl_dylib.patch
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
 
-7. Install mod_perl:
+6. Install mod_perl:
 
   % cd mod_perl-1.xx
   % perl Makefile.PL \
@@ -130,7 +123,7 @@ Or, for Perl 5.6.1, do this:
   % make
   % make install
 
-8. Install Apache:
+7. Install Apache:
 
   % cd apache_1.3.26/
   % SSL_BASE=/usr/local/src/openssl-VERSION/ \
@@ -145,14 +138,14 @@ Or, for Perl 5.6.1, do this:
   % make certificate # Optional -- to make SSL certificate. Read messages.
   % make install
 
-9. Install apreq:
+8. Install apreq:
 
   % cd httpd-apreq/
   % /usr/local/bin/perl Makefile.PL
   % make
   % make intall
 
-10. Install Text::Iconv:
+9. Install Text::Iconv:
 
   % cd Text-Iconv-VERSION/
   % perl -i.bak -p -e "s/'LIBS'\s*=>\s*\[''\]/'LIBS' => \['-liconv'\]/" \
@@ -162,7 +155,7 @@ Or, for Perl 5.6.1, do this:
   % make test
   % make install
 
-11. Install XML::Parser:
+10. Install XML::Parser:
 
   % cd XML-Parser-VERSION/
   % /usr/local/bin/perl Makefile.PL EXPATLIBPATH=/usr/local/lib \
