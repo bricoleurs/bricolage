@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.2.4.1 $
 --
--- $Date: 2003-02-26 02:48:26 $
+-- $Date: 2003-03-23 05:43:19 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -236,7 +236,6 @@ VALUES (24, 23, 135);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (24, NULL, 60, 'All Contributor Types', 'All contributor types in the system.', 0, 1);
-
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (136, 35, 6, 1);
 
@@ -359,6 +358,15 @@ VALUES (147, 35, 6, 1);
 
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES (36, 35, 147);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (48, 0, 77, 'All Media Types', 'All media types in the system.', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (200, 35, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (200, 48, 200);
 
 /*
 

@@ -114,6 +114,8 @@ classes:
 
 =item Bric::Util::Grp
 
+=item Bric::Util::MediaType
+
 =item Bric::Util::Pref
 
 =back
@@ -373,6 +375,12 @@ associate with a destination. Thanks to Alex Epshteyn for the spot! [David]
 
 The installer now collects Apache configuration data from any C<Include>d
 files, as well. Thanks to Alex Wheeler for the spot! [David]
+
+=item *
+
+Media types now can be added to groups. This means that permissions can be set
+so that users can administer media types. Previously, only members of the
+"Global Admins" group could administer meida types. [David]
 
 =back
 
