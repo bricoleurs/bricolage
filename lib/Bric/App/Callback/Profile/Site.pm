@@ -30,7 +30,7 @@ sub save : Callback {
         $site->save;
         $self->cache->set_lmu_time;
         $self->cache->set('__SITES__', 0);
-        $self->cache->set('__WORKFLOWS__', 0);
+        $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
         log_event("${type}_deact", $site);
         set_redirect('/admin/manager/site');
         add_msg($self->lang->maketext("$disp_name profile &quot;[_1]&quot; deleted.",
@@ -45,7 +45,7 @@ sub save : Callback {
         $site->set_domain_name($param->{domain_name});
         $site->save;
         $self->cache->set('__SITES__', 0);
-        $self->cache->set('__WORKFLOWS__', 0);
+        $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
         add_msg($self->lang->maketext("$disp_name profile [_1] saved.", $param->{name}));
         log_event($type . '_save', $site);
 

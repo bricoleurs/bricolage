@@ -14,6 +14,14 @@ my $type = 'desk';
 my $disp_name = get_disp_name($type);
 my $class = get_package_name($type);
 
+my $expire_wf_cache = sub {
+    my ($self, $did) = @_;
+    # Expire the cache for all workflows that contain this desk.
+    foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $did })) {
+        $c->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+    }
+};
+
 sub save : Callback {
     my $self = shift;
 
@@ -27,9 +35,10 @@ sub save : Callback {
         # Deactivate it.
         $desk->deactivate;
         $desk->save;
-        $self->cache->set('__WORKFLOWS__', 0);
+        $self->$expire_wf_cache($self, $param->{"${type}_id"});
         log_event("${type}_deact", $desk);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted from all workflows.",$name));
+        add_msg($self->lang->maketext
+                ("$disp_name profile [_1] deleted from all workflows.", $name));
         set_redirect(defined $param->{workflow_id} ?
                        "/admin/profile/workflow/$param->{workflow_id}"
                          : last_page());
@@ -47,7 +56,9 @@ sub save : Callback {
 	       && $desks[0] != $desk_id) {
                 $used = 1;
             }
-            add_msg($self->lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name))
+            add_msg($self->lang->maketext
+                    ("The name [_1] is already used by another [_2].", $name,
+                     $disp_name))
               if $used;
         }
 
@@ -61,7 +72,7 @@ sub save : Callback {
         }
         unless ($used) {
             $desk->save;
-            $self->cache->set('__WORKFLOWS__', 0);
+            $self->$expire_wf_cache($self, $desk_id);
             log_event($type . (defined $param->{desk_id} ? '_save' : '_new'), $desk);
         } else {
             $param->{new_desk} = 1;

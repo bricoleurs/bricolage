@@ -166,9 +166,12 @@ sub save : Callback {
     # to reload their user objects from the database. Also note that all workflows
     # and sites must be reloaded in the sideNav and header, as permissions may
     # have changed.
-    $self->cache->set_lmu_time;
-    $self->cache->set('__WORKFLOWS__', 0);
-    $self->cache->set('__SITES__', 0);
+    my $cache = $self->cache;
+    $cache->set_lmu_time;
+    $cache->set('__SITES__', 0);
+    foreach my $gid ($user->get_grp_ids) {
+        $cache->set("__WORKFLOWS__$gid", 0) if $c->get("__WORKFLOWS__$gid");
+    }
 
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')

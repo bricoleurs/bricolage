@@ -30,7 +30,7 @@ sub save : Callback {
         # Deactivate it.
         $wf->deactivate;
         $wf->save;
-        $self->cache->set('__WORKFLOWS__', 0);
+        $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
         log_event("${type}_deact", $wf);
         set_redirect('/admin/manager/workflow');
         add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
@@ -82,7 +82,7 @@ sub save : Callback {
                 $wf->deactivate;
                 $wf->save;
                 $param->{id} = $wf->get_id;
-                $self->cache->set('__WORKFLOWS__', 0);
+                $self->cache->set("__WORKFLOWS__$site_id", 0);
                 log_event("${type}_add_desk", $wf, { Desk => $param->{new_desk_name} });
                 log_event($type . '_new', $wf);
             }
@@ -116,7 +116,7 @@ sub save : Callback {
             } else {
                 $wf->activate;
                 $wf->save;
-                $self->cache->set('__WORKFLOWS__', 0);
+                $self->cache->set("__WORKFLOWS__$site_id", 0);
                 add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
                 log_event($type . '_save', $wf);
                 set_redirect('/admin/manager/workflow');

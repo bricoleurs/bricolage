@@ -87,20 +87,31 @@ sub deactivate : Callback {
 ###
 
 $reset_cache = sub {
-    my ($class, $self) = @_;
+    my ($grp, $class, $self) = @_;
+    my $cache = $self->cache;
     if ($class eq 'Bric::Util::Grp::User') {
         # Note that a user has been updated to force all users logged
         # into the system to reload their user objects from the
         # database.
-        $self->cache->set_lmu_time;
+        $cache->set_lmu_time;
         # Also, clear out the site and workflow caches, since they
-        # may have been affected by permission changes.
-        $self->cache->set('__WORKFLOWS__', 0);
-        $self->cache->set('__SITES__', 0);
+        # may have been affected by permission changes. The workflows
+        # are cached on a site_id basis, and since site IDs are also
+        # always grp IDs, we can just expire the workflow cache for
+        # all GRP ids for which each user has membership.
+        $cache->set('__SITES__', 0);
+        foreach my $u ($grp->get_objects) {
+            foreach my $gid ($u->get_grp_ids) {
+                $cache->set("__WORKFLOWS__$gid", 0)
+                  if $cache->get("__WORKFLOWS__$gid");
+            }
+        }
     } elsif ($class eq 'Bric::Util::Grp::Workflow') {
         # There may have been permission and member changes. Reset
         # the cache.
-        $self->cache->set('__WORKFLOWS__', 0);
+        foreach my $wf ($grp->get_objects) {
+            $cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+        }
     } elsif ($class eq 'Bric::Util::Grp::Site') {
         # There may have been permission and member changes. Reset
         # the cache.
@@ -122,7 +133,7 @@ $save_sub = sub {
             $grp->save;
 	    log_event('grp_deact', $grp);
             # Reset the cache.
-            $reset_cache->($class, $self);
+            $reset_cache->($grp, $class, $self);
             add_msg($self->lang->maketext("$disp_name profile [_1] deleted.", $name));
         }
         # Set redirection back to the manager.
@@ -164,7 +175,7 @@ $save_sub = sub {
 	# Redirect back to the manager.
 	set_redirect($redir);
         # Reset the cache.
-        $reset_cache->($class, $self);
+        $reset_cache->($grp, $class, $self);
 	return;
     } else {
 	# Save the group.
