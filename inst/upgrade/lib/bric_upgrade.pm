@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-15 23:47:36 $
+$Date: 2003-10-17 01:23:18 $
 
 =head1 SYNOPSIS
 
@@ -76,8 +76,8 @@ our ($opt_u, $opt_p);
 BEGIN{
     getopts('u:p:');
     # Set the db admin user and password to some reasonable defaults.
-    $ENV{BRIC_DBI_PASS} ||= $opt_p || 'postgres';
-    $ENV{BRIC_DBI_USER} ||= $opt_u || 'postgres';
+    $ENV{BRIC_DBI_PASS} ||= $opt_p ||= 'postgres';
+    $ENV{BRIC_DBI_USER} ||= $opt_u ||= 'postgres';
 }
 
 # Make sure we can load the Bricolage libraries.
@@ -265,11 +265,18 @@ sub do_sql {
 
     # Now grant the necessary permissions.
     if (@objs) {
+        my $objs = join(', ', @objs);
         my $grant = prepare(qq{
-                GRANT  SELECT, UPDATE, INSERT, DELETE
-                ON     } . join(', ', @objs) . qq{
-                TO     ${ \DBI_USER() }
-            });
+            GRANT  SELECT, UPDATE, INSERT, DELETE
+            ON     $objs
+            TO     ${ \DBI_USER() }
+        });
+        execute($grant);
+        $grant = prepare(qq{
+            GRANT  ALL PRIVILEGES
+            ON     $objs
+            TO     $opt_u
+        });
         execute($grant);
     }
 }

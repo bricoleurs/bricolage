@@ -24,18 +24,6 @@ for $type (qw(story media)) {
            site__id   NUMERIC(10)    NOT NULL,
            uri       TEXT            NOT NULL
       )},
-
-      qq{CREATE INDEX fkx_$type\__$type\_uri ON $type\_uri($type\__id)},
-      qq{CREATE UNIQUE INDEX udx_$type\_uri__site_id__uri
-         ON $type\_uri(lower_text_num(uri, site__id))},
-
-      qq{ALTER TABLE $type\_uri
-         ADD CONSTRAINT fk_$type\__$type\_uri FOREIGN KEY ($type\__id)
-             REFERENCES $type(id) ON DELETE CASCADE},
-
-      qq{ALTER TABLE $type\_uri
-         ADD CONSTRAINT fk_$type\__site__id FOREIGN KEY (site__id)
-             REFERENCES site(id) ON DELETE CASCADE},
       ;
 
     # Use our own DIE.
