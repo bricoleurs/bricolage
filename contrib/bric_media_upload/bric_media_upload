@@ -14,7 +14,7 @@ bric_media_upload [options] src target_url [target_url, ...]
 
 Arguments:
 
- src      	    - the source for media files to be uploaded.  This
+ src                  - the source for media files to be uploaded.  This
                       may be a directory, a .zip file or a .tar file.
 
  target_url         - the url for the target server(s)
@@ -40,11 +40,13 @@ Options:
                       seconds.  Defaults to 60.
 
   --make-categories - if media archive contains categories that do not exist,
-		      create them, otherwise place category-less media in /
+                      create them, otherwise place category-less media in /
 
-  --media-type	    - import as this media type.  Defaults to 'Photograph',
+  --media-type            - import as this media type.  Defaults to 'Photograph',
                       if exists.
 
+  --media-info      - add media info elements.
+  
   --content-source  - the content source for which the content will be imported.
                       Defaults to 'Internal'.
 
@@ -59,6 +61,8 @@ Options:
                       Defaults to a directory named
                       bric_media_upload.$$ in your system's temp
                       directory (as determined by File::Spec->tmpdir).
+
+  --skip-existing   - don't try to update media assets that already exist.
 
 =head1 DESCRIPTION
 
@@ -120,9 +124,11 @@ BEGIN {
     our $target_password        = $ENV{BRICOLAGE_PASSWORD};
     our $VERBOSE                = 0;
     our $make_categories        = 0;
-    our $temp_dir		= catdir(tmpdir(), "bric_media_upload.$$");
-    our $media_type		= 'Photograph';
+    our $media_info             = 0;
+    our $temp_dir                    = catdir(tmpdir(), "bric_media_upload.$$");
+    our $media_type             = 'Photograph';
     our $timeout                = 60;
+    our $skip_existing          = 0;
     our $content_source         = 'Internal';
     our $site                   = 'Default Site';
     our $BRIC_SOAP = "$FindBin::Bin/bric_soap";
@@ -132,13 +138,15 @@ BEGIN {
                "verbose"                => \$VERBOSE,
                "target-username=s"      => \$target_username,
                "target-password=s"      => \$target_password,
-	       "temp-dir=s"		=> \$temp_dir,
+               "temp-dir=s"             => \$temp_dir,
                "make-categories"        => \$make_categories,
-	       "media-type=s"		=> \$media_type,
+               "media-type=s"           => \$media_type,
+               "media-info"             => \$media_info,
                "timeout=s"              => \$timeout,
                "content-source=s"       => \$content_source,
                "site=s"                 => \$site,
                "bric_soap=s"            => \$BRIC_SOAP,
+               "skip-existing"          => \$skip_existing,
               ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
@@ -161,6 +169,12 @@ BEGIN {
     @targ_urls = @ARGV;
     pod2usage("Missing required target URL parameters")
         unless @targ_urls;
+
+    if ($media_info) {
+        eval { require Image::Info };
+        die "--media-info option requires Image::Info" if $@;
+        import Image::Info qw/ image_info /;
+    }
 };
 
 our $VERBOSE;
@@ -199,17 +213,17 @@ sub organize_media {
     if (-d $media_source) {
         $media_source_type = 'dir';
     } elsif (-f _ and $media_source =~ /.*\.tar$/) {
-	$media_source_type = 'tar';
+        $media_source_type = 'tar';
     } elsif (-f _ and $media_source =~ /.*\.zip$/) {
-	$media_source_type = 'zip';
+        $media_source_type = 'zip';
     } else {
 +        die "Unrecognized media source '$media_source' - must be a directory or a .tar or .zip file.\n";
      }
 
     # initialize start_path and set it to $media_source if media_source is dir
     if ($media_source_type eq 'dir') {
-	$media_source = File::Spec::Unix->canonpath( $media_source ) ;
-	$START_PATH = $media_source;
+        $media_source = File::Spec::Unix->canonpath( $media_source ) ;
+        $START_PATH = $media_source;
     }
 
     # unzip/untar file to /tmp if nessecary
@@ -262,54 +276,30 @@ sub build_image_list {
 }
 
 sub upload_media {
-    our (@targ_urls, $target_username, $target_password, $make_categories, $timeout, $temp_dir);
+    our (@targ_urls, $target_username, $target_password, $make_categories, $skip_existing, $timeout, $temp_dir);
     foreach my $targ_url (@targ_urls) {
-	print "\nStarting upload to $targ_url\n" if $VERBOSE;
-	my $current_path = "";
-	my $write_to_root = 0;
-	my $first = 1;
-	foreach my $media (@$media_list) {
-	    if ($current_path ne $media->{category}) {
-		$write_to_root = 0;
-		# check to see if category exists
-		my $category_check_command;
-		if ($first) {
-		    $category_check_command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password '$target_password' category list_ids --search path=".$media->{category};
-		    $first = 0;
-		    print "Caching cookie in $temp_dir/logincookie\n" if $VERBOSE;
-		} else {
-		    $category_check_command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$media->{category};
-		}
+        check_connect_soap( $targ_url ) or die "Can't connect to $targ_url";
+        print "\nStarting upload to $targ_url\n" if $VERBOSE;
+        my $current_path = "";
+        my $write_to_root = 0;
+        #my $first = 1;
+        foreach my $media (@$media_list) {
+            if ($current_path ne $media->{category}) {
+                $write_to_root = find_or_create_category( $media->{category}, $targ_url );
+            }
+            $current_path = $media->{category};
 
-		my $exec_result = `$category_check_command 2>&1`;
-		if ( ($exec_result =~ /category_\d*/) ) {
-		    print "\nCategory ".$media->{category}." found.\n" if $VERBOSE;
-		} elsif (not $exec_result) {
-		    # if cat does not exist create it
-		    if ($make_categories) {
-			print "\nCategory ".$media->{category}." needs to be created.\n" if $VERBOSE;
-			create_category($media->{category}, $targ_url);
-		    } else {
-			print "\nCategory ".$media->{category}." does not exist. Will upload media to / category.\n" if $VERBOSE;
-			$write_to_root = 1;
-		    }
-		} else {
-		    die ($exec_result);
-		}
-	    }
-	    $current_path = $media->{category};
+            # check to see if media exists, if so get id and update
+            $media->{category} = "/" if $write_to_root;
+            my $media_id = check_media_exist($media, $targ_url);
 
-	    # check to see if media exists, if so get id and update
-	    $media->{category} = "/" if $write_to_root;
-	    my $media_id = check_media_exist($media, $targ_url);
-
-	    # if media id found, update it
-	    if ($media_id) {
-		create_or_update_media($media,$targ_url,$media_id);
-	    } else { # otherwise create a new one
-		create_or_update_media($media, $targ_url);
-	    }
-	}
+            # if media id found, update it
+            if ($media_id) {
+                    create_or_update_media($media,$targ_url,$media_id) unless $skip_existing;
+            } else { # otherwise create a new one
+                    create_or_update_media($media, $targ_url);
+            }
+        }
     }
 }
 
@@ -346,7 +336,7 @@ EOS
     if ( ($exec_result =~ /category_\d*/) ) {
         print "Category $category created.\n" if $VERBOSE;
     } else {
-	die ("Error creating category $category: $exec_result");
+        die ("Error creating category $category: $exec_result");
     }
 }
 
@@ -358,20 +348,20 @@ sub check_media_exist {
     my $exec_result = `$exec_code 2>&1`;
 
     if ( ($exec_result =~ /media_\d*/) ) {
-	chomp  $exec_result;
-	print "Media ".$media->{name}." found- $exec_result.\n" if $VERBOSE;
-	$exec_result =~ s/media_//;
+        chomp  $exec_result;
+        print "Media ".$media->{name}." found- $exec_result.\n" if $VERBOSE;
+        $exec_result =~ s/media_//;
         return $exec_result;
     } elsif (not $exec_result) {
-	print "Media ".$media->{name}." not found.\n" if $VERBOSE;
-	return 0;
+        print "Media ".$media->{name}." not found.\n" if $VERBOSE;
+        return 0;
     } else {
         die ("Error looking up media: $exec_result");
     }
 }
 
 sub create_or_update_media {
-    our ($timeout, $temp_dir, $media_type, $content_source, $site);
+    our ($timeout, $temp_dir, $media_info, $media_type, $content_source, $site);
     my ($media,$targ_url,$media_id) = @_;
 
     $media_id = '' if !$media_id;
@@ -390,6 +380,7 @@ sub create_or_update_media {
     my $media_data = encode_base64($buf, '');
     close(RH);
 
+    my $infoelements = ($media_info) ? get_media_info($media_file) : '';
     # put vars into xml skeleton
     my $media_xml = <<"EOS";
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -408,7 +399,7 @@ sub create_or_update_media {
   <publish_date></publish_date>
   <category>$media_category</category>
   <contributors></contributors>
-  <elements></elements>
+  <elements>$infoelements</elements>
   <file>
    <name>$media_name</name>
    <size>$media_size</size>
@@ -437,3 +428,65 @@ EOS
     }
 }
 
+sub get_media_info {
+    my $file = shift;
+    
+    my $info = image_info($file);
+    die "Can't parse $file : ".$info->{error} if $info->{error};
+
+    my $xml = "\n   ";
+    my $order = 2;
+    foreach my $key ( qw/ width color_type height compression resolution / ) {
+        $xml .= qq/<data order="$order" element="$key">/;
+        $xml .= (defined $info->{$key}) ? $info->{$key} : 'Undefined';
+        $xml .= "</data>\n   ";
+        $order++;
+    }
+    return $xml;
+}
+
+sub check_connect_soap {
+    my $targ_url = shift;
+    our ($target_username, $target_password, $timeout, $temp_dir);
+    
+    # check to see if root category exists
+    my $command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password '$target_password' category list_ids --search path=/";
+    print "Caching cookie in $temp_dir/logincookie\n" if $VERBOSE;
+
+    my $exec_result = `$command 2>&1`;
+    if ( ($exec_result =~ /category_\d*/) ) {
+        print "\nConnected to $targ_url\n" if $VERBOSE;
+        return 1;
+    }
+
+    return 0;
+}
+
+sub find_or_create_category {
+    my ($category, $targ_url) = @_;
+    our ($timeout, $temp_dir, $make_categories);
+    my $write_to_root = 0;
+    my $command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$category;
+
+    my $exec_result = `$command 2>&1`;
+    if ( ($exec_result =~ /category_\d*/) ) {
+        print "\nCategory ".$category." found.\n" if $VERBOSE;
+    }elsif (not $exec_result) {
+        # if cat does not exist create it
+        if ($make_categories) {
+            print "\nCategory ".$category." needs to be created.\n" if $VERBOSE;
+            (my $parent) = ( $category =~ m[^(.+)/] );
+            if (defined $parent) {
+                find_or_create_category( $parent, $targ_url );
+            }
+            create_category($category, $targ_url);
+        }else{
+            print "\nCategory ".$category." does not exist. Will upload media to / category.\n" if $VERBOSE;
+            $write_to_root = 1;
+        }
+    }else{
+        die ($exec_result);
+    }
+
+    return $write_to_root;
+}

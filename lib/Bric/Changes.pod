@@ -42,6 +42,22 @@ transactions. They no longer allow SQL errors without failing the upgrade. The
 upgrade scripts have also been updated to ensure successful upgrades to
 Bricolage installations as far back as 1.4.0. [David]
 
+=item *
+
+A number of improvements for the F<bric_media_upload> contrib script:
+
+=over 8
+
+=item Creates intermediate categories if needed.
+
+=item Added a C<--skip-existing> directive.
+
+=item Added a C<--media-info> directive.
+
+=back
+
+See the script's usage info for details. [Simon Wilcox]
+
 =back
 
 =head2 Bug Fixes

@@ -157,6 +157,8 @@ Folks who have submitted patches include:
 
 =item Dave Rolsky
 
+=item Simon Wilcox
+
 =back
 
 Friends who have spotted bugs include:
