@@ -12,12 +12,14 @@ exit if fetch_sql(q{ SELECT name FROM category WHERE id=0 });
 # add the new fields and indexes,
 do_sql(q{ ALTER TABLE category ADD COLUMN name VARCHAR(64) },
        q{ ALTER TABLE category ADD COLUMN description VARCHAR(256) },
-       q{ ALTER TABLE category RENAME category_grp_id TO __category_grp_id__},
        q{ CREATE INDEX idx_category__name ON category(LOWER(name)) },
       );
 
 
 update_all();
+
+do_sql(q{ ALTER TABLE category RENAME category_grp_id TO __category_grp_id__});
+
 
 sub update_all {
   my $get_grp_id = prepare("SELECT category_grp_id FROM category");
