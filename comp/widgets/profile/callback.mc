@@ -30,7 +30,7 @@ unless ( $excl->{$type} || chk_authz($obj, (defined $id ? EDIT : CREATE), 1)
 $param->{obj} = $m->comp("$type.mc", %ARGS, obj => $obj, class => $class);
 </%perl>
 <%once>;
-my $excl = { desk => 1, action => 1, server => 1 };
+my $excl = { desk => 1, action => 1, server => 1, element_data => 1 };
 </%once>
 <%doc>
 ###############################################################################
@@ -39,11 +39,11 @@ my $excl = { desk => 1, action => 1, server => 1 };
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.8.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-11-26 02:02:40 $
 
 =head1 SYNOPSIS
 

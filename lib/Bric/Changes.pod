@@ -50,6 +50,23 @@ Mason story templates now inherit from all category templates, thus enabling
 the access of C<< <%attr> >>s and calling of C<< <%method> >>s in category
 templates from story templates.
 
+=item *
+
+Permission to edit element fields is now based on the permissions granted to
+edit the elements they belong to. This means that users other Global Admin
+group members can now edit fields. [David]
+
+=item *
+
+Dates are no longer editable if a user doesn't have permission to edit them.
+[David]
+
+=item *
+
+Users without EDIT access to an element no longer see a link to Edit fields
+of that element, but a link to View them, instead. They will also no longer
+see an "Add Subelements" button. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)

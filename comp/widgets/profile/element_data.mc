@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2003-04-25 16:33:10 $
+$Date: 2003-11-26 02:02:41 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,17 @@ $obj
 return unless $field eq "$widget|save_cb";
 # Grab the element type object and its name.
 my $ed = $obj;
-my $name = "&quot;$param->{name}&quot;";
+my $name = "&quot;" . $ed->get_name . "&quot;";
+
+my $elem = Bric::Biz::AssetType->lookup({ id => $ed->get_element__id });
+unless (chk_authz($elem, EDIT, 1)) {
+    # If we're in here, the user doesn't have permission to do what
+    # s/he's trying to do.
+    add_msg("Changes not saved: permission denied.");
+    set_redirect(last_page());
+    return;
+}
+
 if ($param->{delete}) {
     # Deactivate it.
     $ed->deactivate();

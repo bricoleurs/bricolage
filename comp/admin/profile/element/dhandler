@@ -150,7 +150,7 @@ if (defined $id) {
                  callback => "formBuilder|addElement_cb",
                  image    => "add_sub_element_lgreen",
                  vspace   => 5
-                );
+                ) unless $no_edit;
 
         $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 
@@ -180,10 +180,12 @@ if (defined $id) {
 
                 $num_fields = @$attrs;
                 $m->comp("/widgets/profile/displayAttrs.mc",
-                         form_name => 'cont_profile',
-                         attr      => $attrs,
-                         readOnly  => $no_edit,
-                         useEdit   => 1);
+                         form_name   => 'cont_profile',
+                         attr        => $attrs,
+                         readOnly    => $no_edit,
+                         useEdit     => !$no_edit,
+                         usePosition => !$no_edit,
+                         useDelete   => !$no_edit);
             } else {
                 $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
                 $lang->maketext("No fields defined"));
@@ -278,11 +280,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.4.5 $
+$Revision: 1.14.4.6 $
 
 =head1 DATE
 
-$Date: 2003-06-11 01:24:52 $
+$Date: 2003-11-26 02:02:40 $
 
 =head1 DESCRIPTION
 
