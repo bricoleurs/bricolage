@@ -146,6 +146,11 @@ spot! [David]
 Aliases of Image, Audio, or Video media documents no longer remain stuck on
 desks. Reported by Serge Sozonoff. [David]
 
+=item *
+
+Related media and story subelements of media documents now work properly.
+Thanks to Kang-min Liu for the spot! [David]
+
 =back
 
 =cut
