@@ -135,6 +135,17 @@ Thanks to Matt Vella for the report. [David]
 Fixed select lists and radio buttons in formBuilder so that they can take just
 values as well as value/name pairs. [David]
 
+=item *
+
+Fixed issue with date fields not geting populated when hours and minutes weren't
+selected. Also improvied handling fo partial date fields in Elements. Thanks to
+Matt Vella for the heads-up. [David]
+
+=item *
+
+Fixed bug where only one required data field was included in a new story. Thanks
+to Matt Vella for the report. [David]
+
 =back
 
 =head1 VERSION 1.0.1
