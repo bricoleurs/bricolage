@@ -150,7 +150,7 @@ returns true if characters that would be illegal for a url are found, false othe
 */
 function hasSpecialCharacters(what) {
 
-    var regExp = new RegExp("[^a-zA-Z0-9_-.]");
+    var regExp = new RegExp("[^-a-zA-Z0-9_.]");
     return regExp.test(what);
 
 }
@@ -458,7 +458,7 @@ function confirmChanges(obj) {
     var tmp;
     var confirmed = false;
 
-    // Check f r slug.
+    // Check for slug.
     if (typeof obj["slug"] != "undefined") {
     if (!validateStory(obj)) {
             // The slug isn't valid! Return false.
