@@ -157,6 +157,13 @@ The distribution and SOAP handlers now load a localization object so that any
 code that uses localization will work properly. Reported by Clive Jones.
 [David]
 
+=item *
+
+The C<set_page_extensions()> method of Bric::Util::Burner now throws an
+exception if duplicate page extensions are passed, rather than deferring the
+exception to the creation of a distribution job, which was confusing. [Clive
+Jones]
+
 =back
 
 =cut

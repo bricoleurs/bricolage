@@ -567,8 +567,9 @@ B<Notes:> NONE.
 
 =item  $b = $burner->set_page_extensions(@page_extensions)
 
-Sets page extensions to be used during burning. Will revert to page
-numbering once the extensions are all used.
+Sets page extensions to be used during burning. Will revert to page numbering
+once the extensions are all used. Each of the page extensions passed must be
+unique or an exception will be thrown.
 
 B<Throws:> NONE.
 
@@ -589,7 +590,19 @@ and storyconc.html.
 
 sub set_page_extensions {
     my $self = shift;
-    $self->_set(['_page_extensions'], [\@_]);
+    my %seen;
+    if (grep { $seen{$_}++ } @_) {
+        my $oc = $self->get_oc;
+        my $cat = $self->get_cat;
+        my $elem = $self->get_element;
+        throw_burn_error error => "Duplicate page extensions are not allowed",
+                         mode  => $self->get_mode,
+                         ( $oc   ? (oc    => $oc->get_name)   : ()),
+                         ( $cat  ? (cat   => $cat->get_uri)   : ()),
+                         ( $elem ? (elem  => $elem->get_name) : ()),
+    }
+
+    $self->_set(['_page_extensions'] => [\@_]);
     return $self;
 }
 
