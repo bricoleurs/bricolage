@@ -82,6 +82,13 @@ essentially means that one must always be present in the UI. [David]
 HTML::Template and Template Toolkit are now optional. If they're not installed
 on your system, they won't be loaded by Bricolage. [David]
 
+=item *
+
+The default "Story Editors," "Media Producers," and "Template Developers" user
+groups now have READ permission to the members of the "All Sites" group so
+that they can properly select a site context and gain access to the workflows
+in their site context. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -137,6 +144,12 @@ Wilcox. [David]
 
 Checkin and Publish once again works in the media profile. Thanks to Alexander
 Ling forthe stot. [David]
+
+=item *
+
+Adding users to any of the default site user permission groups no longer
+incorrectly allow those users to select that site for their context. Reported
+by Alexander Ling. [David]
 
 =back
 

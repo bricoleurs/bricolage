@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.6 $
+-- VERSION: $Revision: 1.7 $
 --
--- $Date: 2003-04-03 21:06:28 $
+-- $Date: 2003-12-18 01:34:44 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 /*
@@ -65,6 +65,13 @@ VALUES(44, 7, 1);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(44, 27);
 
+-- Give Story Editors READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(54, 7, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(54, 47);
+
 -- Give Story Editors EDIT rights to the Story workflow.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(31, 7, 2);
@@ -121,6 +128,13 @@ VALUES(46, 8, 1);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(46, 27);
 
+-- Give Media Producers READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(55, 8, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(55, 47);
+
 -- Give Media Producers EDIT rights to the Media workflow.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(36, 8, 2);
@@ -169,6 +183,13 @@ VALUES(48, 9, 1);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(48, 27);
+
+-- Give Template Developers READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(56, 9, 1);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(56, 47);
 
 -- Give Template Developers EDIT rights to the Template workflow.
 INSERT INTO grp_priv (id, grp__id, value)
