@@ -6,10 +6,11 @@ use Test::More;
 use Bric::Biz::Category;
 use Bric::Util::Grp::CategorySet;
 
-my %cat = ( name => 'Testing',
+my %cat = ( name        => 'Testing',
+            site_id     => 100,
             description => 'Description',
-            parent_id => 0,
-            directory => 'testing',
+            parent_id   => 0,
+            directory   => 'testing',
           );
 
 sub table { 'category' }
@@ -18,26 +19,34 @@ sub table { 'category' }
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(7) {
+sub test_lookup : Test(9) {
     my $self = shift;
-    ok( my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}" );
-    ok( $cat->set_ad_string('foo'), "Set the ad string" );
-    ok( $cat->save, "Save $cat{name}" );
-    ok( my $id = $cat->get_id, "Check for ID" );
+
+    ok (my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}");
+    ok ($cat->set_ad_string('foo'),                'Set the ad string');
+    ok ($cat->save,                                "Save $cat{name}");
+    ok (my $id = $cat->get_id,                     "Check for ID" );
+
     # Save the ID for deleting.
     $self->add_del_ids([$id]);
     $self->add_del_ids([$cat->get_asset_grp_id], 'grp');
+
     # Look up the ID in the database.
-    ok( $cat = Bric::Biz::Category->lookup({ id => $id }),
-        "Look up $cat{name}" );
-    is( $cat->get_id, $id, "Check that ID is the same" );
+    ok ($cat = Bric::Biz::Category->lookup({id => $id}), "Look up $cat{name}");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
+    # Look up on site and uri
+    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site__id => 100}),
+        "Look up $cat{name} on URI and Site");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
     # Make sure we've got the ad string.
-    is( $cat->get_ad_string, 'foo', "Check adstring" );
+    is ($cat->get_ad_string, 'foo', 'Check adstring');
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(28) {
+sub test_list : Test(30) {
     my $self = shift;
 
     # Create a new category group.
@@ -73,10 +82,17 @@ sub test_list : Test(28) {
         "Look up name $cat{name}%" );
     is( scalar @cats, 5, "Check for 5 categories" );
 
+    # Try site_id
+    ok( @cats = Bric::Biz::Category->list({site__id => 100}),
+        'Look up site with ID 100');
+    # We get 6 because of the default category
+    is( scalar @cats, 6, "Check for 6 categories" );
+
     # Try grp_id.
     ok( @cats = Bric::Biz::Category->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id'" );
     is( scalar @cats, 3, "Check for 3 categories" );
+
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Biz::Category::INSTANCE_GROUP_ID;
     foreach my $cat (@cats) {

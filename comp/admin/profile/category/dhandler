@@ -36,10 +36,26 @@ if (defined $id) {
     my $p_id = $cat->get_parent;
     $p_id &&= $p_id->get_id;
 
-    $m->comp('/widgets/select_object/select_object.mc', object => 'category',
-	     name => 'parent_id', field => 'uri', disp => 'Parent Category',
-	     selected => ( defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
-	     sort_field => 'uri', reset_key => $reset, req => 1, exclude => [map($_->get_id, $cat->children), defined($id) ? $id : ()]);
+    $m->comp('/widgets/select_object/select_object.mc',
+             object     => 'category',
+	     name       => 'parent_id',
+             field      => 'uri',
+             disp       => 'Parent Category',
+	     selected   => (defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
+	     sort_field => 'uri',
+             reset_key  => $reset,
+             req        => 1,
+             exclude    => [map($_->get_id, $cat->children), defined($id) ? $id : ()]);
+
+    $m->comp('/widgets/select_object/select_object.mc',
+             object     => 'site',
+	     name       => 'site_id',
+             field      => 'name',
+             disp       => 'Site',
+	     selected   => $cat->get_site_id,
+	     sort_field => 'name',
+             reset_key  => $reset,
+             req        => 1);
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -178,11 +194,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:25:59 $
+$Date: 2003-03-06 03:44:07 $
 
 =head1 DESCRIPTION
 

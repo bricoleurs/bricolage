@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.44.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:43 $
+$Date: 2003-03-06 03:44:07 $
 
 =head1 SYNOPSIS
 
@@ -121,12 +121,14 @@ my $dp = 'Bric::Util::Fault::Exception::DP';
 my $table = 'category';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
-my $sel_cols = "a.id, a.directory, a.asset_grp_id, a.active, a.uri, " .
-  "a.parent_id, a.name, a.description, m.grp__id";
-my @sel_props = qw(id directory asset_grp_id _active uri parent_id name
+my $sel_cols = 'a.id, a.site__id, a.directory, a.asset_grp_id, a.active, '.
+               'a.uri, a.parent_id, a.name, a.description, m.grp__id';
+my @sel_props = qw(id site_id directory asset_grp_id _active uri parent_id name
                    description grp_ids);
-my @cols = qw(directory asset_grp_id  active uri parent_id name description);
-my @props = qw(directory asset_grp_id _active uri parent_id name description);
+my @cols = qw(site__id directory asset_grp_id active uri parent_id
+              name description);
+my @props = qw(site_id directory asset_grp_id _active uri parent_id
+               name description);
 my $METHS;
 
 #--------------------------------------#
@@ -138,6 +140,7 @@ BEGIN {
     Bric::register_fields({
                          # Public Fields
                          'id'              => Bric::FIELD_READ,
+                         'site_id'         => Bric::FIELD_RDWR,
                          'directory'       => Bric::FIELD_RDWR,
                          'asset_grp_id'    => Bric::FIELD_READ,
                          'uri'             => Bric::FIELD_READ,
@@ -482,6 +485,18 @@ sub my_meths {
                                             length     => 32,
                                             maxlength  => 64
                                           }
+                             },
+              site_id     => {
+                              name     => 'site_id',
+                              get_meth => sub { shift->get_site_id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_site_id(@_) },
+                              set_args => [],
+                              disp     => 'Site',
+                              type     => 'short',
+                              len      => 10,
+                              req      => 1,
+                              props    => { }
                              },
               description => {
                               get_meth => sub { shift->get_description(@_) },
@@ -1206,16 +1221,16 @@ sub activate {
     my $self = shift;
     my ($param) = @_;
     my $recurse = $param->{'recurse'};
-    
+
     $self->_set(['_active'], [1]);
-    
+
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
         my @cat = $self->get_children;
         foreach (@cat) {
             $_->activate($param);
         }
-        
+
         $self->_set(['_save_children'], [\@cat]);
     }
 
@@ -1241,12 +1256,12 @@ sub deactivate {
         foreach (@cat) {
             $_->deactivate($param);
         }
-        
+
         $self->_set(['_save_children'], [\@cat]);
     }
 
     $self->_set__dirty(1);
-    
+
     return $self;
 }
 
@@ -1346,7 +1361,7 @@ sub _do_list {
 
     # Set up the other query properties.
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' or $k eq 'parent_id') {
+	if ($k eq 'id' or $k eq 'parent_id' or $k eq 'site__id') {
             # It's a simple numeric comparison.
             $wheres .= "and a.$k = ?";
 	    push @params, $v;

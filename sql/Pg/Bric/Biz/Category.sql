@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:45 $
+-- $Date: 2003-03-06 03:44:08 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -40,6 +40,7 @@ CREATE SEQUENCE seq_attr_category_meta START 1024;
 CREATE TABLE category (
     id               NUMERIC(10,0)   NOT NULL
                                      DEFAULT NEXTVAL('seq_category'),
+    site__id         NUMERIC(10,0)   NOT NULL,
     directory        VARCHAR(128)    NOT NULL,
     uri              VARCHAR(256)    NOT NULL,
     name             VARCHAR(64),
@@ -131,7 +132,8 @@ CREATE TABLE attr_category_meta (
 -- Indexes.
 --
 CREATE INDEX idx_category__directory ON category(LOWER(directory));
-CREATE UNIQUE INDEX udx_category__uri ON category(uri);
+CREATE INDEX idx_category__uri ON category(uri);
+CREATE UNIQUE INDEX udx_category__site_uri ON category(uri, site__id);
 CREATE INDEX idx_category__lower_uri ON category(LOWER(uri));
 CREATE INDEX idx_category__name ON category(LOWER(name));
 CREATE INDEX idx_category__parent_id ON category(parent_id);

@@ -45,6 +45,7 @@ if ($field eq "$widget|save_cb") {
         $cat->set_description($param->{description});
         $cat->set_ad_string($param->{ad_string});
         $cat->set_ad_string2($param->{ad_string2});
+        $cat->set_site_id($param->{site_id});
 
         # if this is not ROOT, we have work to do
         if (((defined $id and $id != $root_id) or not defined $id)
@@ -170,11 +171,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:25:59 $
+$Date: 2003-03-06 03:44:07 $
 
 =head1 SYNOPSIS
 

@@ -197,6 +197,9 @@ $changed = $changed eq $type ? 0 : 1;
 <%once>;
 # We'll use this coderef below.
 my $yes_no = sub { $_[0] ? 'Yes' : 'No'};
+my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
+                      return $s->get_name
+                  };
 
 # And we'll use this coderef to determine whether the user can delete objects.
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
@@ -327,7 +330,8 @@ my $def = {
 			       srch_field => 'lname',
 			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
 			       select => $sel_sub },
-	   category       => { list_fields => [qw(uri name)],
+	   category       => { list_fields => [qw(uri site_id name)],
+                               alter => { site_id => $site_name },
 			       behavior => 'expand',
 			       srch_field => 'uri',
 			       constrain => {},
@@ -367,11 +371,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.22.2.1 $
 
 =head1 DATE
 
-$Date: 2003-01-21 18:55:05 $
+$Date: 2003-03-06 03:44:07 $
 
 =head1 SYNOPSIS
 
