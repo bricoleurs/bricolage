@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 11:20:33 $
+$Date: 2003-03-13 11:34:10 $
 
 =head1 SYNOPSIS
 
@@ -268,8 +268,6 @@ Supported Keys:
 =item key_name
 
 =item description
-
-=item primary_oc_id
 
 =item reference
 
