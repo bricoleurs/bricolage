@@ -259,6 +259,13 @@ preference is set to "Advanced". Reported by Marshall Roch. [David]
 Multiple alert types set up to trigger alerts for the same event will now all
 properly execute. Thanks to Christian Hauser for the spot! [David]
 
+=item *
+
+Publishing stories or media via SOAP with the C<published_only> parameter
+(C<--published-only> fof F<bric_republish>) now correctly republishes the
+published versions of documents even if the current version is in workflow.
+Reported by Adam Rinehart. [David]
+
 =back
 
 =cut

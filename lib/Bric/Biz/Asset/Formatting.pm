@@ -711,7 +711,7 @@ out templates.
 
 =item published_version
 
-Returns the version of the templates as they were last deployed. The
+Returns the versions of the templates as they were last deployed. The
 C<checked_out> parameter will be ignored if this parameter is passed a true
 value.
 

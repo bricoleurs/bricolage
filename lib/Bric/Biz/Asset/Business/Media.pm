@@ -522,7 +522,7 @@ out media.
 
 =item published_version
 
-Returns the version of the media documents as they were last published. The
+Returns the versions of the media documents as they were last published. The
 C<checked_out> parameter will be ignored if this parameter is passed a true
 value.
 

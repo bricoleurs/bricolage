@@ -167,7 +167,7 @@ sub main {
 
 # gets a list of story ids, modified by options
 sub get_story_ids {
-    our ($soap, $element, $story_id, $category, $help, $man);
+    our ($soap, $element, $story_id, $category, $help, $man, $published_only);
     our @story_ids;
 
     # quit early if the user specified a story_id
@@ -177,8 +177,8 @@ sub get_story_ids {
     }
 
     # default search
-    my @search = (name(publish_status => 1),
-		  name(no_workflow    => 1));
+    my @search = (name(publish_status => 1));
+    push @search, name(no_workflow    => 1) unless $published_only;
 
     push(@search, name(element  => $element))  if $element;
     push(@search, name(category => $category)) if $category;
