@@ -69,7 +69,7 @@ Bricolage while accounting for the new to update existing media. [Sam]
 Added HTMLArea support. This adds a new type of field to be added to elements
 and contributor types, "WYSIWYG". Such fields are then displayed in the UI
 using HTMLArea, a WYSIWYG HTML editor. This can be useful in particular for
-sipmle fields that often need emphasis added or links. It is not currently
+simple fields that often need emphasis added or links. It is not currently
 available in Bulk Edit or Super Bulk edit. See L<Bric::Admin|Bric::Admin> for
 installation and configuration details. [Eric Sellers]
 
@@ -98,7 +98,7 @@ associated with. [David]
 Modified the indexes on the C<workflow__id> and C<desk__id> columns of the
 story, media, and formatting (template) tables to be more efficient, being
 indexed only when their IDs are greater than 0 (that is, when a story, media
-docment, or template is actually on a desk and in a workflow). [David]
+document, or template is actually on a desk and in a workflow). [David]
 
 =item *
 
@@ -209,7 +209,7 @@ assets. [JoE<atilde>o Pedro]
 
 =item *
 
-Images with no dimension greather than the C<THUMBNAIL_SIZE> F<bricolage.conf>
+Images with no dimension greater than the C<THUMBNAIL_SIZE> F<bricolage.conf>
 directive are no longer expanded to have one side at least C<THUMBNAIL_SIZE>
 pixels, but are left alone. [David]
 
@@ -233,7 +233,7 @@ another document. [Serge Sozonoff]
 =item *
 
 Added the C<subelement_key_name> parameter to the C<list()> method of the
-story and media classes. This paramter allows searches on the key name for a
+story and media classes. This parameter allows searches on the key name for a
 container element that's a subelement of a story or media document. [David]
 
 =item *
@@ -322,7 +322,7 @@ and media. [David]
 =item *
 
 The category SOAP class now correctly calls C<lookup()> with the site ID to
-prevent multipple categories with the same names but in different sites from
+prevent multiple categories with the same names but in different sites from
 being looked up. [JoE<atilde>o Pedro]
 
 =item *
