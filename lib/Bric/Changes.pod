@@ -108,6 +108,12 @@ Fixed a F<bric_soap> C<list_ids> bug [712] with the C<no_workflow> option.
 The upgrade to 1.8.0 now correctly updates story URIs that use the URI Suffix
 of an output channel instead of using the URI Prefix twice. [John Greene]
 
+=item *
+
+The Advanced Search interface for stories and media now displays only the
+top-level elements associated with the site the workflow is in when searching
+for stories and media "By Type". [David]
+
 =back
 
 =cut

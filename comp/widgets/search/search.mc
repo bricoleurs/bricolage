@@ -37,6 +37,7 @@ $object
 $field        => '_default'
 $groupList    => undef
 $use_form_tag => 1
+$wf           => undef
 </%args>
 
 %#--- Initialization ---#
@@ -86,7 +87,8 @@ $m->comp("$type.html", widget       => $widget,
                        object       => $object,
                        disp_field   => $meth->{$field}->{'disp'},
                        groupList    => $groupList,
-                       use_form_tag => $use_form_tag
+                       use_form_tag => $use_form_tag,
+                       wf           => $wf,
         );
 
 </%init>

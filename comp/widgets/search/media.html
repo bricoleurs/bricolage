@@ -5,6 +5,7 @@ $widget
 $object
 $disp_field
 $use_form_tag
+$wf
 </%args>
 
 %#--- Initialization ---#
@@ -21,6 +22,7 @@ my $asset_opts = $advanced_search ? {
               top_level => 1,
               media     => 1,
               active    => 1,
+              site_id   => $wf->get_site_id,
           })
     } : undef;
 </%init>
