@@ -1,4 +1,4 @@
-%doc>
+<%doc>
 ###############################################################################
 
 =head1 NAME
@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.1 $
+$Revision: 1.15.2.2 $
 
 =head1 DATE
 
-$Date: 2004-04-18 15:28:01 $
+$Date: 2004-04-29 03:54:39 $
 
 =head1 SYNOPSIS
 
@@ -20,11 +20,7 @@ $Date: 2004-04-18 15:28:01 $
 =cut
 
 </%doc>
-
-<%args>
-</%args>
-
-<%init>
+<%init>;
 my ($type, $work_id) = split('/', $m->dhandler_arg);
 my ($fields, $obj_type, $previewer);
 if ($type eq 'templates') {
