@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.69 $
+$Revision: 1.70 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.69 $ )[-1];
+our $VERSION = (qw$Revision: 1.70 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 19:55:20 $
+$Date: 2004-03-23 02:52:17 $
 
 =head1 SYNOPSIS
 
@@ -131,7 +131,6 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
 use Bric::Util::Attribute::Formatting;
-use File::Basename qw(fileparse);
 
 #==============================================================================#
 # Inheritance                          #
@@ -1435,14 +1434,14 @@ sub set_category_id {
     my ($self, $id) = @_;
     my @grp_ids;
     if ($id != $self->get_category_id) {
-        $self->_set(['category_id','_category_obj'], [$id, undef]);
+        my $cat = Bric::Biz::Category->lookup({ id => $id });
+        $self->_set([qw(category_id _category_obj)] => [$id, $cat]);
         $self->_set(['file_name'], [$self->_build_file_name]);
         foreach ($self->get_grp_ids()) {
             next if $_ == $self->get_category->get_asset_grp_id();
             push @grp_ids, $_;
         }
-        push @grp_ids,
-          Bric::Biz::Category->lookup({ id => $id })->get_asset_grp_id();
+        push @grp_ids, $cat->get_asset_grp_id;
     }
     return $self;
 }
@@ -2199,11 +2198,6 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-                [ $self->_build_file_name( $init->{file_type}, $name, $cat,
-                                           $init->{output_channel__id},
-                                           $init->{tplate_type} ) ]);
-
-
 =cut
 
 sub _build_file_name {
@@ -2214,8 +2208,7 @@ sub _build_file_name {
       $file_type = ".$file_type";
   } else {
       my $old = $self->_get('file_name');
-      # Scalar context grabs the last return value, which is the extention.
-      $file_type = fileparse($old, qr/\..*$/);
+      ($file_type) = $old =~ /(\.[^.]+)$/;
     }
 
     # Get the name and category object.
