@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.16.2.2 $
+$Revision: 1.16.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-12 16:50:55 $
+$Date: 2002-03-10 02:17:05 $
 
 =head1 SYNOPSIS
 
@@ -1105,6 +1105,38 @@ sub get_output_channel {
 
 ################################################################################
 
+=item $at_obj = $self->get_element_object()
+
+=item $at_obj = $self->_get_element_object()
+
+Returns the asset type object that was associated with this formatting asset.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_element_object {
+    my $self = shift;
+    my $dirty = $self->_get__dirty;
+    my ($at_id, $at_obj) = $self->_get('element__id', '_element_obj');
+    return unless $at_id;
+    unless ($at_obj) {
+	$at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
+	$self->_set(['_element_obj'], [$at_obj]);
+	# Restore the original dirty value.
+	$self->_set__dirty($dirty);
+    }
+    return $at_obj;
+}
+
+*_get_element_object = *get_element_object;
+
+################################################################################
+
 =item $name = $template->get_element_name;
 
 Return the name of the AssetType associated with this object.
@@ -1784,45 +1816,6 @@ sub _get_output_channel_object {
     }
 
     return $oc_obj;
-}
-
-################################################################################
-
-=item $at_obj = $self->_get_element_object()
-
-Returns the asset type object that was associated with this formatting asset.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_element_object {
-    my $self = shift;
-    my $dirty = $self->_get__dirty;
-    my ($at_id, $at_obj) = $self->_get('element__id', '_element_obj');
-
-    return unless $at_id;
-
-    unless ($at_obj) {
-	$at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
-	
-	$self->_set(['_element_obj'], [$at_obj]);
-
-	# Restore the original dirty value.
-	$self->_set__dirty($dirty);
-    }
-
-    return $at_obj;
 }
 
 ################################################################################
