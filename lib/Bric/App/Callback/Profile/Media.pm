@@ -335,7 +335,7 @@ sub checkin : Callback {
 
 ################################################################################
 
-sub save_stay : Callback {
+sub save_and_stay : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
