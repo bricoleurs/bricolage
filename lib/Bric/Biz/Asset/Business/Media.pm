@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.84 $
+$Revision: 1.85 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.84 $ )[-1];
+our $VERSION = (qw$Revision: 1.85 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-04 21:17:45 $
+$Date: 2004-03-05 18:18:00 $
 
 =head1 SYNOPSIS
 
@@ -1093,6 +1093,10 @@ sub set_cover_date {
       || (defined $cover_date && not defined $old)
       || ($cover_date ne $old);
 
+    # Set the cover date so that _construct_uri() will be able to construct
+    # the correct URI!
+    $self->_set(['cover_date'] => [$cover_date]);
+
     my ($uri, $update_uri);
     if (defined $fn) {
         $update_uri = 1;
@@ -1104,8 +1108,8 @@ sub set_cover_date {
         }
     }
 
-    $self->_set([qw(cover_date _update_uri  _category_obj uri)] =>
-                [$cover_date,  $update_uri, $cat,         $uri]);
+    $self->_set([qw(_update_uri  _category_obj uri)] =>
+                [   $update_uri, $cat,         $uri]);
 }
 
 ################################################################################
