@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-05-14 15:51:23 $
 
 =head1 DESCRIPTION
 
@@ -575,7 +575,7 @@ Another option is to use CPAN.pm yourself to download the latest
 Bundle::Bricolage package and use it to install all the required
 packages:
 
-  perl -MCPAN -e install Bundle::Bricolage
+  perl -MCPAN -e 'install Bundle::Bricolage'
 
 However, this is unlikely to succeed without manual intervention since
 some of the modules required by Bricolage have problems with CPAN.pm.
