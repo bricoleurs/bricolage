@@ -38,7 +38,6 @@ Display the page after you click 'Clone' in 'My Workspace'.
 
 <& '/widgets/wrappers/sharky/footer.mc' &>
 
-
 <%once>;
 my $disp = get_disp_name('story');
 my $context = "Workflow | Profile | $disp | Clone";

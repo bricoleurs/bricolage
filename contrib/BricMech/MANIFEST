@@ -1,0 +1,14 @@
+Changes
+Build.PL
+Makefile.PL
+MANIFEST
+README
+t/00-require.t
+t/10-login.t
+t/20-leftnav.t
+t/30-manager.t
+t/40-profile.t
+t/50-workspace.t
+t/60-attribute.t
+lib/Bric/Mech.pm
+META.yml

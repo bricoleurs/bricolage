@@ -4,8 +4,9 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
-use Bric::Util::Grp::Org;
 use Bric::Biz::Org;
+use Bric::Util::Grp::Org;
+use Bric::Util::DBI 'ANY';
 use Bric::Util::Grp::Person;
 use Bric::Util::Grp::User;
 use Bric::Util::Grp::AlertType;
@@ -72,7 +73,7 @@ sub test_lookup : Test(20) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(40) {
+sub test_list : Test(70) {
     my $self = shift;
     ok( my @grps = Bric::Util::Grp->list({ name => 'All%' }),
         "get all All groups" );
@@ -93,6 +94,18 @@ sub test_list : Test(40) {
     ok( UNIVERSAL::isa($grps[0], 'Bric::Util::Grp::Pref'),
     "Check 'All Preferences' class" );
     is( $grps[0]->get_name, 'All Preferences', "Check 'All Preferences' name" );
+
+    ok( @grps = Bric::Util::Grp::Pref->list({
+        obj_id => ANY(1, 2, 3),
+        package => 'Bric::Util::Pref'
+    }), "get any groups with prefs 1, 2, or 3 in them" );
+    is( scalar @grps, 1, "Check for one 'Pref' group" );
+
+    ok( @grps = Bric::Util::Grp::Org->list({
+        obj => ANY(Bric::Biz::Org->lookup({ id => 1 })),
+        package => 'Bric::Util::Org'
+    }), "get any groups with org 1 object in them, using ANY" );
+    is( scalar @grps, 1, "Check for one 'Org' group" );
 
     # Create a new group group.
     ok( my $grpgrp = Bric::Util::Grp::Grp->new
@@ -121,10 +134,31 @@ sub test_list : Test(40) {
         "Look up name $grp{name}" );
     is( scalar @grps, 2, "Check for 2 groups" );
 
+    # Try ANY(name)
+    ok( @grps = Bric::Util::Grp->list({ name => ANY($grp{name}, "$grp{name}1") }),
+        "Look up name ANY($grp{name}, $grp{name}1)" );
+    is( scalar @grps, 3, "Check for 3 groups" );
+
     # Try name + wildcard.
     ok( @grps = Bric::Util::Grp->list({ name => "$grp{name}%" }),
         "Look up name $grp{name}%" );
     is( scalar @grps, 5, "Check for 5 groups" );
+
+    # Try description.
+    ok( @grps = Bric::Util::Grp->list({ description => $grp{description} }),
+        "Look up description $grp{description}" );
+    is( scalar @grps, 5, "Check for 5 groups" );
+
+    # Try description + wildcard.
+    ok( @grps = Bric::Util::Grp->list({ description => "Users%" }),
+        "Look up description Users%" );
+    is( scalar @grps, 7, "Check for 7 groups" );
+
+    # Try ANY(description)
+    ok( @grps = Bric::Util::Grp->list({
+        description => ANY($grp{description}, "Users%")
+    }), "Look up description ANY($grp{description}, Users%" );
+    is( scalar @grps, 12, "Check for 12 groups" );
 
     # Try grp_id.
     ok( @grps = Bric::Util::Grp->list({ grp_id => $grp_id }),
@@ -137,6 +171,11 @@ sub test_list : Test(40) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try ANY(grp_id).
+    ok( @grps = Bric::Util::Grp->list({ grp_id => ANY($grp_id) }),
+        "Look up grp_id 'ANY($grp_id)'" );
+    is( scalar @grps, 3, "Check for 3 groups" );
 
     # Try deactivating one group membership.
     ok( my $mem = $grpgrp->has_member({ obj => $grps[0] }), "Get member" );
@@ -152,6 +191,38 @@ sub test_list : Test(40) {
     ok( @grps = Bric::Util::Grp::Grp->list({ obj => $grps[0], all => 1 }),
         "Look up for group ID $gid" );
     is( scalar @grps, 2, "Check for 2 groups" );
+
+    # Try ANY(id).
+    ok( @grps = Bric::Util::Grp->list({ id => ANY(1, 2) }),
+        "Look up for id => ANY(1, 2)" );
+    is( scalar @grps, 2, "Check for 2 groups" );
+
+    # Try parent_id.
+    ok( @grps = Bric::Util::Grp->list({ parent_id => 0 }),
+        "Look up for parent_id => 0" );
+    is( scalar @grps, 7, "Check for 7 groups" );
+
+    # Try ANY(parent_id).
+    ok( @grps = Bric::Util::Grp->list({ parent_id => ANY(0) }),
+        "Look up for parent_id => ANY(0)" );
+    is( scalar @grps, 7, "Check for 7 groups" );
+
+    # Try deactivating one group.
+    ok my ($tmpgrp) = Bric::Util::Grp->list({ name => "$grp{name}1"}),
+      "Get one group.";
+    ok $tmpgrp->deactivate, "Deactivate group";
+    ok $tmpgrp->save, "Save deactivated group";
+    @grps = Bric::Util::Grp->list({ name => "$grp{name}1"});
+    is @grps, 0, "Should not find deactivated group";
+    ok @grps = Bric::Util::Grp->list({ name => "$grp{name}1", inactive => 1}),
+      "...Unless we use inactive => 1";
+    is @grps, 1, "We should have the one deactivated group";
+    ok @grps = Bric::Util::Grp->list({ name => "$grp{name}1", active => 0}),
+      "...Or unless we use active => 0";
+    is @grps, 1, "We should have the one deactivated group";
+    ok @grps = Bric::Util::Grp->list({ name => "$grp{name}%", active => undef}),
+      "...And we should get both if active => undef";
+    is @grps, 5, "We should have 5 groups";
 }
 
 ##############################################################################

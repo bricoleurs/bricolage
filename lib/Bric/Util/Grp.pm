@@ -291,7 +291,8 @@ keys in the C<$params> hash reference are:
 =item obj
 
 A Bricolage object. The groups returned will have member objects for this
-object.
+object. May use C<ANY> for a list of possible values, but objects just all be
+of the same class.
 
 =item package
 
@@ -303,11 +304,11 @@ object.
 
 A Bricolage object ID. Use in combination with C<package> to have C<list()>
 return group objects with member objects representing a particular Bricolage
-object.
+object. May use C<ANY> for a list of possible values.
 
 =item parent_id
 
-A group parent ID.
+A group parent ID. May use C<ANY> for a list of possible values.
 
 =item active
 
@@ -326,11 +327,11 @@ Otherwise only non-secret groups will be returned.
 
 =item name
 
-The name of a group.
+The name of a group. May use C<ANY> for a list of possible values.
 
 =item description
 
-A group description.
+A group description. May use C<ANY> for a list of possible values.
 
 =item permananent
 
@@ -339,7 +340,8 @@ A boolean to return permanent or non-permanent groups.
 =item grp_id
 
 A Bric::Util::Grp::Grp group ID. All groups that are members of the
-corresponding Bric::Util::Grp::Grp object will be returned.
+corresponding Bric::Util::Grp::Grp object will be returned. May use C<ANY> for
+a list of possible values.
 
 =item Order
 
@@ -2845,41 +2847,48 @@ sub _do_list {
         ($criteria->{package} && $criteria->{obj_id}) ) {
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
-            # Figure out what table this needs to be joined to.
             $pkg = ref $criteria->{obj};
-            # Get the object id.
-            $obj_id = $criteria->{obj}->get_id;
+            if ($pkg eq 'Bric::Util::DBI::ANY') {
+                # Assume they're all of the same class.
+                $pkg = ref $criteria->{obj}[0];
+                my @ids = grep { defined } map { $_->get_id } @{$criteria->{obj}};
+                $obj_id = ANY(@ids) if @ids;
+            } else {
+                # Figure out what table this needs to be joined to.
+                $pkg = ref $criteria->{obj};
+                # Get the object id.
+                $obj_id = $criteria->{obj}->get_id;
+            }
         } else {
             $pkg = $criteria->{package};
             $obj_id = $criteria->{obj_id};
         }
 
-        # Now construct the member table name.
-        my $motable = $class->get_supported_classes->{$pkg} . '_member';
+        # Proceed only if we have an Object ID.
+        if (defined $obj_id) {
+            # Now construct the member table name.
+            my $motable = $class->get_supported_classes->{$pkg} . '_member';
 
-        # build the query
-        $tables .= ", member mm, $motable mo";
-        push @wheres, ( "mo.object_id = ? ", 'mo.member__id = mm.id',
-                        'mm.grp__id = g.id', "mm.active = '1'");
-        push @params, $obj_id;
+            # build the query
+            $tables .= ", member mm, $motable mo";
+            push @wheres, ( 'mo.member__id = mm.id',
+                            'mm.grp__id = g.id', "mm.active = '1'");
+            push @wheres, any_where($obj_id, "mo.object_id = ?", \@params);
 
-        # If an active param has been passed in add it here remember that
-        # groups cannot be deactivated.
-        push @wheres, 'mm.active = ?';
-        push @params, exists $criteria->{active} ?
-          $criteria->{active} ? 1 : 0 : 1;
+            # If an active param has been passed in add it here remember that
+            # groups cannot be deactivated.
+            push @wheres, 'mm.active = ?';
+            push @params, exists $criteria->{active} ?
+              $criteria->{active} ? 1 : 0 : 1;
+        }
     }
 
     # Add other parameters to the query
-    if ( defined $criteria->{id} ) {
-        push @wheres, 'g.id = ?';
-        push @params, $criteria->{id};
-    }
+    push @wheres, any_where($criteria->{id}, "g.id = ?", \@params)
+      if defined $criteria->{id};
 
-    if ( $criteria->{parent_id} ) {
-        push @wheres, 'g.parent_id = ?';
-        push @params, $criteria->{parent_id};
-    }
+    push @wheres, any_where($criteria->{parent_id}, "g.parent_id = ?", \@params)
+      if defined $criteria->{parent_id};
 
     if ( $criteria->{inactive} ) {
         push @wheres, 'g.active = ?';
@@ -2904,15 +2913,14 @@ sub _do_list {
         push @params, $cid;
     }
 
-    if ( $criteria->{name} ) {
-        push @wheres, 'LOWER(g.name) LIKE ?';
-        push @params, lc($criteria->{name});
-    }
+    push @wheres, any_where($criteria->{name}, 'LOWER(g.name) LIKE LOWER(?)',
+                            \@params)
+      if $criteria->{name};
 
-    if ( $criteria->{description} ) {
-        push @wheres, 'LOWER(g.description) LIKE ?';
-        push @params, lc($criteria->{description});
-    }
+    push @wheres, any_where($criteria->{description},
+                            'LOWER(g.description) LIKE LOWER(?)',
+                            \@params)
+      if $criteria->{description};
 
     if ( exists $criteria->{permanent} ) {
         push @wheres, 'g.permanent = ?';
@@ -2922,8 +2930,9 @@ sub _do_list {
     if (exists $criteria->{grp_id}) {
         $tables .= ", member m2, grp_member c2";
         push @wheres, ("g.id = c2.object_id", "c2.member__id = m2.id",
-                       "m2.active = '1'", "m2.grp__id = ?");
-        push @params, $criteria->{grp_id};
+                       "m2.active = '1'");
+        push @wheres, any_where($criteria->{grp_id}, "m2.grp__id = ?",
+                                \@params);
     }
 
     my $where = join ' AND ', @wheres;

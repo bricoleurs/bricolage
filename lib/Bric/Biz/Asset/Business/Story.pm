@@ -304,6 +304,7 @@ PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP => {
       id                     => 's.id = ?',
+      exclude_id             => 's.id <> ?',
       active                 => 's.active = ?',
       inactive               => 's.active = ?',
       alias_id               => 's.alias_id = ?',
@@ -336,7 +337,7 @@ use constant PARAM_WHERE_MAP => {
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',
-      published_version      => 's.published_version = i.version AND i.checked_out = 0',
+      published_version      => "s.published_version = i.version AND i.checked_out = '0'",
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
@@ -348,7 +349,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out           => 'i.checked_out = ?',
       checked_out            => 'i.checked_out = ?',
-      _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
+      _not_checked_out       => "i.checked_out = '0' AND s.id not in "
                               . '(SELECT story__id FROM story_instance '
                               . 'WHERE s.id = story_instance.story__id '
                               . "AND story_instance.checked_out = '1')",
@@ -633,6 +634,11 @@ Story description. May use C<ANY> for a list of possible values.
 =item id
 
 The story ID. May use C<ANY> for a list of possible values.
+
+=item exclude_id
+
+A story ID to exclude from the list. May use C<ANY> for a list of possible
+values.
 
 =item version
 
@@ -1449,19 +1455,21 @@ sub get_secondary_categories {
 
 ################################################################################
 
-=item $ba = $ba->add_categories( [ $category] )
+=item $ba = $ba->add_categories(@categories)
 
-This will take a list ref of category objects or ids and will associate them
-with the business asset
+This will take a list category objects or Is and will associate them with the
+story.
 
 B<Side Effects:>
 
-Adds the asset_grp_ids of the categories to grp_ids (unless they are already there).
+Adds the C<asset_grp_ids> of the categories to grp_ids (unless they are
+already there).
 
 =cut
 
 sub add_categories {
-    my ($self, $categories) = @_;
+    my $self = shift;
+    my $categories = ref $_[0] ? shift : \@_;
     my $cats = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
     my $check = 0;
@@ -1490,9 +1498,9 @@ sub add_categories {
 
 ################################################################################
 
-=item $ba = $ba->delete_categories([$category]);
+=item $ba = $ba->delete_categories(@categories);
 
-This will take a list of categories and remove them from the asset
+This will take a list of categories and remove them from the story.
 
 B<Throws:>
 
@@ -1509,7 +1517,8 @@ NONE
 =cut
 
 sub delete_categories {
-    my ($self, $categories) = @_;
+    my $self = shift;
+    my $categories = ref $_[0] ? shift : \@_;
     my ($cats) = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
     my $check = $self->_get('_update_uri');

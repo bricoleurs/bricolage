@@ -604,6 +604,7 @@ $create_fa = sub {
             });
             if (defined $fa) {
                 add_msg("Deactivated template was reactivated.");
+                $fa->activate;
                 $was_reactivated = 1;
             } else {
                 # XXX: it's redundant to say "element and burner"
@@ -623,10 +624,18 @@ $create_fa = sub {
 
     # Send this template to the first desk.
     $start_desk->accept({ asset => $fa });
+
+    if ($was_reactivated) {
+        # Check it out.
+        $start_desk->checkout($fa, get_user_id());
+        log_event("formatting_checkout", $fa);
+    } else {
+        log_event('formatting_new', $fa);
+    }
+
     $start_desk->save;
 
     # Log that a new template has been created.
-    log_event('formatting_new', $fa) unless $was_reactivated;
     log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
     log_event('formatting_save', $fa);

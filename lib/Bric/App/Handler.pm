@@ -172,6 +172,7 @@ use MasonX::Interp::WithCallbacks;
     require Bric::Util::Burner::TemplateToolkit
       if eval { require Template && $Template::VERSION >= 2.14 };
     use Bric::Util::Class;
+    use Bric::Util::DBI qw(:junction);
     use Bric::Util::Fault qw(:all);
     use Bric::Util::Language;
     use Bric::Util::Pref;

@@ -1,0 +1,11 @@
+^_build
+^Build$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+^bric_
+^www
+\.svn
+\.sh$
+^Bric-Mech-

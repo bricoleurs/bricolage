@@ -11,7 +11,8 @@
   req      => $req,
   readOnly => $readOnly,
   localize => $localize,
-  js       => $js
+  js       => $js,
+  multiple => $multiple,
 &>
 <%args>
 $widget
@@ -27,6 +28,7 @@ $size     => undef
 $js       => undef
 $sel_id   => undef
 $localize => 1
+$multiple => 0
 </%args>
 <%init>;
 my $sub_widget = "$widget.$object";

@@ -288,11 +288,11 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =item name
 
-Lookup ATType by name.
+Lookup ATType by name. May use C<ANY> for a list of possible values.
 
-=item name
+=item description
 
-Lookup ATType by description.
+Lookup ATType by description. May use C<ANY> for a list of possible values.
 
 =item top_level
 
@@ -325,12 +325,12 @@ Boolean; return all media ATTypes.
 =item biz_class_id
 
 Return all ATTypes associated with this business class ID. See C<new()> for a
-list of business asset classes.
+list of business asset classes. May use C<ANY> for a list of possible values.
 
 =item grp_id
 
 Return all ATTypes in the Bric::Util::Grp::ElementType group corresponding to
-this ID.
+this ID. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1137,22 +1137,19 @@ $get_em = sub {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
             # Simple ID lookup.
-            $wheres .= " AND a.id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where($v, 'a.id = ?', \@params);
         } elsif ($k eq 'biz_class_id') {
             # Simple ID lookup.
-            $wheres .= " AND a.biz_class__id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where($v, 'a.biz_class__id = ?', \@params);
         } elsif ($k eq 'name' or $k eq 'description') {
             # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= " AND " . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, element_type_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+              " AND m2.active = '1'";
+            $wheres .= ' AND ' . any_where($v, "m2.grp__id = ?", \@params);
         } else {
             # It's a boolean comparison.
             $wheres .= " AND a.$k = ?";

@@ -1,0 +1,16 @@
+--- #YAML:1.0
+name: Bric-Mech
+version: 0.03
+author:
+  - Scott Lanning <lannings@who.int>
+abstract: browse Bricolage using WWW::Mechanize
+license: perl
+requires:
+  HTML::TokeParser::Simple: 0
+  WWW::Mechanize: 1.10
+  perl: 5.6.1
+provides:
+  Bric::Mech:
+    file: lib/Bric/Mech.pm
+    version: 0.03
+generated_by: Module::Build version 0.2608

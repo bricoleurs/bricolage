@@ -1063,7 +1063,7 @@ The XSD source:
                <xs:element name="fixed_url" type="xs:boolean"/>
                <xs:element name="related_story" type="xs:boolean"/>
                <xs:element name="related_media" type="xs:boolean"/>
-               <xs:element name="media" type="xs:boolean"/>
+               <xs:element name="is_media" type="xs:boolean"/>
                <xs:element name="biz_class">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">

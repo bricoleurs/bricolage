@@ -126,13 +126,13 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    DB_DATE_FORMAT clean_params bind_columns bind_col
 		    bind_param begin commit rollback finish is_num row_array
 		    all_aref fetch_objects order_by group_by build_query
-		    build_simple_query where_clause tables ANY);
+		    build_simple_query where_clause tables ANY any_where);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
 our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
                                     execute next_key last_key bind_columns
-                                    finish)],
+                                    finish any_where)],
 		    trans => [qw(begin commit rollback)],
                     junction => [qw(ANY)],
 		    all => \@EXPORT_OK);
@@ -919,6 +919,50 @@ sub where_clause {
         }
     }
     return $where, \@args;
+}
+
+##############################################################################
+
+=item any_where
+
+  my $where = any_where($value, $where_expression, \@params);
+
+Examines $value to determine whether it is a single value or an C<ANY> value.
+If it is an C<ANY> value, then each of those value is pushed on to the end of
+the C<$params> array reference and the where expression is grouped together in
+parenetheses and C<OR>ed together the same number of times as there are
+values. Otherwise, a single value is pushed onto the C<$params> array
+reference and the where expression simply returned.
+
+For example, if called like so:
+
+  my @params;
+  my $where = any_where(ANY(1, 2, 3), "f.name = ?", \@params);
+
+Then C<@params> will contaion C<(1, 2, 3)> and the string "(f.name = ? OR
+f.name = ? OR f.name = ?)" will be assigned to C<$where>.
+
+However, if the value is not an C<ANY> value:
+
+  my @params;
+  my $where = any_where(1, "f.name = ?", \@params);
+
+Then C<@params> will of course contain only C<(1)> and the string "f.name = ?"
+will be assigned to C<$where>.
+
+This function is useful in classes that wisht to add C<ANY> support to
+specific C<list()> method parameters.
+
+=cut
+
+sub any_where {
+    my ($value, $sql, $params) = @_;
+    if (UNIVERSAL::isa($value, 'Bric::Util::DBI::ANY')) {
+        push @$params, @$value;
+        return '(' . join(' OR ', ($sql) x @$value) . ')';
+    }
+    push @$params, $value;
+    return $sql;
 }
 
 ##############################################################################

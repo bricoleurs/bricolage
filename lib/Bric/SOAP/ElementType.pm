@@ -382,7 +382,7 @@ sub load_asset {
         $asset->set_fixed_url($adata->{fixed_url} ? 1 : 0);
         $asset->set_related_story($adata->{related_story} ? 1 : 0);
         $asset->set_related_media($adata->{related_media} ? 1 : 0);
-        $asset->set_media($adata->{media} ? 1 : 0);
+        $asset->set_media($adata->{is_media} ? 1 : 0);
 
         # change business class to ID
         my $class = Bric::Util::Class->lookup({pkg_name => $adata->{biz_class}});
@@ -444,7 +444,7 @@ sub serialize_asset {
     $writer->dataElement(fixed_url     => ($asset->get_fixed_url ? 1 : 0));
     $writer->dataElement(related_story => ($asset->get_related_story ? 1 : 0));
     $writer->dataElement(related_media => ($asset->get_related_media ? 1 : 0));
-    $writer->dataElement(media         => ($asset->get_media ? 1 : 0));
+    $writer->dataElement(is_media      => ($asset->get_media ? 1 : 0));
 
     # change business class to ID
     my $class = Bric::Util::Class->lookup({id => $asset->get_biz_class_id});

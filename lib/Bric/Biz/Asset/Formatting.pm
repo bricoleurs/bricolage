@@ -247,6 +247,7 @@ PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
 
 use constant PARAM_WHERE_MAP => {
     id                    => 'f.id = ?',
+    exclude_id            => 'f.id <> ?',
     active                => 'f.active = ?',
     inactive              => 'f.active = ?',
     site_id               => 'f.output_channel__id = oc.id AND oc.site__id = ?',
@@ -281,7 +282,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
     checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
-    _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
+    _not_checked_out      => "i.checked_out = '0' AND f.id not in "
                            . '(SELECT formatting__id FROM formatting_instance '
                            . 'WHERE f.id = formatting_instance.formatting__id '
                            . "AND formatting_instance.checked_out = '1')",
@@ -679,6 +680,11 @@ Template description. May use C<ANY> for a list of possible values.
 =item id
 
 The template ID. May use C<ANY> for a list of possible values.
+
+=item exclude_id
+
+A template ID to exclude from the list. May use C<ANY> for a list of possible
+values.
 
 =item version
 

@@ -1,0 +1,17 @@
+0.03  2005-03-02
+  - now uses Module::Build instead of ExtUtils::MakeMaker
+  - improved the 'skip' part of the tests, added several tests
+  - added collapse_admin_menus
+
+0.02  2005-02-28
+  - added 'base' parameter to `new', to allow switching to another
+    WWW::Mechanize-like base class (e.g. Win32::IE::Mechanize)
+  - fixed the 'manager' parameter to `follow_admin_link'
+
+0.01  2005-02-25
+  - initial public release, in the contrib directory of the trunk
+    branch of subversion; main features are login and left nav methods
+
+0.00  2005-02-07
+  - original version; created by h2xs 1.23 with options
+    -b 5.6.1 -XA -n Bric::Mech

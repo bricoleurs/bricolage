@@ -380,7 +380,7 @@ my %formSubs = (
         } else {
             $out .= $value;
         }
-        
+
         $out .= qq{        </div>\n} if $useTable;
         $out .= qq{    </div>\n} if $useTable;
         $m->out($out);
@@ -389,8 +389,8 @@ my %formSubs = (
         select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $agent, $id) = @_;
-            my $out='';
-            
+            my $out = '';
+
             $out .= qq{<div class="row">\n} if $useTable;
             $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
             $out .= "<br />" if (!$useTable && $name);
@@ -402,7 +402,7 @@ my %formSubs = (
                 $out .= qq{            <select name="$key" };
                 $out .= 'size="' . ($vals->{props}{size} ||
                   ($vals->{props}{multiple} ? 5 : 1)) . '"';
-                $out .= ' multiple' if $vals->{props}{multiple};
+                $out .= ' multiple="multiple"' if $vals->{props}{multiple};
                 $out .= qq{ id="$id"} if defined $id;
                 $out .= "$js>\n";
             }

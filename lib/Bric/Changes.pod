@@ -32,7 +32,8 @@ Bricolage. This means that dates can be stored in the database with
 microsecond precision. This was done by modifying Bricolage's date and time
 handling to use the DateTime module from CPAN under the hood. The upshot is
 that you can use the full suite of C<strftime> formats supported by DateTime,
-including the formats for milliseconds and microseconds. [David]
+including the formats for milliseconds and microseconds. Sponsored by Alinghi.
+[David]
 
 =item *
 
@@ -40,7 +41,7 @@ Added new "Precision" option to DateTime fields added to elements and
 contributor types. The supported precisions are "Year", "Month", "Day",
 "Hour", "Minute", "Second", "Millisecond", and "Microsecond". For purposes of
 backwards compatability, the default precision for custom DateTime fields is
-"Minute". [David]
+"Minute". Sponsored by Alinghi. [David]
 
 =item *
 
@@ -52,7 +53,7 @@ C<preview_another_all_ocs()> in PREVIEW_MODE. [Serge Sozonoff]
 
 =item *
 
-Added a C<$INSTALL_VERBOSITY> makefile environment variable that, when set to
+Added C<$INSTALL_VERBOSITY> makefile environment variable that, when set to
 "QUIET", eliminates many of the questions asked during installation and
 cloning, falling back on the default values. [Rod Taylor & Andrea Rota]
 
@@ -68,30 +69,59 @@ the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
 =item *
 
-Added the element_type and output_channel modules to bric_soap. [Scott]
+Added the element type and output_channel modules to the SOAP interface.
+[Scott]
 
 =item *
 
-Added C<ENABLE_GZIP> F<bricolage.conf> directive that turns on compression
-of the UI pages through mod_gzip.  This results in pages as much as fifteen
-times smaller, with minimal extra server load.  If mod_gzip is found during
-installation, the appropriate LoadModule/AddModule lines will be added
-to httpd.conf.  Disabled by default. [Marshall Roch; Suggested by Rod Taylor]
+Added C<ENABLE_GZIP> F<bricolage.conf> directive to turns on compression of
+the UI pages through C<mod_gzip>. This results in pages as much as fifteen
+times smaller, with minimal extra server load. If C<mod_gzip> is found during
+installation, the appropriate C<LoadModule/AddModule> lines will be added to
+F<httpd.conf>. Disabled by default. [Marshall Roch; Suggested by Rod Taylor]
 
 =item *
 
 Added "Show Alpha Search" preference that determines whether the alpha search
-("A | B | C | ... [All]") links should be shown.  The alpha search isn't very
-useful because you can type the first letter in the textbox (or leave it blank
-for "All") for the same result.  Alpha search is off by default. [Marshall Roch]
+("A | B | C | ... [All]") links should be shown. The alpha search isn't very
+useful because you can type the first letter in the textbox (or "%" for "All")
+for the same results. Alpha search is off by default. [Marshall Roch]
 
 =item *
 
 Added C<MEDIA_UNIQUE_FILENAME> F<bricolage.conf> directive to allow the
-filename of media documents to be set to a unique automatically generated
-filename on upload, (Off by default). Also C<MEDIA_FILENAME_PREFIX> directive
-for setting a prefix word e.g. 'media' to be prepended to the filename if
-desired, (off by default). [Paul Orrock / Digital Craftsmen]
+filename of media documents to be set to a unique, automatically generated
+filename on upload, (off by default). Also C<MEDIA_FILENAME_PREFIX> directive
+for setting a prefix word, such as "media", to be prepended to the filename if
+desired (off by default). [Paul Orrock / Digital Craftsmen]
+
+=item *
+
+Added support for the C<ANY()> function to pass multiple possible values for a
+given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
+C<href()> methods in the following classes:
+
+=over
+
+=item Bric::Util::Grp
+
+=item Bric::Biz::ATType
+
+More classes will support it soon! [David]
+
+=item *
+
+Added support for associating secondary categories and output channels when
+cloning a story. Sponsored by Alinghi. [David]
+
+=item *
+
+Added support for adding secondary output channels to a new clone by selecting
+a group of output channels. All output channels in that group that are allowed
+by the story element will be associated with the clone. This is an easy and
+accurate way to add a bunch of output channels to a clone at once. Users must
+have READ access to each listed output channel group. Sponsored by Alinghi.
+[David]
 
 =back
 
@@ -114,6 +144,29 @@ since the two pages are mostly redundant except for a few links. [Marshall]
 All of the old "NUMERIC" columns have been removed from the database and
 replaced with the more appropriate (and faster) "INTEGER", "SMALLINT", and
 "BOOLEAN" data types. [Neil Conway & David]
+
+=item *
+
+Added C<exclude_id> parameter to the C<list()> methods of the story, media,
+and template classes. This parameter can be used to exclude one or more asset
+IDs from the list of objects returned by the call to C<list()> and friends.
+Suggested by Curtis Poe. [David]
+
+=item *
+
+The C<get_desk_stamps()> method in the asset classes has been removed (it was
+deprecated in Bricolage 1.8.4). The same goes for the C<required_satisfied()>
+method in Bric::Biz::Workflow. Thanks to Marshall Roch for the spot! [David]
+
+=item *
+
+Users must have at least READ permission to sources to add them to stories. If
+upgrading from an earlier version of Bricolage, for purposes of backward
+compatability, members of the "All Users" group (that is to say, all users)
+will be granted READ access to all sources. Change this permission to limit
+access as appropriate. For new installations of Bricolage, the default "Story
+Editors" and "User Producers" groups have READ permission to all sources.
+Suggested by Simon Wilcox. [David]
 
 =back
 

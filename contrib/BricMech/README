@@ -1,0 +1,37 @@
+Bric::Mech
+
+This is a subclass of WWW::Mechanize which provides convenience
+methods for navigating the Bricolage (content management system)
+browser interface. In other words, it makes it easier to write
+Bricolage scripts.
+
+
+INSTALLATION
+
+To install this module, type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+Most of the tests will be skipped unless you have set the following
+environment variables:
+
+  BRICOLAGE_SERVER
+  BRICOLAGE_USERNAME
+  BRICOLAGE_PASSWORD
+
+and a Bricolage server is running. These rudimentary tests
+will make no database changes.
+
+
+COPYRIGHT AND LICENCE
+
+Copyright 2005 Scott Lanning. This library is free software;
+you can redistribute it and/or modify it under the same terms
+as Perl itself.
+
+This program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty
+of merchantability or fitness for a particular purpose.
