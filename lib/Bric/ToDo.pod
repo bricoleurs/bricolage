@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.5 $
+$Revision: 1.13.2.6 $
 
 =head1 DATE
 
-$Date: 2001-10-02 07:39:04 $
+$Date: 2001-10-02 08:03:05 $
 
 =head1 DESCRIPTION
 
@@ -32,6 +32,11 @@ significant (including the addition of new libraries).
 =head2 VERSION 1.0.2
 
 =over 4
+
+=item *
+
+Document the use of Cache::FileCache in Bric::Admin, especially how it lives in
+/tmp/FileCache [David].
 
 =item *
 
@@ -292,6 +297,12 @@ Add support for LDAP authentication.
 =head2 VERSION 1.4.0
 
 =over 4
+
+=item *
+
+Change way objects are deactivated (archived?) in the database such that, where
+there are name uniqueness constraints, a new object can be created with the name
+of a deleted one without any clashes (e.g., for Elements and Element Types).
 
 =item *
 
