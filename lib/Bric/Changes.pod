@@ -64,6 +64,11 @@ F<contrib>. Thanks to Matt Vella for the contribution.
 New help pages for the event log and the workflow trail. Thanks to Geoff
 Richards for the contribution.
 
+=item *
+
+Some unnecessary JavaScript was removed from the side navigation layer. Thanks
+to Eldar Kononov for the suggestion. [David]
+
 =back
 
 =head2 Bug Fixes
