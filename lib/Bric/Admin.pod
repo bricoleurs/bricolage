@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-09 00:04:55 $
 
 =head1 DESCRIPTION
 
@@ -890,7 +890,7 @@ Next you'll need to start the FTP server as the same user that Apache
 runs as.  For example, if you run Apache as "nobody" you would use
 this command to start the FTP server:
 
-   su nobody -c /usr/local/bricolage/bin/ftpd -S
+   su nobody -c "/usr/local/bricolage/bin/ftpd -S"
 
 The -S option to ftpd runs the FTP server in the background.  For
 other possibilities see the documentation for Net::FTPServer.
@@ -1520,7 +1520,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.9  2001-10-05 20:07:16  samtregar
+Revision 1.10  2001-10-09 00:04:55  samtregar
+Fixed broken usage suggestion for bin/ftpd - it's nice when your examples actually work...
+
+Revision 1.9  2001/10/05 20:07:16  samtregar
 Merged changes from Release_1_0
 
 
