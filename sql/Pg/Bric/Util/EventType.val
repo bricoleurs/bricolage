@@ -374,6 +374,11 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'passwd_chg', 'User Password Changed', 'The password was changed.', '2', '1');
 
+-- ********** 'user_overriden' ************ --
+    
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'user_overridden', 'User Overridden', 'Trigger user masqueraded as user', '2', '1');
+    
 -- ********** 'grp_new' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)

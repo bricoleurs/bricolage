@@ -6,6 +6,7 @@ use constant CLASS_KEY => 'login';
 
 use strict;
 use Bric::App::Auth ();
+use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg del_redirect redirect_onload);
 use Bric::Util::Priv::Parts::Const qw(:all);
@@ -48,10 +49,11 @@ sub masquerade : Callback {
     my $u = Bric::Biz::Person::User->lookup({ login => $self->value });
 
     if (get_user_object->can_do($u, EDIT)) {
+        log_event('user_overridden', $u);
         my ($res, $msg) = Bric::App::Auth::masquerade($r, $u);
-	$self->set_redirect('/');
+        $self->set_redirect('/');
     } else {
-	add_msg('You do not have permission to override user "[_1]"',
+        add_msg('You do not have permission to override user "[_1]"',
                 $u->get_name);
     }
 }

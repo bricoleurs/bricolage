@@ -153,6 +153,10 @@ since the two pages are mostly redundant except for a few links. [Marshall]
 
 =item *
 
+User overrides are now recorded in the event log. Suggested by David. [Marshall]
+
+=item *
+
 The UI now shows which user is logged in and includes a link to the user's
 profile at the top of each page, above the log out button. Suggested by Philip
 Brown. [Marshall]
