@@ -126,7 +126,50 @@ sub status_msg {
 
 __END__
 
-=head1 parse_uri
+=head1 NAME
+
+Bric::App::Callback::Util - utility functions for callbacks
+
+=head1 VITALS
+
+=over 4
+
+=item Version
+
+$Revision: 1.1.2.5 $
+
+=cut
+
+# Grab the Version Number.
+our $VERSION = (qw$Revision: 1.1.2.5 $ )[-1];
+
+=item Date
+
+$Date: 2003-06-10 12:22:45 $
+
+=item CVS ID
+
+$Id: Util.pm,v 1.1.2.5 2003-06-10 12:22:45 slanning Exp $
+
+=back
+
+=head1 SYNOPSIS
+
+  use Bric::App::Callback::Util qw(:all);
+
+  my ($section, $mode, $type) = parse_uri($uri);
+  my $ua = detect_agent();
+  status_msg(@msgs);
+
+=head1 DESCRIPTION
+
+This class provides utility functions for callback
+classes to use. They generally are replacements for
+what used to be done with $m->comp calls.
+
+=head1 FUNCTIONS
+
+=head2 parse_uri
 
 Returns $section (e.g. admin), $mode (e.g. manager, profile)
 and $type (e.g. user, media, etc). This is centralized here in case
@@ -134,7 +177,7 @@ it becomes a complicated thing to do. And, centralizing is nice.
 
 Note: was comp/lib/util/parseUri.mc
 
-=head1 detect_agent
+=head2 detect_agent
 
 Detects the agent's browser, its version, and the OS.
 
@@ -183,7 +226,7 @@ returned. This may occur in the browser, version, and os fields.
 
 Note: was comp/widgets/util/detectAgent.mc
 
-=head1 status_msg
+=head2 status_msg
 
 Sometimes there's a long process executing, and you want to send status messages
 to the browser so that the user knows what's happening. This element will do
@@ -193,3 +236,17 @@ redirect to another page, or simply finish drawing the current page. It will
 draw in below the status messages.
 
 Note: was comp/lib/util/status_msg.mc
+
+=head1 AUTHOR
+
+This module:
+
+Scott Lanning <lannings@who.int>
+
+Original authors:
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+L<Bric::App::Callback|Bric::App::Callback>
