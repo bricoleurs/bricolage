@@ -3,11 +3,12 @@ package Bric::App::Callback::Profile::Job;
 use base qw(Bric::App::Callback::Package);
 __PACKAGE__->register_subclass('class_key' => 'job');
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
 
-my $type = CLASS_KEY;
-my $disp_name = get_disp_name($type);
+my $disp_name = get_disp_name(CLASS_KEY);
+my $class = get_package_name(CLASS_KEY);
 
 
 sub save : Callback {
@@ -35,6 +36,34 @@ sub save : Callback {
         add_msg("$disp_name profile $name saved.");
     }
     set_redirect('/admin/manager/job');
+}
+
+
+# strictly speaking, this is a Manager (not a Profile) callback
+
+sub cancel : Callback {
+    my $self = shift;
+
+    foreach my $id (@{ mk_aref($self->value) }) {
+        my $job = $class->lookup({'id' => $id}) || next;
+        if (chk_authz($job, EDIT)) {
+            if ($job->is_pending) {
+                # It's executing right now. Don't cancel it.
+                my $msg = 'Cannot cancel [_1] because it is currently executing.';
+                my $arg = '&quot;' . $job->get_name . '&quot;';
+                add_msg($self->lang->maketext($msg, $arg));
+            } else {
+                # Cancel it.
+                $job->cancel();
+                $job->save();
+                log_event('job_cancel', $job);
+            }
+        } else {
+            my $msg = 'Permission to delete [_1] denied.';
+            my $arg = '&quot;' . $job->get_name . '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
+        }
+    }
 }
 
 

@@ -60,7 +60,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 # Add the form buttons and other necessities.
 $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 	 no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
-	 ret_val => 'return_dgreen');
+	 ret_val => 'return_dgreen', widget => $type);
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
 </%perl>
@@ -100,11 +100,11 @@ my $no_del = !$id || $no_edit;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2003-06-10 10:14:00 $
 
 =head1 SYNOPSIS
 
