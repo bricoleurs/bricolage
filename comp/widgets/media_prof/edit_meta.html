@@ -244,15 +244,19 @@ foreach my $cntr ($media->get_contributors) {
 $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
 
 </%perl>
-
   </td>
-  <td width=80 align="center" valign=top><&
-  '/widgets/profile/imageSubmit.mc',
-    formName => "theForm",
-    callback => $widget . "|contributors_cb",
-    image    => "edit_lgreen",
-    vspace   => 3
-  &></td>
+  <td width="80" align="center" valign="top">
+% if ($media->get_alias_id) {
+<img src="/media/images/spacer.gif" height="20" />
+% } else {
+<& /widgets/profile/imageSubmit.mc,
+   formName => "theForm",
+   callback => $widget . "|contributors_cb",
+   image    => "edit_lgreen",
+   vspace   => 3
+&>
+% }
+</td>
 </tr>
 </table>
 <%perl>
