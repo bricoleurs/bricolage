@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-03-22 20:22:58 $
 
 =head1 SYNOPSIS
 
@@ -229,6 +229,30 @@ sub list_ids {
 }
 
 ################################################################################
+
+=back
+
+=head2 Public Class Methods
+
+=over 4
+
+=item Bric::App::Cache->clear()
+
+Clears the cache of all stored data.
+
+Throws: NONE.
+
+Side Effects: NONE.
+
+Notes: NONE.
+
+=cut
+
+sub clear {
+    __PACKAGE__->new(); # make sure cache is loaded
+    $cache->clear();    # clear the cache
+}
+
 
 =back
 

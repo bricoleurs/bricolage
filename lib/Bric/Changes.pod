@@ -54,6 +54,13 @@ allow mixed case URIs.  [Adam]
 
 Categories are now all listed and sorted by URI in select lists. [Sam]
 
+=item *
+
+The cache is now cleared when the Apache server is started or
+restarted.  This avoids potential problems with stale data in the
+cache. [Sam]
+
+
 =back
 
 =head2 Bug Fixes

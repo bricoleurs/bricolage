@@ -81,6 +81,11 @@ if ($command eq 'start') {
 	print "bric_apachectl $command: httpd (pid $pid) already running\n";
 	exit;
     }
+
+    # clear the cache before starting the server to avoid stale cache data
+    require Bric::App::Cache;
+    Bric::App::Cache->clear();
+
     print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
 	print "bric_apachectl $command: httpd started\n";
@@ -134,6 +139,10 @@ if ($command eq 'restart') {
 	}
 
     }
+    # clear the cache before starting the server to avoid stale cache data
+    require Bric::App::Cache;
+    Bric::App::Cache->clear();
+
     # start
     print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
