@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12.2.5 $
+$Revision: 1.12.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 04:27:14 $
+$Date: 2002-03-11 22:09:29 $
 
 =head1 SYNOPSIS
 
@@ -161,8 +161,6 @@ my $mni = 'Bric::Util::Fault::Exception::MNI';
 my $ap = 'Bric::Util::Fault::Exception::AP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
-my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::XMLWriterHandle->new
-  : undef;
 
 #--------------------------------------#
 # Instance Fields
