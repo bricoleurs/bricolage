@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-19 05:12:16 $
+$Date: 2004-04-06 22:53:21 $
 
 =head1 SYNOPSIS
 
@@ -2241,7 +2241,9 @@ sub _init {
                 $self->set_primary_category($new_cat);
             }
         } else {
-            # It's a media asset.
+            # It's a media asset. Give it an empty file name.
+            $self->_set(['file_name'] => ['']);
+            # Assign the category.
             my $cat = $alias_target->get_category_object;
             if (my $new_cat = Bric::Biz::Category->lookup
                 ({ uri => $cat->get_uri, site_id => $init->{site_id}})) {
@@ -2255,9 +2257,6 @@ sub _init {
 
         $self->_set(['slug'], [$alias_target->_get('slug')])
           if $alias_target->_get('slug');
-
-        $self->_set(['file_name'], [$alias_target->_get('file_name')])
-          if $alias_target->_get('file_name');
 
         $self->_set(['name'], [$alias_target->_get('name')])
           if $alias_target->_get('name');

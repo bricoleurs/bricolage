@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.5 ()
+=head1 VERSION 1.7.5 "Ashland" ()
 
 =head2 New Features
 
@@ -133,6 +133,11 @@ there is one. [David]
 
 The C<LOAD_LANGUGES> and C<LOAD_CHAR_SETS> directives are now space delimited,
 to better match other F<bricolage.conf> options. [David]
+
+=item *
+
+Aliased media documents now correctly point to the file name for the aliased
+media document. Reported by Patrick Walsh. [David]
 
 =back
 

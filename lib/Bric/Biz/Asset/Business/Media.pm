@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.94 $
+$Revision: 1.95 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.94 $ )[-1];
+our $VERSION = (qw$Revision: 1.95 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-05 14:53:32 $
+$Date: 2004-04-06 22:53:22 $
 
 =head1 SYNOPSIS
 
@@ -1114,8 +1114,9 @@ B<Notes:> NONE.
 sub set_cover_date {
     my $self = shift;
     my $cover_date = db_date(shift);
-    my ($old, $cat, $cat_id, $fn) =
-      $self->_get(qw(cover_date _category_obj category__id file_name));
+    my ($old, $cat, $cat_id) =
+      $self->_get(qw(cover_date _category_obj category__id));
+    my $fn = $self->get_file_name;
 
     return $self unless (defined $cover_date && not defined $old)
       || (not defined $cover_date && defined $old)
@@ -1197,6 +1198,10 @@ B<Notes:> NONE.
 
 sub get_uri {
     my ($self, $oc) = @_;
+
+    # If it's an alias, we need to always construct the URI.
+    $oc ||= $self->get_primary_oc if $self->_get_alias;
+
     # Just return the URI unless we need to format it according to an output
     # channel's requirements.
     return $self->_get('uri') unless $oc;
@@ -1248,7 +1253,7 @@ B<Notes:> NONE.
 
 sub get_path {
     my $self = shift;
-    my $loc = $self->_get('location') || return;
+    my $loc = $self->get_location || return;
     return Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $loc);
 }
 
@@ -1358,6 +1363,28 @@ sub upload_file {
 
 ################################################################################
 
+=item $file_name = $media->get_file_name()
+
+Returns the name of the file for this given media object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_file_name {
+    my $self = shift;
+    if (my $alias = $self->_get_alias) {
+        return $alias->get_file_name;
+    }
+    return $self->_get('file_name');
+}
+
+################################################################################
+
 =item $file_handle = $media->get_file()
 
 Returns the file handle for this given media object
@@ -1400,6 +1427,14 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+sub get_location {
+    my $self = shift;
+    if (my $alias = $self->_get_alias) {
+        return $alias->get_location;
+    }
+    return $self->_get('location');
+}
 
 ################################################################################
 
@@ -1538,8 +1573,7 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris, $fn) =
-      $self->_get(qw(id _active _update_uri file_name));
+    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
 
     # Start a transaction.
     begin();
@@ -1574,7 +1608,7 @@ sub save {
 
         if ($active) {
             if ($update_uris) {
-                if ($fn) {
+                if (my $fn = $self->get_file_name) {
                     # We have a file name, so we can create URIs. So update
                     # them.
                     $self->_update_uris;
