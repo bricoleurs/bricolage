@@ -12,7 +12,6 @@ $m->comp('/widgets/profile/hidden.mc',
 
 $m->comp('/widgets/perm/perm.mc',
          grp => $grp,
-         show_inactive => $ARGS{show_inactive},
          perm_type => $ARGS{'perm_type'},
 	 read_only => $no_edit);
 
@@ -78,11 +77,11 @@ my $grp_name = $grp->get_name;
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2004-02-16 08:16:54 $
+$Date: 2004-04-11 02:48:22 $
 
 =head1 DESCRIPTION
 

@@ -190,6 +190,13 @@ The list of output channels to add to a media or story document in the media
 and story profiles now includes only those output channels associated with the
 site that the story or media document is in. [David]
 
+=item *
+
+Thanks to the fix to 1.6.13 that prevents deleted groups from affecting
+permissions, there is no longer any need to provide a checkbox to get access
+to deleted groups in the permissions interface. So it has been removed.
+[David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)

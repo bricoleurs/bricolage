@@ -30,11 +30,9 @@ if ($is_user) {
              'indent'  => 140,
              'width'   => 500,
              'value' => $perm_type,
-             'js' => qq{onChange="location.href='} . $r->uri
-                     . "?perm_type=' + "
-                     . qq{escape(this.options[this.selectedIndex].value)}
-                     . qq{ + '&show_inactive=' + this.form.show_inactive.checked"}
-
+             'js' => qq{onChange="location.href='} . $r->uri .
+                     "?perm_type=' + " .
+                     qq{escape(this.options[this.selectedIndex].value)"},
     );
     $m->comp('/widgets/profile/hidden.mc',
          'name' => 'perm_type',
@@ -57,14 +55,6 @@ if ($is_user) {
         }
     }
 }
-
-$m->comp('/widgets/profile/checkbox.mc',
-    disp    => 'Show inactive groups',
-    checked => $show_inactive,
-    value   => 1,
-    name    => 'show_inactive'
-);
-$m->out('<p></p>');
 
 if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
@@ -161,7 +151,6 @@ if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
                  head_comp     => $head_comp,
                  row_comp      => $row_comp,
                  grp_name      => $name,
-                 show_inactive => $show_inactive,
                  perms         => \%perms,
                  site          => $site);
     }
@@ -173,7 +162,6 @@ if ($perm_type =~ /^cat_site_(\d+)$/) {
              head_comp     => $head_comp,
              row_comp      => $row_comp,
              grp_name      => $name,
-             show_inactive => $show_inactive,
              perms         => \%perms,
              site          => $sites{$1},
     );
@@ -221,7 +209,6 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
 $grp
 $num           => undef
 $read_only     => undef
-$show_inactive => undef
 </%args>
 %#--- Once ---#
 <%once>;
@@ -289,11 +276,6 @@ $no_edit = $read_only;
 my $curr_key = $class_obj->get_key_name;
 my $is_user = $curr_key eq 'user_grp' ? 1 : 0;
 my $perm_type = $ARGS{'perm_type'} || 'usrgrp';
-$show_inactive = $show_inactive eq 'true' || $show_inactive eq 1
-  ? 1
-  : 0
-  if defined $show_inactive;
-
 </%init>
 
 %#-- Shared Section --#
@@ -441,7 +423,6 @@ $num
 $row_comp
 $head_comp
 $grp_name
-$show_inactive
 $perms
 </%args>
 <%perl>;
@@ -459,7 +440,6 @@ $perms
         foreach my $cat_grp ($cat_grp_pkg->list({
                              name   => "Site $site_id Category Assets",
                              Order  => 'description',
-                             active => ($show_inactive ? undef : 1),
                              all    => 1 }))
         {
             my $gid = $cat_grp->get_id;
