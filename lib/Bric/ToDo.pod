@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:38 $
+$Date: 2002-02-25 19:32:02 $
 
 =head1 DESCRIPTION
 
@@ -249,6 +249,11 @@ page.
 =item *
 
 Dump Bric::App::ReqCache. Use $r->pnotes() instead.
+
+=item *
+
+Add ability to reverse the order of search results in the manager screens
+(especially for assets).
 
 =item *
 
