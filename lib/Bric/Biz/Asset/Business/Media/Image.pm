@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
@@ -314,8 +314,8 @@ B<Notes:> NONE.
 
 sub thumbnail_info {
     my $self = shift;
+    my $loc = $self->get_location or return;
     my %objhash = ('uri'=>'', 'width'=>'', 'height'=>'');
-    my $loc = $self->get_location;
 
     # thumbnail should be in same place as orig but with _thumb in filename
     $loc =~ s/(\..+)$/_thumb$1/g;
