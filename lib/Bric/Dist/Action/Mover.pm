@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-30 09:13:02 $
+$Date: 2004-04-22 09:51:27 $
 
 =head1 SYNOPSIS
 
@@ -255,7 +255,7 @@ Bric::Util::Trans::FS and Bric::Util::Trans::FTP for examples.
 
 =item *
 
-Add an INSERT statement to lib/Bric/Util/Class.val to create a new
+Add an INSERT statement to F<lib/Bric/Util/Class.val> to create a new
 representation for your mover class. Be sure to set the value of the
 "distributor" column to 1. Use the records for Bric::Util::Trans::FS and
 Bric::Util::Trans::FTP as examples.
