@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.2';
 
 =item Date
 
-$Date: 2003-12-16 17:46:41 $
+$Date: 2003-12-16 17:57:55 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.43 2003-12-16 17:46:41 autarch Exp $
+$Id: Bric.pm,v 1.44 2003-12-16 17:57:55 autarch Exp $
 
 =back
 
@@ -561,7 +561,7 @@ sub cache_me {
         return unless defined $self->{id};
         my $req = Apache->request;
         # We may be called during Apache startup
-        return unless $req;
+        return $self unless $req;
         my $r = Apache::Request->instance($req);
         # Cache it under its ID.
         $r->pnotes("$pkg|id|$self->{id}", $self);
