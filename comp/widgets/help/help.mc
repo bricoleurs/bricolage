@@ -20,7 +20,7 @@ Sam Tregar <stregar@about-inc.com>
 =cut
 </%doc>
 <%perl>
-  my $DEBUG = 1;
+  my $DEBUG = 0;
   my $uri = $r->uri();
 
   print STDERR "HELP : real uri : $uri\n" if $DEBUG;
