@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.37.2.1 $
+$Revision: 1.37.2.2 $
 
 =head1 DATE
 
-$Date: 2002-01-12 23:47:42 $
+$Date: 2002-01-20 02:37:50 $
 
 =head1 DESCRIPTION
 
@@ -307,6 +307,11 @@ Add pagination to listManager (maybe).
 
 Add command-line argument to bric_ftpd that will kill the currently-runnining
 instance.
+
+=item *
+
+Add autopopulation of video media type properties, such as codec, bit rate, fps,
+length, etc. Use a tool such as RIFF::Info.
 
 =back
 
