@@ -39,7 +39,7 @@ if ($mode eq "new") {
 		 value => $mode,
 		 name => 'mode');
 
-	&$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit);
+	&$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit, \%ARGS);
 
 	# show drop down of other subsys, if any
 	if (scalar(@subsys)) {
@@ -190,6 +190,14 @@ my $no_del = !$id || $no_edit;
 my $crumb = $contrib->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
+# Roll in any changes to the contributor if we're just adding contacts.
+if ($ARGS{'add_more|contact|add_cb'}) {
+    foreach my $meth ($contrib->my_meths(1)) {
+	$meth->{set_meth}->($contrib, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+	  if defined $meth->{set_meth};
+    }
+}
+
 my $context   = "Admin | Profile | $disp | $crumb";
 
 # print standard header
@@ -208,7 +216,7 @@ my $section = 'admin';
 my $disp = get_disp_name($type);
 
 my $showAttrs = sub {
-    my ($contrib, $id, $subsys, $extending, $ro) = @_;
+    my ($contrib, $id, $subsys, $extending, $ro, $param) = @_;
     my $preCaption = '&quot;' . ($subsys eq '_MEMBER_SUBSYS' ? 'Default'
 				 : $subsys) . '&quot; Role';
     my $contacts = $contrib->get_obj->get_contacts;
@@ -228,6 +236,7 @@ my $showAttrs = sub {
 	     incr      => 2,
 	     readOnly  => $ro,
 	     useTable  => 0,
+	     param     => $param,
 	     deleteLabelOnly =>1
 	    );
 
@@ -334,11 +343,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2002-04-10 19:04:24 $
 
 =head1 DESCRIPTION
 

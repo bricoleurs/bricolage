@@ -11,7 +11,7 @@ $obj
 
 <%init>;
 # make sure we have some business being here...
-return unless $field eq "$widget|save_cb" || $field eq "$widget|add_cb";
+return unless $field eq "$widget|save_cb";
 
 # Instantiate the grp or person object.
 my $contrib = $obj;
@@ -132,11 +132,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-04-10 19:04:24 $
 
 =head1 SYNOPSIS
 
