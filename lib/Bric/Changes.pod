@@ -31,6 +31,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Added constraint to the group table to keep a group from having itself as a
 parent. Thanks to Joao Pedro Goncalves for the patch. [David]
 
+=item *
+
+Fixed bug in side navigation where an HTML table was opened but not closed.
+[Charles Albrecht]
+
 =back
 
 =head1 VERSION 1.3.2
