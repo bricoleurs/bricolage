@@ -29,6 +29,11 @@ associations to become confused. [David]
 
 The media simple search now searched by URI again. [Mark]
 
+=item *
+
+Now HTML-escaping the contents of the context content displayed for
+subelements so as to prevent HTML in fields from messing up thedisplay. [Mark]
+
 =back
 
 =head1 VERSION 1.6.1
