@@ -50,15 +50,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-24 09:52:07 $
+$Date: 2004-02-24 10:24:09 $
 
 =head1 SYNOPSIS
 
@@ -149,6 +149,11 @@ true.
 B<Notes:> The code for this method came mostly from
 F<comp/widgets/publish/callback.mc>. It would be nice to collect this code in
 a module so it could be kept in one place.
+
+Notes about the notes. It's now F<lib/Bric/App/Callback/Publish.pm>,
+This code is out of date since Mark's job-queue patch, as it still
+instantiates a $burner to publish immediately, so we need to update it.
+It's an opportunity to factor out the code into one place.
 
 =cut
 
