@@ -123,6 +123,11 @@ the value returned by the autopopulation method is C<undef>. [David]
 Fixed bug where autopopulated media asset data fields weren't properly
 autopopulated. [David]
 
+=item *
+
+Fixed problem with category upgrade script failing on category data
+created with 1.3.2.  [Sam]
+
 =back
 
 =head1 VERSION 1.4.0
