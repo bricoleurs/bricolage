@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-07-10 00:48:22 $
 
 =head1 SYNOPSIS
 
@@ -476,8 +476,21 @@ sub get_person {
     return $self->get_object;
 }
 
+sub get_name { shift->get_object->format_name(@_) }
 
-*get_name = sub { shift->get_object->format_name(@_) };
+=item my $val = $contrib->get_data($attr);
+
+Shortcut for the default method of getting attributes from a group
+member, which is
+
+  $member->get_attr({ name => $attr });
+
+By including this convenience method, contributor objects act more like story
+elements, so it'll be easier for template writers to use.
+
+=cut
+
+sub get_data { $_[0]->get_attr( { name => $_[1] }) }
 
 =item $ids = $obj->get_grp_ids();
 
