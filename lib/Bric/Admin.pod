@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.91 $
+$Revision: 1.92 $
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-02-19 18:59:50 $
 
 =head1 DESCRIPTION
 
@@ -147,15 +147,15 @@ START MODULE LIST
 
 =item File::Temp
 
-=item Test::Class
-
-=item Pod::Checker
-
 =item Cache::Mmap
 
 =item Text::Soundex
 
 =item Locale::Maketext
+
+=item Test::Class
+
+=item Pod::Checker (optional)
 
 =item Devel::Profiler 0.03 (optional)
 
