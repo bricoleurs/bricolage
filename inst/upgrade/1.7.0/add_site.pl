@@ -94,10 +94,10 @@ do_sql
      VALUES (700, 200, 700)},
 
   qq{INSERT INTO grp_priv (id, grp__id, value)
-     VALUES(43, 200, 1)},
+     VALUES(50, 200, 1)},
 
   qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-     VALUES(43, 100)},
+     VALUES(50, 100)},
 
   ############################################################################
   # Add the Default site EDIT secret user group and permissions.
@@ -113,10 +113,10 @@ do_sql
      VALUES (701, 201, 701)},
 
   qq{INSERT INTO grp_priv (id, grp__id, value)
-     VALUES(44, 201, 2)},
+     VALUES(51, 201, 2)},
 
   qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-     VALUES(44, 100)},
+     VALUES(51, 100)},
 
   ############################################################################
   # Add the Default site CREATE secret user group and permissions.
@@ -132,10 +132,10 @@ do_sql
      VALUES (702, 202, 702)},
 
   qq{INSERT INTO grp_priv (id, grp__id, value)
-     VALUES(45, 202, 3)},
+     VALUES(52, 202, 3)},
 
   qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-     VALUES(45, 100)},
+     VALUES(52, 100)},
 
   ############################################################################
   # Add the Default site DENY secret user group and permissions.
@@ -151,10 +151,10 @@ do_sql
      VALUES (703, 203, 703)},
 
   qq{INSERT INTO grp_priv (id, grp__id, value)
-     VALUES(46, 203, 255)},
+     VALUES(53, 203, 255)},
 
   qq{INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
-     VALUES(46, 100)},
+     VALUES(53, 100)},
 
   ############################################################################
   # Add the "Default Site" site.
