@@ -84,6 +84,11 @@ Category groups can be edited again. Reported by Alexander Ling. [David]
 
 Elements can be edited again. Thanks to Alexander Ling for the spot! [David]
 
+=item *
+
+Element fields can be edited again without encountering the "called the
+removed method 'get_name'" error. Reported by Alexander Ling. [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
