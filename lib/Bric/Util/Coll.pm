@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-10 03:13:26 $
+$Date: 2003-01-10 03:30:30 $
 
 =head1 SYNOPSIS
 
@@ -496,9 +496,10 @@ sub add_new_objs {
 =item $self = $coll->del_objs(@obj_ids)
 
 Deletes the objects in C<@objs> or identified by the IDs in C<@obj_ids> from
-the collection, if they're a part of the collection. Objects and IDs should
-not be mixed in any call or between any calls to C<del_objs()> in the same
-collection object.
+the collection, if they're a part of the collection. All arguments can be
+either objects or object IDs; however, if you've constructed an object
+already, pass it in rather than the ID, as C<del_objs()> likely will have to
+construct the object from the ID, anyway.
 
 B<Throws:>
 
