@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 19:32:29 $
+$Date: 2002-07-17 23:17:46 $
 
 =head1 SYNOPSIS
 
@@ -1481,7 +1481,7 @@ sub _insert_category {
     # See Bric::Biz::Asset->get_grp_ids to see it at work.
     my $ag_obj = Bric::Util::Grp::Asset->new
       ({ name => 'Category Assets',
-         description => 'For category asset permissions' });
+         description => $self->_get('name') });
     $ag_obj->save;
     $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
     my $nextval = next_key(TABLE);

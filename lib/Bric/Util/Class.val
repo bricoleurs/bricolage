@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.8 $
+-- VERSION: $Revision: 1.9 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -78,8 +78,10 @@ VALUES (21, 'output_channel', 'Bric::Biz::OutputChannel', 'Output Channel', 'Out
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (22, 'element', 'Bric::Biz::AssetType', 'Element', 'Elements', 'Element objects', 0);
 
+/*
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (23, 'category_grp', 'Bric::Util::Grp::Category', 'Hierarchical Category Group', 'Hierarchical Category Groups', 'Used to group together categories that have a hierarchical relationship to one another.', 0);
+*/
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (24, 'asset_type_grp', 'Bric::Util::Grp::AssetType', 'Asset Type Group', 'Asset Type Groups', 'Asset Type Group', 0);

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
 -- Test values.
 --
@@ -14,26 +14,29 @@ DELETE FROM category_member WHERE id IN (702, 703, 704);
 -- -----------------------------------------------------------------------------
 -- Science
 
-INSERT INTO category (id,directory,uri,parent_id, name, description) 
-VALUES (1, 'science', '/science/', 0, 'Science', 'All things sciencey');
+INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
+VALUES (1, 'science', '/science/', 0, 'Science', 'All things sciencey', 53);
 
 -- -----------------------------------------------------------------------------
 -- Material
 
-INSERT INTO category (id,directory,uri,parent_id, name, description) 
-VALUES (2, 'material', '/science/material', 1, 'Material', 'The study of new materials');
+INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
+VALUES (2, 'material', '/science/material', 1, 'Material',
+        'The study of new materials', 54);
 
 -- -----------------------------------------------------------------------------
 -- Physical
 
-INSERT INTO category (id,directory,uri,parent_id, name, description) 
-VALUES (3, 'physical', '/science/physical', 1, 'Physical', 'General macro level science');
+INSERT INTO category (id,directory,uri,parent_id, name, description, asset_grp_id) 
+VALUES (3, 'physical', '/science/physical', 1, 'Physical',
+        'General macro level science', 55);
 
 -- -----------------------------------------------------------------------------
 -- Biological
 
-INSERT INTO category (id, directory, uri,parent_id, name, description) 
-VALUES (4, 'biological', '/science/biological', 1, 'Biological', 'Bugs, bats and bees.');
+INSERT INTO category (id, directory, uri,parent_id, name, description, asset_grp_id)
+VALUES (4, 'biological', '/science/biological', 1, 'Biological',
+        'Bugs, bats and bees.', 56);
 
 -- -----------------------------------------------------------------------------
 -- Groups.
@@ -62,4 +65,17 @@ VALUES (53, 52, 20, 1);
 
 INSERT INTO category_member (id, object_id, member__id)
 VALUES (53, 4, 53); 
+
+-- Asset groups.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (53, NULL, 43, 'Category Assets', 'Science', 1, 0);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (54, NULL, 43, 'Category Assets', 'Material', 1, 0);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (55, NULL, 43, 'Category Assets', 'Physical', 1, 0);
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (56, NULL, 43, 'Category Assets', 'Biological', 1, 0);
 
