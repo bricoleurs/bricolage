@@ -24,6 +24,21 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Empty listManager lists no longer have a gap in them. [David]
 
+=item *
+
+Made the table around the formBuilder radio buttons prettier. [David]
+
+=item *
+
+Fixed numbering of sections in Media profile so that the numbers don't
+skip. [David]
+
+=item *
+
+Updated display of existing contributors in the "Edit Contributors" screen of
+the story and media asset profiles to use listManager. This makes them look
+like they do everywhere else (and uses less code, to boot!). [David]
+
 =back
 
 =head1 VERSION 1.4.3

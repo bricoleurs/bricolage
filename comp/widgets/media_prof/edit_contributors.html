@@ -1,77 +1,48 @@
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%	caption => "Current Contributors",
-%	);
+<%perl>;
+my $order_vals = [ map { [ $_ => $_ ] } 1..@contribs ];
+my ($i, @sort_array);
 
+my $order_sub = sub {
+    return unless $_[1] eq 'order';
+    my $id = $_[0]->get_id;
+    push @sort_array, qq{"$widget|reorder_$id"};
+    $m->scomp('/widgets/profile/select.mc',
+              name => "$widget|reorder_$id",
+              disp => '',
+              value => ++$i,
+              options => $order_vals,
+              useTable => 0,
+              js => qq{onChange="reorder(this, 'theForm')"}
+        )
+};
+my $uri = $r->uri;
+my $role_sub = sub {
+    my ($val, $c) = @_;
+    my $role = $media->get_contributor_role($c);
+    $val .= qq{ (Role: <a href="$uri?media_prof|assoc_contrib_cb=} .
+      $c->get_id . qq{">$role</a>)} if $role;
+    $val;
+};
 
-
-<table border=1 width=578 cellspacing=0 bordercolor=#999966>
-<tr>
-  <td class=medHeader align=center>
-  <span class=label>Last Name</span>
-  </td>
-  <td class=medHeader align=center>
-  <span class=label>First Name</span>
-  </td>
-  <td class=medHeader align=center>
-  <span class=label>Type</span>
-  </td>
-  <td class=medHeader align=center>
-  <span class=label>Order</span>
-  </td>
-  <td class=medHeader align=center>
-  <span class=label>Delete</span>
-  </td>
-</tr>
-
-% my $i = 1;
-% my $total = scalar @contribs; 
-% my @sort_array;
-% foreach (@contribs) {
-% my $id = $_->get_id;
-% push @sort_array, qq{"$widget|reorder_$id"};
-% my $person = $_->get_object;
-% my $val = $_->get_grp->get_name();
-% my $media = get_state_data('media_prof', 'media');
-% my $role = $media->get_contributor_role($_);
-% $val .= ' (Role: <a href="'.$r->uri.'?media_prof|assoc_contrib_cb='.$_->get_id.'">'.ucfirst($role).'</a>)' if $role;
-% my $order_vals;
-% foreach (1 .. $total) {
-%	$order_vals->{$_} = $_;
-% }
-<tr>
-  <td>
-  <% $person->get_lname || '&nbsp;' %>
-  </td>
-  <td>
-  <% $person->get_fname || '&nbsp;' %>
-  </td>
-  <td>
-  <% $val %>
-  </td>
-  <td align=center>
-<& '/widgets/profile/displayFormElement.mc',
-   key 	=> "$widget|reorder_$id",
-   useTable => 0,
-   vals	=> { value => $i,
-             props => { type => 'select',
-                        vals => $order_vals,
-                      },
-             js	=> 'onChange="reorder(this, \'theForm\')"'
-	   }
-&>
-  </td>
-  <td align=center>
-  <input type="checkbox" name="<% $widget %>|delete_id" value="<% $_->get_id %>">
-  </td>
-</tr>
-% $i++;
-% }
-</table>
+$m->comp('/widgets/listManager/listManager.mc',
+         object    => 'contrib',
+         userSort => 0,
+         def_sort_field => 'order',
+         title     => 'Current Contributors',
+         objs      => \@contribs,
+         profile   => undef,
+         alter     => { type => $role_sub },
+         fields    => [qw(lname fname type order)],
+         field_titles => { order => 'Order' },
+         field_values => $order_sub,
+         select =>  ['Delete', "$widget|delete_id"],
+         addition  => ''
+        );
+</%perl>
 <script language="javascript">
 var selectOrderNames = new Array(<% join ', ', @sort_array %>);
 </script>
-
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+<p></p>
 
 <& /widgets/listManager/listManager.mc,
    object    => 'contrib',
