@@ -91,6 +91,11 @@ transaction. If any database changes within an upgrade script encounter an
 error, all of the changes in that script will be rolled back. Suggested by
 Arthur. [David]
 
+=item *
+
+An upgrade script failure will now cause C<make upgrade> to halt installation
+so that any issues are immediately identified and correctable. [David]
+
 =back
 
 =head2 Bug Fixes
