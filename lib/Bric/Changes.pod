@@ -119,6 +119,11 @@ Fixed bug where Bric::SOAP::Category would fail to import ad strings. [David]
 Fixed bug in C<< Bric::Util::Grp->has_member >> where an already-added member
 wasn't always found. [Mark]
 
+=item *
+
+Conflicting URI messages for media assets no longer suggest changing the value
+of the slug, since media assets have no slug. [David]
+
 =back
 
 =head1 VERSION 1.4.3
