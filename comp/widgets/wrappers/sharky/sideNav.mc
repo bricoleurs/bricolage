@@ -100,6 +100,7 @@ unless ($workflows) {
 <html>
 <head>
   <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
+  <meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
@@ -445,10 +446,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:54 $
+$Date: 2003-02-13 16:00:39 $
 
 </%doc>
