@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.128 $
+$Revision: 1.129 $
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:03 $
+$Date: 2004-03-02 19:20:37 $
 
 =head1 DESCRIPTION
 
@@ -194,10 +194,13 @@ C<list()> in all classes. The C<SortBy> parameter can be either a string
 identifying a single attribute (column) to sort by, or an array of attributes
 (columns) to sort by Note that no matter what attributes are selected, the
 object id column must I<always> be the last sorted. Existing C<Order> and
-C<OrderDirection> parameters should be considered aliases to be
-deprecated. C<Limit> and C<Offset> can be added by using derived tables
-(Stephan Szabo is my hero for suggesting this -- I didn't even know it was
-possible!). Here's a quick example for person objects:
+C<OrderDirection> parameters should be considered aliases to be deprecated.
+C<Limit> and C<Offset> can be added by using aggregates to ensure that all
+objects are selected as single rows instead of multiple rows. See how Story,
+Media, and Formatting do this now for examples. If this isn't possible, it can
+be done using derived tables (Stephan Szabo is my hero for suggesting this --
+I didn't even know it was possible!). Here's a quick example for person
+objects:
 
   select p.id, p.prefix, p.fname, p.mname, p.lname, p.suffix, p.active,
          m.grp__id
@@ -220,6 +223,16 @@ Add media type associations to actions and allow users to select the media
 types they want associated with a particular action. Use the hard-coded action
 type media type associations as the default associations when a new action is
 created.
+
+=item *
+
+Allow deactivation of objects to cascade into their assocaitions. For example,
+if one wanted to delete an output channel, the UI should present the user with
+a list of objects it is associdated with (story and media type elements,
+stories and media, destinations) and ask if the user is sure she wants to
+delete it and remove all of the associations. This might be tricky if, for
+example, a given story has only that one OC associated with it, or it is the
+primary output channel for a story.
 
 =back
 
