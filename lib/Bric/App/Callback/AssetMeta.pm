@@ -18,7 +18,7 @@ my %types = (
 );
 
 for my $sub (qw(Image Audio Video)) {
-    $types{"Bric::Biz::Asset::Busines::Media::$sub"} =
+    $types{"Bric::Biz::Asset::Business::Media::$sub"} =
       $types{'Bric::Biz::Asset::Business::Media'};
 }
 
