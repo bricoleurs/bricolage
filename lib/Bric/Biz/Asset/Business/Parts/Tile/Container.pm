@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-12 18:52:15 $
 
 =head1 SYNOPSIS
 
@@ -59,7 +59,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
-use Bric:Util:Fault qw(throw_gen);
+use Bric::Util::Fault qw(throw_gen);
 use Carp ();
 
 #==============================================================================#
