@@ -57,7 +57,7 @@ do {
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
-		   DefaultType        => 'text/html',
+		   DefaultType        => '"text/html; charset=' . lc CHAR_SET . '"',
 		   SetHandler         => 'perl-script',
 		   PerlHandler        => 'Bric::App::Handler',
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
