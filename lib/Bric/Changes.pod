@@ -16,6 +16,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.0.2
 
+=head2 New Features
+
 =over 4
 
 =item *
@@ -68,6 +70,32 @@ are stored in the "bricolage" subdirectory of the local tmp, e.g.,
 
 =item *
 
+Added an "About" page, linked from the logo graphic, that explains the name
+"Bricolage" and offers the license and credits. [David]
+
+=item *
+
+Added PERL_LOADER configuration directive. Pass a line of Perl to this
+directive, and on startup, it'll execute it in the same namespace as your
+templates execute in.
+
+=item *
+
+Added INCLUDE_XML_WRITER and XML_WRITER_ARGS configuration parameters. If
+INCLUDE_XML_WRITER is turned on, then all templates will include a new global,
+$writer, that is an XML::Writer object. This object is provided as a convenience
+for creating XML in your templates. XML_WRITER_ARGS allows certain arguments to
+be passed to the XML::Writer instantiator. See Bric::AdvTemplates for more
+information.
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
 Fixed bug where cancelled checkouts of template appeared to work in some views,
 but not others. Thanks to Matt Vella for the report. [David]
 
@@ -92,17 +120,6 @@ not. Thanks to Matt Vella for the spot. [David]
 
 Fixed bug where element select lists weren't populate with their list of values.
 Thanks to Matt Vella for the report. [David]
-
-=item *
-
-Added an "About" page, linked from the logo graphic, that explains the name
-"Bricolage" and offers the license and credits. [David]
-
-=item *
-
-Added PERL_LOADER configuration directive. Pass a line of Perl to this
-directive, and on startup, it'll execute it in the same namespace as your
-templates execute in.
 
 =back
 
