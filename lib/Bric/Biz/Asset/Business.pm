@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-08 00:01:56 $
+$Date: 2003-11-08 00:03:00 $
 
 =head1 SYNOPSIS
 
@@ -2512,7 +2512,7 @@ sub _update_uris {
           # Check for PostgreSQL 7.4 error message.
           unless $err->get_payload =~
           /duplicate key violates unique constraint "udx_$key\_uri__site_id__uri"/
-          # Check for PostgreSQL 7.3, 7.2, or 7.2 error message.
+          # Check for PostgreSQL 7.3, 7.2, or 7.1 error message.
           or $err->get_payload =~
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
         my $things = $key eq 'media'
