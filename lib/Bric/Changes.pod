@@ -127,6 +127,13 @@ non-ISO style date preference is selected. Thanks to Susan G. for the spot!
 Running C<make upgrade> with PostgreSQL "ident sameuser" security now works
 properly. [Keith Grennan]
 
+=item *
+
+LoadModule and AddModule httpd.conf directives should now be generated properly
+during installation.  LoadModule will use config_log_module or mod_log_config 
+depending on the system, but AddModule will always use mod_log_config.c. 
+Spotted by Dave Jablonski. [Marshall]
+
 =back
 
 =cut

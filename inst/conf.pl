@@ -206,7 +206,7 @@ sub create_httpd_conf {
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t config_log_module " .
                       $AP->{load_modules}{"${mod}_module"} . "\n" .
-                        "AddModule \t mod_$mod.c\n\n";
+                        "AddModule \t mod_log_config.c\n\n";
                 }
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
