@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-21 18:26:01 $
+$Date: 2001-12-21 20:06:57 $
 
 =head1 SYNOPSIS
 
@@ -827,6 +827,27 @@ sub base_name {
 
 ################################################################################
 
+=item my $uri_base_name = $fs->uri_base_name($uri)
+
+Takes a URI as an argument and returns just the base name of the file at the
+end of the URI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses File::Basename::basename() and
+File::Basename::fileparse_set_fstype() internally.
+
+=cut
+
+sub uri_base_name {
+    File::Basename::fileparse_set_fstype('unix');
+    return File::Basename::basename($_[1]);
+}
+
+################################################################################
+
 =item my $dir_name = $fs->dir_name($file_name)
 
 =item my $dir_name = $fs->dir_name($file_name, $OS)
@@ -845,6 +866,27 @@ File::Basename::fileparse_set_fstype() internally.
 
 sub dir_name {
     File::Basename::fileparse_set_fstype($_[2] ? $osen->{ lc $_[2] } :  $^O);
+    return File::Basename::dirname($_[1]);
+}
+
+################################################################################
+
+=item my $uri_dir_name = $fs->uri_dir_name($uri)
+
+Takes a URI as an argument and returns just the directory name, minus the
+filename at the end of the URI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses File::Basename::basename() and
+File::Basename::fileparse_set_fstype() internally.
+
+=cut
+
+sub uri_dir_name {
+    File::Basename::fileparse_set_fstype('unix');
     return File::Basename::dirname($_[1]);
 }
 
