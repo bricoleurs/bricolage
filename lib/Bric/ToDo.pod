@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.115 $
+$Revision: 1.116 $
 
 =head1 DATE
 
-$Date: 2003-08-29 14:58:33 $
+$Date: 2003-09-12 05:13:54 $
 
 =head1 DESCRIPTION
 
@@ -161,6 +161,11 @@ Replace use of Text::Iconv with Encode?
 Bric::Util::FTP::DirHandle has code to specifically recoginze templates ending
 in F<.mc>, F<.tmpl>, and F<.pl>. This needs to be made more flexible, so that
 it recognizes any other burners tha may be added to the system.
+
+=item *
+
+Adjust listManager and desk interfaces so that they remember the field use to
+sort items until the end of a session.
 
 =back
 
