@@ -265,6 +265,8 @@ my $handle_checkin = sub {
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
         log_event('story_add_workflow', $story,
                   { Workflow => $wf->get_name });
+        $story->checkout({ user__id => get_user_id })
+          unless $story->get_checked_out;
     }
 
     $story->checkin;
@@ -276,11 +278,11 @@ my $handle_checkin = sub {
     # See if this story needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
         # Remove from the current desk and from the workflow.
-        $cur_desk->remove_asset($story);
-        $cur_desk->save;
+        $cur_desk->remove_asset($story)->save if $cur_desk;
         $story->set_workflow_id(undef);
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
         add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
@@ -289,7 +291,7 @@ my $handle_checkin = sub {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
         # Find a publish desk.
-        if ($cur_desk->can_publish) {
+        if ($cur_desk and $cur_desk->can_publish) {
             # We've already got one.
             $pub_desk = $cur_desk;
             $no_log = 1;
@@ -301,12 +303,17 @@ my $handle_checkin = sub {
                 $pub_desk = $d and last if $d->can_publish;
             }
             # Transfer the story to the publish desk.
-            $cur_desk->transfer({ to    => $pub_desk,
-                                  asset => $story });
-            $cur_desk->save;
+            if ($cur_desk) {
+                $cur_desk->transfer({ to    => $pub_desk,
+                                      asset => $story });
+                $cur_desk->save;
+            } else {
+                $pub_desk->accept({ asset => $story });
+            }
             $pub_desk->save;
-            $story->save;
         }
+
+        $story->save;
         # Log it!
         log_event(($new ? 'story_create' : 'story_save'), $story);
         log_event('story_checkin', $story);

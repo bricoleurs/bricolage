@@ -309,6 +309,8 @@ my $checkin = sub {
         my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
         log_event('formatting_add_workflow', $fa,
                   { Workflow => $wf->get_name });
+        $fa->checkout({ user__id => get_user_id })
+          unless $fa->get_checked_out;
     }
     $fa->checkin;
     $fa->activate;
@@ -320,11 +322,11 @@ my $checkin = sub {
     # See if this template needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
         # Remove from the current desk and from the workflow.
-        $cur_desk->remove_asset($fa);
-        $cur_desk->save;
+        $cur_desk->remove_asset($fa)->save if $cur_desk;
         $fa->set_workflow_id(undef);
         $fa->save;
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
+        log_event('formatting_checkout', $fa) if $work_id;
         log_event('formatting_checkin', $fa);
         log_event("formatting_rem_workflow", $fa);
         add_msg("Template &quot;" . $fa->get_name . "&quot; saved and " .
@@ -349,11 +351,10 @@ my $checkin = sub {
                 $cur_desk->transfer({ to    => $pub_desk,
                                       asset => $fa });
                 $cur_desk->save;
-                $pub_desk->save;
             } else {
                 $pub_desk->accept({ asset => $fa });
-                $pub_desk->save;
             }
+            $pub_desk->save;
         }
 
         $fa->save;

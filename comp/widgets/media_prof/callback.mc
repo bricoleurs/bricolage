@@ -206,7 +206,7 @@ my $handle_checkin = sub {
 
     if (my $msg = $media->check_uri) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
-                "Please change the category, file name, or slug.");
+                "Please change the category or file name.");
         return;
     }
 
@@ -218,6 +218,8 @@ my $handle_checkin = sub {
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
         log_event('media_add_workflow', $media,
                   { Workflow => $wf->get_name });
+        $media->checkout({ user__id => get_user_id })
+          unless $media->get_checked_out;
     }
 
     $media->checkin;
@@ -229,11 +231,11 @@ my $handle_checkin = sub {
     # See if this media asset needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
         # Remove from the current desk and from the workflow.
-        $cur_desk->remove_asset($media);
-        $cur_desk->save;
+        $cur_desk->remove_asset($media)->save if $cur_desk;
         $media->set_workflow_id(undef);
         $media->save;
         log_event(($new ? 'media_create' : 'media_save'), $media);
+        log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media);
         log_event("media_rem_workflow", $media);
         add_msg("Media &quot;" . $media->get_title . "&quot; saved and " .
@@ -242,7 +244,7 @@ my $handle_checkin = sub {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
         # Find a publish desk.
-        if ($cur_desk->can_publish) {
+        if ($cur_desk and $cur_desk->can_publish) {
             # We've already got one.
             $pub_desk = $cur_desk;
             $no_log = 1;
@@ -254,12 +256,17 @@ my $handle_checkin = sub {
                 $pub_desk = $d and last if $d->can_publish;
             }
             # Transfer the media to the publish desk.
-            $cur_desk->transfer({ to    => $pub_desk,
-                                  asset => $media });
-            $cur_desk->save;
+            if ($cur_desk) {
+                $cur_desk->transfer({ to    => $pub_desk,
+                                      asset => $media });
+                $cur_desk->save;
+            } else {
+                $pub_desk->accept({ asset => $media });
+            }
             $pub_desk->save;
-            $media->save;
         }
+
+        $media->save;
         # Log it!
         log_event(($new ? 'media_create' : 'media_save'), $media);
         log_event('media_checkin', $media);
