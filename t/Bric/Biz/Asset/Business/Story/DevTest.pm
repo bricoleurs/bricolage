@@ -116,7 +116,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(46) {
+sub test_select_methods: Test(51) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -192,7 +192,7 @@ sub test_select_methods: Test(46) {
         $grp->save();
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @WORKFLOW_GRP_IDS, $grp->get_id();
-        
+
         # create some story groups
         $grp = Bric::Util::Grp::Story->new({ name => "_GRP_test_$time.$i" });
         # save the group ids
@@ -241,15 +241,19 @@ sub test_select_methods: Test(46) {
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
 
-    # Try doing a lookup 
+    # Try doing a lookup
     $expected = $story[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[0] }), 'can we call lookup on a Story' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[0] }),
+        'can we call lookup on a Story' );
+    is( $got->get_name(), $expected->get_name,
+        '... does it have the right name');
+    is( $got->get_description(), $expected->get_description(),
+        '... does it have the right desc');
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
-    like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
+    like( $got->get_primary_uri(), qr/^$exp_uri/,
+          '...does the uri match the category and slug');
 
     # check the grp IDs
     my $exp_grp_ids = [ $all_cats_grp_id, 
@@ -260,8 +264,23 @@ sub test_select_methods: Test(46) {
     eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
-    ok( $got = class->list({ id => $OBJ_IDS->{story}->[0], return_versions => 1 }), 'does return_versions work?' );
+    ok( $got = class->list({ id => $OBJ_IDS->{story}->[0],
+                             return_versions => 1,
+                             Order => 'version' }),
+        'does return_versions work?' );
     is( scalar @$got, 3, '... and did we get three versions of story[0]');
+
+    # Make sure we got them back in order.
+    my $n;
+    foreach my $s (@$got) {
+        is( $s->get_version, ++$n, "Check for version $n");
+    }
+
+    # Now fetch a specific version.
+    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[0],
+                               version => 2 }),
+        "Get version 2" );
+    is( $got->get_version, 2, "Check that we got version 2" );
 
     # ... with multiple cats
     $time = time;

@@ -56,7 +56,7 @@ sub construct {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(43) {
+sub test_select_methods: Test(48) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -197,8 +197,23 @@ sub test_select_methods: Test(43) {
     eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
-    ok( $got = class->list({ id => $OBJ_IDS->{media}->[0], return_versions => 1 }), 'does return_versions work?' );
+    ok( $got = class->list({ id => $OBJ_IDS->{media}->[0],
+                             return_versions => 1,
+                             Order => 'version'}),
+        'does return_versions work?' );
     is( scalar @$got, 3, '... and did we get three versions of media[0]');
+
+    # Make sure we got them back in order.
+    my $n;
+    foreach my $m (@$got) {
+        is( $m->get_version, ++$n, "Check for version $n");
+    }
+
+    # Now fetch a specific version.
+    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0],
+                               version => 2 }),
+        "Get version 2" );
+    is( $got->get_version, 2, "Check that we got version 2" );
 
     # ... with multiple cats
     $time = time;
