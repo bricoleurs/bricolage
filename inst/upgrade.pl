@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-05-20 21:52:38 $
 
 =head1 DESCRIPTION
 
@@ -89,46 +89,55 @@ sub read_install_db {
 # check that the version number exists in the version database, note
 # the versions need to upgrade to current version
 sub check_version {
+    my @todo;
+
     # make sure we're not trying to install the same version twice
-    hard_fail(<<END) if $INSTALL->{VERSION} eq $VERSION;
+    if ($INSTALL->{VERSION} eq $VERSION) {
+        print <<END;
 The installed version ("$VERSION") is the same as this version!  "make
-upgrade" only works to upgrade from one version to another.  Please
-use "make install if you wish to overwrite your current install.
+upgrade" is only designed to work to upgrade from one version to
+another.  Please use "make install if you wish to overwrite your
+current install.
+
 END
+        exit 1 unless ask_yesno("Continue with upgrade? [no] ", 0);
+        @todo = ($VERSION);
 
-    # read in versions.txt
-    my @versions;
-    open(VER, "inst/versions.txt") or die "Cannot open inst/versions.txt : $!";
-    while (<VER>) {
-	chomp;
-	next if /^#/ or /^\s*$/;
-	push @versions, $_;
-    }
-    close VER;
-
-    # find this version
-    my ($found, @todo);
-    for my $i (0 .. $#versions) {
-	if ($versions[$i] eq $INSTALL->{VERSION}) {
-	    $found = 1;
-	    @todo = @versions[$i + 1 .. $#versions];
-	}
-    }
-
-    # didn't find the version?
-    hard_fail(<<END) unless $found;
+    } else {
+        # read in versions.txt
+        my @versions;
+        open(VER, "inst/versions.txt") or die "Cannot open inst/versions.txt : $!";
+        while (<VER>) {
+            chomp;
+            next if /^#/ or /^\s*$/;
+            push @versions, $_;
+        }
+        close VER;
+        
+        # find this version
+        my ($found, @todo);
+        for my $i (0 .. $#versions) {
+            if ($versions[$i] eq $INSTALL->{VERSION}) {
+                $found = 1;
+                @todo = @versions[$i + 1 .. $#versions];
+            }
+        }
+        
+        # didn't find the version?
+        hard_fail(<<END) unless $found;
 Couldn't find version "$INSTALL->{VERSION}" in inst/versions.txt.  Are
 you trying to install an older version over a newer one?  That won't
 work.
 END
+    }    
 
     $UPGRADE{TODO} = \@todo;
-
+    
     # note the plan of action
     print "Found existing version $INSTALL->{VERSION}.\n";
     print "Will run database upgrade scripts for versions ", 
-	join(', ', @todo), "\n"
-	    if @todo;
+      join(', ', @todo), "\n"
+        if @todo;
 }
 
 # confirm paths listed in install.db
