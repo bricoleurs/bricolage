@@ -123,7 +123,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %	caption => "Upload a file",
-%	number => 2
+%	number => $num++
 %	);
 
 <table width=578 cellpadding=2 cellspacing=0>
@@ -157,14 +157,14 @@ $m->comp( '/widgets/container_prof/container_prof.mc',
 	tile => $tile,
 	tile_type => 'media',
 	action => 'edit',
-        num => 3,
+        num => $num++,
         title => 'Content',
 	start_count => 6
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Contributors",
-         number => 4);
+         number => $num++);
 </%perl>
 
 
