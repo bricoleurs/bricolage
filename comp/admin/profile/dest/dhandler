@@ -6,7 +6,7 @@ $id => undef
 </%args>
 <%init>;
 
-if ($ARGS{id}) {
+if ($ARGS{id} or $ARGS{site_id}) {
     $m->comp('edit.html', widget => $widget,
                           id     => $id,
                           %ARGS);
