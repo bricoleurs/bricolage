@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-12-27 20:15:58 $
+$Date: 2002-01-04 00:27:33 $
 
 =head1 DESCRIPTION
 
@@ -73,7 +73,7 @@ Bricolage has a Bugzilla server dedicated to it:
 
 You should use this system to report bugs in Bricolage.  If you're
 looking for something to do you can also use the system to find open
-bug and fix them.  For more things to do see L<Bric::Todo>.
+bug and fix them.  For more things to do see L<Bric::ToDo|Bric::ToDo>.
 
 =head1 SUBMITTING PATCHES
 
