@@ -1,0 +1,20 @@
+Description:
+  o  Use bric_xfer_grps to transfer groups from one bricolage
+     installation to another. It assumes that the "group members"
+     for the group already exist in the destination bricolage.
+     For the special case of User group members, you can use
+     the bric_xfer_users script.
+Usage:
+  o  Read the POD for each script
+     $ bric_xfer_grps --man
+     $ bric_xfer_grps --help
+Notes:
+  o  You have to run the scripts as the root user when importing
+     so that it can switch to the Apache user (to access cache).
+  o  Test on a non-production server. It was only run to transfer
+     between versions 1.4.3 and 1.6.0 with User and Category groups.
+Todo:
+  o  Implement scripts for other group members, e.g. Workflow.
+     (Mark has a script to transfer Categories)
+Author:
+  o  Scott Lanning at the WHO, 2003-05-20

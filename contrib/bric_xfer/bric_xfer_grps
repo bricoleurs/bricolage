@@ -1,0 +1,480 @@
+#!/usr/bin/perl
+
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
+=head1 NAME
+
+bric_xfer_grps - command-line client for importing and exporting Grps
+
+=head1 SYNOPSIS
+
+  $ bric_xfer_grps --export [options] --type 'Category' > outfile
+  $ bric_xfer_grps --import [options] --type 'Category' < infile
+
+  Export the users and groups on first server
+
+  $ ./bric_xfer_users --export > usr.out
+  $ ./bric_xfer_grps --export --type 'User' > grp.usr
+  $ ./bric_xfer_grps --export --type 'Category' > grp.cat
+  # etc. for other group member types
+
+  FTP files to second server
+
+  Import the users and groups on second server
+
+  $ sudo ./bric_xfer_users --import < usr.out
+  $ sudo ./bric_xfer_grps --import --type 'User' < grp.usr
+  $ sudo ./bric_xfer_grps --import --type 'Category' < grp.cat
+
+=head1 DESCRIPTION
+
+This script imports and exports Groups. Importing assumes that the
+"members" (e.g. Category, User, Workflow) have already been imported.
+For User members, use the bric_xfer_users script.
+
+Options:
+
+=over
+
+=item --help
+
+Show the SYNOPSIS
+
+=item --man
+
+Show the entire POD
+
+=item --username
+
+Defaults to $ENV{BRICOLAGE_USERNAME} || 'admin'.
+
+=item --password
+
+Defaults to $ENV{BRICOLAGE_PASSWORD} || ''
+
+=item --server
+
+Defaults to $ENV{BRICOLAGE_SERVER} || 'http://localhost'
+
+=item --root
+
+Defaults to $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage'
+
+=item --squash
+
+If this option is present, deactivate old groups when importing.
+
+=item --type
+
+The type of "members" ("Member Type" in the Group Manager)
+you are importing or exporting. You can do multiple
+classes by using multiple options on the command-line.
+If no '--type' option is specified, all types will be
+handled.
+
+NOTE: currently, the multiple-class behavior is not allowed.
+This is mostly just to remind you that you have to first
+import the "member objects" (Category, User, etc.) before
+running this script.
+
+=item --verbose
+
+If this option is present, print some extra information that normally
+would not be displayed
+
+=item --readable
+
+If this option is present, Data::Dumper will use a human-readable format
+when exporting; otherwise, it will use a compact format.
+
+=back
+
+=head1 NOTES
+
+WARNING: Use this script at your own risk. No guarantees.
+Before running this script, back up your bricolage SQL.
+First stop bricolage, then
+  $ pg_dump bric > bric.dump
+then you can restore it with (database bric must first exist)
+  $ psql bric < bric.dump
+then you need to change the database perms.
+
+You must already have imported the group member objects into Bricolage.
+For example, this script won't create new Category objects to add as
+members of the group.
+
+This script doesn't export or import "permanent" or "deactivated" Groups.
+
+=head1 AUTHOR
+
+Scott Lanning <lannings@who.int>
+
+=head1 SEE ALSO
+
+  L<Bric::Util::Grp|Bric::Util::Grp>
+
+=cut
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+use File::Spec::Functions qw(catdir);
+use Getopt::Long;
+use Pod::Usage;
+
+my $ROOTNAME = 'Root Group';
+
+BEGIN {
+    our ($export, $import, $squash, $help, $man, $verbose,
+         $readable, @member_types);
+    our $username = $ENV{BRICOLAGE_USERNAME} || 'admin';
+    our $password = $ENV{BRICOLAGE_PASSWORD} || '';
+    our $server   = $ENV{BRICOLAGE_SERVER}   || 'http://localhost';
+    our $root     = $ENV{BRICOLAGE_ROOT}     || '/usr/local/bricolage';
+
+    GetOptions(
+        'help'            => \$help,
+        'man'             => \$man,
+        'username=s'      => \$username,
+        'password=s'      => \$password,
+        'server=s'        => \$server,
+        'root=s'          => \$root,
+        'import!'         => \$import,
+        'export!'         => \$export,
+        'squash!'         => \$squash,
+        'verbose!'        => \$verbose,
+        'readable!'       => \$readable,
+        'type:s'          => \@member_types,
+    ) || pod2usage(2);
+
+    pod2usage(1) if $help;
+    pod2usage('-verbose' => 2) if $man;
+
+    $ENV{'BRICOLAGE_USERNAME'} = $username;
+    $ENV{'BRICOLAGE_PASSWORD'} = $password;
+    $ENV{'BRICOLAGE_SERVER'}   = $server;
+    $ENV{'BRICOLAGE_ROOT'}     = $root;
+
+    # tell perl where to find Bricolage
+    my $lib = catdir($root, 'lib');
+    if (-e $lib) {
+        $ENV{'PERL5LIB'} = defined $ENV{'PERL5LIB'} ?
+          $ENV{'PERL5LIB'} . ":$lib" : $lib;
+        unshift @INC, $lib;
+    }
+
+    eval { require Bric };
+    die <<"END" if $@;
+######################################################################
+
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
+
+######################################################################
+END
+}
+
+# Load Bric classes after BEGIN
+use Bric::Config qw(:admin SYS_USER);
+use Bric::Util::Class;
+use Bric::Util::Grp;
+use Bric::Util::Grp::Grp;
+
+main();
+
+
+sub main {
+    our ($import, $export, @member_types);
+
+    $|++;
+
+    # this should be removed (and --type documentation updated)
+    # if ever the script has the ability to create new member objects
+    unless (@member_types == 1) {
+        pod2usage("One, and only one, --type option is allowed");
+    }
+
+    my $supported = Bric::Util::Grp::Grp->get_supported_classes();
+    foreach my $grpclass (keys %$supported) {
+        eval "require $grpclass";
+    }
+
+    if ($import) {
+        import_grps();
+    } elsif ($export) {
+        export_grps();
+    } else {
+        pod2usage(1);
+    }
+}
+
+sub export_grps {
+    our ($verbose, $readable, @member_types);
+    my ($grps, @select_grps);
+
+    $grps = get_grps();
+    @select_grps = ();
+
+    # cheating for transporting objects instead of IDs
+    foreach my $grp (@$grps) {
+        next if $grp->get_permanent() or not $grp->is_active();
+        push @select_grps, $grp;
+
+        # parent_id
+        $grp->{'parent_id'} = Bric::Util::Grp->lookup({'id' => $grp->{'parent_id'}})
+          if exists $grp->{'parent_id'};
+
+        # grp_ids - not sure what this is used for
+        my $grp_ids = $grp->{'grp_ids'};
+        $grp->{'grp_ids'} = [];
+        foreach my $gid (@$grp_ids) {
+            push @{ $grp->{'grp_ids'} }, Bric::Util::Grp->lookup({'id' => $gid});
+        }
+
+        # members
+        my @members = $grp->get_members();
+
+        print STDERR sprintf("Group '%s' has members: '%s'\n", $grp->get_name(),
+                             join(',', map {$_->get_id()} @members))
+          if $verbose;
+
+        foreach my $m (@members) {
+            my $mobjs = members_id_to_obj($m);
+            push @{ $grp->{'members'} }, $mobjs;
+        }
+
+        foreach my $c (keys %{ $grp->get_supported_classes() }) {
+            eval "require $c";
+        }
+
+        # get rid of unnecessary junk
+        delete $grp->{'class_id'};   # during import, use ref($grp) instead
+        delete $grp->{'id'};
+        delete $grp->{'_dirty'};
+    }
+
+    $Data::Dumper::Indent = $readable ? 1 : 0;
+    $Data::Dumper::Deepcopy = 1;
+    print Dumper(\@select_grps);
+}
+
+sub import_grps {
+    our ($VAR1, $squash, $verbose, @member_types);
+
+    SLURP: {
+        local $/ = undef;
+        # slurp in $VAR1 here
+        eval <>;
+    }
+
+    # Switch to apache user
+    $> = SYS_USER;
+    die "Failed to switch EUID to Apache user (" . SYS_USER . ")\n"
+      unless $> == SYS_USER;
+
+    if ($squash) {
+        # remove existing grps first unless they're permanent
+        my $oldgrps = get_grps();
+        foreach my $grp (@$oldgrps) {
+            # ack, ADMIN_GRP_ID!
+            unless ($grp->get_permanent() || $grp->get_id == ADMIN_GRP_ID) {
+                my $name = $grp->get_name();
+
+                print STDERR "SQUASH: $name\n" if $verbose;
+                $grp->deactivate();
+                $grp->save();
+            }
+        }
+    }
+
+    # create parent grps
+    foreach my $grp (@$VAR1) {
+        my $parent = $grp->{'parent_id'};   # actually a grp obj
+        next unless defined $parent;
+        next if $grp->{'permanent'} or not $grp->{'_active'};
+
+        unless (Bric::Util::Grp->lookup({'id' => $parent->get_id()})) {
+            create_new_grp($parent);
+        }
+    }
+
+    # create non-parent grps
+    foreach my $grp (@$VAR1) {
+        next if $grp->{'permanent'} or not $grp->{'_active'};
+        create_new_grp($grp);
+    }
+}
+
+# note: create_new_grp has the side-effect of adding member objects
+sub create_new_grp {
+    my $grp = shift;
+    our ($verbose);
+    my ($newgrp, $grpref, $parent, $name, @oldgrps);
+
+    $grpref = ref($grp);
+    $name = $grp->get_name();
+    return if $name eq $ROOTNAME;   # it exists anyway
+
+    my $oldgrps = get_grps($name);
+    if (@$oldgrps) {
+        # If the same group (name) already exists, we resurrect it
+        print STDERR "OLD: $name\n" if $verbose;
+
+        unless (@$oldgrps == 1) {
+            die "list of name '$name' isn't one long\n";
+        } else {
+            $newgrp = shift @$oldgrps;
+        }
+    } else {
+        # Otherwise make a new grp
+        return unless grp_type_okay($grp);
+        print STDERR "NEW: $name\n" if $verbose;
+
+        $newgrp = $grpref->new({
+            'name' => $name,
+            'description' => $grp->get_description(),
+            $grp->get_permanent() ? ('permanent' => 1) : (),  # should be 0..
+        });
+    }
+
+    set_parent(\$newgrp, $grp);
+
+    # add members
+    foreach my $m (map {$_->{'obj'}} @{ $grp->{'members'} }) {
+        next unless $m->{'_active'};
+
+        # get real $m from local bricolage
+        my $class = ref($m);
+        my $key = get_lukey($grp);
+        eval "require $class";
+        my $real_m = ($class->list({$key => $m->{$key}}))[0];
+        die sprintf("no member w/ '%s' eq '%s' in '$class'\n",
+                    $key, $m->{$key}, $class)
+          unless defined $real_m;
+
+        # Note: there is also an 'attrs' parameter,
+        # but it seems to never be used anywhere
+        $newgrp->add_member({'obj' => $real_m});
+    }
+
+    $newgrp->activate();
+    $newgrp->save();
+}
+
+sub get_lukey {
+    my $grp = shift;
+
+    # lookup table for members - defaults to 'name'
+    my %KEYMAP = (
+        'User' => 'login',
+    );
+
+    my $disp = $grp->member_class->get_disp_name();
+    if (exists $KEYMAP{$disp}) {
+        return $KEYMAP{$disp};
+    } else {
+        return 'name';
+    }
+}
+
+sub set_parent {
+    our ($verbose);
+    my ($newgrp, $grp) = @_;    # $newgrp is a scalar ref
+
+    my $parent = $grp->{'parent_id'};   # actually a grp obj
+    if (ref $parent) {
+        my @parent_id = ();
+        if ($parent->get_name() eq $ROOTNAME) {   # workaround a zero ID bug...
+            @parent_id = (0);
+        } else {
+            @parent_id = Bric::Util::Grp->list_ids({'name' => $parent->get_name()});
+        }
+
+        unless (@parent_id == 1) {
+            die "wrong number (" . scalar(@parent_id) . ") of parents for "
+              . $grp->get_name() . $/;
+        } else {
+            my $parent_id = shift @parent_id;
+
+            print STDERR "\tparent ID: $parent_id\n" if $verbose;
+
+            $$newgrp->set_parent_id($parent_id);
+        }
+    }
+}
+
+sub members_id_to_obj {
+    my $m = shift;
+
+    # translate ID to local object in database
+
+    # grp_id
+    my $grp = Bric::Util::Grp->lookup({'id' => $m->{'grp_id'}});
+    unless (defined $grp) {
+        die sprintf("No Grp '%s' for member '%s'\n",
+                    $m->{'grp_id'}, $m->get_id());
+    }
+
+    # _object_class_id
+    my $class = Bric::Util::Class->lookup({'id' => $m->{'_object_class_id'}});
+    unless (defined $class) {
+        die sprintf("No Class '%s' for member '%s'\n",
+                    $m->{'_object_class_id'}, $m->get_id());
+    }
+
+    # obj_id
+    # this is API brokenness
+    my $pkg = $m->get_object_package();
+    eval "require $pkg";
+
+    my $object = $m->get_object();
+    unless (defined $object) {
+        die sprintf("No Obj '%s' for member '%s'\n",
+                    $m->{'obj_id'}, $m->get_id());
+    }
+
+    # put these at the bottom so that overwriting these attributes
+    # doesn't affect any instance method calls
+    $m->{'grp_id'} = $grp;
+    $m->{'_object_class_id'} = $class;
+    $m->{'obj_id'} = $object;
+
+    return $m;
+}
+
+sub get_grps {
+    my $name = shift;
+    our (@member_types);
+    my ($grps, %grps, @select_grps);
+
+    # handles --type option on command-line
+    foreach my $type (@member_types) {
+        $grps{$type}++;
+    }
+
+    $grps = Bric::Util::Grp->list(defined($name) ? {'name' => $name} : {});
+    @select_grps = scalar(@member_types)
+      ? grep {grp_type_okay($_)} @$grps
+      : @$grps;
+
+    return \@select_grps;
+}
+
+sub grp_type_okay {
+    my $grp = shift;
+    our (@member_types);
+
+    return 1 unless @member_types;
+    foreach my $type (@member_types) {
+        return 1 if $grp->member_class->get_disp_name() eq $type;
+    }
+    return 0;
+}
