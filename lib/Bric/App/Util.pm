@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.2.2.4 $
+$Revision: 1.2.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-10 19:31:33 $
+$Date: 2001-12-10 21:59:47 $
 
 =head1 SYNOPSIS
 
@@ -153,30 +153,7 @@ my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 =head2 Public Class Methods
 
-sub set_debug_cookie {
-    my ($val) = @_;
-
-    my $cookie = new CGI::Cookie(-name  => &DEBUG_COOKIE, 
-				 -value => $val,
-				 -path  => '/',
-				);
-    $HTML::Mason::Commands::r->header_out('Set-Cookie' => $cookie);
-}
-
-sub get_debug_cookie {
-    my $c_head = $HTML::Mason::Commands::r->header_in('Cookie');
-    my %cookies = parse CGI::Cookie($c_head);
-    
-    if (exists $cookies{&DEBUG_COOKIE}) {
-	return $cookies{&DEBUG_COOKIE}->{'value'}->[0];
-    } else {
-	return;
-    }
-}
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item (1 || undef) = add_msg($txt)
 
