@@ -360,23 +360,36 @@ form .row {
 }
 form .row .label,
 form .row .redLabel {
-    position: absolute;
-    top: 0; left: 0;
+    float: left;
     width: 135px;
     text-align: right;
     line-height: 2;
 }
 form .row .input {
     padding-left: 140px;
-    line-height: 2;
 }
 form .row .input p {
     margin: 0;
     padding: 0;
-    height: 2em;
+    line-height: 2;
 }
 
 form .alpha .row .input { line-height: 1.3em; }
+
+/* Clear floats without additional HTML markup
+   http://www.positioniseverything.net/easyclearing.html */
+form .row:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+form .row { display: inline-block;}
+/* Hides from IE-mac \*/
+* html form .row {height: 1%;}
+form .row {display: block;}
+/* End hide from IE-mac */
 
 table { padding: 0; border-collapse: collapse; position: relative; }
 table tr.odd { background: #E8E8CD; }
