@@ -178,32 +178,37 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 }
 
+        if (defined $id) {
 
-# dislay existing attributes for this asset type
-if (defined $id) {
+            $m->comp("/widgets/wrappers/sharky/table_top.mc",
+                     caption => "Custom Fields",
+                     number  => ++$num);
 
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Custom Fields",
-	     number  => ++$num);
+            # mangle the attrs and meta to match the existing display code.
+            my $all_data = $comp->get_data;
+            if (@$all_data) {
+                my $attrs = [];
+                foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
+                    my $metas = $dataObj->get_meta('html_info');
+                    my $tmp;
+                    foreach my $meta (keys %$metas) {
+                        $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
+                    }
+                    $tmp->{value} = $metas->{value};
+                    $tmp->{name} = $dataObj->get_name;
+                    $tmp->{id} = $dataObj->get_id;
+                    push @$attrs, $tmp;
+                }
 
-    # mangle the attrs and meta to match the existing display code.
-    my $all_data = $comp->get_data;
-    my $attrs = [];
-    foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
-	my $attr = $dataObj->get_key_name;
-	my $metas = $dataObj->get_meta('html_info');
-	my $tmp;
-	foreach my $meta (keys %$metas) {
-	    $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
-	}
-	$tmp->{value} = $metas->{value};
-	$tmp->{name} = $dataObj->get_key_name;
-	push @$attrs, $tmp;
-    }
-
-    $num_fields = @$attrs;
-    $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
-	     attr => $attrs, readOnly => $no_edit);
+                $num_fields = @$attrs;
+                $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
+                         attr     => $attrs,
+                         readOnly => $no_edit,
+                         useEdit => 1);
+            } else {
+                $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
+                $lang->maketext("No fields defined"));
+            }
 
     # Close the table.
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -289,18 +294,18 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 NAME
 
-/admin/profile/contrib_type/dhandler - Container profile interface
+/admin/profile/element/dhandler - Container profile interface
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:42 $
+$Date: 2003-04-25 17:24:19 $
 
 =head1 DESCRIPTION
 
-Diplays the profile for containers.
+Displays the profile for containers.
 
 </%doc>
