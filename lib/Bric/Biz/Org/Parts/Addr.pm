@@ -7,15 +7,15 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-10-06 22:23:15 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ $Date: 2003-08-14 23:24:11 $
   $addr = $addr->deactivate;
   $addr = $addr->is_active;
 
-  # Print Address Lables.
+  # Print Address Labels.
   my $p = Bric::Biz::Person->lookup({ id => $person_id });
   foreach my $porg ($p->get_orgs) {
       foreach my $addr ($porg->get_addresses($id)) {
