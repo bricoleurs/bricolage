@@ -81,6 +81,11 @@ Moved repeated publish and preview functionality into
 Bric::Util::Burner.  Updated Mason code and Bric::SOAP::Workflow
 accordingly.  [Matt]
 
+=item *
+
+Added C<DBI_PROFILE> bricolage.conf option and C<bric_dbprof> script
+to allow profiling of Bricolage database performance.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.1

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-04-30 20:21:54 $
+$Date: 2002-05-01 02:16:36 $
 
 =head1 SYNOPSIS
 
@@ -81,6 +81,8 @@ use Bric::Config qw(:dbi);
 use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
 use Bric::Util::Fault::Exception::DA;
 use DBI qw(looks_like_number);
+use Time::HiRes qw(gettimeofday);
+use Digest::MD5 qw(md5_hex);
 
 ################################################################################
 # Constants
@@ -368,13 +370,12 @@ B<Notes:> NONE.
 
 sub prepare {
     _connect();
-    _print_query(\$_[0]) if $_[2] || DEBUG;
-    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare(@_[0..1]) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
       if $@;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare()
 
@@ -417,13 +418,12 @@ B<Notes:> NONE.
 
 sub prepare_c {
     _connect();
-    _print_query(\$_[0]) if $_[2] || DEBUG;
-    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1]) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
       if $@;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare_c()
 
@@ -466,13 +466,12 @@ B<Notes:> NONE.
 
 sub prepare_ca {
     _connect();
-    _print_query(\$_[0]) if $_[2] || DEBUG;
-    _print_call_trace()  if CALL_TRACE;
     my $sth;
     eval { $sth = $dbh->prepare_cached(@_[0..1], 1) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to prepare SQL statement\n\n$_[0]", payload => $@ })
       if $@;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare_ca
 
@@ -650,12 +649,14 @@ B<Notes:> NONE.
 
 sub execute {
     my $sth = shift;
-    _print_query_args(\@_) if DEBUG;
+    _debug_execute(\@_, $sth) if DEBUG;
+    _profile_start()          if DBI_PROFILE;
     my $ret;
 
     eval { $ret = $sth->execute(@_) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to execute SQL statement", payload => $@ }) if $@;
+    _profile_stop()           if DBI_PROFILE;
     return $ret;
 }
 
@@ -1046,13 +1047,13 @@ B<Notes:> NONE.
 sub row_aref {
     my ($qry, @params) = @_;
     _connect();
-    _print_query(\$qry)         if DEBUG;
-    _print_call_trace()         if CALL_TRACE;
-    _print_query_args(\@params) if DEBUG;
+    _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
+    _profile_start() if DBI_PROFILE;
     my $aref;
     eval { $aref = $dbh->selectrow_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to select row", payload => $@ }) if $@;
+    _profile_stop() if DBI_PROFILE;
     return $aref;
 } # row_aref()
 
@@ -1090,13 +1091,13 @@ B<Notes:> NONE.
 sub row_array {
     my ($qry, @params) = @_;
     _connect();
-    _print_query(\$qry)         if DEBUG;
-    _print_call_trace()         if CALL_TRACE;
-    _print_query_args(\@params) if DEBUG;
+    _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
+    _profile_start() if DBI_PROFILE;
     my @array;
     eval { @array = $dbh->selectrow_array($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to select row", payload => $@ }) if $@;
+    _profile_stop() if DBI_PROFILE;
     return @array;
 } # row_array()
 
@@ -1139,13 +1140,13 @@ B<Notes:> NONE.
 sub all_aref {
     my ($qry, @params) = @_;
     _connect();
-    _print_query(\$qry)         if DEBUG;
-    _print_call_trace()         if CALL_TRACE;
-    _print_query_args(\@params) if DEBUG;
+    _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
+    _profile_start() if DBI_PROFILE;
     my $aref;
     eval { $aref = $dbh->selectall_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to select all", payload => $@ }) if $@;
+    _profile_stop() if DBI_PROFILE;
     return $aref;
 } # all_aref()
 
@@ -1182,13 +1183,13 @@ B<Notes:> NONE.
 sub col_aref {
     my ($qry, @params) = @_;
     _connect();
-    _print_query(\$qry)         if DEBUG;
-    _print_call_trace()         if CALL_TRACE;
-    _print_query_args(\@params) if DEBUG;
+    _debug_prepare_and_execute(\@params, \$qry) if DEBUG;
+    _profile_start() if DBI_PROFILE;
     my $col;
     eval { $col = $dbh->selectcol_arrayref($qry, undef, @params) };
     die Bric::Util::Fault::Exception::DA->new(
       { msg => "Unable to select column into arrayref", payload => $@ }) if $@;
+    _profile_stop() if DBI_PROFILE;
     return $col;
 } # col_aref()
 
@@ -1333,31 +1334,77 @@ sub _disconnect {
       { msg => "Unable to disconnect from database", payload => $@ }) if $@;
 }
 
-=item _print_query($sql)
+=item _debug_prepare(\$sql)
 
-Writes a message to STDERR containing the sql query.  Should be called
-by functions that prepare statements when DEBUG (DBI_DEBUG) is true.
-
-=cut
-
-sub _print_query {
-  print STDERR "############# Query: ${$_[0]}\n\n";
-}
-
-=item _print_query_args(\@args)
-
-Writes a message to STDERR containing the sql arguments.  Should be
-called by functions that execute statements when DEBUG (DBI_DEBUG) is
-true.
+Prints out debugging messages for a prepare call.  Should be called by
+functions that prepare statements when DEBUG (DBI_DEBUG) is true.
 
 =cut
 
-sub _print_query_args {
-  print STDERR "+++++++++++++ ARGS: ", 
-    join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
-      "\n\n\n\n\n";
+sub _debug_prepare {
+    my $sql_ref = shift;
+    my $sig = _statement_signature($sql_ref);
+    print STDERR "############# Prepare Query [$sig]:\n$$sql_ref\n", 
+	         "#############\n\n";
+    _print_call_trace() if CALL_TRACE;
 }
 
+=item _debug_execute(\@args, $sth)
+
+Prints out debugging messages for an execute call.  Should be called
+by functions that execute statements when DEBUG (DBI_DEBUG) is true.
+
+=cut
+
+sub _debug_execute {
+    my ($args, $sth) = @_;
+    my $sig = _statement_signature(\$sth);
+    print STDERR "+++++++++++++ Execute Query [$sig]\n";
+    print STDERR "+++++++++++++ ARGS: ", 
+	join(', ', map { defined $_ ? $_ : 'NULL' } @{$_[0]}),
+	    "\n\n\n";
+}
+
+=item _debug_prepare_and_execute(\@args, \$sql)
+
+=item _debug_prepare_and_execute(\@args, \$sth)
+
+Prints out debugging messages for a call that prepares and executes in
+one call.  Should be called by functions that prepare and execute when
+DEBUG (DBI_DEBUG) is true.
+
+=cut
+
+sub _debug_prepare_and_execute {
+    my ($args, $ref) = @_;
+    my $sig = _statement_signature($ref);
+    unless (ref $$ref) {
+	# new prepare
+	print STDERR "############# Prepare Query [$sig]:\n$$ref\n",
+                     "#############\n\n";
+	_print_call_trace() if CALL_TRACE;
+    }
+    print STDERR "+++++++++++++ Execute Query [$sig]:\n";
+    print STDERR "+++++++++++++ ARGS: ", 
+	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
+	     "\n\n\n";
+}
+
+=item _statement_signature(\$sql)
+
+=item _statement_signature(\$sth)
+
+Returns a fingerprint for an sql statement or statement handle.  Used
+in debug output to match prepares to executes.
+
+=cut
+
+sub _statement_signature {
+    my $ref = shift;
+    my $sig = ref $$ref ? md5_hex(${$ref}->{Statement}) : md5_hex($$ref);
+    substr($sig, $_, 0) = " " for (4, 9, 14, 19, 24, 29, 34);
+    return $sig;
+}
 
 =item _print_call_trace
 
@@ -1367,12 +1414,39 @@ prepare statements when CALL_TRACE (DBI_CALL_TRACE) is true.
 =cut
 
 sub _print_call_trace {
-  my $n = 1;  
+  print STDERR "------------- Call Trace:\n";
+  my $n = 2;
   while (my @c = caller($n++)) {
-    print STDERR "------------- $c[0] - $c[2] - $c[3]\n";
+    printf STDERR " %-40s => %s()\n", "$c[0] ($c[2])", $c[3];
     last if $c[0] =~ /HTML::Mason/;
   } 
   print STDERR "\n";
+}
+
+=item _profile_start()
+
+Starts a timer used to profile database calls.  Should be
+called before query execution when DBI_PROFILE is true.
+
+=cut
+{
+    my $PROF_TIMER;
+    sub _profile_start {
+	$PROF_TIMER = gettimeofday();
+    }
+
+=item _profile_stop()
+
+Stops the profile timer and writes out the timing results to STDERR.
+Should be called immediately after query execution when DBI_PROFILE is
+true.
+
+=cut
+
+    sub _profile_stop {
+	printf STDERR "************* Time: %0.6f seconds\n\n\n\n",
+	    gettimeofday() - $PROF_TIMER;
+    }
 }
 
 =back

@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-03-20 20:09:38 $
+$Date: 2002-05-01 02:16:37 $
 
 =head1 DESCRIPTION
 
@@ -131,6 +131,12 @@ DBI_DEBUG records every database call in the logs complete with SQL
 and arguments.  DBI_CALL_TRACE adds a a subroutine call trace for each
 statement showing where the database call originated.  This generates
 a lot of data but it can be very helpful.
+
+=item *
+
+If you're working on a performance problem, considering setting
+DBI_PROFILE and using bric_dbprof to anaylze database query
+performance.
 
 =item *
 
