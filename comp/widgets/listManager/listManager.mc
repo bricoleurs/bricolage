@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-07-02 21:22:09 $
+$Date: 2002-07-03 04:48:20 $
 
 =head1 SYNOPSIS
 
@@ -401,13 +401,12 @@ my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
 my $param = {%$list_arg, %$constrain};
 
 # Load the user provided objects into the @objs array.
-my @objects;
-@objects = @$objs if $objs;
+my @objects = $objs ? @$objs : ();
 
 my $empty_search;
 
 # Only list if there are search parameters, or if our behaviour is 'narrow'.
-if (!$objs && (scalar keys %$param or $behavior eq 'narrow')) {
+if (!$objs && ($behavior eq 'narrow' or %$list_arg)) {
     # Combine the list arguments and any passed constraints to search $pkg.
     @objects = $pkg->list($param);
 } else {
