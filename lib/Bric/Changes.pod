@@ -80,8 +80,8 @@ Steele. [David]
 
 =item *
 
-Fixed typo in Media Type manager which broke it. Reported by
-Lari Huttunen. [Scott]
+Fixed typo in Media Type manager that broke it. Reported by Lari
+Huttunen. [Scott]
 
 =back
 
