@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $Revision: 1.2.2.1 $
 --
--- $Date: 2004-02-10 02:35:33 $
+-- $Date: 2004/02/10 02:35:33 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --

@@ -2,7 +2,7 @@
 -- File:    MediaType.val
 -- VERSION: $Revision: 1.1.4.2 $
 --
--- $Date: 2003-03-23 06:51:55 $
+-- $Date: 2003/03/23 06:51:55 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 -- I got these MIME types by using tools/dev/get_mime_types. I called it with

@@ -15,7 +15,7 @@ our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-07 03:31:43 $
+$Date: 2003/01/07 03:31:43 $
 
 =head1 DESCRIPTION
 

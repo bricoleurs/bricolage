@@ -9,7 +9,7 @@ $Revision: 1.14.2.4 $
 
 =head1 DATE
 
-$Date: 2003-08-11 23:00:40 $
+$Date: 2003/08/11 23:00:40 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",

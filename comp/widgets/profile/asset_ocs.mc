@@ -62,7 +62,7 @@ $Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-10-25 23:53:18 $
+$Date: 2002/10/25 23:53:18 $
 
 =head1 SYNOPSIS
 

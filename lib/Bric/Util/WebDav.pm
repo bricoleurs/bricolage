@@ -7,7 +7,7 @@ Bric::Util::WebDav - Placeholder for Bricolage DAV support.
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:21 $
+$Date: 2003/02/18 03:38:21 $
 
 =head1 VERSION
 

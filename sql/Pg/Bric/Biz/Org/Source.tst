@@ -3,7 +3,7 @@
 -- File:    Source.tst
 -- VERSION: $Revision: 1.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003/02/02 19:46:46 $
 -- Author: David Wheeler <david@wheeler.net>
 
 

@@ -18,7 +18,7 @@ our $VERSION = "1.6.15";
 
 =head1 DATE
 
-$Date: 2004-05-03 15:25:15 $
+$Date: 2004/05/03 15:25:15 $
 
 =head1 SYNOPSIS
 

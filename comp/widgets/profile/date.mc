@@ -9,7 +9,7 @@ $Revision: 1.1 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:18 $
+$Date: 2001/09/06 21:52:18 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/date.mc",

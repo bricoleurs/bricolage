@@ -10,7 +10,7 @@ $Revision: 1.10.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-23 00:59:57 $
+$Date: 2003/03/23 00:59:57 $
 
 =head1 DESCRIPTION
 
