@@ -126,7 +126,14 @@ autopopulated. [David]
 =item *
 
 Fixed problem with category upgrade script failing on category data
-created with 1.3.2.  [Sam]
+created with 1.3.2. [Sam]
+
+=item *
+
+During installation, entering a directory name when prompted for the "PID File
+Location" now results in Bricolage using a file called "httpd.pid" in that
+directory, rather than trying (and failing) to use the directory itself as the
+PID file. [David]
 
 =back
 
