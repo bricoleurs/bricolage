@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-02-28 20:47:08 $
+$Date: 2003-03-03 10:03:11 $
 
 =head1 DESCRIPTION
 
@@ -34,10 +34,12 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use File::Find qw(find);
 
+our ($PG, $PGCONF, $PGDEFDB, $ERR_FILE);
+
 print "\n\n==> Creating Bricolage Database <==\n\n";
 
-our $PG;
-do "./postgres.db" or die "Failed to read postgres.db : $!";
+$PGCONF = './postgres.db';
+do $PGCONF or die "Failed to read $PGCONF : $!";
 
 # Switch to postgres system user
 print "Becoming $PG->{system_user}...\n";
@@ -48,9 +50,10 @@ die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
 $ENV{PGPASSWORD} = $PG->{root_pass};
-our $ERR_FILE = catfile tmpdir, '.db.stderr';
+$ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE }
 
+$PGDEFDB = 'template1';
 create_db();
 create_user();
 
@@ -77,7 +80,7 @@ sub exec_sql {
     }
 
     # We encountered a problem.
-    open ERR, "<.db.stderr" or die "Cannot open .db.stderr: $!\n";
+    open ERR, "<$ERR_FILE" or die "Cannot open $ERR_FILE: $!\n";
     local $/;
     return <ERR>;
 }
@@ -86,22 +89,22 @@ sub exec_sql {
 sub create_db {
     print "Creating database named $PG->{db_name}...\n";
     my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'",
-                       0, 'template1');
+                       0, $PGDEFDB);
 
     if ($err) {
-        # There was an error. Offer to drop the datbase if it already exists.
+        # There was an error. Offer to drop the database if it already exists.
         if ($err =~ /database "[^"]+" already exists/) {
             if (ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
                           "Drop database? [no] ", 0)) {
                 # Drop the database.
                 if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0,
-                                    'template1')) {
+                                    $PGDEFDB)) {
                     hard_fail("Failed to drop database.  The database error ",
                               "was:\n\n$err\n")
                 }
                 return create_db();
             } else {
-                unlink 'postgres.db';
+                unlink $PGCONF;
                 hard_fail("Cannot proceed. If you want to use the existing ",
                           "database, run 'make upgrade'\ninstead. To pick a ",
                           "new database name, please run 'make db' again.\n");
@@ -121,14 +124,13 @@ sub create_user {
 
     print "Creating user named $PG->{sys_user}...\n";
     my $err = exec_sql("CREATE USER $user WITH password '$pass' " .
-                       "NOCREATEDB NOCREATEUSER", 0, 'template1');
+                       "NOCREATEDB NOCREATEUSER", 0, $PGDEFDB);
 
     if ($err) {
         if ($err =~ /user name "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
                           "Drop user? [no] ", 0)) {
-                if ($err = exec_sql("DROP USER $PG->{sys_user}", 0,
-                                    'template1')) {
+                if ($err = exec_sql("DROP USER $PG->{sys_user}", 0, $PGDEFDB)) {
                     hard_fail("Failed to drop user.  The database error was:\n\n",
                               "$err\n");
                 }
@@ -138,7 +140,7 @@ sub create_user {
                 return;
             }
         } else {
-            hard_fail("Failed to create database user.  The databae error was:",
+            hard_fail("Failed to create database user.  The database error was:",
               "\n\n$err\n");
         }
     }
@@ -193,7 +195,7 @@ sub load_db {
     print "Finishing database...\n";
     foreach my $maint (qw(vacuum analyze)) {
         my $err = exec_sql($maint);
-        hard_fail("Error encountered during '$maint'. The databaes error ",
+        hard_fail("Error encountered during '$maint'. The database error ",
                   "was\n\n$err") if $err;
     }
     print "Done.\n";
