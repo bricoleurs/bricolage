@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- AssetType.tst
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
 -- Test values.
 --
@@ -43,7 +43,7 @@ VALUES (340, 340, 22, 1);
 -- Create elements
 
 INSERT INTO element (id,name,description,type__id,at_grp__id,primary_oc__id,active)
-VALUES (1,'Column','A weekly column element',1,330,1,1);
+VALUES (1,'Column','column','A weekly column element',1,330,1,1);
 
 INSERT INTO element__output_channel (id, element__id, output_channel__id, active)
 VALUES (1, 1, 1, 1);
@@ -55,10 +55,10 @@ INSERT INTO element__output_channel (id, element__id, output_channel__id, active
 VALUES (3, 1, 3, 1);
 
 INSERT INTO element (id,name,description,type__id,at_grp__id,primary_oc__id,active)
-VALUES (2,'Inset','An inset element',2,340,NULL,1);
+VALUES (2,'Inset','inset','An inset element',2,340,NULL,1);
 
 INSERT INTO element (id,name,description,type__id,primary_oc__id,active)
-VALUES (3,'Pull Quote','A pull quote element',2,NULL,1);
+VALUES (3,'Pull Quote','pull_quote','A pull quote element',2,NULL,1);
 
 INSERT INTO element (id,name,description,type__id,primary_oc__id,active)
 VALUES (4,'Page','A page element.',2,NULL,1);
