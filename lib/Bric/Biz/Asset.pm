@@ -311,7 +311,6 @@ sub list {
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
     my @objs = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
-    return unless $objs[0];
     return (wantarray ? @objs : \@objs);
 }
 
@@ -351,7 +350,6 @@ sub list_ids {
     my $sql = build_query($pkg, $cols, '', $tables, $where, $order);
     my $select = prepare_ca($$sql, undef);
     my $return = col_aref($select, @$args);
-    return unless $return->[0];
     return wantarray ? @{ $return } : $return;
 }
 

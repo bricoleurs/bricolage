@@ -38,6 +38,10 @@ The burner C<next_page_file()> and C<next_page_uri()> methods now properly
 return a value if the C<burn_again> attribute has been set to a true value in
 the Mason burner. [David]
 
+The C<list()> and C<list_ids()> methods of the story, media, and template
+classes no longer return C<undef> in a scalar context when there are not
+objects to be returned. It returns an empty array reference, instead. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
