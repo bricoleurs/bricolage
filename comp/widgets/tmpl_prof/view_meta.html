@@ -1,17 +1,16 @@
 <%perl>
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
-  callback => $widget . "|notes_cb",
-  value    => 'view',
-  image    => "view_notes_teal"
-);
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal"
+) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
-  callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  callback => $widget . "|notes_cb",
+  value    => 'view',
+  image    => %{ $fa->get_notes } ? 'note_fill' : "note"
 );
-
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption   => "Information",

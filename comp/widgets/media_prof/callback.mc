@@ -513,7 +513,8 @@ my $handle_notes = sub {
     my ($widget, $field, $param, $WORK_ID) = @_;
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
-    set_redirect("/workflow/profile/media/edit_notes.html?id=$id");
+    my $action = $param->{$widget.'|notes_cb'};
+    set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
 };
 
 ################################################################################

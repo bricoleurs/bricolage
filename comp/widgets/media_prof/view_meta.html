@@ -1,8 +1,16 @@
 <%perl>
-my $rightText = qq{<input type="image" src="/media/images/view_notes_teal.gif" border=0 name="};
-$rightText .= $widget . qq{|notes_cb" value="View Notes">&nbsp;};
-$rightText .= qq{<input type="image" src="/media/images/view_trail_teal.gif" border=0 name="};
-$rightText .= $widget . qq{|trail_cb" value="View Trail">};
+my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal"
+) . '&nbsp;';
+
+$rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|notes_cb",
+  value    => 'view',
+  image    => %{ $media->get_notes } ? 'note_fill' : "note"
+);
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Information",
