@@ -82,6 +82,11 @@ See the script's usage info for details. [Dave Rolsky]
 Changing a media item's category and then saving caused an error.
 [Dave Rolsky]
 
+=item *
+
+Changing a media document's cover date no longer causes the URI to
+disappear. Thanks to Dave Rolsky for the spot. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
