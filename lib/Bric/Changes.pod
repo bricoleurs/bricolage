@@ -289,6 +289,14 @@ Reported by Adam Rinehart. [David]
 Added upgrade script to clean out old records left in the "member" table if
 users elected to delete old jobs during the 1.8.2 upgrade. [David]
 
+=item *
+
+Users granted a permission greater than READ to the members of the "All Users"
+group no longer get such permission to any members of the "Global Admins"
+group unless they have specifically been granted such permission to the
+members of the "Global Admins" group. Thanks to Marshall Roch for the spot!
+[David]
+
 =back
 
 =cut
