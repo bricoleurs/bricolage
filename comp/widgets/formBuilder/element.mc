@@ -36,7 +36,9 @@ my $name = "&quot;$param->{name}&quot;";
 
 my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
 
-if ($param->{delete} && $field eq "$widget|save_cb") {
+if ($param->{delete} &&
+    ($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
+{
     # Deactivate it.
     $comp->deactivate;
     $comp->save;
@@ -142,7 +144,9 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
     }
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr} && $field eq "$widget|save_cb") {
+    if ($param->{del_attr} &&
+	($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
+    {
 	my $del = [];
 	foreach my $attr (keys %del_attrs) {
 	    push @$del, $data_href->{lc $attr};
@@ -200,11 +204,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.6 $
+$Revision: 1.1.1.1.2.7 $
 
 =head1 DATE
 
-$Date: 2001-11-29 01:53:57 $
+$Date: 2001-11-29 02:12:49 $
 
 =head1 SYNOPSIS
 
