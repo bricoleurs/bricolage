@@ -102,7 +102,7 @@ my $save_data = sub {
       if defined $param->{"$widget|primary_cat"};
 
     # avoid repeated messages from repeated calls to &$save_data
-    &$unique_msgs if $data_errors;    
+    &$unique_msgs if $data_errors;
 
     return not $data_errors;
 };
@@ -564,6 +564,9 @@ my $handle_create = sub {
 	    log_event('story_add_category', $story,
 		      { Category => $cat->get_name })
 	};
+    } else {
+        add_msg("Please select a primary category.");
+        return;
     }
 
     # Save everything else unless there were data errors
