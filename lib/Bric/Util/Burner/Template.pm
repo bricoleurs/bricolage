@@ -54,7 +54,7 @@ use HTML::Template::Expr;
 use Bric::Util::Trans::FS;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Dist::Resource;
-use Bric::Config qw(:burn);
+use Bric::Config qw(:burn :l10n);
 use Digest::MD5 qw(md5 md5_hex);
 use Time::HiRes qw(time);
 
@@ -995,6 +995,7 @@ sub _write_pages {
             open(OUT, ">$filename")
               or throw_gen error   => "Unable to open $filename",
                            payload => $!;
+            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
             print OUT $$header;
             print OUT $pages[$page];
             print OUT $$footer;
@@ -1015,6 +1016,7 @@ sub _write_pages {
         open(OUT, ">$filename")
           or throw_gen error   => "Unable to open $filename",
                        payload => $!;
+        binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
         print OUT $$header;
         print OUT $$output;
         print OUT $$footer;

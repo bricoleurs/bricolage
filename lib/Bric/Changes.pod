@@ -144,6 +144,13 @@ blocks to convert content to another encoding using something like
 C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
 C<$_ = Encode::encode($encoding, $_)>, instead. [David]
 
+=item *
+
+Added C<encoding> attribute to Bric::Util::Burner so that, if templates are
+outputting something other than Perl utf8 decoded data, they can specify what
+they're outputting, and the file opened for output will from the templates
+will be set to the proper mode. Applies to Perl 5.8.0 only. [David]
+
 =back
 
 =head2 Bug Fixes

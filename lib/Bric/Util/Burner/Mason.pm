@@ -52,7 +52,7 @@ use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
                          throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
-use Bric::Config qw(:burn);
+use Bric::Config qw(:burn :l10n);
 use Bric::Util::Burner qw(:modes);
 use Bric::Biz::AssetType;
 require XML::Writer if INCLUDE_XML_WRITER;
@@ -684,6 +684,7 @@ sub end_page {
     open(OUT, ">$file")
       or throw_gen error => "Unable to open '$file' for writing",
                    payload => $!;
+    binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
     print OUT $$buf;
     close(OUT);
 

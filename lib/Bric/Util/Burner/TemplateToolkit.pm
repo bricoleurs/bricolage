@@ -50,7 +50,7 @@ use Template;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
-use Bric::Config qw(:burn);
+use Bric::Config qw(:burn :l10n);
 use Template::Constants qw( :debug );
 
 #==============================================================================#
@@ -287,6 +287,7 @@ sub burn_one {
 	    open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
+            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
 	    print OUT $outbuf;
 	    close(OUT);
 	    $outbuf = '';
