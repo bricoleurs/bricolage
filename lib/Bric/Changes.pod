@@ -144,6 +144,12 @@ to set string extensions to use for successive file names, rather than the
 traditional use of numeric file name extensions for successive file names.
 [Clive Jones]
 
+=item *
+
+Added "Text to search" option in the Advanced search of Media and Stories.
+This will return assets with the searched text in their data elements.
+[JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes

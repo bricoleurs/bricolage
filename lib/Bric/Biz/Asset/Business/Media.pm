@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.56 $
+$Revision: 1.57 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.56 $ )[-1];
+our $VERSION = (qw$Revision: 1.57 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-15 13:01:15 $
+$Date: 2003-09-10 14:39:11 $
 
 =head1 SYNOPSIS
 
@@ -192,7 +192,8 @@ use constant PARAM_FROM_MAP =>
                            'ON (mt.id = mk.media_id)',
      _not_simple        => TABLE . ' mt',
      grp_id             => 'member m2, media_member mm2',
-     category_uri       => 'category c'
+     category_uri       => 'category c',
+     data_text          => 'media_data_tile md',
     };
 
 use constant PARAM_WHERE_MAP =>
@@ -217,6 +218,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_end       => 'mt.expire_date <= ?',
       desk_id               => 'mt.desk_id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
+      data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',

@@ -92,6 +92,15 @@ if (! defined($advanced_search) && get_pref('Default Search') == 1) {
                 </td>
               </tr>
               <tr>
+                <td align="right"><span class=label><% $lang->maketext('Text to search') %>:</span></td>
+                <td>
+                  <& /widgets/profile/text.mc, 
+                     name     => $widget.'|data_text',
+                     value    => get_state_data($widget, 'data_text') || '',
+                     useTable => 0 &>
+                </td>
+              </tr>
+              <tr>
                 <td align="right"><span class=label><% $lang->maketext('Category URI') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc,

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-15 12:12:18 $
+$Date: 2003-09-10 14:39:11 $
 
 =head1 SYNOPSIS
 
@@ -269,7 +269,7 @@ use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 
 # relations to loop through in the big query
-use constant RELATIONS => [qw( story category desk workflow)];
+use constant RELATIONS => [qw( story category desk workflow )];
 
 use constant RELATION_COL =>
     {
@@ -322,6 +322,7 @@ use constant PARAM_FROM_MAP =>
        grp_id             => 'member m2, story_member sm2',
        category_id        => 'story__category sc2',
        category_uri       => 'story__category sc2, category c',
+       data_text          => 'story_data_tile sd',
     };
 
 use constant PARAM_WHERE_MAP =>
@@ -347,6 +348,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_end        => 's.expire_date <= ?',
       desk_id                => 's.desk_id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
+      data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',

@@ -51,7 +51,7 @@ sub story : Callback {
     my (@field, @crit);
 
     $build_fields->($self, \@field, \@crit,
-                    [qw(simple title primary_uri category_uri keyword)]);
+                    [qw(simple title primary_uri category_uri keyword data_text)]);
     $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
@@ -72,7 +72,7 @@ sub media : Callback {
 
     my (@field, @crit);
 
-    $build_fields->($self, \@field, \@crit, [qw(simple name uri)]);
+    $build_fields->($self, \@field, \@crit, [qw(simple name uri data_text)]);
     $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
     $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
