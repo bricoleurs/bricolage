@@ -103,8 +103,8 @@ Arthur for the spot! [David]
 
 =item *
 
-When there is no defined file extension Bricolage now doesn't insert an ending
-'.' (dot). [Arthur/Fotango]
+With C<(STORY_URI_WITH_FILENAME> enabled and when there is no defined file
+extension Bricolage now doesn't insert an ending '.' (dot). [Arthur/Fotango]
 
 =back
 
