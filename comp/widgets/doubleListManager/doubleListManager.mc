@@ -77,21 +77,24 @@ my (@leftVals, @rightVals);
 
 $leftCaption  = $lang->maketext($leftCaption);
 $rightCaption = $lang->maketext($rightCaption);
-
+my %rol = map { $_ => undef } @readOnlyLeft;
+my %ror = map { $_ => undef } @readOnlyRight;
 
 # Build the right-hand list.
 
 foreach my $opt ($rightSort ? sort { lc $a->{description} cmp lc $b->{description} } @rightOpts : @rightOpts) {
     $seen{$opt->{value}} = 1;
     $rightVals[@rightVals] = $opt->{value};
-    $right .= (!$readOnly) ? qq{   <option value="$opt->{value}">$opt->{description}</option>\n} : $opt->{description} . "<br />";
+    my $ro = exists $ror{$opt->{value}} ? ' disabled="disabled"' : '';
+    $right .= (!$readOnly) ? qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n} : $opt->{description} . "<br />";
 }
 
 # Build the left-hand list.
 foreach my $opt ($leftSort ? sort { lc $a->{description} cmp lc $b->{description} } @leftOpts : @leftOpts) {
     next if $seen{$opt->{value}};
     $leftVals[@leftVals] = $opt->{value};
-    $left .= (!$readOnly) ?  qq{   <option value="$opt->{value}">$opt->{description}</option>\n} : $opt->{description} . "<br />";
+    my $ro = exists $rol{$opt->{value}} ? ' disabled="disabled"' : '';
+    $left .= (!$readOnly) ?  qq{   <option value="$opt->{value}"$ro>$opt->{description}</option>\n} : $opt->{description} . "<br />";
 }
 
 </%init>

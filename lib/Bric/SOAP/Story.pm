@@ -29,6 +29,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        resolve_relations
                         load_ocs
                        );
 use Bric::SOAP::Media;
@@ -769,7 +770,8 @@ sub load_asset {
         # are we aliasing?
         my $aliased = exists($sdata->{alias_id}) && $sdata->{alias_id} && ! $update
           ? Bric::Biz::Asset::Business::Story->lookup({
-              id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id}  })
+              id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id}
+            })
           : undef;
 
         # setup init data for create
@@ -785,14 +787,16 @@ sub load_asset {
         if (exists $sdata->{element} and not $aliased) {
             # It's a normal story.
             unless ($selems{$sdata->{element}}) {
-                my $e = (Bric::Biz::AssetType->list
-                         ({ key_name => $sdata->{element}, media => 0 }))[0]
-                           or throw_ap(error => __PACKAGE__ . "::create : no story"
-                                         . " element found matching (element => "
-                                         . "\"$sdata->{element}\")");
-                $selems{$sdata->{element}} =
-                  [ $e->get_id,
-                    { map { $_->get_name => $_ } $e->get_output_channels } ];
+                my $e = (Bric::Biz::AssetType->list({
+                    key_name => $sdata->{element},
+                    media => 0 }))[0]
+                  or throw_ap(error => __PACKAGE__ . "::create : no story"
+                                     . " element found matching (element => "
+                                     . "\"$sdata->{element}\")");
+                $selems{$sdata->{element}} =[
+                    $e->get_id,
+                    { map { $_->get_name => $_ } $e->get_output_channels }
+                ];
             }
 
             # get element__id from story element
@@ -807,8 +811,9 @@ sub load_asset {
         }
 
         # get source__id from source
-        ($init{source__id}) = Bric::Biz::Org::Source->list_ids
-          ({ source_name => $sdata->{source} });
+        ($init{source__id}) = Bric::Biz::Org::Source->list_ids({
+            source_name => $sdata->{source}
+        });
         throw_ap(error => __PACKAGE__ . "::create : no source found matching "
                    . "(source => \"$sdata->{source}\")")
           unless defined $init{source__id};
@@ -1072,61 +1077,8 @@ sub load_asset {
         }
     }
 
-    # resolve relations
-    foreach my $r (@relations) {
-        if ($r->{relative}) {
-            # handle relative links
-            if ($r->{story_id}) {
-                throw_ap(error => __PACKAGE__ .
-                           " : Unable to find related story by relative id " .
-                           "\"$r->{story_id}\"")
-                  unless exists $story_ids{$r->{story_id}};
-                $r->{container}->
-                    set_related_instance_id($story_ids{$r->{story_id}});
-            }
-            if ($r->{media_id}) {
-                throw_ap(error => __PACKAGE__ .
-                           " : Unable to find related media by relative id " .
-                           "\"$r->{media_id}\"")
-                  unless exists $media_ids{$r->{media_id}};
-                $r->{container}->
-                    set_related_media($media_ids{$r->{media_id}});
-            }
-        } else {
-            # handle absolute links
-            if ($r->{story_id}) {
-                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
-                           . " not found.")
-                  unless Bric::Biz::Asset::Business::Story->list_ids(
-                                                  {id => $r->{story_id}});
-                $r->{container}->set_related_instance_id($r->{story_id});
-            } elsif ($r->{story_uri}) {
-                my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
-                    primary_uri => $r->{story_uri},
-                    site_id     => $r->{site_id},
-                });
-                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
-                           . qq{ not found in site "$r->{site_id}"}) unless $sid;
-                $r->{container}->set_related_instance_id($sid);
-            }
-            if ($r->{media_id}) {
-                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
-                           . " not found.")
-                  unless Bric::Biz::Asset::Business::Media->list_ids(
-                                                  {id => $r->{media_id}});
-                $r->{container}->set_related_media($r->{media_id});
-            } elsif ($r->{media_uri}) {
-                my ($mid) = Bric::Biz::Asset::Business::Media->list_ids({
-                    uri     => $r->{media_uri},
-                    site_id => $r->{site_id},
-                });
-                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$r->{media_uri}"}
-                           . qq{ not found in site "$r->{site_id}"}) unless $mid;
-                $r->{container}->set_related_media($mid);
-            }
-        }
-        $r->{container}->save;
-    }
+    # Resolve related stories and media.
+    resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
     return name(ids => [
                         map { name(story_id => $_) } @story_ids,

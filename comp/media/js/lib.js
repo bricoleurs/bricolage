@@ -632,7 +632,7 @@ function addToList(formName,  leftName, rightName) {
     for (var i=0; i<leftOpt.length; i++) {
 
         // if we find a selected option, 
-        if (leftOpt[i].selected) {
+        if (leftOpt[i].selected && $leftOpt[i].disabled != 'disabled') {
             // that's not already on the right, and  isn't in the readOnly array for this list
             if ( !isInList(leftOpt[i].value, rightOpt) && !inArray(leftOpt[i].value, leftReadOnly) ) {
                 // create new option object for the right side list, give it the value and text
@@ -689,9 +689,8 @@ function removeFromList(formName, leftName, rightName) {
 
     for (var i=0; i<rightOpt.length; i++) {
         // if option is selected, and not in the right side readOnly list
-        if (rightOpt[i].selected && !inArray(rightOpt[i].value, rightReadOnly)) {
+        if (rightOpt[i].selected && $rightOpt[i].disabled == '') {
             // add it to the options on the left
-            
             newLeftOpt[newLeftOpt.length] = new Option(rightOpt[i].text, rightOpt[i].value);
         } else {
             // keep it on the right

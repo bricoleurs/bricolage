@@ -85,6 +85,12 @@ value"). Reported by Curtis Poe. [David]
 Updated mail list information in L<Bric::Hacker|Bric::Hacker>. Reported by
 Marshall Roch. [David]
 
+=item *
+
+The SOAP media interface now supports creating relationships between the media
+documents elements and other story and media documents, just like the SOAP
+story interface does. [David]
+
 =back
 
 =head2 Bug Fixes

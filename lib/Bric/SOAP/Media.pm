@@ -26,6 +26,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        resolve_relations
                         load_ocs
                        );
 
@@ -629,8 +630,8 @@ sub load_asset {
           || throw_ap error => "desk '" . $args->{desk} . "' not found!";
     }
 
-    # loop over media, filling in @media_ids
-    my (@media_ids, %melems);
+    # loop over media, filling in @media_ids and @relations.
+    my (%media_ids, @media_ids, %melems, @relations);
     foreach my $mdata (@{$data->{media}}) {
         my $id = $mdata->{id};
 
@@ -639,7 +640,9 @@ sub load_asset {
 
         # are we aliasing?
         my $aliased = exists($mdata->{alias_id}) && $mdata->{alias_id} && ! $update
-          ? Bric::Biz::Asset::Business::Media->lookup({ id => $mdata->{alias_id} })
+          ? Bric::Biz::Asset::Business::Media->lookup({
+              id => $media_ids{$mdata->{alias_id}} || $mdata->{alias_id}
+            })
           : undef;
 
         # setup init data for create
@@ -908,10 +911,11 @@ sub load_asset {
         }
 
         # add element data
-        deserialize_elements(object => $media,
-                             type   => 'media',
-                             data   => $mdata->{elements} || {})
-          unless $aliased;
+        push @relations, deserialize_elements(
+            object => $media,
+            type   => 'media',
+            data   => $mdata->{elements} || {}
+        ) unless $aliased;
 
         # activate if desired
         $media->activate if $mdata->{active};
@@ -923,16 +927,36 @@ sub load_asset {
         log_event('media_save', $media);
 
         # all done, setup the media_id
-        push(@media_ids, $media->get_id);
+        push(@media_ids, $media_ids{$id} = $media->get_id);
     }
 
     $desk->save if defined $desk;
+
+    # if we have any story objects, create them
+    my (%story_ids, @story_ids);
+    if ($data->{story}) {
+        @story_ids = Bric::SOAP::Story->load_asset({ data       => $data,
+                                                     internal   => 1,
+                                                     upload_ids => []    });
+
+        # correlate to relative ids
+        for (0 .. $#story_ids) {
+            $story_ids{$data->{story}[$_]{id}} = $story_ids[$_];
+        }
+    }
+
+    # Resolve related stories and media.
+    resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
     # return a SOAP structure unless this is an internal call
     unless ($args->{internal}) {
         return name(ids => [ map { name(media_id => $_) } @media_ids ]);
     }
-    return @media_ids;
+
+    return name(ids => [
+                        map { name(media_id => $_) } @media_ids,
+                        map { name(story_id => $_) } @story_ids,
+                       ]);
 }
 
 

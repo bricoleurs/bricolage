@@ -33,6 +33,7 @@ our @EXPORT_OK = qw(
                     deserialize_elements
                     load_ocs
                     site_to_id
+                    resolve_relations
                    );
 
 # set to 1 to see debugging output on STDERR
@@ -621,6 +622,66 @@ sub _serialize_tile {
     }
 
     return @related;
+}
+
+sub resolve_relations {
+    my ($story_ids, $media_ids) = (shift, shift);
+    foreach my $r (@_) {
+        if ($r->{relative}) {
+            # handle relative links
+            if ($r->{story_id}) {
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related story by relative id " .
+                           "\"$r->{story_id}\"")
+                  unless exists $story_ids->{$r->{story_id}};
+                $r->{container}->
+                    set_related_instance_id($story_ids->{$r->{story_id}});
+            }
+            if ($r->{media_id}) {
+                throw_ap(error => __PACKAGE__ .
+                           " : Unable to find related media by relative id " .
+                           "\"$r->{media_id}\"")
+                  unless exists $media_ids->{$r->{media_id}};
+                $r->{container}->
+                    set_related_media($media_ids->{$r->{media_id}});
+            }
+        } else {
+            # handle absolute links
+            if ($r->{story_id}) {
+                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Story->list_ids({
+                      id => $r->{story_id}
+                  });
+                $r->{container}->set_related_instance_id($r->{story_id});
+            } elsif ($r->{story_uri}) {
+                my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
+                    primary_uri => $r->{story_uri},
+                    site_id     => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $sid;
+                $r->{container}->set_related_instance_id($sid);
+            }
+            if ($r->{media_id}) {
+                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
+                           . " not found.")
+                  unless Bric::Biz::Asset::Business::Media->list_ids({
+                      id => $r->{media_id}
+                  });
+                $r->{container}->set_related_media($r->{media_id});
+            } elsif ($r->{media_uri}) {
+                my ($mid) = Bric::Biz::Asset::Business::Media->list_ids({
+                    uri     => $r->{media_uri},
+                    site_id => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$r->{media_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $mid;
+                $r->{container}->set_related_media($mid);
+            }
+        }
+        $r->{container}->save;
+    }
 }
 
 
