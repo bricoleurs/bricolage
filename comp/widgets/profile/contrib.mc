@@ -57,13 +57,13 @@ if ($param->{delete}) {
 	# We must be dealing with an existing contributor object
 
 	# get handle to underlying person object
- 	my $obj = $contrib->get_obj;
+ 	my $person = $contrib->get_obj;
 
 	# update contacts on this person object
  	$m->comp("/widgets/profile/updateContacts.mc",
  		 param => $param,
- 		 obj   => $obj);
- 	$obj->save;
+ 		 obj   => $person);
+ 	$person->save;
 
 	# Update attributes.
 	# We'll need these to get the SQL type and max length of attributes.
@@ -106,7 +106,7 @@ if ($param->{delete}) {
 	# Change the mode for the next screen.
 	$param->{mode} = 'edit';
 	set_state_data("contrib_profile", { extending => 1 } );
-	set_redirect('/admin/profile/contrib/edit/' . $obj->get_id . '/'
+	set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
 		     . escape_uri($param->{subsys}) );
 	log_event("${type}_ext", $contrib);
 	return $contrib;
@@ -115,7 +115,7 @@ if ($param->{delete}) {
 
 	$param->{mode} = 'edit';
 	set_state_data("contrib_profile", { extending => 0 } );
-	set_redirect('/admin/profile/contrib/edit/' . $obj->get_id . '/'
+	set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
 		     . escape_uri($param->{subsys}) );
 	return $contrib;
     }
@@ -132,11 +132,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:32 $
+$Date: 2003-06-11 20:38:42 $
 
 =head1 SYNOPSIS
 
