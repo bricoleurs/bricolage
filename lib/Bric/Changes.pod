@@ -22,6 +22,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Added C<MASON_INTERP_ARGS> F<bricolage.conf> directive to allow you to pass
+arguments to the Mason interpreter for the templates. [Scott]
+
+=item *
+
 Added support for sub-second precision to date and time management in
 Bricolage. This means that dates can be stored in the database with
 microsecond precision. This was done by modifying Bricolage's date and time
@@ -39,6 +44,7 @@ backwards compatability, the default precision for custom DateTime fields is
 
 =back
 
+>>>>>>> 1.585
 =head2 Improvements
 
 =over 4
