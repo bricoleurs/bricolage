@@ -15,7 +15,8 @@ if ($field eq "$widget|$object-selected_id_cb") {
     # Handle auto-repopulation of this form.
     my $name = get_state_data($sub_widget, 'form_name');
 
-    set_state_data($sub_widget, 'selected_id', $param->{$name});
+    set_state_data($sub_widget, 'selected_id', $param->{$name})
+      unless ref $param->{$name};
 }
 
 
