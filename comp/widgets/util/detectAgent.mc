@@ -7,11 +7,11 @@ detectAgent.mc - Detects the agent's browser, it's version, and the OS.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-11-20 00:04:08 $
+$Date: 2001-11-29 00:28:52 $
 
 =head1 SYNOPSIS
 

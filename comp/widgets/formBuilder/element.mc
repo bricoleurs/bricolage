@@ -197,11 +197,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2001-11-20 00:04:07 $
+$Date: 2001-11-29 00:28:51 $
 
 =head1 SYNOPSIS
 
