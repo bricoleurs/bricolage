@@ -95,6 +95,12 @@ Time zone issues have been fixed to be more portable. Some platforms that
 experienced Bricolage unexpectedly shifting cover dates and other dates and
 times by several hours should no longer see this problem. [David]
 
+=item *
+
+Non-existent methods no longer throw "permission denied" exceptions, but the
+standard Perl "Can't locate object method" exception. This is to eliminate
+confusion with permission to access Bricolage objects. [David]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)

@@ -10,7 +10,7 @@ Release Version: 1.6.5
 
 File (CVS) Version:
 
-$Revision: 1.35.2.11 $
+$Revision: 1.35.2.12 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.6.5";
 
 =head1 DATE
 
-$Date: 2003-08-13 02:34:05 $
+$Date: 2003-09-05 22:37:44 $
 
 =head1 SYNOPSIS
 
@@ -62,7 +62,7 @@ use strict;
 #--------------------------------------#
 # Programmatic Dependencies
 use Carp;
-use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault qw(throw_gen);
 use Bric::Config qw(:qa :mod_perl);
 
 # Load the Apache modules if we're in mod_perl.
@@ -439,11 +439,7 @@ Access denied: '$field' is not a valid field for package '$package'
 
 =item *
 
-Access denied:  READ access for field '$field' required
-
-=item *
-
-Access denied:  WRITE access for field '$field' required
+Can't locate object method via package.
 
 =back
 
@@ -492,8 +488,7 @@ sub AUTOLOAD {
     # A get request
     if ($op eq 'get') {
         # check permissions
-        die $gen->new({msg => "Access denied:  READ access for field " .
-                              "'$field' required"})
+        throw_gen qq{Can't locate object method "get_$field" via package "$pkg"}
           unless $perm & FIELD_READ;
 
         # setup get method
@@ -505,8 +500,7 @@ sub AUTOLOAD {
     # A set request
     elsif ($op eq 'set') {
         # check permissions
-        die $gen->new({msg => "Access denied:  WRITE access for field " .
-                              "'$field' required"})
+        throw_gen qq{Can't locate object method "set_$field" via package "$pkg"}
           unless $perm & FIELD_WRITE;
 
         # setup set method
@@ -527,7 +521,7 @@ sub AUTOLOAD {
 
     # otherwise, fail
     else {
-	die $gen->new({msg => "No AUTOLOAD method: $AUTOLOAD"});
+        throw_gen qq{Can't locate object method "$op\_$field" via package "$pkg"};
     }
 
     # call the darn method - all the parameters are still in @_
