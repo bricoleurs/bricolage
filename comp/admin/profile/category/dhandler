@@ -19,13 +19,21 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties", number  => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
 	 readOnly => $no_edit,
-	 fieldsUsed => { uri => 1, ad_string => 1,
+	 fieldsUsed => { uri => 1, ad_string => 1, site_id => 1,
 			 ad_string2 => 1, directory => 1 });
 
 if (defined $id) {
-    # It's an existing category. Just show them the URI.
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $cat,
-	     key => 'uri', readOnly => 1);
+    # It's an existing category. Just show them the site and the URI.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref => $cat,
+	     key => 'site',
+             readOnly => 1);
+
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref => $cat,
+	     key => 'uri',
+             readOnly => 1);
+
 } else {
     # Output a field for the directory.
     $m->comp('/widgets/profile/displayFormElement.mc', objref => $cat,
@@ -53,7 +61,7 @@ if (defined $id) {
              field      => 'name',
              disp       => 'Site',
              exclude    => sub { ! chk_authz($_[0], EDIT, 1) },
-	     selected   => $c->get_user_cx(get_user_id),
+	     selected   => scalar $c->get_user_cx(get_user_id),
 	     sort_field => 'name',
              reset_key  => $reset,
              req        => 1);
@@ -77,7 +85,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
 	 readOnly => $no_edit,
 	 fieldsUsed => { uri => 1, name => 1, description => 1,
-			 directory => 1 });
+			 directory => 1, site_id => 1 });
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Get the groups listed.
@@ -195,11 +203,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10.2.2 $
+$Revision: 1.10.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-06 06:54:23 $
+$Date: 2003-03-06 07:25:49 $
 
 =head1 DESCRIPTION
 
