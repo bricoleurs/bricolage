@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 03:47:11 $
+$Date: 2003-09-16 04:20:24 $
 
 =head1 SYNOPSIS
 
@@ -58,18 +58,20 @@ use Encode::Alias;
 ################################################################################
 use base qw(Bric);
 
+################################################################################
+# Function Prototypes
+################################################################################
+sub _convert;
+
 ##############################################################################
 # Constants
 ##############################################################################
-
 # Map some useful aliases.
 define_alias JIS           => 'ISO-2022-JP';
 define_alias 'X-EUC-JP'    => 'ISO-2022-JP';
 define_alias 'SHIFT-JIS'   => 'SJIS';
 define_alias 'X-SHIFT-JIS' => 'SJIS';
 define_alias 'X-SJIS'      => 'SJIS';
-
-sub _convert;
 
 ################################################################################
 # Fields
