@@ -32,6 +32,12 @@ Added support for Mozilla (and there was much rejoicing!). [David]
 
 Changed password for the default "admin" user to "change me now!" [David]
 
+=item *
+
+The slug is stored in the database for both fixed and non-fixed stories. This is
+in anticipation of adding the ability to use the slug for fixed story URIs later
+on. Thanks to Darren Graves for the patch.
+
 =back
 
 =head2 Bug Fixes
@@ -92,6 +98,12 @@ Templates" work. Thanks to Sam for the report. [David]
 
 Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
 [David]
+
+=item *
+
+In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
+properly. Also, get_all_keywords() now also returns the category keywords as
+well as the story keywords. Thanks to Darren Graves for the patch.
 
 =back
 
