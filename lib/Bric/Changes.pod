@@ -28,6 +28,10 @@ Created new method of configuring Bricolage in Apache. [David]
 
 Added support for Mozilla (and there was much rejoicing!). [David]
 
+=item *
+
+Changed password for the default "admin" user to "change me now!" [David]
+
 =back
 
 =head2 Bug Fixes
