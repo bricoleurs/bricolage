@@ -46,15 +46,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 01:39:09 $
+$Date: 2004-03-24 20:44:18 $
 
 =head1 SYNOPSIS
 
@@ -514,7 +514,6 @@ the --workflow option. The start desk of the workflow is used unless
 you pass the --desk option.
 
 =cut
-
 
 =item update
 

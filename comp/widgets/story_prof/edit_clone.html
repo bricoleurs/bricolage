@@ -35,9 +35,22 @@ $m->comp('/widgets/select_object/select_object.mc',
          name       => 'desk_asset|new_category_id',
          constrain  => { site_id => $site_id },
          exclude    => $excl_sub,
-         req        => 0,
+         req        => 1,
          field      => 'uri',
-         sort_field => 'uri',
+         localize   => 0,
+         useTable   => 1
+     );
+$m->out($ieSpacer);
+
+# Output Channel
+$m->comp('/widgets/select_object/select_object.mc',
+         object     => 'output_channel',
+         selected   => $oc_id,
+         disp       => 'Primary Output Channel',
+         name       => 'desk_asset|new_oc_id',
+         ojbs       => [$elem->get_output_channels],
+         req        => 1,
+         field      => 'name',
          localize   => 0,
          useTable   => 1
      );
@@ -97,6 +110,8 @@ $tmeth->{value} = 'Clone of ' . $story->get_title;
 $smeth->{value} = $story->get_slug;
 $cmeth->{value} = $story->get_cover_date;
 my $cat_id = $story->get_primary_category->get_id;
+my $oc_id = $story->get_primary_oc_id;
+my $elem = Bric::Biz::AssetType->lookup({id => $story->get_element__id});
 
 my $agent = detect_agent();
 my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';

@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 23:46:08 $
+$Date: 2004-03-24 20:44:18 $
 
 =head1 SYNOPSIS
 
@@ -592,6 +592,7 @@ Por favor escolha outra categoria-mãe.',
   'Please click [_1]here[_2] to start.' => 'Clique [_1]aqui[_2] para iniciar.',
   'Please log in:' => 'Por favor, introduza o Nome de Utilizador e Palavra-chave',
   'Please select a primary category.' => 'Por favor seleccione uma categoria primária.',
+  'Please select a primary output channel.' => 'Por favor seleccione uma canal de distribuição primária.',
   'Please select a story type.' => 'Por favor seleccione um tipo de artigo.',
   'Preference "[_1]" updated.' => 'Preferência "[_1]" actualizada.',
   'Problem adding "[_1]"' => 'Problemas ao criar "[_1]".',

@@ -36,6 +36,12 @@ server to export all of the templates in a single output channel. [David]
 Added site and output channel support to F<bric_template_diff> and
 F<bric_template_patch> in F<contrib>. [David]
 
+=item *
+
+When cloning a story, you can now select a new primary output channel, in
+addition to category, slug, cover date, etc. Suggested by Serge Sozonoff.
+[David]
+
 =back
 
 =head2 Bug Fixes

@@ -6,15 +6,15 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 23:46:08 $
+$Date: 2004-03-24 20:44:18 $
 
 =head1 SYNOPSIS
 
@@ -152,6 +152,7 @@ our %Lexicon = (
     'Text Area' => '‚Ãrea di Testo',
     'Workflow Manager' => 'Workflow Manager',
     'Please select a primary category.' => 'Per favore scegli una categoria primaria.',
+    'Please select a primary output channel.' => 'Per favore scegli una canale di distribuzione primario',
     'Role' => 'Ruolo',
     'Note' => 'Nota',
     'Existing Subelements' => 'Subelementi Esistenti',

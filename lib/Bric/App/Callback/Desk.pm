@@ -397,6 +397,31 @@ sub _merge_properties {
         $story->set_cover_date($param->{cover_date});
     }
 
+    # Output Channel
+    my $ocid = $param->{"$widget|new_oc_id"};
+    unless (defined $ocid && $ocid ne '') {
+        add_msg('Please select a primary output channel.');
+        $err++;
+    } else {
+        # Delete all the current output channels first,
+        # then add the new output channel and make it primary.
+        # It's a little more complicated to avoid
+        # deleting the new output channel if it's already there.
+
+        # Note the current output channels.
+        my %todelete_ocs =  map { $_->get_id => $_ } $story->get_output_channels;
+
+        unless (delete $todelete_ocs{$ocid}) {
+            $story->add_output_channels(
+                Bric::Biz::OutputChannel->lookup({ id => $ocid })
+              );
+        }
+        $story->set_primary_oc_id($ocid);
+        # We have to save so that the original primary OC can be deleted.
+        $story->save unless $err;
+        $story->del_output_channels(values %todelete_ocs) if %todelete_ocs;
+    }
+
     return 1 unless $err;
     return;
 }

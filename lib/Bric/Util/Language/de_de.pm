@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 23:46:08 $
+$Date: 2004-03-24 20:44:18 $
 
 =head1 SYNOPSIS
 
@@ -597,6 +597,7 @@ use constant key => 'de_de';
   'Please click [_1]here[_2] to start.' => 'Bitte [_1]hier[_2] klicken zum Start.',
   'Please log in:' => 'Bitte einloggen:',
   'Please select a primary category.' => 'Bitte eine Primärkategorie auswählen.',
+  'Please select a primary output channel.' => 'Bitte eine Primärer Ausgabekanal',
   'Please select a story type.' => 'Bitte einen Beitragstyp auswählen.',
   'Preference "[_1]" updated.' => 'Einstellung "[_1]" aktualisiert.',
   'Problem adding "[_1]"' => 'Problem beim Hinzufügen von "[_1]".',

@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 23:46:08 $
+$Date: 2004-03-24 20:44:19 $
 
 =head1 SYNOPSIS
 
@@ -562,6 +562,7 @@ To translate:
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'Please select a primary output channel' => 'Please select a primary output channel',
 
 =end comment
 

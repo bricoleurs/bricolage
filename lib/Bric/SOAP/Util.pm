@@ -44,15 +44,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-24 01:39:09 $
+$Date: 2004-03-24 20:44:18 $
 
 =head1 SYNOPSIS
 
@@ -358,7 +358,7 @@ sub load_ocs {
         my $ocname = ref $ocdata ? $ocdata->{content} : $ocdata;
         my $oc = delete $ocs{$ocname};
         unless ($oc) {
-            # We have to add the new output channel to the media. Grab the
+            # We have to add the new output channel to the document. Grab the
             # OC object from the element.
             $oc = $elem_ocs->{$ocname} or
               throw_ap(error => __PACKAGE__ . "::create : output channel matching " .
