@@ -696,9 +696,8 @@ sub deploy {
 
 =item $success = $burner->undeploy($fa);
 
-Deletes a template from the file system. If the burner object
-was provided with a user_id, the template is undeployed from the user's
-sandbox.
+Deletes a template from the file system. If the burner object was provided
+with a user_id, the template is undeployed from the user's sandbox.
 
 B<Throws:> NONE.
 
@@ -723,7 +722,8 @@ sub undeploy {
 
 =item $url = $burner->preview($ba, $key, $user_id, $oc_id);
 
-Sends story or media to preview server and returns URL. Params:
+Not designed to be called from a template, C<preview()> sends story or media
+to preview server and returns URL. The supported arguments are:
 
 =over 4
 
@@ -887,11 +887,13 @@ sub preview {
 
 =item $url = $b->preview_another($ba, $oc_id);
 
-Burns a story or media document, distributes it to the preview server and
-returns the URL. It is designed to be the complement of C<publish_another()>,
-to be used in templates during previews to burn and distribute related
-documents so that they'll be readily available on the preview server within
-the context of previewing another document. The supported arguments are:
+Designed to be called from a template, C<preview_another()> burns a story or
+media document, distributes it to the preview server and returns the URL. It
+complements C<publish_another()>, and can be used in templates during previews
+to burn and distribute related documents so that they'll be readily available
+on the preview server within the context of previewing another document. In
+any mode other than PREVIEW_MODE, C<preview_another()> is a no-op. The
+supported arguments are:
 
 =over 4
 
@@ -918,6 +920,9 @@ sub preview_another {
     my $self = shift;
     my ($ba, $oc_id) = @_;
 
+    # return unless we are in preview mode
+    return unless $self->_get('mode') == PREVIEW_MODE;
+
     # Figure out what we're previewing.
     my $key = ref $ba eq 'Bric::Biz::Asset::Business::Story'
       ? 'story'
@@ -931,10 +936,82 @@ sub preview_another {
 
 #------------------------------------------------------------------------------#
 
+=item $url = $b->preview_another_all_ocs($ba);
+
+Designed to be called from a template, C<preview_another_all_ocs()>
+complements C<preview_another()> and previews a story or media document in all
+of the the output channels it is associated with. The supported arguments are:
+
+=over 4
+
+=item C<$ba>
+
+A business asset object to burn and send to the preview servers.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub preview_another_all_ocs {
+    my ($self, $ba) = @_;
+
+    # return unless we are in preview mode
+    return unless $self->_get('mode') == PREVIEW_MODE;
+
+    # Iterate over all the Ouput Channels for this story and preview each one.
+    $self->preview_another($ba, $_->get_id ) for $ba->get_output_channels;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $url = $b->blaze_another($ba);
+
+Designed to be called from a template, C<blaze_another()> is a high level
+method that wraps around the entire publish/preview process. It takes a story
+or media document as an argument, and in publish mode, it publishes it, and in
+preview mode, it previews it with C<preview_another_all_ocs()>. The supported
+arguments are:
+
+=over 4
+
+=item C<$ba>
+
+A business asset object to publish or to burn and preview, based on the burn
+context.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub blaze_another {
+    my $self = shift;
+
+    if ($self->get_mode == PUBLISH_MODE) {
+        $self->publish_another(@_);
+    } else {
+        $self->preview_another_all_ocs(@_);
+    }
+}
+
+#------------------------------------------------------------------------------#
+
 =item $published = $burner->publish($ba, $key, $user_id, $publish_date);
 
-Publishes an asset, then remove from workflow. Returns 1 if publish was
-successful, else 0. Parameters are:
+Not designed to be called from a template, C<publish()> publishes an asset,
+then remove it from workflow. Returns 1 if publish was successful, else 0. The
+supported arguments are:
 
 =over 4
 

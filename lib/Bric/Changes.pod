@@ -42,6 +42,14 @@ contributor types. The supported precisions are "Year", "Month", "Day",
 backwards compatability, the default precision for custom DateTime fields is
 "Minute". [David]
 
+=item *
+
+Added C<preview_another_all_ocs()> and C<blaze_another()> to
+Bric::Util::Burner. The former executes a preview for all of the output
+channels a document is associated with. The latter takes a document for its
+argument and calls C<publish_another()> in PUBLISH_MODE and
+C<preview_another_all_ocs()> in PREVIEW_MODE. [Serge Sozonoff]
+
 =back
 
 =head2 Improvements
