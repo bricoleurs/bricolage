@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.25 $
+$Revision: 1.39.2.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-17 14:58:58 $
+$Date: 2003-11-25 16:25:39 $
 
 =head1 SYNOPSIS
 
@@ -56,10 +56,6 @@ $Date: 2003-10-17 14:58:58 $
  # Access note information
  $asset                 = $asset->add_note($note)
  ($note_list || @notes) = $asset->get_notes()
-
- # Creation and modification information.
- ($modi_date, $modi_by)       = $asset->get_modi()
- ($create_date, $create_date) = $asset->get_create()
 
  # Access active status
  $asset            = $asset->deactivate()
