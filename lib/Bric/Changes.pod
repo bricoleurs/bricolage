@@ -182,7 +182,7 @@ etc. Suggested by Simon Wilcox. [David]
 
 Changed the default value of the C<SMTP_SERVER> F<bricolage.conf> directive to
 localhost. This has a much greater chance of working than defaulting to the
-value of the C<VHOST_SERVER_NAME> directive.
+value of the C<VHOST_SERVER_NAME> directive. [David]
 
 =back
 
