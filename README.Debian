@@ -1,19 +1,21 @@
 Bricolage Debian README
 -----------------------
 
-There are currently efforts going on to produce a native Debian package
-that you can simply install with your favorite Debian package tool.
-Gerfried Fuchs knows about the current status. There are/were already
-preliminary packages available which were produced by Erich Schubert.
-You can find them at <http://people.debian.org/~erich/bricolage/>.
+There are currently efforts going on to produce a native Debian package that
+you can simply install with your favorite Debian package tool. Gerfried Fuchs
+knows about the current status. There are/were already preliminary packages
+available which were produced by Erich Schubert. You can find them at
+<http://people.debian.org/~erich/bricolage/>. If you use this package, be sure
+to follow the instructions in /usr/share/bricolage/README.Debian.
 
-Any hints/comments/suggestions appreciated, you can reach Gerfried Fuchs
-at <alfie@users.sourceforge.net>. Please give him some days time to react,
-he tends to be overworked sometimes....
+Any hints/comments/suggestions appreciated, you can reach Gerfried Fuchs at
+<alfie@users.sourceforge.net>. Please give him some days time to react, he
+tends to be overworked sometimes....
 
-Bricolage has been tested on Debian's stable distribution (woody, 3.0).
-The old stable Debian (potato, 2.2) will not work with Bricolage as it
-does not include Perl 5.6.
+Bricolage has been tested on Debian's stable distribution (woody, 3.0). For
+Bricolage 1.7.0 or later, HTML::Mason 1.23 or later is required, with STRONG
+recommendation to use Perl 5.8.0. The old stable Debian (potato, 2.2) will not
+work with Bricolage as it does not include Perl 5.6.
 
 The following DEBs should be installed with apt-get before installing
 Bricolage:
@@ -29,9 +31,9 @@ Bricolage:
 SFTP Mover
 ----------
 
-If you use the optional SFTP mover, you have to install Net::SFTP.
-I found that this will work if you first install some of its prerequisite
-classes as built by Debian:
+If you use the optional SFTP mover, you have to install Net::SFTP. I found
+that this will work if you first install some of its prerequisite classes as
+built by Debian:
 
     $ sudo apt-get install libnet-ssh-perl
     $ sudo apt-get install libstring-crc32-perl

@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2003-10-22 15:27:23 $
+$Date: 2003-11-04 19:27:48 $
 
 =head1 DESCRIPTION
 
@@ -29,6 +29,44 @@ Currently only PostgreSQL support is maintained. There is an Oracle driver,
 but it's old and not known to work. A port to MySQL 4.1 is reportedly
 underway.
 
+=head3 Is there any pre-compiled packages for Bricolage?
+
+There is currently only a tentative start for a bricolage debian package. The
+location of the package is L<http://people.debian.org/~erich/bricolage>.
+
+To use this package, add the following line to your F</etc/apt/sources.list> file:
+
+   deb http://people.debian.org/~erich/bricolage   /
+
+Then update your package database and install bricolage using C<dselect> or
+standard C<apt-get> commands.
+
+As of this writing, the package downloads and installs all necessary packages,
+but you still need to read through the instructions in
+F</usr/share/doc/bricolage/README.Debian> to setup a usable Bricolage
+installation. Please also note that the debian package may be out-of-sync with
+the standard distribution.
+
+=head3 Are there any Bricolage System that runs directly from CD?
+
+There is currently an effort to make a KNOPPIX-style CD for
+Bricolage. Informally this CD is known as KNOPPIX with Bricolage. It is a CD
+that contains a Linux Distribution (Debian in this case) with Bricolage
+preinstalled. The system is self-contained on a CD and the user merely needs
+to boot an i386-compatible computer from the CD. The CD will not in any way
+alter the content of your hard disk. This CD is useful for evaluating
+Bricolage since it removes the hassle of installation. Although it is
+certainly possible to transfer the Bricolage installation on the CD to your
+hard disk, we do not expect this to be the standard procedure to install
+Bricolage after evaluation. Rather, it is better to download the Bricolage
+sources from sourceforge.net and install it.
+
+The KNOPPIX with Bricolage CD is based on Erich Schubert's Debian package, and
+was created by Mark Jaroski as a demonstration of Bricolage.
+as Brico-Knoppix.
+
+The CD is available here: L<http://www.geekhive.net/~mark/brico-knoppix-1.0.iso>
+
 =head3 How well does Bricolage perform?
 
 As far as we know, no one has performed any benchmarks comparing Bricolage to
@@ -38,7 +76,57 @@ publishing system, Bricolage does not host web sites or serve content. Rather,
 when documents are published in Bricolage, they are pushed through templates
 and the resulting files are distributed to your Web server. So if your
 Bricolage templates output static HTML, your public Web server should serve
-your content very fast indeed.
+your content very fast indeed since performanc depends entirely on the
+scalability of your Web server.
+
+=head3 Advantages of using Bricolage
+
+The separation of the content management and publishign server from the front
+end Web server is one of the major strength of Bricolage:
+
+=over 4
+
+=item *
+
+It makes it easy add more capacity to your site to meet increasing demand:
+just add another Web server and configure Bricolage to distribute files
+to it.
+
+=item *
+
+It improves security, as a compromise of the front-end Web server does not
+compromise your data, which is stored on in the Bricolage database server on
+the back end, possibly behind a firewall.
+
+=item *
+
+The overhead of serving user requests can be kept at the minimum. In fact,
+unless you explicitly write code for your Web server to access Bricolage, no
+Bricolage code actually runs when serving pages.
+
+=back
+
+Other advantages of Bricolage include:
+
+=over 4
+
+=item *
+
+Great flexibility for customization. Bricolage is designed from ground up to
+give site creators the ability to customize it to meet their needs. This is
+done by defining new element types, elements, templates and output channels.
+
+=item *
+
+Great documentation and support. Check out
+L<http://www.bricolage.cc/documentation.html>. Information on Mason can be
+found at L<http://www.masonbook.com> and L<http://.www.masonhq.org>.
+
+=item *
+
+Open source. Bricolage is distributed under the modified BSD license.
+
+=back
 
 =head3 How does Bricolage compare to other content management systems?
 
