@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.4.2.3 $
+$Revision: 1.4.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-06 23:18:33 $
+$Date: 2001-11-29 23:54:27 $
 
 =head1 SYNOPSIS
 
@@ -796,7 +796,8 @@ sub my_meths {
 	$meths->{$meth->{name}} = $meth;
 	push @ord, $meth->{name};
     }
-    push @ord, qw(file_name deploy_date output_channel), pop @ord;
+    push @ord, qw(file_name deploy_date output_channel output_channel
+                  category, category_name), pop @ord;
 
     $meths->{file_name} = {
 			      name     => 'file_name',
@@ -836,6 +837,16 @@ sub my_meths {
 			      req      => 0,
 			      type     => 'short',
 			     };
+
+    $meths->{output_channel_name} = {
+			  get_meth => sub { shift->get_output_channel_name(@_) },
+			  get_args => [],
+			  name     => 'output_channel_name',
+			  disp     => 'Output Channel',
+			  len      => 64,
+			  req      => 1,
+			  type     => 'short',
+			 };
 
     $meths->{category} = {
 			  get_meth => sub { shift->get_category(@_) },
