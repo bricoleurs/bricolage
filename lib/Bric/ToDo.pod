@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.1 $
+$Revision: 1.13.2.2 $
 
 =head1 DATE
 
-$Date: 2001-09-28 16:11:27 $
+$Date: 2001-09-28 16:22:45 $
 
 =head1 DESCRIPTION
 
@@ -200,6 +200,10 @@ in in the profile (via JavaScript).
 
 Add "Clone Asset" button to Media and Story profiles (I think that the API and
 maybe even the callbacks are already done).
+
+=item *
+
+Add ability to "undeploy" templates without deactivating them.
 
 =back
 
@@ -464,55 +468,3 @@ David Wheeler <david@wheeler.net>
 
 perl(1),
 Bric (2).
-
-=head1 REVISION HISTORY
-
-$Log: ToDo.pod,v $
-Revision 1.13.2.1  2001-09-28 16:11:27  wheeler
-Added new item for 1.0.2 release.
-
-Revision 1.13  2001/09/28 14:38:46  wheeler
-Added a bunch more, and organized it all. Many of these tasks have assignments,
-and I'm going to move those onto Sourceforge, as well.
-
-Revision 1.12  2001/09/28 12:41:49  wheeler
-Added a bunch more to do items. About to go through them all and get them better
-organized.
-
-Revision 1.11  2001/09/27 15:58:04  wheeler
-Closed out To Dos for 1.0.1. Added a few more to 1.0.2. More to come.
-
-Revision 1.10  2001/09/27 15:41:46  wheeler
-Added filename and file_ext columns to OutputChannel API. Also added a
-configuration directive to CE::Config to specify the default filename and
-extension for the system. Will need to document later that these can be set, or
-move them into preferences. Will also need to use the filename and file_ext
-properties of Bric::Biz::OutputChannel in the Burn System.
-
-Revision 1.9  2001/09/26 15:12:09  wheeler
-Added quite a few more tasks. Will go over it in detail in the next few days and
-work out a more realistic road map.
-
-Revision 1.8  2001/09/25 09:59:41  wheeler
-Added new item.
-
-Revision 1.7  2001/09/25 08:34:16  wheeler
-Added new item.
-
-Revision 1.6  2001/09/20 21:31:00  wheeler
-Deleted completed task. Added new task to 1.0.2 section.
-
-Revision 1.5  2001/09/19 19:49:38  wheeler
-Created new 1.0.2 section and added and moved some items to it.. Deleted some
-completed tasks.
-
-Revision 1.4  2001/09/19 02:57:53  wheeler
-Added new task to 1.2.0 and deleted completed task from 1.0.1.
-
-Revision 1.3  2001/09/18 17:32:45  wheeler
-Corrected spelling error. Removed completed item.
-
-Revision 1.2  2001/09/18 00:01:52  wheeler
-Podified.
-
-=cut
