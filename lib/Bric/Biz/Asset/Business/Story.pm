@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.14 $
+$Revision: 1.39.2.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-04 03:34:10 $
+$Date: 2003-08-05 16:03:01 $
 
 =head1 SYNOPSIS
 
@@ -1040,7 +1040,9 @@ sub get_uri {
         $cat = $self->get_primary_category;
     }
 
-    die $da->new({ msg => "There is no category associated with story." }) unless $cat;
+    die $da->new({ msg => "There is no category associated with story '" .
+                          $self->get_name . "' (#" . $self->get_id . ")." })
+      unless $cat;
 
     # Get the output channel object.
     if ($oc) {
@@ -2300,6 +2302,3 @@ Michael Soderstrom <miraso@pacbell.net>
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 
 =cut
-
-
-
