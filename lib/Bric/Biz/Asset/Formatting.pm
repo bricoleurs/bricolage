@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:39:20 $
+$Date: 2002-03-10 03:48:16 $
 
 =head1 SYNOPSIS
 
@@ -1128,9 +1128,7 @@ NONE
 sub get_element_name {
     my $self = shift;
     my $at_obj = $self->_get_element_object;
-
     return unless $at_obj;
-
     return $at_obj->get_name;
 }
 

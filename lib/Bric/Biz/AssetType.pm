@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 19:54:03 $
+$Date: 2002-03-10 03:48:16 $
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ $Date: 2002-03-08 19:54:03 $
  # Manage output channels.
  $element        = $element->add_output_channels([$output_channel])
  ($oc_list || @ocs) = $element->get_output_channels()
- $element        = $element->delete_output_channels([$output_channel]) 
+ $element        = $element->delete_output_channels([$output_channel])
 
  # Manage the parts of an asset type.
  $element            = $element->add_data($field);
@@ -66,7 +66,7 @@ $Date: 2002-03-08 19:54:03 $
  $element            = $element->add_containers($at || [$at]);
  (@at_list || $at_list) = $element->get_containers();
  $element            = $element->del_containers($at || [$at]);
- 
+
  # Set the repeatability of a field.
  ($element || 0) = $element->is_repeatable($at_container);
  $element        = $element->make_repeatable($at_container);
@@ -78,7 +78,7 @@ $Date: 2002-03-08 19:54:03 $
  (undef || 1) = $element->is_active()
 
  # Save this asset type.
- $element = $element->save() 
+ $element = $element->save()
 
 =head1 DESCRIPTION
 
@@ -86,11 +86,11 @@ The asset type class registers new type of assets that will go through work
 flow.   The individual parts will describe how the fields of the story will
 be laid out.
 
-The AssetType object is composed of AssetType Parts Data objects and 
+The AssetType object is composed of AssetType Parts Data objects and
 AssetType Parts Container objects.   These hold the fields that will become
 Assets when they enter workflow.   Rules can be set upon these.
 
-The AssetType object also holds what output channels this asset will be 
+The AssetType object also holds what output channels this asset will be
 allowed to go through.
 
 =cut
@@ -100,16 +100,15 @@ allowed to go through.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
+# Standard Dependencies
 
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programatic Dependencies
 
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Fault::Exception::GEN;
-
 use Bric::Util::Grp::AssetType;
 use Bric::Util::Grp::Element;
 use Bric::Biz::AssetType::Parts::Data;
@@ -122,7 +121,7 @@ use Bric::Biz::OutputChannel;
 # Inheritance                          #
 #======================================#
 
-use base qw( Exporter Bric );
+use base qw( Bric Exporter );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -157,9 +156,10 @@ use constant BURNER_TEMPLATE => 2;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
+# Public Class Fields
 our $METH;
+our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE);
+our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
 #--------------------------------------#
 # Private Class Fields                  

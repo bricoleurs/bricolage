@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:43:02 $
+$Date: 2002-03-10 03:48:16 $
 
 =head1 SYNOPSIS
 
@@ -132,7 +132,7 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::MNI;
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn);
-use Bric::Biz::AssetType;
+use Bric::Biz::AssetType qw(:all);
 
 
 #==============================================================================#
@@ -407,8 +407,8 @@ NONE
 
 sub burn_one {
     my $self = shift;
-    my $burner = $self->_get_subclass($_[0]);
-    $burner->burn_one(@_);
+    my ($burner, $at) = $self->_get_subclass($_[0]);
+    $burner->burn_one(@_, $at);
 }
 
 =item my $bool = $burner->chk_syntax($ba, \$err)
@@ -427,7 +427,7 @@ B<Notes:> NONE.
 
 sub chk_syntax {
     my $self = shift;
-    my $burner = $self->_get_subclass($_[0]);
+    my ($burner) = $self->_get_subclass($_[0]);
     $burner->chk_syntax(@_);
 }
 
@@ -451,20 +451,33 @@ B<Notes:> NONE.
 =cut
 
 sub _get_subclass {
-    my ($self, $ba) = @_;
-    my $at = Bric::Biz::AssetType->lookup({'id' => $ba->get_element__id});
-    my $which_burner = $at->get_burner() || Bric::Biz::AssetType::BURNER_MASON;
-
-    my $burner_class = "Bric::Util::Burner::";
-    if ($which_burner == Bric::Biz::AssetType::BURNER_MASON) {
-      $burner_class .= "Mason";
-    } elsif ($which_burner == Bric::Biz::AssetType::BURNER_TEMPLATE) {
-      $burner_class .= "Template";
+    my ($self, $asset) = @_;
+    my $burner_class = 'Bric::Util::Burner::';
+    my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id});
+    if ($at) {
+	# Easy to get it
+	my $b = $at->get_burner || BURNER_MASON;
+	$burner_class .= $b == BURNER_MASON ? 'Mason' : 'Template';
+    } else {
+	 # There is no asset type. It could be a template. Find out.
+	$asset->key_name eq 'formatting'
+	  || die $gen->new({msg => 'No element associated with asset.'});
+	# Okay, it's a template. Figure out the proper burner from the file name.
+	my $file_name = $asset->get_file_name;
+	if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
+	    # It's a mason component.
+	    $burner_class .= 'Mason';
+	} elsif ($file_name =~ /\.tmpl$/ || $file_name =~ /\.pl$/) {
+	    # It's an HTML::Template template.
+	    $burner_class .= 'Template';
+	} else {
+	    die $gen->new({msg => 'Cannot determine template burner subclass.'});
+	}
     }
-
     # instantiate the proper subclass and call burn_one()
-    return $burner_class->new($self);
+    return ($burner_class->new($self), $at);
 }
+
 
 1;
 __END__
