@@ -8,7 +8,7 @@
   debug => (QA_MODE || TEMPLATE_QA_MODE)
  &>
 
-<p class="header">An error occurred while processing your request:</p>
+<p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
 
 <p class="errorMsg"><% $msg %></p>
 % if (TEMPLATE_QA_MODE) {

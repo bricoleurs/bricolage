@@ -124,7 +124,7 @@ if ($default_current) {
 }
 
 my @mon_names = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
-my @month = map { [$_,$mon_names[$_-1]] } ('01'..'12');
+my @month = map { [$_,$lang->maketext($mon_names[$_-1])] } ('01'..'12');
 
 if ($year && $mon && $day ) {
 	$js = ' onChange="';
@@ -136,6 +136,8 @@ if ($year && $mon && $day ) {
 <%once>
 my $mk_time_field = sub {
     my ($p) = @_;
+
+    $p->{label} = $lang->maketext($p->{label});
 
     $m->out('<td '.$p->{width}.' valign=top>'.
             '<span class=label>'.$p->{label}.'</span><br />') unless $p->{compact};

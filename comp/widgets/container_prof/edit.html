@@ -35,15 +35,15 @@ my $x=0;
 % if (scalar(@tiles)) { # suppress labels if no results
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
-  <td width=<% FIELD_INDENT - 20 + $shim %> class="medHeader" valign="middle"><span class="label">Name</span></td>
+  <td width=<% FIELD_INDENT - 20 + $shim %> class="medHeader" valign="middle"><span class="label"><%$lang->maketext('Name')%></span></td>
   <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
-  <td width=<% 578 - FIELD_INDENT - 125 %> class="medHeader" align="center"><span class="label">Content</span></td>
-  <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
-  <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
-  <td width=60 class="medHeader" align="center"><span class="label">Position</span></td>
+  <td width=<% 578 - FIELD_INDENT - 125 %> class="medHeader" align="center"><span class="label"><%$lang->maketext('Content')%></span></td>
   <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
   <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
-  <td width=60 class="medHeader" align="center"><span class="label">Delete</span></td>
+  <td width=60 class="medHeader" align="center"><span class="label"><%$lang->maketext('Position')%></span></td>
+  <td width=1><img src="/media/images/spacer.gif" width=1 height=20 border=0 /></td>
+  <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
+  <td width=60 class="medHeader" align="center"><span class="label"><%$lang->maketext('Delete')%></span></td>
 </tr>
 % } # END if (scalar(@tiles)) {
 
@@ -71,7 +71,7 @@ my $x=0;
       <table border=0 cellpadding=0 cellspacing=1 width=<% 578 - FIELD_INDENT - 125 %>>
       <tr>
     <td width=50 class=medHeader align="right">
-      <span class=label><% ($at->is_related_media) ? "URL:" : "Title:" %></span>
+      <span class=label><% $lang->maketext($at->is_related_media ? "URL" : "Title" )%>:</span>
     </td>
 <%perl>
 my $info = '';
@@ -238,7 +238,7 @@ if ($at->is_related_media) {
 % # DISPLAY IF NO TILES
 % if (!$total)  {
 <tr>
-  <td colspan="8" height="22">&nbsp;&nbsp;&nbsp;&nbsp;No elements have been added.</td>
+  <td colspan="8" height="22">&nbsp;&nbsp;&nbsp;&nbsp;<%$lang->maketext('No elements have been added.')%></td>
 </tr>
 
 % }
@@ -344,7 +344,7 @@ if ($at->is_related_media) {
 % if ($show_summary) {
 <table border=0 width=580>
 <tr>
-  <td align="center" colspan=2 valign="middle"><input type="checkbox" name="container_prof|delete_element" value="Delete"> <span class="burgandyLabel">Delete this Element</span></td>
+  <td align="center" colspan=2 valign="middle"><input type="checkbox" name="container_prof|delete_element" value="Delete"> <span class="burgandyLabel"><%$lang->maketext('Delete this Element')%></span></td>
 </tr>
 <tr>
   <td>

@@ -44,7 +44,7 @@ if ($param->{delete} &&
     $comp->deactivate;
     $comp->save;
     log_event("${type}_deact", $comp);
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext('$disp_name profile [_1] deleted.',$name));
     set_redirect('/admin/manager/element');
 }  else {
     # Make sure the name isn't already in use.
@@ -63,7 +63,7 @@ if ($param->{delete} &&
     elsif (@cs == 1 && defined $param->{element_id}
 	   && $cs[0] != $param->{element_id}) {
 	$no_save = 1 }
-    add_msg("The name $name is already used by another $disp_name.") if $no_save;
+    add_msg($lang->maketext('The name [_1] is already used by another [_2].',$name ,$disp_name)) if $no_save;
 
     # Roll in the changes. Create a new object if we need to pass in an Element
     # Type ID.
@@ -113,8 +113,8 @@ if ($param->{delete} &&
 	# There's a new attribute. Decide what type it is.
 	if ($data_href->{lc $param->{fb_name}}) {
 	    # There's already an attribute by that name.
-	    add_msg("An &quot;$param->{fb_name}&quot; attribute already exists."
-		    . " Please try another name.");
+            add_msg($lang->maketext('An [_1] attribute already exists. "
+                     ."Please try another name.',"&quot;$param->{fb_name}&quot;"));
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -247,11 +247,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2002-12-09 01:45:02 $
+$Date: 2003-02-12 15:53:17 $
 
 =head1 SYNOPSIS
 

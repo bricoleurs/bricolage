@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2003-02-12 15:53:18 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
         if (chk_authz($grp, EDIT)) {
 	    if ($grp->get_permanent) {
 		# Dissallow deletion of permanent groups.
-		add_msg("$disp_name cannot be deleted");
+                add_msg($lang->maketext("[_1] cannot be deleted",$disp_name));
 	    } else {
 		# Deactivate it.
 		$grp->deactivate;
@@ -56,7 +56,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
 	    $grp->save;
 	    log_event('grp_deact', $grp);
 	} else {
-	    add_msg("Permission to delete &quot;" . $grp->get_name . "&quot; denied.");
+            add_msg($lang->maketext('Permission to delete [_1] denied.',"&quot;" . $grp->get_name . "&quot;"));
 	}
 }
 return;

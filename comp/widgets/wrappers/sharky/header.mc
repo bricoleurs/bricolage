@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2003-01-07 01:38:25 $
+$Date: 2003-02-12 15:53:53 $
 
 =head1 SYNOPSIS
 
@@ -33,6 +33,14 @@ $debug => undef
 </%args>
 
 <%init>;
+my @context =  split /\|/, $context;
+for (@context){
+    s/^\s|\s$//g;
+    s /^(\"??)(.+?)(\"??)$/$1.$lang->maketext($2).$3/e;
+}
+
+$context = join ' |',@context;
+
 if ($useSideNav) {
     # first, let's bail if we need to...
     do_queued_redirect();
@@ -89,7 +97,7 @@ foreach my $t (@title) {
 
 <html>
 <head>
-<title><% $title %></title>
+<title><% $lang->maketext($title) %></title>
 <meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
@@ -112,7 +120,7 @@ function init() {
 % if ($no_toolbar) {
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Redirect to the window opening page.
-    location.href = '/login/welcome.html?referer=<% $r->uri %>';
+    location.href = '/login/welcome.html?YUCK=1&referer=<% $r->uri %>';
 } else {
     history.forward(1);
 }
@@ -124,10 +132,10 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 
 <body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">
 <noscript>
-<h1>Warning! Bricolage is designed to run with JavaScript enabled.</h1>
-Using Bricolage without JavaScript can result in corrupt data and system instability.
-Please activate JavaScript in your browser before continuing.
+<h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
+<%$lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.')%>
 </noscript>
+
 
 <!-- begin top table -->
 <table border=0 cellpadding=0 cellspacing=0 width=750>
@@ -218,7 +226,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
   <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td class="<% $tab %>" valign="top" width="11"><img src="<% $curve_left %>" width="11" height="22"></td>
-    <td class="<% $tab %>" width="330"><% $title %></td>
+    <td class="<% $tab %>" width="330"><% $lang->maketext($title) %></td>
     <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
 % if ($useSideNav) {
     <td width="10">&nbsp;</td>

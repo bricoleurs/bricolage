@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-07-11 22:21:56 $
+$Date: 2003-02-12 15:53:44 $
 
 =head1 SYNOPSIS
 
@@ -150,6 +150,7 @@ my @t = localtime;
 # Get a good 6 year range starting from last year.
 my @year = ($t[5]+1899..$t[5]+1905);
 my @mon  = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+$_ = $lang->maketext($_) for (@mon);
 my @day  = ('01'..'31');
 my @hour = ('00'..'23');
 my @min  = ('00'..'59');

@@ -11,7 +11,7 @@
   <tr>
     <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
     <td width="10"><img src="/media/images/spacer.gif" width="10" height="25"></td>
-    <td width="568"><a class="redLinkLarge" href="<% $addition->[1] %>"><% $addition->[0] %> a New <% get_class_info($object)->get_disp_name %></a></td>
+    <td width=568><a class=redLinkLarge href="<% $addition->[1] %>"><% $lang->maketext($addition->[0]." a New ".get_class_info($object)->get_disp_name) %></a></td>
     <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
   </tr>
 </table>
@@ -26,7 +26,7 @@
   # Output the table header.
   foreach my $i (0..$#{$fields}) {
       my $f = $fields->[$i];
-      my $disp = shift @$field_disp;
+      my $disp = $lang->maketext(shift @$field_disp);
 
       my ($aclass, $thclass);
       if ($sortBy eq $f) {
@@ -105,7 +105,7 @@
 %     if ($empty_search) {
   <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>">&nbsp;</td></tr>
 %     } else {
-  <tr><td colspan="<% scalar @$fields %>"style="border-style:solid; border-color:#cccc99;">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
+  <tr><td colspan="<% scalar @$fields %>"><%$lang->maketext("No ".lc(get_class_info($object)->get_plural_name)." were found") %></td></tr>
 %     }
 % }
 </table>
@@ -119,7 +119,7 @@ my $page_link = sub {
     $class ||= 'subHeader';
     my $offset = ($page_num - 1) * $limit;
     return qq{ <a href="$url?listManager|set_offset_cb=$offset" } .
-      qq{class="redLinkLarge"><span class="$class">$label</span></a> };
+      qq{class="redLinkLarge"><span class="$class">$lang->maketext($label)</span></a> };
 };
 </%once>
 

@@ -22,7 +22,7 @@ if ($param->{delete}) {
     $contrib->save;
     log_event("${type}_deact", $contrib);
     my $name = "&quot;" . $contrib->get_name . "&quot;";
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
     set_redirect('/admin/manager/contrib');
     return;
 } else {# Roll in the changes.
@@ -95,7 +95,7 @@ if ($param->{delete}) {
 	$param->{contrib_id} = $contrib->get_id;
 	if ($field eq "$widget|save_cb") {
 	    # Record a message and redirect if we're saving
-	    add_msg("$disp_name profile $name saved.");
+            add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
 	    log_event("${type}_save", $contrib);
 	    clear_state("contrib_profile");
 	    set_redirect('/admin/manager/contrib');
@@ -132,11 +132,11 @@ if ($param->{delete}) {
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-04-10 19:04:24 $
+$Date: 2003-02-12 15:53:32 $
 
 =head1 SYNOPSIS
 

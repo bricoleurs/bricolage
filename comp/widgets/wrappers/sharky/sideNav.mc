@@ -39,7 +39,7 @@ my $printLink = sub {
     if ($style =~ /Bold/ && !$isLink) {
        $out .= qq {<span class="$style">$caption</span><br />};
     } else {
-        $out .= qq {<a href="#" class="$style" onClick="return doLink('$href')">$caption</a><br />};
+        $out .= qq {<a href="#" class="$style" onClick="return doLink('$href')">} . $lang->maketext($caption) .'</a><br />';
     }
     return $out;
 };
@@ -172,7 +172,7 @@ foreach my $wf (@$workflows) {
             <tr>
               <td><img src="/media/images/spacer.gif" width=<% $workflowIndent %> height=1></td>
               <td>
-                <span class=workflowHeader>Actions</span><br />
+                <span class=workflowHeader><% $lang->maketext('Actions') %></span><br />
 %               if ($wf->{type} == TEMPLATE_WORKFLOW) {
                    <% &$printLink("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}") %>
                    <% &$printLink("/workflow/manager/templates/$wf->{id}", $uri, "Find $pl_disp->{formatting}") %>
@@ -188,7 +188,7 @@ foreach my $wf (@$workflows) {
 %               }
 % # desks
                 <img src="/media/images/spacer.gif" width=105 height=1>
-                <span class=workflowHeader>Desks</span><br />
+                <span class=workflowHeader><% $lang->maketext('Desks') %></span><br />
                 <%perl>
                   foreach my $d (@{$wf->{desks}}) {
                       next unless chk_authz(0, READ, 1, @{ $d->[2] });
@@ -236,7 +236,7 @@ foreach my $wf (@$workflows) {
         <a href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=0" %>')"><img src="/media/images/red_arrow_open.gif" width=16 height=11 border=0 hspace=4></a>
       </td>
       <td class=sideNavAdminCell <% $tabHeight %> valign="middle" width=126>
-        <a class=sideNavHeaderBoldWhite href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=0" %>')">ADMIN</a>
+        <a class=sideNavHeaderBoldWhite href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=0" %>')"><% $lang->maketext('ADMIN') %></a>
       </td>
     </tr>
 
@@ -252,7 +252,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')">
         <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
-        <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')">SYSTEM</a>
+        <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=0" %>')"><% $lang->maketext('SYSTEM') %></a>
       </td>
     </tr>
 
@@ -285,7 +285,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell <% $tabHeight %> width=10><img src="/media/images/spacer.gif" width=10 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=140><a href="#"  href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=1" %>')">
         <img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>
-        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=1" %>')">SYSTEM</a>
+        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|adminSystem_cb=1" %>')"><% $lang->maketext('SYSTEM') %></a>
       </td>
     </tr>
     </table>
@@ -302,7 +302,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell <% $tabHeight %> width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')">
         <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
-        <a class=sideNavHeaderBold href="#"  onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')">PUBLISHING</a>
+        <a class=sideNavHeaderBold href="#"  onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=0" %>')"><% $lang->maketext('PUBLISHING') %></a>
       </td>
     </tr>
 
@@ -335,7 +335,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell <% $tabHeight %> width=10><img src="/media/images/spacer.gif" width=10 height=2></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=140><a href="#"  onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=1" %>')">
         <img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>
-        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=1" %>')">PUBLISHING</a>
+        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|adminPublishing_cb=1" %>')"><% $lang->maketext('PUBLISHING') %></a>
       </td>
     </tr>
     </table>
@@ -352,7 +352,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell <% $tabHeight %> width=9><img src="/media/images/spacer.gif" width=9 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=141><a href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')">
         <img src="/media/images/dkgreen_arrow_open.gif" width=13 height=9 border=0></a>
-        <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')">DISTRIBUTION</a>
+        <a class=sideNavHeaderBold href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=0" %>')"><% $lang->maketext('DISTRIBUTION') %></a>
       </td>
     </tr>
 
@@ -378,7 +378,7 @@ foreach my $wf (@$workflows) {
       <td class=sideNavInactiveCell <% $tabHeight %> width=10><img src="/media/images/spacer.gif" width=10 height=1></td>
       <td class=sideNavInactiveCell <% $tabHeight %> width=140><a href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=1" %>')">
         <img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>
-        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=1" %>')">DISTRIBUTION</a>
+        <a class=sideNavHeader href="#" onClick="return doNav('<% $r->uri . "?nav|distSystem_cb=1" %>')"><% $lang->maketext('DISTRIBUTION') %></a>
       </td>
     </tr>
     </table>
@@ -395,7 +395,7 @@ foreach my $wf (@$workflows) {
     </tr>
     <tr>
       <td class=sideNavAdminCell <% $tabHeight %> width=18><a href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=1" %>')"><img src="/media/images/white_arrow_closed.gif" width=8 height=13 border=0 hspace=5></a></td>
-      <td class=sideNavActiveCell <% $tabHeight %> width=132><a class=sideNavHeaderBoldWhite href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=1" %>')">ADMIN</a></td>
+      <td class=sideNavActiveCell <% $tabHeight %> width=132><a class=sideNavHeaderBoldWhite href="#" onClick="return doNav('<% $r->uri . "?nav|admin_cb=1" %>')"><% $lang->maketext('ADMIN') %></a></td>
     </tr>
   </table>
 % }
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2002-10-23 00:02:13 $
+$Date: 2003-02-12 15:53:54 $
 
 </%doc>

@@ -23,7 +23,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Template Type:&nbsp;</span></td>
+    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Template Type') %>:&nbsp;</span></td>
     <td width="470">&nbsp;<% $fa->get_tplate_type_string %></td>
   </tr>
   <tr>
@@ -32,10 +32,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
 % if ($fa->get_tplate_type == Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
-    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Asset Type') %>:&nbsp;</span></td>
     <td width="470">&nbsp;<% $fa->get_element_name %></td>
 % } else {
-    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Template Name:&nbsp;</span></td>
+    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Template Name') %>:&nbsp;</span></td>
     <td width="470">&nbsp;<% $fa->get_name %></td>
 % }
   </tr>
@@ -43,7 +43,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
   </tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Output Channel:&nbsp;</span></td>
+    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channel') %>:&nbsp;</span></td>
     <td width="470">&nbsp;<% $fa->get_output_channel_name %></td>
   </tr>
   <tr>
@@ -51,7 +51,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+    <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
     <td width="470">&nbsp;<% $fa->get_uri %></td>
   </tr>
   <tr>
@@ -94,7 +94,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <table border=0 cellpadding=0 cellspacing=0 width=578>
     <tr>
       <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td width=<% FIELD_INDENT %> align="right" class=medHeader><span class=label>Element:&nbsp;</span></td>
+      <td width=<% FIELD_INDENT %> align="right" class=medHeader><span class=label><% $lang->maketext('Element') %>:&nbsp;</span></td>
       <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
       <td width=<% 577 - FIELD_INDENT %>>
 	<% $at->get_name %>
@@ -105,7 +105,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % if (@{$at->get_data}) {
     <tr>
       <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td align="right" class=medHeader><span class=label>Data Elements:&nbsp;</span></td>
+      <td align="right" class=medHeader><span class=label><% $lang->maketext('Data Elements') %>:&nbsp;</span></td>
       <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
       <td>
 % my $comma = '';
@@ -122,7 +122,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 % if (@{$at->get_containers}) {
     <tr>
       <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td align="right" class=medHeader><span class=label>Container Elements:&nbsp;</span></td>
+      <td align="right" class=medHeader><span class=label><% $lang->maketext('Container Elements') %>:&nbsp;</span></td>
       <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
       <td>
 % my $comma = '';

@@ -24,7 +24,7 @@ if ($param->{delete}) {
     # Deactivate it.
     $oc->deactivate;
     log_event('output_channel_deact', $oc);
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
     $oc->save;
     set_redirect('/admin/manager/output_channel');
 } else {
@@ -35,7 +35,7 @@ if ($param->{delete}) {
     elsif (@ocs == 1 && !defined $oc_id) { $used = 1 }
     elsif (@ocs == 1 && defined $oc_id
 	   && $ocs[0] != $oc_id) { $used = 1 }
-    add_msg("The name $name is already used by another $disp_name.") if $used;
+    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name));
 
     # Set the basic properties.
     $oc->set_description( $param->{description} );
@@ -100,7 +100,7 @@ if ($param->{delete}) {
 
 	$oc->save;
 	log_event('output_channel_save', $oc);
-	add_msg("$disp_name profile $name saved.");
+        add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
 	set_redirect('/admin/manager/output_channel');
     } else {
 	$oc->save;

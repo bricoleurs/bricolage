@@ -10,7 +10,7 @@ if ($show_summary) {
 </%perl>
 
 <& '/widgets/wrappers/sharky/table_top.mc',
-   caption => "$field Field Text",
+   caption => $lang->maketext("[_1] Field Text",$field),
    number  => ++$i,
 &>
 
@@ -30,7 +30,7 @@ if ($show_summary) {
                                'useTable' => 0 &>
 </td>
 <td>
-Columns&nbsp;
+<%$lang->maketext('Columns')%>&nbsp;
 </td>
 <td>
 <& '/widgets/profile/text.mc', 'name'    => $widget.'|rows',
@@ -39,7 +39,7 @@ Columns&nbsp;
                                'useTable' => 0 &>
 </td>
 <td>
-Rows 
+<%$lang->maketext('Rows')%>
 </td>
 <td>
 <input type="image" src="/media/images/resize_lgreen.gif" border=0 name="<% $widget %>|resize_cb" value="Resize">
@@ -63,7 +63,7 @@ Rows
 <& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
                                 'value'   => "\n",
                                 'checked' => $sep eq "\n" &>
-One blank line
+<%$lang->maketext('One blank line')%>
 </td>
 <td>
 <& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
@@ -99,8 +99,8 @@ One blank line
 <td>
 <img src="/media/images/spacer.gif" width=10 height=1>
 </td>
-<td>Words<br /><input type="text" name="words" size=5 value="<% $words %>" /></td>
-<td>Characters<br /><input type="text" name="chars" size=5 value="<% $bytes %>" /></td>
+<td><%$lang->maketext('Words')%><br /><input type="text" name="words" size=5 value="<% $words %>" /></td>
+<td><%$lang->maketext('Characters')%><br /><input type="text" name="chars" size=5 value="<% $bytes %>" /></td>
   <td><a href="#" onClick="return wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')"><img src="/media/images/recount_lgreen.gif" border=0></a></td>
 </tr>
 </table>

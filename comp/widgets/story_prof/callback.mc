@@ -44,15 +44,16 @@ my $save_data = sub {
             my $msg = $story->check_uri($uid);
             if ($msg) {
                 if ($old_slug) {
-                    add_msg("The slug has been reverted to '$old_slug', as " .
-                            "the slug '$param->{slug}' caused this story " .
-                            "to have a URI conflicting with that of story " .
-                            "'$msg'.");
+                    
+                    add_msg(lang->maketext("The slug has been reverted to [_1], as " .
+                             "the slug [_2] caused this story " .
+                             "to have a URI conflicting with that of story " .
+                             "[_3].","'$old_slug'","'$param->{slug}'","'$msg'"));
                     $story->set_slug($old_slug);
                 } else {
-                    add_msg("The slug, category and cover date you selected " .
-                            "would have caused this story to have a URI " .
-                            "conflicting with that of story '$msg'.");
+                    add_msg($lang->maketext("The slug, category and cover date you selected " .
+                             "would have caused this story to have a URI " . 
+                             "conflicting with that of story [_1].","'$msg'"));
                 }
                 $data_errors = 1;
             }
@@ -96,14 +97,14 @@ my $save_data = sub {
         my $msg = $story->check_uri($uid);
         if ($msg) {
             if ($old_date) {
-                add_msg("The cover date has been reverted to $fold_date, " .
-                        "as it caused this story to have a URI conflicting " .
-                        "with that of story '$msg'.");
+                add_msg($lang->maketext("The cover date has been reverted to [_1], " .
+                         "as it caused this story to have a URI conflicting " .
+                         "with that of story '[_2].",$old_date,"'$msg'"));
                 $story->set_cover_date($old_date);
             } else {
-                add_msg("The slug, category and cover date you selected " .
-                        "would have caused this story to have a URI " .
-                        "conflicting with that of story '$msg'.");
+                add_msg($lang->maketext("The slug, category and cover date you selected " .
+                         "would have caused this story to have a URI " .
+                         "conflicting with that of story [_1].","'$msg'"));
             }
             $data_errors = 1;
         }
@@ -148,7 +149,7 @@ my $handle_delete = sub {
     $story->deactivate;
     $story->save;
     log_event("story_deact", $story);
-    add_msg("Story &quot;" . $story->get_title . "&quot; deleted.");
+    add_msg($lang->maketext("Story [_1] deleted.","&quot;" . $story->get_title . "&quot;"));
 };
 
 ################################################################################
@@ -171,7 +172,7 @@ my $handle_revert = sub {
     my $version = $param->{"$widget|version"};
     $story->revert($version);
     $story->save();
-    add_msg("Story &quot;" . $story->get_title . "&quot; reverted to V.$version.");
+    add_msg($lang->maketext("Story [_1] reverted to V.[_2].","&quot;" . $story->get_title . "&quot;",$version));
     clear_state($widget);
 };
 
@@ -191,7 +192,7 @@ my $handle_save = sub {
         # Save the story.
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved.");
+        add_msg($lang->maketext("Story [_1] saved.","&quot;" . $story->get_title . "&quot;"));
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -253,8 +254,7 @@ my $handle_checkin = sub {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
-                    "shelved.");
+        add_msg($lang->maketext("Story [_1] saved and shelved.","&quot;" . $story->get_title . "&quot;"));
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -288,8 +288,7 @@ my $handle_checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
-                "checked in to &quot;$dname&quot;.");
+        add_msg($lang->maketext("Story [_1] saved and checked in to [_2].","&quot;" . $story->get_title . "&quot;", "&quot;$dname&quot;"));
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -315,8 +314,7 @@ my $handle_checkin = sub {
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
-                "moved to &quot;$dname&quot;.");
+        add_msg($lang->maketext("Story [_1] saved and moved to [_2].","&quot;" . $story->get_title . "&quot;","&quot;$dname&quot;"));
     }
 
     # Publish the story, if necessary.
@@ -362,7 +360,7 @@ my $handle_save_stay = sub {
         $story->activate;
         $story->save;
         log_event(($new ? 'story_create' : 'story_save'), $story);
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved.");
+        add_msg($lang->maketext("Story [_1] saved.","&quot;" . $story->get_title . "&quot;"));
     }
 };
 
@@ -376,7 +374,7 @@ my $handle_cancel = sub {
     log_event('story_cancel_checkout', $story);
     clear_state($widget);
     set_redirect("/");
-    add_msg("Story &quot;" . $story->get_title . "&quot; check out canceled.");
+    add_msg($lang->maketext("Story [_1] check out canceled.","&quot;" . $story->get_title . "&quot;"));
 };
 
 ################################################################################
@@ -484,7 +482,7 @@ my $handle_create = sub {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg("Story &quot;" . $story->get_title . "&quot; created and saved.");
+    add_msg($lang->maketext("Story [_1] created and saved.", "&quot;" . $story->get_title . "&quot;"));
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -526,7 +524,7 @@ my $handle_delete_cat = sub {
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         log_event('story_del_category', $story, { Category => $cat->get_name });
-        add_msg("Category &quot;" . $cat->get_name . "&quot; disassociated.");
+        add_msg($lang->maketext("Category [_1] disassociated.","&quot;" . $cat->get_name . "&quot;"));
     }
     set_state_data($widget, 'story', $story);
 };
@@ -555,8 +553,7 @@ my $handle_add_category = sub {
         my $msg = $story->check_uri(get_user_id);
         if ($msg) {
             $story->delete_categories([ $cat_id ]);
-            add_msg("The category was not added, as it would have caused a " .
-                    "URI clash with story '$msg'.");
+            add_msg($lang->maketext("The category was not added, as it would have caused a URI clash with story [_1].","'$msg'"));
             $story->save();
             set_state_data($widget, 'story', $story);
             return;
@@ -564,7 +561,7 @@ my $handle_add_category = sub {
         $story->save();
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
+        add_msg($lang->maketext("Category [_1] added.","&quot;" . $cat->get_name . "&quot;"));
     }
     set_state_data($widget, 'story', $story);
 };
@@ -731,8 +728,7 @@ my $save_contrib = sub {
             delete $existing->{$contrib_id};
             log_event('story_del_contrib', $story,
                       { Name => $contrib->get_name });
-            add_msg('Contributor &quot;' . $contrib->get_name .
-                    "&quot; disassociated.");
+            add_msg($lang->maketext('Contributor [_1] disassociated.','&quot;' . $contrib->get_name . '&quot;'));
         }
     }
 
@@ -841,8 +837,7 @@ my $handle_checkout = sub {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg("Permission to checkout &quot;" . $ba->get_name .
-                    "&quot; denied");
+            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $ba->get_name . "&quot;"));
         }
     }
 
@@ -889,8 +884,7 @@ my $handle_recall = sub {
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
             log_event('story_checkout', $ba);
         } else {
-            add_msg("Permission to checkout &quot;" . $ba->get_name
-                    . "&quot; denied");
+            add_msg($lang->maketext("Permission to checkout [_1] denied","&quot;" . $ba->get_name . "&quot;"));
         }
     }
 

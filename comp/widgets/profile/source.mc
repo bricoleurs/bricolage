@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-02-12 15:53:36 $
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,7 @@ if ($param->{delete}) {
     # Deactivate it.
     $source->deactivate;
     log_event("${type}_deact", $source);
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
     $source->save;
 } else {
     my $source_id = $param->{"${type}_id"};
@@ -54,7 +54,7 @@ if ($param->{delete}) {
     elsif (@sources == 1 && !defined $source_id) { $used = 1 }
     elsif (@sources == 1 && defined $source_id
 	   && $sources[0] != $source_id) { $used = 1 }
-    add_msg("The name $name is already used by another $disp_name.") if $used;
+    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
 
     # Roll in the changes.
     if ($param->{org}) {
@@ -74,7 +74,7 @@ if ($param->{delete}) {
 	$source->set_source_name($param->{source_name});
 	$source->save;
 	log_event($type . (defined $param->{source_id} ? '_save' : '_new'), $source);
-	add_msg("$disp_name profile $name saved.");
+        add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
     }
 }
 # Save changes and redirect back to the manager.

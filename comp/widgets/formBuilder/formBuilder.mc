@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-09 22:29:47 $
+$Date: 2003-02-12 15:53:17 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -90,7 +90,7 @@ if ($agent->{browser} eq "Netscape") {
 
 # build the numFields select box
 if ($numFields != -1) {
-	$numFieldsTxt = '<span class=label>Position:</span><br><select name=fb_position size=1>';
+        $numFieldsTxt = '<span class=label>'. $lang->maketext('Position') .':</span><br><select name=fb_position size=1>';
 	for my $i (1 .. $numFields+1) {
 		$numFieldsTxt .= "<option value=$i";
 		$numFieldsTxt .= " selected" if ($i == $numFields+1);
@@ -131,54 +131,62 @@ var cancelValidation = false
 var text_table = '<form name=fb_form target="<% $target %>"><input type=hidden name=fb_type value=text>'
 text_table    += "<table width=330 cellpadding=3>"
 text_table    += "    <tr>"
-text_table    += '    <td valign=top width=170><span class=label>Name:</span><br />'
+text_table    += '    <td valign=top width=170><span class=label> <% $lang->maketext('Name') %>:</span><br />'
 text_table    += '    <input type=text name=fb_name size=20 <% $textStyle %>></td>'
-text_table    += '    <td valign=top width=160><span class=label>Size:</span><br />'
+text_table    += '    <td valign=top width=160><span class=label><% $lang->maketext('Size') %>:</span><br />'
 text_table    += '    <input type="text" name="fb_size" value="32" size="3"></td>'
 text_table    += "    </tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += "    <tr><td valign=top width=170>"
-text_table    += '    <span class=label>Label:</span><br />'
+text_table    += '    <span class=label><% $lang->maketext('Label')%>:</span><br />'
 text_table    += '    <input type=text name=fb_disp size=20 <% $textStyle %>></td>'
-text_table    += '    <td valign=top width=160><span class=label>Maximum size:</span><br />'
+text_table    += '    <td valign=top width=160><span class=label><% $lang->maketext('Maximum size')%>:</span><br />'
 text_table    += '    <input type="text" name="fb_maxlength" value="32" size="3">'
 text_table    += "    </td></tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += '    <tr><td>'
-text_table    += '    <span class=label>Default Value:</span><br />'
+text_table    += '    <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
 text_table    += '    <input type=text name=fb_value size=20 <% $textStyle %>>'
 text_table    += "    </td></tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += '    <tr><td>'
 text_table    += '<% $numFieldsTxt %>'
 text_table    += '    </td><td>'
-% $m->out ( qq {text_table    += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
+%if ($useRequired){
+text_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
 text_table    += '    </td><td>'
-% $m->out ( qq {text_table    += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useQuantifier){
+text_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 text_table    += "    </td></tr>"
 text_table    += "</table></form>&nbsp;"
 
 var radio_table = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=radio>"
 radio_table    += "<table width=340 cellpadding=3>"
 radio_table    += "<tr><td valign=top>"
-radio_table    += '	<span class=label>Name:</span><br />'
+radio_table    += '    <span class=label><% $lang->maketext('Name') %>:</span><br />'
 radio_table    += '	<input type=text name=fb_name><br />'
-radio_table    += '	<span class=label>Group Label:</span><br />'
+radio_table    += '    <span class=label><% $lang->maketext('Group Label') %>:</span><br />'
 radio_table    += '	<input type=text name=fb_disp><br />'
-radio_table    += '	<span class=label>Default Value:</span><br />'
+radio_table    += '    <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
 radio_table    += '	<input type=text name=fb_value>'
 radio_table    += '</td>'
 radio_table    += "	<td valign=top>"
-radio_table    += '	<span class=label>Options, Label<br>(one per line):</span><br />'
+radio_table    += '    <span class=label><%$lang->maketext('Options, Label')%><br>(<% $lang->maketext('one per line')%>):</span><br />'
 radio_table    += '	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
 radio_table    += '</td></tr>'
 radio_table    += '</table><table width=340 cellpadding=3>'
 radio_table    += "<tr><td valign=top>"
 radio_table    += '	<% $numFieldsTxt %>'
 radio_table    += '    </td><td>'
-% $m->out ( qq {radio_table    += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
+%if ($useRequired){
+radio_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
 radio_table    += '    </td><td>'
-% $m->out ( qq {radio_table    += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useQuantifier){
+radio_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 radio_table    += "    </td></tr>"
 radio_table    += '</td></tr></table>'
 radio_table    += '</form>&nbsp;'
@@ -186,21 +194,25 @@ radio_table    += '</form>&nbsp;'
 var checkbox_table = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=checkbox>"
 checkbox_table    += "<table width=340 cellpadding=3>"
 checkbox_table    += "<tr><td valign=top>"
-checkbox_table    += "	<span class=label>Name:</span><br />"
+checkbox_table    += " <span class=label><% $lang->maketext('Name') %>:</span><br />"
 checkbox_table    += '	<input type=text name=fb_name>'
 checkbox_table    += '</td></tr>'
 checkbox_table    += '</table><table width=340 cellpadding=3>'
 checkbox_table    += '<tr><td valign=top>'
-checkbox_table    += '	<span class=label>Label:</span><br />'
+checkbox_table    += ' <span class=label><% $lang->maketext('Label') %>:</span><br />'
 checkbox_table    += ' 	<input type=text name=fb_disp>'
 checkbox_table    += "</td></tr></table>"
 checkbox_table    += "<table width=340 cellpadding=3>"
 checkbox_table    += "<tr><td valign=top>"
 checkbox_table    += '	<% $numFieldsTxt %>'
 checkbox_table    += '    </td><td>'
-% $m->out ( qq {checkbox_table    += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
+%if ($useRequired){
+checkbox_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
 checkbox_table    += '    </td><td>'
-% $m->out ( qq {checkbox_table    += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useQuantifier){
+checkbox_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 checkbox_table    += "    </td></tr>"
 checkbox_table    += '</td></tr>'
 checkbox_table    += '</table>'
@@ -209,45 +221,49 @@ checkbox_table    += '</form>&nbsp;'
 var pulldown_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 pulldown_table     += '<table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td valign=top width=170>'
-pulldown_table     += '		<span class=label>Name:</span><br />'
+pulldown_table     += '		<span class=label><%$lang->maketext('Name')%>:</span><br />'
 pulldown_table     += '		<input type=text name=fb_name><br />'
-pulldown_table     += '		<span class=label>Label:</span><br />'
+pulldown_table     += '                <span class=label><% $lang->maketext('Label') %>:</span><br />'
 pulldown_table     += '  	<input type=text name=fb_disp><br />'
-pulldown_table     += '		<span class=label>Default Value:</span><br />'
+pulldown_table     += '                <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
 pulldown_table     += ' 	<input type=text name=fb_value>'
 pulldown_table 	   += '</td><td valign=top width=170>'
-pulldown_table     += '		<span class=label>Option, Label<br />(one per line):</span><br />'
+pulldown_table     += '                <span class=label><% $lang->maketext('Option, Label') %><br />(<% $lang->maketext('one per line') %>):</span><br />'
 pulldown_table 	   += "  	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>"
 pulldown_table     += "</td></tr>"
 pulldown_table     += '</table><table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td>'
 pulldown_table     += '		<% $numFieldsTxt %>'
 pulldown_table     += '    </td><td>'
-% $m->out ( qq {pulldown_table     += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
+%if ($useRequired){
+pulldown_table     += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
 pulldown_table     += '    </td><td>'
-% $m->out ( qq {pulldown_table     += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useQuantifier){
+pulldown_table     += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 pulldown_table     += "</td></tr></table>"
 pulldown_table     += '</form>&nbsp;'
 
 var select_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 select_table 	 += '<table width=340 cellpadding=3>'
 select_table     += '<tr><td valign=top>'
-select_table     += '	<span class=label>Name:</span><br />'
+select_table     += '  <span class=label><% $lang->maketext('Name') %>:</span><br />'
 select_table     += '	<input type=text name=fb_name size=20> <br />'
-select_table 	 += '	<span class=label>Label:</span><br />'
+select_table     += '   <span class=label><% $lang->maketext('Label') %>:</span><br />'
 select_table     += '	<input type=text name=fb_disp size=20><br />'
-select_table  	 += '	<span class=label>Default Value:</span><br />'
+select_table     += '   <span class=label><% $lang->maketext('Default Value') %>:</span><br />'
 select_table     += '	<input type=text name=fb_value size=20>'
 select_table  	 += '</td><td valign=top>'
-select_table 	 += '	<span class=label>Option, Label<br>(one per line):</span><br>'
+select_table     += '   <span class=label><% $lang->maketext('Option, Label') %><br>(<% $lang->maketext('one per line') %>):</span><br>'
 select_table     += '	<textarea rows=<% $textareaRows %> cols=<% $textareaCols %> name=fb_vals></textarea>'
 select_table     += "</td></tr>"
 select_table 	 += '</table><table width=300 border=0 cellpadding=3>'
 select_table     += "<tr><td valign=top"
-select_table 	 += '	<span class=label>Size:</span><br />'
+select_table     += '   <span class=label><% $lang->maketext('Size') %>:</span><br />'
 select_table     += '	<input type=text name=fb_size value=5 size=3>'
 select_table 	 += '</td><td valign=top>'
-select_table     += '	<span class=label>Allow multiple?</span><br />'
+select_table     += '  <span class=label><% $lang->maketext('Allow multiple') %>?</span><br />'
 select_table     += '	<input type=checkbox name=fb_allowMultiple>'
 select_table     += "</td><td>"
 select_table     += '<% $numFieldsTxt %>'
@@ -255,49 +271,61 @@ select_table     += "</td></tr>"
 select_table 	 += '</table><table width=300 border=0 cellpadding=3>'
 select_table     += '    <tr><td>'
 select_table     += '    </td><td>'
-% $m->out ( qq {select_table     += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
-select_table     += '    </td><td>'
-% $m->out ( qq {select_table     += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useRequired){
+select_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
+select_table    += '    </td><td>'
+%if ($useQuantifier){
+select_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 select_table     += '</td></tr></table></form>&nbsp;'
 
 var textarea_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=textarea>"
-textarea_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label>Name:</span><br>'
+textarea_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Name')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_name></td>'
-textarea_table 	   += '<td valign=top><span class=label>Rows:</span><br>'
+textarea_table 	   += '<td valign=top><span class=label><%$lang->maketext('Rows')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_rows value=4 size=3></td>'
-textarea_table 	   += '<td valign=top><span class=label>Max size:</span><br>'
+textarea_table     += '<td valign=top><span class=label><% $lang->maketext('Max size') %>:</span><br>'
 textarea_table     += '<input type=text name=fb_maxlength value="0" size=4 /></td></tr>'
-textarea_table 	   += '<tr><td valign=top><span class=label>Label:</span><br>'
+textarea_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
 textarea_table     += '<input type=text name=fb_disp></td>'
-textarea_table 	   += '<td valign=top><span class=label>Columns:</span><br>'
+textarea_table     += '<td valign=top><span class=label><% $lang->maketext('Columns') %>:</span><br>'
 textarea_table     += '<input type=text name=fb_cols value=40 size=3></td></tr>'
-textarea_table     += '<tr><td colspan=3><span class=label>Default Value:</span><br>'
+textarea_table     += '<tr><td colspan=3><span class=label><% $lang->maketext('Default Value') %>:</span><br>'
 textarea_table     += '<input type=text name=fb_value></td>'
 textarea_table     += "</tr>"
 textarea_table     += '</table><table width=340 cellpadding=3>'
 textarea_table     += "    <tr><td>"
 textarea_table     += '<% $numFieldsTxt %>'
 textarea_table     += '    </td><td>'
-% $m->out ( qq {textarea_table     += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
-textarea_table     += '    </td><td>'
-% $m->out ( qq {textarea_table     += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useQuantifier);
+%if ($useRequired){
+textarea_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
+textarea_table    += '    </td><td>'
+%if ($useQuantifier){
+textarea_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 textarea_table     += '</td></tr></table></form>&nbsp;'
 
 
 var date_table 	= "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=date>"
 date_table     += "<table width=340 cellpadding=3><tr>"
-date_table     += '<td valign=top><span class=label>Name:</span><br>'
+date_table     += '<td valign=top><span class=label><% $lang->maketext('Name') %>:</span><br>'
 date_table     += '<input type=text name=fb_name></td></tr>'
-date_table     += '<tr><td valign=top><span class=label>Caption:</span><br>'
+date_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Caption') %>:</span><br>'
 date_table     += '<input type=text name=fb_disp></td>'
 date_table     += "</tr>"
 date_table     += '</table><table width=300 border=0 cellpadding=3>'
 date_table     += "<tr><td>"
 date_table     += '<% $numFieldsTxt %>'
 date_table     += '    </td><td>'
-% $m->out ( qq {date_table     += '    <span class=label>Required:</span><input type=checkbox name=fb_req>'\n}) if ($useRequired);
-date_table     += '    </td><td>'
-% $m->out ( qq {date_table     += '    <span class=label>Repeatable:</span><input type=checkbox name=fb_quant>'\n}) if ($useRequired);
+%if ($useRequired){
+date_table    += '    <span class=label><% $lang->maketext('Required') %>:</span><input type=checkbox name=fb_req>' 
+%}
+date_table    += '    </td><td>'
+%if ($useQuantifier){
+date_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</span><input type=checkbox name=fb_quant>'
+%}
 date_table     += '</td></tr></table></form>&nbsp;'
 
 <%perl>
@@ -340,43 +368,43 @@ date_table     += '</td></tr></table></form>&nbsp;'
   <tr>
     <td width="140" style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=text onClick="showForm('text')" checked>
-        <b>Text box</b>
+        <b><% $lang->maketext('Text box') %></b>
     </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=radio onClick="showForm('radio')">
-        <b>Radio Buttons</b>
+        <b><% $lang->maketext('Radio Buttons')%> </b>
     </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=checkbox onClick="showForm('checkbox')">
-	<b>Checkbox</b>
+        <b><% $lang->maketext('Checkbox') %></b>
     </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=pulldown onClick="showForm('pulldown')">
-	<b>Pulldown</b>
+        <b><% $lang->maketext('Pulldown') %></b>
     </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=select onClick="showForm('select')">
-	<b>Select</b>
+        <b><% $lang->maketext('Select') %></b>
 	</td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=textarea onClick="showForm('textarea')">
-	<b>Text Area</b>
+        <b><% $lang->maketext('Text Area') %></b>
     </td>
   </tr>
   <tr>
     <td style="border-style:solid; border-color:#cccc99;">
       <input type=radio name=formElement value=date onClick="showForm('date')">
-	<b>Date</b>
+        <b><% $lang->maketext('Date') %></b>
     </td>
   </tr>
 </table>
@@ -408,7 +436,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => 'delete',
-	 vals => { disp => '<span class="burgandyLabel">Delete this Profile</span>',
+         vals => { disp => '<span class="burgandyLabel">'.$lang->maketext('Delete this Profile').'</span>',
 		   props => { type => 'checkbox',
 			      label_after => 1 },
 #		   value => '0'

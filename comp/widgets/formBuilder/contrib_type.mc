@@ -32,7 +32,7 @@ my $name = "&quot;$param->{name}&quot;";
 if ($param->{delete}) { # Deactivate it.
     $grp->deactivate;
     $grp->save;
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
     log_event("${type}_deact", $grp);
     set_redirect('/admin/manager/contrib_type');
 } else {
@@ -66,8 +66,7 @@ if ($param->{delete}) { # Deactivate it.
 	# There's a new attribute. Decide what type it is.
 	if ($data_href->{lc $param->{fb_name}}) {
 	    # There's already an attribute by that name.
-	    add_msg("An &quot;$param->{fb_name}&quot; attribute already exists."
-		    . " Please try another name.");
+            add_msg($lang->maketext('An [_1] attribute already exists. Please try another name.',"&quot;$param->{fb_name}&quot;"));
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -141,11 +140,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-03-09 00:43:01 $
+$Date: 2003-02-12 15:53:16 $
 
 =head1 SYNOPSIS
 

@@ -8,11 +8,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:02 $
+$Date: 2003-02-12 15:53:34 $
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ if ($param->{delete}) {
     # Deactivate it.
     $ct->deactivate;
     log_event("${type}_deact", $ct);
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
 } else {
     # Make sure the name isn't already in use.
     my @cts = $class->list_ids({ name => $param->{name}, active => 'all' });
@@ -58,7 +58,7 @@ if ($param->{delete}) {
     elsif (@cts == 1 && defined $param->{element_type_id}
 	   && $cts[0] != $param->{element_type_id}) {
 	$used = 1 }
-    add_msg("The name $name is already used by another $disp_name.") if $used;
+    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
 
     # Roll in the changes.
     $ct->set_name($param->{name}) unless $used;
@@ -86,7 +86,7 @@ if ($param->{delete}) {
         $ct->set_related_media(defined $param->{related_media} ? 1 : 0);
         $ct->set_biz_class_id($param->{biz_class_id})
           if defined $param->{biz_class_id};
-        add_msg("$disp_name profile $name saved.") unless $used;
+        add_msg($lang->maketext("$disp_name profile [_1] saved.",$name)) unless $used;
         log_event($type . '_save', $ct);
     }
 }

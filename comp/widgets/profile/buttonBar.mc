@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-11-27 20:46:44 $
+$Date: 2003-02-12 15:53:31 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -92,7 +92,7 @@ if ($versions) {
 
 <table width="580" border="0" cellpadding="0" cellspacing="0">
 <tr>
-  <td align="center" colspan="3" valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel">Delete this Profile</span></td>
+  <td align="center" colspan="3" valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel"><% $lang->maketext('Delete this Profile') %></span></td>
 </tr>
 <tr>
   <td class="lightHeader" colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
@@ -134,7 +134,7 @@ if ($work_id) {
   <tr>
 % if ($versions && @$versions > 1) {
     <td valign="middle"><input type="image" src="/media/images/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
-    <td valign="middle">&nbsp;to <% $versionText %></td>
+    <td valign="middle">&nbsp;<% $lang->maketext('to') %> <% $versionText %></td>
     <td valign="middle"><input type="image" src="/media/images/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
 % } else {
   <td>&nbsp;</td>

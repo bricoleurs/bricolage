@@ -23,9 +23,9 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 
   <td class="darkHeader" valign="top" width="13"><img src="/media/images/666633_curve_left.gif" width="13" height="18"></td>
 % unless ($advanced_search) {
-  <td class="darkHeader" width=556>SEARCH [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink">Advanced Search</a> ]</td>
+<td class=darkHeader width=556><% $lang->maketext('SEARCH') %> [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink"><%$lang->maketext('Advanced Search')%></a> ]</td>
 % } else {
-  <td class="darkHeader" width=556>ADVANCED SEARCH [ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink">Simple Search</a> ]</td>
+  <td class=darkHeader width=556><% $lang->maketext('ADVANCED SEARCH') %>[ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink"><% $lang->maketext('Simple Search') %></a> ]</td>
 % }
   <td class="darkHeader" valign="top" width="13" align="right"><img src="/media/images/666633_curve_right.gif" width="13" height="18"></td>
 </tr>
@@ -52,7 +52,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
 % } else {
               <tr>
-                <td align="right"><span class=label>Title:</span></td>
+                <td align="right"><span class=label><% $lang->maketext('Title') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc,
                      name     => $widget.'|title',
@@ -61,7 +61,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>             
               <tr>
-                <td align="right"><span class=label>URI:</span></td>
+                <td align="right"><span class=label><% $lang->maketext('URI') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc,
                      name     => $widget.'|primary_uri',
@@ -70,7 +70,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>             
               <tr>
-                <td align="right"><span class=label>Keyword:</span></td>
+                <td align="right"><span class=label><% $lang->maketext('Keyword') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc,
                      name     => $widget.'|keyword',
@@ -79,7 +79,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>
               <tr>
-                <td align="right"><span class=label>Category URI:</span></td>
+                <td align="right"><span class=label><% $lang->maketext('Category URI') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc,
                      name     => $widget.'|category_uri',
@@ -88,7 +88,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>             
               <tr>
-                <td align="right"><span class=label>Teaser:</span></td>
+                <td align="right"><span class=label><% $lang->maketext('Teaser') %>:</span></td>
                 <td>
                   <& /widgets/profile/text.mc, 
                      name     => $widget.'|teaser',
@@ -99,8 +99,8 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 % my @cur   = localtime; $cur[5] += 1900; $cur[4]++;
 % my $today = sprintf('%04d-%02d-%02d %02d:%02d:%02d', @cur[5,4,3,2,1,0]);
               <tr>
-                <td colspan=2><span class=label>Cover&nbsp;Date</span><br />
-                  From: 
+                <td colspan=2><span class=label><%$lang->maketext('Cover Date')%></span><br />
+                  <% $lang->maketext('From') %>: 
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|cover_date_start",
                      indent     => 1,
@@ -111,7 +111,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  To: 
+                  <% $lang->maketext('To') %>: 
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|cover_date_end",
                      indent     => 1,
@@ -125,8 +125,8 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>
               <tr>
-                <td  colspan=2><span class=label>Publish&nbsp;Date</span><br />
-                  From: 
+                <td  colspan=2><span class=label><% $lang->maketext('Publish Date') %></span><br />
+                  <% $lang->maketext('From') %>:
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|publish_date_start",
                      indent     => 1,
@@ -137,7 +137,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  To: 
+                  <% $lang->maketext('To') %>:
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|publish_date_end",
                      indent     => 1,
@@ -151,8 +151,8 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                 </td>
               </tr>
               <tr>
-                <td colspan=2><span class=label>Expire&nbsp;Date</span><br />
-                  From: 
+                <td colspan=2><span class=label><% $lang->maketext('Expire Date') %></span><br />
+                  <% $lang->maketext('From') %>:
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|expire_date_start",
                      indent     => 1,
@@ -163,7 +163,7 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  To: 
+                  <% $lang->maketext('To') %>:
                   <& '/widgets/select_time/select_time.mc', 
                      base_name  => "$widget|expire_date_end",
                      indent     => 1,

@@ -7,15 +7,15 @@ dhandler -- Implement the user workspace.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2003-02-12 15:53:55 $
 
 =head1 DESCRIPTION
 
-<description>
+Use workspace dhandler.
 
 =cut
 </%doc>
@@ -27,19 +27,18 @@ my $widget = 'workspace';
 
 %#-- Init Section --#
 <%init>
-my $u = get_user_object();
 my $id = get_user_id();
-my $title = 'Workspace';
-$title .= ' for ' . $u->format_name if $u;
 </%init>
 
 %#-- Begin HTML --#
 <%perl>;
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 'title' => $title,
+	 'title' => $lang->maketext('Workspace for [_1]',
+                                    get_user_object->format_name),
 	  context => 'My Workspace');
 
-$m->out(qq{<form method="post" action="} . $r->uri . qq {" name="desk" onSubmit="return confirmChanges(this)">});
+$m->out(qq{<form method="post" action="} . $r->uri .
+ qq {" name="desk" onSubmit="return confirmChanges(this)">});
 
 $m->comp('/widgets/desk/desk.mc',
 	 user_id => $id,

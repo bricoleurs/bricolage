@@ -120,6 +120,8 @@ Folks who have submitted patches include:
 
 =item Geoff Richards
 
+=item ClE<aacute>udio Valente
+
 =back
 
 Friends who have spotted bugs include:

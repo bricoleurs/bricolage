@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-02-12 15:53:37 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ if ($param->{delete}) {
     $c->set('__WORKFLOWS__', 0);
     log_event("${type}_deact", $wf);
     set_redirect('/admin/manager/workflow');
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
 } else {
     my $wf_id = $param->{"${type}_id"};
     # Make sure the name isn't already in use.
@@ -58,7 +58,7 @@ if ($param->{delete}) {
     elsif (@wfs == 1 && !defined $wf_id) { $used = 1 }
     elsif (@wfs == 1 && defined $wf_id
 	   && $wfs[0] != $wf_id) { $used = 1 }
-    add_msg("The name $name is already used by another $disp_name.") if $used;
+    add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
 
     # Roll in the changes.
     $wf->set_name($param->{name}) unless $used;
@@ -118,7 +118,7 @@ if ($param->{delete}) {
 	    $wf->activate;
 	    $wf->save;
 	    $c->set('__WORKFLOWS__', 0);
-	    add_msg("$disp_name profile $name saved.");
+            add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
 	    log_event($type . '_save', $wf);
 	    set_redirect('/admin/manager/workflow');
 	}

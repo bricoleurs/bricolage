@@ -23,7 +23,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $id %></td>
   </tr>
   <tr>
@@ -32,7 +32,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Asset Type')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_element_name %></td>
   </tr>
   <tr>
@@ -41,7 +41,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Title:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_title %></td>
   </tr>
   <tr>
@@ -50,7 +50,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('URI') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $media->get_uri %></a></td>
   </tr>
   <tr>
@@ -59,7 +59,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Source:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Source') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% Bric::Biz::Org::Source->lookup({ id => $media->get_source__id })->get_source_name %></td>
   </tr>
   <tr>
@@ -68,7 +68,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Description:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_description %></td>
   </tr>
   <tr>
@@ -77,7 +77,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Current Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_version() %></td>
   </tr>
   <tr>
@@ -86,7 +86,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Published Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_published_version() %></td>
   </tr>
   <tr>
@@ -95,7 +95,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Priority:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Priority') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_priority() %></td>
   </tr>
 
@@ -105,7 +105,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Output Channels:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channels') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% join ', ', (map { $_->get_name } $media->get_output_channels) %></td>
   </tr>
 </table>
@@ -119,12 +119,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Download:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Download') %>:&nbsp;</span></td>
   <td width="470">&nbsp;
 % if (my $uri = $media->get_local_uri()) {
     <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
 % } else {
-    No file has been uploaded.
+    <% $lang->maketext('No file has been uploaded') %>
 % }
   </td>
   </tr>
@@ -148,11 +148,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
-  <td width="121" align="right" height="25"><span class=label>Contributors:&nbsp;</span></td>
+  <td width="121" align="right" height="25"><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
   <td width="457">
 <%perl>
 my @existing_contribs = map { $_->get_name } $media->get_contributors;
-$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
+$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;".$lang->maketext('No contributors defined.'));
 </%perl>
   </td>
 </tr>

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-02-12 15:53:36 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ if ($param->{delete}) {
     $s->del;
     $s->save;
     log_event('server_del', $s);
-    add_msg("$disp_name profile $name deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
     # Set the redirection.
     set_redirect("/admin/profile/dest/$param->{dest_id}");
     return;
@@ -62,8 +62,8 @@ if (@dests > 1) { $used = 1 }
 elsif (@dests == 1 && !defined $dest_id) { $used = 1 }
 elsif (@dests == 1 && defined $dest_id
        && $dests[0] != $dest_id) { $used = 1 }
-add_msg("The name $name is already used by another $disp_name in this"
-	. " $dest_name.") if $used;
+add_msg($lang->maketext("The name [_1] is already used by another $disp_name in this"
+	. " $dest_name."),$name) if $used;
 
 # Roll in the changes.
 if (exists $param->{active}) {
@@ -88,7 +88,7 @@ if ($used) {
     $s->set_host_name($param->{host_name});
     $s->save;
     log_event($type . (defined $param->{server_id} ? '_save' : '_new'), $s);
-    add_msg("$disp_name profile $name saved.");
+    add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
     # Set the redirection.
     set_redirect("/admin/profile/dest/$param->{dest_id}");
 }

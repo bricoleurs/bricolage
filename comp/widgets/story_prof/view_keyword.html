@@ -3,7 +3,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption =>  "Category Keywords");
 $m->out("<table border=0 cellpadding=2 cellspacing=0 width=550>");
 foreach my $cat ($story->get_categories) {
-    $m->out(qq{<tr><td width=145 align="right"><span class="label">Category</span></td><td width=405>}
+    $m->out(qq{<tr><td width=145 align="right"><span class="label">}.$lang->maketext('Category').'</span></td><td width=405>'
 	    . qq{<span class=label>} . $cat->get_name
 	    . "</span></td></tr>\n");
     my $flag = '<span class="label">Keywords</span>';

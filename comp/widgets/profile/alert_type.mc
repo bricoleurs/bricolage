@@ -45,7 +45,7 @@ my $save = sub {
 	if (defined $param->{event_type_id}) {
 	    $at->set_event_type_id($param->{event_type_id});
 	    if ($at->name_used) {
-		add_msg("The name $name is already used by another $disp_name.");
+                add_msg($lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name));
 	    } else {
 		$at->save;
 		log_event($type . '_new', $at);
@@ -56,7 +56,7 @@ my $save = sub {
 
     # Make sure the name isn't already in use.
     if ($at->name_used) {
-	add_msg("The name $name is already used by another $disp_name.");
+        add_msg($lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name));
 	return $at;
     }
 
@@ -82,13 +82,13 @@ if ($field eq "$widget|save_cb") {
 	$at->remove;
 	$at->save;
 	log_event("${type}_del", $at);
-	add_msg("$disp_name profile $name deleted.");
+        add_msg($lang->maketext("$disp_name profile [_1] deleted.", $name));
 	set_redirect('/admin/manager/alert_type');
     } else {
 	# Just save it.
 	my $ret = &$save($param, $at, $name);
 	return $ret if $ret;
-	add_msg("$disp_name profile $name saved.");
+        add_msg($lang->maketext("[_1] profile [_2] saved.", $disp_name, $name));
 	set_redirect('/admin/manager/alert_type');
     }
 } elsif ($field eq "$widget|recip_cb") {
@@ -104,7 +104,7 @@ if ($field eq "$widget|save_cb") {
     $at->add_groups( $param->{ctype}, @{ mk_aref($param->{add_groups}) } );
     $at->del_groups( $param->{ctype}, @{ mk_aref($param->{del_groups}) } );
     $at->save;
-    add_msg("$param->{ctype} recipients changed.");
+    add_msg($lang->maketext("[_1] recipients changed.",$param->{ctype}));
     set_redirect("/admin/profile/alert_type/$param->{alert_type_id}");
 }
 
@@ -118,11 +118,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2003-02-12 15:53:30 $
 
 =head1 SYNOPSIS
 

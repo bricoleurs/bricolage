@@ -26,7 +26,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $id %></td>
   </tr>
   <tr>
@@ -34,7 +34,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('Asset Type')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_element_name() %></td>
   </tr>
 <tr>
@@ -42,7 +42,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Current Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_current_version() %></td>
   </tr>
   <tr>
@@ -50,7 +50,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Published Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $media->get_published_version() %></td>
   </tr>
   <tr>
@@ -58,7 +58,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
 % if (my $uri = $media->get_primary_uri) {
 %     if (@ocs == 1) {
   <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $uri %></a></td>
@@ -71,7 +71,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Preview in:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
   <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
   </tr>
 %     }
@@ -143,7 +143,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 <table width=578 cellpadding=2 cellspacing=0>
 <tr>
-  <td width=<% $infoIndent %> valign=top align=right><span class="label">File Path:</span></td>
+  <td width=<% $infoIndent %> valign=top align=right><span class="label"><%$lang->maketext('File Path')%>:</span></td>
   <td width=<% 578 - $infoIndent %>>
     <input type="file" name="<% $widget %>|file" size="30">
   </td>
@@ -158,12 +158,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </td>
 </tr>
 <tr>
-  <td width=150 align=right><span class="label">Download:</span></td>
+  <td width=150 align=right><span class="label"><% $lang->maketext('Download') %>:</span></td>
   <td>
 % if (my $uri = $media->get_local_uri()) {
         <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
 % } else {
-        No file has been uploaded
+        <% $lang->maketext('No file has been uploaded')%>
 % }
         </td>
 </tr>
@@ -199,11 +199,11 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
-  <td width=<% $infoIndent %> align="right"><span class=label>Contributors:</span></td>
+  <td width=<% $infoIndent %> align="right"><span class=label><% $lang->maketext('Contributors') %>:</span></td>
   <td width=<% 578 - $infoIndent - 70 %>>
 <%perl>
 my @existing_contribs = map { $_->get_name } $media->get_contributors;
-$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;No contributors defined.");
+$m->out((scalar(@existing_contribs)) ? "&nbsp;" . join(", ", @existing_contribs) : "&nbsp;".$lang->maketext('No contributors defined'));
 </%perl>
   </td>
   <td width=70><& '/widgets/profile/imageSubmit.mc',

@@ -19,7 +19,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_id %></td>
   </tr>
   <tr>
@@ -29,7 +29,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('Asset Type')%>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_element_name %></td>
   </tr>
   <tr>
@@ -38,7 +38,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Title:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_name %></td>
   </tr>
   <tr>
@@ -47,7 +47,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Description:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_description %></td>
   </tr>
   <tr>
@@ -56,7 +56,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Slug:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Slug') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_slug %></td>
   </tr>
   <tr>
@@ -66,7 +66,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<a href="/workflow/profile/preview/story/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $story->get_primary_uri %></a></td>
   </tr>
   <tr>
@@ -75,7 +75,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Source:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Source') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% Bric::Biz::Org::Source->lookup({ id => $story->get_source__id })->get_source_name %></td>
   </tr>
   <tr>
@@ -84,7 +84,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Categories:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Categories') %>:&nbsp;</span></td>
   <td width="470">&nbsp;
 <%perl>
 my @cats = $story->get_categories;
@@ -102,7 +102,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Cover Date:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Cover Date') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_cover_date %></td>
   </tr>
   <tr>
@@ -111,7 +111,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Publish Date:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Publish Date') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_publish_date %></td>
   </tr>
   <tr>
@@ -120,7 +120,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Expire Date:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Expire Date') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_expire_date %></td>
   </tr>
 
@@ -130,7 +130,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Current Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_current_version %></td>
   </tr>
 
@@ -140,7 +140,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Published Version:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% $story->get_published_version %></td>
   </tr>
 
@@ -150,7 +150,7 @@ $m->out( join(", ", @categories));
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Output Channels:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channels') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<% join ', ', (map { $_->get_name } $story->get_output_channels) %></td>
   </tr>
 
@@ -172,14 +172,14 @@ $m->out( join(", ", @categories));
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
-  <td width=100 class="medHeader"><span class="label">Type</span></td>
+  <td width=100 class="medHeader"><span class="label"><% $lang->maketext('Type') %></span></td>
   <td width=1><img src="/media/images/spacer.gif" width="1" height="20" /></td>
-  <td width=458 class="medHeader"><span class="label">&nbsp;Values</span></td>
+  <td width=458 class="medHeader"><span class="label">&nbsp;<% $lang->maketext('Values') %></span></td>
 </tr>
 </table>
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
-  <td width=121 align=right valign=top><span class=label>Keywords:&nbsp;</span></td>
+  <td width=121 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
   <td width=457 valign=top height="25">
 <%perl>
 my @keywords;
@@ -187,7 +187,7 @@ foreach my $kw ($story->get_keywords) {
     push @keywords, $kw->get_name;
 }
 
-$m->out(scalar(@keywords) ? join(", ", @keywords) : "No keywords defined.");
+$m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
 
 </%perl>
 </tr>
@@ -197,7 +197,7 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : "No keywords defined.");
 </table>
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
-  <td align=right width=121 valign=top><span class=label>Contributors:&nbsp;</span></td>
+  <td align=right width=121 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
   <td width=457 valign=top height="25">
 
 <%perl>
@@ -205,7 +205,7 @@ my @contribs;
 foreach my $cntr ($story->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
-$m->out(scalar(@contribs) ? join(", ", @contribs) : "No contributors defined.");
+$m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
 
 </%perl>
 

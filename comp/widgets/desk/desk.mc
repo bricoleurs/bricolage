@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:37 $
+$Date: 2003-02-12 15:53:13 $
 
 =head1 SYNOPSIS
 
@@ -218,21 +218,21 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                 $desk->save();
 
                 # tell the user this object was baked
-                add_msg("Warning: object '".$obj->get_name.
-                        "' had no associated desk.  It has been ".
-                        "assigned to the '".$desk->get_name."' desk.");
+                add_msg($lang->maketext("Warning: object [_1]' had no associated desk."
+                                       ."  It has been assigned to the [_2]' desk.",
+                                        $obj->get_name, $desk->get_name));
             }
 
 
 
             $desk_id = $desk->get_id;
-            $label = 'Check In to ' . $desk->get_name;
+            $label = $lang->maketext('Check In to [_1]',$desk->get_name);
             $action = 'checkin_cb';
             if ($can_edit) {
                 $vlabel = 'Edit';
                 $pub = $m->scomp('/widgets/profile/checkbox.mc',
                                  name  => "${class}_delete_ids",
-                                 value => $aid) . 'Delete';
+                                 value => $aid) . $lang->maketext('Delete');
             }
         }
         my $elink = $user ? $user : $label ? qq{<a href="} . $r->uri . "?" .
@@ -264,9 +264,9 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                     $obj->set_workflow_id($a_wf->get_id);
                     $obj->save;
 
-                    $msg = "Warning: $name object '".$obj->get_name.
-                      "' had no associated workflow.  It has been ".
-                       "assigned to the '".$a_wf->get_name."' workflow.";
+                    $msg = $lang->maketext("Warning: [_1] object '[_2]' had no associated workflow."
+                                          ."  It has been assigned to the '[_3]' workflow.",
+                                           $name,$obj->get_name,$a_wf->get_name);
 
                     if ($desk) {
                         my @ad = $a_wf->allowed_desks;
@@ -275,9 +275,8 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                             $desk->transfer({'to'    => $st,
                                              'asset' => $obj});
                             $desk->save;
-                            $msg .= "  This change also required that this ".
-                              lc($name)." be moved to the '".$st->get_name.
-                                "' desk";
+                            $msg .= "  ".$lang->maketext("This change also required that this [_1] be"
+                                                        ." moved to the '[_2]' desk",lc($name),$st->get_name);
                         }
                     }
                     add_msg($msg);

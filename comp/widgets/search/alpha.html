@@ -10,9 +10,9 @@
 %   }
 % }
 % if ($let eq '%') {
-[<b>All</b>] 
+[<b><%$lang->maketext('All')%></b>]
 % } else {
-[<a href="<% $url %>?search|alpha_cb=<% '%' %>" class=blackLinkBold>All</a>] 
+[<a href="<% $url %>?search|alpha_cb=<% '%' %>" class=blackLinkBold><%$lang->maketext('All')%></a>]
 % }
   </td>
 </tr>

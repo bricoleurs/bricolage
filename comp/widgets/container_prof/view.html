@@ -9,9 +9,9 @@
 
   <tr>
       <td class="medHeader" width=20><img src="/media/images/spacer.gif" height="18" width="20" /></td>
-      <td width=<% $infoIndent - 20 %> class=medHeader><span class=label>&nbsp;Fields</span> </td>
+      <td width=<% $infoIndent - 20 %> class=medHeader><span class=label>&nbsp;<% $lang->maketext('Fields') %></span> </td>
       <td><img src="/media/images/spacer.gif" width=1 height=1></td>
-      <td colspan="2" class=medHeader width=<% 595 - $infoIndent  %>>&nbsp;<span class=label>Values</span></td>
+      <td colspan="2" class=medHeader width=<% 595 - $infoIndent  %>>&nbsp;<span class=label><% $lang->maketext('Values') %></span></td>
   </tr>
 
   <tr>
@@ -56,7 +56,7 @@
       <td>
 	<img src="/media/images/spacer.gif" height="18" width="1" />
       </td>
-      <td bgcolor="white" colspan=3>No elements are present.</td>
+      <td bgcolor="white" colspan=3><%$lang->maketext('No elements are present.')%></td>
     </tr>
 % }
 

@@ -7,8 +7,7 @@ if ($is_user) {
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "Object Group Permissions", border => 0);
 
-    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access the members of these $grp_pl.");
+    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access the members of these groups.","&quot;$name&quot;"));
     # Get any existing permissions.
     my %perms;
     foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
@@ -33,9 +32,8 @@ if ($is_user) {
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$wf_disp Permissions", border => 0);
-
-    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access assets in these $wf_pl.");
+    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to"
+             ." access assets in these workflows.","&quot;$name&quot;"));
 
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_all_desk_grp_id;
@@ -55,8 +53,8 @@ if ($is_user) {
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$dsk_disp Permissions", border => 0);
 
-    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access assets on these $dsk_pl.");
+    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets"
+             ." on these desks.","&quot;$name&quot;"));
 
     foreach my $dsk ($dsk_pkg->list) {
         my $gid = $dsk->get_asset_grp;
@@ -74,9 +72,8 @@ if ($is_user) {
     # And finally, do it for categories.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$cat_disp Permissions", border => 0);
-
-    $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access assets in these $cat_pl.");
+    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets in these"
+                  ." categories.","&quot;$name&quot;"));
 
     foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
                                               Order => 'description',
@@ -100,8 +97,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 number => $num,
          border => 0);
 
-$m->comp($head_comp, "Grant the members of the following $grp_pl permission "
-	 . "to access the members of the &quot;$name&quot; $grp_disp.");
+$m->comp($head_comp, $lang->maketext("Grant the members of the following groups permission to access"
+                     ." the members of the [_1] group.","&quot;$name&quot;"));
 
 # Get any existing permissions.
 my %perms;

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-06-29 09:08:16 $
+$Date: 2003-02-12 15:53:36 $
 
 =head1 SYNOPSIS
 
@@ -50,7 +50,7 @@ if ($param->{delete}) {
     $mt->deactivate;
     $mt->save;
     log_event("${type}_deact", $mt);
-    add_msg("$disp_name profile $qname deleted.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.",$qname));
     set_redirect("/admin/manager/$type");
     return;
 } else {
@@ -68,7 +68,7 @@ if ($param->{delete}) {
         $used = 1 if (@mts > 1)
             || (@mts == 1 && !defined $mt_id)
             || (@mts == 1 && defined $mt_id && $mts[0] != $mt_id);
-        add_msg("The name $qname is already used by another $disp_name.") if $used;
+        add_msg($lang->maketext("The name [_1] is already used by another $disp_name.",$qname)) if $used;
     }
 
     # Process add_more widget.
@@ -88,11 +88,11 @@ if ($param->{delete}) {
 		} else {
 		    my @addexts = @{[$extension]};
 		    unless ($mt->add_exts(@addexts)) {
-			add_msg("Problem adding '@addexts'");
+                        add_msg($lang->maketext("Problem adding [_1]","'@addexts'"));
 		    }
 		}
 	    } else {
-		add_msg("Extension '$extension' ignored.");
+                add_msg($lang->maketext("Extension [_1] ignored.","'$extension'"));
 	    }
 	}
 	return $usedext;
@@ -103,7 +103,7 @@ if ($param->{delete}) {
 	if (my $ext = $mtids->[$i]) {
 	    my @delexts = @{[$ext]};
 	    unless ($mt->del_exts(@delexts)) {
-		add_msg("Problem deleting '@delexts'");
+                add_msg($lang->maketext("Problem deleting [_1]","'@addexts'"));
 	    }
 	    my $extension = $param->{extension}[$i];
 	    $used_ext += $addext_sub->($mt, $extension, $name);
@@ -134,7 +134,7 @@ if ($param->{delete}) {
     } else {
 	$mt->activate();
 	$mt->save();
-	add_msg("$disp_name profile $qname saved.");
+        add_msg($lang->maketext("$disp_name profile [_1] saved",$qname));
 	unless (defined $mt_id) {
 	    log_event($type . '_new', $mt);
 	} else {

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:58 $
+$Date: 2003-02-12 15:53:33 $
 
 =head1 SYNOPSIS
 
@@ -197,7 +197,7 @@ my $opt_sub = sub {
     my $out = qq{<option value="$k"};
     # select it if there's a match
     $out .= " selected" if (ref $value && $value->{$k}) || $k eq $value;
-    return "$out>$v</option>\n";
+    return "$out>". $lang->maketext( $v ) . "</option>\n";
 };
 
 my $rem_sub = sub {
@@ -230,7 +230,7 @@ my $inpt_sub = sub {
     if ($type ne "checkbox" && $type ne "hidden") {
 	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
 	  . qq{ width="$indent">} : '';
-	$out .= $name ? qq{<span class="$label">$name:</span>}
+        $out .= $name ? qq{<span class="$label">}.$lang->maketext($name).':</span>'
 	  : ($useTable) ? '&nbsp;':'';
 	$out .= &$rem_sub($width, $indent) if $useTable;
 
@@ -244,7 +244,7 @@ my $inpt_sub = sub {
 
 	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
 	  . qq{ width="$indent">} : '';
-	$out .= qq{<span class="label">$name</span>}
+	$out .= qq{<span class="$label">}.$lang->maketext($name).':</span>'
 	  if $name && !$vals->{props}{label_after};
 	$out .= &$rem_sub($width, $indent) if $useTable;
 
@@ -252,12 +252,12 @@ my $inpt_sub = sub {
 	    $out .= qq{<input type="$type" name="$key"$disp_value$extra$js />};
 	} else {
 	    if ($type eq "radio" || $type eq "checkbox") {
-		$out .= ($value) ? " Yes" : " No";
+		$out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
 		$out .= "<br />";
 	    }
 	}
 
-	$out .= qq{ <span class="label">$name</span>&nbsp;}
+	$out .= qq{ <span class="label">} . $lang->maketext($name) . '</span>&nbsp;'
 	  if $name && $vals->{props}{label_after};
     }
 
@@ -286,6 +286,7 @@ my %formSubs = (
 	checkbox => sub {
 	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
 		$label, $readOnly, $agent) = @_;
+            $name = $lang->maketext($name);
 	    my $extra = '';
 	    if (exists $vals->{props}{chk}) {
 		$extra .= ' checked' if $vals->{props}{chk}
@@ -300,6 +301,7 @@ my %formSubs = (
 	textarea => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
 		$label, $readOnly, $agent) = @_;
+            $name = $lang->maketext($name);
 	    my $rows =  $vals->{props}{rows} || 5;
 	    my $cols = $vals->{props}{cols}  || 30;
 
@@ -338,7 +340,7 @@ my %formSubs = (
 		$out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
 		$out .= qq{<td align="right" width="$indent" valign="middle">};
 	    }
-	    $out .= $name ? qq{<span class="$label">$name:</span>} : '';
+            $out .= $name ? qq{<span class="$label">} . $lang->maketext($name) . ':</span>' : '';
 	    $out .= "<br />" if (!$useTable && $name);
 	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
 	      if ($useTable); # && $agent->{browser} eq "Netscape");
@@ -396,7 +398,7 @@ my %formSubs = (
 		$out .= ($readOnly) ? qq{<table border="0" width="$width"><tr><td width=$indent align="right"> }
 	                            : qq{<table border="0" width="$width" cellspacing=0 cellpadding=2><tr><td align="right" width=$indent> };
 	    }
-	    $out .= qq{<span class="radioLabel">$name</span> } if $name;
+	    $out .= qq{<span class="radioLabel">}. $lang->maketext($name) . '</span>' if $name;
 
 	    if ($readOnly) {
 		$out .= "</td><td width=" . ($width - $indent) . ">";

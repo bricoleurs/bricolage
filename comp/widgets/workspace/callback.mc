@@ -48,8 +48,7 @@ if ($field eq "$widget|checkin_cb") {
 		$burn->undeploy($a) if $key eq 'formatting';
 		log_event("${key}_deact", $a);
 	    } else {
-		add_msg("Permission to delete &quot;" . $a->get_name
-			. "&quot; denied.");
+                add_msg($lang->maketext("Permission to delete [_1] denied.","&quot;" . $a->get_name. "&quot;"));
 	    }
 	}
     }
@@ -65,11 +64,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:14 $
+$Date: 2003-02-12 15:53:52 $
 
 =head1 SYNOPSIS
 

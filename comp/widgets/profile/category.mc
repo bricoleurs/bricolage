@@ -20,18 +20,18 @@ if ($field eq "$widget|save_cb") {
     if ($param->{delete} || $param->{delete_cascade}) {
 	if ($id == $root_id) {
 	    # You can't deactivate the root category!
-	    add_msg("$disp_name $name cannot be deleted.");
+            add_msg($lang->maketext("$disp_name [_1] cannot be deleted.",$name));
 	    return $cat;
 	}
 	my ($arg, $msg, $key);
 	if ($param->{delete_cascade}) {
 	    # We're going to delete all subcategories, too.
 	    $arg = { recurse => 1 };
-	    $msg = "$disp_name profile $name and all its $pl_name deleted.";
+            $msg = $lang->maketext("$disp_name profile [_1] and all its $pl_name deleted.",$name);
 	    $key = '_deact_cascade';
 	} else {
 	    # We'll just be deleting this category.
-	    $msg = "$disp_name profile $name deleted.";
+            $lang->maketext("$disp_name profile [_1] deleted.",$name);
 	    $key = '_deact';
 	}
         # Deactivate it.
@@ -62,7 +62,7 @@ if ($field eq "$widget|save_cb") {
                 if (defined($id) and $id == $p_id
                     or grep $_->get_id == $p_id, $cat->children) {
                     add_msg("Parent cannot choose itself or its child as"
-                            . " its parent.  Try a different parent.");
+                            . " its parent. Try a different parent.");
                     return $cat;
                 }
 
@@ -71,14 +71,15 @@ if ($field eq "$widget|save_cb") {
                     my $uri = Bric::Util::Trans::FS->cat_uri(
                       $par->get_uri, $param->{directory}
                     );
-                    add_msg("URI &quot;$uri&quot; is already in use. Please"
-                            . " try a different directory name or Parent.");
+                    add_msg($lang->maketext("Directory name [_1] contains "
+                            . "invalid characters. Please try a different "
+                            . "directory name.","'$param->{directory}'"));
                     return $cat;
                 }
 		if ($param->{directory} =~ /[^\w.-]+/) {
-		    add_msg("Directory name '$param->{directory}' contains " .
-                            "invalid characters. Please try a different " .
-                            "directory name.");
+                    add_msg($lang->maketext("Directory name [_1] contains "
+                            . "invalid characters. Please try a different "
+                            . "directory name.","'$param->{directory}'"));
                     return $cat; 
 		} else {
 		    $cat->set_directory($param->{directory});
@@ -132,11 +133,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-11-04 21:21:43 $
+$Date: 2003-02-12 15:53:31 $
 
 =head1 SYNOPSIS
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-09-26 21:04:33 $
+$Date: 2003-02-12 15:53:55 $
 
 =head1 SYNOPSIS
 
@@ -32,6 +32,8 @@ $rightText => undef
 $border => 1
 </%args>
 <%init>
+$caption =~ s /^\s*|\s{2,}|\s*$//g;
+$caption = $lang->maketext($caption);
 
 my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
 my $borderColor = ($section eq "admin") ? "999966" : "669999";

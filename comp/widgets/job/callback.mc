@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2003-02-12 15:53:19 $
 
 =head1 SYNOPSIS
 
@@ -42,8 +42,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
     if (chk_authz($job, EDIT)) {
 	if ($job->is_pending) {
 	    # It's executing right now. Don't cancel it.
-	    add_msg("Cannot cancel &quot;" . $job->get_name . "&quot; because"
-		    . " it is currently executing.");
+            add_msg($lang->maketext("Cannot cancel [_1] because it is currently executing.","&quot;" . $job->get_name . "&quot;"));
 	} else {
 	    # Cancel it.
 	    $job->cancel;
@@ -51,7 +50,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
 	    log_event('job_cancel', $job);
 	}
     } else {
-	add_msg("Permission to delete &quot;" . $job->get_name . "&quot; denied");
+        add_msg($lang->maketext("Permission to delete [_1] denied.", "&quot;" . $job->get_name . "&quot;"));
     }
 }
 return;

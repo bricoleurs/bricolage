@@ -139,6 +139,14 @@ just a single repeatable field. [Garth]
 
 Added help topic for new "Super Bulk Edit" feature. [David]
 
+=item *
+
+Localization and Internationalization support introduced, with a Portuguese
+library to complement the default English. Most message strings have been
+replaced with calls to the proper localization method. Still to be done are
+references to button images with text on them and strings fetched from the
+database. [ClE<aacute>udio Valente]
+
 =back
 
 =head2 Bug Fixes

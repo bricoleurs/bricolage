@@ -110,7 +110,7 @@ my $handle_delete = sub {
     $media->deactivate;
     $media->save;
     log_event("media_deact", $media);
-    add_msg("Media &quot;" . $media->get_title . "&quot; deleted.");
+    add_msg($lang->maketext("Media [_1] deleted.","&quot;" . $media->get_title . "&quot;"));
 };
 
 ################################################################################
@@ -131,7 +131,7 @@ my $handle_revert = sub {
     my $version = $param->{"$widget|version"};
     $media->revert($version);
     $media->save();
-    add_msg("Media &quot;" . $media->get_title . "&quot; reverted to V.$version.");
+    add_msg($lang->maketext("Media [_1] reverted to V.[_2]","&quot;" . $media->get_title . "&quot;",$version));
     clear_state($widget);
 };
 
@@ -143,8 +143,8 @@ my $handle_save = sub {
     chk_authz($media, EDIT);
 
     if (my $msg = $media->check_uri(get_user_id)) {
-        add_msg("The URI of this media conflicts with that of '$msg'. " .
-                "Please change the category, cover date, or file name.");
+        add_msg($lang->maketext("The URI of this media conflicts with that of [_1]. "
+                ."Please change the category or file name.","&quot;".$msg."&quot;"));
         return;
     }
 
@@ -159,7 +159,7 @@ my $handle_save = sub {
         $media->activate();
         $media->save();
         log_event('media_save', $media);
-        add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
+        add_msg($lang->maketext("Media [_1] saved.","&quot;" . $media->get_title . "&quot;"));
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -192,8 +192,8 @@ my $handle_checkin = sub {
     $media ||= get_state_data($widget, 'media');
 
     if (my $msg = $media->check_uri(get_user_id)) {
-        add_msg("The URI of this media conflicts with that of '$msg'. " .
-                "Please change the category, cover date, or file name.");
+        add_msg($lang->maketext("The URI of this media conflicts with that of [_1]. "
+               ."Please change the category, file name, or slug."),"'$msg'");
         return;
     }
 
@@ -228,8 +228,7 @@ my $handle_checkin = sub {
         log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media);
         log_event("media_rem_workflow", $media);
-        add_msg("Media &quot;" . $media->get_title . "&quot; saved and " .
-                    "shelved.");
+        add_msg($lang->maketext('Media [_1] saved and shelved.',"&quot;" . $media->get_title . "&quot;"));
     } elsif ($desk_id eq 'publish') {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -263,8 +262,7 @@ my $handle_checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
           unless $no_log;
-        add_msg("Media &quot;" . $media->get_title . "&quot; saved and " .
-                "checked in to &quot;$dname&quot;.");
+        add_msg($lang->maketext("Media [_1] saved and checked in to [_2].","&quot;" . $media->get_title . "&quot;","&quot;$dname&quot;"));
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -290,8 +288,7 @@ my $handle_checkin = sub {
         log_event('media_checkin', $media);
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
-        add_msg("Media &quot;" . $media->get_title . "&quot; saved and " .
-                "moved to &quot;$dname&quot;.");
+        add_msg($lang->maketext("Media [_1] saved and moved to [_2].","&quot;" . $media->get_title . "&quot;","&quot;$dname&quot;"));
     }
 
     # Publish the media asset, if necessary.
@@ -329,8 +326,8 @@ my $handle_save_stay = sub {
     $media->save();
 
     if (my $msg = $media->check_uri(get_user_id)) {
-        add_msg("The URI of this media conflicts with that of '$msg'. " .
-                "Please change the category, cover date, or file name.");
+        add_msg($lang->maketext("The URI of this media conflicts with that of [_1]. "
+               ."Please change the category, file name, or slug."),"'$msg'");
         return;
     }
 
@@ -349,7 +346,7 @@ my $handle_save_stay = sub {
         $media->activate;
         $media->save;
         log_event('media_save', $media);
-        add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
+        add_msg($lang->maketext("Media [_1] saved.","&quot;" . $media->get_title . "&quot;"));
     }
 
     # Set the state.
@@ -366,7 +363,7 @@ my $handle_cancel = sub {
     log_event('media_cancel_checkout', $media);
     clear_state($widget);
     set_redirect("/");
-    add_msg("Media &quot;" . $media->get_name . "&quot; check out canceled.");
+    add_msg($lang->maketext("Media [_1] check out canceled.","&quot;" . $media->get_name . "&quot;"));
 };
 
 ################################################################################
@@ -449,7 +446,7 @@ my $handle_create = sub {
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     log_event('media_moved', $media, { Desk => $start_desk->get_name });
     log_event('media_save', $media);
-    add_msg("Media &quot;" . $media->get_title . "&quot; created and saved.");
+    add_msg($lang->maketext('Media [_1] created and saved.',"&quot;" . $media->get_title . "&quot;"));
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
@@ -548,28 +545,28 @@ my $save_contrib = sub {
 
     chk_authz($media, EDIT);
     my $contrib_id = $param->{$widget.'|delete_id'};
-    my $msg;
+    my $contrib_number;
+    my $contrib_string;
     if ($contrib_id) {
         if (ref $contrib_id) {
-            $msg = 'Contributors ';
             $media->delete_contributors($contrib_id);
             foreach (@$contrib_id) {
                 my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
                   ({ id => $_ });
-                $msg .= "&quot;" . $contrib->get_name . "&quot;";
+                $contrib_string .= "&quot;" . $contrib->get_name . "&quot;";
+                $contrib_number++;
                 delete $existing->{$_};
             }
-            $msg .= ' disassociated.';
         } else {
             $media->delete_contributors([$contrib_id]);
             my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
               ({ id => $contrib_id });
             delete $existing->{$contrib_id};
-            $msg = 'Contributor &quot;' . $contrib->get_name .
-              "&quot; disassociated.";
+            $contrib_string = '&quot;' . $contrib->get_name . "&quot;";
+            $contrib_number++;
         }
     }
-    add_msg($msg) if $msg;
+    add_msg($lang->maketext('[quant,_1,Contributor] [_2] associated.',$contrib_number ,$contrib_string)) if $contrib_number;
 
     # get the remaining
     # and reorder
@@ -659,8 +656,7 @@ my $handle_recall = sub {
             log_event('media_moved', $ba, { Desk => $start_desk->get_name });
             log_event('media_checkout', $ba);
         } else {
-            add_msg("Permission to checkout &quot;" . $ba->get_name
-                    . "&quot; denied");
+            add_msg($lang->maketext('Permission to checkout [_1] denied', "&quot;" . $ba->get_name. "&quot;"));
         }
     }
 
@@ -690,8 +686,7 @@ my $handle_checkout = sub {
             # Log Event.
             log_event('media_checkout', $ba);
         } else {
-            add_msg("Permission to checkout &quot;" .
-                     $ba->get_name . "&quot; denied");
+            add_msg($lang->maketext('Permission to checkout [_1] denied', "&quot;" . $ba->get_name. "&quot;"));
         }
     }
 

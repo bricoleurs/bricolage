@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2002-12-05 22:32:57 $
+$Date: 2003-02-12 15:53:23 $
 
 =head1 SYNOPSIS
 
@@ -554,7 +554,7 @@ my $output_select_controls = sub {
 
         push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
                                                               value => $value).
-                    $label;
+                    $lang->maketext($label);
     }
 
     return @cntl;
@@ -580,7 +580,7 @@ my $output_profile_controls = sub {
             $value = "?$value" unless substr($value, 0, 1) eq '?';
         }
 
-        push @cntl, "<a href='$url$value' class=redLink>$label</a>&nbsp;";
+        push @cntl, "<a href='$url$value' class=redLink>".$lang->maketext($label)."</a>&nbsp;";
     }
 
     return @cntl;

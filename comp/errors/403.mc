@@ -22,8 +22,7 @@ if ($class) {
     $class = 'this page';
 }
 $m->out(qq{
-<p class="header">You have not been granted <b>$map->{$perm}</b>
-access to $the <b>$name</b> $class.</p>
+<p class="header"><% $lang->maketext('You have not been granted <b>[_1]</b> access to the <b>[_2]</b> [_3]',$map->{$perm}, $name, $class) %>.</p>
 });
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 $m->abort;

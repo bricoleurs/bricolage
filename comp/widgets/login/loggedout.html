@@ -6,7 +6,7 @@
 
 <table cellpadding=2 cellspacing=0 border=0 width=578>
 <tr>
-<td width=150 align=right><span class=label>Username:</span></td>
+<td width=150 align=right><span class=label><% $lang->maketext('Username') %>:</span></td>
 <td width=448>
 <& '/widgets/profile/text.mc',
     name   => 'login|username',
@@ -16,7 +16,7 @@
 </td>
 </tr>
 <tr>
-<td width=150 align=right><span class=label>Password:</span></td>
+<td width=150 align=right><span class=label><% $lang->maketext('Password') %>:</span></td>
 <td width=448><& '/widgets/profile/password.mc',
                   name => 'login|password',
                   useTable => 0
@@ -24,7 +24,7 @@
 </tr>
 % if (SSL_ENABLE && ! ALWAYS_USE_SSL) {
 <tr>
-<td width=150 align=right><span class=label>Use SSL:</span></td>
+<td width=150 align=right><span class=label><% $lang->maketext('Use SSL')%>:</span></td>
 <td width=448><& '/widgets/profile/checkbox.mc',
                   name => 'login|ssl',
 		  value => 1,

@@ -38,7 +38,7 @@ if (defined $id) {
 
     $m->comp('/widgets/select_object/select_object.mc', object => 'category',
 	     name => 'parent_id', field => 'uri', disp => 'Parent Category',
-	     selected => ( defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : 'none'),
+	     selected => ( defined($p_id) ? $p_id : exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
 	     sort_field => 'uri', reset_key => $reset, req => 1, exclude => [map($_->get_id, $cat->children), defined($id) ? $id : ()]);
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -67,7 +67,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 unless ($no_edit || $no_del) {
     $m->comp('/widgets/profile/checkbox.mc', name => 'delete_cascade',
 	     label_after => 1, value => 1,
-	     disp => "<span class=burgandyLabel>Delete this Category and All its Subcategories</span>");
+             disp => "<span class=burgandyLabel>".$lang->maketext('Delete this Category and All its Subcategories')."</span>");
     $m->out("<br />\n");
 }
 # Add the buttons.
@@ -130,11 +130,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:09 $
+$Date: 2003-02-12 15:52:59 $
 
 =head1 DESCRIPTION
 

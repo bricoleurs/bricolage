@@ -18,7 +18,7 @@ unless ($no_labels) {
     } else {
 	$m->out("<td></td>");
     }
-    $m->out(qq{    <td><span class="label">&nbsp;Delete</td>\n})
+    $m->out(qq{    <td><span class="label">&nbsp;}.$lang->maketext('Delete')."</td>\n")
       unless $read_only || !@$objs;
     $m->out("</tr>\n");
 }
@@ -183,11 +183,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2003-01-07 01:38:24 $
+$Date: 2003-02-12 15:53:06 $
 
 =head1 SYNOPSIS
 

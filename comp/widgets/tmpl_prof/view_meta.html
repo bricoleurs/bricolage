@@ -21,7 +21,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <table border="0" width="578" cellpadding="0" cellspacing="0">
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Template Type:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Template Type') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $fa->get_tplate_type_string %></td>
   </tr>
   <tr>
@@ -31,10 +31,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
 % if ($fa->get_tplate_type == Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Asset Type:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Asset Type') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $fa->get_name %></td>
 % } else {
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Name:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Name') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $fa->get_name %></td>
 % }
   </tr>
@@ -45,7 +45,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Description:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $fa->get_description %></td>
   </tr>
   <tr>
@@ -55,7 +55,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Output Channel:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channel') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $oc_name %></td>
   </tr>
   <tr>
@@ -64,7 +64,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">Category:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Category') %>:&nbsp;</span></td>
   <td width="470" colspan="2">&nbsp;<% $cat_name %></td>
   </tr>
 </table>

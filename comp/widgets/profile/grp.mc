@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-08-28 22:57:12 $
+$Date: 2003-02-12 15:53:35 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ my $save_sub = sub {
 	    # to reload their user objects from the database.
 	    $c->set_lmu_time if $class eq 'Bric::Util::Grp::User';
 	    $c->set('__WORKFLOWS__', 0) if $class eq 'Bric::Util::Grp::Workflow';
-            add_msg("$disp_name profile $name deleted.");
+            add_msg($lang->maketext("$disp_name profile [_1] deleted.",$name));
         }
         # Set redirection back to the manager.
         set_redirect($redir);
@@ -79,7 +79,7 @@ my $save_sub = sub {
 	$grp->save;
         unless ($no_log) {
 	    log_event('grp_save', $grp);
-            add_msg("$disp_name profile $name saved.");
+            add_msg($lang->maketext("$disp_name profile [_1] saved.",$name));
         }
 	# Redirect back to the manager.
 	set_redirect($redir);

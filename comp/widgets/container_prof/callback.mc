@@ -113,7 +113,7 @@ my $delete_element = sub {
         set_redirect($uri);
     }
 
-    add_msg("Element &quot;" . $tile->get_name . "&quot; deleted.");
+    add_msg($lang->maketext("Element [_1] deleted.","&quot;" . $tile->get_name . "&quot;"));
     return;
 };
 
@@ -139,7 +139,7 @@ my $update_parts = sub {
         $locate_tile = $t if $id == $locate_id;
         if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
                            $param->{"$widget|delete_data$id"})) {
-            add_msg("Element &quot;" . $t->get_name . "&quot; deleted.");
+            add_msg($lang->maketext("Element [_1] deleted.","&quot;" . $_->get_name . "&quot;"));
             push @delete, $t;
             next;
         }
@@ -154,8 +154,7 @@ my $update_parts = sub {
                 my $val = $param->{"$widget|$id"} || '';
                 if ( $param->{"$widget|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
-                    add_msg("Invalid date value for &quot;" . $t->get_name
-                            . "&quot; field.");
+                    add_msg($lang->maketext("Invalid date value for [_1] field.","&quot;" . $_->get_name. "&quot;"));
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
@@ -631,8 +630,8 @@ my $super_save_data = sub {
         next unless $p and scalar(@$p);
 
         if ($p->[0]->is_container) {
-            add_msg("Note: Container element '$n' removed in bulk edit but ".
-                    "will not be deleted.");
+            add_msg($lang->maketext("Note: Container element [_1] removed in bulk edit but ".
+                    "will not be deleted.","'$n'"));
             # Put these container tiles back in the list
             push @$dtiles, @$p;
             next;
@@ -643,8 +642,8 @@ my $super_save_data = sub {
                 unless (grep { $_ eq $n } map {my $n = lc($_->get_name);
                                                $n =~ y/a-z0-9/_/cs;
                                                $n} @$dtiles) {
-                    add_msg("Note: Data element '$n' is required and cannot ".
-                            "be comletely removed.  Will delete all but one");
+                    add_msg($lang->maketext("Note: Data element [_1] is required and cannot ".
+                            "be completely removed.  Will delete all but one","'$n'"));
                     push @$dtiles, shift @$p;
                 }
             }
@@ -829,8 +828,8 @@ my $split_super_bulk = sub {
             # If this field is not repeatable and we already have one of these
             # fields, then complain to the user
             if (not $repeatable and $seen{$type}) {
-                add_msg("Field '$type' appears more than once but it is not a ".
-                        "repeatable element.  Please remove all but one.");
+                add_msg($lang->maketext("Field [_1] appears more than once but it is not a ".
+                        "repeatable element.  Please remove all but one.","'$type'"));
                 return;
             }
 
@@ -839,8 +838,8 @@ my $split_super_bulk = sub {
 
             if (not exists $poss_names{$type}) {
                 my $new_type = $closest->([keys %poss_names], $type);
-                add_msg("Bad element name '$type'. ".
-                        "Did you mean '$new_type'?");
+                add_msg($lang->maketext("Bad element name [_1]. ".
+                        "Did you mean [_2]?","'$type'","'$new_type'"));
             }
 
             # If this is a container field, then reset everything
@@ -954,7 +953,7 @@ my $handle_bulk_save = sub {
         $split_fields->($widget, $param->{$widget.'|text'});
         $save_data->($widget);
         my $data_field = get_state_data($widget, 'field');
-        add_msg("&quot;$data_field&quot; Elements saved.");
+        add_msg($lang->maketext("[_1] Elements saved.","&quot;$data_field&quot;"));
     } else {
         $split_super_bulk->($widget, $param->{$widget.'|text'});
         unless (num_msg() > 0) {

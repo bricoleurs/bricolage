@@ -7,7 +7,7 @@
 <table border="0" width="578" cellpadding="0" cellspacing="0">
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="100" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('ID') %>:&nbsp;</span></td>
     <td width="400">&nbsp;<% $story->get_id %></td>
     <td width="70" rowspan=7 valign="bottom"><% $button %></td>
 </tr>
@@ -16,7 +16,7 @@
 </tr>
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="100" align="right" class="medHeader"><span class="label">Title:&nbsp;</span></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
     <td width="400">&nbsp;<% $story->get_title %></td>
 </tr>
 <tr>
@@ -24,7 +24,7 @@
 </tr>
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="100" align="right" class="medHeader"><span class="label">Story Type:&nbsp;</span></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('Story Type') %>:&nbsp;</span></td>
     <td width="400">&nbsp;<% $story->get_element_name %></td>
 </tr>
 <tr>
@@ -32,7 +32,7 @@
 </tr>
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-    <td width="100" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
+    <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
     <td width="400">&nbsp;<% $story->get_primary_uri %></td>
 </tr>
   </table>

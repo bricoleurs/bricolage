@@ -43,14 +43,14 @@ my $onePixCell = sub {
 <td rowspan="<% ($rowspan * 2) %>" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
 </tr>
 <tr>
-    <td align="right" class="medHeader" width="100">Category: </td>
+    <td align="right" class="medHeader" width="100"><%$lang->maketext('Category')%>: </td>
     <td width="1"><img src="/media/images/spacer.gif" width="1" height="20" /></td>
     <td<% $classes->{category_name} || $classes->{location} || '' %> width="240">&nbsp;<span class="subHeader"><% $cat %></span></td>
     <td rowspan="<% ($rowspan * 2 - 1) %>" width="237">
     <table border="0" width="237" celpadding="0" cellspacing="0">
         <tr>
             <% &$onePixCell(0, 20) %>
-            <td><% $elink %></td>
+            <td><% $lang->maketext($elink) %></td>
         <tr>
             <% &$onePixCell(0, 43) %>
             <td>
@@ -87,10 +87,10 @@ if ($desk_type eq 'workflow') {
     }
 }
 </%perl>
-                <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink">Notes</a>&nbsp;&nbsp;
-                <a href="<% $item_url %>" class="blackUnderlinedLink"><% $item_label %></a>&nbsp;&nbsp;
-                <a href="<% $link %>" class="blackUnderlinedLink"><% $vlabel %></a>&nbsp;&nbsp;
-                <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink">Log</a>&nbsp;&nbsp;
+                <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Notes')%></a>&nbsp;&nbsp;
+                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Trail')%></a>&nbsp;&nbsp;
+                <a href="<% $link %>" class="blackUnderlinedLink"><% $lang->maketext($vlabel) %></a>&nbsp;&nbsp;
+                <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Log')%></a>&nbsp;&nbsp;
                 <% $pub %>
             </td>
         </tr>
@@ -103,7 +103,7 @@ if ($desk_type eq 'workflow') {
 </tr>
 
 <tr>
-    <td align="right" class="medHeader"><% $class eq 'formatting' ? 'Asset' : $disp %> Type: </td>
+    <td align="right" class="medHeader"><% $lang->maketext(($class eq 'formatting' ? 'Asset' : $disp ).' Type') %>: </td>
     <% &$onePixCell(0, 20) %>
     <td<% $classes->{element} || '' %>>&nbsp;<span class="subHeader"><% $type %></span></td>
 </tr>
@@ -112,7 +112,7 @@ if ($desk_type eq 'workflow') {
 </tr>
 
 <tr>
-    <td align="right" class="medHeader"><% $date_label || '&nbsp;' %>: </td>
+    <td align="right" class="medHeader"><% $lang->maketext($date_label) || '&nbsp;' %>: </td>
     <% &$onePixCell(0, 20) %>
     <td<% $classes->{cover_date} || '' %>>&nbsp;<span class="subHeader"><% $date || '&nbsp;' %></span></td>
 </tr>
@@ -120,9 +120,9 @@ if ($desk_type eq 'workflow') {
 <% &$onePixCell(3) %>
 </tr>
 <tr>
-    <td align="right" class="medHeader">Priority: </td>
+    <td align="right" class="medHeader"><%$lang->maketext('Priority')%>: </td>
     <% &$onePixCell(0, 18) %>
-    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $priors->{$obj->get_priority} || '&nbsp;' %></span></td>
+    <td<% $classes->{priority} || '' %>>&nbsp;<span class="subHeader"><% $lang->maketext($priors->{$obj->get_priority}) || '&nbsp;' %></span></td>
 </tr>
 <tr>
 <td colspan="6" width="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1"></td>
@@ -222,11 +222,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-11-30 06:23:37 $
+$Date: 2003-02-12 15:53:13 $
 
 =head1 DESCRIPTION
 

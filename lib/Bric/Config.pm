@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:02 $
+$Date: 2003-02-12 15:52:53 $
 
 =head1 SYNOPSIS
 
@@ -69,6 +69,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SYS_USER
                     SYS_GROUP
                     SERVER_WINDOW_NAME
+                    LANGUAGE
                     NO_TOOLBAR
                     APACHE_BIN
                     APACHE_CONF
@@ -191,6 +192,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DISABLE_NAV_LAYER
                                      ALLOW_WORKFLOW_TRANSFER
                                      SERVER_WINDOW_NAME
+                                     LANGUAGE
                                      NO_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
@@ -330,6 +332,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MANUAL_APACHE           => $config->{MANUAL_APACHE};
     use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
     use constant NO_TOOLBAR              => $config->{NO_TOOLBAR};
+    use constant LANGUAGE                => $config->{LANGUAGE} || 'en_us';
 
     use constant APACHE_BIN              => $config->{APACHE_BIN}
       || '/usr/local/apache/bin/httpd';

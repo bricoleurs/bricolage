@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-01-29 20:10:29 $
+$Date: 2003-02-12 15:53:32 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ if ($param->{delete}) {
     $desk->save;
     $c->set('__WORKFLOWS__', 0);
     log_event("${type}_deact", $desk);
-    add_msg("$disp_name profile $name deleted from all workflows.");
+    add_msg($lang->maketext("$disp_name profile [_1] deleted from all workflows.",$name));
     set_redirect(defined $param->{worflow_id} ?
 		 "/admin/profile/workflow/$param->{workflow_id}"
 		 : last_page());
@@ -61,7 +61,7 @@ if ($param->{delete}) {
 	elsif (@desks == 1 && !defined $desk_id) { $used = 1 }
 	elsif (@desks == 1 && defined $desk_id
 	       && $desks[0] != $desk_id) { $used = 1 }
-	add_msg("The name $name is already used by another $disp_name.")
+        add_msg($lang->maketext("The name [_1] is already used by another [_2].",$name,$disp_name))
 	  if $used;
     }
 

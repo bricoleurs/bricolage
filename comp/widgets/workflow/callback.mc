@@ -48,7 +48,7 @@ foreach my $id (@{ mk_aref($param->{$field}) }) {
 	$flag = 1;
     } else {
 	my $name = '&quot;' . $wf->get_name . '&quot';
-	add_msg("Permission to delete $name denied.");
+        add_msg($lang->maketext("Permission to delete [_1] denied.",$name));
     }
 }
 $c->set('__WORKFLOWS__', 0) if $flag;

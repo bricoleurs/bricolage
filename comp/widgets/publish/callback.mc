@@ -55,8 +55,7 @@ if ($field eq 'preview') {
 
             # Make sure this media object isn't checked out.
             if ($r->get_checked_out) {
-                add_msg('Cannot auto-publish related media &quot;'.
-                        $r->get_title.'&quot; because it is checked out');
+                add_msg($lang->maketext('Cannot auto-publish related media [_1] because it is checked out','&quot;'.$r->get_title.'&quot'));
                 next;
             }
             $b->preview($r, 'media', get_user_id(), $m, $oc_id);
@@ -79,10 +78,10 @@ if ($field eq 'preview') {
         my $s = $story_pub->{$sid} ||
           Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
         $b->publish($s, 'story', get_user_id(), $param->{pub_date});
-        add_msg("Story &quot;" . $s->get_title . "&quot; published.")
+        add_msg($lang­>maketext("Story [_1] published.","&quot;" . $s->get_title . "&quot;"))
           if $count <= 3;
     }
-    add_msg("$count stories published.") if $count > 3;
+    add_msg($lang->maketext("[_1] stories published."),$count) if $count > 3;
 
     $count = @$media;
     foreach my $mid (@$media) {
@@ -90,10 +89,10 @@ if ($field eq 'preview') {
         my $m = $media_pub->{$mid} ||
           Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
         $b->publish($m, 'media', get_user_id(), $param->{pub_date});
-        add_msg("Media &quot;" . $m->get_title . "&quot; published.")
+        add_msg($lang­>maketext("Media [_1] published.","&quot;" . $m->get_title . "&quot;"))
           if $count <= 3;
     }
-    add_msg("$count media published.") if $count > 3;
+    add_msg($lang->maketext("[_1] media published."),$count) if $count > 3;
 
     redirect_onload(last_page()) unless $instant;
 }
