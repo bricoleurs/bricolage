@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:03:06 $
+$Date: 2002-10-23 01:05:20 $
 
 =head1 SYNOPSIS
 
@@ -94,7 +94,7 @@ foreach my $t (@title) {
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 % }
-<script language="JavaScript">
+<script type="text/javascript">
 
 var checkboxValues = new Array();
 
@@ -147,7 +147,7 @@ Please activate JavaScript in your browser before continuing.
 <!-- end top tab table -->
 
 % # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
-<script language="javascript">
+<script type="text/javascript">
 function doNav(callback) {
 % if (DISABLE_NAV_LAYER || ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix")) {
     window.location.href = callback;
@@ -200,7 +200,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 % # write out space so the silly browser will provide a scroll bar for the layered content
 % if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{browser} eq "SomeNix") {
 
-  <script language="javascript">
+  <script type="text/javascript">
   for (var i=0; i < <% $numLinks %>; i++) {
       document.write("<p>&nbsp;</p>");
   }
