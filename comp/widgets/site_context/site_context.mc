@@ -29,7 +29,7 @@ unless ($user_sites) {
         foreach my $s (@$sites) {
             # Keep the site if the user has permission.
             my $id = $s->get_id;
-            push @$user_sites, [$id, $s->get_name] if chk_authz($_, READ, 1);
+            push @$user_sites, [$id, $s->get_name] if chk_authz($s, READ, 1);
             # Check if they can use the same old context.
             $cx_ok ||= $id == $cx;
         }
@@ -78,11 +78,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:54 $
+$Date: 2003-03-15 23:02:00 $
 
 =head1 SYNOPSIS
 
