@@ -66,7 +66,7 @@ sub test_list : Test(38) {
     # Try grp_id.
     ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id'" );
-    is( scalar @prefs, 4, "Check for 4 prefs" );
+    is( scalar @prefs, 5, "Check for 5 prefs" );
 
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Util::Pref::INSTANCE_GROUP_ID;
@@ -83,7 +83,7 @@ sub test_list : Test(38) {
     # Now there should only be three using grp_id.
     ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
         "Look up grp_id '$grp_id' again" );
-    is( scalar @prefs, 3, "Check for 3 prefs" );
+    is( scalar @prefs, 4, "Check for 4 prefs" );
 
 
     # Try val_name.
