@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-26 01:37:52 $
+$Date: 2004-02-27 04:33:39 $
 
 =head1 SYNOPSIS
 
@@ -246,6 +246,10 @@ sub lookup {
       || ($param->{alias_id} && $param->{site_id});
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
+    # Check the cache.
+    my $obj = $pkg->cache_lookup($param);
+    return $obj if $obj;
+
     $param = clean_params($pkg, $param);
     # Lookup can return active and inactive assets.
     delete $param->{active};
