@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 02:50:34 $
+$Date: 2002-02-28 19:41:02 $
 
 =head1 SYNOPSIS
 
@@ -72,8 +72,6 @@ $Date: 2002-02-27 02:50:34 $
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage templates.
-
-B<IMPLEMENTATION INCOMPLETE>
 
 =cut
 
