@@ -11,17 +11,28 @@ bric_soap module command [options] [ids or filenames or -]
 
 Modules:
 
-  story
-  media
-  template
+  Story
+  Media
+  Template
+  Workflow
 
 Commands:
 
-  list_ids
-  export
-  create
-  update
-  delete
+  Asset Commands (Story, Media, Template):
+
+    list_ids
+    export
+    create
+    update
+    delete
+
+Workflow Commands:
+
+    publish
+    deploy
+    checkin
+    checkout
+    move
 
 Options:
 
@@ -38,12 +49,15 @@ Options:
   --password - the password for the Bricolage user.  Default to the
                BRICOLAGE_PASSWORD environment variable if set
 
-  --export-related-stories - tell export to include related stories
+  --with-related-stories - tell export and publish to include related stories
 
-  --export-related-media - tell export to include related media
+  --with-related-media - tell export and publish to include related media
 
-  --all - synonym for setting --export-related-stories and
-          --export-related-media
+  --all - synonym for setting --with-related-stories and --with-related-media
+
+  --desk - required desk option for move command
+
+  --workflow - optional workflow option for move command
 
   --search "field=value" - specify a search for list_ids, field must
                            be a valid search field for the list_ids()
@@ -112,8 +126,8 @@ use HTTP::Cookies;
 our $module;
 our $command;
 our %search;
-our $export_related_stories = 0;
-our $export_related_media   = 0;
+our $with_related_stories = 0;
+our $with_related_media   = 0;
 our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
 our $server                 = 'http://localhost:80';
@@ -126,43 +140,69 @@ GetOptions("help"                   => \$help,
 	   "password=s"             => \$password,
 	   "server=s"               => \$server,
 	   "search=s"               => \%search,
-	   "export-related-stories" => \$export_related_stories,
-	   "export-related-media"   => \$export_related_media,
-	   "all"                    => sub { $export_related_stories = 1;
-					     $export_related_media   = 1; },
+	   "with-related-stories"   => \$with_related_stories,
+	   "with-related-media"     => \$with_related_media,
+	   "all"                    => sub { $with_related_stories = 1;
+					     $with_related_media   = 1; },
 	  ) or  pod2usage(2);
 
 pod2usage(1)             if $help;
 pod2usage(-verbose => 2) if $man;
 
-# make sure we have what we need
-foreach my $opt (qw(username password server)) {
-    no strict 'refs';
-    pod2usage("Missing required $opt option.")
-	unless $$opt;
-}
+# jump table for module commands
+our %jump = (
+	     Story    => {
+			  list_ids => \&list_ids,
+			  export   => \&export,
+			  create   => \&create,
+			  update   => \&update,
+			  delete   => \&publish,
+			 },
+	     Media    => {
+			  list_ids => \&list_ids,
+			  export   => \&export,
+			  create   => \&create,
+			  update   => \&update,
+			  delete   => \&publish,
+			 },
+	     Template => {
+			  list_ids => \&list_ids,
+			  export   => \&export,
+			  create   => \&create,
+			  update   => \&update,
+			  delete   => \&publish,
+			 },
+	     Workflow => {
+			  publish  => \&publish,
+			  deploy   => \&deploy,
+			  checkin  => \&checkin,
+			  checkout => \&checkout,
+			  move     => \&move,
+			 }
+	    );
 
-# get module
+# get module and verify
 $module = shift @ARGV;
 pod2usage("Missing required module and command parameters.")
     unless $module;
 $module = ucfirst lc $module;
 pod2usage("Unknown module \"$module\".")
-    unless $module eq 'Story' or 
-    $module eq 'Media' or
-    $module eq 'Template';
+    unless exists $jump{$module};
 
-# get command
+# get command and verify
 $command = shift @ARGV;
 pod2usage("Missing required command parameter.")
     unless $command;
 $command = lc $command;
-pod2usage("Unknown command \"$command\".")
-    unless $command eq 'list_ids' or
-    $command eq 'export'   or
-    $command eq 'create'   or
-    $command eq 'update'   or
-    $command eq 'delete';
+pod2usage("Unsupported $module command \"$command\".")
+    unless exists $jump{$module}{$command};
+
+# make sure we have what we need to login
+foreach my $opt (qw(username password server)) {
+    no strict 'refs';
+    pod2usage("Missing required $opt option.")
+	unless $$opt;
+}
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
@@ -170,8 +210,6 @@ my $soap = new SOAP::Lite
     readable => $ENV{DEBUG} || 0;
 $soap->proxy($server . '/soap',
 	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
-
-
 
 # login
 print STDERR "$module $command: Authenticating to Bricolage...\n" if $verbose;
@@ -184,8 +222,16 @@ print STDERR "$module $command: Login success.\n" if $verbose;
 $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
 print STDERR "$module $command: Switched to $module module.\n" if $verbose;
 
-# execute the command
-if ($command eq 'list_ids') {  
+# execute command
+$jump{$module}{$command}->();
+
+
+#
+# Command subroutines
+#
+
+
+sub list_ids {
     print STDERR "$module $command: Calling Bric::SOAP::$module->$command with search: (",
 	join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
 	    if $verbose;
@@ -197,8 +243,9 @@ if ($command eq 'list_ids') {
     foreach (@$list) {
 	print $_, "\n";
     }
+}
 
-} elsif ($command eq 'export') {
+sub export {
     # collect ids
     my @ids;
     foreach (@ARGV) {
@@ -220,8 +267,8 @@ if ($command eq 'list_ids') {
 
     my @opts;
     push @opts, name(lc $module . '_ids', \@ids);
-    push @opts, name(export_related_stories => 1) if $export_related_stories;
-    push @opts, name(export_related_media   => 1) if $export_related_media;
+    push @opts, name(export_related_stories => 1) if $with_related_stories;
+    push @opts, name(export_related_media   => 1) if $with_related_media;
 
     $response = $soap->export(@opts);
     die "Call to Bric::SOAP::$module->$command failed : \n" .
@@ -229,8 +276,9 @@ if ($command eq 'list_ids') {
 	    if $response->fault;
 
     print $response->result;
+}
 
-} elsif ($command eq 'delete') {
+sub delete {
     # collect ids
     my @ids;
     foreach (@ARGV) {
@@ -254,9 +302,9 @@ if ($command eq 'list_ids') {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
+}
 
-} elsif ($command eq 'create') {
-
+sub create {
     # work through documents1
     foreach (@ARGV) {
 	my $document;
@@ -284,9 +332,10 @@ if ($command eq 'list_ids') {
 	    print $_, "\n";
 	}
     }
+}
 
-} elsif ($command eq 'update') {
 
+sub update {
     # work through documents1
     foreach (@ARGV) {
 	my $document;
@@ -322,4 +371,24 @@ if ($command eq 'list_ids') {
 	    print $_, "\n";
 	}
     }
+}
+
+sub publish {
+    die "$module $command not yet implemented\n";
+}
+
+sub deploy {
+    die "$module $command not yet implemented\n";
+}
+
+sub checkin {
+    die "$module $command not yet implemented\n";
+}
+
+sub checkout {
+    die "$module $command not yet implemented\n";
+}
+
+sub move {
+    die "$module $command not yet implemented\n";
 }
