@@ -141,7 +141,8 @@ my $handle_save = sub {
     my $msg = $media->check_uri();
 
     if ($msg) {
-        add_msg("The URI of this media conflicts with that of '$msg'.  Please change the category or file name.");
+        add_msg("The URI of this media conflicts with that of '$msg'. " .
+                "Please change the category, cover date, or file name.");
         return;
     }
 
@@ -206,7 +207,7 @@ my $handle_checkin = sub {
 
     if (my $msg = $media->check_uri) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
-                "Please change the category or file name.");
+                "Please change the category, cover date, or file name.");
         return;
     }
 
@@ -341,7 +342,8 @@ my $handle_save_stay = sub {
     my $msg = $media->check_uri();
 
     if ($msg) {
-        add_msg("The URI of this media conflicts with that of '$msg'.  Please change the category, file name, or slug.");
+        add_msg("The URI of this media conflicts with that of '$msg'. " .
+                "Please change the category, cover date, or file name.");
         return;
     }
 

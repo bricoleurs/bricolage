@@ -352,6 +352,20 @@ Made Bric::Util::Burner::Mason a little smarter handling exceptions. [David]
 
 Fixed bug where Bric::SOAP::Category would fail to import ad strings. [David]
 
+=item *
+
+Fixed bug in C<< Bric::Util::Grp->has_member >> where an already-added member
+wasn't always found. [Mark]
+
+=item *
+
+Conflicting URI messages for media assets no longer suggest changing the value
+of the slug, since media assets have no slug. [David]
+
+=item *
+
+The friendly messages confirming publishes are back. [David]
+
 =back
 
 =head1 VERSION 1.4.3
