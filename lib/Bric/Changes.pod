@@ -70,6 +70,10 @@ Search by site is now supported in the "Advanced Search" interface of "Find
 Stories", "Find Media", and "Find Templates" when there is more than one site
 and the "Filter by Site Context" peference is not turned on. [David]
 
+=item *
+
+Removed Bric::FAQ, since it is now maintained on the Website, instead. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -242,6 +246,10 @@ navigation without a reboot. [David]
 Creating a story, checking it in, checking it out, and then cancelling the
 checkout no longer incorectly removes the story from workflow. Reported by .
 [David]
+
+=item *
+
+The source of a story can now be changed. [David]
 
 =back
 
