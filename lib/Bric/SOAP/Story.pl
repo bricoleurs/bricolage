@@ -115,6 +115,7 @@ my ($response, $story_ids);
 $response = $soap->login(name(username => USER), 
 			 name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
+exit 1 if $response->fault;
 
 my $success = $response->result;
 ok($success, "login success");
@@ -127,6 +128,7 @@ $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 # try selecting every story
 $response = $soap->list_ids();
 ok(!$response->fault, 'fault check');
+exit 1 if $response->fault;
 
 $story_ids = $response->result;
 isa_ok($story_ids, 'ARRAY');
@@ -135,6 +137,7 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 # try a query returning an empty list
 my $response2 = $soap->list_ids(name(title => 'FOO' . rand() . 'BAR'));
 ok(!$response2->fault, "SOAP result is not a fault");
+exit 1 if $response2->fault;
 my $story_ids2 = $response2->result;
 isa_ok($story_ids2, 'ARRAY');
 is(@$story_ids2, 0, 'list_ids() returned 0 story_ids');
@@ -170,6 +173,7 @@ foreach my $queries (@queries) {
   my $response = $soap->list_ids(map { name($_, $soap_query->{$_}) } 
 			      keys %$soap_query);
   ok(!$response->fault, 'SOAP result is not a fault');
+  exit 1 if $response->fault;
   my $soap_story_ids = $response->result;
   isa_ok($soap_story_ids, 'ARRAY');
 
@@ -193,6 +197,7 @@ foreach my $queries (@queries) {
 # select every story
 $response = $soap->list_ids();
 ok(!$response->fault, 'SOAP result is not a fault');
+exit 1 if $response->fault;
 
 $story_ids = $response->result;
 isa_ok($story_ids, 'ARRAY');
@@ -202,34 +207,29 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
-# if (0) {
-
-# try exporting every story
+# try exporting and importing every story
 foreach my $story_id (@$story_ids) {
   $response = $soap->export(name(story_id => $story_id));
   if ($response->fault) {
     fail('SOAP export() response fault check');
+    exit 1;
   } else {
     pass('SOAP export() response fault check');  
     
     my $document = $response->result;
     ok($document, "recieved document for story $story_id");
     check_doc($document, $xsd, "story $story_id");
+    
+    # add (copy) to title and try to create copy
+    $document =~ s!<name>(.*?)</name>!<name>$1 (copy)</name>!;
+    $response = $soap->create(name(document => $document)->type('base64'));
+    ok(!$response->fault, 'SOAP create() result is not a fault');
+    exit 1 if $response->fault;
+    my $ids = $response->result;
+    isa_ok($ids, 'ARRAY');
+
   }
 }
-
-# }
-
-# try importing a story
-$response = $soap->export(name(story_id => $story_ids->[0]),
-			  name(export_related_stories => 1));
-ok(!$response->fault, 'SOAP result is not a fault');
-my $document = $response->result;
-
-$response = $soap->create(name(document => $document));
-ok(!$response->fault, 'SOAP create result is not a fault');
-my $ids = $response->result;
-isa_ok($ids, 'ARRAY');
 
 # done with schema
 unlink $xsd;

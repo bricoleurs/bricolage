@@ -8,9 +8,11 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session qw(:user);
 use XML::Writer;
 use IO::Scalar;
+use Carp qw(croak);
 
 use Bric::SOAP::Util qw(category_path_to_id 
 			xs_date_to_pg_date pg_date_to_xs_date
@@ -32,15 +34,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-26 00:08:18 $
+$Date: 2002-01-31 01:02:33 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +54,7 @@ $Date: 2002-01-26 00:08:18 $
   # get a list of story_ids for published stories with "foo" in their
   # title
   my $story_ids = $soap->list_ids(name(title          => '%foo%'), 
-                               name(publish_status => 1)     )->result;
+                                  name(publish_status => 1)     )->result;
 
   # FIX: add more examples  
 
@@ -78,7 +80,8 @@ This method can accept the following named parameters to specify the
 search.  Some fields support matching and are marked with an (M).  The
 value for these fields will be interpreted as an SQL match expression
 and will be matched case-insensitively.  Other fields must specify an
-exact string to match.
+exact string to match.  Match fields combine to narrow the search
+results (via ANDs in an SQL WHERE clause).
 
 =over 4
 
@@ -454,7 +457,8 @@ sub create {
 	unless ref $data and ref $data eq 'HASH' and exists $data->{story};
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
-    # loop over stories
+    # loop over stories, filling in %story_ids and %relations
+    my (%story_ids, @story_ids, %relations);
     foreach my $sdata (@{$data->{story}}) {
 	my %init;
 
@@ -528,8 +532,7 @@ sub create {
 
 
 	# add keywords, if we have any
-	if (exists $sdata->{keywords} and 
-	    exists $sdata->{keywords}{keyword}) {
+	if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
 
 	    # collect keyword objects
 	    my @kws;
@@ -544,8 +547,7 @@ sub create {
 	}
 
 	# add contributors, if any
-	if (exists $sdata->{contributors} and 
-	    exists $sdata->{contributors}{contributor}) {
+	if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
 	    foreach my $c (@{$sdata->{contributors}{contributor}}) {
 		my %init = (fname => $c->{fname}, 
 			    mname => $c->{mname},
@@ -559,15 +561,53 @@ sub create {
 		$story->add_contributor($contrib, $c->{role});
 	    }
 	}
-		
-	print STDERR __PACKAGE__ . "::create : created story : ", 
-	    Data::Dumper->Dump([$story], ['story'])
-		    if DEBUG;
-	
-	
+
+	# save the story in an inactive state.  this is necessary to
+	# allow element addition - you can't add elements to an
+	# unsaved story, strangely.
+	$story->deactivate;
+	$story->save;
+
+	# find a suitable workflow and desk for the story.  Might be
+	# nice if Bric::Biz::Workflow->list took a type key...
+	my $desk;
+	foreach my $workflow (Bric::Biz::Workflow->list()) {
+	    if ($workflow->get_type == STORY_WORKFLOW) {
+		$story->set_workflow_id($workflow->get_id());
+		$desk = $workflow->get_start_desk;
+		$desk->accept({'asset' => $story});
+		last;
+	    }
+	}
+
+	# add element data
+	if ($sdata->{elements}) {
+	    $pkg->_load_element(element   => $story->get_tile, 
+				data      => $sdata->{elements},
+			        relations => \%relations);
+	} else {
+	    # load an empty set to create a really empty story
+	    $pkg->_load_element(element   => $story->get_tile, 
+				data      => {});
+	}
+
+	# save the story and desk after activating if desired
+	$story->activate if $sdata->{active};
+	$desk->save;
+	$story->save;
+
+	# this is what story_prof does - skipping this step results in
+	# a story unstuck in time with version set to 0
+	$story->checkin();
+	$story->save();
+	$story->checkout( { user__id => get_user_id });
+	$story->save();
+
+	# all done, setup the story_id
+	push(@story_ids, $story_ids{$sdata->{id}} = $story->get_id);
     }
     
-    return name(ids => [ name(id => 1) ]);
+    return name(ids => [ map { name(id => $_) } @story_ids ]);
 }
 }
 
@@ -631,7 +671,91 @@ Notes: NONE
 
 =over 4
 
-=item @related = _serialize_story(writer => $writer, story_id => $story_id, args => $args)
+=item $pkg->_load_element(element   => $element,
+			  data      => $sdata->{elements},
+			  relations => \%relations);_load_container
+
+Loads a container element with data from the data hash.  Calls
+recursively down through containers.  Fills in a relations hash as it
+goes containing data to fixup related media and related stories.  Dies
+if it finds bad data.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: This method isn't checking compliance with the asset type
+constraints in some cases.  After Bric::SOAP::Element is done I should
+contain the kung-fu necessary for this task.
+
+=cut
+
+sub _load_element {
+    my $pkg       = shift;
+    my %options   = @_;
+    my $element   = $options{element};
+    my $data      = $options{data}; 
+    my $relations = $options{relations};
+	
+    # sanity check
+    croak("Called _load_element on none container!")
+	unless $element->is_container;
+    
+    # make sure we have an empty element - Story->new() helpfully (?)
+    # creates empty data elements for required elements.
+    if (my @e = $element->get_elements) {
+	$element->delete_tiles(\@e);
+	$element->save; # required for delete to "take"
+    }
+
+    # get lists of possible data types and possible containers that
+    # can be added to this element.  Hash on names for quick lookups.
+    my %valid_data      = map { ($_->get_name, $_) }
+	$element->get_possible_data();
+    my %valid_container = map { ($_->get_name, $_) } 
+	$element->get_possible_containers();
+
+    # load data elements
+    if ($data->{data}) {
+	foreach my $d (@{$data->{data}}) {
+	    my $at = $valid_data{$d->{element}};
+	    die "Error loading data element for " . 
+		$element->get_element_name .
+		    " cannot add data element $d->{element} here.\n"
+			unless $at;
+
+	    # add data to container
+	    $element->add_data($at, $d->{content}, $d->{order});
+	    $element->save; # I'm not sure why this is necessary after
+                            # every add, but removing it causes errors
+	}
+    }	    
+
+    # load containers
+    if ($data->{container}) {
+	foreach my $c (@{$data->{container}}) {
+	    my $at = $valid_container{$c->{element}};
+	    die "Error loading container element for " . 
+		$element->get_element_name .
+		    " cannot add data element $c->{element} here.\n"
+			unless $at;
+
+	    # setup container object
+	    my $container = $element->add_container($at);
+	    $container->set_place($c->{order});
+	    $element->save; # I'm not sure why this is necessary after
+                            # every add, but removing it causes errors
+	    
+	    # recurse
+	    $pkg->_load_element(element   => $container,
+				data      => $c,
+				relations => $relations);
+	}
+    }				
+}
+
+
+=item @related = $pkg->_serialize_story(writer => $writer, story_id => $story_id, args => $args)
 
 Serializes a single story into a <story> element using the given
 writer and args.  Returns a list of two-element arrays - [ "media",
@@ -641,8 +765,8 @@ serialized.
 =cut
 
 sub _serialize_story {
-    my $pkg = shift;
-    my %options = @_;
+    my $pkg      = shift;
+    my %options  = @_;
     my $story_id = $options{story_id};
     my $writer   = $options{writer};
     my @related;
@@ -717,11 +841,24 @@ sub _serialize_story {
     # output element data
     $writer->startTag("elements");
     my $element = $story->get_tile();
-    foreach my $e ($element->get_elements()) {
-	push @related, $pkg->_serialize_tile(writer  => $writer,
+    my @e = $element->get_elements;
+
+    # first serialize all data elements
+    foreach my $e (@e) {
+	next if $e->is_container;
+	push(@related, $pkg->_serialize_tile(writer  => $writer,
 					     element => $e,
 					     args    => $options{args},
-					    );
+					    ));	  
+    }
+
+    # then all containers
+    foreach my $e (@e) {
+	next unless $e->is_container;
+	push(@related, $pkg->_serialize_tile(writer  => $writer,
+					     element => $e,
+					     args    => $options{args},
+					    ));	  
     }
     $writer->endTag("elements");
     
@@ -731,7 +868,7 @@ sub _serialize_story {
     return @related;
 }
 
-=item @related = _serialize_tile($writer, $element)
+=item @related = $pkg->_serialize_tile(writer => $writer, element => $element, args => $args)
 
 Serializes a single tile, called recursively on containers.  Returns a
 list of two-element arrays - [ "media", $id ] or [ "story", $id ].
@@ -740,15 +877,15 @@ These are the related media objects serialized.
 =cut
 
 sub _serialize_tile {
-    my $pkg = shift;
-    my %options = @_;
+    my $pkg      = shift;
+    my %options  = @_;
     my $element  = $options{element};
     my $writer   = $options{writer};
     my @related;
     
     if ($element->is_container) {
 	my %attr  = (element => $element->get_element_name,
-		     order   => $element->get_object_order);
+		     order   => $element->get_place);
 	my @e = $element->get_elements();
 	
 	# look for related stuff and tag relative if we'll include in
@@ -756,23 +893,40 @@ sub _serialize_tile {
 	my ($related_story, $related_media);
 	if ($related_story = $element->get_related_story) {
 	    $attr{related_story_id} = $related_story->get_id;
-	    $attr{relative} = 1 if $options{args}{export_related_stories};
-	    push(@related, [ story => $attr{related_story_id} ]);	    
+	    if ($options{args}{export_related_stories}) {
+		$attr{relative} = 1;
+		push(@related, [ story => $attr{related_story_id} ]);
+	    }
 	} elsif ($related_media = $element->get_related_media) {
 	    $attr{related_media_id} = $related_media->get_id;
-	    $attr{relative} = 1 if $options{args}{export_related_media};
-	    push(@related, [ media => $attr{related_story_id} ]);
+	    if ($options{args}{export_related_media}) {
+		$attr{relative} = 1;
+		push(@related, [ media => $attr{related_story_id} ]);
+	    }
 	}
 	
 	if (@e) {
 	    # recurse over contained elements
 	    $writer->startTag("container", %attr);
+
+	    # first serialize all data elements
 	    foreach my $e (@e) {
+		next if $e->is_container;
 		push(@related, $pkg->_serialize_tile(writer  => $writer,
 						     element => $e,
 						     args    => $options{args},
 						    ));	  
 	    }
+
+	    # then all containers
+	    foreach my $e (@e) {
+		next unless $e->is_container;
+		push(@related, $pkg->_serialize_tile(writer  => $writer,
+						     element => $e,
+						     args    => $options{args},
+						    ));	  
+	    }
+
 	    $writer->endTag("container");
 	} else {
 	    # produce clean empty tag
@@ -784,11 +938,11 @@ sub _serialize_tile {
 	if (defined $data and length $data) {
 	    $writer->dataElement("data", $data,
 				 element => $element->get_element_name,
-				 order   => $element->get_object_order);
+				 order   => $element->get_place);
 	} else {
 	    $writer->emptyTag("data", 
 			      element => $element->get_element_name,
-			      order   => $element->get_object_order);
+			      order   => $element->get_place);
 	}
     }
 
