@@ -64,6 +64,12 @@ C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is enabled now uses
 radio buttons instead of a link to select the primary category. Suggested by
 Scott Lanning. [David]
 
+=item *
+
+Search by site is now supported in the "Advanced Search" interface of "Find
+Story", "Find Media", and "Find Template" when there is more than one site and
+the "Filter by Site Context" peference is not turned on. [David]
+
 =back
 
 =head2 Bug Fixes

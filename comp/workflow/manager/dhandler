@@ -148,6 +148,7 @@ my $wf_name = $wf->get_name;
     select    => $select,
     behavior  => 'expand',
     field_values => $thumburi,
+    cx_filter => ! $ARGS{site_id},
     field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
 <p></p>

@@ -56,7 +56,7 @@ sub story : Callback {
 
     _build_fields($self, \@field, \@crit,
                     [qw(simple title primary_uri category_uri keyword data_text)]);
-    _build_id_fields($self, \@field, \@crit, [qw(element__id)]);
+    _build_id_fields($self, \@field, \@crit, [qw(element__id site_id)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
@@ -74,7 +74,7 @@ sub media : Callback {
     my (@field, @crit);
 
     _build_fields($self, \@field, \@crit, [qw(simple name uri data_text)]);
-    _build_id_fields($self, \@field, \@crit, [qw(element__id)]);
+    _build_id_fields($self, \@field, \@crit, [qw(element__id site_id)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
@@ -92,6 +92,7 @@ sub formatting : Callback {
     my (@field, @crit);
 
     _build_fields($self, \@field, \@crit, [qw(simple name file_name)]);
+    _build_id_fields($self, \@field, \@crit, [qw(site_id)]);
 
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
