@@ -207,7 +207,7 @@ sub test_oc_id : Test(14) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(30) {
+sub test_alias : Test(32) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -335,10 +335,9 @@ sub test_alias : Test(30) {
               [$ba->get_contributors],
               "Check get_contributors");
 
-    $element->remove_sites([$site1]);
-    $element->save;
+    ok( $element->remove_sites([$site1]), "Remove site" );
+    ok( $element->save, "Save element" );
 }
-
 
 1;
 __END__
