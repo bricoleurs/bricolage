@@ -102,6 +102,13 @@ dist_tar	:
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
+SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+
+inst/bricolage.sql : $(SQL_FILES)
+	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
+	find lib -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
+	find lib -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
+
 .PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
                   dist_tar check_dist
 
@@ -126,15 +133,8 @@ bin 		:
 files 		: config.db
 	perl inst/files.pl
 
-db    		: inst/db.pl postgres.db inst/bricolage.sql
+db    		: inst/db.pl postgres.db
 	perl inst/db.pl
-
-SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
-
-inst/bricolage.sql : $(SQL_FILES)	
-	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
-	find lib -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
-	find lib -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
 
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
