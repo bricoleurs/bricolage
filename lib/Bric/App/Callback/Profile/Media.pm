@@ -373,6 +373,7 @@ sub cancel : Callback {
 
         # If one move to desk, and one checkout, and this isn't the first
         # time the media has been in workflow since it was created...
+        # XXX Two events upon creation: media_create and media_moved.
         if ($desks == 1 && $cos == 1 && @events > 2) {
             # It was just recalled from the library. So remove it from the
             # desk and from workflow.

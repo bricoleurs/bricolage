@@ -31,13 +31,13 @@ such as "%" to generalize the search. [David]
 C<make upgrade> no longer copies the entire installed component root to a new
 directory as a way to get rid of old UI component files. We now require that
 any deleted component files get removed from an existing installation via an
-upgrade script, instead. See F<inst/upgrade/1.7.0/delete_old_componnets.pl>
+upgrade script, instead. See F<inst/upgrade/1.7.0/delete_old_components.pl>
 for an example. [David]
 
 =item *
 
 Bricolage now runs under a DSO C<mod_perl> as long as it uses a Perl compiled
-with C<usemymalloc='n'> I<or> C<-Ubincompat5005>. See
+with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See
 L<http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used> for
 details. Thanks to Marshall Roch for finding that link. [David]
 
@@ -45,7 +45,7 @@ details. Thanks to Marshall Roch for finding that link. [David]
 
 The New Story and New Media profiles by default no longer have a value
 selected for the Story Type or Media type (respecively), so as to prevent
-creating stories of the wrong type. [David]
+the inadvertant creation of documents of the wrong type. [David]
 
 =item *
 
@@ -67,8 +67,8 @@ Scott Lanning. [David]
 =item *
 
 Search by site is now supported in the "Advanced Search" interface of "Find
-Story", "Find Media", and "Find Template" when there is more than one site and
-the "Filter by Site Context" peference is not turned on. [David]
+Stories", "Find Media", and "Find Templates" when there is more than one site
+and the "Filter by Site Context" peference is not turned on. [David]
 
 =back
 
@@ -85,7 +85,7 @@ the Mason burner. [David]
 =item *
 
 The C<list()> and C<list_ids()> methods of the story, media, and template
-classes no longer return C<undef> in a scalar context when there are not
+classes no longer return C<undef> in a scalar context when there are no
 objects to be returned. It returns an empty array reference, instead. [David]
 
 =item *
@@ -100,9 +100,9 @@ F<bin/Makefile.PL> files from the source directory. [David]
 
 =item *
 
-In F<lib/Bric/Biz/AssetType/Parts/Data.pm> constant C<ORD>, changed 'name' to
-'key_name' (name was replaced with key_name throughout that module, by the
-way...). [Scott]
+Fixed the C<my_meths()> method of Bric::Biz::AssetType::Parts::Data to return
+metdata forthe the C<key_name> attribute instead of an C<undef> for the
+removed C<name> attribute. [Scott]
 
 =item *
 
@@ -204,7 +204,7 @@ when clicking the "Cancel" button. Reported by Paul Orrock. [David]
 
 =item *
 
-The story and media profiles no clear out the session cache for the story or
+The story and media profiles now clear out the session cache for the story or
 media element when leaving the story or media profile. This is to prevent
 perceived caching of changes that were canceled in a profile, noticed only
 when one canceled an edit of a story or media document and immediately edited
@@ -236,6 +236,12 @@ and media type elements. [David]
 Deleting a workflow from the workflow manager now properly updates the
 workflow cache so that the deleted workflow is removed from the left
 navigation without a reboot. [David]
+
+=item *
+
+Creating a story, checking it in, checking it out, and then cancelling the
+checkout no longer incorectly removes the story from workflow. Reported by .
+[David]
 
 =back
 

@@ -248,8 +248,8 @@ sub cancel : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     if ($story->get_version == 0) {
-        # If the version number is 0, the story was never checked in to a
-        # desk. So just delete it.
+        # If the version number is 0, the story was never checked in. So just
+        # delete it.
         return unless $handle_delete->($story, $self);
     } else {
         # Cancel the checkout.
@@ -276,7 +276,9 @@ sub cancel : Callback {
 
         # If one move to desk, and one checkout, and this isn't the first
         # time the story has been in workflow since it was created...
-        if ($desks == 1 && $cos == 1 && @events > 2) {
+        # XXX Three events upon creation: story_create, story_add_category,
+        # and story_moved.
+        if ($desks == 1 && $cos == 1 && @events > 3) {
             # It was just recalled from the library. So remove it from the
             # desk and from workflow.
             my $desk = $story->get_current_desk;
