@@ -88,7 +88,7 @@ functions can get access to the current language handle. [David]
 
 =item *
 
-Added C<output_channel_id> paramter to the C<list()> methods of Story and
+Added C<output_channel_id> parameter to the C<list()> methods of Story and
 Media to enable querying for documents in output channels other than the
 primary output channel. Based on a patch from Clive Jones. [David]
 
@@ -178,7 +178,7 @@ lot of redundant code. [David]
 
 Added C<contrib_id> parameter to the C<list()> methods of
 Bric::Biz::Asset::Business::Story and Bric::Biz::Asset::Business::Media to
-return a lisdt of story or media documents associated with a given
+return a list of story or media documents associated with a given
 contributor. [David]
 
 =item *
@@ -196,7 +196,7 @@ Also added MediaType, Site, and Keyword SOAP modules. [Scott]
 
 =item *
 
-Changes to a stroy's slug, cover date, or primary category will now be
+Changes to a story's slug, cover date, or primary category will now be
 displayed before the story is saved. Suggested by a coworker of Andy Baio.
 [David]
 
@@ -307,7 +307,7 @@ Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 =item *
 
 When an asset is published or deployed directly from the asset profile, it is
-now properly removed from the publish or deploy desk. Repoted by Andy Baio's
+now properly removed from the publish or deploy desk. Reported by Andy Baio's
 coworker. [David]
 
 =item *
@@ -450,7 +450,7 @@ Fixed installer to use PostgreSQL 7.1 syntax to update statistics. [David]
 
 =item *
 
-Now setting C<$PGDATESTYLE> environment variable so that PotgreSQL isn't
+Now setting C<$PGDATESTYLE> environment variable so that PostgreSQL isn't
 confused about the date style Bricolage is using. Suggested by Chris Riddoch.
 [David]
 
@@ -837,10 +837,10 @@ Reported by Mark. [David]
 =item *
 
 Eliminated several error log authentication message such as "No cookie found."
-Thes tended only to confuse users when they were just starting to use
+This tended only to confuse users when they were just starting to use
 Bricolage. I've left in a few error messages, however, so that system
 administrators can see in the log when it looks like someone is trying to hack
-into Bricolage. The remaninging authentication error log messages are:
+into Bricolage. The remaining authentication error log messages are:
 
 =over
 
@@ -3607,7 +3607,7 @@ bric_soap - is complete. [Sam]
 =item *
 
 Fixed numerous cases where user_ids were being used as booleans. Since user_id
-0 is the Adminstrator's user_id this can cause problems. [Sam]
+0 is the Administrator's user_id this can cause problems. [Sam]
 
 =item *
 
@@ -3927,7 +3927,7 @@ than relying on a hard-coded location for pgsql binaries. [David]
 
 Fixed permission granting in bric_pgimport so that the Bricolage database use
 has DELETE permissions on all objects in the Bricolage database. It looks like
-this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
+this permission was ignored in PostgreSQL 7.1 and earlier, or problems would have
 shown up a long time ago! [David]
 
 =item *
