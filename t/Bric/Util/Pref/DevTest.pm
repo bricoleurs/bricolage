@@ -11,7 +11,7 @@ my $tz_pref_id = 1;
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(12) {
+sub test_lookup : Test(13) {
     my $self = shift;
     ok( my $pref = Bric::Util::Pref->lookup({ id => $tz_pref_id }),
         "Look up TZ pref" );
@@ -20,6 +20,8 @@ sub test_lookup : Test(12) {
     is( $pref->get_name, 'Time Zone', "Check name" );
     is( $pref->get_description, 'Time Zone', "Check description" );
     is( $pref->get_value, 'America/Los_Angeles', "Check value" );
+    is( $pref->get_val_name, 'Pacific Time - Los Angeles',
+        "Check value_name" );
     is( $pref->get_default, 'America/Los_Angeles', "Check default" );
     is( $pref->get_manual, 0, "Check manual" );
     is( $pref->get_opt_type, 'select', "Check opt_type" );

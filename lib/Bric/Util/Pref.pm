@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:07 $
+$Date: 2003-03-05 19:06:15 $
 
 =head1 SYNOPSIS
 
@@ -1188,8 +1188,8 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'pref p, pref_opt o, member m, pref_member c';
-    my $wheres = 'p.id = o.pref__id AND p.id = c.object_id ' .
-      'AND m.id = c.member__id AND m.active = 1';
+    my $wheres = 'p.id = o.pref__id AND p.value = o.value ' .
+      'AND p.id = c.object_id AND m.id = c.member__id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
