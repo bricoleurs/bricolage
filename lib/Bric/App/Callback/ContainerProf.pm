@@ -34,7 +34,7 @@ sub drift_correction : PreCallback {
     # (is this necessary/possible?)
     return unless $self->class_key eq CLASS_KEY;
 
-    my $param = $self->request_args->{'paam'};
+    my $param = $self->request_args->{'param'};
 
     # Don't do anything if we've already corrected ourselves.
     return if $param->{'_drift_corrected_'};
