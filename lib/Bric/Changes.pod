@@ -78,6 +78,13 @@ times smaller, with minimal extra server load.  If mod_gzip is found during
 installation, the appropriate LoadModule/AddModule lines will be added
 to httpd.conf.  Disabled by default. [Marshall Roch; Suggested by Rod Taylor]
 
+=item *
+
+Added "Show Alpha Search" preference that determines whether the alpha search
+("A | B | C | ... [All]") links should be shown.  The alpha search isn't very
+useful because you can type the first letter in the textbox (or leave it blank
+for "All") for the same result.  Alpha search is off by default. [Marshall Roch]
+
 =back
 
 =head2 Improvements

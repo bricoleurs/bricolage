@@ -376,6 +376,8 @@ form .row .input p {
     height: 2em;
 }
 
+form .alpha .row .input { line-height: 1.3em; }
+
 table { padding: 0; border-collapse: collapse; position: relative; }
 table tr.odd { background: #E8E8CD; }
 table td.position,
