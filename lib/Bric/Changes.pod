@@ -196,6 +196,12 @@ Fixed problem creating new business assets with SOAP where Bricolage was
 trying to associate them with output channels twice, resulting in an SQL
 Error. [David]
 
+=item *
+
+Fixed broken index on media type extensions. It was duplicating the index on
+the media type names. It has been changed to uniquely index the media type
+file name extensions. [David]
+
 =back
 
 =head1 VERSION 1.5.0

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-02-17 02:06:48 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -47,6 +47,7 @@ CREATE TABLE media_type_ext (
 --
 
 CREATE UNIQUE INDEX udx_media_type__name ON media_type(LOWER(name));
+CREATE UNIQUE INDEX udx_media_type_ext__extension ON media_type_ext(LOWER(extension));
 CREATE UNIQUE INDEX udx_media_type_ext__extension ON media_type(LOWER(name));
 CREATE INDEX fkx_media_type__media_type_ext ON media_type_ext(media_type__id);
 
