@@ -142,6 +142,9 @@ if ($type eq 'job') {
 } elsif ($type eq 'alert_type') {
     $sel_label = 'Delete';
     $sel_widg = 'alert_type|delete_cb';
+} elsif ($type eq 'workflow') {
+    $sel_label = 'Delete';
+    $sel_widg = 'workflow|delete_cb';
 } else {
     $sel_label = 'Delete';
     $sel_widg = 'listManager|deactivate_cb';
@@ -345,11 +348,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.1 $
+$Revision: 1.1.1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:01 $
+$Date: 2001-10-10 20:26:27 $
 
 =head1 SYNOPSIS
 
