@@ -8,8 +8,7 @@ $media_id => undef
 <%once>;
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
-my $comp_root = $m->interp->comp_root;
-$comp_root = $comp_root->[0][1] if PREVIEW_MASON;
+my $comp_root = $m->interp->comp_root->[0][1];
 </%once>
 
 <%init>;

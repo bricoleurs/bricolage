@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.2 $
+$Revision: 1.26.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-24 03:26:59 $
+$Date: 2002-01-28 18:11:18 $
 
 =head1 SYNOPSIS
 
@@ -274,7 +274,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
       [[bric_ui => $config->{MASON_COMP_ROOT}],
        [bric_preview => catdir($config->{MASON_COMP_ROOT}, PREVIEW_LOCAL)]]
-	: $config->{MASON_COMP_ROOT};
+	: [[bric_ui => $config->{MASON_COMP_ROOT}]];
 
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
       || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'data');

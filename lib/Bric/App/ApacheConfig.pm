@@ -60,7 +60,7 @@ our %VirtualHost;
 our @NameVirtualHost = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
 
 do {
-    my %config = ( DocumentRoot => MASON_COMP_ROOT,
+    my %config = ( DocumentRoot => MASON_COMP_ROOT->[0][1],
 		   ServerName   => VHOST_SERVER_NAME,
 		   DefaultType  => 'text/html');
 
