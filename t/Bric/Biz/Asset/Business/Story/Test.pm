@@ -125,7 +125,7 @@ sub test_get_uri: Test(1) {
                                         active         => 1,
                                         output_channel => $oc,
                                      });
-    $element->set_primary_oc_id($oc->get_id);
+#    $element->set_primary_oc_id($oc->get_id,100);
     my $story = $CLASS->new({
                            name        => "_test_$time",
                            description => 'this is a test',
