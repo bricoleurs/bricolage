@@ -7,16 +7,18 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/09/15 00:23:59 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

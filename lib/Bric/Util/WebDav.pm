@@ -7,15 +7,17 @@ Bric::Util::WebDav - Placeholder for Bricolage DAV support.
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:36 $
+$LastChangedDate$
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =pod
 

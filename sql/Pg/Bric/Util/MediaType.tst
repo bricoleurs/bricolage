@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    MeidiaType.tst
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/02/02 19:46:47 $
+-- $LastChangedDate$
 -- Author:  David Wheeler <david@wheeler.net>
 
 -- No test values - there are plenty of default values to play with!

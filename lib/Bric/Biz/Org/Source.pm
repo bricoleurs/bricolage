@@ -6,16 +6,18 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:11 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

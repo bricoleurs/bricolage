@@ -6,16 +6,18 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/12/21 00:27:06 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/18 02:14:45 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

@@ -10,20 +10,22 @@ Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
 
 =item Version
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =item Date
 
-$Date: 2003/08/01 04:51:13 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: mysql.pm,v 1.2 2003/08/01 04:51:13 wheeler Exp $
+$Id$
 
 =back
 

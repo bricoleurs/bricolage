@@ -6,15 +6,17 @@ Bric::Util::Language::zh_hk - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:09 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -30,13 +32,13 @@ Bricolage 正體中文翻譯.
 
 use constant key => 'zh_hk';
 
-our @ISA = qw(Bric::Util::Language);
+our @ISA = qw(Bric::Util::Language::zh_tw);
 
 our %Lexicon = (
 
 );
-1;
 
+1;
 __END__
 
 =head1 AUTHOR
@@ -46,6 +48,8 @@ Kang-min Liu <gugod@gugod.org>
 =head1 SEE ALSO
 
 L<Bric::Util::Language|Bric::Util::Language>
+
+L<Bric::Util::Language::zh_tw|Bric::Util::Language::zh_tw>
 
 =cut
 

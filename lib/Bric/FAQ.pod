@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:05 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -189,6 +189,10 @@ Architectural Energy - L<http://www.archenergy.com/>
 
 2: The Magazine for Couples - L<http://www.2magazine.com/>
 
+=item *
+
+Performance Learning Systems - L<http://www.plsweb.com/>
+
 =back
 
 =head3 Are there any commercial support offerings for Bricolage?
@@ -298,8 +302,8 @@ Sometimes you might need to update your CPAN bundle, itself:
 
 =head3 Why does C<make install> exit with the error 'Missing or empty inst/bricolage.sql!'?
 
-You downloaded Bricolage from Subversion and didn't run C<make dist>.
-Do something like this:
+You checked Bricolage out from Subversion and didn't run C<make dist>. Do
+something like this:
 
     # make dist
     [lots of output...]

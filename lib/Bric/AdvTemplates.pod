@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/19 08:59:44 $
+$LastChangedDate$
 
 =head1 INTRODUCTION
 

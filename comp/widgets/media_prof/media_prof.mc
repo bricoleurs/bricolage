@@ -8,11 +8,11 @@ media_prof.mc - Profile for templates
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/11/30 06:23:37 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

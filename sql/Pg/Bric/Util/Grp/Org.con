@@ -1,7 +1,7 @@
 -- Project: Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/02/02 19:46:48 $
+-- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 
 ALTER TABLE    org_member

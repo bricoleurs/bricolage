@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/25 23:34:02 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

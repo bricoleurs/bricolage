@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/02/19 13:37:08 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

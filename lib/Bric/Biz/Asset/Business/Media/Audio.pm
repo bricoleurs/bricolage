@@ -8,11 +8,13 @@ audios
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 

@@ -60,11 +60,11 @@ $at_ocs
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/08 19:58:31 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

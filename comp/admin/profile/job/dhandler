@@ -118,11 +118,11 @@ my $no_del = !$id || $no_edit;
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/01/13 16:39:09 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

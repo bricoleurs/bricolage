@@ -8,18 +8,20 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =pod
 
 =head1 DATE
 
-$Date: 2003/12/22 18:34:49 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -1329,7 +1331,7 @@ B<Notes:> See also Bric::Biz::Person save() method documentation.
 
 sub save {
     my $self = shift;
-    return unless $self->_get__dirty;
+    return $self->SUPER::save unless $self->_get__dirty;
     my ($id, $act, $done) = $self->_get(qw(id _active _inserted));
 
     if ($done) {

@@ -6,11 +6,11 @@ rm_files.pl - installation script to remove directories and files
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/12/12 12:09:27 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

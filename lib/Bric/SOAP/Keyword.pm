@@ -26,15 +26,17 @@ Bric::SOAP::Keyword - SOAP interface to Bricolage keywords
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/02/23 11:48:41 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

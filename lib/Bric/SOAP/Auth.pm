@@ -23,15 +23,17 @@ Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:35 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

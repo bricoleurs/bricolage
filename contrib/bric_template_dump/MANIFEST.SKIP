@@ -6,4 +6,4 @@
 ^MANIFEST\.SKIP$
 ^bric_template_dump
 ^www
-\.svn
+^\.svn

@@ -6,15 +6,17 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/04/07 20:35:58 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

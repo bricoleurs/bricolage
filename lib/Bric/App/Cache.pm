@@ -6,16 +6,21 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+{
+    no warnings;
+    INIT {
+        require Bric; our $VERSION = Bric->VERSION
+    }
+}
 
 =head1 DATE
 
-$Date: 2003/04/15 09:05:14 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

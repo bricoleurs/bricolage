@@ -7,11 +7,11 @@ dhandler -- the container profile app.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/12 03:25:56 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -26,18 +26,7 @@ my $disp = get_disp_name('element');
 my $sdisp = get_disp_name('story');
 my $context = "Workflow | Profile | $sdisp | $disp |";
 </%once>
-
-%#-- Args Section --#
-<%args>
-</%args>
-
-%#-- Init Section --#
-<%init>
-
-</%init>
-
 %#-- Begin HTML --#
-
 <& "/widgets/wrappers/sharky/header.mc",
   	title => "view container",
 	context => $context . get_state_data('container_prof', 'crumb')
@@ -53,7 +42,5 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
 
 

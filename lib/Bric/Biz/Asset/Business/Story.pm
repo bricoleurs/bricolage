@@ -7,15 +7,17 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.102 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.102 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:07 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,16 +6,18 @@ Bric::Util::Job::Dist - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/02/23 16:01:28 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

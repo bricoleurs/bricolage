@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.132 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/18 15:32:27 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

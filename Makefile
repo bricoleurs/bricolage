@@ -8,7 +8,7 @@
 #   upgrade   - upgrades an existing installation
 #   uninstall - uninstalls an existing installation
 #   clean     - delete intermediate files
-#   dist      - prepare a distribution from a Subversion checkout
+#   dist      - prepare a distrubution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database

@@ -8,15 +8,17 @@ Bric::Util::Trans::Mail - Utility class for sending email.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:37 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -72,8 +74,7 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $mailer = "Bricolage " . Bric->VERSION . ' (' . __PACKAGE__ . " "
-  . __PACKAGE__->VERSION . ")";
+my $mailer = "Bricolage " . Bric->VERSION;
 
 ################################################################################
 

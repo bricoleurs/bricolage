@@ -8,11 +8,11 @@ login - A login widget
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2001/12/04 18:17:40 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/14 16:44:31 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

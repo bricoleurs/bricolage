@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/11/06 00:43:50 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -122,7 +122,7 @@ sub create_paths {
 sub copy_files {
     my $root = shift;
     return if /\.$/;
-    return if /\.svn/;
+    return if /.svn/;
     return if $UPGRADE and m!/data/!; # Don't upgrade data files.
     return if $UPGRADE and /bconf/ and /\.conf$/; # Don't upgrade .conf files.
 

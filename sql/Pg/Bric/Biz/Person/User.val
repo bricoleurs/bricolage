@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    User.val
--- VERSION: $Revision: 1.2 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/12/18 01:20:03 $
+-- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 
 -- Administrator. Password: 'change me now!'.

@@ -6,11 +6,11 @@ bric_pgimport - Builds a Bricolage Database
 
 =head1 VERSION
 
-$Revision$
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date$
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -250,8 +250,8 @@ Usage: $prog [options]
 Supported Options:
   -P The location of the psql program. Defaults to simply 'psql' if undefined.
      This should work if psql is in your path.
-  -w The directory with the Subversion SQL files. Defaults to lib subdirectory of
-     BRICOLAGE_ROOT environment variable, which itself defaults to
+  -w The directory with the Subversion SQL files. Defaults to lib subdirectory
+     of BRICOLAGE_ROOT environment variable, which itself defaults to
      /usr/local/bricolage.
   -u Database user login. Defaults to PGUSER environment variable.
   -p Database user password. Defaults to PGPASSWORD environment variable.

@@ -1,5 +1,21 @@
 package Bric::App::Callback::Profile;
 
+=head1 NAME
+
+Bric::App::Callback::Profile - The Bricolage profile callback base class
+
+=head1 SYNOPSIS
+
+  use base 'Bric::App::Callback::Profile';
+
+=head1 DESCRIPTION
+
+This is the base class from which all Bricolage profile callback classes
+inherit. It provides a number of base and utility methods that are useful to
+the profile classes, and that handle common functionality between the classes.
+
+=cut
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'profile';
@@ -15,6 +31,35 @@ my $excl = {'desk' => 1, 'action' => 1, 'server' => 1, element_data => 1};
 
 my ($get_class, $chk_grp_perms);
 
+##############################################################################
+
+=head1 CLASS INTERFACE
+
+=head2 Constructors
+
+=head3 new
+
+Bric::App::Callback::Profile overrids the parent C<new()> constructor so
+handle a number of tasks common to all profile callback classes. These
+include:
+
+=over 4
+
+=item *
+
+Construting the object on which the callback methods will be operating.
+
+=item *
+
+Setting the class of object that the callback will be executing against.
+
+=item *
+
+Checking permissions on the object to be operated on.
+
+=back
+
+=cut
 
 # each subclass of Profile inherits this constructor,
 # which I want to set up the common things (obj, type, class)
@@ -51,6 +96,57 @@ sub new {
 
     return $self;
 }
+
+##############################################################################
+
+=head1 INSTANCE INTERFACE
+
+=head2 Instance Attributes
+
+=head3 obj
+
+  my $obj = $cb->obj;
+
+The object on which operations are to be performed by callback methods.
+
+=head3 type
+
+  my $type = $cb->type;
+
+The type of object on which operations will be performed. This is generally a
+string such as "user" or "story".
+
+=head3 class
+
+  my $class = $cb->class;
+
+The class of object on which operations will be performed.
+
+=head3 has_perms
+
+  unless ($cb->has_perms)
+      die "Oh-oh!";
+  }
+
+Returns true if the current user has permission to the object to be operated
+on. The required permission is CREATE for new objects and EDIT for existing
+objects.
+
+=cut
+
+##############################################################################
+
+=head2 Instance Methods
+
+=head3 manage_grps
+
+  $cb->manage_grps;
+
+This method manages group memberships for the object. Since many profiles have
+group membership association built in to the UI, this method can handle
+updating the memberships for any and all types of objects with profiles.
+
+=cut
 
 # Group membership is handled the same way through all callbacks,
 # so this method gets inherited to all profiles.
@@ -136,5 +232,31 @@ $get_class = sub {
     return $class;
 };
 
-
 1;
+
+=head1 AUTHOR
+
+Scott Lanning <lannings@who.int>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Bric::App::Callback|Bric::App::Callback>
+
+The Bricolage base callback class, from which Bric::App::Callback::Profile
+inherits.
+
+=item L<Bric::App::Callback::Profile|Bric::App::Callback::Profile::User>
+
+The user profile callback class, which inherits from
+Bric::App::Callback::Profile.
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
+L<Bric::License|Bric::License> for complete license terms and conditions.
+
+=cut

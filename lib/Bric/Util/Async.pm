@@ -6,16 +6,18 @@ Bric::Util::Async - This will handle all the async events
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the version #
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:12 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

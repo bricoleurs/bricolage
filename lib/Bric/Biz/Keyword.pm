@@ -10,20 +10,22 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.21 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =item Date
 
-$Date: 2004/03/19 05:12:15 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Keyword.pm,v 1.21 2004/03/19 05:12:15 wheeler Exp $
+$Id$
 
 =back
 

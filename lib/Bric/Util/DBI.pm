@@ -8,18 +8,20 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =pod
 
 =head1 DATE
 
-$Date: 2004/04/30 00:14:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

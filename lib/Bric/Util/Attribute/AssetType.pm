@@ -7,15 +7,17 @@ Bric::Util::Attribute::AssetType - Groups of Bric::Biz::AssetType objects.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/02/18 06:46:48 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

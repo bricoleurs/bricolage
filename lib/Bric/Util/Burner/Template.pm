@@ -8,15 +8,17 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/10/03 02:45:56 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

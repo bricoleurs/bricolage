@@ -6,16 +6,18 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/01/16 19:00:40 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -1670,56 +1672,60 @@ B<Notes:> NONE.
 
 sub save {
     my $self = shift;
-    return $self unless $self->_get__dirty;
     my ($c, $id) = $self->_get(qw(_cont id));
 
-    if (defined $id) {
-        # It's an existing person. Update it.
-        local $" = ' = ?, '; # Simple way to create placeholders with an array.
-        my $upd = prepare_c(qq{
-            UPDATE person
-            SET   @cols = ?
-            WHERE  id = ?
-        }, undef);
-        execute($upd, $self->_get(@props), $id);
-        unless ($self->_get('_active')) {
-            # Deactivate all group memberships if we've deactivated the person.
-            foreach my $grp (Bric::Util::Grp::Person->list
-                             ({ obj => $self, permanent => 0 })) {
-                foreach my $mem ($grp->has_member({ obj => $self })) {
-                    next unless $mem;
-                    $mem->deactivate;
-                    $mem->save;
+    if ($self->_get__dirty) {
+        if (defined $id) {
+            # It's an existing person. Update it.
+            local $" = ' = ?, '; # Simple way to create placeholders with an array.
+            my $upd = prepare_c(qq{
+                UPDATE person
+                SET   @cols = ?
+                WHERE  id = ?
+            }, undef);
+            execute($upd, $self->_get(@props), $id);
+            unless ($self->_get('_active')) {
+                # Deactivate all group memberships if we've deactivated the person.
+                foreach my $grp (Bric::Util::Grp::Person->list({
+                                 obj => $self,
+                                 permanent => 0 })) {
+                    foreach my $mem ($grp->has_member({ obj => $self })) {
+                        next unless $mem;
+                        $mem->deactivate;
+                        $mem->save;
+                    }
                 }
             }
+        } else {
+            # It's a new person. Insert it.
+            local $" = ', ';
+            my $fields = join ', ', next_key('person'), ('?') x $#cols;
+            my $ins = prepare_c(qq{
+                INSERT INTO person (@cols)
+                VALUES ($fields)
+            }, undef);
+            # Don't try to set ID - it will fail!
+            execute($ins, $self->_get(@props[1..$#props]));
+            # Now grab the ID.
+            $id = last_key('person');
+            $self->_set(['id'], [$id]);
+
+            # Now be sure to create a personal org for this person.
+            my $org = Bric::Biz::Org::Person->new({
+                name => $self->format_name(
+                        Bric::Util::Pref->lookup_val('Name Format')
+                        ),
+                role => 'Personal',
+                _personal => 1,
+                person_id => $id
+            });
+            $org->save;
+
+            # And finally, register this person in the "All Persons" group.
+            $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
         }
-    } else {
-        # It's a new person. Insert it.
-        local $" = ', ';
-        my $fields = join ', ', next_key('person'), ('?') x $#cols;
-        my $ins = prepare_c(qq{
-            INSERT INTO person (@cols)
-            VALUES ($fields)
-        }, undef);
-        # Don't try to set ID - it will fail!
-        execute($ins, $self->_get(@props[1..$#props]));
-        # Now grab the ID.
-        $id = last_key('person');
-        $self->_set(['id'], [$id]);
-
-        # Now be sure to create a personal org for this person.
-        my $org = Bric::Biz::Org::Person->new
-          ({ name => $self->format_name
-             (Bric::Util::Pref->lookup_val('Name Format')),
-             role => 'Personal',
-             _personal => 1,
-             person_id => $id
-           });
-        $org->save;
-
-        # And finally, register this person in the "All Persons" group.
-        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
+
     # Save the contacts.
     $c->save($self, $id) if $c;
     $self->SUPER::save;

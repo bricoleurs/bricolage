@@ -6,11 +6,11 @@ clone.pl - installation script to gather clone information
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/11 02:57:38 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

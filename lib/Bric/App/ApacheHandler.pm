@@ -6,16 +6,18 @@ Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/09/15 20:45:35 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

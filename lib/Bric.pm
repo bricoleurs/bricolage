@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.57 $
+$LastChangedRevision$
 
 =item Release Version
 
@@ -18,16 +18,18 @@ $Revision: 1.57 $
 
 =cut
 
-# Grab the Version Number.
-our $VERSION = '1.9.0';
+# Set the Version Number.
+BEGIN {
+    our $VERSION = '1.8.1';
+}
 
 =item Date
 
-$Date: 2004/04/13 00:34:00 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Bric.pm,v 1.57 2004/04/13 00:34:00 wheeler Exp $
+$Id$
 
 =back
 
@@ -75,12 +77,12 @@ if (defined MOD_PERL) {
     require Apache::Request;
 }
 
+
 ##############################################################################
 # Public Instance Fields
 
 # All subclasses should use the RegisterFields function rather than the below
-# code. See 'Example.pm' in the Subversion module 'doc/codingStandards' for an
-# example subclass.
+# code
 
 sub ACCESS {
     return {# debug  => FIELD_RDWR,  # public field

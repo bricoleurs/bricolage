@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:03 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -107,11 +107,14 @@ sub create_db {
                 }
                 return create_db();
             } else {
-                unlink $PGCONF;
-                hard_fail("Cannot proceed. If you want to use the existing ",
-                          "database, run 'make upgrade'\ninstead. To pick a ",
-                          "new database name, please run 'make db' again.\n");
+                unless (ask_yesno("Create tables in existing database? [yes] ", 1)) {
+                    unlink $PGCONF;
+                    hard_fail("Cannot proceed. If you want to use the existing ",
+                              "database, run 'make upgrade'\ninstead. To pick a ",
+                              "new database name, please run 'make db' again.\n");
+                }
             }
+            return 1;
         } else {
             hard_fail("Failed to create database. The database error was\n\n",
                       "$err\n");
@@ -166,7 +169,7 @@ sub load_db {
     my $db_file = catfile('inst', 'Pg.sql');
     unless (-e $db_file and -s _) {
         my $errmsg = "Missing or empty $db_file!\n\n"
-          . "If you're using Subversion sources, you need to `make dist` first.\n"
+          . "If you're using Subversion, you need to `make dist` first.\n"
           . "See `perldoc Bric::FAQ` for more information.";
         hard_fail($errmsg);
     }

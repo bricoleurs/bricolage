@@ -9,15 +9,17 @@ Group with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/12 21:15:02 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.49.2.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/05/06 03:59:53 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -516,7 +516,7 @@ revision in the branch.
 For the latter number, you can simply use the C<HEAD> keyword, which
 represents the latest revision number in the branch.
 
-For the former number, Bricolage has implemented a standard way of recording a
+For the former number, we have implemented a standard way of recording a
 merge: we create a new tag for the branch. In Subversion, branches and tags
 are exactly the same, the difference is only in convention. So the convention
 for Bricolage is to store tags in the F<tags> subdirectory of the project
@@ -529,15 +529,25 @@ up to which the merge was made. For example, if a merge was committed to the
 trunk from the rev_1_8 branch in Subversion revision # 5694, the branch would
 be tagged "rev_1_8_merge_5694".
 
-So get the revision number of the last merge, look in the Bricolage ViewCVS
+So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
   % svn list http://svn.bricolage.cc/bricolage/tags | grep rev_1_8
-  rev_1_8_merge_5694
-  rev_1_8_merge_5825
-  rev_1_8_merge_5902
-  rev_1_8_merge_5995
+  rev_1_8_merge_5694/
+  rev_1_8_merge_5825/
+  rev_1_8_merge_5902/
+  rev_1_8_merge_5995/
+
+If the branch has never been merged into the trunk you can get the revision
+number at the time the branch was created usinsing C<svn log> command:
+
+  % svn log --verbose --stop-on-copy \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  ------------------------------------------------------------------------
+  r5525 | theory | 2004-05-10 19:16:48 -0700 (Mon, 10 May 2004) | 1 line
+  Changed paths:
+     A /bricolage/branches/rev_1_8 (from /bricolage/trunk:5524)
 
 So now we know that we want to update the trunk with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
@@ -559,8 +569,8 @@ you're updating at this point), you can use the C<--dry-run> option to see
 what files would change without changing them. Or run C<svn diff> with the
 same arguments to see what the differences are:
 
-  % svn merge -r 5995:HEAD http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    > test.diff
+  % svn merge -r --dry-run 5995:HEAD \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8 > test.diff
 
 =item 4
 
@@ -587,13 +597,14 @@ we ran C<svn update> in step one, so it's easy to find and use:
 
   % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8_merge_6123.'
 
-=item 5
+=item 7
 
 Tag the branch with the last revision, so that future merges can decide to
 merge only from thiat revision on.
 
   % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123
+    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
+    -m 'Merge tag for rev_1_8 to revision 6123.'
 
 =back
 
@@ -614,22 +625,22 @@ to add today's date to the header for the new release:
 
   =head1 VERSION 1.x.x (2003-11-29)
 
-Next, tag the release in CVS:
+Next, tag the release in Subversion:
 
-  cvs -qz3 tag rel_1_x_x
+  svn tag rel_1_x_x
 
 If this is a major release, you'll need to create a new branch, so that it can
 be maintained for bug fixes separately, and then tag the release in that
 branch.
 
-  cvs -qz3 tag -b rev_1_x
-  cvs -qz3 tag rel_1_x_x
+  svn branch rev_1_x
+  svn tag rel_1_x_x
 
 Next, export the sources into a new directory. Be sure to use the C<-kkv>
 option with C<export> so that the version numbers are all properly populated.
 
   cd /tmp
-  cvs -qz3 export -r rel_1_x_x -kkv bricolage
+  svn export -r rel_1_x_x bricolage
   cd bricolage
   make dist
 
@@ -656,8 +667,8 @@ Be sure to run C<make devtest> after everything is installed to make sure that
 it is all functioning correctly. Users won't be running these tests, as they
 muck up the database. But that's okay for our validation of the release
 tarball. Use C<make uninstall> to clean up the mess. If you have to go back
-and make any changes, be sure to update the tag of any files you change and
-commit to Subversion, then do the whole thing over again. Once everything
+and make any changes, be sure to commit them to the Subversion repository and
+then to update the tag, then do the whole thing over again. Once everything
 appears to be working properly, release!
 
 =head2 Where to Send Notices

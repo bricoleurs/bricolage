@@ -6,11 +6,11 @@ stop.pl - upgrade script to stop running Bricolage servers
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/04/23 22:24:33 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

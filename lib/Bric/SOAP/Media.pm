@@ -43,15 +43,17 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/30 16:17:48 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

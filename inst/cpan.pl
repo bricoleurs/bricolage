@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/02/06 06:34:53 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

@@ -10,20 +10,22 @@ Bric::Util::Grp::MediaType - Interface to Bric::Util::MediaType Groups
 
 =item Version
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =item Date
 
-$Date: 2003/03/23 06:57:01 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: MediaType.pm,v 1.2 2003/03/23 06:57:01 wheeler Exp $
+$Id$
 
 =back
 

@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/02/02 19:46:47 $
+-- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- -----------------------------------------------------------------------------
 -- Attribute.con
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
 
 /* Commented out because attr_person won't be used in production (in this version).

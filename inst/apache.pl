@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/23 06:56:54 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

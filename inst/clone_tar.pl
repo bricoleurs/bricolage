@@ -6,11 +6,11 @@ clone.pl - installation script to copy files for clone distributions
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/08/13 22:05:10 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

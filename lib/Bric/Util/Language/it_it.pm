@@ -6,15 +6,17 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/24 20:44:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

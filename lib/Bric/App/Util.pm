@@ -7,15 +7,17 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:05 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,17 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/19 05:12:15 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

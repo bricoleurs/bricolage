@@ -7,15 +7,17 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:11 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

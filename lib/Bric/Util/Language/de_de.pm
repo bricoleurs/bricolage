@@ -6,15 +6,17 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/24 20:44:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -714,7 +716,10 @@ any error pointers.
 
 To Translate:
 
-  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"',
+  'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
+  'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
+  'Media "[_1]" scheduled for publication.' => 'Medium "[_1]" veröffentlicht.',
 
 =end comment
 

@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/10 01:03:00 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

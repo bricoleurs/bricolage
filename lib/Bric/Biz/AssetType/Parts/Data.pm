@@ -8,17 +8,17 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
-
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/04/15 11:05:25 $
-
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

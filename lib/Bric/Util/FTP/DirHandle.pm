@@ -8,17 +8,19 @@ Bric::Util::FTP::DirHandle - Virtual FTP Server DirHandle
 
 =head1 VERSION
 
-$Revision $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =pod
 
 =head1 DATE
 
-$Date: 2004/03/19 05:12:16 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

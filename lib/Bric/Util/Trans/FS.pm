@@ -8,15 +8,20 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+{
+    no warnings;
+    INIT {
+        require Bric; our $VERSION = Bric->VERSION
+    }
+}
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:37 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
@@ -493,7 +498,7 @@ sub copy {
         # copied to $dst doesn't already exist as a directory. However, neither
         # opition is very appealing, and the current implementation matches what
         # cp -r does.
-    my $newdir = cat_dir($self, $dst,$src_base);
+        my $newdir = cat_dir($self, $dst,$src_base);
         # Get rid of any existing file or directory inside $dst.
         del($self, $newdir) if -e $newdir;
         # Create a new path to $newdir.

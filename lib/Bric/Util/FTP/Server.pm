@@ -8,17 +8,19 @@ Bric::Util::FTP::Server - Virtual FTP Server
 
 =head1 VERSION
 
-$Revision $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =pod
 
 =head1 DATE
 
-$Date $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

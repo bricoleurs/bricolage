@@ -7,15 +7,17 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/03/21 22:06:24 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

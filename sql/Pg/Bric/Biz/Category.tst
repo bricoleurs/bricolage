@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.4 $
+-- VERSION: $LastChangedRevision$
 --
 -- Test values.
 --

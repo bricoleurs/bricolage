@@ -8,15 +8,17 @@ Bric::Biz::Site objects.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/10/30 03:51:28 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

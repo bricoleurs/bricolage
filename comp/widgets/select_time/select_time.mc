@@ -6,11 +6,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/30 00:14:01 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -10,20 +10,22 @@ Bric::Dist::Action::Email - Class to email distribution resources
 
 =item Version
 
-$Revision: 1.4 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =item Date
 
-$Date: 2004/03/02 00:57:56 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Email.pm,v 1.4 2004/03/02 00:57:56 wheeler Exp $
+$Id$
 
 =back
 

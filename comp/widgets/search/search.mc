@@ -8,11 +8,11 @@ search - A search widget
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/09/13 22:01:49 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

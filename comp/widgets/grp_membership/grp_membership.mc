@@ -6,11 +6,11 @@ grp_membership - Group membership widget
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/18 22:38:45 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,16 +6,18 @@ Bric::Util::Grp::Org - Interface to Bric::Biz::Org Groups
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/06/13 16:49:16 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

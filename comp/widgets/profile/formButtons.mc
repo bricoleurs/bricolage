@@ -63,15 +63,15 @@ formButtons.mc
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/09/23 17:25:57 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,15 +7,17 @@ Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:12 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

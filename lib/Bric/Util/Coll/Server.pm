@@ -7,15 +7,17 @@ Bric::Util::Coll::Server - Interface for managing collections of servers.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2003/07/25 04:39:28 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -8,15 +8,15 @@ getList.mc - generate an array of hashes to be displayed by /widgets/listManager
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2001/12/04 18:17:39 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

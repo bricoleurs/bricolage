@@ -7,15 +7,17 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/05/05 02:27:07 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -66,11 +66,11 @@ $fmt = get_pref('List Name Format');
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/05/20 03:21:58 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

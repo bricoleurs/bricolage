@@ -28,15 +28,17 @@ Bric::SOAP::User - SOAP interface to Bricolage users
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 =head1 DATE
 
-$Date: 2004/02/23 11:48:42 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

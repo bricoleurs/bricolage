@@ -4,11 +4,11 @@ Bric::Changes - Bricolage Changes
 
 =head1 VERSION
 
-$Revision$
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date$
+$LastChangedDate$
 
 =head1 DESCRIPTION
 
@@ -78,6 +78,40 @@ just giving an error message. [Scott]
 
 =head1 VERSION 1.8.1 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+More complete Traditional Chinese and Simplified Chinese localizations. Also,
+the Mandarin localization now simply inherits from the Traditional Chinese
+localization. [Kang-min Liu]
+
+=item *
+
+C<make clone> now copies the F<lib> directory and all of the F<bin> scripts
+from the target to the clone, rather than from the sources. This allows any
+changes that have been made to scripts and classes to be properly cloned.
+[David]
+
+=item *
+
+When installing Bricolage, it will now allow you to proceed if the database
+already exists by asking if you want to create the Bricolage tables in the
+existing database. Suggested by Mark Fournier and Marshall Roch. [David]
+
+=item *
+
+Added some missing translations for English. [David]
+
+=item *
+
+The installer is now a bit smarter in how it handles loading the C<log_config>
+(or C<config_log>, as the case may be) module. [Marshall Roch]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -91,6 +125,29 @@ they wish to publish from. [Scott]
 
 Eliminated 'Bareword "ENABLE_HTMLAREA" not allowed while "strict subs" in use'
 warning that prevented startup for some installations. [Scott]
+
+=item *
+
+The Mason burner now appends a "/" to the end of the category path it
+specifies for burning a story. This removes the ambiguity between a directory
+request and a file request, which in rare circumstances could cause unexpected
+problems. [David]
+
+=item *
+
+Changes made to user or contributor contacts without changing any other part
+of the user or contributor oject are now properly saved. [David]
+
+=item *
+
+When cloning a story, the list of output channels to select from is now
+limited to the site the current workflow is in. Thanks to Serge Sonzonoff for
+the spot! [David]
+
+=item *
+
+Attempting to publish a story or media document with brackets in the title no
+longer causes an error. Reported by Serge Sozonoff. [David]
 
 =back
 

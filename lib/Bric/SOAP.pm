@@ -1,6 +1,8 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+INIT {
+    require Bric; our $VERSION = Bric->VERSION
+}
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -25,11 +27,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/16 21:43:57 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
