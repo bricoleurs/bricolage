@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-20 18:43:00 $
+$Date: 2002-06-03 21:47:00 $
 
 =head1 DESCRIPTION
 
@@ -204,11 +204,7 @@ sub status {
   
   my $data = $template->get_data || "";
   my $size = length($data);
-  my $deploy_date = $template->get_deploy_date;
-  my $date = 0;
-  if ($deploy_date) {
-    $date = local_date($deploy_date, 'epoch');
-  }
+  my $date = $template->get_deploy_date('epoch') || 0;
 
   my $owner = $template->get_user__id;
   if (defined $owner) {
