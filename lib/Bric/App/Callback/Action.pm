@@ -7,7 +7,7 @@ __PACKAGE__->register_subclass(class_key => 'action');
 
 use Bric::App::Authz;
 use Bric::App::Event;
-use Bric::App::Util;
+use Bric::App::Util qw(:all);
 use Bric::Util::Priv::Parts::Const qw(EDIT);
 
 my $disp = get_disp_name(CLASS_KEY);

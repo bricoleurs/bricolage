@@ -3,8 +3,8 @@ package Bric::App::Callback::Alert;
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'alert');
 use strict;
-use Bric::App::Session;
-use Bric::App::Util;
+use Bric::App::Session qw(:user);
+use Bric::App::Util qw(:all);
 use Bric::Util::Alerted;
 
 my $class = get_package_name('recip');

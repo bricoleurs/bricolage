@@ -4,9 +4,9 @@ use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'alias');
 use strict;
 use Bric::App::Authz;
-use Bric::App::Session;
+use Bric::App::Session qw(:state :user);
 use Bric::App::Event;
-use Bric::App::Util;
+use Bric::App::Util qw(:all);
 use Bric::Biz::Asset;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
@@ -68,7 +68,7 @@ sub pick_cats : Callback {
     # Alias it.
     my $ba = $classes{$class_key}->new({ site_id  => $site_id,
                                          alias_id => $aliased_id,
-                                         user__id => get_user_id
+                                         user__id => get_user_id(),
                                        });
     # Set up the category.
     my $cat_ids = mk_aref($param->{'category_id'});
