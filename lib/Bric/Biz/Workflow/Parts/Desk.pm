@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-10-06 14:49:08 $
+$Date: 2003-10-06 15:04:11 $
 
 
 =head1 SYNOPSIS
@@ -408,7 +408,7 @@ Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 =cut
 
 sub DESTROY {
-    # This method should be here even if its empty so that we don't waste time
+    # This method should be here even if it's empty so that we don't waste time
     # making Bricolage's autoload method try to find it.
 }
 
@@ -1392,7 +1392,7 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
 
-    # Make sure to set active explicitly if its not passed.
+    # Make sure to set active explicitly if it's not passed.
     $params->{active} = exists $params->{active} ?
       $params->{active} ? 1 : 0 : 1;
     $params->{publish} = $params->{publish} ? 1 : 0
