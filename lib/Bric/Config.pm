@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39 $ )[-1];
+our $VERSION = (qw$Revision: 1.40 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-16 22:19:32 $
+$Date: 2002-05-01 21:51:03 $
 
 =head1 SYNOPSIS
 
@@ -60,6 +60,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    DBI_PASS
 		    DBI_DEBUG
 		    DBI_CALL_TRACE
+		    DBI_PROFILE
 		    MASON_COMP_ROOT
 		    MASON_DATA_ROOT
 		    MASON_ARGS_METHOD
@@ -124,7 +125,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 				     DBI_USER
 				     DBI_PASS
 				     DBI_DEBUG
-				     DBI_CALL_TRACE)],
+				     DBI_CALL_TRACE
+				     DBI_PROFILE)],
 		    mason     => [qw(MASON_COMP_ROOT
 				     MASON_DATA_ROOT
 				     MASON_ARGS_METHOD)],
@@ -261,8 +263,13 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
 	# Grab the Apache configuration file.
 	$config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
-	$aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
-					 ignore_case => 1);
+	{
+	    # Apache::ConfigFile can be very noisy in the presence of
+	    # <Perl> blocks.
+	    local $^W = 0;
+	    $aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
+					     ignore_case => 1);
+	}
     }
 
     # Apache Settings.
@@ -292,8 +299,12 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DB_PORT                 => $config->{DB_PORT};
     use constant DBI_USER                => $config->{DBI_USER} || 'castellan';
     use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
-    use constant DBI_DEBUG               => $config->{DBI_DEBUG} || 0;
     use constant DBI_CALL_TRACE          => $config->{DBI_CALL_TRACE} || 0;
+    use constant DBI_PROFILE             => $config->{DBI_PROFILE} || 0;
+    # DBI_CALL_TRACE and DBI_PROFILE imply DBI_DEBUG
+    use constant DBI_DEBUG               => $config->{DBI_DEBUG}      || 
+                                            $config->{DBI_CALL_TRACE} || 
+                                            $config->{DBI_PROFILE}    || 0;
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
