@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-13 03:10:28 $
+$Date: 2003-01-15 23:21:22 $
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ use File::Path;
 # user in that directory.
 BEGIN {
     $ENV{BRIC_TEMP_DIR} = File::Spec->catdir
-      (File::Spec->tmpdir, 'bricolage', 'test');
+      (File::Spec->tmpdir, 'bricolage-test');
     File::Path::mkpath($ENV{BRIC_TEMP_DIR}, 0, 0777);
 }
 
