@@ -83,7 +83,8 @@ my $wf = $wf_class->lookup({ id => $wid });
 
 chk_authz($wf, EDIT);
 my $no_edit = !chk_authz($wf, EDIT, 1);
-my $no_del = !$id || $no_edit || @{Bric::Biz::Workflow->list({ head_desk_id => $id })};
+my $no_del = !$id || $no_edit
+  || @{Bric::Biz::Workflow->list_ids({ head_desk_id => $id })};
 
 # Instantiate an object.
 my $desk = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
@@ -104,11 +105,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6.4.2 $
+$Revision: 1.6.4.3 $
 
 =head1 DATE
 
-$Date: 2004-01-04 06:11:52 $
+$Date: 2004-01-04 06:18:05 $
 
 =head1 DESCRIPTION
 
