@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 14:31:03 $
+$Date: 2003-09-18 14:37:42 $
 
 =head1 SYNOPSIS
 
@@ -732,7 +732,7 @@ B<Notes:> NONE.
 sub preview {
     my $self = shift;
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $oc_id, $apache_req) = @_;
+    my ($ba, $key, $user_id, $oc_id) = @_;
     my $comp_root = MASON_COMP_ROOT->[0][1];
     my $site_id = $ba->get_site_id;
 
@@ -748,7 +748,6 @@ sub preview {
 
     # Setup.
     $self->_set(['mode'], [PREVIEW_MODE]);
-    $apache_req->notes("burner.preview" => 1) if $apache_req;
 
     # Burn to each output channel.
     my $ret = eval {

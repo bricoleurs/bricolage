@@ -20,6 +20,11 @@ sub preview : Callback {
     my $media_id = $param->{'media_id'};
     my $oc_id    = $param->{'oc_id'};
 
+    # Note that we're previewing so that the error page will work correctly.
+    if (my $ar = $self->apache_req) {
+        $ar->notes("burner.preview" => 1);
+    }
+
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
     if (my $d = get_state_data($self->class_key)) {
@@ -41,8 +46,7 @@ sub preview : Callback {
         }
 
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id,
-                                  $self->apache_req)) {
+        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             redirect_onload($url);
         }
@@ -55,7 +59,6 @@ sub preview : Callback {
         }
 
         # Get all the related media to be previewed as well
-        my $apache_req = $self->apache_req;
         foreach my $ra ($s->get_related_objects) {
             next if (ref $ra eq 'Bric::Biz::Asset::Business::Story');
 
@@ -72,11 +75,10 @@ sub preview : Callback {
                 next;
             }
 
-            $b->preview($ra, 'media', get_user_id(), $oc_id, $apache_req);
+            $b->preview($ra, 'media', get_user_id(), $oc_id);
         }
         # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id,
-                                  $apache_req)) {
+        if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             redirect_onload($url);
         }
