@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.130 $
+$Revision: 1.131 $
 
 =head1 DATE
 
-$Date: 2003-11-15 00:58:58 $
+$Date: 2003-11-15 01:00:06 $
 
 =head1 DESCRIPTION
 
@@ -192,6 +192,8 @@ START MODULE LIST
 =item Apache::SizeLimit (optional)
 
 =item Net::FTPServer (optional)
+
+=item Net::SSH::Perl 1.24 (optional)
 
 =item Net::SFTP 0.06 (optional)
 
