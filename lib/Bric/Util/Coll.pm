@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-14 23:43:23 $
+$Date: 2002-08-14 23:54:01 $
 
 =head1 SYNOPSIS
 
@@ -84,7 +84,7 @@ use base qw(Bric);
 ##############################################################################
 # Function and Closure Prototypes
 ##############################################################################
-my ($populate);
+# None.
 
 ##############################################################################
 # Constants
@@ -111,7 +111,7 @@ BEGIN {
                          del_obj => Bric::FIELD_READ,
 
                          # Private Fields
-                         params => Bric::FIELD_NONE
+                         params => Bric::FIELD_NONE,
                          _pop => Bric::FIELD_NONE,
                         });
 }
@@ -367,11 +367,11 @@ B<Notes:> NONE.
 =cut
 
 sub get_objs {
-    my ($self, @ids) = @_;
-    &$populate($self);
+    my $self = shift;
+    $self->_populate;
     my ($objs, $new_objs) = $self->_get('objs', 'new_obj');
-    if (@ids) {
-        return wantarray ? @{$objs}{@ids} : [@{$objs}{@ids}];
+    if (@_) {
+        return wantarray ? @{$objs}{@_} : [@{$objs}{@_}];
     } else {
         return wantarray ? ($self->_sort_objs($objs), @$new_objs)
           : [($self->_sort_objs($objs), @$new_objs)];
@@ -514,7 +514,7 @@ B<Notes:> NONE.
 
 sub del_objs {
     my $self = shift;
-    &$populate($self);
+    $self->_populate;
     my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
     if (@_) {
         push @$del_objs, delete @{$objs}{map { ref $_ ? $_->get_id : $_ } @_};
@@ -599,13 +599,9 @@ sub _sort_objs {
 
 =head2 Private Instance Methods
 
-NONE.
-
-=head2 Private Functions
-
 =over 4
 
-=item $self = &$populate($self)
+=item $self = $self->_populate
 
 Populates the collection if it has not yet been populated.
 
@@ -657,7 +653,7 @@ B<Notes:> NONE.
 
 =cut
 
-$populate = sub {
+sub _populate {
     my $self = shift;
     my ($objs, $params, $pop) = $self->_get(qw(objs params _pop));
     return $self if $pop;
@@ -666,10 +662,14 @@ $populate = sub {
     $self->_set(['objs', '_pop'], [$objs, 1]);
 };
 
+=back
+
+=head2 Private Functions
+
+NONE.
+
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
