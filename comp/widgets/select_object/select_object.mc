@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2004-02-19 15:23:32 $
+$Date: 2004-03-09 09:44:22 $
 
 =head1 SYNOPSIS
 
@@ -70,7 +70,7 @@ crit_field
 
 A field of object used to constrain the objects listed. Optional.
 
-DEPRECIATED - Use the 'constrain' argument instead.
+DEPRECATED - Use the 'constrain' argument instead.
 
 =item *
 
@@ -79,7 +79,7 @@ crit_value
 The criterion value to use when choosing which objects to list.  The crit_field 
 and crit_value will be passed directly to the objects 'list' method.  Optional.
 
-DEPRECIATED - Use the 'constrain' argument instead.
+DEPRECATED - Use the 'constrain' argument instead.
 
 =item *
 
@@ -228,7 +228,7 @@ set_state_data($sub_widget, 'form_name', $name);
 my $pkg = get_package_name($object);
 my @vals;
 
-# Handle the depreciated arguments 'crit_field' and 'crit_value'
+# Handle the deprecated arguments 'crit_field' and 'crit_value'
 if ($crit_field) {
     $constrain->{$crit_field} = $crit_value;
 }
