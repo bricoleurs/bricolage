@@ -81,7 +81,7 @@ if ($field eq "$widget|save_cb") {
                     add_msg($lang->maketext("Directory name [_1] contains "
                             . "invalid characters. Please try a different "
                             . "directory name.","'$param->{directory}'"));
-                    return $cat; 
+                    return $cat;
                 } else {
                     $cat->set_directory($param->{directory});
                 }
@@ -171,11 +171,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.14.2.1 $
+$Revision: 1.14.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-06 03:44:07 $
+$Date: 2003-03-10 19:23:04 $
 
 =head1 SYNOPSIS
 

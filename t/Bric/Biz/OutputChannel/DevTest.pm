@@ -68,8 +68,9 @@ sub test_list : Test(79) {
         "Look up web OC" );
 
     # Construct a server type.
-    ok( my $st = Bric::Dist::ServerType->new({ name => 'Bogus',
-                                               move_method => 'FTP' }),
+    ok( my $st = Bric::Dist::ServerType->new({name        => 'Bogus',
+                                              move_method => 'FTP',
+                                              site_id     => 100}),
         "Create server type" );
 
     my $alt_format = '/year/month/categories/day/slug/';

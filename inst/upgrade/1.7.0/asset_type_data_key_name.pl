@@ -18,7 +18,7 @@ update_all();
 
 sub update_all {
     my $get_key_name = prepare('SELECT key_name FROM at_data');
-    my $set_key_name = prepare('UPDATE at_name SET key_name=? WHERE key_name=?');
+    my $set_key_name = prepare('UPDATE at_data SET key_name=? WHERE key_name=?');
 
     my $name;
     execute($get_key_name);

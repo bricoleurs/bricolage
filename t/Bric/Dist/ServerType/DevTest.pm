@@ -11,8 +11,9 @@ sub table {'server_type '}
 
 my $web_oc_id = 1;
 
-my %dest = ( name => 'Bogus',
+my %dest = ( name        => 'Bogus',
              description => 'Bogus ServerType',
+             site_id     => 100,
              move_method => 'File System'
            );
 
@@ -319,8 +320,9 @@ sub test_list_ids : Test(35) {
 ##############################################################################
 sub test_output_channels : Test(18) {
     my $self = shift;
-    ok( my $dest = Bric::Dist::ServerType->new({ name => 'MyServerMan',
-                                               move_method => 'FTP'}),
+    ok( my $dest = Bric::Dist::ServerType->new({name        => 'MyServerMan',
+                                                move_method => 'FTP',
+                                                site_id     => 100}),
         "Create new ST" );
     my @ocs = $dest->get_output_channels;
     is( scalar @ocs, 0, "No OCs" );

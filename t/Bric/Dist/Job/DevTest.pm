@@ -62,8 +62,9 @@ sub test_list : Test(48) {
         "Create group" );
 
     # Create a destination.
-    ok( my $dest = Bric::Dist::ServerType->new({ name => 'Bogus',
-                                                 move_method => 'File System'
+    ok( my $dest = Bric::Dist::ServerType->new({ name        => 'Bogus',
+                                                 move_method => 'File System',
+                                                 site_id     => 100,
                                                }),
         "Create destination." );
     ok( $dest->save, "Save destination" );
@@ -286,8 +287,9 @@ sub test_execute_me : Test(29) {
     }
 
     # Create the ServerType and server.
-    ok( my $dest = Bric::Dist::ServerType->new({ name => 'Big Test',
-                                                 move_method => 'File System'
+    ok( my $dest = Bric::Dist::ServerType->new({ name        => 'Big Test',
+                                                 move_method => 'File System',
+                                                 site_id     => 100,
                                                }),
         "Create destination" );
     ok( $dest->save, "Save destination" );

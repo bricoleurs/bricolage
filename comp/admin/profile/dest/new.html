@@ -1,0 +1,51 @@
+<& '/widgets/wrappers/sharky/header.mc',
+    title => "$disp Profile",
+    context => "Admin | Profile | $disp | $crumb"
+&>
+<form method="post" action="<% $r->uri %>" name="dest_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+my $reset = $ARGS{reset} || time;
+$m->comp('/widgets/profile/hidden.mc', value => $reset, name => 'reset');
+
+# Output the crucial fields.
+$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Site',
+                                                  number  => 1);
+
+$m->comp('/widgets/select_object/select_object.mc',
+         object     => 'site',
+         objs       => $sites,
+         name       => 'site_id',
+         field      => 'name',
+         disp       => 'Site',
+         selected   => scalar $c->get_user_cx(get_user_id),
+         sort_field => 'name',
+         reset_key  => $reset,
+         req        => 1);
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Add the buttons.
+$m->comp('/widgets/profile/formButtons.mc', type     => $type,
+                                            val      => 'next_dkgreen',
+                                            cb       => '',
+                                            section  => $section,
+	                                    no_del   => 1,
+                                            no_save  => 0);
+
+</%perl>
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<%once>;
+my $section = 'admin';
+my $type    = 'dest';
+my $widget  = 'profile';
+my $disp    = get_disp_name($type);
+</%once>
+<%args>
+$id => undef
+$sites
+</%args>
+<%init>;
+# Get the name for the breadcrumb trail.
+my $crumb = 'New';
+</%init>
