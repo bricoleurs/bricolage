@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.4.2.8 $
+$Revision: 1.4.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.4.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-05 17:49:15 $
+$Date: 2001-12-05 21:28:33 $
 
 =head1 SYNOPSIS
 
@@ -142,7 +142,6 @@ use base qw( Bric::Biz::Asset );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($build_file_name);
 # None
 
 #==============================================================================#
@@ -394,18 +393,13 @@ sub new {
 		$cat_path = $cat->ancestry_dir();
 	}
 
-	# construct File Path for FA
-	(my $file = $name) =~ s/\W+/_/g;
-
-	# Don't put the '.mc' extension on if this is an autohandler.
-	$file .= '.mc' unless $name eq 'autohandler';
-
-	$init->{file_name} =
-	  Bric::Util::Trans::FS->cat_dir('', $pre, $cat_path, $post, $file);
-
 	@{$init}{qw(version current_version name)} = (0, 0, $name);
 	$self->SUPER::new($init);
 
+	# setup file_name now that we have an object
+	$self->_set(['file_name'],
+		    [ $self->_build_file_name() ]);
+	
 	return $self;
 }
 
@@ -1179,7 +1173,7 @@ sub set_category_id {
 
     if ($id != $self->get_category_id) {
 	$self->_set(['category_id','_category_obj'], [$id, undef]);
-	$self->_set(['file_name'], [&$build_file_name($self)]);
+	$self->_set(['file_name'], [$self->_build_file_name()]);
     }
 
     return $self;
@@ -2098,18 +2092,10 @@ sub _delete_instance {
     return $self;
 }
 
-################################################################################
+=item my $uri = $self->_build_file_name($name, $cat, $oc);
 
-#--------------------------------------#
-
-=head2 Private Functions
-
-=over 4
-
-=item my $uri = &$build_file_name($fa, $cat, $oc);
-
-Builds the file name for a template. If either or both $cat and $oc are not
-passed, they'll be fetched from the $fa object.
+Builds the file name for a template. If $name, $cat or $oc are not
+passed, they'll be fetched from the object.
 
 B<Throws:> NONE.
 
@@ -2119,12 +2105,13 @@ B<Notes:> NONE.
 
 =cut
 
-$build_file_name = sub {
-    my ($self, $cat, $oc) = @_;
+sub _build_file_name {
+    my ($self, $name, $cat, $oc) = @_;
 
     # Get the category and Output Channel objects, if necessary.
-    $oc ||= $self->_get_output_channel_object;
-    $cat ||= $self->_get_category_object;
+    $oc   ||= $self->_get_output_channel_object;
+    $cat  ||= $self->_get_category_object;
+    $name ||= $self->_get('name');
 
     # Get the pre and post values.
     my ($pre, $post) = ($oc->get_pre_path, $oc->get_post_path) if $oc;
@@ -2139,7 +2126,7 @@ $build_file_name = sub {
     push @path, $post if $post;
 
     # Add the name.
-    (my $file = lc($self->_get('name'))) =~ s/\W+/_/g;
+    (my $file = lc($name)) =~ s/\W+/_/g;
     $file .= '.mc' unless $file eq 'autohandler';
 
     # Return the filename.
@@ -2147,6 +2134,10 @@ $build_file_name = sub {
 };
 
 =back
+
+=head2 Private Functions
+
+NONE
 
 =cut
 
