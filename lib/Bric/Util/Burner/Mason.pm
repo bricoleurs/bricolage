@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.31.4.2 $
+$Revision: 1.31.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.31.4.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-14 05:23:46 $
+$Date: 2003-05-31 00:21:26 $
 
 =head1 SYNOPSIS
 
@@ -490,10 +490,14 @@ sub display_pages {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->display_element()
+=item $success = $b->display_element($element)
+
+=item $success = $b->display_element($element, %ARGS)
 
 A method to be called from template space. This method will find the mason
-element associated with the element passed in and call $m->comp.
+element associated with the element passed in and call C<< $m->comp >>. All
+arguments after the first argument will be passed to the template executed as
+its C<%ARGS> hash.
 
 B<Throws:> NONE.
 

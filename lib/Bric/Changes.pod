@@ -103,6 +103,12 @@ Media assets that are based on "Image", "Audio", and "Video" element types now
 properly show up on desks. Note that existing media assets missing from desks
 should be checked out via "Active Media" and moved to a new desk. [David]
 
+=item *
+
+Documented the support for passing C<%ARGS> to C<< $burner->display_element()
+>> in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
+forgot to document it! Thanks to Mike Slattery for the spot. [David]
+
 =back
 
 =head1 VERSION 1.6.0
