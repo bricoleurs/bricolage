@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 16:52:39 $
+$Date: 2004-03-18 17:05:38 $
 
 =head1 SYNOPSIS
 
@@ -698,32 +698,31 @@ Returns true if $param is an allowed parameter to the $method method.
 
 =cut
 
+my $allowed = {
+    list_ids => { map { $_ => 1 } qw(title description slug category keyword
+                                     simple primary_uri priority workflow
+                                     no_workflow publish_status element
+                                     publish_date_start publish_date_end
+                                     cover_date_start first_publish_date_start
+                                     first_publish_date_end cover_date_end
+                                     expire_date_start expire_date_end site
+                                     alias_id element_key_name unexpired
+                                     data_text output_channel contrib_id
+                                     subelement_key_name Order OrderDirection
+                                     Limit Offset),
+                  grep { /^[^_]/}
+                    keys %{ Bric::Biz::Asset::Business::Story->PARAM_WHERE_MAP }
+                },
+    export   => { map { $_ => 1 } qw(story_id story_ids
+                                     export_related_media
+                                     export_related_stories) },
+    create   => { map { $_ => 1 } qw(document workflow desk) },
+    update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+    delete   => { map { $_ => 1 } qw(story_id story_ids) },
+};
+
 sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
-
-    my @extra_listids = keys %{ Bric::Biz::Asset::Business::Story->PARAM_WHERE_MAP };
-    my $allowed = {
-        list_ids => { map { $_ => 1 } qw(title description slug category
-                                         keyword simple primary_uri priority
-                                         workflow no_workflow publish_status
-                                         element publish_date_start
-                                         publish_date_end cover_date_start
-                                         first_publish_date_start
-                                         first_publish_date_end cover_date_end
-                                         expire_date_start expire_date_end
-                                         site alias_id element_key_name
-                                         unexpired data_text output_channel
-                                         contrib_id subelement_key_name
-                                         Order OrderDirection Limit Offset),
-                                      @extra_listids },
-        export   => { map { $_ => 1 } qw(story_id story_ids
-                                         export_related_media
-                                         export_related_stories) },
-        create   => { map { $_ => 1 } qw(document workflow desk) },
-        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
-        delete   => { map { $_ => 1 } qw(story_id story_ids) },
-    };
-
     return exists($allowed->{$method}->{$param});
 }
 

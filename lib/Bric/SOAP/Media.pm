@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 16:52:38 $
+$Date: 2004-03-18 17:05:38 $
 
 =head1 SYNOPSIS
 
@@ -572,31 +572,30 @@ Returns true if $param is an allowed parameter to the $method method.
 
 =cut
 
+my $allowed = {
+    list_ids => { map { $_ => 1 } qw(title description file_name simple uri
+                                     priority publish_status workflow element
+                                     category publish_date_start
+                                     publish_date_end first_publish_date_start
+                                     first_publish_date_end cover_date_start
+                                     cover_date_end expire_date_start
+                                     expire_date_end site alias_id
+                                     element_key_name unexpired data_text
+                                     output_channel keyword contrib_id
+                                     subelement_key_name Order OrderDirection
+                                     Offset Limit),
+                  grep { /^[^_]/}
+                    keys %{ Bric::Biz::Asset::Business::Media->PARAM_WHERE_MAP }
+                },
+    export   => { map { $_ => 1 } map { module() . "_$_" }  qw(id ids) },
+    create   => { map { $_ => 1 } qw(document workflow desk) },
+    update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+};
+
+$allowed->{delete} = $allowed->{export};
+
 sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
-    my $module = $pkg->module;
-
-    my @extra_listids = keys %{ Bric::Biz::Asset::Business::Media->PARAM_WHERE_MAP };
-    my $allowed = {
-        list_ids => { map { $_ => 1 } qw(title description file_name
-                                         simple uri priority publish_status
-                                         workflow element category
-                                         publish_date_start publish_date_end
-                                         first_publish_date_start
-                                         first_publish_date_end
-                                         cover_date_start cover_date_end
-                                         expire_date_start expire_date_end
-                                         site alias_id element_key_name
-                                         unexpired data_text output_channel
-                                         keyword contrib_id subelement_key_name
-                                         Order OrderDirection Offset Limit),
-                                      @extra_listids },
-        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
-        create   => { map { $_ => 1 } qw(document workflow desk) },
-        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
-        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
-    };
-
     return exists($allowed->{$method}->{$param});
 }
 

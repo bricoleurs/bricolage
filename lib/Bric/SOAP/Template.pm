@@ -42,15 +42,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-18 16:52:40 $
+$Date: 2004-03-18 17:05:38 $
 
 =head1 SYNOPSIS
 
@@ -509,25 +509,24 @@ Returns true if $param is an allowed parameter to the $method method.
 
 =cut
 
+my $allowed = {
+    list_ids => { map { $_ => 1 } qw(element file_name output_channel category
+                                     workflow simple priority publish_status
+                                     element deploy_date_start deploy_date_end
+                                     expire_date_start expire_date_end Order
+                                     OrderDirection Offset Limit),
+                  grep { /^[^_]/}
+                    keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP }
+                },
+    export   => { map { $_ => 1 } map { module() . "_$_" }  qw(id ids) },
+    create   => { map { $_ => 1 } qw(document workflow desk) },
+    update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+};
+
+$allowed->{delete} = $allowed->{export};
+
 sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
-    my $module = $pkg->module;
-
-    my @extra_listids = keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP };
-    my $allowed = {
-        list_ids => { map { $_ => 1 } qw(element file_name output_channel
-                                         category workflow simple
-                                         priority publish_status element
-                                         deploy_date_start deploy_date_end
-                                         expire_date_start expire_date_end
-                                         Order OrderDirection Offset Limit),
-                                      @extra_listids },
-        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
-        create   => { map { $_ => 1 } qw(document workflow desk) },
-        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
-        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
-    };
-
     return exists($allowed->{$method}->{$param});
 }
 
