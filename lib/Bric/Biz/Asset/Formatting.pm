@@ -284,12 +284,12 @@ use constant PARAM_WHERE_MAP => {
     _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
                            . '(SELECT formatting__id FROM formatting_instance '
                            . 'WHERE f.id = formatting_instance.formatting__id '
-                           . 'AND formatting_instance.checked_out = 1)',
+                           . "AND formatting_instance.checked_out = '1')",
     category_id           => 'f.category__id = ?',
     category_uri          => 'f.category__id = c.id AND '
                            . 'LOWER(c.uri) LIKE LOWER(?))',
     _no_return_versions   => 'f.current_version = i.version',
-    grp_id                => 'm2.active = 1 AND '
+    grp_id                => "m2.active = '1' AND "
                            . 'm2.grp__id = ? AND '
                            . 'f.id = fm2.object_id AND '
                            . 'fm2.member__id = m2.id',
@@ -302,7 +302,7 @@ use constant PARAM_ANYWHERE_MAP => {
                           'LOWER(e.key_name) LIKE LOWER(?)' ],
     category_uri     => [ 'f.category__id = c.id',
                           'LOWER(c.uri) LIKE LOWER(?))' ],
-    grp_id           => [ 'm2.active = 1 AND fm2.member__id = m2.id AND f.id = fm2.object_id',
+    grp_id           => [ "m2.active = '1' AND fm2.member__id = m2.id AND f.id = fm2.object_id",
                           'm2.grp__id = ?' ],
     site_id          => [ 'f.output_channel__id = oc.id',
                           'oc.site__id = ?' ],
