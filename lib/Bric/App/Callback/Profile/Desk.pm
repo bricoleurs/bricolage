@@ -56,12 +56,14 @@ sub save : Callback {
         }
 
         # Roll in the changes.
-        $desk->set_name($param->{name}) if exists $param->{name} && !$used;
         $desk->set_description($param->{description}) if exists $param->{description};
-        if (exists $param->{name} && exists $param->{publish}) {
-            $desk->make_publish_desk;
-        } else {
-            $desk->make_regular_desk;
+        if (exists $param->{name}) {
+            $desk->set_name($param->{name}) unless $used;
+            if (exists $param->{publish}) {
+                $desk->make_publish_desk;
+            } else {
+                $desk->make_regular_desk;
+            }
         }
         unless ($used) {
             $desk->save;

@@ -221,6 +221,11 @@ Adding a new category to a group and asking it to cascade that group
 membership into subcategories no longer causes an error. Thanks to Adam
 Rinehart for the spot! [David]
 
+=item *
+
+Adding an existing publish desk to a workflow no longer unsets its publish
+attribute. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
