@@ -7,15 +7,15 @@ Bric::Util::Burner::Template - Bric::Util::Burner subclass to publish business a
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-27 18:28:38 $
+$Date: 2001-11-30 20:36:56 $
 
 =head1 SYNOPSIS
 
@@ -492,6 +492,12 @@ sub new_template {
 	no strict 'refs';
 	$element = ${"$calling_package\::element"};
     }
+
+    # need to setup path if filename set
+    if (exists $args{filename}) {
+      $args{path} ||= [];
+      push(@{$args{path}}, $self->_get_template_path());
+    }      
     
     # autofil defaults on
     my $autofill = exists $args{autofill} ? $args{autofill} : 1;
@@ -530,8 +536,8 @@ sub new_template {
     
     # autofill with element data
     if ($autofill and $element) {
-	# fill in some non-element data
 	my $story = $self->get_story();
+	# fill in some non-element data
 	$template->param(title => $story->get_title) 
 	    if $template->query(name => "title");
 	$template->param(page_break => PAGE_BREAK)
@@ -782,6 +788,44 @@ sub _find_file {
     # returns undef if we didn't find anything
     return undef;
 }
+
+=item @path = $self->_get_template_path()
+
+Returns the HTML::Template path setting that will search up the
+category tree for templates starting from the category returned by
+get_cat.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _get_template_path {
+    my $self = shift;
+    my $template_root = $fs->cat_dir($self->get_comp_dir, ('oc_' . $self->get_oc->get_id));
+    
+    print STDERR __PACKAGE__, "::_get_template_path()\n" if DEBUG;
+    
+    # search up category hierarchy
+    my @cats = $self->get_cat->ancestry;
+    my @path;
+    do {
+	push @path, $fs->cat_dir($template_root, @cats);
+    } while(pop @cats);
+	
+    # return path setting
+    return @path;
+}
+
 
 =item $success = $self->_add_resource();
 
