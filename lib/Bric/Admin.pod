@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.1 $
+$Revision: 1.31.2.2 $
 
 =head1 DATE
 
-$Date: 2002-01-17 02:01:36 $
+$Date: 2002-01-21 23:07:57 $
 
 =head1 DESCRIPTION
 
@@ -477,7 +477,16 @@ And you're done! You can test the installation by calling
 
 PostgreSQL is an integral part of Bricolage: it's where all of your assets are
 stored! Its installation is pretty straight-forward and typical, but it requires
-a number of extra steps that one might not expect. Here are the details:
+a number of extra steps that one might not expect. 
+
+If you're using Redhat Linux you may already have Postgres installed.
+If so, all you need to do to get it ready for use with Bricolage is
+edit your postgresql.conf file (run C<locate postgresql.conf> to find
+it) and turn on the tcpip_socket option:
+
+  tcpip_socket = true
+
+Otherwise, here are the installation details:
 
 =over 4
 
