@@ -126,7 +126,7 @@ if (defined $id) {
 if (defined $id) {
 
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Attributes",
+	     caption => "Custom Fields",
 	     number  => ++$num);
 
     # mangle the attrs and meta to match the existing display code.
@@ -163,7 +163,7 @@ if (!$no_edit && defined $id) {
 	     formName  => 'cont_profile',
 	     numFields => $num_fields,
 	     num       => ++$num,
-	     caption   => 'Add New Attribute Field',
+	     caption   => 'Add New Field',
 	     useRequired   => 1,
 	     useQuantifier => 1
 	    );
@@ -231,11 +231,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =head1 DATE
 
-$Date: 2001-11-05 20:03:40 $
+$Date: 2001-12-10 21:22:02 $
 
 =head1 DESCRIPTION
 
