@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6.2.2 $
+$Revision: 1.6.2.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6.2.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-05 08:15:42 $
+$Date: 2001-10-05 09:31:42 $
 
 =head1 SYNOPSIS
 
@@ -353,8 +353,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || catdir(MASON_DATA_ROOT, 'burn', 'data');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
-    use constant XML_WRITER_ARGS         => $config->{INCLUDE_XML_WRITER_ARGS}
-      || undef;
+    use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
+      (eval "$config->{XML_WRITER_ARGS}" ) : ();
 
     # System User (The user and group under which the server children run). use
     use constant SYS_USER => scalar getpwnam $config->{SYS_USER} || "nobody";
@@ -510,7 +510,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.6.2.2  2001-10-05 08:15:42  wheeler
+Revision 1.6.2.3  2001-10-05 09:31:42  wheeler
+Added configurations for XML::Writer in templates.
+
+Revision 1.6.2.2  2001/10/05 08:15:42  wheeler
 Added SERVER_WINDOW_NAME for use in window.open() JavaScript calls.
 
 Revision 1.6.2.1  2001/10/04 13:37:38  wheeler
