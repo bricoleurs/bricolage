@@ -123,6 +123,11 @@ Bricolage attempted to create a path on its own file system using path
 delimiters for another file system. Thanks to Mike Slattery for the spot.
 [David]
 
+=item *
+
+Required content fields in stories and elements are now displayed in the order
+specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
+
 =back
 
 =head1 VERSION 1.2.0
