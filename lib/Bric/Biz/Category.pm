@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 16:47:21 $
+$Date: 2002-05-18 13:55:35 $
 
 =head1 SYNOPSIS
 
@@ -111,9 +111,9 @@ use base qw(Bric);
 
 use constant TABLE  => 'category';
 use constant COLS   => qw(directory asset_grp_id category_grp_id 
-			  keyword_grp_id active);
+                          keyword_grp_id active);
 use constant FIELDS => qw(directory asset_grp_id category_grp_id 
-			  keyword_grp_id _active);
+                          keyword_grp_id _active);
 use constant ORD    => qw(name description uri directory ad_string ad_string2);
 
 use constant root_category_id => 0;
@@ -141,23 +141,23 @@ our $METH;
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'              => Bric::FIELD_READ,
-			 'directory'       => Bric::FIELD_RDWR,
-			 'asset_grp_id'    => Bric::FIELD_READ,
-			 'category_grp_id' => Bric::FIELD_READ,
-			 'keyword_grp_id'  => Bric::FIELD_READ,
+                         # Public Fields
+                         'id'              => Bric::FIELD_READ,
+                         'directory'       => Bric::FIELD_RDWR,
+                         'asset_grp_id'    => Bric::FIELD_READ,
+                         'category_grp_id' => Bric::FIELD_READ,
+                         'keyword_grp_id'  => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_category_grp_obj' => Bric::FIELD_NONE,
-			 '_asset_grp_obj'    => Bric::FIELD_NONE,
-			 '_keyword_grp_obj'  => Bric::FIELD_NONE,
+                         # Private Fields
+                         '_category_grp_obj' => Bric::FIELD_NONE,
+                         '_asset_grp_obj'    => Bric::FIELD_NONE,
+                         '_keyword_grp_obj'  => Bric::FIELD_NONE,
 
-			 '_attr_obj'         => Bric::FIELD_NONE,
-			 '_attr'             => Bric::FIELD_NONE,
-			 '_meta'             => Bric::FIELD_NONE,
-			 '_save_children'    => Bric::FIELD_NONE,
-			});
+                         '_attr_obj'         => Bric::FIELD_NONE,
+                         '_attr'             => Bric::FIELD_NONE,
+                         '_meta'             => Bric::FIELD_NONE,
+                         '_save_children'    => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -280,7 +280,7 @@ sub lookup {
 
     my $id = $self->get_id;
     my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-						    'subsys'    => $id});
+                                                    'subsys'    => $id});
     $self->_set(['_attr_obj'], [$a_obj]);
 
     return $self;
@@ -329,41 +329,41 @@ sub list {
 
     # Name is set on the group, so it must be searched seperately.
     if ($param->{'name'}) {
-	$ret = Bric::Util::Grp::Category::_select_by_name($param->{'name'},
-							$param->{'active'});
+        $ret = Bric::Util::Grp::Category::_select_by_name($param->{'name'},
+                                                        $param->{'active'});
     } else {
-	foreach (keys %$param) {
-	    if ($_ eq 'directory') {
-		push @txt, $_;
-	    } else {
-		push @num, $_;
-	    }
-	}
-	
-	my $where = join(' AND ', (map { "$_=?" }             @num),
-			          (map { "LOWER($_) LIKE ?" } @txt));
-	
-	$ret = _select_category($where, [@$param{@num,@txt}]);
+        foreach (keys %$param) {
+            if ($_ eq 'directory') {
+                push @txt, $_;
+            } else {
+                push @num, $_;
+            }
+        }
+        
+        my $where = join(' AND ', (map { "$_=?" }             @num),
+                                  (map { "LOWER($_) LIKE ?" } @txt));
+        
+        $ret = _select_category($where, [@$param{@num,@txt}]);
     }
 
     foreach my $d (@$ret) {
-	# Instantiate object
-	my $self = bless {}, $class;
-	
-	# Set the columns selected as well as the passed ID.
-	$self->_set(['id', FIELDS], $d);
-	
-	my $grp_id = $self->get_category_grp_id;
-	my $grp = Bric::Util::Grp::Category->lookup({'id' => $grp_id});
-	
-	$self->_set(['_category_grp_obj'],[$grp]);
-	
-	my $id = $self->get_id;
-	my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-						        'subsys'    => $id});
-	$self->_set(['_attr_obj'], [$a_obj]);
-	
-	push @objs, $self;
+        # Instantiate object
+        my $self = bless {}, $class;
+        
+        # Set the columns selected as well as the passed ID.
+        $self->_set(['id', FIELDS], $d);
+        
+        my $grp_id = $self->get_category_grp_id;
+        my $grp = Bric::Util::Grp::Category->lookup({'id' => $grp_id});
+        
+        $self->_set(['_category_grp_obj'],[$grp]);
+        
+        my $id = $self->get_id;
+        my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
+                                                        'subsys'    => $id});
+        $self->_set(['_attr_obj'], [$a_obj]);
+        
+        push @objs, $self;
     }
 
     return wantarray ? @objs : \@objs;
@@ -550,92 +550,92 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $METH = {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      type     => 'short',
-			      len      => 64,
-			      req      => 1,
-			      search   => 1,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength  => 64
-					  }
-			     },
-	      description => {
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      name     => 'description',
-			      disp     => 'Description',
-			      len      => 256,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      directory        => {
-			      name     => 'directory',
-			      get_meth => sub { shift->get_directory(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_directory(@_) },
-			      set_args => [],
-			      disp     => 'Directory',
-			      type     => 'short',
-			      len      => 128,
-			      req      => 1,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength  => 128
-					  }
-			     },
-	      uri         => {
-			      name     => 'uri',
-			      get_meth => sub { shift->get_uri(@_) },
-			      get_args => [],
-			      disp => 'URI',
-			      type     => 'short',
-			      len      => 256,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength  => 128
-					  }
-			     },
-	      ad_string   => {
-			      name     => 'ad_string',
-			      get_meth => sub { shift->get_ad_string(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_ad_string(@_) },
-			      set_args => [],
-			      disp     => 'Ad String',
-			      type     => 'short',
-			      len      => 1024,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength  => 1024
-					  }
-			     },
-	      ad_string2  => {
-			      name     => 'ad_string2',
-			      get_meth => sub { shift->get_ad_string2(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_ad_string2(@_) },
-			      set_args => [],
-			      disp     => 'Ad String 2',
-			      type     => 'short',
-			      len      => 1024,
-			      props    => { type       => 'text',
-					    length     => 32,
-					    maxlength  => 1024
-					  }
-			     },
-	     };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              type     => 'short',
+                              len      => 64,
+                              req      => 1,
+                              search   => 1,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength  => 64
+                                          }
+                             },
+              description => {
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              name     => 'description',
+                              disp     => 'Description',
+                              len      => 256,
+                              type     => 'short',
+                              props    => { type => 'textarea',
+                                            cols => 40,
+                                            rows => 4
+                                          }
+                             },
+              directory        => {
+                              name     => 'directory',
+                              get_meth => sub { shift->get_directory(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_directory(@_) },
+                              set_args => [],
+                              disp     => 'Directory',
+                              type     => 'short',
+                              len      => 128,
+                              req      => 1,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength  => 128
+                                          }
+                             },
+              uri         => {
+                              name     => 'uri',
+                              get_meth => sub { shift->get_uri(@_) },
+                              get_args => [],
+                              disp => 'URI',
+                              type     => 'short',
+                              len      => 256,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength  => 128
+                                          }
+                             },
+              ad_string   => {
+                              name     => 'ad_string',
+                              get_meth => sub { shift->get_ad_string(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_ad_string(@_) },
+                              set_args => [],
+                              disp     => 'Ad String',
+                              type     => 'short',
+                              len      => 1024,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength  => 1024
+                                          }
+                             },
+              ad_string2  => {
+                              name     => 'ad_string2',
+                              get_meth => sub { shift->get_ad_string2(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_ad_string2(@_) },
+                              set_args => [],
+                              disp     => 'Ad String 2',
+                              type     => 'short',
+                              len      => 1024,
+                              props    => { type       => 'text',
+                                            length     => 32,
+                                            maxlength  => 1024
+                                          }
+                             },
+             };
     return !$ord ? $METH : wantarray ? @{$METH}{&ORD} : [@{$METH}{&ORD}];
 }
 
@@ -725,7 +725,7 @@ sub ancestry {
     unshift @objs, $cur;
 
     while ($cur = $cur->parent()) {
-	unshift @objs, $cur;
+        unshift @objs, $cur;
     }
 
     return wantarray ? @objs : \@objs;
@@ -863,11 +863,11 @@ sub get_ad_string {
     return $self->get_attr(':ad:string');
 
 #    if (defined $name) {
-#	return $self->get_attr(':ad:'.$name);
+#       return $self->get_attr(':ad:'.$name);
 #    } else {
-#	my $attrs = $self->get_attr;
-#	my @names = grep(substr($_, 0, 4) eq ':ad:', keys %$attrs);
-#	return {map { substr($_, 4) => $attrs->{$_} } @names};
+#       my $attrs = $self->get_attr;
+#       my @names = grep(substr($_, 0, 4) eq ':ad:', keys %$attrs);
+#       return {map { substr($_, 4) => $attrs->{$_} } @names};
 #    }
 }
 
@@ -935,13 +935,13 @@ sub set_attr {
     my ($attr, $attr_obj) = $self->_get('_attr', '_attr_obj');
     
     if ($attr_obj) {
-	$attr_obj->set_attr({'name'     => $name,
-			     'sql_type' => 'short',
-			     'value'    => $val});
+        $attr_obj->set_attr({'name'     => $name,
+                             'sql_type' => 'short',
+                             'value'    => $val});
     } else {
-	$attr->{$name} = $val;
-	
-	$self->_set(['_attr'], [$attr]);
+        $attr->{$name} = $val;
+        
+        $self->_set(['_attr'], [$attr]);
     }
 
     return $val;
@@ -956,15 +956,15 @@ sub get_attr {
     return unless defined $id;
 
     unless ($attr) {
-	$attr = Bric::Util::Attribute::Category->new({'object_id' => $id,
-						    'subsys'    => $id});
-	$self->_set(['_attr_obj'], [$attr]);
+        $attr = Bric::Util::Attribute::Category->new({'object_id' => $id,
+                                                    'subsys'    => $id});
+        $self->_set(['_attr_obj'], [$attr]);
     }
 
     if (defined $name) {
         return $attr->get_attr({'name' => $name});
     } else {
-	return $attr->get_attr_hash;
+        return $attr->get_attr_hash;
     }
 }
 
@@ -997,13 +997,13 @@ sub set_meta {
     my ($meta, $attr_obj) = $self->_get('_meta', '_attr_obj');
 
     if ($attr_obj) {
-	$attr_obj->add_meta({'name'  => $name,
-			     'field' => $field,
-			     'value' => $val});
+        $attr_obj->add_meta({'name'  => $name,
+                             'field' => $field,
+                             'value' => $val});
     } else {
-	push @{$meta->{$name}}, [$field, $val];
-	
-	$self->_set(['_meta'], [$meta]);
+        push @{$meta->{$name}}, [$field, $val];
+        
+        $self->_set(['_meta'], [$meta]);
     }
 
     return $val;
@@ -1018,13 +1018,13 @@ sub get_meta {
     return unless $id;
 
     unless ($attr) {
-	$attr = Bric::Util::Attribute::Category->new({'object_id' => $id,
-						    'subsys'    => $id});
-	$self->_set(['_attr_obj'], [$attr]);
+        $attr = Bric::Util::Attribute::Category->new({'object_id' => $id,
+                                                    'subsys'    => $id});
+        $self->_set(['_attr_obj'], [$attr]);
     }
 
     return $attr->get_meta({'name'  => $name,
-			    'field' => $field});
+                            'field' => $field});
 }
 
 #------------------------------------------------------------------------------#
@@ -1053,20 +1053,20 @@ sub keywords {
     my ($mem, @mem_obj);
 
     $kw_obj = $self->_load_grp('Keyword', 
-			       'keyword_grp_id', '_keyword_grp_obj');
+                               'keyword_grp_id', '_keyword_grp_obj');
 
 #    unless ($kw_obj) {
-#	$kw_id = $self->get_keyword_grp_id;
+#       $kw_id = $self->get_keyword_grp_id;
 
-#	# There are no keywords for this category.
-#	return unless $kw_id;
-	
-#	$kw_obj = Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
+#       # There are no keywords for this category.
+#       return unless $kw_id;
+        
+#       $kw_obj = Bric::Util::Grp::Keyword->lookup({'id' => $kw_id});
 
-#	unless ($kw_obj) {
-#	    my $msg = " Failed to instantiate keyword group";
-#	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-#	}
+#       unless ($kw_obj) {
+#           my $msg = " Failed to instantiate keyword group";
+#           die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+#       }
 #    }
 
     $mem = $kw_obj->get_members;
@@ -1104,17 +1104,17 @@ sub assets {
     $ass_obj = $self->_get('_asset_grp_obj');
 
     unless ($ass_obj) {
-	$ass_id = $self->get_asset_grp_id;
+        $ass_id = $self->get_asset_grp_id;
 
-	# There are no keywords for this category.
-	return unless $ass_id;
-	
-	$ass_obj = Bric::Util::Grp::Asset->lookup({'id' => $ass_id});
+        # There are no keywords for this category.
+        return unless $ass_id;
+        
+        $ass_obj = Bric::Util::Grp::Asset->lookup({'id' => $ass_id});
     
-	unless ($ass_obj) {
-	    my $msg = "Failed to instantiate asset group";
-	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-	}
+        unless ($ass_obj) {
+            my $msg = "Failed to instantiate asset group";
+            die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+        }
     }
 
     my $mem = $ass_obj->get_members;
@@ -1238,11 +1238,11 @@ sub del_child {
     my $vals;
 
     foreach (@$cat) {
-	push @$vals, {'package' => ref $_, 'id' => $_->get_id};
-	my $c_grp = $_->_get('_category_grp_obj');
-	$c_grp->set_parent_id(undef);
+        push @$vals, {'package' => ref $_, 'id' => $_->get_id};
+        my $c_grp = $_->_get('_category_grp_obj');
+        $c_grp->set_parent_id(undef);
 
-	push @$save, $_;
+        push @$save, $_;
     }
     
     $cat_obj->delete_members($vals);
@@ -1277,11 +1277,11 @@ sub add_keyword {
     my ($kw) = @_;
 
     my $kw_obj = $self->_load_grp('Keyword', 
-				  'keyword_grp_id', '_keyword_grp_obj');
+                                  'keyword_grp_id', '_keyword_grp_obj');
 
     unless ($kw_obj) {
-	$kw_obj = Bric::Util::Grp::Keyword->new({'name'        => 'Keywords',
-					       'description' => 'A group of keywords'});
+        $kw_obj = Bric::Util::Grp::Keyword->new({'name'        => 'Keywords',
+                                               'description' => 'A group of keywords'});
     }
 
     #$self->_set(['keyword_grp_id'], [$kw_obj->get_id]);
@@ -1317,16 +1317,16 @@ sub del_keyword {
     my ($kw) = @_;
 
     my $kw_obj = $self->_load_grp('Keyword',
-				  'keyword_grp_id', '_keyword_grp_obj');
+                                  'keyword_grp_id', '_keyword_grp_obj');
    
     unless ($kw_obj) {
-	my $msg = "Category has no keywords";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+        my $msg = "Category has no keywords";
+        die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
     }
 
     foreach (@$kw) {
-	$kw_obj->delete_members([{'package' => 'Bric::Biz::Keyword', 
-				  'id'      => ref $_ ? $_->get_id : $_}]);
+        $kw_obj->delete_members([{'package' => 'Bric::Biz::Keyword', 
+                                  'id'      => ref $_ ? $_->get_id : $_}]);
     }
 
     return $self;
@@ -1357,12 +1357,12 @@ sub add_asset {
     my ($a) = @_;
 
     my $a_obj = $self->_load_grp('Asset', 
-				 'asset_grp_id', '_asset_grp_obj');
+                                 'asset_grp_id', '_asset_grp_obj');
    
     unless ($a_obj) {
-	my $desc = 'A group of assets for Category';
-	$a_obj = Bric::Util::Grp::Asset->new({'name'        => 'Assets',
-					    'description' => $desc});
+        my $desc = 'A group of assets for Category';
+        $a_obj = Bric::Util::Grp::Asset->new({'name'        => 'Assets',
+                                            'description' => $desc});
     }
 
     #$self->_set(['asset_grp_id'], [$a_obj->get_id]);
@@ -1370,7 +1370,7 @@ sub add_asset {
     my $t = 'Bric::Biz::Asset';
     # Map any IDs we are passed to a hash ref of ID and type.
     $a_obj->add_members([map {ref{$_} ? {'obj'=>$_} 
-			              : {'package'=>$t,'id'=>$_}} @$a]);
+                                      : {'package'=>$t,'id'=>$_}} @$a]);
 }
 
 #------------------------------------------------------------------------------#
@@ -1398,12 +1398,12 @@ sub del_asset {
     my ($a) = @_;
     
     my $a_obj = $self->_load_grp('Asset', 
-				 'asset_grp_id', '_asset_grp_obj');
+                                 'asset_grp_id', '_asset_grp_obj');
    
     # HACK:  Should return error object.
     unless ($a_obj) {
-	my $msg = "Category has no assets";
-	die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
+        my $msg = "Category has no assets";
+        die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
     }
 
     my $t = 'Bric::Biz::Asset';
@@ -1450,12 +1450,12 @@ sub activate {
     
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
-	my @cat = $self->children;
-	foreach (@cat) {
-	    $_->activate($param);
-	}
-	
-	$self->_set(['_save_children'], [\@cat]);
+        my @cat = $self->children;
+        foreach (@cat) {
+            $_->activate($param);
+        }
+        
+        $self->_set(['_save_children'], [\@cat]);
     }
 
     $self->_set__dirty(1);
@@ -1475,12 +1475,12 @@ sub deactivate {
 
     # Recursively activate children if the recurse flag is set.
     if ($recurse) {
-	my @cat = $self->children;
-	foreach (@cat) {
-	    $_->deactivate($param);
-	}
-	
-	$self->_set(['_save_children'], [\@cat]);
+        my @cat = $self->children;
+        foreach (@cat) {
+            $_->deactivate($param);
+        }
+        
+        $self->_set(['_save_children'], [\@cat]);
     }
 
     $self->_set__dirty(1);
@@ -1514,17 +1514,17 @@ sub save {
     my ($a_obj, $cat_obj, $kw_obj);
 
     if (!$self->get_directory && $id != root_category_id) {
-	# Set a default directory name.
-	my $dir = $self->get_name;
-	$dir =~ y/[a-z]//cd if $dir;
-	
-	$self->set_directory(lc($dir));
+        # Set a default directory name.
+        my $dir = $self->get_name;
+        $dir =~ y/[a-z]//cd if $dir;
+        
+        $self->set_directory(lc($dir));
     }
 
     # Get object references.
     ($a_obj, $cat_obj, $kw_obj) = $self->_get(qw(_asset_grp_obj
-						 _category_grp_obj
-						 _keyword_grp_obj));
+                                                 _category_grp_obj
+                                                 _keyword_grp_obj));
 
     # Save changes made to these objects if they exist.
     $cat_obj->save if $cat_obj;
@@ -1538,18 +1538,18 @@ sub save {
 
     # Save our category information
     if (defined $id) {
-	$self->_update_category();
+        $self->_update_category();
     } else {
-	$self->_insert_category();
+        $self->_insert_category();
     }
 
     # Recursively save children if the _save_children flag is set.
     if ($self->_get('_save_children')) {
-	foreach (@{$self->_get('_save_children')}) {
-	    $_->save;
-	}
-	
-	$self->_set(['_save_children'], [undef]);
+        foreach (@{$self->_get('_save_children')}) {
+            $_->save;
+        }
+        
+        $self->_set(['_save_children'], [undef]);
     }
 
     $self->_save_attr;
@@ -1591,26 +1591,26 @@ sub _save_attr {
     my $id = $self->get_id;
 
     unless ($a_obj) {
-	$a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-						     'subsys'    => $id});
-	$self->_set(['_attr_obj'], [$a_obj]);
+        $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
+                                                     'subsys'    => $id});
+        $self->_set(['_attr_obj'], [$a_obj]);
 
-	while (my ($k,$v) = each %$attr) {
-	    $a_obj->set_attr({'name'     => $k,
-			      'sql_type' => 'short',
-			      'value'    => $v});
-	}
-	
-	while (my ($k,$m) = each %$meta) {
-	    foreach (@$m) {
-		my ($f, $v) = @$_;
-		
-		$a_obj->add_meta({'name'  => $k,
-				  'field' => $f,
-				  'value' => $v});
-	    }
-	}
-	
+        while (my ($k,$v) = each %$attr) {
+            $a_obj->set_attr({'name'     => $k,
+                              'sql_type' => 'short',
+                              'value'    => $v});
+        }
+        
+        while (my ($k,$m) = each %$meta) {
+            foreach (@$m) {
+                my ($f, $v) = @$_;
+                
+                $a_obj->add_meta({'name'  => $k,
+                                  'field' => $f,
+                                  'value' => $v});
+            }
+        }
+        
     }
 
     $a_obj->save;
@@ -1627,16 +1627,16 @@ sub _load_grp {
     # return unless $id;
     
     if ($id) {
-	# There are no keywords for this category.
-	$obj = $gtype->lookup({'id' => $id});
+        # There are no keywords for this category.
+        $obj = $gtype->lookup({'id' => $id});
     } else {
-	$obj = $gtype->new({'name' => 'Group for Category'});
+        $obj = $gtype->new({'name' => 'Group for Category'});
     }
     
     # HACK: This should throw an error object.
     unless ($obj) {
-	my $err_msg = 'Failed to instantiate group';
-	die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg});
+        my $err_msg = 'Failed to instantiate group';
+        die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg});
     }
 
     $self->_set([$obj_field],[$obj]);
@@ -1655,7 +1655,7 @@ sub _select_category {
     execute($sth, @$bind);
     bind_columns($sth, \@d[0..(scalar COLS)]);
     while (fetch($sth)) {
-	push @ret, [@d];
+        push @ret, [@d];
     }
     finish($sth);
 
