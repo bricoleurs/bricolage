@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-10 21:58:28 $
+$Date: 2003-01-21 07:27:09 $
 
 =head1 SYNOPSIS
 
@@ -47,6 +47,10 @@ use Bric::Config qw(:dist);
 if (ENABLE_SFTP_MOVER) {
     require Net::SFTP;
     require Bric::Util::Trans::SFTP;
+}
+
+if (ENABLE_WEBDAV_MOVER) {
+    require Bric::Util::Trans::WebDAV;
 }
 
 ################################################################################
@@ -158,6 +162,15 @@ sub do_it {
                    "but SFTP Mover is disabled."
         });
     }
+
+    unless (ENABLE_WEBDAV_MOVER or $class !~ /::WebDAV$/) {
+        die $ap->new({
+            msg => "Output channel is associated with WebDAV".
+                   "but WebDAV Mover is disabled."
+        });
+    }
+
+
 
     $class->put_res($res, $st);
     # Log the move.
@@ -287,7 +300,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Dist::Action|Bric::Dist::Action>
 
 =cut

@@ -41,6 +41,10 @@ Includes addition of new C<--publish-date> option to F<bric_soap>. [David]
 A number of default groups where not properly added to the "All Groups"
 group. Now they are. [David]
 
+=item *
+
+Added WebDAV mover. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.5.0
@@ -520,6 +524,9 @@ Improved error handling by the SOAP server. Full errors will now be printed to
 the Apache error log, error messages sent back to the client are properly
 escaped, and all database transactions for a single request will be rolled
 back in the event of an error. [David]
+
+Removed "Order" and "OrderDirection" parameters from C<< Bric::Util::Grp->list >>
+since it the SQL must always order by group ID, anyway. [David]
 
 =back
 

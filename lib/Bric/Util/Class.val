@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.11 $
+-- VERSION: $Revision: 1.12 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -232,3 +232,6 @@ VALUES (72, 'media_type', 'Bric::Util::MediaType', 'Media Type', 'Media Types', 
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (73, 'sftp', 'Bric::Util::Trans::SFTP', 'SFTP', 'SFTP Transport', 'Class with methods to move files via SFTP.', 1);
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES (74, 'webdav', 'Bric::Util::Trans::WebDAV', 'WebDAV', 'WebDAV Transport', 'Class with methods to move files via WebDAV', 1);

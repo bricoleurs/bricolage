@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-11-06 23:50:08 $
+$Date: 2003-01-21 07:27:09 $
 
 =head1 SYNOPSIS
 
@@ -54,20 +54,21 @@ $Date: 2002-11-06 23:50:08 $
 
 =head1 DESCRIPTION
 
-This Class provides the basic interface to all Bricolage and users.
-Bric::Biz::Person::User objects are special Bric::Biz::Person objects that
-represent members of the Bric::Util::Group::Person group "User". Only members of
-this group can actually I<use> the application. All other Bric::Biz::Person
-objects cannot use Bricolage, although they can be associated with Bricolage
-objects (e.g., writers can be associated with stories).
+This Class provides the basic interface to all Bricolage and
+users. Bric::Biz::Person::User objects are special Bric::Biz::Person objects
+that represent members of the Bric::Util::Group::Person group "User". Only
+members of this group can actually I<use> the application. All other
+Bric::Biz::Person objects cannot use Bricolage, although they can be
+associated with Bricolage objects (e.g., writers can be associated with
+stories).
 
 Bric::Biz::Person::User extends the Bric::Biz::Person interface to allow the
 setting and checking of passwords, the setting of login names, and the
 activation or deactivation of the person as a user. It also offers methods by
-which to set permissions for individual users, although these permissions really
-should be assigned via membership in other groups. (For example, put editors in
-an editors group, and allow members of that group to edit stories. See
-Bric::Util::Group::Person for more information.)
+which to set permissions for individual users, although these permissions
+really should be assigned via membership in other groups. (For example, put
+editors in an editors group, and allow members of that group to edit
+stories. See Bric::Util::Group::Person for more information.)
 
 =cut
 
@@ -119,8 +120,9 @@ my @uprops = qw(id login password _active);
 my @pcols = qw(p.prefix p.fname p.mname p.lname p.suffix p.active);
 my @pprops = qw(prefix fname mname lname suffix _p_active);
 
-my @cols = (qw(u.id u.login u.password u.active), @pcols);
-my @props = (@uprops, @pprops, '_inserted');
+my $sel_cols = "u.id, u.login, u.password, u.active, " . join(', ', @pcols) .
+  ", m.grp__id";
+my @props = (@uprops, @pprops, qw(grp_ids _inserted));
 
 my $secret = '$8fFidf*34;,a(o};"?i8J<*/#1qE3 $*23kf3K4;-+3f#\'Qz-4feI3rfe}%:e';
 my ($meths, @ord);
@@ -137,6 +139,7 @@ BEGIN {
 			 id => Bric::FIELD_READ,
 			 login => Bric::FIELD_RDWR,
 			 password => Bric::FIELD_NONE,
+                         grp_ids => Bric::FIELD_READ,
 
 			 # Private Fields
 			 _active => Bric::FIELD_NONE,
@@ -1388,50 +1391,61 @@ Bric::Biz::Person.
 
 $get_em = sub {
     my ($pkg, $args, $ids) = @_;
-    my (@wheres, @params);
+    my $tables = 'person p, usr u, member m, user_member c';
+    my $wheres = 'p.id = u.id AND u.id = c.object_id AND c.member__id = m.id';
+    my @params;
     while (my ($k, $v) = each %$args) {
 	if ($k eq 'id') {
-	    push @wheres, "u.$k = ?";
+            $wheres .= " AND u.$k = ?";
 	    push @params, $v;
 	} elsif ($k eq 'login') {
-	    push @wheres, "LOWER(u.$k) LIKE ?";
+	    $wheres .= " AND LOWER(u.$k) LIKE ?";
 	    push @params, lc $v;
+        } elsif ($k eq 'grp_id') {
+            $tables .= ", member m2, user_member c2";
+            $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
+              " AND m2.grp__id = ?";
+            push @params, $v;
 	} else {
-	    push @wheres, "LOWER(p.$k) LIKE ?";
+            $wheres .= " AND LOWER(p.$k) LIKE ?";
 	    push @params, lc $v;
 	}
     }
 
-    my $where = 'p.id = u.id';
-    $where .= ' AND u.active = 1' unless defined $args->{id};
-    local $" = ' AND ';
-    $where .= " AND @wheres" if @wheres;
+    $wheres .= ' AND u.active = 1' unless defined $args->{id};
+    my $qry_cols = $ids ? \'DISTINCT u.id' : \$sel_cols;
 
-    local $" = ', ';
-    my $qry_cols = $ids ? ['u.id'] : \@cols;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
-        FROM   person p, usr u
-        WHERE  $where
-        ORDER BY p.lname, p.fname, p.mname
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY u.id
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my (@d, @users);
-    bind_columns($sel, \@d[0..$#cols]);
-    $d[@cols] = 1; # Sets the inserted flag.
+    my (@d, @users, $grp_ids);
+    my $gids_idx = $#props - 1;
+    bind_columns($sel, \@d[0..$gids_idx]);
+    my $last = -1;
+    $d[$#props] = 1; # Sets the inserted flag.
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
-	my $self = bless {}, $pkg;
-	$self->SUPER::new;
-	$self->_set(\@props, \@d);
-	$self->_set__dirty; # Disables dirty flag.
-	push @users, $self
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new User object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $grp_ids = $d[$gids_idx] = [$d[$gids_idx]];
+            $self->_set(\@props, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @users, $self
+        } else {
+            push @$grp_ids, $d[$gids_idx];
+        }
     }
-    finish($sel);
     return \@users;
 };
 

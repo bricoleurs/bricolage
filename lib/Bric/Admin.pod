@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.87 $
+$Revision: 1.88 $
 
 =head1 DATE
 
-$Date: 2003-01-12 00:29:25 $
+$Date: 2003-01-21 07:27:09 $
 
 =head1 DESCRIPTION
 
@@ -158,6 +158,8 @@ START MODULE LIST
 =item Net::FTPServer (optional)
 
 =item Net::SFTP (optional)
+
+=item HTTP::DAV (optional)
 
 =item Cache::Mmap
 
@@ -1284,6 +1286,17 @@ initialize `~/.ssh/known_hosts' before using the SFTP mover (you might also
 need to create the directory /.ssh with write permission for "nobody", in case
 nobody's home directory is something like `/bin/false' and ssh falls back to
 `/' as the home directory). Defaults to "Off" if not specified.
+
+=item *
+
+B<ENABLE_WEBDAV_MOVER:> Bricolage also supports resource distribution through
+the WebDAV protocol. Set this directive to "On" or "Yes" or "1" to enable
+it. You need to have installed HTTP::DAV from the CPAN, in order to use WebDAV
+from Bricolage. Please note that currently due to restrictions in the perl www
+client library (LWP), a resource must be fully loaded into memory before being
+uploaded to the WebDAV server. It's recommended not to use the WebDAV
+transport to transfer large files, such as movies. Check
+L<http://www.webdav.org/> for information on the WebDAV protocol.
 
 =back
 
