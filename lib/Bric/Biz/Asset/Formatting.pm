@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-31 19:49:15 $
+$Date: 2003-02-09 16:13:12 $
 
 =head1 SYNOPSIS
 
@@ -2243,7 +2243,9 @@ sub _build_file_name {
 
     # Make sure that the filename isn't already in use for this output channel.
     if ($self->list_ids({ file_name => $fn, checked_out => 'all',
-                          output_channel__id => $oc_id })) {
+                          output_channel__id => $oc_id })
+        or $self->list_ids({ file_name => $fn, checked_out => 'all',
+                             output_channel__id => $oc_id, active => 0 })) {
         # One exists already! Throw an exception.
         die Bric::Util::Fault::Exception::DP->new
           ({ msg => "The template '$fn' already exists in output " .

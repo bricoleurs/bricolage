@@ -168,6 +168,12 @@ Bricolage now does more to determine the media type of uploaded media by using
 both the Apache media type determination and, failing that, a file name
 extension. Thanks to Todd Tyree for the spot. [David]
 
+=item *
+
+An attempt to create a template with the same name and output channel as a
+deactivated template now properly tells the user that the template already
+exists. [David]
+
 =back
 
 =head1 VERSION 1.5.0

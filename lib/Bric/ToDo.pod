@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.84 $
+$Revision: 1.85 $
 
 =head1 DATE
 
-$Date: 2003-01-30 01:27:38 $
+$Date: 2003-02-09 16:13:14 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,12 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Give users the option to reactivate deleted templates when they try to create
+a template that already exists in the database as a deactivated template.
+[David]
 
 =item *
 
