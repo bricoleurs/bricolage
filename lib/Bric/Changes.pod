@@ -89,7 +89,7 @@ related.
 
 =item *
 
-Added output the the Apache log consisting of the 20 most recent events on an
+Added output to the Apache log consisting of the 20 most recent events on an
 asset that has lost track of what workflow and/or desk it is on. This is to
 provide debugging information that might help us to track down when an asset
 forgets its workflow and/or desk, so that we might eventually be able to
