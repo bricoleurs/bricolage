@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.11 $
+-- VERSION: $Revision: 1.12 $
 --
--- $Date: 2004-02-06 06:34:56 $
+-- $Date: 2004-02-29 20:36:52 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -235,7 +235,7 @@
 -- ********** 'formatting_checkout' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkout', 'Template Checked Out Canceled', 'Template was checked out.', 19, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkout', 'Template Checked Out', 'Template was checked out.', 19, 1);
 
 -- ********** 'story_cancel_checkout' ************ --
 
