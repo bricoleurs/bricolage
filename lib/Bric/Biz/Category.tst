@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- Test values.
 --
@@ -14,57 +14,26 @@ DELETE FROM category_member WHERE id IN (702, 703, 704);
 -- -----------------------------------------------------------------------------
 -- Science
 
-INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
-VALUES (1, 'science', '/science/', 0, 701);
-
-INSERT INTO grp (id,class__id,name,description,secret)
-VALUES (701, 23, 'Science', 'All things sciencey', 1);
+INSERT INTO category (id,directory,uri,parent_id, name, description) 
+VALUES (1, 'science', '/science/', 0, 'Science', 'All things sciencey');
 
 -- -----------------------------------------------------------------------------
 -- Material
 
-INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
-VALUES (2, 'material', '/science/material', 1, 702);
-
-INSERT INTO grp (id,class__id,name,description,parent_id,secret)
-VALUES (702, 23, 'Material', 'The study of new materials', 701, 1);
-
-INSERT INTO member (id,grp__id, class__id, active) 
-VALUES (702, 701, 20, 1);
-
-INSERT INTO category_member (id, object_id, member__id)
-VALUES (702, 2, 702);
+INSERT INTO category (id,directory,uri,parent_id, name, description) 
+VALUES (2, 'material', '/science/material', 1, 'Material', 'The study of new materials');
 
 -- -----------------------------------------------------------------------------
 -- Physical
 
-INSERT INTO category (id,directory,uri,parent_id, category_grp_id) 
-VALUES (3, 'physical', '/science/physical', 1, 703);
-
-INSERT INTO grp (id,class__id,name,description,parent_id,secret)
-VALUES (703, 23, 'Physical', 'General macro level science', 701, 1);
-
-INSERT INTO member (id, grp__id, class__id, active) 
-VALUES (703, 701, 20, 1);
-
-INSERT INTO category_member (id, object_id, member__id)
-VALUES (703, 3, 703);
+INSERT INTO category (id,directory,uri,parent_id, name, description) 
+VALUES (3, 'physical', '/science/physical', 1, 'Physical', 'General macro level science');
 
 -- -----------------------------------------------------------------------------
 -- Biological
 
-INSERT INTO category (id,directory,uri,parent_id,category_grp_id) 
-VALUES (4, 'biological', '/science/biological', 1, 704);
-
-INSERT INTO grp (id,class__id,name,description,parent_id,secret)
-VALUES (704, 23, 'Biological', 'Bugs, bats and bees.', 701, 1);
-
-INSERT INTO member (id, grp__id, class__id, active) 
-VALUES (704, 701, 20, 1);
-
-INSERT INTO category_member (id, object_id, member__id)
-VALUES (704, 4, 704);
-
+INSERT INTO category (id, directory, uri,parent_id, name, description) 
+VALUES (4, 'biological', '/science/biological', 1, 'Biological', 'Bugs, bats and bees.');
 
 -- -----------------------------------------------------------------------------
 -- Groups.
