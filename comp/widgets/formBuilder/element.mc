@@ -147,11 +147,13 @@ if ($param->{delete} &&
 
     # Add in any new attributes.
     if ($param->{fb_name}) {
+        (my $key_name = lc $param->{fb_name}) =~ y/a-z0-9/_/cs;
+
 	# There's a new attribute. Decide what type it is.
-	if ($data_href->{lc $param->{fb_name}}) {
+	if ($data_href->{$key_name}) {
 	    # There's already an attribute by that name.
             add_msg($lang->maketext('An [_1] attribute already exists. "
-                     ."Please try another name.',"&quot;$param->{fb_name}&quot;"));
+                     ."Please try another name.',"&quot;$key_name&quot;"));
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -176,7 +178,7 @@ if ($param->{delete} &&
 	    my $max = $param->{fb_maxlength} ? $param->{fb_maxlength}
 	      : $param->{fb_maxlength} eq '0' ? 0 : undef;
 
-	    my $atd = $comp->new_data({ key_name    => $param->{fb_name},
+	    my $atd = $comp->new_data({ key_name    => $key_name,
 					required    => $param->{fb_req} ? 1 : 0,
 					quantifier  => $param->{fb_quant} ? 1 : 0,
 					sql_type    => $sqltype,
@@ -198,8 +200,8 @@ if ($param->{delete} &&
 	      if $param->{fb_type} eq 'checkbox';
 
 	    # Log that we've created it.
-            log_event('element_data_new', $atd, { Name => $param->{fb_name} });
-	    log_event("${type}_attr_add", $comp, { Name => $param->{fb_name} });
+            log_event('element_data_new', $atd, { Name => $key_name });
+	    log_event("${type}_attr_add", $comp, { Name => $key_name });
 	}
 
     }
@@ -322,11 +324,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:11 $
+$Date: 2003-07-19 00:37:50 $
 
 =head1 SYNOPSIS
 
