@@ -7,15 +7,15 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:46 $
+$Date: 2003-01-16 19:51:31 $
 
 =head1 SYNOPSIS
 
@@ -95,14 +95,7 @@ BEGIN {
 
 =over 4
 
-=cut
-
-#--------------------------------------#
-# Constructors                          
-
-#------------------------------------------------------------------------------#
-
-=item $obj = new Bric::Util::Grp::AssetType($init);
+=item $obj = new Bric::Util::Grp::AssetType->new($init);
 
 Creates a new assettype group.  Uses inherited 'new' method.
 
@@ -122,7 +115,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::Util::Grp::AssetType($param);
+=item @objs = lookup Bric::Util::Grp::AssetType->lookup($param);
 
 Uses inherited 'lookup' method.
 
@@ -142,7 +135,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Util::Grp::AssetType($param);
+=item @objs = list Bric::Util::Grp::AssetType->list($param);
 
 Uses inherited 'list' method.
 
@@ -160,9 +153,17 @@ NONE
 
 =cut
 
-#--------------------------------------#
+##############################################################################
+
+=back
 
 =head2 Destructors
+
+=over 4
+
+=item $self->DESTROY
+
+Dummy method to prevent wasting time trying to AUTOLOAD DESTROY
 
 =cut
 
@@ -171,19 +172,13 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+##############################################################################
+
+=back
 
 =head2 Public Class Methods
 
-=cut
-
-#--------------------------------------#
-
-=head2 Public Instance Methods
-
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $class_id = Bric::Util::Grp::Category->get_class_id()
 
@@ -285,24 +280,22 @@ sub member_class {
     return $mem_class;
 }
 
+##############################################################################
+
+=back
+
+=head2 Public Instance Methods
+
+NONE.
+
 =head2 Private Methods
 
-=cut
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Class Methods
 
 NONE
 
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
 
 =head2 Private Instance Methods
 
@@ -310,14 +303,8 @@ NONE
 
 =cut
 
-# Add methods here that apply to an instantiated object, but should not be 
-# called directly (e.g. utility functions for instance methods).
-# Use same POD comment style as above for 'new'.
-
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
