@@ -3,8 +3,7 @@ package Bric::Biz::AssetType::Parts::Data;
 
 =head1 NAME
 
-Bric::Biz::element::Parts::Data - The place where fields with in an element
-are registered with rules to their usage
+Bric::Biz::AssetType::Parts::Data - The place where fields with in an element are registered with rules to their usage
 
 =head1 VERSION
 

@@ -3,7 +3,7 @@ package Bric::Util::Coll::Addr::Person;
 
 =head1 NAME
 
-Bric::Util::Coll::Addr - Interface for managing collections of contacts.
+Bric::Util::Coll::Addr::Person - Interface for managing collections of contacts.
 
 =head1 VERSION
 
