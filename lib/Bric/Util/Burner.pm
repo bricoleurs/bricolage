@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32.4.11 $
+$Revision: 1.32.4.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32.4.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.32.4.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-26 11:15:55 $
+$Date: 2003-10-02 09:38:17 $
 
 =head1 SYNOPSIS
 
@@ -994,7 +994,8 @@ sub page_file {
       unless $number > 0;
     my ($fn, $ext) = $self->_get(qw(output_filename output_ext));
     $number = $number == 1 ? '' : $number - 1;
-    return "$fn$number.$ext";
+    $ext = ".$ext" if($ext ne '');    
+    return "$fn$number$ext";
 }
 
 ##############################################################################
