@@ -69,6 +69,7 @@ if ($command eq 'start') {
 	print "bric_apachectl $command: httpd (pid $pid) already running\n";
 	exit;
     }
+    print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
 	print "bric_apachectl $command: httpd started\n";
 	exit;
@@ -122,6 +123,7 @@ if ($command eq 'restart') {
 
     }
     # start
+    print "bric_apachectl $command: starting httpd\n";
     unless (system($httpd)) {
 	print "bric_apachectl $command: httpd started\n";
 	exit;
