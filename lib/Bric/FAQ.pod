@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-02-19 17:28:41 $
+$Date: 2003-02-19 17:31:32 $
 
 =head1 DESCRIPTION
 
@@ -90,9 +90,13 @@ mention the issue:
 
 =over 4
 
-=item L<http://www.masonhq.com/docs/faq/#why_am_i_getting_segmentation_fa>
+=item *
 
-=item L<http://www.masonhq.com/docs/faq/#does_mason_leak_memory>
+L<http://www.masonhq.com/docs/faq/#why_am_i_getting_segmentation_fa>
+
+=item *
+
+L<http://www.masonhq.com/docs/faq/#does_mason_leak_memory>
 
 =back
 
