@@ -25,8 +25,10 @@ on O'Reilly's MacDevCenter.com:
 
 Below is a summary of the instructions, for those who just need the barest of
 hints for compiling and installing software. Just be sure that you've
-installed the latest Mac OS X Developer Tools (10.2) or Xcode Tools (10.3), 
-available after a free registration at http://connect.apple.com/.
+installed the latest Mac OS X Developer Tools (10.2) or Xcode Tools (10.3). 
+available after a free registration at http://connect.apple.com/. In Panther,
+Xcode may already be installed at /Developers/Application/Xcode or the
+installer may be available in /Applications/Installers/Xcode Tools.
 
 PREPARATION
 -----------
