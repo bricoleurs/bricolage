@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:17 $
+$Date: 2003-03-03 03:02:08 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -131,7 +131,7 @@ var cancelValidation = false
 var text_table = '<form name=fb_form target="<% $target %>"><input type=hidden name=fb_type value=text>'
 text_table    += "<table width=330 cellpadding=3>"
 text_table    += "    <tr>"
-text_table    += '    <td valign=top width=170><span class=label> <% $lang->maketext('Name') %>:</span><br />'
+text_table    += '    <td valign=top width=170><span class=label> <% $lang->maketext('Key Name') %>:</span><br />'
 text_table    += '    <input type=text name=fb_name size=20 <% $textStyle %>></td>'
 text_table    += '    <td valign=top width=160><span class=label><% $lang->maketext('Size') %>:</span><br />'
 text_table    += '    <input type="text" name="fb_size" value="32" size="3"></td>'
@@ -165,7 +165,7 @@ text_table    += "</table></form>&nbsp;"
 var radio_table = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=radio>"
 radio_table    += "<table width=340 cellpadding=3>"
 radio_table    += "<tr><td valign=top>"
-radio_table    += '    <span class=label><% $lang->maketext('Name') %>:</span><br />'
+radio_table    += '    <span class=label><% $lang->maketext('Key Name') %>:</span><br />'
 radio_table    += '	<input type=text name=fb_name><br />'
 radio_table    += '    <span class=label><% $lang->maketext('Group Label') %>:</span><br />'
 radio_table    += '	<input type=text name=fb_disp><br />'
@@ -194,7 +194,7 @@ radio_table    += '</form>&nbsp;'
 var checkbox_table = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=checkbox>"
 checkbox_table    += "<table width=340 cellpadding=3>"
 checkbox_table    += "<tr><td valign=top>"
-checkbox_table    += " <span class=label><% $lang->maketext('Name') %>:</span><br />"
+checkbox_table    += " <span class=label><% $lang->maketext('Key Name') %>:</span><br />"
 checkbox_table    += '	<input type=text name=fb_name>'
 checkbox_table    += '</td></tr>'
 checkbox_table    += '</table><table width=340 cellpadding=3>'
@@ -221,7 +221,7 @@ checkbox_table    += '</form>&nbsp;'
 var pulldown_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 pulldown_table     += '<table width=340 cellpadding=3>'
 pulldown_table     += '<tr><td valign=top width=170>'
-pulldown_table     += '		<span class=label><%$lang->maketext('Name')%>:</span><br />'
+pulldown_table     += '		<span class=label><%$lang->maketext('Key Name')%>:</span><br />'
 pulldown_table     += '		<input type=text name=fb_name><br />'
 pulldown_table     += '                <span class=label><% $lang->maketext('Label') %>:</span><br />'
 pulldown_table     += '  	<input type=text name=fb_disp><br />'
@@ -248,7 +248,7 @@ pulldown_table     += '</form>&nbsp;'
 var select_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=select>"
 select_table 	 += '<table width=340 cellpadding=3>'
 select_table     += '<tr><td valign=top>'
-select_table     += '  <span class=label><% $lang->maketext('Name') %>:</span><br />'
+select_table     += '  <span class=label><% $lang->maketext('Key Name') %>:</span><br />'
 select_table     += '	<input type=text name=fb_name size=20> <br />'
 select_table     += '   <span class=label><% $lang->maketext('Label') %>:</span><br />'
 select_table     += '	<input type=text name=fb_disp size=20><br />'
@@ -281,7 +281,7 @@ select_table    += '    <span class=label><% $lang->maketext('Repeatable') %>:</
 select_table     += '</td></tr></table></form>&nbsp;'
 
 var textarea_table  = "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=textarea>"
-textarea_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Name')%>:</span><br>'
+textarea_table 	   += '<table width=340 cellpadding=3><tr><td valign=top><span class=label><%$lang->maketext('Key Name')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_name></td>'
 textarea_table 	   += '<td valign=top><span class=label><%$lang->maketext('Rows')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_rows value=4 size=3></td>'
@@ -310,7 +310,7 @@ textarea_table     += '</td></tr></table></form>&nbsp;'
 
 var date_table 	= "<form name=fb_form target=<% $target %>><input type=hidden name=fb_type value=date>"
 date_table     += "<table width=340 cellpadding=3><tr>"
-date_table     += '<td valign=top><span class=label><% $lang->maketext('Name') %>:</span><br>'
+date_table     += '<td valign=top><span class=label><% $lang->maketext('Key Name') %>:</span><br>'
 date_table     += '<input type=text name=fb_name></td></tr>'
 date_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Caption') %>:</span><br>'
 date_table     += '<input type=text name=fb_disp></td>'
