@@ -163,7 +163,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
-use Bric::Config qw(:uri);
+use Bric::Config qw(:uri :ui);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Attribute::Story;
@@ -284,8 +284,7 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i';
 
-use constant PARAM_FROM_MAP =>
-    {
+use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
        simple               => 'story_member sm, member m, story__category sc, '
@@ -299,12 +298,11 @@ use constant PARAM_FROM_MAP =>
        element_key_name     => 'element e',
        'story.category'     => 'story__category sc2',
        subelement_key_name  => 'story_container_tile sct',
-    };
+};
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
-use constant PARAM_WHERE_MAP =>
-    {
+use constant PARAM_WHERE_MAP => {
       id                     => 's.id = ?',
       active                 => 's.active = ?',
       inactive               => 's.active = ?',
@@ -317,7 +315,7 @@ use constant PARAM_WHERE_MAP =>
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
       element_id             => 's.element__id = ?',
       element__id            => 's.element__id = ?',
-      element_key_name       => 's.element__id = e.id AND e.key_name LIKE LOWER(?)',
+      element_key_name       => 's.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source_id              => 's.source__id = ?',
       source__id             => 's.source__id = ?',
       priority               => 's.priority = ?',
@@ -333,11 +331,12 @@ use constant PARAM_WHERE_MAP =>
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
-      subelement_key_name    => 'i.id = sct.object_instance_id AND sct.key_name LIKE LOWER(?)',
+      subelement_key_name    => 'i.id = sct.object_instance_id AND LOWER(sct.key_name) LIKE LOWER(?)',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',
+      published_version      => 's.published_version = i.version AND i.checked_out = 0',
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
@@ -348,6 +347,11 @@ use constant PARAM_WHERE_MAP =>
                               . 'AND story__id = i.story__id '
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out           => 'i.checked_out = ?',
+      checked_out            => 'i.checked_out = ?',
+      _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
+                              . '(SELECT story__id FROM story_instance '
+                              . 'WHERE s.id = story_instance.story__id '
+                              . 'AND story_instance.checked_out = 1)',
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
@@ -392,13 +396,13 @@ use constant PARAM_WHERE_MAP =>
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
-    };
+};
 
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 's.element__id = e.id',
-                                'e.key_name LIKE LOWER(?)' ],
+                                'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = sct.object_instance_id',
-                                'sct.key_name LIKE LOWER(?)' ],
+                                'LOWER(sct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
     output_channel_id      => [ 'i.id = soc.story_instance__id',
@@ -411,46 +415,45 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ "m2.active = '1' AND sm2.member__id = m2.id AND s.id = sm2.object_id",
+    grp_id                 => [ 'm2.active = 1 AND sm2.member__id = m2.id AND s.id = sm2.object_id',
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_instance__id',
                                 'sic.member__id = ?' ],
 };
 
-use constant PARAM_ORDER_MAP =>
-    {
-      active              => 'active',
-      inactive            => 'active',
-      alias_id            => 'alias_id',
-      site_id             => 'site__id',
-      workflow__id        => 'workflow__id',
-      workflow_id         => 'workflow__id',
-      primary_uri         => 'primary_uri',
-      element_id          => 'element__id',
-      element__id         => 'element__id',
-      source_id           => 'source__id',
-      source__id          => 'source__id',
-      priority            => 'priority',
-      publish_status      => 'publish_status',
-      first_publish_date  => 'first_publish_date',
-      publish_date        => 'publish_date',
-      cover_date          => 'cover_date',
-      expire_date         => 'expire_date',
-      name                => 'name',
-      title               => 'name',
-      description         => 'description',
-      version             => 'version',
-      version_id          => 'i.id',
-      slug                => 'slug',
-      user_id             => 'usr__id',
-      user__id            => 'usr__id',
-      _checked_out        => 'checked_out',
-      primary_oc_id       => 'primary_oc__id',
-      category_id         => 'category_id',
-      category_uri        => 'c.uri',
-      keyword             => 'name',
-      return_versions     => 'version',
-    };
+use constant PARAM_ORDER_MAP => {
+    active              => 's.active',
+    inactive            => 's.active',
+    alias_id            => 's.alias_id',
+    site_id             => 's.site__id',
+    workflow__id        => 's.workflow__id',
+    workflow_id         => 's.workflow__id',
+    primary_uri         => 'LOWER(s.primary_uri)',
+    element_id          => 's.element__id',
+    element__id         => 's.element__id',
+    source_id           => 's.source__id',
+    source__id          => 's.source__id',
+    priority            => 's.priority',
+    publish_status      => 's.publish_status',
+    first_publish_date  => 's.first_publish_date',
+    publish_date        => 's.publish_date',
+    cover_date          => 's.cover_date',
+    expire_date         => 's.expire_date',
+    name                => 'LOWER(i.name)',
+    title               => 'LOWER(i.name)',
+    description         => 'LOWER(i.description)',
+    version             => 'i.version',
+    version_id          => 'i.id',
+    slug                => 'LOWER(i.slug)',
+    user_id             => 'i.usr__id',
+    user__id            => 'i.usr__id',
+    _checked_out        => 'i.checked_out',
+    primary_oc_id       => 'i.primary_oc__id',
+    category_id         => 'sc2.category_id',
+    category_uri        => 'LOWER(c.uri)',
+    keyword             => 'LOWER(k.name)',
+    return_versions     => 'i.version',
+};
 
 use constant DEFAULT_ORDER => 'cover_date';
 
@@ -502,6 +505,10 @@ This will create a new story object with an optionally defined initial state
 Supported Keys:
 
 =over 4
+
+=item *
+
+user__id - Required.
 
 =item *
 
@@ -644,6 +651,12 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out stories.
+
+=item published_version
+
+Returns the versions of the stories as they were last published. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item return_versions
 
@@ -1081,6 +1094,7 @@ sub my_meths {
                           disp     => 'Slug',
                           len      => 64,
                           type     => 'short',
+                          (ALLOW_SLUGLESS_NONFIXED ? () : (req => 1)),
                           props    => {   type       => 'text',
                                           length     => 32,
                                           maxlength => 64

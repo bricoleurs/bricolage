@@ -1,0 +1,12 @@
+--- #YAML:1.0
+name: bric_import_contribs
+version: 0.10
+author:
+  - David Wheeler <david@kineticode.com>.
+abstract: Import contributors from a tab-delimited file
+license: perl
+requires:
+  Getopt::Long: 0
+  Pod::Usage: 0
+provides: {}
+generated_by: Module::Build version 0.25_03

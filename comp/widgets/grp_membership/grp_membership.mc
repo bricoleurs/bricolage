@@ -55,7 +55,7 @@ my ($left, $right) = ([], []);
 my @rogroups = ($obj->INSTANCE_GROUP_ID);
 my @logroups;
 
-unless ($obj->get_id) {
+unless (defined $obj->get_id) {
     # Make sure the "All" group shows up in the list for new objects.
     my $all_grp = Bric::Util::Grp->lookup({ id => $obj->INSTANCE_GROUP_ID});
     push @$right, { value       => $all_grp->get_id,

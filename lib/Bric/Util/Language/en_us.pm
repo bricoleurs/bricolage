@@ -4,7 +4,7 @@ package Bric::Util::Language::en_us;
 
 =head1 NAME
 
-Bric::Util::Language::pt_pt - Bricolage Portuguese translation
+Bric::Util::Language::en_us - Bricolage US English translation
 
 =head1 VERSION
 

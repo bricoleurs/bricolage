@@ -117,13 +117,164 @@ replaced with the more appropriate (and faster) "INTEGER", "SMALLINT", and
 
 =back
 
-=head1 VERSION 1.8.3 ()
+##############################################################################
+
+=head1 VERSION 1.8.4 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Versions of Perl that disallow the use of the C<-I> argument in a setuid
+environment will no longer cause the upgrade to fail. Reported by Serge
+Sozonoff. [David]
+
+=item *
+
+The new support for a false value to the C<checked_out> parameter to the
+C<list()> methods of the story, media, and template classes is now properly
+supported by the SOAP C<list_ids> method, as well. [David]
+
+=item *
+
+Calls to publish documents via SOAP will no longer fail if the
+C<published_version> attribute is not specified and the document to be
+published has never been published before. [David]
+
+=item *
+
+The Bricolage virtual FTP server will no longer fail to start if Template
+Toolkit is installed but its version number is less than 2.14. Reported by
+Adam Rinehart. [David]
+
+=back
+
+=head1 VERSION 1.8.3 (2004-11-09)
 
 =head2 Improvements
 
 =over 4
 
 =item *
+
+C<make clone> now ignores files in the source directory that start with
+"bricolage-". This should prevent copying previous clones into the new
+clone. [David]
+
+=item *
+
+Added F<contrib/thumbnails/precreate-thumbs.pl> script to pre-create
+thumbnails from images. Useful for upgraders. [Scott]
+
+=item *
+
+Added primary key to the "event_attr", "element__site", "story_uri", and
+"media_uri" tables in the database. This will make it easier to do database
+replication. [David and Kenneth Marshall]
+
+=item *
+
+Added F<contrib/bric_import_contribs> to import contributors from a
+tab-delimited file. Development by Kineticode, sponsored by the RAND
+Corporation. [David]
+
+=item *
+
+Added the C<published_version> parameter to the C<list()> methods of the
+story, media, and template classes. This parameter forces the search to return
+the versions of the assets as they were last published, rather than the most
+recent version. This will be most useful to those looking up other documents
+in templates and publishing them, as a way of avoiding pulling documents out
+from other anyone who might have them checked out! [David]
+
+=item *
+
+For those using the Template Toolkit burner, the required version is now 2.14,
+so as to take advantage of the improved Unicode support in that version.
+[David]
+
+=item *
+
+All publishing and distribution jobs are now executed in their own
+transactions when they are triggered by the user interface. This is to reduce
+the chances of a deadlock between long-running publishing transactions.
+[David]
+
+=item *
+
+The installer now requires PostgreSQL 7.3 or later. This is because 7.2
+hasn't worked properly with Bricolage since 1.8.0. [David]
+
+=item *
+
+Optimized SQL queries for key names or that order by string values to use
+indexes in the C<list()> and C<list_ids()> methods of the story, media, and
+template classes. [David]
+
+=item *
+
+The installer will now fail to install if the version of Apache is greater
+than version 1--that is, it will refuse to install under Apache 2 (for now).
+[David]
+
+=item *
+
+Added Russian localization. [Sergey Samoilenko].
+
+=item *
+
+Changed the foreign keys in the story, media, and formatting (template) tables
+so that C<DELETE>s do not cascade, but are restricted. This means that before
+deleting any source, element, site, workflow, or other related object that has
+a foreign key reference in an asset table, those rows must be deleted.
+Otherwise, PostgreSQL will throw an exception. Hopefully, this will put a stop
+to the mysterious but very rare disappearance of stories from Bricolage.
+[David]
+
+=item *
+
+The distribution monitor, F<bric_dist_mon>, no longer populates HTTP headers
+with lists of Job IDs for execution. Instead, it simply sends a request to the
+distribution handler, and Bric::Dist::Handler looks up the jobs to execute
+itself. This fixes an issue with too many headers being put into the request,
+and makes the operation of Bric::Dist::Handler more efficient. [David]
+
+=item *
+
+A call to C<< $burner->burn_another >> in a template that passes in a
+date/time string in the future now causes a publish job to be scheduled for
+that time, rather than immediate burning the document and then scheduling the
+distribution to take place in the future. Reported by Ashlee Caul. [David]
+
+=item *
+
+Improved context-sensitive help for the "New Template" profile. [Paul Orrock
+and David]
+
+=item *
+
+Make slug actually be required when C<ALLOW_SLUGLESS_NONFIXED> isn't enabled,
+in particular on the clone page. Thanks to Dharmender Yadav at Enabling
+Dimensions for part of the patch. [Scott]
+
+=item *
+
+Removed the hack that commits a database transaction in the middle of a
+request that does a "Check in and Publish", since we now require PostgreSQL
+7.3 and the bug that the hacked worked around was fixed in that release.
+[David]
+
+=item *
+
+Added missing constraint to the "type" column of the "workflow" table. [David]
+
+=item *
+
+Changing the sort order of a list of items in a search interface now properly
+reverses the entire collection of object over the pages, rather than just the
+objects for the current page. Thanks to Marshall for the spot! [David]
 
 =back
 
@@ -132,6 +283,173 @@ replaced with the more appropriate (and faster) "INTEGER", "SMALLINT", and
 =over 4
 
 =item *
+
+The localization libraries load without error again. Added tests to ensure
+that this doesn't happen again. [David]
+
+=item *
+
+Publishing stories not in workflow via the SOAP server works again. [David]
+
+=item *
+
+Documents that the SOAP workflow publish finds in workflow but not on a desk
+(which shouldn't happen, but sometimes does) are now just published anyway.
+[David]
+
+=item *
+
+The Burner object's C<encoding> attribute is now setable as well as readable.
+[David]
+
+=item *
+
+The category browser works again. [David]
+
+=item *
+
+Fixed the "event" table to use the correct sequence the id column's default
+value (although the default is never used, this is a good precaution). [David]
+
+=item *
+
+Fixed Media Upload bug where the full local path was being used, by adding
+a 'winxp' key to Bric::Util::Trans::FS to account for an update to
+HTTP::BrowserDetect. [Mark Kennedy]
+
+=item *
+
+A call to C<< $element->get_elements >> in an array context when the element
+contains no subelements no longer returns an array reference. Reported by
+Clinton Gormley. [David]
+
+=item *
+
+Fix bug 839 so that categories can be deleted. [Scott]
+
+=item *
+
+Instances of a required custom field in story elements is no longer required
+once it has been deleted from the element definition in the element manager.
+Reported by Rod Taylor. [David]
+
+=item *
+
+A false value passed to the C<checked_out> parameter of the C<list()> and
+C<list_ids()> methods of the story, media, and template (formatting) classes
+now properly returns only objects or IDs for assets that are not checked out.
+[David]
+
+=item *
+
+The cover date select widget now works properly in the clone interface when a
+non-ISO style date preference is selected. Thanks to Susan G. for the spot!
+[David]
+
+=item *
+
+Running C<make upgrade> with PostgreSQL "ident sameuser" security now works
+properly. [Keith Grennan]
+
+=item *
+
+The C<LoadModule> and C<AddModule> F<httpd.conf> directives should now be
+generated properly during installation. C<LoadModule> will use
+C<config_log_module> or C<mod_log_config> depending on the system, but
+C<AddModule> will always use F<mod_log_config.c>. Spotted by Dave
+Jablonski. [Marshall]
+
+=item *
+
+Deleted sites will no longer be displayed in the site context menu in the
+UI. Reported by Ed Stevenson. [David]
+
+=item *
+
+Sorting templates based on Asset Type (Element) no longer causes an error.
+[David]
+
+=item *
+
+Events are now logged during the cleanup phase in alphabetical order by event
+type key name, to prevent deadlocks between two transactions logging events of
+the same types in different orders at the same time. [David]
+
+=item *
+
+Fixed a number of the callbacks in the story, media, and template profiles so
+that they didn't clear out the session before other callbacks were done with
+it. Most often seen as the error 'Can't call method "get_tiles" on an
+undefined value' in the media profile, especially with IE/Windows (for some
+unknown reason). Reported by Ed Stevenson. [David]
+
+=item *
+
+Fixed typo in clone page that caused all output channels to be listed
+rather than only those associated with the element itself. [Scott]
+
+=item *
+
+Fixed double listing of the "All" group in the group membership double list
+manager. [Christian Hauser]
+
+=item *
+
+Mail sent for alerts and the like now has DOS and Macintosh line-endings
+converted to Unix so that they are displayed properly in most mail clients.
+[Christian Hauser and David]
+
+=item *
+
+Documented required C<user__id> parameter to the C<new()> method in the story
+and media classes. Reported by Rod Taylor. [David]
+
+=item *
+
+Image buttons now correctly execute the C<onsubmit()> method for forms that
+define an C<onsubmit> attribute. This means that, among other things, changes
+to a group profile will persist when you click the "Permissions" button.
+[David]
+
+=item *
+
+Media type groups now properly display their members.
+
+=item *
+
+The "Edit" link that showed up for categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive has been removed. It
+didn't belong there in the first place. Reported by Ho Yin Au. [David]
+
+=item *
+
+Simple search now works when it is selected when the "Default Search"
+preference is set to "Advanced". Reported by Marshall Roch. [David]
+
+=item *
+
+Multiple alert types set up to trigger alerts for the same event will now all
+properly execute. Thanks to Christian Hauser for the spot! [David]
+
+=item *
+
+Publishing stories or media via SOAP with the C<published_only> parameter
+(C<--published-only> for F<bric_republish>) now correctly republishes the
+published versions of documents even if the current version is in workflow.
+Reported by Adam Rinehart. [David]
+
+=item *
+
+Added upgrade script to clean out old records left in the "member" table if
+users elected to delete old jobs during the 1.8.2 upgrade. [David]
+
+=item *
+
+Users granted a permission greater than READ to the members of the "All Users"
+group no longer get such permission to any members of the "Global Admins"
+group unless they have specifically been granted such permission to the
+members of the "Global Admins" group. Thanks to Marshall Roch for the spot!
+[David]
 
 =back
 

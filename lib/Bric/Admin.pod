@@ -43,7 +43,7 @@ apache-ssl.
 
 =item 3
 
-Install PostgreSQL 7.2 or greater. Be sure to use UNICODE for data encoding.
+Install PostgreSQL 7.3 or greater. Be sure to use UNICODE for data encoding.
 
 =item 4
 
@@ -194,7 +194,7 @@ START MODULE LIST
 
 =item HTML::Template::Expr (optional)
 
-=item Template 2.09 (optional)
+=item Template 2.14 (optional)
 
 =item Encode (optional)
 
@@ -242,7 +242,7 @@ mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 
-PostgreSQL 7.2.4
+PostgreSQL 7.3.0
 
 =item *
 
@@ -1051,7 +1051,7 @@ For example, to upgrade from 1.6.13 to 1.8.1, run each of the scripts in
 F<1.6.13/>, F<1.7.5/>, F<1.6.14/>, F<1.8.0/>, and F<1.8.1/> -- B<in that order>.
 Furthermore, the scripts within each directory are run in alphabetical order.
 
-Next, copy in the new sources from the distribution into you bricolage
+Next, copy in the new sources from the distribution into your bricolage
 directory. Be sure B<not> to copy example templates, as they may overwrite
 your own templates. You're best off moving the contents of F<data/> out
 of the way.
@@ -1132,10 +1132,7 @@ bric_apachectl.
 B<LISTEN_PORT:> The TCP/IP Port on which the Bricolage server should listen for
 requests. Defaults to 80 if not specified. You must also tell Apache to listen
 on this port in the configuration file specified in C<APACHE_CONF> (using
-Listen, Port, or BindAddress). B<Note:> If the C<SSL_ENABLE> directive has been
-turned on, then C<LISTEN_PORT> I<must> be set to 80. The Bricolage server will
-not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set to a value other than
-80.
+Listen, Port, or BindAddress).
 
 =item *
 

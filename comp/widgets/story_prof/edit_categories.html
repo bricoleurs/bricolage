@@ -5,7 +5,7 @@ $m->comp('/widgets/listManager/listManager.mc',
          def_sort_field => 'uri',
          title     => 'Current Categories',
          objs      => \@categories,
-#         profile   => $category_current_profile,
+         profile   => undef,
          fields    => [qw(uri site name primary)],
          field_titles => { primary => 'Primary' },
          field_values => $primary_sub,
@@ -72,7 +72,7 @@ my $primary_sub = sub {
 
     # Output the radio button.
     $m->scomp('/widgets/profile/radio.mc',
-              name => "$widget|set_primary_category_cb",
+              name => "$widget|set_primary_category",
               disp => '',
               value => $cid,
               checked => $cid == $primary_cat->get_id,

@@ -24,11 +24,9 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This program monitors the Bricolage distribution jobs queue, and triggers the
-execution of distribution jobs when they're due. It does this by connecting to
-the Bricolage server on a regular basis, getting a list of jobs that are due
-to be executed, and then sending that list to the Bricolage server to be
-executed.
+This program triggers the execution of distribution jobs when they're due. It
+does this by sending a ticler request to the Bricolage server on a regular
+basis.
 
 F<bric_dist_mon> works in one of two ways. The first is as a cron job. Use the
 C<-c> option in a crontab and F<bric_dist_mon> will always execute once and
@@ -37,15 +35,15 @@ execution to be managed by cron, but limits it to the intervals supported by
 cron. For example, cron typically allows jobs to be scheduled to run as
 frequently as every minute. This will be fine for most applications. However,
 in a busy Bricolage environment with highly time-critical content, it may be
-important to have F<bric_dist_mon> check for and trigger new distribution jobs
-more frequently than cron will allow.
+important to have F<bric_dist_mon> trigger new distribution jobs more
+frequently than cron will allow.
 
 For those environments, F<bric_dist_mon> can be used as a persistent, forking
 program. This is the default way to run F<bric_dist_mon>, and the interval can
 be set via the C<-i> option. For example, if a busy environment needed
 distribution jobs checked for and executed every 15 seconds, C<-i 15> will
-cause F<bric_dist_mon> to fork a new process every fifteen seconds, and that
-process will check for and trigger new jobs.
+cause F<bric_dist_mon> to fork a new process every fifteen seconds to send
+a tickle request to the distribution server.
 
 Note that, to run F<bric_dist_mon> as a persistent forking application, some
 method of ensuring that it remains running and gets restarted if it exits will
@@ -261,15 +259,16 @@ sub send_jobs {
 	# Create a client and load the Job IDs.
 	my $client = Bric::Dist::Client->new({ url => $opt_U,
                                                cookie => $cookie->as_string });
-	$client->load_ids;
+#	$client->load_ids;
 
 	# Send debugging info, if necessary.
 	if ($opt_d) {
-	    my $exec = $client->get_exec_ids;
-	    $exec = !@$exec ? 'no Job IDs' : $#$exec > 0 ? "Job ID @$exec" :
-	      "Job IDs @$exec";
-	    local $" = ', ';
-	    log_msg("Sending $exec for execution.");
+#	    my $exec = $client->get_exec_ids;
+#	    $exec = !@$exec ? 'no Job IDs' : $#$exec > 0 ? "Job ID @$exec" :
+#	      "Job IDs @$exec";
+#	    local $" = ', ';
+#	    log_msg("Sending $exec for execution.");
+            log_msg("Sending execution request.");
 	}
 	# Send the Job IDs.
 	$client->send;

@@ -23,11 +23,6 @@ $LastChangedDate$
   use Bric::Dist::Client;
 
   my $dist = Bric::Dist::Client->new;
-  $dist->load_ids;
-
-  my @exec_ids = $dist->get_exec_ids;
-  $dist->add_exec_ids(@exec_ids);
-  $dist->del_exec_ids(@exec_ids);
 
   my $url = $dist->get_url;
   $dist = $dist->set_url($url);
@@ -38,10 +33,10 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This class functions as a client to the distribution server. It will load the
-lists of job IDs to be executed and send them via lwp to the distribution
-server, which is running Bric::Dist::Handler. It is principally used to distribute
-files for preview, and by dist_mon to distribute files for publication.
+This class functions as a client to the distribution server. It sends a tickle
+request to the Bricolage distribution server, which is running
+Bric::Dist::Handler. It is principally used used by
+L<bric_dist_mon|bric_dist_mon> to publish and distribute files.
 
 =cut
 
@@ -53,7 +48,6 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Util::Job;
 use Bric::Util::DBI qw(:standard);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(throw_gen);
@@ -113,20 +107,7 @@ BEGIN {
 
 =item my $dist = Bric::Dist::Client->new($init)
 
-Instantiates a Bric::Dist::Client object. An anonymous hash of initial values may
-be passed. The supported initial value keys are:
-
-=over 4
-
-=item *
-
-exec_ids - An anonymous array of Bric::Util::Job IDs to be executed.
-
-=item *
-
-exp_ids - An anonymous array of Bric::Util::Job IDs to be expired.
-
-=back
+Instantiates a Bric::Dist::Client object.
 
 B<Throws:>
 
@@ -143,14 +124,6 @@ Bric::set() - Problems setting fields.
 =item *
 
 Bric::_get() - Problems retrieving fields.
-
-=item *
-
-Cannot add resources to a completed job.
-
-=item *
-
-Cannot add resources to a executing job.
 
 =back
 
@@ -203,43 +176,9 @@ NONE.
 
 =item $dist = $dist->load_ids
 
-Looks up the IDs of all Bric::Util::Job objects in the database that are ready
-to be executed or expired and populates the properties of this object with those
-IDs.
+B<Note:> Deprecated. No need to call it anymore, as it is now a no-op.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to prepare SQL statement.
-
-=item *
-
-Unable to select column into arrayref.
-
-=item *
-
-Unable to execute SQL statement.
-
-=item *
-
-Unable to bind to columns to statement handle.
-
-=item *
-
-Unable to fetch row from statement handle.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
@@ -249,14 +188,14 @@ B<Notes:> NONE.
 
 sub load_ids {
     my $self = shift;
-    my $jids = $self->_get('exec_ids');
-    my $new_jids = Bric::Util::Job->list_ids( { 
-        sched_time  => [undef, strfdate()],
-        comp_time   => undef,
-        failed      => 0,
-        executing   => 0,
-    });
-    grep { $jids->{$_} = undef } @$new_jids;
+#    my $jids = $self->_get('exec_ids');
+#    my $new_jids = Bric::Util::Job->list_ids({
+#        sched_time  => [undef, strfdate()],
+#        comp_time   => undef,
+#        failed      => 0,
+#        executing   => 0,
+#    });
+#    grep { $jids->{$_} = undef } @$new_jids;
     return $self;
 }
 
@@ -387,17 +326,10 @@ B<Notes:> NONE.
 
 =item my (@exec_jids, $exec_jids_aref) = $dist->get_exec_ids
 
-Returns a list anonymous array of Bric::Util::Job IDs to be executed.
+B<Note:> Deprecated. No need to call it anymore. Will return an empty list or
+array reference.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
@@ -406,25 +338,19 @@ B<Notes:> NONE.
 =cut
 
 sub get_exec_ids {
-    wantarray ? sort { $a <=> $b } keys %{ $_[0]->_get('exec_ids') }
-      : [ sort { $a <=> $b } keys %{ $_[0]->_get('exec_ids') } ];
+#    wantarray ? sort { $a <=> $b } keys %{ $_[0]->_get('exec_ids') }
+#      : [ sort { $a <=> $b } keys %{ $_[0]->_get('exec_ids') } ];
+    wantarray ? () : [];
 }
 
 ################################################################################
 
 =item $self = $dist->add_exec_ids(@exec_ids)
 
-Adds to the list of Bric::Util::Job IDs to be executed.
+B<Note:> Deprecated. No need to call it anymore. All arguments will simply be
+discarded.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
@@ -434,8 +360,8 @@ B<Notes:> NONE.
 
 sub add_exec_ids {
     my $self = shift;
-    my $ids = $self->_get('exec_ids');
-    @{$ids}{@_} = ();
+#    my $ids = $self->_get('exec_ids');
+#    @{$ids}{@_} = ();
     return $self;
 }
 
@@ -443,18 +369,10 @@ sub add_exec_ids {
 
 =item $self = $dist->del_exec_ids(@exec_ids)
 
-Deletes from the list of Bric::Util::Job IDs to be executed. If no exec IDs are
-passed, they will all be deleted.
+B<Note:> Deprecated. No need to call it anymore. All arguments will simply be
+discarded.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
@@ -464,8 +382,8 @@ B<Notes:> NONE.
 
 sub del_exec_ids {
     my $self = shift;
-    my $ids = $self->_get('exec_ids');
-    @_ ? delete @{$ids}{@_} : (%$ids = ());
+#    my $ids = $self->_get('exec_ids');
+#    @_ ? delete @{$ids}{@_} : (%$ids = ());
     return $self;
 }
 
@@ -473,7 +391,7 @@ sub del_exec_ids {
 
 =item $self = $dist->send
 
-Sends the lists of Bric::Util::Job IDs to be expired to the distribution server.
+Sends a tickle request to the distribution server.
 
 B<Throws:>
 
@@ -497,12 +415,12 @@ B<Notes:> NONE.
 
 sub send {
     my $self = shift;
-    my $exec = $self->get_exec_ids;
+#    my $exec = $self->get_exec_ids;
     my $cookie = $self->get_cookie;
 
     eval {
 	my $req = HTTP::Request->new(GET => $self->_get('url'));
-	$req->header(Execute => $exec);
+#	$req->header(Execute => $exec);
 	$req->header(Cookie => $cookie) if $cookie;
 	my $res = $ua->request($req);
 

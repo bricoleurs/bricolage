@@ -25,6 +25,7 @@ CREATE TABLE workflow (
                                   DEFAULT NEXTVAL('seq_workflow'),
     name             VARCHAR(64)  NOT NULL,
     description      VARCHAR(256) NOT NULL,
+
     all_desk_grp_id  INTEGER      NOT NULL,
     req_desk_grp_id  INTEGER      NOT NULL,
     asset_grp_id     INTEGER      NOT NULL,

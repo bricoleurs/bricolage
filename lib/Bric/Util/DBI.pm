@@ -811,31 +811,37 @@ sub clean_params {
     # Map inverse alias inactive to active.
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
-    # checked_out has some special cases
-    # deal with the checked_out param.  The all argument is actually
-    # the default behavior.
-    $param->{_checked_out} = $param->{checked_out}
-      if exists $param->{checked_out} && $param->{checked_out} ne 'all';
-    # this will override the above
-    $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
-    # this is last because it's most important for defining a workspace
-    $param->{_checked_out} = 1 if defined $param->{user__id};
-    if (defined $param->{_checked_out}) {
-        # Make sure we have a valid checkout value -- that is, no null string!
-        $param->{_checked_out} = 0 unless $param->{_checked_out};
-    } else {
-        # finally the default
-        $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
-    }
+    unless ($param->{published_version}) {
+        # checked_out has some special cases
+        # deal with the checked_out param.  The all argument is actually
+        # the default behavior.
+        $param->{_checked_out} = $param->{checked_out}
+          if exists $param->{checked_out} && $param->{checked_out} ne 'all';
+        # this will override the above
+        $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
+        # this is last because it's most important for defining a workspace
+        $param->{_checked_out} = 1 if defined $param->{user__id};
+        if (defined $param->{_checked_out}) {
+            # Make sure we have valid checkout values -- that is, no null
+            # strings!
+            @{$param}{qw(_not_checked_out _checked_out)} = (0, 0)
+              unless $param->{_checked_out};
+        } else {
+            # finally the default
+            $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+        }
 
-    # trim cruft
-    delete $param->{checkout};
-    delete $param->{checked_out};
+        # trim cruft
+        delete $param->{checkout};
+        delete $param->{checked_out};
+    }
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
     # we can only handle the returned versions p in reverse
     $param->{_no_return_versions} = 1
-      unless $param->{return_versions} || defined $param->{version};
+      unless $param->{return_versions}
+      || defined $param->{version}
+      || $param->{published_version};
     # add default order
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id

@@ -13,7 +13,7 @@
 --
 
 -- This function allows us to create UNIQUE indices that combine a lowercased
--- TEXT (or VARCHAR) column with a INTEGER column. See Bric/Util/AlertType.sql
+-- TEXT (or VARCHAR) column with an INTEGER column. See Bric/Util/AlertType.sql
 -- for an example.
 CREATE   FUNCTION lower_text_num(TEXT, INTEGER)
 RETURNS  TEXT AS 'SELECT LOWER($1) || to_char($2, ''|FM9999999999'')'

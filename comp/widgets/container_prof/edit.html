@@ -498,6 +498,10 @@ my $related_summary = sub {
               $type, $rel->get_title)
         unless $rel->is_active;
 
+      add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
+              $type, $rel->get_title)
+        unless $rel->is_active;
+
       my $thumb = '';
       if (USE_THUMBNAILS && $type ne 'story') {
           if ($thumb =  $rel->thumbnail_uri) {

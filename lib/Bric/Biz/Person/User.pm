@@ -986,9 +986,24 @@ sub what_can {
 
     # Get the permission.
     my $priv = 0;
-    foreach my $gid (@gids) {
+    if (ref $obj eq __PACKAGE__) {
+        my $chk_admin = 0;
+        for my $gid (@gids) {
+            # Make a note of the user being in the global admins
+            # group.
+            $chk_admin ||= $gid == ADMIN_GRP_ID;
+            # Grab the greatest permission.
+            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+        }
+        # If they're in the global admins group, allow no greater access than
+        # READ access.
+        $priv = $acl->{&ADMIN_GRP_ID} || READ if $chk_admin && $priv &&
+          $priv != DENY;
+    } else {
         # Grab the greatest permission.
-        $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+        for my $gid (@gids) {
+            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+        }
     }
     return $priv;
 }

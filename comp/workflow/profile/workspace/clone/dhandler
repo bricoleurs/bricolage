@@ -26,7 +26,8 @@ Display the page after you click 'Clone' in 'My Workspace'.
   jsInit => 'document.theForm["title"].focus();'
 &>
 
-<form action="<% $r->uri %>" method="post" name="theForm">
+<form action="<% $r->uri %>" method="post" name="theForm"
+ onSubmit="return confirmChanges(this)">
 
 <& '/widgets/story_prof/story_prof.mc',
   section  => 'clone',

@@ -46,6 +46,7 @@ use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
 use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
+use Bric::Util::Time qw(:all);
 use Apache::Constants qw(HTTP_OK);
 use Apache::Log;
 
@@ -151,18 +152,16 @@ sub handler {
         # Set up the language object and handle the request.
         Bric::Util::Language->get_handle(get_pref('Language'));
 
-	my %headers = $r->headers_in;
 	# Execute all the jobs.
-	foreach my $jid (split /\s*,\s*/, $headers{Execute}) {
-	    eval {
-		my $job = Bric::Util::Job->lookup({ id => $jid }) ||
-                    throw_gen(error => "Job $jid does not exist.");
-		$job->execute_me();
-		log_event("job_exec", $job);
-	    };
-	    # Log any errors.
-	    log_err($r, $@, "Error executing Job $jid") if $@;
-	}
+        for my $job (Bric::Util::Job->list({
+            sched_time  => [undef, strfdate()],
+            comp_time   => undef,
+            failed      => 0,
+            executing   => 0,
+        })) {
+            $job->execute_me;
+            log_event("job_exec", $job);
+        }
     };
 
     # Log any errors.
@@ -170,6 +169,8 @@ sub handler {
 
     return HTTP_OK;
 }
+
+##############################################################################
 
 =item my $bool = log_err($r, $err, $msg)
 

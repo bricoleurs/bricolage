@@ -53,7 +53,7 @@ sub revert : Callback {
     set_state_data($widget, 'story');
 }
 
-sub save : Callback {
+sub save : Callback(priority => 6) {
     my $self = shift;
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
@@ -94,7 +94,7 @@ sub save : Callback {
     }
 }
 
-sub checkin : Callback {
+sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
@@ -169,13 +169,6 @@ sub checkin : Callback {
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
                 '<span class="l10n">' . $story->get_title . '</span>', $dname);
 
-        # HACK: Commit this checkin. WHY?? Because Postgres does NOT like
-        # it when you insert and delete a record within the same
-        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
-        # start a new transaction!
-        Bric::Util::DBI::commit(1);
-        Bric::Util::DBI::begin(1);
-
         # Use the desk callback to save on code duplication.
         my $pub = Bric::App::Callback::Desk->new
           ( cb_request   => $self->cb_request,
@@ -218,7 +211,7 @@ sub checkin : Callback {
     $self->set_redirect("/");
 }
 
-sub save_and_stay : Callback {
+sub save_and_stay : Callback(priority => 6) {
     my $self = shift;
     my $param = $self->params;
     # Just return if there was a problem with the update callback.
@@ -243,7 +236,7 @@ sub save_and_stay : Callback {
     }
 }
 
-sub cancel : Callback {
+sub cancel : Callback(priority => 6) {
     my $self = shift;
 
     my $story = get_state_data($self->class_key, 'story');
@@ -299,7 +292,7 @@ sub cancel : Callback {
     $self->set_redirect("/");
 }
 
-sub return : Callback {
+sub return : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $version_view = get_state_data($widget, 'version_view');
@@ -481,7 +474,7 @@ sub delete_cat : Callback {
                 '<span class="l10n">' . $cat->get_name . '</span>');
     }
 
-    $story->delete_categories(@to_delete);
+    $story->delete_categories(\@to_delete);
     $story->save;
     log_event(@$_) for @to_log;
     set_state_data($widget, 'story', $story);
@@ -826,30 +819,6 @@ sub leave_category : Callback {
     pop_page();
 }
 
-sub set_primary_category : Callback {
-    my $self = shift;
-    my $param = $self->params;
-    my $widget = $self->class_key;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-
-    my $primary_cat_id = $self->value;
-    if (defined $param->{$widget.'|delete_id'}
-        && $param->{$widget.'|delete_id'} == $primary_cat_id) {
-        add_msg("Cannot make a dissociated category the primary category.");
-        return;
-    }
-    my $primary_cat = Bric::Biz::Category->lookup({ id => $primary_cat_id });
-    $story->set_primary_category($primary_cat);
-
-    # set this so that we don't have to $story->save
-    # (used in widgets/story_prof/edit_categories.html)
-#    set_state_data($self->class_key, 'primary_cat', $primary_cat);
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-}
-
 ### end of callbacks
 
 sub clear_my_state {
@@ -908,7 +877,7 @@ $save_contrib = sub {
 $save_category = sub {
     my ($widget, $param, $self) = @_;
 
-    # get the contribs to delete
+    # get the categories to delete
     my $story = get_state_data($widget, 'story');
 
     my $existing = { map { $_->get_id => 1 } $story->get_categories };
@@ -933,6 +902,14 @@ $save_category = sub {
         add_msg('Categories disassociated.');
         $story->delete_categories(\@to_delete);
     }
+
+    # Change the primary category?
+    my $new_prime = $param->{"$widget|set_primary_category"};
+    if ($new_prime != $primary_cid && exists $existing->{$new_prime}) {
+        my $primary_cat = Bric::Biz::Category->lookup({ id => $new_prime });
+        $story->set_primary_category($primary_cat);
+    }
+
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
 };

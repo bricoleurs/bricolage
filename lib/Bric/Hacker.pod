@@ -85,7 +85,7 @@ issues on the #bricolage channel on the Rhizomatic IRC network.
 
 If you're developing Bricolage then you should be working with the latest code
 from the Bricolage Subversion repository. You can browse the Subversion
-repository at L<http://svn.bricolage.cc/viewcvs/>.
+repository at L<http://viewsvn.bricolage.cc/>.
 
 Information on connecting to the repository to checkout a working copy is at
 L<http://www.bricolage.cc/dev/subversion/>.

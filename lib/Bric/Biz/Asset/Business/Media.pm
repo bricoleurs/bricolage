@@ -178,8 +178,7 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i';
 
-use constant PARAM_FROM_MAP =>
-    {
+use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
      output_channel_id    => 'media__output_channel moc',
      simple               => 'media_member mm, member m, at_type at, element e, '
@@ -188,12 +187,11 @@ use constant PARAM_FROM_MAP =>
      data_text            => 'media_data_tile md',
      subelement_key_name  => 'media_container_tile mct',
      contrib_id           => 'media__contributor sic',
-    };
+};
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
-use constant PARAM_WHERE_MAP =>
-    {
+use constant PARAM_WHERE_MAP => {
       id                    => 'mt.id = ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
@@ -205,7 +203,7 @@ use constant PARAM_WHERE_MAP =>
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
-      element_key_name      => 'mt.element__id = e.id AND e.key_name LIKE LOWER(?)',
+      element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
       priority              => 'mt.priority = ?',
@@ -221,11 +219,12 @@ use constant PARAM_WHERE_MAP =>
       unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > CURRENT_TIMESTAMP)',
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
-      subelement_key_name   => 'i.id = mct.object_instance_id AND mct.key_name LIKE LOWER(?)',
+      subelement_key_name   => 'i.id = mct.object_instance_id AND LOWER(mct.key_name) LIKE LOWER(?)',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
+      published_version     => 'mt.published_version = i.version AND i.checked_out = 0',
       user__id              => 'i.usr__id = ?',
       user_id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
@@ -238,6 +237,11 @@ use constant PARAM_WHERE_MAP =>
                              . 'AND media__id = i.media__id '
                              . 'ORDER BY checked_out DESC LIMIT 1 )',
       _checked_out          => 'i.checked_out = ?',
+      checked_out           => 'i.checked_out = ?',
+      _not_checked_out       => 'i.checked_out = 0 AND mt.id not in '
+                              . '(SELECT media__id FROM media_instance '
+                              . 'WHERE mt.id = media_instance.media__id '
+                              . 'AND media_instance.checked_out = 1)',
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
                              . '(moc.output_channel__id = ? OR '
@@ -264,13 +268,13 @@ use constant PARAM_WHERE_MAP =>
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
-    };
+};
 
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 'mt.element__id = e.id',
-                                'e.key_name LIKE LOWER(?)' ],
+                                'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = mct.object_instance_id',
-                                'mct.key_name LIKE LOWER(?)' ],
+                                'LOWER(mct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
     output_channel_id      => [ 'i.id = moc.media_instance__id',
@@ -279,48 +283,46 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ "m2.active = '1' AND mm2.member__id = m2.id AND mt.id = mm2.object_id",
+    grp_id                 => [ 'm2.active = 1 AND mm2.member__id = m2.id AND mt.id = mm2.object_id',
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.media_instance__id',
                                 'sic.member__id = ?' ],
 };
 
-use constant PARAM_ORDER_MAP =>
-    {
-      active              => 'active',
-      inactive            => 'active',
-      alias_id            => 'alias_id',
-      site_id             => 'site__id',
-      workflow__id        => 'workflow__id',
-      workflow_id         => 'workflow__id',
-      uri                 => 'i.uri',
-      element__id         => 'element__id',
-      element_id          => 'element__id',
-      source__id          => 'source__id',
-      source_id           => 'source__id',
-      priority            => 'priority',
-      publish_status      => 'publish_status',
-      first_publish_date  => 'first_publish_date',
-      publish_date        => 'publish_date',
-      cover_date          => 'cover_date',
-      expire_date         => 'expire_date',
-      name                => 'name',
-      file_name           => 'file_name',
-      location            => 'location',
-      category_id         => 'category__id',
-      category__id        => 'category__id',
-      title               => 'name',
-      description         => 'description',
-      version             => 'version',
-      version_id          => 'i.id',
-      user__id            => 'usr__id',
-      _checked_out        => 'checked_out',
-      primary_oc_id       => 'primary_oc__id',
-      category__id        => 'category__id',
-      category_uri        => 'uri',
-      keyword             => 'name',
-      return_versions     => 'version',
-    };
+use constant PARAM_ORDER_MAP => {
+    active              => 'mt.active',
+    inactive            => 'mt.active',
+    alias_id            => 'mt.alias_id',
+    site_id             => 'mt.site__id',
+    workflow__id        => 'mt.workflow__id',
+    workflow_id         => 'mt.workflow__id',
+    uri                 => 'LOWER(i.uri)',
+    element__id         => 'mt.element__id',
+    element_id          => 'mt.element__id',
+    source__id          => 'mt.source__id',
+    source_id           => 'mt.source__id',
+    priority            => 'mt.priority',
+    publish_status      => 'mt.publish_status',
+    first_publish_date  => 'mt.first_publish_date',
+    publish_date        => 'mt.publish_date',
+    cover_date          => 'mt.cover_date',
+    expire_date         => 'mt.expire_date',
+    name                => 'LOWER(i.name)',
+    title               => 'LOWER(i.name)',
+    file_name           => 'LOWER(i.file_name)',
+    location            => 'LOWER(i.location)',
+    category_id         => 'i.category__id',
+    category__id        => 'i.category__id',
+    description         => 'LOWER(i.description)',
+    version             => 'i.version',
+    version_id          => 'i.id',
+    user__id            => 'i.usr__id',
+    _checked_out        => 'i.checked_out',
+    primary_oc_id       => 'i.primary_oc__id',
+    category_uri        => 'LOWER(i.uri)',
+    keyword             => 'LOWER(k.name)',
+    return_versions     => 'i.version',
+};
 
 use constant DEFAULT_ORDER => 'cover_date';
 
@@ -384,6 +386,10 @@ This will create a new media object with an optionally defined initial state
 Supported Keys:
 
 =over 4
+
+=item *
+
+user__id - Required.
 
 =item *
 
@@ -460,7 +466,7 @@ sub new {
 
 ################################################################################
 
-=item $media = Bric::Biz::Asset::Business::Media->lookup->( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media->lookup( { id => $id })
 
 This will return a media asset that matches the criteria defined
 
@@ -515,6 +521,12 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out media.
+
+=item published_version
+
+Returns the versions of the media documents as they were last published. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item return_versions
 

@@ -21,8 +21,8 @@ CREATE TABLE job (
                                     DEFAULT NEXTVAL('seq_job'),
     name          TEXT              NOT NULL,
     usr__id       INTEGER           NOT NULL,
-    sched_time    TIMESTAMP	        NOT NULL
-				                    DEFAULT CURRENT_TIMESTAMP,
+    sched_time    TIMESTAMP	    NOT NULL
+				    DEFAULT CURRENT_TIMESTAMP,
     priority      INT2              NOT NULL 
                                     DEFAULT 3
                                     CONSTRAINT ck_job__priority 

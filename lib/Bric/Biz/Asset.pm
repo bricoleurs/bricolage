@@ -667,7 +667,7 @@ sub my_meths {
                               name     => 'element',
                               get_meth => sub {
                                   my $a_id = shift->get_element__id(@_);
-                                  my $a = Bric::Biz::AssetType->lookup({ id => $a_id });
+                                  my $a = Bric::Biz::AssetType->lookup({ id => $a_id }) or return;
                                   $a->get_name(); },
                               get_args => [],
                               disp     => 'Element',

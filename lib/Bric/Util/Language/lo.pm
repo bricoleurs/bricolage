@@ -36,7 +36,7 @@ use base qw(Bric::Util::Language);
 
 use constant key => 'lo';
 
-%Lexicon =
+our %Lexicon =
   (
    '_AUTO' => 1,
   );

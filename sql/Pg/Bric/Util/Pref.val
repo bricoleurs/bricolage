@@ -1613,6 +1613,9 @@ VALUES ('15', 'ug', 'ug');
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('15', 'vi_vn', 'vi_vn');
 
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'ru_ru', 'ru_ru');
+
 -- Filter search results by site
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)

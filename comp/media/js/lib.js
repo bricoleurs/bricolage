@@ -140,7 +140,14 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
             }
         }
     }
-    frm.submit();
+
+    if (frm.onsubmit) {
+       if (frm.onsubmit()) {
+           frm.submit();
+       }
+    } else {
+        frm.submit();
+    }
     return false;
 }
 

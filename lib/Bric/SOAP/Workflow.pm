@@ -198,45 +198,24 @@ sub publish {
         my $type;
         if ($id->name eq 'story_id') {
             $type = 'story';
-            $obj  = Bric::Biz::Asset::Business::Story->lookup(
-                                         { id => $id->value });
+            $obj  = Bric::Biz::Asset::Business::Story->lookup({
+                id => $id->value,
+                ( $published_only ? ( published_version => 1) : ())
+            });
 
-            if ($published_only) {
-                # Get published_version, not current_version
-                # (version zero isn't published yet)
-                my $pubversion = $obj->get_published_version || 0;
-                if ($pubversion) {
-                    # Get published version instead of current
-                    $obj = $obj->lookup({ id => $id->value, version => $pubversion });
-                } else {
-                    # Skip if --published-only and not published yet
-                    next;
-                }
-            }
-
-            throw_ap(error => "Unable to find story for story_id \"$id\".")
-                unless $obj;
+            throw_ap(error => 'Unable to find story for story_id "'
+                              . $id->value . '".')
+              unless $obj;
 
         } elsif ($id->name eq 'media_id') {
             $type = 'media';
-            $obj  = Bric::Biz::Asset::Business::Media->lookup(
-                                         { id => $id->value });
-
-            if ($published_only) {
-                # Get published_version, not current_version
-                # (version zero means it isn't published yet)
-                my $pubversion = $obj->get_published_version || 0;
-                if ($pubversion) {
-                    # Get published version instead of current
-                    $obj = $obj->lookup({ id => $id->value, version => $pubversion });
-                } else {
-                    # Skip if --published-only and not published yet
-                    next;
-                }
-            }
+            $obj  = Bric::Biz::Asset::Business::Media->lookup({
+                id => $id->value,
+                published_version => $published_only
+            });
 
             throw_ap(error => "Unable to find media object for media_id \"$id\".")
-                unless $obj;
+              unless $obj;
 
         } else {
             throw_ap(error => "Unknown element found in publish_ids list.");
@@ -253,14 +232,18 @@ sub publish {
         throw_ap(error => "Cannot publish checked-out $types{$type}: \"".$id."\".")
             if $obj->get_checked_out and not $preview;
 
-        if (not $preview && $obj->get_workflow_id) {
+        if (! $preview && !$published_only && $obj->get_workflow_id) {
             # It must be on a publish desk.
             my $did = $obj->get_desk_id;
             my $desk = $desks{$did}
               ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+            # XXX There should always be a desk when there's a workflow, but
+            # sometimes there isn't. Hence the "$desk &&" just lets it publish
+            # if that's the case. It will be removed from workflow by the
+            # publish.
             throw_ap qq{Cannot publish $types{$type} "$id" because it }
               . "is not on a publish desk"
-                unless $desk->can_publish;
+                unless $desk && $desk->can_publish;
         }
 
         # Check for PUBLISH permission, or READ if previewing

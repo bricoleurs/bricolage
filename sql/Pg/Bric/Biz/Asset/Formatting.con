@@ -11,23 +11,23 @@
 
 ALTER TABLE formatting
     ADD CONSTRAINT fk_usr__formatting FOREIGN KEY (usr__id)
-    REFERENCES usr(id) ON DELETE CASCADE;
+    REFERENCES usr(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
-    ADD CONSTRAINT fk_output_channel__fromatting FOREIGN KEY (output_channel__id)
-    REFERENCES output_channel(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_output_channel__formatting FOREIGN KEY (output_channel__id)
+    REFERENCES output_channel(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
     ADD CONSTRAINT fk_element__formatting FOREIGN KEY (element__id)
-    REFERENCES element(id) ON DELETE CASCADE;
+    REFERENCES element(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
     ADD CONSTRAINT fk_category__formatting FOREIGN KEY (category__id)
-    REFERENCES category(id) ON DELETE CASCADE;
+    REFERENCES category(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
 	ADD CONSTRAINT fk_workflow__formatting FOREIGN KEY (workflow__id)
-	REFERENCES workflow(id) ON DELETE SET NULL;
+	REFERENCES workflow(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
     ADD CONSTRAINT fk_site__formatting FOREIGN KEY (site__id)
@@ -35,7 +35,7 @@ ALTER TABLE formatting
 
 ALTER TABLE formatting
 	ADD CONSTRAINT fk_desk__formatting FOREIGN KEY (desk__id)
-	REFERENCES desk(id) ON DELETE SET NULL;
+	REFERENCES desk(id) ON DELETE RESTRICT;
 
 -- -----------------------------------------------------------------------------
 -- Table: formatting_instance

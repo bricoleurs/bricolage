@@ -2437,11 +2437,12 @@ sub send_alerts {
     my $omeths = $obj->my_meths;
 
     # For accessing data on the event itself.
-    if ($e_attr) {
+    if ($e_attr && !$e_attr->{__SEEN__}) {
         for my $k (keys %$e_attr) {
             (my $v = lc $k) =~ s/\W+/_/g;
             $e_attr->{lc "et_$v"} = delete $e_attr->{$k};
         }
+        $e_attr->{__SEEN__} = 1;
     }
 
     foreach my $rule ($self->get_rules) {

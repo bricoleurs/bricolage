@@ -50,10 +50,6 @@
 
 %# Output the rows of data
 % my $first;
-% if ($sortOrder eq 'descending') {
-%     @$data = reverse @$data;
-% }
-
 % # here's where the rows diplayed are limited
 % my $i = 0;
 % foreach my $r (0..$#{$data}) {

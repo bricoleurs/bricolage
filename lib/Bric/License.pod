@@ -1,6 +1,6 @@
 =head1 NAME
 
-Bricolage::License - The Bricolage License.
+Bric::License - The Bricolage License.
 
 =head1 LICENSE
 
@@ -181,6 +181,14 @@ Folks who have submitted patches include:
 
 =item Andrea Rota
 
+=item Mark Kennedy
+
+=item Keith Grennan
+
+=item Christian Hauser
+
+=item Dharmender Yadav
+
 =back
 
 Friends who have spotted bugs include:
@@ -265,8 +273,6 @@ Friends who have spotted bugs include:
 
 =item Abdul Halim Mazahar
 
-=item Christian Hauser
-
 =item Tony Cowderoy
 
 =item Joshua Edelstein
@@ -278,6 +284,14 @@ Friends who have spotted bugs include:
 =item Hal Creech
 
 =item Patrick Michael Kane
+
+=item Kenneth Marshall
+
+=item Clinton Gormley
+
+=item Ed Stevenson
+
+=item Ashlee Caul
 
 =back
 
@@ -294,6 +308,8 @@ Bricolage's translation team:
 =item Gerfried Fuchs, Thorsten Biel, Florian Rossol (German)
 
 =item Gang Luo (Simplified Chinese)
+
+=item Sergey Samoilenko (Russian)
 
 =back
 

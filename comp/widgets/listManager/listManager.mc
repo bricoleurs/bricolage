@@ -466,21 +466,20 @@ $load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 
 #--------------------------------------#
 # Sort the objects.
-
 my $sortOrder = get_state_data($widget, 'sortOrder') || $def_sort_order;
 set_state_data($widget, 'sortOrder', $sortOrder);
 
-my @sort_objs = $sort_objects->(\@objects, $meth, $exclude);
+my $sort_objs = $sort_objects->(\@objects, $meth, $exclude);
 
 # Make sure we have some results.
-my $no_results = @sort_objs == 0 && $do_list;
+my $no_results = @$sort_objs == 0 && $do_list;
 
 #--------------------------------------#
 # Build the table data array
 
 # Search Paging vars - also see $insert_footer and build_table_data()
 # number of records returned from lookup
-my $count = scalar @sort_objs;
+my $count = scalar @$sort_objs;
 
 my ($pages, $current_page) = (1,1);
 if ($limit) {
@@ -495,7 +494,7 @@ if ($limit) {
 # save persistent values
 set_state_data($widget, 'pagination', $pagination);
 
-my ($rows, $cols, $data) = $build_table_data->(\@sort_objs,
+my ($rows, $cols, $data) = $build_table_data->($sort_objs,
                                                $meth,
                                                $fields,
                                                $select,
@@ -638,7 +637,7 @@ my $build_table_data = sub {
     my $slice;
     if ($pagination) {
         # make sure $limit + $offset is within range
-        my $end = $limit + $offset > $count - 1 ? $count - 1 : 
+        my $end = $limit + $offset > $count - 1 ? $count - 1 :
           ($limit + $offset - 1);
 
         # extract array slice
@@ -755,15 +754,14 @@ my $load_featured_objs = sub {
 my $recursivesort;
 my $multisort = sub {
     my ($meth, @sort_list) = @_;
-    my $sort_by               = shift @sort_list;
+    my $sort_by = shift @sort_list;
     my ($sort_get, $sort_arg) = @{$meth->{$sort_by}}{'get_meth', 'get_args'};
     my $type = $meth->{$sort_by}{props}{type};
 
     my $val;
     if ($sort_by eq 'id'|| $sort_by eq 'version') {
         # Do a numeric sorting.
-        $val = $sort_get->($a, @$sort_arg) <=>
-          $sort_get->($b, @$sort_arg);
+        $val = $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg);
     } elsif ($type eq 'date') {
         # Pass in the ISO format so that it always sorts properly.
         $val = $sort_get->($a, ISO_8601_FORMAT) cmp
@@ -810,7 +808,10 @@ my $sort_objects = sub {
         @sort_objs = grep(not($exclude->($_)), @sort_objs);
     }
 
-    return @sort_objs;
+    my $sortOrder = get_state_data($widget, 'sortOrder') || '';
+    return defined $sortOrder && $sortOrder eq 'reverse'
+      ? [ reverse @sort_objs ]
+      : \@sort_objs;
 };
 </%once>
 

@@ -32,7 +32,8 @@ sub save : Callback {
     my $name = $param->{disp};
     if ($param->{delete}) {
         # Deactivate it.
-        $ed->deactivate();
+        $ed->deactivate;
+        $ed->set_required(0);
         log_event("$type\_del", $ed);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {

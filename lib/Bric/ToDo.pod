@@ -65,6 +65,22 @@ workflow, and at least EDIT permission to the assets on the start desk.
 
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
+>>>>>>> .merge-right.r6084
+
+=item *
+
+Add "Checkout" button to the "View" screens for stories, media, and
+templats. It must be careful about permissions in the same way that
+F<comp/workflow/manager/dhandler> currently is. That is to say, in order for
+the button to be displayed, the user must have EDIT permission to the
+asset. If the asset isn't currently in workflow, the user must have RECALL
+permission to the asset or to the assets on the start desk in the current
+workflow, and at least EDIT permission to the assets on the start desk.
+
+=item *
+
+Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
+Workspace.
 
 =item *
 

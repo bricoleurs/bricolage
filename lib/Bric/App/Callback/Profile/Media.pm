@@ -126,7 +126,7 @@ sub view : Callback {
 
 ################################################################################
 
-sub revert : Callback {
+sub revert : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
@@ -139,7 +139,7 @@ sub revert : Callback {
 
 ################################################################################
 
-sub save : Callback {
+sub save : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
@@ -182,7 +182,7 @@ sub save : Callback {
 
 ################################################################################
 
-sub checkin : Callback {
+sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
@@ -257,13 +257,6 @@ sub checkin : Callback {
         add_msg('Media "[_1]" saved and checked in to "[_2]".',
                 $media->get_title, $dname);
 
-        # HACK: Commit this checkin WHY?? Because Postgres does NOT like
-        # it when you insert and delete a record within the same
-        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
-        # start a new transaction!
-        Bric::Util::DBI::commit(1);
-        Bric::Util::DBI::begin(1);
-
         # Use the desk callback to save on code duplication.
         my $pub = Bric::App::Callback::Desk->new
           ( cb_request => $self->cb_request,
@@ -308,7 +301,7 @@ sub checkin : Callback {
 
 ################################################################################
 
-sub save_and_stay : Callback {
+sub save_and_stay : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
@@ -340,7 +333,7 @@ sub save_and_stay : Callback {
 
 ################################################################################
 
-sub cancel : Callback {
+sub cancel : Callback(priority => 6) {
     my $self = shift;
     my $media = get_state_data($self->class_key, 'media');
 
@@ -396,7 +389,7 @@ sub cancel : Callback {
 
 ################################################################################
 
-sub return : Callback {
+sub return : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $version_view = get_state_data($widget, 'version_view');

@@ -573,7 +573,7 @@ sub del_objs {
             # Grab the ID.
             my $id = ref $o ? $o->get_id : $o;
             # Do some error checking if we're in QA_MODE.
-            throw_da(error => "Object '$o' not in collection")
+            throw_da(error => "Object '$o' (ID=$id) not in collection")
               if QA_MODE && ! $objs->{$id} && ! $new_idx{$id};
             if (defined $new_idx{$id}) {
                 # Just skip to the next one if we're removing one that

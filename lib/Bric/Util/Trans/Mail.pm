@@ -832,6 +832,9 @@ sub send {
       $self->_get(qw(smtp to from _from_recip cc bcc content_type subject
                      message resources));
 
+    # Clean up message for CRLF of quoted-printable
+    $msg =~ s/\r\n|\r/\n/gs;
+
     # Assemble the arguments we'll need for MIME::Entity.
     my @args = ( 'X-Mailer' => $mailer,
                  ($from ? (From => $from) : ()),

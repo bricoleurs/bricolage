@@ -367,8 +367,6 @@ sub chk_syntax {
 
     $interp->set_global('$burner', $self);
 
-    $interp->set_global('$burner', $self);
-
     # Try to create a component.
     my $comp = eval { $interp->make_component(comp_source => $data) };
     if ($@) {

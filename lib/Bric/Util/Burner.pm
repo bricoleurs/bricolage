@@ -110,6 +110,15 @@ Done! Now start testing...
 =cut
 
 #==============================================================================#
+# Inheritance                          #
+#======================================#
+use base qw(Bric Exporter);
+
+our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
+our %EXPORT_TAGS = ( all => \@EXPORT_OK,
+                     modes => \@EXPORT_OK);
+
+#==============================================================================#
 # Dependencies                         #
 #======================================#
 
@@ -121,6 +130,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
+use Bric::App::Session;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
@@ -130,18 +140,11 @@ use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
+require Bric::Util::Job::Pub;
 use Bric::Util::Pref;
+use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
 use URI;
-
-#==============================================================================#
-# Inheritance                          #
-#======================================#
-use base qw(Bric Exporter);
-
-our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
-our %EXPORT_TAGS = ( all => \@EXPORT_OK,
-                     modes => \@EXPORT_OK);
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -184,8 +187,8 @@ BEGIN {
         oc                    => Bric::FIELD_READ,
         cat                   => Bric::FIELD_READ,
         page                  => Bric::FIELD_READ,
-        encoding              => Bric::FIELD_READ,
-        output_filename       => Bric::FIELD_READ,
+        encoding              => Bric::FIELD_RDWR,
+        output_filename       => Bric::FIELD_RDWR,
         output_ext            => Bric::FIELD_READ,
         output_path           => Bric::FIELD_READ,
         base_path             => Bric::FIELD_READ,
@@ -717,17 +720,18 @@ sub deploy {
     close(MC);
 
     # Delete older versions, if they live elsewhere.
-        my $old_version = $fa->get_published_version or return $self;
-        my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                                   checked_out => 0,
-                                   version     => $old_version });
-        my $old_file = $old_fa->get_file_name or return $self;
+    my $old_version = $fa->get_published_version or return $self;
+    my $old_fa = $fa->lookup({ id          => $fa->get_id,
+                               checked_out => 0,
+                               version     => $old_version })
+      or return $self;
+    my $old_file = $old_fa->get_file_name or return $self;
 
-        $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
-                                 $oc_dir, $old_file);
+    $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
+                             $oc_dir, $old_file);
 
-        return $self if $old_file eq $file;
-        $fs->del($old_file);
+    return $self if $old_file eq $file;
+    $fs->del($old_file);
 
     return $self;
 
@@ -1152,11 +1156,11 @@ sub publish {
             if ($path && $uri) {
                 my $r = Bric::Dist::Resource->lookup({ path => $path,
                                                        uri  => $uri })
-                    || Bric::Dist::Resource->new
-                      ({ path => $path,
-                         media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                         uri => $uri
-                       });
+                    || Bric::Dist::Resource->new({
+                        path => $path,
+                        media_type => Bric::Util::MediaType->get_name_by_ext($uri),
+                        uri => $uri
+                    });
 
                 $r->add_media_ids($baid);
                 $r->save;
@@ -1275,11 +1279,18 @@ Designed to be called from within a template, this method publishes a document
 other than the one currently being published. This is useful when a template
 for one document type needs to trigger the publish of another document. Look
 up that document via the Bricolage API and then pass it to this method to have
-it published at the same time as the story currently being published. If the
-mode isn't PUBLISH_MODE, the publish will not actually be executed. Pass in a
-DateTime string to specify a different date and time to publish the
-document. Pass in a true value as the third argument to trigger the publish in
-any mode, including PREVIEW_MODE (not recommended).
+it published at the same time as the story currently being published.
+
+If the mode isn't C<PUBLISH_MODE>, the publish will not actually be
+executed. Pass in a DateTime string to specify a different date and time to
+publish the document. If that date is in the future, a publish job will be
+schedule at that time. Pass in a true value as the third argument to trigger
+the publish in any mode, including C<PREVIEW_MODE> (not recommended).
+
+Note that any values stored in the C<notes> attribute of the current burner
+will be copied to the new burner that burns the new document, unless the
+C<$publish_time> agrument schedules the document to be published at a future
+time.
 
 B<Throws:> NONE.
 
@@ -1304,6 +1315,18 @@ sub publish_another {
     # Figure out the publish time. Default to the same time as the story
     # that's currently being burned.
     $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT);
+
+    if ($pub_time gt strfdate) {
+        # Schedule it to be published later.
+        Bric::Util::Job::Pub->new({
+            sched_time    => $pub_time,
+            user_id       => Bric::App::Session::get_user_id(),
+            name          => 'Publish "' . $ba->get_name . '"',
+            "$key\_id"    => $ba->get_id,
+            priority      => $ba->get_priority,
+        })->save;
+        return $self;
+    }
 
     # Construct a new burner object and publish the document.
     my $b2 = __PACKAGE__->new;

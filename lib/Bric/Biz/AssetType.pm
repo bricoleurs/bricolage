@@ -2792,6 +2792,7 @@ sub _sync_parts {
 
 	# This needs to happen for deleted parts.
 	$p_obj->deactivate;
+        $p_obj->set_required(0);
 	$p_obj->save;
     }
     return $self;

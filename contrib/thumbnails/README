@@ -1,0 +1,4 @@
+The script precreate-thumbnails.pl "primes" your thumbnail pump
+ahead of time so that you don't have to create a bunch of them
+in real time. See inline of this short script for more details
+of how to use it.

@@ -278,7 +278,7 @@ sub check_modules {
         if ($Config::Config{usemymalloc} eq 'y'
             && defined $Config::Config{bincompat5005}) {
             hard_fail("mod_perl must be either statically compiled into "
-                     . "Apache or else bec compiled with a Perl compiled\n"
+                     . "Apache or else be compiled with a Perl compiled\n"
                      . "with \"usemymalloc='n'\" or without "
                      . "\"bincompat5005\". See this FAQ for more information:"
                      . "\n\n  http://perl.apache.org/docs/1.0/guide/install."

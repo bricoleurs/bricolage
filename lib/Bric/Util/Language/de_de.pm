@@ -34,8 +34,7 @@ use base qw(Bric::Util::Language);
 
 use constant key => 'de_de';
 
-%Lexicon =
-  (
+our %Lexicon = (
 
 # Date
    'Jan' => 'Jan',
@@ -735,7 +734,6 @@ To Translate:
   'You do not have permission to publish media "[_1]"' => 'You do not have permission to publish media "[_1]"',
   'You do not have permission to auto-publish story "[_1]"' => 'You do not have permission to auto-publish story "[_1]"',
   'You do not have permission to auto-publish media "[_1]"' => 'You do not have permission to auto-publish media "[_1]"',
-
 
 =end comment
 

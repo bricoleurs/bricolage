@@ -235,100 +235,108 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i';
 
-use constant PARAM_FROM_MAP =>
-    {
-        _not_simple        => 'formatting_member fm, member m, '
-                            . 'category c, workflow w, ' . TABLE . ' f ',
-       grp_id             =>  'member m2, formatting_member fm2',
-       element_key_name   => 'element e',
-    };
+use constant PARAM_FROM_MAP => {
+    _not_simple      => 'formatting_member fm, member m, '
+                      . 'category c, workflow w, ' . TABLE . ' f ',
+    grp_id           =>  'member m2, formatting_member fm2',
+    element_key_name => 'element e',
+    site_id          => 'output_channel oc',
+};
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
 
-use constant PARAM_WHERE_MAP =>
-    {
-      id                    => 'f.id = ?',
-      active                => 'f.active = ?',
-      inactive              => 'f.active = ?',
-      site_id               => 'f.site__id = ?',
-      no_site_id            => 'f.site__id <> ?',
-      workflow__id          => 'f.workflow__id = ?',
-      workflow_id           => 'f.workflow__id = ?',
-      _null_workflow_id     => 'f.workflow__id IS NULL',
-      element__id           => 'f.element__id = ?',
-      element_key_name      => 'f.element__id = e.id AND e.key_name LIKE LOWER(?)',
-      output_channel_id     => 'f.output_channel__id = ?',
-      output_channel__id    => 'f.output_channel__id = ?',
-      priority              => 'f.priority = ?',
-      deploy_status         => 'f.deploy_status = ?',
-      deploy_date_start     => 'f.deploy_date >= ?',
-      deploy_date_end       => 'f.deploy_date <= ?',
-      expire_date_start     => 'f.expire_date >= ?',
-      expire_date_end       => 'f.expire_date <= ?',
-      desk_id               => 'f.desk__id = ?',
-      name                  => 'LOWER(f.name) LIKE LOWER(?)',
-      file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
-      title                 => 'LOWER(f.name) LIKE LOWER(?)',
-      description           => 'LOWER(f.description) LIKE LOWER(?)',
-      version               => 'i.version = ?',
-      user__id              => 'i.usr__id = ?',
-      user_id               => 'i.usr__id = ?',
-      _checked_in_or_out    => 'i.checked_out = '
-                             . '( SELECT checked_out '
-                             . 'FROM formatting_instance '
-                             . 'WHERE version = i.version '
-                             . 'AND formatting__id = i.formatting__id '
-                             . 'ORDER BY checked_out DESC LIMIT 1 )',
-      _checked_out          => 'i.checked_out = ?',
-      category_id           => 'f.category__id = ?',
-      category_uri          => 'f.category__id = c.id AND '
-                             . 'LOWER(c.uri) LIKE LOWER(?))',
-      _no_return_versions   => 'f.current_version = i.version',
-      grp_id                => "m2.active = '1' AND "
-                             . 'm2.grp__id = ? AND '
-                             . 'f.id = fm2.object_id AND '
-                             . 'fm2.member__id = m2.id',
-      simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
-                             . 'LOWER(f.file_name) LIKE LOWER(?))',
-    };
-
-use constant PARAM_ANYWHERE_MAP => {
-    element_key_name       => [ 'f.element__id = e.id',
-                                'e.key_name LIKE LOWER(?)' ],
-    category_uri           => [ 'f.category__id = c.id',
-                                'LOWER(c.uri) LIKE LOWER(?))' ],
-    grp_id                 => [ "m2.active = '1' AND fm2.member__id = m2.id AND f.id = fm2.object_id",
-                                'm2.grp__id = ?' ],
+use constant PARAM_WHERE_MAP => {
+    id                    => 'f.id = ?',
+    active                => 'f.active = ?',
+    inactive              => 'f.active = ?',
+    site_id               => 'f.output_channel__id = oc.id AND oc.site__id = ?',
+    no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
+    workflow__id          => 'f.workflow__id = ?',
+    workflow_id           => 'f.workflow__id = ?',
+    _null_workflow_id     => 'f.workflow__id IS NULL',
+    element__id           => 'f.element__id = ?',
+    element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
+    output_channel_id     => 'f.output_channel__id = ?',
+    output_channel__id    => 'f.output_channel__id = ?',
+    priority              => 'f.priority = ?',
+    deploy_status         => 'f.deploy_status = ?',
+    deploy_date_start     => 'f.deploy_date >= ?',
+    deploy_date_end       => 'f.deploy_date <= ?',
+    expire_date_start     => 'f.expire_date >= ?',
+    expire_date_end       => 'f.expire_date <= ?',
+    desk_id               => 'f.desk__id = ?',
+    name                  => 'LOWER(f.name) LIKE LOWER(?)',
+    file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
+    title                 => 'LOWER(f.name) LIKE LOWER(?)',
+    description           => 'LOWER(f.description) LIKE LOWER(?)',
+    version               => 'i.version = ?',
+    published_version     => 'f.published_version = i.version AND i.checked_out = 0',
+    user__id              => 'i.usr__id = ?',
+    user_id               => 'i.usr__id = ?',
+    _checked_in_or_out    => 'i.checked_out = '
+                           . '( SELECT checked_out '
+                           . 'FROM formatting_instance '
+                           . 'WHERE version = i.version '
+                           . 'AND formatting__id = i.media__id '
+                           . 'ORDER BY checked_out DESC LIMIT 1 )',
+    checked_out           => 'i.checked_out = ?',
+    _checked_out          => 'i.checked_out = ?',
+    _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
+                           . '(SELECT formatting__id FROM formatting_instance '
+                           . 'WHERE f.id = formatting_instance.formatting__id '
+                           . 'AND formatting_instance.checked_out = 1)',
+    category_id           => 'f.category__id = ?',
+    category_uri          => 'f.category__id = c.id AND '
+                           . 'LOWER(c.uri) LIKE LOWER(?))',
+    _no_return_versions   => 'f.current_version = i.version',
+    grp_id                => 'm2.active = 1 AND '
+                           . 'm2.grp__id = ? AND '
+                           . 'f.id = fm2.object_id AND '
+                           . 'fm2.member__id = m2.id',
+    simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
+                           . 'LOWER(f.file_name) LIKE LOWER(?))',
 };
 
-use constant PARAM_ORDER_MAP =>
-    {
-      active              => 'active',
-      inactive            => 'active',
-      site_id             => 'site__id',
-      workflow_id         => 'workflow__id',
-      workflow__id        => 'workflow__id',
-      element_id          => 'element__id',
-      element__id         => 'element__id',
-      output_channel_id   => 'output_channel__id',
-      output_channel__id  => 'output_channel__id',
-      priority            => 'priority',
-      deploy_status       => 'deploy_status',
-      deploy_date         => 'deploy_date',
-      expire_date         => 'expire_date',
-      name                => 'name',
-      title               => 'name',
-      file_name           => 'f.file_name',
-      description         => 'description',
-      version             => 'version',
-      version_id          => 'i.id',
-      user_id             => 'usr__id',
-      user__id            => 'usr__id',
-      _checked_out        => 'checked_out',
-      category_id         => 'category_id',
-      category_uri        => 'uri',
-      return_versions     => 'version',
-    };
+use constant PARAM_ANYWHERE_MAP => {
+    element_key_name => [ 'f.element__id = e.id',
+                          'LOWER(e.key_name) LIKE LOWER(?)' ],
+    category_uri     => [ 'f.category__id = c.id',
+                          'LOWER(c.uri) LIKE LOWER(?))' ],
+    grp_id           => [ 'm2.active = 1 AND fm2.member__id = m2.id AND f.id = fm2.object_id',
+                          'm2.grp__id = ?' ],
+    site_id          => [ 'f.output_channel__id = oc.id',
+                          'oc.site__id = ?' ],
+    no_site_id       => [ 'f.output_channel__id = oc.id',
+                          'oc.site__id = <>' ],
+};
+
+use constant PARAM_ORDER_MAP => {
+    active              => 'f.active',
+    inactive            => 'f.active',
+    site_id             => 'oc.site__id',
+    workflow_id         => 'f.workflow__id',
+    workflow__id        => 'f.workflow__id',
+    element_id          => 'f.element__id',
+    element__id         => 'f.element__id',
+    output_channel_id   => 'f.output_channel__id',
+    output_channel__id  => 'f.output_channel__id',
+    priority            => 'f.priority',
+    deploy_status       => 'f.deploy_status',
+    deploy_date         => 'f.deploy_date',
+    expire_date         => 'f.expire_date',
+    name                => 'LOWER(f.name)',
+    title               => 'LOWER(f.name)',
+    file_name           => 'LOWER(i.file_name)',
+    category_uri        => 'LOWER(i.file_name)',
+    description         => 'LOWER(f.description)',
+    version             => 'i.version',
+    version_id          => 'i.id',
+    user_id             => 'i.usr__id',
+    user__id            => 'i.usr__id',
+    _checked_out        => 'i.checked_out',
+    category_id         => 'f.category__id',
+    return_versions     => 'i.version',
+};
 
 use constant DEFAULT_ORDER => 'deploy_date';
 
@@ -696,10 +704,11 @@ for a list of possible values.
 Returns a list of templates in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
-=item checked_out
+=item published_version
 
-A boolean value indicating whether to return only checked out or not checked
-out templates.
+Returns the versions of the templates as they were last deployed. The
+C<checked_out> parameter will be ignored if this parameter is passed a true
+value.
 
 =item category_uri
 

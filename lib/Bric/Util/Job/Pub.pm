@@ -79,7 +79,6 @@ use strict;
 use Bric::Config qw(:dist :temp :time STAGE_ROOT);
 use File::Spec::Functions qw(catdir);
 use Bric::Util::Time qw(:all);
-use Bric::App::Event qw(log_event);
 use Bric::Util::Burner;
 use Bric::Util::Burner::Mason;
 use Bric::Biz::Asset::Business::Media;
