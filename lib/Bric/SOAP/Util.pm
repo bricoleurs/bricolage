@@ -32,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:50 $
+$Date: 2002-12-06 06:55:48 $
 
 =head1 SYNOPSIS
 
@@ -175,23 +175,26 @@ sub serialize_elements {
     # output element data
     $writer->startTag("elements");
     my $element = $object->get_tile();
-    my @e = $element->get_elements;
+    my $elems = $element->get_elements;
+    my $diff =  $elems->[-1]->get_place - scalar @$elems + 1;
 
     # first serialize all data elements
-    foreach my $e (@e) {
+    foreach my $e (@$elems) {
         next if $e->is_container;
         push(@related, _serialize_tile(writer  => $writer,
                                        element => $e,
                                        args    => $options{args},
+                                       diff    => $diff,
                                       ));
     }
 
     # then all containers
-    foreach my $e (@e) {
+    foreach my $e (@$elems) {
         next unless $e->is_container;
         push(@related, _serialize_tile(writer  => $writer,
-                                      element => $e,
-                                      args    => $options{args},
+                                       element => $e,
+                                       args    => $options{args},
+                                       diff    => $diff,
                                      ));
     }
 
@@ -433,11 +436,12 @@ sub _serialize_tile {
     my %options  = @_;
     my $element  = $options{element};
     my $writer   = $options{writer};
+    my $diff     = $options{diff} || 0;
     my @related;
 
     if ($element->is_container) {
         my %attr  = (element => $element->get_element_name,
-                     order   => $element->get_place);
+                     order   => $element->get_place - $diff);
         my @e = $element->get_elements();
 
         # look for related stuff and tag relative if we'll include in
@@ -498,11 +502,11 @@ sub _serialize_tile {
         if (defined $data and length $data) {
             $writer->dataElement("data", $data,
                                  element => $element->get_element_name,
-                                 order   => $element->get_place);
+                                 order   => $element->get_place - $diff);
         } else {
             $writer->emptyTag("data",
                               element => $element->get_element_name,
-                              order   => $element->get_place);
+                              order   => $element->get_place - $diff);
         }
     }
 

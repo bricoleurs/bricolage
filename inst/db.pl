@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-11-06 20:31:57 $
+$Date: 2002-12-06 06:55:48 $
 
 =head1 DESCRIPTION
 
@@ -58,9 +58,8 @@ create_db($dbh);
 create_user($dbh);
 $dbh->disconnect;
 
-# load data - done in a forked process to avoid nasty NOTICEs that
-# look like errors but aren't.
-waitpid(load_db(), 0);
+# load data.
+load_db();
 
 print "\n\n==> Finished Creating Bricolage Database <==\n\n";
 exit 0;
