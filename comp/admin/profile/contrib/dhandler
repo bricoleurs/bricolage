@@ -155,11 +155,9 @@ do_queued_redirect();
 my @tmp = split /\//, $r->uri;
 my $mode = $ARGS{mode} || $tmp[4] || 'new';
 
-my $id;
-$id ||= $ARGS{contrib_id};
-$id ||= $tmp[5];
+my $id = $ARGS{contrib_id} || $tmp[5];
 
-my $curSubsys = ($tmp[6]) ? $tmp[6] : undef;
+my $curSubsys = $tmp[6] ||  undef;
 my $state     = get_state_data("contrib_profile");
 my $extending = $state->{extending};
 
@@ -175,11 +173,11 @@ if (!$id) {
 }
 
 # gather all subsys names
-my @subsys = ($mode eq "new") ? () : $contrib->subsys_names;
+my @subsys = $mode eq "new" ? () : $contrib->subsys_names;
 # if there's just one, it must be the current one
-$curSubsys ||= $subsys[0] if (scalar(@subsys) == 1);
+$curSubsys ||= $subsys[0] if @subsys == 1;
 # if there's none (ie, new contrib), assign the default
-$curSubsys ||= "_MEMBER_SUBSYS" if (!scalar(@subsys));
+$curSubsys ||= "_MEMBER_SUBSYS" if !@subsys;
 
 # Check authorization.
 chk_authz($contrib, $id ? READ : CREATE);
@@ -191,7 +189,6 @@ my $crumb = $contrib->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 my $context   = "Admin | Profile | $disp | $crumb";
-#$context .= " (Step 1 of 2)" if  $mode eq "new" || !$id;
 
 # print standard header
 $m->comp('/widgets/wrappers/sharky/header.mc',
@@ -335,11 +332,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.4 $
+$Revision: 1.1.1.1.2.5 $
 
 =head1 DATE
 
-$Date: 2001-10-23 20:58:11 $
+$Date: 2001-11-05 20:09:22 $
 
 =head1 DESCRIPTION
 
