@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-10 14:57:48 $
+$Date: 2003-11-17 18:26:31 $
 
 =head1 SYNOPSIS
 
@@ -884,10 +884,10 @@ my $template = $burner->find_template($m->current_comp->dir_path,
                                       $m->dhandler_arg . '.mc')
   or $burner->throw_error("Unable to find template '"
                           . $m->dhandler_arg . "\.mc'");
-$m->comp($template);
+$m->comp({ base_comp => $m->base_comp }, $template, %ARGS);
 </%init>
 };
-        close(DH);
+    close(DH);
 }
 
 ##############################################################################
