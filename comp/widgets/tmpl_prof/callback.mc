@@ -16,7 +16,7 @@ if ($field eq "$widget|save_cb") {
 	$delete_fa->($fa);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget);
+        return unless $check_syntax->($widget, $fa);
 	# Make sure the fa is activated and then save it.
 	$fa->activate;
 	$fa->save;
@@ -47,13 +47,17 @@ if ($field eq "$widget|save_cb") {
 }
 
 elsif ($field eq "$widget|checkin_cb") {
-    return unless $check_syntax->($widget);
-    $checkin->($widget, $param);
+    my $fa = get_state_data($widget, 'fa');
+    $save_meta->($param, $widget, $fa);
+    return unless $check_syntax->($widget, $fa);
+    $checkin->($widget, $param, $fa);
 }
 
 elsif ($field eq "$widget|checkin_deploy_cb") {
-    return unless $check_syntax->($widget);
-    my $fa = $checkin->($widget, $param);
+    my $fa = get_state_data($widget, 'fa');
+    $save_meta->($param, $widget, $fa);
+    return unless $check_syntax->($widget, $fa);
+    $checkin->($widget, $param, $fa);
     $param->{'desk|formatting_pub_ids'} = $fa->get_id;
 
     # Call the deploy callback in the desk widget.
@@ -76,7 +80,7 @@ elsif ($field eq "$widget|save_and_stay_cb") {
 	clear_state($widget);
     } else {
         # Check syntax.
-        return unless $check_syntax->($widget);
+        return unless $check_syntax->($widget, $fa);
 	# Make sure the template is activated and then save it.
 	$fa->activate;
 	$fa->save;
@@ -344,7 +348,6 @@ my $save_meta = sub {
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
     $fa->set_data($param->{"$widget|code"});
-
     return set_state_data($widget, 'fa', $fa);
 };
 
@@ -383,10 +386,7 @@ my $save_object = sub {
 
 
 my $checkin = sub {
-	my ($widget, $param) = @_;
-	my $fa = get_state_data($widget, 'fa');
-
-	$save_meta->($param, $widget, $fa);
+	my ($widget, $param, $fa) = @_;
 
 	log_event('formatting_checkin', $fa);
 	my $work_id = get_state_data($widget, 'work_id');
@@ -438,8 +438,7 @@ my $checkin = sub {
 };
 
 my $check_syntax = sub {
-    my ($widget) = @_;
-    my $fa = get_state_data($widget, 'fa');
+    my ($widget, $fa) = @_;
     my $burner = Bric::Util::Burner->new;
     my $err;
     # Return success if the syntax checks out.
