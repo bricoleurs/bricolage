@@ -110,7 +110,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -139,7 +139,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -242,7 +242,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -437,7 +437,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -463,7 +463,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -501,7 +501,7 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
@@ -518,12 +518,12 @@ dnl
 dnl Check to see if a user exists.  VAR will be set
 dnl to "yes" on success, "no" on failure.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_USER],[
 	AC_MSG_CHECKING(for user "$2")
-	if finger $2 >/dev/null ; then
+	if id $2 >/dev/null ; then
 		$1='yes'
 		AC_MSG_RESULT(yes)
 	else
@@ -533,26 +533,37 @@ AC_DEFUN([AC_CHECK_SYS_USER],[
 ])
 
 
-dnl @synopsis AC_CHECK_SYS_GROUP(VAR,group)
+dnl @synopsis AC_CHECK_SYS_GROUP(VAR,group,user)
 dnl
 dnl Check to see if a group exists.  VAR will be set
-dnl to "yes" on success, "no" on failure.
+dnl to "yes" on success, "no" on failure.  user should
+dnl a user id which is known to exist, and should be in this 
+dnl group.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_CHECK_SYS_GROUP],[
 	AC_MSG_CHECKING(for group "$2")
 	touch /tmp/ac_group_test
-	if chgrp $2 /tmp/ac_group_test 2>&1 >/dev/null ; then
+	# if we are able to change the group of our file then
+	# we must have a valid group
+	if chgrp $2 /tmp/ac_group_test 2>/dev/null ; then
 		$1='yes'
 		AC_MSG_RESULT(yes)
-	elif chgrp $2 /tmp/ac_group_test 2>&1 | grep 'invalid' >/dev/null 
-		$1='no'
-    	AC_MSG_RESULT(no)
+	# or if we have a match when we look at the user ID
+	elif id $3 |grep $2 2>&1 >/dev/null ; then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	# or if we try to change our file and are told that 
+	# we haven't got permission then the group exists, 
+	# otherwise we would be told that the group is invalid
+	elif chgrp $2 /tmp/ac_group_test 2>&1 | grep 'not permitted' >/dev/null ; then
+		$1='yes'
+    	AC_MSG_RESULT(yes)
 	else
-		$1='yes'
-		AC_MSG_RESULT(yes)
+		$1='no'
+		AC_MSG_RESULT(no)
 	fi
 ])
 
@@ -562,21 +573,20 @@ dnl Try to figure out which pod2html we're working with
 dnl the variable will be set to Christiansen, McDougall, 
 dnl or none, depending on which pod2html is found.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11.2.6 2002-02-01 17:51:31 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.11.2.7 2002-02-05 11:33:49 markjaroski Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POD2HTML],[
 	AC_MSG_CHECKING(which pod2html we have)
-	if pod2html --help | grep '--libpods' ; then
+	if pod2html --help 2>&1 | grep "\-\-libpods" >/dev/null ; then
 		$1='Christiansen'
-	elif pod2html --help | grep 'Unknown option: help' 
+	elif pod2html --help 2>&1 | grep "Unknown option: help" ;then
 		$1='McDougall'
 	else 
 		$1='none'
 	fi
 	AC_SUBST($1)
+	AC_MSG_RESULT(${$1})
 ])
-
-
 
 

@@ -39,6 +39,7 @@ POSTGRES_ROOT_PASS = @PG_ROOT_PASS@
 HAVE_SSL = @HAVE_SSL@
 HOSTNAME = @HOSTNAME@
 PID_FILE = @PID_FILE@
+PGHOME = @PGHOME@
 
 
 # Installation related variables
@@ -68,14 +69,14 @@ MAN_FILES = $(filter-out CVS,$(shell cd ${MAN} && ls))
 MAN_TARGETS = $(addprefix ${mandir}/,${MAN_FILES})
 
 # the conf files have to be handled more gingerly
-CONF_HTTPD = ${CONF}/httpd.conf
+CONF_BRIC = ${CONF}/bricolage.tmp.conf
+CONF_BRIC_TARGET = ${confdir}/bricolage.conf
+CONF_HTTPD = ${CONF}/httpd.tmp.conf
 CONF_HTTPSD = ${CONF}/httpd-ssl.conf
 CONF_HTTPD_TARGET = ${confdir}/httpd.conf
 CONF_HTTPSD_TARGET = ${confdir}/httpd-ssl.conf
 CONF_APACHE_TARGET = ${APACHE_CONF}/httpd.conf
 CONF_APACHES_TARGET = ${APACHE_CONF}/httpd-ssl.conf
-CONF_BRIC = ${CONF}/bricolage.tmp.conf
-CONF_BRIC_TARGET = ${confdir}/bricolage.conf
 CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET} ${CONF_APACHES_TARGET} ${CONF_HTTPSD_TARGET}
 
 # And the various doc files in text form
@@ -222,7 +223,6 @@ endif
 install-lib: 
 	cd ${LIB} && make install
 
-
 # From here on down we're going to do them basically the
 # same way.  It's pretty simple really. Just a matter of
 # finding the original file for every target in the 
@@ -247,6 +247,14 @@ ${DOC_TARGETS}: ${docdir}/%: %
 	${install-files}
 
 
+install-database:
+	${POST_INSTALL}
+ifdef PGHOME
+	su --command='bin/bric_pgimport -w . -u ${POSTGRES_ROOT_USER} -p ${POSTGRES_ROOT_PASS} -d ${DB_NAME} -c -m ${DBI_USER}:${DBI_PASS} -g ${DBI_USER}' ${POSTGRES_ROOT_USER}
+endif
+
+
+
 # obviously we depend on the cpan stuff
 dep: cpan
 cpan: ${CPAN_TARGETS} 
@@ -255,13 +263,15 @@ ${CPAN_TARGETS}:
 	touch $@
 
 # This is where we do our config files
-config: inst/bric.sql conf/httpd.conf conf/bricolage.tmp.conf lib/Makefile
+
+config: inst/bric.sql ${CONF_BRIC} ${CONF_HTTPD} lib/Makefile
+
 
 inst/bric.sql: inst/bric.sql.in
 	cp $^ $@
 	perl -pi -e 's/%DBI_USER%/${DBI_USER}/g' $@
 
-conf/bricolage.tmp.conf: conf/bricolage.tmp.conf.in
+${CONF_BRIC}: ${CONF_BRIC}.in
 	cp $^ $@
 	perl -pi -e 's/%HOSTNAME%/${HOSTNAME}/g' $@
 	perl -pi -e 's/%HAVE_SSL%/${HAVE_SSL}/g' $@
@@ -277,7 +287,7 @@ conf/bricolage.tmp.conf: conf/bricolage.tmp.conf.in
 	perl -pi -e 's,%datadir%,${datadir},g' $@
 
 
-conf/httpd.conf: conf/httpd.conf.in
+${CONF_HTTPD}: ${CONF_HTTPD}.in
 	cp $^ $@
 	perl -pi -e 's,%PID_FILE%,${PID_FILE},g' $@
 
