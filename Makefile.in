@@ -188,7 +188,7 @@ installdirs:
 chowndirs:
 	chown -R ${APACHE_USER}.${APACHE_GROUP} ${compdir} ${datadir} 
 chmoddirs:
-	chmod -R a+r ${htmldir}
+	chmod -R a+r ${htmldir} ${docdir}
 chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
 uninstall: uninstall-lib uninstallfiles uninstalldirs dist-clean
