@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.7 $
+$Revision: 1.18.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-12 18:03:23 $
+$Date: 2003-06-12 18:26:31 $
 
 =head1 SYNOPSIS
 
@@ -45,6 +45,7 @@ use Bric::Util::Class;
 use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
+use HTML::Mason::Request;
 use Apache::Constants qw(HTTP_OK);
 use HTTP::BrowserDetect;
 
@@ -573,6 +574,50 @@ sub redirect_onload {
     }
 }
 
+=item status_msg(@msgs)
+
+Sometimes there's a long process executing, and you want to send status
+messages to the browser so that the user knows what's happening. This function
+will do this for you. Call it each time you want to send one or more status
+messages, and it'll take care of the rest for you. When you're done, you can
+either redirect to another page, or simply finish drawing the current page. It
+will draw in below the status messages. This function will work both in
+callbacks and in Mason UI code.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub status_msg {
+    my $key = '_status_msg_';
+    my $space = '&nbsp;' x 20;
+
+    my $r = Apache::Request->instance;
+    if (my $m = HTML::Mason::Request->instance) {
+        my $old_autoflush = $m->autoflush;   # autoflush is restored below
+        $m->autoflush(1);
+        unless ( $r->pnotes($key) ) {
+            # We haven't called this thing yet. Throw up some initial information.
+            $m->print("<br />\n" x 2);
+            $r->pnotes($key, 1);
+        }
+        map $m->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
+        $m->flush_buffer;
+        $m->autoflush($old_autoflush);
+    } else {
+        unless ( $r->pnotes($key) ) {
+            # We haven't called this thing yet. Throw up some initial information.
+            $r->print("<br />\n" x 2);
+            $r->pnotes($key, 1);
+        }
+        map $r->print(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
+        # Might need to do something to flush the mod_perl buffer to the browser?
+    }
+}
 
 #------------------------------------------------------------------------------#
 
