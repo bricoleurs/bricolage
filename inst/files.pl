@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:58 $
+$Date: 2003-10-16 22:57:42 $
 
 =head1 DESCRIPTION
 
@@ -35,7 +35,7 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
 use File::Find qw(find);
-use File::Copy qw(copy);
+use File::Copy qw(copy move);
 
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
@@ -55,10 +55,24 @@ do "./apache.db" or die "Failed to read apache.db : $!";
 our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
 
-create_paths();
+if ($UPGRADE) {
+    # Remove old object files.
+    rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj');
 
-# Remove old object files if this is an upgrade.
-rmtree(catdir $CONFIG->{MASON_DATA_ROOT}, 'obj' ) if $UPGRADE;
+    # Find a good new name for the component directory.
+    my $dest = "$CONFIG->{MASON_COMP_ROOT}.old";
+    my $i;
+    while (-e $dest) {
+        $dest = "$CONFIG->{MASON_COMP_ROOT}.old" . ++$i;
+    }
+
+    # Move the component directory.
+    move $CONFIG->{MASON_COMP_ROOT}, $dest;
+    print "$CONFIG->{MASON_COMP_ROOT} moved to $dest\n";
+    print "Delete it if you haven't added or altered files in it.\n";
+}
+
+create_paths();
 
 # Copy the Mason UI components.
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) },
