@@ -124,7 +124,7 @@ sub publish : Callback {
             priority      => $s->get_priority(),
         });
         $job->save();
-        # Report publishing if the job was excuted on save, otherwise
+        # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
         add_msg("Story [_1] $saved: \"" .  $s->get_title . '"')
@@ -156,7 +156,7 @@ sub publish : Callback {
             priority      => $m->get_priority(),
         });
         $job->save();
-        # Report publishing if the job was excuted on save, otherwise
+        # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
         add_msg("Media item [_1] $saved: \"" .  $m->get_title . '"')
@@ -166,7 +166,7 @@ sub publish : Callback {
             $d->remove_asset($m);
             $d->save;
         }
-        # Remove it from the workflow by setting is workflow ID to undef
+        # Remove it from the workflow by setting its workflow ID to undef
         if ($m->get_workflow_id) {
             $m->set_workflow_id(undef);
             log_event("media_rem_workflow", $m);
