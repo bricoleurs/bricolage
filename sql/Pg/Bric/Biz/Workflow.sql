@@ -29,7 +29,10 @@ CREATE TABLE workflow (
     req_desk_grp_id  NUMERIC(10)  NOT NULL,
     asset_grp_id     NUMERIC(10)  NOT NULL,
     head_desk_id     NUMERIC(10)  NOT NULL,
-    type             NUMERIC(1)   NOT NULL,
+    type             NUMERIC(1)   NOT NULL
+                                  DEFAULT 1
+                                  CONSTRAINT ck_workflow__type
+                                    CHECK (type IN (1,2,3)),
     active           NUMERIC(1)	  NOT NULL
                                   DEFAULT 1
                                   CONSTRAINT ck_workflow__active
