@@ -57,10 +57,9 @@ $LastChangedDate$
  $asset           = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id    = $asset->get_workflow_id;
@@ -186,7 +185,6 @@ BEGIN {
                         _active           => Bric::FIELD_NONE,
                         _delete           => Bric::FIELD_NONE,
                         _notes            => Bric::FIELD_NONE,
-                        _desk_stamps      => Bric::FIELD_NONE,
                         _attribute_object => Bric::FIELD_NONE,
                         _attr_cache       => Bric::FIELD_NONE,
                         _update_attrs     => Bric::FIELD_NONE,
@@ -250,6 +248,15 @@ sub lookup {
     # Check the cache.
     my $obj = $pkg->cache_lookup($param);
     return $obj if $obj;
+
+    # If checked_out is false, make sure that they get the current version
+    # that's not checked out, rather than the current version that's checked
+    # out and may have changes made by the user who has it checked out. Yes
+    # this is unfortunate.
+    $param->{_checked_out} = 1
+      if !$param->{published_version}
+      && ((exists $param->{checked_out} && !delete $param->{checked_out})
+      || (exists $param->{checkout} && !delete $param->{checkout}));
 
     $param = clean_params($pkg, $param);
     # Lookup can return active and inactive assets.
@@ -1182,24 +1189,22 @@ sub get_expire_date { local_date($_[0]->_get('expire_date'), $_[1]) }
 =item $list or @list = $self->get_desk_stamps();
 
 This returns a reference to a list of desk stamps in scalar context
-or an array in array context
+or an array in array context.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
-
-B<Side Effects:>
-
-NONE 
+B<Side Effects:> NONE.
 
 B<Notes:>
 
-NONE
+This method has been deprecated and will be removed in Bricolage 1.10.0.
 
 =cut
 
 sub get_desk_stamps {
     my ($self) = @_;
+    require Carp; Carp::carp(__PACKAGE__ . "::get_desk_stamps is deprecated "
+                             . " and will be removed in Bricolage 1.10.0");
     my $ds = $self->_get_attr_hash({ subsys => 'deskstamps' });
 
     # This needs to be a numerical sort (perl defaults to a alphanumeric sort)
@@ -1925,17 +1930,6 @@ NONE
 1;
 
 __END__
-
-=head1 NOTES
-
-define supported keys for list
-
-are desk_stamps objects or just data
-
-rewrite description to reflect current state
-
-accessor for asset_version_id (what does get_id return the asset id or the
-asset version group? )
 
 =head1 AUTHOR
 

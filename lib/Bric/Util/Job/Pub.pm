@@ -82,6 +82,9 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Burner;
 use Bric::Util::Burner::Mason;
 use Bric::Biz::Asset::Business::Media;
+use Bric::Biz::Asset::Business::Media::Audio;
+use Bric::Biz::Asset::Business::Media::Image;
+use Bric::Biz::Asset::Business::Media::Video;
 use Bric::Biz::Asset::Business::Story;
 
 ################################################################################

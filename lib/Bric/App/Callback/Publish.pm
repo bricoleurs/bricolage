@@ -135,6 +135,8 @@ sub publish : Callback {
             priority      => $s->get_priority(),
         });
         $job->save();
+        log_event('job_new', $job);
+
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
@@ -173,6 +175,7 @@ sub publish : Callback {
             priority      => $m->get_priority,
         });
         $job->save();
+        log_event('job_new', $job);
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';

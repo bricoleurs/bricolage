@@ -291,6 +291,10 @@ Friends who have spotted bugs include:
 
 =item Clare Parkinson
 
+=item Jason Edgecombe
+
+=item Frank Holtz
+
 =back
 
 Bricolage's translation team:

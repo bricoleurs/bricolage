@@ -45,10 +45,9 @@ $LastChangedDate$
  $vers_grp_id = $asset->get_version_grp__id();
  $vers_id     = $asset->get_asset_version_id();
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id  = $asset->get_workflow_id;

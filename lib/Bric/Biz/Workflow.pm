@@ -40,9 +40,6 @@ $LastChangedDate$
   # Lists the required desks
   @desks = $flow->required_desks();
 
-  # Returns true if the asset object has been through all required desks.
-  $bool  = $flow->required_satisfied($asset_obj);
-
 =head1 DESCRIPTION
 
 A workflow is something that guides an asset through a set of desks, where an
@@ -976,20 +973,20 @@ sub desk_in_required {
 
 Returns true if a assetref has been through all required desks.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
-
-B<Side Effects:>
-
-NONE
+B<Side Effects:> NONE.
 
 B<Notes:>
+
+This method has been deprecated and will be removed in Bricolage 1.10.0.
 
 =cut
 
 sub required_satisfied {
     my $self = shift;
+    require Carp; Carp::carp(__PACKAGE__ . "::require_satisfied is deprecated "
+                             . " and will be removed in Bricolage 1.10.0");
     my ($asset_obj) = @_;
     my @stamps      = $asset_obj->get_desk_stamps;
     my @req         = $self->required_desks;

@@ -171,7 +171,7 @@ sub add_element : Callback {
 
         } elsif ($type eq 'data_') {
             $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
-            $tile->add_data($at, '');
+            $tile->add_data($at, $at->get_meta('html_info')->{value});
             $tile->save();
             set_state_data($self->class_key, 'tile', $tile);
         }
@@ -586,11 +586,15 @@ sub _update_parts {
     my $widget = $self->class_key;
     my $locate_id = $self->value;
     my $tile = get_state_data($widget, 'tile');
+    my $object_type = $tile->get_object_type;
 
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
-    my $do_delete = ($param->{$widget.'|delete_cb'} ||
-                     $param->{$widget.'|save_and_up_cb'} ||
-                     $param->{$widget.'|save_and_stay_cb'});
+    # in the element profile or the document profile.
+    my $do_delete = $param->{$widget.'|delete_cb'} ||
+                    $param->{$widget.'|save_and_up_cb'} ||
+                    $param->{$widget.'|save_and_stay_cb'} ||
+                    $param->{$object_type .'_prof|save_cb'} ||
+                    $param->{$object_type .'_prof|save_and_stay_cb'};
 
     # Save data to tiles and put them in a usable order
     foreach my $t ($tile->get_tiles) {

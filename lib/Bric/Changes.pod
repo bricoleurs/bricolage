@@ -140,6 +140,62 @@ Reported by Clare Parkinson. [David]
 The SOAP server story and media interfaces now support elements that contain
 both related stories and media, rather than one or the other. [David]
 
+=item *
+
+Attempting to preview a story or media document currently checked out to another
+user no longer causes an error. Reported by Paul Orrock. [David]
+
+=item *
+
+Desk asset buttons are no longer broken in non-English localizations. Thanks
+to Scott Lanning for the spot! [David]
+
+=item *
+
+Subelements will be properly deleted when selecting a "Delete" checkbox and
+clicking "Save" or "Save and Stay" in the story or media profile. It always
+worked in the element profile, and now it's consistent across document profile
+interfaces. Spotted by Scott Lanning. [David]
+
+=item *
+
+Custom fields with default values now have their values included when they are
+added to stories and media. Thanks to Clare Parkinson for the spot! [David]
+
+=item *
+
+The C<get_desk_stamps()> method in the asset classes has been deprecated (it
+never worked, anyway) and will be removed in Bricolage 1.10.0. The same goes
+for the C<required_satisfied()> method in Bric::Biz::Workflow. Thanks to
+Marshall Roch for the spot! [David]
+
+=item *
+
+Subclasses of the media class no longer cause errors when distributing files
+via C<bric_queued>. Thanks to Jason Edgecombe for the spot! [David]
+
+=item *
+
+Elements created via SOAP now correctly have site IDs associated with them.
+[David]
+
+=item *
+
+The "All" alphabetical search now properly escapes the "%" wild card
+character. Thanks to Frank Holtz for the spot! [David]
+
+=item *
+
+The C<bric_queued> script now requires a username and password and will
+authenticate the user. This user will then be used for logging events. All
+events logged when a job is run via the UI are now also loged by
+C<bric_queued>. [Mark and David]
+
+=items *
+
+Jobs now get a "Job Created" event logged when they are created. Reported by
+Rachel Murray. [David and Mark]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

@@ -27,6 +27,14 @@ requests to the Bricolage Apache/mod_perl server.
 
 =head1 OPTIONS
 
+=head2 --username
+
+The username to use for the distribution.
+
+=head2 --password
+
+The password for the user specified by the C<--username> option.
+
 =head2 -p <file> | --pid <file>
 
 Specifies a pid file.
@@ -111,6 +119,8 @@ BEGIN {
 END
 }
 
+use Bric::App::Event qw(commit_events);
+use Bric::Biz::Person::User;
 use Bric::Util::Time qw(:all);
 use Bric::Util::Job;
 use Bric::Util::Job::Dist;
@@ -148,15 +158,23 @@ my $CaughtSignal = 0;         # to be set by the signal handler
 # Parse the command line options.
 Getopt::Long::Configure ("bundling");
 GetOptions(
-    "pid|p=s"   => \$Pidfile,
-    "delay|d=i" => \$Delay,
-    "single|s=s"=> \$SingleJobMode,
-    "verbose|v" => \$Verbose,
-    "log|l=s"   => \$Logfile,
-    "help|h"    => \$HelpMode,
+    "pid|p=s"    => \$Pidfile,
+    "delay|d=i"  => \$Delay,
+    "single|s=s" => \$SingleJobMode,
+    "verbose|v"  => \$Verbose,
+    "log|l=s"    => \$Logfile,
+    "help|h"     => \$HelpMode,
+    "username=s" => \my $username,
+    "password=s" => \my $password,
 );
+
+require Pod::Usage && Pod::Usage::pod2usage("Missing required --username option.")
+  unless $username;
+require Pod::Usage && Pod::Usage::pod2usage("Missing required --password option.")
+  unless $password;
+
 # do help if we got the help flag
-require Pod::Usage && pod2usage(1) if $HelpMode; # see Pod::Usage(8)
+require Pod::Usage && Pod::Usage::pod2usage(1) if $HelpMode; # see Pod::Usage(8)
 if ($SingleJobMode) {
     run_single_job();
 } else {
@@ -181,32 +199,36 @@ sub run_as_daemon {
     daemonize();
     # fork off a process for dist jobs
     my $pkg = fork_to_dist();
+    login();
     for (;;) {
-        my ($job) = $pkg->list({
+        for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
             failed     => 0,
             executing  => 0,
-        });
-        if ($job) {
+        })) {
             print 'Executing ' . $job->get_name . "\n" if $Verbose;
-            eval { $job->execute_me } or print $@;
+            eval {
+                $job->execute_me;
+                commit_events();
+            };
+            print $@ if $@;
             terminate() if $CaughtSignal;
-        } else {
-            # no need to store the TERM signal during sleep
-            $SIG{TERM} = \&terminate;
-            sleep $Delay;
-            $SIG{TERM} = \&handle_term;
         }
+        # no need to store the TERM signal during sleep
+        $SIG{TERM} = \&terminate;
+        sleep $Delay;
+        $SIG{TERM} = \&handle_term;
+
         # If we are the parent (pub) process we should check to see that
         # the child (dist) process is still running so that the user only
         # has one to worry about.
         if ($DistPid) {
-            print "Checking on Dist process, $DistPid ...";
+            print "Checking on Dist process, $DistPid ..." if $Verbose;
             if (kill 0 => $DistPid) {
-                print "OK\n";
+                print "OK\n" if $Verbose;
             } else {
-                print "None found.  Panic time!!!\n";
+                print "No child pid found.  Exiting.\n";
                 # The safest thing to do at this point is to quit and let
                 # perl clean everything up.
                 terminate();
@@ -227,6 +249,7 @@ This is our main loop for normal daemon mode
 
 sub run_single_job {
     $Verbose = 1;  # as promised in OPTIONS
+    login();
     # get the package name from the command line type
     my $pkg;
     if (lc $SingleJobMode eq 'dist') {
@@ -235,7 +258,7 @@ sub run_single_job {
         $pkg = PUB_PKG;
     } else {
         require Pod::Usage;
-        pod2usage({
+        Pod::Usage::pod2usage({
             -message => "Invalid argument to -s or --single.\n",
             -verbose => 1,
             -exitval => 1,
@@ -250,7 +273,11 @@ sub run_single_job {
     });
     exit unless $job;
     print 'Executing ' . $job->get_name . "\n" if $Verbose;
-    eval { $job->execute_me } or print $@;
+    eval {
+        $job->execute_me;
+        commit_events();
+    };
+    print $@ if $@;
 }
 
 ##############################################################################
@@ -267,8 +294,10 @@ Returns a package name from which we will get jobs to run.
 ##############################################################################
 
 sub fork_to_dist {
-    $SIG{CHLD} = 'IGNORE';  # prevents defunct children.  See perlipc(8).
-    defined ($DistPid = fork) or die "Can't fork: $!";
+    my $reaper;
+    $reaper = sub { wait; $SIG{CHLD} = $reaper; };
+    $SIG{CHLD} = $reaper;
+    defined ($DistPid = fork) or die "Can't fork: $!\n";
     if ($DistPid) {  # a non-zero pid means we are the parent
         return PUB_PKG;
     } else {
@@ -396,6 +425,18 @@ sub daemonize {
 }
 
 ##############################################################################
+
+sub login {
+    # Find the user and make sure they're legit.
+    my $user = Bric::Biz::Person::User->lookup({ login => $username });
+    die qq{Invalid username or password\n} unless $user;
+
+    # Uncomment this line to be insecure.
+    $user->chk_password($password) or die qq{Invalid username or password\n};
+
+    # Set up the user.
+    Bric::App::Session::set_user(undef, $user);
+}
 
 __END__
 

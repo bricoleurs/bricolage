@@ -556,7 +556,11 @@ Finally, install Apache:
 =item *
 
 Don't forget to install the Apache::Session and Apache::Request perl modules
-now (See "Perl Modules," above).
+now (See "Perl Modules," above). If your Apache is in a non-standard loation,
+you might need to set the C<APXS> environment variable while installing it so
+that tests pass:
+
+  % export APXS=/some/nonstandard/apache/bin/apxs
 
 =back
 

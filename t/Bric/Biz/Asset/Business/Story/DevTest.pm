@@ -95,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(116) {
+sub test_select_methods: Test(122) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -211,15 +211,38 @@ sub test_select_methods: Test(116) {
     $story[0]->add_contributor($self->contrib, 'DEFAULT');
     $story[0]->checkin();
     $story[0]->save();
-    $story[0]->checkout({ user__id => $self->user_id });
-    $story[0]->checkin();
-    $story[0]->save();
-    $story[0]->checkout({ user__id => $self->user_id });
-    $story[0]->checkin();
-    $story[0]->save();
-
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
+
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->checkin();
+    $story[0]->save();
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->save();
+
+    # Test checked_out and checkout.
+    ok my $st = class->lookup({
+        id => $OBJ_IDS->{story}->[0]
+    }), "Look up the checked out story.";
+    is $st->get_version, 2, "Story is at version 1";
+
+    # Test checked_out => 0 to make sure that it works.
+    ok $st = class->lookup({
+        id => $OBJ_IDS->{story}->[0],
+        checked_out => 0,
+    }), "Look up the checked out story.";
+    is $st->get_version, 2, "Story is at version 1";
+
+    # Test checked_out => 0 to make sure that it works.
+    ok $st = class->lookup({
+        id => $OBJ_IDS->{story}->[0],
+        checkout => 0,
+    }), "Look up the checked out story.";
+    is $st->get_version, 2, "Story is at version 1";
+
+    # Check in the story and move on.
+    $story[0]->checkin();
+    $story[0]->save();
 
     # Try doing a lookup
     $expected = $story[0];

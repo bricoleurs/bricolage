@@ -66,10 +66,9 @@ $LastChangedDate$
  $asset       = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id    = $asset->get_workflow_id;
