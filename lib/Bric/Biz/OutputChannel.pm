@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:03 $
+$Date: 2003-03-18 11:05:50 $
 
 =head1 SYNOPSIS
 
@@ -1718,9 +1718,6 @@ sub _do_list {
             $tables .= ', media__output_channel moc';
             $wheres .= ' AND oc.id = moc.output_channel__id ' .
               'AND moc.media_instance__id = ?';
-            push @params, $v;
-        } elsif ($k eq 'include_parent_id') {
-            $wheres .= ' AND inc.output_channel__id = ?';
             push @params, $v;
         } elsif ($k eq 'site_id') {
             $wheres .= ' AND oc.site__id = ?';
