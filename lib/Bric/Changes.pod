@@ -344,6 +344,11 @@ Changing a template in such a way that it will be deployed to a new location
 (by changing the category, for example) once again deletes the previous
 version from the previous location when it is deployed. [David]
 
+=item *
+
+Uploading a new image to a media document with a different media type than the
+previous image no longer causes an Imager error. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

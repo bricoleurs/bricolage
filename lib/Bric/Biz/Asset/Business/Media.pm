@@ -1391,8 +1391,16 @@ sub get_media_type {
 
 =item $media = $media->upload_file($file_handle, $file_name)
 
-Reads a file from the passed $file_handle and stores it in the media
-object under $file_name.
+=item $media = $media->upload_file($file_handle, $file_name, $media_type)
+
+=item $media = $media->upload_file($file_handle, $file_name, $media_type, $size)
+
+Reads a file from the passed $file_handle and stores it in the media object
+under $file_name. If $media_type is passed, it will be used to set the media
+type of the file. Otherwise, C<upload_file()> will use Bric::Util::MediaType
+to determine the media type. If $size is passed, its value will be used for
+the size of the file; otherwise, C<upload_file()> will figure out the file
+size itself.
 
 B<Throws:> NONE.
 
@@ -1404,7 +1412,8 @@ B<Notes:> NONE.
 =cut
 
 sub upload_file {
-    my ($self, $fh, $name) = @_;
+    my ($self, $fh, $name, $type, $size) = @_;
+
     my ($id, $v, $old_fn, $loc, $uri) =
       $self->_get(qw(id version file_name location uri));
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
@@ -1417,6 +1426,23 @@ sub upload_file {
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
+
+    # Set the media type and the file size.
+    if ($type = defined $type
+        ? Bric::Util::MediaType->lookup({name => $type})
+        : undef)
+    {
+        # We got a valid type.
+        $self->_set(['media_type_id', '_media_type_obj'], [$type->get_id, $type]);
+    } elsif (my $mid = Bric::Util::MediaType->get_id_by_ext($name)) {
+        # We figured out the type by the filename extension.
+        $self->_set(['media_type_id', '_media_type_obj'], [$mid, undef]);
+    } else {
+        # We have no idea what the type is. :-(
+        $self->_set(['media_type_id', '_media_type_obj'], [0, undef]);
+    }
+
+    $self->set_size(defined $size ? $size : -S $path);
 
     # Get the Output Channel object.
     my $at_obj = $self->_get_element_object;
