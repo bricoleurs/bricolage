@@ -39,8 +39,9 @@ This script was developed using the GNOME MIME type icons downloaded from
 L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>. (linked to
 from L<http://developer.ximian.com/themes/icons/>), but appears as though it
 would work with the files in a F<mimetypes> subdirectory of most PNG icon
-distributions downloadable from
-L<http://art.gnome.org/themes/icon/index.php>. Updates happily accepted.
+distributions downloadable from L<http://art.gnome.org/themes/icon/index.php>
+(the "NoiaWarm" theme's 48 x 48 MIME type icons look pretty nice with the
+Bricolage UI color scheme). Updates happily accepted.
 
 =head1 OPTIONS
 
@@ -58,6 +59,25 @@ the "gnome-" and leave "appplication-msword.png". In the latter example
 specify "gnome-mime-" for the C<--strip> option. Note that the C<--strip>
 option can be a regular expression.
 
+=head1 SEE ALSO
+
+=over 4
+
+=item L<http://developer.ximian.com/themes/icons/>
+
+The Ximian GNOME Icons page.
+
+=item L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>
+
+The canonical MIME type icons for GNOME.
+
+=item L<http://art.gnome.org/themes/icon/index.php>
+
+GNOME icon themes page, where several different collections of icon themes
+(some of which include the required MIME type icons) can be downloaded.
+
+=back
+
 =head1 AUTHOR
 
 David Wheeler <david@kineticode.com>
@@ -65,7 +85,8 @@ David Wheeler <david@kineticode.com>
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (c) 2004 Kineticode, Inc. See L<Bric::License|Bric::License> for
-complete license terms and conditions.
+complete license terms and conditions. GNOME icons files are distributed
+separately and under their own licenses.
 
 =cut
 

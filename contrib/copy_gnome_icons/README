@@ -30,7 +30,9 @@ DESCRIPTION
     (linked to from <http://developer.ximian.com/themes/icons/>), but
     appears as though it would work with the files in a mimetypes
     subdirectory of most PNG icon distributions downloadable from
-    <http://art.gnome.org/themes/icon/index.php>. Updates happily accepted.
+    <http://art.gnome.org/themes/icon/index.php> (the "NoiaWarm" theme's 48
+    x 48 MIME type icons look pretty nice with the Bricolage UI color
+    scheme). Updates happily accepted.
 
 OPTIONS
   "--strip"
@@ -46,10 +48,23 @@ OPTIONS
     example specify "gnome-mime-" for the "--strip" option. Note that the
     "--strip" option can be a regular expression.
 
+SEE ALSO
+    <http://developer.ximian.com/themes/icons/>
+        The Ximian GNOME Icons page.
+
+    <http://developer.ximian.com/images/art-devel/mime-icons.tgz>
+        The canonical MIME type icons for GNOME.
+
+    <http://art.gnome.org/themes/icon/index.php>
+        GNOME icon themes page, where several different collections of icon
+        themes (some of which include the required MIME type icons) can be
+        downloaded.
+
 AUTHOR
     David Wheeler <david@kineticode.com>
 
 COPYRIGHT AND LICENSE
     Copyright (c) 2004 Kineticode, Inc. See Bric::License for complete
-    license terms and conditions.
+    license terms and conditions. GNOME icons files are distributed
+    separately and under their own licenses.
 
