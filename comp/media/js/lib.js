@@ -69,7 +69,7 @@ function checkPasswords(obj1, obj2, passwd_length) {
 
     if (!newUser && pass1.length == 0) return true;
     
-    // No fewer than 6 characters.
+    // No fewer than passwd_length characters.
     if (pass1.length < passwd_length) {
         alert(passwd_msg1 + passwd_length + passwd_msg2);
         obj1.focus();
@@ -86,14 +86,17 @@ function checkPasswords(obj1, obj2, passwd_length) {
     }
 
     // No preceding or trailing spaces.
-    if (pass1.substring(0,1) == " ") {
+    // XXX: These could be combined if we can get translators to update the
+    //      messages into "Passwords cannot have spaces at the beginning or
+    //      end!"
+    if (pass1.test(/^\s+/)) {
         alert(passwd_start_msg);
         obj1.value = "";
         obj2.value = "";
         obj1.focus();
         return false;      
     }
-    if (pass1.substring(pass1.length-1, pass1.length) == " ") {
+    if (pass1.test(/\s+$/)) {
         alert(passwd_end_msg);
         obj1.value = "";
         obj2.value = "";
@@ -110,7 +113,6 @@ evaluated before the form is submitted. Input: name of the form to be
 submitted, an array of callbacks to be sent, an array of optional statements
 Output: returns false to cancel the link action.
 */
-
 function customSubmit(formName, cbNames, cbValues, optFunctions) {
 
     var frm = document.forms[formName];
@@ -163,6 +165,8 @@ function hasSpecialCharactersOC(what) {
 
 /*
 general textarea cleanup function
+
+XXX: Can this be done using only the text variable?
 */
 function textUnWrap (text) {
     var text2 = text.replace( /\r\n/g, "\n");    //Change Windows newlines to Unix newlines.
