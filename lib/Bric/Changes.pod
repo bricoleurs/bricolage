@@ -53,6 +53,19 @@ get IE to leave them out, too, are welcome. [David]
 Added ability to set permissions on assets based on the categories they're in.
 [David]
 
+=item *
+
+Moved all session and session locking files into the "bricolage" subdirectory fo
+the local file system's tmp directory. You'll want to rm -rf /tmp/bricolage_*.
+
+=item *
+
+Moved the location of cache files to the "bricolage/cache" subdirectory of the
+local file system's tmp directory. You'll want to rm -rf /tmp/FileCache.
+Together with the above change, this means that all Bricolage temporary files
+are stored in the "bricolage" subdirectory of the local tmp, e.g.,
+/tmp/bricolage.
+
 =back
 
 =head1 VERSION 1.0.1
