@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.18.2.4 $
+$Revision: 1.18.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-09 21:58:03 $
+$Date: 2002-12-11 20:07:58 $
 
 =head1 SYNOPSIS
 
@@ -1812,7 +1812,7 @@ sub _construct_uri {
     my $self = shift;
     my ($cat_obj, $oc_obj) = @_;
 #   my $cat_obj = $self->get_primary_category();
-    my $element_obj = $self->_get_element_object();
+    my $element_obj = $self->_get_element_object or return;
     my $fu = $element_obj->get_fixed_url;
     my ($pre, $post);
 
@@ -1823,7 +1823,7 @@ sub _construct_uri {
     my @path = ('', defined $pre ? $pre : ());
 
     # Get URI Format pref
-    my( $pref_value ) = ( Bric::Util::Pref->lookup_val( 
+    my( $pref_value ) = ( Bric::Util::Pref->lookup_val(
         ( $fu ? 'Fixed ' : '' ) . 'URI Format' ) =~ /\/?(.+)\/?/ );
 
     my @tokens = split( '/', $pref_value );

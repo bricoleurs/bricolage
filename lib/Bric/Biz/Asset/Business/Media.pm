@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21.2.6 $
+$Revision: 1.21.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-11 01:52:17 $
+$Date: 2002-12-11 20:08:00 $
 
 =head1 SYNOPSIS
 
@@ -834,11 +834,13 @@ sub set_cover_date {
     my $self = shift;
     $self->SUPER::set_cover_date(@_);
 
-    my ($cat, $cat_id) = $self->_get(qw(_category_obj category__id));
+    my ($cat, $cat_id, $fn)
+      = $self->_get(qw(_category_obj category__id file_name));
+    return $self unless $fn;
+
     $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
 
-    my $uri = Bric::Util::Trans::FS->cat_uri
-      ($self->_construct_uri($cat), $self->_get('file_name'));
+    my $uri = Bric::Util::Trans::FS->cat_uri($self->_construct_uri($cat), $fn);
 
     $self->_set({ _category_obj => $cat,
                   uri           => $uri });
