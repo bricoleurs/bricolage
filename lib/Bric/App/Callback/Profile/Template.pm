@@ -221,7 +221,7 @@ sub recall : Callback {
     my $self = shift;
 
     my $ids = $self->params->{$self->class_key.'|recall_cb'};
-    my %wfs;
+    my ($co, %wfs);
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {
@@ -243,6 +243,9 @@ sub recall : Callback {
             $start_desk->save;
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
+            $co++;
+
+            # Deploy the template to the user's sandbox.
             my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
             $sb->deploy($fa);
 
@@ -251,7 +254,10 @@ sub recall : Callback {
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         $self->set_redirect("/");
     } else {
@@ -266,6 +272,7 @@ sub checkout : Callback {
 
     my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
+    my $co;
 
     foreach my $t_id (@$ids) {
         my $t_obj = Bric::Biz::Asset::Formatting->lookup({'id' => $t_id});
@@ -273,6 +280,9 @@ sub checkout : Callback {
             $t_obj->checkout({ user__id => get_user_id() });
             $t_obj->save;
             log_event("formatting_checkout", $t_obj);
+            $co++;
+
+            # Deploy the template to the user's sandbox.
             my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
             $sb->deploy($t_obj);
         } else {
@@ -280,7 +290,10 @@ sub checkout : Callback {
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         $self->set_redirect("/");
     } else {

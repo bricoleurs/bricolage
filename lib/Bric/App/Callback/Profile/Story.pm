@@ -632,12 +632,14 @@ sub checkout : Callback {
 
     my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
+    my $co;
 
     foreach my $id (@$ids) {
         my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $id});
         if (chk_authz($ba, EDIT, 1)) {
             $ba->checkout({'user__id' => get_user_id()});
             $ba->save;
+            $co++;
 
             # Log Event.
             log_event('story_checkout', $ba);
@@ -646,7 +648,10 @@ sub checkout : Callback {
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         $self->set_redirect("/");
     } else {
@@ -660,7 +665,7 @@ sub recall : Callback {
 
     my $ids = $self->params->{$self->class_key.'|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
-    my %wfs;
+    my ($co, %wfs);
 
     foreach my $id (@$ids) {
         my ($o_id, $w_id) = split('\|', $id);
@@ -686,12 +691,16 @@ sub recall : Callback {
             $start_desk->save;
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
             log_event('story_checkout', $ba);
+            $co++;
         } else {
             add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
         }
     }
 
-    if (@$ids > 1) {
+    # Just bail if they don't have the proper permissions.
+    return unless $co;
+
+    if ($co > 1) {
         # Go to 'my workspace'
         $self->set_redirect("/");
     } else {
