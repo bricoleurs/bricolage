@@ -97,8 +97,9 @@ desired (off by default). [Paul Orrock / Digital Craftsmen]
 
 =item *
 
-Added support for C<ANY()> function to pass multiple possible values for a
-given parameter to the C<list()> method in the following classes:
+Added support for the C<ANY()> function to pass multiple possible values for a
+given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
+C<href()> methods in the following classes:
 
 =over
 
