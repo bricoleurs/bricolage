@@ -119,6 +119,11 @@ This bit of syntactic sugar makes contributor objects behave a bit more like
 C<$element> objects in templates, thus simplifying things for template
 developers. [David]
 
+=item *
+
+Categories now default to sorting by URI, and the URI is the searchable field,
+rather than name. [David]
+
 =back
 
 =head2 Bug Fixes

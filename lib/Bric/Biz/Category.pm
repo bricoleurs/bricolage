@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 20:30:47 $
+$Date: 2002-07-17 00:42:28 $
 
 =head1 SYNOPSIS
 
@@ -540,7 +540,6 @@ sub my_meths {
                               type     => 'short',
                               len      => 64,
                               req      => 1,
-                              search   => 1,
                               props    => { type       => 'text',
                                             length     => 32,
                                             maxlength  => 64
@@ -582,6 +581,7 @@ sub my_meths {
                               disp => 'URI',
                               type     => 'short',
                               len      => 256,
+                              search   => 1,
                               props    => { type       => 'text',
                                             length     => 32,
                                             maxlength  => 128
@@ -1565,6 +1565,7 @@ sub _select_category {
 
     my $sql = 'SELECT '.join(',','id', COLS).' FROM '.TABLE;
     $sql .= " WHERE $where" if $where;
+    $sql .= " ORDER BY uri";
 
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
