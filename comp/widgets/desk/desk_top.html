@@ -43,6 +43,8 @@ if ($class eq 'story') {
     ($link2, $lab2) = ('#media', $pl_names->{media}) if $others->{media};
 
 }
+
+$sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
 </%init>
 <%once>;
 my $sort_by = { story      => [ [ cover_date => 'Cover Date' ],

@@ -259,6 +259,10 @@ also speed the display of such desks. Turn of the C<USE_XHTML>
 F<bricolage.conf> directive to get the old desk views back (useful for older
 browsers). [David]
 
+=item *
+
+Added a preference to set the default Story/Media sorting. [Scott]
+
 =back
 
 =head1 VERSION 1.6.5 ()
