@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.14 $
+$Revision: 1.31.2.15 $
 
 =head1 DATE
 
-$Date: 2002-02-26 15:57:22 $
+$Date: 2002-02-27 03:01:33 $
 
 =head1 DESCRIPTION
 
@@ -551,12 +551,13 @@ C<POSTGRES_INCLUDE> and C<POSTGRES_LIB> environment variables, first:
 
 =back
 
-And now PostgreSQL is ready to go!
+And now PostgreSQL is ready to go!When all of the basic software components have
+been installed, start PostgreSQL. You can use one of the scripts in startup/ if
+you like.
 
 =head2 Bricolage
 
-When all of the basic software components have been installed, start PostgreSQL.
-You can use one of the scripts in startup/ if you like.
+Here's how to install Bricolage.
 
 =item *
 
