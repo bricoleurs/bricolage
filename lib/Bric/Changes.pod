@@ -44,6 +44,12 @@ is already connected to template1. [Scott]
 A preview link is no longer in the "Find Media," "Active Media," desk, or "My
 Workspace" views for media that have no associated file. [David]
 
+=item *
+
+C<make upgrade> now uses the correct PostgreSQL root username and password,
+instead of the default "postgres" username and emtpy password. Thanks to Paul
+Cory for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0

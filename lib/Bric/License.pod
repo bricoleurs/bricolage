@@ -170,6 +170,8 @@ Friends who have spotted bugs include:
 
 =item Chris Jantzen
 
+=item Paul Cory
+
 =back
 
 Bricolage's translation team:
