@@ -137,5 +137,58 @@ sub test_insert : Test(11) {
     ok( ! exists $href->{$ocid}, "ID $ocid gone" );
 }
 
+##############################################################################
+# A concentrated test to make sure that the right OCE gets deleted no
+# matter how many there are and which was changed most recently.
+sub test_delete : Test(24) {
+    my $self = shift;
+    my @oces;
+    # Create some OCE objects
+    foreach my $name (qw(Gar GarGar GarGarGar Bar BarBar BarBarBar)) {
+        ok( my $oce = Bric::Biz::OutputChannel::Element->new({
+            name       => $name,
+            element_id => 1,
+            site_id    => 100,
+        }), "Create OC '$name'" );
+
+        # Now save it. It should be inserted as both an OC and as an OCE.
+        ok( $oce->save, "Save OC '$name'" );
+        $self->add_del_ids([$oce->get_id]);
+        push @oces, $oce;
+    }
+
+    # Change and save the fourth OCE, so that it will be the most recently
+    # updated, which might then cause PostgreSQL to return it instead of
+    # another one.
+    ok( $oces[3]->set_name('Ha Ha!'), "Set fourth OC name's to 'Ha Ha!'" );
+    ok( $oces[3]->save, "Save OC 'Ha Ha!'" );
+
+    # Try deleting the third OC.
+    ok( my $testid = $oces[2]->get_id, "Get third OC's ID" );
+    ok( $oces[2]->remove, "Remove third OC" );
+    ok( $oces[2]->save, "Save third OC" );
+
+    # Now get the hash ref of all output channels associated with element
+    # ID 1.
+    ok( my $href = Bric::Biz::OutputChannel::Element->href({
+        element_id => 1
+    }), "Get OC href" );
+
+    ok( ! exists $href->{$testid}, "ID $testid gone" );
+
+    # Now try deleting the first and see if we get the right one.
+    ok( $testid = $oces[0]->get_id, "Get first OC's ID" );
+    ok( $oces[0]->remove, "Remove first OC" );
+    ok( $oces[0]->save, "Save first OC" );
+
+    # Get the hash ref of all output channels associated with element ID 1
+    # again.
+    ok( $href = Bric::Biz::OutputChannel::Element->href({
+        element_id => 1
+    }), "Get OC href again" );
+
+    ok( ! exists $href->{$testid}, "ID $testid gone" );
+}
+
 1;
 __END__
