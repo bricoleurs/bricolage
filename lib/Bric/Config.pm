@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.10 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.11 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-09 21:52:19 $
 
 =head1 SYNOPSIS
 
@@ -428,9 +428,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant FTP_ADDRESS       => $config->{FTP_ADDRESS}       || "";
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
-    use constant FTP_LOG           => $config->{FTP_LOG}           || 
-                                      catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
-
+    use constant FTP_LOG            => $config->{FTP_LOG}           ||
+      catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {
