@@ -48,7 +48,7 @@ existing approach of using story and media IDs. [David]
 
 =item *
 
-Emails sent by Bricolage now set the send date, since our understanding is
+Email sent by Bricolage now set the send date, since our understanding is
 that the MUA is responsible for setting the date and some SPAM filters trigger
 on missing Date: headers. [Cameron Miller]
 
@@ -193,7 +193,7 @@ Simon Wilcox, Rachel Murray, and others. [David]
 
 =item *
 
-Publishing a published verson of a document that has a later version in
+Publishing a published version of a document that has a later version in
 workflow will no longer cause that later version to be mysteriously removed
 from workflow. This could be caused by passing a document looked up using the
 C<published_version> to C<list()> to C<< $burner->publish_another >> in a
@@ -257,7 +257,7 @@ character. Thanks to Frank Holtz for the spot! [David]
 
 The C<bric_queued> script now requires a username and password and will
 authenticate the user. This user will then be used for logging events. All
-events logged when a job is run via the UI are now also loged by
+events logged when a job is run via the UI are now also logged by
 C<bric_queued>. [Mark and David]
 
 =item *
@@ -268,7 +268,7 @@ Rachel Murray. [David and Mark]
 =item *
 
 Eliminated "Use of uninitialized value in pattern match (m//)" warnings when
-uploading media files. Repoted by Scott Lanning. [David]
+uploading media files. Reported by Scott Lanning. [David]
 
 =item *
 
@@ -318,7 +318,7 @@ htmlArea in CVS. [David & Marshall]
 
 =item *
 
-The JavaScript that handles the double listmanager has been vastly optimized.
+The JavaScript that handles the double list manager has been vastly optimized.
 It should now be able to better handle large lists, such as a list of thousands
 of categories. Reported by Scott. [Marshall]
 
@@ -341,7 +341,7 @@ spot! [David]
 =item *
 
 Reverting a template to a previous version now properly updates to the
-reverted version on the user's sandbox. Also, cancelling a checkout now
+reverted version on the user's sandbox. Also, canceling a checkout now
 properly removes a template from a user's sandbox. [David]
 
 =item *
