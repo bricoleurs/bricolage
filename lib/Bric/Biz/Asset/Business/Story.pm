@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.101.2.1 $
+$Revision: 1.101.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.101.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.101.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-05-01 00:01:32 $
+$Date: 2004-05-03 15:22:37 $
 
 =head1 SYNOPSIS
 
@@ -328,7 +328,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_start      => 's.expire_date >= ?',
       expire_date_end        => 's.expire_date <= ?',
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
-      desk_id                => 's.desk_id = ?',
+      desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.key_name LIKE LOWER(?)',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.71.2.1 $
+$Revision: 1.71.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.71.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-05-01 00:01:29 $
+$Date: 2004-05-03 15:22:22 $
 
 =head1 SYNOPSIS
 
@@ -265,7 +265,7 @@ use constant PARAM_WHERE_MAP =>
       deploy_date_end       => 'f.deploy_date <= ?',
       expire_date_start     => 'f.expire_date >= ?',
       expire_date_end       => 'f.expire_date <= ?',
-      desk_id               => 'f.desk_id = ?',
+      desk_id               => 'f.desk__id = ?',
       name                  => 'LOWER(f.name) LIKE LOWER(?)',
       file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
       title                 => 'LOWER(f.name) LIKE LOWER(?)',

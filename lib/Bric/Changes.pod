@@ -149,6 +149,11 @@ The CSS directory now has its files always served as "text/css". This should
 eliminate problems when Apache sometimes serves the CSS files as "text/html".
 [David]
 
+=item *
+
+The C<desk_id> parameter to the C<list()> methods of the story, media, and
+template classes now works. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)

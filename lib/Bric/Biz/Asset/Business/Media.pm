@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.95.2.2 $
+$Revision: 1.95.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.95.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-05-01 00:01:31 $
+$Date: 2004-05-03 15:22:37 $
 
 =head1 SYNOPSIS
 
@@ -217,7 +217,7 @@ use constant PARAM_WHERE_MAP =>
       expire_date_start     => 'mt.expire_date >= ?',
       expire_date_end       => 'mt.expire_date <= ?',
       unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > CURRENT_TIMESTAMP)',
-      desk_id               => 'mt.desk_id = ?',
+      desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND mct.key_name LIKE LOWER(?)',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
