@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 16:35:04 $
+$Date: 2003-09-17 17:30:25 $
 
 =head1 SYNOPSIS
 
@@ -113,6 +113,17 @@ use Exception::Class
        isa => 'Bric::Util::Fault::Exception',
        alias => 'throw_mni',
      },
+   'Bric::Util::Fault::Exception::Burner' =>
+     { description => 'Burner exception',
+       isa => 'Bric::Util::Fault::Exception',
+       fields => [qw(oc cat elem mode)],
+       alias => 'throw_burn_error',
+     },
+   'Bric::Util::Fault::Exception::Burner::User' =>
+     { description => 'Burner user exception',
+       isa => 'Bric::Util::Fault::Exception::Burner',
+       alias => 'throw_burn_user',
+     },
    'Bric::Util::Fault::Error' =>
      { description => 'Invalid data error',
        isa => 'Bric::Util::Fault::Exception',
@@ -142,8 +153,9 @@ Bric::Util::Fault->Trace(1);
 require Exporter;
 *import = \&Exporter::import;
 our @EXPORT_OK = qw(isa_bric_exception isa_exception rethrow_exception throw_ap
-                    throw_da throw_dp throw_gen throw_mni throw_error
-                    throw_not_unique throw_undef throw_invalid);
+                    throw_da throw_dp throw_gen throw_mni throw_burn_error
+                    throw_burn_user throw_error throw_not_unique throw_undef
+                    throw_invalid);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#

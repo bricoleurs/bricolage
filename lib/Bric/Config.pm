@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.72 $
+$Revision: 1.73 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.72 $ )[-1];
+our $VERSION = (qw$Revision: 1.73 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-11 17:25:12 $
+$Date: 2003-09-17 17:30:25 $
 
 =head1 SYNOPSIS
 
@@ -473,7 +473,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 5;
 
     # Error Page Setting.
-    use constant ERROR_URI => (QA_MODE) ? '/errors/error.html' : '/errors/500.mc';
+    use constant ERROR_URI               => '/errors/500.mc';
 
     # Email Settings.
     use constant SMTP_SERVER => $ENV{BRIC_TEST_SMTP} || $config->{SMTP_SERVER}

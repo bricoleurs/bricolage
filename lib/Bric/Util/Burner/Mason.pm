@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-26 16:17:39 $
+$Date: 2003-09-17 17:30:25 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,8 @@ use strict;
 # Programatic Dependencies
 
 use HTML::Mason::Interp;
-use Bric::Util::Fault qw(throw_gen throw_ap rethrow_exception);
+use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
+                         throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
@@ -188,7 +189,7 @@ A category in which to publish.
 
 sub burn_one {
     my $self = shift;
-    my ($ba, $oc, $cat, $at) = @_;
+    my ($ba, $oc, $cat) = @_;
     my ($outbuf, $retval);
 
     # Determine the component roots.
@@ -229,9 +230,9 @@ sub burn_one {
     $interp->set_global('$element', $element);
     $interp->set_global('$burner',  $self);
 
-    # save some of the values for this burn.
-    $self->_set([qw(_buf     _interp  _comp_root)],
-                [  \$outbuf, $interp, $comp_root]);
+    # Save some of the values for this burn.
+    $self->_set([qw(_buf     _interp  _comp_root element)],
+                [  \$outbuf, $interp, $comp_root, $element]);
 
     # Give 'em the XML Writer object if they want it.
     if (INCLUDE_XML_WRITER) {
@@ -258,13 +259,14 @@ sub burn_one {
     while (1) {
         # Run the biz asset through the template
         eval { $retval = $interp->exec($template) if $template };
-        if ($@) {
-            if (isa_exception($@)) {
-                rethrow_exception($@);
-            } else {
-                throw_ap(error => "Error executing template '$template'.",
-                         payload => $@);
-            }
+        if (my $err = $@) {
+            rethrow_exception($err) if isa_exception($err);
+            throw_burn_error error   => "Error executing '$template'",
+                             payload => $err,
+                             mode    => $self->get_mode,
+                             oc      => $self->get_oc->get_name,
+                             cat     => $self->get_cat->get_uri,
+                             elem    => $element->get_name;
         }
 
         # End the page if there is still content in the buffer.
@@ -608,8 +610,8 @@ sub end_page {
 
     # Save the page we've created so far.
     open(OUT, ">$file")
-      || throw_gen(error => "Unable to open '$file' for writing",
-                   payload => $!);
+      or throw_gen error => "Unable to open '$file' for writing",
+                   payload => $!;
     print OUT $$buf;
     close(OUT);
 
@@ -692,17 +694,11 @@ sub _load_template_element {
 
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)
-      || throw_ap(error => "Unable to find template '$tmpl_name'",
-                  payload => {
-                      class   => __PACKAGE__,
-                      action  => 'load template',
-                      context => {
-                          oc   => $self->get_oc,
-                          cat  => $self->get_cat,
-                          elem => $element,
-                      },
-                  }
-         );
+      or throw_burn_error error => "Unable to find template '$tmpl_name'",
+                          mode  => $self->get_mode,
+                          oc    => $self->get_oc->get_name,
+                          cat   => $self->get_cat->get_uri,
+                          elem  => $element->get_name;
     return $tmpl;
 }
 
@@ -802,6 +798,7 @@ sub _render_element {
 
         # Set the elem global to the current element.
         $interp->set_global('$element', $elem);
+        $self->_set(['element'], [$elem]);
 
         # Push this element on to the stack
         $self->_push_element($elem);
@@ -821,7 +818,9 @@ sub _render_element {
         $self->_pop_element();
 
         # Set the elem global to the previous element
-        $interp->set_global('$element', $self->_current_element);
+        my $curr = $self->_current_element;
+        $interp->set_global('$element', $curr);
+        $self->_set(['element'], [$curr]);
 
         return $html;
     } else {
@@ -870,29 +869,20 @@ sub _create_dhandler {
 
     # Now just write it out to the file system.
     open(DH, ">$file")
-      || throw_gen(error => "Unable to open '$file' for writing",
-                   payload => $!);
-        print DH q{<%init>;
+      or throw_gen error => "Unable to open '$file' for writing",
+                   payload => $!;
+    print DH q{<%init>;
 my $template = $burner->find_template($m->current_comp->dir_path,
                                       $m->dhandler_arg . '.mc')
-  || throw_ap(error => "Unable to find template '"
-                . $m->dhandler_arg . "\.mc'",
-              payload => {
-                  class   => __PACKAGE__,
-                  action  => 'load template',
-                  context => {
-                      oc   => $burner->get_oc,
-                      cat  => $burner->get_cat,
-                      elem => $element,
-                  },
-               }
-     );
+  or $burner->throw_error("Unable to find template '"
+                          . $m->dhandler_arg . "\.mc'");
 $m->comp($template);
 </%init>
 };
         close(DH);
 }
 
+##############################################################################
 
 =item _interp_args()
 
@@ -910,7 +900,7 @@ sub _interp_args {
     my $self = shift;
     # Mason Interp args
 
-    my %interp_args = ( 
+    my %interp_args = (
           'allow_globals' => [qw($story
                                  $burner
                                  $writer
@@ -918,12 +908,14 @@ sub _interp_args {
           'in_package'    => TEMPLATE_BURN_PKG
      );
 
-     $interp_args{compiler} = HTML::Mason::Compiler::ToObject->new( %interp_args,
-                              'preprocess'       => sub { _custom_preprocess(shift, $self) }
-                              ); 
+     $interp_args{compiler} = HTML::Mason::Compiler::ToObject->new
+       ( %interp_args,
+         preprocess => sub { _custom_preprocess(shift, $self) }
+       );
      return %interp_args;
 }
 
+##############################################################################
 
 =item _custom_preprocess($component, $burner)
 
@@ -961,10 +953,10 @@ sub _custom_preprocess {
 
 =item _get_tagset()
 
- Returns which tags should be run, kept or removed, according to
- server context.
+Returns which tags should be run, kept or removed, according to server
+context.
 
- Define the set according to each Bricolage run mode.
+Define the set according to each Bricolage run mode.
 
 B<Throws:> NONE.
 

@@ -1,103 +1,77 @@
 % # Check to see if this is a preview screen.
-% my $prev = $r->uri =~ m:workflow/profile/preview:;
-<& '/widgets/wrappers/sharky/header.mc',
-	title => 'Error',
+% my $prev = $is_burner_error
+%   && $fault->mode == Bric::Util::Burner::PREVIEW_MODE;
+<& /widgets/wrappers/sharky/header.mc,
+	title      => 'Error',
         useSideNav => !$prev,
         no_toolbar => !$prev,
-	context => 'An error occurred.',
-  debug => (QA_MODE || TEMPLATE_QA_MODE)
+	context    => 'An error occurred.',
+        debug      => QA_MODE || TEMPLATE_QA_MODE
  &>
 
 <p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
 
 <p class="errorMsg"><% escape_html($fault->error) %></p>
-% if (TEMPLATE_QA_MODE) {
-<font face="Verdana, Helvetica, Arial">
-<p><b>An exception was thrown:</b></p>
-<b>Fault Type:</b> <% $fault->description %><br />
-<b>Timestamp:</b> <% strfdate($fault->time) %><br />
-<b>Package:</b> <% $fault->package %><br />
-<b>Filename:</b> <% $fault->file %><br />
-<b>Line:</b> <% $fault->line %><br />
-<b>Message:</b> <% escape_html($fault->error . ($more_err ? "\n\n$more_err" : '')) %>
-% if ($is_burner_error) {
-</p>
-% } else {
-<br /><b>Payload:</b>
-<font size="-1"><pre>
-<% escape_html("$pay") %>
-</pre></font>
-</p>
-% }
-</font>
 
-<font face="Verdana, Helvetica, Arial"><p><b>Request args:</b></font>
-<table border="0" cellpadding="2" cellspacing="2">
-% foreach my $arg (keys %req_args) {
-    <tr>
-        <td align="right"><span class="label"><% $arg %>:</span></td>
-        <td align="left"><% escape_html($req_args{$arg}) %></td>
-    </tr>
-% }
-</table>
+% if (QA_MODE or (TEMPLATE_QA_MODE and $is_burner_error)) {
+<div class="debug">
+<dl>
+%     if ($is_burner_error) {
+  <dt>Output Channel</dt> <dd><% $fault->oc || '&nbsp;' %></dd>
+  <dt>Category</dt>       <dd><% $fault->cat || '&nbsp;' %></dd>
+  <dt>Element</dt>        <dd><% $fault->elem || '&nbsp;' %></dd>
+%     }
+  <dt>Fault Class</dt>    <dd><% ref $fault %></dd>
+  <dt>Description</dt>    <dd><% $fault->description || '&nbsp;' %></dd>
+  <dt>Timestamp</dt>      <dd><% strfdate($fault->time) %></dd>
+  <dt>Package</dt>        <dd><% $fault->package || '&nbsp;' %></dd>
+  <dt>Filename</dt>       <dd><% $fault->file || '&nbsp;' %></dd>
+  <dt>Line</dt>           <dd><% $fault->line || '&nbsp;' %></dd>
+%     if (isa_bric_exception($fault)) {
+  <dt>Payload</dt>        <dd><% $fault->payload || '&nbsp;' %></dd>
+%     }
+</dl>
 
-% if ($is_burner_error) {
-<font face="Verdana, Helvetica, Arial"><p><b>Payload:</b></font>
-<table border="0" cellpadding="2" cellspacing="2">
-    <tr>
-        <td align="right"><span class="label">Class:</span></td>
-        <td align="left"><% $pay->{class} %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Action:</span></td>
-        <td align="left"><% $pay->{action} %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Output Channel:</span></td>
-        <td align="left"><% $pay->{context}{oc}->get_name %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Category:</span></td>
-        <td align="left"><% $pay->{context}{cat}->get_name %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Element:</span></td>
-        <td align="left"><% $pay->{context}{elem}->get_name %></td>
-    </tr>
-</table>
-% }
-<font face="Verdana, Helvetica, Arial">
-<b>Stack:</b><br /><% isa_mason_exception($fault) ? $fault->as_text : $fault->trace_as_text %>
+<p><b>Stack:</b></p>
+<pre><% isa_mason_exception($fault) ? $fault->as_text : $fault->trace_as_text %></pre>
 
-<br /><br />
+%     if (QA_MODE) {
+<p><b>Request args:</b></p>
+<dl>
+%         while (my ($arg, $value) = each %req_args) {
+  <dt><% $arg %></dt> <dd><% escape_html($value) %></dd>
+%         }
+</dl>
 <& '/widgets/debug/debug.mc' &>
+%     }
+</div>
 % } else {
-% if ($is_burner_error) {
-<table border="0" cellpadding="2" cellspacing="2">
-    <tr>
-        <td align="right"><span class="label">Class:</span></td>
-        <td align="left"><% $pay->{class} %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Action:</span></td>
-        <td align="left"><% $pay->{action} %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Output Channel:</span></td>
-        <td align="left"><% $pay->{context}{oc}->get_name %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Category:</span></td>
-        <td align="left"><% $pay->{context}{cat}->get_name %></td>
-    </tr>
-    <tr>
-        <td align="right"><span class="label">Element:</span></td>
-        <td align="left"><% $pay->{context}{elem}->get_name %></td>
-    </tr>
-</table>
-% } elsif ($pay) {
-<p class="errorMsg"><% escape_html("$pay") %></p>
+
+<!-- DEBUGGING INFORMATION.
+
+%     if ($is_burner_error) {
+  Output Channel: <% $fault->oc || '' %>
+  Category:       <% $fault->cat || '' %>
+  Element:        <% $fault->elem || '' %>
+%     }
+  Fault Class:    <% ref $fault %>
+  Description:    <% $fault->description || '' %>
+  Timestamp:      <% strfdate($fault->time) %>
+  Package:        <% $fault->package || '' %>
+  Filename:       <% $fault->file || '' %>
+  Line:           <% $fault->line || '' %>
+%     if (isa_bric_exception($fault)) {
+  Payload:        <% $fault->payload || '' %>
+%     }
+
+STACK:
+
+<% isa_mason_exception($fault) ? $fault->as_text : $fault->trace_as_text %>
+  
+END DEBUGGING INFORMATION -->
+
 % }
+% unless (isa_bric_exception($fault, 'Exception::Burner::User')) {
 <p class="header">Please report this error to your administrator.</p>
 % }
 
@@ -116,6 +90,6 @@ my $more_err = $r->pnotes('BRIC_MORE_ERR');
 
 my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
 
-my $is_burner_error = ($fault->error =~ /^Unable to find template/);
+my $is_burner_error = isa_bric_exception($fault, 'Exception::Burner');
 my %req_args = HTML::Mason::Request->instance->request_args;
 </%init>

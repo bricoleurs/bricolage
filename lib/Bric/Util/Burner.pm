@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-05 00:37:15 $
+$Date: 2003-09-17 17:30:25 $
 
 =head1 SYNOPSIS
 
@@ -143,7 +143,8 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Bric::Util::Fault qw(throw_gen throw_ap);
+use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
+                         isa_bric_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
@@ -195,6 +196,7 @@ BEGIN {
           page_numb_start => Bric::FIELD_RDWR,
           mode            => Bric::FIELD_READ,
           story           => Bric::FIELD_READ,
+          element         => Bric::FIELD_READ,
           oc              => Bric::FIELD_READ,
           cat             => Bric::FIELD_READ,
           page            => Bric::FIELD_READ,
@@ -405,6 +407,17 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item my $story = $b->get_element
+
+Returns the element currently being burned -- that is, during the execution of
+the various element templates by C<burn_one()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =item my $oc = $b->get_oc
 
 Returns the output channel in which the story returned by C<get_story()> is
@@ -550,7 +563,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> 
+B<Notes:>
 
 Normally after all page extension strings have been used, pages are
 numbered using the page number, where the first page after the
@@ -599,8 +612,8 @@ sub deploy {
     # Create the directory path and write the file.
     $fs->mk_path($dir);
     open (MC, ">$file")
-      or throw_ap(error => "Could not open '$file'",
-                  payload => $!);
+      or throw_gen  error => "Could not open '$file'",
+                    payload => $!;
     print MC $fa->get_data;
     close(MC);
 
@@ -677,7 +690,6 @@ B<Notes:> NONE.
 
 sub preview {
     my $self = shift;
-    $self->_set(['mode'], [PREVIEW_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $oc_id) = @_;
     my $comp_root = MASON_COMP_ROOT->[0][1];
@@ -693,91 +705,112 @@ sub preview {
     my $oc = Bric::Biz::OutputChannel->lookup
                 ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id($site_id) });
 
+    # Setup.
+    $self->_set(['mode'], [PREVIEW_MODE]);
+    my $cat;
+
     # Burn to each output channel.
-    status_msg('Writing files to "[_1]" Output Channel.', $oc->get_name);
-    my $ocid = $oc->get_id;
-    $self->_set(['base_path'], [$fs->cat_dir($self->get_out_dir,
-                                             'oc_'. $ocid)]);
+    my $ret = eval {
+        status_msg('Writing files to "[_1]" Output Channel.', $oc->get_name);
+        my $ocid = $oc->get_id;
+        $self->_set(['base_path'], [$fs->cat_dir($self->get_out_dir,
+                                                 'oc_'. $ocid)]);
 
-    # Get a list of server types this categroy applies to.
-    my $bat = $oc_sts->{$ocid} ||=
-      Bric::Dist::ServerType->list({ can_preview       => 1,
-                                     active            => 1,
-                                     output_channel_id => $ocid });
-    # Make sure we have some destinations.
-    unless (@$bat) {
-        if (not PREVIEW_LOCAL) {
-            status_msg_severe('Cannot preview asset "[_1]" because there ' .
-                              'are no Preview Destinations associated with ' .
-                              'its output channels.', $ba->get_name);
-            next;
+        # Get a list of server types this categroy applies to.
+        my $bat = $oc_sts->{$ocid} ||=
+          Bric::Dist::ServerType->list({ can_preview       => 1,
+                                         active            => 1,
+                                         output_channel_id => $ocid });
+        # Make sure we have some destinations.
+        unless (@$bat) {
+            if (not PREVIEW_LOCAL) {
+                status_msg_severe('Cannot preview asset "[_1]" because there ' .
+                                  'are no Preview Destinations associated with ' .
+                                  'its output channels.', $ba->get_name);
+                next;
+            }
         }
-    }
 
-    # Create a job for moving this asset in this output Channel.
-    my $name = 'Preview &quot;' . $ba->get_name . "&quot; in &quot;" .
-      $oc->get_name . "&quot;";
+        # Create a job for moving this asset in this output Channel.
+        my $name = 'Preview &quot;' . $ba->get_name . "&quot; in &quot;" .
+          $oc->get_name . "&quot;";
 
-    my $job = Bric::Dist::Job->new({ sched_time => '',
-                                     user_id => $user_id,
-                                     name => $name,
-                                     server_types => $bat});
+        my $job = Bric::Dist::Job->new({ sched_time => '',
+                                         user_id => $user_id,
+                                         name => $name,
+                                         server_types => $bat});
 
-    my $res = [];
-    # Burn, baby, burn!
-    if ($key eq 'story') {
-        foreach my $cat (@cats) {
-            push @$res, $self->burn_one($ba, $oc, $cat);
-        }
-    } else {
-        my $path = $ba->get_path;
-        my $uri = $ba->get_uri($oc);
-        if ($path && $uri) {
-            my $r = Bric::Dist::Resource->lookup({ path => $path,
-                                                   uri  => $uri })
-              || Bric::Dist::Resource->new
-                ({ path => $path,
-                   media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                   uri => $uri
-                 });
+        my $res = [];
+        # Burn, baby, burn!
+        if ($key eq 'story') {
+            foreach $cat (@cats) {
+                push @$res, $self->burn_one($ba, $oc, $cat);
+            }
+        } else {
+            my $path = $ba->get_path;
+            my $uri = $ba->get_uri($oc);
+            if ($path && $uri) {
+                my $r = Bric::Dist::Resource->lookup({ path => $path,
+                                                       uri  => $uri })
+                  || Bric::Dist::Resource->new
+                    ({ path => $path,
+                       media_type => Bric::Util::MediaType->get_name_by_ext($uri),
+                       uri => $uri
+                     });
 
-            $r->add_media_ids($ba->get_id);
-            $r->save;
-            push @$res, $r;
+                $r->add_media_ids($ba->get_id);
+                $r->save;
+                push @$res, $r;
+            }
         }
-    }
-    # Save the delivery job.
-    $job->add_resources(@$res);
-    $job->save;
-    log_event('job_new', $job);
+        # Save the delivery job.
+        $job->add_resources(@$res);
+        $job->save;
+        log_event('job_new', $job);
 
-    # Execute the job and redirect.
-    status_msg("Distributing files.");
-    # We don't need to execute the job if it has already been executed.
-    $job->execute_me unless ENABLE_DIST;
-    if (PREVIEW_LOCAL) {
-        # Make sure there are some files to redirect to.
-        unless (@$res) {
-            status_msg("No output to preview.");
-            return;
+        # Execute the job and redirect.
+        status_msg("Distributing files.");
+        # We don't need to execute the job if it has already been executed.
+        $job->execute_me unless ENABLE_DIST;
+        if (PREVIEW_LOCAL) {
+            # Make sure there are some files to redirect to.
+            unless (@$res) {
+                status_msg("No output to preview.");
+                return;
+            }
+            # Copy the files for previewing locally.
+            foreach my $rsrc (@$res) {
+                $fs->copy($rsrc->get_path,
+                          $fs->cat_dir($comp_root, PREVIEW_LOCAL,
+                                       $rsrc->get_uri));
+            }
+            # Return the redirection URL.
+            return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
+        } else {
+            # Return the redirection URL, if we have one
+            if (@$bat) {
+                return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
+                  . $res->[0]->get_uri;
+            }
         }
-        # Copy the files for previewing locally.
-        foreach my $rsrc (@$res) {
-            $fs->copy($rsrc->get_path,
-                      $fs->cat_dir($comp_root, PREVIEW_LOCAL,
-                                   $rsrc->get_uri));
-        }
-        $self->_set(['mode'], [undef]);
-        # Return the redirection URL.
-        return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
-    } else {
-        # Return the redirection URL, if we have one
-        $self->_set(['mode'], [undef]);
-        if (@$bat) {
-            return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
-                . $res->[0]->get_uri;
-        }
-    }
+    };
+
+    my $err = $@;
+
+    # Reset and bail.
+    $self->_set(['mode'], [undef]);
+    return $ret unless $err;
+
+    # Handle any exceptions. We must throw a burner exception in order for
+    # it to be displayed properly in the error component. So pass the real
+    # exception as the payload.
+    rethrow_exception $err if isa_bric_exception $err, 'Exception::Burner';
+    throw_burn_error error   => $err->error,
+                     payload => $err,
+                     cat     => ($cat ? $cat->get_uri : ''),
+                     mode    => PREVIEW_MODE,
+                     oc      => $oc->get_name,
+                     elem    => $at->get_name;
 }
 #------------------------------------------------------------------------------#
 
@@ -850,9 +883,12 @@ sub publish {
             my $errstr = q{Cannot publish asset "} . $ba->get_name
               . q{" to "} . $oc->get_name . q{" because there }
                . "are no Destinations associated with this output channel.";
-            $die_err
-              ? throw_gen(error => $errstr)
-              : add_msg($errstr);
+            throw_burn_error error => $errstr,
+                             mode  => $self->get_mode,
+                             oc    => $oc->get_name,
+                             elem  => $at->get_name
+              if $die_err;
+              add_msg($errstr);
             next;
         }
 
@@ -1022,7 +1058,7 @@ sub burn_one {
                  $base_uri, 0]);
 
     # Construct the burner and do it!
-    my ($burner, $at) = $self->_get_subclass($_[0]);
+    my ($burner, $at) = $self->_get_subclass($story);
     $burner->burn_one(@_, $at);
 }
 
@@ -1079,7 +1115,10 @@ actually a page in the story. Caveat templator.
 sub page_file {
     my ($self, $number) = @_;
     return unless defined $number;
-    throw_gen(error => "Page number '$number' not greater than zero")
+    throw_burn_error error => "Page number '$number' not greater than zero",
+                     oc    => $self->get_oc->get_name,
+                     mode  => $self->get_mode,
+                     cat   => $self->get_cat->get_uri
       unless $number > 0;
     my ($fn, $ext) = $self->_get(qw(output_filename output_ext));
     my @page_extensions = $self->get_page_extensions;
@@ -1265,6 +1304,36 @@ sub next_page_uri {
 
 ##############################################################################
 
+=item $b->throw_error($message);
+
+  my $media = $element->get_related_media
+    or $burner->throw_error("Hey, you forgot to associate a media document!");
+
+Throws a Bric::Util::Fault::Exception::Burner::User exception. The error
+message passed as an argument will be displayed in the UI so that your user
+can see any mistakes you caught and fix them.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub throw_error {
+    my ($self, $error) = @_;
+    my ($oc, $cat, $elem) = $self->_get(qw(oc cat element));
+    @_ = (error => $error,
+          mode  => $self->get_mode,
+          oc    => ($oc ? $oc->get_name : ''),
+          cat   => ($cat ? $cat->get_uri : ''),
+          elem  => ($elem ? $elem->get_name : ''));
+    goto &throw_burn_user;
+}
+
+##############################################################################
+
 =back
 
 =head2 Private Instance Methods
@@ -1294,7 +1363,7 @@ sub _get_subclass {
           ? 'Mason'
           : $b == BURNER_TEMPLATE
             ? 'Template'
-            : throw_gen(error => 'Cannot determine template burner subclass.');
+            : throw_gen 'Cannot determine template burner subclass.';
 
         # Instantiate the proper subclass.
         return ($burner_class->new($self), $at);
@@ -1302,7 +1371,7 @@ sub _get_subclass {
     } else {
         # There is no asset type. It could be a template. Find out.
         $asset->key_name eq 'formatting'
-          || throw_gen(error => 'No element associated with asset.');
+          || throw_gen 'No element associated with asset.';
         # Okay, it's a template. Figure out the proper burner from the file name.
         my $file_name = $asset->get_file_name;
         if ($file_name =~ /autohandler$/ || $file_name =~ /\.mc$/) {
@@ -1312,11 +1381,11 @@ sub _get_subclass {
             # It's an HTML::Template template.
             $burner_class .= 'Template';
         } else {
-            throw_gen(error => 'Cannot determine template burner subclass.');
+            throw_gen 'Cannot determine template burner subclass.';
         }
 
         # Instantiate the proper subclass.
-        return ($burner_class->new($self));
+        return $burner_class->new($self);
     }
 }
 

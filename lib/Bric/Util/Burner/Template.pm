@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-09-17 17:30:25 $
 
 =head1 SYNOPSIS
 
@@ -52,9 +52,7 @@ use strict;
 
 use HTML::Template::Expr;
 use Bric::Util::Trans::FS;
-use Bric::Util::Fault::Exception::GEN;
-use Bric::Util::Fault::Exception::AP;
-use Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn);
 use Digest::MD5 qw(md5 md5_hex);
@@ -88,14 +86,14 @@ use constant DEBUG      => 0;
 
 BEGIN {
     Bric::register_fields({
-			   # Private Fields
-			   _template_roots  => Bric::FIELD_NONE,
-			   _res             => Bric::FIELD_NONE,
-			   _output_path     => Bric::FIELD_NONE,
-			   _at              => Bric::FIELD_NONE,
-			   _header          => Bric::FIELD_NONE,
-			   _footer          => Bric::FIELD_NONE,
-			  });
+                           # Private Fields
+                           _template_roots  => Bric::FIELD_NONE,
+                           _res             => Bric::FIELD_NONE,
+                           _output_path     => Bric::FIELD_NONE,
+                           _at              => Bric::FIELD_NONE,
+                           _header          => Bric::FIELD_NONE,
+                           _footer          => Bric::FIELD_NONE,
+                          });
 }
 
 #==============================================================================#
@@ -191,7 +189,7 @@ sub burn_one {
     my ($story, $oc, $cat, $at) = @_;
 
     print STDERR __PACKAGE__, "::burn_one() called.\n"
-	if DEBUG;
+        if DEBUG;
 
     # setup empty state for this burn
     my $res      = [];
@@ -203,17 +201,17 @@ sub burn_one {
 
     # save burn parameters
     $self->_set([qw(_res _at _template_roots)],
-		[$res, $at, $template_roots]);
+                [$res, $at, $template_roots]);
 
     # run the category script if it exists
     if ($self->_find_file('category', '.pl') or
-	$self->_find_file('category', '.tmpl')) {
-	my $category_output = $self->run_script('category', '.pl');
-	if (defined $category_output) {
-	    # get header and footer and save them for _write_pages
-	    my ($header, $footer) = split(/${\CONTENT}/, $category_output, 2);
-	    $self->_set([qw(_header _footer)], [\$header, \$footer]);
-	}
+        $self->_find_file('category', '.tmpl')) {
+        my $category_output = $self->run_script('category', '.pl');
+        if (defined $category_output) {
+            # get header and footer and save them for _write_pages
+            my ($header, $footer) = split(/${\CONTENT}/, $category_output, 2);
+            $self->_set([qw(_header _footer)], [\$header, \$footer]);
+        }
     }
 
     # get the element for the story
@@ -228,8 +226,12 @@ sub burn_one {
     # Return a list of the resources we just burned.
     my $ret = $self->_get('_res') || return;
 
-    throw_ap(error => "No files burnt!")
-	unless @$ret;
+    throw_burn_error error => "No files burned",
+                     mode  => $self->get_mode,
+                     oc    => $oc->get_name,
+                     cat   => $cat->get_uri,
+                     elem  => $element->get_name
+      unless @$ret;
 
     return wantarray ? @$ret : $ret;
 }
@@ -256,23 +258,23 @@ sub chk_syntax {
     my $file_name = $ba->get_file_name;
 
     print STDERR __PACKAGE__, "::chk_syntax() called.\n"
-	if DEBUG;   
+        if DEBUG;
 
     # check a .tmpl template file
     if ($file_name =~ /.tmpl$/) {
-	# includes are trouble for this check because it requires the
-	# same "path" setting as burn_one() and that means calling
-	# _get_template_path() which requires an oc and cat to run,
-	# which aren't available in the chk_syntax context.
-	$data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
+        # includes are trouble for this check because it requires the
+        # same "path" setting as burn_one() and that means calling
+        # _get_template_path() which requires an oc and cat to run,
+        # which aren't available in the chk_syntax context.
+        $data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
 
-	eval { HTML::Template::Expr->new(scalarref => \$data) };
-	if ($@) {
-	    $$err = $@;
-	    $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
-	    return 0;
-	}
-	return 1;
+        eval { HTML::Template::Expr->new(scalarref => \$data) };
+        if ($@) {
+            $$err = $@;
+            $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
+            return 0;
+        }
+        return 1;
     }
 
     # check a .pl Perl script
@@ -340,72 +342,83 @@ B<Notes:> NONE.
 =cut
 
 sub run_script {
-  my ($self, $element) = (shift, shift);
-  my ($story) = $self->get_story;
-  my $template_root = $fs->cat_dir($self->get_comp_dir,
-				   ('oc_' . $self->get_oc->get_id));
+    my ($self, $element) = (shift, shift);
+    my ($story) = $self->get_story;
+    my $template_root = $fs->cat_dir($self->get_comp_dir,
+                                     ('oc_' . $self->get_oc->get_id));
 
-  throw_ap(error => __PACKAGE__ . "::run_script() requires an \$element argument.")
-    unless $element;
+    throw_burn_error error =>  __PACKAGE__ . "::run_script() requires an " .
+                              "\$element argument.",
+                     mode  => $self->get_mode,
+                     oc    => $self->get_oc->get_name,
+                     cat   => $self->get_cat->get_uri
+      unless $element;
 
-  print STDERR __PACKAGE__, "::run_script() called.\n"
-    if DEBUG;
+    print STDERR __PACKAGE__, "::run_script() called.\n" if DEBUG;
 
-  # find script element
-  my $script = $self->_find_file($element, '.pl');
+    # find script element
+    my $script = $self->_find_file($element, '.pl');
 
-  # no script, perform default script action directly
-  if (not defined $script) {
-      return $self->new_template(element => $element)->output();
-  }
+    # Set the element attribute.
+    $self->_set(['element'], [$element]);
 
-  print STDERR __PACKAGE__, "::run_script() : found script file : $script.\n"
-    if DEBUG;
+    # no script, perform default script action directly
+    if (not defined $script) {
+        return $self->new_template(element => $element)->output();
+    }
 
-  # construct package name
+    print STDERR __PACKAGE__, "::run_script() : found script file : $script.\n"
+      if DEBUG;
 
-  # escape everything into valid perl identifiers
-  my $package = $script;
-  $package =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
+    # construct package name
 
-  # second pass for slashes and words starting with a digit
-  $package =~ s{
-		(/+)       # directory
-		(\d?)      # package's first character
-	       }[
-		 "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
-		]egx;
+    # escape everything into valid perl identifiers
+    my $package = $script;
+    $package =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
 
-  # prepend our root package
-  $package = "Bric::Util::Burner::Template::SANDBOX$package";
+    # second pass for slashes and words starting with a digit
+    $package =~ s{
+                  (/+)       # directory
+                  (\d?)      # package's first character
+              }[
+                "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
+               ]egx;
 
-  # read script contents into $sub
-  my $sub = "";
-  print STDERR __PACKAGE__, "::run_script() : reading $script.\n"
-    if DEBUG;
-  open(SCRIPT, $script) or throw_gen(error => "Unable to read $script : $!");
-  while(read(SCRIPT, $sub, 102400, length($sub))) {};
-  close(SCRIPT);
+    # prepend our root package
+    $package = "Bric::Util::Burner::Template::SANDBOX$package";
 
-  # compute md5 for script - used in caching system
-  my $md5 = md5($sub);
+    # read script contents into $sub
+    my $sub = "";
+    print STDERR __PACKAGE__, "::run_script() : reading $script.\n"
+      if DEBUG;
+    open(SCRIPT, $script)
+      or throw_burn_error error =>  "Unable to read $script : $!",
+                          mode  => $self->get_mode,
+                          oc    => $self->get_oc->get_name,
+                          cat   => $self->get_cat->get_uri,
+                          elem  => $element->get_name;
+    while(read(SCRIPT, $sub, 102400, length($sub))) {};
+    close(SCRIPT);
 
-  # check if script is cached and unchanged
-  if (exists $SCRIPT_CACHE{$package} and 
-      $SCRIPT_CACHE{$package} eq $md5) {
-      # compiled code is still good - nothing to do
-      print STDERR __PACKAGE__,
-	"::run_script() : skipping compilation - cached copy still good.\n"
-	  if DEBUG;
-  } else {
-      print STDERR __PACKAGE__, "::run_script() : compiling...\n"
-	  if DEBUG;
+    # compute md5 for script - used in caching system
+    my $md5 = md5($sub);
 
-      # determine filename for #line directive
-      my $line_file = substr($script, length($template_root));
+    # check if script is cached and unchanged
+    if (exists $SCRIPT_CACHE{$package} and 
+        $SCRIPT_CACHE{$package} eq $md5) {
+        # compiled code is still good - nothing to do
+        print STDERR __PACKAGE__,
+        "::run_script() : skipping compilation - cached copy still good.\n"
+          if DEBUG;
+    } else {
+        print STDERR __PACKAGE__, "::run_script() : compiling...\n"
+          if DEBUG;
 
-      # construct the code
-      my $code = <<END;
+        # determine filename for #line directive
+        my $line_file = substr($script, length($template_root));
+
+        # construct the code
+        my $code = <<END;
 package $package;
 use strict;
 use vars ('\$burner', '\$element', '\$story');
@@ -415,37 +428,44 @@ $sub
 }
 1;
 END
-      # compile the code
-      undef &{"$package\::_run_script"}; #avoid warnings
-      my $result = _compile($code);
-      unless ($result) {
-	  throw_ap(error => "Error compiling script.<br>\n<pre>\n$@\n</pre>")
-	      if $@;
-      }
+        # compile the code
+        undef &{"$package\::_run_script"}; #avoid warnings
+        my $result = _compile($code);
+        unless ($result) {
+            throw_burn_error error   =>  "Error compiling script.",
+                             payload => $@,
+                             mode    => $self->get_mode,
+                             oc      => $self->get_oc->get_name,
+                             cat     => $self->get_cat->get_uri,
+                             elem    => $element->get_name
+              if $@;
+        }
 
-      # remember the md5
-      $SCRIPT_CACHE{$package} = $md5;
-  }
+        # remember the md5
+        $SCRIPT_CACHE{$package} = $md5;
+    }
 
-  # setup globals for the script
-  {
-      no strict 'refs';
-      ${"$package\::burner"}  = $self;
-      ${"$package\::story"}   = $story;
-      ${"$package\::element"} = $element;
-  }
+    # setup globals for the script
+    {
+        no strict 'refs';
+        ${"$package\::burner"}  = $self;
+        ${"$package\::story"}   = $story;
+        ${"$package\::element"} = $element;
+    }
 
-  # call the script
-  my $cv = \&{"$package\::_run_script"};
-  my $output;
-  eval { $output = $cv->(@_) };
+    # call the script
+    my $cv = \&{"$package\::_run_script"};
+    my $output;
+    eval { $output = $cv->(@_) };
 
-  if ($@) {
-      $@ =~ s/</&lt;/g;
-      $@ =~ s/>/&gt;/g;
-      throw_ap(error => "Error running script.<br>\n<pre>\n$@\n</pre>");
-  }
-  return $output;
+    throw_burn_error error   =>  "Error running script.",
+                     payload => $@,
+                     mode    => $self->get_mode,
+                     oc      => $self->get_oc->get_name,
+                     cat     => $self->get_cat->get_uri,
+                     elem    => $element->get_name
+      if $@;
+    return $output;
 }
 
 =item $template = $burner->new_template(...)
@@ -506,10 +526,9 @@ See L<Bric::HTMLTemplate> for more examples and discussion.
 
 B<Throws:>
 
-new_template called with odd number of arguments - args should be a list of
-key-value pairs
+new_template called with odd number of arguments.
 
-Unable to find HTML::Template template file ...
+Unable to find HTML::Template template file.
 
 B<Side Effects:>
 
@@ -526,22 +545,25 @@ sub new_template {
     my $self = shift;
 
     print STDERR __PACKAGE__, "::new_template() called.\n"
-	if DEBUG;
+        if DEBUG;
 
     # load args
-    throw_ap(error => "new_template called with odd number of arguments - "
-               . "args should be a list of key-value pairs")
+    throw_burn_error error =>  "new_template called with odd number of"
+                               . " arguments",
+                     mode  => $self->get_mode,
+                     oc    => $self->get_oc->get_name,
+                     cat   => $self->get_cat->get_uri,
       if (@_ % 2);
     my %args = @_;
 
     # pull out params and delete from args
     my $element;
     if (exists $args{element}){
-	$element = $args{element};
+        $element = $args{element};
     } elsif (not exists $args{filename}) {
-	# get the element from the current global setting
-	no strict 'refs';
-	$element = ${(caller)[0] . "::element"};
+        # get the element from the current global setting
+        no strict 'refs';
+        $element = ${(caller)[0] . "::element"};
     }
 
     # need to setup path for includes
@@ -560,18 +582,23 @@ sub new_template {
     delete $args{autofill};
 
     if ($element and not exists $args{filename}) {
-	# find element template file
-	my $file = $self->_find_file($element, '.tmpl');
-	throw_ap(error => "Unable to find HTML::Template template file ("
-                   . _element_filename($element) . ".tmpl)")
-	    unless defined $file;
+        # find element template file
+        my $file = $self->_find_file($element, '.tmpl');
+        throw_burn_error error => "Unable to find HTML::Template template"
+                                  . " file '" . _element_filename($element)
+                                  . ".tmpl)",
+                         mode  => $self->get_mode,
+                         oc    => $self->get_oc->get_name,
+                         cat   => $self->get_cat->get_uri,
+                         elem  => $element->get_name
+          unless defined $file;
 
-	print STDERR __PACKAGE__, "::new_template() : found template file ",
-	  "$file for element $element.\n"
-	    if DEBUG;
+        print STDERR __PACKAGE__, "::new_template() : found template file ",
+          "$file for element $element.\n"
+            if DEBUG;
 
-	# set filename arg
-	$args{filename} = $file;
+        # set filename arg
+        $args{filename} = $file;
     }
 
     # autofill requires die_on_bad_params off for now
@@ -593,22 +620,22 @@ sub new_template {
 
     # autofill with element data
     if ($autofill and $element) {
-	my $story = $self->get_story();
-	# fill in some non-element data
-	$template->param(title => $story->get_title)
+        my $story = $self->get_story();
+        # fill in some non-element data
+        $template->param(title => $story->get_title)
           if $template->query(name => "title");
-	$template->param(page_break => PAGE_BREAK)
+        $template->param(page_break => PAGE_BREAK)
           if $template->query(name => "page_break");
-	$template->param(content => CONTENT)
+        $template->param(content => CONTENT)
           if $template->query(name => "content") and $element eq 'category';
 
-	unless ($element eq 'category') {
-	    # setup data for template
-	    my $data = $self->_build_element_vars($element,
-						  $template,
-						  []);
-	    $template->param($data);
-	}
+        unless ($element eq 'category') {
+            # setup data for template
+            my $data = $self->_build_element_vars($element,
+                                                  $template,
+                                                  []);
+            $template->param($data);
+        }
     }
     return $template;
 }
@@ -695,17 +722,17 @@ sub _build_element_vars {
     # get list of names in this scope
     my %exists;
     if (@$path) {
-	%exists = map { $_ => 1 } $template->query(loop => [ @$path ]);
+        %exists = map { $_ => 1 } $template->query(loop => [ @$path ]);
     } else {
-	%exists = map { $_ => 1 } $template->param();
+        %exists = map { $_ => 1 } $template->param();
     }
 
     # get list of names in element_loop scope
     my %element_loop_exists;
     if (@$path) {
-	%element_loop_exists = map { $_ => 1 } $template->query(loop => [ @$path, 'element_loop' ]);
+        %element_loop_exists = map { $_ => 1 } $template->query(loop => [ @$path, 'element_loop' ]);
     } elsif ($template->param('element_loop')) {
-	%element_loop_exists = map { $_ => 1 } $template->param('element_loop');
+        %element_loop_exists = map { $_ => 1 } $template->param('element_loop');
     }
 
     # counter and loop hashes
@@ -716,82 +743,82 @@ sub _build_element_vars {
     # get link if related
     my ($thing, $link);
     if (($thing = $element->get_related_media()) or
-	($thing = $element->get_related_story())) {
-	$link = $thing->get_primary_uri;
-	$var{link} = $link;
+        ($thing = $element->get_related_story())) {
+        $link = $thing->get_primary_uri;
+        $var{link} = $link;
     }
 
     # loop over elements
     foreach my $e ($element->get_tiles()) {
-	# get a proper name
-	my $name = lc $e->get_key_name;
+        # get a proper name
+        my $name = lc $e->get_key_name;
 
-	print STDERR __PACKAGE__ . "::_build_element_vars : saw $name (",
-	  join(', ', @$path), ")\n" if DEBUG;
+        print STDERR __PACKAGE__ . "::_build_element_vars : saw $name (",
+          join(', ', @$path), ")\n" if DEBUG;
 
-	# incr count
-	$count{$name}++;
+        # incr count
+        $count{$name}++;
 
-	# simple data elements
-	unless ($e->is_container) {
-	    $var{$name} = $e->get_data();
-	    $loop{"$name\_loop"} = [] unless exists $loop{"$name\_loop"};
+        # simple data elements
+        unless ($e->is_container) {
+            $var{$name} = $e->get_data();
+            $loop{"$name\_loop"} = [] unless exists $loop{"$name\_loop"};
 
-	    # push a row for this value
-	    push @{$loop{"$name\_loop"}}, { $name => $var{$name},
-					    "$name\_count" => $count{$name},
-					    "is_$name" => 1,
-					  };
+            # push a row for this value
+            push @{$loop{"$name\_loop"}}, { $name => $var{$name},
+                                            "$name\_count" => $count{$name},
+                                            "is_$name" => 1,
+                                          };
 
-	    # push on the element_loop
-	    push @{$loop{element_loop}}, { $name => $var{$name},
-					   "$name\_count" => $count{$name},
-					   "is_$name" => 1,
-					 };
-	} else {
-	    # container elements
-	    $loop{"$name\_loop"} = [] unless exists $loop{"$name\_loop"};
+            # push on the element_loop
+            push @{$loop{element_loop}}, { $name => $var{$name},
+                                           "$name\_count" => $count{$name},
+                                           "is_$name" => 1,
+                                         };
+        } else {
+            # container elements
+            $loop{"$name\_loop"} = [] unless exists $loop{"$name\_loop"};
 
-	    # recurse into element if we have a matching var
-	    if($exists{$name}) {
-		$var{$name} = $self->run_script($e);
+            # recurse into element if we have a matching var
+            if($exists{$name}) {
+                $var{$name} = $self->run_script($e);
 
-		# push on the element_loop
-		push @{$loop{element_loop}}, { $name => $var{$name},
-					       "$name\_count" => $count{$name},
-					       "is_$name" => 1,
-					     };
+                # push on the element_loop
+                push @{$loop{element_loop}}, { $name => $var{$name},
+                                               "$name\_count" => $count{$name},
+                                               "is_$name" => 1,
+                                             };
 
-		# push on the name_loop
-		push @{$loop{"$name\_loop"}}, { $name => $var{$name},
-						"$name\_count" => $count{$name},
-						"is_$name" => 1,
-					      };
-	    } elsif ($element_loop_exists{$name}) {
-		# or if it just has an element loop entry
-		push @{$loop{element_loop}}, { $name => $self->run_script($e),
-					       "$name\_count" => $count{$name},
-					       "is_$name" => 1,
-					     };
+                # push on the name_loop
+                push @{$loop{"$name\_loop"}}, { $name => $var{$name},
+                                                "$name\_count" => $count{$name},
+                                                "is_$name" => 1,
+                                              };
+            } elsif ($element_loop_exists{$name}) {
+                # or if it just has an element loop entry
+                push @{$loop{element_loop}}, { $name => $self->run_script($e),
+                                               "$name\_count" => $count{$name},
+                                               "is_$name" => 1,
+                                             };
 
-	    } else {
-		# recurse into _build_element_loop if we've got a matching loop
-		push @{$loop{"$name\_loop"}},
-		  { %{$self->_build_element_vars($e,
-						 $template,
-						 [ @$path,
-						   "$name\_loop"
-						 ])},
-		    "$name\_count" => $count{$name},
-		    "is_$name" => 1,
-		  };
-	    }
-	}
+            } else {
+                # recurse into _build_element_loop if we've got a matching loop
+                push @{$loop{"$name\_loop"}},
+                  { %{$self->_build_element_vars($e,
+                                                 $template,
+                                                 [ @$path,
+                                                   "$name\_loop"
+                                                 ])},
+                    "$name\_count" => $count{$name},
+                    "is_$name" => 1,
+                  };
+            }
+        }
     }
 
     foreach my $name (keys %count) {
-	# setup totals
-	$var{"$name\_total"} = $count{$name};
+        # setup totals
+        $var{"$name\_total"} = $count{$name};
     }
     return { %loop, %var };
 }
@@ -825,11 +852,11 @@ sub _find_file {
     # search up category hierarchy
     my @cats = map { $_->get_directory } $self->get_cat->ancestry;
     do {
-	# if the file exists, return it
-	foreach my $troot (@$template_roots) {
-	    my $path = $fs->cat_dir($troot, @cats, $filename);
-	    return $path if -e $path;
-	}
+        # if the file exists, return it
+        foreach my $troot (@$template_roots) {
+            my $path = $fs->cat_dir($troot, @cats, $filename);
+            return $path if -e $path;
+        }
     } while(pop(@cats));
 
     # returns undef if we didn't find anything
@@ -859,9 +886,9 @@ sub _get_template_path {
     my @cats = map { $_->get_directory } $self->get_cat->ancestry;
     my @path;
     do {
-	foreach my $troot (@$template_roots) {
-	    push @path, $fs->cat_dir($troot, @cats);
-	}
+        foreach my $troot (@$template_roots) {
+            push @path, $fs->cat_dir($troot, @cats);
+        }
     } while(pop @cats);
 
     # return path setting
@@ -894,8 +921,8 @@ sub _add_resource {
 
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file}) ||
-	      Bric::Dist::Resource->new({ path => $file,
-					  uri  => $uri});
+              Bric::Dist::Resource->new({ path => $file,
+                                          uri  => $uri});
 
     # Set the media type.
     $res->set_media_type(
@@ -934,48 +961,51 @@ sub _write_pages {
     $footer ||= \"";
 
     print STDERR __PACKAGE__, "::_write_pages() called.\n"
-	if DEBUG;
+        if DEBUG;
 
     # multiple pages?
     if ($$output =~ /${\PAGE_BREAK}/) {
-	my @pages = split /${\PAGE_BREAK}/, $$output;
-	for (my $page = 0; $page < @pages; $page++) {
-	    # skip empty last page
-	    last if $page == $#pages and $pages[$page] =~ /^\s*$/;
+        my @pages = split /${\PAGE_BREAK}/, $$output;
+        for (my $page = 0; $page < @pages; $page++) {
+            # skip empty last page
+            last if $page == $#pages and $pages[$page] =~ /^\s*$/;
 
-	    # compute filename
+            # compute filename
             my $filename = $self->file_filepath($page + 1);
 
-	    print STDERR __PACKAGE__, "::_write_pages() : opening multi page $filename\n"
-		if DEBUG;
+            print STDERR __PACKAGE__, "::_write_pages() : opening multi page $filename\n"
+                if DEBUG;
 
-	    # open new file and write to it
-	    open(OUT, ">$filename")
-              or throw_gen(error => "Unable to open $filename : $!");
-	    print OUT $$header;
-	    print OUT $pages[$page];
-	    print OUT $$footer;
-	    close(OUT);
+            # open new file and write to it
+            open(OUT, ">$filename")
+              or throw_gen error   => "Unable to open $filename",
+                           payload => $!;
+            print OUT $$header;
+            print OUT $pages[$page];
+            print OUT $$footer;
+            close(OUT);
 
-	    # add resource object for this file
+            # add resource object for this file
             my $uri = $self->page_uri($page + 1);
-	    $self->_add_resource($filename, $uri);
-	}
+            $self->_add_resource($filename, $uri);
+        }
     } else {
-	# compute filename
+        # compute filename
         my $filename = $self->file_filepath(1);
 
-	print STDERR __PACKAGE__,
-	  "::_write_pages() : opening single page $filename\n" if DEBUG;
+        print STDERR __PACKAGE__,
+          "::_write_pages() : opening single page $filename\n" if DEBUG;
 
-	# open new file and write to it
-	open(OUT, ">$filename") or throw_gen(error => "Unable to open $filename : $!");
-	print OUT $$header;
-	print OUT $$output;
-	print OUT $$footer;
-	close(OUT);
+        # open new file and write to it
+        open(OUT, ">$filename")
+          or throw_gen error   => "Unable to open $filename",
+                       payload => $!;
+        print OUT $$header;
+        print OUT $$output;
+        print OUT $$footer;
+        close(OUT);
 
-	# add resource object for this file
+        # add resource object for this file
         my $uri = $self->page_uri(1);
         $self->_add_resource($filename, $uri);
     }

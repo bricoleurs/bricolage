@@ -161,6 +161,11 @@ story. [David]
 
 =item *
 
+Made User Group Permissions UI wieldy with larger numbers of users by
+adding a select list to choose which type of Permission to look at. [Scott]
+
+=item *
+
 Added ability to preview stories in a selection of output channels in the View
 (read-only) story profile. [David]
 
@@ -202,16 +207,21 @@ searching for and returning all of the stories and media in the database. This
 will help prevent thousands or tens of thousands of assets from being
 displayed in the UI and sucking up all the resources on the server. [David]
 
-=back
+=item *
 
-=head2 Bug Fixes
-
-=over 4
+Added "element" attribute to Bric::Util::Burner so that
+C<< $burner->get_element >> should always return the element currently being
+burned. [David]
 
 =item *
 
-Made User Group Permissions UI wieldy with larger numbers of users by
-adding a select list to choose which type of Permission to look at. [Scott]
+Added burner-specific exceptions with context information, including current
+output channel, current category, and current element. [David]
+
+=item *
+
+Added a C<throw_error()> method to Bric::Util::Burner so that template developers
+can easily throw an exception that their users will see in the UI. [David]
 
 =back
 
