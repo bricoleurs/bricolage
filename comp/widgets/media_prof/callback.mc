@@ -29,7 +29,8 @@ my $handle_update = sub {
       if $param->{"$widget|source__id"};
 
     $media->set_category__id($param->{"$widget|category__id"})
-      if (defined($param->{"$widget|category__id"}) && ($media->get_category__id ne $param->{"$widget|category__id"}));
+      if defined $param->{"$widget|category__id"}
+      && $media->get_category__id ne $param->{"$widget|category__id"};
 
     # set the name
     $media->set_title($param->{title})
@@ -50,20 +51,20 @@ my $handle_update = sub {
 
     # Check for file
     if ($param->{"$widget|file"} ) {
-	my $upload = $r->upload;
-	my $fh = $upload->fh;
-	my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
-	  $m->comp('/widgets/util/detectAgent.mc')->{os});
-	$media->upload_file($fh, $filename);
-	$media->set_size($upload->size);
+        my $upload = $r->upload;
+        my $fh = $upload->fh;
+        my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
+          $m->comp('/widgets/util/detectAgent.mc')->{os});
+        $media->upload_file($fh, $filename);
+        $media->set_size($upload->size);
 
-	my $type          = $upload->type;
-	my $media_type    = Bric::Util::MediaType->lookup({'name' => $type});
-	my $media_type_id = $media_type ? $media_type->get_id : 0;
+        my $type          = $upload->type;
+        my $media_type    = Bric::Util::MediaType->lookup({'name' => $type});
+        my $media_type_id = $media_type ? $media_type->get_id : 0;
 
-	$media->set_media_type_id($media_type_id);
+        $media->set_media_type_id($media_type_id);
 
-	log_event('media_upload', $media);
+        log_event('media_upload', $media);
     }
     set_state_data($widget, 'media', $media);
 };
@@ -113,41 +114,21 @@ my $handle_save = sub {
     $media ||= get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
-    my $msg = $media->check_uri();
-
-    if ($msg) {
+    if (my $msg = $media->check_uri) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
                 "Please change the category, cover date, or file name.");
         return;
     }
 
-    my $work_id = get_state_data($widget, 'work_id');
-
-    if ($work_id) {
-	$media->set_workflow_id($work_id);
-	$media->activate;
-
-	# Figure out what desk this media should be in.
-	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
-	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
-
-	my $start_desk = $wf->get_start_desk;
-
-	# Send this media to the first desk.
-	$start_desk->accept({'asset' => $media});
-	$start_desk->save;
-	log_event('media_moved', $media, { Desk => $start_desk->get_name });
-    }
-
     if ($param->{"$widget|delete"}) {
-	# Delete the media.
-	$handle_delete->($media);
+        # Delete the media.
+        $handle_delete->($media);
     } else {
-	# Make sure the media is activated and then save it.
-	$media->activate();
-	$media->save();
-	log_event('media_save', $media);
-	add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
+        # Make sure the media is activated and then save it.
+        $media->activate();
+        $media->save();
+        log_event('media_save', $media);
+        add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -155,7 +136,7 @@ my $handle_save = sub {
     # Clear the state and send 'em home.
     clear_state($widget);
 
-	if ($return eq 'search') {
+    if ($return eq 'search') {
         my $workflow_id = $media->get_workflow_id();
         my $url = $SEARCH_URL . $workflow_id . '/';
         set_redirect($url);
@@ -190,10 +171,10 @@ my $handle_checkin = sub {
     my $work_id = get_state_data($widget, 'work_id');
 
     if ($work_id) {
-	$media->set_workflow_id($work_id);
+        $media->set_workflow_id($work_id);
 
-	my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
+        my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
+        log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     }
 
     $media->checkin();
@@ -201,19 +182,19 @@ my $handle_checkin = sub {
     my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
     my $cur_desk = $media->get_current_desk();
 
-	my $no_log;
+        my $no_log;
     if ($cur_desk) {
-	if ($cur_desk->get_id() == $desk_id) {
+        if ($cur_desk->get_id() == $desk_id) {
             $no_log = 1;
         } else {
-	    $cur_desk->transfer({
-				 to    => $desk,
-				 asset => $media
-				});
-	    $cur_desk->save();
-	}
+            $cur_desk->transfer({
+                                 to    => $desk,
+                                 asset => $media
+                                });
+            $cur_desk->save();
+        }
     } else {
-	$desk->accept({'asset' => $media});
+        $desk->accept({'asset' => $media});
     }
     $desk->save;
     my $dname = $desk->get_name;
@@ -227,7 +208,7 @@ my $handle_checkin = sub {
     # Clear the state out.
     clear_state($widget);
     add_msg("Media &quot;" . $media->get_title . "&quot; saved and moved to"
-	    . " &quot;$dname&quot;.");
+            . " &quot;$dname&quot;.");
 
     # Set the redirect to the page we were at before here.
     set_redirect("/");
@@ -235,6 +216,7 @@ my $handle_checkin = sub {
     # Remove this page from history.
     pop_page;
 };
+
 ################################################################################
 
 my $handle_checkin_and_pub = sub {
@@ -252,7 +234,7 @@ my $handle_checkin_and_pub = sub {
     } else {
         $work_id = $media->get_workflow_id();
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-       	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
+        log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     }
 
     $media->checkin;
@@ -326,44 +308,25 @@ my $handle_save_stay = sub {
     $media->activate();
     $media->save();
 
-    my $msg = $media->check_uri();
-
-    if ($msg) {
+    if (my $msg = $media->check_uri) {
         add_msg("The URI of this media conflicts with that of '$msg'. " .
                 "Please change the category, cover date, or file name.");
         return;
     }
 
-    if ($work_id) {
-	$media->set_workflow_id($work_id);
-
-	# Figure out what desk this media should be in.
-	my $wf = Bric::Biz::Workflow->lookup({'id' => $work_id});
-	log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
-
-	my $start_desk = $wf->get_start_desk;
-
-	# Send this media to the first desk.
-	$start_desk->accept({'asset' => $media});
-	$start_desk->save;
-	log_event('media_moved', $media, { Desk => $start_desk->get_name });
-	set_state_data($widget, 'work_id', '');
-    }
-
     if ($param->{"$widget|delete"}) {
-	# Delete the media.
-	$handle_delete->($media);
-	# Get out of here, since we've blow it away!
-	set_redirect("/");
-	pop_page();
-	clear_state($widget);
+        # Delete the media.
+        $handle_delete->($media);
+        # Get out of here, since we've blow it away!
+        set_redirect("/");
+        pop_page();
+        clear_state($widget);
     } else {
-	# Make sure the media is activated and then save it.
-	$media->activate;
-	$media->save;
-	log_event('media_save', $media);
-	add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
-	set_state_data($widget, 'work_id', '');
+        # Make sure the media is activated and then save it.
+        $media->activate;
+        $media->save;
+        log_event('media_save', $media);
+        add_msg("Media &quot;" . $media->get_title . "&quot; saved.");
     }
 
     # Set the state.
@@ -389,32 +352,32 @@ my $handle_return = sub {
     my ($widget, $field, $param) = @_;
     my $version_view = get_state_data($widget, 'version_view');
 
-	my $media = get_state_data($widget, 'media');
+        my $media = get_state_data($widget, 'media');
 
     if ($version_view) {
-	my $media_id = $media->get_id();
-	clear_state($widget);
-	set_redirect("/workflow/profile/media/$media_id/?checkout=1");
+        my $media_id = $media->get_id();
+        clear_state($widget);
+        set_redirect("/workflow/profile/media/$media_id/?checkout=1");
     } else {
-	my $state = get_state_name($widget);
-	my $url;
-	my $return = get_state_data($widget, 'return') || '';
-	my $wid = $media->get_workflow_id;
+        my $state = get_state_name($widget);
+        my $url;
+        my $return = get_state_data($widget, 'return') || '';
+        my $wid = $media->get_workflow_id;
 
-	if ($return eq 'search') {
-	    $wid = get_state_data('workflow', 'work_id') || $wid;
-	    $url = $SEARCH_URL . $wid . '/';
-	} elsif ($return eq 'active') {
-	    $url = $ACTIVE_URL . $wid;
-	} elsif ($return =~ /\d+/) {
-	    $url = $DESK_URL . $wid . '/' . $return . '/';
-	} else {
-	    $url = '/';
-	}
+        if ($return eq 'search') {
+            $wid = get_state_data('workflow', 'work_id') || $wid;
+            $url = $SEARCH_URL . $wid . '/';
+        } elsif ($return eq 'active') {
+            $url = $ACTIVE_URL . $wid;
+        } elsif ($return =~ /\d+/) {
+            $url = $DESK_URL . $wid . '/' . $return . '/';
+        } else {
+            $url = '/';
+        }
 
-	# Clear the state and send 'em home.
-	clear_state($widget);
-	set_redirect($url);
+        # Clear the state and send 'em home.
+        clear_state($widget);
+        set_redirect($url);
     }
 };
 
@@ -424,7 +387,8 @@ my $handle_create = sub {
     my ($widget, $field, $param, $WORK_ID) = @_;
 
     # Check permissions.
-    my $gid = Bric::Biz::Workflow->lookup({ id => $WORK_ID })->get_all_desk_grp_id;
+    my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
+    my $gid = $wf->get_all_desk_grp_id;
     chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
     # get the asset type
@@ -432,37 +396,46 @@ my $handle_create = sub {
     my $element = Bric::Biz::AssetType->lookup({ id => $at_id });
 
     # determine the package to which this belongs
-    my $pkg = $element->get_biz_class();
+    my $pkg = $element->get_biz_class;
 
-    my $init = {
-		element => $element,
-		source__id => $param->{"$widget|source__id"},
-		priority   => $param->{priority},
-		cover_date => $param->{cover_date},
-		title       => $param->{title},
-		user__id   => get_user_id,
-		category__id	=> $param->{"$widget|category__id"}
-	       };
+    my $init = { element => $element,
+                 source__id   => $param->{"$widget|source__id"},
+                 priority     => $param->{priority},
+                 cover_date   => $param->{cover_date},
+                 title        => $param->{title},
+                 user__id     => get_user_id,
+                 category__id => $param->{"$widget|category__id"}
+               };
 
-    # bless a new object into this package
+    # Create the media object.
     my $media = $pkg->new($init);
 
-    # Keep this object deactivated until they actually save it.
-    $media->deactivate;
+    # Set the workflow this media should be in.
+    $media->set_workflow_id($WORK_ID);
 
     # Save the media object.
     $media->save;
 
-    # Log that a new media has been created.
-    log_event('media_new', $media);
+    # Send this media to the first desk.
+    my $start_desk = $wf->get_start_desk;
+    $start_desk->accept({ asset => $media });
+    $start_desk->save;
 
-    # store the state to use it in a bit
+    # Log that a new media has been created and generally handled.
+    log_event('media_new', $media);
+    log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
+    log_event('media_moved', $media, { Desk => $start_desk->get_name });
+    log_event('media_save', $media);
+    add_msg("Media &quot;" . $media->get_title . "&quot; created and saved.");
+
+    # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
+    set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
     set_redirect('/workflow/profile/media/'.$media->get_id.'/');
 
-    # As far as history is concerned, this page should be part of the story
+    # As far as history is concerned, this page should be part of the media
     # profile stuff.
     pop_page;
 };
@@ -471,7 +444,6 @@ my $handle_create = sub {
 
 my $handle_contributors = sub {
     my ($widget, $field, $param) = @_;
-
     set_redirect("/workflow/profile/media/contributors.html");
 };
 
@@ -486,12 +458,12 @@ my $handle_assoc_contrib = sub {
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
-	set_state_data($widget, 'contrib', $contrib);
-	set_redirect("/workflow/profile/media/contributor_role.html");
+        set_state_data($widget, 'contrib', $contrib);
+        set_redirect("/workflow/profile/media/contributor_role.html");
     } else {
-	$media->add_contributor($contrib);
-	log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-#	add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
+        $media->add_contributor($contrib);
+        log_event('media_add_contrib', $media, { Name => $contrib->get_name });
+#       add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     }
 };
 
@@ -530,76 +502,69 @@ my $handle_unassoc_contrib = sub {
 ################################################################################
 
 my $save_contrib = sub {
-	my ($widget, $param) = @_;
+    my ($widget, $param) = @_;
+    # get the contribs to delete
+    my $media = get_state_data($widget, 'media');
+    my $existing;
 
-	# get the contribs to delete
-	my $media = get_state_data($widget, 'media');
+    foreach ($media->get_contributors) {
+        my $id = $_->get_id();
+        $existing->{$id} = 1;
+    }
 
-	my $existing;
-	foreach ($media->get_contributors) {
-		my $id = $_->get_id();
-		$existing->{$id} = 1;
-	}
+    chk_authz($media, EDIT);
+    my $contrib_id = $param->{$widget.'|delete_id'};
+    my $msg;
+    if ($contrib_id) {
+        if (ref $contrib_id) {
+            $msg = 'Contributors ';
+            $media->delete_contributors($contrib_id);
+            foreach (@$contrib_id) {
+                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
+                  ({ id => $_ });
+                $msg .= "&quot;" . $contrib->get_name . "&quot;";
+                delete $existing->{$_};
+            }
+            $msg .= ' disassociated.';
+        } else {
+            $media->delete_contributors([$contrib_id]);
+            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
+              ({ id => $contrib_id });
+            delete $existing->{$contrib_id};
+            $msg = 'Contributor &quot;' . $contrib->get_name .
+              "&quot; disassociated.";
+        }
+    }
+    add_msg($msg) if $msg;
 
-	chk_authz($media, EDIT);
-	my $contrib_id = $param->{$widget.'|delete_id'};
-	my $msg;
-	if ($contrib_id) {
-		if (ref $contrib_id) {
-			$msg = 'Contributors ';
-			$media->delete_contributors($contrib_id);
-			foreach (@$contrib_id) {
-				my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-					{ id => $_ });
-				$msg .= "&quot;" . $contrib->get_name . "&quot;";
-				delete $existing->{$_};
-			}
-			$msg .= ' disassociated.';
-		} else {
-			$media->delete_contributors([$contrib_id]);
-			my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-				{ id => $contrib_id });
-			delete $existing->{$contrib_id};
-			$msg = 'Contributor &quot;' . $contrib->get_name .
-			"&quot; disassociated.";
-		}
-	}
-	add_msg($msg) if $msg;
+    # Get the remaining contributors and reorder
+    foreach (keys %$existing) {
+        my $key = $widget . '|reorder_' . $_;
+        my $place = $param->{$key};
+        $existing->{$_} = $place;
+    }
 
-	# get the remaining
-	# and reorder
-	foreach (keys %$existing) {
-		my $key = $widget . '|reorder_' . $_;
-		my $place = $param->{$key};
-		$existing->{$_} = $place;
-	}
-
-	my @no;
-	@no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-	$media->reorder_contributors(@no);
-
-	# and that's that
+    my @no;
+    @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
+    $media->reorder_contributors(@no);
 };
 
 ################################################################################
 
 my $handle_save_contrib = sub {
-	my ($widget, $field, $param) = @_;
-
-	$save_contrib->($widget, $param);
-
-	# Set a redirect for the previous page.
-	set_redirect(last_page);
-	# Pop this page off the stack.
-	pop_page;
+    my ($widget, $field, $param) = @_;
+    $save_contrib->($widget, $param);
+    # Set a redirect for the previous page.
+    set_redirect(last_page);
+    # Pop this page off the stack.
+    pop_page;
 };
 
 ##############################################################################i
 
 my $handle_save_and_stay_contrib = sub {
-	my ($widget, $field, $param) = @_;
-
-	$save_contrib->($widget, $param);
+    my ($widget, $field, $param) = @_;
+    $save_contrib->($widget, $param);
 };
 
 ###############################################################################
@@ -625,10 +590,10 @@ my $handle_notes = sub {
 ################################################################################
 
 my $handle_trail = sub {
-	my ($widget, $field, $param, $WORK_ID) = @_;
-	my $media = get_state_data($widget, 'media');
-	my $id = $media->get_id();
-	set_redirect("/workflow/trail/media/$id");
+    my ($widget, $field, $param, $WORK_ID) = @_;
+    my $media = get_state_data($widget, 'media');
+    my $id = $media->get_id();
+    set_redirect("/workflow/trail/media/$id");
 };
 
 ################################################################################
@@ -640,66 +605,66 @@ my $handle_recall = sub {
     my %wfs;
 
     foreach (@$ids) {
-	my ($o_id, $w_id) = split('\|', $_);
-	my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $o_id});
-	if (chk_authz($ba, EDIT, 1)) {
-	    my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
+        my ($o_id, $w_id) = split('\|', $_);
+        my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $o_id});
+        if (chk_authz($ba, EDIT, 1)) {
+            my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
-	    # Put this formatting asset into the current workflow and log it.
-	    $ba->set_workflow_id($w_id);
-	    log_event('media_add_workflow', $ba, { Workflow => $wf->get_name });
+            # Put this formatting asset into the current workflow and log it.
+            $ba->set_workflow_id($w_id);
+            log_event('media_add_workflow', $ba, { Workflow => $wf->get_name });
 
-	    # Get the start desk for this workflow.
-	    my $start_desk = $wf->get_start_desk;
+            # Get the start desk for this workflow.
+            my $start_desk = $wf->get_start_desk;
 
-	    # Put this formatting asset on to the start desk.
-	    $start_desk->accept({'asset' => $ba});
-	    $start_desk->checkout($ba, get_user_id);
-	    $start_desk->save;
-	    log_event('media_moved', $ba, { Desk => $start_desk->get_name });
+            # Put this formatting asset on to the start desk.
+            $start_desk->accept({'asset' => $ba});
+            $start_desk->checkout($ba, get_user_id);
+            $start_desk->save;
+            log_event('media_moved', $ba, { Desk => $start_desk->get_name });
             log_event('media_checkout', $ba);
-	} else {
-	    add_msg("Permission to checkout &quot;" . $ba->get_name
-		    . "&quot; denied");
-	}
+        } else {
+            add_msg("Permission to checkout &quot;" . $ba->get_name
+                    . "&quot; denied");
+        }
     }
 
     if (@$ids > 1) {
-	# Go to 'my workspace'
-	set_redirect("/");
+        # Go to 'my workspace'
+        set_redirect("/");
     } else {
-	my ($o_id, $w_id) = split('\|', $ids->[0]);
-	# Go to the profile screen
-	set_redirect('/workflow/profile/media/'.$o_id.'?checkout=1');
+        my ($o_id, $w_id) = split('\|', $ids->[0]);
+        # Go to the profile screen
+        set_redirect('/workflow/profile/media/'.$o_id.'?checkout=1');
     }
 };
 
 ################################################################################
 
 my $handle_checkout = sub {
-	my ($widget, $field, $param) = @_;
-	my $ids = $param->{$field};
-	$ids = ref $ids ? $ids : [$ids];
+    my ($widget, $field, $param) = @_;
+    my $ids = $param->{$field};
+    $ids = ref $ids ? $ids : [$ids];
 
-	foreach (@$ids) {
-		my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $_});
-		if (chk_authz($ba, EDIT, 1)) {
-			$ba->checkout({'user__id' => get_user_id});
-			$ba->save;
+    foreach (@$ids) {
+        my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $_});
+        if (chk_authz($ba, EDIT, 1)) {
+            $ba->checkout({'user__id' => get_user_id});
+            $ba->save;
+            # Log Event.
+            log_event('media_checkout', $ba);
+        } else {
+            add_msg("Permission to checkout &quot;" .
+                    $ba->get_name . "&quot; denied");
+        }
+    }
 
-			# Log Event.
-			log_event('media_checkout', $ba);
-		} else {
-			add_msg("Permission to checkout &quot;" .
-					$ba->get_name . "&quot; denied");
-		}
-	}
     if (@$ids > 1) {
-	# Go to 'my workspace'
-	set_redirect("/");
+        # Go to 'my workspace'
+        set_redirect("/");
     } else {
-	# Go to the profile screen
-	set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
+        # Go to the profile screen
+        set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
     }
 };
 
@@ -709,33 +674,33 @@ my $handle_checkout = sub {
 ##########################
 
 my %cbs = (
-	   # create a media asset
-	   create_cb             => $handle_create,
-	   # redirect to edit notes page
-	   notes_cb              => $handle_notes,
-	   # called on all updates the fields
-	   update_pc             => $handle_update,
-	   # final save
-	   save_cb               => $handle_save,
-	   # Return to the workspace without saving.
-	   return_cb             => $handle_return,
-	   # downloads the file to the user
-	   contributors_cb       => $handle_contributors,
-	   assoc_contrib_cb      => $handle_assoc_contrib,
-	   assoc_contrib_role_cb => $handle_assoc_contrib_role,
-	   unassoc_contrib_cb    => $handle_unassoc_contrib,
-	   leave_contrib_cb      => $handle_leave_contrib,
-	   trail_cb              => $handle_trail,
-	   cancel_cb		 => $handle_cancel,
-	   recall_cb             => $handle_recall,
-	   checkout_cb		 => $handle_checkout,
-	   view_cb		 => $handle_view,
-	   revert_cb		 => $handle_revert,
-	   save_and_stay_cb	 => $handle_save_stay,
-	   checkin_cb		 		=> $handle_checkin,
-	   checkin_and_pub_cb	 => $handle_checkin_and_pub,
-	   save_contrib_cb 		=> $handle_save_contrib,
-	   save_and_stay_contrib_cb => $handle_save_and_stay_contrib
+           # create a media asset
+           create_cb             => $handle_create,
+           # redirect to edit notes page
+           notes_cb              => $handle_notes,
+           # called on all updates the fields
+           update_pc             => $handle_update,
+           # final save
+           save_cb               => $handle_save,
+           # Return to the workspace without saving.
+           return_cb             => $handle_return,
+           # downloads the file to the user
+           contributors_cb       => $handle_contributors,
+           assoc_contrib_cb      => $handle_assoc_contrib,
+           assoc_contrib_role_cb => $handle_assoc_contrib_role,
+           unassoc_contrib_cb    => $handle_unassoc_contrib,
+           leave_contrib_cb      => $handle_leave_contrib,
+           trail_cb              => $handle_trail,
+           cancel_cb             => $handle_cancel,
+           recall_cb             => $handle_recall,
+           checkout_cb           => $handle_checkout,
+           view_cb               => $handle_view,
+           revert_cb             => $handle_revert,
+           save_and_stay_cb      => $handle_save_stay,
+           checkin_cb                           => $handle_checkin,
+           checkin_and_pub_cb    => $handle_checkin_and_pub,
+           save_contrib_cb              => $handle_save_contrib,
+           save_and_stay_contrib_cb => $handle_save_and_stay_contrib
 
 );
 </%once>
@@ -751,6 +716,7 @@ my $WORK_ID = get_state_data($widget, 'work_id');
 if (exists $cbs{$cb}) {
     $cbs{$cb}->($widget, $field, $param, $WORK_ID);
 } else {
-    die "No callback for $cb\n";
+    die Bric::Util::Fault::Exception::Ap->new
+      ({ msg => "No callback for $cb in media profile" })
 }
 </%init>

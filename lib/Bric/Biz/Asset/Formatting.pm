@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.27.2.2 $
+$Revision: 1.27.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.27.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-27 03:31:55 $
+$Date: 2002-11-07 23:45:07 $
 
 =head1 SYNOPSIS
 
@@ -349,7 +349,8 @@ sub new {
     my $self = bless {}, $class;
 
     # set active unless we we passed another value
-    $init->{_active} = delete $init->{active} ? 1 : 0;
+    $init->{_active} = exists $init->{active} ?
+      delete $init->{active} ? 1 : 0 : 1;
     $init->{modifier} = $init->{user__id};
     $init->{checked_out} = 1;
     $init->{deploy_status} = 0;
