@@ -266,6 +266,8 @@ ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/gra
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
 
+install-database: ${INST}/installed-database
+
 uninstall-database:
 	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
@@ -296,15 +298,16 @@ dep: cpan
 # This now tries to install Bundle:Bricolage every time
 # provided we have net access...
 cpan: ${INST}/missing_modules
-ifeq (CPAN_WORKS,yes)
+ifeq (${CPAN_WORKS},yes)
 	export POSTGRES_INCLUDE=`${PG_CONFIG} --includedir`
 	export POSTGRES_LIB=`${PG_CONFIG} --libdir`
 	${PERL} -MCPAN -e 'install Bundle::Bricolage' 
 endif
 
 ${INST}/missing_modules:
-	for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
-	
+      for M in ${MISSING_MODULES} ; do echo "$$M\n" >> $@ ; done
+
+
 # These targets are unused for the moment
 ${CPAN_TARGETS}:
 	#${PERL} -MCPAN -e '$$m = "$(@F)" ;$$m =~ s/\./:/g ; install $$m' 
