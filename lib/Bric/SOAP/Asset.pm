@@ -14,7 +14,7 @@ use IO::Scalar;
 
 BEGIN {
     # XXX Turn off warnings so that we don't get XML::Writer's
-    # Parameterless "use IO" deprecated' waring.
+    # Parameterless "use IO" deprecated warning.
     local $^W;
     require XML::Writer;
 }
@@ -30,19 +30,19 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::Category - SOAP interface to Bricolage categories.
+Bric::SOAP::Asset - base class for SOAP "asset" classes
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-12 21:14:19 $
+$Date: 2004-03-15 14:47:26 $
 
 =over 4
 
