@@ -25,7 +25,7 @@ if ($class) {
 } else {
     $class = 'this page';
 }
-$m->out('<p class="header">',
+$m->out('<p>',
         $lang->maketext('You have not been granted <b>[_1]</b> ' .
                         'access to the <b>[_2]</b> [_3]',
                         $map->{$perm}, $name, $class),

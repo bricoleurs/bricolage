@@ -66,14 +66,6 @@ $m->out($ieSpacer, '<br />');
 
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
-# Button at bottom
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
-         caption => 'Submit',
-         number  => 2,
-         ghostly => 1
-     );
-
-
 # Have to use a separate hidden field as IE only sent desk_asset|clone_cb.x
 # and .y, but not desk_asset|clone_cb with value=$sid
 $m->comp('/widgets/profile/hidden.mc',
@@ -82,7 +74,6 @@ $m->comp('/widgets/profile/hidden.mc',
 $m->comp('/widgets/profile/create_button.html',
          widget => '', cb => '');
 
-# (implicit table_bottom...)
 </%perl>
 <%args>
 $widget

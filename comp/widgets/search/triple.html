@@ -7,25 +7,16 @@ $disp_field
 $groupList
 </%args>
 
-%#--- Initialization ---#
-<%init>
-my $agent = detect_agent();
-my $spacerRow = (! $agent->ie) ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
-</%init>
+<form action="<% $r->uri %>" method="post">
 
-<FORM action="<% $r->uri %>" method="post">
-<table border=0 cellpadding=0 cellspacing=0 width=580>
+<& '/widgets/wrappers/sharky/table_top.mc',
+              caption => $lang->maketext('Search'),
+              search  => 1 
+&>
+
+<table border=0 cellpadding=0 cellspacing=0>
 <tr>
-  <td class=darkHeader valign=top width=13><img src="/media/images/666633_curve_left.gif" width=13 height=18></td>
-  <td class=darkHeader width=556><% $lang->maketext('SEARCH') %></td>
-  <td class=darkHeader valign=top width=13 align=right><img src="/media/images/666633_curve_right.gif" width=13 height=18></td>
-</tr>
-</table>
-<table border=0 cellpadding=0 cellspacing=0 width=580>
-<tr>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
-  <td class=lightHeader>
-<% $spacerRow %>
+  <td>
   <%perl>
   $m->comp("substr.html",
 	   widget     => $widget,
@@ -44,12 +35,9 @@ my $spacerRow = (! $agent->ie) ? '<img src="/media/images/spacer.gif" width=550 
 % $m->out($groupList);
   
   </td>
-  <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
-</tr>
-<tr>
-  <td class=darkHeader width=580 colspan=3><img src="/media/images/spacer.gif" width=580 height=1></td>
 </tr>
 </table>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 %#--- Log History ---#
 </form>
 

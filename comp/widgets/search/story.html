@@ -10,9 +10,6 @@ $wf
 
 %#--- Initialization ---#
 <%init>
-my $agent = detect_agent();
-my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
-
 my $advanced_search = get_state_data($widget, 'advanced_search')
   || get_pref('Default Search');
 
@@ -32,23 +29,28 @@ my $asset_opts = $advanced_search ? {
 <form action="<% $r->uri %>" method="post">
 % }
 
-<table border=0 cellpadding=0 cellspacing=0 width=580>
+<%perl>
+my $caption;
+unless ($advanced_search) {
+    $caption = sprintf(qq{%s ~[<a href="%s?%s|set_advanced_cb=1" class="switchSearch">%s</a>~]},
+                   $lang->maketext('Search'),
+                   $r->uri,
+                   $widget,
+                   $lang->maketext('Advanced Search'));
+} else {
+    $caption = sprintf(qq{%s ~[<a href="%s?%s|unset_advanced_cb=1" class="switchSearch">%s</a>~]},
+                   $lang->maketext('Advanced Search'),
+                   $r->uri,
+                   $widget,
+                   $lang->maketext('Simple Search'));
+}
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+              caption => $caption,
+              search  => 1);
+</%perl>
+<table border=0 cellpadding=0 cellspacing=0>
 <tr>
-
-  <td class="darkHeader" valign="top" width="13"><img src="/media/images/666633_curve_left.gif" width="13" height="18"></td>
-% unless ($advanced_search) {
-<td class=darkHeader width=556><% $lang->maketext('SEARCH') %> [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink"><%$lang->maketext('Advanced Search')%></a> ]</td>
-% } else {
-  <td class=darkHeader width=556><% $lang->maketext('ADVANCED SEARCH') %> [ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink"><% $lang->maketext('Simple Search') %></a> ]</td>
-% }
-  <td class="darkHeader" valign="top" width="13" align="right"><img src="/media/images/666633_curve_right.gif" width="13" height="18"></td>
-</tr>
-</table>
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr>
-  <td class="darkHeader"><img src="/media/images/spacer.gif" width=1 height=1></td>
-  <td class=lightHeader>
-<% $spacerRow %>
+  <td>
             <table>
 % unless ($advanced_search) {
               <tr>
@@ -211,12 +213,10 @@ my $asset_opts = $advanced_search ? {
 % } # unless ($advanced_search) {
             </table>
   </td>
-  <td class="darkHeader"><img src="/media/images/spacer.gif" width=1 height=1></td>
-</tr>
-<tr>
-  <td class="darkHeader" width="580" colspan="2"><img src="/media/images/spacer.gif" width="580" height="1"></td>
 </tr>
 </table>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 % if ($advanced_search) {
   <p></p>
   <input type="image" src="/media/images/<% $lang_key %>/search_lgreen.gif" border=0 name="<% $widget %>|story_cb" value="Search">

@@ -73,14 +73,9 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out($ieSpacer, "<br />");
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => "Submit",
-         number  => 2,
-         ghostly => 1
-        );
-
 $m->comp('/widgets/profile/create_button.html',
          widget => $widget);
+
 </%perl>
 <%args>
 $widget

@@ -22,4 +22,5 @@ Generates the bottom of a table by simply closing the appropriate <div> tag.
 =cut
 
 </%doc>
+  </div>
 </div>

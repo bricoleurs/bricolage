@@ -1,10 +1,7 @@
-<table border=0 cellpadding=0 cellspacing=0 width=580>
-  <tr>
-    <td class=<% $tab %> valign=top width=11><% $curve_left %></td>
-    <td class=<% $tab %> width=558>&nbsp;<% uc($title) %></td>
-    <td class=<% $tab %> valign=top width=11 align=right><img src="<% $curve_right %>" width=11 height=19></td>
-  </tr>
-</table>
+<& '/widgets/wrappers/sharky/table_top.mc',
+        caption => $title,
+        number => $number
+&>
 
 % if ($addition) {
 <table border="0" cellpadding="0" cellspacing="0" width="580">
@@ -109,6 +106,7 @@
 %     }
 % }
 </table>
+<& "/widgets/wrappers/sharky/table_bottom.mc" &>
 
 %#--- END HTML ---#
 
@@ -155,7 +153,7 @@ my $sort_col  = 0;
 
 # Figure out where we are.
 my ($section) = parse_uri($r->uri);
-my ($tab, $curve_left, $curve_right, $sort_class, $scolor, $ccolor, $sscolor);
+my ($sort_class, $scolor, $ccolor, $sscolor);
 
 if ($section eq 'admin') {
     ($ccolor, $scolor, $sort_class, $sscolor) =
@@ -163,16 +161,6 @@ if ($section eq 'admin') {
 } else {
     ($ccolor, $scolor, $sort_class, $sscolor) =
       (qw(669999 006666 tealHeader teal));
-}
-
-if ($number) {
-    $tab = 'lightHeader';
-    $curve_left = qq{<img src="/media/images/numbers/${ccolor}_curve_$number.gif" width="20" height="19" />};
-    $curve_right = qq{/media/images/CCCC99_curve_right.gif};
-} else {
-    $tab = $section . 'SubTab';
-    $curve_left = qq{<img src="/media/images/${scolor}_curve_left.gif" width="11" height="19" />};
-    $curve_right = qq{/media/images/${scolor}_curve_right.gif};
 }
 
 # Get the real values if these are code refs.  Handle profile and select

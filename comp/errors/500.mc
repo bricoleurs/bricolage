@@ -8,7 +8,7 @@
         debug      => QA_MODE || TEMPLATE_QA_MODE
  &>
 
-<p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
+<p><% $lang->maketext('An error occurred while processing your request:')%></p>
 
 % if (isa_exception($fault)) {
 <p class="errorMsg"><% escape_html($fault->error) %></p>
@@ -81,7 +81,7 @@ END DEBUGGING INFORMATION -->
 
 % }
 % unless (isa_bric_exception($fault, 'Exception::Burner::User')) {
-<p class="header">Please report this error to your administrator.</p>
+<p>Please report this error to your administrator.</p>
 % }
 
 <& '/widgets/wrappers/sharky/footer.mc' &>

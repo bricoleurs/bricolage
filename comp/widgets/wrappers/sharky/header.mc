@@ -197,11 +197,18 @@ if ($useSideNav) {
 <!-- begin content area -->
 <div id="contentContainer">
 % # top tab, help, logout buttons
+    <div id="headerContainer">
   <table width="580" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td class="<% $tab %>" valign="top" width="11"><img src="<% $curve_left %>" width="11" height="22"></td>
-    <td class="<% $tab %>" width="330"><% $title %></td>
-    <td valign="top" width="11" class="<% $tab %>"><img src="<% $curve_right %>" width="11" height="22"></td>
+    <td width="330">
+    <div class="<% $section %>Box">
+        <div class="fullHeader">
+            <div class="number">&nbsp;</div>
+            <div class="caption"><% $title %></div>
+            <div class="rightText">&nbsp;</div>
+        </div>
+    </div>
+    </td>
 % if ($useSideNav) {
     <td width="10">&nbsp;</td>
     <td valign="top"><& "/widgets/help/help.mc", context => $context, page => $title &></td>
@@ -216,6 +223,7 @@ if ($useSideNav) {
 % }
   </tr>
   </table>
+    </div>
 
 % # top message table
   <table width=580 cellpadding=0 cellspacing=0 border=0>
