@@ -189,6 +189,10 @@ Architectural Energy - L<http://www.archenergy.com/>
 
 2: The Magazine for Couples - L<http://www.2magazine.com/>
 
+=item *
+
+Performance Learning Systems - L<http://www.plsweb.com/>
+
 =back
 
 =head3 Are there any commercial support offerings for Bricolage?
