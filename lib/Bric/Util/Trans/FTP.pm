@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 01:18:07 $
+$Date: 2002-03-14 01:45:41 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use base qw(Bric);
 ################################################################################
 # Constants
 ################################################################################
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 ################################################################################
 # Fields
@@ -170,19 +170,24 @@ sub put_res {
 	    # created it already.
 	    my $dest_dir = $fs->uri_dir_name($dest);
 	    unless ($dirs{$dest_dir}) {
-		# Get the list of directories.
-		foreach my $dir ($fs->split_uri($dest_dir)) {
-		    # Create each one if it doesn't exist.
-		    unless ($ftp->cwd($dir)) {
-			$ftp->mkdir($dir);
-			$ftp->cwd($dir)
-			  || die $gen->new({ msg => "Unable to create directory "
-					     . "'$dest_dir' on remote server "
-					     . "'$hn'." });
+		unless ($ftp->cwd($dest_dir)) {
+		    # The directory doesn't exist.
+		    # Get the list of all of the directories.
+		    foreach my $dir ($fs->split_uri($dest_dir)) {
+			# Create each one if it doesn't exist.
+			unless ($ftp->cwd($dir)) {
+			    $ftp->mkdir($dir);
+			    $ftp->cwd($dir)
+			      || die $gen->new({ msg => "Unable to create "
+						 . "directory '$dest_dir' on "
+						 . "remote server '$hn'." });
+			}
 		    }
 		}
 		# Mark that we've created it, so we don't try to do it again.
 		$dirs{$dest_dir} = 1;
+		# Go back to root.
+		$ftp->cwd('/');
 	    }
 	    # Now, put the file on the server.
 	    $ftp->put($src, $dest)
