@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -43,7 +43,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (10, 'story', 'Bric::Biz::Asset::Business::Story', 'Story', 'Stories', 'Story Asset objects', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (11, 'ftp', 'Bric::Util::Trans::FTP', 'FTP', 'FTP Transport', 'Class with methods to move files via FTP.', 0);
+VALUES (11, 'ftp', 'Bric::Util::Trans::FTP', 'FTP', 'FTP Transport', 'Class with methods to move files via FTP.', 1);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (12, 'fs', 'Bric::Util::Trans::FS', 'File System', 'File System Transport', 'Class with methods to move files within the file system.', 1);

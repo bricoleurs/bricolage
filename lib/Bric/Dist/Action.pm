@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-03-14 01:18:06 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,7 @@ while (<DATA>) {
     chomp;
     my ($key, $class) = split / => /;
     $acts->{$key} = $class;
+    eval "require $class";
 }
 
 ################################################################################

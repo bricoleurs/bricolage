@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-03-12 18:18:48 $
+$Date: 2002-03-14 01:18:06 $
 
 =head1 DESCRIPTION
 
@@ -117,6 +117,21 @@ only be successful diagnosed by examining records being created in the
 database.
 
 =back
+
+=head1 ACTIONS AND MOVERS
+
+A relatively simple way to contribute to Bricolage is to provide actions
+and movers. These are plugin modules that can add new functionality to
+Bricolage without needing to make changes to the existing API.
+
+An "action" is an act that is performed on files before they are distributed.
+Say you want to clean the HTML of all of your HTML files before they're
+distributed. You'll need to create an action to do this. Consult
+L<Bric::Dist::Action> for information on how to create actions.
+
+Say you need to distribute files via a protocol that Bricolage doesn't currently
+support -- say, an new variant of FTP called "FooTP." You'll need to create a
+new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 
 =head1 AUTHOR
 
