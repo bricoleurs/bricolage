@@ -225,6 +225,12 @@ media classes inherit) now works. Thanks to Clare Parkinson for the spot!
 Templates that abort during calls C<preview_another()> now properly abort
 when not using C<PREVIEW_LOCAL>. [Paul Orrock]
 
+=item *
+
+Clicking a link in the left-side navigation after the session has expired 
+now causes the whole window to show the login form, rather than it showing
+inside the nav frame, which was useless. [Marshall]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
