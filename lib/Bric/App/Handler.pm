@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 21:09:38 $
+$Date: 2003-09-15 21:11:45 $
 
 =head1 SYNOPSIS
 
@@ -246,9 +246,6 @@ my $gah = HTML::Mason::ApacheHandler->new(comp_root    => MASON_COMP_ROOT,
                                           data_dir     => MASON_DATA_ROOT,
                                           decline_dirs => 0,
                                           args_method  => MASON_ARGS_METHOD);
-
-# Reset ownership of all files created by Mason at startup.
-chown SYS_USER, SYS_GROUP, $ah->interp->files_written;
 
 ################################################################################
 
