@@ -119,6 +119,11 @@ Made in the index on field key names case-insensitively unique. [David]
 
 Restored category assest group permissions in user group profiles. [David]
 
+=item *
+
+Checkout checkboxes no longer appear for assets that users don't have
+permission to check out. Thanks to Alexander Ling for the spot! [David]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
