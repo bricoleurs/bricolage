@@ -23,7 +23,7 @@ foreach my $oc ( $id ? $dest->get_output_channels : () ) {
 }
 
 # Get all Output Channels for double-list manager.
-foreach my $oc ( Bric::Biz::OutputChannel->list ) {
+foreach my $oc ( Bric::Biz::OutputChannel->list({ active => 1 }) ) {
     push @$left, { value =>  $oc->get_id, description => $oc->get_name };
 }
 
@@ -137,11 +137,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:10 $
+$Date: 2003-03-19 02:26:38 $
 
 =head1 DESCRIPTION
 
