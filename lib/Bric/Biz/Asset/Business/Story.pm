@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-19 11:28:08 $
+$Date: 2002-07-19 19:05:18 $
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,7 @@ $Date: 2002-07-19 11:28:08 $
  # Access Categories
  $cat             = $biz->get_primary_category;
  $biz             = $biz->set_primary_category($cat);
- ($cats || @cats) = get_secondary_categories;
+ ($cats || @cats) = $biz->get_secondary_categories;
  $biz             = $biz->add_categories([$category, ...])
  ($cats || @cats) = $biz->get_categories()
  $biz             = $biz->delete_categories([$category, ...]);
@@ -176,6 +176,7 @@ use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault::Exception::GEN;
+use Bric::Biz::Keyword;
 
 #==============================================================================#
 # Inheritance                          #
@@ -953,13 +954,13 @@ NONE
 
 sub set_slug {
     my ($self, $slug) = @_;
-    my $dirty = $self->_get__dirty();
+#    my $dirty = $self->_get__dirty();
     if ($slug =~ m/\W/) {
         die $gen->new({ msg => 'Slug Must conform to URL character rules' });
     } else {
         $self->_set( { slug => $slug });
     }
-    $self->_set__dirty($dirty);
+#    $self->_set__dirty($dirty);
     return $self;
 }
 
@@ -1459,10 +1460,24 @@ sub clone {
         $contribs->{$_}->{'action'} = 'insert';
     }
 
+    # Grab the categories and keywords.
+    my $pcat = $self->get_primary_category;
+    my $cats = $self->get_categories;
+    my $kw = $self->get_keywords;
+
     $self->_set([qw(version current_version version_id id publish_date
-                    publish_status _update_contributors)],
-                [1, 1, undef, undef, undef, 0, 1]);
+                    publish_status _update_contributors _queried_cats)],
+                [1, 1, undef, undef, undef, 0, 1, 0]);
+
+    # Add the categories and keywords back in.
+    $self->add_categories($cats);
+    $self->set_primary_category($pcat->get_id);
+    $self->save;
+    $self->add_keywords($kw);
+
+    # Save ourselves again and return.
     return $self;
+#    return $self->save;
 }
 
 ################################################################################
