@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:32 $
+$Date: 2003-04-22 10:42:03 $
 
 =head1 SYNOPSIS
 
@@ -48,7 +48,7 @@ if ($param->{delete}) {
     $c->set('__WORKFLOWS__', 0);
     log_event("${type}_deact", $desk);
     add_msg($lang->maketext("$disp_name profile [_1] deleted from all workflows.",$name));
-    set_redirect(defined $param->{worflow_id} ?
+    set_redirect(defined $param->{workflow_id} ?
 		 "/admin/profile/workflow/$param->{workflow_id}"
 		 : last_page());
 } else {
