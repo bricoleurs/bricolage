@@ -10,7 +10,7 @@ use Bric::App::Session qw(:state);
 
 sub save_selected_id : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $object = $self->value;
     my $sub_widget = $self->class_key . '.' . $object;
@@ -26,7 +26,7 @@ sub clear : Callback {
     my $trigger = $self->value;
 
     # If the trigger field was submitted with a true value, clear state!
-    if ($self->request_args->{$trigger}) {
+    if ($self->params->{$trigger}) {
         my $s = Bric::App::Session->instance;
 
         # Find all the select_object widget information

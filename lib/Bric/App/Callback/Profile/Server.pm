@@ -24,7 +24,7 @@ sub save : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $s = $self->obj;
 
     my $name = $param->{host_name};
@@ -91,7 +91,7 @@ sub save : Callback {
 sub delete : Callback {
     my $self = shift;
 
-    my $dest = $dest_class->lookup({ 'id' => $self->request_args->{dest_id} });
+    my $dest = $dest_class->lookup({ 'id' => $self->params->{dest_id} });
     chk_authz($dest, EDIT);
     foreach my $id (@{ mk_aref($self->value) }) {
         my $s = $class->lookup({'id' => $id}) || next;

@@ -16,7 +16,7 @@ my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 sub login : Callback {
     my $self = shift;
     my $r = $self->apache_req;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $un = $param->{$self->class_key . '|username'};
     my $pw = $param->{$self->class_key . '|password'};

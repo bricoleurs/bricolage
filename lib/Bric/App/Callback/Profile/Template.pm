@@ -28,11 +28,11 @@ sub save : Callback {
     my $self = shift;
     my $widget = $self->class_key;
 
-    $save_object->($widget, $self->request_args);
+    $save_object->($widget, $self->params);
     my $fa = get_state_data($widget, 'fa');
 
     my $workflow_id = $fa->get_workflow_id;
-    if ($self->request_args->{"$widget|delete"}) {
+    if ($self->params->{"$widget|delete"}) {
         # Delete the fa.
         $delete_fa->($self, $fa);
     } else {
@@ -68,19 +68,19 @@ sub checkin : Callback {
     my $widget = $self->class_key;
 
     my $fa = get_state_data($widget, 'fa');
-    $save_meta->($self->request_args, $widget, $fa);
+    $save_meta->($self->params, $widget, $fa);
     return unless $check_syntax->($self, $widget, $fa);
-    $checkin->($self, $widget, $self->request_args, $fa);
+    $checkin->($self, $widget, $self->params, $fa);
 }
 
 sub save_and_stay : Callback {
     my $self = shift;
     my $widget = $self->class_key;
 
-    $save_object->($widget, $self->request_args);
+    $save_object->($widget, $self->params);
     my $fa = get_state_data($widget, 'fa');
 
-    if ($self->request_args->{"$widget|delete"}) {
+    if ($self->params->{"$widget|delete"}) {
         # Delete the template.
         $delete_fa->($self, $fa);
         # Get out of here, since we've blow it away!
@@ -102,7 +102,7 @@ sub revert : Callback {
     my $widget = $self->class_key;
 
     my $fa      = get_state_data($widget, 'fa');
-    my $version = $self->request_args->{"$widget|version"};
+    my $version = $self->params->{"$widget|version"};
     $fa->revert($version);
     $fa->save;
     clear_state($widget);
@@ -113,7 +113,7 @@ sub view : Callback {
     my $widget = $self->class_key;
 
     my $fa      = get_state_data($widget, 'fa');
-    my $version = $self->request_args->{"$widget|version"};
+    my $version = $self->params->{"$widget|version"};
     my $id      = $fa->get_id;
     set_redirect("/workflow/profile/templates/$id/?version=$version");
 }
@@ -134,14 +134,14 @@ sub notes : Callback {
     my $self = shift;
     my $widget = $self->class_key;
 
-    my $action = $self->request_args->{$widget.'|notes_cb'};
+    my $action = $self->params->{$widget.'|notes_cb'};
 
     # Save the metadata we've collected on this request.
     my $fa = get_state_data($widget, 'fa');
     my $id = $fa->get_id;
 
     # Save the data if we are in edit mode.
-    &$save_meta($self->request_args, $widget, $fa) if $action eq 'edit';
+    &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
 
     # Set a redirection to the code page to be enacted later.
     set_redirect("/workflow/profile/templates/${action}_notes.html?id=$id");
@@ -152,7 +152,7 @@ sub trail : Callback {
 
     # Save the metadata we've collected on this request.
     my $fa  = get_state_data($self->class_key, 'fa');
-    &$save_meta($self->request_args, $self->class_key, $fa);
+    &$save_meta($self->params, $self->class_key, $fa);
     my $id = $fa->get_id;
 
     # Set a redirection to the code page to be enacted later.
@@ -162,16 +162,16 @@ sub trail : Callback {
 sub create_next : Callback {
     my $self = shift;
 
-    my $ttype = $self->request_args->{tplate_type};
+    my $ttype = $self->params->{tplate_type};
 
     # Just create it if CATEGORY template was selected.
-    $create_fa->($self, $self->class_key, $self->request_args)
+    $create_fa->($self, $self->class_key, $self->params)
       if $ttype == Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
 }
 
 sub create : Callback {
     my $self = shift;
-    $create_fa->($self, $self->class_key, $self->request_args);
+    $create_fa->($self, $self->class_key, $self->params);
 }
 
 sub return : Callback {
@@ -214,7 +214,7 @@ sub return : Callback {
 sub recall : Callback {
     my $self = shift;
 
-    my $ids = $self->request_args->{$self->class_key.'|recall_cb'};
+    my $ids = $self->params->{$self->class_key.'|recall_cb'};
     my %wfs;
     $ids = ref $ids ? $ids : [$ids];
 
@@ -397,13 +397,13 @@ $checkin = sub {
         $param->{"$class_key|formatting_pub_ids"} = $fa->get_id;
 
         # Call the deploy callback in the desk widget.
-        my $cb = Bric::App::Callback::Desk->new(
-            'ah' => $self->ah,
-            'apache_req' => $self->apache_req,
-            'request_args' => $param,
-            'pkg_key' => $class_key,
+        my $cb = Bric::App::Callback::Desk->new
+          ( cb_request => $self->cb_request,
+            apache_req => $self->apache_req,
+            params     => $param,
+            pkg_key    => $class_key,
         );
-        $cb->deploy();
+        $cb->deploy;
     }
 
     # Clear the state out, set redirect, and return.

@@ -28,7 +28,7 @@ sub checkin : Callback {
 
     # Checking in assets and moving them to another desk.
     my %desks;
-    foreach my $next (@{ mk_aref($self->request_args->{"desk_asset|next_desk"})}) {
+    foreach my $next (@{ mk_aref($self->params->{"desk_asset|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
 	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
@@ -53,7 +53,7 @@ sub delete : Callback {
 
     # Deleting assets.
     foreach my $key (@$keys) {
-        foreach my $aid (@{ mk_aref($self->request_args->{"${key}_delete_ids"}) }) {
+        foreach my $aid (@{ mk_aref($self->params->{"${key}_delete_ids"}) }) {
 	    my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	    if (chk_authz($a, EDIT, 1)) {
 		my $d = $a->get_current_desk;

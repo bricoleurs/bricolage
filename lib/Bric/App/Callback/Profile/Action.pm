@@ -20,7 +20,7 @@ sub save : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $act = $self->obj;
 
     if (!defined $param->{action_id}) {
@@ -68,7 +68,7 @@ sub save : Callback {
 
 sub delete : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $dest = $dest_class->lookup({ 'id' => $param->{'dest_id'} });
     chk_authz($dest, EDIT);

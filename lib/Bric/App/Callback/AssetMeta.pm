@@ -20,7 +20,7 @@ my $key = CLASS_KEY . '|note';
 
 sub add_note : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $obj = get_state_data($self->class_key, 'obj');
     my $note = $param->{$key};

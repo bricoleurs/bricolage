@@ -15,7 +15,7 @@ my $class = 'Bric::Biz::AssetType';
 
 sub addElement : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Instantiate the object.
     my $id = $param->{'element_id'};
@@ -39,7 +39,7 @@ sub addElement : Callback {
 
 sub doRedirect : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Instantiate the object.
     my $id = $param->{'element_id'};

@@ -22,7 +22,7 @@ sub save : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $at = $self->obj;
 
     my $name = $param->{name} ? $param->{name} : '';
@@ -50,7 +50,7 @@ sub recip : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $at = $self->obj;
 
     # Save it and let them edit recipients.
@@ -69,7 +69,7 @@ sub edit_recip : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $at = $self->obj;
 
     $at->add_users( $param->{ctype}, @{ mk_aref($param->{add_users}) } );

@@ -21,7 +21,7 @@ sub save : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $site = $self->obj;
 
     if ($param->{delete}) {

@@ -16,7 +16,7 @@ sub save : Callback {
 
     return unless $self->has_perms;
 
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $pref = $self->obj;
 
     my $name = $pref->get_name;

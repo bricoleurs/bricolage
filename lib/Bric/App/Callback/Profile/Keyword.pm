@@ -20,7 +20,7 @@ sub save : Callback {
     my $name = $keyword->get_name;
 
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $is_saving = defined $param->{"$widget\_id"};
 
     if ($param->{delete}) {

@@ -15,7 +15,7 @@ use Bric::Util::Burner;
 
 sub preview : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $story_id = $param->{'story_id'};
     my $media_id = $param->{'media_id'};
     my $oc_id    = $param->{'oc_id'};
@@ -82,7 +82,7 @@ sub preview : Callback {
 
 sub publish : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $story_id = $param->{'story_id'};
     my $media_id = $param->{'media_id'};
 

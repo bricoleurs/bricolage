@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-24 15:16:53 $
+$Date: 2003-09-15 20:45:35 $
 
 =head1 SYNOPSIS
 
@@ -110,7 +110,7 @@ use Bric::App::Callback::Profile::Story;
 use Bric::App::Callback::Profile::Template;
 use Bric::App::Callback::Profile::User;
 use Bric::App::Callback::Profile::Workflow;
-use Bric::App::ApacheHandler;
+use MasonX::Interp::WithCallbacks;
 
 {
     # Now let's set up our Mason space.
@@ -215,49 +215,46 @@ use constant ERROR_FILE =>
 # Private Class Fields
 my $no_trans = 0;
 
-my %interp_args =
-  ( comp_root     => MASON_COMP_ROOT,
-    data_dir      => MASON_DATA_ROOT,
-    static_source => 0,
-    autoflush     => 0,
-    error_mode    => 'fatal',
-  );
+my ($ah, $ct);
+{
+    my %args = ( comp_root            => MASON_COMP_ROOT,
+                 data_dir             => MASON_DATA_ROOT,
+                 static_source        => 0,
+                 autoflush            => 0,
+                 error_mode           => 'fatal',
+                 cb_classes           => 'ALL',
+                 cb_exception_handler => \&cb_exception_handler,
+                 ignore_nulls         => 1,
+                 interp_class         => 'MasonX::Interp::WithCallbacks',
+                 decline_dirs         => 0,
+                 args_method          => MASON_ARGS_METHOD,
+               );
 
-my $interp = HTML::Mason::Interp->new(%interp_args);
-my ($ah, $gah, $ct);
-if (CHAR_SET eq 'UTF-8') {
-    $ah = Bric::App::ApacheHandler->new
-      (%interp_args,
-       decline_dirs         => 0,
-       cb_classes           => 'ALL',
-       cb_exception_handler => \&cb_exception_handler,
-       exec_null_cb_values  => 0,
-       args_method          => MASON_ARGS_METHOD);
-} else {
-    require Bric::Util::CharTrans;
-    $ct = Bric::Util::CharTrans->new(CHAR_SET);
-    $ah = Bric::App::ApacheHandler->new
-      (%interp_args,
-       decline_dirs         => 0,
-       cb_classes           => 'ALL',
-       cb_exception_handler => \&cb_exception_handler,
-       exec_null_cb_values  => 0,
-       args_method          => MASON_ARGS_METHOD,
-       out_method           => \&filter);
+    if (CHAR_SET ne 'UTF-8') {
+        # Load the character translation code and set up the pieces we'll
+        # need to do it.
+        require Bric::Util::CharTrans;
+        $ct = Bric::Util::CharTrans->new(CHAR_SET);
+        $args{out_method} = \&filter;
+    }
+
+    $ah = HTML::Mason::ApacheHandler->new(%args);
 }
 
-$gah = HTML::Mason::ApacheHandler->new(%interp_args,
-                                       decline_dirs => 0,
-                                       args_method => MASON_ARGS_METHOD);
+my $gah = HTML::Mason::ApacheHandler->new(comp_root    => MASON_COMP_ROOT,
+                                          data_dir     => MASON_DATA_ROOT,
+                                          decline_dirs => 0,
+                                          args_method  => MASON_ARGS_METHOD);
 
 # Reset ownership of all files created by Mason at startup.
-chown SYS_USER, SYS_GROUP, $interp->files_written;
+chown SYS_USER, SYS_GROUP, $ah->interp->files_written;
 
 ################################################################################
 
 ################################################################################
 # Instance Fields
 
+# NONE.
 
 ################################################################################
 # Class Methods

@@ -71,8 +71,8 @@ publish to one or more email addresses. [David]
 
 =item *
 
-Callbacks moved from Mason components to modules based on
-MasonX::ApacheHandler::WithCallbacks. [Scott]
+Callbacks moved from Mason components to modules based on Params::Callback and
+managed by MasonX::Interp::WithCallbacks [Scott]
 
 =item *
 

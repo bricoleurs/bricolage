@@ -42,7 +42,7 @@ my ($push_tile_stack, $pop_tile_stack, $pop_and_redirect,
 sub edit : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $r = $self->apache_req;
@@ -70,7 +70,7 @@ sub edit : Callback {
 sub bulk_edit : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $r = $self->apache_req;
@@ -102,7 +102,7 @@ sub bulk_edit : Callback {
 sub view : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $r = $self->apache_req;
@@ -133,7 +133,7 @@ sub delete : Callback {
 sub clear : Callback(priority => 1) {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     clear_state($self->class_key);
@@ -142,7 +142,7 @@ sub clear : Callback(priority => 1) {
 sub add_element : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $r = $self->apache_req;
@@ -155,7 +155,7 @@ sub add_element : Callback {
     if (Bric::Biz::AssetType->lookup({id => $tile->get_element_id()})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $tile->get_object_instance_id()});
     }
-    my $fields = mk_aref($self->request_args->{$self->class_key . '|add_element'});
+    my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
 
     foreach my $f (@$fields) {
         my ($type,$id) = unpack('A5 A*', $f);
@@ -189,11 +189,11 @@ sub add_element : Callback {
 sub update : Callback(priority => 1) {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $widget = $self->class_key;
     return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
 
-    $update_parts->($self, $self->request_args);
+    $update_parts->($self, $self->params);
     my $tile = get_state_data($self->class_key, 'tile');
     $tile->save();
 }
@@ -201,7 +201,7 @@ sub update : Callback(priority => 1) {
 sub pick_related_media : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -213,7 +213,7 @@ sub pick_related_media : Callback {
 sub relate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -224,7 +224,7 @@ sub relate_media : Callback {
 sub unrelate_media : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -235,7 +235,7 @@ sub unrelate_media : Callback {
 sub pick_related_story : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -247,7 +247,7 @@ sub pick_related_story : Callback {
 sub relate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -258,7 +258,7 @@ sub relate_story : Callback {
 sub unrelate_story : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
@@ -269,7 +269,7 @@ sub unrelate_story : Callback {
 sub related_up : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     &$handle_related_up;
@@ -278,7 +278,7 @@ sub related_up : Callback {
 sub lock_val : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my $value = $self->value;
@@ -290,7 +290,7 @@ sub lock_val : Callback {
                  grep(not($_->is_container()), $tile->get_tiles()) };
 
     foreach my $id (@$autopop) {
-        my $lock_set = $self->request_args->{$self->class_key.'|lock_val_'.$id} || 0;
+        my $lock_set = $self->params->{$self->class_key.'|lock_val_'.$id} || 0;
         my $dt = $data->{$id};
 
         # Skip if there is no data tile here.
@@ -306,10 +306,10 @@ sub lock_val : Callback {
 sub save_and_up : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    if ($self->request_args->{$self->class_key . '|delete_element'}) {
+    if ($self->params->{$self->class_key . '|delete_element'}) {
         $delete_element->($self);
         return;
     }
@@ -329,10 +329,10 @@ sub save_and_up : Callback {
 sub save_and_stay : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    if ($self->request_args->{$self->class_key . '|delete_element'}) {
+    if ($self->params->{$self->class_key . '|delete_element'}) {
         $delete_element->($self);
         return;
     }
@@ -351,7 +351,7 @@ sub save_and_stay : Callback {
 sub up : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     $pop_and_redirect->($self, $self->class_key);
@@ -362,7 +362,7 @@ sub up : Callback {
 sub resize : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
     my $widget = $self->class_key;
 
@@ -377,10 +377,10 @@ sub resize : Callback {
 sub change_default_field : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $def  = $self->request_args->{$self->class_key.'|default_field'};
+    my $def  = $self->params->{$self->class_key.'|default_field'};
     my $tile = get_state_data($self->class_key, 'tile');
     my $at   = $tile->get_element();
 
@@ -391,7 +391,7 @@ sub change_default_field : Callback {
 sub change_sep : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     my ($data, $sep);
@@ -423,19 +423,19 @@ sub change_sep : Callback {
 sub recount : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    $split_fields->($self->class_key, $self->request_args->{$self->class_key.'|text'});
+    $split_fields->($self->class_key, $self->params->{$self->class_key.'|text'});
 }
 
 sub bulk_edit_this : Callback {
     my $self = shift;
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $be_field = $self->request_args->{$self->class_key . '|bulk_edit_field'};
+    my $be_field = $self->params->{$self->class_key . '|bulk_edit_field'};
 
     # Save the bulk edit field name
     set_state_data($self->class_key, 'field', $be_field);
@@ -456,7 +456,7 @@ sub bulk_edit_this : Callback {
 sub bulk_save : Callback {
     my ($self) = @_;     # @_ for &$handle_related_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     &$handle_bulk_save;
@@ -465,7 +465,7 @@ sub bulk_save : Callback {
 sub bulk_up : Callback {
     my ($self) = @_;     # @_ for &$handle_bulk_up
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     &$handle_bulk_up;
@@ -474,7 +474,7 @@ sub bulk_up : Callback {
 sub bulk_save_and_up : Callback {
     my ($self) = @_;     # @_ for &$handle_bulk_*
     $drift_correction->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
     &$handle_bulk_save;
@@ -753,7 +753,7 @@ $handle_bulk_up = sub {
 
 $handle_bulk_save = sub {
     my ($self) = @_;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $state_name = get_state_name($self->class_key);
 
@@ -1067,7 +1067,7 @@ $split_super_bulk = sub {
 
 $drift_correction = sub {
     my ($self) = @_;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Don't do anything if we've already corrected ourselves.
     return if $param->{'_drift_corrected_'};

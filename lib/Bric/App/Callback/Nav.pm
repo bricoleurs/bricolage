@@ -11,7 +11,7 @@ my ($do_callback);
 
 
 sub workflow : Callback {
-    my $param = $_[0]->request_args;
+    my $param = $_[0]->params;
 
     # navwfid is set in comp/widgets/wrappers/sharky/sideNav.mc
     set_state_data($_[0]->class_key,

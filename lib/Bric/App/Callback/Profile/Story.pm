@@ -33,8 +33,8 @@ sub view : Callback {
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
     # Abort this save if there were any errors.
-    return unless &$save_data($self, $self->request_args, $widget, $story);
-    my $version = $self->request_args->{"$widget|version"};
+    return unless &$save_data($self, $self->params, $widget, $story);
+    my $version = $self->params->{"$widget|version"};
     my $id = $story->get_id();
     set_redirect("/workflow/profile/story/$id/?version=$version");
 }
@@ -43,7 +43,7 @@ sub revert : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
-    my $version = $self->request_args->{"$widget|version"};
+    my $version = $self->params->{"$widget|version"};
     $story->revert($version);
     $story->save;
     add_msg('Story "[_1]" reverted to V.[_2].', $story->get_title, $version);
@@ -54,7 +54,7 @@ sub save : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
-    my $param = $self->request_args;
+    my $param = $self->params;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
@@ -92,7 +92,7 @@ sub checkin : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
-    my $param = $self->request_args;
+    my $param = $self->params;
     # Abort this save if there were any errors.
     return unless &$save_data($self, $param, $widget, $story);
 
@@ -171,9 +171,9 @@ sub checkin : Callback {
 
         # Use the desk callback to save on code duplication.
         my $pub = Bric::App::Callback::Desk->new
-          ( ah           => $self->ah,
+          ( cb_request   => $self->cb_request,
             apache_req   => $self->apache_req,
-            request_args => { story_pub => { $story->get_id => $story } },
+            params       => { story_pub => { $story->get_id => $story } },
           );
         $pub->publish;
 
@@ -214,7 +214,7 @@ sub checkin : Callback {
 sub save_and_stay : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
@@ -283,7 +283,7 @@ sub return : Callback {
 sub create : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Check permissions.
     my $work_id = get_state_data($widget, 'work_id');
@@ -361,7 +361,7 @@ sub create : Callback {
 sub notes : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
     # Return if there were data errors.
     return unless &$save_data($self, $param, $widget);
 
@@ -374,7 +374,7 @@ sub notes : Callback {
 sub delete_cat : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $cat_ids = mk_aref($self->request_args->{"$widget|delete_cat"});
+    my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     $story->delete_categories($cat_ids);
@@ -394,7 +394,7 @@ sub update_primary : Callback {
     my $widget = $self->class_key;
     my $story   = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $primary = $self->request_args->{"$widget|primary_cat"};
+    my $primary = $self->params->{"$widget|primary_cat"};
     $story->set_primary_category($primary);
     $story->save;
     set_state_data($widget, 'story', $story);
@@ -405,7 +405,7 @@ sub add_category : Callback {
     my $widget = $self->class_key;
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    my $cat_id = $self->request_args->{"$widget|new_category_id"};
+    my $cat_id = $self->params->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
         $story->save;
@@ -439,7 +439,7 @@ sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($self, $self->request_args, $self->class_key);
+    return unless &$save_data($self, $self->params, $self->class_key);
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
@@ -457,7 +457,7 @@ sub view_trail : Callback {
 sub update : Callback(priority => 1) {
     my $self = shift;
 
-    &$save_data($self, $self->request_args, $self->class_key);
+    &$save_data($self, $self->params, $self->class_key);
 }
 
 sub keywords : Callback {
@@ -465,7 +465,7 @@ sub keywords : Callback {
 
 
     # Return if there were data errors
-    return unless &$save_data($self, $self->request_args, $self->class_key);
+    return unless &$save_data($self, $self->params, $self->class_key);
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
@@ -475,7 +475,7 @@ sub keywords : Callback {
 sub contributors : Callback {
     my $self = shift;
     # Return if there were data errors
-    return unless &$save_data($self, $self->request_args, $self->class_key);
+    return unless &$save_data($self, $self->params, $self->class_key);
     set_redirect("/workflow/profile/story/contributors.html");
 }
 
@@ -502,7 +502,7 @@ sub assoc_contrib_role : Callback {
     my $story   = get_state_data($self->class_key, 'story');
     chk_authz($story, EDIT);
     my $contrib = get_state_data($self->class_key, 'contrib');
-    my $role    = $self->request_args->{$self->class_key.'|role'};
+    my $role    = $self->params->{$self->class_key.'|role'};
 
     # Add the contributor
     $story->add_contributor($contrib, $role);
@@ -533,7 +533,7 @@ sub unassoc_contrib : Callback {
 sub save_contrib : Callback {
     my $self = shift;
 
-    $save_contrib->($self->class_key, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
     set_redirect(last_page());
     # Pop this page off the stack.
@@ -542,7 +542,7 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->($self->class_key, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->params, $self);
 }
 
 sub leave_contrib : Callback {
@@ -566,7 +566,7 @@ sub exit : Callback {
 
 sub add_kw : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Grab the story.
     my $story = get_state_data($self->class_key, 'story');
@@ -628,7 +628,7 @@ sub checkout : Callback {
 sub recall : Callback {
     my $self = shift;
 
-    my $ids = $self->request_args->{$self->class_key.'|recall_cb'};
+    my $ids = $self->params->{$self->class_key.'|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 

@@ -2,20 +2,20 @@ package Bric::App::ApacheHandler;
 
 =head1 NAME
 
-Bric::App::ApacheHandler - subclass of MasonX::ApacheHandler::WithCallbacks
+Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:10 $
+$Date: 2003-09-15 20:45:35 $
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ use Bric::Util::Fault qw(:all);
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(MasonX::ApacheHandler::WithCallbacks);
+use base qw(HTML::Mason::ApacheHandler);
 
 ################################################################################
 # Function and Closure Prototypes

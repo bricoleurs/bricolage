@@ -15,7 +15,7 @@ my ($build_fields, $build_id_fields, $build_date_fields, $init_state);
 sub substr : Callback {
     my $self = shift;
     $init_state->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $val_fld = $self->class_key.'|value';
     my $crit = $param->{$val_fld} ? (FULL_SEARCH ? '%' : '')
@@ -53,7 +53,7 @@ sub story : Callback {
     $build_fields->($self, \@field, \@crit,
                     [qw(simple title primary_uri category_uri keyword data_text)]);
     $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
-    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
+    $build_date_fields->($self->class_key, $self->params, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -74,7 +74,7 @@ sub media : Callback {
 
     $build_fields->($self, \@field, \@crit, [qw(simple name uri data_text)]);
     $build_id_fields->($self, \@field, \@crit, [qw(element__id)]);
-    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit,
+    $build_date_fields->($self->class_key, $self->params, \@field, \@crit,
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -95,7 +95,7 @@ sub formatting : Callback {
 
     $build_fields->($self, \@field, \@crit, [qw(simple name file_name)]);
 
-    $build_date_fields->($self->class_key, $self->request_args, \@field, \@crit, 
+    $build_date_fields->($self->class_key, $self->params, \@field, \@crit, 
 			 [qw(cover_date publish_date expire_date)]);
 
     # Default to displaying everything if the leave all fields blank
@@ -111,7 +111,7 @@ sub formatting : Callback {
 sub generic : Callback {
     my $self = shift;
     $init_state->($self);
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Callback in 'leech' mode.  Any old page can send search criteria here
 
@@ -177,7 +177,7 @@ sub unset_advanced : Callback {
 $build_fields = sub {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     foreach my $f (@$add) {
 	my $v = $param->{$self->class_key."|$f"};
@@ -196,7 +196,7 @@ $build_fields = sub {
 $build_id_fields = sub {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     foreach my $f (@$add) {
         my $v = $param->{$self->class_key."|$f"};

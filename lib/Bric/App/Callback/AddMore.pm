@@ -10,7 +10,7 @@ use Bric::App::Session qw(:state);
 
 sub add : Callback {
     my $self = shift;
-    my $type = $self->request_args->{'addmore_type'};
+    my $type = $self->params->{'addmore_type'};
     set_state_data($self->class_key, "add_$type" => 1);
 }
 

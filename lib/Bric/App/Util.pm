@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-13 03:10:08 $
+$Date: 2003-09-15 20:45:36 $
 
 =head1 SYNOPSIS
 
@@ -547,11 +547,11 @@ sub redirect {
 
 Uses a JavaScript function call to redirect the browser to a different
 location. Will not clear out the buffer first, so stuff sent ahead will still
-draw in the browser. If a MasonX::CallbackHandler object is passed in as the
-second argument, the Apache request object will be used to send the JavaScript
-to the Browser and the callback handler object will be used to abort the
-request. Otherwise, the Mason request object will be used to send the
-JavaScript to the browser and to abort the request.
+draw in the browser. If a Params::Callback object is passed in as the second
+argument, the Apache request object will be used to send the JavaScript to the
+Browser and the callback handler object will be used to abort the request.
+Otherwise, the Mason request object will be used to send the JavaScript to the
+browser and to abort the request.
 
 B<Throws:> NONE.
 

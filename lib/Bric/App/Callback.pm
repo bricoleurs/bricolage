@@ -1,6 +1,6 @@
 package Bric::App::Callback;
 
-use base qw(MasonX::CallbackHandler);
+use base qw(Params::Callback);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'Callback';
 

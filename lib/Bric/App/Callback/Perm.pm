@@ -32,7 +32,7 @@ sub save_and_stay : Callback {
 
 sub cancel : Callback {
     my $self = shift;
-    my $gid = $self->request_args->{'grp_id'};
+    my $gid = $self->params->{'grp_id'};
     set_redirect("/admin/profile/grp/$gid");
 }
 
@@ -40,7 +40,7 @@ sub cancel : Callback {
 
 $do_save = sub {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Assemble the relevant IDs.
     my $grp_ids = { usr => mk_aref($param->{usr_grp_id}),

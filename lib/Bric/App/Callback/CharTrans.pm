@@ -19,7 +19,7 @@ BEGIN {
                 my $self = shift;
 
                 # Translate chars if non-UTF8 (see also Handler.pm)
-                my $args = $self->request_args;
+                my $args = $self->params;
                 eval { $ct->to_utf8($args) };
                 if ($@) {
                     if (isa_bric_exception($@)) {

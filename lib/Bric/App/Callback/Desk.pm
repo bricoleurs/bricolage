@@ -28,7 +28,7 @@ sub checkin : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->request_args->{$self->class_key.'|asset_class'};
+    my $a_class = $self->params->{$self->class_key.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
     my $d       = $a_obj->get_current_desk;
@@ -42,7 +42,7 @@ sub checkout : Callback {
     my $self = shift;
 
     my $a_id    = $self->value;
-    my $a_class = $self->request_args->{$self->class_key.'|asset_class'};
+    my $a_class = $self->params->{$self->class_key.'|asset_class'};
     my $pkg     = get_package_name($a_class);
     my $a_obj   = $pkg->lookup({'id' => $a_id});
     my $d       = $a_obj->get_current_desk;
@@ -70,7 +70,7 @@ sub move : Callback {
     my $self = shift;
 
     # Accept one or more assets to be moved to another desk.
-    my $next_desk = $self->request_args->{$self->class_key.'|next_desk'};
+    my $next_desk = $self->params->{$self->class_key.'|next_desk'};
     my $assets    = ref $next_desk ? $next_desk : [$next_desk];
 
     my ($a_id, $a_class, $d_id, $pkg, %wfs);
@@ -122,7 +122,7 @@ sub move : Callback {
 
 sub publish : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $story_pub = $param->{'story_pub'};
     my $media_pub = $param->{'media_pub'};
 
@@ -196,10 +196,10 @@ sub publish : Callback {
     if (%$story_pub or %$media_pub) {
         # Instant publish!
         my $pub = Bric::App::Callback::Publish->new
-          ( ah           => $self->ah,
+          ( cb_request   => $self->cb_request,
             pkg_key      => 'publish',
             apache_req   => $self->apache_req,
-            request_args => { instant => 1,
+            params       => { instant => 1,
                               pub_date => strfdate(),
                             },
           );
@@ -212,7 +212,7 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
 
-    my $a_ids = $self->request_args->{$self->class_key.'|formatting_pub_ids'};
+    my $a_ids = $self->params->{$self->class_key.'|formatting_pub_ids'};
     my $b = Bric::Util::Burner->new;
 
     $a_ids = ref $a_ids ? $a_ids : [$a_ids];

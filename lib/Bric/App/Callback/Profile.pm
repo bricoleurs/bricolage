@@ -23,7 +23,7 @@ sub new {
     my $pkg = shift;
     my $self = bless($pkg->SUPER::new(@_), $pkg);
 
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     $self->type((parse_uri($self->apache_req->uri))[2]);
     $self->class($get_class->($param, $self->type));
@@ -57,7 +57,7 @@ sub new {
 sub manage_grps :Callback {
     my $self   = shift;
     my $obj    = shift || $self->obj;
-    my $param  = $self->request_args;
+    my $param  = $self->params;
   
     return unless $param->{add_grp} or  $param->{rem_grp};
 

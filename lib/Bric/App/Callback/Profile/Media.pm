@@ -35,7 +35,7 @@ sub update : Callback(priority => 1) {
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Make sure it's active.
     $media->activate;
@@ -117,7 +117,7 @@ sub view : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
-    my $version = $self->request_args->{"$widget|version"};
+    my $version = $self->params->{"$widget|version"};
     my $id = $media->get_id();
     set_redirect("/workflow/profile/media/$id/?version=$version");
 }
@@ -128,7 +128,7 @@ sub revert : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
-    my $version = $self->request_args->{"$widget|version"};
+    my $version = $self->params->{"$widget|version"};
     $media->revert($version);
     $media->save;
     add_msg('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
@@ -144,10 +144,10 @@ sub save : Callback {
     chk_authz($media, EDIT);
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->request_args->{__data_errors__};
+    return if delete $self->params->{__data_errors__};
 
     my $workflow_id = $media->get_workflow_id;
-    if ($self->request_args->{"$widget|delete"}) {
+    if ($self->params->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media, $self);
     } else {
@@ -184,7 +184,7 @@ sub checkin : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
@@ -264,9 +264,9 @@ sub checkin : Callback {
 
         # Use the desk callback to save on code duplication.
         my $pub = Bric::App::Callback::Desk->new
-          ( ah           => $self->ah,
-            apache_req   => $self->apache_req,
-            request_args => { media_pup => { $media->get_id => $media } },
+          ( cb_request => $self->cb_request,
+            apache_req => $self->apache_req,
+            params     => { media_pup => { $media->get_id => $media } },
           );
         $pub->publish;
 
@@ -318,9 +318,9 @@ sub save_and_stay : Callback {
     $media->save;
 
     # Just return if there was a problem with the update callback.
-    return if delete $self->request_args->{__data_errors__};
+    return if delete $self->params->{__data_errors__};
 
-    if ($self->request_args->{"$widget|delete"}) {
+    if ($self->params->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media, $self);
         # Get out of here, since we've blown it away!
@@ -394,7 +394,7 @@ sub create : Callback {
     my $widget = $self->class_key;
     # Get the workflow ID to use in redirects.
     my $WORK_ID = get_state_data($widget, 'work_id');
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
@@ -496,7 +496,7 @@ sub assoc_contrib : Callback {
 sub assoc_contrib_role : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $media   = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
     my $contrib = get_state_data($widget, 'contrib');
@@ -571,7 +571,7 @@ $save_contrib = sub {
 
 sub save_contrib : Callback {
     my $self = shift;
-    $save_contrib->($self->class_key, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->params, $self);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
@@ -582,7 +582,7 @@ sub save_contrib : Callback {
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->($self->class_key, $self->request_args, $self);
+    $save_contrib->($self->class_key, $self->params, $self);
 }
 
 ###############################################################################
@@ -602,7 +602,7 @@ sub notes : Callback {
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
-    my $action = $self->request_args->{"$widget|notes_cb"};
+    my $action = $self->params->{"$widget|notes_cb"};
     set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
 }
 
@@ -619,7 +619,7 @@ sub trail : Callback {
 
 sub recall : Callback {
     my $self = shift;
-    my $ids = $self->request_args->{$self->class_key . '|recall_cb'};
+    my $ids = $self->params->{$self->class_key . '|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
@@ -698,7 +698,7 @@ sub keywords : Callback {
 
 sub add_kw : Callback {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Grab the media.
     my $media = get_state_data($self->class_key, 'media');

@@ -72,7 +72,7 @@ sub add_site_id : Callback {
 
 $base_handler = sub {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     my $key = (parse_uri($self->apache_req->uri))[2];
     my $class = get_package_name($key);
@@ -110,7 +110,7 @@ $base_handler = sub {
 
 $do_contrib_type = sub {
     my ($self, $obj, $key, $class) = @_;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $name = $param->{'name'};
     my $disp_name = $conf{$key}{'disp_name'};
     my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
@@ -208,7 +208,7 @@ $do_contrib_type = sub {
 
 $do_element = sub {
     my ($self, $obj, $key, $class) = @_;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $name = $param->{'name'};
     my $disp_name = $conf{$key}{'disp_name'};
     my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
@@ -417,7 +417,7 @@ $delete_element_attrs = sub {
 
 $set_primary_ocs = sub {
     my ($self, $obj, $no_save) = @_;    # $no_save is a scalar ref
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $cb_key = $self->cb_key;
 
     # Determine the enabled output channels.
@@ -466,7 +466,7 @@ $set_primary_ocs = sub {
 
 $add_new_attrs = sub {
     my ($self, $obj, $key, $data_href, $no_save) = @_;   # $no_save scalar_ref
-    my $param = $self->request_args;
+    my $param = $self->params;
 
     # Add in any new attributes.
     if ($param->{fb_name}) {
@@ -518,7 +518,7 @@ $add_new_attrs = sub {
 
 $save_element_etc = sub {
     my ($self, $obj, $key, $no_save, $disp_name, $name) = @_;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $cb_key = $self->cb_key;
 
     # Save the element.

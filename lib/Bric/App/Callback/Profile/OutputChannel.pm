@@ -31,7 +31,7 @@ sub include_oc_id : Callback {
 
 $do_callback = sub {
     my $self = shift;
-    my $param = $self->request_args;
+    my $param = $self->params;
     my $oc = $self->obj;
 
     my $name = $param->{name};
