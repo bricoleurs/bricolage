@@ -6,16 +6,16 @@ Bric::Util::UserPref - Interface to Bricolage per-user preferences.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 04:07:29 $
+$Date: 2003-12-22 18:10:39 $
 
 =head1 SYNOPSIS
 
@@ -56,10 +56,9 @@ $Date: 2003-12-22 04:07:29 $
 
 =head1 DESCRIPTION
 
-This is the central interface for managing Bricolage application
-preferences. It should scale when we later decide to add user and user group
-preferences. Right now it'll just support those global application preferences
-that we deem necessary for the application to work, such as Time Zone.
+This module provides a class for representing per-user preferences.
+This allows each user to override values for preferences like language
+or character set.
 
 =cut
 
