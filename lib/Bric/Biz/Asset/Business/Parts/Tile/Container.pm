@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.3.2.2 $
+$Revision: 1.3.2.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3.2.3 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:06 $
+$Date: 2001-10-10 21:55:43 $
 
 =head1 SYNOPSIS
 
@@ -1166,45 +1166,41 @@ sub reorder_tiles {
     my ($at_count, $data_count) = ({},{});
     my @new_list;
 
-	# make sure then number of elements passed is the same as what we have
-	if (scalar @$tiles != scalar @$new_order ) {
-		die Bric::Util::Fault::Exception::GEN->new( { 
-				msg => 'improper number of args to reorder_tiles'
-			});
-	}
+    # make sure then number of elements passed is the same as what we have
+    if (scalar @$tiles != scalar @$new_order ) {
+	die Bric::Util::Fault::Exception::GEN->new( {
+	  msg => 'Improper number of args to reorder_tiles().' });
+    }
 
     # Order the tiles in the order they are listed in $new_order
     foreach my $obj (@$new_order) {
 
-		# Set this tiles place among other tiles.
-	        my $new_place = scalar @new_list;
-		$obj->set_place($new_place) 
-		  unless $obj->get_place == $new_place;
-		push @new_list, $obj;
-	
-		# Get the appropriate asset type ID and 'seen' hash.
-		my ($at_id, $seen);
-		if ($obj->is_container()) {
-		    $at_id = $obj->get_element_id;
-		    $seen  = $at_count;
-		} else {
-		    $at_id = $obj->get_element_data_id;
-		    $seen  = $data_count;
-		}
+	# Set this tiles place among other tiles.
+	my $new_place = scalar @new_list;
+	$obj->set_place($new_place) 
+	  unless $obj->get_place == $new_place;
+	push @new_list, $obj;
 
-		# Set this tiles place among other tiles of its type.
-		my $n = $seen->{$at_id} || 1;
-	
-		my $new_obj_order = $n++;
-		$obj->set_object_order($new_obj_order)
-		  unless $obj->get_object_order == $new_obj_order;
-		$seen->{$at_id} = $n;
+	# Get the appropriate asset type ID and 'seen' hash.
+	my ($at_id, $seen);
+	if ($obj->is_container()) {
+	    $at_id = $obj->get_element_id;
+	    $seen  = $at_count;
+	} else {
+	    $at_id = $obj->get_element_data_id;
+	    $seen  = $data_count;
+	}
+
+	# Set this tiles place among other tiles of its type.
+	my $n = $seen->{$at_id} || 1;
+	my $new_obj_order = $n++;
+	$obj->set_object_order($new_obj_order)
+	  unless $obj->get_object_order == $new_obj_order;
+	$seen->{$at_id} = $n;
     }
 
     $self->_set(['_tiles', '_update_tiles'], [\@new_list, 1]);
-
     $self->_set__dirty($dirty);
-
     return $self;
 }
 

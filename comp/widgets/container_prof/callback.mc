@@ -171,18 +171,17 @@ my $update_parts = sub {
     # Delete tiles as necessary.
     $tile->delete_tiles(\@delete) if $do_delete;
 
-	if (@curr_tiles) {
+    if (@curr_tiles) {
     	eval { $tile->reorder_tiles([grep(defined($_), @curr_tiles)]) };
     	if ($@) {
-		add_msg("Warning! State inconsistant: Please use the buttons "
-			. "provided by the application rather than the "
-			. "'Back'/'Forward' buttons.");
-		return;
+	    add_msg("Warning! State inconsistant: Please use the buttons "
+		    . "provided by the application rather than the "
+		    . "'Back'/'Forward' buttons.");
+	    return;
     	}
-	}
+    }
 
     set_state_data($widget, 'tile', $tile);
-
     return $locate_tile;
 };
 
