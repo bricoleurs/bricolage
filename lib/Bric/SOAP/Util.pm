@@ -8,11 +8,14 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 
+use XML::Simple qw(XMLin);
+
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
 		    category_path_to_id 
 		    xs_date_to_pg_date pg_date_to_xs_date
+		    parse_asset_document
 		   );
 
 =head1 NAME
@@ -21,15 +24,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-25 19:25:11 $
+$Date: 2002-01-26 00:08:18 $
 
 =head1 SYNOPSIS
 
@@ -127,6 +130,38 @@ sub pg_date_to_xs_date {
     }
 	
     return "${CC}${YY}-${MM}-${DD}T${hh}:${mm}:${ss}$tz";
+}
+
+=item * $data = parse_asset_document($document)
+
+Parses an XML asset document and returns a hash structure.  Inside the
+hash singular elements are stored as keys with scalar values.
+Potentially plural values are stored as array-ref values whether
+they're present multiple times in the document or not.  This routine
+dies on parse errors with information about the error.
+
+At some point in the future this method will be augmented with XML
+Schema validation.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+sub parse_asset_document {
+    my $document = shift;
+
+    return XMLin($document, 
+		 keyattr       => [],
+		 suppressempty => '',
+		 forcearray    => [qw( contributor category
+					keyword element container 
+				       data story media )
+				  ]
+		);
 }
 
 =back

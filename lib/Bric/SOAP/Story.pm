@@ -7,13 +7,15 @@ use warnings;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::App::Session qw(:user);
 use XML::Writer;
 use IO::Scalar;
-use XML::Simple;
 
 use Bric::SOAP::Util qw(category_path_to_id 
-			xs_date_to_pg_date pg_date_to_xs_date);
+			xs_date_to_pg_date pg_date_to_xs_date
+			parse_asset_document
+		       );
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -30,15 +32,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-25 19:29:27 $
+$Date: 2002-01-26 00:08:18 $
 
 =head1 SYNOPSIS
 
@@ -445,22 +447,11 @@ sub create {
 
     # parse and catch erros
     my $data;
-    eval { $data = XMLin($document, 
-			 keyattr       => [],
-			 suppressempty => '',
-			 forcearray    => [qw( contributor category
-					       keyword element container 
-					       data story media )
-					  ]
-			);
-	 };
-
+    eval { $data = parse_asset_document($document) };
     die __PACKAGE__ . "::create : problem parsing asset document : $@\n"
-      if $@;
+	if $@;
     die __PACKAGE__ . "::create : problem parsing asset document : no stories found!\n"
-      unless ref $data and ref $data eq 'HASH' and exists $data->{story};
-
-
+	unless ref $data and ref $data eq 'HASH' and exists $data->{story};
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
     # loop over stories
@@ -469,7 +460,7 @@ sub create {
 
 	# get user__id from Bric::App::Session
 	$init{user__id} = get_user_id;
-
+	
 	# get element__id from story element
 	($init{element__id}) = Bric::Biz::AssetType->list_ids(
                                  { name => $sdata->{element} });
@@ -490,6 +481,24 @@ sub create {
 	    unless $story;
 	print STDERR __PACKAGE__ . "::create : created empty story object\n"
 	    if DEBUG;
+
+	# set simple fields
+	my @simple_fields = qw(name description slug primary_uri
+			       priority publish_status);
+	$story->_set(\@simple_fields, [ @{$sdata}{@simple_fields} ]);
+
+	# activate?
+	$sdata->{active} ? $story->activate : $story->deactivate;
+
+	# assign dates 
+	for my $name qw(cover_date expire_date publish_date) {
+	    my $date = $sdata->{$name};
+	    next unless $date; # skip missing date
+	    my $pg_date = xs_date_to_pg_date($date);
+	    die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+		unless defined $pg_date;
+	    $story->_set([$name],[$pg_date]);
+	}
 
 	# assign categories
 	my @cids;
@@ -516,6 +525,46 @@ sub create {
 	# add categories to story
 	$story->add_categories(\@cids);	
 	$story->set_primary_category($primary_cid);
+
+
+	# add keywords, if we have any
+	if (exists $sdata->{keywords} and 
+	    exists $sdata->{keywords}{keyword}) {
+
+	    # collect keyword objects
+	    my @kws;
+	    foreach (@{$sdata->{keywords}{keyword}}) {
+		my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+		$kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+		push @kws, $kw;
+	    }
+
+	    # add keywords to the story
+	    $story->add_keywords(\@kws);
+	}
+
+	# add contributors, if any
+	if (exists $sdata->{contributors} and 
+	    exists $sdata->{contributors}{contributor}) {
+	    foreach my $c (@{$sdata->{contributors}{contributor}}) {
+		my %init = (fname => $c->{fname}, 
+			    mname => $c->{mname},
+			    lname => $c->{lname});
+		my ($contrib) = 
+		    Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
+		die __PACKAGE__ . "::create : no contributor found matching " .
+		    "(contributer => " . 
+			join(', ', map { "$_ => $c->{$_}" } keys %$c)
+		    unless defined $contrib;
+		$story->add_contributor($contrib, $c->{role});
+	    }
+	}
+		
+	print STDERR __PACKAGE__ . "::create : created story : ", 
+	    Data::Dumper->Dump([$story], ['story'])
+		    if DEBUG;
+	
+	
     }
     
     return name(ids => [ name(id => 1) ]);
