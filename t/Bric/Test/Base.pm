@@ -11,7 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-use Bric; our $VERSION = Bric->VERSION;
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -77,6 +77,7 @@ BEGIN {
     File::Path::mkpath($ENV{BRIC_TEMP_DIR}, 0, 0777);
     $ENV{BRIC_BURN_ROOT} = File::Spec->catdir
       ($ENV{BRIC_TEMP_DIR}, 'burn');
+    print "BASE: $ENV{BRIC_TEMP_DIR}\n";
 }
 
 # Remove the temp directory. END blocks run in LIFO, so this block will run

@@ -11,7 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-use Bric; our $VERSION = Bric->VERSION;
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 

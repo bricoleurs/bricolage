@@ -23,7 +23,7 @@ use Test;
 
 BEGIN { plan tests => 48 }
 
-use Bric;
+require Bric;
 use Bric::BC::Contact;
 
 eval {

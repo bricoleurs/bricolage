@@ -23,7 +23,7 @@ use Test;
 
 BEGIN { plan tests => 20 }
 
-use Bric;
+require Bric;
 use Bric::Util::Grp::User;
 use Bric::Util::Grp::Person;
 use Bric::Util::Priv::Parts::Const qw(:all);
