@@ -3,7 +3,6 @@ package Bric::App::Callback::Publish;
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass('class_key' => 'publish');
 use strict;
-use Bric::App::Callback::Util qw(status_msg);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Asset::Business::Media;
@@ -40,7 +39,7 @@ sub preview : Callback {
 
         # Move out the story and then redirect to preview.
         my $url = $b->preview($media, 'media', get_user_id(), $oc_id);
-        status_msg("Redirecting to preview.");
+#        status_msg("Redirecting to preview.");
         redirect_onload($url);
     } else {
         my $s = get_state_data('story_prof', 'story');
@@ -66,7 +65,7 @@ sub preview : Callback {
         }
         # Move out the story and then redirect to preview.
         my $url = $b->preview($s, 'story', get_user_id(), $oc_id);
-        status_msg("Redirecting to preview.");
+#        status_msg("Redirecting to preview.");
         redirect_onload($url);
     }
 }
