@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-03-12 17:06:58 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -447,6 +447,6 @@ $m->out("<br />\n");
 
 </%perl>
 <a href="#" onClick="formBuilderMagicSubmit('<% $formName %>', 'save');return false"><img src="/media/images/<% $lang_key %>/save_red.gif" border="0" /></a>
-% $m->out(qq{<a href="#" onClick="formBuilderMagicSubmit('$formName', 'save_n_stay');return false"><img src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" /></a>\n}) if $stay;
+% $m->out(qq{<a href="#" onClick="formBuilderMagicSubmit('$formName', 'save_n_stay');return false"><img src="/media/images/$lang_key/save_and_stay_lgreen.gif" border="0" /></a>\n}) if $stay;
 <a href="#" onClick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" /></a>
 </form>
