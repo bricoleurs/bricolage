@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.15 $
+$Revision: 1.38.2.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 00:01:42 $
+$Date: 2003-08-11 15:27:26 $
 
 =head1 SYNOPSIS
 
@@ -1879,8 +1879,7 @@ sub _get_category_object {
     return unless defined $cat_id;
 
     unless ($cat_obj) {
-        $cat_obj = Bric::Biz::Category->lookup({id => $cat_id,
-                                                active => 'all'});
+        $cat_obj = Bric::Biz::Category->lookup({ id => $cat_id });
         $self->_set(['_category_obj'], [$cat_obj]);
 
         # Restore the original dirty value.
