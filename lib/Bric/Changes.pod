@@ -185,6 +185,11 @@ The installer now offers a more meaningful message when it encounters an
 existing database and the user doesn't want to drop that existing database.
 [David]
 
+=item *
+
+Added category group association, including ability to cascade membership
+assignments into subcategories, to category profile. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes

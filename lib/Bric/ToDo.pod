@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.93 $
+$Revision: 1.94 $
 
 =head1 DATE
 
-$Date: 2003-02-28 00:34:52 $
+$Date: 2003-03-01 19:26:00 $
 
 =head1 DESCRIPTION
 
@@ -115,12 +115,6 @@ certain words (e.g., About.com excludes the keyword "about.com").
 
 =item *
 
-Add ability to "View" a related story from within the related story Element, so
-that editors can view what's actually in a story before deciding what to fill in
-to the fields of the related story element itself.
-
-=item *
-
 Add ability to "undeploy" templates without deactivating them.
 
 =item *
@@ -136,13 +130,13 @@ those who want to have it present all the time, see the next item.
 
 =item *
 
-Disallow the Find Stories and Find Media interfaces from searching for and
-returning all of the stories and media in the database. [David]
+Add preference to make advanced search in Find Stories and/or Find Media the
+default search form when you go to those screens.
 
 =item *
 
-Add preference to make advanced search in Find Stories and/or Find Media the
-default search form when you go to those screens.
+Disallow the Find Stories and Find Media interfaces from searching for and
+returning all of the stories and media in the database. [David]
 
 =item *
 
@@ -218,7 +212,7 @@ character set.
 =item *
 
 Revamp the element system. See the proposed functional specification here:
-L<http://bricolage.cc/docs/design/ElementRevision/>.
+L<http://bricolage.cc/docs/design/ElementRevision.html>.
 
 =item *
 
@@ -258,10 +252,6 @@ for this purpose.
 =item *
 
 Add interface for editing Contact Types.
-
-=item *
-
-Add preference for Contributors to be automatically added to assets as keywords.
 
 =item *
 

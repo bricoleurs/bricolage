@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-01 01:38:32 $
+$Date: 2003-03-01 19:26:00 $
 
 =head1 SYNOPSIS
 
@@ -696,7 +696,8 @@ Translation to Portuguese using Lang::Maketext.
       'Category'=>'Categoria',
       'Find Templates' => 'Procurar Templates',
       'Template' => 'Modelo',
-      'Clone' => 'Clone'
+      'Clone' => 'Clone',
+      'Cascade into Subcategories' => 'Cascade into Subcategories',
   );
 
 =cut

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:53 $
+$Date: 2003-03-01 19:26:00 $
 
 =head1 SYNOPSIS
 
@@ -120,7 +120,7 @@ function init() {
 % if ($no_toolbar) {
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Redirect to the window opening page.
-    location.href = '/login/welcome.html?YUCK=1&referer=<% $r->uri %>';
+    location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
     history.forward(1);
 }
