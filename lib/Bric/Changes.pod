@@ -103,6 +103,22 @@ Fixed broken support for audio and video files. These can be set up by the Media
 Type menu in Element Types. Eventually these should arrange for some fields to
 be auto-populated (e.g., bit rate, frame size, length, encoding, etc.).
 
+=item *
+
+Fixed bug where Categories with the same directory name could not be created.
+Thanks to Andrew Baio for the spot. [David]
+
+=item *
+
+Fixed a bug where a user couldn't look at her own event log if she didn't have
+permission. Thank to Michael Alan Dorman for the spot. [David]
+
+=item *
+
+Fixed a bug where permissions set to access workflows and desks had no affect on
+the display of workflows and desks. Thanks to Rachel Murray for the spot.
+[David]
+
 =back
 
 =head1 VERSION 1.2.1

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-02-28 23:02:45 $
 
 =head1 SYNOPSIS
 
@@ -383,7 +383,7 @@ sub new {
 ################################################################################
 
 
-=item $story = Bric::Biz::Asset::Business::Story->lookup->( { id => $id })
+=item $story = Bric::Biz::Asset::Business::Story->lookup( { id => $id })
 
 This will return a story asset that matches the id provided
 

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =head1 DATE
 
-$Date: 2002-02-26 15:50:51 $
+$Date: 2002-02-28 23:02:45 $
 
 =head1 DESCRIPTION
 
@@ -218,6 +218,12 @@ published. Suggested method name: needs_publish().
 =head2 Low Priority Minor Items
 
 =over 4
+
+=item *
+
+Add "Check all" button that uses JS to select all the select checkboxes on a
+publish desk and My Workspace. There's a button in My Alerts that can be copied
+for this purpose.
 
 =item *
 
