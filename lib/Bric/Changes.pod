@@ -29,6 +29,12 @@ Templates once again behave themselves. There were some circumstances where
 they couldn't be checked in, generating "Cannot checkin non checked out
 versions" errors. These have been fixed. [David]
 
+=item *
+
+Some assets on My Workspace were getting "Cannot checkin non checked out
+versions" errors when they were checked in using the "Check in to" select
+list. This has been fixed. [David]
+
 =head1 VERSION 1.4.1
 
 =head2 Bug Fixes

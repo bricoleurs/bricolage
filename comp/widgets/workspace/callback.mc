@@ -16,7 +16,7 @@ if ($field eq "$widget|checkin_cb") {
     foreach my $next (@{ mk_aref($param->{"desk|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
-	my $a = $pkgs->{$key}->lookup({ id => $aid });
+	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
 	my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
 	$curr->checkin($a);
@@ -64,11 +64,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =head1 DATE
 
-$Date: 2002-09-13 18:53:22 $
+$Date: 2002-09-27 18:21:20 $
 
 =head1 SYNOPSIS
 
