@@ -36,7 +36,7 @@
     field  => 'name',
     exclude => [ map { $_->get_id } $asset->get_output_channels ],
     no_persist => 1,
-    name   => "$widget|add_oc_id_cb",
+    name   => "$widget|add_oc_cb",
     default => ['' => 'Add Output Channel'],
     objs => $at_ocs,
     js => "onChange='submit()'",
@@ -58,11 +58,11 @@ $at_ocs
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-10-25 23:53:18 $
+$Date: 2003-08-07 18:21:48 $
 
 =head1 SYNOPSIS
 

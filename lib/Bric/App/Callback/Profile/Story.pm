@@ -45,11 +45,17 @@ sub revert : Callback {
     my $story = get_state_data($widget, 'story');
     my $version = $self->request_args->{"$widget|version"};
     $story->revert($version);
-    $story->save();
-    my $msg = "Story [_1] reverted to V.[_2].";
-    my @args = ('&quot;' . $story->get_title . '&quot;', $version);
-    add_msg($self->lang->maketext($msg, @args));
-    clear_state($widget);
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        return;
+    } else {
+        my $msg = "Story [_1] reverted to V.[_2].";
+        my @args = ('&quot;' . $story->get_title . '&quot;', $version);
+        add_msg($self->lang->maketext($msg, @args));
+        clear_state($widget);
+    }
 }
 
 sub save : Callback {
@@ -63,10 +69,16 @@ sub save : Callback {
     my $workflow_id = $story->get_workflow_id;
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        $handle_delete->($story, $self);
+        return unless $handle_delete->($story, $self);
     } else {
         # Save the story.
-        $story->save;
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($self->lang->maketext($err->maketext));
+            return;
+        }
+
         log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
         add_msg($self->lang->maketext("Story [_1] saved.", $arg));
@@ -122,7 +134,13 @@ sub checkin : Callback {
         # Remove from the current desk and from the workflow.
         $cur_desk->remove_asset($story)->save if $cur_desk;
         $story->set_workflow_id(undef);
-        $story->save;
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($self->lang->maketext($err->maketext));
+            return;
+        }
+
         log_event('story_save', $story);
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
@@ -155,7 +173,12 @@ sub checkin : Callback {
             $pub_desk->save;
         }
 
-        $story->save;
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($self->lang->maketext($err->maketext));
+            return;
+        }
         # Log it!
         log_event('story_save', $story);
         log_event('story_checkin', $story);
@@ -202,7 +225,12 @@ sub checkin : Callback {
         }
 
         $desk->save;
-        $story->save;
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($self->lang->maketext($err->maketext));
+            return;
+        }
         log_event('story_save', $story);
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
@@ -229,14 +257,20 @@ sub save_and_stay : Callback {
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        $handle_delete->($story, $self);
+        return unless $handle_delete->($story, $self);
         # Get out of here, since we've blow it away!
         set_redirect("/");
         clear_state($widget);
     } else {
         # Make sure the story is activated and then save it.
         $story->activate;
-        $story->save;
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+            add_msg($self->lang->maketext($err->maketext));
+            return;
+        }
+
         log_event('story_save', $story);
         my $arg = '&quot;' . $story->get_title . '&quot;';
         add_msg($self->lang->maketext("Story [_1] saved.", $arg));
@@ -248,7 +282,12 @@ sub cancel : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     $story->cancel_checkout();
-    $story->save();
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        return;
+    }
     log_event('story_cancel_checkout', $story);
     clear_state($self->class_key);
     set_redirect("/");
@@ -318,15 +357,6 @@ sub create : Callback {
         $ret = 1;
     }
 
-    # Check the slug.
-    if ($param->{'slug'}) {
-        # check the form of the slug
-        if ($param->{'slug'} =~ m/\W/) {
-            add_msg('Slug must conform to URI character rules.');
-            $ret = 1;
-        }
-    }
-
     # Return if there are problems.
     return if $ret;
 
@@ -350,12 +380,22 @@ sub create : Callback {
     $story->set_workflow_id($work_id);
 
     # Save the story.
-    $story->save;
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        return;
+    }
 
     # Send this story to the first desk.
     $start_desk->accept({ asset => $story });
     $start_desk->save;
-    $story->save;
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        return;
+    }
 
     # Log that a new story has been created and generally handled.
     log_event('story_new', $story);
@@ -398,7 +438,12 @@ sub delete_cat : Callback {
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
     $story->delete_categories($cat_ids);
-    $story->save;
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        return;
+    }
 
     # Log events.
     foreach my $cid (@$cat_ids) {
@@ -417,7 +462,11 @@ sub update_primary : Callback {
     chk_authz($story, EDIT);
     my $primary = $self->request_args->{"$widget|primary_cat"};
     $story->set_primary_category($primary);
-    $story->save();
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+    }
     set_state_data($widget, 'story', $story);
 }
 
@@ -429,21 +478,17 @@ sub add_category : Callback {
     my $cat_id = $self->request_args->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
-        my $msg = $story->check_uri(get_user_id());
-        if ($msg) {
+        eval { $story->save };
+        if (my $err = $@) {
+            rethrow_exception($err) unless isa_bric_exception($err, 'Error');
             $story->delete_categories([ $cat_id ]);
-            my $langmsg = "The category was not added, "
-              . "as it would have caused a URI clash with story [_1].";
-            add_msg($self->lang->maketext($langmsg, "'$msg'"));
-            $story->save();
-            set_state_data($widget, 'story', $story);
-            return;
+            add_msg($self->lang->maketext($err->maketext));
+        } else {
+            my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+            log_event('story_add_category', $story, { Category => $cat->get_name });
+            my $arg = '&quot;' . $cat->get_name . '&quot;';
+            add_msg($self->lang->maketext("Category [_1] added.", $arg));
         }
-        $story->save();
-        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-        log_event('story_add_category', $story, { Category => $cat->get_name });
-        my $arg = '&quot;' . $cat->get_name . '&quot;';
-        add_msg($self->lang->maketext("Category [_1] added.", $arg));
     }
     set_state_data($widget, 'story', $story);
 }
@@ -456,7 +501,11 @@ sub add_oc : Callback {
     my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
     $story->add_output_channels($oc);
     log_event('story_add_oc', $story, { 'Output Channel' => $oc->get_name });
-    $story->save;
+    eval { $story->save };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+    }
     set_state_data($self->class_key, 'story', $story);
 }
 
@@ -624,7 +673,7 @@ sub add_kw : Callback {
     # Delete old keywords.
     $story->del_keywords(mk_aref($param->{del_keyword}))
       if defined $param->{del_keyword};
-    $story->save();
+#    $story->save();
 
     # Save the changes
     set_state_data($self->class_key, 'story', $story);
@@ -787,33 +836,11 @@ $save_data = sub {
     $story->activate;
     my $uid = get_user_id();
 
-    if (($story->get_slug() || '') ne ($param->{'slug'} || '')) {
-        my $old_slug = $story->get_slug();
-        # check the form of the slug
-        if ($param->{'slug'} =~ m/\W/) {
-            add_msg('Slug must conform to URI character rules.');
-            $data_errors = 1;
-        } else {
-            $story->set_slug($param->{slug});
-            my $msg = $story->check_uri($uid);
-            if ($msg) {
-                my $lang = $self->lang;
-                if ($old_slug) {
-                    my $langmsg = "The slug has been reverted to [_1], as "
-                      . "the slug [_2] caused this story to have a URI "
-                      . "conflicting with that of story [_3].";
-                    my @args = ("'$old_slug'", "'$param->{slug}'", "'$msg'");
-                    add_msg($lang->maketext($langmsg, @args));
-                    $story->set_slug($old_slug);
-                } else {
-                    my $langmsg = "The slug, category and cover date you selected "
-                      . "would have caused this story to have a URI "
-                      . "conflicting with that of story [_1].";
-                    add_msg($lang->maketext($langmsg, "'$msg'"));
-                }
-                $data_errors = 1;
-            }
-        }
+    eval { $story->set_slug($param->{slug}) };
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        $data_errors = 1;
     }
 
     $story->set_title($param->{title})
@@ -846,39 +873,23 @@ $save_data = sub {
     $story->set_primary_oc_id($param->{primary_oc_id})
       if exists $param->{primary_oc_id};
 
-    if (($param->{cover_date} || '') ne ($story->get_cover_date || '')) {
-        my $old_date = $story->get_cover_date(ISO_8601_FORMAT);
-        my $fold_date = $story->get_cover_date;
-        $story->set_cover_date($param->{cover_date});
-        my $msg = $story->check_uri($uid);
-        if ($msg) {
-            if ($old_date) {
-                my $langmsg = "The cover date has been reverted to [_1], "
-                  . "as it caused this story to have a URI conflicting "
-                  . "with that of story '[_2].";
-                add_msg($self->lang->maketext($langmsg, $old_date,"'$msg'"));
-                $story->set_cover_date($old_date);
-            } else {
-                my $langmsg = "The slug, category and cover date you selected " .
-                         "would have caused this story to have a URI " .
-                         "conflicting with that of story [_1].";
-                add_msg($self->lang->maketext($langmsg, "'$msg'"));
-            }
+
+    if (exists $param->{cover_date}) {
+        if ($param->{'cover_date-partial'}) {
+            add_msg('Cover Date incomplete.');
             $data_errors = 1;
+        } else {
+            $story->set_cover_date($param->{cover_date});
         }
     }
 
-    if ($param->{'cover_date-partial'}) {
-        add_msg('Cover Date incomplete.');
-        $data_errors = 1;
-    }
-
-    $story->set_expire_date($param->{expire_date})
-      if exists $param->{expire_date};
-
-    if ($param->{'expire_date-partial'}) {
-        add_msg('Expire Date incomplete.');
-        $data_errors = 1;
+    if (exists $param->{expire_date}) {
+        if ($param->{'expire_date-partial'}) {
+            add_msg('Expire Date incomplete.');
+            $data_errors = 1;
+        } else {
+            $story->set_expire_date($param->{expire_date});
+        }
     }
 
     $story->set_primary_category($param->{"$widget|primary_cat"})
@@ -894,18 +905,30 @@ $save_data = sub {
 };
 
 $handle_delete = sub {
-    my ($story, $self) = @_;
+    my ($story, $self, $param) = @_;
     my $desk = $story->get_current_desk();
-    $desk->checkin($story);
-    $desk->remove_asset($story);
-    $desk->save;
+    eval {
+        $desk->checkin($story);
+        $desk->remove_asset($story);
+        $desk->save;
+        $story->set_workflow_id(undef);
+        $story->deactivate;
+        $story->save;
+    };
+
+    if (my $err = $@) {
+        rethrow_exception($err) unless isa_bric_exception($err, 'Error');
+        add_msg($self->lang->maketext($err->maketext));
+        # Force story_prof.mc to lookup the story from the database again.
+        $self->request_args->{checkout} = 1;
+        return;
+    }
+
     log_event("story_rem_workflow", $story);
-    $story->set_workflow_id(undef);
-    $story->deactivate;
-    $story->save;
     log_event("story_deact", $story);
     my $arg = '&quot;' . $story->get_title . '&quot;';
     add_msg($self->lang->maketext("Story [_1] deleted.", $arg));
+    return 1;
 };
 
 
