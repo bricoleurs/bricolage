@@ -3,10 +3,6 @@
 local $SIG{__DIE__} = sub { die &Bric::App::Handler::_make_fault } if QA_MODE;
 </%once>
 <%perl>;
-# Execute any callbacks set for this request. This should be handled in
-# Bric::App::Handler::load_args(), but it doesn't work there right now. Hopefully
-# it will in the near future.
-Bric::App::Session::handle_callbacks($m, \%ARGS) unless $ARGS{__CB_DONE};
 # Execute the dhandlers.
 $m->call_next(%ARGS);
 </%perl>
@@ -19,11 +15,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.4.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 04:02:27 $
+$Date: 2003-06-12 09:04:03 $
 
 =head1 SYNOPSIS
 
@@ -31,6 +27,6 @@ N/A
 
 =head1 DESCRIPTION
 
-This is the root autohandler. It's job is to handle callbacks.
+This is the root autohandler.
 
 </%doc>

@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.23.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.23.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:17 $
+$Date: 2003-06-12 09:04:01 $
 
 =head1 SYNOPSIS
 
@@ -26,8 +26,6 @@ $Date: 2003-04-15 09:05:17 $
   setup_user_session($r);
 
   sync_user_session();
-
-  handle_callbacks($interp);
 
   #- Methods called from widgets -#
 
@@ -367,129 +365,6 @@ sub expire_session {
 
     # Send this cookie out with the headers.
     $cookie->bake;
-    return 1;
-}
-
-#------------------------------------------------------------------------------#
-
-=item handle_callbacks($interp, $parameter_hash)
-
-This function takes an HTML::Mason::Request ($m) object and an anonymous hash of
-GET and/or POST data as its arguments. It scans anonymous hash looking for
-specially marked up field names. If it finds them, it executes the proper Mason
-callback element. Ideally, it should be called from an autohandler, so that it
-executes before any dhandlers:
-
-  <%perl>;
-  unless ($ARGS{__CB_DONE}) {
-      # Setup the global session variable.
-      Bric::App::Session::setup_user_session($r);
-
-      # Execute an callbacks set for this request.
-      Bric::App::Session::handle_callbacks($m, \%ARGS);
-  }
-  $m->call_next(%ARGS);
-  </%perl>
-
-The handle_callbacks() function adds the __CB_DONE key to %ARGS so that when it
-calls callback element, the autohandler can avoid calling handle_callbacks()
-again.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Error handling callbacks.
-
-=back
-
-B<Side Effects:> Executes one or more callback mason elements.
-
-B<Notes:> The format for field names that will be handled by this function is:
-
-  <widget_name>|<field_name>_cb
-
-If any request sends a field element of this format, this callback function will
-look in the widget directory, within the folder named <widget_name> and look for
-a mason element called 'callback.mc'. This element will be called with the
-widget name, the field name that cause the callback and the query string (and/or
-form field) parameters:
-
-  $m->comp($callback_comp, widget => $widget_name,
-           field => $field_name, param => $parameter_hash);
-
-=cut
-
-sub handle_callbacks {
-    my ($m, $param) = @_;
-    my $w_dir = $HTML::Mason::Commands::widget_dir;
-    my (@delay_cb, @priority);
-
-    eval {
-        foreach my $field (keys %$param) {
-            # Strip off the '.x' that an input type="image" tag creates. Yes,
-            # the RegEx is actually faster than using substr(), even when the
-            # $field doesn't have '.x' on its end -- I benchmarked it!
-            (my $key = $field) =~ s/\.x$//;
-            # Determine whether this is a priority callback or a regular one.
-            my $ext = substr($key, -3);
-
-            # Delay execution of regular callbacks.
-            if ($ext eq '_cb') {
-                if ($key ne $field) {
-                    # Some browsers (notably Mozilla) will submit $key as
-                    # well as $key.x and $key.y. So skip it if that's true
-                    # here.
-                    next if exists $param->{$key};
-                    # Otherwise, add the unadorned key to $param.
-                    $param->{$key} = $param->{$field}
-                }
-
-                # Skip callbacks that aren't given a value.
-                next if $param->{$key} eq '';
-
-                my $widget = substr($key, 0, index($key, '|'));
-                my $cb = "/$w_dir/$widget/callback.mc";
-
-                if ($m->comp_exists($cb)) {
-                    # Save the callbacks as sub refs in an array to call later
-                    push @delay_cb, sub {
-                        $m->comp($cb, 'widget' => $widget, 'field'  => $key,
-                                 'param'  => $param, __CB_DONE => 1);
-                    };
-                }
-            }
-            # Call priority callbacks first.
-            elsif ($ext eq '_pc' || $ext eq '_p0') {
-                my $stack = $ext eq '_pc' ? \@delay_cb : \@priority;
-                $param->{$key} = $param->{$field} unless $key eq $field;
-                # Skip callbacks that aren't given a value.
-                next if $param->{$key} eq '';
-
-                my $widget = substr($key, 0, index($key, '|'));
-                my $cb = "/$w_dir/$widget/callback.mc";
-                if ($m->comp_exists($cb)) {
-                    # Save these callbacks, first - ensures that all the '_cb.x'
-                    # fields will be properly named '_cb' instead.
-                    unshift @$stack, sub {
-                        $m->comp($cb, 'widget' => $widget, 'field'  => $key,
-                                 'param'  => $param, __CB_DONE => 1);
-                    };
-                }
-            }
-        }
-
-        # Execute the callbacks.
-        foreach my $cb (@priority, @delay_cb) { &$cb }
-    };
-
-    # Do error processing, if necessary.
-    if ($@) {
-        $@->rethrow() if isa_exception($@);
-        throw_ap(error => "Error handling callbacks.", payload => $@);
-    }
     return 1;
 }
 
