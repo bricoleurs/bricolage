@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.12.2.2 $
+$Revision: 1.12.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-09-27 19:39:51 $
+$Date: 2002-09-27 22:56:54 $
 
 
 =head1 SYNOPSIS
@@ -834,7 +834,7 @@ sub accept {
     my ($param) = @_;
     my $dirty = $self->_get__dirty;
     my $desk          = $param->{'from'};
-    return $self if $desk->get_id == $self->get_id;
+    return $self if $desk and $desk->get_id == $self->get_id;
 
     my $asset         = $param->{'asset'};
     my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,

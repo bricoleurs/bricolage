@@ -26,6 +26,10 @@ Fixed inconsistencey between container element methods and their convenience
 accessors in Bric::Biz::Asset::Business. Thanks to Philip Fibiger for the
 spot. [David]
 
+=item *
+
+Assets can once again be recalled from the library and put on a desk. [David]
+
 =back
 
 =head1 VERSION 1.4.2
