@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.129 $
+$Revision: 1.130 $
 
 =head1 DATE
 
-$Date: 2004-03-02 19:20:37 $
+$Date: 2004-03-02 19:24:11 $
 
 =head1 DESCRIPTION
 
@@ -254,19 +254,15 @@ Create Makefile for distribution engine only.
 
 =item *
 
-Add support for Organizations.
+Add UI support for Organizations.
 
 =item *
 
-Add support for addresses.
+Add UI support for addresses.
 
 =item *
 
 Add HTML Cleaning Action.
-
-=item *
-
-Add X?HTML Validation Action.
 
 =item *
 
@@ -287,6 +283,11 @@ currently-running instance.
 
 Add autopopulation of video media type properties, such as codec, bit rate,
 fps, length, etc. Use a tool such as Video::Info.
+
+=item *
+
+Add thumbnails for videos (using a snap from the first frame?) and other media
+files (using icons).
 
 =item *
 
