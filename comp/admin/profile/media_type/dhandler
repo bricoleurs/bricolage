@@ -111,10 +111,6 @@ if (defined $mt && $mt->get_name) {
 } else {
     $crumb = 'New';
 }
-
-# if ($ARGS{'add_more|media_type_ext|add_cb'}) {
-#     # if adding slots for new extensions
-# }
 </%init>
 
 <%doc>
@@ -126,11 +122,11 @@ if (defined $mt && $mt->get_name) {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.6.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2003-05-29 16:13:26 $
 
 =head1 DESCRIPTION
 
