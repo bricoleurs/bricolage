@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 20:57:46 $
+$Date: 2001-12-27 21:28:47 $
 
 =head1 SYNOPSIS
 
@@ -385,10 +385,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
       || catdir(MASON_DATA_ROOT, 'burn');
     use constant STAGE_ROOT              => catdir(BURN_ROOT, 'stage');
     use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
-    use constant BURN_COMP_ROOT          => $config->{BURN_COMP_ROOT}
-      || catdir(BURN_ROOT, 'comp');
-    use constant BURN_DATA_ROOT          => $config->{BURN_DATA_ROOT}
-      || catdir(BURN_ROOT, 'data');
+    use constant BURN_COMP_ROOT          => catdir(BURN_ROOT, 'comp');
+    use constant BURN_DATA_ROOT          => catdir(BURN_ROOT, 'data');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
     use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
@@ -446,7 +444,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant FTP_ADDRESS       => $config->{FTP_ADDRESS}       || "";
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
-    use constant FTP_LOG            => $config->{FTP_LOG}           ||
+    use constant FTP_LOG           => $config->{FTP_LOG}           ||
       catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
 
     # Output Channel Settings.

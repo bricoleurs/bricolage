@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2001-12-27 21:24:29 $
+$Date: 2001-12-27 21:28:46 $
 
 =head1 DESCRIPTION
 
@@ -1061,17 +1061,6 @@ specified. Make sure that SYS_USER has permission to write to this directory.
 B<BURN_ROOT:> The staging area directory where the burn system places content
 files upon publication or preview. Defaults to C<$MASON_DATA_ROOT/burn> if not
 specified. Make sure that SYS_USER has permission to write to this directory.
-
-=item *
-
-B<BURN_COMP_ROOT:> The directory templates are deployed to. Defaults to
-C<$BURN_ROOT/comp> if not specified.
-
-=item *
-
-B<BURN_DATA_ROOT:> The directory where Mason stores Templates once it has
-compiled them. Defaults to C<$BURN_ROOT/data> if not specified. Make sure that
-SYS_USER has permission to write to this directory.
 
 =item *
 
