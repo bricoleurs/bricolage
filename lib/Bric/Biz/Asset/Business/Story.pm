@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-19 19:05:18 $
+$Date: 2002-07-19 19:26:30 $
 
 =head1 SYNOPSIS
 
@@ -1460,24 +1460,26 @@ sub clone {
         $contribs->{$_}->{'action'} = 'insert';
     }
 
-    # Grab the categories and keywords.
-    my $pcat = $self->get_primary_category;
-    my $cats = $self->get_categories;
+    # Clone the category associations
+    my $cats = $self->_get_categories;
+    map { $cats->{$_}->{action} = 'insert' } keys %$cats;
+
+    # Grab the keywords.
     my $kw = $self->get_keywords;
 
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats)],
                 [1, 1, undef, undef, undef, 0, 1, 0]);
 
-    # Add the categories and keywords back in.
-    $self->add_categories($cats);
-    $self->set_primary_category($pcat->get_id);
-    $self->save;
-    $self->add_keywords($kw);
+    # Prepare to be saved.
+    $self->_set__dirty(1);
 
-    # Save ourselves again and return.
+    # HACK: Save ourselves (required by keywords -- boo!)!
+    $self->save;
+
+    # Add the keywords back in and return
+    $self->add_keywords($kw);
     return $self;
-#    return $self->save;
 }
 
 ################################################################################
