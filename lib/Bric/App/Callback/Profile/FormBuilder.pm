@@ -19,6 +19,7 @@ my %meta_props = (
     'value'     => 'fb_value',
     'type'      => 'fb_type',
     'length'    => 'fb_size',
+    'size'      => 'fb_size',
     'maxlength' => 'fb_maxlength',
     'rows'      => 'fb_rows',
     'cols'      => 'fb_cols',

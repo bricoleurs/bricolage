@@ -14,7 +14,7 @@ $useEdit     => 0
 </%args>
 
 <%once>
-my @meta_props = qw(type length maxlength rows cols multiple);
+my @meta_props = qw(type length maxlength rows cols multiple size);
 </%once>
 
 <%perl>
