@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 22:48:05 $
+$Date: 2004-01-19 20:58:26 $
 
 =head1 SYNOPSIS
 
@@ -587,7 +587,7 @@ stories, and you only want to list 10 on a page over multiple pages, you can
 use this method to force the burner to burn as many pages as you need to get
 the job done.
 
-When the burner prepares to burn the page again, it resets teh C<burn_again>
+When the burner prepares to burn the page again, it resets the C<burn_again>
 attribute. So you'll need to set it for every page for which another page
 burned.
 
