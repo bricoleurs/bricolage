@@ -94,7 +94,8 @@ sub move : Callback {
         my $a_obj = $pkg->lookup({'id' => $a_id});
 
         unless ($a_obj->is_current) {
-            add_msg('Cannot move [_1] asset "[_2]" while it is checked out.', $a_class, $a_obj->get_name);
+            add_msg('Cannot move [_1] asset "[_2]" while it is checked out.',
+                    $a_class, $a_obj->get_name);
             next;
         }
 
@@ -223,39 +224,47 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
 
-    my $a_ids = $self->params->{$self->class_key.'|formatting_pub_ids'};
-    my $b = Bric::Util::Burner->new;
+    if (my $a_ids = $self->params->{$self->class_key.'|formatting_pub_ids'}) {
+        my $b = Bric::Util::Burner->new;
 
-    $a_ids = ref $a_ids ? $a_ids : [$a_ids];
+        $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
-    my $c = @$a_ids;
-    foreach (@$a_ids) {
-        my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $_ });
-        my $action = $fa->get_deploy_status ? 'formatting_redeploy'
-          : 'formatting_deploy';
-        $b->deploy($fa);
-        $fa->set_deploy_date(strfdate());
-        $fa->set_deploy_status(1);
-        $fa->set_published_version($fa->get_current_version);
-        $fa->save;
-        log_event($action, $fa);
+        my $c = @$a_ids;
+        foreach (@$a_ids) {
+            my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $_ });
+            my $action = $fa->get_deploy_status ? 'formatting_redeploy'
+              : 'formatting_deploy';
+            $b->deploy($fa);
+            $fa->set_deploy_date(strfdate());
+            $fa->set_deploy_status(1);
+            $fa->set_published_version($fa->get_current_version);
+            $fa->save;
+            log_event($action, $fa);
 
-        # Get the current desk and remove the asset from it.
-        my $d = $fa->get_current_desk;
-        $d->remove_asset($fa);
-        $d->save;
+            # Get the current desk and remove the asset from it.
+            my $d = $fa->get_current_desk;
+            $d->remove_asset($fa);
+            $d->save;
 
-        # Clear the workflow ID.
-        $fa->set_workflow_id(undef);
-        $fa->save;
-        log_event("formatting_rem_workflow", $fa);
+            # Clear the workflow ID.
+            $fa->set_workflow_id(undef);
+            $fa->save;
+            log_event("formatting_rem_workflow", $fa);
+        }
+        # Let 'em know we've done it!
+        if ($c == 1) {
+            add_msg("$disp_name deployed.");
+        } else {
+            add_msg("[quant,_1,$disp_name] deployed.", $c);
+        }
     }
-    # Let 'em know we've done it!
-    if ($c == 1) {
-        add_msg("$disp_name deployed.");
-    } else {
-        add_msg("[quant,_1,$disp_name] deployed.", $c);
+
+    # If there are stories or media to be published, publish them!
+    if ($self->params->{$self->class_key.'|story_pub_ids'}
+          || $self->params->{$self->class_key.'|media_pub_ids'}) {
+        $self->publish;
     }
+
 }
 
 sub clone : Callback {

@@ -313,6 +313,18 @@ Photoshop-generated images no longer make Bricolage choke when they're
 uploaded to a Media profile that autopopulates fields. Reported by Paul
 Orrock. [David]
 
+=item *
+
+The C<lookup()> method of the story, media, and template classes will now
+correctly return inactive objects. [David]
+
+=item *
+
+If a desk is in a template workflow and a story or media workflow, and you
+attempt to publish a media or story document from that desk in the context of
+the template workflow, it will now properly publish the story or media
+document instead of throwing an error. Reported by Serge Sozonoff. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
