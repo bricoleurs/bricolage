@@ -140,7 +140,7 @@ conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
 	perl inst/conf.pl
 
-done		: conf inst/bricolage.sql db files bin lib cpan
+done		: conf db files bin lib cpan
 	perl inst/done.pl
 
 .PHONY 		: install lib bin files db conf done
