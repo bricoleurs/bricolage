@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.3 $
+$Revision: 1.1.2.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.4 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-07 07:42:20 $
+$Date: 2003-03-07 21:54:03 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.3 2003-03-07 07:42:20 wheeler Exp $
+$Id: Site.pm,v 1.1.2.4 2003-03-07 21:54:03 wheeler Exp $
 
 =back
 
@@ -292,140 +292,35 @@ sub list_ids { $get_em->(@_, 1) }
 
 =head3 my_meths
 
-  my $meths = Bric::Biz::Person->my_meths
-  my @meths = Bric::Biz::Person->my_meths(1);
-  my $meths_aref = Bric::Biz::Person->my_meths(1);
-  @meths = Bric::Biz::Person->my_meths(0, 1);
+  my $meths = Bric::Biz::Site->my_meths
+  my @meths = Bric::Biz::Site->my_meths(1);
+  my $meths_aref = Bric::Biz::Site->my_meths(1);
+  @meths = Bric::Biz::Site->my_meths(0, 1);
   $meths_aref = Bric::Biz::Person->my_meths(0, 1);
 
-Returns an anonymous hash of introspection data for this object. If called
-with a true argument, it will return an ordered list or anonymous array of
-introspection data. If a second true argument is passed instead of a first,
-then a list or anonymous array of introspection data will be returned for
-properties that uniquely identify an object (excluding C<id>, which is
-assumed).
+Returns Bric::Biz::Site attribute accessor introspection data. See
+L<Bric|Bric> for complete documtation of the format of that data. Returns
+accessor introspection data for the following attributes:
 
-Each hash key is the name of a property or attribute of the object. The value
-for a hash key is another anonymous hash containing the following keys:
-
-=over 4
+=over
 
 =item name
 
-The name of the property or attribute. Is the same as the hash key when an
-anonymous hash is returned.
+The site name. A unique identifier attribute.
 
-=item disp
+=item domain_name
 
-The display name of the property or attribute.
+The site domain name. A unique identifier attribute.
 
-=item get_meth
+=item description
 
-A reference to the method that will retrieve the value of the property or
-attribute.
+A description of the site.
 
-=item get_args
+=item active
 
-An anonymous array of arguments to pass to a call to get_meth in order to
-retrieve the value of the property or attribute.
-
-=item set_meth
-
-A reference to the method that will set the value of the property or
-attribute.
-
-=item set_args
-
-An anonymous array of arguments to pass to a call to set_meth in order to set
-the value of the property or attribute.
-
-=item type
-
-The type of value the property or attribute contains. There are only three
-types:
-
-=over 4
-
-=item short
-
-=item date
-
-=item blob
+The site's active status boolean.
 
 =back
-
-=item len
-
-If the value is a 'short' value, this hash key contains the length of the
-field.
-
-=item search
-
-The property is searchable via the list() and list_ids() methods.
-
-=item req
-
-The property or attribute is required.
-
-=item props
-
-An anonymous hash of properties used to display the property or
-attribute. Possible keys include:
-
-=over 4
-
-=item type
-
-The display field type. Possible values are
-
-=over 4
-
-=item text
-
-=item textarea
-
-=item password
-
-=item hidden
-
-=item radio
-
-=item checkbox
-
-=item select
-
-=back
-
-=item length
-
-The Length, in letters, to display a text or password field.
-
-=item maxlength
-
-The maximum length of the property or value - usually defined by the SQL DDL.
-
-=back
-
-=item rows
-
-The number of rows to format in a textarea field.
-
-=item cols
-
-The number of columns to format in a textarea field.
-
-=item vals
-
-An anonymous hash of key/value pairs reprsenting the values and display names
-to use in a select list.
-
-=back
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
 
 =cut
 
