@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-03-01 02:18:29 $
 
 =head1 SYNOPSIS
 
@@ -519,8 +519,9 @@ sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
     # Create 'em if we haven't got 'em.
-    $METHS ||= {
-             'name'        => {'name'     => 'name',
+    unless ($METHS) {
+        $METHS =
+          { 'name'        => { 'name'     => 'name',
                                'get_meth' => sub {shift->get_name(@_)},
                                'get_args' => [],
                                'set_meth' => sub {shift->set_name(@_)},
@@ -532,8 +533,8 @@ sub my_meths {
                                'props'    => {'type'       => 'text',
                                               'length'     => 32,
                                               'max_length' => 256,}
-                              },
-             'screen_name' => {'name'     => 'screen_name',
+                             },
+            'screen_name' => { 'name'     => 'screen_name',
                                'get_meth' => sub {shift->get_screen_name(@_)},
                                'get_args' => [],
                                'set_meth' => sub {shift->set_screen_name(@_)},
@@ -545,8 +546,8 @@ sub my_meths {
                                'props'    => {'type'       => 'text',
                                               'length'     => 64,
                                               'max_length' => 256,}
-                              },
-             'sort_name'   => {'sort_name'     => 'name',
+                             },
+            'sort_name'   => { 'sort_name'     => 'name',
                                'get_meth' => sub {shift->get_sort_name(@_)},
                                'get_args' => [], 
                                'set_meth' => sub {shift->set_sort_name(@_)},
@@ -558,8 +559,10 @@ sub my_meths {
                                'props'    => {'type'       => 'text',
                                               'length'     => 64,
                                               'max_length' => 256,}
-                              },
-            };
+                             },
+          };
+        $METHS->{keyword} = $METHS->{name};
+    }
 
     if ($ord) {
         return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
