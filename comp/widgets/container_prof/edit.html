@@ -154,7 +154,7 @@ if ($at->is_related_media) {
 	$vals->{props}{vals} = $val_prop;
     }
 </%perl>
-    <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:&nbsp;</span></td>
+    <td align="right" colspan=2><span class="label"><% $vals->{props}{disp} %>:&nbsp;</span></td>
     <td colspan=3>
     <table border=0 cellpadding=0 cellspacing=0>
     <tr>
@@ -413,9 +413,9 @@ my $repeatable_opts;
 my @pos_data = $tile->get_possible_data();
 foreach (@pos_data) {
     my $key = 'data_' . $_->get_id();
-    $elem_opts->{$key} = $_->get_name();
+    $elem_opts->{$key} = $_->get_meta('html_info')->{disp};
     if ($_->get_quantifier()) {
-	$repeatable_opts->{$_->get_name()} = $_->get_name();
+	$repeatable_opts->{$_->get_name()} = $_->get_name;
     }
 }
 
