@@ -35,14 +35,13 @@ q{ALTER TABLE element__site ADD
 q{INSERT INTO element__site (element__id, site__id, primary_oc__id) SELECT e.id, 100, primary_oc__id
     FROM element AS e, at_type AS a WHERE a.id = e.type__id AND a.top_level = 1},
 
-#q{ALTER TABLE element DROP CONSTRAINT fk_output_channel__element}, # seens broken with 7.2.3
+# seems broken with 7.2.3
+q{ALTER TABLE element DROP CONSTRAINT fk_output_channel__element},
+
 q{ALTER TABLE element RENAME COLUMN primary_oc__id TO primary_oc__id__old},
 
 q{DROP INDEX fkx_output_channel__element},
   ;
 
-
-
 1;
 __END__
-
