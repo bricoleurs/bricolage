@@ -5,10 +5,10 @@ my $imageSubmit = sub {
     my $localorno = $useGlobalImage ? '' : "$lang_key/";
 
     $m->out(qq{<a href="#" $js>});
-    $m->out(qq{<img src=\"/media/images/$localorno$image.gif\" border="0" });
+    $m->out(qq{<img src="/media/images/$localorno$image.gif" border="0" });
     $m->out(qq{hspace="$hspace" }) if ($hspace);
     $m->out(qq{vspace="$vspace" }) if ($vspace);
-    $m->out("/></a>");
+    $m->out(qq{style="vertical-align: middle;" /></a>});
     $m->out(qq{<input type="hidden" name="} . $callback . qq{" value="">}) if ($useHidden);
 };
 </%once>

@@ -113,6 +113,23 @@ sub update : Callback(priority => 1) {
     set_state_data($widget, 'media', $media);
 }
 
+sub delete_media : Callback {
+    my $self = shift;
+
+    my $widget = $self->class_key;
+    my $media = get_state_data($widget, 'media');
+    chk_authz($media, EDIT);
+
+    # Make sure it's active.
+    $media->activate;
+    
+    $media->delete_file($media);
+    
+    log_event('media_del_file', $media);
+    
+    set_state_data($widget, 'media', $media);
+}
+
 ################################################################################
 
 sub view : Callback {

@@ -1487,6 +1487,15 @@ sub upload_file {
     return $self;
 }
 
+sub delete_file {
+    my ($self) = @_;
+    
+    $self->_set([qw(file_name location  uri _update_uri)] =>
+                [   undef, undef, undef, 1]);
+                
+    return $self;
+}
+
 ################################################################################
 
 =item $file_name = $media->get_file_name()

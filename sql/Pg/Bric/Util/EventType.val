@@ -107,6 +107,11 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_upload', 'Media File Uploaded', 'Media file was uploaded.', '46', '1');
 
+-- ********** 'media_del_file' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_del_file', 'Media File Removed from Media', 'The media file was dissociated from the media.', '46', '1');
+    
 -- ********** 'story_add_category' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
