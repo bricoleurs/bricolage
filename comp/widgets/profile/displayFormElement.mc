@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2004-02-24 21:56:39 $
+$Date: 2004-02-24 22:01:56 $
 
 =head1 SYNOPSIS
 
@@ -322,7 +322,6 @@ my %formSubs = (
 	    $out .= &$rem_sub($width, $indent) if $useTable;
 	    $value = defined $value ? escape_html($value) : '';
 	    $key = $key ? escape_html($key) : '';
-             
 
 	    if (!$readOnly) {
             $js = $js ? " $js" : '';
@@ -333,9 +332,9 @@ my %formSubs = (
                 $uniquename =~ s/[\||_]//g;
  				my $upval = length($value);
 				my $dwval = $vals->{props}{maxlength} - $upval;
-                my $textstring = $lang->maketext('Characters') 
+                my $textstring = $lang->maketext('Characters')
 				  . qq {: <span id="textCountUp$uniquename">$upval</span> }
-                  . $lang->maketext('Remaining') 
+                  . $lang->maketext('Remaining')
 				  . qq{: <span id="textCountDown$uniquename">$dwval</span>};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n<textarea  id="$uniquename" }
