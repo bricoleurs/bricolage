@@ -88,6 +88,8 @@ if (defined $id) {
 <%perl>;
         $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
 
+        # Manage Output Channels if this is a top-level container.
+
         my $primid = $comp->get_primary_oc_id;
         my $oc_sub = sub {
             my $ocid = $_[0]->get_id;
@@ -287,11 +289,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.2.2 $
+$Revision: 1.14.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-12 01:50:12 $
+$Date: 2003-03-12 01:55:55 $
 
 =head1 DESCRIPTION
 
