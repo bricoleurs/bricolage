@@ -718,6 +718,7 @@ To translate:
   'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
   'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
   'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].'
+  'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.' => 'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.'
 
 =end comment
 

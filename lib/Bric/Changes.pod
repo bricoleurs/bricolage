@@ -165,6 +165,16 @@ Added F<README.Mandrake>. [Cameron Miller]
 Added C<SFTP_HOME> F<bricolage.conf> directive to specify the home directory
 and location of SSH keys when SSH is enabled. [Cameron Miller]
 
+=item *
+
+Users can no longer implicitly publish related stories and media that they
+don't have PUBLISH access to. [David]
+
+=item *
+
+Users can no longer publish realted documents that are in workflow but not on
+a publish desk. [David]
+
 =back
 
 =head2 Bug Fixes
