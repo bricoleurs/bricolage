@@ -357,6 +357,9 @@ sub create : Callback {
         return;
     }
 
+    # Save story again now that data was added...
+    $story->save;
+
     # Log that a new story has been created and generally handled.
     log_event('story_new', $story);
     log_event('story_add_category', $story, { Category => $cat->get_name });
