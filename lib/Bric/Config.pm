@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.88 $
+$Revision: 1.89 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.88 $ )[-1];
+our $VERSION = (qw$Revision: 1.89 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:49:18 $
+$Date: 2004-02-20 14:07:28 $
 
 =head1 SYNOPSIS
 
@@ -537,8 +537,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.pid');
 
     # Output Channel Settings.
-    use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
-    use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
+    use constant DEFAULT_FILENAME => $config->{DEFAULT_FILENAME} || 'index';
+    use constant DEFAULT_FILE_EXT => $config->{DEFAULT_FILE_EXT} || 'html';
 
     # Temp Dir Setting
     use constant TEMP_DIR               => $ENV{BRIC_TEMP_DIR} ||
