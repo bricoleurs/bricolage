@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.7 $
+$Revision: 1.15.2.8 $
 
 =head1 DATE
 
-$Date: 2002-02-23 01:49:14 $
+$Date: 2002-02-26 00:46:28 $
 
 =head1 SYNOPSIS
 
@@ -202,7 +202,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
 
 % # write out space so the silly browser will provide a scroll bar for the layered content
-% if ($agent->{browser} eq "Netscape" && !$agent->{browser} eq "SomeNix") { 
+% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{browser} eq "SomeNix") {
 
   <script language="javascript">
   for (var i=0; i < <% $numLinks %>; i++) {
