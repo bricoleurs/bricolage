@@ -4,6 +4,6 @@
  * used for HTML::Template. This feature is new to 1.2.0.
 */
 
-ALTER TABLE element ADD COLUMN burner INT NOT NULL;
+ALTER TABLE element ADD COLUMN burner NUMERIC(2,0) NOT NULL;
 ALTER TABLE element ALTER burner SET DEFAULT 1;
 UPDATE element SET burner = 1;
