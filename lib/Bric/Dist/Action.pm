@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-11 14:44:56 $
 
 =head1 SYNOPSIS
 
@@ -1757,9 +1757,13 @@ $reorder = sub {
 
     my $i = 0;
     begin();
-    eval { foreach (@ord) { execute($upd, ++$i, $_) } };
+    eval {
+        foreach (@ord) { execute($upd, ++$i, $_) }
+        commit();
+    };
+
     # If there was an error, rollback and die. Otherwise, commit.
-    $@ ? rollback() && throw_gen(error => $@) : commit();
+    rollback() && throw_gen(error => $@) if $@;
     return 1;
 };
 
