@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.20 $
+$Revision: 1.40.2.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 21:10:59 $
+$Date: 2003-10-22 03:26:19 $
 
 =head1 SYNOPSIS
 
@@ -846,9 +846,10 @@ sub my_meths {
                           type     => 'short',
                          };
 
-        # Copy the data for the title from name.
-        $meths->{title} = { %{ $meths->{name} } };
-        $meths->{title}{disp} = 'Title';
+    # Copy the data for the title from name.
+    $meths->{title} = { %{ $meths->{name} } };
+    $meths->{title}{name} = 'title';
+    $meths->{title}{disp} = 'Title';
 
     # Rename element.
     $meths->{element} = { %{ $meths->{element} } };
