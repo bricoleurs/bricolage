@@ -42,6 +42,11 @@ bric_dev_sync (--delete-existing) and bric_soap (--force). [Sam]
 Fixed bug in Bric::SOAP::Element where updating an element could cause
 Stories using that element to lose track of their field data. [Sam]
 
+=item *
+
+Fixed bug in Bric::Util::Burner::Template where <tmpl_include>s caused
+syntax errors. [Sam]
+
 =back
 
 =head2 New Features

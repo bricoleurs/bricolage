@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-04-23 19:06:23 $
 
 =head1 SYNOPSIS
 
@@ -280,7 +280,13 @@ sub chk_syntax {
 
     # check a .tmpl template file
     if ($file_name =~ /.tmpl$/) {
-	eval { HTML::Template::Expr->new(scalarref => \$data) };
+	# includes are trouble for this check because it requires the
+	# same "path" setting as burn_one() and that means calling
+	# _get_template_path() which requires an oc and cat to run,
+	# which aren't available in the chk_syntax context.
+	$data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
+	
+	eval { HTML::Template::Expr->new(scalarref => \$data, cache => 0) };
 	if ($@) {
 	    $$err = $@;
 	    $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
