@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.79 $
+$Revision: 1.80 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.79 $ )[-1];
+our $VERSION = (qw$Revision: 1.80 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 07:44:33 $
+$Date: 2004-02-23 14:13:37 $
 
 =head1 SYNOPSIS
 
@@ -483,7 +483,7 @@ Returns only inactive stories.
 
 =item category_id
 
-Returns a list os stories in the category represented by a category ID. May
+Returns a list of stories in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
 =item keyword
