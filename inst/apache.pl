@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.2.1 $
 
 =head1 DATE
 
-$Date: 2002-09-02 05:34:37 $
+$Date: 2002-09-25 23:03:34 $
 
 =head1 DESCRIPTION
 
@@ -172,16 +172,15 @@ sub get_types_config {
 sub check_modules {
     print "Checking for required Apache modules...\n";
 
-    $AP{ssl_avail} = 0;
     my @missing;
     # loop over required modules
- MOD: 
-    foreach my $mod (qw(perl log_config mime alias ssl apache_ssl)) {
+ MOD:
+    foreach my $mod (qw(perl log_config mime alias apache_ssl ssl)) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
-          $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
-          next;
+            $AP{$mod} = 1 if $mod =~ /ssl$/;
+            next;
         }
         # try DSO
         if ($AP{dso}) {
@@ -191,7 +190,7 @@ sub check_modules {
                 $AP{load_modules}{"${mod}_module"}                  and
                 -e catfile($AP{HTTPD_ROOT}, 
                            $AP{load_modules}{"${mod}_module"})) {
-                $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
+                $AP{$mod} = 1 if $mod =~ /ssl$/;
                 next MOD;
             }
 
@@ -201,7 +200,7 @@ sub check_modules {
             if ($AP{load_modules}{"${mod}_module"} and
                 file_name_is_absolute($AP{load_modules}{"${mod}_module"}) and
                 -e $AP{load_modules}{"${mod}_module"}) {
-                $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
+                $AP{$mod} = 1 if $mod =~ /ssl$/;
                 next MOD;
             }
 
@@ -225,7 +224,7 @@ sub check_modules {
                     if (-e ($_ = catfile($path, "lib${mod}.so"))) {
                         $AP{add_modules}{"mod_$mod"} = 1;
                         $AP{load_modules}{"${mod}_module"} = $_;
-                        $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
+                        $AP{$mod} = 1 if $mod =~ /ssl$/;
                         next MOD;
                     }
                 }
@@ -236,7 +235,7 @@ sub check_modules {
                 if (-e ($_ = catfile($path, "mod_${mod}.so"))) {
                     $AP{add_modules}{"mod_$mod"} = 1;
                     $AP{load_modules}{"${mod}_module"} = $_;
-                    $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
+                    $AP{$mod} = 1 if $mod =~ /ssl$/;
                     next MOD;
                 }
             }
@@ -246,8 +245,6 @@ sub check_modules {
         # ssl missing is A-OK
         push @missing, $mod unless $mod =~ /ssl$/;
     }
-
-    $AP{ssl} = $AP{ssl_avail} || 'no';          # if SSL is available the use it
 
     hard_fail("The following Apache modules are required by Bricolage and\n",
               "are missing from your installation:\n",
@@ -277,13 +274,21 @@ END
     $AP{ssl_key} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.key", "server.key");
     $AP{ssl_cert} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.crt","server.crt");
 
-    if (ask_yesno("Do you want to use SSL? [no] ", 0)) {
-        $AP{ssl} = ask_choice("Which SSL module do you use? " .
-                              "(apache_ssl or mod_ssl) ",
-                              [ 'mod_ssl', 'apache_ssl' ], 'mod_ssl');
-        ask_confirm("SSL certificate file location", \$AP{ssl_cert});
-        ask_confirm("SSL certificate key file location", \$AP{ssl_key});
-        ask_confirm("Apache SSL Port:\t\t",     \$AP{ssl_port});
+    if ($AP{ssl} or $AP{apache_ssl}) {
+        if (ask_yesno("Do you want to use SSL? [no] ", 0)) {
+            if ($AP{ssl} and $AP{apache_ssl}) {
+                $AP{ssl} = ask_choice("Which SSL module do you use? " .
+                                      "(apache_ssl or mod_ssl) ",
+                                      [ 'mod_ssl', 'apache_ssl' ], 'mod_ssl');
+            } else {
+                $AP{ssl} = $AP{ssl} ? 'mod_ssl' : 'apache_ssl';
+            }
+            ask_confirm("SSL certificate file location", \$AP{ssl_cert});
+            ask_confirm("SSL certificate key file location", \$AP{ssl_key});
+            ask_confirm("Apache SSL Port:\t\t",     \$AP{ssl_port});
+        } else {
+            $AP{ssl} = 0;
+        }
     } else {
         $AP{ssl} = 0;
     }

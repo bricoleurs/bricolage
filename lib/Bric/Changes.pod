@@ -197,6 +197,13 @@ Assets on a desk now no longer have the current desk listed in the "Move to"
 select list. Even if they did, selecting the current desk would no longer
 remove an asset from workflow! Thanks to Andrew Baio for the spot. [David]
 
+=item *
+
+The installer is now much more intelligent about prompting for SSL
+information. It won't ask if you want to use SSL if it can't find mod_ssl or
+apache_ssl, and will only prompt you to pick one or the other if it can find
+both. [David]
+
 =back
 
 =head1 VERSION 1.4.0
