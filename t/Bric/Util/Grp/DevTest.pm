@@ -23,6 +23,7 @@ use Bric::Util::Grp::Formatting;
 use Bric::Util::Grp::Grp;
 use Bric::Util::Grp::Job;
 use Bric::Util::Grp::Media;
+use Bric::Util::Grp::MediaType;
 use Bric::Util::Grp::Org;
 use Bric::Util::Grp::OutputChannel;
 use Bric::Util::Grp::Person;
