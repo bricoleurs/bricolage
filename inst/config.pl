@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-06-11 21:29:05 $
 
 =head1 DESCRIPTION
 
@@ -34,6 +34,7 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
 use Config;
+use Cwd;
 
 print "\n\n==> Gathering User Configuration <==\n\n";
 our %CONFIG;
@@ -121,7 +122,18 @@ END
   }
 
 sub confirm_settings {
+  my $default_root = $CONFIG{BRICOLAGE_ROOT};
   ask_confirm("\nBricolage Root Directory", \$CONFIG{BRICOLAGE_ROOT});
+
+  # make sure this directory isn't the same at the source directory
+  if (canonpath($CONFIG{BRICOLAGE_ROOT}) eq canonpath(cwd())) {
+      print "\nYou cannot install Bricolage into the same directory where it ".
+        "is being built.\n";
+      print "Please choose another directory.\n";
+      $CONFIG{BRICOLAGE_ROOT} = $default_root;
+      return confirm_settings();
+  }
+
 
   # make sure this directory doesn't already house a Bricolage install
   if (-e $CONFIG{BRICOLAGE_ROOT} and 
