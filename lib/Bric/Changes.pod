@@ -183,6 +183,11 @@ it. Most often seen as the error 'Can't call method "get_tiles" on an
 undefined value' in the media profile, especially with IE/Windows (for some
 unknown reason). Reported by Ed Stevenson. [David]
 
+=item *
+
+Fixed typo in clone page that caused all output channels to be listed
+rather than only those associated with the element itself. [Scott]
+
 =back
 
 =cut
