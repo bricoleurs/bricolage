@@ -62,7 +62,7 @@ year is 2003, then the date span will be from 1993 to 2013.
 =item *
 
 Added the C<ENABLE_SFTP_V2> F<bricolage.conf> directive to make
-SSH protocol 2 be tried first.
+SSH protocol 2 be tried first. [Scott]
 
 =back
 
