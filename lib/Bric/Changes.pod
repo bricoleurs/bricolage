@@ -25,10 +25,6 @@ This document lists the Changes to Bricolage introduced with each release.
 Creating a template that was deactivated now reactivates it instead of
 just giving an error message. [Scott]
 
-=item *
-
-Added UI for managing organizations (which provide the base data for souces). [David]
-
 =back
 
 =head1 VERSION 1.8.0 "Portland" ()
