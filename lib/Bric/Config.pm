@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-20 02:11:40 $
+$Date: 2001-09-20 02:12:29 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
          . 'fdIf^ N;:';
 
     # QA Mode settings.
-    use constant QA_MODE                 => 1;
+    use constant QA_MODE                 => 0;
 
     # Character translation settings.
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
@@ -364,8 +364,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 6;
 
     # Error Page Setting.
-#    use constant ERROR_URI => '/errors/500.mc';
-    use constant ERROR_URI => '/errors/error.html';
+    use constant ERROR_URI => '/errors/500.mc';
+#    use constant ERROR_URI => '/errors/error.html';
 
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
@@ -476,7 +476,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.2  2001-09-20 02:11:40  wheeler
+Revision 1.3  2001-09-20 02:12:29  wheeler
+Undid changes I accidentally committed.
+
+Revision 1.2  2001/09/20 02:11:40  wheeler
 Removed files that I'd put in the wrong place!
 
 Revision 1.1.1.1  2001/09/06 21:52:50  wheeler
