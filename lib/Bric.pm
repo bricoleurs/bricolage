@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.5.2 -- Development Track for 1.6.0
+Release Version: 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.35.2.3 $
+$Revision: 1.35.2.4 $
 
 =cut
 
-our $VERSION = "1.5.2";
+our $VERSION = "1.6.0";
 
 =head1 DATE
 
-$Date: 2003-04-02 05:34:12 $
+$Date: 2003-04-03 22:11:08 $
 
 =head1 SYNOPSIS
 
@@ -563,7 +563,8 @@ sub get_grp_ids {
     return unless defined($self->GROUP_PACKAGE);
 
     # If it's just a class name, just return the instance class ID.
-    return $self->INSTANCE_GROUP_ID unless ref $self;
+    return wantarray ? $self->INSTANCE_GROUP_ID : [$self->INSTANCE_GROUP_ID]
+      unless ref $self;
 
     # Just return if there are no group IDs.
     return unless exists $self->{grp_ids};
