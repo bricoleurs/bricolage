@@ -35,6 +35,11 @@ Added Linux startup script F<contrib/start_scripts/linux>. [David]
 Added C<version_id> parameter to the C<list()> methods of the story, media,
 and template classes. Oversight reported by Kang-min Liu. [David]
 
+=item *
+
+Distribution via SFTP is now atomic and respects the C<FTP_UNLINK_BEFORE_MOVE>
+directive. Spotted by Patrick Michael Kane. [David]
+
 =back
 
 =head2 Bug Fixes
