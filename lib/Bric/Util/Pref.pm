@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-11-30 18:21:13 $
 
 =head1 SYNOPSIS
 
@@ -1204,6 +1204,9 @@ $get_em = sub {
             $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
+        } elsif ($k eq 'active') {
+            # Preferences have no active column.
+            next;
         } else {
             $k = 'def' if $k eq 'default';
             # It's a varchar field.
