@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:35 $
+$Date: 2001-09-25 12:52:33 $
 
 =head1 SYNOPSIS
 
@@ -172,7 +172,7 @@ if ($useSideNav) {
     } else {
 	my $uri = $r->uri;
 	# create a unique uri to defeat browser caching attempts.
-	$uri .= '&debug=$debug&rnd=' . time;
+	$uri .= "&debug=$debug&rnd=" . time;
 	chomp $uri;
 	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if ($agent->{browser} eq "Netscape");
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
@@ -251,8 +251,12 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.1  2001-09-06 21:52:35  wheeler
-Initial revision
+Revision 1.2  2001-09-25 12:52:33  wheeler
+Fixed variable interpolation problem (a variable *wasn't* getting
+interpolated!).
+
+Revision 1.1.1.1  2001/09/06 21:52:35  wheeler
+Upload to SourceForge.
 
 </%doc>
 
