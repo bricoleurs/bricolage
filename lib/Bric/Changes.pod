@@ -191,6 +191,12 @@ Fixed misnamed database constraint. [David]
 Templates can once again be retreived from the library and checked out for
 revising. [David]
 
+=item *
+
+Assets on a desk now no longer have the current desk listed in the "Move to"
+select list. Even if they did, selecting the current desk would no longer
+remove an asset from workflow! Thanks to Andrew Baio for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.0
