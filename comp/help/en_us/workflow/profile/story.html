@@ -1,6 +1,8 @@
 <help page="Story Profile">
 
-<h3>1) Information</h3>
+% my $i = 1;
+
+<h3><% $i++ %>) Information</h3>
 
 <p><dl>
 <dt>Trail</dt>
@@ -49,7 +51,7 @@
 <dd>The date and time the Story will be taken offline.</dd>
 </dl></p>
 
-<h3>2) Content</h3>
+<h3><% $i++ %>) Content</h3>
 
 <p>This is where you give shape to the Story, by editing its existing Elements
 and adding new ones. Each different Story type has its own set of Elements --
@@ -74,7 +76,7 @@ Position numbers, then click the Reorder button.</dd>
 button. You can delete more than one item at a time.</dd>
 </dl></p>
 
-<h3>3) Categories</h3>
+<h3><% $i++ %>) Categories</h3>
 <p>Categories determine where on the site an item is published. An item can lie
 in one Category or in several, but only one is designated as the Primary
 Category. On your first time through, the Story's only Category will be the one
@@ -91,7 +93,18 @@ and click Add Category.</p>
     button. You can delete more than one Category at a time.</dd>
 </dl></p>
 
-<h3>4) Associations</h3>
+% if (ENABLE_OC_ASSET_ASSOCIATION) {
+
+<h3><% $i++ %>) Output Channels</h3>
+
+<p>Select which output channels to associate with this story. Note that in order
+for an output channel to appear in the dropdown list (Add Output Channel), it has
+to have been associated to the element (as given in the 'Story Type Element' item
+in the 'Information' section) in the Element Manager.</p>
+
+% }
+
+<h3><% $i++ %>) Associations</h3>
 
 <p>In this section, you provide meta information (information that is embedded
 in the Story but not displayed), which allows for more accurate searches and
