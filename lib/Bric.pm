@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.4';
 
 =item Date
 
-$Date: 2004-03-02 06:13:17 $
+$Date: 2004-03-08 16:50:26 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.48 2004-03-02 06:13:17 wheeler Exp $
+$Id: Bric.pm,v 1.49 2004-03-08 16:50:26 wheeler Exp $
 
 =back
 
@@ -564,10 +564,10 @@ sub cache_me {
         return $self unless $req;
         my $r = Apache::Request->instance($req);
         # Cache it under its ID.
-        $r->pnotes("$pkg|id|$self->{id}", $self);
+        $r->pnotes("$pkg|id|$self->{id}" => $self);
         # Cache it under other unique identifiers.
         foreach my $m ($self->my_meths(0, 1)) {
-            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), $self);
+            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self) => $self);
         }
     }
     if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
@@ -608,11 +608,11 @@ sub uncache_me {
         return $self unless $req;
         my $r = Apache::Request->instance($req);
 
-        # Cache it under its ID.
-        $r->pnotes("$pkg|id|$self->{id}", undef);
-        # Cache it under other unique identifiers.
+        # Uncache it under its ID.
+        $r->pnotes("$pkg|id|$self->{id}" => undef);
+        # Uncache it under other unique identifiers.
         foreach my $m ($self->my_meths(0, 1)) {
-            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self), undef);
+            $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self) => undef);
         }
     }
     if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
