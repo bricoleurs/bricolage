@@ -29,7 +29,7 @@
           $sort_sign = '-' if ($userSort && $sortOrder !~ /^reverse$/);
       }
       
-      $m->out(qq{<th$class>});
+      $m->out(qq{    <th$class>});
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
@@ -38,7 +38,7 @@
           $m->out($disp);
       }
       
-      $m->out("</th>");
+      $m->out("</th>\n");
   }
 
   # Adjust the table size.
@@ -46,7 +46,6 @@
       $m->out(qq{<th colspan="} . ($cols - scalar @$fields) . qq{"></th>});
   }
 </%perl>
-
   </tr>
 
 %# Output the rows of data
@@ -61,13 +60,13 @@
 % my $o_id = shift @{$data->[$r]};
 % my $class = qq{ class="} . ($i % 2 ? "odd" : "even") . qq{"};
 % $i++; 
-  <tr <% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
+  <tr<% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
 <%perl>
   # Output for each field.
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
       my $class = qq{ class="selected"} if ($c eq $sort_col);
-      $m->out(qq{<td$class>$val</td>\n});
+      $m->out(qq{    <td$class>$val</td>\n});
   }
 
   # Fill out the rest of the columns.
@@ -76,7 +75,6 @@
   }
 
 </%perl>
-
 %# End foreach my $o (@$objs)
   </tr>
 % }

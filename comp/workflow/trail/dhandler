@@ -1,18 +1,16 @@
-<%perl>
-$m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => "$disp->{$type} Desk Stamps",
-	 context => "Workflow | Profile | $disp->{$type} | &quot;"
-	 . $obj->get_name . "&quot; | Desk Stamps"
-);
-$m->out("<p></p>");
-$m->comp('/widgets/eventList/eventList.mc',
-	 object => $type,
-         obj_id => $id,
-	 constrain => { key_name => "${type}_moved"});
-$m->out("<br />\n");
-$m->comp('/lib/util/back_button.mc');
-$m->comp('/widgets/wrappers/sharky/footer.mc');
-</%perl>
+<& '/widgets/wrappers/sharky/header.mc',
+    title => "$disp->{$type} Desk Stamps",
+    context => "Workflow | Profile | $disp->{$type} | &quot;"
+               . $obj->get_name . "&quot; | Desk Stamps" &>
+
+<& '/widgets/eventList/eventList.mc',
+    title   => $lang->maketext("Events"),
+    object => $type,
+    obj_id => $id,
+    constrain => { key_name => "${type}_moved"} &>
+
+<& '/lib/util/back_button.mc' &>
+<& '/widgets/wrappers/sharky/footer.mc' &>
 
 <%args>
 $id => undef

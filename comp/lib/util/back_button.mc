@@ -1,4 +1,4 @@
-<a href="#" onClick="window.location.href='<% $url %>'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0  /></a>
+<a href="<% $url %>"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" /></a>
 <%args>
 $label => 'Back'
 $url => undef
@@ -10,7 +10,7 @@ $url ||= last_page();
 
 =head1 NAME
 
-/lib/util/bac_button.mc - Adds a self-contained back button to a page
+/lib/util/back_button.mc - Adds a self-contained back button to a page
 
 =head1 VERSION
 
@@ -22,7 +22,7 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-  $m->comp('/lib/util/bac_button.mc');
+  $m->comp('/lib/util/back_button.mc');
 
 =head1 DESCRIPTION
 

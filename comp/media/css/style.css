@@ -1,7 +1,7 @@
 body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
-pre        { font-size:11px;}
+pre        { padding: 1em; margin: 0; font-size: 1.1em; } 
 
 p          { font-size:11px; line-height:16px; }
 h3         { font-size:12px; line-height:17px;}
@@ -15,7 +15,7 @@ form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
 .textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 .textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.codeArea  { font-family:monospace; font-size:11px; }
+.codeArea  { width: 99%; font-family: monospace; font-size: 1.1em; }
 
 body {
     margin: 0;
@@ -365,15 +365,17 @@ form .row .redLabel {
     text-align: right;
     line-height: 2;
 }
+
 form .row .input {
     padding-left: 140px;
+    margin-left: 0;
+    line-height: 2;
 }
 form .row .input p {
     margin: 0;
     padding: 0;
-    line-height: 2;
+    line-height: 1.9;
 }
-
 form .alpha .row .input { line-height: 1.3em; }
 
 /* Clear floats without additional HTML markup
@@ -446,3 +448,15 @@ table td.delete { width: 100px; text-align: center; }
 * html .paginate {height: 1%;}
 .paginate {display: block;}
 /* End hide from IE-mac */
+
+.viewmeta dt,
+.viewmeta dd { font-size: 1em; line-height: 2em; height: 2em; }
+.viewmeta dt {
+    float: left;
+    clear: both;
+    width: 130px;
+    padding-right: 5px;
+    text-align: right;
+    background-color: #999966;
+}
+.viewmeta dd { margin-left: 140px; }
