@@ -47,6 +47,7 @@ if ($field eq "$widget|save_cb") {
 }
 
 elsif ($field eq "$widget|checkin_cb") {
+    return unless $check_syntax->($widget);
     $checkin->($widget, $param);
 }
 

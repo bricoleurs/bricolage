@@ -44,6 +44,12 @@ Goncalves for the spot. [David]
 Changed all strttime instances of '%G' to '%Y', as this seems to be
 more portable. [David]
 
+=item *
+
+Checking in a template from a template profile now performs a syntax
+check of the temlate just as saving the template does. [Joao Pedro
+Goncalves]
+
 =back
 
 =head1 Version 1.2.3
