@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 21:41:35 $
+$Date: 2001-12-27 23:25:16 $
 
 =head1 SYNOPSIS
 
@@ -309,7 +309,6 @@ sub find_template {
     while (@dirs) {
 	my $tmpl = $fs->cat_uri(@dirs, $name);
 	return $tmpl if $interp->lookup($tmpl);
-#	return $tmpl if $Bric::Util::Burner::Mason::m->comp_exists($tmpl);
 	pop @dirs;
     }
     return;
@@ -447,7 +446,10 @@ sub display_element {
 	my $template = $self->_load_template_element($elem);
 
 	# Display the element
-	$Bric::Util::Burner::Mason::m->comp($template) if $template;
+	{
+	    no strict 'refs';
+	    ${TEMPLATE_BURN_PKG . '::m'}->comp($template) if $template;
+	}
 
 	# Pop the element back off again.
 	$self->_pop_element();
@@ -455,7 +457,8 @@ sub display_element {
 	# Set the elem global to the previous element
 	$interp->set_global('$element', $self->_current_element);
     } else {
-	$Bric::Util::Burner::Mason::m->out($elem->get_data);
+	    no strict 'refs';
+	    ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
     }
 }
 
@@ -480,7 +483,10 @@ us the opportunity to tailor the verbiage to suit our application better.
 
 =cut
 
-sub chain_next { $Bric::Util::Burner::Mason::m->call_next }
+sub chain_next {
+    no strict 'refs';
+    ${TEMPLATE_BURN_PKG . '::m'}->call_next;
+}
 
 #------------------------------------------------------------------------------#
 
@@ -521,7 +527,10 @@ sub end_page {
     $fs->mk_path($path);
 
     # Flush the output buffer before writing the file.
-    $Bric::Util::Burner::Mason::m->flush_buffer;
+    {
+	no strict 'refs';
+	${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
+	}
 
     # Save the page we've created so far.
     open(OUT, ">$file")
@@ -770,10 +779,14 @@ $m->comp($template);
 1;
 
 package Bric::Util::Burner::Mason::XMLWriterHandle;
+use Bric::Config qw(:burn);
 
 sub new { bless {} }
 
-sub print { $Bric::Util::Burner::Mason::m->out(@_[1..$#_]) }
+sub print {
+    no strict 'refs';
+    ${TEMPLATE_BURN_PKG . '::m'}->out(@_[1..$#_]);
+}
 
 1;
 
@@ -783,6 +796,7 @@ __END__
 
 =head1 NOTES
 
+NONE.
 
 =head1 AUTHOR
 
