@@ -161,6 +161,10 @@ Optimized and added tests for Bric::Util::Priv's C<get_acl()> and
 C<get_acl_mtime()> methods. These should make the looking up of a user's
 access control list faster. [David]
 
+=item *
+
+Added preview link to every element profile of a story profile. [David]
+
 =back
 
 =head2 Bug Fixes

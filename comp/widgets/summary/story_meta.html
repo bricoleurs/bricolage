@@ -33,8 +33,26 @@
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
     <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
-    <td width="400">&nbsp;<% $story->get_primary_uri %></td>
-</tr>
+% if ($is_related_story) {
+  <td width="470">&nbsp;<% $prim_uri %></td>
+  </tr>
+% } else {
+%     if (@ocs == 1) {
+  <td width="470">&nbsp;<a href="/workflow/profile/preview/story/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $prim_uri %></a></td>
+  </tr>
+%     } else {
+  <td width="470">&nbsp;<% $prim_uri %></td>
+  </tr>
+  <tr>
+  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+  </tr>
+  <tr>
+  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
+  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
+  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/story/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
+  </tr>
+%     }
+% }
   </table>
 % if ($frame) {
 <& /widgets/wrappers/sharky/table_bottom.mc &>
@@ -52,4 +70,26 @@ my $story = get_state_data($widget, 'asset');
 my $cat      = $story->get_primary_category;
 my $cat_name = $cat ? $cat->get_name : '';
 $header ||= 'Story Information';
+
+# see whether we're at the top of the page or not;
+# otherwise, we won't show the "Preview in" line
+my $is_related_story = $number != 1;
+
+my $id = $story->get_id();
+my $prim_uri = $story->get_primary_uri();
+my $agent = $m->comp("/widgets/util/detectAgent.mc");
+my $infoIndent = ($agent->{browser} eq "Netscape") ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+
+# get output channel info
+my $at = $story->get_element__id();
+my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
+my @ocs = $asset_type->get_output_channels();
+
+my $oc_select = '<select name="ocSelect">';
+foreach my $oc (@ocs) {
+    my $selected = '';
+    $selected = ' selected' if $oc->get_id() == $asset_type->get_primary_oc_id();
+    $oc_select .= '<option value="' . $oc->get_id() . '"' . $selected . '>' . $oc->get_name() . '</option>';
+}
+$oc_select .= '</select>';
 </%init>
