@@ -35,21 +35,31 @@ use constant MAX_RESTART_WAIT => 10;
 
 $|++;
 
-BEGIN {
-    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-    eval { require Bric };
-    if ($@) {
-	# We need to set PERL5LIB.
-	require File::Spec::Functions;
-	my $lib =  File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
-	unshift @INC, $lib;
-	$ENV{PERL5LIB} = defined $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:$lib" : $lib;
+use File::Spec::Functions qw(catdir);
 
-	# Try again.
-	eval { require Bric };
-	die "Cannot locate Bricolage libraries.\n" if $@;
-    }
-};
+BEGIN {
+    # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
+    $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+
+    # use $BRICOLAGE_ROOT/lib if exists 
+    $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    unshift(@INC, 
+	    $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ? "$ENV{PERL5LIB}:$_" : $_)
+	if -e;
+    
+    # make sure Bric is found
+    eval "use Bric";
+    die <<'END' if $@;
+######################################################################
+
+Cannot locate Bricolage libraries.  Please set the environment
+variable BRICOLAGE_ROOT to the location of your Bricolage
+installation or set the environment variable PERL5LIB to the
+directory where Bricolage's libraries are installed.
+
+######################################################################
+END
+}
 
 use Bric::Config qw(:apachectl);
 
