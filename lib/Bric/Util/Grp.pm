@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-21 21:56:34 $
+$Date: 2002-08-21 21:58:17 $
 
 =head1 SYNOPSIS
 
@@ -550,8 +550,8 @@ sub get_supported_classes { undef }
 
 =item (1 || undef) = Bric::Util::Grp->get_secret
 
-Returns true if this Grp class is available for end user management. Secret
-groups are used by Bricolage only for internal purposes.
+Returns true if this Grp class is not available for end user
+management. Secret groups are used by Bricolage only for internal purposes.
 
 B<Throws:> NONE.
 
