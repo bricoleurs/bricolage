@@ -60,6 +60,11 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
         }
     };
 
+    my $sel_sub = sub {
+        return if $_[0]->get_id == $primid;
+        return ['Delete', 'rem_oc'];
+    };
+
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'output_channel',
 	     userSort => 0,
@@ -71,7 +76,7 @@ if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
 	     field_titles => { primary => 'Primary', enabled => 'Enabled' },
 	     field_values => $oc_sub,
 	     profile => undef,
-	     select =>  ['Delete', 'rem_oc'],
+	     select => $sel_sub,
 	     number => ++$num
 	    );
 
@@ -236,11 +241,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-10-25 20:30:17 $
+$Date: 2002-12-05 00:16:06 $
 
 =head1 DESCRIPTION
 
