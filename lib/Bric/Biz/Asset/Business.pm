@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:04 $
+$Date: 2003-03-13 13:22:49 $
 
 =head1 SYNOPSIS
 
@@ -1956,9 +1956,11 @@ sub _init {
     }
 
     # Set up the output channels.
-    $self->add_output_channels( map { $_->is_enabled ? $_ : () }
-                                $init->{element}->get_output_channels);
-    $self->set_primary_oc_id($init->{element}->get_primary_oc_id);
+    if ($init->{element}->get_top_level) {
+        $self->add_output_channels( map { $_->is_enabled ? $_ : () }
+                                    $init->{element}->get_output_channels);
+        $self->set_primary_oc_id($init->{element}->get_primary_oc_id(100));
+    }
 
     # Let's create the new tile as well.
     my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
