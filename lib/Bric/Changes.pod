@@ -32,6 +32,10 @@ Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 
 =item *
 
+Bug fix when deploying to multiple output channels. If the output channel ids matched each other partly, it could cause a file to be removed after it just had been uploaded. [Arthur / Fotango]
+
+=item *
+
 When an asset is published or deployed directly from the asset profile, it is
 now properly removed from the publish or deploy desk. Repoted by Andy Baio's
 coworker. [David]
