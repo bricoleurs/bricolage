@@ -30,6 +30,11 @@ editing the Story at the top level). [Scott]
 
 Added Linux startup script F<contrib/start_scripts/linux>. [David]
 
+=item *
+
+Added C<version_id> parameter to the C<list()> methods of the story, media,
+and template classes. Oversight reported by Kang-min Liu. [David]
+
 =back
 
 =head2 Bug Fixes
