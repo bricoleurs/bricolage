@@ -299,6 +299,9 @@ Changes:
 License:
 	${POD2TEXT} lib/Bric/License.pod >$@
 
+test:
+	cd ${LIB} && make test
+
 
 
 # TODO: Make this recursively generate tag files in all directories
