@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-06-29 01:45:49 $
+$Date: 2002-07-02 19:36:16 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -84,7 +84,7 @@ if ($versions) {
   <table border=0 cellpadding=0 cellspacing=0>
   <tr>
 % my ($act, $cb) = $widget eq 'tmpl_prof' ?
-%   ('deploy', 'deploy') : ('publish', '_and_pub');
+%   ('deploy', 'deploy') : ('publish', 'and_pub');
     <td align="center">
       <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_<% $cb %>_cb" value="Check In And Publish" />
     </td>
