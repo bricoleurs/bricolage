@@ -244,9 +244,10 @@ BEGIN {
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
      $to_preview, $username, $password, $server, $verbose, $desk, $workflow,
-     $timeout, $use_cookie, $save_cookie, $chunks);
+     $timeout, $use_cookie, $save_cookie, $chunks, $continue);
 
-use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ());
+use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
+  on_fault => \&_handle_fault;
 import SOAP::Data 'name';
 use HTTP::Cookies;
 
@@ -342,13 +343,11 @@ $soap->proxy($server . '/soap',
              timeout    => $timeout,
             );
 
-my $response;
-
 # login
 if (!$use_cookie) { 
     print STDERR "$module $command: Authenticating to Bricolage...\n" if $verbose;
-    $response = $soap->login(name(username => $username), 
-    			    name(password => $password));
+    my $response = $soap->login(name(username => $username), 
+                                name(password => $password));
     die "Login failed.\n" if $response->fault;
     print STDERR "$module $command: Login success.\n" if $verbose;
 } else {
@@ -373,8 +372,8 @@ sub list_ids {
 	"with search: (",
 	    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
 		if $verbose;
-    $response = $soap->list_ids(map { name($_ => $search{$_}) } keys %search);
-    _print_fault($response) if $response->fault;
+    my $response = $soap->list_ids(map { name($_ => $search{$_}) } 
+                                   keys %search);
     my $list = $response->result;
     foreach (@$list) {
 	print lc $module, "_", $_, "\n";
@@ -390,18 +389,13 @@ sub export {
     push @opts, name(export_related_stories => 1) if $with_related_stories;
     push @opts, name(export_related_media   => 1) if $with_related_media;
 
-    $response = $soap->export(@opts);
-    _print_fault($response) if $response->fault;
-
-    print $response->result;
+    print $soap->export(@opts)->result;
 }
 
 sub delete {
     # collect ids
     my @ids = _read_ids(lc($module) . "_id");
-
-    $response = $soap->delete(name(lc $module . '_ids', \@ids));
-    _print_fault($response) if $response->fault;
+    $soap->delete(name(lc $module . '_ids', \@ids));
 }
 
 sub create {
@@ -422,11 +416,8 @@ sub create {
 	    length($document), " bytes\n"
 		if $verbose;
 
-	$response = $soap->create(name(document => $document)->type('base64'));
-	_print_fault($response) if $response->fault;
-
 	# print out response ids
-	_print_ids($response);
+	_print_ids($soap->create(name(document => $document)->type('base64')));
     }
 }
 
@@ -458,22 +449,18 @@ sub update {
 	    " with document:  ", length($document), " bytes\n"
 		if $verbose;
 
-	$response = $soap->update(name(document => $document)->type('base64'),
-				  name(update_ids =>
-				       [ map
-					 { name("${name}_id" => $_) }
-					 @update_ids ]));
-	_print_fault($response) if $response->fault;
-
+	my $response = $soap->update(name(document => 
+                                          $document)->type('base64'),
+                                     name(update_ids =>
+                                          [ map
+                                            { name("${name}_id" => $_) }
+                                            @update_ids ]));
 	# print out ids
 	_print_ids($response);
     }
 }
 
 sub publish {
-    # collect ids
-    my @ids = _read_ids();
-
     my @opts;
     push @opts, name(publish_related_stories => 1) if $with_related_stories;
     push @opts, name(publish_related_media   => 1) if $with_related_media;
@@ -481,69 +468,32 @@ sub publish {
 
     # publish by chunks
     _foreach_chunks {
-        my ($start, $end) = @_;
-        $response = $soap->publish(name(publish_ids => \@_),
-                                   @opts);
-        if ($response->fault) {
-            print "$module $command failed: ", 
-              join(', ', map { $_->value } @_), "\n";
-            _print_nonfatal_fault($response);
-        } else {
-            _print_ids($response);
-        }
-    } (@ids);
+        _print_ids($soap->publish(name(publish_ids => \@_), @opts));
+    } (_read_ids());
 }
 
 sub deploy {
-    # collect ids
-    my @ids = _read_ids();
-    
+    # deploy by chunks
     _foreach_chunks {
-        my ($start, $end) = @_;
-        $response = $soap->deploy(name(deploy_ids => \@_));
-        
-        _print_fault($response) if $response->fault;
-        
-        # print out ids for this chunk
-        _print_ids($response);
-    } (@ids);
+        _print_ids($soap->deploy(name(deploy_ids => \@_)));
+    } (_read_ids());
 }
 
 sub checkin {
-    # collect ids
-    my @ids = _read_ids();
-
     # checkin by chunks
     _foreach_chunks {
-        my ($start, $end) = @_;
-        $response = $soap->checkin(name(checkin_ids => \@_));
-        
-        _print_fault($response) if $response->fault;
-        
-        # print out ids for this chunk
-        _print_ids($response);
-    } (@ids);
+        _print_ids($soap->checkin(name(checkin_ids => \@_)));
+    } (_read_ids());
 }
 
 sub checkout {
-    # collect ids
-    my @ids = _read_ids();
-
     # checkout by chunks
     _foreach_chunks {
-        $response = $soap->checkout(name(checkout_ids => \@_));
-        
-        _print_fault($response) if $response->fault;
-        
-        # print out ids for this chunk
-        _print_ids($response);
-    } (@ids);
+        _print_ids($soap->checkout(name(checkout_ids => \@_)));
+    } (_read_ids());
 }
 
 sub move {
-    # collect ids
-    my @ids = _read_ids();
-
     die "$module $command requires a desk option.\n"
 	unless defined $desk;
     my @opts = (name(desk => $desk));
@@ -551,13 +501,8 @@ sub move {
 
     # move by chunks
     _foreach_chunks {
-        $response = $soap->move(name(move_ids => \@_),
-                                @opts);
-        _print_fault($response) if $response->fault;
-        
-        # print out ids for this chunk
-        _print_ids($response);
-    } (@ids);
+        _print_ids($soap->move(name(move_ids => \@_), @opts));
+    } (_read_ids());
 }
 
 #
@@ -609,7 +554,7 @@ sub _foreach_chunks (&@) {
     our $chunks;
 
     if ($chunks == 0) {
-        $code->(\@_);
+        $code->(@_);
     } else {
         # step through indexes $chunks at a time
         my ($start, $end);
@@ -635,34 +580,28 @@ sub _print_ids {
     }
 }
 
-# prints out fault message and exits unconditionally
-sub _print_fault {
-    my $r = shift;
-    if ($r->faultstring eq 'Application error' and
-	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
-	# this is a bric exception, the interesting stuff is in detail
-	die "Call to Bric::SOAP::$module->$command failed : \n" .
-	    join("\n", values %{$r->faultdetail});
+# handle faults from SOAP::Lite's on_fault event
+sub _handle_fault {
+    my ($soap, $r) = @_;
+
+    # print out the error as appropriate
+    if (ref $r) {
+        if ($r->faultstring eq 'Application error' and
+            ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+            # this is a bric exception, the interesting stuff is in detail
+            print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
+              join("\n", values %{$r->faultdetail});
+        } else {
+            print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
+              $r->faultstring;
+        }
     } else {
-	die "Call to Bric::SOAP::$module->$command failed : \n" .
-	    $r->faultstring;
+        print STDERR "TRANSPORT ERROR:", $soap->transport->status, "\n";
     }
-}
 
-
-# prints out fault message and exits unless continue-on-errors is in effect
-sub _print_nonfatal_fault {    
-    my $r = shift;
-    our $continue;
-
-    if ($r->faultstring eq 'Application error' and
-	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
-	# this is a bric exception, the interesting stuff is in detail
-	print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
-	    join("\n", values %{$r->faultdetail});
-    } else {
-	print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
-	    $r->faultstring;
-    }
+    # exit unless continueing on errors
     exit 1 unless $continue;
+
+    # return an empty object to keep things humming along
+    return SOAP::SOM->new();
 }
