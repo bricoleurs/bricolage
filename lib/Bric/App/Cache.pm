@@ -6,16 +6,16 @@ Bric::App::Cache - Object for managing Application-wide global data.
 
 =head1 VERSION
 
-$Revision: 1.16.2.1 $
+$Revision: 1.16.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-05 22:10:56 $
+$Date: 2003-03-06 07:28:38 $
 
 =head1 SYNOPSIS
 
@@ -474,6 +474,9 @@ of 0 (zero) means that there is no context, in which case the user can see all
 the workflows from all the sites to which she has access. If the value is
 undefined, then the context isn't set.
 
+B<Side Effects:> If C<QA_MODE> is enabled, then C<$user_id> and C<$site_id>
+will be checked to ensure that they are proper arguments.
+
 =cut
 
 sub get_user_cx {
@@ -491,6 +494,9 @@ to indicate an unknown context. Pass in 0 (zero) to indicate that the user has
 no context, and so can access all of the workflows in all of the sites to
 which she has access. Otherwise, simply pass in the site ID the user has
 selected.
+
+B<Side Effects:> If C<QA_MODE> is enabled, then C<$user_id> and C<$site_id>
+will be checked to ensure that they are proper arguments.
 
 =cut
 
