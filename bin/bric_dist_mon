@@ -185,7 +185,7 @@ $opt_i ||= INTERVAL;
 $opt_d ||= DEBUG;
 if ($opt_U) {
     unless ($opt_U =~ m[/dist/?$]) {
-        $opt_U .= $opt_U m[/$] ? 'dist/' : '/dist/';
+        $opt_U .= $opt_U =~ m[/$] ? 'dist/' : '/dist/';
     }
 } else {
     $opt_U ||= URL;
