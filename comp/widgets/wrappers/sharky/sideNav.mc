@@ -104,7 +104,6 @@ window.onload = function () {
 # Begin Workflows -------------------------------------
 $m->out(qq{<ul id="nav">});
 $m->out(qq{<li id="workspace"><a class="closed" href="/workflow/profile/workspace/" target="_parent" title="My Workspace">My Workspace</a></li>});
-if ( $nav->{workflows} ) {
 $m->out(qq{<li id="workflows">});
 $m->out(qq{<ul class="submenu">});
 # iterate thru workflows
@@ -157,9 +156,6 @@ foreach my $wf (@$workflows) {
 }
 $m->out(qq{</ul>});
 $m->out(qq{</li>});
-} else { # closed state
-$m->out(qq{<li id="workflows" class="closed"><a href="} . $r->uri . qq{?nav|workflows_cb=1">} . $lang->maketext('Workflow') . qq{</a></li>});
-}
 # End Workflows -------------------------------------
 
 # Begin Admin --------------------------------------
