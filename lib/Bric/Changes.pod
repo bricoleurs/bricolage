@@ -267,6 +267,13 @@ Deleting assets on My Workspace now prompts the user to make sure s/he really
 wants to do that. Not sure how we missed this all this time! Thanks to Andrew
 Baio for the spot. [David]
 
+=item *
+
+Assets on Desks and My Workspace that are checked out to the the user whose
+viewing them will now always preview the version as currently edited by the
+user, rather than the last checked-in version. Other users still can only
+previewe the last checked-in version. [David]
+
 =back
 
 =head1 VERSION 1.4.3

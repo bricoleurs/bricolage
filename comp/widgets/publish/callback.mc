@@ -32,7 +32,9 @@ if ($field eq 'preview') {
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
-            $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
+            $media = Bric::Biz::Asset::Business::Media->lookup
+              ({ id => $media_id,
+                 checkout => $param->{checkout} });
         }
 
         # Move out the story and then redirect to preview.
@@ -42,7 +44,9 @@ if ($field eq 'preview') {
     } else {
         my $s = get_state_data('story_prof', 'story');
         unless ($s && defined $story_id && $s->get_id == $story_id) {
-            $s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+            $s = Bric::Biz::Asset::Business::Story->lookup
+              ({ id => $story_id,
+                 checkout => $param->{checkout} });
         }
 
         # Get all the related media to be previewed as well
