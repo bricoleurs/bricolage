@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-05-20 21:52:38 $
+$Date: 2002-06-25 21:50:41 $
 
 =head1 DESCRIPTION
 
@@ -115,27 +115,29 @@ END
         close VER;
         
         # find this version
-        my ($found, @todo);
+        my $found;
         for my $i (0 .. $#versions) {
             if ($versions[$i] eq $INSTALL->{VERSION}) {
                 $found = 1;
                 @todo = @versions[$i + 1 .. $#versions];
+                last;
             }
         }
-        
+
         # didn't find the version?
         hard_fail(<<END) unless $found;
 Couldn't find version "$INSTALL->{VERSION}" in inst/versions.txt.  Are
 you trying to install an older version over a newer one?  That won't
 work.
 END
-    }    
+    }
 
+    # save todo list for later
     $UPGRADE{TODO} = \@todo;
     
     # note the plan of action
     print "Found existing version $INSTALL->{VERSION}.\n";
-    print "Will run database upgrade scripts for versions ", 
+    print "Will run database upgrade scripts for version(s) ", 
       join(', ', @todo), "\n"
         if @todo;
 }

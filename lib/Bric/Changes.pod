@@ -77,6 +77,11 @@ containing a contributor with an empty middle name would fail.  [Sam]
 Changed strttime instances of '%G' to '%Y' in URI preference, as this seems to
 be more portable. [David]
 
+=item *
+
+Fixed bug that was preventing 'make upgrade' from running database
+upgrade scripts. [Sam]
+
 =back
 
 =head1 VERSION 1.3.2
