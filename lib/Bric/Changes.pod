@@ -237,8 +237,13 @@ operations.
 
 =item *
 
-Bric::App::Session now has an instance() public class method to return the
-%HTML::Mason::Commands::session hash. [Scott]
+Bric::App::Session now has an C<instance()> public class method to return the
+C<%HTML::Mason::Commands::session> hash. [Scott]
+
+=item *
+
+Subelement can now nest. That is, they can contain themselves. Not in a story,
+of course, but in the document model (element administration). [David]
 
 =back
 

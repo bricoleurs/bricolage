@@ -45,7 +45,7 @@ if (exists $ARGS{elem_type}) {
 # Set the title, selection label, and widget.
 if (defined $id) {
     $constrain->{top_level} = 0;
-    $excl_sub = sub { $_[0]->get_id == $id  || ! chk_authz($_[0], READ, 1) };
+    $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
     $title = 'Choose Subelements';
     my $name = $pkg_name->lookup({ id => $id })->get_name;
     $context = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
@@ -147,11 +147,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.14.2.1 $
+$Revision: 1.14.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-12 17:33:17 $
+$Date: 2003-03-20 23:15:22 $
 
 =head1 SYNOPSIS
 
