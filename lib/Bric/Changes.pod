@@ -70,8 +70,8 @@ e.g., /tmp/bricolage. [David]
 
 =item *
 
-Added new program, clean_tmp.pl, that can be used in a cron job to delete stale
-temporary files. [Sam]
+Added new program, bric_clean_tmp, that can be used in a cron job to delete
+stale temporary files. [Sam]
 
 =item *
 
@@ -128,6 +128,11 @@ before. [David]
 
 Renamed programs in bin/ so that they all start with "bric_". Update any links
 to the old names, because they're gone. [David]
+
+=item *
+
+Rewrote bric_apachectl to use Perl and Bric::Config instead of a shell script.
+Also changed it so that a restart is always a hard restart. [Sam]
 
 =back
 
