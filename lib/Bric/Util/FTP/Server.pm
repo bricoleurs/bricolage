@@ -8,17 +8,22 @@ Bric::Util::FTP::Server - Virtual FTP Server
 
 =head1 VERSION
 
-1.0
+$Revision $
 
 =cut
 
-our $VERSION = "1.0";
+our $VERSION = substr(q$Revision 1.0$, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date $
+
+=head1 SYNOPSIS
+
+  use Bric::Util::FTP::Server;
+  Bric::Util::FTP::Server->run;
 
 =head1 DESCRIPTION
 
@@ -30,48 +35,50 @@ template.  When a file is uploaded it is automatically checked-in and
 deployed.
 
 B<WARNING:> The FTP server component is an experimental feature and
-has not been fully tested of completely implemented!
+has not been fully tested!
 
-For installation instructions see L<Bric::Admin>.
+For installation and configuration instructions see L<Bric::Admin>.
 
-=head1 NOTES
+=head1 INTERFACE
 
-Currently only GET and PUT are implemented.  Also, you cannot create a
-new template file using the FTP interface.  You must create a template
-through the web interface and check it in before you can access it
-using FTP.
+This module inherits from Net::FTPServer and doesn't override any
+public methods.  See L<Net::FTPServer> for details.
 
-=head1 AUTHOR
+=head1 PRIVATE
 
-Sam Tregar (stregar@about-inc.com
+=head2 Private Instance Methods
 
-=head1 SEE ALSO
-
-Net::FTPServer
-
-=head1 REVISION HISTORY
-
-$Log: Server.pm,v $
-Revision 1.1  2001-10-02 16:23:59  samtregar
-Added FTP interface to templates
-
+=over 4
 
 =cut
 
-
-
+################################################################################
+# Dependencies
+################################################################################
+# Standard Dependencies
 use strict;
-use warnings;
 
+################################################################################
+# Programmatic Dependences
 use Bric::Util::DBI qw(:all);
 use Bric::Config qw(:ftp);
 use Bric::Biz::Person::User;
-
 use Net::FTPServer;
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::FTP::DirHandle;
 
+################################################################################
+# Inheritance
+################################################################################
 our @ISA = qw(Net::FTPServer);
+
+=item pre_configuration_hook()
+
+This is called by Net:FTPServer before configuration begins.  It's
+used in this class to add our name and version to the version string
+displayed by the server.
+
+=cut
 
 sub pre_configuration_hook {
   my $self = shift;
@@ -80,25 +87,17 @@ sub pre_configuration_hook {
   $self->{version_string} .= " Bric::Util::FTP::Server/$VERSION";
 }
 
-sub post_accept_hook {
-  my $self = shift;
-  
-  # start a transaction
-  # begin();
-}
+=item authenticaton_hook($user, $pass, $user_is_anon)
 
-# This is called after executing every command. It commits the transaction
-# into the database.
-sub post_command_hook {
-  my $self = shift;
-  
-  # commit transaction and start a new one
-  #commit();
-  #begin();
-}
+When a user logs in authentication_hook() is called to check their
+username and password.  This method calls
+Bric::Biz::Person::User->lookup() using the given username and then
+checks the password.  Returns -1 on login failure or 0 on success.  As
+a side-effect this method stashes the Bric::Biz::Person::User object
+into $self->{user_obj}.
 
+=cut
 
-# perform login against the database.
 sub authentication_hook {
   my $self = shift;
   my $user = shift;
@@ -119,14 +118,28 @@ sub authentication_hook {
   return 0;
 }
 
-# Return an instance of Bric::Util::FTP::DirHandle for the root
-# directory.
+=item root_directory_hook()
+
+Net::FTPServer calls this method to get a DirHandle for the root
+directory.  This method just calls Bric::Util::FTP::DirHandle->new().
+
+=cut
+
 sub root_directory_hook {
   my $self = shift;
   return new Bric::Util::FTP::DirHandle ($self);
 }
 
-# called when an error occured
+=item system_error_hook()
+
+This method is called when an error is signaled elsewhere in the
+server.  It looks for a key called "error" in $self and returns that
+if it's available.  This allows for an OO version of the ever-popular
+$! mechanism.  (Or, at least, that's the idea.  As far as I can tell
+it never really gets called!)
+
+=cut
+
 sub system_error_hook {
   my $self = shift;
   print STDERR __PACKAGE__, "::system_error_hook()\n" if FTP_DEBUG;
@@ -136,3 +149,23 @@ sub system_error_hook {
 }
 
 1;
+
+__END__
+
+=head1 NOTES
+
+Currently only GET and PUT are implemented.  Also, you cannot create a
+new template file using the FTP interface.  You must create a template
+through the web interface and check it in before you can access it
+using FTP.
+
+=head1 AUTHOR
+
+Sam Tregar (stregar@about-inc.com
+
+=head1 SEE ALSO
+
+Net::FTPServer, Bric::Util::FTP::DirHandler, Bric::Util::FTP::FileHandle
+
+=cut
+

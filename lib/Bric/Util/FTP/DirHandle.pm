@@ -8,44 +8,42 @@ Bric::Util::FTP::DirHandle - Virtual FTP Server DirHandle
 
 =head1 VERSION
 
-1.0
+$Revision $
 
 =cut
 
-our $VERSION = "1.0";
+our $VERSION = substr(q$Revision 1.0$, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-02 16:23:59 $
+$Date: 2001-10-09 00:03:02 $
 
 =head1 DESCRIPTION
 
 This module provides a directory handle object for use by
 Bric::Util::FTP::Server.
 
-=head1 AUTHOR
+=head1 INTERFACE
 
-Sam Tregar (stregar@about-inc.com
+This module inherits from Net::FTPServer::DirHandle and overrides the
+required methods.  This class is used internally by Bric::Util::FTP::Server.
 
-=head1 SEE ALSO
+=head2 Constructors
 
-Bric::Util::FTP::Server
-
-=head1 REVISION HISTORY
-
-$Log: DirHandle.pm,v $
-Revision 1.1  2001-10-02 16:23:59  samtregar
-Added FTP interface to templates
-
+=over 4
 
 =cut
 
-
+################################################################################
+# Dependencies
+################################################################################
+# Standard Dependencies
 use strict;
-use warnings;
 
+################################################################################
+# Programmatic Dependences
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Category;
 use Bric::Biz::Asset::Formatting;
@@ -55,9 +53,22 @@ use Carp qw(confess croak);
 use Net::FTPServer::DirHandle;
 use Bric::Util::FTP::FileHandle;
 
+################################################################################
+# Inheritance
+################################################################################
 our @ISA = qw(Net::FTPServer::DirHandle);
 
-# Return a new directory handle.
+
+=item new($ftps, [$pathname, $category_id])
+
+Creates a new Bric::Util::FTP::DirHandle object.  Requires a
+Bric::Util::FTP::Server object as its first paramater.  Optionally
+takes a pathname and a category_id.  If not supplied the pathname
+defaults to "/" and the corresponding catgeory_id is looked up from
+the database.
+
+=cut
+
 sub new {
   my $class = shift;
   my $ftps = shift;	       # FTP server object.
@@ -78,16 +89,23 @@ sub new {
   return $self;
 }
 
-# called when an error occured
-sub system_error_hook {
-  my $self = shift;
-  print STDERR __PACKAGE__, "::system_error_hook()\n" if FTP_DEBUG;
-  return delete $self->{error}
-    if exists $self->{error};
-  return "Unknown error occurred.";
-}
+=back
 
-# return a subdirectory handle or a file handle within this directory.
+=head2 Public Instance Methods
+
+=over 4
+
+=item get($filename)
+
+The get() method is used to do a lookup on a specific filename.  If a
+template called $filename exists in this category then get() will call
+Bric::Util::FTP::FileHandle->new() and return the object.  If a
+category exists underneath this category called $filename then new()
+will be called and the directory handle will be returned.  Failing
+that, undef is returned.
+
+=cut
+
 sub get {
   my $self = shift;
   my $filename = shift;
@@ -126,6 +144,49 @@ sub get {
   # nothing found.
   return undef;
 }
+
+=item open($filename, $mode)
+
+This method is called to open a file in the current directory.  Right
+now this is equivalent to get($filename)->open($mode) since it doesn't
+support creating new files.  The possible modes are 'r', 'w' and 'a'.
+The method returns a Bric::Util::FTP::FileHandle or undef on failure.
+
+=cut
+
+sub open {
+  my $self = shift;
+  my $filename = shift;
+  my $mode = shift;
+
+  print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
+  
+  # find filename
+  my $list = Bric::Biz::Asset::Formatting->list({ category__id => $self->{category_id}, file_name => "%/$filename" });
+
+  if ($list) {
+    my $template = shift @$list;
+    return Bric::Util::FTP::FileHandle->new($self->{ftps},
+                                            $template,
+                                            $self->{category_id}
+                                           )->open($mode);
+  }
+
+  # not handling creation yet...
+  return undef;
+}
+
+=item list($wildcard)
+
+The list() method is called to do a wildcard search inside a
+directory.  The method performs a search for categories and templates
+matching the specified wildcard.  The return value is a reference to
+an array of two-element arrays - the first element is the name and the
+second is the corresponding FileHandle or DirHandle object.  The
+results are sorted by names before being returned.  If nothing matches
+the wildcard then a reference to an empty array is returned.
+
+=cut
 
 sub list {
   my $self = shift;
@@ -194,6 +255,14 @@ sub list {
   return \@results;
 }
 
+=item list_status($wildcard)
+
+This method performs the same as list() but also adds a third element
+to each returned array - the results of calling the status() method on
+the object.  See the status() method below for details.
+
+=cut
+
 sub list_status { 
   my $self = shift;
   my $wildcard = shift;
@@ -206,7 +275,13 @@ sub list_status {
   return $list;
 }
 
-# get parent of current directory.
+=item parent()
+
+Returns the Bric::FTP::DirHandle object for the parent of this
+directory.  For the root directory it returns itself.
+
+=cut
+
 sub parent {
   my $self = shift;
   my $category_id = $self->{category_id};
@@ -223,7 +298,28 @@ sub parent {
   return bless $dirh, ref $self;
 }
 
-# get directory status - this is all fake data 
+=item status()
+
+This method returns information about the object.  The return value is
+a list with seven elements - ($mode, $perms, $nlink, $user, $group,
+$size, $time).  To quote the good book (Net::FTPServer::Handle):
+
+          $mode     Mode        'd' = directory,
+                                'f' = file,
+                                and others as with
+                                the find(1) -type option.
+          $perms    Permissions Permissions in normal octal numeric format.
+          $nlink    Link count
+          $user     Username    In printable format.
+          $group    Group name  In printable format.
+          $size     Size        File size in bytes.
+          $time     Time        Time (usually mtime) in Unix time_t format.
+
+In this case all of these values are fixed for all categories: ( 'd',
+0777, 1, "nobody", "", 0, 0 ).
+
+=cut
+
 sub status {
   my $self = shift;
   my $category_id = $self->{category_id};
@@ -231,43 +327,51 @@ sub status {
   return ( 'd', 0777, 1, "nobody", "", 0, 0 );
 }
 
-# unsupported ops
+=item move()
+
+Unsupported method that always returns -1.  Category management using
+the FTP interface will probably never be supported.
+
+=cut
+
 sub move   { 
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }
 
+=item delete()
+
+Unsupported method that always returns -1.  Category management using
+the FTP interface will probably never be supported.
+
+=cut
+
 sub delete { 
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }
+
+=item mkdir()
+
+Unsupported method that always returns -1.  Category management using
+the FTP interface will probably never be supported.
+
+=cut
+
 sub mkdir  { 
   $_[0]->{error} = "Categories cannot be modified through the FTP interface.";
   -1;
 }
 
-sub open {
-  my $self = shift;
-  my $filename = shift;
-  my $mode = shift;
+=item can_*()
 
-  print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
-  
-  # find filename
-  my $list = Bric::Biz::Asset::Formatting->list({ category__id => $self->{category_id}, file_name => "%/$filename" });
+Returns permissions information for various activites.  can_write(),
+can_enter() and can_list() all return true since these operations are
+supported on all categories.  can_delete(), can_rename() and
+can_mkdir() all return false since these operations are never
+supported.
 
-  if ($list) {
-    my $template = shift @$list;
-    return Bric::Util::FTP::FileHandle->new($self->{ftps},
-                                            $template,
-                                            $self->{category_id}
-                                           )->open($mode);
-  }
-
-  # not handling creation yet...
-  # $self->{ftps}->reply(214, "Template creation not yet supported.");
-  return undef;
-}
+=cut
 
 sub can_write  { 1; }
 sub can_delete { 0; }
@@ -275,6 +379,22 @@ sub can_enter  { 1; }
 sub can_list   { 1; }
 sub can_rename { 0; }
 sub can_mkdir  { 0; }
+
+=back
+
+=head1 PRIVATE
+
+=head2 Private Functions
+
+=over 4
+
+=item _get_cats()
+
+Returnes a reference to a hash of category information.  Caches this
+data in a package global and returns the cached data if already
+called.
+
+=cut
 
 # returns a data structure for categories - caches in a global
 # variable.
@@ -306,7 +426,14 @@ sub _get_cats {
   return $CATS;
 }
 
-# invalidate category cache - forces reload on next call to _get_cats
+=item _forget_cats()
+
+Invalidates the cache used by _get_cats().  If the module ever
+provided operations that change catgeories then this method could be
+used to forget stale values.
+
+=cut
+
 sub _forget_cats {
   our $CATS;
   undef($CATS);
@@ -314,3 +441,17 @@ sub _forget_cats {
 
 
 1;
+
+__END__
+
+=pod
+
+=head1 AUTHOR
+
+Sam Tregar (stregar@about-inc.com)
+
+=head1 SEE ALSO
+
+Net:FTPServer::DirHandle, Bric::Util::FTP::Server, Bric::Util::FTP::FileHandle
+
+=cut

@@ -8,48 +8,43 @@ Bric::Util::FTP::FileHandle - Virtual FTP Server FileHandle
 
 =head1 VERSION
 
-1.0
+$Revision $
 
 =cut
 
-our $VERSION = "1.0";
+our $VERSION = substr(q$Revision 1.0$, 10, -1);
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-02 20:10:26 $
+$Date: 2001-10-09 00:03:02 $
 
 =head1 DESCRIPTION
 
 This module provides a file handle object for use by
 Bric::Util::FTP::Server.
 
-=head1 AUTHOR
+=head1 INTERFACE
 
-Sam Tregar (stregar@about-inc.com
+This module inherits from Net::FTPServer::FileHandle and overrides the
+required methods.  This class is used internally by Bric::Util::FTP::Server.
 
-=head1 SEE ALSO
+=head2 Constructors
 
-Bric::Util::FTP::Server
-
-=head1 REVISION HISTORY
-
-$Log: FileHandle.pm,v $
-Revision 1.2  2001-10-02 20:10:26  samtregar
-Fix for templates with no deploy date crashing server
-
-Revision 1.1  2001/10/02 16:23:59  samtregar
-Added FTP interface to templates
-
+=over 4
 
 =cut
 
+################################################################################
+# Dependencies
+################################################################################
+# Standard Dependencies
 use strict;
-use warnings;
 
+################################################################################
+# Programmatic Dependences
 use Carp qw(croak confess);
-
 use Bric::Config qw(:ftp);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
@@ -60,9 +55,22 @@ use Bric::Util::FTP::DirHandle;
 use Net::FTPServer::FileHandle;
 use IO::Scalar;
 
+################################################################################
+# Inheritance
+################################################################################
 our @ISA = qw(Net::FTPServer::FileHandle);
 
-# return a new file handle.
+=pod
+
+=item new($ftps, $template, $category_id)
+
+Creates a new Bric::Util::FTP::FileHandle object.  Requires three
+arguments - the Bric::Util::FTP::Server object, the
+Bric::Biz::Asset::Formatting object that this filehandle represents
+(aka the template object), and the category_id which this file is in.
+
+=cut
+
 sub new {
   my $class = shift;
   my $ftps = shift;
@@ -85,70 +93,24 @@ sub new {
   return bless $self, $class;
 }
 
-# the directory handle for this file.
-sub dir {
-  my $self = shift;
-  return Bric::Util::FTP::DirHandle->new ($self->{ftps},
-                                          $self->dirname,
-                                          $self->{category_id});
-}
+=back
 
-# get stat for this file
-sub status {
-  my $self = shift;
-  my $template = $self->{template};
+=head2 Public Instance Methods
 
-  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";  
-  
-  my $size = length($template->get_data);
-  my $deploy_date = $template->get_deploy_date;
-  my $date = 0;
-  if ($deploy_date) {
-    $date = local_date($deploy_date, 'epoch');
-  }
+=over 4
 
-  my $owner = $template->get_user__id;
-  if ($owner) {
+=item open($mode)
 
-    # if checked out, get the username return read-only
-    my $user = Bric::Biz::Person::User->lookup({id => $owner});
-    my $login = defined $user ? $user->get_login : "unknown";
-    return ( 'f', 0444, 1, $login, "co", $size,  $date);
+This method opens this template object for access using the provided
+mode ('r', 'w' or 'a').  The method returns an IO::Scalar object that
+will be used by Net::FTPServer to access the template text.  For
+read-only access a plain IO::Scalar object is returned.  For
+write-methods an internal tied class -
+Bric::Util::FTP::FileHandle::SCALAR - is used with IO::Scalar to
+provide write-access to the data in the database.  Returns undef on
+failure.
 
-  } else {
-    # otherwise check for write privs - can't use chk_authz because it
-    # works with the web login caching system.
-    my $priv = $self->{ftps}{user_obj}->what_can($template);
-    my $mode;
-    if ($priv == EDIT or $priv == CREATE) {
-      $mode = 0777;
-    } else {
-      $mode = 0400;
-    }
-    return ( 'f', $mode, 1, "nobody", "ci", $size,  $date);
-  }
-
-
-}
-
-# fixed properties
-sub can_read   {  1; }
-sub can_rename {  0; }
-sub can_delete {  0; }
-
-# check to see if template is checked out
-sub can_write  { 
-  my $self = shift;
-  my @stats = $self->status();
-
-  # this should probably be a real bit test for u+w
-  if ($stats[1] == 0777) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-*can_append = \&can_write;
+=cut
 
 # Open the file handle.
 sub open {
@@ -186,6 +148,132 @@ sub open {
     return $handle;
   }
 }
+
+=item dir()
+
+Returns the directory handle for the category that this template is
+in.  Calls Bric::Util::FTP::DirHandle->new().
+
+=cut
+
+sub dir {
+  my $self = shift;
+  return Bric::Util::FTP::DirHandle->new ($self->{ftps},
+                                          $self->dirname,
+                                          $self->{category_id});
+}
+
+=item status()
+
+This method returns information about the object.  The return value is
+a list with seven elements - ($mode, $perms, $nlink, $user, $group,
+$size, $time).  To quote the good book (Net::FTPServer::Handle):
+
+          $mode     Mode        'd' = directory,
+                                'f' = file,
+                                and others as with
+                                the find(1) -type option.
+          $perms    Permissions Permissions in normal octal numeric format.
+          $nlink    Link count
+          $user     Username    In printable format.
+          $group    Group name  In printable format.
+          $size     Size        File size in bytes.
+          $time     Time        Time (usually mtime) in Unix time_t format.
+
+$mode is always 'f'.  $perms is set depending on wether the template
+is checked out and whether the user has access to edit the template.
+$nlink is always 1.  $user is set to the user that has the template
+checked out or "nobody" for checked in templates.  $group is "ci" if
+the template is checked out, "ci" if it's checked in.  $size is the
+size of the template text in bytes.  $time is set to the deploy_time()
+of the template.
+
+=cut
+
+sub status {
+  my $self = shift;
+  my $template = $self->{template};
+
+  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";  
+  
+  my $size = length($template->get_data);
+  my $deploy_date = $template->get_deploy_date;
+  my $date = 0;
+  if ($deploy_date) {
+    $date = local_date($deploy_date, 'epoch');
+  }
+
+  my $owner = $template->get_user__id;
+  if ($owner) {
+
+    # if checked out, get the username return read-only
+    my $user = Bric::Biz::Person::User->lookup({id => $owner});
+    my $login = defined $user ? $user->get_login : "unknown";
+    return ( 'f', 0444, 1, $login, "co", $size,  $date);
+
+  } else {
+    # otherwise check for write privs - can't use chk_authz because it
+    # works with the web login caching system.
+    my $priv = $self->{ftps}{user_obj}->what_can($template);
+    my $mode;
+    if ($priv == EDIT or $priv == CREATE) {
+      $mode = 0777;
+    } else {
+      $mode = 0400;
+    }
+    return ( 'f', $mode, 1, "nobody", "ci", $size,  $date);
+  }
+
+
+}
+
+=item can_*()
+
+Returns permissions information for various activites.  can_read()
+always returns 1 since templates can always be read.  can_rename() and
+can_delete() return 0 since these operations are not yet supported.
+can_write() and can_append() return 1 if the user can write to the
+template - if it's checked in and the user has permission.
+
+=cut
+
+# fixed properties
+sub can_read   {  1; }
+sub can_rename {  0; }
+sub can_delete {  0; }
+
+# check to see if template is checked out
+sub can_write  { 
+  my $self = shift;
+  my @stats = $self->status();
+
+  # this should probably be a real bit test for u+w
+  if ($stats[1] == 0777) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+*can_append = \&can_write;
+
+=back
+
+=head1 PRIVATE
+
+=head2 Private Classes
+
+=over 4
+
+=item Bric::Util::FTP::FileHandle::SCALAR
+
+This class provides a tied scalar interface to a template object's
+data.  The TIESCALAR constructor takes a template object as a single
+argument.  Writes to the tied scalar result in the template object
+being altered, saved, checked-in and deployed.
+
+=back
+
+=cut
 
 package Bric::Util::FTP::FileHandle::SCALAR;
 use strict;
@@ -244,3 +332,17 @@ sub STORE {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 AUTHOR
+
+Sam Tregar (stregar@about-inc.com)
+
+=head1 SEE ALSO
+
+Net:FTPServer::FileHandle, Bric::Util::FTP::Server, Bric::Util::FTP::DirHandle
+
+=cut
