@@ -6,15 +6,15 @@ Bric::Util::Coll - Interface for managing collections of objects.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-10 03:30:30 $
+$Date: 2003-01-23 22:16:59 $
 
 =head1 SYNOPSIS
 
@@ -554,7 +554,7 @@ sub del_objs {
     # If we're in QA mode, populate the collection. This will help to
     # catch bugs where someone tries to delete an object that isn't in
     # the collection.
-    $self->populate if QA_MODE;
+    $self->_populate if QA_MODE;
     my ($objs, $del_objs) = $self->_get('objs', 'del_obj');
     if ($self->is_populated) {
         foreach my $o (@_) {
