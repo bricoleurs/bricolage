@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-09-05 23:42:46 $
+$Date: 2002-09-19 00:01:06 $
 
 =head1 SYNOPSIS
 
@@ -34,7 +34,9 @@ $Date: 2002-09-05 23:42:46 $
 
   # Or simply execute this script.
   perl inst/runtests.pl
+  perl inst/runtests.pl t/test_file, t/test_file ...
   perl inst/runtests.pl -V
+  perl inst/runtests.pl -V t/test_file, t/test_file ...
   perl inst/runtests.pl -d
   perl inst/runtests.pl -dV
 
@@ -48,10 +50,12 @@ cause the script to only run the 'Test.pm' scripts.
 If the environment variable C<TEST_VERBOSE> is set, or the C<-V> option is
 passed in, then the tests will be run in verbose mode.
 
-Note that this script C<chdir>s into F<t/>. So all test classes will be run in
-that directory. This will help prevent us from polluting the root directory --
-although really, if you need to output test files or something, use
-C<File::Spec->tmpdir> and clean up after yourself!
+If a list of one or more test class files are passed in, then only those tests
+will be run.
+
+All tests are executed in the Bricolage distribution root directory. If you're
+writing tests that need to output test files or something, please use
+C<< File::Spec->tmpdir >> and clean up after yourself!
 
 =head1 AUTHOR
 
@@ -70,9 +74,8 @@ use File::Spec;
 use Test::Harness qw(runtests $verbose);
 use Getopt::Std;
 
-# Drop down into the t directory, and add the requisite library paths to @INC.
-chdir 't' if -d 't';
-unshift @INC, File::Spec->catdir(File::Spec->updir, 'lib'), 'lib';
+# Add the requisite library paths to @INC.
+unshift @INC, 'lib', File::Spec->catdir('t', 'lib');
 
 # Get arguments.
 my %opts;
@@ -82,8 +85,9 @@ getopts('dV', \%opts);
 my $chk = $opts{d} ? sub { m/Test.pm$/ } : sub { $_ eq 'Test.pm' };
 
 # Find the tests.
-my @tests;
-find(sub { push @tests, $File::Find::name if $chk->() }, 'lib');
+my @tests = @ARGV;
+find(sub { push @tests, $File::Find::name if $chk->() }, 'lib')
+  unless @tests;
 
 # Set verbosity.
 if ($opts{V}) {
