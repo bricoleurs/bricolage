@@ -8,16 +8,16 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-28 08:24:09 $
 
 =head1 SYNOPSIS
 
@@ -291,16 +291,18 @@ sub new {
 
 	# If this could die, but in that case we just skip this part.
 	my @name = eval { $pkg->autopopulated_fields };
-	
+	my $i = 0;
 	foreach my $n (@name) {
 	    my $atd = $self->new_data({'name'        => $n,
-				       'description' => "autopopulated $n field",
+				       'description' => "Autopopulated $n field.",
 				       'required'    => 1,
 				       'sql_type'    => 'short',
-						autopopulated => 1 });
+				       autopopulated => 1 });
 	    $atd->set_attr('html_info', '');
+	    $atd->set_meta('html_info', 'disp', $n);
 	    $atd->set_meta('html_info', 'type', 'text');
-	    $atd->set_meta('html_info', 'size', 20);
+	    $atd->set_meta('html_info', 'length', 32);
+	    $atd->set_meta('html_info', 'pos', ++$i);
 	}
     }
 
@@ -2743,7 +2745,10 @@ L<perl>,L<Bric>,L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: AssetType.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-28 08:24:09  wheeler
+Updated the meta attributes of autopopulated fields.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:14  wheeler
