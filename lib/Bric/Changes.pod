@@ -22,9 +22,13 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Made story profile's subelement 'Preview In' output-channel list
-consistent with the top level one (e.g. editing a Page shows the
-same preview OCs as editing the Story at the top level). [Scott]
+Made story profile's subelement 'Preview In' output-channel list consistent
+with the top level one (e.g. editing a Page shows the same preview OCs as
+editing the Story at the top level). [Scott]
+
+=item *
+
+Added Linux startup script F<contrib/start_scripts/linux>. [David]
 
 =back
 
