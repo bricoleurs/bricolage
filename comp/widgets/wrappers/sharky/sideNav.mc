@@ -146,7 +146,7 @@ unless ($workflows) {
 foreach my $wf (@$workflows) {
     # Check permissions.
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
-    my $esc_name = escape_uri($wf->{name});
+    my $esc_name = escape_html($wf->{name});
 
     $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
 
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.6.2.5 $
+$Revision: 1.6.2.6 $
 
 =head1 DATE
 
-$Date: 2002-02-28 22:49:27 $
+$Date: 2002-03-01 17:00:17 $
 
 </%doc>

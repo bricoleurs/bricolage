@@ -71,6 +71,11 @@ Fixed bug where attempting to create a destination with the same name as an
 existing but deactivated destination triggered an SQL error. Thanks to Michael
 Alan Dorman for the spot. [David]
 
+=item *
+
+Fixed bug where Workflows with spaces in their names would not create proper
+submenus in the left navigation bar. Thanks to the WHO for the spot [David]
+
 =back
 
 =head1 VERSION 1.2.1
