@@ -48,6 +48,13 @@ The C<display_element()> method in the Mason burner once again passes
 component arguments on to components. And now, so does C<sdisplay_element()>.
 [David]
 
+=item *
+
+Fixed F<favicon.ico> code so that the browser and server don't go into an
+infinite loop with redirects of redirects. The F<favicon.ico> still doesn't
+pop up in the location field in my browser, but it does display proplerly if I
+point my browser at it. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
