@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-02 18:49:11 $
+$Date: 2003-02-18 06:46:45 $
 
 =head1 SYNOPSIS
 
@@ -169,6 +169,8 @@ my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 =head1 INTERFACE
 
 =head2 Functions
+
+=over 4
 
 =item setup_user_session($r)
 
@@ -800,79 +802,12 @@ sub user_is_admin {
     return $bric_user->{admin};
 }
 
-
-#--------------------------------------#
-# Private Class Fields
-
-
-
-#--------------------------------------#
-# Instance Fields
-
-
-
-#==============================================================================#
-
-=head1 INTERFACE
-
-=head2 Constructors
-
-NONE.
-
-=cut
-
-
-#--------------------------------------#
-
-=head2 Destructors
-
-NONE.
-
-=cut
-
-#--------------------------------------#
-
-=head2 Public Class Methods
-
-NONE.
-
-=cut
-
-
-#--------------------------------------#
-
-=head2 Public Instance Methods
-
-NONE.
-
-=cut
-
-#==============================================================================#
-
-=head2 Private Methods
-
-NONE.
-
-=cut
-
-#--------------------------------------#
-
-=head2 Private Class Methods
-
-NONE
-
-=cut
-
-#--------------------------------------#
-
-=head2 Private Instance Methods
-
-NONE
-
 =cut
 
 1;
 __END__
+
+=back
 
 =head1 NOTES
 

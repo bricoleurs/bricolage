@@ -7,16 +7,16 @@ alerts were sent.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2003-02-18 06:46:48 $
 
 =head1 SYNOPSIS
 
@@ -266,7 +266,7 @@ sub get_sent_time { local_date($_[0]->_get('sent_time'), $_[1]) }
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 

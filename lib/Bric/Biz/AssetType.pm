@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-02-18 06:46:46 $
 
 =head1 SYNOPSIS
 
@@ -2633,8 +2633,6 @@ $get_oc_coll = sub {
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
 };
-
-=over 4
 
 =item my $key_name = $make_key_name->($name)
 

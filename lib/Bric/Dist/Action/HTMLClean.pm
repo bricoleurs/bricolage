@@ -6,16 +6,16 @@ Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:40 $
+$Date: 2003-02-18 06:46:47 $
 
 =head1 SYNOPSIS
 
@@ -145,7 +145,7 @@ sub do_it {
 
 ################################################################################
 
-=back 4
+=back
 
 =head1 PRIVATE
 
@@ -211,6 +211,8 @@ sub _clear_attr { $_[0] }
 
 ################################################################################
 
+=back
+
 =head2 Private Functions
 
 NONE.
@@ -230,7 +232,7 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Dist::Action|Bric::Dist::Action>
 
 =cut

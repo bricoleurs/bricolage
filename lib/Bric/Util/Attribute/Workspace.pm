@@ -5,18 +5,17 @@ package Bric::Util::Attribute::Workspace;
 
 Bric::Util::Attribute::Workspace - Groups of workspace objects.
 
-
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:46 $
+$Date: 2003-02-18 06:46:48 $
 
 =head1 SYNOPSIS
 
@@ -33,18 +32,15 @@ The implimentations of workspace attributes.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
 use base qw( Bric::Util::Attribute );
 
 #=============================================================================#
@@ -62,16 +58,13 @@ use base qw( Bric::Util::Attribute );
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-
-#--------------------------------------#
-# Private Class Fields                  
-
+# Public Class Fields
 
 #--------------------------------------#
-# Instance Fields                       
+# Private Class Fields
 
+#--------------------------------------#
+# Instance Fields
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({});
@@ -84,18 +77,6 @@ BEGIN {
 =head2 Constructors
 
 ALL CONSTRUCTORS INHERITED
-
-=over 4
-
-=cut
-
-#--------------------------------------#
-
-=head2 Public Class Methods
-
-=cut
-
-#------------------------------------------------------------------------------#
 
 =head2 Public Class Methods
 
@@ -111,13 +92,15 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> Values for this method look like 'grp' given a full object type of
-'Bric::Util::Grp'.
+Bric::Util::Grp.
 
 =cut
 
 sub short_object_type { return 'workspace' }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Instance Methods
 
@@ -160,16 +143,13 @@ NONE
 1;
 __END__
 
-=back
-
 =head1 NOTES
 
 NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
