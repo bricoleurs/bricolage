@@ -429,7 +429,7 @@ sub testclean_params: Test(8) {
              active => 1,
              _no_return_versions => 1,
              _not_simple => 1,
-             _checked_out => '',
+             _checked_out => 0,
              _not_checked_out => 0,
              Order => 'cover_date',
            };

@@ -822,8 +822,10 @@ sub clean_params {
         # this is last because it's most important for defining a workspace
         $param->{_checked_out} = 1 if defined $param->{user__id};
         if (defined $param->{_checked_out}) {
-            # Make sure we have a valid checkout value -- that is, no null string!
-            $param->{_not_checked_out} = 0 unless $param->{_checked_out};
+            # Make sure we have valid checkout values -- that is, no null
+            # strings!
+            @{$param}{qw(_not_checked_out _checked_out)} = (0, 0)
+              unless $param->{_checked_out};
         } else {
             # finally the default
             $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
