@@ -22,7 +22,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Created new method of configuring Bricolage in Apache. [David]
+Created new method of configuring Bricolage in Apache. For mod_perl 1.26 and
+earlier, a custom config file will be written to the bricolage temp directory
+every time Bricolage is started or restarted. For mod_perl 1.27 and later, no
+temp file will be written. [David]
 
 =item *
 
@@ -37,6 +40,12 @@ Changed password for the default "admin" user to "change me now!" [David]
 The slug is stored in the database for both fixed and non-fixed stories. This is
 in anticipation of adding the ability to use the slug for fixed story URIs later
 on. Thanks to Darren Graves for the patch.
+
+=item *
+
+Added DISABLE_NAV_LAYER directive. It's off by default, but if you turn it on in
+bricolage.conf, the side navigation layer will be rendered as plain HTML in
+every page instead of as a separate layer. [David]
 
 =back
 
