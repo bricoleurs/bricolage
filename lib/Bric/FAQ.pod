@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.10 $
+$Revision: 1.7.2.11 $
 
 =head1 DATE
 
-$Date: 2003-08-12 17:23:52 $
+$Date: 2003-08-18 18:47:41 $
 
 =head1 DESCRIPTION
 
@@ -90,8 +90,7 @@ L<http://kineticode.com/services/>.
 
 =head2 Installation
 
-=head3 Why does mod_perl have to be statically compiled into Apache? I've been
-using mod_perl as a DSO and have had no problems with it at all.
+=head3 Why does mod_perl have to be statically compiled into Apache? I've been using mod_perl as a DSO and have had no problems with it at all.
 
 You are very fortunate, because mod_perl 1.x is just not too stable as a
 DSO. Weird things tend to happen. That's not to say that some haven't set it
@@ -249,8 +248,7 @@ A Short introduction to F<pg_hba.conf> can be found in L<Bric::DBA|Bric::DBA>,
 and it is more thorougly documented at
 L<http://www.postgresql.org/docs/current/interactive/client-authentication.html>.
 
-=head3 Why do I get a 404 when I connect to the Bricolage UI and get an
-error like the following in Apache's F<error_log>?
+=head3 Why do I get a 404 when I connect to the Bricolage UI and get an error like the following in Apache's F<error_log>?
 
   [error] [client 127.0.0.1] Error executing AccessHandler: Bric::App::Session -- /usr/local/lib/perl5/site_perl/5.8.0/Bric/App/Session.pm -- 236
   Difficulties tie'ing the session hash to file '/tmp/bricolage/session'
@@ -262,10 +260,7 @@ the temp file directories and restart Bricolage:
   sudo chown -R nobody:nobody /tmp/bricolage
   sudo bric_apachectl restart
 
-=head3 When I try to login to Bricolage, I get redirected to F</login>, but
-the page is blank. There's nothing in the HTML source except C<<
-<html><head></head></html> >> or nothing at all. There are no errors in the
-error log or the access log. What's wrong?
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but the page is blank. There's nothing in the HTML source except C<< <html><head></head></html> >> or nothing at all. There are no errors in the error log or the access log. What's wrong?
 
 I've seen this a couple of times, but the cause was different each time. On
 one occasion, there was a F<FilesMatch> directive in a separate VirtualHost
@@ -292,8 +287,7 @@ simply copying these two files from the Bricolage source directories to your
 installed component root will correct the problem. Holler on the
 bricolage-general mail list if it doesn't.
 
-=head3 When I try to login to Bricolage, I get redirected to F</login>, but
-the webserver reported a "500 Internal Server Error". What's wrong?
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but the webserver reported a "500 Internal Server Error". What's wrong?
 
 Look in your Apache F<error_log> file. If you find an error along the lines of
 
@@ -313,9 +307,7 @@ you will get
 Thus demonstrating that you're dealing with a PostgreSQL configuration issue,
 rather than a Bricolage issue.
 
-=head3 I'm trying to restore a backup of the Bricolage database, but I keep
-getting an error like this: "ERROR: Function login_avail(varchar, numeric,
-numeric) does not exist". What gives?
+=head3 I'm trying to restore a backup of the Bricolage database, but I keep getting an error like this: "ERROR: Function login_avail(varchar, numeric, numeric) does not exist". What gives?
 
 This is a known issue with PostgreSQL's C<pg_dump> utility -- it's not smart
 enough to handle circular dependencies. The PostgreSQL developers are aware of
@@ -338,8 +330,7 @@ able to load the database and get back to work!
 
 =head2 Element Administration
 
-=head3 I added a field to an element and deleted it, and now I can't add a new
-field with the same name. Why not?
+=head3 I added a field to an element and deleted it, and now I can't add a new field with the same name. Why not?
 
 Fields cannot have the same name, even if they've been deleted. This is
 because you might have older stories around that use the old name, and still
