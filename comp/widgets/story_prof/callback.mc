@@ -886,6 +886,7 @@ my $handle_recall = sub {
             $start_desk->accept({'asset' => $ba});
             $start_desk->checkout($ba, get_user_id);
             $start_desk->save;
+            $ba->save;
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
             log_event('story_checkout', $ba);
         } else {
