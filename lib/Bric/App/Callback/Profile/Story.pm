@@ -462,16 +462,26 @@ sub delete_cat : Callback {
     my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    $story->delete_categories($cat_ids);
-    $story->save;
 
-    # Log events.
+    my (@to_delete, @to_log);
+    my $primary = $self->params->{"$widget|primary_cat"}
+      ||  $story->set_primary_category;
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
-        log_event('story_del_category', $story, { Category => $cat->get_name });
+        if ($cid == $primary) {
+            add_msg('Category "[_1]" cannot be dissociated because it is the'
+                    . 'primary category', $cat->get_name);
+            next;
+        }
+        push @to_delete, $cid;
+        push @to_log, ['story_del_category', $story, { Category => $cat->get_name }];
         add_msg('Category "[_1]" disassociated.',
                 '<span class="l10n">' . $cat->get_name . '</span>');
     }
+
+    $story->delete_categories(@to_delete);
+    $story->save;
+    log_event(@$_) for @to_log;
     set_state_data($widget, 'story', $story);
 }
 

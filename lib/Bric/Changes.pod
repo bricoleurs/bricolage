@@ -86,6 +86,11 @@ The list of output channels to add to an element in the element profile now
 contains the name of the site that each is associated with, since different
 sites can have output channels with the same names. [David]
 
+=item *
+
+You can no longer delete a category from a story when you have also marked it
+to become the primary category. Reported by Simon Wilcox. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
