@@ -7,15 +7,15 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-10-08 04:13:25 $
 
 =head1 SYNOPSIS
 
@@ -24,6 +24,7 @@ $m->comp("/widgets/doubleListManager/doubleListManager.mc",
 	rightOpts       => @rightOpts,
 	rightSort       => 1,
 	leftSort        => 1,
+        size            => 10,
         readOnly        => true || false  # toggles display of buttons to move items btwn lists.  Default is false.
         leftCaption     => $leftCaption   # optional string displayed above left list
         rightCaption    => $rightCaption  # optional string displayed above right list
@@ -66,6 +67,7 @@ $rightJs        => ''
 $leftSort       => 0
 $rightSort      => 0
 $formName       => 'theForm'
+$size           => 10
 </%args>
 
 <%init>;
@@ -185,7 +187,7 @@ if ($showRightList) {
     <td>&nbsp;</td><td valign=top align=right>
 % if ($showLeftList) {
 %   if (!$readOnly) {
-      <select name="<% $leftName %>" size="10" multiple style="width:225px" width="210">
+      <select name="<% $leftName %>" size="<% $size %>" multiple style="width:225px" width="210">
       <% $left %>
       </select>
 %   } else {
@@ -196,7 +198,7 @@ if ($showRightList) {
     <td valign=top>
 % if ($showRightList) {
 %   if (!$readOnly) {
-      <select name="<% $rightName %>" size="10" multiple style="width:225px" width="210">
+      <select name="<% $rightName %>" size="<% $size %>" multiple style="width:225px" width="210">
       <% $right %>
       </select>
 %   } else {
