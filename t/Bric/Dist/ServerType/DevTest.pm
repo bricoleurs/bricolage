@@ -5,7 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Dist::ServerType;
 use Bric::Dist::Server;
-use Bric::Dist::Job;
+use Bric::Util::Job;
 use Bric::Util::Grp::Dest;
 
 sub table {'server_type'}
