@@ -249,6 +249,20 @@ of course, but in the document model (element administration). [David]
 
 Keywords can now be associated with media assets. [David]
 
+=item *
+
+Templates now have a C<published_version> attribute that properly reflects the
+version of a template that was last deployed. This matches what Story and
+Media have done since around version 1.3.2, and eliminates some warnings from
+the error log. The UI has also been updated to properly show the deploy status
+of templates. [David]
+
+=item *
+
+The installer should now properly detect that the Apache "log_config" module
+is installed even when it's called "config_log". Thanks to Ilia Chipitsine for
+the spot and the diagnostics needed to solve the problem. [David]
+
 =back
 
 =head2 Bug Fixes
