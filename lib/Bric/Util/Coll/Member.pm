@@ -8,15 +8,15 @@ members
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:46 $
+$Date: 2002-08-27 17:22:43 $
 
 =head1 SYNOPSIS
 
@@ -175,7 +175,10 @@ sub save {
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
     foreach my $mem (@$del_objs) {
-	$mem->save if $mem->get_id;
+        if ($mem->get_id) {
+            $mem->remove;
+            $mem->save;
+        }
     }
     @$del_objs = ();
 

@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:45 $
+$Date: 2002-08-27 17:22:43 $
 
 
 =head1 SYNOPSIS
@@ -890,8 +890,8 @@ sub remove_asset {
 					   '_asset_grp_obj');
 
     # If the asset was accepted and we get here, remove this asset from the desk
-    $asset_grp_obj->delete_members([{'package' => ref $asset,
-				     'id'      => $asset->get_id}]);
+    $asset_grp_obj->delete_member({ package => ref $asset,
+                                    id      => $asset->get_id });
 
     return $self;
 }

@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-21 21:58:17 $
+$Date: 2002-08-27 17:22:43 $
 
 =head1 SYNOPSIS
 
@@ -1383,7 +1383,6 @@ sub delete_member {
 
     # Remove the member object and return.
     my $memb_coll = $get_memb_coll->($self);
-    $mem->remove;
     $memb_coll->del_objs($self->get_object_class_id ?
                          $mem->get_obj_id :
                          $mem->get_id);

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 133;
+use Test::More tests => 134;
 
 BEGIN {
     # Load Grp and all of the subclasses. AssetVersion may not be used
@@ -192,6 +192,8 @@ is( $grp->get_name, 'Test Orgs', "Check Test Orgs name" );
 ok( @mems = $grp->get_members, "Get test members" );
 ok( @mems == 1, "Check for one test member" );
 is( $mems[0]->get_obj_id, $o->get_id, "Check test member ID" );
+# Reload the group before removing the member.
+ok( $grp = Bric::Util::Grp->lookup({ id => $gid }), "Reload new org grp" );
 ok( $grp->delete_members([$o]),"Delete org member" );
 @mems = $grp->get_members;
 ok( @mems == 0, "Check for no members" );

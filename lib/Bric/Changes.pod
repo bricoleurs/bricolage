@@ -24,6 +24,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 The Element Type manager now displays properly again without errors. [David]
 
+=item *
+
+Assets are now properly removed from desks when they are published or moved
+from one desk to another. More generally, any time a single object is removed
+from a group, it will be properly removed. [David]
+
 =back
 
 =head1 VERSION 1.3.3
