@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-05 23:36:45 $
+$Date: 2002-02-11 20:57:55 $
 
 =head1 SYNOPSIS
 
@@ -976,8 +976,8 @@ sub get_media_type {
 
 =item $media = $media->upload_file($file_handle, $file_name)
 
-Will get a file handle from apache and a name that is associated
-will store it in a versioned manner
+Reads a file from the passed $file_handle and stores it in the media
+object under $file_name.
 
 B<Throws:>
 
@@ -985,9 +985,9 @@ NONE
 
 B<Side Effects:>
 
-NONE
+Closes the $file_handle after reading.
 
-B<Notes:>
+B<Notes:> 
 
 NONE
 
@@ -1003,8 +1003,10 @@ sub upload_file {
 
 	open FILE, ">$path" or die
 	  Bric::Util::Fault::Exception::GEN->new({ msg => "Unable to open '$path': $!" });
-	# fix for binary files
-	while (<$fh>) { print FILE $_ }
+	my $buffer;
+	while(read($fh, $buffer, 10240)) {
+	    print FILE $buffer;
+	}
 	close $fh;
 	close FILE;
 
