@@ -77,13 +77,13 @@ A number of fixes for the bric_media_upload contrib script:
 
 =over 8
 
-=item * Made it work with the 1.7.0 DTD.
+=item Made it work with the 1.7.0 XML Schema.
 
-=item * Fixed a bug in its use of File::Find.
+=item Fixed a bug in its use of File::Find.
 
-=item * Fixed problem in calculating category names when given a directory to upload.
+=item Fixed problem in calculating category names when given a directory to upload.
 
-=item * Added --bric_soap and --site options.
+=item Added C<--bric_soap> and C<--site> options.
 
 =back
 
