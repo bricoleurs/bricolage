@@ -422,6 +422,7 @@ sub load_asset {
         my $update = exists $to_update{$id};
 
         # make sure this name isn't already taken
+        # XXX This should use key name, no?
         my @list = Bric::Biz::AssetType->list_ids({ name => $edata->{name},
                                                     active => 0 });
         if (@list) {
@@ -449,6 +450,7 @@ sub load_asset {
         }
 
         # set simple data
+        # XXX Key name and name are separate, and should be separate in the XML.
         $element->set_key_name($edata->{name});
         $element->set_description($edata->{description});
         $element->set_burner($burner);
