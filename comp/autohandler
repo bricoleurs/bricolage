@@ -1,7 +1,8 @@
-<%perl>;
+<%once>;
 # Enable smarter exceptions if in QA_MODE.
 local $SIG{__DIE__} = sub { die &Bric::App::Handler::_make_fault } if QA_MODE;
-
+</%once>
+<%perl>;
 # Execute any callbacks set for this request. This should be handled in
 # Bric::App::Handler::load_args(), but it doesn't work there right now. Hopefully
 # it will in the near future.
@@ -19,11 +20,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-02-25 21:31:55 $
+$Date: 2003-02-27 21:58:58 $
 
 =head1 SYNOPSIS
 

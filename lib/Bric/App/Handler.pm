@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-25 21:31:54 $
+$Date: 2003-02-27 21:58:59 $
 
 =head1 SYNOPSIS
 
@@ -303,6 +303,11 @@ sub _make_fault {
     # Otherwise, create a new exception object.
     my $payload = '';
     if (isa_mason_exception($err)) {
+        if (isa_mason_exception($err, 'Abort') or
+            isa_mason_exception($err, 'Compilation::IncompatibleCompiler')) {
+            # Just let these fall through so that Mason can handle them.
+            die $err;
+        }
         my $brief = $err->as_brief;
         return $brief if UNIVERSAL::isa($brief, 'Bric::Util::Fault');
         $payload = $brief;
