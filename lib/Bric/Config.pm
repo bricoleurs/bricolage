@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.50.2.2 $
+$Revision: 1.50.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.50.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-29 23:11:23 $
+$Date: 2002-10-29 23:20:30 $
 
 =head1 SYNOPSIS
 
@@ -472,9 +472,11 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant PROFILE => $config->{PROFILE} || 0;
 
     # Okay, now load the end-user's code, if any.
-    if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
-        my $pkg = TEMPLATE_BURN_PKG;
-        INIT { eval "package $pkg; $config->{PERL_LOADER}" }
+    INIT {
+        if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
+            my $pkg = TEMPLATE_BURN_PKG;
+            eval "package $pkg; $config->{PERL_LOADER}";
+        }
     }
 }
 
