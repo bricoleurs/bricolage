@@ -135,6 +135,14 @@ have READ access to each listed output channel group. Sponsored by Alinghi.
 Added C<MEDIA_UPLOAD_LIMIT> F<bricolage.conf> directive for setting a size
 limit on uploaded media files. [Scott]
 
+=item *
+
+Added a frame on top of the preview window with a "Repreview" link.  This is
+useful for previewing changes when you're developing templates.  Rather than
+having to save the template, go back to the workspace, repreview, and then
+go back to the template profile, you can preview the story, then edit the 
+template and click "Repreview." [Marshall]
+
 =back
 
 =head2 Improvements

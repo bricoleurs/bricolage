@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Preview Controller</title>
+    <style type="text/css">
+        body {
+            background: #E8E8CD;
+            padding: 0 10px;
+            margin: 0;
+            line-height: 30px;
+        }
+        p { padding: 0; margin: 0; }
+    </style>
+    <script type="text/javascript">
+        window.onload = function() {
+            var btnRepreview = document.getElementById("repreview");
+            btnRepreview.onclick = function() {
+                parent.frames['preview'].location.href = 
+                    parent.preview_uri; 
+                return false;
+            }
+        }
+    </script>
+  </head>
+  <body>
+    <p id="actions"><a href="#" id="repreview">Repreview</a></p>
+  </body>
+</html>

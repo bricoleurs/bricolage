@@ -1,0 +1,39 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+dhandler -- Preview/Publish popup control panel.
+
+=head1 VERSION
+
+$LastChangedRevision$
+
+=head1 DATE
+
+$LastChangedDate$
+
+=head1 DESCRIPTION
+
+Outputs a frameset on preview with controls to repreview pages.
+
+=cut
+</%doc>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+                      "XHTML1-f.dtd" >
+<html xmlns="http://www.w3.org/TR/1999/REC-html-in-xml"
+      xml:lang="en" lang="en" >
+<head>
+<title>Bricolage Preview</title>
+<script type="text/javascript">
+  var preview_uri = "/workflow/profile/preview/<% $m->dhandler_arg %><% $query %>";
+</script>
+</head>
+<frameset cols="100%" rows="30,*">
+  <frame src="/workflow/profile/preview/control/control.html" name="control" id="control" scrolling="no" frameborder="0" />
+  <frame src="/workflow/profile/preview/<% $m->dhandler_arg %><% $query %>" name="preview" id="preview" scrolling="auto" frameborder="0" />
+</frameset>
+</html>
+<%init>
+my $query = $r->args() ? "?".$r->args() : '';
+</%init>
