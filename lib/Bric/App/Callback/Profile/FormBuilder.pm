@@ -101,7 +101,6 @@ $base_handler = sub {
             set_redirect("/admin/manager/$key");
         } else {
             $obj->activate();
-            $obj->set_name($param->{'name'});
             $obj->set_description($param->{'description'});
 
             if ($key eq 'contrib_type') {
@@ -122,6 +121,8 @@ $do_contrib_type = sub {
     my $key_name = exists($param->{'key_name'})
       ? sprintf('&quot;%s&quot;', $param->{'key_name'})
       : '';
+
+    $obj->set_name($param->{'name'});
 
     my $data_href = $obj->get_member_attr_hash || {};
     $data_href = { map { lc($_) => 1 } keys %$data_href };
@@ -235,6 +236,7 @@ $do_element = sub {
 
     $obj = $get_obj->($class, $param, $key, $obj);
 
+    $obj->set_name($param->{'name'});   # must come after $get_obj !
     $set_key_name->($obj, $param) unless $no_save;
     $obj->set_burner($param->{burner}) if defined $param->{burner};
 
