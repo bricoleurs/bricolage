@@ -174,7 +174,7 @@ BEGIN {
                         current_version   => Bric::FIELD_READ,
                         published_version => Bric::FIELD_RDWR,
                         priority          => Bric::FIELD_RDWR,
-                        modifer           => Bric::FIELD_READ,
+                        modifier          => Bric::FIELD_READ,
                         expire_date       => Bric::FIELD_RDWR,
                         checked_out       => Bric::FIELD_READ,
                         workflow_id       => Bric::FIELD_RDWR,
