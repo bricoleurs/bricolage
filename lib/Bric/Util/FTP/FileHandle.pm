@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-31 00:17:45 $
+$Date: 2002-03-20 18:43:00 $
 
 =head1 DESCRIPTION
 
@@ -362,6 +362,9 @@ sub STORE {
   my $user = $self->{user};
   print STDERR __PACKAGE__, "::STORE()\n" if FTP_DEBUG;
 
+  # checkout the template
+  $template->checkout({ user__id => $user->get_id });
+
   # save the new code
   $template->set_data($data);
   $template->save();
@@ -373,6 +376,9 @@ sub STORE {
                            timestamp => strfdate(),
                            attr      => undef,
                          });
+
+  # checkin the template
+  $template->checkin();
 
   # get a new burner
   my $burner = Bric::Util::Burner->new;
