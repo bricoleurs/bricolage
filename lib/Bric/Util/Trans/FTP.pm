@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:15 $
+$Date: 2003-01-15 17:54:00 $
 
 =head1 SYNOPSIS
 
@@ -143,60 +143,60 @@ as to what needs to be changed.
 sub put_res {
     my ($pkg, $res, $st) = @_;
     foreach my $s ($st->get_servers) {
-	# Skip inactive servers.
-	next unless $s->is_active;
-	my $hn = $s->get_host_name;
-	# Instantiate an FTP object, login, and change to binary mode.
-	my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-	  || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
-			     payload => $@ });
-	$ftp->login($s->get_login, $s->get_password)
-	  || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
+        # Skip inactive servers.
+        next unless $s->is_active;
+        my $hn = $s->get_host_name;
+        # Instantiate an FTP object, login, and change to binary mode.
+        my $ftp = Net::FTP->new($hn, Debug => DEBUG)
+          || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
+                             payload => $@ });
+        $ftp->login($s->get_login, $s->get_password)
+          || die $gen->new({ msg => "Unable to login to remote server '$hn'.",
                              payload => $ftp->message });
-	$ftp->binary
-	  || die $gen->new({ msg => 'Unable to change to binary mode on ' .
-			            "remote server '$hn'.",
+        $ftp->binary
+          || die $gen->new({ msg => 'Unable to change to binary mode on ' .
+                                    "remote server '$hn'.",
                              payload => $ftp->message });
-	# Get the document root.
-	my $doc_root = $s->get_doc_root;
+        # Get the document root.
+        my $doc_root = $s->get_doc_root;
 
-	# Now, put each file on the remote server.
-	my %dirs;
-	foreach my $r (@$res) {
-	    # Get the source and destination paths for the resource.
-	    my $src = $r->get_tmp_path || $r->get_path;
-	    my $dest = $fs->cat_uri($doc_root, $r->get_uri);
-	    # Create the destination directory if it doesn't exist and we haven't
-	    # created it already.
-	    my $dest_dir = $fs->uri_dir_name($dest);
-	    unless ($dirs{$dest_dir}) {
-		unless ($ftp->cwd($dest_dir)) {
-		    # The directory doesn't exist.
-		    # Get the list of all of the directories.
-		    foreach my $dir ($fs->split_uri($dest_dir)) {
-			# Create each one if it doesn't exist.
-			unless ($ftp->cwd($dir)) {
-			    $ftp->mkdir($dir);
-			    $ftp->cwd($dir) || die $gen->new
+        # Now, put each file on the remote server.
+        my %dirs;
+        foreach my $r (@$res) {
+            # Get the source and destination paths for the resource.
+            my $src = $r->get_tmp_path || $r->get_path;
+            my $dest = $fs->cat_uri($doc_root, $r->get_uri);
+            # Create the destination directory if it doesn't exist and we haven't
+            # created it already.
+            my $dest_dir = $fs->uri_dir_name($dest);
+            unless ($dirs{$dest_dir}) {
+                unless ($ftp->cwd($dest_dir)) {
+                    # The directory doesn't exist.
+                    # Get the list of all of the directories.
+                    foreach my $dir ($fs->split_uri($dest_dir)) {
+                        # Create each one if it doesn't exist.
+                        unless ($ftp->cwd($dir)) {
+                            $ftp->mkdir($dir);
+                            $ftp->cwd($dir) || die $gen->new
                               ({ msg => "Unable to create directory '$dir' " .
                                         "in path '$dest_dir' on remote server " .
                                         "'$hn'.",
                                  payload => $ftp->message });
-			}
-		    }
-		}
-		# Mark that we've created it, so we don't try to do it again.
-		$dirs{$dest_dir} = 1;
-		# Go back to root.
-		$ftp->cwd('/');
-	    }
-	    # Now, put the file on the server.
-	    $ftp->put($src, $dest) || die $gen->new
+                        }
+                    }
+                }
+                # Mark that we've created it, so we don't try to do it again.
+                $dirs{$dest_dir} = 1;
+                # Go back to root.
+                $ftp->cwd('/');
+            }
+            # Now, put the file on the server.
+            $ftp->put($src, $dest) || die $gen->new
               ({ msg => "Unable to put file '$dest' on remote server '$hn'.",
                  payload => $ftp->message });
-	}
-	# Log off.
-	$ftp->quit || die $gen->new
+        }
+        # Log off.
+        $ftp->quit || die $gen->new
           ({ msg => 'Unable to properly close connection to remote server ' .
                     "'$hn'.",
              payload => $ftp->message });
@@ -242,31 +242,31 @@ B<Notes:> See put_res(), above.
 sub del_res {
     my ($pkg, $res, $st) = @_;
     foreach my $s ($st->get_servers) {
-	# Skip inactive servers.
-	next unless $s->is_active;
-	my $hn = $s->get_host_name;
-	# Instantiate an FTP object and login.
-	my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-	  || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
-			     payload => $@ });
-	$ftp->login($s->get_login, $s->get_password)
-	  || die $gen->new({ msg => "Unable to login to remote server '$hn'." });
+        # Skip inactive servers.
+        next unless $s->is_active;
+        my $hn = $s->get_host_name;
+        # Instantiate an FTP object and login.
+        my $ftp = Net::FTP->new($hn, Debug => DEBUG)
+          || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
+                             payload => $@ });
+        $ftp->login($s->get_login, $s->get_password)
+          || die $gen->new({ msg => "Unable to login to remote server '$hn'." });
 
-	# Get the document root.
-	my $doc_root = $s->get_doc_root;
-	foreach my $r (@$res) {
-	    # Get the name of the file to be deleted.
-	    my $file = $fs->cat_uri($doc_root, $r->get_uri);
-	    if ($ftp->ls($file)) {
-		# It exists. Delete it.
-		$ftp->delete($file)
-		  || die $gen->new({ msg => "Unable to delete resource '$file' "
-				            . "from remote server '$hn'." });
-	    }
-	}
-	$ftp->quit
-	  || die $gen->new({ msg => 'Unable to properly close connection to '
-			            . "remote server '$hn'." });
+        # Get the document root.
+        my $doc_root = $s->get_doc_root;
+        foreach my $r (@$res) {
+            # Get the name of the file to be deleted.
+            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            if ($ftp->ls($file)) {
+                # It exists. Delete it.
+                $ftp->delete($file)
+                  || die $gen->new({ msg => "Unable to delete resource '$file' "
+                                            . "from remote server '$hn'." });
+            }
+        }
+        $ftp->quit
+          || die $gen->new({ msg => 'Unable to properly close connection to '
+                                    . "remote server '$hn'." });
     }
     return 1;
 }
