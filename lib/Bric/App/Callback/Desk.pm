@@ -1,10 +1,5 @@
 package Bric::App::Callback::Desk;
 
-# XXX: there is a problem -- comp/widgets/desk/callback.mc
-# has two extra %args: $story_pub => {}, $media_pub => {}
-# How do we deal with that?
-# I see: the callbacks are called from other components..
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'desk');
 use strict;
@@ -138,6 +133,8 @@ sub move : Callback {
 sub publish : Callback {
     my $self = shift;
     my $param = $self->request_args;
+    my $story_pub = $param->{'story_pub'};
+    my $media_pub = $param->{'media_pub'};
 
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
@@ -148,13 +145,13 @@ sub publish : Callback {
     # start with the objects checked for publish
     my @objs = ((map { $mpkg->lookup({id => $_}) } @$media),
 		(map { $spkg->lookup({id => $_}) } @$story),
-                (values %$story_pub),    # XXX
-                (values %$media_pub)     # XXX
+                (values %$story_pub),
+                (values %$media_pub)
                );
 
     # Make sure we have the IDs for any assets passed in explicitly.
-    push @$story, keys %$story_pub;      # XXX
-    push @$media, keys %$media_pub;      # XXX
+    push @$story, keys %$story_pub;
+    push @$media, keys %$media_pub;
 
     # make sure we don't get into circular loops
     my %seen;
@@ -207,21 +204,12 @@ sub publish : Callback {
 
     set_state_data('publish', { story => $story,
                                 media => $media,
-                                story_pub => $story_pub,   # XXX
-                                media_pub => $media_pub    # XXX
+                                story_pub => $story_pub,
+                                media_pub => $media_pub
                               });
 
-    if (%$story_pub or %$media_pub) {                      # XXX
+    if (%$story_pub or %$media_pub) {
         # Instant publish!
-#        $m->comp('/widgets/publish/callback.mc',
-#                 field   => 'publish',
-#                 widget  => 'publish',
-#                 instant => 1,
-#                 param   => { pub_date => Bric::Util::Time::strfdate }
-#                );
-        # XXX: is this right?
-        my $pkg_key = 'publish';
-        my $cb_key = 'publish';
         my $pub = Bric::App::Callback::Publish->new(
             'ah' => $self->ah,
             'apache_req' => $self->apache_req,
@@ -229,8 +217,6 @@ sub publish : Callback {
                 'instant' => 1,
                 'pub_date' => Bric::Util::Time::strfdate,
             },
-            'cb_key' => $cb_key,
-            'trigger_key' => "${pkg_key}|${cb_key}_cb",    # unused, actually
         );
         $pub->publish();
     } else {
