@@ -76,8 +76,8 @@ probably save you the trouble.  Your choices are:
 END
 
     $CONFIG{set} = "s";
-    ask_choice("Your choice?", 
-               [ "s", "m" ], $CONFIG{set}) unless $QUIET;
+    $CONFIG{set} = ask_choice("Your choice?",
+                              [ "s", "m" ], "s") unless $QUIET;
 
     # setup the default
     if ($CONFIG{set} eq 's') {
