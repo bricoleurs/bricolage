@@ -137,11 +137,27 @@ limit on uploaded media files. [Scott]
 
 =item *
 
-Added a frame on top of the preview window with a "Repreview" link.  This is
-useful for previewing changes when you're developing templates.  Rather than
-having to save the template, go back to the workspace, repreview, and then
-go back to the template profile, you can preview the story, then edit the 
+Added a frame on top of the preview window with a "Repreview" link. This is
+useful for previewing changes when you're developing templates. Rather than
+having to save the template, go back to the workspace, repreview, and then go
+back to the template profile, you can preview the story, then edit the
 template and click "Repreview." [Marshall]
+
+=item *
+
+Added a pluggable authentication system. New authentication engines can be
+created by simply implementing a module named C<Bric::Util::Auth*>, where "*"
+is the name of the authentication scheme. The new scheme can then be used by
+adding it to the new C<AUTH_ENGINES> F<bricolage.conf> directive. By default
+the existing authentication scheme is used. [David]
+
+=item *
+
+Added support for authentication to Bricolage against an LDAP server. The new
+C<LDAP_*> F<bricolage.conf> directives make it simple to configure Bricolage
+to authenticate against any LDAP server. Includes support for authenticating
+users only if they are members of a specific user group in the LDAP database.
+Users must still exist in Bricolage, however. [David]
 
 =back
 

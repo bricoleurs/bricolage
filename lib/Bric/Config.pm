@@ -77,6 +77,18 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SSL_CERTIFICATE_KEY_FILE
                     AUTH_TTL
                     AUTH_SECRET
+                    AUTH_ENGINES
+                    LDAP_SERVER
+                    LDAP_VERSION
+                    LDAP_USER
+                    LDAP_PASS
+                    LDAP_BASE
+                    LDAP_UID_ATTR
+                    LDAP_FILTER
+                    LDAP_GROUP
+                    LDAP_MEMBER_ATTR
+                    LDAP_TLS
+                    LDAP_SSL_VERSION
                     AUTH_COOKIE
                     COOKIE
                     LOGIN_MARKER
@@ -198,7 +210,19 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     sys_user  => [qw(SYS_USER
                                      SYS_GROUP)],
                     auth      => [qw(AUTH_TTL
+                                     AUTH_ENGINES
                                      AUTH_SECRET)],
+                    ldap      => [qw(LDAP_SERVER
+                                     LDAP_VERSION
+                                     LDAP_USER
+                                     LDAP_PASS
+                                     LDAP_BASE
+                                     LDAP_UID_ATTR
+                                     LDAP_FILTER
+                                     LDAP_GROUP
+                                     LDAP_MEMBER_ATTR
+                                     LDAP_TLS
+                                     LDAP_SSL_VERSION)],
                     auth_len  => [qw(PASSWD_LENGTH
                                      LOGIN_LENGTH)],
                     prev      => [qw(PREVIEW_LOCAL
@@ -337,7 +361,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
                 # Check that the line is a valid config line and exit
                 # immediately if not.
-                unless (defined $var and length $var and 
+                unless (defined $var and length $var and
                         defined $val and length $val) {
                   print STDERR "Syntax error in $conf_file at line $.: '$_'\n";
                   exit 1;
@@ -379,7 +403,8 @@ require Bric; our $VERSION = Bric->VERSION;
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
-                    RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME))
+                    RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME
+                    LDAP_TLS))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -453,7 +478,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
     use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
     use constant VHOST_SERVER_NAME       => $config->{VHOST_SERVER_NAME};
-    
+
     use constant ENABLE_GZIP             => $config->{ENABLE_GZIP};
 
     # ssl Settings.
@@ -538,6 +563,23 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant AUTH_SECRET             => $config->{AUTH_SECRET}
       || '^eFH;5D,~3!f9o&3f_=dwePL3f:/.Oi|FG/3sd9=45oi%8GF;*)4#0gn3)34tf\`3~'
          . 'fdIf^ N;:';
+    use constant AUTH_ENGINES            => (
+        map { "Bric::Util::Auth$_"}
+        split /\s+/, $config->{AUTH_ENGINES} || 'Internal'
+    );
+
+    # LDAP settings.
+    use constant LDAP_SERVER             => $config->{LDAP_SERVER} || 'localhost';
+    use constant LDAP_VERSION            => $config->{LDAP_VERSION} || 3;
+    use constant LDAP_USER               => $config->{LDAP_USER} || '';
+    use constant LDAP_PASS               => $config->{LDAP_PASS} || '';
+    use constant LDAP_BASE               => $config->{LDAP_BASE} || '';
+    use constant LDAP_UID_ATTR           => $config->{LDAP_UID_ATTR} || 'uid';
+    use constant LDAP_FILTER             => $config->{LDAP_FILATER} || '(objectclass=*)';
+    use constant LDAP_GROUP              => $config->{LDAP_GROUP} || '';
+    use constant LDAP_MEMBER_ATTR        => $config->{LDAP_MEMBER_ATTR} || 'uniqueMember';
+    use constant LDAP_TLS                => $config->{LDAP_TLS};
+    use constant LDAP_SSL_VERSION        => $config->{LDAP_SSL_VERSION} || 3;
 
     # QA Mode settings.
     use constant QA_MODE                 => $config->{QA_MODE} || 0;
