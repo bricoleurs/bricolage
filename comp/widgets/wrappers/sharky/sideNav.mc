@@ -98,9 +98,9 @@ unless ($workflows) {
 </%perl>
 % if (!DISABLE_NAV_LAYER && ($agent->{os} ne "SomeNix" || $agent->{browser} eq 'Mozilla')) {
 <html>
-<meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
-<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <head>
+  <meta http-equiv="Expires" content="Mon, 06, Jan 1990 00:00:01 GMT">
+  <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
 % if ($agent->{browser} ne "Netscape") {
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2002-10-22 20:28:20 $
+$Date: 2002-10-23 00:02:13 $
 
 </%doc>
