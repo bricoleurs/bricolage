@@ -57,6 +57,11 @@ association is usually obvious from the name. [David]
 The category URI is now displayed for assets on desks, rather than the
 name. This is consistent with the display of the category elsewhere. [David]
 
+=item *
+
+Elements to which no subelements can be added will no longer display an empty
+select list and "Add Element" button. [Geoff Richards]
+
 =back
 
 =head2 Bug Fixes
