@@ -12,7 +12,7 @@
 -- Functions. 
 --
 
--- This funtion allows us to create UNIQUE indices that combine a lowercased
+-- This function allows us to create UNIQUE indices that combine a lowercased
 -- TEXT (or VARCHAR) column with a NUMERIC column. See Bric/Util/AlertType.sql
 -- for an example.
 CREATE   FUNCTION lower_text_num(TEXT, NUMERIC(10, 0))
