@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =head1 DATE
 
-$Date: 2002-07-06 03:24:35 $
+$Date: 2002-07-18 19:10:19 $
 
 =head1 DESCRIPTION
 
@@ -155,6 +155,24 @@ but for those who want to have it present all the time, see the next item.
 
 Add preference to make advanced search in Find Stories and/or Find Media the
 default search form when you go to those screens.
+
+=item *
+
+Move Bric::Util::Fault::Exception objects up, so that they become subclasses
+of Bric::Util::Fault, instead.
+
+=item *
+
+Update exception handling to allow for option to send error details to a valid
+email address or URI. The error page (500.mc) would have a form with all the
+details in hidden fields, and a button. When the button is pressed, the info
+in the form would either be sent to the specified email adddress or to the
+specified URL (on the assumption that that URL would process the form data).
+
+=item *
+
+Change the behavior of the popup window so that it doesn't pop-up, but instead
+presents a simple page with a link to the new window.
 
 =back
 
