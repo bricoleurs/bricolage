@@ -14,6 +14,15 @@ my $DESK_URL = '/workflow/profile/desk/';
 ####################
 ## Misc Functions ##
 
+# removes repeated error messages
+my $unique_msgs = sub {
+    my (%seen, @msgs);
+    while (my $msg = next_msg) {
+	push @msgs, $msg unless $seen{$msg}++;
+    }
+    add_msg($_) for @msgs;
+};
+
 my $save_data = sub {
     my ($param, $widget, $story) = @_;
     my $data_errors = 0;
@@ -60,6 +69,9 @@ my $save_data = sub {
 
     $story->set_primary_category($param->{"$widget|primary_cat"})
       if defined $param->{"$widget|primary_cat"};
+
+    # avoid repeated messages from repeated calls to &$save_data
+    &$unique_msgs if $data_errors;    
 
     return not $data_errors;
 };
