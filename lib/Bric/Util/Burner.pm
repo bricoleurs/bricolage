@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.12.2.1 $
+$Revision: 1.12.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-09 00:13:25 $
+$Date: 2002-03-10 02:16:10 $
 
 =head1 SYNOPSIS
 
@@ -132,7 +132,7 @@ use Bric::Util::Fault::Exception::AP;
 use Bric::Util::Fault::Exception::MNI;
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn);
-use Bric::Biz::AssetType;
+use Bric::Biz::AssetType qw(:all);
 
 
 #==============================================================================#
@@ -454,13 +454,14 @@ B<Notes:> NONE.
 
 sub _get_subclass {
     my ($self, $ba) = @_;
-    my $at = Bric::Biz::AssetType->lookup({'id' => $ba->get_element__id});
-    my $which_burner = $at->get_burner() || Bric::Biz::AssetType::BURNER_MASON;
+    my $at = $ba->get_element_object
+      || die $gen->new({ msg => 'No element object associated with template.'});
+    my $which_burner = $at->get_burner || BURNER_MASON;
 
     my $burner_class = "Bric::Util::Burner::";
-    if ($which_burner == Bric::Biz::AssetType::BURNER_MASON) {
+    if ($which_burner == BURNER_MASON) {
       $burner_class .= "Mason";
-    } elsif ($which_burner == Bric::Biz::AssetType::BURNER_TEMPLATE) {
+    } elsif ($which_burner == BURNER_TEMPLATE) {
       $burner_class .= "Template";
     }
 
