@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-01-29 06:40:35 $
 
 =head1 SYNOPSIS
 
@@ -2226,6 +2226,9 @@ sub _do_list {
     }
 
     # Check active
+    # Bug. This should test for exists (as should type__id below). Note that
+    # when this is fixed, we'll have to fix comp/widgets/formBuilder/element.mc,
+    # as well. Maybe other places, too.
     if ($param->{'active'}) {
 	push @where, 'a.active=?';
 	push @bind, $param->{'active'};
