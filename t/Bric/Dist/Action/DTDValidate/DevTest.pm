@@ -66,7 +66,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check bad parse error message" );
     like( $err->payload,
-          qr|^/foo/bad\.html:11: error: Opening and ending tag mismatch: br line 10 and p|,
+          qr|^/foo/bad\.html:11: (parser )?error ?: Opening and ending tag mismatch: br line 10 and p|,
           "Check parse error payload" );
 
     # Make sure that we get a validation failure for invalid.html.
@@ -77,7 +77,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
     like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error:|,
+          qr|/foo/invalid\.html:0: validity error ?:|,
          "Check validation payload");
 
     # Make sure that a valid file, um, validates.
@@ -94,7 +94,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check bad parse error message" );
     like( $err->payload,
-          qr|^/foo/bad\.html:11: error: Opening and ending tag mismatch: br line 10 and p|,
+          qr|^/foo/bad\.html:11: (parser )?error ?: Opening and ending tag mismatch: br line 10 and p|,
           "Check parse error payload" );
 
     # Make sure that multiple files are validated.
@@ -106,7 +106,7 @@ sub test_do_it : Test(31) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     is( $err->error, 'Error parsing XML', "Check invalid XML message" );
     like( $err->payload,
-          qr|/foo/invalid\.html:0: validity error:|,
+          qr|/foo/invalid\.html:0: validity error ?:|,
          "Check validation payload");
 }
 
