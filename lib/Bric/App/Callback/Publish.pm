@@ -48,6 +48,7 @@ sub preview : Callback {
         # Move out the story and then redirect to preview.
         if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
+            # redirect_onload() prevents any other callbacks from executing.
             redirect_onload($url);
         }
     } else {
@@ -80,6 +81,7 @@ sub preview : Callback {
         # Move out the story and then redirect to preview.
         if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
+            # redirect_onload() prevents any other callbacks from executing.
             redirect_onload($url);
         }
     }
@@ -138,6 +140,7 @@ sub publish : Callback {
       if $pubed && $count > 3;
 
     unless (exists($param->{'instant'}) && $param->{'instant'}) {
+        # redirect_onload() prevents any other callbacks from executing.
         redirect_onload(last_page(), $self);
     }
 }
