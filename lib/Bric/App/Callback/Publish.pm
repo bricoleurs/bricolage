@@ -116,7 +116,7 @@ sub publish : Callback {
         # Schedule
         my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
         my $name = 'Publish "' . $s->get_name . '"';
-        my $job = Bric::Util::Job::Pub->new({ 
+        my $job = Bric::Util::Job::Pub->new({
             sched_time    => $param->{pub_date},
             user_id       => get_user_id(),
             name          => $name,
@@ -148,7 +148,7 @@ sub publish : Callback {
         # Schedule
         my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
         my $name = 'Publish "' . $m->get_name . '"';
-        my $job = Bric::Util::Job::Pub->new({ 
+        my $job = Bric::Util::Job::Pub->new({
             sched_time    => $param->{pub_date},
             user_id       => get_user_id(),
             name          => $name,
