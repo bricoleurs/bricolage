@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-29 20:57:29 $
+$Date: 2002-07-02 00:58:26 $
 
 =head1 SYNOPSIS
 
@@ -52,58 +52,58 @@ use Apache::ConfigFile;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(DBD_PACKAGE
-		    DB_NAME
-		    DB_HOST
-		    DB_PORT
-		    DBD_TYPE
-		    DBI_USER
-		    DBI_PASS
-		    DBI_DEBUG
-		    DBI_CALL_TRACE
-		    DBI_PROFILE
-		    MASON_COMP_ROOT
-		    MASON_DATA_ROOT
-		    MASON_ARGS_METHOD
-		    FIELD_INDENT
-		    SYS_USER
-		    SYS_GROUP
-		    SERVER_WINDOW_NAME
-		    APACHE_BIN
-		    APACHE_CONF
-		    PID_FILE
+                    DB_NAME
+                    DB_HOST
+                    DB_PORT
+                    DBD_TYPE
+                    DBI_USER
+                    DBI_PASS
+                    DBI_DEBUG
+                    DBI_CALL_TRACE
+                    DBI_PROFILE
+                    MASON_COMP_ROOT
+                    MASON_DATA_ROOT
+                    MASON_ARGS_METHOD
+                    FIELD_INDENT
+                    SYS_USER
+                    SYS_GROUP
+                    SERVER_WINDOW_NAME
+                    APACHE_BIN
+                    APACHE_CONF
+                    PID_FILE
                     LISTEN_PORT
-		    NAME_VHOST
-		    VHOST_SERVER_NAME
+                    NAME_VHOST
+                    VHOST_SERVER_NAME
                     SSL_ENABLE
-		    CHAR_SET
-		    AUTH_TTL
-		    AUTH_SECRET
-		    QA_MODE
-		    TEMPLATE_QA_MODE
-		    ADMIN_GRP_ID
-		    PASSWD_LENGTH
-		    LOGIN_LENGTH
-		    ERROR_URI
-		    ENABLE_DIST
-		    DIST_ATTEMPTS
+                    CHAR_SET
+                    AUTH_TTL
+                    AUTH_SECRET
+                    QA_MODE
+                    TEMPLATE_QA_MODE
+                    ADMIN_GRP_ID
+                    PASSWD_LENGTH
+                    LOGIN_LENGTH
+                    ERROR_URI
+                    ENABLE_DIST
+                    DIST_ATTEMPTS
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
-		    MEDIA_FILE_ROOT
-		    SMTP_SERVER
-		    ALERT_FROM
-		    ALERT_TO_METH
-		    BURN_ROOT
-		    STAGE_ROOT
-		    PREVIEW_ROOT
-		    BURN_COMP_ROOT
-		    BURN_DATA_ROOT
-		    BURN_ARGS_METHOD
+                    MEDIA_FILE_ROOT
+                    SMTP_SERVER
+                    ALERT_FROM
+                    ALERT_TO_METH
+                    BURN_ROOT
+                    STAGE_ROOT
+                    PREVIEW_ROOT
+                    BURN_COMP_ROOT
+                    BURN_DATA_ROOT
+                    BURN_ARGS_METHOD
                     TEMPLATE_BURN_PKG
-		    INCLUDE_XML_WRITER
-		    XML_WRITER_ARGS
-		    ISO_8601_FORMAT
-		    PREVIEW_LOCAL
-		    PREVIEW_MASON
+                    INCLUDE_XML_WRITER
+                    XML_WRITER_ARGS
+                    ISO_8601_FORMAT
+                    PREVIEW_LOCAL
+                    PREVIEW_MASON
                     FULL_SEARCH
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
@@ -112,100 +112,100 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_ADDRESS
                     FTP_LOG
                     FTP_DEBUG
-		    DISABLE_NAV_LAYER
-		    TEMP_DIR
+                    DISABLE_NAV_LAYER
+                    TEMP_DIR
                     PROFILE
                     CHECK_PROCESS_SIZE
                     MAX_PROCESS_SIZE
                     CHECK_FREQUENCY
                     MIN_SHARE_SIZE
                     MAX_UNSHARED_SIZE
-		   );
+                   );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
-		    dbi       => [qw(DBD_PACKAGE
-				     DB_NAME
-				     DB_HOST
-				     DB_PORT
-				     DBD_TYPE
-				     DBI_USER
-				     DBI_PASS
-				     DBI_DEBUG
-				     DBI_CALL_TRACE
-				     DBI_PROFILE)],
-		    mason     => [qw(MASON_COMP_ROOT
-				     MASON_DATA_ROOT
-				     MASON_ARGS_METHOD)],
-		    burn      => [qw(BURN_ROOT
-				     STAGE_ROOT
-				     PREVIEW_ROOT
-				     BURN_COMP_ROOT
-				     BURN_DATA_ROOT
-				     TEMPLATE_BURN_PKG
-				     DEFAULT_FILENAME
-				     INCLUDE_XML_WRITER
-				     XML_WRITER_ARGS
-				     DEFAULT_FILE_EXT
-				     BURN_ARGS_METHOD)],
+                    dbi       => [qw(DBD_PACKAGE
+                                     DB_NAME
+                                     DB_HOST
+                                     DB_PORT
+                                     DBD_TYPE
+                                     DBI_USER
+                                     DBI_PASS
+                                     DBI_DEBUG
+                                     DBI_CALL_TRACE
+                                     DBI_PROFILE)],
+                    mason     => [qw(MASON_COMP_ROOT
+                                     MASON_DATA_ROOT
+                                     MASON_ARGS_METHOD)],
+                    burn      => [qw(BURN_ROOT
+                                     STAGE_ROOT
+                                     PREVIEW_ROOT
+                                     BURN_COMP_ROOT
+                                     BURN_DATA_ROOT
+                                     TEMPLATE_BURN_PKG
+                                     DEFAULT_FILENAME
+                                     INCLUDE_XML_WRITER
+                                     XML_WRITER_ARGS
+                                     DEFAULT_FILE_EXT
+                                     BURN_ARGS_METHOD)],
                     oc        => [qw(DEFAULT_FILENAME
-				     DEFAULT_FILE_EXT)],
-		    sys_user  => [qw(SYS_USER
-				     SYS_GROUP)],
-		    auth      => [qw(AUTH_TTL
-				     AUTH_SECRET)],
-		    auth_len  => [qw(PASSWD_LENGTH
-				     LOGIN_LENGTH)],
-		    prev      => [qw(PREVIEW_LOCAL
-				     STAGE_ROOT
-				     PREVIEW_ROOT
-				     MASON_COMP_ROOT
-				     PREVIEW_MASON)],
-		    dist      => [qw(ENABLE_DIST
-				     DEF_MEDIA_TYPE
-				     DIST_ATTEMPTS
-				     PREVIEW_LOCAL)],
-		    qa        => [qw(QA_MODE 
+                                     DEFAULT_FILE_EXT)],
+                    sys_user  => [qw(SYS_USER
+                                     SYS_GROUP)],
+                    auth      => [qw(AUTH_TTL
+                                     AUTH_SECRET)],
+                    auth_len  => [qw(PASSWD_LENGTH
+                                     LOGIN_LENGTH)],
+                    prev      => [qw(PREVIEW_LOCAL
+                                     STAGE_ROOT
+                                     PREVIEW_ROOT
+                                     MASON_COMP_ROOT
+                                     PREVIEW_MASON)],
+                    dist      => [qw(ENABLE_DIST
+                                     DEF_MEDIA_TYPE
+                                     DIST_ATTEMPTS
+                                     PREVIEW_LOCAL)],
+                    qa        => [qw(QA_MODE 
                                      TEMPLATE_QA_MODE)],
-		    err       => [qw(ERROR_URI)],
-		    char      => [qw(CHAR_SET)],
-		    ui        => [qw(FIELD_INDENT
-				     DISABLE_NAV_LAYER
-				     SERVER_WINDOW_NAME)],
-		    email     => [qw(SMTP_SERVER)],
-		    admin     => [qw(ADMIN_GRP_ID)],
-		    time      => [qw(ISO_8601_FORMAT)],
-		    alert     => [qw(ALERT_FROM
-				     ALERT_TO_METH)],
-		    apachectl => [qw(APACHE_BIN
-				     APACHE_CONF
-				     PID_FILE
-				     SSL_ENABLE)],
-		    ssl       => [qw(SSL_ENABLE
-				     LISTEN_PORT)],
-		    conf      => [qw(SSL_ENABLE
-				     LISTEN_PORT
-				     ENABLE_DIST
-				     NAME_VHOST
-				     VHOST_SERVER_NAME
-				     MASON_COMP_ROOT
-				     PREVIEW_LOCAL
-				     PREVIEW_MASON)],
-		    media     => [qw(MEDIA_URI_ROOT
-				     MEDIA_FILE_ROOT)],
+                    err       => [qw(ERROR_URI)],
+                    char      => [qw(CHAR_SET)],
+                    ui        => [qw(FIELD_INDENT
+                                     DISABLE_NAV_LAYER
+                                     SERVER_WINDOW_NAME)],
+                    email     => [qw(SMTP_SERVER)],
+                    admin     => [qw(ADMIN_GRP_ID)],
+                    time      => [qw(ISO_8601_FORMAT)],
+                    alert     => [qw(ALERT_FROM
+                                     ALERT_TO_METH)],
+                    apachectl => [qw(APACHE_BIN
+                                     APACHE_CONF
+                                     PID_FILE
+                                     SSL_ENABLE)],
+                    ssl       => [qw(SSL_ENABLE
+                                     LISTEN_PORT)],
+                    conf      => [qw(SSL_ENABLE
+                                     LISTEN_PORT
+                                     ENABLE_DIST
+                                     NAME_VHOST
+                                     VHOST_SERVER_NAME
+                                     MASON_COMP_ROOT
+                                     PREVIEW_LOCAL
+                                     PREVIEW_MASON)],
+                    media     => [qw(MEDIA_URI_ROOT
+                                     MEDIA_FILE_ROOT)],
                     search    => [qw(FULL_SEARCH)],
                     ftp       => [qw(ENABLE_FTP_SERVER
-				     FTP_PORT
-				     FTP_ADDRESS
-				     FTP_LOG
-				     FTP_DEBUG)],
-		    temp      => [qw(TEMP_DIR)],
+                                     FTP_PORT
+                                     FTP_ADDRESS
+                                     FTP_LOG
+                                     FTP_DEBUG)],
+                    temp      => [qw(TEMP_DIR)],
                     profile   => [qw(PROFILE)],
- 		    proc_size => [qw(CHECK_PROCESS_SIZE
- 				     MAX_PROCESS_SIZE
- 				     CHECK_FREQUENCY
- 				     MIN_SHARE_SIZE
- 				     MAX_UNSHARED_SIZE)],
-		   );
+                    proc_size => [qw(CHECK_PROCESS_SIZE
+                                     MAX_PROCESS_SIZE
+                                     CHECK_FREQUENCY
+                                     MIN_SHARE_SIZE
+                                     MAX_UNSHARED_SIZE)],
+                   );
 
 #=============================================================================#
 # Function Prototypes                  #
@@ -219,70 +219,70 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     my ($config, $aconf);
 
     BEGIN {
-	# Load the configuration file, if it exists.
-	my $conf_file = $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage';
-	$conf_file = catdir($conf_file, 'conf', 'bricolage.conf');
-	if (-e $conf_file) {
-	    open CONF, $conf_file or die "Cannot open $conf_file: $!\n";
-	    while (<CONF>) {
-		# Get each configuration line into $config.
-		chomp;                  # no newline
-		s/#.*//;                # no comments
-		s/^\s+//;               # no leading white
-		s/\s+$//;               # no trailing white
-		next unless length;     # anything left?
+        # Load the configuration file, if it exists.
+        my $conf_file = $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage';
+        $conf_file = catdir($conf_file, 'conf', 'bricolage.conf');
+        if (-e $conf_file) {
+            open CONF, $conf_file or die "Cannot open $conf_file: $!\n";
+            while (<CONF>) {
+                # Get each configuration line into $config.
+                chomp;                  # no newline
+                s/#.*//;                # no comments
+                s/^\s+//;               # no leading white
+                s/\s+$//;               # no trailing white
+                next unless length;     # anything left?
 
-		# Get the variable and its value.
-		my ($var, $val) = split(/\s*=\s*/, $_, 2);
+                # Get the variable and its value.
+                my ($var, $val) = split(/\s*=\s*/, $_, 2);
 
-		# Check that the line is a valid config line and exit
-		# immediately if not.
-		unless (defined $var and length $var and 
-			defined $val and length $val) {
-		  print STDERR "Syntax error in $conf_file at line $.: '$_'\n";
-		  exit 1;
-		}
+                # Check that the line is a valid config line and exit
+                # immediately if not.
+                unless (defined $var and length $var and 
+                        defined $val and length $val) {
+                  print STDERR "Syntax error in $conf_file at line $.: '$_'\n";
+                  exit 1;
+                }
 
-		# Save the configuration directive.
-		$config->{uc $var} = $val;
-	    }
-	    close CONF;
+                # Save the configuration directive.
+                $config->{uc $var} = $val;
+            }
+            close CONF;
 
-	    # Set the default VHOST_SERVER_NAME.
-	    $config->{VHOST_SERVER_NAME} ||= '_default_';
+            # Set the default VHOST_SERVER_NAME.
+            $config->{VHOST_SERVER_NAME} ||= '_default_';
 
-	    # Set up the server window name (because Netscape is retarted!).
-	    ($config->{SERVER_WINDOW_NAME} =
-	     $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
+            # Set up the server window name (because Netscape is retarted!).
+            ($config->{SERVER_WINDOW_NAME} =
+             $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
-	}
-	# Process boolean directives here. These default to 1.
-	foreach (qw(ENABLE_DIST PREVIEW_LOCAL PREVIEW_MASON)) {
-	    my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
-	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
-	}
-	# While these default to 0.
-	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
+        }
+        # Process boolean directives here. These default to 1.
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL PREVIEW_MASON)) {
+            my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
+            $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
+        }
+        # While these default to 0.
+        foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
                     PROFILE CHECK_PROCESS_SIZE))
-	{
-	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
-	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
-	}
+        {
+            my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
+            $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
+        }
 
-	# Set the Mason component root to its default here.
-	$config->{MASON_COMP_ROOT} ||=
-	  catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
+        # Set the Mason component root to its default here.
+        $config->{MASON_COMP_ROOT} ||=
+          catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
 
-	# Grab the Apache configuration file.
-	$config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
-	{
-	    # Apache::ConfigFile can be very noisy in the presence of
-	    # <Perl> blocks.
-	    local $^W = 0;
-	    $aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
-					     ignore_case => 1);
-	}
+        # Grab the Apache configuration file.
+        $config->{APACHE_CONF} ||= '/usr/local/apache/conf/httpd.conf';
+        {
+            # Apache::ConfigFile can be very noisy in the presence of
+            # <Perl> blocks.
+            local $^W = 0;
+            $aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
+                                             ignore_case => 1);
+        }
     }
 
     # Apache Settings.
@@ -330,7 +330,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
       [[bric_ui => $config->{MASON_COMP_ROOT}],
        [bric_preview => catdir($config->{MASON_COMP_ROOT}, PREVIEW_LOCAL)]]
-	: [[bric_ui => $config->{MASON_COMP_ROOT}]];
+        : [[bric_ui => $config->{MASON_COMP_ROOT}]];
 
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
       || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'data');
@@ -376,7 +376,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # the base directory that will store media assets
     use constant MEDIA_URI_ROOT => '/data/media';
     use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
-					   'data', 'media');
+                                           'data', 'media');
 
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 6;
@@ -416,19 +416,19 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant TEMP_DIR        => $config->{TEMP_DIR} || tmpdir();
 
     # Process Size Limit Settings
-    use constant CHECK_PROCESS_SIZE	=> $config->{CHECK_PROCESS_SIZE};
-    use constant MAX_PROCESS_SIZE	=> $config->{MAX_PROCESS_SIZE} || 56000;
-    use constant CHECK_FREQUENCY	=> $config->{CHECK_FREQUENCT} || 1;
-    use constant MIN_SHARE_SIZE		=> $config->{MIN_SHARE_SIZE} || 0;
-    use constant MAX_UNSHARED_SIZE	=> $config->{MAX_UNSHARED_SIZE} || 0;
+    use constant CHECK_PROCESS_SIZE     => $config->{CHECK_PROCESS_SIZE};
+    use constant MAX_PROCESS_SIZE       => $config->{MAX_PROCESS_SIZE} || 56000;
+    use constant CHECK_FREQUENCY        => $config->{CHECK_FREQUENCT} || 1;
+    use constant MIN_SHARE_SIZE         => $config->{MIN_SHARE_SIZE} || 0;
+    use constant MAX_UNSHARED_SIZE      => $config->{MAX_UNSHARED_SIZE} || 0;
 
     # Profiler settings
     use constant PROFILE => $config->{PROFILE} || 0;
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {
-	my $pkg = TEMPLATE_BURN_PKG;
-	eval "package $pkg; $config->{PERL_LOADER}";
+        my $pkg = TEMPLATE_BURN_PKG;
+        eval "package $pkg; $config->{PERL_LOADER}";
     }
 }
 
@@ -499,7 +499,6 @@ NONE
 NONE
 
 =cut
-
 
 1;
 __END__
