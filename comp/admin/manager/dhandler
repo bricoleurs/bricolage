@@ -218,7 +218,7 @@ my $sel_sub = sub {
 # This coderef will be used for category delete checkboxes.
 my $cat_sel_sub = sub {
     # Don't create a checkbox for the root category.
-    &$sel_sub if $_[0]->is_root_category;
+    &$sel_sub if ! $_[0]->is_root_category;
 };
 
 # We'll use this coderef to make sure the user can at least READ the object.
@@ -383,11 +383,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2003-09-23 17:25:54 $
+$Date: 2003-10-03 02:41:27 $
 
 =head1 SYNOPSIS
 
