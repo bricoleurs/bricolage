@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-13 02:58:34 $
+$Date: 2003-01-13 17:41:21 $
 
 =head1 SYNOPSIS
 
@@ -1283,6 +1283,8 @@ sub _remove_workflow {
 =head2 Private Functions
 
 NONE
+
+=cut
 
 1;
 __END__
