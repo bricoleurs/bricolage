@@ -94,6 +94,12 @@ Clinton Gormley. [David]
 
 Fix bug 839 so that categories can be deleted. [Scott]
 
+=item *
+
+Instances of a required custom field in story elements is no longer required
+once it has been deleted from the element definition in the element manager.
+Reported by Rod Taylor. [David]
+
 =back
 
 =cut
