@@ -10,7 +10,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-02-27 20:54:35 $
+$Date: 2003-03-05 21:25:42 $
 
 =head1 SYNOPSIS
 
@@ -45,6 +45,11 @@ use constant FIELD_NONE    => 0x01;
 use constant FIELD_READ    => 0x02;
 use constant FIELD_WRITE   => 0x04;
 use constant FIELD_RDWR    => FIELD_READ | FIELD_WRITE;
+
+use constant CAN_DO_LIST_IDS => 0;
+use constant CAN_DO_LIST => 0;
+use constant CAN_DO_LOOKUP => 0;
+use constant HAS_CLASS_ID => 0;
 
 #=============================================================================#
 # Dependencies                         #

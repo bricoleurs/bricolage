@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-05 21:25:49 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -60,6 +60,7 @@ CREATE TABLE story (
     current_version   NUMERIC(10, 0)  NOT NULL,
     published_version NUMERIC(10, 0),
     workflow__id      NUMERIC(10,0),
+    desk__id          NUMERIC(10,0),
     publish_status    NUMERIC(1,0)    NOT NULL
                                       DEFAULT 0
                                       CONSTRAINT ck_story__publish_status
@@ -262,3 +263,6 @@ CREATE INDEX idx_attr_story_meta__name ON attr_story_meta(LOWER(name));
 
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
+
+CREATE INDEX fdx_story__desk__id ON story(desk__id);
+

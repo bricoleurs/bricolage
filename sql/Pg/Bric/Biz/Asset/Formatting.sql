@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-05 21:25:47 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -57,6 +57,7 @@ CREATE TABLE formatting (
     file_name           VARCHAR(256),
     current_version     NUMERIC(10,0)  NOT NULL,
     workflow__id        NUMERIC(10,0),
+    desk__id            NUMERIC(10,0),
     deploy_status       NUMERIC(1,0)   NOT NULL
                                        DEFAULT 0
                                        CONSTRAINT ck_formatting__deploy_status
@@ -177,6 +178,7 @@ CREATE INDEX fkx_usr__formatting ON formatting(usr__id);
 CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
 CREATE INDEX fkx_element__formatting ON formatting(element__id);
 CREATE INDEX fkx_category__formatting ON formatting(category__id);
+CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id);
 
 -- formatting_instance.
 CREATE INDEX fkx_usr__formatting_instance ON formatting_instance(usr__id);

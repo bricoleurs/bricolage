@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 13:08:06 $
+$Date: 2003-03-05 21:25:43 $
 
 =head1 SYNOPSIS
 
@@ -34,8 +34,8 @@ $Date: 2003-03-03 13:08:06 $
  $name        = $asset->get_name()
  $asset       = $asset->set_description($description)
  $description = $asset->get_description()
- $priority	  = $asset->get_priority()
- $asset		  = $asset->set_priority($priority)
+ $priority        = $asset->get_priority()
+ $asset           = $asset->set_priority($priority)
 
  # User information
  $usr_id      = $asset->get_user__id()
@@ -44,14 +44,14 @@ $Date: 2003-03-03 13:08:06 $
  # Version information
  $vers        = $asset->get_version();
  $vers_id     = $asset->get_version_id();
- $current 	  = $asset->get_current_version();
+ $current         = $asset->get_current_version();
  $checked_out = $asset->get_checked_out()
 
  # Publish info
  $needs_publish = $asset->needs_publish();
 
  # Expire Data Information
- $asset 	  = $asset->set_expire_date($date)
+ $asset           = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
  # Desk stamp information
@@ -60,8 +60,8 @@ $Date: 2003-03-03 13:08:06 $
  $asset                             = $asset->set_current_desk($desk_stamp)
 
  # Workflow methods.
- $id  	= $asset->get_workflow_id;
- $obj 	= $asset->get_workflow_object;
+ $id    = $asset->get_workflow_id;
+ $obj   = $asset->get_workflow_object;
  $asset = $asset->set_workflow_id($id);
 
  # Access note information
@@ -80,18 +80,17 @@ $Date: 2003-03-03 13:08:06 $
 
 =head1 DESCRIPTION
 
-Asset is the Parent Class for everything that will go through Workflow.   
-It contains data and actions that are common to all of these objects.
-Asset holds information on desks visited by the object, notes associated
-with the object, and versioning information.
-Actions that can be preformed are fork which prepares an object to be
-edited in a checked out state, cancel, which cancels the fork, merge which 
-takes the forked object compares it to the stored main version and creates 
-a new version and revert which is called on a forked object which returns 
-the state of the object at a given version id.
+Asset is the Parent Class for everything that will go through Workflow. It
+contains data and actions that are common to all of these objects. Asset holds
+information on desks visited by the object, notes associated with the object,
+and versioning information. Actions that can be preformed are fork which
+prepares an object to be edited in a checked out state, cancel, which cancels
+the fork, merge which takes the forked object compares it to the stored main
+version and creates a new version and revert which is called on a forked
+object which returns the state of the object at a given version id.
 
-A fork will preform a copy in the database keeping the asset id, and version 
-number the same but will associate a user with the object.   
+A fork will preform a copy in the database keeping the asset id, and version
+number the same but will associate a user with the object.
 
 =cut
 
@@ -108,8 +107,10 @@ use strict;
 # Programmatic Dependencies              
 
 use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::MNI;
 use Bric::Biz::Workflow;
 use Bric::Util::Time qw(:all);
+use Bric::Util::DBI qw(:all);
 
 #==============================================================================#
 # Inheritance                          #
@@ -129,7 +130,7 @@ use base qw(Bric);
 # Constants                            #
 #======================================#
 
-# None
+use constant DEBUG => 0;
 
 #==============================================================================#
 # Fields                               #
@@ -145,6 +146,7 @@ use base qw(Bric);
 # Private Class Fields
 my $meths;
 my @ord = qw(id name description priority uri cover_date  version element needs_publish publish_status expire_date active);
+my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
 # Instance Fields                       
@@ -154,35 +156,37 @@ my @ord = qw(id name description priority uri cover_date  version element needs_
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			# Public Fields
-			name				=> Bric::FIELD_RDWR,
-			description			=> Bric::FIELD_RDWR,
-			version				=> Bric::FIELD_READ,
-			user__id			=> Bric::FIELD_READ,
-			id					=> Bric::FIELD_READ,
-			version_id			=> Bric::FIELD_READ,
-			current_version		=> Bric::FIELD_READ,
-			published_version	=> Bric::FIELD_RDWR,
-			priority			=> Bric::FIELD_RDWR,
-			modifer				=> Bric::FIELD_READ,
-			expire_date			=> Bric::FIELD_RDWR,
-			checked_out			=> Bric::FIELD_READ,
-			workflow_id			=> Bric::FIELD_RDWR,
+                        # Public Fields
+                        name              => Bric::FIELD_RDWR,
+                        description       => Bric::FIELD_RDWR,
+                        version           => Bric::FIELD_READ,
+                        user__id          => Bric::FIELD_READ,
+                        id                => Bric::FIELD_READ,
+                        version_id        => Bric::FIELD_READ,
+                        current_version   => Bric::FIELD_READ,
+                        published_version => Bric::FIELD_RDWR,
+                        priority          => Bric::FIELD_RDWR,
+                        modifer           => Bric::FIELD_READ,
+                        expire_date       => Bric::FIELD_RDWR,
+                        checked_out       => Bric::FIELD_READ,
+                        workflow_id       => Bric::FIELD_RDWR,
+                        desk_id           => Bric::FIELD_READ,
 
-			# Private Fields
-			_checkin 			=> Bric::FIELD_NONE,
-			_checkout 			=> Bric::FIELD_NONE,
-			_cancel				=> Bric::FIELD_NONE,
-			_active				=> Bric::FIELD_NONE,
-			_delete 			=> Bric::FIELD_NONE,
-			_notes				=> Bric::FIELD_NONE,
-			_desk_stamps 		=> Bric::FIELD_NONE,
-			_attribute_object	=> Bric::FIELD_NONE,
-			_attr_cache			=> Bric::FIELD_NONE,
-			_update_attrs		=> Bric::FIELD_NONE,
-			_versions			=> Bric::FIELD_NONE,
-			_workflow_id		=> Bric::FIELD_NONE
-	});
+                        # Private Fields
+                        _checkin          => Bric::FIELD_NONE,
+                        _checkout         => Bric::FIELD_NONE,
+                        _cancel           => Bric::FIELD_NONE,
+                        _active           => Bric::FIELD_NONE,
+                        _delete           => Bric::FIELD_NONE,
+                        _notes            => Bric::FIELD_NONE,
+                        _desk_stamps      => Bric::FIELD_NONE,
+                        _attribute_object => Bric::FIELD_NONE,
+                        _attr_cache       => Bric::FIELD_NONE,
+                        _update_attrs     => Bric::FIELD_NONE,
+                        _versions         => Bric::FIELD_NONE,
+                        _desk             => Bric::FIELD_NONE,
+                        _workflow_id      => Bric::FIELD_NONE
+        });
 }
 
 #==============================================================================#
@@ -201,15 +205,17 @@ BEGIN {
 # Constructors
 #------------------------------------------------------------------------------#
 
-=item ($asset_list || @assets) = Bric::Biz::Asset->list( $criteria )
+=item $asset = Bric::Biz::Asset::Business::Story->lookup( { id => $id })
+=item $asset = Bric::Biz::Asset::Business::Media->lookup( { id => $id })
+=item $asset = Bric::Biz::Asset::Formatting->lookup( { id => $id })
 
-This will call list on both the inherited classes
+This will return a story asset that matches the id provided
 
 B<Throws:>
 
-NONE
+"Missing required parameter 'id'"
 
-B:<side effects:>
+B<Side Effects:>
 
 NONE
 
@@ -219,20 +225,94 @@ NONE
 
 =cut
 
+sub lookup {
+    my ($class, $param) = @_;
+    die $gen->new({ msg => "Missing Required Parameters id or version_id" })
+      unless $param->{id} || $param->{version_id};
+    die Bric::Util::Fault::Exception::MNI->new( { 
+      msg => 'Must call list on Story, Media, or Formatting'}) 
+      unless $class->CAN_DO_LOOKUP; 
+    $param = clean_params($class, $param);
+    my $tables =  tables($class, $param);
+    my ($where, $args) = where_clause($class, $param);
+    my $order = order_by($class, $param);
+    my $sql = build_query_with_unions($class, $class->COLUMNS, $tables, $where, $order);
+    my $fields = [ 'id', $class->FIELDS, 'version_id', $class->VERSION_FIELDS, 'grp_ids' ];
+    # we have to send the args 4 times for the query with grp ids
+    $args = [ @$args, @$args, @$args, @$args ];
+    my @obj = fetch_objects( $class, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    return $obj[0] if @obj == 1;
+    # oops there must be a duplicate id
+    die $gen->new({ msg => "Duplicate id found. $class:" . $param->{id} 
+                                . ' version: ' . $param->{version_id} });
+}
+    
+################################################################################
+
+
+=item (@stories||$stories) = Bric::Biz::Asset::Business::Story->list($params)
+=item (@media_objs||$media) = Bric::Biz::Asset::Business::Media->list($params)
+=item (@formatting_objs||$formatting) = Bric::Biz::Asset::Business::Formatting->list($params)
+
+B<See Also:>
+
+=item Bric::Biz::Asset::Business::Story->list()
+=item Bric::Biz::Asset::Business::Media->list()
+=item Bric::Biz::Asset::Business::Formatting->list()
+
+=cut
+
 sub list {
-	my $class = shift;
-	my ($param) = @_;
+    my ($class, $param) = @_;
+    die Bric::Util::Fault::Exception::MNI->new( { 
+      msg => 'Must call list on Story, Media, or Formatting'}) 
+      unless $class->CAN_DO_LIST; 
+    $param = clean_params($class, $param);
+    my $tables = tables($class, $param);
+    my ($where, $args) = where_clause($class, $param);
+    my $order = order_by($class, $param);
+    my $fields = [ 'id', $class->FIELDS, 'version_id', $class->VERSION_FIELDS, 'grp_ids' ];
+    my $sql = build_query_with_unions($class, $class->COLUMNS, $tables, $where, $order);
+    # we have to send the args 4 times for the query with grp ids
+    $args = [ @$args, @$args, @$args, @$args ];
+    my @objs = fetch_objects($class, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    return (wantarray ? @objs : \@objs);
+}
 
-	# let the kid's list function handle this
-	my @objs = Bric::Biz::Asset::Formatting->list($param);
-	my @objs2 = Bric::Biz::Asset::Business->list($param);
+=item (@ids||$ids) = Bric::Biz::Asset::Business::Story->list_ids($params)
+=item (@ids||$ids) = Bric::Biz::Asset::Business::Media->list_ids($params)
+=item (@ids||$ids) = Bric::Biz::Asset::Business::Formatting->list_ids($params)
 
-	# chunk them together
-	my @all = (@objs, @objs2);
+B<See Also:>
 
-	# return them to the user
+=item Bric::Biz::Asset::Business::Story->list_ids()
+=item Bric::Biz::Asset::Business::Media->list_ids()
+=item Bric::Biz::Asset::Business::Formatting->list_ids()
 
-	return wantarray ? @all : \@all;
+=cut
+
+sub list_ids {
+    my ($class, $param) = @_;
+    die Bric::Util::Fault::Exception::MNI->new( { 
+      msg => 'Must call list on Story, Media, or Formatting'}) 
+      unless $class->CAN_DO_LIST_IDS; 
+    # clean the params
+    $param = clean_params($class, $param);
+    my $cols = $class->ID_COL;
+    my $tables =  tables($class, $param);
+    my ($where, $args) = where_clause($class, $param);
+    my $order = order_by($class, $param);
+    # choose the query type, without grp_ids is faster
+    my $sql;
+    if ( $param->{grp_id} ) {
+        $sql = build_query_with_unions($class, $cols, $tables, $where, $order);
+        $args = [ @$args, @$args, @$args, @$args ];
+    } else {
+        $sql = build_query($cols, $tables, $where, $order);
+    }
+    my $select = prepare_ca($sql, undef, DEBUG);
+    my $return = col_aref($select, @$args);
+    return wantarray ? @{ $return } : $return;
 }
 
 ################################################################################
@@ -254,37 +334,6 @@ Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 sub DESTROY {
     # This method should be here even if its empty so that we don't waste time
     # making Bricolage's autoload method try to find it.
-}
-
-#--------------------------------------#
-
-=back
-
-=head2 Public Class Methods
-
-=over 4
-
-=item ($id_list || @ids) = Bric::Biz::Asset->list_ids( $criteria )
-
-Method Not Implemented
-
-B<Throws:>
-
-"Method Not Implemented"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub list_ids {
-	die Bric::Util::Fault::Exception::MNI->new( { 
-			msg => 'Method not implemented'});
 }
 
 ################################################################################
@@ -320,11 +369,11 @@ B<Notes:> NONE.
 
 sub list_priorities {
     my $p = { 1 => 'High',
-	      2 => 'Medium High',
-	      3 => 'Normal',
-	      4 => 'Medium Low',
-	      5 => 'Low'
-	    };
+              2 => 'Medium High',
+              3 => 'Normal',
+              4 => 'Medium Low',
+              5 => 'Low'
+            };
     return wantarray ? %$p : $p;
 }
 
@@ -475,157 +524,157 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     $meths = {
-	      id         => {
-			      name     => 'id',
-			      get_meth => sub { shift->get_id(@_) }, 
-			      get_args => [],
-			      disp     => 'ID',
-			      len      => 10,
-			      type     => 'short',
-			     },
-		  needs_publish => {
+              id         => {
+                              name     => 'id',
+                              get_meth => sub { shift->get_id(@_) }, 
+                              get_args => [],
+                              disp     => 'ID',
+                              len      => 10,
+                              type     => 'short',
+                             },
+                  needs_publish => {
                   name     => 'needs_publish',
                   get_meth => sub { my $a=shift;
-									if ($a->get_publish_status(@_)) {
-										return $a->needs_publish(@_) ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';
-									} }, 
+                                                                        if ($a->get_publish_status(@_)) {
+                                                                                return $a->needs_publish(@_) ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';
+                                                                        } }, 
                   get_args => [],
                  },
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-	  		      type     => 'short',
-			      len      => 256,
-			      req      => 1,
-			      props    => {   type       => 'text',
-					      length     => 32,
-					      maxlength => 256
-					  }
-			     },
-	      description => {
-			      name     => 'description',
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      disp     => 'Description',
-			      len      => 1024,
-			      req      => 0,
-			      type     => 'short',
-			      props    => {   type => 'textarea',
-					      cols => 40,
-					      rows => 4
-					  }
-			     },
-	      priority    => {
-			      name     => 'priority',
-			      get_meth => sub { shift->get_priority(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_priority(@_) },
-			      set_args => [],
-			      disp     => 'Priority',
-	  		      type     => 'short',
-			      len      => 1,
-			      req      => 1,
-			      props    => {   type => 'select',
-					      vals => [[ 1 => 'High'],
-						       [ 2 => 'Medium High'],
-						       [ 3 => 'Normal'],
-						       [ 4 => 'Medium Low'],
-						       [ 5 => 'Low'],
-						      ]
-					  }
-			     },
-	      uri         => {
-			      name     => 'uri',
-			      get_meth => sub { shift->get_uri(@_) },
-			      get_args => [],
-			      disp     => 'URI',
-			      len      => 256,
-			      type     => 'short',
-			     },
-	      cover_date  => {
-			      name     => 'cover_date',
-			      get_meth => sub { shift->get_cover_date(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_cover_date(@_) },
-			      set_args => [],
-			      search   => 1,
-			      disp     => 'Cover Date',
-			      len      => 64,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'date' }
-			     },
-	      version     => {
-			      name     => 'version',
-			      get_meth => sub { shift->get_version(@_) },
-			      get_args => [],
-			      disp     => 'Version',
-			      len      => 10,
-			      type     => 'short',
-			     },
-	      element_id => {
-			      name     => 'element_id',
-			      get_meth => sub { shift->get_element__id(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_element__id(@_) },
-			      set_args => [],
-			      disp     => 'Asset Type ID',
-			      len      => 10,
-			      req      => 0,
-			      type     => 'short',
-			     },
-	      element  => {
-			      name     => 'element',
-			      get_meth => sub {
-				  my $a_id = shift->get_element__id(@_);
-				  my $a = Bric::Biz::AssetType->lookup({ id => $a_id });
-				  $a->get_name(); },
-			      get_args => [],
-			      disp     => 'Asset Type',
-			      len      => 256,
-			      type     => 'short',
-			     },
-	      publish_status => {
-			     name     => 'publish_status',
-			     get_meth => sub { shift->get_publish_status(@_) },
-			     get_args => [],
-			     disp     => 'Status',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			    },
-		expire_date => {
-				name     => 'expire_date',
-				get_meth => sub { shift->get_expire_date(@_) },
-				get_args => [],
-				set_meth => sub { shift->set_expire_date(@_) },
-				set_args => [],
-				disp     => 'Expire Date',
-				len      => 64,
-				req      => 0,
-				type     => 'short',
-				props    => { type => 'date' }
-				},
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+              name        => {
+                              name     => 'name',
+                              get_meth => sub { shift->get_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_name(@_) },
+                              set_args => [],
+                              disp     => 'Name',
+                              type     => 'short',
+                              len      => 256,
+                              req      => 1,
+                              props    => {   type       => 'text',
+                                              length     => 32,
+                                              maxlength => 256
+                                          }
+                             },
+              description => {
+                              name     => 'description',
+                              get_meth => sub { shift->get_description(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_description(@_) },
+                              set_args => [],
+                              disp     => 'Description',
+                              len      => 1024,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {   type => 'textarea',
+                                              cols => 40,
+                                              rows => 4
+                                          }
+                             },
+              priority    => {
+                              name     => 'priority',
+                              get_meth => sub { shift->get_priority(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_priority(@_) },
+                              set_args => [],
+                              disp     => 'Priority',
+                              type     => 'short',
+                              len      => 1,
+                              req      => 1,
+                              props    => {   type => 'select',
+                                              vals => [[ 1 => 'High'],
+                                                       [ 2 => 'Medium High'],
+                                                       [ 3 => 'Normal'],
+                                                       [ 4 => 'Medium Low'],
+                                                       [ 5 => 'Low'],
+                                                      ]
+                                          }
+                             },
+              uri         => {
+                              name     => 'uri',
+                              get_meth => sub { shift->get_uri(@_) },
+                              get_args => [],
+                              disp     => 'URI',
+                              len      => 256,
+                              type     => 'short',
+                             },
+              cover_date  => {
+                              name     => 'cover_date',
+                              get_meth => sub { shift->get_cover_date(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_cover_date(@_) },
+                              set_args => [],
+                              search   => 1,
+                              disp     => 'Cover Date',
+                              len      => 64,
+                              req      => 0,
+                              type     => 'short',
+                              props    => { type => 'date' }
+                             },
+              version     => {
+                              name     => 'version',
+                              get_meth => sub { shift->get_version(@_) },
+                              get_args => [],
+                              disp     => 'Version',
+                              len      => 10,
+                              type     => 'short',
+                             },
+              element_id => {
+                              name     => 'element_id',
+                              get_meth => sub { shift->get_element__id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_element__id(@_) },
+                              set_args => [],
+                              disp     => 'Asset Type ID',
+                              len      => 10,
+                              req      => 0,
+                              type     => 'short',
+                             },
+              element  => {
+                              name     => 'element',
+                              get_meth => sub {
+                                  my $a_id = shift->get_element__id(@_);
+                                  my $a = Bric::Biz::AssetType->lookup({ id => $a_id });
+                                  $a->get_name(); },
+                              get_args => [],
+                              disp     => 'Asset Type',
+                              len      => 256,
+                              type     => 'short',
+                             },
+              publish_status => {
+                             name     => 'publish_status',
+                             get_meth => sub { shift->get_publish_status(@_) },
+                             get_args => [],
+                             disp     => 'Status',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                            },
+                expire_date => {
+                                name     => 'expire_date',
+                                get_meth => sub { shift->get_expire_date(@_) },
+                                get_args => [],
+                                set_meth => sub { shift->set_expire_date(@_) },
+                                set_args => [],
+                                disp     => 'Expire Date',
+                                len      => 64,
+                                req      => 0,
+                                type     => 'short',
+                                props    => { type => 'date' }
+                                },
+              active     => {
+                             name     => 'active',
+                             get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                             get_args => [],
+                             set_meth => sub { $_[1] ? shift->activate(@_)
+                                                 : shift->deactivate(@_) },
+                             set_args => [],
+                             disp     => 'Active',
+                             len      => 1,
+                             req      => 1,
+                             type     => 'short',
+                             props    => { type => 'checkbox' }
+                            },
+             };
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 
@@ -656,23 +705,23 @@ NONE
 =cut
 
 sub get_versions {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	my $dirty = $self->_get__dirty();
-	
-	my $versions = $self->_get('_versions');
+        my $dirty = $self->_get__dirty();
+        
+        my $versions = $self->_get('_versions');
 
-	return $versions if $versions;
+        return $versions if $versions;
 
-	my $pkg = ref $self;
+        my $pkg = ref $self;
 
-	$versions = $pkg->list( { id => $self->get_id(), return_versions => 1 });
+        $versions = $pkg->list( { id => $self->get_id(), return_versions => 1 });
 
-	$self->_set( { _versions => $versions });
+        $self->_set( { _versions => $versions });
 
-	$self->_set__dirty($dirty);
+        $self->_set__dirty($dirty);
 
-	return $versions;
+        return $versions;
 }
 
 ################################################################################
@@ -1092,8 +1141,8 @@ sub get_desk_stamps {
 
     my (%dc, @desks);
     foreach (@keys) {
-	push @desks, $dc{$ds->{$_}} ||=
-	  Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$_}});
+        push @desks, $dc{$ds->{$_}} ||=
+          Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$_}});
     }
     return wantarray ? @desks : \@desks;
 }
@@ -1121,20 +1170,7 @@ NONE
 sub set_current_desk {
     my ($self, $desk) = @_;
     my $desk_id     = $desk->get_id();
-    my $desk_stamps = $self->_get_attr_hash({subsys => 'deskstamps'});
-    my $next_key    = 0;
-
-    # Find the highest numbered key
-    foreach my $n (keys %{$desk_stamps}) {
-	$next_key = $n if $next_key < $n;
-    }
-
-    $self->_set_attr({subsys   => 'deskstamps',
-		      name     => $next_key+1,
-		      sql_type => 'short',
-		      value    => $desk_id
-		     });
-
+    $self->_set({desk_id => $desk_id});
     return $self;
 }
 
@@ -1160,17 +1196,11 @@ NONE
 =cut
 
 sub get_current_desk {
-    my ($self) = @_;
-    my $ds      = $self->_get_attr_hash({subsys => 'deskstamps'});
-    my $cur_key = 1;
-
-    # Find the highest numbered key
-    foreach my $n (keys %{$ds}) {
-	$cur_key = $n if $cur_key < $n;
-    }
-
-    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({id => $ds->{$cur_key}});
-
+    my $self = shift;
+    my ($id, $desk) = $self->_get(qw(desk_id _desk));
+    return $desk if $desk;
+    $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $id });
+    $self->_set(['_desk'], [$desk]);
     return $desk;
 }
 
@@ -1183,11 +1213,11 @@ This returns the id that uniquely identifies this asset.
 
 B<Throws:>
 
-NONE 
+NONE
 
 B<Side Effects:>
 
-NONE 
+NONE
 
 B<Notes:>
 
@@ -1264,6 +1294,26 @@ sub get_workflow_object {
 
 ################################################################################
 
+=item $id = $asset->get_desk_id
+
+Returns the ID for the desk the asset is currently on.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+################################################################################
+
 =item $self = $self->cancel ();
 
 Reverts the actions of a fork with out committing any changes.   Deletes
@@ -1271,7 +1321,7 @@ row for the checked out asset
 
 B<Throws:>
 
-NONE 
+NONE
 
 B<Side Effects:>
 
@@ -1287,16 +1337,16 @@ NONE
 
 =item  $self->set_note ( $note );
 
-Adds a note to the Asset Takes a note object.   Flags that a new 
-note record should be created come data base time 
+Adds a note to the Asset Takes a note object. Flags that a new note record
+should be created come data base time
 
 B<Throws:>
 
-NONE 
+NONE
 
 B<Side Effects:>
 
-NONE 
+NONE
 
 B<Notes:>
 
@@ -1305,22 +1355,22 @@ NONE
 =cut
 
 sub add_note {
-	my $self = shift;
-	my ($note) = @_;
+        my $self = shift;
+        my ($note) = @_;
 
 
-	my $notes = $self->_get_attr_hash({ subsys => 'notes'});
+        my $notes = $self->_get_attr_hash({ subsys => 'notes'});
 
-	my $note_index = $self->get_version();
+        my $note_index = $self->get_version();
 
-	$self->_set_attr({ 
-			subsys => 'notes', 
-			name => $note_index,
-			sql_type => 'short', 
-			value => $note
-		});
+        $self->_set_attr({ 
+                        subsys => 'notes', 
+                        name => $note_index,
+                        sql_type => 'short', 
+                        value => $note
+                });
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1344,11 +1394,11 @@ NONE
 =cut
 
 sub get_notes {
-	my $self = shift;
+        my $self = shift;
 
-	my $notes = $self->_get_attr_hash({ subsys => 'notes' });
+        my $notes = $self->_get_attr_hash({ subsys => 'notes' });
 
-	return $notes;
+        return $notes;
 }
 
 ################################################################################
@@ -1372,11 +1422,11 @@ NONE
 =cut
 
 sub activate {
-	my $self = shift;
+        my $self = shift;
 
-	$self->_set( { '_active' => 1 } );
+        $self->_set( { '_active' => 1 } );
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1400,11 +1450,11 @@ NONE
 =cut
 
 sub deactivate {
-	my $self = shift;
+        my $self = shift;
 
-	$self->_set( { '_active' => 0 } );
+        $self->_set( { '_active' => 0 } );
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1435,52 +1485,6 @@ sub is_active {
 
 ################################################################################
 
-=item my (@gids || $gids_aref) = $asset->get_grp_ids
-
-=item my (@gids || $gids_aref) = Bric::Biz::Asset->get_grp_ids
-
-Returns a list or anonymous array of Bric::Biz::Group object ids representing the
-groups of which this Bric::Biz::Asset object is a member.
-
-B<Throws:> See Bric::Util::Grp::list().
-
-B<Side Effects:> NONE.
-
-B<Notes:> This list includes the Group IDs of the Desk and Workflow in which the
-asset is a member.
-
-=cut
-
-sub get_grp_ids {
-    my $self = shift;
-    my @ids = $self->SUPER::get_grp_ids;
-    if (ref $self) {
-        if (defined $self->get_workflow_id) {
-            # Add the workflow group ID.
-            if ($self->get_workflow_id) {
-                push @ids, $self->get_workflow_object->get_all_desk_grp_id;
-            }
-
-            # Add the desk group ID.
-            if (my $d = $self->get_current_desk) {
-                push @ids, $d->get_asset_grp;
-            }
-        }
-
-	# Add the category groud IDs.
-	if ($self->key_name eq 'story') {
-	    # Stories can have multiple categories.
-	    push @ids, map { $_->get_asset_grp_id } $self->get_categories;
-	} else {
-	    # Media and Templates are in only one category.
-	    push @ids, $self->get_category->get_asset_grp_id;
-	}
-    }
-    return wantarray ? @ids : \@ids;
-}
-
-################################################################################
-
 =item $self = $self->cancel_checkout()
 
 Cancels the checkout.   Deletes the version instance record and its associated.
@@ -1501,15 +1505,15 @@ NONE
 =cut
 
 sub cancel_checkout {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_set( {
-		user__id => undef,
-		checked_out => 0,
-		_cancel		=> 1
-		});
+        $self->_set( {
+                user__id => undef,
+                checked_out => 0,
+                _cancel         => 1
+                });
 
-	return $self;
+        return $self;
 }
 
 ##############################################################################
@@ -1575,11 +1579,11 @@ NONE
 =cut
 
 sub save {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	$self->_sync_attributes();
+        $self->_sync_attributes();
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1651,41 +1655,41 @@ NONE
 =cut
 
 sub _set_attr {
-	my ($self, $param) = @_;
+        my ($self, $param) = @_;
 
-	my $dirty = $self->_get__dirty();
+        my $dirty = $self->_get__dirty();
 
-	# check to see if we have an id, get attr obj if we do
-	# otherwise put it into a cache 
-	if ($self->_get('id') ) {
-		my $attr_obj = $self->_get_attribute_object();
+        # check to see if we have an id, get attr obj if we do
+        # otherwise put it into a cache 
+        if ($self->_get('id') ) {
+                my $attr_obj = $self->_get_attribute_object();
 
-		# param should have been passed in an acceptable manner
-		# send it straight to the attr obj
-		$attr_obj->set_attr( $param );
+                # param should have been passed in an acceptable manner
+                # send it straight to the attr obj
+                $attr_obj->set_attr( $param );
 
-	} else {
-		# get the cache or create a new one if necessary
-		my $attr_cache = $self->_get('_attr_cache') || {};
+        } else {
+                # get the cache or create a new one if necessary
+                my $attr_cache = $self->_get('_attr_cache') || {};
 
-		# the value for this subsys/name combo
-		$attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'} =
-			$param->{'value'};
+                # the value for this subsys/name combo
+                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'} =
+                        $param->{'value'};
 
-		# the sql type 
-		$attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'type'} =
-			$param->{'sql_type'};
+                # the sql type 
+                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'type'} =
+                        $param->{'sql_type'};
 
-		# store the cache so we can access it later
-		$self->_set( { '_attr_cache' => $attr_cache });
-	}
+                # store the cache so we can access it later
+                $self->_set( { '_attr_cache' => $attr_cache });
+        }
 
-	# set the flag to update the attrs
-	$self->_set( { '_update_attrs' => 1 });
+        # set the flag to update the attrs
+        $self->_set( { '_update_attrs' => 1 });
 
-	$self->_set__dirty($dirty);
+        $self->_set__dirty($dirty);
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
@@ -1709,30 +1713,30 @@ NONE
 =cut
 
 sub _get_attr {
-	my ($self, $param) = @_;
+        my ($self, $param) = @_;
 
-	# check for an id to see if we need to access the cache or
-	# the attribute object
-	my $attr;
-	if ($self->_get('id') ) {
-		# we have an id so get the attribute object
-		my $attr_obj = $self->_get_attribute_object();
+        # check for an id to see if we need to access the cache or
+        # the attribute object
+        my $attr;
+        if ($self->_get('id') ) {
+                # we have an id so get the attribute object
+                my $attr_obj = $self->_get_attribute_object();
 
-		# param should have been passed in a valid format
-		# send directly to the attr object
-		$attr = $attr_obj->get_attr( $param );
+                # param should have been passed in a valid format
+                # send directly to the attr object
+                $attr = $attr_obj->get_attr( $param );
 
-	} else {
+        } else {
 
-		# get the cache if it exists or create if it does not
-		my $attr_cache = $self->_get('_attr_cache') || {};
+                # get the cache if it exists or create if it does not
+                my $attr_cache = $self->_get('_attr_cache') || {};
 
-		# get the data to return 
-		$attr =
-			$attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'};
-	}
+                # get the data to return 
+                $attr =
+                        $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'};
+        }
 
-	return $attr;
+        return $attr;
 }
 
 ################################################################################
@@ -1756,39 +1760,39 @@ NONE
 =cut
 
 sub _sync_attributes {
-	my ($self) = @_;
+        my ($self) = @_;
 
-	return $self unless $self->_get('_update_attrs');
+        return $self unless $self->_get('_update_attrs');
 
-	my $attr_obj = $self->_get_attribute_object();
-	$attr_obj->save();
+        my $attr_obj = $self->_get_attribute_object();
+        $attr_obj->save();
 
-	# see if we have attr in the cache to be stored...
-	my $attr_cache = $self->_get('_attr_cache');
-	if ($attr_cache) {
-		# retrieve cache and store it on the attribute object
-		foreach my $subsys (keys %$attr_cache) {
-			foreach my $name (keys %{ $attr_cache->{$subsys} }) {
-				# set the attribute
-				$attr_obj->set_attr( {
-						subsys => $subsys,
-						name => $name,
-						sql_type => $attr_cache->{$subsys}->{$name}->{'type'},
-						value => $attr_cache->{$subsys}->{$name}->{'value'}
-					});
-			}
-		}
+        # see if we have attr in the cache to be stored...
+        my $attr_cache = $self->_get('_attr_cache');
+        if ($attr_cache) {
+                # retrieve cache and store it on the attribute object
+                foreach my $subsys (keys %$attr_cache) {
+                        foreach my $name (keys %{ $attr_cache->{$subsys} }) {
+                                # set the attribute
+                                $attr_obj->set_attr( {
+                                                subsys => $subsys,
+                                                name => $name,
+                                                sql_type => $attr_cache->{$subsys}->{$name}->{'type'},
+                                                value => $attr_cache->{$subsys}->{$name}->{'value'}
+                                        });
+                        }
+                }
 
-		# clear the attribute cache
-		$self->_set( { '_attr_cache' => undef });
-	}
-	# clear the update flag
-	$self->_set( { '_update_attrs' => undef });
+                # clear the attribute cache
+                $self->_set( { '_attr_cache' => undef });
+        }
+        # clear the update flag
+        $self->_set( { '_update_attrs' => undef });
 
-	# call save on the attribute object
-	$attr_obj->save();
+        # call save on the attribute object
+        $attr_obj->save();
 
-	return $self;
+        return $self;
 }
 
 ################################################################################
