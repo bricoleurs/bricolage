@@ -1,10 +1,39 @@
 package Bric::Test::PodTest;
 
+=head1 NAME
+
+Bric::Test::Base - Bricolage Development Testing Base Class
+
+=head1 VERSION
+
+$Revision: 1.6 $
+
+=cut
+
+# Grab the Version Number.
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
+
+=head1 DATE
+
+$Date: 2003-02-18 07:30:37 $
+
+=head1 SYNOPSIS
+
+See L<Bric::Test::Runner|Bric::Test::Runner>.
+
+=head1 DESCRIPTION
+
+This test class uses Pod::Checker to parse the POD in all of the modules in
+the F<lib>, F<bin>, and F<t/Bric/Test> directories to make sure that they
+contain no POD errors.
+
+=cut
+
 use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use File::Find;
-use File::Spec;
+use File::Spec::Functions;
 use Pod::Checker;
 use IO::Scalar;
 use Test::More;
@@ -22,6 +51,8 @@ sub new {
 
 sub test_mods : Test(no_plan) {
     my $self = shift;
+    my $test_dir = catdir 't', 'Bric';
+    $test_dir = qr/^$test_dir/;
     my $mods = $self->{mods};
     foreach my $module (@$mods) {
         # Set up an error file handle and a POD checker object.
@@ -30,11 +61,8 @@ sub test_mods : Test(no_plan) {
         my $checker = Pod::Checker->new( -warnings => 1 );
         $checker->parse_from_file($module, $errors);
         # Delete this next statement once all errors are fixed!
-        local $TODO = 'POD repairs in progress...'
-          unless $checker->num_errors == 0;
-        # Fail the test if the file's POD contains errors.
-        ok($checker->num_errors == 0, "Check ${module}'s POD" )
-          or diag("POD errors in $module");
+        ok( $checker->num_errors == 0, "Check ${module}'s POD" );
+        diag("POD errors in $module: $errstr") if $errstr;
     }
 }
 
@@ -49,7 +77,8 @@ sub find_mods {
 
     # Find all the modules.
     my @mods;
-    find( sub { push @mods, $File::Find::name if m/\.pm$/ }, 'lib', 't' );
+    find( sub { push @mods, $File::Find::name if m/\.pm$/ }, 'lib',
+          catdir('t', 'Bric', 'Test') );
 
     # Find the bin directory.
     die "Cannot find Bricolage lib directory"
@@ -62,3 +91,12 @@ sub find_mods {
 
 1;
 __END__
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+L<Bric::Test::Base|Bric::Test::Base>,L<Bric::Test::Runner|Bric::Test::Runner>,
+L<Pod::Checker|Pod::Checker>
