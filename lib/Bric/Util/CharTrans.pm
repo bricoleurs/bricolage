@@ -6,17 +6,17 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-14 00:34:56 $
+$Date: 2004-03-03 18:19:21 $
 
 =head1 SYNOPSIS
 
@@ -178,14 +178,20 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:>
+
+=over 4
+
+=item Error converting data from [charset] to utf-8.
+
+=back
 
 =cut
 
 sub to_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    _convert shift, $self->charset, 'utf8';
+    _convert shift, $self->charset, 'utf-8';
     return $self;
 }
 
@@ -199,7 +205,13 @@ Performs an in-place conversion of the UTF-8 data in C<$utf8_text> to the
 character set specified via C<charset()>. References to SCALARs, ARRAYs, and
 HASHes will be recursively processed and their data replaced.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item Error converting data from utf-8 to [charset].
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -210,7 +222,7 @@ B<Notes:> NONE.
 sub from_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    _convert shift, 'utf8', $self->charset;
+    _convert shift, 'utf-8', $self->charset;
     return $self;
 }
 
@@ -231,22 +243,31 @@ of a data structure.
 =cut
 
 sub _convert {
-    if (my $ref = ref $_[0]) {
-        my $in = shift;
-        if ($ref eq 'SCALAR') {
-            return from_to($$in, $_[0], $_[1]);
-        } elsif ($ref eq 'ARRAY') {
-            # Recurse through the array elements.
-            _convert($_, @_) for @$in;
-        } elsif ($ref eq 'HASH') {
-            # Recurse through the hash values.
-            _convert($_, @_) for values %$in;
+    eval {
+        if (my $ref = ref $_[0]) {
+            my $in = shift;
+            if ($ref eq 'SCALAR') {
+                return from_to($$in, $_[0], $_[1]);
+            } elsif ($ref eq 'ARRAY') {
+                # Recurse through the array elements.
+                _convert($_, @_) for @$in;
+                return;
+            } elsif ($ref eq 'HASH') {
+                # Recurse through the hash values.
+                _convert($_, @_) for values %$in;
+                return;
+            } else {
+                return;
+            }
         } else {
-            # Do nothing.
+            return from_to(shift, $_[0], $_[1]);
         }
-    } else {
-        return from_to(shift, $_[0], $_[1]);
-    }
+    };
+
+    my $err = $@ or return;
+    throw_gen error   => "Error converting data from $_[0] to $_[1]",
+              payload => $@;
+
 }
 
 =end private
