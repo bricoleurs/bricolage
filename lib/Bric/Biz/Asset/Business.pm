@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 01:59:03 $
+$Date: 2003-10-03 10:54:22 $
 
 =head1 SYNOPSIS
 
@@ -2329,7 +2329,7 @@ sub _construct_uri {
 
 =item $at_obj = $self->_get_element_object()
 
-Returns the asset tpe object that coresponds to this business object
+Returns the asset type object that coresponds to this business object
 
 B<Throws:>
 
