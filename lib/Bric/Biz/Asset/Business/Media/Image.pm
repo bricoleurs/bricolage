@@ -8,11 +8,11 @@ images
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
@@ -416,16 +416,19 @@ sub create_thumbnail {
       or throw_gen error   => "Imager cannot open '$path'",
                    payload => $img->errstr;
 
-    # Create smaller version by scaling largest side to THUMBNAIL_SIZE
-    my $thumb = $img->scale(xpixels => THUMBNAIL_SIZE,
-                            ypixels => THUMBNAIL_SIZE,
-                            type    => 'min');
+    # If either dimension is greather than the thumbnail size, create a
+    # smaller version by scaling largest side to THUMBNAIL_SIZE
+    if ($img->getwidth > THUMBNAIL_SIZE || $img->getheight > THUMBNAIL_SIZE) {
+        $img = $img->scale(xpixels => THUMBNAIL_SIZE,
+                           ypixels => THUMBNAIL_SIZE,
+                           type    => 'min');
+    }
 
     # Save the image or die.
     my $thumbfile = $self->_thumb_file;
-    $thumb->write(file => $thumbfile)
+    $img->write(file => $thumbfile)
       or throw_gen error   => "Imager cannot write '$thumbfile'",
-                   payload => $img->errstr;
+        payload => $img->errstr;
     return $self;
 }
 

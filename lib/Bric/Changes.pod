@@ -193,6 +193,11 @@ only override another user if she has EDIT permission to that other user. This
 makes it easier for user administrators to masquerade as other users without
 having to change passwords. [David]
 
+=item *
+
+Eliminated another SQL performance bottleneck with simple searches of media
+assets. [JoE<atilde>o Pedro]
+
 =back
 
 =head2 Bug Fixes
