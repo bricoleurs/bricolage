@@ -76,8 +76,9 @@ publish to one or more email addresses. Funded by ETonline. [David]
 
 =item *
 
-Callbacks moved from Mason components to modules based on Params::Callback and
-managed by MasonX::Interp::WithCallbacks. [Scott]
+Callbacks were moved from Mason components to modules based on
+Params::Callback and managed by MasonX::Interp::WithCallbacks. This makes the
+UI layer more responsive and enhances maintainability. [Scott]
 
 =item *
 
@@ -154,9 +155,9 @@ names. [Clive Jones]
 
 =item *
 
-Added "Text to search" option in the Advanced search of Media and
-Stories. This option will return assets with the searched text in their data
-elements. [JoE<atilde>o Pedro]
+Added "Text to search" option in the Advanced search of Media and Stories to
+search for documents based on the contents of their field. [JoE<atilde>o
+Pedro]
 
 =item *
 
@@ -201,8 +202,11 @@ David]
 
 =item *
 
-Factored out some of the SOAP asset classes into Bric::SOAP::Asset. Also added
-MediaType, Site, and Keyword SOAP modules. [Scott]
+Factored out some of the SOAP asset classes into Bric::SOAP::Asset. [Scott]
+
+=item *
+
+Added MediaType, Site, and Keyword SOAP modules. [Scott]
 
 =item *
 
@@ -248,11 +252,11 @@ edited to add a new burner. [David]
 =item *
 
 Moved category selection from Media and Story Profiles into their own separate
-components so that organizations with 2000+ categories don't have to load them
-into a dropdown list every time an asset is edited. The category "browser"
-uses an interface similar to 'Associate Contributors', which has the advantage
-of being searchable rather than looking through a "long list of all
-categories". This feature can be enabled via the new
+components so that organizations with hundreds or thousands categories don't
+have to load them into a dropdown list every time an asset is edited. The
+category "browser" uses an interface similar to 'Associate Contributors',
+which has the advantage of being searchable rather than looking through a
+"long list of all categories". This feature can be enabled via the new
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive. [Scott]
 
 =item *
@@ -295,7 +299,7 @@ separate host. [Thorston Biel]
 
 =item *
 
-Wrote context-sensitive help for pages that were missing it. [Scott]
+Added context-sensitive help for pages that were missing it. [Scott]
 
 =item *
 
