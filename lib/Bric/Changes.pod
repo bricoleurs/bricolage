@@ -237,9 +237,10 @@ displayed in its textarea box in a monospaced font. [David]
 
 =item *
 
-The main Bricolage JavaScript library is now a static file served by Apache
-rather than a Mason component processed by mod_perl. This allows the JS to be
-cached by the browser so that it doesn't have to request it for every page in
+The main Bricolage JavaScript library has had several other JavaScript
+libraries rolled into it, and is now a static file served by Apache rather
+than a Mason component processed by mod_perl. This allows the JS to be cached
+by the browser so that it doesn't have to request it for every page in
 Bricolage. It also cuts down on procesing time, since it doesn't have to be
 managed dynamically as a Mason component anymore. [David]
 
