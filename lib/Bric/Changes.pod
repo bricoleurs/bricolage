@@ -109,6 +109,12 @@ alphabetical order. [David]
 The XML representation of media documents used by the SOAP server now supports
 the media type of the file. [David]
 
+=item *
+
+The "multi" install destination is now the default, rather than the "single"
+install destination. The two styles ("multi" and "single") are now also better
+described during installation. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -64,15 +64,17 @@ Bricolage comes with two sets of defaults.  You'll have the
 opportunity to override these defaults but choosing wisely here will
 probably save you the trouble.  Your choices are:
 
-  s - "single"   one installation for the entire system
+  s - "single"   one installation for the entire system, with modules
+                 integrated into Perl's @INC directories
 
-  m - "multi"    an installation that lives next to other installations
-                 on the same machine
+  m - "multi"    an installation that lives entirely in a single directory,
+                 so that it can coexist with other installations on the
+                 same machine
 
 END
 
-    $CONFIG{set} = ask_choice("Your choice?", 
-                              [ "s", "m" ], "s");
+    $CONFIG{set} = ask_choice("Your choice?",
+                              [ "s", "m" ], "m");
 
     # setup the default
     if ($CONFIG{set} eq 's') {
