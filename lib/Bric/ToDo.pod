@@ -4,32 +4,44 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.25 $
+$Revision: 1.13.2.26 $
 
 =head1 DATE
 
-$Date: 2001-11-21 18:58:25 $
+$Date: 2001-11-29 00:38:04 $
 
 =head1 DESCRIPTION
 
-This document lists the items on Bricolage's To Do list, and also serves as a
-road map.
+This document lists the items on Bricolage's To Do list.
 
 =head1 OVERVIEW
 
-I'm combining the concepts of the To Do list with the Road Map, since what's on
-the To To list merely has version goals. Most of the stuff up through v1.4.0
-should be doable. Other wild ideas go into the "Blue Sky" section.
+Bricolage versions are determined by the types of changes required. Minor
+version numbers require no changes to the database schema (though data in the
+database can be added or changed, e.g, for new preferences), and require few
+changes to the libraries. The idea is to try to use the existing tools in the
+libraries and the database to do more in the UI, though minor changes to the
+libraries are allowed. Major version numbers, on the other hand, change when the
+database schema has been altered, or when the changes to the libraries are
+significant (including the addition of new libraries), or simply when
+significant features have been added.
 
-Bricolage versions are determined by the typs of changes required. Minor version
-numbers require no changes to the datbase (neither in terms of data or the DDL),
-and require few changes to the libraries. The idea is to try to use the existing
-tools in the libraries and the database to do more in the UI, though minor
-changes to the libraries are allowed. Major version numbers, on the other hand,
-change when the database has changed, or when the changes to the libraries are
-significant (including the addition of new libraries).
+At any one time, we will list the tasks that contributors have accepted for the
+next minor version and for the next major version. After that, we list other
+outstanding to do items in descending order of importance: "High Priority Minor
+Items," "High Priority Major Items," "Low Priority Minor Items," and "Low
+Priority Major Items." Developers who wish to volunteer to take on one or more
+of these tasks should contact announce their plans and version goal on the
+Bricolage Developers list <bricolage-devel@lists.sourceforge.net>. Contributions
+are welcome.
+
+At the end of this document, the "Blue Sky" section features items that will
+likely never be done for the 1.x development of Bricolage, but we'd like to keep
+in mind as long term goals further down the line.
 
 =head2 VERSION 1.0.2
+
+Estimated ship date: 8 December 2001.
 
 =over 4
 
@@ -37,10 +49,6 @@ significant (including the addition of new libraries).
 
 Add name of Output Channel to list of Templates in Find Templates interface
 [Michele].
-
-=item *
-
-Create installation makefile [Mark].
 
 =item *
 
@@ -74,7 +82,11 @@ Make SSL optional (and off by default) [David or Sam].
 
 =item *
 
-Add URI to all media profile views.
+Add URI to all media profile views [Michele].
+
+=item *
+
+Add ability to change the category association in Templates [David].
 
 =back
 
@@ -82,20 +94,59 @@ Add URI to all media profile views.
 
 ################################################################################
 
-=head2 VERSION 1.0.3
+=head2 VERSION 1.2.0
+
+Estimated ship date: 8 December 2001.
 
 =over 4
 
 =item *
 
-Add support for Mozilla/Netscape 6 [Dave or Mark].
+Create installation makefile. [Mark]
 
 =item *
 
 Create category browser so that, in interfaces where users have to navigate
 categories (e.g., when creating subcategories, or when assigning an asset to a
 category), they can do it hierarchically, rather than have to look at a long-ass
-list of all categories [David].
+list of all categories. [David]
+
+=item *
+
+Allow only one template with a given name for a given category and output
+channel. [Sam]
+
+=item *
+
+Add Context-sensitive, online help. Note that this has been done, but all of the
+help files should be proof-read for accuracy and they still need some style
+applied to them. [Sam]
+
+=item *
+
+Add separate interface for editing templates (via FTP). Note that this is done,
+but needs testing. [Sam]
+
+=item *
+
+Add the ability to use HTML::Template Templates without breaking the use of
+Mason. Note that this is done, but needs testing. [Sam]
+
+=item *
+
+Separate the filesystem destinations for stories burned for publication and for
+stories burned for previewing. This will prevent someone previewing and stomping
+all over a published version of a story. [David]
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 High Priority Minor Items
+
+=over
 
 =item *
 
@@ -109,41 +160,22 @@ interface to select from existing keywords for associating with assets.
 
 =item *
 
-Add HTML Cleaning Action [David].
+Add regression test suite.
 
 =item *
 
-Add HTML Checking Action [David].
+Add URI Case preference.
 
 =item *
 
-Add Akamaization Action [David].
+Create preference and the code to enforce it for URI format, that is, the order
+in which it is assembled (category/date/slug or /date/category/slug, etc.).
 
 =item *
 
-Add new move methods (FTP, SCP, etc.) [Sam and David].
-
-=item *
-
-Add regression test suite [Mark].
-
-=item *
-
-Add interface for editing Contact Types [David].
-
-=item *
-
-Add check for existing people before adding new ones in the Contributor and
-User interfaces [David].
-
-=item *
-
-Add preference for Contributors to be automatically added to assets as keywords
-[David].
-
-=item *
-
-Add ability to change the category association in Templates.
+Add preferences and the code to enforce them to allow admins to specify that
+keywords follow certain rules, such as being all lowercase, or to exclude
+certain words (e.g., About.com excludes the keyword "about.com").
 
 =item *
 
@@ -158,11 +190,6 @@ Add "Check In and Publish/Deploy" button to asset editing screens.
 =item *
 
 Add "Check In and Remove from Workflow" button to asset editing screens.
-
-=item *
-
-Link contributors to their assets in the -- provide a link in the Contributor
-Manager and/or the Contributor Profile).
 
 =item *
 
@@ -184,36 +211,139 @@ Add ability to "undeploy" templates without deactivating them.
 
 ################################################################################
 
-=head2 VERSION 1.2.0
+=head2 High Priority Major Items
 
 =over 4
 
 =item *
 
-Allow only one template with a given name for a given category and output
-channel.
+Add interface for exporting and importing assets and other objects via XML.
+Ideally, this should use a SOAP interface in order to facilitate other features
+such as scheduled publishing and syndication.
 
 =item *
 
-Add keywords to media [David].
+Add scheduled Burning/Syndication.
 
 =item *
 
-Add Context-sensitive, online help [Sam].
+Add better tools for handling special characters (e.g., high ASCII, Latin-1
+letters with umlauts and accents and such). May need to select a character set
+to be associated with output channels, and convert characters based on the
+character set.
+
+=item *
+
+Improve the formBuilder interface such that existing fields can be edited, and
+there is better control over how the fields are created.
+
+=item *
+
+Simplify associating media with stories. Users should be able to associated
+media with stories just as they do contributors and keywords. However, the new
+media objects they upload should be put into the repository as normal media
+assets. New uploads of the same media file increment the version numbers.
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 Low Priority Minor Items
+
+=over 4
+
+=item *
+
+Add support for Mozilla/Netscape 6. Essentially, the JavaScript needs to be
+updated.
+
+=item *
+
+Modify JavaScript and CSS to work entirely in JavaScript, rather than rely on
+server-side client identification. This way, the script files can just be sent
+to the browser once, rather than re-executing the Mason versions of these files
+for every request.
+
+=item *
+
+Add interface for editing Contact Types.
+
+=item *
+
+Add preference for Contributors to be automatically added to assets as keywords.
+
+=item *
+
+Add support for Organizations.
+
+=item *
+
+Add support for addresses.
+
+=item *
+
+Add HTML Cleaning Action.
+
+=item *
+
+Add HTML Checking Action.
+
+=item *
+
+Add Akamaization Action.
+
+=item *
+
+Add new move methods (FTP, SCP, etc.).
+
+=item *
+
+Link contributors to their assets in the -- provide a link in the Contributor
+Manager and/or the Contributor Profile).
+
+=item *
+
+Add preferences for listManagers to indicate whethere they should default to
+expand or narrow behavior.
+
+=item *
+
+Add pagination to listManager (maybe).
+
+=back
+
+=cut
+
+################################################################################
+
+=head2 Low Priority Major Items
+
+=over 4
+
+=item *
+
+Add keywords to media.
+
+=item *
+
+Add new and/or custom form fields to the formBuilder (WHO request -- need more
+information on what exactly they want). One important example is a "Relational"
+option, where the user can specify a link to another object in Bricolage, pick a
+field name for that object, and have it appear in a select list. For some
+objects, they may wish to narrow the field some (such as with categories -- only
+list subcategories of a given category). Perhaps we can somehow allow them to
+pass in arguments to list()?
+
+=item *
+
+Add support for Java templates.
 
 =item *
 
 Add user-created help for user-created fields (add a "Help Text" field to Form
-Builder) [David or Sam].
-
-=item *
-
-Add scheduled Burning/Syndication [David].
-
-=item *
-
-Add separate interface for editing templates (via FTP [bleh!] or SCP or
-somesuch) [Sam].
+Builder).
 
 =item *
 
@@ -227,28 +357,6 @@ for a workflow (since desks can be in multiple workflows).
 
 =item *
 
-Improve the formBuilder interface such that existing fields can be edited, and
-there is in general more control over how the fields are created [David].
-
-=item *
-
-Add new and/or custom form fields to the formBuilder (WHO request -- need more
-information on what exactly they want). One important example is a "Relational"
-option, where the user can specify a link to another object in Bricolage, pick a
-field name for that object, and have it appear in a select list. For some
-objects, they may wish to narrow the field some (such as with categories -- only
-list subcategories of a given category). Perhaps we can somehow allow them to
-pass in arguments to list()? [David]
-
-=item *
-
-Simplify associating media with stories. Users should be able to associated
-media with stories just as they do contributors and keywords. However, the new
-media objects they upload should be put into the repository as normal media
-assets. New uploads of the same media file increment the version numbers.
-
-=item *
-
 Add a flag to the category object to indicate whether or not assets can be
 associated with it, and then check that flag in the new asset profiles.
 
@@ -259,7 +367,7 @@ allowed to have subcategories, and then check that flag in the category profile.
 
 =item *
 
-Allow some preferences to have values typed into a text field [David].
+Allow some preferences to have values typed into a text field.
 
 =item *
 
@@ -270,41 +378,15 @@ and date formats).
 
 Add preference groupings (secret groups would probably work well) and present
 the grouped preferences together in a profile. Then just list the preference
-groups in the Preference Manager [David].
+groups in the Preference Manager.
 
 =item *
 
-Add preferences for listManagers to indicate whethere they should default to
-expand or narrow behavior [David].
-
-=item *
-
-Add URI Case preference [David].
-
-=item *
-
-Create preference for URI format, that is, the order in which it is assembled
-(category/date/slug or /date/category/slug, etc.) [David].
-
-=item *
-
-Add preferences to allow admins to specify that keywords follow certain rules,
-such as being all lowercase, or to exclude certain words (e.g., About.com
-excludes the keyword "about.com") [David].
+Add support for contributor contracts.
 
 =item *
 
 Add support for LDAP authentication.
-
-=back
-
-=cut
-
-################################################################################
-
-=head2 VERSION 1.4.0
-
-=over 4
 
 =item *
 
@@ -323,10 +405,6 @@ Add support for Instant messaging (using Jabber server) in Alerts.
 
 =item *
 
-Add pagination to listManager (maybe).
-
-=item *
-
 Add file system-like asset browsing (especially for templates and media).
 
 =item *
@@ -337,34 +415,17 @@ document.
 
 =item *
 
-Add the ability to use HTML::Template Templates without breaking the use of
-Mason [Sam].
-
-=item *
-
 Create a different way of distinguishing which desks are shared and which are
 not, rather than relying solely on the desk name.
 
 =item *
 
-Add directory Support (as in MPS).
-
-=item *
-
-Add support for Organizations [David].
-
-=item *
-
-Add support for addresses [David].
-
-=item *
-
-Add support for contributor contracts [David].
+Add directory (a.k.a. story index) support.
 
 =item *
 
 Have objects load their group IDs when they're selected in order to save time
-checking permissions [David].
+checking permissions.
 
 =item *
 
