@@ -136,6 +136,7 @@ elsif ($field eq "$widget|create_cb") {
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
     my $cat_id = $param->{$widget.'|cat_id'};
+    my $file_type = $param->{file_type};
 
     my ($at, $name);
     unless ($param->{$widget.'|no_at'}) {
@@ -294,7 +295,7 @@ my $save_meta = sub {
     $fa ||= get_state_data($widget, 'fa');
     chk_authz($fa, EDIT);
     $fa->set_priority($param->{priority}) if $param->{priority};
-    $fa->set_category_id($param->{category_id}) if $param->{category_id};
+    $fa->set_category_id($param->{category_id}) if exists $param->{category_id};
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
     $fa->set_data($param->{"$widget|code"});
