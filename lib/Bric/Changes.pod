@@ -184,6 +184,10 @@ Fixed a bug where the time a distribution job is scheduled was not properly
 converted to UTC for storage in the database. Thanks to Mike Slattery for the
 great code archaeology! [David]
 
+=item *
+
+Fixed the spelling of "contributor" in several spots. [Andrew Baio]
+
 =back
 
 =head1 VERSION 1.2.0

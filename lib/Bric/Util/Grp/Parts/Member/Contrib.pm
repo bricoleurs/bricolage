@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:37 $
+$Date: 2002-02-26 00:42:12 $
 
 =head1 SYNOPSIS
 
@@ -483,7 +483,7 @@ sub get_person {
 
 Get a list of grp IDs of groups this object belongs to. Overrides the default
 implementation because it needs the group memeberships of the underlying person
-object, rather than of the conbributor object.
+object, rather than of the contributor object.
 
 B<Throws:>
 
