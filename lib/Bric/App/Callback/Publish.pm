@@ -109,7 +109,6 @@ sub publish : Callback {
 
     # Iterate through each story and media object to be published.
     my $count = @$stories;
-    my $pubed;
     foreach my $sid (@$stories) {
         # Schedule
         my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
@@ -141,7 +140,6 @@ sub publish : Callback {
     }
 
     $count = @$media;
-    $pubed = 0;
     foreach my $mid (@$media) {
         # Schedule
         my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
