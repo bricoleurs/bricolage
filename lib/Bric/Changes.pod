@@ -36,12 +36,20 @@ default value in several administrative profiles. [David]
 
 Refactored Bric::Biz::Keyword. It is now more compliant with the standard API
 as defined in other classes. Also added support for keyword groups so that we
-can create a keyword manager.
+can create a keyword manager. [David]
 
 =item *
 
-Added $burner->sdisplay_element method to Bric::Util::Burner.
-This is a sprintf version of $burner->display_element. [Scott]
+Added C<< $burner->sdisplay_element >> method to Bric::Util::Burner. This is a
+C<sprintf>-style version of C<< $burner->display_element >>. [Scott]
+
+=item *
+
+Added C<get_data_element()> method to
+Bric::Biz::Asset::Business::Parts::Tile::Container. This allows template
+writers to more easily find a single data element, rather than just the value
+of a single data element (as C<get_data()> does). Inspired by a comment from
+Bill Cappel. [David]
 
 =back
 
