@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.76 $
+$Revision: 1.77 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.76 $ )[-1];
+our $VERSION = (qw$Revision: 1.77 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:06 $
+$Date: 2004-02-16 15:49:19 $
 
 =head1 SYNOPSIS
 
@@ -243,7 +243,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'JOIN media_instance ON media__id = media.id '
                              . 'WHERE LOWER(name) LIKE LOWER(?) '
                              . 'OR LOWER(description) LIKE LOWER(?) '
-                             . 'OR LOWER(primary_uri) LIKE LOWER(?) '
+                             . 'OR LOWER(mt.uri) LIKE LOWER(?) '
                              . 'UNION SELECT media_id FROM media_keyword '
                              . 'JOIN keyword ON (keyword.id = keyword_id) '
                              . 'WHERE LOWER(name) LIKE LOWER(?))',
@@ -257,7 +257,7 @@ use constant PARAM_ORDER_MAP =>
       alias_id            => 'alias_id',
       site_id             => 'site__id',
       workflow__id        => 'workflow__id',
-      primary_uri         => 'primary_uri',
+      uri                 => 'mt.uri',
       element__id         => 'element__id',
       source__id          => 'source__id',
       priority            => 'priority',
@@ -592,8 +592,7 @@ number of objects specified by C<Limit>.
 
 =item simple
 
-Triggers a single OR search that hits title, description, primary_uri and
-keywords.
+Triggers a single OR search that hits title, description, uri and keywords.
 
 =back
 
