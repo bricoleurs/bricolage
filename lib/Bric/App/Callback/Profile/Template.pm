@@ -404,13 +404,16 @@ $checkin = sub {
 
     # Deploy the template, if necessary.
     if ($desk_id eq 'deploy') {
-        $param->{'desk|formatting_pub_ids'} = $fa->get_id;
+        my $class_key = 'desk_asset';
+
+        $param->{"$class_key|formatting_pub_ids"} = $fa->get_id;
 
         # Call the deploy callback in the desk widget.
         my $cb = Bric::App::Callback::Desk->new(
             'ah' => $self->ah,
             'apache_req' => $self->apache_req,
             'request_args' => $param,
+            'pkg_key' => $class_key,
         );
         $cb->deploy();
     }
