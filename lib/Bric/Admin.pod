@@ -61,6 +61,19 @@ And then as root:
 
 If you run into problems then read below for the details.
 
+In order to prevent the Bricolage installer from asking any questions, simply
+set the environment variable C<$INSTALL_VERBOSITY> to "QUIET":
+
+  make INSTALL_VERBOSITY=QUIET
+  make test
+  make INSTALL_VERBOSITY=QUIET install
+
+Bricolage will do it's best to discover most information by itself, and exist
+with an error when it cannot.
+
+This feature wil likely prove most useful for automated or batch
+installations.
+
 =head1 PACKAGES
 
 Bricolage requires a lot of other components to be installed; here's a list of
