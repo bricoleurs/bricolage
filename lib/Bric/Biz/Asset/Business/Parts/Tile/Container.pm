@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2004-03-08 15:23:01 $
+$Date: 2004-03-10 14:01:38 $
 
 =head1 SYNOPSIS
 
@@ -809,8 +809,8 @@ sub add_container {
 
 =item $string = $element->get_data_element($name, $obj_order)
 
-This method will search the contained elements for one with the coresponding name
-ane object order field. It will then return data element.
+This method will search the contained elements for one with the corresponding name
+and object order field. It will then return the data element.
 
 B<Throws:> NONE.
 
