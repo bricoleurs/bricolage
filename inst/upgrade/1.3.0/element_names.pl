@@ -37,21 +37,29 @@ exit if fetch_sql(qq{
 });
 
 do_sql(
+    'DROP INDEX idx_sc_tile__name',
     'ALTER TABLE story_container_tile RENAME name TO __name__old__',
     'ALTER TABLE story_container_tile ADD name VARCHAR(64)',
     'UPDATE story_container_tile SET name = __name__old__',
+    'CREATE INDEX idx_sc_tile__name ON story_container_tile(LOWER(name))',
 
+    'DROP INDEX idx_mc_tile__name',
     'ALTER TABLE media_container_tile RENAME name TO __name__old__',
     'ALTER TABLE media_container_tile ADD name VARCHAR(64)',
     'UPDATE media_container_tile SET name = __name__old__',
+    'CREATE INDEX idx_mc_tile__name ON media_container_tile(LOWER(name))',
 
+    'DROP INDEX idx_story_data_tile__name',
     'ALTER TABLE story_data_tile RENAME name TO __name__old__',
     'ALTER TABLE story_data_tile ADD name VARCHAR(64)',
     'UPDATE story_data_tile SET name = __name__old__',
+    'CREATE INDEX idx_story_data_tile__name ON story_data_tile(LOWER(name))',
 
+    'DROP INDEX idx_media_data_tile__name',
     'ALTER TABLE media_data_tile RENAME name TO __name__old__',
     'ALTER TABLE media_data_tile ADD name VARCHAR(64)',
-    'PDATE media_data_tile SET name = __name__old__'
+    'UPDATE media_data_tile SET name = __name__old__',
+    'CREATE INDEX idx_media_data_tile__name ON media_data_tile(LOWER(name))'
 );
 
 __END__
