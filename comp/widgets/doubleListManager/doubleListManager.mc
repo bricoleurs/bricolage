@@ -187,7 +187,7 @@ if ($showRightList) {
     <td>&nbsp;</td><td valign=top align=right>
 % if ($showLeftList) {
 %   if (!$readOnly) {
-      <select name="<% $leftName %>" size="<% $size %>" multiple style="width:225px" width="210">
+      <select name="<% $leftName %>" id="<% $leftName %>" size="<% $size %>" multiple style="width:225px" width="210">
       <% $left %>
       </select>
 %   } else {
@@ -198,7 +198,7 @@ if ($showRightList) {
     <td valign=top>
 % if ($showRightList) {
 %   if (!$readOnly) {
-      <select name="<% $rightName %>" size="<% $size %>" multiple style="width:225px" width="210">
+      <select name="<% $rightName %>" id="<% $rightName %>" size="<% $size %>" multiple style="width:225px" width="210">
       <% $right %>
       </select>
 %   } else {
@@ -213,12 +213,12 @@ if ($showRightList) {
 
 if ($showLeftList && $showRightList && !$readOnly) {
     $m->out(qq{ <tr><td>&nbsp;</td><td align="right"> });
-    $m->out(qq{ <a href="#" onClick="return addToList('} .$formName . qq{', '$leftName', '$rightName'); $leftJs;">});
+    $m->out(qq{ <a href="#" onclick="move_item('} . $formName . qq{', '} . $leftName . qq{', '} . $rightName . qq{'); return false;">});
     $m->out(qq{<img src="/media/images/$lang_key/add_to_list_lgreen.gif" border=0 /></a>} );
     $m->out(qq{ </td><td align="left"> } );
-    $m->out(qq{ <a href="#" onClick="return removeFromList('} .$formName . qq{', '$leftName', '$rightName'); $rightJs;">} );
+    $m->out(qq{ <a href="#" onClick="move_item('} . $formName . qq{', '} . $rightName . qq{', '} . $leftName . qq{'); return false;">} );
     $m->out(qq{<img src="/media/images/$lang_key/remove_from_list_red.gif" border=0 /></a>} );
-    $m->out(qq{	</td><td>&nbsp;</td></tr> });
+    $m->out(qq{ </td><td>&nbsp;</td></tr> });
 }
 </%perl>
 

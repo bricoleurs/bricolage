@@ -302,6 +302,12 @@ htmlArea in CVS. [David & Marshall]
 
 =item *
 
+The JavaScript that handles the double listmanager has been vastly optimized.
+It should now be able to better handle large lists, such as a list of thousands
+of categories. Reported by Scott. [Marshall]
+
+=item *
+
 Logging now works properly with the virtual FTP server. [Keith Grennan]
 
 =item *
