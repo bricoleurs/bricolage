@@ -30,6 +30,11 @@ so was probably quite rare, anyway. [David]
 Upgrades no longer cause an error during the execution of
 F<inst/db_grant.pl>. Reported by Abdul Halim Mazahar. [David]
 
+=item *
+
+Alerts once again properly check the attributes of the events that trigger
+them. Reported by Patrick Walsh. [David]
+
 =back
 
 =head1 VERSION 1.6.11 "Green" (2004-03-17)

@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.13.2.5 $
+$Revision: 1.13.2.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.13.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 22:04:07 $
+$Date: 2004-04-07 21:16:15 $
 
 =head1 SYNOPSIS
 
@@ -2424,8 +2424,16 @@ sub send_alerts {
 
     # For accessing data on the user who triggered the event and this alert.
     my $tmeths = Bric::Util::EventType->my_trig_meths;
+
     # For accessing data on the oject of the alert.
     my $omeths = $obj->my_meths;
+
+    # For accessing data on the event itself.
+    for my $k (keys %$e_attr) {
+        (my $v = lc $k) =~ s/\W+/_/g;
+        $e_attr->{lc "et_$v"} = delete $e_attr->{$k};
+    }
+
     foreach my $rule ($self->get_rules) {
         # String naming the data to grab.
         my $attr = $rule->get_attr;
@@ -2435,7 +2443,7 @@ sub send_alerts {
         my ($tmeth, $targs) = $tmeths->{$attr} ?
           @{$tmeths->{$attr}}{'get_meth', 'get_args'} : ();
 
-        # How to look it oup in the object of the alert.
+        # How to look it up in the object of the alert.
         my ($ometh, $oargs) = $omeths->{$attr} ?
           @{$omeths->{$attr}}{'get_meth', 'get_args'} : ();
 
