@@ -231,6 +231,8 @@ Friends who have spotted bugs include:
 
 =item Abdul Halim Mazahar
 
+=item Christian Hauser
+
 =back
 
 Bricolage's translation team:

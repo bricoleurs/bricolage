@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 C<make upgrade> once again correctly creates F<postgres.db> if the existing
 installation doesn't know the installed version of PostgreSQL. [David]
 
+=item *
+
+Adding notes to image, video, or audio media documents no longer causes na
+error. Reported by Christian Hauser. [David]
+
 =back
 
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
