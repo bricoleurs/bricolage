@@ -580,9 +580,7 @@ sub _update_parts {
     my (@curr_tiles, @delete, $locate_tile);
 
     my $widget = $self->class_key;
-    my $locate_id = exists $param->{'edit_view_bulk_tile_id'}
-      ? $param->{'edit_view_bulk_tile_id'}
-      : -1;    # invalid ID
+    my $locate_id = $self->value;
     my $tile = get_state_data($widget, 'tile');
 
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed

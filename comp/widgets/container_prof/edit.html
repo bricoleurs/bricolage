@@ -45,6 +45,7 @@ my $x=0;
   <td width=1 class="medHeader" rowspan=<% $rowspan %>><img src="/media/images/spacer.gif" width=1 height=1 /></td>
   <td width=60 class="medHeader" align="center"><span class="label"><%$lang->maketext('Delete')%></span></td>
 </tr>
+  <input type="hidden" name="<% $widget %>|edit_cb" value="" />
 % } # END if (scalar(@tiles)) {
 
 % # BEGIN FOREACH TILES
@@ -104,27 +105,24 @@ if ($at->is_related_media) {
       </tr>
       <tr>
       <td colspan=2><& '/widgets/profile/imageSubmit.mc',
-         formName => 'theForm',
-         callback => 'container_prof|edit_cb',
-         image    => 'edit_lgreen',
-         vspace   => 3
-      &><& '/widgets/profile/hidden.mc',
-         'name' => 'edit_view_bulk_tile_id',
-         'value' => $dt->get_id()
+         formName  => 'theForm',
+         callback  => 'container_prof|edit_cb',
+         image     => 'edit_lgreen',
+         vspace    => 3,
+         value     => $dt->get_id,
+         useHidden => 0
       &></td>
       </tr>
       </table>
 % } else {
 
     <& '/widgets/profile/imageSubmit.mc',
-         formName => 'theForm',
-         callback => 'container_prof|edit_cb',
-         image    => 'edit_lgreen',
-         vspace   => 3
-    &>
-    <& '/widgets/profile/hidden.mc',
-         'name' => 'edit_view_bulk_tile_id',
-         'value' => $dt->get_id()
+         formName  => 'theForm',
+         callback  => 'container_prof|edit_cb',
+         image     => 'edit_lgreen',
+         vspace    => 3,
+         value     => $dt->get_id,
+         useHidden => 0
     &>
 % }
 
@@ -135,12 +133,11 @@ if ($at->is_related_media) {
 % if (scalar(@{$dt->get_possible_data()}) or scalar(@{$dt->get_possible_containers()})) {
       <td align="center" valign="middle"><span class="label"> - or - </span></td>
       <td><& '/widgets/profile/imageSubmit.mc',
-         formName => 'theForm',
-         callback => 'container_prof|bulk_edit_cb',
-         image    => 'bulk_edit_lgreen'
-       &><& '/widgets/profile/hidden.mc',
-         'name' => 'edit_view_bulk_tile_id',
-         'value' => $dt->get_id()
+         formName  => 'theForm',
+         callback  => 'container_prof|bulk_edit_cb',
+         image     => 'bulk_edit_lgreen',
+         value     => $dt->get_id,
+         useHidden => 0
        &></td>
     <td>
     <& '/widgets/profile/select.mc',
