@@ -74,10 +74,6 @@ if ($mode eq "new") {
 
     } else {
 	# show all roles for this member so the user can choose one
-	$m->comp('/widgets/profile/hidden.mc',
-		 value => 'preEdit',
-		 name => 'mode');
-
 	$m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
 
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -343,11 +339,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-04-10 19:04:24 $
+$Date: 2002-05-03 18:18:47 $
 
 =head1 DESCRIPTION
 
