@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.134 $
+$Revision: 1.135 $
 
 =head1 DATE
 
-$Date: 2003-11-30 17:32:35 $
+$Date: 2003-12-11 22:32:03 $
 
 =head1 DESCRIPTION
 
@@ -89,6 +89,8 @@ START MODULE LIST
 
 =item Net::Cmd
 
+=item Bundle::libnet
+
 =item Devel::Symdump
 
 =item DBI 1.18
@@ -113,8 +115,6 @@ START MODULE LIST
 
 =item Mail::Address
 
-=item Net::SMTP
-
 =item XML::Writer
 
 =item LWP
@@ -124,6 +124,8 @@ START MODULE LIST
 =item MLDBM
 
 =item Params::Validate
+
+=item Exception::Class 1.12
 
 =item Class::Container 0.09
 
@@ -141,21 +143,13 @@ START MODULE LIST
 
 =item Test::Simple
 
-=item Parse::RecDescent
-
 =item Text::Balanced
-
-=item HTML::Template
-
-=item HTML::Template::Expr
 
 =item XML::Parser 2.34
 
 =item XML::Simple
 
 =item IO::Stringy
-
-=item MIME::Parser
 
 =item SOAP::Lite
 
@@ -169,15 +163,17 @@ START MODULE LIST
 
 =item Test::Class
 
-=item Exception::Class 1.12
-
 =item HTTP::BrowserDetect
 
 =item Params::CallbackRequest 1.10
 
 =item MasonX::Interp::WithCallbacks 1.10
 
-=item Template 2.09
+=item HTML::Template (optional)
+
+=item HTML::Template::Expr (optional)
+
+=item Template 2.09 (optional)
 
 =item Encode (optional)
 
