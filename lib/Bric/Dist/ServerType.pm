@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-03-07 01:28:20 $
 
 =head1 SYNOPSIS
 
@@ -326,6 +326,10 @@ can_publish
 =item *
 
 can_preview
+
+=item *
+
+active
 
 =back
 
@@ -2021,6 +2025,9 @@ $get_em = sub {
 	} elsif ($k eq 'move_method') {
 	    push @wheres, "LOWER(c.disp_name) LIKE ?";
 	    push @params, lc $v;
+	} elsif ($k eq 'active') {
+	    push @wheres, "s.active = ?";
+	    push @params, $v ? 1 : 0;
 	} else {
 	    push @wheres, "LOWER(s.$k) LIKE ?";
 	    push @params, lc $v;
@@ -2028,8 +2035,7 @@ $get_em = sub {
     }
 
     # Assemble the WHERE clause.
-    my $where = $params->{id} ? '' : "\n               AND active = 1";
-    $where .= "\n               AND " . join ' AND ', @wheres if @wheres;
+    my $where .= "\n               AND " . join ' AND ', @wheres if @wheres;
 
     # Assemble and prepare the query.
     local $" = ', ';

@@ -334,7 +334,7 @@ my $def = {
 	   dest           => { list_fields => [qw(name description publish preview)],
 			       behavior => 'narrow',
 			       srch_field => 'name',
-			       constrain => {},
+			       constrain => { active => 1 },
 			       alter => { publish => $yes_no,
 					  preview => $yes_no, },
 			       select => $sel_sub },
@@ -357,11 +357,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-03-07 01:28:19 $
 
 =head1 SYNOPSIS
 

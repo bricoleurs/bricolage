@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-28 23:02:45 $
+$Date: 2002-03-07 01:28:20 $
 
 =head1 SYNOPSIS
 
@@ -1720,9 +1720,10 @@ sub _do_list {
 
 	execute($select,@bind);
 	bind_columns($select, \@d[0 .. $count]);
-	
-	while (fetch($select)) {    
-	    my $self = bless {}, $class;
+
+	my $pkg = ref $class || $class;
+	while (fetch($select)) {
+	    my $self = bless {}, $pkg;
 
 	    $self->_set(['id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
 		$self->_set__dirty(0);	

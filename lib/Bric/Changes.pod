@@ -119,6 +119,33 @@ Fixed a bug where permissions set to access workflows and desks had no affect on
 the display of workflows and desks. Thanks to Rachel Murray for the spot.
 [David]
 
+=item *
+
+Fixed bug where attempting to create a destination with the same name as an
+existing but deactivated destination triggered an SQL error. Thanks to Michael
+Alan Dorman for the spot. [David]
+
+=item *
+
+Fixed bug where Workflows with spaces in their names would not create proper
+submenus in the left navigation bar. Thanks to the WHO for the spot [David]
+
+=item *
+
+Fixed bug where the wrong story might be previewed when clicking the title of a
+story in My Workspace or on a desk. [David]
+
+=item *
+
+Changing the category a media asset is in now correctly updates the underlying
+category object and the URI without the media asset needing to be checked in.
+[Matt Vella]
+
+=item *
+
+Eliminated "Template compile failed" errors for templates with <%init> sections.
+[David]
+
 =back
 
 =head1 VERSION 1.2.1
@@ -199,150 +226,7 @@ Fixed some problems with the sideNav menus under Netscape. [David]
 Fixed broken "Preview" button in Read-only story profile and in related story
 elements. [Matt Vella]
 
-=item *
-
-Updated debugging code to accommodate new syntax in Cache::Cache. Thanks to Sam
-Tregar for the spot. [David]
-
-=item *
-
-Fixed problem with Element names containing non-alphanumeric characters. [Sam]
-
-=item *
-
-Checking out media assets from "Find Media" now redirects you to the media
-profile if you've checked out one media asset, or My Workspace if you've checked
-out more than one. This puts it in line with how "Find Stories" and "Find
-Templates" work. Thanks to Sam for the report. [David]
-
-=item *
-
-Fixed bulk edit functionality for Media assets. Thanks to Sam for the spot.
-[David]
-
-=item *
-
-In Bric::Biz::Asset::Business, the source get_meth key in my_meths() now works
-properly. Also, get_all_keywords() now also returns the category keywords as
-well as the story keywords. Thanks to Darren Graves for the patch.
-
-=item *
-
-Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
-Darren Graves for the spot. [David]
-
-=item *
-
-Sorting assets by ID in "Find X" and Workspace/Desk view now properly does a
-numeric sort rather than an alphanumeric sort. Thanks to Sam Tregar for the
-spot. [David]
-
-=item *
-
-Fixed an obscure bug where, for files uploaded as part of a Media file,
-Bricolage attempted to create a path on its own file system using path
-delimiters for another file system. Thanks to Mike Slattery for the spot.
-[David]
-
-=item *
-
-Required content fields in stories and elements are now displayed in the order
-specified in the Element profile. Thanks to Sam Tregar for the spot. [David]
-
-=item *
-
-All assets now start with the version number 0 until the first time they are
-checked in. Also, they will show up on desks and in the Find views after the
-first time they are saved. It was inconsistent before, and some items could not
-be seen in the desk and Find views until they were checked in. Thanks to Sam for
-spotting the inconsistency. [David]
-
-=item *
-
-The bric_clean_tmp script has been changed to avoid deleting the Bricolage
-cache file.  [Sam]
-
-=item *
-
-Fixed typo that broke Bric::Dist::Client. [Mike Slattery]
-
-=item *
-
-Fixed multiple select custom fields for Elements and Contributors. Thanks to
-Mike Slattery for the spot. [David]
-
-=item *
-
-Fixed ugly bug where deleting a "Media Type" Element would delete all the media
-objects of that type. Thanks to Sam for the spot (though not for the bug!).
-[David]
-
-=item *
-
-Fixed bric_pgimport so that it uses DBI to drop and create the database, rather
-than relying on a hard-coded location for pgsql binaries. [David]
-
-=item *
-
-Fixed permission granting in bric_pgimport so that the Bricolage database use
-has DELETE permissions on all objects in the Bricolage database. It looks like
-this permission was ignored in PosgreSQL 7.1 and earlier, or problems would have
-shown up a long time ago! [David]
-
-=item *
-
-Fixed a bug where the time a distribution job is scheduled was not properly
-converted to UTC for storage in the database. Thanks to Mike Slattery for the
-great code archaeology! [David]
-
-=item *
-
-Fixed the spelling of "contributor" in several spots. [Andrew Baio]
-
-=item *
-
-Fixed bug where changing a story's primary category left it with B<no> primary
-category. [Matt Vella]
-
-=back
-
-=head1 VERSION 1.2.0
-
-=head2 New Features
-
-=over 4
-
-=item *
-
-Added Context-sensitive, online help. [Sam]
-
-=item *
-
-Added separate interface for editing templates (via FTP). [Sam]
-
-=item *
-
-Added the ability to use HTML::Template Templates. [Sam]
-
-=item *
-
-Added ability for differnt Output Channels to function as different component
-roots for in Mason templates. This will allow for templates that can't be found
-in the current Output Channel to be searched for in other Output Channels.
-[David]
-
-=item *
-
-Added link to Event log to Find Story, Find Template, and Find Media screens.
-[David]
-
-=item *
-
-Added true previewing for media assets. Now, when you click their URIs to
-preview them, they will be distributed to the preview server(s) before
-redirecting the user to them, rather than just serving them up from where they
-live on the Bricolage file system. The latter can still be accessed under
-"Download" in the Media Asset profile. This will continue to be the preferred
+=item
 way to grab media files for editing and such, as it will not incur the overhead
 of distributing the media file. [David]
 
@@ -483,153 +367,7 @@ Added INCLUDE_XML_WRITER and XML_WRITER_ARGS configuration parameters. If
 INCLUDE_XML_WRITER is turned on, then all templates will include a new global,
 $writer, that is an XML::Writer object. This object is provided as a convenience
 for creating XML in your templates. XML_WRITER_ARGS allows certain arguments to
-be passed to the XML::Writer instantiator. See Bric::AdvTemplates for more
-information. [David]
-
-=item *
-
-Added URI information to associated categories in the story profile. [David]
-
-=item *
-
-Changed category selection for new Templates to use the category URI rather than
-the name, in line with how Story and Media work. [David]
-
-=item *
-
-Added "Save and Stay" button to the Element Profile. [David]
-
-=item *
-
-Story Type, Media Type, and Element select lists are now filtered for READ
-permission in the Story, Media, and Template profiles, respectively. [David]
-
-=item *
-
-Category select lists are filtered for READ permission in the Story, Media, and
-Template profiles. [David]
-
-=item *
-
-Category and Story Type, Media Type, and Element select lists are now required
-fields where appropriate in the Story, Media, and Template profiles. This change
-was introduced because, with the introduction of permission checking on these
-select lists, it's possible for them to show up empty where it wasn't possible
-before. [David]
-
-=item *
-
-Renamed programs in bin/ so that they all start with "bric_". Update any links
-to the old names, because they're gone. [David]
-
-=item *
-
-Rewrote bric_apachectl to use Perl and Bric::Config instead of a shell script.
-Also changed it so that a restart is always a hard restart. [Sam]
-
-=item *
-
-Added name of Output Channel to list of Templates in Find Templates interface.
-[David]
-
-=item *
-
-Changed behavior of sideNav to Limit rendering of Workflows permissions. If a
-user doesn't have READ permission on Workflow, it won't show up in the display.
-[David]
-
-=item *
-
-Added URI to all media profile views. [David]
-
-=item *
-
-Added ability to change the category association in Templates. [David]
-
-=item *
-
-Changed the Notes icon in Story, Media, and Template profiles to a graphical
-representation of a note. When there are no notes associated with the asset, the
-graphic is an empty note. When there are notes associated with the asset, then
-there is writing on the note. This allows editors to see at a glance if there
-are any existing notes. [David]
-
-=item *
-
-Made SSL optional (and off by default). [Sam]
-
-=item *
-
-Change the term "attribute" to "field" in the UI. [David].
-
-=back
-
-=head2 Bug Fixes
-
-=over 4
-
-=item *
-
-Fixed bug where cancelled checkouts of template appeared to work in some views,
-but not others. Thanks to Matt Vella for the report. [David]
-
-=item *
-
-Fixed bug where story titles were accentally getting bogus hyperlinking markup.
-Thanks to Chris Brody for the report. [David]
-
-=item *
-
-Fixed a bug where the "Generic" check box on the "New Template" screen was
-partially ignored, leading to possibly corrupted data, and at least to the
-inability to create autohandlers. Thanks to Sam Tregar for the bug report that
-led to finding this bug. [David]
-
-=item *
-
-Fixed bug where element checkboxes weren't remembering if they were checked or
-not. Thanks to Matt Vella for the spot. [David]
-
-=item *
-
-Fixed bug where element select lists weren't populate with their list of values.
-Thanks to Matt Vella for the report. [David]
-
-=item *
-
-Fixed select lists and radio buttons in formBuilder so that they can take just
-values as well as value/name pairs. [David]
-
-=item *
-
-Fixed issue with date fields not geting populated when hours and minutes weren't
-selected. Also improvied handling fo partial date fields in Elements. Thanks to
-Matt Vella for the heads-up. [David]
-
-=item *
-
-Fixed bug where only one required data field was included in a new story. Thanks
-to Matt Vella for the report. [David]
-
-=item *
-
-Removed the CVS $Log entries from all files, as these were likely to cause
-conflicts between branches and because few end users will be interested in
-seeing them in the docs, anyway. [Sam and David]
-
-=item *
-
-Fixed bug where new workflows weren't able to add new desks, but were showing up
-in the side nav before "Save" was clicked. Thanks to Chris Brody for the
-heads-up. [David]
-
-=item *
-
-Fixed bug where workflows deleted via the Workflow Manager (rather than the
-Workflow Profile) continued to show up in the side nav. Thanks to Sam Tregar for
-the spot. [David]
-
-=item *
+be passed to the XML::Writer i
 
 Fixed bug where data fields deleted from Elements were deleting them from
 existing stories, too. [David]
