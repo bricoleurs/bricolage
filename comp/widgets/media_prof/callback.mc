@@ -79,6 +79,7 @@ my $handle_delete = sub {
     $desk->remove_asset($media);
     $desk->save;
     log_event("media_rem_workflow", $media);
+    $media->set_workflow_id(undef);
     $media->deactivate;
     $media->save;
     log_event("media_deact", $media);

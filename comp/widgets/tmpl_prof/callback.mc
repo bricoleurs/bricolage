@@ -454,6 +454,7 @@ my $delete_fa = sub {
     log_event("formatting_rem_workflow", $fa);
     my $burn = Bric::Util::Burner->new;
     $burn->undeploy($fa);
+    $fa->set_workflow_id(undef);
     $fa->deactivate;
     $fa->save;
     log_event("formatting_deact", $fa);

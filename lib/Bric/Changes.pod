@@ -62,6 +62,11 @@ time. [David]
 Files are now distributed on a per-output channel basis, to ensure that the
 proper file is distributed to the proper destinations. [David]
 
+=item *
+
+Assets are now properly removed from workflow when they're deactivated
+(deleted in the UI). [David]
+
 =back
 
 =head1 VERSION 1.4.0
