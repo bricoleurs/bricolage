@@ -33,8 +33,9 @@ could cause SQL errors due to overflowing the name field. [Sam]
 
 =item *
 
-Fixed bug in Bric::SOAP::Element where elements updated with
-bric_dev_sync weren't being used by existing stories.
+Removed Bric::SOAP::Element->delete(force => 1) which could cause data
+corruption in existing stories.  Also removed dependent options in
+bric_dev_sync (--delete-existing) and bric_soap (--force). [Sam]
 
 =back
 
