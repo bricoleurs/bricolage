@@ -257,6 +257,8 @@ Friends who have spotted bugs include:
 
 =item Ho Yin Au
 
+=item Abdul Halim Mazahar
+
 =back
 
 Bricolage's translation team:

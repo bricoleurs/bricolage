@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-12-08 17:36:41 $
+$Date: 2004-04-10 01:03:00 $
 
 =head1 DESCRIPTION
 
@@ -177,6 +177,8 @@ sub output_dbs {
                 CONFIG => "config.db",
                 AP     => "apache.db"  );
     while ( my ($key, $file) = each %dbs) {
+        # We must have a version number for PostgreSQL.
+        next if $key eq 'PG' && !$INSTALL->{$key}{version};
         open(FILE, ">$file") or die "Unable to open $file : $!";
         print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
         close(FILE);
