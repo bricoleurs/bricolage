@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-03-02 22:10:06 $
 
 
 =head1 SYNOPSIS
@@ -333,13 +333,13 @@ sub copy {
     my ($at_id) = @_;
     my $self_copy;
 
-    return unless $at_id; 
+    return unless $at_id;
     return unless $self;
-    
+
     $self_copy = bless {}, ref $self;
-    
+
     my @k = keys %$self;
-    
+
     # Copy the object.
     $self_copy->_set(\@k, [$self->_get(@k)]);
     # Clear out fields specific to the original.
@@ -594,6 +594,7 @@ B<Notes:> Not yet written.
 
 sub my_meths {
     # To be written.
+    return;
 }
 
 ##############################################################################
