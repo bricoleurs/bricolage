@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.7 $
+$Revision: 1.37.2.8 $
 
 =head1 DATE
 
-$Date: 2003-06-12 20:18:35 $
+$Date: 2003-06-12 20:43:16 $
 
 =head1 DESCRIPTION
 
@@ -461,8 +461,7 @@ example, that would be "rev_1_4_merge-2002-08-31".
 
   cd bricolage-head-checkout/
   cvs -z3 -q update
-  cvs -z3 -q update -d -kk -j rev_1_4_merge-2002-08-31 \
-    -j rev_1_4
+  cvs -z3 -q update -d -kk -j rev_1_4_merge-2002-08-31 -j rev_1_4
 
 The C<-d> option will allow new directories and their contents added to the
 branch to be merged into HEAD. Note also the use of the C<-kk> option. This
