@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-01-16 21:28:30 $
 
 =head1 SYNOPSIS
 
@@ -489,6 +489,33 @@ sub get_element_data_obj {
     }
 
     return $atd;
+}
+
+################################################################################
+
+=item $name = $data->get_element_name()
+
+Returns the name of the element
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_element_name {
+	my ($self) = @_;
+	my $at = $self->_get_element_object();
+	my $name = $at->get_name();
+	return $name;
 }
 
 ################################################################################
