@@ -160,7 +160,7 @@ my $no_del = ! defined $id || $no_edit || $id == $root_id;
 if ($ARGS{'add_more|keyword|add_cb'}) {
     foreach my $meth ($cat->my_meths(1)) {
 	$meth->{set_meth}->($cat, @{$meth->{set_args}}, $ARGS{$meth->{name}})
-	  if defined $meth->{set_meth};
+	  if defined $meth->{set_meth} and exists $ARGS{$meth->{name}};
     }
 }
 
@@ -178,11 +178,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10.4.1 $
+$Revision: 1.10.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-28 05:51:58 $
+$Date: 2003-04-24 22:08:51 $
 
 =head1 DESCRIPTION
 

@@ -172,7 +172,12 @@ created. [David]
 =item *
 
 The list of events no longer displays attributes for events that have no
-attributes [David]
+attributes. [David]
+
+=item *
+
+Attempting to add more keywords to the root category no longer results in the
+error "Cannot change the directory of the root category." [David]
 
 =back
 
