@@ -60,15 +60,14 @@ http://lists.sourceforge.net/lists/listinfo/bricolage-bugs
 You can often find folks hanging out and occasionally discussing development
 issues on the #bricolage channel on the Rhizomatic IRC network.
 
-=head1 CVS - THE CUTTING EDGE
+=head1 SUBVERSION
 
 If you're developing Bricolage then you should be working with the latest code
-from CVS. You can browse the CVS tree at:
+from the Bricolage Subversion repository. You can browse the Subversion
+repository at L<http://svn.bricolage.cc/viewcvs/>.
 
-   http://sourceforge.net/cvs/?group_id=34789
-
-You'll also find information there on connecting to the repository to checkout
-a working copy.
+Information on connecting to the repository to checkout a working copy is at
+L<http://www.bricolage.cc/svn.html>.
 
 =head1 BUG TRACKING
 
