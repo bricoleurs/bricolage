@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.7.5 ()
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added F<bric_template_dump> to F<contrib>. This script uses the Bricolage SOAP
+server to export all of the templates in a single output channel. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
