@@ -7,16 +7,16 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 14:44:56 $
+$Date: 2003-08-11 15:33:23 $
 
 =head1 SYNOPSIS
 
@@ -95,7 +95,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Fault qw(throw_dp throw_mni throw_gen);
+use Bric::Util::Fault qw(throw_dp throw_mni throw_gen rethrow_exception);
 use Bric::Dist::Resource;
 use Bric::Util::Attribute::Action;
 
@@ -1763,7 +1763,7 @@ $reorder = sub {
     };
 
     # If there was an error, rollback and die. Otherwise, commit.
-    rollback() && throw_gen(error => $@) if $@;
+    rollback() && rethrow_exception(error => $@) if $@;
     return 1;
 };
 
