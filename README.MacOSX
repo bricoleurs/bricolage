@@ -5,19 +5,31 @@ Bricolage works well on Mac OS X, especially on version 10.2 or later, but
 installation requires a fair bit of additional preparation. The major issue is
 that, because it cannot run on a DSO mod_perl, Bricolage will not run on the
 verion of Apache that comes with Mac OS X. A further issue is that Bricolage
-requires the libapreq library of Perl modules to run, and these have not yet
-been ported to Mac OS X.
+requires the libapreq library of Perl modules to run, and compiling this
+library takes a few extra steps on Mac OS X.
 
-The solution is to compile your own Apache with mod_perl with a special patch
-that statically compiles support for libapreq into Apache. The patch can be
-found here:
+The solution is to compile your own Apache with mod_perl. Complete details for
+building everything you need to run Bricolage on Mac OS X will always be found
+at http://david.wheeler.net/osx.html. More detailed instructions, as well as a
+discussion of the issues of running Apache/mod_perl/mod_ssl on Mac OS X, may
+be found in the following articles on O'Reilly's MacDevCenter.com:
 
-  http://www.apache.org/~joes/
+  "Build Your Own Apache Server with mod_perl"
+  http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html
 
-Download the files "apreq.tar.gz" and "apreq.patch".
+  "Build Your Own Apache Server with mod_perl and mod_ssl"
+  http://www.macdevcenter.com/pub/a/mac/2002/12/18/apache_modssl.html
+
+Below is a summary of the instructions, for those who just need the barest of
+hints for compiling and installing software. Just be sure that you've
+installed the latest Mac OS X Developer tools, available for a free
+registration at http://developer.apple.com/.
+
+PREPARATION
+-----------
 
 If you're planning to use mod_ssl for secure connections to your Mac OS X
-Bricolage server, you'll also need to download a couple of patches that help
+Bricolage server, you'll need to download a couple of patches that help
 mod_ssl to find Mac OS X's OpenSSL libraries and allow the compiler to
 properly find libdbm while configuring Apache. The patches can be found here:
 
@@ -41,6 +53,8 @@ perl-5.6.1.tar.gz.
 From http://perl.apache.org/dist/, download the the sources for latest 1.x
 version of mod_perl.
 
+From http://www.apache.org/dist/httpd/libapreq/, download libapreq-1.1.tar.gz.
+
 From ftp://ftp.gnu.org/gnu/libiconv/, download the sources for the latest
 version of the iconv library.
 
@@ -56,28 +70,20 @@ sources.
 From http://www.ca.postgresql.org/ftpsite/latest/, download the latest
 PostgreSQL sources.
 
-Complete details for building everything you need to run Bricolage on Mac OS X
-will always be found at http://david.wheeler.net/osx.html. More detailed instructions,
-as well as a discussion of the issues of running Apache/mod_perl/mod_ssl on
-Mac OS X, may be found in the following articles on O'Reilly's MacDevCenter.com:
-
-  "Build Your Own Apache Server with mod_perl"
-  http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html
-
-  "Build Your Own Apache Server with mod_perl and mod_ssl"
-  http://www.macdevcenter.com/pub/a/mac/2002/12/18/apache_modssl.html
-
-Below is a summary of the instructions, for those who just need the barest of
-hints for compiling and installing software. Just be sure that you've
-installed the latest Mac OS X Developer tools, available for a free
-registration at http://developer.apple.com/.
-
 INSTALLATION SUMMARY
+--------------------
 
 All examples here assume that youv've unpackaged all of the above source
 tarballs into /usr/local/src, e.g., with the command
 
   tar zxvf sources.tar.gz
+
+Note that if you've never installed anything in /usr/local before, you must
+install at least one library (expat or libiconv are good candidates) before
+installing Perl. This is so that Perl will pick up on the existence of
+/usr/local/lib and /usr/local/include and make sure that modules that need
+access to the library files in these directories will be able to find them.
+You should be fine if you follow the steps outlined here.
 
 1. Install expat:
 
@@ -132,7 +138,6 @@ Or, for Perl 5.6.1, do this:
 
   % cd apache_1.3.xx
   % patch -p0 < ../apache_dbm.patch
-  % patch -p0 < ../apreq.patch
   % cd ..
   
 6. Configure mod_ssl (Optional -- Required for SSL support):
@@ -172,10 +177,14 @@ Or, for Perl 5.6.1, do this:
 
 9. Install libapreq:
 
-  % cd httpd-apreq/
+  % cd libapreq-1.1
+  % ./configure --with-apache-includes=/usr/local/apache/include
+  % make
+  % make install
   % /usr/local/bin/perl Makefile.PL
   % make
-  % make intall
+  % make test
+  % make install
   % cd ..
 
 10. Install Text::Iconv:

@@ -124,6 +124,11 @@ Added object caching to the base class, and calls to it from all classes with
 a C<lookup()> method to take advantage of it. The caching is only for the
 duration of a request for now, but can be expanded later. [David]
 
+=item *
+
+Updated F<INSTALL.MacOSX> to reflect changes thanks to the new Mac OS X suport
+included in libapreq 1.1. [David]
+
 =back
 
 =head2 Bug Fixes
