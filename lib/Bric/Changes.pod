@@ -260,9 +260,10 @@ to work properly. [Thorsten Biel]
 
 =item *
 
-The creation of the Bricolage PostgreSQL user during installtion no longer
-complains about usernames with dashes and other non-alphanumeric characters in
-them. Thanks to Marshall Roch for the spot! [David]
+The creation of the Bricolage PostgreSQL user and database during installtion
+no longer complains about usernames or database names with dashes and other
+non-alphanumeric characters in them. Thanks to Marshall Roch for the spot!
+[David]
 
 =back
 

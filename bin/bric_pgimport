@@ -228,8 +228,8 @@ sub initialize {
 
 	# Create a new database.
 	print "\nCreating database '$opt_d'.\n" unless $opt_q;
-        exec_sql("CREATE DATABASE $opt_d WITH ENCODING = 'UNICODE'"
-                 . " TEMPLATE template0", 0, 'template1');
+        exec_sql(qq{CREATE DATABASE "$opt_d" WITH ENCODING = 'UNICODE'}
+                   . " TEMPLATE template0", 0, 'template1');
     }
 
     # Find all the files of each type.
