@@ -7,11 +7,11 @@ bulk_edit.html -- edit containers in bulk.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2002-02-08 20:12:12 $
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,7 @@ $Date: 2001-12-04 18:17:42 $
 <%once>;
 my $type = 'element'; # Hack!
 my $disp = get_disp_name($type);
-my $mdisp = get_disp_name('media);
+my $mdisp = get_disp_name('media');
 my $context = "Workflow | Profile | $mdisp | $disp |";
 </%once>
 
@@ -38,12 +38,12 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 
 %#-- Begin HTML --#
 
-<& /widgets/wrappers/sharky/header.mc 
-    title => "$disp Profile",
-	context => $context . get_state_data('container_prof', 'crumb') .
-        ' | &quot;' . get_state_data('container_prof', 'field') . '&quot;'
-    context => $context
+<& /widgets/wrappers/sharky/header.mc,
+	title => "$disp Profile",
+	context => $context . get_state_data('container_prof', 'crumb') || '' .
+        ' | &quot;' . get_state_data('container_prof', 'field') || '' . '&quot;'
 &>
+
 <form action="<% $r->uri %>" method="post" name="theForm">
 
 <& /widgets/container_prof/container_prof.mc, 
