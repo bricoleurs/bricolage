@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-04 13:37:38 $
+$Date: 2001-10-05 08:15:42 $
 
 =head1 SYNOPSIS
 
@@ -57,6 +57,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    SYS_USER
 		    SYS_GROUP
 		    SERVER_NAME
+		    SERVER_WINDOW_NAME
 		    SERVER_ADMIN
 		    APACHE_SERVER_ROOT
 		    PID_FILE
@@ -106,6 +107,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    BURN_COMP_ROOT
 		    BURN_DATA_ROOT
 		    BURN_ARGS_METHOD
+		    INCLUDE_XML_WRITER
+		    XML_WRITER_ARGS
 		    ISO_8601_FORMAT
 		    PREVIEW_LOCAL
 		    PREVIEW_MASON
@@ -143,6 +146,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 				BURN_COMP_ROOT
 			        BURN_DATA_ROOT
                                 DEFAULT_FILENAME
+                                INCLUDE_XML_WRITER
+             		        XML_WRITER_ARGS
                                 DEFAULT_FILE_EXT
 				BURN_ARGS_METHOD)],
                     oc => [qw(DEFAULT_FILENAME
@@ -162,7 +167,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 		    qa => [qw(QA_MODE)],
 		    err => [qw(ERROR_URI)],
 		    char => [qw(CHAR_SET)],
-		    ui => [qw(FIELD_INDENT)],
+		    ui => [qw(FIELD_INDENT
+                              SERVER_WINDOW_NAME)],
 		    email => [qw(SMTP_SERVER)],
 		    admin => [qw(ADMIN_GRP_ID)],
 		    time => [qw(ISO_8601_FORMAT)],
@@ -234,6 +240,18 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 		$config->{uc $var} = $value;
 	    }
 	    close CONF;
+
+	    # Invent a server name, if necessary.
+	    $config->{SERVER_NAME} ||= do {
+		my $h = `hostname`;
+		my $d = `dnsdomainname`;
+		chomp ($h, $d);
+		$d ? "$h.$d" : $h;
+	    };
+
+	    # Set up the server window name (because Netscape is retarted!).
+	    ($config->{SERVER_WINDOW_NAME} = $config->{SERVER_NAME}) =~ s/\W+/_/g;
+
 	}
 	# Process boolean directives here. These default to 1.
 	foreach (qw(ENABLE_DIST PREVIEW_LOCAL PREVIEW_MASON)) {
@@ -241,7 +259,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
 	# While these default to 0.
-	foreach (qw(PREVIEW_MASON FULL_SEARCH)) {
+	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER)) {
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
 	}
@@ -249,13 +267,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     }
 
     # Apache Settings.
-    use constant SERVER_NAME => $config->{SERVER_NAME}
-      || do {
-	  my $h = `hostname`;
-	  my $d = `dnsdomainname`;
-	  chomp ($h, $d);
-	  $d ? "$h.$d" : $h;
-      };
+    use constant SERVER_NAME             => $config->{SERVER_NAME};
+    use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
 
     use constant SERVER_ADMIN            => $config->{SERVER_ADMIN}
       || 'root@' . SERVER_NAME;
@@ -339,6 +352,9 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant BURN_DATA_ROOT          => $config->{BURN_DATA_ROOT}
       || catdir(MASON_DATA_ROOT, 'burn', 'data');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
+    use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
+    use constant XML_WRITER_ARGS         => $config->{INCLUDE_XML_WRITER_ARGS}
+      || undef;
 
     # System User (The user and group under which the server children run). use
     use constant SYS_USER => scalar getpwnam $config->{SYS_USER} || "nobody";
@@ -494,7 +510,10 @@ L<perl>, L<DBC>
 =head1 REVISION HISTORY
 
 $Log: Config.pm,v $
-Revision 1.6.2.1  2001-10-04 13:37:38  wheeler
+Revision 1.6.2.2  2001-10-05 08:15:42  wheeler
+Added SERVER_WINDOW_NAME for use in window.open() JavaScript calls.
+
+Revision 1.6.2.1  2001/10/04 13:37:38  wheeler
 Added PERL_LOADER and fixed bug where *no* directives were getting loaded!
 
 Revision 1.6  2001/09/27 15:41:46  wheeler
