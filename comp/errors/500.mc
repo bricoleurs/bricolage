@@ -49,6 +49,8 @@
 
 <!-- DEBUGGING INFORMATION.
 
+Error: <% escape_html($fault->error) %>
+
 %     if ($is_burner_error) {
   Output Channel: <% $fault->oc || '' %>
   Category:       <% $fault->cat || '' %>
