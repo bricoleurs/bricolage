@@ -1,4 +1,7 @@
 <table border="0">
+ <tr>
+  <th colspan="2">User Agent</th>
+ </tr>
 % foreach my $key (keys %map) {
 %     my $method = $map{$key};
 <tr>
