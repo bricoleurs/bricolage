@@ -125,6 +125,11 @@ Reported by Paul Cory. [David]
 Deleted alert types are no longer displayed in the Alert Type Manager. Thanks
 to Paul Cory for the spot! [David]
 
+=item *
+
+Added more intelligent code using HTTP headers instead of HTML to prevent
+browsers [IE] from caching pages. [David]
+
 =back
 
 =head1 VERSION 1.6.0

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.35.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-12 04:57:40 $
+$Date: 2003-06-06 15:50:00 $
 
 =head1 SYNOPSIS
 
@@ -32,6 +32,8 @@ $no_hist => 0
 $debug => undef
 </%args>
 <%init>;
+# Prevent IE et al. from caching pages.
+$r->no_cache(1);
 my @context =  split /\|/, $context;
 for (@context){
     s/^\s|\s$//g;
@@ -125,7 +127,6 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 }
 % } # if
 </script>
-<meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
