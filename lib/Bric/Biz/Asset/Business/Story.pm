@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.79 $
+$Revision: 1.80 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.79 $ )[-1];
+our $VERSION = (qw$Revision: 1.80 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-13 02:30:27 $
+$Date: 2004-02-14 00:12:28 $
 
 =head1 SYNOPSIS
 
@@ -262,7 +262,6 @@ use constant CAN_DO_LOOKUP => 1;
 
 use constant GROUP_COLS => ('m.grp__id as grp_id',
                             'c.asset_grp_id as cat_grp_id',
-                            'd.asset_grp as desk_grp_id',
                             'w.asset_grp_id as wf_grp_id');
 
 # the mapping for building up the where clause based on params
@@ -272,7 +271,6 @@ use constant WHERE => 's.id = i.story__id '
   . 'AND m.active = 1 '
   . 'AND sc.story_instance__id = i.id '
   . 'AND c.id = sc.category__id '
-  . 'AND s.desk__id = d.id '
   . 'AND s.workflow__id = w.id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
@@ -288,7 +286,7 @@ use constant PARAM_FROM_MAP =>
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
        simple               => 'story_member sm, member m, story__category sc, '
-                               . 'category c, desk d, workflow w, ' . TABLE . ' s ',
+                               . 'category c, workflow w, ' . TABLE . ' s ',
        grp_id               => 'member m2, story_member sm2',
        category_id          => 'story__category sc2',
        category_uri         => 'story__category sc2',

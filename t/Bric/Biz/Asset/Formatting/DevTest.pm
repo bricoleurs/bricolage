@@ -639,8 +639,13 @@ sub test_select_b_new_objs: Test(64) {
          site_id            => 100,
        });
     $formatting[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
-    $formatting[4]->set_current_desk( $OBJ->{desk}->[0] );
+    $formatting[4]->save;
+
+    $OBJ->{desk}->[0]->accept({ asset  => $formatting[4] });
+    $OBJ->{desk}->[0]->save;
+    $formatting[4]->checkin();
     $formatting[4]->save();
+
     push @{$OBJ_IDS->{formatting}}, $formatting[4]->get_id();
     $self->add_del_ids( $formatting[4]->get_id() );
 

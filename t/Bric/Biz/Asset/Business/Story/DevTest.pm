@@ -125,11 +125,11 @@ sub test_select_methods: Test(97) {
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @CATEGORY_GRP_IDS, $grp->get_id();
 
-        # create desks 
-        $desk = Bric::Biz::Workflow::Parts::Desk->new({ 
-                                        name => "_test_$time.$i",
-                                        description => '',
-                                     });
+        # create desks
+        $desk = Bric::Biz::Workflow::Parts::Desk->new({
+            name => "_test_$time.$i",
+            description => '',
+        });
         $desk->save();
         $self->add_del_ids([$desk->get_id()], 'desk');
         push @{$OBJ_IDS->{desk}}, $desk->get_id();
@@ -147,13 +147,13 @@ sub test_select_methods: Test(97) {
         push @DESK_GRP_IDS, $grp->get_id();
 
         # create workflows
-        $workflow = Bric::Biz::Workflow->new({ 
-                                        type => Bric::Biz::Workflow::STORY_WORKFLOW,
-                                        name => "_test_$time.$i",
-                                        start_desk => $desk,
-                                        description => 'test',
-                                        site_id => 100, #Use default site_id
-                                     });
+        $workflow = Bric::Biz::Workflow->new({
+            type => Bric::Biz::Workflow::STORY_WORKFLOW,
+            name => "_test_$time.$i",
+            start_desk => $desk,
+            description => 'test',
+            site_id => 100, #Use default site_id
+        });
         $workflow->save();
         $self->add_del_ids([$workflow->get_id()], 'workflow');
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
@@ -478,9 +478,13 @@ sub test_select_methods: Test(97) {
     $story[5]->add_categories([ $OBJ->{category}->[0] ]);
     $story[5]->set_primary_category($OBJ->{category}->[0]);
     $story[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
-    $story[5]->set_current_desk( $OBJ->{desk}->[0] );
+    $story[5]->save;
+
+    $OBJ->{desk}->[0]->accept({ asset  => $story[5] });
+    $OBJ->{desk}->[0]->save;
     $story[5]->checkin();
     $story[5]->save();
+
     push @{$OBJ_IDS->{story}}, $story[5]->get_id();
     $self->add_del_ids( $story[5]->get_id() );
 
@@ -509,6 +513,7 @@ sub test_select_methods: Test(97) {
                      100, # site_id
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
+
     is_deeply( [sort { $a <=> $b } $got->get_grp_ids ], $exp_grp_ids,
                '... does it have the right grp_ids' );
 

@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.38 $ )[-1];
+our $VERSION = (qw$Revision: 1.39 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-02-11 06:15:06 $
+$Date: 2004-02-14 00:12:28 $
 
 =head1 SYNOPSIS
 
@@ -729,7 +729,7 @@ sub fetch_objects {
     # Prepare and execute the query
     my $select = prepare_ca($sql, undef);
     execute($select, @$args);
-    bind_columns($select, \@d[0 .. $#$fields + 3]);
+    bind_columns($select, \@d[0 .. $#$fields + 2]);
 
     # loop through the list, looking for different grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
@@ -744,7 +744,7 @@ sub fetch_objects {
             my $obj = bless {}, $pkg;
             %seen = ();
             # The group IDs are in the last four columns.
-            $grp_ids = $d[-4] = [grep { $_ && !$seen{$_}++ } @d[-4..-1]];
+            $grp_ids = $d[-3] = [grep { $_ && !$seen{$_}++ } @d[-3..-1]];
             $obj ->_set($fields, \@d);
             $obj->_set__dirty(0);
             $obj = bless $obj, Bric::Util::Class->lookup({
@@ -753,7 +753,7 @@ sub fetch_objects {
             push @objs, $obj->cache_me;
         } else {
             # Append the group IDs, excluding 0 and undef.
-            push @$grp_ids, grep { $_ && !$seen{$_}++ } @d[-4..-1];
+            push @$grp_ids, grep { $_ && !$seen{$_}++ } @d[-3..-1];
         }
     }
     finish($select);

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.73 $
+$Revision: 1.74 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.73 $ )[-1];
+our $VERSION = (qw$Revision: 1.74 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-13 02:30:27 $
+$Date: 2004-02-14 00:12:27 $
 
 =head1 SYNOPSIS
 
@@ -150,7 +150,6 @@ use constant HAS_CLASS_ID => 1;
 
 use constant GROUP_COLS => ('m.grp__id as grp_id',
                             'c.asset_grp_id as cat_grp_id',
-                            'd.asset_grp as desk_grp_id',
                             'w.asset_grp_id as wf_grp_id');
 
 # the mapping for building up the where clause based on params
@@ -161,7 +160,6 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND c.id = i.category__id '
   . 'AND e.id = mt.element__id '
   . 'AND at.id = e.type__id '
-  . 'AND mt.desk__id = d.id '
   . 'AND mt.workflow__id = w.id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
@@ -177,7 +175,7 @@ use constant PARAM_FROM_MAP =>
      keyword            => 'media_keyword mk, keyword k',
      output_channel_id  => 'media__output_channel moc',
      simple             => 'media_member mm, member m, at_type at, element e, '
-                           . 'category c, desk d, workflow w,' . TABLE . ' mt ',
+                           . 'category c, workflow w,' . TABLE . ' mt ',
      grp_id             => 'member m2, media_member mm2',
      data_text          => 'media_data_tile md',
      contrib_id         => 'media__contributor sic',

@@ -436,8 +436,11 @@ sub test_select_methods: Test(80) {
                            });
     $media[5]->set_category__id( $OBJ->{category}->[0]->get_id );
     $media[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
-    $media[5]->set_current_desk( $OBJ->{desk}->[0] );
-    $media[5]->save();
+    $media[5]->save;
+
+    $OBJ->{desk}->[0]->accept({ asset  => $media[5] });
+    $OBJ->{desk}->[0]->save;
+    $media[5]->checkin();
     $media[5]->save();
     push @{$OBJ_IDS->{media}}, $media[5]->get_id();
     $self->add_del_ids( $media[5]->get_id() );

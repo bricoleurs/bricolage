@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-13 02:30:27 $
+$Date: 2004-02-14 00:12:27 $
 
 =head1 SYNOPSIS
 
@@ -218,7 +218,6 @@ use constant CAN_DO_LOOKUP => 1;
 
 use constant GROUP_COLS => ('m.grp__id as grp_id',
                             'c.asset_grp_id as cat_grp_id',
-                            'd.asset_grp as desk_grp_id',
                             'w.asset_grp_id as wf_grp_id');
 
 # the mapping for building up the where clause based on params
@@ -227,7 +226,6 @@ use constant WHERE => 'f.id = i.formatting__id '
   . 'AND m.id = fm.member__id '
   . 'AND m.active = 1 '
   . 'AND c.id = f.category__id '
-  . 'AND f.desk__id = d.id '
   . 'AND f.workflow__id = w.id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
@@ -241,7 +239,7 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP =>
     {
         _not_simple        => 'formatting_member fm, member m, '
-                            . 'category c, desk d, workflow w, ' . TABLE . ' f ',
+                            . 'category c, workflow w, ' . TABLE . ' f ',
        grp_id             =>  'member m2, formatting_member fm2',
        element_key_name   => 'element e',
     };
