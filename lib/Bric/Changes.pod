@@ -153,6 +153,14 @@ Added URI to all media profile views. [David]
 
 Added ability to change the category association in Templates. [David]
 
+=item *
+
+Changed the Notes icon in Story, Media, and Template profiles to a graphical
+representation of a note. When there are no notes associated with the asset, the
+graphic is an empty note. When there are notes associated with the asset, then
+there is writing on the note. This allows editors to see at a glance if there
+are any existing notes. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -271,6 +279,11 @@ database in Bric::Biz::AssetType. [David]
 Fixed a bug where clicking "Save and Stay" in the Element profile wouldn't
 delete attributes (fields) marked as such, or even delete the Element itself, if
 the "Delete this profile" checkbox was checked.
+
+=item *
+
+Fixed a bug where, for Story and Media assets, editors were given Edit access to
+notes, even when they didn't have the asset checked out. [David]
 
 =back
 

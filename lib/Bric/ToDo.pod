@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.29 $
+$Revision: 1.13.2.30 $
 
 =head1 DATE
 
-$Date: 2001-11-30 04:27:00 $
+$Date: 2001-11-30 21:49:34 $
 
 =head1 DESCRIPTION
 
@@ -51,12 +51,6 @@ When clicking "New" for an existing contributor, allow choice of Contributor
 Type, and B<then> role. Right now, if you want an existing to be a contributor
 of a different type, you have to create a new person, and this duplication is
 bad [David].
-
-=item *
-
-Create different "Notes" icon (different color) for when there actually B<are>
-notes in an asset. This way users won't have to go to the Notes screen just to
-find out if they have notes [Michele].
 
 =item *
 
