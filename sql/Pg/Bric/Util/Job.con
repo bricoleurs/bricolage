@@ -15,9 +15,23 @@ ALTER TABLE job ADD CONSTRAINT fk_job__usr
     REFERENCES usr(id) ON DELETE CASCADE
 ;
 
+ALTER TABLE job ADD CONSTRAINT fk_job__class
+    FOREIGN KEY (class__id)
+    REFERENCES class(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job ADD CONSTRAINT fk_job__story
+    FOREIGN KEY (story__id)
+    REFERENCES story(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job ADD CONSTRAINT fk_job__media
+    FOREIGN KEY (media__id)
+    REFERENCES media(id) ON DELETE CASCADE
+;
 
 -- 
--- TABLE: job__resource 
+-- TABLE: job__resource
 --
 
 ALTER TABLE job__resource ADD CONSTRAINT fk_job__job__resource
@@ -32,7 +46,7 @@ ALTER TABLE job__resource ADD CONSTRAINT fk_resource__job__resource
 
 
 -- 
--- TABLE: job__server_type 
+-- TABLE: job__server_type
 --
 
 ALTER TABLE job__server_type ADD CONSTRAINT fk_job__job__server_type

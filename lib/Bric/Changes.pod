@@ -380,6 +380,11 @@ operator. These include the C<keyword> and C<category_uri> parameters. Passing
 an C<ANY> argument to these parameters could cause a well-populated database
 to lock up with an impossible query for hours at a time. [David]
 
+=item *
+
+Restored foreign keys missing on the "job" table and related tables since
+version 1.8.0. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
