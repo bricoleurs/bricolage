@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2003-11-12 17:11:53 $
+$Date: 2003-11-19 16:15:30 $
 
 =head1 DESCRIPTION
 
@@ -130,7 +130,7 @@ sub create_user {
                        "NOCREATEDB NOCREATEUSER", 0, $PGDEFDB);
 
     if ($err) {
-        if ($err =~ /user(name)? "[^"]+" already exists/) {
+        if ($err =~ /user( name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
                           "Drop user? [no] ", 0)) {
                 if ($err = exec_sql("DROP USER $PG->{sys_user}", 0, $PGDEFDB)) {
