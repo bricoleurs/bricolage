@@ -198,6 +198,11 @@ Autopopulated fields in media elements can once again have their values
 fetched in templates. This problem was due to bad key names being created for
 new image elements created after upgradeing to 1.7.0. [David]
 
+=item *
+
+The workflow profile no longer displays deactivated sites in the site select
+list. Thanks to Serge Sozonoff for the spot. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
