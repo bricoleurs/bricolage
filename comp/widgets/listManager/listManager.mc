@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2002-07-02 20:03:41 $
+$Date: 2002-07-02 21:22:09 $
 
 =head1 SYNOPSIS
 
@@ -471,24 +471,26 @@ my ($rows, $cols, $data) = $build_table_data->(\@sort_objs,
                                                $pagination);
 
 # Call the element to show this list
-$m->comp("$style.mc", widget          => $widget,
-	              title           => $title,
-	              fields          => $fields,
-	              data            => $data,
-	              rows            => $rows,
-	              pkg             => $pkg,
-                      cols            => $cols,
-                      userSort        => $userSort,
-	 	      addition        => $addition,
-	              featured        => \%featured_lookup,
-	              featured_color  => $featured_color,
-	              number          => $number,
-	              empty_search    => $empty_search,
-	);
-
-# print out paging footer here
-$m->out(&$insert_footer($current_page,$limit,$pages,$r->uri,$pagination)) if $pages > 1;
-
+$m->comp("$style.mc",
+         widget          => $widget,
+         title           => $title,
+         fields          => $fields,
+         data            => $data,
+         rows            => $rows,
+         pkg             => $pkg,
+         cols            => $cols,
+         userSort        => $userSort,
+         addition        => $addition,
+         featured        => \%featured_lookup,
+         featured_color  => $featured_color,
+         number          => $number,
+         empty_search    => $empty_search,
+         pagination      => { curr_page  => $current_page,
+                              limit      => $limit,
+                              pages      => $pages,
+                              pagination => $pagination
+                            }
+        );
 </%init>
 
 <%once>
@@ -535,52 +537,6 @@ my $get_my_meths = sub {
 	}
     }
     return $meths;
-};
-
-
-my $insert_footer = sub {
-    my($current_page, $limit, $pages, $url, $pagination) = @_;
-    my $align = QA_MODE ? "left" : "center";
-
-    # returns a link to the page specified with the given label
-    my $page_link = sub {
-        my ($page_num, $label) = @_;  
-        my $offset = ($page_num - 1) * $limit;
-        return qq{ <a href="$url?listManager|set_offset_cb=$offset">$label</a> };
-    };
-
-    $m->out(qq{<table align="$align" border="0" cellpadding="0" cellspacing="0" width="435"><tr>});
-
-    unless ($pagination) {
-        $m->out("<td>" . $page_link->(0, 'Paginate Results') . "</td>");
-    } else {
-        $m->out('<td align="left">');
-
-        # previous link, if applicable
-        if( $current_page - 1 >= 1 ) {
-            $m->out($page_link->($current_page - 1, "Previous") . '&nbsp;' );
-        }
-
-        # links to other pages by number
-        foreach ( 1..$pages ) {
-            if ($_ == $current_page) {
-                $m->out(" $_ ");
-            } else {
-                $m->out($page_link->($_, $_));
-            }
-        }
-
-        # next link, if applicable
-        if( $current_page + 1 <= $pages ) {
-            $m->out('&nbsp;' . $page_link->($current_page + 1, "Next"));
-        }
-
-        $m->out(<<EOF);
-</td>
-<td align="right"><a href="$url?listManager|show_all_records_cb=1">Show All</a></td>
-EOF
-    }
-    $m->out(qq{</tr></table>});
 };
 
 my $output_select_controls = sub {

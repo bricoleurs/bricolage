@@ -57,7 +57,7 @@
       $m->out("</th>");
   }
 
-  # Adjust the tabel size.
+  # Adjust the table size.
   if (scalar @$fields < $cols) {
       $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">' );
 
@@ -111,17 +111,18 @@ EOF
 %# End foreach my $o (@$objs)
   </tr>
 % }
+% $m->comp('.footer', pagination => $pagination, cols => $cols)
+%    if $pagination->{pages} > 1;
 
-%# If there were no results (and thus none of the above is output) tell the user
+% # If there were no results (and thus none of the above is output) tell the user
 % if ($rows == 1) {
-% if ($empty_search) {
+%     if ($empty_search) {
   <tr><td colspan="<% scalar @$fields %>"></td></tr>
-% } else {
+%     } else {
   <tr><td colspan="<% scalar @$fields %>">No <% lc(get_class_info($object)->get_plural_name) %> were found</td></tr>
-% }
+%     }
 % }
 </table>
-
 
 %#--- END HTML ---#
 
@@ -145,6 +146,15 @@ my $insert_check_all = sub {
 
     return $bool;
 };
+
+# Returns a link to the page specified with the given label. Used by .footer.
+my $page_link = sub {
+    my ($page_num, $label, $limit, $url, $class) = @_;
+    $class ||= 'subHeader';
+    my $offset = ($page_num - 1) * $limit;
+    return qq{ <a href="$url?listManager|set_offset_cb=$offset" } .
+      qq{class="redLinkLarge"><span class="$class">$label</span></a> };
+};
 </%once>
 
 %#--- Arguments ---#
@@ -163,6 +173,7 @@ $featured_color
 $number => 0
 $empty_search
 $pkg => undef
+$pagination => {}
 </%args>
 
 %#--- Initialization ---#
@@ -205,4 +216,50 @@ if ($number) {
 $addition = &$addition($pkg) if ref $addition eq 'CODE';
 </%init>
 
-%#--- Log History ---#
+<%def .footer>
+<%args>
+$pagination
+$cols
+</%args>
+<%init>;
+--$cols;
+my $url = $r->uri;
+my $align = QA_MODE ? "left" : "center";
+$m->out(qq{<tr valign="middle" height="25" valign="top" class="lightHeader"\n});
+my $style = qq{style="border-style:solid; border-color:#cccc99;"};
+unless ($pagination->{pagination}) {
+    $m->out(<td> . $page_link->(0, 'Paginate Results', $pagination->{limit},
+                                  $url) . "</td>");
+} else {
+    $m->out(qq{<td $style colspan="$cols">\n});
+
+    # previous link, if applicable
+    if( $pagination->{curr_page} - 1 >= 1 ) {
+        $m->out($page_link->($pagination->{curr_page} - 1,
+                             qq{&laquo;},
+                             $pagination->{limit}, $url, 'header') . '&nbsp;');
+    }
+
+    # links to other pages by number
+    foreach ( 1..$pagination->{pages} ) {
+        if ($_ == $pagination->{curr_page}) {
+            $m->out(qq{<span class="subHeader"><b>$_</b>&nbsp;</span>});
+        } else {
+            $m->out($page_link->($_, "$_", $pagination->{limit}, $url) .
+                    '&nbsp;');
+        }
+    }
+
+    # next link, if applicable
+    if( $pagination->{curr_page} + 1 <= $pagination->{pages} ) {
+        $m->out('&nbsp;' . $page_link->($pagination->{curr_page} + 1,
+                                        qq{&raquo;},
+                                        $pagination->{limit}, $url, 'header'));
+    }
+
+    $m->out(qq{</td><td $style align="right"><a href="$url?listManager|show_all_records_cb=1" class="redLinkLarge">} .
+            qq{Show All</a></td>});
+}
+$m->out(qq{</tr>});
+</%init>
+</%def>
