@@ -5,12 +5,9 @@ use File::Find;
 use File::Spec::Functions ();
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use bric_upgrade qw(is_later);
+use bric_upgrade;
 use Bric::Config qw(BURN_COMP_ROOT);
 use Bric::Util::Trans::FS;
-
-# Check the version number.
-exit unless is_later(1.2.0);
 
 my $fs = Bric::Util::Trans::FS->new;
 

@@ -12,9 +12,6 @@ use Bric::Util::Trans::FS;
 my $tclass= 'Bric::Biz::Asset::Formatting';
 my $fs = Bric::Util::Trans::FS->new;
 
-# Check the version number.
-exit unless is_later(1.3.1);
-
 # First, we'll need to get a list of Output Channel IDs that have a pre or post
 # path.
 my $oc_sel = prepare(qq{

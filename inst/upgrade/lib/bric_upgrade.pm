@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-22 22:36:01 $
+$Date: 2002-04-23 21:03:02 $
 
 =head1 SYNOPSIS
 
@@ -57,7 +57,7 @@ user with administrative permissions.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_sql fetch_sql is_later);
+our @EXPORT_OK = qw(do_sql test_sql fetch_sql);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir);
@@ -116,39 +116,6 @@ $Bric::Util::DBI::dbh = DBI->connect(join(':', 'DBI', DBD_TYPE,
 				     $opt_u, $opt_p, $ATTR);
 
 =head1 EXPORTED FUNCTIONS
-
-=head2 is_later()
-
-  exit unless is_later($version_vstring);
-
-B<Note:> This function is experimental.
-
-This function compares the version number of the currently installed Bricolage
-against a v-string argument that represents the new version we're upgrading to.
-It does a bit of fancy work to ensure that it compares v-strings. It also tracks
-a hash that lists exceptions to the basic rules of v-string comparison. For
-example, if version 1.3.0 was released before 1.2.2, and you're "upgrading" from
-1.2.2 to 1.3.0, this function will return false when called like this:
-
-  exit unless is_later(1.3.0);
-
-This is imperfect, however, as there may still be some scripts that need to be
-run to upgrade from 1.2.2 to 1.3.0 (to take advantage of new features in 1.3.0,
-for example), so use this function with care.
-
-=cut
-
-# Set up version exceptions.
-my %except = (1.3.0, { 1.2.2, 1 });
-
-sub is_later {
-    my $new_version = shift;
-    if ($new_version gt $old_version) {
-	return 1 unless exists $except{$new_version}
-	  && $except{$new_version}{$old_version};
-    }
-    return;
-}
 
 =head2 test_sql()
 

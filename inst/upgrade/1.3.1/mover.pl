@@ -5,9 +5,6 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-# Check the version number.
-#exit unless is_later(1.3.1);
-
 exit if fetch_sql(qq{
     SELECT 1
     FROM   class
