@@ -44,7 +44,7 @@ Options:
   --server - specifies the Bricolage server URL, defaults to
              http://localhost:80
 
-  --username - the Bricolage username, defaults to the BRICOLAGE_USER 
+  --username - the Bricolage username, defaults to the BRICOLAGE_USER
                environment variable if set, 'admin' otherwise
 
   --password - the password for the Bricolage user.  Default to the
@@ -72,7 +72,7 @@ Options:
 
 Here are some example command-lines.  These all assume you've setup
 BRICOLAGE_USER and BRICOLAGE_PASSWORD and that your Bricolage server
-is on http://localhost:80.  If not you'll need to add --username,
+is on http://localhost:80.  If you haven't, you'll need to add --username,
 --password and --server arguments as appropriate.
 
 Output an XML dump of the story with story_id 1024 into the file
@@ -87,11 +87,11 @@ Upload that story to the server at some.host.org:
 A simpler way to do the above two steps:
 
   bric_soap story export 1024 \
-  | bric_soap story create --server http://some.host.org -  
+  | bric_soap story create --server http://some.host.org -
 
 Copy all stories from the local Bricolage to the server at some.host.org:
 
-  bric_soap story list_ids 
+  bric_soap story list_ids
   | bric_soap story export - \
   | bric_soap story create --server http://some.host.org -
 
@@ -101,7 +101,7 @@ Delete all stories (gasp!):
 
 Publish all unpublished stories:
 
-  bric_soap story list_ids --search "publish_status=0" 
+  bric_soap story list_ids --search "publish_status=0"
   | bric_soap workflow publish -
 
 Republish all published stories.  This is useful when a template
@@ -168,7 +168,7 @@ our $verbose                = 0;
 our $desk;
 our $workflow;
 our ($help, $man);
-GetOptions("help"                   => \$help, 
+GetOptions("help"                   => \$help,
 	   "man"                    => \$man,
 	   "verbose+"               => \$verbose,
 	   "username=s"             => \$username,
@@ -303,7 +303,7 @@ sub export {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
-	     	     
+
     print $response->result;
 }
 
@@ -331,7 +331,7 @@ sub create {
 	    close(DOC);
 	}
 
-	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ", 
+	print STDERR "$module $command: Calling Bric::SOAP::$module->$command with document:  ",
 	    length($document), " bytes\n"
 		if $verbose;
 
@@ -355,7 +355,7 @@ sub update {
 	    print STDERR "$module $command: Reading document from STDIN...\n"
 		if $verbose;
 	    $document = join('', <STDIN>);
-	} else { 
+	} else {
 	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
 	    $document = join('', <DOC>);
 	    close(DOC);
@@ -365,18 +365,18 @@ sub update {
 	my @update_ids = $document =~ /<$name.*id="(\d+)"/g;
 	die "No $module ids found in update document.\n"
 	    unless @update_ids;
-	print STDERR "$module $command: Found ids for update: ", 
+	print STDERR "$module $command: Found ids for update: ",
 	    join(', ', @update_ids), "\n"
-		if $verbose;	
-       
+		if $verbose;
+
 	print STDERR "$module $command: Calling Bric::SOAP::$module->$command",
 	    " with document:  ", length($document), " bytes\n"
 		if $verbose;
-	
+
 	$response = $soap->update(name(document => $document)->type('base64'),
-				  name(update_ids => 
-				       [ map 
-					 { name("${name}_id" => $_) } 
+				  name(update_ids =>
+				       [ map
+					 { name("${name}_id" => $_) }
 					 @update_ids ]));
 	die "Call to Bric::SOAP::$module->$command failed : \n" .
 	    $response->faultstring
@@ -399,7 +399,7 @@ sub publish {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
-    
+
     # print out ids
     _print_ids($response);
 }
@@ -427,7 +427,7 @@ sub checkin {
 	    if $response->fault;
 
     # print out ids
-    _print_ids($response);    
+    _print_ids($response);
 }
 
 sub checkout {
@@ -438,7 +438,7 @@ sub checkout {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
-    
+
     # print out ids
     _print_ids($response);
 }
@@ -456,7 +456,7 @@ sub move {
     die "Call to Bric::SOAP::$module->$command failed : \n" .
 	$response->faultstring
 	    if $response->fault;
-    
+
     # print out ids
     _print_ids($response);
 }
@@ -496,7 +496,7 @@ sub _read_ids {
   die "No ids found for $command.\n"
       unless @ids;
 
-  print STDERR "$module $command: Calling $module->$command with ids: ", 
+  print STDERR "$module $command: Calling $module->$command with ids: ",
       join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
 	  if $verbose;
 
