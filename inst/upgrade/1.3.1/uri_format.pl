@@ -17,7 +17,7 @@ exit if fetch_sql( qq{
 } );
 
 my @sql = (
-	"ALTER TABLE pref ADD COLUMN manual NUMERIC(1,0) DEFAULT 0",
+	"ALTER TABLE pref ADD COLUMN manual NUMERIC(1,0)",
 	"ALTER TABLE pref ADD CONSTRAINT ck_manual__pref CHECK(manual IN(0,1))",
 	"UPDATE pref SET manual = 0",
 	"INSERT INTO pref (id, name, description, value, def, manual)
