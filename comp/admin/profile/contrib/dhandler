@@ -253,7 +253,6 @@ my $showAttrs = sub {
     # end contact info
 
     # display attrs
-
     $m->comp('/widgets/profile/hidden.mc', value => $subsys, name => 'subsys')
       unless $ro;
 
@@ -276,7 +275,7 @@ my $showAttrs = sub {
     if ($num_fields) {
 	# display attrs
 	$m->comp("/widgets/wrappers/sharky/table_top.mc",
-		 caption => $preCaption . " Attributes",
+		 caption => $preCaption . " Custom Fields",
 		 number  => 3);
 	$m->comp("/widgets/profile/displayAttrs.mc",
 		 attr        => $attr,
@@ -364,11 +363,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:35 $
+$Date: 2001-10-23 19:37:41 $
 
 =head1 DESCRIPTION
 
