@@ -14,6 +14,26 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.2.0
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added Context-sensitive, online help. [Sam]
+
+=item *
+
+Added separate interface for editing templates (via FTP). [Sam]
+
+=item *
+
+Added the ability to use HTML::Template Templates. [Sam]
+
+=back
+
 =head1 VERSION 1.0.2
 
 =over 4
