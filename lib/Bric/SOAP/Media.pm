@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:03 $
+$Date: 2002-11-02 00:15:46 $
 
 =head1 SYNOPSIS
 
@@ -742,6 +742,11 @@ sub _load_media {
 	    $media->set_media_type_id(0);
 	}
 
+        # make sure this story won't create a duplicate URI
+        die __PACKAGE__ . "::create : unable to create media, URI '"
+          . $media->get_uri . "' is already taken.\n"
+            if $media->check_uri;
+
 	# save the media in an inactive state.  this is necessary to
 	# allow element addition - you can't add elements to an
 	# unsaved media, strangely.
@@ -751,16 +756,12 @@ sub _load_media {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the media.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == MEDIA_WORKFLOW) {
-		    $media->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $media});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the media.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => MEDIA_WORKFLOW }))[0];
+            $media->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $media});
 	}
 
 	# add element data

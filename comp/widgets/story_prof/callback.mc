@@ -89,12 +89,13 @@ my $save_data = sub {
       if exists $param->{primary_oc_id};
 
     if (($param->{cover_date} || '') ne ($story->get_cover_date || '')) {
-        my $old_date = $story->get_cover_date();
+        my $old_date = $story->get_cover_date(ISO_8601_FORMAT);
+        my $fold_date = $story->get_cover_date;
         $story->set_cover_date($param->{cover_date});
         my $msg = $story->check_uri;
         if ($msg) {
             if ($old_date) {
-                add_msg("The cover date has been reverted to $old_date, " .
+                add_msg("The cover date has been reverted to $fold_date, " .
                         "as it caused this story to have a URI conflicting " .
                         "with that of story '$msg'.");
                 $story->set_cover_date($old_date);

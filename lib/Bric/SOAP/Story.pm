@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-26 00:39:03 $
+$Date: 2002-11-02 00:15:46 $
 
 =head1 SYNOPSIS
 
@@ -806,6 +806,11 @@ sub _load_stories {
 	$story->add_categories(\@cids);	
 	$story->set_primary_category($primary_cid);
 
+        # make sure this story won't create a duplicate URI
+        die __PACKAGE__ . "::create : unable to create story, URI '"
+          . $story->get_uri . "' is already taken.\n"
+            if $story->check_uri;
+
 	# remove all contributors if updating
 	$story->delete_contributors([ $story->get_contributors ])
 	    if $update and $story->get_contributors;
@@ -854,16 +859,12 @@ sub _load_stories {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the story.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == STORY_WORKFLOW) {
-		    $story->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $story});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the story.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => STORY_WORKFLOW }))[0];
+            $story->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $story});
 	}
 
 	# add element data
@@ -886,7 +887,7 @@ sub _load_stories {
 
     # if we have any media objects, create them
     my (%media_ids, @media_ids);
-    if ($data->{media}) {	
+    if ($data->{media}) {
 	@media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
 				                      internal   => 1,
 						      upload_ids => []    });
@@ -894,7 +895,7 @@ sub _load_stories {
 	# correlate to relative ids
 	for (0 .. $#media_ids) {
 	    $media_ids{$data->{media}[$_]{id}} = $media_ids[$_];
-	}	
+	}
     }
 
     # resolve relations

@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-11-02 00:15:46 $
 
 =head1 SYNOPSIS
 
@@ -631,7 +631,7 @@ sub _load_template {
 	# assign catgeory_id (not category__id, for some reason...)
 	$init{category_id} = category_path_to_id($tdata->{category}[0]);
 	die __PACKAGE__ . " : no category found matching " .
-	    "(category => \"$tdata->{category}\")\n"
+	    "(category => \"$tdata->{category}[0]\")\n"
 		unless defined $init{category_id};
 
 	# setup data
@@ -745,16 +745,12 @@ sub _load_template {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the template.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == TEMPLATE_WORKFLOW) {
-		    $template->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $template});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the template.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => TEMPLATE_WORKFLOW }))[0];
+            $template->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $template});
 	}
 
 	# save the template and desk after activating if desired

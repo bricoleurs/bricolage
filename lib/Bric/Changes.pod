@@ -272,7 +272,63 @@ object for which permissions are checked. [Mark & David]
 
 =back
 
-=head1 VERSION 1.4.4
+=head1 VERSION 1.4.5
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed error message generated from Bric::SOAP::Template->update() to
+properly display the category name, rather than "ARRAY(0x9cf43bc)". [Sam]
+
+=item *
+
+The Bricolage SOAP interface will no longer allow the creation of
+stories and media with duplicate URIs. [Sam]
+
+=item *
+
+Fixed circular dependency issues when Bricolage modules are used in the
+C<PERL_LOADER> F<bricolage.conf> directive. [David]
+
+=item *
+
+Added the root category to the "All Categories" group. It should have been in
+that group all along. [David]
+
+=item *
+
+Documentation for C<< Bric::Biz::Workflow->list >> has been improved, and the
+method used for finding workflows and desks to put imported assets on in
+Bric::SOAP has been simplified. [David]
+
+=item *
+
+Added printing of a message regarding the filenames being processed by
+F<bric_soap>'s C<create> and C<update> commands when its C<--verbose> option
+is set. [David]
+
+=item *
+
+Setting a story's cover date to a date that causes one of its URIs to conflict
+with an existing story's URIs no longer causes an error. Thanks to Sam for the
+spot! [David]
+
+=item *
+
+Display of the source was missing from the view Story and Media profiles, but
+no longer. [David]
+
+=item *
+
+The correct source is now displayed in the Story and Media edit profiles.
+[David]
+
+=back
+
+
 
 =head2 Bug Fixes
 

@@ -95,15 +95,16 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <% $ieSpacer %>
 
-<& '/widgets/select_object/select_object.mc', 
-  object        => 'source',
-  name          => "$widget|source__id",
-  field         => 'source_name',
-  selected_id   => $media->get_source__id,
-  indent        => 0,
-  useTable      => 1,
-  disp          => "Source"
+<& '/widgets/select_object/select_object.mc',
+  object   => 'source',
+  name     => "$widget|source__id",
+  field    => 'source_name',
+  selected => $media->get_source__id,
+  indent   => 0,
+  useTable => 1,
+  disp     => "Source"
 &>
+
 <% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
   object        => 'category',
@@ -140,7 +141,17 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          number => $num++
         );
 
+<<<<<<< edit_meta.html
 </%perl>
+=======
+% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+%       caption => "Upload a file",
+%       number => $num++
+%       );
+
+>>>>>>> 1.11.2.3
 <table width=578 cellpadding=2 cellspacing=0>
 <tr>
   <td width=<% $infoIndent %> valign=top align=right><span class="label">File Path:</span></td>

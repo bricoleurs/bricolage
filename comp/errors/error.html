@@ -52,7 +52,7 @@
 </table>
 % }
 <font face="Verdana, Helvetica, Arial">
-<b>Stack:</b><br /><% join("<br />\n", map { ref $_ ? join(' - ', @{$_}[1,3,2]) : $_ } @{$fault->get_stack} ) %>
+<b>Stack:</b><br /><% join("<br />\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ } @{$fault->get_stack} ) %>
 
 <br /><br />
 
