@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.19.2.1 $
+$Revision: 1.19.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.19.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-10 15:27:19 $
+$Date: 2003-06-10 17:57:12 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -63,7 +63,7 @@ $stay                   => undef
 </%args>
 <%init>
 
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = parse_uri($r->uri);
 my $agent        = detect_agent();
 my $div          = 'div';
 my $name         = "id";

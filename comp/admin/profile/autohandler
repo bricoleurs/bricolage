@@ -3,7 +3,7 @@ my $widget = 'profile';
 </%once>
 <%perl>;
 # Figure out where we are.
-my ($section, $moe, $key, $id, $oid) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $moe, $key, $id, $oid) = parse_uri($r->uri);
 
 # Grab the ID from the URL.
 $ARGS{id} = defined $id && ($id eq 'perm' || $id eq 'recip') ? $oid : $id

@@ -154,7 +154,7 @@ my $sortOrder = get_state_data($widget, 'sortOrder') || '';
 my $sort_col  = 0;
 
 # Figure out where we are.
-my ($section) = $m->comp('/lib/util/parseUri.mc');
+my ($section) = parse_uri($r->uri);
 my ($tab, $curve_left, $curve_right, $sort_class, $scolor, $ccolor, $sscolor);
 
 if ($section eq 'admin') {

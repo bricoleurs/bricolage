@@ -27,7 +27,7 @@ my $pldisp = get_class_info('recip')->get_plural_name;
 $id => undef
 </%args>
 <%init>;
-$id ||= ($m->comp("/lib/util/parseUri.mc"))[3];
+$id ||= (parse_uri($r->uri))[3];
 my $a = $class->lookup({ id => $id });
 my $aname = '&quot;' . $a->get_name . '&quot;';
 my $eid = $a->get_event_id;

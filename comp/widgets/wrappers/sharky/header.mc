@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.37.2.1 $
+$Revision: 1.37.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-10 15:27:24 $
+$Date: 2003-06-10 17:57:12 $
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ if ($useSideNav) {
 }
 
 # Figure out where we are (assume workflow).
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = parse_uri($r->uri);
 $section ||= 'workflow';
 
 my ($layer, $properties);

@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.18.2.2 $
+$Revision: 1.18.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-10 15:27:16 $
+$Date: 2003-06-10 17:57:10 $
 
 =head1 SYNOPSIS
 
@@ -81,6 +81,7 @@ our @EXPORT_OK = qw(
                     mk_aref
 
                     detect_agent
+                    parse_uri
                    );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
@@ -749,6 +750,33 @@ sub detect_agent {
     Bric::App::Session::set_state_data('util', 'user-agent', $ua);
 
     return $ua;
+}
+
+#--------------------------------------#
+
+=item ($section, $mode, $type, ...) = parse_uri($uri);
+
+Returns $section (e.g. admin), $mode (e.g. manager, profile)
+and $type (e.g. user, media, etc). This is centralized here in case
+it becomes a complicated thing to do. And, centralizing is nice.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+Was comp/lib/util/parseUri.mc.
+
+=cut
+
+sub parse_uri {
+    my $uri = shift;
+    return split /\//, substr($uri, 1);
 }
 
 #--------------------------------------#

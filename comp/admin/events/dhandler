@@ -19,7 +19,7 @@ $id => undef
 </%args>
 <%init>;
 # Figure out where we are.
-my ($section, $mode, $type, $oid) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type, $oid) = parse_uri($r->uri);
 # Redirect if necessary. Should change this to a 404 error page.
 $m->comp('/errors/404.mc') unless $type;
 # HACK - This really should be correct in the database instead.

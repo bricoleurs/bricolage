@@ -20,7 +20,7 @@ my $dispmap = { story => get_disp_name('story'),
               };
 </%once>
 <%init>;
-my ($class_key, $wf_id) = ($m->comp("/lib/util/parseUri.mc"))[3,4];
+my ($class_key, $wf_id) = (parse_uri($r->uri))[3,4];
 my $disp = $dispmap->{$class_key} or redirect("/");
 my $context = "Workflow | Profile | $disp | Select Alias";
 </%init>

@@ -128,7 +128,7 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 use Bric::Config qw(:ssl);
 
 # Figure out where we are.
-my ($section, $mode, $type) = $m->comp("/lib/util/parseUri.mc");
+my ($section, $mode, $type) = parse_uri($r->uri);
 
 # Redirect if necessary.
 $m->comp('/errors/404.mc') unless $type && $def->{$type};
@@ -377,11 +377,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.25.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-15 18:14:21 $
+$Date: 2003-06-10 17:57:11 $
 
 =head1 SYNOPSIS
 
