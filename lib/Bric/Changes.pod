@@ -80,6 +80,13 @@ the new field unlimited in length. [David]
 
 Fixed a couple of buttons to be proper case rather than upper case. [David]
 
+=item *
+
+Separated the filesystem destinations for assets burned for publication and for
+assets burned for previewing. This will prevent someone previewing and stomping
+all over a published version of an asset before the published version is
+distributed. [David]
+
 =back
 
 =head1 VERSION 1.0.2

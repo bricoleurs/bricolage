@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =head1 DATE
 
-$Date: 2001-12-27 20:46:05 $
+$Date: 2001-12-27 21:02:35 $
 
 =head1 DESCRIPTION
 
@@ -73,12 +73,6 @@ instance. [Sam]
 
 Allow only one template with a given name for a given category and output
 channel. [Sam]
-
-=item *
-
-Separate the filesystem destinations for stories burned for publication and for
-stories burned for previewing. This will prevent someone previewing and stomping
-all over a published version of a story. [David]
 
 =item *
 
