@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-07-19 11:28:08 $
 
 =head1 SYNOPSIS
 
@@ -165,18 +165,17 @@ It contains the metadata and associations with Formatting assets.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
+use Bric::Util::Fault::Exception::GEN;
 
 #==============================================================================#
 # Inheritance                          #
@@ -199,57 +198,53 @@ use base qw( Bric::Biz::Asset::Business );
 
 use constant DEBUG => 0;
 
-use constant TABLE 	=> 'story';
+use constant TABLE      => 'story';
 
 use constant VERSION_TABLE => 'story_instance';
 
-use constant COLS	=> qw(
-						priority
-						source__id
-						usr__id
-						element__id
-						publish_date
-						expire_date
-						cover_date
-						current_version
-						published_version
-						workflow__id
-						publish_status
-                        primary_uri
-						active);
+use constant COLS       => qw( priority
+                               source__id
+                               usr__id
+                               element__id
+                               publish_date
+                               expire_date
+                               cover_date
+                               current_version
+                               published_version
+                               workflow__id
+                               publish_status
+                               primary_uri
+                               active);
 
-use constant VERSION_COLS => qw(
-						name
-						description
-						story__id
-						version
-						usr__id
-						slug
-						checked_out);
+use constant VERSION_COLS => qw( name
+                                 description
+                                 story__id
+                                 version
+                                 usr__id
+                                 slug
+                                 checked_out);
 
-use constant FIELDS =>  qw(
-						priority
-						source__id 
-						user__id
-						element__id 
-						publish_date 
-						expire_date
-						cover_date
-						current_version
-						published_version
-						workflow_id
-						publish_status
-                        primary_uri
-						_active);
+use constant FIELDS =>  qw( priority
+                            source__id
+                            user__id
+                            element__id
+                            publish_date
+                            expire_date
+                            cover_date
+                            current_version
+                            published_version
+                            workflow_id
+                            publish_status
+                            primary_uri
+                            _active);
 
-use constant VERSION_FIELDS => qw(
-						name
-						description
-						id
-						version
-						modifier
-						slug
-						checked_out);
+use constant VERSION_FIELDS => qw( name
+                                   description
+                                   id
+                                   version
+                                   modifier
+                                   slug
+                                   checked_out);
 
 use constant AD_PARAM => '_AD_PARAM';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Story';
@@ -260,28 +255,26 @@ use constant INSTANCE_GROUP_ID => 31;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# Public fields should use 'vars'
-#use vars qw();
+# Public Class Fields
+# NONE.
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 my ($meths, @ord);
+my $gen = 'Bric::Util::Fault::Exception::GEN';
 
 #--------------------------------------#
-# Instance Fields                       
-
-# None
+# Instance Fields
+# NONE.
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			# Public Fields
-			slug            => Bric::FIELD_RDWR
+                        # Public Fields
+                        slug            => Bric::FIELD_RDWR
 
-			# Private Fields
-	});
+                        # Private Fields
+        });
 }
 
 #==============================================================================#
@@ -297,8 +290,7 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors  
-
+# Constructors
 #------------------------------------------------------------------------------#
 
 =item $story = Bric::Biz::Asset::Business::Story->new( $initial_state )
@@ -365,7 +357,7 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
@@ -398,60 +390,56 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
 sub lookup {
-	my ($class, $param) = @_;
-	my $self = bless {}, (ref $class ? ref $class : $class);
+    my ($class, $param) = @_;
+    my $self = bless {}, (ref $class ? ref $class : $class);
 
-	my $sql = 'SELECT s.id, ' . join(', ', map {"s.$_ "} COLS) .
-				', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-				' FROM ' . TABLE . ' s, ' . VERSION_TABLE . ' i ';
+    my $sql = 'SELECT s.id, ' . join(', ', map {"s.$_ "} COLS) .
+      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
+      ' FROM ' . TABLE . ' s, ' . VERSION_TABLE . ' i ';
 
-	my @where;
-	if ($param->{'id'}) {
-		$sql .= ' WHERE s.id=? AND i.story__id=s.id ';
-		push @where, $param->{'id'};
-	} elsif ($param->{'version_id'}) {
-		$sql .= ' WHERE i.id=? AND i.story__id=s.id ';
-		push @where, $param->{'version_id'};
-	} else {
-		die Bric::Util::Fault::Exception::GEN->new( { 
-			msg => "Missing Required Parameters id or version_id" });
-	}
+    my @where;
+    if ($param->{'id'}) {
+        $sql .= ' WHERE s.id=? AND i.story__id=s.id ';
+        push @where, $param->{'id'};
+    } elsif ($param->{'version_id'}) {
+        $sql .= ' WHERE i.id=? AND i.story__id=s.id ';
+        push @where, $param->{'version_id'};
+    } else {
+        die $gen->new({ msg => "Missing Required Parameters id or version_id" });
+    }
 
-	if ($param->{'version'}) {
-		$sql .= ' AND i.version=? ';
-		push @where, $param->{'version'};
-	} elsif ($param->{'checkout'}) {
-		$sql .= ' AND i.checked_out=? ';
-		push @where, 1;
-	} else {
-		$sql .= ' AND s.current_version=i.version ';
-	}
+    if ($param->{'version'}) {
+        $sql .= ' AND i.version=? ';
+        push @where, $param->{'version'};
+    } elsif ($param->{'checkout'}) {
+        $sql .= ' AND i.checked_out=? ';
+        push @where, 1;
+    } else {
+        $sql .= ' AND s.current_version=i.version ';
+    }
 
-	# add the extra id field to the count
-	my $col_count = (scalar COLS) + (scalar VERSION_COLS) + 1;
-	my @d;
+    # add the extra id field to the count
+    my $col_count = (scalar COLS) + (scalar VERSION_COLS) + 1;
+    my @d;
 
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	local $" = ', '; #"
-	execute($sth, @where);
-	bind_columns($sth, \@d[0 .. $col_count ]);
-	fetch($sth);
+    my $sth = prepare_ca($sql, undef, DEBUG);
+    local $" = ', '; #"
+    execute($sth, @where);
+    bind_columns($sth, \@d[0 .. $col_count ]);
+    fetch($sth);
 
-	# Return nothing if we don't get any results (no story ID)
-	return unless $d[0];
+    # Return nothing if we don't get any results (no story ID)
+    return unless $d[0];
 
-	$self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-
-	return unless $self->_get('id');
-
-	$self->_set__dirty(0);
-
-	return $self;
+    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+    return unless $self->_get('id');
+    $self->_set__dirty(0);
+    return $self;
 }
 
 ################################################################################
@@ -626,10 +614,9 @@ NONE
 =cut
 
 sub list {
-	my ($class, $params) = @_;
-
-	# Send to _do_list function which will return objects
-	_do_list($class,$params,undef);
+    my ($class, $params) = @_;
+    # Send to _do_list function which will return objects
+    _do_list($class,$params,undef);
 }
 
 ################################################################################
@@ -656,8 +643,6 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=cut                  
-
 =item ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids( $criteria )
 
 Returns a list of the ids that match the given criteria
@@ -679,15 +664,14 @@ B<Side Effects:>
 NONE
 
 B<Notes:>
-NONE 
+NONE
 
 =cut
 
 sub list_ids {
-	my ($class, $params) = @_;
-
-	# Send to _do_list function which will return objects
-	_do_list($class,$params,1);
+    my ($class, $params) = @_;
+    # Send to _do_list function which will return objects
+    _do_list($class,$params,1);
 }
 
 ################################################################################
@@ -847,45 +831,45 @@ sub my_meths {
 
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
     }
     push @ord, qw(slug category category_name), pop @ord;
     $meths->{slug}    = {
-			  get_meth => sub { shift->get_slug(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_slug(@_) },
-			  set_args => [],
-			  name     => 'slug',
-			  disp     => 'Slug',
-			  len      => 64,
-			  type     => 'short',
-			  props    => {   type       => 'text',
-					  length     => 32,
-					  maxlength => 64
-				      }
-			 };
+                          get_meth => sub { shift->get_slug(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_slug(@_) },
+                          set_args => [],
+                          name     => 'slug',
+                          disp     => 'Slug',
+                          len      => 64,
+                          type     => 'short',
+                          props    => {   type       => 'text',
+                                          length     => 32,
+                                          maxlength => 64
+                                      }
+                         };
     $meths->{category} = {
-			  get_meth => sub { shift->get_primary_category(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_primary_category(@_) },
-			  set_args => [],
-			  name     => 'category',
-			  disp     => 'Category',
-			  len      => 64,
-			  req      => 1,
-			  type     => 'short',
-			 };
+                          get_meth => sub { shift->get_primary_category(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_primary_category(@_) },
+                          set_args => [],
+                          name     => 'category',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
 
     $meths->{category_name} = {
-			  get_meth => sub { shift->get_primary_category(@_)->get_name },
-			  get_args => [],
-			  name     => 'category_name',
-			  disp     => 'Category',
-			  len      => 64,
-			  req      => 1,
-			  type     => 'short',
-			 };
+                          get_meth => sub { shift->get_primary_category(@_)->get_name },
+                          get_args => [],
+                          name     => 'category_name',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
 
     # Rename element, too.
     $meths->{element} = { %{ $meths->{element} } };
@@ -909,15 +893,15 @@ by the pre- and post- directory strings of an output channel, the
 URI of the business object's asset type, and the cover date if the asset type
 is not a fixed URL.
 
-B<Throws:> 
+B<Throws:>
 
 NONE
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -927,23 +911,23 @@ sub get_uri {
     my $self = shift;
     my ($cat, $oc) = @_;
     my ($cat_obj, $oc_obj);
-
-	my $dirty = $self->_get__dirty();
+    my $dirty = $self->_get__dirty();
 
     if ($cat) {
-		$cat_obj = ref $cat ? $cat : Bric::Biz::Category->lookup({'id'=>$cat});
-		$oc_obj  = ref $oc  ? $oc  : Bric::Biz::OutputChannel->lookup({'id'=>$oc});
+        $cat_obj = ref $cat ? $cat :
+          Bric::Biz::Category->lookup({'id'=>$cat});
+        $oc_obj  = ref $oc  ? $oc  :
+          Bric::Biz::OutputChannel->lookup({'id'=>$oc});
     } else {
-		$cat_obj = $self->get_primary_category();
-		my $at_obj = $self->_get_element_object();
-		($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+        $cat_obj = $self->get_primary_category();
+        my $at_obj = $self->_get_element_object();
+        ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
     }
     my $uri = $self->_construct_uri($cat_obj, $oc_obj);
 
     # Update the 'primary_uri' field if we were called with no arguments.
     $self->_set(['primary_uri'], [$uri]) unless scalar(@_);
-
-	$self->_set__dirty($dirty);
+    $self->_set__dirty($dirty);
     return $uri;
 }
 
@@ -953,7 +937,7 @@ sub get_uri {
 
 Sets the slug for this story
 
-B<Throws:> 
+B<Throws:>
 
 'Invalid characters found in slug'
 
@@ -968,19 +952,15 @@ NONE
 =cut
 
 sub set_slug {
-	my ($self, $slug) = @_;
-
-	my $dirty = $self->_get__dirty();
-
-	if ($slug =~ m/\W/) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => 'Slug Must conform to URL character rules' });
-	} else {
-		$self->_set( { slug => $slug });
-	}
-
-	$self->_set__dirty($dirty);
-	return $self;
+    my ($self, $slug) = @_;
+    my $dirty = $self->_get__dirty();
+    if ($slug =~ m/\W/) {
+        die $gen->new({ msg => 'Slug Must conform to URL character rules' });
+    } else {
+        $self->_set( { slug => $slug });
+    }
+    $self->_set__dirty($dirty);
+    return $self;
 }
 
 ################################################################################
@@ -1015,12 +995,16 @@ sub check_uri {
     my ($self) = @_;
     my $msg;
     # get element type and output channel info for currnt story
-    my $s_eid = $self->get_element__id() || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the element__id of this story' });
-    my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the Asset Type of this story' });
+    my $s_eid = $self->get_element__id() ||
+      die $gen->new({ msg => 'Cannot retrieve the element_id of this story' });
+    my $s_el = Bric::Biz::AssetType->lookup({id => $s_eid}) ||
+      die $gen->new({ msg => 'Cannot retrieve the Asset Type of this story' });
     my @ocs = $s_el->get_output_channels();
-    die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve any output channels associated with his storys asset type' }) if !$ocs[0];
+    die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
+                           "with this story's story type element" })
+      if !$ocs[0];
     # then loop thru each category for this story
-    OUTER: foreach my $category ($self->get_categories()) {
+  OUTER: foreach my $category ($self->get_categories()) {
         # get stories in the same category
         my %parm;
         $parm{'category_id'} = $category->get_id;
@@ -1033,16 +1017,21 @@ sub check_uri {
             next if (defined $self->get_id and $st->get_id == $self->get_id);
 
             # get element type and output channel info
-            my $st_eid = $st->get_element__id() || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the element__id of this story' });
-            my $st_el = Bric::Biz::AssetType->lookup({id => $st_eid}) || die Bric::Util::Fault::Exception::GEN->new( { msg => 'Was not able to retrieve the Asset Type of this story' });
+            my $st_eid = $st->get_element__id() ||
+              die $gen>new({ msg => 'Cannot retrieve the element_id of this ' .
+                                    'story' });
+            my $st_el = Bric::Biz::AssetType->lookup({id => $st_eid}) ||
+              die $gen->new({ msg => 'Cannotretrieve the Asset Type of this' .
+                                     'story' });
             my @st_ocs = $st_el->get_output_channels();
 
             # for each output channel, throw an error for conflicting URI.
             foreach my $st_oc(@st_ocs) {
                 foreach my $oc (@ocs) {
-                    if ($st->get_uri($category,$st_oc) eq $self->get_uri($category,$oc)) {
-                    $msg = $st->get_name();
-                    last OUTER;
+                    if ($st->get_uri($category,$st_oc) eq
+                        $self->get_uri($category,$oc)) {
+                        $msg = $st->get_name();
+                        last OUTER;
                     }
                 }
             }
@@ -1078,21 +1067,21 @@ sub get_categories {
     my @all;
     my $reset;
     foreach my $c_id (keys %$cats) {
-	next if $cats->{$c_id}->{'action'}
-	  && $cats->{$c_id}->{'action'} eq 'delete';
-	if ($cats->{$c_id}->{'object'} ){
-	    push @all, $cats->{$c_id}->{'object'};
-	} else {
-	    my $cat = Bric::Biz::Category->lookup({ id => $c_id });
-	    $cats->{$c_id}->{'object'} = $cat;
-	    $reset = 1;
-	    push @all, $cat;
-	}
+        next if $cats->{$c_id}->{'action'}
+          && $cats->{$c_id}->{'action'} eq 'delete';
+        if ($cats->{$c_id}->{'object'} ){
+            push @all, $cats->{$c_id}->{'object'};
+        } else {
+            my $cat = Bric::Biz::Category->lookup({ id => $c_id });
+            $cats->{$c_id}->{'object'} = $cat;
+            $reset = 1;
+            push @all, $cat;
+        }
     }
     if ($reset) {
-	my $dirty = $self->_get__dirty();
-	$self->_set({ '_categories' => $cats });
-	$self->_set__dirty($dirty);
+        my $dirty = $self->_get__dirty();
+        $self->_set({ '_categories' => $cats });
+        $self->_set__dirty($dirty);
     }
     return wantarray ? @all : \@all;
 }
@@ -1118,26 +1107,25 @@ NONE
 =cut
 
 sub get_primary_category {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $cats = $self->_get_categories();
 
-	my $cats = $self->_get_categories();
-
-	foreach my $c_id (keys %$cats) {
-		if ($cats->{$c_id}->{'primary'}) {
-			if ($cats->{$c_id}->{'object'} ) {
-				return $cats->{$c_id}->{'object'};
-			} else {
-				return Bric::Biz::Category->lookup( { id => $c_id });
-			}
-		}
-	}
+    foreach my $c_id (keys %$cats) {
+        if ($cats->{$c_id}->{'primary'}) {
+            if ($cats->{$c_id}->{'object'} ) {
+                return $cats->{$c_id}->{'object'};
+            } else {
+                return Bric::Biz::Category->lookup( { id => $c_id });
+            }
+        }
+    }
 }
 
 ################################################################################
 
 =item $story = $story->set_primary_category()
 
-Defines a category as being the the primary one for this story.   If a category
+Defines a category as being the the primary one for this story. If a category
 is aready marked as being primary, this will disassociate it.
 
 B<Throws:>
@@ -1158,20 +1146,20 @@ sub set_primary_category {
     my ($self, $cat) = @_;
     my $cats = $self->_get_categories();
     foreach my $c_id (keys %$cats) {
-	if ($cats->{$c_id}->{'primary'}) {
-	    unless ($c_id == $cat) {
-		$cats->{$c_id}->{'primary'} = 0;
-		$cats->{$c_id}->{'action'} = 'update';
-	    }
-	} else {
-	    if ($cat == $c_id) {
-		$cats->{$c_id}->{'primary'} = 1;
-		unless ($cats->{$c_id}->{'action'}
-		    && ($cats->{$c_id}->{'action'} eq 'insert')) {
-		    $cats->{$c_id}->{'action'} = 'update';
-		}
-	    }
-	}
+        if ($cats->{$c_id}->{'primary'}) {
+            unless ($c_id == $cat) {
+                $cats->{$c_id}->{'primary'} = 0;
+                $cats->{$c_id}->{'action'} = 'update';
+            }
+        } else {
+            if ($cat == $c_id) {
+                $cats->{$c_id}->{'primary'} = 1;
+                unless ($cats->{$c_id}->{'action'}
+                    && ($cats->{$c_id}->{'action'} eq 'insert')) {
+                    $cats->{$c_id}->{'action'} = 'update';
+                }
+            }
+        }
     }
     return $self;
 }
@@ -1197,28 +1185,27 @@ NONE
 =cut
 
 sub get_secondary_categories {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $cats = $self->_get_categories();
 
-	my $cats = $self->_get_categories();
-
-	my @seconds;
-	foreach my $c_id (keys %$cats) {
-		next if $cats->{$c_id}->{'primary'};
-		if ($cats->{$c_id}->{'object'} ) {
-			push @seconds, $cats->{$c_id}->{'object'};
-		} else {
-			push @seconds, Bric::Biz::Category->lookup( { id => $c_id });
-		}
-	}
-	return wantarray ? @seconds : \@seconds;
+    my @seconds;
+    foreach my $c_id (keys %$cats) {
+        next if $cats->{$c_id}->{'primary'};
+        if ($cats->{$c_id}->{'object'} ) {
+            push @seconds, $cats->{$c_id}->{'object'};
+        } else {
+            push @seconds, Bric::Biz::Category->lookup( { id => $c_id });
+        }
+    }
+    return wantarray ? @seconds : \@seconds;
 }
 
 ################################################################################
 
 =item $ba = $ba->add_categories( [ $category] )
 
-This will take a list ref of category objects or ids and will associate 
-them with the business asset
+This will take a list ref of category objects or ids and will associate them
+with the business asset
 
 B<Throws:>
 
@@ -1235,32 +1222,27 @@ NONE
 =cut
 
 sub add_categories {
-	my ($self, $categories) = @_;
+    my ($self, $categories) = @_;
+    my $cats = $self->_get_categories();
 
-	my $cats = $self->_get_categories();
+    foreach my $c (@$categories) {
+        # get the id
+        my $cat_id = ref $c ? $c->get_id() : $c;
 
-	foreach my $c (@$categories) {
-		# get the id
-		my $cat_id = ref $c ? $c->get_id() : $c;
+        # if it already is associated make sure it is not going to be deleted
+        if (exists $cats->{$cat_id}) {
+            $cats->{$cat_id}->{'action'} = undef;
+        } else {
+            $cats->{$cat_id}->{'action'} = 'insert';
+                        $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
+        }
+    }
 
-		# if it already is associated make sure it is not
-		# going to be deleted
-		if (exists $cats->{$cat_id}) {
-			$cats->{$cat_id}->{'action'} = undef;
-		} else {
-			$cats->{$cat_id}->{'action'} = 'insert';
-			$cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
-		}
-	}
-
-	# store the values
-
-	$self->_set({   '_categories' => $cats});
-
-	# set the dirty flag
-	$self->_set__dirty(1);
-
-	return $self;
+    # store the values
+    $self->_set({   '_categories' => $cats});
+    # set the dirty flag
+    $self->_set__dirty(1);
+    return $self;
 }
 
 ################################################################################
@@ -1288,17 +1270,17 @@ sub delete_categories {
     my ($cats) = $self->_get_categories();
 
     foreach my $c (@$categories) {
-	# get the id if there was an object passed
-	my $cat_id = ref $c ? $c->get_id() : $c;
-	# remove it from the current list and add it to the delete list
-	if (exists $cats->{$cat_id} ) {
-	    if ($cats->{$cat_id}->{'action'}
-		&& $cats->{$cat_id}->{'action'} eq 'insert') {
-		delete $cats->{$cat_id};
-	    } else {
-		$cats->{$cat_id}->{'action'} = 'delete';
-	    }
- 	}
+        # get the id if there was an object passed
+        my $cat_id = ref $c ? $c->get_id() : $c;
+        # remove it from the current list and add it to the delete list
+        if (exists $cats->{$cat_id} ) {
+            if ($cats->{$cat_id}->{'action'}
+                && $cats->{$cat_id}->{'action'} eq 'insert') {
+                delete $cats->{$cat_id};
+            } else {
+                $cats->{$cat_id}->{'action'} = 'delete';
+            }
+        }
     }
 
     # set the values.
@@ -1323,7 +1305,7 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
@@ -1349,20 +1331,17 @@ NONE
 =cut
 
 sub checkout {
-	my ($self ,$param) = @_;
+    my ($self ,$param) = @_;
+    my $cats = $self->_get_categories();
+    $self->SUPER::checkout($param);
 
-	my $cats = $self->_get_categories();
+    # clone the category associations
+    foreach (keys %$cats ) {
+        $cats->{$_}->{'action'} = 'insert';
+    }
 
-	$self->SUPER::checkout($param);
-
-	# clone the category associations
-	foreach (keys %$cats ) {
-		$cats->{$_}->{'action'} = 'insert';
-	}
-
-	$self->_set__dirty(1);
-
-	return $self;
+    $self->_set__dirty(1);
+    return $self;
 }
 
 ################################################################################
@@ -1395,7 +1374,7 @@ figure out a way to rectify this.]
 #    return wantarray ? @ids : \@ids;
 #}
 
-#############################################################################	
+#############################################################################
 
 =item $story = $story->revert();
 
@@ -1416,53 +1395,37 @@ NONE
 =cut
 
 sub revert {
-	my ($self, $version) = @_;
+    my ($self, $version) = @_;
+    die $gen->new({ msg => "May not revert a non checked out version" })
+      unless $self->_get('checked_out');
 
-	if (!$self->_get('checked_out')) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "May not revert a non checked out version" });
-	}
+    my @prior_versions = __PACKAGE__->list( { id => $self->_get_id,
+                                              return_versions => 1 });
 
-	my @prior_versions = __PACKAGE__->list( {
-			id				=> $self->_get_id(),
-			return_versions => 1
-		});
+    my $revert_obj;
+    foreach (@prior_versions) {
+        if ($_->get_version == $version) {
+            $revert_obj = $_;
+        }
+    }
 
-	my $revert_obj;
-	foreach (@prior_versions) {
-		if ($_->get_version == $version) {
-			$revert_obj = $_;
-		}
-	}
+    die $gen>new({ msg => "The requested version does not exist" })
+      unless $revert_obj;
 
-	unless ($revert_obj) {
-		die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "The requested version does not exist"
-		});
-	}
+    # clone information from the tables
+    $self->_set( { slug => $revert_obj->get_slug });
 
-	# clone information from the tables
-	$self->_set( { 
-			slug => $revert_obj->get_slug()
-		});
+    # clone the tiles
+    # get rid of current tiles
+    my $tile = $self->get_tile();
+    $tile->do_delete();
+    my $new_tile = $revert_obj->get_tile();
+    $new_tile->prepare_clone();
+    $self->_set( { _delete_tile => $tile,
+                   _tile        => $new_tile });
 
-	# clone the tiles
-	# get rid of current tiles
-	my $tile = $self->get_tile();
-	$tile->do_delete();
-
-	my $new_tile = $revert_obj->get_tile();
-
-	$new_tile->prepare_clone();
-
-	$self->_set( { 
-			_delete_tile 	=> $tile,
-			_tile			=> $new_tile
-		});
-
-	$self->_set__dirty(1);
-
-	return $self;
+    $self->_set__dirty(1);
+    return $self;
 }
 
 ################################################################################
@@ -1486,29 +1449,20 @@ NONE
 =cut
 
 sub clone {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $tile = $self->get_tile();
+    $tile->prepare_clone();
 
-	my $tile = $self->get_tile();
-	$tile->prepare_clone();
+    my $contribs = $self->_get_contributors();
+    # clone contributors
+    foreach (keys %$contribs ) {
+        $contribs->{$_}->{'action'} = 'insert';
+    }
 
-	my $contribs = $self->_get_contributors();
-	# clone contributors
-	foreach (keys %$contribs ) {
-		$contribs->{$_}->{'action'} = 'insert';
-	}
-
-	$self->_set( {
-		version					=> 1,
-		current_version			=> 1,
-		version_id 				=> undef,
-		id						=> undef,
-		publish_date			=> undef,
-		publish_status			=> 0,
-		_update_contributors 	=> 1
-		});
-
-
-	return $self;
+    $self->_set([qw(version current_version version_id id publish_date
+                    publish_status _update_contributors)],
+                [1, 1, undef, undef, undef, 0, 1]);
+    return $self;
 }
 
 ################################################################################
@@ -1518,13 +1472,13 @@ sub clone {
 Updates the story object in the database
 
 B<Throws:>
- NONE
+NONE
 
 B<Side Effects:>
- NONE
+NONE
 
 B<Notes:>
- NONE 
+NONE
 
 =cut
 
@@ -1536,30 +1490,30 @@ sub save {
       unless ($self->get_primary_uri eq $self->get_uri);
 
     if ($self->_get('id')) {
-	# make any necessary updates to the Main table
-	$self->_update_story();
-	if ($self->_get('version_id')) {
-	    if ($self->_get('_cancel')) {
-		$self->_delete_instance();
-		if ($self->_get('version') == 0) {
-		    $self->_delete_story();
-		}
-		$self->_set( {'_cancel' => undef });
-		return $self;
-	    } else {
-		$self->_update_instance();
-	    }
-	} else {
-	    $self->_insert_instance();
-	}
+        # make any necessary updates to the Main table
+        $self->_update_story();
+        if ($self->_get('version_id')) {
+            if ($self->_get('_cancel')) {
+                $self->_delete_instance();
+                if ($self->_get('version') == 0) {
+                    $self->_delete_story();
+                }
+                $self->_set( {'_cancel' => undef });
+                return $self;
+            } else {
+                $self->_update_instance();
+            }
+        } else {
+            $self->_insert_instance();
+        }
     } else {
-	if ($self->_get('_cancel')) {
-	    return $self;
-	} else {
-	    # This is Brand new insert both Tables
-	    $self->_insert_story();
-	    $self->_insert_instance();
-	}
+        if ($self->_get('_cancel')) {
+            return $self;
+        } else {
+            # This is Brand new insert both Tables
+            $self->_insert_story();
+            $self->_insert_instance();
+        }
     }
 
     $self->_sync_categories();
@@ -1595,7 +1549,7 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
@@ -1611,8 +1565,8 @@ sub _do_list {
 
     # Don't add any more if we're just listing IDs
     unless ($ids) {
-	push @select, (map { "s.$_" } COLS),
-	              (map { "i.$_" } 'id', VERSION_COLS);
+        push @select, (map { "s.$_" } COLS),
+          (map { "i.$_" } 'id', VERSION_COLS);
     }
 
     # Build a list of table names to use.
@@ -1620,15 +1574,15 @@ sub _do_list {
 
     # Put the story__category mapping table in if they are searching by category
     if (defined($param->{'category_id'})) {
-	push @tables, 'story__category c';
+        push @tables, 'story__category c';
     }
 
     if ($param->{'keyword'}) {
-	push @tables, 'story_keyword sk', 'keyword k';
-	push @where, ('sk.story_id = s.id',
+        push @tables, 'story_keyword sk', 'keyword k';
+        push @where, ('sk.story_id = s.id',
                       'k.id = sk.keyword_id',
-		      'LOWER(k.name) LIKE ?');
-	push @bind, lc($param->{'keyword'});
+                      'LOWER(k.name) LIKE ?');
+        push @bind, lc($param->{'keyword'});
     }
 
     # Map field 'title' to field 'name'.
@@ -1637,90 +1591,92 @@ sub _do_list {
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
 
-     # handle simple search - hits title, primary_uri, description and
-     # keywords.
-     if ($param->{'simple'}) {
+    # handle simple search - hits title, primary_uri, description and
+    # keywords.
+    if ($param->{'simple'}) {
        # replace TABLE select with left join to select keywords if
-       # there are any
-       $tables[0] = 'story s left outer join story_keyword sk left outer join keyword k on (sk.keyword_id = k.id) on (s.id = sk.story_id)';
-       push @where, ('(LOWER(k.name) LIKE ? OR LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? OR LOWER(s.primary_uri) LIKE ?)');
-       push @bind, (lc($param->{'simple'})) x 4;
-     }
-
+        # there are any
+        $tables[0] = 'story s left outer join story_keyword sk left outer ' .
+          'join keyword k on (sk.keyword_id = k.id) on (s.id = sk.story_id)';
+        push @where, ('(LOWER(k.name) LIKE ? OR LOWER(i.name) LIKE ? OR ' .
+                      'LOWER(i.description) LIKE ? OR LOWER(s.primary_uri) ' .
+                      'LIKE ?)');
+        push @bind, (lc($param->{'simple'})) x 4;
+    }
 
     # Build the where clause for the trivial story table fields.
     foreach my $f (qw(workflow__id primary_uri element__id 
-		      priority active id publish_status)) {
-	next unless exists $param->{$f};
+                      priority active id publish_status)) {
+        next unless exists $param->{$f};
 
-	if ($f eq 'primary_uri') {
-	    push @where, "LOWER(s.$f) LIKE ?";
-	    push @bind,  lc($param->{$f});
-	} elsif ($f eq 'workflow__id' and not defined $param->{$f}){ 
-	    # support search for NULL workflow__id
-	    push @where, "s.$f IS NULL";
-	} else {
-	    push @where, "s.$f=?";
-	    push @bind,  $param->{$f};
-	}
+        if ($f eq 'primary_uri') {
+            push @where, "LOWER(s.$f) LIKE ?";
+            push @bind,  lc($param->{$f});
+        } elsif ($f eq 'workflow__id' and not defined $param->{$f}){ 
+            # support search for NULL workflow__id
+            push @where, "s.$f IS NULL";
+        } else {
+            push @where, "s.$f=?";
+            push @bind,  $param->{$f};
+        }
     }
 
     # Build the where clause for the trivial story version table fields.
     foreach my $f (qw(name description version slug)) {
-	next unless exists $param->{$f};
+        next unless exists $param->{$f};
 
-	if (($f eq 'name') || ($f eq 'description') || ($f eq 'slug')) {
-	    push @where, "LOWER(i.$f) LIKE ?";
-	    push @bind,  lc($param->{$f});
-	} else { 
-	    push @where, "i.$f=?";
-	    push @bind,  $param->{$f};
-	}
+        if (($f eq 'name') || ($f eq 'description') || ($f eq 'slug')) {
+            push @where, "LOWER(i.$f) LIKE ?";
+            push @bind,  lc($param->{$f});
+        } else { 
+            push @where, "i.$f=?";
+            push @bind,  $param->{$f};
+        }
     }
 
     # Handle the custom list fields.
 
     # Special sql needed for searching on user_id
     if (defined $param->{'user__id'}) {
-	push @where, 's.usr__id=?';
-	push @bind, $param->{'user__id'};
-	push @where, 'i.checked_out=?';
-	push @bind, 1;
+        push @where, 's.usr__id=?';
+        push @bind, $param->{'user__id'};
+        push @where, 'i.checked_out=?';
+        push @bind, 1;
     } else {
-	push @where, 'i.checked_out=?';
-	push @bind, 0;
+        push @where, 'i.checked_out=?';
+        push @bind, 0;
     }
 
     # Return only the current version unless they want them all.
     unless ($param->{'return_versions'}) {
-	push @where, 's.current_version=i.version';
+        push @where, 's.current_version=i.version';
     }
 
     # Handle searches on dates
     foreach my $type (qw(publish_date cover_date expire_date)) {
-	my ($start, $end) = ($param->{$type.'_start'},
-			     $param->{$type.'_end'});
-	
-	# Handle date ranges.
-	if ($start && $end) {
-	    push @where, "s.$type BETWEEN ? AND ?";
-	    push @bind, $start, $end;
-	} else {
-	    # Handle 'everying before' or 'everything after' $date searches.
-	    if ($start) {
-		push @where, "s.$type > ?";
-		push @bind, $start;
-	    } elsif ($end) {
-		push @where, "s.$type < ?";
-		push @bind, $end;
-	    }
-	}
+        my ($start, $end) = ($param->{$type.'_start'},
+                             $param->{$type.'_end'});
+
+        # Handle date ranges.
+        if ($start && $end) {
+            push @where, "s.$type BETWEEN ? AND ?";
+            push @bind, $start, $end;
+        } else {
+            # Handle 'everying before' or 'everything after' $date searches.
+            if ($start) {
+                push @where, "s.$type > ?";
+                push @bind, $start;
+            } elsif ($end) {
+                push @where, "s.$type < ?";
+                push @bind, $end;
+            }
+        }
     }
 
     if (defined $param->{'category_id'}) {
-	push @where, 'i.id = c.story_instance__id';
-	push @where, 'c.category__id = ?';
-	push @bind, $param->{'category_id'};
+        push @where, 'i.id = c.story_instance__id';
+        push @where, 'c.category__id = ?';
+        push @bind, $param->{'category_id'};
     }
 
     push @where, 's.id=i.story__id';
@@ -1728,63 +1684,59 @@ sub _do_list {
     $sql  = 'SELECT DISTINCT '.join(', ',@select).' FROM '.join(', ',@tables);
     $sql .= ' WHERE '.join(' AND ',@where);
 
-    # a small selection of possible order bys - this could be made
-    # general like where.
+    # a small selection of possible order bys - this could be made general
+    # like where.
     if ($param->{'return_versions'}) {
-	$sql .= ' ORDER BY i.version ';
+        $sql .= ' ORDER BY i.version ';
     } elsif ($param->{Order}) {
-	if ($param->{'Order'} eq 'cover_date') {
-	    $sql .= ' ORDER BY s.cover_date';
-	} elsif ($param->{'Order'} eq 'publish_date') {
-	    $sql .= ' ORDER BY s.publish_date';
-	}
+        if ($param->{'Order'} eq 'cover_date') {
+            $sql .= ' ORDER BY s.cover_date';
+        } elsif ($param->{'Order'} eq 'publish_date') {
+            $sql .= ' ORDER BY s.publish_date';
+        }
     } else {
-	# default to ordering by cover_date unless we're just returning ids
-	$sql .= ' ORDER BY s.cover_date' unless $ids;
+        # default to ordering by cover_date unless we're just returning ids
+        $sql .= ' ORDER BY s.cover_date' unless $ids;
     }
 
     # check for ORDER BY direction
     if ($param->{OrderDirection}) {
-      $sql .= ' ' . $param->{OrderDirection} . ' ';
+        $sql .= ' ' . $param->{OrderDirection} . ' ';
     }
 
     # check for limit and offset
     if ($param->{'Limit'}) {
-      $sql .= ' LIMIT ' . $param->{'Limit'} . ' ';
-      if ($param->{'Offset'}) {
-        $sql .= ' OFFSET ' . $param->{'Offset'} . ' ';
-      }
+        $sql .= ' LIMIT ' . $param->{'Limit'} . ' ';
+        if ($param->{'Offset'}) {
+            $sql .= ' OFFSET ' . $param->{'Offset'} . ' ';
+        }
     }
-
-    # print STDERR "\n\n", $sql, "\n\n", join(', ', @bind), "\n\n";
 
     my $select = prepare_ca($sql, undef, DEBUG);
 
     if ($ids) {
-	# called from list_ids give em what they want
-	my $return = col_aref($select,@bind);
-
-	return wantarray ? @{ $return } : $return;
+        # called from list_ids give em what they want
+        my $return = col_aref($select,@bind);
+        return wantarray ? @{ $return } : $return;
     } else { # end if ids
-	# this must have been called from list so give objects
-	my (@objs, @d);
-	my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;	
+        # this must have been called from list so give objects
+        my (@objs, @d);
+        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
 
-	execute($select,@bind);
-	bind_columns($select, \@d[0 .. $count]);
+        execute($select,@bind);
+        bind_columns($select, \@d[0 .. $count]);
 
-	my $pkg = ref $class || $class;
-	while (fetch($select)) {
-	    my $self = bless {}, $pkg;
+        my $pkg = ref $class || $class;
+        while (fetch($select)) {
+            my $self = bless {}, $pkg;
+            $self->_set(['id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
+            $self->_set__dirty(0);
+            push @objs, $self;
+        }
 
-	    $self->_set(['id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-		$self->_set__dirty(0);	
-	    push @objs, $self;
-	}
-
-	# Return the objects.
-	return (wantarray ? @objs : \@objs) if @objs;
-	return;
+        # Return the objects.
+        return (wantarray ? @objs : \@objs) if @objs;
+        return;
     }
 }
 
@@ -1813,38 +1765,31 @@ NONE
 =cut
 
 sub _get_contributors {
-	my ($self) = @_;
+    my ($self) = @_;
+    my ($contrib, $queried) = $self->_get('_contributors', '_queried_contrib');
+    unless ($queried) {
+        my $dirty = $self->_get__dirty();
+        my $sql = 'SELECT member__id, place, role FROM story__contributor ' .
+          'WHERE story_instance__id=? ';
 
-	my ($contrib, $queried) = 
-		$self->_get('_contributors', '_queried_contrib');
-
-	unless ($queried) {
-
-		my $dirty = $self->_get__dirty();
-
-		my $sql = 'SELECT member__id, place, role FROM story__contributor ' .
-					'WHERE story_instance__id=? ';
-
-		my $sth = prepare_ca($sql, undef, DEBUG);
-		execute($sth, $self->_get('version_id'));
-		while (my $row = fetch($sth)) {
-			$contrib->{$row->[0]}->{'role'} = $row->[2];
-			$contrib->{$row->[0]}->{'place'} = $row->[1];
-		}
-		$self->_set( { 
-				'_queried_contrib' => 1,
-				'_contributors' => $contrib 
-			});
-		$self->_set__dirty($dirty);
-		
-	}
-
-	return $contrib;
-} 
+        my $sth = prepare_ca($sql, undef, DEBUG);
+        execute($sth, $self->_get('version_id'));
+        while (my $row = fetch($sth)) {
+            $contrib->{$row->[0]}->{'role'} = $row->[2];
+            $contrib->{$row->[0]}->{'place'} = $row->[1];
+        }
+        $self->_set( { 
+                      '_queried_contrib' => 1,
+                      '_contributors' => $contrib 
+                     });
+        $self->_set__dirty($dirty);
+    }
+    return $contrib;
+}
 
 ################################################################################
 
-=item $self = $self->_insert_contributor( $id, $role) 
+=item $self = $self->_insert_contributor( $id, $role)
 
 Inserts a row into the mapping table for contributors
 
@@ -1863,16 +1808,14 @@ NONE
 =cut
 
 sub _insert_contributor {
-	my ($self, $id, $role, $place) = @_;
+    my ($self, $id, $role, $place) = @_;
+    my $sql = 'INSERT INTO story__contributor ' .
+      ' (id, story_instance__id, member__id, place, role) ' .
+      " VALUES (${\next_key('story__contributor')},?,?,?,?) ";
 
-	my $sql = 'INSERT INTO story__contributor ' .
-				' (id, story_instance__id, member__id, place, role) ' . 
-				" VALUES (${\next_key('story__contributor')},?,?,?,?) ";
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'), $id, $place, $role);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $id, $place, $role);
+    return $self;
 }
 
 ################################################################################
@@ -1896,18 +1839,15 @@ NONE
 =cut
 
 sub _update_contributor {
-	my ($self, $id, $role, $place) = @_;
+    my ($self, $id, $role, $place) = @_;
+    my $sql = 'UPDATE story__contributor ' .
+      ' SET role=?, place=? ' .
+      ' WHERE story_instance__id=? ' .
+      ' AND member__id=? ';
 
-	my $sql = 'UPDATE story__contributor ' .
-				' SET role=?, place=? ' . 
-				' WHERE story_instance__id=? ' . 
-				' AND member__id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $role, $place, $self->_get('version_id'), $id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $role, $place, $self->_get('version_id'), $id);
+    return $self;
 }
 
 ################################################################################
@@ -1931,17 +1871,14 @@ NONE
 =cut
 
 sub _delete_contributor {
-	my ($self, $id) = @_;
+    my ($self, $id) = @_;
+    my $sql = 'DELETE FROM story__contributor ' .
+      ' WHERE story_instance__id=? ' .
+      ' AND member__id=? ';
 
-	my $sql = 'DELETE FROM story__contributor ' . 
-				' WHERE story_instance__id=? ' . 
-				' AND member__id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $self->_get('version_id'), $id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $id);
+    return $self;
 }
 
 ################################################################################
@@ -1965,41 +1902,35 @@ NONE
 =cut
 
 sub _get_categories {
-	my ($self) = @_;
+    my ($self) = @_;
+    my ($cats, $queried) = $self->_get('_categories', '_queried_cats');
 
-	my ($cats, $queried) = $self->_get('_categories', '_queried_cats');
+    unless ($queried) {
+        my $dirty = $self->_get__dirty();
+        my $sql = 'SELECT category__id, main '.
+          "FROM story__category ".
+          " WHERE story_instance__id=? ";
 
-	unless ($queried) {
-		my $dirty = $self->_get__dirty();
-		my $sql = 'SELECT category__id, main '.
-					"FROM story__category ".
-					" WHERE story_instance__id=? ";
+        my $sth = prepare_ca($sql, undef, DEBUG);
+        execute($sth, $self->_get('version_id'));
+        while (my $row = fetch($sth)) {
+            $cats->{$row->[0]}->{'primary'} = $row->[1];
+        }
 
-		my $sth = prepare_ca($sql, undef, DEBUG);
-
-		execute($sth, $self->_get('version_id'));
-		while (my $row = fetch($sth)) {
-			$cats->{$row->[0]}->{'primary'} = $row->[1];
-		}
-
-		# Write this back in case it has not yet been defined.
-		$self->_set( {
-				'_categories' => $cats,
-				'_queried_cats' => 1 
-			});
-
-		$self->_set__dirty($dirty);
-	}
-
-	return $cats;
+        # Write this back in case it has not yet been defined.
+        $self->_set( { '_categories' => $cats,
+                       '_queried_cats' => 1 });
+        $self->_set__dirty($dirty);
+    }
+    return $cats;
 }
 
 ################################################################################
 
-=item $ba = $ba->_sync_categories 
+=item $ba = $ba->_sync_categories
 
-Called by save this will make sure that all the changes in category
-mappings are reflected in the database
+Called by save this will make sure that all the changes in category mappings
+are reflected in the database
 
 B<Throws:>
 
@@ -2020,19 +1951,19 @@ sub _sync_categories {
     my $dirty = $self->_get__dirty();
     my $cats = $self->_get_categories();
     foreach my $cat_id (keys %$cats) {
-	next unless $cats->{$cat_id}->{'action'};
-	if ($cats->{$cat_id}->{'action'} eq 'insert') {
-	    my $primary = $cats->{$cat_id}->{'primary'} ? 1 : 0;
-	    $self->_insert_category($cat_id, $primary);
-	    $cats->{$cat_id}->{'action'} = undef;
-	} elsif ($cats->{$cat_id}->{'action'} eq 'update') {
-	    my $primary = $cats->{$cat_id}->{'primary'} ? 1 : 0;
-	    $self->_update_category($cat_id, $primary);
-	    $cats->{$cat_id}->{'action'} = undef;
-	} elsif ($cats->{$cat_id}->{'action'} eq 'delete') {
-	    $self->_delete_category($cat_id);
-	    delete $cats->{$cat_id};
-	}
+        next unless $cats->{$cat_id}->{'action'};
+        if ($cats->{$cat_id}->{'action'} eq 'insert') {
+            my $primary = $cats->{$cat_id}->{'primary'} ? 1 : 0;
+            $self->_insert_category($cat_id, $primary);
+            $cats->{$cat_id}->{'action'} = undef;
+        } elsif ($cats->{$cat_id}->{'action'} eq 'update') {
+            my $primary = $cats->{$cat_id}->{'primary'} ? 1 : 0;
+            $self->_update_category($cat_id, $primary);
+            $cats->{$cat_id}->{'action'} = undef;
+        } elsif ($cats->{$cat_id}->{'action'} eq 'delete') {
+            $self->_delete_category($cat_id);
+            delete $cats->{$cat_id};
+        }
     }
 
     $self->_set( { '_categories' => $cats });
@@ -2061,16 +1992,14 @@ NONE
 =cut
 
 sub _insert_category {
-	my ($self, $category_id,$primary) = @_;
+    my ($self, $category_id,$primary) = @_;
+    my $sql = "INSERT INTO story__category ".
+      "(id, story_instance__id, category__id, main) ".
+      "VALUES (${\next_key('story__category')},?,?,?)";
 
-	my $sql = "INSERT INTO story__category ".
-				"(id, story_instance__id, category__id, main) ".
-				"VALUES (${\next_key('story__category')},?,?,?)";
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'), $category_id, $primary);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $category_id, $primary);
+    return $self;
 }
 
 ################################################################################
@@ -2094,15 +2023,13 @@ NONE
 =cut
 
 sub _delete_category {
-	my ($self, $category_id) = @_;
+    my ($self, $category_id) = @_;
+    my $sql = "DELETE FROM story__category ".
+      "WHERE story_instance__id=? AND category__id=? ";
 
-	my $sql = "DELETE FROM story__category ".
-				"WHERE story_instance__id=? AND category__id=? ";
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'), $category_id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'), $category_id);
+    return $self;
 }
 
 ################################################################################
@@ -2126,16 +2053,14 @@ NONE
 =cut
 
 sub _update_category {
-	my ($self, $category_id,$primary) = @_;
+    my ($self, $category_id,$primary) = @_;
+    my $sql = "UPDATE story__category ".
+      "SET main=? ".
+      "WHERE story_instance__id=? AND category__id=? ";
 
-	my $sql = "UPDATE story__category ".
-				"SET main=? ".
-				"WHERE story_instance__id=? AND category__id=? ";
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $primary, $self->_get('version_id'), $category_id);
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $primary, $self->_get('version_id'), $category_id);
+    return $self;
 }
 
 ###############################################################################
@@ -2159,29 +2084,23 @@ NONE
 =cut
 
 sub _get_attribute_object {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $dirty = $self->_get__dirty();
+    my $attr_obj = $self->_get('_attribute_object');
+    return $attr_obj if $attr_obj;
 
-	my $dirty = $self->_get__dirty();
-
-	my $attr_obj = $self->_get('_attribute_object');
-
-	return $attr_obj if $attr_obj;
-
-	# Let's Create a new one if one does not exist
-	$attr_obj = Bric::Util::Attribute::Story->new(
-				{id => $self->_get('id')});
-
-	$self->_set( {'_attribute_object' => $attr_obj} );
-	$self->_set__dirty($dirty);
-
-	return $attr_obj;
+    # Let's Create a new one if one does not exist
+    $attr_obj = Bric::Util::Attribute::Story->new({ id => $self->_get('id') });
+    $self->_set( {'_attribute_object' => $attr_obj} );
+    $self->_set__dirty($dirty);
+    return $attr_obj;
 }
 
 ################################################################################
 
 =item $self = $self->_do_delete()
 
-Removes the row from te database
+Removes the row from the database
 
 B<Throws:>
 
@@ -2198,16 +2117,12 @@ NONE
 =cut
 
 sub _do_delete {
-	my ($self) = @_;
-
-	my $delete = prepare_c( qq{
-		DELETE FROM 
-			TABLE
-		WHERE
-			id=?
-		}, undef, DEBUG);
-
-	execute($delete, $self->_get('id'));
+    my ($self) = @_;
+    my $delete = prepare_c(qq{
+        DELETE FROM ${ \TABLE() }
+        WHERE  id=?
+    }, undef, DEBUG);
+    execute($delete, $self->_get('id'));
 }
 
 ################################################################################
@@ -2231,20 +2146,17 @@ NONE
 =cut
 
 sub _insert_story {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
+      "VALUES (${\next_key(TABLE)}, ". join(', ',  ('?') x COLS) .')';
 
-	my $sql = 'INSERT INTO ' . TABLE . ' (id, ' . join(', ', COLS) . ') '.
-				"VALUES (${\next_key(TABLE)}, ". join(', ',  ('?') x COLS) .')';
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(FIELDS));
+    $self->_set({ id => last_key(TABLE) });
 
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(FIELDS));
-
-	$self->_set( { id => last_key(TABLE) });
-
-	# And finally, register this person in the "All Stories" group.
-	$self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-
-	return $self;
+    # And finally, register this person in the "All Stories" group.
+    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+    return $self;
 }
 
 ################################################################################
@@ -2268,19 +2180,16 @@ NONE
 =cut
 
 sub _insert_instance {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $sql = 'INSERT INTO '. VERSION_TABLE .
+      ' (id, '.join(', ', VERSION_COLS) . ')'.
+      "VALUES (${\next_key(VERSION_TABLE)}, ".
+      join(', ', ('?') x VERSION_COLS) . ')';
 
-	my $sql = 'INSERT INTO '. VERSION_TABLE .
-				' (id, '.join(', ', VERSION_COLS) . ')'.
-				"VALUES (${\next_key(VERSION_TABLE)}, ".
-					join(', ', ('?') x VERSION_COLS) . ')';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(VERSION_FIELDS));
-
-	$self->_set( { version_id => last_key(VERSION_TABLE) });
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(VERSION_FIELDS));
+    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    return $self;
 }
 
 ################################################################################
@@ -2304,17 +2213,14 @@ NONE
 =cut
 
 sub _update_story {
-	my ($self) = @_;
+    my ($self) = @_;
+    return unless $self->_get__dirty();
+    my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map {"$_=?" } COLS) .
+      ' WHERE id=? ';
 
-	return unless $self->_get__dirty();
-
-	my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map {"$_=?" } COLS) .
-				' WHERE id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(FIELDS), $self->_get('id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(FIELDS), $self->_get('id'));
+    return $self;
 }
 
 ################################################################################
@@ -2338,18 +2244,15 @@ NONE
 =cut
 
 sub _update_instance {
-	my ($self) = @_;
+    my ($self) = @_;
+    return unless $self->_get__dirty();
+    my $sql = 'UPDATE ' . VERSION_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+      ' WHERE id=? ';
 
-	return unless $self->_get__dirty();
-
-	my $sql = 'UPDATE ' . VERSION_TABLE .
-				' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
-				' WHERE id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################
@@ -2373,15 +2276,13 @@ NONE
 =cut
 
 sub _delete_instance {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+      ' WHERE id=? ';
 
-	my $sql = 'DELETE FROM ' . VERSION_TABLE .
-				' WHERE id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('version_id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################
@@ -2405,15 +2306,13 @@ NONE
 =cut
 
 sub _delete_story {
-	my ($self) = @_;
+    my ($self) = @_;
+    my $sql = 'DELETE FROM ' . TABLE .
+      ' WHERE id=? ';
 
-	my $sql = 'DELETE FROM ' . TABLE .
-				' WHERE id=? ';
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-	execute($sth, $self->_get('id'));
-
-	return $self;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $self->_get('id'));
+    return $self;
 }
 
 ################################################################################
@@ -2429,8 +2328,7 @@ NONE
 
 =head1 AUTHOR
 
-"Michael Soderstrom" <miraso@pacbell.net>
-Bricolage Engineering
+Michael Soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
