@@ -1,5 +1,5 @@
 body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
+td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px; font-weight: bold;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
 pre        { font-size:11px;}
 
@@ -78,6 +78,7 @@ div.debug dt:after {
     width: 580px;
     font-size: 11px;
     line-height: 11px;
+    font-weight: normal;
 }
 
 .desk_item {
