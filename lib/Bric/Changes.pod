@@ -115,6 +115,12 @@ Added the C<CHAR_SET> directive's value to Bricolage's Apache configuration
 via the F<httpd.conf> directive C<AddDefaultCharset>. Might help with some
 Unicode issues. [David]
 
+=item *
+
+Distribution error handling is better now, with errors passed back to the
+client and an error when F<bric_dist_mon> attempts to connect to a server or
+URL that's not a Bricolage distribution server. [David]
+
 =back
 
 =head1 VERSION 1.6.1
