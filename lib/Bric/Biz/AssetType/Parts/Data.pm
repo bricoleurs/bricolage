@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.12.2.3 $
+$Revision: 1.12.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.4 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 20:33:45 $
+$Date: 2003-08-14 21:08:47 $
 
 
 =head1 SYNOPSIS
@@ -1282,7 +1282,7 @@ sub remove {
 
     my $sql = 'DELETE FROM '.TABLE.' WHERE id=?';    
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $id);
 
     return $self;
@@ -1520,7 +1520,7 @@ sub _select_data {
     my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
               ' WHERE id = ? AND active = ?';
 
-    my $sth = prepare_ca($sql);
+    my $sth = prepare_ca($sql, undef);
     execute($sth, $id, 1);
     bind_columns($sth, \@d[0..(scalar COLS - 1)]);
     fetch($sth);
@@ -1557,7 +1557,7 @@ sub _update_data {
               ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
 
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS), $self->get_id);
     return 1;
 }
@@ -1590,7 +1590,7 @@ sub _insert_data {
     my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
               "VALUES ($nextval,".join(',', ('?') x COLS).')';
 
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(COLS));
 
     # Set the ID of this object.
