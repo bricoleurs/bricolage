@@ -33,7 +33,7 @@ do_sql
 
   # Add a new aggregate index.
   q/CREATE UNIQUE INDEX udx_server_type__name_site
-      ON server_type(LOWER(name, site__id))/
+      ON server_type(lower_text_num(name, site__id))/
 ;
 
 __END__

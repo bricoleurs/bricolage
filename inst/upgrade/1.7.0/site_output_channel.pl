@@ -28,7 +28,7 @@ do_sql
       FOREIGN KEY (site__id) REFERENCES site(id)
       ON DELETE CASCADE/,
 
-  # Add an index.
+  # Add the index.
   q/CREATE INDEX fkx_site__output_channel ON output_channel(site__id)/,
 
   # Drop the old index on the name column.
@@ -36,7 +36,7 @@ do_sql
 
   # Add a new aggregate index.
   q/CREATE UNIQUE INDEX udx_output_channel__name_site
-      ON output_channel(LOWER(name, site__id))/
+      ON output_channel(lower_text_num(name, site__id))/
 ;
 
 __END__

@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-13 21:43:15 $
+$Date: 2003-03-15 06:05:25 $
 
 =head1 SYNOPSIS
 
@@ -26,7 +26,6 @@ $Date: 2003-03-13 21:43:15 $
   $name  = $flow->get_name;
   $flow  = $flow->set_name($name);
 
-  $site    = $flow->get_site;
   $site_id = $flow->get_site_id;
   $flow    = $flow->set_site_id($site_id);
 
@@ -661,10 +660,10 @@ sub my_meths {
                               disp     => 'Site',
                               type     => 'short',
                               req      => 0,
-               #               props    => { type       => 'text',
-               #                             length     => 10,
-               #                             maxlength  => 10
-               #                           }
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
+                                          }
                              },
               active      => {
                               name     => 'active',
@@ -698,7 +697,17 @@ sub my_meths {
 
 =over 4
 
-=item $id = $workflow->get_site_id()
+=item $id = $workflow->get_id
+
+Returns the workflow's ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $site_id = $workflow->get_site_id
 
 Returns the ID of the site this Workflow is a part of
 
@@ -708,7 +717,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $workflow = $workflow->set_site_id($id)
+=item $workflow = $workflow->set_site_id($site_id)
 
 Set the ID of the site this Workflow should be a part of
 

@@ -5,41 +5,33 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-exit if test_sql(qq{SELECT site__id FROM workflow});
+exit if test_sql 'SELECT 1 FROM workflow WHERE id = 101 AND site__id = 100';
 
 do_sql
-q{ DROP INDEX udx_workflow__name},
-q{ DROP INDEX pk_workflow__id},
-q {ALTER TABLE workflow RENAME TO upgrade_workflow},
+  # Add the new site__id column.
+  q/ALTER TABLE workflow ADD site__id NUMERIC(10, 0)/,
 
+  # Populate site__id with data.
+  q/UPDATE workflow SET site__id = 100/,
 
+  # Add a NOT NULL constraint.
+  q{ALTER TABLE workflow
+      ADD CONSTRAINT ck_workflow_null
+      CHECK (site__id IS NOT NULL)},
 
-q{ CREATE TABLE workflow (
-    id               NUMERIC(10)  NOT NULL
-                                  DEFAULT NEXTVAL('seq_workflow'),
-    name             VARCHAR(64)  NOT NULL,
-    description      VARCHAR(256) NOT NULL,
-    all_desk_grp_id  NUMERIC(10)  NOT NULL,
-    req_desk_grp_id  NUMERIC(10)  NOT NULL,
-    head_desk_id     NUMERIC(10)  NOT NULL,
-    type             NUMERIC(1)   NOT NULL,
-    active           NUMERIC(1)	  NOT NULL
-                                  DEFAULT 1
-                                  CONSTRAINT ck_workflow__active
-                                    CHECK (active IN (0,1)),
-    site__id         NUMERIC(10)  NOT NULL,
-    CONSTRAINT pk_workflow__id PRIMARY KEY (id)
-)},
+  # Add a foreign key constraint.
+  q/ALTER TABLE workflow
+      ADD CONSTRAINT fk_site__workflow__site__id
+      FOREIGN KEY (site__id) REFERENCES site(id)
+      ON DELETE CASCADE/,
 
-q{ INSERT INTO workflow SELECT *,100 FROM upgrade_workflow},
+  # Drop the old name index.
+  q{DROP INDEX udx_workflow__name},
 
-q{ DROP TABLE upgrade_workflow},
+  # Add the indexes.
+  q{CREATE UNIQUE INDEX udx_workflow__name__site__id
+    ON workflow(lower_text_num(name, site__id))},
 
-q{ CREATE INDEX fkx_site__workflow__site__id ON workflow(site__id)},
-
-q{ ALTER TABLE    workflow
-ADD CONSTRAINT fk_site__workflow__site__id FOREIGN KEY (site__id)
-REFERENCES     site(id) ON DELETE CASCADE},
-
-;
+  q{CREATE INDEX fkx_site__workflow__site__id ON workflow(site__id)},
+  ;
 

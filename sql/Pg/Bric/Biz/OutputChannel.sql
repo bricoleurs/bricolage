@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-15 05:16:21 $
+-- $Date: 2003-03-15 06:05:25 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -88,10 +88,11 @@ CREATE TABLE output_channel_member (
 CREATE UNIQUE INDEX udx_output_channel__name_site
 ON output_channel(lower_text_num(name, site__id));
 
+CREATE INDEX fkx_site__output_channel ON output_channel(site__id);
 CREATE INDEX idx_output_channel__filename ON output_channel(LOWER(filename));
 CREATE INDEX idx_output_channel__file_ext ON output_channel(LOWER(file_ext));
+
 CREATE INDEX fkx_output_channel__oc_include ON output_channel_include(output_channel__id);
-CREATE INDEX fkx_site__output_channel ON output_channel(site__id);
 CREATE INDEX fkx_oc__oc_include_inc ON output_channel_include(include_oc_id);
 CREATE UNIQUE INDEX udx_output_channel_include ON output_channel_include(output_channel__id, include_oc_id);
 CREATE INDEX fkx_output_channel__oc_member ON output_channel_member(object_id);
