@@ -121,6 +121,11 @@ Distribution error handling is better now, with errors passed back to the
 client and an error when F<bric_dist_mon> attempts to connect to a server or
 URL that's not a Bricolage distribution server. [David]
 
+=item *
+
+Enabled the C<PERL_LOADER> F<bricolage.conf> configuration directive and gave
+it a default value that's actualy useful. [David]
+
 =back
 
 =head1 VERSION 1.6.1
