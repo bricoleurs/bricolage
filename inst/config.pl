@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-04-08 23:25:26 $
 
 =head1 DESCRIPTION
 
@@ -81,6 +81,9 @@ END
 	$CONFIG{MODULE_DIR}     = $Config{sitelib};
 	$CONFIG{BIN_DIR}        = $Config{scriptdir};
 	$CONFIG{MAN_DIR}        = $Config{man3dir};
+
+	# remove man3 trailer
+	$CONFIG{MAN_DIR} =~ s!/man3!!;
 	
 	# construct default system-wide log directory based on Apache
 	# error_log setting
