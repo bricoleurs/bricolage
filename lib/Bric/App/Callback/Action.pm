@@ -5,10 +5,9 @@ use strict;
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'action');
 
-use Bric::App::Authz;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
-use Bric::Util::Priv::Parts::Const qw(EDIT);
 
 my $disp = get_disp_name(CLASS_KEY);
 my $class = get_package_name(CLASS_KEY)
