@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2002-11-19 00:18:37 $
+$Date: 2002-12-05 00:26:11 $
 
 =head1 SYNOPSIS
 
@@ -45,7 +45,7 @@ Specification section.
 
 =head2 Supported Functionality
 
-The Bricolage SOAP interface will support the following features: 
+The Bricolage SOAP interface will support the following features:
 
 =over 4
 
@@ -220,7 +220,7 @@ Perl call like:
 Is called through SOAP as:
 
   <SOAP-ENV:Body>
-    <namesp2:list_ids 
+    <namesp2:list_ids
      xmlns:namesp2="http://bricolage.sourceforge.net/Bric/SOAP/Story">
       <title xsi:type="xsd:string">%foo%</title>
       <publish_status xsi:type="xsd:int">1</publish_status>
@@ -231,7 +231,7 @@ SOAP::Lite clients can generate this call using SOAP::Data::name() to
 name the parameters:
 
   import SOAP::Data 'name';
-  my $result = $soap->list_ids(name(title          => '%foo%'), 
+  my $result = $soap->list_ids(name(title          => '%foo%'),
                                name(publish_status => 1)       );
 
 In most cases Perl doesn't distinguish between strings and numbers.
@@ -246,7 +246,7 @@ needs to return multiple values then a SOAP array is returned
 containing the values.  For example, Bric::SOAP::Story->list_ids()
 returns a list of story ids in this structure:
 
-  <namesp2:list_idsResponse 
+  <namesp2:list_idsResponse
    xmlns:namesp2="http://bricolage.sourceforge.net/Bric/SOAP/Story">
     <story_ids SOAP-ENC:arrayType="xsd:int[4]" xsi:type="SOAP-ENC:Array">
        <story_id xsi:type="xsd:int">1027</story_id>
@@ -258,7 +258,7 @@ returns a list of story ids in this structure:
 
 And an empty response returns an empty array:
 
-  <namesp1:list_idsResponse 
+  <namesp1:list_idsResponse
    xmlns:namesp1="http://bricolage.sourceforge.net/Bric/SOAP/Story">
     <story_ids SOAP-ENC:arrayType="xsd:ur-type[0]" xsi:type="SOAP-ENC:Array"/>
   </namesp1:list_idsResponse>
@@ -390,7 +390,7 @@ The XSD source:
                    </xs:sequence>
                  </xs:complexType>
                </xs:element>
-               <xs:element name="output_channels">
+               <xs:element name="output_channels" minOccurs="0">
                  <xs:complexType>
                    <xs:sequence>
                      <xs:element name="output_channel" maxOccurs="unbounded">
