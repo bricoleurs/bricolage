@@ -132,8 +132,12 @@ Perl 5.8.0 or later is now strongly recommended for better Unicode support.
 
 =item *
 
-Fixed deleting an Alert Type Rule. Also fixed Editing Alert Type
-Recipients. [Scott]
+Fixed deleting an Alert Type Rule. Also fixed Editing Alert Type Recipients.
+[Scott]
+
+=item *
+
+Notes are once again saved with a document. Thanks to Scott for the spot! [David]
 
 =back
 

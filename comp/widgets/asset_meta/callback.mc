@@ -16,7 +16,7 @@ if ($field eq "$widget|add_note_cb") {
     my $key = $widget . '|note';
     my $note = $param->{$key};
     $obj->add_note($note);
-#    $obj->save();
+    $obj->save;
     add_msg('Note saved.');
     set_state_data($widget, 'obj');
 
