@@ -22,14 +22,18 @@ if ($param->{tplate_type}) {
     if ($param->{tplate_type} ==
         Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
         # It's an element template. Offer them a list of elements to
-        # choose from.
+        # choose from. Get the top-level elements for this site, and then
+        # all of the subelements.
+        my @objs = sort { $a->get_name cmp $b->get_name }
+          Bric::Biz::AssetType->list({ top_level => 0 }),
+          Bric::Biz::AssetType->list({ site_id => $site_id });
         $m->comp('/widgets/select_object/select_object.mc',
                  object    => 'element',
                  name      => $widget.'|at_id',
                  field     => 'name',
                  reset_key => $rk,
                  exclude   => $excl_media_sub,
-                 constrain => { site_id => $site_id },
+                 objs      => \@objs,
                  disp      => 'Element');
     } elsif ($param->{tplate_type} ==
              Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
