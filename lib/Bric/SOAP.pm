@@ -181,7 +181,7 @@ Provides query, export, update, create, and delete for Element definitions.
 Provides query, export, update, create, and delete for Category objects.
 
 =item L<Bric::SOAP::MediaType|Bric::SOAP::MediaType>
-n
+
 Provides query, export, update, create, and delete for MediaType objects.
 
 =item L<Bric::SOAP::Site|Bric::SOAP::Site>
