@@ -203,10 +203,6 @@ sub publish : Callback {
                 }
             }
         }
-
-        # Add these unpublished related assets to be published as well.
-        push @$story, @rel_story;
-        push @$media, @rel_media;
     }
 
     # For publishing from a desk, I added two new 'publish'

@@ -8,11 +8,11 @@ publish - A widget to display publish options.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2004-03-01 17:32:21 $
+$Date: 2004-03-17 09:34:02 $
 
 =head1 SYNOPSIS
 
@@ -39,7 +39,14 @@ my $media_pkg = get_package_name($media_key_name);
 <%init>;
 my ($story_pub_ids, $media_pub_ids);
 if (my $d = get_state_data($widget)) {
+    # Get the original assets
     ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
+    # Get related assets, too
+    my ($rel_story_ids, $rel_media_ids) = @{$d}{qw(rel_story rel_media)};
+    push @$story_pub_ids, @$rel_story_ids
+      if defined($rel_story_ids) && @$rel_story_ids;
+    push @$media_pub_ids, @$rel_media_ids
+      if defined($rel_media_ids) && @$rel_media_ids;
 }
 
 my $objs = [];
