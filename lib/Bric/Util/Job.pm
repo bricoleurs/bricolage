@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 22:00:41 $
+$Date: 2004-02-19 14:51:56 $
 
 =head1 SYNOPSIS
 
@@ -127,9 +127,11 @@ my $PKG_MAP = {
 
 ################################################################################
 # Private Class Fields
-my @COLS = qw(id name expire usr__id sched_time priority comp_time tries executing story__id media__id class__id error_message failed);
-my @PROPS = qw(id name type user_id sched_time priority comp_time tries _executing story_id media_id _class_id error_message _failed);
-my @ORD = @PROPS[1..$#PROPS - 1];
+my @COLS = qw(id name expire usr__id sched_time priority comp_time tries
+              error_message executing story__id media__id class__id failed);
+my @PROPS = qw(id name type user_id sched_time priority comp_time tries
+               error_message _executing story_id media_id _class_id _failed);
+my @ORD = @PROPS[1..$#PROPS - 6];
 
 my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, a.priority, '
   . 'a.comp_time, a.tries, a.executing, a.story__id, a.media__id, '
