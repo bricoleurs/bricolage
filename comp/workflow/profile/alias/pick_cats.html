@@ -2,8 +2,7 @@
 my $i;
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title   => $lang->maketext("Select Categories"),
-         context => $lang->maketext("Workflow | Profile | $disp | Select Alias"),
-         wf_id   => $wf_id);
+         context => $lang->maketext("Workflow | Profile | $disp | Select Alias"));
 
 $m->print('<form method="post" action="', $r->uri,
           qq{" name="pick_cats" onSubmit="return confirmChanges(this)">\n});
@@ -11,36 +10,14 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => $caption,
          number  => ++$i);
 # Let 'em pick a category for the story they're aliasing.
-$m->print('<br />', $cat_sel, '<br />');
+$m->print('<br />', $cat_sel->(), '<br />');
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 # Let 'em alias related stories.
-if (@rel_story) {
-    $m->comp('/widgets/listManager/listManager.mc',
-             object   => 'story',
-             title    => 'Related %n to Alias',
-             addition => undef,
-             objs     => \@rel_story,
-             fields   => [qw(id name uri cover_date)],
-             profile  => undef,
-             select   => undef,
-             number   => ++$i,
-	);
-}
+$m->comp('.relateds', 'story', \@rel_story, ++$i) if @rel_story;
 
 # Let 'em alias related media.
-if (@rel_media) {
-    $m->comp('/widgets/listManager/listManager.mc',
-             object   => 'media',
-             title    => 'Related %n to Alias',
-             addition => undef,
-             objs     => \@rel_media,
-             fields   => [qw(id name uri cover_date)],
-             profile  => undef,
-             select   => undef,
-             number   => ++$i,
-	);
-}
+$m->comp('.relateds', 'media', \@rel_media, ++$i) if @rel_media;
 
 # Send 'em on up!
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -63,20 +40,65 @@ my %dispmap = ( story => get_disp_name('story'),
                 media => get_disp_name('media')
               );
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
+
+my ($caption, $site_id, $class_key);
+# We'll use this closure to output the hidden fields and select lists for
+# related assets, as well as the main select list for the main asset being
+# aliased.
+my $cat_sel = sub {
+    my ($o, $field) = @_;
+    my ($cap, $table, $default);
+    my $ret;
+    if ($field) {
+        if ($field eq 'name') {
+            # Give 'em a preview link.
+            return qq{<a href="/workflow/profile/preview/$class_key/} .
+              $o->get_id . '" class="blackUnderlinedLink" target="preview_' .
+              SERVER_WINDOW_NAME . '">' . $o->get_title . '</a>';
+        }
+        return if $field ne 'category';
+        $cap = '';
+        $table = 0;
+        $default = ['', $lang->maketext('No Alias')];
+        # Output a hidden field for this asset.
+        $ret = $m->scomp( '/widgets/profile/hidden.mc',
+                          name  => $o->key_name . '_id',
+                          value => $o->get_id
+                        );
+    } else {
+        $cap = $caption;
+        $table = 1;
+    }
+    return $ret .
+    $m->scomp( '/widgets/select_object/select_object.mc',
+               object     => 'category',
+               disp       => $cap,
+               name       => "category_id",
+               constrain  => { site_id => $site_id },
+               exclude    => $excl_sub,
+               req        => 1,
+               default    => $default,
+               field      => 'uri',
+               sort_field => 'uri',
+               useTable   => $table,
+               no_persist => 1,
+             );
+};
+
 </%once>
 <%shared>;
-my $caption = $lang->maketext("Select a Category");
-</%shared>
-<%init>;
-# Load 'em on up!
-my $class_key = get_state_data($widget, 'class_key');
-my $disp = $dispmap{$class_key} or redirect("/");
-my $aliased_id = get_state_data($widget, 'aliased_id');
-my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
+$caption = $lang->maketext("Select a Category");
 my $wf_id = get_state_data($widget, 'wf_id');
 my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
 my $gid = $wf->get_all_desk_grp_id;
-my $site_id = $wf->get_site_id;
+$site_id = $wf->get_site_id;
+$class_key = get_state_data($widget, 'class_key');
+</%shared>
+<%init>;
+# Load 'em on up!
+my $disp = $dispmap{$class_key} or redirect("/");
+my $aliased_id = get_state_data($widget, 'aliased_id');
+my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
 # Find any related assets.
 my (@rel_story, @rel_media);
@@ -86,23 +108,29 @@ foreach my $rel ($aliased->get_related_objects) {
     if(chk_authz($rel, READ, 1)
        and chk_authz($ref, CREATE, 0, $site_id, $gid)) {
         if ($ref->isa('Bric::Biz::Asset::Business::Story')) {
-            push @rel_story, $rel->get_id;
+            push @rel_story, $rel;
         } else {
-            push @rel_media, $rel->get_id;
+            push @rel_media, $rel;
         }
     }
 }
 
-# Load up the list of categories.
-my $cat_sel = $m->scomp( '/widgets/select_object/select_object.mc',
-                         object     => 'category',
-                         disp       => $caption,
-                         name       => "category_id",
-                         constrain  => { site_id => $site_id },
-                         exclude    => $excl_sub,
-                         req        => 1,
-                         field      => 'uri',
-                         sort_field => 'uri',
-                         useTable   => 1
-                       );
 </%init>
+<%def .relateds>
+<%perl>;
+my ($key, $rels, $num) = @_;
+$m->comp('/widgets/listManager/listManager.mc',
+         object       => $key,
+         title        => 'Related %n to Alias',
+         addition     => undef,
+         objs         => $rels,
+         fields       => [qw(name uri category)],
+         field_titles => { category => $lang->maketext("Alias in Category") },
+         field_values => $cat_sel,
+         profile      => undef,
+         select       => undef,
+         number       => $num,
+        );
+$m->print('<br />');
+</%perl>
+</%def>
