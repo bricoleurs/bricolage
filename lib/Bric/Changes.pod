@@ -14,6 +14,25 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.7.3 ()
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+The F<bric_media_upload> contributed script now provides a more meaningful
+error message when it can't find F<bric_soap>. [Dave Rolsky]
+
+=item *
+
+The F<bric_dist_mon> C<-U> option no longer requires that "/dist/" be at the
+end of the URL. If "/dist/" is missing, F<bric_dist_mon> will append it.
+[David]
+
+=back
+
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
 
 =head2 New Features

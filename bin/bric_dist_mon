@@ -74,7 +74,8 @@ to 30 seconds.
 =item -U
 
 The distribution server URL, including the protocol. Defaults to
-"http://localhost/dist/".
+"http://localhost/dist/". If "/dist" isn't appended to the end of the URL,
+F<bric_dist_mon> will append it for you.
 
 =item -a
 
@@ -182,7 +183,13 @@ usage("User name and password are required.") unless $opt_u && $opt_p;
 # Make sure we have an interval and a debugging value.
 $opt_i ||= INTERVAL;
 $opt_d ||= DEBUG;
-$opt_U ||= URL;
+if ($opt_U) {
+    unless ($opt_U =~ m[/dist/?$]) {
+        $opt_U .= $opt_U m[/$] ? 'dist/' : '/dist/';
+    }
+} else {
+    $opt_U ||= URL;
+}
 
 ################################################################################
 {
