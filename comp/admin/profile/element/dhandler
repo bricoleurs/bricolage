@@ -196,7 +196,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                         $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
                     }
                     $tmp->{value} = $metas->{value};
-                    $tmp->{name} = $dataObj->get_name;
+                    $tmp->{name} = $dataObj->get_key_name;
                     $tmp->{id} = $dataObj->get_id;
                     push @$attrs, $tmp;
                 }
@@ -299,11 +299,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =head1 DATE
 
-$Date: 2003-04-28 13:35:49 $
+$Date: 2003-04-29 12:58:20 $
 
 =head1 DESCRIPTION
 
