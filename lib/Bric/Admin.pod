@@ -127,7 +127,7 @@ START MODULE LIST
 
 =item Params::Validate
 
-=item Exception::Class 1.20
+=item Exception::Class 1.12
 
 =item Class::Container 0.09
 
