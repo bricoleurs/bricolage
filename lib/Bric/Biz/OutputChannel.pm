@@ -3,91 +3,86 @@ package Bric::Biz::OutputChannel;
 
 =head1 NAME
 
-Bric::Biz::OutputChannel - The manner of keeping track of output channels 
+Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2001-12-18 03:20:03 $
 
 =head1 SYNOPSIS
 
- $oc = Bric::Biz::OutputChannel->new( $initial_state )
+  use Bric::Biz::OutputChannel;
 
- $oc = Bric::Biz::OutputChannel->lookup( { id => $id} )
+  # Constructors.
+  $oc = Bric::Biz::OutputChannel->new( $initial_state );
+  $oc = Bric::Biz::OutputChannel->lookup( { id => $id} );
+  my $ocs_aref = Bric::Biz::OutputChannel->list( $criteria );
+  my @ocs = Bric::Biz::OutputChannel->list( $criteria );
 
- ($ocs_aref || @ocs) = Bric::Biz::OutputChannel->list( $criteria )
+  # Class Methos.
+  my $id_aref = Bric::Biz::OutputChannel->list_ids( $criteria );
+  my @ids = Bric::Biz::OutputChannel->list_ids( $criteria );
 
- ($id_aref || @ids) = Bric::Biz::OutputChannel->list_ids( $criteria )
+  # Instance Methods.
+  $id = $oc->get_id;
 
- $oc = $oc->set_name( $name )
+  my $name = $oc->get_name;
+  $oc = $oc->set_name( $name );
 
- $name = $oc->get_name()
+  my $description = $oc->get_description;
+  $oc = $oc->set_description( $description );
 
- $oc = $oc->set_description( $description )
+  if ($oc->get_primary) { # do stuff }
+  $oc = $oc->set_primary(1); # or pass undef.
 
- $description = $oc->get_description()
+  my @ocs = >$oc->get_includes(@ocs);
+  $oc->set_includes(@ocs);
 
- $oc = $oc->set_tile_aware( undef || 1)
+  $oc = $oc->activate;
+  $oc = $oc->deactivate;
+  $oc = $oc->is_active;
 
- (undef || 1 ) = $oc->get_tile_aware()
-
- $oc = $oc->set_primary( undef || 1)
-
- (undef || 1 ) = $oc->get_primary()
-
- $oc = $oc->activate()
-
- $oc = $oc->deactivate()
-
- $oc = $oc->is_active()
-
- $id = $oc->get_id()
-
- $oc = $oc->save()
+  $oc = $oc->save;
 
 =head1 DESCRIPTION
 
-
-Holds information about the output channels that will be associated with 
-templates and elements
+Holds information about the output channels that will be associated with
+templates and elements.
 
 =cut
 
-#==============================================================================## Dependencies                         #
+#==============================================================================
+## Dependencies                        #
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
+# Programatic Dependencies.
 use Bric::Config qw(:oc);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
+use Bric::Util::Fault::Exception::GEN;
+use Bric::Util::Fault::Exception::DP;
 
 #==============================================================================
 ## Inheritance                         #
 #======================================#
-
-# The parent module should have a 'use' line if you need to import from it.
-# use Bric;
 use base qw(Bric);
 
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
-
 # None
 
 #==============================================================================
@@ -113,57 +108,67 @@ use constant GROUP_PACKAGE => 'Bric::Util::Grp::OutputChannel';
 
 #--------------------------------------#
 # Public Class Fields
-# Public fields should use 'vars'
-#use vars qw();
+
+# None.
 
 #--------------------------------------#
 # Private Class Fields
-
-# Private fields use 'my'
 my $meths;
+my $gen = 'Bric::Util::Fault::Exception::GEN';
+my $dp  = 'Bric::Util::Fault::Exception::DP';
+
+my %txt_map = ( name      => 'LOWER(name) LIKE ?',
+		pre_path  => 'LOWER(pre_path) LIKE ?',
+		post_path => 'LOWER(post_path) LIKE ?',
+);
+my %num_map = ( primary => 'primary = ?',
+	        active  => 'active = ?',
+	        server_type_id => 'id in (select output_channel__id from '
+		                  . 'server_type__output_channel where '
+                                  . 'server_type__id = ?)'
+);
 
 #--------------------------------------#
 # Instance Fields
 
-# None
-
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields({
-            # Public Fields
-			# The human readable name field
-			'name'		=> Bric::FIELD_RDWR,
+    Bric::register_fields(
+      {
+       # Public Fields
+       # The human readable name field
+       'name'		=> Bric::FIELD_RDWR,
 
-			# The human readable description field
-			'description'	=> Bric::FIELD_RDWR,
+       # The human readable description field
+       'description'	=> Bric::FIELD_RDWR,
 
-			# might want to be write since if it changes
-			# it will fuck alot up
-			'pre_path'		=> Bric::FIELD_RDWR,
+       # might want to be write since if it changes
+       # it will fuck alot up
+       'pre_path'		=> Bric::FIELD_RDWR,
 
-			# same as prepath
-			'post_path'		=> Bric::FIELD_RDWR,
+       # same as prepath
+       'post_path'		=> Bric::FIELD_RDWR,
 
-                        # These will be used to construct file names
-                        # for content files burned to the Output Channel.
-                        'filename'              => Bric::FIELD_RDWR,
-                        'file_ext'              => Bric::FIELD_RDWR,
+       # These will be used to construct file names
+       # for content files burned to the Output Channel.
+       'filename'              => Bric::FIELD_RDWR,
+       'file_ext'              => Bric::FIELD_RDWR,
 
-			# the flag as to wheather this is a primary
-			# output channel
-			'primary'		=> Bric::FIELD_RDWR,
+       # the flag as to wheather this is a primary
+       # output channel
+       'primary'		=> Bric::FIELD_RDWR,
 
-			# The data base id
-			'id'           => Bric::FIELD_READ,
+       # The data base id
+       'id'           => Bric::FIELD_READ,
 
-			# Private Fileds
-
-			# The active flag
-			'_active'		=> Bric::FIELD_NONE
-	});
+       # Private Fileds
+       # The active flag
+       '_active'		=> Bric::FIELD_NONE
+      });
 }
 
-#==============================================================================## Interface Methods                    #
+#==============================================================================
+## Interface Methods                   #
 #======================================#
 
 =head1 INTERFACE
@@ -175,16 +180,14 @@ BEGIN {
 =cut
 
 #--------------------------------------#
-# Constructors  
+# Constructors
 
 #------------------------------------------------------------------------------#
 
-=item $oc = Bric::Biz::Output_channel->new( $initial_state )
+=item $oc = Bric::Biz::OutputChannel->new( $initial_state )
 
-This will create a new Output channel object with the optional 
-defined state
-
-suported keys:
+Instantiates a Bric::Biz::OutputChannel object. An anonymous hash of initial
+values may be passed. The supported initial value keys are:
 
 =over 4
 
@@ -198,26 +201,19 @@ description
 
 =item *
 
-tile_aware
-
-=item *
-
 primary
 
 =item *
 
-active (default is active, pass undef to make a new inactive Output Channe;
+active (default is active, pass undef to make a new inactive Output Channel)
 
 =back
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE 
+B<Notes:> NONE.
 
 =cut
 
@@ -232,52 +228,77 @@ sub new {
 	return $self;
 }
 
-=item $oc = Bric::Biz::Output_channel->lookup( { id => $id} )
+=item $oc = Bric::Biz::OutputChannel->lookup( { id => $id } )
 
-Will look up an output channel object for a given id
+Looks up and instantiates a new Bric::Biz::OutputChannel object based on the
+Bric::Biz::OutputChannel object ID passed. If $id is not found in the database,
+lookup() returns undef.
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=item *
 
-B<Notes:>
-NONE 
+Missing required param 'id'.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub lookup {
-	my ($class, $params) = @_;
+    my ($class, $params) = @_;
 
-	die Bric::Util::Fault::Exception::GEN->new( {
-		'msg' => 'missing required param id'} )
-			unless $params->{'id'};
+    die $gen->new( { msg => 'missing required param id'} )
+      unless $params->{'id'};
 
-	my $self = bless {}, $class;
+    my $self = bless {}, $class;
+    $self->SUPER::new();
 
-	$self->SUPER::new();
+    my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE .
+      ' WHERE id=? ';
 
-	my $sql = 'SELECT id,'. join(',',COLS) . " FROM ". TABLE . 
-				' WHERE id=? ';
+    my @d;
+    my $sth = prepare_c($sql, undef, DEBUG);
+    execute($sth, $params->{'id'} );
+    bind_columns($sth, \@d[0 .. (scalar COLS)]);
+    fetch($sth);
 
-	my @d;
-	my $sth = prepare_ca($sql, undef, DEBUG);
-	execute($sth, $params->{'id'} );
-	bind_columns($sth, \@d[0 .. (scalar COLS)]);
-	fetch($sth);
-
-	$self->_set( [ 'id', FIELDS], [@d]);
-
-
-	return $self;
+    $self->_set( ['id', FIELDS], [@d]);
+    return $self;
 }
 
-=item ($ocs_aref || @ocs) = Bric::Biz::Output_channel->list( $criteria )
+=item ($ocs_aref || @ocs) = Bric::Biz::OutputChannel->list( $criteria )
 
-Will return a list of objects that match a given criteria
-
-supported keys:
+Returns a list or anonymous array of Bric::Biz::OutputChannel objects based on
+the search parameters passed via an anonymous hash. The supported lookup keys
+are:
 
 =over 4
 
@@ -291,10 +312,6 @@ primary
 
 =item *
 
-tile_aware
-
-=item *
-
 server_type_id
 
 =item *
@@ -304,20 +321,44 @@ active
 =back
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE 
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub list {
-	my ($class, $params) = @_;
-
-	_do_list($class, $params, undef);
+    my ($class, $params) = @_;
+    _do_list($class, $params, undef);
 }
 
 =item $ocs_href = Bric::Biz::OutputChannel->href( $criteria )
@@ -327,20 +368,44 @@ Output Channel ID, and each value is Output Channel object that corresponds to
 that ID. Takes the same arguments as list().
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE 
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes: NONE.
 
 =cut
 
 sub href {
-	my ($class, $params) = @_;
-
-	_do_list($class, $params, undef, 1);
+    my ($class, $params) = @_;
+    _do_list($class, $params, undef, 1);
 }
 
 #--------------------------------------#
@@ -355,7 +420,6 @@ Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
 sub DESTROY {
     # empty for now
-
 }
 
 #--------------------------------------#
@@ -365,38 +429,51 @@ sub DESTROY {
 =cut
 
 
-=item ($id_aref || @ids) = Bric::Biz::Output_channel->list_ids( $criteria )
+=item ($id_aref || @ids) = Bric::Biz::OutputChannel->list_ids( $criteria )
 
-Will return a list of ids that match the given criteria
+Returns a list or anonymous array of Bric::Biz::OutputChannel object IDs based
+on the search criteria passed via an anonymous hash. The supported lookup keys
+are the same as for list().
 
-Supported Keys:
+B<Throws:>
 
 =over 4
 
-=item name
+=item *
 
-=item primary
+Unable to prepare SQL statement.
 
-=item tile_aware
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
 
 =back
 
-B<Throws:>
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE 
+B<Notes:> NONE.
 
 =cut
 
 sub list_ids {
-	my $class = shift;
-	my ($params) = @_;
-
-	_do_list($class, $params, 1);
+    my ($class, $params) = @_;
+    _do_list($class, $params, 1);
 }
 
 =item $meths = Bric::Biz::AssetType->my_meths
@@ -650,66 +727,57 @@ sub my_meths {
 
 =head2 Public Instance Methods
 
-=cut
+=over 4
 
+=item $id = $oc->get_id
+
+Returns the OutputChannel's unique ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =item $oc = $oc->set_name( $name )
 
-Sets the name field
+Sets the name of the Output Channel.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects: NONE.
 
-B<Notes:>
-NONE
-
-=cut
-
+B<Notes:> NONE.
 
 =item $name = $oc->get_name()
 
-Returns the name field
+Returns the name of the Output Channel.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects: NONE.
 
-B<Notes:>
-NONE
-
-=cut
-
+B<Notes:> NONE.
 
 =item $oc = $oc->set_description( $description )
 
-Sets the description Field
+Sets the description of the Output Channel.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =item $description = $oc->get_description()
 
-Returns the description field
+Returns the description of the Output Channel.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =item $oc = $oc->set_pre_path($pre_path)
 
@@ -801,170 +869,138 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $oc = $oc->set_tile_aware( undef || 1)
-
-Set the flag for wheather this output channel is tile aware
-
-B<Throws:> NONE
-
-B<Side Effects:> NONE
-
-B<Notes:> NONE
-
-=item (undef || 1 ) = $oc->get_tile_aware()
-
-Return if this channel is tile aware or not
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-
 =item $oc = $oc->set_primary( undef || 1)
 
-Set the flag that this is the primary out put channel or not
+Set the flag that indicates whether or not this is the primary Output Channel.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
-
-=cut
-
+B<Notes:> NONE.
 
 =item (undef || 1 ) = $oc->get_primary()
 
-Returns 1 if this is the primary output channel undef otherwise
+Returns true if this is the primary Output Channel and false (undef) if it is
+not.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-Only one Output channel can be the primary output channel
+B<Notes:> Only one Output channel can be the primary output channel.
 
-=cut
+=item $self = $oc->activate
 
+Activates the Bric::Biz::OutputChannel object. Call $oc->save to make the change
+persistent. Bric::Biz::OutputChannel objects instantiated by new() are active by
+default.
 
-=item $oc = $oc->activate()
+B<Throws:> NONE.
 
-MAkes the item active 
+B<Side Effects:> NONE.
 
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub activate {
-	my ($self) = @_;
-
-	$self->_set( { '_active' => 1 } );
-
-	return $self;
+    my $self = shift;
+    $self->_set({_active => 1 });
 }
 
-=item $oc = $oc->deactivate()
+=item $self = $oc->deactivate
 
-Makes the item inactive
+Deactivates (deletes) the Bric::Biz::OutputChannel object. Call $oc->save to
+make the change persistent.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
-
 sub deactivate {
-	my ($self) = @_;
-
-	$self->_set( { '_active' => 0 } );
-
-	return $self;
+    my $self = shift;
+    $self->_set({_active => 0 });
 }
 
-=item (undef || 1) = $oc->is_active()
+=item $self = $oc->is_active
 
-Returns if the Output channel is active or not
+Returns $self (true) if the Bric::Biz::OutputChannel object is active, and undef
+(false) if it is not.
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub is_active {
-	my $self = shift;
-	return $self->_get('_active') ? $self : undef;
+    my $self = shift;
+    $self->_get('_active') ? $self : undef;
 }
 
-=item $id = $oc->get_id()
 
-Returns the data base id of the object
+=item $self = $oc->save
 
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-
-=item $oc = $oc->save()
-
-Saves the info to the database
+Saves any changes to the Bric::Biz::OutputChannel object. Returns $self on
+success and undef on failure.
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to select row.
+
+=item *
+
+Incorrect number of args to _set.
+
+=item *
+
+Bric::_set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub save {
-	my ($self) = @_;
-	return $self unless $self->_get__dirty();
-	defined $self->_get('id') ? $self->_do_update : $self->_do_insert;
+    my ($self) = @_;
+    return $self unless $self->_get__dirty();
+    defined $self->_get('id') ? $self->_do_update : $self->_do_insert;
+    $self->SUPER::save();
 }
 
 
-#==============================================================================## Private Methods                      #
+#==============================================================================
+## Private Methods                     #
 #======================================#
 
 =head1 PRIVATE
@@ -973,144 +1009,158 @@ sub save {
 
 #--------------------------------------#
 
-=head2 Private Class Methods                 
+=head2 Private Class Methods
 
 =item _do_list
 
-called by list and list ids this does the brunt of their work
+Called by list and list ids this does the brunt of their work.
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _do_list {
     my ($class, $params, $ids, $href) = @_;
+    my (@wheres, @params);
 
-	my $sql = 'SELECT id';
-
-	unless ($ids) {
-		$sql .= ', ' . join(', ', COLS);
+    while (my ($k, $v) = each %$params) {
+	if ($txt_map{$k}) {
+	    push @wheres, $txt_map{$k};
+	    push @params, lc $v;
+	} elsif ($num_map{$k}) {
+	    push @wheres, $num_map{$k};
+	    push @params, $v;
+	} elsif ($k eq 'all') {
+	    push @wheres, 'active = ?';
+	    push @params, 1;
+	} else {
+	    $dp->new({ msg => "Invalid property argument '$k'." });
 	}
+    }
 
-	$sql .= ' FROM ' . TABLE . ' ';
+    local $" = ' AND ';
+    my $where = @wheres ? "WHERE  @wheres" : '';
 
+    # Assemble and prepare the query.
+    my $qry_cols = $ids ? [] : ['id', COLS()];
+    $" = ', ';
+    my $sel = prepare_c(qq{
+        SELECT @$qry_cols
+        FROM   ${ \TABLE() }
+        $where
+        ORDER BY name
+    }, undef, DEBUG);
 
-	# construct where clause
-	my @where;
-	my @where_params;
-
-	if ( $params->{'name'} ) {
-		push @where, 'LOWER(name) LIKE ?';
-		push @where_params, lc($params->{'name'});
+    if ( $ids ) {
+	# called from list_ids give em what they want
+	my $return = col_aref($sel, @params);
+	return wantarray ? @{ $return } : $return;
+    } else { # end if ids
+	# this must have been called from list so give objects
+	my (@d, @objs, %objs);
+	execute($sel, @params);
+	bind_columns($sel, \@d[0 .. (scalar COLS)]);
+	while (my $row = fetch($sel) ) {
+	    my $self = bless {}, $class;
+	    $self->SUPER::new();
+	    $self->_set( ['id', FIELDS], \@d);
+	    $href ? $objs{$d[0]} = $self : push @objs, $self;
 	}
-
-    	if ( $params->{'pre_path'} ) {
-		push @where, 'LOWER(pre_path) LIKE ?';
-		push @where_params, lc($params->{'pre_path'});
-	}
-
-       	if ( $params->{'post_path'} ) {
-		push @where, 'LOWER(post_path) LIKE ?';
-		push @where_params, lc($params->{'post_path'});
-	}
-
-	if ( $params->{'primary'} ) {
-		push @where, 'primary=?';
-		push @where_params, $params->{'primary'};
-	}
-
-	if ( $params->{'active'} ) {
-		push @where, 'active=?';
-		push @where_params, $params->{'active'};
-	}
-
-	if ( exists $params->{server_type_id} ) {
-		push @where, 'id in (select output_channel__id from server_type__output_channel where server_type__id = ?)';
-		push @where_params, $params->{server_type_id};
-	}
-
-	unless ( $params->{'all'} ) {
-		push @where, 'active=?';
-		push @where_params, 1;
-	}
-
-	if (@where) {
-		$sql .= 'WHERE ';
-		$sql .= join ' AND ', @where;
-	}
-        $sql .= ' ORDER BY name';
-
-	my $select = prepare_ca( $sql, undef, DEBUG);
-
-
-	if ( $ids ) {
-		# called from list_ids give em what they want
-		my $return = col_aref($select,@where_params);
-
-		return wantarray ? @{ $return } : $return;
-
-	} else { # end if ids 
-		# this must have been called from list so give objects
-		my (@d, @objs, %objs);
-
-		execute($select, @where_params);
-		bind_columns($select, \@d[0 .. (scalar COLS)]);
-
-		while (my $row = fetch($select) ) {
-
-			my $self = bless {}, $class;
-			$self->SUPER::new();
-			$self->_set( ['id', FIELDS], \@d);
-
-			$href ? $objs{$d[0]} = $self : push @objs, $self;
-		}
-		return \%objs if $href;
-		return wantarray ? @objs : \@objs;
-	}
- 
+	return \%objs if $href;
+	return wantarray ? @objs : \@objs;
+    }
 }
 
 
 #--------------------------------------#
 
-=head2 Private Instance Methods              
+=head2 Private Instance Methods
 
 =item _do_update()
 
-will perform the update to the data base after being called 
-from save
+Will perform the update to the database after being called from save.
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to select row.
+
+=item *
+
+Incorrect number of args to _set.
+
+=item *
+
+Bric::_set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _do_update {
     my ($self) = @_;
-
-	my $sql = "UPDATE " . TABLE . 
-				" SET " . join(', ', map { "$_=?" } COLS) .
-				" WHERE id=? ";
-
-	my $sth = prepare_c($sql, undef, DEBUG);
-
-	execute($sth, $self->_get( FIELDS ), $self->_get('id'));
-
-	$self->_set__dirty(undef);
-
+    local $" = ' = ?, '; # Simple way to create placeholders with an array.
+    my $upd = prepare_c(qq{
+        UPDATE ${ \TABLE() }
+        SET    @{ [COLS] } = ?
+        WHERE  id = ?
+    });
+    execute($upd, $self->_get(FIELDS, 'id'));
     return $self;
 }
 
@@ -1119,27 +1169,56 @@ sub _do_update {
 Will do the insert to the database after being called by save
 
 B<Throws:>
-NONE
 
-B<Side Effects:>
-NONE
+=over 4
 
-B<Notes:>
-NONE
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to select row.
+
+=item *
+
+Incorrect number of args to _set.
+
+=item *
+
+Bric::_set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub _do_insert {
     my ($self) = @_;
 
-    my $sql = 'INSERT INTO ' . TABLE . '(id, ' . join(', ', COLS) . ')' .
-      'VALUES (' . ${\next_key(TABLE)} . ', '.
-	join (',', ('?') x COLS) . ')';
-
-    my $insert = prepare_c($sql, undef, DEBUG);
-    execute($insert, $self->_get( FIELDS ) );
+    local $" = ', ';
+    my $fields = join ', ', next_key('output_channel'), ('?') x COLS;
+    my $ins = prepare_c(qq{
+        INSERT INTO output_channel (id, @{[COLS()]})
+        VALUES ($fields)
+    }, undef, DEBUG);
+    execute($ins, $self->_get( FIELDS ) );
     $self->_set( { 'id' => last_key(TABLE) } );
-    $self->_set__dirty(undef);
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
 }
@@ -1149,17 +1228,15 @@ __END__
 
 =head1 NOTES
 
-NONE
+NONE.
 
 =head1 AUTHOR
 
- michael soderstrom ( miraso@pacbell.net )
+Michael Soderstrom L<lt>miraso@pacbell.netL<gt>
 
 =head1 SEE ALSO
 
- L<perl>,L<Bric>,L<Bric::Biz::Asset::Business>,L<Bric::Biz::element>,
- L<Bric::Biz::Asset::Formatting> 
+L<perl>,L<Bric>,L<Bric::Biz::Asset::Business>,L<Bric::Biz::AssetType>,
+L<Bric::Biz::Asset::Formatting>.
 
 =cut
-
-
