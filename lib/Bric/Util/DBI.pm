@@ -785,7 +785,7 @@ sub build_query {
 
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
-    print $sql;
+
     return \$sql;
 }
 
