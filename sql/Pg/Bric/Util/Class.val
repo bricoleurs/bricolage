@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.2.4.2 $
+-- VERSION: $Revision: 1.2.4.3 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -37,7 +37,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (8, 'user_grp', 'Bric::Util::Grp::User', 'User Group', 'User Groups', 'User Group objects', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (9, 'contrib_type', 'Bric::Util::Grp::Person', 'Contributor Type', 'Contributor Types', 'Contriburtor Type objects', 0);
+VALUES (9, 'contrib_type', 'Bric::Util::Grp::Person', 'Contributor Type', 'Contributor Types', 'Contributor Type objects', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (10, 'story', 'Bric::Biz::Asset::Business::Story', 'Story', 'Stories', 'Story Asset objects', 0);
