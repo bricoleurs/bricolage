@@ -64,6 +64,7 @@ sub save : Callback {
                 log_event($type . '_new', $ct);
             }
             $param->{'obj'} = $ct;
+            return;
         } else {
             # If we get here, it's an existing type.
             $ct->set_paginated(defined $param->{paginated} ? 1 : 0);

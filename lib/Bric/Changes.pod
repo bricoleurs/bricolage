@@ -224,6 +224,11 @@ apparently have more. [Thorsten Biel]
 Media, Story, and Template groups now properly display all of the permissions
 that can be granted to user groups to access them. [David]
 
+=item *
+
+The "Next" button in the Element Type profile now correctly loads the next
+page of the profile instead of returning to the manager. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
