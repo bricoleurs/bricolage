@@ -185,7 +185,7 @@ BEGIN {
         cat                   => Bric::FIELD_READ,
         page                  => Bric::FIELD_READ,
         encoding              => Bric::FIELD_RDWR,
-        output_filename       => Bric::FIELD_READ,
+        output_filename       => Bric::FIELD_RDWR,
         output_ext            => Bric::FIELD_READ,
         output_path           => Bric::FIELD_READ,
         base_path             => Bric::FIELD_READ,
@@ -717,17 +717,18 @@ sub deploy {
     close(MC);
 
     # Delete older versions, if they live elsewhere.
-        my $old_version = $fa->get_published_version or return $self;
-        my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                                   checked_out => 0,
-                                   version     => $old_version });
-        my $old_file = $old_fa->get_file_name or return $self;
+    my $old_version = $fa->get_published_version or return $self;
+    my $old_fa = $fa->lookup({ id          => $fa->get_id,
+                               checked_out => 0,
+                               version     => $old_version })
+      or return $self;
+    my $old_file = $old_fa->get_file_name or return $self;
 
-        $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
-                                 $oc_dir, $old_file);
+    $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
+                             $oc_dir, $old_file);
 
-        return $self if $old_file eq $file;
-        $fs->del($old_file);
+    return $self if $old_file eq $file;
+    $fs->del($old_file);
 
     return $self;
 
