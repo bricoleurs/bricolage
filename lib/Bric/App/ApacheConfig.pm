@@ -59,7 +59,7 @@ BEGIN {
 package Apache::ReadConfig;
 use strict;
 use warnings;
-use Bric::Config qw(:conf :sys_user :qa :temp :profile);
+use Bric::Config qw(:conf :sys_user :qa :temp :profile :proc_size);
 use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
@@ -85,6 +85,25 @@ do {
 		   ($DEBUGGING ?  
 		    (PerlFixupHandler => 'Apache::DB') : ()), 
 		 );
+
+    if (CHECK_PROCESS_SIZE) {
+        # see Apache::SizeLimit manpage
+        require Apache::SizeLimit;
+
+	# apache child processes larger than this size will be killed
+        $Apache::SizeLimit::MAX_PROCESS_SIZE	   = MAX_PROCESS_SIZE;
+
+	# requests handled per size check
+        $Apache::SizeLimit::CHECK_EVERY_N_REQUESTS = CHECK_FREQUENCY;
+
+	$Apache::SizeLimit::MIN_SHARE_SIZE	   = MIN_SHARE_SIZE
+	    if MIN_SHARE_SIZE > 0;
+
+	$Apache::SizeLimit::MAX_UNSHARED_SIZE	   = MAX_UNSHARED_SIZE
+	    if MAX_UNSHARED_SIZE > 0;
+
+        $config{PerlFixupHandler} = 'Apache::SizeLimit';
+    }
 
     # set up profiling with Devel::Profiler - this installs a
     # ChildInitHandler

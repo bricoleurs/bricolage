@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:17 $
+$Date: 2002-05-29 20:57:29 $
 
 =head1 DESCRIPTION
 
@@ -148,6 +148,8 @@ START MODULE LIST
 =item File::Temp
 
 =item Devel::Profiler
+
+=item Apache::SizeLimit
 
 =begin installation
 
@@ -851,6 +853,19 @@ your own VirtualHost declarations. Defaults to "*" if not specified.
 
 B<VHOST_SERVER_NAME:> The host name under which Bricolage will run as a virtual
 host in the Apache server. Defaults to the default host if not specified.
+
+=item *
+
+B<CHECK_PROCESS_SIZE:> Turn on this feature to limit the size of Apache child
+processes. C<MAX_PROCESS_SIZE> determines the maximum size in KBs to which the
+processes will be allowed to grow. C<CHECK_FREQUENCY> determines how many
+requests will be handled before a process' candidacy for termination is
+evaluated. C<MIN_SHARE_SIZE> Indicates the minimum amount of shared memory the
+process must employ to not be a candidate for termination. C<MAX_UNSHARED_SIZE>
+Sets a limit on the amount of unshared memory a process may consume to not be a
+candidate for termination. Set C<MIN_SHARE_SIZE> or C<MAX_UNSHARE_SIZE> to '0'
+to disable either respective test. All size settings are in KBs. See
+B<Apache::SizeLimit> for more information.
 
 =back
 
