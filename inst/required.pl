@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.8.4.3 $
+$Revision: 1.8.4.4 $
 
 =head1 DATE
 
-$Date: 2003-12-01 17:13:56 $
+$Date: 2004-01-04 04:15:56 $
 
 =head1 DESCRIPTION
 
@@ -111,6 +111,7 @@ sub find_pg {
     # then some standard locations.
     my @paths = (path(), qw(/usr/local/pgsql/bin
 			    /usr/local/postgres/bin
+                            /usr/lib/postgresql/bin
 			    /opt/pgsql/bin
 			    /usr/local/bin
 			    /usr/local/sbin

@@ -58,6 +58,11 @@ locate class method 'Bric::Util::Language::de_de::new' via package
 Added new path to find PostgreSQL installed by some Debian packages. [Cinly
 Ooi]
 
+=item *
+
+Workflows with special characters such as "+" and "&" now work properly in the
+side navigation. Thanks to Patrick Walsh for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
