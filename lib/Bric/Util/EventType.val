@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2001-09-06 21:55:12 $
+-- $Date: 2001-09-28 11:45:31 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -180,7 +180,22 @@
 -- ********** 'formatting_checkout' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkout', 'Template Checked Out', 'Template was checked out.', 19, 1);
+    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkout', 'Template Checked Out Canceled', 'Template was checked out.', 19, 1);
+
+-- ********** 'story_cancel_checkout' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_cancel_checkout', 'Story Check Out Canceled', 'Story check out was canceled.', 10, 1);
+
+-- ********** 'media_cancel_checkout' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_cancel_checkout', 'Media Check Out Canceled', 'Media check out was canceled.', 46, 1);
+
+-- ********** 'formatting_cancel_checkout' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'formatting_cancel_checkout', 'Template Check Out Canceled', 'Template check out was caneled.', 19, 1);
 
 -- ********** 'story_new' ************ --
 
@@ -675,7 +690,10 @@
 /*
 Change Log:
 $Log: EventType.val,v $
-Revision 1.1  2001-09-06 21:55:12  wheeler
-Initial revision
+Revision 1.2  2001-09-28 11:45:31  wheeler
+Added asset checkout canceled event types.
+
+Revision 1.1.1.1  2001/09/06 21:55:12  wheeler
+Upload to SourceForge.
 
 */
