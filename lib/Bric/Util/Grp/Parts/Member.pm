@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:47 $
+$Date: 2002-07-10 00:41:30 $
 
 =head1 SYNOPSIS
 
@@ -812,9 +812,9 @@ NONE
 
 sub subsys_names { $_[0]->_subsys_names }
 
-=item $val = $mbr->get_attr($param)
+=item $val = $mbr->get_attr({ name => $attr })
 
-Returns a single attribute for the member
+Returns a single attribute for the member.
 
 B<Throws:>
 
