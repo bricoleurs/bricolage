@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2001-12-23 18:50:41 $
+$Date: 2001-12-23 20:26:35 $
 
 =head1 DESCRIPTION
 
@@ -63,6 +63,11 @@ list of all categories. [David]
 =item *
 
 Add listing of Output Channels to FTP interface [Sam].
+
+=item *
+
+Add command-line argument to bric_ftpd that will kill the currently-runnining
+instance. [Sam]
 
 =item *
 
