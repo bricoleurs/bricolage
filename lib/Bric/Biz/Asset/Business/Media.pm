@@ -193,6 +193,7 @@ PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP => {
       id                    => 'mt.id = ?',
+      exclude_id            => 'mt.id <> ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
       alias_id              => 'mt.alias_id = ?',
@@ -503,6 +504,11 @@ Media Document description. May use C<ANY> for a list of possible values.
 =item id
 
 The media document ID. May use C<ANY> for a list of possible values.
+
+=item exclude_id
+
+A media document ID to exclude from the list. May use C<ANY> for a list of
+possible values.
 
 =item version
 
