@@ -37,6 +37,12 @@ Added primary key to the "event_attr", "element__site", "story_uri", and
 "media_uri" tables in the database. This will make it easier to do database
 replication. [David and Kenneth Marshall]
 
+=item *
+
+Added F<contrib/bric_import_contribs> to import contributors from a
+tab-delimited file. Development by Kineticode, sponsored by the RAND
+Corporation. [David]
+
 =back
 
 =head2 Bug Fixes

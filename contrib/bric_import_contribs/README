@@ -1,0 +1,34 @@
+bric_import_contribs 0.10
+=========================
+
+This program creates new contributors in a Bricolage installation from records
+in a tab-delimited file. The file must have a record for one contributor on
+each line of the file, and must contain tab-delimited fields with each part of
+each contributor's name. The file may also optionally contain contact
+information for each user (email address, phone numbers, etc.) and content for
+custom fields.
+
+INSTALLATION
+
+To install this module, type the following:
+
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
+
+DEPENDENCIES
+
+This program requires these other modules and libraries:
+
+  Getopt::Long
+  Pod::Usage
+
+It also requires a Bricolage server and API.
+
+COPYRIGHT AND LICENCE
+
+Copyright (c) 2004 Kineticode, Inc. All rightgs reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.

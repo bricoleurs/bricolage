@@ -1,0 +1,253 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use Bric::Biz::Person;
+use Bric::Biz::Person::User;
+use Bric::Util::Grp::Person;
+use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::Attribute::Grp;
+use Bric::Util::Event;
+
+our $VERSION = '0.10';
+
+my $subsys = '_MEMBER_SUBSYS';
+
+GetOptions(
+    "username=s"      => \my $username,
+    "password=s"      => \my $password,
+    "contrib-type=s"  => \my $groupname,
+    "skip-first"      => \my $skipfirst,
+    "custom-field=s"  => \my @extra_fields,
+    "contact-field=s" => \my @contact_fields,
+);
+
+pod2usage("Missing required --username option.")     unless $username;
+pod2usage("Missing required --password option.")     unless $password;
+pod2usage("Missing required --contrib-type option.") unless $groupname;
+pod2usage("No import file specified.")               unless @ARGV;
+
+# Find the user and make sure they're legit.
+my $user = Bric::Biz::Person::User->lookup({ login => $username });
+die qq{Bad username or password\n} unless $user;
+
+# Uncomment this line to be insecure.
+$user->chk_password($password) or die qq{Bad username or password\n};
+
+# Find the contributor group.
+my $grp = Bric::Util::Grp::Person->list({
+    name      => $groupname,
+    permanent => 0,
+    all       => 1,
+});
+
+# Make sure we have a contributor group.
+die qq{There is no such contributor type "$groupname"\n}
+  unless $grp && @$grp;
+
+# Make sure we have only one grp.
+die qq{There is more than one contributor type named "$groupname"\n}
+  if @$grp > 1;
+
+# Great, now we know who we're dealing with!
+$grp = $grp->[0];
+
+# Skip the first record.
+<> if $skipfirst;
+
+# We'll need this to get the SQL type of custom fields.
+# XXX We're ignor field max length for now.
+
+if (@extra_fields) {
+    my $mem_attr =  Bric::Util::Attribute::Grp->new({
+        id => $grp->get_id,
+        susbsys => $subsys,
+    });
+    for (@extra_fields) {
+        $_ = [$_ => $mem_attr->get_sqltype({ name => $_,
+                                             subsys => $subsys,
+                                         })
+             ];
+        die qq{Custom field "$_->[0]" is not specified for contributor }
+          . qq{type "$groupname"\n} unless $_->[1];
+    }
+}
+
+
+# Now let's create the new records.
+while (<>) {
+    my ($prefix, $first, $middle, $last, $suffix, @extra) = split /\t/;
+    # Create the person object.
+    my $contrib = Bric::Biz::Person->new({
+        prefix => $prefix,
+        fname  => $first,
+        mname  => $middle,
+        lname  => $last,
+        suffix => $suffix,
+    })->save;
+
+    # Add the person to the contributor group.
+    my $member = $grp->add_member({ obj => $contrib });
+    $grp->save;
+
+    # We need a contrib object, not just a member oject. So look it up.
+    $member = Bric::Util::Grp::Parts::Member::Contrib->lookup({
+        id => $member->get_id
+    });
+
+    # Log the creation of the new contributor.
+    Bric::Util::Event->new({
+        key_name => 'contrib_new',
+        obj      => $member,
+        user     => $user,
+    });
+
+    # Add any contact fields.
+    if (@contact_fields) {
+        for my $type (@contact_fields) {
+            my $value = shift @extra;
+            $value = '' unless defined $value;
+            $contrib->new_contact($type, $value);
+        }
+        $contrib->save;
+    }
+
+    # Add any custom fields.
+    if (@extra_fields) {
+        for my $field (@extra_fields) {
+            my $value = shift @extra;
+            $value = '' unless defined $value;
+            $member->set_attr({ subsys   => $subsys,
+                                name     => $field->[0],
+                                value    => $value,
+                                sql_type => $field->[1] });
+        }
+        $member->save;
+    }
+
+    # Let em know what we've done.
+    print "Added ", $contrib->get_name, $/;
+
+}
+
+1;
+__END__
+
+=head1 NAME
+
+import_contribs - Import contributors from a tab-delimited file
+
+=head1 SYNOPSIS
+
+  import_contribs --username admin --password password \
+     --contrib-type Writers file.tab
+
+=head1 DESCRIPTION
+
+This program creates new contributors in a Bricolage installation from records
+in a tab-delimited file. The file must have a record for one contributor on
+each line of the file, and must contain tab-delimited fields with each part of
+each contributor's name. The file may also optionally contain contact
+information for each user (email address, phone numbers, etc.) and content for
+custom fields.
+
+=head1 OPTIONS
+
+  import_contribs --username username --password password \
+    --contrib-type contrib_type [options] import_file
+
+=head2 Arguments
+
+=over 4
+
+=item import_file
+
+The file containing the tab-delimited records of contributors to be
+imported. Each line should contain the following fields in the following
+order:
+
+=over 4
+
+=item Prefix
+
+=item First Name
+
+=item Middle Name
+
+=item Last Name
+
+=item Sufix
+
+=back
+
+Extra columns of data can be specified for custom field content using the
+C<--custom-field> option.
+
+=back
+
+=head2 Options
+
+=over 4
+
+=item C<--username>
+
+The name of the user doing the import. This will be used for logging the
+creation of all of the contributors. Required.
+
+=item C<--password>
+
+The password for the user importing the contributors. Required.
+
+=item C<--contrib-type>
+
+The type of contributor to be used to create all of the contributors in the
+file. Required.
+
+=item C<--skip-first>
+
+Pass a true value for this option to skip the first line of the import
+file. Usefule when the first line is used to identify the columns in the rest
+of the file. Optional.
+
+=item C<--contact-field>
+
+Use this option to specify that one ore more tab-delimited fields following
+the required name fields contains contact data. Pass in the type of contact
+information is in each field, such as "Primary Email" or "Business Phone".
+Contact fields B<must> preceed any custom fields in the tab-delimited file. To
+ specify more than one contact field, simply use the option multiple times:
+
+  --contact-field 'Business Phone' --contact-field 'Primary Email'
+
+Optional.
+
+=item C<--custom-field>
+
+Use this option to specify one or more extra columns of content in the
+tab-delimited file to be used for filling in the contents of custom fields for
+the default role for each contributor. Custom field content data B<must>
+follow any contact field data in the tab-delmited file. Also, note that the
+contributor type B<must> have custom fields created with the names passed via
+this option. To specify more than one custom field, simply use the option
+multiple times:
+
+  --cutom-field foo --custom-field bar
+
+Optional.
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@kineticode.com>. Development sponsored by the RAND
+Corporation E<reg>.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2004 Kineticode, Inc. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut
