@@ -222,15 +222,16 @@ $pagination
 $cols
 </%args>
 <%init>;
---$cols;
 my $url = $r->uri;
 my $align = QA_MODE ? "left" : "center";
-$m->out(qq{<tr valign="middle" height="25" valign="top" class="lightHeader"\n});
+$m->out(qq{<tr valign="middle" height="25" valign="top" class="lightHeader">\n});
 my $style = qq{style="border-style:solid; border-color:#cccc99;"};
 unless ($pagination->{pagination}) {
-    $m->out(<td> . $page_link->(0, 'Paginate Results', $pagination->{limit},
-                                  $url) . "</td>");
+    $m->out(qq{<td $style colspan="$cols">} .
+            $page_link->(0, 'Paginate Results', $pagination->{limit},
+                         $url) . "</td>");
 } else {
+    --$cols;
     $m->out(qq{<td $style colspan="$cols">\n});
 
     # previous link, if applicable
