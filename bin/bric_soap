@@ -87,10 +87,22 @@ Options:
 			   required.
 
   --chunks               - perform actions in chunks of this many ids.
-                           Currently implemented only for "workflow
-                           publish" but may be expanded to other
-                           commands as needed.  Defaults to 0 which means no
-                           chunking.
+                           Currently implemented only for the workflow
+                           commands (publish, deploy, checkin,
+                           checkout, move) but may be expanded to
+                           other commands as needed.  Defaults to 0
+                           which means no chunking.
+
+  --continue-on-errors   - normally an error returned by a call to the
+                           SOAP interface is fatal and bric_soap stops
+                           immediately.  If this flag is set then the
+                           errror message is printed but processing
+                           continues, if possible.  Currently
+                           implemented only for the workflow commands
+                           (publish, deploy, checkin, checkout, move)
+                           but may be expanded to other commands as
+                           needed.
+
 
 =head1 EXAMPLES
 
@@ -183,6 +195,9 @@ L<Bric::SOAP>
 use Getopt::Long;
 use Pod::Usage;
 
+# predeclare to get prototype support
+sub _foreach_chunks (&@);
+
 BEGIN {
     our $module;
     our $command;
@@ -192,6 +207,7 @@ BEGIN {
     our $to_preview           = 0;
     our $timeout              = 30;
     our $chunks               = 0;
+    our $continue             = 0;
     our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
     our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
     our $server                 = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
@@ -219,6 +235,7 @@ BEGIN {
 	       "save-cookie-file=s"     => \$save_cookie,
 	       "use-cookie-file=s"      => \$use_cookie,
                "chunks=s",              => \$chunks,
+               "continue-on-errors"     => \$continue,
 	      ) or  pod2usage(2);
     
     pod2usage(1)             if $help;
@@ -462,61 +479,65 @@ sub publish {
     push @opts, name(publish_related_media   => 1) if $with_related_media;
     push @opts, name(to_preview              => 1) if $to_preview;
 
-    if ($chunks == 0) {
-        $response = $soap->publish(name(publish_ids => \@ids), @opts);
-        _print_fault($response) if $response->fault;
-
-        # print out ids
-        _print_ids($response);
-    } else {
-        # step through @ids $chunks at a time
-        my ($start, $end);
-        for ($start = 0; $start <= $#ids; $start = $end + 1) {
-            $end = $start + $chunks - 1;
-            $end = $#ids if $end > $#ids;
-	    
-            $response = $soap->publish(name(publish_ids => 
-                                            [@ids[$start .. $end]],
-                                            @opts));
-            _print_fault($response) if $response->fault;
-            
-            # print out ids for this chunk
+    # publish by chunks
+    _foreach_chunks {
+        my ($start, $end) = @_;
+        $response = $soap->publish(name(publish_ids => \@_),
+                                   @opts);
+        if ($response->fault) {
+            print "$module $command failed: ", 
+              join(', ', map { $_->value } @_), "\n";
+            _print_nonfatal_fault($response);
+        } else {
             _print_ids($response);
-	}
-    }   
+        }
+    } (@ids);
 }
 
 sub deploy {
     # collect ids
     my @ids = _read_ids();
-
-    $response = $soap->deploy(name(deploy_ids => \@ids));
-    _print_fault($response) if $response->fault;
-
-    # print out ids
-    _print_ids($response);
+    
+    _foreach_chunks {
+        my ($start, $end) = @_;
+        $response = $soap->deploy(name(deploy_ids => \@_));
+        
+        _print_fault($response) if $response->fault;
+        
+        # print out ids for this chunk
+        _print_ids($response);
+    } (@ids);
 }
 
 sub checkin {
     # collect ids
     my @ids = _read_ids();
 
-    $response = $soap->checkin(name(checkin_ids => \@ids));
-    _print_fault($response) if $response->fault;
-
-    # print out ids
-    _print_ids($response);
+    # checkin by chunks
+    _foreach_chunks {
+        my ($start, $end) = @_;
+        $response = $soap->checkin(name(checkin_ids => \@_));
+        
+        _print_fault($response) if $response->fault;
+        
+        # print out ids for this chunk
+        _print_ids($response);
+    } (@ids);
 }
 
 sub checkout {
     # collect ids
     my @ids = _read_ids();
 
-    $response = $soap->checkout(name(checkout_ids => \@ids));
-    _print_fault($response) if $response->fault;
-
-    # print out ids
-    _print_ids($response);
+    # checkout by chunks
+    _foreach_chunks {
+        $response = $soap->checkout(name(checkout_ids => \@_));
+        
+        _print_fault($response) if $response->fault;
+        
+        # print out ids for this chunk
+        _print_ids($response);
+    } (@ids);
 }
 
 sub move {
@@ -528,13 +549,15 @@ sub move {
     my @opts = (name(desk => $desk));
     push @opts, name(workflow => $workflow) if defined $workflow;
 
-    $response = $soap->move(name(move_ids => \@ids), @opts);
-    die "Call to Bric::SOAP::$module->$command failed : \n" .
-	$response->faultstring
-	    if $response->fault;
-
-    # print out ids
-    _print_ids($response);
+    # move by chunks
+    _foreach_chunks {
+        $response = $soap->move(name(move_ids => \@_),
+                                @opts);
+        _print_fault($response) if $response->fault;
+        
+        # print out ids for this chunk
+        _print_ids($response);
+    } (@ids);
 }
 
 #
@@ -569,7 +592,8 @@ sub _read_ids {
       }
   }
 
-  die "No ids found for $command.\n"
+  die "\nNo ids found for $module $command.\n".
+    "(did you forget a '-' argument to read ids from STDIN?)\n"
       unless @ids;
 
   print STDERR "$module $command: Calling $module->$command with ids: ",
@@ -577,6 +601,24 @@ sub _read_ids {
 	  if $verbose;
 
   return @ids;
+}
+
+# performs a given action in chunks increments
+sub _foreach_chunks (&@) {
+    my $code = shift;
+    our $chunks;
+
+    if ($chunks == 0) {
+        $code->(\@_);
+    } else {
+        # step through indexes $chunks at a time
+        my ($start, $end);
+        for ($start = 0; $start <= $#_; $start = $end + 1) {
+            $end = $start + $chunks - 1;
+            $end = $#_ if $end > $#_;
+            $code->(@_[$start .. $end]);
+	}
+    }   
 }
 
 # prints out ids from a SOAP response
@@ -593,7 +635,7 @@ sub _print_ids {
     }
 }
 
-# prints out fault message
+# prints out fault message and exits unconditionally
 sub _print_fault {
     my $r = shift;
     if ($r->faultstring eq 'Application error' and
@@ -605,4 +647,22 @@ sub _print_fault {
 	die "Call to Bric::SOAP::$module->$command failed : \n" .
 	    $r->faultstring;
     }
+}
+
+
+# prints out fault message and exits unless continue-on-errors is in effect
+sub _print_nonfatal_fault {    
+    my $r = shift;
+    our $continue;
+
+    if ($r->faultstring eq 'Application error' and
+	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+	# this is a bric exception, the interesting stuff is in detail
+	print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
+	    join("\n", values %{$r->faultdetail});
+    } else {
+	print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
+	    $r->faultstring;
+    }
+    exit 1 unless $continue;
 }

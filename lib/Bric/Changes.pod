@@ -42,15 +42,26 @@ Added README.MacOSX. [David]
 =item *
 
 Added new --chunks option to the bric_soap tool to avoid problems with
-timeouts on large workloads.  Currently only supports the "worflow
-publish" command but it will be expanded to other long-running
-commands in the future.  [Sam]
+timeouts on large workloads.  Currently only supports the workflow
+commands (publish, deploy, checkin, checkout, move) but it will be
+expanded to other long-running commands in the future.  [Sam]
 
 =item *
 
 Improved performance of search paging.  ListManager now only builds
 the output rows that will actually be shown on the screen.  For large
 data sets this results in a huge gain in search speed.  [Adam and Sam]
+
+=item *
+
+Revised category implementation to use explicit uri and parent_id
+fields rather than relying on the Grp system.  This improves
+performance tremendously for larger numbers of categories.  [Jeff Pinyan]
+
+=item *
+
+Added new --continue-on-errors option to bric_soap to prevent
+non-fatal errors from ending the process. [Sam]
 
 =over 4
 
