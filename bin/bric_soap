@@ -37,45 +37,51 @@ Commands:
 
 Options:
 
-  --help - shows this screen
+  --help                 - shows this screen
 
-  --man - shows the full documentation
+  --man                  - shows the full documentation
 
-  --server - specifies the Bricolage server URL, defaults to
-             http://localhost:80
+  --server               - specifies the Bricolage server URL, defaults
+                           to http://localhost
 
-  --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
-               environment variable if set, 'admin' otherwise
+  --username             - the Bricolage username, defaults to the
+                           BRICOLAGE_USERNAME environment variable if
+                           set, 'admin' otherwise
 
-  --password - the password for the Bricolage user.  Default to the
-               BRICOLAGE_PASSWORD environment variable if set
+  --password             - the password for the Bricolage user.
+                           Default to the BRICOLAGE_PASSWORD
+                           environment variable if set.
 
   --with-related-stories - tell export and publish to include related stories
 
-  --with-related-media - tell export and publish to include related media
+  --with-related-media   - tell export and publish to include related media
 
-  --all - synonym for setting --with-related-stories and --with-related-media
+  --all                  - synonym for setting --with-related-stories and
+                           --with-related-media
 
-  --desk - required desk option for move command
+  --desk                 - required desk option for move command
 
-  --workflow - workflow option for move command
+  --workflow             - workflow option for move command
 
-  --search="field=value" - specify a search for list_ids, field must
+  --search field=value   - specify a search for list_ids, field must
                            be a valid search field for the list_ids()
                            method of the appropriate module.
 
-  --verbose - print a running description to STDERR.  Add a second
-              --verbose and you'll get debugging output too.
+  --verbose              - print a running description to STDERR.  Add
+                           a second --verbose and you'll get debugging
+                           output too.
 
-  --force - use force option for Bric::SOAP::Element->delete()
+  --force                - use force option for
+                           Bric::SOAP::Element->delete()
 
 
 =head1 EXAMPLES
 
-Here are some example command-lines.  These all assume you've setup
-BRICOLAGE_USERNAME and BRICOLAGE_PASSWORD and that your Bricolage server
-is on http://localhost:80.  If you haven't, you'll need to add --username,
---password and --server arguments as appropriate.
+Here are some example command-lines.  The examples assume that you've
+set the BRICOLAGE_USERNAME and BRICOLAGE_PASSWORD environment
+variables and that your local Bricolage server is running on
+http://localhost.  If this is not the case you'll need to add
+--username, --password and --server arguments as appropriate.
 
 Output an XML dump of the story with story_id 1024 into the file
 1024.xml:
@@ -89,13 +95,13 @@ Upload that story to the server at some.host.org:
 A simpler way to do the above two steps:
 
   bric_soap story export 1024 \
-  | bric_soap story create --server http://some.host.org -
+  | bric_soap story create --server some.host.org -
 
 Copy all stories from the local Bricolage to the server at some.host.org:
 
   bric_soap story list_ids
   | bric_soap story export - \
-  | bric_soap story create --server http://some.host.org -
+  | bric_soap story create --server some.host.org -
 
 Delete all stories (gasp!):
 
@@ -103,14 +109,14 @@ Delete all stories (gasp!):
 
 Publish all unpublished stories:
 
-  bric_soap story list_ids --search="publish_status=0" 
+  bric_soap story list_ids --search publish_status=0
   | bric_soap workflow publish -
 
 Republish all published stories.  This is useful when a template
 change needs to reflected across a site.  The C<sort -k2 -t_ -n> is a
 crude way to make sure that newer stories overwrite older ones.
 
-  bric_soap story list_ids --search="publish_status=1" \
+  bric_soap story list_ids --search publish_status=1 \
   | sort -k2 -t_ -n
   | bric_soap workflow publish -
 
@@ -120,10 +126,10 @@ stories.  Then publish the story along with any related stories or
 media.
 
   bric_soap story list_ids \
-     --search="title=Annoying Ad Turns Man Pro-Whaling" \
+     --search "title=Annoying Ad Turns Man Pro-Whaling" \
   | bric_soap story export --all - \
   | bric_soap story create --server http://some.host.org - \
-  | bric_soap workflow publish --server http://some.host.org -
+  | bric_soap workflow publish --server some.host.org -
 
 =head1 ID PARAMETERS
 
@@ -166,7 +172,7 @@ our $with_related_media   = 0;
 our $force                = 0;
 our $username               = $ENV{BRICOLAGE_USERNAME} || 'admin';
 our $password               = $ENV{BRICOLAGE_PASSWORD} || '';
-our $server                 = 'http://localhost:80';
+our $server                 = 'http://localhost';
 our $verbose                = 0;
 our $desk;
 our $workflow;

@@ -115,12 +115,17 @@ client.
 
 =head1 EXAMPLES
 
-To get a clean copy of all elements and templates from the server
-called "prod":
+Simply copy all elements and templates from the server called "prod"
+to localhost:
+
+  bric_dev_sync http://prod http://localhost
+
+Like the above, but clears localhost of all elements and templates
+first.
 
   bric_dev_sync --delete-existing prod localhost
 
-The same, but with categories copied also:
+Like the above, but with categories copied also:
 
   bric_dev_sync --delete-existing --copy-catgeories prod localhost
 
@@ -129,10 +134,19 @@ and associated templates:
 
   bric_dev_sync --element Article --with-sub localhost prod
 
+Update prod with changes with changes to all .pl templates:
+
+  bric_dev_sync --no-elements --template '%.pl' localhost prod
+
 Distribute changes to elements and templates from locahost out to
 prod1, prod2 and prod3 machines:
 
   bric_dev_sync localhost prod1 prod2 prod3
+
+Like the above, but clean prod1, prod2 and prod3 of all elements and
+templates first:
+
+  bric_dev_sync --delete-existing localhost prod1 prod2 prod3
 
 =head1 AUTHOR
 
@@ -229,6 +243,7 @@ require Data::Dumper if $VERBOSE;
 
 main();
 
+# main is where it's at
 sub main {
     # connect and login to SOAP servers
     soap_connect();
@@ -250,13 +265,14 @@ sub main {
     # sync assets from source to targets
     sync_assets();
 
-    print "Bricolage Dev Sync Complete.\n";
+    print "bric_dev_sync success.\n";
     exit 0;
 }
 
 # target manipulation
 #
 
+# deletes all elements and templates from all targets
 sub clear_target {
     our @targ;
 
@@ -272,13 +288,13 @@ sub clear_target {
 
     # do the dirty deed
     foreach my $module qw(Element Template) {
-	foreach my $soap (@targ) {
-	    my @ids = call_list_ids($soap, $module);
-	    call_delete($soap, $module, @ids);
+	foreach my $soap (@targ) {	   
+	  call_delete($soap, $module, call_list_ids($soap, $module));
 	}
     }
 }
 
+# syncs source assets from source to targets
 sub sync_assets {
     our (%elements, %templates, %categories, $copy_categories);
     sync_categories() if $copy_categories and keys %categories;
@@ -286,6 +302,7 @@ sub sync_assets {
     sync_templates()  if keys %templates;
 }
 
+# copies categories from source to target as needed
 sub sync_categories {
     our (%categories, @targ, $delete_existing);
 
@@ -326,6 +343,7 @@ sub sync_categories {
     }
 }
 
+# copies and updates elements from source to targets
 sub sync_elements {
     our (%elements, @targ, $delete_existing);
 
@@ -404,6 +422,7 @@ sub sync_elements {
     }
 }
 
+# create and updates templates from source to targets
 sub sync_templates {
     our (%templates, @targ, $delete_existing, $no_deploy);
     my @ids;
@@ -632,6 +651,7 @@ sub get_source_templates {
 	unless @template_ids;
 }
 
+# get source categories
 sub get_source_categories {
     our ($source, %categories);
 
@@ -683,7 +703,7 @@ sub call_list_ids {
     return ();
 }
 
-# calls create on chosen SOAP module, returns list of ids
+# calls update on chosen SOAP module, returns list of ids
 sub call_update {
     my ($soap, $module, $document) = (shift, shift, shift);
     my $type = lc($module) . "_id";
