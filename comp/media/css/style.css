@@ -1,13 +1,13 @@
-body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
+body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size: 65%; }
 td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
 pre        { padding: 1em; margin: 0; font-size: 1.1em; } 
 
 p          { font-size:11px; line-height:16px; }
 h3         { font-size:12px; line-height:17px;}
-dt         { font-size:11px; line-height:16px; font-weight:bold; }
+/*dt         { font-size:11px; line-height:16px; font-weight:bold; }
 dd         { font-size:11px; line-height:16px; }
-li         { font-size:11px; line-height:16px; }
+li         { font-size:11px; line-height:16px; }*/
 
 a img      { border: none; }
 
@@ -54,51 +54,41 @@ body {
 #breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }
 
 
-.header                    { position: relative; width: 100%; }
-.header .caption           { background-color: #CCCC99; }
-.fullHeader                { position: relative; color: white; font-weight: bold; width: 100%; }
-.fullHeader a              { color: white; }
-.fullHeader .number,
-.fullHeader .rightText     { width: 8px; }
-.adminBox .fullHeader      { background-color: #CC6633; }
-.workflowBox .fullHeader   { background-color: #006666; }
-.loginBox .fullHeader      { background-color: #006666; }
-.searchBox .fullHeader     { background-color: #666633; }
-.errorsBox .fullHeader     { background-color: #CC0000; }
-.helpBox .fullHeader       { background-color: #006666; }
+.header      { position: relative; width: 100%; }
+.fullHeader  { position: relative; width: 100%; color: white; font-weight: bold; }
+.header      .caption           { background-color: #CCCC99; }
+.fullHeader  .caption a     { color: white; }
+.fullHeader  .number,
+.fullHeader  .rightText     { width: 8px; }
+.adminBox    .fullHeader    { background-color: #CC6633; }
+.workflowBox .fullHeader    { background-color: #006666; }
+.loginBox    .fullHeader    { background-color: #006666; }
+.searchBox   .fullHeader    { background-color: #666633; }
+.errorsBox   .fullHeader    { background-color: #CC0000; }
+.helpBox     .fullHeader    { background-color: #006666; }
 
 .number { 
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-image: url("/media/images/curve_left.gif");
-    background-repeat: no-repeat;
-    background-position: top left; 
-    color: white;
+    position: absolute; top: 0; left: 0;
+    background: transparent url("/media/images/curve_left.gif") top left no-repeat;
     line-height: 2em;
-    height: 2em;
     width: 2.5em;
-    text-align: center;
+    color: white;
     font-weight: bold;
+    text-align: center;
 }
 .workflowBox .header .number { background-color: #669999; }
-.adminBox .header .number    { background-color: #D7713E; }
-.caption                     { 
-    text-transform: uppercase; 
-    line-height: 2em; 
-    height: 2em; 
-    padding-left: 3em;
-}
-.fullHeader .caption         { padding-left: 14px; }
-#headerContainer .caption    { padding-left: 14px; text-transform: none; font-size: 1.2em; }
+.adminBox    .header .number { background-color: #D7713E; }
+            
+.caption { text-transform: uppercase; line-height: 2em; padding-left: 3em; }
+.fullHeader .caption { padding-left: 10px; }
+#headerContainer .caption { padding-left: 10px; text-transform: none; font-size: 1.2em; }
 .rightText { 
     position: absolute;
-    top: 0;
-    right: -1px; /* Fix strange 1px showing in IE */
+    top: 0; right: -1px; /* Fix strange 1px showing in IE */
     width: 30%;
-    height: 2em;
+    line-height: 2em;
     background: transparent url("/media/images/curve_right.gif") top right no-repeat;
-    padding: 3px 10px 0 0;
+    padding: 2px 10px 0 0;
     text-align: right;
 }
 .border              { border-style: solid; border-width: 0 1px 1px 1px; }
@@ -116,14 +106,9 @@ body {
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
-.blueLink       { font-size:10px; color:#669999;}
-.blueLinkBold   { font-size:10px; color:#669999; font-weight:bold}
 .orangeLink     { font-size:10px; color:#CC6633;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
-.darkBlueLink   { font-size:10px; color:#006666;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
-.redLinkLight   { color:#993300; }
-.redLinkLarge   { font-size:11px; color:#993300; font-weight:bold}
 .whiteLink      { font-size:10px; color:#ffffff; text-decoration:none}
 .whiteUnderlinedLink      { font-size:10px; color:#ffffff;}
 .blackLink      { font-size:10px; color:#000000; text-decoration:none}
@@ -131,23 +116,11 @@ body {
 .whiteMedUnderlinedLink { font-size:11px; color:#ffffff;}
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
-.sideNavActiveCell   {background:#999966}
-.sideNavInactiveCell {background:#cccc99}
-.sideNavAdminCell    {background:#999966}
-.sideNavHeader       { font-size:10px; color:#000000; text-decoration:none}
-.sideNavHeaderBold   { font-size:10px; font-weight:bold; color:#000000; text-decoration:none}
-.sideNavHeaderBoldWhite { font-size:10px; font-weight:bold; color:#ffffff; text-decoration:none}
 
-.workflowBold        { font-size:10px; font-weight:bold; color:#666633}
-.workflowHeader      { font-size:10px; font-weight:bold; color:#666633}
-
-.title       { font-size:12px;}
-.subHeader   { font-size:11px;}
+/* .title       { font-size:12px;} */
 .label       { font-size:10px; font-weight:bold}
 .redLabel    { font-size:10px; font-weight:bold; color:red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
-.whiteLabel  { font-size:10px; font-weight:bold; color:white}
-.description { font-size:10px; color:blue}
 .errorMsg    { color: red; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
                                 /* stylesheet.  If this style ever gets applied, that */
@@ -156,18 +129,9 @@ body {
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
 
-.adminTab       {background:#cc6633;  font-size:12px; color:white; font-weight:bold;}
-.workflowTab    {background:#006666;  font-size:12px; color:white; font-weight:bold;}
-.adminSubTab    {background:#cc6633;  font-size:10px; color:white; font-weight:bold;}
-.whiteTextTab   { font-size:11px; color:white; font-weight:bold;}
-.workflowSubTab {background:#006666;  font-size:10px; color:white; font-weight:bold;}
 .darkHeader     {background:#666633;  font-size:10px; color:white; font-weight:bold;}
 .medHeader      {background:#999966;}
 .lightHeader    {background-color: #cccc99;}
-.redHeader      {background:#993300;  font-size:12px; color:white; font-weight:bold;}
-.tealHeader     {background:#669999;  font-size:12px; color:white; font-weight:bold;}
-.greyHeader     {background:#cccccc;}
-.tealHighlight  {background:#669999;  font-size:10px; color:white; font-weight:bold;}
 .aliasHeader    {background:#99Cc99; font-style:italic;}
 
 div.debug dt {
@@ -466,6 +430,7 @@ dl.viewmeta dt {
     width: 130px;
     padding-right: 5px;
     text-align: right;
+    font-weight: bold;
     background-color: #E8E8CD;
 }
 dl.viewmeta dd { margin-left: 140px; }

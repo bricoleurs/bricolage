@@ -2,16 +2,16 @@
 % if ($num_pages) {
 <table width="578" cellpadding="2" cellspacing="0" border="0">
   <tr class="lightHeader">
-    <td align="left" <% $style %> <% $colspan %>>
+    <td align="left" <% $colspan %>>
       <% $prev_link %>
 %     foreach my $page (0 .. $num_pages) {
 %         my $off = $page * $limit;
-      <a href="<% $url %>?offset=<% $off %>" class="redLinkLarge"><span class="subHeader"><% $page + 1 %></span></a>
+      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>
 %     }
       <% $next_link %>
     </td>
 %     unless ($show_all) {
-    <td align="right" <% $style %>><a href="<% $url %>?show_all=1" class="redLinkLarge">Show All</a></td>
+    <td align="right"><a href="<% $url %>?show_all=1" class="next">Show All</a></td>
 %     }
   </tr>
 </table>
@@ -99,9 +99,9 @@ my $next_offset = $offset + $limit;
 $next_offset = $num_pages * $limit if $next_offset > $num_objs;
 my ($prev_link, $next_link) = ('', '');
 if ($offset) {
-    $prev_link = qq{<a href="$url?offset=$prev_offset" class="redLinkLarge"><span class="subHeader">&laquo;</span></a>};
+    $prev_link = qq{<a href="$url?offset=$prev_offset">&laquo;</a>};
 }
 unless ($offset == $num_pages * $limit) {
-    $next_link = qq{<a href="$url?offset=$next_offset" class="redLinkLarge"><span class="subHeader">&raquo;</span></a>};
+    $next_link = qq{<a href="$url?offset=$next_offset">&raquo;</a>};
 }
 </%init>

@@ -11,7 +11,7 @@
       <span class="label"><% $lang->maketext('Download') %>:&nbsp;</span></td>
     <td width="470">&nbsp;
 %     if (my $uri = $media->get_local_uri) {
-    <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
+    <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>"><% $media->get_file_name %></a>
 %     } else {
     <% $lang->maketext('No file has been uploaded') %>
 %     }
@@ -50,7 +50,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     </td>
     <td>
 %     if (my $uri = $media->get_local_uri()) {
-      <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>" class="darkBlueLink"><% $media->get_file_name %></a>
+      <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>"><% $media->get_file_name %></a>
 %     } else {
       <% $lang->maketext('No file has been uploaded')%>
 %     }
