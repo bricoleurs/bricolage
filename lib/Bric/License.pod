@@ -172,6 +172,10 @@ Friends who have spotted bugs include:
 
 =item Paul Cory
 
+=item Jeff Steele
+
+=item Lari Huttunen
+
 =back
 
 Bricolage's translation team:
