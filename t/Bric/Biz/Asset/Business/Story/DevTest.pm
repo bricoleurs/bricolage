@@ -81,7 +81,7 @@ sub test_clone : Test(17) {
     is( $clone->get_title, $orig->get_title, "Compare titles" );
     is( $clone->get_slug, 'jarkko', "Compare slugs" );
     ok( my $ouri = $orig->get_uri, "Get original URI" );
-    $ouri =~ s/slug4/jarkko/;
+    $ouri =~ s/slug\d+/jarkko/;
     is( $clone->get_uri, $ouri, "Compare uris" );
 
     # Check that the output channels are the same.
