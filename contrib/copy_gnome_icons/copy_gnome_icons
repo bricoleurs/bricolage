@@ -138,7 +138,7 @@ my %seen;
 for my $file (@ARGV) {
     $_ = basename($file);
     s/\.png$// or next;
-    s/^$strip//;
+    s/^$strip// or next;
     my ($cat, $type) = split /-/, $_, 3;
     if ($type) {
         mkpath catdir($mime_dir, $cat) unless $seen{$cat}++;
