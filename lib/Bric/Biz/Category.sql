@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.9 $
+-- VERSION: $Revision: 1.10 $
 --
--- $Date: 2002-07-17 10:53:49 $
+-- $Date: 2002-07-18 13:02:49 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -45,7 +45,7 @@ CREATE TABLE category (
     name             VARCHAR(64),
     description      VARCHAR(256),
     parent_id        NUMERIC(10,0)   NOT NULL,
-    asset_grp_id     NUMERIC(10,0),
+    asset_grp_id     NUMERIC(10,0)   NOT NULL,
     active           NUMERIC(1,0)    NOT NULL
                                      DEFAULT 1
                                      CONSTRAINT ck_category__active

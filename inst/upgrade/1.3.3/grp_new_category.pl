@@ -12,7 +12,11 @@ exit unless fetch_sql(q{ SELECT 1 FROM class WHERE id = 23 });
 move_privs();
 
 do_sql(q{ UPDATE category set __category_grp_id__ = NULL },
-       q{ DELETE FROM class WHERE id = 23});
+       q{ DELETE FROM class WHERE id = 23 },
+       q{ ALTER TABLE    category
+          ADD CONSTRAINT ck_category__asset_grp_id
+          CHECK          (asset_grp_id IS NOT NULL)
+ });
 
 sub move_privs {
     # This subroutine is going to change the group that manages permissions.
