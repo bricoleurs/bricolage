@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33.2.5 $
+$Revision: 1.33.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 00:17:44 $
+$Date: 2003-03-12 01:16:13 $
 
 =head1 SYNOPSIS
 
@@ -2246,8 +2246,8 @@ sub save {
     # Save the parts and the output channels.
     $oc_coll->save if $oc_coll;
 
-    # Save the sites.
-    $site_coll->save($id) if $site_coll;
+    # Save the sites if object has an id
+    $site_coll->save($id) if $site_coll && $id;
 
     # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
@@ -2268,6 +2268,9 @@ sub save {
 
     # First save the main object information
     $id ? $self->_update_asset_type : $self->_insert_asset_type;
+
+    #Otherwise save sites here when we have the id
+    $site_coll->save($self->get_id) if $site_coll && !$id;
 
     # Save the attribute information.
     $self->_save_attr;
