@@ -18,6 +18,7 @@ use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
 use Bric::Util::Priv::Parts::Const qw(:all);
+use Bric::Config qw(:l10n);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         output_channel_name_to_id
@@ -458,6 +459,7 @@ sub export {
     $document_handle->close();
 
     # name, type and return
+    Encode::_utf8_off($document) if ENCODE_OK;
     return name(document => $document)->type('base64');
 }
 

@@ -96,6 +96,11 @@ David]
 Deleting an element that has a template no longer causes an error. Thanks to
 Susan for the spot! [David]
 
+=item *
+
+Eliminated encoding errors when using the SOAP interface to output stories or
+media with wide characters. Reported by Scott Lanning. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

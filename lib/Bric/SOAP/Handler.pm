@@ -80,6 +80,7 @@ use constant DEBUG => 0;
 # turn on tracing when debugging
 use SOAP::Lite +trace => [ (DEBUG ? ('all') : ()), fault => \&handle_soap_err ];
 use SOAP::Transport::HTTP;
+use Bric::Config qw(:l10n);
 use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
@@ -91,6 +92,7 @@ use Apache;
 use Apache::Request;
 use Apache::Constants qw(OK);
 use Apache::Util qw(escape_html);
+require Encode if ENCODE_OK;
 
 use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::Auth
