@@ -3,13 +3,14 @@ Bricolage Mac OS X/Darwin README
 
 Bricolage works well on Mac OS X, especially on version 10.2 or later, but
 installation requires a fair bit of additional preparation. The major issue is
-that Bricolage will not run on the verion of Apache that comes with Mac OS
-X. This is because Bricolage requires the apreq library of Perl modules to
-run, and these have not yet been ported to Mac OS X.
+that, because it cannot run on a DSO mod_perl, Bricolage will not run on the
+verion of Apache that comes with Mac OS X. A further issue is that Bricolage
+requires the libapreq library of Perl modules to run, and these have not yet
+been ported to Mac OS X.
 
 The solution is to compile your own Apache with mod_perl with a special patch
-that statically compiles support for apreq into Apache. The patch can be found
-here:
+that statically compiles support for libapreq into Apache. The patch can be
+found here:
 
   http://www.apache.org/~joes/
 
@@ -56,11 +57,20 @@ From http://www.ca.postgresql.org/ftpsite/latest/, download the latest
 PostgreSQL sources.
 
 Complete details for building everything you need to run Bricolage on Mac OS X
-will always be found at http://david.wheeler.net/osx.html. Below is a summary
-of the instructions on that page, for those who just need the barest of hints
-for compiling and installing software. Just be sure that you've installed the
-latest Mac OS X Developer tools, available for a free registration at
-http://developer.apple.com/.
+will always be found at http://david.wheeler.net/osx.html. More detailed instructions,
+as well as a discussion of the issues of running Apache/mod_perl/mod_ssl on
+Mac OS X, may be found in the following articles on O'Reilly's MacDevCenter.com:
+
+  "Build Your Own Apache Server with mod_perl"
+  http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html
+
+  "Build Your Own Apache Server with mod_perl and mod_ssl"
+  http://www.macdevcenter.com/pub/a/mac/2002/12/18/apache_modssl.html
+
+Below is a summary of the instructions, for those who just need the barest of
+hints for compiling and installing software. Just be sure that you've
+installed the latest Mac OS X Developer tools, available for a free
+registration at http://developer.apple.com/.
 
 INSTALLATION SUMMARY
 
@@ -100,8 +110,7 @@ tarballs into /usr/local/src, e.g., with the command
   % cd perl-5.8.0/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
-  % sh Configure -des -Uversiononly -Dprefix=/usr/local \
-    -Uinstallusrbinperl
+  % sh Configure -des -Dprefix=/usr/local -Uinstallusrbinperl
   % make
   % make test # Will be a few expected and documented failures
   % make install
@@ -113,8 +122,7 @@ Or, for Perl 5.6.1, do this:
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
   % perl -i.bak -p -e 's|Local/Library|Library|g' hints/darwin.sh
-  % sh Configure -des -Dfirstmakefile=GNUmakefile \
-    -Dldflags="-flat_namespace" -Uinstallusrbinperl
+  % sh Configure -des -Dldflags="-flat_namespace" -Uinstallusrbinperl
   % make
   % make test # will be a few errors -- should be okay.
   % make install
@@ -123,21 +131,21 @@ Or, for Perl 5.6.1, do this:
 5. Patch Apache:
 
   % cd apache_1.3.xx
-  % patch -p0 < /usr/local/src/apache_dbm.patch
-  % patch -p0 < /usr/local/src/apreq.patch
+  % patch -p0 < ../apache_dbm.patch
+  % patch -p0 < ../apreq.patch
   % cd ..
   
 6. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
-  % patch -p0 < /usr/local/src/mod_ssl_dylib.patch
+  % patch -p0 < ../mod_ssl_dylib.patch
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
   % cd ..
 
 7. Install mod_perl:
 
   % cd mod_perl-1.xx
-  % perl Makefile.PL \
+  % /usr/local/bin/perl Makefile.PL \
     NO_HTTPD=1 \
     USE_APACI=1 \
     PREP_HTTPD=1 \
@@ -210,8 +218,8 @@ DURING INSTALLATION
 
 While runing "make", you'll be prompted to answer a series of
 questions. Provided you've followed the directions here and installed and
-configured PostgreSQL, most of the defaults should be fine. There are a couple
-of things to watch for, however:
+configured Apache, most of the defaults should be fine. There are a couple of
+things to watch for, however:
 
 * When you're prompted to confirm the location of Apache, do not accept
   "/usr/sbin/httpd" if that's what is offered. That is the Apple Apache
