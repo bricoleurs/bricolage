@@ -68,6 +68,11 @@ no longer. [David]
 The correct source is now displayed in the Story and Media edit profiles.
 [David]
 
+=item *
+
+An attempt to install Bricolage to use an existing PostgreSQL user no longer
+causes an installation error when you decline drop the user. [David]
+
 =back
 
 =head1 VERSION 1.4.4

@@ -6,15 +6,15 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.7.2.2 $
+$Revision: 1.7.2.3 $
 
 =head1 DATE
 
-$Date: 2002-10-12 20:09:00 $
+$Date: 2002-11-02 00:58:58 $
 
 =head1 DESCRIPTION
 
-This script is called during "make install" to install the Bricolage
+This script is called during C<make install> to install the Bricolage
 database.
 
 =head1 AUTHOR
@@ -26,7 +26,6 @@ Sam Tregar <stregar@about-inc.com>
 L<Bric::Admin>
 
 =cut
-
 
 use strict;
 use FindBin;
@@ -114,14 +113,18 @@ sub create_user {
                           "NOCREATEDB NOCREATEUSER");
 
     # if the user already exists offer to drop it
-    if (not $result and 
-        $dbh->errstr =~ /user name "[^"]+" already exists/ and
-        ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
-                  "Drop user? [no] ", 0)) {
-        hard_fail("Failed to drop user.  The error from Postgres was:\n\n",
-                  $dbh->errstr, "\n")
-            unless $dbh->do("DROP USER $PG->{sys_user}");
-        return create_user($dbh);
+    if (not $result and
+        $dbh->errstr =~ /user name "[^"]+" already exists/) {
+        if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
+                      "Drop user? [no] ", 0)) {
+            hard_fail("Failed to drop user.  The error from Postgres was:\n\n",
+                      $dbh->errstr, "\n")
+              unless $dbh->do("DROP USER $PG->{sys_user}");
+            return create_user($dbh);
+        } else {
+            # We'll just use the existing user.
+            return;
+        }
     }
 
     hard_fail("Failed to create database user.  The error from Postgres was:",
