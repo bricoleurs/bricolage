@@ -235,6 +235,12 @@ prevents problems when a few objects are created or updated before an
 exception is thrown. Now any error will cause the entire SOAP request to
 fail. Thanks to Neal Sofge for the spot! [David]
 
+=item *
+
+Changing the "Size" display attribute of a field in the Field profile (a
+subprofile of the Element admin profile) now properly causes the field to
+actually display in the new size. Reported by Tony Cowderoy. [David]
+
 =back
 
 =cut
