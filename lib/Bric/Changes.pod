@@ -186,6 +186,10 @@ Made the parent category field in the Category Profile a required field.
 Fix Bric::Util::FTP::FileHandle to work with a modified date-formatting
 preference. [Matt]
 
+=item *
+
+Fixed section numbering in the Contributor Type profile. [Scott Lanning]
+
 =back
 
 =head2 New Features
