@@ -23,13 +23,6 @@ unless ($sites) {
 }
 
 $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
-
-unless ($sites) {
-    $sites = Bric::Biz::Site->list;
-    $c->set('__SITES__', $sites);
-}
-
-$sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
 </%init>
 
 % if ($use_form_tag) {
