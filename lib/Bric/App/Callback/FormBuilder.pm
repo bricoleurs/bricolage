@@ -1,5 +1,11 @@
 package Bric::App::Callback::FormBuilder;
 
+# XXX: from David msg on May 2nd:
+# I think that the formBuilder/element.mc and
+# formBuilder/contributor_type.mc callbacks should also be under
+# Profile...but I leave that up to you.
+# -- Now I understand this
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'formBuilder');
 use strict;
