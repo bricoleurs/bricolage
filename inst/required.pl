@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2004-01-08 12:43:31 $
+$Date: 2004-03-18 02:14:45 $
 
 =head1 DESCRIPTION
 
@@ -102,7 +102,7 @@ exit 0;
 
 # look for postgresql
 sub find_pg {
-    print "Looking for PostgreSQL with version >= 7.1.0...\n";
+    print "Looking for PostgreSQL with version >= 7.2.0...\n";
 
     # find PostgreSQL by looking for pg_config.  First search user's path
     # then some standard locations.
@@ -151,8 +151,8 @@ sub find_pg {
 	unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail("Found old version of Postgres: $x.$y.$z - ",
-		     "7.1.0 or greater required.")
-	unless (($x > 7) or ($x == 7 and $y >= 1));
+		     "7.2.0 or greater required.")
+	unless (($x > 7) or ($x == 7 and $y >= 2));
     print "Found acceptable version of Postgres: $x.$y.$z.\n";
 
     print "However, version 7.3.0 or later is strongly recommended.\n",
