@@ -61,7 +61,10 @@ KNOWN ISSUES
   connections to the PostgreSQL server to be unexpectedly dropped in such a
   way that Bricolage cannot reconnect. Please use Apache 1.3.27 until the
   underlying problem has been identified and addressed. Join the
-  Bricolage-General mail list to receive updates on the status of this issue.
+  Bricolage-General mail list to receive updates on the status of this issue,
+  or follow the Apache bug report.
+
+    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22805
 
 * Users who have been given the rights, via membership, to edit groups and/or
   users effectively have complete access to the system. This is because they
