@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-13 16:55:19 $
 
 =head1 SYNOPSIS
 
@@ -521,7 +521,7 @@ element__id
 
 =item *
 
-category_id
+category__id
 
 =item *
 
@@ -1351,7 +1351,7 @@ sub checkout {
 		die Bric::Util::Fault::Exception::GEN->new( {
 			msg => "Already Checked Out" });
 	}
-	unless ($param->{'user__id'}) {
+	unless (defined $param->{'user__id'}) {
 		die Bric::Util::Fault::Exception::GEN->new( { msg =>
 			"Must be checked out to users" });
 	}	
@@ -1640,7 +1640,7 @@ sub _do_list {
 
     # Build the where clause for the trivial formatting table fields.
     foreach my $f (qw(id workflow__id output_channel__id element__id
-                      category_id name file_name active)) {
+                      category__id name file_name active)) {
 	next unless exists $param->{$f};
 
 	if (($f eq 'name') || ($f eq 'file_name')) {
@@ -2116,7 +2116,10 @@ L<Bric>, L<Bric::Biz::Asset>
 =head1 REVISION HISTORY
 
 $Log: Formatting.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-13 16:55:19  samtregar
+Fixed two bugs - category_id is really category__id and user__id can be 0
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:41  wheeler
