@@ -43,15 +43,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.37.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.37.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 15:45:31 $
+$Date: 2003-07-02 17:11:16 $
 
 =head1 SYNOPSIS
 
@@ -932,7 +932,7 @@ sub _load_stories {
             unless defined $story->get_primary_oc_id;
 
         # remove all keywords if updating
-        $story->delete_keywords($story->get_keywords) if $update;
+        $story->del_keywords($story->get_keywords) if $update;
 
         # add keywords, if we have any
         if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
