@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.101 $
+$Revision: 1.102 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.101 $ )[-1];
+our $VERSION = (qw$Revision: 1.102 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-31 11:42:59 $
+$Date: 2004-04-19 09:29:07 $
 
 =head1 SYNOPSIS
 
@@ -117,6 +117,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     TEMPLATE_BURN_PKG
                     INCLUDE_XML_WRITER
                     XML_WRITER_ARGS
+                    MASON_INTERP_ARGS
                     ISO_8601_FORMAT
                     PREVIEW_LOCAL
                     PREVIEW_MASON
@@ -185,6 +186,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DEFAULT_FILENAME
                                      INCLUDE_XML_WRITER
                                      XML_WRITER_ARGS
+                                     MASON_INTERP_ARGS
                                      DEFAULT_FILE_EXT
                                      BURN_ARGS_METHOD)],
                     oc        => [qw(DEFAULT_FILENAME
@@ -505,6 +507,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
     use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
       (eval "$config->{XML_WRITER_ARGS}" ) : ();
+    use constant MASON_INTERP_ARGS       => $config->{MASON_INTERP_ARGS} ?
+      (eval "$config->{MASON_INTERP_ARGS}" ) : ();
 
     # System User (The user and group under which the server children run). use
     use constant SYS_USER => scalar getpwnam($config->{SYS_USER} or "nobody");

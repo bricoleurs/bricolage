@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.62 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+our $VERSION = (qw$Revision: 1.62 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-03 22:26:03 $
+$Date: 2004-04-19 09:29:06 $
 
 =head1 SYNOPSIS
 
@@ -235,6 +235,7 @@ sub burn_one {
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new(
+        MASON_INTERP_ARGS,
         $self->_interp_args,
         request_class => 'HTML::Mason::Request',
         error_mode    => 'fatal',
@@ -357,10 +358,12 @@ sub chk_syntax {
     my $data = $tmpl->get_data or return $self;
 
     # Create the interpreter
-    my $interp = HTML::Mason::Interp->new( $self->_interp_args,
-                                          'comp_root'  => $self->get_comp_dir,
-                                          'data_dir'   => $self->get_data_dir,
-                                          );
+    my $interp = HTML::Mason::Interp->new(
+        MASON_INTERP_ARGS,
+        $self->_interp_args,
+        'comp_root'  => $self->get_comp_dir,
+        'data_dir'   => $self->get_data_dir,
+    );
 
     # Try to create a component.
     my $comp = eval { $interp->make_component(comp_source => $data) };

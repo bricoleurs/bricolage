@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.155 $
+$Revision: 1.156 $
 
 =head1 DATE
 
-$Date: 2004-03-25 18:36:21 $
+$Date: 2004-04-19 09:29:06 $
 
 =head1 DESCRIPTION
 
@@ -1215,6 +1215,17 @@ file. Defaults to no arguments if not specified.
 
 B<Note>: Only the Mason burner supports XML::Writer.
 
+=item *
+
+B<MASON_INTERP_ARGS:> This directive passes arguments to the
+L<HTML::Mason::Interp|HTML::Mason::Interp> constructor in
+L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>'s C<burn_one>
+method, which means it affects the Mason interpreter for your templates.
+See L<HTML::Mason::Interp> for the list of parameters you can pass
+to the C<new> method. Defaults to no arguments if not specified.
+
+B<Note>: Only the Mason burner supports HTML::Mason::Interp. :)
+
 =back
 
 =head2 Authentication Configuration
@@ -1448,7 +1459,7 @@ from 1993 to 2013.
 =item *
 
 B<ENABLE_CATEGORY_BROWSER:> Category browser setting. Enable this directive to
-make the Media and Story profiles use the category browserb. This is useful if
+make the Media and Story profiles use the category browser. This is useful if
 you have a lot of categories, as it prevents them all from being loaded into a
 big select list each time you edit a Media or Story document. Disabled by
 default.
