@@ -1,0 +1,15 @@
+<table width="<% $table_width %>" cellpadding="0" cellspacing="0">
+<tr>
+  <td width="<% $cell_width %>"><img src="/media/images/spacer.gif" width="<% $cell_width %>" height="1" /></td>
+  <td><input type="image" src="/media/images/<% $lang_key %>/<% $button %>.gif" border="0" name="<% $widget %>|<% $cb %>"></td>
+</tr>
+</table>
+<%args>
+$widget
+$cb     => 'create_cb'
+$button => 'create_red'
+</%args>
+<%once>;
+my $table_width = FIELD_INDENT + 150;
+my $cell_width = FIELD_INDENT - 10;
+</%once>
