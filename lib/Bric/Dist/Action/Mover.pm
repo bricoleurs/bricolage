@@ -6,16 +6,16 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-03-12 19:06:59 $
 
 =head1 SYNOPSIS
 
@@ -111,12 +111,12 @@ NONE.
 
 =head2 Public Instance Methods
 
-These methods documented are in addition to those inherited from
+The methods documented here are in addition to those inherited from
 Bric::Dist::Action.
 
 =over 4
 
-=item $act->undo_it($job, $resources, $server_type)
+=item $act->do_it($job, $resources, $server_type)
 
 Executes $action via the method specified for the Bric::Dist::ServerType of which
 this action is a part.
