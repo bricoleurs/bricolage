@@ -59,7 +59,44 @@ from working properly. [Sam]
 
 =item *
 
-All fixes in the soon-to-be-released 1.2.1 version.  See below for details.
+All fixes in the soon-to-be-released 1.2.2 version.  See below for details.
+
+=back
+
+=head1 Version 1.2.2
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Some misspellings were corrected in Bric::Admin. Thanks to Ask Bjoern Hansen for
+the spot. [David]
+
+=item *
+
+Fixed broken "Return" buttons on related media and related story pages. [David]
+
+=item *
+
+Fixed bug where assets weren't activated when they were creaed and then checked
+in without clicking the "Save" button. [David]
+
+=item *
+
+Fixed bug where a fixed story's slug was getting used in its URI. [David]
+
+=item *
+
+Fixed broken image autopopulation fields (compression, height, width, etc.)
+[David]
+
+=item *
+
+Fixed broken support for audio and video files. These can be set up by the Media
+Type menu in Element Types. Eventually these should arrange for some fields to
+be auto-populated (e.g., bit rate, frame size, length, encoding, etc.).
 
 =back
 

@@ -191,7 +191,7 @@ chowndirs:
 chmoddirs:
 	chmod -R a+r ${htmldir} ${docdir} ${bindir}
 	chmod -R a+x ${bindir}
-uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean
+uninstall: uninstalldatabase uninstall-lib uninstallfiles uninstalldirs dist-clean uninstall-database
 uninstall-lib:
 	-cd ${LIB} && make uninstall
 uninstalldirs:
@@ -261,12 +261,14 @@ ${DOC_TARGETS}: ${docdir}/%: %
 ${INST}/installed-database: ${INST}/bricolage.sql ${INST}/pguser.sql ${INST}/grants.sql
 	perl -pi -e 's/nobody/${DBI_USER}/g' ${INST}/bricolage.sql
 	@${POST_INSTALL}
-	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
-	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 	su -c '${CREATEDB} -E unicode ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/pguser.sql' ${POSTGRES_SYSTEM_USER}
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/bricolage.sql' ${POSTGRES_SYSTEM_USER} 2> $@
 	su -c '${PSQL} ${PSQL_OPTIONS} -f ${INST}/grants.sql' ${POSTGRES_SYSTEM_USER} 2>> $@
+
+uninstall-database:
+	-su -c '${DROPDB} ${DB_NAME}' ${POSTGRES_SYSTEM_USER}
+	-su -c '${DROPUSER} ${DBI_USER}' ${POSTGRES_SYSTEM_USER}
 
 # This makes the grant script
 ${INST}/grants.sql: ${INST}/bricolage.sql
@@ -380,7 +382,7 @@ docclean:
 .PHONY : clean dep clean cpan doc libs install installdirs \
 		 install-bin install-comp install-conf install-data \
 		 install-lib install-doc install-html install-man \
-		 uninstall uninstalldirs config database \
+		 uninstall uninstalldirs config database uninstall-database \
 		 uninstall-bin uninstall-comp uninstall-conf uninstall-data \
 		 uninstall-lib uninstall-doc uninstall-html uninstall-man 
 

@@ -6,16 +6,16 @@ Bric::App::MediaFunc - Location for functions that query uploaded media files.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-02-27 03:04:39 $
 
 =head1 SYNOPSIS
 
@@ -31,13 +31,13 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Image::Info qw(image_info);
+use Image::Info ();
+use Bric::Util::Fault::Exception::DP;
 
 ################################################################################
 # Inheritance
 ################################################################################
 use base qw(Bric);
-
 
 ################################################################################
 # Function and Closure Prototypes
@@ -55,7 +55,7 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-
+my $dp = 'Bric::Util::Fault::Exception::DP';
 
 ################################################################################
 
@@ -63,17 +63,15 @@ use constant DEBUG => 0;
 # Instance Fields
 
 BEGIN {
-	Bric::register_fields(
-		{
-			# Public Fields
-			
+    Bric::register_fields(
+			  {
+			   # Public Fields
 
-			# Private Fields
-			_path				=> Bric::FIELD_NONE,
-			_file_handle		=> Bric::FIELD_NONE,
-
-			_image_info			=> Bric::FIELD_NONE
-		});
+			   # Private Fields
+			   _path	=> Bric::FIELD_NONE,
+			   _file_handle	=> Bric::FIELD_NONE,
+			   _image_info	=> Bric::FIELD_NONE
+			  });
 }
 
 ################################################################################
@@ -103,15 +101,11 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	$self = bless {}, $self unless ref $self;
-
-	$init->{'_path'} = delete $init->{'file_path'};
-
-	$self->SUPER::new($init);
-
-	return $self;
+    my ($self, $init) = @_;
+    $self = bless {}, $self unless ref $self;
+    $init->{'_path'} = delete $init->{'file_path'};
+    $self->SUPER::new($init);
+    return $self;
 }
 
 
@@ -123,15 +117,15 @@ sub new {
 
 Dummy method to prevent wasting time trying to AUTOLOAD DESTROY.
 
-B<Throws:> 
+B<Throws:>
 
 NONE
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -169,13 +163,7 @@ NONE
 
 =cut
 
-sub get_height {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info();
-
-	return $info->{'height'};
-}
+sub get_height { $_[0]->_get_image_info->{height} }
 
 ################################################################################
 
@@ -197,13 +185,7 @@ NONE
 
 =cut
 
-sub get_width {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info();
-
-	return $info->{'width'};
-}
+sub get_width { $_[0]->_get_image_info->{width} }
 
 ################################################################################
 
@@ -225,13 +207,7 @@ NONE
 
 =cut
 
-sub get_color_type {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'color_type'};
-}
+sub get_color_type { $_[0]->_get_image_info->{color_type} }
 
 ################################################################################
 
@@ -253,13 +229,7 @@ NONE
 
 =cut
 
-sub get_resolution {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'resolution'};
-}
+sub get_resolution { $_[0]->_get_image_info->{resolution} }
 
 ################################################################################
 
@@ -281,71 +251,13 @@ NONE
 
 =cut
 
-sub get_samples_per_pixel {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'SamplesPerPixel'};
-}
-
-sub get_bits_per_sample {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'BitsPerSample'};
-}
-
-sub get_comment {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'Comment'};
-}
-
-sub get_interlace {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'Interlace'};
-}
-
-sub get_comperssion {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-	return $info->{'Compression'};
-}
-
-sub get_gama {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'Gama'};
-}
-
-sub get_last_modi_time {
-	my ($self) = @_;
-
-	my $info = $self->_get_image_info;
-
-	return $info->{'LastModificationTime'};
-}
-
-################################################################################
-
-
-sub test {
-	my ($class, $fh) = @_;
-
-	print STDERR "We have the file in media func\n";
-
-	return "Eat More Cheese\n";
-}
+sub get_samples_per_pixel { $_[0]->_get_image_info->{SamplesPerPixel} }
+sub get_bits_per_sample { $_[0]->_get_image_info->{BitsPerSample} }
+sub get_comment { $_[0]->_get_image_info->{Comment} }
+sub get_interlace { $_[0]->_get_image_info->{Interlace} }
+sub get_compression { $_[0]->_get_image_info->{Compression} }
+sub get_gama { $_[0]->_get_image_info->{Gama} }
+sub get_last_modi_time { $_[0]->_get_image_info->{LastModificationTime} }
 
 ################################################################################
 
@@ -386,17 +298,14 @@ NONE
 =cut
 
 sub _get_image_info {
-	my ($self) = @_;
-
-	my $info = $self->_get('_image_info');
-
-	return $info if $info;
-
-	$info = image_info( $self->_get('_path'));
-
-	$self->_set( { '_image_info' => $info });
-
-	return $info;
+    my ($self) = @_;
+    my $info = $self->_get('_image_info');
+    return $info if $info;
+    $info = Image::Info::image_info( $self->_get('_path'));
+    die $dp->new({ msg => 'Error retreiving data from image.',
+		   payload => $info->{error} }) if $info->{error};
+    $self->_set( { '_image_info' => $info });
+    return $info;
 }
 
 1;

@@ -21,6 +21,9 @@ my $save_data = sub {
     $story ||= get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
+    # Make sure the story is active.
+    $story->activate;
+
     if ($param->{'slug'}) {
 	# check the form of the slug
 	if ($param->{'slug'} =~ m/\W/) {

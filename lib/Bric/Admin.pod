@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-02-27 03:04:39 $
 
 =head1 DESCRIPTION
 
@@ -111,10 +111,6 @@ Perl Modules:
 =item *
 
 OpenSSL 0.9.6a (optional)
-
-=item *
-
-MM 1.1.3 - Shared Memory Library
 
 =item *
 
@@ -268,40 +264,11 @@ use any Configure commands, and execute these commands:
 C<make install> insn't necessary because the sources will be compiled into
 Apache.
 
-=head2 MM - Shared Memory Library
-
-Installation of MM follows the usual conventions. Here's an example:
-
-=over 4
-
-=item *
-
-Download the MM source tarball from www.engelschall.com.
-
-=item *
-
-Gunzip and untar the sources.
-
-=item *
-
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands (we recommend --disable-shared, to prevent building
-shared libraries), and execute these commands:
-
-  ./configure --disable-shared
-  make
-
-=back
-
-C<make install> insn't necessary because the sources will be compiled into
-Apache.
-
 =head2 Apache Interface to OpenSSL (mod_ssl) (optional)
 
-You'll need to install mod_perl if you want to use Bricolage's SSL
-support to run a more secure server, otherwise you can skip this step.
-Installation of mod_ssl follows the usual conventions. Here's an
-example:
+You'll need to install mod_ss if you want to use Bricolage's SSL support to run
+a more secure server, otherwise you can skip this step. Installation of mod_ssl
+follows the usual conventions. Here's an example:
 
 =over 4
 
@@ -319,8 +286,9 @@ Change into the source directory, read the INSTALL file to see if you need to
 use any Configure commands. The only one required here is C<--with-apache>, so
 you'll need to have already downloaded, gunzipped, and untarred the Apache
 sources (see below). If you already have a server certificate and a server key,
-use the C<--with-crt> and C<--with-key> commands to point to them. Then, execute
-this command:
+use the C<--with-crt> and C<--with-key> commands to point to them. You might
+also want to consider including the optional MM library (see mod_ssl's INSTALL
+file for details). Then, execute this command:
 
   ./configure --with-apache=/usr/local/src/bricolage/apache_1.3.xx
 
@@ -630,10 +598,12 @@ If you run into problem, please file a bug report at
 L<http://bricolage-bugzilla.thepirtgroup.com> and then try the manual
 installation instructions below.
 
+When all of the basic software components have been installed, start PostgreSQL.
+You can use one of the scripts in startup/ if you like.
+
 =head2 Bricolage (Manual Installation)
 
-When all of the basic software components have been insalled, start PostgreSQL.
-You can use one of the scripts in startup/ if you like.
+Here's how to install Bricolage manually.
 
 =over
 
@@ -1150,8 +1120,8 @@ a page index number to uniquely name the file for a given story. Defaults to
 
 B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
 time in the same package spaces as your templates run in. This is so that you
-only have to load stuff that you might often use once, such as CGI or
-Apache::DBI. This should be a complete Perl statment that can simply be loaded,
+only have to load stuff that you might often use once, such as CGI.pm or
+Apache::DBI. This should be a complete Perl statement that can simply be loaded,
 and won't pause and wait for anything else, as otherwise your server will never
 start! And be warned that this code is executed at server startup time, so
 beware loading any variables that don't survive forks very well (such as

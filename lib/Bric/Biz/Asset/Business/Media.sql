@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2001-12-04 18:17:44 $
+-- $Date: 2002-02-27 03:04:40 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -22,6 +22,8 @@ CREATE SEQUENCE seq_media__contributor START 1024;
 CREATE SEQUENCE seq_media_member START 1024;
 
 CREATE SEQUENCE seq_image_member START  1024;
+CREATE SEQUENCE seq_audio_member START  1024;
+CREATE SEQUENCE seq_video_member START  1024;
 
 CREATE SEQUENCE seq_media_fields START 1024;
 
@@ -164,6 +166,35 @@ CREATE TABLE image_member (
 );
 
 
+-- -----------------------------------------------------------------------------
+-- Table: audio_member
+--
+-- Description: The link between audio objects and member objects
+--
+
+CREATE TABLE audio_member (
+    id          NUMERIC(10,0)  NOT NULL
+                               DEFAULT NEXTVAL('seq_audio_member'),
+    object_id   NUMERIC(10,0)  NOT NULL,
+    member__id  NUMERIC(10,0)  NOT NULL,
+    CONSTRAINT pk_audio_member__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: video_member
+--
+-- Description: The link between video objects and member objects
+--
+
+CREATE TABLE video_member (
+    id          NUMERIC(10,0)  NOT NULL
+                               DEFAULT NEXTVAL('seq_video_member'),
+    object_id   NUMERIC(10,0)  NOT NULL,
+    member__id  NUMERIC(10,0)  NOT NULL,
+    CONSTRAINT pk_video_member__id PRIMARY KEY (id)
+);
+
+
 -- Table: attr_media
 --
 -- Description: A table to represent types of attributes.  A type is defined by
@@ -248,6 +279,14 @@ CREATE INDEX fkx_member__media_member ON media_member(member__id);
 -- image_member.
 CREATE INDEX fkx_image__image_member ON image_member(object_id);
 CREATE INDEX fkx_member__image_member ON image_member(member__id);
+
+-- audio_member.
+CREATE INDEX fkx_audio__audio_member ON audio_member(object_id);
+CREATE INDEX fkx_member__audio_member ON audio_member(member__id);
+
+-- video_member.
+CREATE INDEX fkx_video__video_member ON video_member(object_id);
+CREATE INDEX fkx_member__video_member ON video_member(member__id);
 
 -- Unique index on subsystem/name pair
 CREATE UNIQUE INDEX udx_attr_media__subsys__name ON attr_media(subsys, name);
