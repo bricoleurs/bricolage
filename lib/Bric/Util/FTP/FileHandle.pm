@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:51 $
+$Date: 2003-11-30 01:32:17 $
 
 =head1 DESCRIPTION
 
@@ -78,21 +78,21 @@ sub new {
   my $template    = shift;
   my $oc_id       = shift;
   my $category_id = shift;
-  
+
   my $filename =  $template->get_file_name;
   $filename = substr($filename, rindex($filename, '/') + 1);
 
   # Create object.
   my $self = Net::FTPServer::FileHandle->new ($ftps, $filename);
-  
+
   $self->{template}    = $template;
   $self->{category_id} = $category_id;
   $self->{oc_id}       = $oc_id;
   $self->{filename}    = $filename;
 
-  print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n" 
+  print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n"
     if FTP_DEBUG;
-  
+
   return bless $self, $class;
 }
 
@@ -120,8 +120,8 @@ sub open {
   my $self = shift;
   my $mode = shift;
   my $template = $self->{template};
-  
-  print STDERR __PACKAGE__, "::open('$mode') : ", $template->get_file_name, "\n" 
+
+  print STDERR __PACKAGE__, "::open('$mode') : ", $template->get_file_name, "\n"
     if FTP_DEBUG;
 
   if ($mode eq "r") {
@@ -136,19 +136,19 @@ sub open {
     return undef unless $self->can_write;
 
     # first clear the data unless appending
-    $template->set_data('') 
+    $template->set_data('')
       unless $mode eq 'a';
 
     # create a tied scalar and return an IO::Scalar attached to it
     my $data;
-    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR', 
+    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR',
 	$template, $self->{ftps}{user_obj};
     my $handle = new IO::Scalar \$data;
 
     # seek if appending
     $handle->seek(length($template->get_data))
       if $mode eq 'a';
-    
+
     return $handle;
   }
 }
@@ -200,8 +200,8 @@ sub status {
   my $self = shift;
   my $template = $self->{template};
 
-  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";  
-  
+  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";
+
   my $data = $template->get_data || "";
   my $size = length($data);
   my $date = $template->get_deploy_date('epoch') || 0;
@@ -219,10 +219,15 @@ sub status {
     # works with the web login caching system.
     my $priv = $self->{ftps}{user_obj}->what_can($template);
     my $mode;
-    if ($priv == EDIT or $priv == CREATE) {
-      $mode = 0777;
+    if (!$priv or $priv == DENY) {
+        # They can't touch it.
+        $mode = 0000;
+    } elsif ($priv >= EDIT) {
+        # They have full access.
+        $mode = 0777;
     } else {
-      $mode = 0400;
+        # They can read it.
+        $mode = 0444;
     }
     return ( 'f', $mode, 1, "nobody", "ci", $size,  $date);
   }
@@ -242,7 +247,7 @@ sub delete {
   my $self = shift;
   my $template = $self->{template};
 
-  print STDERR __PACKAGE__, "::delete() : ", $template->get_file_name, "\n";  
+  print STDERR __PACKAGE__, "::delete() : ", $template->get_file_name, "\n";
 
   # delete code equivalent to delete callback in
   # comp/widgets/tmpl_prof
@@ -256,7 +261,7 @@ sub delete {
   }
 
   # log the removal
-  Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow', 
+  Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
                            timestamp => strfdate(),
@@ -266,11 +271,11 @@ sub delete {
   # undeploy and deactivate
   my $burn = Bric::Util::Burner->new;
   $burn->undeploy($template);
-  $template->deactivate;  
+  $template->deactivate;
   $template->save;
 
   # log the deactivation
-  Bric::Util::Event->new({ key_name  => 'formatting_deact', 
+  Bric::Util::Event->new({ key_name  => 'formatting_deact',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
                            timestamp => strfdate(),
@@ -296,7 +301,7 @@ sub can_rename {  0; }
 sub can_delete {  1; }
 
 # check to see if template is checked out
-sub can_write  { 
+sub can_write  {
   my $self = shift;
   my @stats = $self->status();
 
@@ -366,7 +371,7 @@ sub STORE {
   $template->save();
 
   # log the save
-  Bric::Util::Event->new({ key_name  => 'formatting_save', 
+  Bric::Util::Event->new({ key_name  => 'formatting_save',
                            obj       => $template,
                            user      => $user,
                            timestamp => strfdate(),
@@ -386,7 +391,9 @@ sub STORE {
   $template->save();
 
   # log the deploy
-  Bric::Util::Event->new({ key_name  => $template->get_deploy_status ? 'formatting_redeploy' : 'formatting_deploy',
+  Bric::Util::Event->new({ key_name  => $template->get_deploy_status
+                                        ? 'formatting_redeploy'
+                                        : 'formatting_deploy',
                            obj       => $template,
                            user      => $user,
                            timestamp => strfdate(),
@@ -400,7 +407,7 @@ sub STORE {
   if ($desk) {
     $desk->remove_asset($template);
     $desk->save;
-  } 
+  }
 
   # clear the workflow ID
   $template->set_workflow_id(undef);

@@ -73,7 +73,7 @@ Find Stories and Find Media. Suggested by Arthur. [David]
 
 =item *
 
-A number of fixes for the bric_media_upload contrib script:
+A number of fixes for the F<bric_media_upload> contrib script:
 
 =over 8
 
@@ -156,6 +156,10 @@ error. Spotted by Alexander Ling. [David]
 
 Sites added to a site group will now be listed as members of the site group in
 the site group's profile. Thanks to Alexander Ling for the spot. [David]
+
+=item *
+
+Improved permission checking in the virtual FTP server. [David]
 
 =back
 
