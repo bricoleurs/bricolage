@@ -37,6 +37,11 @@ Removed Bric::SOAP::Element->delete(force => 1) which could cause data
 corruption in existing stories.  Also removed dependent options in
 bric_dev_sync (--delete-existing) and bric_soap (--force). [Sam]
 
+=item *
+
+Fixed bug in Bric::SOAP::Element where updating an element could cause
+Stories using that element to lose track of their field data. [Sam]
+
 =back
 
 =head2 New Features

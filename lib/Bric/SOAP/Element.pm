@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-19 20:03:12 $
+$Date: 2002-04-19 22:45:00 $
 
 =head1 SYNOPSIS
 
@@ -626,25 +626,21 @@ sub _load_element {
 	    push @{$fixup{$edata->{name}}}, $name;
 	}
 
-	# remove fields if updating (I am a bad, bad man, but this
-	# will all get fixed soon enough in the element revision)
+	# build hash of old data
+	my (%old_data, %updated_data);
 	if ($update) {
 	    my @data = $element->get_data();
 	    foreach my $data (@data) {	    
-		my $new_name = "[ del ". time ." ] " . $data->get_name;
-		$new_name = substr($new_name,0,31) if length $new_name > 32;
-		$data->set_name($new_name);
-		$data->save;
+		$old_data{$data->get_name} = $data;
 	    }
-	    $element->del_data(\@data) if @data;
 	}
-	
+
 	# find fields and instantiate new data elements
 	my $place = 0;
 	$edata->{fields} ||= {field => []};
 	foreach my $field (@{$edata->{fields}{field}}) {
 	    $place++; # next!
-
+	    
 	    # figure out sql_type, from widgets/formBuilder/element.mc
 	    my $sql_type;
 	    if ($field->{type} eq 'date'){
@@ -658,19 +654,45 @@ sub _load_element {
 		$sql_type = 'short';
 	    }
 	    
-	    # get a new data object
-	    my $data = $element->new_data({name        => $field->{name},
-					   required    => $field->{required},
-					   quantifier  => $field->{repeatable},
-					   sql_type    => $sql_type,
-					   place       => $place,					   publishable => 1,
-					   max_length  => $field->{max_size},
-					  });
+	    # get a data object
+	    my $data;
+	    if ($update and exists $old_data{$field->{name}}) {
+		print STDERR __PACKAGE__ . "::update : ". 
+		    "Found old data object for $edata->{name} => ", 
+			"$field->{name}.\n"
+			    if DEBUG;
+		$data = $old_data{$field->{name}};		    
+		$data->set_name($field->{name});
+		$data->set_required($field->{required});
+		$data->set_quantifier($field->{repeatable});
+		$data->set_sql_type($sql_type);
+		$data->set_place($place);
+		$data->set_publishable(1);
+		$data->set_max_length($field->{max_size});
+		$updated_data{$field->{name}} = 1;
+	    } else {
+		# get a new data object
+		print STDERR __PACKAGE__ . "::create : ". 
+		    "Creating new data object for $edata->{name} => ", 
+			"$field->{name}.\n"
+			    if DEBUG;
+		$data = $element->new_data(
+				     { name        => $field->{name},
+				       required    => $field->{required},
+				       quantifier  => $field->{repeatable},
+				       sql_type    => $sql_type,
+				       place       => $place,
+				       publishable => 1,
+				       max_length  => $field->{max_size},
+				     });
+	    }
 	    
-	    # add default value attribute.    (strange, my eyes are itching...)
+	    # add default value attribute.
+	    # (strange, my eyes are itching...)
 	    $data->set_attr(html_info => $field->{default});
 	    
-	    # add meta data to value attribute.            (oh, god they burn!)
+	    # add meta data to value attribute.
+	    # (oh, god they burn!)
 	    $data->set_meta(html_info => disp      => $field->{label});
 	    $data->set_meta(html_info => value     => $field->{default});
 	    $data->set_meta(html_info => type      => $field->{type});
@@ -681,9 +703,21 @@ sub _load_element {
 	    $data->set_meta(html_info => multiple  => $field->{multiple});
 	    $data->set_meta(html_info => vals      => $field->{options});
 	    $data->set_meta(html_info => pos       => $place);
-
+	    
 	    # (my eyes! they're on fire!  oh, sweet lord, why?  WHY
 	    # HAVE YOU DONE THIS TO ME?)
+	}
+
+	# if updating then data fields might need deleting
+	if ($update) {
+	    my @deleted = grep { not exists $updated_data{$_} } keys %old_data;
+	    if (@deleted) {
+		print STDERR __PACKAGE__ . "::update : ". 
+		    "Deleting data fields $edata->{name} => ", 
+			join(', ', @deleted), "\n"
+			    if DEBUG;
+		$element->del_data([ (map { $old_data{$_} } @deleted) ]);
+	    }
 	}
 
 	# activate or inactive?
