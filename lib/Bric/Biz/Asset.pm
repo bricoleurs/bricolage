@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.8 $
+$Revision: 1.25.2.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 01:15:22 $
+$Date: 2003-03-21 01:52:37 $
 
 =head1 SYNOPSIS
 
@@ -564,14 +564,12 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              },
-                  needs_publish => {
-                  name     => 'needs_publish',
-                  get_meth => sub { my $a=shift;
-                                                                        if ($a->get_publish_status(@_)) {
-                                                                                return $a->needs_publish(@_) ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';
-                                                                        } }, 
-                  get_args => [],
-                 },
+            needs_publish => {
+                              name     => 'needs_publish',
+                              get_meth => sub { shift->needs_publish(@_) },
+                              get_args => [],
+                              disp     => 'Status',
+                             },
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
