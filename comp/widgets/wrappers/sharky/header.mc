@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.2 $
+$Revision: 1.15.2.3 $
 
 =head1 DATE
 
-$Date: 2002-01-18 00:36:55 $
+$Date: 2002-01-23 22:30:18 $
 
 =head1 SYNOPSIS
 
@@ -71,9 +71,9 @@ if ($agent->{browser} eq "Netscape") {
 } else {
     $layer = "iframe";
     $properties = ($agent->{os} eq "MacOS")
-      ? qq { width=150 border=0 scrolling="no" frameborder="no" style="z-index:10;" }
-      : " width=150 height=" . $numLinks * 24
-      . qq { border=0 scrolling="no" frameborder="no" style="z-index:10;" };
+      ? qq { width=150 height="100%" border=0 scrolling="no" frameborder="no" style="z-index:10;" }
+      : " width=150"
+      . qq { height="100%" border=0 scrolling="no" frameborder="no" style="z-index:10;" };
 }
 
 # clean up the title
