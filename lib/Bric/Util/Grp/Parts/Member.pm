@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:13 $
+$Date: 2003-11-30 00:57:52 $
 
 =head1 SYNOPSIS
 
@@ -1238,14 +1238,23 @@ sub _do_list {
         $force     = $param->{grp_package}->get_object_class_id;
     }
 
-    my ( $object_id, $package );
+    my ( $object_id, $package, $object_class_id );
     if ( $param->{object} ) {
         $package   = ref $param->{object};
         $object_id = $param->{object}->get_id;
-    }
-    elsif ( $param->{object_id} && $param->{object_package} ) {
+        # If the group class can contain objects of more than one class, we
+        # need to look up the member object for that class only.
+        $object_class_id = $class->_get_class_id($package)
+          unless $param->{grp_package}
+          and $param->{grp_package}->get_object_class_id;
+    } elsif ( $param->{object_id} && $param->{object_package} ) {
         $object_id = $param->{object_id};
         $package   = $param->{object_package};
+        # If the group class can contain objects of more than one class, we
+        # need to look up the member object for that class only.
+        $object_class_id = $class->_get_class_id($package)
+          unless $param->{grp_package}
+          and $param->{grp_package}->get_object_class_id;
     }
 
     my @objs;
@@ -1258,7 +1267,7 @@ sub _do_list {
                                   id => $force });
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
-                $param->{all}, $ids );
+                                 $object_class_id, $param->{all}, $ids );
         }
         else {
             foreach ( keys %$supported ) {
@@ -1267,10 +1276,8 @@ sub _do_list {
                                       pkg_name => $_ });
 
                 push @objs,
-                  _do_joined_select(
-                    $class,     $member_table, $grp_id,
-                    $object_id, $param->{all}, $ids
-                );
+                  _do_joined_select($class, $member_table, $grp_id, $object_id,
+                                    $object_class_id, $param->{all}, $ids);
             }
         }
 
@@ -1283,14 +1290,15 @@ sub _do_list {
 
             push @objs,
               _do_joined_select( $class, $member_table, $grp_id, $object_id,
-                $param->{all}, $ids );
+                                 $object_class_id, $param->{all}, $ids );
         }
         else {
             # HACK. I changed "_do_select" to "_do_joined_select" because
             # there is no "_do_select". So this probably doesn't work at all,
             # but it most likely isn't called at all or we would have noticed
             # it by now.
-            push @objs, _do_joined_select( $class, $grp_id, $param->{all} );
+            push @objs, _do_joined_select( $class, undef, $grp_id, $object_id,
+                                           $object_class_id, $param->{all}, $ids );
         }
     }
 
@@ -1322,7 +1330,8 @@ sub _get_member_table {
 }
 
 sub _do_joined_select {
-    my ( $class, $member_table, $grp_id, $object_id, $all, $ids ) = @_;
+    my ( $class, $member_table, $grp_id, $object_id, $object_class_id,
+         $all, $ids ) = @_;
     my $cols = $ids ? 'm.id' :
       'm.id, m.grp__id, m.class__id, m.active, o.id, o.object_id, o.member__id';
     my $sql =
@@ -1336,6 +1345,10 @@ sub _do_joined_select {
     if ($object_id) {
         push @param, ' o.object_id=? ';
         push @bind,  $object_id;
+    }
+    if ($object_class_id) {
+        push @param, ' m.class__id = ? ';
+        push @bind,  $object_class_id;
     }
     unless ($all) {
         push @param, ' m.active=1 ';

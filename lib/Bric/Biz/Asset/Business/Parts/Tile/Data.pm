@@ -8,15 +8,15 @@ the business data.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 SYNOPSIS
 
@@ -771,11 +771,15 @@ sub _do_list {
 
     # Build up a where clause if necessary.
     my (@where, @bind);
-    foreach my $f (qw(object_instance_id active element_data_id name
-                      parent_id)) {
+    foreach my $f (qw(object_instance_id active name parent_id)) {
         next unless exists $param->{$f};
-        push @where, "$f=?";
+        push @where, "$f = ?";
         push @bind, $param->{$f};
+    }
+
+    if (exists $param->{element_data_id}) {
+        push @where, "element_data__id = ?";
+        push @bind, $param->{element_data_id};
     }
 
     my $sql = 'SELECT id';

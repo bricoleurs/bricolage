@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2003-11-19 16:15:30 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 DESCRIPTION
 

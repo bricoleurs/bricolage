@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.132 $
+$Revision: 1.133 $
 
 =head1 DATE
 
-$Date: 2003-11-15 03:22:54 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 DESCRIPTION
 
@@ -1345,21 +1345,14 @@ B<ENABLE_SFTP_MOVER:> This directive indicates whether the Bricolage server
 may distribute resources using the SFTP mover. Setting this to "On" or "Yes"
 or "1" will enable the SFTP mover. In order to use the SFTP mover, you must
 manually install the Net::SFTP module from the CPAN. Furthermore, you should
-login to the remote server as Apache user (e.g. "nobody") in order to
-initialize F<~/.ssh/known_hosts> before using the SFTP mover (you might also
-need to create the directory F</.ssh> on the Bricolage server (and possibly on
-the destination server, too) with write permission for "nobody", in case
-nobody's home directory is something like F</bin/false> and ssh falls back to
-F</> as the home directory). Defaults to "Off" if not specified.
-
-=item *
-
-B<ENABLE_SFTP_V2:> Setting this directive to 'On' or 'Yes' or '1' tells the
-SFTP mover to try using version 2 of SSH before trying version 1;
-otherwise, it will try version 1 first, then version 2. Defaults to
-'Off' if not specified. The reason for this default is that the
-prerequisites for Protocol 1 in Net::SSH::Perl are much less than
-for version 2.
+login to the remote server in order to initialize F<~/.ssh/known_hosts> before
+using the SFTP mover. You might also need to create the directory F</.ssh> on
+the Bricolage server (and possibly on the destination server, too) with write
+permission for "nobody", in case nobody's home directory is something like
+F</bin/false> and ssh falls back to F</> as the home directory). To use a
+private key, it must be named F<~/.ssh/identity> for F<~/.ssh/id_rsa>, as
+those are the files that Net::SSH::Perl looks for. Defaults to "Off" if not
+specified.
 
 =item *
 

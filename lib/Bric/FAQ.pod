@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2003-11-26 15:11:37 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 DESCRIPTION
 
@@ -215,7 +215,7 @@ Users list
 archives (L<http://marc.theaimsgroup.com/?l=apache-modperl>) for some
 discussions of this issue.
 
-=head2 Error Messages
+=head2 Errors
 
 This section contains questions about error messages output
 by Bricolage.
@@ -414,6 +414,28 @@ SQL dump file and add these lines:
 This will add the constraint at the very end of the load, when both the "usr"
 table and the C<login_avail()> function have been created. Now you should be
 able to load the database and get back to work!
+
+=head3 I keep clicking the "Click here to start" link on the very first Bricolage page I see, but it keeps just opening up a new window with "Click here to start" again. What gives?
+
+I'm going to go out on a limb here and guess that you're using Safari on Mac
+OS X. Safari has a JavaScript bug wherein it doesn't know the name of a
+window. The "Click here to start" link opens a new named window, but since
+Safari doesn't know that it's named, Bricolage's JavaScript can't tell that
+it's named, either, and so keeps trying to get you to open a window with
+the correct name. It'll never happen. Apple should be aware of this issue,
+as I've filed a bug report for it using Safari's bug reporting interface, and
+have reported it again via Apple's official bug database (Bug # 3485193).
+
+Until Apple fixes the bug, there are two ways to resolve this issue: First,
+don't use Safari. This is the preferred solution, and since there are some
+other great Browsers for Mac OS X (notably Camino, Firebird, and Mozilla),
+it's a real option for most Bricolage users. The second solution is to disable
+the named window by adding the undocumented configuration directive
+C<NO_TOOLBAR> to your F<bricolage.conf> file with a false value. The downside
+of this approach, however, is that all users of Bricolage will now be using
+Bricolage in a window with the back button, and this can potentially lead to
+problems with the state of story objects while you're editing them. However,
+if you never use the back button, it should be fine.
 
 =head2 Element Administration
 

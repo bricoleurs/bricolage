@@ -6,11 +6,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:20 $
+$Date: 2003-11-30 00:57:50 $
 
 =head1 SYNOPSIS
 
@@ -137,6 +137,7 @@ $compact         => 0
 $indent          => undef
 $disp            => undef
 $repopulate      => 0
+$read_only       => 0
 </%args>
 <%once>
 my $widget = 'select_time';
@@ -182,6 +183,8 @@ $fields{'min'}  = \@min  unless $no_min;
 
 set_state_data($sub_widget, $s);
 
+$style .= '_ro' if $read_only;
+
 $m->comp("$style.html",
 	 widget          => $widget,
 	 base_name       => $base_name,
@@ -190,6 +193,7 @@ $m->comp("$style.html",
 	 indent          => $indent,
 	 compact         => $compact,
 	 disp            => $disp,
+         def_date        => $def_date,
          %fields
 	);
 

@@ -467,6 +467,74 @@ upgrading. [David]
 
 =back
 
+=head1 VERSION 1.6.8 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Custom select fields now correctly pay attention to the size attribute.
+Reported by Dave Rolsky. [David]
+
+=item *
+
+The element type manager now displays "Subelement" instead of "Story" for
+subelement element types. Suggested by Dave Rolsky. [David]
+
+=item *
+
+Updated to work with PostgreSQL 7.4. [David]
+
+=item *
+
+Improved error message in Bric::Util::Trans::SFTP. [David]
+
+=item *
+
+Its possible to create new stories again without running into errors saying
+that a URI is not unique because the cover date and slug were accidentally
+exclued from the URI. [David]
+
+=item *
+
+Mason story templates now inherit from all category templates, thus enabling
+the access of C<< <%attr> >>s and calling of C<< <%method> >>s in category
+templates from story templates.
+
+=item *
+
+Permission to edit element fields is now based on the permissions granted to
+edit the elements they belong to. This means that users other Global Admin
+group members can now edit fields. [David]
+
+=item *
+
+Dates are no longer editable if a user doesn't have permission to edit them.
+[David]
+
+=item *
+
+Users without EDIT access to an element no longer see a link to Edit fields
+of that element, but a link to View them, instead. They will also no longer
+see an "Add Subelements" button. [David]
+
+=item *
+
+Fixed bug that triggered an invalid error message when a story URI is non-unique.
+Reported by Kevin Elliott. [David]
+
+=item *
+
+Assets with the same IDs but in different classes (media vs. stories vs.
+templates) no longer prevent each other from being added to a desk that can
+contain different classes of assets. Thanks to Scott for the spot and doing
+the research that lead to the replication of the problem. [David]
+
+
+=back
+
 =head1 VERSION 1.6.7 (2003-10-22)
 
 =head2 Bug Fixes
@@ -523,6 +591,12 @@ for the spot. [David]
 
 Added tests for validity of the POD in F<*.pod> files as well as F<*.pm>
 files. Fixed a few POD typos found as a result. [David]
+
+=item *
+
+Fixed C<element_data_id> parameter to
+Bric::Biz::Asset::Business::Parts::Tile::Data to actually work. Reported by
+Eldar Kononov. [David]
 
 =back
 

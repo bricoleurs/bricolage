@@ -56,20 +56,28 @@ $id => undef
 </%args>
 
 <%init>;
-# Instantiate an object
+# Instantiate an object.
 my $field = $ARGS{obj}
   ? $ARGS{obj}
   : defined($id)
       ? $class->lookup({'id' => $id})
+      # This part isn't really necessary, since no new fields are ever created
+      # here.
       : $class->new();
 $id ||= $field->get_id();
 
 my $meta = $field->get_meta('html_info');
 my $which = $meta->{'type'};  # text, radio, etc..
 
-# Check authorization
-chk_authz($field, $id ? READ : CREATE);
-my $no_edit = !chk_authz($field, ($id ? EDIT : CREATE), 1);
+# Get the element object to which the field belongs.
+my $elem = Bric::Biz::AssetType->lookup({ id => $field->get_element__id });
+
+# Check authorization. We check the element, rather than the field, since
+# field permissions are not (currently) supported.
+#chk_authz($field, $id ? READ : CREATE);
+#my $no_edit = !chk_authz($field, ($id ? EDIT : CREATE), 1);
+chk_authz($elem, READ);
+my $no_edit = !chk_authz($elem, EDIT, 1);
 my $no_del = !$id || $no_edit;
 
 my $exclude = {
@@ -91,11 +99,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:48 $
+$Date: 2003-11-30 00:57:50 $
 
 =head1 DESCRIPTION
 

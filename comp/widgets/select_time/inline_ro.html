@@ -1,0 +1,13 @@
+<%perl>
+if ($useTable) {
+    # There probably ought to be something else here...
+    $m->print(qq{<table border="0" width="578"><tr><td align="right" width="125"><span class="label">$disp:</span></td><td width="453">$def_date</td></tr></table></tr>\n});
+} else {
+    $m->print(qq{<table border="0" width="578"><tr><td align="right" width="125"><span class="label">$disp:</span></td><td width="453">$def_date</td></tr></table></tr>\n});
+}
+</%perl>
+<%args>
+$useTable => 0
+$def_date
+$disp => ''
+</%args>

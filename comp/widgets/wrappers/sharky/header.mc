@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =head1 DATE
 
-$Date: 2003-11-10 13:57:41 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,8 @@ $debug => undef
 my @context =  split /\|/, $context;
 
 for (@context){
-    s/^\s+|\s+$//g;
+    s/^\s+//g;
+    s/\s+$//g;
     if (/^(\"?)(.+?)(\"?)$/) {
         my $startquote = $1;
         my $endquote = $3;

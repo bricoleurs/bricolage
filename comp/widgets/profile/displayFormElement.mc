@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-10-14 00:36:41 $
+$Date: 2003-11-30 00:57:50 $
 
 =head1 SYNOPSIS
 
@@ -285,8 +285,9 @@ my %formSubs = (
 		     def_date  => $value,
 		     useTable  => $useTable,
 		     width     => $width,
-		     disp      => $name
-		    );
+		     disp      => $name,
+                     read_only => $readOnly
+                 );
         },
 
 	checkbox => sub {

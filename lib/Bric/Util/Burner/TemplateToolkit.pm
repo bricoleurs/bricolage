@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-26 03:10:01 $
+$Date: 2003-11-30 00:57:52 $
 
 =head1 SYNOPSIS
 
@@ -641,8 +641,6 @@ sub end_page {
 =head2 Private Class Methods
 
 NONE.
-
-=back
 
 =head2 Private Instance Methods
 

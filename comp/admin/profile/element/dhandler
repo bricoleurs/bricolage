@@ -170,7 +170,6 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
         $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
     }
 
-
     # display elements contained by this asset type
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
@@ -194,7 +193,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 	     callback => "formBuilder|addElement_cb",
 	     image    => "add_sub_element_lgreen",
 	     vspace   => 5
-	    );
+	    ) unless $no_edit;
 
     $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 }
@@ -227,7 +226,9 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                          form_name => 'cont_profile',
                          attr     => $attrs,
                          readOnly => $no_edit,
-                         useEdit => 1);
+                         useEdit     => !$no_edit,
+                         usePosition => !$no_edit,
+                         useDelete   => !$no_edit);
             } else {
                 $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
                 $lang->maketext("No fields defined"));
@@ -321,11 +322,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2003-11-26 03:10:00 $
+$Date: 2003-11-30 00:57:50 $
 
 =head1 DESCRIPTION
 

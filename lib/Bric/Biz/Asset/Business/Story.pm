@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.67 $
+$Revision: 1.68 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.67 $ )[-1];
+our $VERSION = (qw$Revision: 1.68 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-22 03:42:21 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 SYNOPSIS
 
@@ -56,10 +56,6 @@ $Date: 2003-10-22 03:42:21 $
  # Access note information
  $asset                 = $asset->add_note($note)
  ($note_list || @notes) = $asset->get_notes()
-
- # Creation and modification information.
- ($modi_date, $modi_by)       = $asset->get_modi()
- ($create_date, $create_date) = $asset->get_create()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -106,12 +102,6 @@ $Date: 2003-10-22 03:42:21 $
  ($kw_list || @kws) = $biz->get_keywords()
  ($self || undef)   = $biz->has_keyword($keyword)
  $biz               = $biz->del_keywords([$kw, ...])
-
- # Related stories
- $biz                   = $biz->add_related([$other_biz, ...])
- (@related || $related) = $biz->get_related()
- $biz                   = $biz->delete_related([$other_ba, ...])
- $rel_grp__id           = $biz->get_related_grp__id()
 
  # Setting extra information
  $id   = $biz->create_attr($sql_type, $length, $at_data_id, $data_param);

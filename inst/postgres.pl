@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-11-06 21:57:42 $
+$Date: 2003-11-30 00:57:51 $
 
 =head1 DESCRIPTION
 
@@ -57,6 +57,7 @@ get_include_dir();
 get_lib_dir();
 get_bin_dir();
 get_psql();
+get_version();
 get_users();
 get_host();
 get_version();
