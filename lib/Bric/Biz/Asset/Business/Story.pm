@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-18 00:10:56 $
+$Date: 2002-10-19 00:50:11 $
 
 =head1 SYNOPSIS
 
@@ -905,20 +905,26 @@ NONE
 sub get_uri {
     my $self = shift;
     my ($cat, $oc) = @_;
-    my ($cat_obj, $oc_obj);
     my $dirty = $self->_get__dirty();
 
+    # Get the category object.
     if ($cat) {
-        $cat_obj = ref $cat ? $cat :
-          Bric::Biz::Category->lookup({'id'=>$cat});
-        $oc_obj  = ref $oc  ? $oc  :
-          Bric::Biz::OutputChannel->lookup({'id'=>$oc});
+        $cat = Bric::Biz::Category->lookup({ id => $cat})
+          unless ref $cat;
     } else {
-        $cat_obj = $self->get_primary_category();
-        my $at_obj = $self->_get_element_object();
-        ($oc_obj) = $at_obj->get_output_channels($at_obj->get_primary_oc_id);
+        $cat = $self->get_primary_category;
     }
-    my $uri = $self->_construct_uri($cat_obj, $oc_obj);
+
+    # Get the output channel object.
+    if ($oc) {
+        $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
+          unless ref $oc;
+    } else {
+        my $at = $self->_get_element_object;
+        ($oc) = $at->get_output_channels($at->get_primary_oc_id);
+    }
+
+    my $uri = $self->_construct_uri($cat, $oc);
 
     # Update the 'primary_uri' field if we were called with no arguments.
     $self->_set(['primary_uri'], [$uri]) unless scalar(@_);
