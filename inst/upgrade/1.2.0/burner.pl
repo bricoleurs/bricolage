@@ -19,8 +19,10 @@ BEGIN {
 use Bric::Util::DBI qw(:all);
 
 # Check to see if we've run this before.
-my $sth = prepare('SELECT burner FROM element');
-eval { execute($sth) };
+eval {
+    my $sth = prepare('SELECT burner2 FROM element');
+    execute($sth);
+};
 exit unless $@;
 
 # Okay, we haven't run this before. Let's do it!
@@ -29,7 +31,7 @@ begin();
 
 # Now update it all.
 eval {
-    $sth = prepare('ALTER TABLE element ADD COLUMN burner NUMERIC(2,0) NOT NULL');
+    my $sth = prepare('ALTER TABLE element ADD COLUMN burner NUMERIC(2,0) NOT NULL');
     execute($sth);
     $sth = prepare('ALTER TABLE element ALTER burner SET DEFAULT 1');
     execute($sth);
