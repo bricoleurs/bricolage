@@ -27,7 +27,8 @@ return unless $field eq "$widget|save_cb"
   || $field eq "$widget|add_cb"
   || $field eq "$widget|save_n_stay_cb"
   || $field eq "$widget|addElement_cb"
-  || $field eq "$widget|add_oc_id_cb";
+  || $field eq "$widget|add_oc_id_cb"
+  || $field eq "$widget|add_site_id_cb";
 return unless $param->{$field}; # prevent multiple calls to this file
 
 
@@ -70,6 +71,8 @@ if ($param->{delete} &&
       if exists $param->{element_type_id} && !defined $param->{element_id};
     $comp->activate;
     $comp->set_name($param->{name});
+        
+
 
     # Normalize the key name
     my $kn = lc($param->{key_name});
@@ -193,6 +196,16 @@ if ($param->{delete} &&
         $comp->delete_output_channels($del_oc_ids);
     }
 
+    # Delete sites.
+    if ($param->{rem_site}) {
+        my $del_site_ids = mk_aref($param->{rem_site});
+        if(@$del_site_ids >= @{$comp->get_sites}) {
+            add_msg($lang->maketext("You cannot remove all Sites"));
+        } else {
+            $comp->remove_sites($del_site_ids);
+        }
+    }
+
     # Enable output channels.
     my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
     foreach my $oc ($comp->get_output_channels) {
@@ -202,6 +215,10 @@ if ($param->{delete} &&
     # Add output channels.
     $comp->add_output_channel($param->{"$widget|add_oc_id_cb"})
       if $field eq "$widget|add_oc_id_cb";
+
+    # Add sites
+    $comp->add_site($param->{"$widget|add_site_id_cb"})
+      if $field eq "$widget|add_site_id_cb";
 
     # delete any selected sub elements
     if ($param->{"element|delete_cb"}) {
@@ -214,9 +231,15 @@ if ($param->{delete} &&
         $comp->set_primary_oc_id($oc->get_id) if $oc;
     }
 
+
+    $comp->add_site($c->get_user_cx(get_user_id)) 
+        if $param->{isNew} && $comp->get_top_level;
+
     # Save the element.
     $comp->save unless $no_save;
     $param->{element_id} = $comp->get_id;
+
+    
 
     my $containers = $comp->get_containers;
     if (($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb")
@@ -252,11 +275,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.2.2 $
+$Revision: 1.22.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-03 03:01:20 $
+$Date: 2003-03-12 01:50:12 $
 
 =head1 SYNOPSIS
 

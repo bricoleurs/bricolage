@@ -39,8 +39,55 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 if (defined $id) {
 
-    # Manage Output Channels if this is a top-level container.
     if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
+        my $site_sub = sub {
+            my $siteid = $_[0]->get_id;
+            if ($_[1] eq 'enabled') {
+                $m->scomp('/widgets/profile/checkbox.mc',
+                          name => 'enabled',
+                          value => $siteid,
+                          checked => $_[0]->is_active,
+                          useTable => 0
+                         );
+            }
+        };
+
+        my $sel_sub = sub {
+            return ['Delete', 'rem_site'];
+        };
+
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object => 'site',
+                 userSort => 0,
+                 def_sort_field => 'name',
+                 title => 'Sites',
+                 objs => scalar $comp->get_sites,
+                 addition => undef,
+                 fields => [qw(name description)],
+                 field_titles => { primary => 'Primary', enabled => 'Enabled' },
+                 field_values => $site_sub,
+                 profile => undef,
+                 select => $sel_sub,
+                 number => ++$num
+                );
+</%perl>
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+    object => 'site',
+    field  => 'name',
+    exclude => [ map { $_->get_id } $comp->get_sites ],
+    no_persist => 1,
+    name   => 'formBuilder|add_site_id_cb',
+    default => ['' => 'Add Site'],
+    constrain => { active => 1 },
+    js => "onChange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
+<br />
+<%perl>;
+        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
+
         my $primid = $comp->get_primary_oc_id;
         my $oc_sub = sub {
             my $ocid = $_[0]->get_id;
@@ -62,7 +109,7 @@ if (defined $id) {
         }
         };
 
-        my $sel_sub = sub {
+        $sel_sub = sub {
             return if $_[0]->get_id == $primid;
             return ['Delete', 'rem_oc'];
         };
@@ -240,11 +287,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.2.1 $
+$Revision: 1.14.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-03 02:58:38 $
+$Date: 2003-03-12 01:50:12 $
 
 =head1 DESCRIPTION
 
