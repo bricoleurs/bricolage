@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 16:41:50 $
+$Date: 2002-07-17 18:56:08 $
 
 =head1 SYNOPSIS
 
@@ -259,7 +259,7 @@ sub export {
     $document_handle->close();
 
     # name, type and return
-    return name(document => $document)->type('base64');   
+    return name(document => $document)->type('base64');
 }
 }
 
@@ -474,7 +474,7 @@ sub delete {
     }
     return name(result => 1);
 }
-
+}
 
 
 =back
