@@ -61,6 +61,17 @@ year is 2003, then the date span will be from 1993 to 2013.
 
 =back
 
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Made User Group Permissions UI wieldy with larger numbers of users by
+adding a select list to choose which type of Permission to look at. [Scott]
+
+=back
+
 =head1 VERSION 1.6.2
 
 =head2 Bug Fixes
