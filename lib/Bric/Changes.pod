@@ -115,7 +115,9 @@ Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and others.
 =item *
 
 The workflow, destination, and output channel profiles only display site
-information if the user had EDIT access to more than one site. Suggested by
+information if the user had EDIT access to more than one site. The "Find
+Stories" and "Find Media" managers only display the site information fo the
+listed documents if there is more than one site in Bricolage. Suggested by
 Scott Lanning. [David]
 
 =item *
