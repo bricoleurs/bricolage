@@ -72,6 +72,14 @@ execute SQL statements and build an incomplete database. This prevents the
 creation broken databases when people didn't notice errors in the past.
 [David]
 
+=item *
+
+A list of subelements is now less likely to mysteriously become out of order
+and thus lead to strange action-at-a-distance errors. And even if they do
+become out of order, the error message will be more appropriate ("Warning!
+State inconsistent" instead of "Can't call method 'get_name' on an undefined
+value"). Reported by Curtis Poe. [David]
+
 =back
 
 =head2 Bug Fixes

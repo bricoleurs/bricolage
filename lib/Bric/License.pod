@@ -297,6 +297,8 @@ Friends who have spotted bugs include:
 
 =item Martin Bacovsky
 
+=item Curtis Poe
+
 =back
 
 Bricolage's translation team:

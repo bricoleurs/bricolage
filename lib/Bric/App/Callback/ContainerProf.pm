@@ -642,10 +642,12 @@ sub _update_parts {
     $tile->delete_tiles(\@delete) if $do_delete;
 
     if (@curr_tiles) {
-        eval { $tile->reorder_tiles([grep(defined($_), @curr_tiles)]) };
+        eval { $tile->reorder_tiles([ grep { defined } @curr_tiles ]) };
         if ($@) {
-            add_msg("Warning! State inconsistent: Please use the buttons provided by the application rather than the 'Back'/'Forward' buttons.");
-            return;
+            add_msg("Warning! State inconsistent: Please use the buttons "
+                    . "provided by the application rather than the 'Back'/"
+                    . "'Forward' buttons.");
+            return $locate_tile;
         }
     }
 
