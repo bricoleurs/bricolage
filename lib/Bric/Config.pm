@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.58.4.8 $
+$Revision: 1.58.4.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58.4.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.58.4.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-15 19:58:11 $
+$Date: 2003-12-30 22:26:19 $
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,6 @@ use Carp;
 #--------------------------------------#
 # Programmatic Dependencies
 use File::Spec::Functions qw(catdir tmpdir catfile);
-use Apache::ConfigFile;
 
 #==============================================================================#
 # Inheritance                          #
@@ -248,7 +247,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 #======================================#
 {
     # We'll store the settings loaded from the configuration file here.
-    my ($config, $aconf);
+    my $config;
 
     BEGIN {
         # Load the configuration file, if it exists.
@@ -340,13 +339,21 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
               unless -e $config->{APACHE_CONF};
         }
 
-        {
-            # Apache::ConfigFile can be very noisy in the presence of
-            # <Perl> blocks.
-            local $^W;
-            $aconf = Apache::ConfigFile->new(file => $config->{APACHE_CONF},
-                                             ignore_case => 1);
+        # Get the Apache PID file location from httpd.conf.
+        open HC, $config->{APACHE_CONF}
+          or die "Cannot open $config->{APACHE_CONF}: $!\n";
+        while (<HC>) {
+            # Ignore comments.
+            chomp;                  # no newline
+            s/#.*//;                # no comments
+            s/^\s+//;               # no leading white
+            s/\s+$//;               # no trailing white
+            next unless length;     # anything left?
+            next unless /^PidFile\s+(.*)/i;
+            $config->{__PIDFILE__} = $1;
+            last;
         }
+        close HC;
     }
 
     # Apache Settings.
@@ -359,7 +366,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
       || '/usr/local/apache/bin/httpd';
     use constant APACHE_CONF             => $config->{APACHE_CONF};
 
-    use constant PID_FILE                => $aconf->pidfile
+    use constant PID_FILE                => $config->{__PIDFILE__}
       || '/usr/local/apache/logs/httpd.pid';
 
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;

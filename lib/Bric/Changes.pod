@@ -31,6 +31,11 @@ will be correctly installed and located. [Simon Wilcox]
 Story profile JavaScript validation works again. Thanks to Simon Wilcox for
 the spot! [David]
 
+=item *
+
+Eliminated the need for the Apache::ConfigFile module, and thus some annoying
+problems with the CPAN indexer when trying to install it. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
