@@ -119,6 +119,11 @@ permissions. Thanks to Sam Tregar for the spot. [David]
 Custom fields in elements and contributor types now remember their "size"
 setting. Thanks to Sam Tregar for the spot. [David]
 
+=item *
+
+The Element select list on the new Template profile no longer lists media
+elements, since media assets don't use templates. [David]
+
 =back
 
 =head1 VERSION 1.2.1
