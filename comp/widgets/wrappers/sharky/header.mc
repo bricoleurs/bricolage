@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2002-08-18 23:43:19 $
+$Date: 2002-09-26 21:04:33 $
 
 =head1 SYNOPSIS
 
@@ -110,12 +110,8 @@ function init() {
 
 % if ($no_toolbar) {
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
-    // Send the current window to a blank page.
-    // Turn off the toolbar, back button, etc.
-    var newWin = window.open(location.href, 'Bricolage_<% SERVER_WINDOW_NAME %>',
-      'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780');
-    location.href = 'about:blank';
-    newWin.focus(true);
+    // Redirect to the window opening page.
+    location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
     history.forward(1);
 }

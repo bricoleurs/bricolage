@@ -1,0 +1,20 @@
+<& /widgets/wrappers/sharky/header.mc,
+   useSideNav => 0,
+   no_toolbar => 0,
+   context => "Welcome to Bricolage.",
+&>
+
+<& /widgets/wrappers/sharky/table_top.mc &>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td class="subHeader">
+Please click <a href="#" class="redLinkLarge" onclick="var newWin = window.open('<% $ARGS{referer} %>', 'Bricolage_<% SERVER_WINDOW_NAME %>', 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780'); newWin.focus(true);">here</a> to start.</p>
+</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+</table>
+
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+%#-- End HTML --#

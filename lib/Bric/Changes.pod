@@ -149,6 +149,12 @@ For stories on My Workspace, Replaced "Trail" with "Clone". Clicking this link
 will make an exact copy of the story with the words "Clone of " prepended to
 the story title. [David]
 
+=item *
+
+Got rid of the popup window. Now when the toolbar-less window isn't the
+current window, the browser will be redirected to a a Welcome page where users
+can click a link to open the new window with the Bricolage UI. [David]
+
 =back
 
 =head1 VERSION 1.4.1

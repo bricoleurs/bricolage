@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:35 $
+$Date: 2002-09-26 21:04:33 $
 
 =head1 SYNOPSIS
 
@@ -25,7 +25,7 @@ generate a top table
 <%args>
 
 $number  => 0
-$caption => '&nbsp;'
+$caption => ''
 $height  => 1
 $ghostly => 0
 $rightText => undef
