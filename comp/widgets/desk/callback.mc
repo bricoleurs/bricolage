@@ -239,7 +239,9 @@ elsif ($field eq "$widget|clone_cb") {
     $desk->accept({ asset => $story });
     $desk->save;
     # Log events.
+    my $wf = $story->get_workflow_object;
     log_event('story_clone_create', $story);
+    log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $desk->get_name });
     log_event('story_checkout', $story);
 }
