@@ -26,7 +26,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">ID:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_id() %></td>
+  <td width="470">&nbsp;<% $id %></td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
@@ -42,7 +42,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label">URI:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_uri %></td>
+  <td width="470">&nbsp;<a href="/workflow/profile/preview/media/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $media->get_uri %></a></td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
@@ -207,7 +207,7 @@ my $wf = Bric::Biz::Workflow->lookup( { id => $wf_id });
 my $desks = $wf->allowed_desks();
 my $cd = $media->get_current_desk();
 $cd = $wf->get_start_desk() unless $cd;
-
+my $id = $media->get_id;
 
 # Set up a formatting variable
 my $agent = $m->comp("/widgets/util/detectAgent.mc");

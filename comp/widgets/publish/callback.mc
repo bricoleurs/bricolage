@@ -3,14 +3,14 @@ $widget
 $field
 $param
 $story_id => undef
+$media_id => undef
 </%args>
 <%once>;
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
 </%once>
 
-
-<%init>
+<%init>;
 # Hunt the wumpus
 $field = 'publish' if $field eq "$widget|publish_cb";
 return unless $field eq 'preview' or $field eq "publish";
@@ -20,31 +20,42 @@ my ($story_pub_ids, $media_pub_ids);
 if (my $d = get_state_data($widget)) {
     ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
     clear_state($widget);
-} elsif (! defined $story_id) { return }
-
+} elsif (! defined $story_id && ! defined $media_id ) { return }
 
 if ($field eq 'preview') {
-    my $s = get_state_data('story_prof', 'story');
-    unless ($s && defined $story_id && $s->get_id != $story_id) {
-		$s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
-    }
-
-    # Get all the related media to be previewed as well
-    foreach my $r ($s->get_related_objects) {
-	next if (ref $r eq 'Bric::Biz::Asset::Business::Story');
-
-	# Make sure this media object isn't checked out.
-	if ($r->get_checked_out) {
-	    add_msg('Cannot auto-publish related media &quot;'.
-                    $r->get_title.'&quot; because it is checked out');
-	    next;
+    if (defined $media_id) {
+	my $m = get_state_data('media_prof', 'media');
+	unless ($m && $m->get_id != $media_id) {
+	    $m = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
 	}
-	&$publish($r, 'media', $param, $field);
+
+	# Move out the story and then redirect to preview.
+	my $url = &$publish($m, 'media', $param, $field);
+	&$send_msg("Redirecting to preview.");
+	redirect_onload($url);
+    } else {
+	my $s = get_state_data('story_prof', 'story');
+	unless ($s && defined $story_id && $s->get_id != $story_id) {
+	    $s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	}
+
+	# Get all the related media to be previewed as well
+	foreach my $r ($s->get_related_objects) {
+	    next if (ref $r eq 'Bric::Biz::Asset::Business::Story');
+
+	    # Make sure this media object isn't checked out.
+	    if ($r->get_checked_out) {
+		add_msg('Cannot auto-publish related media &quot;'.
+			$r->get_title.'&quot; because it is checked out');
+		next;
+	    }
+	    &$publish($r, 'media', $param, $field);
+	}
+	# Move out the story and then redirect to preview.
+	my $url = &$publish($s, 'story', $param, $field);
+	&$send_msg("Redirecting to preview.");
+	redirect_onload($url);
     }
-    # Move out the story and then redirect to preview.
-    my $url = &$publish($s, 'story', $param, $field);
-    &$send_msg("Redirecting to preview.");
-    redirect_onload($url);
 } else {
     my $stories = mk_aref($story_pub_ids);
     my $media = mk_aref($media_pub_ids);
@@ -203,12 +214,11 @@ my $publish = sub {
 				       $rsrc->get_uri));
 	    }
 	    # Return the redirection URL.
-	    return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri)
-	      if $key eq 'story';
+	    return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
 	} else {
 	    # Return the redirection URL.
 	    return 'http://' . ($bats->[0]->get_servers)[0]->get_host_name
-	      . $ba->get_uri if $key eq 'story';
+	      . $ba->get_uri;
 	}
     }
 };
