@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-09-17 19:47:08 $
 
 =head1 SYNOPSIS
 
@@ -233,7 +233,8 @@ sub lookup {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
     throw_gen(error => "Missing Required Parameters id or version_id")
-      unless $param->{id} || $param->{version_id};
+      unless $param->{id} || $param->{version_id}
+      || ($param->{alias_id} && $param->{site_id});
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);

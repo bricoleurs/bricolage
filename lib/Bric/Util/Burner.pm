@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-17 17:30:25 $
+$Date: 2003-09-17 19:47:09 $
 
 =head1 SYNOPSIS
 
@@ -150,6 +150,8 @@ use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
 use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
+use Bric::Biz::Site;
+use URI;
 
 #==============================================================================#
 # Inheritance                          #
@@ -1300,6 +1302,80 @@ sub next_page_uri {
     my $filename = $self->next_page_file or return;
     my $base_uri = $self->_get('base_uri');
     return $fs->cat_uri($base_uri, $filename);
+}
+
+##############################################################################
+
+=item my $uri = $b->best_uri($story)
+
+  % if (my $rel_story = $element->get_related_story) {
+      <a href="<% $burner->best_uri($rel_story)->as_string %>">
+        <% $rel_story->get_title %>
+      </a>
+  % }
+
+Returns a URI object representing Bricolage's best guess as to the appropriate
+URI to use to link to the story or media object passed as an argument. See the
+L<URI|URI> docs for information on its interface. The semantics that
+C<best_uri()> uses to create the URI are as follows:
+
+First, it checks to see if the asset's Site ID is the same as the the Site ID
+for the current output channel. If it is, then the URI is returned without the
+protocol or server name, but formatted for either the current output channel
+or for the document's primary output channel.
+
+If the document isn't in the current output channel's site, C<best_uri()>
+looks for an alias to the document in the current output channel's site. If
+there is one the alias is used to create the URI, and the URI is returned
+without the protocol or server name, but formatted for either the current
+output channel or for the alias' primary output channel.
+
+And finally, if the document is in another site and there is no alias in the
+current site, C<best_uri()> will return a full URI with the prtocol and the
+document's site's domain name, formatted according to the settings of the
+document's primary output channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub best_uri {
+    my ($self, $ba) = @_;
+    my $oc = $self->get_oc;
+    my $site_id = $oc->get_site_id;
+    my $uri = '';
+
+    if ($ba->get_site_id == $site_id) {
+        # Make sure we have an output channel that works with this asset.
+        # Try the current one, and fallback on the default if that fails.
+        $oc = ($ba->get_output_channels($oc->get_id))[0] ||
+          $ba->get_primary_oc;
+    } else {
+        # The asset's not in this site. Try to lookup an alias in this site.
+        if (my $rel = $ba->lookup({ alias_id => $ba->get_id,
+                                    site_id  => $site_id })) {
+            # Use the alias, instead.
+            $ba = $rel;
+            # Make sure we have an output channel that works with this asset.
+            # Try the current one, and fallback on the default if that fails.
+            $oc = ($ba->get_output_channels($oc->get_id))[0] ||
+              $ba->get_primary_oc;
+        } else {
+            # No alias. Prepend the protocol and site domain name to
+            # the URI.
+            $oc = $ba->get_primary_oc;
+            my $site = Bric::Biz::Site->lookup({ id => $ba->get_site_id });
+            $uri = $oc->get_protocol . $site->get_domain_name;
+        }
+    }
+
+    # Who's idea was it to have the OC passed as the first argument to Media
+    # and the second to Story??? (Oh yeah, mine -- legacy reasons.) -- David
+    return URI->new($uri . $ba->get_uri((UNIVERSAL::isa($ba, 'Bric::Biz::Asset::Business::Story') ? undef : ()), $oc));
 }
 
 ##############################################################################
