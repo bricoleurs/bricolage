@@ -171,7 +171,7 @@ when called.
 
 search_widget
 
-Pass a a widget name to this argument to tell the listManager in which widgets
+Pass a widget name to this argument to tell the listManager in which widget's
 session data to look for its list criterion.  By default it will look in the
 session data belonging to the 'search' widget.   The widget given here
 must populate the 'field' and 'criterion' keys of its session data.  
@@ -297,7 +297,7 @@ will default to a standard color if not passed.
 
 =head1 NOTES
 
-There is one other way to pass search criteria to the listWidget.  By setting
+There is one other way to pass search criteria to the listManager.  By setting
 a certain set of hidden fields, you can act as a parasite on the search widget
 and force it to do your bidding.  The fields are:
 

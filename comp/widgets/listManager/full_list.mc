@@ -4,19 +4,16 @@
 &>
 
 % if ($addition) {
-<table border="0" cellpadding="0" cellspacing="0" width="580">
-  <tr>
-    <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
-    <td width="10"><img src="/media/images/spacer.gif" width="10" height="25"></td>
-    <td width=568><a class=redLinkLarge href="<% $addition->[1] %>"><% $lang->maketext($addition->[0]." a New ". ($addition->[2] || get_class_info($object)->get_disp_name)) %></a></td>
-    <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
-  </tr>
-</table>
+<div class="addnewitem">
+    <a href="<% $addition->[1] %>">
+        <% $lang->maketext($addition->[0]." a New ". ($addition->[2] || get_class_info($object)->get_disp_name)) %>
+    </a>
+</div>
 % }
 
 
 <!-- table header display -->
-<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<table class="listManager">
   <tr>
 <%perl>
   my $field_disp = shift @$data;
@@ -25,38 +22,28 @@
       my $f = $fields->[$i];
       my $disp = $lang->maketext(shift @$field_disp);
 
-      my ($aclass, $thclass);
+      my ($sort_sign, $class);
       if ($sortBy eq $f) {
-          ($aclass, $thclass) = ('whiteLink', $sort_class);
+          $class = qq{ class="} . (($sortOrder !~ /^reverse$/) ? "sortdown" : "sortup") . qq{"};
           $sort_col = $i;
-      } else {
-          ($aclass, $thclass) = ('blackLink', 'medHeader')
+          $sort_sign = '-' if ($userSort && $sortOrder !~ /^reverse$/);
       }
-
-      $m->out(qq{<th class=$thclass style="border-style:solid; border-color:#cccc99;">&nbsp;});
+      
+      $m->out(qq{<th$class>});
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
-          my $sortsign = '';
-          my $sortsymbol = '';
-
-          if (($sortBy eq $f) && ($sortOrder !~ /^reverse$/)) {
-              $sortsign = '-';
-              $sortsymbol = qq{<img src="/media/images/listsort_down_$sscolor.gif" border="0">};
-          } elsif ($sortBy eq $f) {
-              $sortsymbol = qq{<img src="/media/images/listsort_up_$sscolor.gif" border="0">};
-          }
-          $m->out(qq{<a class="$aclass" href="$url?listManager|sortBy_cb=$sortsign$f">} .
-                  ($disp || "") . "&nbsp;$sortsymbol</a>");
+          $m->out(qq{<a href="$url?listManager|sortBy_cb=$sort_sign$f">} . ($disp || "") . "</a>");
       } else {
           $m->out($disp);
       }
+      
       $m->out("</th>");
   }
 
   # Adjust the table size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">&nbsp;</th>');
+      $m->out(qq{<th colspan="} . ($cols - scalar @$fields) . qq{"></th>});
   }
 </%perl>
 
@@ -68,25 +55,24 @@
 %     @$data = reverse @$data;
 % }
 
-% # here's where the rows diplayed are limited - see lines 209-18
+% # here's where the rows diplayed are limited
+% my $i = 0;
 % foreach my $r (0..$#{$data}) {
 % my $o_id = shift @{$data->[$r]};
-  <tr <% $featured->{$o_id} ? "bgcolor=\"$featured_color\"" : "" %>>
+% my $class = qq{ class="} . ($i % 2 ? "odd" : "even") . qq{"};
+% $i++; 
+  <tr <% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
 <%perl>
   # Output for each field.
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
-      if ($c eq $sort_col) {
-          $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;"><b>$val</b></td>\n});
-      } else {
-          $m->out(qq{<td height=25 valign=top style="border-style:solid; border-color:#cccc99;">$val</td>\n});
-      }
+      my $class = qq{ class="selected"} if ($c eq $sort_col);
+      $m->out(qq{<td$class>$val</td>\n});
   }
 
   # Fill out the rest of the columns.
   foreach ((@{$data->[$r]}+1)..$cols) {
-      $m->out(qq{<td style="border-style:solid; border-color:#cccc99;">} .
-              qq{&nbsp;</td>\n});
+      $m->out(qq{<td></td>\n});
   }
 
 </%perl>
@@ -94,18 +80,18 @@
 %# End foreach my $o (@$objs)
   </tr>
 % }
-% $m->comp('.footer', pagination => $pagination, cols => $cols)
-%    if $pagination->{pages} > 1;
 
 % # If there were no results (and thus none of the above is output) tell the user
 % if ($rows == 1) {
-%     if ($empty_search) {
-  <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>">&nbsp;</td></tr>
-%     } else {
-  <tr><td style="border-style:solid; border-color:#cccc99;" colspan="<% scalar @$fields %>"><%$lang->maketext("No ".lc(get_class_info($object)->get_plural_name)." were found") %></td></tr>
-%     }
+%   my $message;
+%   $message = $lang->maketext("No ".lc(get_class_info($object)->get_plural_name) . " were found") if !$empty_search;
+    <tr><td colspan="<% scalar @$fields %>"><% $message %>&nbsp;</td></tr>
 % }
 </table>
+
+% $m->comp('.footer', pagination => $pagination, cols => $cols)
+%    if $pagination->{pages} > 1;
+
 <& "/widgets/wrappers/sharky/table_bottom.mc" &>
 
 %#--- END HTML ---#
@@ -113,12 +99,11 @@
 <%once>;
 # Returns a link to the page specified with the given label. Used by .footer.
 my $page_link = sub {
-    my ($page_num, $label, $limit, $url, $class) = @_;
-    $class ||= 'subHeader';
+    my ($page_num, $label, $limit, $url, $title) = @_;
+    $title = qq{ title="$title"} if $title;
     my $offset = ($page_num - 1) * $limit;
-    return qq{ <a href="$url?listManager|set_offset_cb=$offset" } .
-      qq{class="redLinkLarge"><span class="$class">} .
-      $lang->maketext($label) . q{</span></a>};
+    return qq{<a href="$url?listManager|set_offset_cb=$offset"$title>} .
+      $lang->maketext($label) . q{</a> };
 };
 </%once>
 
@@ -151,18 +136,6 @@ my $sortBy    = get_state_data($widget, 'sortBy')
 my $sortOrder = get_state_data($widget, 'sortOrder') || '';
 my $sort_col  = 0;
 
-# Figure out where we are.
-my ($section) = parse_uri($r->uri);
-my ($sort_class, $scolor, $ccolor, $sscolor);
-
-if ($section eq 'admin') {
-    ($ccolor, $scolor, $sort_class, $sscolor) =
-      (qw(CC6633 CC6633 redHeader red));
-} else {
-    ($ccolor, $scolor, $sort_class, $sscolor) =
-      (qw(669999 006666 tealHeader teal));
-}
-
 # Get the real values if these are code refs.  Handle profile and select
 # on a row by row basis.
 $addition = &$addition($pkg) if ref $addition eq 'CODE';
@@ -176,26 +149,24 @@ $cols
 <%init>;
 my $url = $r->uri;
 my $align = QA_MODE ? "left" : "center";
-$m->out(qq{<tr valign="middle" height="25" valign="top" class="lightHeader">\n});
 my $style = qq{style="border-style:solid; border-color:#cccc99;"};
+$m->out(qq{<div class="paginate">\n});
 unless ($pagination->{pagination}) {
-    $m->out(qq{<td $style colspan="$cols">} .
-            $page_link->(0, 'Paginate Results', 0, $url) . "</td>");
+    $m->out(qq{<div class="all">} .
+            $page_link->(0, 'Paginate Results', 0, $url) . "</div>\n");
 } else {
-    --$cols;
-    $m->out(qq{<td $style colspan="$cols">\n});
-
+    $m->out(qq{<div class="pages">});
     # previous link, if applicable
     if( $pagination->{curr_page} - 1 >= 1 ) {
         $m->out($page_link->($pagination->{curr_page} - 1,
                              qq{&laquo;},
-                             $pagination->{limit}, $url, 'header') . '&nbsp;');
+                             $pagination->{limit}, $url, 'Previous Page') . '&nbsp;');
     }
 
     # links to other pages by number
     foreach ( 1..$pagination->{pages} ) {
         if ($_ == $pagination->{curr_page}) {
-            $m->out(qq{<span class="subHeader"><b>$_</b>&nbsp;</span>});
+            $m->out(qq{<span class="current">$_</span>&nbsp;});
         } else {
             $m->out($page_link->($_, "$_", $pagination->{limit}, $url) .
                     '&nbsp;');
@@ -206,12 +177,12 @@ unless ($pagination->{pagination}) {
     if( $pagination->{curr_page} + 1 <= $pagination->{pages} ) {
         $m->out('&nbsp;' . $page_link->($pagination->{curr_page} + 1,
                                         qq{&raquo;},
-                                        $pagination->{limit}, $url, 'header'));
+                                        $pagination->{limit}, $url, 'Next Page'));
     }
+    $m->out(qq{</div>});
 
-    $m->out(qq{</td><td $style align="right"><a href="$url?listManager|show_all_records_cb=1" class="redLinkLarge">} .
-            qq{Show All</a></td>});
+    $m->out(qq{<div class="all"><a href="$url?listManager|show_all_records_cb=1">Show All</a></div>});
 }
-$m->out(qq{</tr>});
+$m->out(qq{</div>});
 </%init>
 </%def>
