@@ -57,6 +57,13 @@ scripts are now smarter about loading Bricolage libraries and reporting
 relevant errors when they can't load Bricoalge libraries. Thanks to Geoff
 Richards for the patch. [David]
 
+=item *
+
+Category permissions are now properly checked on assets when they're not in
+workflow as well as when they are in workflow. This means that if a group of
+users is granted permission to access stories in a category, they can now
+access those stories even if they're not in workflow. [David]
+
 =back
 
 =head1 VERSION 1.4.5
