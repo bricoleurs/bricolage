@@ -214,37 +214,45 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 my $xsd = extract_schema();
 ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 
-# try exporting and importing every story
-foreach my $story_id (@$story_ids) {
-  $response = $soap->export(name(story_id => $story_id));
-  if ($response->fault) {
-    fail('SOAP export() response fault check');
-    exit 1;
-  } else {
-    pass('SOAP export() response fault check');  
-    
-    my $document = $response->result;
-    ok($document, "recieved document for story $story_id");
-    check_doc($document, $xsd, "story $story_id");
-    
-    # add (copy) to title and try to create copy
-    $document =~ s!<name>(.*?)</name>!<name>$1 (copy)</name>!;
-    $response = $soap->create(name(document => $document)->type('base64'));
-    ok(!$response->fault, 'SOAP create() result is not a fault');
-    exit 1 if $response->fault;
-    my $ids = $response->result;
-    isa_ok($ids, 'ARRAY');
-
-    # delete copies unless debugging and NO_DELETE unset
-    if (DELETE_TEST_STORIES) {
-      $response = $soap->delete(name(story_ids => [ map { name(story_id => $_) } @$ids ]));
-      ok(!$response->fault, 'SOAP delete() result is not a fault');
-      exit 1 if $response->fault;
-      ok($response->result, "SOAP delete() result check");
+# try exporting and importing every story with various option sets
+my @export_ops = ( [], [ name(export_related_stories => 1) ] );
+my $num = 1;
+my $copy_sym = 1;
+foreach my $ops (@export_ops) {		  
+    foreach my $story_id (@$story_ids) {
+	$response = $soap->export(name(story_id => $story_id), @$ops);
+	if ($response->fault) {
+	    fail('SOAP export() response fault check');
+	    exit 1;
+	} else {
+	    pass('SOAP export() response fault check');  
+	    
+	    my $document = $response->result;
+	    ok($document, "recieved document for story $story_id");
+	    check_doc($document, $xsd, "story $story_id");
+	    
+	    # add (copy) to title and try to create copy
+	    $document =~ s!<name>(.*?)</name>!<name>$1 (copy $copy_sym)</name>!gx;
+	    $copy_sym++;
+	    $response = $soap->create(name(document => $document)->type('base64'));
+	    ok(!$response->fault, 'SOAP create() result is not a fault');
+	    exit 1 if $response->fault;
+	    my $ids = $response->result;
+	    isa_ok($ids, 'ARRAY');
+	    
+	    # delete copies unless debugging and NO_DELETE unset
+	    if (DELETE_TEST_STORIES) {
+		$response = $soap->delete(name(story_ids => [ map { name(story_id => $_) } @$ids ]));
+		ok(!$response->fault, 'SOAP delete() result is not a fault');
+		exit 1 if $response->fault;
+		ok($response->result, "SOAP delete() result check");
+	    }
+	}	
     }
-
-  }
+    pass("Finished export() ops set $num");
+    $num++;
 }
+
 
 # done with schema
 unlink $xsd;

@@ -10,6 +10,7 @@ use Bric::Biz::Category;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session qw(:user);
+use Bric::App::Authz qw(chk_authz READ EDIT CREATE);
 use XML::Writer;
 use IO::Scalar;
 use Carp qw(croak);
@@ -34,15 +35,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-31 22:34:39 $
+$Date: 2002-02-01 00:52:23 $
 
 =head1 SYNOPSIS
 
@@ -457,8 +458,8 @@ sub create {
 	unless ref $data and ref $data eq 'HASH' and exists $data->{story};
     print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
 
-    # loop over stories, filling in %story_ids and %relations
-    my (%story_ids, @story_ids, %relations);
+    # loop over stories, filling in %story_ids and @relations
+    my (%story_ids, @story_ids, @relations);
     foreach my $sdata (@{$data->{story}}) {
 	my %init;
 
@@ -485,6 +486,10 @@ sub create {
 	    unless $story;
 	print STDERR __PACKAGE__ . "::create : created empty story object\n"
 	    if DEBUG;
+
+	# is this is right way to check create access for stories?
+	die __PACKAGE__ . "::create : access denied.\n"
+	    unless chk_authz($story, CREATE, 1);
 
 	# set simple fields
 	my @simple_fields = qw(name description slug primary_uri
@@ -584,7 +589,7 @@ sub create {
 	if ($sdata->{elements}) {
 	    $pkg->_load_element(element   => $story->get_tile, 
 				data      => $sdata->{elements},
-			        relations => \%relations);
+			        relations => \@relations);
 	} else {
 	    # load an empty set to create a really empty story
 	    $pkg->_load_element(element   => $story->get_tile, 
@@ -605,6 +610,21 @@ sub create {
 
 	# all done, setup the story_id
 	push(@story_ids, $story_ids{$sdata->{id}} = $story->get_id);
+    }
+
+    # resolve relations
+    # FIX: more checking here would be nice
+    foreach my $r (@relations) {
+	if (defined $r->{story_id}) {
+	    if ($r->{relative}) {
+		$r->{container}->set_related_instance_id($story_ids{$r->{story_id}});
+	    } else {
+		$r->{container}->set_related_instance_id($r->{story_id});
+	    }
+	} else {
+	    # FIX: do related media stuff when Bric::SOAP::Media is done
+	}
+	$r->{container}->save;
     }
     
     return name(ids => [ map { name(id => $_) } @story_ids ]);
@@ -709,6 +729,9 @@ sub delete {
 	$story = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
 	die __PACKAGE__ . "::delete : no story found for id \"$story_id\"\n"
 	  unless $story;
+	die __PACKAGE__ . "::deleye : access denied for story \"$story_id\".\n"
+	    unless chk_authz($story, CREATE, 1);
+
 	$story->checkout({ user__id => get_user_id });
       }
 
@@ -730,14 +753,12 @@ sub delete {
 
 =over 4
 
-=item $pkg->_load_element(element   => $element,
-			  data      => $sdata->{elements},
-			  relations => \%relations);_load_container
+=item $pkg->_load_element(element => $element, data => $sdata->{elements}, relations => \@relations);
 
 Loads a container element with data from the data hash.  Calls
-recursively down through containers.  Fills in a relations hash as it
-goes containing data to fixup related media and related stories.  Dies
-if it finds bad data.
+recursively down through containers.  Adds to the relations array as
+it goes containing data to fixup related media and related stories.
+Dies if it finds bad data.
 
 Throws: NONE
 
@@ -805,10 +826,29 @@ sub _load_element {
 	    $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 	    
+
+	    # deal with related stories and media
+	    if ($c->{related_media_id}) {
+		# store fixup information - the object to be updated
+		# and the external id
+		push(@$relations, { container => $container, 
+				    media_id  => $c->{related_media_id},
+				    relative  => $c->{relative} || 0 });
+	    } elsif ($c->{related_story_id}) {
+		push(@$relations, { container => $container, 
+				    story_id  => $c->{related_story_id}, 
+				    relative  => $c->{relative} || 0 });
+	    }
+
 	    # recurse
 	    $pkg->_load_element(element   => $container,
 				data      => $c,
 				relations => $relations);
+
+
+
+
+
 	}
     }				
 }
@@ -833,6 +873,9 @@ sub _serialize_story {
     my $story = Bric::Biz::Asset::Business::Story->lookup({id => $story_id});
     die __PACKAGE__ . "::export : story_id \"$story_id\" not found.\n"
 	unless $story;
+
+    die __PACKAGE__ . "::export : access denied for story \"$story_id\".\n"
+	unless chk_authz($story, READ, 1);
     
     # open a story element
     $writer->startTag("story", 
