@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.1.1.2.1 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.1.1.1.2.1 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 21:54:55 $
+$Date: 2001-10-04 14:42:23 $
 
 =head1 SYNOPSIS
 
@@ -1247,7 +1247,7 @@ sub save {
 
             # Delete this attribute if necessary
 	    if ($nameval->{'_delete'}) {
-		$self->delete_from_table('val', {'id' => $val_id});
+		$self->_delete_from_table('val', ['id = ?'], [$val_id]);
 		next;
 	    }
 
@@ -1273,7 +1273,7 @@ sub save {
 
 		# Delete this attribute if necessary
 		if ($metaval->{'_delete'}) {
-		    $self->delete_from_table('meta', {'id' => $meta_id});
+		    $self->_delete_from_table('meta', ['id = ?'], [$meta_id]);
 		    next;
 		}
 
@@ -1876,7 +1876,10 @@ L<perl>, L<Bric>, L<Bric::Util::Group>
 =head1 REVISION HISTORY
 
 $Log: Attribute.pm,v $
-Revision 1.1  2001-09-06 21:54:55  wheeler
-Initial revision
+Revision 1.1.1.1.2.1  2001-10-04 14:42:23  wheeler
+Fixed syntax errors that prevented the deletion of attributes.
+
+Revision 1.1.1.1  2001/09/06 21:54:55  wheeler
+Upload to SourceForge.
 
 =cut
