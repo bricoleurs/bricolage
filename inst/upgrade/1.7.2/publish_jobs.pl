@@ -19,28 +19,33 @@ do_sql
     q{ALTER TABLE job ADD error_message VARCHAR(2000)},
     q{ALTER TABLE job ADD priority NUMERIC(1,0)},
 
+    # pending -> executing
+    q{UPDATE job SET executing = 0},
+
+    # failed = 0
+    q{UPDATE job SET failed = 0},
+
+    # priority defaults to 3
+    q{UPDATE job SET priority = 3},
+
     # update the existing class rows
-    q{UPDATE  class
+    q{UPDATE  class 
       SET     pkg_name = 'Bric::Util::Job'
       WHERE   pkg_name = 'Bric::Dist::Job'},
 
     # insert the new class rows
-    q{INSERT INTO class (id, key_name, pkg_name, disp_name,
+    q{INSERT INTO class (id, key_name, pkg_name, disp_name, 
                          plural_name, description, distributor)
-      VALUES (79, 'dist_job', 'Bric::Util::Job::Dist', 'Distribution Job',
+      VALUES (79, 'dist_job', 'Bric::Util::Job::Dist', 'Distribution Job', 
               'Distribution Jobs', 'Distribution job objects.', 0)},
 
-    q{INSERT INTO class (id, key_name, pkg_name, disp_name,
+    q{INSERT INTO class (id, key_name, pkg_name, disp_name, 
                          plural_name, description, distributor)
-      VALUES (80, 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job',
+      VALUES (80, 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job', 
               'Publication Jobs', 'Publication job objects.', 0)},
 
-    q{UPDATE job
-      SET    executing = 0,
-             priority = 3,
-             failed = 0,
-             class__id = 79
-     },
+    # existing jobs are all dist jobs, mark them as such
+    q{UPDATE job SET class__id = 79},
 
     # add the contraints
     q{ALTER TABLE job ADD CONSTRAINT ck_job__priority CHECK (priority BETWEEN 1 AND 5)},

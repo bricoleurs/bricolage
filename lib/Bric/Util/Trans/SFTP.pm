@@ -6,16 +6,16 @@ Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-12 23:43:17 $
+$Date: 2004-03-25 18:36:22 $
 
 =head1 SYNOPSIS
 
@@ -138,10 +138,10 @@ sub put_res {
 
         # Set up the SSH arguments.
         my @ssh_args;
-        if (ENABLE_SFTP_V2 || SFTP_MOVER_CIPHER) {
+        if (ENABLE_SFTP_V2 || SSH_MOVER_CIPHER) {
             my @args;
             push @args, protocol => '2,1' if ENABLE_SFTP_V2;
-            push @args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
+            push @args, cipher   => SSH_MOVER_CIPHER if SSH_MOVER_CIPHER;
             @ssh_args = (ssh_args => \@args);
         }
 
