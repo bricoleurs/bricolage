@@ -11,8 +11,8 @@ eval { require "../config.db" };
 my @EXE;
 File::Find::find({no_chdir => 1,
 		  wanted   => sub { 
-		    return if m!blib! or m!CVS! or m!Makefile!;
-		    push @EXE, $_;
+		      return unless -f and m!bric_\w+$!;
+		      push @EXE, $_;
 		  }},
 		 File::Spec->curdir);
 
