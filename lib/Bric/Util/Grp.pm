@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 01:06:22 $
+$Date: 2003-12-16 12:14:05 $
 
 =head1 SYNOPSIS
 
@@ -1350,7 +1350,7 @@ sub get_objects {
     my $id = $self->_get('id') or return;
     my @objs;
     foreach my $class ($self->get_list_classes) {
-        push @objs, $class->list({ grp_id => $id, active => 1 });
+        push @objs, $class->list({ grp_id => $id });
     }
     return wantarray ? @objs : \@objs;
 }
@@ -2036,7 +2036,8 @@ B<Notes:> NONE.
 sub get_group_attr_hash {
     my ($self) = @_;
     # args to pass to _get_attr_hash
-    my $param->{subsys} = GRP_SUBSYS;
+    my $param = {};
+    $param->{subsys} = GRP_SUBSYS;
     my $attrs = $self->_get_attr_hash($param, 1);
     return $attrs;
 }
