@@ -332,7 +332,7 @@ function showForm(which) {
 	caption   = fb_obj.fb_disp.value;
 	vals      = (typeof (fb_obj.fb_vals)      != "undefined" && fb_obj.fb_vals.value)      ? fb_obj.fb_vals.value   : '';
 	length    = (typeof (fb_obj.fb_length)    != "undefined" && fb_obj.fb_length.value)    ? fb_obj.fb_length.value : '';
-	maxlength = (typeof (fb_obj.fb_maxlength) != "undefined" && fb_obj.fb_maxlength.value) ? fb_obj.fb_maxlength.value : '';
+	maxlength = (typeof (fb_obj.fb_maxlength) != "undefined" && which != 'textarea' && fb_obj.fb_maxlength.value) ? fb_obj.fb_maxlength.value : '';
     }
 
     // put the html together and write it to the div
