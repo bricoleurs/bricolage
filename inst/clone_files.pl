@@ -6,11 +6,11 @@ clone.pl - installation script to copy files for clone distributions
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.6.1 $
 
 =head1 DATE
 
-$Date: 2002-08-13 22:05:10 $
+$Date: 2003-06-06 20:15:47 $
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,14 @@ foreach my $d (readdir(CUR))  {
     next if $d =~ /.db$/;
     next if $d eq 'dist' or $d eq 'comp' or $d eq 'data';
     system("cp -pR $d dist");
-}    
-close(CUR);  
+}
+close(CUR);
+
+# Set owner and group to the current owner and group.
+#my $uid = $>;
+my $uid = 0;
+#(my $gid = $) =~ s/\s.*//);
+my $gid = 0;
+system 'chown', '-R', "$uid:$gid", 'dist';
 
 print "\n\n==> Finished Cloning Bricolage Files <==\n\n";

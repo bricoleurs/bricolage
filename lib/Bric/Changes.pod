@@ -135,6 +135,12 @@ browsers [IE] from caching pages. [David]
 Bricolage no correctly sets the HTTP headers for the content language and
 character set. Thanks to Nathan Ollerenshaw for the spot! [David]
 
+item *
+
+C<make clone> now changes the user and group ownership on the cloned files to
+the values for the current user (root). This is to avoid problems when
+C<tar>ing up those files. [David]
+
 =back
 
 =head1 VERSION 1.6.0
