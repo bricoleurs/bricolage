@@ -25,108 +25,46 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 </%perl>
 
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $id %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('Media Type Element')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_element_name() %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_current_version() %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_published_version || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_first_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_publish_date || '' %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
+<dl class="viewmeta">
+<dt><%$lang->maketext('ID')%>:</dt>
+<dd><% $id %></dd>
+<dt><%$lang->maketext('Media Type Element')%>:</dt>
+<dd><% $media->get_element_name() %></dd>
+<dt><% $lang->maketext('Current Version') %>:</dt>
+<dd><% $media->get_current_version() %></dd>
+<dt><% $lang->maketext('Published Version') %>:</dt>
+<dd><% $media->get_published_version || '&nbsp;' %></dd>
+<dt><% $lang->maketext('First Published') %>:</dt>
+<dd><% $media->get_first_publish_date || '&nbsp;' %></dd>
+<dt><% $lang->maketext('Last Published') %>:</dt>
+<dd><% $media->get_publish_date || '&nbsp;' %></dd>
+<dt><% $lang->maketext('URI') %>:</dt>
 % if (my $uri = $media->get_primary_uri) {
 %     if (@ocs == 1) {
-  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+<dd><% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'media',
                                     title => $media->get_primary_uri,
                                     doc   => $media,
-                                    style => 'blackUnderlinedLink') %></td>
-  </tr>
-% } else {
-  <td width="470">&nbsp;<% $uri %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
-  </tr>
+                                    style => 'blackUnderlinedLink') %></dd>
+%     } else {
+<dd><% $uri %></dd>
+<dt><% $lang->maketext('Preview in') %>:</dt>
+<dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
 %     }
 % }
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Site') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% Bric::Biz::Site->lookup({id => $media->get_site_id})->
-  get_name() %></td>
-  </tr>
-  <tr>
-  <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
-  </tr>
-</table>
-<% $ieSpacer %>
+<dt><% $lang->maketext('Site') %>:</dt>
+<dd><% Bric::Biz::Site->lookup({id => $media->get_site_id})->get_name() %></dd>  
+</dl>
+
+<div class="editmeta">
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'title',
 &>
-
-<% $ieSpacer %>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'description',
 &>
-
-<% $ieSpacer %>
-
 <& '/widgets/select_object/select_object.mc',
   object   => 'source',
   name     => "$widget|source__id",
@@ -138,7 +76,6 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 
 % unless (ENABLE_CATEGORY_BROWSER) {
-<% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
   object        => 'category',
   constrain => { site_id => $media->get_site_id },
@@ -154,24 +91,22 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 % }  # unless ENABLE_CATEGORY_BROWSER
 
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'priority',
 &>
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'cover_date',
 &>
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'expire_date',
 &>
-<% $ieSpacer %>
+</div>
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
 $m->comp('file_section.mc',
          media     => $media,
          widget    => $widget,
@@ -179,6 +114,7 @@ $m->comp('file_section.mc',
          read_only => $media->get_alias_id,
          indent    => $infoIndent
         );
+        
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         tile        => $tile,
         tile_type   => 'media',
@@ -197,8 +133,6 @@ if (ENABLE_OC_ASSET_ASSOCIATION) {
              at_ocs => \@aocs
          );
 }
-
-$m->out("$ieSpacer<br />\n");
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Associations",
