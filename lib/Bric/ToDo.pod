@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.17 $
+$Revision: 1.13.2.18 $
 
 =head1 DATE
 
-$Date: 2001-10-05 13:59:09 $
+$Date: 2001-10-05 16:05:54 $
 
 =head1 DESCRIPTION
 
@@ -155,6 +155,12 @@ User interfaces [David].
 =item *
 
 Add ability to change the category association in Templates.
+
+=item *
+
+Add ability to "View" a related story from within the related story Element, so
+that editors can view what's actually in a story before deciding what to fill in
+to the fields of the related story element itself.
 
 =item *
 
