@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-18 23:43:49 $
+$Date: 2003-01-20 06:41:25 $
 
 =head1 SYNOPSIS
 
@@ -55,7 +55,7 @@ $Date: 2003-01-18 23:43:49 $
 
   # Instance methods for managing members.
   my @members = $grp->get_members;
-  my @member_obss = $grp->get_objects;
+  my @member_objs = $grp->get_objects;
   $grp->add_member(\%member_spec);
   $grp->add_members(\@member_specs);
   $grp = $grp->delete_member(\%member_spec);
