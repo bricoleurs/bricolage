@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12.2.1 $
+$Revision: 1.12.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 22:54:03 $
+$Date: 2002-10-29 00:07:17 $
 
 =head1 SYNOPSIS
 
@@ -741,6 +741,11 @@ sub _load_media {
 	    $media->set_size(0);
 	    $media->set_media_type_id(0);
 	}
+
+        # make sure this story won't create a duplicate URI
+        die __PACKAGE__ . "::create : unable to create media, URI '"
+          . $media->get_uri . "' is already taken.\n"
+            if $media->check_uri;
 
 	# save the media in an inactive state.  this is necessary to
 	# allow element addition - you can't add elements to an

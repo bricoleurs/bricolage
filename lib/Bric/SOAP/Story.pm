@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28.2.1 $
+$Revision: 1.28.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.28.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-25 22:54:03 $
+$Date: 2002-10-29 00:07:18 $
 
 =head1 SYNOPSIS
 
@@ -805,6 +805,11 @@ sub _load_stories {
 	# add categories to story
 	$story->add_categories(\@cids);	
 	$story->set_primary_category($primary_cid);
+
+        # make sure this story won't create a duplicate URI
+        die __PACKAGE__ . "::create : unable to create story, URI '"
+          . $story->get_uri . "' is already taken.\n"
+            if $story->check_uri;
 
 	# remove all contributors if updating
 	$story->delete_contributors([ $story->get_contributors ])
