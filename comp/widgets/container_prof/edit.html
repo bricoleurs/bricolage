@@ -126,21 +126,34 @@ if ($at->is_related_media) {
     </tr>
     </table>
   </td>
+<%perl>;
+} else {
+    # START ELSE ( DATA TILE DISPLAY )
+    my $at_obj = $dt->get_element_data_obj();
+    $no_del = $at_obj->get_required;
+    my $meta = $at_obj->get_meta('html_info');
+    my $vals = { props => { %$meta } };
+    my $key =  $widget . '|' . $dt->get_id;
 
-% } else {
-% # START ELSE ( DATA TILE DISPLAY )
-%    my $at_obj = $dt->get_element_data_obj();
-%    $no_del = $at_obj->get_required;
-%    my $meta = $at_obj->get_meta('html_info');
-%    my $vals = { props => { %$meta } };
-%    my $key =  $widget . '|' . $dt->get_id;
-%    $vals->{value} = $dt->get_data;
-%    $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
-%    if ($vals->{props}{type} eq 'checkbox') {
-%        $vals->{props}{chk} = $vals->{value};
-%        $vals->{value} = 1;
-%    }
+    # Get the value.
+    $vals->{value} = $dt->get_data;
+    $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
+    if ($vals->{props}{type} eq 'checkbox') {
+	$vals->{props}{chk} = $vals->{value};
+	$vals->{value} = 1;
+    }
 
+    # Set the array of possible values, if necessary.
+    if ( my $tmp = $vals->{props}{vals} ) {
+	my $val_prop;
+	foreach my $line (split /\n/, $tmp) {
+	    my ($v, $l) = split /\s*,\s*/, $line;
+	    chomp $v;
+	    push @$val_prop, [$v, $l];
+	}
+	$vals->{props}{vals} = $val_prop;
+    }
+</%perl>
     <td align="right" colspan=2><span class="label"><% $dt->get_name() %>:&nbsp;</span></td>
     <td colspan=3>
     <table border=0 cellpadding=0 cellspacing=0>
