@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =head1 DATE
 
-$Date: 2004-02-11 06:46:27 $
+$Date: 2004-02-12 19:45:11 $
 
 =head1 DESCRIPTION
 
@@ -119,6 +119,8 @@ Make sure you check the results with C<cvs diff> before committing.
 
 =head1 CODING STANDARDS
 
+=head2 Perl
+
 Try to follow the style of the existing Bricolage code. Except where it is
 bad, of course. Basically, write in the style you see in most Perl books and
 documentation, particularly L<perlstyle>.
@@ -128,7 +130,7 @@ we now request that you use 4-space indents (2 spaces for continued lines)
 and discourage the use of tabs. The following settings for some of the more
 popular editors are thus recommended while editing Bricolage source code.
 
-=head2 Emacs
+=head3 Emacs
 
 We strongly recommend that you use C<cperl-mode> while editing Bricolage
 sources in Emacs. Grab the latest version from the CPAN, install it, and then
@@ -178,7 +180,7 @@ files by adding this to your C<~/.emacs> file:
 
   (add-to-list 'auto-mode-alist '("/usr/local/bricolage/data/obj" . cperl-mode))
 
-=head2 Vim
+=head3 Vim
 
 Rafael Garcia-Suarez has written a Vim indent macro which (for the most
 part) duplicates the behavior of Emacs C<perl-mode>.  It is now, as of Vim
@@ -202,6 +204,53 @@ and haven't yet been re-tabbed.
 
 The expandtab setting does the Right Thing under the new rules, in that it
 doesn't use tabs at all, only spaces.
+
+=head3 SQL
+
+The standard for writing SQL in Bricolage is pretty straight-forward: format
+the SQL in 80 columns or less, and use heredocs where possible. For example:
+
+  my $sql = "<<    END_SQL";
+      SELECT id, name, description, publish_date, cover_date, current_version,
+             publish_status, active
+      FROM   story
+      WHERE  id = ?
+      END_SQL
+
+Also, when writing your queries, please follow the following rules with regard
+to table aliases:
+
+=over 4
+
+=item *
+
+Do not alias any table names in queries, unless those table names are longer
+than 8 characters, or are referred to in the FROM clause more than once. Under
+this rule, for example, "story" and "member" would never be aliased unless
+referenced twice.
+
+=item *
+
+For table names over 8 characters, abbreviated aliases are acceptable provided
+that they are still long enough to be informative. i.e. "st_cat" instead of
+"sc" for "story_category".
+
+=item *
+
+For multiple links to the same table, use an alias which is long enough to be
+informative, such as "story2" or "inst_2" for the second reference to "story"
+or "story_instance".
+
+=back
+
+The reason for these rules is that single-letter aliases for queries are as
+unreadable and unmaintainable as single-letter variables names. You get
+halfway down the page, and you can no longer remember to what tables they
+refer.
+
+The rules above are acutally taken from O'Reilly's "Introduction to PL/SQL
+Programming," which has an I<excellent> chapter on code cleanliness in SQL and
+SQL-extension languages.
 
 =head2 OTHER GOOD PRACTICES
 
