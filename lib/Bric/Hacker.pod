@@ -587,7 +587,7 @@ we ran C<svn update> in step one, so it's easy to find and use:
 
   % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8_merge_6123.'
 
-=item 5
+=item 7
 
 Tag the branch with the last revision, so that future merges can decide to
 merge only from thiat revision on.
