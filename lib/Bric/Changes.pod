@@ -65,6 +65,18 @@ installation, and asks the whether to continue or not. This is to encourage
 folks to have a good backup before upgrading, in case the upgrade fails.
 [David]
 
+=item *
+
+Bricolage now supports per-user preferences.  Admins can mark a
+preference as overrideable, which allows users to set this preference
+to their preferred value.  [Dave Rolsky]
+
+=item *
+
+The character set and language preferences have been moved into the
+database, so that these can be overridden by individual users if
+needed.  [Dave Rolsky]
+
 =back
 
 =head2 Improvements
@@ -163,6 +175,15 @@ by Alexander Ling. [David]
 
 The inline "Bulk Edit" feature in story and media profiles works again. Thanks
 to Neal Sofge for the spot! [David]
+
+=item *
+
+The German localization module (Bric::Util::Language::de_de) had the
+wrong package name, which meant that attempts to use it failed with
+the error "Can't locate class method
+'Bric::Util::Language::de_de::new' via package
+'Bric::Util::Language::de_de' at
+/usr/share/perl/5.8.2/Locale/Maketext.pm line 319".  [Dave Rolsky]
 
 =back
 
