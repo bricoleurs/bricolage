@@ -469,8 +469,13 @@ The create method creates new objects using the data contained in an
 XML document of the format created by export().
 
 The create will fail if your story element contains non-relative
-related_story_ids or related_media_ids that do not refer to existing
-stories or media in the system.
+related_story_ids or related_media_ids that do not refer to existing stories
+or media in the system. Related stores and media can be identified by either
+an ID (set the "relative" attribute to 1 if it refers to an ID elsewhere in
+the same XML file) or by URI (primary URI for stories) and site ID. If
+C<related_story_uri> or C<related_media_uri> is specified without an
+accompanying C<related_site_id> the related document's site is assumed to be
+the same as the current story or media document.
 
 Returns a list of new story_ids and media_ids created in the order of
 the assets in the document.
