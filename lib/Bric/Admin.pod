@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31.2.4 $
+$Revision: 1.31.2.5 $
 
 =head1 DATE
 
-$Date: 2002-02-05 01:58:39 $
+$Date: 2002-02-05 16:56:14 $
 
 =head1 DESCRIPTION
 
@@ -621,11 +621,11 @@ Try to hit the web server. If you're prompted for a login, you're in! If not,
 check the Apache error log to figure out what might have gone wrong.
 
 To start using Bricolage, log in as the default user. The user name is "admin"
-and the password is "c@st3l!@n". This user is not special, so you can change it
-however you like. The first thing you should do is to B<change the admin login
-password> so that others who download the Bricolage sources can't just use that
-login to get into I<your> installation! Now use the admin login to create other
-user accounts.
+and the password is "change me now!". This user is not special, so you can
+change it however you like. The first thing you should do is to B<change the
+admin login password> so that others who download the Bricolage sources can't
+just use that login to get into I<your> installation! Now use the admin login to
+create other user accounts.
 
 =back
 
