@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:39 $
+$Date: 2002-02-28 23:41:03 $
 
 =head1 SYNOPSIS
 
@@ -393,19 +393,44 @@ Supported Keys:
 
 =over 4
 
-=item *
+=item name
 
-output_channel
+The name of the asset type.  Matched with case-insentive LIKE.
+
+=item description
+
+The description of the asset type.  Matched with case-insentive LIKE.
+
+=item output_channel
 
 The ID of an output channel.  Returned will be all AssetType objects that 
 contain this output channel.
 
-=item *
-
-data_name
+=item data_name
 
 The name of an AssetType::Data object.  Returned will be all AssetType objects 
 that reference this particular AssetType::Data object.
+
+=item map_type__id
+
+The map_type__id of an AssetType::Data object.
+
+=item active
+
+Set to 0 to return active and inactive asset types.  1, the default,
+returns only active asset types.
+
+=item type__id
+
+match elements of a particular attype
+
+=item top_level
+
+set to 1 to return only top-level elements
+
+=item media
+
+match against a particular media asste type (att.media)
 
 =back
 
