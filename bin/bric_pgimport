@@ -180,8 +180,8 @@ exit;
 #------------------------------------------------------------------------------#
 
 sub initialize {
-    $opt_H ||= $ENV{PGHOST} || 'localhost';
-    $opt_o ||= $ENV{PGPORT} || 5432;
+    $opt_H ||= $ENV{PGHOST}; # || 'localhost';
+    $opt_o ||= $ENV{PGPORT}; # || 5432;
     $opt_d ||= $ENV{PGDATABASE};
     $opt_u ||= $ENV{PGUSER};
     $opt_p ||= $ENV{PGPASSWORD};
