@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =head1 DATE
 
-$Date: 2001-10-02 13:27:54 $
+$Date: 2001-10-02 14:24:57 $
 
 =head1 SYNOPSIS
 
@@ -101,15 +101,14 @@ function init() {
 
 }
 
-</script>
-
-<script language="JavaScript">
-//if (window.toolbar.visible == true) {
+% if ($agent->{browser} ne 'Internet Explorer') {
+if (window.toolbar.visible == true) {
     // Turn off the toolbar, back button, etc.
-//    var win1 = window.open("<% $uri %>", "Bricolage", toolbar="no",
-//                           width=document.width, height=document.height);
-//    self.close();
-//}
+    var win1 = window.open("<% $uri %>", "Bricolage", 'menubar=0,location=0,'
+                             + 'toolbar=0,personalbar=0,status=1,scrollbars=1');
+    self.close();
+}
+% } # if
 </script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>
@@ -260,7 +259,11 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2.2.2  2001-10-02 13:27:54  wheeler
+Revision 1.2.2.3  2001-10-02 14:24:57  wheeler
+Fixed hiding of toolbars, etc., to leave the scrollbars and to work properly
+with Netscape et al., but to ignore IE.
+
+Revision 1.2.2.2  2001/10/02 13:27:54  wheeler
 Disabled JavaScript that hides browser stuff because it wasn't working with
 Netscape and was removing too many elements of the browser (though this latter
 issue can easily be corrected).
