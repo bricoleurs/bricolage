@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.27.2.3 $
+$Revision: 1.27.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.27.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.27.2.4 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 22:04:06 $
+$Date: 2003-09-12 02:27:21 $
 
 
 =head1 SYNOPSIS
@@ -899,7 +899,7 @@ sub remove_asset {
 
     # If the asset was accepted and we get here, remove this asset from the desk
     $asset_grp_obj->delete_member({ obj => $asset });
-
+    $asset->remove_from_desk;
     return $self;
 }
 

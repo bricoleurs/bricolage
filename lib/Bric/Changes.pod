@@ -14,6 +14,25 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.6 ()
+
+=over 4
+
+=item *
+
+When an asset is published or deployed directly from the asset profile, it is
+now properly removed from the publish or deploy desk. Repoted by Andy Baio's
+coworker. [David]
+
+=item *
+
+The "desk_id" attribute of assets is now properly cleared when an asset is
+removed from workflow. [David]
+
+=back
+
+=head2 Bug Fixes
+
 =head1 VERSION 1.6.5 (2003-09-10)
 
 =head2 Bug Fixes
