@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.24.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 23:17:46 $
+$Date: 2002-09-13 18:40:24 $
 
 =head1 SYNOPSIS
 
@@ -1067,7 +1067,7 @@ NONE
 sub get_children {
     my $self = shift;
     my $id = $self->_get('id');
-    return unless defined $id;
+    return unless defined $id && $id != ROOT_CATEGORY_ID;
     return Bric::Biz::Category->list({parent_id => $id});
 }
 

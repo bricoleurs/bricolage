@@ -83,6 +83,10 @@ database. [David]
 Deleted output channels no longer show up in the "New Template" output channel
 select list. Thanks to Daniel Fisher for the spot. [David]
 
+=item *
+
+The root category ("/") no longer returns itself as its own parent. [David]
+
 =back
 
 =head1 VERSION 1.4.0
