@@ -113,6 +113,7 @@ sub test_list : Test(32) {
 # Test Output Channel methods.
 ##############################################################################
 sub test_oc : Test(32) {
+    my $self = shift;
     ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element" );
 
@@ -128,6 +129,7 @@ sub test_oc : Test(32) {
         "Create 'Foober' OC" );
     ok( $oc->save, "Save Foober" );
     ok( my $ocid = $oc->get_id, "Get Foober ID" );
+    $self->add_del_ids($ocid, 'output_channel');
 
     # Add it to the Element object and try get_ocs again.
     ok( $at->add_output_channels([$oc]), "Add Foober" );
@@ -142,7 +144,7 @@ sub test_oc : Test(32) {
     is( scalar @$oces, 2, "Check for two OCs again" );
 
     # Now lookup the story element from the database and try get_ocs again.
-    ok( $at = Bric::Biz::AssetType->lookup({ id => 1 }),
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 4" );
     is( scalar @$oces, 2, "Check for two OCs 3" );
@@ -160,7 +162,7 @@ sub test_oc : Test(32) {
     is( scalar @$oces, 1, "Check for one OC 3" );
 
     # Now look it up and check it one last time.
-    ok( $at = Bric::Biz::AssetType->lookup({ id => 1 }),
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 7" );
     is( scalar @$oces, 1, "Check for one OC 4" );
