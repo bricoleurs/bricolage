@@ -9,14 +9,16 @@ other features. It operates in an Apache/mod_perl environment, and uses the
 PostgreSQL RDBMS for its repository.
 
 For installation instructions, see INSTALL. Once Bricolage has been installed,
-this file will also be available via the command "man Bric::Admin".
+this file will also be available via the Bric::Admin man page.
 
 For copying information, see License. Once Bricolage has been installed, this
-file will also be available via the command "man Bric::License".
+file will also be available via the Bric::License man page.
 
 For the latest news, see Changes. Once Bricolage has been installed, this file
-will also be available via the command "man Bric::Changes".
+will also be available via the Bric::Changes man page.
 
+DOCUMENATION
+============
 After you've installed Bricolage, a number of man pages will be available to
 help get you started using it.
 
