@@ -192,6 +192,11 @@ great code archaeology! [David]
 
 Fixed the spelling of "contributor" in several spots. [Andrew Baio]
 
+=item *
+
+Fixed bug where changing a story's primary category left it with B<no> primary
+category. [Matt Vella]
+
 =back
 
 =head1 VERSION 1.2.0
