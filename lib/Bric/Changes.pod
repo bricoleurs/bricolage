@@ -157,11 +157,6 @@ non-unique URI in a story. Thanks to Rachel Murray for the spot! [David]
 
 =item *
 
-Fixed C<has_keyword> for stories and media, which was always returning
-C<undef>. Spotted by Clare Parkinson. [Scott]
-
-=item *
-
 Fix in the SOAP server code to adjust for changes in Exception::Class 1.20.
 [David]
 
@@ -198,11 +193,6 @@ workflow will no longer cause that later version to be mysteriously removed
 from workflow. This could be caused by passing a document looked up using the
 C<published_version> to C<list()> to C<< $burner->publish_another >> in a
 template. [David]
-
-=item *
-
-The C<has_keyword()> method in the story and media classes now works properly.
-Reported by Clare Parkinson. [David]
 
 =item *
 
