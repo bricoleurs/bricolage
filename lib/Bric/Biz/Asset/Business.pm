@@ -2178,9 +2178,6 @@ sub _init {
     if ($init->{alias_id}) {
         my $alias_target = $class->lookup({ id => $init->{alias_id} });
 
-        throw_dp "Cannot create an alias to an asset in the same site"
-          if $alias_target->get_site_id == $init->{site_id};
-
         throw_dp "Cannot create an alias to an alias"
           if $alias_target->get_alias_id;
 

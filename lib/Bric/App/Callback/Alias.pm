@@ -43,13 +43,6 @@ sub make_alias : Callback {
     chk_authz($aliased, READ);
     chk_authz($classes{$class_key}, CREATE, 0, $site_id, $gid);
 
-    # Make sure they're not try to create an alias to an asset in the
-    # same site.
-    if ($aliased->get_site_id() == $site_id) {
-        add_msg("Cannot create an alias to a $dispmap{$class_key} in the same site.");
-        return;
-    }
-
     # If we got here, we'll let 'em create the alias. But first, let's see if
     # there are any related assets that they might want to alias, as well.
     set_state_data($self->class_key, 'aliased_id', $aliased_id);

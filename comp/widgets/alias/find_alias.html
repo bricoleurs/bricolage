@@ -11,7 +11,6 @@
    sortBy       => 'name',
    select       => undef,
    profile      => $related_alias,
-   constrain    => { no_site_id => $site_id },
    exclude      => $excl_sub,
    fields       => $fields,
    field_values => $field_values,
@@ -41,7 +40,6 @@ my %elems = map { $_ => 1 } Bric::Biz::AssetType->list_ids
 # case-by-case bassis to limit most things.
 my $excl_sub = sub {
     not chk_authz($_[0], READ, 1)
-      or not $elems{$_[0]->get_element__id}
 };
 
 my $fields = [qw(id title uri cover_date)];

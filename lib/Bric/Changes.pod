@@ -70,6 +70,10 @@ is enabled. Reported by Serge Sozonoff. [David]
 The C<has_member()> method of Bric::Util::Grp is now faster when searching for
 a specific group member. [David]
 
+=item *
+
+Aliases can now be made to documents within the same site. [Serge Sozonoff]
+
 =back
 
 =head2 Bug Fixes
