@@ -181,7 +181,7 @@ my $crumb = $contrib->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 # Roll in any changes to the contributor if we're just adding contacts.
-if ($ARGS{'add_more|contact|add_cb'}) {
+if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
     foreach my $meth ($contrib->my_meths(1)) {
 	$meth->{set_meth}->($contrib, @{$meth->{set_args}}, $ARGS{$meth->{name}})
 	  if defined $meth->{set_meth};
@@ -333,11 +333,11 @@ my $stepOneOfTwo = sub {
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.6.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:00 $
+$Date: 2003-05-29 17:02:13 $
 
 =head1 DESCRIPTION
 
