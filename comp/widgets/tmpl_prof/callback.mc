@@ -141,6 +141,12 @@ elsif ($field eq "$widget|create_cb") {
 
     my ($at, $name);
     unless ($param->{$widget.'|no_at'}) {
+	unless (defined $at_id && $at_id ne '') {
+	    # It's no good.
+	    add_msg("You must select an Element or check the "
+		    . "&quot;Generic&quot check box.");
+	    return;
+	}
 	# Associate it with an Element.
 	$at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
 	$name  = $at->get_name();
