@@ -8,15 +8,15 @@ package Bric::Util::Attribute;
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:54 $
+$Date: 2001-10-23 18:22:43 $
 
 =head1 SYNOPSIS
 
@@ -346,7 +346,7 @@ sub lookup {
    # This is just a placeholder.  There is no obvious use for a lookup function 
    # here.
 
-   die "Method not implimented\n";
+   die "Method not implemented\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -357,7 +357,7 @@ sub list {
    # This is just a placeholder.  There is no obvious use for a list function 
    # here.
 
-   die "Method not implimented\n";
+   die "Method not implemented\n";
 }
 
 
