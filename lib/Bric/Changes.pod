@@ -99,6 +99,12 @@ type manager on some platforms. Reported by Radu Greab. [David]
 
 Deactivated alert types are once again available via the UI. [David]
 
+=item *
+
+Text input fields no longer impose a default maximum field length. This is so
+that element fields that have their maximum length set to 0 can truely be
+unlimited in length. Reported by Kevin Elliott. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
