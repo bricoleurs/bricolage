@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-02-12 01:19:40 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -46,9 +46,9 @@ CREATE TABLE person_member (
 -- INDEXES.
 --
 
-CREATE INDEX idx_person__lname ON person(lname);
-CREATE INDEX idx_person__fname ON person(fname);
-CREATE INDEX idx_person__mname ON person(mname);
+CREATE INDEX idx_person__lname ON person(LOWER(lname));
+CREATE INDEX idx_person__fname ON person(LOWER(fname));
+CREATE INDEX idx_person__mname ON person(LOWER(mname));
 
 CREATE INDEX fkx_person__person_member ON person_member(object_id);
 CREATE INDEX fkx_member__person_member ON person_member(member__id);

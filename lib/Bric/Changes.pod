@@ -174,6 +174,10 @@ An attempt to create a template with the same name and output channel as a
 deactivated template now properly tells the user that the template already
 exists. [David]
 
+=item *
+
+Fixed indexes for person objects so that they're case-insensitive. [David]
+
 =back
 
 =head1 VERSION 1.5.0
