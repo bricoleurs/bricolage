@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.1 $
+$Revision: 1.21.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.2 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-14 19:43:55 $
+$Date: 2003-03-15 01:37:30 $
 
 =head1 SYNOPSIS
 
@@ -765,16 +765,18 @@ sub clean_params {
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
     # Map inverse alias inactive to active.
-    $param->{'active'} = ($param->{'inactive'} ? 0 : 1) 
+    $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
     # checked_out has some special cases
-    if ($param->{checked_out} = 'all') {
-        delete $param->{_checked_out};
-    } elsif (exists $param->{checked_out}) {
-        $param->{_checked_out} = $param->{checked_out};
+    if (exists $param->{checked_out}) {
+        if ($param->{checked_out} eq 'all') {
+            delete $param->{_checked_out};
+        } else {
+            $param->{_checked_out} = $param->{checked_out};
+        }
     } elsif (exists $param->{checkout}) {
         $param->{_checked_out} = $param->{checkout};
-    } elsif (exists $param->{user_id}) {
+    } elsif (defined $param->{user_id}) {
         $param->{_checked_out} = 1;
     } else {
         $param->{_checked_out} = 0;
