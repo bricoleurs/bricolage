@@ -1,14 +1,9 @@
 package Bric::App::Callback::Publish;
 
-# XXX: another one with extra %args
-#$oc_id => undef
-#$story_id => undef
-#$media_id => undef
-
-
 use base qw(Bric::App::Callback);
-__PACKAGE__->register_subclass(class_key => 'publish');
+__PACKAGE__->register_subclass('class_key' => 'publish');
 use strict;
+use Bric::App::Callback::Util qw(status_msg);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
 use Bric::Biz::Asset::Business::Media;
@@ -19,6 +14,9 @@ use Bric::Util::Burner;
 sub preview : Callback {
     my $self = shift;
     my $param = $self->request_args;
+    my $story_id = $param->{'story_id'};
+    my $media_id = $param->{'media_id'};
+    my $oc_id    = $param->{'oc_id'};
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
@@ -41,9 +39,8 @@ sub preview : Callback {
         }
 
         # Move out the story and then redirect to preview.
-        #XXX: $oc_id
         my $url = $b->preview($media, 'media', get_user_id(), $oc_id);
-        &$send_msg("Redirecting to preview.");
+        status_msg("Redirecting to preview.");
         redirect_onload($url);
     } else {
         my $s = get_state_data('story_prof', 'story');
@@ -65,13 +62,11 @@ sub preview : Callback {
                 add_msg($self->lang->maketext($msg, $arg));
                 next;
             }
-            # XXX: $oc_id
             $b->preview($ra, 'media', get_user_id(), $oc_id);
         }
         # Move out the story and then redirect to preview.
-        # XXX: $oc_id
         my $url = $b->preview($s, 'story', get_user_id(), $oc_id);
-        &$send_msg("Redirecting to preview.");
+        status_msg("Redirecting to preview.");
         redirect_onload($url);
     }
 }
@@ -79,6 +74,8 @@ sub preview : Callback {
 sub publish : Callback {
     my $self = shift;
     my $param = $self->request_args;
+    my $story_id = $param->{'story_id'};
+    my $media_id = $param->{'media_id'};
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
@@ -126,12 +123,6 @@ sub publish : Callback {
         redirect_onload(last_page());
     }
 }
-
-
-my $send_msg = sub {
-    # XXX: BOING!
-    $m->comp('/lib/util/status_msg.mc', @_);
-};
 
 
 1;
