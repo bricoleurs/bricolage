@@ -113,16 +113,10 @@ Added a C<bricolage.conf> directive to force the user to always use SSL.
 
 =item *
 
-Added F<bricolage.conf> directive to enable/disable the browser toolbar for
-debugging and development. Documented in L<Bric::Hacker|Bric::Hacker>.
-[Michael Robinton]
-
-=item *
-
 Added C<get_data()> method to Bric::Util::Grp::Parts::Member::Contrib. This
 method takes a simplar scalar argument and returns the relevant attribute.
 This bit of syntactic sugar makes contributor objects behave a bit more like
-<$element> objects in templates, thus simplifying things for template
+C<$element> objects in templates, thus simplifying things for template
 developers. [David]
 
 =back
