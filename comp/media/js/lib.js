@@ -1,8 +1,3 @@
-window.onload = function () {
-    document.getElementById("btnAbout").onclick = openAbout;
-    document.getElementById("btnHelp").onclick = openHelp;
-}
-
 // set up global to track names of double list managers
 var doubleLists = new Array();
 var formObj = '';
@@ -776,6 +771,11 @@ function resizeframe() {
 /*
 Open popup window
 */
+function installHelpButtons() {    
+    document.getElementById("btnAbout").onclick = openAbout;
+    document.getElementById("btnHelp").onclick = openHelp;
+}
+
 function openWindow(page) {
     window.open('/help/' + lang_key + '/' + page + '.html', 
                                 'Help_<% SERVER_WINDOW_NAME %>', 
@@ -783,7 +783,6 @@ function openWindow(page) {
                                 );
     return false;
 }
-
 function openAbout() { return openWindow("about"); }
 function openHelp()  { 
     var uri = window.location.pathname.replace(/\/?\d*\/?$/g, "");

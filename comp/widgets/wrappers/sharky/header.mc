@@ -80,6 +80,11 @@ if(ref($title) eq 'ARRAY') {
 var lang_key = "<% $lang_key %>";
 var checkboxValues = new Array();
 
+window.onload = function () {
+    init();
+    installHelpButtons();
+}
+
 function init() {
     <% $jsInit %>;
 }
@@ -95,7 +100,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 </script>
 </head>
 
-<body onload="init()">
+<body>
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>
