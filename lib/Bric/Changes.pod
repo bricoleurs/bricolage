@@ -52,9 +52,9 @@ C<preview_another_all_ocs()> in PREVIEW_MODE. [Serge Sozonoff]
 
 =item *
 
-Added a makefile parameter that, when set to "QUIET", eliminates many of the
-questions asked during installation, falling back on the default values. [Rod
-Taylor]
+Added a C<$INSTALL_VERBOSITY> makefile environment variable that, when set to
+"QUIET", eliminates many of the questions asked during installation, falling
+back on the default values. [Rod Taylor]
 
 =item *
 
