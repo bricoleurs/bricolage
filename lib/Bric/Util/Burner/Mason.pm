@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-23 00:34:58 $
+$Date: 2001-12-23 01:06:51 $
 
 =head1 SYNOPSIS
 
@@ -305,11 +305,12 @@ template exists.
 sub find_template {
     my ($self, $uri, $name) = @_;
     my $interp = $self->_get('_interp');
-    while ($uri) {
-	my $tmpl = $fs->cat_uri($uri, $name);
+    my @dirs = $fs->split_uri($uri);
+    while (@dirs) {
+	my $tmpl = $fs->cat_uri(@dirs, $name);
 	return $tmpl if $interp->lookup($tmpl);
 #	return $tmpl if $Bric::Util::Burner::Mason::m->comp_exists($tmpl);
-	$uri = $fs->trunc_uri($uri);
+	pop @dirs;
     }
     return;
 }
