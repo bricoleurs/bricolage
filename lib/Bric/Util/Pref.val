@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.5.2.1 $
 --
--- $Date: 2001-12-04 18:17:46 $
+-- $Date: 2002-04-03 02:57:07 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 INSERT INTO pref (id, name, description, value, def)
@@ -1607,7 +1607,7 @@ VALUES (4, 'UTF-8', 'UTF-8');
 -- Date and time formatting.
 
 INSERT INTO pref (id, name, description, value, def)
-VALUES (5, 'Date/Time Format', 'How dates and times are displayed.', '%G-%m-%d %T', '%G-%m-%d %T');
+VALUES (5, 'Date/Time Format', 'How dates and times are displayed.', '%Y-%m-%d %T', '%Y-%m-%d %T');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (405, 22, 48, 1);
@@ -1616,10 +1616,10 @@ INSERT INTO pref_member (id, object_id, member__id)
 VALUES (5, 5, 405); 
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES (5, '%G-%m-%d %T', 'ISO-8601 Compliant (CCYY-MM-DD hh:mm:ss)');
+VALUES (5, '%Y-%m-%d %T', 'ISO-8601 Compliant (CCYY-MM-DD hh:mm:ss)');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES (5, '%G-%m-%dT%T', 'ISO-8601 Strict (CCYY-MM-DDThh:mm:ss)');
+VALUES (5, '%Y-%m-%dT%T', 'ISO-8601 Strict (CCYY-MM-DDThh:mm:ss)');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES (5, '%m/%d/%Y %T', 'U.S. (MM/DD/CCYY hh:mm:ss)');

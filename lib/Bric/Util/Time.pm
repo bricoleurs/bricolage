@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:36 $
+$Date: 2002-04-03 02:57:07 $
 
 =head1 SYNOPSIS
 
@@ -160,7 +160,7 @@ It will use the Time Zone preference set via Bric::App::Pref unless $utc is true
 in which case the time will be formatted is UTC time. Use POSIX::setlocale to
 have the strfdate() output a localized format of $time - otherwise it defaults
 to the system's locale. $format is the stftime format in which $time should be
-formatted; defaults to ISO 8601-compliant time formatting ("%G-%m-%d %T").
+formatted; defaults to ISO 8601-compliant time formatting ("%Y-%m-%d %T").
 
 B<Throws:> NONE.
 

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26.2.11 $
+$Revision: 1.26.2.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.26.2.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-22 21:49:44 $
+$Date: 2002-04-03 02:57:06 $
 
 =head1 SYNOPSIS
 
@@ -339,7 +339,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant CHAR_SET                => $config->{CHAR_SET} || 'ISO-8859-1';
 
     # Time constants.
-    use constant ISO_8601_FORMAT         => "%G-%m-%d %T";
+    use constant ISO_8601_FORMAT         => "%Y-%m-%d %T";
 
     # Admin group ID. This will go away once permissions are implemented.
     use constant ADMIN_GRP_ID            => 6;

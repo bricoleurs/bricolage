@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.7.2.2 $
+$Revision: 1.7.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-26 19:51:18 $
+$Date: 2002-04-03 02:57:07 $
 
 =head1 SYNOPSIS
 
@@ -1958,7 +1958,7 @@ sub _construct_uri {
 
     unless ($fu) {
 	# Add the cover date.
-	push @path, $self->get_cover_date("%G/%m/%d");
+	push @path, $self->get_cover_date("%Y/%m/%d");
 
 	# Add the slug.
 	push @path, $self->get_slug if $self->key_name eq 'story';

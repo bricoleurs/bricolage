@@ -39,6 +39,11 @@ Bricolage from starting. [Sam]
 The view button in the element profile now works correctly. Thanks to Joao Pedro
 Goncalves for the spot. [David]
 
+=item *
+
+Changed all strttime instances of '%G' to '%Y', as this seems to be
+more portable. [David]
+
 =back
 
 =head1 Version 1.2.3
