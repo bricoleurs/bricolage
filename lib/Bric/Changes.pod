@@ -66,6 +66,10 @@ Changed default value for text area fields added via the form builder (i.e., in
 Contributor Type and Element profiles) to 0. The values 0 and "" always make the
 the new field unlimited in length. [David]
 
+=item *
+
+Fixed a couple of buttons to be proper case rather than upper case. [David]
+
 =back
 
 =head1 VERSION 1.0.2
