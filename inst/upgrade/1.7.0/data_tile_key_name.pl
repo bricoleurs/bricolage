@@ -40,17 +40,17 @@ do_sql
 
 sub update_all {
     my ($table) = @_;
-    my $get_name     = prepare("SELECT name FROM $table");
-    my $set_key_name = prepare("UPDATE $table SET key_name=? WHERE name=?");
+    my $select = prepare("SELECT DISTINCT name FROM $table");
+    my $update = prepare("UPDATE $table SET key_name = ? WHERE name = ?");
 
     my $name;
-    execute($get_name);
-    bind_columns($get_name, \$name);
+    execute($select);
+    bind_columns($select, \$name);
 
-    while (fetch($get_name)) {
+    while (fetch($select)) {
         my $key_name = lc($name);
         $key_name =~ y/a-z0-9/_/cs;
-        execute($set_key_name, $key_name, $name);
+        execute($update, $key_name, $name);
     }
 }
 
