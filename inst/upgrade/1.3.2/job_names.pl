@@ -37,7 +37,7 @@ exit if fetch_sql(qq{
     WHERE  pg_class.oid = pg_attribute.attrelid
            AND pg_class.relname = 'job'
            AND pg_attribute.attname = 'name'
-           AND pg_attribute.atttypmod >= 64;
+           AND pg_attribute.atttypmod >= 256;
 });
 
 do_sql(
