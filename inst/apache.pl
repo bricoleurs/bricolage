@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-05-10 19:44:54 $
+$Date: 2002-07-06 23:18:50 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,6 @@ do "./required.db" or die "Failed to read required.db : $!";
 $AP{user}  = 'nobody';
 $AP{group} = 'nobody';
 $AP{port}  = 80;
-$AP{ssl}   = 0;
 chomp ($AP{server_name} = `hostname`);
 
 read_conf();
@@ -172,20 +171,26 @@ sub get_types_config {
 sub check_modules {
     print "Checking for required Apache modules...\n";
 
+    $AP{ssl_avail} = 0;
     my @missing;
     # loop over required modules
  MOD: 
-    foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias)) {
+    foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias apache_ssl)) {
 	# first look in static modules
-	next if exists $AP{static_modules}{"mod_$mod"};
-
+	if (exists $AP{static_modules}{"mod_$mod"} ||
+	   ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
+	  $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
+	  next;
+	}
 	# try DSO
 	if ($AP{dso}) {
 	    # try modules specified in AddModule/LoadModule pairs
-	    if ($AP{add_modules}{"mod_$mod"}       and
-		$AP{load_modules}{"${mod}_module"} and
+	    if (($AP{add_modules}{"mod_$mod"} ||
+		 ( $mod eq 'apache_ssl' && $AP{add_modules}{$mod})) and
+		$AP{load_modules}{"${mod}_module"}		    and
 		-e catfile($AP{HTTPD_ROOT}, 
 			   $AP{load_modules}{"${mod}_module"})) {
+		$AP{ssl_avail} = $mod if $mod =~ /ssl$/;
 		next MOD;
 	    }
 	    
@@ -195,6 +200,7 @@ sub check_modules {
 	    if ($AP{load_modules}{"${mod}_module"} and
 		file_name_is_absolute($AP{load_modules}{"${mod}_module"}) and
 		-e $AP{load_modules}{"${mod}_module"}) {
+		$AP{ssl_avail} = $mod if $mod =~ /ssl$/;
 		next MOD;
 	    }
 	    
@@ -213,6 +219,7 @@ sub check_modules {
 		    if (-e ($_ = catfile($path, "lib${mod}.so"))) {
 			$AP{add_modules}{"mod_$mod"} = 1;
 			$AP{load_modules}{"${mod}_module"} = $_;
+			$AP{ssl_avail} = $mod if $mod =~ /ssl$/;
 			next MOD;
 		    } 
 		}
@@ -224,23 +231,19 @@ sub check_modules {
 		if (-e ($_ = catfile($path, "mod_${mod}.so"))) {
 		    $AP{add_modules}{"mod_$mod"} = 1;
 		    $AP{load_modules}{"${mod}_module"} = $_;
+		    $AP{ssl_avail} = $mod if $mod =~ /ssl$/;
 		    next MOD;
 		} 
 	    }
 	}
 
 	# missing module
-	push @missing, $mod;
+	# ssl missing is A-OK
+	push @missing, $mod unless $mod =~ /ssl$/;
     }
 
-    # ssl missing is A-OK
-    if (grep { /^ssl$/ } @missing) {
-	$AP{ssl_avail} = 0;
-	@missing = grep { !/^ssl$/ } @missing;
-    } else {
-	$AP{ssl_avail} = 1;
-    }
-    
+    $AP{ssl} = $AP{ssl_avail} || 'no';		# if SSL is available the use it
+
     hard_fail("The following Apache modules are required by Bricolage and\n",
 	      "are missing from your installation:\n",
 	      (map { "\tmod_$_\n" } @missing), "\n")
@@ -260,12 +263,22 @@ the default should be correct.
 
 END
   
-    ask_confirm("Apache User:\t\t",  \$AP{user});
-    ask_confirm("Apache Group:\t\t", \$AP{group});
-    ask_confirm("Apache Port:\t\t",  \$AP{port});
-    $AP{ssl} = ask_yesno("Use SSL:\t\t [".($AP{ssl} ? 'yes' : 'no')."] ", 
-			 $AP{ssl});
-    ask_confirm("Apache Server Name:\t",  \$AP{server_name});
+    ask_confirm("Apache User:\t\t\t",  \$AP{user});
+    ask_confirm("Apache Group:\t\t\t", \$AP{group});
+    ask_confirm("Apache Port:\t\t\t",  \$AP{port});
+# install fails if this is wrong
+    $AP{ssl_key} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.key", "server.key");
+    $AP{ssl_cert} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.crt","server.crt");
+
+    $AP{ssl} = ask_choice("SSL? mod_ssl, apache_ssl, no:\t",
+		[ 'no', 'mod_ssl', 'apache_ssl' ], $AP{ssl});
+    if ($AP{ssl} =~ /no/i) {
+	$AP{ssl} = 0;		# testing elsewhere is true/false
+    } else {
+	ask_confirm("SSL_CERTIFICATE_FILE:\t", \$AP{ssl_cert});
+	ask_confirm("SSL_CERTIFICATE_KEY_FILE:\t", \$AP{ssl_key});
+    }
+    ask_confirm("Apache Server Name:\t\t",  \$AP{server_name});
     
     print <<END;
 

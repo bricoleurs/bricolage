@@ -2,7 +2,7 @@ package Bric::App::ApacheConfig;
 
 =head1 NAME
 
-Bric::App::ApacheConf - Bricolage httpd.conf configuration
+Bric::App::ApacheConfig - Bricolage httpd.conf configuration
 
 =head1 VERSION
 
@@ -26,7 +26,7 @@ $Date$
         unshift(@INC, catdir($ENV{BRICOLAGE_ROOT}, 'lib'));
       };
   </Perl>
-  PerlModule Bric::App::ApacheConf
+  PerlModule Bric::App::ApacheConfig
 
 =head1 DESCRIPTION
 
@@ -45,64 +45,11 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 =cut
 
-package Apache::ReadConfig;
-use strict;
-use warnings;
+use Bric::App::ApacheStartup;
 
-# start Apache::DB if we're debugging.  This is done here so that
-# modules loaded below will get debugging symbols.
-our $DEBUGGING;
-BEGIN { 
-  if(Apache->define('BRICOLAGE_DEBUG')) {
-    require Apache::DB;
-    Apache::DB->init;
-    $DEBUGGING = 1;
-  }
-}
-
-BEGIN {
-    # set up profiling with Devel::Profiler - this installs a
-    # ChildInitHandler.  It needs to be setup as early as possible to
-    # enable the CORE::GLOBAL::caller override to be used by the
-    # profiled modules.
-    use Bric::Config qw(PROFILE QA_MODE);
-    if (PROFILE) {
-        # exclude upper-case subs, which are mostly constants in Bric anyway
-        my $sub_filter = sub {
-            return 0 if $_[1] =~ /^[A-Z_]+$/;
-            return 1;
-        };
-
-        # exclude Bric::Util::Fault and some misbehavin' packages used
-        # by Bric
-        my $pkg_filter = sub {
-            return 0 if ($_[0] =~ /^Bric::Util::Fault/ or
-                         $_[0] =~ /^XML::Parser/       or
-                         $_[0] =~ /^SOAP/);
-            return 1;
-        };
-
-        require Devel::Profiler::Apache;
-        Devel::Profiler::Apache->import(sub_filter     => $sub_filter,
-                                        package_filter => $pkg_filter);
-
-        # profiling with QA_MODE on is inadvisable
-        print STDERR "WARNING: Both PROFILE and QA_MODE options activated.\n",
-                     "         PROFILE results will be skewed.\n\n"
-            if QA_MODE;
-    }
-}
-
-use Bric::Config qw(:conf :sys_user :qa :temp :profile :proc_size);
-use Bric::App::Handler;
-use Bric::App::AccessHandler;
-use Bric::App::CleanupHandler;
-use Bric::App::Auth;
-use mod_perl;
-our %VirtualHost;
-
-our @NameVirtualHost = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
-
+my $silent_config = ! MANUAL_APACHE && $mod_perl::VERSION > 1.26;
+my %VirtualHost_lcl;
+my @NameVirtualHost_lcl = ([ NAME_VHOST . ':' . LISTEN_PORT ]);
 do {
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
@@ -116,35 +63,18 @@ do {
 		     'permanent .*\/favicon\.ico$ /media/images/favicon.ico',
 
 		   # setup Apache::DB handler if debugging
-		   ($DEBUGGING ?  
-		    (PerlFixupHandler => 'Apache::DB') : ()), 
+		   ($DEBUGGING ?
+		    (PerlFixupHandler => 'Apache::DB') : ()),
 		 );
 
-    if (CHECK_PROCESS_SIZE) {
-        # see Apache::SizeLimit manpage
-        require Apache::SizeLimit;
+    # see Apache::SizeLimit manpage
+    $config{PerlFixupHandler} = 'Apache::SizeLimit'
+	if CHECK_PROCESS_SIZE;
 
-	# apache child processes larger than this size will be killed
-        $Apache::SizeLimit::MAX_PROCESS_SIZE	   = MAX_PROCESS_SIZE;
-
-	# requests handled per size check
-        $Apache::SizeLimit::CHECK_EVERY_N_REQUESTS = CHECK_FREQUENCY;
-
-	$Apache::SizeLimit::MIN_SHARE_SIZE	   = MIN_SHARE_SIZE
-	    if MIN_SHARE_SIZE > 0;
-
-	$Apache::SizeLimit::MAX_UNSHARED_SIZE	   = MAX_UNSHARED_SIZE
-	    if MAX_UNSHARED_SIZE > 0;
-
-        $config{PerlFixupHandler} = 'Apache::SizeLimit';
-    }
-
-    if (PREVIEW_LOCAL) {
-	# This will slow down every request; thus we recommend that previews
-	# not be local.
-	require Bric::App::PreviewHandler;
-	$config{PerlTransHandler} = 'Bric::App::PreviewHandler::uri_handler';
-    }
+    # This will slow down every request; thus we recommend that previews
+    # not be local.
+    $config{PerlTransHandler} = 'Bric::App::PreviewHandler::uri_handler'
+	if PREVIEW_LOCAL;
 
     # This URI will handle logging users out.
     my %locs = ("/logout"  => {
@@ -164,8 +94,8 @@ do {
 	# Apache::DB handler in place the output from the first screen
 	# after login goes to the debugger's STDOUT instead of the
 	# browser!
-       ($DEBUGGING ?  
-        (PerlFixupHandler  => 'Apache::OK') : ()), 
+       ($DEBUGGING ?
+        (PerlFixupHandler  => 'Apache::OK') : ()),
     };
 
     # This URI will handle all non-Mason stuff that we server (graphics, etc.).
@@ -175,8 +105,8 @@ do {
         PerlCleanupHandler => 'Apache::OK',
 
 	# mask off Apache::DB handler if debugging
-       ($DEBUGGING ?  
-        (PerlFixupHandler  => 'Apache::OK') : ()), 
+       ($DEBUGGING ?
+        (PerlFixupHandler  => 'Apache::OK') : ()),
     };
 
     # This will serve media assets and previews.
@@ -206,9 +136,9 @@ do {
             PerlAccessHandler  => 'Apache::OK',
             PerlCleanupHandler => 'Apache::OK',
 
-            # mask off Apache::DB handler if debugging 
+            # Mask off Apache::DB handler if debugging
 	   ($DEBUGGING ?  
-            (PerlFixupHandler  => 'Apache::OK') : ()), 
+            (PerlFixupHandler  => 'Apache::OK') : ()),
         };
     }
 
@@ -231,51 +161,81 @@ do {
 	}
     }
     $config{Location} = \%locs;
-    $VirtualHost{NAME_VHOST . ':' . LISTEN_PORT} = \%config;
+    $VirtualHost_lcl{NAME_VHOST . ':' . LISTEN_PORT} = \%config;
 
     if (SSL_ENABLE) {
-	push @NameVirtualHost, [ NAME_VHOST . ':443' ];
-	my %ssl_config = (%config, SSLEngine => 'on');
+	push @NameVirtualHost_lcl, [ NAME_VHOST . ':443' ];
+	my %ssl_config = (%config,
+		SSLCertificateFile	=> &SSL_CERTIFICATE_FILE,
+		SSLCertificateKeyFile	=> &SSL_CERTIFICATE_KEY_FILE);
+
 	my %ssl_locs = %locs;
 	$ssl_locs{"/login"} = {
             SetHandler         => 'perl-script',
             PerlAccessHandler  => 'Bric::App::AccessHandler::okay',
             PerlHandler        => 'Bric::App::Handler',
-            PerlCleanupHandler => 'Bric::App::CleanupHandler'
+            PerlCleanupHandler => 'Bric::App::CleanupHandler',
         };
+
 	$ssl_config{Location} = \%ssl_locs;
-	$VirtualHost{NAME_VHOST . ':443'} = \%ssl_config;
-    }
 
-    unless ($mod_perl::VERSION > 1.26) {
+	if ($silent_config) {		# Apache::ReadConfig does not handle <IfModule>
+	    if (SSL_ENABLE eq 'apache_ssl') {
+		$ssl_config{SSLEnable}		= '';
+		$ssl_config{SSLRequireSSL}	= '';
+		$ssl_config{SSLVerifyClient}	= 0;
+		$ssl_config{SSLVerifyDepth}	= 10;
+	    } else {	# is mod_ssl
+		$ssl_config{SSLEngine}		= 'on';
+	    }
+	} else {
+	    my %mod_ssl = ( SSLEngine => 'on' );
+	    $ssl_config{'IfModule mod_ssl.c'} = \%mod_ssl;
+	    my %apache_ssl = (
+		SSLEnable	=> '',
+		SSLVerifyClient	=> 0,
+		SSLVerifyDepth	=> 10,
+		SSLRequireSSL	=> ''
+	    );
+	    $ssl_config{'IfModule apache_ssl.c'} = \%apache_ssl;
+	}
+	$VirtualHost_lcl{NAME_VHOST . ':443'} = \%ssl_config;
+      }
 
-	# If we get here, then <Perl> sections are broken. See the discussion here:
-	# http://mathforum.org/epigone/modperl/rorphaltwin. As a quick and dirty
-	# fix, let's dump the config to a temp file and just use the include
-	# directive.
+    if ($silent_config) {
+	# place VirtualHost stuff in Apache's scope
+	package Apache::ReadConfig;
+	our @NameVirtualHost = @NameVirtualHost_lcl;
+	our %VirtualHost = %VirtualHost_lcl;
+    } else {
+	# If we get here, then <Perl> sections are broken. See the discussion
+	# here: http://mathforum.org/epigone/modperl/rorphaltwin. As a quick
+	# and dirty fix, let's dump the config to a temp file and just use the
+	# include directive.
 	use Bric::Util::Trans::FS;
 	my $conffile = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage',
 						      'bric_httpd.conf');
 	open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
 	select CONF;
 
-	# Output the NameVirtualHost directives.
-	print "NameVirtualHost $_->[0]\n" for @NameVirtualHost;
-	@NameVirtualHost = ();
+	# Output the NameVirtualHost_lcl directives.
+	print "NameVirtualHost $_->[0]\n" for @NameVirtualHost_lcl;
+	@NameVirtualHost_lcl = ();
 
 	# Output the rest.
-	while (my ($k, $v) = each %VirtualHost) {
+	while (my ($k, $v) = each %VirtualHost_lcl) {
 	    print "<VirtualHost $k>\n";
-	    print_bric_directive(undef, $v, 2);
+	    Bric::App::ApacheConfig::print_bric_directive(undef, $v, 2);
 	    print "</VirtualHost>\n";
 	}
-	%VirtualHost = ();
 	close CONF;
 	select STDOUT;
+	%VirtualHost_lcl = ();
+	# place Include directive in Apache's scope
+	package Apache::ReadConfig;
 	our $Include = $conffile;
     }
 };
-
 
 # This function is required for outputting a configuration file from mod_perl
 # version 1.26 and earlier.
@@ -293,6 +253,8 @@ sub print_bric_directive {
 	    if (ref $value) {
 		print "$indent<$directive>\n";
 		print_bric_directive(undef, $value, $i + 2);
+		$directive = 'IfModule' if $directive =~ /^IfModule/i;
+		$directive = 'IfDevine' if $directive =~ /^IfDefine/i;
 		print "$indent</$directive>\n";
 	    }
 	    else {

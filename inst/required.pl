@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-06-27 04:15:58 $
+$Date: 2002-07-06 23:18:50 $
 
 =head1 DESCRIPTION
 
@@ -138,16 +138,16 @@ sub find_pg {
 sub find_apache {
     print "Looking for Apache with version >= 1.3.12...\n";
     
-    # find Apache by looking for executables called httpd, apache-perl
-    # or apache, in that order.  First search user's path then some
-    # standard locations.
+    # find Apache by looking for executables called httpd, httpsd, 
+    # apache-perl or apache, in that order.  First search user's 
+    # path then some standard locations.
     my @paths = (path(), qw(/usr/local/apache/bin
 			    /usr/local/bin
 			    /usr/local/sbin
 			    /usr/bin
 			    /usr/sbin
 			    /bin));
-    my @exe = qw(httpd apache-perl apache);
+    my @exe = qw(httpd httpsd apache-perl apache);
 
  FIND: 
     foreach my $exe (@exe) {

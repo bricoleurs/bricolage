@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-07-06 23:18:50 $
 
 =head1 DESCRIPTION
 
@@ -82,12 +82,15 @@ sub create_bricolage_conf {
     # simple settings
     set_bric_conf_var(\$conf, APACHE_BIN      => $REQ->{APACHE_EXE});
     set_bric_conf_var(\$conf, LISTEN_PORT     => $AP->{port});
-    set_bric_conf_var(\$conf, SSL_ENABLE      => $AP->{ssl} ? 'On' : 'Off');
+    set_bric_conf_var(\$conf, SSL_ENABLE      => $AP->{ssl} ? $AP->{ssl} : 'Off');
+    set_bric_conf_var(\$conf, SSL_CERTIFICATE_FILE	=> $AP->{ssl_cert});
+    set_bric_conf_var(\$conf, SSL_CERTIFICATE_KEY_FILE	=> $AP->{ssl_key});
     set_bric_conf_var(\$conf, SYS_USER        => $AP->{user});
     set_bric_conf_var(\$conf, SYS_GROUP       => $AP->{group});
     set_bric_conf_var(\$conf, DB_NAME         => $PG->{db_name});
     set_bric_conf_var(\$conf, DBI_USER        => $PG->{sys_user});
     set_bric_conf_var(\$conf, DBI_PASS        => $PG->{sys_pass});
+
 
     # path settings
     my $root = $CONFIG->{BRICOLAGE_ROOT};
@@ -95,8 +98,7 @@ sub create_bricolage_conf {
 							 "httpd.conf"));
     set_bric_conf_var(\$conf, MASON_COMP_ROOT => $CONFIG->{MASON_COMP_ROOT});
     set_bric_conf_var(\$conf, MASON_DATA_ROOT => $CONFIG->{MASON_DATA_ROOT});
-    set_bric_conf_var(\$conf, BURN_ROOT       => 
-catdir($CONFIG->{MASON_DATA_ROOT}, "burn"));
+    set_bric_conf_var(\$conf, BURN_ROOT       => catdir($CONFIG->{MASON_DATA_ROOT}, "burn"));
     set_bric_conf_var(\$conf, TEMP_DIR        => $CONFIG->{TEMP_DIR});
 			  
     # setup auth secret to some fairly random string
@@ -160,41 +162,49 @@ sub create_httpd_conf {
     # take a stab at SSL settings if ssl is on.  This stuff is
     # probably wrong and probably needs to be probed for explicitly
     # in apache.pl.
-    if ($AP->{ssl}) {
+
+    if ($AP->{ssl} =~ /apache_ssl/) {
+
+       my $gc_loc = $AP->{SUEXEC_BIN} || '';
+       $gc_loc =~ s/suexec/gcache/;
+       set_httpd_var(\$httpd, SSLCacheServerPath => catfile($gc_loc));
+       set_httpd_var(\$httpd, SSLCacheServerPort => catfile($log, "gcache_port"));
+
+    } elsif ($AP->{ssl} =~ /mod_ssl/) {
+
 	set_httpd_var(\$httpd, SSLSessionCache => "dbm:" . 
 		      catfile($log, "ssl_scache"));
 	set_httpd_var(\$httpd, SSLMutex        => "file:" .
 		      catfile($log, "ssl_mutex"));
 	set_httpd_var(\$httpd, SSLLog          => catfile($log,
 							  "ssl_engine_log"));
-	set_httpd_var(\$httpd, SSLCertificateFile    => 
-		      catfile($ap_root, "conf", "ssl.crt","server.crt"));
-	set_httpd_var(\$httpd, SSLCertificateKeyFile  => 
-		      catfile($ap_root, "conf", "ssl.key", "server.key"));
     }
 
     # DSO Apache's need that sweet DSO spike in the vein just to get
     # up in the morning
     if ($AP->{dso}) {
 	my $dso_section = "# Load DSOs\n\n";
-	foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias)) {
+	foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias apache_ssl)) {
 	    # static modules need no load
 	    next if exists $AP->{static_modules}{"mod_$mod"};
-	    
-	    # need ssl?
-	    next if $mod eq 'ssl' and not $AP->{ssl};
+	    next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{apache_ssl};
 
-	    unless ($mod eq 'log_config') {
-		# it's my wife
-		$dso_section .= "LoadModule \t ${mod}_module " . 
-		    $AP->{load_modules}{"${mod}_module"} . "\n";
-		$dso_section .= "AddModule \t mod_$mod.c\n\n";
-	    } else {
+	    if ($mod eq 'log_config') {
 		# I want to kill whoever decided this was a good idea
 		$dso_section .= "LoadModule \t config_log_module " . 
 		    $AP->{load_modules}{"${mod}_module"} . "\n";
 		$dso_section .= "AddModule \t mod_$mod.c\n\n";
-	    }		
+	    } elsif ($mod eq 'apache_ssl') {
+		next unless $AP->{ssl} =~ /apache_ssl/;
+		$dso_section .= "LoadModule \t ${mod}_module " .
+		    $AP->{load_modules}{"${mod}_module"} . "\n";
+		$dso_section .= "AddModule \t apache_ssl.c\n\n";
+	    } else {
+		next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
+		$dso_section .= "LoadModule \t ${mod}_module " . 
+		    $AP->{load_modules}{"${mod}_module"} . "\n";
+		$dso_section .= "AddModule \t mod_$mod.c\n\n";
+	    }
 	}
    
 	# put DSO loads at the top.  This could be prettier.
@@ -213,7 +223,7 @@ sub create_httpd_conf {
 sub set_httpd_var {
     my ($httpd, $var, $val) = @_;
     unless ($$httpd =~ s/^(\s*$var\s+).*$/$1$val/mi) {
-	hard_fail("Unable to set bricolage.conf variable $var to \"$val\".");
+	hard_fail("Unable to set httpd.conf variable $var to \"$val\".");
     }
 }
 

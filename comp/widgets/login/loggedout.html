@@ -22,7 +22,7 @@
                   useTable => 0
 &></td>
 </tr>
-% if (SSL_ENABLE) {
+% if (SSL_ENABLE && ! ALWAYS_USE_SSL) {
 <tr>
 <td width=150 align=right><span class=label>Use SSL:</span></td>
 <td width=448><& '/widgets/profile/checkbox.mc',
@@ -34,7 +34,11 @@
 </tr>
 % }
 <tr>
+% if (SSL_ENABLE && ALWAYS_USE_SSL) {
+  <td>&nbsp;<input type="hidden" name="login|ssl" value="1" /></td>
+% } else {
   <td>&nbsp;</td>
+% }
   <td><input type="image" src="/media/images/login.gif" border=0 vspace=5 name="<% "$widget|login_cb" %>" value="Login"></td>
 </tr>
 </table>

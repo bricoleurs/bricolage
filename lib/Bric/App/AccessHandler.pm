@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-07-06 23:18:50 $
 
 =head1 SYNOPSIS
 
@@ -129,6 +129,12 @@ sub handler {
     my $r = shift;
 
     my $ret = eval {
+	# Silently zap foolish user access to http when SSL is always required
+	# by web master.
+	if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
+	    $r->custom_response(FORBIDDEN, 'https://'. $r->hostname . '/logout');
+	    return FORBIDDEN;
+	}
 	# Set up the user's session data.
 	Bric::App::Session::setup_user_session($r);
 	my ($res, $msg) = auth($r);

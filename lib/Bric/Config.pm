@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-05 19:56:05 $
+$Date: 2002-07-06 23:18:50 $
 
 =head1 SYNOPSIS
 
@@ -39,11 +39,12 @@ and their use.
 #--------------------------------------#
 # Standard Dependencies
 use strict;
-use File::Spec::Functions qw(catdir tmpdir);
-use Apache::ConfigFile;
+use Carp;
 
 #--------------------------------------#
 # Programmatic Dependencies
+use File::Spec::Functions qw(catdir tmpdir);
+use Apache::ConfigFile;
 
 #==============================================================================#
 # Inheritance                          #
@@ -74,7 +75,10 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LISTEN_PORT
                     NAME_VHOST
                     VHOST_SERVER_NAME
+                    ALWAYS_USE_SSL
                     SSL_ENABLE
+                    SSL_CERTIFICATE_FILE
+                    SSL_CERTIFICATE_KEY_FILE
                     CHAR_SET
                     AUTH_TTL
                     AUTH_SECRET
@@ -121,6 +125,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CHECK_FREQUENCY
                     MIN_SHARE_SIZE
                     MAX_UNSHARED_SIZE
+                    MANUAL_APACHE
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -183,15 +188,19 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PID_FILE
                                      SSL_ENABLE)],
                     ssl       => [qw(SSL_ENABLE
+                                     ALWAYS_USE_SSL
                                      LISTEN_PORT)],
                     conf      => [qw(SSL_ENABLE
+                                     SSL_CERTIFICATE_FILE
+                                     SSL_CERTIFICATE_KEY_FILE
                                      LISTEN_PORT
                                      ENABLE_DIST
                                      NAME_VHOST
                                      VHOST_SERVER_NAME
                                      MASON_COMP_ROOT
                                      PREVIEW_LOCAL
-                                     PREVIEW_MASON)],
+                                     PREVIEW_MASON
+                                     MANUAL_APACHE)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT)],
                     search    => [qw(FULL_SEARCH)],
@@ -225,7 +234,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         my $conf_file = $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage';
         $conf_file = catdir($conf_file, 'conf', 'bricolage.conf');
         if (-e $conf_file) {
-            open CONF, $conf_file or die "Cannot open $conf_file: $!\n";
+            open CONF, $conf_file or croak "Cannot open $conf_file: $!\n";
             while (<CONF>) {
                 # Get each configuration line into $config.
                 chomp;                  # no newline
@@ -264,12 +273,24 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
         # While these default to 0.
-        foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
+        foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
                     DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER))
+                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER ALWAYS_USE_SSL))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
+        }
+
+        # Special case for the SSL_ENABLE configuration directive.
+        if (my $ssl = $config->{SSL_ENABLE}) {
+            if ($ssl eq 'off' or $ssl eq 'no') {
+                $config->{SSL_ENABLE} = 0;
+            } else {
+                croak "Invalid SSL_ENABLE directive: '$ssl'"
+                  unless $ssl eq 'mod_ssl' or $ssl eq 'apache_ssl';
+            }
+        } else {
+            $config->{SSL_ENABLE} = 0;
         }
 
         # Set the Mason component root to its default here.
@@ -288,6 +309,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     }
 
     # Apache Settings.
+    use constant MANUAL_APACHE           => $config->{MANUAL_APACHE};
     use constant SERVER_WINDOW_NAME      => $config->{SERVER_WINDOW_NAME};
 
     use constant APACHE_BIN              => $config->{APACHE_BIN}
@@ -301,9 +323,14 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
     use constant VHOST_SERVER_NAME       => $config->{VHOST_SERVER_NAME};
 
-    # mod_ssl Setting.
+    # ssl Settings.
     use constant SSL_ENABLE              => $config->{SSL_ENABLE};
-    die "LISTEN_PORT directive must be set to 80 when SSL_ENABLE is on\n"
+    use constant SSL_CERTIFICATE_FILE    =>
+      $config->{SSL_CERTIFICATE_FILE} || '';
+    use constant SSL_CERTIFICATE_KEY_FILE =>
+      $config->{SSL_CERTIFICATE_KEY_FILE} || '';
+    use constant ALWAYS_USE_SSL		 => $config->{ALWAYS_USE_SSL};
+    croak "LISTEN_PORT directive must be set to 80 when SSL_ENABLE is on\n"
       if SSL_ENABLE && LISTEN_PORT != 80;
 
     # DBI Settings.
@@ -317,8 +344,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DBI_CALL_TRACE          => $config->{DBI_CALL_TRACE} || 0;
     use constant DBI_PROFILE             => $config->{DBI_PROFILE} || 0;
     # DBI_CALL_TRACE and DBI_PROFILE imply DBI_DEBUG
-    use constant DBI_DEBUG               => $config->{DBI_DEBUG}      || 
-                                            $config->{DBI_CALL_TRACE} || 
+    use constant DBI_DEBUG               => $config->{DBI_DEBUG}      ||
+                                            $config->{DBI_CALL_TRACE} ||
                                             $config->{DBI_PROFILE}    || 0;
 
     # Distribution Settings.

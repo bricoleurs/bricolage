@@ -18,6 +18,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 New Features
 
+=over 4
+
 =item *
 
 Revised Bric::Biz::Keyword implementation to improve performance. The new
@@ -31,9 +33,9 @@ inerface and standard API. [Sam]
 
 =item *
 
-Added new --save-cookie-file and --use-cookie-file options to bric_soap to
-allow authentication to span bric_soap calls. This can result in significant
-time savings across multiple invocations. [Matt]
+Added new C<--save-cookie-file> and C<--use-cookie-file> options to
+F<bric_soap> to allow authentication to span F<bric_soap> calls. This can
+result in significant time savings across multiple invocations. [Matt]
 
 =item *
 
@@ -41,27 +43,27 @@ Added README.MacOSX. [David]
 
 =item *
 
-Added new --chunks option to the bric_soap tool to avoid problems with
-timeouts on large workloads.  Currently only supports the workflow
-commands (publish, deploy, checkin, checkout, move) but it will be
-expanded to other long-running commands in the future.  [Sam]
+Added new C<--chunks> option to the F<bric_soap> tool to avoid problems with
+timeouts on large workloads. Currently only supports the workflow commands
+(C<publish>, C<deploy>, C<checkin>, C<checkout>, C<move>), but it will be
+expanded to other long-running commands in the future. [Sam]
 
 =item *
 
-Improved performance of search paging.  ListManager now only builds
-the output rows that will actually be shown on the screen.  For large
-data sets this results in a huge gain in search speed.  [Adam and Sam]
+Improved performance of search paging. ListManager now only builds the output
+rows that will actually be shown on the screen. For large data sets this
+results in a huge gain in search speed. [Adam and Sam]
 
 =item *
 
-Revised category implementation to use explicit uri and parent_id
-fields rather than relying on the Grp system.  This improves
-performance tremendously for larger numbers of categories.  [Jeff Pinyan]
+Revised category implementation to use explicit C<uri> and C<parent_id> fields
+rather than relying on the Bric::Util::Grp system. This improves performance
+tremendously for larger numbers of categories. [Jeff Pinyan]
 
 =item *
 
-Added new --continue-on-errors option to bric_soap to prevent
-non-fatal errors from ending the process. [Sam]
+Added new C<--continue-on-errors> option to F<bric_soap> to prevent non-fatal
+errors from ending the process. [Sam]
 
 =item *
 
@@ -79,7 +81,35 @@ Added list reverse feature. [Scott]
 
 Added SFTP mover. [Scott]
 
-=over 4
+=item *
+
+Add support for Apache-SSL. This required a change to the context of the
+F<bricolage.conf> C<ENABLE_SSL> directice to indicate the type of SSL support:
+none, apache_ssl, or mod_ssl. [Michael Robinton]
+
+=item *
+
+Added support for manual httpd configuration. Split out dynamic configuration
+from ApacheConfig.pm and move to a new module, ApacheStartup.pm, that sets no
+Apache configuration directives. ApacheConfig.pm calls this module. [Michael
+Robinton]
+
+=item *
+
+Added F<bricolage.conf> configuration directive to force the start up process
+to always write out a F<C<$TEMP_DIR>/bricolage/bric_httpd.conf> as an
+F<httpd.conf> include file. [Michael Robinton]
+
+=item *
+
+Moved SSL key and certificate configuration from global F<httpd.conf> settings
+to per virtual host via F<bricolage.conf> configuration directives. [Michael
+Robinton]
+
+=item *
+
+Added a C<bricolage.conf> directive to force the user to always use SSL.
+[Michael Robinton]
 
 =back
 
