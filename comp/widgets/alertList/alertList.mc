@@ -41,6 +41,7 @@ my $prof_sub = sub {
     return ['Recipients', "$recip_url/" . $_[0]->get_id, ''];
 };
 
+$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => $title );
 $m->comp('/widgets/listManager/listManager.mc',
 	 object => $mode,
 	 fields => $d->{fields},
@@ -48,9 +49,9 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 profile => $prof_sub,
 	 addition => undef,
 	 constrain => { $key => $ARGS{$key} },
-	 title => $title,,
 	 select => undef);
-
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+     
 (%users, $fmt) = ();
 </%init>
 

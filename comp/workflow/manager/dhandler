@@ -148,6 +148,9 @@ push @fields, 'site'
 &>
 
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
+<& '/widgets/wrappers/sharky/table_top.mc', 
+    caption => $lang->maketext(get_class_info($type)->get_plural_name . ' Found')
+&>
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
     sortBy    => $sort_by->{$type},
@@ -155,7 +158,6 @@ push @fields, 'site'
     alter     => $alter,
     exclude   => $exclude,
     profile   => $profile,
-    title     => $lang->maketext('%n Found'),
     addition  => $addition,
     select    => $select,
     behavior  => 'expand',
@@ -163,6 +165,8 @@ push @fields, 'site'
     cx_filter => ! $ARGS{site_id},
     field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',

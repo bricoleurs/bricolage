@@ -58,9 +58,11 @@ $wf = $wf->get_name;
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">
+  <& '/widgets/wrappers/sharky/table_top.mc', 
+      caption => 'Active ' . get_class_info($obj_type)->get_plural_name
+  &>
   <& '/widgets/listManager/listManager.mc',
      object       => $obj_type,
-     title        => 'Active %n',
      fields       => $fields,
      sortBy       => 'priority',
      exclude      => $exclude->($desk_chk),
@@ -76,6 +78,7 @@ $wf = $wf->get_name;
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>
+  <& '/widgets/wrappers/sharky/table_bottom.mc' &>
  
 <& /widgets/buttons/submit.mc,
    disp      => 'Checkout',

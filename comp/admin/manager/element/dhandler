@@ -109,18 +109,23 @@ if ($id) {
 
 $m->out(qq {<input type="hidden" name="element_id" value=$id>\n} ) if ($id);
 
+$m->comp('/widgets/wrappers/sharky/table_top.mc',
+   caption => 'Existing ' . get_class_info($key)->get_plural_name
+);
+
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
-	 behavior  => $behavior,
-	 object    => $key,
+         behavior  => $behavior,
+         object    => $key,
          constrain => $constrain,
-	 profile   => ($id) ? undef : $prof_sub,
-	 title     => 'Existing %n',
-	 fields    => [qw(name description type_name)],
+         profile   => ($id) ? undef : $prof_sub,
+         fields    => [qw(name description type_name)],
          exclude   => sub { ! chk_authz($_[0], READ, 1) },
-	 addition  => defined $id ? undef : $add_sub,
-	 select    => $sel_sub,
+         addition  => defined $id ? undef : $add_sub,
+         select    => $sel_sub,
 );
+
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 # Output the form closing tag if necessary.
 if ($id) {

@@ -64,7 +64,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'dest_profile',
          no_edit => $no_edit,
          widget  => $type,
-         num => 4
+         num => 3
 );
 
 
@@ -72,6 +72,9 @@ if (defined $id) {
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
     # Output the actions.
+    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => get_class_info('action')->get_plural_name,
+             number => 4 );
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'action',
 	     userSort => 0,
@@ -82,16 +85,16 @@ if (defined $id) {
 	     profile => [ [$label, "/admin/profile/action"],
 			  ['Log', "/admin/events/action"] ],
 	     select =>    $no_del ? undef : ['Delete', 'action|delete_cb'],
-	     number => 3
 	    );
-
-    $m->out("<br />\n");
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
     # Output the Servers.
+    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => get_class_info('server')->get_plural_name,
+             number => 5 );
     $m->comp('/widgets/listManager/listManager.mc',
 	     userSort => 0,
 	     object => 'server',
-	     title => '%n',
 	     addition => $no_edit ? undef : ['Add', "/admin/profile/server?dest_id=$id"],
 	     constrain => { server_type_id => $id },
 	     fields => [qw(host_name os doc_root active)],
@@ -99,8 +102,9 @@ if (defined $id) {
 			  ['Log', "/admin/events/server"] ],
 	     alter => { active => $yes_no },
 	     select =>    $no_del ? undef : ['Delete', 'server|delete_cb'],
-	     number => 5
 	    );
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
 	     section => $section,

@@ -3,11 +3,13 @@
   type         => $class_key,
   field        => 'name',
   use_form_tag => 0 &>
-<p></p>
+
 <a name="results"></a>
+<& '/widgets/wrappers/sharky/table_top.mc', 
+   caption => $lang->maketext("Find a $class_key to alias"),
+&>
 <& /widgets/listManager/listManager.mc,
    object       => $class_key,
-   title        => $lang->maketext("Find a $class_key to alias"),
    sortBy       => 'name',
    select       => undef,
    profile      => $related_alias,
@@ -19,7 +21,8 @@
    cx_filter    => 0,
    behavior     => 'expand',
 &>
-<p></p>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <a href="#" onClick="window.location.href='/workflow/profile/workspace/'; return false;">
   <img src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0">
 </a>

@@ -14,6 +14,10 @@
                  );
     };
 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Output Channels',
+             number => $num);
+    
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'output_channel',
 	     userSort => 0,
@@ -30,7 +34,7 @@
                             },
 	     number => $num
 	    );
-
+        
 </%perl>
 <table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
@@ -45,6 +49,7 @@
     useTable => 0,
 &></td></tr>
 </table>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <%args>
 $widget
 $asset

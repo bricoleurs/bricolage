@@ -88,11 +88,13 @@ if (defined $id) {
 
         };
 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => 'Sites',
+             number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
                  object => 'site',
                  userSort => 0,
                  def_sort_field => 'name',
-                 title => 'Sites',
                  objs => scalar $comp->get_sites,
                  addition => undef,
                  fields => [qw(name description primary)],
@@ -100,8 +102,8 @@ if (defined $id) {
                  field_values => $site_sub,
                  profile => undef,
                  select => $sel_sub,
-                 number => ++$num
                 );
+       
 my %sites = map { $_->get_id => 1 } $comp->get_sites;
 </%perl>
 <table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
@@ -117,9 +119,9 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     useTable => 0,
 &></td></tr>
 </table>
-<br />
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <%perl>;
-        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
 
         # Manage Output Channels if this is a top-level container.
 
@@ -143,11 +145,13 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             return ['Delete', 'rem_oc'];
         };
 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => 'Output Channels',
+             number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
                  object => 'output_channel',
                  userSort => 0,
                  def_sort_field => 'name',
-                 title => 'Output Channels',
                  objs => scalar $comp->get_output_channels,
                  addition => undef,
                  fields => [qw(name description site enabled)],
@@ -155,7 +159,6 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                  field_values => $oc_sub,
                  profile => undef,
                  select => $oc_sel_sub,
-                 number => ++$num
                 );
         my @available_ocs;
         foreach my $site ($comp->get_sites) {
@@ -180,9 +183,9 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     useTable => 0,
 &></td></tr>
 </table>
-<br />
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <%perl>;
-        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
     }
 
     # display elements contained by this asset type
@@ -191,17 +194,19 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     # Output the actions.
     my $containers = $comp->get_containers;
 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => 'Existing Subelements',
+             number  => ++$num );
     $m->comp('/widgets/listManager/listManager.mc',
 	     object         => 'element',
 	     objs           => $containers,
 	     behavior       => 'expand',
-	     title          => "Existing Subelements",
 	     addition       => undef,
 	     fields         => [qw(name type_name description)],
 	     profile        => undef,
 	     select         => $no_del ? undef : ['Delete', 'element|delete_sub'],
-	     number         => ++$num,
 	    );
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "cont_profile",
@@ -210,7 +215,6 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 	     vspace   => 5
 	    ) unless $no_edit;
 
-    $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 }
 
         # display existing attributes for this asset type

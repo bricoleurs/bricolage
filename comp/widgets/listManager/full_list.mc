@@ -1,8 +1,3 @@
-<& '/widgets/wrappers/sharky/table_top.mc',
-        caption => $title,
-        number => $number
-&>
-
 % if ($addition) {
 <div class="addnewitem">
     <a href="<% $addition->[1] %>">
@@ -86,8 +81,6 @@
 % $m->comp('.footer', pagination => $pagination, cols => $cols)
 %    if $pagination->{pages} > 1;
 
-<& "/widgets/wrappers/sharky/table_bottom.mc" &>
-
 %#--- END HTML ---#
 
 <%once>;
@@ -105,7 +98,6 @@ my $page_link = sub {
 
 <%args>
 $widget
-$title
 $fields
 $data
 $rows
@@ -114,7 +106,6 @@ $userSort # Whether users can resort the list.
 $addition
 $featured => undef
 $featured_color
-$number => 0
 $empty_search
 $pkg => undef
 $pagination => {}

@@ -58,19 +58,6 @@ default to 'full_list'.
 
 =item *
 
-title
-
-This gives the display title for this list.  The string may contain substituted
-values.  They are:
-
-%n - The plural name of the object being listed.
-
-The default value for this argument is:
-
-'Existing %n'
-
-=item *
-
 sortBy
 
 Provide the a default column by which to sort all the elements of the list.  If
@@ -355,7 +342,6 @@ $pkg->list({'name'        => $param->{'name_field'},
 <%args>
 $object                        # The object type to display
 $style          => 'full_list'  # The list style (full or paginated)
-$title          => 'Existing %n' # Text for the title of this list.
 $sortBy         => ''           # Default to sorting by ID
 $userSort       => 1            # A flag for whether the user can resort the list
 $profile        => ['Edit', ''] # URL to the profile for this object.
@@ -371,7 +357,6 @@ $exclude        => undef           # Exclude certain objects from the list.
 $alter          => {}           # Alter the data for one field
 $featured       => undef        # Make one row a featured row
 $featured_color => '#cccc99'    # The color for the bkground of the featured row
-$number         => 0
 $objs           => undef        # These are user objects to be listed.
 $def_sort_field => undef
 $def_sort_order => undef        # Whether to sort in descending order by default
@@ -398,13 +383,6 @@ my $meth = $get_my_meths->($pkg, $field_titles, $field_values);
 
 # Set the fields to display
 $fields ||= [sort keys %$meth];
-
-# Set the title
-my $name = get_class_info($object)->get_plural_name;
-
-$title = $lang->maketext($title);
-
-$title =~ s/\%n/$lang->maketext($name)/e;
 
 # We need a hash of featured IDs to use for later
 my %featured_lookup = map { ($_,1) } @$featured;
@@ -509,7 +487,6 @@ my ($rows, $cols, $data) = $build_table_data->($sort_objs,
 # Call the element to show this list
 $m->comp("$style.mc",
          widget          => $widget,
-         title           => $title,
          fields          => $fields,
          data            => $data,
          rows            => $rows,
@@ -519,7 +496,6 @@ $m->comp("$style.mc",
          addition        => $addition,
          featured        => \%featured_lookup,
          featured_color  => $featured_color,
-         number          => $number,
          empty_search    => $empty_search,
          pagination      => { curr_page  => $current_page,
                               limit      => $limit,
