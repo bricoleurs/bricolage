@@ -9,18 +9,15 @@ use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use POSIX ();
 
-my $USE_CORE = 1;
 my $epoch = CORE::time;
 
 BEGIN {
-    # Override the time function. Generally use CORE::time, but when $USE_CORE
-    # is set to a false value, always return the value of $epoch, which will
-    # remain the same for the lifetime of the tests. This is to prevent those
-    # tests that test for the time *right now* from getting screwed up by the
-    # clock turning over.
-    *CORE::GLOBAL::time = sub () { $USE_CORE ? CORE::time() : $epoch };
+    # Override the time function, but just have it use CORE::time. This will
+    # allow us to hijack the function later by locally redefining
+    # CORE::GLOBAL::time. This is to prevent those tests that test for the
+    # time *right now* from getting screwed up by the clock turning over.
+    *CORE::GLOBAL::time = sub () { CORE::time() };
 }
-
 
 ##############################################################################
 # Set up needed variables.
@@ -44,17 +41,12 @@ my ($local_date, $local_iso_date, $fmt_local);
 }
 
 ##############################################################################
-# Setup and teardown methods.
-##############################################################################
-# Don't use the core time for any of these tests.
-sub hijack_time : Test(setup => 0) { $USE_CORE = 0 }
-sub restore_time : Test(teardown => 0) { $USE_CORE = 1 }
-
-##############################################################################
 # Test the exported functions.
 ##############################################################################
 # Test strfdate().
 sub test_strfdate : Test(4) {
+    no warnings qw(redefine);
+    local *CORE::GLOBAL::time = sub () { $epoch };
     is( strfdate($epoch), $local_iso_date,
         "Check strfdate is '$local_iso_date'" );
     is( strfdate($epoch, undef, 1), $utc_iso_date,
@@ -68,6 +60,8 @@ sub test_strfdate : Test(4) {
 ##############################################################################
 # Test local_date().
 sub test_local_date : Test(5) {
+    no warnings qw(redefine);
+    local *CORE::GLOBAL::time = sub () { $epoch };
     is( local_date($utc_date), $local_date,
         "Check local date is '$local_date'" );
     is( local_date($utc_date, $format), $fmt_local,
@@ -101,6 +95,8 @@ sub test_local_date : Test(5) {
 ##############################################################################
 # Test db_date().
 sub test_db_date : Test(2) {
+    no warnings qw(redefine);
+    local *CORE::GLOBAL::time = sub () { $epoch };
     is( db_date($local_iso_date), $db_date, "Check db date is '$db_date'" );
     # Hope that the clock doesn't click over during this test.
     is( db_date(undef, 1),
