@@ -228,15 +228,15 @@ __END__
 
 =head1 AUTHOR
 
-Sam Tregar (stregar@about-inc.com
+Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-Net::FTPServer
+L<Net::FTPServer|Net::FTPServer>
 
-L<Bric::Util::FTP::DirHandler>
+L<Bric::Util::FTP::DirHandle|Bric::Util::FTP::DirHandle>
 
-L<Bric::Util::FTP::FileHandle>
+L<Bric::Util::FTP::FileHandle|Bric::Util::FTP::FileHandle>
 
 =cut
 

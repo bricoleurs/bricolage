@@ -681,10 +681,10 @@ Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-Net:FTPServer::DirHandle
+L<Net:FTPServer::DirHandle|Net:FTPServer::DirHandle>
 
-L<Bric::Util::FTP::Server>
+L<Bric::Util::FTP::Server|<Bric::Util::FTP::Server>
 
-L<Bric::Util::FTP::FileHandle>
+L<Bric::Util::FTP::FileHandle|Bric::Util::FTP::FileHandle>
 
 =cut

@@ -506,14 +506,14 @@ __END__
 
 =head1 AUTHOR
 
-Sam Tregar (stregar@about-inc.com)
+Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-Net:FTPServer::FileHandle
+L<Net:FTPServer::FileHandle|Net:FTPServer::FileHandle>
 
-L<Bric::Util::FTP::Server>
+L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>
 
-L<Bric::Util::FTP::DirHandle>
+L<Bric::Util::FTP::DirHandle|Bric::Util::FTP::DirHandle>
 
 =cut
