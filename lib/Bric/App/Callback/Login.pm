@@ -22,17 +22,18 @@ sub login : Callback {
     my $un = $param->{$self->class_key . '|username'};
     my $pw = $param->{$self->class_key . '|password'};
     my ($res, $msg) = Bric::App::Auth::login($r, $un, $pw);
+    my $redir = del_redirect() || '';
+    $redir = '/' if $redir =~ m|^/login|;
     if ($res) {
 	if ($param->{$self->class_key . '|ssl'}) {
 	    # They want to use SSL. Do a simple redirect.
 	    set_state_name($self->class_key, 'ssl');
-            $self->redirect(del_redirect() || '');
+            $self->redirect($redir);
 	} else {
 	    # Redirect them back to port 80 if not using SSL.
 	    set_state_name($self->class_key, 'nossl');
             # redirect_onload() prevents any other callbacks from executing.
-	    redirect_onload('http://' . $r->hostname . $port
-                              . (del_redirect() || ''), $self);
+	    redirect_onload('http://' . $r->hostname . $port . $redir, $self);
 	}
     } else {
 	add_msg($msg);
