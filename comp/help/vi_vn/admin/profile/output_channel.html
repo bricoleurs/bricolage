@@ -1,0 +1,53 @@
+<help page="Output Channel Profile">
+
+<p><dl>
+<dt>Properties</dt>
+<dd>Enter the Output Channel's name and a brief description. With the
+    &quot;Pre&quot; and &quot;Post&quot; fields, you can tell the output
+    channel to associate a prefix directory or postfix directory to the URI of
+    all resources (stories and media) in the output channel. This feature is
+    useful if you're keeping different kinds of content on one delivery
+    server. Enter the file name and extension for the stories files created in
+    this output channel in the &quot;File Name&quot; and &quot;File
+    Extension&quot; fields.<br /><br/>
+
+    The URI Format properties determine how the URIs of stories and media will
+    be created in this output channel. In the &quot;URI Format&quot; and
+    &quot;Fixed URI Format&quot; fields, enter the tokens that represent the
+    various parts out of which the URI should be made. Tokens must be
+    separated by &quot;/&quot; like a URI. The currently available tokens are:
+    &quot;categories&quot;, &quot;day&quot;, &quot;month&quot;,
+    &quot;slug&quot;, and &quot;year&quot;. Assuming a story in the category
+    &quot;/stories&quot;, whose slug is &quot;hello&quot;, and the date is
+    February 27, 2002, the URI Format
+    &quot;/day/month/year/categories/slug/&quot; would produce the URI
+    &quot;/27/02/2002/stories/hello&quot;.<br /><br />
+
+    The &quot;URI Case&quot; select list forces URIs in this output channel to
+    be formatted in a particular case, either &quot;Mixed Case&quot; (the
+    default), &quot;Lowercase&quot;, or &quot;Uppercase&quot;.<br /><br />
+
+    The &quot;Use Slug for Filename&quot; field indicates that the names of
+    the story files created in this output channel should use the slug when
+    possible. This means that non-fixed stories will use the slug to name the
+    file, if it's available. Fixed stories will instead use the name specified
+    in the Filename field, while media will use the name of the media file
+    itself.</dd>
+
+</dl></p>
+
+<p>Click <i>Next</i> for the second page of the Profile.</p>
+
+<p><dl>
+<dt>Template Includes</dt>
+<dd>Select existing Output Channels in order to include the templates of those
+    Output Channels in this Output Channel. The idea here is that, when you
+    preview or publish assets via this Output Channel, if the Burn system can't
+    find a template, it'll look for it in the Output Channels selected here. The
+    template includes can be ordered, and they will be searched for templates in
+    that order.</dd>
+</dl></p>
+
+<p>When finished, click <i>Save</i>.</p>
+
+</help>
