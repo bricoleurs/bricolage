@@ -52,6 +52,12 @@ Added printing of a message regarding the filenames being processed by
 F<bric_soap>'s C<create> and C<update> commands when its C<--verbose> option
 is set. [David]
 
+=item *
+
+Setting a story's cover date to a date that causes one of its URIs to conflict
+with an existing story's URIs no longer causes an error. Thanks to Sam for the
+spot! [David]
+
 =back
 
 =head1 VERSION 1.4.4
