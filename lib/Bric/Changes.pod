@@ -176,8 +176,8 @@ report from Patrick Walsh. [David]
 
 Queries for stories, media, and templates have been greatly optimized. Thanks
 to a large database from I<The Register> and query optimization from Josh
-Berkus, searches for stories are now up to ten times faster than they were
-before. [David]
+Berkus (under sponsorship from WHO), searches for stories are now up to ten
+times faster than they were before. [David]
 
 =back
 
