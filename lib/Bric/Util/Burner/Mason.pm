@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$Revision: 1.54 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.53 $ )[-1];
+our $VERSION = (qw$Revision: 1.54 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-07 01:03:19 $
+$Date: 2004-02-10 08:23:17 $
 
 =head1 SYNOPSIS
 
@@ -266,6 +266,7 @@ sub burn_one {
     # finds the document template (acting as a dhandler). This will
     # likely break with HTML::Mason 1.40, but it will probably have
     # a parameter to do it for us (or allow us to subclass Component).
+    no warnings 'redefine';
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
