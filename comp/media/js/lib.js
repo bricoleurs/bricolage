@@ -433,7 +433,10 @@ function confirmFormBuilder(formName) {
     }
 
     // get the delete button value into the main form: 
-    if (fb_obj && document.fb_magic_buttons.elements["delete"].checked) obj.elements["delete"].value = 1;
+    if (fb_obj && document.fb_magic_buttons.elements["delete"] &&
+        document.fb_magic_buttons.elements["delete"].checked) {
+            obj.elements["delete"].value = 1;
+    }
 
     // all good
     return true;
