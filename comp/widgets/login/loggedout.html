@@ -1,40 +1,36 @@
 <form action="<% $r->uri %>" method="post" name="bricolage_login">
-<& /widgets/wrappers/sharky/table_top.mc,
-   caption => 'Please log in:' &>
-<table cellpadding="2" cellspacing="0" border="0" width="578">
-<tr>
-<td width="150" align="right"><span class="label"><% $lang->maketext('Username') %>:</span></td>
-<td width="448">
-<& /widgets/profile/text.mc,
-   name     => 'login|username',
-   useTable => 0 &>
-</td>
-</tr>
-<tr>
-<td width="150" align="right"><span class="label"><% $lang->maketext('Password') %>:</span></td>
-<td width="448"><& '/widgets/profile/password.mc',
-                   name => 'login|password',
-                   useTable => 0 &></td>
-</tr>
+<& '/widgets/wrappers/sharky/table_top.mc',
+   caption => $lang->maketext('Please log in:') &>
+
+<& '/widgets/profile/text.mc',
+    disp    => $lang->maketext('Username'),
+    name    => 'login|username' &>
+
+<& '/widgets/profile/password.mc',
+    disp    => $lang->maketext('Password'),
+    name    => 'login|password' &>
+
 % if (SSL_ENABLE && ! ALWAYS_USE_SSL) {
-<tr>
-<td width="150" align="right"><span class"=label"><% $lang->maketext('Use SSL')%>:</span></td>
-<td width="448"><& '/widgets/profile/checkbox.mc',
-                  name => 'login|ssl',
-		  value => 1,
-		  checked => $state eq 'ssl' ? 1 : 0,
-                  useTable => 0 &></td>
-</tr>
+<& '/widgets/profile/checkbox.mc',
+    disp    => $lang->maketext('Use SSL'),
+    name    => 'login|ssl',
+    value   => 1,
+    checked => $state eq 'ssl' ? 1 : 0 &>
 % }
-<tr>
+
 % if (SSL_ENABLE && ALWAYS_USE_SSL) {
-  <td>&nbsp;<input type="hidden" name="login|ssl" value="1" /></td>
-% } else {
-  <td>&nbsp;</td>
+<& '/widgets/profile/hidden.mc',
+    disp    => $lang->maketext('Use SSL'),
+    name    => 'login|ssl',
+    value   => 1 &>
 % }
-  <td><input type="image" src="/media/images/<% $lang_key %>/login.gif" border="0" vspace="5" name="<% "$widget|login_cb" %>" value="Login"></td>
-</tr>
-</table>
+
+<& '/widgets/profile/button.mc',
+    disp    => $lang->maketext('Log in'),
+    widget  => 'login',
+    cb      => 'login_cb',
+    button  => 'login' &>
+
 <& /widgets/wrappers/sharky/table_bottom.mc &>
 </form>
 <%args>

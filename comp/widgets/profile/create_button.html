@@ -1,10 +1,7 @@
-<div><input type="image" src="/media/images/<% $lang_key %>/<% $button %>.gif" border="0" name="<% $widget %>|<% $cb %>"></div>
+<div><input type="image" src="/media/images/<% $lang_key %>/<% $button %>.gif" name="<% $widget %>|<% $cb %>" value="<% $disp %>"></div>
 <%args>
 $widget
 $cb     => 'create_cb'
 $button => 'create_red'
+$disp    => ''
 </%args>
-<%once>;
-my $table_width = FIELD_INDENT + 150;
-my $cell_width = FIELD_INDENT - 10;
-</%once>

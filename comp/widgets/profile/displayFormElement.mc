@@ -230,6 +230,7 @@ my $inpt_sub = sub {
     my $out;
     my $disp_value = defined $value && $type ne 'password' ? ' value="'
       . escape_html($value) . '"' : '';
+    my $src = defined $vals->{props}{src} ? ' src="' . $vals->{props}{src} . '"' : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
 
@@ -242,7 +243,7 @@ my $inpt_sub = sub {
 
 	if (!$readOnly) {
             my $idout = $id ? qq{ id="$id"} : '';
-	    $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$disp_value$extra$js />};
+	    $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$src$disp_value$extra$js />};
 	} else {
 	    $out .= ($type ne "password") ? " $value" : "********";
 	}
@@ -256,7 +257,7 @@ my $inpt_sub = sub {
         $out .= &$rem_sub($width, $indent) if $useTable;
 
         if (!$readOnly) {
-            $out .= qq{<input type="$type" name="$key"$disp_value$extra$js />};
+            $out .= qq{<input type="$type" name="$key"$src$disp_value$extra$js />};
         } else {
             if ($type eq "radio" || $type eq "checkbox") {
                 $out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
@@ -277,6 +278,7 @@ my %formSubs = (
         text => sub { &$inpt_sub('text', @_, &$len_sub($_[1]) ) },
         password => sub { &$inpt_sub('password', @_, &$len_sub($_[1]) ) },
         hidden => sub { &$inpt_sub('hidden', @_) },
+        image => sub { &$inpt_sub('image', @_) },
 
         date => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,

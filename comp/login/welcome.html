@@ -14,15 +14,11 @@ my $string   = $lang->maketext('Please click [_1]here[_2] to start.',
                );
 </%perl>
 
-<table border="0" cellpadding="0" cellspacing="0">
-<tr><td>&nbsp;</td></tr>
-<tr><td>&nbsp;</td><td class="subHeader">
-<% $string %></p>
-</td><td>&nbsp;</td></tr>
-<tr><td>&nbsp;</td></tr>
-</table>
+<div style="padding: 1em;">
+<% $string %>
+</div>
 
 <& /widgets/wrappers/sharky/table_bottom.mc &>
 
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& /widgets/wrappers/sharky/footer.mc &>
 %#-- End HTML --#
