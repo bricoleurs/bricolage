@@ -35,119 +35,122 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
   <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
   <td class=lightHeader>
 <% $spacerRow %>
-	    <table>
+            <table>
 % unless ($advanced_search) {
               <tr>
                 <td>
                   <& /widgets/profile/text.mc, 
                      name     => $widget.'|simple',
-		     value    => get_state_data($widget, 'simple') || '',
-		     useTable => 0 &>
+                     value    => get_state_data($widget, 'simple') || '',
+                     useTable => 0 &>
                 </td>
                 <td>
+%# This hidden field is required to make the form submit when the user hits
+%# the "enter" key.
+                  <input type="hidden" name="<% $widget %>|media_cb" value="Search" />
                   <input type="image" src="/media/images/search_red.gif" border=0 name="<% $widget %>|media_cb" value="Search">
                 </td>
 % } else {
-	      <tr>
-		<td align="right"><span class=label>Title:</span></td>
-		<td>
-		  <& /widgets/profile/text.mc, 
+              <tr>
+                <td align="right"><span class=label>Title:</span></td>
+                <td>
+                  <& /widgets/profile/text.mc, 
                      name     => $widget.'|name',
-		     value    => get_state_data($widget, 'name') || '',
-		     useTable => 0 &>
-		</td>
-	      </tr>		
-	      <tr>
-		<td align="right"><span class=label>URI:</span></td>
-		<td>
-		  <& /widgets/profile/text.mc, 
+                     value    => get_state_data($widget, 'name') || '',
+                     useTable => 0 &>
+                </td>
+              </tr>             
+              <tr>
+                <td align="right"><span class=label>URI:</span></td>
+                <td>
+                  <& /widgets/profile/text.mc, 
                      name     => $widget.'|uri',
-		     value    => get_state_data($widget, 'uri') || '',
-		     useTable => 0 &>
-		</td>
-	      </tr>		
+                     value    => get_state_data($widget, 'uri') || '',
+                     useTable => 0 &>
+                </td>
+              </tr>             
 % my @cur   = localtime; $cur[5] += 1900; $cur[4]++;
 % my $today = sprintf('%04d-%02d-%02d %02d:%02d:%02d', @cur[5,4,3,2,1,0]);
-	      <tr>
-		<td colspan=2><span class=label>Cover&nbsp;Date</span><br />
-	          From: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|cover_date_start",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'cover_date_start')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-	          To: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|cover_date_end",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'cover_date_end')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-		</td>
-	      </tr>
-	      <tr>
-		<td colspan=2><span class=label>Publish&nbsp;Date</span><br />
-	          From: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|publish_date_start",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'publish_date_start')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-		  To: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|publish_date_end",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'publish_date_end')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-		</td>
-	      </tr>
-	      <tr>
-		<td colspan=2><span class=label>Expire&nbsp;Date</span><br />
-		  From: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|expire_date_start",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'expire_date_start')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-		  To: 
-		  <& '/widgets/select_time/select_time.mc', 
-		     base_name  => "$widget|expire_date_end",
-		     indent     => 1,
-		     no_hour    => 1,
-		     no_min     => 1,
-		     repopulate => 0,
-		     def_date   => get_state_data($widget, 'expire_date_end')||'',
-		     compact    => 1,
-		     style      => 'inline',
-		  &>
-		</td>
-	      </tr>
+              <tr>
+                <td colspan=2><span class=label>Cover&nbsp;Date</span><br />
+                  From: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|cover_date_start",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'cover_date_start')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                  To: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|cover_date_end",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'cover_date_end')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                </td>
+              </tr>
+              <tr>
+                <td colspan=2><span class=label>Publish&nbsp;Date</span><br />
+                  From: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|publish_date_start",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'publish_date_start')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                  To: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|publish_date_end",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'publish_date_end')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                </td>
+              </tr>
+              <tr>
+                <td colspan=2><span class=label>Expire&nbsp;Date</span><br />
+                  From: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|expire_date_start",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'expire_date_start')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                  To: 
+                  <& '/widgets/select_time/select_time.mc', 
+                     base_name  => "$widget|expire_date_end",
+                     indent     => 1,
+                     no_hour    => 1,
+                     no_min     => 1,
+                     repopulate => 0,
+                     def_date   => get_state_data($widget, 'expire_date_end')||'',
+                     compact    => 1,
+                     style      => 'inline',
+                  &>
+                </td>
+              </tr>
 % }
-	    </table>
+            </table>
   </td>
   <td class=darkHeader><img src="/media/images/spacer.gif" width=1 height=1></td>
 </tr>

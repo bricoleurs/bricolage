@@ -51,17 +51,6 @@ elsif ($field eq "$widget|checkin_cb") {
     $checkin->($widget, $param);
 }
 
-elsif ($field eq "$widget|checkin_deploy_cb") {
-    my $fa = $checkin->($widget, $param);
-    $param->{'desk|formatting_pub_ids'} = $fa->get_id;
-
-    # Call the deploy callback in the desk widget.
-    $m->comp('/widgets/desk/callback.mc',
-	     widget => 'desk',
-	     field  => 'desk|deploy_cb',
-	     param  => $param);
-}
-
 elsif ($field eq "$widget|save_and_stay_cb") {
     $save_object->($widget, $param);
     my $fa = get_state_data($widget, 'fa');
@@ -279,6 +268,7 @@ elsif ($field eq "$widget|recall_cb") {
 	    $start_desk->checkout($fa, get_user_id);
 	    $start_desk->save;
 	    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
+            log_event('formatting_checkout', $fa);
 	} else {
 	    add_msg("Permission to checkout &quot;" . $fa->get_name
 		    . "&quot; denied");
@@ -379,58 +369,112 @@ my $save_object = sub {
 
 
 my $checkin = sub {
-	my ($widget, $param) = @_;
-	my $fa = get_state_data($widget, 'fa');
+    my ($widget, $param) = @_;
+    my $fa = get_state_data($widget, 'fa');
+    my $new = defined $fa->get_id ? 0 : 1;
+    $save_meta->($param, $widget, $fa);
 
-	$save_meta->($param, $widget, $fa);
+    my $work_id = get_state_data($widget, 'work_id');
+    my $wf;
+    if ($work_id) {
+        $fa->set_workflow_id($work_id);
+        my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
+        log_event('formatting_add_workflow', $fa,
+                  { Workflow => $wf->get_name });
+    }
+    $fa->checkin;
+    $fa->activate;
 
-	log_event('formatting_checkin', $fa);
-	my $work_id = get_state_data($widget, 'work_id');
+    # Get the desk information.
+    my $desk_id = $param->{"$widget|desk"};
+    my $cur_desk = $fa->get_current_desk;
 
-	if ($work_id) {
-	    $fa->set_workflow_id($work_id);
-	    my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-	    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
-	}
-	$fa->checkin();
-	$fa->activate();
-	$fa->save();
+    # See if this template needs to be removed from workflow or published.
+    if ($desk_id eq 'remove') {
+        # Remove from the current desk and from the workflow.
+        $cur_desk->remove_asset($fa);
+        $cur_desk->save;
+        $fa->set_workflow_id(undef);
+        $fa->save;
+        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
+        log_event('formatting_checkin', $fa);
+        log_event("formatting_rem_workflow", $fa);
+        add_msg("Template &quot;" . $fa->get_name . "&quot; saved and " .
+                    "shelved.");
+    } elsif ($desk_id eq 'deploy') {
+        # Publish the template and remove it from workflow.
+        my ($pub_desk, $no_log);
+        # Find a publish desk.
+        if ($cur_desk->can_publish) {
+            # We've already got one.
+            $pub_desk = $cur_desk;
+            $no_log = 1;
+        } else {
+            # Find one in this workflow.
+            $wf ||= Bric::Biz::Workflow->lookup
+              ({ id => $fa->get_workflow_id });
+            foreach my $d ($wf->allowed_desks) {
+                $pub_desk = $d and last if $d->can_publish;
+            }
+            # Transfer the template to the publish desk.
+            $cur_desk->transfer({ to    => $pub_desk,
+                                  asset => $fa });
+            $cur_desk->save;
+            $pub_desk->save;
+            $fa->save;
+        }
+        # Log it!
+        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
+        log_event('formatting_checkin', $fa);
+        my $dname = $pub_desk->get_name;
+        log_event('formatting_moved', $fa, { Desk => $dname })
+          unless $no_log;
+        add_msg("Template &quot;" . $fa->get_name . "&quot; saved and " .
+                "checked in to &quot;$dname&quot;.");
+    } else {
+        # Look up the selected desk.
+        my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
+          ({ id => $desk_id });
+        my $no_log;
+        if ($cur_desk) {
+            if ($cur_desk->get_id == $desk_id) {
+                $no_log = 1;
+            } else {
+                # Transfer the template to the new desk.
+                $cur_desk->transfer({ to    => $desk,
+                                      asset => $fa });
+                $cur_desk->save;
+            }
+        } else {
+            # Send this template to the selected desk.
+            $desk->accept({ asset => $fa });
+        }
 
-	my $desk_id = $param->{"$widget|desk"};
-	my $desk    = Bric::Biz::Workflow::Parts::Desk->lookup({id => $desk_id});
-	my $cur_desk = $fa->get_current_desk();
+        $desk->save;
+        $fa->save;
+        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
+        log_event('formatting_checkin', $fa);
+        my $dname = $desk->get_name;
+        log_event('formatting_moved', $fa, { Desk => $dname }) unless $no_log;
+        add_msg("Template &quot;" . $fa->get_name . "&quot; saved and " .
+                "moved to &quot;$dname&quot;.");
+    }
 
-	my $no_log;
-	if ($cur_desk) {
-	    if ($cur_desk->get_id() == $desk_id) {
-		$no_log = 1;
-	    } else {
-		# Send this story to the next desk
-		$cur_desk->transfer({
-				     to    => $desk,
-				     asset => $fa
-				    });
-		$cur_desk->save();
-	    }
-	} else {
-	    $desk->accept( { 'asset' => $fa });
-	}
+    # Deploy the template, if necessary.
+    if ($desk_id eq 'deploy') {
+        $param->{'desk|formatting_pub_ids'} = $fa->get_id;
 
-	$desk->save;
-	my $dname = $desk->get_name;
-	log_event('formatting_moved', $fa, {Desk => $dname}) unless $no_log;
-	add_msg("Template &quot;" . $fa->get_name . "&quot; checked in to &quot;${dname}&quot; desk.");
+        # Call the deploy callback in the desk widget.
+        $m->comp('/widgets/desk/callback.mc',
+                 widget => 'desk',
+                 field  => 'desk|deploy_cb',
+                 param  => $param);
+    }
 
-	# Clear the state out.
-	clear_state($widget);
-
-	# Set the redirect to the page we were at before here.
-	set_redirect("/");
-
-	# Remove this page from history.
-	pop_page;
-
-	return $fa;
+    # Clear the state out, set redirect, and return.
+    clear_state($widget);
+    set_redirect("/");
+    return $fa;
 };
 
 my $check_syntax = sub {
@@ -454,6 +498,7 @@ my $delete_fa = sub {
     log_event("formatting_rem_workflow", $fa);
     my $burn = Bric::Util::Burner->new;
     $burn->undeploy($fa);
+    $fa->set_workflow_id(undef);
     $fa->deactivate;
     $fa->save;
     log_event("formatting_deact", $fa);

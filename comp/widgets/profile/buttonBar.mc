@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-08-15 21:03:02 $
+$Date: 2002-09-13 22:01:46 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -33,28 +33,43 @@ $obj
 <%init>;
 # browser spacing stuff
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $ieSpacer = ($agent->{os} ne "SomeNix") ?
-  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
+my $ieSpacer = $agent->{os} ne "SomeNix" ?
+  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" } .
+  qq{width="5" height="5" /></td></tr>}
   : '';
 
 my $deskText = qq{<select name="$widget|desk">};
-my $versions = $obj->get_versions;
-my $versionText = qq{<select name="$widget|version">};
+my $can_pub;
 
 if ($desks) {
     foreach (@$desks) {
-	my $id = $_->get_id;
-	$deskText .= qq{<option value="$id"};
-	$deskText .= " selected" if $id == $cd->get_id;
-	$deskText .= ">" .  $_->get_name() . "</option>";
+        my $id = $_->get_id;
+        $deskText .= qq{<option value="$id"};
+        $deskText .= " selected" if $id == $cd->get_id;
+        $deskText .= ">to " .  $_->get_name . "</option>";
+        $can_pub = 1 if $_->can_publish and chk_authz($_, EDIT, 1);
+    }
+
+    # Set up choice to remove from workflow.
+    $deskText .='<option value="remove">and Shelve</option>';
+
+    # Set up choice to publish, if possible.
+    if ($can_pub) {
+        my ($act, $cb) = $widget eq 'tmpl_prof' ?
+          ('Deploy', 'deploy') : ('Publish', 'publish');
+        $deskText .= qq{<option value="$cb">and $act</option>};
     }
     $deskText .= "</select>";
 }
 
+my $versions = $obj->get_versions;
+my $versionText = '';
+
 if ($versions) {
+    $versionText = qq{<select name="$widget|version">};
     foreach (sort {$b->get_version <=> $a->get_version}  @$versions ) {
-	my $v = $_->get_version;
-	$versionText .= qq{<option value="$v">$v</option>};
+        my $v = $_->get_version;
+        $versionText .= qq{<option value="$v">$v</option>};
     }
     $versionText .= "</select>";
 }
@@ -62,26 +77,25 @@ if ($versions) {
 </%init>
 
 
-<table width=580 border=0 cellpadding=0 cellspacing=0>
+<table width="580" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td align="center" colspan="3" valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel">Delete this Profile</span></td>
 </tr>
 <tr>
-  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width=580 height=1></td>
+  <td class="lightHeader" colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
 </tr>
-<% $ieSpacer %> 
+<% $ieSpacer %>
 <tr>
   <td width="33%">
-  <table border=0 cellpadding=0 cellspacing=0>
+  <table border="0" cellpadding="0" cellspacing="3">
   <tr>
-    <td valign="middle"><input type="image" src="/media/images/check_in_dgreen.gif" border=0 name="<% $widget %>|checkin_cb" value="Check In"></td>
-    <td valign="middle">&nbsp;to&nbsp;</td>
+    <td valign="middle"><input type="image" src="/media/images/check_in_dgreen.gif" border="0" name="<% $widget %>|checkin_cb" value="Check In"></td>
     <td valign="middle"><% $deskText %></td>
   </tr>
   </table>
   </td>
   <td width="34%" align="center">
-<%perl>
+<%perl>;
 my $wf;
 my $work_id = get_state_data($widget, 'work_id');
 my $type;
@@ -95,36 +109,19 @@ if ($widget eq 'story_prof') {
 
 my $story = get_state_data($widget, $type);
 if ($work_id) {
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id }); 
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 } else {
    $work_id = $story->get_workflow_id();
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });      
-}  
-
-# get desks for workflow
-my @desk = $wf->allowed_desks();
-my $has_perms = 0;
-
-# Find publish desk for this workflow
-foreach my $desk (@desk) {
-    if ($desk->can_publish) {
-	$has_perms = 1 if ( chk_authz($desk, EDIT, 1) );
-    }
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
 }
-
-# if able to edit on publishable desk show checkin/publish button
-if ( $has_perms ) {
-my ($act, $cb) = $widget eq 'tmpl_prof' ?
-  ('deploy', 'deploy') : ('publish', 'and_pub');
 </%perl>
 <table border=0 cellpadding=0 cellspacing=0>
   <tr>
     <td>
-      <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_<% $cb %>_cb" value="Check In And Publish" />
+% # Add clone button here.
     </td>
   </tr>
   </table>
-% }
   </td>
   <td align="right" widht="33%">
   <table border=0 cellpadding=0 cellspacing=0>

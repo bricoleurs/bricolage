@@ -117,6 +117,7 @@ my $handle_delete = sub {
     $desk->remove_asset($story);
     $desk->save;
     log_event("story_rem_workflow", $story);
+    $story->set_workflow_id(undef);
     $story->deactivate;
     $story->save;
     log_event("story_deact", $story);
@@ -224,209 +225,118 @@ my $handle_save = sub {
 ################################################################################
 
 my $handle_checkin = sub {
-        my ($widget, $field, $param, $story, $new) = @_;
-
-        $story ||= get_state_data($widget, 'story');
-
-        # Abort this save if there were any errors.
-        return unless &$save_data($param, $widget, $story);
-
-        my $work_id = get_state_data($widget, 'work_id');
-
-        if ($work_id) {
-                # Set the workflow this story should be in.
-                $story->set_workflow_id($work_id);
-                my $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-                log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
-        }
-
-        $story->checkin();
-
-        # figure out the desk this should go to
-        my $desk_id = $param->{"$widget|desk"};
-
-        my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
-
-        my $cur_desk = $story->get_current_desk();
-
-        my $no_log;
-        if ($cur_desk) {
-                if ($cur_desk->get_id() == $desk_id) {
-                        $no_log = 1;
-                } else {
-                        $cur_desk->transfer( { 
-                                to              => $desk,
-                                asset   => $story
-                        });
-                        $cur_desk->save();
-                }
-        } else {
-                # Send this story to the first desk.
-                $desk->accept({'asset' => $story});
-        }
-        $desk->save;
-        my $dname = $desk->get_name;
-        log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-
-        # make sure that the story is active
-        $story->save();
-
-        log_event(($new ? 'story_create' : 'story_save'), $story);
-        log_event('story_checkin', $story);
-
-        # Clear the state out.
-        clear_state($widget);
-
-        # Set the redirect to the page we were at before here.
-        set_redirect("/");
-
-        add_msg("Story &quot;" . $story->get_title . "&quot; saved and moved to"
-                . " &quot;$dname&quot;.");
-};
-
-################################################################################
-
-my $handle_checkin_and_pub = sub {
     my ($widget, $field, $param, $story, $new) = @_;
-    my (@rel_story, @rel_media, @objs, $published);
     $story ||= get_state_data($widget, 'story');
 
     # Abort this save if there were any errors.
     return unless &$save_data($param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
-
-    # Get workflow for this story
     my $wf;
     if ($work_id) {
         # Set the workflow this story should be in.
         $story->set_workflow_id($work_id);
         $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-        log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
-    } else {
-        $work_id = $story->get_workflow_id();
-        $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-        log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
+        log_event('story_add_workflow', $story,
+                  { Workflow => $wf->get_name });
     }
 
     $story->checkin;
 
-    # get desks for workflow
-    my @desk = $wf->allowed_desks();
-    my $gdesk;
-
-    # Find publish desk for this workflow
-    foreach my $desk (@desk) {
-        $gdesk = $desk if $desk->can_publish;
-    }
-
+    # Get the desk information.
+    my $desk_id = $param->{"$widget|desk"};
     my $cur_desk = $story->get_current_desk;
 
-    my $no_log;
-    if ($cur_desk) {
-        if ($cur_desk->get_id == $gdesk->get_id) {
+    # See if this story needs to be removed from workflow or published.
+    if ($desk_id eq 'remove') {
+        # Remove from the current desk and from the workflow.
+        $cur_desk->remove_asset($story);
+        $cur_desk->save;
+        $story->set_workflow_id(undef);
+        $story->save;
+        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_checkin', $story);
+        log_event("story_rem_workflow", $story);
+        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
+                    "shelved.");
+    } elsif ($desk_id eq 'publish') {
+        # Publish the story and remove it from workflow.
+        my ($pub_desk, $no_log);
+        # Find a publish desk.
+        if ($cur_desk->can_publish) {
+            # We've already got one.
+            $pub_desk = $cur_desk;
             $no_log = 1;
         } else {
-            $cur_desk->transfer({ to    => $gdesk,
+            # Find one in this workflow.
+            $wf ||= Bric::Biz::Workflow->lookup
+              ({ id => $story->get_workflow_id });
+            foreach my $d ($wf->allowed_desks) {
+                $pub_desk = $d and last if $d->can_publish;
+            }
+            # Transfer the story to the publish desk.
+            $cur_desk->transfer({ to    => $pub_desk,
                                   asset => $story });
             $cur_desk->save;
+            $pub_desk->save;
+            $story->save;
         }
+        # Log it!
+        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_checkin', $story);
+        my $dname = $pub_desk->get_name;
+        log_event('story_moved', $story, { Desk => $dname })
+          unless $no_log;
+        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
+                "checked in to &quot;$dname&quot;.");
     } else {
-        # Send this story to the first desk.
-        $gdesk->accept({ asset => $story});
-    }
-    $gdesk->save;
-    my $dname = $gdesk->get_name;
-    log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-
-    # make sure that the story is active
-    $story->save();
-
-    add_msg("Story &quot;" . $story->get_title . "&quot; saved, checked in to" .
-            " &quot;$dname&quot;.");
-
-    log_event(($new ? 'story_create' : 'story_save'), $story);
-    log_event('story_checkin', $story);
-
-    # Clear the state out.
-    clear_state($widget);
-
-    # HACK: Commit this checkin
-    # WHY?? Because Postgres does NOT like it when you insert and
-    # delete a record within the same transaction.
-    Bric::Util::DBI::commit(1);
-    Bric::Util::DBI::begin(1);
-
-    # add story to object list
-    push(@objs, $story);
-
-    # make sure we don't get into circular loops
-    my %seen;
-
-    # iterate through objects looking for related media
-    while(@objs) {
-        my $a = shift @objs;
-        next unless $a;
-
-        # haven't I seen you someplace before?
-        my $key = ref($a) . '.' . $a->get_id;
-        next if exists $seen{$key};
-        $seen{$key} = 1;
-
-        if ($a->get_checked_out) {
-            add_msg("Cannot publish ".lc(get_disp_name($a->key_name))." '".
-                    $a->get_name."' because it is checked out");
-            next;
-        }
-
-        foreach my $r ($a->get_related_objects) {
-            # Skip assets whose current version has already been published.
-            next unless $r->needs_publish;
-
-            if ($r->get_checked_out) {
-                add_msg("Cannot auto-publish related ".
-                        lc(get_disp_name($r->key_name))." '".$r->get_name."' ".
-                        " because it is checked out.");
-                next;
-            }
-
-            # push onto the appropriate list
-            if (ref $r eq 'Bric::Biz::Asset::Business::Story') {
-                push @rel_story, $r->get_id;
-                push(@objs, $r); # recurse through related stories
+        # Look up the selected desk.
+        my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
+          ({ id => $desk_id });
+        my $no_log;
+        if ($cur_desk) {
+            if ($cur_desk->get_id == $desk_id) {
+                $no_log = 1;
             } else {
-                push @rel_media, $r->get_id;
+                # Transfer the story to the new desk.
+                $cur_desk->transfer({ to    => $desk,
+                                      asset => $story });
+                $cur_desk->save;
             }
+        } else {
+            # Send this story to the selected desk.
+            $desk->accept({ asset => $story });
         }
+
+        $desk->save;
+        $story->save;
+        log_event(($new ? 'story_create' : 'story_save'), $story);
+        log_event('story_checkin', $story);
+        my $dname = $desk->get_name;
+        log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
+        add_msg("Story &quot;" . $story->get_title . "&quot; saved and " .
+                "moved to &quot;$dname&quot;.");
     }
 
-    # Instantiate the Burner object.
-    my $b = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
+    # Publish the story, if necessary.
+    if ($desk_id eq 'publish') {
+        # HACK: Commit this checkin WHY?? Because Postgres does NOT like
+        # it when you insert and delete a record within the same
+        # transaction. This will be fixed in PostgreSQL 7.3. Be sure to
+        # start a new transaction!
+        Bric::Util::DBI::commit(1);
+        Bric::Util::DBI::begin(1);
 
-    # publish this story
-    $published = $b->publish($story, 'story', get_user_id);
-
-    if ($published) {
-        add_msg("Story &quot;" . $story->get_title . "&quot; published.");
-
-        # publish related stories
-        foreach my $sid (@rel_story) {
-            # Instantiate the story.
-            my $s = Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
-            $b->publish($s, 'story', get_user_id);
-            add_msg("Story &quot;" . $s->get_title . "&quot; published.");
-        }
-
-        # publish related media
-        foreach my $mid (@rel_media) {
-            # Instantiate the media.
-            my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-            $b->publish($m, 'media', get_user_id);
-            add_msg("Media &quot;" . $m->get_title . "&quot; published.");
-        }
+        # Use the desk callback to save on code duplication.
+        $m->comp('/widgets/desk/callback.mc',
+                 widget => $widget,
+                 field => "$widget|publish_cb",
+                 story_pub => { $story->get_id => $story },
+                 param => {},
+                );
     }
-
-    # Set the redirect to the page we were at before here.
+    # Clear the state out and set redirect.
+    clear_state($widget);
     set_redirect("/");
 };
 
@@ -976,6 +886,7 @@ my $handle_recall = sub {
             $start_desk->checkout($ba, get_user_id);
             $start_desk->save;
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
+            log_event('story_checkout', $ba);
         } else {
             add_msg("Permission to checkout &quot;" . $ba->get_name
                     . "&quot; denied");
@@ -1024,7 +935,6 @@ my %cbs = (
            save_and_stay_cb         => $handle_save_stay,
            return_cb                => $handle_workspace_return,
            checkin_cb               => $handle_checkin,
-           checkin_and_pub_cb       => $handle_checkin_and_pub,
            save_contrib_cb          => $handle_save_contrib,
            save_and_stay_contrib_cb => $handle_save_and_stay_contrib,
           );

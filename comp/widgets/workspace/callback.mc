@@ -41,6 +41,7 @@ if ($field eq "$widget|checkin_cb") {
 		$d->remove_asset($a);
 		$d->save;
 		log_event("${key}_rem_workflow", $a);
+                $a->set_workflow_id(undef);
 		$a->deactivate;
 		$a->save;
 		$burn->undeploy($a) if $key eq 'formatting';
@@ -63,11 +64,11 @@ if ($field eq "$widget|checkin_cb") {
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-01-31 01:01:14 $
+$Date: 2002-09-13 22:01:52 $
 
 =head1 SYNOPSIS
 

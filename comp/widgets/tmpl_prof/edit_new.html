@@ -1,15 +1,15 @@
 <%perl>
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
-	 'caption' => 'Properties',
-	 'number'  => 1);
+         'caption' => 'Properties',
+         'number'  => 1);
 $m->out($ieSpacer);
 $m->comp('/widgets/select_object/select_object.mc',
-	 object    => 'element',
-	 name      => $widget.'|at_id',
-	 field     => 'name',
-	 reset_key => $rk,
+         object    => 'element',
+         name      => $widget.'|at_id',
+         field     => 'name',
+         reset_key => $rk,
          exclude   => $excl_media_sub,
-	 disp      => 'Element');
+         disp      => 'Element');
 $m->out($ieSpacer);
 </%perl>
 <table border="0" width="578" cellpadding=0 cellspacing=0>
@@ -23,8 +23,8 @@ $m->out($ieSpacer);
 <%perl>
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
-	 key => "file_type",
-	 vals => {
+         key => "file_type",
+         vals => {
                disp  => "File Type",
                value => 'mc',
                props => { 
@@ -39,33 +39,34 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out($ieSpacer);
 
 $m->comp('/widgets/select_object/select_object.mc',
-	 'object'    => 'output_channel',
-	 'name'      => $widget.'|oc_id',
-	 'field'     => 'name',
-	 'reset_key' => $rk,
+         'object'    => 'output_channel',
+         'name'      => $widget.'|oc_id',
+         'field'     => 'name',
+         'reset_key' => $rk,
+         constrain   => { active => 1 },
          req         => 1,
-	 'disp'      => 'Output Channel');
+         'disp'      => 'Output Channel');
 $m->out($ieSpacer);
 $m->comp('/widgets/select_object/select_object.mc',
-	 'object'    => 'category',
+         'object'    => 'category',
          'name'      => $widget.'|cat_id',
-	 'reset_key' => $rk,
+         'reset_key' => $rk,
          'field'     => 'uri',
          sort_field  => 'uri',
          exclude     => $excl_sub,
          req         => 1,
-	 'disp'      => 'Category');
+         'disp'      => 'Category');
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
-	 key => "priority",
-	 vals => $pmeth);
+         key => "priority",
+         vals => $pmeth);
 $m->out($ieSpacer);
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Submit",
-	 number  => 2,
-	 ghostly => 1);
+         caption => "Submit",
+         number  => 2,
+         ghostly => 1);
 </%perl>
 <table width=<% FIELD_INDENT + 150 %> cellpadding=0 cellspacing=0>
 <tr>

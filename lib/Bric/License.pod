@@ -102,6 +102,8 @@ Folks who have submitted patches include:
 
 =item Charles Albrecht
 
+=item Michael Robinton
+
 =back
 
 Friends who have spotted bugs include:
@@ -112,13 +114,13 @@ Friends who have spotted bugs include:
 
 =item Josh Cox
 
-=item Michael Robinton
-
 =item Marlon Bermas
 
 =item Tracey Largay
 
 =item Ask BjE<oslash>rn Hansen
+
+=item Daniel Fisher
 
 =back
 

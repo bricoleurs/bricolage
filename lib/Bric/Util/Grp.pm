@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-28 22:57:12 $
+$Date: 2002-09-13 22:01:55 $
 
 =head1 SYNOPSIS
 
@@ -2856,9 +2856,10 @@ sub _do_list {
         push @where_param, 0;
     }
 
-    if ( $class->get_class_id != 6 ) {
+    my $cid = $class->get_class_id;
+    if ( $cid != __PACKAGE__->get_class_id ) {
         push @where_clause, $chk ? 'g.class__id=?' : 'class__id=?';
-        push @where_param, $class->get_class_id;
+        push @where_param, $cid;
     }
 
     if ( $criteria->{'name'} ) {

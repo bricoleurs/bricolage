@@ -4,10 +4,7 @@ $field
 $param
 </%args>
 
-<%init>
-
-use Bric::Config qw(:search);
-
+<%init>;
 # Set the uri for use in expiring the search criteria.
 set_state_data($widget, 'crit_set_uri', $r->uri);
 

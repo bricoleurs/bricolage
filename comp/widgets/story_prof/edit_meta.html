@@ -15,9 +15,9 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Information",
-	 number  => $num++,
-	 rightText => $rightText
+         caption => "Information",
+         number  => $num++,
+         rightText => $rightText
 
 );
 
@@ -83,10 +83,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <& '/widgets/select_object/select_object.mc',
   object        => 'source',
-  name			=> "$widget|source__id",
-  field			=> 'source_name',
+  name                  => "$widget|source__id",
+  field                 => 'source_name',
   selected_id   => $story->get_source__id,
-  indent	=> 0,
+  indent        => 0,
   useTable      => 1,
   disp          => "Source"
 
@@ -140,12 +140,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $num = $m->comp('/widgets/container_prof/container_prof.mc', 
-	tile		=> $tile,
-	tile_type	=> 'story',
-	action		=> 'edit',
+        tile            => $tile,
+        tile_type       => 'story',
+        action          => 'edit',
         title           => 'Content',
         num             => $num,
-	start_count	=> 4
+        start_count     => 4
 );
 
 </%perl>
@@ -158,25 +158,25 @@ link. Here is a starter:
 <%perl>;$repeatable_opts
 my $cats = $story->get_categories;
     $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'category',
-	     userSort => 0,
-	     objs => $cats,
-	     title => '%n',
-#	     addition => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
-#	     constrain => { server_type_id => $id },
-	     fields => [qw(name)],
-	     profile => undef,
-	     select =>  ['Delete', "$widget|delete_cat"],
-	     number => $num
-	    );
+             object => 'category',
+             userSort => 0,
+             objs => $cats,
+             title => '%n',
+#            addition => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
+#            constrain => { server_type_id => $id },
+             fields => [qw(name)],
+             profile => undef,
+             select =>  ['Delete', "$widget|delete_cat"],
+             number => $num
+            );
 </%perl>
 <br />
 
 </%doc>
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => "Categories",
-%	 number  => $num++);
+%        caption => "Categories",
+%        number  => $num++);
 
 % my @cat = $story->get_categories;
 % my $primary = $story->get_primary_category();
@@ -210,8 +210,8 @@ my $cats = $story->get_categories;
     <td align="center">
 % if ($cat_id != $p_id) {
 <& '/widgets/profile/checkbox.mc',
-	name => "$widget|delete_cat",
-	value => $_->get_id
+        name => "$widget|delete_cat",
+        value => $_->get_id
 &>
 % }
 &nbsp;
@@ -241,20 +241,20 @@ my $cats = $story->get_categories;
 <tr class=medHeader>
   <td align="right" width=<% FIELD_INDENT - 10 %>><&
   '/widgets/profile/imageSubmit.mc',
-	     formName => "theForm",
-	     callback => "$widget|add_category_cb",
-	     image    => "add_category_lgreen",
+             formName => "theForm",
+             callback => "$widget|add_category_cb",
+             image    => "add_category_lgreen",
              vspace   => 3,
              hspace   => 2
 &></td>
   <td width=<% 588 - FIELD_INDENT %> valign="middle">
 <& '/widgets/select_object/select_object.mc', 
         object => 'category',
-	name => "$widget|new_category_id",
+        name => "$widget|new_category_id",
         exclude => $excl_sub,
-	field => 'uri',
-	sort_field => 'uri',
-	useTable => 0
+        field => 'uri',
+        sort_field => 'uri',
+        useTable => 0
 &>
   </td>
 </tr>
@@ -263,8 +263,8 @@ my $cats = $story->get_categories;
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => "Associations",
-%	 number  => $num++);
+%        caption => "Associations",
+%        number  => $num++);
 <table border=0 width=578 cellpadding=0 cellspacing=0>
 <tr>
   <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
@@ -290,9 +290,9 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : "No keywords defined.");
 </%perl>
   </td>
   <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
-	     formName => "theForm",
-	     callback => "$widget|keywords_cb",
-	     image    => "edit_lgreen",
+             formName => "theForm",
+             callback => "$widget|keywords_cb",
+             image    => "edit_lgreen",
              vspace   => 4
 &></td>
 </tr>
@@ -331,8 +331,8 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 $m->comp("/widgets/profile/buttonBar.mc",
          widget      => $widget,
-	 desks       => $desks,
-	 cd          => $cd,
+         desks       => $desks,
+         cd          => $cd,
          obj         => $story,
 );
 

@@ -85,6 +85,25 @@ The slug can now be used in the Fixed URI Format. [David]
 The slug can now be used for story file names. The option is supported on an
 Output Channel basis, and will only work for stories that have a slug. [David]
 
+=item *
+
+Added a "and Shelve" option to the "Check In" select list in the button bar on
+story, media, and asset pages. When this option is selected, the asset is
+checked in and then removed from workflow without publishing. [David]
+
+=item *
+
+Removed the "Checkin/Publish" and "Checkin/Deploy" buttons in asset profiles
+and replaced them with new "and Publish" or "and Deploy" options in the "Check
+In" select list in the button bar. Doing this collects all the usual Check In
+actions in one place and saves us screen real estate! [David]
+
+=item *
+
+Changed the way the "Checkin and Publish" and "Checkin and Deploy" callbacks
+work to use existing code in the desk and publish widgets to do the dirty
+work. This greatly reduces code duplication. [David]
+
 =back
 
 =head1 VERSION 1.4.1
@@ -134,6 +153,51 @@ time. [David]
 
 Files are now distributed on a per-output channel basis, to ensure that the
 proper file is distributed to the proper destinations. [David]
+
+=item *
+
+Assets are now properly removed from workflow when they're deactivated
+(deleted in the UI). [David]
+
+=item *
+
+Template syntax is now properly checked when using the "Checkin/Deploy"
+button. [JoE<atilde>o Pedro]
+
+=item *
+
+The example generic template (autohandler) included in the database is now
+included in the burn root, too, since it's marked as "Deployed" in the
+database. [David]
+
+=item *
+
+Deleted output channels no longer show up in the "New Template" output channel
+select list. Thanks to Daniel Fisher for the spot. [David]
+
+=item *
+
+The root category ("/") no longer returns itself as its own parent. [David]
+
+=item *
+
+Assets not in workflow are now properly logged as being checked out when
+someone checks them out. [David]
+
+=item *
+
+The "Or Pick a Type" menus in the Group manager, the Contributor manager, and
+the Element manager all work again. [David]
+
+=item *
+
+Changing category names now updates the name of the category asset group
+object, which appears in the user group permissions page. [David]
+
+=item *
+
+Hitting the "enter" key after filling in a serach field now properly submits
+the search as if the "Search" button had been clicked. [David]
 
 =back
 

@@ -2,6 +2,8 @@
 $widget
 $field
 $param
+$story_pub => {}
+$media_pub => {}
 </%args>
 
 <%once>;
@@ -108,7 +110,14 @@ elsif ($field eq "$widget|publish_cb") {
 
     # start with the objects checked for publish
     my @objs = ((map { $mpkg->lookup({id => $_}) } @$media),
-		(map { $spkg->lookup({id => $_}) } @$story));
+		(map { $spkg->lookup({id => $_}) } @$story),
+                (values %$story_pub),
+                (values %$media_pub)
+               );
+
+    # Make sure we have the IDs for any assets passed in explicitly.
+    push @$story, keys %$story_pub;
+    push @$media, keys %$media_pub;
 
     # make sure we don't get into circular loops
     my %seen;
@@ -143,7 +152,7 @@ elsif ($field eq "$widget|publish_cb") {
 
 	    # push onto the appropriate list
 	    if (ref $r eq 'Bric::Biz::Asset::Business::Story') {
-		push @rel_story, $r->get_id;		
+		push @rel_story, $r->get_id;
 		push(@objs, $r); # recurse through related stories
 	    } else {
 		push @rel_media, $r->get_id;
@@ -155,9 +164,23 @@ elsif ($field eq "$widget|publish_cb") {
     push @$story, @rel_story;
     push @$media, @rel_media;
 
-    set_state_data('publish', {story => $story,
-			       media => $media});
-    set_redirect('/workflow/profile/publish');
+    set_state_data('publish', { story => $story,
+                                media => $media,
+                                story_pub => $story_pub,
+                                media_pub => $media_pub
+                              });
+
+    if (%$story_pub or %$media_pub) {
+        # Instant publish!
+        $m->comp('/widgets/publish/callback.mc',
+                 field  => 'publish',
+                 widget => 'publish',
+                 messages => 1,
+                 param  => { pub_date => Bric::Util::Time::strfdate }
+                );
+    } else {
+        set_redirect('/workflow/profile/publish');
+    }
 }
 
 elsif ($field eq "$widget|deploy_cb") {

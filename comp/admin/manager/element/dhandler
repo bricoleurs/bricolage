@@ -35,10 +35,10 @@ if (exists $ARGS{elem_type}) {
     if ($ARGS{'search|substr_cb'}) {
         # Delete elem_type if we're showing search results.
         delete $ARGS{elem_type};
-    } else {
-        # Otherwise, determine list contraint.
-        $ARGS{elem_type} ? ($constrain = { type__id => $ARGS{elem_type} })
-          : ($behavior = 'narrow');
+    } elsif ($ARGS{elem_type}) {
+        # Determine list contraint.
+        $constrain = { type__id => $ARGS{elem_type} };
+        $behavior = 'narrow';
     }
 }
 
@@ -147,11 +147,11 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-05-26 19:44:18 $
+$Date: 2002-09-13 22:01:44 $
 
 =head1 SYNOPSIS
 
