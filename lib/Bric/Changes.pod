@@ -135,6 +135,13 @@ Location" now results in Bricolage using a file called "httpd.pid" in that
 directory, rather than trying (and failing) to use the directory itself as the
 PID file. [David]
 
+=item *
+
+The side navigation layer is now better aware of its context, and changes the
+colors of some of its graphics depending on the context. Also recreaed the
+"WORKFLOW" tab graphics. It looks like this has been broken for over a year,
+and I only just noticed it! [David]
+
 =back
 
 =head1 VERSION 1.4.0
