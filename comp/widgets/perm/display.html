@@ -1,7 +1,55 @@
 %#-- Begin HTML --#
 <%perl>;
+my $perm_sel = {
+    'usrgrp'   => $usr_grp_pl,
+    $is_user ? (
+        'all'      => 'All',
+        'object'   => 'Object Groups',
+        'workflow' => ucfirst($wf_pl),
+        'desk'     => ucfirst($dsk_pl),
+#        'category' => ucfirst($cat_pl),
+    ) : (),
+};
+
+my (%perms, %start_desks);
+
+$num ||= 1;
+
 if ($is_user) {
-    $num ||= 1;
+    $m->comp('/widgets/profile/select.mc',
+             'disp' => 'Pick a Permissions Type',
+             'options' => $perm_sel,
+             'indent'  => 140,
+             'width'   => 500,
+             'value' => $perm_type,
+             'js' => qq{onChange="location.href='} . $r->uri .
+                     "?perm_type=' + " .
+                     qq{escape(this.options[this.selectedIndex].value)"},
+    );
+    $m->comp('/widgets/profile/hidden.mc',
+         'name' => 'perm_type',
+         'value' => $perm_type,
+    );
+    $m->out('<p></p>');
+
+
+    # $is_user means $perm_type is one of
+    # object, workflow, desk, (category)
+
+    foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
+	my $gid = $perm->get_obj_grp_id;
+	next if $gid == ADMIN_GRP_ID;
+	$perms{$gid} = $perm;
+    }
+
+    unless ($perm_type eq 'object') {
+        foreach my $wf ($wf_pkg->list()) {
+            $start_desks{$wf->get_head_desk_id()} = 1;
+        }
+    }
+}
+
+if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
     # other groups.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
@@ -9,7 +57,6 @@ if ($is_user) {
 
     $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access the members of these groups.","&quot;$name&quot;"));
     # Get any existing permissions.
-    my %perms;
     foreach my $perm ($pkg->list({ usr_grp_id => $id }) ) {
 	my $gid = $perm->get_obj_grp_id;
 	next if $gid == ADMIN_GRP_ID;
@@ -27,18 +74,18 @@ if ($is_user) {
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+}
 
+if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     # We need to do it for workflows, desks, and categories, too.
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$wf_disp Permissions", border => 0);
     $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to"
              ." access assets in these workflows.","&quot;$name&quot;"));
-    my %start_desks;
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_asset_grp_id;
 	my $grp = $asset_grp_pkg->lookup({ id => $gid });
-        $start_desks{$wf->get_head_desk_id} = 1;
 	$m->comp($row_comp,
 		 grp => $grp,
 		 gid => $gid,
@@ -48,7 +95,9 @@ if ($is_user) {
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+}
 
+if ($perm_type eq 'desk' || $perm_type eq 'all') {
     # Now do the desks.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
              caption => "$dsk_disp Permissions", border => 0);
@@ -69,56 +118,59 @@ if ($is_user) {
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+}
 
-    # And finally, do it for categories.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
-             caption => "$cat_disp Permissions", border => 0);
-    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets in these"
-                  ." categories.","&quot;$name&quot;"));
+# if ($perm_type eq 'category' || $perm_type eq 'all') {
+#    # And finally, do it for categories.
+#    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+#             caption => "$cat_disp Permissions", border => 0);
+#    $m->comp($head_comp, $lang->maketext("Grant [_1] members permission to access assets in these"
+#                  ." categories.","&quot;$name&quot;"));
+#
+#    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
+#                                              Order => 'description',
+#                                              all  => 1 })) {
+#	my $gid = $cat_grp->get_id;
+#	$m->comp($row_comp,
+#		 grp => $cat_grp,
+#		 gid => $gid,
+#		 type => 'obj',
+#		 perm => $perms{$gid},
+#		 name => $cat_grp->get_description
+#		);
+#    }
+#   $m->out(qq{</table>\n});
+#   $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+# }
 
-    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
-                                              Order => 'description',
-                                              all  => 1 })) {
-	my $gid = $cat_grp->get_id;
-	$m->comp($row_comp,
-		 grp => $cat_grp,
-		 gid => $gid,
-		 type => 'obj',
-		 perm => $perms{$gid},
-		 name => $cat_grp->get_description
-		);
+if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
+    # Now get the permissions on this group that are granted to user groups.
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+             caption => "$usr_grp_disp Permissions",
+	     number => $num,
+             border => 0);
+
+    $m->comp($head_comp, $lang->maketext("Grant the members of the following groups permission to access"
+    ." the members of the [_1] group.","&quot;$name&quot;"));
+
+    # Get any existing permissions.
+    foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
+        my $gid = $perm->get_usr_grp_id;
+        next if $gid == ADMIN_GRP_ID;
+        $perms{$gid} = $perm;
+    }
+    # Now get the rows for all user groups.
+    foreach my $grp ($usr_grp_pkg->list) {
+        my $gid = $grp->get_id;
+        next if $gid == ADMIN_GRP_ID;
+        $m->comp($row_comp,
+                 grp => $grp,
+                 gid => $gid,
+                 perm => $perms{$gid});
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 }
-
-# Now get the permissions on this group that are granted to user groups.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => "$usr_grp_disp Permissions",
-	 number => $num,
-         border => 0);
-
-$m->comp($head_comp, $lang->maketext("Grant the members of the following groups permission to access"
-                     ." the members of the [_1] group.","&quot;$name&quot;"));
-
-# Get any existing permissions.
-my %perms;
-foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
-    my $gid = $perm->get_usr_grp_id;
-    next if $gid == ADMIN_GRP_ID;
-    $perms{$gid} = $perm;
-}
-# Now get the rows for all user groups.
-foreach my $grp ($usr_grp_pkg->list) {
-    my $gid = $grp->get_id;
-    next if $gid == ADMIN_GRP_ID;
-    $m->comp($row_comp,
-	     grp => $grp,
-	     gid => $gid,
-	     perm => $perms{$gid});
-}
-$m->out(qq{</table>\n});
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
 </%perl>
 
 %#--- Arguments ---#
@@ -141,6 +193,7 @@ my $pkg = get_package_name($key);
 my $usr_grp_key = 'user_grp';
 my $usr_grp_disp = get_disp_name($usr_grp_key);
 my $usr_grp_pkg = get_package_name($usr_grp_key);
+my $usr_grp_pl = get_class_info($usr_grp_key)->get_plural_name;
 my $wf_key = 'workflow';
 my $wf_pkg = get_package_name($wf_key);
 my $wf_disp = get_disp_name($wf_key);
@@ -177,6 +230,7 @@ my $name = $grp->get_name;
 $no_edit = $read_only;
 my $curr_key = $class_obj->get_key_name;
 my $is_user = $curr_key eq 'user_grp' ? 1 : 0;
+my $perm_type = $ARGS{'perm_type'} || 'usrgrp';
 </%init>
 
 %#-- Shared Section --#
@@ -228,7 +282,7 @@ if ($perm) {
 %     foreach my $v (@$vals_aref) {
 %         if ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
     <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
-% } else {
+%         } else {
     <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">
         <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
     </td>

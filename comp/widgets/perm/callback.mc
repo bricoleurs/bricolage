@@ -14,7 +14,14 @@ $param
 </%args>
 
 <%init>;
-return unless $field eq "$widget|save_cb";
+my $gid = $param->{grp_id};
+
+if ($field eq "$widget|cancel_cb") {
+    set_redirect("/admin/profile/grp/$gid");
+    return;
+}
+
+return unless $field eq "$widget|save_cb" || $field eq "$widget|save_and_stay_cb";
 
 # Assemble the relevant IDs.
 my $grp_ids = { usr => mk_aref($param->{usr_grp_id}),
@@ -24,7 +31,6 @@ my $perm_ids = { usr => mk_aref($param->{usr_perm_id}),
 		 obj => mk_aref($param->{obj_perm_id})
 	       };
 # Instantiate the group object and check permissions.
-my $gid = $param->{grp_id};
 my $grp = $grp_class->lookup({ id => $gid });
 chk_authz($grp, EDIT);
 
@@ -78,7 +84,7 @@ if ($chk) {
 
 # Set a message and redirect!
 add_msg("$disp_name saved.");
-set_redirect("/admin/profile/grp/$gid");
+set_redirect("/admin/profile/grp/$gid") unless $field eq "$widget|save_and_stay_cb";
 </%init>
 
 <%doc>
@@ -90,11 +96,11 @@ set_redirect("/admin/profile/grp/$gid");
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2003-06-23 11:34:37 $
 
 =head1 SYNOPSIS
 
