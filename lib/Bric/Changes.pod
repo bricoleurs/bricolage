@@ -22,6 +22,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Added Template Toolkit burner support. [Arthur / Fotango]
+
+=item *
+
 Added Bric::Biz::Site. This class will be worked into the rest of the API and
 the UI over the next few weeks in order to add true multisite capabilities to
 Bricolage. [David]
