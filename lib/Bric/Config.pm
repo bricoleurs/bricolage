@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-04 00:20:50 $
+$Date: 2002-01-08 21:26:56 $
 
 =head1 SYNOPSIS
 
@@ -281,7 +281,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 	}
 
 	# Set the Mason component root to its default here.
-	$config->{MASON_COMP_ROOT} ||= catdir($ENV{BRICOLAGE_ROOT}, 'comp');
+	$config->{MASON_COMP_ROOT} ||= catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
     }
 
     # Apache Settings.
@@ -291,7 +291,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
     use constant SERVER_ADMIN            => $config->{SERVER_ADMIN}
       || 'root@' . SERVER_NAME;
     use constant DOCUMENT_ROOT           => $config->{DOCUMENT_ROOT}
-      || catdir($ENV{BRICOLAGE_ROOT}, 'comp');
+      || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'comp');
     use constant MIN_SPARE_SERVERS       => $config->{MIN_SPARE_SERVERS} || 2;
     use constant MAX_SPARE_SERVERS       => $config->{MAX_SPARE_SERVERS} || 6;
     use constant START_SERVERS           => $config->{START_SERVERS} || 2;
@@ -371,7 +371,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 	: $config->{MASON_COMP_ROOT};
 
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
-      || catdir($ENV{BRICOLAGE_ROOT}, 'data');
+      || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'data');
     use constant MASON_ARGS_METHOD       => 'mod_perl';  # Could also be 'CGI'
 
     # Burner settings.
@@ -440,7 +440,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
-      catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
+      catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
