@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2004-03-23 00:53:02 $
+$Date: 2004-03-23 01:59:46 $
 
 =head1 SYNOPSIS
 
@@ -124,8 +124,8 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    col_aref last_key next_key db_date_parts DB_DATE_FORMAT
 		    clean_params bind_columns bind_col bind_param begin commit
 		    rollback finish is_num row_array all_aref fetch_objects
-		    order_by build_query build_simple_query where_clause
-		    tables ANY);
+		    order_by group_by build_query build_simple_query
+                    where_clause tables ANY);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
@@ -769,15 +769,8 @@ NONE
 =cut
 
 sub build_query {
-    my ($pkg, $cols, $grp_cols, $tables, $where_clause, $order, $limit,
+    my ($pkg, $cols, $grp_by, $tables, $where_clause, $order, $limit,
         $offset) = @_;
-
-    # Add the GROUP BY clause.
-    my $grp_by = '';
-    if ($grp_cols) {
-        $grp_by = "GROUP BY  $cols";
-        $cols .= ", $grp_cols";
-    }
 
     # get the various parts of the query
     my $sql = qq{
@@ -855,6 +848,10 @@ sub clean_params {
         $param->{$df} = Bric::Util::Time::db_date($param->{$df}) if $param->{$df};
     }
 
+    # Fixup unexpired to use the current UTC time.
+    $param->{unexpired} = Bric::Util::Time::db_date(undef, 1)
+      if delete $param->{unexpired};
+
     # Return the parameters.
     return $param;
 }
@@ -912,9 +909,11 @@ sub where_clause {
     return $where, \@args;
 }
 
+##############################################################################
+
 =item my $order_by = order_by
 
-Builds up the ORDER BY clause
+Builds up the ORDER BY clause.
 
 B<Throws:>
 
@@ -957,6 +956,33 @@ sub order_by {
     }
     # Return the ORDER BY clause with the ID column.
     return "ORDER BY $ord $dir, $id_col";
+}
+
+##############################################################################
+
+=item my $group_by = group_by
+
+Builds up the GROUP BY clause.
+
+B<Throws:> None.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub group_by {
+    my ($pkg, $param) = @_;
+    my $grp_by = 'GROUP  BY ' . $pkg->COLUMNS . $pkg->RO_COLUMNS;
+    return $grp_by unless $param->{Order};
+    # Grab the specified ording column and add it to the GROUP BY clause,
+    # if it's not already included.
+    my $ord = $pkg->PARAM_ORDER_MAP->{$param->{Order}};
+    # XXX I sure wish there was a hash to check for this, rather than
+    # doint the regular expression.
+    $grp_by .= ", $ord" unless $grp_by =~ /$ord/;
+    return $grp_by;
 }
 
 

@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 19:37:19 $
+$Date: 2004-03-23 01:59:46 $
 
 =head1 SYNOPSIS
 
@@ -260,8 +260,9 @@ sub lookup {
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS,
-                          join(', ', $pkg->GROUP_COLS),
+    my $grp_by = group_by($pkg, $param);
+    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
+                            . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
@@ -301,8 +302,9 @@ sub list {
     my $tables = tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS,
-                          join(', ', $pkg->GROUP_COLS),
+    my $grp_by = group_by($pkg, $param);
+    my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
+                            . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];

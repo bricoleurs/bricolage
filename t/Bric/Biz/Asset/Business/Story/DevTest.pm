@@ -95,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(111) {
+sub test_select_methods: Test(113) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -689,7 +689,13 @@ sub test_select_methods: Test(111) {
        "Try contrib_id" );
     is( @$got, 3, 'Check for three stories' );
 
-    # Tets unexpired.
+    # Make sure that Order parameters that aren't attributes, such as
+    # category_uri, work.
+    ok( $got = class->list({ Order => 'category_uri' }),
+       "Try ordering by category_uri" );
+    is( @$got, 10, 'Check for ten stories' );
+
+    # Test unexpired.
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 6, 'Check for six stories');
 

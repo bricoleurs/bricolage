@@ -40,6 +40,12 @@ Serge Sozonoff for the spot. [David]
 
 Fixed clone interface for IE users. Spotted by Serge Sozonoff. [Scott]
 
+=item *
+
+Some of the supported values for the C<Order> parameter to the Story, Media,
+and Template classes, such as C<category_uri>, did not work before. Now they
+do. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)

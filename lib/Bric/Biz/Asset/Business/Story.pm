@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.97 $
+$Revision: 1.98 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.97 $ )[-1];
+our $VERSION = (qw$Revision: 1.98 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 00:53:02 $
+$Date: 2004-03-23 01:59:46 $
 
 =head1 SYNOPSIS
 
@@ -411,7 +411,7 @@ use constant PARAM_ORDER_MAP =>
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
       category_id         => 'category_id',
-      category_uri        => 'uri',
+      category_uri        => 'c.uri',
       keyword             => 'name',
       return_versions     => 'version',
     };
