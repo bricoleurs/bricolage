@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2004-03-09 09:44:22 $
+$Date: 2004-03-26 11:07:40 $
 
 =head1 SYNOPSIS
 
@@ -275,6 +275,8 @@ $m->comp($style.'.html',
          disp     => $disp,
          useTable => $useTable,
          readOnly => $readOnly,
+         # for less than 20 vals, use a dropdown (<select size="1">);
+         # otherwise, it will be a select list
          size     => $size || @vals <= 20 ? 1 : 5,
          req      => $req,
          sel_id   => $selected,
