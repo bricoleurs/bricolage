@@ -32,10 +32,12 @@ for my $type (qw(story media)) {
     $type eq 'story' ? add_story_uris($ids) : add_media_uris($ids);
 }
 
+my ($type, $aid, $uri, $ocname, $rolled_back);
+
 sub add_story_uris {
     my $ids = shift;
-    my $ins = prepare q{INSERT INTO story_uri (story__id, site__id, uri)
-                        VALUES (?, ?, ?)};
+    my $ins = prepare(q{INSERT INTO story_uri (story__id, site__id, uri)
+                        VALUES (?, ?, ?)});
 
     for $aid (@$ids) {
         my $story = Bric::Biz::Asset::Business::Story->lookup({
@@ -66,13 +68,13 @@ sub add_story_uris {
 
 sub add_media_uris {
     my $ids = shift;
-    my $ins = prepare q{INSERT INTO media_uri (media__id, site__id, uri)
-                        VALUES (?, ?, ?)};
+    my $ins = prepare(q{INSERT INTO media_uri (media__id, site__id, uri)
+                        VALUES (?, ?, ?)});
 
-    for my $mid (@$ids) {
+    for my $aid (@$ids) {
         my ($uri, $ocname);
         my $media = Bric::Biz::Asset::Business::Media->lookup({
-            id => $mid
+            id => $aid
         });
 
         # Get all the associated output channels. Skip it if there are none.
@@ -88,7 +90,7 @@ sub add_media_uris {
             # Skip it if we've seen it before.
             next if $seen{$uri};
             # Make it so.
-                execute($ins, $mid, $site_id, $uri);
+                execute($ins, $aid, $site_id, $uri);
             $seen{$uri} = 1;
         }
     }

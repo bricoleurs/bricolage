@@ -5,10 +5,15 @@ use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Biz::Site;
 use Bric::Util::Grp::User;
 use Bric::Util::Priv;
 
+BEGIN {
+    eval "use Bric::Biz::Site";
+    eval "use lib catdir $FindBin::Bin, updir, updir, updir, 'lib'" if $@;
+}
+
+use Bric::Biz::Site;
 
 # If there is a site with PUBLIH in its name, we've already been upgraded.
 exit if fetch_sql
