@@ -747,9 +747,13 @@ Resize navigation iframe
 function resizeframe() {
     var ifrm = parent.document.getElementById("sideNav");
     var agt = navigator.userAgent.toLowerCase();
+    var is_major = parseInt(navigator.appVersion);
+    var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
+    var is_ie5   = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.0") !=-1));
+    var is_ie5_5 = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.5") !=-1));
     var is_mac = (agt.indexOf("mac")!=-1);
-    if (window.opera || (document.all && !is_mac)) {
-      // Opera and IE5 only
+    if (window.opera || ((is_ie5 || is_ie5_5) && !is_mac)) {
+      // Opera and IE5/Win only
       ifrm.style.height = document.body.scrollHeight + "px";
     } else {
       // Everyone else
