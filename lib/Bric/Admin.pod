@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.10 $
+$Revision: 1.5.2.11 $
 
 =head1 DATE
 
-$Date: 2001-10-16 18:47:52 $
+$Date: 2001-10-31 01:20:19 $
 
 =head1 DESCRIPTION
 
@@ -403,18 +403,21 @@ can skip this step.
 Near the end of the installation process, you will be prompted to enter
 information for the certificate. Do so however you like - or better yet, get
 yourself a formal certificate from a certificate authority such as VeriSign. If
-you do it yourself, you may have to tweak the FQDN entry in order to ge the
-server to properly start up with SSL. See "Building Certificate" below for more
-detailed instructions on building your SSL certificate.
+you do it yourself -- that is, create a certificate and be your own certificate
+authority, make sure that you enter different values for the "Organizational
+Unit Name" for the Certificate Authority (CA) certificate and the Server
+certificate. Aparently, it breaks the certificate if you have the same value OU
+Name for both certificates. See "Building Certificate" below for more detailed
+instructions on building your SSL certificate.
 
 =item *
 
 You'll be prompted to enter the certificate information twice. Afterwards,
-you'll see this prompt:
+you'll see this prompt for each of the two new certificates:
 
   Encrypt the private key now? [Y/n]:
 
-Enter "n" or you'll have to type in a passphrase every time you start Apache.
+Enter "n" to avoid having to type in a passphrase every time you start Apache.
 Enter "y" if you really don't trust your system users.
 
 =item *
@@ -1295,20 +1298,19 @@ The following address a number of installation issues you might face.
 
 =head2 Building Certificate
 
-If you choose to create your own certificate rather than use one certified by a
-certificate authority such as VeriSign, it's possible that you'll run into
-issues getting the server to start up with the certificate properly. If so,
-you'll see errors in the Apache error log that look like this one:
+If you choose to create your own certificate and act as your own certificate
+authority rather than use a known certificate authority such as VeriSign, it's
+possible that you'll run into issues getting the server to start up with the
+certificate properly. If so, you'll see errors in the Apache error log that look
+like this:
 
   [Wed Jul  4 10:48:25 2001] [error] OpenSSL: error:14094412:SSL
   routines:SSL3_READ_BYTES:sslv3 alert bad certificate [Hint: Subject CN in
   certificate not server name or identical to CA!?]
 
-This issue seems to stem from a different between your server name and the name
-you specified when you created the certificate. The only solution I've found to
-this issue is to keep building the certificate, putting different values into
-the prompts for FQDN and other settings (and keeping them the same across the
-two different prompts) until the error goes away.
+This issue can be resolved by simply making sure that you enter different values
+for the "Organization Unite Name" for the certificate authority certificate and
+the server cirtificate.
 
 If you're facing this issue, here's how to manually build a new certificate:
 
@@ -1316,40 +1318,45 @@ If you're facing this issue, here's how to manually build a new certificate:
 
 =item 1.
 
-Change directories into /usr/local/src/bricolage/apache_build/apache_1.2.20.
+Shut down Apache if it's running:
+
+  /usr/local/bricolage/bin/apachectl startssl
 
 =item 2.
+
+Delete the existing installation of Apache:
+
+  rm -rf /usr/local/apache*
+
+=item 3.
+
+Change directories into /usr/local/src/bricolage/apache_build/apache_1.2.xx.
+
+=item 4.
 
 Execute the following command:
 
   make certificate TYPE=custom
 
 You will be prompted as you were during the inital installation. Follow the same
-instructions, but try different values in some of the prompts. It seems to
-matter that you include the actual server name in the "Common Name" field.
-Again, be sure to enter "n" or you'll have to type in a password every time you
-start Apache. Enter "y" if you really don't trust your system users.
+instructions, but be sure to use different values for the "Organization Unit
+Name" in the two certificates. When you're prompted to encrypt the CA and Server
+keys, enter "n" to avoid having to enter a passphrase every time you start
+Apache, but enter "y" if you really don't trust your system users.
 
-=item 3.
+=item 5.
 
 Execute the following command:
 
   make install
 
-This will install the new certificate.
+This will install Apache and the new certificate.
 
 =item 4.
 
-Stop and Start Apache again:
+Start Apache again:
 
   /usr/local/bricolage/bin/apachectl stop
-  /usr/local/bricolage/bin/apachectl startssl
-
-=item 5.
-
-Try to connect to the server again. If you get the same error, repeat these
-steps, entering different values for the certificate prompts, until it does
-work.
 
 =back
 
