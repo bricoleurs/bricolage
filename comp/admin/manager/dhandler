@@ -248,7 +248,6 @@ my $def = {
 	   user           => { list_fields => [qw(lname fname login)],
 			       srch_field => 'lname',
 			       constrain => {},
-                               sort_by => 'lname',
 			       behavior => 'expand',
 			       exclude => sub { return if $_[0]->get_id == get_user_id;
 						!chk_authz($_[0], READ, 1);
@@ -326,7 +325,6 @@ my $def = {
 	   contrib        => { list_fields => [qw(lname fname type)],
 			       behavior => 'expand',
 			       srch_field => 'lname',
-                               sort_by => 'lname',
 			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
 			       select => $sel_sub },
 	   category       => { list_fields => [qw(uri name)],
@@ -369,11 +367,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2003-01-21 07:27:08 $
+$Date: 2003-01-21 18:55:05 $
 
 =head1 SYNOPSIS
 

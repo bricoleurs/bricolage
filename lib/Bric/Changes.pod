@@ -532,9 +532,6 @@ the Apache error log, error messages sent back to the client are properly
 escaped, and all database transactions for a single request will be rolled
 back in the event of an error. [David]
 
-Removed "Order" and "OrderDirection" parameters from C<< Bric::Util::Grp->list >>
-since it the SQL must always order by group ID, anyway. [David]
-
 =back
 
 =head2 Bug Fixes

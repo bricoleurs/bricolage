@@ -13,7 +13,7 @@ my $cat = Bric::Biz::Category->lookup({ id => 0 });
 # Construct its asset group.
 my $ag = Bric::Util::Grp::Asset->lookup({ id => $cat->get_asset_grp_id });
 
-# Just exit if it's description is the same as the Root Category's URI.
+# Just exit if its description is the same as the Root Category's URI.
 exit if $ag->get_description eq $cat->get_uri;
 
 # So update its group description.

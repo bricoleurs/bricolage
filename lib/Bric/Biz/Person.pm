@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 07:27:09 $
+$Date: 2003-01-21 18:55:06 $
 
 =head1 SYNOPSIS
 
@@ -633,7 +633,7 @@ sub my_meths {
 			     set_meth => sub { shift->set_lname(@_) },
 			     set_args => [],
 			     disp     => 'Last',
-			     search   => 0, # We have to do the SQL sort by id. :-(
+			     search   => 1,
 			     len      => 64,
 			     req      => 0,
 			     type     => 'short',
@@ -1805,13 +1805,14 @@ $get_em = sub {
     $where .= ($where ? ' AND ' : '') . join(' AND ', @wheres) if @wheres;
 
     local $" = ', ';
-    my $qry_cols = $ids ? ['p.id'] : \@sel_cols;
+    my ($qry_cols, $order) = $ids ? (['p.id'], 'p.id') :
+      (\@sel_cols, 'p.lname, p.fname, p.mname, p.id');
     my $sel = prepare_c(qq{
         SELECT @$qry_cols
         FROM   $table p, $mem_table m, $map_table c $extra_tables
         WHERE  p.id = c.object_id AND c.member__id = m.id
                $extra_wheres AND $where
-        ORDER BY p.id
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.

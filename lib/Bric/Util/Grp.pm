@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 07:16:16 $
+$Date: 2003-01-21 18:55:06 $
 
 =head1 SYNOPSIS
 
@@ -323,6 +323,15 @@ A boolean to return permanent or non-permanent groups.
 
 A Bric::Util::Grp::Grp group ID. All groups that are members of the
 corresponding Bric::Util::Grp::Grp object will be returned.
+
+=item Order
+
+A property name to order by.
+
+=item OrderDirection
+
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending.
 
 =back
 
@@ -2808,12 +2817,15 @@ sub _do_list {
     }
 
     my $where = join ' AND ', @wheres;
+    my $ord = $ids ? 'g.id' : $criteria->{Order} ?
+      $criteria->{Order}  . ', g.id' : 'g.name, g.id';
+    my $direction = $criteria->{OrderDirection} || '';
     my $qry_cols = $ids? \'DISTINCT g.id' : \$sel_cols;
     my $select = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $where
-        ORDER BY g.id
+        ORDER BY $ord $direction
     }, undef , DEBUG);
 
     # Just return the IDs, if they're what's wanted.

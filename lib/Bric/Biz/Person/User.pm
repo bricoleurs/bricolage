@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-01-21 07:27:09 $
+$Date: 2003-01-21 18:55:06 $
 
 =head1 SYNOPSIS
 
@@ -1413,13 +1413,14 @@ $get_em = sub {
     }
 
     $wheres .= ' AND u.active = 1' unless defined $args->{id};
-    my $qry_cols = $ids ? \'DISTINCT u.id' : \$sel_cols;
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT u.id', 'u.id') :
+      (\$sel_cols, 'p.lname, p.fname, p.mname, u.id');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $wheres
-        ORDER BY u.id
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.

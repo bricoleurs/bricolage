@@ -78,9 +78,9 @@ if ($is_user) {
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access assets in these $cat_pl.");
 
-    foreach my $cat_grp (sort { $a->get_description cmp $b->get_description }
-                         $cat_grp_pkg->list({name => 'Category Assets',
-                                             all  => 1 })) {
+    foreach my $cat_grp ($cat_grp_pkg->list({ name => 'Category Assets',
+                                              Order => 'description',
+                                              all  => 1 })) {
 	my $gid = $cat_grp->get_id;
 	$m->comp($row_comp,
 		 grp => $cat_grp,
