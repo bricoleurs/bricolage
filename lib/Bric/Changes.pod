@@ -44,7 +44,6 @@ backwards compatability, the default precision for custom DateTime fields is
 
 =back
 
->>>>>>> 1.585
 =head2 Improvements
 
 =over 4
