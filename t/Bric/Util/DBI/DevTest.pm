@@ -40,32 +40,35 @@ sub test_fetch_objects: Test(4) {
         )
     });
 
-    for my $row ([1, 1, 1, 1, 1, 1, 1, 1, 1, undef, undef, 1],
-                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 4, undef, 2],
-                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+    for my $row ([1, 1, 1, 1, 1, 1, 1, 1, 1, undef, undef, 2],
+                 [1, 1, 1, 1, 1, 1, 1, 1, undef, 4, undef, undef],
+                 [1, 1, 1, 1, 1, 1, 1, 1, 3, 5, 6, 7],
 
-                 [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 1],
-                 [2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 2, 2],
-                 [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 3],
+                 [2, 2, 2, 2, 2, 2, 2, 2, 1, 4, 7, 10],
+                 [2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 8, 20],
+                 [2, 2, 2, 2, 2, 2, 2, 2, 3, 6, 9, 30],
 
-                 [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
-                 [3, 3, 3, 3, 3, 3, 3, 3, 6, 3, 3, 2],
-                 [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                 [3, 3, 3, 3, 3, 3, 3, 3, 3, undef, 2, 1],
+                 [3, 3, 3, 3, 3, 3, 3, 3, 6, 0, 0, 0],
+                 [3, 3, 3, 3, 3, 3, 3, 3, 4, 0, 0, 0],
 
-                 [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1],
-                 [4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 4, 2],
-                 [4, 4, 4, 4, 4, 4, 4, 4, 7, 4, 4, 3],
+                 [4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 5, 1],
+                 [4, 4, 4, 4, 4, 4, 4, 4, 0, 8, 0, 2],
+                 [4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 3],
              ) {
         execute($sth, @$row);
     }
 
     # check that _fetch_objects produces the right objs
-    my $sql = q{ SELECT one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve
+    my $sql = q{ SELECT one, two, three, four, five, six, seven, eight,
+                 id_list(DISTINCT nine), id_list(DISTINCT ten),
+                 id_list(DISTINCT eleven), id_list(DISTINCT twelve)
                  FROM test_fetch_objects
-                 ORDER BY one, twelve ASC };
+                 GROUP BY one, two, three, four, five, six, seven, eight
+                 ORDER BY one, eight ASC };
     my $fields = [ qw( one two three four five six seven eight nine ) ];
-    my $stories = fetch_objects('Bric', $sql, $fields, undef, undef, undef);
-    $_->{nine} = [sort @{$_->{nine}}] for @$stories;
+    my $stories = fetch_objects('Bric', $sql, $fields, 4, undef, undef, undef);
+    $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     my $expect = [
              bless( {
                       one     => 1,
@@ -76,7 +79,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 1,
                       seven   => 1,
                       eight   => 1,
-                      nine    => [ 1, 2, 3, 4 ],
+                      nine    => [ 1, 2, 3, 4, 5, 6, 7 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -88,7 +91,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 2,
                       seven   => 2,
                       eight   => 2,
-                      nine    => [ 1, 2, 3, 4, 5 ],
+                      nine    => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -100,7 +103,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 3,
                       seven   => 3,
                       eight   => 3,
-                      nine    => [ 1, 2, 3, 6 ],
+                      nine    => [ 1, 2, 3, 4, 6 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -112,14 +115,16 @@ sub test_fetch_objects: Test(4) {
                       six     => 4,
                       seven   => 4,
                       eight   => 4,
-                      nine    => [ 1, 2, 3, 4, 7, 8 ],
+                      nine    => [ 1, 2, 3, 4, 5, 8 ],
                       _dirty  => 0,
                     }, 'Bric' ),
            ];
-    is_deeply($stories, $expect, 'Checking that _fetch_objects produces the correct object structure');
+    is_deeply($stories, $expect,
+              'Checking that _fetch_objects produces the correct object structure');
     # test limit
-    $stories = fetch_objects('Bric', $sql, $fields, undef, 2, undef);
-    $_->{nine} = [sort @{$_->{nine}}] for @$stories;
+    $sql .= ' LIMIT 2';
+    $stories = fetch_objects('Bric', $sql, $fields, 4, undef, 2, undef);
+    $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {
                       one     => 1,
@@ -130,7 +135,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 1,
                       seven   => 1,
                       eight   => 1,
-                      nine    => [ 1, 2, 3, 4 ],
+                      nine    => [ 1, 2, 3, 4, 5, 6, 7 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -142,14 +147,16 @@ sub test_fetch_objects: Test(4) {
                       six     => 2,
                       seven   => 2,
                       eight   => 2,
-                      nine    => [ 1, 2, 3, 4, 5 ],
+                      nine    => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30 ],
                       _dirty  => 0,
                     }, 'Bric' ),
            ];
     is_deeply($stories, $expect, 'limit of 2 gets first two objects');
     # test offset
-    $stories = fetch_objects('Bric', $sql, $fields, undef, undef, 2);
-    $_->{nine} = [sort @{$_->{nine}}] for @$stories;
+    $sql =~ s/LIMIT 2//;
+    $sql .= ' OFFSET 2';
+    $stories = fetch_objects('Bric', $sql, $fields, 4, undef);
+    $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {
                       one     => 3,
@@ -160,7 +167,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 3,
                       seven   => 3,
                       eight   => 3,
-                      nine    => [ 1, 2, 3, 6 ],
+                      nine    => [ 1, 2, 3, 4, 6 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -172,14 +179,16 @@ sub test_fetch_objects: Test(4) {
                       six     => 4,
                       seven   => 4,
                       eight   => 4,
-                      nine    => [ 1, 2, 3, 4, 7, 8 ],
+                      nine    => [ 1, 2, 3, 4, 5, 8 ],
                       _dirty  => 0,
                     }, 'Bric' ),
            ];
     is_deeply($stories, $expect, 'offset of two gets last two objects');
     # test limit and offset together
-    $stories = fetch_objects('Bric', $sql, $fields, undef, 2, 1);
-    $_->{nine} = [sort @{$_->{nine}}] for @$stories;
+    $sql =~ s/OFFSET 2/OFFSET 1/;
+    $sql .= ' LIMIT 2';
+    $stories = fetch_objects('Bric', $sql, $fields, 4, undef, 2, 1);
+    $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
              bless( {
                       one     => 2,
@@ -190,7 +199,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 2,
                       seven   => 2,
                       eight   => 2,
-                      nine    => [ 1, 2, 3, 4, 5 ],
+                      nine    => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30 ],
                       _dirty  => 0,
                     }, 'Bric' ),
              bless( {
@@ -202,7 +211,7 @@ sub test_fetch_objects: Test(4) {
                       six     => 3,
                       seven   => 3,
                       eight   => 3,
-                      nine    => [ 1, 2, 3, 6],
+                      nine    => [ 1, 2, 3, 4, 6 ],
                       _dirty  => 0,
                     }, 'Bric' ),
            ];
