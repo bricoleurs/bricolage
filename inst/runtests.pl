@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-09-19 00:03:28 $
+$Date: 2002-09-19 00:59:17 $
 
 =head1 SYNOPSIS
 
@@ -86,14 +86,14 @@ my $chk = $opts{d} ? sub { m/Test.pm$/ } : sub { $_ eq 'Test.pm' };
 
 # Find the tests.
 my @tests = @ARGV;
-find(sub { push @tests, $File::Find::name if $chk->() }, 'lib')
+find(sub { push @tests, $File::Find::name if $chk->() }, 't')
   unless @tests;
 
 # Set verbosity.
 if ($opts{V}) {
     # This environment variable tells Test::Class to be verbose.
     $ENV{TEST_VERBOSE} = 1;
-    # This varible tells Test::Harness to be verbose.
+    # This variable tells Test::Harness to be verbose.
     $verbose = 1;
 } else {
     # Tell Test::Harness to be verbose if the TEST_VERBOSE environment
