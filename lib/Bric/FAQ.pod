@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:13 $
+$Date: 2003-10-07 02:00:00 $
 
 =head1 DESCRIPTION
 
@@ -381,6 +381,45 @@ full substring query. Or you can enable on the "FULL_SEARCH" F<bricolage.conf>
 directive and restart Bricolage. But know that either of these methods I<will>
 a lot slower (though you probably won't notice much until you have 1000s of
 documents).
+
+=head3 Does Bricolage have a memory leak?
+
+No. Bricolage can use a lot of memory resources, especially if you publish a
+lot of documents at once, such as via the SOAP interface. Perl grabs the
+memory it needs, but it never releases it back to the operating system,
+although it will reuse it before asking the OS for more. So if you've
+published a lot of stories at once or done anything else to cause Bricolage to
+load a lot of data (such as used the search interface to get a list of all
+10,000 stories in your Bricolage database), then the process that handled your
+request will become quite large and stay that way for its lifetime.
+
+There are a number of ways to address this issue:
+
+=over 4
+
+=item *
+
+If you're using C<bric_soap> to execute big SOAP requests, use its C<--chunks>
+option whenever possible to cut down on the amount of work any one request is
+doing.
+
+=item *
+
+Change your Apache configuration to get a better handle on your process
+sizes. Set C<MaxSpareServers> and C<MinSpareServers> to a reasonable numbers,
+and set C<MaxRequestsPerChild> to limit the number of requests any one child
+handles. See the Apache documentation at L<http://httpd.apache.org/docs/> for
+more information on these and related directives.
+
+=item *
+
+Use Bricolage's support for Apache::SizeLimit. This support is enabled via the
+C<CHECK_PROCESS_SIZE> F<bricolage.conf> directives, and you can tune it using
+the C<MAX_PROCESS_SIZE>, C<CHECK_FREQUENCY>, C<MIN_SHARE_SIZE>, and
+C<MAX_UNSHARED_SIZE> directives, as well. See
+L<Apache::Admin|Apache::Admin/"Apache Configuration"> for details.
+
+=back
 
 =head2 Template Administration
 
