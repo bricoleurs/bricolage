@@ -599,8 +599,10 @@ sub _handle_fault {
             print STDERR "Call to Bric::SOAP::$module->$command failed : \n" .
               $r->faultstring;
         }
+        print STDERR "Check the Apache error log for more detail.\n";
     } else {
         print STDERR "TRANSPORT ERROR:", $soap->transport->status, "\n";
+        print STDERR "Check the Apache error log for more information.\n";
     }
 
     # exit unless continueing on errors

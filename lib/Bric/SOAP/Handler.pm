@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:53 $
+$Date: 2002-11-13 01:45:09 $
 
 =head1 SYNOPSIS
 
@@ -78,11 +78,15 @@ use warnings;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
-use SOAP::Lite (DEBUG ? ('trace') : ());
+use SOAP::Lite +trace => [ (DEBUG ? ('trace') : ()), fault => \&handle_err ];
 use SOAP::Transport::HTTP;
 use Bric::App::Auth;
 use Bric::App::Session;
+use Bric::Util::DBI qw(:trans);
+use Bric::App::Event qw(clear_events);
+use Bric::Util::Fault::Exception::AP;
 use Apache::Constants qw(OK);
+use Apache::Util qw(escape_html);
 
 use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::Auth
@@ -101,46 +105,58 @@ $SERVER->serializer->readable(1) if DEBUG;
 
 # setup routines to serialize Bric exceptions
 sub SOAP::Serializer::as_Bric__Util__Fault__Exception__GEN {
-    [ $_[2], $_[4], $_[1]->error_info ];
+    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
 }
 sub SOAP::Serializer::as_Bric__Util__Fault__Exception__AP {
-    [ $_[2], $_[4], $_[1]->error_info ];
+    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
 }
 sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DP {
-    [ $_[2], $_[4], $_[1]->error_info ];
+    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
 }
 sub SOAP::Serializer::as_Bric__Util__Fault__Exception__MNI {
-    [ $_[2], $_[4], $_[1]->error_info ];
+    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
 }
 sub SOAP::Serializer::as_Bric__Util__Fault__Exception__DA {
-    [ $_[2], $_[4], $_[1]->error_info ];
+    [ $_[2], $_[4], escape_html($_[1]->error_info) ];
 }
+
+
+my $commit = 1;
+my $apreq;
 
 # dispatch to $SERVER->handler()
 sub handler {
-  my ($r) = @_;
-  my $action = $r->header_in('SOAPAction') || '';
+    my ($r) = @_;
+    $apreq = $r;
+    my $status;
 
-  print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
+    eval {
+        # Start the database transactions.
+        begin(1);
 
-  # setup user session
-  Bric::App::Session::setup_user_session($r);
+        my $action = $r->header_in('SOAPAction') || '';
 
-  # let everyone try to login
-  return $SERVER->handler(@_)
-    if $action eq '"http://bricolage.sourceforge.net/Bric/SOAP/Auth#login"';
+        print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
 
-  # check auth
-  my ($res, $msg) = Bric::App::Auth::auth($r);
+        # setup user session
+        Bric::App::Session::setup_user_session($r);
 
-  if ($res) {
-    return $SERVER->handler(@_);
-  } else {
-    $r->log_reason($msg);
-    $r->send_http_header('text/xml');
-    # send a SOAP fault.  I can't find an easy way to do this with
-    # SOAP::Lite without reinventing some wheels...
-    print <<END;
+        # let everyone try to login
+        if ($action eq '"http://bricolage.sourceforge.net/Bric/SOAP/Auth#login"') {
+            $status = $SERVER->handler(@_);
+        } else {
+
+            # check auth
+            my ($res, $msg) = Bric::App::Auth::auth($r);
+
+            if ($res) {
+                $status = $SERVER->handler(@_);
+            } else {
+                $r->log_reason($msg);
+                $r->send_http_header('text/xml');
+                # send a SOAP fault.  I can't find an easy way to do this with
+                # SOAP::Lite without reinventing some wheels...
+                print <<END;
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope
  xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"
@@ -157,9 +173,52 @@ sub handler {
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 END
-  }
+            }
+        }
+    };
 
-  return OK;
+    # Do error processing, if necessary.
+    handle_err(0, 0, $@) if $@;
+
+    # Commit to the database, uless there was an error.
+    if ($commit) {
+        commit(1);
+    } else {
+        # Reset for the next request.
+        $commit = 1;
+    }
+
+    # Free up the apache request object.
+    undef $apreq;
+
+    # Boogie!
+    return $status;
+}
+
+sub handle_err {
+    my ($code, $string, $err, $actor) = @_;
+
+    # Prevent the commit in handler().
+    $commit = 0;
+
+    # Create an exception object unless we already have one.
+    $err = Bric::Util::Fault::Exception::AP->new
+      ({ msg => "Error executing SOAP command.", payload => $err })
+      unless ref $err;
+
+    # Rollback the database transactions.
+    eval { rollback(1) };
+    my $more_err = $@ ? "In addition, the database rollback failed: $@" : undef;
+
+    # Clear out events to that they won't be logged.
+    clear_events();
+
+    # Send the error to the apache error log.
+    $apreq->log->error($err->get_msg . ': ' . $err->get_payload .
+                       ($more_err ? "\n\n$more_err" : '') . "\nStack Trace:\n" .
+                       join("\n", map { ref $_ ? join(' - ', @{$_}[1,2,3]) : $_ }
+                            @{$err->get_stack}) . "\n\n");
+
 }
 
 # silence warnings from SOAP::Lite

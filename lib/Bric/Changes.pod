@@ -31,6 +31,13 @@ Added "Order" and "OrderDirection" parameters to C<< Bric::Util::Grp->list >>
 in order to be able to specify a different column and sort order for getting a
 list of groups. [David]
 
+=item *
+
+Improved error handling by the SOAP server. Full errors will now be printed to
+the Apache error log, error messages sent back to the client are properly
+escaped, and all database transactions for a single request will be rolled
+back in the event of an error. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -158,6 +165,10 @@ some browsers. Instead, a separate preview window is opened. [David]
 
 When publishing a media asset, its name will not be properly added to the UI
 message, without causing an error. [Petar Bojkov]
+
+=item *
+
+Fixed exception class name in Handler.pm. [Scott]
 
 =back
 
@@ -672,10 +683,6 @@ HTML::Mason (>1.09). [Sam]
 =item *
 
 The F<bric_dist_mon> program works again. [David]
-
-=item *
-
-Fixed exception class name in Handler.pm. [Scott]
 
 =back
 
