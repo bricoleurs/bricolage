@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =head1 DATE
 
-$Date: 2002-01-12 17:43:14 $
+$Date: 2002-01-12 17:44:21 $
 
 =head1 DESCRIPTION
 
@@ -145,9 +145,7 @@ following Configure commands:
 =item -Umymalloc
 
 This Configure command will build perl without perl's malloc. This is necessary
-to prevent segfaults with XML::Parser under mod_perl. [Note that XML::Parser
-isn't currently part of Bricolage, but will soon be, and users will likely
-install it, anyway.]
+to prevent segfaults with XML::Parser under mod_perl.
 
 =item  -Dinstallusrbinperl
 
