@@ -84,6 +84,13 @@ Users with CREATE access to a start desk can once again create stories on that
 desk even when they don't have CREATE access to "All Stories." Reported by
 Simon Wilcox. [David]
 
+=item *
+
+Each upgrade script is now run within the confines of a single database
+transaction. If any database changes within an upgrade script encounter an
+error, all of the changes in that script will be rolled back. Suggested by
+Arthur. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.12.6.5 $
+$Revision: 1.12.6.6 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12.6.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 23:23:59 $
+$Date: 2003-09-30 18:16:47 $
 
 =head1 SYNOPSIS
 
@@ -45,13 +45,21 @@ $Date: 2003-09-10 23:23:59 $
 
 This module exports functions that are useful for upgrading a Bricolage
 database. The idea is that all changes to the Bricolage database that are
-required by and upgrade will be performed via this module. It provides
-functions to test to see if an upgrade has previously been performed, as well
-as functions to update the database. Furthermore, it will automatically
-process -p and -u arguments to your upgrade script so that the change can be
-done by a database user with administrative permissions.
+required by and upgrade will be performed in a single transaction via this
+module. It provides functions to test to see if an upgrade has previously been
+performed, as well as functions to update the database. Furthermore, it will
+automatically process -p and -u arguments to your upgrade script so that the
+change can be done by a database user with administrative permissions.
+
+This module assumes that the upgrades performed by a single upgrade script
+must be carried out atomically; either all of the changes are committed, or
+none are. Thus, this module starts a database transaction as soon as it loads,
+and rolls back any changes if any exceptions are thrown. If all changes
+succeed, then the transaction will be commited when the script exits.
 
 =cut
+
+##############################################################################
 
 use strict;
 require Exporter;
@@ -98,29 +106,48 @@ $@
 END
 }
 
-# load Bricolage libraries
+# Load Bricolage DBI library.
 use Bric::Util::DBI qw(:all);
 
+##############################################################################
+# Start a transaction. Everyting the script that loads this module
+# does should be in a single transaction.
+begin();
+
+my $rolled_back;
+
+# Catch all exceptions. We want to rollback any transactions before
+# exiting.
+$SIG{__DIE__} = sub {
+    # For some reason, this seems to get called twice
+    unless ($rolled_back) {
+        rollback();
+        print STDERR "\n\n", ('#') x 70, "\n",
+          "ERROR: DATABASE UPDATE FAILED!\n\n",
+          "The database was not affected. Please address this ",
+          "issue before continuing.\n\nThe error encountered was:\n\n";
+        $rolled_back = 1;
+    }
+    die @_;
+};
+
+END {
+    # Commit all transactions unless there was an error and a rollback.
+    commit() unless $rolled_back;
+}
+
+##############################################################################
 # Grab the Bricolage version number and put it into a v-string. We can
 # eliminate the eval if, in the future, we change the Bric version number
 # to an actual v-string.
 my $old_version = eval "v$Bric::VERSION";
 
-# Connect to the database.
-my $ATTR =  { RaiseError => 1,
-	      PrintError => 0,
-	      AutoCommit => 1,
-	      ChopBlanks => 1,
-	      ShowErrorStatement => 1,
-	      LongReadLen => 32768,
-	      LongTruncOk => 0
-};
-
-
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out.
 open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
+
+##############################################################################
 
 =head1 EXPORTED FUNCTIONS
 
@@ -137,9 +164,10 @@ been performed.
 For example, say you need to add a table C<foo_bar>. It's possible, for some
 reason or other, that the table may already have been added -- perhaps your
 script has already been run against the Bricolage installation. To determine
-whether it has, call C<test_sql> with a SQL query that will throw an exception
-if the table doesn't exist, but succeed if it does. If it does succeed, then
-simply exit your script without continuing to update the database.
+whether it has, call C<test_sql()> with an SQL query that will throw an
+exception if the table doesn't exist, but succeed if it does. If it does
+succeed, then simply exit your script without continuing to update the
+database.
 
   exit if test_sql('SELECT * from foo_bar');
 
@@ -153,24 +181,27 @@ sub test_sql {
     return $@ ? 0 : 1;
 }
 
+##############################################################################
+
 =head2 fetch_sql()
 
   exit if fetch_sql($sql);
 
-Evaluates the C<SELECT> SQL expression $sql against the Bricolage database and
-attempts to fetch a value from the query. If a value is successfully returned,
-C<fetch_sql> returns true. Otherwise, it returns false. An exception will also
-cause C<fetch_sql> to return false. Use this function to determine whether the
-upgrades your script is about to perform have already been performed.
+Evaluates the C<SELECT> SQL expression C<$sql> against the Bricolage database
+and attempts to fetch a value from the query. If a value is successfully
+returned, C<fetch_sql()> returns true. Otherwise, it returns false. An
+exception will also cause C<fetch_sql()> to return false. Use this function to
+determine whether the upgrades your script is about to perform have already
+been performed.
 
-This function is similar in functionality to C<test_sql>, except that it
+This function is similar in functionality to C<test_sql()>, except that it
 doesn't explicitly test for an exception. In other words, it's useful for
 testing for database changes that may not trigger an exception even if they
 haven't been run. For example, say you need to add a new value to the
-event_type table with the key_name column value 'foo_grepped'. To determine
-whether this value has already been entered into the database, you simply try
-to select it. Use C<fetch_sql> to do this, as it will return true if it
-manages to fetch a value, and false otherwise.
+"event_type" table with the "key_name" column value 'foo_grepped'. To
+determine whether this value has already been entered into the database, you
+simply try to select it. Use C<fetch_sql()> to do this, as it will return true
+if it manages to fetch a value, and false otherwise.
 
   exit if fetch_sql('SELECT name FROM event_type WHERE key_name = 'foo_grepped');
 
@@ -182,19 +213,21 @@ sub fetch_sql {
 	my $sth = prepare(shift);
 	execute($sth);
 	$val = fetch($sth);
+        finish($sth);
     };
     return $val && !$@ ? 1 : 0;
 }
 
+##############################################################################
 
 =head2 do_sql()
 
   do_sql(@sql_statements);
 
-This function takes a list of SQL statements and executes each in turn. For
-each, it also sets the proper permissions for the Bricolage database user to
-be able to access the tables and sequences it creates. Use this function to
-actually make changes to the Bricolage database.
+This function takes a list of SQL statements and executes each in turn. It
+also sets the proper permissions for the Bricolage database user to be able to
+access the tables and sequences it creates. Use this function to actually make
+changes to the Bricolage database.
 
 For example, say you need to add the table "soap_scum". Simply pass the proper
 SQL to create the table to this function, and the SQL will be executed, and
@@ -210,47 +243,35 @@ the Bricolage database user provided the proper permissions to access it.
 
   do_sql($sql);
 
-If for some reason there are any errors executing any of the SQL statements,
-all the changes started with this call to do_sql() will be rolled back and an
-exception thrown. Thus, any error will prevent any of the changes from
-affecting the database unless all of the SQL statements succeed.
-
 =cut
 
 sub do_sql {
-    begin();
-    eval {
-	my @objs;
-	# Execute each SQL statement.
-	foreach my $sql (@_) {
-            local $SIG{__WARN__} = sub {};
-	    my $sth = prepare($sql);
-	    execute($sth);
-	    if ($sql =~ /CREATE\s+TABLE\s+([^\s]*)/i
-		|| $sql =~ /CREATE\s+SEQUENCE\s+([^\s]*)/i)
-	    {
-		# Grab the name of the object to grant permissions on.
-		push @objs, $1;
-	    }
-	}
+    my @objs;
+    # Execute each SQL statement.
+    foreach my $sql (@_) {
+        local $SIG{__WARN__} = sub {};
+        my $sth = prepare($sql);
+        execute($sth);
+        if ($sql =~ /CREATE\s+TABLE\s+([^\s]*)/i
+            || $sql =~ /CREATE\s+SEQUENCE\s+([^\s]*)/i)
+          {
+              # Grab the name of the object to grant permissions on.
+              push @objs, $1;
+          }
+    }
 
-	# Now grant the necessary permissions.
-	if (@objs) {
-	    my $grant = prepare(qq{
+    # Now grant the necessary permissions.
+    if (@objs) {
+        my $grant = prepare(qq{
                 GRANT  SELECT, UPDATE, INSERT, DELETE
                 ON     } . join(', ', @objs) . qq{
                 TO     ${ \DBI_USER() }
             });
-	    execute($grant);
-	}
-    };
-    if (my $err = $@) {
-	rollback();
-	die "Update failed. Database was not affected. Error: $err";
-    } else {
-	commit();
+        execute($grant);
     }
 }
+
+##############################################################################
 
 =head2 db_version()
 
@@ -284,7 +305,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler E<lt>david@wheeler.netE<gt>
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
