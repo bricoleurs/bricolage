@@ -7,21 +7,23 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 06:07:11 $
+$Date: 2003-08-11 16:06:54 $
 
 =head1 SYNOPSIS
 
+  use Bric::Util::Fault qw(throw_gen);
+
   eval {
       # Do something that causes general mayhem.
-      die Bric::Util::Fault::Subclass->new({ msg => 'Ro-ro!' });
+      throw_gen(error => 'Ro-ro!');
   };
 
   if (my $err = $@) {
