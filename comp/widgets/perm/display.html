@@ -1,5 +1,9 @@
 %#-- Begin HTML --#
 <%perl>;
+my %sites;
+# XXX Should we exclude inactive sites?
+my @sites = map { $sites{$_->get_id} = $_; $_}
+  Bric::Biz::Site->list({ active => 1 });
 my $perm_sel = [
     ['usrgrp'   => $usr_grp_pl],
     $is_user ? (
@@ -7,9 +11,10 @@ my $perm_sel = [
         ['object'         => $lang->maketext('Object Groups')],
         ['workflow'       => $lang->maketext(ucfirst $wf_pl)],
         ['desk'           => $lang->maketext(ucfirst $dsk_pl)],
-        (map { ['cat_site_' . $_->get_id =>
+        (map { $sites{$_->get_id} = $_; # Cache for later.
+               ['cat_site_' . $_->get_id =>
                 $lang->maketext('[_1] Site Categories', $_->get_name)  ]
-            } Bric::Biz::Site->list({ active => 1 })),
+            } @sites),
         ['all_categories' => $lang->maketext("All " . ucfirst $cat_pl)],
     ) : (),
 ];
@@ -97,7 +102,8 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
 if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     # We need to do it for workflows, desks, and categories, too.
     # Do the workflows, first.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+             number => $num++,
              caption => "$wf_disp Permissions", border => 0);
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to'
              ." access assets in these workflows.", $name));
@@ -112,7 +118,9 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
                  type => 'obj',
                  is_asset_grp => 0,
                  perm => $perms{$gid},
-                 name => $wf->get_name);
+                 name => $wf->get_name . ' ('
+                         . $sites{$wf->get_site_id}->get_name . ')'
+       );
     }
     $m->out(qq{</table>\n});
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
@@ -147,7 +155,7 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
 
 if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
     # And finally, do it for all the categories in each site.
-    for my $site (Bric::Biz::Site->list({ active => 1 })) {
+    for my $site (@sites) {
         $m->comp('.site_categories',
                  num           => $num++,
                  head_comp     => $head_comp,
@@ -162,15 +170,14 @@ if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
 if ($perm_type =~ /^cat_site_(\d+)$/) {
     $m->comp('.site_categories',
              num           => $num++,
-             head_comp         => $head_comp,
+             head_comp     => $head_comp,
              row_comp      => $row_comp,
              grp_name      => $name,
              show_inactive => $show_inactive,
              perms         => \%perms,
-             site          => Bric::Biz::Site->lookup({ id => $1 })
+             site          => $sites{$1},
     );
 }
-
 
 if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     # Now get the permissions on this group that are granted to user groups.
