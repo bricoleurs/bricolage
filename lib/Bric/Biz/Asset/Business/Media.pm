@@ -460,7 +460,7 @@ sub new {
 
 ################################################################################
 
-=item $media = Bric::Biz::Asset::Business::Media->lookup->( { id => $id })
+=item $media = Bric::Biz::Asset::Business::Media->lookup( { id => $id })
 
 This will return a media asset that matches the criteria defined
 
