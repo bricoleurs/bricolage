@@ -41,7 +41,7 @@ if ($param->{delete}) { # Deactivate it.
     $grp->set_name($param->{name});
     $grp->set_description($param->{description});
 
-    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
+    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{delete_attr})} );
     my $data_href = $grp->get_member_attr_hash || {};
     $data_href = {  map { lc($_) => 1 } keys %$data_href };
 
@@ -106,7 +106,7 @@ if ($param->{delete}) { # Deactivate it.
     }
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr}) {
+    if ($param->{delete_attr}) {
 	foreach my $attr (keys %del_attrs) {
 	    $grp->delete_member_attr({ name => $attr });
 	    # Log that we've deleted it.
@@ -140,11 +140,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.6.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:16 $
+$Date: 2003-06-11 09:46:41 $
 
 =head1 SYNOPSIS
 

@@ -189,7 +189,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             my $all_data = $comp->get_data;
             if (@$all_data) {
                 my $attrs = [];
-                foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
+                foreach my $dataObj (@$all_data) {
                     my $metas = $dataObj->get_meta('html_info');
                     my $tmp;
                     foreach my $meta (keys %$metas) {
@@ -202,7 +202,8 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                 }
 
                 $num_fields = @$attrs;
-                $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
+                $m->comp("/widgets/profile/displayAttrs.mc",
+                         form_name => 'cont_profile',
                          attr     => $attrs,
                          readOnly => $no_edit,
                          useEdit => 1);
@@ -299,11 +300,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.23.2.1 $
 
 =head1 DATE
 
-$Date: 2003-04-29 12:58:20 $
+$Date: 2003-06-11 09:46:40 $
 
 =head1 DESCRIPTION
 

@@ -97,7 +97,7 @@ foreach my $attr (@$attr) {
 		 label_after => 1,
 		 disp => 'Delete',
 		 value => $attr->{name},
-		 name => "del_attr",
+		 name => "delete_attr",
 		 useTable => 0,
 		 readOnly => $readOnly
 		);

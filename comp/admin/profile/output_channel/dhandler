@@ -119,7 +119,7 @@ var selectOrderNames = new Array("include_pos")
     field  => 'name',
     exclude => [ $id, map { $_->get_id } $oc->get_includes ],
     no_persist => 1,
-    name   => 'profile|include_oc_id_cb',
+    name   => 'output_channel|include_oc_id_cb',
     default => ['' => 'Add to Include'],
     constrain => { active => 1 },
     js => "onChange='submit()'",
@@ -159,11 +159,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =head1 DATE
 
-$Date: 2003-03-15 18:35:11 $
+$Date: 2003-06-11 09:46:41 $
 
 =head1 SYNOPSIS
 

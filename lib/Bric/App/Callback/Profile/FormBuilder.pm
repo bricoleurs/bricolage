@@ -108,7 +108,7 @@ my $do_contrib_type = sub {
     my $param = $self->request_args;
     my $name = sprintf('&quot;%s&quot;', $param->{'name'});
     my $disp_name = $conf{$key}{'disp_name'};
-    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'del_attr'})} );
+    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
       ? sprintf('&quot;%s&quot;', $param->{'key_name'})
       : '';
@@ -168,7 +168,7 @@ my $do_contrib_type = sub {
     }
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr}) {
+    if ($param->{delete_attr}) {
         foreach my $attr (keys %del_attrs) {
             $obj->delete_member_attr({ name => $attr });
             # Log that we've deleted it.
@@ -200,7 +200,7 @@ my $do_element = sub {
     my $param = $self->request_args;
     my $name = sprintf('&quot;%s&quot;', $param->{'name'});
     my $disp_name = $conf{$key}{'disp_name'};
-    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'del_attr'})} );
+    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
       ? sprintf('&quot;%s&quot;', $param->{'key_name'})
       : '';
@@ -360,7 +360,8 @@ my $update_element_attrs = sub {
             my $field = lc $aname;
             $data_href->{$field}->set_place($pos->[$i]);
             $data_href->{$field}->set_meta('html_info', 'pos', $pos->[$i]);
-            $data_href->{$field}->set_meta('html_info', 'value', $param->{"attr|$aname"});
+            $data_href->{$field}->set_meta('html_info', 'value',
+                                           $param->{"attr|$aname"});
             $data_href->{$field}->save;
             $i++;
         }
@@ -383,7 +384,7 @@ my $delete_element_attrs = sub {
     my ($obj, $param, $key, $cb_key, $data_href) = @_;
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr} && ($cb_key eq 'save' || $cb_key eq 'save_n_stay')) {
+    if ($param->{delete_attr} && ($cb_key eq 'save' || $cb_key eq 'save_n_stay')) {
         my $del = [];
         foreach my $attr (keys %del_attrs) {
             my $atd = $data_href->{lc $attr};
