@@ -37,59 +37,43 @@ document. [David]
 
 =item *
 
-Fixed upgrade scripts to be more intelligent in their handling of
-transactions. They no longer allow SQL errors without failing the upgrade. The
-upgrade scripts have also been updated to ensure successful upgrades to
-Bricolage installations as far back as 1.4.0. [David]
+Added new permissions "RECALL" and "PUBLISH". These permissions apply only to
+asset groups, including desks, categories, and workflows. Now users must have
+RECALL permission to recall assets from the library and bring them into
+workflow, and PUBLISH permission to publish assets. This should make it much
+easier to create more flexible permissions to manage approval
+processes. [David]
 
 =item *
 
-A number of improvements for the F<bric_media_upload> contrib script:
-
-=over 8
-
-=item Creates intermediate categories if needed.
-
-=item Added a C<--skip-existing> directive.
-
-=item Added a C<--media-info> directive.
-
-=back
-
-See the script's usage info for details. [Simon Wilcox]
+Bricolage now supports per-user preferences. Admins can mark a preference as
+overrideable, which allows users to set this preference to their preferred
+value. [Dave Rolsky]
 
 =item *
 
-C<make upgrade> now suggests that the user run C<make clone> on the existing
-installation, and asks the whether to continue or not. This is to encourage
-folks to have a good backup before upgrading, in case the upgrade fails.
-[David]
+The character set and language preferences have been moved into the database,
+so that these can be overridden by individual users if needed. [Dave Rolsky]
 
 =item *
 
-Bricolage now supports per-user preferences.  Admins can mark a
-preference as overrideable, which allows users to set this preference
-to their preferred value.  [Dave Rolsky]
+Added C<--published-only> option to F<bric_soap> and F<bric_republish> so that
+the last-published version of a document can be republished, rather than the
+current version. [Scott]
 
 =item *
 
-The character set and language preferences have been moved into the
-database, so that these can be overridden by individual users if
-needed.  [Dave Rolsky]
+Added Bric::Util::Job::Pub. Publication can now be placed into a queue and
+deferred until a scheduled time, instead of burning on command and
+distributing later, Bricolage will now burn a story at the time of the
+scheduled distribution. [Mark]
 
 =item *
 
-Added --published-only option to bric_soap and bric_republish
-so that you can republish the last-published version rather than
-the current version. [Scott]
-
-=item *
-
-Added Bric::Util::Job::Pub (and C<bric_queued>). Publication can now be placed
-into a queue and deferred until a scheduled time. Along with the addition of
-the C<bric_queue> daemon or the use of a carefully tuned instance of
-Bricolage, this change allows the Bricolage administrator to control the
-amount of system resources given over to publishing. [Mark]
+Added the C<bric_queued> daemon to take advantage of the new publication
+scheduling of Bric::Util::Job::Pub. Together with the use of a carefully tuned
+instance of Bricolage, these new features allows the Bricolage administrator
+to control the amount of system resources given over to publishing. [Mark]
 
 =item *
 
@@ -142,11 +126,33 @@ in their site context. [David]
 
 =item *
 
-Added new permissions "RECALL" and "PUBLISH", which apply only to asset
-groups, including desks, categories, and workflows. Now users must have RECALL
-permission to recall assets from the library and bring them into workflow, and
-PUBLISH permission to publish assets. This should make it much easier to
-create more flexible permissions to manage approval processes. [David]
+A number of improvements for the F<bric_media_upload> contrib script:
+
+=over 8
+
+=item Creates intermediate categories if needed.
+
+=item Added a C<--skip-existing> directive.
+
+=item Added a C<--media-info> directive.
+
+=back
+
+See the script's usage info for details. [Simon Wilcox]
+
+=item *
+
+Fixed upgrade scripts to be more intelligent in their handling of
+transactions. They no longer allow SQL errors without failing the upgrade. The
+upgrade scripts have also been updated to ensure successful upgrades to
+Bricolage installations as far back as 1.4.0. [David]
+
+=item *
+
+C<make upgrade> now suggests that the user run C<make clone> on the existing
+installation, and asks the whether to continue or not. This is to encourage
+folks to have a good backup before upgrading, in case the upgrade fails.
+[David]
 
 =item *
 
@@ -163,8 +169,9 @@ has access to [JoE<atilde>o Pedro]
 
 =item *
 
-The Mason burner now uses document templates as true dhandlers, enabling
-inheritance to autohandlers to work properly. [David & Dave Rolsky]
+The Mason burner now uses document templates as true dhandlers, enabling full
+Mason-style inheritance from autohandlers to work properly. [David & Dave
+Rolsky]
 
 =item *
 
