@@ -8,6 +8,7 @@
 #   upgrade   - upgrades an existing installation
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a CVS checkout
+#   clone     - create a distribution based on an existing system
 #
 # See INSTALL for details.
 #
@@ -116,6 +117,32 @@ inst/bricolage.sql : $(SQL_FILES)
 .PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
                   dist_tar check_dist
 
+##########################
+# clone rules            #
+##########################
+
+clone           : distclean clone.db clone_dist_dir clone_files clone_sql \
+		  rm_sql rm_use rm_CVS rm_tmp \
+                  dist/INSTALL dist/Changes dist/License \
+		  clone_tar 
+
+clone.db	:
+	perl inst/clone.pl
+
+clone_dist_dir  : 
+	-rm -rf dist
+	mkdir dist
+
+clone_files     :
+	perl inst/clone_files.pl
+
+clone_sql       : 
+	perl inst/clone_sql.pl
+
+clone_tar	:
+	perl inst/clone_tar.pl
+
+.PHONY 		: clone_dist_dir clone_files clone_sql clone_tar
 
 ##########################
 # installation rules     #

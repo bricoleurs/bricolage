@@ -134,6 +134,11 @@ Vastly improved the speed at which categories can be imported via SOAP.
 Makefile now confirms location of Apache and PostgreSQL to allow for
 systems with multiple versions of each available. [Sam]
 
+=item *
+
+Added "make clone" command to the installation system to create
+distributions based on existing Bricolage systems.  [Sam]
+
 =back
 
 =head2 Bug Fixes

@@ -6,15 +6,15 @@ Bric::Inst - support library for installation system scripts
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-08-13 22:05:11 $
 
 =head1 SYNOPSIS
 
@@ -71,8 +71,8 @@ exits with code 1.
 =cut
 
 sub hard_fail {
-  print "#" x 79, "\n\n", join('', @_), "\n", "#" x 79, "\n";
-  exit 1;
+    print "#" x 79, "\n\n", join('', @_), "\n", "#" x 79, "\n";
+    exit 1;
 }
 
 =item ask_yesno($question, $default)
