@@ -5,15 +5,15 @@
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:56 $
+$Date: 2004-02-28 01:56:41 $
 
 =head1 SYNOPSIS
 $m->comp(
@@ -141,7 +141,7 @@ text_table    += "    <tr><td valign=top width=170>"
 text_table    += '    <span class=label><% $lang->maketext('Label')%>:</span><br />'
 text_table    += '    <input type=text name=fb_disp size=20 <% $textStyle %>></td>'
 text_table    += '    <td valign=top width=160><span class=label><% $lang->maketext('Maximum size')%>:</span><br />'
-text_table    += '    <input type="text" name="fb_maxlength" value="32" size="3">'
+text_table    += '    <input type="text" name="fb_maxlength" value="0" size="3">'
 text_table    += "    </td></tr>"
 text_table    += "</table><table width=330 cellpadding=3>"
 text_table    += '    <tr><td>'
@@ -286,7 +286,7 @@ textarea_table     += '<input type=text name=fb_name></td>'
 textarea_table 	   += '<td valign=top><span class=label><%$lang->maketext('Rows')%>:</span><br>'
 textarea_table     += '<input type=text name=fb_rows value=4 size=3></td>'
 textarea_table     += '<td valign=top><span class=label><% $lang->maketext('Max size') %>:</span><br>'
-textarea_table     += '<input type=text name=fb_maxlength value="0" size=4 /></td></tr>'
+textarea_table     += '<input type="text" name="fb_maxlength" value="0" size="4" /></td></tr>'
 textarea_table     += '<tr><td valign=top><span class=label><% $lang->maketext('Label') %>:</span><br>'
 textarea_table     += '<input type=text name=fb_disp></td>'
 textarea_table     += '<td valign=top><span class=label><% $lang->maketext('Columns') %>:</span><br>'

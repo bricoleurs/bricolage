@@ -196,6 +196,12 @@ Type on which the contributor is based has no custom fields. This will prevent
 folks from creating new contributor rols in the UI only to find that Bricolage
 hasn't created them because there are no custom fields. [David]
 
+=item *
+
+In the formBuilder interface used by the Element and Contributor Type
+profiles, the maximum length of text and textarea fields is no "0", or
+unlimited. [David]
+
 =back
 
 =head2 Bug Fixes
