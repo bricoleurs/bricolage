@@ -13,7 +13,7 @@
 <p class="errorMsg"><% escape_html($fault->error) %></p>
 
 % if (isa_bric_exception($fault) and my $pay = $fault->payload) {
-<p><% $pay %></p>
+<pre><% escape_html($pay) %></pre>
 % }
 
 % if (QA_MODE or (TEMPLATE_QA_MODE and $is_burner_error)) {
