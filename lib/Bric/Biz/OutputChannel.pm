@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-25 08:33:35 $
 
 =head1 SYNOPSIS
 
@@ -926,7 +926,7 @@ sub _do_list {
 		push @where_params, $params->{'active'};
 	}
 
-	if ( $params->{server_type_id} ) {
+	if ( exists $params->{server_type_id} ) {
 		push @where, 'id in (select output_channel__id from server_type__output_channel where server_type__id = ?)';
 		push @where_params, $params->{server_type_id};
 	}
@@ -1062,7 +1062,11 @@ NONE
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-25 08:33:35  wheeler
+Fixed bug where if the server_type_id argument to _do_list() was undefined it
+ignored it, rather than looking for NULL, which makes more sense.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:53:28  wheeler
