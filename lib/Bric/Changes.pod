@@ -86,6 +86,11 @@ Stories and Media created or updated via the SOAP interface will now associate
 contributors of the appropriate type, instead of "All Contributors". [Scott &
 David]
 
+=item *
+
+Deleting an element that has a template no longer causes an error. Thanks to
+Susan for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
