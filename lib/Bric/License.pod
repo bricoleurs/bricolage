@@ -197,6 +197,8 @@ Friends who have spotted bugs include:
 
 =item Marc Hawson
 
+=item Tobias Kremer
+
 =back
 
 Bricolage's translation team:

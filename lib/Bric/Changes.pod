@@ -107,7 +107,7 @@ The list manager now sorts version numbers as numbers rather than strings.
 =item *
 
 The media type profile again allows extensions to be added and removed.
-Reported by Tobias. [David]
+Reported by Tobias Kremer. [David]
 
 =item *
 
