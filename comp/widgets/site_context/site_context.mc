@@ -10,6 +10,7 @@ return unless defined $uid;
 my $sites = $c->get($cachekey);
 my $user_sites = get_state_data($widget, $usites_key);
 my $cx = $c->get_user_cx($uid);
+$cx = -1 unless defined $cx;
 
 unless ($sites) {
     # The list of sites has been reset. Grab them all again.
@@ -25,11 +26,12 @@ unless ($user_sites) {
     if ($sites) {
         # We have some sites to choose from, so set 'em up.
         # It's okay if all sites is the context.
-        my $cx_ok = defined $cx && $cx == 0;
+        my $cx_ok = $cx == 0;
         foreach my $s (@$sites) {
+            next unless chk_authz($s, READ, 1);
             # Keep the site if the user has permission.
             my $id = $s->get_id;
-            push @$user_sites, [$id, $s->get_name] if chk_authz($s, READ, 1);
+            push @$user_sites, [$id, $s->get_name];
             # Check if they can use the same old context.
             $cx_ok ||= $id == $cx;
         }
@@ -51,6 +53,12 @@ unless ($user_sites) {
         $user_sites = [];
         set_state_data($widget, $usites_key => $user_sites);
         $c->set_user_cx($uid, undef);
+    }
+} else {
+    # Make sure we have a context.
+    if ($cx == -1) {
+        $cx = $user_sites->[0] ? $user_sites->[0][0] : undef;
+        $c->set_user_cx($uid, $cx);
     }
 }
 
@@ -79,11 +87,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-09-16 16:52:25 $
+$Date: 2004-02-28 23:40:01 $
 
 =head1 SYNOPSIS
 
