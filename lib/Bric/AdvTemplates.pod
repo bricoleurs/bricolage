@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-10-22 06:01:15 $
+$Date: 2003-12-11 11:18:08 $
 
 =head1 INTRODUCTION
 
@@ -106,7 +106,7 @@ two paragraphs of text, the resulting published story would look like:
         <table><tr><td width=570>
 
             <!-- Code for /News/Politics/column.mc -->
-            <b><% $story->get_title %></b>
+            <b>Man Bites Dog</b>
 
             <p>Earlier today a man was reported biting a dog</p>
 
