@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.70 $
+$Revision: 1.71 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.70 $ )[-1];
+our $VERSION = (qw$Revision: 1.71 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 01:04:47 $
+$Date: 2004-03-21 22:06:24 $
 
 =head1 SYNOPSIS
 
@@ -924,7 +924,7 @@ sub preview_another {
       : 'media';
 
     # Create a new burner and do the preview.
-    my $b2 = $self->new;
+    my $b2 = __PACKAGE__->new;
     $b2->_set(['_output_preview_msgs'] => [0]);
     return $b2->preview($ba, $key, get_user_id(), $oc_id);
 }

@@ -31,6 +31,11 @@ Sellers]
 Text::Levenshtein is again correctly loaded as an optional module, not a
 required module. Reported by Marshall Roch. [David]
 
+=item *
+
+Bric::Util::Burner's C<preview_another()> method now actually works. Thanks to
+Serge Sozonoff for the spot. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
