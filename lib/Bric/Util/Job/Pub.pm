@@ -6,16 +6,16 @@ Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-23 23:37:34 $
+$Date: 2004-02-27 11:20:31 $
 
 =head1 SYNOPSIS
 
@@ -82,7 +82,6 @@ use Bric::Util::Time qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::Util::Burner;
 use Bric::Util::Burner::Mason;
-use Bric::Util::Burner::Template;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 
