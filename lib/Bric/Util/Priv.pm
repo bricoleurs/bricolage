@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-22 02:57:12 $
+$Date: 2003-02-26 02:01:14 $
 
 =head1 SYNOPSIS
 
@@ -513,6 +513,7 @@ sub get_acl {
         FROM   grp_priv gp, grp_priv__grp_member gm, grp g, member m,
                user_member mo
         WHERE  gp.id = gm.grp_priv__id
+               AND g.id = m.grp__id
                AND gp.grp__id = g.id
                AND m.id = mo.member__id
                AND m.active = 1
@@ -572,7 +573,7 @@ sub get_acl_mtime {
                user_member mo
         WHERE  gp.id = gm.grp_priv__id
                AND gp.grp__id = g.id
-               AND  g.id = m.grp__id
+               AND g.id = m.grp__id
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
