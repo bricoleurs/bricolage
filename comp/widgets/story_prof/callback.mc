@@ -51,7 +51,7 @@ my $save_data = sub {
                     $story->set_slug($old_slug);
                 } else {
                     add_msg($lang->maketext("The slug, category and cover date you selected " .
-                             "would have caused this story to have a URI " . 
+                             "would have caused this story to have a URI " .
                              "conflicting with that of story [_1].","'$msg'"));
                 }
                 $data_errors = 1;
@@ -474,6 +474,7 @@ my $handle_create = sub {
 
     # Save everything else unless there were data errors
     return unless &$save_data($param, $widget, $story);
+    $story->save;
 
     # Log that a new story has been created and generally handled.
     log_event('story_new', $story);
