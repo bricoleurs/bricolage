@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-12 09:00:13 $
+$Date: 2003-04-28 13:36:00 $
 
 
 =head1 SYNOPSIS
@@ -142,14 +142,15 @@ use constant COLS  => qw(
                          sql_type
                          active);
 
+use constant ORD => qw(name description max_length required quantifier active);
+
 #==============================================================================#
 # Fields                               #
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-# NONE
+# Public Class Fields
+our $METHS;
 
 #--------------------------------------#
 # Private Class Fields                  
@@ -232,7 +233,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item  $field = Bric::Biz::element::Parts::Data->new( $initial_state )
+=item  $field = Bric::Biz::AssetType::Parts::Data->new( $initial_state )
 
 creates a new element Field Part with the values associated with the 
 initial state
@@ -595,8 +596,119 @@ B<Notes:> Not yet written.
 =cut
 
 sub my_meths {
-    # To be written.
-    return;
+    my ($pkg, $ord, $ident) = @_;
+
+    # Create 'em if we haven't got 'em.
+    $METHS ||= {
+              name        => {
+                  name     => 'name',
+                  get_meth => sub { shift->get_name() },
+                  get_args => [],
+                  set_meth => sub { shift->set_name(@_) },
+                  set_args => [],
+                  disp     => 'Key Name',
+                  search   => 1,
+                  len      => 64,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 32,
+                      maxlength => 64,
+                  },
+              },
+              description => {
+                  get_meth => sub { shift->get_description() },
+                  get_args => [],
+                  set_meth => sub { shift->set_description(@_) },
+                  set_args => [],
+                  name     => 'description',
+                  disp     => 'Description',
+                  len      => 256,
+                  req      => 0,
+                  type     => 'short',
+                  props    => {
+                      type => 'textarea',
+                      cols => 40,
+                      rows => 4,
+                  },
+              },
+              max_length => {
+                  name     => 'max_length',
+                  get_meth => sub { shift->get_max_length() },
+                  get_args => [],
+                  set_meth => sub { shift->set_max_length(@_) },
+                  set_args => [],
+                  disp     => 'Max length',
+                  search   => 1,
+                  len      => 8,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              required => {
+                  name     => 'required',
+                  get_meth => sub { shift->get_required() },
+                  get_args => [],
+                  set_meth => sub {
+                      my ($self, $req) = @_;
+                      $req = (defined $req && $req) ? 1 : 0;
+                      $self->set_required($req);
+                  },
+                  set_args => [],
+                  disp     => 'Required',
+                  search   => 1,
+                  len      => 1,
+                  type     => 'short',
+                  props    => {
+                      type      => 'checkbox',
+                  },
+              },
+              quantifier => {
+                  name     => 'quantifier',
+                  get_meth => sub { shift->get_quantifier() },
+                  get_args => [],
+                  set_meth => sub {
+                      # note: $rep is boolean
+                      my ($self, $rep) = @_;
+                      $rep = (defined $rep && $rep) ? 1 : 0;
+                      $self->set_quantifier($rep);
+                  },
+                  set_args => [],
+                  disp     => 'Repeatable',
+                  len      => 1,
+                  type     => 'short',
+                  props    => {
+                      type      => 'checkbox',
+                  },
+              },
+              active     => {
+                  name     => 'active',
+                  get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                  get_args => [],
+                  set_meth => sub { $_[1] ? shift->activate(@_)
+                                      : shift->deactivate(@_) },
+                  set_args => [],
+                  disp     => 'Active',
+                  len      => 1,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {
+                      type => 'checkbox',
+                  },
+              },
+          };
+
+    if ($ord) {
+        return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
+    } elsif ($ident) {
+        return wantarray ? $METHS->{name} : [$METHS->{name}];
+    } else {
+        return $METHS;
+    }
 }
 
 ##############################################################################

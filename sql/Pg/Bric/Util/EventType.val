@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2003-04-15 09:05:29 $
+-- $Date: 2003-04-28 13:36:04 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -624,6 +624,27 @@
    -- HACK: This really should be 'element_attr_del'.
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_attr_del', 'Attribute Deleted from Element', 'An attribute was deleted from the element profile.', 22, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
+
+-- ********** 'element_data_new' ************ --
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'element_data_new', 'Element Data Created', 'Element Data was created.', 29, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
+
+-- ********** 'element_data_save' ************ --
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'element_data_save', 'Element Data Saved in Element', 'Element Data was saved in the element data profile.', 29, 1);
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
+
+-- ********** 'element_data_del' ************ --
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'element_data_del', 'Element Data Deleted from Element', 'Element Data was deleted from the element data profile.', 29, 1);
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');

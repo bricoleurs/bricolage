@@ -79,6 +79,11 @@ Neatened the "Find Stories," "Active Stories," "Find Media," and "Active
 Media" screens and added the ability to preview stories and media by clicking
 their titles. [David]
 
+=item *
+
+Added Field Profile, so you can edit Fields rather than having
+to delete and recreate them. [Scott]
+
 =back
 
 =head2 Bug Fixes
