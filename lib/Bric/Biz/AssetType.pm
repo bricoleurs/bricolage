@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-27 11:15:39 $
+$Date: 2004-02-06 19:30:58 $
 
 =head1 SYNOPSIS
 
@@ -2457,7 +2457,7 @@ sub _do_list {
     my $tables = "$table a, $mem_table m, $map_table c";
     my @wheres = ('a.id = c.object_id', 'c.member__id = m.id',
                   'm.active = 1');
-    my @params;
+    my ($top, @params);
 
     # Set up the active parameter.
     if (exists $params->{active}) {
@@ -2495,7 +2495,7 @@ sub _do_list {
 	push @wheres, 'att.id = a.type__id';
         if (exists $params->{top_level}) {
 	    push @wheres, 'att.top_level = ?';
-	    push @params, delete $params->{top_level} ? 1 : 0;
+	    push @params, $top = delete $params->{top_level} ? 1 : 0;
         }
         if (exists $params->{media}) {
 	    push @wheres, 'att.media = ?';
@@ -2577,7 +2577,7 @@ sub _do_list {
 
     # Multisite elements are all the top-level for the site,
     # plus all non top-level elements.
-    if($params->{site_id} && !defined($params->{top_level})) {
+    if($params->{site_id} && !defined $top) {
         delete $params->{site_id};
         $params->{top_level} = 0;
         push @elems, _do_list($pkg, $params);
