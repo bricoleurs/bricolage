@@ -151,7 +151,7 @@ if ($at->is_related_media) {
 } else {
     # START ELSE ( DATA TILE DISPLAY )
     my $at_obj = $dt->get_element_data_obj();
-    $no_del = $at_obj->get_required;
+    $no_del = $at_obj->get_required && $dt->get_object_order == 1;
     my $meta = $at_obj->get_meta('html_info');
     my $vals = { props => { %$meta } };
     my $key =  $widget . '|' . $dt->get_id;
