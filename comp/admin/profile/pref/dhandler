@@ -46,6 +46,7 @@ $props->{rows} = $rows if defined $rows;
 
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
+         number  => 1,
 	 caption => $name);
 
 $m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
@@ -62,6 +63,17 @@ $m->comp('/widgets/profile/displayFormElement.mc', key => 'can_be_overridden',
                    value => 1 } );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Output group membership.
+$m->out("<br />\n");
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::Pref',
+         obj => $pref,
+         formName => 'pref_profile',
+         no_edit => $no_edit,
+         widget => $widget,
+         num => 2,
+);
 
 # Output the form buttons.
 $m->out("<br />\n");

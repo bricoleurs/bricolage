@@ -11,7 +11,7 @@
   <tr>
     <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
     <td width="10"><img src="/media/images/spacer.gif" width="10" height="25"></td>
-    <td width=568><a class=redLinkLarge href="<% $addition->[1] %>"><% $lang->maketext($addition->[0]." a New ".get_class_info($object)->get_disp_name) %></a></td>
+    <td width=568><a class=redLinkLarge href="<% $addition->[1] %>"><% $lang->maketext($addition->[0]." a New ". ($addition->[2] || get_class_info($object)->get_disp_name)) %></a></td>
     <td class="lightHeader" width="1"><img src="/media/images/spacer.gif" width="1" height="19"></td>
   </tr>
 </table>

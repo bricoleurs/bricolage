@@ -114,6 +114,36 @@ Improved zh-cn translation. [Gang Luo]
 Burner notes now persist for all sub burns (triggered by C<publish_another()>
 and C<preview_another()> in a single burn. [Serge Sozonoff]
 
+=item *
+
+Keyword groups now properly display their members. [David]
+
+=item *
+
+Added ability to create and manage groups of objects for several different
+types of objects. Also added the ability manage group membship within the
+administrative profiles for those objects. This change makes it possible to
+give users permission to administer subsets of objects. The new groupable
+objects are:
+
+=over 8
+
+=item Preferences
+
+=item Groups
+
+=item Alert Types
+
+=item Element Types
+
+=item Keywords
+
+=item Contributors
+
+=back
+
+[David]
+
 =back
 
 =head2 Bug Fixes
@@ -249,6 +279,11 @@ fail. Thanks to Neal Sofge for the spot! [David]
 Changing the "Size" display attribute of a field in the Field profile (a
 subprofile of the Element admin profile) now properly causes the field to
 actually display in the new size. Reported by Tony Cowderoy. [David]
+
+=item *
+
+The table of contacts in the alert type profile is now more like other tables,
+in terms of border colors, etc. [David]
 
 =back
 

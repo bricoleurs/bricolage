@@ -19,6 +19,16 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
+# Output group membership.
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::Keyword',
+         obj => $obj,
+         formName => 'keyword_profile',
+         widget => $type,
+         no_edit => $no_edit,
+         num => 2
+);
+
 
 </%perl>
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,

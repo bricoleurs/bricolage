@@ -95,6 +95,7 @@ if (defined $def->{$type}{select}) {
 } else {
     $m->out("<p></p>");
 }
+
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
 	 behavior => $behavior,
@@ -102,7 +103,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 profile => $prof_sub,
 	 title =>   $def->{$type}{title} || 'Existing %n',
 	 fields => $def->{$type}{list_fields},
-	 addition => $type eq 'pref' || $type eq 'job' ? undef : $add_sub,
+	 addition => $type eq 'pref' || $type eq 'job' ? undef : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
 	 select => $def->{$type}{select},
 	 constrain => $constrain || $def->{$type}{constrain},
          field_titles => $def->{$type}{field_titles},
@@ -129,8 +130,6 @@ $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
 ($can_del, $users, $ets) = ();
 </%perl>
 <%init>;
-use Bric::Config qw(:ssl);
-
 # Figure out where we are.
 my ($section, $mode, $type) = parse_uri($r->uri);
 
@@ -198,6 +197,11 @@ my $add_sub = sub {
         ['Add', "$prefix/admin/profile/$type"] : undef;
 };
 
+my $ct_add_sub = sub {
+    return chk_authz($_[0], CREATE, 1) ?
+        ['Add', "$prefix/admin/profile/$type", 'Contributor Group'] : undef;
+};
+
 # Check where we were last.
 my $changed = get_state_name('admin_mgr') || '';
 set_state_name('admin_mgr', $type);
@@ -231,7 +235,9 @@ my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 
 # We'll use this for displaying a select list of groups.
 my %grp_sel = Bric::Util::Grp->href_grp_class_keys;
-$grp_sel{''} = 'All Groups';
+$grp_sel{''} = ' All Groups'; # XXX The space makes it first in the list.
+# XXX Make sure contrib_grp is properly re-labled.
+$grp_sel{contrib_type} = 'Contributor Groups';
 my $fmt;
 
 # We'll use this coderef for displaying users.

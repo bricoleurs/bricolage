@@ -71,6 +71,13 @@ sub add_site_id : Callback {
 
 ###
 
+# New contributor types are really secret groups, so we need to make sure
+# that's so.
+my %new_params = (
+    contrib_type => { secret => 1 },
+    element      => {},
+);
+
 $base_handler = sub {
     my $self = shift;
     my $param = $self->params;
@@ -80,7 +87,9 @@ $base_handler = sub {
 
     # Instantiate the object.
     my $id = $param->{$key . '_id'};
-    my $obj = defined $id ? $class->lookup({ id => $id }) : $class->new;
+    my $obj = defined $id
+      ? $class->lookup({ id => $id })
+      : $class->new($new_params{$key});
 
     # Check the permissions.
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
