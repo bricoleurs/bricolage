@@ -12,8 +12,10 @@ AC_PREFIX_DEFAULT(/usr/local/bricolage)
 # Use braces instead of parens because sh, perl, etc. also accept them.
 datadir='${prefix}/data'
 sysconfdir='${prefix}/conf'
-# Capture the config string early
-CONFIG_STRING="$@"
+# Capture the config string early.  This will wind up stored in
+# a clear text file with open read perms, so get rid of the
+# passwords.
+CONFIG_STRING=`echo $@ | sed -e 's/ --with-dbi-pass=[^ ]*//g'`
 
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
@@ -27,7 +29,7 @@ AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
 AC_VAR_WITH(ADMINISTRATOR,administrator,root)
 AC_VAR_WITH(DB_NAME,db-name,wwwdata)
 AC_VAR_WITH(DBI_USER,dbi-user,nobody)
-AC_VAR_WITH(DBI_PASS,dbi-pass,ChangeMeNow)
+AC_VAR_WITH(DBI_PASS,dbi-pass)
 AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
 # TODO: System defaults for these can be determined from $APACHE -V
@@ -157,6 +159,17 @@ AC_CACHE_SAVE
 AC_ARG_VAR(PG_ROOT_PASS)
 AC_CACHE_SAVE
 CHECK_FOR_PGPASS
+
+if test "x${DBI_PASS}" = "x" ; then
+	defaults=no
+	AC_PROMPT_USER_NO_DEFINE(DBI_PASS,[
+We will be creating a new database user: ${DBI_USER}.
+Please enter a password for this user.])
+fi
+
+if test "x${DBI_PASS}" = "x" ; then
+	AC_MSG_ERROR(No database user password defined)
+fi
 
 # predefined
 AC_SUBST(VERSION)
