@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-15 19:50:41 $
+$Date: 2002-07-16 19:52:31 $
 
 =head1 SYNOPSIS
 
@@ -86,7 +86,6 @@ use strict;
 # Programatic Dependencies              
 
 # A class that impliments categories as a subset of groups.
-use Bric::Util::Grp::Category;
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
@@ -111,10 +110,8 @@ use base qw(Bric);
 #======================================#
 
 use constant TABLE  => 'category';
-use constant COLS   => qw(directory asset_grp_id category_grp_id 
-                          active uri parent_id);
-use constant FIELDS => qw(directory asset_grp_id category_grp_id 
-                          _active uri parent_id);
+use constant COLS   => qw(directory asset_grp_id  active uri parent_id name description);
+use constant FIELDS => qw(directory asset_grp_id _active uri parent_id name description);
 use constant ORD    => qw(name description uri directory ad_string ad_string2);
 
 use constant ROOT_CATEGORY_ID => 0;
@@ -145,12 +142,12 @@ BEGIN {
                          'id'              => Bric::FIELD_READ,
                          'directory'       => Bric::FIELD_RDWR,
                          'asset_grp_id'    => Bric::FIELD_READ,
-                         'category_grp_id' => Bric::FIELD_READ,
                          'uri'             => Bric::FIELD_READ,
                          'parent_id'       => Bric::FIELD_RDWR,
+                         'name'            => Bric::FIELD_RDWR,
+                         'description'     => Bric::FIELD_RDWR,
 
                          # Private Fields
-                         '_category_grp_obj' => Bric::FIELD_NONE,
                          '_asset_grp_obj'    => Bric::FIELD_NONE,
 
                          '_attr_obj'         => Bric::FIELD_NONE,
@@ -227,14 +224,6 @@ sub new {
 
     # Call the parent's constructor.
     $self->SUPER::new();
-
-    my $cat_grp = Bric::Util::Grp::Category->new($init);
-    
-    # Save this to the database so we can get an ID.
-    #$cat_grp->save;
-
-    $self->_set(['_category_grp_obj'], [$cat_grp]);
-    
     $self->activate;
 
     # Return the object.
@@ -273,11 +262,6 @@ sub lookup {
     
     # Set the columns selected as well as the passed ID.
     $self->_set(['id', FIELDS], $ret->[0]);
-
-    my $grp_id = $self->get_category_grp_id;
-    my $grp = Bric::Util::Grp::Category->lookup({'id' => $grp_id});
-    
-    $self->_set(['_category_grp_obj'],[$grp]);
 
     my $id = $self->get_id;
     my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
@@ -324,24 +308,15 @@ sub list {
     # If 'all' is passed as the value of active, don't select based on active.
     delete $param->{'active'} if $param->{'active'} eq 'all';
 
-    # Name is set on the group, so it must be searched seperately.
-    if ($param->{'name'}) {
-        $ret = Bric::Util::Grp::Category::_select_by_name($param->{'name'},
-                                                        $param->{'active'});
-    } else {
-        foreach (keys %$param) {
-            if ($_ eq 'directory') {
-                push @txt, $_;
-            } else {
-                push @num, $_;
-            }
-        }
-        
-        my $where = join(' AND ', (map { "$_=?" }             @num),
-                                  (map { "LOWER($_) LIKE ?" } @txt));
-        
-        $ret = _select_category($where, [@$param{@num,@txt}]);
+    foreach (keys %$param) {
+        if ($_ eq 'directory' or $_ eq 'name') { push @txt, $_ }
+        else { push @num, $_ }
     }
+        
+    my $where = join(' AND ', (map { "$_=?" }             @num),
+                              (map { "LOWER($_) LIKE ?" } @txt));
+        
+    $ret = _select_category($where, [@$param{@num,@txt}]);
 
     foreach my $d (@$ret) {
         # Instantiate object
@@ -349,11 +324,6 @@ sub list {
         
         # Set the columns selected as well as the passed ID.
         $self->_set(['id', FIELDS], $d);
-        
-        my $grp_id = $self->get_category_grp_id;
-        my $grp = Bric::Util::Grp::Category->lookup({'id' => $grp_id});
-        
-        $self->_set(['_category_grp_obj'],[$grp]);
         
         my $id = $self->get_id;
         my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
@@ -644,58 +614,6 @@ sub my_meths {
 
 #------------------------------------------------------------------------------#
 
-=item $name = $cat->get_name;
-
-Return the name of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_name {
-    my $self = shift;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    return $cat_obj->get_name;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $self = $cat->set_name($name);
-
-Sets the name of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_name {
-    my ($self, $name) = @_;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    return $cat_obj->set_name($name) ? $self : undef;
-}
-
-#------------------------------------------------------------------------------#
-
 =item @objs = $cat->ancestry();
 
 Return all the parent category of this category
@@ -858,33 +776,6 @@ sub set_parent_id {
 
 #------------------------------------------------------------------------------#
 
-=item $name = $cat->get_description;
-
-Returns the description of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_description {
-    my $self = shift;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    return $cat_obj->get_description;
-}
-
-
-#------------------------------------------------------------------------------#
-
 =item $val = $element->set_ad_string($value);
 
 =item $self = $element->get_ad_string;
@@ -937,7 +828,56 @@ sub get_ad_string2 {
     return $self->get_attr(':ad:string2');
 }
 
-#------------------------------------------------------------------------------#
+
+### these functions are automatic
+
+=item $name = $cat->get_name;
+
+Return the name of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=item $self = $cat->set_name($name);
+
+Sets the name of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=item $name = $cat->get_description;
+
+Returns the description of this category.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
 
 =item $self = $cat->set_description($desc);
 
@@ -956,12 +896,6 @@ B<Notes:>
 NONE
 
 =cut
-
-sub set_description {
-    my ($self, $desc) = @_;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    return $cat_obj->set_description($desc) ? $self : undef;
-}
 
 #------------------------------------------------------------------------------#
 
@@ -1233,48 +1167,6 @@ sub add_child {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $cat->del_child([$cat]);
-
-Delete a child of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub del_child {
-    my $self = shift;
-    my ($cat) = @_;
-    my $cat_obj = $self->_get('_category_grp_obj');
-    my $save    = $self->_get('_save_children');
-    my $vals;
-
-    foreach (@$cat) {
-        push @$vals, {'package' => ref $_, 'id' => $_->get_id};
-        my $c_grp = $_->_get('_category_grp_obj');
-        $c_grp->set_parent_id(undef);
-
-        push @$save, $_;
-    }
-    
-    $cat_obj->delete_members($vals);
-
-    $self->_set(['_save_children'], [$save]);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
 =item $success = $cat->add_keyword([$kw || $kw_id]);
 
 Associates a keyword with this category.
@@ -1540,11 +1432,9 @@ sub save {
     }
 
     # Save changes made to these objects if they exist.
-    $cat_obj->save if $cat_obj;
     $a_obj->save   if $a_obj;
 
     # Make sure the IDs are set.
-    $self->_set(['category_grp_id'], [$cat_obj->get_id]) if $cat_obj;
     $self->_set(['asset_grp_id'], [$a_obj->get_id])
       unless defined $ag_id || !$a_obj;
 

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2002-06-11 22:21:22 $
+-- $Date: 2002-07-16 19:52:31 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -9,10 +9,6 @@
 -- -----------------------------------------------------------------------------
 -- Table: category
 
-ALTER TABLE category ADD
-	CONSTRAINT fk_subcat_grp__category FOREIGN KEY (category_grp_id)
-	REFERENCES grp(id) ON DELETE CASCADE;
-        
 ALTER TABLE category ADD
 	CONSTRAINT fk_asset_grp__category FOREIGN KEY (asset_grp_id)
 	REFERENCES grp(id) ON DELETE CASCADE;

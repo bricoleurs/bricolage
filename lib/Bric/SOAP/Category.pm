@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-02 23:42:44 $
+$Date: 2002-07-16 19:52:32 $
 
 =head1 SYNOPSIS
 
@@ -568,12 +568,6 @@ sub _load_category {
 	    die __PACKAGE__ . " : requested path \"$cdata->{path}\" " .
 		"is already in use."
 		    if exists $paths{$path};
-
-	    # disassociate from parent if updating
-	    if ($update and $category->get_parent) {
-		$category->get_parent->del_child([$category]);
-		$category->get_parent->save;
-	    }
 
 	    # special-case root category
 	    if ($path eq '/') {
