@@ -91,6 +91,11 @@ sites can have output channels with the same names. [David]
 You can no longer delete a category from a story when you have also marked it
 to become the primary category. Reported by Simon Wilcox. [David]
 
+=item *
+
+Editing notes from My Workspace now works properly. Thanks to Simon Wilcox for
+the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
