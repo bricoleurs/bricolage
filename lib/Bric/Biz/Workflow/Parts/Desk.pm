@@ -2,24 +2,21 @@ package Bric::Biz::Workflow::Parts::Desk;
 ###############################################################################
 
 =head1 NAME
- 
- Bric::Biz::Workflow::Parts::Desk;
 
- Impliments a desk object as part of a workflow
-
+Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2002-09-28 00:08:15 $
+$Date: 2002-09-28 00:09:25 $
 
 
 =head1 SYNOPSIS
