@@ -53,6 +53,7 @@ blibdir = @blibdir@
 libdir = @libdir@
 htmldir = @htmldir@
 mandir  = @mandir@
+docdir  = @docdir@
 VPATH = @srcdir@
 
 
@@ -81,7 +82,7 @@ CONF_BRIC_TARGET = ${confdir}/bricolage.conf
 CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET}
 
 # And the various doc files in text form
-DOC_TARGETS = ${docdir}/README ${docdir}/Changes \
+DOC_TARGETS = ${docdir}/Changes \
 			  ${docdir}/License ${docdir}/TODO
 
 
@@ -114,21 +115,12 @@ DATA_FILES = $(foreach dir, \
 				${DATA_SUBDIRS}, \
 					$(shell cd ${DATA} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 DATA_TARGETS = $(addprefix ${datadir}/,${DATA_FILES})
-#
-BLIB_SUBDIRS = $(subst ./,, \
-					$(shell cd ${BLIB} && \
-						${FIND} . -mindepth 1 -type d -not -name CVS -not -name .))
-BLIB_FILES = $(foreach dir, \
-				${BLIB_SUBDIRS}, \
-					$(shell cd ${BLIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
-BLIB_TARGETS = $(addprefix ${blibdir}/,${BLIB_FILES})
 
 # Canned sequence for installation
 
 define install-files
 @$(NORMAL_INSTALL)  # Normal commands follow.
 ${INST}/mkinstalldirs $(@D)
-chown ${APACHE_USER}.${APACHE_GROUP} $(@D)
 cp $^ $@
 chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
@@ -180,7 +172,7 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 all:  doc
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html 
+		 install-man install-html chowndirs
 installdirs:
 	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
@@ -188,6 +180,8 @@ installdirs:
                            ${confdir} ${libdir} \
                            ${compdir} ${blibdir} \
                            ${htmldir} ${mandir}
+chowndirs:
+	chown -R ${APACHE_USER}.${APACHE_GROUP} ${blibdir} ${compdir} ${datadir}
 uninstall: uninstallfiles uninstalldirs dist-clean
 uninstalldirs:
 	$(NORMAL_UNINSTALL)  # Normal commands follow.
@@ -228,9 +222,6 @@ endif
 install-lib: ${LIB_TARGETS}
 ${LIB_TARGETS}: ${libdir}%: ${LIB}%
 	${install-files}
-install-blib: ${BLIB_TARGETS}
-${BLIB_TARGETS}: ${blibdir}%: ${BLIB}%
-	${install-files}
 install-comp: ${COMP_TARGETS}
 ${COMP_TARGETS}: ${compdir}%: ${COMP}% 
 	${install-files}
@@ -246,7 +237,8 @@ ${HTML_TARGETS}: ${htmldir}%: ${HTML}%
 install-bin: ${BIN_TARGETS}
 ${BIN_TARGETS}: ${bindir}%: ${BIN}%
 	${install-files}
-${DOC_TARGETS}: ${docdir}%: ${DOC}%
+install-doc: ${DOC_TARGETS}
+${DOC_TARGETS}: ${docdir}/%: %
 	${install-files}
 
 

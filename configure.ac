@@ -16,7 +16,8 @@ sysconfdir='${prefix}/conf'
 # Additional --with-switches
 # SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
 AC_VAR_WITH(compdir,compdir,'${prefix}/comp')
-AC_VAR_WITH(htmldir,htmldir,'${prefix}/doc/html')
+AC_VAR_WITH(docdir,docdir,'${prefix}/doc')
+AC_VAR_WITH(htmldir,htmldir,'${docdir}/html')
 AC_VAR_WITH(blibdir,blibdir,'${prefix}/blib')
 AC_VAR_WITH(APACHE_USER,apache-user,nobody)
 AC_VAR_WITH(APACHE_GROUP,apache-group,nobody)
