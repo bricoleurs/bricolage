@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 22:58:52 $
+$Date: 2002-03-13 01:17:43 $
 
 =head1 SYNOPSIS
 
@@ -518,7 +518,7 @@ sub _load_category {
     # tried to use a fixup hash like the Element code but as it turns
     # out half-creating categories is a really bad thing resulting in
     # insane infinite loops.  Hence, this workaround.
-    @{$data->{category}} = sort {(exists $b->{path} ? length($b->{path}) : 0)
+    @{$data->{category}} = sort {(exists $a->{path} ? length($a->{path}) : 0)
 				 <=> 
 				 (exists $b->{path} ? length($b->{path}) : 0) }
 	@{$data->{category}};

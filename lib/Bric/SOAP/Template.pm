@@ -25,7 +25,7 @@ import SOAP::Data 'name';
 # needed to get envelope on method calls
 our @ISA = qw(SOAP::Server::Parameters);
 
-use constant DEBUG => 0;
+use constant DEBUG => 1;
 require Data::Dumper if DEBUG;
 
 # this is needed by Template.pl so it can test create() and update()
@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-28 19:41:02 $
+$Date: 2002-03-13 01:17:43 $
 
 =head1 SYNOPSIS
 
@@ -609,11 +609,10 @@ sub _load_template {
 		unless defined $init{output_channel__id};
 
 	# figure out file_type
-	my $file_type;
 	if ($tdata->{file_name} =~ /\.(\w+)$/) {
-	    $file_type = $1;
+	    $init{file_type} = $1;
 	} elsif ($tdata->{file_name} =~ /autohandler$/) {
-	    $file_type = 'mc';
+	    $init{file_type} = 'mc';
 	} else {
 	    die __PACKAGE__ . 
 		" : unable to determine file_type for file_name " .
@@ -715,8 +714,10 @@ sub _load_template {
 	    if ($template) {
 		# make sure it's ours
 		die __PACKAGE__ . "::update : template \"$id\" ".
-		    "is checked out to another user.\n"
-			unless $template->get_user__id == get_user_id;
+		    "is checked out to another user: ", 
+			$template->get_user__id, ".\n"
+			    if defined $template->get_user__id and
+				$template->get_user__id != get_user_id;
 		die __PACKAGE__ . " : access denied.\n"
 		    unless chk_authz($template, CREATE, 1);
 	    } else {
