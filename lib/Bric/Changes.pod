@@ -335,6 +335,11 @@ a new member was added. This was very wasteful, and slowed performance a great
 deal for groups with thousands of members. Thanks to Mark for the spot.
 [David]
 
+=item *
+
+Added check for Category "Directory" string to make sure that no non-URL
+characters are added. [Matt Vella]
+
 =back
 
 =head1 VERSION 1.3.2

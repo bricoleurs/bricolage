@@ -79,8 +79,12 @@ if ($field eq "$widget|save_cb") {
                             . " try a different directory name or Parent.");
                     return $cat;
                 }
-                
-                $cat->set_directory($param->{directory});
+		if ($param->{directory} =~ /[^a-zA-Z0-9\_]+/) {
+		    add_msg("Directory name '".$param->{directory}."' contains invalid characters. Please try a different directory name.");
+                    return $cat; 
+		} else {
+		    $cat->set_directory($param->{directory});
+		}
             }
 	}
 
@@ -127,11 +131,11 @@ if ($field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-07-15 20:46:18 $
+$Date: 2002-08-18 23:55:58 $
 
 =head1 SYNOPSIS
 
