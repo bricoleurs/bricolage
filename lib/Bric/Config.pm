@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.89 $
+$Revision: 1.90 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.89 $ )[-1];
+our $VERSION = (qw$Revision: 1.90 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-20 14:07:28 $
+$Date: 2004-02-20 15:05:33 $
 
 =head1 SYNOPSIS
 
@@ -547,7 +547,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Process Size Limit Settings
     use constant CHECK_PROCESS_SIZE     => $config->{CHECK_PROCESS_SIZE};
     use constant MAX_PROCESS_SIZE       => $config->{MAX_PROCESS_SIZE} || 56000;
-    use constant CHECK_FREQUENCY        => $config->{CHECK_FREQUENCT} || 1;
+    use constant CHECK_FREQUENCY        => $config->{CHECK_FREQUENCY} || 1;
     use constant MIN_SHARE_SIZE         => $config->{MIN_SHARE_SIZE} || 0;
     use constant MAX_UNSHARED_SIZE      => $config->{MAX_UNSHARED_SIZE} || 0;
 
