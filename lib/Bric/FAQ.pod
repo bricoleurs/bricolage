@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.11 $
+$Revision: 1.7.2.12 $
 
 =head1 DATE
 
-$Date: 2003-08-18 18:47:41 $
+$Date: 2003-08-18 18:50:30 $
 
 =head1 DESCRIPTION
 
@@ -186,24 +186,17 @@ Sometimes you might need to update your CPAN bundle, itself:
 
   perl -MCPAN -e 'install Bundle::CPAN'
 
-=head3 Why does C<make install> exit with the following error?
+=head3 Why does C<make install> exit with the error 'Missing or empty inst/bricolage.sql!'?
 
-  Missing or empty inst/bricolage.sql!
-
-You downloaded Bricolage from CVS and didn't
-run `make dist`. Do something like this:
+You downloaded Bricolage from CVS and didn't run C<make dist>. Do something
+like this:
 
     # make dist
     [lots of output...]
     # cd bricolage-1.5.0
     # make install
 
-=head3 Why does C<make install> exit with the following error?
-
-  ###############################################################################
-
-  Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd".
-  ###############################################################################
+=head3 Why does C<make install> exit with the error 'Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd"'?
 
 Most likely it's because you're installing Bricolage on Red Hat 8 or later and
 haven't got 'round to reading F<README.RedHat>. In fact, a fair number of Perl
@@ -227,19 +220,16 @@ We've also heard that you can set the LANG environment variable globally in
 the F</etc/sysconfig/i18n> file. Then you wouldn't need to worry about it
 anywhere else.
 
-=head3 Why does C<make install> exit with the following error?
+=head3 Why does C<make install> exit with the error 'IDENT authentication failed for user "postgres"'?
 
-  IDENT authentication failed for user "postgres"
-
-I'm not sure why the IDENT fails. In inst/db_grant.pl,
-we switch EUID to that of 'postgres'. Maybe more things
-need to be set in order to convince postgresql that
-you're logging in as 'postgres' instead of 'root'?
+I'm not sure why the IDENT fails. In F<inst/db_grant.pl>, we switch EUID to
+that of 'postgres'. Maybe more things need to be set in order to convince
+postgresql that you're logging in as 'postgres' instead of 'root'?
 
 I worked around the problem by ignoring it; in pg_hba.conf,
 
-  #local   all         all                                         ident sameuser
-  #host    all         all         127.0.0.1        255.0.0.0      ident sameuser
+  #local  all         all                                         ident sameuser
+  #host   all         all         127.0.0.1        255.0.0.0      ident sameuser
   local   all         all                                         trust
   host    all         all         127.0.0.1        255.0.0.0      trust
   host    all         all         0.0.0.0          0.0.0.0        reject
