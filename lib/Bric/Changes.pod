@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.6.1
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added F<bric_xfer_grps> and F<bric_xfer_users to F<contrib/bric_xfer>.
+They use the Bric API to transfer Groups between bricolages. [Scott]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
