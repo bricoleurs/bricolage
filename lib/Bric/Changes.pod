@@ -87,6 +87,12 @@ Changing a media item's category and then saving caused an error.
 Changing a media document's cover date no longer causes the URI to
 disappear. Thanks to Dave Rolsky for the spot. [David]
 
+=item *
+
+Attempting to preview a story for which there are no associated destinations
+no longer causes the error 'Can't call method "ACCESS" without a package or
+object reference'. Thanks to Earle Martin for the spot! [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)

@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.58 $ )[-1];
+our $VERSION = (qw$Revision: 1.59 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 11:20:42 $
+$Date: 2003-10-30 00:16:52 $
 
 =head1 SYNOPSIS
 
@@ -783,7 +783,7 @@ sub preview {
         # Make sure we have some destinations.
         unless (@$bat) {
             if (not PREVIEW_LOCAL) {
-                status_msg_severe('Cannot preview asset "[_1]" because there ' .
+                severe_status_msg('Cannot preview asset "[_1]" because there ' .
                                   'are no Preview Destinations associated with ' .
                                   'its output channels.', $ba->get_name);
                 next;
