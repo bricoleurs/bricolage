@@ -51,12 +51,12 @@ Database name. Defaults to C<PGDATABASE> environment variable.
 =item -H
 
 PostgreSQL server host name. Will use C<PGHOST> environment variable or else
-PostgreSQL assumes that it's connecting via sockets.
+PostgreSQL assumes that it's connecting via local Unix sockets.
 
 =item -o
 
 PostgreSQL server port number. Will use C<PGPORT> environment variable or else
-PostgreSQL assumes that it's connecting via sockets.
+PostgreSQL assumes that it's connecting via local Unix sockets.
 
 =item -c
 
