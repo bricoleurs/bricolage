@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.9 $
+$Revision: 1.13.2.10 $
 
 =head1 DATE
 
-$Date: 2001-10-02 14:36:00 $
+$Date: 2001-10-03 12:45:32 $
 
 =head1 DESCRIPTION
 
@@ -32,11 +32,6 @@ significant (including the addition of new libraries).
 =head2 VERSION 1.0.2
 
 =over 4
-
-=item *
-
-Document the use of Cache::FileCache in Bric::Admin, especially how it lives in
-/tmp/FileCache [David].
 
 =item *
 
