@@ -25,7 +25,7 @@ unless ($user_sites) {
     if ($sites) {
         # We have some sites to choose from, so set 'em up.
         # It's okay if all sites is the context.
-        my $cx_ok = $cx == 0;
+        my $cx_ok = defined $cx && $cx == 0;
         foreach my $s (@$sites) {
             # Keep the site if the user has permission.
             my $id = $s->get_id;
@@ -78,11 +78,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-03-15 23:02:00 $
+$Date: 2003-04-24 15:41:54 $
 
 =head1 SYNOPSIS
 
