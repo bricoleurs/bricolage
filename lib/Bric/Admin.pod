@@ -431,9 +431,9 @@ Gunzip and untar the Apache and mod_perl sources.
 
 =item *
 
-Change into the source directory, read the INSTALL file to see if you need to
-use any Configure commands other than those specified below. Then execute the
-commands:
+Change into the mod_perl source directory, read the INSTALL file to see if you
+need to use any Configure commands other than those specified below. Then
+execute the commands:
 
   perl Makefile.PL \
     APACHE_SRC=../apache_1.3.*/src \
