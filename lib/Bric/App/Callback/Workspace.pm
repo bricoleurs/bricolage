@@ -6,15 +6,16 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:all);
+use Bric::Biz::Asset::Business::Story;
+use Bric::Biz::Asset::Business::Media;
+use Bric::Biz::Asset::Formatting;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Burner;
 
 my $keys = [qw(story media formatting)];
 my $pkgs = { map { $_ => get_package_name($_) } @$keys };
 my $dskpkg = 'Bric::Biz::Workflow::Parts::Desk';
-foreach my $pkg (@$pkgs, $dskpkg) {
-    eval "require $pkg";
-}
+
 
 sub checkin : Callback {
     my $self = shift;
