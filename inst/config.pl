@@ -61,6 +61,9 @@ print "\n\n==> Finished Gathering User Configuration <==\n\n";
 exit 0;
 
 sub choose_defaults {
+
+if (!$QUIET) {
+
     print <<END;
 ========================================================================
 
@@ -122,8 +125,20 @@ END
         $CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
         $CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
         $CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
-      }
-  }
+    }
+} else {
+    # use QUIET defaults
+    $CONFIG{BRICOLAGE_ROOT}   = get_default("BRICOLAGE_ROOT_DIR");
+    $CONFIG{TEMP_DIR}         = get_default("BRICOLAGE_TMP_DIR");
+    $CONFIG{MODULE_DIR}       = get_default("BRICOLAGE_PERL_DIR");
+    $CONFIG{BIN_DIR}          = get_default("BRICOLAGE_BIN_DIR");
+    $CONFIG{MAN_DIR}          = get_default("BRICOLAGE_MAN_DIR");
+    $CONFIG{LOG_DIR}          = get_default("BRICOLAGE_LOG_DIR");
+    $CONFIG{PID_FILE}         = get_default("BRICOLAGE_PID");
+    $CONFIG{MASON_COMP_ROOT}  = get_default("BRICOLAGE_COMP_DIR");
+    $CONFIG{MASON_DATA_ROOT}  = get_default("BRICOLAGE_DATA_DIR");
+}
+}
 
 sub confirm_settings {
   my $default_root = $CONFIG{BRICOLAGE_ROOT};
@@ -159,7 +174,7 @@ sub confirm_settings {
   ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR}, $QUIET);
   ask_confirm("Man-Page Directory (! to skip)", \$CONFIG{MAN_DIR}, $QUIET);
   ask_confirm("Log Directory",             \$CONFIG{LOG_DIR}, $QUIET);
-  ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
+  ask_confirm("PID File Location",         \$CONFIG{PID_FILE}, $QUIET);
   ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT}, $QUIET);
   ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT}, $QUIET);
 

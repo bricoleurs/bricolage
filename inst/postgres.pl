@@ -44,14 +44,18 @@ print "\n\n==> Probing PostgreSQL Configuration <==\n\n";
 
 our %PG;
 
+my $passwordsize = 10;
+my @alphanumeric = ('a'..'z', 'A'..'Z', 0..9);
+my $randpassword = join '', map $alphanumeric[rand @alphanumeric], 0..$passwordsize;
+
 # setup some defaults
-$PG{root_user} = 'postgres';
-$PG{root_pass} = '';
-$PG{sys_user}  = 'bric';
-$PG{sys_pass}  = 'NONE';
-$PG{db_name}   = 'bric';
-$PG{host_name} = '';
-$PG{host_port} = '';
+$PG{root_user} = get_default("POSTGRES_SUPERUSER") || 'postgres';
+$PG{root_pass} = $ENV{POSTGRES_SUPERPASS} || '';
+$PG{sys_user}  = get_default("POSTGRES_BRICUSER") || 'bric';
+$PG{sys_pass}  = $QUIET ? $randpassword : 'NONE';
+$PG{db_name}   = get_default("POSTGRES_DB") || 'bric';
+$PG{host_name} = $ENV{POSTGRES_HOSTNAME} || '';
+$PG{host_port} = $ENV{POSTGRES_HOSTPASS} || '';
 $PG{version} = '';
 
 our $REQ;
@@ -127,7 +131,7 @@ sub get_users {
     print "\n";
     ask_confirm("Postgres Root Username", \$PG{root_user}, $QUIET);
     ask_confirm("Postgres Root Password (leave empty for no password)",
-		\$PG{root_pass});
+		\$PG{root_pass}, $QUIET);
 
     while(1) {
 	$PG{system_user} = $PG{root_user};
@@ -139,7 +143,7 @@ sub get_users {
     }
 
     while(1) {
-      ask_confirm("Bricolage Postgres Username", \$PG{sys_user});
+      ask_confirm("Bricolage Postgres Username", \$PG{sys_user}, $QUIET);
       if ($PG{sys_user} eq $PG{root_user}) {
 	print "Bricolage Postgres User cannot be the same as the Postgres Root User.\n";
       } else {
@@ -147,16 +151,16 @@ sub get_users {
       }
     }
 
-    ask_confirm("Bricolage Postgres Password", \$PG{sys_pass});
-    ask_confirm("Bricolage Database Name", \$PG{db_name});
+    ask_confirm("Bricolage Postgres Password", \$PG{sys_pass}, $QUIET);
+    ask_confirm("Bricolage Database Name", \$PG{db_name}, $QUIET);
 }
 
 # ask for host specifics
 sub get_host {
     print "\n";
     ask_confirm("Postgres Database Server Hostname (default is unset, i.e. local domain socket)",
-                \$PG{host_name});
+                \$PG{host_name}, $QUIET);
     ask_confirm("Postgres Database Server Port Number (default is local domain socket)",
-                \$PG{host_port});
+                \$PG{host_port}, $QUIET);
 }
 

@@ -59,6 +59,13 @@ cloning, falling back on the default values. [Rod Taylor & Andrea Rota]
 
 =item *
 
+Added C<$USE_DEFAULTS> makefile environment variable that, when used with 
+C<$INSTALL_VERBOSITY>, will use platform-specific answers to all of the 
+installation questions.  This allows for completely silent, customizable
+installations, which are necessary for packagers. [Masrhall Roch]
+
+=item *
+
 Added C<RELATED_MEDIA_UPLOAD> F<bricolage.conf> directive that allows editors
 to upload media files directly into an element profile if they have permission
 to create media and to access a media workflow. This makes it a much simpler
