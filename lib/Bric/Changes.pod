@@ -236,6 +236,23 @@ which should be always in production code (e.g., releases). [David]
 Elements are now displayed with their display names rather than their attribute
 names. Thanks to Sam Tregar for the spot. [David]
 
+=item *
+
+Fixed bug where fields (attributes) added to an Element with the name of an
+existing but deactivated field triggered an error. Thanks to Sam for the
+heads-up. [David]
+
+=item *
+
+Fixed a bug where data fields sometimes were not propery retreived from the
+database in Bric::Biz::AssetType. [David]
+
+=item *
+
+Fixed a bug where clicking "Save and Stay" in the Element profile wouldn't
+delete attributes (fields) marked as such, or even delete the Element itself, if
+the "Delete this profile" checkbox was checked.
+
 =back
 
 =head1 VERSION 1.0.1
