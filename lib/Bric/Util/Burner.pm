@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-18 06:21:08 $
+$Date: 2003-09-18 12:35:52 $
 
 =head1 SYNOPSIS
 
@@ -325,7 +325,7 @@ B<Notes:> NONE.
 =item my $burner_class = Bric::Util::Burner->cat_fn_has_ext($filename);
 
 Returns true if the category template with the base file name C<$filename> has
-a file extension, and fase if it doesn't. For example Mason category templates
+a file extension, and false if it doesn't. For example Mason category templates
 have no extension, so this method returns false for the C<$filename>
 "autohandler". On the other hand, HTML::Template templates do have extensions,
 so this method returns true for the C<$filename> "category".
