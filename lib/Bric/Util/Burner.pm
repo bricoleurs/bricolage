@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.66 $
+$Revision: 1.67 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.66 $ )[-1];
+our $VERSION = (qw$Revision: 1.67 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 00:57:56 $
+$Date: 2004-03-03 22:55:37 $
 
 =head1 SYNOPSIS
 
@@ -279,6 +279,7 @@ sub new {
     $init->{out_dir}  ||= STAGE_ROOT;
     $init->{page_numb_start} ||= 1;
     $init->{_page_extensions}  ||= [''];
+    $init->{_notes} = {};
 
     $init->{sandbox_dir} = $fs->cat_dir(BURN_SANDBOX_ROOT, 'user_'. $init->{user_id})
        if defined($init->{user_id});
@@ -377,7 +378,7 @@ sub list_file_types  { $opts }
 
 =over 4
 
-=item my $data_dir = $b->get_data_dir
+=item my $data_dir = $burner->get_data_dir
 
 Returns the data directory.
 
@@ -387,7 +388,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $b = $b->set_data_dir($data_dir)
+=item $b = $burner->set_data_dir($data_dir)
 
 Sets the component directory.
 
@@ -397,7 +398,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $comp_dir = $b->get_comp_dir
+=item my $comp_dir = $burner->get_comp_dir
 
 Returns the component directory.
 
@@ -407,7 +408,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $b = $b->set_comp_dir($comp_dir)
+=item $b = $burner->set_comp_dir($comp_dir)
 
 Sets the data directory.
 
@@ -417,7 +418,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $out_dir = $b->get_out_dir
+=item my $out_dir = $burner->get_out_dir
 
 Returns the output directory.
 
@@ -427,7 +428,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $b = $b->set_out_dir($out_dir)
+=item $b = $burner->set_out_dir($out_dir)
 
 Sets the output directory.
 
@@ -437,7 +438,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $mode = $b->get_mode
+=item my $mode = $burner->get_mode
 
 Returns the burn mode. The value is an integer corresponding to one of the
 following constants: "PUBLISH_MODE", "PREVIEW_MODE", and "SYNTAX_MODE".
@@ -448,7 +449,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $story = $b->get_story
+=item my $story = $burner->get_story
 
 Returns the story currently being burned -- that is, during the execution of
 templates by C<burn_one()>.
@@ -459,7 +460,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $story = $b->get_element
+=item my $story = $burner->get_element
 
 Returns the element currently being burned -- that is, during the execution of
 the various element templates by C<burn_one()>.
@@ -470,7 +471,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $oc = $b->get_oc
+=item my $oc = $burner->get_oc
 
 Returns the output channel in which the story returned by C<get_story()> is
 currently being burned.
@@ -481,7 +482,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $cat = $b->get_cat
+=item my $cat = $burner->get_cat
 
 Returns the category to which the story returned by C<get_story()> is
 currently being burned.
@@ -492,7 +493,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $page = $b->get_page
+=item my $page = $burner->get_page
 
 Returns the index number of the page that's currently being burned. The index
 is 0-based. The first page is "0", the second page is "1" and so on.
@@ -503,11 +504,11 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $output_filename = $b->get_output_filename
+=item my $output_filename = $burner->get_output_filename
 
 Returns the base name used to create the file names of all files created by
 the current burn. This will have the same value as
-C<< $b->get_oc->get_filename >>.
+C<< $burner->get_oc->get_filename >>.
 
 B<Throws:> NONE.
 
@@ -515,11 +516,11 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $output_ext = $b->get_output_ext
+=item my $output_ext = $burner->get_output_ext
 
 Returns the filename extension used to create the file names of all files
 created by the current burn. This will have the same value as
-C<< $b->get_oc->get_file_ext >>.
+C<< $burner->get_oc->get_file_ext >>.
 
 B<Throws:> NONE.
 
@@ -527,7 +528,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $output_path = $b->get_base_path
+=item my $output_path = $burner->get_base_path
 
 Returns the local file system path to the directory that will be used as the
 base path for all files written for documents within a given output channel.
@@ -538,7 +539,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $output_path = $b->get_output_path
+=item my $output_path = $burner->get_output_path
 
 Returns the local file system path to the directory into which all files
 created by the current burn will be written.
@@ -549,7 +550,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $base_uri = $b->get_base_uri
+=item my $base_uri = $burner->get_base_uri
 
 Returns the base URI to the directory into which all files created by the
 current burn will be written.
@@ -560,7 +561,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item  $b = $b->set_page_extensions(@page_extensions)
+=item  $b = $burner->set_page_extensions(@page_extensions)
 
 Sets page extensions to be used during burning. Will revert to page
 numbering once the extensions are all used.
@@ -588,7 +589,7 @@ sub set_page_extensions {
     return $self;
 }
 
-=item  my @page_extensions = $b->get_page_extensions();
+=item  my @page_extensions = $burner->get_page_extensions();
 
 Returns the page extensions to be used during burning.
 
@@ -606,7 +607,7 @@ sub get_page_extensions {
     return @$page_extensions;
 }
 
-=item  $b = $b->set_page_numb_start($start);
+=item  $b = $burner->set_page_numb_start($start);
 
 Sets the start to be used when numbering pages after array
 passed to set_page_extensions has been exhausted.
@@ -631,7 +632,7 @@ story1.html
 If you want numbering to correspond to the actual story page number,
 then you would pass the number of page extensions plus 1.
 
-=item  my $page_numb_start = $b->get_page_numb_start;
+=item  my $page_numb_start = $burner->get_page_numb_start;
 
 Returns the page extension start.
 
@@ -641,7 +642,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $success = $b->deploy($fa);
+=item $success = $burner->deploy($fa);
 
 Deploys a template to the file system. If the burner object
 was provided with a user_id, the template is deployed into the user's
@@ -691,7 +692,7 @@ sub deploy {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->undeploy($fa);
+=item $success = $burner->undeploy($fa);
 
 Deletes a template from the file system. If the burner object
 was provided with a user_id, the template is undeployed from the user's
@@ -717,7 +718,7 @@ sub undeploy {
 }
 #------------------------------------------------------------------------------#
 
-=item $url = $b->preview($ba, $key, $user_id, $oc_id);
+=item $url = $burner->preview($ba, $key, $user_id, $oc_id);
 
 Sends story or media to preview server and returns URL. Params:
 
@@ -867,7 +868,7 @@ sub preview {
 
 #------------------------------------------------------------------------------#
 
-=item $published = $b->publish($ba, $key, $user_id, $publish_date);
+=item $published = $burner->publish($ba, $key, $user_id, $publish_date);
 
 Publishes an asset, then remove from workflow. Returns 1 if publish was
 successful, else 0. Parameters are:
@@ -1071,7 +1072,7 @@ sub publish {
     return $published;
 }
 
-=item $b->publish_another($ba);
+=item $burner->publish_another($ba);
 
   $burner->publish_another($ba);
   $burner->publish_another($ba, $publish_time);
@@ -1118,7 +1119,7 @@ sub publish_another {
 
 #------------------------------------------------------------------------------#
 
-=item @resources = $b->burn_one($ba, $oc, $cat);
+=item @resources = $burner->burn_one($ba, $oc, $cat);
 
 Publishes an asset. Returns a list of resources burned. Parameters are:
 
@@ -1163,6 +1164,9 @@ sub burn_one {
                 [@_, $oc->get_filename($story), $oc->get_file_ext, $path,
                  $base_uri, 0]);
 
+    # Clear out any previously existing notes.
+    $self->clear_notes;
+
     # Construct the burner and do it!
     my ($burner, $at) = $self->_get_subclass($story);
     $burner->burn_one(@_, $at);
@@ -1192,7 +1196,7 @@ sub chk_syntax {
 
 ##############################################################################
 
-=item my $page_file = $b->page_file($number)
+=item my $page_file = $burner->page_file($number)
 
   % # Mason syntax.
   % my $page_file = $burner->page_file($number);
@@ -1242,7 +1246,7 @@ sub page_file {
 
 ##############################################################################
 
-=item my $page_uri = $b->page_uri($number)
+=item my $page_uri = $burner->page_uri($number)
 
   % # Mason syntax.
   % my $page_uri = $burner->page_uri($number);
@@ -1277,7 +1281,7 @@ sub page_uri {
 
 ##############################################################################
 
-=item my $page_filepath = $b->page_filepath($number)
+=item my $page_filepath = $burner->page_filepath($number)
 
 Returns the complete local file system file name for a page in a story as the
 story is being burned. The page number must be greater than 0.
@@ -1308,7 +1312,7 @@ sub page_filepath {
 
 ##############################################################################
 
-=item my $prev_page_file = $b->prev_page_file
+=item my $prev_page_file = $burner->prev_page_file
 
   % if (my $prev = $burner->prev_page_file) {
       <a href="<% $prev %>">Previous Page</a>
@@ -1333,7 +1337,7 @@ sub prev_page_file {
 
 ##############################################################################
 
-=item my $prev_page_uri = $b->prev_page_uri
+=item my $prev_page_uri = $burner->prev_page_uri
 
   % if (my $prev = $burner->prev_page_uri) {
       <a href="<% $prev %>">Previous Page</a>
@@ -1359,7 +1363,7 @@ sub prev_page_uri {
 
 ##############################################################################
 
-=item my $next_page_file = $b->next_page_file
+=item my $next_page_file = $burner->next_page_file
 
   % if (my $next = $burner->next_page_file) {
       <a href="<% $next %>">Next Page</a>
@@ -1385,7 +1389,7 @@ sub next_page_file {
 
 ##############################################################################
 
-=item my $next_page_uri = $b->next_page_uri
+=item my $next_page_uri = $burner->next_page_uri
 
   % if (my $next = $burner->next_page_uri) {
       <a href="<% $next %>">Next Page</a>
@@ -1411,7 +1415,7 @@ sub next_page_uri {
 
 ##############################################################################
 
-=item my $uri = $b->best_uri($story)
+=item my $uri = $burner->best_uri($story)
 
   % if (my $rel_story = $element->get_related_story) {
       <a href="<% $burner->best_uri($rel_story)->as_string %>">
@@ -1485,7 +1489,77 @@ sub best_uri {
 
 ##############################################################################
 
-=item $b->throw_error($message);
+=item $burner->notes
+
+  my $notes = $burner->notes;
+  while (my ($k, $v) = each %$notes) {
+      print "$k => $v\n";
+  }
+
+  my $last = 10;
+  $burner->notes( last_story => $last );
+  $last = $burner->notes('last_story');
+
+The C<notes()> method provides a place to store burn data data, giving
+template developers a way to share data among multiple burns over the course
+of publishing a single story in a single category to a single output
+channel. Any data stored here persists for the duration of a call to
+C<burn_one()>. Use C<clear_notes()> to manually clear the notes.
+
+Conceptually, C<notes()> contains a hash of key-value pairs. C<notes($key,
+$value)> stores a new entry in this hash. C<notes($key)> returns a previously
+stored value. C<notes()> without any arguments returns a reference to the
+entire hash of key-value pairs.
+
+C<notes()> is similar to the mod_perl method C<< $r->pnotes() >>. The main
+differences are that this C<notes()> can be used in a non-mod_perl environment
+(such as when a story is published by F<bric_queued>, and that its lifetime is
+tied to the lifetime of the call to C<burn_one()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub notes {
+    my $self = shift;
+    my $notes = $self->_get('_notes');
+    return $notes unless @_;
+    my $key = shift;
+    return @_
+      ? $notes->{$key} = shift
+      : $notes->{$key};
+}
+
+##############################################################################
+
+=item $burner->clear_notes
+
+  $cb_request->clear_notes;
+
+Use this method to clear out the notes hash.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub clear_notes {
+    my $self = shift;
+    my $notes = $self->_get('_notes');
+    %$notes = ();
+    return $self;
+}
+
+##############################################################################
+
+=item $burner->throw_error($message);
 
   my $media = $element->get_related_media
     or $burner->throw_error("Hey, you forgot to associate a media document!");

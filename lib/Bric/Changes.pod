@@ -25,6 +25,15 @@ This document lists the Changes to Bricolage introduced with each release.
 A "Bulk Publish" link in ADMIN->PUBLISHING that lets members of the Global
 Admins group publish story and media documents by category. [Scott]
 
+=item *
+
+Added C<notes()> method to Bric::Util::Burner, along with the accompanying
+C<clear_notes()>. The C<notes()> method provides a place to store burn data
+data, giving template developers a way to share data among multiple burns over
+the course of publishing a single story in a single category to a single
+output channel. Any data stored here persists for the duration of a call to
+C<burn_one()>. [David]
+
 =back
 
 =head2 Improvements
