@@ -18,7 +18,7 @@ my $expire_wf_cache = sub {
     my ($self, $did) = @_;
     # Expire the cache for all workflows that contain this desk.
     foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $did })) {
-        $c->set('__WORKFLOWS__' . $wf->get_site_id, 0);
+        $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
     }
 };
 
