@@ -439,6 +439,16 @@ sub _merge_properties {
 
         my $was_there = delete($todelete_cats{$cid}) || 0;
         $story->add_categories([$cid]) unless $was_there;
+        if (my $seconds = $param->{"$widget|secondary_category_id"}) {
+            # Add secondary categories.
+            my @add;
+            for my $catid (@{mk_aref($seconds)}) {
+                # Leave existing seconary categories and the primary category.
+                next if delete $todelete_cats{$catid} || $catid == $cid;
+                push @add, Bric::Biz::Category->lookup({ id => $catid });
+            }
+            $story->add_categories(\@add) if @add;
+        }
         $story->delete_categories([ values(%todelete_cats) ]) if %todelete_cats;
         $story->set_primary_category($cid);
     }
@@ -472,6 +482,37 @@ sub _merge_properties {
             );
         }
         $story->set_primary_oc_id($ocid);
+
+        # Add any secondary output channels.
+        my (%seen, @add);
+        if (my $ocs2 = $param->{"$widget|secondary_oc_id"}) {
+            for my $oc2id (@{mk_aref($ocs2)}) {
+                # Leave existing seconary OCs and the primary OC.
+                next if delete $todelete_ocs{$oc2id} || $oc2id == $ocid;
+                push @add, Bric::Biz::OutputChannel->lookup({ id => $oc2id })
+                  unless $seen{$oc2id}++;
+            }
+        }
+
+        # Add any secondary output channels from an associated OC group.
+        if (my $grp_id = $param->{"$widget|oc_grp_id"}) {
+            my %allowed = map { $_->get_id => 1 }
+              $story->_get_element_object->get_output_channels;
+            push @add,
+              map { $_->[1] }
+              grep {
+                  $allowed{$_->[0]}
+                  && !$seen{$_->[0]}++
+                  && ! delete $todelete_ocs{$_->[0]}
+              }
+              map { [ $_->get_id => $_ ] }
+              Bric::Biz::OutputChannel->list({ grp_id => $grp_id });
+        }
+
+        # Now add them.
+        $story->add_output_channels(@add) if @add;
+
+        # Delete any leftovers.
         $story->del_output_channels(values %todelete_ocs) if %todelete_ocs;
     }
 

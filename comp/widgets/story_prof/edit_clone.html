@@ -28,12 +28,13 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out($ieSpacer);
 
 # Category
+my $cats = Bric::Biz::Category->list({ site_id => $site_id });
 $m->comp('/widgets/select_object/select_object.mc',
          object     => 'category',
          selected   => $cat_id,
          disp       => 'Primary Category',
          name       => 'desk_asset|new_category_id',
-         constrain  => { site_id => $site_id },
+         objs       => $cats,
          exclude    => $excl_sub,
          req        => 1,
          field      => 'uri',
@@ -42,19 +43,77 @@ $m->comp('/widgets/select_object/select_object.mc',
      );
 $m->out($ieSpacer);
 
+# Secondary categories
+my $cats = Bric::Biz::Category->list({ site_id => $site_id });
+$m->comp('/widgets/select_object/select_object.mc',
+         object     => 'category',
+         disp       => 'Secondary Categories',
+         name       => 'desk_asset|secondary_category_id',
+         selected   => join('__OPT__', map { $_->get_id } $story->get_secondary_categories),
+         objs       => $cats,
+         exclude    => $excl_sub,
+         req        => 1,
+         size       => @$cats < 5 ? scalar @$cats : 5,
+         field      => 'uri',
+         localize   => 0,
+         useTable   => 1,
+         multiple   => 1,
+     );
+$m->out($ieSpacer);
+
+my $ocs = [grep { $_->get_site_id == $site_id } $elem->get_output_channels];
 # Output Channel
 $m->comp('/widgets/select_object/select_object.mc',
          object     => 'output_channel',
          selected   => $oc_id,
          disp       => 'Primary Output Channel',
          name       => 'desk_asset|new_oc_id',
-         objs       => [grep { $_->get_site_id == $site_id } $elem->get_output_channels],
+         objs       => $ocs,
          req        => 1,
          field      => 'name',
          localize   => 0,
          useTable   => 1
      );
 $m->out($ieSpacer);
+
+if (@$ocs > 1) {
+    # Secondary Output Channels
+    $m->comp('/widgets/select_object/select_object.mc',
+             object     => 'output_channel',
+             selected   => join('__OPT__', map { $_->get_id } $story->get_output_channels),
+             disp       => 'Secondary Output Channels',
+             name       => 'desk_asset|secondary_oc_id',
+             objs       => $ocs,
+             req        => 0,
+             field      => 'name',
+             localize   => 0,
+             useTable   => 1,
+             multiple   => 1,
+             size       => @$ocs >= 5 ? 5 : scalar @$ocs,
+         );
+    $m->out($ieSpacer);
+
+    # Output Channel groups
+    if (my @grps = grep { chk_authz($_, READ, 1) }
+          Bric::Util::Grp::OutputChannel->list({
+              obj => ANY(@$ocs),
+              permanent => 0,
+          }))
+    {
+        $m->comp('/widgets/select_object/select_object.mc',
+                 object     => 'output_channel_grp',
+                 disp       => 'Output Channel Group',
+                 name       => 'desk_asset|oc_grp_id',
+                 objs       => \@grps,
+                 default    => [''],
+                 selected   => '',
+                 req        => 0,
+                 field      => 'name',
+                 useTable   => 1,
+             );
+        $m->out($ieSpacer);
+    }
+}
 
 # Cover date
 $m->comp('/widgets/profile/displayFormElement.mc',
