@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-10-22 06:01:16 $
+$Date: 2003-12-09 17:14:20 $
 
 =head1 BACKGROUND
 
@@ -83,11 +83,11 @@ So given this definition someone creating a new element of type 'column' will
 have these three types of fields available to them.
 
 Elements can also contain other elements as part of their definition. For
-example, maybe the the 'column' element above will be used for a column
-reviewing music. A music column might want to have a short blurb about the
-albums they review. Additionally, say somewhere else on the site, there is
-another type of story, "Top Music Picks", that lists blurbs about albums. So we
-create another another element called 'music_blurb' with these fields:
+example, maybe the 'column' element above will be used for a column reviewing
+music. A music column might want to have a short blurb about the albums they
+review. Additionally, say somewhere else on the site, there is another type of
+story, "Top Music Picks", that lists blurbs about albums. So we create another
+another element called 'music_blurb' with these fields:
 
 =over 4
 
