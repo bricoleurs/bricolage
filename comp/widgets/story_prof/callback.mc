@@ -467,7 +467,14 @@ my $handle_create = sub {
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
 
-    # Save the story.
+    # Set the slug and cover date and save the story.
+    if ($param->{'cover_date-partial'}) {
+        add_msg('Cover Date incomplete.');
+        return;
+    }
+
+    $story->set_slug($param->{slug});
+    $story->set_cover_date($param->{cover_date});
     $story->save;
 
     # Send this story to the first desk.

@@ -38,6 +38,10 @@ Updated to work with PostgreSQL 7.4. [David]
 
 Improved error message in Bric::Util::Trans::SFTP. [David]
 
+=item *
+
+The URI on a new story now properly includes the cover date and slug. [David]
+
 =back
 
 =head1 VERSION 1.6.7 (2003-10-22)
