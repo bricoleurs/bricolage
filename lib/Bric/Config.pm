@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.87 $
+$Revision: 1.88 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.87 $ )[-1];
+our $VERSION = (qw$Revision: 1.88 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 08:17:02 $
+$Date: 2004-02-16 08:49:18 $
 
 =head1 SYNOPSIS
 
@@ -93,6 +93,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ERROR_URI
                     ENABLE_DIST
                     QUEUE_PUBLISH_JOBS
+                    FTP_UNLINK_BEFORE_MOVE
                     DIST_ATTEMPTS
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
@@ -193,6 +194,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PREVIEW_MASON)],
                     dist      => [qw(ENABLE_DIST
                                      QUEUE_PUBLISH_JOBS
+                                     FTP_UNLINK_BEFORE_MOVE
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
                                      ENABLE_WEBDAV_MOVER
@@ -329,7 +331,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     ALLOW_WORKFLOW_TRANSFER ALLOW_ALL_SITES_CX
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
-                    FTP_DEPLOY_ON_UPLOAD))
+                    FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -435,6 +437,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     # Distribution Settings.
     use constant ENABLE_DIST => $config->{ENABLE_DIST};
     use constant QUEUE_PUBLISH_JOBS => $config->{QUEUE_PUBLISH_JOBS};
+    use constant FTP_UNLINK_BEFORE_MOVE => $config->{FTP_UNLINK_BEFORE_MOVE} || 0;
     use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
     use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
     use constant PREVIEW_MASON => $config->{PREVIEW_MASON};

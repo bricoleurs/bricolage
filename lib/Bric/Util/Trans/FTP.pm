@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-30 20:05:26 $
+$Date: 2004-02-16 08:49:19 $
 
 =head1 SYNOPSIS
 
@@ -39,6 +39,7 @@ use strict;
 use Net::FTP;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
+use Bric::Config qw(:dist);
 
 ################################################################################
 # Inheritance
@@ -197,9 +198,10 @@ sub put_res {
                 $ftp->cwd($ftp_root);
             }
 
-            # Delete any existing copy of the temp file if the FTP server is Windows.
+            # Delete any existing copy of the temp file if the FTP server is
+            # Windows or if Bricolage has been explicitly configured to do so.
             my $tmpdest = $dest . '.tmp';
-            $ftp->delete($tmpdest) if $is_win;
+            $ftp->delete($tmpdest) if ($is_win or FTP_UNLINK_BEFORE_MOVE);
 
             # Now, put the file on the server.
             $ftp->put($src, $tmpdest)
@@ -207,8 +209,9 @@ sub put_res {
                                   " server '$hn'",
                          payload => $ftp->message;
 
-            # Delete any existing copy of the file if the FTP server is Windows.
-            $ftp->delete($dest) if $is_win;
+            # Delete any existing copy of the file if the FTP server is Windows
+            # or if Bricolage has been explicitly configured to do so.
+            $ftp->delete($dest) if ($is_win or FTP_UNLINK_BEFORE_MOVE);
 
             # Rename the temporary file.
             $ftp->rename($tmpdest, $dest)
