@@ -57,6 +57,13 @@ on missing Date: headers. [Cameron Miller]
 The media type manager now validates media type names to ensure that they are
 of the form "type/subtype" with no spaces. Suggested by Marshall Roch. [David]
 
+=item *
+
+When started up by the super user, the virtual FTP server now runs as the same
+user as the Bricolage Apache server. This should prevent malicious users of
+the virtual FTP server from being able to do things as the root user that they
+shouldn't. [Keith Grennan]
+
 =back
 
 =head2 Bug Fixes
