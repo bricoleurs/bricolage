@@ -175,6 +175,8 @@ Folks who have submitted patches include:
 
 =item Eric Sellers
 
+=item Rod Taylor
+
 =back
 
 Friends who have spotted bugs include:

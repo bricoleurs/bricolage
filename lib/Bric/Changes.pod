@@ -50,6 +50,12 @@ channels a document is associated with. The latter takes a document for its
 argument and calls C<publish_another()> in PUBLISH_MODE and
 C<preview_another_all_ocs()> in PREVIEW_MODE. [Serge Sozonoff]
 
+=item *
+
+Added a makefile parameter that, when set to "QUIET", eliminates many of the
+questions asked during installation, falling back on the default values. [Rod
+Taylor]
+
 =back
 
 =head2 Improvements

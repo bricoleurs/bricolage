@@ -19,6 +19,9 @@
 # Set the location of Perl.
 PERL = /usr/bin/perl
 
+# Blank by default, but set to QUIET to ask essential questions only
+INSTALL_VERBOSITY?= STANDARD
+
 # can't load Bric since it loads Bric::Config which has dependencies
 # that won't be solved till make install.
 BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm`
@@ -31,13 +34,13 @@ all 		: required.db modules.db apache.db postgres.db config.db \
                   bconf/bricolage.conf build_done
 
 required.db	: inst/required.pl
-	$(PERL) inst/required.pl
+	$(PERL) inst/required.pl $(INSTALL_VERBOSITY)
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
-	$(PERL) inst/modules.pl
+	$(PERL) inst/modules.pl $(INSTALL_VERBOSITY)
 
 apache.db	: inst/apache.pl required.db
-	$(PERL) inst/apache.pl
+	$(PERL) inst/apache.pl $(INSTALL_VERBOSITY)
 
 # This should be updated to something more database-independent. In fact,
 # what should happen is that a script should present a list of supported
@@ -45,10 +48,10 @@ apache.db	: inst/apache.pl required.db
 # driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
 # work should just assume that database and do the work for that database.
 postgres.db 	: inst/postgres.pl required.db
-	$(PERL) inst/postgres.pl
+	$(PERL) inst/postgres.pl $(INSTALL_VERBOSITY)
 
 config.db	: inst/config.pl required.db apache.db postgres.db
-	$(PERL) inst/config.pl
+	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
