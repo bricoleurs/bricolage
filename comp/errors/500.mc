@@ -25,7 +25,7 @@
 % } else {
 <br /><b>Payload:</b>
 <font size="-1"><pre>
-<% $pay %>
+<% "$pay" %>
 </pre></font>
 </p>
 % }
@@ -96,7 +96,7 @@
     </tr>
 </table>
 % } elsif ($pay) {
-<p class="errorMsg"><% $pay %></p>
+<p class="errorMsg"><% "$pay" %></p>
 % }
 <p class="header">Please report this error to your administrator.</p>
 % }
@@ -123,7 +123,6 @@ warn '$fault not an exception object' unless isa_exception($fault);
 
 # Get payload, stringify if payload is an exception object
 my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
-$pay = "$pay";
 
 my $is_burner_error = ($fault->error =~ /^Unable to find template/);
 
