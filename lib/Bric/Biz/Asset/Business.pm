@@ -1599,7 +1599,7 @@ B<Notes:> NONE.
 
 sub is_fixed {
     my $self = shift;
-    my $element = $self->get_element;
+    my $element = $self->_get_element_object;
     return $element->get_fixed_url;
 }
 
