@@ -97,6 +97,11 @@ The installer now checks to make sure that mod_perl is statically compiled
 into Apache, since weird things tend to happen when Bricolage uses a DSO
 mod_perl. [David]
 
+=item *
+
+Fixed reordering code for subelements. The select list for subelements should
+now always have an appropriate value. [David]
+
 =back
 
 =head1 VERSION 1.4.5

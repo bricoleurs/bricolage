@@ -12,6 +12,8 @@ if ($show_summary) {
 
 # COUNT FOR REORDER JAVA SCRIPT
 my $total = scalar @tiles;
+my $diff =  $total ? $tiles[-1]->get_place - $total + 1 : 0;
+my $ord_vals = [ map { [ $_ - 1, $_ ] } 1..$total ];
 my $x=0;
 
 </%perl>
@@ -181,23 +183,14 @@ if ($at->is_related_media) {
 % # ORDER TABLE CELL
   <td valign="middle" align="center" colspan=2>
 
-% my $f_key;
-% if ($dt->is_container) {
-%	 $f_key = "$widget|reorder_con" . $dt->get_id();
-% } else {
-%	 $f_key = "$widget|reorder_dat" . $dt->get_id();
-% }
-% my $vals = [];
-% foreach (1 .. $total) {
-%	my $val = $_ - 1;
-%	push @$vals, [$val, $_];
-%}
+% my $f_key = "$widget|reorder_" . ($dt->is_container ? 'con' : 'dat') .
+%   $dt->get_id;
 
-<& '/widgets/profile/displayFormElement.mc',
+<& /widgets/profile/displayFormElement.mc,
    key => $f_key,
-   vals => { value => $dt->get_place(),
+   vals => { value => $dt->get_place - $diff,
 	     props => { type => 'select',
-			vals => $vals, },
+			vals => $ord_vals, },
 	     js    => 'onChange="reorder(this, \'theForm\')"'
 	   },
   useTable => 0
@@ -211,9 +204,9 @@ if ($at->is_related_media) {
          &nbsp;
 % } elsif ($dt->is_container) {
 % # START IF CONTAINER
-	<input type="checkbox" name="container_prof|delete_cont<% $dt->get_id()%>" value="1">
+	<input type="checkbox" name="container_prof|delete_cont<% $dt->get_id %>" value="1">
 % } else {
-	<input type="checkbox" name="container_prof|delete_data<% $dt->get_id()%>" value="1">
+	<input type="checkbox" name="container_prof|delete_data<% $dt->get_id %>" value="1">
 % }
    </td>
 </tr>
