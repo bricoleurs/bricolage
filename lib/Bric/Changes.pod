@@ -259,6 +259,11 @@ continues to use the old one.  [Sam]
 Fixed installer to not require unneeded Apache modules (mod_proxy and
 mod_rewrite). [Sam]
 
+=item *
+
+Fixed installer to first ask whether SSL supprt is desired before
+asking for a specific SSL module. [Sam]
+
 =back
 
 =head1 VERSION 1.3.2

@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-08-09 16:12:46 $
+$Date: 2002-08-09 16:24:06 $
 
 =head1 DESCRIPTION
 
@@ -265,19 +265,22 @@ END
     ask_confirm("Apache User:\t\t\t",  \$AP{user});
     ask_confirm("Apache Group:\t\t\t", \$AP{group});
     ask_confirm("Apache Port:\t\t\t",  \$AP{port});
-# install fails if this is wrong
+    ask_confirm("Apache Server Name:\t\t",  \$AP{server_name});
+
+    # install fails if this is wrong
     $AP{ssl_key} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.key", "server.key");
     $AP{ssl_cert} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.crt","server.crt");
 
-    $AP{ssl} = ask_choice("SSL? mod_ssl, apache_ssl, no:\t",
-		[ 'no', 'mod_ssl', 'apache_ssl' ], $AP{ssl});
-    if ($AP{ssl} =~ /no/i) {
-	$AP{ssl} = 0;		# testing elsewhere is true/false
+    if (ask_yesno("Do you want to use SSL? [no] ", 0)) {        
+        $AP{ssl} = ask_choice("Which SSL module do you use? " .
+                              "(apache_ssl or mod_ssl) ",
+                              [ 'mod_ssl', 'apache_ssl' ], 'mod_ssl');
+	ask_confirm("SSL certificate file location", \$AP{ssl_cert});
+	ask_confirm("SSL certificate key file location", \$AP{ssl_key});
     } else {
-	ask_confirm("SSL_CERTIFICATE_FILE:\t", \$AP{ssl_cert});
-	ask_confirm("SSL_CERTIFICATE_KEY_FILE:\t", \$AP{ssl_key});
+	$AP{ssl} = 0;
     }
-    ask_confirm("Apache Server Name:\t\t",  \$AP{server_name});
+
     
     print <<END;
 
