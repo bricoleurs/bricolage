@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.2 $
+$Revision: 1.25.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-14 20:10:24 $
+$Date: 2003-03-15 03:59:48 $
 
 =head1 SYNOPSIS
 
@@ -232,9 +232,9 @@ sub lookup {
     $pkg = ref $pkg || $pkg;
     die $gen->new({ msg => "Missing Required Parameters id or version_id" })
       unless $param->{id} || $param->{version_id};
-    die Bric::Util::Fault::Exception::MNI->new( { 
-      msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $pkg->CAN_DO_LOOKUP; 
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => 'Must call list on Story, Media, or Formatting'})
+      unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);
     # we don't care about checked out state for lookup
     delete $param->{_checked_out};
@@ -244,23 +244,25 @@ sub lookup {
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where, $order);
-    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS, 'grp_ids' ];
+    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
+                                      $order);
+    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
+                   'grp_ids' ];
     # we have to send the args 4 times for the query with grp ids
     $args = [ @$args, @$args, @$args, @$args ];
-    my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    my @obj = fetch_objects( $pkg, $sql, $fields, $args, $param->{Limit},
+                             $param->{Offset});
     return unless $obj[0];
     return $obj[0];
 }
-    
+
 ################################################################################
 
+=item (@stories || $stories) = Bric::Biz::Asset::Business::Story->list($params)
 
-=item (@stories||$stories) = Bric::Biz::Asset::Business::Story->list($params)
+=item (@media_objs || $media) = Bric::Biz::Asset::Business::Media->list($params)
 
-=item (@media_objs||$media) = Bric::Biz::Asset::Business::Media->list($params)
-
-=item (@formatting_objs||$formatting) = Bric::Biz::Asset::Business::Formatting->list($params)
+=item (@template_objs || $templates) = Bric::Biz::Asset::Business::Formatting->list($params)
 
 B<See Also:>
 
@@ -279,18 +281,21 @@ B<See Also:>
 sub list {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    die Bric::Util::Fault::Exception::MNI->new( { 
-      msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $pkg->CAN_DO_LIST; 
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => 'Must call list on Story, Media, or Formatting'})
+      unless $pkg->CAN_DO_LIST;
     $param = clean_params($pkg, $param);
     my $tables = tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
     my $order = order_by($pkg, $param);
-    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS, 'grp_ids' ];
-    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where, $order);
+    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
+                   'grp_ids' ];
+    my $sql = build_query_with_unions($pkg, $pkg->COLUMNS, $tables, $where,
+                                      $order);
     # we have to send the args 4 times for the query with grp ids
     $args = [ @$args, @$args, @$args, @$args ];
-    my @objs = fetch_objects($pkg, $sql, $fields, $args, $param->{Limit}, $param->{Offset});
+    my @objs = fetch_objects($pkg, $sql, $fields, $args, $param->{Limit},
+                             $param->{Offset});
     return unless $objs[0];
     return (wantarray ? @objs : \@objs);
 }
@@ -318,12 +323,12 @@ B<See Also:>
 sub list_ids {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    die Bric::Util::Fault::Exception::MNI->new( { 
-      msg => 'Must call list on Story, Media, or Formatting'}) 
-      unless $pkg->CAN_DO_LIST_IDS; 
+    die Bric::Util::Fault::Exception::MNI->new
+      ({ msg => 'Must call list on Story, Media, or Formatting'})
+      unless $pkg->CAN_DO_LIST_IDS;
     # clean the params
     $param = clean_params($pkg, $param);
-    $param->{Order} = 'id';
+    delete $param->{Order};
     my $cols = $pkg->ID_COL;
     my $tables =  tables($pkg, $param);
     my ($where, $args) = where_clause($pkg, $param);
@@ -383,8 +388,8 @@ sub key_name { 'asset' }
 
 =item my (%priorities || $priorities_href) = $asset->list_priorities()
 
-Returns a list or anonymous array of the priority labels. Each key is 
-the priority number, and the corresponding value is its label.
+Returns a list or anonymous array of the priority labels. Each key is the
+priority number, and the corresponding value is its label.
 
 B<Throws:> NONE.
 
@@ -553,7 +558,7 @@ sub my_meths {
     $meths = {
               id         => {
                               name     => 'id',
-                              get_meth => sub { shift->get_id(@_) }, 
+                              get_meth => sub { shift->get_id(@_) },
                               get_args => [],
                               disp     => 'ID',
                               len      => 10,

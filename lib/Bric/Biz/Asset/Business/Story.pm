@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.1 $
+$Revision: 1.39.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-14 19:43:55 $
+$Date: 2003-03-15 03:59:49 $
 
 =head1 SYNOPSIS
 
@@ -276,8 +276,11 @@ use constant RELATION_TABLES =>
 
 use constant RELATION_JOINS =>
     {
-        story      => 'sm.object_id = s.id AND m.id = sm.member__id',
-        category   => 'sc.story_instance__id = i.id AND cm.object_id = sc.category__id AND m.id = cm.member__id',
+        story      => 'sm.object_id = s.id AND m.id = sm.member__id ' .
+                      'AND m.active = 1',
+        category   => 'sc.story_instance__id = i.id ' .
+                      'AND cm.object_id = sc.category__id ' .
+                      'AND m.id = cm.member__id',
         desk       => 'dm.object_id = s.desk__id AND m.id = dm.member__id',
         workflow   => 'wm.object_id = s.workflow__id AND m.id = wm.member__id',
     };
@@ -356,7 +359,6 @@ use constant PARAM_WHERE_MAP =>
 
 use constant PARAM_ORDER_MAP => 
     {
-      id                  => 'id',
       active              => 'active',
       inactive            => 'active',
       workflow__id        => 'workflow__id',

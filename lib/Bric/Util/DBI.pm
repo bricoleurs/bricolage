@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.2 $
+$Revision: 1.21.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.3 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-15 01:37:30 $
+$Date: 2003-03-15 03:59:49 $
 
 =head1 SYNOPSIS
 
@@ -882,19 +882,33 @@ NONE
 
 sub order_by {
     my ($pkg, $param) = @_;
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => 'OrderDirection parameter must either ASC or DESC.' })
-      if $param->{OrderDirection} 
-      && $param->{OrderDirection} ne 'ASC' 
-      && $param->{OrderDirection} ne 'DESC';
-    $param->{OrderDirection} = 'ASC' unless $param->{OrderDirection};
-    die Bric::Util::Fault::Exception::DA->new(
-      { msg => 'Bad Order parameter.' })
-      if $param->{Order} 
-      && ! $pkg->PARAM_ORDER_MAP->{ $param->{Order} };
-    return unless $param->{Order};
-    return ' ORDER BY ' . $pkg->PARAM_ORDER_MAP->{$param->{Order}} 
-      . ' ' . $param->{OrderDirection};  
+
+    if ($param->{Order}) {
+        # Grab the order map.
+        my $map = $pkg->PARAM_ORDER_MAP;
+
+        # Make sure it's legit.
+        my $ord = $map->{$param->{Order}}
+          or die Bric::Util::Fault::Exception::DA->new
+          ({ msg => "Bad Order parameter '$param->{Order}'" });
+
+        # Set up the order direction.
+        my $dir = 'ASC';
+        if ($param->{OrderDirection}) {
+            # Make sure it's legit.
+            die Bric::Util::Fault::Exception::DA->new
+              ({ msg => 'OrderDirection parameter must either ASC or DESC.' })
+                if $param->{OrderDirection} ne 'ASC'
+                  and $param->{OrderDirection} ne 'DESC';
+            # Grab it.
+            $dir = $param->{OrderDirection};
+        }
+        # Return the ORDER BY clause with the ID column.
+        return "ORDER BY $ord $dir, id";
+    }
+
+    # Default to returning ID.
+    return "ORDER BY id";
 }
 
 

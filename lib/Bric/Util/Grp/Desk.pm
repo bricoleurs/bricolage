@@ -7,15 +7,15 @@ Bric::Util::Grp::Desk - A class to impliment desk groups
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.8.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 16:23:52 $
+$Date: 2003-03-15 03:59:49 $
 
 =head1 SYNOPSIS
 
@@ -230,7 +230,28 @@ NONE
 
 sub get_supported_classes {
     return { &PACKAGE => 'desk' };
-}	
+}
+
+##############################################################################
+
+=item my @list_classes = Bric::Util::Grp::Desk->get_list_classes
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_list_classes { (PACKAGE) }
 
 ################################################################################
 

@@ -82,7 +82,6 @@ use constant PARAM_WHERE_MAP =>
 
 use constant PARAM_ORDER_MAP =>
     {
-      id                  => 'id',
       active              => 'active',
       inactive            => 'active',
       workflow__id        => 'workflow__id',
@@ -368,26 +367,27 @@ sub test_tables: Test(16) {
 sub test_order_by: Test(6) {
     my $self = shift;
     my ($got, $expected);
-    
-    $got = eval { order_by($CLASS, { OrderDirection => 'NORTH' }) };
-    like( $@, qr/OrderDirection parameter must either ASC or DESC./, 
+
+    $got = eval { order_by($CLASS, { Order => 'name',
+                                     OrderDirection => 'NORTH' }) };
+    like( $@, qr/OrderDirection parameter must either ASC or DESC./,
       'bad order throws exception');
 
     $got = eval { order_by($CLASS, { Order => 'NORTH' }) };
-    like( $@, qr/Bad Order parameter./, 
+    like( $@, qr/Bad Order parameter 'NORTH'/,
             'bad order throws exception');
 
     $got = order_by($CLASS, undef);
-    is( $got, undef,'missing order produces nothing');
+    is( $got, 'ORDER BY id' ,'missing order orders by ID');
 
-    $got = order_by($CLASS, { Order => 'id' });
-    is( $got, ' ORDER BY id ASC','order works');
+    $got = order_by($CLASS, { Order => 'slug' });
+    is( $got, 'ORDER BY slug ASC, id', 'order works');
 
-    $got = order_by($CLASS, { Order => 'id', OrderDirection => 'ASC' });
-    is( $got, ' ORDER BY id ASC','order works with ASC');
+    $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'ASC' });
+    is( $got, 'ORDER BY slug ASC, id','order works with ASC');
 
-    $got = order_by($CLASS, { Order => 'id', OrderDirection => 'DESC' });
-    is( $got, ' ORDER BY id DESC', 'order works with DESC');
+    $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'DESC' });
+    is( $got, 'ORDER BY slug DESC, id', 'order works with DESC');
 
 }
 
@@ -407,9 +407,9 @@ sub testclean_params: Test(7) {
              _no_returned_versions => 1,
              _checked_out => 0,
              _not_simple => 1,
-             Order => 'id',
+             Order => 'slug',
            };
-    is_deeply( clean_params($CLASS, { Order => 'id' }), $exp, 'Order works right');
+    is_deeply( clean_params($CLASS, { Order => 'slug' }), $exp, 'Order works right');
     $exp = { 
              active => 1,
              returned_versions => 1,

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.40.2.1 $
+$Revision: 1.40.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.40.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-14 19:43:52 $
+$Date: 2003-03-15 03:59:48 $
 
 =head1 SYNOPSIS
 
@@ -226,7 +226,6 @@ use constant PARAM_WHERE_MAP =>
 
 use constant PARAM_ORDER_MAP => 
     {
-      id                  => 'id',
       active              => 'active',
       inactive            => 'active',
       workflow__id        => 'workflow__id',

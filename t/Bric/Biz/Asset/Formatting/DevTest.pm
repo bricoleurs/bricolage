@@ -642,7 +642,7 @@ sub test_select_b_new_objs: Test(32) {
     my @got_grp_ids;
 
     ok( my @got = class->list({ name => '_test%', user_id => $admin_id }), 'lets do a search by name' );
-    ok( $got = class->list({ name => '_test%', Order => 'id', user_id => $admin_id  }), 'lets do a search by name' );
+    ok( $got = class->list({ name => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do a search by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -653,7 +653,7 @@ sub test_select_b_new_objs: Test(32) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title => '_test%', Order => 'id', user_id => $admin_id  }), 'lets do a search by title' );
+    ok( $got = class->list({ title => '_test%', Order => 'title', user_id => $admin_id  }), 'lets do a search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id();
@@ -665,14 +665,14 @@ sub test_select_b_new_objs: Test(32) {
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', user_id => $admin_id  }), 'getting by grp_id' );
+    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'title', user_id => $admin_id  }), 'getting by grp_id' );
     my $number = @$got;
     is( $number, 2, 'there should be two formatting in the first grp' );
     is( $got->[0]->get_id(), $formatting[1]->get_id(), '... and they should be numbers 2' );
     is( $got->[1]->get_id(), $formatting[2]->get_id(), '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name => '_test%', Order => 'id', user_id => $admin_id  }), 'lets do an IDs search by name' );
+    ok( $got = class->list_ids({ name => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do an IDs search by name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -680,7 +680,7 @@ sub test_select_b_new_objs: Test(32) {
     eq_set( \@got_ids, $OBJ_IDS->{formatting}, '... did we get the right list of ids out' );
     undef @got_ids;
 
-    ok( $got = class->list_ids({ title => '_test%', Order => 'id', user_id => $admin_id  }), 'lets do an ids search by title' );
+    ok( $got = class->list_ids({ title => '_test%', Order => 'name', user_id => $admin_id  }), 'lets do an ids search by title' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_;
@@ -689,7 +689,7 @@ sub test_select_b_new_objs: Test(32) {
     undef @got_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', user_id => $admin_id  }), 'getting by grp_id' );
+    ok( $got = class->list_ids({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'title', user_id => $admin_id  }), 'getting by grp_id' );
     $number = @$got;
     is( $number, 2, 'there should be two formatting objects in the first grp' );
     is( $got->[0], $formatting[1]->get_id(), '... and they should be numbers 2' );
@@ -697,13 +697,12 @@ sub test_select_b_new_objs: Test(32) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order => 'id', Limit => 3, user_id => $admin_id  }), 'try setting a limit of 3');
+    ok( $got = class->list({ Order => 'title', Limit => 3, user_id => $admin_id  }), 'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 formatting objects back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'id', Offset => 1, user_id => $admin_id  }), 'try setting an offset of 2 for a search that just returned 3 objs');
+    ok( $got = class->list({ grp_id => $OBJ->{formatting_grp}->[0]->get_id(), Order => 'name', Offset => 1, user_id => $admin_id  }), 'try setting an offset of 2 for a search that just returned 3 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
-    
 }
 
 1;
