@@ -225,6 +225,11 @@ The template profile's "cheat sheet" of the subelements of an element now
 correctly display subelement key names instead of munging element names, as
 was required before version 1.7.0. [JoE<atilde>o Pedro]
 
+=item *
+
+C<< Bric::SOAP::Category->list_ids >> now converts site names to site IDs.
+[JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)
