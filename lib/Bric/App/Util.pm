@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-05 21:23:55 $
+$Date: 2003-12-04 22:03:59 $
 
 =head1 SYNOPSIS
 
@@ -557,7 +557,9 @@ browser and to abort the request.
 
 B<Throws:> NONE.
 
-B<Side Effects:> NONE.
+B<Side Effects:> Becuase C<redirect_onload()> executes immediately, if it is
+called from a callback, note that no further callbacks will be executed, not
+even post-callback request callbacks.
 
 B<Notes:> NONE.
 
