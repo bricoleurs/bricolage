@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-03-23 06:57:00 $
 
 =head1 SYNOPSIS
 
@@ -166,6 +166,7 @@ use constant COLS       => qw( name
                                category__id
                                file_name
                                current_version
+                               published_version
                                deploy_status
                                deploy_date
                                expire_date
@@ -190,6 +191,7 @@ use constant FIELDS     => qw( name
                                category_id
                                file_name
                                current_version
+                               published_version
                                deploy_status
                                deploy_date
                                expire_date
@@ -244,6 +246,7 @@ use constant WHERE => 'f.id = i.formatting__id';
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
 
+use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i, member m';
@@ -281,13 +284,18 @@ use constant PARAM_WHERE_MAP =>
       description           => 'LOWER(f.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
       user__id              => 'i.usr__id = ?',
+      _checked_in_or_out    => 'i.checked_out = '
+                             . '( SELECT max(checked_out) '
+                             . 'FROM formatting_instance '
+                             . 'WHERE version = i.version )',
       _checked_out          => 'i.checked_out = ?',
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '
                              . 'LOWER(c.uri) LIKE LOWER(?))',
-      _no_returned_versions => 'f.current_version = i.version',
-      grp_id                => 'f.id = fm2.object_id AND '
+      _no_return_versions   => 'f.current_version = i.version',
+      grp_id                => 'm2.active = 1 AND '
                              . 'm2.grp__id = ? AND '
+                             . 'f.id = fm2.object_id AND '
                              . 'fm2.member__id = m2.id',
       simple                => '(LOWER(f.name) LIKE ? OR '
                              . 'LOWER(f.file_name) LIKE ?)',

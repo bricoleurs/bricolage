@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-03-03 10:03:11 $
+$Date: 2003-03-23 06:56:55 $
 
 =head1 DESCRIPTION
 
@@ -149,12 +149,13 @@ sub create_user {
 
 # load schema and data into database
 sub load_db {
-    # make sure we have a bricolage.sql and that it's not empty (this
-    # can happen if you "make dist" from a distribution due to missing
-    # .sql files)
     my $db_file = catfile('inst', 'Pg.sql');
-    hard_fail("Missing or empty $db_file!")
-      unless -e $db_file and -s _;
+    unless (-e $db_file and -s _) {
+        my $errmsg = "Missing or empty $db_file!\n\n"
+          . "If you're using CVS, you need to `make dist` first.\n"
+          . "See `perldoc Bric::FAQ` for more information.";
+        hard_fail($errmsg);
+    }
 
     print "Loading Bricolage Database. (this could take a few minutes)\n";
     my $err = exec_sql(0, $db_file);

@@ -163,21 +163,7 @@ $desk_type
 my $id = $obj->get_id;
 
 # Determine the status.
-my $status;
-if ($obj->get_publish_status) {
-    my ($letter, $action) = $obj->key_name eq 'formatting'
-      ? ('D', 'Deployed')
-      : ('P', 'Published');
-    $status = $obj->needs_publish ?
-      qq{<img src="/media/images/$lang_key/$letter\_red.gif" border="0" } .
-        qq{width="15" height="15" alt="[$letter]" title="} .
-        $lang->maketext("Needs to be $action") . q{" />} :
-      qq{<img src="/media/images/$lang_key/$letter\_green.gif" border="0" } .
-        qq{width="15" height="15" alt="[$letter]" title="} .
-        $lang->maketext("$action Version") . q{"  />};
-} else {
-    $status = '&nbsp;';
-}
+my $status = $m->comp('publish_status.mc', asset => $obj) || '&nbsp;';
 
 my $cats = $r->pnotes("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
@@ -228,11 +214,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:16 $
+$Date: 2003-03-23 06:56:54 $
 
 =head1 DESCRIPTION
 

@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:44 $
+$Date: 2003-03-23 06:56:54 $
 
 =head1 DESCRIPTION
 
@@ -93,20 +93,28 @@ sub read_conf {
         $AP{conf_file} = catfile($AP{HTTPD_ROOT}, $AP{SERVER_CONFIG_FILE});
     }
 
-    # read in conf file contents if file exists
-    if (open(CONF, $AP{conf_file})) {
-        print "Reading Apache conf file: $AP{conf_file}.\n";
-        $AP{conf} = join('', <CONF>);
-        close CONF;
-    } elsif (open(CONF, "/usr/share/doc/apache-perl/examples/httpd.conf")) {
-        # debian keeps an example conf in a funny location, maybe it's there?
-        $AP{conf_file} = "/usr/share/doc/apache-perl/examples/httpd.conf";
-        print "Reading Apache conf file: $AP{conf_file}.\n";
-        $AP{conf} = join('', <CONF>);
-        close CONF;
-    } else {
-        $AP{conf} = '';
+    # If the conf file doesn't exist, check for teh funny location that
+    # Debian uses.
+    unless (-e $AP{conf_file}) {
+        $AP{conf_file} = "/usr/share/doc/apache-perl/examples/httpd.conf"
+          if -e "/usr/share/doc/apache-perl/examples/httpd.conf";
     }
+
+    # read in conf file contents.
+    $AP{conf} = slurp_conf($AP{conf_file});
+
+    # Read in any included configuration files.
+    for ($AP{conf} =~ /^\s*Include\s+(.+)$/gim) {
+        $AP{conf} .= "\n" . slurp_conf($1);
+    }
+}
+
+sub slurp_conf {
+    my $file = shift;
+    return '' unless -e $file;
+    print "Reading Apache conf file: $file.\n";
+    open CONF, $file or warn("Cannot open '$file': $!\n"), return '';
+    return join '', <CONF>;
 }
 
 # parse list of Apache modules
@@ -199,6 +207,13 @@ sub check_modules {
                 -e catfile($AP{HTTPD_ROOT}, 
                            $AP{load_modules}{"${mod}_module"})) {
                 $AP{$mod} = 1 if $mod =~ /ssl$/;
+                next MOD;
+            # On some platforms, "log_config" can actually be loaded via
+            # AddModule as "config_log".
+            } elsif ($mod eq 'log_config' and $AP{add_modules}{"mod_$mod"} and
+                     $AP{load_modules}{config_log_module}                  and
+                     -e catfile($AP{HTTPD_ROOT},
+                                 $AP{load_modules}{config_log_module})) {
                 next MOD;
             }
 

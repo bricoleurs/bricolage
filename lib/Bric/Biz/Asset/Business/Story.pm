@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-03-23 06:57:01 $
 
 =head1 SYNOPSIS
 
@@ -349,8 +349,11 @@ use constant PARAM_WHERE_MAP =>
       version                => 'i.version = ?',
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
+      _checked_in_or_out     => 'i.checked_out = '
+                              . '( SELECT max(checked_out) '
+                              . 'FROM story_instance '
+                              . 'WHERE version = i.version )',
       _checked_out           => 'i.checked_out = ?',
-      checkout               => 'i.checked_out = ?',
       primary_oc_id          => 'i.primary_oc__id = ?',
       category_id            => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = ?',
@@ -360,7 +363,7 @@ use constant PARAM_WHERE_MAP =>
       keyword                => 'sk.story_id = s.id AND '
                               . 'k.id = sk.keyword_id AND '
                               . 'LOWER(k.name) LIKE LOWER(?)',
-      _no_returned_versions  => 's.current_version = i.version',
+      _no_return_versions    => 's.current_version = i.version',
       grp_id                 => 'm2.grp__id = ? AND '
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',

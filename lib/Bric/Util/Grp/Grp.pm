@@ -6,16 +6,16 @@ Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2003-03-23 06:57:01 $
 
 =head1 SYNOPSIS
 
@@ -145,6 +145,7 @@ sub get_supported_classes {
       'Bric::Util::Grp::Story' => 'grp',
       'Bric::Util::Grp::User' => 'grp',
       'Bric::Util::Grp::Workflow' => 'grp',
+      'Bric::Util::Grp::MediaType' => 'grp',
       'Bric::Util::Grp::Site' => 'grp',
     }
 }

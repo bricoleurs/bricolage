@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 20:49:49 $
+$Date: 2003-03-23 06:57:01 $
 
 =head1 SYNOPSIS
 
@@ -40,6 +40,7 @@ use strict;
 use Bric::Util::DBI qw(:standard col_aref prepare_ca);
 use Bric::Util::Fault::Exception::DP;
 use Bric::App::Cache;
+use Bric::Util::Grp::MediaType;
 
 ################################################################################
 # Inheritance
@@ -55,6 +56,8 @@ my ($get_em, $make_obj, $lookup_ext, $get_ext_data);
 # Constants
 ################################################################################
 use constant DEBUG => 0;
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::MediaType';
+use constant INSTANCE_GROUP_ID => 48;
 
 ################################################################################
 # Fields
@@ -64,14 +67,14 @@ use constant DEBUG => 0;
 ################################################################################
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
-my @cols = qw(m.id m.name m.description m.active e.extension);
+my $SEL_COLS = 'a.id, a.name, a.description, a.active, e.extension, m.grp__id';
 my @mcols = qw(id name description active);
 my @mprops = qw(id name description _active);
 my @ecols = qw(id media_type__id extension);
-my @props = qw(id name description _active _exts _new_exts _del_exts);
+my @SEL_PROPS = qw(id name description _active _exts grp_ids);
 my @ord = qw(name description active);
-my %map = ( name => 'LOWER(name) LIKE ?',
-            description => 'LOWER(description) LIKE ?',
+my %map = ( name => 'LOWER(a.name) LIKE ?',
+            description => 'LOWER(a.description) LIKE ?',
             ext => => 'LOWER(e.extension) LIKE ?');
 my $key = '__MediaType__';
 my ($meths, $cache);
@@ -137,9 +140,10 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
-    $init->{_exts} = { map { $_ => 1 } @{ delete $init->{ext} } }
+    $init->{_new_exts} = { map { $_ => 1 } @{ delete $init->{ext} } }
       if $init->{ext};
-    @{$init}{qw(_new_exts _del_exts)} = ({}, {});
+    @{$init}{qw(_exts _del_exts grp_ids _active)} =
+      ({}, {}, [INSTANCE_GROUP_ID], 1);
     $self->SUPER::new($init);
 }
 
@@ -232,6 +236,10 @@ name
 =item *
 
 ext
+
+=item *
+
+grp_id
 
 =back
 
@@ -1080,6 +1088,9 @@ sub save {
         # Now grab the ID.
         $id = last_key('media_type');
         $self->_set(['id'], [$id]);
+
+        # Register the media type in the "All Media Types" group.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     }
 
     # Load the cache.
@@ -1193,110 +1204,75 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
-    my (@wheres, @params);
+    # Doing an outer join here solely for media type 0, which has no
+    # extensions (since it's a non-extetion).
+    my $tables = 'media_type a LEFT JOIN media_type_ext e ' .
+      'ON a.id = e.media_type__id, member m, media_type_member am';
+    my $wheres = 'a.id = am.object_id ' .
+      'AND am.member__id = m.id AND m.active = 1';
+    my @params;
+
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' || $k eq 'active') {
-            push @wheres, "m.$k = ?";
+            # Simple numeric comparison.
+            $wheres .= " AND a.$k = ?";
+            push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Add in the group tables a second time and join to them.
+            $tables .= ", member m2, media_type_member am2";
+            $wheres .= " AND a.id = am2.object_id AND am2.member__id = m2.id" .
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # It's a varchar field.
-            push @wheres, $map{$k};
+            $wheres .= " AND $map{$k}";
             push @params, lc $v;
         }
     }
 
-    # Assemble the WHERE statement.
-    my $where = @wheres ? join("\n               AND ", ('', @wheres)) : '';
-
-    # Assemble the query.
-    local $" = ', ';
-    # When calling list_ids, I received an error: "For SELECT DISTINCT,
-    # ORDER BY expressions must appear in target list". This was because
-    # "ORDER BY m.name" was present when "SELECT DISTINCT m.id" was called,
-    # so I made the ORDER BY optional.
-    # (Note: we still need to join media_type with media_type_ext, in case
-    # the WHERE clause uses 'extension'.)
-    my ($qry_cols, $order_by);
-    if ($ids) {
-        $qry_cols = ['DISTINCT m.id'];
-        $order_by = '';
-    } else {
-        $qry_cols = \@cols;
-        $order_by = 'ORDER BY m.name';
-    }
-    my $sel = prepare_ca(qq{
-        SELECT @$qry_cols
-        FROM   media_type m, media_type_ext e
-        WHERE  m.id = e.media_type__id$where
-        $order_by
+    # Assemble and prepare the query.
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id') :
+      (\$SEL_COLS, 'a.name, a.id');
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
-    my ($last, @d, @init, $ext, @mts) = (-1);
-    bind_columns($sel, \@d[0..$#cols-1], \$ext);
+    my (@d, @mts, $exts, $grp_ids, $seen);
+    bind_columns($sel, \@d[0..$#SEL_PROPS]);
+    my $last = -1;
     $pkg = ref $pkg || $pkg;
     while (fetch($sel)) {
         if ($d[0] != $last) {
-            # Create a new object.
-            push @mts, &$make_obj($pkg, \@init) unless $last == -1;
-            # Get the new record.
             $last = $d[0];
-            @init = (@d, {});
+            # Create a new server type object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new({ _new_exts => {}, _del_exts => {} });
+            # Get a reference to the array of group IDs.
+            $seen = { $d[$#d] => 1 };
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            # Get a reference to the has of extensions.
+            $exts = $d[$#d-1] = { $d[$#d-1] => 1 } if $d[$#d-1];
+            $self->_set(\@SEL_PROPS, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            push @mts, $self->cache_me;
+        } else {
+            $exts->{ $d[$#d-1] } = 1;
+            unless ($seen->{$d[$#d]}) {
+                push @$grp_ids, $d[$#d];
+                $seen->{$d[$#d]} = 1;
+            }
         }
-        # Grab the MIME type.
-        $init[$#init]->{$ext} = 1;
     }
-    # Grab the last object.
-    push @mts, &$make_obj($pkg, \@init) if @init;
+
     # Return the objects.
     return \@mts;
-};
-
-################################################################################]
-
-=item my $mt = &$make_obj( $pkg, $init )
-
-Instantiates a Bric::Util::MediaType object. Used by &$get_em().
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Unable to load action subclass.
-
-=item *
-
-Invalid parameter passed to constructor method.
-
-=item *
-
-Incorrect number of args to Bric::_set().
-
-=item *
-
-Bric::set() - Problems setting fields.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-$make_obj = sub {
-    my ($pkg, $init) = @_;
-    my $self = bless {}, $pkg;
-    $self->SUPER::new;
-    push @$init, ({}, {});
-    $self->_set(\@props, $init);
-    $self->_set__dirty;
-    $self->cache_me;
 };
 
 ################################################################################

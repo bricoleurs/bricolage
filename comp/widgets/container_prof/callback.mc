@@ -762,6 +762,7 @@ my $split_super_bulk = sub {
 
     # Create hash of possible names from the data elements
     foreach my $p ($at->get_data) {
+        print STDERR $p->get_key_name, "\n";
         $poss_names{$p->get_key_name} = 'd';
     }
 

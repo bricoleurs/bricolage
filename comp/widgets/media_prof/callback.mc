@@ -702,6 +702,50 @@ my $handle_checkout = sub {
     }
 };
 
+################################################################################
+
+my $handle_keywords = sub {
+    my ($widget, $field, $param) = @_;
+    my $id = get_state_data($widget, 'media')->get_id;
+    set_redirect("/workflow/profile/media/keywords.html");
+};
+
+################################################################################
+
+my $handle_add_kw = sub {
+    my ($widget, $field, $param) = @_;
+
+    # Grab the media.
+    my $media = get_state_data($widget, 'media');
+    chk_authz($media, EDIT);
+
+    # Add new keywords.
+    my $new;
+    foreach (@{ mk_aref($param->{keyword}) }) {
+        next unless $_;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+        unless ($kw) {
+            $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+            log_event('keyword_new', $kw);
+        }
+        push @$new, $kw;
+    }
+    $media->add_keywords($new) if $new;
+
+    # Delete old keywords.
+    $media->delete_keywords(mk_aref($param->{del_keyword}))
+      if defined $param->{del_keyword};
+
+    # Save the changes
+    set_state_data($widget, 'media', $media);
+
+    set_redirect(last_page);
+
+    add_msg("Keywords saved.");
+
+    # Take this page off the stack.
+    pop_page;
+};
 
 ##########################
 ## Callback Definitions ##
@@ -735,6 +779,8 @@ my %cbs = (
            save_contrib_cb       => $handle_save_contrib,
            save_and_stay_contrib_cb => $handle_save_and_stay_contrib,
            add_oc_id_cb             => $handle_add_oc,
+           keywords_cb              => $handle_keywords,
+           add_kw_cb                => $handle_add_kw,
 );
 </%once>
 

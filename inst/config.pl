@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:17:35 $
+$Date: 2003-03-23 06:56:55 $
 
 =head1 DESCRIPTION
 
@@ -152,7 +152,7 @@ sub confirm_settings {
   ask_confirm("Temporary Directory",       \$CONFIG{TEMP_DIR});
   ask_confirm("Perl Module Directory",     \$CONFIG{MODULE_DIR});
   ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR});
-  ask_confirm("Man-Page Directory",        \$CONFIG{MAN_DIR});
+  ask_confirm("Man-Page Directory (! to skip)", \$CONFIG{MAN_DIR});
   ask_confirm("Log Directory",             \$CONFIG{LOG_DIR});
   ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
   $CONFIG{PID_FILE} = catfile($CONFIG{PID_FILE}, 'httpd.pid')

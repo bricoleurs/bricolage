@@ -46,8 +46,8 @@ sub test_lookup : Test(7) {
         "Look up the new job ID '$jid'" );
     is( $job->get_id, $jid, "Check that the ID is the same" );
     # Check a few attributes.
-    my $ret_date = local_date(db_date($date), ISO_8601_FORMAT);
-    is( $job->get_sched_time, $ret_date, "Scheduled time is $ret_date" );
+    is( $job->get_sched_time(ISO_8601_FORMAT), $date,
+        "Scheduled time is '$date'" );
     my $uid = $self->user_id;
     is( $job->get_user_id, $uid, "Check User ID $uid" );
 }
@@ -316,7 +316,7 @@ sub test_execute_me : Test(29) {
     ok( my $sid = $server->get_id, "Get server ID" );
     $self->add_del_ids($sid, 'server');
 
-    # Create and exeucte the job.
+    # Create and execute the job.
     my %args = %job;
     ok( my $job = Bric::Dist::Job->new(\%args), "Create new job" );
     ok( $job->add_resources(@res), "Add resources" );

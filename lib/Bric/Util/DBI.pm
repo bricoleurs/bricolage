@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-03-23 06:57:01 $
 
 =head1 SYNOPSIS
 
@@ -731,11 +731,11 @@ sub build_query_with_unions {
     my (@queries);
     # loop through the relations building a query
     foreach my $rel ( @{$pkg->RELATIONS} ) {
-        my $rtables = "," . $pkg->RELATION_TABLES->{$rel};
+        my $rtables = ", " . $pkg->RELATION_TABLES->{$rel};
         my $rwhere_clause = $pkg->RELATION_JOINS->{$rel};
-        $rtables = "" if length($rtables) == 1;
+        $rtables = "" if length($rtables) == 2;
         push @queries, qq{ SELECT DISTINCT $cols
-                           FROM   $tables $rtables
+                           FROM   $tables$rtables
                            WHERE  $where_clause AND $rwhere_clause
                          };
     }
@@ -769,25 +769,25 @@ sub clean_params {
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
     # checked_out has some special cases
-    if (exists $param->{checked_out}) {
-        if ($param->{checked_out} eq 'all') {
-            delete $param->{_checked_out};
-        } else {
-            $param->{_checked_out} = $param->{checked_out};
-        }
-    } elsif (exists $param->{checkout}) {
-        $param->{_checked_out} = $param->{checkout};
-    } elsif (defined $param->{user_id}) {
-        $param->{_checked_out} = 1;
-    } else {
-        $param->{_checked_out} = 0;
-    }
+    # deal with the checked_out param.  The all argument is actually
+    # the default behavior.
+    $param->{_checked_out} = $param->{checked_out}
+      if exists $param->{checked_out} && $param->{checked_out} ne 'all';
+    # this will override the above
+    $param->{_checked_out} = $param->{checkout} if exists $param->{checkout};
+    # this is last because it's most important for defining a workspace
     $param->{_checked_out} = 1 if defined $param->{user__id};
+    # finally the default
+    $param->{_checked_in_or_out} = 1 unless defined $param->{_checked_out};
+    # trim cruft
+    delete $param->{checkout};
+    delete $param->{checked_out};
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
     # we can only handle the returned versions p in reverse
-    $param->{_no_returned_versions} = 1 unless $param->{return_versions};
-    # add default order
+    $param->{_no_return_versions} = 1 
+      unless $param->{return_versions} || $param->{version};
+    # add default order 
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id
     if( exists $param->{workflow_id} && ! defined $param->{workflow_id} ) {

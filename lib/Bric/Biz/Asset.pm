@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-18 00:01:23 $
+$Date: 2003-03-23 06:57:00 $
 
 =head1 SYNOPSIS
 
@@ -240,9 +240,7 @@ sub lookup {
       ({ msg => 'Must call list on Story, Media, or Formatting'})
       unless $pkg->CAN_DO_LOOKUP;
     $param = clean_params($pkg, $param);
-    # we don't care about checked out state for lookup
-    delete $param->{_checked_out};
-    # but we do want the newest version. will use order to get it
+    # we generally want the newest version. will use order to get it
     $param->{Order} = 'version';
     $param->{OrderDirection} = 'DESC';
     my $tables =  tables($pkg, $param);
@@ -569,14 +567,12 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              },
-                  needs_publish => {
-                  name     => 'needs_publish',
-                  get_meth => sub { my $a=shift;
-                                                                        if ($a->get_publish_status(@_)) {
-                                                                                return $a->needs_publish(@_) ? '<img src="/media/images/P_red.gif" border=0 width="15" height="15" />' : '<img src="/media/images/P_green.gif" border=0 width="15" height="15" />';
-                                                                        } }, 
-                  get_args => [],
-                 },
+            needs_publish => {
+                              name     => 'needs_publish',
+                              get_meth => sub { shift->needs_publish(@_) },
+                              get_args => [],
+                              disp     => 'Status',
+                             },
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -736,9 +732,10 @@ sub my_meths {
 
 =over 4
 
-=item $versions = $asset->get_versions()
+=item $versions = $asset->get_versions
 
-Returns a list ref of the previous versions of this asset
+Returns an array or array reference the previous versions of this asset in
+order from the first to the current.
 
 B<Throws:>
 
@@ -755,23 +752,17 @@ NONE
 =cut
 
 sub get_versions {
-        my ($self) = @_;
-
-        my $dirty = $self->_get__dirty();
-        
-        my $versions = $self->_get('_versions');
-
-        return $versions if $versions;
-
-        my $pkg = ref $self;
-
-        $versions = $pkg->list( { id => $self->get_id(), return_versions => 1 });
-
-        $self->_set( { _versions => $versions });
-
+    my ($self) = @_;
+    my $versions = $self->_get('_versions');
+    unless ($versions) {
+        my $dirty = $self->_get__dirty;
+        $versions = $self->list({ id              => $self->get_id,
+                                  return_versions => 1,
+                                  Order           => 'version' });
+        $self->_set({ _versions => $versions });
         $self->_set__dirty($dirty);
-
-        return $versions;
+    }
+    return wantarray ? @$versions : $versions;
 }
 
 ################################################################################
@@ -1631,7 +1622,6 @@ B<Notes:> NONE.
 
 sub checkin {
     my $self = shift;
-
     die Bric::Util::Fault::Exception::GEN->new
       ({ msg => "Cannot checkin non checked out versions" })
       unless $self->_get('checked_out');

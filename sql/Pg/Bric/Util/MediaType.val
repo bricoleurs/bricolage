@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    MediaType.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-03-23 06:57:01 $
 -- Author:  David Wheeler <david@wheeler.net>
 
 -- I got these MIME types by using tools/dev/get_mime_types. I called it with
@@ -672,3 +672,556 @@ VALUES (91, 'x-conference/x-cooltalk', NULL, 1);
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
 VALUES (129, 91, 'ice');
+
+-- Add them all to "All Media Types" group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (800, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (800, 0, 800);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (801, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (801, 1, 801);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (802, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (802, 2, 802);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (803, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (803, 3, 803);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (804, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (804, 4, 804);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (805, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (805, 5, 805);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (806, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (806, 6, 806);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (807, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (807, 7, 807);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (808, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (808, 8, 808);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (809, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (809, 9, 809);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (810, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (810, 10, 810);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (811, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (811, 11, 811);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (812, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (812, 12, 812);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (813, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (813, 13, 813);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (814, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (814, 14, 814);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (815, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (815, 15, 815);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (816, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (816, 16, 816);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (817, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (817, 17, 817);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (818, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (818, 18, 818);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (819, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (819, 19, 819);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (820, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (820, 20, 820);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (821, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (821, 21, 821);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (822, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (822, 22, 822);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (823, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (823, 23, 823);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (824, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (824, 24, 824);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (825, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (825, 25, 825);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (826, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (826, 26, 826);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (827, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (827, 27, 827);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (828, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (828, 28, 828);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (829, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (829, 29, 829);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (830, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (830, 30, 830);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (831, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (831, 31, 831);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (832, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (832, 32, 832);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (833, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (833, 33, 833);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (834, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (834, 34, 834);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (835, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (835, 35, 835);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (836, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (836, 36, 836);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (837, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (837, 37, 837);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (838, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (838, 38, 838);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (839, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (839, 39, 839);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (840, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (840, 40, 840);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (841, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (841, 41, 841);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (842, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (842, 42, 842);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (843, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (843, 43, 843);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (844, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (844, 44, 844);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (845, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (845, 45, 845);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (846, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (846, 46, 846);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (847, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (847, 47, 847);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (848, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (848, 48, 848);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (849, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (849, 49, 849);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (850, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (850, 50, 850);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (851, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (851, 51, 851);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (852, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (852, 52, 852);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (853, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (853, 53, 853);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (854, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (854, 54, 854);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (855, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (855, 55, 855);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (856, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (856, 56, 856);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (857, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (857, 57, 857);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (858, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (858, 58, 858);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (859, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (859, 59, 859);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (860, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (860, 60, 860);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (861, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (861, 61, 861);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (862, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (862, 62, 862);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (863, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (863, 63, 863);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (864, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (864, 64, 864);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (865, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (865, 65, 865);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (866, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (866, 66, 866);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (867, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (867, 67, 867);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (868, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (868, 68, 868);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (869, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (869, 69, 869);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (870, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (870, 70, 870);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (871, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (871, 71, 871);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (872, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (872, 72, 872);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (873, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (873, 73, 873);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (874, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (874, 74, 874);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (875, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (875, 75, 875);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (876, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (876, 76, 876);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (877, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (877, 77, 877);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (878, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (878, 78, 878);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (879, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (879, 79, 879);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (880, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (880, 80, 880);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (881, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (881, 81, 881);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (882, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (882, 82, 882);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (883, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (883, 83, 883);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (884, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (884, 84, 884);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (885, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (885, 85, 885);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (886, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (886, 86, 886);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (887, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (887, 87, 887);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (888, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (888, 88, 888);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (889, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (889, 89, 889);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (890, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (890, 90, 890);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (891, 48, 72, 1);
+
+INSERT INTO media_type_member (id, object_id, member__id)
+VALUES (891, 91, 891);

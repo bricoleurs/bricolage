@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-03-23 06:57:01 $
 
 =head1 SYNOPSIS
 
@@ -220,6 +220,10 @@ use constant PARAM_WHERE_MAP =>
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
+      _checked_in_or_out    => 'i.checked_out = '
+                             . '( SELECT max(checked_out) '
+                             . 'FROM media_instance '
+                             . 'WHERE version = i.version )',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
       category__id          => 'i.category__id = ?',
@@ -229,8 +233,9 @@ use constant PARAM_WHERE_MAP =>
       keyword               => 'mk.media_id = mt.id AND '
                              . 'k.id = mk.keyword_id AND '
                              . 'LOWER(k.name) LIKE LOWER(?)',
-      _no_returned_versions => 'mt.current_version = i.version',
+      _no_return_versions   => 'mt.current_version = i.version',
       grp_id                => 'm2.grp__id = ? AND '
+                             . 'm2.active = 1 AND '
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => '( LOWER(k.name) LIKE LOWER(?) OR '

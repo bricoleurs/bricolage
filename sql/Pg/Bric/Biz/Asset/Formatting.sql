@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.3 $
+-- VERSION: $Revision: 1.4 $
 --
--- $Date: 2003-03-15 18:36:07 $
+-- $Date: 2003-03-23 06:57:01 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -58,6 +58,7 @@ CREATE TABLE formatting (
     current_version     NUMERIC(10,0)  NOT NULL,
     workflow__id        NUMERIC(10,0),
     desk__id            NUMERIC(10,0),
+    published_version   NUMERIC(10, 0),
     deploy_status       NUMERIC(1,0)   NOT NULL
                                        DEFAULT 0
                                        CONSTRAINT ck_formatting__deploy_status

@@ -75,7 +75,7 @@ use constant PARAM_WHERE_MAP =>
       category_id         => 'i.id = c.story_instance__id AND c.category_id = ?',
       category_uri        => 'i.id = c.story_instance__id AND c.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
       keyword             => 'sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
-      _no_returned_versions => 's.current_version = i.version',
+      _no_return_versions => 's.current_version = i.version',
       grp_id              => 's.id IN ( SELECT DISTINCT sm.object_id FROM story_member sm, member m WHERE m.grp__id = ? AND sm.member__id = m.id )',
       simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) OR LOWER(s.primary_uri) LIKE LOWER(?))',
     };
@@ -118,19 +118,19 @@ sub test_build_query: Test(2) {
     # with grp_ids
     my $got = build_query_with_unions('Bric::Util::DBI::Test', 'cols', 'tables', 'where', 'order');
     my $expected = q{  SELECT DISTINCT cols
-                       FROM   tables ,story_member sm
+                       FROM   tables, story_member sm
                        WHERE  where AND sm.object_id = s.id AND m.id = sm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables ,story__category sc, category_member cm
+                       FROM   tables, story__category sc, category_member cm
                        WHERE  where AND sc.story_instance__id = i.id AND cm.object_id = sc.category__id AND m.id = cm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables ,desk_member dm
+                       FROM   tables, desk_member dm
                        WHERE  where AND dm.object_id = s.desk__id AND m.id = dm.member__id
                        UNION
                        SELECT DISTINCT cols
-                       FROM   tables ,workflow_member wm
+                       FROM   tables, workflow_member wm
                        WHERE  where AND wm.object_id = s.workflow__id AND m.id = wm.member__id
                        order};
     $got =~ s/[\t ]+/ /gm; # ignore whitespace
@@ -271,8 +271,8 @@ sub test_where: Test(70) {
     is( $cols, $base . ' AND sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)', 'check keyword param');
     is_deeply( $args, [1], ' ... and the arg');
     # return_versions
-    ($cols, $args) = where_clause($CLASS, { _no_returned_versions => 1 });
-    is( $cols, $base . ' AND s.current_version = i.version', 'check _no_returned_versions param');
+    ($cols, $args) = where_clause($CLASS, { _no_return_versions => 1 });
+    is( $cols, $base . ' AND s.current_version = i.version', 'check _no_return_versions param');
     is_deeply( $args, [], ' ... and the arg');
     # grp_id
     ($cols, $args) = where_clause($CLASS, { grp_id => 1 });
@@ -308,7 +308,7 @@ sub test_where: Test(70) {
                     category_id         => 22,
                     category_uri        => 23,
                     keyword             => 24,
-                    _no_returned_versions => 25,
+                    _no_return_versions => 25,
                     grp_id              => 26,
                   };
     ($cols, $args) = where_clause($CLASS, $param);
@@ -396,49 +396,49 @@ sub testclean_params: Test(7) {
     my $exp;
     $exp = { 
              active => 1,
-             _no_returned_versions => 1,
-             _checked_out => 0,
+             _no_return_versions => 1,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, undef), $exp, 'correct base params added');
     $exp = { 
              active => 1,
-             _no_returned_versions => 1,
-             _checked_out => 0,
+             _no_return_versions => 1,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'slug',
            };
     is_deeply( clean_params($CLASS, { Order => 'slug' }), $exp, 'Order works right');
     $exp = { 
              active => 1,
              return_versions => 1,
-             _checked_out => 0,
              _not_simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
-    is_deeply( clean_params($CLASS, { return_versions => 1 }), $exp, 'add returned versions');
+    is_deeply( clean_params($CLASS, { return_versions => 1 }), $exp, 'add return versions');
     $exp = { 
              active => 1,
-             _no_returned_versions => 1,
-             _checked_out => 0,
+             _no_return_versions => 1,
              simple => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, {simple => 1}), $exp, 'simple sets itself and not _not_simple');
     # active <-> inactive
     $exp = { 
              active => 0,
-             _no_returned_versions => 1,
-             _checked_out => 0,
+             _no_return_versions => 1,
              _not_simple => 1,
              inactive => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { inactive => 1 }), $exp, 'inactive sets active 0');
     $exp = { 
              active => 1,
-             _no_returned_versions => 1,
+             _no_return_versions => 1,
              _not_simple => 1,
              user__id => 1,
              _checked_out => 1,
@@ -447,10 +447,10 @@ sub testclean_params: Test(7) {
     is_deeply( clean_params($CLASS, { user__id => 1 }), $exp, 'set _checked_out to 1 for user__id');
     $exp = { 
              active => 1,
-             _no_returned_versions => 1,
-             _checked_out => 0,
+             _no_return_versions => 1,
              _not_simple => 1,
              _null_workflow_id => 1,
+             _checked_in_or_out => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { workflow_id => undef }), $exp, 'undef workflow__id sets _null_workflow_id');

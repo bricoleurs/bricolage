@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:16 $
+$Date: 2003-03-23 06:56:54 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -75,13 +75,12 @@ if ($desks) {
     $deskText .= "</select>";
 }
 
-my $versions = $obj->get_versions;
 my $versionText = '';
+my $version = $obj->get_version;
 
-if ($versions) {
+if ($version) {
     $versionText = qq{<select name="$widget|version">};
-    foreach (sort {$b->get_version <=> $a->get_version}  @$versions ) {
-        my $v = $_->get_version;
+    foreach my $v (reverse 1..$version ) {
         $versionText .= qq{<option value="$v">$v</option>};
     }
     $versionText .= "</select>";
@@ -132,7 +131,7 @@ if ($work_id) {
   <td align="right" widht="33%">
   <table border="0" cellpadding="0" cellspacing="0">
   <tr>
-% if ($versions && @$versions > 1) {
+% if ($version) {
     <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
     <td valign="middle">&nbsp;<% $lang->maketext('to') %> <% $versionText %></td>
     <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-03-12 03:25:55 $
+$Date: 2003-03-23 06:56:54 $
 
 =head1 SYNOPSIS
 
@@ -66,6 +66,13 @@ my $addition = sub {
     return;
 };
 
+my $alter = { publish_status => sub {
+                  my ($val, $obj) = @_;
+                  return unless $val;
+                  $m->comp('/widgets/desk/publish_status.mc', asset => $obj);
+              }
+            };
+
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%init>;
@@ -91,7 +98,8 @@ for (@$wf) { $wf = "&quot;$_->{name}&quot;" and last if $_->{id} == $w_id }
   'object'   => $object,
   sortBy     => 'name',
   title      => '%n Found',
-  'fields'   => [qw(id name file_name output_channel_name)],
+  'fields'   => [qw(id file_name output_channel_name publish_status)],
+  alter      => $alter,
   'profile'  => $profile,
   exclude    => $exclude,
   addition   => $addition,

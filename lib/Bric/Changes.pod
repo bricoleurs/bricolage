@@ -134,6 +134,8 @@ classes:
 
 =item Bric::Util::Grp
 
+=item Bric::Util::MediaType
+
 =item Bric::Util::Pref
 
 =back
@@ -257,8 +259,31 @@ operations.
 
 =item *
 
-Bric::App::Session now has an instance() public class method to return the
-%HTML::Mason::Commands::session hash. [Scott]
+Bric::App::Session now has an C<instance()> public class method to return the
+C<%HTML::Mason::Commands::session> hash. [Scott]
+
+=item *
+
+Subelement can now nest. That is, they can contain themselves. Not in a story,
+of course, but in the document model (element administration). [David]
+
+=item *
+
+Keywords can now be associated with media assets. [David]
+
+=item *
+
+Templates now have a C<published_version> attribute that properly reflects the
+version of a template that was last deployed. This matches what Story and
+Media have done since around version 1.3.2, and eliminates some warnings from
+the error log. The UI has also been updated to properly show the deploy status
+of templates. [David]
+
+=item *
+
+The installer should now properly detect that the Apache "log_config" module
+is installed even when it's called "config_log". Thanks to Ilia Chipitsine for
+the spot and the diagnostics needed to solve the problem. [David]
 
 =back
 
@@ -365,6 +390,17 @@ a primary output channel. [David]
 
 Deleted output channels no longer show up in the list of output channels to
 associate with a destination. Thanks to Alex Epshteyn for the spot! [David]
+
+=item *
+
+The installer now collects Apache configuration data from any C<Include>d
+files, as well. Thanks to Alex Wheeler for the spot! [David]
+
+=item *
+
+Media types now can be added to groups. This means that permissions can be set
+so that users can administer media types. Previously, only members of the
+"Global Admins" group could administer meida types. [David]
 
 =back
 
