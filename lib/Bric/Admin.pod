@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2002-01-10 20:12:35 $
+$Date: 2002-01-10 23:32:47 $
 
 =head1 DESCRIPTION
 
@@ -632,7 +632,10 @@ upgrade from 1.0.2 to 1.2.0:
   perl upgrade/1.2.0/rm_dhandlers.pl
 
 You'll need to adjust the psql line to match your Postrges settings
-(postgres_user and bric_database_name).
+(postgres_user and bric_database_name).  Also, you may need to edit
+oc_include.sql if you need to GRANT access to your database to a user
+other than "nobody".  The GRANT statements are at the bottom of the
+file.
 
 Now edit the new bricolage.conf file to match your old settings using
 the bricolage.conf.old settings you saved as a guide.  Don't just copy
