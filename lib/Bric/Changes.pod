@@ -24,6 +24,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Elminated some warnings. Reported by Christian Hauser. [David]
 
+=item *
+
+Simplified error handling in the C<Bric> base class and when running outside
+of C<mod_perl>. [David]
+
 =back
 
 =head1 VERSION 1.6.10 "Jump" (2004-02-29)
