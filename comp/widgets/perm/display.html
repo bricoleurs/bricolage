@@ -78,14 +78,14 @@ if ($is_user) {
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
 	     . "access assets in these $cat_pl.");
 
-    foreach my $cat_grp ($cat_grp_pkg->list({ all => 1 })) {
+    foreach my $cat_grp ($cat_grp_pkg->list({ all => 1, name => 'Category Assets'})) {
 	my $gid = $cat_grp->get_id;
 	$m->comp($row_comp,
 		 grp => $cat_grp,
 		 gid => $gid,
 		 type => 'obj',
 		 perm => $perms{$gid},
-		 name => $cat_grp->get_name
+		 name => $cat_grp->get_description
 		);
     }
     $m->out(qq{</table>\n});
@@ -155,7 +155,7 @@ my $cat_key = 'category';
 my $cat_pkg = get_package_name($cat_key);
 my $cat_disp = get_disp_name($cat_key);
 my $cat_pl = lc get_class_info($cat_key)->get_plural_name;
-my $cat_grp_key = 'category_grp';
+my $cat_grp_key = 'asset_grp';
 my $cat_grp_disp = get_disp_name($cat_grp_key);
 my $cat_grp_pkg = get_package_name($cat_grp_key);
 my $grp_key = 'grp';

@@ -6,16 +6,16 @@ Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-06-11 22:21:22 $
+$Date: 2002-07-17 19:32:31 $
 
 =head1 SYNOPSIS
 
@@ -123,7 +123,6 @@ sub get_supported_classes {
       'Bric::Util::Grp::Asset' => 'grp',
       'Bric::Util::Grp::AssetType' => 'grp',
       'Bric::Util::Grp::AssetVersion' => 'grp',
-      'Bric::Util::Grp::BA' => 'grp',
       'Bric::Util::Grp::Category' => 'grp',
       'Bric::Util::Grp::CategorySet' => 'grp',
       'Bric::Util::Grp::ContribType' => 'grp',

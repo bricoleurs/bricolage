@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-17 12:40:37 $
+$Date: 2002-07-17 19:32:29 $
 
 =head1 SYNOPSIS
 
@@ -31,8 +31,6 @@ $Date: 2002-07-17 12:40:37 $
 
  # Return a list of keywords associated with this category.
  @keys   = $cat->keywords();
- # Return a list of assets asscociated with this category.
- @assets = $cat->assets();
  # Return a list of child categories of this category.
  @cats   = $cat->get_children();
  # Return the parent of this category.
@@ -58,16 +56,12 @@ $Date: 2002-07-17 12:40:37 $
  $cat->add_keyword([$kw_id]);
  $cat->del_keyword([$kw_id]);
 
- # Add/Delete assets associated with this category.
- $cat->add_asset([$asset || $asset_id]);
- $cat->del_asset([$asset || $asset_id]);
-
  # Save information for this category to the database.
  $cat->save;
 
 =head1 DESCRIPTION
 
-Allows assets to be grouped into categories.  In addition to assets a category 
+Allows assets to be grouped into categories. In addition to assets a category
 can contain other categories, allowing a hierarchical layout of categories and
 assets.
 
@@ -78,20 +72,18 @@ assets.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
-
-# A class that impliments categories as a subset of groups.
+# Programatic Dependencies
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::DP;
 use Bric::Util::DBI qw(:standard col_aref);
+use Bric::Util::Grp::Asset;
 
 #==============================================================================#
 # Inheritance                          #
@@ -148,8 +140,6 @@ BEGIN {
                          'description'     => Bric::FIELD_RDWR,
 
                          # Private Fields
-                         '_asset_grp_obj'    => Bric::FIELD_NONE,
-
                          '_attr_obj'         => Bric::FIELD_NONE,
                          '_attr'             => Bric::FIELD_NONE,
                          '_meta'             => Bric::FIELD_NONE,
@@ -216,18 +206,9 @@ NONE
 =cut
 
 sub new {
-    my $class = shift;
-    my ($init) = @_;
-
-    # Create the object via fields which returns a blessed object.
-    my $self = bless {}, $class;
-
-    # Call the parent's constructor.
-    $self->SUPER::new();
-    $self->activate;
-
-    # Return the object.
-    return $self;
+    my ($pkg, $init) = @_;
+    $init->{_active} = 1;
+    $pkg->SUPER::new($init);
 }
 
 #------------------------------------------------------------------------------#
@@ -1065,48 +1046,6 @@ sub keywords {
 
 #------------------------------------------------------------------------------#
 
-=item @assets = $cat->assets();
-
-Returns a list of assets associated with this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub assets {
-    my $self = shift;
-    my ($ass_id, $ass_obj);
-
-    $ass_obj = $self->_get('_asset_grp_obj');
-
-    unless ($ass_obj) {
-        $ass_id = $self->get_asset_grp_id;
-
-        # There are no assets for this category.
-        return unless $ass_id;
-        $ass_obj = Bric::Util::Grp::Asset->lookup({'id' => $ass_id});
-        die $gen->new({'msg' => "Failed to instantiate asset group"})
-          unless $ass_obj;
-    }
-
-    my $mem = $ass_obj->get_members;
-    return unless $mem;
-    my @mem_obj = map { $_->get_object } @$mem;
-    return wantarray ? @mem_obj : \@mem_obj;
-}
-
-#------------------------------------------------------------------------------#
-
 =item C<my @cats = $cat->get_children;>
 
 Returns the children of this category.
@@ -1222,7 +1161,7 @@ sub add_keyword {
               unless defined $keyword;
         }
 
-        # associate keyword with this asset
+        # associate keyword with this category
         $keyword->associate($self);
     }
 }
@@ -1258,90 +1197,11 @@ sub del_keyword {
               unless defined $keyword;
         }
         
-        # dissociate keyword with this asset
+        # dissociate keyword with this category.
         $keyword->dissociate($self);
     }
     
     return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $asset = $cat->add_asset($asset || [$asset]);
-
-Add an asset to this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub add_asset {
-    my $self = shift;
-    my ($a) = @_;
-
-    my $a_obj = $self->_load_grp('Asset', 
-                                 'asset_grp_id', '_asset_grp_obj');
-   
-    unless ($a_obj) {
-        my $desc = 'A group of assets for Category';
-        $a_obj = Bric::Util::Grp::Asset->new({'name'        => 'Assets',
-                                            'description' => $desc});
-    }
-
-    #$self->_set(['asset_grp_id'], [$a_obj->get_id]);
-
-    my $t = 'Bric::Biz::Asset';
-    # Map any IDs we are passed to a hash ref of ID and type.
-    $a_obj->add_members([map {ref{$_} ? {'obj'=>$_} 
-                                      : {'package'=>$t,'id'=>$_}} @$a]);
-}
-
-#------------------------------------------------------------------------------#
-
-=item $success = $cat->del_asset($asset || [$asset]);
-
-Removes an asset from this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub del_asset {
-    my $self = shift;
-    my ($a) = @_;
-    
-    my $a_obj = $self->_load_grp('Asset', 
-                                 'asset_grp_id', '_asset_grp_obj');
-   
-    # HACK:  Should return error object.
-    unless ($a_obj) {
-        my $msg = "Category has no assets";
-        die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
-    }
-
-    my $t = 'Bric::Biz::Asset';
-    # Map any IDs we are passed to a hash ref of ID and type.
-    $a_obj->delete_members([map {ref{$_} ? $_ : {'package'=>$t,'id'=>$_}} @$a]);
 }
 
 #------------------------------------------------------------------------------#
@@ -1446,10 +1306,8 @@ sub save {
     my $self = shift;
     my $id = $self->get_id;
 
-    my ($dir, $a_obj, $cat_obj, $ag_id) =
-      $self->_get(qw(directory _asset_grp_obj _category_grp_obj));
+    my $dir = $self->_get(qw(directory));
 
-#    if (!$self->get_directory && $id != ROOT_CATEGORY_ID) {
     unless (defined $dir && $dir ne '' ||
             (defined $id && $id == ROOT_CATEGORY_ID)) {
         # Set a default directory name.
@@ -1457,13 +1315,6 @@ sub save {
         $dir =~ y/[a-z]//cd if $dir;
         $self->set_directory($dir);
     }
-
-    # Save changes made to these objects if they exist.
-    $a_obj->save   if $a_obj;
-
-    # Make sure the IDs are set.
-    $self->_set(['asset_grp_id'], [$a_obj->get_id])
-      unless defined $ag_id || !$a_obj;
 
     # Save our category information
     if (defined $id) {
@@ -1477,12 +1328,10 @@ sub save {
         foreach (@{$self->_get('_save_children')}) {
             $_->save;
         }
-        
         $self->_set(['_save_children'], [undef]);
     }
 
     $self->_save_attr;
-
     return $self;
 }
 
@@ -1598,14 +1447,14 @@ sub _update_category {
 
     my $sql = 'UPDATE '.TABLE.
               " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
-    
+
     my $sth = prepare_c($sql);
 
     if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
-        my $new_uri = Bric::Util::Trans::FS->cat_uri(
-          $self->get_parent->get_uri,
-          $self->_get('directory'),
-        );
+        my $new_uri = Bric::Util::Trans::FS->cat_uri
+          ( $self->get_parent->get_uri,
+            $self->_get('directory')
+          );
 
         $self->_set(['uri'], [$new_uri]);
     }
@@ -1626,6 +1475,15 @@ sub _update_category {
 
 sub _insert_category {
     my $self = shift;
+    # Set up a group. This isn't used anywhere or for anything other than
+    # to have a way to get a group ID from a category to track assets. The
+    # assets will pretend they're in the group, even though they're really not.
+    # See Bric::Biz::Asset->get_grp_ids to see it at work.
+    my $ag_obj = Bric::Util::Grp::Asset->new
+      ({ name => 'Category Assets',
+         description => 'For category asset permissions' });
+    $ag_obj->save;
+    $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
     my $nextval = next_key(TABLE);
 
     # Create the insert statement.
@@ -1640,7 +1498,7 @@ sub _insert_category {
     )]);
 
     execute($sth, $self->_get(FIELDS));
-  
+
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);
     # Add the category to the 'All Categories' group.
@@ -1648,11 +1506,6 @@ sub _insert_category {
     return $self;
 }
 
-sub _get_category_grp {
-    my $self = shift;
-   
-
-}
 
 1;
 __END__
