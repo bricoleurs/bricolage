@@ -3,22 +3,10 @@
                                   Version 1.8.0
 
 Bricolage is a full-featured, enterprise-class content management system. It
-offers a browser-based interface for ease-of use, a full-fledged templating
-system with complete programming language support for flexibility, and many
+offers a browser-based interface for ease-of use, full-fledged templating
+systems with complete programming language support for flexibility, and many
 other features. It operates in an Apache/mod_perl environment, and uses the
 PostgreSQL RDBMS for its repository.
-
-This is a development release of Bricolage. It contains over 50 new features
-not found in Bricolage 1.6.x, including support for multiple sites, aliasing
-documents between sites, email distribution, keyword management, Template
-Toolkit templating, search by field contents, improved workflow permissions,
-true scheduled burning and publishing, and many significant performance and UI
-enhancements. See Changes for a complete list of changes.
-
-Be warned that, as a development release of Bricolage, this version will have
-bugs. We welcome people testing this release, but anyone using Bricolage in a
-production environment is strongly encouraged to await the arrival of 1.8.0,
-likely in late October or early November.
 
 GETTING STARTED
 ===============
@@ -27,19 +15,19 @@ Before installing Bricolage, be sure to read the platform-specific README file
 relevant to your operating system, if there is one.
 
 For installation instructions, see INSTALL. Once Bricolage has been installed,
-this file will also be available via the Bric::Admin man page.
+this file will also be available via `perldoc Bric::Admin`.
 
 For copying information, see License. Once Bricolage has been installed, this
-file will also be available via the Bric::License man page.
+file will also be available via `perldoc Bric::License`.
 
 For the latest news, see Changes. Once Bricolage has been installed, this file
-will also be available via the Bric::Changes man page.
+will also be available via perldoc `Bric::Changes`.
 
 DOCUMENTATION
 =============
 
 After you've installed Bricolage, the complete API documentation will be
-available as man pages. It is also available on the Bricolage site, at
+available as via perldoc pages. It is also available on the Bricolage site, at
 http://bricolage.cc/documentation.html. Here are a few entry points to get you
 started.
 
