@@ -311,7 +311,7 @@ sub create_user {
     $pass =~ s/'/''/g;
     $user =~ s/'/''/g;
     my $sql = qq{
-        CREATE USER $user
+        CREATE USER "$user"
         WITH PASSWORD '$pass' NOCREATEDB NOCREATEUSER
     };
     system($PSQL, '-q', '-c', $sql, $opt_d);

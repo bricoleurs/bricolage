@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2004-02-21 19:40:30 $
+$Date: 2004-02-22 01:05:06 $
 
 =head1 DESCRIPTION
 
@@ -126,7 +126,7 @@ sub create_user {
     my $pass = $PG->{sys_pass};
 
     print "Creating user named $PG->{sys_user}...\n";
-    my $err = exec_sql("CREATE USER $user WITH password '$pass' " .
+    my $err = exec_sql(qq{CREATE USER "$user" WITH password '$pass' } .
                        "NOCREATEDB NOCREATEUSER", 0, $PGDEFDB);
 
     if ($err) {
