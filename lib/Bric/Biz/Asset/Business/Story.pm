@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.76 $
+$Revision: 1.77 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.76 $ )[-1];
+our $VERSION = (qw$Revision: 1.77 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-12 00:14:53 $
+$Date: 2004-02-12 07:01:09 $
 
 =head1 SYNOPSIS
 
@@ -335,7 +335,7 @@ use constant PARAM_WHERE_MAP =>
                               . '( SELECT max(checked_out) '
                               . 'FROM story_instance '
                               . 'WHERE version = i.version '
-                              . 'AND story__id = s.id )',
+                              . 'AND story__id = i.story__id )',
       _checked_out           => 'i.checked_out = ?',
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '

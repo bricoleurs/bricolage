@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.72 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71 $ )[-1];
+our $VERSION = (qw$Revision: 1.72 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-12 00:14:53 $
+$Date: 2004-02-12 07:01:08 $
 
 =head1 SYNOPSIS
 
@@ -222,7 +222,7 @@ use constant PARAM_WHERE_MAP =>
                              . '( SELECT max(checked_out) '
                              . 'FROM media_instance '
                              . 'WHERE version = i.version '
-                             . 'AND media__id = mt.id)',
+                             . 'AND media__id = i.media__id)',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
