@@ -36,6 +36,12 @@ to create documents based on types without output channel associations.
 The "Output Channel" item for templates on desks now displays properly.
 [David]
 
+=item *
+
+Eliminated bogus "Use of element's 'name' field is deprecated" warnings. Key
+names are allowed to have digits and underscores, and we weren't consistent
+about that. [David]
+
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
