@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =head1 DATE
 
-$Date: 2003-10-28 16:06:43 $
+$Date: 2004-02-17 10:53:25 $
 
 =head1 SYNOPSIS
 
@@ -398,7 +398,7 @@ my %featured_lookup = map { ($_,1) } @$featured;
 
 # limit the number of results to display per page
 my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-
+my $site_filter = Bric::Util::Pref->lookup_val( "Filter by Site Context" ) || 0;
 #--------------------------------------#
 # Set up pagination data.
 
@@ -421,7 +421,11 @@ if ($show_all || ($pagination && defined $offset)) {
     # Construct the parameters and then save them for future pages, if necessary.
     my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
                                         $def_sort_field);
+
     $param = {%$list_arg, %$constrain};
+
+    $param->{site_id} = $c->get_user_cx(get_user_id) if $site_filter && $pkg->HAS_MULTISITE;
+
     set_state_data($widget, 'list_params', $param) if $pagination;
     $do_list = 1 if %$list_arg;
 }
