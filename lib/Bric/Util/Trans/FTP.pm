@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:08 $
+$Date: 2003-10-30 20:05:26 $
 
 =head1 SYNOPSIS
 
@@ -152,7 +152,7 @@ sub put_res {
         my $is_win = $s->get_os eq 'Win32';
         # Instantiate an FTP object, login, and change to binary mode.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-          or throw_gen ertor   => "Unable to connect to remote server '$hn'.",
+          or throw_gen error   => "Unable to connect to remote server '$hn'.",
                        payload => $@;
         $ftp->login($s->get_login, $s->get_password)
           or throw_gen error   => "Unable to login to remote server '$hn'.",
