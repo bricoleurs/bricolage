@@ -4,3 +4,4 @@ config.cache
 config.log
 config.status
 autoscan.log
+install.log

@@ -1,0 +1,231 @@
+NAME
+    Bric::Changes - Bricolage Changes
+
+VERSION
+    $Revision: 1.1 $
+
+DATE
+    $Date: 2001-12-13 14:26:33 $
+
+DESCRIPTION
+    This document lists the Changes to Bricolage introduced with each
+    release.
+
+VERSION 1.2.0
+  New Features
+
+    *   Added Context-sensitive, online help. [Sam]
+
+    *   Added separate interface for editing templates (via FTP). [Sam]
+
+    *   Added the ability to use HTML::Template Templates. [Sam]
+
+    *   Fixed a bug with local previews where a preview page could show up
+        instead of the Bricoalge UI. Thanks to Sara for the spot. [David]
+
+    *   Fixed a bug where Mason component calls failed in previews when the
+        PREVIEW_MASON directive was enabled. [David]
+
+VERSION 1.0.2
+  New Features
+
+    *   Added "File Name" and "File Extension" properties to OutputChannels.
+        These properties will now be used to name files burned to the file
+        system on preview and publish. [David]
+
+    *   Added DEFAULT_FILENAME and DEFAULT_FILE_EXT configuration directives
+        to set default values on the "File Name" and "File Extenstion"
+        Output Channel properties. [David]
+
+    *   Changed Bric::Util::Burner->display_element() so that it doesn't
+        paginate. All paginated pages are now treated instead as regular
+        elements. This is useful for things like printer-freindly pages.
+        Bric::Util::Burner->display_element() contines to work as before.
+        Use this method to output a separate file for each paginated
+        element. [David]
+
+    *   When errors occur while previewing stories, the leftNav is now
+        turned off. [David]
+
+    *   Browser buttons and menus are now disabled. [David]
+
+    *   Added ability to set permissions on assets based on the categories
+        they're in. [David]
+
+    *   Moved all session and session locking files into the "bricolage"
+        subdirectory of the local file system's tmp directory. You'll want
+        to rm -rf /tmp/bricolage_* upon upgrading. [David]
+
+    *   Moved the location of cache files to the "bricolage/cache"
+        subdirectory of the local file system's tmp directory. You'll want
+        to rm -rf /tmp/FileCache upon upgrading. Together with the above
+        change, this means that all Bricolage temporary files are stored in
+        the "bricolage" subdirectory of the local tmp, e.g., /tmp/bricolage.
+        [David]
+
+    *   Added new program, bric_clean_tmp, that can be used in a cron job to
+        delete stale temporary files. [Sam]
+
+    *   Added an "About" page, linked from the logo graphic, that explains
+        the name "Bricolage" and offers the license and credits. [David]
+
+    *   Added PERL_LOADER configuration directive. Pass a line of Perl to
+        this directive, and on startup, it'll execute it in the same
+        namespace as your templates execute in. [David]
+
+    *   Added INCLUDE_XML_WRITER and XML_WRITER_ARGS configuration
+        parameters. If INCLUDE_XML_WRITER is turned on, then all templates
+        will include a new global, $writer, that is an XML::Writer object.
+        This object is provided as a convenience for creating XML in your
+        templates. XML_WRITER_ARGS allows certain arguments to be passed to
+        the XML::Writer instantiator. See Bric::AdvTemplates for more
+        information. [David]
+
+    *   Added URI information to associated categories in the story profile.
+        [David]
+
+    *   Changed category selection for new Templates to use the category URI
+        rather than the name, in line with how Story and Media work. [David]
+
+    *   Added "Save and Stay" button to the Element Profile. [David]
+
+    *   Story Type, Media Type, and Element select lists are now filtered
+        for READ permission in the Story, Media, and Template profiles,
+        respectively. [David]
+
+    *   Category select lists are filtered for READ permission in the Story,
+        Media, and Template profiles. [David]
+
+    *   Category and Story Type, Media Type, and Element select lists are
+        now required fields where appropriate in the Story, Media, and
+        Template profiles. This change was introduced because, with the
+        introduction of permission checking on these select lists, it's
+        possible for them to show up empty where it wasn't possible before.
+        [David]
+
+    *   Renamed programs in bin/ so that they all start with "bric_". Update
+        any links to the old names, because they're gone. [David]
+
+    *   Rewrote bric_apachectl to use Perl and Bric::Config instead of a
+        shell script. Also changed it so that a restart is always a hard
+        restart. [Sam]
+
+    *   Added name of Output Channel to list of Templates in Find Templates
+        interface. [David]
+
+    *   Changed behavior of sideNav to Limit rendering of Workflows
+        permissions. If a user doesn't have READ permission on Workflow, it
+        won't show up in the display. [David]
+
+    *   Added URI to all media profile views. [David]
+
+    *   Added ability to change the category association in Templates.
+        [David]
+
+    *   Changed the Notes icon in Story, Media, and Template profiles to a
+        graphical representation of a note. When there are no notes
+        associated with the asset, the graphic is an empty note. When there
+        are notes associated with the asset, then there is writing on the
+        note. This allows editors to see at a glance if there are any
+        existing notes. [David]
+
+    *   Made SSL optional (and off by default). [Sam]
+
+    *   Change the term "attribute" to "field" in the UI. [David].
+
+  Bug Fixes
+
+    *   Fixed bug where cancelled checkouts of template appeared to work in
+        some views, but not others. Thanks to Matt Vella for the report.
+        [David]
+
+    *   Fixed bug where story titles were accentally getting bogus
+        hyperlinking markup. Thanks to Chris Brody for the report. [David]
+
+    *   Fixed a bug where the "Generic" check box on the "New Template"
+        screen was partially ignored, leading to possibly corrupted data,
+        and at least to the inability to create autohandlers. Thanks to Sam
+        Tregar for the bug report that led to finding this bug. [David]
+
+    *   Fixed bug where element checkboxes weren't remembering if they were
+        checked or not. Thanks to Matt Vella for the spot. [David]
+
+    *   Fixed bug where element select lists weren't populate with their
+        list of values. Thanks to Matt Vella for the report. [David]
+
+    *   Fixed select lists and radio buttons in formBuilder so that they can
+        take just values as well as value/name pairs. [David]
+
+    *   Fixed issue with date fields not geting populated when hours and
+        minutes weren't selected. Also improvied handling fo partial date
+        fields in Elements. Thanks to Matt Vella for the heads-up. [David]
+
+    *   Fixed bug where only one required data field was included in a new
+        story. Thanks to Matt Vella for the report. [David]
+
+    *   Removed the CVS $Log entries from all files, as these were likely to
+        cause conflicts between branches and because few end users will be
+        interested in seeing them in the docs, anyway. [Sam and David]
+
+    *   Fixed bug where new workflows weren't able to add new desks, but
+        were showing up in the side nav before "Save" was clicked. Thanks to
+        Chris Brody for the heads-up. [David]
+
+    *   Fixed bug where workflows deleted via the Workflow Manager (rather
+        than the Workflow Profile) continued to show up in the side nav.
+        Thanks to Sam Tregar for the spot. [David]
+
+    *   Fixed bug where data fields deleted from Elements were deleting them
+        from existing stories, too. [David]
+
+    *   Fixed bug where stories with related media associated with them were
+        displaying the story as an Element rather than as a story after
+        editing the related media. [David]
+
+    *   Removed all file system location dependencies for the operation of
+        Bricolage. Bricolage will still assume that everything's in
+        /usr/local/bricolage, but any location is fine as long as the
+        BRICOLAGE_ROOT environment variable is set to the proper location.
+        [David]
+
+    *   Added code to force all preview pages to be re-requested from the
+        server every time they're viewed. This prevents the browser from
+        loading older versions from its cache, and allows users to always
+        see the most recently-burned output of a story. [David]
+
+    *   Removed debugging information from URLs for when debugging is turned
+        off -- which should be always in production code (e.g., releases).
+        [David]
+
+    *   Elements are now displayed with their display names rather than
+        their attribute names. Thanks to Sam Tregar for the spot. [David]
+
+    *   Fixed bug where fields (attributes) added to an Element with the
+        name of an existing but deactivated field triggered an error. Thanks
+        to Sam for the heads-up. [David]
+
+    *   Fixed a bug where data fields sometimes were not propery retreived
+        from the database in Bric::Biz::AssetType. [David]
+
+    *   Fixed a bug where clicking "Save and Stay" in the Element profile
+        wouldn't delete attributes (fields) marked as such, or even delete
+        the Element itself, if the "Delete this profile" checkbox was
+        checked.
+
+    *   Fixed a bug where, for Story and Media assets, editors were given
+        Edit access to notes, even when they didn't have the asset checked
+        out. [David]
+
+    *   Changed the misleading and inaccurate "Two blank lines" label in the
+        Bulk Edit interface to the more accurate "One blank line". Thanks to
+        Sam Tregar for the heads-up.
+
+VERSION 1.0.1
+    *   Initial public release.
+
+AUTHOR
+    David Wheeler <david@wheeler.net>
+
+SEE ALSO
+    perl(1), Bric (2).
+

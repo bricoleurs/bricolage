@@ -1,0 +1,334 @@
+NAME
+    Bric::ToDo - Bricolage To Do List
+
+VERSION
+    $Revision: 1.1 $
+
+DATE
+    $Date: 2001-12-13 14:26:33 $
+
+DESCRIPTION
+    This document lists the items on Bricolage's To Do list.
+
+OVERVIEW
+    Bricolage versions are determined by the types of changes required.
+    Minor version numbers require no changes to the database schema (though
+    data in the database can be added or changed, e.g, for new preferences),
+    and require few changes to the libraries. The idea is to try to use the
+    existing tools in the libraries and the database to do more in the UI,
+    though minor changes to the libraries are allowed. Major version
+    numbers, on the other hand, change when the database schema has been
+    altered, or when the changes to the libraries are significant (including
+    the addition of new libraries), or simply when significant features have
+    been added.
+
+    At any one time, we will list the tasks that contributors have accepted
+    for the next minor version and for the next major version. After that,
+    we list other outstanding to do items in descending order of importance:
+    "High Priority Minor Items," "High Priority Major Items," "Low Priority
+    Minor Items," and "Low Priority Major Items." Developers who wish to
+    volunteer to take on one or more of these tasks should contact announce
+    their plans and version goal on the Bricolage Developers list
+    <bricolage-devel@lists.sourceforge.net>. Contributions are welcome.
+
+    At the end of this document, the "Blue Sky" section features items that
+    will likely never be done for the 1.x development of Bricolage, but we'd
+    like to keep in mind as long term goals further down the line.
+
+  VERSION 1.2.0
+
+    Estimated ship date: 28 December 2001.
+
+    *   Create installation makefile. [Mark]
+
+    *   Create category browser so that, in interfaces where users have to
+        navigate categories (e.g., when creating subcategories, or when
+        assigning an asset to a category), they can do it hierarchically,
+        rather than have to look at a long-ass list of all categories.
+        [David]
+
+    *   Allow only one template with a given name for a given category and
+        output channel. [Sam]
+
+    *   Separate the filesystem destinations for stories burned for
+        publication and for stories burned for previewing. This will prevent
+        someone previewing and stomping all over a published version of a
+        story. [David]
+
+    *   When clicking "New" for an existing contributor, allow choice of
+        Contributor Type, and then role. Right now, if you want an existing
+        to be a contributor of a different type, you have to create a new
+        person, and this duplication is bad [David].
+
+    *   When adding a new person, have user search for existing persons
+        first to ensure that the person doesn't already exist. That is, when
+        adding a new user, it could be that the person being added is
+        already in the system as a contributor, so the new user object can
+        be based on the person object underlying the contributor object.
+        Similarly, when adding a new contributor, the person being added
+        could having an existing person record as an existing contributor or
+        user. [David]
+
+    *   Add ability for differnt Output Channels to function as different
+        component roots for in Mason templates. This will allow for
+        templates that can't be found in the current Output Channel to be
+        searched for in other Output Channels.
+
+  High Priority Minor Items
+
+    *   Resolve the "Adding Element and hitting Cancel" issue (See
+        http://bricolage-bugzilla.about.com/show_bug.cgi?id=3).
+
+    *   Add Keyword Management interface to centrally manage keywords. Also
+        add interface to select from existing keywords for associating with
+        assets.
+
+    *   Add regression test suite.
+
+    *   Add URI Case preference.
+
+    *   Write distribution documentation.
+
+    *   Create preference and the code to enforce it for URI format, that
+        is, the order in which it is assembled (category/date/slug or
+        /date/category/slug, etc.).
+
+    *   Add preferences and the code to enforce them to allow admins to
+        specify that keywords follow certain rules, such as being all
+        lowercase, or to exclude certain words (e.g., About.com excludes the
+        keyword "about.com").
+
+    *   Add ability to "View" a related story from within the related story
+        Element, so that editors can view what's actually in a story before
+        deciding what to fill in to the fields of the related story element
+        itself.
+
+    *   Add "Check In and Publish/Deploy" button to asset editing screens.
+
+    *   Add "Check In and Remove from Workflow" button to asset editing
+        screens.
+
+    *   If a field in an Element is marked "Required," then require that it
+        be filled in in the profile (via JavaScript).
+
+    *   Add "Clone Asset" button to Media and Story profiles (I think that
+        the API and maybe even the callbacks are already done).
+
+    *   Add ability to "undeploy" templates without deactivating them.
+
+  High Priority Major Items
+
+    *   Add interface for exporting and importing assets and other objects
+        via XML. Ideally, this should use a SOAP interface in order to
+        facilitate other features such as scheduled publishing and
+        syndication.
+
+    *   Add scheduled Burning/Syndication.
+
+    *   Add better tools for handling special characters (e.g., high ASCII,
+        Latin-1 letters with umlauts and accents and such). May need to
+        select a character set to be associated with output channels, and
+        convert characters based on the character set.
+
+    *   Improve the formBuilder interface such that existing fields can be
+        edited, and there is better control over how the fields are created.
+
+    *   Simplify associating media with stories. Users should be able to
+        associated media with stories just as they do contributors and
+        keywords. However, the new media objects they upload should be put
+        into the repository as normal media assets. New uploads of the same
+        media file increment the version numbers.
+
+    *   Add a method to assets to indicate whether the current version needs
+        publishing. Basically, what this method will do is return false if
+        the current version has been published, and true if it has not --
+        even if a previous version has been published. Suggested method
+        name: needs_publish().
+
+  Low Priority Minor Items
+
+    *   Add support for Mozilla/Netscape 6. Essentially, the JavaScript
+        needs to be updated.
+
+    *   Modify JavaScript and CSS to work entirely in JavaScript, rather
+        than rely on server-side client identification. This way, the script
+        files can just be sent to the browser once, rather than re-executing
+        the Mason versions of these files for every request.
+
+    *   Add interface for editing Contact Types.
+
+    *   Add a preference to name the Bricolage instance. This name could be
+        used in window titles as well as in the "Welcome to Bricolage"
+        message on the login page.
+
+    *   Add preference for Contributors to be automatically added to assets
+        as keywords.
+
+    *   Create makefile for distribution engine only.
+
+    *   Add support for Organizations.
+
+    *   Add support for addresses.
+
+    *   Add HTML Cleaning Action.
+
+    *   Add HTML Checking Action.
+
+    *   Add Akamaization Action.
+
+    *   Add new move methods (FTP, SCP, etc.).
+
+    *   Link contributors to their assets in the -- provide a link in the
+        Contributor Manager and/or the Contributor Profile).
+
+    *   Add preferences for listManagers to indicate whethere they should
+        default to expand or narrow behavior.
+
+    *   Add pagination to listManager (maybe).
+
+  Low Priority Major Items
+
+    *   Add keywords to media.
+
+    *   Add new and/or custom form fields to the formBuilder (WHO request --
+        need more information on what exactly they want). One important
+        example is a "Relational" option, where the user can specify a link
+        to another object in Bricolage, pick a field name for that object,
+        and have it appear in a select list. For some objects, they may wish
+        to narrow the field some (such as with categories -- only list
+        subcategories of a given category). Perhaps we can somehow allow
+        them to pass in arguments to list()?
+
+    *   Add support for Java templates.
+
+    *   Add user-created help for user-created fields (add a "Help Text"
+        field to Form Builder).
+
+    *   Make Session an object.
+
+    *   Add ordering to desks, such that their position in workflow can be
+        ordered. This will likely need some sort of attribute on the desks's
+        membership in the group for a workflow (since desks can be in
+        multiple workflows).
+
+    *   Add a flag to the category object to indicate whether or not assets
+        can be associated with it, and then check that flag in the new asset
+        profiles.
+
+    *   Add a flag to the category object to indicate whether or not the
+        category is allowed to have subcategories, and then check that flag
+        in the category profile.
+
+    *   Allow some preferences to have values typed into a text field.
+
+    *   Allow some preferences to get new options entered by the users
+        (e.g., for name and date formats).
+
+    *   Add preference groupings (secret groups would probably work well)
+        and present the grouped preferences together in a profile. Then just
+        list the preference groups in the Preference Manager.
+
+    *   Add support for contributor contracts.
+
+    *   Add support for LDAP authentication.
+
+    *   Change way objects are deactivated (archived?) in the database such
+        that, where there are name uniqueness constraints, a new object can
+        be created with the name of a deleted one without any clashes (e.g.,
+        for Elements and Element Types).
+
+    *   Update all interface elements to use localization libraries. No text
+        that appears to the user should appear except in reference to a
+        localization library.
+
+    *   Add support for Instant messaging (using Jabber server) in Alerts.
+
+    *   Add file system-like asset browsing (especially for templates and
+        media).
+
+    *   Revamp Exceptions so that they use numbers to look themselves up --
+        so there's a central repository of possible exceptions, and they are
+        therefore easier to document.
+
+    *   Create a different way of distinguishing which desks are shared and
+        which are not, rather than relying solely on the desk name.
+
+    *   Add directory (a.k.a. story index) support.
+
+    *   Have objects load their group IDs when they're selected in order to
+        save time checking permissions.
+
+    *   Add Group copying so that a new group can start with the settings
+        (including permissions) of an existing group.
+
+    *   Allow Element Types to be subelements. This means that all elements
+        of a particular type will be subelements, so that if you add or
+        remove elements of that type, they will automatically be subelements
+        of whatever element for which the type is defined.
+
+    *   Add specification for whether Elements added as Subelements of
+        another are "Required" or not -- just as we currently do for fields
+        in an Element.
+
+    *   Create separate sand box for previewing stories with templates while
+        templates are under development -- that is, without deploying them.
+
+    *   Add support for individual user preferences that can override (some)
+        global preferences. (Also add group-level prefs?)
+
+    *   Allow multiple files to be associated with a single media asseet
+        (e.g., when there's an image, a thumbnail, a high-res version, etc.,
+        all essentially for the same asset).
+
+  Blue Sky
+
+    *   Add basic project management. Tie project tasks to stops in the
+        workflow.
+
+    *   Add support for concurrent checkouts, including support for conflict
+        resolution.
+
+    *   Add support for display of deltas between versions -- something like
+        what CVSWeb does, in terms of allowing editors to see what has
+        changed between versions of an asset.
+
+    *   Create system of interserver communication and replication.
+
+    *   Integrate with CVS and/or Subversion.
+
+    *   Integrate with WebDAV (Slide? mod_dav?).
+
+    *   Add full-text indexing of the database.
+
+    *   Add strong type checking.
+
+    *   Add thorough directory (LDAP, NDS, ADS) integration, including group
+        and permission management.
+
+    *   Add support for document translation (e.g., Word, QuarkXPress,
+        Acrobat, etc.).
+
+    *   Add support for skins -- different colors, etc, probably via
+        preferences.
+
+    *   Add support for creating PDFs in templates (is there something on
+        CPAN for this?).
+
+    *   Allow Elements to be previewed before they're added.
+
+    *   Add permission granularity down to the User, property, field, and
+        attribute levels.
+
+    *   Version element individually, separate from stories?
+
+    *   Add reporting, where reports can be templated and saved.
+
+    *   Allow items to move through different workflows and/or desks in
+        parallel.
+
+AUTHOR
+    David Wheeler <david@wheeler.net>
+
+SEE ALSO
+    perl(1), Bric (2).
+

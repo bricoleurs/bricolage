@@ -3,6 +3,10 @@
 PERL = /usr/bin/perl
 APACHE = /usr/sbin/apache-perl
 POSTGRESHOME = /usr/lib/postgresql
+POD2HTML = /usr/bin/pod2html
+POD2TEXT = /usr/bin/pod2text
+POD2MAN = /usr/bin/pod2man
+
 
 
 # Installation related variables
@@ -33,7 +37,7 @@ MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${m
 
 
 
-all: dep
+all: dep README INSTALL TODO License
 
 install:
 
@@ -41,8 +45,24 @@ dep: cpan
 
 cpan:
 	${INSTALL_MISSING}
+	echo Installed ${MISSING_MODULES} >>install.log
+
+INSTALL:
+	${POD2TEXT} lib/Bric/Admin.pod >$@
+
+TODO:
+	${POD2TEXT} lib/Bric/ToDo.pod >$@
+
+README:
+	${POD2TEXT} lib/Bric/Changes.pod >$@
+
+License:
+	${POD2TEXT} lib/Bric/License.pod >$@
+
 
 clean:
+	${RM} -f README INSTALL TODO License
+
 
 
 .PHONY : clean dep clean cpan
