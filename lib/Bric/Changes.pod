@@ -151,6 +151,12 @@ UI. Reported by Ed Stevenson. [David]
 Sorting templates based on Asset Type (Element) no longer causes an error.
 [David]
 
+=item *
+
+Events are now logged during the cleanup phase in alphabetical order by event
+type key name, to prevent deadlocks between two transactions logging events of
+the same types in different orders at the same time. [David]
+
 =back
 
 =cut

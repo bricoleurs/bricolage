@@ -166,7 +166,9 @@ B<Notes:> NONE.
 =cut
 
 sub commit_events {
-    foreach (@$events) { Bric::Util::Event->new($_) }
+    # Commit in alphabetical order to prevent deadlocks.
+    Bric::Util::Event->new($_)
+        for sort { $a->{key_name} cmp $b->{key_name} } @$events;
     @$events = ();
     return 1;
 }
