@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2003-03-12 04:03:37 $
+$Date: 2003-03-12 04:57:40 $
 
 =head1 SYNOPSIS
 
@@ -99,6 +99,7 @@ foreach my $t (@title) {
 <meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
+<script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
 % }
 <script type="text/javascript">
 

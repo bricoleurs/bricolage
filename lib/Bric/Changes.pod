@@ -70,6 +70,16 @@ classes:
 
 =over 4
 
+=item Bric::Biz::Asset
+
+=item Bric::Biz::Asset::Business
+
+=item Bric::Biz::Asset::Business::Story
+
+=item Bric::Biz::Asset::Business::Media
+
+=item Bric::Biz::Asset::Formatting
+
 =item Bric::Biz::AssetType
 
 =item Bric::Biz::ATType
@@ -116,7 +126,8 @@ parameter to be passed to the C<list()> method of these classes as a way of
 allowing a group to return a list of the objects in the group en masse, rather
 than one-at-a-time from the member objects of each group. Once similar
 optimizations have been made to the Bric::Biz::Assest classes, the necessary
-change will be made to Bric::Util::Grp to allow this functionality. [David]
+change will be made to Bric::Util::Grp to allow this functionality. [David and
+Mark]
 
 =item *
 
@@ -144,8 +155,12 @@ Added help topic for new "Super Bulk Edit" feature. [David]
 Localization and Internationalization support introduced, with a Portuguese
 library to complement the default English. Most message strings have been
 replaced with calls to the proper localization method. Still to be done are
-references to button images with text on them and strings fetched from the
-database. [ClE<aacute>udio Valente]
+strings fetched from the database (e.g. events). [ClE<aacute>udio Valente]
+
+=item *
+
+Localization of text images (buttons), Help, and JavaScript message added.
+These still need translation, however. [David]
 
 =item *
 
