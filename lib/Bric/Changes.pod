@@ -56,6 +56,11 @@ The Bricolage virtual FTP server will no longer fail to start if Template
 Toolkit is installed but its version number is less than 2.14. Reported by
 Adam Rinehart. [David]
 
+=item *
+
+Fixed a bug where nothing would ever publish if you had PUBLISH_RELATED_ASSETS
+enabled in bricolage.conf. [Mark]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
