@@ -34,6 +34,17 @@ Updated Bric::DBA documentation to better reflect PostgreSQL standards.
 
 Minor documentation correction in Bric::Util::Grp::Parts::Member. [Mark]
 
+=item *
+
+Fixed bug in SOAP interface where container subelements added to a story or
+media asset were logged as if the story type element or media type element was
+added instead of the appropriate subelement. [David]
+
+=item *
+
+Fixed bug in publish code that was attempting to use the Apache request object
+as a media asset. Thanks to John Greene for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.5

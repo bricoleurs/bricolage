@@ -48,16 +48,16 @@ if ($field eq 'preview') {
 	}
 
 	# Get all the related media to be previewed as well
-	foreach my $r ($s->get_related_objects) {
-	    next if (ref $r eq 'Bric::Biz::Asset::Business::Story');
+	foreach my $rel ($s->get_related_objects) {
+	    next if (ref $rel eq 'Bric::Biz::Asset::Business::Story');
 
 	    # Make sure this media object isn't checked out.
-	    if ($r->get_checked_out) {
+	    if ($rel->get_checked_out) {
 		add_msg('Cannot auto-publish related media &quot;'.
-			$r->get_title.'&quot; because it is checked out');
+			$rel->get_title.'&quot; because it is checked out');
 		next;
 	    }
-	    $b->preview($r, 'media', get_user_id(), $m, $oc_id);
+	    $b->preview($rel, 'media', get_user_id(), $m, $oc_id);
 	}
 	# Move out the story and then redirect to preview.
 	my $url = $b->preview($s, 'story', get_user_id(), $m, $oc_id);
