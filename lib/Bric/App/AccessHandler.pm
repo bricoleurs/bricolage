@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-06 23:18:32 $
+$Date: 2001-12-04 00:29:24 $
 
 =head1 SYNOPSIS
 
@@ -60,7 +60,7 @@ use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err);
+use Bric::Config qw(:err :ssl);
 
 ################################################################################
 # Inheritance
@@ -142,7 +142,11 @@ sub handler {
 #	set_redirect($uri);
 	set_redirect('/');
 	my $hostname = $r->hostname;
-	$r->custom_response(FORBIDDEN, "https://$hostname/login");
+	if (SSL_ENABLE) {
+	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
+	} else {
+	    $r->custom_response(FORBIDDEN, "http://$hostname/login");
+	}
 	return FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
@@ -175,7 +179,11 @@ sub logout_handler {
 
 	# Rredirect to the login page.
 	my $hostname = $r->hostname;
-	$r->custom_response(FORBIDDEN, "https://$hostname/login");
+	if (SSL_ENABLE) {
+	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
+	} else {
+	    $r->custom_response(FORBIDDEN, "http://$hostname/login");
+	}
 	return FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;

@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.15 $
+$Revision: 1.5.2.16 $
 
 =head1 DATE
 
-$Date: 2001-11-29 23:25:07 $
+$Date: 2001-12-04 00:28:31 $
 
 =head1 DESCRIPTION
 
@@ -82,7 +82,7 @@ Perl Modules:
 
 =item *
 
-OpenSSL 0.9.6a
+OpenSSL 0.9.6a (optional)
 
 =item *
 
@@ -90,7 +90,7 @@ MM 1.1.3 - Shared Memory Library
 
 =item *
 
-mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL
+mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL (optional)
 
 =item *
 
@@ -204,9 +204,12 @@ exceptions are DBD::Pg, which can only be installed after PostgreSQL has been
 installed (see below); and Apache::Session and libapreq, both of which can only
 be installed once Apache and mod_perl have been installed.
 
-=head2 OpenSSL
+=head2 OpenSSL (optional)
 
-Installation of OpenSSL follows the usual conventions. Here's an example:
+You'll need to install OpenSSL if you want to use Bricolage's SSL
+support to run a more secure server, otherwise you can skip this step.
+Installation of OpenSSL follows the usual conventions. Here's an
+example:
 
 =over 4
 
@@ -260,9 +263,12 @@ shared libraries), and execute these commands:
 C<make install> insn't necessary because the sources will be compiled into
 Apache.
 
-=head2 Apache Interface to OpenSSL (mod_ssl)
+=head2 Apache Interface to OpenSSL (mod_ssl) (optional)
 
-Installation of mod_ssl follows the usual conventions. Here's an example:
+You'll need to install mod_perl if you want to use Bricolage's SSL
+support to run a more secure server, otherwise you can skip this step.
+Installation of mod_ssl follows the usual conventions. Here's an
+example:
 
 =over 4
 
@@ -347,10 +353,10 @@ This command selects the classical Apache path layout.
 This command prevents incompatabilities between Apache's implementation of the
 Expat XML parser, and that used by Perl's XML::Parser module.
 
-=item --enable-module=ssl
+=item --enable-module=ssl (optional)
 
 This command compiles in SSL support, using the mod_ssl sources configured
-earlier.
+earlier.  You only need this option if you plan to use Bricolage's SSL support.
 
 =item --enable-module=rewrite
 
@@ -374,11 +380,22 @@ mod_perl make process.
 
 =back
 
-The commands you'll execute, therefore, should look something like this:
-
 =over 4
 
 =item *
+
+The commands you'll execute, therefore, should look something like this:
+
+  ./configure \
+    "--with-layout=Apache" \
+    "--disable-rule=EXPAT" \
+    "--enable-module=rewrite" \
+    "--enable-module=so" \
+    "--enable-module=proxy" \
+    "--activate-module=src/modules/perl/libperl.a"
+  make
+
+Or if you're planning to use SSL:
 
   ./configure \
     "--with-layout=Apache" \
@@ -392,19 +409,15 @@ The commands you'll execute, therefore, should look something like this:
 
 =item *
 
-Before you install Apache, however, you'll need to install the SSL certificates.
-If you compiled OpenSSL with the C<--with-crt> and C<--with-key> commands, you
-can skip this step.
-
-=item *
+If you plan to use SSL you'll need to install the SSL certificates
+before you install Apache.  If you compiled OpenSSL with the
+C<--with-crt> and C<--with-key> commands, you can skip this step.
 
 If you don't have a formal certificate from a certificate authority
 such as VeriSign then you can make a dummy certificate with the
 command:
 
   make certificate TYPE=dummy
-
-=item *
 
 If you do have a formal certificate then can make a certificate with
 the command:
@@ -565,9 +578,7 @@ UPDATE, and SELECT permissions an all objects in the Bricolage database.
 Start Apache. Use one of the scripts in scripts/ if you like. You can manually
 start it via the following command:
 
-  /user/local/bricolage/bin/apachectl startssl
-
-Be sure to use startssl.
+  /user/local/bricolage/bin/bric_apachectl start
 
 =item *
 
@@ -834,7 +845,7 @@ Defaults to "30" if not specified.
 
 =head2 Apache OpenSSL (mod_ssl) Configuration
 
-The Apache OpenSSL interface (mod_ssl) is an integral part of the Bricolage
+The Apache OpenSSL interface (mod_ssl) is an optional part of the Bricolage
 application. Not only does it enabled secure logons to the system, but it also
 allows completely secure access to the entire application, should you need it
 (and not need to worry about the performance overhead.). The following
@@ -842,6 +853,12 @@ directives derive from their similarly-named mod_ssl directives. See the mod_ssl
 documentation <http://www.modssl.org/docs> for more detail.
 
 =over 4
+
+=item *
+
+B<SSL_ENABLE:> Set this option to 1 to enable SSL support.  Make
+sure you've followed the installation instructions for building a
+mod_ssl Apache.  This is set to 0 by default.
 
 =item *
 
@@ -1285,9 +1302,9 @@ directories or to a subdirectory of these directories:
 
 The following address a number of installation issues you might face.
 
-=head2 Building Certificate
+=head2 Building SSL Certificate
 
-If you choose to create your own certificate and act as your own certificate
+If you choose to create your own SSL certificate and act as your own certificate
 authority rather than use a known certificate authority such as VeriSign, it's
 possible that you'll run into issues getting the server to start up with the
 certificate properly. If so, you'll see errors in the Apache error log that look
@@ -1309,7 +1326,7 @@ If you're facing this issue, here's how to manually build a new certificate:
 
 Shut down Apache if it's running:
 
-  /usr/local/bricolage/bin/apachectl startssl
+  /usr/local/bricolage/bin/bric_apachectl stop
 
 =item 2.
 
@@ -1345,7 +1362,7 @@ This will install Apache and the new certificate.
 
 Start Apache again:
 
-  /usr/local/bricolage/bin/apachectl stop
+  /usr/local/bricolage/bin/bric_apachectl start
 
 =back
 

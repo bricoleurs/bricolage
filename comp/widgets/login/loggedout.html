@@ -22,6 +22,8 @@
                   useTable => 0
 &></td>
 </tr>
+% use Bric::Config qw(:ssl);
+% if (SSL_ENABLE) {
 <tr>
 <td width=150 align=right><span class=label>Use SSL:</span></td>
 <td width=448><& '/widgets/profile/checkbox.mc',
@@ -31,6 +33,7 @@
                   useTable => 0
 &></td>
 </tr>
+% }
 <tr>
   <td>&nbsp;</td>
   <td><input type="image" src="/media/images/login.gif" border=0 vspace=5 name="<% "$widget|login_cb" %>" value="Login"></td>
