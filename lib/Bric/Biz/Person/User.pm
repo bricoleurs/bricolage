@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-11-06 23:18:33 $
+$Date: 2001-11-30 03:55:58 $
 
 =head1 SYNOPSIS
 
@@ -955,10 +955,14 @@ sub what_can {
 	$self->_set(['_acl'], [$acl]);
     }
 
+    # Gather up all of the group IDs.
+    push @gids, $obj->get_grp_ids if ref $obj;
+
+    # Get the permission.
     my $priv = 0;
-    foreach my $gid ($obj->get_grp_ids, @gids) {
+    foreach my $gid (@gids) {
 	# Grab the greatest permission.
-	$priv = $priv | $acl->{$gid}
+	$priv = $priv | $acl->{$gid};
     }
     return $priv;
 }
