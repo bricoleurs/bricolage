@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 14:56:08 $
+$Date: 2004-02-27 21:17:21 $
 
 =head1 SYNOPSIS
 
@@ -125,7 +125,7 @@ use constant DEBUG => 0;
 my @rcols = qw(id parent_id path uri size mod_time is_dir);
 my @cols = qw(r.id r.parent_id r.path r.uri r.size r.mod_time r.is_dir t.name);
 my @props = qw(id parent_id path uri size _mod_time _is_dir media_type);
-my @ORD = qw(parent_id path uri size mod_time media_type);
+my @ORD = qw(path uri size mod_time media_type);
 
 ################################################################################
 
