@@ -900,7 +900,7 @@ yourself).
 
 Delete all existing Mason object files and temporary files:
 
-  rm -rf data/obj/BRIC_UI/*
+  rm -rf data/obj/bric_ui/*
   rm -rf /tmp/bricolage/*
 
 Run the upgrade scripts needed for upgrading to the new version. The upgrade
