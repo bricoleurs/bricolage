@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.35.2.1 $
+$Revision: 1.35.2.2 $
 
 =head1 DATE
 
-$Date: 2003-06-06 15:50:00 $
+$Date: 2003-06-06 16:44:26 $
 
 =head1 SYNOPSIS
 
@@ -34,6 +34,10 @@ $debug => undef
 <%init>;
 # Prevent IE et al. from caching pages.
 $r->no_cache(1);
+# Set up the language and character set headers.
+$r->content_languages([Bric::Config::LANGUAGE]);
+$r->content_type('text/html; charset=' . lc Bric::Config::CHAR_SET);
+
 my @context =  split /\|/, $context;
 for (@context){
     s/^\s|\s$//g;
@@ -98,7 +102,6 @@ foreach my $t (@title) {
 <html>
 <head>
 <title><% $lang->maketext($title) %></title>
-<meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>

@@ -177,6 +177,8 @@ Friends who have spotted bugs include:
 
 =item Lari Huttunen
 
+=item Nathan Ollerenshaw
+
 =back
 
 Bricolage's translation team:

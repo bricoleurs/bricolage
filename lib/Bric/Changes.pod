@@ -130,6 +130,11 @@ to Paul Cory for the spot! [David]
 Added more intelligent code using HTTP headers instead of HTML to prevent
 browsers [IE] from caching pages. [David]
 
+=item *
+
+Bricolage no correctly sets the HTTP headers for the content language and
+character set. Thanks to Nathan Ollerenshaw for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0
