@@ -308,6 +308,11 @@ Reverting a template to a previous version now properly updates to the
 reverted version on the user's sandbox. Also, cancelling a checkout now
 properly removes a template from a user's sandbox. [David]
 
+=item *
+
+When creating a new workflow, the workflow profile no longer forgets the
+selected site when you click the "New Desk" button. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
