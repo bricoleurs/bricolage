@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.5';
 
 =item Date
 
-$Date: 2004-03-19 06:38:38 $
+$Date: 2004-03-23 18:01:07 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.54 2004-03-19 06:38:38 wheeler Exp $
+$Id: Bric.pm,v 1.55 2004-03-23 18:01:07 joaop Exp $
 
 =back
 
@@ -55,6 +55,8 @@ use constant CAN_DO_LIST_IDS => 0;
 use constant CAN_DO_LIST => 0;
 use constant CAN_DO_LOOKUP => 0;
 use constant HAS_CLASS_ID => 0;
+
+use constant HAS_MULTISITE => 0;
 
 ##############################################################################
 # Dependencies

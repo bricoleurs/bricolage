@@ -51,6 +51,11 @@ do. [David]
 Changing categories on a template no longer creates Frankensteinian template
 paths. [David]
 
+=item *
+
+Added constant HAS_MULTISITE => 0 to Bric.pm, so that all classes properly
+declare themselves on search results. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
