@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.4';
 
 =item Date
 
-$Date: 2004-03-08 16:50:26 $
+$Date: 2004-03-09 09:38:57 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.49 2004-03-08 16:50:26 wheeler Exp $
+$Id: Bric.pm,v 1.50 2004-03-09 09:38:57 slanning Exp $
 
 =back
 
@@ -548,7 +548,7 @@ sub get_grp_ids {
   $obj = $obj->cache_me;
 
 Caches the object for later retrieval by the C<lookup()> class method. Should
-be called for all objecta retrieved from the database, including all objects
+be called for all objects retrieved from the database, including all objects
 to be returned by C<lookup()>, C<list()>, and C<href()> methods.
 
 =cut
