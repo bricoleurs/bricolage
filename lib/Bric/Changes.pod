@@ -524,7 +524,7 @@ current C<%session> hash. [Scott]
 
 =item *
 
-Subelement can now nest. That is, they can contain themselves. Not in a story,
+Subelements can now nest. That is, they can contain themselves. Not in a story,
 of course, but in the document model (element administration). [David]
 
 =item *
