@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:17 $
+$Date: 2002-10-18 00:10:55 $
 
 =head1 INTRODUCTION
 
@@ -229,19 +229,21 @@ index.html :
 
 =head2 Using 'display_pages'
 
-Use the 'display_pages' method to create new files for each page element. The
-'display_pages' method takes the name of a paginated element:
+Use the C<display_pages()> method to create new files for each page
+element. The C<display_pages()> method takes one or more names of paginated
+elements:
 
-    % $burner->display_pages('page');
+  % $burner->display_pages('page', 'another_page');
 
 When a story is published, the entire template containing the call to
-'display_pages' is run once for every instance of the named element passed to
-'display_pages'. So if we have a 'Column' containing 3 'Page' elements, the
-'Column' template will be run 3 times. Each time it runs, the 'display_element'
-call will run the 'Page' template with each succeeding page.
+C<display_pages()> is run once for every instance of the named element passed
+to C<display_pages()>. So if we have a 'Column' containing 3 'Page' elements
+and no "Another Page" elements, the 'Column' template will be run 3
+times. Each time it runs, the C<display_pages()> method will run the 'Page'
+template with each succeeding page.
 
-So we can use our earlier example with just a minor change to produce the output
-we want:
+So we can use our earlier example with just a minor change to produce the
+output we want:
 
     <!-- Code for 'column' -->
     <html>
@@ -401,14 +403,14 @@ Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::AdvTemplates|Bric::AdvTemplates>, 
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>, 
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>, 
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>, 
-L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>, 
-L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>, 
-L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>, 
+L<Bric|Bric>,
+L<Bric::AdvTemplates|Bric::AdvTemplates>,
+L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
+L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>,
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>,
 L<Bric::Util::Burner|Bric::Util::Burner>
 
 =cut

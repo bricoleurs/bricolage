@@ -193,6 +193,33 @@ arguments are passed to the templates that are executed just as they are if
 you'd called C<< $m->comp >>, meaning that you can access their values via the
 C<%ARGS> global and in C<< <%args> >> blocks in Mason templates. [David]
 
+=item *
+
+Changed the C<display_pages()> method of Bric::Util::Burner::Mason so that its
+first argument can be an anonymous array of the names of different paginated
+elements, and then all of those different paginated elements will be burned in
+order. This allows a story to have more than one type of paginated
+element. [David]
+
+=item *
+
+Added the methods C<prev_page_file()>, C<prev_page_uri()>,
+C<next_page_file()>, and C<next_page_uri()> to
+Bric::Util::Burner::Mason. These methods return the strings representing the
+file names or URIs of the previous and next pages of a stsory, relative to the
+page that is currently being burned and, in the case of the C<_uri()> methods,
+appropriate to the currently-burning Output Channel. Also updated the
+L<Bric::Templates|Bric::Templates> and
+L<Bric::AdvTemplates|Bric::AdvTemplates> documents to reflect these
+additions. [David]
+
+
+=item *
+
+Added C<source__id> to list of criteria by which stories can be searched via
+the Bric::Biz::Asset::Business::Story C<list()> and C<list_ids()>
+methods. [David]
+
 =back
 
 =head1 VERSION 1.4.4

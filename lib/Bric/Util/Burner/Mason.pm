@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-15 21:31:09 $
+$Date: 2002-10-18 00:10:57 $
 
 =head1 SYNOPSIS
 
@@ -94,25 +94,26 @@ my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::Mason::XMLWriterHandle->ne
 
 BEGIN {
     Bric::register_fields({
-			 #- Per burn/deploy values.
-			 'job'            => Bric::FIELD_READ,
-			 'page'           => Bric::FIELD_RDWR,
-			 'story'          => Bric::FIELD_READ,
-			 'oc'             => Bric::FIELD_READ,
-			 'cat'            => Bric::FIELD_READ,
-			 'uri_path'       => Bric::FIELD_READ,
+                         #- Per burn/deploy values.
+                         'job'            => Bric::FIELD_READ,
+                         'page'           => Bric::FIELD_RDWR,
+                         'story'          => Bric::FIELD_READ,
+                         'oc'             => Bric::FIELD_READ,
+                         'cat'            => Bric::FIELD_READ,
+                         'uri_path'       => Bric::FIELD_READ,
 
-			 # Private Fields
-			 '_interp'         => Bric::FIELD_NONE,
-			 '_comp_root'      => Bric::FIELD_NONE,
-			 '_buf'            => Bric::FIELD_NONE,
-			 '_writer'         => Bric::FIELD_NONE,
-			 '_elem'           => Bric::FIELD_NONE,
-			 '_at'             => Bric::FIELD_NONE,
-			 '_files'          => Bric::FIELD_NONE,
-			 '_res'            => Bric::FIELD_NONE,
-			 '_more_pages'     => Bric::FIELD_NONE,
-			});
+                         # Private Fields
+                         '_interp'         => Bric::FIELD_NONE,
+                         '_comp_root'      => Bric::FIELD_NONE,
+                         '_buf'            => Bric::FIELD_NONE,
+                         '_writer'         => Bric::FIELD_NONE,
+                         '_elem'           => Bric::FIELD_NONE,
+                         '_at'             => Bric::FIELD_NONE,
+                         '_files'          => Bric::FIELD_NONE,
+                         '_res'            => Bric::FIELD_NONE,
+                         '_more_pages'     => Bric::FIELD_NONE,
+                         '_page_place'     => Bric::FIELD_NONE,
+                        });
 }
 
 #==============================================================================#
@@ -201,23 +202,23 @@ sub burn_one {
 
     # Create a parser and allow some global variables.
     my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
-								 $burner
-								 $writer
-								 $element)],
-					  'in_package'    => TEMPLATE_BURN_PKG);
+                                                                 $burner
+                                                                 $writer
+                                                                 $element)],
+                                          'in_package'    => TEMPLATE_BURN_PKG);
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];
     foreach my $inc ($oc, $oc->get_includes) {
-	my $inc_dir = "oc_" . $inc->get_id;
-	push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
+        my $inc_dir = "oc_" . $inc->get_id;
+        push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
     }
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new('parser'     => $parser,
-			 		  'comp_root'  => $comp_root,
-				 	  'data_dir'   => $self->get_data_dir,
-					  'out_method' => \$outbuf);
+                                          'comp_root'  => $comp_root,
+                                          'data_dir'   => $self->get_data_dir,
+                                          'out_method' => \$outbuf);
 
     my $element = $ba->get_tile;
     $self->_push_element($element);
@@ -229,13 +230,13 @@ sub burn_one {
 
     # save some of the values for this burn.
     $self->_set([qw(story   oc   cat   _buf     _interp  _comp_root)],
-		[   $ba,   $oc, $cat, \$outbuf, $interp, $comp_root]);
+                [   $ba,   $oc, $cat, \$outbuf, $interp, $comp_root]);
 
     # Give 'em the XML Writer object if they want it.
     if (INCLUDE_XML_WRITER) {
-	my $writer = XML::Writer->new(OUTPUT => $xml_fh, XML_WRITER_ARGS);
-	$interp->set_global('$writer',  $writer);
-	$self->_set(['_writer'], [$writer]);
+        my $writer = XML::Writer->new(OUTPUT => $xml_fh, XML_WRITER_ARGS);
+        $interp->set_global('$writer',  $writer);
+        $self->_set(['_writer'], [$writer]);
     }
 
     # Get the template name. Because this is a top-level Element, we don't want
@@ -244,26 +245,26 @@ sub burn_one {
     my $tmpl_name = _fmt_name($element->get_name);
     my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
     if ( $interp->lookup($template . '.mc') ) {
-	# The top-level .mc template exits.
-	$template .= '.mc';
+        # The top-level .mc template exits.
+        $template .= '.mc';
     } else {
-	# If we're in here, there's no top-level .mc template. So create a
-	# dhandler for it if there isn't one already.
-	_create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-	  unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
+        # If we're in here, there's no top-level .mc template. So create a
+        # dhandler for it if there isn't one already.
+        _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
+          unless $interp->lookup($fs->cat_uri($tmpl_path, 'dhandler'));
     }
 
     while (1) {
-	# Run the biz asset through the template
-	eval { $retval = $interp->exec($template) if $template };
-	die $ap->new({ msg     => "Error executing template '$template'.",
-		       payload => $@ }) if $@;
+        # Run the biz asset through the template
+        eval { $retval = $interp->exec($template) if $template };
+        die $ap->new({ msg     => "Error executing template '$template'.",
+                       payload => $@ }) if $@;
 
-	# End the page if there is still content in the buffer.
-	$self->end_page if $outbuf !~ /^\s*$/;
+        # End the page if there is still content in the buffer.
+        $self->end_page if $outbuf !~ /^\s*$/;
 
-	# Keep burning this template if it contains more pages.
-	last unless $self->_get('_more_pages');
+        # Keep burning this template if it contains more pages.
+        last unless $self->_get('_more_pages');
     }
 
     $self->_pop_element();
@@ -295,18 +296,18 @@ sub chk_syntax {
 
     # Create a parser and allow some global variables.
     my $parser = HTML::Mason::Parser->new('allow_globals' => [qw($story
-								 $burner
-								 $writer
-								 $element)],
-					  'in_package'    => TEMPLATE_BURN_PKG);
+                                                                 $burner
+                                                                 $writer
+                                                                 $element)],
+                                          'in_package'    => TEMPLATE_BURN_PKG);
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new('parser'     => $parser,
-			 		  'comp_root'  => $self->get_comp_dir,
-				 	  'data_dir'   => $self->get_data_dir);
+                                          'comp_root'  => $self->get_comp_dir,
+                                          'data_dir'   => $self->get_data_dir);
 
     # Try to create a component.
     return $parser->make_component(script => $ba->get_data,
-				   error  => $err_ref);
+                                   error  => $err_ref);
 }
 
 #------------------------------------------------------------------------------#
@@ -341,10 +342,10 @@ sub find_template {
     my $interp = $self->_get('_interp');
     my @dirs = $fs->split_uri($uri);
     while (@dirs) {
-	my $tmpl = $fs->cat_uri(@dirs, $name);
-	return $tmpl if $interp->lookup($tmpl);
-	# Pop off a directory.
-	pop @dirs;
+        my $tmpl = $fs->cat_uri(@dirs, $name);
+        return $tmpl if $interp->lookup($tmpl);
+        # Pop off a directory.
+        pop @dirs;
     }
     return;
 }
@@ -406,10 +407,10 @@ B<Notes:> See also find_template() above.
 sub find_first_template {
     my $self = shift;
     while (my $tmpl = shift) {
-	$tmpl = $self->find_template($fs->uri_dir_name($tmpl),
-				     $fs->uri_base_name($tmpl))
-	  || next;
-	return $tmpl;
+        $tmpl = $self->find_template($fs->uri_dir_name($tmpl),
+                                     $fs->uri_base_name($tmpl))
+          || next;
+        return $tmpl;
     }
     return;
 }
@@ -418,9 +419,16 @@ sub find_first_template {
 
 =item $success = $b->display_pages($paginated_element_name)
 
-A method to be called from template space. Use this method to display paginated
-elements. If this method is used, the burn system will run once for every page
-in the story; this is so autohandlers will be called when appropriate.
+=item $success = $b->display_pages($paginated_element_name, %ARGS)
+
+=item $success = $b->display_pages(\@paginated_element_names, %ARGS)
+
+A method to be called from template space. Use this method to display
+paginated elements. If this method is used, the burn system will run once for
+every page element listed in C<\@paginated_element_names> (or just
+C<$paginated_element_name>) in the story; this is so that autohandlers will be
+called when appropriate. All arguments after the first argument will be passed
+to the template executed as its C<%ARGS> hash.
 
 B<Throws:> NONE.
 
@@ -432,19 +440,30 @@ B<Notes:> NONE.
 
 sub display_pages {
     my $self = shift;
-    my $elem_name = shift;
-    my $interp   = $self->_get('_interp');
-    my $page_num = $self->get_page;
+    my $names = shift;
+    $names = [$names] unless ref $names;
 
     # Get the current element
-    my $elem      = $self->_current_element;
-    # Get the current page to burn (+1 since the $page var starts at 0).
-    my $page_elem = $elem->get_container($elem_name, $page_num+1);
+    my $elem = $self->_current_element;
+    my $page_place = $self->_get('_page_place') || 0;
 
-    # Do a look ahead to the next page.
-    my $next_page = $elem->get_container($elem_name, $page_num+2);
-    # Set the '_more_pages' variable if there are more pages to burn after this.
-    $self->_set(['_more_pages'], [(defined($next_page) ? 1 : 0)]);
+    my ($next_page, $page_elem);
+    my $tiles = $elem->get_tiles;
+    foreach my $place ($page_place..$#$tiles) {
+        my $e = $tiles->[$place];
+        next unless $e->is_container;
+        foreach my $name (@$names) {
+            next unless $e->has_name($name);
+            $page_elem ? $next_page = 1 : $page_elem = $e;
+            next unless $next_page;
+            last;
+        }
+    }
+
+    # Set the '_more_pages' and '_page_place' properties.
+    $self->_set([ qw(_more_pages _page_place) ],
+                [ $next_page,
+                  $page_elem ? $page_elem->get_place + 1 : $page_place + 1 ]);
 
     $self->display_element($page_elem, @_);
 }
@@ -470,33 +489,151 @@ sub display_element {
 
     # Call another element if this is a container otherwise output the data.
     if ($elem->is_container) {
-	my $interp = $self->_get('_interp');
+        my $interp = $self->_get('_interp');
 
-	# Set the elem global to the current element.
-	$interp->set_global('$element', $elem);
+        # Set the elem global to the current element.
+        $interp->set_global('$element', $elem);
 
-	# Push this element on to the stack
-	$self->_push_element($elem);
+        # Push this element on to the stack
+        $self->_push_element($elem);
 
-	my $template = $self->_load_template_element($elem);
+        my $template = $self->_load_template_element($elem);
 
-	# Display the element
-	{
-	    no strict 'refs';
-	    ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_) if $template;
-	}
+        # Display the element
+        {
+            no strict 'refs';
+            ${TEMPLATE_BURN_PKG . '::m'}->comp($template, @_) if $template;
+        }
 
-	# Pop the element back off again.
-	$self->_pop_element();
+        # Pop the element back off again.
+        $self->_pop_element();
 
-	# Set the elem global to the previous element
-	$interp->set_global('$element', $self->_current_element);
+        # Set the elem global to the previous element
+        $interp->set_global('$element', $self->_current_element);
     } else {
-	    no strict 'refs';
-	    ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
+            no strict 'refs';
+            ${TEMPLATE_BURN_PKG . '::m'}->out($elem->get_data);
     }
 }
 
+##############################################################################
+
+=item $prev_page_file = $b->prev_page_file
+
+  % if (my $prev = $burner->prev_page_file) {
+      <a href="<% $prev %>">Previous Page</a>
+  % }
+
+Returns the file name for the previous file in a story as the story is being
+burned. If there is no previous file, C<prev_page_file()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub prev_page_file {
+    my $self = shift;
+    my ($page, $story, $oc) = $self->_get(qw(page story oc));
+    # Page 0 is the first page, and there is none before it.
+    return unless $page;
+    $page--;
+    $page ||= ''; # Change "0" to ''.
+    my $fn = $oc->get_filename($story);
+    my $ext = $oc->get_file_ext;
+    return "$fn$page.$ext";
+}
+
+##############################################################################
+
+=item $prev_page_uri = $b->prev_page_uri
+
+  % if (my $prev = $burner->prev_page_uri) {
+      <a href="<% $prev %>">Previous Page</a>
+  % }
+
+Returns the URI for the previous file in a story as the story is being
+burned. If there is no previous URI, C<prev_page_uri()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub prev_page_uri {
+    my $self = shift;
+    my $filename = $self->prev_page_file or return;
+    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
+    # The URI minus the page name.
+    my $base_uri = $story->get_uri($cat, $oc);
+    # The complete URI
+    return $fs->cat_uri($base_uri, $filename);
+}
+
+##############################################################################
+
+=item $next_page_file = $b->next_page_file
+
+  % if (my $next = $burner->next_page_file) {
+      <a href="<% $next %>">Next Page</a>
+  % }
+
+Returns the file name for the next file in a story as the story is being
+burned. If there is no next file, C<next_page_file()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub next_page_file {
+    my $self = shift;
+    my ($page, $isnext, $story, $oc) =
+      $self->_get(qw(page _more_pages story oc));
+    return unless $isnext;
+    $page++;
+    my $fn = $oc->get_filename($story);
+    my $ext = $oc->get_file_ext;
+    return "$fn$page.$ext";
+}
+
+##############################################################################
+
+=item $next_page_uri = $b->next_page_uri
+
+  % if (my $next = $burner->next_page_uri) {
+      <a href="<% $next %>">Next Page</a>
+  % }
+
+Returns the URI for the next file in a story as the story is being
+burned. If there is no next URI, C<next_page_uri()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub next_page_uri {
+    my $self = shift;
+    my $filename = $self->next_page_file or return;
+    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
+    # The URI minus the page name.
+    my $base_uri = $story->get_uri($cat, $oc);
+    # The complete URI
+    return $fs->cat_uri($base_uri, $filename);
+}
 
 #------------------------------------------------------------------------------#
 
@@ -541,8 +678,8 @@ B<Notes:> NONE.
 sub end_page {
     my $self = shift;
     my $ba   = $self->get_story;
-    my $buf  = $self->_get('_buf');
 
+    my $buf  = $self->_get('_buf');
     my ($cat, $oc) = $self->_get('cat', 'oc');
     my $fn         = $oc->get_filename($ba);
     my $ext        = $oc->get_file_ext;
@@ -564,14 +701,14 @@ sub end_page {
 
     # Flush the output buffer before writing the file.
     {
-	no strict 'refs';
-	${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
+        no strict 'refs';
+        ${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
     }
 
     # Save the page we've created so far.
     open(OUT, ">$file")
       || die $gen->new({ msg => "Unable to open '$file' for writing",
-			 payload => $! });
+                         payload => $! });
     print OUT $$buf;
     close(OUT);
 
@@ -630,7 +767,7 @@ sub _add_resource {
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file}) ||
       Bric::Dist::Resource->new({ path => $file,
-				uri  => $uri});
+                                uri  => $uri});
 
     # Set the media type.
     $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
@@ -667,14 +804,14 @@ sub _load_template_element {
     # Look up the template (it may live few directories above $tmpl_path)
     my $tmpl = $self->find_template($tmpl_path, $tmpl_name)
       || die $ap->new({ msg     => "Unable to find template '$tmpl_name'",
-			payload => { class   => __PACKAGE__,
-				     action  => 'load template',
-				     context => { oc   => $self->get_oc,
-						  cat  => $self->get_cat,
-						  elem => $element
-						}
-				   }
-		      });
+                        payload => { class   => __PACKAGE__,
+                                     action  => 'load template',
+                                     context => { oc   => $self->get_oc,
+                                                  cat  => $self->get_cat,
+                                                  elem => $element
+                                                }
+                                   }
+                      });
     return $tmpl;
 }
 
@@ -776,7 +913,7 @@ sub _create_dhandler {
     my ($comp_root, $oc, $cat, $tmpl_name) = @_;
     # The complete path on the file system sans the filename.
     my $path = $fs->cat_dir($comp_root->[0][1],
-			    $fs->uri_to_dir($cat->ancestry_path));
+                            $fs->uri_to_dir($cat->ancestry_path));
 
     # The complete path on the file system including the filename.
     my $file = $fs->cat_dir($path, 'dhandler');
@@ -787,8 +924,8 @@ sub _create_dhandler {
     # Now just write it out to the file system.
     open(DH, ">$file")
       || die $gen->new({ msg => "Unable to open '$file' for writing",
-			 payload => $! });
-	print DH q{<%once>;
+                         payload => $! });
+        print DH q{<%once>;
 my $ap = 'Bric::Util::Fault::Exception::AP';
 </%once>
 <%init>;
@@ -797,15 +934,15 @@ my $template = $burner->find_template($m->current_comp->dir_path,
   || die $ap->new({ msg     => "Unable to find template '"
                                . $m->dhandler_arg . "\.mc'",
                     payload => { class   => __PACKAGE__,
-			         action  => 'load template',
-			         context => { oc   => $burner->get_oc,
-					      cat  => $burner->get_cat,
-					      elem => $element }}
+                                 action  => 'load template',
+                                 context => { oc   => $burner->get_oc,
+                                              cat  => $burner->get_cat,
+                                              elem => $element }}
                    });
 $m->comp($template);
 </%init>
 };
-	close(DH);
+        close(DH);
 }
 
 1;

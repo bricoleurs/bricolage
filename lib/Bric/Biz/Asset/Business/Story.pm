@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-16 03:38:15 $
+$Date: 2002-10-18 00:10:56 $
 
 =head1 SYNOPSIS
 
@@ -513,6 +513,10 @@ element__id
 
 =item *
 
+source__id
+
+=item *
+
 priority
 
 =item *
@@ -642,17 +646,11 @@ sub DESTROY {
 
 =item ($ids || @ids) = Bric::Biz::Asset::Business::Story->list_ids( $criteria )
 
-Returns a list of the ids that match the given criteria
+Returns a list of Story IDs that match the given criteria.
 
-Supported Keys:
+See the C<list()> method for the list of supported Keys.
 
-=over 4
 
-=item *
-
-See List method
-
-=back
 
 B<Throws:>
 NONE
@@ -1645,7 +1643,7 @@ sub _do_list {
 
     # Build the where clause for the trivial story table fields.
     foreach my $f (qw(workflow__id primary_uri element__id 
-                      priority active id publish_status)) {
+                      priority active id publish_status source__id)) {
         next unless exists $param->{$f};
 
         if ($f eq 'primary_uri') {

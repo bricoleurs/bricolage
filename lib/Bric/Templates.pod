@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-05-23 20:23:18 $
+$Date: 2002-10-18 00:10:55 $
 
 =head1 BACKGROUND
 
@@ -157,13 +157,13 @@ this:
         <head><title>$column_topic</title></head>
         <body>
             By $author<br />
-	    <br />
+            <br />
 
-	    <p>$para1</p>
-	    <p>$para2</p>
-	    ...
-	    display_element(music_blurb)
-	    ...
+            <p>$para1</p>
+            <p>$para2</p>
+            ...
+            display_element(music_blurb)
+            ...
         </body>
     </html>
 
@@ -361,13 +361,13 @@ category. Assume that all publishes are done to the same output channel with an
 ID of 1:
 
 
-    Category Story is Published	     Formatting element Used
+    Category Story is Published      Formatting element Used
     ---------------------------      -------------------------
-    Music/Rock			     $COMP_ROOT/oc_1/music/column.mc
-    Theater/Broadway		     $COMP_ROOT/oc_1/column.mc
-    Gallery			     $COMP_ROOT/oc_1/column.mc
-    Gallery/Art			     $COMP_ROOT/oc_1/column.mc
-    Gallery/Sculpture		     $COMP_ROOT/oc_1/gallery/sculpture/column.mc
+    Music/Rock                       $COMP_ROOT/oc_1/music/column.mc
+    Theater/Broadway                 $COMP_ROOT/oc_1/column.mc
+    Gallery                          $COMP_ROOT/oc_1/column.mc
+    Gallery/Art                      $COMP_ROOT/oc_1/column.mc
+    Gallery/Sculpture                $COMP_ROOT/oc_1/gallery/sculpture/column.mc
 
 As you can see a story published in a particular category will lookup 'up' the
 category tree to find a template to format it, if it can't find it in the
@@ -432,17 +432,17 @@ The code for this template might look like this:
     <!-- Root Autohandler -->
     <html>
         <head><title>Arts n' Media</title></head>
-	<body>
-	    <!-- Header Nav -->
-	    <table><tr><td><a href="">link1</a></td>
-	               <td><a href="">link2</a></td>
-		       <td><a href="">link3</a></td></tr></table>
+        <body>
+            <!-- Header Nav -->
+            <table><tr><td><a href="">link1</a></td>
+                       <td><a href="">link2</a></td>
+                       <td><a href="">link3</a></td></tr></table>
 
     % $burner->chain_next;
 
             <hr />
-	    Comments? <a href="email:foo@bar.com">foo@bar.com</a>
-	</body>
+            Comments? <a href="email:foo@bar.com">foo@bar.com</a>
+        </body>
     </html>
 
 
@@ -491,28 +491,28 @@ assume that column.mc outputs the story data in <p> tags):
     <!-- Root Autohandler -->
     <html>
         <head><title>Arts n' Media</title></head>
-	<body>
-	    <!-- Header Nav -->
-	    <table><tr><td><a href="">link1</a></td>
-	               <td><a href="">link2</a></td>
-		       <td><a href="">link3</a></td></tr></table>
+        <body>
+            <!-- Header Nav -->
+            <table><tr><td><a href="">link1</a></td>
+                       <td><a href="">link2</a></td>
+                       <td><a href="">link3</a></td></tr></table>
 
             <!-- Music Category Autohandler -->
-	    <h1>Music</h1>
-	    <table width="570" border="0">
-	        <tr><td>
+            <h1>Music</h1>
+            <table width="570" border="0">
+                <tr><td>
 
-		    <!-- Column Template -->
-		    <p>
-		        This is a test column
+                    <!-- Column Template -->
+                    <p>
+                        This is a test column
                     </p>
 
                 </td></tr>
             </table>
 
             <hr />
-	    Comments? <a href="email:foo@bar.com">foo@bar.com</a>
-	</body>
+            Comments? <a href="email:foo@bar.com">foo@bar.com</a>
+        </body>
     </html>
 
 
@@ -910,45 +910,47 @@ will be discussed later in another document.
 Next let's look at some example code for the 'page' element:
 
     <!-- The page element -->
-    % my $order = $element->get_object_order;
+    % my $page = $burner->get_page;
 
     <!-- Only display this title if we are on the first page -->
-    % if ($order == 1) {
+    % unless ($page) {
             <h1><% $story->get_title %></h1>
     % }
 
     <!-- Show the content for this element -->
     <%perl>
         foreach my $e ($element->get_elements) {
-	    if ($e->has_name('paragraph')) {
+            if ($e->has_name('paragraph')) {
                 $m->out('<p>');
-	        $burner->display_element($e);
-	        $m->out('</p>');
-	    } elsif ($e->has_name('pull_quote')) {
-	        $m->out('<p><i>');
-		$burner->display_element($e);
-	        $m->out('</i></p>');
+                $burner->display_element($e);
+                $m->out('</p>');
+            } elsif ($e->has_name('pull_quote')) {
+                $m->out('<p><i>');
+                $burner->display_element($e);
+                $m->out('</i></p>');
             } elsif ($e->has_name('inset')) {
-	        $burner->display_element($e);
+                $burner->display_element($e);
             }
         }
 
-        my $next = $element->get_data('next');
-        my $prev = $element->get_data('previous');
+        my $next_txt = $element->get_data('next');
+        my $prev_txt = $element->get_data('previous');
+        my $next = $burner->next_page_file;
+        my $prev = $burner->prev_page_file;
     </%perl>
 
     <!-- Show previous page link if it exists -->
-    % if ($prev) {
-            [Page <% $order -1 %>]&lt;&lt;&lt;
-            <a href="index<% $order-2 || '' %>.html"><% $prev %></a>
+    % if ($prev and $prev_txt) {
+            [Page <% $page %>]&lt;&lt;&lt;
+            <a href="<% $prev %>"><% $prev_txt %></a>
     % }
 
             &nbsp;&nbsp;&nbsp;
 
     <!-- Show next page link if it exists -->
-    % if ($next) {
-            <a href="index<% $order %>.html"><% $next %></a>
-            &gt;&gt;&gt;[Page <% $order + 1 %>]
+    % if ($next and $next_txt) {
+            <a href="<% $next %>"><% $next_txt %></a>
+            &gt;&gt;&gt;[Page <% $page + 2 %>]
     % }
 
 This code outputs the main HTML, outputting a header if this is the first page
@@ -983,15 +985,15 @@ to any category.
 
 =head2 Class Names
 
-    Object Type		Associated Perl Class
+    Object Type         Associated Perl Class
     -----------         ---------------------
-    Element		Bric::Biz::AssetType
-    Template		Bric::Biz::Asset::Formatting
-    Story		Bric::Biz::Asset::Business::Story
-    element		Bric::Biz::Asset::Business::Parts::Tile
-    Data element	Bric::Biz::Asset::Business::Parts::Tile::Data
-    Container element	Bric::Biz::Asset::Business::Parts::Tile::Container
-    Burn System		Bric::Util::Burner
+    Element             Bric::Biz::AssetType
+    Template            Bric::Biz::Asset::Formatting
+    Story               Bric::Biz::Asset::Business::Story
+    element             Bric::Biz::Asset::Business::Parts::Tile
+    Data element        Bric::Biz::Asset::Business::Parts::Tile::Data
+    Container element   Bric::Biz::Asset::Business::Parts::Tile::Container
+    Burn System         Bric::Util::Burner
 
 =head2 Glossary
 
@@ -1055,14 +1057,14 @@ Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::AdvTemplates|Bric::AdvTemplates>, 
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>, 
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>, 
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>, 
-L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>, 
-L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>, 
-L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>, 
+L<Bric|Bric>,
+L<Bric::AdvTemplates|Bric::AdvTemplates>,
+L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
+L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>,
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>,
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>,
 L<Bric::Util::Burner|Bric::Util::Burner>
 
 =cut
