@@ -34,7 +34,7 @@ return unless $param->{$field}; # prevent multiple calls to this file
 my $comp = $obj;
 my $name = "&quot;$param->{name}&quot;";
 
-my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
+my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{delete_attr})} );
 
 if ($param->{delete} &&
     ($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
@@ -88,21 +88,22 @@ if ($param->{delete} &&
         add_msg("Element must be associated with at least one output channel.")
     }
 
-    # Update existing attributes. Get them from the Parts::Data class rather than from
-    # $comp->get_data so that we can be sure to check for both active and inactive
-    # data fields.
-    my $all_data = Bric::Biz::AssetType::Parts::Data->list(
-      { element__id => $param->{element_id} });
+    # Update existing attributes. Get them from the Parts::Data class rather
+    # than from $comp->get_data so that we can be sure to check for both
+    # active and inactive data fields.
+    my $all_data = Bric::Biz::AssetType::Parts::Data->list
+      ({ element__id => $param->{element_id} });
 #    my $all_data = $comp->get_data;
     my $data_href = { map { lc ($_->get_name) => $_ } @$all_data };
     my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
-	if (!$del_attrs{$aname} ) {
+	unless ($del_attrs{$aname} ) {
 	    my $key = lc $aname;
 	    $data_href->{$key}->set_place($pos->[$i]);
 	    $data_href->{$key}->set_meta('html_info', 'pos', $pos->[$i]);
-	    $data_href->{$key}->set_meta('html_info', 'value', $param->{"attr|$aname"});
+	    $data_href->{$key}->set_meta('html_info', 'value',
+                                         $param->{"attr|$aname"});
 	    $data_href->{$key}->save;
 	    $i++;
 	}
@@ -168,7 +169,7 @@ if ($param->{delete} &&
     }
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr} &&
+    if ($param->{delete_attr} &&
 	($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
     {
 	my $del = [];
@@ -251,11 +252,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.6 $
+$Revision: 1.22.4.7 $
 
 =head1 DATE
 
-$Date: 2003-05-27 19:19:16 $
+$Date: 2003-06-11 01:24:54 $
 
 =head1 SYNOPSIS
 

@@ -166,7 +166,7 @@ if (defined $id) {
             my $all_data = $comp->get_data;
             if (@$all_data) {
                 my $attrs = [];
-                foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
+                foreach my $dataObj (@$all_data) {
                     my $metas = $dataObj->get_meta('html_info');
                     my $tmp;
                     foreach my $meta (keys %$metas) {
@@ -179,10 +179,11 @@ if (defined $id) {
                 }
 
                 $num_fields = @$attrs;
-                $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
-                         attr     => $attrs,
-                         readOnly => $no_edit,
-                         useEdit => 1);
+                $m->comp("/widgets/profile/displayAttrs.mc",
+                         form_name => 'cont_profile',
+                         attr      => $attrs,
+                         readOnly  => $no_edit,
+                         useEdit   => 1);
             } else {
                 $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
                 $lang->maketext("No fields defined"));
@@ -277,11 +278,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.4.4 $
+$Revision: 1.14.4.5 $
 
 =head1 DATE
 
-$Date: 2003-04-25 16:32:59 $
+$Date: 2003-06-11 01:24:52 $
 
 =head1 DESCRIPTION
 

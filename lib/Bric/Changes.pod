@@ -167,6 +167,20 @@ deleted again. Thanks to Arthur Bergman for the spot! [David]
 Added listing of emeritus developers. Otherwise Sam was simply listed as a
 patcher, which is hardly accurate. [David]
 
+=item *
+
+The element profile no longer displays deleted fields after clicking the "Save
+and Stay" button. [David]
+
+=item *
+
+The element profile now correctly issues a warning when a field is selected to
+be deleted. [David]
+
+=item *
+
+Made unlocalized JavaScript message localized. [David]
+
 =back
 
 =head1 VERSION 1.6.0
