@@ -165,6 +165,11 @@ access control list faster. [David]
 
 Added preview link to every element profile of a story profile. [David]
 
+=item *
+
+Pared down number of default User groups by eliminating those that relate to
+only a single admin menu item. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -225,7 +230,13 @@ the root category. Thanks to Sam for the spot! [David]
 
 Removed C<< Bric::Biz::AssetType->remove >>. It shouldn't be used anywhere,
 and might be responsible for the mysterious dissappearance of elements in
-general. Thanks to JoE<atilde>o Pedro for the spot.
+general. Thanks to JoE<atilde>o Pedro for the spot. [David]
+
+=item *
+
+Assigned apporpriate permissions to allow the default "Story Editors," "Media
+Producers," and "Template Developers" to access the default workflow and desks
+relevant to them. They hadn't had that access by default before. [David]
 
 =back
 

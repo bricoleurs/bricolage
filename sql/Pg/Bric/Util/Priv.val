@@ -1,9 +1,11 @@
 -- Project: Bricolage Business API
 -- File:    Priv.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.2 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-02-26 02:48:26 $
 -- Author:  David Wheeler <david@wheeler.net>
+
+/*
 
 -- Give Contributor Administrators CREATE rights to All Contributors.
 INSERT INTO grp_priv (id, grp__id, value)
@@ -40,12 +42,49 @@ VALUES(5, 36, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(5, 4);
 
+*/
+
 -- Give Story Editors CREATE rights to All Stories.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(6, 7, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(6, 31);
+
+-- Give Story Editors CREATE rights to the Story workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(31, 7, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(31, 41);
+
+-- Give Story Editors EDIT rights to the Edit desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(32, 7, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(32, 61);
+
+-- Give Story Editors EDIT rights to the Copy desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(33, 7, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(33, 62);
+
+-- Give Story Editors EDIT rights to the Legal desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(34, 7, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(34, 63);
+
+-- Give Story Editors EDIT rights to the Publish desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(35, 7, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(35, 64);
 
 -- Give Media Producers CREATE rights to All Media.
 INSERT INTO grp_priv (id, grp__id, value)
@@ -54,12 +93,63 @@ VALUES(7, 8, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(7, 32);
 
+-- Give Media Producers CREATE rights to the Media workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(36, 8, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(36, 43);
+
+-- Give Media Producers EDIT rights to the Art desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(37, 8, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(37, 65);
+
+-- Give Media Producers EDIT rights to the Legal desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(38, 8, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(38, 63);
+
+-- Give Media Producers EDIT rights to the Publish desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(39, 8, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(39, 64);
+
 -- Give Template Developers CREATE rights to All Templates.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(8, 9, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(8, 33);
+
+-- Give Template Developers CREATE rights to the Template workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(40, 9, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(40, 45);
+
+-- Give Template Developers EDIT rights to the Development desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(41, 9, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(41, 66);
+
+-- Give Template Developers EDIT rights to the Deploy desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES(42, 9, 2);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES(42, 67);
+
+/*
 
 -- Give Element Administrators CREATE rights to All Elements.
 INSERT INTO grp_priv (id, grp__id, value)
@@ -102,6 +192,8 @@ VALUES(14, 17, 3);
 
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(14, 26);
+
+*/
 
 -- Give Distribution Administrators CREATE rights to All Destinations.
 INSERT INTO grp_priv (id, grp__id, value)
@@ -201,6 +293,8 @@ VALUES(28, 21, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(28, 35);
 
+/*
+
 -- Give Contributor Type Administrators CREATE rights to All Contributor Types.
 INSERT INTO grp_priv (id, grp__id, value)
 VALUES(29, 37, 3);
@@ -215,4 +309,4 @@ VALUES(30, 38, 3);
 INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
 VALUES(30, 28);
 
-
+*/
