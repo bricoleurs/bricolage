@@ -6,13 +6,10 @@ use strict;
 use Bric::App::Authz;
 use Bric::App::Event;
 use Bric::App::Util qw(:all);
-use Bric::Config qw(:ui);
-use Bric::Util::Language;
 use Bric::Util::Priv::Parts::Const qw(EDIT);
 
 my $disp_name = get_disp_name(CLASS_KEY);
 my $class = get_package_name(CLASS_KEY);
-my $lang = Bric::Util::Language->get_handle(LANGUAGE);
 
 sub delete : Callback {
     my $self = shift;
@@ -26,7 +23,7 @@ sub delete : Callback {
             log_event(CLASS_KEY . '_del', $at);
         } else {
             my $name = '&quot;' . $at->get_name() . '&quot';
-            add_msg($lang->maketext("Permission to delete [_1] denied.", $name));
+            add_msg($self->lang->maketext("Permission to delete [_1] denied.", $name));
         }
     }
 }
