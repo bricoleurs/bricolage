@@ -186,7 +186,7 @@ sub add_element : Callback {
     }
 }
 
-sub update : Callback {
+sub update : Callback(priority => 1) {
     my $self = shift;
     $drift_correction->($self);
     my $param = $self->request_args;
