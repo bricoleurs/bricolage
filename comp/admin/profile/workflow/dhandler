@@ -48,7 +48,7 @@ if (defined $id) {
 	     field_values => $start_sub,
 	     alter => { publish => $yes_no },
 	     profile => $prof_sub,
-	     select =>  $no_del ? undef : ['Remove', 'remove_desk'],
+	     select =>  $no_del || @$desks < 2 ? undef : ['Remove', 'remove_desk'],
 	     number => 2
 	    );
 } elsif ($new_desk) {
@@ -180,11 +180,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.4.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2004-01-04 06:11:52 $
 
 =head1 DESCRIPTION
 

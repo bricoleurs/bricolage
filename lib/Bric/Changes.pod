@@ -63,6 +63,12 @@ Ooi]
 Workflows with special characters such as "+" and "&" now work properly in the
 side navigation. Thanks to Patrick Walsh for the spot! [David]
 
+=item *
+
+Start desks can no longer be removed from workflows. This prevents workflows
+from having no desks, thus avoiding problems adding desks to such
+workflows. Reported by Patrick Walsh. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
