@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.68 $
+$Revision: 1.69 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.68 $ )[-1];
+our $VERSION = (qw$Revision: 1.69 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-30 00:57:51 $
+$Date: 2003-12-01 20:29:44 $
 
 =head1 SYNOPSIS
 
@@ -641,6 +641,10 @@ primary_oc_id
 =item *
 
 priority
+
+=item *
+
+contrib_id
 
 =item *
 
