@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.31.2.1 $
 
 =head1 DATE
 
-$Date: 2002-01-11 02:03:50 $
+$Date: 2002-01-17 02:01:36 $
 
 =head1 DESCRIPTION
 
@@ -380,7 +380,13 @@ versions.
 =item --enable-module=so
 
 This command enables the mod_so module that ships with Apache. This shared
-libarary is used by mod_perl. [Is this true, or did I make it up?]
+library is used by mod_perl.
+
+=begin comment
+
+Is this true, or did I make it up?
+
+=end comment
 
 =item --enable-module=proxy
 
@@ -578,13 +584,18 @@ as follows:
   ./bric_pgimport -u postgres -p postgres -d dbname -c -m db_user:db_password
 
 Where 'dbname' is the name you want the Bricolage database to be called in
-PostgreSQL, and 'db_user' and 'db_password' are the user name and
-password to be created in the PostgreSQL database, and under which the Bricolage
-application will run. Note that the -u argument must represent a PostgreSQL user
-with CREATE DATABASE and CREATE USER permissions. The 'bric_user' user will be
-creaed without these permissions (the 'dbname' database will be owned by the
-user passed in via the -u argument), but will be granted full CREATE, DELETE,
-UPDATE, and SELECT permissions an all objects in the Bricolage database.
+PostgreSQL, and 'db_user' and 'db_password' are the user name and password to be
+created in the PostgreSQL database, and under which the Bricolage application
+will run. Note that the -u argument must represent a PostgreSQL user with CREATE
+DATABASE and CREATE USER permissions. The 'bric_user' user will be creaed
+without these permissions (the 'dbname' database will be owned by the user
+passed in via the -u argument), but will be granted full CREATE, DELETE, UPDATE,
+and SELECT permissions an all objects in the Bricolage database.
+
+See L<Bric::DBA/> for more information on database security. You may want to
+alter the default security policy. Also, bric_import uses a TCP/IP connection so
+you may need to run postmaster with the I<-i> option.
+
 
 =item *
 
@@ -715,6 +726,14 @@ set this configuration directive in bricolage.conf.
 
 =item *
 
+B<LISTEN_PORT:> The TCP/IP Port on which the Bricolage server should listen for
+requests. Defaults to 80 if not specified. B<Note:> If the C<SSL_ENABLE>
+directive has been turned on, then C<LISTEN_PORT> I<must> be set to 80. The
+Bricolage server will not start if C<SSL_ENABLE> is on and C<LISTEN_PORT> is set
+to a value other than 80.
+
+=item *
+
 B<SERVER_ADMIN:> The email address of the server administrator. Defaults to
 "root@SERVER_NAME".
 
@@ -780,8 +799,14 @@ not specified.
 
 B<ERROR_LOG:> Sets the name of the file to which the server will log any errors
 it encounters. Defaults to " /usr/local/apache/logs/error_log" if not specified.
-This is not portable, so it may need to be changed. [We may want to change it to
-keep the log in the Bricolage directory space, anyway.]
+This is not portable, so it may need to be changed.
+
+=begin comment
+
+We may want to change it to keep the log in the Bricolage directory space,
+anyway.
+
+=end comment
 
 =item *
 
@@ -911,7 +936,9 @@ documentation <http://www.modssl.org/docs> for more detail.
 
 B<SSL_ENABLE:> Turn on this boolean directive to enable SSL support. Make sure
 you've followed the installation instructions for building a mod_ssl Apache.
-Disabled by default.
+Disabled by default. B<Note:> The C<LISTEN_PORT> directive I<must> be set to 80
+if C<SSL_ENABLE> is on. The Bricolage server will not start if C<SSL_ENABLE> is
+on and C<LISTEN_PORT> is set to a value other than 80.
 
 =item *
 
@@ -1025,7 +1052,7 @@ to "builtin" if not specified.
 =head2 Database Configuration
 
 The database configuration directives tell Bricolage where to find its data, and
-how to get it. Specifically, you want to assign to these diretives the values
+how to get it. Specifically, you want to assign to these directives the values
 you passed to the -d and -m arguments of C<pgimport> (see above).
 
 =over 4
@@ -1088,7 +1115,7 @@ stored.
 =item *
 
 B<MASON_COMP_ROOT:> Mason's element root. This is the directory in which all the
-Bricolage UI element sare stored. Defaults to C<$BRICOLAGE_ROOT/comp> if not
+Bricolage UI elements are stored. Defaults to C<$BRICOLAGE_ROOT/comp> if not
 specified.
 
 =item *
@@ -1133,7 +1160,7 @@ These directives set rules for Bricolage user authentication.
 =item *
 
 B<AUTH_TTL:> The amount of time, in seconds, a user is allowed to be idle before
-he/she is automatically logged out. Defaults to 8 hours (28800 seconds) if not
+he/she is automatically logged out. Defaults to 8 hours (28,800 seconds) if not
 specified.
 
 =item *
@@ -1174,7 +1201,7 @@ users' browsers.
 B<CHAR_SET:> The character set of in which data will be passed to the API.
 ISO-8859-1 should work for most Western European users. Note that this setting
 is necessary as all data is stored in the database in Unicode. Defaults to
-ISO-8859-1 if not specified. Defaults to "ISO-8859-1" if not specified.
+ISO-8859-1 if not specified.
 
 =back
 
@@ -1187,16 +1214,21 @@ Apache processes that handle the UI will also handle distribution
 responsibilities. The second approach is to set up a separate Apache server just
 to handle distribution. That server will need access to C<$BRICOLAGE_ROOT/stage>
 in order to read the files there and distribute them elsewhere. Making
-C<$BRICOLAGE_ROOT/stage> an NFS mount will do the trick. [Will need to write a
-lot more documentation about this at some point -- and need think about saving
-media to /stage instead of /media/assets, too.]
+C<$BRICOLAGE_ROOT/stage> an NFS mount will do the trick.
+
+=begin comment
+
+Will need to write a lot more documentation about this at some point -- and need
+think about saving media to /stage instead of /media/assets, too.
+
+=end comment
 
 =over 4
 
 =item *
 
 B<ENABLE_DIST:> This directive indicates whether the Bricolage server will also
-handle disbribution responsibilities. If set to "On" or "Yes" or "1", the
+handle distribution responsibilities. If set to "On" or "Yes" or "1", the
 Bricolage server will handle distribution. If set to any other value, it will
 not. In this latter case, be sure you set up another server to do it. Note that
 this directive has no effect on previews, as those need to be immediate and will
@@ -1216,7 +1248,7 @@ preview stories. If set to "On" or "Yes" or "1", Bricolage will use its own
 Apache server to serve preview pages (using a directory prefix from the root).
 If it's set to any other value, it will use a server from a destination with the
 'Preview' checkbox checked. For large Bricolage installations where performance
-is important, wwe recommend that you use a separate server for previews, as
+is important, we recommend that you use a separate server for previews, as
 using the Bricolage server itself adds a fair bit of overhead to every request
 -- including requests outside of the preview directory. Defaults to "1" if not
 specified.
@@ -1227,11 +1259,11 @@ B<PREVIEW_MASON:> This directive tells Bricolage to use Mason for local story
 previews. If set to "On" or "Yes" or "1", Bricolage will use its own Apache
 server and Mason to serve preview pages. If it's set to any other value, it will
 not use Mason for local previews. For large Bricolage installations, we
-recommend that you not use Bric's builtin previewing support (see above), and
-even when you do, enabling Mason for local previews adds even more overhead to
-every request -- including requests outside of the preview directory. Defaults
-to "0" if not specified, and has no affect unless the PREVIEW_LOCAL directive
-has been activated (see above).
+recommend that you not use Bricolage's built-in previewing support (see above),
+and even when you do, enabling Mason for local previews adds even more overhead
+to every request -- including requests outside of the preview directory.
+Defaults to "0" if not specified, and has no affect unless the PREVIEW_LOCAL
+directive has been activated (see above).
 
 =item *
 
@@ -1260,18 +1292,28 @@ out. Defaults to SERVER_NAME directive if not specified.
 =item *
 
 B<ALERT_FROM:> The email address that appears in the 'From' header of emailed
-alerts. Defaults to SERVER_ADMIN directive if not specified. [It might be
-worthwhile in a future version to allow Alert Type owners to set this
-themselves.]
+alerts. Defaults to SERVER_ADMIN directive if not specified.
+
+=begin comment
+
+It might be worthwhile in a future version to allow Alert Type owners to set
+this themselves.
+
+=end comment
 
 =item *
 
 B<ALERT_TO_METH:> The email header used for addressing alert recipients. Use
 "to" if you want everyone who receives the same alert to see who else received
 it. Use "bcc" if you don't want anyone to see who else got an alert, or if you
-just want to save the bandwidth. Defaults to "bcc" if not specified. [It might
-be worthwhile in a future version to allow Alert Type owners to set this
-themselves.]
+just want to save the bandwidth. Defaults to "bcc" if not specified.
+
+=begin comment
+
+It might be worthwhile in a future version to allow Alert Type owners to set
+this themselves.
+
+=end comment
 
 =back
 
@@ -1490,7 +1532,7 @@ maintenance.
 =head2 Database
 
 By default, the Bricolage database is stored where all PostgreSQL databases are
-stored -- that is, /usr/local/pgsql/data. Depending on the needs of your
+stored -- /usr/local/pgsql/data by default. Depending on the needs of your
 environment, the database can become quite large. We therefore recommend you
 place this directory on a separate partition. Better yet, place it on its own
 disk in order to optimize disk access time by preventing database access from
@@ -1530,14 +1572,14 @@ documents (e.g., QuickTime movies), this directory will start to use a lot of
 space -- and especially if the media files themselves are versioned. Thus in
 environments where many large media assets will be managed, it might make sense
 to put this directory on its own partition or disk, as well. And remember to
-back it up to prvent the loss of all of your media assets -- they aren't stored
+back it up to prevent the loss of all of your media assets -- they aren't stored
 anywhere else!
 
-Bricolage also create temporary files for caching user session data and
+Bricolage also creates temporary files for caching user session data and
 application data. All of these files are stored in sub directories of the local
 system's $TMP environment variable (actually, the temp directory is determined
 by the tmpdir() method of the File::Spec library, which uses the $TMP
-environment variable and other meand to determine the local OS's temporary
+environment variable and other means to determine the local OS's temporary
 directory). Session files are stored in C<$TMP/bricolage/session> and
 C<$TMP/bricolage/lock>. These directories should stay relatively free of cruft,
 as the session files are regularly deleted when users logout or their login
