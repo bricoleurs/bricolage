@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-02-26 02:38:10 $
+$Date: 2003-03-01 01:38:32 $
 
 =head1 SYNOPSIS
 
@@ -641,6 +641,7 @@ Translation to Portuguese using Lang::Maketext.
 
    'Warning: object [_1]\' had no associated desk.  It has been assigned to the [_2]\' desk.' =>
      'Aviso: o objecto [_1]\' não tem secretária associada. Foi atribuído à secretária [_2]\'.',
+   '_AUTO' => 1,
   );
 
 =head2 To translate
@@ -695,7 +696,7 @@ Translation to Portuguese using Lang::Maketext.
       'Category'=>'Categoria',
       'Find Templates' => 'Procurar Templates',
       'Template' => 'Modelo',
-      '_AUTO' => 1,
+      'Clone' => 'Clone'
   );
 
 =cut
