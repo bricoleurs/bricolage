@@ -24,8 +24,7 @@ do_sql
   ############################################################################
   # Create the site table.
   qq{CREATE TABLE site (
-       id          NUMERIC(10, 0)    NOT NULL
-                                     DEFAULT NEXTVAL('seq_site'),
+       id          NUMERIC(10, 0)    NOT NULL,
        name        TEXT,
        description TEXT,
        domain_name TEXT,

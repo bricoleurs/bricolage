@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.3 $
+-- VERSION: $Revision: 1.1.2.4 $
 --
--- $Date: 2003-03-08 21:06:08 $
+-- $Date: 2003-03-08 21:28:49 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 
@@ -13,8 +13,7 @@
 --
 
 CREATE TABLE site (
-    id          NUMERIC(10, 0)    NOT NULL
-                                    DEFAULT NEXTVAL('seq_site'),
+    id          NUMERIC(10, 0)    NOT NULL,
     name        TEXT,
     description TEXT,
     domain_name TEXT,
