@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-29 22:19:17 $
+$Date: 2002-04-29 22:58:48 $
 
 =head1 SYNOPSIS
 
@@ -390,7 +390,7 @@ user_id to publish as.
 
 $m
 
-media state_data.
+mason object (optional).
 
 =back
 

@@ -32,13 +32,13 @@ if ($field eq 'preview') {
     # Instantiate the Burner object.
     my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
     if (defined $media_id) {
-	my $m = get_state_data('media_prof', 'media');
-	unless ($m && defined $media_id && $m->get_id == $media_id) {
-	    $m = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
+	my $media = get_state_data('media_prof', 'media');
+	unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
+	    $media = Bric::Biz::Asset::Business::Media->lookup({ id => $media_id });
 	}
 
 	# Move out the story and then redirect to preview.
-	my $url = $b->preview($m, 'media', get_user_id(), $m);
+	my $url = $b->preview($media, 'media', get_user_id(), $m);
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     } else {
@@ -79,8 +79,8 @@ if ($field eq 'preview') {
 
     foreach my $mid (@$media) {
 	# Instantiate the media.
-	my $m = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
-	$b->publish($m, 'media', get_user_id(), $param->{pub_date});	
+	my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
+	$b->publish($media, 'media', get_user_id(), $param->{pub_date});	
     }
 
     redirect_onload(last_page());
