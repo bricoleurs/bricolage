@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-29 00:08:02 $
+$Date: 2002-10-29 21:01:01 $
 
 =head1 SYNOPSIS
 
@@ -105,10 +105,12 @@ use constant TABLE   => 'category';
 use constant MTABLE  => Bric::Util::Grp::Parts::Member::TABLE;
 use constant CMTABLE => TABLE . '_' . MTABLE;
 
-use constant COLS    => qw(a.directory a.asset_grp_id  a.active a.uri
-                           a.parent_id a.name a.description c.grp__id);
+use constant SELCOLS    => qw(a.directory a.asset_grp_id  a.active a.uri
+                              a.parent_id a.name a.description c.grp__id);
+use constant COLS    => qw(directory asset_grp_id  active uri parent_id name
+                           description);
 use constant FIELDS  => qw(directory asset_grp_id _active uri parent_id name
-                           description grp_ids);
+                           description);
 use constant ORD     => qw(name description uri directory ad_string ad_string2);
 
 use constant ROOT_CATEGORY_ID   => 0;
@@ -266,7 +268,7 @@ sub lookup {
     my $self = bless {}, ref $pkg || $pkg;
 
     # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS], $ret->[0]);
+    $self->_set(['id', FIELDS, 'grp_ids'], $ret->[0]);
 
     my $id = $self->get_id;
     my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
@@ -341,7 +343,7 @@ sub list {
         my $self = bless {}, $class;
 
         # Set the columns selected as well as the passed ID.
-        $self->_set(['id', FIELDS], $d);
+        $self->_set(['id', FIELDS, 'grp_ids'], $d);
 
         my $id = $self->get_id;
         my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
@@ -1478,7 +1480,7 @@ sub _select_category {
 
     # The left join in here is allows us to return all of the group IDs with
     # the categories in a single query
-    my $columns = join ',', 'a.id', COLS;  # list of columns to return
+    my $columns = join ',', 'a.id', SELCOLS;  # list of columns to return
     my $table = TABLE;      # main table to select from
     my $mtable = MTABLE;    # grp member table from which we get grp__id
     my $cmtable = CMTABLE;  # relational table to get member table row
@@ -1494,7 +1496,7 @@ sub _select_category {
 
     my $sth = prepare_c($sql);
     execute($sth, @$bind);
-    bind_columns($sth, \@d[0..(scalar COLS)]);
+    bind_columns($sth, \@d[0..(scalar SELCOLS)]);
     # Since there are now duplicate values in the result set for every column
     # in category we have to be careful to avoid duplicate objects. This is a
     # good stage to catch it. We'll test the ID of each row to see if it
