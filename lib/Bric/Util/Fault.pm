@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:22 $
+$Date: 2003-03-03 02:14:42 $
 
 =head1 SYNOPSIS
 
@@ -184,7 +184,7 @@ instead.
 sub new {
     my $class = shift;
 
-    my %params = ref $_[0] ? %{$_[0]} : @_;
+    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
     $params{'env'} = {%ENV};
     $params{'error'} = delete $params{'msg'} if exists $params{'msg'};
 
@@ -401,7 +401,8 @@ B<Notes:> NONE.
 =cut
 
 sub throw {
-    my ($class, %params) = @_;
+    my $class = shift;
+    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
 
     # please only use 'error', not 'message', with Bric exceptions :)
     if (isa_bric_exception($params{error})) {
