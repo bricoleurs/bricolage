@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.98 $
+$Revision: 1.99 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.98 $ )[-1];
+our $VERSION = (qw$Revision: 1.99 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 01:59:46 $
+$Date: 2004-03-26 03:43:47 $
 
 =head1 SYNOPSIS
 
@@ -309,10 +309,13 @@ use constant PARAM_WHERE_MAP =>
       site_id                => 's.site__id = ?',
       no_site_id             => 's.site__id <> ?',
       workflow__id           => 's.workflow__id = ?',
+      workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
+      element_id             => 's.element__id = ?',
       element__id            => 's.element__id = ?',
       element_key_name       => 's.element__id = e.id AND e.key_name LIKE LOWER(?)',
+      source_id              => 's.source__id = ?',
       source__id             => 's.source__id = ?',
       priority               => 's.priority = ?',
       publish_status         => 's.publish_status = ?',
@@ -334,6 +337,7 @@ use constant PARAM_WHERE_MAP =>
       version                => 'i.version = ?',
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
       user__id               => 'i.usr__id = ?',
+      user_id                => 'i.usr__id = ?',
       _checked_in_or_out     => 'i.checked_out = '
                               . '( SELECT max(checked_out) '
                               . 'FROM story_instance '
@@ -392,8 +396,11 @@ use constant PARAM_ORDER_MAP =>
       alias_id            => 'alias_id',
       site_id             => 'site__id',
       workflow__id        => 'workflow__id',
+      workflow_id         => 'workflow__id',
       primary_uri         => 'primary_uri',
+      element_id          => 'element__id',
       element__id         => 'element__id',
+      source_id           => 'source__id',
       source__id          => 'source__id',
       priority            => 'priority',
       publish_status      => 'publish_status',
@@ -407,6 +414,7 @@ use constant PARAM_ORDER_MAP =>
       version             => 'version',
       version_id          => 'i.id',
       slug                => 'slug',
+      user_id             => 'usr__id',
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       primary_oc_id       => 'primary_oc__id',
@@ -595,7 +603,7 @@ The story version number. May use C<ANY> for a list of possible values.
 
 The story slug. May use C<ANY> for a list of possible values.
 
-=item user__id
+=item user_id
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
@@ -622,7 +630,7 @@ use C<ANY> for a list of possible values.
 
 Returns stories associated with a given keyword string (not object).
 
-=item workflow__id
+=item workflow_id
 
 Return a list of stories in the workflow represented by the workflow ID. May
 use C<ANY> for a list of possible values.
@@ -647,12 +655,12 @@ be very useful in templates that want to create a list of stories in all of
 the categories the current story is in. But be sure to use the <Limit>
 parameter!
 
-=item element__id
+=item element_id
 
 Returns a list of stories associated with a given element ID. May use C<ANY>
 for a list of possible values.
 
-=item source__id
+=item source_id
 
 Returns a list of stories associated with a given source ID. May use C<ANY>
 for a list of possible values.

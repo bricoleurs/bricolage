@@ -56,6 +56,12 @@ Spell checking now works in HTMLArea. [Eric Sellers]
 When creating a new story without a slug, Bricolage will now autogenerate
 a slug based on the title. [JoE<atilde>o Pedro]
 
+=item *
+
+Added single underscore parameters to the C<list()> methods of the Story,
+Media, and Template classes to complement those that have the awful double
+underscores. [David]
+
 =back
 
 =head2 Bug Fixes

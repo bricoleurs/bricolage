@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.92 $
+$Revision: 1.93 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.92 $ )[-1];
+our $VERSION = (qw$Revision: 1.93 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 00:53:02 $
+$Date: 2004-03-26 03:43:46 $
 
 =head1 SYNOPSIS
 
@@ -199,10 +199,13 @@ use constant PARAM_WHERE_MAP =>
       site_id               => 'mt.site__id = ?',
       no_site_id            => 'mt.site__id <> ?',
       workflow__id          => 'mt.workflow__id = ?',
+      workflow_id           => 'mt.workflow__id = ?',
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
+      element_id            => 'mt.element__id = ?',
       element_key_name      => 'mt.element__id = e.id AND e.key_name LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
+      source_id             => 'mt.source__id = ?',
       priority              => 'mt.priority = ?',
       publish_status        => 'mt.publish_status = ?',
       first_publish_date_start => 'mt.publish_date >= ?',
@@ -222,6 +225,7 @@ use constant PARAM_WHERE_MAP =>
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
       user__id              => 'i.usr__id = ?',
+      user_id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
@@ -266,9 +270,12 @@ use constant PARAM_ORDER_MAP =>
       alias_id            => 'alias_id',
       site_id             => 'site__id',
       workflow__id        => 'workflow__id',
+      workflow_id         => 'workflow__id',
       uri                 => 'i.uri',
       element__id         => 'element__id',
+      element_id          => 'element__id',
       source__id          => 'source__id',
+      source_id           => 'source__id',
       priority            => 'priority',
       publish_status      => 'publish_status',
       first_publish_date  => 'first_publish_date',
@@ -472,7 +479,7 @@ The media document version number. May use C<ANY> for a list of possible values.
 
 The media document file name. May use C<ANY> for a list of possible values.
 
-=item user__id
+=item user_id
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
@@ -499,7 +506,7 @@ use C<ANY> for a list of possible values.
 
 Returns media associated with a given keyword string (not object).
 
-=item workflow__id
+=item workflow_id
 
 Return a list of media in the workflow represented by the workflow ID. May
 use C<ANY> for a list of possible values.
@@ -514,12 +521,12 @@ possible values.
 Returns a list of media with a given category URI. May use C<ANY> for a list
 of possible values. May use C<ANY> for a list of possible values.
 
-=item element__id
+=item element_id
 
 Returns a list of media associated with a given element ID. May use C<ANY>
 for a list of possible values.
 
-=item source__id
+=item source_id
 
 Returns a list of media associated with a given source ID. May use C<ANY>
 for a list of possible values.

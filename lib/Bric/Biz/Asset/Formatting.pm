@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.70 $
+$Revision: 1.71 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.70 $ )[-1];
+our $VERSION = (qw$Revision: 1.71 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-23 02:52:17 $
+$Date: 2004-03-26 03:43:46 $
 
 =head1 SYNOPSIS
 
@@ -253,9 +253,11 @@ use constant PARAM_WHERE_MAP =>
       site_id               => 'f.site__id = ?',
       no_site_id            => 'f.site__id <> ?',
       workflow__id          => 'f.workflow__id = ?',
+      workflow_id           => 'f.workflow__id = ?',
       _null_workflow_id     => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
       element_key_name      => 'f.element__id = e.id AND e.key_name LIKE LOWER(?)',
+      output_channel_id     => 'f.output_channel__id = ?',
       output_channel__id    => 'f.output_channel__id = ?',
       priority              => 'f.priority = ?',
       deploy_status         => 'f.deploy_status = ?',
@@ -270,6 +272,7 @@ use constant PARAM_WHERE_MAP =>
       description           => 'LOWER(f.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
       user__id              => 'i.usr__id = ?',
+      user_id               => 'i.usr__id = ?',
       _checked_in_or_out    => 'i.checked_out = '
                              . '( SELECT max(checked_out) '
                              . 'FROM formatting_instance '
@@ -293,8 +296,11 @@ use constant PARAM_ORDER_MAP =>
       active              => 'active',
       inactive            => 'active',
       site_id             => 'site__id',
+      workflow_id         => 'workflow__id',
       workflow__id        => 'workflow__id',
+      element_id          => 'element__id',
       element__id         => 'element__id',
+      output_channel_id   => 'output_channel__id',
       output_channel__id  => 'output_channel__id',
       priority            => 'priority',
       deploy_status       => 'deploy_status',
@@ -306,6 +312,7 @@ use constant PARAM_ORDER_MAP =>
       description         => 'description',
       version             => 'version',
       version_id          => 'i.id',
+      user_id             => 'usr__id',
       user__id            => 'usr__id',
       _checked_out        => 'checked_out',
       category_id         => 'category_id',
@@ -663,11 +670,11 @@ id
 
 =item *
 
-workflow__id
+workflow_id
 
 =item *
 
-output_channel__id
+output_channel_id
 
 =item *
 
@@ -675,11 +682,11 @@ tplate_type
 
 =item *
 
-element__id
+element_id
 
 =item *
 
-category__id
+category_id
 
 =item *
 
