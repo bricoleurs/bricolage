@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2001-12-28 19:13:46 $
 
 =head1 SYNOPSIS
 
@@ -79,7 +79,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Util::DBI qw(:standard row_aref prepare_ca);
+use Bric::Util::DBI qw(:standard row_aref prepare_ca col_aref);
 use Bric::Util::Grp::User;
 use Bric::Config qw(:admin);
 use Digest::MD5 qw(md5_hex);
