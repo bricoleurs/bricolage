@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -9,6 +9,7 @@ use Bric::SOAP::Media;
 use Bric::SOAP::Template;
 use Bric::SOAP::Workflow;
 use Bric::SOAP::Element;
+use Bric::SOAP::Category;
 
 1;
 __END__
@@ -19,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2002-03-08 05:45:25 $
+$Date: 2002-03-08 06:35:44 $
 
 =head1 SYNOPSIS
 
@@ -175,14 +176,14 @@ Provides query, export, update, create and delete for Templates.
 
 Provides query, export, update, create and delete for Element definitions.
 
-=item Bric::SOAP::Category B<[Not Yet Implemented]>
+=item Bric::SOAP::Category B<[Implementation Incomplete]>
 
 Provides query, export, update, create and delete for Category objects.
 
 =item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
 Provides the ability to move Story, Media and Formatting objects
-between desks, publish and deploy.
+between desks.  Also provides checkin, checkout, publish and deploy.
 
 =back
 
@@ -716,20 +717,12 @@ The XSD source:
 		   </xs:restriction>
 		 </xs:simpleType>
 	       </xs:element>
-	       <xs:element name="directory">
+	       <xs:element name="path">
 		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
+		   <xs:restriction base="xs:string"/>
 		 </xs:simpleType>
 	       </xs:element>
-	       <xs:element name="parent_directory">
-		 <xs:simpleType>
-		   <xs:restriction base="xs:string">
-		     <xs:maxLength value="128"/>
-		   </xs:restriction>
-		 </xs:simpleType>
-	       </xs:element>
+	       <xs:element name="active" type="xs:boolean"/>
 	       <xs:element name="adstring">
 		 <xs:simpleType>
 		   <xs:restriction base="xs:string"/>
@@ -825,6 +818,8 @@ Here's a simple story with some keywords and no contributors:
     </container>
    </elements>
   </story>
+ </assets>
+
  
 =head2 Example Clients
 
@@ -882,6 +877,8 @@ L<Bric::SOAP::Template|Bric::SOAP::Template>
 L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
 L<Bric::SOAP::Element|Bric::SOAP::Element>
+
+L<Bric::SOAP::Category|Bric::SOAP::Category>
 
 =head1 AUTHOR
 
