@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-12 15:54:12 $
+$Date: 2003-02-18 05:58:18 $
 
 =head1 SYNOPSIS
 
@@ -145,6 +145,8 @@ sub new {
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Public Instance Methods
 
@@ -631,13 +633,17 @@ sub end_page {
 
 #==============================================================================#
 
-=head2 PRIVATE
+=back
 
-=cut
-
-#--------------------------------------#
+=head1 PRIVATE
 
 =head2 Private Class Methods
+
+=over 4
+
+=item _fmt_name
+
+Needs documenting.
 
 =cut
 
@@ -650,6 +656,8 @@ sub _fmt_name {
 }
 
 #--------------------------------------#
+
+=back
 
 =head2 Private Instance Methods
 
@@ -794,6 +802,8 @@ sub _pop_element {
 
 #--------------------------------------#
 
+=back
+
 =head2 Private Functions
 
 =over 4
@@ -810,10 +820,6 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
-
-=cut
-
-=back
 
 =cut
 
