@@ -277,6 +277,15 @@ The category SOAP class now correctly calls C<lookup()> with the site ID to
 prevent multipple categories with the same names but in different sites from
 being looked up. [JoE<atilde>o Pedro]
 
+=item *
+
+User overrideable preferences are now properly checked for permissions to
+allow users with READ permission to a user to see the permissions. [David]
+
+=item *
+
+Users can now edit their own user-overrideable preferences. [David]
+
 =back
 
 =head1 VERSION 1.7.3 (2004-03-01)

@@ -82,7 +82,7 @@ if (@prefs) {
              object => 'pref',
              addition => undef,
              profile =>
-             sub { ['Edit', "/admin/profile/user_pref/" . $_[0]->get_id,
+             sub { [($can_edit ? 'Edit' : 'View'), "/admin/profile/user_pref/" . $_[0]->get_id,
                     'user_id=' . $id] },
              select  => sub { my $up =
                                   Bric::Util::UserPref->lookup
@@ -179,11 +179,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2004-03-16 22:01:41 $
 
 =head1 DESCRIPTION
 

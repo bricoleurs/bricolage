@@ -10,7 +10,7 @@ my $user = Bric::Biz::Person::User->lookup({ id => $user_id});
 
 my $user_pref = $class->lookup({ pref_id => $pref_id, user_id => $user_id });
 
-my $no_edit = chk_authz($user, EDIT) ? 0 : 1;
+my $no_edit = $user_id == get_user_id || chk_authz($user, EDIT, 1) ? 0 : 1;
 
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
@@ -97,11 +97,11 @@ my $pref_id = $ARGS{id};
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2003-12-18 22:32:30 $
+$Date: 2004-03-16 22:01:41 $
 
 =head1 DESCRIPTION
 
