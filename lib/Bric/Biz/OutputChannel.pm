@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - The manner of keeping track of output channels
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 15:41:46 $
+$Date: 2001-09-27 15:54:49 $
 
 =head1 SYNOPSIS
 
@@ -184,7 +184,7 @@ defined state
 
 suported keys:
 
-=over4
+=over 4
 
 =item *
 
@@ -277,7 +277,7 @@ Will return a list of objects that match a given criteria
 
 supported keys:
 
-=over4
+=over 4
 
 =item *
 
@@ -369,7 +369,7 @@ Will return a list of ids that match the given criteria
 
 Supported Keys:
 
-=over4
+=over 4
 
 =item name
 
@@ -666,9 +666,6 @@ NONE
 B<Notes:>
 NONE
 
-=cut
-
-
 =item $description = $oc->get_description()
 
 Returns the description field
@@ -682,10 +679,73 @@ NONE
 B<Notes:>
 NONE
 
-=cut
+=item $oc = $oc->set_pre_path($pre_path)
 
+Sets the string that will be used at the beginning of the URIs for assets in
+this Output Channel.
 
-=item $oc = $oc->set_tile_aware( undef || 1)
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $pre_path = $oc->get_pre_path
+
+Gets the string that will be used at the beginning of the URIs for assets in
+this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $oc = $oc->set_post_path($post_path)
+
+Sets the string that will be used at the end of the URIs for assets in this
+Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $post_path = $oc->get_post_path
+
+Gets the string that will be used at the end of the URIs for assets in
+this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $oc = $oc->set_file_ext($file_ext)
+
+Sets the filename extension that will be used in the names of files burned into
+this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $file_ext = $oc->get_file_ext
+
+Gets the filename extension that will be used in the names of files burned into
+this Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+=
+item $oc = $oc->set_tile_aware( undef || 1)
 
 Set the flag for wheather this output channel is tile aware
 
@@ -1053,7 +1113,10 @@ NONE
 =head1 REVISION HISTORY
 
 $Log: OutputChannel.pm,v $
-Revision 1.4  2001-09-27 15:41:46  wheeler
+Revision 1.5  2001-09-27 15:54:49  wheeler
+Documented pre_path, post_path, filename, and file_ext.
+
+Revision 1.4  2001/09/27 15:41:46  wheeler
 Added filename and file_ext columns to OutputChannel API. Also added a
 configuration directive to CE::Config to specify the default filename and
 extension for the system. Will need to document later that these can be set, or
