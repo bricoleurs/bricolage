@@ -65,6 +65,11 @@ Delfim Machado. [David]
 
 =item *
 
+If the "Select All" button is clicked to select all the checkboxes on a desk,
+and then is clicked again, it will uncheck all of the check boxes. [David]
+
+=item *
+
 Login redirection now works properly with Safari. [David]
 
 =head2 Bug Fixes
