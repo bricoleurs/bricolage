@@ -7,24 +7,24 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 16:48:40 $
+$Date: 2003-10-01 17:16:57 $
 
 =head1 SYNOPSIS
 
  use Bric::Util::Burner::TemplateToolkit;
 
  # Create a new TemplateToolkit burner using the settings from $burner
- $mason_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
+ $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
 
- # burn an asset, get back a list of resources
+ # Burn an asset, get back a list of resources
  @resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
