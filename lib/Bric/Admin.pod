@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.82 $
+$Revision: 1.83 $
 
 =head1 DATE
 
-$Date: 2002-11-27 04:17:59 $
+$Date: 2002-12-02 01:12:02 $
 
 =head1 DESCRIPTION
 
@@ -1511,7 +1511,7 @@ Delete the existing installation of Apache:
 
 =item 3.
 
-Change directories into /usr/local/src/bricolage/apache_build/apache_1.2.xx.
+Change directories into /usr/local/src/bricolage/apache_build/apache_1.3.xx.
 
 =item 4.
 
