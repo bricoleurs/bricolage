@@ -39,6 +39,11 @@ parent. Thanks to Joao Pedro Goncalves for the patch. [David]
 
 =item *
 
+Fixed bug in side navigation where an HTML table was opened but not closed.
+[Charles Albrecht]
+
+=item *
+
 Fixed bug where installation system would chown all of the chosen TEMP_DIR to
 SYS_USER. Thanks to Dave Rolsky for the report. [Sam]
 
