@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.25.2.5 $
+$Revision: 1.25.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.25.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:10:35 $
+$Date: 2003-03-20 03:14:45 $
 
 =head1 SYNOPSIS
 
@@ -718,9 +718,10 @@ sub my_meths {
 
 =over 4
 
-=item $versions = $asset->get_versions()
+=item $versions = $asset->get_versions
 
-Returns a list ref of the previous versions of this asset
+Returns an array or array reference the previous versions of this asset in
+order from the first to the current.
 
 B<Throws:>
 
@@ -738,14 +739,16 @@ NONE
 
 sub get_versions {
     my ($self) = @_;
-    my $dirty = $self->_get__dirty();
     my $versions = $self->_get('_versions');
-    return $versions if $versions;
-    my $pkg = ref $self;
-    $versions = $pkg->list({ id => $self->get_id, return_versions => 1 });
-    $self->_set({ _versions => $versions });
-    $self->_set__dirty($dirty);
-    return $versions;
+    unless ($versions) {
+        my $dirty = $self->_get__dirty;
+        $versions = $self->list({ id              => $self->get_id,
+                                  return_versions => 1,
+                                  Order           => 'version' });
+        $self->_set({ _versions => $versions });
+        $self->_set__dirty($dirty);
+    }
+    return wantarray ? @$versions : $versions;
 }
 
 ################################################################################
