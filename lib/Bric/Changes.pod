@@ -307,6 +307,12 @@ URL if it is not alreaded appended. Reported by Marshall Roch. [David]
 
 Fixed ancient bug revealed by the release of DBI 1.41. [David]
 
+=item *
+
+Photoshop-generated images no longer make Bricolage choke when they're
+uploaded to a Media profile that autopopulates fields. Reported by Paul
+Orrock. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
