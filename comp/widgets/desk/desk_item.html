@@ -88,7 +88,7 @@ if ($desk_type eq 'workflow') {
 }
 </%perl>
                 <a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Notes')%></a>&nbsp;&nbsp;
-                <a href="/workflow/trail/<% $class %>/<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Trail')%></a>&nbsp;&nbsp;
+                <a href="<% $item_url %>" class="blackUnderlinedLink"><% $lang->maketext($item_label) %></a>&nbsp;&nbsp;
                 <a href="<% $link %>" class="blackUnderlinedLink"><% $lang->maketext($vlabel) %></a>&nbsp;&nbsp;
                 <a href="/workflow/events/<% $class %>/<% $aid %>" class="blackUnderlinedLink"><%$lang->maketext('Log')%></a>&nbsp;&nbsp;
                 <% $pub %>
@@ -222,11 +222,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:13 $
+$Date: 2003-03-01 01:38:15 $
 
 =head1 DESCRIPTION
 
