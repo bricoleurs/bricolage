@@ -14,6 +14,16 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.6.13 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+=back
+
 =head1 VERSION 1.6.12 "Tov" (2004-04-09)
 
 =head2 Bug Fixes
