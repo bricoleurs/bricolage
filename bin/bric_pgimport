@@ -39,6 +39,15 @@ use vars qw( $LOG $STOP );
 # Main Program                         #
 #======================================#
 
+# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
+# filter them out.
+open STDERR, "| perl -e 'while (<>) { print unless /^NOTICE:  / }'"
+  or die "Cannot pipe STDERR: $!\n";
+
+# This would also work, but we *know* that we have already Perl to work with.
+#open STDERR, "| grep -v '^NOTICE:  '"
+#  or die "Cannot pipe STDERR to grep\n";
+
 # Setup some initial values.
 initialize();
 
@@ -61,6 +70,8 @@ grant_permissions($opt_g, create_user());
 
 # Do any cleanup work before exiting.
 clean_up();
+
+
 
 #==============================================================================#
 # Subroutines                          #
@@ -340,6 +351,9 @@ sub clean_up {
     }
     print "Done.\n" unless $opt_q;
 
+my $t1 = Benchmark->new;
+my $td = timediff($t1, $t0);
+print "the code took: ", timestr($td), "\n";
     exit;
 }
 

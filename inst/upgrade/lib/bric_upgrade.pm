@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-08-30 00:24:32 $
 
 =head1 SYNOPSIS
 
@@ -69,7 +69,7 @@ BEGIN {
     # use $BRICOLAGE_ROOT/lib if exists 
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
     unshift(@INC, $_) if -e $_;
-    
+
     # make sure Bric is found
     eval "use Bric";
     die <<'END' if $@;
@@ -114,6 +114,16 @@ my $ATTR =  { RaiseError => 1,
 $Bric::Util::DBI::dbh = DBI->connect(join(':', 'DBI', DBD_TYPE,
 					  Bric::Util::DBI::DSN_STRING),
 				     $opt_u, $opt_p, $ATTR);
+
+# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
+# filter them out.
+open STDERR, "| perl -e 'while (<>) { print unless /^NOTICE:  / }'"
+  or die "Cannot pipe STDERR: $!\n";
+
+# This would also work, but we *know* that we have already Perl to work with.
+#open STDERR, "| grep -v '^NOTICE:  '"
+#  or die "Cannot pipe STDERR to grep\n";
+
 
 =head1 EXPORTED FUNCTIONS
 

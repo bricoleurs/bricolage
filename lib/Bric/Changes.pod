@@ -43,18 +43,18 @@ published. [David]
 
 =item *
 
-Some media asset events weren't geting logged properly Now they are. [David]
+Some media asset events weren't getting logged properly Now they are. [David]
 
 =item *
 
-Database transactions are now properly maintained whe publishing
+Database transactions are now properly maintained when publishing
 assets. Everything was working, but DBI C<AutoCommit> was getting turned on,
 and this likely slowed some things down a bit. [David]
 
 =item *
 
 Assets can once again be found via the "Find" pages and recalled into a
-worfklow without error. [David]
+workflow without error. [David]
 
 =item *
 
@@ -78,6 +78,14 @@ greater speed.. [JoE<atilde>o Pedro]
 All Bricolage F<.pod> files are now installed and converted to C<man> pages
 along with all of the F<.pm> files. [David]
 
+=item *
+
+PostgreSQL "NOTICE" messages are now suppressed during installation. [David]
+
+=item *
+
+Corrected a bunch of spelling errors in this file. [David]
+
 =back
 
 =head1 VERSION 1.3.3
@@ -95,7 +103,7 @@ implemented API and database support for Media keywords. [Sam]
 =item *
 
 Added support for search Media by category and file name through the SOAP
-inerface and standard API. [Sam]
+interface and standard API. [Sam]
 
 =item *
 
@@ -150,7 +158,7 @@ Added SFTP mover. [Scott]
 =item *
 
 Add support for Apache-SSL. This required a change to the context of the
-F<bricolage.conf> C<ENABLE_SSL> directice to indicate the type of SSL support:
+F<bricolage.conf> C<ENABLE_SSL> directive to indicate the type of SSL support:
 none, apache_ssl, or mod_ssl. [Michael Robinton]
 
 =item *
@@ -180,7 +188,7 @@ Added a C<bricolage.conf> directive to force the user to always use SSL.
 =item *
 
 Added C<get_data()> method to Bric::Util::Grp::Parts::Member::Contrib. This
-method takes a simplar scalar argument and returns the relevant attribute.
+method takes a simpler scalar argument and returns the relevant attribute.
 This bit of syntactic sugar makes contributor objects behave a bit more like
 C<$element> objects in templates, thus simplifying things for template
 developers. [David]
@@ -279,7 +287,7 @@ containing a contributor with an empty middle name would fail.  [Sam]
 
 =item *
 
-Changed strttime instances of '%G' to '%Y' in URI preference, as this seems to
+Changed strftime instances of '%G' to '%Y' in URI preference, as this seems to
 be more portable. [David]
 
 =item *
@@ -369,7 +377,7 @@ mod_rewrite). [Sam]
 
 =item *
 
-Fixed installer to first ask whether SSL supprt is desired before asking for a
+Fixed installer to first ask whether SSL support is desired before asking for a
 specific SSL module. [Sam]
 
 =item *
@@ -643,7 +651,7 @@ functionality. I've put it back now. [Mark]
 
 =item *
 
-Fixed button javascript to work correctly in Mozilla. [Matt]
+Fixed button JavaScript to work correctly in Mozilla. [Matt]
 
 =item *
 
@@ -801,7 +809,7 @@ spot. [David]
 
 =item *
 
-Fixed a few poorly-named timezones in the time zone preference. More
+Fixed a few poorly-named time zones in the time zone preference. More
 still needs to be done here, actually. [David]
 
 =item *
@@ -1148,7 +1156,7 @@ Added the ability to use HTML::Template Templates. [Sam]
 
 =item *
 
-Added ability for differnt Output Channels to function as different component
+Added ability for different Output Channels to function as different component
 roots for in Mason templates. This will allow for templates that can't be found
 in the current Output Channel to be searched for in other Output Channels.
 [David]
