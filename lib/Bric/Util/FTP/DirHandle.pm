@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-11-27 18:28:38 $
+$Date: 2001-12-03 18:27:37 $
 
 =head1 DESCRIPTION
 
@@ -323,8 +323,10 @@ In this case all of these values are fixed for all categories: ( 'd',
 sub status {
   my $self = shift;
   my $category_id = $self->{category_id};
+
+  print STDERR __PACKAGE__, "::status() : ", $category_id, "\n";  
   
-  return ( 'd', 0777, 1, "nobody", "", 0, 0 );
+  return ( 'd', 0777, 2, "nobody", "nobody", 0, 0 );
 }
 
 =item move()
