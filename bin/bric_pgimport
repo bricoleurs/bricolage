@@ -205,7 +205,7 @@ sub check_plpgsql {
     eval {
         my $plpgsql = find_plpgsql();
         $DBH->do("CREATE FUNCTION plpgsql_call_handler () RETURNS OPAQUE AS " .
-                 "'$plpgsql' LANGUAGE C");
+                 "'$plpgsql' LANGUAGE 'C'");
 
         $DBH->do("CREATE TRUSTED PROCEDURAL LANGUAGE plpgsql " .
                  "HANDLER plpgsql_call_handler");
