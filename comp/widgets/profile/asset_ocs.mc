@@ -1,4 +1,6 @@
 <%perl>
+    my $sid = $asset->get_site_id;
+    $at_ocs = [ grep { $_->get_site_id == $sid } @$at_ocs ];
     my $primid = $asset->get_primary_oc_id;
     my $oc_sub = sub {
         return unless $_[1] eq 'primary';
@@ -58,11 +60,11 @@ $at_ocs
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-08-07 18:21:48 $
+$Date: 2004-04-08 19:58:31 $
 
 =head1 SYNOPSIS
 

@@ -168,6 +168,12 @@ The group manager now properly displays the names of the sites that member
 objects are associated with if the class of the objects being managed knows
 that its objects are associated with sites. Reported by Ho Yin Au. [David]
 
+=item *
+
+The list of output channels to add to a media or story document in the media
+and story profiles now includes only those output channels associated with the
+site that the story or media document is in. [David]
+
 =back
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
