@@ -11,15 +11,30 @@ exit if test_sql(qq{SELECT primary_oc__id FROM story_instance});
 foreach my $at (qw(story media)) {
     do_sql
       # Create the new column.
-      "ALTER TABLE ${at}_instance ADD COLUMN primary_oc__id NUMERIC(1,0)",
+      "ALTER TABLE ${at}_instance ADD COLUMN primary_oc__id NUMERIC(10,0)"
+    ;
 
-      # Set its value
-      "UPDATE ${at}_instance
-       SET    primary_oc__id = element.primary_oc__id
-       FROM   element, ${at}
-       WHERE  ${at}.id = ${at}_instance.${at}__id
-              AND ${at}.element__id = element.id",
+    my $sel = prepare(qq{
+        SELECT s.id, e.primary_oc__id
+        FROM   ${at} s, element e
+        WHERE  s.element__id = e.id
+        ORDER BY s.id
+    });
 
+    my $upd = prepare(qq{
+        UPDATE ${at}_instance
+        SET    primary_oc__id = ?
+        WHERE  ${at}__id = ?
+    });
+
+    execute($sel);
+    my ($sid, $ocid);
+    bind_columns($sel, \$sid, \$ocid);
+    while (fetch($sel)) {
+        execute($upd, $ocid, $sid);
+    }
+
+    do_sql
       # Add constraints.
       "ALTER TABLE ${at}_instance
        ADD CONSTRAINT ck_${at}_instance_prim_oc_null
