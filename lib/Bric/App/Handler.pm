@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-25 21:07:44 $
+$Date: 2003-02-25 21:15:54 $
 
 =head1 SYNOPSIS
 
@@ -238,12 +238,7 @@ sub handler {
     my $status;
     eval {
         # Enable smarter exceptions if in QA_MODE.
-        local $SIG_{__DIE__} = sub {
-            die ref $_[0] ? $_[0] :
-              Bric::Util::Fault::Exception::AP->new
-                  ({ msg => "Error processing Mason elements.",
-                     payload => join '', @_ });
-        } if QA_MODE;
+        local $SIG{__DIE__} = \&_make_fault if QA_MODE;
 	# Start the database transactions.
 	begin(1);
 	# Handle the request.
@@ -275,27 +270,7 @@ B<Notes:> NONE.
 
 sub handle_err {
     my ($r, $err) = @_;
-    # Create an exception object unless we already have one.
-  ERRCHK: {
-        unless (UNIVERSAL::isa($err, 'Bric::Util::Fault::Exception')) {
-            my $payload = '';
-            if (isa_mason_exception($err)) {
-                my $brief = $err->as_brief;
-                if (UNIVERSAL::isa($brief, 'Bric::Util::Fault::Exception')) {
-                    $err = $brief;
-                    last ERRCHK;
-                } else {
-                    $payload = $brief;
-                }
-            } else {
-                $payload = $err;
-            }
-
-            $err = Bric::Util::Fault::Exception::AP->new
-              ({ msg => "Error processing Mason elements.",
-                 payload => $payload });
-        }
-    };
+    $err = _make_fault($err);
 
     # Rollback the database transactions.
     eval { rollback(1) };
@@ -318,6 +293,30 @@ sub handle_err {
     return $interp->exec(ERROR_URI, fault => $err,
 			 __CB_DONE => 1, more_err => $more_err);
 }
+
+##############################################################################
+
+sub _make_fault {
+    my $err = shift;
+
+    # Just return bricolage exceptions.
+    return $err if UNIVERSAL::isa($err, 'Bric::Util::Fault');
+
+    # Otherwise, create a new exception object.
+    my $payload = '';
+    if (isa_mason_exception($err)) {
+        my $brief = $err->as_brief;
+        return $brief if UNIVERSAL::isa($brief, 'Bric::Util::Fault');
+        $payload = $brief;
+    } else {
+        $payload = $err;
+    }
+
+    return Bric::Util::Fault::Exception::AP->new
+      ({ msg => "Error processing Mason elements.",
+         payload => $payload });
+}
+
 ################################################################################
 
 =item filter($output)
