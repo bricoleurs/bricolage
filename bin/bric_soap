@@ -23,11 +23,13 @@ Modules:
   desk
   workflow
   element_type
+  output_channel
 
 Commands:
 
   Asset Commands (story, media, template, element, category,
-                  media_type, site, keyword, user, desk, element_type):
+                  media_type, site, keyword, user, desk, element_type,
+                  output_channel):
 
     list_ids
     export
@@ -283,6 +285,7 @@ import SOAP::Data 'name';
 use HTTP::Cookies;
 
 # jump table for module commands
+# XXX: factor this out
 our %jump = (
 	     story    => {
 			  list_ids => \&list_ids,
@@ -367,6 +370,13 @@ our %jump = (
                           delete   => \&delete,
 			 },
              element_type => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                      },
+             output_channel => {
                           list_ids => \&list_ids,
                           export   => \&export,
                           create   => \&create,

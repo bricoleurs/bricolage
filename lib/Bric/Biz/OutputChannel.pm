@@ -58,7 +58,7 @@ $LastChangedDate$
   $oc->use_slug_off;
 
   # Output Channel Includes instance methods.
-  my @ocs = $oc->get_includes(@ocs);
+  my @ocs = $oc->get_includes;
   $oc->set_includes(@ocs);
   $oc->add_includes(@ocs);
   $oc->del_includes(@ocs);

@@ -68,7 +68,7 @@ the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
 =item *
 
-Added the element_type module to bric_soap. [Scott]
+Added the element_type and output_channel modules to bric_soap. [Scott]
 
 =back
 

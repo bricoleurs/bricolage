@@ -18,6 +18,7 @@ use Bric::SOAP::Keyword;
 use Bric::SOAP::User;
 use Bric::SOAP::Desk;
 use Bric::SOAP::ElementType;
+use Bric::SOAP::OutputChannel;
 
 1;
 __END__
@@ -210,6 +211,10 @@ And now list_ids, export, create, update, and delete.
 =item L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
 
 Provides query, export, update, create, and delete for ElementType objects.
+
+=item L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
+
+Provides query, export, update, create, and delete for OutputChannel objects.
 
 =back
 
@@ -430,7 +435,7 @@ The XSD source:
                        <xs:complexType>
                          <xs:simpleContent>
                            <xs:extension base="xs:string">
-                             <xs:attribute name="site" type="xs:string" use="require"/>
+                             <xs:attribute name="site" type="xs:string" use="required"/>
                            </xs:extension>
                          </xs:simpleContent>
                        </xs:complexType>
@@ -1074,6 +1079,109 @@ The XSD source:
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
+         <xs:element name="output_channel" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="protocol">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="16"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="pre_path">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="post_path">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="filename">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="32"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="file_ext">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="32"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="uri_format">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="fixed_uri_format">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="uri_case">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="16"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="use_slug" type="xs:boolean"/>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="includes">
+                 <xs:annotation>
+                   <xs:documentation>A list of output channels for template includes.
+                   </xs:documentation>
+                 </xs:annotation>
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="include" minOccurs="0" maxOccurs="unbounded">
+                       <xs:complexType>
+                         <xs:simpleContent>
+                           <xs:extension base="xs:string">
+                             <xs:attribute name="site" type="xs:string" use="require" />
+                           </xs:extension>
+                         </xs:simpleContent>
+                       </xs:complexType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
          <xs:element name="workflow" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
@@ -1268,6 +1376,8 @@ L<Bric::SOAP::User|Bric::SOAP::User>
 L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 
 L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
+
+L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
 
 L<bric_soap|bric_soap>
 
