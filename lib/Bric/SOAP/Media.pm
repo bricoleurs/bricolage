@@ -13,7 +13,6 @@ use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use XML::Writer;
 use IO::Scalar;
-use Carp qw(croak);
 use MIME::Base64;
 
 use Bric::SOAP::Util qw(category_path_to_id 
@@ -38,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 03:35:03 $
+$Date: 2002-02-21 20:17:06 $
 
 =head1 SYNOPSIS
 

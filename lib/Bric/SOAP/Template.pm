@@ -12,7 +12,6 @@ use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
 use IO::Scalar;
 use XML::Writer;
-use Carp qw(croak);
 use Bric::Biz::Person::User;
 
 use Bric::SOAP::Util qw(category_path_to_id 
@@ -39,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-13 22:57:47 $
+$Date: 2002-02-21 20:17:06 $
 
 =head1 SYNOPSIS
 
