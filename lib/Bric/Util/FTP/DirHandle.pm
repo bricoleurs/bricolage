@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:14 $
+$Date: 2004-02-08 01:56:34 $
 
 =head1 DESCRIPTION
 
@@ -65,11 +65,10 @@ our @ISA = qw(Net::FTPServer::DirHandle);
 
 =item new($ftps, [$pathname, $oc_id, $category_id])
 
-Creates a new Bric::Util::FTP::DirHandle object.  Requires a
-Bric::Util::FTP::Server object as its first paramater.  Optionally
-takes a pathname, an oc_id and a category_id.  If not supplied the
-pathname defaults to "/" and the corresponding oc_id and catgeory_id
-is looked up from the database.
+Creates a new Bric::Util::FTP::DirHandle object. Requires a
+Bric::Util::FTP::Server object as its first parameter. Optionally takes a
+pathname, a site_id, an oc_id, and a category_id. If not supplied the pathname
+defaults to "/".
 
 =cut
 
@@ -77,6 +76,7 @@ sub new {
   my $class       = shift;
   my $ftps        = shift;       # FTP server object.
   my $pathname    = shift || "/";
+  my $site_id     = shift;
   my $oc_id       = shift;
   my $category_id = shift;
 
@@ -84,12 +84,13 @@ sub new {
   my $self = Net::FTPServer::DirHandle->new($ftps, $pathname);
   bless $self, $class;
 
-  # get output channel and cagetory_id from args, default to dummy value
+  # get output channel, site, and cagetory_id from args, default to dummy value
+  $self->{site_id}     = defined $site_id     ? $site_id     : -1;
   $self->{oc_id}       = defined $oc_id       ? $oc_id       : -1;
   $self->{category_id} = defined $category_id ? $category_id : -1;
 
-  print STDERR __PACKAGE__, "::new() : $self->{oc_id} : $self->{category_id}\n"
-    if FTP_DEBUG;
+  print STDERR __PACKAGE__, "::new() : $self->{oc_id} : $self->{site_id} :"
+    . " $self->{category_id}\n" if FTP_DEBUG;
 
   return $self;
 }
@@ -114,18 +115,19 @@ that, undef is returned.
 sub get {
   my $self        = shift;
   my $filename    = shift;
+  my $site_id     = $self->{site_id};
   my $oc_id       = $self->{oc_id};
   my $category_id = $self->{category_id};
 
   print STDERR __PACKAGE__, "::get() : $filename\n" if FTP_DEBUG;
 
   # look for a template by that name
-  my $list = Bric::Biz::Asset::Formatting->list(
-               {
-                output_channel__id => $oc_id,
-                category_id       => $category_id,
-                file_name          => "%/$filename",
-               });
+  my $list = Bric::Biz::Asset::Formatting->list({
+      site_id            => $site_id,
+      output_channel__id => $oc_id,
+      category_id        => $category_id,
+      file_name          => "%/$filename",
+  });
 
   if ($list and @$list) {
     # warn on multiple templates
@@ -134,24 +136,44 @@ sub get {
 
     # found at least one template
     my $template = $list->[0];
-    return new Bric::Util::FTP::FileHandle ($self->{ftps},
-                                            $template,
-                                            $oc_id,
-                                            $category_id,
-                                           )
+    return Bric::Util::FTP::FileHandle->new(
+        $self->{ftps},
+        $template,
+        $site_id,
+        $oc_id,
+        $category_id,
+    )
       # Allow access only to template if the user has READ access to it.
       if $self->{ftps}{user_obj}->can_do($template, READ);
   }
 
+  # Search for a site if we don't have one.
+  if ($site_id == -1) {
+      my ($id) = Bric::Biz::Site->list_ids({ name => $filename });
+      return Bric::Util::FTP::DirHandle->new($self->{ftps},
+                                             "/" . $filename . "/",
+                                             $id,
+                                             $oc_id,
+                                             $category_id,
+                                         )
+        if $id;
+  }
+
   # search for an output channel if we don't have one
   if ($oc_id == -1) {
-      my ($id) = Bric::Biz::OutputChannel->list_ids({ name => $filename });
+      my ($id) = Bric::Biz::OutputChannel->list_ids({ name => $filename,
+                                                      site_id => $site_id});
       if ($id) {
+          # Find the root category.
+          my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
+                                                      uri     => '/' });
           return Bric::Util::FTP::DirHandle->new($self->{ftps},
                                                  "/" . $filename . "/",
+                                                 $site_id,
                                                  $id,
-                                                 0,
-                                                );
+                                                 $cid,
+                                             )
+            if $cid;
       }
   }
 
@@ -165,6 +187,7 @@ sub get {
     if ($cats->{$child_id}{directory} eq $filename) {
       return Bric::Util::FTP::DirHandle->new($self->{ftps},
                                              $self->pathname . $filename . "/",
+                                             $site_id,
                                              $oc_id,
                                              $child_id,
                                             );
@@ -188,10 +211,17 @@ sub open {
   my $self        = shift;
   my $filename    = shift;
   my $mode        = shift;
+  my $site_id     = $self->{site_id};
   my $oc_id       = $self->{oc_id};
   my $category_id = $self->{category_id};
 
   print STDERR __PACKAGE__, "::open($filename, $mode)\n" if FTP_DEBUG;
+
+  if ($site_id == -1) {
+      print STDERR __PACKAGE__, "::open() called without site_id!\n"
+          if FTP_DEBUG;
+      return undef;
+  }
 
   if ($oc_id == -1) {
       print STDERR __PACKAGE__, "::open() called without oc_id!\n"
@@ -206,11 +236,12 @@ sub open {
   }
 
   # find filename
-  my $list = Bric::Biz::Asset::Formatting->list
-    ({ output_channel__id => $oc_id,
-       category_id       => $category_id,
-       file_name          => "%/$filename"
-     });
+  my $list = Bric::Biz::Asset::Formatting->list({
+      site_id            => $site_id,
+      output_channel__id => $oc_id,
+      category_id        => $category_id,
+      file_name          => "%/$filename"
+  });
 
   if ($list) {
     # warn on multiple templates
@@ -222,13 +253,15 @@ sub open {
     # Allow access only to template if the user has READ access to it.
     return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                             $template,
+                                            $site_id,
                                             $oc_id,
                                             $category_id
                                            )->open($mode)
       if $self->{ftps}{user_obj}->can_do($template, READ);
   }
 
-  print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n";
+  print STDERR __PACKAGE__, "::open($filename, $mode) : creating new template\n"
+    if FTP_DEBUG;
 
   # create a new template
   my ($name, $dir, $file_type) = fileparse($filename, qr/\..*$/);
@@ -258,15 +291,16 @@ sub open {
     $self->pathname, $filename, "\n" if FTP_DEBUG;
 
   ## create the new template object
-  my $template = Bric::Biz::Asset::Formatting->new
-    ({ 'element'            => $at,
+  my $template = Bric::Biz::Asset::Formatting->new({
+       'element'            => $at,
+       'site_id'            => $site_id,
        'file_type'          => $file_type,
        'output_channel__id' => $oc_id,
        'category_id'        => $category_id,
        'priority'           => 3,
        'name'               => ($at ? lc $at->get_key_name : undef),
        'user__id'           => $self->{ftps}{user_obj}->get_id,
-     });
+   });
 
   # find a template workflow.  Might be nice if
   # Bric::Biz::Workflow->list too a type key...
@@ -285,6 +319,7 @@ sub open {
   # now pass off to FileHandle
   return Bric::Util::FTP::FileHandle->new($self->{ftps},
                                           $template,
+                                          $site_id,
                                           $oc_id,
                                           $category_id,
                                          )->open($mode);
@@ -305,6 +340,7 @@ the wildcard then a reference to an empty array is returned.
 sub list {
   my $self        = shift;
   my $wildcard    = shift;
+  my $site_id     = $self->{site_id};
   my $oc_id       = $self->{oc_id};
   my $category_id = $self->{category_id};
   my $cats        = _get_cats();
@@ -320,11 +356,37 @@ sub list {
     $like = $ftps->wildcard_to_sql_like($wildcard);
   }
 
+  # If no site, just search sites.
+  if ($site_id == -1) {
+      # get output channels
+      my @sites  = Bric::Biz::Site->list({name => ($like || '%')});
+      foreach my $site (@sites) {
+          ##############################################################
+          # XXX Should probably exclude certain sites here according
+          # to permissions -- same with comp/tmpl_prof/edit_new.html!
+          # next unless $self->{ftps}{user_obj}->can_do($site, READ);
+          ##############################################################
+          my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
+                                                     "/" . $site->get_name . "/",
+                                                     $site->get_id,
+                                                     -1,
+                                                     -1);
+          push @results, [ $site->get_name, $dirh ];
+      }
+      @results = sort { $a->[0] cmp $b->[0] } @results;
+      return \@results;
+  }
+
+
   # if no oc, just search ocs
   if ($oc_id == -1) {
       # get output channels
-      my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%')});
+      my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%'),
+                                                 site_id => $site_id});
       foreach my $oc (@ocs) {
+          # Find its root category ID.
+          my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
+                                                      uri     => '/' });
           ##############################################################
           # XXX Should probably exclude certain output channels here according
           # to permissions -- same with comp/tmpl_prof/edit_new.html!
@@ -332,8 +394,9 @@ sub list {
           ##############################################################
           my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
                                                      "/" . $oc->get_name . "/",
+                                                     $site_id,
                                                      $oc->get_id(),
-                                                     0);
+                                                     $cid);
           push @results, [ $oc->get_name, $dirh ];
       }
       @results = sort { $a->[0] cmp $b->[0] } @results;
@@ -348,21 +411,23 @@ sub list {
       foreach my $cat (@$results) {
           # Allow access only to categories the user has READ access to.
           next unless $self->{ftps}{user_obj}->can_do($cat, READ);
-          my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
-                                                     $self->pathname . 
-                                                     $cat->get_directory,
-                                                     $oc_id,
-                                                     $cat->get_id);
-
+          my $dirh = Bric::Util::FTP::DirHandle->new(
+              $self->{ftps},
+              $self->pathname . $cat->get_directory,
+              $site_id,
+              $oc_id,
+              $cat->get_id);
           push @results, [ $cat->get_directory, $dirh ];
       }
   } else {
       if ($cats->{children}{$category_id}) {
           foreach my $child_id (@{$cats->{children}{$category_id}}) {
-              my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
-                                                         $self->pathname . $cats->{$child_id}{directory} . "/",
-                                                         $oc_id,
-                                                         $child_id);
+              my $dirh = Bric::Util::FTP::DirHandle->new(
+                  $self->{ftps},
+                  $self->pathname . $cats->{$child_id}{directory} . "/",
+                  $site_id,
+                  $oc_id,
+                  $child_id);
               push(@results, [ $cats->{$child_id}{directory}, $dirh ]);
           }
       }
@@ -371,35 +436,34 @@ sub list {
   # get templates
   my $list;
   if ($like) {
-      $list = Bric::Biz::Asset::Formatting->list(
-       {
-        output_channel__id => $oc_id,
-        category_id       => $category_id,
-        file_name         => "%/" . ($like || '%')
-       });
+      $list = Bric::Biz::Asset::Formatting->list({
+          site_id            => $site_id,
+          output_channel__id => $oc_id,
+          category_id        => $category_id,
+          file_name          => "%/" . ($like || '%')
+      });
   } else {
-      $list = Bric::Biz::Asset::Formatting->list(
-        {
-         output_channel__id => $oc_id,
-         category_id       => $category_id,
-        });
+      $list = Bric::Biz::Asset::Formatting->list({ 
+          site_id            => $site_id,
+          output_channel__id => $oc_id,
+          category_id        => $category_id,
+      });
   }
 
   # create filehandles
   if ($list) {
-    foreach my $template (@$list) {
-        next unless $self->{ftps}{user_obj}->can_do($template, READ);
-        my $fileh = new Bric::Util::FTP::FileHandle ($self->{ftps},
-                                                     $template,
-                                                     $oc_id,
-                                                     $self->{category_id});
+      foreach my $template (@$list) {
+          next unless $self->{ftps}{user_obj}->can_do($template, READ);
+          my $fileh = Bric::Util::FTP::FileHandle->new($self->{ftps},
+                                                       $template,
+                                                       $site_id,
+                                                       $oc_id,
+                                                       $self->{category_id});
         my $filename = $template->get_file_name;
         $filename = substr($filename, rindex($filename, '/') + 1);
         push @results, [ $filename, $fileh ];
     }
   }
-
-  @results = sort { $a->[0] cmp $b->[0] } @results;
 
   return \@results;
 }
@@ -433,6 +497,7 @@ directory.  For the root directory it returns itself.
 
 sub parent {
   my $self = shift;
+  my $site_id = $self->{site_id};
   my $category_id = $self->{category_id};
   my $cats = _get_cats();
 
@@ -445,8 +510,13 @@ sub parent {
   $dirh->{category_id} = $cats->{$category_id}{parent_id} || -1;
 
   # magic to get the right oc_id
-  if ($self->{category_id} == 0) {
+  my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
+                                              uri     => '/' });
+
+  if ($self->{category_id} == $cid) {
       $dirh->{oc_id} = -1;
+  } elsif ($self->{oc_id} == -1) {
+      $dirh->{site_id} = -1;
   } else {
       $dirh->{category_id} = $self->{oc_id};
   }
@@ -478,10 +548,12 @@ In this case all of these values are fixed for all categories: ( 'd',
 
 sub status {
   my $self        = shift;
+  my $site_id     = $self->{site_id} || -1;
   my $oc_id       = $self->{oc_id} || -1;
   my $category_id = $self->{category_id} || -1;
 
-  print STDERR __PACKAGE__, "::status() : $oc_id : $category_id \n";
+  print STDERR __PACKAGE__, "::status() : $site_id : $oc_id : $category_id \n"
+    if FTP_DEBUG;
 
   return ( 'd', 0777, 2, "nobody", "nobody", 0, 0 );
 }
@@ -608,12 +680,6 @@ sub _forget_cats {
   our $CATS;
   undef($CATS);
 }
-
-sub dir {
-    my $self = shift;
-    return $self;
-}
-
 
 1;
 

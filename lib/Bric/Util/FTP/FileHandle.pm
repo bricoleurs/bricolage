@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:16 $
+$Date: 2004-02-08 01:56:34 $
 
 =head1 DESCRIPTION
 
@@ -64,7 +64,7 @@ our @ISA = qw(Net::FTPServer::FileHandle);
 
 =cut
 
-=item new($ftps, $template, $oc_id, $category_id)
+=item new($ftps, $template, $site_id, $oc_id, $category_id)
 
 Creates a new Bric::Util::FTP::FileHandle object.  Requires three
 arguments - the Bric::Util::FTP::Server object, the
@@ -77,6 +77,7 @@ sub new {
   my $class       = shift;
   my $ftps        = shift;
   my $template    = shift;
+  my $site_id     = shift;
   my $oc_id       = shift;
   my $category_id = shift;
 
@@ -89,6 +90,7 @@ sub new {
   $self->{template}    = $template;
   $self->{category_id} = $category_id;
   $self->{oc_id}       = $oc_id;
+  $self->{site_id}     = $site_id;
   $self->{filename}    = $filename;
 
   print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n"
@@ -163,11 +165,13 @@ in.  Calls Bric::Util::FTP::DirHandle->new().
 
 sub dir {
   my $self = shift;
-  print STDERR __PACKAGE__, "::dir() : ", $self->{template}->get_file_name, "\n" ;
-  return Bric::Util::FTP::DirHandle->new ($self->{ftps},
-                                          $self->dirname,
-                                          $self->{oc_id},
-                                          $self->{category_id});
+  print STDERR __PACKAGE__, "::dir() : ", $self->{template}->get_file_name, "\n"
+    if FTP_DEBUG;
+  return Bric::Util::FTP::DirHandle->new($self->{ftps},
+                                         $self->dirname,
+                                         $self->{site_id},
+                                         $self->{oc_id},
+                                         $self->{category_id});
 }
 
 =item status()
@@ -201,7 +205,8 @@ sub status {
   my $self = shift;
   my $template = $self->{template};
 
-  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n";
+  print STDERR __PACKAGE__, "::status() : ", $template->get_file_name, "\n"
+    if FTP_DEBUG;
 
   my $data = $template->get_data || "";
   my $size = length($data);
@@ -259,7 +264,8 @@ sub delete {
   my $self = shift;
   my $template = $self->{template};
 
-  print STDERR __PACKAGE__, "::delete() : ", $template->get_file_name, "\n";
+  print STDERR __PACKAGE__, "::delete() : ", $template->get_file_name, "\n"
+    if FTP_DEBUG;
 
   # delete code equivalent to delete callback in
   # comp/widgets/tmpl_prof
@@ -401,7 +407,8 @@ sub STORE {
   $burner->deploy($template);
   $template->set_deploy_date(strfdate());
   $template->set_deploy_status(1);
-  $template->save();
+  $template->set_published_version($template->get_current_version);
+  $template->save;
 
   # log the deploy
   Bric::Util::Event->new({ key_name  => $template->get_deploy_status
@@ -425,7 +432,6 @@ sub STORE {
   # clear the workflow ID
   $template->set_workflow_id(undef);
   $template->save;
-
   return $data;
 }
 
