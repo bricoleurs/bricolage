@@ -218,8 +218,14 @@ file name extensions. [David]
 
 =item *
 
-Bric::Biz::Category->get_children now properly returns the children for the
-root category. Thanks to Sam for the spot! [David]
+C<< Bric::Biz::Category->get_children >> now properly returns the children for
+the root category. Thanks to Sam for the spot! [David]
+
+=item *
+
+Removed C<< Bric::Biz::AssetType->remove >>. It shouldn't be used anywhere,
+and might be responsible for the mysterious dissappearance of elements in
+general. Thanks to JoE<atilde>o Pedro for the spot.
 
 =back
 

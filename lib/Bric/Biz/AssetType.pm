@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 06:46:46 $
+$Date: 2003-02-25 21:41:02 $
 
 =head1 SYNOPSIS
 
@@ -421,9 +421,8 @@ sub list { _do_list(@_) }
 
 =item ($at_list || @ats) = Bric::Biz::AssetType->list_ids($param)
 
-This will return a list of objects that match the criteria defined 
-
-See the 'list' function for the allowed keys of $param.
+This will return a list of objects that match the criteria defined. See the
+C<list()> method for the allowed keys of the C<$param> hash reference.
 
 B<Throws:>
 
@@ -2014,42 +2013,6 @@ B<Notes:>
 NONE
 
 =cut
-
-#------------------------------------------------------------------------------#
-
-=item (undef || $self) = $field->remove()
-
-Removes this object completely from the DB.  Returns 1 if active or undef 
-otherwise
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub remove {
-    my $self = shift;
-    my $id = $self->get_id;
-
-    # Don't try anything unless we actually have an ID.
-    return unless $id;
-
-    my $sql = "DELETE FROM $table WHERE id = ?";
-
-    my $sth = prepare_c($sql, undef, DEBUG);
-    execute($sth, $id);
-
-    return $self;
-}
 
 #------------------------------------------------------------------------------#
 
