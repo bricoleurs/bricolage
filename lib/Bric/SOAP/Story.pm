@@ -818,6 +818,20 @@ sub load_asset {
                    . "(source => \"$sdata->{source}\")")
           unless defined $init{source__id};
 
+        # Get category and desk.
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
+                $workflow = (Bric::Biz::Workflow->list({
+                    type => STORY_WORKFLOW,
+                    site_id => $init{site_id}
+                }))[0];
+            }
+
+            unless (exists $args->{desk}) {  # already done above
+                $desk = $workflow->get_start_desk;
+            }
+        }
+
         # get base story object
         my $story;
         unless ($update) {
@@ -830,7 +844,7 @@ sub load_asset {
 
             # is this is right way to check create access for stories?
             throw_ap(error => __PACKAGE__ . " : access denied.")
-              unless chk_authz($story, CREATE, 1);
+              unless chk_authz($story, CREATE, 1, $desk->get_asset_grp);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -1017,17 +1031,8 @@ sub load_asset {
         }
 
         unless ($update && $no_wf_or_desk_param) {
-            unless (exists $args->{workflow}) {  # already done above
-                $workflow = (Bric::Biz::Workflow->list({ type => STORY_WORKFLOW,
-                                                         site_id => $init{site_id} }))[0];
-            }
-
             $story->set_workflow_id($workflow->get_id);
             log_event("story_add_workflow", $story, { Workflow => $workflow->get_name });
-
-            unless (exists $args->{desk}) {  # already done above
-                $desk = $workflow->get_start_desk;
-            }
             if ($update) {
                 my $olddesk = $story->get_current_desk;
                 if (defined $olddesk) {

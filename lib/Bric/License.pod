@@ -302,6 +302,8 @@ Friends who have spotted bugs include:
 
 =item JosE<eacute> Castro
 
+=item Alexandra Gershman
+
 =back
 
 Bricolage's translation team:

@@ -704,6 +704,20 @@ sub load_asset {
           category_path_to_id(__PACKAGE__, $mdata->{category}[0], \%init)
           unless defined $init{category__id};
 
+        # Determine workflow and desk.
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
+                $workflow = (Bric::Biz::Workflow->list({
+                    type => MEDIA_WORKFLOW,
+                    site_id => $init{site_id}
+                }))[0];
+            }
+
+            unless (exists $args->{desk}) {  # already done above
+                $desk = $workflow->get_start_desk;
+            }
+        }
+
         # get base media object
         my $media;
         unless ($update) {
@@ -714,9 +728,9 @@ sub load_asset {
             print STDERR __PACKAGE__ . "::create : created empty media object\n"
                 if DEBUG;
 
-            # is this is right way to check create access for media?
+            # Check permissions. The start desk group applies to the permissions.
             throw_ap(error => __PACKAGE__ . " : access denied.")
-              unless chk_authz($media, CREATE, 1);
+              unless chk_authz($media, CREATE, 1, $desk->get_asset_grp);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -877,16 +891,8 @@ sub load_asset {
         }
 
         unless ($update && $no_wf_or_desk_param) {
-            unless (exists $args->{workflow}) {  # already done above
-                $workflow = (Bric::Biz::Workflow->list({ type => MEDIA_WORKFLOW,
-                                                         site_id => $init{site_id} }))[0];
-            }
             $media->set_workflow_id($workflow->get_id);
             log_event("media_add_workflow", $media, { Workflow => $workflow->get_name });
-
-            unless (exists $args->{desk}) {  # already done above
-                $desk = $workflow->get_start_desk;
-            }
             if ($update) {
                 my $olddesk = $media->get_current_desk;
                 if (defined $olddesk) {
