@@ -6,10 +6,60 @@ use Test::More;
 use Bric::Biz::OutputChannel::Element;
 
 ##############################################################################
+# Test constructors.
+##############################################################################
+# Test the href() constructor.
+sub test_href : Test(12) {
+    my $self = shift;
+    ok( my $href = Bric::Biz::OutputChannel::Element->href
+        ({ element_id => 1 }), "Get Story OCs" );
+    is( scalar keys %$href, 1, "Check for one OC" );
+    ok( my $oce = $href->{1}, "Grab OC ID 1" );
+    is( $oce->get_name, 'Web', "Check OC name 'Web'" );
+
+    # Check the enabled attribute.
+    ok( $oce->is_enabled, "Check is_enabled" );
+    ok( $oce->set_enabled_off, "Turn enabled off" );
+    ok( ! $oce->is_enabled, "Check is_enabled off" );
+    ok( $oce->set_enabled_on, "Turn enabled on" );
+    ok( $oce->is_enabled, "Check is_enabled on" );
+
+    # Check the element_id attribute.
+    is( $oce->get_element_id, 1, "Check element_id eq 1" );
+    ok( $oce->set_element_id(2), "Set element_id to 2" );
+    is( $oce->get_element_id, 2, "Check element_id eq 2" );
+}
+
+##############################################################################
+# Test the new() constructor.
+sub test_new : Test(10) {
+    my $self = shift;
+    # Try creating one from an OC ID.
+    ok( my $oce = Bric::Biz::OutputChannel::Element->new({ oc_id => 1 }),
+        "Create OCE from OC ID 1" );
+    isa_ok($oce, 'Bric::Biz::OutputChannel::Element');
+    isa_ok($oce, 'Bric::Biz::OutputChannel');
+    is( $oce->get_name, "Web", "Check name 'Web'" );
+
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 1 }),
+        "Create enabled OC" );
+    ok( $oce->is_enabled, "OC is enabled" );
+
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 1 }),
+        "Create enabled OC" );
+    ok( $oce->is_enabled, "Enabled OC is enabled" );
+
+    ok( $oce = Bric::Biz::OutputChannel::Element->new({ enabled => 0 }),
+        "Create disabled OC" );
+    ok( ! $oce->is_enabled, "disabled OC is not enabled" );
+}
+
+##############################################################################
 # Test instance methods.
 ##############################################################################
 # Test save() method's update ability.
 sub test_update : Test(13) {
+    my $self = shift;
     # Grab an existing OCE from the database.
     ok( my $href = Bric::Biz::OutputChannel::Element->href
         ({ element_id => 1 }), "Get Story OCs" );
@@ -40,6 +90,7 @@ sub test_update : Test(13) {
 ##############################################################################
 # Test save()'s insert and delete abilities.
 sub test_insert : Test(11) {
+    my $self = shift;
     # Create a new output channel.
     ok( my $oce = Bric::Biz::OutputChannel::Element->new({ name => "Foober",
                                                            element_id => 1
@@ -49,6 +100,7 @@ sub test_insert : Test(11) {
     # Now save it. It should be inserted as both an OC and as an OCE.
     ok( $oce->save, "Save new OCE" );
     ok( my $ocid = $oce->get_id, "Get ID" );
+    $self->add_del_ids([$ocid]);
 
     # Now retreive it.
     ok( my $href = Bric::Biz::OutputChannel::Element->href
@@ -67,12 +119,6 @@ sub test_insert : Test(11) {
     ok( $href = Bric::Biz::OutputChannel::Element->href
         ({ element_id => 1 }), "Get Story OCs" );
     ok( ! exists $href->{$ocid}, "ID $ocid gone" );
-
-    # And finally, clean out the OC table.
-    Bric::Util::DBI::prepare(qq{
-        DELETE FROM output_channel
-        WHERE  id = $ocid
-    })->execute;
 }
 
 1;

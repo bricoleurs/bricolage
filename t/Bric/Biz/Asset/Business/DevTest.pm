@@ -38,7 +38,7 @@ sub test_oc : Test(36) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
-    return "OCs tested only by subclass" if $key eq 'biz';
+     return "OCs tested only by subclass" if $key eq 'biz';
     ok( my $ba = $self->construct, "Construct $key object" );
     ok( my $elem = $self->get_elem, "Get element object" );
 
