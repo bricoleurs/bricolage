@@ -7,15 +7,15 @@ Bric::Util::Class - A module to provide access to the class table
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-16 19:37:52 $
+$Date: 2002-10-21 20:07:06 $
 
 =head1 SYNOPSIS
 
@@ -205,16 +205,10 @@ NONE
 
 sub lookup {
     my ($class, $init) = @_;
-
-    my $key;
-    if (defined $init->{id}) {
-        $key = $init->{id};
-    } else {
-        $key = lc $init->{key_name} || lc $init->{pkg_name} || return;
-    }
-
+    my $key = lc($init->{id} || $init->{key_name} || $init->{pkg_name})
+      or return;
     # Make sure all the classes are loaded and cached.
-    list($class) unless %BY_ID;
+    $class->list unless %BY_ID;
     return $BY_ID{$key} || $BY_KEY{$key} || $BY_PKG{$key};
 }
 
