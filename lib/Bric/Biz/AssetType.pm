@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33.2.4 $
+$Revision: 1.33.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-11 17:48:32 $
+$Date: 2003-03-12 00:17:44 $
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,11 @@ $Date: 2003-03-11 17:48:32 $
   $element        = $element->add_output_channels([$output_channel])
   ($oc_list || @ocs) = $element->get_output_channels()
   $element        = $element->delete_output_channels([$output_channel])
+
+  # Manage sites
+  $element               = $element->add_sites([$site])
+  ($site_list || @sites) = $element->get_sites()
+  $element               = $element->remove_sites([$site])
 
   # Manage the parts of an asset type.
   $element            = $element->add_data($field);
@@ -119,7 +124,7 @@ use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
 use Bric::Util::Coll::Site;
-
+use Bric::Util::Fault qw(throw_dp);
 #==============================================================================#
 # Inheritance                          #
 #======================================#
@@ -1561,6 +1566,7 @@ assocation between each output channel and this element object.
 
 sub get_sites { $get_site_coll->(shift)->get_objs(@_) 
 }
+
 #------------------------------------------------------------------------------#
 
 =item my $site = $element->add_site($site)
@@ -1570,8 +1576,19 @@ sub get_sites { $get_site_coll->(shift)->get_objs(@_)
 Adds a site to this element object and returns the resulting
 Bric::Biz::Site object. Can pass in either an site object or a site ID.
 
-B<Throws:> NONE.
+B<Throws:>
 
+=over 4
+
+=item *
+
+You can only add sites to top level objects
+
+=item *
+
+Couldn't find site
+
+=back
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1581,17 +1598,48 @@ B<Notes:> NONE.
 sub add_site {
     my ($self, $site) = @_;
 
-    #this should be a proper exception, but David
-    #needs to tell me the convetion for exceptions
-    die "You can only add sites to top level objects" unless
+    throw_dp "You can only add sites to top level objects" unless
       $self->get_top_level;
 
     my $site_coll = $get_site_coll->($self);
     $site = Bric::Biz::Site->lookup({ id =>  $site}) unless ref $site;
 
-    die "Couldn't find site" unless ref $site;
+    throw_dp "Couldn't find site" unless ref $site;
 
     $site_coll->add_new_objs( $site );
+    return $site;
+}
+#------------------------------------------------------------------------------#
+
+=item my $site = $element->add_sites([$site])
+
+=item my $site = $element->add_sites([$site_id])
+
+Adds a site to this element object and returns the Bric::Biz::AssetType object. 
+Can pass in multiple site objects or site IDs.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+You can only add sites to top level objects
+
+=item *
+
+Couldn't find site
+
+=back
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_sites {
+    my ($self, $sites) = @_;
+    $self->add_site($_) for @$sites;
 }
 
 #------------------------------------------------------------------------------#
@@ -1601,7 +1649,15 @@ sub add_site {
 This takes an array reference of output channels and removes their association
 from the object.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot remove last site from an AssetType
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -1612,7 +1668,10 @@ B<Notes:> NONE.
 sub remove_sites {
     my ($self, $sites) = @_;
     my $site_coll = $get_site_coll->($self);
+    throw_dp "Cannot remove last site from an AssetType"
+      if @{$site_coll->get_objs} < 2;
     $site_coll->del_objs(@$sites);
+    
     return $self;
 }
 

@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
+use Test::Exception;
 use Bric::Biz::AssetType;
 use Bric::Biz::OutputChannel;
 
@@ -187,5 +188,81 @@ sub test_oc : Test(32) {
 
 }
 
+##############################################################################
+# Test Site methods.
+##############################################################################
+
+
+
+sub test_site : Test(10) {
+    my $self = shift;
+
+    #dependant on intial values
+    my ($top_level_element_id, $element_id) = (1,6);
+
+    #create two dummy sites
+
+    my $site1 = Bric::Biz::Site->new( { name => "Dummy 1",
+                                        domain_name => 'www.dummy1.com',
+                                      });
+
+    ok( $site1->save(), "Create first dummy site");
+    my $site1_id = $site1->get_id;
+
+    my $site2 = Bric::Biz::Site->new( { name => "Dummy 2",
+                                        domain_name => 'www.dummy2.com',
+                                      });
+
+    ok( $site2->save(), "Create second dummy site");
+    my $site2_id = $site2->get_id;
+
+    my $top_level_element = Bric::Biz::AssetType->lookup({id => $top_level_element_id});
+    my $element           = Bric::Biz::AssetType->lookup({id => $element_id});
+
+    #First of all test all exceptions
+
+    throws_ok {
+        $element->add_site($site1_id);
+    } qr /You can only add sites to top level objects/,
+      "Check that only top_level objects can add a site";
+
+    throws_ok {
+        $element->add_site($site1);
+    } qr /You can only add sites to top level objects/,
+      "Check that only top_level objects can add a site";
+
+    throws_ok {
+        $top_level_element->add_site(999999999); #Large ID that doesn't exist
+    } qr /Couldn't find site/,  # ' trick 
+      "Check if site is a real site";
+
+    throws_ok {
+        $top_level_element->remove_sites([$site1]);
+    } qr /Cannot remove last site from an AssetType/,
+      "Check that you can't remove the last site";
+
+    is($site1->get_id, $top_level_element->add_site($site1)->get_id, "Add a new site");
+
+    is($site2->get_id, $top_level_element->add_site($site2_id)->get_id, "Add a new site");
+
+    #due to bug in the coll code, one must do a save between add_sites/remove_sites
+
+    $top_level_element->save();
+
+    is(scalar @{$top_level_element->get_sites()}, 3, "We should have three sites now");
+
+    $top_level_element->remove_sites([$site1, $site2_id]);
+
+    is(scalar @{$top_level_element->get_sites()}, 1, "We should have one sites now");
+
+
+
+
+    Bric::Util::DBI::prepare(qq {
+        DELETE FROM site
+        WHERE id = $site1_id OR id = $site2_id
+    })->execute();
+
+}
 1;
 __END__
