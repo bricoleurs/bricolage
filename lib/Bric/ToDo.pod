@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.91 $
+$Revision: 1.92 $
 
 =head1 DATE
 
-$Date: 2003-02-26 02:48:26 $
+$Date: 2003-02-27 21:21:48 $
 
 =head1 DESCRIPTION
 
@@ -46,6 +46,12 @@ in mind as long term goals further down the line.
 =head2 High Priority Minor Items
 
 =over
+
+=item *
+
+Add an C<instance()> function/method to Bric::Util::Session so that other
+parts of the API can always get the current session, instead of grabbing
+C<%HTML::Mason::Commands::session> directly (as in Bric::App::Util).
 
 =item *
 
@@ -182,6 +188,14 @@ Replace use of Text::Iconv with Encode?
 =head2 High Priority Major Items
 
 =over 4
+
+=item *
+
+Remove C<check_uri()> bottleneck in Story.pm and Media.pm. Create a table with
+two columns in it, one for story IDs and one for URIs, and put all of the URIs
+in it. Then we could just query against that table to compare URIs. All the
+possible URIs for a story would have to be included in the table, for all
+combinations of category and output channel Do the same for media.
 
 =item *
 
