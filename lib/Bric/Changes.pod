@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.4 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Made story profile's subelement 'Preview In' output-channel list
+consistent with the top level one (e.g. editing a Page shows the
+same preview OCs as editing the Story at the top level). [Scott]
+
+=back
+
 =head2 Bug Fixes
 
 =over
