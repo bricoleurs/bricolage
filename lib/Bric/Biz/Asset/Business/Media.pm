@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.21.2.5 $
+$Revision: 1.21.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-11 01:50:26 $
+$Date: 2002-12-11 01:52:17 $
 
 =head1 SYNOPSIS
 
@@ -787,6 +787,42 @@ sub set_category__id {
 Returns the category id that has been associated with this media object
 
 B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+=item $self = $media->set_cover_date($cover_date)
+
+Sets the cover date and updates the URI.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to unpack date.
+
+=item *
+
+Unable to format date.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
 
 B<Side Effects:> NONE.
 
