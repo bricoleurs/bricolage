@@ -29,6 +29,11 @@ coworker. [David]
 The "desk_id" attribute of assets is now properly cleared when an asset is
 removed from workflow. [David]
 
+=item *
+
+Fixed 1.6.5 upgrade script to look for Bric::Config in the proper location.
+[David]
+
 =back
 
 =head2 Bug Fixes
