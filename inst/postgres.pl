@@ -64,7 +64,6 @@ get_psql();
 get_version();
 get_users();
 get_host();
-get_version();
 
 # all done, dump out apache database, announce success and exit
 open(OUT, ">postgres.db") or die "Unable to open postgres.db : $!";
