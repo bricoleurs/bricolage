@@ -86,14 +86,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Categories') %>:&nbsp;</span></td>
+  <td width="<% $infoIndent %>" align="right" valign="top" class="medHeader"><span class="label"><% $lang->maketext('Categories') %>:&nbsp;</span></td>
   <td width="470">&nbsp;<%perl>
-my @cats = $story->get_categories;
-my @categories;
-foreach (@cats) {
-    push @categories, $_->get_name;
-}
-$m->out( join(", ", @categories));
+$m->print(join '<br />&nbsp;', sort { $a cmp $b }
+          map { $_->get_uri } $story->get_categories);
 </%perl>
   </td>
   </tr>

@@ -215,6 +215,10 @@ Friends who have spotted bugs include:
 
 =item Perrin Harkins
 
+=item Chris Riddoch
+
+=item Gary Gilchrist
+
 =back
 
 Bricolage's translation team:

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:22 $
+$Date: 2003-09-10 18:39:04 $
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,8 @@ $Date: 2003-07-25 04:39:22 $
 <%args>
 </%args>
 
-<%once>
+<%once>;
+my ($start_desk_ok, $desk_chk);
 my $object = 'media';
 my $plural = get_class_info($object)->get_plural_name;
 my $w_id;
@@ -47,11 +48,13 @@ my $select = sub {
     my $o = shift;
     my $u = $o->get_user__id;
 
-    if ((not defined $u) && chk_authz($o, EDIT, 1)) {
+    if (not defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
-	    return ['Checkout', 'media_prof|checkout_cb'];
+	    return ['Checkout', 'media_prof|checkout_cb']
+              if $desk_chk->{$o->get_desk_id}[1];
 	} else {
-	    return ['Checkout', 'media_prof|recall_cb', $o->get_id.'|'.$w_id];
+	    return ['Checkout', 'media_prof|recall_cb', $o->get_id.'|'.$w_id]
+              if $start_desk_ok;
 	}
     }
 
@@ -59,7 +62,7 @@ my $select = sub {
 };
 
 my $addition = sub {
-    if (chk_authz($_[0], CREATE, 1)) {
+    if ($start_desk_ok && chk_authz($_[0], CREATE, 1)) {
         return ['Create', "/workflow/profile/media/new/$w_id"];
     }
     return;
@@ -90,8 +93,15 @@ my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 # Get the workflow ID.
 ($w_id) = $r->uri =~ m!/(\d+)/?$!;
 
-# Grab the workflow from the database.
-my $wf = Bric::Biz::Workflow->lookup({ id => $w_id })->get_name;
+# Grab the workflow and start desk permissions.
+my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
+my $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
+                                   chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
+                 map { [$_->get_name => [$_->get_asset_grp, $_->get_grp_ids ]] }
+                 $wf->allowed_desks
+               };
+$start_desk_ok = $desk_chk->{$wf->get_start_desk->get_name};
+$wf = $wf->get_name;
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',
    title => "Find $plural",

@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.0';
 
 =item Date
 
-$Date: 2003-06-13 16:49:13 $
+$Date: 2003-09-10 18:39:06 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.39 2003-06-13 16:49:13 wheeler Exp $
+$Id: Bric.pm,v 1.40 2003-09-10 18:39:06 wheeler Exp $
 
 =back
 
@@ -466,7 +466,7 @@ sub AUTOLOAD {
     # A get request
     if ($op eq 'get') {
         # check permissions
-        throw_gen "Access denied: READ access for field '$field' required"
+        throw_gen qq{Can't locate object method "get_$field" via package "$pkg"}
           unless $perm & FIELD_READ;
 
         # setup get method
@@ -478,7 +478,7 @@ sub AUTOLOAD {
     # A set request
     elsif ($op eq 'set') {
         # check permissions
-        throw_gen "Access denied: WRITE access for field '$field' required"
+        throw_gen qq{Can't locate object method "set_$field" via package "$pkg"}
           unless $perm & FIELD_WRITE;
 
         # setup set method
@@ -499,7 +499,7 @@ sub AUTOLOAD {
 
     # otherwise, fail
     else {
-        throw_gen "No AUTOLOAD method: $AUTOLOAD"
+        throw_gen qq{Can't locate object method "$op\_$field" via package "$pkg"};
     }
 
     # call the darn method - all the parameters are still in @_

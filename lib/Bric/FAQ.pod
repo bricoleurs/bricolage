@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:43 $
+$Date: 2003-09-10 18:39:07 $
 
 =head1 DESCRIPTION
 
@@ -97,8 +97,7 @@ L<http://kineticode.com/services/>.
 
 =head2 Installation
 
-=head3 Why does mod_perl have to be statically compiled into Apache? I've been
-using mod_perl as a DSO and have had no problems with it at all.
+=head3 Why does mod_perl have to be statically compiled into Apache? I've been using mod_perl as a DSO and have had no problems with it at all.
 
 You are very fortunate, because mod_perl 1.x is just not too stable as a
 DSO. Weird things tend to happen. That's not to say that some haven't set it
@@ -194,24 +193,17 @@ Sometimes you might need to update your CPAN bundle, itself:
 
   perl -MCPAN -e 'install Bundle::CPAN'
 
-=head3 Why does C<make install> exit with the following error?
+=head3 Why does C<make install> exit with the error 'Missing or empty inst/bricolage.sql!'?
 
-  Missing or empty inst/bricolage.sql!
-
-You downloaded Bricolage from CVS and didn't
-run `make dist`. Do something like this:
+You downloaded Bricolage from CVS and didn't run C<make dist>. Do something
+like this:
 
     # make dist
     [lots of output...]
     # cd bricolage-1.5.0
     # make install
 
-=head3 Why does C<make install> exit with the following error?
-
-  ###############################################################################
-
-  Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd".
-  ###############################################################################
+=head3 Why does C<make install> exit with the error 'Unable to set bricolage.conf variable APACHE_BIN to "/usr/local/apache/bin/httpd"'?
 
 Most likely it's because you're installing Bricolage on Red Hat 8 or later and
 haven't got 'round to reading F<README.RedHat>. In fact, a fair number of Perl
@@ -235,29 +227,25 @@ We've also heard that you can set the LANG environment variable globally in
 the F</etc/sysconfig/i18n> file. Then you wouldn't need to worry about it
 anywhere else.
 
-=head3 Why does C<make install> exit with the following error?
+=head3 Why does C<make install> exit with the error 'IDENT authentication failed for user "postgres"'?
 
-  IDENT authentication failed for user "postgres"
-
-I'm not sure why the IDENT fails. In inst/db_grant.pl,
-we switch EUID to that of 'postgres'. Maybe more things
-need to be set in order to convince postgresql that
-you're logging in as 'postgres' instead of 'root'?
+I'm not sure why the IDENT fails. In F<inst/db_grant.pl>, we switch EUID to
+that of 'postgres'. Maybe more things need to be set in order to convince
+postgresql that you're logging in as 'postgres' instead of 'root'?
 
 I worked around the problem by ignoring it; in pg_hba.conf,
 
-  #local   all         all                                         ident sameuser
-  #host    all         all         127.0.0.1        255.0.0.0      ident sameuser
+  #local  all         all                                         ident sameuser
+  #host   all         all         127.0.0.1        255.0.0.0      ident sameuser
   local   all         all                                         trust
   host    all         all         127.0.0.1        255.0.0.0      trust
   host    all         all         0.0.0.0          0.0.0.0        reject
 
 A Short introduction to F<pg_hba.conf> can be found in L<Bric::DBA|Bric::DBA>,
-and it is more thorougly documented at
+and it is more thoroughly documented at
 L<http://www.postgresql.org/docs/current/interactive/client-authentication.html>.
 
-=head3 Why do I get a 404 when I connect to the Bricolage UI and get an
-error like the following in Apache's F<error_log>?
+=head3 Why do I get a 404 when I connect to the Bricolage UI and get an error like the following in Apache's F<error_log>?
 
   [error] [client 127.0.0.1] Error executing AccessHandler: Bric::App::Session -- /usr/local/lib/perl5/site_perl/5.8.0/Bric/App/Session.pm -- 236
   Difficulties tie'ing the session hash to file '/tmp/bricolage/session'
@@ -269,10 +257,7 @@ the temp file directories and restart Bricolage:
   sudo chown -R nobody:nobody /tmp/bricolage
   sudo bric_apachectl restart
 
-=head3 When I try to login to Bricolage, I get redirected to F</login>, but
-the page is blank. There's nothing in the HTML source except C<<
-<html><head></head></html> >> or nothing at all. There are no errors in the
-error log or the access log. What's wrong?
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but the page is blank. There's nothing in the HTML source except C<< <html><head></head></html> >> or nothing at all. There are no errors in the error log or the access log. What's wrong?
 
 I've seen this a couple of times, but the cause was different each time. On
 one occasion, there was a F<FilesMatch> directive in a separate VirtualHost
@@ -299,8 +284,7 @@ simply copying these two files from the Bricolage source directories to your
 installed component root will correct the problem. Holler on the
 bricolage-general mail list if it doesn't.
 
-=head3 When I try to login to Bricolage, I get redirected to F</login>, but
-the webserver reported a "500 Internal Server Error". What's wrong?
+=head3 When I try to login to Bricolage, I get redirected to F</login>, but the web server reported a "500 Internal Server Error". What's wrong?
 
 Look in your Apache F<error_log> file. If you find an error along the lines of
 
@@ -320,9 +304,7 @@ you will get
 Thus demonstrating that you're dealing with a PostgreSQL configuration issue,
 rather than a Bricolage issue.
 
-=head3 I'm trying to restore a backup of the Bricolage database, but I keep
-getting an error like this: "ERROR: Function login_avail(varchar, numeric,
-numeric) does not exist". What gives?
+=head3 I'm trying to restore a backup of the Bricolage database, but I keep getting an error like this: "ERROR: Function login_avail(varchar, numeric, numeric) does not exist". What gives?
 
 This is a known issue with PostgreSQL's C<pg_dump> utility -- it's not smart
 enough to handle circular dependencies. The PostgreSQL developers are aware of
@@ -345,8 +327,7 @@ able to load the database and get back to work!
 
 =head2 Element Administration
 
-=head3 I added a field to an element and deleted it, and now I can't add a new
-field with the same name. Why not?
+=head3 I added a field to an element and deleted it, and now I can't add a new field with the same name. Why not?
 
 Fields cannot have the same name, even if they've been deleted. This is
 because you might have older stories around that use the old name, and still
@@ -375,9 +356,9 @@ online help.
 
 Read the F<README> document in the directory where you unpacked Bricolage to
 learn about other documents on specific things like Bricolage administration,
-usage, or hacking. The project's website is
+usage, or hacking. The project's web site is
 L<http://www.bricolage.cc/>. The
-website lists information about mailing lists.
+web site lists information about mailing lists.
 
 =head3 I can't get my head around the idea of workflow. Is there any documentation on it?
 
@@ -387,6 +368,55 @@ Kallen, in which he discussed what Salon needed out of a CMS (including
 workflow) and how he came to select the tools to use the CMS that was the
 proof-of-concept for Bricolage. The article is at
 L<http://www.salon.com/contact/staff/idk/print.html>.
+
+=head2 Template Administration
+
+=head3 I added a template to a category and then deleted it, and now I can't add a new
+template with the same name. Why not?
+
+Deleted template profiles don't actually get deleted but instead marked
+inactive in the database. This prevents creating a new template with the same
+name in them same category in the same output channel. In a future release, an
+easy way to reactivate deleted template profiles will be integrated in the
+GUI.
+
+In the meantime, deleted (that is, deactivated) template can be brought back
+by using a updating the database directly and querying against the output
+channel ID and the template's file name:
+
+  psql -U [username] -d [databasename] -c \
+    "UPDATE formatting SET active = 1 WHERE output_channel__id = [ocid] \
+     AND file_name = '[path]'"
+
+The arguments in brackets above are:
+
+=over 4
+
+=item username
+
+The username for your Bricolage PostgreSQL user. This is the username the
+Bricolage installer created for you, and which is listed as the C<DBI_USER>
+F<bricolage.conf> directive.
+
+=item databasename
+
+The name of the Bricolage database. This is the database the Bricolage
+installer created for you, and which is listed as the C<DB_NAME>
+F<bricolage.conf> directive.
+
+=item ocid
+
+The ID of the output channel that the template is in.
+
+=item path
+
+The full URI path name of the template. This is a combination of the category
+path and the name of the template, usually constructed from the element for
+which it is created. For example, a Mason template created for the "Book
+Review" element in the category "/reviews/books" would be called
+F</reviews/books/book_review.mc>.
+
+=back
 
 =head1 AUTHOR
 

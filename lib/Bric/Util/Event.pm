@@ -6,16 +6,16 @@ Bric::Util::Event - Interface to Bricolage Events
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-09-10 18:39:07 $
 
 =head1 SYNOPSIS
 
@@ -1357,9 +1357,9 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my $tables = 'event e LEFT JOIN (event_attr ea JOIN event_type_attr ta ' .
-                 '                  ON ea.event_type_attr__id = ta.id) ' .
-                 'ON e.id = ea.event__id, class c, event_type t'; # .
+    my $tables = 'event e LEFT JOIN event_attr ea ON e.id = ea.event__id ' .
+      'LEFT JOIN event_type_attr ta ON ea.event_type_attr__id = ta.id, ' .
+      'class c, event_type t'; # .
 #                 ', member m, event_member em';
     my $wheres = 'e.event_type__id = t.id AND t.class__id = c.id'; # .
 #      ' AND e.id = em.object_id AND m.id = em.member__id';

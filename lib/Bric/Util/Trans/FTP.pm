@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:37 $
+$Date: 2003-09-10 18:39:08 $
 
 =head1 SYNOPSIS
 
@@ -152,15 +152,15 @@ sub put_res {
         my $is_win = $s->get_os eq 'Win32';
         # Instantiate an FTP object, login, and change to binary mode.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-          || throw_gen(error => "Unable to connect to remote server '$hn'.",
-                       payload => $@);
+          or throw_gen ertor   => "Unable to connect to remote server '$hn'.",
+                       payload => $@;
         $ftp->login($s->get_login, $s->get_password)
-          || throw_gen(error => "Unable to login to remote server '$hn'.",
-                       payload => $ftp->message);
+          or throw_gen error   => "Unable to login to remote server '$hn'.",
+                       payload => $ftp->message;
         $ftp->binary
-          || throw_gen(error => 'Unable to change to binary mode on ' .
-                         "remote server '$hn'.",
-                       payload => $ftp->message);
+          or throw_gen error   => 'Unable to change to binary mode on' .
+                                  " remote server '$hn'.",
+                       payload => $ftp->message;
 
         # Get the FTP and document roots.
         my $ftp_root = $ftp->pwd || '/';
@@ -183,11 +183,11 @@ sub put_res {
                         # Create each one if it doesn't exist.
                         unless ($ftp->cwd($dir)) {
                             $ftp->mkdir($dir);
-                            my $errstr = "Unable to create directory '$dir' "
-                              . "in path '$dest_dir' on remote server '$hn'.";
-                            $ftp->cwd($dir)
-                              || throw_gen(error => $errstr,
-                                           payload => $ftp->message);
+                            $ftp->cwd($dir) or throw_gen
+                              error   => "Unable to create directory '$dir'" .
+                                         " in path '$dest_dir' on remote" .
+                                         " server '$hn'.",
+                              payload => $ftp->message;
                         }
                     }
                 }
@@ -203,23 +203,24 @@ sub put_res {
 
             # Now, put the file on the server.
             $ftp->put($src, $tmpdest)
-              || throw_gen(error => "Unable to put file '$tmpdest' on remote server '$hn'",
-                           payload => $ftp->message);
+              or throw_gen error => "Unable to put file '$tmpdest' on remote" .
+                                  " server '$hn'",
+                         payload => $ftp->message;
 
             # Delete any existing copy of the file if the FTP server is Windows.
             $ftp->delete($dest) if $is_win;
 
             # Rename the temporary file.
             $ftp->rename($tmpdest, $dest)
-              || throw_gen(error => "Unable to rename file '$tmpdest' to '$dest' on " .
-                             "remote server '$hn'.",
-                           payload => $ftp->message);
+              or throw_gen error => "Unable to rename file '$tmpdest' to" .
+                                  " '$dest' on remote server '$hn'.",
+                         payload => $ftp->message;
         }
         # Log off.
         $ftp->quit
-          || throw_gen(error => 'Unable to properly close connection to '
-                         . "remote server '$hn'.",
-                       payload => $ftp->message);
+          or throw_gen error => 'Unable to properly close connection to' .
+                              " remote server '$hn'.",
+                     payload => $ftp->message;
     }
     return 1;
 }
@@ -267,26 +268,39 @@ sub del_res {
         my $hn = $s->get_host_name;
         # Instantiate an FTP object and login.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
-          || throw_gen(error => "Unable to connect to remote server '$hn'.",
-                       payload => $@);
+          or throw_gen error   => "Unable to connect to remote server '$hn'.",
+                       payload => $@;
         $ftp->login($s->get_login, $s->get_password)
-          || throw_gen(error => "Unable to login to remote server '$hn'.");
+          or throw_gen "Unable to login to remote server '$hn'.";
 
         # Get the document root.
         my $doc_root = $s->get_doc_root;
         foreach my $r (@$res) {
             # Get the name of the file to be deleted.
             my $file = $fs->cat_uri($doc_root, $r->get_uri);
-            if ($ftp->ls($file)) {
+
+            # Get the directory to ls, and the file we are looking for
+            my $fn   = $fs->base_name($file);
+            my $fd   = $fs->dir_name($file);
+
+            # List the target directory.
+            my @ftpres  = $ftp->ls($fd);
+
+            # Walk the directory listing looking for the file.
+            # The directory listing can include the path.
+            foreach my $f (@ftpres) {
+                next unless $fs->base_name($f) eq $fn;
                 # It exists. Delete it.
                 $ftp->delete($file)
-                  || throw_gen(error => "Unable to delete resource '$file' "
-                                 . "from remote server '$hn'.");
+                  or throw_gen error => "Unable to delete resource '$file'" .
+                                      " from remote server '$hn'.",
+                             payload => $ftp->message;
+                last;
             }
         }
         $ftp->quit
-          || throw_gen(error => 'Unable to properly close connection to '
-                         . "remote server '$hn'.");
+          or throw_gen error => 'Unable to properly close connection to' .
+                                " remote server '$hn'.";
     }
     return 1;
 }

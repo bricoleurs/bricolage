@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-15 12:50:29 $
+$Date: 2003-09-10 18:39:07 $
 
 =head1 SYNOPSIS
 
@@ -108,6 +108,7 @@ my $ATTR =  { RaiseError => 1,
 	      LongReadLen => 32768,
 	      LongTruncOk => 0
 };
+my $AutoCommit = 1;
 
 ##############################################################################
 # Inheritance
@@ -527,14 +528,14 @@ sub begin {
 
     # Turn off AutoCommit. We can switch to begin_work() once DBD::Pg supports
     # it.
-    my $ret = eval { $dbh->{AutoCommit} = 0 };
+    my $ret = eval { $dbh->{AutoCommit} = 0 if $dbh->{AutoCommit} };
     throw_da error   => "Unable to turn AutoCommit off",
              payload => $@
       if $@;
 
     # Set our default attributes to have AutoCommit off for all new
     # connections.
-    $ATTR->{AutoCommit} = 0;
+    $AutoCommit = 0;
     return $ret;
 } # begin()
 
@@ -576,7 +577,7 @@ sub commit {
     my $dbh = _connect();
 
     # Commit the transaction.
-    my $ret = eval { $dbh->commit };
+    my $ret = eval { $dbh->commit unless $dbh->{AutoCommit} };
     throw_da error   => "Unable to commit transaction",
              payload => $@
       if $@;
@@ -590,7 +591,7 @@ sub commit {
 
     # Set our default attributes to have AutoCommit on for all new
     # connections.
-    $ATTR->{AutoCommit} = 1;
+    $AutoCommit = 1;
 
     return $ret;
 } # commit()
@@ -633,7 +634,7 @@ sub rollback {
     my $dbh = _connect();
 
     # Rollback the transaction.
-    my $ret = eval { $dbh->rollback };
+    my $ret = eval { $dbh->rollback unless $dbh->{AutoCommit} };
     throw_da error   => "Unable to rollback transaction",
              payload => $@
       if $@;
@@ -647,7 +648,7 @@ sub rollback {
 
     # Set our default attributes to have AutoCommit on for all new
     # connections.
-    $ATTR->{AutoCommit} = 1;
+    $AutoCommit = 1;
 
     return $ret;
 } # rollback()
@@ -1687,8 +1688,12 @@ B<Notes:> NONE.
 
 sub _connect {
     my $dbh = eval {
-        DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
-                            DBI_USER, DBI_PASS, $ATTR);
+        my $d = DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
+                                    DBI_USER, DBI_PASS, $ATTR);
+        # Make sure we're consistent about what we think the transaction
+        # state is.
+        $d->{AutoCommit} = $AutoCommit;
+        return $d;
     };
 
     throw_da error   => "Unable to connect to database",
@@ -1716,6 +1721,7 @@ sub _disconnect {
     throw_da error   => "Unable to disconnect from database",
              payload => $@
       if $@;
+    $AutoCommit = 1;
 }
 
 ##############################################################################

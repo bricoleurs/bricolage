@@ -168,6 +168,7 @@ foreach my $wf (@$workflows) {
         $m->out("</td>\n</tr>");
 
         # actions/desks/publish items for this workflow
+        my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
         </%perl>
         </table>
 
@@ -181,16 +182,16 @@ foreach my $wf (@$workflows) {
               <td>
                 <span class=workflowHeader><% $lang->maketext('Actions') %></span><br />
 %               if ($wf->{type} == TEMPLATE_WORKFLOW) {
-                   <% &$printLink("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}") %>
+%                     $m->print($printLink->("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}")) if $can_create;
                    <% &$printLink("/workflow/manager/templates/$wf->{id}", $uri, "Find $pl_disp->{formatting}") %>
                    <% &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") %>
 %               } elsif ($wf->{type} == STORY_WORKFLOW) {
-                   <% &$printLink("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}") %>
+%                     $m->print($printLink->("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}")) if $can_create;
                    <% &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") %>
                    <% &$printLink("/workflow/manager/story/$wf->{id}/", $uri, "Find $pl_disp->{story}") %>
                    <% &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") %>
 %               } elsif ($wf->{type} == MEDIA_WORKFLOW) {
-                   <% &$printLink("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}") %>
+%                     $m->print($printLink->("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}")) if $can_create;
                    <% &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") %>
                    <% &$printLink("/workflow/manager/media/$wf->{id}/", $uri, "Find $pl_disp->{media}") %>
                    <% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %>
@@ -456,10 +457,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2003-08-24 15:16:53 $
+$Date: 2003-09-10 18:39:04 $
 
 </%doc>

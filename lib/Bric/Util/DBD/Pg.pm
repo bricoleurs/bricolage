@@ -10,20 +10,20 @@ Bric::Util::DBD::Pg - Bricolage PostgreSQL database adaptor
 
 =item Version
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =item Date
 
-$Date: 2003-08-03 22:53:13 $
+$Date: 2003-09-10 18:39:07 $
 
 =item CVS ID
 
-$Id: Pg.pm,v 1.11 2003-08-03 22:53:13 wheeler Exp $
+$Id: Pg.pm,v 1.12 2003-09-10 18:39:07 wheeler Exp $
 
 =back
 
@@ -80,7 +80,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 ##############################################################################
 BEGIN {
      $ENV{PGTZ} = 'UTC';
-#    $ENV{PGDATESTYLE} = 'ISO';          # Should default to this, anyway.
+     $ENV{PGDATESTYLE} = 'ISO';          # Should default to this, anyway.
 #    $ENV{PGCLIENTENCODING} = 'UNICODE'; # Should default to this, anyway.
 #    $ENV{PGSERVERENCODING} = 'UNICODE'; # Should default to this, anyway.
 } # BEGIN

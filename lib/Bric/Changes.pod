@@ -177,10 +177,9 @@ causes an error. Reported by Kevin Elliott. [David]
 =item *
 
 Switched to using C<< DBI->connect_cached() >> from using our own database
-connection caching. This change somehow eliminated problems running Bricolage
-on Apache 1.3.28. It's also the right thing to do. This does bump up the
-minimum required version of DBI to 1.18, though the latest version is always
-recommended. Thanks toe Perrin Harkins for the suggestion. [David]
+connection caching. This change does bump up the minimum required version of
+DBI to 1.18, though the latest version is always recommended. It's also the
+right thing to do. Thanks to Perrin Harkins for the suggestion. [David]
 
 =item *
 
@@ -204,6 +203,58 @@ Passing an undef via the C<workflow__id> parameters to the C<list()> method of
 Story, Media, or Template really does again cause Bricolage to correctly
 return only those assets that are not in workflow. It wasn't as fixed in 1.6.3
 as I had thought. Reported by Kevin Elliott. [David]
+
+=item *
+
+Vastly improved the speed of the query that lists events, and added an index
+to help it along, as well. [Mark]
+
+=item *
+
+The list of categories associated with a story is now presented in
+alphabetical order by URI in the story profile. Suggested by Geoff
+Richards. [David]
+
+=item *
+
+The FTP mover now properly deletes files rather than erroring out. [Clive
+Jones]
+
+=item *
+
+Fixed installer to use PostgreSQL 7.1 syntax to update statistics. [David]
+
+=item *
+
+Now setting C<$PGDATESTYLE> environment variable so that PotgreSQL isn't
+confused about the date style Bricolage is using. Suggested by Chris Riddoch.
+[David]
+
+=item *
+
+Users without EDIT access to the start desk in a workflow can no longer create
+assets in that workflow. Nor can they check out assets from the library, as
+there's no start desk for them to check them in to. But they can still check
+them out from other desks that they have EDIT access to. Reported by Rachel
+Murray. [David]
+
+=item *
+
+Time zone issues have been fixed to be more portable. Some platforms that
+experienced Bricolage unexpectedly shifting cover dates and other dates and
+times by several hours should no longer see this problem. [David]
+
+=item *
+
+Non-existent methods no longer throw "permission denied" exceptions, but the
+standard Perl "Can't locate object method" exception. This is to eliminate
+confusion with permission to access Bricolage objects. [David]
+
+=item *
+
+Adding a new element type with the same name as an existing or deleted element
+type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
+[David]
 
 =back
 

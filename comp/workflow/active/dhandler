@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-07-18 23:45:13 $
+$Date: 2003-09-10 18:39:04 $
 
 =head1 SYNOPSIS
 
@@ -46,8 +46,14 @@ if ($type eq 'templates') {
     };
 }
 
-# Grab the workflow from the database.
-my $wf = Bric::Biz::Workflow->lookup({ id => $work_id })->get_name;
+# Grab the workflow and start desk permissions.
+my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
+my $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
+                                   chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
+                 map { [$_->get_name => [$_->get_asset_grp, $_->get_grp_ids ]] }
+                 $wf->allowed_desks
+               };
+$wf = $wf->get_name;
 </%init>
 
 <& '/widgets/wrappers/sharky/header.mc',
@@ -62,9 +68,9 @@ my $wf = Bric::Biz::Workflow->lookup({ id => $work_id })->get_name;
      title        => 'Active %n',
      fields       => $fields,
      sortBy       => 'priority',
-     exclude      => $exclude,
+     exclude      => $exclude->($desk_chk),
      addition     => undef,
-     select       => $select->($type, $work_id),
+     select       => $select->($type, $work_id, $desk_chk),
      profile      => $profile->($type),
      alter        => {priority => sub { $pri[$_[0]-1] },
                       title    => $previewer },
@@ -129,25 +135,29 @@ my $profile = sub {
 };
 
 my $select = sub {
-    my ($type, $work_id) = @_;
+    my ($type, $work_id, $desk_chk) = @_;
     my $widget = $type eq 'templates' ? 'tmpl_prof' : $type.'_prof';
 
     # Return an anonymous sub with closure on $type
     return sub {
         my $o = shift;
         my $u = $o->get_user__id;
-        if ((not defined $u) && chk_authz($o, EDIT, 1)) {
-	    if ($o->get_workflow_id) {
-	        return ['Checkout', $widget.'|checkout_cb'];
-	    } else {
-	        return ['Checkout', $widget.'|recall_cb', $o->get_id.'|'.$work_id];
-	    }
+        if (!defined $u && $desk_chk->{$o->get_desk_id}[1]
+            && chk_authz($o, EDIT, 1)) {
+            return ['Checkout', $widget.'|checkout_cb'];
         }
         return;
     }
 };
 
-my $exclude = sub { ! chk_authz($_[0], READ, 1) };
+my $exclude = sub {
+    my $desk_chk = shift;
+    return sub {
+        my $o = shift;
+        return 1 unless $desk_chk->{$o->get_desk_id}[0];
+        return ! chk_authz($o, READ, 1);
+    };
+};
 
 my $values = sub {
     my ($o, $f) = @_;

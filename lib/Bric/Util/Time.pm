@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-09-10 18:39:07 $
 
 =head1 SYNOPSIS
 
@@ -44,6 +44,7 @@ use Bric::Config qw(:time);
 use Bric::Util::Fault qw(throw_ap throw_gen);
 use Bric::Util::DBI qw(db_date_parts DB_DATE_FORMAT);
 use Bric::Util::Pref;
+use POSIX ();
 
 ################################################################################
 # Constants
@@ -65,6 +66,7 @@ our @EXPORT_OK = qw(strfdate local_date db_date);
 # at once.
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 $ENV{TZ} = 'UTC';
+POSIX::tzset;
 
 ############################################################################
 # Private Functions
@@ -88,7 +90,6 @@ BEGIN {
 	    return $time;
 	};
     } else {
-	require POSIX;
 	$fsub = sub {
 	    my ($t, $f) = @_;
 	    $t ||= time;
@@ -180,8 +181,14 @@ Unable to format date.
 =cut
 
 sub strfdate {
-    local $ENV{TZ} = $_[2] ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone');
-    return &$fsub(@_[0..1]);
+    my $ret;
+    {
+        local $ENV{TZ} = $_[2] ? 'UTC' : Bric::Util::Pref->lookup_val('Time Zone');
+        POSIX::tzset;
+        $ret = &$fsub(@_[0..1]);
+    }
+    POSIX::tzset;
+    return $ret;
 }
 
 ################################################################################
@@ -235,11 +242,20 @@ sub local_date {
     my ($db_date, $format, $bool) = @_;
     return unless $db_date || $bool;
     $format ||= Bric::Util::Pref->lookup_val('Date/Time Format');
-    # Set the time zone.
-    local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
-    return $db_date ? timegm(db_date_parts($db_date)) : time
-      if $format eq 'epoch';
-    &$fsub($db_date ? timegm(db_date_parts($db_date)) : undef, $format);
+    my $ret;
+    {
+        # Set the time zone.
+        local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
+        POSIX::tzset;
+        if ($format eq 'epoch') {
+            $ret = $db_date ? timegm(db_date_parts($db_date)) : time;
+        } else {
+            $ret = $fsub->($db_date ? timegm(db_date_parts($db_date))
+                           : undef, $format);
+        }
+    }
+    POSIX::tzset;
+    return $ret;
 } # strfdate()
 
 ################################################################################
@@ -292,12 +308,14 @@ sub db_date {
 
     # Set the time zone, default to Time Zone preference if none supplied.
     local $ENV{TZ} = $tz ? $tz : Bric::Util::Pref->lookup_val('Time Zone');
+    POSIX::tzset;
 
     # get the local date or now
     my $local_date = $date ? timelocal(&$iso_parts($date)) : time;
 
     # Set the time zone to UTC to get db date
     $ENV{TZ} = 'UTC';
+    POSIX::tzset;
 
     # Format the date and return it.
     &$fsub($local_date, DB_DATE_FORMAT);

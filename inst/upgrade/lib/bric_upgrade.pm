@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-12 19:04:42 $
+$Date: 2003-09-10 18:39:05 $
 
 =head1 SYNOPSIS
 
@@ -61,6 +61,18 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir);
 
+# Load the options.
+use Getopt::Std;
+our ($opt_u, $opt_p);
+
+BEGIN{
+    getopts('u:p:');
+    # Set the db admin user and password to some reasonable defaults.
+    $ENV{DBI_PASS} ||= $opt_u || 'postgres';
+    $ENV{DBI_USER} ||= $opt_p || 'postgres';
+}
+
+# Make sure we can load the Bricolage libraries.
 BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
@@ -84,16 +96,7 @@ END
 }
 
 # load Bricolage libraries
-use Bric::Config qw(:dbi);
 use Bric::Util::DBI qw(:all);
-
-# Get the options.
-use Getopt::Std;
-our ($opt_u, $opt_p);
-getopts('u:p:');
-# Set the db admin user and password to some reasonable defaults.
-$opt_u ||= 'postgres';
-$opt_p ||= 'postgres';
 
 # Grab the Bricolage version number and put it into a v-string. We can
 # eliminate the eval if, in the future, we change the Bric version number
@@ -110,9 +113,6 @@ my $ATTR =  { RaiseError => 1,
 	      LongTruncOk => 0
 };
 
-$Bric::Util::DBI::dbh = DBI->connect(join(':', 'DBI', DBD_TYPE,
-					  Bric::Util::DBI::DSN_STRING),
-				     $opt_u, $opt_p, $ATTR);
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out.

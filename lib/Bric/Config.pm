@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.70 $
+$Revision: 1.71 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.70 $ )[-1];
+our $VERSION = (qw$Revision: 1.71 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-18 13:29:55 $
+$Date: 2003-09-10 18:39:07 $
 
 =head1 SYNOPSIS
 
@@ -395,8 +395,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DB_NAME                 => $config->{DB_NAME} || 'sharky';
     use constant DB_HOST                 => $config->{DB_HOST};
     use constant DB_PORT                 => $config->{DB_PORT};
-    use constant DBI_USER                => $config->{DBI_USER} || 'castellan';
-    use constant DBI_PASS                => $config->{DBI_PASS} || 'nalletsac';
+    use constant DBI_USER                =>
+      $ENV{DBI_USER} || $config->{DBI_USER} || 'castellan';
+    use constant DBI_PASS                =>
+      $ENV{DBI_PASS} || $config->{DBI_PASS} || 'nalletsac';
     use constant DBI_CALL_TRACE          => $config->{DBI_CALL_TRACE} || 0;
     use constant DBI_PROFILE             => $config->{DBI_PROFILE} || 0;
     # DBI_CALL_TRACE and DBI_PROFILE imply DBI_DEBUG

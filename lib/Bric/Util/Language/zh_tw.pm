@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-13 03:10:17 $
+$Date: 2003-09-10 18:39:08 $
 
 =head1 SYNOPSIS
 
@@ -67,8 +67,8 @@ our %Lexicon = (
     'All Elements' => '所有的元素',
     'All Groups' => '所有的群組',
     'Allow multiple' => '允許多選',
-    'An "[_1]" attribute already exists. Please try another name.' => '[_1] 屬性已然存在，請用別的名稱。',
-    'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => '所選之輸出頻道、分類、元素、與burner已有對應之起用的模板，在增加新的模板之前，你必須先刪除目前存在的模板。',
+    'An [_1] attribute already exists. Please try another name.' => '[_1] 屬性已然存在，請用別的名稱。',
+    'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => '所選之輸出頻道、分類、元素、與burner已有對應之起用的模板，在增加新的模板之前，你必須先刪除目前存在的模板。',
     'An error occurred while processing your request:' => '在處理您的要求時，發生了一個錯誤；',
     'An error occurred.' => '一個錯誤突然在這裡出現，把你嚇得半死。',
     'Apr' => '四月',

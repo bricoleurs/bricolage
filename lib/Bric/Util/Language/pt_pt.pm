@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-13 03:10:14 $
+$Date: 2003-09-10 18:39:08 $
 
 =head1 SYNOPSIS
 
@@ -337,7 +337,7 @@ use constant key => 'pt_pt';
    'Active Templates' => 'Modelos Activos',
    'Add a New User' => 'Criar Novo Utilizador',
 
-   'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
+   'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' =>
      'Já existe um modelo activo para o canal de distribuição, categoria, elemento e burner que assinalou. Tem de apagar o temp+late existtente para poder adicionar um novo.',
 
    'At least one extension is required.' =>
