@@ -77,11 +77,13 @@ unless ($workflows) {
 	# account for desks
 	my @desks = map { [ $_->get_id, $_->get_name ] } $w->allowed_desks;
 	$tmp += scalar(@desks);
+	my @gids = $w->get_grp_ids;
 
-	my $wf = { type => $w->get_type,
-		   id   => $w->get_id,
-		   name => $w->get_name,
-		   desks => \@desks
+	my $wf = { type  => $w->get_type,
+		   id    => $w->get_id,
+		   name  => $w->get_name,
+		   desks => \@desks,
+		   gids  => \@gids
 		 };
 	push @$workflows, $wf;
     }
@@ -145,6 +147,8 @@ unless ($workflows) {
 # Begin Workflows -------------------------------------
 # iterate thru workflows
 foreach my $wf (@$workflows) {
+    # Check permissions.
+    next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
     my $esc_name = escape_uri($wf->{name});
 
     $m->out("<table border=0 cellpadding=0 cellspacing=0 bgcolor=white width=150>\n");
@@ -443,10 +447,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =head1 DATE
 
-$Date: 2001-11-16 17:19:58 $
+$Date: 2001-11-30 04:04:40 $
 
 </%doc>
