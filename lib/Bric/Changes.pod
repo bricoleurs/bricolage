@@ -102,6 +102,11 @@ mod_perl. [David]
 Fixed reordering code for subelements. The select list for subelements should
 now always have an appropriate value. [David]
 
+=item *
+
+The URI is now properly updated in media assets when some part of the URI is
+changed in the UI. Thanks to Sean Greathouse for the spot. [David]
+
 =back
 
 =head1 VERSION 1.4.5
