@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-11-27 18:28:38 $
+$Date: 2001-12-04 23:23:46 $
 
 =head1 DESCRIPTION
 
@@ -54,6 +54,7 @@ use Bric::Biz::Asset::Formatting;
 use Bric::Util::FTP::DirHandle;
 use Net::FTPServer::FileHandle;
 use IO::Scalar;
+use Bric::Util::Event;
 
 ################################################################################
 # Inheritance
@@ -227,6 +228,54 @@ sub status {
 
 }
 
+=item delete()
+
+Deletes the current template.  This has the same effect as deleting
+the template through the UI - it undeploys the template if it's
+deployed and marks it inactive.
+
+=cut
+
+sub delete {
+  my $self = shift;
+  my $template = $self->{template};
+
+  print STDERR __PACKAGE__, "::delete() : ", $template->get_file_name, "\n";  
+
+  # delete code equivalent to delete callback in
+  # comp/widgets/tmpl_prof
+
+  # remove from current desk
+  my $desk = $template->get_current_desk;
+  $desk->checkin($template);
+  $desk->remove_asset($template);
+  $desk->save;
+
+  # log the removal
+  Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow', 
+                           obj       => $template,
+                           user      => $self->{ftps}{user_obj},
+                           timestamp => strfdate(),
+                           attr      => undef,
+                         });
+
+  # undeploy and deactivate
+  my $burn = Bric::Util::Burner->new;
+  $burn->undeploy($template);
+  $template->deactivate;  
+  $template->save;
+
+  # log the deactivation
+  Bric::Util::Event->new({ key_name  => 'formatting_deact', 
+                           obj       => $template,
+                           user      => $self->{ftps}{user_obj},
+                           timestamp => strfdate(),
+                           attr      => undef,
+                         });
+
+  return 1;
+}
+
 =item can_*()
 
 Returns permissions information for various activites.  can_read()
@@ -240,7 +289,7 @@ template - if it's checked in and the user has permission.
 # fixed properties
 sub can_read   {  1; }
 sub can_rename {  0; }
-sub can_delete {  0; }
+sub can_delete {  1; }
 
 # check to see if template is checked out
 sub can_write  { 
