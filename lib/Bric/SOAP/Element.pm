@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-08 02:40:18 $
+$Date: 2002-03-08 19:16:04 $
 
 =head1 SYNOPSIS
 
@@ -408,6 +408,17 @@ Specifies a single element_id to be deleted.
 
 Specifies a list of element_ids to delete.
 
+=item force
+
+By default this method just sets the Element inactive.  Unfortunately,
+Bricolage requires that Element names be unique even between active
+and inactive Elements.  Thus, if you delete an Element normally you
+won't be able to create another Element of the same name.  
+
+By setting force to true delete() will first change the name of the
+Element to something like "name [deleted 1015610648]" and then set it
+inactive.  This accomplishes a "real" delete.
+
 =back 4
 
 Throws: NONE
@@ -422,7 +433,7 @@ Notes: NONE
 
 # hash of allowed parameters
 {
-my %allowed = map { $_ => 1 } qw(element_id element_ids);
+my %allowed = map { $_ => 1 } qw(element_id element_ids force);
 
 sub delete {
     my $pkg = shift;
@@ -464,6 +475,10 @@ sub delete {
 	    "::delete : access denied for element \"$element_id\".\n"
 		unless chk_authz($element, CREATE, 1);
 
+	# force the delete by mangling name if force is set
+	$element->set_name($element->get_name . "[ deleted ". time ." ]")
+	    if ($args->{force});
+	    
 	# delete the element
 	$element->deactivate;
 	$element->save;
@@ -511,6 +526,7 @@ sub _load_element {
 
     # loop over element, filling @element_ids
     my @element_ids;
+    my %fixup;
     foreach my $edata (@{$data->{element}}) {
 	my $id = $edata->{id};
 
@@ -612,22 +628,18 @@ sub _load_element {
 	$element->del_containers([ $element->get_containers ])
 	    if $update;
 
-	# find sub-elements
-	my @subids;
+	# find sub-elements and stash them in the fixup array.  This
+	# is done because an Element could refer to another Element in
+	# the same asset document.
 	$edata->{subelements} ||= {subelement => []};
 	foreach my $subdata (@{$edata->{subelements}{subelement}}) {
 	    # get name
 	    my $name = ref $subdata ? $subdata->{content} : $subdata;
-	    my ($sub_id) = Bric::Biz::AssetType->list_ids({name => $name});
-	    die __PACKAGE__ . "::create : no subelement found matching " .
-		"(subelement => \"$name\")\n"
-		    unless defined $sub_id;
-	    
-	    push(@subids, $sub_id);
-	}    
-	
-	# add sub-elements
-	$element->add_containers(\@subids) if @subids;
+
+	    # add name to fixup hash for this element
+	    $fixup{$edata->{name}} = [] unless exists $fixup{$edata->{name}};
+	    push @{$fixup{$edata->{name}}}, $name;
+	}
 
 	# remove fields if updating (I am a bad, bad man, but this
 	# will all get fixed soon enough in the element revision)
@@ -664,8 +676,7 @@ sub _load_element {
 					   required    => $field->{required},
 					   quantifier  => $field->{repeatable},
 					   sql_type    => $sql_type,
-					   place       => $place,
-					   publishable => 1,
+					   place       => $place,					   publishable => 1,
 					   max_length  => $field->{max_size},
 					  });
 	    
@@ -696,6 +707,22 @@ sub _load_element {
 	push(@element_ids, $element->get_id);
     }
 
+    # run through fixup attaching sub-elements
+    foreach my $element_name (keys %fixup) {
+	my ($element) = Bric::Biz::AssetType->list({name => $element_name});
+	my @sub_ids;
+	
+	foreach my $sub_name (@{$fixup{$element_name}}) {
+	    my ($sub_id) = Bric::Biz::AssetType->list_ids({name => $sub_name});
+	    die __PACKAGE__ . " : no subelement found matching " .
+		"(subelement => \"$sub_name\") ". 
+		    "for element \"$element_name\".\n"
+		       unless defined $sub_id;
+	    push @sub_ids, $sub_id;
+	}
+	$element->add_containers(\@sub_ids);
+	$element->save;
+    }
     return name(ids => [ map { name(element_id => $_) } @element_ids ]);
 }
 
