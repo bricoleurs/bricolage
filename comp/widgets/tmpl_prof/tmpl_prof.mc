@@ -8,11 +8,11 @@ tmpl_prof - Handle adding and updating templates.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-01-31 00:15:11 $
+$Date: 2002-11-30 06:23:37 $
 
 =head1 SYNOPSIS
 
@@ -129,7 +129,7 @@ if (my $fa = get_state_data($widget, 'fa')) {
     # Make sure the user has the correct permissions
     chk_authz($fa, $state eq 'edit' ? EDIT : READ);
     # Set the title for this request.
-    $rc->set("$widget|name", '&quot;' . $fa->get_name . '&quot;');
+    $r->pnotes("$widget|name", '&quot;' . $fa->get_name . '&quot;');
 }
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);

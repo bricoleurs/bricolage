@@ -8,11 +8,11 @@ debug - Output some debugging information
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-06-04 22:14:26 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 SYNOPSIS
 
@@ -50,8 +50,7 @@ foreach my $id ($Bric::App::Cache::STORE->$keys_meth) {
     $cache->{$id} = $Bric::App::Cache::STORE->get($id);
 }
 $cache = Data::Dumper::Dumper($cache);
-my %rcache = $rc->get_all;
-my $rcache = Data::Dumper::Dumper(\%rcache);
+my $rcache = Data::Dumper::Dumper($r->pnotes());
 
 $m->comp('/widgets/debug/agent.mc');
 $m->comp('/widgets/debug/dump.mc', sess => $s, env => $e,

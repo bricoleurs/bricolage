@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.76 $
+$Revision: 1.77 $
 
 =head1 DATE
 
-$Date: 2002-11-27 04:58:57 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 DESCRIPTION
 
@@ -233,10 +233,6 @@ for this purpose.
 =item *
 
 Add interface for editing Contact Types.
-
-=item *
-
-Dump Bric::App::ReqCache. Use C<< $r->pnotes() >> instead.
 
 =item *
 

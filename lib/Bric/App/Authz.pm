@@ -6,16 +6,16 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:22:00 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 SYNOPSIS
 
@@ -50,7 +50,6 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
-use Bric::App::ReqCache;
 
 ################################################################################
 # Inheritance
@@ -77,7 +76,6 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $rc;
 
 ################################################################################
 
@@ -148,13 +146,13 @@ sub chk_authz {
     my ($obj, $chk_perm, $no_redir, @gids) = @_;
     my $perm;
     if (my $ref = ref $obj) {
-	$rc ||= Bric::App::ReqCache->new;
 	my $id = $obj->get_id;
 	$id = '' unless defined $id;
 	my $key = "_AUTHZ_:$ref:$id";
-	unless (defined ($perm = $rc->get($key))) {
+        my $r = $HTML::Mason::Commands::r;
+        unless (defined ($perm = $r->pnotes($key))) {
 	    $perm = get_user_object()->what_can($obj, @gids);
-	    $rc->set($key, $perm);
+            $r->pnotes($key, $perm);
 	}
     } else {
 	$perm = get_user_object()->what_can($obj, @gids);

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-13 22:58:52 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,6 @@ use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
     use Bric::App::Auth qw(:all);
     use Bric::App::Authz qw(:all);
     use Bric::App::Cache;
-    use Bric::App::ReqCache;
     use Bric::App::Event qw(log_event);
     use Bric::App::Session qw(:state :user);
     use Bric::App::Util qw(:msg
@@ -122,16 +121,13 @@ use HTML::Mason::ApacheHandler (args_method => MASON_ARGS_METHOD);
 
     use Bric::SOAP;
 
-    use vars qw($c $rc $widget_dir);
+    use vars qw($c $widget_dir);
 
     # Where our widgets live under the element root.
     $widget_dir = 'widgets';
 
     # A global that makes the cache available everywhere.
     $c = Bric::App::Cache->new;
-
-    # A global that maes the request cache available everywhere.
-    $rc = Bric::App::ReqCache->new;
 }
 
 ################################################################################

@@ -6,16 +6,16 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 SYNOPSIS
 
@@ -56,7 +56,6 @@ use strict;
 # Programmatic Dependences
 use Apache::Constants qw(OK);
 use Bric::App::Session;
-use Bric::App::ReqCache;
 use Bric::App::Event qw(commit_events);
 use Bric::Util::DBI qw(:trans);
 
@@ -137,7 +136,6 @@ sub handler {
     eval {
 	# Sync the user's session data.
 	Bric::App::Session::sync_user_session($r);
-	Bric::App::ReqCache->clear;
     };
     # If there's a problem with this (unlikely!), then we're hosed. Apache will
     # hang and need to be rebooted.

@@ -56,7 +56,7 @@ if ($section eq 'notes') {
     set_state_data($widget, 'obj', $object);
     set_state_data($widget, 'notes', $notes);
     set_state_data($widget, 'version', $version);
-    $rc->set("$widget|name", '&quot;' . $object->get_name . '&quot;');
+    $r->pnotes("$widget|name", '&quot;' . $object->get_name . '&quot;');
 }
 
 my $comp = $action . '_' . $section . '.html';

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:13 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 DESCRIPTION
 
@@ -52,7 +52,7 @@ my $content = $m->scomp('/widgets/tmpl_prof/tmpl_prof.mc',
 # Output the Header.
 $m->comp("/widgets/wrappers/sharky/header.mc",
 	 title => "$disp Profile",
-	 context => "Workflow | Profile | $disp | " . $rc->get('tmpl_prof|name'));
+	 context => "Workflow | Profile | $disp | " . $r->pnotes('tmpl_prof|name'));
 </%init>
 <form method="post" action="<% $r->uri %>" name="theForm" onSubmit="return confirmChanges(this)">
 <% $content %>

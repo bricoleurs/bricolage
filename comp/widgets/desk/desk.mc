@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-10-23 20:53:12 $
+$Date: 2002-11-30 06:23:37 $
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ my $pkgs = { story      => get_package_name('story'),
 my $others;
 my $cached_assets = sub {
     my ($ckey, $desk, $user_id, $class, $meths, $sort_by) = @_;
-    my $objs = $rc->get("$widget.objs");
+    my $objs = $r->pnotes("$widget.objs");
     unless ($objs) {
         # We have no objects. So get 'em!
         if ($desk) {
@@ -100,7 +100,7 @@ my $cached_assets = sub {
     }
 
     # Cache them for this request.
-    $rc->set("$widget.objs", $objs);
+    $r->pnotes("$widget.objs", $objs);
 
     # Figure out what all we've got. We'll use this for displaying
     # relative links.

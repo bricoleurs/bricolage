@@ -8,11 +8,11 @@ story_prof.mc - The profile of stories widget
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-01-31 00:15:11 $
+$Date: 2002-11-30 06:23:37 $
 
 =head1 SYNOPSIS
 
@@ -136,7 +136,7 @@ if (my $story = get_state_data($widget, 'story')) {
     # Make sure the user has the correct permissions
     chk_authz($story, $state eq 'edit' ? EDIT : READ);
     # Set the title for this request.
-    $rc->set("$widget|title", '&quot;' . $story->get_title . '&quot;');
+    $r->pnotes("$widget|title", '&quot;' . $story->get_title . '&quot;');
 }
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);

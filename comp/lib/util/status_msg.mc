@@ -4,7 +4,7 @@ my $space = '&nbsp;' x 20;
 </%once>
 <%init>;
 local $m->interp->{out_mode} = 'stream';
-unless ( $rc->get($key) ) {
+unless ( $r->pnotes($key) ) {
     # We haven't called this thing yet. Throw up some initial information.
     $m->out("<br />\n" x 2);
 #    $m->out(qq{
@@ -17,7 +17,7 @@ unless ( $rc->get($key) ) {
 }
 map $m->out(qq{$space<span class="errorMsg">$_</span><br />\n}), @_;
 $m->flush_buffer;
-$rc->set($key, 1);
+$r->pnotes($key, 1);
 </%init>
 <%doc>
 
@@ -27,11 +27,11 @@ status_msg.mc - Sends messages to the browser in real-time
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 SYNOPSIS
 

@@ -173,7 +173,7 @@ if ($obj->get_publish_status) {
     $status = '&nbsp;';
 }
 
-my $cats = $rc->get("desk.cats") || {};
+my $cats = $r->pnotes("desk.cats") || {};
 my ($name, $date, $date_label, $cat);
 
 if ($class eq 'formatting') {
@@ -185,7 +185,7 @@ if ($class eq 'formatting') {
 	unless ($cat = $cats->{$cat_id}) {
 	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_name;
 	    $cats->{$cat_id} = $cat;
-	    $rc->set("desk.cats", $cats);
+	    $r->pnotes("desk.cats", $cats);
 	}
     } else {
 	$cat = '&nbsp;';
@@ -222,11 +222,11 @@ my $rowspan = 4;
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2002-10-16 04:50:21 $
+$Date: 2002-11-30 06:23:37 $
 
 =head1 DESCRIPTION
 

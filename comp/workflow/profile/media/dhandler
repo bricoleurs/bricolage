@@ -7,11 +7,11 @@ dhandler -- the dhandler for media profiles
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:12 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 DESCRIPTION
 
@@ -54,7 +54,7 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
 
 <& "/widgets/wrappers/sharky/header.mc",
     title => "$disp Profile",
-    context => "Workflow | Profile | $disp | " . $rc->get('media_prof|title')
+    context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title')
 &>
 
 <form method="post" action="<% $r->uri %>" enctype="multipart/form-data" name="theForm" onSubmit="return confirmChanges(this)">

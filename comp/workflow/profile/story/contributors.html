@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-11-30 06:23:36 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,7 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
 
 <& /widgets/wrappers/sharky/header.mc, 
 	title => 'Contributor Association',
-	context => $context . $rc->get('story_prof|title') . ' | Contributors'
+	context => $context . $r->pnotes('story_prof|title') . ' | Contributors'
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm">

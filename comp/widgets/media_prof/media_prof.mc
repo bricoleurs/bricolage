@@ -8,11 +8,11 @@ media_prof.mc - Profile for templates
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-01-31 00:15:11 $
+$Date: 2002-11-30 06:23:37 $
 
 =head1 SYNOPSIS
 
@@ -131,7 +131,7 @@ if (my $media = get_state_data($widget, 'media')) {
     # Make sure the user has the correct permissions
     chk_authz($media, $state eq 'edit' ? EDIT : READ);
     # Set the title for this request.
-    $rc->set("$widget|title", '&quot;' . $media->get_title . '&quot;');
+    $r->pnotes("$widget|title", '&quot;' . $media->get_title . '&quot;');
 }
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
