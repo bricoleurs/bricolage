@@ -82,6 +82,11 @@ Assets will no longer appear to randomlly dissappear from workflow. [David]
 Added constraints to the "media_type_member" group that were inadvertantly
 left out of 1.5.1. [David]
 
+=item *
+
+Permissions are now once again properly checked for asets in categories,
+workflows, and on desks. [Mark]
+
 =back
 
 =head1 VERSION 1.5.1
