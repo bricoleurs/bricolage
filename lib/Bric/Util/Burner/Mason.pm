@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.59 $
+$Revision: 1.60 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.59 $ )[-1];
+our $VERSION = (qw$Revision: 1.60 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-28 00:59:11 $
+$Date: 2004-03-01 21:42:20 $
 
 =head1 SYNOPSIS
 
@@ -932,7 +932,7 @@ sub _interp_args {
 
      $interp_args{compiler} = HTML::Mason::Compiler::ToObject->new
        ( %interp_args,
-         preprocess => sub { _custom_preprocess(shift, $self) }
+         preprocess => \&_custom_preprocess
        );
 
      return %interp_args;
@@ -957,80 +957,24 @@ B<Notes:> NONE.
 =cut
 
 sub _custom_preprocess {
-    my ($s, $burner) = @_;
+    my $s = shift;
 
-    my $s_tags = _get_tagset($burner);
+    # Change %realtime to %text.
+    $$s =~ s/<(\/)?\%realtime>/<$1\%text>/gi;
 
-    for my $t (@{$s_tags->{remove}}) {
-        $$s =~ s/<(\/)?\%$t>/<$1\%doc>/gi;
+    my %modes = ( publish    => 'PUBLISH_MODE',
+                  preview    => 'PREVIEW_MODE',
+                  chk_syntax => 'SYNTAX_MODE'
+                );
+
+    # Change other custom tags to %perl that check the burn mode.
+    # XXX This may be a bit naive, if people put the "<%publish>" in a context
+    # where it's not actually a block (such as in a string). But why would
+    # anyone do that??
+    while (my ($tag, $mode) = each %modes) {
+        $$s =~ s/<%$tag>/<%perl>if (\$burner->get_mode == Bric::Util::Burner->$mode) {/gi;
+        $$s =~ s/<\/%$tag>/}<\/%perl>/gi;
     }
-
-    for my $t (@{$s_tags->{keep}}) {
-        $$s =~ s/<(\/)?\%$t>/<$1\%text>/gi;
-    }
-
-    for my $t (@{$s_tags->{run}}) {
-        $$s =~ s/<(\/)?\%$t>//gi;
-    }
-}
-
-##############################################################################
-
-=item _get_tagset()
-
-Returns which tags should be run, kept or removed, according to server
-context.
-
-Define the set according to each Bricolage run mode.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_tagset {
-
-    my $burner = shift;
-
-    # If there's no burner object available,
-    # it's a frontend server so realtime mode tags
-    # are used, where all code is removed except realtime, which is processed.
-    #
-
-
-    return { remove => ['publish','realtime','chk_syntax','preview'] ,
-             run    => ['realtime']
-           } unless ref($burner);
-
-    # Remove debugging and preview code, run publish code,
-    # keep realtime code.
-
-    if ( $burner->get_mode == PUBLISH_MODE ) {
-         return { run    => ['publish'],
-                  keep   => ['realtime'],
-                  remove => ['chk_syntax', 'preview']
-         };
-    }
-
-
-
-    # In preview, we run every code, except chk_syntax.
-    if ( $burner->get_mode == PREVIEW_MODE) {
-         return { run    => ['publish','realtime', 'preview'],
-                  remove => ['chk_syntax']
-         };
-    }
-
-    # In syntax checking mode, every tag is run, so that
-    # it can be checked for errors.
-
-    if ( $burner->get_mode == SYNTAX_MODE ) {
-         return { run    => ['publish','realtime','chk_syntax','preview'] };
-    }
-
 }
 
 1;
