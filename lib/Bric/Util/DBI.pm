@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-28 00:08:24 $
+$Date: 2004-01-08 13:21:02 $
 
 =head1 SYNOPSIS
 
@@ -262,7 +262,7 @@ bind_param()
 =item *
 
 DB_DATE_FORMAT - the strftime format for the date format used by the
-databse. Used by Bric::Util::Time; you should not need this - use the
+database. Used by Bric::Util::Time; you should not need this - use the
 functions exported by Bric::Util::Time instead.
 
 =back
@@ -273,7 +273,7 @@ Each of the functions below that will directly access the database will first
 check for a connection to the database and establish the connection if it does
 not exist. There is no need to worry about accessing or storing a $dbh in any
 Bricolage module. Plus, each function handles all aspects of database
-exception handling so tht you do not have to. The exception is with the
+exception handling so that you do not have to. The exception is with the
 transactional functions; see Begin() below for more information.
 
 =head2 Constructors
