@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.21.2.17 $
+$Revision: 1.21.2.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21.2.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.21.2.18 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-14 22:15:45 $
+$Date: 2003-08-14 23:17:23 $
 
 =head1 SYNOPSIS
 
@@ -486,9 +486,9 @@ sub prepare_ca {
       execute($upd);
       commit();
   };
-  if ($@) {
+  if (my $err = $@) {
       rollback();
-      die $@;
+      rethrow_exception($err);
   }
 
 Sets $dbh->{AutoCommit} = 0. Use before a series of database transactions so
