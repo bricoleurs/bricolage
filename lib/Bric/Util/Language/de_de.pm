@@ -723,6 +723,8 @@ To Translate:
   'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
   'Media "[_1]" scheduled for publication.' => 'Medium "[_1]" veröffentlicht.',
   'Not defined.' => 'Not defined.',
+  'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
 
 =end comment
 

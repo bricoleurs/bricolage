@@ -5,8 +5,10 @@ $m->comp('/widgets/listManager/listManager.mc',
          def_sort_field => 'uri',
          title     => 'Current Categories',
          objs      => \@categories,
-         profile   => $category_current_profile,
-         fields    => [qw(uri site name)],
+#         profile   => $category_current_profile,
+         fields    => [qw(uri site name primary)],
+         field_titles => { primary => 'Primary' },
+         field_values => $primary_sub,
          select =>  $category_select,
          addition  => ''
         );
@@ -60,18 +62,24 @@ my $exclude_cats = sub {
 </%init>
 
 <%once>
-my $category_current_profile = sub {
+my $primary_sub = sub {
+    return unless $_[1] eq 'primary';
     my $cat = shift;
     my $widget = 'story_prof';
     my $story = get_state_data($widget, 'story');
     my $primary_cat = $story->get_primary_category;
+    my $cid = $cat->get_id;
 
-    if ($cat->get_name eq $primary_cat->get_name) {
-        return;
-    } else {
-        return ['Primary', $r->uri, "$widget|set_primary_category_cb=" . $cat->get_id];
-    }
+    # Output the radio button.
+    $m->scomp('/widgets/profile/radio.mc',
+              name => "$widget|set_primary_category_cb",
+              disp => '',
+              value => $cid,
+              checked => $cid == $primary_cat->get_id,
+              useTable => 0,
+    );
 };
+
 my $category_choose_profile = sub {
     my $cat = shift;
     my $widget = 'story_prof';

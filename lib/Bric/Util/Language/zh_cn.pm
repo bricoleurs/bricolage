@@ -565,6 +565,8 @@ To translate:
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"',
   'Please select a primary output channel' => 'Please select a primary output channel',
   'Not defined.' => 'Not defined.',
+  'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
 
 =end comment
 

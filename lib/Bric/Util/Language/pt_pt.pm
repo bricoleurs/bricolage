@@ -715,6 +715,8 @@ To translate:
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
   'Not defined.' => 'Not defined.',
+  'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
 
 =end comment
 

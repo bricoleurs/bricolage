@@ -826,11 +826,18 @@ sub leave_category : Callback {
 
 sub set_primary_category : Callback {
     my $self = shift;
+    my $param = $self->params;
+    my $widget = $self->class_key;
 
     my $story = get_state_data($self->class_key, 'story');
     chk_authz($story, EDIT);
 
     my $primary_cat_id = $self->value;
+    if (defined $param->{$widget.'|delete_id'}
+        && $param->{$widget.'|delete_id'} == $primary_cat_id) {
+        add_msg("Cannot make a dissociated category the primary category.");
+        return;
+    }
     my $primary_cat = Bric::Biz::Category->lookup({ id => $primary_cat_id });
     $story->set_primary_category($primary_cat);
 
@@ -895,27 +902,26 @@ $save_category = sub {
     my $story = get_state_data($widget, 'story');
 
     my $existing = { map { $_->get_id => 1 } $story->get_categories };
-
     chk_authz($story, EDIT);
-    my $cat_id = $param->{$widget.'|delete_id'};
+    my $cat_id = mk_aref($param->{$widget.'|delete_id'});
     my $msg;
-    if ($cat_id) {
-        if (ref $cat_id) {  # delete more than one category
-            $story->delete_categories($cat_id);
-            foreach my $id (@$cat_id) {
-                my $cat = Bric::Biz::Category->lookup({ id => $id });
-                delete $existing->{$id};
-                log_event('story_del_category', $story, { Name => $cat->get_name });
-            }
-            add_msg('Categories disassociated.');
-        } else {            # delete one category
-            $story->delete_categories([$cat_id]);
-            my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-            delete $existing->{$cat_id};
-            my $name = $cat->get_name;
-            log_event('story_del_category', $story, { Name => $name });
-            add_msg('Category "[_1]" disassociated.', $name);
+    my @to_delete;
+    my $primary_cid = $story->get_primary_category->get_id;
+
+    foreach my $id (@$cat_id) {
+        if ($id == $primary_cid) {
+            add_msg('The primary category cannot be deleted.');
+            next;
         }
+        delete $existing->{$id};
+        push @to_delete, $id;
+        my $cat = Bric::Biz::Category->lookup({ id => $id });
+        log_event('story_del_category', $story, { Name => $cat->get_name });
+    }
+
+    if (@to_delete) {
+        add_msg('Categories disassociated.');
+        $story->delete_categories(\@to_delete);
     }
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
