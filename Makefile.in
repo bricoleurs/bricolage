@@ -1,7 +1,6 @@
 # standard
 SHELL = /bin/sh
 
-
 # Programatic dependancies
 PERL = @PERL@
 APACHE = @APACHE@
@@ -83,7 +82,7 @@ CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET}
 
 # And the various doc files in text form
 DOC_TARGETS = ${docdir}/README ${docdir}/Changes \
-			  ${docdir}/License ${docdir}/TODO ${docdir}/INSTALL
+			  ${docdir}/License ${docdir}/TODO
 
 
 # now the heart of the matter.  We are just copying
@@ -124,12 +123,14 @@ BLIB_FILES = $(foreach dir, \
 					$(shell cd ${BLIB} && ${FIND} ${dir} -maxdepth 1 -type f -not -name ".*"))
 BLIB_TARGETS = $(addprefix ${blibdir}/,${BLIB_FILES})
 
-
 # Canned sequence for installation
 
 define install-files
-@${INST}/mkinstalldirs $(@D)
+@$(NORMAL_INSTALL)  # Normal commands follow.
+${INST}/mkinstalldirs $(@D)
+chown ${APACHE_USER}.${APACHE_GROUP} $(@D)
 cp $^ $@
+chown ${APACHE_USER}.${APACHE_GROUP} $@
 @echo $@ >>${INST}/install.log
 endef
 
@@ -153,15 +154,14 @@ INSTALLED_DIRS = ${bindir} ${datadir} \
 
 
 
-# these are standard variable that a lot of people 
+# These are standard variable that a lot of people 
 # use in automagical build routines.  Bascially they
-# allow an admin to define what is going to get done by the 
-# standard targets below
-NORMAL_INSTALL = ${BIN_TARGETS} ${COMP_TARGETS} \
-				 ${CONF_TARGETS} ${DATA_TARGETS} \
-				 ${LIB_TARGETS} ${DOC_TARGETS}
+# allow someone to cause this makefile to produce a 
+# script which will do certain parts of the installation
+# but not other parts.  They have to stay undefined here.
+NORMAL_INSTALL = :
 PRE_INSTALL = :
-POST_INSTALL = :
+POST_INSTALL = : 
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
@@ -180,8 +180,9 @@ CPAN_TARGETS = $(subst :,.,$(addprefix ${INST}/cpan/,${MISSING_MODULES}))
 all:  doc
 install: dep installdirs install-bin install-comp \
 		 install-conf install-data install-lib install-doc \
-		 install-man install-html
+		 install-man install-html 
 installdirs:
+	@$(NORMAL_INSTALL)  # Normal commands follow.
 	@${INST}/mkinstalldirs ${prefix} ${exec_prefix} \
                            ${bindir} ${datadir} \
                            ${confdir} ${libdir} \
@@ -189,15 +190,15 @@ installdirs:
                            ${htmldir} ${mandir}
 uninstall: uninstallfiles uninstalldirs dist-clean
 uninstalldirs:
+	$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
 	@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
+	$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
 	@rm -f ${INSTALLED_FILES}
-
-
 
 
 # specific install and uninstall targets including the list
@@ -258,13 +259,9 @@ ${CPAN_TARGETS}:
 
 
 
-
 # and here are our document files.
-doc: Changes INSTALL TODO License
+doc: Changes TODO License
 	cd ${DOC} && ${MAKE} -e
-
-INSTALL:
-	${POD2TEXT} lib/Bric/Admin.pod >$@
 
 TODO:
 	${POD2TEXT} lib/Bric/ToDo.pod >$@
@@ -285,7 +282,7 @@ endif
 
 
 clean: docclean
-	${RM} -f Changes INSTALL TODO License tags
+	${RM} -f Changes TODO License tags
 
 dist-clean: 
 	${RM} -f ${INST}/install.log 
