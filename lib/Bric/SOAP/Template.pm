@@ -25,7 +25,7 @@ import SOAP::Data 'name';
 # needed to get envelope on method calls
 our @ISA = qw(SOAP::Server::Parameters);
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 # this is needed by Template.pl so it can test create() and update()
@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 01:17:43 $
+$Date: 2002-03-13 01:18:07 $
 
 =head1 SYNOPSIS
 
