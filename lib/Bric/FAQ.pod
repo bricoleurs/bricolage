@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =head1 DATE
 
-$Date: 2004-04-16 15:57:04 $
+$Date: 2004-04-26 12:17:05 $
 
 =head1 DESCRIPTION
 
@@ -188,6 +188,10 @@ Architectural Energy - L<http://www.archenergy.com/>
 =item *
 
 2: The Magazine for Couples - L<http://www.2magazine.com/>
+
+=item *
+
+Alinghi - L<http://www.ubstrophy.com/>
 
 =back
 
