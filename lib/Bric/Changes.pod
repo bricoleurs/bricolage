@@ -320,6 +320,17 @@ Fixed broken foreign key index on element table. [Dave Rolsky]
 Added partial index to speed queries against the job table, and thus to speed
 distribution. [Mark]
 
+=item *
+
+Fixed upgrade module to properly grant the correct Bricolage database user
+permission to access new tables and sequences. [David]
+
+=item *
+
+An upgrade script failure will I<really> now cause C<make upgrade> to halt
+installation so that any issues are immediately identified and correctable.
+[David]
+
 =back
 
 =head1 VERSION 1.6.6 (2003-10-03)

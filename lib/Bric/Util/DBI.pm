@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-10-10 12:23:04 $
+$Date: 2003-10-15 23:01:04 $
 
 =head1 SYNOPSIS
 
@@ -93,6 +93,9 @@ use constant CALL_TRACE => DBI_CALL_TRACE || 0;
 use constant DEBUG => DBI_DEBUG || 0;
 # You can set DBI_TRACE from 0 (Disabled) through 9 (super verbose).
 use constant DBI_TRACE => 0;
+
+use constant CONNECT_USER => $ENV{BRIC_DBI_USER} || DBI_USER;
+use constant CONNECT_PASS => $ENV{BRIC_DBI_PASS} || DBI_PASS;
 
 DBI->trace(DBI_TRACE);
 
@@ -1689,7 +1692,7 @@ B<Notes:> NONE.
 sub _connect {
     my $dbh = eval {
         my $d = DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
-                                    DBI_USER, DBI_PASS, $ATTR);
+                                    CONNECT_USER, CONNECT_PASS, $ATTR);
         # Make sure we're consistent about what we think the transaction
         # state is.
         $d->{AutoCommit} = $AutoCommit;

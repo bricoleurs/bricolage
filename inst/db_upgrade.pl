@@ -6,11 +6,11 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:12 $
+$Date: 2003-10-15 23:01:02 $
 
 =head1 DESCRIPTION
 
@@ -61,7 +61,7 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
 	my $ret = system("perl", "-I$CONFIG->{MODULE_DIR}", $script, '-u',
                          $PG->{root_user}, '-p', $PG->{root_pass});
         # Pass through abnormal exits so that `make` will be halted.
-        exit($ret) if $ret;
+        exit $ret / 256 if $ret;
     }
 }
 

@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-14 00:36:41 $
+$Date: 2003-10-15 23:01:02 $
 
 =head1 SYNOPSIS
 
@@ -108,6 +108,7 @@ END
 
 # Load Bricolage DBI library.
 use Bric::Util::DBI qw(:all);
+use Bric::Util::Config qw(DBI_USER);
 
 ##############################################################################
 # Start a transaction. Everyting the script that loads this module
