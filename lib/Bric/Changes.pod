@@ -62,6 +62,11 @@ spot. [David]
 Fixed a few poorly-named timezones in the time zone preference. More
 still needs to be done here, actually. [David]
 
+=item *
+
+Implemented the chk_syntax() method in Bric::Util::Burner::Template.
+[Sam]
+
 =back
 
 =head1 Version 1.2.3
