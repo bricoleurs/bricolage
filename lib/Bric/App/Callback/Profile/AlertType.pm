@@ -9,6 +9,7 @@ use Bric::App::Util qw(:all);
 
 my $type = CLASS_KEY;
 my $disp_name = get_disp_name($type);
+my $class = get_package_name(CLASS_KEY);
 
 
 sub save : Callback {
@@ -65,6 +66,26 @@ sub edit_recip : Callback {
     $at->save;
     add_msg($self->lang->maketext("[_1] recipients changed.",$param->{ctype}));
     set_redirect("/admin/profile/alert_type/$param->{alert_type_id}");
+}
+
+
+# strictly speaking, this is a Manager (not a Profile) callback
+
+sub delete : Callback {
+    my $self = shift;
+
+    my $msg = 'Permission to delete [_1] denied.';
+    foreach my $id (@{ mk_aref($self->value) }) {
+        my $at = $class->lookup({'id' => $id}) || next;
+        if (chk_authz($at, EDIT, 1)) {
+            $at->remove();
+            $at->save();
+            log_event(CLASS_KEY . '_del', $at);
+        } else {
+            my $name = '&quot;' . $at->get_name() . '&quot';
+            add_msg($self->lang->maketext($msg, $name));
+        }
+    }
 }
 
 
