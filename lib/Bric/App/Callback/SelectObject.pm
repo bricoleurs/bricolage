@@ -12,13 +12,17 @@ sub save_selected_id : Callback {
     my $self = shift;
     my $param = $self->params;
 
-    my $object = $self->value;
-    my $sub_widget = $self->class_key . '.' . $object;
+    my $obj = $self->value;
+    my @objs = ref($obj) ? @$obj : ($obj);
 
-    # Handle auto-repopulation of this form.
-    my $name = get_state_data($sub_widget, 'form_name');
-    set_state_data($sub_widget, 'selected_id', $param->{$name})
-      unless ref $param->{$name};
+    foreach my $object (@objs) {
+        my $sub_widget = $self->class_key . '.' . $object;
+
+        # Handle auto-repopulation of this form.
+        my $name = get_state_data($sub_widget, 'form_name');
+        set_state_data($sub_widget, 'selected_id', $param->{$name})
+          unless ref $param->{$name};
+    }
 }
 
 sub clear : Callback {
@@ -31,7 +35,7 @@ sub clear : Callback {
 
         # Find all the select_object widget information
         my @sel = grep(substr($_,0,13) eq 'select_object', keys %$s);
-        
+
         # Clear out all the state data.
         foreach my $sub_widget (@sel) {
             set_state_data($sub_widget, {});

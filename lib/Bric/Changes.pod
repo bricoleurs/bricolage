@@ -199,6 +199,12 @@ the spot! [David]
 Templates are now correctly saved to the user's sandbox when "Save and Stay"
 is pressed. [oE<atilde>o Pedro]
 
+=item *
+
+select_object.mc correctly saves its selected_id state so that,
+for example, dropdown menus in New Story remember the item
+that was selected last time.
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
