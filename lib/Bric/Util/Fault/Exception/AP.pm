@@ -1,4 +1,5 @@
 package Bric::Util::Fault::Exception::AP;
+use Bric::Util::Fault;
 
 1;
 __END__

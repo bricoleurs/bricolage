@@ -1,4 +1,5 @@
 package Bric::Util::Fault::Exception::MNI;
+use Bric::Util::Fault;
 
 1;
 __END__

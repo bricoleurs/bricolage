@@ -1,4 +1,5 @@
 package Bric::Util::Fault::Exception::DA;
+use Bric::Util::Fault;
 
 1;
 __END__
