@@ -46,7 +46,7 @@ MODULE_COMMAND = $(foreach mod,${MISSING_MODULES},${PERL} -MCPAN -e "install ${m
 
 
 
-all: README INSTALL TODO License install
+all: README INSTALL TODO License doc
 
 install: dep 
 
@@ -76,10 +76,11 @@ doc:
 
 
 
-clean:
+clean: docclean
 	${RM} -f README INSTALL TODO License
-	cd $(DOC) && ${MAKE} -e clean
 
+docclean:
+	cd $(DOC) && ${MAKE} -e clean
 
 
 .PHONY : clean dep clean cpan
