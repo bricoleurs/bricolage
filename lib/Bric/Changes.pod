@@ -90,7 +90,7 @@ longer causes an error. Reported by Serge Sozonoff. [David]
 =item *
 
 Fixed a F<bric_soap> C<list_ids> bug [712] with the C<no_workflow> option.
-Reported by Clive Jones. [Scott]
+[Clive Jones]
 
 =item *
 
