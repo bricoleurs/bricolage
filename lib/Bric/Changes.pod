@@ -80,6 +80,12 @@ way...). [Scott]
 Added missing language-specifying HTML attributes so as to properly localize
 story titles and the like. Reported by Joshua Edelstein. [David]
 
+=item *
+
+The list of output channels to add to an element in the element profile now
+contains the name of the site that each is associated with, since different
+sites can have output channels with the same names. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

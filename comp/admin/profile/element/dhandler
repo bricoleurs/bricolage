@@ -170,6 +170,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     field  => 'name',
     exclude => [ map { $_->get_id } $comp->get_output_channels ],
     no_persist => 1,
+    getter => $oc_name_getter,
     name   => 'formBuilder|add_oc_id_cb',
     default => ['' => 'Add Output Channel'],
     constrain => { active => 1 },
@@ -298,6 +299,12 @@ my $disp = get_disp_name('element'); # HACK!
 my $sel_sub = sub {
     return unless chk_authz($_[0], EDIT, 1);
     return ['Delete', 'rem_site'];
+};
+my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $oc_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
 };
 </%once>
 
