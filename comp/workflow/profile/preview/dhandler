@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-27 19:50:31 $
+$Date: 2002-04-04 10:04:02 $
 
 =head1 DESCRIPTION
 
@@ -22,10 +22,11 @@ $Date: 2001-12-27 19:50:31 $
 
 %#-- Begin HTML --#
 <%perl>;
-my ($class, $id) = split('/', $m->dhandler_arg);
+my ($class, $id, $oc_id) = split('/', $m->dhandler_arg);
 $m->comp('/widgets/publish/callback.mc',
 	 param => \%ARGS,
 	 "${class}_id" => $id,
+   oc_id => $oc_id,
 	 field => 'preview',
 	 widget => 'publish');
 </%perl>

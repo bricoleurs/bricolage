@@ -2,6 +2,7 @@
 $widget
 $field
 $param
+$oc_id => undef
 $story_id => undef
 $media_id => undef
 </%args>
@@ -9,9 +10,13 @@ $media_id => undef
 my $fs = PREVIEW_LOCAL ? Bric::Util::Trans::FS->new : undef;
 my $send_msg = sub { $m->comp('/lib/util/status_msg.mc', @_) };
 my $comp_root = $m->interp->comp_root->[0][1];
+my $i_oc_id;
 </%once>
 
 <%init>;
+# amazing what you have to do to get an argument into a 'shared' section
+$i_oc_id = $oc_id;
+
 # Hunt the wumpus
 $field = 'publish' if $field eq "$widget|publish_cb";
 return unless $field eq 'preview' or $field eq "publish";
@@ -135,8 +140,8 @@ my $publish = sub {
     my $bats = {};
     my $res = [];
     my $ocs = $field eq 'preview'
-      ? [ Bric::Biz::OutputChannel->lookup({ id => $at->get_primary_oc_id }) ]
-	: $at->get_output_channels;
+      ? [ Bric::Biz::OutputChannel->lookup({ id => $i_oc_id ? $i_oc_id : $at->get_primary_oc_id}) ]
+    	: $at->get_output_channels;
 
     # Iterate through each output channel.
     foreach my $oc (@$ocs) {
