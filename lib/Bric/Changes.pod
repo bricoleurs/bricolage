@@ -25,6 +25,10 @@ This document lists the Changes to Bricolage introduced with each release.
 Some misspellings were corrected in Bric::Admin. Thanks to Ask Bjoern Hansen for
 the spot. [David]
 
+=item *
+
+Fixed broken "Return" buttons on related media and related story pages. [David]
+
 =back
 
 =head1 VERSION 1.2.1
