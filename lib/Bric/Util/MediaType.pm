@@ -6,16 +6,16 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:12 $
+$Date: 2003-09-15 21:48:46 $
 
 =head1 SYNOPSIS
 
@@ -1205,7 +1205,7 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     # Doing an outer join here solely for media type 0, which has no
-    # extensions (since it's a non-extetion).
+    # extensions (since it's a non-extension).
     my $tables = 'media_type a LEFT JOIN media_type_ext e ' .
       'ON a.id = e.media_type__id, member m, media_type_member am';
     my $wheres = 'a.id = am.object_id ' .
