@@ -2,6 +2,7 @@ use strict;
 use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
+use Bric::Util::DBI qw(rollback);
 use bric_upgrade qw(:all);
 
 # check if we're already upgraded.
