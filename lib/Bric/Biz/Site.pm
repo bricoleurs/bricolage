@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-30 18:34:20 $
+$Date: 2003-06-04 00:19:02 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.4 2003-03-30 18:34:20 wheeler Exp $
+$Id: Site.pm,v 1.5 2003-06-04 00:19:02 wheeler Exp $
 
 =back
 
@@ -917,5 +917,10 @@ Each asseet object is associated with a site.
 Each destination object is associated with a site.
 
 =back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2003 Kineticode, Inc. See L<Bric::License|Bric::License> for
+complete license terms and conditions.
 
 =cut

@@ -10,20 +10,20 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
 =item Version
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-30 18:34:20 $
+$Date: 2003-06-04 00:19:02 $
 
 =item CVS ID
 
-$Id: Keyword.pm,v 1.16 2003-03-30 18:34:20 wheeler Exp $
+$Id: Keyword.pm,v 1.17 2003-06-04 00:19:02 wheeler Exp $
 
 =back
 
@@ -790,5 +790,11 @@ Business assets, including stories and media, can be associated with keywords.
 Categories can be associated with key words.
 
 =back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2001 About.com. Changes Copyright (c) 2002-2003 Kineticode, Inc.
+and others. See L<Bric::License|Bric::License> for complete license terms and
+conditions.
 
 =cut
