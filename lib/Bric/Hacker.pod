@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.37.2.1 $
+$Revision: 1.37.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-23 20:11:04 $
+$Date: 2003-03-23 20:19:04 $
 
 =head1 DESCRIPTION
 
@@ -539,13 +539,15 @@ indeed build and properly install itself.
   # Start PostgreSQL.
   sudo make install
   make devtest
+  sudo make uninstall
 
 Be sure to run C<make devtest> after everything is installed to make sure that
 it is all functioning correctly. Users won't be running these tests, as they
 muck up the database. But that's okay for our validation of the release
-tarball. If you have to go back and make any changes, be sure to update the
-tag of any files you change and commit to CVS, then do the whole thing over
-again. Once everything appears to be working properly, release!
+tarball. Use C<make uninstall> to clean up the mess. If you have to go back
+and make any changes, be sure to update the tag of any files you change and
+commit to CVS, then do the whole thing over again. Once everything appears to
+be working properly, release!
 
 =head1 AUTHOR
 
