@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.100 $
+$Revision: 1.101 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.100 $ )[-1];
+our $VERSION = (qw$Revision: 1.101 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-25 18:36:22 $
+$Date: 2004-03-31 11:42:59 $
 
 =head1 SYNOPSIS
 
@@ -144,6 +144,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
                     ALLOW_SLUGLESS_NONFIXED
+                    AUTOGENERATE_SLUG
                     YEAR_SPAN_BEFORE
                     YEAR_SPAN_AFTER
                     CACHE_DEBUG_MODE
@@ -220,6 +221,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
                                      ALLOW_SLUGLESS_NONFIXED
+                                     AUTOGENERATE_SLUG
                                      SERVER_WINDOW_NAME
                                      YEAR_SPAN_BEFORE
                                      YEAR_SPAN_AFTER
@@ -360,7 +362,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS ENABLE_HTMLAREA))
+                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -559,6 +561,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
     use constant ALLOW_SLUGLESS_NONFIXED => $config->{ALLOW_SLUGLESS_NONFIXED};
+    use constant AUTOGENERATE_SLUG       => $config->{AUTOGENERATE_SLUG};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};
     use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
     use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;

@@ -297,9 +297,11 @@ sub create : Callback {
     # Make sure we have the required data.
     my $ret;
 
-    # Create a slug based on title if there is no slug.
-    ($param->{slug} = substr($param->{title}, 0, 32)) =~ y/a-z0-9/_/cs
-      unless defined $param->{slug} && $param->{slug} =~ /\S/;
+    if (AUTOGENERATE_SLUG) {
+        # Create a slug based on title if there is no slug.
+        ($param->{slug} = substr($param->{title}, 0, 32)) =~ y/a-z0-9/_/cs
+          unless defined $param->{slug} && $param->{slug} =~ /\S/;
+    }
 
     # Check the story type.
     if (defined $param->{"$widget|at_id"} && $param->{"$widget|at_id"} ne '') {
