@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.18.2.2 $
+$Revision: 1.18.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.18.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-07 16:33:34 $
+$Date: 2002-11-12 03:22:02 $
 
 =head1 SYNOPSIS
 
@@ -368,8 +368,8 @@ sub load_args {
         if ($@) {
             my $msg = 'Error translating from '.$ct->charset.' to UTF-8.';
             die ref $@ ? $@
-                       : DC::Util::Fault::Exception::DP->new({msg     => $msg,,
-                                                              payload => $@});
+                       : Bric::Util::Fault::Exception::DP->new({msg     => $msg,
+                                                                payload => $@});
         }
 
         # Build up our own argument hash of converted values.
