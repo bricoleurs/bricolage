@@ -2,8 +2,6 @@
 my $widget = 'site_context';
 my $usites_key = 'sites';
 my $cachekey = '__SITES__';
-my $type = 'site';
-my $disp_name = get_disp_name($type);
 </%once>
 <%init>;
 my $uid = get_user_id;
@@ -60,7 +58,7 @@ unless ($user_sites) {
 return unless @$user_sites > (ALLOW_ALL_SITES_CX ? 2 : 1);
 
 # Give 'em a select list.
-#$m->print($lang->maketext("[_1] Context", $disp_name), ': ');
+#$m->print($lang->maketext("Site Context"), ': ');
 $m->comp('/widgets/profile/select.mc',
          options  => $user_sites,
          name     => 'site_context|change_context_cb',
@@ -80,11 +78,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.1.2.3 $
+$Revision: 1.1.2.4 $
 
 =head1 DATE
 
-$Date: 2003-03-05 22:40:36 $
+$Date: 2003-03-06 02:18:16 $
 
 =head1 SYNOPSIS
 
