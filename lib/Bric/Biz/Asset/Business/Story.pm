@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.70 $
+$Revision: 1.71 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.70 $ )[-1];
+our $VERSION = (qw$Revision: 1.71 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-16 19:00:40 $
+$Date: 2004-01-17 00:39:58 $
 
 =head1 SYNOPSIS
 
@@ -314,6 +314,7 @@ use constant PARAM_FROM_MAP =>
        category_uri       => 'story__category sc2, category c',
        data_text          => 'story_data_tile sd',
        contrib_id         => 'story__contributor sic',
+       element_key_name   => 'element e'
     };
 
 use constant PARAM_WHERE_MAP =>
@@ -328,6 +329,7 @@ use constant PARAM_WHERE_MAP =>
       _null_workflow_id      => 's.workflow__id IS NULL',
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
       element__id            => 's.element__id = ?',
+      element_key_name       => 's.element__id = e.id AND e.key_name LIKE LOWER(?)',
       source__id             => 's.source__id = ?',
       priority               => 's.priority = ?',
       publish_status         => 's.publish_status = ?',

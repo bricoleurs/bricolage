@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-03 01:16:10 $
+$Date: 2004-01-17 00:39:57 $
 
 =head1 SYNOPSIS
 
@@ -261,8 +261,8 @@ use constant PARAM_FROM_MAP =>
        category_uri       =>  'category c',
        simple             =>  TABLE . ' f',
        _not_simple        =>  TABLE . ' f',
-       grp_id             =>  'member m2, formatting_member fm2'
-
+       grp_id             =>  'member m2, formatting_member fm2',
+       element_key_name   => 'element e',
     };
 
 use constant PARAM_WHERE_MAP =>
@@ -275,6 +275,7 @@ use constant PARAM_WHERE_MAP =>
       workflow__id          => 'f.workflow__id = ?',
       _null_workflow_id     => 'f.workflow__id IS NULL',
       element__id           => 'f.element__id = ?',
+      element_key_name      => 'f.element__id = e.id AND e.key_name LIKE LOWER(?)',
       output_channel__id    => 'f.output_channel__id = ?',
       priority              => 'f.priority = ?',
       deploy_status         => 'f.deploy_status = ?',

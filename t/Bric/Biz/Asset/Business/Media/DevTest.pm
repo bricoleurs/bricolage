@@ -53,7 +53,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(72) {
+sub test_select_methods: Test(80) {
     my $self = shift;
     my $class = $self->class;
 
@@ -479,6 +479,25 @@ sub test_select_methods: Test(72) {
     ok( $got = class->list({ name => '_test%', user_id => $admin_id,
                              Order => 'name' }),
         'lets do a search by name' );
+    # check the ids
+    foreach (@$got) {
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
+    }
+    $OBJ_IDS->{media} = [ sort { $a <=> $b } @{ $OBJ_IDS->{media} } ];
+
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{media},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for media $i" );
+    }
+    undef @got_ids;
+    undef @got_grp_ids;
+
+    # Try a search by element_key_name.
+    ok( $got = class->list({ element_key_name => $element->get_key_name }),
+        'lets do a search by element_key_name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id;

@@ -92,7 +92,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(89) {
+sub test_select_methods: Test(97) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -520,6 +520,28 @@ sub test_select_methods: Test(89) {
     ok( $got = class->list({ name => '_test%',
                              Order => 'name' }),
         'lets do a search by name' );
+
+    # check the ids
+    foreach (@$got) {
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [ sort { $a <=> $b } $_->get_grp_ids ];
+    }
+    $OBJ_IDS->{story} = [ sort { $a <=> $b } @{ $OBJ_IDS->{story} } ];
+
+    is_deeply( \@got_ids, $OBJ_IDS->{story},
+               '... did we get the right list of ids out' );
+
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for story $i" );
+    }
+    undef @got_ids;
+    undef @got_grp_ids;
+
+    # Try a search by element_key_name.
+    ok( $got = class->list({ element_key_name => $element->get_key_name,
+                             Order            => 'name' }),
+        'lets do a search by element_key_name' );
 
     # check the ids
     foreach (@$got) {

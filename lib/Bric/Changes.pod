@@ -144,6 +144,13 @@ permission to recall assets from the library and bring them into workflow, and
 PUBLISH permission to publish assets. This should make it much easier to
 create more flexible permissions to manage approval processes. [David]
 
+=item *
+
+Added C<element_key_name> parameter to the C<list()> method of the story,
+media, and formatting classes. This makes it easier to use the name of a story
+type element, media type element, or template element to search for assets,
+rather than the C<element__id> parameter, which isn't as friendly. [David]
+
 =back
 
 =head2 Bug Fixes

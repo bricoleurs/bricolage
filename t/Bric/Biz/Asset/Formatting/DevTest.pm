@@ -283,7 +283,7 @@ sub test_select_a_default_objs: Test(12) {
 }
 
 ##############################################################################
-sub test_select_b_new_objs: Test(57) {
+sub test_select_b_new_objs: Test(64) {
     my $self = shift;
     my $class = $self->class;
 
@@ -676,6 +676,29 @@ sub test_select_b_new_objs: Test(57) {
                              Order   => 'name',
                              user_id => $admin_id  }),
         'lets do a search by name' );
+    # check the ids
+    foreach (@$got) {
+        push @got_ids, $_->get_id;
+        push @got_grp_ids, [sort { $a <=> $b } $_->get_grp_ids ];
+    }
+
+    $OBJ_IDS->{formatting} = [ sort { $a <=> $b }
+                               @{ $OBJ_IDS->{formatting} } ];
+
+    is_deeply( [sort { $a <=> $b } @got_ids], $OBJ_IDS->{formatting},
+               '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        is_deeply( $got_grp_ids[$i], $EXP_GRP_IDS[$i],
+                   "... and did we get the right grp_ids for template $i" );
+    }
+    undef @got_ids;
+    undef @got_grp_ids;
+
+    # Try a search by element_key_name.
+    ok( $got = class->list({ element_key_name => '_test_%',
+                             Order            => 'name',
+                             user_id          => $admin_id  }),
+        'lets do a search by element_key_name' );
     # check the ids
     foreach (@$got) {
         push @got_ids, $_->get_id;
