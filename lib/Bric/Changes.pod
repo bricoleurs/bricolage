@@ -194,6 +194,11 @@ Attempting to create a destination with the same name as an existing or
 deleted destination no longer causes an SQL error. Thanks to Simon Wilcox for
 the spot! [David]
 
+=item *
+
+Templates are now correctly saved to the user's sandbox when "Save and Stay"
+is pressed. [oE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.7.1 (2003-11-30)
