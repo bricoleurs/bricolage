@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:57 $
+$Date: 2003-08-12 19:04:42 $
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,7 @@ date - Simple date formatting.
 
 </%doc>
 <%args>
-
+$localize => 1
 $vals     => 0
 $name     => undef
 $key      => ''
@@ -135,6 +135,7 @@ $rows     => undef
 my $agent = detect_agent();
 $vals->{props}{cols} = $cols if ($cols);
 $vals->{props}{rows} = $rows if ($rows);
+$localize_opts = $localize;
 
 if ($objref) {
     # fetch ref to introspection hash
@@ -150,8 +151,9 @@ if ($objref) {
     $indent ||= FIELD_INDENT;
     my $label    =  ($methods->{$key}{req}) ? "redLabel" : "label";
 
-    # Get the name, if necessary.
+    # Get the name and localize it, if necessary.
     $name = $methods->{$key}{disp} unless defined $name;
+    $name = $lang->maketext($name) if $localize && $name && $formType ne 'date';
 
     # Assemble javascript.
     if (! $methods->{$key}{set_meth} ) {
@@ -161,7 +163,8 @@ if ($objref) {
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $methods->{$key}, $value, $js, $name, $width,
-                           $indent, $useTable, $label, $readOnly, $agent) if $formSubs{$formType};
+                           $indent, $useTable, $label, $readOnly, $agent)
+      if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
 	    . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
@@ -172,13 +175,15 @@ if ($objref) {
     $indent  ||= $vals->{indent} ? $vals->{indent} : FIELD_INDENT;
     my $label     =  ($vals->{req}) ? "redLabel" : "label";
 
-    # Get the name, if necessary.
+    # Get the name and localize it, if necessary.
     $name = $vals->{disp} unless defined $name;
+    $name = $lang->maketext($name) if $localize && $name && $formType ne 'date';
     $js = $vals->{js} || $js || '';
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $vals, $value, $js, $name, $width, $indent,
-                           $useTable, $label, $readOnly, $agent) if $formSubs{$formType};
+                           $useTable, $label, $readOnly, $agent)
+      if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
 	    . qq{"$vals->{disp}";\n</script>\n}) if $vals->{req};
@@ -190,6 +195,7 @@ return $key;
 
 </%perl>
 <%once>;
+my $localize_opts = 1;
 my $opt_sub = sub {
     my ($k, $v, $value) = @_;
     for ($k, $v, $value) { $_ = '' unless defined $_ }
@@ -197,7 +203,7 @@ my $opt_sub = sub {
     my $out = qq{<option value="$k"};
     # select it if there's a match
     $out .= " selected" if (ref $value && $value->{$k}) || $k eq $value;
-    return "$out>". $lang->maketext( $v ) . "</option>\n";
+    return "$out>". ($localize_opts ? $lang->maketext($v) : $v) . "</option>\n";
 };
 
 my $rem_sub = sub {
@@ -209,9 +215,9 @@ my $rem_sub = sub {
 
 my $len_sub = sub {
     my ($vals) = @_;
-    my $max = $vals->{props}{maxlength} || 128;
+    my $max = $vals->{props}{maxlength};
     my $len = $vals->{props}{length} || 32;
-    return qq{ maxlength="$max" size="$len"};
+    return qq{ size="$len"} . ($max ? q{ maxlength="$max"} : '');
 };
 
 my $inpt_sub = sub {
@@ -230,7 +236,7 @@ my $inpt_sub = sub {
     if ($type ne "checkbox" && $type ne "hidden") {
 	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
 	  . qq{ width="$indent">} : '';
-        $out .= $name ? qq{<span class="$label">}.$lang->maketext($name).':</span>'
+        $out .= $name ? qq{<span class="$label">$name:</span>}
 	  : ($useTable) ? '&nbsp;':'';
 	$out .= &$rem_sub($width, $indent) if $useTable;
 
@@ -244,7 +250,7 @@ my $inpt_sub = sub {
 
 	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
 	  . qq{ width="$indent">} : '';
-	$out .= qq{<span class="$label">}.$lang->maketext($name).':</span>'
+	$out .= qq{<span class="$label">$name:</span>}
 	  if $name && !$vals->{props}{label_after};
 	$out .= &$rem_sub($width, $indent) if $useTable;
 
@@ -257,7 +263,7 @@ my $inpt_sub = sub {
 	    }
 	}
 
-	$out .= qq{ <span class="label">} . $lang->maketext($name) . '</span>&nbsp;'
+	$out .= qq{ <span class="label">$name</span>&nbsp;}
 	  if $name && $vals->{props}{label_after};
     }
 
@@ -286,7 +292,6 @@ my %formSubs = (
 	checkbox => sub {
 	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
 		$label, $readOnly, $agent) = @_;
-            $name = $lang->maketext($name);
 	    my $extra = '';
 	    if (exists $vals->{props}{chk}) {
 		$extra .= ' checked' if $vals->{props}{chk}
@@ -301,7 +306,6 @@ my %formSubs = (
 	textarea => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
 		$label, $readOnly, $agent) = @_;
-            $name = $lang->maketext($name);
 	    my $rows =  $vals->{props}{rows} || 5;
 	    my $cols = $vals->{props}{cols}  || 30;
 
@@ -338,7 +342,7 @@ my %formSubs = (
 		$out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
 		$out .= qq{<td align="right" width="$indent" valign="middle">};
 	    }
-            $out .= $name ? qq{<span class="$label">} . $lang->maketext($name) . ':</span>' : '';
+            $out .= $name ? qq{<span class="$label">$name:</span>} : '';
 	    $out .= "<br />" if (!$useTable && $name);
 	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
 	      if ($useTable);
@@ -396,7 +400,7 @@ my %formSubs = (
 		$out .= ($readOnly) ? qq{<table border="0" width="$width"><tr><td width=$indent align="right"> }
 	                            : qq{<table border="0" width="$width" cellspacing=0 cellpadding=2><tr><td align="right" width=$indent> };
 	    }
-	    $out .= qq{<span class="radioLabel">}. $lang->maketext($name) . '</span>' if $name;
+	    $out .= qq{<span class="radioLabel">$name</span>} if $name;
 
 	    if ($readOnly) {
 		$out .= "</td><td width=" . ($width - $indent) . ">";

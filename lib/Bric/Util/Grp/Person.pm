@@ -6,16 +6,16 @@ Bric::Util::Grp::Person - Interface to Bric::Biz::Person Groups
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2003-08-12 19:04:45 $
 
 =head1 SYNOPSIS
 
@@ -83,6 +83,14 @@ BEGIN {
 =head2 Constructors
 
 Inherited from Bric::Util::Grp.
+
+=cut
+
+sub new {
+    my ($class, $init) = @_;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
+    $class->SUPER::new($init);
+}
 
 =head2 Destructors
 

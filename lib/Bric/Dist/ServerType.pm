@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-12 19:04:44 $
 
 =head1 SYNOPSIS
 
@@ -235,6 +235,7 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = ref $pkg || $pkg;
     @{$init}{qw(_active _publish _preview _copy)} = (1, 1, 0, 0);
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 

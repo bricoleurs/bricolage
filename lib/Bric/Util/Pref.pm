@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-12 19:04:45 $
 
 =head1 SYNOPSIS
 
@@ -423,7 +423,8 @@ B<Notes:> See &$load_cache().
 
 sub lookup_val {
     $cache ||= &$load_cache;
-    return $cache->get($prefkey)->{$_[1]};
+    my $val = $cache->get($prefkey);
+    return $val->{$_[1]};
 }
 
 ################################################################################

@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.0
+=head1 VERSION 1.7.0 ()
 
 =head2 New Features
 
@@ -99,7 +99,126 @@ adding a select list to choose which type of Permission to look at. [Scott]
 
 =back
 
-=head1 VERSION 1.6.2
+=head1 VERSION 1.6.3 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Document and contributor type field information (label, options) is no longer
+pushed through Locale::Maketext, thus preventing errors when element and
+contributor type admins create field options with brackets in them. Reported
+by Kevin Elliott. [David]
+
+=item *
+
+Documents associated with categories that have been deleted will once again
+work properly. Even though a category may be deactivated, any documents
+previously put into that category should still work, and still treat the
+category as a working category. And so they do. Thanks to Kevin Elliott for
+the spot! [David]
+
+=item *
+
+Renamed events for adding fields to elements and contributor types. They were
+mentioning "attributes," and now they mention "fields," instead. [David]
+
+=item *
+
+Updated Bric::Admin (F<INSTALL>) to instruct users encountering installation
+problems to first check the list archives and post to the mailing list before
+filing a bug. [Cinly Ooi]
+
+=item *
+
+Permissions granted on the "All" groups work again. Reported by Kevin Elliott.
+[David]
+
+=item *
+
+Resize now works in super bulk edit. Thanks to Michael G. Kaiser for the spot.
+[David]
+
+=item *
+
+Documented that the C<list_ids()> methods in Bric::Biz::Asset's subclasses
+ignore the C<Order> and C<OrderDiretion> parameters and return an unordered
+list of IDs. Reported by Clive Jones. [David]
+
+=item *
+
+The "Add Element" select list in story, media profiles now lists the fields
+that can be added in the order specified in the element profile, and then the
+subelements that can be added, instead of mixing up fields and subelements in
+alphabetical order. Thanks to JoE<atilde>o Pedro for the spot! [David]
+
+=item *
+
+When a template is deployed, Bricolage now checks to see if its file name has
+changed since it was last deployed, and if it has, it deletes the old
+file. Reported by Kevin Elliott. [David]
+
+=item *
+
+Optimized performance of Bric::Dist::Resource queries and wrote lots of tests
+for them. [David]
+
+=item *
+
+When a story or media document is published, Bricolage now looks to see if any
+files distributed for previous versions of the document are no longer
+associated with the document, and expires them if they are. It does so on a
+per-output channel basis, so note that if output channel settings have changed
+since the document was last published, the expiration may miss some stale
+files. The same goes for when destinations are changed. But this should cover
+the vast majority of cases.
+
+=item *
+
+Fixed error looking up alert types in the dataase, which affected the alert
+type manager on some platforms. Reported by Radu Greab. [David]
+
+=item *
+
+Deactivated alert types are once again available via the UI. [David]
+
+=item *
+
+Text input fields no longer impose a default maximum field length. This is so
+that element fields that have their maximum length set to 0 can truely be
+unlimited in length. Reported by Kevin Elliott. [David]
+
+=item *
+
+Template output channel associations no longer trigger an error when importing
+templates via the SOAP interface. [Clive Jones]
+
+=item *
+
+Passing an undef via the C<workflow__id> parameters to the C<list()> method of
+Story, Media, or Template once again causes Bricolage to correctly return only
+those assets that are not in workflow. Reported by Kevin Elliott. [David]
+
+=item *
+
+Extra blank lines between subelement tags in super bulk edit no longer causes
+an error. Thanks to Kevin Elliott for the spot! [David]
+
+=item *
+
+Searches no longer return unexpected results or all objects when pagination is
+enabled. Thanks to Kevin Elliott for the spot! [David]
+
+=item *
+
+The searches for documents by beginning and ending cover dates were not
+inclusive of the end date. Now they are! Reported by Kevin Elliott. [David]
+
+=back
+
+=head1 VERSION 1.6.2 (2003-07-28)
 
 =head2 New Features
 
@@ -143,7 +262,7 @@ graphics. Helps Chinese Traditional to display more nicely. [Kang-min Liu]
 
 =item *
 
-The media simple search now searched by URI again. [Mark]
+The media simple search now searches by URI again. [Mark]
 
 =item *
 
@@ -368,7 +487,7 @@ the contents of F<conf/>. [David]
 
 =back
 
-=head1 VERSION 1.6.1
+=head1 VERSION 1.6.1 (2003-06-12)
 
 =head2 New Features
 
@@ -541,7 +660,7 @@ Made unlocalized JavaScript message localized. [David]
 
 =back
 
-=head1 VERSION 1.6.0
+=head1 VERSION 1.6.0 (2003-04-29)
 
 =head2 New Features
 
@@ -735,7 +854,7 @@ C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
 
 =back
 
-=head1 VERSION 1.5.2
+=head1 VERSION 1.5.2 (2003-04-02)
 
 =head2 New Features
 
@@ -834,7 +953,7 @@ workflows, and on desks. [Mark]
 
 =back
 
-=head1 VERSION 1.5.1
+=head1 VERSION 1.5.1 (2003-03-23)
 
 =head2 New Features
 
@@ -1204,7 +1323,7 @@ so that users can administer media types. Previously, only members of the
 
 =back
 
-=head1 VERSION 1.5.0
+=head1 VERSION 1.5.0 (2003-01-09)
 
 =head2 New Features
 
@@ -1526,7 +1645,7 @@ collections, such as desks, should be more responsive. [David]
 
 =back
 
-=head1 VERSION 1.4.6
+=head1 VERSION 1.4.6 (2003-01-06)
 
 =head2 Bug Fixes
 
@@ -1658,7 +1777,7 @@ C<< Bric::SOAP::Category->list_ids >>. [David]
 
 =back
 
-=head1 VERSION 1.4.5
+=head1 VERSION 1.4.5 (2002-11-13)
 
 =head2 Changes
 
@@ -1826,7 +1945,7 @@ Added missing C<list_ids()> method to Bric::Biz::Category. [David]
 
 =back
 
-
+=head1 VERSION 1.4.4 (2002-10-27)
 
 =head2 Bug Fixes
 
@@ -1964,7 +2083,7 @@ Geoff Richards for the spot. [David]
 
 =back
 
-=head1 VERSION 1.4.3
+=head1 VERSION 1.4.3 (2002-09-28)
 
 =head2 Bug Fixes
 
@@ -1987,7 +2106,7 @@ again. [David]
 
 =back
 
-=head1 VERSION 1.4.2
+=head1 VERSION 1.4.2 (2002-09-27)
 
 =head2 Bug Fixes
 
@@ -2023,7 +2142,7 @@ altogether. [David]
 
 =back
 
-=head1 VERSION 1.4.1
+=head1 VERSION 1.4.1 (2002-09-25)
 
 =head2 Bug Fixes
 
@@ -2215,7 +2334,7 @@ both. [David]
 
 =back
 
-=head1 VERSION 1.4.0
+=head1 VERSION 1.4.0 (2002-09-02)
 
 =head2 New Features
 
@@ -2340,7 +2459,7 @@ The F<bric_dist_mon> program works again. [David]
 
 =back
 
-=head1 VERSION 1.3.3
+=head1 VERSION 1.3.3 (2002-08-24)
 
 =head2 New Features
 
@@ -2694,7 +2813,7 @@ reverted. [David]
 
 =back
 
-=head1 VERSION 1.3.2
+=head1 VERSION 1.3.2 (2002-06-09)
 
 =head2 New Features
 
@@ -2932,7 +3051,7 @@ Fixed section numbering in the Contributor Type profile. [Scott Lanning]
 
 =back
 
-=head1 VERSION 1.3.1
+=head1 VERSION 1.3.1 (2002-04-03)
 
 =head2 New Features
 
@@ -3067,12 +3186,56 @@ Implemented the chk_syntax() method in Bric::Util::Burner::Template.
 
 =back
 
-=head1 Version 1.2.3
+=head1 VERSION 1.3.0 (2002-02-10)
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Bricolage SOAP interface partially implemented. Bric::SOAP::Story and
+Bric::SOAP::Media are fully implemented and tested. The command-line client -
+bric_soap - is complete. [Sam]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed numerous cases where user_ids were being used as booleans. Since user_id
+0 is the Adminstrator's user_id this can cause problems. [Sam]
+
+=item *
+
+Fixed problem where deleting an asset would fail with the "cannot check-in non
+checked-out version" error. [Sam]
+
+=item *
+
+Fixed bug in HTML::Template burner when an element name had more than one
+space in it. [Sam]
+
+=item *
+
+Fixed bug in database that prevented element names over 32 characters from
+working properly. [Sam]
+
+=item *
+
+All fixes in the soon-to-be-released 1.2.1 version. See below for details.
+
+=back
+
+=head1 VERSION 1.2.3 (2002-03-17)
 
 Functionally equivalent to 1.2.2, but includes required files missing from the
 1.2.2 distribution.
 
-=head1 Version 1.2.2
+=head1 VERSION 1.2.2 (2002-03-15)
 
 =head2 New Features
 
@@ -3199,7 +3362,7 @@ The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
 
 =back
 
-=head1 VERSION 1.2.1
+=head1 VERSION 1.2.1 (2002-02-25)
 
 =head2 New Features
 
@@ -3384,7 +3547,7 @@ category. [Matt Vella]
 
 =back
 
-=head1 VERSION 1.2.0
+=head1 VERSION 1.2.0 (2002-01-10)
 
 =head2 New Features
 
@@ -3485,7 +3648,7 @@ choke if it couldn't figure out the MediaType itself. [David]
 
 =back
 
-=head1 VERSION 1.0.2
+=head1 VERSION 1.0.2 (2001-12-10)
 
 =head2 New Features
 
@@ -3628,7 +3791,7 @@ heads-up.
 
 =back
 
-=head1 VERSION 1.0.1
+=head1 VERSION 1.0.1 (2001-09-28)
 
 =over 4
 

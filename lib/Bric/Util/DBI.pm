@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:36 $
+$Date: 2003-08-12 19:04:45 $
 
 =head1 SYNOPSIS
 
@@ -789,14 +789,14 @@ sub clean_params {
     # take care of the simple query, or lack thereof
     $param->{_not_simple} = 1 unless $param->{simple};
     # we can only handle the returned versions p in reverse
-    $param->{_no_return_versions} = 1 
-      unless $param->{return_versions} || $param->{version};
+    $param->{_no_return_versions} = 1
+      unless $param->{return_versions} || defined $param->{version};
     # add default order 
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id
-    if( exists $param->{workflow_id} && ! defined $param->{workflow_id} ) {
+    if( exists $param->{workflow__id} && ! defined $param->{workflow__id} ) {
         $param->{_null_workflow_id} = 1;
-        delete $param->{workflow_id};
+        delete $param->{workflow__id};
     }
     return $param;
 }

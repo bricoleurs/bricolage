@@ -462,7 +462,8 @@ sub testclean_params: Test(8) {
              _checked_in_or_out => 1,
              Order => 'cover_date',
            };
-    is_deeply( clean_params($CLASS, { workflow_id => undef }), $exp, 'undef workflow__id sets _null_workflow_id');
+    is_deeply( clean_params($CLASS, { workflow__id => undef }),
+               $exp, 'undef workflow__id sets _null_workflow_id');
 }
 
 

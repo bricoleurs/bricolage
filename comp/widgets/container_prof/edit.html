@@ -167,19 +167,19 @@ if ($at->is_related_media) {
     $vals->{value} = $dt->get_data(ISO_8601_FORMAT);
     $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
     if ($vals->{props}{type} eq 'checkbox') {
-    $vals->{props}{chk} = $vals->{value};
-    $vals->{value} = 1;
+        $vals->{props}{chk} = $vals->{value};
+        $vals->{value} = 1;
     }
 
     # Set the array of possible values, if necessary.
     if ( my $tmp = $vals->{props}{vals} ) {
-    my $val_prop;
-    foreach my $line (split /\n/, $tmp) {
-        my ($v, $l) = split /\s*,\s*/, $line;
-        chomp $v;
-        push @$val_prop, [$v, $l];
-    }
-    $vals->{props}{vals} = $val_prop;
+        my $val_prop;
+        foreach my $line (split /\n/, $tmp) {
+            my ($v, $l) = split /\s*,\s*/, $line;
+            chomp $v;
+            push @$val_prop, [$v, $l];
+        }
+        $vals->{props}{vals} = $val_prop;
     }
 </%perl>
     <td align="right" colspan=2><span class="label"><% $vals->{props}{disp} %>:&nbsp;</span></td>
@@ -190,7 +190,8 @@ if ($at->is_related_media) {
     <& '/widgets/profile/displayFormElement.mc',
       key      => $key,
       vals     => $vals,
-      useTable => 0
+      useTable => 0,
+      localize => 0
     &>
       </td>
 
@@ -285,7 +286,7 @@ if ($at->is_related_media) {
   <td width=180 class="medHeader">
 <& /widgets/profile/select.mc, name     => $widget.'|add_element',
                                options  => $elem_opts,
-                   useTable => 0,
+                               useTable => 0,
                                multiple => 0,
                                size     => 1,
 &>
@@ -425,7 +426,7 @@ my $start = get_state_data($widget, 'start');
 # the contained tiles
 my @tiles = $tile->get_tiles();
 
-my $elem_opts;
+my $elem_opts = [];
 my $repeatable_opts = [];
 
 # the possible data options
@@ -433,7 +434,7 @@ my @pos_data = $tile->get_possible_data();
 foreach (@pos_data) {
     my $key = 'data_' . $_->get_id();
     my $disp = $_->get_meta('html_info')->{disp};
-    $elem_opts->{$key} = $disp;
+    push @$elem_opts, [ $key => $disp ];
     if ($_->get_quantifier()) {
         push @$repeatable_opts, [$_->get_key_name, $disp];
     }
@@ -445,7 +446,7 @@ my @pos_cont = $tile->get_possible_containers();
 foreach (@pos_cont) {
     next unless chk_authz($_, READ, 1);
     my $key = 'cont_' . $_->get_id();
-    $elem_opts->{$key} = $_->get_name();
+    push @$elem_opts, [ $key => $_->get_name ];
 }
 
 my $at_id = $tile->get_element_id;

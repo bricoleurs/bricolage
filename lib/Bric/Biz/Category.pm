@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.49 $
+$Revision: 1.50 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.49 $ )[-1];
+our $VERSION = (qw$Revision: 1.50 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -219,6 +219,7 @@ NONE
 sub new {
     my ($pkg, $init) = @_;
     $init->{_active} = 1;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $pkg->SUPER::new($init);
 }
 
@@ -255,6 +256,7 @@ sub lookup {
     my $cat = $pkg->cache_lookup(@_);
     return $cat if $cat;
 
+    $_[0]->{active} = 'all';
     $cat = $pkg->_do_list(@_);
     # We want @$cat to have only one value.
     throw_dp(error => 'Too many ' . __PACKAGE__ . ' objects found.')

@@ -7,15 +7,15 @@ Bric::Biz::Org - Bricolage Interface to Organizations
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -182,6 +182,7 @@ sub new {
     my $self = bless {}, ref $pkg || $pkg;
     $init->{_personal} = $init->{_personal} ? 1 : 0;
     $init->{_active} = 1;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 

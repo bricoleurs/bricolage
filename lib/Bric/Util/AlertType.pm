@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-12 19:04:45 $
 
 =head1 SYNOPSIS
 
@@ -149,9 +149,10 @@ my $table = 'alert_type';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 
-my %map = (id => 'id',
+my %map = (id            => 'id',
+           active        => 'active',
            event_type_id => 'event_type__id',
-           owner_id => 'usr__id');
+           owner_id      => 'usr__id');
 my $meths;
 my @ord = qw(name event_type_id owner_id subject message active);
 
@@ -252,6 +253,7 @@ sub new {
     my $self = bless {}, ref $pkg || $pkg;
     $init->{_active} = 1;
     $init->{_del} = 0;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $self->SUPER::new($init);
 }
 
@@ -344,6 +346,10 @@ subject
 =item *
 
 message
+
+=item *
+
+active
 
 =back
 
@@ -2530,7 +2536,8 @@ $get_em = sub {
     my $tables = "$table a, $mem_table m, $map_table c";
     my @wheres = ('a.id = c.object_id','c.member__id = m.id',
                   'm.active = 1');
-    push @wheres, 'a.del = 0' if defined $params->{id};
+    push @wheres, "a.del = 0" unless exists $params->{id};
+
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($map{$k}) {

@@ -100,7 +100,7 @@ rm_CVS		:
 	find dist/ -name '.cvsignore'  | xargs rm -rf
 
 rm_tmp		:
-	find dist/ -name '#*#' -o -name '*~' | xargs rm -rf
+	find dist/ -name '#*#' -o -name '*~' -o -name '.#*' | xargs rm -rf
 
 dist/INSTALL	: lib/Bric/Admin.pod
 	pod2text lib/Bric/Admin.pod   > dist/INSTALL

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -179,6 +179,7 @@ use constant VERSION_COLS => qw( formatting__id
                                  version
                                  usr__id
                                  data
+                                 file_name
                                  checked_out);
 
 use constant FIELDS     => qw( name
@@ -204,6 +205,7 @@ use constant VERSION_FIELDS => qw( id
                                    version
                                    modifier
                                    data
+                                   file_name
                                    checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
@@ -758,8 +760,9 @@ sub DESTROY {
 
 =item ($ids || @ids) = Bric::Biz::Asset::Formatting->list_ids($param)
 
-Returns a list of ids that match the given parameters. See the C<list()>
-method for supported keys in the C<$param> hash reference.
+Returns an unordered list or array reference of template object IDs that match
+the criteria defined. The criteria are the same as those for the C<list()>
+method except for C<Order> and C<OrderDirection>, which C<list_ids()> ignore.
 
 B<Throws:>
 
@@ -1877,7 +1880,7 @@ sub _get_category_object {
     return unless defined $cat_id;
 
     unless ($cat_obj) {
-        $cat_obj = Bric::Biz::Category->lookup({id => $cat_id});
+        $cat_obj = Bric::Biz::Category->lookup({ id => $cat_id });
         $self->_set(['_category_obj'], [$cat_obj]);
 
         # Restore the original dirty value.

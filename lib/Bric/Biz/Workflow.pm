@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -225,6 +225,7 @@ sub new {
 
     my $sd = delete $init->{start_desk};
     $init->{_active} = 1;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
     # Call the parent's constructor.
     $self = $self->SUPER::new($init);

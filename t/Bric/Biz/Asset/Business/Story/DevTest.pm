@@ -687,6 +687,7 @@ sub test_add_get_categories: Test(4) {
     my $rcats;
     ok( $rcats = $story->get_categories, '... and we can call get');
     # are the ones we just added in there?
+    $rcats = [ sort { $a->get_name cmp $b->get_name } @$rcats ];
     is( $rcats->[0]->get_name(), "_test_$time.1", ' ... and they both' );
     is( $rcats->[1]->get_name(), "_test_$time.2", ' ... have the right name' );
 }

@@ -44,7 +44,7 @@ sub test_lookup : Test(10) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(32) {
+sub test_list : Test(37) {
     my $self = shift;
     # Create a new test_valsent group.
     ok( my $grp = Bric::Util::Grp::AlertType->new
@@ -119,6 +119,17 @@ sub test_list : Test(32) {
         ({ event_type_id => $test_vals{event_type_id} + 1}),
         "Lookup by event_type_id '" . ($test_vals{event_type_id} + 1) . "'" );
     is( scalar @ats, 3, "Check for 3 alert types" );
+
+    # Try active.
+    ok( @ats = Bric::Util::AlertType->list({ active => 1 }),
+        "Look up active true" );
+    is( scalar @ats, 5, "Check for 5 alert types" );
+
+    # Deactivate one and try again.
+    ok( $ats[0]->deactivate->save, "Deactivate an alert type" );
+    ok( @ats = Bric::Util::AlertType->list({ active => 1 }),
+        "Look up active true again" );
+    is( scalar @ats, 4, "Check for 4 alert types" );
 }
 
 1;

@@ -40,15 +40,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-12 19:04:44 $
 
 =head1 SYNOPSIS
 
@@ -609,8 +609,9 @@ sub _load_template {
         $init{user__id} = get_user_id;
 
         # handle output_channel => output_channel__id mapping
-        ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids(
-                                      { name => $tdata->{output_channel} });
+
+        ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids
+          ({ name => $tdata->{output_channel}[0] });
         throw_ap(error => __PACKAGE__ . " : no output_channel found matching "
                    . "(output_channel => \"$tdata->{output_channel}\")")
           unless defined $init{output_channel__id};
@@ -622,8 +623,8 @@ sub _load_template {
             $init{file_type} = 'mc';
         } else {
             throw_ap(error => __PACKAGE__ .
-                       " : unable to determine file_type for file_name " .
-                       "\"$tdata->{file_name}\".");
+                     " : unable to determine file_type for file_name " .
+                     "\"$tdata->{file_name}\".");
         }
 
         # get element and name for asset type unless this generic

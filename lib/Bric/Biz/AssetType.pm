@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.48 $
+$Revision: 1.49 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.48 $ )[-1];
+our $VERSION = (qw$Revision: 1.49 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -282,13 +282,14 @@ B<Notes:> NONE.
 
 sub new {
     my ($class, $init) = @_;
-
     my $self = bless {}, ref $class || $class;
-
     $init->{_active} = 1;
 
     # Set reference unless explicitly set.
     $init->{reference} = $init->{reference} ? 1 : 0;
+
+    # Set the instance group ID.
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
     $self->SUPER::new($init);
 
@@ -1825,12 +1826,8 @@ sub get_data {
     my @all;
 
     # Include the yet to be added parts.
-    while (my ($id,$obj) = each %$new_parts) {
-	if ($id == -1) {
-	    push @all, @$obj;
-	} else {
-	    push @all, $obj;
-	}
+    while (my ($id, $obj) = each %$new_parts) {
+        push @all, $id == -1 ? @$obj : $obj;
     }
 
     push @all, values %$parts;
@@ -1838,9 +1835,10 @@ sub get_data {
     if ($field) {
 	# Return just the field they asked for.
 	$field = $make_key_name->($field);
-	my ($val) = grep($_->get_key_name eq $field, @all);
-	return unless $val;
-	return $val;
+        for my $d (@all) {
+            return $d if $d->get_key_name eq $field;
+        }
+	return;
     } else {
 	# Return all the fields.
 	return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :

@@ -4,21 +4,20 @@ package bric_upgrade;
 
 =head1 NAME
 
-bric_upgrade - Library with functions to assist upgrading a Bricolage
-installation.
+bric_upgrade - Library with functions to assist upgrading a Bricolage installation.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-09 16:57:26 $
+$Date: 2003-08-12 19:04:42 $
 
 =head1 SYNOPSIS
 
@@ -46,18 +45,18 @@ $Date: 2003-08-09 16:57:26 $
 
 This module exports functions that are useful for upgrading a Bricolage
 database. The idea is that all changes to the Bricolage database that are
-required by and upgrade will be performed via this module. It provides functions
-to test to see if an upgrade has previously been performed, as well as functions
-to update the database. Furthermore, it will automatically process -p and -u
-arguments to your upgrade script so that the change can be done by a database
-user with administrative permissions.
+required by and upgrade will be performed via this module. It provides
+functions to test to see if an upgrade has previously been performed, as well
+as functions to update the database. Furthermore, it will automatically
+process -p and -u arguments to your upgrade script so that the change can be
+done by a database user with administrative permissions.
 
 =cut
 
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_sql fetch_sql);
+our @EXPORT_OK = qw(do_sql test_sql fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir);
@@ -96,9 +95,9 @@ getopts('u:p:');
 $opt_u ||= 'postgres';
 $opt_p ||= 'postgres';
 
-# Grab the Bricolage version number and put it into a v-string. We can eliminate
-# the eval if, in the future, we change the Bric version number to an actual
-# v-string.
+# Grab the Bricolage version number and put it into a v-string. We can
+# eliminate the eval if, in the future, we change the Bric version number
+# to an actual v-string.
 my $old_version = eval "v$Bric::VERSION";
 
 # Connect to the database.
@@ -126,10 +125,11 @@ open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
 
   exit if test_sql($sql);
 
-Evaluates the SQL expression $sql against the Bricolage database. If there is an
-error preparing or executing $sql, test_sql() will return false. If there are no
-errors, it will return true. Use this function to determine whether the upgrades
-your script is about to perform have already been performed.
+Evaluates the SQL expression C<$sql> against the Bricolage database. If there
+is an error preparing or executing C<$sql>, C<test_sql()> will return
+false. If there are no errors, it will return true. Use this function to
+determine whether the upgrades your script is about to perform have already
+been performed.
 
 For example, say you need to add a table C<foo_bar>. It's possible, for some
 reason or other, that the table may already have been added -- perhaps your
@@ -160,14 +160,14 @@ C<fetch_sql> returns true. Otherwise, it returns false. An exception will also
 cause C<fetch_sql> to return false. Use this function to determine whether the
 upgrades your script is about to perform have already been performed.
 
-This function is similar in functionality to C<test_sql>, except that it doesn't
-explicitly test for an exception. In other words, it's useful for testing for
-database changes that may not trigger an exception even if they haven't been
-run. For example, say you need to add a new value to the event_type table with
-the key_name column value 'foo_grepped'. To determine whether this value has
-already been entered into the database, you simply try to select it. Use
-C<fetch_sql> to do this, as it will return true if it manages to fetch a value,
-and false otherwise.
+This function is similar in functionality to C<test_sql>, except that it
+doesn't explicitly test for an exception. In other words, it's useful for
+testing for database changes that may not trigger an exception even if they
+haven't been run. For example, say you need to add a new value to the
+event_type table with the key_name column value 'foo_grepped'. To determine
+whether this value has already been entered into the database, you simply try
+to select it. Use C<fetch_sql> to do this, as it will return true if it
+manages to fetch a value, and false otherwise.
 
   exit if fetch_sql('SELECT name FROM event_type WHERE key_name = 'foo_grepped');
 
@@ -189,13 +189,13 @@ sub fetch_sql {
   do_sql(@sql_statements);
 
 This function takes a list of SQL statements and executes each in turn. For
-each, it also sets the proper permissions for the Bricolage database user to be
-able to access the tables and sequences it creates. Use this function to
+each, it also sets the proper permissions for the Bricolage database user to
+be able to access the tables and sequences it creates. Use this function to
 actually make changes to the Bricolage database.
 
 For example, say you need to add the table "soap_scum". Simply pass the proper
-SQL to create the table to this function, and the SQL will be executed, and the
-Bricolage database user provided the proper permissions to access it.
+SQL to create the table to this function, and the SQL will be executed, and
+the Bricolage database user provided the proper permissions to access it.
 
   my $sql = qq{
       CREATE TABLE soap_scum (
@@ -207,10 +207,10 @@ Bricolage database user provided the proper permissions to access it.
 
   do_sql($sql);
 
-If for some reason there are any errors executing any of the SQL statements, all
-the changes started with this call to do_sql() will be rolled back and an
-exception thrown. Thus, any error will prevent any of the changes from affecting
-the database unless all of the SQL statements succeed.
+If for some reason there are any errors executing any of the SQL statements,
+all the changes started with this call to do_sql() will be rolled back and an
+exception thrown. Thus, any error will prevent any of the changes from
+affecting the database unless all of the SQL statements succeed.
 
 =cut
 
@@ -248,6 +248,29 @@ sub do_sql {
     } else {
 	commit();
     }
+}
+
+=head2 db_version()
+
+  if (db_version() ge '7.3') {
+      do_sql "ALTER TABLE foo DROP bar";
+  }
+
+This function returns the the version number of the database server we're
+connected to. It can be used to determine what functionality is available in
+order to perform different tasks. For example, PostgreSQL 7.3 and later
+support dropping columns. Thus, the above exmple demonstrates checking that
+the server is 7.3 or later before executing dropping a column.
+
+=cut
+
+my $version;
+
+sub db_version {
+    return $version if $version;
+    $version = col_aref("SELECT version()")->[0];
+    $version =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
+    return $version;
 }
 
 1;

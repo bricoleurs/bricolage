@@ -149,6 +149,8 @@ Folks who have submitted patches include:
 
 =item Clive Jones
 
+=item Cinly Ooi
+
 =back
 
 Friends who have spotted bugs include:
@@ -200,6 +202,12 @@ Friends who have spotted bugs include:
 =item Marc Hawson
 
 =item Tobias Kremer
+
+=item Kevin Elliott
+
+=item Michael G. Kaiser
+
+=item Radu Greab
 
 =back
 

@@ -7,16 +7,16 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-12 19:04:44 $
 
 
 =head1 SYNOPSIS
@@ -202,6 +202,7 @@ sub new {
     $init->{_active} = !defined $init->{active} ? 1 :
       delete $init->{active} ? 1 : 0;
     $init->{_publish} = delete $init->{publish} ? 1 : 0;
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
     # Call the parent's constructor.
     $self->SUPER::new($init);

@@ -6,16 +6,16 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:37 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -128,8 +128,8 @@ sub handler {
     };
     # Log any errors.
     if (my $err = $@) {
-	rollback();
-	$r->log->error($err);
+	rollback(1);
+	$r->log->error(ref $err ? $err->as_text : $err);
     }
 
     eval {
@@ -138,7 +138,7 @@ sub handler {
     };
     # If there's a problem with this (unlikely!), then we're hosed. Apache will
     # hang and need to be rebooted.
-    $r->log->error($@) if $@;
+    $r->log->error(ref $@ ? $@->as_text : $@) if $@;
     # Bail (this actually isn't required, but let's be consistent!).
     return OK;
 }

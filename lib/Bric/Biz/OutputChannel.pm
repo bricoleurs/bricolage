@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:33 $
+$Date: 2003-08-12 19:04:43 $
 
 =head1 SYNOPSIS
 
@@ -297,6 +297,7 @@ sub new {
     $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug} ? 1 : 0;
 
     # Construct this puppy!
+    push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     return $class->SUPER::new($init);
 }
 

@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-08-12 19:04:44 $
 
 =head1 SYNOPSIS
 
@@ -317,6 +317,11 @@ File resources that are associated with a directory Resource's ID.
 =item job_id
 
 Resources associated with a given job ID.
+
+=item not_job_id
+
+Resources not associated with a given job ID. Best used in combination with
+C<story_id> or C<media_id>.
 
 =back
 
@@ -1719,85 +1724,89 @@ B<Notes:>
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my (@wheres, @params);
-    # I should probably change this from a while loop to a series of if
-    # statements for individual keys, since I'm checking every one of them,
-    # anyway.
+    my $tables = 'resource r, media_type t';
+    my $wheres = 'r.media_type__id = t.id';
+    my @params;
+
     while (my ($k, $v) = each %$params) {
         if ($k eq 'mod_time') {
             if (ref $v) {
                 # It's an arrayref of times.
-                push @wheres, "r.$k BETWEEN ? AND ?";
+                $wheres .= " AND r.$k BETWEEN ? AND ?";
                 push @params, db_date($v->[0]), db_date($v->[1]);
             } else {
                 # It's a single value.
-                push @wheres, "r.$k = ?";
+                $wheres .= " AND r.$k = ?";
                 push @params, db_date($v);
             }
         } elsif ($k eq 'size') {
             if (ref $v) {
                 # It's an arrayref of sizes.
-                push @wheres, "r.$k BETWEEN ? AND ?";
+                $wheres .= " AND r.$k BETWEEN ? AND ?";
                 push @params, @$v;
             } else {
                 # It's a single value.
-                push @wheres, "r.$k = ?";
+                $wheres .= " AND r.$k = ?";
                 push @params, $v;
             }
         } elsif ($k eq 'path' || $k eq 'uri') {
             # A text comparison.
-            push @wheres, "$k LIKE ?";
+            $wheres .= " AND $k LIKE ?";
             push @params, $v;
         } elsif ($k eq 'media_type') {
-            # We need to do a subselect for the correct MEDIA type ID.
+            # Another text comparison.
+            $wheres .= " AND LOWER(t.name) LIKE ?";
             push @params, lc $v;
-            push @wheres, "r.media_type__id IN (SELECT id FROM media_type WHERE" .
-              " LOWER(name) LIKE ?)";
         } elsif ($k eq 'story_id') {
-            # We need to do a subselect for the story_id.
+            # We need to do a an inner join for the story_id.
+            $tables .= ", story__resource sr";
+            $wheres .= " AND r.id = sr.resource__id AND sr.story__id = ?";
             push @params, $v;
-            push @wheres, "r.id IN (SELECT resource__id FROM story__resource"
-              . " WHERE story__id = ?)";
         } elsif ($k eq 'media_id') {
-            # We need to do a subselect for the media_id.
+            # We need to do a an inner join for the media_id.
+            $tables .= ", media__resource sr";
+            $wheres .= " AND r.id = sr.resource__id AND sr.media__id = ?";
             push @params, $v;
-            push @wheres, "r.id IN (SELECT resource__id FROM media__resource"
-              . " WHERE media__id = ?)";
         } elsif ($k eq 'dir_id') {
-            # We need to do a subselect for the media_id.
+            # Simple numeric comparison.
+            $wheres .= " AND r.parent_id = ?";
             push @params, $v;
-            push @wheres, "r.id IN (SELECT id FROM resource WHERE parent_id = ?)";
         } elsif ($k eq 'job_id') {
             # if job_id is undef, just return no hits rather than toast the
             # database with the index-defeating query "WHERE job__id = NULL"
             return ($href ? {} : []) unless defined $v;
 
             # We need to do a subselect for the job_id.
-            push @wheres, "r.id IN (SELECT resource__id FROM job__resource "
-                          . "WHERE job__id = ?)";
+            $tables .= ", job__resource jr";
+            $wheres .= " AND r.id = jr.resource__id AND jr.job__id = ?";
+            push @params, $v;
+        } elsif ($k eq 'not_job_id') {
+            # if job_id is undef, just return no hits rather than toast the
+            # database with the index-defeating query "WHERE job__id = NULL"
+            return ($href ? {} : []) unless defined $v;
+
+            # We need to do a subselect for the job_id.
+            $wheres .= " AND r.id NOT IN (SELECT resource__id FROM "
+                          . "job__resource WHERE job__id = ?)";
             push @params, $v;
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
-            push @wheres, "r.$k = ?";
+            $wheres .= " AND r.$k = ?";
             push @params, $v ? 1 : 0;
         } else {
             # It's an ID.
-            push @wheres, "r.$k = ?";
+            $wheres .= " AND r.$k = ?";
             push @params, $v;
         }
     }
 
-    # Assemble the WHERE statement.
-    local $" = "\n               AND ";
-    my $where = @wheres ? "\n               AND @wheres" : '';
-
     # Prepare the SELECT statement.
     local $" = ', ';
-    my $qry_cols = $ids ? ['id'] : \@cols;
+    my $qry_cols = $ids ? ['r.id'] : \@cols;
     my $sel = prepare_ca(qq{
         SELECT @$qry_cols
-        FROM   resource r, media_type t
-        WHERE  r.media_type__id = t.id$where
+        FROM   $tables
+        WHERE  $wheres
         ORDER BY path
     }, undef, DEBUG);
 
