@@ -62,7 +62,8 @@ if ($param->{delete} &&
     elsif (@cs == 1 && defined $param->{element_id}
 	   && $cs[0] != $param->{element_id}) {
 	$no_save = 1 }
-    add_msg($lang->maketext('The name [_1] is already used by another [_2].',$name ,$disp_name)) if $no_save;
+    add_msg($lang->maketext('The name [_1] is already used by another [_2].',
+                            $name, $disp_name)) if $no_save;
 
     # Roll in the changes. Create a new object if we need to pass in an Element
     # Type ID.
@@ -192,16 +193,21 @@ if ($param->{delete} &&
         $comp->delete_output_channels($del_oc_ids);
     }
 
-    # Enable output channels. The primary OC should always be enabled.
+    # Figure out which output channels should be enabled, including the primary,
+    # of course.
     my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
-      $comp->get_primary_oc_id;
+      $comp->get_primary_oc_id || ();
+
+    # Add a new output channel, if necessary.
+    if ($field eq "$widget|add_oc_id_cb") {
+        $comp->add_output_channel($param->{"$widget|add_oc_id_cb"});
+        $enabled{$param->{"$widget|add_oc_id_cb"}} = 1;
+    }
+
+    # Enable output channels. The primary OC should always be enabled.
     foreach my $oc ($comp->get_output_channels) {
         $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
     }
-
-    # Add output channels.
-    $comp->add_output_channel($param->{"$widget|add_oc_id_cb"})
-      if $field eq "$widget|add_oc_id_cb";
 
     # delete any selected sub elements
     if ($param->{"element|delete_cb"}) {
@@ -252,11 +258,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.7 $
+$Revision: 1.22.4.8 $
 
 =head1 DATE
 
-$Date: 2003-06-11 01:24:54 $
+$Date: 2003-07-18 19:03:08 $
 
 =head1 SYNOPSIS
 
