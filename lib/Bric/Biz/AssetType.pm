@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33.2.3 $
+$Revision: 1.33.2.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33.2.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-09 04:03:36 $
+$Date: 2003-03-11 17:48:32 $
 
 =head1 SYNOPSIS
 
@@ -115,8 +115,10 @@ use Bric::Biz::AssetType::Parts::Data;
 use Bric::Util::Attribute::AssetType;
 use Bric::Biz::ATType;
 use Bric::Util::Class;
+use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
+use Bric::Util::Coll::Site;
 
 #==============================================================================#
 # Inheritance                          #
@@ -127,7 +129,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $make_key_name);
+my ($get_oc_coll, $get_site_coll, $make_key_name);
 
 #==============================================================================#
 # Constants                            #
@@ -209,6 +211,9 @@ BEGIN {
 
 			 # Stores the collection of output channels
                          '_oc_coll'             => Bric::FIELD_NONE,
+
+			 # Stores the collection of sites
+                         '_site_coll'             => Bric::FIELD_NONE,
 
 			 # A list of contained parts
 			 '_parts'	        => Bric::FIELD_NONE,
@@ -1536,6 +1541,83 @@ sub delete_output_channels {
 
 #------------------------------------------------------------------------------#
 
+=item ($site_list || @site_list) = $element->get_sites;
+
+=item ($site_list || @site_list) = $element->get_sites(@site_ids);
+
+This returns a list of output channels that have been associated with this
+asset type. If C<@site_ids> is passed, then only the site with those
+IDs are returned, if they're associated with this asset type.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> The objects returned will be Bric::Biz::Site
+objects, and these objects contain extra information relevant to the
+assocation between each output channel and this element object.
+
+=cut
+
+sub get_sites { $get_site_coll->(shift)->get_objs(@_) 
+}
+#------------------------------------------------------------------------------#
+
+=item my $site = $element->add_site($site)
+
+=item my $site = $element->add_site($site_id)
+
+Adds a site to this element object and returns the resulting
+Bric::Biz::Site object. Can pass in either an site object or a site ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_site {
+    my ($self, $site) = @_;
+
+    #this should be a proper exception, but David
+    #needs to tell me the convetion for exceptions
+    die "You can only add sites to top level objects" unless
+      $self->get_top_level;
+
+    my $site_coll = $get_site_coll->($self);
+    $site = Bric::Biz::Site->lookup({ id =>  $site}) unless ref $site;
+
+    die "Couldn't find site" unless ref $site;
+
+    $site_coll->add_new_objs( $site );
+}
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->remove_sites([$sites])
+
+This takes an array reference of output channels and removes their association
+from the object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub remove_sites {
+    my ($self, $sites) = @_;
+    my $site_coll = $get_site_coll->($self);
+    $site_coll->del_objs(@$sites);
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
 =item ($part_list || @part_list) = $element->get_data()
 
 This will return a list of the fields and containers that make up
@@ -2097,13 +2179,16 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll) = $self->_get(qw(id _oc_coll));
+    my ($id, $oc_coll, $site_coll) = $self->_get(qw(id _oc_coll _site_coll));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
 
     # Save the parts and the output channels.
     $oc_coll->save if $oc_coll;
+
+    # Save the sites.
+    $site_coll->save($id) if $site_coll;
 
     # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
@@ -2666,6 +2751,74 @@ $get_oc_coll = sub {
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
+};
+
+
+=item my $site_coll = $get_site_coll->($self)
+
+Returns the collection of sites for this element. The collection is
+a L<Bric::Util::Coll::Site|Bric::Util::Coll::Site> object. See that
+class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
+details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_site_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $site_coll) = $self->_get('id', '_site_coll');
+    return $site_coll if $site_coll;
+    $site_coll = Bric::Util::Coll::Site->new
+      (defined $id ? {element_id => $id} : undef);
+    $self->_set(['_site_coll'], [$site_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $site_coll;
 };
 
 =item my $key_name = $make_key_name->($name)

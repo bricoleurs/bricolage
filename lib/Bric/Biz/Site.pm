@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.11 $
+$Revision: 1.1.2.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.12 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-11 01:17:42 $
+$Date: 2003-03-11 17:48:32 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.11 2003-03-11 01:17:42 wheeler Exp $
+$Id: Site.pm,v 1.1.2.12 2003-03-11 17:48:32 arthurbergman Exp $
 
 =back
 
@@ -755,6 +755,11 @@ $get_em = sub {
             $tables .= ", member m2, site_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
+            push @params, $params->{$k};
+        } elsif ($k eq 'element_id') {
+            # Look up by element association.
+            $tables .= ", element__site es";
+            $wheres .= " AND a.id = es.site__id AND es.element__id = ?";
             push @params, $params->{$k};
         } else {
             # Simple string comparison.

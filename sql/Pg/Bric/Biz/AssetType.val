@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.1 $
+-- VERSION: $Revision: 1.1.2.2 $
 --
--- $Date: 2003-03-03 03:05:11 $
+-- $Date: 2003-03-11 17:48:32 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -85,6 +85,9 @@ VALUES (641, 341, 641);
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (1, 'Story', 'story', 'A story element', 1, 330, 1, 1);
 
+INSERT INTO element__site (element__id, site__id)
+VALUES (1, 100);
+
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (410, 27, 22, 1);
 
@@ -98,6 +101,9 @@ VALUES (1, 1, 1, 1, 1);
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (2, 'Column', 'column', 'A weekly column element', 1, 331, 1, 1);
 
+INSERT INTO element__site (element__id, site__id)
+VALUES (2, 100);
+
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (411, 27, 22, 1);
 
@@ -110,6 +116,9 @@ VALUES (4, 2, 1, 1, 1);
 
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (3, 'Book Review', 'book_review', 'A book review element', 1, 332, 1, 1);
+
+INSERT INTO element__site (element__id, site__id)
+VALUES (3, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (412, 27, 22, 1);
@@ -126,6 +135,9 @@ VALUES (7, 3, 1, 1, 1);
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (4, 'Photograph', 'photograph', 'A photograph element', 2, 333, 1, 1);
 
+INSERT INTO element__site (element__id, site__id)
+VALUES (4, 100);
+
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (413, 27, 22, 1);
 
@@ -139,6 +151,9 @@ VALUES (10, 4, 1, 1, 1);
 
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (5, 'Illustration', 'illustration', 'An illustration element', 2, 334, 1, 1);
+
+INSERT INTO element__site (element__id, site__id)
+VALUES (5, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (414, 27, 22, 1);
@@ -219,6 +234,9 @@ VALUES (22, 12, 437);
 -- A Cover Element
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, primary_oc__id, active)
 VALUES (13, 'Cover', 'cover', 'A cover element.', 7, 335, 1, 1);
+
+INSERT INTO element__site (element__id, site__id)
+VALUES (13, 100);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (438, 27, 22, 1);

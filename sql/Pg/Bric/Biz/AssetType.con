@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:45 $
+-- $Date: 2003-03-11 17:48:32 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 
@@ -79,6 +79,18 @@ ALTER TABLE attr_element_val ADD
 ALTER TABLE attr_element_meta ADD 
     CONSTRAINT fk_attr_at__attr_at_meta FOREIGN KEY (attr__id)
     REFERENCES attr_element(id) ON DELETE CASCADE;
+
+
+-- -----------------------------------------------------------------------------
+-- Table: element__site
+
+ALTER TABLE element__site ADD 
+    CONSTRAINT fk_element__site_site__id FOREIGN KEY (site__id)
+    REFERENCES site(id) ON DELETE CASCADE;
+
+ALTER TABLE element__site ADD 
+    CONSTRAINT fk_element__site_element__id  FOREIGN KEY (element__id)
+    REFERENCES element(id) ON DELETE CASCADE;
 
 
 
