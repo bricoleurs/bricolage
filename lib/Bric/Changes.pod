@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Bric::SAOP::Handler now properly logs fatal errors that are strings rather than
 exceptions. [David]
 
+=item *
+
+Updated Bric::DBA documentation to better reflect PostgreSQL standards.
+[Neil Conway]
+
 =back
 
 =head1 VERSION 1.4.5

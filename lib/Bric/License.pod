@@ -106,6 +106,8 @@ Folks who have submitted patches include:
 
 =item Petar Bojkov
 
+=item Neil Conway
+
 =back
 
 Friends who have spotted bugs include:
