@@ -1,28 +1,36 @@
 <%once>;
-my $class = 'Bric::Biz::Category';
-my $section = 'admin';
-my $type = 'category';
 my $widget = 'profile';
-my $disp = get_disp_name($type);
-my $root_id = $class->ROOT_CATEGORY_ID;
 </%once>
 <%args>
 $id => undef
 </%args>
 <%init>;
 
-if ($ARGS{site_id}) {
-    $m->comp('edit.html', id => $id, %ARGS);
+if ($ARGS{id}) {
+    $m->comp('edit.html', widget => $widget,
+                          id     => $id,
+                          %ARGS);
 } else {
     # Get a list of sites that we have EDIT access to
     my $sites = $c->get('__SITES__');
+
+    unless ($sites) {
+        $sites = Bric::Biz::Site->list;
+        $c->set('__SITES__', $sites);
+    }
+
     $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
 
+    # If there is only one site, skip the site chooser screen
     if (@$sites == 1) {
         $ARGS{site_id} = $sites->[0]->get_id;
-        $m->comp('edit.html', id => $id, %ARGS);
+        $m->comp('edit.html', widget => $widget,
+                              id     => $id,
+                              %ARGS);
     } else {
-        $m->comp('new.html', id => $id, sites => $sites);
+        $m->comp('new.html', widget => $widget,
+                             id     => $id,
+                             sites  => $sites);
     }
 }
 </%init>
@@ -35,11 +43,11 @@ if ($ARGS{site_id}) {
 
 =head1 VERSION
 
-$Revision: 1.10.2.5 $
+$Revision: 1.10.2.6 $
 
 =head1 DATE
 
-$Date: 2003-03-09 02:39:01 $
+$Date: 2003-03-10 18:30:54 $
 
 =head1 DESCRIPTION
 
