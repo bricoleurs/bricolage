@@ -35,13 +35,32 @@ my %conf = (
 );
 
 
-# handle all these callbacks with the same subroutine
-foreach my $cb (qw(save add save_n_stay addElement add_oc_id add_site_id)) {
-    *$cb = sub : Callback {
-        return unless $_[0]->value;      # already handled
-        &$base_handler;
-    };
+sub save : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
 }
+sub add : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+sub save_n_stay : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+sub addElement : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+sub add_oc_id : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+sub add_site_id : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+
+###
 
 my $base_handler = sub {
     my $self = shift;
@@ -55,16 +74,7 @@ my $base_handler = sub {
     my $obj = defined $id ? $class->lookup({ id => $id }) : $class->new;
 
     # Check the permissions.
-    unless (chk_authz($obj, $id ? EDIT : CREATE, 1)
-
-              # XXX: apparently $key cannot be 'user' currently;
-              # see below $key.mc where is called in the current directory,
-              # but there is no component widgets/formBuilder/user.mc
-              # (only contrib_type.mc and element.mc (formBuilder.mc is called
-              # from comp/admin/profile/(contrib_type|element)/dhandler )
-
-              || ($key eq 'user' && $obj->get_id == get_user_id()))
-    {
+    unless (chk_authz($obj, $id ? EDIT : CREATE, 1) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
         add_msg($self->lang->maketext("Changes not saved: permission denied."));
@@ -310,8 +320,10 @@ my $do_element = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
             # There's already an attribute by that name.
-            add_msg($self->lang->maketext('An [_1] attribute already exists. "
-                     ."Please try another name.',"&quot;$param->{fb_name}&quot;"));
+            my $msg = 'An [_1] attribute already exists. "
+                     . "Please try another name.';
+            my $arg = "&quot;$param->{fb_name}&quot;";
+            add_msg($self->lang->maketext($msg, $arg));
             $no_save = 1;
         } else {
             my $sqltype = $param->{fb_type} eq 'date' ? 'date'
