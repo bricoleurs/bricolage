@@ -231,6 +231,12 @@ attribute. [David]
 Deleted output channels no longer show up in the select list for story type
 and media type elements. [David]
 
+=item *
+
+Deleting a workflow from the workflow manager now properly updates the
+workflow cache so that the deleted workflow is removed from the left
+navigation without a reboot. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
