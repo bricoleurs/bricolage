@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2002-05-17 22:01:26 $
+$Date: 2002-05-18 13:35:00 $
 
 =head1 DESCRIPTION
 
@@ -121,7 +121,7 @@ popular editors are thus recommended while editing Bricolage source code.
 
 =head2 Emacs
 
-We strongrly recommend that you use C<cperl-mode> while editing Bricolage
+We strongly recommend that you use C<cperl-mode> while editing Bricolage
 sources in Emacs. Grab the latest version from the CPAN, install it, and then
 place the following in your C<~/.emacs> file:
 
@@ -163,9 +163,32 @@ And if you need to examine the Mason object files created by Bricolage in
 order to chase down bugs and such, you can use the C<cperl-mode> in those
 files by adding this to your C<~/.emacs> file:
 
-  (add-to-list 'auto-mode-alist '("/usr/local/bricoloage/data/obj" . cperl-mode))
+  (add-to-list 'auto-mode-alist '("/usr/local/bricolage/data/obj" . cperl-mode))
 
 =head2 Vim
+
+Rafael Garcia-Suarez has written a Vim indent macro which (for the most
+part) duplicates the behavior of Emacs C<perl-mode>.  It is now, as of Vim
+6.0, included in the Vim distribution and should be found in
+C<$VIMRUNTIME/indent/perl>.  The easiest way to use it though is to place the
+following line in your .vimrc:
+
+    source $VIMRUNTIME/indent.vim
+
+You'll also need to add these lines.
+
+    set tabstop=8
+    set softtabstop=4
+    set shiftwidth=4
+    set expandtab
+
+The first three lines make Vim duplicate the behavior of Emacs in creating
+the appearance of 4 space tabs with a mix of tabs and spaces.  This is
+necessary for reading older Bricolage files which were written this way,
+and haven't yet been re-tabbed.
+
+The expandtab setting does the Right Thing under the new rules, in that it
+doesn't use tabs at all, only spaces.
 
 =head1 DEBUGGING
 
@@ -212,7 +235,7 @@ a lot of data but it can be very helpful.
 =item *
 
 If you're working on a performance problem, considering setting
-DBI_PROFILE and using bric_dbprof to anaylze database query
+DBI_PROFILE and using bric_dbprof to analyze database query
 performance.
 
 =item *
