@@ -195,11 +195,6 @@ the error "Can't locate class method
 
 =item *
 
-Eliminated the need for the Apache::ConfigFile module, and thus some annoying
-problems with the CPAN indexer when trying to install it. [David]
-
-=item *
-
 The members of the "All" groups are prevented from being changed in the
 callbacks now, as well as in the interface, where JS had been preventing it.
 [David]
