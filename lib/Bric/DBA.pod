@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =head1 DATE
 
-$Date: 2004-03-25 17:35:25 $
+$Date: 2004-03-25 20:48:22 $
 
 =head1 DESCRIPTION
 
@@ -328,7 +328,7 @@ is still doing unnecessary seq scans.
 
   random_page_cost = 2
 
-=head2 Maximum FSM Pages
+=head2 Maximum Free Space Map Pages
 
 The C<max_fsm_pages> directive should be set relative to the amount of update
 activity. No one is really sure how much daily update activity there is in a
