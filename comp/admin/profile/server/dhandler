@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
-<form method="post" action="<% $r->uri %>" name="server_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="server_profile" onSubmit="return confirmChanges(this)" autocomplete="off">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'server_id')
   if defined $id;
@@ -79,11 +79,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2003-07-28 00:05:13 $
+$Date: 2004-04-10 00:28:56 $
 
 =head1 DESCRIPTION
 
