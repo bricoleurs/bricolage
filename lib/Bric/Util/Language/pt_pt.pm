@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.9.2.5 $
+$Revision: 1.9.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-22 17:10:52 $
+$Date: 2003-07-22 15:33:40 $
 
 =head1 SYNOPSIS
 
@@ -313,7 +313,6 @@ use constant key => 'pt_pt';
    'Move Assets' => 'Mover Materiais',
    'Move to' => 'Mover para',
    'New Media ' => 'Novo Media ',
-   'New Media' => 'Novo Media',
    'New Story' => 'Novo Artigo',
    'New Template' => 'Novo Template',
    'Publish' => 'Publicar',
