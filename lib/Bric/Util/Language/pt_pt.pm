@@ -6,19 +6,21 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-03 06:54:40 $
+$Date: 2004-01-07 15:23:33 $
 
 =head1 SYNOPSIS
 
-  use base qw( Bric );
+In F<bricolage.conf>:
+
+  LANGUAGE = pt_pt
 
 =head1 DESCRIPTION
 

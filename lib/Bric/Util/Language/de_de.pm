@@ -6,19 +6,21 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 19:15:09 $
+$Date: 2004-01-07 15:23:33 $
 
 =head1 SYNOPSIS
 
-  use base qw( Bric );
+In F<bricolage.conf>:
+
+  LANGUAGE = de_de
 
 =head1 DESCRIPTION
 

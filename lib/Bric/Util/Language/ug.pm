@@ -6,19 +6,21 @@ Bric::Util::Language::ug - Bricolage Uyghur translation
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-05 19:28:33 $
+$Date: 2004-01-07 15:23:33 $
 
 =head1 SYNOPSIS
 
-  use base qw( Bric );
+In F<bricolage.conf>:
+
+  LANGUAGE = ug
 
 =head1 DESCRIPTION
 

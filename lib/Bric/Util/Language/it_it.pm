@@ -6,19 +6,19 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-23 23:30:06 $
+$Date: 2004-01-07 15:23:33 $
 
 =head1 SYNOPSIS
 
-In F<bricoalage.conf>:
+In F<bricolage.conf>:
 
   LANGUAGE = it_it
 

@@ -6,19 +6,19 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-23 23:30:06 $
+$Date: 2004-01-07 15:23:33 $
 
 =head1 SYNOPSIS
 
-In F<bricoalage.conf>:
+In F<bricolage.conf>:
 
   LANGUAGE = zh_tw
 
