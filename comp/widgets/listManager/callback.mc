@@ -76,6 +76,7 @@ elsif ($field eq "$widget|set_offset_cb") {
 }
 # call back to display all results
 elsif ($field eq "$widget|show_all_records_cb") {
-    set_state_data($widget,'pagination',0);
+    set_state_data($widget, 'pagination', 0);
+    set_state_data($widget, 'show_all', 1);
 }
 </%init>

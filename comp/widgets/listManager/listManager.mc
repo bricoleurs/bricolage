@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.22.4.3 $
+$Revision: 1.22.4.4 $
 
 =head1 DATE
 
-$Date: 2003-07-18 20:22:24 $
+$Date: 2003-07-18 22:41:00 $
 
 =head1 SYNOPSIS
 
@@ -401,15 +401,27 @@ my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
 
 my $pagination = get_state_data($widget, 'pagination');
 $pagination = $limit ? 1 : 0 unless defined $pagination;
-my $offset = $limit ? get_state_data( $widget, 'offset' ) || 0 : 0;
-set_state_data($widget, 'offset', 0);
+my $offset = $limit ? get_state_data( $widget, 'offset' ) : undef;
+set_state_data($widget, 'offset', undef);
+my $show_all = get_state_data($widget, 'show_all');
+set_state_data($widget, 'show_all', undef);
 
 #--------------------------------------#
 # Find constraint and list objects.
 
-my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
-                                    $def_sort_field, $pagination, $offset);
-my $param = {%$list_arg, %$constrain};
+my ($param, $do_list);
+if ($show_all || ($pagination && defined $offset)) {
+    # We're processing pages. Just return the last query parameters.
+    $param = get_state_data($widget, 'list_params');
+    $do_list = 1;
+} else {
+    # Construct the parameters and then save them for future pages, if necessary.
+    my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
+                                        $def_sort_field);
+    $param = {%$list_arg, %$constrain};
+    set_state_data($widget, 'list_params', $param) if $pagination;
+    $do_list = 1 if %$list_arg;
+}
 
 # Load the user provided objects into the @objs array.
 my @objects = $objs ? @$objs : ();
@@ -417,7 +429,7 @@ my @objects = $objs ? @$objs : ();
 my $empty_search;
 
 # Only list if there are search parameters, or if our behaviour is 'narrow'.
-if (!$objs && ($behavior eq 'narrow' or %$list_arg)) {
+if (!$objs && ($behavior eq 'narrow' or $do_list)) {
     # Combine the list arguments and any passed constraints to search $pkg.
     @objects = $pkg->list($param);
 } else {
@@ -433,7 +445,7 @@ $load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 my @sort_objs = $sort_objects->(\@objects, $meth, $exclude);
 
 # Make sure we have some results.
-my $no_results = (scalar(@sort_objs) == 0) && (scalar(keys(%$list_arg)) > 0);
+my $no_results = @sort_objs == 0 && $do_list;
 
 #--------------------------------------#
 # Build the table data array
@@ -654,11 +666,7 @@ my $build_table_data = sub {
 };
 
 my $build_constraints = sub {
-    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field,
-        $pagination, $offset) = @_;
-
-    # Just return the last search criteria if we're in the middle of pagination.
-    return get_state_data($widget, 'list_params') if $pagination && $offset;
+    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field) = @_;
 
     # Only get the criterion if we are still on the same page where it was set.
     my $prev = get_state_data($search_widget, 'crit_set_uri') || '';
@@ -698,8 +706,6 @@ my $build_constraints = sub {
         }
     }
 
-    # Save the search criteria if we're using pagination.
-    set_state_data($widget, 'list_params', $list_arg);
     return $list_arg;
 };
 

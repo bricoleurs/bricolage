@@ -11,30 +11,24 @@ my $behavior = $def->{$type}{behavior};
 my $searchType = "dual";
 # Offer a list of groups to choose from, if this is a group manager.
 if ($type eq 'grp') {
-    my $prev_grp_type = get_state_data($type, 'prev_grp_type');
-    if (defined $prev_grp_type) {
-        unless (exists($ARGS{'grp_type'})) {
-            $ARGS{'grp_type'} = $prev_grp_type;
-        }
-    }
-
     # Set the constraint.
     $constrain = $def->{$type}{constrain};
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
 	# It's a search. Reset the group type.
 	$ARGS{grp_type} = 'all';
-    } elsif (exists $ARGS{grp_type}) {
+        set_state_data('manager|grp', 'prev_grp_type', undef);
+    } elsif (exists $ARGS{grp_type} or
+             $ARGS{grp_type} = get_state_data('manager|grp', 'prev_grp_type')) {
 	# It's just a query by group type. Set the default obj_key and
         # set the behavior to ensure that the results are listed.
 	$obj_key = $ARGS{grp_type} || 'grp';
         $behavior = 'narrow';
-        set_state_data($type, 'prev_grp_type', $ARGS{'grp_type'});
+        set_state_data('manager|grp', 'prev_grp_type', $ARGS{'grp_type'});
     } else {
         # It's the first time accessing.
 	$ARGS{grp} = 'all';
     }
 
-    set_state_name($type, $obj_key);
     $groupList = $m->scomp('/widgets/profile/select.mc',
 			   disp => 'Or Pick a Type',
 			   options => \%grp_sel,
@@ -85,7 +79,7 @@ if ($type eq 'grp') {
 }
 
 $m->comp('/widgets/search/search.mc',
-   object    => $obj_key,
+   object    => $type,
    field     => $def->{$type}{srch_field},
    type      => $searchType,
    groupList => $groupList
@@ -98,7 +92,6 @@ if (defined $def->{$type}{select}) {
 } else {
     $m->out("<p></p>");
 }
-
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
 	 behavior => $behavior,
@@ -375,11 +368,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.23.2.2 $
+$Revision: 1.23.2.3 $
 
 =head1 DATE
 
-$Date: 2003-07-18 20:22:24 $
+$Date: 2003-07-18 22:41:00 $
 
 =head1 SYNOPSIS
 
