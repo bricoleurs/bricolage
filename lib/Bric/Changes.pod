@@ -68,6 +68,11 @@ The select list of desks to transfer an asset to on My Workspace now includes
 all possible desks, including the one for which there is a link. [JoE<atilde>o
 Pedro]
 
+=item *
+
+Fetching objects from Bric::Biz::Asset::Business::Media has been optimized for
+greater speed.. [JoE<atilde>o Pedro]
+
 =back
 
 =head1 VERSION 1.3.3
