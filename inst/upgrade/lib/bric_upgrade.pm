@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-17 01:23:18 $
+$Date: 2003-10-17 01:37:05 $
 
 =head1 SYNOPSIS
 
@@ -67,7 +67,8 @@ use base qw(Exporter);
 our @EXPORT_OK = qw(do_sql test_sql fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(catdir updir);
+use FindBin;
 
 # Load the options.
 use Getopt::Std;
@@ -84,6 +85,14 @@ BEGIN{
 BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+
+    # Always use the Bric::Config and Bric::Util::DBi from the sources.
+    unshift @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib';
+    require Bric::Config;
+    Bric::Config->import(qw(DBI_USER));
+    require Bric::Util::DBI;
+    Bric::Util::DBI->import(qw(:all));
+    shift @INC;
 
     # use $BRICOLAGE_ROOT/lib if exists
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
@@ -105,10 +114,6 @@ $@
 ######################################################################
 END
 }
-
-# Load Bricolage DBI library.
-use Bric::Util::DBI qw(:all);
-use Bric::Config qw(DBI_USER);
 
 ##############################################################################
 # Start a transaction. Everyting the script that loads this module
