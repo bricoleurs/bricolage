@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.71 $
+$Revision: 1.71.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.71 $ )[-1];
+our $VERSION = (qw$Revision: 1.71.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-26 03:43:46 $
+$Date: 2004-05-01 00:01:29 $
 
 =head1 SYNOPSIS
 
@@ -651,6 +651,11 @@ active - defaults to true
 user__id - if defined will return the versions checked out to the user with
 this id. Otherwise , unless C<checked_out> is passed, it will return the most
 current non-checked out versions.
+
+=item *
+
+checked_out - A boolean value indicating whether to return only checked out or
+not checked out templates.
 
 =item *
 

@@ -117,6 +117,13 @@ Events are now properly logged for keywords managed in the keyword profile.
 Media URIs are now properly updated when the primary output channel is changed.
 Reported by Ben Bangert. [David]
 
+=item *
+
+Bulk publish no longer marks checked-out stories as published when it hasn't
+published them. It also is no longer redundant when it reports that
+checked-out assets won't be published. Thanks to Serge Sozonoff for the spot!
+[David]
+
 =back
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)

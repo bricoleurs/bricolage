@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.95.2.1 $
+$Revision: 1.95.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.95.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.95.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-29 03:47:14 $
+$Date: 2004-05-01 00:01:31 $
 
 =head1 SYNOPSIS
 
@@ -487,6 +487,11 @@ The media document file name. May use C<ANY> for a list of possible values.
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
+
+=item checked_out
+
+A boolean value indicating whether to return only checked out or not checked
+out media.
 
 =item return_versions
 

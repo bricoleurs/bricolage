@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.101 $
+$Revision: 1.101.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.101 $ )[-1];
+our $VERSION = (qw$Revision: 1.101.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-04-05 14:53:32 $
+$Date: 2004-05-01 00:01:32 $
 
 =head1 SYNOPSIS
 
@@ -611,6 +611,11 @@ The story slug. May use C<ANY> for a list of possible values.
 
 Returns the versions that are checked out by the user, otherwise returns the
 most recent version. May use C<ANY> for a list of possible values.
+
+=item checked_out
+
+A boolean value indicating whether to return only checked out or not checked
+out stories.
 
 =item return_versions
 

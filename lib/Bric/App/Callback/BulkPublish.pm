@@ -12,7 +12,6 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Util::DBI qw(ANY);
 
-
 sub publish_categories : Callback {
     my $self = shift;
 
