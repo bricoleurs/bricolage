@@ -6,6 +6,7 @@
 #   all       - default target checks requirements and builds source
 #   install   - installs the bricolage system
 #   upgrade   - upgrades an existing installation
+#   uninstall - uninstalls an existing installation
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a CVS checkout
 #   clone     - create a distribution based on an existing system
@@ -219,6 +220,23 @@ upgrade_done    :
 	@echo
 
 .PHONY		: db_upgrade upgrade_files stop upgrade_done
+
+##########################
+# uninstall rules        #
+##########################
+
+uninstall 	: prep_uninstall stop db_uninstall rm_files clean
+
+prep_uninstall	:
+	$(PERL) inst/uninstall.pl
+
+db_uninstall	:
+	$(PERL) inst/db_uninstall.pl
+
+rm_files	:
+	$(PERL) inst/rm_files.pl
+
+.PHONY 		: uninstall prep_uninstall db_uninstall rm_files
 
 ##########################
 # test rules             #

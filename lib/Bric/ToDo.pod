@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.80 $
+$Revision: 1.81 $
 
 =head1 DATE
 
-$Date: 2002-12-05 22:32:59 $
+$Date: 2002-12-12 12:09:27 $
 
 =head1 DESCRIPTION
 
@@ -120,10 +120,6 @@ Add ability to "undeploy" templates without deactivating them.
 
 Add option to the installation system to always use the defaults and
 never prompt the user.
-
-=item *
-
-Add "make uninstall" support to installation system.
 
 =item *
 

@@ -315,6 +315,10 @@ appropriate to the currently-burning Output Channel. [David]
 
 Ported to HTML::Mason versions 1.15 and higher. [Scott]
 
+=item *
+
+Added C<make uninstall> support to installation system. [Scott]
+
 =back
 
 =head1 VERSION 1.4.6
