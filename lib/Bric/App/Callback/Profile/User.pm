@@ -40,7 +40,8 @@ sub save : Callback {
         my $msg = "$disp_name profile [_1] deleted.";
         add_msg($self->lang->maketext($msg, $name));
         get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
-          : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
+          : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
+                            $self);
         return;
     }
 
@@ -171,7 +172,8 @@ sub save : Callback {
 
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
-      : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
+      : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
+                        $self);
 }
 
 
