@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2001-12-10 21:02:18 $
 
 =head1 SYNOPSIS
 
@@ -274,7 +274,7 @@ sub lookup {
     if (exists $init->{'id'}) {
 	$ret = _select_keyword('id=?', [$init->{'id'}]);
     } elsif (exists $init->{'name'}) {
-	$ret = _select_keyword('LOWER(name) = ?', [lc($init->{'name'})]);
+	$ret = _select_keyword('LOWER(name) LIKE ?', [lc($init->{'name'})]);
     } else {
 	my $err_msg = 'Bad parameters passed to \'lookup\'';
 	die Bric::Util::Fault::Exception::GEN->new({'msg' => $err_msg});
