@@ -1,25 +1,20 @@
 package Bric::Util::Language::pt_pt;
 
-
 =head1 NAME
 
 Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-Release Version: 1.5.1 -- Development Track for 1.6.0
-
-File (CVS) Version:
-
-$Revision: 1.9.2.4 $
+$Revision: 1.9.2.5 $
 
 =cut
 
-our $VERSION = "1.5.1";
+our $VERSION = (qw$Revision: 1.9.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-27 16:14:37 $
+$Date: 2003-06-22 17:10:52 $
 
 =head1 SYNOPSIS
 
