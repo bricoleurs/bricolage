@@ -30,7 +30,7 @@ sub make_alias : Callback {
     my $self = shift;
     my ($class_key, $wf_id, $wf, $gid, $site_id, $site) = $get_dynamic->();
  
-    my $aliased_id = $self->param_value;
+    my $aliased_id = $self->param_field;
     my $aliased = $classes{$class_key}->lookup({ id => $aliased_id });
 
     # Check permissions. Users must have READ permission to the asset to be

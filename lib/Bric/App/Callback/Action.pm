@@ -18,7 +18,7 @@ sub delete : Callback {
     my $self = shift;
 
     chk_authz($dest, EDIT);
-    foreach my $id (@{ mk_aref($self->param_value) }) {
+    foreach my $id (@{ mk_aref($self->param_field) }) {
         my $act = $class->lookup({ id => $id }) || next;
         $act->del();
         $act->save();

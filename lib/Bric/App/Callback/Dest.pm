@@ -14,7 +14,7 @@ my $class = get_package_name($type);
 sub delete : Callback {
     my $self = shift;
 
-    foreach my $id (@{ mk_aref($self->param_value) }) {
+    foreach my $id (@{ mk_aref($self->param_field) }) {
         my $dest = $class->lookup({ id => $id }) || next;
         if (chk_authz($dest, EDIT, 1)) {
             $dest->del_output_channels;

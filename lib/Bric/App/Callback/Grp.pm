@@ -18,7 +18,7 @@ my $c = Bric::App::Cache->new();   # singleton
 sub deactivate : Callback {
     my $self = shift;
 
-    foreach my $id (@{ mk_aref($self->param_value) }) {
+    foreach my $id (@{ mk_aref($self->param_field) }) {
         my $grp = $class->lookup({ id => $id }) || next;
         if (chk_authz($grp, EDIT)) {
             if ($grp->get_permanent) {

@@ -14,7 +14,7 @@ my $class = get_package_name(CLASS_KEY);
 sub delete : Callback {
     my $self = shift;
 
-    foreach my $id (@{ mk_aref($self->param_value) }) {
+    foreach my $id (@{ mk_aref($self->param_field) }) {
         my $at = $class->lookup({ id => $id }) || next;
         if (chk_authz($at, EDIT, 1)) {
             $at->remove();

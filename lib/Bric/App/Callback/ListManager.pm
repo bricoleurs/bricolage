@@ -14,7 +14,7 @@ sub select-(.+) : Callback {          # XXX: callback subversion
     my $method = $1;                  # XXX
 
     my $self = shift;
-    my $value = $self->param_value;
+    my $value = $self->param_field;
     my $id      = ref $value ? $value : [$value];
     my $pkg = get_state_data(CLASS_KEY, 'pkg_name');
 
@@ -93,7 +93,7 @@ sub set_offset : Callback {
     my $self = shift;
 
     set_state_data(CLASS_KEY, 'pagination', 1);
-    set_state_data(CLASS_KEY, 'offset', $self->param_value);
+    set_state_data(CLASS_KEY, 'offset', $self->param_field);
 }
 
 # call back to display all results
