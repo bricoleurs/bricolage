@@ -66,6 +66,11 @@ rather than C<make install> so that C<make test> can take advantage of them.
 Bric::App::Session and Bric::App::Cache no longer C<chown> their files and
 directories during C<make test>. [David]
 
+=item *
+
+Super Bulk Edit no longer joins lines together without a space, so that words
+should now be properly separated. [David]
+
 =back
 
 =head1 VERSION 1.5.2

@@ -787,7 +787,7 @@ my $split_super_bulk = sub {
     my %seen;
     my $blanks = 0;
 
-    foreach my $l (split(/\r?\n/, $text)) {
+    foreach my $l (split(/\r?\n|\r/, $text)) {
         chomp($l);
 
         # See if we have a blank line
@@ -854,7 +854,7 @@ my $split_super_bulk = sub {
         # Nothing special about this line, push it into the accumulator
         else {
             $type ||= $def_field || $chunks[-1]->[0];
-            $acc .= $l;
+            $acc .= $acc ? " $l" : $l;
 
             $blanks = 0;
         }
