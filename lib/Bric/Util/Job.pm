@@ -6,16 +6,16 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-01-15 13:55:52 $
 
 =head1 SYNOPSIS
 
@@ -714,11 +714,11 @@ sub my_meths {
                               req      => 1,
                               type     => 'short',
                               props    => { type => 'select',
-                                            vals => [ [1, '1'],
-                                                      [2, '2'], 
-                                                      [3, '3'], 
-                                                      [4, '4'], 
-                                                      [5, '5'], ],
+                                              vals => [[ 1 => 'High'],
+                                                       [ 2 => 'Medium High'],
+                                                       [ 3 => 'Normal'],
+                                                       [ 4 => 'Medium Low'],
+                                                       [ 5 => 'Low'], ],
                                           }
                              },
               user_id     => {
