@@ -26,6 +26,12 @@ Versions of Perl that disallow the use of the C<-I> argument in a setuid
 environment will no longer cause the upgrade to fail. Reported by Serge
 Sozonoff. [David]
 
+=item *
+
+The new support for a false value to the C<checked_out> parameter to the
+C<list()> methods of the story, media, and template classes is now properly
+supported by the SOAP C<list_ids> method, as well. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)

@@ -346,6 +346,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'WHERE version = i.version '
                               . 'AND story__id = i.story__id )',
       _checked_out           => 'i.checked_out = ?',
+      checked_out            => 'i.checked_out = ?',
       _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
                               . '(SELECT story__id FROM story_instance '
                               . 'WHERE s.id = story_instance.story__id '

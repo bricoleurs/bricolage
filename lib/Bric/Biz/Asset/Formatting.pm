@@ -278,6 +278,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'FROM formatting_instance '
                            . 'WHERE version = i.version '
                            . 'AND formatting__id = i.formatting__id )',
+    checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
     _not_checked_out      => 'i.checked_out = 0 AND f.id not in '
                            . '(SELECT formatting__id FROM formatting_instance '
