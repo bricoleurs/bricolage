@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.87 $
+$Revision: 1.88 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.87 $ )[-1];
+our $VERSION = (qw$Revision: 1.88 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 21:39:46 $
+$Date: 2004-03-08 12:42:06 $
 
 =head1 SYNOPSIS
 
@@ -1252,7 +1252,7 @@ sub get_primary_category {
 =item $story = $story->set_primary_category($cat_id || $cat)
 
 Defines a category as being the the primary one for this story. If a category
-is aready marked as being primary, this will disassociate it.
+is already marked as being primary, this will disassociate it.
 
 B<Throws:>
 
