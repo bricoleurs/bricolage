@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-11-02 00:50:34 $
 
 =head1 SYNOPSIS
 
@@ -675,7 +675,7 @@ NONE
 
 B<Side Effects:>
 
-=overn 4
+=over 4
 
 =item *
 
