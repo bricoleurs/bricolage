@@ -223,6 +223,8 @@ my $inpt_sub = sub {
     my $out;
     my $disp_value = defined $value && $type ne 'password' ? ' value="'
       . escape_html($value) . '"' : '';
+    $disp_value = defined $value && $type eq 'image' ? ' title="'
+      . escape_html($value) . '"' : $disp_value;
     my $src = defined $vals->{props}{src} ? ' src="' . $vals->{props}{src} . '"' : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';

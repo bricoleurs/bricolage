@@ -139,33 +139,27 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          number => $num++);
 </%perl>
 
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Category') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-<%perl>
-my $cat = $media->get_category;
-$m->out($cat->get_name);
-</%perl>
-  </td>
-  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
-             formName => "theForm",
-             callback => "$widget|category_cb",
-             image    => "edit_lgreen",
-             vspace   => 4
-&></td>
+% my $rowColor = "even";
+<table class="associations">
+% if (ENABLE_CATEGORY_BROWSER) {
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Category') %>:</th>
+<td><% $media->get_category->get_uri %></td>
+<td class="edit"><& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'category_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &></td>
 </tr>
-</table>
+% }   # if ENABLE_CATEGORY_BROWSER
 
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-<%perl>
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Keywords') %>:</th>
+<td><%perl>
 my @keywords;
 foreach my $kw ($media->get_keywords) {
     push @keywords, $kw->get_name;
@@ -173,45 +167,36 @@ foreach my $kw ($media->get_keywords) {
 
 $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
 
-</%perl>
-  </td>
-  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
-             formName => "theForm",
-             callback => "$widget|keywords_cb",
-             image    => "edit_lgreen",
-             vspace   => 4
-&></td>
+</%perl></td>
+<td class="edit"><& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'keywords_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &></td>
 </tr>
-</table>
 
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr>
-  <td align=right width=120 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-
-<%perl>
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Contributors') %>:</th>
+<td><%perl>
 my @contribs;
 foreach my $cntr ($media->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
 $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
 
-</%perl>
-  </td>
-  <td width="80" align="center" valign="top">
-% if ($media->get_alias_id) {
-<img src="/media/images/spacer.gif" height="20" />
-% } else {
-<& /widgets/profile/imageSubmit.mc,
-   formName => "theForm",
-   callback => $widget . "|contributors_cb",
-   image    => "edit_lgreen",
-   vspace   => 3
-&>
+</%perl></td>
+<td class="edit">
+% unless ($media->get_alias_id) {
+<& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'contributors_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &>
 % }
 </td>
 </tr>

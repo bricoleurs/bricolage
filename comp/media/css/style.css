@@ -8,7 +8,7 @@ th         { font-size: 1.1em; }
 pre        { font-size: 1.1em; padding: 1em; margin: 0; } 
 h3         { font-size: 1.1em; }
 
-a img      { border: none; }
+a img      { border: none; vertical-align: middle; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
@@ -389,8 +389,25 @@ table td.delete { width: 100px; text-align: center; }
 .paginate .pages { float: left; width: 70%; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
+.associations { width: 100%; border-style: hidden; }
+.associations th { 
+    width: 125px; 
+    text-align: right; 
+    font-weight: bold; 
+}
+.associations th,
+.associations td { 
+    padding: 5px;
+    font-size: 1em;
+    vertical-align: top; 
+    border-style: solid; 
+    border-color: #cccc99; 
+    border-width: 1px 0; 
+}
+.associations td.edit { width: 20px; vertical-align: top; }
+
 dl.viewmeta dt,
-dl.viewmeta dd { border-bottom: solid white 1px; padding: 3px 0; }
+dl.viewmeta dd { border-bottom: solid white 1px; padding: 0; line-height: 1.8em }
 dl.viewmeta dt {
     float: left;
     clear: both;
@@ -401,7 +418,6 @@ dl.viewmeta dt {
     background-color: #E8E8CD;
 }
 dl.viewmeta dd { margin-left: 140px; }
-
 
 /******************************************************
  * HACKS                                              *

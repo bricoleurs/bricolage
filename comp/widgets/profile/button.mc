@@ -31,6 +31,7 @@ $widget    => undef
 $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
+$globalImage => 0
 $name      => ''
 $js        => ''
 $indent    => ''
@@ -39,11 +40,12 @@ $localize  => 1
 </%args>
 <%perl>;
 my $key = ($widget) ? "$widget|$cb" : $name;
+my $local = $globalImage ? '' : "$lang_key/";
 
 my $vals = { disp      => '',
              value     => $disp,
              props     => { type      => 'image',
-                            src       => "/media/images/$lang_key/$button.gif"
+                            src       => "/media/images/$local$button.gif"
                           },
 
              js        => $js,
