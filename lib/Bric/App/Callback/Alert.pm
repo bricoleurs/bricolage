@@ -37,7 +37,7 @@ sub ack_all : Callback {
 }
 
 
-my $msg_redirect = sub msg_redirect {
+my $msg_redirect = sub {
     my $ids = shift;
     $class->ack_by_id(@$ids);
     my $c = @$ids;
