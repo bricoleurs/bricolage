@@ -10,20 +10,20 @@ Bric::Util::DBD::Pg - Bricolage PostgreSQL database adaptor
 
 =item Version
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =item Date
 
-$Date: 2003-08-01 05:03:24 $
+$Date: 2003-08-03 22:53:13 $
 
 =item CVS ID
 
-$Id: Pg.pm,v 1.10 2003-08-01 05:03:24 wheeler Exp $
+$Id: Pg.pm,v 1.11 2003-08-03 22:53:13 wheeler Exp $
 
 =back
 
@@ -53,7 +53,7 @@ use strict;
 # Programmatic Dependences
 use DBD::Pg;
 use Bric::Config qw(:dbi);
-use Bric::Util::Fault qw(throw_dp)
+use Bric::Util::Fault qw(throw_dp);
 
 ##############################################################################
 # Constants
