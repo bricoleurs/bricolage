@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.7.1 ()
+=head1 VERSION 1.7.1 (2003-11-30)
 
 =head2 Improvements
 
@@ -63,7 +63,7 @@ component arguments on to components. And now, so does C<sdisplay_element()>.
 
 Fixed F<favicon.ico> code so that the browser and server don't go into an
 infinite loop with redirects of redirects. The F<favicon.ico> still doesn't
-pop up in the location field in my browser, but it does display proplerly if I
+pop up in the location field in my browser, but it does display properly if I
 point my browser at it. [David]
 
 =item *
@@ -130,7 +130,7 @@ the UI no longer displays a message saying that it was published. [David]
 =item *
 
 Fixed page logging so that redirects to the page before the current page can
-work correctly. It was most noticably broken when trying to associate a
+work correctly. It was most noticeably broken when trying to associate a
 contributor with a document. [David]
 
 =item *
@@ -513,15 +513,15 @@ Improved error message in Bric::Util::Trans::SFTP. [David]
 
 =item *
 
-Its possible to create new stories again without running into errors saying
+It's possible to create new stories again without running into errors saying
 that a URI is not unique because the cover date and slug were accidentally
-exclued from the URI. [David]
+excluded from the URI. [David]
 
 =item *
 
 Mason story templates now inherit from all category templates, thus enabling
 the access of C<< <%attr> >>s and calling of C<< <%method> >>s in category
-templates from story templates.
+templates from story templates. [David]
 
 =item *
 
@@ -551,7 +551,6 @@ Assets with the same IDs but in different classes (media vs. stories vs.
 templates) no longer prevent each other from being added to a desk that can
 contain different classes of assets. Thanks to Scott for the spot and doing
 the research that lead to the replication of the problem. [David]
-
 
 =back
 
