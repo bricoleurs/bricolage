@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.65 $
+$Revision: 1.66 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.65 $ )[-1];
+our $VERSION = (qw$Revision: 1.66 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:55 $
+$Date: 2004-02-06 19:46:07 $
 
 =head1 SYNOPSIS
 
@@ -205,7 +205,6 @@ use constant PARAM_FROM_MAP =>
      category_uri       => 'category c',
      data_text          => 'media_data_tile md',
      contrib_id         => 'media__contributor sic',
-     element_key_name   => 'element e'
     };
 
 use constant PARAM_WHERE_MAP =>
