@@ -61,6 +61,7 @@ print "\n\n==> Starting Database Upgrade <==\n\n";
 # setup environment to ensure scripts run correctly
 $ENV{BRICOLAGE_ROOT} = $UPGRADE->{BRICOLAGE_ROOT};
 my $perl = $ENV{PERL} || $^X;
+$ENV{PERL5LIB} = $CONFIG->{MODULE_DIR};
 
 # run the upgrade scripts
 foreach my $v (@{$UPGRADE->{TODO}}) {
@@ -74,8 +75,8 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
 
     foreach my $script (@scripts) {
 	print "Running '$perl $script'.\n";
-	my $ret = system("$perl", "-I$CONFIG->{MODULE_DIR}", $script, '-u',
-                         $PG->{root_user}, '-p', $PG->{root_pass});
+	my $ret = system("$perl", $script, '-u', $PG->{root_user},
+                         '-p', $PG->{root_pass});
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;
     }

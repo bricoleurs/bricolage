@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.4 ()
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Versions of Perl that disallow the use of the C<-I> argument in a setuid
+environment will no longer cause the upgrade to fail. Reported by Serge
+Sozonoff. [David]
+
+=back
+
 =head1 VERSION 1.8.3 (2004-11-09)
 
 =head2 Improvements
