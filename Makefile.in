@@ -76,8 +76,6 @@ CONF_BRIC = ${CONF}/bricolage.tmp.conf
 CONF_BRIC_TARGET = ${confdir}/bricolage.conf
 CONF_HTTPD = ${CONF}/httpd.tmp.conf
 CONF_HTTPD_TARGET = ${confdir}/httpd.conf
-CONF_HTTPSD = ${CONF}/httpd-ssl.conf
-CONF_HTTPSD_TARGET = ${confdir}/httpd-ssl.conf
 CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET} ${CONF_OPTIONS_TARGET}
 
 
@@ -219,8 +217,6 @@ uninstallfiles:
 # for CONF we have to do it by hand more or less.
 install-conf: ${CONF_TARGETS}
 ${CONF_BRIC_TARGET}: ${CONF_BRIC}
-	${install-files}
-${CONF_HTTPSD_TARGET}: ${CONF_HTTPSD}
 	${install-files}
 ${CONF_HTTPD_TARGET}: ${CONF_HTTPD}
 	${install-files}
