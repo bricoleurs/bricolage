@@ -242,6 +242,15 @@ that can be granted to user groups to access them. [David]
 The "Next" button in the Element Type profile now correctly loads the next
 page of the profile instead of returning to the manager. [David]
 
+=item *
+
+Fixed URI uniqueness upgrade scripts, which were having problems with
+PostgreSQL permissions. [David]
+
+=item *
+
+C<make clone> works again. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)

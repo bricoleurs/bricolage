@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-16 12:02:37 $
+$Date: 2004-02-21 19:37:07 $
 
 =head1 SYNOPSIS
 
@@ -72,6 +72,10 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 use File::Spec::Functions qw(catdir updir);
 use FindBin;
 
+# Prevent stupid "Can't locate Log/Agent.pm errors by always loading
+# Cache::FileCache here.
+use Cache::FileCache;
+
 # Load the options.
 use Getopt::Std;
 our ($opt_u, $opt_p);
@@ -88,7 +92,7 @@ BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
 
-    # Always use the Bric::Config and Bric::Util::DBi from the sources.
+    # Always use the Bric::Config and Bric::Util::DBI from the sources.
     unshift @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib';
     require Bric::Config;
     Bric::Config->import(qw(DBI_USER));
