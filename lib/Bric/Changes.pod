@@ -70,6 +70,14 @@ the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
 Added the element_type and output_channel modules to bric_soap. [Scott]
 
+=item *
+
+Added C<ENABLE_GZIP> F<bricolage.conf> directive that turns on compression
+of the UI pages through mod_gzip.  This results in pages as much as fifteen
+times smaller, with minimal extra server load.  If mod_gzip is found during
+installation, the appropriate LoadModule/AddModule lines will be added
+to httpd.conf.  Disabled by default. [Marshall Roch; Suggested by Rod Taylor]
+
 =back
 
 =head2 Improvements

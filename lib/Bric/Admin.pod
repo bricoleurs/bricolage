@@ -262,6 +262,10 @@ apache_ssl 1.3.22+ssl_1.47 Apache SSL (optional)
 
 =item *
 
+mod_gzip - Gzip page compression (optional)
+
+=item *
+
 HTMLArea 3.0 or later (optional)
 
 =item *
@@ -1215,6 +1219,13 @@ If this line is changed to
 
 then only the contents of the F<httpd.conf> specified by the C<Apache_CONF>
 directive will be passed to the httpd daemon.
+
+=item *
+
+B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache module 
+installed and want it to compress the the UI pages.  Pages will be as much 
+as fifteen times smaller, with minimal extra server load, resulting in faster
+load times and less bandwidth consumption. Disabled by default.
 
 =back
 

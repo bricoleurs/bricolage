@@ -161,6 +161,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_TIME_ZONES
                     ENABLE_HTMLAREA
                     HTMLAREA_TOOLBAR
+                    ENABLE_GZIP
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -263,7 +264,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      PREVIEW_LOCAL
                                      PREVIEW_MASON
-                                     MANUAL_APACHE)],
+                                     MANUAL_APACHE
+                                     ENABLE_GZIP)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT)],
                     thumb     => [qw(USE_THUMBNAILS
@@ -371,7 +373,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
-                    RELATED_MEDIA_UPLOAD))
+                    RELATED_MEDIA_UPLOAD ENABLE_GZIP))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -445,6 +447,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
     use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
     use constant VHOST_SERVER_NAME       => $config->{VHOST_SERVER_NAME};
+    
+    use constant ENABLE_GZIP             => $config->{ENABLE_GZIP};
 
     # ssl Settings.
     use constant SSL_ENABLE              => $config->{SSL_ENABLE};
