@@ -32,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 06:55:48 $
+$Date: 2003-02-14 18:08:12 $
 
 =head1 SYNOPSIS
 
@@ -250,15 +250,8 @@ output channels in an asset will be left unchanged.
 
 sub load_ocs {
     my ($asset, $ocdata, $elem_ocs, $key, $update) = @_;
-        my %ocs;
-        if ($update) {
-            # Note the current output channels.
-            %ocs =  map { $_->get_name => $_ } $asset->get_output_channels;
-        } else {
-            # Delete the existing output channels.
-            $asset->del_output_channels;
-            $asset->set_primary_oc_id;
-        }
+    # Note the current output channels.
+        my %ocs =  map { $_->get_name => $_ } $asset->get_output_channels;
 
         # Update the output channels.
         foreach my $ocdata (@$ocdata) {

@@ -190,6 +190,12 @@ exists. [David]
 
 Fixed indexes for person objects so that they're case-insensitive. [David]
 
+=item *
+
+Fixed problem creating new business assets with SOAP where Bricolage was
+trying to associate them with output channels twice, resulting in an SQL
+Error. [David]
+
 =back
 
 =head1 VERSION 1.5.0
