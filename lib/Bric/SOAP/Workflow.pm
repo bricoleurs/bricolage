@@ -47,15 +47,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 05:43:03 $
+$Date: 2003-09-16 14:09:33 $
 
 =head1 SYNOPSIS
 
@@ -132,7 +132,13 @@ The date and time (in ISO-8601 format) at which to publish the assets.
 
 =back
 
-B<Throws:> NONE.
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 B<Side Effects:> Stories and media have their publish_status field set to
 true.
@@ -270,7 +276,13 @@ A list of "template_id" elements to be published.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: Templates have their deploy_status set to true.
 
@@ -378,7 +390,13 @@ checked out.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -514,7 +532,13 @@ checked in.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -643,7 +667,13 @@ checked in.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 

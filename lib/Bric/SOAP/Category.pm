@@ -6,39 +6,35 @@ use warnings;
 
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
-use Bric::App::Session  qw(get_user_id);
-use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
-use Bric::App::Event    qw(log_event);
-use IO::Scalar;
-use XML::Writer;
-
-use Bric::SOAP::Util qw(parse_asset_document);
+use Bric::Biz::Site;
+use Bric::App::Authz  qw(chk_authz READ CREATE);
+use Bric::App::Event  qw(log_event);
+use Bric::SOAP::Util  qw(parse_asset_document site_to_id);
 use Bric::Util::Fault qw(throw_ap);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
+Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-09-16 14:09:32 $
 
 =head1 SYNOPSIS
 
@@ -113,7 +109,13 @@ Set false to return deleted categories.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -124,10 +126,6 @@ and as such do not benefit from SQL's OR of search parameters.  This
 should be fixed by adding them to the underlying list().
 
 =cut
-
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(name directory path uri parent active);
 
 sub list_ids {
     my $self = shift;
@@ -141,7 +139,7 @@ sub list_ids {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $self->is_allowed_param($_, 'list_ids');
     }
 
     # check for path or parent combined with other searches
@@ -179,7 +177,7 @@ sub list_ids {
     # name the array and return
     return name(category_ids => \@result);
 }
-}
+
 
 =item export
 
@@ -199,11 +197,17 @@ Specifies a single category_id to be retrieved.
 =item category_ids
 
 Specifies a list of category_ids.  The value for this option should be an
-array of interger "category_id" categories.
+array of integer "category_id" categories.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -211,62 +215,6 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(category_id category_ids);
-
-sub export {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->export() called : args : ",
-        Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # category_id is sugar for a one-category category_ids arg
-    $args->{category_ids} = [ $args->{category_id} ] 
-      if exists $args->{category_id};
-
-    # make sure category_ids is an array
-    throw_ap(error => __PACKAGE__ . "::export : missing required category_id(s) setting.")
-      unless defined $args->{category_ids};
-    throw_ap(error => __PACKAGE__ . "::export : malformed category_id(s) setting.")
-      unless ref $args->{category_ids} and ref $args->{category_ids} eq 'ARRAY';
-
-    # setup XML::Writer
-    my $document        = "";
-    my $document_handle = new IO::Scalar \$document;
-    my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
-                                           DATA_MODE   => 1,
-                                           DATA_INDENT => 1);
-
-    # open up an assets document, specifying the schema namespace
-    $writer->xmlDecl("UTF-8", 1);
-    $writer->startTag("assets", 
-                      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
-
-    # iterate through category_ids, serializing category objects as we go
-    foreach my $category_id (@{$args->{category_ids}}) {
-      $pkg->_serialize_category(writer      => $writer, 
-                                category_id  => $category_id,
-                                args        => $args);
-  }
-
-    # end the assets category and end the document
-    $writer->endTag("assets");
-    $writer->end();
-    $document_handle->close();
-
-    # name, type and return
-    return name(document => $document)->type('base64');
-}
-}
 
 =item create
 
@@ -287,7 +235,13 @@ contain at least one category object.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -295,35 +249,6 @@ Notes: NONE
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document);
-
-sub create {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->create() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
-      unless $args->{document};
-
-    # setup empty update_ids arg to indicate create state
-    $args->{update_ids} = [];
-
-    # call _load_category
-    return $pkg->_load_category($args);
-}
-}
 
 =item update
 
@@ -355,7 +280,13 @@ an empty update_ids list is equivalent to a create().
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -363,39 +294,6 @@ Notes: NONE
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document update_ids);
-
-sub update {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->update() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
-      unless $args->{document};
-
-    # make sure we have an update_ids array
-    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
-      unless $args->{update_ids};
-    throw_ap(error => __PACKAGE__
-               . "::update : malformed update_ids parameter - must be an array.")
-      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
-
-    # call _load_category
-    return $pkg->_load_category($args);
-}
-}
 
 =item delete
 
@@ -413,17 +311,19 @@ Specifies a list of category_ids to delete.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
 Notes: NONE
 
 =cut
-
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(category_id category_ids);
 
 sub delete {
     my $pkg = shift;
@@ -436,11 +336,11 @@ sub delete {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, 'delete');
     }
 
     # category_id is sugar for a one-element category_ids arg
-    $args->{category_ids} = [ $args->{category_id} ] 
+    $args->{category_ids} = [ $args->{category_id} ]
         if exists $args->{category_id};
 
     # make sure category_ids is an array
@@ -476,7 +376,40 @@ sub delete {
     }
     return name(result => 1);
 }
+
+
+=item $self->module
+
+Returns the module name, that is the first argument passed
+to bric_soap.
+
+=cut
+
+sub module { 'category' }
+
+=item is_allowed_param
+
+=item $pkg->is_allowed_param($param, $method)
+
+Returns true if $param is an allowed parameter to the $method method.
+
+=cut
+
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+    my $module = $pkg->module;
+
+    my $allowed = {
+        list_ids => { map { $_ => 1 } qw(name site directory path uri parent active) },
+        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+        create   => { map { $_ => 1 } qw(document) },
+        update   => { map { $_ => 1 } qw(document update_ids) },
+        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+    };
+
+    return exists($allowed->{$method}->{$param});
 }
+
 
 =back
 
@@ -492,7 +425,7 @@ create().
 
 =cut
 
-sub _load_category {
+sub load_asset {
     my ($pkg, $args) = @_;
     my $document     = $args->{document};
     my $data         = $args->{data};
@@ -548,6 +481,10 @@ sub _load_category {
               unless chk_authz($category, CREATE, 1);
         }
 
+        # set site
+        my $site_id = site_to_id(__PACKAGE__, $cdata->{site});
+        $category->set_site_id($site_id);
+
         # set simple fields
         $category->set_name($cdata->{name});
         $category->set_description($cdata->{description});
@@ -561,7 +498,8 @@ sub _load_category {
             # check that the requested path doesn't already exist.
             throw_ap(error => __PACKAGE__ . " : requested path \"$cdata->{path}\""
                        . " is already in use.")
-              if $paths{$path} ||= Bric::Biz::Category->lookup({ uri => $path });
+              if $paths{$path} ||= Bric::Biz::Category->lookup({ uri => $path,
+                                                                 site_id => $site_id });
 
             # special-case root category
             if ($path eq '/') {
@@ -576,14 +514,15 @@ sub _load_category {
 
                 # make sure we've got a parent
                 my $parent = $paths{$parent_path} ||=
-                  Bric::Biz::Category->lookup({ uri => $parent_path });
+                  Bric::Biz::Category->lookup({ uri => $parent_path,
+                                                site_id => $site_id });
                 throw_ap(error => __PACKAGE__ . " : couldn't find category object "
                            . "for path \"$parent_path\"")
                   unless $parent;
 
                 # Set directory and parent ID.
-                $category->set_directory($directory);
                 $category->set_parent_id($parent->get_id);
+                $category->set_directory($directory);
 
                 # save category
                 $category->save;
@@ -591,22 +530,21 @@ sub _load_category {
         }
 
         # remove all keywords if updating
-        $category->del_keyword([ $category->keywords ])
-            if $update and $category->keywords;
+        $category->del_keywords([ $category->get_keywords ])
+            if $update and $category->get_keywords;
 
         # add keywords, if we have any
         if ($cdata->{keywords} and $cdata->{keywords}{keyword}) {
-
             # collect keyword objects
             my @kws;
             foreach (@{$cdata->{keywords}{keyword}}) {
                 my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-                $kw ||= Bric::Biz::Keyword->new({ name => $_})->save;
+                $kw ||= Bric::Biz::Keyword->new({ name => $_ })->save;
                 push @kws, $kw;
             }
 
             # add keywords to the category
-            $category->add_keyword(\@kws);
+            $category->add_keywords(\@kws);
         }
 
         # save category
@@ -630,7 +568,7 @@ the given writer and args.
 
 =cut
 
-sub _serialize_category {
+sub serialize_asset {
     my $pkg         = shift;
     my %options     = @_;
     my $category_id  = $options{category_id};
@@ -646,6 +584,10 @@ sub _serialize_category {
 
     # open a category category
     $writer->startTag("category", id => $category_id);
+
+    # Write out the name of the site.
+    my $site = Bric::Biz::Site->lookup({ id => $category->get_site_id });
+    $writer->dataElement('site' => $site->get_name);
 
     # write out simple categories in schema order
     $writer->dataElement(name        => $category->get_name());
@@ -663,7 +605,7 @@ sub _serialize_category {
 
     # output keywords
     $writer->startTag("keywords");
-    foreach my $k ($category->keywords) {
+    foreach my $k ($category->get_keywords) {
         $writer->dataElement(keyword => $k->get_name);
     }
     $writer->endTag("keywords");

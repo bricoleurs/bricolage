@@ -6,20 +6,17 @@ use warnings;
 
 use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
-use Bric::App::Session  qw(get_user_id);
-use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
-use Bric::App::Event    qw(log_event);
-use Bric::Util::Fault   qw(throw_ap);
-use IO::Scalar;
-use XML::Writer;
-
-use Bric::SOAP::Util qw(parse_asset_document);
+use Bric::Biz::Site;
+use Bric::App::Session qw(get_user_id);
+use Bric::App::Authz   qw(chk_authz READ);
+use Bric::App::Event   qw(log_event);
+use Bric::Util::Fault  qw(throw_ap);
+use Bric::SOAP::Util   qw(parse_asset_document);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
@@ -30,15 +27,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:35 $
+$Date: 2003-09-16 14:09:32 $
 
 =head1 SYNOPSIS
 
@@ -109,18 +106,19 @@ set to 1 to return only top-level elements
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
 Notes: NONE
 
 =cut
-
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(name description output_channel
-                                 type top_level);
 
 sub list_ids {
     my $self = shift;
@@ -133,7 +131,7 @@ sub list_ids {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $self->is_allowed_param($_, 'list_ids');
     }
 
     # handle type => type__id mapping
@@ -172,7 +170,6 @@ sub list_ids {
     # name the array and return
     return name(element_ids => \@result);
 }
-}
 
 =item export
 
@@ -196,7 +193,13 @@ array of interger "element_id" elements.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -204,62 +207,6 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(element_id element_ids);
-
-sub export {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->export() called : args : ",
-        Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # element_id is sugar for a one-element element_ids arg
-    $args->{element_ids} = [ $args->{element_id} ]
-      if exists $args->{element_id};
-
-    # make sure element_ids is an array
-    throw_ap(error => __PACKAGE__ . "::export : missing required element_id(s) setting.")
-      unless defined $args->{element_ids};
-    throw_ap(error => __PACKAGE__ . "::export : malformed element_id(s) setting.")
-      unless ref $args->{element_ids} and ref $args->{element_ids} eq 'ARRAY';
-
-    # setup XML::Writer
-    my $document        = "";
-    my $document_handle = new IO::Scalar \$document;
-    my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
-                                           DATA_MODE   => 1,
-                                           DATA_INDENT => 1);
-
-    # open up an assets document, specifying the schema namespace
-    $writer->xmlDecl("UTF-8", 1);
-    $writer->startTag("assets", 
-                      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
-
-    # iterate through element_ids, serializing element objects as we go
-    foreach my $element_id (@{$args->{element_ids}}) {
-      $pkg->_serialize_element(writer      => $writer,
-                               element_id  => $element_id,
-                               args        => $args);
-    }
-
-    # end the assets element and end the document
-    $writer->endTag("assets");
-    $writer->end();
-    $document_handle->close();
-
-    # name, type and return
-    return name(document => $document)->type('base64');
-}
-}
 
 =item create
 
@@ -280,7 +227,13 @@ contain at least one element object.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -290,35 +243,6 @@ setting.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document);
-
-sub create {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->create() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
-      unless $args->{document};
-
-    # setup empty update_ids arg to indicate create state
-    $args->{update_ids} = [];
-
-    # call _load_element
-    return $pkg->_load_element($args);
-}
-}
 
 =item update
 
@@ -350,7 +274,13 @@ an empty update_ids list is equivalent to a create().
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -360,39 +290,6 @@ setting.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document update_ids);
-
-sub update {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->update() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
-      unless $args->{document};
-
-    # make sure we have an update_ids array
-    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
-      unless $args->{update_ids};
-    throw_ap(error => __PACKAGE__ .
-               "::update : malformed update_ids parameter - must be an array.")
-      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
-
-    # call _load_element
-    return $pkg->_load_element($args);
-}
-}
 
 =item delete
 
@@ -410,7 +307,13 @@ Specifies a list of element_ids to delete.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -418,58 +321,39 @@ Notes: NONE
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(element_id element_ids);
 
-sub delete {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
+=item $self->module
 
-    print STDERR __PACKAGE__ . "->delete() called : args : ",
-        Data::Dumper->Dump([$args],['args']) if DEBUG;
+Returns the module name, that is the first argument passed
+to bric_soap.
 
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
+=cut
 
-    # element_id is sugar for a one-element element_ids arg
-    $args->{element_ids} = [ $args->{element_id} ]
-        if exists $args->{element_id};
+sub module { 'element' }
 
-    # make sure element_ids is an array
-    throw_ap(error => __PACKAGE__ . "::delete : missing required element_id(s) setting.")
-      unless defined $args->{element_ids};
-    throw_ap(error => __PACKAGE__ . "::delete : malformed element_id(s) setting.")
-      unless ref $args->{element_ids} and ref $args->{element_ids} eq 'ARRAY';
+=item is_allowed_param
 
-    # delete the element
-    foreach my $element_id (@{$args->{element_ids}}) {
-        print STDERR __PACKAGE__ .
-            "->delete() : deleting element_id $element_id\n"
-                if DEBUG;
+=item $pkg->is_allowed_param($param, $method)
 
-        # lookup element
-        my $element = Bric::Biz::AssetType->lookup({ id => $element_id });
-        throw_ap(error => __PACKAGE__ .
-            "::delete : no element found for id \"$element_id\"")
-          unless $element;
-        throw_ap(error => __PACKAGE__ .
-                   "::delete : access denied for element \"$element_id\".")
-          unless chk_authz($element, CREATE, 1);
+Returns true if $param is an allowed parameter to the $method method.
 
-        # delete the element
-        $element->deactivate;
-        $element->save;
-        log_event("element_deact", $element);
-    }
+=cut
 
-    return name(result => 1);
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+    my $module = $pkg->module;
+
+    my $allowed = {
+        list_ids => { map { $_ => 1 } qw(name description output_channel type top_level) },
+        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+        create   => { map { $_ => 1 } qw(document) },
+        update   => { map { $_ => 1 } qw(document update_ids) },
+        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+    };
+
+    return exists($allowed->{$method}->{$param});
 }
-}
+
 
 =back
 
@@ -485,7 +369,7 @@ create().
 
 =cut
 
-sub _load_element {
+sub load_asset {
     my ($pkg, $args) = @_;
     my $document     = $args->{document};
     my $data         = $args->{data};
@@ -561,7 +445,7 @@ sub _load_element {
         }
 
         # set simple data
-        $element->set_name($edata->{name});
+        $element->set_key_name($edata->{name});
         $element->set_description($edata->{description});
         $element->set_burner($burner);
 
@@ -628,7 +512,7 @@ sub _load_element {
         if ($update) {
             my @data = $element->get_data();
             foreach my $data (@data) {
-                $old_data{$data->get_name} = $data;
+                $old_data{$data->get_key_name} = $data;
             }
         }
 
@@ -659,7 +543,7 @@ sub _load_element {
                         "$field->{name}.\n"
                             if DEBUG;
                 $data = $old_data{$field->{name}};
-                $data->set_name($field->{name});
+                $data->set_key_name($field->{name});
                 $data->set_required($field->{required});
                 $data->set_quantifier($field->{repeatable});
                 $data->set_sql_type($sql_type);
@@ -764,7 +648,7 @@ the given writer and args.
 
 =cut
 
-sub _serialize_element {
+sub serialize_asset {
     my $pkg         = shift;
     my %options     = @_;
     my $element_id  = $options{element_id};
@@ -808,7 +692,8 @@ sub _serialize_element {
     # set top_level stuff if top_level
     if ($element->get_top_level) {
         $writer->dataElement(top_level => 1);
-        my $primary_oc_id = $element->get_primary_oc_id();
+        my ($site_id) = Bric::Biz::Site->list_ids({ element_id => $element_id });
+        my $primary_oc_id = $element->get_primary_oc_id($site_id);
         $writer->startTag("output_channels");
         foreach my $oc ($element->get_output_channels) {
             $writer->dataElement(output_channel => $oc->get_name,
@@ -824,7 +709,7 @@ sub _serialize_element {
     # output subelements
     $writer->startTag("subelements");
     foreach ($element->get_containers) {
-        $writer->dataElement(subelement => $_->get_name);
+        $writer->dataElement(subelement => $_->get_key_name);
     }
     $writer->endTag("subelements");
 
@@ -840,7 +725,7 @@ sub _serialize_element {
 
         # required elements
         $writer->dataElement(type  => $meta->{type});
-        $writer->dataElement(name  => $data->get_name);
+        $writer->dataElement(name  => $data->get_key_name);
         $writer->dataElement(label => $meta->{disp});
         $writer->dataElement(required   => $data->get_required   ? 1 : 0);
         $writer->dataElement(repeatable => $data->get_quantifier ? 1 : 0);

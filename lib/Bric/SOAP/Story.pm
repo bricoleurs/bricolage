@@ -13,7 +13,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
-use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
@@ -32,8 +32,7 @@ use Bric::SOAP::Media;
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
@@ -44,15 +43,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 05:43:03 $
+$Date: 2003-09-16 14:09:33 $
 
 =head1 SYNOPSIS
 
@@ -198,7 +197,7 @@ Lower bound on cover date.  Given in XML Schema dateTime format
 Upper bound on cover date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
 
-=item Order 
+=item Order
 
 Specifies that the results be ordered by a particular property.
 
@@ -220,7 +219,13 @@ specified by "Limit". Not used if "Limit" is not defined, and when
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -228,20 +233,11 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(title description slug category keyword simple
-                                 primary_uri priority workflow no_workflow
-                                 publish_status element publish_date_start
-                                 publish_date_end cover_date_start
-                                 cover_date_end expire_date_start
-                                 expire_date_end Order OrderDirection Limit
-                                 Offset site alias_id);
-
 sub list_ids {
     my $self = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'list_ids';
 
     print STDERR __PACKAGE__ . "->list_ids() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -249,7 +245,7 @@ sub list_ids {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $self->is_allowed_param($_, $method);
     }
 
     # handle workflow => workflow__id mapping
@@ -316,7 +312,6 @@ sub list_ids {
     # name the array and return
     return name(story_ids => \@result);
 }
-}
 
 =item export
 
@@ -356,7 +351,13 @@ document in L<Bric::SOAP|Bric::SOAP> for details).
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -364,16 +365,11 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(story_id story_ids
-                                 export_related_media
-                                 export_related_stories);
-
 sub export {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'export';
 
     print STDERR __PACKAGE__ . "->export() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -381,7 +377,7 @@ sub export {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     # story_id is sugar for a one-element story_ids arg
@@ -412,9 +408,9 @@ sub export {
     my %done;
     while(my $story_id = shift @story_ids) {
       next if exists $done{$story_id}; # been here before?
-      my @related = $pkg->_serialize_story(writer   => $writer,
-                                           story_id => $story_id,
-                                           args     => $args);
+      my @related = $pkg->serialize_asset(writer   => $writer,
+                                          story_id => $story_id,
+                                          args     => $args);
       $done{$story_id} = 1;
 
       # queue up the related stories, story the media for later
@@ -428,9 +424,9 @@ sub export {
     %done = ();
     foreach my $media_id (@media_ids) {
       next if $done{$media_id};
-      Bric::SOAP::Media->_serialize_media(media_id => $media_id,
-                                          writer   => $writer,
-                                          args     => {});
+      Bric::SOAP::Media->serialize_asset(media_id => $media_id,
+                                         writer   => $writer,
+                                         args     => {});
       $done{$media_id} = 1;
     }
 
@@ -441,7 +437,6 @@ sub export {
 
     # name, type and return
     return name(document => $document)->type('base64');
-}
 }
 
 =item create
@@ -476,7 +471,13 @@ Specifies the initial desk the story is to be created on
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -489,35 +490,6 @@ you pass the --desk option.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document workflow desk);
-
-sub create {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->create() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
-      unless $args->{document};
-
-    # setup empty update_ids arg to indicate create state
-    $args->{update_ids} = [];
-
-    # call _load_stories
-    return $pkg->_load_stories($args);
-}
-}
 
 =item update
 
@@ -557,7 +529,13 @@ Specifies the desk to move the story to
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -566,40 +544,6 @@ ignored and always 0 for new stories.  Updated stories do get
 publish_status set from the document setting.
 
 =cut
-
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
-
-sub update {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->update() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
-      unless $args->{document};
-
-    # make sure we have an update_ids array
-    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
-      unless $args->{update_ids};
-    throw_ap(error => __PACKAGE__ .
-               "::update : malformed update_ids parameter - must be an array.")
-      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
-
-    # call _load_stories
-    return $pkg->_load_stories($args);
-}
-}
 
 
 =item delete
@@ -618,7 +562,13 @@ Specifies a list of story_ids to delete.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -626,14 +576,11 @@ Notes: NONE
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(story_id story_ids);
-
 sub delete {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'delete';
 
     print STDERR __PACKAGE__ . "->delete() called : args : ",
       Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -641,7 +588,7 @@ sub delete {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     # story_id is sugar for a one-element story_ids arg
@@ -693,7 +640,47 @@ sub delete {
 
     return name(result => 1);
 }
+
+
+=item $self->module
+
+Returns the module name, that is the first argument passed
+to bric_soap.
+
+=cut
+
+sub module { 'story' }
+
+=item is_allowed_param
+
+=item $pkg->is_allowed_param($param, $method)
+
+Returns true if $param is an allowed parameter to the $method method.
+
+=cut
+
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+
+    my $allowed = {
+        list_ids => { map { $_ => 1 } qw(title description slug category keyword simple
+                                         primary_uri priority workflow no_workflow
+                                         publish_status element publish_date_start
+                                         publish_date_end cover_date_start
+                                         cover_date_end expire_date_start
+                                         expire_date_end Order OrderDirection Limit
+                                         Offset site alias_id) },
+        export   => { map { $_ => 1 } qw(story_id story_ids
+                                         export_related_media
+                                         export_related_stories) },
+        create   => { map { $_ => 1 } qw(document workflow desk) },
+        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+        delete   => { map { $_ => 1 } qw(story_id story_ids) },
+    };
+
+    return exists($allowed->{$method}->{$param});
 }
+
 
 =back
 
@@ -709,7 +696,7 @@ create().
 
 =cut
 
-sub _load_stories {
+sub load_asset {
     my ($pkg, $args) = @_;
     my $document = $args->{document};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
@@ -1095,7 +1082,7 @@ serialized.
 
 =cut
 
-sub _serialize_story {
+sub serialize_asset {
     my $pkg      = shift;
     my %options  = @_;
     my $story_id = $options{story_id};

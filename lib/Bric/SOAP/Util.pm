@@ -40,15 +40,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-15 13:54:45 $
+$Date: 2003-09-16 14:09:33 $
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ Notes: NONE
 sub site_to_id {
     my ($pkg, $site) = @_;
     my ($site_id) = Bric::Biz::Site->list_ids({ name => $site });
-    throw_ap(error => qq{$pkg::list_ids: no site found matching (site => "$site")})
+    throw_ap(error => qq{$pkg\::list_ids: no site found matching (site => "$site")})
         unless defined $site_id;
     return $site_id;
 }

@@ -11,15 +11,20 @@ bric_soap module command [options] [ids or filenames or -]
 
 Modules:
 
-  Story
-  Media
-  Template
-  Element
-  Workflow
+  story
+  media
+  template
+  element
+  category
+  media_type
+  site
+  keyword
+  workflow
 
 Commands:
 
-  Asset Commands (Story, Media, Template, Element, Category):
+  Asset Commands (story, media, template, element, category,
+                  media_type, site, keyword):
 
     list_ids
     export
@@ -266,55 +271,75 @@ use HTTP::Cookies;
 
 # jump table for module commands
 our %jump = (
-	     Story    => {
+	     story    => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
 			 },
-	     Media    => {
+	     media    => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
 			 },
-	     Template => {
+	     template => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
 			 },
-	     Element => {
+	     element => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
 			 },
-	     Category => {
+	     category => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
 			 },
-	     Workflow => {
+             media_type => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                       },
+             site => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                       },
+             keyword => {
+                          list_ids => \&list_ids,
+                          export   => \&export,
+                          create   => \&create,
+                          update   => \&update,
+                          delete   => \&delete,
+                       },
+	     workflow => {
 			  publish  => \&publish,
 			  deploy   => \&deploy,
 			  checkin  => \&checkin,
 			  checkout => \&checkout,
 			  move     => \&move,
-			 }
+			 },
 	    );
 
 # get module and verify
 $module = shift @ARGV;
 pod2usage("Missing required module and command parameters.")
     unless $module;
-$module = ucfirst lc $module;
 pod2usage("Unknown module \"$module\".")
     unless exists $jump{$module};
 
@@ -336,7 +361,7 @@ foreach my $opt (@options) {
 
 # make sure chunking isn't requested for a non-chunk-supporting command
 die "The --chunks option only works with the Workflow publish command.\n"
-  if $chunks and $module ne 'Workflow' and $command ne 'publish';
+  if $chunks and $module ne 'workflow' and $command ne 'publish';
 
 # setup soap object to login with
 my $soap = new SOAP::Lite
@@ -372,7 +397,7 @@ if (!$use_cookie) {
 }
 
 # switch to requested module
-$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
+$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . _class_name($module));
 print STDERR "$module $command: Switched to $module module.\n" if $verbose;
 
 # execute command
@@ -385,24 +410,25 @@ $jump{$module}{$command}->();
 
 
 sub list_ids {
-    print STDERR "$module $command: Calling Bric::SOAP::$module->$command ",
-	"with search: (",
-	    join(', ', map { "$_ => $search{$_}" } keys %search), ")\n"
-		if $verbose;
+    if ($verbose) {
+        my $class = _class_name($module);
+        print STDERR "$module $command: Calling Bric::SOAP::$class->$command ",
+          "with search: (", join(', ', map { "$_ => $search{$_}" } keys %search), ")\n";
+    }
     my $response = $soap->list_ids(map { name($_ => $search{$_}) }
                                    keys %search);
     my $list = $response->result;
     foreach (@$list) {
-	print lc $module, "_", $_, "\n";
+        print $module, "_", $_, "\n";
     }
 }
 
 sub export {
     # collect ids
-    my @ids = _read_ids(lc($module) . "_id");
+    my @ids = _read_ids($module . "_id");
 
     my @opts;
-    push @opts, name(lc $module . '_ids', \@ids);
+    push @opts, name($module . '_ids', \@ids);
     push @opts, name(export_related_stories => 1) if $with_related_stories;
     push @opts, name(export_related_media   => 1) if $with_related_media;
 
@@ -411,8 +437,8 @@ sub export {
 
 sub delete {
     # collect ids
-    my @ids = _read_ids(lc($module) . "_id");
-    $soap->delete(name(lc $module . '_ids', \@ids));
+    my @ids = _read_ids($module . "_id");
+    $soap->delete(name($module . '_ids', \@ids));
 }
 
 sub create {
@@ -435,9 +461,11 @@ sub create {
 	    close(DOC);
 	}
 
-	print STDERR "$module $command: Calling Bric::SOAP::$module->$command " .
-          "with document:  ", length($document), " bytes\n"
-          if $verbose;
+        if ($verbose) {
+            my $class = _class_name($module);
+            print STDERR "$module $command: Calling Bric::SOAP::$class->$command " .
+              "with document:  ", length($document), " bytes\n";
+        }
 
 	# print out response ids
 	_print_ids($soap->create(name(document => $document)->type('base64'), @opts));
@@ -466,23 +494,23 @@ sub update {
 	    close(DOC);
 	}
 
-	my $name = lc($module);
-	my @update_ids = $document =~ /<$name.*id="(\d+)"/g;
+	my @update_ids = $document =~ /<$module.*id="(\d+)"/g;
 	die "No $module ids found in update document.\n"
 	    unless @update_ids;
-	print STDERR "$module $command: Found ids for update: ",
-	    join(', ', @update_ids), "\n"
-		if $verbose;
+        if ($verbose) {
+            print STDERR "$module $command: Found ids for update: ",
+              join(', ', @update_ids), "\n";
 
-	print STDERR "$module $command: Calling Bric::SOAP::$module->$command",
-	    " with document:  ", length($document), " bytes\n"
-		if $verbose;
+            my $class = _class_name($module);
+            print STDERR "$module $command: Calling Bric::SOAP::$class->$command",
+              " with document:  ", length($document), " bytes\n";
+        }
 
 	my $response = $soap->update(name(document =>
                                           $document)->type('base64'),
                                      name(update_ids =>
                                           [ map
-                                            { name("${name}_id" => $_) }
+                                            { name("$module\_id" => $_) }
                                             @update_ids ]),
                                      @opts);
 	# print out ids
@@ -560,7 +588,7 @@ sub _read_ids {
 	      "(story_1024, for example).\n"
 		  unless $default_type;
 	  push @ids, name($default_type, $_);
-      } elsif (/^([a-zA-Z]+)_(\d+)$/) {
+      } elsif (/^([a-zA-Z_]+)_(\d+)$/) {
 	  my ($name, $id) = ($1, $2);
 	  push @ids, name(lc $name . "_id", $id);
       } else {
@@ -572,9 +600,11 @@ sub _read_ids {
     "(did you forget a '-' argument to read ids from STDIN?)\n"
       unless @ids;
 
-  print STDERR "$module $command: Calling $module->$command with ids: ",
-      join(', ', map { $_->name . " => " . $_->value } @ids) , "\n"
-	  if $verbose;
+  if ($verbose) {
+      my $class = _class_name($module);
+      print STDERR "$module $command: Calling $class->$command with ids: ",
+        join(', ', map { $_->name . " => " . $_->value } @ids) , "\n";
+  }
 
   return @ids;
 }
@@ -617,13 +647,14 @@ sub _handle_fault {
 
     # print out the error as appropriate
     if (ref $r) {
+        my $class = _class_name($module);
         if ($r->faultstring eq 'Application error' and
             ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
             # this is a bric exception, the interesting stuff is in detail
-            print STDERR "Call to Bric::SOAP::$module->$command failed:\n\n",
+            print STDERR "Call to Bric::SOAP::$class->$command failed:\n\n",
               join("\n", values %{$r->faultdetail}), $/, $/;
         } else {
-            print STDERR "Call to Bric::SOAP::$module->$command failed:\n\n",
+            print STDERR "Call to Bric::SOAP::$class->$command failed:\n\n",
               $r->faultstring, $/, $/;
         }
         print STDERR "Check the Apache error log for more detail.\n";
@@ -638,3 +669,9 @@ sub _handle_fault {
     # return an empty object to keep things humming along
     return SOAP::SOM->new();
 }
+
+sub _class_name {
+    my $module = shift;
+    return join('', map { ucfirst } split(/_/, lc($module)));
+}
+

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-09-16 14:09:31 $
 
 =head1 SYNOPSIS
 
@@ -1647,8 +1647,8 @@ sub delete_output_channels {
 
 =item ($site_list || @site_list) = $element->get_sites(@site_ids);
 
-This returns a list of output channels that have been associated with this
-asset type. If C<@site_ids> is passed, then only the site with those
+This returns a list of sites that have been associated with this
+asset type. If C<@site_ids> is passed, then only the sites with those
 IDs are returned, if they're associated with this asset type.
 
 B<Throws:> NONE.

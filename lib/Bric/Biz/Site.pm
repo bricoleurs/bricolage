@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =item Date
 
-$Date: 2003-09-16 04:44:46 $
+$Date: 2003-09-16 14:09:32 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.7 2003-09-16 04:44:46 wheeler Exp $
+$Id: Site.pm,v 1.8 2003-09-16 14:09:32 slanning Exp $
 
 =back
 
@@ -58,7 +58,7 @@ $Id: Site.pm,v 1.7 2003-09-16 04:44:46 wheeler Exp $
 
 =head1 DESCRIPTION
 
-Site are first-class Bricolage objects designed to manage different sites from
+Sites are first-class Bricolage objects designed to manage different sites from
 within a single Bricolage instance.
 
 =cut
@@ -254,6 +254,10 @@ A boolean value indicating if the site is active.
 =item grp_id
 
 A Bric::Util::Grp::Site object ID.
+
+=item element_id
+
+A Bric::Biz::AssetType element ID.
 
 =back
 

@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-09-16 14:09:32 $
 
 =head1 SYNOPSIS
 
@@ -834,7 +834,6 @@ NONE
 
 sub set_directory {
     my ($self, $dir) = @_;
-    my $id = $self->_get('id');
     throw_dp(error => "Cannot change the directory of the root category")
       if $self->is_root_category;
     $self->_set(['directory', '_update_uri'], [$dir, 1]);
@@ -1176,7 +1175,7 @@ sub get_keywords {
 
 sub keywords {
     Carp::cluck(__PACKAGE__ . "->keywords has been deprecated.\n" .
-                "Use ", __PACKAGE__, "->keyword instead");
+                "Use ", __PACKAGE__, "->get_keywords instead");
     $_[0]->get_keywords;
 }
 
@@ -1292,13 +1291,13 @@ sub add_keywords {
     my $self = shift;
     my $kw_coll = &$get_kw_coll($self);
     $self->_set__dirty(1);
-    $kw_coll->add_new_objs(@_);
+    $kw_coll->add_new_objs(ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_);
 }
 
 sub add_keyword {
     Carp::cluck(__PACKAGE__ . "->add_keyword has been deprecated.\n" .
                 "Use ", __PACKAGE__, "->add_keywords instead");
-    $_[0]->add_keywords(@{$_[1]})
+    $_[0]->add_keywords(@{$_[1]});
 }
 
 #------------------------------------------------------------------------------#
@@ -1318,8 +1317,8 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE
 
-B<Notes:> The old C<add_keyword()> method has been deprecated. Please use
-C<add_keywords()>, instead.
+B<Notes:> The old C<del_keyword()> method has been deprecated. Please use
+C<del_keywords()>, instead.
 
 =cut
 
@@ -1333,7 +1332,7 @@ sub del_keywords {
 sub del_keyword {
     Carp::cluck(__PACKAGE__ . "->del_keyword has been deprecated.\n" .
                 "Use ", __PACKAGE__, "->del_keywords instead");
-    $_[0]->add_keywords(@{$_[1]})
+    $_[0]->del_keywords(@{$_[1]});
 }
 
 #------------------------------------------------------------------------------#

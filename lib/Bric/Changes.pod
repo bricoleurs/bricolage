@@ -139,7 +139,7 @@ See L<Bric::AdvTemplates> for documentation on this. [JoE<atilde>o Pedro]
 
 =item *
 
-Added new page extesion support to the burner, which allows temlate developers
+Added new page extension support to the burner, which allows template developers
 to set string extensions to use for successive file names, rather than the
 traditional use of numeric file name extensions for successive file names.
 [Clive Jones]
@@ -183,6 +183,11 @@ the dependency on a C library (libiconv). Note that this changed the API of
 Bric::Util::CharTrans. Its C<to_utf8()> and C<from_utf8()> methods now always
 convert the argument passed in in place. They did this before for references,
 but now they do it for plain strings, as well. [Scott & David]
+
+=item *
+
+Factored out some of the SOAP asset classes into Bric::SOAP::Asset.
+Also added MediaType, Site, and Keyword SOAP modules. [Scott]
 
 =back
 

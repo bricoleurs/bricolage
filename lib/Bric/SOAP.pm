@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -10,6 +10,9 @@ use Bric::SOAP::Template;
 use Bric::SOAP::Workflow;
 use Bric::SOAP::Element;
 use Bric::SOAP::Category;
+use Bric::SOAP::MediaType;
+use Bric::SOAP::Site;
+use Bric::SOAP::Keyword;
 
 1;
 __END__
@@ -20,11 +23,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2003-05-20 18:39:43 $
+$Date: 2003-09-16 14:09:29 $
 
 =head1 SYNOPSIS
 
@@ -172,6 +175,18 @@ Provides query, export, update, create, and delete for Element definitions.
 =item L<Bric::SOAP::Category|Bric::SOAP::Category>
 
 Provides query, export, update, create, and delete for Category objects.
+
+=item L<Bric::SOAP::MediaType|Bric::SOAP::MediaType>
+
+Provides query, export, update, create, and delete for MediaType objects.
+
+=item L<Bric::SOAP::MediaType|Bric::SOAP::Site>
+
+Provides query, export, update, create, and delete for Site objects.
+
+=item L<Bric::SOAP::MediaType|Bric::SOAP::Keyword>
+
+Provides query, export, update, create, and delete for Keyword objects.
 
 =item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
@@ -589,6 +604,13 @@ The XSD source:
          <xs:element name="template" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
                <xs:element name="element">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">
@@ -737,6 +759,13 @@ The XSD source:
          <xs:element name="category" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
+               <xs:element name="site">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
                <xs:element name="name">
                  <xs:simpleType>
                    <xs:restriction base="xs:string"/>
@@ -776,6 +805,91 @@ The XSD source:
                    </xs:sequence>
                  </xs:complexType>
                </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="media_type" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+               <xs:element name="exts">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="ext" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                       <xs:annotation>
+                         <xs:documentation>This is just a list of extensions.</xs:documentation>
+                       </xs:annotation>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="site" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="description">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="domain_name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="keyword" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string"/>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="screen_name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="sort_name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="256"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+               <xs:element name="active" type="xs:boolean"/>
              </xs:sequence>
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
@@ -904,6 +1018,12 @@ L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 L<Bric::SOAP::Element|Bric::SOAP::Element>
 
 L<Bric::SOAP::Category|Bric::SOAP::Category>
+
+L<Bric::SOAP::MediaType|Bric::SOAP::MediaType>
+
+L<Bric::SOAP::Site|Bric::SOAP::Site>
+
+L<Bric::SOAP::Keyword|Bric::SOAP::Keyword>
 
 L<bric_soap|bric_soap>
 

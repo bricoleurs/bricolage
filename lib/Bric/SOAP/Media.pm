@@ -9,14 +9,12 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Util::Grp::Parts::Member::Contrib;
-use Bric::Util::Fault   qw(throw_ap);
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
+
+use Bric::Util::Fault   qw(throw_ap);
 use Bric::App::Session  qw(get_user_id);
-use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
-use XML::Writer;
-use IO::Scalar;
-use MIME::Base64;
 
 use Bric::SOAP::Util qw(category_path_to_id
                         site_to_id
@@ -31,8 +29,7 @@ use Bric::SOAP::Util qw(category_path_to_id
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
@@ -43,15 +40,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 05:43:03 $
+$Date: 2003-09-16 14:09:32 $
 
 =head1 SYNOPSIS
 
@@ -171,7 +168,13 @@ Upper bound on cover date.  Given in XML Schema dateTime format
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -182,19 +185,11 @@ here too.
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(title description file_name
-                                 simple uri priority publish_status
-                                 workflow element category
-                                 publish_date_start publish_date_end
-                                 cover_date_start cover_date_end
-                                 expire_date_start expire_date_end
-                                 site alias_id);
 sub list_ids {
     my $self = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'list_ids';
 
     print STDERR __PACKAGE__ . "->list_ids() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -202,7 +197,7 @@ sub list_ids {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $self->is_allowed_param($_, $method);
     }
 
     # handle workflow => workflow__id mapping
@@ -263,7 +258,6 @@ sub list_ids {
     # name the array and return
     return name(media_ids => \@result);
 }
-}
 
 =item export
 
@@ -287,7 +281,13 @@ array of interger "media_id" elements.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -300,61 +300,6 @@ your Media types then you'll have to manually fetch the relations.
 
 =cut
 
-{
-  # hash of allowed parameters
-  my %allowed = map { $_ => 1 } qw(media_id media_ids);
-
-sub export {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->export() called : args : ",
-        Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # media_id is sugar for a one-element media_ids arg
-    $args->{media_ids} = [ $args->{media_id} ] if exists $args->{media_id};
-
-    # make sure media_ids is an array
-    throw_ap(error => __PACKAGE__ . "::export : missing required media_id(s) setting.")
-      unless defined $args->{media_ids};
-    throw_ap(error => __PACKAGE__ . "::export : malformed media_id(s) setting.")
-      unless ref $args->{media_ids} and ref $args->{media_ids} eq 'ARRAY';
-
-    # setup XML::Writer
-    my $document        = "";
-    my $document_handle = new IO::Scalar \$document;
-    my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
-                                           DATA_MODE   => 1,
-                                           DATA_INDENT => 1);
-
-    # open up an assets document, specifying the schema namespace
-    $writer->xmlDecl("UTF-8", 1);
-    $writer->startTag("assets", 
-                      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
-
-    # iterate through media_ids, serializing media objects as we go
-    foreach my $media_id (@{$args->{media_ids}}) {
-        $pkg->_serialize_media(writer   => $writer,
-                               media_id => $media_id,
-                               args     => $args);
-    }
-
-    # end the assets element and end the document
-    $writer->endTag("assets");
-    $writer->end();
-    $document_handle->close();
-
-    # name, type and return
-    return name(document => $document)->type('base64');
-}
-}
 
 =item create
 
@@ -383,7 +328,13 @@ Specifies the initial desk the story is to be created on
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -396,35 +347,6 @@ you pass the --desk option.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document workflow desk);
-
-sub create {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->create() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
-      unless $args->{document};
-
-    # setup empty update_ids arg to indicate create state
-    $args->{update_ids} = [];
-
-    # call _load_media
-    return $pkg->_load_media($args);
-}
-}
 
 =item update
 
@@ -464,7 +386,13 @@ Specifies the desk to move the media to
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -473,40 +401,6 @@ always 0 for new stories.  Updated media do get their publish_status
 set from the incoming document.
 
 =cut
-
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
-
-sub update {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->update() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
-      unless $args->{document};
-
-    # make sure we have an update_ids array
-    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
-      unless $args->{update_ids};
-    throw_ap(error => __PACKAGE__ .
-               "::update : malformed update_ids parameter - must be an array.")
-      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
-
-    # call _load_media
-    return $pkg->_load_media($args);
-}
-}
 
 
 =item delete
@@ -525,7 +419,13 @@ Specifies a list of media_ids to delete.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -534,13 +434,11 @@ Notes: NONE
 =cut
 
 # hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(media_id media_ids);
-
 sub delete {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'delete';
 
     print STDERR __PACKAGE__ . "->delete() called : args : ",
       Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -548,7 +446,7 @@ sub delete {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     # media_id is sugar for a one-element media_ids arg
@@ -600,6 +498,43 @@ sub delete {
 
     return name(result => 1);
 }
+
+=item $self->module
+
+Returns the module name, that is the first argument passed
+to bric_soap.
+
+=cut
+
+sub module { 'media' }
+
+=item is_allowed_param
+
+=item $pkg->is_allowed_param($param, $method)
+
+Returns true if $param is an allowed parameter to the $method method.
+
+=cut
+
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+    my $module = $pkg->module;
+
+    my $allowed = {
+        list_ids => { map { $_ => 1 } qw(title description file_name
+                                         simple uri priority publish_status
+                                         workflow element category
+                                         publish_date_start publish_date_end
+                                         cover_date_start cover_date_end
+                                         expire_date_start expire_date_end
+                                         site alias_id) },
+        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+        create   => { map { $_ => 1 } qw(document workflow desk) },
+        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+    };
+
+    return exists($allowed->{$method}->{$param});
 }
 
 =back
@@ -616,7 +551,7 @@ create().
 
 =cut
 
-sub _load_media {
+sub load_asset {
     my ($pkg, $args) = @_;
     my $document = $args->{document};
     my $data     = $args->{data};
@@ -954,7 +889,7 @@ writer and args.
 
 =cut
 
-sub _serialize_media {
+sub serialize_asset {
     my $pkg      = shift;
     my %options  = @_;
     my $media_id = $options{media_id};

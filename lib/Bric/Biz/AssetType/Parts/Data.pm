@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:11 $
+$Date: 2003-09-16 14:09:32 $
 
 
 =head1 SYNOPSIS
@@ -34,8 +34,8 @@ $Date: 2003-08-14 23:24:11 $
  $id    = $field->get_id()
 
  # Get/Set the name of this field.
- $field = $field->set_name($name)
- $name  = $field->get_name()
+ $field = $field->set_key_name($name)
+ $name  = $field->get_key_name()
 
  # Get/set the description for this field.
  $field = $field->set_description($description)
@@ -799,6 +799,30 @@ NONE
 
 #------------------------------------------------------------------------------#
 
+=item set_name
+
+B<Notes:> This method no longer exists. Use set_key_name instead.
+
+=cut
+
+sub set_name {
+    my ($pkg,$file,$line) = caller;
+    my $msg = "ERROR: [$file:$line] called the removed method 'set_name'";
+    throw_gen(error => $msg);
+}
+
+=item get_name
+
+B<Notes:> This method no longer exists. Use get_key_name instead.
+
+=cut
+
+sub get_name {
+    my ($pkg,$file,$line) = caller;
+    my $msg = "ERROR: [$file:$line] called the removed method 'get_name'";
+    throw_gen(error => $msg);
+}
+
 =item $field = $field->set_key_name( $name )
 
 Sets the key name for this field.  The display name is stored in the 'disp'
@@ -817,12 +841,6 @@ B<Notes:>
 NONE
 
 =cut
-
-sub get_name {
-    my ($pkg,$file,$line) = caller;
-    my $msg = "WARNING: [$file:$line] called the deprecated method 'get_name'";
-    throw_gen(error => $msg);
-}
 
 #------------------------------------------------------------------------------#
 

@@ -118,7 +118,7 @@ sub save : Callback {
             next unless $_;
             my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
             unless ($kw) {
-                $kw = Bric::Biz::Keyword->new({ name => $_})->save;
+                $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
                 log_event('keyword_new', $kw);
             }
             push @$new, $kw;

@@ -7,16 +7,16 @@ use warnings;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
+use Bric::Biz::Site;
 use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
 use Bric::App::Session  qw(get_user_id);
-use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
 use Bric::Util::Fault   qw(throw_ap);
-use IO::Scalar;
-use XML::Writer;
 use Bric::Biz::Person::User;
 
 use Bric::SOAP::Util qw(category_path_to_id
+                        site_to_id
                         xs_date_to_db_date db_date_to_xs_date
                         parse_asset_document
                        );
@@ -24,8 +24,7 @@ use Bric::SOAP::Util qw(category_path_to_id
 use SOAP::Lite;
 import SOAP::Data 'name';
 
-# needed to get envelope on method calls
-our @ISA = qw(SOAP::Server::Parameters);
+use base qw(Bric::SOAP::Asset);
 
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
@@ -40,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 05:43:03 $
+$Date: 2003-09-16 14:09:33 $
 
 =head1 SYNOPSIS
 
@@ -154,7 +153,13 @@ Upper bound on expire date.  Given in XML Schema dateTime format
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -164,18 +169,11 @@ Bric::Biz::Asset::Formatting->list() and then support them here too.
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(element file_name output_channel
-                                 category workflow simple
-                                 priority publish_status element
-                                 deploy_date_start deploy_date_end
-                                 expire_date_start expire_date_end);
-
 sub list_ids {
     my $self = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'list_ids';
 
     print STDERR __PACKAGE__ . "->list_ids() called : args : ",
         Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -183,7 +181,7 @@ sub list_ids {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::list_ids : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
+            unless $self->is_allowed_param($_, $method);
     }
 
     # handle workflow => workflow__id mapping
@@ -243,7 +241,6 @@ sub list_ids {
     # name the array and return
     return name(template_ids => \@result);
 }
-}
 
 =item export
 
@@ -267,7 +264,13 @@ array of interger "template_id" elements.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -275,62 +278,6 @@ Notes: NONE
 
 =cut
 
-{
-# hash of allowed parameters
-my %allowed = map { $_ => 1 } qw(template_id template_ids);
-
-sub export {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->export() called : args : ",
-        Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::export : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
-    }
-
-    # template_id is sugar for a one-element template_ids arg
-    $args->{template_ids} = [ $args->{template_id} ]
-      if exists $args->{template_id};
-
-    # make sure template_ids is an array
-    throw_ap(error => __PACKAGE__ . "::export : missing required template_id(s) setting.")
-        unless defined $args->{template_ids};
-    throw_ap(error => __PACKAGE__ . "::export : malformed template_id(s) setting.")
-        unless ref $args->{template_ids} and ref $args->{template_ids} eq 'ARRAY';
-
-    # setup XML::Writer
-    my $document        = "";
-    my $document_handle = new IO::Scalar \$document;
-    my $writer          = XML::Writer->new(OUTPUT      => $document_handle,
-                                           DATA_MODE   => 1,
-                                           DATA_INDENT => 1);
-
-    # open up an assets document, specifying the schema namespace
-    $writer->xmlDecl("UTF-8", 1);
-    $writer->startTag("assets", 
-                      xmlns => 'http://bricolage.sourceforge.net/assets.xsd');
-
-    # iterate through template_ids, serializing template objects as we go
-    foreach my $template_id (@{$args->{template_ids}}) {
-      $pkg->_serialize_template(writer      => $writer,
-                                template_id => $template_id,
-                                args        => $args);
-    }
-
-    # end the assets element and end the document
-    $writer->endTag("assets");
-    $writer->end();
-    $document_handle->close();
-
-    # name, type and return
-    return name(document => $document)->type('base64');
-}
-}
 
 =item create
 
@@ -359,7 +306,13 @@ Specifies the initial desk the story is to be created on
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -369,35 +322,6 @@ you pass the --desk option.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document workflow desk);
-
-sub create {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->create() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::create : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::create : missing required document parameter.")
-      unless $args->{document};
-
-    # setup empty update_ids arg to indicate create state
-    $args->{update_ids} = [];
-
-    # call _load_template
-    return $pkg->_load_template($args);
-}
-}
 
 =item update
 
@@ -437,7 +361,13 @@ Specifies the desk to move the template to
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -448,39 +378,6 @@ extension.  This should be fixed.
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(document update_ids workflow desk);
-
-sub update {
-    my $pkg = shift;
-    my $env = pop;
-    my $args = $env->method || {};
-
-    print STDERR __PACKAGE__ . "->update() called : args : ",
-      Data::Dumper->Dump([$args],['args']) if DEBUG;
-
-    # check for bad parameters
-    for (keys %$args) {
-        throw_ap(error => __PACKAGE__ . "::update : unknown parameter \"$_\".")
-            unless exists $allowed{$_};
-    }
-
-    # make sure we have a document
-    throw_ap(error => __PACKAGE__ . "::update : missing required document parameter.")
-      unless $args->{document};
-
-    # make sure we have an update_ids array
-    throw_ap(error => __PACKAGE__ . "::update : missing required update_ids parameter.")
-      unless $args->{update_ids};
-    throw_ap(error => __PACKAGE__ .
-               "::update : malformed update_ids parameter - must be an array.")
-      unless ref $args->{update_ids} and ref $args->{update_ids} eq 'ARRAY';
-
-    # call _load_template
-    return $pkg->_load_template($args);
-}
-}
 
 =item delete
 
@@ -498,7 +395,13 @@ Specifies a list of template_ids to delete.
 
 =back
 
-Throws: NONE
+Throws:
+
+=over
+
+=item Exception::AP
+
+=back
 
 Side Effects: NONE
 
@@ -506,14 +409,11 @@ Notes: NONE
 
 =cut
 
-# hash of allowed parameters
-{
-my %allowed = map { $_ => 1 } qw(template_id template_ids);
-
 sub delete {
     my $pkg = shift;
     my $env = pop;
     my $args = $env->method || {};
+    my $method = 'delete';
 
     print STDERR __PACKAGE__ . "->delete() called : args : ",
       Data::Dumper->Dump([$args],['args']) if DEBUG;
@@ -521,7 +421,7 @@ sub delete {
     # check for bad parameters
     for (keys %$args) {
         throw_ap(error => __PACKAGE__ . "::delete : unknown parameter \"$_\".")
-          unless exists $allowed{$_};
+          unless $pkg->is_allowed_param($_, $method);
     }
 
     # template_id is sugar for a one-element template_ids arg
@@ -579,7 +479,52 @@ sub delete {
 
     return name(result => 1);
 }
+
+=item $self->module
+
+Returns the module name, that is the first argument passed
+to bric_soap.
+
+=cut
+
+sub module { 'template' }
+
+=item $self->class
+
+Returns the class name used for 'lookup' (used in the delete method).
+
+=cut
+
+sub class { 'Bric::Biz::Asset::Formatting' }
+
+
+=item is_allowed_param
+
+=item $pkg->is_allowed_param($param, $method)
+
+Returns true if $param is an allowed parameter to the $method method.
+
+=cut
+
+sub is_allowed_param {
+    my ($pkg, $param, $method) = @_;
+    my $module = $pkg->module;
+
+    my $allowed = {
+        list_ids => { map { $_ => 1 } qw(element file_name output_channel
+                                         category workflow simple
+                                         priority publish_status element
+                                         deploy_date_start deploy_date_end
+                                         expire_date_start expire_date_end) },
+        export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+        create   => { map { $_ => 1 } qw(document workflow desk) },
+        update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
+        delete   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
+    };
+
+    return exists($allowed->{$method}->{$param});
 }
+
 
 =back
 
@@ -595,7 +540,7 @@ create().
 
 =cut
 
-sub _load_template {
+sub load_asset {
     my ($pkg, $args) = @_;
     my $document     = $args->{document};
     my $data         = $args->{data};
@@ -638,6 +583,9 @@ sub _load_template {
 
         # get user__id from Bric::App::Session
         $init{user__id} = get_user_id;
+
+        # Get the site ID.
+        $init{site_id} = site_to_id($pkg, $tdata->{site});
 
         # handle output_channel => output_channel__id mapping
 
@@ -837,7 +785,7 @@ the given writer and args.
 
 =cut
 
-sub _serialize_template {
+sub serialize_asset {
     my $pkg         = shift;
     my %options     = @_;
     my $template_id = $options{template_id};
@@ -853,6 +801,11 @@ sub _serialize_template {
 
     # open a template element
     $writer->startTag("template", id => $template_id);
+
+    # write out site
+    my $site_id = $template->get_site_id;
+    my $site = Bric::Biz::Site->lookup({ id => $site_id });
+    $writer->dataElement(site => $site->get_name);
 
     # write out element, known to bric as "name" and save it for later
     my $name = $template->get_name;
