@@ -193,6 +193,15 @@ if ($param->{delete} &&
         for (@$del_oc_ids) {
             $comp->set_primary_oc_id(undef) and last if $_ == $primoc;
         }
+
+        # workaround because of wierd relationship
+        # between OutputChannel and OutputChannel::Element
+        # seems like the object gets loaded by lookup
+        # this forces them to be loaded first by the
+        # href function, seems like O::E needs a _do_list 
+        # /Arthur
+        $comp->get_output_channels();        
+
         $comp->delete_output_channels($del_oc_ids);
     }
 
@@ -275,11 +284,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2003-03-12 08:59:52 $
+$Date: 2003-03-12 13:50:37 $
 
 =head1 SYNOPSIS
 
