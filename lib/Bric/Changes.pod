@@ -43,6 +43,10 @@ Richards for the contribution.
 Some unnecessary JavaScript was removed from the side navigation layer. Thanks
 to Eldar Kononov for the suggestion. [David]
 
+=item *
+
+Added keyword support for media assets to SOAP interface. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -125,6 +129,50 @@ Minor JavaScript fix for Opera users, thanks to Kevin White. [David]
 The "multi" installation method now defaults the "Bricolage Root Directory"
 setting to F</usr/local/bricolage> instead of "NONE". This seems to be less
 annoying to people. [David]
+
+=item *
+
+The F<inst/upgrade/1.5.1/asset_desk.pl> script, which is run by
+C<make upgrade>, now correctly checks to see if the upgrade has already been
+performed. [David]
+
+=item *
+
+The F<inst/upgrade/1.5.1/webdav_mover.pl> script, which is run by
+C<make upgrade>, now correctly checks for the existence of the correct record
+in the "class" table before inserting a new record. [David]
+
+=item *
+
+During C<make upgrade>, the upgrade scripts are now run I<before> the new APIs
+are installed, so that there are no conflicts when using the existing API to
+make changes. [David]
+
+=item *
+
+Creation and installation of man pages can now be avoided during
+C<make upgrade> as well as during C<make>. [David]
+
+=item *
+
+Man pages will now be installed in the correct subdirectory of
+C<$BRICOLAGE_ROOT> when using the "multi" install method. [David]
+
+=item *
+
+Fixed issue where asset groups and desk groups were conflated in workflow
+objects, leading to errors on the permissions page. Thanks to JoE<atilde>o
+Pedro for the spot. [David]
+
+=item *
+
+The URI of new stories is once again properly formed when the stories are
+created. [David]
+
+=item *
+
+The list of events no longer displays attributes for events that have no
+attributes [David]
 
 =back
 
