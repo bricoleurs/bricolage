@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-02-27 20:11:20 $
 
 =head1 SYNOPSIS
 
@@ -1170,29 +1170,44 @@ Returns name of media with conflicting URI, if any.
 
 sub check_uri {
     my ($self, $uid) = @_;
-    my $media_cat = $self->get_category__id();
+    my $id = $self->_get('id') || 0;
 
-    die $gen->new({ msg => 'Unable to retrieve category__id of this media' })
-      unless defined $media_cat;
+    # Get the category.
+    my $media_cat = $self->get_category__id or die $gen->new
+      ({ msg => 'Unable to retrieve category__id of this media' });
 
-    # get media in the same category
+    # Get the current media's output channels.
+    my @ocs = $self->get_output_channels;
+    die $gen->new({ msg => 'Cannot retrieve any output channels associated ' .
+                           "with this media asset's media type element" })
+      if !$ocs[0];
+
+    # Get all media in the same category.
     my $params = { category_id => $media_cat,
                    active      => 1 };
 
-    my $medias = __PACKAGE__->list($params);
+    my $medias = $self->list($params);
     if (defined $uid) {
         $params->{user__id} = $uid;
-        push @$medias, __PACKAGE__->list($params);
+        push @$medias, $self->list($params);
     }
 
-    my ($id, $uri) = $self->_get(qw(id uri));
-
+    # For each media asset that shares this category...
     foreach my $med (@$medias) {
-        # skip if current media
-        next if $med->get_id == $id;
-        return $med->get_name if $med->get_uri eq $uri;
+        # Don't want to compare current media with itself.
+        next if ($med->get_id == $id);
+
+        # For each output channel, throw an error for conflicting URI.
+        foreach my $med_oc ($med->get_output_channels) {
+            foreach my $oc (@ocs) {
+                # HACK: Must get rid of the message and throw an
+                # exception, instead.
+                return $med->get_name if
+                  $med->get_uri($med_oc) eq $self->get_uri($oc);
+            }
+        }
     }
-    return 0;
+    return;
 }
 
 ################################################################################

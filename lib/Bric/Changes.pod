@@ -249,6 +249,12 @@ Fixed bug introduced in 1.5.0 where stories where checked for duplicate URIs
 for output channels that they weren't actually in. Thanks to Bill Cappel for
 the spot. [David]
 
+=item *
+
+Fixed duplicate URI checking for media assets so that all output channels a
+media asset is in will be checked for dupliate URIs instead of just the
+primary URI. [David]
+
 =back
 
 =head1 VERSION 1.5.0
