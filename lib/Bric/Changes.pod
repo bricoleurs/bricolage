@@ -14,6 +14,23 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.8.1 ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Bulk Publish now ensures that users have at least READ access to catgories
+they wish to publish from. [Scott]
+
+=back
+
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.8.0 "Portland" (2004-05-03)
 
 =head2 Improvements
@@ -166,6 +183,10 @@ Stories and media are no longer published twice when published from a publish
 desk or via Bulk Publish. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)
 
@@ -354,6 +375,10 @@ to deleted groups in the permissions interface. So it has been removed.
 [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.4 "Sacramento" (2004-03-18)
 
@@ -688,6 +713,10 @@ Apache forks, leading to strange errors such as "message type 0x49 arrived
 from server while idle", and occaisionally a frozen server. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.3 (2004-03-01)
 
@@ -1047,6 +1076,10 @@ longer causes an error. Reported by Marshall Bloch. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
 
 =head2 New Features
@@ -1345,6 +1378,10 @@ sites) that the user does not have at least READ permission to access. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.7.1 (2003-11-30)
 
 =head2 Improvements
@@ -1511,6 +1548,10 @@ media file stored in the database, unless the file name of the media
 was also changed. [Dave Rolsky]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.7.0 (2003-10-22)
 
@@ -1825,6 +1866,10 @@ upgrading. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.14 (2004-05-02)
 
 =head2 Bug Fixes
@@ -1868,6 +1913,10 @@ Reported by Serge Sozonoff. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
 
 =head2 Bug Fixes
@@ -1880,6 +1929,10 @@ Deactivated groups no longer affect permission checking. Discovered thanks to
 a bug report from Serge Sozonoff. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.12 "Tov" (2004-04-09)
 
@@ -1903,6 +1956,10 @@ Alerts once again properly check the attributes of the events that trigger
 them. Reported by Patrick Walsh. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.11 "Green" (2004-03-17)
 
@@ -1938,6 +1995,10 @@ cases. Incidentally, this change also allows dynamic configuration of mod_perl
 1.26 and earlier. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.10 "Jump" (2004-02-29)
 
@@ -2032,6 +2093,10 @@ Changed the name of the event logged when templates are checked out from
 "Template Checked Out Canceled" to the correct "Template Checked Out." [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.9 (2004-02-06)
 
@@ -2143,6 +2208,10 @@ Updated Chinese Traditional localization. [Kang-min Liu]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.8 (2003-11-29)
 
 =head2 Bug Fixes
@@ -2215,6 +2284,10 @@ preview. Reported by Simon Wilcox. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.7 (2003-10-22)
 
 =head2 Bug Fixes
@@ -2279,6 +2352,10 @@ Bric::Biz::Asset::Business::Parts::Tile::Data to actually work. Reported by
 Eldar Kononov. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.6 (2003-10-03)
 
@@ -2379,6 +2456,10 @@ directories as files. [Arthur]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.5 (2003-09-10)
 
 =head2 Bug Fixes
@@ -2474,6 +2555,10 @@ type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.4 (2003-08-12)
 
 =head2 Bug Fixes
@@ -2485,6 +2570,10 @@ type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
 Preview works again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.3 (2003-08-12)
 
@@ -2609,6 +2698,10 @@ Fixed spelling of "contributor" in the description of the contributor type
 class in the database. Noticed by Radu Greab. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.2 (2003-07-28)
 
@@ -2879,6 +2972,10 @@ the contents of F<conf/>. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.6.1 (2003-06-12)
 
 =head2 New Features
@@ -3051,6 +3148,10 @@ be deleted. [David]
 Made unlocalized JavaScript message localized. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.6.0 (2003-04-29)
 
@@ -3246,6 +3347,10 @@ C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.5.2 (2003-04-02)
 
 =head2 New Features
@@ -3344,6 +3449,10 @@ Permissions are now once again properly checked for assets in categories,
 workflows, and on desks. [Mark]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.5.1 (2003-03-23)
 
@@ -3715,6 +3824,10 @@ so that users can administer media types. Previously, only members of the
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.5.0 (2003-01-09)
 
 =head2 New Features
@@ -4037,6 +4150,10 @@ collections, such as desks, should be more responsive. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.6 (2003-01-06)
 
 =head2 Bug Fixes
@@ -4168,6 +4285,10 @@ Added missing C<uri> parameter to the possible search options in
 C<< Bric::SOAP::Category->list_ids >>. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.5 (2002-11-13)
 
@@ -4337,6 +4458,10 @@ Added missing C<list_ids()> method to Bric::Biz::Category. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.4 (2002-10-27)
 
 =head2 Bug Fixes
@@ -4475,6 +4600,10 @@ Geoff Richards for the spot. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.3 (2002-09-28)
 
 =head2 Bug Fixes
@@ -4497,6 +4626,10 @@ The C<get_all_keywords()> method of Bric::Biz::Asset::Business works
 again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.2 (2002-09-27)
 
@@ -4533,6 +4666,10 @@ desk they're already on will no longer remove them from all desks
 altogether. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.4.1 (2002-09-25)
 
@@ -4726,6 +4863,10 @@ both. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.4.0 (2002-09-02)
 
 =head2 New Features
@@ -4850,6 +4991,10 @@ HTML::Mason (>1.09). [Sam]
 The F<bric_dist_mon> program works again. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.3.3 (2002-08-24)
 
@@ -5205,6 +5350,10 @@ reverted. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.2 (2002-06-09)
 
 =head2 New Features
@@ -5443,6 +5592,10 @@ Fixed section numbering in the Contributor Type profile. [Scott Lanning]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.1 (2002-04-03)
 
 =head2 New Features
@@ -5578,6 +5731,10 @@ Implemented the chk_syntax() method in Bric::Util::Burner::Template.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.3.0 (2002-02-10)
 
 =head2 New Features
@@ -5622,10 +5779,18 @@ All fixes in the soon-to-be-released 1.2.1 version. See below for details.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.2.3 (2002-03-17)
 
 Functionally equivalent to 1.2.2, but includes required files missing from the
 1.2.2 distribution.
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.2.2 (2002-03-15)
 
@@ -5753,6 +5918,10 @@ The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
 [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.2.1 (2002-02-25)
 
@@ -5939,6 +6108,10 @@ category. [Matt Vella]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.2.0 (2002-01-10)
 
 =head2 New Features
@@ -6039,6 +6212,10 @@ figure it out from their file extensions. This fixes a bug where Bricolage would
 choke if it couldn't figure out the MediaType itself. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.0.2 (2001-12-10)
 
@@ -6183,6 +6360,10 @@ heads-up.
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.0.1 (2001-09-28)
 
 =over 4
@@ -6192,6 +6373,10 @@ heads-up.
 Initial public release.
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 AUTHOR
 
