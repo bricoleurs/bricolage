@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:47 $
+$Date: 2004-02-17 13:44:30 $
 
 =head1 SYNOPSIS
 
@@ -210,7 +210,7 @@ use constant key => 'de_de';
   'Groups' => 'Gruppen',
   'HTML::Template' => 'HTML::Template',
   'ID' => 'ID',
-  'Information' => 'Information
+  'Information' => 'Information',
   'Jobs' => 'Aufträge',
   'Key Name' => 'Schlüsselname',
   'Label' => 'Etikett',
@@ -304,7 +304,7 @@ use constant key => 'de_de';
   'Template Name' => 'Vorlagenname',
   'Text box' => 'Textfeld',
   'Title' => 'Titel',
-  'Trail' => Protokoll',
+  'Trail' => 'Protokoll',
   'Type' => 'Typ',
   'URI' => 'URI',
   'URL' => 'URL',
@@ -456,7 +456,7 @@ use constant key => 'de_de';
   'Category profile "[_1]" and all its categories deleted.' => 'Kategorieprofil "[1]" und alle zugehörigen Kategorien gelöscht.',
   'Category profile "[_1]" deleted.' => 'Kategorieprofil "[_1]" gelöscht.',
   'Category profile "[_1]" saved.' => 'Kategorieprofil "[_1]" gespeichert.',
-  'Changes not saved: permission denied.' => Änderungen nicht gespeichert: unerlaubter Zugriff.',
+  'Changes not saved: permission denied.' => 'Änderungen nicht gespeichert: unerlaubter Zugriff.',
   'Check In to [_1]' => 'Nach [_1] einchecken',
   'Choose a Related Story' => 'Verwandten Beitrag auswählen',
   'Contributor "[_1]" disassociated.' => 'Mitarbeiter "[_1]" disassoziiert.',
@@ -529,7 +529,7 @@ use constant key => 'de_de';
   'Media Type profile "[_1]" deleted.' => 'Medientypprofil "[_1]" gelöscht.',
   'Media Type profile "[_1]" saved.' => 'Medientypprofil "[_1]" gespeichert.',
   'Move Method' => 'Verschiebungsmethode',
-  'Move to Desk' => 'Verschieben zum B&uuml;ro'
+  'Move to Desk' => 'Verschieben zum B&uuml;ro',
   'Name is required.' => 'Name wird benötigt.',
   'Needs to be Deployed' => 'Muß ausgebracht werden',
   'Needs to be Published' => 'Muß veröffentlicht werden',

@@ -138,6 +138,10 @@ A number of upgrade script annoyances were cleared up. [David]
 The C<simple> parameter to the Media class' C<list()> method works again. As a
 result, so does "Find Stories" in the UI. [David]
 
+=item *
+
+The de-de localization library has been fixed so that it now works. [David]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
