@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 18:36:06 $
+$Date: 2003-03-15 21:52:32 $
 
 =head1 SYNOPSIS
 
@@ -1126,7 +1126,9 @@ sub check_uri {
   OUTER: foreach my $category ($self->get_categories) {
         # get stories in the same category
         my $params = { category_id => $category->get_id,
-                       active      => 1 };
+                       active      => 1,
+                       site_id     => $self->get_site_id,
+                     };
 
         my $stories = $self->list($params);
         # HACK: Get stories for the current user, too.
