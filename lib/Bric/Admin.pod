@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.145 $
+$Revision: 1.146 $
 
 =head1 DATE
 
-$Date: 2004-02-27 01:52:50 $
+$Date: 2004-02-27 05:57:20 $
 
 =head1 DESCRIPTION
 
@@ -1417,7 +1417,7 @@ directives that affect Bricolage Alerting.
 
 B<SMTP_SERVER:> The DNS name of an SMTP server that the Alerting API can send
 alerts to. All alerts are sent by email, so this directive is important to fill
-out. Defaults to VHOST_SERVER_NAME directive if not specified.
+out. Defaults to "localhost" if not specified.
 
 =item *
 

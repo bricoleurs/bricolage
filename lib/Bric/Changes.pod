@@ -178,6 +178,12 @@ Made the default installed "Photograph" and "Illustration" media document
 types true image objects, with autopopulated fields for height, width,
 etc. Suggested by Simon Wilcox. [David]
 
+=item *
+
+Changed the default value of the C<SMTP_SERVER> F<bricolage.conf> directive to
+localhost. This has a much greater chance of working than defaulting to the
+value of the C<VHOST_SERVER_NAME> directive.
+
 =back
 
 =head2 Bug Fixes
