@@ -63,6 +63,7 @@ sub preview : Callback {
         # Get all the related media to be previewed as well
         foreach my $ra ($s->get_related_objects) {
             next if ref $ra eq 'Bric::Biz::Asset::Business::Story';
+            next unless $ra->is_active;
 
             # Make sure this media object isn't checked out.
             if ($ra->get_checked_out) {

@@ -1792,8 +1792,9 @@ sub execute_me {
       if $self->get_comp_time;
 
     # Mark this job executing.
-    &$set_executing($self, 1) 
-      || throw_dp({ error => "Can't get a lock on job No. " . $self->get_id . '.' });
+    # XXX This is ineffective because it's inside a transaction!
+    &$set_executing($self, 1)
+      or throw_dp "Can't get a lock on job No. " . $self->get_id . '.';
     return $self;
 
 }
@@ -1810,7 +1811,7 @@ Bric::Config::DIST_ATTEMPTS it also marks the Job as having failed.
 sub handle_error {
     my ($self, $err) = @_;
     # make sure that we unset executing first thing
-    &$set_executing($self,0);
+#    &$set_executing($self,0);
     # convert the error to text
     if ($self->_get('tries') >= DIST_ATTEMPTS) {
         # We've met or exceeded the maximum number of attempts. Save
@@ -1818,8 +1819,12 @@ sub handle_error {
         # executing.
         $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
         # log the event
-        my $et = Bric::Util::EventType->lookup({ key_name => $self->KEY_NAME . '_failed' });
-        my $user = Bric::Biz::Person::User->lookup({ id => $self->get_user_id });
+        my $et = Bric::Util::EventType->lookup({
+            key_name => $self->KEY_NAME . '_failed'
+        });
+        my $user = Bric::Biz::Person::User->lookup({
+            id => $self->get_user_id
+        });
         $et->log_event($user, $self);
     } else {
         # We're gonna try again. Unlock the job.

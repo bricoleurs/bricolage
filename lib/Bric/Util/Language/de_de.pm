@@ -723,6 +723,7 @@ To Translate:
   'Not defined.' => 'Not defined.',
   'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
   'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
+  'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].'
 
 =end comment
 

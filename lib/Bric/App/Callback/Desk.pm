@@ -191,6 +191,8 @@ sub publish : Callback {
                 foreach my $r ($a->get_related_objects) {
                     # Skip assets whose current version has already been published.
                     next unless $r->needs_publish;
+                    # Skip deactivated documents.
+                    next unless $r->is_active;
 
                     # haven't I seen you someplace before?
                     my $rid = $r->get_id;

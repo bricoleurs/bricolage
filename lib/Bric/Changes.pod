@@ -81,6 +81,12 @@ C<--locale=C> so as to avoid collation issues with non-Western characters. See
 this discussion for more information:
 L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
 
+=item *
+
+Added a warning to the story and media profiles for when related stories and
+media have been deactivated and a different story or media document should be
+related.
+
 =back
 
 =head2 Bug Fixes
@@ -262,6 +268,12 @@ The source of a story can now be changed. [David]
 
 Status messages sent to the browser during previews are now hidden if an error
 is triggered. [Marshall]
+
+=item *
+
+Publishing a document with deactivated related documents no longer causes
+those deactivated documents to be published, too. Reported by Paul Orrock.
+[David]
 
 =back
 
