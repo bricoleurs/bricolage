@@ -42,3 +42,16 @@ REFERENCES     output_channel(id) ON DELETE CASCADE;
 ALTER TABLE    output_channel_include
 ADD CONSTRAINT fk_oc__oc_include_inc FOREIGN KEY (include_oc_id)
 REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+
+--
+-- Grant Permissions.
+--
+
+REVOKE ALL on "seq_output_channel_include" from PUBLIC;
+GRANT ALL on "seq_output_channel_include" to "postgres";
+GRANT INSERT,UPDATE,DELETE,SELECT on "seq_output_channel_include" to "nobody";
+
+REVOKE ALL on "output_channel_include" from PUBLIC;
+GRANT ALL on "output_channel_include" to "postgres";
+GRANT INSERT,UPDATE,DELETE,SELECT on "output_channel_include" to "nobody";
