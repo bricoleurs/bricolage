@@ -35,15 +35,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 23:17:26 $
+$Date: 2002-03-26 19:28:45 $
 
 =head1 SYNOPSIS
 
@@ -250,7 +250,7 @@ sub publish {
 	    my $server_list = Bric::Dist::ServerType->list(
 		       { ($preview ? (can_preview => 1) : (can_publish => 1)),
 			 output_channel_id => $oc_id });
-	    die "Cannot publish ($type => $id ) " .
+	    die "Cannot publish ($type => $id) " .
 		"because there are no Destinations associated with its " .
 		    "output channels.\n"
 			unless @$server_list;
@@ -261,8 +261,11 @@ sub publish {
 	    if ($type eq 'story') {
 		# only stories get burnt
 		my @cats = $obj->get_categories;
-		foreach (@cats) {
-		    push @res, $burner->burn_one($obj, $oc, $_);
+		foreach (@cats) {		  
+		    eval { push @res, $burner->burn_one($obj, $oc, $_) };
+		    die __PACKAGE__ . "::publish : problem publishing " .
+			"($type => $id) : $@\n"
+			    if $@;
 		}
 	    } else {
 		# media gets moved around directly
