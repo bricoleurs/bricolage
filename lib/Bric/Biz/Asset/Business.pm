@@ -2224,7 +2224,7 @@ sub _init {
                [$init->{site_id}, $self->INSTANCE_GROUP_ID]
            ]);
 
-        if ($self->can('get_primary_category')) {
+        if ($self->key_name eq 'story') {
             # It's a story asset.
             delete $init->{_categories};
             foreach my $cat ($alias_target->get_primary_category,
