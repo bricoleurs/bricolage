@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-12-28 18:36:49 $
+$Date: 2002-07-16 20:30:47 $
 
 =head1 DESCRIPTION
 
@@ -311,7 +311,6 @@ sub list {
   my $oc_id       = $self->{oc_id};
   my $category_id = $self->{category_id};
   my $cats        = _get_cats();
-  my $grp_id      = $cats->{category_id}{grp_id};
   my $ftps        = $self->{ftps};
 
   print STDERR __PACKAGE__, "::list() : ", $wildcard || "", "\n" if FTP_DEBUG;
@@ -341,17 +340,18 @@ sub list {
 
   # get subdirectories.
   if ($like) {
-      # select matching subdirectories
-      my $results = all_aref("SELECT c.id, c.directory FROM category c, grp g WHERE g.id = c.category_grp_id AND g.parent_id = ? AND c.directory LIKE ?", $grp_id, $like);
+      my $results = Bric::Biz::Category->list({ directory => $like,
+                                                parent_id => $category_id });
       
       # create dirhandles
-      foreach my $row (@$results) {
+      foreach my $cat (@$results) {
 	  my $dirh = new Bric::Util::FTP::DirHandle ($self->{ftps},
-						     $self->pathname . $row->[1] . "/",
+						     $self->pathname . 
+                                                     $cat->get_directory,
 						     $oc_id,
-						     $row->[0]);
+						     $cat->get_id);
 	  
-	  push @results, [ $row->[1], $dirh ];
+	  push @results, [ $cat->get_directory, $dirh ];
       }
   } else {
       if ($cats->{children}{$category_id}) {
@@ -557,15 +557,14 @@ sub _get_cats {
   our $CATS;
   return $CATS if $CATS;
 
-  my ($category_id, $grp_id, $directory, $parent_id);
-  my $sth = prepare('SELECT c.id, c.directory, c.category_grp_id, pg.id as parent_directory FROM category c LEFT OUTER JOIN (grp g LEFT OUTER JOIN category pg ON g.parent_id = pg.category_grp_id) ON c.category_grp_id = g.id');
+  my ($category_id, $directory, $parent_id);
+  my $sth = prepare('SELECT id, directory, parent_id FROM Category');
   $sth->execute();
-  $sth->bind_columns(\$category_id, \$directory, \$grp_id, \$parent_id);
+  $sth->bind_columns(\$category_id, \$directory, \$parent_id);
 
   while($sth->fetch()) {
     # store data under category_id
     $CATS->{$category_id}{directory} = $directory;
-    $CATS->{$category_id}{grp_id}    = $grp_id;
     $CATS->{$category_id}{parent_id} = $parent_id;
 
     # build reverse mapping children->parents

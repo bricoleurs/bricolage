@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-07-16 19:52:31 $
+$Date: 2002-07-16 20:30:47 $
 
 =head1 SYNOPSIS
 
@@ -279,9 +279,21 @@ Return a list of category objects based on certain criteria
 
 Criteria keys:
 
-I<'children of'>
+=over 4
 
-Given a category object returns its children.
+=item name
+
+=item directory
+
+=item uri
+
+=item active
+
+=item description
+
+=item parent_id
+
+=back
 
 B<Throws:>
 
@@ -309,7 +321,8 @@ sub list {
     delete $param->{'active'} if $param->{'active'} eq 'all';
 
     foreach (keys %$param) {
-        if ($_ eq 'directory' or $_ eq 'name') { push @txt, $_ }
+        if ($_ eq 'directory' or $_ eq 'name' or 
+            $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
         else { push @num, $_ }
     }
         
