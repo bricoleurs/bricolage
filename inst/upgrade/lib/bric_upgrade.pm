@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.12.6.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.6.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 01:43:48 $
+$Date: 2003-08-09 16:58:56 $
 
 =head1 SYNOPSIS
 
@@ -220,6 +220,7 @@ sub do_sql {
 	my @objs;
 	# Execute each SQL statement.
 	foreach my $sql (@_) {
+            local $SIG{__WARN__} = sub {};
 	    my $sth = prepare($sql);
 	    execute($sth);
 	    if ($sql =~ /CREATE\s+TABLE\s+([^\s]*)/i
