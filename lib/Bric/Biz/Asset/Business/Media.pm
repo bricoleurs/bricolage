@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.55 $ )[-1];
+our $VERSION = (qw$Revision: 1.56 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:10 $
+$Date: 2003-08-15 13:01:15 $
 
 =head1 SYNOPSIS
 
@@ -535,6 +535,26 @@ expire_date_start - if end is left blank will return everything after the arg
 =item *
 
 expire_date_end - if start is left blank will return everything before the arg
+
+=item *
+
+Order - A property name to order by.
+
+=item *
+
+OrderDirection - The direction in which to order the records, either "ASC" for
+ascending (the default) or "DESC" for descending.
+
+=item *
+
+Limit - A maximum number of objects to return. If not specified, all objects
+that match the query will be returned.
+
+=item *
+
+Offset - The number of objects to skip before listing the number of objects
+specified by "Limit". Not used if "Limit" is not defined, and when "Limit" is
+defined and "Offset" is not, no objects will be skipped.
 
 =item *
 
