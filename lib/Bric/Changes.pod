@@ -68,6 +68,11 @@ The primary output channel is now always enabled by default in elements. This
 is to make it much harder to create documents without output channel
 associations, an event that can lead to database exceptions. [David]
 
+=item *
+
+The root category now lists itself as being in the "All Categories" group once
+in the category profile. [David]
+
 =back
 
 =head1 VERSION 1.5.1

@@ -68,18 +68,18 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => 'Group Memberships',
          number  => 3);
 
-# Get user's groups for double-list manager.
+# Get category's groups for double-list manager.
 my $all_grp = Bric::Util::Grp->lookup({ id => $cat->INSTANCE_GROUP_ID});
 my ($left, $right) = ([], []);
 
 push @$right, { value => $all_grp->get_id, description => $all_grp->get_name}
-  unless $cat->get_id;
+  unless defined $cat->get_id;
 
 foreach my $grp ( Bric::Util::Grp::CategorySet->list({obj => $cat}) ) {
     push @$right, { value =>  $grp->get_id, description => $grp->get_name };
 }
 
-# Get all user groups for double-list manager.
+# Get all category groups for double-list manager.
 foreach my $grp ( Bric::Util::Grp::CategorySet->list ) {
     push @$left, { value =>  $grp->get_id, description => $grp->get_name };
 }
@@ -178,11 +178,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.4.1 $
 
 =head1 DATE
 
-$Date: 2003-03-01 19:25:59 $
+$Date: 2003-03-28 05:51:58 $
 
 =head1 DESCRIPTION
 
