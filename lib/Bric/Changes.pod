@@ -101,6 +101,11 @@ Susan for the spot! [David]
 Eliminated encoding errors when using the SOAP interface to output stories or
 media with wide characters. Reported by Scott Lanning. [David]
 
+=item *
+
+Fields with a an empty string or 0 (zero) for their values will no longer be
+displayed as "Not defined" when viewing a story. [David]
+
 =back
 
 =head1 VERSION 1.8.3 (2004-11-09)
