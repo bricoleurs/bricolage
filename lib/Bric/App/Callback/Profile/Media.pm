@@ -29,7 +29,7 @@ my $DESK_URL = '/workflow/profile/desk/';
 my ($save_contrib, $handle_delete);
 
 
-sub update : Callback {
+sub update : Callback(priority => 1) {
     my $self = shift;
 
     return unless $self->has_perms;
