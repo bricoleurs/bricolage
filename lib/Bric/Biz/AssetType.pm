@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.33.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.33.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:42 $
+$Date: 2003-03-03 01:13:00 $
 
 =head1 SYNOPSIS
 
@@ -136,7 +136,7 @@ my ($get_oc_coll, $make_key_name);
 use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
-use constant ORD => qw(name description type_name  burner active);
+use constant ORD => qw(name key_name description type_name  burner active);
 
 # possible values for burner
 use constant BURNER_MASON    => 1;
@@ -157,11 +157,11 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 my $table = 'element';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
-my @cols = qw(name description burner reference type__id at_grp__id
+my @cols = qw(name key_name description burner reference type__id at_grp__id
               primary_oc__id active);
-my @props = qw(name description burner reference type__id at_grp__id
+my @props = qw(name key_name description burner reference type__id at_grp__id
                primary_oc_id _active);
-my $sel_cols = "a.id, a.name, a.description, a.burner, a.reference, " .
+my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
   "a.type__id, a.at_grp__id, a.primary_oc__id, a.active, m.grp__id";
 my @sel_props = ('id', @props, 'grp_ids');
 
@@ -172,13 +172,15 @@ my @sel_props = ('id', @props, 'grp_ids');
 # permissions.
 BEGIN {
     Bric::register_fields({
-
 			 # Public Fields
 			 # The database id of the Asset Type
 			 'id'		        => Bric::FIELD_READ,
 
 			 # A group for holding AssetTypes that are children.
 			 'at_grp__id'           => Bric::FIELD_READ,
+
+                         # A unique name for the story type
+                         'key_name'             => Bric::FIELD_RDWR,
 
 			 # The human readable name for the story type
 			 'name'		        => Bric::FIELD_RDWR,
@@ -251,6 +253,8 @@ Supported Keys:
 
 =item name
 
+=item key_name
+
 =item description
 
 =item primary_oc_id
@@ -290,10 +294,10 @@ sub new {
 	my @name = eval { $pkg->autopopulated_fields };
 	my $i = 0;
 	foreach my $n (@name) {
-	    my $atd = $self->new_data({'name'        => $n,
-				       'description' => "Autopopulated $n field.",
-				       'required'    => 1,
-				       'sql_type'    => 'short',
+	    my $atd = $self->new_data({name        => $n,
+				       description => "Autopopulated $n field.",
+				       required    => 1,
+				       sql_type    => 'short',
 				       autopopulated => 1 });
 	    $atd->set_attr('html_info', '');
 	    $atd->set_meta('html_info', 'disp', $n);
@@ -313,12 +317,12 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $element = Bric::Biz::AssetType->lookup({ id => $id })
+=item $element = Bric::Biz::AssetType->lookup({id => $id})
 
-=item $element = Bric::Biz::AssetType->lookup({ name => $name })
+=item $element = Bric::Biz::AssetType->lookup({key_name => $key_name})
 
 Looks up and instantiates a new Bric::Biz::AssetType object based on the
-Bric::Biz::AssetType object ID or name passed. If C<$id> or C<$name> is not
+Bric::Biz::AssetType object ID or name passed. If C<$id> or C<$key_name> is not
 found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
@@ -363,6 +367,10 @@ Supported Keys:
 =item name
 
 The name of the asset type.  Matched with case-insentive LIKE.
+
+=item key_name
+
+The unique key name of the asset type.  Matched with case insensitive LIKE
 
 =item description
 
@@ -625,6 +633,24 @@ sub my_meths {
 					    maxlength => 64
 					  }
 			     },
+
+              key_name    => {
+                              name     => 'key_name',
+			      get_meth => sub { shift->get_key_name(@_) },
+			      get_args => [],
+			      set_meth => sub { shift->set_key_name(@_) },
+			      set_args => [],
+			      disp     => 'Key Name',
+			      search   => 1,
+			      len      => 64,
+			      req      => 1,
+			      type     => 'short',
+			      props    => {type      => 'text',
+                                           length    => 32,
+                                           maxlength => 64
+					  }
+                             },
+
 	      description => {
 			      get_meth => sub { shift->get_description(@_) },
 			      get_args => [],
@@ -688,7 +714,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
     } elsif ($ident) {
-        return wantarray ? $METHS->{name} : [$METHS->{name}];
+        return wantarray ? $METHS->{key_name} : [$METHS->{key_name}];
     } else {
         return $METHS;
     }
@@ -740,6 +766,40 @@ NONE
 =item $name = $element->get_name()
 
 This will return the name field for the asset type
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->set_key_name($key_name)
+
+This will set the unique key name field for the asset type
+
+B<Throws:>
+NONE
+
+B<Side Effects:>
+NONE
+
+B<Notes:>
+NONE
+
+=cut
+
+#------------------------------------------------------------------------------#
+
+=item $name = $element->get_key_name()
+
+This will return the unique key name field for the asset type
 
 B<Throws:>
 NONE
@@ -1190,10 +1250,10 @@ NONE
 sub get_fixed_url {
     my $self = shift;
     my $att_obj = $self->_get_at_type_obj;
-    
+
     return unless $att_obj;
 
-    return $att_obj->get_fixed_url;     
+    return $att_obj->get_fixed_url;
 }
 
 #------------------------------------------------------------------------------#
@@ -1216,8 +1276,8 @@ NONE
 sub get_at_type {
     my $self = shift;
     my $att_obj = $self->_get_at_type_obj;
-    
-    return $att_obj; 
+
+    return $att_obj;
 }
 
 #------------------------------------------------------------------------------#
@@ -1336,7 +1396,7 @@ NONE
 
 =cut
 
-sub set_meta { 
+sub set_meta {
     my $self = shift;
     my ($name, $field, $val) = @_;
     my $attr_obj = $self->_get_attr_obj;
@@ -1615,10 +1675,10 @@ sub new_data {
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1674,7 +1734,7 @@ sub copy_data {
     my ($new_parts) = $self->_get('_new_parts');
     my $f_obj = $param->{'field_obj'};
     my ($at, $f) = @$param{'at','field_name'};
-   
+
     unless ($f_obj) {
 	unless ($at) {
 	    my $msg = 'Insufficient argurments';
@@ -1683,16 +1743,16 @@ sub copy_data {
 	
 	$f_obj = $at->get_data($f);
     }
-    
+
     my $part = $f_obj->copy($at->get_id);
 
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
-    
+
     # Update $self's new and deleted parts lists.
     $self->_set(['_new_parts'], [$new_parts]);
-    
+
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
 
@@ -1895,7 +1955,7 @@ sub make_repeatable {
     my $self = shift @_;
     my ($at) = @_;
     my $c_id = $at->get_id;
-    
+
     $self->set_attr("_child_${c_id}_repeatable", 1);
 
     return $self;
@@ -1933,9 +1993,9 @@ NONE
 
 sub is_active {
     my $self = shift;
-    
+
     return $self->_get('_active') ? $self : undef;
-} 
+}
 
 #------------------------------------------------------------------------------#
 
@@ -2050,10 +2110,16 @@ sub save {
 
     unless ($self->is_active) {
 	# Check to see if this AT is reference anywhere. If not, delete it.
-	unless ($self->_is_referenced) {
-	    $self->remove;
-	    return $self;
-	}
+
+        # This is broken because AssetType does not define a 'remove' method.
+        # David said he did a sweep to remove things that do a 'delete from...'
+        # because he suspected they were causing lost elements.  Leaving this
+        # commented out until a way to handle permanently removing things can
+        # be decided.
+	#unless ($self->_is_referenced) {
+	#    $self->remove;
+	#    return $self;
+	#}
     }
 
     # First save the main object information
@@ -2107,8 +2173,12 @@ sub _do_list {
 
     # Set up the active parameter.
     if (exists $params->{active}) {
-        push @wheres, "a.active = ?";
-        push @params, delete $params->{active} ? 1 : 0;
+        my $val = delete $params->{active};
+        # Only set the active flag if they've passed a specific value.
+        if (defined $val) {
+            push @wheres, "a.active = ?";
+            push @params, $val ? 1 : 0;
+        }
     } elsif (! exists $params->{id}) {
         push @wheres, "a.active = ?";
         push @params, 1;
