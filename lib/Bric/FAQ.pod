@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.7.2.16 $
+$Revision: 1.7.2.17 $
 
 =head1 DATE
 
-$Date: 2003-11-15 02:27:54 $
+$Date: 2004-04-16 15:58:23 $
 
 =head1 DESCRIPTION
 
@@ -382,7 +382,7 @@ you might find some use in a presentation given at the 2000 OSCON by Ian
 Kallen, in which he discussed what Salon needed out of a CMS (including
 workflow) and how he came to select the tools to use the CMS that was the
 proof-of-concept for Bricolage. The article is at
-L<http://www.salon.com/contact/staff/idk/print.html>.
+L<http://www.arachna.com/edu/talks/iswp/index.html>.
 
 =head3 Why do searches return only objects with fields that start with my query string, rather than containing the query string anywhere in the field?
 
