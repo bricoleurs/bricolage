@@ -44,15 +44,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 20:01:23 $
+$Date: 2004-03-17 03:12:47 $
 
 =head1 SYNOPSIS
 
@@ -182,6 +182,16 @@ Lower bound on publishing date.  Given in XML Schema dateTime format
 Upper bound on publishing date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
 
+=item first_publish_date_start
+
+Lower bound on the first date a story was published. Given in XML Schema
+dateTime format (CCYY-MM-DDThh:mm:ssTZ).
+
+=item first_publish_date_end
+
+Upper bound on the first date a story was published. Given in XML Schema
+dateTime format (CCYY-MM-DDThh:mm:ssTZ).
+
 =item cover_date_start
 
 Lower bound on cover date.  Given in XML Schema dateTime format
@@ -201,6 +211,34 @@ Lower bound on cover date.  Given in XML Schema dateTime format
 
 Upper bound on cover date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
+
+=item element_key_name (M)
+
+The key name of the top-level element for the story. This is more accurate
+than the C<element> parameter, since there can be multiple elements with the
+same name.
+
+=item unexpired
+
+Set to a true value to get a list of only unexpired stories.
+
+=item data_text (M)
+
+Text stored in the fields of the story element or any of its subelements. Only
+fields that use the "short" storage type will be searched.
+
+=item output_channel
+
+The name of an ouput channel that stories must be associated with.
+
+=item keyword (M)
+
+A keyword associated with a story.
+
+=item contrib_id
+
+A Bricolage contributor object ID. Only stories associated with that
+contributor will have their IDs listed.
 
 =item Order
 
@@ -289,6 +327,16 @@ sub list_ids {
           unless defined $category_id;
         $args->{category_id} = $category_id;
         delete $args->{category};
+    }
+
+    # handle output_channel => output_channel_id conversion
+    if (exists $args->{output_channel}) {
+        my $output_channel_id = output_channel_name_to_id($args->{output_channel});
+        throw_ap(error => __PACKAGE__ . "::list_ids : no output channel found matching "
+                   . "(output_channel => \"$args->{output_channel}\")")
+          unless defined $output_channel_id;
+        $args->{output_channel_id} = $output_channel_id;
+        delete $args->{output_channel};
     }
 
     # handle site => site_id conversion
@@ -668,13 +716,18 @@ sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
 
     my $allowed = {
-        list_ids => { map { $_ => 1 } qw(title description slug category keyword simple
-                                         primary_uri priority workflow no_workflow
-                                         publish_status element publish_date_start
+        list_ids => { map { $_ => 1 } qw(title description slug category
+                                         keyword simple primary_uri priority
+                                         workflow no_workflow publish_status
+                                         element publish_date_start
                                          publish_date_end cover_date_start
-                                         cover_date_end expire_date_start
-                                         expire_date_end Order OrderDirection Limit
-                                         Offset site alias_id) },
+                                         first_publish_date_start
+                                         first_publish_date_end cover_date_end
+                                         expire_date_start expire_date_end
+                                         site alias_id element_key_name
+                                         unexpired data_text output_channel
+                                         keyword contrib_id Order
+                                         OrderDirection Limit Offset ) },
         export   => { map { $_ => 1 } qw(story_id story_ids
                                          export_related_media
                                          export_related_stories) },

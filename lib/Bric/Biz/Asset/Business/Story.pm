@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.94 $
+$Revision: 1.95 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.94 $ )[-1];
+our $VERSION = (qw$Revision: 1.95 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 20:47:40 $
+$Date: 2004-03-17 03:12:47 $
 
 =head1 SYNOPSIS
 
@@ -715,6 +715,11 @@ Returns a list of stories with a expire date on or before a given date/time.
 
 A boolean parameter. Returns a list of stories without an expire date, or with
 an expire date set in the future.
+
+=item data_text
+
+Text stored in the fields of the story element or any of its subelements.
+Only fields that use the "short" storage type will be searched.
 
 =item Order
 

@@ -6,6 +6,7 @@ use warnings;
 
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
+use Bric::Biz::OutputChannel;
 use Bric::Util::Fault qw(throw_ap);
 use Bric::Util::Time qw(db_date local_date strfdate);
 use Bric::Config qw(:time);
@@ -23,6 +24,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
                     category_path_to_id
+                    output_channel_name_to_id
                     xs_date_to_db_date db_date_to_xs_date
                     parse_asset_document
                     serialize_elements
@@ -40,15 +42,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-16 14:09:33 $
+$Date: 2004-03-17 03:12:47 $
 
 =head1 SYNOPSIS
 
@@ -82,6 +84,22 @@ Notes: NONE
 =cut
 
 sub category_path_to_id { (Bric::Biz::Category->list_ids({ uri => shift }))[0] }
+
+=item $output_channel_id = output_channel_name_to_id($path)
+
+Returns an output channel ID for an output channel name.
+
+Throws: NONE
+
+Side Effects: NONE
+
+Notes: NONE
+
+=cut
+
+sub output_channel_name_to_id {
+    (Bric::Biz::OutputChannel->list_ids({ name => shift }))[0]
+}
 
 =item $site_id = site_path_to_id($path)
 

@@ -230,6 +230,55 @@ during previews to burn and distribute related documents so that they'll be
 readily available on the preview server within the context of previewing
 another document. [Serge Sozonoff]
 
+=item *
+
+Added the following search parameters to the Bric::SOAP::Story C<list_ids()>
+method (and therefore the SOAP interface):
+
+=over 8
+
+=item element_key_name
+
+=item unexpired
+
+=item data_text
+
+=item output_channel
+
+=item keyword
+
+=item contrib_id
+
+=back
+
+=item *
+
+Added the following search parameters to the Bric::SOAP::Media C<list_ids()>
+method (and therefore the SOAP interface):
+
+=over 8
+
+=item element_key_name
+
+=item unexpired
+
+=item data_text
+
+=item output_channel
+
+=item keyword
+
+=item contrib_id
+
+=item Order
+
+=item OrderDirection
+
+=item Offest
+
+=item Limit
+
+=back
 
 =back
 

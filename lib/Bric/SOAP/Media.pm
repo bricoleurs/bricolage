@@ -41,15 +41,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 20:01:23 $
+$Date: 2004-03-17 03:12:47 $
 
 =head1 SYNOPSIS
 
@@ -151,6 +151,16 @@ Lower bound on publishing date.  Given in XML Schema dateTime format
 Upper bound on publishing date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
 
+=item first_publish_date_start
+
+Lower bound on the first date a media document was published. Given in XML
+Schema dateTime format (CCYY-MM-DDThh:mm:ssTZ).
+
+=item first_publish_date_end
+
+Upper bound on the first date a media document was published. Given in XML
+Schema dateTime format (CCYY-MM-DDThh:mm:ssTZ).
+
 =item cover_date_start
 
 Lower bound on cover date.  Given in XML Schema dateTime format
@@ -170,6 +180,54 @@ Lower bound on cover date.  Given in XML Schema dateTime format
 
 Upper bound on cover date.  Given in XML Schema dateTime format
 (CCYY-MM-DDThh:mm:ssTZ).
+
+=item element_key_name (M)
+
+The key name of the top-level element for the media document. This is more
+accurate than the C<element> parameter, since there can be multiple elements
+with the same name.
+
+=item unexpired
+
+Set to a true value to get a list of only unexpired stories.
+
+=item data_text (M)
+
+Text stored in the fields of the media document element or any of its
+subelements. Only fields that use the "short" storage type will be searched.
+
+=item output_channel
+
+The name of an ouput channel that stories must be associated with.
+
+=item keyword (M)
+
+A keyword associated with a media document.
+
+=item contrib_id
+
+A Bricolage contributor object ID. Only stories associated with that
+contributor will have their IDs listed.
+
+=item Order
+
+Specifies that the results be ordered by a particular property.
+
+=item OrderDirection
+
+The direction in which to order the records, either "ASC" for
+ascending (the default) or "DESC" for descending.
+
+=item Limit
+
+A maximum number of objects to return. If not specified, all objects
+that match the query will be returned.
+
+=item Offset
+
+The number of objects to skip before listing the number of objects
+specified by "Limit". Not used if "Limit" is not defined, and when
+"Limit" is defined and "Offset" is not, no objects will be skipped.
 
 =back
 
@@ -235,6 +293,16 @@ sub list_ids {
           unless defined $category_id;
         $args->{category__id} = $category_id;
         delete $args->{category};
+    }
+
+    # handle output_channel => output_channel_id conversion
+    if (exists $args->{output_channel}) {
+        my $output_channel_id = output_channel_name_to_id($args->{output_channel});
+        throw_ap(error => __PACKAGE__ . "::list_ids : no output channel found matching "
+                   . "(output_channel => \"$args->{output_channel}\")")
+          unless defined $output_channel_id;
+        $args->{output_channel_id} = $output_channel_id;
+        delete $args->{output_channel};
     }
 
     # handle site => site_id conversion
@@ -530,9 +598,14 @@ sub is_allowed_param {
                                          simple uri priority publish_status
                                          workflow element category
                                          publish_date_start publish_date_end
+                                         first_publish_date_start
+                                         first_publish_date_end
                                          cover_date_start cover_date_end
                                          expire_date_start expire_date_end
-                                         site alias_id) },
+                                         site alias_id element_key_name
+                                         unexpired data_text output_channel
+                                         keyword contrib_id Order
+                                         OrderDirection Offest Limit) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document workflow desk) },
         update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
