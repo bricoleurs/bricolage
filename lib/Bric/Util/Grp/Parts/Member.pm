@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-23 18:05:27 $
+$Date: 2001-10-23 18:30:19 $
 
 =head1 SYNOPSIS
 
@@ -1528,7 +1528,7 @@ sub _set_attr {
         $attr_cache->{ $param->{'subsys'} }->{ $param->{'name'} }->{'value'} =
           $param->{'value'};
 
-        # the sql type 
+        # the sql type
         $attr_cache->{ $param->{'subsys'} }->{ $param->{'name'} }->{'type'} =
           $param->{'sql_type'};
 
@@ -1704,10 +1704,8 @@ sub _get_attr_hash {
         $attrs = $attr_obj->get_attr_hash($param);
     }
     else {
-
         # grab the cache
         my $attr_cache = $self->_get('_attr_cache');
-
         # get the desired info
         foreach ( keys %${ $attr_cache->{ $param->{'subsys'} } } ) {
             $attrs->{$_} = $attr_cache->{ $param->{'subsys'} }->{$_}->{'value'};
