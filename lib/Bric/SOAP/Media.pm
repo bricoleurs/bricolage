@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 23:36:30 $
+$Date: 2002-04-17 18:21:33 $
 
 =head1 SYNOPSIS
 
@@ -632,7 +632,7 @@ sub _load_media {
 	# assign catgeory__id
 	$init{category__id} = category_path_to_id($mdata->{category}[0]);
 	die __PACKAGE__ . "::create : no category found matching " .
-	    "(category => \"$mdata->{category}\")\n"
+	    "(category => \"$mdata->{category}[0]\")\n"
 		unless defined $init{category__id};
 	
 	# get base media object
