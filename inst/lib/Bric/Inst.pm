@@ -6,15 +6,15 @@ Bric::Inst - support library for installation system scripts
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-13 22:05:11 $
+$Date: 2003-12-08 17:36:41 $
 
 =head1 SYNOPSIS
 
@@ -86,17 +86,17 @@ sub ask_yesno {
     my ($question, $default) = @_;
     my $tries = 1;
     local $| = 1;
-    while (1) {	    
-	print $question;
-	my $answer = <STDIN>;
-	chomp($answer);
-	return $default if not length $answer;
-	return 0 if $answer and $answer =~ /^no?$/i;
-	return 1 if $answer =~ /^y(?:es)?$/i;
-	print "Please answer \"yes\" or \"no\".\n";
-	print "And quit screwing around.\n" if ++$tries > 3;
+    while (1) {
+        print $question;
+        my $answer = <STDIN>;
+        chomp($answer);
+        return $default if not length $answer;
+        return 0 if $answer and $answer =~ /^no?$/i;
+        return 1 if $answer =~ /^y(?:es)?$/i;
+        print "Please answer \"yes\" or \"no\".\n";
+        print "And quit screwing around.\n" if ++$tries > 3;
     }
-}    
+}
 
 
 =item ask_confirm($description, $ref_to_setting)
@@ -112,20 +112,20 @@ sub ask_confirm {
     my ($desc, $ref) = @_;
     my $tries = 1;
     local $| = 1;
-    while (1) {	    
-	print $desc, " [", $$ref, "] ";
-	my $answer = <STDIN>;
-	chomp($answer);
-	if (not length $answer or $answer eq $$ref) {
-	    return unless $$ref eq 'NONE';
-	    print "No default is available for this question, ",
-		"please enter a value.\n";
-	    next;
-	}
-	if (ask_yesno("Are you sure you want to use '$answer'? [yes] ", 1)) {
-	    $$ref = $answer;
-	    return;
-	}
+    while (1) {
+        print $desc, " [", $$ref, "] ";
+        my $answer = <STDIN>;
+        chomp($answer);
+        if (not length $answer or $answer eq $$ref) {
+            return unless $$ref eq 'NONE';
+            print "No default is available for this question, ",
+                "please enter a value.\n";
+            next;
+        }
+        if (ask_yesno("Are you sure you want to use '$answer'? [yes] ", 1)) {
+            $$ref = $answer;
+            return;
+        }
     }
 }
 
@@ -140,15 +140,15 @@ sub ask_choice {
     my ($desc, $choices, $default) = @_;
     my $tries = 1;
     local $| = 1;
-    while (1) {	    
-	print $desc, " [", $default, "] ";
-	my $answer = <STDIN>;
-	chomp($answer);
-	$answer = lc $answer;
-	return $default if not length $answer;
-	return $answer if grep { $_ eq $answer } @$choices;
-	print "Please choose from: ", join(', ', @$choices), "\n";
-	print "And quit screwing around.\n" if ++$tries > 3;
+    while (1) {
+        print $desc, " [", $default, "] ";
+        my $answer = <STDIN>;
+        chomp($answer);
+        $answer = lc $answer;
+        return $default if not length $answer;
+        return $answer if grep { $_ eq $answer } @$choices;
+        print "Please choose from: ", join(', ', @$choices), "\n";
+        print "And quit screwing around.\n" if ++$tries > 3;
     }
 }
 

@@ -58,6 +58,13 @@ A number of improvements for the F<bric_media_upload> contrib script:
 
 See the script's usage info for details. [Simon Wilcox]
 
+=item *
+
+C<make upgrade> now suggests that the user run C<make clone> on the existing
+installation, and asks the whether to continue or not. This is to encourage
+folks to have a good backup before upgrading, in case the upgrade fails.
+[David]
+
 =back
 
 =head2 Bug Fixes

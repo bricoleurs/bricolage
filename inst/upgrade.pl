@@ -6,11 +6,11 @@ upgrade.pl - installation script to gather upgrade information
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:37 $
+$Date: 2003-12-08 17:36:41 $
 
 =head1 DESCRIPTION
 
@@ -43,14 +43,29 @@ unless ($> == 0) {
 }
 
 # setup default root
-our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} || 
-		                   '/usr/local/bricolage' );
+our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
+                                   '/usr/local/bricolage' );
 our $INSTALL; 
 
 # determine version being installed
 use lib './lib';
 require "lib/Bric.pm";
 our $VERSION = $Bric::VERSION;
+
+print q{
+##########################################################################
+
+  We strongly recommend that you `make clone` your existing installation
+  (using the sources for that version ) BEFORE running `make upgrade`.
+  This is so that if there are any problems with the upgrade, you can
+  delete the installation, install the clone, fix the problems, and then
+  try `make upgrade` again.
+
+##########################################################################
+
+};
+
+exit 1 unless ask_yesno("Continue with the upgrade? [yes] ", 1);
 
 print "\n\n==> Setting-up Bricolage Upgrade Process <==\n\n";
 
@@ -64,25 +79,25 @@ print "\n\n==> Finished Setting-up Bricolage Upgrade Process <==\n\n";
 
 # find the bricolage to update
 sub get_bricolage_root {
-    ask_confirm("Bricolage Root Directory to Upgrade?", 
-		\$UPGRADE{BRICOLAGE_ROOT});
+    ask_confirm("Bricolage Root Directory to Upgrade?",
+                \$UPGRADE{BRICOLAGE_ROOT});
 
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $UPGRADE{BRICOLAGE_ROOT}.\n")
-	unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
+        unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
 
     # verify that this Bricolage was installed with "make install"
     hard_fail("The Bricolage Installation found in $UPGRADE{BRICOLAGE_ROOT}\n",
-	      "was installed manually and cannot be automatically upgraded.")
-	unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
+              "was installed manually and cannot be automatically upgraded.")
+        unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
 }
 
 # read the install.db file from the chosen bricolage root
 sub read_install_db {
     my $install_file = catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
     if (-e $install_file) {
-	# read it in if it exists
-	do $install_file or die "Failed to read $install_file : $!";
+        # read it in if it exists
+        do $install_file or die "Failed to read $install_file : $!";
     }
 }
 
@@ -113,7 +128,7 @@ END
             push @versions, $_;
         }
         close VER;
-        
+
         # find this version
         my $found;
         for my $i (0 .. $#versions) {
@@ -146,25 +161,25 @@ END
 sub confirm_paths {
     print "\nPlease confirm the Bricolage target directories.\n\n";
     ask_confirm("Bricolage Perl Module Directory",
-		\$INSTALL->{CONFIG}{MODULE_DIR});
+                \$INSTALL->{CONFIG}{MODULE_DIR});
     ask_confirm("Bricolage Executable Directory",
-		\$INSTALL->{CONFIG}{BIN_DIR});
+                \$INSTALL->{CONFIG}{BIN_DIR});
     ask_confirm("Bricolage Man-Page Directory (! to skip)",
-		\$INSTALL->{CONFIG}{MAN_DIR});
+                \$INSTALL->{CONFIG}{MAN_DIR});
     ask_confirm("Mason Component Directory",
-		\$INSTALL->{CONFIG}{MASON_COMP_ROOT});
+                \$INSTALL->{CONFIG}{MASON_COMP_ROOT});
 }
 
 # output .db files used by installation steps
 sub output_dbs {
     # fake up the .dbs from %INSTALL
     my %dbs = ( PG     => "postgres.db",
-		CONFIG => "config.db",
-		AP     => "apache.db"  );
+                CONFIG => "config.db",
+                AP     => "apache.db"  );
     while ( my ($key, $file) = each %dbs) {
-	open(FILE, ">$file") or die "Unable to open $file : $!";
-	print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
-	close(FILE);
+        open(FILE, ">$file") or die "Unable to open $file : $!";
+        print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
+        close(FILE);
     }
 
     # output upgrade.db
