@@ -25,6 +25,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Turned off the PREVIW_MASON configuration directive in bricolage.conf. It should
 be off by default. [David]
 
+=item *
+
+Deleted Output Channels now properly don't show up in the Output Channel manager
+again. Thanks to Sara for the spot! [David]
+
 =back
 
 =head1 VERSION 1.2.0
