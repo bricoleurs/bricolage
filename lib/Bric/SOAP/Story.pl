@@ -53,6 +53,14 @@ schema validation tests will be skipped.
 
 =over 4
 
+=item USER
+
+Set this to a working login.
+
+=item PASSWORD
+
+Set this to the password for the USER account.
+
 =item DEBUG
 
 Set this to 1 to see debugging text including the full XML for every
@@ -69,6 +77,9 @@ Sam Tregar <stregar@about-inc.com>
 use strict;
 use constant DEBUG => 0;
 
+use constant USER     => 'admin';
+use constant PASSWORD => 'bric';
+
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
@@ -82,6 +93,7 @@ use Carp::Heavy; # for some reason if I remove this I can't get syntax
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
 use Bric::Biz::Workflow;
+use HTTP::Cookies;
 
 # check to see if we have Xerces C++ to use for Schema validation
 our $has_xerces = 0;
@@ -89,14 +101,26 @@ my $test;
 eval { $test = `DOMCount -? 2>&1`;    };
 $has_xerces = 1 if $test =~ /This program invokes the DOM parser/;
 
-# setup soap object
+# setup soap object to login with
 my $soap = new SOAP::Lite
-    uri => 'http://bricolage.sourceforge.net/Bric/SOAP/Story',
-    proxy => 'http://localhost/soap',
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => DEBUG;
+$soap->proxy('http://localhost/soap',
+	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 isa_ok($soap, 'SOAP::Lite');
 
 my ($response, $story_ids);
+
+# login
+my $response = $soap->login(name(username => USER), 
+			    name(password => PASSWORD));
+ok(!$response->fault, 'fault check');
+
+my $success = $response->result;
+ok($success, "login success");
+
+# set uri for Story module
+$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
 # try selecting every story
 $response = $soap->list_ids();

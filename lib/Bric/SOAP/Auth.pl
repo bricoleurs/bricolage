@@ -42,7 +42,7 @@ use strict;
 use constant DEBUG => 0;
 
 use constant USER     => 'admin';
-use constant PASSWORD => 'bluefour';
+use constant PASSWORD => 'bric';
 
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
@@ -54,9 +54,8 @@ use HTTP::Cookies;
 my $soap = new SOAP::Lite
     uri => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => DEBUG;
-my $cookie_jar = HTTP::Cookies->new(ignore_discard => 1);
-$soap->proxy('http://stregar.about.com:80/soap',
-	     cookie_jar => $cookie_jar);
+$soap->proxy('http://localhost/soap',
+	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 isa_ok($soap, 'SOAP::Lite');
 
 my $response = $soap->login(name(username => USER), 
@@ -66,9 +65,12 @@ ok(!$response->fault, 'fault check');
 my $success = $response->result;
 ok($success, "login success");
 
-print STDERR "COOKIE JAR: ", $cookie_jar->as_string, "\n";
+# print STDERR "COOKIE JAR: ", $cookie_jar->as_string, "\n";
 
 # try making a call using the creds
 $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 $response = $soap->list_ids();
 ok(!$response->fault, 'fault check');
+my $list = $response->result;
+isa_ok($list, 'ARRAY');
+ok(@$list, 'retrieved story ids from list_id');

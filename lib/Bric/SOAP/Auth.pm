@@ -14,6 +14,7 @@ import SOAP::Data 'name';
 # needed to get envelope on method calls
 our @ISA = qw(SOAP::Server::Parameters);
 
+use constant DEBUG => 0;
 
 =head1 NAME
 
@@ -21,30 +22,40 @@ Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-23 19:52:28 $
+$Date: 2002-01-24 00:19:35 $
 
 =head1 SYNOPSIS
 
-  <Location /soap>
-    SetHandler perl-script
-    PerlHandler Bric::SOAP::Handler
-    PerlAccessHandler Bric::SOAP::Auth
-  </Location>
+  # setup soap object
+  my $soap = new SOAP::Lite
+      uri => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+      readable => DEBUG;
+  
+  # setup the proxy with a cookie jar to hold the auth cookie
+  $soap->proxy('http://localhost/soap',
+               cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+
+  # call the login method
+  my $response = $soap->login(name(username => USER), 
+                      	      name(password => PASSWORD));
+
+  # switch uri to call methods in other Bric::SOAP classes
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
 =head1 DESCRIPTION
 
-This module provides both a PerlAccessHandler and a SOAP login()
-method.  Clients call the login() method before calling Bric::SOAP
-classes and recieve a cookie.  The PerlAccessHandler validates this
-cookie on every request.
+This module provides a SOAP login service for Bricolage.  Clients call
+the login() method before calling Bric::SOAP classes and recieve a
+cookie.  Bric::SOAP::Handler validates this cookie using
+Bric::App::Auth on every request.
 
 =head1 INTERFACE
 
@@ -80,6 +91,9 @@ sub login {
   die __PACKAGE__ . "::login : missing required parameter 'password'\n"
     unless exists $args->{password};
 
+  print STDERR __PACKAGE__ . "::login : login attempt : $args->{username}\n"
+    if DEBUG;
+
   # Workaround bug where an md5 of the password in utf-8 is not the
   # same as the md5 of the ascii password even if all characters are
   # 7-bit.
@@ -95,17 +109,6 @@ sub login {
   die __PACKAGE__ . "::login : login failed : $msg\n"; 
 }
 
-=item Bric::SOAP::Auth->handler()
-
-Checks auth cookie handed out by login().  If the cookie is not
-present the client recieves a SOAP fault.
-
-Throws: NONE
-
-Side Effects: NONE
-
-Notes: NONE
-
 =back 4
 
 =head1 AUTHOR
@@ -114,14 +117,8 @@ Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-L<Bric::SOAP|Bric::SOAP>
+L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Handler|Bric::SOAP::Handler>
 
 =cut
-
-sub handler {
-  return OK;
-}
-
-
 
 1;
