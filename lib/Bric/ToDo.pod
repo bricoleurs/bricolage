@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-09-19 19:49:38 $
+$Date: 2001-09-20 21:31:00 $
 
 =head1 DESCRIPTION
 
@@ -27,10 +27,6 @@ feature list. Bugs should just go into Bugzilla.
 
 =item *
 
-Add License [Sam].
-
-=item *
-
 Finish Element Administration Documentation [David].
 
 =back
@@ -38,6 +34,10 @@ Finish Element Administration Documentation [David].
 =head2 VERSION 1.0.2
 
 =over 4
+
+=item *
+
+Add script for cleaning out /tmp that users can run from a cron job [Sam].
 
 =item *
 
@@ -254,7 +254,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.5  2001-09-19 19:49:38  wheeler
+Revision 1.6  2001-09-20 21:31:00  wheeler
+Deleted completed task. Added new task to 1.0.2 section.
+
+Revision 1.5  2001/09/19 19:49:38  wheeler
 Created new 1.0.2 section and added and moved some items to it.. Deleted some
 completed tasks.
 
