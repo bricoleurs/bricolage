@@ -34,7 +34,7 @@ my $sel_opts = [(1..$num_fields)];
 # display attrs
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => "Custom Fields",
-	 number  => 3);
+	 number  => 2);
 
 if ($num_fields) {
     $m->comp("/widgets/profile/displayAttrs.mc",
@@ -127,11 +127,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-10 21:39:21 $
+$Date: 2002-06-06 00:41:37 $
 
 =head1 DESCRIPTION
 
