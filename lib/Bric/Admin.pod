@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.142 $
+$Revision: 1.143 $
 
 =head1 DATE
 
-$Date: 2004-02-16 08:44:06 $
+$Date: 2004-02-16 16:19:21 $
 
 =head1 DESCRIPTION
 
@@ -1341,6 +1341,15 @@ control the use of system resources by running a second instance of Bricolage,
 setting the Apache MaxClients configuration directive to control the number of
 Apache processes which will be used for publishing, and thus the amount of
 memory and processor cycles.
+
+=item *
+
+B<FTP_UNLINK_BEFORE_MOVE>. This directive must be set to Yes for some FTP
+servers (e.g. pure-ftpd has been reported to need this) to correctly handle
+uploads of already existing files: when publishing via FTP, Bricolage first
+creates a temporary file, than moves this temp file over the existing,
+older file, overwriting it. Some servers do not support renaming to existing
+files, so the original one must be deleted first.
 
 
 =back
