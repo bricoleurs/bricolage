@@ -1499,7 +1499,7 @@ B<Notes:> NONE.
 $get_types = sub {
     my ($href, $alert, $ids) = @_;
     my @qry_cols = $href ? ('c.id', @type_cols) : ('c.type');
-    my $where = $alert ? 'AND alertable = 1' : '';
+    my $where = $alert ? "AND alertable = '1'" : '';
 
     local $" = ', ';
     my $sel = prepare_ca(qq{

@@ -785,7 +785,7 @@ my $sort_objects = sub {
     }
 
     my $sortOrder = get_state_data($widget, 'sortOrder') || '';
-    return defined $sortOrder && $sortOrder eq 'reverse'
+    return defined $sortOrder && $sortOrder eq 'ascending'
       ? [ reverse @sort_objs ]
       : \@sort_objs;
 };
