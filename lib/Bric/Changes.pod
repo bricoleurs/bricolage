@@ -22,8 +22,9 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added F<bric_xfer_grps> and F<bric_xfer_users> to F<contrib/bric_xfer>.
-They use the Bric API to transfer Groups between bricolages. [Scott]
+Added F<bric_xfer_grps> and F<bric_xfer_users> to F<contrib/bric_xfer>. They
+use the Bric API to transfer users and groups between Bricolage Installations.
+[Scott]
 
 =back
 
