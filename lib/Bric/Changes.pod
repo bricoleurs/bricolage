@@ -90,6 +90,11 @@ since the document was last published, the expiration may miss some stale
 files. The same goes for when destinations are changed. But this should cover
 the vast majority of cases.
 
+=item *
+
+Fixed error looking up alert types in the dataase, which affected the alert
+type manager on some platforms. Reported by Radu Greab. [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)

@@ -207,6 +207,8 @@ Friends who have spotted bugs include:
 
 =item Michael G. Kaiser
 
+=item Radu Greab
+
 =back
 
 Bricolage's translation team:
