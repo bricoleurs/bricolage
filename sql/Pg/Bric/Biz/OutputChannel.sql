@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-07 23:52:10 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -31,6 +31,8 @@ CREATE TABLE output_channel (
                                 DEFAULT NEXTVAL('seq_output_channel'),
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),
+    site__id         NUMERIC(10,0)  NOT NULL,
+    protocol         VARCHAR(16),
     pre_path         VARCHAR(64),
     post_path        VARCHAR(64),
     filename         VARCHAR(32)    NOT NULL,
@@ -83,7 +85,8 @@ CREATE TABLE output_channel_member (
 -- 
 -- INDEXES.
 --
-CREATE UNIQUE INDEX udx_output_channel__name ON output_channel(LOWER(name));
+CREATE UNIQUE INDEX udx_output_channel__name_site ON output_channel(name, site__id);
+
 CREATE INDEX idx_output_channel__filename ON output_channel(LOWER(filename));
 CREATE INDEX idx_output_channel__file_ext ON output_channel(LOWER(file_ext));
 CREATE INDEX fkx_output_channel__oc_include ON output_channel_include(output_channel__id);

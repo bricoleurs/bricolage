@@ -8,8 +8,10 @@ use Bric::Dist::ServerType;
 
 sub table { 'output_channel' }
 
-my %oc = ( name => 'Bogus',
+my %oc = ( name        => 'Bogus',
            description => 'Bogus OC',
+           site_id     => 100,
+           protocol    => 'http://',
          );
 my $web_oc_id = 1;
 
@@ -26,7 +28,7 @@ sub _clean_test_vals : Test(0) {
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(14) {
+sub test_lookup : Test(16) {
     ok( my $oc = Bric::Biz::OutputChannel->lookup({ id => $web_oc_id}),
         "Lookup Web OC" );
 
@@ -35,25 +37,27 @@ sub test_lookup : Test(14) {
     isa_ok($oc, 'Bric');
 
     # Check its properties.
-    is( $oc->get_name, 'Web', "Check name" );
-    is( $oc->get_description, 'Output to the web', "Check description" );
-    is( $oc->get_pre_path, '', "Check pre_path" );
-    is( $oc->get_post_path, '', "Check post_path" );
-    is( $oc->get_filename, 'index', "Check filename" );
-    is( $oc->get_file_ext, 'html', "Check file_ext" );
-    is( $oc->get_uri_format, '/categories/year/month/day/slug/',
+    is ($oc->get_name,        'Web',               "Check name" );
+    is ($oc->get_description, 'Output to the web', "Check description" );
+    is ($oc->get_site_id,     100,                 'Check site ID');
+    is ($oc->get_protocol,    undef,               'Check protocol');
+    is ($oc->get_pre_path,    '',                  "Check pre_path" );
+    is ($oc->get_post_path,   '',                  "Check post_path" );
+    is ($oc->get_filename,    'index',             "Check filename" );
+    is ($oc->get_file_ext,    'html',              "Check file_ext" );
+    is ($oc->get_uri_format,  '/categories/year/month/day/slug/',
           "Check uri_format" );
-    is( $oc->get_fixed_uri_format, '/categories/',
+    is ($oc->get_fixed_uri_format, '/categories/',
           "Check fixed_uri_format" );
-    is( $oc->get_uri_case, Bric::Biz::OutputChannel::MIXEDCASE(),
+    is ($oc->get_uri_case, Bric::Biz::OutputChannel::MIXEDCASE(),
         "Check uri_case" );
-    ok( !$oc->can_use_slug, "Check can_use_slug" );
-    ok( $oc->is_active, "Check is_active" );
+    ok (!$oc->can_use_slug,   "Check can_use_slug" );
+    ok ($oc->is_active,       "Check is_active" );
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(75) {
+sub test_list : Test(79) {
     my $self = shift;
     # Create a new output channel group.
     ok( my $grp = Bric::Util::Grp::OutputChannel->new
@@ -73,21 +77,24 @@ sub test_list : Test(75) {
     for my $n (1..5) {
         my %args = %oc;
         # Make sure the name is unique.
-        $args{name} .= $n;
+        $args{name}   .= $n;
+
         if ($n % 2) {
             # There'll be three of these.
             $args{description} .= $n;
-            $args{uri_case} = UPPERCASE;
-            $args{uri_format} = $alt_format;
-            $args{use_slug} = 1;
-            $args{pre_path} = 'foo';
-            $args{primary} = 1;
+            $args{protocol}    .= $n;
+            $args{uri_case}     = UPPERCASE;
+            $args{uri_format}   = $alt_format;
+            $args{use_slug}     = 1;
+            $args{pre_path}     = 'foo';
+            $args{primary}      = 1;
         } else {
             # And two of these.
-            $args{file_name} = 'home';
-            $args{file_ext} = '.pl';
+            $args{protocol}         = '';
+            $args{file_name}        = 'home';
+            $args{file_ext}         = '.pl';
             $args{fixed_uri_format} = $alt_format;
-            $args{post_path} = 'bar';
+            $args{post_path}        = 'bar';
         }
         ok( my $oc = Bric::Biz::OutputChannel->new(\%args),
             "Create $args{name}" );
@@ -148,6 +155,16 @@ sub test_list : Test(75) {
         ({ description => "$oc{description}%" }),
         "Look up description '$oc{description}%'" );
     is( scalar @ocs, 5, "Check for 5 output channels" );
+
+    # Try site_id
+    ok (@ocs = Bric::Biz::OutputChannel->list({site__id => $oc{site_id}}),
+        "Look up site '$oc{site_id}'");
+    is (scalar @ocs, 6, "Check for 6 output channels" );
+
+    # Try protocol
+    ok (@ocs = Bric::Biz::OutputChannel->list({protocol => $oc{protocol}.'%'}),
+        "Look up site '$oc{protocol}%'");
+    is (scalar @ocs, 3, "Check for 3 output channels" );
 
     # Try pre_path.
     ok( @ocs = Bric::Biz::OutputChannel->list({ pre_path => 'foo'}),

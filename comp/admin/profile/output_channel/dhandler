@@ -34,8 +34,29 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 number  => 1);
 
 # Dump out the fields for display.
-$m->comp('/widgets/profile/dumpRemainingFields.mc', readOnly => $no_edit,
-	 objref => $oc, fieldsUsed => { active => 1 } );
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         readOnly   => $no_edit,
+	 objref     => $oc,
+         fieldsUsed => {active => 1});
+
+if ($id || $no_edit) {
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref   => $oc,
+             key      => 'site',
+             readOnly => 1);
+} else {
+    # Output a list of object types to choose from.
+    $m->comp('/widgets/select_object/select_object.mc',
+	     readOnly  => ($no_edit || $id),
+             object    => 'site',
+             name      => 'site_id',
+             field     => 'name',
+             disp      => 'Site',
+             exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
+             selected  => scalar $c->get_user_cx(get_user_id),
+             reset_key => $id
+            );
+}
 
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -138,11 +159,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.2.1 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:19:11 $
+$Date: 2003-03-07 23:52:09 $
 
 =head1 SYNOPSIS
 

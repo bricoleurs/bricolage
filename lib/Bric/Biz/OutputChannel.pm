@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.24.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.24.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:21:48 $
+$Date: 2003-03-07 23:52:09 $
 
 =head1 SYNOPSIS
 
@@ -140,18 +140,21 @@ my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id ' .
   'AND m.active = 1';
 my $SEL_ORDER = 'oc.name, oc.id';
 
-my @COLS = qw(name description pre_path post_path primary_ce filename
-              file_ext uri_format fixed_uri_format uri_case use_slug active);
+my @COLS = qw(name description protocol site__id pre_path post_path primary_ce
+              filename file_ext uri_format fixed_uri_format uri_case use_slug
+              active);
 
-my @PROPS = qw(name description pre_path post_path primary filename file_ext
-               uri_format fixed_uri_format uri_case _use_slug _active);
+my @PROPS = qw(name description protocol site_id pre_path post_path primary
+               filename file_ext uri_format fixed_uri_format uri_case _use_slug
+               _active);
 
-my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.pre_path, oc.post_path, ' .
-  'oc.primary_ce, oc.filename, oc.file_ext, oc.uri_format, ' .
-  'oc.fixed_uri_format, oc.uri_case, oc.use_slug, oc.active, m.grp__id';
+my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.protocol, oc.site__id, '.
+               'oc.pre_path, oc.post_path, oc.primary_ce, oc.filename, '.
+               'oc.file_ext, oc.uri_format, oc.fixed_uri_format, oc.uri_case, '.
+               'oc.use_slug, oc.active, m.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
-my @ORD = qw(name description pre_path post_path filename file_ext  uri_format
+my @ORD = qw(name description site_id protocol pre_path post_path filename file_ext  uri_format
              fixed_uri_format uri_case use_slug active);
 my $GRP_ID_IDX = $#SEL_PROPS;
 
@@ -177,6 +180,11 @@ BEGIN {
 
        # The human readable description field
        'description'           => Bric::FIELD_RDWR,
+
+       # What site this OC is part of
+       'site_id'               => Bric::FIELD_RDWR,
+       # What protocol to use for URLs (ie, http://, https://, ftp://)
+       'protocol'              => Bric::FIELD_RDWR,
 
        # Path to insert at the beginning of URIs.
        'pre_path'              => Bric::FIELD_RDWR,
@@ -259,37 +267,36 @@ B<Notes:> NONE.
 =cut
 
 sub new {
-        my ($class, $init) = @_;
-        # Set active attribute.
-        $init->{_active} = exists $init->{active}
-          ? delete $init->{active} : 1;
+    my ($class, $init) = @_;
+    # Set active attribute.
+    $init->{_active} = exists $init->{active} ? delete $init->{active} : 1;
 
-        # Set file naming attributes.
-        $init->{filename} ||= DEFAULT_FILENAME;
-        $init->{file_ext} ||= DEFAULT_FILE_EXT;
+    # Set file naming attributes.
+    $init->{filename} ||= DEFAULT_FILENAME;
+    $init->{file_ext} ||= DEFAULT_FILE_EXT;
 
-        # Set URI formatting attributes.
-        $init->{uri_format} = $init->{uri_format} ?
-          $parse_uri_format->($class->my_meths->{uri_format}{disp},
-                              $init->{uri_format})
-          : DEFAULT_URI_FORMAT;
-        $init->{fixed_uri_format} = $init->{fixed_uri_format} ?
-          $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
+    # Set URI formatting attributes.
+    $init->{uri_format} = $init->{uri_format}
+      ? $parse_uri_format->($class->my_meths->{uri_format}{disp},
+                          $init->{uri_format})
+      : DEFAULT_URI_FORMAT;
+
+    $init->{fixed_uri_format} = $init->{fixed_uri_format}
+      ? $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
                               $init->{fixed_uri_format})
-          : DEFAULT_FIXED_URI_FORMAT;
+      : DEFAULT_FIXED_URI_FORMAT;
 
-        # Set URI case and use slug attributes.
-        $init->{uri_case} ||= DEFAULT_URI_CASE;
-        $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug}
-          ? 1 : 0;
+    # Set URI case and use slug attributes.
+    $init->{uri_case} ||= DEFAULT_URI_CASE;
+    $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug} ? 1 : 0;
 
-        # Construct this puppy!
-        return $class->SUPER::new($init);
+    # Construct this puppy!
+    return $class->SUPER::new($init);
 }
 
 =item $oc = Bric::Biz::OutputChannel->lookup({ id => $id })
 
-=item $oc = Bric::Biz::OutputChannel->lookup({ name => $name })
+=item $oc = Bric::Biz::OutputChannel->lookup({ name => $name, site__id => $id})
 
 Looks up and instantiates a new Bric::Biz::OutputChannel object based on an
 Bric::Biz::OutputChannel object ID or name. If no output channelobject is
@@ -301,7 +308,7 @@ B<Throws:>
 
 =item *
 
-Missing required parameter 'id' or 'name'.
+Missing required parameter 'id' or 'name'/'site__id'.
 
 =item *
 
@@ -337,8 +344,8 @@ B<Notes:> NONE.
 
 sub lookup {
     my ($class, $params) = @_;
-    die $gen->new({ msg => "Missing required parameter 'id' or 'name'" })
-      unless $params->{id} or $params->{name};
+    die $gen->new({ msg => "Missing required parameter 'id' or 'name'/'site__id'" })
+      unless $params->{id} or ($params->{name} and $params->{site__id});
 
     my $oc = $class->cache_lookup($params);
     return $oc if $oc;
@@ -366,6 +373,14 @@ name
 =item *
 
 description
+
+=item *
+
+site__id
+
+=item *
+
+protocol
 
 =item *
 
@@ -741,6 +756,48 @@ sub my_meths {
                                             rows => 4
                                           }
                              },
+              site_id     => {
+                              get_meth => sub { shift->get_site_id(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_site_id(@_) },
+                              set_args => [],
+                              name     => 'site_id',
+                              disp     => 'Site',
+                              len      => 10,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {}
+                             },
+              site        => {
+                              name     => 'site',
+                              get_meth => sub { my $s = Bric::Biz::Site->lookup
+                                                  ({ id => shift->get_site_id })
+                                                  or return;
+                                                $s->get_name;
+                                            },
+                              disp     => 'Site',
+                              type     => 'short',
+                              req      => 0,
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
+                                          }
+                             },
+              protocol    => {
+                              get_meth => sub { shift->get_protocol(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_protocol(@_) },
+                              set_args => [],
+                              name     => 'protocol',
+                              disp     => 'Protocol',
+                              len      => 16,
+                              req      => 0,
+                              type     => 'short',
+                              props    => {type      => 'text',
+                                           size      => 8,
+                                           maxlength => 16}
+                             },
+
               pre_path      => {
                              name     => 'pre_path',
                              get_meth => sub { shift->get_pre_path(@_) },
@@ -895,7 +952,7 @@ sub my_meths {
 
 =item $id = $oc->get_id
 
-Returns the OutputChannel's unique ID.
+Returns the OutputChannel\'s unique ID.
 
 B<Throws:> NONE.
 
@@ -936,6 +993,46 @@ B<Notes:> NONE.
 =item $description = $oc->get_description()
 
 Returns the description of the Output Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $id = $oc->get_site_id()
+
+Returns the ID of the site this OC is a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $id = $oc->set_site_id($id)
+
+Set the ID this OC should be a part of
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $proto = $oc->get_protocol()
+
+Returns the protocol for this OC (http://, ftp://, etc)
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $proto = $oc->set_protocol($proto)
+
+Set the protocol for this OC
 
 B<Throws:> NONE.
 
@@ -1612,6 +1709,9 @@ sub _do_list {
             push @params, $v;
         } elsif ($k eq 'include_parent_id') {
             $wheres .= ' AND inc.output_channel__id = ?';
+            push @params, $v;
+        } elsif ($k eq 'site__id') {
+            $wheres .= ' AND oc.site__id = ?';
             push @params, $v;
         } else {
             # Simple string comparison!

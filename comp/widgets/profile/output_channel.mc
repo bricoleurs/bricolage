@@ -39,6 +39,8 @@ if ($param->{delete}) {
 
     # Set the basic properties.
     $oc->set_description( $param->{description} );
+    $oc->set_site_id($param->{site_id});
+    $oc->set_protocol($param->{protocol});
     $oc->set_pre_path( $param->{pre_path} );
     $oc->set_post_path( $param->{post_path});
     $oc->set_filename( $param->{filename});
