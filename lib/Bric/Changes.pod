@@ -26,7 +26,7 @@ German localization started. [Gerfried Fuchs]
 
 =item *
 
-New help pages for the desstination, server, and action profiles. [Geoff
+New help pages for the destination, server, and action profiles. [Geoff
 Richards]
 
 =back
@@ -39,7 +39,7 @@ Richards]
 
 Fixed a bug in Bric::SOAP::Media which was causing all media files uploaded
 with that module to be placed in C<comp/data/media/$version/> rather than
-C<comp/data/media/$id/$version/>.  [Mark]
+C<comp/data/media/$id/$version/>. [Mark]
 
 =item *
 
@@ -63,7 +63,8 @@ The media simple search now searched by URI again. [Mark]
 =item *
 
 Now HTML-escaping the contents of the context content displayed for
-subelements so as to prevent HTML in fields from messing up thedisplay. [Mark]
+subelements so as to prevent HTML in fields from messing up the display.
+[Mark]
 
 =item *
 
@@ -135,7 +136,7 @@ at or near "template0"', which occurred with versions of PostgreSQL prior to
 =item *
 
 Enabled the C<PERL_LOADER> F<bricolage.conf> configuration directive and gave
-it a default value that's actualy useful. [David]
+it a default value that's actually useful. [David]
 
 =item *
 
@@ -148,7 +149,8 @@ Fixed deleting an Alert Type Rule. Also fixed Editing Alert Type Recipients.
 
 =item *
 
-Notes are once again saved with a document. Thanks to Scott for the spot! [David]
+Notes are once again saved with a document. Thanks to Scott for the spot!
+[David]
 
 =item *
 
@@ -181,13 +183,13 @@ longer creates an extra story. Reported by Clive Jones. [David]
 
 Changed "Cannot publish asset because there are no Destinations associated
 with its output channels" to instead include the name of the output channel
-missing Desination associations so that the user can tell which output
+missing Destination associations so that the user can tell which output
 channels need a Destination association. [Clive Jones]
 
 =item *
 
 When an document's primary output channel has been changed to something other
-than that defined by its documtent type element, preview will now correctly
+than that defined by its document type element, preview will now correctly
 use the document's primary output channel instead of the element's primary
 output channel. [David]
 
@@ -215,9 +217,8 @@ are now properly saved. Reported by Scott. [David]
 
 =item *
 
-Adding Extentions to a Bric::Util::MediaType object when creating it via that
+Adding Extensions to a Bric::Util::MediaType object when creating it via that
 class' C<new()> constructor works again. Reported by Clive Jones. [David]
-
 
 =back
 
