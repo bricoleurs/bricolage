@@ -99,6 +99,7 @@ use Getopt::Long;
 use Pod::Usage;
 use File::Spec::Functions qw(tmpdir catdir);
 
+our $content_source;
 BEGIN {
     # get parameters from command line.  do this during compile so
     # $VERBOSE can effect use options and such.  also so errors get
@@ -112,7 +113,7 @@ BEGIN {
     our $temp_dir		= catdir(tmpdir(), "bric_media_upload.$$");
     our $media_type		= 'Photograph';
     our $timeout                = 60;
-    our $content_source         = 'Internal';
+    $content_source         = 'Internal';
     our ($help, $man);
     GetOptions("help"                   => \$help,
                "man"                    => \$man,
@@ -138,7 +139,7 @@ BEGIN {
         unless defined $target_password;
 
     $temp_dir = File::Spec->canonpath( $temp_dir );
-   
+
     # get media_source and targets
     $media_source = shift @ARGV;
     pod2usage("Missing required media source and target URL parameters")
@@ -162,14 +163,13 @@ sub main {
     print "Creating temp dir $temp_dir.\n" if $VERBOSE;
     File::Path::mkpath([$temp_dir],0,0700) || 
         die("Unable to create temp dir $temp_dir : $!");
-    
+
     # create list of media paths to be uploaded
     organize_media();
-    
     upload_media();
 
     # empty temp dir when done
-    File::Path::rmtree([$temp_dir]); 
+    File::Path::rmtree([$temp_dir]);
 
     print "bric_media_upload success.\n";
     exit 0;
@@ -178,8 +178,8 @@ sub main {
 # takes media source and returns a list of hashed media
 sub organize_media {
     our ($media_source);
-    
-    # determine media source type 
+
+    # determine media source type
     my $media_source_type;
     if (-d $media_source) {
         $media_source_type = 'dir';
@@ -191,34 +191,31 @@ sub organize_media {
 +        die "Unrecognized media source '$media_source' - must be a directory or a .tar or .zip file.\n";
      }
 
-  
-    # initialize start_path and set it to $media_source if media_source is dir  
+    # initialize start_path and set it to $media_source if media_source is dir
     if ($media_source_type eq 'dir') {
-	$media_source = File::Spec::Unix->canonpath( $media_source ) ;	
+	$media_source = File::Spec::Unix->canonpath( $media_source ) ;
 	$START_PATH = $media_source;
     }
- 
+
     # unzip/untar file to /tmp if nessecary
-    $START_PATH = open_media_source($media_source_type) if (!$START_PATH); 
-
+    $START_PATH = open_media_source($media_source_type) if (!$START_PATH);
     File::Find::find(\&build_image_list, $START_PATH);
-
 }
 
 # unzip or untar a file into temp dir
 sub open_media_source {
     our ($media_source, $temp_dir);
     my $media_source_type = shift;
-     
-    # create statement to unzip or untar media source file 
+
+    # create statement to unzip or untar media source file
     my $source_open_statement = ($media_source_type eq 'tar') ? "tar -xf $media_source -C $temp_dir" : "unzip -oq $media_source -d $temp_dir";
 
     # execute unzip/untar statement to temp dir
-    print "Opening media source $media_source_type file $media_source....\n" if $VERBOSE; 
+    print "Opening media source $media_source_type file $media_source....\n" if $VERBOSE;
     system($source_open_statement) == 0 ||
     die("Problems unzipping/untarring file.\n");
 
-    return $temp_dir; 
+    return $temp_dir;
 }
 
 # used by File::Find to recursively look in temp dir for images
@@ -234,11 +231,11 @@ sub build_image_list {
     my $full_path = "$START_PATH$path/$file";
     print "Found Media: $full_path \n" if $VERBOSE;
     $path = "/" if (!$path);
-    
+
     $temp->{name} = $file;
     $temp->{category} = $path;
     $temp->{full_path} = $full_path;
- 
+
     push @$media_list, $temp;
 }
 
@@ -248,7 +245,7 @@ sub upload_media {
 	print "\nStarting upload to $targ_url\n" if $VERBOSE;
 	my $current_path = "";
 	my $write_to_root = 0;
-	my $first = 1;	
+	my $first = 1;
 	foreach my $media (@$media_list) {
 	    if ($current_path ne $media->{category}) {
 		$write_to_root = 0;
@@ -261,7 +258,7 @@ sub upload_media {
 		} else {
 		    $category_check_command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$media->{category};
 		}
-	
+
 		my $exec_result = `$category_check_command 2>&1`;
 		if ( ($exec_result =~ /category_\d*/) ) {
 		    print "\nCategory ".$media->{category}." found.\n" if $VERBOSE;
@@ -275,16 +272,16 @@ sub upload_media {
 			$write_to_root = 1;
 		    }
 		} else {
-		    die ($exec_result); 
-		}	
+		    die ($exec_result);
+		}
 	    }
 	    $current_path = $media->{category};
-	
+
 	    # check to see if media exists, if so get id and update
 	    $media->{category} = "/" if $write_to_root;
 	    my $media_id = check_media_exist($media, $targ_url);
 
-	    # if media id found, update it 
+	    # if media id found, update it
 	    if ($media_id) {
 		create_or_update_media($media,$targ_url,$media_id);
 	    } else { # otherwise create a new one
@@ -298,7 +295,7 @@ sub upload_media {
 sub create_category {
     our ($timeout, $temp_dir);
     my ($category, $targ_url) = @_;
-    
+
     # put vars into xml skeleton
     my $category_xml = <<"EOS";
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -334,7 +331,7 @@ sub check_media_exist {
     our ($timeout, $media_type, $temp_dir);
     my ($media,$targ_url) = @_;
     my $exec_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media list_ids --search file_name='".$media->{name}."' --search category='".$media->{category}."' --search element='".$media_type."' ";
-    
+
     my $exec_result = `$exec_code 2>&1`;
 
     if ( ($exec_result =~ /media_\d*/) ) {
@@ -348,7 +345,6 @@ sub check_media_exist {
     } else {
         die ("Error looking up media: $exec_result");
     }
- 
 }
 
 sub create_or_update_media {
@@ -405,7 +401,7 @@ EOS
     close FILE;
 
     print "Uploading $media_name...\n" if $VERBOSE;
-    my $execute_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media $operation $temp_dir/media_xml_temp.xml"; 
+    my $execute_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media $operation $temp_dir/media_xml_temp.xml";
 
     # code to execute
     my $exec_result = `$execute_code 2>&1`;
@@ -415,6 +411,5 @@ EOS
     } else {
         die ("Error $operation media $media_name: $exec_result");
     }
-    
 }
 
