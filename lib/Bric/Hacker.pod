@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2002-05-03 20:46:34 $
+$Date: 2002-05-16 18:33:53 $
 
 =head1 DESCRIPTION
 
@@ -106,8 +106,63 @@ Make sure you check the results with C<cvs diff> before committing.
 
 =head1 CODING STANDARDS
 
-Try to follow the style of the existing Bricolage code.  [ David, want
-to elaborate on POD, Mason, etc? ]
+Try to follow the style of the existing Bricolage code.
+
+=begin comment
+
+We need to elaborate on this: POD, Mason, etc.
+
+=end comment
+
+Although historically the Bricolage code has not enforced whitespace rules, in
+general, we try to encourage 4-space indents (2 spaces for continued lines)
+and discourage the use of tabs. The following settings for some of the more
+popular editors are thus recommended while editing Bricolage source code.
+
+=head2 Emacs
+
+We strongrly recommend that you use C<cperl-mode> while editing Bricolage
+sources in Emacs. Grab the latest version from the CPAN, install it, and then
+place the following in your C<~/.emacs> file:
+
+  (custom-set-variables
+   '(case-fold-search t)
+   '(cperl-indent-level 4)
+   '(cperl-continued-statement-offset 2)
+   '(cperl-tab-always-indent t)
+   '(indent-tabs-mode nil))
+
+Also, if you'd like to take advantage of the full functionality of
+C<cperl-mode> and have it automatically parse all Perl source files, add these
+settings, as well:
+
+  (autoload 'perl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
+  (setq cperl-hairy t)
+  (setq auto-mode-alist
+  (append '(("\\.\\([pP][Llm]\\|al\\|pod\\)$" . cperl-mode))  auto-mode-alist ))
+  (setq interpreter-mode-alist (append interpreter-mode-alist '(("miniperl" . cperl-mode))))
+
+When editing Bricolage Mason components, C<mmm-mode> can help. It's Mason mode
+will parse Mason component files and use <sgml-mode> in HTML spaces and
+C<cperl-mode> in Mason blocks. Grab it from
+L<http://mmm-mode.sourceforge.net/>, install it, and then add the following to
+your C<~/.emacs> file to have it automatically parse your Bricolage Mason
+component files:
+
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
+  (require 'mmm-mode)
+  (require 'mmm-mason)
+  (setq mmm-global-mode 'maybe)
+  (add-to-list 'auto-mode-alist '("/usr/local/bricolage/comp" . html-mode))
+  (mmm-add-mode-ext-class 'html-mode "/usr/local/bricolage/comp" 'mason)
+
+And if you need to examine the Mason object files created by Bricolage in
+order to chase down bugs and such, you can use the C<cperl-mode> in those
+files by adding this to your C<~/.emacs> file:
+
+  (add-to-list 'auto-mode-alist '("/usr/local/bricoloage/data/obj" . cperl-mode))
+
+=head2 Vim
 
 =head1 DEBUGGING
 
