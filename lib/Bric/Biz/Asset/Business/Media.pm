@@ -238,10 +238,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'AND media__id = i.media__id)',
       _checked_out          => 'i.checked_out = ?',
       checked_out           => 'i.checked_out = ?',
-      _not_checked_out       => 'i.checked_out = 0 AND mt.id not in '
-                              . '(SELECT media__id FROM media_instance '
-                              . 'WHERE mt.id = media_instance.media__id '
-                              . 'AND media_instance.checked_out = 1)',
+      _not_checked_out       => "i.checked_out = '0'",
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
                              . '(moc.output_channel__id = ? OR '
@@ -255,7 +252,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions   => 'mt.current_version = i.version',
       grp_id                => 'm2.grp__id = ? AND '
-                             . 'm2.active = 1 AND '
+                             . "m2.active = '1' AND "
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => 'mt.id IN ('
@@ -283,7 +280,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
-    grp_id                 => [ 'm2.active = 1 AND mm2.member__id = m2.id AND mt.id = mm2.object_id',
+    grp_id                 => [ "m2.active = '1' AND mm2.member__id = m2.id AND mt.id = mm2.object_id",
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.media_instance__id',
                                 'sic.member__id = ?' ],

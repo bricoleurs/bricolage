@@ -348,10 +348,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'AND story__id = i.story__id )',
       _checked_out           => 'i.checked_out = ?',
       checked_out            => 'i.checked_out = ?',
-      _not_checked_out       => 'i.checked_out = 0 AND s.id not in '
-                              . '(SELECT story__id FROM story_instance '
-                              . 'WHERE s.id = story_instance.story__id '
-                              . 'AND story_instance.checked_out = 1)',
+      _not_checked_out       => "i.checked_out = '0'",
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
@@ -382,7 +379,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'LOWER(k.name) LIKE LOWER(?)',
       _no_return_versions    => 's.current_version = i.version',
       grp_id                 => 'm2.grp__id = ? AND '
-                              . 'm2.active = 1 AND '
+                              . "m2.active = '1' AND "
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
       simple                 => 's.id IN ('
