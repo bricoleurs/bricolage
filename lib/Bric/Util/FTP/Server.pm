@@ -12,7 +12,7 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =pod
 
@@ -160,6 +160,8 @@ sub system_error_hook {
 1;
 
 __END__
+
+=back
 
 =head1 AUTHOR
 

@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-07-16 20:30:47 $
+$Date: 2003-02-18 05:44:13 $
 
 =head1 DESCRIPTION
 
@@ -600,9 +600,11 @@ __END__
 
 =pod
 
+=back
+
 =head1 AUTHOR
 
-Sam Tregar (stregar@about-inc.com)
+Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 

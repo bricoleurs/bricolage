@@ -1,67 +1,23 @@
 package Bric::Util::Grp::AssetVersion;
-
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
-
 use strict;
-
 use base qw(Bric::Util::Grp);
-
-
-BEGIN {
-	Bric::register_fields()
-}
-
-
-#sub new {
-#	my $class = shift;
-#
-#	my $self = fields::new($class);
-#
-#	$self->SUPER::new();
-#
-#	$self->{'class_id'} = 1;
-#
-#	return $self;
-#
-#}
-
-=item secret
-
-Pod ME
-
-=cut
-
-sub get_secret {
-	return 1;
-}
-
-=item Class ID
-
-POD ME
-
-=cut
-
-sub get_class_id {
-	return 25;
-}
-
-
-=item Supported Classes
-
-POD ME
-
-=cut
-
-sub get_supported_classes {
-
-	my $allowed_classes = { 
-			       'Bric::Biz::Asset::Business::Media' => 'media',
-			       'Bric::Biz::Asset::Business::Story'	=> 'story',
-			       'Bric::Biz::Asset::Formatting' => 'formatting',
-						};
-	return $allowed_classes;
-}
+sub get_secret { 1 }
+sub get_class_id { 25 }
 
 1;
-
 __END__
+
+=head1 NAME
+
+Bric::Util::Grp::AssetVersion - Legacy Group Class
+
+=head1 DESCRIPTION
+
+
+This is a dummy class to keep upgraded installations from breaking when
+Bric::Util::Grp loads classes based on the contents of the contents of the
+Class table. Unfortunately trying to delete from the Class table triggeres a
+cascading delete of dangerous proportions. If we find a way around that then
+we can remove this file.
+
+=cut

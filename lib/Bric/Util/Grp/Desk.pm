@@ -7,15 +7,15 @@ Bric::Util::Grp::Desk - A class to impliment desk groups
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:47 $
+$Date: 2003-02-18 05:44:14 $
 
 =head1 SYNOPSIS
 
@@ -163,9 +163,7 @@ B<Notes:>
 
 NONE
 
-=cut
-
-#--------------------------------------#
+=back
 
 =head2 Destructors
 
@@ -180,15 +178,11 @@ sub DESTROY {
 
 =head2 Public Class Methods
 
-=cut
-
-#--------------------------------------#
+NONE.
 
 =head2 Public Instance Methods
 
-=cut
-
-#------------------------------------------------------------------------------#
+=over 4
 
 =item $class_id = Bric::Util::Grp::Category->get_class_id()
 
@@ -254,24 +248,15 @@ sub get_object_class_id { 45 }
 
 #==============================================================================#
 
+=back
+
 =head2 Private Methods
 
-=cut
-
-#--------------------------------------#
+NONE.
 
 =head2 Private Class Methods
 
 NONE
-
-=cut
-
-
-# Add methods here that do not require an object be instantiated, and should not
-# be called outside this module (e.g. utility functions for class methods).
-# Use same POD comment style as above for 'new'.
-
-#--------------------------------------#
 
 =head2 Private Instance Methods
 
@@ -279,14 +264,8 @@ NONE
 
 =cut
 
-# Add methods here that apply to an instantiated object, but should not be 
-# called directly (e.g. utility functions for instance methods).
-# Use same POD comment style as above for 'new'.
-
 1;
 __END__
-
-=back
 
 =head1 NOTES
 
@@ -294,8 +273,7 @@ NONE
 
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
