@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.3 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:06 $
+$Date: 2001-10-10 21:44:33 $
 
 =head1 SYNOPSIS
 
@@ -549,8 +549,7 @@ NONE
 
 sub get_data {
     my ($self) = @_;
-    my $sql_type = $self->_get_sql_type();
-	
+    my $sql_type = $self->_get_sql_type() || return;
     return $self->_get('_'.$sql_type.'_val');
 }
 
