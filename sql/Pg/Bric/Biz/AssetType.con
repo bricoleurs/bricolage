@@ -1,0 +1,84 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003-02-02 19:46:45 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+
+
+-- -----------------------------------------------------------------------------
+-- Table: element
+
+ALTER TABLE element ADD 
+	CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
+	REFERENCES at_type(id) ON DELETE CASCADE;
+
+ALTER TABLE element ADD 
+	CONSTRAINT fk_grp__element FOREIGN KEY (at_grp__id)
+	REFERENCES grp(id) ON DELETE CASCADE;
+
+ALTER TABLE element ADD 
+	CONSTRAINT fk_output_channel__element FOREIGN KEY (primary_oc__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: element__output_channel
+
+ALTER TABLE element__output_channel ADD
+	CONSTRAINT fk_element__at_oc FOREIGN KEY (element__id)
+	REFERENCES element(id) ON DELETE CASCADE;
+
+ALTER TABLE element__output_channel ADD
+	CONSTRAINT fk_output_channel__at_oc FOREIGN KEY (output_channel__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: element__language
+
+/*
+
+ALTER TABLE element__language ADD
+	CONSTRAINT fk_at__at__lang FOREIGN KEY (element__id)
+	REFERENCES element(id) ON DELETE CASCADE;
+	
+ALTER TABLE element__language ADD
+	CONSTRAINT fk_lang__at__lang FOREIGN KEY (language__id)
+	REFERENCES language(id) ON DELETE CASCADE;
+
+*/
+
+-- -----------------------------------------------------------------------------
+-- Table: element_member
+
+ALTER TABLE element_member ADD
+	CONSTRAINT fk_element__at_member FOREIGN KEY (object_id)
+	REFERENCES element(id) ON DELETE CASCADE;
+
+ALTER TABLE category_member ADD
+	CONSTRAINT fk_member__at_member FOREIGN KEY (member__id)
+	REFERENCES member(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_element
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_element_val
+
+
+ALTER TABLE attr_element_val ADD 
+    CONSTRAINT fk_attr_at__attr_at_val FOREIGN KEY (attr__id)
+    REFERENCES attr_element(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_element_val ADD
+    CONSTRAINT fk_at__attr_at_val FOREIGN KEY (object__id)
+    REFERENCES element(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_element_meta
+
+ALTER TABLE attr_element_meta ADD 
+    CONSTRAINT fk_attr_at__attr_at_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_element(id) ON DELETE CASCADE;
+
+
+

@@ -1,0 +1,15 @@
+-- Project: Bricolage Business API
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003-02-02 19:46:48 $
+-- Author: David Wheeler <david@wheeler.net>
+
+ALTER TABLE    user_member
+ADD CONSTRAINT fk_user__user_member FOREIGN KEY (object_id)
+REFERENCES     usr(id) ON DELETE CASCADE;
+
+ALTER TABLE    user_member
+ADD CONSTRAINT fk_member__user_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+

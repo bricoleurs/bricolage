@@ -1,0 +1,37 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003-02-02 19:46:46 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- Alter Table Commands for the story data tiles
+ALTER TABLE story_data_tile
+ADD CONSTRAINT fk_story_instance__sd_tile FOREIGN KEY (object_instance_id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story_data_tile
+ADD CONSTRAINT fk_sc_tile__sd_tile FOREIGN KEY (parent_id)
+	REFERENCES story_container_tile(id) ON DELETE CASCADE;
+
+ALTER TABLE story_data_tile
+ADD CONSTRAINT fk_at_data__sd_tile FOREIGN KEY (element_data__id)
+	REFERENCES at_data(id) ON DELETE CASCADE;
+
+
+-- Alter Table Commands for the media data tiles
+ALTER TABLE media_data_tile
+ADD CONSTRAINT fk_media_instance__md_tile FOREIGN KEY (object_instance_id)
+	REFERENCES media_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE media_data_tile
+ADD CONSTRAINT fk_mc_tile__md_tile FOREIGN KEY (parent_id)
+	REFERENCES media_container_tile(id) ON DELETE CASCADE;
+
+ALTER TABLE media_data_tile
+ADD CONSTRAINT fk_at_data__md_tile FOREIGN KEY (element_data__id)
+	REFERENCES at_data(id) ON DELETE CASCADE;
+
+
+

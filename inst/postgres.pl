@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2003-02-02 19:46:35 $
 
 =head1 DESCRIPTION
 
@@ -53,6 +53,7 @@ do "./required.db" or die "Failed to read required.db : $!";
 get_include_dir();
 get_lib_dir();
 get_bin_dir();
+get_psql();
 get_users();
 
 # all done, dump out apache database, announce success and exit
@@ -92,6 +93,14 @@ sub get_bin_dir {
 	unless $data;
     chomp($data);
     $PG{bin_dir} = $data;
+}
+
+sub get_psql {
+    print "Finding psql.\n";
+    my $psql = catfile($PG{bin_dir}, 'psql');
+    hard_fail("Unable to locate psql executable.")
+	unless -e $psql and -x $psql;
+    $PG{psql} = $psql;
 }
 
 # ask the user for user settings

@@ -1,0 +1,21 @@
+-- Project:      Bricolage Business API
+-- File:    Org.use
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003-02-02 19:46:46 $
+-- Author: David Wheeler <david@wheeler.net>
+
+SELECT id, name, long_name, active
+FROM   org
+WHERE  id = 56;
+
+INSERT INTO org (id, name, long_name, active)
+VALUES (seq_org.NextVal, 'Kodak', 'Eastman Kodak Corporation', 1);
+
+UPDATE org
+SET    id = 56,
+       name = 'Kodak',
+       long_name = 'Eastman Kodak Corporation',
+       active = 1
+WHERE  id = 56;
+

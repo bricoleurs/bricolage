@@ -7,6 +7,7 @@
 use strict;
 use DBI;
 use Getopt::Std;
+use File::Spec::Functions;
 
 #==============================================================================#
 # Constants                            #
@@ -28,12 +29,13 @@ use constant ATTR => {'RaiseError'  => 1,
 #======================================#
 
 our ($opt_u, $opt_p, $opt_d, $opt_w, $opt_H, $opt_t, $opt_h, $opt_r, $opt_o,
-     $opt_c, $opt_m, $opt_q, $opt_g);
+     $opt_c, $opt_m, $opt_q, $opt_g, $opt_P);
 
-getopts('u:p:d:w:H:o:m:htrcqg:');
+getopts('u:p:d:w:H:o:m:htrcqg:P:');
 
-use vars qw( $DBH @SQL @CON @VAL @TST);
-use vars qw( $LOG $STOP );
+use vars qw( @SQL @CON @VAL @TST $STOP );
+
+our $PSQL = $opt_P || 'psql';
 
 #==============================================================================#
 # Main Program                         #
@@ -41,7 +43,7 @@ use vars qw( $LOG $STOP );
 
 # Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
 # filter them out.
-open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
+open STDERR, "| perl -ne 'print unless /: NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
 
 # Setup some initial values.
@@ -49,23 +51,23 @@ initialize();
 
 # Insert the different file sets.
 print "\nAdding table definitions...\n" unless $opt_q;
-insert_file_set(@SQL);
+insert_file_set(\@SQL);
 
 print "\nPrepopulating tables with default values...\n" unless $opt_q;
-insert_file_set(@VAL);
+insert_file_set(\@VAL);
 
 if ($opt_t) {
     print "\nPrepopulating tables with test values...\n" unless $opt_q;
-    insert_file_set(@TST);
+    insert_file_set(\@TST);
 }
 
 print "\nAdding constraints...\n" unless $opt_q;
-insert_file_set(@CON);
+insert_file_set(\@CON);
 
 grant_permissions($opt_g, create_user());
-
+exit;
 # Do any cleanup work before exiting.
-clean_up();
+#clean_up();
 
 
 
@@ -82,10 +84,12 @@ sub initialize {
     $opt_u ||= $ENV{PGUSER};
     $opt_p ||= $ENV{PGPASSWORD};
 
-    unless ($opt_w) {
+    if ($opt_w) {
+        # Add on the location of the SQL.
+        $opt_w = catdir($$opt_w, 'sql', DBD);
+    } else {
 	$ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-	require File::Spec::Functions;
-	$opt_w = File::Spec::Functions::catdir($ENV{BRICOLAGE_ROOT}, 'lib');
+	$opt_w = catdir($ENV{BRICOLAGE_ROOT}, 'sql', DBD);
     }
 
     # Print a usage message unless all required args are included or if -h has
@@ -102,35 +106,28 @@ sub initialize {
 	usage();
     }
 
+    # Set up the environment variables for psql.
+    $ENV{PGHOST} ||= $opt_H;
+    $ENV{PGPORT} ||= $opt_o;
+    $ENV{PGDATABASE} ||= $opt_d;
+    $ENV{PGUSER} ||= $opt_u;
+    $ENV{PGPASSWORD} ||= $opt_p;
+
     # Set some vars.
-    $LOG = '';
     $STOP = $opt_q ? 0 : 1;
 
     if ($opt_c || $opt_r) {
-	# Create the DSN for the template1 database.
-	my $dsn = "dbname=template1;host=$opt_H;port=$opt_o";
-
-	# Establish a database connection.
-	$DBH = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
-
 	# Drop the current database, if necessary.
-	if ($opt_r) {
-	    print "\nDropping database '$opt_d'.\n" unless $opt_q;
-	    exec_sql("drop database $opt_d");
-	}
+        if ($opt_r) {
+            print "\nDropping database '$opt_d'.\n" unless $opt_q;
+            exec_sql("DROP DATABASE $opt_d", 0, 'template1');
+        }
+
 	# Create a new database.
 	print "\nCreating database '$opt_d'.\n" unless $opt_q;
-	exec_sql("create database $opt_d WITH ENCODING = 'UNICODE'");
-	# Close the connection to template1. We'll reconnect to the proper
-	# database below.
-	$DBH->disconnect;
+        exec_sql("CREATE DATABASE $opt_d WITH ENCODING = 'UNICODE'", 0,
+                 'template1');
     }
-
-    # Create the DSN.
-    my $dsn = "dbname=$opt_d;host=$opt_H;port=$opt_o";
-
-    # Establish a database connection.
-    $DBH = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
 
     # Find all the files of each type.
     @SQL = reverse `find $opt_w -name '*.sql'`;
@@ -148,6 +145,8 @@ sub usage {
 Usage: $prog [options]
 
 Supported Options:
+  -P The location of the psql program. Defaults to simply 'psql' if undefined.
+     This should work if psql is in your path.
   -w The directory with the CVS SQL files. Defaults to lib subdirectory of
      BRICOLAGE_ROOT environment variable, which itself defaults to
      /usr/local/bricolage.
@@ -174,76 +173,29 @@ Supported Options:
 #------------------------------------------------------------------------------#
 
 sub insert_file_set {
-    foreach my $file (@_) {
+    foreach my $file (@{$_[0]}) {
 	chomp $file;
 	print "\tImporting '$file'\n" unless $opt_q;
-	exec_sql($_, $file) for grab_statements($file);
+        exec_sql(0, $file);
     }
 }
 
 #------------------------------------------------------------------------------#
 
 sub exec_sql {
-    my ($sql, $file) = @_;
-    $file = $file ? "\n$file" : '';
-    eval { $DBH->do($sql) };
-    if ($@) {
-	warn "\nProblems executing sql:\n\n" unless $opt_q;
-	# Log this error;
-	$LOG .= ('-'x80)."$file\n$sql\n$@\n";
+    my ($sql, $file, $db) = @_;
+    $db ||= $opt_d;
+    my @args = $sql ? ('-c', $sql) : ('-f', $file);
+    # System returns 0 on success, so just return if it succeeds.
+    system($PSQL, '-q', @args, $db) or return;
 
-	if ($STOP) {
-	    warn "$sql\n\n$@\n\n";
-	    print "Continue (c), Go non-interactive (g), Quit (q): ";
-	    my $ans = <STDIN>;
-	    $STOP = 0  if $ans =~ /^g/i;
-	    clean_up() if $ans =~ /^q/i;
-	}
+    # We encountered a problem.
+    if ($STOP) {
+        print "Continue (c), Go non-interactive (g), Quit (q): ";
+        my $ans = <STDIN>;
+        $STOP = 0  if $ans =~ /^g/i;
+        exit if $ans =~ /^q/i;
     }
-}
-
-#------------------------------------------------------------------------------#
-
-sub grab_statements {
-    my ($file) = @_;
-    my @stmt;
-    my $sql = '';
-    my $comment;
-
-    open(SQL, $file) or die "Can't open '$file': $!\n";
-    while (my $line = <SQL>) {
-	# Skip single line comments.
-	next if $line =~ /^--/;
-	# Skip blank lines
-	next if $line =~ /^\s*$/;
-
-	# Check for a start comment block
-	if ($line =~ m|/\*|) {
-	    $comment = 1;
-	    next;
-	}
-
-	# Check for an end comment block
-	if ($line =~ m|\*/|) {
-	    $comment = 0;
-	    next;
-	}
-
-	# Skip if we are in a commented block;
-	next if $comment;
-
-	# If we are at the end of the statement, push it onto the stack.
-	if ($line =~ s/;\s*$//) {
-	    $sql .= $line;
-	    push @stmt, $sql;
-	    $sql = '';
-	} else {
-	    $sql .= $line;
-	}
-    }
-    close(SQL);
-
-    return @stmt;
 }
 
 #------------------------------------------------------------------------------#
@@ -255,10 +207,11 @@ sub create_user {
     print "Creating user '$user'.\n" unless $opt_q;
     $pass =~ s/'/''/g;
     $user =~ s/'/''/g;
-    exec_sql(qq{
+    my $sql = qq{
         CREATE USER $user
-        WITH password '$pass' NOCREATEDB NOCREATEUSER
-    });
+        WITH PASSWORD '$pass' NOCREATEDB NOCREATEUSER
+    };
+    system($PSQL, '-q', '-c', $sql, $opt_d);
     return $user;
 }
 
@@ -267,6 +220,15 @@ sub create_user {
 sub grant_permissions {
     return unless @_;
     print "\nGranting permissions...\n" unless $opt_q;
+
+    # This requires that we use DBI. We could probably have psql dump
+    # the results of the below query to a file and then parse the file,
+    # but there's not much point in investing the time to do that at this
+    # point. So create the DSN.
+    my $dsn = "dbname=$opt_d;host=$opt_H;port=$opt_o";
+
+    # Establish a database connection.
+    my $dbh = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
 
     # Get a list of objects to grant permissions on.
     my $sql = qq{
@@ -281,71 +243,38 @@ sub grant_permissions {
 
     my $objects;
     eval {
-	my $sel = $DBH->prepare($sql);
-	$objects = $DBH->selectcol_arrayref($sel, undef, lc $opt_u);
+	my $sel = $dbh->prepare($sql);
+	$objects = $dbh->selectcol_arrayref($sel, undef, lc $opt_u);
+        $dbh->disconnect;
 	return 1 unless @$objects;
     };
 
     if ($@) {
 	warn "\nProblems executing sql:\n\n" unless $opt_q;
 	# Log this error;
-	$LOG .= ('-'x80)."\n$sql\n$@\n";
 
 	if ($STOP) {
 	    warn "$sql\n\n$@\n\n";
 	    print "Continue (c), Go non-interactive (g), Quit (q): ";
 	    my $ans = <STDIN>;
 	    $STOP = 0  if $ans =~ /^g/i;
-	    clean_up() if $ans =~ /^q/i;
+	    exit if $ans =~ /^q/i;
 	}
     }
 
-    foreach (@_) {
-	next unless $_;
-	local $" = ', ';
+    $objects = join ', ', @$objects;
+
+    foreach my $user (@_) {
+	next unless $user;
 	$sql = qq{
             GRANT SELECT, UPDATE, INSERT, DELETE
-            ON    @$objects
-            TO    $_
+            ON    $objects
+            TO    $user
         };
-
-	exec_sql($sql);
+        exec_sql($sql);
     }
 }
 
-#------------------------------------------------------------------------------#
-
-sub clean_up {
-    my $ans;
-
-    $DBH->disconnect;
-
-    print '-' x 80 . "\n\n" unless $opt_q;
-    my $def = 'pgimport.err';
-
-    # Print a log of the errors encountered.
-    if ($LOG) {
-	if ($opt_q) {
-	    open(ERR, ">$def") or die "Can't open file '$def': $!\n";
-	    print ERR $LOG;
-	    close(ERR);
-	    exit;
-	}
-	print "Save a log of the errors encountered [Y/n]: ";
-	chomp($ans = <STDIN>);
-	exit if $ans =~ /^n/i;
-
-	print "File to save [./pgimport.err]: ";
-	chomp($ans = <STDIN>);
-	$ans ||= $def;
-
-	open(ERR, ">$ans") or die "Can't open file '$ans': $!\n";
-	print ERR $LOG;
-	close(ERR);
-	print "\n";
-    }
-    print "Done.\n" unless $opt_q;
-}
 
 1;
 __END__

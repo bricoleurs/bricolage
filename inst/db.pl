@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2003-01-07 01:38:25 $
+$Date: 2003-02-02 19:46:35 $
 
 =head1 DESCRIPTION
 
@@ -40,23 +40,15 @@ print "\n\n==> Creating Bricolage Database <==\n\n";
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
 
-# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
-# filter them out. This *must* happen before setting $> below, or Perl will
-# complain.
-open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
-  or die "Cannot pipe STDERR: $!\n";
+# Set environment variables for psql.
+$ENV{PGUSER} = $PG->{root_user};
+$ENV{PGPASSWORD} = $PG->{root_pass};
+our $ERR_FILE = '.db.stderr';
+END { unlink $ERR_FILE }
 
-# Switch to postgres system user
-print "Becoming $PG->{system_user}...\n";
-$> = $PG->{system_user_uid};
-die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
-    unless $> == $PG->{system_user_uid};
-
-# setup database and user while connected to dummy template1
-my $dbh = db_connect('template1');
+my $dbh;
 create_db($dbh);
 create_user($dbh);
-$dbh->disconnect;
 
 # load data.
 load_db();
@@ -76,29 +68,48 @@ sub db_connect {
     return $dbh;
 }
 
+sub exec_sql {
+    my ($sql, $file, $db, $res) = @_;
+    $db ||= $PG->{db_name};
+    # System returns 0 on success, so just return if it succeeds.
+    open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
+    if ($res) {
+        my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
+        @$res = `$PG->{psql} -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        return unless $?;
+    } else {
+        my @args = $sql ? ('-c', $sql) : ('-f', $file);
+        system($PG->{psql}, '-q', @args, '-d', $db) or return;
+    }
+
+    # We encountered a problem.
+    open ERR, "<.db.stderr" or die "Cannot open .db.stderr: $!\n";
+    local $/;
+    return <ERR>;
+}
+
 # create the database, optionally dropping an existing database
 sub create_db {
     my $dbh = shift;
     print "Creating database named $PG->{db_name}...\n";
-    my $result = $dbh->do("CREATE DATABASE $PG->{db_name} WITH " .
-                          "ENCODING = 'UNICODE'");
+    my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'",
+                       0, 'template1');
 
-    # if the database already exists offer to drop it
-    if (not $result and
-        $dbh->errstr =~ /database "[^"]+" already exists/ and
-        ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
-                  "Drop database? [no] ", 0)) {
-        hard_fail("Failed to drop database.  The error from Postgres was:\n\n",
-                  $dbh->errstr, "\n")
-            unless $dbh->do("DROP DATABASE $PG->{db_name}");
-        return create_db($dbh);
+    if ($err) {
+        # There was an error. Offer to drop the datbase if it already exists.
+        if ($err =~ /database "[^"]+" already exists/ and
+            ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
+                      "Drop database? [no] ", 0)) {
+            if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0, 'template1')) {
+                hard_fail("Failed to drop database.  The database error ",
+                          "was:\n\n$err\n")
+            }
+            return create_db($dbh);
+        } else {
+            hard_fail("Failed to create database. The database error wase\n\n",
+                      "$err\n");
+        }
     }
-
-    # else, hard fail if unable to create
-    hard_fail("Failed to create database.  The error from Postgres was:\n\n",
-              $dbh->errstr, "\n")
-        unless $result;
-
     print "Database created.\n";
 }
 
@@ -109,28 +120,28 @@ sub create_user {
     my $pass = $PG->{sys_pass};
 
     print "Creating user named $PG->{sys_user}...\n";
-    my $result = $dbh->do("CREATE USER $user WITH password '$pass' ".
-                          "NOCREATEDB NOCREATEUSER");
+    my $err = exec_sql("CREATE USER $user WITH password '$pass' " .
+                       "NOCREATEDB NOCREATEUSER", 0, 'template1');
 
-    # if the user already exists offer to drop it
-    if (not $result and
-        $dbh->errstr =~ /user name "[^"]+" already exists/) {
-        if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
-                      "Drop user? [no] ", 0)) {
-            hard_fail("Failed to drop user.  The error from Postgres was:\n\n",
-                      $dbh->errstr, "\n")
-              unless $dbh->do("DROP USER $PG->{sys_user}");
-            return create_user($dbh);
+    if ($err) {
+        if ($err =~ /user name "[^"]+" already exists/) {
+            if (ask_yesno("User named \"$PG->{sys_user}\" already exists.  ".
+                          "Drop user? [no] ", 0)) {
+                if ($err = exec_sql("DROP USER $PG->{sys_user}", 0,
+                                    'template1')) {
+                    hard_fail("Failed to drop user.  The database error was:\n\n",
+                              "$err\n");
+                }
+                return create_user($dbh);
+            } else {
+                # We'll just use the existing user.
+                return;
+            }
         } else {
-            # We'll just use the existing user.
-            return;
+            hard_fail("Failed to create database user.  The databae error was:",
+              "\n\n$err\n");
         }
     }
-
-    hard_fail("Failed to create database user.  The error from Postgres was:",
-              "\n\n", $dbh->errstr, "\n")
-        unless $result;
-
     print "User created.\n";
 }
 
@@ -139,85 +150,44 @@ sub load_db {
     # make sure we have a bricolage.sql and that it's not empty (this
     # can happen if you "make dist" from a distribution due to missing
     # .sql files)
-    hard_fail("Missing or empty inst/bricolage.sql!")
-      unless -e "inst/bricolage.sql" and -s _;
-
-    # open bricolage.sql, created in an earlier rule or by "make dist"
-    # in days gone by.
-    open(SQL, "inst/bricolage.sql")
-        or die "Unable to open inst/bricolage.sql : $!";
+    my $db_file = catfile('inst', 'Pg.sql');
+    hard_fail("Missing or empty $db_file!")
+      unless -e $db_file and -s _;
 
     print "Loading Bricolage Database. (this could take a few minutes)\n";
-
-    # connect to target database
-    my $dbh = db_connect($PG->{db_name});
-
-    # run through sql executing queries as they are found
-    my $sql = "";
-    my ($result, $in_comment);
-    my $i;        # For status dot calculations.
-    local $| = 1; # Don't buffer status dots.
-    while (<SQL>) {
-        next if /^--/ or /^\s*$/; # skip simple comments and blank lines
-
-        # check for an end comment block
-        if (m|\*/|) {
-            $in_comment = 0;
-            next;
-        }
-
-        # skip if we are in a commented block
-        next if $in_comment;
-
-        # check for a start comment block
-        if (m|/\*|) {
-            $in_comment = 1;
-            next;
-        }
-
-        # if we are at the end of the statement, execute it
-        if (s/;\s*$//) {
-            hard_fail("Database error on statement:\n\n",
-                      $sql, "\n\nError was:\n\n", $dbh->errstr, "\n")
-              unless ($dbh->do($sql . $_));
-            $sql = '';
-            # Output a dot every twenty statements.
-            print '.' unless ++$i % 20;
-            next;
-        }
-
-        # otherwise, concat and keep looking
-        $sql .= $_;
-    }
-    close(SQL);
+    exec_sql(0, $db_file);
     print "\nDone.\n";
 
     # assign all permissions to SYS_USER
     print "Granting privilages...\n";
 
     # get a list of all tables and sequences that don't start with pg
-    my $objects = $dbh->selectcol_arrayref(<<'END');
-SELECT relname
-FROM pg_class
-WHERE (relkind = 'S' OR relkind = 'r') AND
-      relname NOT LIKE 'pg%'
-END
-    die $dbh->errstr unless $objects;
+    my $sql = qq{
+       SELECT relname
+       FROM   pg_class
+       WHERE  relkind IN ('r', 'S')
+              AND relname NOT LIKE 'pg%';
+    };
 
-    # loop over objects assigning perms
-    foreach my $obj (@$objects) {
-        my $r = $dbh->do("GRANT SELECT, UPDATE, INSERT, DELETE ".
-                         "ON $obj TO $PG->{sys_user}");
-        hard_fail("Database error granting permissions on $obj:\n\n",
-                  "Error was:\n\n", $dbh->errstr, "\n")
-          unless $r;
-    }
+    my @objects;
+    exec_sql($sql, 0, 0, \@objects);
+
+    my $objects = join (', ', map { chomp; $_ } @objects);
+
+    $sql = qq{
+        GRANT SELECT, UPDATE, INSERT, DELETE
+        ON    $objects
+        TO    $PG->{sys_user}
+    };
+    exec_sql($sql);
 
     print "Done.\n";
 
     # vacuum to create usable indexes
     print "Finishing database...\n";
-    $dbh->do('VACUUM ANALYZE');
+    exec_sql('vacuum');
+    exec_sql('analyze');
+    exec_sql('reindex');
     print "Done.\n";
 
     # all done - disconnect and kill this processes

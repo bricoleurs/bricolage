@@ -35,6 +35,11 @@ modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 apache.db	: inst/apache.pl required.db
 	$(PERL) inst/apache.pl
 
+# This shoudl be updated to something more database-independent. In fact,
+# what should happen is that a script should present a list of supported
+# databases, the user picks which one (each with a key name for the DBD
+# driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
+# work should just assume that database and do the work for that database.
 postgres.db 	: inst/postgres.pl required.db
 	$(PERL) inst/postgres.pl
 
@@ -61,8 +66,8 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
-                  rm_tst rm_use rm_CVS rm_tmp dist/INSTALL dist/Changes \
+dist            : check_dist distclean inst/bricolage.sql dist_dir \
+                  rm_CVS rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
 # can't load Bric since it loads Bric::Config which has dependencies
@@ -80,17 +85,7 @@ distclean	: clean
 dist_dir	:
 	-rm -rf dist
 	mkdir dist
-	ls | grep -v dist | $(PERL) -lne 'system("cp -pR $$_ dist")'
-
-rm_sql		:
-	find dist/lib/ -name '*.sql' -o -name '*.val' -o -name '*.con' \
-        | xargs rm -rf
-
-rm_use          :
-	find dist/lib/ -name '*.use'   | xargs rm -rf
-
-rm_tst          :
-	find dist/lib/ -name '*.tst'   | xargs rm -rf
+	ls | grep -v dist | grep -v sql | $(PERL) -lne 'system("cp -pR $$_ dist")'
 
 rm_CVS		:
 	find dist/ -type d -name 'CVS' | xargs rm -rf
@@ -115,10 +110,11 @@ dist_tar	:
 
 SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
+# Update this later to be database-independent.
 inst/bricolage.sql : $(SQL_FILES)
-	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
-	find lib -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
-	find lib -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
+	find sql/Pg -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/Pg.sql
+	find sql/Pg -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/Pg.sql
+	find sql/Pg -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/Pg.sql
 
 .PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
                   dist_tar check_dist

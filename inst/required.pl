@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-07-23 20:16:35 $
+$Date: 2003-02-02 19:46:35 $
 
 =head1 DESCRIPTION
 
@@ -109,7 +109,7 @@ sub find_pg {
 	if (-e catfile($path, "pg_config")) {
 	    $REQ{PG_CONFIG} = catfile($path, "pg_config");
 	    last;
-	}    
+	}
     }
 
     # confirm or deny
