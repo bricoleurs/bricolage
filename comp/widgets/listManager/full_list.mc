@@ -59,7 +59,7 @@
 
   # Adjust the table size.
   if (scalar @$fields < $cols) {
-      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;"></th>');
+      $m->out("<th colspan=".($cols - scalar @$fields).' class=medHeader style="border-style:solid; border-color:#cccc99;">&nbsp;</th>');
   }
 </%perl>
 
