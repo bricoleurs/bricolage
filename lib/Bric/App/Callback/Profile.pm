@@ -10,7 +10,7 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:aref :msg :history :pkg :browser);
 
-my $excl = {'desk' => 1, 'action' => 1, 'server' => 1};
+my $excl = {'desk' => 1, 'action' => 1, 'server' => 1, element_data => 1};
 
 my ($get_class);
 
@@ -58,7 +58,6 @@ sub manage_grps :Callback {
     my $self   = shift;
     my $obj    = shift || $self->obj;
     my $param  = $self->params;
-  
     return unless $param->{add_grp} or  $param->{rem_grp};
 
     my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }

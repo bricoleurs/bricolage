@@ -6,8 +6,8 @@ use constant CLASS_KEY => 'element_data';
 
 use strict;
 use Bric::App::Event qw(log_event);
+use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:msg :history);
-
 
 my $type = CLASS_KEY;
 my $disp_name = 'Field';
@@ -16,12 +16,20 @@ my $disp_name = 'Field';
 sub save : Callback {
     my $self = shift;
 
-    return unless $self->has_perms;
-
     my $param = $self->params;
     my $ed = $self->obj;
+    my $elem = Bric::Biz::AssetType->lookup({ id => $ed->get_element__id });
 
-    my $name = $param->{name};
+    unless (chk_authz($elem, EDIT, 1)) {
+        # If we're in here, the user doesn't have permission to do what
+        # s/he's trying to do.
+        add_msg("Changes not saved: permission denied.");
+        $self->set_redirect(last_page());
+        $self->has_perms(0);
+        return;
+    }
+
+    my $name = $ed->get_name;
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate();
