@@ -76,11 +76,11 @@ CONF_BRIC = ${CONF}/bricolage.tmp.conf
 CONF_BRIC_TARGET = ${confdir}/bricolage.conf
 CONF_HTTPD = ${CONF}/httpd.tmp.conf
 CONF_HTTPD_TARGET = ${confdir}/httpd.conf
-CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET} ${CONF_OPTIONS_TARGET}
+CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_HTTPD_TARGET} ${CONF_HTTPSD_TARGET}
 
 
 # And the various doc files in text form
-CONF_OPTIONS = ${INST}/configuration
+CONF_OPTIONS = configure_options
 CONF_OPTIONS_TARGET = ${docdir}/configure_options
 DOC_TARGETS = ${docdir}/Changes \
 			  ${docdir}/License ${docdir}/TODO \
@@ -268,10 +268,7 @@ ${CPAN_TARGETS}:
 # This is where we do our config files
 
 config: inst/bric.sql ${CONF_BRIC} ${CONF_HTTPD} \
-		lib/Makefile ${INST}/configuration
-
-${CONF_OPTIONS}:
-	echo ${CONFIG_STRING} > $@
+		lib/Makefile 
 
 ${INST}/bric.sql: inst/bric.sql.in
 	cp $^ $@
@@ -303,7 +300,7 @@ lib/Makefile:
 
 
 # and here are our document files.
-doc: Changes TODO License
+doc: Changes TODO License ${CONF_OPTIONS}
 	cd ${DOC} && ${MAKE} -e
 
 TODO:
@@ -317,6 +314,9 @@ License:
 
 test:
 	cd ${LIB} && make test
+
+${CONF_OPTIONS}:
+	echo ${CONFIG_STRING} > $@
 
 ${CONF_OPTIONS_TARGET}: ${CONF_OPTIONS}
 	${install-files}
