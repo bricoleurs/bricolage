@@ -254,6 +254,11 @@ caching being turned on.  HTML::Template's cache doesn't know that a
 new compilation would turn up a difference <tmpl_include> so it
 continues to use the old one.  [Sam]
 
+=item *
+
+Fixed installer to not require unneeded Apache modules (mod_proxy and
+mod_rewrite). [Sam]
+
 =back
 
 =head1 VERSION 1.3.2

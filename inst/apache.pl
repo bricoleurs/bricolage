@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-07-06 23:18:50 $
+$Date: 2002-08-09 16:12:46 $
 
 =head1 DESCRIPTION
 
@@ -175,7 +175,7 @@ sub check_modules {
     my @missing;
     # loop over required modules
  MOD: 
-    foreach my $mod (qw(perl rewrite proxy ssl log_config mime alias apache_ssl)) {
+    foreach my $mod (qw(perl log_config mime alias ssl apache_ssl)) {
 	# first look in static modules
 	if (exists $AP{static_modules}{"mod_$mod"} ||
 	   ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
@@ -214,8 +214,8 @@ sub check_modules {
 			      catdir($AP{HTTPD_ROOT}, "libexec"),
 			      "/usr/lib/apache/1.3"              ) {		
 
-		# perl and proxy use libfoo.so format filenames
-		if ($mod eq 'perl' or $mod eq 'proxy') {
+		# perl uses libfoo.so format filenames
+		if ($mod eq 'perl') {
 		    if (-e ($_ = catfile($path, "lib${mod}.so"))) {
 			$AP{add_modules}{"mod_$mod"} = 1;
 			$AP{load_modules}{"${mod}_module"} = $_;
@@ -225,9 +225,8 @@ sub check_modules {
 		}
 
 		# everything else is mod_foo.so.  Not an elsif in case
-		# perl or proxy are sometimes mod_foo.so too.  I can
-		# imagine a package maintainer getting smart and "fixing"
-		# them.
+		# perl is sometimes mod_foo.so too.  I can imagine a
+		# package maintainer getting smart and "fixing" it.
 		if (-e ($_ = catfile($path, "mod_${mod}.so"))) {
 		    $AP{add_modules}{"mod_$mod"} = 1;
 		    $AP{load_modules}{"${mod}_module"} = $_;
