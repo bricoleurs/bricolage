@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-27 17:10:29 $
+$Date: 2002-05-28 09:12:14 $
 
 =head1 SYNOPSIS
 
@@ -614,7 +614,7 @@ sub my_meths {
                               get_args => [],
                               set_meth => sub { shift->set_ad_string(@_) },
                               set_args => [],
-                              disp     => 'French',
+                              disp     => 'Ad String',
                               type     => 'short',
                               len      => 1024,
                               props    => { type       => 'text',
@@ -628,7 +628,7 @@ sub my_meths {
                               get_args => [],
                               set_meth => sub { shift->set_ad_string2(@_) },
                               set_args => [],
-                              disp     => 'Spanish',
+                              disp     => 'Ad String 2',
                               type     => 'short',
                               len      => 1024,
                               props    => { type       => 'text',
