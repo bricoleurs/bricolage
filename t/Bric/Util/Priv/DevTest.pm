@@ -141,5 +141,95 @@ sub test_get_acl_mtime : Test(3) {
     is( $mtime, $acl->{mtime}, "Check mtime" );
 }
 
+##############################################################################
+# Test inactive groups.
+sub test_inactive_groups : Test(37) {
+    my $self = shift;
+    my $uid = $self->user_id;
+
+    # Create a new user group and add a user to it.
+    ok( my $ug = Bric::Util::Grp::User->new({ name => 'FooUser' }),
+        "Create new user group");
+    ok( $ug->add_member({ package => 'Bric::Biz::Person::User',
+                          id => $uid }),
+        "Add user to group" );
+    ok( $ug->save, "Save new user group" );
+    ok( my $ugid = $ug->get_id, "Get user group ID" );
+    $self->add_del_ids($ugid, 'grp');
+    ok( $ug = $ug->lookup({ id => $ugid }), "Grab user group from database" );
+
+    # Create a new MediaType group and add a media type to it.
+    ok( my $mg = Bric::Util::Grp::MediaType->new({ name => 'FooMT'}),
+        "Create new MT group" );
+    ok( $mg->save, "Save new MT group" );
+    ok( my $mgid = $mg->get_id, "Get MT group ID" );
+    $self->add_del_ids($mgid, 'grp');
+    ok( $mg = $mg->lookup({ id => $mgid }), "Grab MT group from database" );
+
+    # Grant the new user group permission to the new MT group.
+    ok( my $priv = Bric::Util::Priv->new({ usr_grp => $ug,
+                                           obj_grp => $mg,
+                                           value => CREATE}),
+        "Create permission for new user group" );
+    ok( $priv->save, "Save new permission" );
+    $self->add_del_ids($priv->get_id);
+
+    # Make sure that the user has the new group in its ACL.
+    ok( my $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, 3, "Check for MT group in ACL" );
+
+    # Now, remove the user from the user group.
+    ok( $ug->delete_member({ package => 'Bric::Biz::Person::User',
+                             id => $uid }),
+        "Delete user from user group" );
+    ok( $ug->save, "Save user group again" );
+
+    # So the MT group should no longer be in the ACL.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, undef, "Check for no MT group in ACL" );
+
+     # Add the user back to the user group.
+    ok( $ug->add_member({ package => 'Bric::Biz::Person::User',
+                          id => $uid }),
+        "Add user back to group" );
+    ok( $ug->save, "Save user group" );
+
+    # Make sure that the user again has the new group in its ACL.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, 3, "Check for MT group in ACL again" );
+
+    # Now, deactivate the new user group!
+    ok( $ug->deactivate, "Deactivate user group" );
+    ok( $ug->save, "Save deactivated user group" );
+
+    # So the MT group should gone from the ACL again.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, undef, "Check for no MT group in ACL again" );
+
+    # Reactivate the user group.
+    ok( $ug->activate, "Re-activate user group" );
+    ok( $ug->save, "Save re-activated user group" );
+
+    # So the MT group should back in the ACL again.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, 3, "Check for MT group in ACL again" );
+
+    # Now deactivate the MT group.
+    ok( $mg->deactivate, "Deactivate MT group" );
+    ok( $mg->save, "Save deactivated MT group" );
+
+    # So the MT group should gone from the ACL again.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, undef, "Bye-bye MT group" );
+
+    # Re-activate the MT group.
+    ok( $mg->activate, "Re-activate MT group" );
+    ok( $mg->save, "Save re-activated MT group" );
+
+    # So the MT group should back in the ACL again.
+    ok( $acl = Bric::Util::Priv->get_acl($uid), "Get ACL for UID '$uid'" );
+    is( $acl->{$mgid}, 3, "Back and better than ever!" );
+}
+
 1;
 __END__
