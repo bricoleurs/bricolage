@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:45 $
+-- $Date: 2003-03-03 01:18:25 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -47,6 +47,7 @@ CREATE TABLE element  (
     id              NUMERIC(10,0)  NOT NULL
                                    DEFAULT NEXTVAL('seq_element'),
     name            VARCHAR(64)    NOT NULL,
+    key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
     burner          NUMERIC(2,0)   NOT NULL DEFAULT 1,
     reference       NUMERIC(1,0)   NOT NULL
@@ -183,7 +184,7 @@ CREATE TABLE attr_element_meta (
 -- -----------------------------------------------------------------------------
 -- Indexes.
 --
-CREATE UNIQUE INDEX udx_element__name ON element(LOWER(name));
+CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name));
 CREATE INDEX fkx_at_type__element ON element(type__id);
 CREATE INDEX fkx_grp__element ON element(type__id);
 CREATE INDEX fkx_output_channel__element ON element(primary_oc__id);
