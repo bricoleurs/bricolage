@@ -4,7 +4,6 @@ package Bric::App::Callback::Publish;
 #$oc_id => undef
 #$story_id => undef
 #$media_id => undef
-#$instant  => 0
 
 
 use base qw(Bric::App::Callback);
@@ -21,6 +20,7 @@ use HTML::Mason::Request;
 sub preview : Callback {
     my $self = shift;
     my $m = HTML::Mason::Request->instance;
+    my $param = $self->request_args;
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
@@ -80,6 +80,7 @@ sub preview : Callback {
 
 sub publish : Callback {
     my $self = shift;
+    my $param = $self->request_args;
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids, $story_pub, $media_pub);
@@ -123,7 +124,9 @@ sub publish : Callback {
     add_msg($self->lang->maketext("[_1] media published.", $count))
       if $count > 3;
 
-    redirect_onload(last_page()) unless $instant;     # XXX: $instant
+    unless (exists($param->{'instant'}) && $param->{'instant'}) {
+        redirect_onload(last_page());
+    }
 }
 
 
