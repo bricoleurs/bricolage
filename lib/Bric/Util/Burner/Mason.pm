@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-19 20:58:26 $
+$Date: 2004-02-07 01:03:19 $
 
 =head1 SYNOPSIS
 
@@ -228,14 +228,21 @@ sub burn_one {
         }
     }
 
-    # Create the interpreter
-    my $interp = HTML::Mason::Interp->new($self->_interp_args,
-                                          'comp_root'  => $comp_root,
-                                          'data_dir'   => $self->get_data_dir,
-                                          'out_method' => \$outbuf,
-                                         );
+    # Find the inheritance path and the template name.
+    my $element   = $ba->get_tile;
+    my $tmpl_path = $cat->ancestry_path;
+    my $tmpl_name = $element->get_key_name . '.mc';
 
-    my $element = $ba->get_tile;
+    # Create the interpreter
+    my $interp = HTML::Mason::Interp->new(
+        $self->_interp_args,
+        comp_root     => $comp_root,
+        data_dir      => $self->get_data_dir,
+        out_method    => \$outbuf,
+        dhandler_name => $tmpl_name,
+    );
+
+    # Push this element onto the top of the stack.
     $self->_push_element($element);
 
     # Set some global variables to be passed in.
@@ -254,27 +261,25 @@ sub burn_one {
         $self->_set(['_writer'], [$writer]);
     }
 
-    # Get the template name. Because this is a top-level Element, we don't want
-    # to look far for its corresponding template.
-    my $tmpl_path = $cat->ancestry_path;
-    my $tmpl_name = $element->get_key_name;
-    my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
-    if ( $interp->comp_exists($template . '.mc') ) {
-        # The top-level .mc template exits.
-        $template .= '.mc';
-    } else {
-        # If we're in here, there's no top-level .mc template. So create a
-        # dhandler for it if there isn't one already.
-        _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-          unless $interp->comp_exists($fs->cat_uri($tmpl_path, 'dhandler'));
-    }
+    # XXX Temporarily change Mason's inheritance behavior so that it
+    # does inheritance from the category path, not from wherever it
+    # finds the document template (acting as a dhandler). This will
+    # likely break with HTML::Mason 1.40, but it will probably have
+    # a parameter to do it for us (or allow us to subclass Component).
+    local *HTML::Mason::Component::inherit_start_path = sub {
+        my $self = shift;
+        return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
+        return $self->{inherit_start_path};
+    };
 
     while (1) {
         # Run the biz asset through the template
-        eval { $retval = $interp->exec($template) if $template };
+        eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
             rethrow_exception($err) if isa_exception($err);
-            throw_burn_error error   => "Error executing '$template'",
+            throw_burn_error error   => "Error executing '"
+                                      . $fs->cat_uri($tmpl_path, $tmpl_name)
+                                      . "'",
                              payload => $err,
                              mode    => $self->get_mode,
                              oc      => $self->get_oc->get_name,
@@ -282,7 +287,7 @@ sub burn_one {
                              elem    => $element->get_name;
         }
 
-        # End the page if there is still content in the buffer.
+        # End the page if there is content in the buffer.
         $self->end_page if $outbuf !~ /^\s*$/;
 
         my ($more, $again) = $self->_get(qw(more_pages burn_again));
@@ -304,6 +309,7 @@ sub burn_one {
         }
     }
 
+    # Free up the element stack.
     $self->_pop_element;
 
     # Return a list of the resources we just burned.
@@ -882,50 +888,6 @@ sub _render_element {
 
 =over 4
 
-=item _create_dhandler($comp_root, $oc, $cat, $tmpl_name)
-
-Creates a top-level dhandler. This dhandler, when executed, will find the proper
-template in its URI hierarchy. The reason we create this dhandler is to ensure
-that a mason component gets executed at the end of the URI hierarchy, so that
-all the corresponding autohandlers will also be executed properly.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _create_dhandler {
-    my ($comp_root, $oc, $cat, $tmpl_name) = @_;
-    # The complete path on the file system sans the filename.
-    my $path = $fs->cat_dir($comp_root->[0][1],
-                            $fs->uri_to_dir($cat->ancestry_path));
-
-    # The complete path on the file system including the filename.
-    my $file = $fs->cat_dir($path, 'dhandler');
-
-    # Create the necessary directories
-    $fs->mk_path($path);
-
-    # Now just write it out to the file system.
-    open(DH, ">$file")
-      or throw_gen error => "Unable to open '$file' for writing",
-                   payload => $!;
-    print DH q{<%init>;
-my $template = $burner->find_template($m->current_comp->dir_path,
-                                      $m->dhandler_arg . '.mc')
-  or $burner->throw_error("Unable to find template '"
-                          . $m->dhandler_arg . "\.mc'");
-$m->comp({ base_comp => $m->base_comp }, $template, %ARGS);
-</%init>
-};
-    close(DH);
-}
-
-##############################################################################
-
 =item _interp_args()
 
 Returns HTML::Mason->Interp arguments, with custom tags set.
@@ -993,6 +955,8 @@ sub _custom_preprocess {
     }
 }
 
+##############################################################################
+
 =item _get_tagset()
 
 Returns which tags should be run, kept or removed, according to server
@@ -1050,10 +1014,11 @@ sub _get_tagset {
 
 }
 
-
-
 1;
 
+##############################################################################
+# This package is for the XML::Writer to use to write XML directly to the
+# Mason buffer.
 package Bric::Util::Burner::Mason::XMLWriterHandle;
 use Bric::Config qw(:burn);
 

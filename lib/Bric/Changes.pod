@@ -161,6 +161,11 @@ Added "Filter by Site Context" preference. When active, search results only
 return assets relative to the site context instead of all the sites the user
 has access to [JoE<atilde>o Pedro]
 
+=item *
+
+The Mason burner now uses document templates as true dhandlers, enabling
+inheritance to autohandlers to work properly. [David & Dave Rolsky]
+
 =back
 
 =head2 Bug Fixes
