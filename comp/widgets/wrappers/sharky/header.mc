@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.2.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-25 12:52:33 $
+$Date: 2001-10-01 13:52:36 $
 
 =head1 SYNOPSIS
 
@@ -51,7 +51,7 @@ my $tab         = ($section eq "admin") ? "adminTab" : "workflowTab";
 my $curve_left  = ($section eq "admin") ? "/media/images/CC6633_curve_left.gif" : "/media/images/006666_curve_left.gif";
 my $curve_right = ($section eq "admin") ? "/media/images/CC6633_curve_right.gif" : "/media/images/006666_curve_right.gif";
 my @title       = split (/ /, $title);
-
+my $uri         = $r->uri;
 
 # calculate number of links displayed by side nav and pad out this table cell to make the page
 # long enough (in the browser's mind) to render a scroll bar if needed
@@ -103,6 +103,14 @@ function init() {
 
 </script>
 
+<script language="JavaScript">
+if (window.toolbar.visible == true) {
+    // Turn off the toolbar, back button, etc.
+    var win1 = window.open("<% $uri %>", "Bricolage", toolbar="no",
+                           width=document.width, height=document.height);
+    self.close();
+}
+</script>
 <meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 </head>
 
@@ -110,8 +118,9 @@ function init() {
 
 <body bgcolor="#ffffff" onLoad="init()">
 <noscript>
-<h1>Warning! Bricolage is designed to run with Javascript enabled.</h1>
-Using Bricolage without Javascript can result in corrupt data and system instability.  Please activate Javascript in your browser before continuing.
+<h1>Warning! Bricolage is designed to run with JavaScript enabled.</h1>
+Using Bricolage without JavaScript can result in corrupt data and system instability.
+Please activate JavaScript in your browser before continuing.
 </noscript>
 
 <!-- begin top table -->
@@ -251,7 +260,10 @@ while (my $txt = next_msg) {
 <%doc>
 
 $Log: header.mc,v $
-Revision 1.2  2001-09-25 12:52:33  wheeler
+Revision 1.2.2.1  2001-10-01 13:52:36  wheeler
+Added JavaScript to get rid of menus, buttons, etc.
+
+Revision 1.2  2001/09/25 12:52:33  wheeler
 Fixed variable interpolation problem (a variable *wasn't* getting
 interpolated!).
 
