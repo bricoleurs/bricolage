@@ -160,6 +160,11 @@ Added example use for C<< $burner->display_pages >> to Bric::AdvTemplates.
 
 Added F<README.Mandrake>. [Cameron Miller]
 
+=item *
+
+Added C<SFTP_HOME> F<bricolage.conf> directive to specify the home directory
+and location of SSH keys when SSH is enabled. [Cameron Miller]
+
 =back
 
 =head2 Bug Fixes

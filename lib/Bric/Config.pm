@@ -96,6 +96,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENABLE_SFTP_MOVER
                     ENABLE_SFTP_V2
                     SFTP_MOVER_CIPHER
+                    SFTP_HOME
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
                     USE_THUMBNAILS
@@ -204,6 +205,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
                                      SFTP_MOVER_CIPHER
+                                     SFTP_HOME
                                      ENABLE_WEBDAV_MOVER
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
@@ -477,6 +479,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ENABLE_SFTP_MOVER       => $config->{ENABLE_SFTP_MOVER};
     use constant ENABLE_SFTP_V2          => $config->{ENABLE_SFTP_V2};
     use constant SFTP_MOVER_CIPHER       => $config->{SFTP_MOVER_CIPHER} || 0;
+    use constant SFTP_HOME               => $config->{SFTP_HOME};
     use constant ENABLE_WEBDAV_MOVER     => $config->{ENABLE_WEBDAV_MOVER};
 
     # Publishing Settings.

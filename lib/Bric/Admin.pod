@@ -1354,6 +1354,13 @@ specified.
 
 =item *
 
+B<SFTP_HOME:> If you've enabled SFTP, set this directive to a directory
+containing your SSH keys and with permisssions appropriate for C<SYS_USER> to
+access. If no value is provided, the default will be specified by Net::SFTP,
+but is generally F</> (and therefore probably I<not> what you want).
+
+=item *
+
 B<SFTP_MOVER_CIPHER:> This directive forces the SFTP mover (if enabled by the
 C<ENABLE_SFTP_MOVER> directive) to use a particular encryption cipher. This
 can be useful for tuning SFTP distribution for speed. The default is 0, which

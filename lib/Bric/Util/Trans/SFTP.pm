@@ -131,6 +131,10 @@ B<Notes:> Uses Net::SFTP internally.
 
 sub put_res {
     my ($pkg, $res, $st) = @_;
+
+    # Set HOME environment variable for SSH client
+    local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
+
     foreach my $s ($st->get_servers) {
 	# Skip inactive servers.
 	next unless $s->is_active;
@@ -251,6 +255,10 @@ B<Notes:> See put_res(), above.
 
 sub del_res {
     my ($pkg, $res, $st) = @_;
+
+    # Set HOME environment variable for SSH client
+    local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
+
     foreach my $s ($st->get_servers) {
 	# Skip inactive servers.
 	next unless $s->is_active;
