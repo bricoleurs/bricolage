@@ -5,6 +5,7 @@
 #
 #   all       - default target checks requirements and builds source
 #   install   - installs the bricolage system
+#   upgrade   - upgrades an existing installation
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a CVS checkout
 #
@@ -21,13 +22,13 @@ all 		: required.db modules.db apache.db postgres.db config.db \
 required.db	: inst/required.pl
 	perl inst/required.pl
 
-modules.db 	:  inst/modules.pl lib/Bric/Admin.pod
+modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 	perl inst/modules.pl
 
 apache.db	: inst/apache.pl required.db
 	perl inst/apache.pl
 
-postgres.db 	:  inst/postgres.pl required.db
+postgres.db 	: inst/postgres.pl required.db
 	perl inst/postgres.pl
 
 config.db	: inst/config.pl required.db apache.db postgres.db
@@ -48,14 +49,20 @@ build_done	: required.db modules.db apache.db postgres.db config.db
 
 .PHONY 		: all
 
+
 ###########################
 # dist rules              #
 ###########################
 
-dist            : distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
-                  dist/INSTALL dist/Changes dist/License dist_tar
+dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
+                  rm_use rm_CVS dist/INSTALL dist/Changes dist/License dist_tar
 
-BRIC_VERSION := $(shell perl -Ilib -MBric -e 'print $$Bric::VERSION')
+# this makes FreeBSD's make happier than "print $$Bric::Version" for
+# some reason.
+BRIC_VERSION := $(shell perl -Ilib -MBric -e 'package Bric; print $$VERSION')
+
+check_dist      :
+	perl inst/check_dist.pl $(BRIC_VERSION)
 
 distclean	: clean
 	-rm -rf bricolage-$(BRIC_VERSION)
@@ -96,7 +103,7 @@ dist_tar	:
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
 .PHONY 		: distclean inst/bricolage.sql dist_dir rm_sql rm_use rm_CVS \
-                  dist_tar
+                  dist_tar check_dist
 
 
 ##########################
@@ -105,14 +112,14 @@ dist_tar	:
 
 install 	: all cpan lib bin files db conf done
 
-cpan 		: modules.db config.db inst/cpan.pl
+cpan 		: modules.db postgres.db inst/cpan.pl
 	perl inst/cpan.pl
 
-lib 	: 
+lib 		: 
 	-rm -f lib/Makefile
 	cd lib; perl Makefile.PL; $(MAKE) install
 
-bin 	:
+bin 		:
 	-rm -f bin/Makefile
 	cd bin; perl Makefile.PL; $(MAKE) install
 
@@ -125,25 +132,62 @@ db    		: inst/db.pl postgres.db inst/bricolage.sql
 SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 inst/bricolage.sql : $(SQL_FILES)	
-	find lib/ -name '*.sql' -exec cat '{}' ';' >  inst/bricolage.sql
-	find lib/ -name '*.val' -exec cat '{}' ';' >> inst/bricolage.sql
-	find lib/ -name '*.con' -exec cat '{}' ';' >> inst/bricolage.sql
+	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
+	find lib -name '*.val' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
+	find lib -name '*.con' -exec grep -v '^--' '{}' ';' >> inst/bricolage.sql
 
 conf		: inst/conf.pl files required.db config.db postgres.db \
                   apache.db
 	perl inst/conf.pl
 
-done		: 
+done		: conf inst/bricolage.sql db files bin lib cpan
 	perl inst/done.pl
 
 .PHONY 		: install lib bin files db conf done
 
 
 ##########################
+# upgrade rules          #
+##########################
+
+upgrade		: upgrade.db required.db cpan stop lib bin db_upgrade \
+	          upgrade_files upgrade_conf upgrade_done
+
+upgrade.db	:
+	perl inst/upgrade.pl
+
+db_upgrade	: upgrade.db
+	perl inst/db_upgrade.pl
+
+stop		:
+	perl inst/stop.pl
+
+upgrade_files   :
+	perl inst/files.pl UPGRADE
+
+upgrade_conf    :
+	perl inst/conf.pl UPGRADE
+
+upgrade_done    :
+	@echo
+	@echo ===========================================================
+	@echo ===========================================================
+	@echo 
+	@echo Bricolage Upgrade Complete.  You may now start your
+	@echo servers to start using the new version of Bricolage.
+	@echo 
+	@echo ===========================================================
+	@echo ===========================================================
+	@echo
+
+.PHONY		: db_upgrade upgrade_files stop upgrade_done
+
+
+##########################
 # clean rules            #
 ##########################
 
-clean : 
+clean 		: 
 	-rm -rf *.db
 	-rm -rf build_done
 	cd lib ; perl Makefile.PL ; $(MAKE) clean

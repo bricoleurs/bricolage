@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-09 21:26:13 $
+$Date: 2002-04-23 22:24:33 $
 
 =head1 DESCRIPTION
 
@@ -51,11 +51,16 @@ do "./config.db" or die "Failed to read config.db : $!";
 our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
 
+# check if we're upgrading
+our $UPGRADE;
+$UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
+
 create_paths();
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) }, 
        no_chdir => 1 }, './comp');
 find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) }, 
-       no_chdir => 1 }, './data');
+       no_chdir => 1 }, './data')
+    unless $UPGRADE;
 
 assign_permissions();
 
@@ -81,6 +86,7 @@ sub copy_files {
     return if /\.$/;
     return if /CVS/;
     return if /\.cvsignore$/;
+    return if m!/data/! and $UPGRADE;
 
     # construct target by lopping off ^./foo/ and appending to $root
     my $targ;

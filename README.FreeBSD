@@ -15,7 +15,7 @@ installation process:
 
      Decompress and edit the Makefile.PL inside, changing:
 
-       'LIBS'         => [''],
+        'LIBS'         => [''],
 
      To:
 

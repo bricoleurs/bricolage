@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-04-09 21:26:13 $
+$Date: 2002-04-23 22:24:33 $
 
 =head1 DESCRIPTION
 
@@ -122,6 +122,14 @@ END
 
 sub confirm_settings {
   ask_confirm("\nBricolage Root Directory", \$CONFIG{BRICOLAGE_ROOT});
+
+  # make sure this directory doesn't already house a Bricolage install
+  if (-e $CONFIG{BRICOLAGE_ROOT} and 
+      -e catfile($CONFIG{BRICOLAGE_ROOT}, "conf", "bricolage.conf")) {
+      print "That directory already contains a Bricolage installation.\n";
+      exit 1 unless ask_yesno("Continue and overwrite existing installation? ".
+			      "[no] ", 0);
+  }
 
   # some prefs are based on BRICOLAGE_ROOT, need to eval them now
   foreach (qw(TEMP_DIR MODULE_DIR BIN_DIR MAN_DIR LOG_DIR PID_FILE 

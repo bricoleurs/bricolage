@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-04-09 21:26:13 $
+$Date: 2002-04-23 22:24:33 $
 
 =head1 DESCRIPTION
 
@@ -37,6 +37,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Copy qw(copy);
 use Time::HiRes qw(time);
 use Digest::MD5 qw(md5_base64);
+use Data::Dumper;
 
 # read in user config settings
 our $CONFIG;
@@ -48,11 +49,20 @@ do "./postgres.db" or die "Failed to read postgres.db : $!";
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
+# determine version being installed
+use lib './lib';
+require "lib/Bric.pm";
+our $VERSION = $Bric::VERSION;
+
+# check if we're upgrading
+our $UPGRADE;
+$UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
+
 print "\n\n==> Creating Bricolage Conf Files <==\n\n";
 
-create_bricolage_conf();
-create_httpd_conf();
-
+create_bricolage_conf() unless $UPGRADE;
+create_httpd_conf()     unless $UPGRADE;
+create_install_db();
 
 print "\n\n==> Finished Creating Bricolage Conf Files <==\n\n";
 exit 0;
@@ -205,4 +215,19 @@ sub set_httpd_var {
     unless ($$httpd =~ s/^(\s*$var\s+).*$/$1$val/mi) {
 	hard_fail("Unable to set bricolage.conf variable $var to \"$val\".");
     }
+}
+
+# create the install.db file used by "make upgrade"
+sub create_install_db {
+    # write out new httpd.conf in final resting place
+    print "Writing $CONFIG->{BRICOLAGE_ROOT}/conf/install.db...\n";
+    open(DB, ">$CONFIG->{BRICOLAGE_ROOT}/conf/install.db")
+	or die "Cannot open $CONFIG->{BRICOLAGE_ROOT}/conf/httpd.conf : $!";
+    print DB Data::Dumper->Dump([{ CONFIG  => $CONFIG,
+				   AP      => $AP,
+				   PG      => $PG,
+				   REQ     => $REQ,
+				   VERSION => $VERSION }],
+				['INSTALL']);
+    close DB;
 }

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.55 $
+$Revision: 1.56 $
 
 =head1 DATE
 
-$Date: 2002-03-26 19:33:49 $
+$Date: 2002-04-23 22:24:33 $
 
 =head1 DESCRIPTION
 
@@ -150,6 +150,23 @@ should add this feature to profiles only (edit and view), and not to desks.
 Add check for uniqueness of URIs when Stories and Media are created.
 Also check that secondary URIs created by adding categories to Stories
 are unique.  This could be made optional but should be on by default.
+
+=item *
+
+Add option to the installation system to always use the defaults and
+never prompt the user.
+
+=item *
+
+Enhance the upgrade system to allow upgrading of installations that
+did not use the new installation system.  These installs won't have a
+conf/install.db to guide the upgrade and the upgrade system will have
+to compensate by probing bricolage.conf and asking the user questions
+about their setup.
+
+=item *
+
+Add "make uninstall" support to installation system.
 
 =back
 

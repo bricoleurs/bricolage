@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:13 $
+$Date: 2002-04-23 22:24:33 $
 
 =head1 DESCRIPTION
 
@@ -112,6 +112,7 @@ our %flags = (
 	      'Params::Validate' => FORCE,
 	      'DBD::Pg'          => FORCE|PG_ENV,
 	      'Cache::Cache'     => FORCE,
+	      'HTML::Mason'      => FORCE,
 	     );
 
 # read in list of required modules
@@ -121,7 +122,6 @@ do "./modules.db" or die "Failed to read modules.db : $!";
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db : $!";
 
-
 # loop through modules installing as we go
 foreach my $mod (@$MOD) {
     my ($name, $found, $req_version) = @{$mod}{qw(name found req_version)};
@@ -129,14 +129,13 @@ foreach my $mod (@$MOD) {
 
     install_module($mod->{name}, $mod->{req_version});
     $mod->{found} = 1;
+
+    # make sure we don't redo this work, even if we're run twice in a
+    # row after a failure.
+    update_modules_db();
 }
 
 print "\n\n==> Finished Installing Modules From CPAN <==\n\n";
-
-# all done, update modules database
-open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
-print OUT Data::Dumper->Dump([$MOD],['MOD']);
-close OUT;
 
 exit 0;
 
@@ -226,9 +225,15 @@ You can then attempt to install the module manually with:
 
 END
     }
-
+    
     # all done.
     print "$name installed successfully.\n";
 }
 
-
+# updates modules.db with progress
+sub update_modules_db {
+    # update modules database with progress
+    open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
+    print OUT Data::Dumper->Dump([$MOD],['MOD']);
+    close OUT;
+}
