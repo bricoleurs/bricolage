@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-06 06:34:56 $
+$Date: 2004-04-11 02:26:42 $
 
 =head1 SYNOPSIS
 
@@ -517,10 +517,13 @@ sub get_acl {
     my $sel = prepare_c(qq{
         SELECT gm.grp__id, gp.value, gp.mtime
         FROM   grp_priv gp, grp_priv__grp_member gm, grp g, member m,
-               user_member mo
+               user_member mo, grp gg
         WHERE  gp.id = gm.grp_priv__id
                AND g.id = m.grp__id
                AND gp.grp__id = g.id
+               AND g.active = 1
+               AND gm.grp__id = gg.id
+               AND gg.active = 1
                AND m.id = mo.member__id
                AND m.active = 1
                AND mo.object_id = ?
@@ -577,9 +580,12 @@ sub get_acl_mtime {
     my $sel = prepare_ca(qq{
         SELECT MAX(gp.mtime)
         FROM   grp_priv gp, grp_priv__grp_member gm, grp g, member m,
-               user_member mo
+               user_member mo, grp gg
         WHERE  gp.id = gm.grp_priv__id
                AND gp.grp__id = g.id
+               AND g.active = 1
+               AND gm.grp__id = gg.id
+               AND gg.active = 1
                AND g.id = m.grp__id
                AND m.id = mo.member__id
                AND m.active = 1
