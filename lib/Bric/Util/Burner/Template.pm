@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-23 20:13:33 $
+$Date: 2002-02-06 23:03:09 $
 
 =head1 SYNOPSIS
 
@@ -676,7 +676,7 @@ sub _build_element_vars {
     foreach my $e ($element->get_tiles()) {
 	# get a proper name
 	my $name = lc $e->get_name();
-	$name =~ s/ /_/;
+	$name =~ s/ /_/g;
 
 	print STDERR __PACKAGE__ . "::_build_element_vars : saw $name (",
 	  join(', ', @$path), ")\n" if DEBUG;
