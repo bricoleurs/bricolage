@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-07-28 00:05:13 $
 
 =head1 DESCRIPTION
 
@@ -188,14 +188,6 @@ I worked around the problem by ignoring it; in pg_hba.conf,
   local   all         all                                         trust
   host    all         all         127.0.0.1        255.0.0.0      trust
   host    all         all         0.0.0.0          0.0.0.0        reject
-
-=head3 Why do I get an error like the following in Apache's F<error_log>?
-
-    [error] access to / failed for 127.0.0.1, reason: No cookies found.
-
-This only happens the first time your browser accesses Bricolage.
-It is harmless and indicates that no Bricolage session cookie
-has been set yet.
 
 =head3 Why do I get a 404 when I connect to the Bricolage UI and get an
 error like the following in Apache's F<error_log>?

@@ -6,11 +6,11 @@ clone.pl - installation script to copy files for clone distributions
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:12 $
+$Date: 2003-07-28 00:05:13 $
 
 =head1 DESCRIPTION
 
@@ -51,7 +51,7 @@ opendir(CUR, '.') or die $!;
 foreach my $d (readdir(CUR))  {
     next if $d eq '.' or $d eq '..';
     next if $d =~ /.db$/;
-    next if $d eq 'dist' or $d eq 'comp' or $d eq 'data';
+    next if $d eq 'dist' or $d eq 'comp' or $d eq 'data' or $d eq 'conf';
     system("cp -pR $d dist");
 }
 close(CUR);

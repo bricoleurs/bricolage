@@ -43,7 +43,7 @@ if ($param->{delete} &&
     $comp->deactivate;
     $comp->save;
     log_event("${type}_deact", $comp);
-    add_msg($lang->maketext('$disp_name profile [_1] deleted.',$name));
+    add_msg($lang->maketext("$disp_name profile [_1] deleted.", $name));
     set_redirect('/admin/manager/element');
 }  else {
     # Make sure the name isn't already in use.
@@ -335,11 +335,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:15 $
+$Date: 2003-07-28 00:05:13 $
 
 =head1 SYNOPSIS
 

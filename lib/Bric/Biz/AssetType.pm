@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.46 $
+$Revision: 1.47 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.46 $ )[-1];
+our $VERSION = (qw$Revision: 1.47 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 16:49:14 $
+$Date: 2003-07-28 00:05:13 $
 
 =head1 SYNOPSIS
 
@@ -1632,7 +1632,8 @@ sub delete_output_channels {
     my $oc_coll = $get_oc_coll->($self);
     no warnings 'uninitialized';
     foreach my $oc (@$ocs) {
-        $oc = Bric::Biz::OutputChannel->lookup({ id => $oc }) unless ref($oc);
+        $oc = Bric::Biz::OutputChannel::Element->lookup({ id => $oc })
+          unless ref $oc;
         throw_dp "Cannot delete a primary output channel"
           if $self->get_primary_oc_id($oc->get_site_id) == $oc->get_id;
     }

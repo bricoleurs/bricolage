@@ -67,7 +67,7 @@
 </table>
 % }
 <font face="Verdana, Helvetica, Arial">
-<b>Stack:</b><br /><% join("<br />\n", @{$fault->get_stack} ) %>
+<b>Stack:</b><br /><% isa_mason_exception($fault) ? $fault->as_text : $fault->trace_as_text %>
 
 <br /><br />
 <& '/widgets/debug/debug.mc' &>

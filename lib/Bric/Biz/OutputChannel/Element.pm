@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-06-13 18:01:23 $
+$Date: 2003-07-28 00:05:13 $
 
 =head1 SYNOPSIS
 
@@ -203,7 +203,7 @@ sub new {
         $self = $pkg->SUPER::new($init);
     }
     # Set the necessary properties and return.
-    $self->_set([qw(_enabled element_id)], [$en, $eid]);
+    $self->_set([qw(_enabled element_id _map_id)], [$en, $eid, undef]);
     # New relationships should always trigger a save.
     $self->_set__dirty(1);
 }
