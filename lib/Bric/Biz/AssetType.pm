@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.9.2.1 $
+$Revision: 1.9.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-29 06:40:35 $
+$Date: 2002-02-14 19:47:07 $
 
 =head1 SYNOPSIS
 
@@ -2765,8 +2765,9 @@ sub _get_parts {
     return $parts if substr(%$parts, 0, index(%$parts, '/'));
 
     my $cont = Bric::Biz::AssetType::Parts::Data->list(
-				          {'element__id' => $self->get_id,
-					   'active'        => 1}
+				          { element__id => $self->get_id,
+					    order_by    => 'place',
+					    active      => 1 }
 							);
     my $p_table = {map { $_->get_id => $_ } (@$cont)};
 

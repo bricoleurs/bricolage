@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.6.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:44 $
+$Date: 2002-02-14 19:47:07 $
 
 
 =head1 SYNOPSIS
@@ -1140,7 +1140,10 @@ sub _do_list {
     
     # Add the where clause if there is one.
     $sql .= ' WHERE '.join(' AND ', @where) if @where;
-    
+
+    # Add the ORDER BY clause if there is one.
+    $sql .= " ORDER BY $param->{order_by}" if $param->{order_by};
+
     my $select = prepare_ca($sql, undef, DEBUG);
     
     if ($ids) {
