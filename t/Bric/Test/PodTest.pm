@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 19:22:44 $
+$Date: 2003-03-04 16:07:52 $
 
 =head1 SYNOPSIS
 
@@ -40,9 +40,7 @@ use warnings;
 use base qw(Bric::Test::Base);
 use File::Find;
 use File::Spec::Functions;
-use Pod::Checker;
-use IO::Scalar;
-use Test::More;
+use Test::Pod;
 
 sub new {
     my $self = shift->SUPER::new(@_);
@@ -57,22 +55,8 @@ sub new {
 
 sub test_mods : Test(no_plan) {
     my $self = shift;
-    my $test_dir = catdir 't', 'Bric';
-    $test_dir = qr/^$test_dir/;
-    my $mods = $self->{mods};
-    foreach my $module (@$mods) {
-        # Set up an error file handle and a POD checker object.
-        my $errstr = '';
-        my $errors = IO::Scalar->new(\$errstr);
-        open my $fh, '<', $module or die "Cannot open '$module': $!\n";
-        my $checker = Pod::Checker->new( -warnings => 1 );
-        $checker->parse_from_filehandle($fh, $errors);
-        ok( $checker->num_errors == 0, "Check ${module}'s POD" );
-        if ($errstr =~ m/^\*\*\*/) {
-            # There are warnings or errors. So print error string via diag.
-            $errstr =~ s/\(unknown\)/$module/g;
-            diag( "\n", $errstr )
-        }
+    foreach my $mod (@{ $self->{mods} }) {
+        pod_file_ok($mod);
     }
 }
 

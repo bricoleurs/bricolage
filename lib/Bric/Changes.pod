@@ -202,6 +202,11 @@ display a bit of text from the first text field in each listed subelement so
 that it's easier to see at a glance which subelement is which. [JoE<atilde>o
 Pedro]
 
+=item *
+
+Switched POD testing from Pod::Checker to Test::Pod (using Pod::Simple). Fixed
+the POD errors it found, too. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -6,16 +6,16 @@ Bric::Biz::Contact - Interface to Contacts
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-03-04 16:07:50 $
 
 =head1 SYNOPSIS
 
@@ -1443,22 +1443,22 @@ The arguments are as follows:
 
 =over
 
-=item 0
+=item *
 
 If no arguments are passed, a simple list of contact type names is returned.
 
-=item 1
+=item *
 
 The first arugment requires that a hash list or anonymous hash be returned,
 where the hash keys are the contact type names and the values are the contact
 type descriptions.
 
-=item 2
+=item *
 
 The second argument specifies that the values returned by the the method reflect
 only those contact types that are alertable.
 
-=item 3
+=item *
 
 The third argument specifies that the hash values returned by the inclusion of
 the second argument be the contact type IDs, rather than their descriptions.

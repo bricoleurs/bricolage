@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.95 $
+$Revision: 1.96 $
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:09 $
+$Date: 2003-03-04 16:07:47 $
 
 =head1 DESCRIPTION
 
@@ -158,7 +158,9 @@ START MODULE LIST
 
 =item Exception::Class 1.10
 
-=item Pod::Checker (optional)
+=item Pod::Simple (optional)
+
+=item Test::Pod (optional)
 
 =item Devel::Profiler 0.03 (optional)
 
@@ -181,6 +183,7 @@ END MODULE LIST
 =back
 
 =item *
+
 Apache 1.3.12
 
 =item *

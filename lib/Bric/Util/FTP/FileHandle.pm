@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-02 16:50:51 $
+$Date: 2003-03-04 16:07:51 $
 
 =head1 DESCRIPTION
 
@@ -29,10 +29,6 @@ Bric::Util::FTP::Server.
 
 This module inherits from Net::FTPServer::FileHandle and overrides the
 required methods.  This class is used internally by Bric::Util::FTP::Server.
-
-=head2 Constructors
-
-=over 4
 
 =cut
 
@@ -61,7 +57,11 @@ use Bric::Util::Event;
 ################################################################################
 our @ISA = qw(Net::FTPServer::FileHandle);
 
-=pod
+=head2 Constructors
+
+=over 4
+
+=cut
 
 =item new($ftps, $template, $oc_id, $category_id)
 
