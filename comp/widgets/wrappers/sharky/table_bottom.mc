@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =head1 DATE
 
-$Date: 2004-04-29 01:59:50 $
+$Date: 2004-04-29 02:10:01 $
 
 =head1 SYNOPSIS
 
@@ -17,8 +17,7 @@ $Date: 2004-04-29 01:59:50 $
 
 =head1 DESCRIPTION
 
-Generates the bottom of a table. Use the C<$border> parameter to determine
-whether to draw border lines. Defaults to true.
+Generates the bottom of a table by simply closing the appropriate <div> tag.
 
 =cut
 
