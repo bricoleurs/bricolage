@@ -105,6 +105,13 @@ simplifies getting access to a parent element in an element template. [David]
 Added User and Desk (asset) modules to the SOAP API, added asset commands
 to the Workflow module, and made corresponding changes to bric_soap. [Scott]
 
+=item *
+
+Added C<burn_again> attribute to the Mason burner. This method can be called
+from within a template to force the burner to burn the current page again,
+creating a new file. This can be usefule for creating multi-file output
+without extra paginated subelements. [David]
+
 =back
 
 =head2 Improvements

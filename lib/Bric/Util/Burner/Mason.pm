@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$Revision: 1.51 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.50 $ )[-1];
+our $VERSION = (qw$Revision: 1.51 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-01-13 16:39:08 $
+$Date: 2004-01-16 22:48:05 $
 
 =head1 SYNOPSIS
 
@@ -95,6 +95,7 @@ BEGIN {
                          #- Per burn/deploy values.
                          'job'            => Bric::FIELD_READ,
                          'more_pages'     => Bric::FIELD_READ,
+                         'burn_again'     => Bric::FIELD_RDWR,
 
                          # Private Fields
                          '_interp'         => Bric::FIELD_NONE,
@@ -207,8 +208,9 @@ sub burn_one {
     foreach my $inc ($oc, $oc->get_includes) {
         my $inc_dir = "oc_" . $inc->get_id;
 
-        push @$comp_root, [ 'sandbox' . $inc_dir => $fs->cat_dir($self->get_sandbox_dir, $inc_dir ) ] 
-            if $self->get_sandbox_dir;
+        push @$comp_root, [ 'sandbox' . $inc_dir =>
+                            $fs->cat_dir($self->get_sandbox_dir, $inc_dir ) ]
+          if $self->get_sandbox_dir;
 
         push @$comp_root, [ $inc_dir => $fs->cat_dir($comp_dir, $inc_dir) ];
     }
@@ -225,8 +227,6 @@ sub burn_one {
             $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
         }
     }
-
-
 
     # Create the interpreter
     my $interp = HTML::Mason::Interp->new($self->_interp_args,
@@ -285,8 +285,15 @@ sub burn_one {
         # End the page if there is still content in the buffer.
         $self->end_page if $outbuf !~ /^\s*$/;
 
+        my ($more, $again) = $self->_get(qw(more_pages burn_again));
+        if ($again) {
+            # Reset burn_again and move on to the next page.
+            $self->_set(['burn_again'] => [0]);
+            next;
+        }
+
         # Keep burning this template if it contains more pages.
-        last unless $self->_get('more_pages');
+        last unless $more;
     }
 
     # Restore any existing Mason request object and Bricolage objects.
@@ -557,6 +564,32 @@ sub sdisplay_element {
 
 Returns true if more pages remain to be burned, and false if not. Only
 enumerated when C<display_pages()> is being used to output pages.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+##############################################################################
+
+=item $success = $b->set_burn_again(1)
+
+=item my $again = $b->get_burn_again
+
+This method is designed to be called from within a template. When passed a
+true value, it causes the burner to burn the current story and page again,
+creating another file. This is useful for creating multi-file output without
+extra paginated subelements. For example, if you need to create an index of
+stories, and you only want to list 10 on a page over multiple pages, you can
+use this method to force the burner to burn as many pages as you need to get
+the job done.
+
+When the burner prepares to burn the page again, it resets teh C<burn_again>
+attribute. So you'll need to set it for every page for which another page
+burned.
 
 B<Throws:> NONE.
 
