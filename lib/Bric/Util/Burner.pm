@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-12 15:54:11 $
+$Date: 2003-03-26 05:08:28 $
 
 =head1 SYNOPSIS
 
@@ -565,6 +565,7 @@ sub preview {
     my $send_msg = $m ? sub { $m->comp('/lib/util/status_msg.mc', @_) } :
                         sub { 0; };
     my $comp_root = MASON_COMP_ROOT->[0][1];
+    my $site_id = $ba->get_site_id;
 
     # Get a list of the relevant categories, put primary category first
     my @cats = ($key eq 'story') ?
@@ -574,7 +575,7 @@ sub preview {
     # Grab the asset type and output channel.
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $oc = Bric::Biz::OutputChannel->lookup
-                ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id });
+                ({ id => $oc_id ? $oc_id : $at->get_primary_oc_id($site_id) });
 
     # Burn to each output channel.
     &$send_msg("Writing files to &quot;" . $oc->get_name
