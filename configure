@@ -2574,12 +2574,12 @@ echo "${ECHO_T}no" >&6
 
  fi
 
- echo "$as_me:2577: checking for CPAN module Apache::libapreq 0.31_03" >&5
-echo $ECHO_N "checking for CPAN module Apache::libapreq 0.31_03... $ECHO_C" >&6
+ echo "$as_me:2577: checking for CPAN module Apache::libapreq " >&5
+echo $ECHO_N "checking for CPAN module Apache::libapreq ... $ECHO_C" >&6
  #
  # use perl itself to check for the module
  #
- if perl -e "use Apache::libapreq 0.31_03" 2>/dev/null ;then
+ if perl -e "use Apache::libapreq " 2>/dev/null ;then
     echo "$as_me:2583: result: yes" >&5
 echo "${ECHO_T}yes" >&6
  else

@@ -131,5 +131,5 @@ AC_SUBST(VERSION)
 # write out the makefiles
 # TODO: The files here that aren't makefiles should eventually
 # 		be handled by make, this is cheating in a way
-AC_CONFIG_FILES([Makefile doc/Makefile install/bric.sql conf/bricolage.tmp.conf])
+AC_CONFIG_FILES([Makefile doc/Makefile inst/bric.sql conf/bricolage.tmp.conf])
 AC_OUTPUT

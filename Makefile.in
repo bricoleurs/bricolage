@@ -22,7 +22,7 @@ DATA = data
 LIB = lib
 BLIB = blib
 DOC = doc
-INST = install
+INST = inst
 HTML = ${DOC}/html
 MAN = ${DOC}/man
 
@@ -78,7 +78,7 @@ CONF_APACHE_TARGET = ${APACHE_CONF}/httpd.conf
 CONF_APACHES_TARGET = ${APACHE_CONF}/httpd-ssl.conf
 CONF_BRIC = ${CONF}/bricolage.tmp.conf
 CONF_BRIC_TARGET = ${confdir}/bricolage.conf
-CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET}
+CONF_TARGETS = ${CONF_BRIC_TARGET} ${CONF_APACHE_TARGET} ${CONF_HTTPD_TARGET} ${CONF_APACHES_TARGET} ${CONF_HTTPSD_TARGET}
 
 # And the various doc files in text form
 DOC_TARGETS = ${docdir}/Changes \
@@ -187,13 +187,13 @@ chownpg:
 	chown -R ${POSTGRES_ROOT_USER} ${bindir}/bric_pgimport
 uninstall: uninstallfiles uninstalldirs dist-clean
 uninstalldirs:
-	$(NORMAL_UNINSTALL)  # Normal commands follow.
+	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing installed dirs 
 	@for D in ${INSTALLED_DIRS} ; do \
 		rmdir --ignore-fail-on-non-empty `find $$D -depth -type d`; \
 	done
 uninstallfiles:
-	$(NORMAL_UNINSTALL)  # Normal commands follow.
+	@$(NORMAL_UNINSTALL)  # Normal commands follow.
 	@echo removing previously installed files
 	@rm -f ${INSTALLED_FILES}
 
