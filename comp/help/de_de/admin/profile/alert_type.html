@@ -1,0 +1,87 @@
+<help page="Meldungstypprofil">
+
+<p>Hier erstellen Sie neue Meldungstypen und passen existierende an.</p>
+
+<p>Beim erstellen eines neuen Meldungstyps:</p>
+
+<p>
+<dl>
+
+<dt>Objekt w&auml;hlen</dt>
+<dd>Das Objekt welches Sie ausw&auml;hlen wird Gegenstand der Ereignisse die Ihre Aktionen ausl&ouml;sen. Nachdem Sie das Objekt ausgew&auml;hlt haben, klicken Sie auf Weiter.</dd>
+
+<dt>Ereignistyp w&auml;hlen</dt>
+<dd>W&auml;hlen Sie einen zum zuvor gew&auml;hlten Objekt relevanten Ereignistyp. Es ist das ausl&ouml;sen des hier gew&auml;hlten Ereignistyps welches wiederum Ihre Meldung ausl&ouml;st. Auf dieser Seite m&uuml;ssen Sie zudem den Namen f&uuml;r den Meldungstyp angeben. Der Name ist beliebig. Zuletzt m&uuml;ssen Sie den Besitzer des Meldungstyps w&auml;hlen. Standardm&auml;&szlig;sind Sie das, Sie k&ouml;nnen aber auch einen anderen Benutzer ausw&auml;hlen. Jeder Besitzer kann nur einen Meldungstypen mit gleichlautendem Namen haben. Klicken Sie auf Weiter wenn Sie bereit sind, fortzufahren.</dd>
+</dl>
+</p>
+
+<p>Die letzte Seite auf die Sie beim erstellen neuer Meldungstypen gelangen ist auch die Seite, mit der Sie existierende Meldungstypen &auml;ndern k&ouml;nnen. Hier k&ouml;nnen Sie Regeln setzen, Meldungsinhalte editieren und Meldungsempf&auml;nger designieren.</p>
+
+<p>
+<dl>
+
+<dt>Eigenschaften</dt>
+<dd>Die ersten drei Eigenschaften wurden oben beschrieben. die Aktiv-Eigenschaft bestimmt ob die Meldung tats&auml;chlich versandt wird, wenn das zugeh&ouml;rige
+Ereignis eintrifft. Standardm&auml;&szlig;ig ist eine Meldung aktiv, kann aber durch setzen des H&auml;kchens inaktiv geschaltet werden.
+</dd>
+
+<dt>Regeln</dt>
+<dd>Regeln m&uuml;ssen sich f&uuml;r ein Ereignis als logisch wahr erweisen, wenn dadurch eine Meldung ausgel&ouml;st werden soll. Eine Regel vergleicht ereignisrelevante Daten (das &quot;Attribut&quot;) mit einem Wert den Sie eingeben. (Zu bemerken w&auml;re, da&szlig; &quot;Ausl&ouml;ser&quot; der Benutzer ist, der das Ereignis ausl&ouml;ste.) Bei Vergleichen ist die Gro&szlig;-/Kleinschreibung unerheblich. Es wird einer von mehreren Operatoren zum Vergleich herangezogen: 
+    <dl>
+
+    <dt>=</dt>
+    <dd>Gleichheit. Dies wird wahrscheinlich der am h&auml;ufigsten verwendete Operator sein. Er ist wahr, wenn der Wert <strong>exakt</strong> mit den Ereignisdaten &uuml;bereinstimmt.</dd>
+
+    <dt>&lt;&gt;</dt>
+    <dd>Ungleichheit. Wahr, wenn der Wert <strong>nicht exakt</strong> mit den Ereignisdaten &uuml;bereinstimmt.</dd>
+
+    <dt>&gt;</dt>
+    <dd>Gr&ouml;&szlig;er als.</dd>
+
+    <dt>&lt;</dt>
+    <dd>Kleiner als.</dd>
+
+    <dt>&gt;=</dt>
+    <dd>Gr&ouml;&szlig;er oder gleich.</dd>
+
+    <dt>&lt;=</dt>
+    <dd>Kleiner oder gleich.</dd>
+
+    <dt>=~</dt>
+    <dd>Vergleich gegen einen regul&auml;ren Ausdruck (regular expression), wie in Perl verwendet. Eine Erkl&auml;rung von regul&auml;ren Ausdr&uuml;cken w&uuml;rde den Rahmen dieser Hilfe sprengen, aber hier sind einige Beispiele:
+    
+        <dl>
+
+        <dt>Teilweise &Uuml;bereinstimmung mit einem Wert</dt>
+        <dd>W&auml;hrend &quot;=&quot; wie oben beschrieben den Wert exakt vergleicht, kann ein hier eingegebener Wert in einem beliebigen Teil des Vergleichswertes auftauchen. So w&uuml;rde z.B. der Wert <code>Spanien</code> beim Vergleich mit &quot;Barcelona, Spanien&quot; eine &Uuml;bereinstimmung ergeben.</dd>
+
+        <dt>&Uuml;bereinstimmung mit einem von mehreren Werten</dt>
+        <dd>Sie k&ouml;nnen mit '|' mehrere Werte trennen und dadurch einen Vergleich mit allen Werten erhalten. Z.B. <code>Spain|France|England</code> w&uuml;rde mit jedem der drei L&auml;nder &uuml;bereinstimmen. Es sei bemerkt, da&szlig; zur &Uuml;bereinstimmung mit <strong>allen</strong> Werten drei separate &quot;=&quot; Regeln ben&ouml;tigt werden.</dd>
+
+        <dt>Unscharfer Wert</dt>
+        <dd>Wenn Sie z.B. eine &Uuml;bereinstimmung mit entweder &quot;Paris, Frankreich&quot; oder &quot;Parteien in Frankreich&quot; ben&ouml;tigen, k&ouml;nnen Sie diesen Wert verwenden: <code>Par.*France</code>. Das '.' bedeutet ein beliebiges Zeichen, und das nachfolgende '*' bedeutet eine beliebige Anzahl dieser Zeichen.</dd>
+
+        </dl>
+    </dd>
+
+    <dt>!~</dt>
+    <dd>Negation eines regul&auml;ren Ausdruckes. Dies ist das Gegenteil von &quot;=~&quot;.</dd>
+
+    </dl>
+</dd>
+
+<dt>Inhalt</dt>
+<dd>Dies ist der Inhalt, der in der Meldung versandt wird. Der Betreff ist der Betreff der Email, und die Meldung ist der Inhalt der Email. Sie k&ouml;nnen in die Textfelder eintragen, was Sie m&ouml;chten, Sie k&ouml;nnen aber mit den Men&uuml;s ereignisspezifische Informationen einf&uuml;gen. F&uuml;r jedes Feld gibt es ein Men&uuml;, was das einf&uuml;gen von &quot;Variablen&quot; in die Felder vereinfacht. Wenn Sie einen Punkt ausw&auml;hlen wird er automatisch in das Feld eingef&uuml;gt. Die Werte im Men&uuml; entsprechenden &quot;Attributen&quot; im Abschnitt Regeln. Sie m&uuml;ssen die Men&uuml;s nicht verwenden, Sie k&ouml;nnen die Variable auch direkt in das Feld eintragen. Beachten Sie bitte, da&szlig; Dollarzeichen (<code>$</code>) eine besondere Bedeutung besitzen, da sie Variablen definieren. Um ein Dollarzeichen als solches einzugeben, m&uuml;ssen Sie es ihm einen umgekehrten Schr&auml;gstrich (Backslash) voranstellen, wie in <code>Kosten: \$500</code>.</dd>
+
+<dt>Empf&auml;nger</dt>
+<dd>Empf&auml;nger sind die Benutzer, die diese Meldung erhalten werden. Es gibt drei Arten von &quot;Kontakten&quot; denen Emails gesandt k&ouml;nnen: Prim&auml;re Email, Sekund&auml;re Email und Pager Email. Beachten Sie insbes., da&szlig; diese Werte im Benutzerprofil gesetzt werden m&uuml;ssen. Wenn Sie einen Empf&auml;nger f&uuml;r eine Ereignismeldung definieren, dieser aber die KOntaktinformationen im Benutzerprofil nicht eingetragen hat, dann erh&auml;lt der Empf&auml;nger die Benachrichtigung nicht. Benutzer mit mehreren Adressen erhalten eine Meldung an jede dieser Adressen.</dd>
+
+</dl>
+</p>
+
+<p>Ween Sie fertig sind, klicken Sie unten auf Speichern, oder auf Abbrechen, um die &Auml;nderunden zu verwerfen. Um den Meldungstyp zu l&ouml;schen, setzen Sie ein H&auml;kchen in &quot;Profil l&ouml;schen&quot; und klicken Sie auf Speichern.</p>
+
+<p>Weitere Informationen &uuml;ber Meldungen finden Sie in
+   <a href="http://bricolage.cc/docs/Bric/Alert.html" onclick="var newWin = window.open('http://bricolage.cc/docs/Bric/Alert.html'); newWin.focus(true); return false;">Bric::Alert</a> (in englischer Sprache).</p>
+
+</help>
