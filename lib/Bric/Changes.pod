@@ -25,6 +25,12 @@ This document lists the Changes to Bricolage introduced with each release.
 A "Bulk Publish" link in ADMIN->PUBLISHING that lets members of the Global
 Admins group publish story and media documents by category. [Scott]
 
+=item *
+
+Added a method C<is_fixed> to story and media objects, to determine whether
+a business asset has a fixed URL (for example, a Cover page). Refer to
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>. [Scott]
+
 =back
 
 =head2 Improvements

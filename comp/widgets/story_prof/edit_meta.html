@@ -456,14 +456,10 @@ $oc_select .= '</select>';
 
 # Set slug required if it is
 my $slug_req = 0;
-unless (ALLOW_SLUGLESS_NONFIXED) {
-    my $at_id = $story->get_element__id;
-    my $element = Bric::Biz::AssetType->lookup({ id => $at_id });
-    unless ($element->get_fixed_url) {
-        # This isn't a Cover (it's non-fixed) and ALLOW_SLUGLESS_NONFIXED
-        # is false, so we make slug required
-        $slug_req = 1;
-    }
+unless (ALLOW_SLUGLESS_NONFIXED || $story->is_fixed) {
+    # This isn't a Cover (it's non-fixed) and ALLOW_SLUGLESS_NONFIXED
+    # is false, so we make slug required
+    $slug_req = 1;
 }
 my $slug_vals = {
     %{ Bric::Biz::Asset::Business::Story->my_meths->{slug} },

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.57 $ )[-1];
+our $VERSION = (qw$Revision: 1.58 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 21:39:45 $
+$Date: 2004-03-03 17:05:41 $
 
 =head1 SYNOPSIS
 
@@ -1556,7 +1556,7 @@ sub get_tile { goto &get_element };
 
 Returns the primary URL for this business asset. The primary URL is determined
 by the pre- and post- directory strings of the primary output channel, the
-URI of the business object\'s asset type, and the cover date if the asset type
+URI of the business object's asset type, and the cover date if the asset type
 is not a fixed URL.
 
 B<Throws:> NONE.
@@ -1576,6 +1576,27 @@ sub get_primary_uri {
         $self->_set(['primary_uri'], [$uri]);
     }
     return $uri;
+}
+
+################################################################################
+
+=item $bool = $biz->is_fixed
+
+Returns a boolean value: true if the business asset has a fixed URL
+(for example, a Cover), false otherwise.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub is_fixed {
+    my $self = shift;
+    my $element = $self->get_element;
+    return $element->get_fixed_url;
 }
 
 ################################################################################
