@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:45 $
+$Date: 2001-12-27 20:53:56 $
 
 =head1 SYNOPSIS
 
@@ -233,12 +233,12 @@ B<Notes:>
 
 sub new {
     my ($class, $init) = @_;
-    
+
     # setup defaults
     $init->{data_dir} ||= BURN_DATA_ROOT;
     $init->{comp_dir} ||= BURN_COMP_ROOT;
-    $init->{out_dir}  ||= BURN_ROOT;
-    
+    $init->{out_dir}  ||= STAGE_ROOT;
+
     # create the object using mother's constructor and return it
     return $class->SUPER::new($init);
 }
