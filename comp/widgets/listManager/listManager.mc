@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2004-03-30 19:30:31 $
+$Date: 2004-04-09 22:51:15 $
 
 =head1 SYNOPSIS
 
@@ -365,6 +365,7 @@ $featured_color => '#cccc99'    # The color for the bkground of the featured row
 $number         => 0
 $objs           => undef        # These are user objects to be listed.
 $def_sort_field => undef
+$cx_filter      => 1            # Make false to override Filter by Site Context.
 </%args>
 
 <%init>
@@ -400,8 +401,10 @@ my %featured_lookup = map { ($_,1) } @$featured;
 
 # limit the number of results to display per page
 my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-my $site_cx = $c->get_user_cx(get_user_id)
-  if Bric::Util::Pref->lookup_val( "Filter by Site Context" )
+my $site_cx;
+$site_cx = $c->get_user_cx(get_user_id)
+  if $cx_filter
+  && Bric::Util::Pref->lookup_val( "Filter by Site Context" )
   && $pkg->HAS_MULTISITE;
 
 #--------------------------------------#

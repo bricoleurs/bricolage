@@ -78,6 +78,12 @@ Turned off browser autocompletion in the Server and User profiles. This
 prevents some browsers (e.g., Camino) from filling in your username and
 password where it doesn't belong. [David]
 
+=item *
+
+When the "Filter by Site Context" preference is enabled, it no longer filters
+documents when searching for documents to alias. Reported by Patrick
+Walsh. [David]
+
 =back
 
 =head2 Bug Fixes

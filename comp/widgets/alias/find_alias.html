@@ -6,17 +6,18 @@
 <p></p>
 <a name="results"></a>
 <& /widgets/listManager/listManager.mc,
-   object   => $class_key,
-   title    => $lang->maketext("Find a $class_key to alias"),
-   sortBy   => 'name',
-   select   => undef,
-   profile  => $related_alias,
-   constrain => { no_site_id => $site_id },
-   exclude  => $excl_sub,
-   fields   => [qw(id title uri cover_date)],
+   object       => $class_key,
+   title        => $lang->maketext("Find a $class_key to alias"),
+   sortBy       => 'name',
+   select       => undef,
+   profile      => $related_alias,
+   constrain    => { no_site_id => $site_id },
+   exclude      => $excl_sub,
+   fields       => [qw(id title uri cover_date)],
    field_values => $field_values,
-   addition => '',
-   behavior  => 'expand',
+   addition     => '',
+   cx_filter    => 0,
+   behavior     => 'expand',
 &>
 <p></p>
 <a href="#" onClick="window.location.href='/workflow/profile/workspace/'; return false;">
