@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Out of the box, the Story Editors, Media Producers, and Template Develpers
+Out of the box, the Story Editors, Media Producers, and Template Developers
 groups now have READ permission to access members of the "All Categories" and
 "All Elements" groups, which allow them to actually create assets based on
 elements and within categories. [David]
