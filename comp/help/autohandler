@@ -22,7 +22,7 @@ David Wheeler <david@wheeler.net>
 </%doc>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
+<meta http-equiv="Content-Type" content="text/html; charset=<% get_pref('Character Set') %>" />
 <title><% $title %></title>
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
