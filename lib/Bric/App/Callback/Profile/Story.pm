@@ -492,7 +492,7 @@ sub view_trail : Callback {
     set_redirect("/workflow/trail/story/$id");
 }
 
-sub update : Callback {
+sub update : Callback(priority => 1) {
     my $self = shift;
 
     &$save_data($self, $self->request_args, $self->class_key);

@@ -39,7 +39,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <td>
     <& '/widgets/profile/imageSubmit.mc',
        formName => "theForm",
-       callback => $widget ."|update_pc",
+       callback => $widget ."|update_cb",
        image    => "upload_red"
      &>
     </td>
