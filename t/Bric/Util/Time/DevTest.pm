@@ -37,6 +37,7 @@ my $fmt_utc = POSIX::strftime($format, gmtime($epoch));
 my ($local_date, $local_iso_date, $fmt_local);
 {
     local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
+    POSIX::tzset;
     $local_date = POSIX::strftime($pref_format, localtime($epoch));
     $local_iso_date = POSIX::strftime(ISO_8601_FORMAT, localtime($epoch));
     $fmt_local = POSIX::strftime($format, localtime($epoch));
@@ -78,6 +79,7 @@ sub test_local_date : Test(5) {
     {
         # Make sure to use the time zone from the preferences.
         local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
+        POSIX::tzset;
         $current = POSIX::strftime(ISO_8601_FORMAT, localtime);
 
     }
@@ -88,6 +90,7 @@ sub test_local_date : Test(5) {
     {
         # Make sure to use the time zone from the preferences.
         local $ENV{TZ} = Bric::Util::Pref->lookup_val('Time Zone');
+        POSIX::tzset;
         $current = POSIX::strftime($pref_format, localtime);
     }
     # Check the local date in the preferred format.
