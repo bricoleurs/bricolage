@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.9 $
+$Revision: 1.38.2.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-29 06:09:13 $
+$Date: 2003-04-01 13:21:39 $
 
 =head1 SYNOPSIS
 
@@ -214,12 +214,20 @@ use constant CAN_DO_LOOKUP => 1;
 # relations to loop through in the big query
 use constant RELATIONS => [qw( formatting category desk workflow )];
 
+use constant RELATION_COL =>
+    {
+        formatting => 'm.grp__id',
+        category   => 'o.asset_grp_id AS grp__id',
+        desk       => 'o.asset_grp AS grp__id',
+        workflow   => 'o.asset_grp_id AS grp__id',
+    };
+
 use constant RELATION_TABLES =>
     {
-        formatting => 'formatting_member fm',
-        category   => 'category_member cm',
-        desk       => 'desk_member dm',
-        workflow   => 'workflow_member wm',
+        formatting => 'formatting_member fm, member m',
+        category   => 'category o',
+        desk       => 'desk o',
+        workflow   => 'workflow o',
     };
 
 use constant RELATION_JOINS =>
@@ -227,27 +235,21 @@ use constant RELATION_JOINS =>
         formatting      => 'fm.object_id = f.id '
                          . 'AND m.id = fm.member__id '
                          . 'AND m.active = 1',
-        category        => 'cm.object_id = f.category__id '
-                         . 'AND m.id = cm.member__id '
-                         . 'AND m.active = 1',
-        desk            => 'dm.object_id = f.desk__id '
-                         . 'AND m.id = dm.member__id '
-                         . 'AND m.active = 1',
-        workflow        => 'wm.object_id = f.workflow__id '
-                         . 'AND m.id = wm.member__id '
-                         . 'AND m.active = 1',
+        category        => 'o.id = f.category__id ',
+        desk            => 'o.id = f.desk__id ',
+        workflow        => 'o.id = f.workflow__id ',
     };
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'f.id = i.formatting__id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+            . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {

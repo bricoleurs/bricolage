@@ -14,6 +14,7 @@ use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Story;
 use Bric::Util::Grp::Workflow;
 use Bric::Util::Grp::CategorySet;
+use Data::Dumper; #FIXME
 
 sub class { 'Bric::Biz::Asset::Business::Story' }
 sub table { 'story' }
@@ -96,13 +97,10 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(51) {
+sub test_select_methods: Test(88) {
     my $self = shift;
 
     # let's grab existing 'All' group info
-    my $all_workflow_grp_id = Bric::Util::Grp->lookup({ name => 'All Workflows' })->get_id();
-    my $all_cats_grp_id = Bric::Util::Grp->lookup({ name => 'All Categories' })->get_id();
-    my $all_desks_grp_id = Bric::Util::Grp->lookup({ name => 'All Desks' })->get_id();
     my $all_stories_grp_id = Bric::Util::Grp->lookup({ name => 'All Stories' })->get_id();
 
     # now we'll create some test objects
@@ -118,6 +116,7 @@ sub test_select_methods: Test(51) {
                                        });
         $CATEGORY->add_child([$cat]);
         $cat->save();
+        $self->add_del_ids([$cat->get_id()], 'category');
         push @{$OBJ_IDS->{category}}, $cat->get_id();
         push @{$OBJ->{category}}, $cat;
         # create some category groups
@@ -128,6 +127,7 @@ sub test_select_methods: Test(51) {
         $grp->add_member({obj => $cat });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @CATEGORY_GRP_IDS, $grp->get_id();
 
@@ -137,6 +137,7 @@ sub test_select_methods: Test(51) {
                                         description => '',
                                      });
         $desk->save();
+        $self->add_del_ids([$desk->get_id()], 'desk');
         push @{$OBJ_IDS->{desk}}, $desk->get_id();
         push @{$OBJ->{desk}}, $desk;
         # create some desk groups
@@ -147,6 +148,7 @@ sub test_select_methods: Test(51) {
         # save the group ids
         $grp->add_member({ obj => $desk });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @DESK_GRP_IDS, $grp->get_id();
 
@@ -158,6 +160,7 @@ sub test_select_methods: Test(51) {
                                         description => 'test',
                                      });
         $workflow->save();
+        $self->add_del_ids([$workflow->get_id()], 'workflow');
         push @ALL_DESK_GRP_IDS, $workflow->get_all_desk_grp_id;
         push @REQ_DESK_GRP_IDS, $workflow->get_req_desk_grp_id;
         push @{$OBJ_IDS->{workflow}}, $workflow->get_id();
@@ -170,6 +173,7 @@ sub test_select_methods: Test(51) {
         # save the group ids
         $grp->add_member({ obj => $workflow });
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @WORKFLOW_GRP_IDS, $grp->get_id();
 
@@ -177,14 +181,10 @@ sub test_select_methods: Test(51) {
         $grp = Bric::Util::Grp::Story->new({ name => "_GRP_test_$time.$i" });
         # save the group ids
         $grp->save();
+        $self->add_del_ids([$grp->get_id()], 'grp');
         push @{$OBJ_IDS->{grp}}, $grp->get_id();
         push @{$OBJ->{story_grp}}, $grp;
         push @STORY_GRP_IDS, $grp->get_id();
-    }
-
-    # set up to do the deletes
-    foreach my $table (qw(grp category workflow desk)) {
-        $self->add_del_ids( $OBJ_IDS->{$table}, $table );
     }
 
     # look up a story element
@@ -236,12 +236,14 @@ sub test_select_methods: Test(51) {
           '...does the uri match the category and slug');
 
     # check the grp IDs
-    my $exp_grp_ids = [ $all_cats_grp_id, 
-                        $all_stories_grp_id, 
-                        $OBJ_IDS->{grp}->[0] ];
+    my $exp_grp_ids = 
+        [ 
+            $OBJ->{category}->[0]->get_asset_grp_id(),
+            $all_stories_grp_id, 
+        ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set($got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
     ok( $got = class->list({ id => $OBJ_IDS->{story}->[0],
@@ -291,17 +293,17 @@ sub test_select_methods: Test(51) {
     like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ 
                      $all_stories_grp_id, 
-                     $CATEGORY_GRP_IDS[0],
-                     $OBJ_IDS->{grp}->[4], 
-                     $OBJ_IDS->{grp}->[8], 
-                     $OBJ_IDS->{grp}->[12], 
-                     $OBJ_IDS->{grp}->[16], 
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
+                     $OBJ->{category}->[1]->get_asset_grp_id(),
+                     $OBJ->{category}->[2]->get_asset_grp_id(),
+                     $OBJ->{category}->[3]->get_asset_grp_id(),
+                     $OBJ->{category}->[4]->get_asset_grp_id(),
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set( $got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # ... as a grp member
     $time = time;
@@ -334,14 +336,14 @@ sub test_select_methods: Test(51) {
     like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ 
                      $all_stories_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
                      $STORY_GRP_IDS[0],
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set( $got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # ... a bunch of grps
     $time = time;
@@ -386,9 +388,9 @@ sub test_select_methods: Test(51) {
     like( $got->get_primary_uri(), qr/^$exp_uri/, '...does the uri match the category and slug');
 
     # check the grp IDs
-    $exp_grp_ids = [ $all_cats_grp_id, 
+    $exp_grp_ids = [ 
                      $all_stories_grp_id,
-                     $CATEGORY_GRP_IDS[0],
+                     $OBJ->{category}->[0]->get_asset_grp_id(),
                      $STORY_GRP_IDS[0],
                      $STORY_GRP_IDS[1],
                      $STORY_GRP_IDS[2],
@@ -397,7 +399,7 @@ sub test_select_methods: Test(51) {
                    ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set( $got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # ... now try a workflow
     $time = time;
@@ -432,15 +434,13 @@ sub test_select_methods: Test(51) {
 
     # check the grp IDs
     $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
                         $all_stories_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
+                        $OBJ->{category}->[0]->get_asset_grp_id(),
+                        $OBJ->{workflow}->[0]->get_asset_grp_id(),
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set( $got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # ... desk
     $time = time;
@@ -476,19 +476,14 @@ sub test_select_methods: Test(51) {
 
     # check the grp IDs
     $exp_grp_ids = [ 
-                        $all_workflow_grp_id,
-                        $all_cats_grp_id, 
                         $all_stories_grp_id, 
-                        $all_desks_grp_id, 
-                        $CATEGORY_GRP_IDS[0],
-                        $DESK_GRP_IDS[0],
-                        $ALL_DESK_GRP_IDS[0],
-                        $REQ_DESK_GRP_IDS[0],
-                        $WORKFLOW_GRP_IDS[0],
+                        $OBJ->{category}->[0]->get_asset_grp_id(),
+                        $OBJ->{workflow}->[0]->get_asset_grp_id(),
+                        $OBJ->{desk}->[0]->get_asset_grp(),
                     ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     $got_grp_ids = $got->get_grp_ids();
-    eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+    ok(eq_set( $got_grp_ids , $exp_grp_ids), '... does it have the right grp_ids' );
 
     # try listing something up by at least key in each table
     # be sure to try to get them both as a ref and a list
@@ -502,8 +497,10 @@ sub test_select_methods: Test(51) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -513,8 +510,10 @@ sub test_select_methods: Test(51) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -525,8 +524,10 @@ sub test_select_methods: Test(51) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -537,8 +538,10 @@ sub test_select_methods: Test(51) {
         push @got_ids, $_->get_id();
         push @got_grp_ids, \@{$_->get_grp_ids()};
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
-    eq_set( \@got_grp_ids, \@EXP_GRP_IDS, '... and did we get the right grp_ids' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
+    for (my $i = 0; $i < @got_grp_ids; $i++) {
+        ok(eq_set( $got_grp_ids[$i], $EXP_GRP_IDS[$i]), "... and did we get the right grp_ids for story $i" );
+    }
     undef @got_ids;
     undef @got_grp_ids;
 
@@ -557,7 +560,7 @@ sub test_select_methods: Test(51) {
     foreach (@$got) {
         push @got_ids, $_;
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
     undef @got_ids;
 
     ok( $got = class->list_ids({ title => '_test%', Order => 'name' }), 'lets do an ids search by title' );
@@ -565,7 +568,7 @@ sub test_select_methods: Test(51) {
     foreach (@$got) {
         push @got_ids, $_;
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
     undef @got_ids;
 
     ok( $got = class->list_ids({ primary_uri => '/_test%', Order => 'name' }), 'lets do an ids search by primary uri' );
@@ -573,7 +576,7 @@ sub test_select_methods: Test(51) {
     foreach (@$got) {
         push @got_ids, $_;
     }
-    eq_set( \@got_ids, $OBJ_IDS->{story}, '... did we get the right list of ids out' );
+    ok(eq_set( \@got_ids, $OBJ_IDS->{story}), '... did we get the right list of ids out' );
     undef @got_ids;
 
     # finally do this by grp_ids

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.7 $
+$Revision: 1.39.2.8 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-29 06:09:14 $
+$Date: 2003-04-01 13:21:42 $
 
 =head1 SYNOPSIS
 
@@ -266,12 +266,20 @@ use constant CAN_DO_LOOKUP => 1;
 # relations to loop through in the big query
 use constant RELATIONS => [qw( story category desk workflow )];
 
+use constant RELATION_COL =>
+    {
+        story     => 'm.grp__id',
+        category  => 'o.asset_grp_id AS grp__id',
+        desk      => 'o.asset_grp AS grp__id',
+        workflow  => 'o.asset_grp_id AS grp__id',
+    };
+
 use constant RELATION_TABLES =>
     {
-        story      => 'story_member sm',
-        category   => 'story__category sc, category_member cm',
-        desk       => 'desk_member dm',
-        workflow   => 'workflow_member wm',
+        story      => 'story_member sm, member m',
+        category   => 'story__category sc, category o',
+        desk       => 'desk o',
+        workflow   => 'workflow o',
     };
 
 use constant RELATION_JOINS =>
@@ -280,27 +288,21 @@ use constant RELATION_JOINS =>
                     . 'AND m.id = sm.member__id '
                     . 'AND m.active = 1',
         category   => 'sc.story_instance__id = i.id '
-                    . 'AND cm.object_id = sc.category__id '
-                    . 'AND m.id = cm.member__id '
-                    . 'AND m.active = 1',
-        desk       => 'dm.object_id = s.desk__id '
-                    . 'AND m.id = dm.member__id '
-                    . 'AND m.active = 1',
-        workflow   => 'wm.object_id = s.workflow__id '
-                    . 'AND m.id = wm.member__id '
-                    . 'AND m.active = 1',
+                    . 'AND o.id = sc.category__id ',
+        desk       => 'o.id = s.desk__id ',
+        workflow   => 'o.id = s.workflow__id ',
     };
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 's.id = i.story__id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
-            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+            . join(', i.', 'i.id AS version_id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP =>
     {
@@ -1677,6 +1679,7 @@ sub save {
 
 =over 4
 
+=cut
 
 ################################################################################
 
