@@ -7,11 +7,11 @@ new.html -- The Mason for creating new Media Assets
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2002-10-23 01:19:12 $
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,6 @@ chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
    context => $context,
    jsInit => 'document.theForm["title"].focus();'
 &>
-<& '/javascripts/profile/formValidator.js' &>
 <form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
 
 <& /widgets/media_prof/media_prof.mc, 

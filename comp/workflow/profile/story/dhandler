@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:42 $
+$Date: 2002-10-23 01:19:13 $
 
 =head1 DESCRIPTION
 
@@ -56,7 +56,6 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
 
 </%init>
 %# Output the content.
-<& '/javascripts/profile/formValidator.js', id => $id &>
 <form method="post" action="<% $r->uri %>" name="theForm" onSubmit="return confirmChanges(this)">
 <% $content %>
 </form>

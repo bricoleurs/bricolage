@@ -4,7 +4,6 @@
    context => "Admin | Profile | $wf_disp | &quot;" . $wf->get_name . "&quot"
               . "| $disp | $crumb"
 &>
-<& '/javascripts/profile/formValidator.js', id => $id &>
 <form method="post" action="<% $r->uri %>" name="desk_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $wid, name => 'workflow_id')
@@ -105,11 +104,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2002-10-23 01:19:10 $
 
 =head1 DESCRIPTION
 

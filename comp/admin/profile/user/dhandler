@@ -3,7 +3,6 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
-<& '/javascripts/profile/formValidator.js', id => $id &>
 
 <form method="post" action="<% $r->uri %>" name="user_profile" onSubmit="if ( checkPasswords(this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}">
 
@@ -166,11 +165,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-10-23 01:03:05 $
+$Date: 2002-10-23 01:19:12 $
 
 =head1 DESCRIPTION
 

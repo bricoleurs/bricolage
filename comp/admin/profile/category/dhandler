@@ -3,7 +3,6 @@
     title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb"
 &>
-<& '/javascripts/profile/formValidator.js', id => $id &>
 <form method="post" action="<% $r->uri %>" name="cat_profile" onSubmit="return confirmChanges(this)">
 <%perl>;
 my $reset;
@@ -131,11 +130,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-07-02 22:49:18 $
+$Date: 2002-10-23 01:19:09 $
 
 =head1 DESCRIPTION
 

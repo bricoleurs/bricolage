@@ -4,11 +4,7 @@
     context => "Admin | Profile | $disp | $crumb",
   jsInit => (defined $id) ? "showForm('text')" : ""
 &>
-
-<& '/javascripts/profile/formValidator.js', id => $id &>
-
 <form method="post" action="<% $r->uri %>" name="cont_profile" onSubmit="return confirmChanges(this)">
-
 <%perl>;
 
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'element_id')  if defined $id;
@@ -250,11 +246,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-10-09 17:40:25 $
+$Date: 2002-10-23 01:19:10 $
 
 =head1 DESCRIPTION
 

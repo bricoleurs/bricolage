@@ -449,6 +449,8 @@ new values on the right are marked selected.
 */
 var confirming = false
 var submitting = false
+var requiredFields         = new Object();
+var specialCharacterFields = new Object();
 function confirmChanges(obj) {
     
     if (confirming || submitting) return false;

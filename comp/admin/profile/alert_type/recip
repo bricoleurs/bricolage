@@ -2,7 +2,6 @@
 <%perl>
 $m->out(qq{<form method="post" name="alert_type_recip" action="} . $r->uri
         . qq{" onSubmit="return confirmChanges(this)">\n});
-$m->comp('/javascripts/profile/formValidator.js', id => $id);
 
 # Output a hidden field with the ID.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');

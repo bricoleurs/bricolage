@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-09-26 00:04:22 $
+$Date: 2002-10-23 01:19:13 $
 
 =head1 DESCRIPTION
 
@@ -45,7 +45,6 @@ chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 	context => $context,
  &>
 
-<& '/javascripts/profile/formValidator.js' &>
 <form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
 <& /widgets/tmpl_prof/tmpl_prof.mc, section => 'new',
                                     param => \%ARGS,
