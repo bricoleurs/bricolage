@@ -6,16 +6,16 @@ Bric::Util::Priv - Individual Privileges
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:16 $
+$Date: 2004-01-08 16:24:11 $
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ my @cols = (qw(p.id p.grp__id p.value p.mtime), 'g.grp__id');
 my @props = (@priv_props, 'obj_grp_id');
 
 # This hash is for checking the legitimacy of value settings.
-my %vals = (1 => 1, 2 => 1, 3 => 1, 255 => 1);
+my %vals = (1 => 1, 2 => 1, 3 => 1, 4 => 1, 5 => 1, 255 => 1);
 my $meths;
 
 ################################################################################
