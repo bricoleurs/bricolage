@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-09-03 19:03:13 $
+$Date: 2002-12-13 00:50:33 $
 
 =head1 DESCRIPTION
 
@@ -142,14 +142,8 @@ exit 0;
 sub install_module {
     my ($name, $req_version) = @_;
 
-    unless ($name eq 'HTML::Mason') {
-        # push onto the queue.  This keeps everything simpler below
-        CPAN::Queue->new($name);
-    } else {
-        # HTML::Mason's current version breaks Bricolage, so make sure
-        # we get an old one
-        CPAN::Queue->new("J/JS/JSWARTZ/HTML-Mason-1.05.tar.gz");
-    }
+    # push onto the queue.  This keeps everything simpler below
+    CPAN::Queue->new($name);
 
     # process the queue
     while (my $q = CPAN::Queue->first) {
