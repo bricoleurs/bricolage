@@ -190,6 +190,25 @@ character set.
 
 =item *
 
+Since elements and element types aren't really deleted from the database and you
+can't change an element's type once it has been created, the default templates
+are very restrictive.  For example, I wanted to change the pull quote element
+from an Inset to a new general Subelement type, but when you delete pull_quote
+and try to recreate it as a Subelement, it fails because "pull_quote" already
+exists.
+
+The installer should have an option to not install the default elements.  This
+seems easy enough by moving those SQL commands to a separate file and executing
+them based on whether the user opts to install them.
+
+Better yet, if there was a way to import elements and element types (through
+SOAP?[1]), there could be no default, but several different pre-made element
+sets that the user could choose to import right after installation depending on
+what type of site they wanted (daily newspaper, montly magazine, normal website,
+etc.).
+
+=item *
+
 Revamp the element system. See the proposed functional specification here:
 L<http://bricolage.cc/docs/design/ElementRevision.html>.
 
