@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.2.4 $
+$Revision: 1.44.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 17:32:18 $
+$Date: 2003-03-08 18:23:52 $
 
 =head1 SYNOPSIS
 
@@ -930,38 +930,6 @@ NONE
 =item $self = $cat->set_description($desc);
 
 Sets the description of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=item $site_id = $cat->get_site_id;
-
-Returns the site ID of this category.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=item $self = $cat->set_site_id($site_id);
-
-Sets the site ID of this category.
 
 B<Throws:>
 
