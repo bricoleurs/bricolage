@@ -33,8 +33,9 @@ thumbnails from images. Useful for upgraders. [Scott]
 
 =item *
 
-Added primary key to the "event_attr" table in the database. This will make it
-easier to do database replication. Reported by Kenneth Marshall. [David]
+Added primary key to the "event_attr", "element__site", "story_uri", and
+"media_uri" tables in the database. This will make it easier to do database
+replication. [David and Kenneth Marshall]
 
 =back
 
