@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.8.4.1 $
+$Revision: 1.8.4.2 $
 
 =head1 DATE
 
-$Date: 2003-07-06 02:13:54 $
+$Date: 2003-07-19 15:33:14 $
 
 =head1 DESCRIPTION
 
@@ -62,6 +62,7 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions;
 use Data::Dumper;
+use Config;
 
 our %REQ;
 our %RESULTS;
