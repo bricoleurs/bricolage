@@ -60,7 +60,7 @@ http://lists.sourceforge.net/lists/listinfo/bricolage-bugs
 You can often find folks hanging out and occasionally discussing development
 issues on the #bricolage channel on the Rhizomatic IRC network.
 
-=head1 CVS - THE CUTTING EDGE
+=head1 CVS - NO LONGER USED - CHANGEME FOR SVN
 
 If you're developing Bricolage then you should be working with the latest code
 from CVS. You can browse the CVS tree at:
@@ -89,7 +89,7 @@ Pod::Perldoc from CPAN to generate HTML files:
 
 =end comment
 
-=head1 SUBMITTING PATCHES
+=head1 SUBMITTING PATCHES - CHANGEME FOR SVN
 
 Patches should be generated using a C<cvs -z3 diff -u> command on each of the
 files modified, from the root directory. For example, if you made changes to
@@ -108,7 +108,7 @@ you would add this to patch.txt with:
 Always create patches using the most recent CVS version if possible. Send your
 patches to the bricolage-devel list mentioned above.
 
-=head1 APPLYING PATCHES
+=head1 APPLYING PATCHES - CHANGEME FOR SVN
 
 Patches created using the method above can be applied using C<patch> with the
 C<-p0> option from the root of your CVS checkout:
@@ -476,7 +476,7 @@ Say you need to distribute files via a protocol that Bricolage doesn't currently
 support -- say, an new variant of FTP called "FooTP." You'll need to create a
 new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 
-=head1 MERGING CHANGES FROM BRANCH TO TRUNK
+=head1 MERGING CHANGES FROM BRANCH TO TRUNK - CHANGEME FOR SVN
 
 If you're a Bricolage developer with permission to commit to the CVS
 repository, you may occasionally have to merge changes from a release branch
@@ -572,7 +572,7 @@ conflicts we get between merges. See the Karl Fogel and Moshe Bar's book "Open
 Source Development with CVS, 2nd Edition", chapter 2, for a more detailed
 explanation of the whys and wheres of this approach to merging CVS branches.
 
-=head1 CREATING DISTRIBUTIONS
+=head1 CREATING DISTRIBUTIONS - CHANGEME FOR SVN
 
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
