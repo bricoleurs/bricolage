@@ -28,6 +28,8 @@ $type = 'element' if $type eq 'element';
 # Instantiate the object and check permissions.
 $id ||= $oid;
 my $obj = get_package_name($type)->lookup({ id => $id });
-chk_authz($obj, READ);
+unless ($type eq 'user' && $id == get_user_id()) {
+    chk_authz($obj, READ);
+}
 my $disp = get_disp_name($type);
 </%init>
