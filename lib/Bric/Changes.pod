@@ -22,6 +22,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Fixed a bug in Bric::SOAP::Media which was causing all media files uploaded
+with that module to be placed in C<comp/data/media/$version/> rather than
+C<comp/data/media/$id/$version/>.  [Mark]
+
+=item *
+
 Fixed SQL bug that might in rare situations cause element output channel
 associations to become confused. [David]
 
