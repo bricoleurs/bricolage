@@ -1,9 +1,0 @@
-bin/bric_import_contribs
-Build.PL
-Changes
-Makefile.PL
-MANIFEST			This list of files
-META.yml
-README
-t/bric_import_contribs.t
-t/zpod.t
