@@ -16,7 +16,7 @@ for my $t (qw(story media)) {
       # Populate the new column.
       qq{UPDATE $t
          SET    first_publish_date = (
-                    SELECT timestamp
+                    SELECT MIN(timestamp)
                     FROM   event, event_type
                     WHERE  obj_id = $t.id
                            AND event.event_type__id = event_type.id

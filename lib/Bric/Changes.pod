@@ -208,6 +208,13 @@ new image elements created after upgradeing to 1.7.0. [David]
 The workflow profile no longer displays deactivated sites in the site select
 list. Thanks to Serge Sozonoff for the spot. [David]
 
+=item *
+
+The upgrade script that adds the C<first_publish_date> attribute to the
+database now properly sets that date for existing assets, no matter how many
+"publish" events have been logged. There should be only one, but some systems
+apparently have more. [Thorsten Biel]
+
 =back
 
 =head1 VERSION 1.7.2 "Kat" (2004-02-12)
