@@ -1,11 +1,11 @@
 body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px; font-weight: bold;}
+td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
 th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
 pre        { font-size:11px;}
 
 p          { font-size:11px; line-height:16px; }
 h3         { font-size:12px; line-height:17px;}
-dt         { font-size:11px; line-height:16px; }
+dt         { font-size:11px; line-height:16px; font-weight:bold; }
 dd         { font-size:11px; line-height:16px; }
 li         { font-size:11px; line-height:16px; }
 
@@ -78,7 +78,6 @@ div.debug dt:after {
     width: 580px;
     font-size: 11px;
     line-height: 11px;
-    font-weight: normal;
 }
 
 .desk_item {
@@ -287,6 +286,7 @@ div.debug dt:after {
 }
 
 .desk_item .body dt {
+    font-weight: normal;
     color: black;
     background:#999966;  
     float: left;
