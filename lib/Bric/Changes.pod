@@ -71,11 +71,6 @@ returning a text page to the browser. [David]
 Now displaying the name of the site each story and media document is in in
 Find Stories and Find Media. Suggested by Arthur. [David]
 
-=item *
-
-The element type manager now displays "Subelement" instead of "Story" for
-subelement element types. Suggested by Dave Rolsky. [David]
-
 =back
 
 =head1 VERSION 1.7.0 (2003-10-22)
