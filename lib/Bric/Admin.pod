@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.5.2.1 $
 
 =head1 DATE
 
-$Date: 2001-09-25 13:45:40 $
+$Date: 2001-10-01 10:27:56 $
 
 =head1 DESCRIPTION
 
@@ -777,7 +777,7 @@ triggering of certain events within the system (see Bric::Util::AlertType and
 Bric::Util::Alert for the Alert API documentation). There are a few system-level
 directives that affect Bricolage Alerting.
 
-=over
+=over 4
 
 =item *
 
@@ -805,7 +805,7 @@ themselves.]
 
 =head2 Search Configuration
 
-=over
+=over 4
 
 =item *
 
@@ -815,6 +815,33 @@ sub-string searches are more expensive, since they cannot use database indexes,
 but that may not matter if there are few records in your database. Many users
 find the sub-string searches to be more intuitive, so enable it if you find the
 trade-off to be worth it. Defaults to "Off" if not specified.
+
+=back
+
+=head2 File Naming Configuration
+
+All files burned to the file system during publishes and previews must be named
+(of course!), and they're named for the "File Name" and "File Extenstion"
+properties of the Output Channel they're getting burned to. You can give these
+properties whatever values you want (as long as they're legal on your file
+system!), but here you can set some defaults that all Output channels will start
+with.
+
+=over 4
+
+=item *
+
+B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
+start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
+page index number to uniquely name the file for a given story. Defaults to
+"index" if not specified.
+
+=item *
+
+B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+a page index number to uniquely name the file for a given story. Defaults to
+"html" if not specified.
 
 =back
 
@@ -1394,7 +1421,14 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.5  2001-09-25 13:45:40  wheeler
+Revision 1.5.2.1  2001-10-01 10:27:56  wheeler
+Added support for custom file naming on a per-output channel basis. The filename
+is specified in the Output Channel profile, and used during the burn phase to
+name files on the file system. Configuration directives specifying default
+values for the filename fields have also been added and documented in
+Bric::Admin.
+
+Revision 1.5  2001/09/25 13:45:40  wheeler
 Improved documentation for the FULL_SEARCH configureation directive.
 
 Revision 1.4  2001/09/24 12:16:03  wheeler
