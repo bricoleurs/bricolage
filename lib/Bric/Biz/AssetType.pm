@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.62 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.61 $ )[-1];
+our $VERSION = (qw$Revision: 1.62 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 11:42:14 $
+$Date: 2004-02-28 01:06:22 $
 
 =head1 SYNOPSIS
 
@@ -622,19 +622,19 @@ B<Notes:> NONE.
 
 =cut
 
-    
 my $tmpl_archs;
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
-    unless($tmpl_archs) {
-	$tmpl_archs =  [[BURNER_MASON, 'Mason']];
-	push @$tmpl_archs,  [BURNER_TEMPLATE, 'HTML::Template']
+    unless ($tmpl_archs) {
+	$tmpl_archs = [[BURNER_MASON, 'Mason']];
+	push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
 	    if $Bric::Util::Burner::Template::VERSION;
 	push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
 	    if $Bric::Util::Burner::TemplateToolkit::VERSION;
     }
+
     # Create 'em if we haven't got 'em.
     $METHS ||= {
 	      name        => {
