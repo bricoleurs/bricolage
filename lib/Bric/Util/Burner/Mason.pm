@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:48:16 $
+$Date: 2002-03-14 21:43:06 $
 
 =head1 SYNOPSIS
 
@@ -240,8 +240,7 @@ sub burn_one {
 
     # Get the template name. Because this is a top-level Element, we don't want
     # to look far for its corresponding template.
-    my $tmpl_path = $fs->cat_uri('', $oc->get_pre_path, $cat->ancestry_path,
-				 $oc->get_post_path);
+    my $tmpl_path = $cat->ancestry_path;
     my $tmpl_name = _fmt_name($element->get_name);
     my $template = $fs->cat_uri($tmpl_path, $tmpl_name);
     if ( $interp->lookup($template . '.mc') ) {
@@ -664,8 +663,7 @@ sub _load_template_element {
     my ($oc, $cat) = $self->_get(qw(oc cat));
 
     # Get the path (based at comp_root) and the template name.
-    my $tmpl_path = $fs->cat_uri('', $oc->get_pre_path, $cat->ancestry_path,
-				 $oc->get_post_path);
+    my $tmpl_path = $cat->ancestry_path;
     my $tmpl_name = _fmt_name($element->get_name) . '.mc';
 
     # Look up the template (it may live few directories above $tmpl_path)
@@ -779,8 +777,8 @@ B<Notes:> NONE.
 sub _create_dhandler {
     my ($comp_root, $oc, $cat, $tmpl_name) = @_;
     # The complete path on the file system sans the filename.
-    my $path = $fs->cat_dir($comp_root->[0][1], $oc->get_pre_path,
-			    $cat->ancestry_path, $oc->get_post_path);
+    my $path = $fs->cat_dir($comp_root->[0][1],
+			    $fs->uri_to_dir($cat->ancestry_path));
 
     # The complete path on the file system including the filename.
     my $file = $fs->cat_dir($path, 'dhandler');
