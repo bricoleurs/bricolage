@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5.2.2 $
+$Revision: 1.5.2.3 $
 
 =head1 DATE
 
-$Date: 2001-10-03 08:52:47 $
+$Date: 2001-10-03 09:22:53 $
 
 =head1 DESCRIPTION
 
@@ -1394,16 +1394,17 @@ application data. All of these files are stored in sub directories of the local
 system's $TMP environment variable (actually, the temp directory is determined
 by the tmpdir() method of the File::Spec library, which uses the $TMP
 environment variable and other meand to determine the local OS's temporary
-directory). Session files are stored in C<$TMP/bricolage_session> and
-C<$TMP/bricolage_lock>. These directories should stay relatively free of cruft,
+directory). Session files are stored in C<$TMP/bricolage/session> and
+C<$TMP/bricolage/lock>. These directories should stay relatively free of cruft,
 as the session files are regularly deleted when users logout or their login
-sessions expire and they attempt to log back in. Still, it'd be good to set up a
-cron job to monitor these directories and delete fiels and subdirectories that
+sessions expire and they attempt to log back in. (However, in some cases we've
+noticed a buildup of files in the lock directory.) Still, it'd be good to set up
+a cron job to monitor these directories and delete files and subdirectories that
 haven't been accessed in a while.
 
 Bricolage also uses a cross-process caching mechanism to shara data between
 Apache processes and applications. The data for this cache is stored in
-C<$TMP/bricolage_cache>. The files in this directory can be periodically
+C<$TMP/bricolage/cache>. The files in this directory can be periodically
 deleted. Just be sure to shut down Bricolage before doing so, and then you can
 start it up as soon as they're gone. This will ensure that no one tries to
 access the cache after it has been deleted, and it will be recreated when the
@@ -1421,7 +1422,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: Admin.pod,v $
-Revision 1.5.2.2  2001-10-03 08:52:47  wheeler
+Revision 1.5.2.3  2001-10-03 09:22:53  wheeler
+Updated for changes in the location of temporary files.
+
+Revision 1.5.2.2  2001/10/03 08:52:47  wheeler
 Updated documentation for the storage of cache files.
 
 Revision 1.5.2.1  2001/10/01 10:27:56  wheeler
