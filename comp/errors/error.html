@@ -18,11 +18,11 @@
 <b>Package:</b> <% $fault->package %><br />
 <b>Filename:</b> <% $fault->file %><br />
 <b>Line:</b> <% $fault->line %><br />
-<b>Message:</b> <% $fault->error . ($more_err ? "\n\n$more_err" : '') |h %>
+<b>Message:</b> <% escape_html($fault->error . ($more_err ? "\n\n$more_err" : '')) %>
 % if ($is_burner_error) {
 </p>
 % } else {
-<br /><b>Payload:</b> <% $pay |h %></p>
+<br /><b>Payload:</b> <% escape_html("$pay") %></p>
 % }
 </font>
 
@@ -31,7 +31,7 @@
 % foreach my $arg (keys %req_args) {
     <tr>
         <td align="right"><span class="label"><% $arg %>:</span></td>
-        <td align="left"><% $req_args{$arg} |h %></td>
+        <td align="left"><% escape_html($req_args{$arg}) %></td>
     </tr>
 % }
 </table>
@@ -92,7 +92,6 @@ warn '$fault not an exception object' unless isa_exception($fault);
 
 # Get payload, stringify if payload is an exception object
 my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
-$pay = "$pay";
 
 my $is_burner_error = ($fault->error =~ /^Unable to find template/);
 my %req_args = HTML::Mason::Request->instance->request_args;
