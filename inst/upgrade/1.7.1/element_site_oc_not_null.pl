@@ -32,11 +32,12 @@ if (db_version ge '7.3') {
     # This approach may not be safe. If so, we'll have to add the constraint
     # using a CHECK.
     do_sql
+      q{LOCK TABLE element__site IN ACCESS EXCLUSIVE MODE},
       "UPDATE pg_attribute
        SET    attnotnull = 't'
        WHERE  attname = 'primary_oc__id'
                AND attrelid in (
-                 SELECT pg_class.oid
+                 SELECT oid
                  FROM   pg_class
                  WHERE  relkind='r'
                         AND relname='element__site'
