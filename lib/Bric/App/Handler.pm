@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-07 03:31:43 $
+$Date: 2003-02-02 21:51:21 $
 
 =head1 SYNOPSIS
 
@@ -121,6 +121,8 @@ use Carp qw(croak);
     use Bric::SOAP;
 
     use HTML::Mason::Exceptions;
+    eval { require Text::Levenshtein };
+    require Text::Soundex if $@;
 
     use vars qw($c $widget_dir);
 

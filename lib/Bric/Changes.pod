@@ -129,6 +129,12 @@ duration of a request for now, but can be expanded later. [David]
 Updated F<INSTALL.MacOSX> to reflect changes thanks to the new Mac OS X suport
 included in libapreq 1.1. [David]
 
+=item *
+
+Added "Super Bulk Edit", which is a bulk edit interface allowing users to
+editall of the fields in an element at once using POD-like tags, rather than
+just a single repeatable field. [Garth]
+
 =back
 
 =head2 Bug Fixes

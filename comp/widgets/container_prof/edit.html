@@ -22,9 +22,9 @@ my $x=0;
 % if (@tiles || $elem_opts ) {
 
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%	caption => $title,
-%	number => $num++
-%	);
+%    caption => $title,
+%    number => $num++
+%    );
 
 <table border="0" width="578" cellpadding="0" cellspacing="0">
 
@@ -70,9 +70,9 @@ my $x=0;
 
       <table border=0 cellpadding=0 cellspacing=1 width=<% 578 - FIELD_INDENT - 125 %>>
       <tr>
-	<td width=50 class=medHeader align="right">
-	  <span class=label><% ($at->is_related_media) ? "URL:" : "Title:" %></span>
-	</td>
+    <td width=50 class=medHeader align="right">
+      <span class=label><% ($at->is_related_media) ? "URL:" : "Title:" %></span>
+    </td>
 <%perl>
 my $info = '';
 
@@ -84,38 +84,40 @@ if ($at->is_related_media) {
     $info = $rel->get_title if $rel;
 }
 </%perl>
-	<td width=<% 578 - FIELD_INDENT - 125-50 %>>&nbsp;<% $info %>
-	</td>
+    <td width=<% 578 - FIELD_INDENT - 125-50 %>>&nbsp;<% $info %>
+    </td>
       </tr>
       <tr>
-	<td colspan=2><& '/widgets/profile/imageSubmit.mc',
-	     formName => "theForm",
-	     callback => "container_prof|edit". $dt->get_id() ."_cb",
-	     image    => "edit_lgreen",
+    <td colspan=2><& '/widgets/profile/imageSubmit.mc',
+         formName => "theForm",
+         callback => "container_prof|edit". $dt->get_id() ."_cb",
+         image    => "edit_lgreen",
              vspace   => 3
-	&></td>
+    &></td>
       </tr>
       </table>
 % } else {
 
-	<& '/widgets/profile/imageSubmit.mc',
-	     formName => "theForm",
-	     callback => "container_prof|edit". $dt->get_id() ."_cb",
-	     image    => "edit_lgreen",
+    <& '/widgets/profile/imageSubmit.mc',
+         formName => "theForm",
+         callback => "container_prof|edit". $dt->get_id() ."_cb",
+         image    => "edit_lgreen",
              vspace   => 3
-	&>
+    &>
 
 % }
 
 </td>
-% # START OPTIONAL BULK EDIT PULLDOWN
-%   if (my $opts = $repeatable_elem_opts->($dt)) {
+% # START BULK EDIT PULLDOWN
+% my $opts = $repeatable_elem_opts->($dt);
+% # Only show this if there is anything to add.
+% if (scalar(@{$dt->get_possible_data()}) or scalar(@{$dt->get_possible_containers()})) {
       <td align="center" valign="middle"><span class="label"> - or - </span></td>
       <td><& '/widgets/profile/imageSubmit.mc',
-	     formName => "theForm",
-	     callback => "container_prof|bulk_edit-" . $dt->get_id() ."_cb",
-	     image    => "bulk_edit_lgreen"
-	   &></td>
+         formName => "theForm",
+         callback => "container_prof|bulk_edit-" . $dt->get_id() ."_cb",
+         image    => "bulk_edit_lgreen"
+       &></td>
     <td>
     <& '/widgets/profile/select.mc',
         name     => $widget.'|bulk_edit_tile_field-'.$dt->get_id,
@@ -123,8 +125,8 @@ if ($at->is_related_media) {
         useTable => 0,
     &>
     </td>
+% }
 
-%   } # END IF OPTIONAL BULK EDIT PULLDOWN
     </tr>
     </table>
   </td>
@@ -141,19 +143,19 @@ if ($at->is_related_media) {
     $vals->{value} = $dt->get_data(ISO_8601_FORMAT);
     $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
     if ($vals->{props}{type} eq 'checkbox') {
-	$vals->{props}{chk} = $vals->{value};
-	$vals->{value} = 1;
+    $vals->{props}{chk} = $vals->{value};
+    $vals->{value} = 1;
     }
 
     # Set the array of possible values, if necessary.
     if ( my $tmp = $vals->{props}{vals} ) {
-	my $val_prop;
-	foreach my $line (split /\n/, $tmp) {
-	    my ($v, $l) = split /\s*,\s*/, $line;
-	    chomp $v;
-	    push @$val_prop, [$v, $l];
-	}
-	$vals->{props}{vals} = $val_prop;
+    my $val_prop;
+    foreach my $line (split /\n/, $tmp) {
+        my ($v, $l) = split /\s*,\s*/, $line;
+        chomp $v;
+        push @$val_prop, [$v, $l];
+    }
+    $vals->{props}{vals} = $val_prop;
     }
 </%perl>
     <td align="right" colspan=2><span class="label"><% $vals->{props}{disp} %>:&nbsp;</span></td>
@@ -161,18 +163,18 @@ if ($at->is_related_media) {
     <table border=0 cellpadding=0 cellspacing=0>
     <tr>
       <td>
-	<& '/widgets/profile/displayFormElement.mc',
-	  key      => $key,
-	  vals     => $vals,
-	  useTable => 0
-	&>
+    <& '/widgets/profile/displayFormElement.mc',
+      key      => $key,
+      vals     => $vals,
+      useTable => 0
+    &>
       </td>
 
 %     if ($dt->is_autopopulated()) {
-	  <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>">
-	  &nbsp;Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked ? ' CHECKED' : '' %>></td>
+      <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>">
+      &nbsp;Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked ? ' CHECKED' : '' %>></td>
 %     } else {
-	<td>&nbsp;</td>
+    <td>&nbsp;</td>
 %     }
     </tr>
     </table>
@@ -189,13 +191,13 @@ if ($at->is_related_media) {
 <& /widgets/profile/displayFormElement.mc,
    key => $f_key,
    vals => { value => $dt->get_place - $diff,
-	     props => { type => 'select',
-			vals => $ord_vals, },
-	     js    => 'onChange="reorder(this, \'theForm\')"'
-	   },
+         props => { type => 'select',
+            vals => $ord_vals, },
+         js    => 'onChange="reorder(this, \'theForm\')"'
+       },
   useTable => 0
 &>
-													
+                                                    
   </td>
 
 % # DELETE TABLE CELL
@@ -204,9 +206,9 @@ if ($at->is_related_media) {
          &nbsp;
 % } elsif ($dt->is_container) {
 % # START IF CONTAINER
-	<input type="checkbox" name="container_prof|delete_cont<% $dt->get_id %>" value="1">
+    <input type="checkbox" name="container_prof|delete_cont<% $dt->get_id %>" value="1">
 % } else {
-	<input type="checkbox" name="container_prof|delete_data<% $dt->get_id %>" value="1">
+    <input type="checkbox" name="container_prof|delete_data<% $dt->get_id %>" value="1">
 % }
    </td>
 </tr>
@@ -221,11 +223,11 @@ if ($at->is_related_media) {
 % if (scalar @tiles) {
     <td align="center" colspan=2><&
       '/widgets/profile/imageSubmit.mc',
-	formName => "theForm",
+    formName => "theForm",
         callback => "container_prof|reorder_cb",
         image    => "reorder_lgreen",
         vspace   => 3,
-	hspace   => 2
+    hspace   => 2
     &></td>
     <td align="center"><input type="image" src="/media/images/delete_red.gif" border=0 hspace=2 vspace=3 name="container_prof|delete_cb" value="delete"></td>
 % } else {
@@ -259,7 +261,7 @@ if ($at->is_related_media) {
   <td width=180 class="medHeader">
 <& /widgets/profile/select.mc, name     => $widget.'|add_element',
                                options  => $elem_opts,
-			       useTable => 0,
+                   useTable => 0,
                                multiple => 0,
                                size     => 1,
 &>
@@ -273,22 +275,22 @@ if ($at->is_related_media) {
 
     <table border="0" cellpadding="0" cellspacing="0">
       <tr>
-	<td align="right"><&
-	  '/widgets/profile/imageSubmit.mc',
-	    formName => "theForm",
-	    callback => $widget ."|bulk_edit_this_cb",
-	    image    => "bulk_edit_lgreen",
-	    vspace   => 3,
-	    hspace   => 4
-	&></td>
-	<td>
+    <td align="right"><&
+      '/widgets/profile/imageSubmit.mc',
+        formName => "theForm",
+        callback => $widget ."|bulk_edit_this_cb",
+        image    => "bulk_edit_lgreen",
+        vspace   => 3,
+        hspace   => 4
+    &></td>
+    <td>
 <& /widgets/profile/select.mc,
-	  name => $widget.'|bulk_edit_field',
-	  options  => $repeatable_opts,
-	  useTable => 0,
+      name => $widget.'|bulk_edit_field',
+      options  => $repeatable_opts,
+      useTable => 0,
 &>
         </td>
-	
+    
       </tr>
     </table>
 
@@ -310,8 +312,8 @@ if ($at->is_related_media) {
 %### Start Related Story Section ###
 % if ($is_related_story) {
 <& /widgets/wrappers/sharky/table_top.mc,
-  	 caption => 'Related Story',
-	 number => $num++
+       caption => 'Related Story',
+     number => $num++
 &>
 
 % $related_summary->($tile, 'story', $widget);
@@ -327,8 +329,8 @@ if ($at->is_related_media) {
 % if ($is_related_media) {
 
 <& /widgets/wrappers/sharky/table_top.mc,
-  	 caption => 'Related Media  ',
-	 number => $num++
+       caption => 'Related Media  ',
+     number => $num++
 &>
 
 % $related_summary->($tile, 'media', $widget);
@@ -368,11 +370,11 @@ $m->out("var selectOrderNames = new Array(" );
 
 my $txt = '';
 foreach my $dt (@tiles) {
-	if ($dt->is_container) {
-   		$txt .= '"container_prof|reorder_con' . $dt->get_id() . '", ';
-	} else {
-		$txt .= '"container_prof|reorder_dat' . $dt->get_id() . '", ';
-	}
+    if ($dt->is_container) {
+           $txt .= '"container_prof|reorder_con' . $dt->get_id() . '", ';
+    } else {
+        $txt .= '"container_prof|reorder_dat' . $dt->get_id() . '", ';
+    }
 }
 $m->out( substr($txt, 0, length($txt) - 2 ) );
 $m->out(")\n\n");
@@ -400,7 +402,7 @@ my $start = get_state_data($widget, 'start');
 my @tiles = $tile->get_tiles();
 
 my $elem_opts;
-my $repeatable_opts;
+my $repeatable_opts = [];
 
 # the possible data options
 my @pos_data = $tile->get_possible_data();
@@ -409,9 +411,10 @@ foreach (@pos_data) {
     my $disp = $_->get_meta('html_info')->{disp};
     $elem_opts->{$key} = $disp;
     if ($_->get_quantifier()) {
-	$repeatable_opts->{$_->get_name()} = $disp;
+        push @$repeatable_opts, [$_->get_name(), $disp];
     }
 }
+push @$repeatable_opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
 
 # the container options
 my @pos_cont = $tile->get_possible_containers();
@@ -440,16 +443,18 @@ my $shim = ($agent->{browser} eq "Netscape") ?  -4 : 4;
 my $repeatable_elem_opts = sub {
     my ($t) = @_;
     my $id = $t->get_id;
-    my $opts;
+    my @opts;
 
     foreach ($t->get_possible_data()) {
-	if ($_->get_quantifier()) {
-	    # Pass the name with the tile ID as the value
-	    $opts->{$_->get_name()} = $_->get_meta('html_info')->{disp};
-	}
+    if ($_->get_quantifier()) {
+        # Pass the name with the tile ID as the value
+            push @opts, [$_->get_name(), $_->get_meta('html_info')->{disp}];
+    }
     }
 
-    return $opts;
+    push @opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
+
+    return \@opts;
 };
 
 my $related_summary = sub {
@@ -459,11 +464,11 @@ my $related_summary = sub {
                              : $tile->get_related_media;
 
   my $button = $m->scomp( '/widgets/profile/imageSubmit.mc',
-			  formName => "theForm",
-			  callback => $widget  ."|pick_related_".$type."_cb",
-			  image    => "edit_lgreen",
-			  vspace   => 4,
-			);
+              formName => "theForm",
+              callback => $widget  ."|pick_related_".$type."_cb",
+              image    => "edit_lgreen",
+              vspace   => 4,
+            );
 
   $m->out('<table border=0 cellpadding=0 cellspacing=0 width=578>');
 
@@ -475,7 +480,7 @@ my $related_summary = sub {
                 type   => $type,
                 header => 'Currently Related '.ucfirst($type),
                 frame  => 0,
-	        button => $button );
+            button => $button );
       $m->out('</td></tr>');
   } else {
       $m->out('<tr><td width=518>');
