@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.61 $
+$Revision: 1.62 $
 
 =head1 DATE
 
-$Date: 2002-05-29 20:57:29 $
+$Date: 2002-05-30 18:43:04 $
 
 =head1 DESCRIPTION
 
@@ -356,6 +356,11 @@ commands:
 =back
 
 =head2 Apache
+
+Before continuing, consult the F<README.configure> file that comes with the
+Apache distribution. It contains a very helpful (and short) bit of
+documentation and covers a lot of good information, particularly with respect
+to DSO use (a topic not covered here).
 
 By now you've downloaded Apache and gunzipped and untarred its sources. There
 are a lot of Configure commands supported by Apache. We recommend that you use
