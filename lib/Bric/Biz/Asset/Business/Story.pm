@@ -1449,19 +1449,21 @@ sub get_secondary_categories {
 
 ################################################################################
 
-=item $ba = $ba->add_categories( [ $category] )
+=item $ba = $ba->add_categories(@categories)
 
-This will take a list ref of category objects or ids and will associate them
-with the business asset
+This will take a list category objects or Is and will associate them with the
+story.
 
 B<Side Effects:>
 
-Adds the asset_grp_ids of the categories to grp_ids (unless they are already there).
+Adds the C<asset_grp_ids> of the categories to grp_ids (unless they are
+already there).
 
 =cut
 
 sub add_categories {
-    my ($self, $categories) = @_;
+    my $self = shift;
+    my $categories = ref $_[0] ? shift : \@_;
     my $cats = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
     my $check = 0;
@@ -1490,9 +1492,9 @@ sub add_categories {
 
 ################################################################################
 
-=item $ba = $ba->delete_categories([$category]);
+=item $ba = $ba->delete_categories(@categories);
 
-This will take a list of categories and remove them from the asset
+This will take a list of categories and remove them from the story.
 
 B<Throws:>
 
@@ -1509,7 +1511,8 @@ NONE
 =cut
 
 sub delete_categories {
-    my ($self, $categories) = @_;
+    my $self = shift;
+    my $categories = ref $_[0] ? shift : \@_;
     my ($cats) = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
     my $check = $self->_get('_update_uri');
