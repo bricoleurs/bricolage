@@ -31,7 +31,7 @@ require Data::Dumper if DEBUG;
 
 # this is needed by Template.pl so it can test create() and update()
 # without damaging the system.
-use constant ALLOW_DUPLICATE_TEMPLATES => 1;
+use constant ALLOW_DUPLICATE_TEMPLATES => 0;
 
 =head1 NAME
 
@@ -39,15 +39,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.11.2.4 $
+$Revision: 1.11.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:54 $
+$Date: 2002-11-09 01:30:46 $
 
 =head1 SYNOPSIS
 
