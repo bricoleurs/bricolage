@@ -3,16 +3,23 @@ package Bric::App::Callback::Workspace;
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'workspace');
 use strict;
+use Bric::App::Authz qw(:all);
+use Bric::App::Event qw(log_event);
+use Bric::App::Util qw(:all);
+use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Util::Burner;
 
 my $keys = [qw(story media formatting)];
-my $pkgs = { map { $_=>  get_package_name($_) } @$keys };
+my $pkgs = { map { $_ => get_package_name($_) } @$keys };
 my $dskpkg = 'Bric::Biz::Workflow::Parts::Desk';
 
 
-if ($field eq "$widget|checkin_cb") {
+sub checkin : Callback {
+    my $self = shift;
+
     # Checking in assets and moving them to another desk.
     my %desks;
-    foreach my $next (@{ mk_aref($param->{"desk|next_desk"})}) {
+    foreach my $next (@{ mk_aref($self->request_args->{"desk|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
 	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
@@ -29,11 +36,15 @@ if ($field eq "$widget|checkin_cb") {
         $curr->save;
         $next->save;
     }
-} elsif ($field eq "$widget|delete_cb") {
+}
+
+sub delete : Callback {
+    my $self = shift;
     my $burn = Bric::Util::Burner->new;
+
     # Deleting assets.
     foreach my $key (@$keys) {
-        foreach my $aid (@{ mk_aref($param->{"${key}_delete_ids"}) }) {
+        foreach my $aid (@{ mk_aref($self->request_args->{"${key}_delete_ids"}) }) {
 	    my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	    if (chk_authz($a, EDIT, 1)) {
 		my $d = $a->get_current_desk;
@@ -47,7 +58,9 @@ if ($field eq "$widget|checkin_cb") {
 		$burn->undeploy($a) if $key eq 'formatting';
 		log_event("${key}_deact", $a);
 	    } else {
-                add_msg($lang->maketext("Permission to delete [_1] denied.","&quot;" . $a->get_name. "&quot;"));
+                my $msg = "Permission to delete [_1] denied.";
+                my $arg = '&quot;' . $a->get_name. '&quot;';
+                add_msg($self->lang->maketext($msg, $arg));
 	    }
 	}
     }
