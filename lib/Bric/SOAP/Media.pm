@@ -43,15 +43,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-30 16:14:44 $
+$Date: 2004-03-30 16:17:48 $
 
 =head1 SYNOPSIS
 
@@ -649,7 +649,7 @@ sub load_asset {
         $init{user__id} = get_user_id;
 
         # Get the site ID.
-        $mdata->{site} = 'Default Site' unless exists $mdata->{site}
+        $mdata->{site} = 'Default Site' unless exists $mdata->{site};
         $init{site_id} = site_to_id(__PACKAGE__, $mdata->{site});
 
         if (exists $mdata->{element} and not $aliased) {
