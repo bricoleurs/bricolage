@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-16 00:04:29 $
+$Date: 2002-07-03 16:05:18 $
 
 =head1 SYNOPSIS
 
@@ -758,7 +758,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub set_name { $_[0]->_set('name', substr $_[1], 0, 256) }
+sub set_name { $_[0]->_set( ['name'] => [substr $_[1], 0, 256] ) }
 
 =item my $user_id = $job->get_user_id
 
