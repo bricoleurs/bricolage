@@ -58,6 +58,13 @@ For those using the Template Toolkit burner, the required version is now 2.14,
 so as to take advantage of the improved Unicode support in that version.
 [David]
 
+=item *
+
+All publishing and distribution jobs are now executed in their own
+transactions when they are triggered by the user interface. This is to reduce
+the chances of a deadlock between long-running publishing transactions.
+[David]
+
 =back
 
 =head2 Bug Fixes

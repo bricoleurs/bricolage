@@ -103,7 +103,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($get_em, $get_coll, $set_executing, $check_priority, $do_insert);
+my ($get_em, $get_coll, $set_executing, $check_priority);
 
 ################################################################################
 # Constants
@@ -1666,6 +1666,8 @@ sub save {
             WHERE  id = ?
         });
         execute($del, $id);
+        $res->save($id) if $res;
+        $sts->save($id) if $sts;
     } elsif (defined $id) {
         # Existing record. Update it.
         local $" = ' = ?, '; # Simple way to create placeholders with an array.
@@ -1675,29 +1677,44 @@ sub save {
             WHERE  id = ?
         });
         execute($upd, $self->_get(@PROPS), $id);
+        $res->save($id) if $res;
+        $sts->save($id) if $sts;
     } else {
-        # It's a new job. Execute it if it's time.
+        # It's a new job. Insert it.
+        local $" = ', ';
+        my $fields = join ', ', next_key('job'), ('?') x $#COLS;
+        my $ins = prepare_c(qq{
+            INSERT INTO job (@COLS)
+            VALUES ($fields)
+        }, undef, DEBUG);
+
+        # Don't try to set ID - it will fail!
+        my @ps = $self->_get(@PROPS[1..$#PROPS]);
+        execute($ins, @ps);
+
+        # Now grab the ID.
+        my $id = last_key('job');
+        $self->_set(['id'] => [$id]);
+
+        # Register this job in the "All Jobs" group and save any associated
+        # destinations and resources.
+        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        $res->save($id) if $res;
+        $sts->save($id) if $sts;
+
+        # For simple deployments of Bricolage where the neither a job queue
+        # nor a seperated dist machine are in use we want to execute *newly
+        # inserted* jobs right away.
         if (ENABLE_DIST && !QUEUE_PUBLISH_JOBS
-              && $self->get_sched_time('epoch') <= time) {
-            eval { $self->execute_me };
-            if (my $err = $@) {
-                # Save the new job and die.
-                $id = $do_insert->($self);
-                $res->save($id) if $res;
-                $sts->save($id) if $sts;
-                $self->SUPER::save;
-                die $err;
-            }
+            && $self->get_sched_time('epoch') <= time)
+        {
+            # Execute the job and then be sure to start a new transaction!
+            $self->execute_me;
+            begin(1);
         }
 
-        # Just insert the job.
-        $id = $do_insert->($self);
     }
-
-    $res->save($id) if $res;
-    $sts->save($id) if $sts;
-    $self->SUPER::save;
-    return $self;
+    return $self->SUPER::save;
 }
 
 ################################################################################
@@ -1766,32 +1783,23 @@ sub execute_me {
     throw_gen({ error => "Cannot execute job that has already been executed."})
       if $self->get_comp_time;
 
-    if ($self->get_id) {
-        # It's an exsisting job in the database. Get a lock on it.
-        $set_executing->($self, 1);
+    # Get a lock on the job.
+    $set_executing->($self, 1);
 
-        # Do it!
-        eval {
-            begin(1);
-            $self->_do_it(@_);
-            # Success!
-            $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
-            $self->save;
-            commit(1);
-        };
-
-        if (my $err = $@) {
-            # Rollback and handle.
-            rollback(1);
-            $self->handle_error($err);
-        }
-    } else {
-        # It's a new job. Just execute it.
-        $self->_set([qw(_executing tries)] => [1, 1]);
-        eval { $self->_do_it(@_) };
-        $self->handle_error($@) if $@;
+    # Do it!
+    eval {
+        begin(1);
+        $self->_do_it(@_);
         # Success!
-        return $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
+        $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
+        $self->save;
+        commit(1);
+    };
+
+    if (my $err = $@) {
+        # Rollback and handle.
+        rollback(1);
+        $self->handle_error($err);
     }
     return $self;
 }
@@ -2193,36 +2201,6 @@ $set_executing = sub {
 
     # Set the new number of tries and the executing attribute and return.
     return $self->_set([qw(_executing tries)], [$value, $exec]);
-};
-
-##############################################################################
-
-=item my $id = $do_insert->($self)
-
-Adds a new record to the database for the job. Called by C<save()>.
-
-=cut
-
-$do_insert = sub {
-    my $self = shift;
-    local $" = ', ';
-    my $fields = join ', ', next_key('job'), ('?') x $#COLS;
-    my $ins = prepare_c(qq{
-        INSERT INTO job (@COLS)
-        VALUES ($fields)
-    }, undef, DEBUG);
-
-    # Don't try to set ID - it will fail!
-    my @ps = $self->_get(@PROPS[1..$#PROPS]);
-    execute($ins, @ps);
-
-    # Now grab the ID.
-    my $id = last_key('job');
-    $self->_set(['id'], [$id]);
-
-    # Finally, register this job in the "All Jobs" group and return the id.
-    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-    return $id;
 };
 
 1;
