@@ -126,7 +126,6 @@ sub cleanup : Test(teardown => 0) {
     my $key = $self->class->key_name;
     if (my $baids = delete $self->{$key}) {
         $baids = join ', ', @$baids;
-        diag "Deleting $key asset IDs $baids";
         # Delete from the asset table...
         Bric::Util::DBI::prepare(qq{
             DELETE FROM $key
