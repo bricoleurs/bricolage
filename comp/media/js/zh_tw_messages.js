@@ -11,4 +11,5 @@ var passwd_end_msg = "密碼結尾不能有空白！";
 var days_msg = "這個日期根本不存在！它已經被改為 ";
 var data_msg =  "你必須將所有欄位都填上資料！";
 var empty_field_msg = "你必須給定這個的值 ";
-var illegal_chars_msg = " 內含非法字元！"; 
+var illegal_chars_msg = " 內含非法字元！";
+var warn_delete_msg = "You are about to permanently delete items! Do you wish to continue?"
