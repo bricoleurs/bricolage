@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-01-23 20:13:33 $
 
 =head1 SYNOPSIS
 
@@ -82,6 +82,7 @@ use Bric::Config qw(:err :ssl);
 ################################################################################
 # Private Class Fields
 my $ap = 'Bric::Util::Fault::Exception::AP';
+my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
 ################################################################################
 
@@ -134,7 +135,7 @@ sub handler {
 	return OK if $res;
 
 	# If we're here, the user needs to authenticate. Figure out where they
-	# wanted to go so we can redirect them there after they'ved logged in.
+	# wanted to go so we can redirect them there after they've logged in.
 	$r->log_reason($msg);
 #	my $uri = $r->uri;
 #	my $args = $r->args;
@@ -145,7 +146,7 @@ sub handler {
 	if (SSL_ENABLE) {
 	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
 	} else {
-	    $r->custom_response(FORBIDDEN, "http://$hostname/login");
+	    $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
 	}
 	return FORBIDDEN;
     };
@@ -173,16 +174,16 @@ sub logout_handler {
 	# Set up the user's session data.
 	Bric::App::Session::setup_user_session($r);
 	# Logout.
-	logout();
+	logout($r);
 	# Expire the user's session.
 	Bric::App::Session::expire_session($r);
 
-	# Rredirect to the login page.
+	# Redirect to the login page.
 	my $hostname = $r->hostname;
 	if (SSL_ENABLE) {
 	    $r->custom_response(FORBIDDEN, "https://$hostname/login");
 	} else {
-	    $r->custom_response(FORBIDDEN, "http://$hostname/login");
+	    $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
 	}
 	return FORBIDDEN;
     };

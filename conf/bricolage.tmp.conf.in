@@ -29,6 +29,8 @@
 # SERVER_SIGNATURE        Email
 # TIMEOUT                 30
 # USE_CANONICAL_NAME      On
+# LISTEN_PORT             80
+# SSL_ENABLE              off
 
 APACHE_SERVER_ROOT      = @SERVER_ROOT@ 
 PID_FILE                = @PID_FILE@
@@ -53,9 +55,11 @@ HOST_NAME_LOOKUPS       = Off
 SERVER_SIGNATURE        = Email
 TIMEOUT                 = 30
 USE_CANONICAL_NAME      = On
+LISTEN_PORT             = 80
 
 # set this to 1 if you want to use SSL
-SSL_ENABLE              = 1
+SSL_ENABLE              = off
+
 # mod_ssl settings. These settings relate the similarly-named mod_ssl
 # configurations. Read the mod_ssl documentation for more information on these
 # configurations. Depending on your environment, changing some of these may help

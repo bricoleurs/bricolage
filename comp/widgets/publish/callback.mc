@@ -135,8 +135,12 @@ my $publish = sub {
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
     my $bats = {};
     my $res = [];
+    my $ocs = $field eq 'preview'
+      ? [ Bric::Biz::OutputChannel->lookup({ id => $at->get_primary_oc_id }) ]
+	: $at->get_output_channels;
+
     # Iterate through each output channel.
-    foreach my $oc ($at->get_output_channels) {
+    foreach my $oc (@$ocs) {
 	&$send_msg("Writing files to &quot;" . $oc->get_name
 		   . '&quot; Output Channel.');
 	my $ocid = $oc->get_id;

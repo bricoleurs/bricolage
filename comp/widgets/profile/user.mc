@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-01-23 20:13:29 $
 
 =head1 SYNOPSIS
 
@@ -26,6 +26,7 @@ processed was submitted from the User Profile page.
 <%once>;
 my $type = 'user';
 my $disp_name = get_disp_name($type);
+my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 </%once>
 <%args>
 $widget
@@ -49,7 +50,7 @@ if ($param->{delete}) {
     my $name = "&quot;" . $user->get_name . "&quot;";
     add_msg("$disp_name profile $name deleted.");
     get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
-      : redirect_onload('http://' . $r->hostname . '/admin/manager/user');
+      : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
     return;
 }
 
@@ -169,6 +170,6 @@ $c->set('__WORKFLOWS__', 0);
 
 # Redirect. Use redirect_onload because the User profile has been using SSL.
 get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
-  : redirect_onload('http://' . $r->hostname . '/admin/manager/user');
+  : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user');
 return;
 </%init>

@@ -110,7 +110,7 @@ dnl
 dnl The first argument is the name of a variable which is to
 dnl contain a space-delimited list of missing modules.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_CPAN_MODULE],[
@@ -139,7 +139,7 @@ dnl
 dnl After the test the variable name will hold the 
 dnl path to PostgreSQL home
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_PROG_POSTGRES],[
@@ -242,7 +242,7 @@ dnl
 dnl This macro checks to see that postgres has been 
 dnl compiled to allow the desired encoding
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_POSTGRES_ENCODING], [
@@ -437,7 +437,7 @@ dnl DEFAULT value if the user merely hits return.  Also calls
 dnl AC_DEFINE_UNQUOTED() on the VARIABLENAME for VARIABLENAMEs that should
 dnl be entered into the config.h file as well.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Wes Hardaker <wjhardaker@ucdavis.edu>
 dnl
 AC_DEFUN([AC_PROMPT_USER],
@@ -463,7 +463,7 @@ dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl there is a password, and if so what it is.
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([CHECK_FOR_PGPASS],[
@@ -501,14 +501,55 @@ dnl @synopsis AC_VAR_WITH(VAR,with,default)
 dnl
 dnl when installing a PostgreSQL db we'll need to know if 
 dnl
-dnl @version $Id: aclocal.m4,v 1.11 2002-01-09 19:03:12 markjaroski Exp $
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
 dnl @author Mark Jaroski <mark@geekhive.net>
 dnl
 AC_DEFUN([AC_VAR_WITH],[
 AC_ARG_WITH($2,AC_HELP_STRING([
-  --with-$2],[defaults to '$3']),
+  --with-$2],[defaults to $3]),
   $1=${withval},
   $1=$3)
 AC_SUBST($1)
 
 ])
+
+dnl @synopsis AC_CHECK_SYS_USER(VAR,username)
+dnl
+dnl Check to see if a user exists.  VAR will be set
+dnl to "yes" on success, "no" on failure.
+dnl
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_SYS_USER],[
+	AC_MSG_CHECKING(for user "$2")
+	if grep "^$2:" /etc/passwd >/dev/null ;then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	else
+		$1='no'
+    AC_MSG_RESULT(no)
+	fi
+])
+
+
+dnl @synopsis AC_CHECK_SYS_GROUP(VAR,group)
+dnl
+dnl Check to see if a group exists.  VAR will be set
+dnl to "yes" on success, "no" on failure.
+dnl
+dnl @version $Id: aclocal.m4,v 1.12 2002-01-23 20:13:29 samtregar Exp $
+dnl @author Mark Jaroski <mark@geekhive.net>
+dnl
+AC_DEFUN([AC_CHECK_SYS_GROUP],[
+	AC_MSG_CHECKING(for group "$2")
+	if grep "^$2:" /etc/group >/dev/null ;then
+		$1='yes'
+		AC_MSG_RESULT(yes)
+	else
+		$1='no'
+    AC_MSG_RESULT(no)
+	fi
+])
+
+

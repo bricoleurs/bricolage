@@ -113,6 +113,7 @@ my $disp = get_disp_name($type);
 # Grab the length setting for the password fields.
 my $pass_len = $class->my_meths->{password}{props}{length};
 my $pass_max = $class->my_meths->{password}{props}{maxlength};
+my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 </%once>
 <%args>
 $id => undef
@@ -152,7 +153,7 @@ if ($ARGS{'add_more|contact|add_cb'}) {
 
 # Establish the return URI.
 my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
-      : 'http://' . $r->hostname . '/admin/manager/user';
+      : 'http://' . $r->hostname . $port . '/admin/manager/user';
 </%init>
 
 
@@ -165,11 +166,11 @@ my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2002-01-23 20:13:29 $
 
 =head1 DESCRIPTION
 

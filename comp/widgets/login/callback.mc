@@ -1,3 +1,6 @@
+<%once>;
+my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
+</%once>
 <%args>
 $widget
 $field
@@ -13,11 +16,11 @@ if ($field eq "$widget|login_cb") {
 	if ($param->{$widget. '|ssl'}) {
 	    # They want to use SSL. Do a simple redirect.
 	    set_state_name($widget, 'ssl');
-	    do_queued_redirect();
+	    do_queued_redirect() || redirect('/');
 	} else {
 	    # Redirect them back to port 80 if not using SSL.
 	    set_state_name($widget, 'nossl');
-	    redirect_onload('http://' . $r->hostname . (del_redirect() || ''));
+	    redirect_onload('http://' . $r->hostname . $port . (del_redirect() || ''));
 	}
     } else {
 	add_msg($msg);

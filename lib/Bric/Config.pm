@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-08 21:26:56 $
+$Date: 2002-01-23 20:13:33 $
 
 =head1 SYNOPSIS
 
@@ -86,6 +86,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     HOST_NAME_LOOKUPS
 		    SERVER_SIGNATURE
 		    USE_CANONICAL_NAME
+                    LISTEN_PORT
                     SSL_ENABLE
 		    SSL_SESSION_CACHE
 		    SSL_SESSION_CACHE_TIMEOUT
@@ -205,9 +206,11 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
 				   HOST_NAME_LOOKUPS
 				   SERVER_SIGNATURE
 				   USE_CANONICAL_NAME
+				   LISTEN_PORT
 				   PREVIEW_LOCAL
 				   PREVIEW_MASON)],
 		    ssl => [qw(SSL_ENABLE
+			       LISTEN_PORT
 			       SSL_SESSION_CACHE
 			       SSL_SESSION_CACHE_TIMEOUT
 			       SSL_MUTEX
@@ -324,9 +327,12 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK,
       || 30;
     use constant USE_CANONICAL_NAME      => $config->{USE_CANONICAL_NAME}
       || 'On';
+    use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
 
     # mod_ssl Settings.
     use constant SSL_ENABLE              => $config->{SSL_ENABLE};
+    die "LISTEN_PORT directive must be set to 80 when SSL_ENABLE is on\n"
+      if SSL_ENABLE && LISTEN_PORT != 80;
     use constant SSL_SESSION_CACHE       => $config->{SSL_SESSION_CACHE}
       || 'dbm:/usr/local/apache/logs/ssl_scache';
     use constant SSL_SESSION_CACHE_TIMEOUT =>
