@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-16 14:03:00 $
+$Date: 2003-03-16 14:34:38 $
 
 =head1 SYNOPSIS
 
@@ -2027,10 +2027,18 @@ sub _init {
             }
         }
         $self->_set(['slug'], [$alias_target->_get('slug')])
-        if($alias_target->_get('slug'));
+          if($alias_target->_get('slug'));
+
+        $self->_set(['file_name'], [$alias_target->_get('file_name')])
+          if($alias_target->_get('file_name'));
+
         $self->_set(['name'], [$alias_target->_get('name')])
-        if($alias_target->_get('name'));
+          if($alias_target->_get('name'));
+
         $self->_set(['element__id'], [$alias_target->_get('element__id')]);
+
+        $self->_set(['category__id'], [$alias_target->_get('category__id')])
+          if($alias_target->_get('category__id'));
 
         $self->_set
           ([qw(current_version publish_status modifier

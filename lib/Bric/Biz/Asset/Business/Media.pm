@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 21:52:30 $
+$Date: 2003-03-16 14:34:38 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,8 @@ use constant COLS           => qw( element__id
                                    desk__id
                                    publish_status
                                    active
-                                   site__id);
+                                   site__id
+                                   alias_id);
 
 use constant VERSION_COLS   => qw( name
                                    description
@@ -117,7 +118,8 @@ use constant FIELDS         => qw( element__id
                                    desk_id
                                    publish_status
                                    _active
-                                   site_id);
+                                   site_id
+                                   alias_id);
 
 use constant VERSION_FIELDS => qw( name
                                    description
@@ -143,7 +145,7 @@ use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
 # relations to loop through in the big query
-use constant RELATIONS => [qw( media category desk workflow )];
+use constant RELATIONS => [qw( media category desk workflow alias)];
 
 use constant RELATION_TABLES =>
     {
@@ -151,6 +153,7 @@ use constant RELATION_TABLES =>
         category   => 'category_member cm',
         desk       => 'desk_member dm',
         workflow   => 'workflow_member wm',
+        alias      => '',
     };
 
 use constant RELATION_JOINS =>
@@ -159,6 +162,7 @@ use constant RELATION_JOINS =>
         category   => 'cm.object_id = i.category__id AND m.id = cm.member__id',
         desk       => 'dm.object_id = mt.desk__id AND m.id = dm.member__id',
         workflow   => 'wm.object_id = mt.workflow__id AND m.id = wm.member__id',
+        alias      => 'mt.alias_id IS NOT NULL',
     };
 
 # the mapping for building up the where clause based on params
@@ -186,6 +190,7 @@ use constant PARAM_WHERE_MAP =>
       id                    => 'mt.id = ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
+      alias_id              => 'mt.alias_id = ?',
       site__id              => 'mt.site__id = ?',
       workflow__id          => 'mt.workflow__id = ?',
       _null_workflow__id    => 'mt.workflow__id IS NULL',
@@ -231,6 +236,7 @@ use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
+      alias_id            => 'alias_id',
       site__id            => 'site__id',
       workflow__id        => 'workflow__id',
       primary_uri         => 'primary_uri',
