@@ -107,6 +107,12 @@ object, which appears in the user group permissions page. [David]
 Hitting the "enter" key after filling in a serach field now properly submits
 the search as if the "Search" button had been clicked. [David]
 
+=item *
+
+Changed libapreq requirement in Bric::Admin to read "Apache::Request
+1.0". This should make the installer install the most recent version of
+libapreq, instead of relying on whatever the OS provides. [David]
+
 =back
 
 =head1 VERSION 1.4.0
