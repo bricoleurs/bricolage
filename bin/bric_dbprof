@@ -27,6 +27,9 @@ bric_dbprof [options] logfile
 
                  count   - most executions
 
+  --nowrap   - by default the output wraps the SQL queries to fit on
+               your screen.  Use this option to prevent that.
+
 
 =head1 DESCRIPTION
 
@@ -79,17 +82,20 @@ L<Bric::Hacker>
 
 use Getopt::Long;
 use Pod::Usage;
+use Text::Wrap;
 
 BEGIN {
     our $VERBOSE         = 0;
     our $n               = 10;
     our $mode            = "total";
+    our $nowrap          = 0;
     our ($help, $man);
     GetOptions("help"            => \$help,
 	       "man"             => \$man,
 	       "verbose+"        => \$VERBOSE,	   
 	       "n=s"             => \$n,
 	       "mode=s"          => \$mode,
+	       "nowrap"          => \$nowrap,
 	      ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
@@ -218,8 +224,11 @@ sub output_stats {
 
 # outputs a single query record
 sub output_record {
+    our ($nowrap);
     my ($num, $rec) = @_;
-    printf(<<'END', $num + 1, $rec->{sql}, $rec->{count}, $rec->{total_time}, ($rec->{total_time} / $rec->{count}), $rec->{longest});
+    my $sql = $nowrap ? $rec->{sql} : format_sql($rec->{sql});    
+
+    printf(<<'END', $num + 1, $sql, $rec->{count}, $rec->{total_time}, ($rec->{total_time} / $rec->{count}), $rec->{longest});
 
 ### Query %3d #################################################################
 
@@ -237,3 +246,14 @@ sub output_record {
 END
 
 }
+
+# pretty-prints an SQL expression
+sub format_sql {
+    my $sql = shift;
+    $sql =~ s/,([\S])/, $1/g;
+    $sql =~ s/$_/\n\n$_\t/g for qw(FROM WHERE VALUES LEFT AND OR);
+    $sql = fill(" ", " " x 8, $sql);
+    $sql =~ s/\n\n/\n/;
+    return $sql;
+}
+
