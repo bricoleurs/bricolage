@@ -8,15 +8,15 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:45 $
+$Date: 2002-03-14 21:35:45 $
 
 =head1 SYNOPSIS
 
@@ -40,6 +40,7 @@ $Date: 2002-02-19 23:53:45 $
   my $uri  = $fs->cat_uri(@uri_parts);
   my $uri  = $fs->trunc_uri($dir);
   my $uri  = $fs->dir_to_uri($dir);
+  my $dir  = $fs->uri_to_dir($uri);
 
 =head1 DESCRIPTION
 
@@ -767,6 +768,26 @@ sub dir_to_uri {
     $d[0] = '' if ($^O eq 'Win32' || $^O eq 'OS2') &&
       File::Spec::Functions::file_name_is_absolute($_[1]);
     return File::Spec::Unix->catdir(map { &$escape_uri($_) } @d);
+}
+
+################################################################################
+
+=item my $uri = $fs->uri_to_dir($uri)
+
+Takes a URI and changes it to a directory name for the local platform.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses File::Spec::Unix->catdir() and File::Spec::Unix->splitdir()
+internally.
+
+=cut
+
+sub uri_to_dir {
+    my @d = File::Spec::Unix->splitdir($_[1]);
+    return File::Spec::Functions::catdir(@d);
 }
 
 ################################################################################
