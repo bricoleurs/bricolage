@@ -6,11 +6,11 @@ apache.pl - installation script to probe apache configuration
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.4.1 $
 
 =head1 DATE
 
-$Date: 2002-12-05 21:07:44 $
+$Date: 2003-03-23 00:11:44 $
 
 =head1 DESCRIPTION
 
@@ -199,6 +199,13 @@ sub check_modules {
                 -e catfile($AP{HTTPD_ROOT}, 
                            $AP{load_modules}{"${mod}_module"})) {
                 $AP{$mod} = 1 if $mod =~ /ssl$/;
+                next MOD;
+            # On some platforms, "log_config" can actually be loaded via
+            # AddModule as "config_log".
+            } elsif ($mod eq 'log_config' and $AP{add_modules}{"mod_$mod"} and
+                     $AP{load_modules}{config_log_module}                  and
+                     -e catfile($AP{HTTPD_ROOT},
+                                 $AP{load_modules}{config_log_module})) {
                 next MOD;
             }
 
