@@ -6,11 +6,11 @@ grp_membership - Group membership widget
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2004-03-16 22:12:25 $
+$Date: 2004-03-18 22:38:45 $
 
 =head1 SYNOPSIS
 
@@ -112,8 +112,8 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           readOnlyRight => \@rogroups,
           readOnlyLeft  => \@logroups,
           leftCaption   => 'Available Groups',
-          showLeftList  => $no_edit,
-	  rightCaption  =>  $no_edit ? '' : 'Current Groups',
+          showLeftList  => !$no_edit,
+	  rightCaption  => $no_edit ? '' : 'Current Groups',
           readOnly      => $no_edit
         );
 
