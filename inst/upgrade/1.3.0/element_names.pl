@@ -20,6 +20,10 @@ Except that these tables have referential constraints on them from other tables.
 The best I could come up with is to rename the old column and move the data into
 a new column of the correct type and old name.
 
+This leaves an extra column in the database, but it won't really hurt much.
+Maybe someday PostgreSQL will have a DROP COLUMN command, and we can do away
+with the column.
+
 =end comment
 
 =cut
