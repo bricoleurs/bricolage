@@ -16,7 +16,7 @@ import SOAP::Data 'name';
 # needed to get envelope on method calls
 our @ISA = qw(SOAP::Server::Parameters);
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 =head1 NAME
@@ -25,15 +25,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-11 22:55:18 $
+$Date: 2002-01-16 21:46:13 $
 
 =head1 SYNOPSIS
 
@@ -304,7 +304,7 @@ Specifies a single story_id to be retrieved.
 Specifies a list of story_ids.  The value for this option should be an
 array of interger "story_id" elements.
 
-=item export_media
+=item export_related_media
 
 If set to 1 any related media attached to the story will be included
 in the exported document.  The story will refer to these included
@@ -312,7 +312,7 @@ media objects using the relative form of related-media linking.  (see
 the XML Schema document in L<Bric::SOAP|Bric::SOAP> for
 details)
 
-=item export_related
+=item export_related_stories
 
 If set to 1 then the export will work recursively across related
 stories.  If export_media is also set then media attached to related
@@ -333,10 +333,11 @@ Notes: NONE
 {
 # hash of allowed parameters
 my %allowed = map { $_ => 1 } qw(story_id story_ids 
-				 export_media export_related);
+				 export_related_media 
+				 export_related_stories);
 
 sub export {
-    my $self = shift;
+    my $pkg = shift;
     our $ef;
     my $env = pop;
     my $args = $env->method || {};    
@@ -376,26 +377,11 @@ sub export {
     # iterate through story_ids, serializing as we go
     my @story_ids = @{$args->{story_ids}};
     while(my $story_id = shift @story_ids) {
-	my $story = Bric::Biz::Asset::Business::Story->lookup({
-                                               id => $story_id});
-	die __PACKAGE__ . "::export : story_id \"$story_id\" not found.\n"
-	    unless $story;
-	  
-	# open a story element
-	$writer->startTag("story", 
-			  id => $story_id, 
-			  element => $story->get_element_name);
-	
-	# write out simple elements in schema order
-	foreach my $e (qw(name description slug primary_uri
-			  priority publish_status active   )) {
-	    $writer->dataElement($e => $story->_get($e));
-	}
-
-	# close the story
-	$writer->endTag("story");
+	$pkg->_serialize_story(writer   => $writer, 
+			       story_id => $story_id,
+			       args     => $args);
     }
-
+    
     # end the assets element and end the document
     $writer->endTag("assets");
     $writer->end();
@@ -484,6 +470,174 @@ Side Effects: NONE
 Notes: NONE
 
 =back 4
+
+=head2 Private Class Methods
+
+=over 4
+
+=item @related = _serialize_story($writer, $story_id)
+
+Serializes a single story into a <story> element using the given
+writer.  Returns a list of two-element arrays - [ "media", $id ] or [
+"story", $id ].  These are the related media objects serialized.
+
+=cut
+
+sub _serialize_story {
+    my $pkg = shift;
+    my %options = @_;
+    my $story_id = $options{story_id};
+    my $writer   = $options{writer};
+
+    my $story = Bric::Biz::Asset::Business::Story->lookup({id => $story_id});
+    die __PACKAGE__ . "::export : story_id \"$story_id\" not found.\n"
+	unless $story;
+    
+    # open a story element
+    $writer->startTag("story", 
+		      id => $story_id, 
+		      element => $story->get_element_name);
+    
+    # write out simple elements in schema order
+    foreach my $e (qw(name description slug primary_uri
+		      priority publish_status )) {
+	$writer->dataElement($e => $story->_get($e));
+    }
+    
+    # set active flag
+    $writer->dataElement(active => ($story->is_active ? 1 : 0));
+    
+    # get source name
+    my $src = Bric::Biz::Org::Source->lookup({
+					      id => $story->get_source__id });
+    die __PACKAGE__ . "::export : unable to find source\n"
+	unless $src;
+    $writer->dataElement(source => $src->get_source_name);
+    
+    # get dates and output them in dateTime format
+    for my $name qw(cover_date expire_date publish_date) {
+	my $date = $story->_get($name);
+	next unless $date; # skip missing date
+	
+	# extract parts
+	my ($CC, $YY, $MM, $DD, $hh, $mm, $ss, $tz) =  $date =~
+	    /^(\d\d)(\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(.*)$/;
+	die __PACKAGE__ . "::export : bad date format for $name : $date\n"
+	    unless $CC;
+	
+	# translate timezone 
+	if ($tz) {
+	    if ($tz eq "+00") {
+		$tz = 'Z';
+	    } elsif ($tz =~ /^\+\d\d$/) {
+		$tz .= ':00';
+	    }
+	} else {
+	    $tz = "";
+	}
+	
+	# assemble time
+	$writer->dataElement($name, 
+			     "${CC}${YY}-${MM}-${DD}T${hh}:${mm}:${ss}$tz");
+    }
+    
+    # output categories
+    $writer->startTag("categories");
+    my $cat = $story->get_primary_category();
+    $writer->dataElement(category => $cat->ancestry_path, primary => 1);
+    foreach $cat ($story->get_secondary_categories) {
+	$writer->dataElement(category => $cat->ancestry_path);
+    }
+    $writer->endTag("categories");
+
+    # output keywords
+    $writer->startTag("keywords");
+    foreach my $k ($story->get_keywords) {
+	$writer->dataElement(keyword => $k->get_name);
+    }
+    $writer->endTag("keywords");
+
+    # output element data
+    $writer->startTag("elements");
+    my $element = $story->get_tile();
+    foreach my $e ($element->get_elements()) {
+	$pkg->_serialize_tile(writer  => $writer,
+			      element => $e,
+			      args    => $options{args},
+			     );
+    }
+    $writer->endTag("elements");
+
+    # close the story
+    $writer->endTag("story");    
+}
+
+=item @related = _serialize_tile($writer, $element)
+
+Serializes a single tile, called recursively on containers.  Returns a
+list of two-element arrays - [ "media", $id ] or [ "story", $id ].
+These are the related media objects serialized.
+
+=cut
+
+sub _serialize_tile {
+    my $pkg = shift;
+    my %options = @_;
+    my $element  = $options{element};
+    my $writer   = $options{writer};
+    my @related;
+
+    if ($element->is_container) {
+	my %attr  = (element => $element->get_element_name,
+		     order   => $element->get_object_order);
+	my @e = $element->get_elements();
+
+	# look for related stuff and tag relative if we'll include in
+	# the assets dump.
+	my ($related_story, $related_media);
+	if ($related_story = $element->get_related_story) {
+	    $attr{related_story_id} = $related_story->get_id;
+	    $attr{relative} = 1 if $options{args}{export_related_stories};
+	    push(@related, [ story => $attr{related_story_id} ]);	    
+	} elsif ($related_media = $element->get_related_media) {
+	    $attr{related_media_id} = $related_media->get_id;
+	    $attr{relative} = 1 if $options{args}{export_related_media};
+	    push(@related, [ media => $attr{related_story_id} ]);
+	}
+	
+	if (@e) {
+	    # recurse over contained elements
+	    $writer->startTag("container", %attr);
+	    foreach my $e (@e) {
+		push(@related, $pkg->_serialize_tile(writer  => $writer,
+						     element => $e,
+						     args    => $options{args},
+						    ));	  
+	    }
+	    $writer->endTag("container");
+	} else {
+	    # produce clean empty tag
+	    $writer->emptyTag("container", %attr);
+	}
+    } else {
+	# data elements
+	my $data = $element->get_data;
+	if (defined $data and length $data) {
+	    $writer->dataElement("data", $data,
+				 element => $element->get_element_name,
+				 order   => $element->get_object_order);
+	} else {
+	    $writer->emptyTag("data", 
+			      element => $element->get_element_name,
+			      order   => $element->get_object_order);
+	}
+    }
+
+    return @related;
+}
+
+
+=back
 
 =head1 AUTHOR
 

@@ -42,12 +42,16 @@ Sam Tregar <stregar@about-inc.com>
 =cut
 
 use strict;
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 use Test::More qw(no_plan);
 use SOAP::Lite (DEBUG ? (trace => [qw(debug)]) : ());
 import SOAP::Data 'name';
 use Data::Dumper;
+use XML::Simple;
+use Carp;
+use Carp::Heavy; # for some reason if I remove this I can't get syntax
+                 # errors, I just get Carp errors.
 
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::AssetType;
@@ -62,7 +66,7 @@ isa_ok($soap, 'SOAP::Lite');
 
 # try selecting every story
 my $response = $soap->list_ids();
-ok(!$response->fault, 'SOAP result is not a fault');
+ok(!$response->fault, 'fault check');
 
 my $story_ids = $response->result;
 isa_ok($story_ids, 'ARRAY');
@@ -135,11 +139,37 @@ ok(@$story_ids, 'list_ids() returned some story_ids');
 # try exporting a story
 my $story_id = $story_ids->[0];
 $response = $soap->export(name(story_id => $story_id));
-ok(!$response->fault, 'SOAP export() response fault check');
+if ($response->fault) {
+  fail('SOAP export() response fault check');
+} else {
+  pass('SOAP export() response fault check');  
 
-my $document = $response->result;
-ok($document, 'Recieved export document');
-like($document, qr/<assets/, 'Looks like XML');
-print "Asset Document\n--------------\n$document\n" if DEBUG;
+  my $document = $response->result;
+  ok($document, 'Recieved export document');
+  check_doc($document, "first story");
+}
 
+# this will be replaced by a schema validator as soon as I can get
+# one working!
+sub check_doc {
+  my ($doc, $name) = @_;
+  my $x = XMLin($doc, 
+		forcearray => [ 'story' ],
+		keyattr    => [],
+		keeproot   => 1);
 
+  print "$name :\n$doc\n" if DEBUG;
+  print Data::Dumper->Dump([$x], ['doc']) if DEBUG;
+
+  # check basic structure
+  ok(exists $x->{assets}, "$name has assets");
+  ok(exists $x->{assets}{story}, "$name has at least one story");
+
+  # check that all required elements are present
+  foreach my $s (@{$x->{assets}{story}}) {
+      my @missing = grep { not exists $s->{$_} } 
+	  (qw(name description slug primary_uri priority publish_status active 
+	      source cover_date categories keywords elements));
+      ok(!@missing, "has required elements");
+  }
+}

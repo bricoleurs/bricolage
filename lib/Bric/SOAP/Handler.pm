@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-11 22:55:18 $
+$Date: 2002-01-16 21:46:13 $
 
 =head1 SYNOPSIS
 
@@ -73,7 +73,7 @@ L<Bric::SOAP|Bric::SOAP>
 use strict;
 use warnings;
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 # turn on tracing when debugging
 use SOAP::Lite (DEBUG ? ('trace') : ());
