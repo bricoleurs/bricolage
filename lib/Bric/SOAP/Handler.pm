@@ -122,7 +122,7 @@ BEGIN {
     # }
 
     foreach my $ec (Exception::Class->VERSION >= 1.20
-                    ? Exception::Class::Classes
+                    ? Exception::Class::Classes()
                     : Exception::Class::Base->Classes)
     {
         $ec =~ s/::/__/g;
