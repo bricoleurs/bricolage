@@ -34,7 +34,7 @@ sub test_const : Test(2) {
 # Test unique caching
 ##############################################################################
 
-sub test_unique : Test(8) {
+sub test_unique : Test(7) {
     my $self = shift;
     local $Bric::CACHE_DEBUG_MODE_RUNTIME = 1;
     local %Bric::DEBUG_CACHE;

@@ -33,7 +33,7 @@ sub test_lookup : Test(13) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(38) {
+sub test_list : Test(39) {
     my $self = shift;
 
     # Create a new job group.
