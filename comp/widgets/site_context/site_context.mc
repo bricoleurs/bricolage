@@ -43,7 +43,8 @@ unless ($user_sites) {
         }
 
         # Create an option for all available sites.
-        push @$user_sites, [0, 'All Sites'] if ALLOW_ALL_SITES_CX;
+        push @$user_sites, [0, $lang->maketext('All Sites') ]
+          if ALLOW_ALL_SITES_CX;
 
         # Save their list of site and their context.
         set_state_data($widget, $usites_key => $user_sites);
@@ -79,11 +80,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.1.2.2 $
+$Revision: 1.1.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-05 22:37:34 $
+$Date: 2003-03-05 22:40:36 $
 
 =head1 SYNOPSIS
 
