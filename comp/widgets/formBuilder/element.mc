@@ -63,8 +63,12 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
     $comp->set_description($param->{description});
     $comp->set_primary_oc_id($param->{primary_oc_id}) if exists $param->{primary_oc_id};
 
-    # Update existing attributes.
-    my $all_data = $comp->get_data;
+    # Update existing attributes. Get them from the Parts::Data class rather than from
+    # $comp->get_data so that we can be sure to check for both active and inactive
+    # data fields.
+    my $all_data = Bric::Biz::AssetType::Parts::Data->list(
+      { element__id => $param->{element_id} });
+#    my $all_data = $comp->get_data;
     my $data_href = { map { lc ($_->get_name) => $_ } @$all_data };
     my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
@@ -153,7 +157,7 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
     $comp->delete_output_channels( mk_aref($param->{rem_oc}) )
       if $param->{rem_oc};
 
-    # delete any selected sub elements 
+    # delete any selected sub elements
     if ($param->{"element|delete_cb"}) {
 	$comp->del_containers( mk_aref($param->{"element|delete_cb"}) );
     }
@@ -196,11 +200,11 @@ if ($param->{delete} && $field eq "$widget|save_cb") {
 
 =head1 VERSION
 
-$Revision: 1.1.1.1.2.5 $
+$Revision: 1.1.1.1.2.6 $
 
 =head1 DATE
 
-$Date: 2001-11-05 20:03:18 $
+$Date: 2001-11-29 01:53:57 $
 
 =head1 SYNOPSIS
 
