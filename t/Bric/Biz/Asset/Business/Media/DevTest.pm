@@ -1,7 +1,7 @@
 package Bric::Biz::Asset::Business::Media::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::DevBase);
+use base qw(Bric::Biz::Asset::Business::DevTest);
 use Test::More;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Media::Image;
@@ -42,14 +42,8 @@ sub new_args {
       file_name     => 'fun.foo',
       source__id    => 1,
       primary_oc_id => 1,
+      category__id  => 0
     )
-}
-
-##############################################################################
-# Constructs a new object.
-sub construct {
-    my $self = shift;
-    $self->class->new({ $self->new_args, @_ });
 }
 
 ##############################################################################

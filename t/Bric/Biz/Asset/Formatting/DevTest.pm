@@ -1,7 +1,7 @@
 package Bric::Biz::Asset::Formatting::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Test::DevBase);
+use base qw(Bric::Biz::Asset::DevTest);
 use Test::More;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.6 $
+$Revision: 1.39.2.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-21 18:06:56 $
+$Date: 2003-03-29 06:09:14 $
 
 =head1 SYNOPSIS
 
@@ -344,7 +344,8 @@ use constant PARAM_WHERE_MAP =>
       _checked_in_or_out    => 'i.checked_out = '
                              . '( SELECT max(checked_out) '
                              . 'FROM story_instance '
-                             . 'WHERE version = i.version )',
+                             . 'WHERE version = i.version '
+                             . 'AND story__id = s.id )',
       _checked_out          => 'i.checked_out = ?',
       primary_oc_id         => 'i.primary_oc__id = ?',
       category_id           => 'i.id = sc2.story_instance__id AND '
@@ -366,7 +367,7 @@ use constant PARAM_WHERE_MAP =>
                              . 'LOWER(s.primary_uri) LIKE LOWER(?) )',
     };
 
-use constant PARAM_ORDER_MAP => 
+use constant PARAM_ORDER_MAP =>
     {
       active              => 'active',
       inactive            => 'active',
@@ -512,6 +513,8 @@ sub new {
     $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
     delete $init->{'active'};
     $init->{priority} ||= 3;
+    $init->{_queried_cats} = {};
+    $init->{_categories} = {};
     $init->{name} = delete $init->{title} if exists $init->{title};
     $self->SUPER::new($init);
 }
