@@ -164,6 +164,13 @@ exception if duplicate page extensions are passed, rather than deferring the
 exception to the creation of a distribution job, which was confusing. [Clive
 Jones]
 
+=item *
+
+Calls to C<preview_another()> in Bric::Util::Burner will now use any templates
+in the current user's sandbox and properly burn them to the preview root
+rather than to the staging root used for publishing. Reported by Serge
+Sozonoff. [David]
+
 =back
 
 =cut

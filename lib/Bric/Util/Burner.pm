@@ -126,7 +126,7 @@ use strict;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
-use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
+use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev);
 use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
@@ -939,7 +939,9 @@ sub preview_another {
       : 'media';
 
     # Create a new burner and do the preview.
-    my $b2 = __PACKAGE__->new;
+    my $b2 = __PACKAGE__->new({ user_id => $self->get_user_id,
+                                out_dir => PREVIEW_ROOT,
+                              });
     $b2->_set(['_output_preview_msgs'] => [0]);
     return $b2->preview($ba, $key, get_user_id(), $oc_id);
 }
