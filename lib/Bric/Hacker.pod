@@ -616,8 +616,6 @@ Subversion branches.
 
 =head1 CREATING DISTRIBUTIONS
 
-B<Note: To be updated to reflect use of Subvesion!>
-
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
 tarball. First, proof-read the list of changes in Bric::Changes. Also, be sure
@@ -625,51 +623,67 @@ to add today's date to the header for the new release:
 
   =head1 VERSION 1.x.x (2003-11-29)
 
-Next, tag the release in Subversion:
-
-  svn tag rel_1_x_x
-
 If this is a major release, you'll need to create a new branch, so that it can
 be maintained for bug fixes separately, and then tag the release in that
-branch.
+branch. In Subversion, branches and tags are exactly the same; the difference
+is only in convention. So the convention for Bricolage is to store tags in the
+F<tags> subdirectory of the project directory, and branches in the F<branches>
+subdirectory. The other half of the convention is that no one should ever
+commit changes to a tag after it has been created.
 
-  svn branch rev_1_x
-  svn tag rel_1_x_x
+So to create a branch, make the copy from the F<trunk>:
 
-Next, export the sources into a new directory. Be sure to use the C<-kkv>
-option with C<export> so that the version numbers are all properly populated.
+  % svn cp http://svn.bricolage.cc/bricolage/trunk \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    -m 'New branch for maintenance of Bricolage 1.8.x.'
 
-  cd /tmp
-  svn export -r rel_1_x_x bricolage
-  cd bricolage
-  make dist
+If you've just created the branch, or if you haven't already checked out the
+existing branch, do so now. You'll need it to fix bugs and release future
+minor releases of Bricolage, anyway, so it's good to have on hand.
+
+  % svn co cp http://svn.bricolage.cc/bricolage/branches/rev_1_8
+
+Now create the distribution tarball.
+
+  % cd rev_1_8
+  % make dist
 
 This will create a distribution tarball in the bricolage directory. Copy this
 tarball somewhere, and do a full test with it, to make sure that Bricolage
 does indeed build and properly install itself.
 
-  cp bricolage-1.x.x.tar.gz /tmp/src
-  cd /tmp/src
-  tar zxvf bricolage-1.x.x.tar.gz
-  cd bricolage-1.x.x
-  perl Makefile.PL
-  make
+  % cp bricolage-1.x.x.tar.gz /tmp/src
+  % cd /tmp/src
+  % tar zxvf bricolage-1.x.x.tar.gz
+  % cd bricolage-1.x.x
+  % perl Makefile.PL
+  % make
   # Shut down PostgreSQL.
-  make test
+  % make test
   # Start PostgreSQL.
-  sudo make install
-  make devtest
-  sudo bric_apachectl start
+  % sudo make install
+  % make devtest
+  % sudo bric_apachectl start
   # Log in to the UI and test it a bit.
-  sudo make uninstall
+  % sudo make uninstall
 
-Be sure to run C<make devtest> after everything is installed to make sure that
-it is all functioning correctly. Users won't be running these tests, as they
-muck up the database. But that's okay for our validation of the release
-tarball. Use C<make uninstall> to clean up the mess. If you have to go back
-and make any changes, be sure to commit them to the Subversion repository and
-then to update the tag, then do the whole thing over again. Once everything
-appears to be working properly, release!
+Be sure to run C<make devtest> after everything is installed to ensure that it
+is all functioning correctly. Users won't be running these tests, as they muck
+up the database. But that's okay for our validation of the release tarball.
+Use C<make uninstall> to clean up the mess. If you have to go back and make
+any changes, be sure to commit them to the Subversion repository and then to
+update the tag, then do the whole thing over again. Once everything appears to
+be working properly, release!
+
+Now that the new version of Bricolage is out free in the world, it's time to
+tag the release. Again, it's a simple copy:
+
+  % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    http://svn.bricolage.cc/bricolage/tags/rel_1_8_0 \
+    -m 'Tag for the 1.8.0 release of Bricolage.'
+
+The tag is mainly kept for the purposes of record-keeping. And since copies
+are cheap in Subversion, it's worthwhile.
 
 =head2 Documentation Generation
 
