@@ -26,7 +26,7 @@ Added unit testing framework based on L<Test::Class|Test::Class> and executed
 by L<Test::Harness|Test::Harness>. Tests can be run after C<make install> by
 running C<make test> or C<make devtest>. The former runs tests that access
 database data but execute no C<INSERT>, C<UPDATE>, or C<DELETE> commands. The
-latter runs tests that can make changes to the datbase, and are intended to be
+latter runs tests that can make changes to the database, and are intended to be
 a full testing of Bricolage's API. Both make targets can be executed in
 verbose mode by passing C<TEST_VERBOSE=1> to the make command. From now on,
 all tests will be expected to pass before changes are committed to the
@@ -38,7 +38,7 @@ Added F<Makefile.PL>. This is mainly a dummy script designed to mimic the
 usual way in which Perl modules are installed. It doesn't actually create a
 F<Makefile>, but processes the existing one, setting it up to use whatever
 Perl was used to execute F<Makefile.PL> itself. The advantage to this is that
-the Perl the executes F<Makefile.PL> will be used throughout Bricolage. [David]
+the Perl that executes F<Makefile.PL> will be used throughout Bricolage. [David]
 
 =item *
 
@@ -284,6 +284,10 @@ useful for generating tables of contents and such. [David]
 
 Added support for the association between business assets and output channels
 to the SOAP interface. [David]
+
+=item *
+
+Removed IO::String dependence. [Scott]
 
 =back
 

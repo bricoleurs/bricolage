@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.81 $
+$Revision: 1.82 $
 
 =head1 DATE
 
-$Date: 2002-11-21 11:35:32 $
+$Date: 2002-11-27 04:17:59 $
 
 =head1 DESCRIPTION
 
@@ -100,8 +100,6 @@ START MODULE LIST
 =item XML::Writer
 
 =item LWP
-
-=item IO::String
 
 =item Image::Info
 

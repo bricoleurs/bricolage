@@ -6,7 +6,7 @@ use base qw(Bric::Test::Base);
 use File::Find;
 use File::Spec;
 use Pod::Checker;
-use IO::String;
+use IO::Scalar;
 use Test::More;
 
 BEGIN {__PACKAGE__->test_class }
@@ -27,15 +27,16 @@ sub test_mods : Test(no_plan) {
     my $mods = $self->{mods};
     foreach my $module (@$mods) {
         # Set up an error file handle and a POD checker object.
-        my $errors = IO::String->new;
+        my $errstr = '';
+        my $errors = new IO::Scalar \$errstr;
         my $checker = Pod::Checker->new( -warnings => 1 );
         $checker->parse_from_file($module, $errors);
         # Delete this next statement once all errors are fixed!
-        local $TODO = 'POD repairs in progres...'
+        local $TODO = 'POD repairs in progress...'
           unless $checker->num_errors == 0;
         # Fail the test if the file's POD contains errors.
         ok($checker->num_errors == 0, "Check ${module}'s POD" )
-          or diag(${ $errors->string_ref });
+          or diag($errstr);
     }
 }
 
