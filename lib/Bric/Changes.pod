@@ -274,6 +274,12 @@ object for which permissions are checked. [Mark & David]
 
 Added event logging for keywords. [David]
 
+=item *
+
+Changed the code in Bric::Util::Burner::Mason to allow for new Mason burners
+to be constructed and used to publish stories from within templates. This is
+useful for generating tables of contents and such. [David]
+
 =back
 
 =head1 VERSION 1.4.5
