@@ -33,8 +33,8 @@ sub save : Callback {
     } else {
         # Roll in the changes. Assume it's active.
         foreach my $meth ($keyword->my_meths(1)) {
-            next if $is_saving && $meth->{name} eq 'name';
-            $meth->{set_meth}->($keyword, @{$meth->{set_args}}, $param->{$meth->{name}})
+            $meth->{set_meth}->($keyword, @{$meth->{set_args}},
+                                $param->{$meth->{name}})
               if defined $meth->{set_meth};
         }
         $keyword->save;

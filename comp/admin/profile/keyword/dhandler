@@ -12,15 +12,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Properties",
          number  => 1 );
 
-if (defined $id) {
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $obj,
-             key => 'name', readOnly => 1);
-} else {
-    $used = { active => 1 };
-}
-
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $obj,
-          fieldsUsed => $used, readOnly => $no_edit);
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         objref => $obj,
+         fieldsUsed => { active => 1 },
+         readOnly => $no_edit);
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -62,8 +57,6 @@ my $no_del = !$id || $no_edit;
 # Get the name for the breadcrumb trail.
 my $crumb = $obj->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
-
-my $used = { active => 1, name => 1 };
 </%init>
 
 <%doc>
@@ -75,11 +68,11 @@ my $used = { active => 1, name => 1 };
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.2.1 $
 
 =head1 DATE
 
-$Date: 2003-08-24 15:16:53 $
+$Date: 2004-04-20 18:08:54 $
 
 =head1 DESCRIPTION
 

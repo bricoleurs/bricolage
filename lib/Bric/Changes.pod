@@ -36,6 +36,10 @@ For checked-out media, stories, and documents listed in the "Active" and
 "Find" interfaces, added the name of the user who has each checked out to the
 empty column that would otherwise contain a "Checkout" checkbox. [David]
 
+=item *
+
+Keyword names are now always editable in the keyword manager. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Parts::Tile::Data - Data (Field) Element
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.19.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.19.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-11 20:23:40 $
+$Date: 2004-04-20 18:09:44 $
 
 =head1 SYNOPSIS
 
@@ -530,7 +530,7 @@ sub get_element_name { $_[0]->get_name }
 
 =item $key_name = $data->get_element_key_name
 
-An alias for C<< $data->get_name >>.
+An alias for C<< $data->get_key_name >>.
 
 B<Throws:> NONE.
 
