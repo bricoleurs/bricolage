@@ -264,7 +264,6 @@ sub build_image_list {
     return if $file =~ /^\./;
 
     my $full_path = "$path/$file";
-
     $path =~ s/^$TRIM_START// if defined $TRIM_START;
 
     my $temp;

@@ -1078,7 +1078,8 @@ sub load_asset {
                   unless exists $story_ids{$r->{story_id}};
                 $r->{container}->
                     set_related_instance_id($story_ids{$r->{story_id}});
-            } else {
+            }
+            if ($r->{media_id}) {
                 throw_ap(error => __PACKAGE__ .
                            " : Unable to find related media by relative id " .
                            "\"$r->{media_id}\"")
@@ -1094,12 +1095,29 @@ sub load_asset {
                   unless Bric::Biz::Asset::Business::Story->list_ids(
                                                   {id => $r->{story_id}});
                 $r->{container}->set_related_instance_id($r->{story_id});
-            } else {
+            } elsif ($r->{story_uri}) {
+                my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
+                    primary_uri => $r->{story_uri},
+                    site_id     => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $sid;
+                $r->{container}->set_related_instance_id($sid);
+            }
+            if ($r->{media_id}) {
                 throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
                            . " not found.")
                   unless Bric::Biz::Asset::Business::Media->list_ids(
                                                   {id => $r->{media_id}});
                 $r->{container}->set_related_media($r->{media_id});
+            } elsif ($r->{media_uri}) {
+                my ($mid) = Bric::Biz::Asset::Business::Media->list_ids({
+                    uri     => $r->{media_uri},
+                    site_id => $r->{site_id},
+                });
+                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$r->{media_uri}"}
+                           . qq{ not found in site "$r->{site_id}"}) unless $mid;
+                $r->{container}->set_related_media($mid);
             }
         }
         $r->{container}->save;

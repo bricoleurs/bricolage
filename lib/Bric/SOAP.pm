@@ -1115,7 +1115,10 @@ The XSD source:
      <xs:attribute name="element" type="xs:string" use="required"/>
      <xs:attribute name="order" type="xs:int" use="required"/>
      <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
+     <xs:attribute name="related_story_uri" type="xs:int" use="optional"/>
      <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
+     <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
+     <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
      <xs:attribute name="relative" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>

@@ -40,6 +40,12 @@ and template classes. Oversight reported by Kang-min Liu. [David]
 Distribution via SFTP is now atomic and respects the C<FTP_UNLINK_BEFORE_MOVE>
 directive. Spotted by Patrick Michael Kane. [David]
 
+=item *
+
+Related story and media elements managed through the SOAP server can now use a
+combination of URI and site ID to identify related assets in addition to the
+existing approach of using story and media IDs. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -123,6 +129,16 @@ workflow will no longer cause that later version to be mysteriously removed
 from workflow. This could be caused by passing a document looked up using the
 C<published_version> to C<list()> to C<< $burner->publish_another >> in a
 template. [David]
+
+=item *
+
+The C<has_keyword()> method in the story and media classes now works properly.
+Reported by Clare Parkinson. [David]
+
+=item *
+
+The SOAP server story and media interfaces now support elements that contain
+both related stories and media, rather than one or the other. [David]
 
 =back
 

@@ -1855,7 +1855,7 @@ sub del_keywords {
 
 =item ($self || undef) = $ba->has_keyword($keyword)
 
-Returns true if the keyword object is associated with this asset.
+Returns a keyword if the keyword object is associated with this asset.
 
 B<Throws:> NONE.
 
@@ -1867,7 +1867,7 @@ B<Notes:> Uses C<get_keywords()> internally.
 
 sub has_keyword {
     my ($self, $kw) = @_;
-    return scalar($self->get_keywords($kw->get_id)) != 0;
+    $self->get_keywords($kw->get_id);
 }
 
 ###############################################################################

@@ -398,6 +398,7 @@ Notes:
 sub deserialize_elements {
     my %options = @_;
     $options{element} = $options{object}->get_tile;
+    $options{site_id} = $options{object}->get_site_id;
     return _deserialize_tile(%options);
 }
 
@@ -429,6 +430,7 @@ sub _deserialize_tile {
     my $data      = $options{data};
     my $object    = $options{object};
     my $type      = $options{type};
+    my $site_id   = $options{site_id};
     my @relations;
 
     # make sure we have an empty element - Story->new() helpfully (?)
@@ -487,21 +489,37 @@ sub _deserialize_tile {
             $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 
-            # deal with related stories and media
+            # Deal with related media
             if ($c->{related_media_id}) {
                 # store fixup information - the object to be updated
                 # and the external id
                 push(@relations, { container => $container,
                                    media_id  => $c->{related_media_id},
                                    relative  => $c->{relative} || 0 });
-            } elsif ($c->{related_story_id}) {
+            } elsif ($c->{related_media_uri}) {
+                push @relations, {
+                    container => $container,
+                    media_uri => $c->{related_media_uri},
+                    site_id   => $c->{related_site_id} || $site_id,
+                };
+            }
+
+            # Deal with realted story.
+            if ($c->{related_story_id}) {
                 push(@relations, { container => $container,
                                    story_id  => $c->{related_story_id},
                                    relative  => $c->{relative} || 0 });
+            } elsif ($c->{related_story_uri}) {
+                push @relations, {
+                    container => $container,
+                    story_uri => $c->{related_story_uri},
+                    site_id   => $c->{related_site_id} || $site_id,
+                };
             }
 
             # recurse
             push @relations, _deserialize_tile(element   => $container,
+                                               site_id   => $site_id,
                                                data      => $c);
             # Log it.
             log_event("${type}_add_element", $object,
