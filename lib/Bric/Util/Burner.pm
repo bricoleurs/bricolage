@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.31 $ )[-1];
+our $VERSION = (qw$Revision: 1.32 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-06 20:31:57 $
+$Date: 2002-12-12 15:54:11 $
 
 =head1 SYNOPSIS
 
@@ -182,10 +182,18 @@ BEGIN {
     Bric::register_fields
         ({
           # Public Fields
-          data_dir => Bric::FIELD_RDWR,
-          comp_dir => Bric::FIELD_RDWR,
-          out_dir  => Bric::FIELD_RDWR,
-          mode     => Bric::FIELD_READ,
+          data_dir        => Bric::FIELD_RDWR,
+          comp_dir        => Bric::FIELD_RDWR,
+          out_dir         => Bric::FIELD_RDWR,
+          mode            => Bric::FIELD_READ,
+          story           => Bric::FIELD_READ,
+          oc              => Bric::FIELD_READ,
+          cat             => Bric::FIELD_READ,
+          page            => Bric::FIELD_READ,
+          output_filename => Bric::FIELD_READ,
+          output_ext      => Bric::FIELD_READ,
+          output_path     => Bric::FIELD_READ,
+          base_uri        => Bric::FIELD_READ,
       });
 }
 
@@ -366,6 +374,96 @@ B<Notes:> NONE.
 
 Returns the burn mode. The value is an integer corresponding to one of the
 following constants: "PUBLISH_MODE", "PREVIEW_MODE", and "SYNTAX_MODE".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $story = $b->get_story
+
+Returns the story currently being burned -- that is, during the execution of
+templates by C<burn_one()>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $oc = $b->get_oc
+
+Returns the output channel in which the story returned by C<get_story()> is
+currently being burned.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $cat = $b->get_cat
+
+Returns the category to which the story returned by C<get_story()> is
+currently being burned.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $page = $b->get_page
+
+Returns the index number of the page that's currently being burned. The index
+is 0-based. The first page is "0", the second page is "1" and so on.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $output_filename = $b->get_output_filename
+
+Returns the base name used to create the file names of all files created by
+the current burn. This will have the same value as
+C<< $b->get_oc->get_filename >>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $output_ext = $b->get_output_ext
+
+Returns the filename extensionused to create the file names of all files created by
+the current burn. This will have the same value as
+C<< $b->get_oc->get_file_ext >>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $output_path = $b->get_output_path
+
+Returns the local file system path to the directory into which all files
+created by the current burn will be written.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $base_uri = $b->get_base_uri
+
+Returns the base URI to the directory into which all files created by the
+current burn will be written.
 
 B<Throws:> NONE.
 
@@ -748,6 +846,23 @@ B<Notes:> NONE.
 
 sub burn_one {
     my $self = shift;
+    my ($story, $oc, $cat) = @_;
+
+    # Figure out the base URI and output path.
+    my $base_uri = $story->get_uri($cat, $oc);
+    my $path = $fs->cat_dir($self->get_out_dir, 'oc_'. $oc->get_id,
+                            $fs->uri_to_dir($base_uri));
+
+    # Create the output directory.
+    $fs->mk_path($path);
+
+    # Set up properties needed by the subclasses.
+    $self->_set([qw(story oc cat output_filename output_ext output_path
+                    base_uri page)],
+                [@_, $oc->get_filename($story), $oc->get_file_ext, $path,
+                 $base_uri, 0]);
+
+    # Construct the burner and do it!
     my ($burner, $at) = $self->_get_subclass($_[0]);
     $burner->burn_one(@_, $at);
 }
@@ -774,6 +889,215 @@ sub chk_syntax {
     $self->_set(['mode'], [undef]);
     return $ret;
 }
+
+##############################################################################
+
+=item my $page_file = $b->page_file($number)
+
+  % # Mason syntax.
+  % my $page_file = $burner->page_file($number);
+  <a href="<% $page_file %>">Page Number $number</a>
+
+Returns the file name for a page in a story as the story is being burned. The
+page number must be greater than 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Page number not greater than zero.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method does not check to see if the page number passed in is
+actually a page in the story. Caveat templator.
+
+=cut
+
+sub page_file {
+    my ($self, $number) = @_;
+    return unless defined $number;
+    die $gen->new({ msg => "Page number '$number' not greater than zero" })
+      unless $number > 0;
+    my ($fn, $ext) = $self->_get(qw(output_filename output_ext));
+    $number = $number == 1 ? '' : $number - 1;
+    return "$fn$number.$ext";
+}
+
+##############################################################################
+
+=item my $page_uri = $b->page_uri($number)
+
+  % # Mason syntax.
+  % my $page_uri = $burner->page_uri($number);
+  <a href="<% $page_uri %>">Page Number $number</a>
+
+Returns the URI for a page in a story as the story is being burned. The
+page number must be greater than 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Page number not greater than zero.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method does not check to see if the page number passed in is
+actually a page in the story. Caveat templator.
+
+=cut
+
+sub page_uri {
+    my $self = shift;
+    my $filename = $self->page_file(@_) or return;
+    my $base_uri = $self->_get('base_uri');
+    return $fs->cat_uri($base_uri, $filename);
+}
+
+##############################################################################
+
+=item my $page_filepath = $b->page_filepath($number)
+
+Returns the complete local file system file name for a page in a story as the
+story is being burned. The page number must be greater than 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Page number not greater than zero.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method does not check to see if the page number passed in is
+actually a page in the story. Caveat templator.
+
+=cut
+
+sub page_filepath {
+    my $self = shift;
+    my $filename = $self->page_file(@_) or return;
+    my $base_dir = $self->_get('output_path');
+    return $fs->cat_file($base_dir, $filename);
+}
+
+##############################################################################
+
+=item my $prev_page_file = $b->prev_page_file
+
+  % if (my $prev = $burner->prev_page_file) {
+      <a href="<% $prev %>">Previous Page</a>
+  % }
+
+Returns the file name for the previous file in a story as the story is being
+burned. If there is no previous file, C<prev_page_file()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub prev_page_file {
+    my $self = shift;
+    my $page = $self->_get(qw(page)) or return;
+    return $self->page_file($page);
+}
+
+##############################################################################
+
+=item my $prev_page_uri = $b->prev_page_uri
+
+  % if (my $prev = $burner->prev_page_uri) {
+      <a href="<% $prev %>">Previous Page</a>
+  % }
+
+Returns the URI for the previous file in a story as the story is being
+burned. If there is no previous URI, C<prev_page_uri()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub prev_page_uri {
+    my $self = shift;
+    my $filename = $self->prev_page_file or return;
+    my $base_uri = $self->_get('base_uri');
+    return $fs->cat_uri($base_uri, $filename);
+}
+
+##############################################################################
+
+=item my $next_page_file = $b->next_page_file
+
+  % if (my $next = $burner->next_page_file) {
+      <a href="<% $next %>">Next Page</a>
+  % }
+
+Returns the file name for the next file in a story as the story is being
+burned. If there is no next file, C<next_page_file()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub next_page_file {
+    my $self = shift;
+    my ($page, $isnext) = $self->_get(qw(page more_pages));
+    return unless $isnext;
+    return $self->page_file($page + 2);
+}
+
+##############################################################################
+
+=item my $next_page_uri = $b->next_page_uri
+
+  % if (my $next = $burner->next_page_uri) {
+      <a href="<% $next %>">Next Page</a>
+  % }
+
+Returns the URI for the next file in a story as the story is being
+burned. If there is no next URI, C<next_page_uri()> returns undef.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub next_page_uri {
+    my $self = shift;
+    my $filename = $self->next_page_file or return;
+    my $base_uri = $self->_get('base_uri');
+    return $fs->cat_uri($base_uri, $filename);
+}
+
+##############################################################################
 
 =back
 

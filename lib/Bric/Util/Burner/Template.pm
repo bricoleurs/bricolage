@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-10 23:28:14 $
+$Date: 2002-12-12 15:54:12 $
 
 =head1 SYNOPSIS
 
@@ -82,26 +82,16 @@ use constant PAGE_BREAK => "<<<<<<<<<<<<<<<<<< PAGE BREAK >>>>>>>>>>>>>>>>>>";
 use constant CONTENT    => "<<<<<<<<<<<<<<<<<< CONTENT >>>>>>>>>>>>>>>>>>";
 use constant DEBUG      => 0;
 
-                                                          
 #--------------------------------------#
 # Instance Fields                      #
 #--------------------------------------#
 
 BEGIN {
     Bric::register_fields({
-			   #- Per burn/deploy values.
-			   page             => Bric::FIELD_RDWR,
-			   story            => Bric::FIELD_READ,
-			   oc               => Bric::FIELD_READ,
-			   cat              => Bric::FIELD_READ,
-
 			   # Private Fields
 			   _template_roots  => Bric::FIELD_NONE,
 			   _res             => Bric::FIELD_NONE,
 			   _output_path     => Bric::FIELD_NONE,
-			   _output_filename => Bric::FIELD_NONE,
-			   _output_ext      => Bric::FIELD_NONE,
-			   _base_uri        => Bric::FIELD_NONE,
 			   _at              => Bric::FIELD_NONE,
 			   _header          => Bric::FIELD_NONE,
 			   _footer          => Bric::FIELD_NONE,
@@ -205,16 +195,6 @@ sub burn_one {
 
     # setup empty state for this burn
     my $res      = [];
-    my $page     = 0;
-
-    # compute output filename and extension
-    my $oc_filename = $oc->get_filename($story);
-    my $oc_ext      = $oc->get_file_ext;
-    my $base_uri    = $story->get_uri($cat, $oc);
-    my $path        = $fs->cat_dir($self->get_out_dir, 'oc_'.
-				   $oc->get_id, $base_uri);
-    # make paths as necessary
-    $fs->mk_path($path) unless -d $path;
 
     # compute template_roots for later
     my $comp_dir = $self->get_comp_dir;
@@ -222,13 +202,11 @@ sub burn_one {
                            ($oc, $oc->get_includes) ];
 
     # save burn parameters
-    $self->_set([qw(story oc cat _output_filename _output_path _output_ext
-                    _res page _base_uri _at _template_roots)],
-		[$story, $oc, $cat, $oc_filename, $path, $oc_ext,
-                 $res, $page, $base_uri, $at, $template_roots]);
+    $self->_set([qw(_res _at _template_roots)],
+		[$res, $at, $template_roots]);
 
     # run the category script if it exists
-    if ($self->_find_file('category', '.pl') or 
+    if ($self->_find_file('category', '.pl') or
 	$self->_find_file('category', '.tmpl')) {
 	my $category_output = $self->run_script('category', '.pl');
 	if (defined $category_output) {
@@ -287,19 +265,18 @@ sub chk_syntax {
 	# _get_template_path() which requires an oc and cat to run,
 	# which aren't available in the chk_syntax context.
 	$data =~ s/<[tT][mM][pP][lL]_[iI][nN][cC][lL][uU][dD][eE][^>]+>//g;
-	
+
 	eval { HTML::Template::Expr->new(scalarref => \$data) };
 	if ($@) {
 	    $$err = $@;
 	    $$err =~ s!/fake/path/for/non/file/template!$file_name!g;
-	    return 0;	
+	    return 0;
 	}
 	return 1;
     }
-    
-    
+
     # check a .pl Perl script
-    
+
     # construct the code block ala run_script
     my $time = md5_hex(time); # make sure package is unique
     my $code = <<END;
@@ -564,7 +541,7 @@ sub new_template {
 	$element = $args{element};
     } elsif (not exists $args{filename}) {
 	# get the element from the current global setting
-	no strict 'refs';        
+	no strict 'refs';
 	$element = ${(caller)[0] . "::element"};
     }
 
@@ -572,7 +549,7 @@ sub new_template {
     $args{search_path_on_include} = 1;
     $args{path} ||= [];
     push(@{$args{path}}, $self->_get_template_path());
-    print STDERR __PACKAGE__, "::new_template() : set path to ", 
+    print STDERR __PACKAGE__, "::new_template() : set path to ",
       join(', ', @{$args{path}}), "\n"
         if DEBUG;
 
@@ -608,9 +585,9 @@ sub new_template {
 
     # setup some useful functions
     # $args{functions}{call} => sub { $self->run_script($_[0]) };
-    $args{functions}{page_link} = sub { $self->_page_link(@_); };
-    $args{functions}{next_page_link} = sub { $self->_page_link($_[0] + 1); };
-    $args{functions}{prev_page_link} = sub { $self->_page_link($_[0] - 1); };
+    $args{functions}{page_link} = sub { $self->page_file(@_); };
+    $args{functions}{next_page_link} = sub { $self->page_file($_[0] + 1); };
+    $args{functions}{prev_page_link} = sub { $self->page_file($_[0] - 1); };
 
     # instantiate the template object
     my $template = HTML::Template::Expr->new(%args);
@@ -619,17 +596,17 @@ sub new_template {
     if ($autofill and $element) {
 	my $story = $self->get_story();
 	# fill in some non-element data
-	$template->param(title => $story->get_title) 
-	    if $template->query(name => "title");
+	$template->param(title => $story->get_title)
+          if $template->query(name => "title");
 	$template->param(page_break => PAGE_BREAK)
-	    if $template->query(name => "page_break");
+          if $template->query(name => "page_break");
 	$template->param(content => CONTENT)
-	    if $template->query(name => "content") and $element eq 'category';
+          if $template->query(name => "content") and $element eq 'category';
 
 	unless ($element eq 'category') {
 	    # setup data for template
-	    my $data = $self->_build_element_vars($element, 
-						  $template, 
+	    my $data = $self->_build_element_vars($element,
+						  $template,
 						  []);
 	    $template->param($data);
 	}
@@ -954,11 +931,7 @@ NONE
 
 sub _write_pages {
     my ($self, $output) = @_;
-    my ($path, $name, $ext, $header, $footer) = $self->_get('_output_path',
-							    '_output_filename',
-							    '_output_ext',
-							    '_header',
-							    '_footer');
+    my ($header, $footer) = $self->_get(qw(_header _footer));
 
     print STDERR __PACKAGE__, "::_write_pages() called.\n"
 	if DEBUG;
@@ -971,8 +944,7 @@ sub _write_pages {
 	    last if $page == $#pages and $pages[$page] =~ /^\s*$/;
 
 	    # compute filename
-	    my $filename = $page ? $fs->cat_file($path, $name . $page . '.' . $ext) :
-		                   $fs->cat_file($path, $name . '.' . $ext);
+            my $filename = $self->file_filepath($page + 1);
 
 	    print STDERR __PACKAGE__, "::_write_pages() : opening multi page $filename\n"
 		if DEBUG;
@@ -985,13 +957,12 @@ sub _write_pages {
 	    close(OUT);
 
 	    # add resource object for this file
-	    my $uri = $fs->cat_file($self->_get('_base_uri'),
-				    substr($filename, length($path)));
+            my $uri = $self->page_uri($page + 1);
 	    $self->_add_resource($filename, $uri);
 	}
     } else {
 	# compute filename
-	my $filename = $fs->cat_file($path, $name . '.' . $ext);
+        my $filename = $self->file_filepath(1);
 
 	print STDERR __PACKAGE__,
 	  "::_write_pages() : opening single page $filename\n" if DEBUG;
@@ -1004,9 +975,8 @@ sub _write_pages {
 	close(OUT);
 
 	# add resource object for this file
-	$self->_add_resource($filename,
-			     $fs->cat_file($self->_get('_base_uri'),
-					   substr($filename, length($path))));
+        my $uri = $self->page_uri(1);
+        $self->_add_resource($filename, $uri);
     }
 }
 
@@ -1074,33 +1044,6 @@ NONE
 
 sub _compile {
     return eval($_[0]);
-}
-
-=item $link = _page_link($page)
-
-Returns the filename for the given $page number - index.html for 1, index1.html
-for 2, etc.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _page_link {
-    my $self = shift;
-    my ($filename, $ext) = $self->_get('_output_filename', '_output_ext');
-
-    return "$filename.$ext" if $_[0] == 1;
-    return $filename . ($_[0] - 1) . ".$ext";
 }
 
 =back

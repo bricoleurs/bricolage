@@ -204,11 +204,11 @@ element. [David]
 =item *
 
 Added the methods C<prev_page_file()>, C<prev_page_uri()>,
-C<next_page_file()>, and C<next_page_uri()> to
-Bric::Util::Burner::Mason. These methods return the strings representing the
-file names or URIs of the previous and next pages of a stsory, relative to the
-page that is currently being burned and, in the case of the C<_uri()> methods,
-appropriate to the currently-burning Output Channel. Also updated the
+C<next_page_file()>, and C<next_page_uri()> to Bric::Util::Burner. These
+methods return the strings representing the file names or URIs of the previous
+and next pages of a stsory, relative to the page that is currently being
+burned and, in the case of the C<*_uri()> methods, appropriate to the
+currently-burning Output Channel. Also updated the
 L<Bric::Templates|Bric::Templates> and
 L<Bric::AdvTemplates|Bric::AdvTemplates> documents to reflect these
 additions. [David]
@@ -305,11 +305,12 @@ categories. [David]
 
 =item *
 
-Added the methods C<page_file()> and C<page_uri()> to
-Bric::Util::Burner::Mason. When passed a page number argument, these methods
-return the strings representing the file names or URIs of the given page in
-the curently-burning story and, in the case of the C<page_uri()> method,
-appropriate to the currently-burning Output Channel. [David]
+Added the methods C<page_file()> and C<page_uri()> to Bric::Util::Burner. When
+passed a page number argument, these methods return the strings representing
+the file names or URIs of the given page in the curently-burning story and, in
+the case of the C<page_uri()> method, appropriate to the currently-burning
+Output Channel. These methods are best used in burners that don't burn one
+page at a time, such as Burner::Template. [David]
 
 =item *
 
@@ -318,6 +319,12 @@ Ported to HTML::Mason versions 1.15 and higher. [Scott]
 =item *
 
 Added C<make uninstall> support to installation system. [Scott]
+
+=item *
+
+Added C<page_filepath()> method to Bric::Util::Burner. This method allows
+burner subclasses to get the name of a file to write to the file system
+without needing to figure out the file name themselves. [David]
 
 =back
 

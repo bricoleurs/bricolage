@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.29 $ )[-1];
+our $VERSION = (qw$Revision: 1.30 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-10 18:45:26 $
+$Date: 2002-12-12 15:54:12 $
 
 =head1 SYNOPSIS
 
@@ -95,11 +95,6 @@ BEGIN {
     Bric::register_fields({
                          #- Per burn/deploy values.
                          'job'            => Bric::FIELD_READ,
-                         'page'           => Bric::FIELD_RDWR,
-                         'story'          => Bric::FIELD_READ,
-                         'oc'             => Bric::FIELD_READ,
-                         'cat'            => Bric::FIELD_READ,
-                         'uri_path'       => Bric::FIELD_READ,
                          'more_pages'     => Bric::FIELD_READ,
 
                          # Private Fields
@@ -143,7 +138,6 @@ sub new {
     my $init = { %$burner };
 
     # setup defaults (in addition to those provided by $burner)
-    $init->{page}     ||= 0;
     $init->{_res}     ||= [];
 
     # create the object using Bric's constructor and return it
@@ -237,8 +231,8 @@ sub burn_one {
     $interp->set_global('$burner',  $self);
 
     # save some of the values for this burn.
-    $self->_set([qw(story   oc   cat   _buf     _interp  _comp_root)],
-                [   $ba,   $oc, $cat, \$outbuf, $interp, $comp_root]);
+    $self->_set([qw(_buf     _interp  _comp_root)],
+                [  \$outbuf, $interp, $comp_root]);
 
     # Give 'em the XML Writer object if they want it.
     if (INCLUDE_XML_WRITER) {
@@ -558,190 +552,6 @@ B<Notes:> NONE.
 
 =cut
 
-##############################################################################
-
-=item my $page_file = $b->page_file($number)
-
-  % my $page = $burner->page_file($number);
-  <a href="<% $page %>">Page Number $number</a>
-
-Returns the file name for a page in a story as the story is being burned. The
-page number must be greater than 0.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Page number not greater than zero.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> This method does not check to see if the page number passed in is
-actually a page in the story. Caveat templator.
-
-=cut
-
-sub page_file {
-    my ($self, $number) = @_;
-    return unless defined $number;
-    die $gen->new({ msg => "Page number '$number' not greater than zero" })
-      unless $number > 0;
-    my ($page, $story, $oc) = $self->_get(qw(page story oc));
-    $number = $number == 1 ? '' : $number - 1;
-    my $fn = $oc->get_filename($story);
-    my $ext = $oc->get_file_ext;
-    return "$fn$number.$ext";
-}
-
-##############################################################################
-
-=item my $page_file = $b->page_uri($number)
-
-  % my $page = $burner->page_uri($number);
-
-Returns the URI for a page in a story as the story is being burned. The
-page number must be greater than 0.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Page number not greater than zero.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> This method does not check to see if the page number passed in is
-actually a page in the story. Caveat templator.
-
-=cut
-
-sub page_uri {
-    my $self = shift;
-    my $filename = $self->page_file(@_) or return;
-    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
-    # The URI minus the page name.
-    my $base_uri = $story->get_uri($cat, $oc);
-    # The complete URI
-    return $fs->cat_uri($base_uri, $filename);
-}
-
-##############################################################################
-
-=item my $prev_page_file = $b->prev_page_file
-
-  % if (my $prev = $burner->prev_page_file) {
-      <a href="<% $prev %>">Previous Page</a>
-  % }
-
-Returns the file name for the previous file in a story as the story is being
-burned. If there is no previous file, C<prev_page_file()> returns undef.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub prev_page_file {
-    my $self = shift;
-    my $page = $self->_get(qw(page)) or return;
-    return $self->page_file($page);
-}
-
-##############################################################################
-
-=item my $prev_page_uri = $b->prev_page_uri
-
-  % if (my $prev = $burner->prev_page_uri) {
-      <a href="<% $prev %>">Previous Page</a>
-  % }
-
-Returns the URI for the previous file in a story as the story is being
-burned. If there is no previous URI, C<prev_page_uri()> returns undef.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub prev_page_uri {
-    my $self = shift;
-    my $filename = $self->prev_page_file or return;
-    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
-    # The URI minus the page name.
-    my $base_uri = $story->get_uri($cat, $oc);
-    # The complete URI
-    return $fs->cat_uri($base_uri, $filename);
-}
-
-##############################################################################
-
-=item my $next_page_file = $b->next_page_file
-
-  % if (my $next = $burner->next_page_file) {
-      <a href="<% $next %>">Next Page</a>
-  % }
-
-Returns the file name for the next file in a story as the story is being
-burned. If there is no next file, C<next_page_file()> returns undef.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub next_page_file {
-    my $self = shift;
-    my ($page, $isnext) = $self->_get(qw(page more_pages));
-    return unless $isnext;
-    return $self->page_file($page + 2);
-}
-
-##############################################################################
-
-=item my $next_page_uri = $b->next_page_uri
-
-  % if (my $next = $burner->next_page_uri) {
-      <a href="<% $next %>">Next Page</a>
-  % }
-
-Returns the URI for the next file in a story as the story is being
-burned. If there is no next URI, C<next_page_uri()> returns undef.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub next_page_uri {
-    my $self = shift;
-    my $filename = $self->next_page_file or return;
-    my ($story, $oc, $cat) = $self->_get(qw(story oc cat));
-    # The URI minus the page name.
-    my $base_uri = $story->get_uri($cat, $oc);
-    # The complete URI
-    return $fs->cat_uri($base_uri, $filename);
-}
-
 #------------------------------------------------------------------------------#
 
 =item $success = $b->chain_next()
@@ -770,11 +580,19 @@ sub chain_next {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->end_page();
+=item $success = $b->end_page;
 
 Writes out the current page and starts a new one.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to open file for writing.
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -784,27 +602,10 @@ B<Notes:> NONE.
 
 sub end_page {
     my $self = shift;
-    my $ba   = $self->get_story;
 
-    my $buf  = $self->_get('_buf');
-    my ($cat, $oc) = $self->_get('cat', 'oc');
-    my $fn         = $oc->get_filename($ba);
-    my $ext        = $oc->get_file_ext;
-    my $page       = $self->get_page || '';
-    my $filename   = "$fn$page.$ext";
-    my $base       = $fs->cat_dir($self->get_out_dir, 'oc_' . $oc->get_id);
-
-    # The URI minus the page name.
-    my $base_uri = $ba->get_uri($cat, $oc);
-    # The complete URI
-    my $uri      = $fs->cat_uri($base_uri, $filename);
-    # The complete path on the file system sans the filename.
-    my $path     = $fs->cat_dir($base, $base_uri);
-    # The complete path on the file system including the filename.
-    my $file     = $fs->cat_dir($path, $filename);
-
-    # Create the necessary directories
-    $fs->mk_path($path);
+    my ($page, $buf) = $self->_get(qw(page _buf));
+    my $file = $self->page_filepath(++$page);
+    my $uri  = $self->page_uri($page);
 
     # Flush the output buffer before writing the file.
     {
@@ -820,12 +621,12 @@ sub end_page {
     close(OUT);
 
     # Add a resource to the job object.
-    $self->_add_resource($file, $uri, $ext);
+    $self->_add_resource($file, $uri);
 
     # Clear the output buffer.
     $$buf = '';
     # Increment the page number
-    $self->set_page(++$page);
+    $self->_set(['page'], [$page]);
 }
 
 #==============================================================================#
@@ -868,18 +669,18 @@ B<Notes:> NONE.
 
 sub _add_resource {
     my $self = shift;
-    my ($file, $uri, $ext) = @_;
-    my $ba  = $self->get_story;
+    my ($file, $uri) = @_;
+    my ($story, $ext) = $self->_get(qw(story ext));
 
     # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file}) ||
+    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
       Bric::Dist::Resource->new({ path => $file,
-                                uri  => $uri});
+                                  uri  => $uri });
 
     # Set the media type.
     $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
     # Add our story ID.
-    $res->add_story_ids($ba->get_id);
+    $res->add_story_ids($story->get_id);
     $res->save;
     my $ress = $self->_get('_res');
     push @$ress, $res;
