@@ -27,7 +27,9 @@ greater speed.. [JoE<atilde>o Pedro]
 
 =item *
 
-PostgreSQL "NOTICE" messages are now suppressed during installation. [David]
+PostgreSQL "NOTICE" messages are now suppressed during installation. Instead,
+a series of dots will be displayed to indicate progress loading the
+database. [David]
 
 =item *
 

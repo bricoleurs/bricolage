@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-08-30 22:43:37 $
+$Date: 2002-08-30 23:31:30 $
 
 =head1 DESCRIPTION
 
@@ -152,6 +152,8 @@ sub load_db {
     # run through sql executing queries as they are found
     my $sql = "";
     my ($result, $in_comment);
+    my $i;        # For status dot calculations.
+    local $| = 1; # Don't buffer status dots.
     while (<SQL>) {
         next if /^--/ or /^\s*$/; # skip simple comments and blank lines
 
@@ -176,6 +178,8 @@ sub load_db {
                       $sql, "\n\nError was:\n\n", $dbh->errstr, "\n")
               unless ($dbh->do($sql . $_));
             $sql = '';
+            # Output a dot every twenty statements.
+            print '.' unless ++$i % 20;
             next;
         }
 
@@ -183,8 +187,7 @@ sub load_db {
         $sql .= $_;
     }
     close(SQL);
-    print "\n\n***** NOTICE lines above do not indicate errors *****\n\n";
-    print "Done.\n";
+    print "\nDone.\n";
 
     # assign all permissions to SYS_USER
     print "Granting privilages...\n";
