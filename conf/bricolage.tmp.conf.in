@@ -30,8 +30,8 @@
 # TIMEOUT                 30
 # USE_CANONICAL_NAME      On
 
-APACHE_SERVER_ROOT      = /etc/apache-perl # Not portable
-PID_FILE                = /var/run/apache-perl.pid # Not portable
+APACHE_SERVER_ROOT      = @SERVER_ROOT@ 
+PID_FILE                = @PID_FILE@
 SERVER_NAME             = @HOSTNAME@
 SERVER_ADMIN            = @ADMINISTRATOR@@@HOSTNAME@
 DOCUMENT_ROOT           = @compdir@
@@ -43,12 +43,12 @@ MAX_CLIENTS             = 150
 KEEP_ALIVE              = Off
 MAX_KEEP_ALIVE_REQUESTS = 100
 KEEP_ALIVE_TIMEOUT      = 15
-ERROR_LOG               = /var/log/apache-perl/error.log # Not portable
+ERROR_LOG               = @ERROR_LOG@
 LOG_LEVEL               = info
 LOG_FORMAT              = '%h %l %u %t "%r" %>s %b "%{Referer}i "%{User-Agent}i" "%{Cookie}i" "%v:%p"' combined
-CUSTOM_LOG              = /var/log/apache-perl/access.log combined
+CUSTOM_LOG              = @ACCESS_LOG@ combined
 # SCORE_BOARD_FILE
-TYPES_CONFIG            = /etc/apache-perl/mime.types
+TYPES_CONFIG            = @SERVER_ROOT@/conf/mime.types
 HOST_NAME_LOOKUPS       = Off
 SERVER_SIGNATURE        = Email
 TIMEOUT                 = 30
@@ -60,16 +60,16 @@ SSL_ENABLE              = 1
 # configurations. Read the mod_ssl documentation for more information on these
 # configurations. Depending on your environment, changing some of these may help
 # improve performance. The defaults are as follows:
-SSL_SESSION_CACHE       = dbm:/var/log/apache-ssl/ssl_scache # Not portable
-SSL_SESSION_CACHE_TIMEOUT = 300
-SSL_MUTEX               = file:/var/log/apache-ssl/ssl_mutex # Not portable
-SSL_LOG                 = /var/log/apache-ssl/ssl_engine_log # Not portable
-SSL_LOG_LEVEL           = info
-SSL_CERTIFICATE_FILE    = /etc/apache-ssl/ssl.crt/server.crt
-SSL_CERTIFICATE_KEY_FILE = /etc/apache-ssl/ssl.key/server.key
-SSL_CIPHER_SUITE        = ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-SSL_PASS_PHRASE_DIALOG  = builtin
-SSL_PORT				= 443
+@SSL_COMMENT@SSL_SESSION_CACHE       = dbm:@LOGDIR@/ssl_scache # Not portable
+@SSL_COMMENT@SSL_SESSION_CACHE_TIMEOUT = 300
+@SSL_COMMENT@SSL_MUTEX               = file:@LOGDIR@/ssl_mutex # Not portable
+@SSL_COMMENT@SSL_LOG                 = @SSL_LOG@
+@SSL_COMMENT@SSL_LOG_LEVEL           = info
+@SSL_COMMENT@SSL_CERTIFICATE_FILE    = @SERVER_ROOT@/conf/ssl.crt/server.crt
+@SSL_COMMENT@SSL_CERTIFICATE_KEY_FILE = @SERVER_ROOT@/conf//ssl.key/server.key
+@SSL_COMMENT@SSL_CIPHER_SUITE        = ALL:!ADH:!EXP56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+@SSL_COMMENT@SSL_PASS_PHRASE_DIALOG  = builtin
+@SSL_COMMENT@SSL_PORT				= 443
 
 # Database settings. These are simply the name of the database in which all
 # Bricolage data will be stored, as well as the username and password the

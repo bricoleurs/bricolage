@@ -23,6 +23,11 @@ AC_CACHE_SAVE
 
 # Checks for libraries.
 CHECK_SSL
+SSL_COMMENT=
+if test "${HAVE_SSL}" != "yes" ;then
+	SSL_COMMENT='# '
+fi
+AC_SUBST(SSL_COMMENT)
 AC_CACHE_SAVE
 
 # Checks for CPAN modules
@@ -61,18 +66,24 @@ AC_CACHE_SAVE
 CHECK_FOR_PGPASS
 
 # Additional --with-switches
+# SYNTAX: AC_VAR_WITH(VARNAME,switchname,default)
 AC_VAR_WITH(compdir,compdir,$prefix/comp)
 AC_VAR_WITH(APACHE_USER,apache_user,nobody)
 AC_VAR_WITH(APACHE_GROUP,apache_group,nobody)
 AC_VAR_WITH(HOSTNAME,hostname,`hostname --fqdn || true`)
-
 AC_VAR_WITH(ADMINISTRATOR,administrator,root)
 AC_VAR_WITH(DB_NAME,db-name,wwwdata)
 AC_VAR_WITH(DBI_USER,dbi-user,nobody)
 AC_VAR_WITH(DBI_PASS,dbi-pass,c@st3l!@n)
-
 AC_VAR_WITH(POSTGRES_ROOT_USER,pgroot-user,postgres)
 AC_VAR_WITH(POSTGRES_SYSTEM_USER,pgsystem-user,postgres)
+# TODO: System defaults for these can be determined from $APACHE -V
+AC_VAR_WITH(SERVER_ROOT,server_root,/usr/local/apache)
+AC_VAR_WITH(LOGDIR,lod_dir,${SERVER_ROOT}/logs)
+AC_VAR_WITH(ERROR_LOG,error_log,${LOGDIR}/error.log)
+AC_VAR_WITH(ACCESS_LOG,access_log,${LOGDIR}/access.log)
+AC_VAR_WITH(SSL_LOG,ssl_log,${LOGDIR}/ssl_engine_log)
+AC_VAR_WITH(PID_FILE,pid_file,${LOGDIR}/httpd.pid)
 
 # predefined
 AC_SUBST(VERSION)
