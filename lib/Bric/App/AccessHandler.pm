@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.16.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.16.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:36 $
+$Date: 2003-04-08 08:33:54 $
 
 =head1 SYNOPSIS
 
@@ -289,13 +289,15 @@ sub handle_err {
     (my $fn = $r->filename) =~ s/$uri/${\ERROR_URI}/;
     $r->uri(ERROR_URI);
     $r->filename($fn);
-    my $msg = 'Error executing AccessHandler';
-    # Set some headers so that the error element can have some error
-    # messages to display.
-    $r->header_in(BRIC_ERR_MSG => $msg . '.');
-    $r->header_in(BRIC_ERR_PAY => $err);
+
+    $err = Bric::Util::Fault::Exception::AP->new(
+        error => 'Error executing AccessHandler',
+        payload => $err,
+    );
+    $r->pnotes('BRIC_EXCEPTION' => $err);
+
     # Send the error to the apache error log.
-    $r->log->error("$msg: $err");
+    $r->log->error($err->as_text());
     # Return OK so that Mason can handle displaying the error element.
     return OK;
 }

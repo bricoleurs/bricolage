@@ -10,7 +10,7 @@
 
 <p class="header"><% $lang->maketext('An error occurred while processing your request:')%></p>
 
-<p class="errorMsg"><% $msg %></p>
+<p class="errorMsg"><% $fault->error %></p>
 % if (TEMPLATE_QA_MODE) {
 <font face="Verdana, Helvetica, Arial">
 <p><b>An exception was thrown:</b></p>
@@ -111,23 +111,21 @@ $more_err => undef
 <%init>;
 # Clear out messages - they're likely irrelevant now.
 clear_msg();
-unless (isa_bric_exception($fault)) {
-    my %h = $r->headers_in;
-    my $payload = isa_mason_exception($fault) ? $fault->as_brief : $h{BRIC_ERR_PAY};
-    if (isa_bric_exception($payload)) {
-        $payload = $payload->error();
-    }
-    $fault = Bric::Util::Fault::Exception::AP->new(
-        error => $h{BRIC_ERR_MSG} || 'No error message found',
-        payload => $payload );
-}
 
-my $msg = $fault->error || '';
-# Get the payload if this is a Mason-level or burn system error.
-my $pay = $fault->payload if $msg eq 'Error processing Mason elements.'
-  ||  $msg =~ /^Unable to find template/
-  ||  TEMPLATE_QA_MODE ;
-my $is_burner_error = ($msg =~ /^Unable to find template/);
+# If $fault is undef, the exception object MUST BE in pnotes
+# (from AccessHandler or PreviewHandler)
+unless (defined $fault) {
+    $fault = $r->pnotes('BRIC_EXCEPTION');
+}
+warn '$fault not an exception object' unless isa_exception($fault);
+
+# From here on, $fault MUST BE an exception object
+
+# Get payload, stringify if payload is an exception object
+my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
+$pay = "$pay";
+
+my $is_burner_error = ($fault->error =~ /^Unable to find template/);
 
 my %req_args = HTML::Mason::Request->instance->request_args;
 </%init>

@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-07 16:34:39 $
+$Date: 2003-04-08 08:33:55 $
 
 =head1 SYNOPSIS
 
@@ -201,13 +201,15 @@ sub handle_err {
     # Set the URI and filename for the error element.
     $r->uri(ERROR_URI);
     $r->filename(ERROR_FILE);
-    my $msg = 'Error executing PreviewHandler';
-    # Set some headers so that the error element can have some error
-    # messages to display.
-    $r->header_in(BRIC_ERR_MSG => $msg . '.');
-    $r->header_in(BRIC_ERR_PAY => $err);
+
+    $err = Bric::Util::Fault::Exception::AP->new(
+        error => 'Error executing PreviewHandler',
+        payload => $err,
+    );
+    $r->pnotes('BRIC_EXCEPTION' => $err);
+
     # Send the error to the apache error log.
-    $r->log->error("$msg: $err");
+    $r->log->error($err->as_text());
     # Return OK so that Mason can handle displaying the error element.
     return OK;
 }
