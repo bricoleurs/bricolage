@@ -1676,6 +1676,7 @@ $make_obj = sub {
     my ($pkg, $init) = @_;
     if ($init->[4]) {
         $pkg = $acts->{$init->[4]} ||= "Bric::Dist::Action::$init->[4]";
+        # XXX Is this eval safe? I think it is.
         eval "require $acts->{$init->[4]}";
         throw_gen(error => "Unable to load $acts->{$init->[4]} action subclass.",
                   payload => $@)

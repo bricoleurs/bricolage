@@ -144,6 +144,11 @@ objects are:
 
 [David]
 
+=item *
+
+Alert rules are now evaluated within a safe compartment (using Safe.pm) to
+prevent security exploits. [David]
+
 =back
 
 =head2 Bug Fixes

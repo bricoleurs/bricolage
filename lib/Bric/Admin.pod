@@ -171,6 +171,8 @@ START MODULE LIST
 
 =item MasonX::Interp::WithCallbacks 1.10
 
+=item Safe
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)

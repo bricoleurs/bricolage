@@ -699,7 +699,6 @@ sub get_object {
     my ( $obj, $id ) = $self->_get(qw(obj obj_id));
     my $package = $self->get_object_package();
     unless ($obj) {
-#        eval " require $package ";
         $obj = $package->lookup( { id => $id } );
         $self->_set( ['obj'], [$obj] );
 
