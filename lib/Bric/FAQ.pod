@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-01-17 23:25:54 $
+$Date: 2003-02-19 17:28:41 $
 
 =head1 DESCRIPTION
 
@@ -70,6 +70,36 @@ DFA - L<http:E<sol>E<sol>dfafunds.comE<sol>>
 Macworld - L<http:E<sol>E<sol>www.macworld.comE<sol>>
 
 =back
+
+=back
+
+=head2 Installation
+
+=over 4
+
+=item Why does mod_perl have to be statically compiled into Apache? I've been
+using mod_perl as a DSO and have had no problems with it at all.
+
+You are very fortunate, because mod_perl 1.x is just not too stable as a
+DSO. Weird things tend to happen. That's not to say that some haven't set it
+up as a DSO and just had it work, but we've seen all sorts of unexplainable
+problems just evaporate when users have switched from a DSO to a static
+mod_perl. And it's not Bricolage so much as Mason where the problems are
+noticed. The Mason site (L<http://www.masonhq.com/>) has a couple of FAQs that
+mention the issue:
+
+=over 4
+
+=item L<http://www.masonhq.com/docs/faq/#why_am_i_getting_segmentation_fa>
+
+=item L<http://www.masonhq.com/docs/faq/#does_mason_leak_memory>
+
+=back
+
+You can also search the Mason Users list archives
+(L<http://marc.theaimsgroup.com/?l=mason>) and the mod_perl Users list
+archives (L<http://marc.theaimsgroup.com/?l=apache-modperl>) for some
+discussions of this issue.
 
 =back
 
