@@ -6,11 +6,11 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2003-10-10 19:21:16 $
+$Date: 2003-10-15 08:39:15 $
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,7 @@ $PG{sys_user}  = 'bric';
 $PG{sys_pass}  = 'NONE';
 $PG{db_name}   = 'bric';
 $PG{host_name} = 'localhost';
-$PG{host_port} = '';
+$PG{host_port} = '5432';
 
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
