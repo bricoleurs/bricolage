@@ -8,6 +8,7 @@ use strict;
 use Bric::App::Authz qw(chk_authz EDIT);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref :msg);
+use Bric::App::Session qw(:user);
 
 my $disp_name = 'User Preference';
 
@@ -18,10 +19,15 @@ sub save : Callback {
     my $param = $self->params;
 
     my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
-    unless (chk_authz($user, EDIT, 1)) {
+    unless (chk_authz($user, EDIT, 1) || $param->{user_id} == get_user_id) {
         add_msg("Changes not saved: permission denied.");
         return;
     }
+
+    warn "
+          pref_id => $param->{pref_id},
+          user_id => $param->{user_id}
+";
 
     my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $param->{pref_id},
                                                    user_id => $param->{user_id} });
@@ -48,7 +54,7 @@ sub delete : Callback {
     my $param = $self->params;
 
     my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
-    unless (chk_authz($user, EDIT, 1)) {
+    unless (chk_authz($user, EDIT, 1) || $param->{user_id} == get_user_id) {
         add_msg("Changes not saved: permission denied.");
         return;
     }

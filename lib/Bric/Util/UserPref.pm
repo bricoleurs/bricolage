@@ -81,7 +81,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($get_em, $get_opts, $pref);
+my ($get_em, $pref);
 
 ################################################################################
 # Constants
@@ -95,10 +95,11 @@ use constant DEBUG => 0;
 
 ################################################################################
 # Private Class Fields
-my $SEL_COLS = 'up.id, p.id, p.name, p.description, p.def, up.value, p.manual, ' .
-  'p.opt_type, o.description, p.can_be_overridden, up.usr__id';
-my @SEL_PROPS = qw(id pref_id name description default value manual opt_type val_name
-                   can_be_overridden user_id);
+my $SEL_COLS = 'up.id, p.id, p.name, p.description, p.def, up.value, p.manual, '
+  . 'p.opt_type, CASE WHEN o.description IS NULL THEN up.value ELSE '
+  . 'o.description END, p.can_be_overridden, up.usr__id';
+my @SEL_PROPS = qw(id pref_id name description default value manual opt_type
+                    val_name can_be_overridden user_id);
 
 my @ORD = @SEL_PROPS[1..$#SEL_PROPS-1];
 my @upcols  = qw(id pref__id usr__id value);
@@ -186,8 +187,8 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> If $id is found, populates the new Bric::Util::Pref object with
-data from the database before returning it.
+B<Side Effects:> If $id is found, populates the new Bric::Util::Pref object
+with data from the database before returning it.
 
 B<Notes:> NONE.
 
@@ -210,8 +211,8 @@ sub lookup {
 
 =item my (@prefs || $user_prefs_aref) = Bric::Util::Pref->list($params)
 
-Returns a list or anonymous array of Bric::Util::Pref objects based on the search
-parameters passed via an anonymous hash. The supported lookup keys are:
+Returns a list or anonymous array of Bric::Util::Pref objects based on the
+search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
@@ -585,9 +586,9 @@ No AUTOLOAD method.
 B<Side Effects:> NONE.
 
 
-B<Notes:> If the Bric::Util::UserPref object has been instantiated via the new()
-constructor and has not yet been C<save>d, the object will not yet have an ID,
-so this method call will return undef.
+B<Notes:> If the Bric::Util::UserPref object has been instantiated via the
+C<new()> constructor and has not yet been C<save>d, the object will not yet have
+an ID, so this method call will return undef.
 
 =item my $pref_id = $user_pref->get_pref_id
 
@@ -822,9 +823,9 @@ B<Notes:> NONE.
 
 =item my $val_name = $user_pref->get_val_name
 
-Returns preference value's descriptive name. Note that if you've set the value,
-this method will return an incorrect value unless and until you instantiate the
-object again using lookup() or list().
+Returns preference value's descriptive name. Note that if you've set the
+value, this method will return an incorrect value unless and until you
+instantiate the object again using C<lookup()> or C<list()>.
 
 B<Throws:>
 
@@ -902,124 +903,9 @@ B<Notes:> NONE.
 
 =cut
 
-=item my (@opts || $opts_aref) = $user_pref->get_opts
-
-Returns a list or anonymous array of options available for filling in the value
-of this preference.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to prepare SQL statement.
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to execute SQL statement.
-
-=item *
-
-Unable to bind to columns to statement handle.
-
-=item *
-
-Unable to fetch row from statement handle.
-
-=item *
-
-Incorrect number of args to Bric::_set().
-
-=item *
-
-Bric::set() - Problems setting fields.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_opts { wantarray ? sort keys %{ &$get_opts($_[0]) }
-                 : [ sort keys %{ &$get_opts($_[0]) } ];
-}
-
 ################################################################################
 
-=item my $opts_href = $user_pref->get_opts_href
-
-Returns a hashref of options available for filling in the value of this
-preference. The hash keys are the options, and the values are their
-descriptions.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bric::_get() - Problems retrieving fields.
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to prepare SQL statement.
-
-=item *
-
-Unable to connect to database.
-
-=item *
-
-Unable to execute SQL statement.
-
-=item *
-
-Unable to bind to columns to statement handle.
-
-=item *
-
-Unable to fetch row from statement handle.
-
-=item *
-
-Incorrect number of args to Bric::_set().
-
-=item *
-
-Bric::set() - Problems setting fields.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_opts_href { &$get_opts($_[0]) }
-
-################################################################################
-
-=item $pref = $user_pref->pref()
+=item $pref = $user_pref->get_pref()
 
 Loads the Bric::Util::Pref object for the given user preference object.
 
@@ -1187,9 +1073,9 @@ NONE.
 
 =item my $user_pref_ids_aref = &$get_em( $pkg, $params, 1 )
 
-Function used by lookup() and list() to return a list of Bric::Util::Pref objects
-or, if called with an optional third argument, returns a list of Bric::Util::Pref
-object IDs (used by list_ids()).
+Function used by C<lookup()> and C<list()> to return a list of
+Bric::Util::Pref objects or, if called with an optional third argument,
+returns a list of Bric::Util::Pref object IDs (used by C<list_ids()>).
 
 B<Throws:>
 
@@ -1233,9 +1119,11 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $href) = @_;
-    my $tables = 'pref p, usr_pref up, pref_opt o, member m, pref_member c';
-    my $wheres = 'p.id = o.pref__id AND up.value = o.value AND p.id = up.pref__id ' .
-      'AND p.id = c.object_id AND m.id = c.member__id AND m.active = 1';
+    my $tables = 'pref p, usr_pref up LEFT JOIN pref_opt o '
+      . 'ON up.pref__id = o.pref__id AND up.value = o.value, '
+      . 'member m, pref_member c';
+    my $wheres = 'p.id = up.pref__id AND p.id = c.object_id '
+      . 'AND m.id = c.member__id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -1307,6 +1195,8 @@ __END__
 NONE.
 
 =head1 AUTHOR
+
+Dave Rolsky <autarch@urth.org>
 
 David Wheeler <david@wheeler.net>
 

@@ -180,6 +180,10 @@ Publishing a story or media document along with its related story or media
 documents from a publish desk again correctly publishes the original asset as
 well as the relateds. Reported by Paul Orrock. [David]
 
+=item *
+
+Users can now set their own values for overrideable preferences. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
