@@ -14,7 +14,7 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.6.2
+=head1 VERSION 1.6.2 (2003-07-28)
 
 =head2 New Features
 
@@ -283,7 +283,7 @@ the contents of F<conf/>. [David]
 
 =back
 
-=head1 VERSION 1.6.1
+=head1 VERSION 1.6.1 (2003-06-12)
 
 =head2 New Features
 
@@ -456,7 +456,7 @@ Made unlocalized JavaScript message localized. [David]
 
 =back
 
-=head1 VERSION 1.6.0
+=head1 VERSION 1.6.0 (2003-04-29)
 
 =head2 New Features
 
@@ -650,7 +650,7 @@ C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
 
 =back
 
-=head1 VERSION 1.5.2
+=head1 VERSION 1.5.2 (2003-04-02)
 
 =head2 New Features
 
@@ -749,7 +749,7 @@ workflows, and on desks. [Mark]
 
 =back
 
-=head1 VERSION 1.5.1
+=head1 VERSION 1.5.1 (2003-03-23)
 
 =head2 New Features
 
@@ -1119,7 +1119,7 @@ so that users can administer media types. Previously, only members of the
 
 =back
 
-=head1 VERSION 1.5.0
+=head1 VERSION 1.5.0 (2003-01-09)
 
 =head2 New Features
 
@@ -1441,7 +1441,7 @@ collections, such as desks, should be more responsive. [David]
 
 =back
 
-=head1 VERSION 1.4.6
+=head1 VERSION 1.4.6 (2003-01-06)
 
 =head2 Bug Fixes
 
@@ -1573,7 +1573,7 @@ C<< Bric::SOAP::Category->list_ids >>. [David]
 
 =back
 
-=head1 VERSION 1.4.5
+=head1 VERSION 1.4.5 (2002-11-13)
 
 =head2 Changes
 
@@ -1741,7 +1741,7 @@ Added missing C<list_ids()> method to Bric::Biz::Category. [David]
 
 =back
 
-
+=head1 VERSION 1.4.4 (2002-10-27)
 
 =head2 Bug Fixes
 
@@ -1879,7 +1879,7 @@ Geoff Richards for the spot. [David]
 
 =back
 
-=head1 VERSION 1.4.3
+=head1 VERSION 1.4.3 (2002-09-28)
 
 =head2 Bug Fixes
 
@@ -1902,7 +1902,7 @@ again. [David]
 
 =back
 
-=head1 VERSION 1.4.2
+=head1 VERSION 1.4.2 (2002-09-27)
 
 =head2 Bug Fixes
 
@@ -1938,7 +1938,7 @@ altogether. [David]
 
 =back
 
-=head1 VERSION 1.4.1
+=head1 VERSION 1.4.1 (2002-09-25)
 
 =head2 Bug Fixes
 
@@ -2130,7 +2130,7 @@ both. [David]
 
 =back
 
-=head1 VERSION 1.4.0
+=head1 VERSION 1.4.0 (2002-09-02)
 
 =head2 New Features
 
@@ -2255,7 +2255,7 @@ The F<bric_dist_mon> program works again. [David]
 
 =back
 
-=head1 VERSION 1.3.3
+=head1 VERSION 1.3.3 (2002-08-24)
 
 =head2 New Features
 
@@ -2609,7 +2609,7 @@ reverted. [David]
 
 =back
 
-=head1 VERSION 1.3.2
+=head1 VERSION 1.3.2 (2002-06-09)
 
 =head2 New Features
 
@@ -2847,7 +2847,7 @@ Fixed section numbering in the Contributor Type profile. [Scott Lanning]
 
 =back
 
-=head1 VERSION 1.3.1
+=head1 VERSION 1.3.1 (2002-04-03)
 
 =head2 New Features
 
@@ -2982,12 +2982,56 @@ Implemented the chk_syntax() method in Bric::Util::Burner::Template.
 
 =back
 
-=head1 Version 1.2.3
+=head1 VERSION 1.3.0 (2002-02-10)
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Bricolage SOAP interface partially implemented. Bric::SOAP::Story and
+Bric::SOAP::Media are fully implemented and tested. The command-line client -
+bric_soap - is complete. [Sam]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Fixed numerous cases where user_ids were being used as booleans. Since user_id
+0 is the Adminstrator's user_id this can cause problems. [Sam]
+
+=item *
+
+Fixed problem where deleting an asset would fail with the "cannot check-in non
+checked-out version" error. [Sam]
+
+=item *
+
+Fixed bug in HTML::Template burner when an element name had more than one
+space in it. [Sam]
+
+=item *
+
+Fixed bug in database that prevented element names over 32 characters from
+working properly. [Sam]
+
+=item *
+
+All fixes in the soon-to-be-released 1.2.1 version. See below for details.
+
+=back
+
+=head1 VERSION 1.2.3 (2002-03-17)
 
 Functionally equivalent to 1.2.2, but includes required files missing from the
 1.2.2 distribution.
 
-=head1 Version 1.2.2
+=head1 VERSION 1.2.2 (2002-03-15)
 
 =head2 New Features
 
@@ -3114,7 +3158,7 @@ The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
 
 =back
 
-=head1 VERSION 1.2.1
+=head1 VERSION 1.2.1 (2002-02-25)
 
 =head2 New Features
 
@@ -3299,7 +3343,7 @@ category. [Matt Vella]
 
 =back
 
-=head1 VERSION 1.2.0
+=head1 VERSION 1.2.0 (2002-01-10)
 
 =head2 New Features
 
@@ -3400,7 +3444,7 @@ choke if it couldn't figure out the MediaType itself. [David]
 
 =back
 
-=head1 VERSION 1.0.2
+=head1 VERSION 1.0.2 (2001-12-10)
 
 =head2 New Features
 
@@ -3543,7 +3587,7 @@ heads-up.
 
 =back
 
-=head1 VERSION 1.0.1
+=head1 VERSION 1.0.1 (2001-09-28)
 
 =over 4
 
