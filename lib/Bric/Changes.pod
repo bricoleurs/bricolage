@@ -257,13 +257,6 @@ the side navigation layer. [David]
 
 =item *
 
-The user object is no longer instantiated from the database every time a user
-sends a request to Bricolage. It appears that this bit of overhead has
-unfortunately been imposed on every request since Bricolage 1.0 due to a very
-stupid typo. [David]
-
-=item *
-
 Changes to site settings are now correctly reflected in the UI for all users
 as soon as they are made. [David]
 
@@ -318,13 +311,6 @@ to work properly. [Thorsten Biel]
 
 =item *
 
-The creation of the Bricolage PostgreSQL user and database during installtion
-no longer complains about usernames or database names with dashes and other
-non-alphanumeric characters in them. Thanks to Marshall Roch for the spot!
-[David]
-
-=item *
-
 Distribution jobs can be edited via the UI again. Thanks to Marshall Roch for
 the spot. [David]
 
@@ -340,21 +326,6 @@ URL if it is not alreaded appended. Reported by Marshall Roch. [David]
 
 =item *
 
-Fixed ancient bug revealed by the release of DBI 1.41. [David]
-
-=item *
-
-Photoshop-generated images no longer make Bricolage choke when they're
-uploaded to a Media profile that autopopulates fields. Reported by Paul
-Orrock. [David]
-
-=item *
-
-The C<lookup()> method of the story, media, and template classes will now
-correctly return inactive objects. [David]
-
-=item *
-
 If a desk is in a template workflow and a story or media workflow, and you
 attempt to publish a media or story document from that desk in the context of
 the template workflow, it will now properly publish the story or media
@@ -366,20 +337,14 @@ Fixed previewing with multiple OCs. [Serge Sozonoff]
 
 =item *
 
-Fixed a bug in `bric_soap story create/update` caused by refactoring in
+Fixed a bug in C<bric_soap story create/update> caused by refactoring in
 version 1.7.0. Found by David during a demo. [Scott]
 
 =item *
 
-Fixed typo of CHECK_FREQUENCY in Bric::Config that would've made it
-always use the default of 1, since version 1.43 (2002/05). [Scott]
-
-=item *
-
 An attempt to preview a story for which no template exists now gives a
-friendly error message again.  This was broken by the change in 1.7.2
-that made the Mason burner use document templates as true dhandlers.
-[Dave Rolsky]
+friendly error message again. This was broken by the change in 1.7.2 that made
+the Mason burner use document templates as true dhandlers. [Dave Rolsky]
 
 =back
 
@@ -5039,8 +5004,8 @@ well as the story keywords. Thanks to Darren Graves for the patch.
 
 =item *
 
-Removed quotation marks from DEF_MEDIA_TYPE setting in bricolage.conf. Thanks to
-Darren Graves for the spot. [David]
+Removed quotation marks from DEF_MEDIA_TYPE setting in F<bricolage.conf>.
+Thanks to Darren Graves for the spot. [David]
 
 =item *
 
