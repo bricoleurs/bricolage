@@ -28,15 +28,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-19 22:45:00 $
+$Date: 2002-08-12 18:13:40 $
 
 =head1 SYNOPSIS
 
@@ -718,6 +718,8 @@ sub _load_element {
 			    if DEBUG;
 		$element->del_data([ (map { $old_data{$_} } @deleted) ]);
 	    }
+
+            $_->save for (map { $old_data{$_} } keys %updated_data);
 	}
 
 	# activate or inactive?
