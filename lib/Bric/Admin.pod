@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2001-12-27 21:28:46 $
+$Date: 2001-12-28 18:29:11 $
 
 =head1 DESCRIPTION
 
@@ -1187,6 +1187,13 @@ even when you do, enabling Mason for local previews adds even more overhead to
 every request -- including requests outside of the preview directory. Defaults
 to "0" if not specified, and has no affect unless the PREVIEW_LOCAL directive
 has been activated (see above).
+
+=item *
+
+B<DEF_MEDIA_TYPE:> Designates the default media type for assets where Bricolage
+cannot ascertain the media type. The value of this directive must be present in
+the database -- see Bric::Util::MediaType for more information. Defaults to
+"text/html" if not specified.
 
 =back
 

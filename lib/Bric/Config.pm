@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 21:41:35 $
+$Date: 2001-12-28 18:29:11 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ use File::Spec::Functions qw(catdir);
 # Inheritance                          #
 #======================================#
 
-use base qw( Exporter );
+use base qw(Exporter);
 
 our @EXPORT_OK = qw(DBD_PACKAGE
 		    DBD_TYPE
@@ -102,6 +102,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    ENABLE_DIST
 		    DIST_ATTEMPTS
                     MEDIA_URI_ROOT
+                    DEF_MEDIA_TYPE
 		    MEDIA_FILE_ROOT
 		    SMTP_SERVER
 		    ALERT_FROM
@@ -128,23 +129,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_DEBUG
 		   );
 
-our %EXPORT_TAGS = (all => [qw(:dbi
-			       :mason
-			       :auth
-			       :conf
-			       :ssl
-			       :qa
-			       :admin
-			       :char
-			       :media
-			       :err
-			       :dist
-			       :ui
-			       :email
-			       :alert
-			       :burn
-                               :oc
-                               :search)],
+our %EXPORT_TAGS = (all => \@EXPORT_OK,
 		    dbi => [qw(DBD_PACKAGE
 			       DBD_TYPE
 			       DSN_STRING
@@ -180,6 +165,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 				DOCUMENT_ROOT
 				PREVIEW_MASON)],
 		    dist => [qw(ENABLE_DIST
+                                DEF_MEDIA_TYPE
 				DIST_ATTEMPTS
 				PREVIEW_LOCAL)],
 		    qa => [qw(QA_MODE)],
@@ -371,6 +357,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant DIST_ATTEMPTS => $config->{DIST_ATTEMPTS} || 3;
     use constant PREVIEW_LOCAL => $config->{PREVIEW_LOCAL} ? qw(data preview) : 0;
     use constant PREVIEW_MASON => $config->{PREVIEW_MASON};
+    use constant DEF_MEDIA_TYPE => $config->{DEF_MEDIA_TYPE} || 'text/html';
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
