@@ -254,6 +254,11 @@ didn't belong there in the first place. Reported by Ho Yin Au. [David]
 Simple search now works when it is selected when the "Default Search"
 preference is set to "Advanced". Reported by Marshall Roch. [David]
 
+=item *
+
+Multiple alert types set up to trigger alerts for the same event will now all
+properly execute. Thanks to Christian Hauser for the spot! [David]
+
 =back
 
 =cut
