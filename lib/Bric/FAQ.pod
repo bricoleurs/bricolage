@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2004-02-05 16:51:27 $
+$Date: 2004-02-05 16:55:31 $
 
 =head1 DESCRIPTION
 
@@ -414,6 +414,13 @@ SQL dump file and add these lines:
 This will add the constraint at the very end of the load, when both the "usr"
 table and the C<login_avail()> function have been created. Now you should be
 able to load the database and get back to work!
+
+=item Why do I get the error 'Can't locate object method "" via package "HTML::Mason::Lexer"'?
+
+This is a bug with Perl. It is caused by the presence of Unicode in a Mason
+template, and dates from a period when Perl's regular expressions had some
+difficulty with Unicode. It was fixed in Perl 5.8.1. Upgrade to the latest
+version of Perl and you should be good to go.
 
 =head3 I keep clicking the "Click here to start" link on the very first Bricolage page I see, but it keeps just opening up a new window with "Click here to start" again. What gives?
 
