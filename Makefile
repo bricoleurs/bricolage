@@ -102,7 +102,7 @@ dist_tar	:
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
-SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con' -o '*.plsql')
 
 inst/bricolage.sql : $(SQL_FILES)
 	find lib -name '*.sql' -exec grep -v '^--' '{}' ';' >  inst/bricolage.sql
