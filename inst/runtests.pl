@@ -6,11 +6,11 @@ runtests.pl - Runs Bricolage's Tests
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-09-19 00:01:06 $
+$Date: 2002-09-19 00:03:28 $
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,7 @@ if ($opts{V}) {
     # This varible tells Test::Harness to be verbose.
     $verbose = 1;
 } else {
-    # Tell Test::Harness to be verobose if the TEST_VERBOSE environment
+    # Tell Test::Harness to be verbose if the TEST_VERBOSE environment
     # variable is set.
     $verbose = 1 if $ENV{TEST_VERBOSE};
 }
