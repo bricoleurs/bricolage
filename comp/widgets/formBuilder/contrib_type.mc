@@ -71,8 +71,10 @@ if ($param->{delete}) { # Deactivate it.
 	    $no_save = 1;
 	} else {
 	    my $sqltype = $param->{fb_type} eq 'date' ? 'date'
-	      : $param->{fb_type} eq 'textarea' && $param->{fb_siz} > 1024
-		? 'blob' : 'short';
+	      : $param->{fb_type} eq 'textarea'
+	      && (!$param->{fb_maxlength} || $param->{fb_maxlength} > 1024)
+	      ? 'blob' : 'short';
+
 	    my $value = $sqltype eq 'date' ? undef : $param->{fb_value};
 
 	    # Set it for all members of this group.
@@ -139,11 +141,11 @@ Profile
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:38 $
+$Date: 2001-10-23 17:15:02 $
 
 =head1 SYNOPSIS
 
