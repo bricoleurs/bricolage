@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-30 03:51:28 $
+$Date: 2003-10-30 19:06:06 $
 
 =head1 SYNOPSIS
 
@@ -2402,8 +2402,8 @@ sub save {
                    site__id       = ?
         },undef, DEBUG);
         foreach my $site_id (keys %$primary_oc_site) {
-            execute($update, $primary_oc_site->{$site_id}, $self->get_id, $site_id);
-
+            my $oc_id = delete $primary_oc_site->{$site_id} or next;
+            execute($update, $oc_id, $id, $site_id);
         }
     }
 
@@ -2431,7 +2431,7 @@ sub save {
 
 =over 4
 
-=item _do_list 
+=item _do_list
 
 called from list and list ids this will query the db and return either
 ids or objects
