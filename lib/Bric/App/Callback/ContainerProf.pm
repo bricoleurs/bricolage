@@ -190,8 +190,12 @@ sub update : Callback(priority => 1) {
     return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
 
     $self->_update_parts($self->params);
-    my $tile = get_state_data($self->class_key, 'tile');
-    $tile->save();
+
+    # Don't save the element; that's handled by the callback for the button
+    # that was actually clicked (e.g., "Save")--or not (e.g., "Cancel"), as
+    # the case may be.
+#    my $tile = get_state_data($self->class_key, 'tile');
+#    $tile->save;
 }
 
 sub pick_related_media : Callback {
@@ -536,9 +540,9 @@ sub bulk_save_and_up : Callback {
     my ($self) = @_;     # @_ for &$handle_bulk_*
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-
+    return if $param->{_inconsistent_state_};
     $self->_handle_bulk_save;
+    return if $param->{_super_bulk_error_};
     $self->_handle_bulk_up;
 }
 
@@ -1092,16 +1096,21 @@ sub _split_super_bulk {
             # If this field is not repeatable and we already have one of these
             # fields, then complain to the user
             if (not $repeatable and $seen{$type}) {
-                add_msg('Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.', $type);
-                return;
+                $self->params->{_super_bulk_error_} = 1;
+                add_msg('Field "[_1]" appears more than once but it is not a '
+                        . 'repeatable element.  Please remove all but one.',
+                        $type);
+                next;
             }
 
             # Note that we've seen this element type
             $seen{$type} = 1;
 
             if (not exists $poss_names{$type}) {
+                $self->params->{_super_bulk_error_} = 1;
                 my $new_type = _closest([keys %poss_names], $type);
-                add_msg('Bad element name "[_1]". Did you mean "[_2]"?', $type, $new_type);
+                add_msg('Bad element name "[_1]". Did you mean "[_2]"?',
+                        $type, $new_type);
             }
 
             # If this is a container field, then reset everything
@@ -1178,7 +1187,9 @@ sub _drift_correction {
     }
     # If we didn't find the tile, abort, and restore the tile stack
     else {
-        add_msg("Warning! State inconsistent: Please use the buttons provided by the application rather than the 'Back'/'Forward' buttons");
+        add_msg("Warning! State inconsistent: Please use the buttons "
+                . "provided by the application rather than the 'Back'/"
+                . "'Forward' buttons");
 
         # Set this flag so that nothing gets changed on this request.
         $param->{'_inconsistent_state_'} = 1;

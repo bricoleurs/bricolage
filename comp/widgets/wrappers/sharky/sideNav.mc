@@ -71,7 +71,6 @@ $nav ||= get_state_data("nav");
 unless ($workflows) {
     # The cache hasn't been loaded yet. Load it.
     $workflows = [];
-
     foreach my $w (Bric::Biz::Workflow->list({site_id => $site_id})) {
         # account for desks
         my @desks = map { [ $_->get_id, $_->get_name,
@@ -99,16 +98,7 @@ unless ($workflows) {
 <head>
   <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
   <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
-  <script type="text/javascript">
-    function resizeframe() {
-      var ifrm = parent.document.getElementById("sideNav");
-      if (window.opera) {
-        ifrm.style.height = document.body.scrollHeight + "px";
-      } else {
-        ifrm.style.height = document.body.offsetHeight + "px";
-      }
-    }
-  </script>
+  <script type="text/javascript" src="/media/js/lib.js"></script>
 </head>
 <body id="navFrame" onload="resizeframe();">
 <div class="btn-workflow"><img src="<% $workflowGraphic %>" alt="Workflow" /></div>

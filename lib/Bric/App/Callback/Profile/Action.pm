@@ -1,5 +1,20 @@
 package Bric::App::Callback::Profile::Action;
 
+=head1 NAME
+
+Bric::App::Callback::Profile::Action - Action callback class.
+
+=head1 SYNOPSIS
+
+  use Bric::App::Callback::Profile::Action;
+
+=head1 DESCRIPTION
+
+This class contains the callbacks for the distribution action profile in the
+Bricolage UI.
+
+=cut
+
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'action';
@@ -80,6 +95,32 @@ sub delete : Callback {
     }
 }
 
-
-
 1;
+__END__
+
+=head1 AUTHOR
+
+Scott Lanning <lannings@who.int>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Bric::App::Callback::Profile|Bric::App::Callback::Profile>
+
+The Bricolage profile callback base class, from which
+Bric::App::Callback::Profile::Action inherits.
+
+=item L<Bric::App::Callback|Bric::App::Callback>
+
+The Bricolage base callback class, from which Bric::App::Callback::Profile
+inherits.
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
+L<Bric::License|Bric::License> for complete license terms and conditions.
+
+=cut

@@ -5,6 +5,7 @@ my $site_id = $wf->get_site_id;
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Properties",
+         id      => 'storyinfo',
          number  => 1);
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
@@ -20,6 +21,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 $m->out($ieSpacer);
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "slug",
+         id => 'slug',
          vals => $smeth
         );
 $m->out($ieSpacer);
@@ -29,6 +31,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           name       => 'story_prof|at_id',
           req => 1,
           field      => 'name',
+          default    => ['' , ''],
           constrain  => { top_level => 1,
                           media => 0,
                           site_id => $site_id,

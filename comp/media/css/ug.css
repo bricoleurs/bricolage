@@ -11,6 +11,10 @@
     direction: rtl;
 }
 
+#slug { direction: ltr; }
+
+.110n { direction: rtl; }
+
 .desk_item .head .title,
 .desk_item .head .titlealias, 
 .desk_item .head .titlesorted {

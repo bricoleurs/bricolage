@@ -82,13 +82,17 @@ if (@prefs) {
              object => 'pref',
              addition => undef,
              profile =>
-             sub { [($can_edit ? 'Edit' : 'View'), "/admin/profile/user_pref/" . $_[0]->get_id,
-                    'user_id=' . $id] },
-             select  => sub { my $up =
-                                  Bric::Util::UserPref->lookup
-                                      ({ user_id => $id,
-                                         pref_id => $_[0]->get_id });
-                              $up ? ['Reset', 'user_pref|delete_cb', $up->get_id] : undef },
+             sub {
+                 [($can_edit || $is_user ? 'Edit' : 'View'),
+                  "/admin/profile/user_pref/" . $_[0]->get_id,
+                  'user_id=' . $id]
+             },
+             select  => sub {
+                 my $up = Bric::Util::UserPref->lookup({
+                     user_id => $id,
+                     pref_id => $_[0]->get_id });
+                 $up ? ['Reset', 'user_pref|delete_cb', $up->get_id] : undef;
+             },
              title => 'User Preferences',
              number => 5,
              fields => [qw(name description val_name)],

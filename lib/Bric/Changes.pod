@@ -91,7 +91,497 @@ just giving an error message. [Scott]
 
 =back
 
-=head1 VERSION 1.8.1 ()
+=head1 VERSION 1.8.3 ()
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.2 (2004-11-13)
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added note to the context-sensitive help for the story, media, and template
+search pages to search on "/" to return all records, and to use SQL wildcards
+such as "%" to generalize the search. [David]
+
+=item *
+
+C<make upgrade> no longer copies the entire installed component root to a new
+directory as a way to get rid of old UI component files. We now require that
+any deleted component files get removed from an existing installation via an
+upgrade script, instead. See F<inst/upgrade/1.7.0/delete_old_components.pl>
+for an example. [David]
+
+=item *
+
+Bricolage now runs under a DSO C<mod_perl> as long as it uses a Perl compiled
+with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See
+L<http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used> for
+details. Thanks to Marshall Roch for finding that link. [David]
+
+=item *
+
+The New Story and New Media profiles by default no longer have a value
+selected for the Story Type or Media type (respectively), so as to prevent
+the inadvertent creation of documents of the wrong type. [David]
+
+=item *
+
+Alerts triggered to be sent to users who don't have the appropriate contact
+information will now be logged for those users so that they can see them and
+acknowledge them under "My Alerts". [David]
+
+=item *
+
+Added F<bric_media_dump> script to F<contrib/>. [David]
+
+=item *
+
+The category association interface used in the story profile when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is enabled now uses
+radio buttons instead of a link to select the primary category. Suggested by
+Scott Lanning. [David]
+
+=item *
+
+Search by site is now supported in the "Advanced Search" interface of "Find
+Stories", "Find Media", and "Find Templates" when there is more than one site
+and the "Filter by Site Context" preference is not turned on. [David]
+
+=item *
+
+Removed Bric::FAQ, since it is now maintained on the Website, instead. [David]
+
+=item *
+
+Updated Bric::Admin to suggest that PostgreSQL's C<initdb> be run with
+C<--no-locale> so as to avoid collation issues with non-Western characters.
+See this discussion for more information:
+L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
+
+=item *
+
+Added a warning to the story and media profiles for when related stories and
+media have been deactivated and a different story or media document should be
+related.
+
+=item *
+
+Added output to the Apache log consisting of the 20 most recent events on an
+asset that has lost track of what workflow and/or desk it is on. This is to
+provide debugging information that might help us to track down when an asset
+forgets its workflow and/or desk, so that we might eventually be able to
+eliminate the code that picks up on this and corrects it. [David]
+
+=item *
+
+The distribution monitor, F<bric_dist_mon>, now prints error information to
+C<STDERR> when there is an error, instead of just printing it to the system
+log. [David]
+
+=item *
+
+Existing jobs are now executed within their own transactions, as opposed to no
+transaction specification. This means that each job must succeed or fail
+independent of any other jobs. New jobs are executed before being inserted
+into the database so as to keep them atomic within their surrounding
+transaction (generally a UI request). All this means that transactionality is
+much more intelligent for jobs and will hopefully eliminate job table
+deadlocks. Reported by Mark Jaroski, Serge Sozonoff, Patrick Michael Kane, and
+others. [David]
+
+=item *
+
+The workflow, destination, and output channel profiles only display site
+information if the user has EDIT access to more than one site. The "Find
+Stories" and "Find Media" managers only display the site information for the
+listed documents if there is more than one site in Bricolage. Suggested by
+Scott Lanning. [David]
+
+=item *
+
+Updated documentation of parameters to the C<list()> method of
+Bric::Biz::Asset::Formatting (the template class). Also documented a few
+parameters to the story and media class C<list()> methods that were supported
+but previously undocumented. [David]
+
+=item *
+
+Variables are now properly decoded to UTF-8 when they are populated from the
+database. [David]
+
+=item *
+
+The strings used in translations are now all properly decoded to UTF-8.
+[David]
+
+=item *
+
+All templates now execute with UTF-8 character strings enabled. This means
+that any templates that convert content to other character sets might need to
+change the way they do so. For example, templates that had used
+C<< <%filter> >> blocks to convert content to another encoding using something
+like C<Encode::from_to($_, 'utf-8', $encoding)> must now use something like
+C<$_ = Encode::encode($encoding, $_)>, instead. Bric::Util::CharTrans should
+continue to do the right thing. [David]
+
+=item *
+
+Added C<encoding> attribute to Bric::Util::Burner so that, if templates are
+outputting something other than Perl C<utf8> decoded data, they can specify
+what they're outputting, and the file opened for output from the templates
+will be set to the proper mode. Applies to Perl 5.8.0 and later only. [David]
+
+=item *
+
+Added example use for C<< $burner->display_pages >> to Bric::AdvTemplates.
+[Cinly Ooi]
+
+=item *
+
+Added F<README.Mandrake>. [Cameron Miller]
+
+=item *
+
+Added C<SFTP_HOME> F<bricolage.conf> directive to specify the home directory
+and location of SSH keys when SSH is enabled. [Cameron Miller]
+
+=item *
+
+Users can no longer implicitly publish related stories and media via the UI
+that they don't have PUBLISH access to. [David]
+
+=item *
+
+Users can no longer publish related documents via the UI or SOAP that are in
+workflow but not on a publish desk. [David]
+
+=item *
+
+Added search by output channel to "Find Templates". [David]
+
+=item *
+
+Previewing a document with a related media document that's checked out no
+longer triggers a "Cannot auto-publish related media because it is checked
+out" message. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The burner C<next_page_file()> and C<next_page_uri()> methods now properly
+return a value if the C<burn_again> attribute has been set to a true value in
+the Mason burner. [David]
+
+=item *
+
+The C<list()> and C<list_ids()> methods of the story, media, and template
+classes no longer return C<undef> in a scalar context when there are no
+objects to be returned. They return an empty array reference, instead. [David]
+
+=item *
+
+The C<is_fixed()> method in the story and media classes now works properly.
+Reported by Marshall Roch. [David]
+
+=item *
+
+C<make clone> once again properly copies the F<lib/Makefile.PL> and
+F<bin/Makefile.PL> files from the source directory. [David]
+
+=item *
+
+Fixed the C<my_meths()> method of Bric::Biz::AssetType::Parts::Data to return
+metadata for the the C<key_name> attribute instead of an C<undef> for the
+removed C<name> attribute. [Scott]
+
+=item *
+
+Added missing language-specifying HTML attributes so as to properly localize
+story titles and the like. Reported by Joshua Edelstein. [David]
+
+=item *
+
+The list of output channels to add to an element in the element profile now
+contains the name of the site that each is associated with, since different
+sites can have output channels with the same names. [David]
+
+=item *
+
+You can no longer delete a category from a story when you have also marked it
+to become the primary category. Reported by Simon Wilcox. [David]
+
+=item *
+
+Editing notes from My Workspace now works properly. Thanks to Simon Wilcox for
+the spot! [David]
+
+=item *
+
+The "Advanced Search" interface once again works for searching for related
+story and media documents. Reported by Ben Bangert and many others. [David]
+
+=item *
+
+Renaming a site and its domain name now always properly renames the associated
+site permission user groups. Reported by Will Trillich. [David]
+
+=item *
+
+The "Alias Story" interface now works properly when the C<USE_THUMBNAILS>
+directive is enabled. Reported by Ben Bangert. [David]
+
+=item *
+
+Attempting to create a new source with the same name as an existing but
+deactivated source no longer throws an SQL error, but provides a nice error
+message. Reported by Marshall Roch. [David]
+
+=item *
+
+Bricolage no longer attempts to email alerts to an empty list of recipients.
+This will make your SMTP server happier. [David]
+
+=item *
+
+The version numbering issues of Bricolage modules have all been worked out
+after the confusion in 1.8.1. This incidentally allows the HTML::Template and
+Template Toolkit burners to be available again. Reported by Mike W. [David]
+
+=item *
+
+Misspelling the name of a key name tag or including a non-repeatable field
+more than once in Super Bulk Edit no longer causes all of the changes in that
+screen to be lost. [David]
+
+=item *
+
+When a user overrides the global "Date/Time Format" and "Time Zone"
+preferences, the affects of the overrides are now properly reflected in the
+UI. [David]
+
+=item *
+
+The "Default Asset Sort" preference now actually works. Reported by Simon
+Wilcox. [David]
+
+=item *
+
+Publishing a story or media document along with its related story or media
+documents from a publish desk again correctly publishes the original asset as
+well as the relateds. Reported by Paul Orrock. [David]
+
+=item *
+
+Users can now set their own values for overrideable preferences. [David]
+
+=item *
+
+The C<list()> and C<list_ids()> methods of the Story, Media, and Template
+(F<Formatting.pm>) classes no longer have the side effect of changing values
+in the hash references passed to them. This had caused problems for date/time
+parameters. Reported by Paul Orrock. [David]
+
+=item *
+
+Auto-generated slugs (enabled via the C<AUTOGENERATE_SLUG> F<bricolage.conf>
+directive) no longer convert uppercase characters to underscores. Thanks to
+Paul Orrock for the spot! [David]
+
+=item *
+
+Changes made to story content in the story profile are no longer preserved
+when clicking the "Cancel" button. Reported by Paul Orrock. [David]
+
+=item *
+
+The story and media profiles now clear out the session cache for the story or
+media element when leaving the story or media profile. This is to prevent
+perceived caching of changes that were canceled in a profile, noticed only
+when one canceled an edit of a story or media document and immediately edited
+the same document. [David]
+
+=item *
+
+Clicking the "Add More" button to add more keywords to a new category no
+longer causes an error. [David]
+
+=item *
+
+Adding a new category to a group and asking it to cascade that group
+membership into subcategories no longer causes an error. Thanks to Adam
+Rinehart for the spot! [David]
+
+=item *
+
+Adding an existing publish desk to a workflow no longer unsets its publish
+attribute. [David]
+
+=item *
+
+Deleted output channels no longer show up in the select list for story type
+and media type elements. [David]
+
+=item *
+
+Deleting a workflow from the workflow manager now properly updates the
+workflow cache so that the deleted workflow is removed from the left
+navigation without a reboot. [David]
+
+=item *
+
+Creating a story, checking it in, checking it out, and then canceling the
+checkout no longer incorrectly removes the story from workflow. [David]
+
+=item *
+
+The source of a story can now be changed. [David]
+
+=item *
+
+Status messages sent to the browser during previews are now hidden if an error
+is triggered. [Marshall]
+
+=item *
+
+Publishing a document with deactivated related documents no longer causes
+those deactivated documents to be published, too. Reported by Paul Orrock.
+[David]
+
+=item *
+
+The Bricolage 404, 403, and 500 error pages now send the appropriate HTTP
+header to the browser. Thanks to Marshall Roch for the spot! [David]
+
+=item *
+
+The Output Channel URI Prefix and URI Suffix fields are once again allowed to
+include a slash (F</>). Reported by Kevin Elliott. [David]
+
+=item *
+
+An attempt to create a new template with the proper extension as part of the
+name (e.g., F<foo.mc> for a Mason template) now keeps the extension instead of
+changing the dot to an underscore and adding the extension (e.g., it stays
+F<foo.mc> instead of becoming F<foo_mc.mc>). This is especially useful when
+creating utility templates and for users of C<bric_dev_sync>. Thanks to Paul
+Orrock for the spot! [David]
+
+=item *
+
+When Bricolage notices that a document or template is not in workflow or on a
+desk when it should be, it is now more intelligent in trying to select the
+correct workflow and/or desk to put it on, based on current workflow context
+and user permissions. Reported by Hal Creech. [David]
+
+=item *
+
+Content submitted to Bricolage in the UTF-8 character set is now always has
+the C<utf8> flag set on the Perl strings that store it. This allows fields
+that have a maximum length to be truncated to that length in characters
+instead of bytes. Thanks to Kang-min Liu for the spot! [David]
+
+=item *
+
+C<< Bric::Biz::OutputChannel->list_ids >> no longer returns duplicate
+IDs. This incidentally allows output channels that happen to be in groups to
+be edited, eliminating the 'name "Web" is already used by another Output
+Channel' error. Thanks to John Greene for the spot! [David]
+
+=item *
+
+The media type of media documents now defaults to "none" instead of inserting
+a C<NULL> into the database. The column has also be marked C<NOT NULL> in
+order to ensure that this remains the pattern. [David]
+
+=item *
+
+Changed the "name" and "error_message" columns in the "job" table in the
+database from C<VARCHAR> to <TEXT>. This is so that we don't have to truncate
+them before inserting them. [David]
+
+=item *
+
+Elements with autopopulated fields (e.g., for image documents) can now be
+created via the SOAP interface. Reported by Todd Tyree. [David]
+
+=item *
+
+Fixed a number of the parameters to the C<list()> method of the Story, Media,
+and Template classes to properly handle an argument using the C<ANY>
+operator. These include the C<keyword> and C<category_uri> parameters. Passing
+an C<ANY> argument to these parameters before this release could cause a
+well-populated database to lock up with an impossible query for hours at a
+time. [David]
+
+=item *
+
+Restored foreign keys and constraints missing on the "job" table and related
+tables since version 1.8.0. [David]
+
+=item *
+
+The error message for failed distribution jobs is now properly displayed in
+the UI. [Mark]
+
+=item *
+
+Fixed bug with the execution of jobs in F<bric_queued>. [Mark]
+
+=item *
+
+Attempting to create a new desk with the same name as a deactivated desk
+no longer returns an SQL error, but a more informative error.
+
+=item *
+
+Template sandboxes now work for the Template Toolkit burner. [David]
+
+=item *
+
+The output channel and element profiles no longer display deactivated output
+channels in their output channel select lists (for output channel includes in
+the output channel profile and for primary output channels in the element
+profile). [David]
+
+=item *
+
+The side navigation layer now works correctly with Internet Explorer 5.5 for
+Windows. [Marshall]
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.1 (2004-07-08)
 
 =head2 Improvements
 
@@ -129,7 +619,7 @@ The installer is now a bit smarter in how it handles loading the C<log_config>
 
 Added ID attributes to story, media, and element profiles and "fieldcontent"
 class to content field values in the "View" screens so that they can be
-used as CSS selectorts. [David]
+used as CSS selectors. [David]
 
 =item *
 
@@ -139,7 +629,7 @@ right-to-left languages or for languages that require special fonts. [David]
 =item *
 
 The "New Alias" search interface now displays thumbnails when searching for
-media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> diretive
+media documents to alias and the C<USE_THUMBNAILS> F<bricolage.conf> directive
 is enabled. Reported by Serge Sozonoff. [David]
 
 =item *
@@ -159,9 +649,9 @@ Bricolage UI. Suggested by Neal Sofge. [David]
 
 =item *
 
-The SOAP interface for importing and exporting elements now properlly has
+The SOAP interface for importing and exporting elements now properly has
 "key_name" XML elements instead of "name" XML elements. The changes are
-backwards compatable with XML exported from Bricolage 1.8.0 servers, however.
+backwards compatible with XML exported from Bricolage 1.8.0 servers, however.
 Reported by Tony Cowderoy. [David]
 
 =item *
@@ -198,7 +688,7 @@ Keyword groups now properly display their members. [David]
 =item *
 
 Added ability to create and manage groups of objects for several different
-types of objects. Also added the ability manage group membship within the
+types of objects. Also added the ability manage group membership within the
 administrative profiles for those objects. This change makes it possible to
 give users permission to administer subsets of objects. The new groupable
 objects are:
@@ -241,7 +731,7 @@ documents to be published. [David]
 
 =item *
 
-Bulk Publish now ensures that users have at least READ access to catgories
+Bulk Publish now ensures that users have at least READ access to categories
 they wish to publish from. [Scott]
 
 =item *
@@ -259,12 +749,12 @@ problems. [David]
 =item *
 
 Changes made to user or contributor contacts without changing any other part
-of the user or contributor oject are now properly saved. [David]
+of the user or contributor object are now properly saved. [David]
 
 =item *
 
 When cloning a story, the list of output channels to select from is now
-limited to the site the current workflow is in. Thanks to Serge Sonzonoff for
+limited to the site the current workflow is in. Thanks to Serge Sozonoff for
 the spot! [David]
 
 =item *
@@ -347,7 +837,7 @@ creates a new template. The type of template depends on the name of the
 template being uploaded, and for element templates, on whether there is an
 element with the appropriate key name. The user must have CREATE permission
 to All Templates or to the start desk in the first template workflow in the
-relevent site.
+relevant site.
 
 =item *
 

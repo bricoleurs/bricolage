@@ -12,9 +12,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -30,7 +28,9 @@ Translation to German using Lang::Maketext.
 
 =cut
 
-@ISA = qw(Bric::Util::Language);
+use strict;
+use utf8;
+use base qw(Bric::Util::Language);
 
 use constant key => 'de_de';
 
@@ -727,6 +727,15 @@ To Translate:
   'Microseconds' => 'Microseconds',
   'Not defined.' => 'Not defined.',
   "You do not have sufficient permission to create a media document for this site" => "You do not have sufficient permission to create a media document for this site"
+  'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
+  'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].'
+  'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.' => 'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.',
+  'You do not have permission to publish story "[_1]"' => 'You do not have permission to publish story "[_1]"',
+  'You do not have permission to publish media "[_1]"' => 'You do not have permission to publish media "[_1]"',
+  'You do not have permission to auto-publish story "[_1]"' => 'You do not have permission to auto-publish story "[_1]"',
+  'You do not have permission to auto-publish media "[_1]"' => 'You do not have permission to auto-publish media "[_1]"',
+
 
 =end comment
 

@@ -91,7 +91,7 @@ Specifies the HTTP timeout for SOAP requests in seconds. Defaults to 60.
 
 =head1 DESCRIPTION
 
-This program dumps all of the current, active templats in a single output
+This program dumps all of the current, active templates in a single output
 channel. The templates will be written to the current directory unless the
 C<--output-to> option is used. F<bric_template_dump> will recreate the
 category structure of for the templates in the specified output channel as
@@ -105,7 +105,7 @@ Based on code from F<bric_template_diff>, by Sam Tregar.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2004 Kineticode, Inc. All rightgs reserved.
+Copyright (c) 2004 Kineticode, Inc. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

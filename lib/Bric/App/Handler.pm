@@ -11,9 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -120,7 +118,8 @@ use MasonX::Interp::WithCallbacks;
     package HTML::Mason::Commands;
 
     # Load all modules to be used from elements.
-    use Apache::Util qw(escape_html escape_uri);
+    use Apache::Util qw(escape_uri);
+    use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;
@@ -154,7 +153,8 @@ use MasonX::Interp::WithCallbacks;
                            :pref
                            :aref
                            :browser
-                           :wf);
+                           :wf
+                           :sites);
 
     use Bric::Dist::Action;
     use Bric::Dist::Action::Mover;
@@ -232,6 +232,7 @@ my ($ah);
                  interp_class         => 'MasonX::Interp::WithCallbacks',
                  decline_dirs         => 0,
                  args_method          => MASON_ARGS_METHOD,
+                 preamble             => "use utf8;\n",
                );
 
     $ah = HTML::Mason::ApacheHandler->new(%args);
@@ -304,6 +305,7 @@ sub handler {
         # Set up the language and content type headers.
         $r->content_languages([$lang_name]);
         $r->content_type('text/html; charset=' . lc $char_set);
+        Bric::Util::Pref->use_user_prefs(1);
 
 	# Start the database transactions.
 	begin(1);
@@ -311,6 +313,8 @@ sub handler {
 	$status = $ah->handle_request($r);
 	# Commit the database transactions.
 	commit(1);
+
+        Bric::Util::Pref->use_user_prefs(0);
     };
 
     # Do error processing, if necessary.

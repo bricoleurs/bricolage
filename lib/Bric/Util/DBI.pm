@@ -13,9 +13,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
@@ -105,13 +103,14 @@ DBI->trace(DBI_TRACE);
 use constant DB_DATE_FORMAT => Bric::Config::ISO_8601_FORMAT;
 
 # Package constant variables. This one is for the DB connection attributes.
-my $ATTR =  { RaiseError => 1,
-	      PrintError => 0,
-	      AutoCommit => 0,
-	      ChopBlanks => 1,
+my $ATTR =  { RaiseError         => 1,
+	      PrintError         => 0,
+	      AutoCommit         => 0,
+	      ChopBlanks         => 1,
 	      ShowErrorStatement => 1,
-	      LongReadLen => 32768,
-	      LongTruncOk => 0
+	      LongReadLen        => 32768,
+	      LongTruncOk        => 0,
+              DBH_ATTR,
 };
 my $AutoCommit = 1;
 
@@ -804,7 +803,9 @@ B<Notes:> Bric::Util::Time must be loaded before this method is called.
 =cut
 
 sub clean_params {
-    my ($class, $param) = @_;
+    my $class = shift;
+    # Copy the parameters to that we don't create any undesirable side-effects.
+    my $param = defined $_[0] ? { %{+shift} } : {};
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
     # Map inverse alias inactive to active.
@@ -899,6 +900,11 @@ sub where_clause {
         next unless defined $v;
         my $sql = $pkg->PARAM_WHERE_MAP->{$k} or next;
         if (UNIVERSAL::isa($v, 'Bric::Util::DBI::ANY')) {
+            # The WHERE clause may be in two parts.
+            if (my $any = $pkg->PARAM_ANYWHERE_MAP->{$k}) {
+                $where .= " AND $any->[0]";
+                $sql = $any->[1];
+            }
             $where .= ' AND (' . join(' OR ', ($sql) x @$v) . ')';
             push @args, (@$v) x  $sql =~ s/\?//g;
         } else {

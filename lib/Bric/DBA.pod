@@ -409,9 +409,24 @@ data. In particular the C<job> table tends to grow quite large, with most of
 the data actually not being used for much of anything, so from time to time we
 do this:
 
-    DELETE FROM job
-    WHERE  executing = 0
-           AND comp_time IS NOT NULL
+  DELETE FROM member
+  WHERE  id IN (
+           SELECT member__id
+           FROM   job_member, job
+           WHERE  job.id = job_member.object_id
+                  AND executing = 0
+                  AND (
+                    comp_time IS NOT NULL
+                    OR failed = 1
+                  )
+           );
+
+  DELETE FROM job
+  WHERE  executing = 0
+         AND (
+           comp_time IS NOT NULL
+           OR failed = 1
+         );
 
 This can result in significant boosts in preview and publish performance,
 since, for each job-related query, PostgreSQL will no longer have to load a

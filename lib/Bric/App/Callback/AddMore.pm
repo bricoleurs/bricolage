@@ -7,7 +7,6 @@ use constant CLASS_KEY => 'add_more';
 use strict;
 use Bric::App::Session qw(:state);
 
-
 sub add : Callback {
     my $self = shift;
     my $type = $self->params->{'addmore_type'};

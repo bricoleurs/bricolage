@@ -136,6 +136,7 @@ sub delete : Callback {
         if (chk_authz($wf, EDIT, 1)) {
             $wf->deactivate();
             $wf->save();
+            $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
             log_event("${type}_deact", $wf);
             $flag = 1;
         } else {

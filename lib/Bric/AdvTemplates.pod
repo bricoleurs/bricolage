@@ -210,8 +210,10 @@ index.html :
 Use the C<display_pages()> method to create new files for each page
 element. The C<display_pages()> method takes one or more names of paginated
 elements:
+  % my @pagenames = qw/page another_page/;
+  % $burner->display_pages(\@pagenames);
 
-  % $burner->display_pages('page', 'another_page');
+Here, pages with key names 'page' and 'another page' are published.
 
 When a story is published, the entire template containing the call to
 C<display_pages()> is run once for every instance of the named element passed
@@ -303,7 +305,7 @@ The $rel_story object will have all the methods that the exported $story object
 has since they are the same object. To get the top element of the story you can
 use the method 'get_tile':
 
-    % my $rel_element = $rel_story->get_tile;
+    % my $rel_element = $rel_story->get_element;
 
 The $rel_element object is the same object as the exported $element object and
 has all the same methods.

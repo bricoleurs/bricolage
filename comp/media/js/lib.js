@@ -149,8 +149,16 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
 returns true if characters that would be illegal for a url are found, false otherwise.
 */
 function hasSpecialCharacters(what) {
-
     var regExp = new RegExp("[^-a-zA-Z0-9_.]");
+    return regExp.test(what);
+
+}
+
+/*
+returns true if characters that would be illegal for a URL prefix or suffix, false otherwise.
+*/
+function hasSpecialCharactersOC(what) {
+    var regExp = new RegExp("[^-a-zA-Z0-9_./]");
     return regExp.test(what);
 
 }
@@ -462,6 +470,7 @@ var confirming = false
 var submitting = false
 var requiredFields         = new Object();
 var specialCharacterFields = new Object();
+var specialOCFields = new Object();
 function confirmChanges(obj) {
     
     if (confirming || submitting) return false;
@@ -514,6 +523,22 @@ function confirmChanges(obj) {
             if (typeof tmp != "undefined") {
                 if ( hasSpecialCharacters(tmp.value) ) {
                     alert( specialCharacterFields[field] + illegal_chars_msg );
+                    tmp.focus();
+                    confirming = false
+                    return false;
+                }
+            }
+        }
+    }  
+
+
+    // examine registered special output channel fields(with slash allowed).
+    if (typeof specialOCFields != "undefined") {         
+        for (field in specialOCFields) {
+            tmp = eval("obj." + field);
+            if (typeof tmp != "undefined") {
+                if ( hasSpecialCharactersOC(tmp.value) ) {
+                    alert( specialOCFields[field] + illegal_chars_msg );
                     tmp.focus();
                     confirming = false
                     return false;
@@ -712,4 +737,26 @@ function textCount(which, maxLength) {
     if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
     writeDiv("textCountUp" + which,myObj.value.length);
     writeDiv("textCountDown" + which,maxLength-myObj.value.length);
+}
+
+
+
+/*
+Resize navigation iframe
+*/
+function resizeframe() {
+    var ifrm = parent.document.getElementById("sideNav");
+    var agt = navigator.userAgent.toLowerCase();
+    var is_major = parseInt(navigator.appVersion);
+    var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
+    var is_ie5   = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.0") !=-1));
+    var is_ie5_5 = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.5") !=-1));
+    var is_mac = (agt.indexOf("mac")!=-1);
+    if (window.opera || ((is_ie5 || is_ie5_5) && !is_mac)) {
+      // Opera and IE5/Win only
+      ifrm.style.height = document.body.scrollHeight + "px";
+    } else {
+      // Everyone else
+      ifrm.style.height = document.body.offsetHeight + "px";
+    }
 }

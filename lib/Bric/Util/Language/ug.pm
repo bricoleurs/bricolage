@@ -12,9 +12,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -32,7 +30,9 @@ Translation to Uyghur using Lang::Maketext.
 
 =cut
 
-@ISA = qw(Bric::Util::Language);
+use strict;
+use utf8;
+use base qw(Bric::Util::Language);
 
 use constant key => 'ug';
 

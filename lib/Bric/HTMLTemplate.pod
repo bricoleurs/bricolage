@@ -28,25 +28,26 @@ media.  When a story is published the category tree is searched for
 templates starting in the primary category for the story.  The search
 proceeds up the tree until a matching template is found.
 
-Bricolage allows you to create two types of templates -
-element-specific templates or generic templates.  Element-specific
-templates are assigned to a single element (ex. Article, Page, Pull
-Quote, etc.).  Generic templates are assigned to the category.
+Bricolage allows you to create three types of templates: element templates,
+category templates, and utility templates. Element templates are assigned to a
+single element (e.g., Article, Page, Pull Quote, etc.). Category templates are
+assigned to the category. Utility templates must be placed into a category,
+but otherwise have no relationship to elements or categories.
 
 =head1 SCRIPTS AND TEMPLATES
 
 HTML::Template works by separating Perl code from HTML design.  In
-Bricolage this results in two types of template files - .pl script
-files and .tmpl template files.  The script files contain Perl code.
+Bricolage this results in two types of template files - F<.pl> script
+files and F<.tmpl> template files.  The script files contain Perl code.
 The template files contain a mix of HTML tags and HTML::Template's
-<TMPL_*> tags.
+C<< <TMPL_*> >> tags.
 
 This divide between programming and design allows for a division of
 labor between programmers and designers.  First, the programmer can
-setup a set of elements and scripts (.pl files).  Usually the
-programmer will also create some bare-bones example templates (.tmpl
+setup a set of elements and scripts (F<.pl> files).  Usually the
+programmer will also create some bare-bones example templates (F<.tmpl>
 files).  Next the designers can edit the template files to match the
-desired design.  
+desired design.
 
 As an additional benefit, if per-category design changes are required
 a designer can create template files in each category that will
@@ -59,13 +60,13 @@ tweak the design by category than the code.
 Bricolage decides which burner module to use - Mason or HTML::Template
 - by looking at the burner setting for the top-level story element
 being published.  To start using HTML::Template to publish a story
-type go to Admin -> Elements, find the story element and set its
+type go to Admin -E<gt> Elements, find the story element and set its
 burner to HTML::Template.
 
 When you're creating templates you'll also see a pull-down called
-burner.  This determines whether you're creating a Mason "story.mc",
-an HTML::Template "story.pl" script or an HTML::Template "story.tmpl"
-template.
+"Burner".  This determines whether you're creating a Mason F<story.mc>,
+an HTML::Template F<story.pl> script, an HTML::Template F<story.tmpl>
+or some other templating architecture template.
 
 =head1 AN EXAMPLE STORY TYPE
 
@@ -1112,5 +1113,23 @@ than I've covered in this document.  Your main tools - scripts,
 templates, the Bric::Util::Burner::Template API and the various
 objects available in Bricolage - are now yours for the taking.  Go
 forth and bend Bricolage whimpering to your task!
+
+=head1 AUTHOR
+
+Sam Tregar <sam@tregar.com>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Bric::Util::Burner|Bric::Util::Burner>
+
+=item L<Bric::Templates|Bric::Templates>
+
+=item L<Bric::AdvTemplates|Bric::AdvTemplates>
+
+=item L<Bric::ElementAdmin|Bric::ElementAdmin>
+
+=back
 
 =cut

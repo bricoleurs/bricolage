@@ -50,6 +50,7 @@ sub save : Callback {
             my $member = $group->add_member({ obj => $contrib });
             $group->save;
             @{$param}{qw(mode contrib_id)} = ('edit', $member->get_id);
+            # We need a contrib object, not just a member oject. So look it up.
             $member = Bric::Util::Grp::Parts::Member::Contrib->lookup({
                 id => $param->{contrib_id}
             });

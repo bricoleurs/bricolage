@@ -11,17 +11,9 @@ if ($ARGS{id} or $ARGS{site_id}) {
                           id     => $id,
                           %ARGS);
 } else {
-    # Get a list of sites that we have EDIT access to
-    my $sites = $c->get('__SITES__');
-
-    unless ($sites) {
-        $sites = Bric::Biz::Site->list;
-        $c->set('__SITES__', $sites);
-    }
-
-    $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
-
-    # If there is only one site, skip the site chooser screen
+    # If there is only one site that they have EDIT access to,
+    # skip the site chooser screen.
+    my $sites = site_list(EDIT);
     if (@$sites == 1) {
         $ARGS{site_id} = $sites->[0]->get_id;
         $m->comp('edit.html', widget => $widget,

@@ -184,7 +184,7 @@ sub get_types_config {
 sub check_modules {
     print "Checking for required Apache modules...\n";
 
-    my (@missing, $no_perl);
+    my (@missing);
     # loop over required modules
  MOD:
     foreach my $mod (qw(perl log_config mime alias apache_ssl ssl)) {
@@ -192,13 +192,6 @@ sub check_modules {
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
             $AP{$mod} = 1 if $mod =~ /ssl$/;
-            next;
-        }
-
-        # Perl is special -- it can't be a DSO.
-        if ($mod eq 'perl') {
-            $no_perl = 1;
-            push @missing, $mod;
             next;
         }
 
@@ -274,11 +267,24 @@ sub check_modules {
     }
 
     hard_fail("The following Apache modules are required by Bricolage and\n",
-              "are missing from your installation",
-              ( $no_perl ? " (Note that mod_perl must be\n" .
-                "statically compiled into Apache):\n" : ":\n"),
+              "are missing from your installation:\n",
               (map { "\tmod_$_\n" } @missing), "\n")
       if @missing;
+
+    # Make sure that a DSO mod_perl is okay.
+    unless ($AP{static_modules}{mod_perl}) {
+        # Check how Perl was compiled.
+        require Config;
+        if ($Config::Config{usemymalloc} eq 'y'
+            && defined $Config::Config{bincompat5005}) {
+            hard_fail("mod_perl must be either statically compiled into "
+                     . "Apache or else bec compiled with a Perl compiled\n"
+                     . "with \"usemymalloc='n'\" or without "
+                     . "\"bincompat5005\". See this FAQ for more information:"
+                     . "\n\n  http://perl.apache.org/docs/1.0/guide/install."
+                     . "html#When_DSO_can_be_Used\n\n");
+        }
+    }
 
     print "All required modules found.\n";
 }

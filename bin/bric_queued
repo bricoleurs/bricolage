@@ -208,8 +208,8 @@ sub run_as_daemon {
             executing => 0,
         });
         if ($job) {
-            print 'Executing ' . $_->get_name . "\n" if $Verbose;
-            eval { $_->execute_me } or print $@;
+            print 'Executing ' . $job->get_name . "\n" if $Verbose;
+            eval { $job->execute_me } or print $@;
             terminate() if $CaughtSignal;
         } else {
             # no need to store the TERM signal during sleep

@@ -1,0 +1,36 @@
+bric_media_dump 0.10
+====================
+
+This program may be used to dump all of the media files of a given type from
+a Bricolage server.
+
+INSTALLATION
+
+To install this module, type the following:
+
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
+
+DEPENDENCIES
+
+This program requires these other modules and libraries:
+
+  Getopt::Long
+  Pod::Usage
+  SOAP::Lite
+  File::Spec
+  HTTP::Cookies
+  File::Path
+  MIME::Base64
+  XML::Simple
+
+It also requires a Bricolage server.
+
+COPYRIGHT AND LICENCE
+
+Copyright (c) 2004 Kineticode, Inc. All rightgs reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.

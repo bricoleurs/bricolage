@@ -25,33 +25,54 @@ Bricolage has a number of mailing-lists that are relevant to developers:
 
 =item bricolage-general@lists.sourceforge.net
 
-This is the mailing-list for normal Bricolage users.  This is a good
-place to go with questions about how the application works and should
-work.  To subscribe go to:
+Questions, installation problems, bug reports, job and site announcements,
+other general discussion. Posts to this list are subscriber-only, because
+otherwise we would be inundated with spam. Please subscribe before posting.
 
-http://lists.sourceforge.net/lists/listinfo/bricolage-general
+Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-general>
+
+Archives: L<http://marc.theaimsgroup.com/?l=bricolage-general>
+
+=item bricolage-announce@lists.sourceforge.net
+
+Official announcements from the Bricolage team. These are always Cc'd to
+Bricolage-General, so you need not subscribe to both. Very low
+traffic. (read-only except for core developers)
+
+Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-announce>
+
+Archives: L<http://marc.theaimsgroup.com/?l=bricolage-announce>
 
 =item bricolage-devel@lists.sourceforge.net
 
-This is the place to discuss Bricolage development, propose changes,
-post patches and penetrate markets.  To subscribe go to:
+In-depth discussions about new development directions, proposed features,
+implementation details. Posts to this list are subscriber-only, because
+otherwise we would be inundated with spam. Please subscribe before posting.
 
-http://lists.sourceforge.net/lists/listinfo/bricolage-devel
+Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-devel>
+
+Archives: L<http://marc.theaimsgroup.com/?l=bricolage-devel>
 
 =item bricolage-commits@lists.sourceforge.net
 
-This list gets an email for every commit to the Subversion tree (see below for
-more about Subversion). B<DO NOT POST TO THIS LIST!> To subscribe:
+CVS context diffs for all checkins to the Bricolage repository. (read-only).
 
-http://lists.sourceforge.net/lists/listinfo/bricolage-commits
+Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-commits>
+
+Archives: L<http://marc.theaimsgroup.com/?l=bricolage-commits>
 
 =item bricolage-bugs@lists.sourceforge.net
 
-This list gets an email for every bug-report submitted to Bugzilla
-(see below for Bugzilla details).  B<DO NOT POST TO THIS LIST!> To
-subscribe:
+Bricolage Bugzilla activity. This list is read-only. To report a bug in
+Bricolage, please use our Bugzilla server.
 
-http://lists.sourceforge.net/lists/listinfo/bricolage-bugs
+Bugzilla: L<http://bugzilla.bricolage.cc/>
+
+Subscribe: L<http://lists.sourceforge.net/lists/listinfo/bricolage-bugs>
+
+Archives: L<http://marc.theaimsgroup.com/?l=bricolage-bugs>
+
+Bugzilla: L<http://bugzilla.bricolage.cc/>
 
 =back
 
@@ -67,7 +88,7 @@ from the Bricolage Subversion repository. You can browse the Subversion
 repository at L<http://svn.bricolage.cc/viewcvs/>.
 
 Information on connecting to the repository to checkout a working copy is at
-L<http://www.bricolage.cc/svn.html>.
+L<http://www.bricolage.cc/dev/subversion/>.
 
 =head1 BUG TRACKING
 
@@ -110,7 +131,7 @@ Send your patches to the bricolage-devel list mentioned above.
 =head1 APPLYING PATCHES
 
 Patches created using the method above can be applied using C<patch> with the
-C<-p0> option from the root of your Subvesion checkout:
+C<-p0> option from the root of your Subversion checkout:
 
   patch -p0 < patch.txt
 
@@ -185,7 +206,7 @@ Rafael Garcia-Suarez has written a Vim indent macro which (for the most
 part) duplicates the behavior of Emacs C<perl-mode>.  It is now, as of Vim
 6.0, included in the Vim distribution and should be found in
 C<$VIMRUNTIME/indent/perl>.  The easiest way to use it though is to place the
-following line in your .vimrc:
+following line in your F<.vimrc> file:
 
     source $VIMRUNTIME/indent.vim
 
@@ -247,7 +268,7 @@ unreadable and unmaintainable as single-letter variables names. You get
 halfway down the page, and you can no longer remember to what tables they
 refer.
 
-The rules above are acutally taken from O'Reilly's "Introduction to PL/SQL
+The rules above are actually taken from O'Reilly's "Introduction to PL/SQL
 Programming," which has an I<excellent> chapter on code cleanliness in SQL and
 SQL-extension languages.
 
@@ -491,8 +512,8 @@ and have no uncommitted changes. You can check for these differences by using
 the Subversion C<status> and C<update> commands. Running C<svn status> will tell
 you if there have been any uncommitted changes to the local copy of the branch
 or trunk. Running C<svn update> will merge in any updates from the copy on the
-Subversion server. So we recommend runing both of these commands in both the
-branch and the trunk and committing any necessary chaanges before continuing.
+Subversion server. So we recommend running both of these commands in both the
+branch and the trunk and committing any necessary changes before continuing.
 
   % cd bricolage-trunk
   % svn status
@@ -540,7 +561,7 @@ C<list> command to find it:
   rev_1_8_merge_5995/
 
 If the branch has never been merged into the trunk you can get the revision
-number at the time the branch was created usinsing C<svn log> command:
+number at the time the branch was created using C<svn log> command:
 
   % svn log --verbose --stop-on-copy \
     http://svn.bricolage.cc/bricolage/branches/rev_1_8
@@ -591,7 +612,7 @@ If there are any test failures, you'll need to fix those, too.
 =item 6
 
 Commit the changes to the trunk. Be sure to specify what revisions were merged
-in, and the name of the new tag you'll creeate for the branch. The final
+in, and the name of the new tag you'll create for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
@@ -616,8 +637,6 @@ Subversion branches.
 
 =head1 CREATING DISTRIBUTIONS
 
-B<Note: To be updated to reflect use of Subvesion!>
-
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
 tarball. First, proof-read the list of changes in Bric::Changes. Also, be sure
@@ -625,51 +644,62 @@ to add today's date to the header for the new release:
 
   =head1 VERSION 1.x.x (2003-11-29)
 
-Next, tag the release in Subversion:
-
-  svn tag rel_1_x_x
-
 If this is a major release, you'll need to create a new branch, so that it can
 be maintained for bug fixes separately, and then tag the release in that
-branch.
+branch. In Subversion, branches and tags are exactly the same; the difference
+is only in convention. So the convention for Bricolage is to store tags in the
+F<tags> subdirectory of the project directory, and branches in the F<branches>
+subdirectory. The other half of the convention is that no one should ever
+commit changes to a tag after it has been created.
 
-  svn branch rev_1_x
-  svn tag rel_1_x_x
+So to create a branch, make the copy from the F<trunk>:
 
-Next, export the sources into a new directory. Be sure to use the C<-kkv>
-option with C<export> so that the version numbers are all properly populated.
+  % svn cp http://svn.bricolage.cc/bricolage/trunk \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    -m 'New branch for maintenance of Bricolage 1.8.x.'
 
-  cd /tmp
-  svn export -r rel_1_x_x bricolage
-  cd bricolage
-  make dist
+Now export the branch and create the distribution tarball.
+
+  % svn export http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  % cd rev_1_8
+  % make dist
 
 This will create a distribution tarball in the bricolage directory. Copy this
 tarball somewhere, and do a full test with it, to make sure that Bricolage
 does indeed build and properly install itself.
 
-  cp bricolage-1.x.x.tar.gz /tmp/src
-  cd /tmp/src
-  tar zxvf bricolage-1.x.x.tar.gz
-  cd bricolage-1.x.x
-  perl Makefile.PL
-  make
+  % cp bricolage-1.x.x.tar.gz /tmp/src
+  % cd /tmp/src
+  % tar zxvf bricolage-1.x.x.tar.gz
+  % cd bricolage-1.x.x
+  % perl Makefile.PL
+  % make
   # Shut down PostgreSQL.
-  make test
+  % make test
   # Start PostgreSQL.
-  sudo make install
-  make devtest
-  sudo bric_apachectl start
+  % sudo make install
+  % make devtest
+  % sudo bric_apachectl start
   # Log in to the UI and test it a bit.
-  sudo make uninstall
+  % sudo make uninstall
 
-Be sure to run C<make devtest> after everything is installed to make sure that
-it is all functioning correctly. Users won't be running these tests, as they
-muck up the database. But that's okay for our validation of the release
-tarball. Use C<make uninstall> to clean up the mess. If you have to go back
-and make any changes, be sure to commit them to the Subversion repository and
-then to update the tag, then do the whole thing over again. Once everything
-appears to be working properly, release!
+Be sure to run C<make devtest> after everything is installed to ensure that it
+is all functioning correctly. Users won't be running these tests, as they muck
+up the database. But that's okay for our validation of the release tarball.
+Use C<make uninstall> to clean up the mess. If you have to go back and make
+any changes, be sure to commit them to the Subversion repository and then do
+the whole thing over again. Once everything appears to be working properly,
+release!
+
+Now that the new version of Bricolage is out free in the world, it's time to
+tag the release. Again, it's a simple copy:
+
+  % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    http://svn.bricolage.cc/bricolage/tags/rel_1_8_0 \
+    -m 'Tag for the 1.8.0 release of Bricolage.'
+
+The tag is mainly kept for the purposes of record-keeping. And since copies
+are cheap in Subversion, it's worthwhile.
 
 =head2 Documentation Generation
 
@@ -682,8 +712,8 @@ you've just released 1.10.0, then you'll need to create a new "1.10" section
 and add a link to it on the documentation page of the Web site.
 
 The documentation is generated with the F<pod_browser> script, which is in the
-"distutils" directory in Subversion. Read its instructions carefully, and then
-generate the documentation on the Web server.
+F<distutils/PodBrowser> in Subversion. Read its instructions carefully, and
+then generate the documentation on the Web server.
 
 =head2 Where to Send Notices
 
@@ -730,6 +760,8 @@ generate the documentation on the Web server.
 =item L<http://freshmeat.net/projects/bricolage/>
 
 =item L<http://use.perl.org/>
+
+=item L<http://bugs.bricolage.cc/>
 
 =back
 

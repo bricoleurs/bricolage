@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 
 =head1 DATE
@@ -1402,8 +1400,16 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
 
     # Make sure to set active explicitly if it's not passed.
-    $params->{active} = exists $params->{active} ?
-      $params->{active} ? 1 : 0 : 1;
+    if (exists $params->{active}) {
+        if (defined $params->{active}) {
+            $params->{active} = $params->{active} ? 1 : 0;
+        } else {
+            delete $params->{active};
+        }
+    } else {
+        $params->{active} = 1;
+    }
+
     $params->{publish} = $params->{publish} ? 1 : 0
       if exists $params->{publish};
 

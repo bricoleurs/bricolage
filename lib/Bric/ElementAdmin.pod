@@ -1025,6 +1025,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>
+L<http://www.bricolage.cc/about/doc_models/> contains graphical depictions of
+the document models used to create the Bricolage Website in a nice
+illustration of how to construct document models from elements and fields.
 
 =cut

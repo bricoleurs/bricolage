@@ -31,17 +31,26 @@ sub add_note : Callback {
     my $obj = get_state_data($self->class_key, 'obj');
     my $note = $param->{$key};
     $obj->add_note($note);
-    add_msg('Note saved.');
     set_state_data($self->class_key, 'obj');
 
     # Cache the object in the session if it's the current object.
     my @state_vals = @{ $types{ ref $obj } };
     if (my $c_obj = get_state_data(@state_vals)) {
-        my $cid = $c_obj->get_id();
-        my $id = $obj->get_id();
-        set_state_data(@state_vals, $obj)
-          if (!defined $cid && !defined $id) ||
-          (defined $cid && defined $id && $id == $cid);
+        my $cid = $c_obj->get_id;
+        my $id = $obj->get_id;
+        if ((!defined $cid && !defined $id) ||
+            (defined $cid && defined $id && $id == $cid)) {
+            # It's the same object. Put it in the cache with the new note.
+            set_state_data(@state_vals, $obj);
+        } else {
+            # It's not the same as the cached object. So just save it.
+            $obj->save;
+            add_msg('Note saved.');
+        }
+    } else {
+        # Just save the asset with the note.
+        $obj->save;
+        add_msg('Note saved.');
     }
     # Use the page history to go back to the page that called us.
     $self->set_redirect(last_page());

@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1734,7 +1732,7 @@ sub _do_list {
     my $sel_order = $pkg->SEL_ORDER;
     my ($order, $props, $qry_cols) = ($sel_order, \@sel_props, \$sel_cols);
     if ($ids) {
-        $qry_cols = \'oc.id';
+        $qry_cols = \'DISTINCT oc.id';
         $order = 'oc.id';
     } elsif ($params->{include_parent_id}) {
         $qry_cols = \"$sel_cols, inc.id";

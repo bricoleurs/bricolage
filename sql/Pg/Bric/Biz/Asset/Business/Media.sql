@@ -88,7 +88,7 @@ CREATE TABLE media_instance (
     usr__id             NUMERIC(10,0)   NOT NULL,
     version             NUMERIC(10,0),
     category__id        NUMERIC(10,0)   NOT NULL,
-    media_type__id      NUMERIC(10,0),
+    media_type__id      NUMERIC(10,0)   NOT NULL,
     primary_oc__id      NUMERIC(10,0)   NOT NULL,
     file_size           NUMERIC(10,0),
     file_name           VARCHAR(256),

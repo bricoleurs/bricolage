@@ -35,7 +35,7 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
 use File::Find qw(find);
-use File::Copy qw(copy move);
+use File::Copy qw(copy);
 
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
@@ -55,36 +55,10 @@ do "./apache.db" or die "Failed to read apache.db : $!";
 our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
 
-if ($UPGRADE) {
-    # Remove old object files.
-    rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj');
+create_paths();
 
-    # Find a good new name for the component directory.
-    my $dest = "$CONFIG->{MASON_COMP_ROOT}.old";
-    my $i;
-    while (-e $dest) {
-        $dest = "$CONFIG->{MASON_COMP_ROOT}.old" . ++$i;
-    }
-
-    # Move the component directory.
-    move $CONFIG->{MASON_COMP_ROOT}, $dest
-      or die "Cannot move '$CONFIG->{MASON_COMP_ROOT}' to '$dest': $!\n";
-
-    # Create the new paths.
-    create_paths();
-
-    # Now move the "data" directory back.
-    move catdir($dest, 'data'), catdir($CONFIG->{MASON_COMP_ROOT}, 'data')
-      or die "Cannot move '", catdir($dest, 'data'), "' to '",
-      catdir($CONFIG->{MASON_COMP_ROOT}, 'data'), "': $!\n";
-
-    # Holler at 'em.
-    print "$CONFIG->{MASON_COMP_ROOT} moved to $dest\n";
-    print "Delete it if you haven't added or altered files in it.\n";
-} else {
-    # Just create the new paths.
-    create_paths();
-}
+# Remove old object files if this is an upgrade.
+rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) },

@@ -15,9 +15,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 
@@ -734,7 +732,9 @@ $set_unique_attr = sub {
     }
 
     # Success!
-    $self->_set([$field, '_rename'], [$value, $old_value]);
+    return $self->_set([$field, '_rename'] => [$value, $old_value])
+      if $field eq 'name';
+    return $self->_set([$field] => [$value]);
 };
 
 ##############################################################################

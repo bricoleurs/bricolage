@@ -49,6 +49,20 @@ in mind as long term goals further down the line.
 
 =item *
 
+Add ability to reverse the sort order of items on desks.
+
+=item *
+
+Add "Checkout" button to the "View" screens for stories, media, and
+templats. It must be careful about permissions in the same way that
+F<comp/workflow/manager/dhandler> currently is. That is to say, in order for
+the button to be displayed, the user must have EDIT permission to the
+asset. If the asset isn't currently in workflow, the user must have RECALL
+permission to the asset or to the assets on the start desk in the current
+workflow, and at least EDIT permission to the assets on the start desk.
+
+=item *
+
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
 
@@ -171,6 +185,25 @@ Add better tools for handling special characters (e.g., high ASCII, Latin-1
 letters with umlauts and accents and such). May need to select a character set
 to be associated with output channels, and convert characters based on the
 character set.
+
+=item *
+
+Since elements and element types aren't really deleted from the database and you
+can't change an element's type once it has been created, the default templates
+are very restrictive.  For example, I wanted to change the pull quote element
+from an Inset to a new general Subelement type, but when you delete pull_quote
+and try to recreate it as a Subelement, it fails because "pull_quote" already
+exists.
+
+The installer should have an option to not install the default elements.  This
+seems easy enough by moving those SQL commands to a separate file and executing
+them based on whether the user opts to install them.
+
+Better yet, if there was a way to import elements and element types (through
+SOAP?[1]), there could be no default, but several different pre-made element
+sets that the user could choose to import right after installation depending on
+what type of site they wanted (daily newspaper, montly magazine, normal website,
+etc.).
 
 =item *
 

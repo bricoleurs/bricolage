@@ -168,7 +168,7 @@ sub manage_grps :Callback {
 
     # It could be an array of objects -- See Profile::Category.
     for my $o (ref $obj eq 'ARRAY' ? @$obj : ($obj)) {
-        my $all_grp_id = $obj->INSTANCE_GROUP_ID;
+        my $all_grp_id = $o->INSTANCE_GROUP_ID;
         # Assemble the new member information.
         foreach my $grp (@add_grps) {
             # Check permissions.

@@ -20,6 +20,7 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui :pub);
 use Bric::Util::Burner;
+use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(strfdate);
 
 my $pkgs = {
@@ -164,18 +165,26 @@ sub publish : Callback {
             my ($key, $objs, $pub_ids) = @$_;
             # iterate through objects looking for related and stories
             while (@$objs) {
-                my $a = shift @$objs or next;
+                my $doc = shift @$objs or next;
 
                 # haven't I seen you someplace before?
-                my $id = $a->get_id;
+                my $id = $doc->get_id;
                 next if exists $seen{"$key$id"};
                 $seen{"$key$id"} = 1;
 
-                if ($a->get_checked_out) {
-                    my $a_disp_name = lc get_disp_name($key);
-                    add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
-                            . " checked out.", $a->get_name);
+                if ($doc->get_checked_out) {
+                    # Cannot publish checked-out assets.
+                    my $doc_disp_name = lc get_disp_name($key);
+                    add_msg("Cannot publish $doc_disp_name \"[_1]\" because it is"
+                            . " checked out.", $doc->get_name);
                     delete $pub_ids->{$id};
+                    next;
+                }
+
+                unless (chk_authz($doc, PUBLISH, 1)) {
+                    my $doc_disp_name = lc get_disp_name($key);
+                    add_msg('You do not have permission to publish '
+                            . qq{$doc_disp_name "[_1]"}, $doc->get_name);
                     next;
                 }
 
@@ -186,32 +195,60 @@ sub publish : Callback {
                     push @mids, $id;
                 }
 
+                my %desks;
+
                 # Examine all the related objects.
-                foreach my $r ($a->get_related_objects) {
+                foreach my $rel ($doc->get_related_objects) {
                     # Skip assets whose current version has already been published.
-                    next unless $r->needs_publish;
+                    next unless $rel->needs_publish;
+                    # Skip deactivated documents.
+                    next unless $rel->is_active;
 
                     # haven't I seen you someplace before?
-                    my $rid = $r->get_id;
-                    my $rkey = $r->key_name;
-                    next if exists $seen{"$rkey$rid"};
-                    $seen{"$rkey$rid"} = 1;
+                    my $relid = $rel->get_id;
+                    my $relkey = $rel->key_name;
+                    next if exists $seen{"$relkey$relid"};
+                    $seen{"$relkey$relid"} = 1;
 
-                    if ($r->get_checked_out) {
-                        my $r_disp_name = lc(get_disp_name($r->key_name));
-                        add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
-                                . " because it is checked out.", $r->get_name);
+                    if ($rel->get_checked_out) {
+                        # Cannot publish checked-out assets.
+                        my $rel_disp_name = lc get_disp_name($rel->key_name);
+                        add_msg("Cannot auto-publish related $rel_disp_name "
+                                . '"[_1]" because it is checked out.',
+                                $rel->get_name);
+                        next;
+                    }
+
+                    if ($rel->get_workflow_id) {
+                        # It must be on a publish desk.
+                        my $did = $rel->get_desk_id;
+                        my $desk = $desks{$did}
+                          ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+                        unless ($desk->can_publish) {
+                            my $rel_disp_name = lc get_disp_name($rel->key_name);
+                            add_msg("Cannot auto-publish related $rel_disp_name "
+                                    . '"[_1]" because it is not on a publish desk.',
+                                    $rel->get_name);
+                            next;
+                        }
+                    }
+
+                    unless (chk_authz($rel, PUBLISH, 1)) {
+                        # Permission denied!
+                        my $rel_disp_name = lc get_disp_name($rel->key_name);
+                        add_msg('You do not have permission to auto-publish '
+                                . qq{$rel_disp_name "[_1]"}, $rel->get_name);
                         next;
                     }
 
                     # push onto the appropriate list
-                    if ($rkey eq 'story') {
-                        push @rel_story, $r->get_id;
-                        push @sids, $rid if $pub_ids->{$id};
-                        push(@stories, $r); # recurse through related stories
+                    if ($relkey eq 'story') {
+                        push @rel_story, $rel->get_id;
+                        push @sids, $relid if $pub_ids->{$id};
+                        push(@stories, $rel); # recurse through related stories
                     } else {
-                        push @rel_media, $r->get_id;
-                        push @mids, $rid if $pub_ids->{$id};
+                        push @rel_media, $rel->get_id;
+                        push @mids, $relid if $pub_ids->{$id};
                     }
                 }
             }

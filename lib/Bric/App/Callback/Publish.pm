@@ -63,13 +63,7 @@ sub preview : Callback {
         # Get all the related media to be previewed as well
         foreach my $ra ($s->get_related_objects) {
             next if ref $ra eq 'Bric::Biz::Asset::Business::Story';
-
-            # Make sure this media object isn't checked out.
-            if ($ra->get_checked_out) {
-                add_msg('Cannot auto-publish related media "[_1]" because ' .
-                        'it is checked out.', $ra->get_title);
-                next;
-            }
+            next unless $ra->is_active;
 
             unless ($ra->get_path) {
                 status_msg('No file associated with media "[_1]". Skipping.',

@@ -11,9 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1336,20 +1334,27 @@ $send_em = sub {
         VALUES (?, ?, ?, ?)
     }, undef);
 
-    my %alerted;
+    my (%alerted, %missed);
     my %ctypes = Bric::Biz::Contact->href_alertable_type_ids;
     while (my ($ctype, $cid) = each %ctypes) {
         # Get a list of unique User IDs in the groups.
         my (%users, %email);
         foreach my $user ($at->get_users($ctype),
                  map { $_->get_objects } $at->get_groups($ctype) ) {
+            my $uid = $user->get_id;
             foreach my $c ($user->get_contacts) {
-                  next unless $c->get_type eq $ctype;
-                  my $e = $c->get_value;
-                  $users{$user->get_id}->{$e} = 1;
-                  $email{$e} = 1
-              }
+                next unless $c->get_type eq $ctype;
+                my $e = $c->get_value or next;
+                $users{$uid}->{$e} = 1;
+                $email{$e} = 1;
+                $missed{$uid} = 0;
+            }
+            # Record something for the user, even if no contact information
+            # was found.
+            $missed{$uid} = 1 unless exists $users{$uid};
         }
+
+        next unless %email;
 
         # Now send the email.
         my $m = Bric::Util::Trans::Mail->new({ from => ALERT_FROM,
@@ -1375,6 +1380,11 @@ $send_em = sub {
             }
         }
     }
+
+    # Fill in those users who weren't sent alert, but still need to see one
+    # in the UI.
+    execute($ins_alerted, $_, $self->{id})
+      for grep { $missed{$_} } keys %missed;
     return 1;
 };
 

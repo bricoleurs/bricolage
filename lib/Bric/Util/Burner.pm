@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -126,12 +124,13 @@ use strict;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
-use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev);
+use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev :l10n);
 use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
+use Bric::Util::Pref;
 use File::Basename qw(fileparse);
 use URI;
 
@@ -185,6 +184,7 @@ BEGIN {
         oc                    => Bric::FIELD_READ,
         cat                   => Bric::FIELD_READ,
         page                  => Bric::FIELD_READ,
+        encoding              => Bric::FIELD_READ,
         output_filename       => Bric::FIELD_READ,
         output_ext            => Bric::FIELD_READ,
         output_path           => Bric::FIELD_READ,
@@ -453,6 +453,31 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item my $encoding = $burner->get_encoding
+
+Returns the character set encoding to be used to write out the contents of a
+burn to a file. Defaults to "utf8".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $b = $burner->set_encoding($encoding)
+
+Sets the character set encoding to be used to write out the contents of a burn
+to a file under Perl 5.8.0 and later. Use this attribute if templates are
+converting output data from Bricolage's native UTF-8 encoding to another
+encoding. Use "raw" if your templates are outputting binary data. Defaults to
+"utf8".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =item my $story = $burner->get_story
 
 Returns the story currently being burned -- that is, during the execution of
@@ -687,6 +712,7 @@ sub deploy {
     open (MC, ">$file")
       or throw_gen  error => "Could not open '$file'",
                     payload => $!;
+    binmode MC, ':utf8' if ENCODE_OK;
     print MC $fa->get_data;
     close(MC);
 
@@ -1328,13 +1354,19 @@ sub burn_one {
 
     # Set up properties needed by the subclasses.
     $self->_set([qw(story oc cat output_filename output_ext output_path
-                    base_uri page)],
+                    base_uri page encoding)],
                 [@_, $oc->get_filename($story), $oc->get_file_ext, $path,
-                 $base_uri, 0]);
+                 $base_uri, 0, 'utf8']);
 
     # Construct the burner and do it!
     my ($burner, $at) = $self->_get_subclass($story);
-    $burner->burn_one(@_, $at);
+
+    # Never use the local user's preferences during a burn.
+    my $use_user = Bric::Util::Pref->use_user_prefs;
+    Bric::Util::Pref->use_user_prefs(0) if $use_user;
+    my $ret = $burner->burn_one(@_, $at);
+    Bric::Util::Pref->use_user_prefs(1) if $use_user;
+    return wantarray ? @$ret : $ret;
 }
 
 =item my $bool = $burner->chk_syntax($ba, \$err)
@@ -1547,8 +1579,8 @@ B<Notes:> NONE.
 
 sub next_page_file {
     my $self = shift;
-    my ($page, $isnext) = $self->_get(qw(page more_pages));
-    return unless $isnext;
+    my ($page, $isnext, $again) = $self->_get(qw(page more_pages burn_again));
+    return unless $isnext || $again;
     return $self->page_file($page + 2);
 }
 

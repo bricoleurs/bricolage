@@ -11,9 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -105,7 +103,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($get_em, $get_coll, $set_executing, $check_priority);
+my ($get_em, $get_coll, $set_executing, $check_priority, $do_insert);
 
 ################################################################################
 # Constants
@@ -114,7 +112,6 @@ use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Job';
 use constant INSTANCE_GROUP_ID => 30;
 use constant NAME_MAX_LENGTH => 246;
-use constant ERR_MAX_LENGTH => 2000;
 
 my $PKG_MAP = {
     54 => 'Bric::Util::Job',
@@ -270,9 +267,6 @@ sub new {
     # Check for a legitimate Class ID, or die.
     my $class = Bric::Util::Class->lookup({ pkg_name => $pkg });
     $self->_set({ _class_id => $class->get_id });
-
-    # truncate the name param to 256 characters 
-    $init->{name} = substr $init->{name}, 0, 256;
 
     # Set the type and the _executing and tries defaults.
     $init->{type} = $init->{type} ? 1 : 0;
@@ -779,13 +773,11 @@ sub my_meths {
                               set_args => [],
                               disp     => 'Error Message',
                               search   => 0,
-                              len      => ERR_MAX_LENGTH,
                               req      => 0,
                               type     => 'short',
                               props    => { type      => 'textarea',
                                             cols      => 60,
                                             rows      => 10,
-                                            maxlength => ERR_MAX_LENGTH,
                                           }
                              },
              };
@@ -927,10 +919,6 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
-
-=cut
-
-sub set_name { $_[0]->_set( ['name'] => [substr $_[1], 0, 256] ) }
 
 =item my $user_id = $job->get_user_id
 
@@ -1668,14 +1656,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
     return unless $self->_get__dirty;
-    my ($id, $cancel, $res, $sts, $err) =
-      $self->_get(qw(id _cancel _resources _server_types error_message));
-
-    # truncate the error message if necessary
-    if (defined $err && length $err > ERR_MAX_LENGTH) {
-        $err = substr($err, 0, ERR_MAX_LENGTH);
-        $self->_set(['error_message'], [$err])
-    }
+    my ($id, $cancel, $res, $sts) =
+      $self->_get(qw(id _cancel _resources _server_types));
 
     if (defined $id && $cancel) {
         # It has been marked for deletion. So do it!
@@ -1694,33 +1676,24 @@ sub save {
         });
         execute($upd, $self->_get(@PROPS), $id);
     } else {
-        # It's a new job. Insert it.
-        local $" = ', ';
-        my $fields = join ', ', next_key('job'), ('?') x $#COLS;
-        my $ins = prepare_c(qq{
-            INSERT INTO job (@COLS)
-            VALUES ($fields)
-        }, undef, DEBUG);
+        # It's a new job. Execute it if it's time.
+        if (ENABLE_DIST && !QUEUE_PUBLISH_JOBS
+              && $self->get_sched_time('epoch') <= time) {
+            eval { $self->execute_me };
+            if (my $err = $@) {
+                # Save the new job and die.
+                $id = $do_insert->($self);
+                $res->save($id) if $res;
+                $sts->save($id) if $sts;
+                $self->SUPER::save;
+                die $err;
+            }
+        }
 
-        # Don't try to set ID - it will fail!
-        my @ps = $self->_get(@PROPS[1..$#PROPS]);
-        execute($ins, @ps);
-
-        # Now grab the ID.
-        $id = last_key('job');
-        $self->_set(['id'], [$id]);
-
-        # For simple deployments of Bricolage where the neither a job queue
-        # nor a seperated dist machine are in use we want to execute *newly
-        # inserted* jobs right away.
-        $self->execute_me
-          if ENABLE_DIST 
-          && (!QUEUE_PUBLISH_JOBS)
-          && $self->get_sched_time('epoch') <= time;
-
-        # And finally, register this job in the "All Jobs" group.
-        $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+        # Just insert the job.
+        $id = $do_insert->($self);
     }
+
     $res->save($id) if $res;
     $sts->save($id) if $sts;
     $self->SUPER::save;
@@ -1793,11 +1766,34 @@ sub execute_me {
     throw_gen({ error => "Cannot execute job that has already been executed."})
       if $self->get_comp_time;
 
-    # Mark this job executing.
-    &$set_executing($self, 1) 
-      || throw_dp({ error => "Can't get a lock on job No. " . $self->get_id . '.' });
-    return $self;
+    if ($self->get_id) {
+        # It's an exsisting job in the database. Get a lock on it.
+        $set_executing->($self, 1);
 
+        # Do it!
+        eval {
+            begin(1);
+            $self->_do_it(@_);
+            # Success!
+            $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
+            $self->save;
+            commit(1);
+        };
+
+        if (my $err = $@) {
+            # Rollback and handle.
+            rollback(1);
+            $self->handle_error($err);
+        }
+    } else {
+        # It's a new job. Just execute it.
+        $self->_set([qw(_executing tries)] => [1, 1]);
+        eval { $self->_do_it(@_) };
+        $self->handle_error($@) if $@;
+        # Success!
+        return $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
+    }
+    return $self;
 }
 
 ################################################################################
@@ -1811,23 +1807,34 @@ Bric::Config::DIST_ATTEMPTS it also marks the Job as having failed.
 
 sub handle_error {
     my ($self, $err) = @_;
-    # make sure that we unset executing first thing
-    &$set_executing($self,0);
-    # convert the error to text
-    if ($self->_get('tries') >= DIST_ATTEMPTS) {
-        # We've met or exceeded the maximum number of attempts. Save
-        # the error message and mark the job as failed, and no longer
-        # executing.
-        $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
-        # log the event
-        my $et = Bric::Util::EventType->lookup({ key_name => $self->KEY_NAME . '_failed' });
-        my $user = Bric::Biz::Person::User->lookup({ id => $self->get_user_id });
-        $et->log_event($user, $self);
+    if ($self->get_id) {
+        begin(1);
+        # Convert the error to text
+        if ($self->_get('tries') >= DIST_ATTEMPTS) {
+            # We've met or exceeded the maximum number of attempts. Save
+            # the error message and mark the job as failed, and no longer
+            # executing.
+            $self->_set([qw(_executing error_message _failed)], [0, "$err", 1]);
+            # log the event
+            my $et = Bric::Util::EventType->lookup({
+                key_name => $self->KEY_NAME . '_failed'
+            });
+            my $user = Bric::Biz::Person::User->lookup({
+                id => $self->get_user_id
+            });
+            $et->log_event($user, $self);
+        } else {
+            # We're gonna try again. Unlock the job.
+            $self->_set([qw(_executing error_message)], [0, "$err"]);
+        }
+        $self->save;
+        commit(1);
     } else {
-        # We're gonna try again. Unlock the job.
-        $self->_set([qw(_executing error_message)], [0, "$err"]);
+        # The job hasn't been added to the database, yet. Save the error;
+        # save() will catch it and rethrow it.
+        $self->_set([qw(_executing error_message)] => [0, "$err"]);
     }
-    $self->save;
+
     die $err;  # now re-throw the error that got us here
 }
 
@@ -1843,7 +1850,21 @@ NONE.
 
 =head2 Private Instance Methods
 
-NONE.
+=over 4
+
+=item $job = $job->_do_it
+
+This is an abstract method that must be implemented in subclasses. In
+subclasses, C<_do_it()> carries out the tasks that constitute a job. Here in
+the base class, it throws an exception.
+
+=cut
+
+sub _do_it { throw_mni ref(shift()) . '->_do_it not implemented' }
+
+##############################################################################
+
+=back
 
 =head2 Private Functions
 
@@ -2022,7 +2043,9 @@ $get_em = sub {
     return \@jobs;
 };
 
-=item my $coll = &$get_coll($self, $class, $key)
+##############################################################################
+
+=item my $coll = $get_coll->($self, $class, $key)
 
 Returns the collection for this job. Pass in the $job object itself, the
 property key for storing the collection, and the name of the collection class.
@@ -2088,7 +2111,9 @@ $get_coll = sub {
     return $coll;
 };
 
-=item my $bool = &$check_priority($priority)
+##############################################################################
+
+=item my $bool = $check_priority->($priority)
 
 Checks a number to see if it is in the correct range for a priority
 setting (1 to 5, inclusive), and throws an error if it isn't.
@@ -2096,14 +2121,16 @@ setting (1 to 5, inclusive), and throws an error if it isn't.
 =cut
 
 $check_priority = sub {
-    throw_gen({ error => "Priority must be between 1 and 5 inclusive." })
+    throw_gen "Priority must be between 1 and 5 inclusive."
       unless $_[0] >= 1 && $_[0] <= 5;
 };
 
-=item my $bool = &$set_executing($self, $value)
+##############################################################################
 
-Sets the executing column in the database, as well as the executing property in the
-job object. Used by execute().
+=item my $bool = $set_executing->($self, $value)
+
+Sets the executing column in the database, as well as the executing property
+in the job object. Used by C<execute_me()>.
 
 B<Throws:>
 
@@ -2141,17 +2168,66 @@ $set_executing = sub {
     my ($self, $value) = @_;
     my ($id, $exec) = $self->_get(qw(id tries));
     $exec++ if $value;
-    my $upd = prepare_c(qq{
-        UPDATE job
-        SET    executing = ?,
-               tries = ?
-        WHERE  id = ?
-               AND executing <> ?
-    });
-    my $ret = execute($upd, $value, $exec, $id, $value);
-    return if $ret eq '0E0';
-    $self->_set([qw(_executing tries)], [$value, $exec]);
-    return $ret;
+    my $ret;
+    eval {
+        begin(1);
+        my $upd = prepare_c(qq{
+            UPDATE job
+            SET    executing = ?,
+                   tries = ?
+            WHERE  id = ?
+                   AND executing <> ?
+        });
+
+        $ret = execute($upd, $value, $exec, $id, $value);
+        # Commit the transaction so that no other processes will attempt to
+        # execute the job.
+        commit(1);
+    };
+
+    # Handle any exceptions.
+    if (my $err = $@) {
+        rollback(1);
+        die $err;
+    }
+
+    # Throw an exception if we couldn't get a lock.
+    if ($ret eq '0E0') {
+        throw_dp error => "Can't get a lock on job No. ". $self->get_id . '.';
+    }
+
+    # Set the new number of tries and the executing attribute and return.
+    return $self->_set([qw(_executing tries)], [$value, $exec]);
+};
+
+##############################################################################
+
+=item my $id = $do_insert->($self)
+
+Adds a new record to the database for the job. Called by C<save()>.
+
+=cut
+
+$do_insert = sub {
+    my $self = shift;
+    local $" = ', ';
+    my $fields = join ', ', next_key('job'), ('?') x $#COLS;
+    my $ins = prepare_c(qq{
+        INSERT INTO job (@COLS)
+        VALUES ($fields)
+    }, undef, DEBUG);
+
+    # Don't try to set ID - it will fail!
+    my @ps = $self->_get(@PROPS[1..$#PROPS]);
+    execute($ins, @ps);
+
+    # Now grab the ID.
+    my $id = last_key('job');
+    $self->_set(['id'], [$id]);
+
+    # Finally, register this job in the "All Jobs" group and return the id.
+    $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+    return $id;
 };
 
 1;

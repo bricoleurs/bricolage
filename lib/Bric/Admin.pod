@@ -148,7 +148,7 @@ START MODULE LIST
 
 =item HTML::Mason 1.23
 
-=item DBD::Pg
+=item DBD::Pg 1.22
 
 =item DB_File
 
@@ -652,15 +652,21 @@ partition. This example just demonstrates the default:
 =item *
 
 Initialize the PostgreSQL database. Be sure to pass the directory you just
-created to the C<-D> command.
+created to the C<-D> command. We also recommend that you specify the "C"
+locale, since the collation of many other locales can be quite broken
+(especially if you're using non-western characters in your content; see
+L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079> for
+details).
 
-  su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
+  su - postgres -c "/usr/local/pgsql/bin/initdb --no-locale \
+    -D /usr/local/pgsql/data"
 
 You might find it easier to set PostgreSQL default encoding for new databases
 to UNICODE when initializing the database cluster, using the following
 command instead of the former one:
 
-  su - postgres -c "/usr/local/pgsql/bin/initdb --encoding UNICODE -D /usr/local/pgsql/data"
+  su - postgres -c "/usr/local/pgsql/bin/initdb --no-locale \
+    --encoding UNICODE -D /usr/local/pgsql/data"
 
 =item *
 
@@ -1496,6 +1502,13 @@ SFTP mover to try to use the SSH protocol 2 before protocol 1; otherwise, it
 first tries protocol 1. Enable this directive if you've installed the
 necessary CPAN modules for SSH-2 support in Net::SFTP. Disabled if not
 specified.
+
+=item *
+
+B<SFTP_HOME:> If you've enabled SFTP, set this directive to a directory
+containing your SSH keys and with permisssions appropriate for C<SYS_USER> to
+access. If no value is provided, the default will be specified by Net::SFTP,
+but is generally F</> (and therefore probably I<not> what you want).
 
 =item *
 

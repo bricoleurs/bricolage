@@ -32,6 +32,7 @@ $m->out('<p>',
         "</p>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 $m->flush_buffer;
+$r->status(Apache::Constants::HTTP_FORBIDDEN);
 $m->abort;
 </%perl>
 <%args>

@@ -49,11 +49,17 @@ system("cp -pR $CLONE->{CONFIG_DIR} dist");
 my $libdir = catdir curdir, 'dist', 'lib';
 mkpath $libdir;
 system("cp -pR $CONFIG->{MODULE_DIR}/Bric* $libdir");
+# Copy the Makefile.PL from source.
+my $makefile = catfile curdir, 'lib', 'Makefile.PL';
+system("cp -pR $makefile $libdir");
 
 # Copy bin from target.
 my $bindir = catdir curdir, 'dist', 'bin';
 mkpath $bindir;
 system("cp -pR $CONFIG->{BIN_DIR}/bric_* $bindir");
+# Copy the Makefile.PL from source.
+$makefile = catfile curdir, 'bin', 'Makefile.PL';
+system("cp -pR $makefile $bindir");
 
 # remove conf/install.db
 unlink("dist/conf/install.db");

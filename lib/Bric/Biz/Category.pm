@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1378,7 +1376,8 @@ NONE
 
 sub is_root_category {
     my $self = shift;
-    return ($self->get_parent_id == 0) ? $self : undef;
+    my $parent = $self->get_parent_id;
+    return defined $parent && $parent ne '' && $parent == 0 ? $self : undef;
 }
 
 #------------------------------------------------------------------------------#

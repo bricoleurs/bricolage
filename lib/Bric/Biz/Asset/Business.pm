@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1599,7 +1597,7 @@ B<Notes:> NONE.
 
 sub is_fixed {
     my $self = shift;
-    my $element = $self->get_element;
+    my $element = $self->_get_element_object;
     return $element->get_fixed_url;
 }
 
@@ -1878,6 +1876,9 @@ sub has_keyword {
 =item $self = $self->cancel()
 
 Called upon a checked out asset.   This unchecks it out.
+
+XXX Actually, it deletes the asset! I don't think that's what we want. Don't
+use this method!
 
 B<Throws:>
 

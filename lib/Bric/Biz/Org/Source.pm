@@ -11,9 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1238,12 +1236,16 @@ $get_em = sub {
             push @params, $v;
         } else {
             # We're horked.
-            throw_dp(error => "Invalid property '$k'.");
+            throw_dp(error => "Invalid property '$k'.")
+              unless $k eq 'all'; # XXX Allow all.
         }
     }
 
     # Make sure it's active unless and ID has been passed.
-    $wheres .= " AND s.active = 1" unless defined $params->{id};
+    # XXX Allow all. I will never again implicitly add search parameters to
+    # an API.
+    $wheres .= " AND s.active = 1" unless defined $params->{id}
+      || $params->{all};
 
     # Assemble and prepare the query.
     my ($qry_cols, $order) = $ids ? (\'DISTINCT s.id', 's.id') :

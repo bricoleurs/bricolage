@@ -28,9 +28,9 @@ my $widget = 'desk_asset';
 
 %#-- Args Section --#
 <%args>
-$story_sort_by => 'cover_date'
-$media_sort_by => 'cover_date'
-$formatting_sort_by => 'cover_date'
+$story_sort_by => get_pref('Default Asset Sort') || 'cover_date'
+$media_sort_by => get_pref('Default Asset Sort') || 'cover_date'
+$formatting_sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $offset => 0
 $show_all => undef
 </%args>

@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -52,7 +50,7 @@ use Template;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
-use Bric::Config qw(:burn);
+use Bric::Config qw(:burn :l10n);
 use Template::Constants qw( :debug );
 
 #==============================================================================#
@@ -203,8 +201,15 @@ sub burn_one {
 
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
-    my $template_roots = [ map { $fs->cat_dir($comp_dir, "oc_" . $_->get_id) }
-                           ($oc, $oc->get_includes) ];
+    my $template_roots;
+    foreach my $inc ($oc, $oc->get_includes) {
+        my $inc_dir = "oc_" . $inc->get_id;
+
+        push @$template_roots, $fs->cat_dir($self->get_sandbox_dir, $inc_dir)
+          if $self->get_sandbox_dir;
+
+        push @$template_roots, $fs->cat_dir($comp_dir, $inc_dir);
+    }
 
     # Save an existing TemplateToolkit request object and Bricolage objects.
     my (%bric_objs);
@@ -270,6 +275,8 @@ sub burn_one {
     $self->_push_element($element);
 
     while(1) {
+        use utf8;
+        warn "Processing $template\n";
 	$tt->process($template) or throw_burn_error
           error   => "Error executing '$template'",
           payload => $tt->error,
@@ -280,7 +287,6 @@ sub burn_one {
 
 	my $page = $self->_get('page') + 1;
 
-
 	if($outbuf !~ /^\s*$/) {
 	    my $file = $self->page_filepath($page);
 	    my $uri  = $self->page_uri($page);
@@ -289,6 +295,7 @@ sub burn_one {
 	    open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
+            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
 	    print OUT $outbuf;
 	    close(OUT);
 	    $outbuf = '';

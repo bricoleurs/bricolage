@@ -12,9 +12,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -32,7 +30,9 @@ Translation to Portuguese using Lang::Maketext.
 
 =cut
 
-@ISA = qw(Bric::Util::Language);
+use strict;
+use utf8;
+use base qw(Bric::Util::Language);
 
 use constant key => 'pt_pt';
 
@@ -719,6 +719,10 @@ To translate:
   'Microseconds' => 'Microseconds',
   'Precision' => 'Precision',
   "You do not have sufficient permission to create a media document for this site" => "You do not have sufficient permission to create a media document for this site"
+  'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
+  'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].'
+  'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.' => 'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.'
 
 =end comment
 

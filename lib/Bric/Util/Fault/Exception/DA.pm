@@ -6,7 +6,7 @@ __END__
 
 =head1 NAME
 
-Bric::Util::Exception::DA - Legacy Exception Class
+Bric::Util::Fault::Exception::DA - Legacy Exception Class
 
 =head1 DESCRIPTION
 

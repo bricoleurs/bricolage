@@ -32,9 +32,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -555,14 +553,9 @@ sub load_asset {
             push @{$fixup{$edata->{key_name}}}, $kn;
         }
 
-        # build hash of old data
-        my (%old_data, %updated_data);
-        if ($update) {
-            my @data = $element->get_data();
-            foreach my $data (@data) {
-                $old_data{$data->get_key_name} = $data;
-            }
-        }
+        # build hash of existing fields.
+        my %old_data = map { $_->get_key_name => $_ } $element->get_data;
+        my %updated_data;
 
         # find fields and instantiate new data elements
         my $place = 0;
@@ -591,7 +584,7 @@ sub load_asset {
 
             # get a data object
             my $data;
-            if ($update and exists $old_data{$field->{key_name}}) {
+            if ($old_data{$field->{key_name}}) {
                 print STDERR __PACKAGE__ . "::update : ".
                     "Found old data object for $edata->{key_name} => ",
                         "$field->{key_name}.\n"

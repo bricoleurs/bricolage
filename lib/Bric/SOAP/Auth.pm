@@ -27,9 +27,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -47,7 +45,7 @@ $LastChangedDate$
                cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
   # call the login method
-  my $response = $soap->login(name(username => USER), 
+  my $response = $soap->login(name(username => USER),
                               name(password => PASSWORD));
 
   # switch uri to call methods in other Bric::SOAP classes

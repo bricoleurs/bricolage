@@ -47,7 +47,9 @@ sub revert : Callback {
     my $version = $self->params->{"$widget|version"};
     $story->revert($version);
     $story->save;
-    add_msg('Story "[_1]" reverted to V.[_2].', $story->get_title, $version);
+    add_msg('Story "[_1]" reverted to V.[_2].',
+            '<span class="l10n">' . $story->get_title . '</span>',
+            $version);
     set_state_data($widget, 'story');
 }
 
@@ -68,13 +70,15 @@ sub save : Callback {
         # Save the story.
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.', $story->get_title);
+        add_msg('Story "[_1]" saved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
+
     }
 
     my $return = get_state_data($widget, 'return') || '';
 
     # Clear the state and send 'em home.
-    clear_state($widget);
+    $self->clear_my_state;
 
     if ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
@@ -126,7 +130,8 @@ sub checkin : Callback {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story, { Version => $story->get_version });
         log_event("story_rem_workflow", $story);
-        add_msg('Story "[_1]" saved and shelved.', $story->get_title);
+        add_msg('Story "[_1]" saved and shelved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -162,7 +167,7 @@ sub checkin : Callback {
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
-                $story->get_title, $dname);
+                '<span class="l10n">' . $story->get_title . '</span>', $dname);
 
         # HACK: Commit this checkin. WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -205,11 +210,11 @@ sub checkin : Callback {
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
         add_msg('Story "[_1]" saved and moved to "[_2]".',
-                $story->get_title, $dname);
+                '<span class="l10n">' . $story->get_title . '</span>', $dname);
     }
 
     # Clear the state out and set redirect.
-    clear_state($widget);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -227,13 +232,14 @@ sub save_and_stay : Callback {
         return unless $handle_delete->($story, $self);
         # Get out of here, since we've blow it away!
         $self->set_redirect("/");
-        clear_state($widget);
+        $self->clear_my_state;
     } else {
         # Make sure the story is activated and then save it.
         $story->activate;
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.', $story->get_title);
+        add_msg('Story "[_1]" saved.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     }
 }
 
@@ -242,8 +248,8 @@ sub cancel : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     if ($story->get_version == 0) {
-        # If the version number is 0, the story was never checked in to a
-        # desk. So just delete it.
+        # If the version number is 0, the story was never checked in. So just
+        # delete it.
         return unless $handle_delete->($story, $self);
     } else {
         # Cancel the checkout.
@@ -270,7 +276,9 @@ sub cancel : Callback {
 
         # If one move to desk, and one checkout, and this isn't the first
         # time the story has been in workflow since it was created...
-        if ($desks == 1 && $cos == 1 && @events > 2) {
+        # XXX Three events upon creation: story_create, story_add_category,
+        # and story_moved.
+        if ($desks == 1 && $cos == 1 && @events > 3) {
             # It was just recalled from the library. So remove it from the
             # desk and from workflow.
             my $desk = $story->get_current_desk;
@@ -284,9 +292,10 @@ sub cancel : Callback {
             # others to find.
             $story->save;
         }
-        add_msg('Story "[_1]" check out canceled.', $story->get_title);
+        add_msg('Story "[_1]" check out canceled.',
+                '<span class="l10n">' . $story->get_title . '</span>');
     }
-    clear_state($self->class_key);
+    $self->clear_my_state;
     $self->set_redirect("/");
 }
 
@@ -299,7 +308,7 @@ sub return : Callback {
 
     if ($version_view) {
         my $story_id = $story->get_id();
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect("/workflow/profile/story/$story_id/?checkout=1");
     } else {
         my $url;
@@ -318,7 +327,7 @@ sub return : Callback {
         }
 
         # Clear the state and send 'em home.
-        clear_state($widget);
+        $self->clear_my_state;
         $self->set_redirect($url);
     }
 }
@@ -340,7 +349,7 @@ sub create : Callback {
 
     if (AUTOGENERATE_SLUG) {
         # Create a slug based on title if there is no slug.
-        ($param->{slug} = substr($param->{title}, 0, 32)) =~ y/a-z0-9/_/cs
+        ($param->{slug} = substr($param->{title}, 0, 32)) =~ y/a-zA-Z0-9/_/cs
           unless defined $param->{slug} && $param->{slug} =~ /\S/;
     }
 
@@ -421,7 +430,8 @@ sub create : Callback {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg('Story "[_1]" created and saved.', $story->get_title);
+    add_msg('Story "[_1]" created and saved.',
+            '<span class="l10n">' . $story->get_title . '</span>');
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -454,15 +464,26 @@ sub delete_cat : Callback {
     my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
     my $story = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
-    $story->delete_categories($cat_ids);
-    $story->save;
 
-    # Log events.
+    my (@to_delete, @to_log);
+    my $primary = $self->params->{"$widget|primary_cat"}
+      ||  $story->set_primary_category;
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
-        log_event('story_del_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" disassociated.', $cat->get_name);
+        if ($cid == $primary) {
+            add_msg('Category "[_1]" cannot be dissociated because it is the'
+                    . 'primary category', $cat->get_name);
+            next;
+        }
+        push @to_delete, $cid;
+        push @to_log, ['story_del_category', $story, { Category => $cat->get_name }];
+        add_msg('Category "[_1]" disassociated.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
     }
+
+    $story->delete_categories(@to_delete);
+    $story->save;
+    log_event(@$_) for @to_log;
     set_state_data($widget, 'story', $story);
 }
 
@@ -488,7 +509,8 @@ sub add_category : Callback {
         $story->save;
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" added.', $cat->get_name);
+        add_msg('Category "[_1]" added.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
     }
     set_state_data($widget, 'story', $story);
 }
@@ -691,7 +713,8 @@ sub checkout : Callback {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            add_msg('Permission to checkout "[_1]" denied.',
+                    '<span class="l10n">' . $ba->get_title . '</span>');
         }
     }
 
@@ -740,7 +763,8 @@ sub recall : Callback {
             log_event('story_checkout', $ba);
             $co++;
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            add_msg('Permission to checkout "[_1]" denied.',
+                    '<span class="l10n">' . $ba->get_title . '</span>');
         }
     }
 
@@ -804,11 +828,18 @@ sub leave_category : Callback {
 
 sub set_primary_category : Callback {
     my $self = shift;
+    my $param = $self->params;
+    my $widget = $self->class_key;
 
     my $story = get_state_data($self->class_key, 'story');
     chk_authz($story, EDIT);
 
     my $primary_cat_id = $self->value;
+    if (defined $param->{$widget.'|delete_id'}
+        && $param->{$widget.'|delete_id'} == $primary_cat_id) {
+        add_msg("Cannot make a dissociated category the primary category.");
+        return;
+    }
     my $primary_cat = Bric::Biz::Category->lookup({ id => $primary_cat_id });
     $story->set_primary_category($primary_cat);
 
@@ -820,6 +851,14 @@ sub set_primary_category : Callback {
 }
 
 ### end of callbacks
+
+sub clear_my_state {
+    my $self = shift;
+    clear_state($self->class_key);
+    clear_state('container_prof');
+}
+
+##############################################################################
 
 $save_contrib = sub {
     my ($widget, $param, $self) = @_;
@@ -873,27 +912,26 @@ $save_category = sub {
     my $story = get_state_data($widget, 'story');
 
     my $existing = { map { $_->get_id => 1 } $story->get_categories };
-
     chk_authz($story, EDIT);
-    my $cat_id = $param->{$widget.'|delete_id'};
+    my $cat_id = mk_aref($param->{$widget.'|delete_id'});
     my $msg;
-    if ($cat_id) {
-        if (ref $cat_id) {  # delete more than one category
-            $story->delete_categories($cat_id);
-            foreach my $id (@$cat_id) {
-                my $cat = Bric::Biz::Category->lookup({ id => $id });
-                delete $existing->{$id};
-                log_event('story_del_category', $story, { Name => $cat->get_name });
-            }
-            add_msg('Categories disassociated.');
-        } else {            # delete one category
-            $story->delete_categories([$cat_id]);
-            my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-            delete $existing->{$cat_id};
-            my $name = $cat->get_name;
-            log_event('story_del_category', $story, { Name => $name });
-            add_msg('Category "[_1]" disassociated.', $name);
+    my @to_delete;
+    my $primary_cid = $story->get_primary_category->get_id;
+
+    foreach my $id (@$cat_id) {
+        if ($id == $primary_cid) {
+            add_msg('The primary category cannot be deleted.');
+            next;
         }
+        delete $existing->{$id};
+        push @to_delete, $id;
+        my $cat = Bric::Biz::Category->lookup({ id => $id });
+        log_event('story_del_category', $story, { Name => $cat->get_name });
+    }
+
+    if (@to_delete) {
+        add_msg('Categories disassociated.');
+        $story->delete_categories(\@to_delete);
     }
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
@@ -943,8 +981,8 @@ $save_data = sub {
       if exists $param->{title};
     $story->set_description($param->{description})
       if exists $param->{description};
-    $story->set_source__id($param->{"$widget|source_id"})
-      if exists $param->{"$widget|source_id"};
+    $story->set_source__id($param->{"$widget|source__id"})
+      if exists $param->{"$widget|source__id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
@@ -1006,7 +1044,8 @@ $handle_delete = sub {
     $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);
-    add_msg('Story "[_1]" deleted.', $story->get_title);
+    add_msg('Story "[_1]" deleted.',
+            '<span class="l10n">' . $story->get_title . '</span>');
     return 1;
 };
 

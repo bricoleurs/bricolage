@@ -78,7 +78,7 @@ if (defined $id) {
                 $m->scomp('/widgets/select_object/select_object.mc',
                           object => 'output_channel',
                           field  => 'name',
-                          constrain => { site_id => $siteid },
+                          constrain => { site_id => $siteid, active => 1 },
                           no_persist => 1,
                           name   => "primary_oc_site_$siteid",
                           useTable => 0,
@@ -159,17 +159,20 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                 );
         my @available_ocs;
         foreach my $site ($comp->get_sites) {
-            push @available_ocs, Bric::Biz::OutputChannel->list
-              ({ site_id => $site->get_id});
+            push @available_ocs, Bric::Biz::OutputChannel->list({
+                site_id => $site->get_id,
+                active  => 1
+            });
         }
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
-    objs   => \@available_ocs, 
+    objs   => \@available_ocs,
     field  => 'name',
     exclude => [ map { $_->get_id } $comp->get_output_channels ],
     no_persist => 1,
+    getter => $oc_name_getter,
     name   => 'formBuilder|add_oc_id_cb',
     default => ['' => 'Add Output Channel'],
     constrain => { active => 1 },
@@ -298,6 +301,12 @@ my $disp = get_disp_name('element'); # HACK!
 my $sel_sub = sub {
     return unless chk_authz($_[0], EDIT, 1);
     return ['Delete', 'rem_site'];
+};
+my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $oc_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
 };
 </%once>
 

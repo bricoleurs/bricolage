@@ -19,7 +19,7 @@ CREATE SEQUENCE seq_job_member START 1024;
 CREATE TABLE job (
     id            NUMERIC(10, 0)    NOT NULL
                                     DEFAULT NEXTVAL('seq_job'),
-    name          VARCHAR(256)      NOT NULL,
+    name          TEXT              NOT NULL,
     usr__id       NUMERIC(10, 0)    NOT NULL,
     sched_time    TIMESTAMP	    NOT NULL
 				    DEFAULT CURRENT_TIMESTAMP,
@@ -47,7 +47,7 @@ CREATE TABLE job (
     class__id     NUMERIC(10,0)     NOT NULL,
     story__id     NUMERIC(10,0),
     media__id     NUMERIC(10,0),
-    error_message VARCHAR(2000),
+    error_message TEXT,
     CONSTRAINT pk_job__id PRIMARY KEY (id)
 );
 

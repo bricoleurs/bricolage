@@ -177,6 +177,8 @@ Folks who have submitted patches include:
 
 =item Rod Taylor
 
+=item Cameron Miller
+
 =back
 
 Friends who have spotted bugs include:
@@ -264,6 +266,16 @@ Friends who have spotted bugs include:
 =item Christian Hauser
 
 =item Tony Cowderoy
+
+=item Joshua Edelstein
+
+=item Will Trillich
+
+=item Adam Rinehart
+
+=item Hal Creech
+
+=item Patrick Michael Kane
 
 =back
 

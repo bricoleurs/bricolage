@@ -1,0 +1,9 @@
+^_build
+^Build$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+^bric_media_dump
+^www
+\.svn

@@ -12,9 +12,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -174,7 +172,7 @@ BEGIN {
                         current_version   => Bric::FIELD_READ,
                         published_version => Bric::FIELD_RDWR,
                         priority          => Bric::FIELD_RDWR,
-                        modifer           => Bric::FIELD_READ,
+                        modifier          => Bric::FIELD_READ,
                         expire_date       => Bric::FIELD_RDWR,
                         checked_out       => Bric::FIELD_READ,
                         workflow_id       => Bric::FIELD_RDWR,
@@ -311,7 +309,6 @@ sub list {
     my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->VERSION_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
     my @objs = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
-    return unless $objs[0];
     return (wantarray ? @objs : \@objs);
 }
 
@@ -351,7 +348,6 @@ sub list_ids {
     my $sql = build_query($pkg, $cols, '', $tables, $where, $order);
     my $select = prepare_ca($$sql, undef);
     my $return = col_aref($select, @$args);
-    return unless $return->[0];
     return wantarray ? @{ $return } : $return;
 }
 
@@ -1613,35 +1609,32 @@ sub is_active {
 
 ################################################################################
 
-=item $self = $self->cancel_checkout()
+=item $self = $self->cancel_checkout
 
-Cancels the checkout.   Deletes the version instance record and its associated.
-Files
+Cancels the checkout. Deletes the version instance record.
 
 B<Throws:>
 
-"Asset is Not Checked Out"
+=over 4
 
-B<Side Effects:>
+=item "Cannot cancel a non checked out asset"
 
-NONE
+=back
 
-B<Notes:>
+B<Side Effects:> NONE.
 
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub cancel_checkout {
-        my ($self) = @_;
+    my $self = shift;
 
-        $self->_set( {
-                user__id => undef,
-                checked_out => 0,
-                _cancel         => 1
-                });
+    # Make sure it's checked out.
+    throw_gen "Cannot cancel a non checked out asset"
+      unless $self->_get('checked_out');
 
-        return $self;
+    return $self->_set([qw(user__id checked_out _cancel)] => [undef, 0, 1]);
 }
 
 ##############################################################################

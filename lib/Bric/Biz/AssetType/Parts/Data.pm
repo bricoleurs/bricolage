@@ -3,8 +3,7 @@ package Bric::Biz::AssetType::Parts::Data;
 
 =head1 NAME
 
-Bric::Biz::element::Parts::Data - The place where fields with in an element
-are registered with rules to their usage
+Bric::Biz::AssetType::Parts::Data - The place where fields with in an element are registered with rules to their usage
 
 =head1 VERSION
 
@@ -12,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -22,13 +19,13 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
- $field = Bric::Biz::element::Parts::Data->new( $initial_state )
+ $field = Bric::Biz::AssetType::Parts::Data->new( $initial_state )
 
- $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
+ $field = Bric::Biz::AssetType::Parts::Data->lookup( { id => $id } )
 
- ($field_list || @fields) = Bric::Biz::element::Parts::Data->list($criteria)
+ ($field_list || @fields) = Bric::Biz::AssetType::Parts::Data->list($criteria)
 
- ($ids || @ids) = Bric::Biz::element::Parts::Data->list_ids($criteria)
+ ($ids || @ids) = Bric::Biz::AssetType::Parts::Data->list_ids($criteria)
 
 
  $id    = $field->get_id()
@@ -73,7 +70,8 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This class holds the data about data that will eventualy populate Published
-Assets.  The name and description fields can be set as can a number of rules.
+Assets. The C<key_name> and C<description> fields can be set as can a number
+of rules.
 
 The max length field.   This will allow someone to set the max length allowed
 for their field.   It will have a rule set upon it so that the max length will
@@ -138,7 +136,7 @@ use constant COLS  => qw(
                          sql_type
                          active);
 
-use constant ORD => qw(name description max_length required quantifier active);
+use constant ORD => qw(key_name description max_length required quantifier active);
 
 #==============================================================================#
 # Fields                               #
@@ -347,7 +345,7 @@ sub copy {
 
 #------------------------------------------------------------------------------#
 
-=item $field = Bric::Biz::element::Parts::Data->lookup( { id => $id } )
+=item $field = Bric::Biz::AssetType::Parts::Data->lookup( { id => $id } )
 
 Returns an existing Asset type field object that has the id that was given
 as an argument
@@ -384,7 +382,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item ($parts || @parts) = Bric::Biz::element::Parts::Data->list($params)
+=item ($parts || @parts) = Bric::Biz::AssetType::Parts::Data->list($params)
 
 Returns a list (or list ref) of field objects that match the criteria in the
 C<$params> hash reference. Supported criteria are:
@@ -726,7 +724,7 @@ sub my_meths {
 
 ##############################################################################
 
-=item ($ids || @ids) = Bric::Biz::element::Parts::Field->list_ids($params)
+=item ($ids || @ids) = Bric::Biz::AssetType::Parts::Field->list_ids($params)
 
 Returns the ids of the field objects that match the given criteria in the
 C<$params> hash reference. See C<list()> for a list of supported parameters.

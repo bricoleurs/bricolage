@@ -11,9 +11,7 @@ $LastChangedRevision$
 =cut
 
 # Grab the Version Number.
-INIT {
-    require Bric; our $VERSION = Bric->VERSION
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -1164,19 +1162,24 @@ $get_em = sub {
     $" = ', ';
     my @qry_cols = $ids ? ('DISTINCT a.id') : (@cols, @by_cols);
 #my @by_cols = qw(c.type v.contact_value__value v.sent_time);
-#my @by_props = qw(type value sent_time); 
+#my @by_props = qw(type value sent_time);
    my $sel = prepare_c(qq{
         SELECT @qry_cols
-        FROM   alerted a, alerted__contact_value v, contact c,
-               alert b
-        WHERE  a.id = v.alerted__id
-               AND b.id = a.alert__id
-               AND v.contact__id = c.id
+        FROM   alert b, alerted a LEFT JOIN alerted__contact_value v
+               ON a.id = v.alerted__id LEFT JOIN contact c on v.contact__id = c.id
+        WHERE  b.id = a.alert__id
                $where
         ORDER BY a.id
     }, undef);
 
-    # Just return the IDs, if they're what's wanted.
+warn "        SELECT @qry_cols
+        FROM   alert b, alerted a LEFT JOIN alerted__contact_value v
+               ON a.id = v.alerted__id LEFT JOIN contact c on v.contact__id = c.id
+        WHERE  b.id = a.alert__id
+               $where
+        ORDER BY a.id
+
+";    # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);

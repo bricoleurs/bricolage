@@ -38,7 +38,7 @@ $work_id => undef
 $style   => 'standard'
 $action  => undef
 $wf      => undef
-$sort_by => 'cover_date'
+$sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $offset  => 0
 $show_all => undef
 </%args>
@@ -114,6 +114,84 @@ my $cached_assets = sub {
 
     # Return them.
     return $objs->{$ckey};
+};
+
+# XXX This is used by the desk and workflow placement hacks.
+my $dump_events = sub {
+    my $obj = shift;
+    return if $r->pnotes("$obj");
+    $r->pnotes("$obj" => 1);
+    my $cid = get_class_info(ref $obj)->get_id;
+    print STDERR "Recent events for ", $obj->key_name, ' "',
+      $obj->get_name, "\":$/";
+    my $i = 0;
+    my %users;
+    for my $e (reverse Bric::Util::Event->list({
+        obj_id   => $obj->get_id,
+        class_id => $cid}))
+    {
+        my $u = $users{$e->get_user_id} ||= $e->get_user->get_login;
+        print STDERR "   ", $e->get_timestamp, ": ", $e->get_name,
+          " by $u$/";
+        last if ++$i >= 20;
+    }
+    print STDERR $/;
+};
+
+# XXX This is a hack. We still have no idea when or why a document forgets
+# its workflow or desk.
+my $put_into_wf = sub {
+    my ($obj, $cancel) = @_;
+    $r->log->error(uc($obj->key_name) . ' "' . $obj->get_name
+                   . '" forgot what workflow it was in.');
+    $dump_events->($obj);
+    # No workflow, either. Find one.
+    my $wf = find_workflow($obj->get_site_id, $obj->workflow_type, READ);
+    unless ($wf) {
+        # Oh, hell. They don't have access to the appropriate
+        # workflow. Just cancel the checkout.
+        $obj->cancel_checkout;
+        $obj->save;
+        add_msg('Warning: object "[_1]" had no associated workflow, and '
+                . 'you do not have the appropriate permissions to assign '
+                . 'it to one. Checkout cancelled.', $obj->get_name);
+        return;
+    }
+
+    # Assign to workflow
+    $obj->set_workflow_id($wf->get_id);
+    add_msg('Warning: object "[_1]" had no associated workflow. It has been '
+            . 'assigned to the "[_2]" workflow',
+            $obj->get_name, $wf->get_name);
+    return $wf;
+};
+
+# XXX This is a hack. We still have no idea when or why a document forgets
+# its workflow or desk.
+my $put_onto_desk = sub {
+    my ($obj, $wf, $perm) = @_;
+    $r->log->error(uc($obj->key_name) . ' "' . $obj->get_name
+                   . '" forgot what desk it was on.');
+    $dump_events->($obj);
+    # Put it on a desk in the workflow.
+    my $desk = find_desk($wf, $perm);
+    unless ($desk) {
+        # Oh, hell. They don't have permission to a desk. Cancel the checkout.
+        $obj->cancel_checkout;
+        $obj->save;
+        add_msg('Warning: object "[_1]" had no associated desk, and you '
+                . 'do not have the appropriate permissions to assign it '
+                . 'to one. Checkout cancelled.', $obj->get_name);
+        return;
+    }
+    $desk->accept({'asset' => $obj});
+    $desk->save;
+
+    # Tell the user this object was baked
+    add_msg('Warning: object "[_1]" had no associated desk. It has been '
+            . 'assigned to the "[_2]" desk.',
+            $obj->get_name, $desk->get_name);
+    return $desk;
 };
 </%once>
 
@@ -197,6 +275,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my $desk_opts = [['', '']];
         my ($user);
         my $pub = '';
+        my $a_wf = $wfs{$obj->get_workflow_id} ||= $obj->get_workflow_object;
         if ($desk_type eq 'workflow') {
             # Figure out the checkout/edit link.
             if (defined $user_id) {
@@ -221,7 +300,8 @@ if (defined $objs && @$objs > $obj_offset) {
                 my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
                 if ($can_pub and ! $obj->get_checked_out) {
                     $checkname = "$widget|${class}_pub_ids";
-                    $checklabel = $lang->maketext($class eq 'formatting' ? 'Deploy' : 'Publish');
+                    $checklabel = $lang->maketext($class eq 'formatting'
+                                                  ? 'Deploy' : 'Publish');
                 }
 
                 # We don't want both Delete and Publish on the same page
@@ -233,48 +313,51 @@ if (defined $objs && @$objs > $obj_offset) {
                       . qq{<label for="$widget\_$aid">$checklabel</label>};
                 }
             }
+
+            # XXX HACK: Stop the 'allowed_desks' error.
+            unless ($a_wf) {
+                if ($obj->is_active) {
+                    # Hrm, we don't have a workflow object. What workflow is
+                    # the current desk in?
+                    if ($work_id) {
+                        $obj->set_workflow_id($work_id);
+                        $obj->save;
+                        $a_wf = $wfs{$work_id}
+                          ||= Bric::Biz::Workflow->lookup({ id => $work_id});
+                        add_msg('Warning: object "[_1]" had no associated '
+                                . 'workflow.  It has been assigned to the '
+                                . '"[_2]" workflow.',
+                                $obj->get_name, $a_wf->get_name);
+                    } else {
+                        # This shouldn't happen, since $work_id is always
+                        # passed as a paramter.
+                        $a_wf = $put_into_wf->($obj) or next;
+                    }
+                    # We know we have a desk because we're currently *on*
+                    # a desk!
+                } else {
+                    # Remove it from the desk.
+                    $desk->remove_asset($obj) if $desk;
+                    next;
+                }
+            }
         } else {
             # It's 'My Workspace'.
             $desk = $obj->get_current_desk;
+            # XXX We should never lose track of the workflow! This is a hack.
+            $a_wf ||= $obj->get_workflow_object || $put_into_wf->($obj)
+              || next;
 
-            # HACK: sometimes objects don't have a current desk.  I don't
-            # know why, but it happens and then a fatal error occurs
-            # when $desk->get_id is called on an undef desk.  Instead,
-            # find the default desk for this object and put it there
-            # with a warning for the user.
-            if (not defined $desk) {
-                my $wf = $obj->get_workflow_object;
-
-                # no workflow either!  Find one appropriate for the
-                # object.
-                if (not defined $wf) {
-                    my $site_id = $obj->get_site_id;
-                    my $ref = ref $obj;
-                    my $type = $ref =~ /Story$/
-                      ? 2
-                      : $ref =~ /Media/
-                        ? 3
-                        : 1;
-                    # Find a workflow to put it on.
-                    ($wf) = Bric::Biz::Workflow->list({ type    => $type,
-                                                        site_id => $site_id});
-                    # assign to workflow
-                    $obj->set_workflow_id($wf->get_id());
-                }
-
-                # assign to start desk of workflow
-                $desk = $wf->get_start_desk;
-                $desk->accept({'asset' => $obj});
-                $desk->save();
-
-                # tell the user this object was baked
-                add_msg('Warning: object "[_1]" had no associated desk. '
-                         . 'It has been assigned to the "[_2]" desk.',
-                        $obj->get_name, $desk->get_name);
+            unless ($desk) {
+                # XXX I really want to make this go away!
+                # HACK: sometimes objects don't have a current
+                # desk. I don't know why, but it happens and then
+                # a fatal error occurs. So find a desk for it.
+                $desk = $put_onto_desk->($obj, $a_wf, EDIT) or next;
             }
 
             $desk_id = $desk->get_id;
-            $label = $lang->maketext('Check In to [_1]',$desk->get_name);
+            $label = $lang->maketext('Check In to [_1]', $desk->get_name);
             $action = 'checkin_cb';
             if ($can_edit) {
                 $vlabel = 'Edit';
@@ -288,57 +371,8 @@ if (defined $objs && @$objs > $obj_offset) {
         }
 
         # Assemble the list of desks we can move this to.
-        my $a_wf = $wfs{$obj->get_workflow_id} ||= $obj->get_workflow_object;
-
         my $value = '';
         if ($desk_opts) {
-
-            # HACK:  Stop the 'allowed_desks' error.
-            unless ($a_wf) {
-                if ($obj->is_active) {
-                    my $site_id = $obj->get_site_id;
-                    my $ref = ref $obj;
-                    my $type = $ref =~ /Story$/
-                      ? 2
-                      : $ref =~ /Media/
-                        ? 3
-                        : 1;
-                    # Find a workflow to put it on.
-                    ($a_wf) = Bric::Biz::Workflow->list({ type    => $type,
-                                                          site_id => $site_id});
-
-                    $obj->set_workflow_id($a_wf->get_id);
-                    $obj->save;
-
-                    my @msg_args = ('Warning: object "[_1]" had no associated '
-                                    . 'workflow.  It has been assigned to the '
-                                    . '"[_2]" workflow.',
-                                    $obj->get_name, $a_wf->get_name);
-                    my $did = $obj->get_desk_id;
-                    my @ad = $a_wf->allowed_desks;
-                    unless (grep($did == $_->get_id, @ad)) {
-                        my $st = $a_wf->get_start_desk;
-                        if ($desk && $desk->get_id != $st->get_id) {
-                            $desk->transfer({'to'    => $st,
-                                             'asset' => $obj});
-                            $desk->save;
-                        } else {
-                            $st->accept({ asset => $obj });
-                            $st->save;
-                            $obj->save;
-                        }
-                        $msg_args[0] .= ' This change also required that '
-                              . 'this object be moved to the "[_3]" desk.';
-                        push(@msg_args, $st->get_name);
-                    }
-                    add_msg(@msg_args);
-                } else {
-                    # Remove it from the desk!
-                    $desk->remove_asset($obj) if $desk;
-                    next;
-                }
-            }
-
             my %seen;
             my $a_wfid = $a_wf->get_id;
             foreach my $d ($a_wf->allowed_desks) {

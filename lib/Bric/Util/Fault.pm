@@ -11,9 +11,7 @@ $LastChangedRevision$
 
 =cut
 
-INIT {
-    require Bric; our $VERSION = Bric->VERSION;
-}
+require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
@@ -162,7 +160,7 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#
 # Programatic Dependencies
-use overload q{""} => \&error_info;
+use overload q{""} => \&error_info, fallback => 1;
 use HTML::Mason::Exceptions ();
 
 #=============================================================================#

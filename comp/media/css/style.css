@@ -24,10 +24,15 @@ body {
 #navFrame         { background: #666633; }
 #help             { background: white; }
 
-#bricLogo         { padding: 8px 8px 2px 8px; background: white; }
-#mainContainer    { position: relative; margin: 0 8px 8px 8px; }
-#navContainer     { position: absolute; top: 0; left: 0; width: 150px; }
-#contentContainer { position: relative; left: 158px; width: 580px; }
+#bricLogo { padding: 8px 8px 2px 8px; background: white; }
+#mainContainer { position: relative; margin: 0 8px 8px 8px; }
+#navContainer { position: absolute; top: 0; left: 0; width: 150px; }
+* html #navContainer { 
+    /* IE5/Win hack... messy fix for bug 801. */
+    top: -35px; t\op: 0; 
+    left: -8px; lef\t: 0; 
+}
+#contentContainer { padding-left: 158px; }
 
 .adminBox,
 .workflowBox,
