@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =head1 DATE
 
-$Date: 2003-03-07 16:40:42 $
+$Date: 2003-03-09 19:38:12 $
 
 =head1 DESCRIPTION
 
@@ -273,7 +273,7 @@ All of the tests are run by the F<inst/runtests.pl> script, which in turn
 tells L<Test::Harness|Test::Harness> to execute F<t/Bric/Test/Runner.pm>. This
 file will find all the necessary test classes, load them, and then run their
 tests. F<inst/runtests.pl> takes a number of arguments to simplify the running
-of scripts, including a list of Test files or classes to run, so that you can
+of scripts, including a list of test files or classes to run, so that you can
 just run the tests you need to run while you're developing new tests.
 C<perldoc inst/runtests.pl> for more information.
 
@@ -285,6 +285,18 @@ Bric::Test::Base. Be sure to read the documentation in these classes, as it
 will help you to write your tests more effectively. Pay special attention to
 the methods added to Bric::Test::DevBase, as they're there to help you clean
 up any new records you've added to the database.
+
+And finally, when you do provide patches to Bricolage, along with the new
+tests to test them, make sure that all I<existing> tests pass, as well. This
+means that you should always run C<make devtest> on a fresh database build
+with your changes. Furthermore, if your patch involves changes to the
+database, you should provide the necessary upgrade script in F<inst/upgrade/>,
+and also run the tests against a database that has been built from Bricolage
+sources untouched by your patch, and then upgraded by your upgrade
+script. This will help to ensure that your upgrade script modifies the
+database in the same way as your patch modifies the Bricolage SQL files.
+
+And with that said, happy testing!
 
 =head1 DEBUGGING
 
