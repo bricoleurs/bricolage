@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 
@@ -369,19 +369,15 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
-
-	$init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-	delete $init->{'active'};
-	$init->{priority} ||= 3;
-	$init->{name} = delete $init->{title} if exists $init->{title};
-	$self = bless {}, $self unless ref $self;
-
-	$self->_init($init);
-
-	$self->SUPER::new($init);
-
-	return $self;
+    my ($self, $init) = @_;
+    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
+    delete $init->{'active'};
+    $init->{priority} ||= 3;
+    $init->{name} = delete $init->{title} if exists $init->{title};
+    $self = bless {}, $self unless ref $self;
+    $self->_init($init);
+    $self->SUPER::new($init);
+    return $self;
 }
 
 ################################################################################
@@ -1479,51 +1475,43 @@ B<Notes:>
 =cut
 
 sub save {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	# Make sure the primary uri is up to date.
-	$self->_set(['primary_uri'], [$self->get_uri])
-		unless ($self->get_primary_uri eq $self->get_uri);
+    # Make sure the primary uri is up to date.
+    $self->_set(['primary_uri'], [$self->get_uri])
+      unless ($self->get_primary_uri eq $self->get_uri);
 
-	if ($self->_get('id')) {
-
-		# make any necessary updates to the Main table
-		$self->_update_story();
-
-		if ($self->_get('version_id')) {
-			if ($self->_get('_cancel')) {
-				$self->_delete_instance();
-				if ($self->_get('version') == 0) {
-					$self->_delete_story();
-				}
-				$self->_set( {'_cancel' => undef });
-				return $self;
-			} else {
-				$self->_update_instance();
-			}
-		} else {
-			$self->_insert_instance();
+    if ($self->_get('id')) {
+	# make any necessary updates to the Main table
+	$self->_update_story();
+	if ($self->_get('version_id')) {
+	    if ($self->_get('_cancel')) {
+		$self->_delete_instance();
+		if ($self->_get('version') == 0) {
+		    $self->_delete_story();
 		}
-
+		$self->_set( {'_cancel' => undef });
+		return $self;
+	    } else {
+		$self->_update_instance();
+	    }
 	} else {
-
-		if ($self->_get('_cancel')) {
-			return $self;
-		} else {
-			# This is Brand new insert both Tables
-			$self->_insert_story();
-			$self->_insert_instance();
-		}
+	    $self->_insert_instance();
 	}
+    } else {
+	if ($self->_get('_cancel')) {
+	    return $self;
+	} else {
+	    # This is Brand new insert both Tables
+	    $self->_insert_story();
+	    $self->_insert_instance();
+	}
+    }
 
-
-	$self->_sync_categories();
-	$self->SUPER::save();
-
-
-	$self->_set__dirty(0);
-
-	return $self;
+    $self->_sync_categories();
+    $self->SUPER::save();
+    $self->_set__dirty(0);
+    return $self;
 }
 
 ################################################################################

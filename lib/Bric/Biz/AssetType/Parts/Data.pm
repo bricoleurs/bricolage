@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:54 $
+$Date: 2001-10-11 00:34:54 $
 
 
 =head1 SYNOPSIS
@@ -936,13 +936,7 @@ NONE
 
 =cut
 
-sub activate {
-    my $self = shift;
-    
-    $self->_set( { 'active' => 1 } );
-    
-    return $self;
-}
+sub activate { $_[0]->_set(['active'], [1]) }
 
 #------------------------------------------------------------------------------#
 
@@ -964,13 +958,7 @@ NONE
 
 =cut
 
-sub deactivate {
-    my $self = shift;
-    
-    $self->_set( { 'active' => undef } );
-    
-    return $self;
-}
+sub deactivate { $_[0]->_set(['active'], [0]) }
 
 #------------------------------------------------------------------------------#
 
@@ -992,11 +980,7 @@ NONE
 
 =cut
 
-sub is_active {
-    my $self = shift;
-    
-    return $self->_get('active') ? 1 : undef;
-}
+sub is_active { return $_[0]->_get('active') ? $_[0] : undef }
 
 #------------------------------------------------------------------------------#
 

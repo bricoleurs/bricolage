@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2001-10-09 22:21:02 $
+$Date: 2001-10-11 00:35:39 $
 
 =head1 SYNOPSIS
 
@@ -102,9 +102,10 @@ function init() {
 
 }
 
-% if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
+%# if ($no_toolbar && $agent->{browser} ne 'Internet Explorer') {
+% if ($no_toolbar) {
 %     # We have to strip out non-alphanumeric chars because Netscape is lame!
-if (window.toolbar.visible == true) {
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
     // Turn off the toolbar, back button, etc.
     window.open("<% $uri %>", 'Bricolage_<% SERVER_WINDOW_NAME %>',
                 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1');

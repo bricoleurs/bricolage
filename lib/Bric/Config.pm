@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.11 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.12 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 21:52:19 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 
@@ -419,10 +419,6 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     # Search Settings
     use constant FULL_SEARCH => => $config->{FULL_SEARCH};
 
-    # Output Channel Settings.
-    use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
-    use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
-
     # FTP Settings
     use constant ENABLE_FTP_SERVER => $config->{ENABLE_FTP_SERVER} || 0;
     use constant FTP_ADDRESS       => $config->{FTP_ADDRESS}       || "";
@@ -430,6 +426,11 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG            => $config->{FTP_LOG}           ||
       catdir($ENV{BRICOLAGE_ROOT}, 'ftp.log');
+
+    # Output Channel Settings.
+    use constant DEFAULT_FILENAME => => $config->{DEFAULT_FILENAME} || 'index';
+    use constant DEFAULT_FILE_EXT => => $config->{DEFAULT_FILE_EXT} || 'html';
+
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {

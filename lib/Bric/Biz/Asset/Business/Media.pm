@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.8 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.9 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 

@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.7 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 
@@ -387,7 +387,7 @@ form field) parameters:
 sub handle_callbacks {
     my ($m, $param) = @_;
     my $w_dir = $HTML::Mason::Commands::widget_dir;
-    my @delay_cb;
+    my (@delay_cb, @priority);
 
     eval {
 	foreach my $field (keys %$param) {
@@ -416,7 +416,8 @@ sub handle_callbacks {
 		}
 	    }
 	    # Call priority callbacks first.
-	    elsif ($ext eq '_pc') {
+	    elsif ($ext eq '_pc' || $ext eq '_p0') {
+		my $stack = $ext eq '_pc' ? \@delay_cb : \@priority;
 		$param->{$key} = $param->{$field} unless $key eq $field;
 		# Skip callbacks that aren't given a value.
 		next if $param->{$key} eq '';
@@ -426,7 +427,7 @@ sub handle_callbacks {
 		if ($m->comp_exists($cb)) {
 		    # Save these callbacks, first - ensures that all the '_cb.x'
 		    # fields will be properly named '_cb' instead.
-		    unshift @delay_cb, sub {
+		    unshift @$stack, sub {
 			$m->comp($cb, 'widget' => $widget, 'field'  => $key,
 				 'param'  => $param, __CB_DONE => 1);
 		    };
@@ -435,7 +436,7 @@ sub handle_callbacks {
 	}
 
 	# Execute the callbacks.
-	foreach my $cb (@delay_cb) { &$cb }
+	foreach my $cb (@priority, @delay_cb) { &$cb }
     };
 
     # Do error processing, if necessary.

@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2001-10-09 20:48:56 $
+-- $Date: 2001-10-11 00:34:55 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 -- -----------------------------------------------------------------------------
 -- Member.sql
 -- 
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- The member table and the tables that map member back to their respective 
 -- objects. The member table contains an id and a group id. The table that 

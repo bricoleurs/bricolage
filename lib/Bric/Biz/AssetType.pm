@@ -8,16 +8,16 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 
@@ -1732,7 +1732,7 @@ sub del_data {
     my ($parts, $new_parts, $del_parts) = $self->_get('_parts',
 						      '_new_parts',
 						      '_del_parts');
-    
+
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
 	    my $msg = 'Must pass AssetType field or container objects, not IDs';
@@ -1741,25 +1741,24 @@ sub del_data {
 
 	# Get the ID if we were passed an object.
 	my $p_id = $p->get_id();
-	
+
 	# Delete this part from the list and put it on the deletion list.
 	if (exists $parts->{$p_id}) {
 	    delete $parts->{$p_id};
 	    # Add the object as a value.
 	    $del_parts->{$p_id} = $p;
 	}
-	
+
 	# Remove this value from the addition list if its there.
 	delete $new_parts->{$p_id};
     }
-    
+
     # Update $self's new and deleted parts lists.
-    $self->_set(['_parts', '_new_parts', '_del_parts'], 
+    $self->_set(['_parts', '_new_parts', '_del_parts'],
 		[$parts  , $new_parts  , $del_parts]);
 
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
-
     return $self;
 }
 
@@ -2400,7 +2399,7 @@ sub _sync_parts {
     my ($parts, $new_parts, $del_parts) = $self->_get('_parts',
 						      '_new_parts',
 						      '_del_parts');
-    
+
     # Pull of the newly created parts.
     my $created = delete $new_parts->{-1};
 
@@ -2419,10 +2418,10 @@ sub _sync_parts {
     foreach my $p_id (keys %$new_parts) {
 	# Delete this from the new list and grab the object.
 	my $p_obj = delete $new_parts->{$p_id};
-	
+
 	# Save the parts object.
 	$p_obj->save;
-	
+
 	# Add it to the current parts list.
 	$parts->{$p_id} = $p_obj;
     }
@@ -2434,9 +2433,9 @@ sub _sync_parts {
 	my $p_obj = delete $del_parts->{$p_id};
 
 	# This needs to happen for deleted parts.
-	$p_obj->remove();
+	$p_obj->deactivate;
+	$p_obj->save;
     }
-    
     return $self;
 }
 
@@ -2707,7 +2706,7 @@ sub _get_parts {
 
     my $cont = Bric::Biz::AssetType::Parts::Data->list(
 				          {'element__id' => $self->get_id,
-					   '_active'        => 1}
+					   'active'        => 1}
 							);
     my $p_table = {map { $_->get_id => $_ } (@$cont)};
 

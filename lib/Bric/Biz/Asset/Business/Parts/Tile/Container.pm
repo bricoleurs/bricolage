@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:54 $
+$Date: 2001-10-11 00:34:54 $
 
 =head1 SYNOPSIS
 
@@ -226,64 +226,58 @@ NONE
 =cut
 
 sub new {
-	my ($self, $init) = @_;
+    my ($self, $init) = @_;
 
-	# check active and object
-	$init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-	delete $init->{'active'};	
-	$init->{'place'}  ||= 0;
-	$init->{'object_order'} ||=1;
+    # check active and object
+    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
+    delete $init->{'active'};
+    $init->{'place'}  ||= 0;
+    $init->{'object_order'} ||=1;
+    $self = bless {}, $self unless ref $self;
 
-	$self = bless {}, $self unless ref $self;
-
-	if ($init->{'object'}) {
-		$init->{'object_instance_id'} = $init->{'object'}->get_version_id();
-		my $class = ref $init->{'object'};
-
-		if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
-			$init->{'object_type'} = 'media';
-		} elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
-			$init->{'object_type'} = 'story';
-		} else {
-			die Bric::Util::Fault::Exception::GEN->new( { 
-				msg => "Object of type $class not allowed"});
-		}
-		$init->{'_object'} = delete $init->{'object'};
-	}
-
-	if ($init->{'element'} ) {
-		$init->{'element_id'} = $init->{'element'}->get_id();
-		$init->{'_element_obj'} = delete $init->{'element'};
+    if ($init->{'object'}) {
+	$init->{'object_instance_id'} = $init->{'object'}->get_version_id();
+	my $class = ref $init->{'object'};
+	if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
+	    $init->{'object_type'} = 'media';
+	} elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
+	    $init->{'object_type'} = 'story';
 	} else {
-		# not sure why this needs to be here
-		delete $init->{'element'};
-		$init->{'_element_obj'} = Bric::Biz::AssetType->lookup({ 
-				'id' => $init->{'element_id'} });
-
+	    die Bric::Util::Fault::Exception::GEN->new( {
+              msg => "Object of type $class not allowed"});
 	}
+	$init->{'_object'} = delete $init->{'object'};
+    }
 
-	$init->{'name'} = $init->{'_element_obj'}->get_name();
-	$init->{'description'} = $init->{'_element_obj'}->get_description();
+    if ($init->{'element'} ) {
+	$init->{'element_id'} = $init->{'element'}->get_id();
+	$init->{'_element_obj'} = delete $init->{'element'};
+    } else {
+	# not sure why this needs to be here
+	delete $init->{'element'};
+	$init->{'_element_obj'} = Bric::Biz::AssetType->lookup({
+	  'id' => $init->{'element_id'} });
+    }
 
-	$self->SUPER::new($init);
+    $init->{'name'} = $init->{'_element_obj'}->get_name();
+    $init->{'description'} = $init->{'_element_obj'}->get_description();
+    $self->SUPER::new($init);
 
-	# prepopulate from the asset type object
-	my $parts = $init->{'_element_obj'}->get_data();
+    # prepopulate from the asset type object
+    my $parts = $init->{'_element_obj'}->get_data();
+    unless ($init->{'object_type'}) {
+	die Bric::Util::Fault::Exception::GEN->new( {
+          msg => "Cannot create with out object type." });
+    }
 
-	unless ($init->{'object_type'}) {
-		die Bric::Util::Fault::Exception::GEN->new( { msg => 
-				"can not create with out object type" });
+    foreach (@$parts) {
+	if ($_->get_required()) {
+	    $self->add_data($_);
 	}
+    }
 
-	foreach (@$parts) {
-		if ($_->get_required()) {
-			$self->add_data($_);
-		}
-	}
-
-	$self->_set__dirty(1);
-
-	return $self;
+    $self->_set__dirty(1);
+    return $self;
 }
 
 ################################################################################
@@ -380,9 +374,8 @@ NONE
 =cut
 
 sub list {
-	my ($class, $param) = @_;
-
-	_do_list($class,$param,undef);
+    my ($class, $param) = @_;
+    _do_list($class,$param,undef);
 }
 
 ################################################################################
@@ -741,9 +734,8 @@ sub get_possible_containers {
 
 =item $container = $container->add_data($atd, data, $object);
 
-Takes an asset type data object and the data and the object ot add it to
-and creates a tile and then adds the tile to its self.
-Now that's service.
+Takes an asset type data object and the data and the object to add it to and
+creates a tile and then adds the tile to its self. Now that's service.
 
 B<Throws:>
 
@@ -760,19 +752,16 @@ NONE
 =cut
 
 sub add_data {
-	my ($self, $atd, $data) = @_;
+    my ($self, $atd, $data) = @_;
+    my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new(
+      { active             => 1,
+        object_type        => $self->_get('object_type'),
+        object_instance_id => $self->_get('object_id'),
+        element_data       => $atd });
 
-	my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new(
-				{   'active' 				=> 1,
-					'object_type'			=> $self->_get('object_type'),
-					'object_instance_id'	=> $self->_get('object_id'),
-					'element_data'		=> $atd });
-	$data_tile->set_data($data);
-						
-	$self->add_tile($data_tile);
-
-	return $self;
-
+    $data_tile->set_data($data);
+    $self->add_tile($data_tile);
+    return $self;
 }
 
 ################################################################################
@@ -928,17 +917,16 @@ NONE
 
 B<Notes:>
 
-NONE 
+NONE
 
 =cut
 
 sub get_elements { get_tiles(@_) }
 
 sub get_tiles {
-	my ($self) = @_;
-	my $tiles     = $self->_get_tiles();
-
-	return wantarray ? @$tiles : $tiles;
+    my ($self) = @_;
+    my $tiles = $self->_get_tiles();
+    return wantarray ? @$tiles : $tiles;
 }
 
 ################################################################################
@@ -1178,45 +1166,41 @@ sub reorder_tiles {
     my ($at_count, $data_count) = ({},{});
     my @new_list;
 
-	# make sure then number of elements passed is the same as what we have
-	if (scalar @$tiles != scalar @$new_order ) {
-		die Bric::Util::Fault::Exception::GEN->new( { 
-				msg => 'improper number of args to reorder_tiles'
-			});
-	}
+    # make sure then number of elements passed is the same as what we have
+    if (scalar @$tiles != scalar @$new_order ) {
+	die Bric::Util::Fault::Exception::GEN->new( {
+	  msg => 'Improper number of args to reorder_tiles().' });
+    }
 
     # Order the tiles in the order they are listed in $new_order
     foreach my $obj (@$new_order) {
 
-		# Set this tiles place among other tiles.
-	        my $new_place = scalar @new_list;
-		$obj->set_place($new_place) 
-		  unless $obj->get_place == $new_place;
-		push @new_list, $obj;
-	
-		# Get the appropriate asset type ID and 'seen' hash.
-		my ($at_id, $seen);
-		if ($obj->is_container()) {
-		    $at_id = $obj->get_element_id;
-		    $seen  = $at_count;
-		} else {
-		    $at_id = $obj->get_element_data_id;
-		    $seen  = $data_count;
-		}
+	# Set this tiles place among other tiles.
+	my $new_place = scalar @new_list;
+	$obj->set_place($new_place) 
+	  unless $obj->get_place == $new_place;
+	push @new_list, $obj;
 
-		# Set this tiles place among other tiles of its type.
-		my $n = $seen->{$at_id} || 1;
-	
-		my $new_obj_order = $n++;
-		$obj->set_object_order($new_obj_order)
-		  unless $obj->get_object_order == $new_obj_order;
-		$seen->{$at_id} = $n;
+	# Get the appropriate asset type ID and 'seen' hash.
+	my ($at_id, $seen);
+	if ($obj->is_container()) {
+	    $at_id = $obj->get_element_id;
+	    $seen  = $at_count;
+	} else {
+	    $at_id = $obj->get_element_data_id;
+	    $seen  = $data_count;
+	}
+
+	# Set this tiles place among other tiles of its type.
+	my $n = $seen->{$at_id} || 1;
+	my $new_obj_order = $n++;
+	$obj->set_object_order($new_obj_order)
+	  unless $obj->get_object_order == $new_obj_order;
+	$seen->{$at_id} = $n;
     }
 
     $self->_set(['_tiles', '_update_tiles'], [\@new_list, 1]);
-
     $self->_set__dirty($dirty);
-
     return $self;
 }
 
@@ -1358,120 +1342,94 @@ NONE
 =cut
 
 sub _do_list {
-	my ($class, $param,$ids) = @_;
+    my ($class, $param, $ids) = @_;
+    die Bric::Util::Fault::Exception::GEN->new( {
+			msg => "improper args for list" })
+      unless ($param->{'object'} || $param->{'object_type'});
 
-	die Bric::Util::Fault::Exception::GEN->new( {
-			msg => "improper args for list" }) 
-				unless ($param->{'object'} || $param->{'object_type'});
+    my ($obj_type, $obj_id, $table);
 
-	my ($obj_type,$obj_id);
-	my $table;
-
-	if ($param->{'object'}) {
-		my $obj_class = ref $param->{'object'};
-		if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-			$table = S_TABLE;
-			$obj_type = 'story';
-
-		} elsif ($obj_class =~ /^Bric::Biz::Asset::Business::Media/) {
-			$table = M_TABLE;
-			$obj_type = 'media';
-
-		} else {
-			die Bric::Util::Fault::Exception::GEN->new( 
-				{ msg => "Object of type $obj_class not allowed to be tiled"});
-		}
-		$obj_id = $param->{'object'}->get_version_id();
+    if ($param->{'object'}) {
+	my $obj_class = ref $param->{'object'};
+	if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
+	    $table = S_TABLE;
+	    $obj_type = 'story';
+	} elsif ($obj_class =~ /^Bric::Biz::Asset::Business::Media/) {
+	    $table = M_TABLE;
+	    $obj_type = 'media';
 	} else {
-		if ($param->{'object_type'} eq 'story') {
-			$table = S_TABLE;
-
-		} elsif ($param->{'object_type'} eq 'media') {
-			$table = M_TABLE;
-
-		} else {
-			my $msg = "Object of type $param->{'object_type'} not allowed ".
-						"to be tiled";
-			die Bric::Util::Fault::Exception::GEN->new( {
-				msg => $msg });
-		}
+	    die Bric::Util::Fault::Exception::GEN->new(
+	      { msg => "Object of type $obj_class not allowed to be tiled" });
 	}
+	$obj_id = $param->{'object'}->get_version_id();
 
-
-	my @where;
-	my @where_param;
-
-	if ($obj_id) {
-		push @where, " object_instance_id=? ";
-		push @where_param, $obj_id;
-	}
-
-	if (exists $param->{'active'} ) {
-		push @where, ' active=? ';
-		push @where_param, $param->{'active'};
-	}
-
-	if (exists $param->{'parent_id'}) {
-		push @where, '(parent_id=? OR (? IS NULL AND parent_id IS NULL))';
-		push @where_param, $param->{'parent_id'}, $param->{'parent_id'};
-	}
-
-	if ($param->{'element_id'} ) {
-		push @where, ' element__id=? ';
-		push @where_param, $param->{'element_id'};
-	}
-
-	if ($param->{'name'}) {
-		push @where, ' name=? ';
-		push @where_param, $param->{'name'};
-	}
-
-	my $sql;
-	if ($ids) {
-		$sql = "SELECT id FROM $table ";
-
+    } else {
+	if ($param->{'object_type'} eq 'story') {
+	    $table = S_TABLE;
+	} elsif ($param->{'object_type'} eq 'media') {
+	    $table = M_TABLE;
 	} else {
-		$sql = 'SELECT id, ' . join(', ', COLS) . 
-				" FROM $table ";
+	    my $msg = "Object of type $param->{'object_type'} not allowed ".
+	      "to be tiled";
+	    die Bric::Util::Fault::Exception::GEN->new( { msg => $msg });
 	}
+    }
 
-	if (@where) {
-		$sql .= ' WHERE ';
-		$sql .= join ' AND ', @where;
+    my (@where, @where_param);
+
+    if ($obj_id) {
+	push @where, " object_instance_id=? ";
+	push @where_param, $obj_id;
+    }
+    if (exists $param->{'active'} ) {
+	push @where, ' active=? ';
+	push @where_param, $param->{'active'};
+    }
+    if (exists $param->{'parent_id'}) {
+	push @where, '(parent_id=? OR (? IS NULL AND parent_id IS NULL))';
+	push @where_param, $param->{'parent_id'}, $param->{'parent_id'};
+    }
+    if ($param->{'element_id'} ) {
+	push @where, ' element__id=? ';
+	push @where_param, $param->{'element_id'};
+    }
+    if ($param->{'name'}) {
+	push @where, ' name=? ';
+	push @where_param, $param->{'name'};
+    }
+
+    my $sql;
+    if ($ids) {
+	$sql = "SELECT id FROM $table ";
+    } else {
+	$sql = 'SELECT id, ' . join(', ', COLS) . " FROM $table ";
+    }
+
+    if (@where) {
+	$sql .= ' WHERE ';
+	$sql .= join ' AND ', @where;
+    }
+    my $select = prepare_ca( $sql, undef, DEBUG);
+
+    if ($ids) {
+	my $return = col_aref($select,@where_param);
+	return wantarray ? @{ $return } : $return;
+    } else {
+	my @objs;
+	execute($select, @where_param);
+	my @cols;
+	$select->bind_columns($select, \@cols[0 .. scalar COLS]);
+	while (fetch($select) ) {
+	    my $self = bless {}, $class;
+	    $self->_set( [ 'id', FIELDS ], [@cols] );
+	    # FIX THIS SHIT
+	    my $ot = $obj_type || $param->{'object_type'};
+	    $self->_set( { 'object_type' => $ot });
+	    $self->_set__dirty(0);
+	    push @objs, $self;
 	}
-
-	my $select = prepare_ca( $sql, undef, DEBUG);
-
-	if ($ids) {
-		my $return = col_aref($select,@where_param);
-
-		return wantarray ? @{ $return } : $return;
-
-	} else {
-
-		my @objs;
-
-		execute($select, @where_param);
-
-		my @cols;
-		$select->bind_columns($select, \@cols[0 .. scalar COLS]);
-		while (fetch($select) ) {
-
-			my $self = bless {}, $class;
-
-			$self->_set( [ 'id', FIELDS ], [@cols] );
-
-			# FIX THIS SHIT
-			my $ot = $obj_type || $param->{'object_type'};
-			$self->_set( { 'object_type' => $ot });
-
-			$self->_set__dirty(0);
-
-			push @objs, $self;
-		}
-
-		return wantarray ? @objs : \@objs;
-	}
+	return wantarray ? @objs : \@objs;
+    }
 }
 
 ################################################################################
@@ -1726,7 +1684,7 @@ sub _get_tiles {
     my $tiles = $self->_get('_tiles');
 
     # Do not attempt to get the AssetType tiles if we don't yet have an ID.
-    return [] unless $self->get_id;
+    return [] unless $tiles || $self->get_id;
 
     unless ($tiles) {
 	my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list(

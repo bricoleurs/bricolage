@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
--- $Date: 2001-10-09 20:48:54 $
+-- $Date: 2001-10-11 00:34:54 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- -----------------------------------------------------------------------------
 -- Attribute.sql
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $Revision: 1.3 $
 --
 -- This SQL creates the tables necessary for the attribute object.  This file
 -- applies to attributes on the Bric::Person class.  Any other classes that 

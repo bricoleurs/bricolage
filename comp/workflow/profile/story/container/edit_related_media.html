@@ -7,11 +7,11 @@ edit_related.html - Edit related data for a cointainer tile.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:41 $
+$Date: 2001-10-11 00:35:40 $
 
 =head1 DESCRIPTION
 
@@ -35,14 +35,15 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 
 %#-- Init Section --#
 <%init>;
+my $crumb = get_state_data('container_prof', 'crumb') || '';
+$crumb .= ' |' if $crumb;
 </%init>
 
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc, 
 	title => "Select Related $mdisp",
-	context => $context . get_state_data('container_prof', 'crumb') .
-                   " | Related $mdisp"
+	context => "$context $crumb Related $mdisp"
 &>
 
 <form action="<% $r->uri %>" method="post">

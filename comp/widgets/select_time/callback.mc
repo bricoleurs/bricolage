@@ -10,11 +10,15 @@ my $is_clear_state = sub {
     my $trigger = $param->{'select_time|clear_cb'} || return;
     return $param->{$trigger};
 };
+my $defs = { min  => '00',
+	     hour => '00',
+	     day  => '01'
+	   };
 </%once>
 
 <%init>
 
-if (($field eq "$widget|refresh_pc") and (not $is_clear_state->($param))) {
+if (($field eq "$widget|refresh_p0") and (not $is_clear_state->($param))) {
     # There might be many time widgets on this page.
     my $base = mk_aref($param->{$field});
 
@@ -33,20 +37,19 @@ if (($field eq "$widget|refresh_pc") and (not $is_clear_state->($param))) {
 	    my $v = $param->{$f};
 
 	    # Set the incomplete flag and stop if we get an unset date value.
-	    if ($v == -1) {
-		$incomplete = 1;
-	    } else {
+	    if ($v eq '-1') {
+		$defs->{$unit} ? (push @vals, $defs->{$unit}) : ($incomplete = 1);
+ 	    } else {
 		$has_data = 1;
 
 		# Collect the values.
 		push @vals, ($v || '0');
 	    }
-	    
 
 	    # Update all the time values.
 	    set_state_data($sub_widget, $unit, $v) if defined $v;
 	}
-	
+
 	if ($incomplete) {
 	    # Clear state if this is incomplete
 	    #clear_state($sub_widget);
@@ -55,7 +58,6 @@ if (($field eq "$widget|refresh_pc") and (not $is_clear_state->($param))) {
 	    $param->{$b.'-partial'} = 1 if $has_data;
 	} else {
 	    my $date = sprintf("%04d-%02d-%02d %02d:%02d:00", @vals);
-	
 	    # Write the date to the parameters.
 	    $param->{$b} = $date;
 	}

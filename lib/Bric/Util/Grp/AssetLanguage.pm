@@ -1,6 +1,6 @@
 package Bric::Util::Grp::AssetLanguage;
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 use strict;
 

@@ -10,7 +10,7 @@ Release Version: 1.1.0
 
 File (CVS) Version:
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.1.0";
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 SYNOPSIS
 
@@ -710,9 +710,12 @@ sub _set {
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
 
     # Set state
+
     my $dirt = $self->{_dirty};
     # Disable warnings to prevent "Use of uninitialized value in string ne"
     # messages.
+    local $^W = undef;
+
     for my $i (0..$#$k) {
 	eval {
 	    if ((defined $self->{$k->[$i]} && !defined $v->[$i])

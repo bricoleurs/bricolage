@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:37 $
+$Date: 2001-10-11 00:35:39 $
 
 =head1 SYNOPSIS
 
@@ -48,14 +48,12 @@ my $widget = 'container_prof';
 # Default to using the tile passed in followed by the tile in state.
 $tile ||= get_state_data($widget, 'tile');
 
-# set the tile that we will be editing into state
+# Set the tile that we will be editing into state.
 set_state_data($widget, 'tile', $tile);
-
 set_state_data($widget, 'start', $start_count);
-
 my $state = get_state_name($widget);
 
-# Don't change the state unless $action isn't 'edit'. 
+# Don't change the state unless $action isn't 'edit'.
 $state = $action unless $action eq 'edit';
 
 # Set the state name if it has not been set.
@@ -67,13 +65,13 @@ if ($state eq 'edit_bulk') {
     # Load up the data the first time around.
     unless (get_state_data($widget, 'dtiles')) {
 	my $field = get_state_data($widget, 'field');
-	
+
 	# Grab only the tiles that have the name $field
 	my @dtiles = grep($_->get_name eq $field, $tile->get_tiles());
-	
+
 	# Load the data into an array which will be used until they finish.
 	my @data = map { $_->get_data } @dtiles;
-	
+
 	# Intialize the state data.
 	set_state_data($widget, 'dtiles',    \@dtiles);
 	set_state_data($widget, 'data',      \@data);

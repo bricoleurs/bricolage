@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:53 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 DESCRIPTION
 
@@ -835,6 +835,121 @@ trade-off to be worth it. Defaults to "Off" if not specified.
 
 =back
 
+=head2 File Naming Configuration
+
+All files burned to the file system during publishes and previews must be named
+(of course!), and they're named for the "File Name" and "File Extenstion"
+properties of the Output Channel they're getting burned to. You can give these
+properties whatever values you want (as long as they're legal on your file
+system!), but here you can set some defaults that all Output channels will start
+with.
+
+=over 4
+
+=item *
+
+B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
+start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
+page index number to uniquely name the file for a given story. Defaults to
+"index" if not specified.
+
+=item *
+
+B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+a page index number to uniquely name the file for a given story. Defaults to
+"html" if not specified.
+
+=back
+
+=head2 File Naming Configuration
+
+All files burned to the file system during publishes and previews must be named
+(of course!), and they're named for the "File Name" and "File Extenstion"
+properties of the Output Channel they're getting burned to. You can give these
+properties whatever values you want (as long as they're legal on your file
+system!), but here you can set some defaults that all Output channels will start
+with.
+
+=over 4
+
+=item *
+
+B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
+start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
+page index number to uniquely name the file for a given story. Defaults to
+"index" if not specified.
+
+=item *
+
+B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+a page index number to uniquely name the file for a given story. Defaults to
+"html" if not specified.
+
+=back
+
+=head2 Perl Loading Configuration
+
+=over 4
+
+=item *
+
+B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
+time in the same package spaces as your templates run in. This is so that you
+only have to load stuff that you might often use once, such as CGI or
+Apache::DBI. This should be a complete Perl statment that can simply be loaded,
+and won't pause and wait for anything else, as otherwise your server will never
+start! And be warned that this code is executed at server startup time, so
+beware loading any variables that don't survive forks very well (such as
+database handles). Defaults to load nothing if not specified.
+
+=back
+
+=head2 File Naming Configuration
+
+All files burned to the file system during publishes and previews must be named
+(of course!), and they're named for the "File Name" and "File Extenstion"
+properties of the Output Channel they're getting burned to. You can give these
+properties whatever values you want (as long as they're legal on your file
+system!), but here you can set some defaults that all Output channels will start
+with.
+
+=over 4
+
+=item *
+
+B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
+start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
+page index number to uniquely name the file for a given story. Defaults to
+"index" if not specified.
+
+=item *
+
+B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
+will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+a page index number to uniquely name the file for a given story. Defaults to
+"html" if not specified.
+
+=back
+
+=head2 Perl Loading Configuration
+
+=over 4
+
+=item *
+
+B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
+time in the same package spaces as your templates run in. This is so that you
+only have to load stuff that you might often use once, such as CGI or
+Apache::DBI. This should be a complete Perl statment that can simply be loaded,
+and won't pause and wait for anything else, as otherwise your server will never
+start! And be warned that this code is executed at server startup time, so
+beware loading any variables that don't survive forks very well (such as
+database handles). Defaults to load nothing if not specified.
+
+=back
+
 =head2 Virtual FTP Server Configuration
 
 Bricolage includes a virtual FTP server that can be used to allow
@@ -898,50 +1013,69 @@ other possibilities see the documentation for Net::FTPServer.
 Once the server is up and running connect to it with an FTP client and
 start editing templates.  For more information see the documenation
 for Bric::Util::FTP::Server.
+=head2 Virtual FTP Server Configuration
 
-=head2 File Naming Configuration
+Bricolage includes a virtual FTP server that can be used to allow
+access to Bricolage templates.  This may provide a more comfortable
+development environment for programmers working on templates.  Many
+editors provide FTP modes that make editing files via FTP almost as
+easy as editing files localy (ange-ftp for Emacs, for example).  
 
-All files burned to the file system during publishes and previews must be named
-(of course!), and they're named for the "File Name" and "File Extenstion"
-properties of the Output Channel they're getting burned to. You can give these
-properties whatever values you want (as long as they're legal on your file
-system!), but here you can set some defaults that all Output channels will start
-with.
+There are security risks to consider - FTP sends passwords unencrypted
+over the network.  If you are running Bricolage behind a firewall this
+might not be a problem.
 
-=over 4
+B<WARNING:> The FTP server component is an experimental feature and
+has not been fully tested of completely implemented!
+
+To enable the FTP server you'll need to install the Net::FTPServer
+Perl module.  After that you can configure the FTP server with the
+following options:
+
+=over
 
 =item *
 
-B<DEFAULT_FILENAME:> Sets the default filename that all new Output Channel will
-start with in their "File Name" property. Combined with DEFAULT_FILE_EXT and a
-page index number to uniquely name the file for a given story. Defaults to
-"index" if not specified.
+B<ENABLE_FTP_SERVER:> Set this to 1 if you want to use the FTP server.
+Defaults to 0.
 
 =item *
 
-B<DEFAULT_FILE_EXT:> Sets the default file extention that all new Output Channel
-will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
-a page index number to uniquely name the file for a given story. Defaults to
-"html" if not specified.
+B<FTP_PORT:> The port that the FTP server will run on.  Users will
+need to know this port to connect to the FTP server.  Since you won't
+be running the server as root you'll need to choose a port above 1024.
+Defaults to 2121.
+
+=item *
+
+B<FTP_ADDRESS:> Normally the FTP server will bind to all the available
+IP addresses for your machine.  If you set this variable then the
+server will only bind to the specified address.
+
+=item *
+
+B<FTP_LOG:> Set this to the file where you want to FTP logs written
+to.  Defaults to $BRICOLAGE_ROOT/ftp.log if not set.
+
+=item *
+
+B<FTP_DEBUG:> If you set this to 1 you'll see a lot of useful tracing
+information in the FTP logfile.  This can help diagnose errors but is probably only of intertest to developers.  Defaults to 0.
 
 =back
 
-=head2 Perl Loading Configuration
+Next you'll need to start the FTP server as the same user that Apache
+runs as.  For example, if you run Apache as "nobody" you would use
+this command to start the FTP server:
 
-=over 4
+   su nobody -c "/usr/local/bricolage/bin/ftpd -S"
 
-=item *
+The -S option to ftpd runs the FTP server in the background.  For
+other possibilities see the documentation for Net::FTPServer.
 
-B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
-time in the same package spaces as your templates run in. This is so that you
-only have to load stuff that you might often use once, such as CGI or
-Apache::DBI. This should be a complete Perl statment that can simply be loaded,
-and won't pause and wait for anything else, as otherwise your server will never
-start! And be warned that this code is executed at server startup time, so
-beware loading any variables that don't survive forks very well (such as
-database handles). Defaults to load nothing if not specified.
-
-=back
+Once the server is up and running connect to it with an FTP client and
+start editing templates.  For more information see the documenation
+for Bric::Util::FTP::Server.
 
 =head1 DIRECTORY PERMISSIONS
 

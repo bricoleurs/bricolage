@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =head1 DATE
 
-$Date: 2001-10-05 20:07:16 $
+$Date: 2001-10-11 00:34:53 $
 
 =head1 DESCRIPTION
 
@@ -37,6 +37,10 @@ significant (including the addition of new libraries).
 
 Add name of Output Channel to list of Templates in Find Templates interface
 [Michele].
+
+=item *
+
+Add a "Save and Stay" button to the Element Profile. [David]
 
 =item *
 
@@ -86,14 +90,6 @@ Change the term "attribute" to "field" in the UI [Michele].
 =item *
 
 Make SSL optional (and off by default) [David or Sam].
-
-=item *
-
-Have Bric::Util::Class use Bric::Util::Cache [David].
-
-=item *
-
-Have Bric::Util::Class use Bric::App::Cache [David].
 
 =item *
 

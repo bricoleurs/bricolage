@@ -343,16 +343,16 @@ my $handle_create = sub {
     chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 
     my $init = {element__id => $param->{"$widget|at_id"},
-		source__id     => $param->{"$widget|source__id"},
-		user__id       => get_user_id };
+		source__id  => $param->{"$widget|source__id"},
+		user__id    => get_user_id };
 
-	if ($param->{'slug'}) {
+    if ($param->{'slug'}) {
         # check the form of the slug
         if ($param->{'slug'} =~ m/\W/) {
             add_msg('Slug must conform to URI character rules.');
-			return;
-		}
+	    return;
 	}
+    }
 
     # Create a new story with the initial values given.
     my $story = Bric::Biz::Asset::Business::Story->new($init);

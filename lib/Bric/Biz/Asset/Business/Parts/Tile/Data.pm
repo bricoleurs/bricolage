@@ -8,15 +8,15 @@ contains the business data
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:54 $
+$Date: 2001-10-11 00:34:54 $
 
 =head1 SYNOPSIS
 
@@ -549,8 +549,7 @@ NONE
 
 sub get_data {
     my ($self) = @_;
-    my $sql_type = $self->_get_sql_type();
-	
+    my $sql_type = $self->_get_sql_type() || return;
     return $self->_get('_'.$sql_type.'_val');
 }
 
@@ -836,28 +835,20 @@ sub _do_list {
 
     ## PREPARE AND EXECUTE THE SQL ##
     my $select = prepare_ca($sql, undef, DEBUG);
-
     if ($ids) {
 	my $return = col_aref($select, @bind);
-	
 	return wantarray ? @{ $return } : $return;
     } else {
 	my @objs;
-	
 	execute($select, @bind);
-	
 	my @d;
 	bind_columns($select,\@d[0 .. scalar(COLS)]);
-	
 	while (fetch($select)) {
 	    my $self = bless {}, $class;
-
 	    $self->_set(['id', FIELDS, 'object_type'], [@d, $obj_type]);
 	    $self->_set__dirty(0);
-
 	    push @objs, $self;
 	}
-	
 	return wantarray ? @objs : \@objs;
     }
 }

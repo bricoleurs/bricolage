@@ -1,4 +1,4 @@
-<input type="hidden" name="select_time|refresh_pc" value="<% $base_name %>">
+<input type="hidden" name="select_time|refresh_p0" value="<% $base_name %>">
 
 <%perl>
 
@@ -134,17 +134,16 @@ if ($year && $mon && $day ) {
 </%init>
 
 <%once>
-
 my $mk_time_field = sub {
     my ($p) = @_;
 
     $m->out('<td '.$p->{width}.' valign=top>'.
             '<span class=label>'.$p->{label}.'</span><br />') unless $p->{compact};
 
-    $m->comp('/widgets/profile/select.mc', 
+    $m->comp('/widgets/profile/select.mc',
              'name'     => $p->{base},
              'value'    => $p->{default},
-             'options'  => [[-1, $p->{label}], @{$p->{vals}}],
+             'options'  => [ [ '-1' , $p->{label}], @{$p->{vals}} ],
              'useTable' => 0);
 
     $m->out('</td>') unless $p->{compact};

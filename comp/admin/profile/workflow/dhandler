@@ -59,7 +59,8 @@ if (defined $id) {
 	     number => 2);
     $m->comp('/widgets/profile/text.mc',
 	     name => 'new_desk_name',
-	     disp => 'Start Desk'
+	     disp => 'Start Desk',
+	     req  => 1
 	    );
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 } else {
@@ -180,11 +181,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-10-09 20:54:36 $
+$Date: 2001-10-11 00:35:39 $
 
 =head1 DESCRIPTION
 

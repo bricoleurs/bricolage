@@ -8,15 +8,15 @@ Bric::Biz::Publisher - A class to manage publishing of business assets.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.5 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.6 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-09 20:48:54 $
+$Date: 2001-10-11 00:34:54 $
 
 =head1 SYNOPSIS
 
