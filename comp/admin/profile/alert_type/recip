@@ -86,6 +86,7 @@ $m->out("<br />\n");
 $m->comp("/widgets/profile/formButtons.mc",
          type => $type,
          section => $widget,
+         widget => $type,
          no_del => 1,
 	 return => "/admin/profile/$type/$id",
 	 cb => 'edit_recip_cb',
