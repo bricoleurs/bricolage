@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =head1 DATE
 
-$Date: 2002-12-05 00:26:11 $
+$Date: 2003-01-17 23:59:15 $
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ The Bricolage SOAP interface will support the following features:
 
 =over 4
 
-=item * Stories and Media
+=item Stories and Media
 
 Clients will be able to create new stories and media into the system.
 Additionally, it will possible to update existing stories and media.
@@ -57,16 +57,16 @@ Clients will be able to export existing stories and media in the
 format accepted for creation.  Finally, clients may delete stories or
 media.
 
-=item * Elements
+=item Elements
 
 Clients will be able to create, update, delete and export element
 definitions.
 
-=item * Templates
+=item Templates
 
 Clients will be able to create, update, delete and export templates.
 
-=item * Workflow
+=item Workflow
 
 Clients will be able to move stories and media between desks.  Clients
 will be able to publish stories and media.  Clients will be able to
@@ -81,32 +81,32 @@ are some potential use cases:
 
 =over 4
 
-=item * Importing Content From Legacy Systems
+=item Importing Content From Legacy Systems
 
 Using the Story and Media interfaces content can be moved from legacy
 CMS systems into Bricolage.
 
-=item * Automated Publishing
+=item Automated Publishing
 
 With access to workflow and publishing it will be simple to write an
 auto-publishing daemon that publishes a selection of stories on a
 schedule.
 
-=item * Story and Media Synchronization
+=item Story and Media Synchronization
 
 It is often desirable to move stories and media between instances of
 Bricolage.  The SOAP interface could be used by a clients that
 automatically synchronize stories in a group of Bricolage instances,
 perhaps by category or some other selection criteria.
 
-=item * Element and Template Distribution
+=item Element and Template Distribution
 
 A centrally-developed library of elements and templates has many
 advantages.  With the SOAP interface it will be possible to
 automatically update Bricolage instances with new versions of elements
 and templates.
 
-=item * XML Syndication
+=item XML Syndication
 
 An XML syndication system could be written to pull stories from the
 SOAP interface and transform them into the target XML DTD.
@@ -799,6 +799,8 @@ The XSD source:
    </xs:complexType>
  </xs:schema>
 
+=back
+
 =head2 Example Asset Documents
 
 Here's a simple story with some keywords and no contributors:
@@ -837,8 +839,6 @@ Here's a simple story with some keywords and no contributors:
   </story>
  </assets>
 
-=back
- 
 =head2 Example Clients
 
 A few example clients will be developed.
