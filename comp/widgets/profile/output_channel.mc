@@ -92,6 +92,7 @@ if ($param->{delete}) {
 	add_msg("$disp_name profile $name saved.");
 	set_redirect('/admin/manager/output_channel');
     } else {
+	$oc->save;
 	log_event('output_channel_new', $oc);
 	return $oc;
     }
