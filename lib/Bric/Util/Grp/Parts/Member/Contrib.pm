@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-14 23:24:13 $
+$Date: 2003-09-15 00:23:59 $
 
 =head1 SYNOPSIS
 
@@ -139,15 +139,15 @@ B<Notes:> NONE.
 
 sub lookup {
     my $pkg = shift;
-    my $job = $pkg->cache_lookup(@_);
-    return $job if $job;
+    my $contrib = $pkg->cache_lookup(@_);
+    return $contrib if $contrib;
 
-    $job = $pkg->_do_list(@_);
-    # We want @$job to have only one value.
+    $contrib = $pkg->_do_list(@_);
+    # We want @$contrib to have only one value.
     throw_dp(error => 'Too many Bric::Util::Grp::Parts::Member::Contrib'
-               . ' objects found.')
-      if @$job > 1;
-    return @$job ? $job->[0] : undef;
+                    . ' objects found.')
+      if @$contrib > 1;
+    return @$contrib ? $contrib->[0] : undef;
 }
 
 =back
