@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.33 $
+$Revision: 1.34 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.33 $ )[-1];
+our $VERSION = (qw$Revision: 1.34 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-01-31 19:49:15 $
 
 =head1 SYNOPSIS
 
@@ -41,6 +41,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::Media;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
+use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media);
@@ -1443,8 +1444,8 @@ sub _do_list {
 
     # Handle searches on dates
     foreach my $type (qw(publish_date cover_date expire_date)) {
-        my ($start, $end) = ($param->{$type.'_start'},
-                             $param->{$type.'_end'});
+        my ($start, $end) = (db_date($param->{$type.'_start'}),
+                             db_date($param->{$type.'_end'}));
 
         # Handle date ranges.
         if ($start && $end) {

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28 $ )[-1];
+our $VERSION = (qw$Revision: 1.29 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-01-31 19:49:14 $
 
 =head1 SYNOPSIS
 
@@ -127,7 +127,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my $get_oc_coll;
+my ($get_oc_coll, $make_key_name);
 
 #==============================================================================#
 # Constants                            #
@@ -1516,7 +1516,8 @@ sub get_data {
 
     if ($field) {
 	# Return just the field they asked for.
-	my ($val) = grep($_->get_name eq $field, @all);
+	$field = $make_key_name->($field);
+	my ($val) = grep($make_key_name->($_->get_name) eq $field, @all);
 	return unless $val;
 	return $val;
     } else {
@@ -1807,12 +1808,19 @@ NONE
 
 sub get_containers {
     my $self = shift;
+    my ($field) = @_;
     my $grp = $self->_get_asset_type_grp;
     my $mbs = $grp->get_members;
 
     my @at = map { $_->get_object } @$mbs;
 
-    return wantarray ? @at : \@at;
+    if ($field) {
+	my ($val) = grep($make_key_name->($_->get_name) eq $field, @at);
+	return unless $val;
+	return $val;
+    } else {
+	return wantarray ? @at : \@at;
+    }
 }
 
 #------------------------------------------------------------------------------#
@@ -2624,6 +2632,28 @@ $get_oc_coll = sub {
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
 };
+
+=over 4
+
+=item my $key_name = $make_key_name->($name)
+
+Takes an element name and turns it into the key name. This is the name that
+will be used in templates and in the super bulk edit interface.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$make_key_name = sub {
+    my $n = lc($_[0]);
+    $n =~ y/a-z0-9/_/cs;
+    return $n;
+};
+
 
 1;
 __END__

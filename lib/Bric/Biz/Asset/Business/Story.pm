@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-29 06:46:03 $
+$Date: 2003-01-31 19:49:15 $
 
 =head1 SYNOPSIS
 
@@ -1703,7 +1703,7 @@ sub _do_list {
         if (($f eq 'name') || ($f eq 'description') || ($f eq 'slug')) {
             push @where, "LOWER(i.$f) LIKE ?";
             push @bind,  lc($param->{$f});
-        } else { 
+        } else {
             push @where, "i.$f=?";
             push @bind,  $param->{$f};
         }
@@ -1729,8 +1729,8 @@ sub _do_list {
 
     # Handle searches on dates
     foreach my $type (qw(publish_date cover_date expire_date)) {
-        my ($start, $end) = ($param->{$type.'_start'},
-                             $param->{$type.'_end'});
+        my ($start, $end) = (db_date($param->{$type.'_start'}),
+                             db_date($param->{$type.'_end'}));
 
         # Handle date ranges.
         if ($start && $end) {
