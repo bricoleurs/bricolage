@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 14:33:28 $
+$Date: 2002-05-03 16:25:57 $
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ $Date: 2002-05-03 14:33:28 $
   $st->del_servers;
 
   # Accessors to output channels associated with this server type.
-  my @ocs = $job->get_output_channels;
+  my @ocs = $st->get_output_channels;
   $st = $st->add_output_channels(@ocs);
   $st = $st->del_output_channels(@ocs);
 
@@ -1000,12 +1000,12 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my (@ocs || $ocs_aref) = $job->get_output_channels
+=item my (@ocs || $ocs_aref) = $st->get_output_channels
 
-=item my (@ocs || $ocs_aref) = $job->get_output_channels(@oc_ids)
+=item my (@ocs || $ocs_aref) = $st->get_output_channels(@oc_ids)
 
-Returns a list or anonymous array of the Bric::Biz::OutputChannel objects that
-represent the directories and/or files on which this job acts.
+Returns a list or anonymous array of the Bric::Biz::OutputChannel objects
+that represent the directories and/or files on which this server type acts.
 
 B<Throws:>
 
@@ -1060,11 +1060,10 @@ sub get_output_channels {
 
 ################################################################################
 
-=item $job = $job->add_output_channels(@ocs)
+=item $st = $st->add_output_channels(@ocs)
 
-Adds Output Channels to this job. Call save() to save the relationship. Output
-Channels cannot be added to a job after the job has executed. Trying to add
-Output Channels after a job has completed will throw an exception.
+Adds Output Channels to this server type. Call save() to save the
+relationship.
 
 B<Throws:>
 
@@ -1099,10 +1098,11 @@ sub add_output_channels {
 
 ################################################################################
 
-=item $self = $job->del_output_channels(@ocs)
+=item $self = $st->del_output_channels(@ocs)
 
-Dissociates Output Channels, represented as Bric::Biz::OutputChannel objects, from the job.
-call save() to save the dissociations to the database.
+Dissociates Output Channels, represented as Bric::Biz::OutputChannel
+objects, from the server type. call save() to save the dissociations to the
+database.
 
 B<Throws:>
 
