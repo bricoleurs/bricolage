@@ -7,15 +7,15 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:38 $
+$Date: 2002-10-31 19:56:34 $
 
 =head1 SYNOPSIS
 
@@ -44,13 +44,13 @@ $Date: 2002-08-30 22:13:38 $
 
 A workflow is something that guides an asset through a set of desks, where an
 asset is any kind of creative content (a story, an image, a sound file, etc)
-and a desk performs and kind of validation or transformation upon an asset 
-needed before it can be published.  Example desks might be a 'legal' desk where
+and a desk performs and kind of validation or transformation upon an asset
+needed before it can be published. Example desks might be a 'legal' desk where
 users can verify any legal issue for a particular asset, or an 'edit' desk
 where users can check consistancy and presentation for an asset.
- 
+
 A workflow might be as simple as a linear path through a set of desks or as
-complex as requiring certain desks be visited with other desks optional and a 
+complex as requiring certain desks be visited with other desks optional and a
 route through the desks that can be arbitrarily complex.
 
 =cut
@@ -268,7 +268,7 @@ sub lookup {
     my $class = shift;
     my ($param) = @_;
     my $wf_id = ref $param ? $param->{'id'} : $param;
-    
+
     # Create the object via fields which returns a blessed object.
     my $self = bless {}, $class;
 
@@ -276,7 +276,7 @@ sub lookup {
     $self->SUPER::new();
 
     my $ret = _select_workflow('id=?', [$wf_id]);
-    
+
     # Set the columns selected as well as the passed ID.
     $self->_set(['id', FIELDS], $ret->[0]);
 
@@ -296,40 +296,34 @@ Return a list of all known workflow types.  Keys of $param are:
 
 =over 4
 
-=item *
-
-name
+=item C<name>
 
 Return all workflows matching a certain name
 
-=item *
-
-description
+=item C<description>
 
 Return all workflows with a matching description.
 
-=item *
+=item C<type>
 
-active
+Return all workflows of a particular type. The types are integers accessible
+via the C<STORY_WORKFLOW>, C<MEDIA_WORKFLOW>, and C<TEMPLATE_WORKFLOW>
+constants.
 
-Boolean; Return all in/active workflows
+=item C<active>
+
+Boolean; Return all in/active workflows.
 
 =back
 
-All searches except 'active' are done using the LIKE operator, so '%' can be 
-used for substring searching.
+Seaches against C<name> and C<description> use the LIKE operator, so '%' can
+be used for substring searching.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -360,13 +354,13 @@ sub list {
     foreach my $d (@$ret) {
 	# Create the object via fields which returns a blessed object.
 	my $self = bless {}, $class;
-	
+
 	# Call the parent's constructor.
 	$self->SUPER::new();
-	
+
 	# Set the columns selected as well as the passed ID.
 	$self->_set(['id', FIELDS], $d);
-	
+
 	push @all, $self;
     }
 

@@ -35,6 +35,17 @@ stories and media with duplicate URIs. [Sam]
 Fixed circular dependency issues when Bricolage modules are used in the
 C<PERL_LOADER> F<bricolage.conf> directive. [David]
 
+=item *
+
+Added the root category to the "All Categories" group. It should have been in
+that group all along. [David]
+
+=item *
+
+Documentation for C<< Bric::Biz::Workflow->list >> has been improved, and the
+method used for finding workflows and desks to put imported assets on in
+Bric::SOAP has been simplified. [David]
+
 =back
 
 =head1 VERSION 1.4.4

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Catergory.val
 --
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.4.2.1 $
 --
 -- Test values.
 --
@@ -79,3 +79,27 @@ VALUES (55, NULL, 43, 'Category Assets', 'Physical', 1, 0);
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (56, NULL, 43, 'Category Assets', 'Biological', 1, 0);
 
+-- All Categories.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (54, 26, 20, 1);
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES (57, 1, 54); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (55, 26, 20, 1);
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES (58, 2, 55); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (56, 26, 20, 1);
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES (59, 3, 56); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (57, 26, 20, 1);
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES (60, 4, 57); 

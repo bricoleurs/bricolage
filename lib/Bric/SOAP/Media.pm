@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12.2.2 $
+$Revision: 1.12.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-29 00:07:17 $
+$Date: 2002-10-31 19:56:35 $
 
 =head1 SYNOPSIS
 
@@ -756,16 +756,12 @@ sub _load_media {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the media.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == MEDIA_WORKFLOW) {
-		    $media->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $media});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the media.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => MEDIA_WORKFLOW }))[0];
+            $media->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $media});
 	}
 
 	# add element data

@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-28 18:53:45 $
+$Date: 2002-10-31 19:56:35 $
 
 =head1 SYNOPSIS
 
@@ -745,16 +745,12 @@ sub _load_template {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the template.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == TEMPLATE_WORKFLOW) {
-		    $template->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $template});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the template.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => TEMPLATE_WORKFLOW }))[0];
+            $template->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $template});
 	}
 
 	# save the template and desk after activating if desired

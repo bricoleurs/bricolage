@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28.2.2 $
+$Revision: 1.28.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.28.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-10-29 00:07:18 $
+$Date: 2002-10-31 19:56:35 $
 
 =head1 SYNOPSIS
 
@@ -859,16 +859,12 @@ sub _load_stories {
 	# updates are in-place, no need to futz with workflows and desks
 	my $desk;
 	unless ($update) {
-	    # find a suitable workflow and desk for the story.  Might be
-	    # nice if Bric::Biz::Workflow->list took a type key...
-	    foreach my $workflow (Bric::Biz::Workflow->list()) {
-		if ($workflow->get_type == STORY_WORKFLOW) {
-		    $story->set_workflow_id($workflow->get_id());
-		    $desk = $workflow->get_start_desk;
-		    $desk->accept({'asset' => $story});
-		    last;
-		}
-	    }
+	    # find a suitable workflow and desk for the story.
+            my $workflow = (Bric::Biz::Workflow->list
+                            ({ type => STORY_WORKFLOW }))[0];
+            $story->set_workflow_id($workflow->get_id());
+            $desk = $workflow->get_start_desk;
+            $desk->accept({'asset' => $story});
 	}
 
 	# add element data
@@ -891,7 +887,7 @@ sub _load_stories {
 
     # if we have any media objects, create them
     my (%media_ids, @media_ids);
-    if ($data->{media}) {	
+    if ($data->{media}) {
 	@media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
 				                      internal   => 1,
 						      upload_ids => []    });
@@ -899,7 +895,7 @@ sub _load_stories {
 	# correlate to relative ids
 	for (0 .. $#media_ids) {
 	    $media_ids{$data->{media}[$_]{id}} = $media_ids[$_];
-	}	
+	}
     }
 
     # resolve relations
