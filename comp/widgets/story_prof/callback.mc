@@ -32,14 +32,30 @@ my $save_data = sub {
     # Make sure the story is active.
     $story->activate;
 
-    if ($param->{'slug'}) {
-	# check the form of the slug
-	if ($param->{'slug'} =~ m/\W/) {
-	    add_msg('Slug must conform to URI character rules.');
-	    $data_errors = 1;
-	} else {
-	    $story->set_slug($param->{slug});
-	}
+    if (($story->get_slug() || '') ne ($param->{'slug'} || '')) {
+        my $old_slug = $story->get_slug();
+        # check the form of the slug
+        if ($param->{'slug'} =~ m/\W/) {
+            add_msg('Slug must conform to URI character rules.');
+            $data_errors = 1;
+        } else {
+            $story->set_slug($param->{slug});
+            my $msg = $story->check_uri;
+            if ($msg) {
+		if ($old_slug) {
+		    add_msg("The slug has been reverted to '$old_slug', as " .
+			    "the slug '$param->{slug}' caused this story " .
+			    "to have a URI conflicting with that of story " .
+			    "'$msg'.");
+		    $story->set_slug($old_slug);
+		} else {
+		    add_msg("The slug, category and cover date you selected " .
+			    "would have caused this story to have a URI " .
+			    "conflicting with that of story '$msg'.");
+		}
+                $data_errors = 1;
+            }
+        }
     }
 
     $story->set_title($param->{title})
@@ -50,8 +66,24 @@ my $save_data = sub {
       if exists $param->{"$widget|source_id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
-    $story->set_cover_date($param->{cover_date})
-      if exists $param->{cover_date};
+    if (($param->{cover_date} || '') ne ($story->get_cover_date || '')) {
+        my $old_date = $story->get_cover_date();
+        $story->set_cover_date($param->{cover_date});
+        my $msg = $story->check_uri;
+        if ($msg) {
+	    if ($old_date) {
+		add_msg("The cover date has been reverted to $old_date, " .
+			"as it caused this story to have a URI conflicting " .
+			"with that of story '$msg'.");
+		$story->set_cover_date($old_date);
+	    } else {
+		add_msg("The slug, category and cover date you selected " .
+			"would have caused this story to have a URI " .
+			"conflicting with that of story '$msg'.");
+	    }
+            $data_errors = 1;
+        }
+    }
 
     if ($param->{'cover_date-partial'}) {
 	add_msg('Cover Date incomplete.');
@@ -608,11 +640,18 @@ my $handle_add_category = sub {
     chk_authz($story, EDIT);
     my $cat_id = $param->{"$widget|new_category_id"};
     if (defined $cat_id) {
-	$story->add_categories([ $cat_id ]);
-	$story->save();
-	my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-	log_event('story_add_category', $story, { Category => $cat->get_name });
-	add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
+        $story->add_categories([ $cat_id ]);
+        my $msg = $story->check_uri();
+        if ($msg) {
+            $story->delete_categories([ $cat_id ]);
+            add_msg("The category was not added, as it would have caused a URI clash with story '$msg'.");
+            $story->save();
+            set_state_data($widget, 'story', $story);
+            return;
+        }
+        $story->save();
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        log_event('story_add_category', $story, { Category => $cat->get_name });        add_msg("Category &quot;" . $cat->get_name . "&quot; added.");
     }
     set_state_data($widget, 'story', $story);
 };
