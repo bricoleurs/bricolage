@@ -58,7 +58,7 @@ do {
     my @config = (
         '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
         '  ServerName             ' . VHOST_SERVER_NAME,
-        qq{  DefaultType            "text/html; charset=$char_set"},
+        "  DefaultType            \"text/html; charset=$char_set\"",
         "  AddDefaultCharset      $char_set",
         '  SetHandler             perl-script',
         '  PerlHandler            Bric::App::Handler',
