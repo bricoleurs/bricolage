@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.88 $
+$Revision: 1.89 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.88 $ )[-1];
+our $VERSION = (qw$Revision: 1.89 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-16 19:33:41 $
+$Date: 2004-03-16 19:53:16 $
 
 =head1 SYNOPSIS
 
@@ -246,14 +246,14 @@ use constant PARAM_WHERE_MAP =>
                              . 'mm2.member__id = m2.id AND '
                              . 'mt.id = mm2.object_id',
       simple                => 'mt.id IN ('
-                             . 'SELECT media.id FROM media '
-                             . 'JOIN media_instance mi2 ON media__id = media.id '
-                             . 'WHERE LOWER(name) LIKE LOWER(?) '
-                             . 'OR LOWER(description) LIKE LOWER(?) '
-                             . 'OR LOWER(i.uri) LIKE LOWER(?) '
+                             . 'SELECT media.id FROM media mmt'
+                             . 'JOIN media_instance mi2 ON media__id = mmt.id '
+                             . 'WHERE LOWER(mi2.name) LIKE LOWER(?) '
+                             . 'OR LOWER(mi2.description) LIKE LOWER(?) '
+                             . 'OR LOWER(mi2.uri) LIKE LOWER(?) '
                              . 'UNION SELECT media_id FROM media_keyword '
-                             . 'JOIN keyword ON (keyword.id = keyword_id) '
-                             . 'WHERE LOWER(name) LIKE LOWER(?))',
+                             . 'JOIN keyword kk ON (kk.id = keyword_id) '
+                             . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
     };
 
