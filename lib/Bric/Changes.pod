@@ -77,7 +77,7 @@ Fixed installer to use PostgreSQL 7.1 syntax to update statistics. [David]
 
 =item *
 
-Now setting C<$PGDATESTYLE> environment variable so that PotgreSQL isn't
+Now setting C<$PGDATESTYLE> environment variable so that PostgreSQL isn't
 confused about the date style Bricolage is using. Suggested by Chris Riddoch.
 [David]
 
