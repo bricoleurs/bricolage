@@ -6,15 +6,15 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-02 22:57:13 $
+$Date: 2004-03-03 20:25:40 $
 
 =head1 SYNOPSIS
 
@@ -205,7 +205,7 @@ use constant key => 'de_de';
   'File Type' => 'Dateityp',
   'First' => 'Vorname',
   'First Name' => 'Vorname',
-  'First Published' => 'Erste Ver\xc3\xb6ffentlichung',
+  'First Published' => 'Erste Veröffentlichung',
   'Fixed' => 'Fester URL',
   'Generic' => 'Generisch',
   'Group Type' => 'Gruppentyp',
@@ -330,7 +330,7 @@ use constant key => 'de_de';
   '_AUTO' => 1,
   'all' => 'alle',
   'one per line' => 'eines pro Zeile',
-  'to' => 'für',
+  'to' => 'auf',
 
 # Action Commands
 
@@ -359,7 +359,7 @@ use constant key => 'de_de';
    'Check In Assets' => 'Güter einchecken',
    'Check In to Edit' => 'Zur Redaktion einchecken',
    'Check In to Publish' => 'Zur Veröffentlichung einchecken',
-   'Check In to' => 'Einchecken zu',
+   'Check In to' => 'Einchecken nach',
    'Check In' => 'Einchecken',
    'Checkin' => 'Einchecken',
    'Check Out' => 'Auschecken',
@@ -413,15 +413,15 @@ use constant key => 'de_de';
    'View' => 'Ansehen',
    'Workflow Profile' => 'Workflowprofil',
    'Grant "[_1]" members permission to access assets in these categories.' =>
-     '[_1] Mitgliedern den Zugriff auf Güter dieser Kategorien gewähren.',
+     '"[_1]" Mitgliedern den Zugriff auf Güter dieser Kategorien gewähren.',
    'Grant "[_1]" members permission to access assets in these workflows.' =>
-     '[_1] Mitgliedern den Zugriff auf Güter dieser Workflows gewähren.',
+     '"[_1]" Mitgliedern den Zugriff auf Güter dieser Workflows gewähren.',
    'Grant "[_1]" members permission to access assets on these desks.' =>
-     '[_1] Mitgliedern den Zugriff auf Güter dieser B&uuml;ros gewähren.',
+     '"[_1]" Mitgliedern den Zugriff auf Güter dieser B&uuml;ros gewähren.',
    'Grant "[_1]" members permission to access the members of these groups.' =>
-     '[_1] Mitgliedern den Zugriff auf Mitglieder dieser Gruppen gewähren.',
+     '"[_1]" Mitgliedern den Zugriff auf Mitglieder dieser Gruppen gewähren.',
    'Grant the members of the following groups permission to access the members of the "[_1]" group.' =>
-     'Mitgliedern der folgenden Gruppen den Zugriff auf Mitglieder der Gruppe [_1] gewähren.',
+     'Mitgliedern der folgenden Gruppen den Zugriff auf Mitglieder der Gruppe "[_1]" gewähren.',
 
 
 # System reply messages
@@ -576,6 +576,7 @@ use constant key => 'de_de';
   'No workflows were found' => 'Keine Workflows gefunden',
   'Note: Container element "[_1]" removed in bulk edit but will not be deleted.' => 'Achtung: Containerelement "[_1]" im Blockeditor entfernt, wird aber nicht gelöscht.',
   'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.' => 'Achtung: Datenelement "[_1]" wird benötigt und kann nicht vollständig entfernt werden. Lösche alle bis auf eines.',
+  'Object Groups' => 'Objektgruppen',
   'Object Group Permissions' => 'Objektgruppenrechte',
   'Or Pick a Type' => 'Oder wählen Sie einen Typ',
   'Output Channel profile "[_1]" deleted.' => 'Ausgabenkanalprofil "[_1]" gelöscht.',
@@ -612,6 +613,8 @@ use constant key => 'de_de';
   'Server profile "[_1]" deleted.' => 'Serverprofil "[_1]" gelöscht.',
   'Server profile "[_1]" saved.' => 'Serverprofil "[_1]" gespeichert.',
   'Servers' => 'Server',
+  '[_1] Site [_2] Permissions' => '[_1] Site [_2] Zugriffsrechte',
+  '[_1] Site Categories' => '[_1] Site Kategorien',
   'Site "[_1]" requires a primary output channel.' => 'Site "[_1]" benötigt einen primären Ausgabekanal',
   'Site profile "[_1]" deleted.' => 'Siteprofil "[_1]" gelöscht.',
   'Site profile "[_1]" saved.' => 'Siteprofil "[_1]" gespeichert.',
@@ -709,9 +712,6 @@ translation, which I'll gradually try to remove. I'd be very grateful for
 any error pointers.
 
 To Translate:
-  '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
-  'Object Groups' => 'Object Groups',
-  '[_1] Site Categories' => '[_1] Site Categories',
 
 =end comment
 
