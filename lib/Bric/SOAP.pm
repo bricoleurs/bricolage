@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -8,6 +8,7 @@ use Bric::SOAP::Story;
 use Bric::SOAP::Media;
 use Bric::SOAP::Template;
 use Bric::SOAP::Workflow;
+use Bric::SOAP::Element;
 
 1;
 __END__
@@ -18,11 +19,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-02-28 19:37:37 $
+$Date: 2002-03-02 01:19:04 $
 
 =head1 SYNOPSIS
 
@@ -170,7 +171,7 @@ Provides query, export, update, create and delete for Media objects.
 
 Provides query, export, update, create and delete for Templates.
 
-=item Bric::SOAP::Element B<[Not Yet Implemented]>
+=item L<Bric::SOAP::Element|Bric::SOAP::Element> B<[Implementation Incomplete]>
 
 Provides query, export, update, create and delete for Element definitions.
 
@@ -822,6 +823,10 @@ L<Bric::SOAP::Story|Bric::SOAP::Story>
 L<Bric::SOAP::Media|Bric::SOAP::Media>
 
 L<Bric::SOAP::Template|Bric::SOAP::Template>
+
+L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
+
+L<Bric::SOAP::Element|Bric::SOAP::Element>
 
 =head1 AUTHOR
 
