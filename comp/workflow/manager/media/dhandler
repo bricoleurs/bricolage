@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.13.2.7 $
+$Revision: 1.13.2.8 $
 
 =head1 DATE
 
-$Date: 2003-09-10 21:08:43 $
+$Date: 2004-02-06 00:39:17 $
 
 =head1 SYNOPSIS
 
@@ -46,16 +46,15 @@ my $profile = sub {
 
 my $select = sub {
     my $o = shift;
-    my $u = $o->get_user__id;
+    return if defined $o->get_user__id;
+    return unless chk_authz($o, EDIT, 1);
 
-    if (not defined $u && chk_authz($o, EDIT, 1)) {
-	if ($o->get_workflow_id) {
-	    return ['Checkout', 'media_prof|checkout_cb']
-              if $desk_chk->{$o->get_desk_id}[1];
-	} else {
-	    return ['Checkout', 'media_prof|recall_cb', $o->get_id.'|'.$w_id]
-              if $start_desk_ok;
-	}
+    if ($o->get_workflow_id) {
+        return ['Checkout', 'media_prof|checkout_cb']
+          if $desk_chk->{$o->get_desk_id}[1];
+    } else {
+        return ['Checkout', 'media_prof|recall_cb', $o->get_id.'|'.$w_id]
+          if $start_desk_ok;
     }
 
     return;

@@ -101,6 +101,12 @@ Events with attributes with the same name as attributes of the object the
 event was triggered on (a common occurence) no longer confuses the two. Thanks
 to Todd Tyree for the spot. [David]
 
+=item *
+
+Users granted permission to access the members of a group via two user group
+associations now always get the highest priority permission, as it should
+be. Thanks to Patrick Walsh for the stot. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
