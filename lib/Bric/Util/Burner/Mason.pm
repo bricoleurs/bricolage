@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.7.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.7.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 23:25:16 $
+$Date: 2002-01-22 20:21:41 $
 
 =head1 SYNOPSIS
 
@@ -305,10 +305,16 @@ template exists.
 sub find_template {
     my ($self, $uri, $name) = @_;
     my $interp = $self->_get('_interp');
+    my $post = $self->get_oc->get_post_path;
     my @dirs = $fs->split_uri($uri);
+    # Get rid of the post directory, if there is one.
+    pop @dirs if $post;
     while (@dirs) {
-	my $tmpl = $fs->cat_uri(@dirs, $name);
+	# Always include the post directory. If it doesn't extist, cat_uri()
+	# will ignore it.
+	my $tmpl = $fs->cat_uri(@dirs, $post, $name);
 	return $tmpl if $interp->lookup($tmpl);
+	# Pop off a directory.
 	pop @dirs;
     }
     return;
