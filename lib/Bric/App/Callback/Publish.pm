@@ -36,7 +36,8 @@ sub preview : Callback {
     }
 
     # Instantiate the Burner object.
-    my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT, user_id => get_user_id() });
+    my $b = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT,
+                                      user_id => get_user_id });
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
@@ -61,7 +62,7 @@ sub preview : Callback {
 
         # Get all the related media to be previewed as well
         foreach my $ra ($s->get_related_objects) {
-            next if (ref $ra eq 'Bric::Biz::Asset::Business::Story');
+            next if ref $ra eq 'Bric::Biz::Asset::Business::Story';
 
             # Make sure this media object isn't checked out.
             if ($ra->get_checked_out) {

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.52 $
+$Revision: 1.53 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.52 $ )[-1];
+our $VERSION = (qw$Revision: 1.53 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-08 00:03:00 $
+$Date: 2003-12-05 23:41:50 $
 
 =head1 SYNOPSIS
 
@@ -1437,25 +1437,21 @@ sub get_related_objects {
 }
 
 sub _find_related {
-    my $self = shift;
-    my ($tile) = @_;
-    my @children = $tile->get_containers;
-    my (@related);
+    my ($self, $tile) = @_;
+    my @related;
 
-    # Add this tiles related assets
+    # Add this tile's related assets
     my $rmedia = $tile->get_related_media;
     my $rstory = $tile->get_related_story;
     push @related, $rmedia if $rmedia;
     push @related, $rstory if $rstory;
 
     # Check all the children for related assets.
-    foreach my $c (@children) {
-        my @r = $self->_find_related($c);
-
-        push @related, @r if @r;
+    foreach my $c ($tile->get_containers) {
+        push @related, $self->_find_related($c);
     }
 
-    return (wantarray ? @related : \@related) if @related;
+    return wantarray ? @related : \@related if @related;
     return;
 }
 
