@@ -300,7 +300,7 @@ Friends who have spotted bugs include:
 
 =item Curtis Poe
 
-=item =item JosE<eacute> Castro
+=item JosE<eacute> Castro
 
 =back
 
