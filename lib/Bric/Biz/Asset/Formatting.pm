@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.9 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.10 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-11 00:34:53 $
+$Date: 2001-10-16 22:40:47 $
 
 =head1 SYNOPSIS
 
@@ -892,11 +892,10 @@ NONE
 
 sub set_deploy_date {
     my $self = shift;
-    my ($date) = @_;
+    my $date = db_date(shift);
+    my $deploy_date = $self->_get('deploy_date');
 
-    $date = db_date($date);
-
-    if ($date ne $self->_get('deploy_date')) {
+    unless (defined $deploy_date and $date eq $deploy_date) {
 	$self->_set(['deploy_date'], [$date]);
     }
 
