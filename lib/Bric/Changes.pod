@@ -189,6 +189,12 @@ but now they do it for plain strings, as well. [Scott & David]
 Factored out some of the SOAP asset classes into Bric::SOAP::Asset.
 Also added MediaType, Site, and Keyword SOAP modules. [Scott]
 
+=item *
+
+Changes to a stroy's slug, cover date, or primary category will now be
+displayed before the story is saved. Suggested by a coworker of Andy Baio.
+[David]
+
 =back
 
 =head2 Bug Fixes

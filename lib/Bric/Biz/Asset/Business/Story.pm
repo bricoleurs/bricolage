@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.62 $
+$Revision: 1.63 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.62 $ )[-1];
+our $VERSION = (qw$Revision: 1.63 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-09-15 05:42:18 $
+$Date: 2003-09-17 01:59:03 $
 
 =head1 SYNOPSIS
 
@@ -1123,6 +1123,8 @@ sub set_slug {
       if (not defined $slug && defined $old)
       || (defined $slug && not defined $old)
       || ($slug ne $old);
+    # Set the primary URI.
+    $self->get_uri;
     return $self;
 }
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.47 $
+$Revision: 1.48 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.47 $ )[-1];
+our $VERSION = (qw$Revision: 1.48 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-11 09:33:34 $
+$Date: 2003-09-17 01:59:03 $
 
 =head1 SYNOPSIS
 
@@ -1293,6 +1293,8 @@ sub set_cover_date {
       if (not defined $cover_date && defined $old)
       || (defined $cover_date && not defined $old)
       || ($cover_date ne $old);
+    # Update URI.
+    $self->get_uri;
     return $self;
 }
 
@@ -2118,7 +2120,7 @@ sub _init {
           unless $at_exists;
 
         $self->set_source__id( $alias_target->get_source__id );
-        $self->set_cover_date( $alias_target->get_cover_date );
+        $self->_set(['cover_date'], [$alias_target->_get('cover_date')]);
 
         $self->add_output_channels(
            map { ($_->is_enabled &&
