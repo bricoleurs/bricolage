@@ -6,11 +6,11 @@ grp_membership - Group membership widget
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2003-08-25 18:48:53 $
+$Date: 2003-09-23 15:02:54 $
 
 =head1 SYNOPSIS
 
@@ -58,7 +58,9 @@ push @$right, { value       => $all_grp->get_id,
                 description => $all_grp->get_name}
   unless $obj->get_id;
 
-foreach my $grp ( $grp_class->list({ obj => $obj }) ) {
+foreach my $grp ( $obj->can('get_grps') ? 
+                  $obj->get_grps : $grp_class->list({ obj => $obj }) ) {
+
     push @$right, { value       => $grp->get_id,
                     description => $grp->get_name };
 }
