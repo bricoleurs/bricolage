@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18 $ )[-1];
+our $VERSION = (qw$Revision: 1.19 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-24 22:00:53 $
+$Date: 2004-01-12 12:13:14 $
 
 =head1 SYNOPSIS
 
@@ -108,7 +108,7 @@ character set.
 
 =item *
 
-Copy F<comp/media/js/en_us_messages.js> to a a new JavaScript file named with
+Copy F<comp/media/js/en_us_messages.js> to a new JavaScript file named with
 your language key substituted for "en_us". Translate the JavaScript messages
 in your new JavaScript file. Be sure to use the UTF-8 character set.
 
