@@ -12,7 +12,7 @@ BEGIN { push @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib' }
 
 use Bric::Biz::Site;
 
-# If there is a site with PUBLIH in its name, we've already been upgraded.
+# If there is a site with PUBLISH in its name, we've already been upgraded.
 exit if fetch_sql
   q{SELECT 1
     FROM   grp

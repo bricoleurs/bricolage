@@ -14,14 +14,20 @@
    profile   => undef,
    exclude   => $exclude,
    behavior  => 'expand',
+   @constrain
 &>
 
 <p>
-<input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" border="0" name="publish_button" value="Publish" />
+<input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" name="publish_button" value="Publish" />
 </p>
 
-<%init>
-
+<%init>;
+my @constrain;
+# Limit to the current site context? Site ID 0 or undef is no context.
+if (my $site_id = $c->get_user_cx(get_user_id)
+    && get_pref("Filter by Site Context")) {
+    @constrain = ( constrain => {  site_id => $site_id } );
+}
 </%init>
 
 <%once>
@@ -40,8 +46,7 @@ my $exclude = sub {
     # exclude unauthorized categories
     return 1 unless chk_authz($cat, READ, 1);
 
-    # exclude categories that aren't in the current site
-    my $site_id = $c->get_user_cx(get_user_id());
-    return $cat->get_site_id != $site_id;
+    # Keep it!
+    return;
 };
 </%once>

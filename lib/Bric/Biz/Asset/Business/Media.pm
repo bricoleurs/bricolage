@@ -1508,17 +1508,12 @@ sub revert {
     throw_gen(error => "May not revert a non checked out version")
       unless $self->_get('checked_out');
 
-    my $revert_obj;
-    foreach ($self->list({ id => $self->get_id,
-                           return_versions => 1})) {
-        if ($_->get_version == $version) {
-            $revert_obj = $_;
-            last;
-        }
-    }
+    my $revert_obj = __PACKAGE__->lookup({
+        id          => $self->_get_id,
+        version     => $version,
+        checked_out => 0
+    }) or throw_gen "The requested version does not exist";
 
-    throw_gen(error => "The requested version does not exist")
-      unless $revert_obj;
 
     # Delete existing contributors.
     if (my $contrib = $self->_get_contributors) {

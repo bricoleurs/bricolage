@@ -191,7 +191,7 @@ sub build_uri {
     }
 
     # Add the post value.
-    push @path, $oc->{pre_path} if $oc->{pre_path};
+    push @path, $oc->{post_path} if defined $oc->{post_path};
     return Bric::Util::Trans::FS->cat_uri(@path);
 }
 

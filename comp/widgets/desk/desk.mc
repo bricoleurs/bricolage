@@ -248,13 +248,16 @@ if (defined $objs && @$objs > $obj_offset) {
                 # no workflow either!  Find one appropriate for the
                 # object.
                 if (not defined $wf) {
-                    if (ref($obj) =~ /Story$/) {
-                        ($wf) = Bric::Biz::Workflow->list({'type' => 2});
-                    } elsif (ref($obj) =~ /Media/) {
-                        ($wf) = Bric::Biz::Workflow->list({'type' => 3});
-                    } elsif (ref($obj) =~ /Formatting$/) {
-                        ($wf) = Bric::Biz::Workflow->list({'type' => 1});
-                    }
+                    my $site_id = $obj->get_site_id;
+                    my $ref = ref $obj;
+                    my $type = $ref =~ /Story$/
+                      ? 2
+                      : $ref =~ /Media/
+                        ? 3
+                        : 1;
+                    # Find a workflow to put it on.
+                    ($wf) = Bric::Biz::Workflow->list({ type    => $type,
+                                                        site_id => $site_id});
                     # assign to workflow
                     $obj->set_workflow_id($wf->get_id());
                 }
@@ -265,7 +268,8 @@ if (defined $objs && @$objs > $obj_offset) {
                 $desk->save();
 
                 # tell the user this object was baked
-                add_msg('Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.',
+                add_msg('Warning: object "[_1]" had no associated desk. '
+                         . 'It has been assigned to the "[_2]" desk.',
                         $obj->get_name, $desk->get_name);
             }
 
@@ -292,31 +296,40 @@ if (defined $objs && @$objs > $obj_offset) {
             # HACK:  Stop the 'allowed_desks' error.
             unless ($a_wf) {
                 if ($obj->is_active) {
+                    my $site_id = $obj->get_site_id;
+                    my $ref = ref $obj;
+                    my $type = $ref =~ /Story$/
+                      ? 2
+                      : $ref =~ /Media/
+                        ? 3
+                        : 1;
                     # Find a workflow to put it on.
-                    if (ref($obj) =~ /Story$/) {
-                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 2});
-                    } elsif (ref($obj) =~ /Media/) {
-                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 3});
-                    } elsif (ref($obj) =~ /Formatting$/) {
-                        ($a_wf) = Bric::Biz::Workflow->list({'type' => 1});
-                    }
+                    ($a_wf) = Bric::Biz::Workflow->list({ type    => $type,
+                                                          site_id => $site_id});
 
                     $obj->set_workflow_id($a_wf->get_id);
                     $obj->save;
 
-                    my @msg_args = ('Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.',
-                                 $obj->get_name, $a_wf->get_name);
-
-                    if ($desk) {
-                        my @ad = $a_wf->allowed_desks;
-                        unless (grep($desk->get_id == $_->get_id, @ad)) {
-                            my $st = $a_wf->get_start_desk;
+                    my @msg_args = ('Warning: object "[_1]" had no associated '
+                                    . 'workflow.  It has been assigned to the '
+                                    . '"[_2]" workflow.',
+                                    $obj->get_name, $a_wf->get_name);
+                    my $did = $obj->get_desk_id;
+                    my @ad = $a_wf->allowed_desks;
+                    unless (grep($did == $_->get_id, @ad)) {
+                        my $st = $a_wf->get_start_desk;
+                        if ($desk && $desk->get_id != $st->get_id) {
                             $desk->transfer({'to'    => $st,
                                              'asset' => $obj});
                             $desk->save;
-                            $msg_args[0] .= ' This change also required that this object be moved to the "[_3]" desk.';
-                            push(@msg_args, $st->get_name);
+                        } else {
+                            $st->accept({ asset => $obj });
+                            $st->save;
+                            $obj->save;
                         }
+                        $msg_args[0] .= ' This change also required that '
+                              . 'this object be moved to the "[_3]" desk.';
+                        push(@msg_args, $st->get_name);
                     }
                     add_msg(@msg_args);
                 } else {

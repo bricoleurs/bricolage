@@ -1,5 +1,7 @@
 package Bric::Util::Language::zh_tw;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
@@ -700,6 +702,10 @@ To translate:
   '[_1] Site Categories' => '[_1] 站台分類',
   'You do not have permission to override user "[_1]"' => '您不得 override 使用者 "[_1]"'
   'Please select a primary output channel' => '請選擇一個主要輸出頻道',
+  'Not defined.' => 'Not defined.',
+  'Milliseconds' => 'Milliseconds',
+  'Microseconds' => 'Microseconds',
+  'Not defined.' => 'Not defined.',
 
 Notice:
 

@@ -65,7 +65,9 @@ sub save : Callback {
             }
         };
 
-        for my $f (qw(size maxlength rows cols)) {
+        # HACK: Size goes in twice. Don't ask me why!
+        $param->{length} = $param->{size};
+        for my $f (qw(size maxlength rows cols length)) {
             $set_meta_number->($ed, $f, $param);
         }
 

@@ -31,8 +31,16 @@ underway.
 
 =head3 Is there any pre-compiled packages for Bricolage?
 
-There is currently only a tentative start for a bricolage debian package. The
-location of the package is L<http://people.debian.org/~erich/bricolage>.
+There is a FreeBSD port for Bricolage 1.8. To use it, simply update your ports
+tree, and then:
+
+  cd /usr/ports/www/bricolage
+  make
+  make install
+
+There is currently only a tentative start for a bricolage debian package, and
+unfortunately, it is rather out of date. The location of the package is
+L<http://people.debian.org/~erich/bricolage>.
 
 To use this package, add the following line to your F</etc/apt/sources.list> file:
 
@@ -518,7 +526,13 @@ name in your templates to use the new field name.
 
 Did you add it as a subelement to a document type element, or as a subelement
 to any element that's part of a document type element hierarchy? If not, it
-won't show up in the template select list.
+won't show up in the template select list. This behavior has to do with sites;
+only story type and media type elements are associated with sites, so to
+create a new template in a workflow (which is associated with a site), it
+looks for all the story type and media type elements associated with that
+site, and then adds all subelements of those elements. So unless your new
+subelement is associated with a story type or media type element, you won't
+see it when you go to create a new template.
 
 =head2 Miscellaneous
 

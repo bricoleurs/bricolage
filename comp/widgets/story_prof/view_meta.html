@@ -10,6 +10,7 @@ my $rightText = qq{
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Information",
 	 number  => 1,
+         id      => 'storyinfo',
 	 rightText => $rightText
 
 );
@@ -37,7 +38,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_name %></td>
+  <td width="470" class="fieldcontent">&nbsp;<% $story->get_name %></td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
@@ -46,7 +47,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <tr>
   <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
   <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_description %></td>
+  <td width="470" class="fieldcontent">&nbsp;<% $story->get_description %></td>
   </tr>
   <tr>
   <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>

@@ -207,7 +207,7 @@ sub test_oc_id : Test(14) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(34) {
+sub test_alias : Test(33) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -241,10 +241,6 @@ sub test_alias : Test(34) {
     throws_ok { $class->new({ alias_id => $ba->get_id }) }
       qr /Cannot create an asset without a site/,
       "Check that you need the Site parameter";
-
-    throws_ok { $class->new({ alias_id => $ba->get_id, site_id => 100 }) }
-      qr /Cannot create an alias to an asset in the same site/,
-      "Check that you cannot create alias to a asset in the same site";
 
     # Create an extra site
     my $site1 = Bric::Biz::Site->new({ name => __PACKAGE__ . "1",

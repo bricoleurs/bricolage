@@ -98,6 +98,8 @@ if(ref($title) eq 'ARRAY') {
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <title><% $title %></title>
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
@@ -127,7 +129,6 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 }
 % } # if
 </script>
-<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
 <body bgcolor="#ffffff" <% $margins %> onLoad="init()" marginwidth="8" marginheight="8" topmargin="8" leftmargin="8">

@@ -45,14 +45,14 @@ sub save : Callback {
 
         if ($param->{mode} eq 'new') {
             # add person object to the selected group
-            my $group = Bric::Util::Grp::Person->lookup( { id => $param->{group} } );
+            my $group = Bric::Util::Grp::Person->lookup({ id => $param->{group} });
             $contrib->save;
-            my $member = $group->add_member( { obj => $contrib } );
+            my $member = $group->add_member({ obj => $contrib });
             $group->save;
             @{$param}{qw(mode contrib_id)} = ('edit', $member->get_id);
-            $member = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-                {
-                    id => $param->{contrib_id} } );
+            $member = Bric::Util::Grp::Parts::Member::Contrib->lookup({
+                id => $param->{contrib_id}
+            });
 
             # Log that we've created a new contributor.
             log_event("${type}_new", $member);
@@ -73,17 +73,19 @@ sub save : Callback {
             # Update attributes.
             # We'll need these to get the SQL type and max length of attributes.
             my $all = $contrib->all_for_subsys;
-            my $mem_attr = Bric::Util::Attribute::Grp->new({ id => $contrib->get_grp_id,
-                                                             susbsys => '_MEMBER_SUBSYS'});
+            my $mem_attr = Bric::Util::Attribute::Grp->new({
+                id => $contrib->get_grp_id,
+                susbsys => '_MEMBER_SUBSYS'
+            });
 
             foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
                 # Grab the SQL type.
                 my $sqltype = $mem_attr->get_sqltype({ name => $aname,
-                                                       subsys => $param->{subsys} });
-
+                                                       subsys => '_MEMBER_SUBSYS' });
                 # Truncate the value, if necessary.
                 my $max = $all->{$aname}{meta}{maxlength}{value};
                 my $value = $param->{"attr|$aname"};
+
                 $value = join('__OPT__', @$value)
                   if $all->{$aname}{meta}{multiple}{value} && ref $value;
                 $value = substr($value, 0, $max) if $max && length $value > $max;

@@ -126,7 +126,7 @@ use strict;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
-use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST);
+use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev);
 use Bric::Biz::AssetType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
@@ -317,8 +317,8 @@ sub DESTROY {}
 =item my $burner_class = Bric::Util::Burner->class_for_ext($ext);
 
 Returns the name of the burner class that handles templates with the extension
-passed in. The extension must be the full extension name, starting with the
-".", such as ".mc" or ".tmpl".
+passed in. The extension must be the full extension name without with the ".",
+such as "mc" or "tmpl".
 
 B<Throws:> NONE.
 
@@ -354,7 +354,7 @@ B<Notes:> NONE.
 
 =item my $file_types = Bric::Util::Burner->list_file_types
 
-Returns an array reference of array references of burner file name extesions
+Returns an array reference of array references of burner file name extensions
 mapped to labels for each. Suitable for use in select widgets.
 
 B<Throws:> NONE.
@@ -394,7 +394,7 @@ B<Notes:> NONE.
 
 =item $b = $burner->set_data_dir($data_dir)
 
-Sets the component directory.
+Sets the data directory.
 
 B<Throws:> NONE.
 
@@ -414,7 +414,7 @@ B<Notes:> NONE.
 
 =item $b = $burner->set_comp_dir($comp_dir)
 
-Sets the data directory.
+Sets the component directory.
 
 B<Throws:> NONE.
 
@@ -567,8 +567,9 @@ B<Notes:> NONE.
 
 =item  $b = $burner->set_page_extensions(@page_extensions)
 
-Sets page extensions to be used during burning. Will revert to page
-numbering once the extensions are all used.
+Sets page extensions to be used during burning. Will revert to page numbering
+once the extensions are all used. Each of the page extensions passed must be
+unique or an exception will be thrown.
 
 B<Throws:> NONE.
 
@@ -589,7 +590,19 @@ and storyconc.html.
 
 sub set_page_extensions {
     my $self = shift;
-    $self->_set(['_page_extensions'], [\@_]);
+    my %seen;
+    if (grep { $seen{$_}++ } @_) {
+        my $oc = $self->get_oc;
+        my $cat = $self->get_cat;
+        my $elem = $self->get_element;
+        throw_burn_error error => "Duplicate page extensions are not allowed",
+                         mode  => $self->get_mode,
+                         ( $oc   ? (oc    => $oc->get_name)   : ()),
+                         ( $cat  ? (cat   => $cat->get_uri)   : ()),
+                         ( $elem ? (elem  => $elem->get_name) : ()),
+    }
+
+    $self->_set(['_page_extensions'] => [\@_]);
     return $self;
 }
 
@@ -930,9 +943,11 @@ sub preview_another {
       ? 'story'
       : 'media';
 
-    # Create a new burner and do the preview.
-    my $b2 = __PACKAGE__->new;
-    $b2->_set(['_output_preview_msgs'] => [0]);
+    # Create a new burner, copy the notes, and do the preview.
+    my $b2 = __PACKAGE__->new({ user_id => $self->get_user_id,
+                                out_dir => PREVIEW_ROOT,
+                              });
+    $b2->_set([qw(_output_preview_msgs _notes)] => [0, $self->_get('_notes')]);
     return $b2->preview($ba, $key, get_user_id(), $oc_id);
 }
 
@@ -1054,8 +1069,8 @@ sub publish {
     my $baid = $ba->get_id;
 
     # Determine if we've published before. Set the expire date if we haven't.
-    my ($repub, $exp_date) = $ba->get_publish_status ?
-      (1, undef) : (undef, $ba->get_expire_date(ISO_8601_FORMAT));
+    my $repub = $ba->get_publish_status;
+    my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
 
     # Get a list of the relevant categories.
     my @cats = $key eq 'story' ? $ba->get_categories : ();
@@ -1134,20 +1149,28 @@ sub publish {
 
         # Set up an expire job, if necessary.
         if ($exp_date and my @res = $job->get_resources) {
-            # We'll need to expire it.
-            my $expname = 'Expire "' . $ba->get_name .
-              '" from "' . $oc->get_name . '"';
-            my $exp_job = Bric::Util::Job::Dist->new({
-                sched_time   => $exp_date,
-                user_id      => $user_id,
-                server_types => $bat,
-                name         => $expname,
-                resources    => \@res,
-                type         => 1,
-                priority     => $ba->get_priority,
-            });
-            $exp_job->save;
-            log_event('job_new', $exp_job);
+            # Make sure we haven't expired this asset on that date already.
+            # XXX There could potentially be some files missed because of
+            # changes between versions, but that should be extremely uncommon.
+            unless (Bric::Util::Job::Dist->list_ids({ sched_time  => $exp_date,
+                                                      resource_id => $res[0]->get_id,
+                                                      type        => 1,
+                                                  })->[0]) {
+                # We'll need to expire it.
+                my $expname = 'Expire "' . $ba->get_name .
+                  '" from "' . $oc->get_name . '"';
+                my $exp_job = Bric::Util::Job::Dist->new({
+                    sched_time   => $exp_date,
+                    user_id      => $user_id,
+                    server_types => $bat,
+                    name         => $expname,
+                    resources    => \@res,
+                    type         => 1,
+                    priority     => $ba->get_priority,
+                });
+                $exp_job->save;
+                log_event('job_new', $exp_job);
+            }
         }
 
         # Expire stale resources, if necessary.
@@ -1258,6 +1281,7 @@ sub publish_another {
 
     # Construct a new burner object and publish the document.
     my $b2 = __PACKAGE__->new;
+    $b2->_set(['_notes'] => [$self->_get('_notes')]);
     $b2->publish($ba, $key, get_user_id, $pub_time);
 }
 
@@ -1307,9 +1331,6 @@ sub burn_one {
                     base_uri page)],
                 [@_, $oc->get_filename($story), $oc->get_file_ext, $path,
                  $base_uri, 0]);
-
-    # Clear out any previously existing notes.
-    $self->clear_notes;
 
     # Construct the burner and do it!
     my ($burner, $at) = $self->_get_subclass($story);
@@ -1647,8 +1668,9 @@ sub best_uri {
 The C<notes()> method provides a place to store burn data data, giving
 template developers a way to share data among multiple burns over the course
 of publishing a single story in a single category to a single output
-channel. Any data stored here persists for the duration of a call to
-C<burn_one()>. Use C<clear_notes()> to manually clear the notes.
+channel. Any data stored here persists for the lifetime of the burner object,
+as well as to any burners generated by calls to C<publish_another()> or
+C<preview_another()>. Use C<clear_notes()> to manually clear the notes.
 
 Conceptually, C<notes()> contains a hash of key-value pairs. C<notes($key,
 $value)> stores a new entry in this hash. C<notes($key)> returns a previously
@@ -1657,8 +1679,8 @@ entire hash of key-value pairs.
 
 C<notes()> is similar to the mod_perl method C<< $r->pnotes() >>. The main
 differences are that this C<notes()> can be used in a non-mod_perl environment
-(such as when a story is published by F<bric_queued>, and that its lifetime is
-tied to the lifetime of the call to C<burn_one()>.
+(such as when a story is published by F<bric_queued>), and that its lifetime is
+tied to the lifetime of the burner object.
 
 B<Throws:> NONE.
 
@@ -1744,8 +1766,8 @@ sub throw_error {
   __PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
                                  category_fn => 'category',
                                  exts        =>
-                                   { '.pl'   => 'HTML::Template Script (.pl)',
-                                     '.tmpl' => 'HTML::Template Template (.tmpl)'
+                                   { 'pl'   => 'HTML::Template Script (.pl)',
+                                     'tmpl' => 'HTML::Template Template (.tmpl)'
                                    }
                                );
 
@@ -1767,7 +1789,7 @@ sub _register_burner {
     my $class = shift;
     my $burner = shift;
 
-    # Register the class with the constant.
+    # Register the class with the constant.a
     $classes->{$burner} = $class;
 
     # Save the file name specs.

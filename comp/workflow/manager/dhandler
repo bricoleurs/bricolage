@@ -122,16 +122,17 @@ $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
               $wf->allowed_desks
             };
 $start_desk_ok = $desk_chk->{$wf->get_head_desk_id}[0];
-$wf = $wf->get_name;
+my $wf_name = $wf->get_name;
 </%init>
 <& '/widgets/wrappers/sharky/header.mc',
    title => "Find $pl_name->{$type}",
-   context => "Workflow | &quot;$wf&quot; | Find $pl_name->{$type}"
+   context => "Workflow | &quot;$wf_name&quot; | Find $pl_name->{$type}"
  &>
 
 <& '/widgets/search/search.mc',
    'object' => $type,
    'type'   => $type,
+   'wf'     => $wf,
 &>
 
 <form method="post" action="<% $r->uri %>" name="$type\_manager">

@@ -154,7 +154,8 @@ addition
 
 An 'addition' is a generic term for adding a new object to the list manager.  
 This will usually happen by creating a new object of the appropriate type.  This
-argument takes an array ref of a label and a URL.   The default is:
+argument takes an array ref of a label, a URL, and an optional object display
+name. The default is:
 
 ['Add', '']
 

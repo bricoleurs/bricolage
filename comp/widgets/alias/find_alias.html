@@ -11,10 +11,10 @@
    sortBy       => 'name',
    select       => undef,
    profile      => $related_alias,
-   constrain    => { no_site_id => $site_id },
    exclude      => $excl_sub,
-   fields       => [qw(id title uri cover_date)],
+   fields       => $fields,
    field_values => $field_values,
+   field_titles => { thumb => $lang->maketext('Thumb') },
    addition     => '',
    cx_filter    => 0,
    behavior     => 'expand',
@@ -40,18 +40,27 @@ my %elems = map { $_ => 1 } Bric::Biz::AssetType->list_ids
 # case-by-case bassis to limit most things.
 my $excl_sub = sub {
     not chk_authz($_[0], READ, 1)
-      or not $elems{$_[0]->get_element__id}
 };
+
+my $fields = [qw(id title uri cover_date)];
+unshift @$fields, 'thumb' if USE_THUMBNAILS;
 </%init>
 <%once>;
 my $link_key;
 my $field_values = sub {
     my ($o, $field) = @_;
-    return unless $field eq 'title';
-    my $html = qq{<a href="/workflow/profile/preview/$link_key} . $o->get_id .
-      '" class="blackUnderlinedLink" target="preview_' . SERVER_WINDOW_NAME .
-      '">' . $o->get_title . '</a>';
-    return $html;
+    if ($field eq 'title') {
+        my $html = qq{<a href="/workflow/profile/preview/$link_key} . $o->get_id .
+          '" class="blackUnderlinedLink" target="preview_' . SERVER_WINDOW_NAME .
+          '">' . $o->get_title . '</a>';
+        return $html;
+    } elsif ($field eq 'thumb') {
+        # If we get a thumbnail URI, we have an image. Otherwise, simply return
+        # a space to fill the column properly because we aren't an image object
+        # but USE_THUMBNAILS is on.
+        my $thumb_uri = $o->thumbnail_uri or return '&nbsp;';
+        return qq{ <img src="$thumb_uri" />};
+    }
 };
 
 my $related_alias = sub {

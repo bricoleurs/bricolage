@@ -184,11 +184,11 @@ Provides query, export, update, create, and delete for Category objects.
 
 Provides query, export, update, create, and delete for MediaType objects.
 
-=item L<Bric::SOAP::MediaType|Bric::SOAP::Site>
+=item L<Bric::SOAP::Site|Bric::SOAP::Site>
 
 Provides query, export, update, create, and delete for Site objects.
 
-=item L<Bric::SOAP::MediaType|Bric::SOAP::Keyword>
+=item L<Bric::SOAP::Keyword|Bric::SOAP::Keyword>
 
 Provides query, export, update, create, and delete for Keyword objects.
 
@@ -196,7 +196,7 @@ Provides query, export, update, create, and delete for Keyword objects.
 
 Provides query, export, update, create, and delete for User objects.
 
-=item L<Bric::SOAP::User|Bric::SOAP::User>
+=item L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 
 Provides query, export, update, create, and delete for Desk objects.
 
@@ -687,6 +687,13 @@ The XSD source:
          <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
+               <xs:element name="key_name">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
                <xs:element name="name">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">
@@ -770,7 +777,7 @@ The XSD source:
                        <xs:complexType>
                          <xs:sequence>
                            <xs:element name="type" type="xs:string"/>
-                           <xs:element name="name" type="xs:string"/>
+                           <xs:element name="key_name" type="xs:string"/>
                            <xs:element name="label" type="xs:string"/>
                            <xs:element name="required" type="xs:boolean"/>
                            <xs:element name="repeatable" type="xs:boolean"/>

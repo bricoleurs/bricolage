@@ -28,6 +28,18 @@ $widget
 # The tile object.
 my $tile = get_state_data($widget, 'tile');
 my $relate_id = $tile->get_related_media_id;
+
+my $excl_sub;
+warn $tile->get_object_type, $/;
+if ($tile->get_object_type eq 'media') {
+    my $asset_id = get_state_data('media_prof', 'media')->get_id;
+    $excl_sub = sub {
+        return 1 if $_[0]->get_id == $asset_id;
+        return !chk_authz($_[0], READ, 1);
+    };
+} else {
+    $excl_sub = sub { return !chk_authz($_[0], READ, 1) };
+}
 </%init>
 <%once>;
 my $related_profile = sub {
@@ -38,7 +50,7 @@ my $related_profile = sub {
         return ['Un-relate', $r->uri, "container_prof|unrelate_media_cb=".$o->get_id];
     }
 };
-my $excl_sub = sub { return !chk_authz($_[0], READ, 1) };
+
 my $thumburi = sub {
     my ($selfobj, $fieldname) = @_;
     return unless $fieldname eq 'thumb';

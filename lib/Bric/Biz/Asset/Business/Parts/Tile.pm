@@ -549,8 +549,8 @@ B<Notes:> NONE.
 
 =item my $object_instance_id = $element->get_object_instance_id
 
-Returns the ID of the document (story or media) that the element is associated
-with.
+Returns the ID of the version of the document (story or media) that the
+element is associated with.
 
 B<Throws:> NONE.
 
@@ -560,8 +560,8 @@ B<Notes:> NONE.
 
 =item $element->set_object_instance_id($object_instance_id)
 
-Sets the ID of the document (story or media) that the element is associated
-with.
+Sets the ID of the version of the document (story or media) that the element
+is associated with.
 
 B<Throws:> NONE.
 

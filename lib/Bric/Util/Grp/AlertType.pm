@@ -181,7 +181,8 @@ sub get_object_class_id { OBJECT_CLASS_ID }
 
 =item my $secret = Bric::Util::Grp::AlertType->get_secret()
 
-Returns true, because this is a secret type of group used only by developers.
+Returns false, because this is not a secret type of group, so it can be
+directly used by users.
 
 B<Throws:> NONE.
 
@@ -191,7 +192,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { Bric::Util::Grp::SECRET_GRP }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 

@@ -384,7 +384,7 @@ The unique key name of the asset type.  Matched with case insensitive LIKE
 
 The description of the asset type.  Matched with case-insentive LIKE.
 
-=item output_channel
+=item output_channel_id
 
 The ID of an output channel. Returned will be all AssetType objects that
 contain this output channel.
@@ -2498,7 +2498,7 @@ sub _do_list {
 
     # Set up the rest of the parameters.
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'output_channel') {
+        if ($k eq 'output_channel_id' || $k eq 'output_channel') {
             $tables .= ', element__output_channel ao';
             push @wheres, ('ao.output_channel__id = ?',
                            'ao.element__id = a.id');

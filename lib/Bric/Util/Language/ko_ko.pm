@@ -1,5 +1,7 @@
 package Bric::Util::Language::ko_ko;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::ko_ko - Bricolage Korean translation

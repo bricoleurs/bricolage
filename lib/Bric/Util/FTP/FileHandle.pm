@@ -422,11 +422,14 @@ sub STORE {
 
     # Put the template into workflow.
     if (not $template->get_workflow_id) {
-        # Recall it into workflow.
+        # Recall it into workflow, move it to a desk, and check it out.
         $self->{ftps}->move_into_workflow($template)
     } elsif (not $template->get_desk_id) {
         # Move it to the start desk and check it out.
         $self->{ftps}->move_onto_desk($template)
+    } elsif (not $template->get_checked_out) {
+        # Check it out.
+        $self->{ftps}->check_out($template)
     }
 
     # save the new code
@@ -456,6 +459,12 @@ sub STORE {
                   && $self->{ftps}{user_obj}->can_do($d, READ);
             }
 
+            unless ($pub_desk) {
+                warn "Cannot deploy ", $template->get_name,
+                  ": no deploy desk\n";
+                return;
+            }
+
             # Transfer the template to the publish desk.
             if ($cur_desk) {
                 $cur_desk->transfer({ to    => $pub_desk,
@@ -476,7 +485,7 @@ sub STORE {
 
         # Make sure they have permission to deploy (publish).
         unless ($self->{ftps}{user_obj}->can_do($template, PUBLISH)) {
-            warn "Cannot publish ", $template->get_name,
+            warn "Cannot deploy ", $template->get_name,
               ": permission denied\n";
             return;
         }
@@ -532,14 +541,14 @@ __END__
 
 =head1 AUTHOR
 
-Sam Tregar (stregar@about-inc.com)
+Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
-Net:FTPServer::FileHandle
+L<Net:FTPServer::FileHandle|Net:FTPServer::FileHandle>
 
-L<Bric::Util::FTP::Server>
+L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>
 
-L<Bric::Util::FTP::DirHandle>
+L<Bric::Util::FTP::DirHandle|Bric::Util::FTP::DirHandle>
 
 =cut

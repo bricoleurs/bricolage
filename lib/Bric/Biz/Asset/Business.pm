@@ -2178,11 +2178,11 @@ sub _init {
     if ($init->{alias_id}) {
         my $alias_target = $class->lookup({ id => $init->{alias_id} });
 
-        throw_dp "Cannot create an alias to an asset in the same site"
-          if $alias_target->get_site_id == $init->{site_id};
-
         throw_dp "Cannot create an alias to an alias"
           if $alias_target->get_alias_id;
+
+        # Re-bless the alias into the same class as the aliased.
+        bless $self, ref $alias_target;
 
         $self->_set([qw(alias_id _alias_obj)],
                     [$init->{alias_id}, $alias_target]);

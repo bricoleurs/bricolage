@@ -43,8 +43,7 @@ $show_summary => undef
 my $widget = 'container_prof';
 </%once>
 
-<%init>
-
+<%init>;
 # Default to using the tile passed in followed by the tile in state.
 $tile ||= get_state_data($widget, 'tile');
 
@@ -60,8 +59,8 @@ $state = $action;
 #
 #   # Don't change the state unless $action isn't 'edit'.
 #   $state = $action unless $action eq 'edit';
-# 
-# This exception was causing the container_prof code to occasionally show a 
+#
+# This exception was causing the container_prof code to occasionally show a
 # view screen rather than an edit screen.  Maybe there was a good reason
 # for this exception and the bug is really in another place in container_prof?
 

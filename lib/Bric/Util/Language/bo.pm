@@ -1,5 +1,7 @@
 package Bric::Util::Language::bo;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::bo - Bricolage Tibetan translation

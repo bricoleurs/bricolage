@@ -1,4 +1,4 @@
-Revision history for activitymail.
+Revision history for bric_template_dump.
 
 0.12
        - Added --unix-endings option to convert all line endings to Unix-

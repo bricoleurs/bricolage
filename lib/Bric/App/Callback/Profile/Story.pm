@@ -48,7 +48,7 @@ sub revert : Callback {
     $story->revert($version);
     $story->save;
     add_msg('Story "[_1]" reverted to V.[_2].', $story->get_title, $version);
-    clear_state($widget);
+    set_state_data($widget, 'story');
 }
 
 sub save : Callback {

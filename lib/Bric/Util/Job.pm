@@ -217,6 +217,11 @@ server_types - An anonymous array of Bric::Dist::ServerTypeBric::Dist::ServerTyp
 objects representing the types of servers for which the job must be executed.
 See Bric::Dist::ServerType for an interface for creating server types.
 
+=item *
+
+type - The type of job. Pass a true value for an expire job and a false value
+(or no C<type> parameter at all) for a distribution job.
+
 =back
 
 Either the resources, resource_names, or resource_ids anonymous array is must be
@@ -393,11 +398,11 @@ server_type_id - A Bric::Dist::ServerType object ID.
 
 grp_id - A Bric::Util::Grp::Job object ID.
 
-=item * 
+=item *
 
 failed - A boolean indicating whether or not a job is considered a failure
 
-=item * 
+=item *
 
 executing - A boolean indicating whether some process is running C<execute_me>
 on this job
@@ -520,11 +525,13 @@ B<Notes:> NONE.
 
 =cut
 
-sub list_ids { 
+sub list_ids {
     my ($pkg, $params) = @_;
     my $class = ref $pkg || $pkg;
     $params->{_class_id} = $class->CLASS_ID unless $class eq __PACKAGE__;
-    return wantarray ? @{ &$get_em($pkg, $params, 1) } : &$get_em($pkg, $params, 1) 
+    return wantarray
+      ? @{ &$get_em($pkg, $params, 1) }
+      : &$get_em($pkg, $params, 1);
 }
 
 ################################################################################
@@ -1933,15 +1940,18 @@ $get_em = sub {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
+        } elsif ($k eq 'type') {
+            # Boolean
+            $wheres .= " AND a.expire = ?";
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'failed') {
-            # boolean 
+            # Boolean
             $wheres .= " AND a.$k = ?";
-            push @params, $v;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'executing') {
-            # boolean 
+            # Boolean
             $wheres .= " AND a.$k = ?";
-            $v = 0 unless $v;
-            push @params, $v;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'error_message') {
             # Simple string comparison.
             $wheres .= " AND LOWER(a.$k) LIKE ?";
@@ -1977,6 +1987,7 @@ $get_em = sub {
     # Assemble and prepare the query.
     my $qry_cols = $ids ? \'DISTINCT a.id, a.sched_time, a.priority' :
       \$SEL_COLS;
+
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables

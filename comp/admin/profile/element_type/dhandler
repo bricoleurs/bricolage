@@ -26,14 +26,15 @@ if (defined $id && $ct->get_media) {
 }
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Get the group's membership listed
-#$m->comp("/widgets/grp_membership/grp_membership.mc",
-#         grp_class => 'Bric::Util::Grp::ElementType',
-#         obj => $ct,
-#         formName => 'ct_profile',
-#         no_edit => $no_edit,
-#         num => 2
-#);
+# Output group membership.
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::ElementType',
+         obj => $ct,
+         formName => 'ct_profile',
+         widget => $widget,
+         no_edit => $no_edit,
+         num => 2
+);
 
 $m->comp('/widgets/profile/formButtons.mc',
 	 type => $type,

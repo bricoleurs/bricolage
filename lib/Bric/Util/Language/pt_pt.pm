@@ -1,5 +1,7 @@
 package Bric::Util::Language::pt_pt;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::pt_pt - Bricolage Portuguese translation
@@ -712,6 +714,7 @@ To translate:
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'Not defined.' => 'Not defined.',
   'Milliseconds' => 'Milliseconds',
   'Microseconds' => 'Microseconds',
   'Precision' => 'Precision',

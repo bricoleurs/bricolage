@@ -1530,10 +1530,12 @@ methods to add and delete privileges.
 
 $get_priv = sub {
     local $" = ' | '; # Unary OR
-    eval "@_";        # will return highest value.
+    eval "@_";        # will return highest value. XXX Is this safe?
 };
 
 =end comment
+
+=cut
 
 1;
 __END__

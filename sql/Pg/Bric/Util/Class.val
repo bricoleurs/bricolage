@@ -216,7 +216,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES (67, 'formatting_grp', 'Bric::Util::Grp::Formatting', 'Template Group', 'Template Groups', 'Group of templates', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (68, 'grp_grp', 'Bric::Util::Grp::Grp', 'Group of Groups', 'Groups of Groups', 'Group of groups', 0);
+VALUES (68, 'grp_grp', 'Bric::Util::Grp::Grp', 'Group Group', 'Group Groups', 'Group of groups', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (69, 'asset', 'Bric::Biz::Asset', 'Asset', 'Assets', 'Asset objects', 0);

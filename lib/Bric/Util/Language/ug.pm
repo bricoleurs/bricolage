@@ -1,5 +1,7 @@
 package Bric::Util::Language::ug;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::ug - Bricolage Uyghur translation

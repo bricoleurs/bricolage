@@ -351,12 +351,18 @@ sub handle_err {
     # Clear out redirects so that they won't be triggered.
     del_redirect();
 
-    # Exception::Class::Base provides as_string, but as_text is not
-    # guaranteed.
-    my $text = $err->can('as_text') ? $err->as_text : $err->as_string;
+    # Send the error(s) to the apache error log.
+    $r->log->error($err->full_message);
+    $r->log->error($more_err) if $more_err;
 
-    # Send the error to the apache error log.
-    $r->log->error($text . ($more_err ? "\n$more_err\n" : ''));
+    # Exception::Class::Base provides trace->as_string, but trace_as_text is
+    # not guaranteed. Use print STDERR to avoid escaping newlines.
+    print STDERR $err->can('trace_as_text')
+      ? $err->trace_as_text
+      : join ("\n",
+              map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                $err->trace->frames),
+        "\n";
 
     # Process the exception for the user.
     # Instead of using $interp->exec we start over a la PreviewHandler.

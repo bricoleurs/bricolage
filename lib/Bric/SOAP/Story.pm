@@ -296,9 +296,9 @@ sub list_ids {
       category_path_to_id(__PACKAGE__, delete $args->{category}, $args)
       if exists $args->{category};
 
-    # no_workflow means workflow__id => undef
+    # no_workflow means workflow__id => 0
     if ($args->{no_workflow}) {
-        $args->{workflow__id} = undef;
+        $args->{workflow__id} = 0;
         delete $args->{no_workflow};
     }
 

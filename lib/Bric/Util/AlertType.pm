@@ -117,6 +117,7 @@ use Bric::Util::Event;
 use Bric::Util::Coll::Rule;
 use Bric::Util::Alert;
 use Bric::Util::Grp::AlertType;
+use Safe;
 
 ################################################################################
 # Inheritance
@@ -157,6 +158,13 @@ my %map = (id            => 'id',
            owner_id      => 'usr__id');
 my $meths;
 my @ord = qw(name event_type_id owner_id subject message active);
+
+my $safe = Safe->new;
+# If new operators get added to Bric::Util::AlertType::Parts::Rule, use
+# `perl -MOpcode=opdump -e opdump` to find their ops and add them here.
+# XXX Add regcmaybe, regcreset, pushre, or regcomp?
+$safe->permit_only(qw(seq sne sgt slt sge le match not lc padany lineseq
+                      const leaveeval qr regcreset));
 
 ################################################################################
 
@@ -2474,11 +2482,15 @@ sub send_alerts {
         my $op = $rule->get_operator;
         my $chk = $rule->get_value;
         # Perform a regular expression or simple comparison.
-        if ($op eq '=~' || $op eq '!~') {
-            my $re = qr/$chk/i;
-            return unless eval qq|\$value $op \$re|;
-        } else {
-            return unless eval qq|lc '$chk' $op lc '$value'|;
+        my $code = $op eq '=~' || $op eq '!~'
+          ? qq{q[$value] $op qr[$chk]}
+          : qq{lc q[$chk] $op lc q[$value]};
+        unless ($safe->reval($code)) {
+            # Just return if there's no error.
+            my $err = $@ or return;
+            # Yow! An exception. Someone is trying to do something naughty!
+            throw_dp error   => "Invalid alert rule",
+                     payload => $err;
         }
     }
 

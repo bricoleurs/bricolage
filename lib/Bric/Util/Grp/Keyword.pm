@@ -121,6 +121,29 @@ sub get_object_class_id { OBJ_CLASS_ID }
 
 ##############################################################################
 
+=head3 get_list_classes
+
+  my @list_classes = Bric::Util::Grp::Keyword->get_list_classes;
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_list_classes { ('Bric::Biz::Keyword') }
+
+################################################################################
+
 =head3 get_class_id
 
   my $class_id = Bric::Util::Grp::Keyword->get_class_id;
@@ -142,7 +165,7 @@ that can be used by users.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ##############################################################################
 

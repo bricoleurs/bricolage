@@ -1,5 +1,7 @@
 package Bric::Util::Language::en_us;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::pt_pt - Bricolage Portuguese translation

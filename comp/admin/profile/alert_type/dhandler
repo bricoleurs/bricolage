@@ -101,15 +101,26 @@ if (defined $id) {
 	     caption => 'Recipients', number => 4);
 
     $m->comp('/widgets/profile/hidden.mc', name => 'ctype');
-    $m->out(qq{<table border="1" cellpadding="2" cellspacing="0" width="578"}
-            . qq{ bordercolor="#cccc99">\n});
-    $m->out(qq{<tr class="medHeader"><th>Contact</th><th>Groups</th>}
-            . qq{<th>Users</th><th>&nbsp;</td></tr>\n});
+    $m->out(qq{<table border="1" cellpadding="3" cellspacing="0" width="578"}
+            . qq{ style="border-style:solid; border-color:#cccc99;">\n});
+    $m->out(qq{<tr class="medHeader" style="border-style:solid; border-color:#cccc99;"><th style="border-style:solid; border-color:#cccc99;">Contact</th><th style="border-style:solid; border-color:#cccc99;">Groups</th>}
+            . qq{<th style="border-style:solid; border-color:#cccc99;">Users</th><th style="border-style:solid; border-color:#cccc99;">&nbsp;</td></tr>\n});
     foreach my $c (Bric::Biz::Contact->list_alertable_types) {
 	$m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
     }
     $m->out("</table>\n");
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    # Output group membership.
+    $m->out("<br />\n");
+    $m->comp("/widgets/grp_membership/grp_membership.mc",
+             grp_class => 'Bric::Util::Grp::AlertType',
+             obj => $at,
+             formName => 'alert_type_profile',
+             no_edit => $no_edit,
+             widget => $widget,
+             num => 5,
+    );
 
     # Output the form buttons.
     $m->out("<br />\n");
@@ -242,8 +253,8 @@ $at
 $no_edit
 </%args>
 <tr valign="top">
-    <td><% $c %></td>
-    <td>
+    <td style="border-style:solid; border-color:#cccc99;"><% $c %></td>
+    <td style="border-style:solid; border-color:#cccc99;">
 % my $fill = '';
 % foreach my $g ($at->get_groups($c)) {
 %    $m->out($fill . $g->get_name);
@@ -251,7 +262,7 @@ $no_edit
 % } # foreach
 % $m->out("&nbsp;") unless $fill; $fill = '';
     </td>
-    <td>
+    <td style="border-style:solid; border-color:#cccc99;">
 % foreach my $u ($at->get_users($c)) {
 %    $m->out($fill . $u->format_name($fmt));
 %    $fill = "<br />\n";
@@ -259,9 +270,9 @@ $no_edit
 % $m->out("&nbsp;") unless $fill;
     </td>
 % if ($no_edit) {
-    <td>&nbsp;</td>
+    <td style="border-style:solid; border-color:#cccc99;">&nbsp;</td>
 % } else {
-    <td align="center"><& '/widgets/profile/imageSubmit.mc',
+    <td align="center" style="border-style:solid; border-color:#cccc99;"><& '/widgets/profile/imageSubmit.mc',
 	     formName => "alert_type_profile",
 	     callback => "$type|recip_cb",
 	     image    => "edit_lgreen",

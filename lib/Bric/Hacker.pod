@@ -488,7 +488,7 @@ with a minimum of hassle.
 
 Make sure that both the branch you are merging from and the trunk are updated
 and have no uncommitted changes. You can check for these differences by using
-the Subversion <status> and <update> commands. Running C<svn status> will tell
+the Subversion C<status> and C<update> commands. Running C<svn status> will tell
 you if there have been any uncommitted changes to the local copy of the branch
 or trunk. Running C<svn update> will merge in any updates from the copy on the
 Subversion server. So we recommend runing both of these commands in both the
@@ -507,7 +507,7 @@ branch and the trunk and committing any necessary chaanges before continuing.
 =item 2
 
 To merge the changes from the branch into the trunk, you need to tell the
-Subversion <merge> command to use the difference between two revisions in the
+Subversion C<merge> command to use the difference between two revisions in the
 I<branch> to update the trunk. The two revisions to compare are, on the one
 hand, either the revision when the branch was created, or the revision when
 the branch was last merged into the trunk; and on the other hand, the current
@@ -518,7 +518,7 @@ represents the latest revision number in the branch.
 
 For the former number, we have implemented a standard way of recording a
 merge: we create a new tag for the branch. In Subversion, branches and tags
-are exactly the same, the difference is only in convention. So the convention
+are exactly the same; the difference is only in convention. So the convention
 for Bricolage is to store tags in the F<tags> subdirectory of the project
 directory, and branches in the F<branches> subdirectory. The other half of the
 convention is that no one should ever commit changes to a tag after it has
@@ -551,7 +551,7 @@ number at the time the branch was created usinsing C<svn log> command:
 
 So now we know that we want to update the trunk with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
-to find out at what revision number the branch was created and use that
+to find out revision number at which the branch was created and use that
 number.
 
 =item 3
@@ -591,7 +591,7 @@ If there are any test failures, you'll need to fix those, too.
 =item 6
 
 Commit the changes to the trunk. Be sure to specify what revisions were merged
-in, and what the new tag you'll create in the branch will be named. The final
+in, and the name of the new tag you'll creeate for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
@@ -599,8 +599,8 @@ we ran C<svn update> in step one, so it's easy to find and use:
 
 =item 7
 
-Tag the branch with the last revision, so that future merges can decide to
-merge only from thiat revision on.
+Tag the branch with the last revision, so that future merges can find it and
+know to merge only from that revision on.
 
   % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
     http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
@@ -610,7 +610,7 @@ merge only from thiat revision on.
 
 By following this methodology we should be able to minimize the number of
 conflicts we get between merges. See book "Version Control with Subversion,"
-chapter 4 at L<http://svnbook.red-bean.com/svnbook/ch04.html>, for a more
+chapter 4 at L<http://svnbook.red-bean.com/svnbook/ch04.html> for a more
 detailed explanation of the whys and wheres of this approach to merging
 Subversion branches.
 
@@ -670,6 +670,20 @@ tarball. Use C<make uninstall> to clean up the mess. If you have to go back
 and make any changes, be sure to commit them to the Subversion repository and
 then to update the tag, then do the whole thing over again. Once everything
 appears to be working properly, release!
+
+=head2 Documentation Generation
+
+Once the new version of Bricolage has been released, you'll need to regenerate
+the documentation on the Web site. There is documentation for each major
+version of Bricolage. The documentation for each version is generated from the
+latest minor release. So if you've just released, say, version 1.8.4, then the
+documentation should be generated for the "1.8" Documentation section. If
+you've just released 1.10.0, then you'll need to create a new "1.10" section
+and add a link to it on the documentation page of the Web site.
+
+The documentation is generated with the F<pod_browser> script, which is in the
+"distutils" directory in Subversion. Read its instructions carefully, and then
+generate the documentation on the Web server.
 
 =head2 Where to Send Notices
 

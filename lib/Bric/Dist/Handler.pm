@@ -46,6 +46,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
+use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Apache::Constants qw(HTTP_OK);
 use Apache::Log;
@@ -149,6 +150,9 @@ sub handler {
         $r->header_out(BricolageDist => 1);
         $r->send_http_header;
 
+        # Set up the language object and handle the request.
+        Bric::Util::Language->get_handle(get_pref('Language'));
+
 	my %headers = $r->headers_in;
 	# Execute all the jobs.
 	foreach my $jid (split /\s*,\s*/, $headers{Execute}) {
@@ -194,10 +198,19 @@ sub log_err {
     clear_events();
 
     # Send the error to the client.
-    $r->print($err->message);
+    $r->print($err->full_message);
 
-    # Log it!
-    $r->log->crit($err->as_text);
+    # Send the error(s) to the apache error log.
+    $r->log->crit($err->full_message);
+
+    # Exception::Class::Base provides trace->as_string, but trace_as_text is
+    # not guaranteed. Use print STDERR to avoid escaping newlines.
+    print STDERR $err->can('trace_as_text')
+      ? $err->trace_as_text
+      : join ("\n",
+              map {sprintf "  [%s:%d]", $_->filename, $_->line }
+                $err->trace->frames),
+        "\n";
 }
 
 1;

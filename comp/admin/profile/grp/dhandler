@@ -142,6 +142,18 @@ if (defined $id) {
                   rightCaption => "Current $pl_disp" );
 
         $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+        # Output group membership.
+        $m->out("<br />\n");
+        $m->comp("/widgets/grp_membership/grp_membership.mc",
+                 grp_class => 'Bric::Util::Grp::Grp',
+                 obj => $grp,
+                 formName => 'grp_profile',
+                 no_edit => $no_edit,
+                 widget => $widget,
+                 num => 3,
+        );
+
     }
 </%perl>
 <table width="580" cellpadding="0" cellspacing="0">
@@ -206,6 +218,8 @@ my $class_opt;
 	next if $pkg->get_secret;
 	$class_opt->{$pkg} = $v->get_disp_name;
     }
+    # XXX Dual-purpose class.
+    $class_opt->{'Bric::Util::Grp::Person'} = 'Contributor Group';
 }
 
 my $section = 'admin';
@@ -232,7 +246,9 @@ my $is_perm = $grp->get_permanent;
 my $no_del = !$id || $no_edit || $grp->get_permanent || $id == ADMIN_GRP_ID;
 my $class_obj = $grp->my_class;
 my $class_name = $class_obj->get_pkg_name;
-my $disp = $class_obj->get_disp_name;
+my $disp = $class_obj->get_key_name eq 'contrib_type'
+  ? 'Contributor Group'
+  : $class_obj->get_disp_name;
 
 # Get the name for the breadcrumb trail.
 my $crumb = $grp->get_name;

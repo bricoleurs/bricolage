@@ -1,5 +1,7 @@
 package Bric::Util::Language::de_de;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::de_de - Bricolage German translation
@@ -720,6 +722,10 @@ To Translate:
   'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
   'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
   'Media "[_1]" scheduled for publication.' => 'Medium "[_1]" veröffentlicht.',
+  'Not defined.' => 'Not defined.',
+  'Milliseconds' => 'Milliseconds',
+  'Microseconds' => 'Microseconds',
+  'Not defined.' => 'Not defined.',
 
 =end comment
 

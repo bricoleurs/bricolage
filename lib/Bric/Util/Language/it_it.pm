@@ -1,5 +1,7 @@
 package Bric::Util::Language::it_it;
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language::it_it - Bricolage Italian translation
@@ -537,6 +539,10 @@ To translate:
   'Object Groups' => 'Object Groups',
   '[_1] Site Categories' => '[_1] Site Categories',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"'
+  'Not defined.' => 'Not defined.',
+  'Milliseconds' => 'Milliseconds',
+  'Microseconds' => 'Microseconds',
+  'Not defined.' => 'Not defined.',
 
 =end comment
 

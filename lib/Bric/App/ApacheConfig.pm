@@ -157,6 +157,7 @@ do {
       "  </Location>";
 
     if (ENABLE_DIST) {
+        require Bric::Dist::Handler;
         push @locs,
           "  <Location /dist>\n" .
           "    SetHandler          perl-script\n" .

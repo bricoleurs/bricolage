@@ -1,6 +1,8 @@
 package Bric::Util::Language;
 ###############################################################################
 
+=encoding utf8
+
 =head1 NAME
 
 Bric::Util::Language - Bricolage Localization
@@ -116,6 +118,13 @@ character set.
 Copy F<comp/media/js/en_us_messages.js> to a new JavaScript file named with
 your language key substituted for "en_us". Translate the JavaScript messages
 in your new JavaScript file. Be sure to use the UTF-8 character set.
+
+=item *
+
+Copy F<comp/media/css/en_us.css> to a new CSS file named with your language
+key substituted for "en_us". Add any CSS that your langauge requires, such as
+special fonts, right-to-left text, font sizes, etc. Many languages will
+require no special CSS, in which case you can leave your new CSS file empty.
 
 =back
 

@@ -87,6 +87,10 @@ results (via ANDs in an SQL WHERE clause).
 
 =over 4
 
+=item key_name (M)
+
+The element's key name.
+
 =item name (M)
 
 The element's name.
@@ -147,8 +151,7 @@ sub list_ids {
 
     # handle type => type__id mapping
     if (exists $args->{type}) {
-        my ($type_id) = Bric::Biz::ATType->list_ids(
-                                 { name => $args->{type} });
+        my ($type_id) = Bric::Biz::ATType->list_ids({ name => $args->{type} });
         throw_ap(error => __PACKAGE__ . "::list_ids : no type found matching " .
                    "(type => \"$args->{type}\")")
           unless defined $type_id;
@@ -158,15 +161,14 @@ sub list_ids {
 
     # handle output_channel => output_channel__id mapping
     if (exists $args->{output_channel}) {
-        my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids(
-                                { name => $args->{output_channel} });
+        my ($output_channel_id) = Bric::Biz::OutputChannel->list_ids({
+            name => $args->{output_channel}
+        });
         throw_ap(error => __PACKAGE__ . "::list_ids : no output_channel found matching "
                    . "(output_channel => \"$args->{output_channel}\")")
           unless defined $output_channel_id;
 
-        # strangely, AssetType->list() calls this output_channel, not
-        # output_channel__id like the rest of Bric
-        $args->{output_channel} = $output_channel_id;
+        $args->{output_channel_id} = $output_channel_id;
     }
 
     my @list = Bric::Biz::AssetType->list_ids($args);
@@ -355,8 +357,8 @@ sub is_allowed_param {
     my $module = $pkg->module;
 
     my $allowed = {
-        list_ids => { map { $_ => 1 } qw(name description output_channel type
-                                         top_level active) },
+        list_ids => { map { $_ => 1 } qw(key_name name description active
+                                         output_channel type top_level) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
         update   => { map { $_ => 1 } qw(document update_ids) },
@@ -430,15 +432,24 @@ sub load_asset {
         # are we updating?
         my $update = exists $to_update{$id};
 
-        # make sure this name isn't already taken
-        my @list = Bric::Biz::AssetType->list_ids({ name => $edata->{name},
+        # Convert the name to a key name, if needed.
+        unless (defined $edata->{key_name}) {
+            ($edata->{key_name} = lc $edata->{name}) =~ y/a-z0-9/_/cs;
+            my $r = Apache::Request->instance(Apache->request);
+            $r->log->warn("No key name in element loaded via SOAP. "
+                          . "Converted '$edata->{name}' to "
+                          . "'$edata->{key_name}'");
+        }
+
+        # make sure this key name isn't already taken
+        my @list = Bric::Biz::AssetType->list_ids({ key_name => $edata->{key_name},
                                                     active => 0 });
         if (@list) {
-            throw_ap(error => "Unable to create element \"$id\" named \"$edata->{name}\" : "
-                       . "that name is already taken.")
+            throw_ap "Unable to create element \"$id\" key named "
+              . "\"$edata->{key_name}\": that key name is already taken."
               unless $update;
-            throw_ap(error => "Unable to update element \"$id\" to have name " .
-                       "$edata->{name}\" : that name is already taken.")
+            throw_ap "Unable to update element \"$id\" to have key name " .
+              "$edata->{key_name}\" : that name is already taken."
               unless $list[0] == $id;
         }
 
@@ -458,7 +469,8 @@ sub load_asset {
         }
 
         # set simple data
-        $element->set_key_name($edata->{name});
+        $element->set_key_name($edata->{key_name});
+        $element->set_name($edata->{name});
         $element->set_description($edata->{description});
         $element->set_burner($burner);
 
@@ -531,15 +543,16 @@ sub load_asset {
 
         # find sub-elements and stash them in the fixup array.  This
         # is done because an Element could refer to another Element in
-        # the same asset document.
+        # the same document.
         $edata->{subelements} ||= {subelement => []};
         foreach my $subdata (@{$edata->{subelements}{subelement}}) {
-            # get name
-            my $name = ref $subdata ? $subdata->{content} : $subdata;
+            # get key_name
+            my $kn = ref $subdata ? $subdata->{content} : $subdata;
 
             # add name to fixup hash for this element
-            $fixup{$edata->{name}} = [] unless exists $fixup{$edata->{name}};
-            push @{$fixup{$edata->{name}}}, $name;
+            $fixup{$edata->{key_name}} = []
+              unless exists $fixup{$edata->{key_name}};
+            push @{$fixup{$edata->{key_name}}}, $kn;
         }
 
         # build hash of old data
@@ -557,6 +570,12 @@ sub load_asset {
         foreach my $field (@{$edata->{fields}{field}}) {
             $place++; # next!
 
+            # Make sure we have a key name. It should be fine, since we
+            # were using the key name for the name in 1.8 before we renamed
+            # it "key_name" in 1.8.1.
+            ($field->{key_name} = lc $field->{name}) =~ y/a-z0-9/_/cs
+              unless defined $field->{key_name};
+
             # figure out sql_type, from widgets/formBuilder/element.mc
             my $sql_type;
             if ($field->{type} eq 'date'){
@@ -572,35 +591,35 @@ sub load_asset {
 
             # get a data object
             my $data;
-            if ($update and exists $old_data{$field->{name}}) {
+            if ($update and exists $old_data{$field->{key_name}}) {
                 print STDERR __PACKAGE__ . "::update : ".
-                    "Found old data object for $edata->{name} => ",
-                        "$field->{name}.\n"
+                    "Found old data object for $edata->{key_name} => ",
+                        "$field->{key_name}.\n"
                             if DEBUG;
-                $data = $old_data{$field->{name}};
-                $data->set_key_name($field->{name});
+                $data = $old_data{$field->{key_name}};
+                $data->set_key_name($field->{key_name});
                 $data->set_required($field->{required});
                 $data->set_quantifier($field->{repeatable});
                 $data->set_sql_type($sql_type);
                 $data->set_place($place);
                 $data->set_publishable(1);
                 $data->set_max_length($field->{max_size});
-                $updated_data{$field->{name}} = 1;
+                $updated_data{$field->{key_name}} = 1;
             } else {
                 # get a new data object
                 print STDERR __PACKAGE__ . "::create : ".
-                    "Creating new data object for $edata->{name} => ",
-                        "$field->{name}.\n"
+                    "Creating new data object for $edata->{key_name} => ",
+                        "$field->{key_name}.\n"
                             if DEBUG;
-                $data = $element->new_data(
-                                     { name        => $field->{name},
-                                       required    => $field->{required},
-                                       quantifier  => $field->{repeatable},
-                                       sql_type    => $sql_type,
-                                       place       => $place,
-                                       publishable => 1,
-                                       max_length  => $field->{max_size},
-                                     });
+                $data = $element->new_data({
+                    key_name    => $field->{key_name},
+                    required    => $field->{required},
+                    quantifier  => $field->{repeatable},
+                    sql_type    => $sql_type,
+                    place       => $place,
+                    publishable => 1,
+                    max_length  => $field->{max_size},
+                });
             }
 
             # add default value attribute.
@@ -636,7 +655,7 @@ sub load_asset {
 
             if (@deleted) {
                 print STDERR __PACKAGE__ . "::update : ".
-                    "Deleting data fields $edata->{name} => ",
+                    "Deleting data fields $edata->{key_name} => ",
                         join(', ', @deleted), "\n"
                             if DEBUG;
                 $element->del_data([ (map { $old_data{$_} } @deleted) ]);
@@ -658,11 +677,11 @@ sub load_asset {
 
     # run through fixup attaching sub-elements
     foreach my $element_name (keys %fixup) {
-        my ($element) = Bric::Biz::AssetType->list({name => $element_name});
+        my ($element) = Bric::Biz::AssetType->list({key_name => $element_name});
         my @sub_ids;
 
         foreach my $sub_name (@{$fixup{$element_name}}) {
-            my ($sub_id) = Bric::Biz::AssetType->list_ids({name => $sub_name});
+            my ($sub_id) = Bric::Biz::AssetType->list_ids({key_name => $sub_name});
             throw_ap(error => __PACKAGE__ . " : no subelement found matching "
                        . "(subelement => \"$sub_name\") "
                        . "for element \"$element_name\".")
@@ -701,7 +720,7 @@ sub serialize_asset {
     $writer->startTag("element", id => $element_id);
 
     # write out simple elements in schema order
-    foreach my $e (qw(name description)) {
+    foreach my $e (qw(key_name name description)) {
         $writer->dataElement($e => $element->_get($e));
     }
 
@@ -766,9 +785,9 @@ sub serialize_asset {
         $writer->startTag("field");
 
         # required elements
-        $writer->dataElement(type  => $meta->{type});
-        $writer->dataElement(name  => $data->get_key_name);
-        $writer->dataElement(label => $meta->{disp});
+        $writer->dataElement(type       => $meta->{type});
+        $writer->dataElement(key_name   => $data->get_key_name);
+        $writer->dataElement(label      => $meta->{disp});
         $writer->dataElement(required   => $data->get_required   ? 1 : 0);
         $writer->dataElement(repeatable => $data->get_quantifier ? 1 : 0);
 

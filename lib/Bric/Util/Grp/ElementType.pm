@@ -192,7 +192,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_secret { 0 }
+sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
