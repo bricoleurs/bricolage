@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-27 23:48:10 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -27,6 +27,7 @@ CREATE TABLE workflow (
     description      VARCHAR(256) NOT NULL,
     all_desk_grp_id  NUMERIC(10)  NOT NULL,
     req_desk_grp_id  NUMERIC(10)  NOT NULL,
+    asset_grp_id     NUMERIC(10)  NOT NULL,
     head_desk_id     NUMERIC(10)  NOT NULL,
     type             NUMERIC(1)   NOT NULL,
     active           NUMERIC(1)	  NOT NULL
@@ -53,6 +54,9 @@ CREATE TABLE workflow_member (
 -- INDEXES.
 --
 CREATE UNIQUE INDEX udx_workflow__name ON workflow(LOWER(name));
+CREATE INDEX fkx_grp__workflow__all_desk_grp_id ON workflow(all_desk_grp_id);
+CREATE INDEX fkx_grp__workflow__req_desk_grp_id ON workflow(req_desk_grp_id);
+CREATE INDEX fkx_grp__workflow__asset_grp_id ON workflow(asset_grp_id);
 CREATE INDEX fkx_workflow__workflow_member ON workflow_member(object_id);
 CREATE INDEX fkx_member__workflow_member ON workflow_member(member__id);
 

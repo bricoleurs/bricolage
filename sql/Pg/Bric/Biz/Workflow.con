@@ -1,9 +1,25 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.4.1 $
 --
--- $Date: 2003-02-02 19:46:46 $
+-- $Date: 2003-03-27 23:48:10 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
+
+-- 
+-- TABLE: workflow
+--
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__all_desk_grp_id FOREIGN KEY (all_desk_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__req_desk_grp_id FOREIGN KEY (req_desk_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+ALTER TABLE    workflow
+ADD CONSTRAINT fk_grp__workflow__asset_grp_id FOREIGN KEY (asset_grp_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
 
 -- 
 -- TABLE: workflow_member

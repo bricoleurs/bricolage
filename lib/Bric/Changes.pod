@@ -51,6 +51,17 @@ keywords associated with them, too. [David]
 The "Acces Denied" message is back for when someone tries to access an object
 to which they don't have adequate permission. [David]
 
+=item *
+
+Previews of assets that are not checked out work again. [David]
+
+=item *
+
+Workfow and desk permissions relative to the assets they contain are now
+restored to their previous behavior. Desks no longer simply inherit the
+permission granted on any of the workflows they're in. This issue was resolved
+by creating a new secret asset group ID for each workflow. [David]
+
 =back
 
 =head1 VERSION 1.5.1
