@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-09-20 21:31:00 $
+$Date: 2001-09-25 08:34:16 $
 
 =head1 DESCRIPTION
 
@@ -49,6 +49,10 @@ Write distribution documentation [David].
 
 =item *
 
+Change the term "attribute" to "field" [David].
+
+=item *
+
 Change CE::_set() to only set if the values are different.
 
 =item *
@@ -76,6 +80,11 @@ XML::Writer (or related) support in Templates [David].
 =item *
 
 HTML::Template support in Templates [Sam].
+
+=item *
+
+Create preference for URI format, that is, the order in which it is assembled
+(category/date/slug or /date/category/slug, etc.) [David].
 
 =item *
 
@@ -254,7 +263,10 @@ Bric (2).
 =head1 REVISION HISTORY
 
 $Log: ToDo.pod,v $
-Revision 1.6  2001-09-20 21:31:00  wheeler
+Revision 1.7  2001-09-25 08:34:16  wheeler
+Added new item.
+
+Revision 1.6  2001/09/20 21:31:00  wheeler
 Deleted completed task. Added new task to 1.0.2 section.
 
 Revision 1.5  2001/09/19 19:49:38  wheeler
