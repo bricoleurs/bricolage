@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-14 01:51:33 $
+$Date: 2002-03-14 01:52:28 $
 
 =head1 SYNOPSIS
 
@@ -252,7 +252,7 @@ sub do_sql {
 	if (@objs) {
 	    my $grant = prepare(qq{
                 GRANT  SELECT, UPDATE, INSERT, DELETE
-                ON     @objs
+                ON     } . join(', ', @objs) . qq{
                 TO     ${ \DBI_USER() }
             });
 	    execute($grant);
