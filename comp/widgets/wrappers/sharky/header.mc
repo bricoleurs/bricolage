@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15.2.6 $
+$Revision: 1.15.2.7 $
 
 =head1 DATE
 
-$Date: 2002-02-23 00:14:54 $
+$Date: 2002-02-23 01:49:14 $
 
 =head1 SYNOPSIS
 
@@ -153,7 +153,7 @@ Please activate JavaScript in your browser before continuing.
 % # this is the Netscape doNav function.  IE looks for it in the iframe file (ie: sideNav.mc)
 <script language="javascript">
 function doNav(callback) {
-% if ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix") {
+% if (DISABLE_NAV_LAYER || ($agent->{browser} ne 'Mozilla' && $agent->{os} eq "SomeNix")) {
     window.location.href = callback;
     return false;
 % } else {
