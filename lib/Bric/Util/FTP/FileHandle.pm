@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-06-03 21:47:00 $
+$Date: 2003-03-02 16:50:51 $
 
 =head1 DESCRIPTION
 
@@ -189,7 +189,7 @@ $size, $time).  To quote the good book (Net::FTPServer::Handle):
 $mode is always 'f'.  $perms is set depending on wether the template
 is checked out and whether the user has access to edit the template.
 $nlink is always 1.  $user is set to the user that has the template
-checked out or "nobody" for checked in templates.  $group is "ci" if
+checked out or "nobody" for checked in templates.  $group is "co" if
 the template is checked out, "ci" if it's checked in.  $size is the
 size of the template text in bytes.  $time is set to the deploy_time()
 of the template.
