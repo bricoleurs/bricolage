@@ -23,19 +23,19 @@ do_sql
   ;
 
 sub update_all {
-    my $get_key_name = prepare('SELECT element__id, key_name FROM at_data');
-    my $set_key_name = prepare('UPDATE at_data SET key_name = ? WHERE key_name = ?');
+    my $get_key_name = prepare('SELECT id, element__id, key_name FROM at_data');
+    my $set_key_name = prepare('UPDATE at_data SET key_name = ? WHERE id = ?');
 
-    my ($eid, $name, %seen);
+    my ($id, $eid, $name, %seen);
     execute($get_key_name);
-    bind_columns($get_key_name, \$eid, \$name);
+    bind_columns($get_key_name, \$id, \$eid, \$name);
 
     while (fetch($get_key_name)) {
         my $key_name = lc $name;
         $key_name =~ y/a-z0-9/_/cs;
         $key_name = incr_kn($name, $eid, $key_name, \%seen)
           if $seen{"$eid|$key_name"};
-        execute($set_key_name, $key_name, $name);
+        execute($set_key_name, $key_name, $id);
         $seen{"$eid|$key_name"} = 1;
     }
 }
@@ -50,11 +50,11 @@ sub incr_kn {
     ##########################################################################
 
     WARNING! The element with the ID "$eid" has a field named "$name" that
-    creates the key name "kn". However, this key name is a  duplicate of
-    another key name for a field in that element. To get around this problem,
-    the key name for element "$eid" has been set to "$kn$x". If this is not
-    acceptable to you, you can change it to another value manually by updating
-    the database directly with:
+    creates the key name "$kn". However, this key name is a
+    duplicate of another key name for a field in that element. To get around
+    this problem, the key name for element "$eid" has been set to "$kn$x". If
+    this is not acceptable to you, you can change it to another value manually
+    by updating the database directly with:
 
        UPDATE at_data
        SET    key_name = 'new_key'
