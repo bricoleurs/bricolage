@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.93 $
+$Revision: 1.94 $
 
 =head1 DATE
 
-$Date: 2003-02-20 19:56:41 $
+$Date: 2003-02-24 16:09:18 $
 
 =head1 DESCRIPTION
 
@@ -1663,10 +1663,10 @@ Bricolage comes with a script that cleans out old temporary files.
 You can use this by adding a line to the crontab for the web server
 user (often "nobody") like this:
 
-   0 2 * * * /usr/local/bricolage/bin/bric_clean_tmp.pl
+   0 2 * * * /usr/local/bricolage/bin/bric_clean_tmp
 
-This will run nightly at 2AM and clean out all files older than 12
-hours. See the documentation in bin/clean_tmp.pl for more details.
+This will run nightly at 2AM and clean out all files older than 12 hours. See
+L<bric_clean_tmp> for more details.
 
 =head1 CLONING AN INSTALLATION
 
