@@ -60,7 +60,7 @@ dist            : check_dist distclean inst/bricolage.sql dist_dir rm_sql \
 
 # this makes FreeBSD's make happier than "print $$Bric::Version" for
 # some reason.
-BRIC_VERSION := $(shell perl -Ilib -MBric -e 'package Bric; print $$VERSION')
+BRIC_VERSION := $(shell perl -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib/Bric.pm)
 
 check_dist      :
 	perl inst/check_dist.pl $(BRIC_VERSION)

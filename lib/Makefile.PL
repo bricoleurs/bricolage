@@ -1,5 +1,4 @@
 use ExtUtils::MakeMaker;
-use Bric;
 use File::Find;
 use File::Spec;
 use strict;
@@ -21,7 +20,6 @@ File::Find::find({no_chdir => 1,
 
 # Write out the Makefile
 WriteMakefile(NAME           => 'Bric',
-              VERSION        => $Bric::VERSION,
               PM             => \%PM,
 	      ( exists $CONFIG->{MODULE_DIR} ? 
 		( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) : 
