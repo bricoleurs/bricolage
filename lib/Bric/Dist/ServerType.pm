@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-07 01:28:20 $
+$Date: 2002-05-03 14:33:28 $
 
 =head1 SYNOPSIS
 
@@ -530,6 +530,7 @@ sub list_move_methods {
         SELECT disp_name
         FROM   class
         WHERE  distributor = 1
+        ORDER BY disp_name
     });
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
 }
