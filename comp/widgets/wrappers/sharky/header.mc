@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =head1 DATE
 
-$Date: 2003-04-25 00:03:57 $
+$Date: 2003-06-13 16:49:11 $
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,6 @@ foreach my $t (@title) {
 <html>
 <head>
 <title><% $lang->maketext($title) %></title>
-<meta http-equiv="Content-Type" content="text/html; charset=<% Bric::Config::CHAR_SET %>" />
 % if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
@@ -125,7 +124,6 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
 }
 % } # if
 </script>
-<meta http-equiv="expires" content="Wed, 20 Feb 2000 08:30:00 GMT">
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 </head>
 
@@ -205,7 +203,7 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
 </%perl>
 
 % # write out space so the silly browser will provide a scroll bar for the layered content
-% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{browser} eq "SomeNix") {
+% if (!DISABLE_NAV_LAYER && $agent->{browser} eq "Netscape" && !$agent->{os} eq "SomeNix") {
 
   <script type="text/javascript">
   for (var i=0; i < <% $numLinks %>; i++) {

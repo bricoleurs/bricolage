@@ -8,16 +8,16 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-04-29 12:38:18 $
+$Date: 2003-06-13 16:49:15 $
 
 
 =head1 SYNOPSIS
@@ -432,6 +432,27 @@ sub list {
     my ($param) = @_;
     _do_list($class,$param);
 }
+
+##############################################################################
+
+=item my $data_href = Bric::Biz::Site->href($params);
+
+Returns an anonymous hash of data objects based on the search parameters
+passed via an anonymous hash. The hash keys will be the site IDs, and the
+values will be the corresponding data elements. The supported lookup keys are
+the same as those for C<list()>.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub href { _do_list(@_, undef, 1) }
 
 =back
 
@@ -1342,7 +1363,7 @@ NONE
 
 sub _do_list {
     my $class = shift;
-    my ($param, $ids) = @_;
+    my ($param, $ids, $href) = @_;
     my (@where, @bind);
 
     my $sql = 'SELECT id,'.join(',',COLS).' FROM '.TABLE;
@@ -1407,7 +1428,7 @@ sub _do_list {
 
     } else {
         # this must have been called from list so give objects
-        my (@d, @objs);
+        my (@d, @objs, %objs);
         execute($select, @bind);
         bind_columns($select, \@d[0..(scalar COLS)]);
 
@@ -1421,8 +1442,10 @@ sub _do_list {
               ({ 'object_id' => $id,
                  'subsys'    => "id_$id"});
             $self->_set(['_attr_obj'], [$a_obj]);
-            push @objs, $self->cache_me;
+            $href ? $objs{$d[0]} = $self->cache_me :
+              push @objs, $self->cache_me;
         }
+        return \%objs if $href;
         return wantarray ? @objs : \@objs;
     }
 }

@@ -45,7 +45,10 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 =cut
 
+use strict;
 use Bric::App::ApacheStartup;
+use Bric::Config qw(:char);
+our $DEBUGGING;
 
 my $silent_config = ! MANUAL_APACHE && $mod_perl::VERSION > 1.26;
 my %VirtualHost_lcl;
@@ -54,7 +57,7 @@ do {
     # Set up the basic configuration.
     my %config = ( DocumentRoot       => MASON_COMP_ROOT->[0][1],
 		   ServerName         => VHOST_SERVER_NAME,
-		   DefaultType        => 'text/html',
+		   DefaultType        => '"text/html; charset=' . lc CHAR_SET . '"',
 		   SetHandler         => 'perl-script',
 		   PerlHandler        => 'Bric::App::Handler',
 		   PerlAccessHandler  => 'Bric::App::AccessHandler',
@@ -107,6 +110,9 @@ do {
 	# mask off Apache::DB handler if debugging
        ($DEBUGGING ?
         (PerlFixupHandler  => 'Apache::OK') : ()),
+    };
+    $locs{"/media/js"} = {
+         ForceType => '"application/x-javascript; charset=' . lc CHAR_SET . '"'
     };
 
     # This will serve media assets and previews.

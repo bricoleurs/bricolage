@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.44 $
+$Revision: 1.45 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44 $ )[-1];
+our $VERSION = (qw$Revision: 1.45 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-03 21:06:16 $
+$Date: 2003-06-13 16:49:15 $
 
 =head1 SYNOPSIS
 
@@ -2045,7 +2045,6 @@ sub _init {
            map { ($_->is_enabled &&
                   $_->get_site_id == $init->{site_id}) ? $_ : () }
                                    $at->get_output_channels);
-
 
         $self->set_primary_oc_id($at->get_primary_oc_id($init->{site_id}));
 

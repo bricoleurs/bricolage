@@ -1,0 +1,306 @@
+#!/usr/bin/perl
+
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
+=head1 NAME
+
+bric_xfer_users - command-line client for importing and exporting Users
+
+=head1 SYNOPSIS
+
+  $ bric_xfer_users --export [options] > outfile
+  $ bric_xfer_users --import [options] < infile
+
+  Export the users and groups on first server
+
+  $ ./bric_xfer_users --export > usr.out
+  $ ./bric_xfer_grps --export --type 'User' > grp.usr
+  $ ./bric_xfer_grps --export --type 'Category' > grp.cat
+  # etc. for other group member types
+
+  FTP files to second server
+
+  Import the users and groups on second server
+
+  $ sudo ./bric_xfer_users --import < usr.out
+  $ sudo ./bric_xfer_grps --import --type 'User' < grp.usr
+  $ sudo ./bric_xfer_grps --import --type 'Category' < grp.cat
+
+=head1 DESCRIPTION
+
+This script imports and exports Users. It doesn't take care
+of their Grp associations, though. For that, run bric_xfer_grps.
+
+Options:
+
+=over
+
+=item --help
+
+Show the SYNOPSIS
+
+=item --man
+
+Show the entire POD
+
+=item --username
+
+Defaults to $ENV{BRICOLAGE_USERNAME} || 'admin'.
+
+=item --password
+
+Defaults to $ENV{BRICOLAGE_PASSWORD} || ''
+
+=item --server
+
+Defaults to $ENV{BRICOLAGE_SERVER} || 'http://localhost'
+
+=item --root
+
+Defaults to $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage'
+
+=item --squash
+
+Deactivate old users when importing
+
+=item --verbose
+
+Print some information that normally would not be displayed
+
+=item --readable
+
+If this option is present, Data::Dumper will use a human-readable format
+when exporting; otherwise, it will use a compact format.
+
+=back
+
+=head1 NOTES
+
+WARNING: Use this script at your own risk. No guarantees.
+Before running this script, back up your bricolage SQL.
+First stop bricolage, then
+  $ pg_dump bric > bric.dump
+then you can restore it with (database bric must first exist)
+  $ psql bric < bric.dump
+then you need to change the database perms.
+
+When importing Users, this script switches EUID to the Apache User,
+in order to have write permission to Bricolage's cache directory.
+Therefore you might have to run this script as either the Apache
+User or root.
+
+This script doesn't import or export "deactivated" Users.
+
+=head1 AUTHOR
+
+Scott Lanning <lannings@who.int>
+
+=head1 SEE ALSO
+
+  L<Bric::Biz::Person::User|Bric::Biz::Person::User>
+
+=cut
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+use File::Spec::Functions qw(catdir);
+use Getopt::Long;
+use Pod::Usage;
+
+BEGIN {
+    our ($export, $import, $squash, $help, $man, $verbose, $readable);
+    our $username = $ENV{BRICOLAGE_USERNAME} || 'admin';
+    our $password = $ENV{BRICOLAGE_PASSWORD} || '';
+    our $server   = $ENV{BRICOLAGE_SERVER}   || 'http://localhost';
+    our $root     = $ENV{BRICOLAGE_ROOT}     || '/usr/local/bricolage';
+
+    GetOptions(
+        'help'            => \$help,
+        'man'             => \$man,
+        'username=s'      => \$username,
+        'password=s'      => \$password,
+        'server=s'        => \$server,
+        'root=s'          => \$root,
+        'import!'         => \$import,
+        'export!'         => \$export,
+        'squash!'         => \$squash,
+        'verbose!'        => \$verbose,
+        'readable!'       => \$readable,
+    ) || pod2usage(2);
+
+    pod2usage(1) if $help;
+    pod2usage('-verbose' => 2) if $man;
+
+    $ENV{'BRICOLAGE_USERNAME'} = $username;
+    $ENV{'BRICOLAGE_PASSWORD'} = $password;
+    $ENV{'BRICOLAGE_SERVER'}   = $server;
+    $ENV{'BRICOLAGE_ROOT'}     = $root;
+
+    # tell perl where to find Bricolage
+    my $lib = catdir($root, 'lib');
+    if (-e $lib) {
+        $ENV{'PERL5LIB'} = defined $ENV{'PERL5LIB'} ?
+          $ENV{'PERL5LIB'} . ":$lib" : $lib;
+        unshift @INC, $lib;
+    }
+
+    eval { require Bric };
+    die <<"END" if $@;
+######################################################################
+
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
+
+######################################################################
+END
+}
+
+# Load Bric classes after BEGIN
+use Bric::Biz::Contact;
+use Bric::Biz::Person::User;
+use Bric::Config qw(SYS_USER);
+use Bric::Util::Grp;
+
+main();
+
+
+sub main {
+    our ($import, $export);
+
+    $|++;
+
+    if ($import) {
+        import_users();
+    } elsif ($export) {
+        export_users();
+    } else {
+        pod2usage(1);
+    }
+}
+
+sub export_users {
+    our ($readable);
+    my ($users, @select_users);
+
+    $users = Bric::Biz::Person::User->list();
+    @select_users = ();
+
+    # cheating: hide the objects corresponding to IDs
+    foreach my $user (@$users) {
+        next unless $user->is_active();
+        push @select_users, $user;
+
+        # group memberships
+        my @grps = $user->get_grps();
+        $user->{'grp_ids'} = [ @grps ];
+
+        # contacts
+        my @contacts = $user->get_contacts();
+        $user->{'_cont'} = [ @contacts ];
+    }
+
+    $Data::Dumper::Indent = $readable ? 1 : 0;
+    print Dumper(\@select_users);
+}
+
+sub import_users {
+    our ($VAR1, $squash, $verbose);
+    my ($grps);
+
+    SLURP: {
+        local $/ = undef;
+        # slurp in $VAR1 here
+        eval <>;
+    }
+
+    # Switch to apache user
+    $> = SYS_USER;
+    die "Failed to switch EUID to Apache user (" . SYS_USER . ")\n"
+      unless $> == SYS_USER;
+
+    if ($squash) {
+        # remove existing users first
+        my @oldusers = Bric::Biz::Person::User->list();
+        foreach my $user (@oldusers) {
+            my $login = $user->get_login();
+            print STDERR "SQUASH: '$login' and contacts\n" if $verbose;
+            $user->del_contacts();
+            $user->deactivate();
+            $user->save();
+        }
+    }
+
+    foreach my $user (@$VAR1) {
+        my @luuser = Bric::Biz::Person::User->list_ids({'login' => $user->{'login'}});
+        if (@luuser) {
+            print STDERR sprintf("SKIPPED: '%s' already exists\n", $user->{'login'})
+              if $verbose;
+            next;
+        }
+
+        next unless $user->{'_active'};
+        my $contacts = set_contacts(\$user);
+
+        # Now we have a regular User object, so create the user
+        my $newuser = get_newuser($user);
+
+        # add contacts to new User
+        foreach my $c (@$contacts) {
+            print STDERR sprintf("Adding contact '%s -> %s' to user '%s'\n",
+                                 $c->get_type(), $c->get_value, $user->get_name())
+              if $verbose;
+        }
+        $newuser->add_new_contacts(@$contacts);
+
+        $newuser->save();
+    }
+}
+
+# modifies $user in place, returns new list of Contact objs
+sub set_contacts {
+    my $user = shift;   # ref to scalar
+    my ($contobjs, @contacts);
+
+    $contobjs = [ @{ $$user->{'_cont'} } ];   # actually old list of Contact objs
+
+    foreach my $old (@$contobjs) {
+        my $new = Bric::Biz::Contact->new({
+            'type'        => $old->get_type(),
+            'value'       => $old->get_value(),
+            'description' => $old->get_description(),
+        });
+        $new->activate();
+        $new->save();
+        push @contacts, $new;
+    }
+
+    delete $$user->{'_cont'};
+    return \@contacts;
+}
+
+sub get_newuser {
+    my $user = shift;
+
+    my $newuser = Bric::Biz::Person::User->new({
+        'lname'  => $user->get_lname(),
+        'fname'  => $user->get_fname(),
+        'mname'  => $user->get_mname(),
+        'prefix' => $user->get_prefix(),
+        'suffix' => $user->get_suffix(),
+        'login'  => $user->get_login(),
+    });
+    # XXX: unable to use set_password as we already have md5,
+    # and it's obviously "impossible" to obtain a plaintext password
+    $newuser->_set(['password'], [$user->{'password'}]);
+    $newuser->activate();
+    return $newuser;
+}

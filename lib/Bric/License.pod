@@ -4,7 +4,8 @@ Bricolage::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2003 About.com
+Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2003
+Kineticode, Inc. and others.
 
 All rights reserved.
 
@@ -50,7 +51,7 @@ Bricolage is maintained by:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =back
 
@@ -58,11 +59,11 @@ The current development team consists of:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
-
-=item Sam Tregar <sam@tregar.com>
+=item David Wheeler <david@kineticode.com>
 
 =item Scott Lanning <slanning@theworld.com>
+
+=item Mark Jaroski <mark@geekhive.net>
 
 =back
 
@@ -70,13 +71,27 @@ The original developers were:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =item Garth Webb <garth@perijove.com>
 
 =item Michael Soderstrom <miraso@pacbell.net>
 
-=item David Gantenbein <fretlessbass@home.com>
+=item David Gantenbein <fretlessbass@attbi.com>
+
+=back
+
+Emeritus Developers:
+
+=item Garth Webb <garth@perijove.com>
+
+=item Michael Soderstrom <miraso@pacbell.net>
+
+=item David Gantenbein <fretlessbass@attbi.com>
+
+=item Sam Tregar <stregar@about-inc.com>
+
+=over
 
 =back
 
@@ -86,7 +101,7 @@ The online help was written by:
 
 =item Chris Brody <chris_brody@hotmail.com>
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =item Geoff Richards <geoffr@gbdirect.co.uk>
 
@@ -96,11 +111,11 @@ Folks who have submitted patches include:
 
 =over 4
 
+=item Sam Tregar
+
 =item JoE<atilde>o Pedro GonE<ccedil>alves
 
 =item Rachel Murray
-
-=item Mark Jarosky
 
 =item Matt Vella
 
@@ -129,6 +144,8 @@ Folks who have submitted patches include:
 =item Eldar Kononov
 
 =item Kevin White
+
+=item Kang-min Liu
 
 =back
 
@@ -169,6 +186,14 @@ Friends who have spotted bugs include:
 =item Alex Wheeler
 
 =item Chris Jantzen
+
+=item Paul Cory
+
+=item Jeff Steele
+
+=item Lari Huttunen
+
+=item Nathan Ollerenshaw
 
 =back
 

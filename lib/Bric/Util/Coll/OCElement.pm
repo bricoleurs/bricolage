@@ -8,15 +8,15 @@ Bric::Biz::OutputChannel::Element objects.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-08 23:55:39 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -168,7 +168,7 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my $self = shift;
+    my ($self, $id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
     foreach my $oce (values %$del_objs) {
@@ -179,8 +179,14 @@ sub save {
     }
     %$del_objs = ();
 
-    # Save the existing and new objects.
-    foreach my $oce (values %$objs, @$new_objs) {
+    # Save the existing objects.
+    foreach my $oce (values %$objs) {
+	$oce->save;
+    }
+
+    # Save the new objects.
+    foreach my $oce (@$new_objs) {
+        $oce->set_element_id($id);
 	$oce->save;
     }
 

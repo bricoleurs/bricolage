@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:16 $
+$Date: 2003-06-13 16:49:14 $
 
 =head1 SYNOPSIS
 
@@ -174,7 +174,7 @@ sub fixup_handler {
 	# Just return if it's an httpd content type.
 	my $ctype = $r->content_type;
 	return OK if $ctype =~ /^httpd/;
-	# Set the default handler if it's content type is known and it's not
+	# Set the default handler if its content type is known and it's not
 	# text/html.
 	$r->handler('default-handler') if $ctype && $ctype ne 'text/html';
 	return OK;

@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:29 $
+$Date: 2003-06-13 16:49:15 $
 
 =head1 SYNOPSIS
 
@@ -151,7 +151,7 @@ sub handler {
                 $status = $SERVER->handler(@_);
             } else {
                 $r->log_reason($msg);
-                $r->send_http_header('text/xml');
+                $r->content_type('text/xml; charset=utf-8');
                 # send a SOAP fault.  I can't find an easy way to do this with
                 # SOAP::Lite without reinventing some wheels...
                 print <<END;

@@ -10,7 +10,7 @@ $groupList
 %#--- Initialization ---#
 <%init>
 my $agent = $m->comp("/widgets/util/detectAgent.mc");
-my $spacerRow = ($agent->{os} ne "Internet Explorer") ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
+my $spacerRow = ($agent->{browser} ne "Internet Explorer") ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 </%init>
 
 <FORM action="<% $r->uri %>" method="post">

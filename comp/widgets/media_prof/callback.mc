@@ -192,8 +192,9 @@ my $handle_checkin = sub {
     $media ||= get_state_data($widget, 'media');
 
     if (my $msg = $media->check_uri(get_user_id)) {
-        add_msg($lang->maketext("The URI of this media conflicts with that of [_1]. "
-               ."Please change the category, file name, or slug."),"'$msg'");
+        my $langmsg = "The URI of this media conflicts with that of [_1]. "
+          . "Please change the category, file name, or slug.";
+        add_msg($lang->maketext($langmsg, "'$msg'"));
         return;
     }
 
@@ -326,8 +327,9 @@ my $handle_save_stay = sub {
     $media->save();
 
     if (my $msg = $media->check_uri(get_user_id)) {
-        add_msg($lang->maketext("The URI of this media conflicts with that of [_1]. "
-               ."Please change the category, file name, or slug."),"'$msg'");
+        my $langmsg = "The URI of this media conflicts with that of [_1]. "
+          . "Please change the category, file name, or slug.";
+        add_msg($lang->maketext($langmsg, "'$msg'"));
         return;
     }
 

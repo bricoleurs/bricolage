@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-05-20 17:42:45 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -204,13 +204,14 @@ sub burn_one {
     }
 
     # Save an existing Mason request object and Bricolage objects.
-    my ($curr_req, %bric_objs);
-    {
+    my (%bric_objs);
+    # XXX Perhaps we should use and check for a subclass, instead?
+    if (HTML::Mason::Request->instance->out_method) {
+        # If there's an out_method, assume that there's an existing burn
+        # going on.
         no strict 'refs';
-        if ($curr_req = ${TEMPLATE_BURN_PKG . '::m'}) {
-            for (qw(story burner element writer)) {
-                $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
-            }
+        for (qw(m story burner element writer)) {
+            $bric_objs{$_} = ${TEMPLATE_BURN_PKG . "::$_"};
         }
     }
 
@@ -274,16 +275,14 @@ sub burn_one {
     }
 
     # Restore any existing Mason request object and Bricolage objects.
-    if ($curr_req) {
+    if ($bric_objs{story}) {
         no strict 'refs';
-        ${TEMPLATE_BURN_PKG . '::m'} = $curr_req;
-        for (qw(story burner element writer)) {
+        for (qw(m story burner element writer)) {
             ${TEMPLATE_BURN_PKG . "::$_"} = $bric_objs{$_};
         }
     }
 
-
-    $self->_pop_element();
+    $self->_pop_element;
 
     # Return a list of the resources we just burned.
     my $ret = $self->_get('_res') || return;
@@ -493,8 +492,12 @@ sub display_pages {
 
 =item $success = $b->display_element($element)
 
+=item $success = $b->display_element($element, %ARGS)
+
 A method to be called from template space. This method will find the mason
-element associated with the element passed in and call $m->comp.
+element associated with the element passed in and call C<< $m->comp >>. All
+arguments after the first argument will be passed to the template executed as
+its C<%ARGS> hash.
 
 B<Throws:> NONE.
 
@@ -507,7 +510,6 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
-
     $self->_render_element($elem, 1);
 }
 
@@ -530,7 +532,6 @@ B<Notes:> NONE.
 sub sdisplay_element {
     my $self = shift;
     my $elem = shift or return;
-
     return $self->_render_element($elem, 0);
 }
 
@@ -575,8 +576,7 @@ us the opportunity to tailor the verbiage to suit our application better.
 
 sub chain_next {
     my $self = shift;
-    no strict 'refs';
-    ${TEMPLATE_BURN_PKG . '::m'}->call_next(@_);
+    HTML::Mason::Request->instance->call_next(@_);
 }
 
 #------------------------------------------------------------------------------#
@@ -607,12 +607,6 @@ sub end_page {
     my ($page, $buf) = $self->_get(qw(page _buf));
     my $file = $self->page_filepath(++$page);
     my $uri  = $self->page_uri($page);
-
-    # Flush the output buffer before writing the file.
-    {
-        no strict 'refs';
-        ${TEMPLATE_BURN_PKG . '::m'}->flush_buffer;
-    }
 
     # Save the page we've created so far.
     open(OUT, ">$file")
@@ -924,8 +918,8 @@ use Bric::Config qw(:burn);
 sub new { bless {} }
 
 sub print {
-    no strict 'refs';
-    ${TEMPLATE_BURN_PKG . '::m'}->out(@_[1..$#_]);
+    shift;
+    HTML::Mason::Request->instance->out(@_);
 }
 
 1;

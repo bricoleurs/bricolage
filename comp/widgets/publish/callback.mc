@@ -82,7 +82,7 @@ if ($field eq 'preview') {
                                 $s->get_title . "&quot;"))
           if $count <= 3;
     }
-    add_msg($lang->maketext("[_1] stories published."),$count) if $count > 3;
+    add_msg($lang->maketext("[_1] stories published.", $count)) if $count > 3;
 
     $count = @$media;
     foreach my $mid (@$media) {
@@ -94,7 +94,7 @@ if ($field eq 'preview') {
                                 $m->get_title . "&quot;"))
           if $count <= 3;
     }
-    add_msg($lang->maketext("[_1] media published."),$count) if $count > 3;
+    add_msg($lang->maketext("[_1] media published.", $count)) if $count > 3;
 
     redirect_onload(last_page()) unless $instant;
 }

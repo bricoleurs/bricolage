@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:36 $
+$Date: 2003-06-13 16:49:11 $
 
 =head1 SYNOPSIS
 
@@ -103,7 +103,7 @@ if ($param->{delete}) {
 	if (my $ext = $mtids->[$i]) {
 	    my @delexts = @{[$ext]};
 	    unless ($mt->del_exts(@delexts)) {
-                add_msg($lang->maketext("Problem deleting [_1]","'@addexts'"));
+                add_msg($lang->maketext("Problem deleting [_1]","'@delexts'"));
 	    }
 	    my $extension = $param->{extension}[$i];
 	    $used_ext += $addext_sub->($mt, $extension, $name);

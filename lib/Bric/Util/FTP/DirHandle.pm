@@ -12,13 +12,13 @@ $Revision $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-03-02 19:46:11 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 DESCRIPTION
 
@@ -122,7 +122,7 @@ sub get {
   my $list = Bric::Biz::Asset::Formatting->list(
 	       {
 		output_channel__id => $oc_id,
-		category__id       => $category_id,
+		category_id       => $category_id,
 		file_name          => "%/$filename",
 	       });
 
@@ -208,7 +208,7 @@ sub open {
   my $list = Bric::Biz::Asset::Formatting->list(
 	       {
 		output_channel__id => $oc_id,
-		category__id       => $category_id,
+		category_id       => $category_id,
 		file_name          => "%/$filename"
 	       });
 
@@ -385,14 +385,14 @@ sub list {
       $list = Bric::Biz::Asset::Formatting->list(
        {
 	output_channel__id => $oc_id,
-	category__id       => $category_id, 
+	category_id       => $category_id, 
 	file_name         => "%/" . ($like || '%')
        });
   } else {
       $list = Bric::Biz::Asset::Formatting->list(
 	{
 	 output_channel__id => $oc_id,
-	 category__id       => $category_id,
+	 category_id       => $category_id,
 	});
   }
 

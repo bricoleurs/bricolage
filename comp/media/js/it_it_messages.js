@@ -12,3 +12,4 @@ var days_msg = "This day does not exist! Your day is changed to ";
 var data_msg = "You must provide a value for all data field elements!";
 var empty_field_msg = "You must supply a value for ";
 var illegal_chars_msg = " contains illegal characters!";
+var warn_delete_msg = "You are about to permanently delete items! Do you wish to continue?"

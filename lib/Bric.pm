@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.38 $
+$Revision: 1.39 $
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.7.0';
 
 =item Date
 
-$Date: 2003-04-03 21:06:08 $
+$Date: 2003-06-13 16:49:13 $
 
 =item CVS ID
 
-$Id: Bric.pm,v 1.38 2003-04-03 21:06:08 wheeler Exp $
+$Id: Bric.pm,v 1.39 2003-06-13 16:49:13 wheeler Exp $
 
 =back
 
@@ -797,7 +797,7 @@ sub _set {
 
         # skip unless new_value is different from old_value
         next if (not defined $new_value and not defined $old_value) or
-          (defined $new_value and defined $old_value and 
+          (defined $new_value and defined $old_value and
            $old_value eq $new_value);
 
         # a change was found, mark for later

@@ -6,11 +6,11 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2003-06-13 16:49:13 $
 
 =head1 DESCRIPTION
 
@@ -38,6 +38,8 @@ our $UPGRADE;
 do "./upgrade.db" or die "Failed to read upgrade.db : $!";
 our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
+our $PG;
+do './postgres.db' or die "Failed to read postgres.db : $!";
 
 print "\n\n==> Starting Database Upgrade <==\n\n";
 
@@ -56,7 +58,8 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
 
     foreach my $script (@scripts) {
 	print "Running 'perl $script'.\n";
-	system("perl", "-I$CONFIG->{MODULE_DIR}", $script);
+	system("perl", "-I$CONFIG->{MODULE_DIR}", $script,
+               '-u', $PG->{root_user}, '-p', $PG->{root_pass});
     }
 }
 

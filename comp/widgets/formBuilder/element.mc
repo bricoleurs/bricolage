@@ -34,7 +34,7 @@ my $comp     = $obj;
 my $name     = "&quot;$param->{name}&quot;";
 my $key_name = "&quot;$param->{key_name}&quot;";
 
-my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{del_attr})} );
+my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{delete_attr})} );
 
 if ($param->{delete} &&
     ($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
@@ -124,21 +124,22 @@ if ($param->{delete} &&
         }
     }
 
-    # Update existing attributes. Get them from the Parts::Data class rather than from
-    # $comp->get_data so that we can be sure to check for both active and inactive
-    # data fields.
-    my $all_data = Bric::Biz::AssetType::Parts::Data->list(
-      { element__id => $param->{element_id} });
+    # Update existing attributes. Get them from the Parts::Data class rather
+    # than from $comp->get_data so that we can be sure to check for both
+    # active and inactive data fields.
+    my $all_data = Bric::Biz::AssetType::Parts::Data->list
+      ({ element__id => $param->{element_id} });
 #    my $all_data = $comp->get_data;
     my $data_href = { map { lc ($_->get_key_name) => $_ } @$all_data };
     my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
-	if (!$del_attrs{$aname} ) {
+	unless ($del_attrs{$aname} ) {
 	    my $key = lc $aname;
 	    $data_href->{$key}->set_place($pos->[$i]);
 	    $data_href->{$key}->set_meta('html_info', 'pos', $pos->[$i]);
-	    $data_href->{$key}->set_meta('html_info', 'value', $param->{"attr|$aname"});
+	    $data_href->{$key}->set_meta('html_info', 'value',
+                                         $param->{"attr|$aname"});
 	    $data_href->{$key}->save;
 	    $i++;
 	}
@@ -197,21 +198,22 @@ if ($param->{delete} &&
 	      if $param->{fb_type} eq 'checkbox';
 
 	    # Log that we've created it.
-            log_event('element_data_new', $comp, { Name => $param->{fb_name} });
+            log_event('element_data_new', $atd, { Name => $param->{fb_name} });
 	    log_event("${type}_attr_add", $comp, { Name => $param->{fb_name} });
 	}
 
     }
 
     # Delete any attributes that are no longer needed.
-    if ($param->{del_attr} &&
+    if ($param->{delete_attr} &&
 	($field eq "$widget|save_cb" || $field eq "$widget|save_n_stay_cb"))
     {
 	my $del = [];
 	foreach my $attr (keys %del_attrs) {
-	    push @$del, $data_href->{lc $attr};
+            my $atd = $data_href->{lc $attr};
+	    push @$del, $atd;
 	    log_event("${type}_attr_del", $comp, { Name => $attr });
-            log_event('element_data', $comp, { Name => $attr });
+            log_event('element_data_del', $atd);
 	}
 	$comp->del_data($del);
     }
@@ -320,11 +322,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.31 $
+$Revision: 1.32 $
 
 =head1 DATE
 
-$Date: 2003-04-28 13:35:52 $
+$Date: 2003-06-13 16:49:11 $
 
 =head1 SYNOPSIS
 

@@ -6,16 +6,16 @@ Bric::Util::Trans::FTP - FTP Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-21 19:58:44 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -150,6 +150,7 @@ sub put_res {
         # Skip inactive servers.
         next unless $s->is_active;
         my $hn = $s->get_host_name;
+        my $is_win = $s->get_os eq 'Win32';
         # Instantiate an FTP object, login, and change to binary mode.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
           || die $gen->new({ msg => "Unable to connect to remote server '$hn'.",
@@ -194,12 +195,21 @@ sub put_res {
                 # Go back to root.
                 $ftp->cwd('/');
             }
-            # Now, put the file on the server.
+
+            # Delete any existing copy of the temp file if the FTP server is
+            # Windows.
             my $tmpdest = $dest . '.tmp';
+            $ftp->delete($tmpdest) if $is_win;
+
+            # Now, put the file on the server.
             $ftp->put($src, $tmpdest) || die $gen->new
               ({ msg => "Unable to put file '$tmpdest' on remote server " .
                         "'$hn'",
                  payload => $ftp->message });
+
+            # Delete any existing copy of the file if the FTP server is
+            # Windows.
+            $ftp->delete($dest) if $is_win;
 
             # Rename the temporary file.
             $ftp->rename($tmpdest, $dest) || die $gen->new

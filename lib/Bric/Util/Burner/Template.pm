@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-12 15:54:12 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -932,6 +932,8 @@ NONE
 sub _write_pages {
     my ($self, $output) = @_;
     my ($header, $footer) = $self->_get(qw(_header _footer));
+    $header ||= \"";
+    $footer ||= \"";
 
     print STDERR __PACKAGE__, "::_write_pages() called.\n"
 	if DEBUG;

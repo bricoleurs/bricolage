@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$Revision: 1.35 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.34 $ )[-1];
+our $VERSION = (qw$Revision: 1.35 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:38 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -850,7 +850,7 @@ sub burn_one {
     my ($story, $oc, $cat) = @_;
 
     # Figure out the base URI and output path.
-    my $base_uri = $story->get_uri($cat, $oc);
+    my $base_uri = $story->get_uri($cat, $oc, 1);
     my $path = $fs->cat_dir($self->get_out_dir, 'oc_'. $oc->get_id,
                             $fs->uri_to_dir($base_uri));
 

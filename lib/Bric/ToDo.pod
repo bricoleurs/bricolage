@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.102 $
+$Revision: 1.103 $
 
 =head1 DATE
 
-$Date: 2003-05-20 16:47:29 $
+$Date: 2003-06-13 16:49:14 $
 
 =head1 DESCRIPTION
 
@@ -161,8 +161,8 @@ to keep the interface basically the same as it is now.
 
 =item *
 
-The installation system should allow the PostgreSQL database to exist
-on a separarate machine.  Currently only a local database will work.
+The installation system should allow the PostgreSQL database to exist on a
+separarate machine. Currently only a local database will work.
 
 =item *
 
@@ -275,7 +275,7 @@ Add HTML Cleaning Action.
 
 =item *
 
-Add HTML Validation Action.
+Add X?HTML Validation Action.
 
 =item *
 
@@ -407,14 +407,6 @@ not, rather than relying solely on the desk name.
 =item *
 
 Add explicit directory (a.k.a. story index) support.
-
-=item *
-
-Add an option to all C<list()> methods so that they can take an array of IDs
-and return all the objects with those IDs via the C<WHERE ID IN (...)> SQL
-syntax. Such queries shouldn't be prepared via C<prepare_cached()>, only via
-C<prepare()>, since there will likely be a different number of IDs to look for
-every time.
 
 =item *
 

@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.45 $
+$Revision: 1.46 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.45 $ )[-1];
+our $VERSION = (qw$Revision: 1.46 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-01 04:57:26 $
+$Date: 2003-06-13 16:49:14 $
 
 =head1 SYNOPSIS
 
@@ -1813,7 +1813,7 @@ NONE
 
 B<Notes:>
 
-The parts returned here may not have their parent IDs or order set if this 
+The parts returned here may not have their parent IDs or order set if this
 object has not been saved yet.
 
 =cut
@@ -1872,9 +1872,8 @@ NONE
 sub add_data {
     my $self = shift;
     my ($parts_arg) = @_;
-    my $parts = $self->_get_parts();
-    my ($new_parts, $del_parts) = $self->_get('_new_parts',
-				             '_del_parts');
+    my $parts = $self->_get_parts;
+    my ($new_parts, $del_parts) = $self->_get(qw(_new_parts _del_parts));
 
     foreach my $p (@$parts_arg) {
 	unless (ref $p) {
@@ -1883,14 +1882,14 @@ sub add_data {
 	}
 
 	# Get the ID if we were passed an object.
-	my $p_id = $p->get_id();
-	
+	my $p_id = $p->get_id;
+
 	# Skip adding this part if it already exists.
 	next if exists $parts->{$p_id};
 
 	# Add this to the parts list.
-	$parts->{$p_id} = $p;
-	
+	$new_parts->{$p_id} = $p;
+
 	# Remove this value from the deletion list if its there.
 	delete $del_parts->{$p_id};
     }
@@ -1951,8 +1950,8 @@ sub new_data {
 
 =item $element = $element->copy_data($param)
 
-Copy the definition for a data field from another asset type. 
-Keys for $param are:
+Copy the definition for a data field from another asset type. Keys for $param
+are:
 
 =over 4
 
@@ -2002,7 +2001,7 @@ sub copy_data {
 	    my $msg = 'Insufficient argurments';
 	    die Bric::Util::Fault::Exception::GEN->new({'msg' => $msg});
 	}
-	
+
 	$f_obj = $at->get_data($f);
     }
 
@@ -2025,8 +2024,7 @@ sub copy_data {
 
 =item $element = $element->del_data( [ $field || $container ])
 
-This will take a list of parts and will disassociate them from the 
-story type
+This will take a list of parts and will disassociate them from the story type.
 
 B<Throws:>
 NONE
@@ -2062,7 +2060,7 @@ sub del_data {
 	    $del_parts->{$p_id} = $p;
 	}
 
-	# Remove this value from the addition list if its there.
+	# Remove this value from the addition list if it's there.
 	delete $new_parts->{$p_id};
     }
 
@@ -2357,17 +2355,19 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll, $site_coll, $primary_oc_site) = 
+    my ($id, $oc_coll, $site_coll, $primary_oc_site) =
       $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
 
-    # Save the parts and the output channels.
-    $oc_coll->save if $oc_coll;
+    if ($id) {
+        # Save the parts and the output channels.
+        $oc_coll->save($id) if $oc_coll;
 
-    # Save the sites if object has an id
-    $site_coll->save($id) if $site_coll && $id;
+        # Save the sites if object has an id
+        $site_coll->save($id) if $site_coll;
+    }
 
     # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
@@ -2381,10 +2381,18 @@ sub save {
     }
 
     # First save the main object information
-    $id ? $self->_update_asset_type : $self->_insert_asset_type;
+    if ($id) {
+        $self->_update_asset_type;
+    } else {
+        $self->_insert_asset_type;
+        $id = $self->_get('id');
 
-    #Otherwise save sites here when we have the id
-    $site_coll->save($self->get_id) if $site_coll && !$id;
+        # Save the sites.
+        $site_coll->save($id) if $site_coll;
+
+        # Save the output channels.
+        $oc_coll->save($id) if $oc_coll;
+    }
 
     # Save the mapping of primary oc per site
     if ($primary_oc_site) {
@@ -2405,6 +2413,7 @@ sub save {
 
     # Save the parts.
     $self->_sync_parts;
+
 
     # Call our parents save method.
     $self->SUPER::save;
@@ -2743,15 +2752,15 @@ sub _get_asset_type_grp {
 sub _sync_parts {
     my $self = shift;
     my $parts = $self->_get_parts();
-    my ($new_parts, $del_parts) = $self->_get('_new_parts',
-					      '_del_parts');
+    my ($id, $new_parts, $del_parts) =
+      $self->_get(qw(id _new_parts _del_parts));
 
-    # Pull of the newly created parts.
+    # Pull off the newly created parts.
     my $created = delete $new_parts->{-1};
 
     # Now that we know we have an ID for $self, set element ID for
     foreach my $p_obj (@$created) {
-	$p_obj->set_element__id($self->get_id);
+	$p_obj->set_element__id($id);
 
 	# Save the parts object.
 	$p_obj->save;
@@ -2862,9 +2871,9 @@ sub _insert_asset_type {
 
 =item $self = $self->_get_parts
 
-Call the list function of Bric::Biz::AssetType::Parts::Container to return a list
-of conainer parts of this AssetType object, or return the existing parts if
-weve already loaded them.
+Call the list function of Bric::Biz::AssetType::Parts::Container to return a
+list of conainer parts of this AssetType object, or return the existing parts
+if weve already loaded them.
 
 B<Throws:>
 
@@ -2882,25 +2891,20 @@ NONE
 
 sub _get_parts {
     my $self = shift;
-
-    my $parts = $self->_get('_parts') || {};
+    my ($id, $parts) = $self->_get(qw(id _parts));
 
     # Do not attempt to get the AssetType parts if we don't yet have an ID.
-    return unless $self->get_id;
+    return unless $id;
 
-    # Do not load parts via 'list' if we've already done it.
-    return $parts if substr(%$parts, 0, index(%$parts, '/'));
+    unless ($parts) {
+        $parts = Bric::Biz::AssetType::Parts::Data->href
+          ({ element__id => $self->get_id,
+             order_by    => 'place',
+             active      => 1 });
+        $self->_set(['_parts'], [$parts]);
+    }
 
-    my $cont = Bric::Biz::AssetType::Parts::Data->list(
-				          { element__id => $self->get_id,
-					    order_by    => 'place',
-					    active      => 1 }
-							);
-    my $p_table = {map { $_->get_id => $_ } (@$cont)};
-
-    $self->_set(['_parts'], [$p_table]);
-
-    return $p_table;
+    return $parts;
 }
 
 ##############################################################################

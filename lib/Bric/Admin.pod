@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.106 $
+$Revision: 1.107 $
 
 =head1 DATE
 
-$Date: 2003-06-04 00:33:59 $
+$Date: 2003-06-13 16:49:13 $
 
 =head1 DESCRIPTION
 
@@ -177,6 +177,8 @@ START MODULE LIST
 =item HTTP::DAV (optional)
 
 =item Text::Levenshtein (optional)
+
+=item Crypt::SSLeay (optional)
 
 =begin installation
 
@@ -1234,6 +1236,10 @@ Portuguese.
 
 Italian.
 
+=item zh_tw
+
+Traditional Chinese.
+
 =back
 
 Defaults to "en_us" if not specified.
@@ -1715,7 +1721,7 @@ settings, workflow, etc.
 Instead, you can clone an installation, which produces a distribution
 tar-ball that you can install on the destination server.  This
 tar-ball includes all the contents of the Bricolage database, all
-files created by Bricolagae and all configuration settings.
+files created by Bricolage and all configuration settings.
 
 To clone an installation, first open up a fresh source distribution
 for the version that is installed.  Then enter the source directory

@@ -26,6 +26,16 @@ sub new_args {
     )
 }
 
+sub pe {
+    my $self = shift;
+    diag @_;
+    my $at = Bric::Biz::AssetType->lookup({ id => 1 });
+    foreach my $oc ($at->get_output_channels) {
+        diag $oc->get_name;
+    }
+}
+
+
 ##############################################################################
 # Constructs a new object.
 sub construct {

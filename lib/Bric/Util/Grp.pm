@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.42 $ )[-1];
+our $VERSION = (qw$Revision: 1.43 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:17 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -387,6 +387,17 @@ B<Side Effects:> NONE.
 B<Notes:> If the C<obj> or C<obj_id> & C<package> parameters are used, then
 this method must be called from a subclass.
 
+Also, the Grp subclasses aren't loaded by this class, so when using
+the Bric API outside of Bricolage, you need to require the object
+class on the fly; for example:
+
+  use Bric::Util::Grp::Grp;
+  my $supported = Bric::Util::Grp::Grp->get_supported_classes();
+  foreach my $grpclass (keys %$supported) {
+      eval "require $grpclass";
+  }
+  my $grps = Bric::Util::Grp->list();
+
 =cut
 
 sub list { _do_list(@_) }
@@ -698,7 +709,8 @@ sub get_member_ids {
     my ($class, $grp_id) = @_;
     my $short;
     if (my $cid = $class->get_object_class_id) {
-        $short = Bric::Util::Class->lookup({ id => $cid })->get_key_name;
+        my $pkg = Bric::Util::Class->lookup({ id => $cid })->get_pkg_name;
+        $short = $class->get_supported_classes->{$pkg};
     } else {
         # Assuming that there is only one class here because otherwise
         # allowing this method would be daft!
@@ -1323,6 +1335,15 @@ B<Notes:> This method gets a list of classes from C<get_list_classes()> and
 calls C<list()> on each, passing in the required C<grp_id> parameter. Thus
 this method will not reflect any changes made to group membership unless
 C<save()> has been called on the group object.
+
+Also, the object class isn't loaded by the group class, so when using
+the Bric API outside of Bricolage, you need to require the object
+class on the fly; for example:
+
+  foreach my $c ($grp->get_list_classes()) {
+      eval "require $c";
+  }
+  my $objs = $grp->get_objects();
 
 =cut
 

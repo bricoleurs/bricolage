@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.51 $
+$Revision: 1.52 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.51 $ )[-1];
+our $VERSION = (qw$Revision: 1.52 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-04-15 09:05:20 $
+$Date: 2003-06-13 16:49:15 $
 
 =head1 SYNOPSIS
 
@@ -1035,7 +1035,7 @@ B<Notes:> NONE.
 
 sub get_uri {
     my $self = shift;
-    my ($cat, $oc) = @_;
+    my ($cat, $oc, $no_file) = @_;
     my $dirty = $self->_get__dirty();
 
     # Get the category object.
@@ -1065,7 +1065,7 @@ sub get_uri {
 
     my $uri = $self->_construct_uri($cat, $oc);
 
-    if (STORY_URI_WITH_FILENAME) {
+    if (STORY_URI_WITH_FILENAME and not $no_file) {
         my $fname = $oc->can_use_slug ?
           $self->_get('slug') || $oc->get_filename :
           $oc->get_filename;

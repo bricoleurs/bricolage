@@ -1,5 +1,5 @@
 // set up global to track names of double list managers
-var doubleLists = new Array();
+ var doubleLists = new Array();
 var formObj = '';
 
 function validateStory(obj) {
@@ -375,9 +375,8 @@ function isEmpty(what) {
     return true
 }
 
-
 function confirmDeletions() {
-    return confirm("You are about to permanently delete items! Do you wish to continue?");
+    return confirm(warn_delete_msg);
 }
 
 /*

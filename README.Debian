@@ -1,6 +1,12 @@
 Bricolage Debian README
 -----------------------
 
+==============================================================================
+Note: This README is out of date. If you'd like to see it updated, or
+to lay your hands on a native Debian package, prod Gerfried Fuchs to
+get on with it already!
+==============================================================================
+
 Bricolage has been tested on Debian's testing distribution (3.0).  The
 current stable Debian (2.2) will not work with Bricolage as it does
 not include Perl 5.6.

@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =head1 DATE
 
-$Date: 2003-04-24 23:57:37 $
+$Date: 2003-06-13 16:49:12 $
 
 =head1 DESCRIPTION
 
@@ -88,7 +88,8 @@ sub exec_sql {
 # create the database, optionally dropping an existing database
 sub create_db {
     print "Creating database named $PG->{db_name}...\n";
-    my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'",
+    my $err = exec_sql("CREATE DATABASE $PG->{db_name} WITH ENCODING = 'UNICODE'"
+                       . " TEMPLATE template0",
                        0, $PGDEFDB);
 
     if ($err) {

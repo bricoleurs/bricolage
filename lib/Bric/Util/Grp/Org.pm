@@ -6,16 +6,16 @@ Bric::Util::Grp::Org - Interface to Bric::Biz::Org Groups
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 06:49:18 $
+$Date: 2003-06-13 16:49:16 $
 
 =head1 SYNOPSIS
 
@@ -122,7 +122,7 @@ B<Notes:> NONE.
 
 sub get_supported_classes { { 'Bric::Biz::Org' => 'org',
 			      'Bric::Biz::Org::Source' => 'org',
-			      'Bric::Biz::Org::Person', => 'person' } }
+			      'Bric::Biz::Org::Person', => 'org' } }
 
 ##############################################################################
 
