@@ -75,7 +75,7 @@ tarballs into /usr/local/src, e.g., with the command
   % cd perl-5.8.0/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
-  % sh Configure -des -Uversiononly -Dprefix=/usr/local
+  % sh Configure -des -Uversiononly -Dprefix=/usr/local -Uinstallusrbinperl
   % make
   % make test # Will be a few expected and documented failures
   % make install
