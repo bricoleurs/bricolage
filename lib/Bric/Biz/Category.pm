@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 00:35:11 $
+$Date: 2003-01-16 02:18:48 $
 
 =head1 SYNOPSIS
 
@@ -100,18 +100,8 @@ use base qw(Bric);
 #==============================================================================#
 # Constants                            #
 #======================================#
-
-use constant TABLE   => 'category';
-use constant MTABLE  => Bric::Util::Grp::Parts::Member::TABLE;
-use constant CMTABLE => TABLE . '_' . MTABLE;
-
-use constant SELCOLS    => qw(a.directory a.asset_grp_id  a.active a.uri
-                              a.parent_id a.name a.description c.grp__id);
-use constant COLS    => qw(directory asset_grp_id  active uri parent_id name
-                           description);
-use constant FIELDS  => qw(directory asset_grp_id _active uri parent_id name
-                           description);
-use constant ORD     => qw(name description uri directory ad_string ad_string2);
+use constant DEBUG => 0;
+use constant ORD => qw(name description uri directory ad_string ad_string2);
 
 use constant ROOT_CATEGORY_ID   => 0;
 use constant INSTANCE_GROUP_ID => 26;
@@ -123,17 +113,27 @@ use constant GROUP_PACKAGE => 'Bric::Util::Grp::CategorySet';
 
 #--------------------------------------#
 # Public Class Fields
-our $METH;
 
 #--------------------------------------#
 # Private Class Fields
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $dp = 'Bric::Util::Fault::Exception::DP';
+my $table = 'category';
+my $mem_table = 'member';
+my $map_table = $table . "_$mem_table";
+my $sel_cols = "a.id, a.directory, a.asset_grp_id, a.active, a.uri, " .
+  "a.parent_id, a.name, a.description, m.grp__id";
+my @sel_props = qw(id directory asset_grp_id _active uri parent_id name
+                   description grp_ids);
+my @cols = qw(directory asset_grp_id  active uri parent_id name description);
+my @props = qw(directory asset_grp_id _active uri parent_id name description);
+my $METH;
 
 #--------------------------------------#
 # Instance Fields
 
-# This method of Bricolage will call 'use fields' for you and set some permissions.
+# This method of Bricolage will call 'use fields' for you and set some
+# permissions.
 BEGIN {
     Bric::register_fields({
                          # Public Fields
@@ -240,34 +240,12 @@ NONE
 =cut
 
 sub lookup {
-    my ($pkg, $init) = @_;
-    my $ret;
-    my $cat_id = $init->{id};
-    if (defined $cat_id) {
-        $ret = _select_category('a.id = ?', [$cat_id]);
-    } elsif (my $uri = $init->{uri}) {
-        $ret = _select_category('a.uri = ?', [$uri]);
-    } else {
-        $dp->new({ msg => "Only 'id' or 'uri' parameter allowed to new" });
-    }
-
-    # Check the data.
-    return unless $ret->[0];
-    die $dp->new({ msg => "Too many category objects found" })
-      if @$ret > 1;
-
-    # Construct the object.
-    my $self = bless {}, ref $pkg || $pkg;
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set(['id', FIELDS, 'grp_ids'], $ret->[0]);
-
-    my $id = $self->get_id;
-    my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-                                                    'subsys'    => $id});
-    $self->_set(['_attr_obj'], [$a_obj]);
-
-    return $self;
+    my $cat = shift->_do_list(@_);
+    # We want @$cat to have only one value.
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => 'Too many Bric::Biz::Person objects found.' })
+      if @$cat > 1;
+    return @$cat ? $cat->[0] : undef;
 }
 
 #------------------------------------------------------------------------------#
@@ -291,6 +269,8 @@ Criteria keys:
 =item description
 
 =item parent_id
+
+=item grp_id
 
 =back
 
@@ -1335,43 +1315,90 @@ Several that need documenting!
 =cut
 
 sub _do_list {
-    my $class = shift;
-    my ($param, $ids) = @_;
-    my ($ret, @objs);
-    my (@num, @txt);
+    my ($pkg, $params, $ids) = @_;
+    my (@wheres, @params);
+    my $extra_tables = '';
+    my $extra_wheres = '';
 
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} :  1;
-    # If 'all' is passed as the value of active, don't select based on active.
-    delete $param->{'active'} if $param->{'active'} eq 'all';
-
-    foreach (keys %$param) {
-        if ($_ eq 'directory' or $_ eq 'name' or 
-            $_ eq 'uri' or $_ eq 'description') { push @txt, $_ }
-        else { push @num, $_ }
+    # Set up the active property.
+    if (exists $params->{active}) {
+        if ($params->{active} eq 'all') {
+            delete $params->{active};
+        } else {
+            push @wheres, "a.active = ?";
+            push @params, $params->{active} ? 1 : 0;
+        }
+    } else {
+        push @wheres, "a.active = ?";
+        push @params, 1;
     }
 
-    my $where = join(' AND ', (map { "a.$_ = ?" }             @num),
-                              (map { "LOWER(a.$_) LIKE ?" } @txt));
-
-    $ret = _select_category($where, [@$param{@num,@txt}], $ids);
-    return wantarray ? @$ret : $ret if $ids;
-
-    foreach my $d (@$ret) {
-        # Instantiate object
-        my $self = bless {}, $class;
-
-        # Set the columns selected as well as the passed ID.
-        $self->_set(['id', FIELDS, 'grp_ids'], $d);
-
-        my $id = $self->get_id;
-        my $a_obj = Bric::Util::Attribute::Category->new({'object_id' => $id,
-                                                        'subsys'    => $id});
-        $self->_set(['_attr_obj'], [$a_obj]);
-
-        push @objs, $self;
+    # Set up the other query properties.
+    while (my ($k, $v) = each %$params) {
+	if ($k eq 'id' or $k eq 'parent_id') {
+            # It's a simple numeric comparison.
+	    push @wheres, "a.$k = ?";
+	    push @params, $v;
+        } elsif ($k eq 'grp_id') {
+            # Fancy-schmancy second join.
+            $extra_tables = ", $mem_table m2, $map_table c2";
+            $extra_wheres = "AND a.id = c2.object_id AND " .
+              "c2.member__id = m2.id";
+            push @wheres, "m2.grp__id = ?";
+            push @params, $v;
+	} else {
+            # It's a simpler string comparison.
+	    push @wheres, "LOWER(a.$k) LIKE ?";
+	    push @params, lc $v;
+	}
     }
 
-    return wantarray ? @objs : \@objs;
+    # Create the where clause and the select and order by clauses.
+    my $where = @wheres ? join(' AND ', @wheres) : '';
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', '') :
+      (\$sel_cols, 'ORDER BY a.uri');
+
+    # Prepare the statement.
+    my $sel = prepare_c(qq{
+        SELECT $$qry_cols
+        FROM   $table a, $mem_table m, $map_table c $extra_tables
+        WHERE  a.id = c.object_id AND c.member__id = m.id
+               $extra_wheres AND $where
+        $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    return col_aref($sel, @params) if $ids;
+
+    execute($sel, @params);
+    my (@d, @cats, $grp_ids);
+    bind_columns($sel, \@d[0..$#sel_props]);
+    $pkg = ref $pkg || $pkg;
+    my $last = -1;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new Category object.
+            my $self = bless {}, $pkg;
+            $self->SUPER::new;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $self->_set(\@sel_props, \@d);
+            # Add the attribute object.
+            # Hack: Get rid of this object!
+            $self->_set( ['_attr_obj'],
+                         [ Bric::Util::Attribute::Category->new
+                           ({ object_id => $d[0],
+                              subsys => $d[0] })
+                         ]
+                       );
+            $self->_set__dirty; # Disable the dirty flag.
+            push @cats, $self
+        } else {
+            # Append the ID.
+            push @$grp_ids, $d[$#d];
+        }
+    }
+    return wantarray ? @cats : \@cats;
 }
 
 =item _save_attr
@@ -1441,64 +1468,6 @@ sub _load_grp {
     return $obj;
 }
 
-=item _select_category
-
-=cut
-
-sub _select_category {
-    my ($where, $bind, $ids) = @_;
-    my (@ret, @d, $d_tmp);
-
-    # The left join in here is allows us to return all of the group IDs with
-    # the categories in a single query
-    my $columns = $ids ? ' DISTINCT a.id' : join ',', 'a.id', SELCOLS;  # list of columns to return
-    my $table = TABLE;      # main table to select from
-    my $mtable = MTABLE;    # grp member table from which we get grp__id
-    my $cmtable = CMTABLE;  # relational table to get member table row
-    $where = $where ? "AND $where" : '';
-    my $sql = qq{
-        SELECT $columns
-        FROM   $table a, $cmtable b, $mtable c
-        WHERE  a.id = b.object_id AND b.member__id = c.id
-               $where
-    };
-
-    $sql .= "        ORDER  BY uri\n" unless $ids;
-
-    my $sth = prepare_c($sql);
-
-    # Just return the IDs, if they're what's wanted.
-    return col_aref($sth, @$bind) if $ids;
-
-    execute($sth, @$bind);
-    bind_columns($sth, \@d[0..(scalar SELCOLS)]);
-    # Since there are now duplicate values in the result set for every column
-    # in category we have to be careful to avoid duplicate objects. This is a
-    # good stage to catch it. We'll test the ID of each row to see if it
-    # matches the previous. This works because we are ordering by URI, which
-    # is unique, and has a 1 to 1 relationship with id.
-    while (fetch($sth)) {
-        if ($d_tmp && $d[0] == $d_tmp->[0]) {
-            # we have a matching ID. Just tack the last entry onto the
-            # arrayref in the tmp array
-            push @{ $d_tmp->[$#d] }, $d[$#d];
-        } else {
-            # This is the first row with this ID. Save the old tmp_array if
-            # there is one.
-            push @ret, $d_tmp if $d_tmp;
-            # now load the current row into the tmp aray and convert the last
-            # entry into an arrayref
-            $d_tmp = [@d];
-            $d_tmp->[$#d] = [$d[$#d]];
-        }
-    }
-    # There will always be something left in the tmp array if any records have
-    # been fetched.
-    push @ret, $d_tmp if $d_tmp;
-    finish($sth);
-    return \@ret;
-}
-
 =item _update_category
 
 =cut
@@ -1507,10 +1476,11 @@ sub _update_category {
     my $self = shift;
     my ($id) = $self->_get(qw(id));
 
-    my $sql = 'UPDATE '.TABLE.
-              " SET ".join(',', map {"$_=?"} COLS)." WHERE id=?";
-
-    my $sth = prepare_c($sql);
+    my $sth = prepare_c(qq{
+        UPDATE $table
+        SET    ${\join(',', map {"$_=?"} @cols)}
+        WHERE  id = ?
+    });
     my $new_uri;
 
     if ($self->_get('_update_uri') and $id != ROOT_CATEGORY_ID) {
@@ -1522,7 +1492,7 @@ sub _update_category {
         $self->_set(['uri'], [$new_uri]);
     }
 
-    execute($sth, $self->_get(FIELDS), $self->get_id);
+    execute($sth, $self->_get(@props), $self->get_id);
 
     if ($new_uri) {
         # Change the URI in the asset group description.
@@ -1547,9 +1517,9 @@ sub _insert_category {
     my $self = shift;
 
     # Prepare the insert statement.
-    my $nextval = next_key(TABLE);
-    my $sql = 'INSERT INTO '.TABLE." (id,".join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $nextval = next_key($table);
+    my $sql = "INSERT INTO $table (id,".join(',',@cols).") ".
+              "VALUES ($nextval,".join(',', ('?') x @cols).')';
 
     my $sth = prepare_c($sql);
 
@@ -1570,10 +1540,10 @@ sub _insert_category {
     $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
 
     # Insert the new category.
-    execute($sth, $self->_get(FIELDS));
+    execute($sth, $self->_get(@props));
 
     # Set the ID of this object.
-    $self->_set(['id'],[last_key(TABLE)]);
+    $self->_set(['id'],[last_key($table)]);
 
     # Add the category to the 'All Categories' group and return.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);

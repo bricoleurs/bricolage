@@ -1,89 +1,85 @@
-package Bric::Biz::Person::DevTest;
+package Bric::Biz::Category::DevTest;
 use strict;
 use warnings;
 use base qw(Bric::Test::Base);
-use Bric::Biz::Person;
-use Bric::Util::Grp::Person;
 use Test::More;
+use Bric::Biz::Category;
+use Bric::Util::Grp::CategorySet;
 
-my %name = ( lname => 'Whorf',
-             fname => 'Benjamin',
-             mname => 'Lee',
-             prefix => 'Dr.',
-             suffix => 'Ph.D.'
-           );
+my %cat = ( name => 'Testing',
+            description => 'Description',
+            parent_id => 0,
+            directory => 'testing',
+          );
 
 ##############################################################################
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(5) {
+sub test_lookup : Test(7) {
     my $self = shift;
-    ok( my $p = Bric::Biz::Person->new(\%name), "Create $name{lname}" );
-    ok( $p->save, "Save $name{lname}" );
-    ok( my $id = $p->get_id, "Check for ID" );
+    ok( my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}" );
+    ok( $cat->set_ad_string('foo'), "Set the ad string" );
+    ok( $cat->save, "Save $cat{name}" );
+    ok( my $id = $cat->get_id, "Check for ID" );
     # Save the ID for deleting.
     $self->add_del_ids($id);
     # Look up the ID in the database.
-    ok( $p = Bric::Biz::Person->lookup({ id => $id }),
-        "Look up $name{lname}" );
-    is( $p->get_id, $id, "Check that ID is the same" );
+    ok( $cat = Bric::Biz::Category->lookup({ id => $id }),
+        "Look up $cat{name}" );
+    is( $cat->get_id, $id, "Check that ID is the same" );
+    # Make sure we've got the ad string.
+    is( $cat->get_ad_string, 'foo', "Check adstring" );
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(26) {
+sub test_list : Test(22) {
     my $self = shift;
 
-    # Create a new person group.
-    ok( my $grp = Bric::Util::Grp::Person->new
-        ({ name => 'Test PersonGrp' }),
+    # Create a new category group.
+    ok( my $grp = Bric::Util::Grp::CategorySet->new
+        ({ name => 'Test CatSet' }),
         "Create group" );
 
     # Create some test records.
     for my $n (1..5) {
-        my %args = %name;
-        $args{lname} = $name{lname} . $n if $n % 2;
-        ok( my $p = Bric::Biz::Person->new(\%args), "Create $args{lname}" );
-        ok( $p->save, "Save $args{lname}" );
+        my %args = %cat;
+        # Make sure the directory name is unique.
+        $args{directory} .= $n;
+        $args{name} .= $n if $n % 2;
+        ok( my $cat = Bric::Biz::Category->new(\%args), "Create $args{name}" );
+        ok( $cat->save, "Save $args{name}" );
         # Save the ID for deleting.
-        $self->add_del_ids($p->get_id);
-        $grp->add_member({ obj => $p }) if $n % 2;
+        $self->add_del_ids($cat->get_id);
+        $grp->add_member({ obj => $cat }) if $n % 2;
     }
 
     ok( $grp->save, "Save group" );
     ok( my $grp_id = $grp->get_id, "Get group ID" );
     $self->add_grp_del_ids($grp_id);
 
-    # Try fname.
-    ok( my @ps = Bric::Biz::Person->list({ fname => $name{fname} }),
-        "Look up fname $name{fname}" );
-    is( scalar @ps, 5, "Check for 5 persons" );
+    # Try name.
+    ok( my @cats = Bric::Biz::Category->list({ name => $cat{name} }),
+        "Look up name $cat{name}" );
+    is( scalar @cats, 2, "Check for 2 categories" );
 
-    # Try lname.
-    ok( @ps = Bric::Biz::Person->list({ lname => $name{lname} }),
-        "Look up lname $name{lname}" );
-    is( scalar @ps, 2, "Check for 2 persons" );
-
-    # Try lname + wildcard.
-    ok( @ps = Bric::Biz::Person->list({ lname => "$name{lname}%" }),
-        "Look up lname $name{lname}%" );
-    is( scalar @ps, 5, "Check for 5 persons" );
+    # Try name + wildcard.
+    ok( @cats = Bric::Biz::Category->list({ name => "$cat{name}%" }),
+        "Look up name $cat{name}%" );
+    is( scalar @cats, 5, "Check for 5 categories" );
 
     # Try grp_id.
-    my $all_grp_id = Bric::Biz::Person::INSTANCE_GROUP_ID;
-    ok( @ps = Bric::Biz::Person->list({ grp_id => $all_grp_id,
-                                        fname => $name{fname} }),
-        "Look up grp_id 1" );
-    is( scalar @ps, 5, "Check for 5 persons" );
-
-    # Try grp_id and make sure we have them all.
-    ok( @ps = Bric::Biz::Person->list({ grp_id => $grp_id }),
+    my $all_grp_id = Bric::Biz::Category::INSTANCE_GROUP_ID;
+    ok( @cats = Bric::Biz::Category->list
+        ({ grp_id => $grp_id,
+           uri => "/$cat{directory}%",
+           name => "$cat{name}%" }),
         "Look up grp_id $grp_id" );
-    is( scalar @ps, 3, "Check for 3 persons" );
+    is( scalar @cats, 3, "Check for 3 categories" );
     # Make sure we've got all the Group IDs we think we should have.
-    foreach my $p (@ps) {
-        my %grp_ids = map { $_ => 1 } @{ $p->get_grp_ids };
+    foreach my $cat (@cats) {
+        my %grp_ids = map { $_ => 1 } @{ $cat->get_grp_ids };
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
@@ -101,7 +97,7 @@ sub cleanup : Test(teardown => 0) {
     if (my $ids = delete $self->{del_ids}) {
         $ids = join ', ', @$ids;
         Bric::Util::DBI::prepare(qq{
-            DELETE FROM person
+            DELETE FROM category
             WHERE  id IN ($ids)
         })->execute;
     }
@@ -127,6 +123,7 @@ sub add_grp_del_ids {
     my $self = shift;
     push @{$self->{grp_del_ids}}, @_;
 }
+
 
 1;
 __END__

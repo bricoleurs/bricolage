@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-16 00:19:01 $
+$Date: 2003-01-16 02:18:48 $
 
 =head1 SYNOPSIS
 
@@ -1823,6 +1823,7 @@ $get_em = sub {
     my $last = -1;
     while (fetch($sel)) {
         if ($d[0] != $last) {
+            $last = $d[0];
             # Create a new Person object.
             my $self = bless {}, $pkg;
             $self->SUPER::new;
