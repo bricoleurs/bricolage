@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-12-12 05:37:12 $
+$Date: 2003-12-17 21:51:10 $
 
 =head1 SYNOPSIS
 
@@ -51,8 +51,9 @@ my $select = sub {
 
     if (not defined $u && chk_authz($o, EDIT, 1)) {
 	if ($o->get_workflow_id) {
+            # Allow checkout if they can see the desk the asset is on.
 	    return ['Checkout', "$widg\_prof|checkout_cb"]
-              if $desk_chk->{$o->get_desk_id}[1];
+              if $desk_chk->{$o->get_desk_id}[0];
 	} else {
             # Allow checkout only if they have access to the start desk.
 	    return ['Checkout', "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
