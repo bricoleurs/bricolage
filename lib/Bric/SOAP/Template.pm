@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-13 01:18:07 $
+$Date: 2002-05-29 20:49:51 $
 
 =head1 SYNOPSIS
 
@@ -624,7 +624,7 @@ sub _load_template {
 	    my ($element) = Bric::Biz::AssetType->list(
 			  { name => $tdata->{element}[0] });
 	    die __PACKAGE__ . " : no element found matching " .
-		"(element => \"$tdata->{element}[0]\n"
+		"(element => \"$tdata->{element}[0]\")\n"
 		    unless defined $element;
 	    $init{element__id} = $element->get_id;
 	    $init{name}        = $element->get_name;
