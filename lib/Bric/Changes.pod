@@ -149,6 +149,13 @@ objects are:
 Alert rules are now evaluated within a safe compartment (using Safe.pm) to
 prevent security exploits. [David]
 
+=item *
+
+The Bulk Publish admin tool is no longer limited to use only by members of the
+Global Admins group. Now anyone can use it. All one needs is READ permission
+to the categories of stories, and PUBLISH permission to the stories and media
+documents to be published. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -289,6 +296,11 @@ actually display in the new size. Reported by Tony Cowderoy. [David]
 
 The table of contacts in the alert type profile is now more like other tables,
 in terms of border colors, etc. [David]
+
+=item *
+
+The Bulk Publish admin tool now only limits the category search to the current
+site context if the "Filter by Site Context" preference is checked. [David]
 
 =back
 

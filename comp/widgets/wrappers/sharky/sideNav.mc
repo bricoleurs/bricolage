@@ -309,11 +309,8 @@ foreach my $wf (@$workflows) {
               <% &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) %>
               <% &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) %>
               <% &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) %>
-%# Show the bulk publish link if we are an admin.
-%             if (user_is_admin()) {
-                  <br />
-                  <% &$printLink('/admin/control/publish', $uri, 'Bulk Publish') %>
-%             }
+              <br />
+              <% &$printLink('/admin/control/publish', $uri, 'Bulk Publish') %>
             </td>
           </tr>
         </table>
