@@ -6,19 +6,19 @@ Bric - The Bricolage base class.
 
 =head1 VERSION
 
-Release Version: 1.6.11
+Release Version: 1.6.12
 
 File (CVS) Version:
 
-$Revision: 1.35.2.19 $
+$Revision: 1.35.2.20 $
 
 =cut
 
-our $VERSION = "1.6.11";
+our $VERSION = "1.6.12";
 
 =head1 DATE
 
-$Date: 2004-03-16 00:21:03 $
+$Date: 2004-03-19 00:07:18 $
 
 =head1 SYNOPSIS
 
@@ -390,7 +390,9 @@ B<Notes:>
 
 unless (MOD_PERL) {
     $SIG{__DIE__} = \&throw_gen;
-    $SIG{__WARN__} = sub { print STDERR throw_gen @_ };
+    $SIG{__WARN__} = sub {
+        print STDERR Bric::Util::Fault::GEN->new(error => shift)
+    };
 }
 
 #------------------------------------------------------------------------------#
