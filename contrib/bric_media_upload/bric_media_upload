@@ -172,6 +172,9 @@ BEGIN {
     pod2usage("Missing required target URL parameters")
         unless @targ_urls;
 
+    pod2usage("Cannot find bric_soap executable")
+        unless -x $BRIC_SOAP;
+
     if ($media_info) {
         eval { require Image::Info };
         die "--media-info option requires Image::Info" if $@;
