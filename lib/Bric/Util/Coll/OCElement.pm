@@ -8,15 +8,15 @@ Bric::Biz::OutputChannel::Element objects.
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-18 19:57:25 $
+$Date: 2002-10-08 20:55:00 $
 
 =head1 SYNOPSIS
 
@@ -198,7 +198,28 @@ sub save {
 
 =head2 Private Class Methods
 
-NONE.
+=over 4
+
+=item Bric::Util::Coll::OutputChannel->_sort_objs($objs_href)
+
+Sorts a list of objects into an internally-specified order. This class sorts
+output channel objects by name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _sort_objs {
+    my ($pkg, $objs) = @_;
+    return sort { lc $a->get_name cmp lc $b->get_name }
+      values %$objs;
+}
+
+=back
 
 =head2 Private Instance Methods
 
