@@ -8,11 +8,11 @@ videos
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
+our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
 
 =head1 DATE
 

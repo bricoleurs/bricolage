@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.2.2.4 $
+$Revision: 1.2.2.5 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.4 $, 10, -1);
+our $VERSION = (qw$Revision: 1.2.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:06 $
+$Date: 2001-11-06 23:18:32 $
 
 =head1 SYNOPSIS
 

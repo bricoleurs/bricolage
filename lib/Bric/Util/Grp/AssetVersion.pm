@@ -1,6 +1,6 @@
 package Bric::Util::Grp::AssetVersion;
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = (qw$Revision: 1.1.1.1.2.1 $ )[-1];
 
 use strict;
 

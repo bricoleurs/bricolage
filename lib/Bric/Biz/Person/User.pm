@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
+our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2001-10-09 21:51:07 $
+$Date: 2001-11-06 23:18:33 $
 
 =head1 SYNOPSIS
 
