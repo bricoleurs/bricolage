@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-07-02 19:47:17 $
+$Date: 2002-08-15 21:03:02 $
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -81,15 +81,50 @@ if ($versions) {
   </table>
   </td>
   <td width="34%" align="center">
-  <table border=0 cellpadding=0 cellspacing=0>
+<%perl>
+my $wf;
+my $work_id = get_state_data($widget, 'work_id');
+my $type;
+if ($widget eq 'story_prof') {
+    $type = 'story';
+} elsif ($widget eq 'media_prof') {
+    $type = 'media';
+} else {
+    $type = 'fa';
+}
+
+my $story = get_state_data($widget, $type);
+if ($work_id) {
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id }); 
+} else {
+   $work_id = $story->get_workflow_id();
+   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });      
+}  
+
+# get desks for workflow
+my @desk = $wf->allowed_desks();
+my $has_perms = 0;
+
+# Find publish desk for this workflow
+foreach my $desk (@desk) {
+    if ($desk->can_publish) {
+	$has_perms = 1 if ( chk_authz($desk, EDIT, 1) );
+    }
+}
+
+# if able to edit on publishable desk show checkin/publish button
+if ( $has_perms ) {
+my ($act, $cb) = $widget eq 'tmpl_prof' ?
+  ('deploy', 'deploy') : ('publish', 'and_pub');
+</%perl>
+<table border=0 cellpadding=0 cellspacing=0>
   <tr>
-% my ($act, $cb) = $widget eq 'tmpl_prof' ?
-%   ('deploy', 'deploy') : ('publish', 'and_pub');
     <td>
       <input type="image" src="/media/images/checkin_and_<% $act %>_dgreen.gif" border="0" name="<% $widget %>|checkin_<% $cb %>_cb" value="Check In And Publish" />
     </td>
   </tr>
   </table>
+% }
   </td>
   <td align="right" widht="33%">
   <table border=0 cellpadding=0 cellspacing=0>
