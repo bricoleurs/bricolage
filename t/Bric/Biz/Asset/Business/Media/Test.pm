@@ -13,5 +13,6 @@ sub _test_load : Test(+1) {
     use_ok('Bric::Biz::Asset::Business::Media');
 }
 
+
 1;
 __END__

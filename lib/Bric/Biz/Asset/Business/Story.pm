@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-03 13:08:06 $
+$Date: 2003-03-05 21:20:49 $
 
 =head1 SYNOPSIS
 
@@ -177,6 +177,7 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::DA;
+use Bric::Biz::Asset::Business;
 use Bric::Biz::Keyword;
 
 #==============================================================================#
@@ -204,6 +205,8 @@ use constant TABLE      => 'story';
 
 use constant VERSION_TABLE => 'story_instance';
 
+use constant ID_COL => 's.id';
+
 use constant COLS       => qw( priority
                                source__id
                                usr__id
@@ -216,7 +219,8 @@ use constant COLS       => qw( priority
                                workflow__id
                                publish_status
                                primary_uri
-                               active);
+                               active
+                               desk__id);
 
 use constant VERSION_COLS => qw( name
                                  description
@@ -239,7 +243,8 @@ use constant FIELDS =>  qw( priority
                             workflow_id
                             publish_status
                             primary_uri
-                            _active);
+                            _active
+                            desk_id);
 
 use constant VERSION_FIELDS => qw( name
                                    description
@@ -254,10 +259,115 @@ use constant AD_PARAM => '_AD_PARAM';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Story';
 use constant INSTANCE_GROUP_ID => 31;
 
+use constant CAN_DO_LIST_IDS => 1;
+use constant CAN_DO_LIST => 1;
+use constant CAN_DO_LOOKUP => 1;
+
+# relations to loop through in the big query
+use constant RELATIONS => [qw( story category desk workflow )];
+
+use constant RELATION_TABLES =>
+    {
+        story      => 'story_member sm',
+        category   => 'story__category sc, category_member cm',
+        desk       => 'desk_member dm',
+        workflow   => 'workflow_member wm',
+    };
+
+use constant RELATION_JOINS =>
+    {
+        story      => 'sm.object_id = s.id AND m.id = sm.member__id',
+        category   => 'sc.story_instance__id = i.id AND cm.object_id = sc.category__id AND m.id = cm.member__id',
+        desk       => 'dm.object_id = s.desk__id AND m.id = dm.member__id',
+        workflow   => 'wm.object_id = s.workflow__id AND m.id = wm.member__id',
+    };
+
+# the mapping for building up the where clause based on params
+use constant WHERE => 's.id = i.story__id';
+
+use constant COLUMNS => join(', s.', 's.id', COLS) . ', ' 
+            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+
+
+# param mappings for the big select statement
+use constant FROM => VERSION_TABLE . ' i, member m';
+
+use constant PARAM_FROM_MAP =>
+    {
+       keyword            =>  'story_keyword sk, keyword k',
+       simple             =>  'story s LEFT OUTER JOIN story_keyword sk LEFT OUTER JOIN keyword k ON (sk.keyword_id = k.id) ON (s.id = sk.story_id)',
+       _not_simple        =>  TABLE . ' s'
+    };
+
+use constant PARAM_WHERE_MAP =>
+    {
+      id                  => 's.id = ?',
+      active              => 's.active = ?',
+      inactive            => 's.active = ?',
+      workflow__id        => 's.workflow__id = ?',
+      _null_workflow__id  => 's.workflow__id IS NULL',
+      primary_uri         => 'LOWER(s.primary_uri) LIKE LOWER(?)',
+      element__id         => 's.element__id = ?',
+      source__id          => 's.source__id = ?',
+      priority            => 's.priority = ?',
+      publish_status      => 's.publish_status = ?',
+      publish_date_start  => 's.publish_date >= ?',
+      publish_date_end    => 's.publish_date <= ?',
+      cover_date_start    => 's.cover_date >= ?',
+      cover_date_end      => 's.cover_date <= ?',
+      expire_date_start   => 's.expire_date >= ?',
+      expire_date_end     => 's.expire_date <= ?',
+      desk_id             => 's.desk_id = ?',
+      name                => 'LOWER(i.name) LIKE LOWER(?)',
+      title               => 'LOWER(i.name) LIKE LOWER(?)',
+      description         => 'LOWER(i.description) LIKE LOWER(?)',
+      version             => 'i.version = ?',
+      slug                => 'LOWER(i.slug) LIKE LOWER(?)',
+      user_id             => 'i.usr__id = ?',
+      _checked_out        => 'i.checked_out = ?',
+      primary_oc_id       => 'i.primary_oc__id = ?',
+      category_id         => 'i.id IN ( SELECT story_instance__id FROM story__category WHERE category__id = ? )',
+      category_uri        => 'i.id IN ( SELECT story_instance__id FROM story__category WHERE category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?)) )',
+      keyword             => 'sk.story_id = s.id AND k.id = sk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
+      _no_return_versions => 's.current_version = i.version',
+      grp_id              => 's.id IN ( SELECT DISTINCT sm.object_id FROM story_member sm, member m WHERE m.grp__id = ? AND sm.member__id = m.id )',
+      simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?) OR LOWER(s.primary_uri) LIKE LOWER(?))',
+    };
+
+use constant PARAM_ORDER_MAP => 
+    {
+      id                  => 'id',
+      active              => 'active',
+      inactive            => 'active',
+      workflow__id        => 'workflow__id',
+      primary_uri         => 'primary_uri',
+      element__id         => 'element__id',
+      source__id          => 'source__id',
+      priority            => 'priority',
+      publish_status      => 'publish_status',
+      publish_date        => 'publish_date',
+      cover_date          => 'cover_date',
+      expire_date         => 'expire_date',
+      name                => 'name',
+      title               => 'name',
+      description         => 'description',
+      version             => 'version',
+      version_id          => 'version_id',
+      slug                => 'slug',
+      user_id             => 'usr__id',
+      _checked_out        => 'checked_out',
+      primary_oc_id       => 'primary_oc__id',
+      category_id         => 'category_id',
+      category_uri        => 'uri',
+      keyword             => 'name',
+      return_versions     => 'version',
+    };
+
+use constant DEFAULT_ORDER => 'cover_date';
+
 #==============================================================================#
 # Fields                               #
 #======================================#
-
 #--------------------------------------#
 # Public Class Fields
 # NONE.
@@ -392,59 +502,10 @@ NONE
 
 B<Notes:>
 
-NONE
+Inherited from Asset
 
 =cut
 
-sub lookup {
-    my ($class, $param) = @_;
-    my $self = $class->cache_lookup($param);
-    return $self if $self;
-
-    $self = bless {}, (ref $class ? ref $class : $class);
-
-    my $sql = 'SELECT s.id, ' . join(', ', map {"s.$_ "} COLS) .
-      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-      ' FROM ' . TABLE . ' s, ' . VERSION_TABLE . ' i ';
-
-    my @where;
-    if ($param->{'id'}) {
-        $sql .= ' WHERE s.id=? AND i.story__id=s.id ';
-        push @where, $param->{'id'};
-    } elsif ($param->{'version_id'}) {
-        $sql .= ' WHERE i.id=? AND i.story__id=s.id ';
-        push @where, $param->{'version_id'};
-    } else {
-        die $gen->new({ msg => "Missing Required Parameters id or version_id" });
-    }
-
-    if ($param->{'version'}) {
-        $sql .= ' AND i.version=? ';
-        push @where, $param->{'version'};
-    } elsif ($param->{'checkout'}) {
-        $sql .= ' AND i.checked_out=? ';
-        push @where, 1;
-    } else {
-        $sql .= ' AND s.current_version=i.version ';
-    }
-
-    # add the extra id field to the count
-    my $col_count = (scalar COLS) + (scalar VERSION_COLS) + 1;
-    my @d;
-    my $sth = prepare_ca($sql, undef, DEBUG);
-    local $" = ', '; #"
-    execute($sth, @where);
-    bind_columns($sth, \@d[0 .. $col_count ]);
-    fetch($sth);
-
-    # Return nothing if we don't get any results (no story ID)
-    return unless $d[0];
-
-    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-    return unless $self->_get('id');
-    $self->_set__dirty(0);
-    return $self->cache_me;
-}
 
 ################################################################################
 
@@ -625,15 +686,10 @@ NONE
 
 B<Notes:>
 
-NONE
+Inherited from Bric::Biz::Asset;
 
 =cut
 
-sub list {
-    my ($class, $params) = @_;
-    # Send to _do_list function which will return objects
-    _do_list($class,$params,undef);
-}
 
 ################################################################################
 
@@ -671,7 +727,6 @@ Returns a list of Story IDs that match the given criteria.
 See the C<list()> method for the list of supported Keys.
 
 
-
 B<Throws:>
 NONE
 
@@ -679,15 +734,10 @@ B<Side Effects:>
 NONE
 
 B<Notes:>
-NONE
+
+Inherited from Bric::Biz::Asset
 
 =cut
-
-sub list_ids {
-    my ($class, $params) = @_;
-    # Send to _do_list function which will return objects
-    _do_list($class,$params,1);
-}
 
 ################################################################################
 
@@ -918,6 +968,10 @@ B<Throws:>
 
 =item *
 
+No category associated with story.
+
+=item *
+
 Category not associated with story.
 
 =item *
@@ -949,9 +1003,11 @@ sub get_uri {
         $cat = $self->get_primary_category;
     }
 
+    die $da->new({ msg => "There is no category associated with story." }) unless $cat;
+
     # Get the output channel object.
     if ($oc) {
-        $oc = Bric::Biz::OutputChannel->lookup({ id =>$oc })
+        $oc = Bric::Biz::OutputChannel->lookup({ id => $oc })
           unless ref $oc;
         die $da->new({ msg => "Output channel '" . $oc->get_name . "' not " .
                        "associated with story '" . $self->get_name . "'" })
@@ -1153,11 +1209,12 @@ sub get_primary_category {
             }
         }
     }
+    return undef;
 }
 
 ################################################################################
 
-=item $story = $story->set_primary_category()
+=item $story = $story->set_primary_category($cat_id || $cat)
 
 Defines a category as being the the primary one for this story. If a category
 is aready marked as being primary, this will disassociate it.
@@ -1178,22 +1235,20 @@ NONE
 
 sub set_primary_category {
     my ($self, $cat) = @_;
+    my $cat_id = ref $cat ? $cat->get_id : $cat;
     my $cats = $self->_get_categories();
     foreach my $c_id (keys %$cats) {
         if ($cats->{$c_id}->{'primary'}) {
-            unless ($c_id == $cat) {
-                $cats->{$c_id}->{'primary'} = 0;
-                $cats->{$c_id}->{'action'} = 'update';
-            }
-        } else {
-            if ($cat == $c_id) {
-                $cats->{$c_id}->{'primary'} = 1;
-                unless ($cats->{$c_id}->{'action'}
-                    && ($cats->{$c_id}->{'action'} eq 'insert')) {
-                    $cats->{$c_id}->{'action'} = 'update';
-                }
-            }
+            $cats->{$c_id}->{'primary'} = 0;
+            $cats->{$c_id}->{'action'} = 'update'
+                    unless $cats->{$c_id}->{'action'} eq 'insert';
         }
+        if ($cat_id == $c_id) {
+            $cats->{$c_id}->{'primary'} = 1;
+            $cats->{$c_id}->{'action'} = 'update'
+                    unless $cats->{$c_id}->{'action'} eq 'insert';
+        }
+
     }
     return $self;
 }
@@ -1588,218 +1643,6 @@ sub save {
 
 =over 4
 
-=item = _do_list
-
-Called by list will return objects or ids depending on who is calling
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _do_list {
-    my ($class, $param, $ids) = @_;
-    my ($sql, @select, @tables, @where, @bind);
-
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-
-    # Build a list of selected columns.
-    push @select, 's.id';
-
-    # Don't add any more if we're just listing IDs
-    unless ($ids) {
-        push @select, (map { "s.$_" } COLS),
-          (map { "i.$_" } 'id', VERSION_COLS);
-    }
-
-    # Build a list of table names to use.
-    push @tables, TABLE.' s', VERSION_TABLE.' i';
-
-    # Put the story__category mapping table in if they are searching by category
-    if (defined $param->{category_id} or defined $param->{category_uri}) {
-        push @tables, 'story__category c';
-        push @where, 'i.id = c.story_instance__id';
-        if (defined $param->{'category_id'}) {
-            push @where, 'c.category__id = ?';
-            push @bind, $param->{category_id};
-        } else {
-            push @where, q{c.category__id in
-                               (SELECT id
-                                FROM   category
-                                WHERE  LOWER(uri) LIKE ?)};
-            push @bind, lc $param->{category_uri};
-        }
-    }
-
-    if ($param->{'keyword'}) {
-        push @tables, 'story_keyword sk', 'keyword k';
-        push @where, ('sk.story_id = s.id',
-                      'k.id = sk.keyword_id',
-                      'LOWER(k.name) LIKE ?');
-        push @bind, lc($param->{'keyword'});
-    }
-
-    # Map field 'title' to field 'name'.
-    $param->{'name'} = $param->{'title'} if exists $param->{'title'};
-    # Map inverse alias inactive to active.
-    $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
-      if exists $param->{'inactive'};
-
-    # handle simple search - hits title, primary_uri, description and
-    # keywords.
-    if ($param->{'simple'}) {
-       # replace TABLE select with left join to select keywords if
-        # there are any
-        $tables[0] = 'story s left outer join story_keyword sk left outer ' .
-          'join keyword k on (sk.keyword_id = k.id) on (s.id = sk.story_id)';
-        push @where, ('(LOWER(k.name) LIKE ? OR LOWER(i.name) LIKE ? OR ' .
-                      'LOWER(i.description) LIKE ? OR LOWER(s.primary_uri) ' .
-                      'LIKE ?)');
-        push @bind, (lc($param->{'simple'})) x 4;
-    }
-
-    $param->{primary_oc__id} = delete $param->{primary_oc_id}
-      if exists $param->{primary_oc_id};
-
-    # Build the where clause for the trivial story table fields.
-    foreach my $f (qw(workflow__id primary_uri element__id primary_oc_id
-                      priority active id publish_status source__id)) {
-        next unless exists $param->{$f};
-
-        if ($f eq 'primary_uri') {
-            push @where, "LOWER(s.$f) LIKE ?";
-            push @bind,  lc($param->{$f});
-        } elsif ($f eq 'workflow__id' and not defined $param->{$f}){
-            # support search for NULL workflow__id
-            push @where, "s.$f IS NULL";
-        } else {
-            push @where, "s.$f=?";
-            push @bind,  $param->{$f};
-        }
-    }
-
-    # Build the where clause for the trivial story version table fields.
-    foreach my $f (qw(name description version slug)) {
-        next unless exists $param->{$f};
-
-        if (($f eq 'name') || ($f eq 'description') || ($f eq 'slug')) {
-            push @where, "LOWER(i.$f) LIKE ?";
-            push @bind,  lc($param->{$f});
-        } else {
-            push @where, "i.$f=?";
-            push @bind,  $param->{$f};
-        }
-    }
-
-    # Handle the custom list fields.
-
-    # Special sql needed for searching on user_id
-    if (defined $param->{'user__id'}) {
-        push @where, 's.usr__id=?';
-        push @bind, $param->{'user__id'};
-        push @where, 'i.checked_out=?';
-        push @bind, 1;
-    } else {
-        push @where, 'i.checked_out=?';
-        push @bind, 0;
-    }
-
-    # Return only the current version unless they want them all.
-    unless ($param->{'return_versions'}) {
-        push @where, 's.current_version=i.version';
-    }
-
-    # Handle searches on dates
-    foreach my $type (qw(publish_date cover_date expire_date)) {
-        my ($start, $end) = (db_date($param->{$type.'_start'}),
-                             db_date($param->{$type.'_end'}));
-
-        # Handle date ranges.
-        if ($start && $end) {
-            push @where, "s.$type BETWEEN ? AND ?";
-            push @bind, $start, $end;
-        } else {
-            # Handle 'everying before' or 'everything after' $date searches.
-            if ($start) {
-                push @where, "s.$type > ?";
-                push @bind, $start;
-            } elsif ($end) {
-                push @where, "s.$type < ?";
-                push @bind, $end;
-            }
-        }
-    }
-
-    push @where, 's.id=i.story__id';
-
-    $sql  = 'SELECT DISTINCT '.join(', ',@select).' FROM '.join(', ',@tables);
-    $sql .= ' WHERE '.join(' AND ',@where);
-
-    # a small selection of possible order bys - this could be made general
-    # like where.
-    if ($param->{'return_versions'}) {
-        $sql .= ' ORDER BY i.version ';
-    } elsif ($param->{Order}) {
-        if ($param->{'Order'} eq 'cover_date') {
-            $sql .= ' ORDER BY s.cover_date';
-        } elsif ($param->{'Order'} eq 'publish_date') {
-            $sql .= ' ORDER BY s.publish_date';
-        }
-    } else {
-        # default to ordering by cover_date unless we're just returning ids
-        $sql .= ' ORDER BY s.cover_date' unless $ids;
-    }
-
-    # check for ORDER BY direction
-    if ($param->{OrderDirection}) {
-        $sql .= ' ' . $param->{OrderDirection} . ' ';
-    }
-
-    # check for limit and offset
-    if ($param->{'Limit'}) {
-        $sql .= ' LIMIT ' . $param->{'Limit'} . ' ';
-        if ($param->{'Offset'}) {
-            $sql .= ' OFFSET ' . $param->{'Offset'} . ' ';
-        }
-    }
-
-    my $select = prepare_ca($sql, undef, DEBUG);
-
-    if ($ids) {
-        # called from list_ids give em what they want
-        my $return = col_aref($select,@bind);
-        return wantarray ? @{ $return } : $return;
-    } else { # end if ids
-        # this must have been called from list so give objects
-        my (@objs, @d);
-        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-
-        execute($select,@bind);
-        bind_columns($select, \@d[0 .. $count]);
-
-        my $pkg = ref $class || $class;
-        while (fetch($select)) {
-            my $self = bless {}, $pkg;
-            $self->_set(['id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-            $self->_set__dirty(0);
-            push @objs, $self->cache_me;
-        }
-
-        # Return the objects.
-        return (wantarray ? @objs : \@objs) if @objs;
-        return;
-    }
-}
 
 ################################################################################
 

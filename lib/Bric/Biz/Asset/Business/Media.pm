@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Media - The parent class of all media objects
 
 =head1 VERSION
 
-$Revision: 1.37 $
+$Revision: 1.38 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.37 $ )[-1];
+our $VERSION = (qw$Revision: 1.38 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:29:07 $
+$Date: 2003-03-05 21:20:47 $
 
 =head1 SYNOPSIS
 
@@ -68,8 +68,12 @@ use base qw( Bric::Biz::Asset::Business );
 #======================================#
 
 use constant DEBUG => 0;
+
 use constant TABLE  => 'media';
+
 use constant VERSION_TABLE => 'media_instance';
+
+use constant ID_COL => 'mt.id';
 
 use constant COLS           => qw( element__id
                                    priority
@@ -81,6 +85,7 @@ use constant COLS           => qw( element__id
                                    expire_date
                                    cover_date
                                    workflow__id
+                                   desk__id
                                    publish_status
                                    active);
 
@@ -108,6 +113,7 @@ use constant FIELDS         => qw( element__id
                                    expire_date
                                    cover_date
                                    workflow_id
+                                   desk_id
                                    publish_status
                                    _active);
 
@@ -127,6 +133,116 @@ use constant VERSION_FIELDS => qw( name
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
+
+# let Asset know not to throw an exception
+use constant CAN_DO_LIST_IDS => 1;
+use constant CAN_DO_LIST => 1;
+use constant CAN_DO_LOOKUP => 1;
+use constant HAS_CLASS_ID => 1;
+
+# relations to loop through in the big query
+use constant RELATIONS => [qw( media category desk workflow )];
+
+use constant RELATION_TABLES =>
+    {
+        media      => 'media_member mm',
+        category   => 'category_member cm',
+        desk       => 'desk_member dm',
+        workflow   => 'workflow_member wm',
+    };
+
+use constant RELATION_JOINS =>
+    {
+        media      => 'mm.object_id = mt.id AND m.id = mm.member__id',
+        category   => 'cm.object_id = i.category__id AND m.id = cm.member__id',
+        desk       => 'dm.object_id = mt.desk__id AND m.id = dm.member__id',
+        workflow   => 'wm.object_id = mt.workflow__id AND m.id = wm.member__id',
+    };
+
+# the mapping for building up the where clause based on params
+use constant WHERE => 'mt.id = i.media__id';
+
+use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', ' 
+            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+
+
+# param mappings for the big select statement
+use constant FROM => VERSION_TABLE . ' i, member m';
+
+use constant PARAM_FROM_MAP =>
+    {
+       keyword            =>  'media_keyword mk, keyword k',
+       simple             =>  'media mt LEFT OUTER JOIN media_keyword mk LEFT OUTER JOIN keyword k ON (mk.keyword_id = k.id) ON (mt.id = mk.media_id)',
+       _not_simple        =>  TABLE . ' mt'
+    };
+
+use constant PARAM_WHERE_MAP =>
+    {
+      id                  => 'mt.id = ?',
+      active              => 'mt.active = ?',
+      inactive            => 'mt.active = ?',
+      workflow__id        => 'mt.workflow__id = ?',
+      _null_workflow__id  => 'mt.workflow__id IS NULL',
+      element__id         => 'mt.element__id = ?',
+      source__id          => 'mt.source__id = ?',
+      priority            => 'mt.priority = ?',
+      publish_status      => 'mt.publish_status = ?',
+      publish_date_start  => 'mt.publish_date >= ?',
+      publish_date_end    => 'mt.publish_date <= ?',
+      cover_date_start    => 'mt.cover_date >= ?',
+      cover_date_end      => 'mt.cover_date <= ?',
+      expire_date_start   => 'mt.expire_date >= ?',
+      expire_date_end     => 'mt.expire_date <= ?',
+      desk_id             => 'mt.desk_id = ?',
+      name                => 'LOWER(i.name) LIKE LOWER(?)',
+      title               => 'LOWER(i.name) LIKE LOWER(?)',
+      description         => 'LOWER(i.description) LIKE LOWER(?)',
+      version             => 'i.version = ?',
+      user_id             => 'i.usr__id = ?',
+      uri                 => 'LOWER(i.uri) LIKE LOWER(?)',
+      file_name           => 'LOWER(i.file_name LIKE LOWER(?)',
+      location            => 'LOWER(i.location) LIKE LOWER(?)',
+      _checked_out        => 'i.checked_out = ?',
+      primary_oc_id       => 'i.primary_oc__id = ?',
+      category_id         => 'i.category__id = ?',
+      category_uri        => 'i.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
+      keyword             => 'mk.media_id = mt.id AND k.id = mk.keyword_id AND LOWER(k.name) LIKE LOWER(?)',
+      _no_return_versions => 'mt.current_version = i.version',
+      grp_id              => 'mt.id IN ( SELECT DISTINCT mm.object_id FROM media_member mm, member m WHERE m.grp__id = ? AND mm.member__id = m.id )',
+      simple              => '(LOWER(k.name) LIKE LOWER(?) OR LOWER(i.name) LIKE LOWER(?) OR LOWER(i.description) LIKE LOWER(?)',
+    };
+
+use constant PARAM_ORDER_MAP => 
+    {
+      id                  => 'id',
+      active              => 'active',
+      inactive            => 'active',
+      workflow__id        => 'workflow__id',
+      primary_uri         => 'primary_uri',
+      element__id         => 'element__id',
+      source__id          => 'source__id',
+      priority            => 'priority',
+      publish_status      => 'publish_status',
+      publish_date        => 'publish_date',
+      cover_date          => 'cover_date',
+      expire_date         => 'expire_date',
+      name                => 'name',
+      file_name           => 'file_name',
+      location            => 'location',
+      title               => 'name',
+      description         => 'description',
+      version             => 'version',
+      version_id          => 'version_id',
+      user_id             => 'usr__id',
+      _checked_out        => 'checked_out',
+      primary_oc_id       => 'primary_oc__id',
+      category_id         => 'category_id',
+      category_uri        => 'uri',
+      keyword             => 'name',
+      return_versions     => 'version',
+    };
+
+use constant DEFAULT_ORDER => 'cover_date';
 
 #==============================================================================#
 # Fields                               #
@@ -268,56 +384,9 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> Inherited from Bric::Biz::Asset.
 
 =cut
-
-sub lookup {
-    my ($pkg, $param) = @_;
-    my $self = $pkg->cache_lookup($param);
-    return $self if $self;
-
-    my $sql = 'SELECT m.id, ' . join(', ', map {"m.$_ "} COLS) .
-      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-      ' FROM ' . TABLE . ' m, ' . VERSION_TABLE . ' i ' .
-      ' WHERE m.id=? AND i.media__id=m.id ';
-
-    my @where = ($param->{'id'});
-    if ($param->{'version'}) {
-        $sql .= ' AND i.version=? ';
-        push @where, $param->{'version'};
-    } elsif ($param->{'checkout'}) {
-        $sql .= ' AND i.checked_out=? ';
-        push @where, 1;
-    } else {
-        $sql .= ' AND m.current_version=i.version ';
-    }
-    $sql .= ' ORDER BY m.cover_date';
-
-    my @d;
-    my $cols = (scalar COLS + scalar VERSION_COLS) + 1;
-    my $sth = prepare_ca($sql, undef, DEBUG);
-    execute($sth, @where);
-    bind_columns($sth, \@d[0 .. $cols ]);
-    fetch($sth);
-
-    # get the asset type and from that the biz package
-    # to bless the proper object
-    $self = bless {}, ref $pkg || $pkg;
-    $self->_set([ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-
-    return unless $self->_get('id');
-    $self->cache_me;
-
-    my $element = $self->_get_element_object();
-    my $biz_class = $element->get_biz_class();
-    if ($biz_class && $biz_class ne ref $self) {
-        $self = bless $self, $biz_class;
-    }
-
-    $self->_set__dirty(0);
-    return $self;
-}
 
 ################################################################################
 
@@ -466,11 +535,9 @@ B<Side Effects:>
 
 NONE
 
-B<Notes:> NONE.
+B<Notes:> Inherited from Bric::Biz::Asset.
 
 =cut
-
-sub list { _do_list($_[0], $_[1], undef) }
 
 ################################################################################
 
@@ -512,11 +579,9 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> Inherited from Bric::Biz::Asset.
 
 =cut
-
-sub list_ids { _do_list($_[0], $_[1], 1) }
 
 ################################################################################
 
@@ -1355,180 +1420,6 @@ sub save {
         }
     $self->SUPER::save();
     return $self;
-}
-
-################################################################################
-
-#==============================================================================#
-
-=back
-
-=head1 PRIVATE
-
-NONE
-
-#--------------------------------------#
-
-=head2 Private Class Methods
-
-NONE
-
-=head2 Private Instance Methods
-
-=over 4
-
-=item $media->_do_list($params)
-
-Called by list will return objects or ids depending on who is calling
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _do_list {
-    my ($class, $param, $ids) = @_;
-
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-
-    # Build a list of select cols
-    my @select = ('m.id');
-    unless ($ids) {
-        push @select, (map { "m.$_" } COLS),(map {"i.$_" } 'id', VERSION_COLS);
-    }
-
-    # get the tables
-    my @tables = (TABLE . ' m', VERSION_TABLE . ' i');
-
-    # map name to title if passed
-    $param->{'name'} = $param->{'title'} if exists $param->{'title'};
-    # Map inverse alias inactive to active.
-    $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
-      if exists $param->{'inactive'};
-
-    # build the where clause
-    my (@where, @bind);
-
-    # include trivial media table fields
-    foreach my $f (qw(id active priority element__id
-                      workflow__id source__id publish_status)) {
-        next unless exists $param->{$f};
-        push @where, "m.$f=?";
-        push @bind, $param->{$f};
-    }
-
-    # do for instance table
-    foreach my $f (qw(name file_name description version uri category__id)) {
-        next unless exists $param->{$f};
-        if (($f eq 'name') || ($f eq 'description') ||
-            ($f eq 'uri')  || ($f eq 'file_name')) {
-            push @where, "LOWER(i.$f) LIKE ?";
-            push @bind, lc($param->{$f});
-        } else {
-            push @where, "i.$f=?";
-            push @bind, $param->{$f};
-        }
-    }
-
-    # Do for primary OC ID.
-    if (exists $param->{primary_oc_id}) {
-        push @where, "i.primary_oc__id = ?";
-        push @bind, $param->{primary_oc_id};
-    }
-
-    # handle the special fields
-    if ($param->{'simple'}) {
-        push @where, '(LOWER(i.name) LIKE ? OR LOWER(i.description) LIKE ? '
-          . 'OR LOWER(i.uri) LIKE ?)';
-        push @bind, (lc($param->{'simple'})) x 3;
-    }
-
-    # for searching for user_id
-    if (defined $param->{'user__id'}) {
-        push @where, " m.usr__id=? ";
-        push @bind, $param->{'user__id'};
-        push @where, " i.checked_out=? ";
-        push @bind, 1;
-    } else {
-        push @where, ' i.checked_out=? ';
-        push @bind, 0;
-    }
-
-    unless ($param->{'return_versions'}) {
-        push @where, " m.current_version=i.version ";
-    }
-
-    # Handle searches on dates
-    foreach my $type (qw(publish_date cover_date expire_date)) {
-        my ($start, $end) = (db_date($param->{$type.'_start'}),
-                             db_date($param->{$type.'_end'}));
-
-        # Handle date ranges.
-        if ($start && $end) {
-            push @where, "m.$type BETWEEN ? AND ?";
-            push @bind, $start, $end;
-        } else {
-            # Handle 'everying before' or 'everything after' $date
-            # searches.
-            if ($start) {
-                push @where, "m.$type > ?";
-                push @bind, $start;
-            } elsif ($end) {
-                push @where, "m.$type < ?";
-                push @bind, $end;
-            }
-        }
-    }
-
-    push @where, ' m.id=i.media__id ';
-
-    my $sql;
-    $sql = 'SELECT DISTINCT ' . join(', ', @select) . ' FROM ' .
-      join(', ', @tables);
-    $sql .= ' WHERE ' . join(' AND ', @where);
-
-    if ($ids) {
-        # when doing a SELECT DISTINCT you can't ORDER BY a
-        # field outside the SELECT list.
-        $sql .= ' ORDER BY m.id';
-    } elsif ($param->{'return_versions'}) {
-        $sql .= ' ORDER BY i.version ';
-    }
-
-    my $select = prepare_ca($sql, undef, DEBUG);
-
-    if ( $ids ) {
-        # called from list_ids give em what they want
-        my $return = col_aref($select,@bind);
-        return wantarray ? @{ $return } : $return;
-    } else { # end if ids
-        # this must have been called from list so give objects
-        my (@objs, @d, %biz_classes);
-        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-        execute($select,@bind);
-        bind_columns($select, \@d[0 .. $count ]);
-        $class = ref $class || $class;
-        while (my $row = fetch($select) ) {
-            # Create the new media object.
-            my $self = bless {}, $class;
-            # Set its attributes.
-            $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-            # Determine its class.
-            $biz_classes{$d[1]} = $self->_get_element_object->get_biz_class
-              unless defined $biz_classes{$d[1]};
-            # Change its class, if necessary.
-            $self = bless $self, $biz_classes{$d[1]} if
-              $biz_classes{$d[1]} && $biz_classes{$d[1]} ne ref $self;
-            # Keep it.
-            push @objs, $self->cache_me;
-        }
-        return (wantarray ? @objs : \@objs) if @objs;
-        return;
-    }
 }
 
 ################################################################################

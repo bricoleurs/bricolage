@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 21:02:18 $
+$Date: 2003-03-05 21:20:46 $
 
 =head1 SYNOPSIS
 
@@ -240,38 +240,6 @@ sub new {
 
 ###############################################################################
 
-=item ($obj_list||@objs) = Bric::Biz::Asset::Business->list( $criteria )
-
-This will return a list or list ref of Business assets that match the given
-criteria
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub list {
-        my ($class, $param) = @_;
-
-        my @stories = Bric::Biz::Asset::Business::Story->list($param);
-        my @media = Bric::Biz::Asset::Business::Media->list($param);
-
-        my @all = (@stories, @media);
-
-        return wantarray ? @all : \@all;
-}
-
-###############################################################################
-
 
 #--------------------------------------#
 
@@ -293,40 +261,6 @@ sub DESTROY {
 }
 
 ###############################################################################
-
-
-#--------------------------------------#
-
-=back
-
-=head2 Public Class Methods
-
-=over 4
-
-=item list ids is not allowed for parent classes
-
-You will have to use list to get all the objects
-
-B<Throws:>
-
-"method not implemented"
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub list_ids {
-        die Bric::Util::Fault::Exception::MNI->new(
-                { msg => "Method Not Implemented" });
-}
-
-################################################################################
 
 =item my $key_name = Bric::Biz::Asset::Business->key_name()
 

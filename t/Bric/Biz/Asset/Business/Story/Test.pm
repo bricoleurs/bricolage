@@ -4,153 +4,175 @@ use warnings;
 use base qw(Bric::Biz::Asset::Business::Test);
 use Test::More;
 
+my $CLASS = 'Bric::Biz::Asset::Business::Story';
+my $ELEMENT_CLASS = 'Bric::Biz::AssetType';
+my $OC_CLASS = 'Bric::Biz::OutputChannel';
+
 ##############################################################################
 # Test class loading.
+# NOTE: The tests load alphabetically, and this one has to be first.
 ##############################################################################
-sub _test_load : Test(+1) {
+sub first_test_load: Test(3) {
     my $self = shift;
     $self->SUPER::_test_load;
-    use_ok('Bric::Biz::Asset::Business::Story');
+    use_ok($CLASS);
 }
+
+##############################################################################
+# PRIVATE class methods
+##############################################################################
+sub test_add_get_categories: Test(4) {
+    # make a story
+    my $time = time;
+    my $element = $ELEMENT_CLASS->new({
+                                        id          => 1,
+                                        name        => 'test element',
+                                        description => 'testing',
+                                        active      => 1,
+                                     });
+    my $story = $CLASS->new({
+                           name        => "_test_$time",
+                           description => 'this is a test',
+                           priority    => 1,
+                           source__id  => 1,
+                           slug        => 'test',
+                           user__id    => 0,
+                           element     => $element, 
+                       });
+    # make a couple of categories
+    my $cats = [];
+    $cats->[0] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.1", 
+                                           description => '',
+                                           directory => "_test_$time.1",
+                                           id => 1,
+                                        });
+    $cats->[1] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.2", 
+                                           description => '',
+                                           directory => "_test_$time.2",
+                                           id => 2,
+                                        });
+    # add the categories 
+    ok( $story->add_categories($cats), 'can add an arrayref of new categories');
+    # get the categories
+    my $rcats;
+    ok( $rcats = $story->get_categories, '... and we can call get');
+    # are the ones we just added in there?
+    is( $rcats->[0]->get_name(), "_test_$time.1", ' ... and they both' );
+    is( $rcats->[1]->get_name(), "_test_$time.2", ' ... have the right name' );
+}
+
+sub test_set_get_primary_category: Test(8) {
+    # make a story
+    my $time = time;
+    my $element = $ELEMENT_CLASS->new({
+                                        id          => 1,
+                                        name        => 'test element',
+                                        description => 'testing',
+                                        active      => 1,
+                                     });
+    my $story = $CLASS->new({
+                           name        => "_test_$time",
+                           description => 'this is a test',
+                           priority    => 1,
+                           source__id  => 1,
+                           slug        => 'test',
+                           user__id    => 0,
+                           element     => $element, 
+                       });
+    # Test: make sure it has no primary category
+    is( $story->get_primary_category(), undef, 'a new story has no primary category' );
+    # make a couple of categories
+    my $cats = [];
+    $cats->[0] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.1", 
+                                           description => '',
+                                           directory => "_test_$time.1",
+                                           id => 1,
+                                        });
+    $cats->[1] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.2", 
+                                           description => '',
+                                           directory => "_test_$time.2",
+                                           id => 2,
+                                        });
+    # add the categories 
+    ok( $story->add_categories($cats), 'can add an arrayref of new categories');
+    # set it as the primary
+    ok( $story->set_primary_category($cats->[0]), 'can set it as the primary category');
+    # get the primary category
+    my $pcat;
+    ok( $pcat = $story->get_primary_category(), ' ... and can get it.');
+    # Test: is the primary category the one we set
+    is( $pcat->get_name(), $cats->[0]->get_name(), ' ... and it appears to be the same one.');
+    # set it as the primary
+    ok( $story->set_primary_category($cats->[1]), "now let's try to change it");
+    # get the primary category
+    ok( $pcat = $story->get_primary_category(), ' ... and can get it.');
+    # Test: is the primary category the one we set
+    is( $pcat->get_name(), $cats->[1]->get_name(), ' ... and it appears to be the new one.');
+}
+
+sub test_get_uri: Test(1) {
+    # make a story with the slug 'test'
+    my $time = time;
+    my ($oc) = $OC_CLASS->list(); # any oc will do
+    my $element = $ELEMENT_CLASS->new({
+                                        id             => 1,
+                                        name           => 'test element',
+                                        description    => 'testing',
+                                        active         => 1,
+                                        output_channel => $oc,
+                                     });
+    $element->set_primary_oc_id($oc->get_id);
+    my $story = $CLASS->new({
+                           name        => "_test_$time",
+                           description => 'this is a test',
+                           priority    => 1,
+                           source__id  => 1,
+                           slug        => 'test',
+                           user__id    => 0,
+                           element     => $element, 
+                       });
+    # tryto get the uri before a category assigned. should catch an error
+    eval { $story->get_uri };
+    isnt( $@, undef, 'Should get an error if we try to get a uri with no category.' );
+    # make a couple of categories
+    my $cats = [];
+    $cats->[0] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.1", 
+                                           description => '',
+                                           directory => "_test_$time.1",
+                                           id => 1,
+                                        });
+    $cats->[1] = Bric::Biz::Category->new({ 
+                                           name => "_test_$time.2", 
+                                           description => '',
+                                           directory => "_test_$time.2",
+                                           id => 2,
+                                        });
+    # add the categories 
+    $story->add_categories($cats);
+    $story->set_primary_category($cats->[0]);
+    # the uri should now be '/$dir/.*test'
+    # XXX try to get the uri with a cat set
+    # XXX then try it with a different cat
+}
+
+sub test_get_fields_from_new: Test(0) {
+    # XXX make a new story with all of the fields
+    # XXX Test: does each field have a value matching
+    #           that set in the params?
+}
+
+sub test_set_get_fields: Test(0) {
+    # XXX make a new story with minimal fields set
+    # XXX For each field:
+    # XXX set the field
+    # XXX Test: get the field and compare with what we set
+}
+
 
 1;
 __END__
-
-# Here is the original test script for reference. If there's something usable
-# here, then use it. Otherwise, feel free to discard it once the tests have
-# been fully written above.
-
-#!/usr/bin/perl -w
-
-use Bric::BC::Asset::Business::Story;
-use Bric::BC::AssetType;
-
-my $story;
-
-eval {
-my $at = Bric::BC::AssetType->lookup( { id => 1 });
-
-my $s = Bric::BC::Asset::Business::Story->new({'element'   => $at,
-					     'user__id'     => 11,
-					     'source__id'   => 3});
-
-generate_part_list($at,$s);
-
-$s->checkin();
-
-$s->save();
-
-print $s->get_id() . "\n";
-
-my $id = $s->get_id;
-
-$story = Bric::BC::Asset::Business::Story->lookup( { id => $id });
-
-my $title = $story->get_data('title',0);
-
-my $url = $story->get_data('url',0);
-
-print "These were returned by name and object index\n";
-print "$title  $url \n";
-
-print "here is everythingin order \n";
-parse_container($story->get_tile, 0);
-
-$story->checkout({user__id => 11});
-
-$story->save();
-};
-
-die $@ if $@;
-
-print "Checked out story is " . $story->get_id() . "\n";
-
-sub parse_container {
-	my $container = shift;
-	my $index = shift;
-
-	my $tabs = "\t" x $index;
-	print "Container " . $container->get_name . "\n";
-
-	my @tiles = $container->get_tiles();
-
-	foreach my $tile (@tiles) {
-		if ($tile->is_container) {
-			parse_container($tile, $index++);
-		} else {
-			print $tabs . $tile->get_data() . "\n";
-		}
-	}
-}
-
-sub generate_part_list {
-    my ($atc,$container) = @_;
-
-    my $parts = $atc->get_data();
-    my $sub_containers = $atc->get_containers();
-
-    my $i = 0;
-
-    my $add = {};
-    foreach (@$parts) {
-	$add->{$i}->{'id'} = $_->get_id();
-	$add->{$i}->{'name'} = $_->get_name();
-	$add->{$i}->{'obj'} = $_;
-	$add->{$i}->{'data'} = 1;
-	$i++;
-    }
-
-    foreach (@$sub_containers) {
-	$add->{$i}->{'id'} = $_->get_id();
-	$add->{$i}->{'name'} = $_->get_name();
-	$add->{$i}->{'obj'} = $_;
-	$add->{$i}->{'data'} = 0;
-	$i++;
-    }
-
-    $add->{$i}->{'name'} = 'finish';
-    $add->{$i}->{'end'} = 1;
-
-    my $end = 0;
-    while ($end != 1) {
-	print "Choose From this list\n";
-	
-	foreach (sort { $a <=> $b} keys %$add) {
-	    if (exists $add->{$_}->{'data'}) {
-		print $add->{$_}->{'data'} ? 'D:  ' : 'C:  ';
-	    } else {
-		print '    ';
-	    }
-
-	    my $id   = $add->{$_}->{'id'} || '';
-	    my $name = $add->{$_}->{'name'};
-
-	    print "$_\t$id\t$name\n";
-	}
-	
-	print "Enter your Choice\n";
-	my $ii = <STDIN>;
-	chomp $ii;
-	
-	my $string;
-	unless (exists $add->{$ii}->{'end'}) {
-	    print "Enter a value\n";
-	    $string = <STDIN>;
-	    chomp $string;
-	}
-	
-	unless (exists $add->{$ii}->{'end'}) {
-	    if ($add->{$ii}->{'data'}) {
-		my $atd = $add->{$ii}->{'obj'};
-		$container->add_data($atd, $string);
-		
-	    } else {
-		my $nc = $container->add_container($add->{$ii}->{'obj'});
-		# add the container bit here
-		generate_part_list( $add->{$ii}->{'obj'}, $nc);
-	    }
-	} else {	
-	    $end = 1;
-	}
-    }
-}

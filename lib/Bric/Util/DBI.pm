@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-02-18 03:38:20 $
+$Date: 2003-03-05 21:20:39 $
 
 =head1 SYNOPSIS
 
@@ -117,14 +117,15 @@ use base qw(Exporter);
 # You can explicitly import any of the functions in this class. The last two
 # should only ever be imported by Bric::Util::Time, however.
 our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref col_aref
-		    last_key next_key db_date_parts DB_DATE_FORMAT
+		    last_key next_key db_date_parts DB_DATE_FORMAT clean_params
 		    bind_columns bind_col bind_param begin commit rollback
-		    finish is_num row_array all_aref);
+		    finish is_num row_array all_aref fetch_objects order_by
+                    build_query_with_unions build_query where_clause tables);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
-our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch execute next_key
-				    last_key bind_columns finish)],
+our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects execute 
+                                    next_key last_key bind_columns finish)],
 		    trans => [qw(begin commit rollback)],
 		    all => \@EXPORT_OK);
 
@@ -575,6 +576,312 @@ sub commit {
       { msg => "Unable to turn AutoCommit on", payload => $@ }) if $@;
     return $ret;
 }
+
+################################################################################
+
+=item = fetch_objects( $pkg, $sql, $fields, $args )
+
+fetch_objects takes a package name, a sql statement, an arrayref of fields,
+and a list of arguments.  It uses the results from the sql statement to
+construct objects of the specified package, in which the final column is
+variable over a number of lines in which the other columns are the same.
+Like this:
+
+    1 1 1
+    1 1 2
+    1 1 3
+    2 2 1
+    2 2 2
+    2 2 3
+
+which would, given the package name of Bric, and fields [ qw( one two three) ] 
+assemble the following objects:
+
+    [ 
+        bless ( {
+                one   => 1,
+                two   => 1,
+                three => [ 1, 2, 3 ],
+              }, 'Bric' ),
+        bless ( {
+                one   => 2,
+                two   => 2,
+                three => [ 1, 2, 3 ],
+              }, 'Bric' ),
+    ]
+
+In practice this is used for the grp_ids aggrigation of Asset objects.
+
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=back
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub fetch_objects {
+    my ($pkg, $sql, $fields, $args, $limit, $offset) =  @_;
+    my (@objs, @d, $grp_ids);
+    # make offset numeric
+    $offset = $offset || 0;
+    # figure out the fields we need to fill
+    my $count = @$fields - 1;
+    # set and execute the query
+    my $select = prepare_ca($sql, undef, DEBUG);
+    execute($select, @$args);
+    bind_columns($select, \@d[0 .. $count]);
+    # loop through the list, looking for diferrent grp__id columns in
+    # matching lines.  Note: this works for all sort orders except grp__id
+    my $last = -1;
+    my $i;
+    while (fetch($select)) {
+        if ($d[0] != $last) {
+            last if $limit && @objs >= $limit;
+            $last = $d[0];
+            next unless $i++ >= $offset;
+            my $obj = bless {}, $pkg;
+            $grp_ids = $d[$#d] = [$d[$#d]];
+            $obj ->_set($fields, [@d, $grp_ids]);
+            $obj->_set__dirty(0);
+            $obj = bless $obj, Bric::Util::Class->lookup(
+              { id => $obj->get_class_id })->get_pkg_name()
+              if $pkg->HAS_CLASS_ID;
+            push @objs, $obj->cache_me;
+        } else {
+            # Append the ID.
+            push @$grp_ids, $d[$#d];
+        }
+    }
+    finish($select);
+    # Return the objects.
+    return (wantarray ? @objs : \@objs) if @objs;
+}
+
+=item = _build_query($cols, $tables, $where_clause, $order)
+
+Called by list will return objects or ids depending on who is calling
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub build_query {
+    my ($cols, $tables, $where_clause, $order) = @_;
+    # get the various parts of the query
+    return qq{ SELECT DISTINCT $cols
+               FROM   $tables
+               WHERE  $where_clause
+               $order
+             };
+}
+
+=item = _build_query_with_unions($cols, $tables, $where_clause, $order);
+
+Called by list will return objects or ids depending on who is calling
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub build_query_with_unions {
+    my ($pkg, $cols, $tables, $where_clause, $order) = @_;
+    my (@queries);
+    # loop through the relations building a query
+    foreach my $rel ( @{$pkg->RELATIONS} ) {
+        my $rtables = $pkg->RELATION_TABLES->{$rel};
+        my $rwhere_clause = $pkg->RELATION_JOINS->{$rel};
+        push @queries, qq{ SELECT DISTINCT $cols
+                           FROM   $tables, $rtables
+                           WHERE  $where_clause AND $rwhere_clause
+                         };
+    }
+    return join("UNION\n", @queries) . "$order";
+}
+
+=item = $params = clean_params($params)
+
+Parameters for Asset objects should be run through this before sending them
+to the query building functions.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub clean_params {
+    my ($class, $param) = @_;
+    # Make sure to set active explictly if its not passed.
+    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
+    # Map inverse alias inactive to active.
+    $param->{'active'} = ($param->{'inactive'} ? 0 : 1) if exists $param->{'inactive'};
+    # handle the special user_id p if it's missing
+    $param->{_checked_out} = 0 unless exists $param->{user_id};
+    # take care of the simple query, or lack thereof
+    $param->{_not_simple} = 1 unless $param->{simple};
+    # we can only handle the returned versions p in reverse
+    $param->{_no_returned_versions} = 1 unless $param->{returned_versions};
+    # add default order 
+    $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
+    # support of NULL workflow__id
+    if( exists $param->{workflow_id} && ! defined $param->{workflow_id} ) {
+        $param->{_null_workflow_id} = 1;
+        delete $param->{workflow_id};
+    }
+    return $param;
+}
+
+=item = _select_tables
+
+The from clause for the main select is built here.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub tables {
+    my ($pkg, $param) = @_;
+    my $from = $pkg->FROM;
+    foreach (keys %$param) {
+        next unless $pkg->PARAM_FROM_MAP->{$_};
+        my $t = $pkg->PARAM_FROM_MAP->{$_};
+        next if $from =~ m/$t/;
+        $from .= ', ' . $t;
+    }
+    return $from;
+}
+
+=item = where_clause
+
+The where clause for the main select is built here.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub where_clause {
+    my ($pkg, $param) = @_;
+    my (@args, $where, $and);
+    $where = $pkg->WHERE;
+    foreach (keys %$param) {
+        next unless $pkg->PARAM_WHERE_MAP->{$_};
+        next unless $param->{$_};
+        my $sql = $pkg->PARAM_WHERE_MAP->{$_};
+        $where .= ' AND ' . $sql;
+        my $i;
+        my $count = $sql =~ s/\?//g;
+        while ( $i++ < $count ) { 
+            push @args, $param->{$_};
+        }
+    }
+    return $where, \@args;
+}
+
+=item = order_by
+
+Builds up the ORDER BY clause
+
+B<Throws:>
+
+OrderDirection parameter must either ASC or DESC.
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub order_by {
+    my ($pkg, $param) = @_;
+    die Bric::Util::Fault::Exception::DA->new(
+      { msg => 'OrderDirection parameter must either ASC or DESC.' })
+      if $param->{OrderDirection} 
+      && $param->{OrderDirection} ne 'ASC' 
+      && $param->{OrderDirection} ne 'DESC';
+    $param->{OrderDirection} = 'ASC' unless $param->{OrderDirection};
+    die Bric::Util::Fault::Exception::DA->new(
+      { msg => 'Bad Order parameter.' })
+      if $param->{Order} 
+      && ! $pkg->PARAM_ORDER_MAP->{ $param->{Order} };
+    return unless $param->{Order};
+    return ' ORDER BY ' . $pkg->PARAM_ORDER_MAP->{$param->{Order}} 
+      . ' ' . $param->{OrderDirection};  
+}
+
 
 ################################################################################
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-03-05 21:20:46 $
 
 =head1 SYNOPSIS
 
@@ -155,6 +155,7 @@ use constant UTILITY_TEMPLATE => 3;
 # constants for the Database
 use constant TABLE      => 'formatting';
 use constant VERSION_TABLE => 'formatting_instance';
+use constant ID_COL => 'f.id';
 use constant COLS       => qw( name
                                priority
                                description
@@ -169,6 +170,7 @@ use constant COLS       => qw( name
                                deploy_date
                                expire_date
                                workflow__id
+                               desk__id
                                active);
 
 use constant VERSION_COLS => qw( formatting__id
@@ -191,6 +193,7 @@ use constant FIELDS     => qw( name
                                deploy_date
                                expire_date
                                workflow_id
+                               desk_id
                                _active);
 
 use constant VERSION_FIELDS => qw( id
@@ -201,6 +204,102 @@ use constant VERSION_FIELDS => qw( id
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
 use constant INSTANCE_GROUP_ID => 33;
+
+use constant CAN_DO_LIST_IDS => 1;
+use constant CAN_DO_LIST => 1;
+use constant CAN_DO_LOOKUP => 1;
+
+# relations to loop through in the big query
+use constant RELATIONS => [qw( formatting category desk workflow )];
+
+use constant RELATION_TABLES =>
+    {
+        formatting => 'formatting_member fm',
+        category   => 'category_member cm',
+        desk       => 'desk_member dm',
+        workflow   => 'workflow_member wm',
+    };
+
+use constant RELATION_JOINS =>
+    {
+        formatting      => 'fm.object_id = f.id AND m.id = fm.member__id',
+        category        => 'cm.object_id = f.category__id AND m.id = cm.member__id',
+        desk            => 'dm.object_id = f.desk__id AND m.id = dm.member__id',
+        workflow        => 'wm.object_id = f.workflow__id AND m.id = wm.member__id',
+    };
+
+# the mapping for building up the where clause based on params
+use constant WHERE => 'f.id = i.formatting__id';
+
+use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
+            . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
+
+
+# param mappings for the big select statement
+use constant FROM => VERSION_TABLE . ' i, member m';
+
+use constant PARAM_FROM_MAP =>
+    {
+       category_id        =>  'formatting__category mc',
+       category_uri       =>  'formatting__category mc',
+       _not_simple        =>  TABLE . ' f'
+    };
+
+use constant PARAM_WHERE_MAP =>
+    {
+      id                  => 'f.id = ?',
+      active              => 'f.active = ?',
+      inactive            => 'f.active = ?',
+      workflow__id        => 'f.workflow__id = ?',
+      _null_workflow__id  => 'f.workflow__id IS NULL',
+      element__id         => 'f.element__id = ?',
+      output_channel__id  => 'f.output_channel__id = ?',
+      priority            => 'f.priority = ?',
+      deploy_status       => 'f.deploy_status = ?',
+      deploy_date_start   => 'f.deploy_date >= ?',
+      deploy_date_end     => 'f.deploy_date <= ?',
+      expire_date_start   => 'f.expire_date >= ?',
+      expire_date_end     => 'f.expire_date <= ?',
+      desk_id             => 'f.desk_id = ?',
+      name                => 'LOWER(f.name) LIKE LOWER(?)',
+      file_name           => 'LOWER(f.file_name) LIKE LOWER(?)',
+      title               => 'LOWER(f.name) LIKE LOWER(?)',
+      description         => 'LOWER(f.description) LIKE LOWER(?)',
+      version             => 'i.version = ?',
+      user_id             => 'i.usr__id = ?',
+      _checked_out        => 'i.checked_out = ?',
+      category_id         => 'f.category__id = ?',
+      category_uri        => 'f.category__id in (SELECT id FROM category WHERE LOWER(uri) LIKE LOWER(?))',
+      _no_return_versions => 'f.current_version = i.version',
+      grp_id              => 'f.id IN ( SELECT DISTINCT mm.object_id FROM formatting_member mm, member m WHERE m.grp__id = ? AND mm.member__id = m.id )',
+      simple              => '(LOWER(f.name) LIKE ? OR LOWER(f.file_name) LIKE ?)',
+    };
+
+use constant PARAM_ORDER_MAP => 
+    {
+      id                  => 'id',
+      active              => 'active',
+      inactive            => 'active',
+      workflow__id        => 'workflow__id',
+      element__id         => 'element__id',
+      output_channel__id  => 'output_channel__id',
+      priority            => 'priority',
+      deploy_status       => 'deploy_status',
+      deploy_date         => 'deploy_date',
+      expire_date         => 'expire_date',
+      name                => 'name',
+      title               => 'name',
+      description         => 'description',
+      version             => 'version',
+      version_id          => 'version_id',
+      user_id             => 'usr__id',
+      _checked_out        => 'checked_out',
+      category_id         => 'category_id',
+      category_uri        => 'uri',
+      return_versions     => 'version',
+    };
+
+use constant DEFAULT_ORDER => 'id';
 
 #==============================================================================#
 # Fields                               #
@@ -491,54 +590,9 @@ NONE
 
 B<Notes:>
 
-NONE
+Inherited from Bric::Biz::Asset.
 
 =cut
-
-sub lookup {
-    my ($class, $param) = @_;
-    my $self = $class->cache_lookup($param);
-    return $self if $self;
-
-    $self = bless {}, (ref $class ? ref $class : $class);
-    my $sql = 'SELECT f.id, ' . join(', ', map {"f.$_ "} COLS) .
-      ', i.id, ' . join(', ', map {"i.$_ "} VERSION_COLS) .
-      ' FROM ' . TABLE . ' f, ' . VERSION_TABLE . ' i ';
-
-    my @where;
-    if ($param->{'id'}) {
-        $sql .= ' WHERE f.id=? AND i.formatting__id=f.id ';
-        push @where, $param->{'id'};
-    } elsif ($param->{'version_id'}) {
-        $sql .= ' WHERE i.id=? AND i.formatting__id=f.id ';
-        push @where, $param->{'version_id'};
-    } else {
-        die Bric::Util::Fault::Excepction::GEN->new
-          ({ msg => 'Missing required parameters "id" or "version_id"' });
-    }
-
-    if ($param->{'version'}) {
-        $sql .= ' AND i.version=? ';
-        push @where, $param->{'version'};
-    } elsif ($param->{'checkout'}) {
-        $sql .= ' AND i.checked_out=? ';
-        push @where, 1;
-    } else {
-        $sql .= ' AND f.current_version=i.version ';
-    }
-
-    my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-    my @d;
-    my $sth = prepare_ca($sql, undef, DEBUG);
-    execute($sth, @where);
-    bind_columns($sth, \@d[0 .. $count ]);
-    fetch($sth);
-
-    $self->_set( [ 'id', FIELDS, 'version_id', VERSION_FIELDS], [@d]);
-    return unless $self->_get('id');
-    $self->_set__dirty(0);
-    return $self->cache_me;
-}
 
 ################################################################################
 
@@ -636,17 +690,9 @@ NONE
 
 B<Notes:>
 
-NONE
+Inherited from Bric::Biz::Asset.
 
 =cut
-
-
-sub list {
-        my ($class, $param) = @_;
-
-        # send this to do list
-        return _do_list($class, $param, undef);
-}
 
 #--------------------------------------#
 
@@ -690,16 +736,9 @@ NONE
 
 B<Notes:>
 
-NONE
+Inherited from Bric::Biz::Asset.
 
 =cut
-
-sub list_ids {
-        my ($class, $param) = @_;
-
-        # call do list with the flag that states we just want ids\
-        return _do_list($class, $param, 1);
-}
 
 
 ################################################################################
@@ -1691,149 +1730,6 @@ sub save {
 
 =over 4
 
-=item _do_list( $class, $param, $ids)
-
-Executes for list and list_ids
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _do_list {
-    my ($class, $param, $ids) = @_;
-    my ($sql, $sth, @bind);
-    my (@select, @from, @where, $order);
-
-    # Make sure to set active explictly if its not passed.
-    $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
-
-    # Setup the base query.
-    @select = ('f.id');
-    @from   = (TABLE.' f', VERSION_TABLE.' i');
-    @where  = ('f.id=i.formatting__id');
-
-    unless ($ids) {
-        # if we want more than ids we have to ask for them
-        push @select, (map { "f.$_ "} COLS),
-                      'i.id',
-                      (map { "i.$_ "} VERSION_COLS);
-    }
-
-    # the user__id field
-    if (exists $param->{user__id}) {
-        push @where, 'f.usr__id = ?', 'i.checked_out = ?';
-        push @bind,  $param->{user__id}, 1;
-    } elsif (exists $param->{checked_out}) {
-        if ($param->{checked_out} ne 'all') {
-            push @where, 'i.checked_out = ?';
-            push @bind,  $param->{checked_out} ? 1 : 0;
-        }
-    } else {
-        push @where, 'i.checked_out = ?';
-        push @bind,  0;
-    }
-
-    # The tplate_type field.
-    if ($param->{tplate_type}) {
-        push @where, 'f.tplate_type = ?';
-        push @bind, $param->{tplate_type};
-    }
-
-    unless ($param->{'return_versions'}) {
-        push @where, 'f.current_version=i.version';
-    }
-
-    # Build the where clause for the trivial formatting table fields.
-    foreach my $f (qw(id workflow__id output_channel__id element__id
-                      category__id name file_name active)) {
-        next unless exists $param->{$f};
-
-        if (($f eq 'name') || ($f eq 'file_name')) {
-            push @where, "LOWER(f.$f) LIKE ?";
-            push @bind,  lc($param->{$f});
-        } else {
-            push @where, "f.$f=?";
-            push @bind,  $param->{$f};
-        }
-    }
-
-    if ($param->{'simple'}) {
-      push @where, ('(LOWER(f.name) LIKE ? OR LOWER(f.file_name) LIKE ?)');
-      push @bind, (lc($param->{'simple'})) x 2;
-    }
-
-
-    # Handle searches on dates
-    foreach my $type (qw(deploy_date expire_date)) {
-        my ($start, $end) = (db_date($param->{$type.'_start'}),
-                             db_date($param->{$type.'_end'}));
-
-        # Handle date ranges.
-        if ($start && $end) {
-            push @where, "f.$type BETWEEN ? AND ?";
-            push @bind, $start, $end;
-        } else {
-            # Handle 'everying before' or 'everything after' $date searches.
-            if ($start) {
-                push @where, "f.$type > ?";
-                push @bind, $start;
-            } elsif ($end) {
-                push @where, "f.$type < ?";
-                push @bind, $end;
-            }
-        }
-    }
-
-    # Determine how to order the results.
-    if ( $param->{'return_versions'}) {
-        $order = 'i.version';
-    } else {
-        $order = 'f.deploy_date';
-    }
-
-    $sql  = 'SELECT '  .join(',',     @select).' '.
-            'FROM '    .join(',',     @from).' '.
-            'WHERE '   .join(' AND ', @where).' '.
-            'ORDER BY '.$order;
-
-    $sth = prepare_ca($sql, undef, DEBUG);
-
-    if ($ids) {
-        my $return = col_aref($sth, @bind);
-        return unless @$return;
-        return wantarray ? @$return : $return;
-
-    } else {
-        my (@d, @objs);
-
-        my $count = (scalar FIELDS) + (scalar VERSION_FIELDS) + 1;
-        execute($sth, @bind);
-        bind_columns($sth, \@d[0 .. $count]);
-
-        while (fetch($sth)) {
-            my $self = bless {}, $class;
-
-            $self->SUPER::new();
-
-            $self->_set( ['id', FIELDS, 'version_id', VERSION_FIELDS] , [@d]);
-            $self->_set__dirty(undef);
-
-            push @objs, $self->cache_me;
-        }
-        return (wantarray ? @objs : \@objs) if @objs;
-        return;
-    }
-}
 
 ################################################################################
 
@@ -2245,17 +2141,25 @@ sub _build_file_name {
     # Create the file name.
     my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),
                                             $file);
-
     # Make sure that the filename isn't already in use for this output channel.
-    if ($self->list_ids({ file_name => $fn, checked_out => 'all',
-                          output_channel__id => $oc_id })
-        or $self->list_ids({ file_name => $fn, checked_out => 'all',
-                             output_channel__id => $oc_id, active => 0 })) {
-        # One exists already! Throw an exception.
-        die Bric::Util::Fault::Exception::DP->new
-          ({ msg => "The template '$fn' already exists in output " .
-                    "channel '" . $self->get_output_channel_name . "'" });
-    }
+    my @existing;
+    push @existing, $self->list_ids(
+        { 
+            file_name => $fn, 
+            checked_out => 'all',
+            output_channel__id => $oc_id 
+        });
+    push @existing, $self->list_ids(
+        { 
+            file_name => $fn, 
+            checked_out => 'all',
+            output_channel__id => $oc_id,
+            active => 0,
+        });
+    die Bric::Util::Fault::Exception::DP->new
+      ({ msg => "The template '$fn' already exists in output " .
+      "channel '" . $self->get_output_channel_name . "'" })
+      if @existing != 0;
 
     # If we get here, just return the file name.
     return $fn;
