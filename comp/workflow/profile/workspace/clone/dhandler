@@ -1,0 +1,61 @@
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+<name> -- <description>
+
+=head1 VERSION
+
+$Revision: 1.1 $
+
+=head1 DATE
+
+$Date: 2004-03-09 21:08:40 $
+
+=head1 DESCRIPTION
+
+Display the page after you click 'Clone' in 'My Workspace'.
+
+=cut
+</%doc>
+
+<& '/widgets/wrappers/sharky/header.mc',
+  title => 'clone story',
+  context => $context,
+  jsInit => 'document.theForm["title"].focus();'
+&>
+
+<form action="<% $r->uri %>" method="post" name="theForm">
+
+<& '/widgets/story_prof/story_prof.mc',
+  section  => 'clone',
+  work_id  => $w_id
+&>
+
+</form>
+
+<& '/widgets/wrappers/sharky/footer.mc' &>
+
+
+<%once>;
+my $disp = get_disp_name('story');
+my $context = "Workflow | Profile | $disp | Clone";
+my $story_pkg = 'Bric::Biz::Asset::Business::Story';
+</%once>
+
+<%init>
+$r->uri =~ m!/([^/]+)/?$!;
+my $sid = $1;
+my $story = $story_pkg->lookup({ id => $sid });
+
+# Check that user has perms to create on start desk
+my $wf = $story->get_workflow_object;
+my $gid =  $wf->get_start_desk->get_asset_grp;
+chk_authz($story_pkg, CREATE, 0, $gid);
+
+# set_state_data conflicted with story_prof.mc, so I used pnotes
+$r->pnotes(cloned_story => $story);
+
+my $w_id = $wf->get_id;
+</%init>

@@ -1,0 +1,99 @@
+<%doc>
+This is to display the page after you click Clone in My Workspace.
+It was mostly copied from edit_new.html and gets called
+through story_prof.mc.
+
+It lets you modify the category, slug, and cover date of the
+cloned story, using the current values by default.
+</%doc>
+<%perl>;
+# Display the properties
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Properties",
+         number  => 1);
+$m->out($ieSpacer, '<br />');
+
+# Title
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => 'title',
+         vals => $tmeth
+     );
+$m->out($ieSpacer);
+
+# Slug
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => 'slug',
+         vals => $smeth
+     );
+$m->out($ieSpacer);
+
+# Category
+$m->comp('/widgets/select_object/select_object.mc',
+         object     => 'category',
+         selected   => $cat_id,
+         disp       => 'Primary Category',
+         name       => 'desk_asset|new_category_id',
+         constrain  => { site_id => $site_id },
+         exclude    => $excl_sub,
+         req        => 0,
+         field      => 'uri',
+         sort_field => 'uri',
+         localize   => 0,
+         useTable   => 1
+     );
+$m->out($ieSpacer);
+
+# Cover date
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => 'cover_date',
+         vals => $cmeth,
+     );
+$m->out($ieSpacer, '<br />');
+
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+
+# Button at bottom
+$m->comp('/widgets/wrappers/sharky/table_top.mc',
+         caption => 'Submit',
+         number  => 2,
+         ghostly => 1
+     );
+
+$m->comp('/widgets/profile/create_button.html',
+         widget => 'desk_asset',   # for 'cb'
+         value => $sid,
+         cb => 'clone_cb');
+
+# (implicit table_bottom...)
+</%perl>
+<%args>
+$widget
+</%args>
+<%once>;
+my $spkg = 'Bric::Biz::Asset::Business::Story';
+
+# Title, Slug, and Cover Date my_meths
+my $tmeth = { %{ $spkg->my_meths->{title} } };
+my $smeth = { %{ $spkg->my_meths->{slug} } };
+my $cmeth = { %{ $spkg->my_meths->{cover_date} } };
+# listManager exclude
+my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
+</%once>
+<%init>;
+my $w_id = get_state_data($widget, 'work_id');
+my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
+my $site_id = $wf->get_site_id;
+
+# (used pnotes in clone/dhandler because story_prof.mc messes with state_data)
+my $story = $r->pnotes('cloned_story');
+my $sid = $story->get_id;
+
+# Default values
+$tmeth->{value} = 'Clone of ' . $story->get_title;
+$smeth->{value} = $story->get_slug;
+$cmeth->{value} = $story->get_cover_date;
+my $cat_id = $story->get_primary_category->get_id;
+
+my $agent = detect_agent();
+my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
+</%init>

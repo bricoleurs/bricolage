@@ -83,7 +83,8 @@ if ($desk_type eq 'workflow') {
     }
     if ($class eq 'story') {
         $item_label = 'Clone';
-        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+#        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+        $item_url = "/workflow/profile/workspace/clone/$aid";
     }
 }
 </%perl>
@@ -245,11 +246,11 @@ my $elink = $user ? $user : $label ? qq{<a href="} . $r->uri . "?" .
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2003-10-03 05:58:12 $
+$Date: 2004-03-09 21:08:39 $
 
 =head1 DESCRIPTION
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.88 $
+$Revision: 1.89 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.88 $ )[-1];
+our $VERSION = (qw$Revision: 1.89 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-08 12:42:06 $
+$Date: 2004-03-09 21:08:42 $
 
 =head1 SYNOPSIS
 
@@ -1272,6 +1272,7 @@ sub set_primary_category {
     my ($self, $cat) = @_;
     my $cat_id = ref $cat ? $cat->get_id : $cat;
     my $cats = $self->_get_categories();
+
     foreach my $c_id (keys %$cats) {
         if ($cats->{$c_id}->{'primary'}) {
             $cats->{$c_id}->{'primary'} = 0;
@@ -1285,8 +1286,8 @@ sub set_primary_category {
               unless $cats->{$c_id}->{action}
               and $cats->{$c_id}->{action} eq 'insert';
         }
-
     }
+
     return $self;
 }
 
@@ -1402,7 +1403,7 @@ sub delete_categories {
     my ($self, $categories) = @_;
     my ($cats) = $self->_get_categories();
     my @grp_ids = $self->get_grp_ids();
-    my $check = 0;
+    my $check = $self->_get('_update_uri');
     foreach my $c (@$categories) {
         # get the id if there was an object passed
         my $cat_id = ref $c ? $c->get_id() : $c;
@@ -1413,7 +1414,7 @@ sub delete_categories {
             delete $cats->{$cat_id};
         } else {
             $cats->{$cat_id}->{'action'} = 'delete';
-            $check = 1;
+            $check ||= 1;
         }
         my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
           : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id;
@@ -1589,6 +1590,11 @@ NONE
 
 sub clone {
     my ($self) = @_;
+    # Uncache the story, so that the clone isn't returned when looking up
+    # the original ID.
+    $self->uncache_me;
+
+    # Clone the element.
     my $tile = $self->get_tile();
     $tile->prepare_clone;
 
@@ -1615,7 +1621,7 @@ sub clone {
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
                     _attribute_object _update_uri first_publish_date)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 0, undef]);
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
@@ -1880,6 +1886,7 @@ NONE
 sub _get_categories {
     my ($self) = @_;
     my ($cats, $queried) = $self->_get('_categories', '_queried_cats');
+
     unless ($queried) {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT category__id, main '.
@@ -1896,6 +1903,7 @@ sub _get_categories {
         $self->_set([qw(_categories _queried_cats)] => [$cats, 1]);
         $self->_set__dirty($dirty);
     }
+
     return $cats;
 }
 

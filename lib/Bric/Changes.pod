@@ -75,7 +75,10 @@ associated with. [David]
 
 =item *
 
-Modified the indexes where the story, media, and formatting (template)
+Modified the indexes on the C<workflow__id> and C<desk__id> columns of the
+story, media, and formatting (template) tables to be more efficient, being
+indexed only when their IDs are greater than 0 (that is, when a story, media
+docment, or template is actually on a desk and in a workflow). [David]
 
 =item *
 
@@ -94,6 +97,13 @@ and media profiles. [Scott]
 The element admin profile now automatically addes the currently selected site
 context to new elements, thus generally saving a step when creating new
 elements. [JoE<atilde>o Pedro]
+
+=item *
+
+Added an interface to 'Clone' for stories so that you can change the category,
+slug, and cover date, because otherwise an identical story is created, which
+would cause errors for some stories. Clones are no longer allowed to have URIs
+that are identical to the stories they were cloned from. [Scott]
 
 =back
 

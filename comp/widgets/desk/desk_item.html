@@ -146,7 +146,8 @@ if ($desk_type eq 'workflow') {
     }
     if ($class eq 'story') {
         $item_label = 'Clone';
-        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+#        $item_url = $r->uri . "?$widget|clone_cb=$aid";
+        $item_url = "/workflow/profile/workspace/clone/$aid";
     }
 }
 
@@ -163,11 +164,11 @@ my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2003-10-23 23:43:16 $
+$Date: 2004-03-09 21:08:39 $
 
 =head1 DESCRIPTION
 

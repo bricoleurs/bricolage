@@ -16,13 +16,12 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::Config qw(ALLOW_WORKFLOW_TRANSFER PUBLISH_RELATED_ASSETS);
+use Bric::Config qw(:ui :pub);
 use Bric::Util::Burner;
 use Bric::Util::Time qw(strfdate);
 
 my $type = 'formatting';
 my $disp_name = 'Template';
-
 
 sub checkin : Callback {
     my $self = shift;
@@ -277,31 +276,91 @@ sub deploy : Callback {
 
 sub clone : Callback {
     my $self = shift;
-
     my $aid = $self->value;
+    my $param = $self->params;
+
     # Lookup the story and log that it has been cloned.
     my $story = Bric::Biz::Asset::Business::Story->lookup({ id => $aid });
     log_event('story_clone', $story);
+
     # Look it up again to avoid the event above being logged on the clone
     # instead of the original story.
     $story = Bric::Biz::Asset::Business::Story->lookup({ id => $aid });
+
     # Get the current desk.
     my $desk = $story->get_current_desk;
-    # Clone and save the story.
+
+    # Clone the story.
     $story->clone;
-    $story->set_title('Clone of ' . $story->get_title);
+
+    # Merge changes into story
+    $self->_merge_properties($story) or return;
+
+    # Save changes
     $story->save;
+
     # Put the cloned story on the desk.
     $desk->accept({ asset => $story });
     $desk->save;
-    # Log events.
+
+    # Log events and redirect.
     my $wf = $story->get_workflow_object;
     log_event('story_clone_create', $story);
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $desk->get_name });
     log_event('story_checkout', $story);
+    $self->set_redirect('/workflow/profile/workspace');
 }
 
+### PRIVATE ###
 
+sub _merge_properties {
+    my ($self, $story) = @_;
+    my $param = $self->params;
+    my $widget = $self->class_key;
+
+    my $err = 0;
+
+    # Title
+    $story->set_title($param->{title});
+
+    # Slug - account for sluglessness
+    $param->{slug} = '' unless exists($param->{slug}) && defined($param->{slug});
+    unless (ALLOW_SLUGLESS_NONFIXED || $story->is_fixed || $param->{slug} =~ /\S/) {
+        add_msg('Slug required for non-fixed (non-cover) story type.');
+        $err++;
+    } else {
+        $story->set_slug($param->{slug});
+    }
+
+    # Category
+    my $cid = $param->{"$widget|new_category_id"};
+    unless (defined $cid && $cid ne '') {
+        add_msg('Please select a primary category.');
+        $err++;
+    } else {
+        # Delete all the current categories first,
+        # then add the new category and make it primary.
+        # It's a little more complicated to avoid
+        # deleting the new category if it's already there.
+        my %todelete_cats = map { $_->get_id => $_ } $story->get_categories;
+
+        my $was_there = delete($todelete_cats{$cid}) || 0;
+        $story->add_categories([$cid]) unless $was_there;
+        $story->delete_categories([ values(%todelete_cats) ]) if %todelete_cats;
+        $story->set_primary_category($cid);
+    }
+
+    # Cover date
+    if ($param->{'cover_date-partial'}) {
+        add_msg('Cover Date incomplete.');
+        $err++;
+    } else {
+        $story->set_cover_date($param->{cover_date});
+    }
+
+    return 1 unless $err;
+    return;
+}
 
 1;

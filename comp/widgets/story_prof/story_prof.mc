@@ -8,11 +8,11 @@ story_prof.mc - The profile of stories widget
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2003-12-22 03:21:15 $
+$Date: 2004-03-09 21:08:40 $
 
 =head1 SYNOPSIS
 
@@ -68,9 +68,8 @@ $section
 %#--- Initialization ---#
 
 <%init>
-
 # Clear out the state data if this is our first time here.
-if ($section eq 'new' or $section eq 'find_alias') {
+if ($section eq 'new' or $section eq 'find_alias' or $section eq 'clone') {
     # A hacky fix for the 'sidenav query string breakin shit' problem.
     # Get an existing workflow ID if we weren't passed one.
     $work_id ||= get_state_data($widget, 'work_id');
@@ -143,5 +142,4 @@ $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
 
 %#--- Log History ---#
-
 
