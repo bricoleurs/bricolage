@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.18.4.2 $
+$Revision: 1.18.4.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.4.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.3 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-08 21:05:06 $
+$Date: 2003-08-11 09:18:29 $
 
 =head1 SYNOPSIS
 
@@ -1470,7 +1470,7 @@ sub _do_insert {
         $table =  M_TABLE
     } else {
         die Bric::Util::Fault::Exception::GEN->new
-          ({ 'msq' => 'Object must be a media or story to add tiles' });
+          ({ 'msg' => 'Object must be a media or story to add tiles' });
     }
 
     my $sql = "INSERT INTO $table " .
