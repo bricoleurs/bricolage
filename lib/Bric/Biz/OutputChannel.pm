@@ -102,7 +102,7 @@ our %EXPORT_TAGS = (case_constants => \@EXPORT_OK);
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
-my ($get_inc, $parse_uri_format);
+my ($get_inc);
 
 #==============================================================================
 ## Constants                           #
@@ -283,15 +283,8 @@ sub new {
     $init->{file_ext} ||= DEFAULT_FILE_EXT;
 
     # Set URI formatting attributes.
-    $init->{uri_format} = $init->{uri_format}
-      ? $parse_uri_format->($class->my_meths->{uri_format}{disp},
-                          $init->{uri_format})
-      : DEFAULT_URI_FORMAT;
-
-    $init->{fixed_uri_format} = $init->{fixed_uri_format}
-      ? $parse_uri_format->($class->my_meths->{fixed_uri_format}{disp},
-                              $init->{fixed_uri_format})
-      : DEFAULT_FIXED_URI_FORMAT;
+    $init->{uri_format}       ||= DEFAULT_URI_FORMAT;
+    $init->{fixed_uri_format} ||= DEFAULT_FIXED_URI_FORMAT;
 
     # Set URI case and use slug attributes.
     $init->{uri_case} ||= DEFAULT_URI_CASE;
@@ -1219,9 +1212,7 @@ B<Notes:> NONE.
 =cut
 
 sub set_uri_format {
-    $_[0]->_set(['uri_format'],
-                [$parse_uri_format->($_[0]->my_meths->{uri_format}{disp},
-                                     $_[1])])
+    $_[0]->_set(['uri_format'], [$_[1]])
 }
 
 =item my $format = $oc->get_uri_format
@@ -1259,9 +1250,7 @@ B<Notes:> NONE.
 =cut
 
 sub set_fixed_uri_format {
-    $_[0]->_set(['fixed_uri_format'],
-                [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp},
-                                     $_[1])])
+    $_[0]->_set(['fixed_uri_format'], [$_[1]])
 }
 
 =item (undef || 1 ) = $oc->can_use_slug
@@ -1978,63 +1967,6 @@ $get_inc = sub {
     }
     return $inc;
 };
-
-##############################################################################
-
-=item my $uri_format = $parse_uri_format->($name, $format)
-
-Parses a URI format as passed to C<set_uri_format()> or
-C<set_fixed_uri_format()> and returns it if it parses properly. If it doesn't,
-it throws an exception. The C<$name> attribute is used in the exceptions.
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-No URI Format value specified.
-
-=item *
-
-Invalid URI Format tokens.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-$parse_uri_format = sub {
-    my ($name, $format) = @_;
-    my %toks = map { $_ => 1 } qw(categories day month year slug);
-
-    # Throw an exception for an empty or bogus format.
-    throw_dp(error => "No $name value specified")
-      if not $format or $format =~ /^\s*$/;
-
-    # Parse the format for invalid tokens.
-    $format =~ s#/?(.+)/?#$1#;
-    my (@tokens, @bad);
-    foreach my $token (split /\//, $format) {
-        $toks{$token} ?
-          push @tokens, $token :
-          push @bad, $token;
-    }
-
-    # Throw an exception for a format with invalid tokens.
-    if (my $c = @bad) {
-        my $pl = $c > 1 ? 's' : '';
-        my $bad = join ', ', @bad;
-        throw_dp(error => "Invalid $name token$pl: $bad");
-    }
-
-    # Return the format.
-    return '/' . join('/', @tokens) . '/';
-};
-
 
 1;
 __END__

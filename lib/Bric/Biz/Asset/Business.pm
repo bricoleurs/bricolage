@@ -2366,33 +2366,22 @@ sub _construct_uri {
     # Get the pre and post values.
     ($pre, $post) = ($oc_obj->get_pre_path, $oc_obj->get_post_path) if $oc_obj;
 
-    # Add the pre value.
-    my @path = ('', defined $pre ? $pre : ());
-
     # Get URI Format.
     my $fmt = $fu ? $oc_obj->get_fixed_uri_format : $oc_obj->get_uri_format;
 
-    my @tokens = split( '/', $fmt );
+    my ($category_uri, $slug);
+    $category_uri = $cat_obj->ancestry_path if $cat_obj;
+    $slug = ($self->key_name eq 'story') ? $self->get_slug : '';
+    
+    $fmt =~ s/%{categories}/$category_uri/g;
+    $fmt =~ s/%{slug}/$slug/g;
+    
+    my $path = $self->get_cover_date($fmt);
+    
+    my @path = split( '/', $path );
 
-    # iterate over tokens pushing each onto @path
-    foreach my $token( @tokens ) {
-        next unless $token;
-        if ($uri_format_hash{$token}  ne '') {
-            # Add the cover date value.
-            push @path, $self->get_cover_date( $uri_format_hash{ $token } );
-        } else {
-            if ($token eq 'categories') {
-                # Add Category
-                push @path, $cat_obj->ancestry_path if $cat_obj;
-            } elsif ($token eq 'slug' and $self->key_name eq 'story') {
-                # Add the slug.
-                my $slug = $self->get_slug or next;
-                push @path, $slug;
-            }
-        }
-    }
-
-    # Add the post value.
+    # Add the pre and post values.
+    unshift @path, $pre if $pre;
     push @path, $post if $post;
 
     # Return the URI with the case adjusted as necessary.
