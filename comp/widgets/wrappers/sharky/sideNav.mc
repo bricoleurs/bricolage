@@ -76,10 +76,10 @@ unless ($workflows) {
 	$tmp += 6;
 	# account for desks
 	my @desks = map { [ $_->get_id, $_->get_name,
-			    [$_->get_grp_ids, $_->get_asset_grp] ]
+			    [$_->get_asset_grp, $_->get_grp_ids] ]
 		        } $w->allowed_desks;
 	$tmp += scalar(@desks);
-	my @gids = ($w->get_grp_ids, $w->get_all_desk_grp_id);
+	my @gids = ($w->get_all_desk_grp_id, $w->get_grp_ids);
 
 	my $wf = { type  => $w->get_type,
 		   id    => $w->get_id,
@@ -445,10 +445,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.6.2.6 $
+$Revision: 1.6.2.7 $
 
 =head1 DATE
 
-$Date: 2002-03-01 17:00:17 $
+$Date: 2002-03-08 03:55:12 $
 
 </%doc>
