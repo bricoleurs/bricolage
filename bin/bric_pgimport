@@ -19,7 +19,8 @@ $Date$
 =head1 DESCRIPTION
 
 This is a developer program. Users should C<make> and C<make install> to build
-their Bricolage installations and database.
+their Bricolage installations and database. Note that it only works with PostgreSQL
+7.3 and later.
 
 =head1 OPTIONS
 
