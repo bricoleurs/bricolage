@@ -184,7 +184,10 @@ my $prof_sub = sub {
       || ($type eq 'user' && $_[0]->get_id == get_user_id())
       || ($type eq 'alert_type' && $_[0]->get_owner_id == get_user_id());
     return $type ne 'contrib' ? [ $edit, [ 'Log', "/admin/events/$type/$id", ''] ]
-      : [ $edit, ['New', "/admin/profile/contrib/extend/$id", ''],
+      : [ $edit, [$_[0]->all_for_subsys
+                    ? ('New', "/admin/profile/contrib/extend/$id", '')
+                    : ()
+                 ],
                  [ 'Log', "/admin/events/$type/$id", ''] ];
 };
 
@@ -412,11 +415,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.39 $
+$Revision: 1.40 $
 
 =head1 DATE
 
-$Date: 2004-02-07 23:27:39 $
+$Date: 2004-02-28 00:41:10 $
 
 =head1 SYNOPSIS
 

@@ -189,6 +189,13 @@ value of the C<VHOST_SERVER_NAME> directive. [David]
 Eliminated the term "Asset Type" from the UI, replacing it with "Element",
 "Story Type Element", or "Media Type Element", as context demands. [David]
 
+=item *
+
+The Contributor manager no longer presents a "New" link if the Contributor
+Type on which the contributor is based has no custom fields. This will prevent
+folks from creating new contributor rols in the UI only to find that Bricolage
+hasn't created them because there are no custom fields. [David]
+
 =back
 
 =head2 Bug Fixes
