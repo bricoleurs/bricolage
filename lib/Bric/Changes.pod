@@ -275,6 +275,11 @@ Publishing a document with deactivated related documents no longer causes
 those deactivated documents to be published, too. Reported by Paul Orrock.
 [David]
 
+=item *
+
+The Bricolage 404, 403, and 500 error pages now send the appropriate HTTP
+header to the browser. Thanks to Marshall Roch for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)
