@@ -25,15 +25,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-16 21:46:13 $
+$Date: 2002-01-17 22:45:42 $
 
 =head1 SYNOPSIS
 
@@ -475,11 +475,12 @@ Notes: NONE
 
 =over 4
 
-=item @related = _serialize_story($writer, $story_id)
+=item @related = _serialize_story(writer => $writer, story_id => $story_id, args => $args)
 
 Serializes a single story into a <story> element using the given
-writer.  Returns a list of two-element arrays - [ "media", $id ] or [
-"story", $id ].  These are the related media objects serialized.
+writer and args.  Returns a list of two-element arrays - [ "media",
+$id ] or [ "story", $id ].  These are the related media objects
+serialized.
 
 =cut
 
@@ -556,6 +557,21 @@ sub _serialize_story {
 	$writer->dataElement(keyword => $k->get_name);
     }
     $writer->endTag("keywords");
+
+    # output contributors
+    $writer->startTag("contributors");
+    foreach my $c ($story->get_contributors) {
+      my $p = $c->get_person;
+      $writer->startTag("contributor");
+      $writer->dataElement(fname  => $p->get_fname);
+      $writer->dataElement(mname  => $p->get_mname);
+      $writer->dataElement(lname  => $p->get_lname);
+      $writer->dataElement(type   => $c->get_grp->get_name);
+      $writer->dataElement(role   => $story->get_contributor_role($c));
+      $writer->endTag("contributor");
+    }
+    $writer->endTag("contributors");
+
 
     # output element data
     $writer->startTag("elements");
