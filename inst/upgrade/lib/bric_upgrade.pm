@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-14 02:10:06 $
+$Date: 2004-02-16 12:02:37 $
 
 =head1 SYNOPSIS
 
@@ -333,7 +333,7 @@ sub test_function($) {
                AND p.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype
                AND NOT p.proisagg
                AND pg_catalog.pg_function_is_visible(p.oid)
-               AND p.proname = '$function
+               AND p.proname = '$function'
     });
 }
 
@@ -357,7 +357,7 @@ sub test_aggregate($) {
         FROM   pg_proc p
         WHERE  p.proisagg
                AND pg_catalog.pg_function_is_visible(p.oid)
-               AND p.proname = '$aggregate
+               AND p.proname = '$aggregate'
     });
 }
 
