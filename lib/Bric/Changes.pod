@@ -98,6 +98,12 @@ Thanks to Matt Vella for the report. [David]
 Added an "About" page, linked from the logo graphic, that explains the name
 "Bricolage" and offers the license and credits. [David]
 
+=item *
+
+Added PERL_LOADER configuration directive. Pass a line of Perl to this
+directive, and on startup, it'll execute it in the same namespace as your
+templates execute in.
+
 =back
 
 =head1 VERSION 1.0.1

@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.12 $
+$Revision: 1.13.2.13 $
 
 =head1 DATE
 
-$Date: 2001-10-04 11:14:12 $
+$Date: 2001-10-04 13:48:28 $
 
 =head1 DESCRIPTION
 
@@ -76,8 +76,8 @@ Write distribution documentation [David].
 =item *
 
 Filter categories and asset types in Asset editing screens by permission. Users
-who don't have READ permission on a category or asset type shoul't see it in the
-select lists [David].
+who don't have READ permission on a category or asset type should't see it in
+the select lists [David].
 
 =item *
 
@@ -93,13 +93,7 @@ XML::Writer (or related) support in Templates [David].
 
 =item *
 
-Have Bric::Util::Class use Bric::Util::Cache [David].
-
-=item *
-
-Add PERL_LOADER configuration directive to bricolage.conf (and Bric::Config) so
-that system administrators can easily specify extra Perl modules they want
-loaded for use in templates [David].
+Have Bric::Util::Class use Bric::App::Cache [David].
 
 =item *
 
