@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:45 $
+$Date: 2002-08-28 22:57:12 $
 
 =head1 SYNOPSIS
 
@@ -23,6 +23,7 @@ This element is called by /widgets/profile/callback.mc when the data to be
 processed was submitted from the User Profile page.
 
 </%doc>
+
 <%once>;
 my $type = 'grp';
 my $disp_name = get_disp_name($type);
@@ -67,7 +68,8 @@ my $save_sub = sub {
             # Deactivate members.
             foreach my $id (ref $param->{objects} ? @{$param->{objects}}
                             : $param->{objects}) {
-                foreach my $mem ($grp->has_member({ obj => $pkg->lookup({ id => $id }) }) ) {
+                foreach my $mem ($grp->has_member({ package => $pkg,
+                                                    id => $id }) ) {
 		    $mem->deactivate;
                     $mem->save;
                 }

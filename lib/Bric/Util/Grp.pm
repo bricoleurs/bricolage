@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-27 17:22:43 $
+$Date: 2002-08-28 22:57:12 $
 
 =head1 SYNOPSIS
 
@@ -1454,7 +1454,9 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> This method I<may> return false if a member has been added via
+C<add_member()> but the Grp object hasn't been saved. The upshot is that one
+should always call has_member() on a fully saved Grp object.
 
 =cut
 
@@ -1485,7 +1487,8 @@ sub has_member {
             $mem = $memb_hash->{$pkg}{$id} or return;
         }
     } else {
-        # Just look it up.
+        # Just look it up. This will fail if a member has been added, but the
+        # group hasn't been saved.
         my %args = $params->{obj} ? ( object => $params->{obj} ) :
           ( object_package => $params->{package}, object_id => $params->{id});
         $args{grp} = $self;
