@@ -38,7 +38,7 @@ sub cancel : Callback {
 
 ###
 
-my $do_save = sub {
+$do_save = sub {
     my $self = shift;
     my $param = $self->request_args;
 
