@@ -49,6 +49,11 @@ Improved error messages thrown in exceptions in Bric::Util::Trans::FTP.
 Removed code and documentation for PostgreSQL 7.3 compatability. With the
 release of 7.3b2, it's no longer needed. [David]
 
+=item *
+
+Fixed "make clone" to properly include database contents in clone
+distribution. [Sam]
+
 =back
 
 =head1 VERSION 1.4.3
