@@ -16,19 +16,20 @@ if ($type eq 'grp') {
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
 	# It's a search. Reset the group type.
 	$ARGS{grp_type} = 'all';
-        set_state_data('manager|grp', 'prev_grp_type', undef);
+        set_state_data($type, 'prev_grp_type', undef);
     } elsif (exists $ARGS{grp_type} or
-             $ARGS{grp_type} = get_state_data('manager|grp', 'prev_grp_type')) {
+             $ARGS{grp_type} = get_state_data($type, 'prev_grp_type')) {
 	# It's just a query by group type. Set the default obj_key and
         # set the behavior to ensure that the results are listed.
 	$obj_key = $ARGS{grp_type} || 'grp';
         $behavior = 'narrow';
-        set_state_data('manager|grp', 'prev_grp_type', $ARGS{'grp_type'});
+        set_state_data($type, 'prev_grp_type', $ARGS{'grp_type'});
     } else {
         # It's the first time accessing.
 	$ARGS{grp} = 'all';
     }
 
+    set_state_name($type, $obj_key);
     $groupList = $m->scomp('/widgets/profile/select.mc',
 			   disp => 'Or Pick a Type',
 			   options => \%grp_sel,
@@ -368,11 +369,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.23.2.3 $
+$Revision: 1.23.2.4 $
 
 =head1 DATE
 
-$Date: 2003-07-18 22:41:00 $
+$Date: 2003-07-22 04:48:21 $
 
 =head1 SYNOPSIS
 
