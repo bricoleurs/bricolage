@@ -18,7 +18,7 @@
 <%def .textarea>
 <& '/widgets/profile/textarea.mc', 'name' => $_[0]->[0],
    'value' => $meta->{$_[0]->[0]}, 'disp' => $_[0]->[1],
-   'rows' => 5, 'cols' => 20 &>
+&>
 </%def>
 <%def .check>
 <& '/widgets/profile/checkbox.mc', 'name' => $_[0]->[0],
@@ -33,13 +33,11 @@ my ($meta, %conf);
 </%shared>
 <%init>
 my $textStyle    = 'style="width:120px"';
-my $textareaRows = 5;
-my $textareaCols = 20;
 
 # shared
 $meta = $field->get_meta('html_info');
 
-# Note: don't confuse $meta->{'disp'} with a row in %conf 
+# Note: don't confuse $meta->{'disp'} with a row in %conf
 # beginning with 'disp'
 
 %conf = (
@@ -73,7 +71,7 @@ $meta = $field->get_meta('html_info');
     ],
     'textarea' => [
         ['disp' => 'Label', '.text'],
-        ['value' => 'Default Value', '.text'],
+        ['value' => 'Default Value', '.textarea'],
         ['maxlength' => 'Max size', '.number'],
         ['rows' => 'Rows', '.number'],
         ['cols' => 'Columns', '.number'],

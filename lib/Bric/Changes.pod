@@ -107,6 +107,11 @@ Users granted permission to access the members of a group via two user group
 associations now always get the highest priority permission, as it should
 be. Thanks to Patrick Walsh for the stot. [David]
 
+=item *
+
+Textarea fields in elements no longer lose some of their default data after
+editing the field in the element manager. Reported by Todd Tyree. [David]
+
 =back
 
 =head1 VERSION 1.6.8 (2003-11-29)
