@@ -90,22 +90,22 @@ Pod::Perldoc from CPAN to generate HTML files:
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using a C<cvs -z3 diff -u> command on each of the
+Patches should be generated using the C<svn diff> command on each of the
 files modified, from the root directory. For example, if you made changes to
 F<lib/Bric/Changes.pod> and F<comp/foo.mc>, you would generate a diff by
-running this command from the root of your CVS checkout:
+running this command from the root of your Subversion checkout:
 
-  cvs -qz3 diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
+  svn diff lib/Bric/Changes.pod comp/foo.mc > patch.txt
 
 If you created one or more new files in your changes then you'll have to add
 them to the patch separately using normal C<diff> against C</dev/null>. For
 example, if you created the file C<inst/upgrade/1.9.1/solve_fermat.pl> then
 you would add this to patch.txt with:
 
-  diff -qz3 -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
+  diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
 
-Always create patches using the most recent CVS version if possible. Send your
-patches to the bricolage-devel list mentioned above.
+Always create patches using an up-to-date Subversion checkout if possible.
+Send your patches to the bricolage-devel list mentioned above.
 
 =head1 APPLYING PATCHES
 
