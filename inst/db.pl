@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-05-10 19:44:54 $
+$Date: 2002-08-09 18:09:14 $
 
 =head1 DESCRIPTION
 
@@ -127,6 +127,12 @@ sub create_user {
 
 # load schema and data into database
 sub load_db {
+    # make sure we have a bricolage.sql and that it's not empty (this
+    # can happen if you "make dist" from a distribution due to missing
+    # .sql files)
+    hard_fail("Missing or empty inst/bricolage.sql!")
+      unless -e "inst/bricolage.sql" and -s _;
+
     # open bricolage.sql, created in an earlier rule or by "make dist"
     # in days gone by.
     open(SQL, "inst/bricolage.sql") 
@@ -134,84 +140,74 @@ sub load_db {
 
     print "Loading Bricolage Database. (this could take a few minutes)\n";
 
-    # I wish there was a better way to avoid all the annoying NOTICE
-    # warnings.  According to the PostgreSQL mailing-list archives
-    # this is on "the agenda".  That was over a year ago.
-    return $_ if $_ = fork;
-    close STDERR;
-
-    # open an eval so that die()s can be sent to STDOUT
-    eval {	
-	# connect to target database
-	my $dbh = db_connect($PG->{db_name});
-      
-	# run through sql executing queries as they are found
-	my $sql = "";
-	my ($result, $in_comment);
-	while (<SQL>) {
-	    next if /^--/ or /^\s*$/; # skip simple comments and blank lines
-
-	    # check for an end comment block
-	    if (m|\*/|) {
-		$in_comment = 0;
-		next;
-	    }
-
-	    # skip if we are in a commented block
-	    next if $in_comment;       
-	  	  
-	    # check for a start comment block
-	    if (m|/\*|) {
-		$in_comment = 1;
-		next;
-	    }
-
-	    # if we are at the end of the statement, execute it
-	    if (s/;\s*$//) {
-		hard_fail("Database error on statement:\n\n",
-			  $sql, "\n\nError was:\n\n", $dbh->errstr, "\n")
-		    unless ($dbh->do($sql . $_));
-		$sql = '';
-		next;
-	    }	    
-	  
-	    # otherwise, concat and keep looking
-	    $sql .= $_;
-	}
-	close(SQL);
-	print "Done.\n";
-      
-      	# assign all permissions to SYS_USER
-	print "Granting privilages...\n";
-      
-	# get a list of all tables and sequences that don't start with pg
-	my $objects = $dbh->selectcol_arrayref(<<'END');
+    # connect to target database
+    my $dbh = db_connect($PG->{db_name});
+    
+    # run through sql executing queries as they are found
+    my $sql = "";
+    my ($result, $in_comment);
+    while (<SQL>) {
+        next if /^--/ or /^\s*$/; # skip simple comments and blank lines
+        
+        # check for an end comment block
+        if (m|\*/|) {
+            $in_comment = 0;
+            next;
+        }
+        
+        # skip if we are in a commented block
+        next if $in_comment;       
+        
+        # check for a start comment block
+        if (m|/\*|) {
+            $in_comment = 1;
+            next;
+        }
+        
+        # if we are at the end of the statement, execute it
+        if (s/;\s*$//) {
+            hard_fail("Database error on statement:\n\n",
+                      $sql, "\n\nError was:\n\n", $dbh->errstr, "\n")
+              unless ($dbh->do($sql . $_));
+            $sql = '';
+            next;
+        }	    
+        
+        # otherwise, concat and keep looking
+        $sql .= $_;
+    }
+    close(SQL);
+    print "\n\n***** NOTICE lines above do not indicate errors *****\n\n";
+    print "Done.\n";
+    
+    # assign all permissions to SYS_USER
+    print "Granting privilages...\n";
+    
+    # get a list of all tables and sequences that don't start with pg
+    my $objects = $dbh->selectcol_arrayref(<<'END');
 SELECT relname
 FROM pg_class
 WHERE (relkind = 'S' OR relkind = 'r') AND 
       relname NOT LIKE 'pg%'
 END
-	die $dbh->errstr unless $objects;
-	
-	# loop over objects assigning perms
-	foreach my $obj (@$objects) {
-	    my $r = $dbh->do("GRANT SELECT, UPDATE, INSERT, DELETE ".
-			     "ON $obj TO $PG->{sys_user}");
-	    hard_fail("Database error granting permissions on $obj:\n\n",
-		      "Error was:\n\n", $dbh->errstr, "\n")
-		unless $r;
-	}
-
-	print "Done\n";
-      
-	# vacuum to create usable indexes
-	print "Finishing database...\n";
-	$dbh->do('VACUUM ANALYZE');
-	print "Done.\n";
-    };    
+    die $dbh->errstr unless $objects;
     
-    hard_fail("Error encountered during database load:\n\n$@\n") if $@;
+    # loop over objects assigning perms
+    foreach my $obj (@$objects) {
+        my $r = $dbh->do("GRANT SELECT, UPDATE, INSERT, DELETE ".
+                         "ON $obj TO $PG->{sys_user}");
+        hard_fail("Database error granting permissions on $obj:\n\n",
+                  "Error was:\n\n", $dbh->errstr, "\n")
+          unless $r;
+    }
 
+    print "Done.\n";
+    
+    # vacuum to create usable indexes
+    print "Finishing database...\n";
+    $dbh->do('VACUUM ANALYZE');
+    print "Done.\n";
+    
     # all done - disconnect and kill this processes
     $dbh->disconnect;
     exit 0;
