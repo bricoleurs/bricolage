@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-03-20 19:33:48 $
+$Date: 2002-03-20 21:10:52 $
 
 =head1 SYNOPSIS
 
@@ -30,7 +30,7 @@ my $type = 'pref';
 my $disp_name = get_disp_name($type);
 
 my $handle_parse_format = sub {
-  my ( $param, $name ) = shift( @_ );
+  my ( $param, $name ) = @_;
   my @acceptable_tokens = qw( categories day month year slug );
   my ( @bad_tokens, @good_tokens );
   my $value = $param->{ 'value' };
