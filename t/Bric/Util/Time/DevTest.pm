@@ -18,7 +18,7 @@ BEGIN {
     # remain the same for the lifetime of the tests. This is to prevent those
     # tests that test for the time *right now* from getting screwed up by the
     # clock turning over.
-    *CORE::GLOBAL::time = sub { $USE_CORE ? CORE::time : $epoch };
+    *CORE::GLOBAL::time = sub () { $USE_CORE ? CORE::time() : $epoch };
 }
 
 
