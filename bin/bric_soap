@@ -19,7 +19,7 @@ Modules:
 
 Commands:
 
-  Asset Commands (Story, Media, Template, Element):
+  Asset Commands (Story, Media, Template, Element, Category):
 
     list_ids
     export
@@ -60,7 +60,7 @@ Options:
 
   --workflow - workflow option for move command
 
-  --search "field=value" - specify a search for list_ids, field must
+  --search="field=value" - specify a search for list_ids, field must
                            be a valid search field for the list_ids()
                            method of the appropriate module.
 
@@ -101,14 +101,14 @@ Delete all stories (gasp!):
 
 Publish all unpublished stories:
 
-  bric_soap story list_ids --search "publish_status=0"
+  bric_soap story list_ids --search="publish_status=0" 
   | bric_soap workflow publish -
 
 Republish all published stories.  This is useful when a template
 change needs to reflected across a site.  The C<sort -k2 -t_ -n> is a
 crude way to make sure that newer stories overwrite older ones.
 
-  bric_soap story list_ids --search "publish_status=1" \
+  bric_soap story list_ids --search="publish_status=1" \
   | sort -k2 -t_ -n
   | bric_soap workflow publish -
 
@@ -118,7 +118,7 @@ stories.  Then publish the story along with any related stories or
 media.
 
   bric_soap story list_ids \
-     --search "title=Annoying Ad Turns Man Pro-Whaling" \
+     --search="title=Annoying Ad Turns Man Pro-Whaling" \
   | bric_soap story export --all - \
   | bric_soap story create --server http://some.host.org - \
   | bric_soap workflow publish --server http://some.host.org -
@@ -210,6 +210,13 @@ our %jump = (
 			  delete   => \&delete,
 			 },
 	     Element => {
+			  list_ids => \&list_ids,
+			  export   => \&export,
+			  create   => \&create,
+			  update   => \&update,
+			  delete   => \&delete,
+			 },
+	     Category => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
@@ -471,7 +478,7 @@ sub move {
 sub _read_ids {
   my ($default_type) = @_;
   my @ids;
-  while ($_ = shift @ARGV) {
+  while (defined($_ = shift @ARGV)) {
       if ($_ eq '-') {
 	  print STDERR "$module $command: Reading ids from STDIN...\n"
 	      if $verbose;
