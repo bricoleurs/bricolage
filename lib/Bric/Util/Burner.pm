@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 21:41:35 $
+$Date: 2001-12-27 21:50:44 $
 
 =head1 SYNOPSIS
 
@@ -421,17 +421,10 @@ sub burn_one {
 
     # instantiate the proper subclass and call burn_one()
     my $burner = $burner_class->new($self);
-    return $burner->burn_one($ba, $at, $oc, $cat);      
+    return $burner->burn_one($ba, $at, $oc, $cat);
 }
 
 1;
-
-package Bric::Util::Burner::XMLWriterHandle;
-
-sub new { bless {} }
-
-sub print { $HTML::Mason::Commands::m->out(@_[1..$#_]) }
-
 __END__
 
 =back
@@ -442,7 +435,6 @@ __END__
 =head1 AUTHOR
 
 "Garth Webb" <garth@perijove.com>
-Bricolage Engineering
 
 Sam Tregar <stregar@about-inc.com>
 
