@@ -1,11 +1,10 @@
 #!/usr/bin/perl -w
 
 use strict;
+use File::Spec::Functions qw(catdir updir);
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Util::DBI qw(:all);
-
 
 my ($name) = row_array("SELECT name FROM element WHERE key_name = ''");
 exit unless defined $name;
