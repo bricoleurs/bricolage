@@ -8,18 +8,18 @@ Bric::Util::DBD::Pg - The Bricolage PostgreSQL Driver
 
 =head1 VERSION
 
-$Revision: 1.6.2.1 $
+$Revision: 1.6.2.2 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.6.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.6.2.2 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-08 04:01:58 $
+$Date: 2002-03-09 01:40:30 $
 
 =head1 SYNOPSIS
 
@@ -92,8 +92,8 @@ use Bric::Config qw(:dbi);
 # This variable tells Bric::Util::DBI whether this driver supports transactions
 use constant TRANSACTIONAL => 1;
 use constant DSN_STRING => 'dbname=' . DB_NAME
-  . (DB_HOST ? ';host=' . DB_HOST : '')
-  . (DB_PORT ? ';port=' . DB_PORT : '');
+  . (DB_HOST ? eval "';host=' . DB_HOST" : '')
+  . (DB_PORT ? eval "';port=' . DB_PORT" : '');
 
 ################################################################################
 # Inheritance
