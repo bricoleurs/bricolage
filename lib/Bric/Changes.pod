@@ -179,6 +179,12 @@ look up an object with an ID of 0. [JoE<atilde>o Pedro]
 
 Switched exceptions from home-grown to using Exception::Class. [Scott]
 
+=item *
+
+The installer now offers a more meaningful message when it encounters an
+existing database and the user doesn't want to drop that existing database.
+[David]
+
 =back
 
 =head2 Bug Fixes

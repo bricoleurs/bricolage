@@ -6,11 +6,11 @@ db.pl - installation script to install database
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =head1 DATE
 
-$Date: 2003-02-25 16:17:47 $
+$Date: 2003-02-28 02:02:17 $
 
 =head1 DESCRIPTION
 
@@ -62,6 +62,8 @@ sub exec_sql {
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
         @$res = `$PG->{psql} -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        # Shift off the column headers.
+        shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
@@ -82,16 +84,23 @@ sub create_db {
 
     if ($err) {
         # There was an error. Offer to drop the datbase if it already exists.
-        if ($err =~ /database "[^"]+" already exists/ and
-            ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
-                      "Drop database? [no] ", 0)) {
-            if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0, 'template1')) {
-                hard_fail("Failed to drop database.  The database error ",
-                          "was:\n\n$err\n")
+        if ($err =~ /database "[^"]+" already exists/) {
+            if (ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
+                          "Drop database? [no] ", 0)) {
+                # Drop the database.
+                if ($err = exec_sql("DROP DATABASE $PG->{db_name}", 0,
+                                    'template1')) {
+                    hard_fail("Failed to drop database.  The database error ",
+                              "was:\n\n$err\n")
+                }
+                return create_db();
+            } else {
+                unlink 'postgres.db';
+                hard_fail("Cannot proceed. Please run 'make postgres.db' ",
+                          "and then run 'make install' again");
             }
-            return create_db();
         } else {
-            hard_fail("Failed to create database. The database error wase\n\n",
+            hard_fail("Failed to create database. The database error was\n\n",
                       "$err\n");
         }
     }
@@ -139,11 +148,13 @@ sub load_db {
       unless -e $db_file and -s _;
 
     print "Loading Bricolage Database. (this could take a few minutes)\n";
-    exec_sql(0, $db_file);
+    my $err = exec_sql(0, $db_file);
+    hard_fail("Error loading database. The database error was\n\n$err\n")
+      if $err;
     print "\nDone.\n";
 
     # assign all permissions to SYS_USER
-    print "Granting privilages...\n";
+    print "Granting privileges...\n";
 
     # get a list of all tables and sequences that don't start with pg
     my $sql = qq{
@@ -154,16 +165,20 @@ sub load_db {
     };
 
     my @objects;
-    exec_sql($sql, 0, 0, \@objects);
+    $err = exec_sql($sql, 0, 0, \@objects);
+    hard_fail("Failed to get list of objects. The database error was\n\n",
+              "$err\n") if $err;
 
     my $objects = join (', ', map { chomp; $_ } @objects);
 
     $sql = qq{
         GRANT SELECT, UPDATE, INSERT, DELETE
         ON    $objects
-        TO    $PG->{sys_user}
+        TO    $PG->{sys_user};
     };
-    exec_sql($sql);
+    $err = exec_sql($sql);
+    hard_fail("Failed to Grant privileges. The database error was\n\n$err")
+      if $err;
 
     print "Done.\n";
 
