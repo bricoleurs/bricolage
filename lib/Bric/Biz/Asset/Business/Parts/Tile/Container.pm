@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.18.2.1 $
+$Revision: 1.18.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.2.2 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-03-05 18:48:06 $
+$Date: 2003-03-09 03:02:22 $
 
 =head1 SYNOPSIS
 
@@ -820,7 +820,7 @@ sub get_data {
     # name rather than the display name.
     if ($name =~ /[^a-z]/) {
         ($name = lc($name)) =~ y/a-z/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is depreciated for ".
+        my $msg = "Warning:  Use of element's 'name' field is deprecated for ".
                   "use with element method 'get_data'.  Please use the ".
                   "element's 'key_name' field instead";
         Bric::App::Util::add_msg($msg);
@@ -860,7 +860,7 @@ sub get_container {
     # name rather than the display name.
     if ($name =~ /[^a-z]/) {
         ($name = lc($name)) =~ y/a-z/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is depreciated for ".
+        my $msg = "Warning:  Use of element's 'name' field is deprecated for ".
                   "use with element method 'get_container'.  Please use the ".
                   "element's 'key_name' field instead";
         Bric::App::Util::add_msg($msg);
