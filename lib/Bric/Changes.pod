@@ -97,6 +97,10 @@ getting lost. Thanks to Mike Slattery for the spot. [Sam]
 
 =item *
 
+Fixed bug in HTML::Template burner where templates in non-root categories could not be found.  Thanks to Marlon Bermas for the spot.  [Sam]
+
+=item *
+
 All fixes in the soon-to-be-released 1.2.2 version.  See below for details.
 
 =back
