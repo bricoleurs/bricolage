@@ -4,11 +4,11 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =head1 DATE
 
-$Date: 2002-05-18 13:35:00 $
+$Date: 2002-05-23 20:20:39 $
 
 =head1 DESCRIPTION
 
@@ -234,17 +234,40 @@ a lot of data but it can be very helpful.
 
 =item *
 
-If you're working on a performance problem, considering setting
-DBI_PROFILE and using bric_dbprof to analyze database query
-performance.
-
-=item *
-
 Look at the database directly using psql.  Many bugs in Bricolage can
 only be successful diagnosed by examining records being created in the
 database.
 
 =back
+
+=head1 PERFORMANCE TUNING
+
+Bricolage has two separate profiling systems that you can use to
+extract performance data:
+
+=over 4
+
+=item *
+
+To run Bricolage under the Devel::Profiler module set the PROFILE
+variable on in your bricolage.conf file and restart your server.  This
+will create a profiler/$$/tmon.out file in your Apache log directory
+for each server process.  You can use dprofpp to analyze these files
+after the server has been stopped with "bric_apachectl stop".  See the
+Devel::Profiler documentation for more details.
+
+=item *
+
+The database profiler is activated by setting the DBI_PROFILE option
+on in bricolage.conf.  This causes database profiling traces to be
+written to the Aapche error_log during requests.  You can then use
+bric_dbprof to analyze these trace.  See the bric_dbprof manpage for
+details.
+
+=back
+
+B<CAUTION:> Neither of these options is appropriate for a production
+system.
 
 =head1 ACTIONS AND MOVERS
 

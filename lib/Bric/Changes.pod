@@ -213,6 +213,11 @@ system.  [Matt]
 Added search paging preference to break search results into multiple
 pages.  [Adam]
 
+=item *
+
+Added support for running Bricolage under Devel::Profiler with the new
+PROFILE configuration option.  [Sam]
+
 =back
 
 =head1 VERSION 1.3.1

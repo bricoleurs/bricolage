@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.41 $
+$Revision: 1.42 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.41 $ )[-1];
+our $VERSION = (qw$Revision: 1.42 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-20 03:21:59 $
+$Date: 2002-05-23 20:20:39 $
 
 =head1 SYNOPSIS
 
@@ -114,6 +114,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     FTP_DEBUG
 		    DISABLE_NAV_LAYER
 		    TEMP_DIR
+                    PROFILE
 		   );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -159,7 +160,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 				     DIST_ATTEMPTS
 				     PREVIEW_LOCAL)],
 		    qa        => [qw(QA_MODE 
-					 TEMPLATE_QA_MODE)],
+                                     TEMPLATE_QA_MODE)],
 		    err       => [qw(ERROR_URI)],
 		    char      => [qw(CHAR_SET)],
 		    ui        => [qw(FIELD_INDENT
@@ -193,6 +194,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 				     FTP_LOG
 				     FTP_DEBUG)],
 		    temp      => [qw(TEMP_DIR)],
+                    profile   => [qw(PROFILE)],
 		   );
 
 #=============================================================================#
@@ -251,7 +253,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 	}
 	# While these default to 0.
 	foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER SSL_ENABLE
-                    DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE))
+                    DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
+                    PROFILE))
 	{
 	    my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
 	    $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -401,6 +404,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 
     # Temp Dir Setting
     use constant TEMP_DIR        => $config->{TEMP_DIR} || tmpdir();
+
+    # Profiler settings
+    use constant PROFILE => $config->{PROFILE} || 0;
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {

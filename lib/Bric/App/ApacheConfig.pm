@@ -59,7 +59,7 @@ BEGIN {
 package Apache::ReadConfig;
 use strict;
 use warnings;
-use Bric::Config qw(:conf :sys_user :qa :temp);
+use Bric::Config qw(:conf :sys_user :qa :temp :profile);
 use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
@@ -85,6 +85,10 @@ do {
 		   ($DEBUGGING ?  
 		    (PerlFixupHandler => 'Apache::DB') : ()), 
 		 );
+
+    # set up profiling with Devel::Profiler - this installs a
+    # ChildInitHandler
+    require Devel::Profiler::Apache if PROFILE;
 
     if (PREVIEW_LOCAL) {
 	# This will slow down every request; thus we recommend that previews
