@@ -118,6 +118,12 @@ mesages and JavaScript messages. [Kang-min Liu]
 Relabeled the "Pre" and "Post" attributes of output channels as "URI Prefix"
 and "URI Suffix", respectively. [Serge Sozonoff]
 
+=item *
+
+Added C<get_element()> method to Bric::Biz::Asset::Business and deprecated the
+C<get_tile()> method. This will make things a bit more consistent for template
+developers, at least. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -161,7 +167,8 @@ an error and was useless anyway. [Scott]
 
 =item *
 
-Fixed Template Element list, where container elements appeared twice. [Joao Pedro]
+Fixed Template Element list, where container elements appeared twice. [Joao
+Pedro]
 
 =back
 

@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.54 $
+$Revision: 1.55 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.54 $ )[-1];
+our $VERSION = (qw$Revision: 1.55 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-11 23:05:46 $
+$Date: 2004-02-18 17:47:45 $
 
 =head1 SYNOPSIS
 
@@ -1512,9 +1512,12 @@ sub _find_related {
 
 ################################################################################
 
-=item $container_tile = $ba->get_tile()
+=item $element = $ba->get_element
 
-Returns the top level tile that coresponds to this Asset
+ my $element = $ba->get_element;
+ $element = $ba->get_tile; # Deprecated form.
+
+Returns the top level element that contains content for this document.
 
 B<Throws:>
 
@@ -1530,8 +1533,8 @@ NONE
 
 =cut
 
-sub get_tile {
-    my ($self) = @_;
+sub get_element {
+    my $self = shift;
     my $object = $self->_get_alias || $self;
     my $tile = $self->_get('_tile');
     unless ($tile) {
@@ -1543,6 +1546,8 @@ sub get_tile {
     }
     return $tile;
 }
+
+sub get_tile { goto &get_element };
 
 ################################################################################
 
