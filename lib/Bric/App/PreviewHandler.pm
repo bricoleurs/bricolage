@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.2.2.2 $
+$Revision: 1.2.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.2.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.2.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-06 23:18:32 $
+$Date: 2001-11-16 00:19:39 $
 
 =head1 SYNOPSIS
 
@@ -123,6 +123,11 @@ B<Notes:> NONE.
 sub uri_handler {
     my $r = shift;
     my $ret = eval {
+	# Set the headers to always expire the document.
+	my $headers = $r->headers_out;
+	$headers->{'Pragma'} = $headers->{'Cache-control'} = 'no-cache';
+	$r->no_cache(1);
+
 	# Grab the URI and break it up into its constituent parts.
 	my $uri = $r->uri;
 	my @dirs = $fs->split_uri($uri);
