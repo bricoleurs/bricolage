@@ -51,6 +51,7 @@ do_sql
   qq{CREATE UNIQUE INDEX udx_site__domain_name ON site(LOWER(domain_name))},
   qq{CREATE INDEX fkx_site__site_member ON site_member(object_id)},
   qq{CREATE INDEX fkx_member__site_member ON site_member(member__id)},
+  qq{CREATE INDEX idx_grp__description ON grp(LOWER(description))},
 
   ############################################################################
   # Add the sequence.
@@ -72,13 +73,65 @@ do_sql
   # Add the default site group.
   qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
                       permanent)
-     VALUES (100, NULL, 76, 'Default Site', 'Default Site Group.', 1, 1)},
+     VALUES (100, NULL, 43, 'Secret Site Asset Group', NULL, 1, 1)},
 
   qq{INSERT INTO member (id, grp__id, class__id, active)
      VALUES (166, 35, 6, 1)},
 
   qq{INSERT INTO grp_member (id, object_id, member__id)
      VALUES (57, 100, 166)},
+
+  ############################################################################
+  # Add the Default site READ secret user group.
+  qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
+                      permanent)
+     VALUES (200, 0, 8, 'Default Site READ Users', '__Site 100 Users__', 1,
+             0)},
+
+  qq{INSERT INTO member (id, grp__id, class__id, active)
+     VALUES (700, 3, 6, 1)},
+
+  qq{INSERT INTO grp_member (id, object_id, member__id)
+     VALUES (700, 200, 700)},
+
+  ############################################################################
+  # Add the Default site EDIT secret user group.
+  qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
+                      permanent)
+    VALUES (201, 0, 8, 'Default Site EDIT Users', '__Site 100 Users__', 1,
+            0)},
+
+  qq{INSERT INTO member (id, grp__id, class__id, active)
+     VALUES (701, 3, 6, 1)},
+
+  qq{INSERT INTO grp_member (id, object_id, member__id)
+     VALUES (701, 201, 701)},
+
+  ############################################################################
+  # Add the Default site CREATE secret user group.
+  qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
+                      permanent)
+     VALUES (202, 0, 8, 'Default Site CREATE Users', '__Site 100 Users__', 1,
+             0)},
+
+  qq{INSERT INTO member (id, grp__id, class__id, active)
+     VALUES (702, 3, 6, 1)},
+
+  qq{INSERT INTO grp_member (id, object_id, member__id)
+     VALUES (702, 202, 702)},
+
+  ############################################################################
+  # Add the Default site DENY secret user group.
+  qq{INSERT INTO grp (id, parent_id, class__id, name, description, secret,
+                      permanent)
+     VALUES (203, 0, 8, 'Default Site DENY Users', '__Site 100 Users__', 1,
+             0)},
+
+  qq{INSERT INTO member (id, grp__id, class__id, active)
+     VALUES (703, 3, 6, 1)},
+
+  qq{INSERT INTO grp_member (id, object_id, member__id)
+     VALUES (703, 203, 703)},
 
   ############################################################################
   # Add the "Default Site" site.

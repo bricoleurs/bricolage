@@ -51,19 +51,20 @@ if (defined $id) {
       || $memb_pkg eq 'Bric::Biz::Person::User'
       ? get_pref('List Name Format') : undef;
 
-    # Get the existing members.
     if ($class_name eq 'Bric::Util::Grp::Source') {
+        # Get existing members.
 	foreach my $mem ( $grp->get_members ) {
 	    my $obj = $mem->get_object;
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_source_name };
-    }
+        }
 	# Get potential members.
 	foreach my $obj ( $memb_pkg->list ) {
 	    push @$left, { value =>  $obj->get_id,
 			   description => $obj->get_source_name };
 	}
     } elsif ($class_name eq 'Bric::Util::Grp::CategorySet') {
+        # Get existing members.
 	foreach my $mem ( $grp->get_members ) {
 	    my $obj = $mem->get_object;
 	    push @$right, { value =>  $obj->get_id,
@@ -75,13 +76,14 @@ if (defined $id) {
 			   description => $obj->get_uri };
 	}
     } else {
+        # Get existing members.
 	foreach my $mem ( $grp->get_members ) {
 	    my $obj = $mem->get_object;
 	    push @$right, { value =>  $obj->get_id,
 			    description => $obj->get_name($format) };
-    }
+        }
 	# Get potential members.
-	foreach my $obj ( $memb_pkg->list ) {
+	foreach my $obj ( $memb_pkg->list({ active => 1 }) ) {
 	    push @$left, { value =>  $obj->get_id,
 			   description => $obj->get_name($format) };
 	}
@@ -199,11 +201,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.8.2.1 $
 
 =head1 DATE
 
-$Date: 2002-11-09 01:43:44 $
+$Date: 2003-03-08 04:11:36 $
 
 =head1 DESCRIPTION
 

@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.36.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.36.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 20:22:05 $
+$Date: 2003-03-08 04:11:37 $
 
 =head1 SYNOPSIS
 
@@ -317,6 +317,10 @@ Otherwise only non-secret groups will be returned.
 =item name
 
 The name of a group.
+
+=item description
+
+A group description.
 
 =item permananent
 
@@ -2812,6 +2816,11 @@ sub _do_list {
     if ( $criteria->{name} ) {
         push @wheres, 'LOWER(g.name) LIKE ?';
         push @params, lc($criteria->{name});
+    }
+
+    if ( $criteria->{description} ) {
+        push @wheres, 'LOWER(g.description) LIKE ?';
+        push @params, lc($criteria->{description});
     }
 
     if ( exists $criteria->{permanent} ) {

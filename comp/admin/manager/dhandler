@@ -149,6 +149,8 @@ if ($type eq 'job') {
     $sel_widg = 'workflow|delete_cb';
 } elsif ($type eq 'dest') {
     $sel_widg = 'dest|delete_cb';
+} elsif ($type eq 'site') {
+    $sel_widg = 'site|delete_cb';
 } else {
     $sel_widg = 'listManager|deactivate_cb';
 }
@@ -376,11 +378,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.22.2.2 $
+$Revision: 1.22.2.3 $
 
 =head1 DATE
 
-$Date: 2003-03-07 07:42:19 $
+$Date: 2003-03-08 04:11:36 $
 
 =head1 SYNOPSIS
 

@@ -22,25 +22,11 @@ sub table { 'site' }
 # Setup methods.
 ##############################################################################
 # Setup some sites to play with.
-sub setup_sites : Test(setup => 31) {
+sub setup_sites : Test(setup => 13) {
     my $self = shift;
     # Create a new site group.
     ok( my $grp = Bric::Util::Grp::Site->new({ name => 'Test SiteGrp' }),
         "Create group" );
-
-    # Retrieve the "All Users" group.
-    my $ug_id = Bric::Biz::Person::User->INSTANCE_GROUP_ID;
-    ok( my $usr_grp = Bric::Util::Grp::User->lookup({ id => $ug_id }),
-        "Look up All Users" );
-
-    # Create a new user group.
-    ok( my $deny_grp = Bric::Util::Grp::User->new({ name => 'Deny Users' }),
-        "Create deny user group" );
-    ok( $deny_grp->add_member({ id      => $self->user_id,
-                                package => 'Bric::Biz::Person::User' }),
-        "Add admin user to deny group" );
-    ok( $deny_grp->save, "Save deny group" );
-    $self->add_del_ids($deny_grp->get_id, 'grp');
 
     # Create some test records.
     my @sites;
@@ -55,29 +41,15 @@ sub setup_sites : Test(setup => 31) {
         my $id = $site->get_id;
         $self->add_del_ids($id);
         $self->add_del_ids($id, 'grp');
-        # Create the permission and schedule it for deletion.
-        ok( my $priv = Bric::Util::Priv->new({ usr_grp => $usr_grp,
-                                               obj_grp => $site->get_grp,
-                                               value   => CREATE }),
-            "Create CREATE priv" );
-        ok( $priv->save, "Save priv" );
-        $self->add_del_ids($priv->get_id, 'grp_priv');
 
+        $grp->add_member({ obj => $site }) if $n % 2;
 
-        if ($n % 2) {
-            $grp->add_member({ obj => $site }) if $n % 2;
-        } else {
-            # Create a DENY permission. It should override the CREATE
-            # permission for the two sites it's created for.
-            ok( my $priv = Bric::Util::Priv->new({ usr_grp => $deny_grp,
-                                                   obj_grp => $site->get_grp,
-                                                   value   => DENY }),
-                "Create DENY priv" );
-            ok( $priv->save, "Save priv" );
-            $self->add_del_ids($priv->get_id, 'grp_priv');
-        }
+        # Schedule the secret user gropus for deletion.
+        $self->add_del_ids(scalar Bric::Util::Grp::User->list_ids
+                           ({ description => "__Site $id Users__",
+                              all         => 1 }), 'grp');
 
-        # Save the new site.
+        # Cache the new site.
         push @sites, $site;
     }
 
@@ -331,11 +303,12 @@ sub test_save : Test(36) {
     ok( $site->set_description($desc), "Change description" );
     is( $site->get_description, $desc, "Check description" );
     ok( $site->is_active, "Check is active" );
-    is( $site->get_grp->get_id, $site->get_id, "Check group ID is ID" );
+    is( $site->get_asset_grp->get_id, $site->get_id,
+        "Check asset group ID is ID" );
     ok( my $grp_ids = $site->get_grp_ids, "Get group IDs" );
     isa_ok( $grp_ids, 'ARRAY', "Check group IDs are in an array" );
     # There could be other group IDs, but we can't know what they are now.
-    ok( scalar @$grp_ids >= 2, "Check for at least two group IDs" );
+    ok( scalar @$grp_ids >= 1, "Check for at least one group ID" );
     ok( $site->save, "Save site" );
 
     # Look it up in the database and verify the values.
@@ -344,7 +317,8 @@ sub test_save : Test(36) {
     is( $site->get_domain_name, $dn, "Check domain name" );
     is( $site->get_description, $desc, "Check description" );
     ok( $site->is_active, "Check is active" );
-    is( $site->get_grp->get_id, $site->get_id, "Check group ID is ID" );
+    is( $site->get_asset_grp->get_id, $site->get_id,
+        "Check asset group ID is ID" );
     ok( $grp_ids = $site->get_grp_ids, "Get group IDs" );
     isa_ok( $grp_ids, 'ARRAY', "Check group IDs are in an array" );
     ok( scalar @$grp_ids >= 2, "Check for at least two group IDs" );
@@ -366,10 +340,80 @@ sub test_save : Test(36) {
     is( $site->get_domain_name, $dn, "Check domain name" );
     is( $site->get_description, $desc, "Check description" );
     ok( ! $site->is_active, "Check is not active" );
-    is( $site->get_grp->get_id, $site->get_id, "Check group ID is ID" );
+    is( $site->get_asset_grp->get_id, $site->get_id,
+        "Check asset group ID is ID" );
     ok( eq_set( scalar $site->get_grp_ids, $grp_ids), "Check group IDs" );
 }
 
+
+##############################################################################
+# Test permission groups.
+sub test_priv_grps : Test(31) {
+    my $self = shift;
+    my $site = $self->{test_sites}[0];
+
+    # Make sure that there are four user groups for this site.
+    ok( my @grps = $site->list_priv_grps, "Get user groups" );
+    is( scalar @grps, 4, "Check for four groups" );
+
+    # Check their names.
+    ok( my $name = $site->get_name, "Get name" );
+    my $name_regex = qr/^$name/;
+    foreach my $grp (@grps) {
+        isa_ok($grp, 'Bric::Util::Grp::User');
+        like( $grp->get_name, $name_regex, "Check name" );
+        ok( $grp->get_permanent, "Check that it's permanent" );
+    }
+
+    # Chane the site's name.
+    ok( $site->set_name('Biggie'), "Change name" );
+    ok( $site->save, "Save site" );
+
+    # Load 'em up again.
+    ok( @grps = $site->list_priv_grps, "Get user groups again" );
+    is( scalar @grps, 4, "Check for four groups again" );
+
+    # Check that they've been renamed.
+    $name_regex = qr/^Biggie/;
+    foreach my $grp (@grps) {
+        isa_ok($grp, 'Bric::Util::Grp::User');
+        like( $grp->get_name, $name_regex, "Check new name" );
+    }
+
+    # Make sure we got an asset group, too.
+    ok( my $grp = $site->get_asset_grp, "Get asset group" );
+    isa_ok($grp, 'Bric::Util::Grp::Asset');
+    is( $grp->get_id, $site->get_id, "Check asset group ID is site ID" );
+    is( $grp->get_name, 'Secret Site Asset Group', "Check site name" );
+}
+
+##############################################################################
+# Test Permissions.
+sub test_privs : Test(18) {
+    my $self = shift;
+    my $site = $self->{test_sites}[0];
+
+    # Grab the permissions for this sucker.
+    ok( my @privs = Bric::Util::Priv->list({ obj_grp_id => $site->get_id }),
+        "List the permissions" );
+    is( scalar @privs, 4, "Check for 4 permissions" );
+
+    # Check their values. There should be one for each permission.
+    my %perms = %{ Bric::Util::Priv->vals_href };
+    my %seen;
+    foreach my $priv (@privs) {
+        ok( delete $perms{$priv->get_value}, "Get value" );
+        $seen{$priv->get_id} = 1;
+    }
+
+    # Grab the permissions associated with the user groups.
+    foreach my $ugrp ($site->list_priv_grps) {
+        ok( my @p = Bric::Util::Priv->list({ usr_grp_id => $ugrp->get_id }),
+            "List user privs" );
+        is( scalar @p, 1, "Check for one priv" );
+        ok( delete $seen{$p[0]->get_id}, "Check we've seen it" );
+    }
+}
 
 1;
 __END__

@@ -20,6 +20,7 @@ if ($param->{delete}) {
     $site->save;
     $c->set_lmu_time;
     $c->set('__SITES__', 0);
+    $c->set('__WORKFLOWS__', 0);
     log_event("${type}_deact", $site);
     set_redirect('/admin/manager/site');
     add_msg($lang->maketext("$disp_name profile &quot;[_1]&quot; deleted.",
@@ -34,8 +35,36 @@ eval {
     $site->set_domain_name($param->{domain_name});
     $site->save;
     $c->set('__SITES__', 0);
+    $c->set('__WORKFLOWS__', 0);
     add_msg($lang->maketext("$disp_name profile [_1] saved.", $param->{name}));
     log_event($type . '_save', $site);
+
+    # Take care of group managment.
+    if ($param->{add_grp} or $param->{rem_grp}) {
+
+        my @add_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
+          @{mk_aref($param->{add_grp})};
+        my @del_grps = map { Bric::Util::Grp->lookup({ id => $_ }) }
+          @{mk_aref($param->{rem_grp})};
+
+        # Assemble the new member information.
+        foreach my $grp (@add_grps) {
+            # Add the user to the group.
+            $grp->add_members([{ obj => $site }]);
+            $grp->save;
+            log_event('grp_save', $grp);
+        }
+
+        foreach my $grp (@del_grps) {
+            # Deactivate the user's group membership.
+            foreach my $mem ($grp->has_member({ obj => $site })) {
+                $mem->deactivate;
+                $mem->save;
+            }
+            $grp->save;
+            log_event('grp_save', $grp);
+        }
+    }
     set_redirect('/admin/manager/site');
 };
 
@@ -56,11 +85,11 @@ return $site;
 
 =head1 VERSION
 
-$Revision: 1.1.2.1 $
+$Revision: 1.1.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-07 07:42:20 $
+$Date: 2003-03-08 04:11:37 $
 
 =head1 SYNOPSIS
 

@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.6 $
+$Revision: 1.1.2.7 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.7 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-07 22:17:04 $
+$Date: 2003-03-08 04:11:37 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.6 2003-03-07 22:17:04 wheeler Exp $
+$Id: Site.pm,v 1.1.2.7 2003-03-08 04:11:37 wheeler Exp $
 
 =back
 
@@ -72,8 +72,11 @@ use strict;
 ##############################################################################
 # Programmatic Dependences
 use Bric::Util::Grp::Site;
+use Bric::Util::Grp::User;
+use Bric::Util::Grp::Asset;
 use Bric::Util::DBI qw(:standard col_aref);
 use Bric::Util::Fault qw(throw_da throw_not_unique);
+use Bric::Util::Priv;
 use Bric::Config qw(:qa);
 
 ##############################################################################
@@ -84,7 +87,7 @@ use base qw(Bric);
 ##############################################################################
 # Function and Closure Prototypes
 ##############################################################################
-my ($get_em, $set_unique_attr);
+my ($get_em, $set_unique_attr, $rename_grps);
 
 ##############################################################################
 # Constants
@@ -99,7 +102,7 @@ use constant INSTANCE_GROUP_ID => 47;
 # Private Class Fields
 
 my $TABLE = 'site';
-my @COLS = qw(id name description domain_name active);
+my @COLS =  qw(id name description domain_name active);
 my @PROPS = qw(id name description domain_name _active);
 
 my $SEL_COLS = 'a.' . join(', a.', @COLS) . ', m.grp__id';
@@ -119,7 +122,8 @@ BEGIN {
 
         # Private Fields
         _active     => Bric::FIELD_NONE,
-        _grp        => Bric::FIELD_NONE,
+        _asset_grp  => Bric::FIELD_NONE,
+        _rename     => Bric::FIELD_NONE,
        });
 }
 
@@ -469,40 +473,21 @@ sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 =head2 Instance Methods
 
-=head3 get_grp
-
-  my $site_grp = $site->get_grp;
-
-Returns the group object for this site. Used for creating permissions objects.
-
-B<Thows:>
-
-=over 4
-
-=item Exception::DA
-
-=back
-
-=cut
-
-sub get_grp {
-    my $self = shift;
-    my ($id, $grp) = $self->_get(qw(id _grp));
-    return $grp if $grp;
-    return unless $id;
-    $grp = Bric::Util::Grp::Site->lookup({ id => $id });
-    $self->_set(['_grp'], [$grp]);
-    return $grp;
-}
-
-##############################################################################
-
 =head3 save
 
   $site = $site->save;
 
 Saves any changes to the site object to the database. Returns the site object
 on success and throws an exception on failure.
+
+B<Side Effects:> Creates five internal permanent groups. One is a
+Bric::Util::Grp::Asset group. Its ID is used for the site ID, so that it can
+easily be used by Bric::Biz::Asset to add the ID to its C<grp_ids> attribute
+because every asset is related to a site. The other four are
+Bric::Util::Grp::User groups, and one is created for each permission, READ,
+EDIT, CREATE, and DENY. Furthermore, a Bric::Util::Priv object is created for
+each of these user groups in turn, to grant their users the appropriate
+permissions to any assets associated with the site.
 
 B<Thows:>
 
@@ -530,11 +515,17 @@ sub save {
 
         # Make it so.
         execute($upd, $self->_get(@PROPS), $id);
+
+        # Rename the groups, if need be.
+        $rename_grps->($self) if $self->_get('_rename');
     } else {
-        # Create a new secret group for this site.
-        my $grp = Bric::Util::Grp::Site->new({ name => 'Secret Site Group',
-                                               secret => 1 });
+        # Create a new permanent secret asset group for this site.
+        my $grp = Bric::Util::Grp::Asset->new
+          ({ name      => 'Secret Site Asset Group',
+             permanent => 1,
+             secret    => 1 });
         $grp->save;
+
         # Swipe the group's ID for our own!
         $id = $grp->get_id;
         $self->_set([qw(id _grp)], [$id, $grp]);
@@ -550,13 +541,23 @@ sub save {
         # Don't try to set ID - it will fail!
         execute($ins, $self->_get(@PROPS));
 
-        # Register this site in its private group and in the "All Sites" group.
+        # Register this site in the "All Sites" group and add the group ID.
         $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
-        $grp->add_member({ obj => $self });
-        $grp->save;
+        $self->_set(['grp_ids'], [[INSTANCE_GROUP_ID]]);
 
-        # Add the group IDs.
-        $self->_set(['grp_ids'], [[INSTANCE_GROUP_ID, $id]]);
+        # Create user permission groups.
+        my $name = $self->get_name;
+        my $privs = Bric::Util::Priv->vals_href ;
+        while (my ($priv, $field) = each %$privs) {
+            my $g = Bric::Util::Grp::User->new
+              ({ name        => "$name $field Users",
+                 description => "__Site $id Users__",
+                 permanent   => 1});
+            $g->save;
+            Bric::Util::Priv->new({ obj_grp => $grp,
+                                    usr_grp => $g,
+                                    value   => $priv })->save;
+        }
     }
 
     # Finish up.
@@ -566,6 +567,66 @@ sub save {
 ##############################################################################
 
 =begin private
+
+=head2 Private Instance Methods
+
+These methods are included for the sake of completeness, but since there
+appears to be no use for them currently, I'm keeping them private for now.
+
+=head3 get_asset_grp
+
+  my $site_grp = $site->get_asset_grp;
+
+Returns the group object for this site. Used for creating permissions objects.
+
+B<Note:> Do I<not> change the name, description, or permission associations of
+the asset group. Those functions are handled internally by Bric::Biz::Site.
+Just use this group to add and remove users you wish to associate with a site.
+
+B<Thows:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+sub get_asset_grp {
+    my $self = shift;
+    my ($id, $grp) = $self->_get(qw(id _asset_grp));
+    return $grp if $grp;
+    return unless $id;
+    $grp = Bric::Util::Grp::Asset->lookup({ id => $id });
+    $self->_set(['_asset_grp'], [$grp]);
+    return $grp;
+}
+
+##############################################################################
+
+=head3 list_priv_grps
+
+  my @grps = $site->list_priv_grps;
+  my $grps_aref = $site->list_priv_grps;
+
+Returns a list or array reference of the Bric::Util::Grp::User objects that
+are used for granting users permission to access the assets in a site.
+
+B<Note:> Do I<not> change the name, description, or permission associations of
+these groups. Those functions are handled internally by Bric::Biz::Site. Just
+use these groups to add and remove users you wish to associate with a site.
+
+=cut
+
+sub list_priv_grps {
+    my $self = shift;
+    my ($id, $old, $new) = $self->_get(qw(id _rename name));
+    Bric::Util::Grp::User->list({ description => "__Site $id Users__",
+                                  all         => 1 });
+}
+
+##############################################################################
 
 =head2 Private Functions
 
@@ -606,7 +667,7 @@ $set_unique_attr = sub {
     }
 
     # Success!
-    $self->_set([$field], [$value]);
+    $self->_set([$field, '_rename'], [$value, $old_value]);
 };
 
 ##############################################################################
@@ -713,6 +774,37 @@ $get_em = sub {
 
     return unless @sites;
     return wantarray ? @sites : \@sites;
+};
+
+##############################################################################
+
+=head3 $rename_grps
+
+  $get_em->($self);
+
+Looks up the associated user groups in the database and renames them. Used
+when the name of the site has changed. Since the permission user groups will
+appear in the UI, it makes sense that they always be appropriately named.
+
+B<Throws:>
+
+=over 4
+
+=item Exception::DA
+
+=back
+
+=cut
+
+$rename_grps = sub {
+    my $self = shift;
+    my ($old, $new) = $self->_get(qw(_rename name));
+    foreach my $grp ($self->list_priv_grps) {
+        (my $name = $grp->get_name) =~ s/^$old/$new/;
+        $grp->set_name($name);
+        $grp->save;
+    }
+    $self->_set(['_rename'], []);
 };
 
 1;

@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
--- VERSION: $Revision: 1.2.2.1 $
+-- VERSION: $Revision: 1.2.2.2 $
 --
--- $Date: 2003-03-04 01:26:47 $
+-- $Date: 2003-03-08 04:11:37 $
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES (0, NULL, 6, 'Root Group', 'The mother of all groups.', 1, 1);
@@ -417,15 +417,55 @@ VALUES (165, 35, 6, 1);
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES (56, 47, 165);
 
--- Create the Default site secret group.
+-- Create the Default site permanent group.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES (100, NULL, 76, 'Default Site', 'Default Site Group.', 1, 1);
+VALUES (100, NULL, 43, 'Secret Site Asset Group', NULL, 1, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (166, 35, 6, 1);
 
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES (57, 100, 166);
+
+-- Create the Default site READ secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (200, 0, 8, 'Default Site READ Users', '__Site 100 Users__', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (700, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (700, 200, 700);
+
+-- Create the Default site EDIT secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (201, 0, 8, 'Default Site EDIT Users', '__Site 100 Users__', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (701, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (701, 201, 701);
+
+-- Create the Default site CREATE secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (202, 0, 8, 'Default Site CREATE Users', '__Site 100 Users__', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (702, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (702, 202, 702);
+
+-- Create the Default site DENY secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES (203, 0, 8, 'Default Site DENY Users', '__Site 100 Users__', 0, 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (703, 3, 6, 1);
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES (703, 203, 703);
 
 -- Illustrators.
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
@@ -441,7 +481,7 @@ INSERT INTO member (id, grp__id, class__id, active)
 VALUES (154, 24, 9, 1);
 
 INSERT INTO contrib_type_member (id, object_id, member__id)
-VALUES (3, 40, 154); 
+VALUES (3, 40, 154);
 
 
 -- Edit Desk.
