@@ -295,7 +295,7 @@ sub test_select_a_default_objs: Test(12) {
 }
 
 
-sub test_select_b_new_objs: Test(32) {
+sub test_select_b_new_objs: Test(34) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -413,26 +413,43 @@ sub test_select_b_new_objs: Test(32) {
     $formatting[0] = class->new({
                                priority           => 1,
                                user__id           => $admin_id,
+                               description        => 'test object',
                                element            => $element, 
                                tplat_type         => 1,
                                output_channel__id => 1,
                                category_id        => $OBJ->{category}->[0]->get_id(),
                            });
+    $formatting[0]->checkin();
     $formatting[0]->save();
+    $formatting[0]->checkout({ user__id => $self->user_id });
+    $formatting[0]->checkin();
+    $formatting[0]->save();
+    $formatting[0]->checkout({ user__id => $self->user_id });
+    $formatting[0]->checkin();
+    $formatting[0]->save();
+
     push @{$OBJ_IDS->{formatting}}, $formatting[0]->get_id();
     $self->add_del_ids( $formatting[0]->get_id() );
 
     # Try doing a lookup 
     $expected = $formatting[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[0] }), 'can we call lookup on a Formatting Object' );
-    is( $got->get_name(), $expected->get_name(), '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(), '... does it have the right desc');
+    ok( $got = class->lookup({ id => $OBJ_IDS->{formatting}->[0] }), 
+      'can we call lookup on a Formatting Object' );
+    is( $got->get_name(), $expected->get_name(), 
+      '... does it have the right name');
+    is( $got->get_description(), $expected->get_description(), 
+      '... does it have the right desc');
 
     # check the grp IDs
     my $exp_grp_ids = [ $all_cats_grp_id, $all_formatting_grp_id, $OBJ_IDS->{grp}->[0] ];
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
     eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+
+    # now find out if return_version get the right number of versions
+    ok( $got = class->list({ id => $OBJ_IDS->{formatting}->[0], return_versions => 1 }), 
+      'does return_versions work?' );
+    is( scalar @$got, 3, '... and did we get three versions of formatting[0]');
 
     # ... as a grp member
     $time = time;

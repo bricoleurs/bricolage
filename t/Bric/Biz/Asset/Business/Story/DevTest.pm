@@ -116,7 +116,7 @@ sub test_clone : Test(15) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(44) {
+sub test_select_methods: Test(46) {
     my $self = shift;
 
     # let's grab existing 'All' group info
@@ -231,6 +231,13 @@ sub test_select_methods: Test(44) {
     $story[0]->set_primary_category($OBJ->{category}->[0]);
     $story[0]->checkin();
     $story[0]->save();
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->checkin();
+    $story[0]->save();
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->checkin();
+    $story[0]->save();
+
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
 
@@ -251,6 +258,10 @@ sub test_select_methods: Test(44) {
     push @EXP_GRP_IDS, $exp_grp_ids;
     my $got_grp_ids = $got->get_grp_ids();
     eq_set( $got_grp_ids , $exp_grp_ids, '... does it have the right grp_ids' );
+
+    # now find out if return_version get the right number of versions
+    ok( $got = class->list({ id => $OBJ_IDS->{story}->[0], return_versions => 1 }), 'does return_versions work?' );
+    is( scalar @$got, 3, '... and did we get three versions of story[0]');
 
     # ... with multiple cats
     $time = time;

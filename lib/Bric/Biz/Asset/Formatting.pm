@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.38.2.4 $
+$Revision: 1.38.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.38.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.38.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-19 02:53:07 $
+$Date: 2003-03-19 19:32:29 $
 
 =head1 SYNOPSIS
 
@@ -242,6 +242,7 @@ use constant WHERE => 'f.id = i.formatting__id';
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', ' 
             . join(', i.', 'i.id AS version_id', VERSION_COLS) . ', m.grp__id';
 
+use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
 use constant FROM => VERSION_TABLE . ' i, member m';
@@ -280,9 +281,10 @@ use constant PARAM_WHERE_MAP =>
       category_id           => 'f.category__id = ?',
       category_uri          => 'f.category__id = c.id AND '
                              . 'LOWER(c.uri) LIKE LOWER(?))',
-      _no_returned_versions => 'f.current_version = i.version',
-      grp_id                => 'f.id = fm2.object_id AND '
+      _no_return_versions   => 'f.current_version = i.version',
+      grp_id                => 'm2.active = 1 AND '
                              . 'm2.grp__id = ? AND '
+                             . 'f.id = fm2.object_id AND '
                              . 'fm2.member__id = m2.id',
       simple                => '(LOWER(f.name) LIKE ? OR '
                              . 'LOWER(f.file_name) LIKE ?)',
