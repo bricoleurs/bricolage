@@ -77,6 +77,7 @@ $(MAN_TARGETS): man
 	$(POD2MAN) $(ORIG) man/$(BASE) 
 	${GZIP} man/${BASE}
 	chmod a+r $@
+	touch $@
 
 
 

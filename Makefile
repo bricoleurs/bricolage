@@ -83,4 +83,4 @@ docclean:
 	cd $(DOC) && ${MAKE} -e clean
 
 
-.PHONY : clean dep clean cpan
+.PHONY : clean dep clean cpan doc
