@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.22.4.1 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:23 $
+$Date: 2003-04-24 22:53:57 $
 
 =head1 SYNOPSIS
 
@@ -629,7 +629,7 @@ my $build_table_data = sub {
             }
 
             # Add this value to the return data.
-            push @{$data->[$r]}, ($val || '&nbsp');
+            push @{$data->[$r]}, ! defined $val || $val eq '' ? '&nbsp' : $val;
         }
 
         my @sel = $output_select_controls->($o, $select, \%flags);
