@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.tst
--- VERSION: $Revision: 1.3 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/03/12 18:36:39 $
+-- $LastChangedDate$
 -- Author:  David Wheeler <david@wheeler.net>
 
 DELETE FROM server_type;

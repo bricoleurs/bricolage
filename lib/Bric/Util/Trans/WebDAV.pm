@@ -6,7 +6,7 @@ Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/01/15 12:27:39 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

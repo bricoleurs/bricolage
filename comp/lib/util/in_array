@@ -7,16 +7,16 @@ in_array.mc
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.1 $, 10, -1);
+our $VERSION = substr(q$LastChangedRevision$, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001/09/06 21:51:57 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

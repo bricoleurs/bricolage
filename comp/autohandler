@@ -18,11 +18,11 @@ autohandler - The first Mason element to execute during a request.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/03 19:07:05 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

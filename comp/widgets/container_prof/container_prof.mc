@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/12 08:59:52 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

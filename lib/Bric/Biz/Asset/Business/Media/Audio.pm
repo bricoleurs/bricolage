@@ -8,7 +8,7 @@ audios
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$LastChangedRevision$
 
 =cut
 

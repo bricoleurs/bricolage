@@ -7,7 +7,7 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:12 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

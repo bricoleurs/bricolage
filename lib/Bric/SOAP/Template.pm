@@ -45,7 +45,7 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$LastChangedRevision$
 
 =cut
 
@@ -53,7 +53,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/30 16:14:45 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

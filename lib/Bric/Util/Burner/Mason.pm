@@ -7,7 +7,7 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.61.2.2 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/05/02 22:48:00 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

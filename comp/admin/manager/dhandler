@@ -428,11 +428,11 @@ unless (Bric::Config::ENCODE_OK) {
 
 =head1 VERSION
 
-$Revision: 1.41.2.2 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/26 05:38:08 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

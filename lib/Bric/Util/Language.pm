@@ -7,7 +7,7 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.22.2.1 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/30 00:45:39 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

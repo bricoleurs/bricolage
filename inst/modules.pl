@@ -6,11 +6,11 @@ modules.pl - installation script to probe for required Perl modules
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/12/12 21:14:45 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

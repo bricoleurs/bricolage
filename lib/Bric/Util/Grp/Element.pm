@@ -6,7 +6,7 @@ Bric::Util::Grp::Element - Interface to Element Groups
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/03/11 16:23:53 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

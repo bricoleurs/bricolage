@@ -6,7 +6,7 @@ Bric::Util::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/11 23:17:07 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/09/16 16:52:25 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/textarea.mc",

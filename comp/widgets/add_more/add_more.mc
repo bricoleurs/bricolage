@@ -183,11 +183,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/07/25 18:10:50 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

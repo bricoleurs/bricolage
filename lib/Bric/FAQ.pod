@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.38.2.3 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/05/02 23:26:07 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

@@ -6,7 +6,7 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
@@ -14,7 +14,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/24 20:44:19 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,7 +7,7 @@ Bric::Biz::Asset::Business::Parts::Tile::Data - Data (Field) Element
 
 =head1 VERSION
 
-$Revision: 1.19.2.1 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/20 18:09:44 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

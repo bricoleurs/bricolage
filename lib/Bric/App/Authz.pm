@@ -6,7 +6,7 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/02/06 06:34:55 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

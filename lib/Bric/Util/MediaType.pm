@@ -6,7 +6,7 @@ Bric::Util::MediaType - Interface to Media Types.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/09/15 21:48:46 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

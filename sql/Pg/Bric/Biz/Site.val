@@ -1,9 +1,9 @@
 
 -- Project:      Bricolage Business API
 -- File:    Site.val
--- VERSION: $Revision: 1.3 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/12/18 01:17:54 $
+-- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 
 -- Default site.

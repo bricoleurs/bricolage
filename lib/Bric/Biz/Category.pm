@@ -7,7 +7,7 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.58.2.1 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/27 18:09:58 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,11 +6,11 @@ uninstall.pl - installation script to uninstall Bricolage
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/12/12 12:09:27 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Formatting.tst
 --
--- VERSION: $Revision: 1.2 $
+-- VERSION: $LastChangedRevision$
 --
 -- Test values.
 --

@@ -8,7 +8,7 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.50 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,7 +19,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/10 00:22:29 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

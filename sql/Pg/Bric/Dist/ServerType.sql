@@ -1,8 +1,8 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
--- VERSION: $Revision: 1.3 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/03/15 05:16:21 $
+-- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 --
 

@@ -8,7 +8,7 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.53 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/23 01:59:46 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

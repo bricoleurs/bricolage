@@ -6,11 +6,11 @@ clone_db.pl - installation script to clone an existing database
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/19 05:52:51 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

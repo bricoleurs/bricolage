@@ -10,7 +10,7 @@ Bric::Util::DBD::Pg - Bricolage PostgreSQL database adaptor
 
 =item Version
 
-$Revision: 1.12 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,11 +19,11 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 
-$Date: 2003/09/10 18:39:07 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Pg.pm,v 1.12 2003/09/10 18:39:07 wheeler Exp $
+$Id$
 
 =back
 

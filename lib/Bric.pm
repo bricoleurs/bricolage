@@ -10,7 +10,7 @@ Bric - The Bricolage base class.
 
 =item Version
 
-$Revision: 1.55.2.2 $
+$LastChangedRevision$
 
 =item Release Version
 
@@ -23,11 +23,11 @@ our $VERSION = '1.8.1';
 
 =item Date
 
-$Date: 2004/05/05 01:34:33 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Bric.pm,v 1.55.2.2 2004/05/05 01:34:33 wheeler Exp $
+$Id$
 
 =back
 

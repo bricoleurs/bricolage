@@ -426,11 +426,11 @@ __END__
 
 =head2 Version
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =head2 Date
 
-$Date: 2004/01/16 22:00:41 $
+$LastChangedDate$
 
 =cut
 

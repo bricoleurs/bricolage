@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Attribute.use
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
 -- This file contains the recomended SQL for accessing the tables defined in 
 -- Attribute.sql.  That is this is the SQL required to access the attribute 

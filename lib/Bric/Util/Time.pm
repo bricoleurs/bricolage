@@ -8,7 +8,7 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,7 +19,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/11 21:29:15 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,11 +6,11 @@ db.pl - installation script to uninstall database
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/02/06 06:34:53 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

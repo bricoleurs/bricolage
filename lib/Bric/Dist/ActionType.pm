@@ -6,7 +6,7 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/09/18 21:19:08 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -8,7 +8,7 @@ Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:37 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/07 16:38:12 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

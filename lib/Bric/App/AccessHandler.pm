@@ -7,7 +7,7 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/10/03 05:58:13 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

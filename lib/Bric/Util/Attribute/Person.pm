@@ -6,7 +6,7 @@ Bric::Util::Attribute::Person - Interface to Attributes of Bric::Biz::Person obj
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2002/01/06 04:40:36 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

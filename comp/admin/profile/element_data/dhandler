@@ -99,11 +99,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/11/30 00:57:50 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

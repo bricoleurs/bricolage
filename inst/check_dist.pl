@@ -6,11 +6,11 @@ check_dist.pl - checks to make sure we're ready for "make dist"
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/05/20 03:21:59 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

@@ -6,7 +6,7 @@ Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/08/14 23:24:12 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

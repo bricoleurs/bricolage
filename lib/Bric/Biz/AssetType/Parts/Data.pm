@@ -8,7 +8,7 @@ are registered with rules to their usage
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$LastChangedRevision$
 
 =cut
 
@@ -17,7 +17,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/02/24 21:42:01 $
+$LastChangedDate$
 
 
 =head1 SYNOPSIS

@@ -26,7 +26,7 @@ Bric::SOAP::Category - SOAP interface to Bricolage categories.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$LastChangedRevision$
 
 =cut
 
@@ -34,7 +34,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/30 16:14:43 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

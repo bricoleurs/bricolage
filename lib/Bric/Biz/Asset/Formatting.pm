@@ -7,7 +7,7 @@ Bric::Biz::Asset::Formatting - Template assets
 
 =head1 VERSION
 
-$Revision: 1.71.2.2 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/05/03 15:22:22 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

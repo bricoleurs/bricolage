@@ -6,7 +6,7 @@ Bric::Util::Grp::ContribType - Interface to Bric::Util::Grp::Person Groups
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/03/19 06:49:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,7 +7,7 @@ for given server types.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/01 13:09:27 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -8,7 +8,7 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.63 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/10 17:01:42 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

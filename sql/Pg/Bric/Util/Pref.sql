@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.3 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/12/19 18:56:05 $
+-- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 
 

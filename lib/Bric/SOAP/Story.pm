@@ -46,7 +46,7 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.64.2.1 $
+$LastChangedRevision$
 
 =cut
 
@@ -54,7 +54,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/22 15:48:24 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

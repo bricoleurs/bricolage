@@ -6,7 +6,7 @@ Bric::App::ApacheStartup - Bricolage httpd startup configuration
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2002/07/06 23:28:05 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -8,7 +8,7 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,7 +19,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/12/22 18:34:49 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,11 +7,11 @@ Bric::Util::WebDav - Placeholder for Bricolage DAV support.
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:36 $
+$LastChangedDate$
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =cut
 

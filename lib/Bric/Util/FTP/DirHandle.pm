@@ -18,7 +18,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/19 05:12:16 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

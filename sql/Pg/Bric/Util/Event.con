@@ -1,9 +1,9 @@
 --
 -- ER/Studio 4.0 SQL Code Generation
 -- Project:      Bricolage Business API
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/02/02 19:46:47 $
+-- $LastChangedDate$
 -- Target DBMS : Oracle 8
 -- Author: David Wheeler <david@wheeler.net>
 

@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.32.2.3 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/20 18:13:33 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

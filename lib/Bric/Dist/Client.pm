@@ -7,7 +7,7 @@ distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/01/13 16:39:08 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -8,11 +8,11 @@ publish - A widget to display publish options.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/17 09:34:02 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/13 00:09:37 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

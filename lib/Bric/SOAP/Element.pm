@@ -28,7 +28,7 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.18 $
+$LastChangedRevision$
 
 =cut
 
@@ -36,7 +36,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/02/23 11:48:41 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/09/29 18:41:48 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/select.mc",

@@ -8,11 +8,11 @@ story_prof.mc - The profile of stories widget
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/09 21:08:40 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/17 02:19:49 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

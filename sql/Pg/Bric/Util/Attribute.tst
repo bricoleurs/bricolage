@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Attribute.tst
 --
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
 
 /*

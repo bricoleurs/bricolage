@@ -93,11 +93,11 @@ $m->comp('/widgets/profile/select.mc',
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/03/01 21:03:57 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

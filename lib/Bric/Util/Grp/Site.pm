@@ -10,7 +10,7 @@ Bric::Util::Grp::Site - Interface to Bric::Biz::Site Groups
 
 =item Version
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,11 +19,11 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 
-$Date: 2003/11/30 01:14:44 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Site.pm,v 1.3 2003/11/30 01:14:44 wheeler Exp $
+$Id$
 
 =back
 

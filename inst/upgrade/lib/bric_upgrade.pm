@@ -8,7 +8,7 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.34 $
+$LastChangedRevision$
 
 =cut
 
@@ -17,7 +17,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/04/10 01:03:00 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -7,7 +7,7 @@ Bric::Util::Grp::AssetType - A group of AssetTypes.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/03/19 06:49:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -6,7 +6,7 @@ Bric::Util::UserPref - Interface to Bricolage per-user preferences.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/12/22 18:10:39 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -10,7 +10,7 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,11 +19,11 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 
-$Date: 2003/12/22 19:27:45 $
+$LastChangedDate$
 
-=item CVS ID
+=item Subversion ID
 
-$Id: Site.pm,v 1.10 2003/12/22 19:27:45 wheeler Exp $
+$Id$
 
 =back
 

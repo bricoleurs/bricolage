@@ -29,11 +29,11 @@ status_msg.mc - Sends messages to the browser in real-time
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2002/12/10 18:45:25 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

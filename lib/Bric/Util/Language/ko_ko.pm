@@ -6,7 +6,7 @@ Bric::Util::Language::ko_ko - Bricolage Korean translation
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$LastChangedRevision$
 
 =cut
 
@@ -14,7 +14,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/01/07 15:23:33 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

@@ -140,11 +140,11 @@ if (defined $mt && $mt->get_name) {
 
 =head1 VERSION
 
-$Revision: 1.4.2.1 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/04/26 05:38:09 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

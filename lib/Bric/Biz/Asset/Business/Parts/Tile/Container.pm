@@ -7,7 +7,7 @@ Bric::Biz::Asset::Business::Parts::Tile::Container - Container Element
 
 =head1 VERSION
 
-$Revision: 1.38 $
+$LastChangedRevision$
 
 =cut
 
@@ -16,7 +16,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/19 05:12:16 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

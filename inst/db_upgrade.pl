@@ -6,11 +6,11 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/02/06 06:34:53 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

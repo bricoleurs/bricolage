@@ -6,7 +6,7 @@ Bric::Util::EventType - Interface to Types of Events
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/02/18 13:47:28 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

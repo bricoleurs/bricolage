@@ -6,7 +6,7 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$LastChangedRevision$
 
 =cut
 
@@ -14,7 +14,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2004/03/24 20:44:18 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

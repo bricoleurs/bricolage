@@ -43,11 +43,11 @@ if ($ARGS{id} or $ARGS{site_id}) {
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/03/12 08:59:51 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

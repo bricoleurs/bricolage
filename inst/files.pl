@@ -6,11 +6,11 @@ files.pl - installation script to create directories and copy files
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/11/06 00:43:50 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

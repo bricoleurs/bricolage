@@ -6,11 +6,11 @@ config.pl - installation script to probe user configuration
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2003/07/25 04:39:23 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

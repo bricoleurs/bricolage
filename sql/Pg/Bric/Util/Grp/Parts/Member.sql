@@ -1,14 +1,14 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
--- $Date: 2003/02/02 19:46:48 $
+-- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 -- -----------------------------------------------------------------------------
 -- Member.sql
 -- 
--- VERSION: $Revision: 1.1 $
+-- VERSION: $LastChangedRevision$
 --
 -- The member table and the tables that map member bac to their respective 
 -- objects.   The member table contains an id and a group id.   The table that 

@@ -219,11 +219,11 @@ if ($new_desk) {
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$LastChangedRevision$
 
 =head1 DATE
 
-$Date: 2004/02/19 10:42:45 $
+$LastChangedDate$
 
 =head1 DESCRIPTION
 

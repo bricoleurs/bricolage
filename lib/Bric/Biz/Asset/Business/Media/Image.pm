@@ -8,7 +8,7 @@ images
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$LastChangedRevision$
 
 =cut
 

@@ -8,7 +8,7 @@ Bric::Util::DBD::Oracle - The Bricolage Oracle Driver
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$LastChangedRevision$
 
 =cut
 
@@ -19,7 +19,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/08/11 09:33:36 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

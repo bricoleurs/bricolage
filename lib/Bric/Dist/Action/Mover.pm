@@ -6,7 +6,7 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/12/30 09:13:02 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 

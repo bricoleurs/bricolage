@@ -7,7 +7,7 @@ Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$LastChangedRevision$
 
 =cut
 
@@ -15,7 +15,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date: 2003/02/18 05:55:08 $
+$LastChangedDate$
 
 =head1 SYNOPSIS
 
