@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.84 $
+$Revision: 1.85 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.84 $ )[-1];
+our $VERSION = (qw$Revision: 1.85 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-19 12:25:03 $
+$Date: 2004-02-20 09:56:57 $
 
 =head1 SYNOPSIS
 
@@ -458,7 +458,7 @@ BEGIN {
 
 =item $story = Bric::Biz::Asset::Business::Story->new( $initial_state )
 
-This will create a new story object with an optionaly defined intiial state
+This will create a new story object with an optionally defined initial state
 
 Supported Keys:
 
