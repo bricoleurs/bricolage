@@ -947,7 +947,7 @@ my ($cb) = substr($field, length($widget)+1);
 if (exists $cbs{$cb}) {
     $cbs{$cb}->($widget, $field, $param);
 } else {
-    die Bric::Util::Fault::Exception::Ap->new
+    die Bric::Util::Fault::Exception::AP->new
       ({ msg => "No callback for $cb in story profile" })
 }
 </%init>

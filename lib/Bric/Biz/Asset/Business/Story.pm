@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.36 $
+$Revision: 1.37 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.36 $ )[-1];
+our $VERSION = (qw$Revision: 1.37 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 20:00:57 $
+$Date: 2003-03-03 13:08:06 $
 
 =head1 SYNOPSIS
 
@@ -1423,7 +1423,7 @@ sub revert {
         }
     }
 
-    die $gen>new({ msg => "The requested version does not exist" })
+    die $gen->new({ msg => "The requested version does not exist" })
       unless $revert_obj;
 
     # clone information from the tables

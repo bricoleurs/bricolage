@@ -8,15 +8,15 @@ asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.21 $
+$Revision: 1.22 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.21 $ )[-1];
+our $VERSION = (qw$Revision: 1.22 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:23 $
+$Date: 2003-03-03 13:08:06 $
 
 =head1 SYNOPSIS
 
@@ -283,7 +283,7 @@ NONE
 =cut
 
 sub list_ids {
-	die Bric::Util::Fault::Exception::MNE->new( { 
+	die Bric::Util::Fault::Exception::MNI->new( { 
 			msg => 'Method not implemented'});
 }
 

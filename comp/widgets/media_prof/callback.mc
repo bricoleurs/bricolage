@@ -746,7 +746,7 @@ my $WORK_ID = get_state_data($widget, 'work_id');
 if (exists $cbs{$cb}) {
     $cbs{$cb}->($widget, $field, $param, $WORK_ID);
 } else {
-    die Bric::Util::Fault::Exception::Ap->new
+    die Bric::Util::Fault::Exception::AP->new
       ({ msg => "No callback for $cb in media profile" })
 }
 </%init>
