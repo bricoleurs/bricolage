@@ -9,6 +9,8 @@ MKDIR = @MKDIR@
 PERL = @PERL@
 FIND = @FIND@
 
+POD2HTML_TYPE = @POD2HTML_TYPE@
+
 # ****************************************************************
 # * Other Fields
 # ****************************************************************
@@ -46,8 +48,8 @@ doc: html
 # ****************************************************************
 html: $(HTML_TARGETS)
 $(HTML_TARGETS): html/%.html: ${BRIC}/%.pod
-ifdef PERL2HTML
-	${PERL2HTML} --bgcolor '#ffffff' --verbosity 1 ${BRIC} html
+ifeq (${POD@HTML_TYPE},"McDougall")
+	${POD2HTML} --bgcolor '#ffffff' --verbosity 1 ${BRIC} html
 else
 	$(POD2HTML) --podpath=Bric --podroot=../${LIB} --verbose \
 	--flush --htmldir=html --recurse --index --infile=$^ \

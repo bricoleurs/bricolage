@@ -1752,15 +1752,15 @@ fi
 	echo "$as_me:1752: checking which pod2html we have" >&5
 echo $ECHO_N "checking which pod2html we have... $ECHO_C" >&6
 	if pod2html --help 2>&1 | grep "\-\-libpods" >/dev/null ; then
-		POD2HTML_VERSION='Christiansen'
+		POD2HTML_TYPE='Christiansen'
 	elif pod2html --help 2>&1 | grep "Unknown option: help" ;then
-		POD2HTML_VERSION='McDougall'
+		POD2HTML_TYPE='McDougall'
 	else
-		POD2HTML_VERSION='none'
+		POD2HTML_TYPE='none'
 	fi
 
-	echo "$as_me:1762: result: ${POD2HTML_VERSION}" >&5
-echo "${ECHO_T}${POD2HTML_VERSION}" >&6
+	echo "$as_me:1762: result: ${POD2HTML_TYPE}" >&5
+echo "${ECHO_T}${POD2HTML_TYPE}" >&6
 
 # Extract the first word of "pod2text", so it can be a program name with args.
 set dummy pod2text; ac_word=$2
@@ -3270,7 +3270,7 @@ s,@PG_CONFIG@,$PG_CONFIG,;t t
 s,@PGHOME@,$PGHOME,;t t
 s,@PERL@,$PERL,;t t
 s,@POD2HTML@,$POD2HTML,;t t
-s,@POD2HTML_VERSION@,$POD2HTML_VERSION,;t t
+s,@POD2HTML_TYPE@,$POD2HTML_TYPE,;t t
 s,@POD2TEXT@,$POD2TEXT,;t t
 s,@POD2MAN@,$POD2MAN,;t t
 s,@GZIP@,$GZIP,;t t
