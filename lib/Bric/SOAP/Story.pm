@@ -38,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-11 23:16:57 $
+$Date: 2002-02-13 03:35:03 $
 
 =head1 SYNOPSIS
 
@@ -349,7 +349,6 @@ my %allowed = map { $_ => 1 } qw(story_id story_ids
 
 sub export {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -461,7 +460,6 @@ my %allowed = map { $_ => 1 } qw(document);
 
 sub create {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -530,7 +528,6 @@ my %allowed = map { $_ => 1 } qw(document update_ids);
 
 sub update {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -593,7 +590,6 @@ my %allowed = map { $_ => 1 } qw(story_id story_ids);
 
 sub delete {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     

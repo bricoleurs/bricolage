@@ -38,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-11 23:16:57 $
+$Date: 2002-02-13 03:35:03 $
 
 =head1 SYNOPSIS
 
@@ -287,7 +287,6 @@ your Media types then you'll have to manually fetch the relations.
 
 sub export {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -372,7 +371,6 @@ my %allowed = map { $_ => 1 } qw(document);
 
 sub create {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -441,7 +439,6 @@ my %allowed = map { $_ => 1 } qw(document update_ids);
 
 sub update {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
@@ -504,7 +501,6 @@ my %allowed = map { $_ => 1 } qw(media_id media_ids);
 
 sub delete {
     my $pkg = shift;
-    our $ef;
     my $env = pop;
     my $args = $env->method || {};    
     
