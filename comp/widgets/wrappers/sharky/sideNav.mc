@@ -159,10 +159,10 @@ foreach my $wf (@$workflows) {
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=15>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
+        $m->out(qq{<a href="#" onClick="return doNav('} . $r->uri . qq{?nav|workflow_cb=0&navwfid=$wf->{id}')">});
         $m->out("<img src=\"/media/images/dkgreen_arrow_open.gif\" width=13 height=9 border=0 hspace=0></a></td>\n");
         $m->out("<td valign=middle $tabHeight width=135>");
-        $m->out(qq {<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=0')">});
+        $m->out(qq{<a href="#" class=sideNavHeaderBold onClick="return doNav('} . $r->uri . qq{?nav|workflow_cb=0&navwfid=$wf->{id}')">});
         $m->out(uc ( $wf->{name} )  . "</a>");
         $m->out("</td>\n</tr>");
 
@@ -215,10 +215,10 @@ foreach my $wf (@$workflows) {
         $m->out("<tr class=sideNavInactiveCell>\n");
         $m->out(qq{ <td><img src="/media/images/spacer.gif" width=10 height=5></td> } );
         $m->out("<td valign=middle $tabHeight width=140>");
-        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow-$wf->{id}_cb=1>");
-        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
+        $m->out("<a class=sideNavHeader href=" . $r->uri . "?nav|workflow_cb=1&navwfid=$wf->{id}>");
+        $m->out(qq {<a href="#" onClick="return doNav('} . $r->uri . qq {?nav|workflow_cb=1&navwfid=$wf->{id}')">});
         $m->out(qq{<img src="/media/images/mdgreen_arrow_closed.gif" width=8 height=13 border=0 hspace=2></a>\n});
-        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow-$wf->{id}_cb=1')">});
+        $m->out(qq {<a href="#" class=sideNavHeader onClick="return doNav('} . $r->uri . qq {?nav|workflow_cb=1&navwfid=$wf->{id}')">});
         $m->out( uc ( $wf->{name} )  . "</a></td>\n</tr>");
         $m->out("</table>\n");
 
@@ -454,10 +454,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.32.2.1 $
 
 =head1 DATE
 
-$Date: 2003-04-15 09:04:55 $
+$Date: 2003-06-03 13:17:18 $
 
 </%doc>
