@@ -274,10 +274,16 @@ sub publish {
             # appropriate
             foreach my $rel ($obj->get_related_objects) {
                 # Add it in.
-                if ($args->{publish_related_stories} and $type eq 'story') {
+                if ($args->{publish_related_stories} &&
+                    UNIVERSAL::isa($rel, 'Bric::Biz::Asset::Business::Story'))
+                {
                     push(@ids, name(story_id => $rel->get_id));
-                } elsif ($args->{publish_related_media} and $type eq 'media') {
+                } elsif ($args->{publish_related_media} &&
+                    UNIVERSAL::isa($rel, 'Bric::Biz::Asset::Business::Media'))
+                {
                     push(@ids, name(media_id => $rel->get_id));
+                } else {
+                    # Nothing.
                 }
             }
         }
