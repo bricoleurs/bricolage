@@ -115,6 +115,16 @@ Added Crypt::SSLeay to the list of optional modules to be installed. This
 module is required for SOAP communications over SSL. So if you use SSL and you
 use the SOAP server, you'll want to install it. [David]
 
+=item *
+
+Fixed alerts so that alerts are once again sent to the members of groups.
+Reported by Paul Cory. [David]
+
+=item *
+
+Deleted alert types are no longer displayed in the Alert Type Manager. Thanks
+to Paul Cory for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.0
