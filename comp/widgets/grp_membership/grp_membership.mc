@@ -72,7 +72,6 @@ foreach my $grp ( $obj->can('get_grps')
                   : ()) {
     # Skip the group if they don't have READ access to it.
     next unless chk_authz($grp, READ, 1);
-
     my $gid = $grp->get_id;
     push @$right, { value       => $gid,
                     description => $grp->get_name };

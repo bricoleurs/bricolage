@@ -2840,9 +2840,13 @@ sub _do_list {
     my @wheres = ('g.id = c.object_id', 'c.member__id = m.id',
                   'm.active = 1');
     my $tables = "grp g, member m, grp_member c";
-    # If an object is passed then we have to join to the member table again.
-    if (($criteria->{obj} && defined $criteria->{obj}->get_id)
-        || ($criteria->{package} && $criteria->{obj_id})) {
+    if ($criteria->{obj} && !defined $criteria->{obj}->get_id) {
+        # If the object has no ID, it's not yet in any groups.
+        return;
+    } elsif ($criteria->{obj}
+               # If an object is passed then we have to join to the member
+               # table again.
+             || ($criteria->{package} && $criteria->{obj_id})) {
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
             # Figure out what table this needs to be joined to.
