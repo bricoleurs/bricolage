@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing:  Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:47 $
+$Date: 2001-09-26 07:59:41 $
 
 =head1 INTRODUCTION
 
@@ -43,7 +43,7 @@ Including related stories and media
 
 =head1 AUTOHANDLER TEMPLATES
 
-Is it possible not to associate a template with an Element.  Doing so creates a
+It is possible not to associate a template with an Element.  Doing so creates a
 template that will be used for every type of Story in a particular category
 and output channel.  These are called "Autohandler Templates" or just 
 "Autohandlers".
@@ -356,5 +356,28 @@ in your templates.  The 'get_media_type' method returns the mime type of the
 media object.  These are text values of the form 'image/jpeg'.
 
 The 'get_size' method will return the file size of the media file.
+
+=cut
+
+Garth Webb <garth@perijove.com>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2),
+Bric::AdvTemplates(3),
+Bric::Biz::AssetType(4),
+Bric::Biz::Asset::Formatting(5),
+Bric::Biz::Asset::Business::Story(6),
+Bric::Biz::Asset::Business::Parts::Tile(7),
+Bric::Biz::Asset::Business::Parts::Tile::Data(8),
+Bric::Biz::Asset::Business::Parts::Tile::Container(9),
+Bric::Util::Burner(10)
+
+=head1 REVISION HISTORY
+
+$Log: AdvTemplates.pod,v $
+Revision 1.2  2001-09-26 07:59:41  wheeler
+Made a few minor corrections.
 
 =cut

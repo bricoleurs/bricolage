@@ -6,11 +6,11 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2001-09-06 21:52:57 $
+$Date: 2001-09-26 07:59:39 $
 
 =head1 BACKGROUND
 
@@ -648,7 +648,6 @@ The burn system object
 
 =back
 
-
 I<Story Object Methods>
 
 The story object is the object containing the story to be published.  It is used
@@ -664,20 +663,21 @@ highlight the most important/usefull ones here:
 
 Retrieve the title of this story
 
-=item $story->get_teaser
+=item $story->get_description
 
-Retrieve the 'teaser' for this story.  This is basically a short description.
+Retrieve the description for this story.
 
 =item $story->get_cover_date
 
-Returns the date this story is tied to (not necessarily when it was published). 
- 
-A cover date might be 'June 1, 2001' for the June issue of Seventeen magazine, 
-but it might actually be published some time before or after that exact date.
+Returns the date this story is tied to (not necessarily when it was published).
+
+A cover date might be 'June 1, 2001' for the June issue of, say, I<Seventeen>
+magazine, but it might actually be published some time before or after that
+exact date.
 
 =item $story->get_primary_uri
 
-This is the primary URI for this story.  This returns the URI for the primary 
+This is the primary URI for this story. This returns the URI for the primary
 output channel in the primary category.
 
 =back
@@ -1030,7 +1030,8 @@ A Mason concept.  Templates behave in a similar maner to dhandlers
 =item Element
 
 The "form" of a story or story part
-  
+ 
+
 =item element
 
 An instance of an Element in a story
@@ -1052,3 +1053,28 @@ The data to be published.
 A output format for published data.
 
 =back
+
+=head1 AUTHOR
+
+Garth Webb <garth@perijove.com>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2),
+Bric::AdvTemplates(3),
+Bric::Biz::AssetType(4),
+Bric::Biz::Asset::Formatting(5),
+Bric::Biz::Asset::Business::Story(6),
+Bric::Biz::Asset::Business::Parts::Tile(7),
+Bric::Biz::Asset::Business::Parts::Tile::Data(8),
+Bric::Biz::Asset::Business::Parts::Tile::Container(9),
+Bric::Util::Burner(10)
+
+=head1 REVISION HISTORY
+
+$Log: Templates.pod,v $
+Revision 1.2  2001-09-26 07:59:39  wheeler
+Made a few minor corrections.
+
+=cut
