@@ -366,13 +366,14 @@ sub resize : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $param = $self->request_args;
+    my $widget = $self->class_key;
 
     my $splitter = get_state_name($widget) eq 'edit_bulk'
       ? $split_fields : $split_super_bulk;
-    $splitter->($self->class_key, $param->{$self->class_key.'|text'});
+    $splitter->($widget, $param->{$widget . '|text'});
 
-    set_state_data($self->class_key, 'rows', $param->{$self->class_key.'|rows'});
-    set_state_data($self->class_key, 'cols', $param->{$self->class_key.'|cols'});
+    set_state_data($widget, 'rows', $param->{$widget . '|rows'});
+    set_state_data($widget, 'cols', $param->{$widget . '|cols'});
 }
 
 sub change_default_field : Callback {
