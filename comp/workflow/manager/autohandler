@@ -1,0 +1,9 @@
+<%once>;
+my $widget = 'workflow';
+</%once>
+<%init>;
+if (my $wid = $m->dhandler_arg) {
+    set_state_data($widget, 'work_id', $wid);
+}
+$m->call_next;
+</%init>
