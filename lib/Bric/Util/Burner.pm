@@ -7,15 +7,15 @@ Bric::Util::Burner - Publishes Business Assets and Deploys Templates
 
 =head1 VERSION
 
-$Revision: 1.69 $
+$Revision: 1.70 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.69 $ )[-1];
+our $VERSION = (qw$Revision: 1.70 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-14 19:00:25 $
+$Date: 2004-03-17 01:04:47 $
 
 =head1 SYNOPSIS
 
@@ -169,30 +169,30 @@ my $fs = Bric::Util::Trans::FS->new;
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields
-        ({
-          # Public Fields
-          data_dir        => Bric::FIELD_RDWR,
-          comp_dir        => Bric::FIELD_RDWR,
-          out_dir         => Bric::FIELD_RDWR,
-          page_numb_start => Bric::FIELD_RDWR,
-          sandbox_dir     => Bric::FIELD_RDWR,
-          user_id         => Bric::FIELD_RDWR,
-          mode            => Bric::FIELD_READ,
-          story           => Bric::FIELD_READ,
-          element         => Bric::FIELD_READ,
-          oc              => Bric::FIELD_READ,
-          cat             => Bric::FIELD_READ,
-          page            => Bric::FIELD_READ,
-          output_filename => Bric::FIELD_READ,
-          output_ext      => Bric::FIELD_READ,
-          output_path     => Bric::FIELD_READ,
-          base_path       => Bric::FIELD_READ,
-          base_uri        => Bric::FIELD_READ,
-          # Private Fields
-          _page_extensions => Bric::FIELD_NONE,
-          _notes           => Bric::FIELD_NONE,
-      });
+    Bric::register_fields({
+        # Public Fields
+        data_dir              => Bric::FIELD_RDWR,
+        comp_dir              => Bric::FIELD_RDWR,
+        out_dir               => Bric::FIELD_RDWR,
+        page_numb_start       => Bric::FIELD_RDWR,
+        sandbox_dir           => Bric::FIELD_RDWR,
+        user_id               => Bric::FIELD_RDWR,
+        mode                  => Bric::FIELD_READ,
+        story                 => Bric::FIELD_READ,
+        element               => Bric::FIELD_READ,
+        oc                    => Bric::FIELD_READ,
+        cat                   => Bric::FIELD_READ,
+        page                  => Bric::FIELD_READ,
+        output_filename       => Bric::FIELD_READ,
+        output_ext            => Bric::FIELD_READ,
+        output_path           => Bric::FIELD_READ,
+        base_path             => Bric::FIELD_READ,
+        base_uri              => Bric::FIELD_READ,
+        # Private Fields
+        _page_extensions      => Bric::FIELD_NONE,
+        _notes                => Bric::FIELD_NONE,
+        _output_preview_msgs  => Bric::FIELD_NONE,
+    });
 }
 
 #==============================================================================#
@@ -246,7 +246,7 @@ value stored in the C<BURN_DATA_ROOT> directive set in F<bricolage.conf>.
 
 =item C<user_id>
 
-ID of the user to get a sandbox to deploy/undeploy templates for previewing. 
+ID of the user to get a sandbox to deploy/undeploy templates for previewing.
 C<sandbox_dir> is set from this value.
 
 =item C<comp_dir>
@@ -281,6 +281,7 @@ sub new {
     $init->{page_numb_start} ||= 1;
     $init->{_page_extensions}  ||= [''];
     $init->{_notes} = {};
+    $init->{_output_preview_msgs} ||= 1;
 
     $init->{sandbox_dir} = $fs->cat_dir(BURN_SANDBOX_ROOT, 'user_'. $init->{user_id})
        if defined($init->{user_id});
@@ -662,7 +663,7 @@ sub deploy {
     my $oc_dir  = 'oc_' . $fa->get_output_channel->get_id;
 
     # Grab the file name and directory.
-    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir, 
+    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
                    $oc_dir, $fa->get_file_name);
     my $dir = $fs->dir_name($file);
 
@@ -681,7 +682,7 @@ sub deploy {
                                    version     => $old_version });
         my $old_file = $old_fa->get_file_name or return $self;
 
-        $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir, 
+        $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
                                  $oc_dir, $old_file);
 
         return $self if $old_file eq $file;
@@ -712,7 +713,8 @@ sub undeploy {
     my $oc_dir = 'oc_' . $fa->get_output_channel->get_id;
 
     # Grab the file name.
-    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir, $oc_dir, $fa->get_file_name);
+    my $file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
+                            $oc_dir, $fa->get_file_name);
 
     # Delete it from the file system.
     $fs->del($file) if -e $file;
@@ -758,10 +760,12 @@ sub preview {
     my $comp_root = MASON_COMP_ROOT->[0][1];
     my $site_id = $ba->get_site_id;
 
+    my $do_status_msg = $self->_get('_output_preview_msgs');
+
     # Get a list of the relevant categories, put primary category first
-    my @cats = ($key eq 'story') ?
-      ($ba->get_primary_category, $ba->get_secondary_categories) :
-      ();
+    my @cats = $key eq 'story'
+      ? ($ba->get_primary_category, $ba->get_secondary_categories)
+      : ();
 
     # Grab the asset type and output channel.
     my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
@@ -773,19 +777,30 @@ sub preview {
 
     # Burn to each output channel.
     my $ret = eval {
-        status_msg('Writing files to "[_1]" Output Channel.', $oc->get_name);
+        status_msg('Writing files to "[_1]" Output Channel.', $oc->get_name)
+          if $do_status_msg;
         my $ocid = $oc->get_id;
         $self->_set(['base_path'], [$fs->cat_dir($self->get_out_dir,
                                                  'oc_'. $ocid)]);
 
         # Get a list of server types this categroy applies to.
-        my $bat = $oc_sts->{$ocid} ||=
-          Bric::Dist::ServerType->list({ can_preview       => 1,
-                                         active            => 1,
-                                         output_channel_id => $ocid });
+        my $bat = $oc_sts->{$ocid} ||= Bric::Dist::ServerType->list({
+            can_preview       => 1,
+            active            => 1,
+            output_channel_id => $ocid
+        });
+
         # Make sure we have some destinations.
         unless (@$bat) {
-            if (not PREVIEW_LOCAL) {
+            unless (PREVIEW_LOCAL) {
+                Bric::Util::Fault::Error->throw(
+                  error => 'Cannot preview asset "' . $ba->get_name . '" because '
+                           . 'there are no Preview Destinations associated with '
+                           . 'its output channels.',
+                   maketext => ['Cannot preview asset "[_1]" because there ' .
+                                'are no Preview Destinations associated with ' .
+                                'its output channels.', $ba->get_name])
+                   unless $do_status_msg;
                 severe_status_msg('Cannot preview asset "[_1]" because there ' .
                                   'are no Preview Destinations associated with ' .
                                   'its output channels.', $ba->get_name);
@@ -833,13 +848,15 @@ sub preview {
         log_event('job_new', $job);
 
         # Execute the job and redirect.
-        status_msg("Distributing files.");
+        status_msg("Distributing files.") if $do_status_msg;
+
         # We don't need to execute the job if it has already been executed.
         $job->execute_me unless $job->get_comp_time;
+
         if (PREVIEW_LOCAL) {
             # Make sure there are some files to redirect to.
             unless (@$res) {
-                status_msg("No output to preview.");
+                status_msg("No output to preview.") if $do_status_msg;
                 return;
             }
             # Copy the files for previewing locally.
@@ -865,6 +882,51 @@ sub preview {
     $self->_set(['mode'], [undef]);
     return $ret unless $err;
     rethrow_exception $err;
+}
+#------------------------------------------------------------------------------#
+
+=item $url = $b->preview_another($ba, $oc_id);
+
+Burns a story or media document, distributes it to the preview server and
+returns the URL. It is designed to be the complement of C<publish_another()>,
+to be used in templates during previews to burn and distribute related
+documents so that they'll be readily available on the preview server within
+the context of previewing another document. The supported arguments are:
+
+=over 4
+
+=item C<$ba>
+
+A business asset object to burn and send to the preview server.
+
+=item C<$oc_id>
+
+The ID of the output channel to use to burn a story. Defaults to the primary
+output channel of the story.
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub preview_another {
+    my $self = shift;
+    my ($ba, $oc_id) = @_;
+
+    # Figure out what we're previewing.
+    my $key = ref $ba eq 'Bric::Biz::Asset::Business::Story'
+      ? 'story'
+      : 'media';
+
+    # Create a new burner and do the preview.
+    my $b2 = $self->new;
+    $b2->_set(['_output_preview_msgs'] => [0]);
+    return $b2->preview($ba, $key, get_user_id(), $oc_id);
 }
 
 #------------------------------------------------------------------------------#
@@ -996,37 +1058,37 @@ sub publish {
             # We'll need to expire it.
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
-            my $exp_job = Bric::Util::Job::Dist->new
-              ({ sched_time   => $exp_date,
-                 user_id      => $user_id,
-                 server_types => $bat,
-                 name         => $expname,
-                 resources    => \@res,
-                 type         => 1,
-                 priority     => $ba->get_priority,
-               });
+            my $exp_job = Bric::Util::Job::Dist->new({
+                sched_time   => $exp_date,
+                user_id      => $user_id,
+                server_types => $bat,
+                name         => $expname,
+                resources    => \@res,
+                type         => 1,
+                priority     => $ba->get_priority,
+            });
             $exp_job->save;
             log_event('job_new', $exp_job);
         }
 
         # Expire stale resources, if necessary.
-        if (my @stale = Bric::Dist::Resource->list
-            ({ "$key\_id" => $baid,
-               not_job_id => $job->get_id,
-               path       => "$base_path/%" }))
+        if (my @stale = Bric::Dist::Resource->list({
+              "$key\_id" => $baid,
+              not_job_id => $job->get_id,
+              path       => "$base_path/%" }))
         {
             # Yep, there are old resources to expire.
             my $stale_name = 'Expire stale "' . $ba->get_name .
               '" from "' . $oc->get_name . '" files';
-            my $stale_job = Bric::Util::Job::Dist->new
-              ({ sched_time   => $publish_date,
-                 user_id      => $user_id,
-                 server_types => $bat,
-                 name         => $stale_name,
-                 resources    => \@stale,
-                 type         => 1,
-                 priority     => $ba->get_priority,
-               });
+            my $stale_job = Bric::Util::Job::Dist->new({
+                sched_time   => $publish_date,
+                user_id      => $user_id,
+                server_types => $bat,
+                name         => $stale_name,
+                resources    => \@stale,
+                type         => 1,
+                priority     => $ba->get_priority,
+            });
             $stale_job->save;
             log_event('job_new', $stale_job);
 
@@ -1072,6 +1134,8 @@ sub publish {
     $self->_set(['mode'], [undef]);
     return $published;
 }
+
+##############################################################################
 
 =item $burner->publish_another($ba);
 

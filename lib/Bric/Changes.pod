@@ -213,6 +213,15 @@ Thumbnails are now displayed when searching media to related to an element.
 
 Thumbnails are now displayed in related media subelements. [David]
 
+=item *
+
+Added C<preview_another()> method to Bric::Util::Burner. This method is
+designed to be the complement of C<publish_another()>, to be used in templates
+during previews to burn and distribute related documents so that they'll be
+readily available on the preview server within the context of previewing
+another document. [Serge Sozonoff]
+
+
 =back
 
 =head2 Bug Fixes
