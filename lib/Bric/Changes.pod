@@ -55,7 +55,7 @@ acknowledge them under "My Alerts". [David]
 
 =item *
 
-Added C<bric_media_dump> script to C<contrib/>. [David]
+Added F<bric_media_dump> script to F<contrib/>. [David]
 
 =item *
 
@@ -124,7 +124,7 @@ Scott Lanning. [David]
 
 Updated documentation of parameters to the C<list()> method of
 Bric::Biz::Asset::Formatting (the template class). Also documented a few
-parameters to the story and media class <list()> methods that were supported
+parameters to the story and media class C<list()> methods that were supported
 but previously undocumented. [David]
 
 =item *
@@ -181,6 +181,12 @@ workflow but not on a publish desk. [David]
 =item *
 
 Added search by output channel to "Find Templates". [David]
+
+=item *
+
+Previewing a document with a related media document that's checked out no
+longer triggers a "Cannot auto-publish related media because it is checked
+out" message. [David]
 
 =back
 

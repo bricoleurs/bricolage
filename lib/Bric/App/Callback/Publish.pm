@@ -65,13 +65,6 @@ sub preview : Callback {
             next if ref $ra eq 'Bric::Biz::Asset::Business::Story';
             next unless $ra->is_active;
 
-            # Make sure this media object isn't checked out.
-            if ($ra->get_checked_out) {
-                add_msg('Cannot auto-publish related media "[_1]" because ' .
-                        'it is checked out.', $ra->get_title);
-                next;
-            }
-
             unless ($ra->get_path) {
                 status_msg('No file associated with media "[_1]". Skipping.',
                            $ra->get_title);
