@@ -18,6 +18,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Bug Fixes
 
+=over 4
+
 =item *
 
 Added missing index to the C<workflow__id> column of the C<story>, C<media>,
@@ -39,6 +41,13 @@ searches. [David]
 
 Added missing foreign key constraints for the C<desk_id> column of the
 C<story>, C<media>, and C<formatting> (template) tables. [David]
+
+=item *
+
+C<make clone> no longer fails when it can't find F<httpd.conf>, because it
+no longer looks for it. [David]
+
+=back
 
 =head1 VERSION 1.6.9 (2004-02-06)
 

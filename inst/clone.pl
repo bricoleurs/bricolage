@@ -6,11 +6,11 @@ clone.pl - installation script to gather clone information
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.1.6.1 $
 
 =head1 DATE
 
-$Date: 2002-08-13 22:05:10 $
+$Date: 2004-02-10 07:46:16 $
 
 =head1 DESCRIPTION
 
@@ -43,16 +43,16 @@ unless ($> == 0) {
 }
 
 # setup default root
-our %CLONE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} || 
+our %CLONE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
                '/usr/local/bricolage' );
-our $INSTALL; 
+our ($INSTALL, $VERSION);
 
 # determine version being installed
 use lib './lib';
-require "lib/Bric.pm";
-our $VERSION = $Bric::VERSION;
 
-print "\n\n==> Setting-up Bricolage Clone Process <==\n\n";
+eval find_version();
+
+print "\n\n==> Setting-up Bricolage $VERSION Clone Process <==\n\n";
 
 get_bricolage_root();
 read_install_db();
@@ -63,17 +63,30 @@ output_dbs();
 
 print "\n\n==> Finished Setting-up Bricolage Clone Process <==\n\n";
 
+# find_version
+sub find_version {
+    my $bric = catfile $FindBin::Bin, updir, 'lib', 'Bric.pm';
+    open BRIC, $bric or die "Cannot open $bric: $!\n";
+    my $inpod;
+    while (<BRIC>) {
+        $inpod = /^=(?!cut)/ ? 1 : /^=cut/ ? 0 : $inpod;
+        next if $inpod || /^\s*#/;
+        return $_ if m/([\$*])(([\w\:\']*)\bVERSION)\b.*\=/;
+    }
+    return;
+}
+
 # get clone name
 sub get_clone_name {
     print "\n";
     $CLONE{NAME} = "NONE";
-    ask_confirm("What would you like to name your clone ". 
+    ask_confirm("What would you like to name your clone ".
                 "(used to name the archive)? ", \$CLONE{NAME});
 }
 
 # find the bricolage to update
 sub get_bricolage_root {
-    ask_confirm("Bricolage Root Directory to Clone?", 
+    ask_confirm("Bricolage Root Directory to Clone?",
 		\$CLONE{BRICOLAGE_ROOT});
 
     # verify that we have a Bricolage install here
