@@ -67,6 +67,11 @@ The list of categories associated with a story is now presented in
 alphabetical order by URI in the story profile. Suggested by Geoff
 Richards. [David]
 
+=item *
+
+The FTP mover now properly deletes files rather than erroring out. [Clive
+Jones]
+
 =back
 
 =head1 VERSION 1.6.4 (2003-08-12)
