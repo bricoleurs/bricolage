@@ -37,7 +37,7 @@ if ($is_user) {
     my %start_desks;
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_asset_grp_id;
-	my $grp = $dsk_grp_pkg->lookup({ id => $gid });
+	my $grp = $asset_grp_pkg->lookup({ id => $gid });
         $start_desks{$wf->get_head_desk_id} = 1;
 	$m->comp($row_comp,
 		 grp => $grp,
@@ -149,9 +149,6 @@ my $dsk_key = 'desk';
 my $dsk_pkg = get_package_name($dsk_key);
 my $dsk_disp = get_disp_name($dsk_key);
 my $dsk_pl = lc get_class_info($dsk_key)->get_plural_name;
-my $dsk_grp_key = 'desk_grp';
-my $dsk_grp_disp = get_disp_name($dsk_grp_key);
-my $dsk_grp_pkg = get_package_name($dsk_grp_key);
 my $cat_key = 'category';
 my $cat_pkg = get_package_name($cat_key);
 my $cat_disp = get_disp_name($cat_key);

@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.4.2 $
+-- VERSION: $Revision: 1.1.4.3 $
 --
--- $Date: 2003-04-01 04:36:56 $
+-- $Date: 2003-04-24 14:28:51 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@wheeler.net>
 --
@@ -16,7 +16,7 @@ INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (1, 101, 407);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
-VALUES (49, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+VALUES (49, NULL, 43, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (180, 35, 6, 1);
@@ -95,7 +95,7 @@ INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (2, 102, 408);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
-VALUES (51, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+VALUES (51, NULL, 43, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (181, 35, 6, 1);
@@ -168,7 +168,7 @@ INSERT INTO workflow_member(id, object_id, member__id)
 VALUES (3, 103, 409);
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
-VALUES (52, NULL, 40, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
+VALUES (52, NULL, 43, 'Workflow Assets', 'Assets group for workflow permissions', 1, 0, 1);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (182, 35, 6, 1);
