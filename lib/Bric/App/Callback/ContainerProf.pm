@@ -7,12 +7,15 @@ use constant CLASS_KEY => 'container_prof';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:msg :aref :history);
+use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
+use Bric::App::Callback::Desk;
+use Bric::App::Callback::Profile::Media;
 use Bric::Biz::AssetType;
 use Bric::Biz::AssetType::Parts::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
@@ -31,7 +34,6 @@ my %pkgs = (
     story => 'Bric::Biz::Asset::Business::Story',
     media => 'Bric::Biz::Asset::Business::Media',
 );
-
 
 sub edit : Callback {
     my $self = shift;
@@ -202,6 +204,69 @@ sub pick_related_media : Callback {
     my $object_type = $tile->get_object_type();
     my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     $self->set_redirect("$uri/edit_related_media.html");
+}
+
+sub create_related_media : Callback {
+    my $self = shift;
+    $self->_drift_correction;
+    my $widget = $self->class_key;
+
+    my $tile =  get_state_data($self->class_key, 'tile');
+    my $type  = $tile->get_object_type;
+    my $asset = get_state_data($type.'_prof', $type);
+
+    my $param = $self->params;
+    return if $param->{'_inconsistent_state_'};
+    return unless $param->{"media_prof|file"};
+
+    # Get the workflow for media files.
+    my $media_wf = find_workflow($asset->get_site_id, MEDIA_WORKFLOW, READ);
+    unless (find_desk($media_wf, CREATE)) {
+        add_msg("You do not have sufficient permission to create a media "
+                . "document for this site");
+        return;
+    }
+
+    set_state_data('media_prof', 'work_id', $media_wf->get_id);
+
+    # Set up the parameters to create a new media document.
+    my $m_param = {
+        "title"                   => $param->{"media_prof|file"},
+        "cover_date"              => $asset->get_cover_date,
+        "priority"                => $asset->get_priority,
+        "media_prof|category__id" => $asset->get_primary_category->get_id,
+        "media_prof|source__id"   => $asset->get_source__id,
+        "media_prof|at_id"        => $param->{"media_prof|at_id"},
+        "media_prof|file"         => $param->{"media_prof|file"},
+    };
+
+    my $media_cb = Bric::App::Callback::Profile::Media->new(
+        cb_request => $self->cb_request,
+        pkg_key    => 'media_prof',
+        apache_req => $self->apache_req,
+        params     => $m_param
+    );
+
+    $media_cb->create;
+    $media_cb->update;
+    my $media = get_state_data('media_prof', 'media');
+    $media_cb->save;
+
+    # Now check the media document in to a desk.
+    my $desk_cb = Bric::App::Callback::Desk->new(
+        cb_request => $self->cb_request,
+        pkg_key    => 'desk_asset',
+        apache_req => $self->apache_req,
+        value      => $media->get_id,
+        params     => { "desk_asset|asset_class" => $media->key_name },
+    );
+    $desk_cb->checkin;
+
+    # Stay where we are! This cancles any redirects set up by the Media
+    # callback object.
+    $self->set_redirect($self->apache_req->uri);
+    $tile->set_related_media($media->get_id);
+    set_state_data($widget, 'tile' => $tile);
 }
 
 sub relate_media : Callback {

@@ -53,6 +53,8 @@ use Apache::Util qw(escape_html);
 use HTTP::BrowserDetect;
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
+use Bric::App::Authz qw(:all);
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 #==============================================================================#
 # Inheritance                          #
@@ -91,6 +93,9 @@ our @EXPORT_OK = qw(
                     parse_uri
                     status_msg
                     severe_status_msg
+
+                    find_workflow
+                    find_desk
                    );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
@@ -118,6 +123,8 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                                    parse_uri
                                    status_msg
                                    severe_status_msg)],
+                    wf      => [qw(find_workflow
+                                   find_desk)],
                    );
 
 #=============================================================================#
@@ -821,6 +828,59 @@ sub detect_agent {
 }
 
 #--------------------------------------#
+
+=item my $wf = find_workflow($site_id, $type, $perm);
+
+Returns a workflow of a particular type in a given site for which the user has
+a given permission. Returns C<undef> if no workflow is found.
+
+=cut
+
+# Could this be optimized to use the cache that sideNav.mc uses?
+
+sub find_workflow {
+    my ($site_id, $type, $perm) = @_;
+    for my $wf (Bric::Biz::Workflow->list({ type    => $type,
+                                            site_id => $site_id })) {
+        return $wf if chk_authz($wf, $perm, 1);
+    }
+    return undef;
+}
+
+#--------------------------------------#
+
+=item my $desk = find_desk($wf, $doc_perm)
+
+Returns the desk in the given workflow for which the user has the permission
+to access its documents. Returns C<undef> if no desk is found.
+
+=cut
+
+# Could this be optimized to use the cache that sideNav.mc uses?
+
+sub find_desk {
+    my ($wf, $perm) = @_;
+    return unless $wf;
+    if (chk_authz(undef, $perm, 1, $wf->get_asset_grp_id)) {
+        # They have the permission for the whole workflow.
+        # Just return the start desk unless they're interested
+        # in a publish desk.
+        return $wf->get_start_desk unless $perm == PUBLISH;
+        # So find a publish desk. It's likely to be the last one returned,
+        # so optimize for that.
+        for my $d (reverse $wf->allowed_desks) {
+            return $d if $d->can_publish;
+        }
+    }
+
+    # Okay, so find a desk.
+    for my $d ($wf->allowed_desks) {
+        return $d if chk_authz(undef, $perm, 1, $d->get_asset_grp);
+    }
+
+    # Failure.
+    return undef;
+}
 
 =back
 

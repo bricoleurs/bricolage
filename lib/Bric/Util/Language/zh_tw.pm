@@ -706,6 +706,7 @@ To translate:
   'Milliseconds' => 'Milliseconds',
   'Microseconds' => 'Microseconds',
   'Not defined.' => 'Not defined.',
+  "You do not have sufficient permission to create a media document for this site" => "You do not have sufficient permission to create a media document for this site"
 
 Notice:
 

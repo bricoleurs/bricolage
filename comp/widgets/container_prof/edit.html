@@ -5,13 +5,8 @@
 % }
 <%perl>;
 # Show the story summary if needed.
-if ($show_summary) {
-    my $type  = $tile->get_object_type;
-
-    # Nab the story from the story_prof widget.
-    my $asset = get_state_data($type.'_prof', $type);
-    $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1);
-}
+$m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
+  if $show_summary;
 
 # COUNT FOR REORDER JAVA SCRIPT
 my $total = scalar @tiles;
@@ -340,7 +335,7 @@ if ($at->is_related_media) {
      number => $num++
 &>
 
-% $related_summary->($tile, 'story', $widget);
+% $related_summary->($tile, 'story', $widget, $asset);
 
 <& /widgets/wrappers/sharky/table_bottom.mc &>
 
@@ -357,7 +352,7 @@ if ($at->is_related_media) {
      number => $num++
 &>
 
-% $related_summary->($tile, 'media', $widget);
+% $related_summary->($tile, 'media', $widget, $asset);
 
 <& /widgets/wrappers/sharky/table_bottom.mc &>
 
@@ -391,7 +386,7 @@ if ($at->is_related_media) {
 %# this script creates an array with the names
 %# of select boxes that need ordering
 <script language="javascript">
-<%perl>
+<%perl>;
 $m->out("var selectOrderNames = new Array(" );
 
 my $txt = '';
@@ -409,15 +404,13 @@ $m->out("</script>");
 return $num;
 
 </%perl>
-
 <%args>
 $widget
 $num          => undef
 $title        => undef
 $show_summary => undef
 </%args>
-
-<%init>
+<%init>;
 # the tile object
 my $tile = get_state_data($widget, 'tile');
 
@@ -463,10 +456,12 @@ my $ieSpacer = $agent->ie
   ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
   : '';
 my $shim = $agent->nav4 ? -4 : 4;
+
+# Nab the story from the story_prof widget.
+my $type  = $tile->get_object_type;
+my $asset = get_state_data($type.'_prof', $type);
 </%init>
-
-<%once>
-
+<%once>;
 my $repeatable_elem_opts = sub {
     my ($t) = @_;
     my $id = $t->get_id;
@@ -485,9 +480,9 @@ my $repeatable_elem_opts = sub {
 };
 
 my $related_summary = sub {
-  my ($tile, $type, $widget) = @_;
+  my ($tile, $type, $widget, $asset) = @_;
 
-  my $rel = $type eq 'story' ? $tile->get_related_story 
+  my $rel = $type eq 'story' ? $tile->get_related_story
                              : $tile->get_related_media;
 
   my $button = $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -497,8 +492,7 @@ my $related_summary = sub {
               vspace   => 4,
             );
 
-  $m->out('<table border=0 cellpadding=0 cellspacing=0 width=578>');
-
+  $m->out('<table border="0" cellpadding="0" cellspacing="0" width="578">');
   if ($rel) {
       my $thumb = '';
       if (USE_THUMBNAILS && $type ne 'story') {
@@ -513,14 +507,23 @@ my $related_summary = sub {
                 type   => $type,
                 header => 'Currently Related '.ucfirst($type),
                 frame  => 0,
-            button => $thumb . $button );
+                button => $thumb . $button );
       $m->out('</td></tr>');
   } else {
-      $m->out('<tr><td width=518>');
-      $m->out('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No related '.ucfirst($type));
-      $m->out("</td><td width=70>$button");
+      $m->out('<tr><td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+              $lang->maketext('No related [_1]'. ucfirst($type)));
+      $m->out(qq{</td><td align="right" width="100%">$button&nbsp;</td></tr>});
+      if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
+          # Give 'em an upload form.
+          if (my $uploader = $m->scomp( '/widgets/profile/media_upload.mc',
+                                       widget   => $widget,
+                                       formName => "theForm",
+                                       site_id  => $asset->get_site_id,
+                                      )) {
+              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n});
+          }
+      }
   }
-  $m->out('</td></tr></table>');
+  $m->out('</table>');
 };
-
 </%once>

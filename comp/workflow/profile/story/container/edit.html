@@ -37,18 +37,18 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </%init>
 
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc', 
-	title => "$disp Profile",
-	context => $context . get_state_data('container_prof', 'crumb')
+<& '/widgets/wrappers/sharky/header.mc',
+    title => "$disp Profile",
+    context => $context . get_state_data('container_prof', 'crumb')
 &>
-<form method="post" action="<% $r->uri %>" name="theForm" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges(this)">
 
-<& /widgets/container_prof/container_prof.mc, 
-	tile_type    => 'story',
-        num          => 2,
-	action       => 'edit',
-	show_summary => 1,
-  &>
+<& /widgets/container_prof/container_prof.mc,
+   tile_type    => 'story',
+   num          => 2,
+   action       => 'edit',
+   show_summary => 1,
+&>
 
 </form>
 

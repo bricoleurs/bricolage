@@ -146,6 +146,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
+                    RELATED_MEDIA_UPLOAD
                     ALLOW_SLUGLESS_NONFIXED
                     AUTOGENERATE_SLUG
                     YEAR_SPAN_BEFORE
@@ -225,6 +226,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      FULL_SEARCH
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
+                                     RELATED_MEDIA_UPLOAD
                                      ALLOW_SLUGLESS_NONFIXED
                                      AUTOGENERATE_SLUG
                                      SERVER_WINDOW_NAME
@@ -368,7 +370,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG))
+                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
+                    RELATED_MEDIA_UPLOAD))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -569,6 +572,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant DISABLE_NAV_LAYER       => $config->{DISABLE_NAV_LAYER};
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
+    use constant RELATED_MEDIA_UPLOAD    => $config->{RELATED_MEDIA_UPLOAD};
     use constant ALLOW_SLUGLESS_NONFIXED => $config->{ALLOW_SLUGLESS_NONFIXED};
     use constant AUTOGENERATE_SLUG       => $config->{AUTOGENERATE_SLUG};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};

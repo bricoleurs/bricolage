@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -161,13 +159,9 @@ selected.
 =cut
 
 </%doc>
-
-<%once>
+<%once>;
 my $widget = 'select_object';
 </%once>
-
-%#--- Arguments ---#
-
 <%args>
 $style      => 'dropdown'
 $object
@@ -194,10 +188,7 @@ $size       => undef
 $js         => undef
 $localize   => 1
 </%args>
-
-%#--- Initialization ---#
-
-<%init>
+<%init>;
 
 # Append the object name to the end of the widget name to allow multiple select
 # boxes to exist on the same page.
@@ -260,15 +251,15 @@ if ($pkg) {
 
         my $val = $val_get->($o, $val_arg);
         push @vals, [$id, $val];
-    } 
+    }
 } else {
     # Handle the case where the package name is not in the database.
     @vals = ([0,"Pkg get failed: '$object'"]);
 }
 
-$m->comp($style.'.html', 
-         widget   => $widget, 
-         object   => $object, 
+$m->comp($style.'.html',
+         widget   => $widget,
+         object   => $object,
          vals     => \@vals,
          width    => $width,
          indent   => $indent,
@@ -285,7 +276,4 @@ $m->comp($style.'.html',
 );
 
 </%init>
-
-%#--- Log History ---#
-
 

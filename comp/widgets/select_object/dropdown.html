@@ -1,6 +1,5 @@
-<input type="hidden" name="<% "$widget|save_selected_id_cb" %>" value="<% $object %>">
-
-<& /widgets/profile/select.mc, 
+<input type="hidden" name="<% "$widget|save_selected_id_cb" %>" value="<% $object %>" />
+<& /widgets/profile/select.mc,
   name     => $name,
   value    => $sel_id,
   options  => $vals,
@@ -13,8 +12,7 @@
   readOnly => $readOnly,
   localize => $localize,
   js       => $js
-  &>
-
+&>
 <%args>
 $widget
 $object
@@ -30,11 +28,8 @@ $js       => undef
 $sel_id   => undef
 $localize => 1
 </%args>
-
-<%init>
-
+<%init>;
 my $sub_widget = "$widget.$object";
 my $name   = get_state_data($sub_widget, 'form_name');
 $sel_id = get_state_data($sub_widget, 'selected_id') unless defined $sel_id;
-
 </%init>
