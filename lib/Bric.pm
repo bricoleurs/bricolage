@@ -10,15 +10,15 @@ Release Version: 1.2.0
 
 File (CVS) Version:
 
-$Revision: 1.15 $
+$Revision: 1.15.2.1 $
 
 =cut
 
-our $VERSION = "1.2.0";
+our $VERSION = "1.2.1";
 
 =head1 DATE
 
-$Date: 2002-01-11 02:05:38 $
+$Date: 2002-02-22 05:31:27 $
 
 =head1 SYNOPSIS
 
