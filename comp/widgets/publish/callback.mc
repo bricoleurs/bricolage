@@ -38,9 +38,20 @@ if ($field eq 'preview') {
 	&$send_msg("Redirecting to preview.");
 	redirect_onload($url);
     } else {
-	my $s = get_state_data('story_prof', 'story');
-	unless ($s && defined $story_id && $s->get_id != $story_id) {
-	    $s = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	# get the checked in version
+	my $story_ci = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id });
+	# and the checked out version
+	my $story_co = Bric::Biz::Asset::Business::Story->lookup({ id => $story_id, checkout => 1 });
+
+	# if they're the same version and the checked out version is
+	# checked out by this user then use the checked out version
+	my $s;
+	if ($story_co and $story_ci and
+	    $story_ci->get_version == $story_co->get_version and
+	    $story_co->get_user__id() == get_user_id()) {
+	    $s = $story_co;
+	} else {
+	    $s = $story_ci;
 	}
 
 	# Get all the related media to be previewed as well
