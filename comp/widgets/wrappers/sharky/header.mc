@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.23.2.1 $
+$Revision: 1.23.2.2 $
 
 =head1 DATE
 
-$Date: 2002-10-15 21:57:37 $
+$Date: 2003-01-02 18:22:37 $
 
 =head1 SYNOPSIS
 
@@ -231,8 +231,8 @@ $m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } );
     <td width="77" alight="right" valign="top">
         <a href="/workflow/profile/alerts"><img src="/media/images/my_alerts_orange.gif" width="77" height="20" border="0" hspace="3" /></a>
     </td>
-    <td align="right" width="70">
-    <a href="/logout"><img src="/media/images/logout.gif" width="70" height="20" border="0"></a>
+    <td align="right" width="68">
+    <a href="/logout"><img src="/media/images/logout.gif" width="68" height="20" border="0"></a>
     </td>
 % } else {
     <td width="228">&nbsp;</td>

@@ -35,9 +35,9 @@ David Wheeler L<lt>david@wheeler.netL<gt>
     <td width="475">
       <table width="475" cellpadding="0" cellspacing="0" border="0">
         <tr height="22">
-          <td class="tab" valign="top" width="11"><img src="/media/images/006666_curve_left.gif" width="11" height="22"></td>
+          <td class="tab" valign="top" width="12"><img src="/media/images/006666_curve_left.gif" width="12" height="22"></td>
           <td class="tab" width="348"><% $title %></td>
-          <td valign="top" width="11" class="tab"><img src="/media/images/006666_curve_right.gif" width="11" height="22"></td>
+          <td valign="top" width="12" class="tab"><img src="/media/images/006666_curve_right.gif" width="12" height="22"></td>
           <td width="217" align="right" valign="top"><a href="javascript:self.close()"><img src="/media/images/close.gif" border="0" alt="Close" width="52" height="20" /></a></td>
         </tr>
       </table>
@@ -54,7 +54,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
             <tr>
               <td width="20" bgcolor="#669999"><img src="/media/images/numbers/669999_curve_blank.gif" width="20" height="18" border="0"></td>
               <td class="light" width="475">&nbsp;<% uc $page %></td>
-              <td width="8" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="8" height="18"></td>
+              <td width="13" bgcolor="#cccc99"><img src="/media/images/lt_green_curve_right.gif" width="13" height="18"></td>
             </tr>
           </table>
         <table border="0" cellpadding="0" cellspacing="0" width="475">

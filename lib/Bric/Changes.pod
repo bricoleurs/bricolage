@@ -135,6 +135,10 @@ with the encoding set to UTF-8 (UNICODE). [David]
 
 Added instructions for installing readline library to README.MacOSX. [David]
 
+=item *
+
+Fixed some inaccurate image sizes. [Geoff Richards]
+
 =back
 
 =head1 VERSION 1.4.5

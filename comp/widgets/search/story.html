@@ -20,13 +20,13 @@ my $advanced_search = get_state_data($widget, 'advanced_search') || 0;
 
 <table border=0 cellpadding=0 cellspacing=0 width=580>
 <tr>
-  <td class=darkHeader valign=top width=13><img src="/media/images/666633_curve_left.gif" width=13 height=19></td>
+  <td class=darkHeader valign=top width=13><img src="/media/images/666633_curve_left.gif" width=13 height=18></td>
 % unless ($advanced_search) {
   <td class=darkHeader width=556>SEARCH [ <a href="<% $r->uri %>?<% $widget %>|set_advanced_cb=1" class="whiteUnderlinedLink">Advanced Search</a> ]</td>
 % } else {
   <td class=darkHeader width=556>ADVANCED SEARCH [ <a href="<% $r->uri %>?<% $widget %>|unset_advanced_cb=1" class="whiteUnderlinedLink">Simple Search</a> ]</td>
 % }
-  <td class=darkHeader valign=top width=13 align=right><img src="/media/images/666633_curve_right.gif" width=13 height=19></td>
+  <td class=darkHeader valign=top width=13 align=right><img src="/media/images/666633_curve_right.gif" width=13 height=18></td>
 </tr>
 </table>
 <table border=0 cellpadding=0 cellspacing=0 width=578>
