@@ -173,6 +173,12 @@ UI. [David]
 The "Default Asset Sort" preference now actually works. Reported by Simon
 Wilcox. [David]
 
+=item *
+
+Publishing a story or media document along with its related story or media
+documents from a publish desk again correctly publishes the original asset as
+well as the relateds. [David]
+
 =back
 
 =head1 VERSION 1.8.1 (2004-07-08)

@@ -43,10 +43,28 @@ if (my $d = get_state_data($widget)) {
     ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
     # Get related assets, too
     my ($rel_story_ids, $rel_media_ids) = @{$d}{qw(rel_story rel_media)};
-    push @$story_pub_ids, @$rel_story_ids
-      if defined($rel_story_ids) && @$rel_story_ids;
-    push @$media_pub_ids, @$rel_media_ids
-      if defined($rel_media_ids) && @$rel_media_ids;
+
+    # Check for related stories.
+    if (defined $rel_story_ids && @$rel_story_ids) {
+        # Create hidden callback fields for the original stories.
+        $m->comp('/widgets/profile/hidden.mc',
+                 name => 'publish|select_publish_cb',
+                 value => "story=$_")
+          for @$story_pub_ids;
+        # Push the related stories onto the list.
+        push @$story_pub_ids, @$rel_story_ids
+    }
+
+    # Check for related media.
+    if (defined $rel_media_ids && @$rel_media_ids) {
+        # Create hidden callback fields for the original media.
+        $m->comp('/widgets/profile/hidden.mc',
+                 name => 'publish|select_publish_cb',
+                 value => "media=$_")
+          for @$media_pub_ids;
+        # Push the related media onto the list.
+        push @$media_pub_ids, @$rel_media_ids
+    }
 }
 
 my $objs = [];
