@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.9.2.2 $
+$Revision: 1.9.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-14 19:47:07 $
+$Date: 2002-02-14 20:00:21 $
 
 =head1 SYNOPSIS
 
@@ -1589,7 +1589,8 @@ sub get_data {
 	return $val;
     } else {
 	# Return all the fields.
-	return wantarray ? @all : \@all;
+	return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
+	  [ sort { $a->get_place <=> $b->get_place } @all ];
     }
 }
 
