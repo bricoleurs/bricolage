@@ -1,0 +1,67 @@
+=head1 NAME
+
+Bric::Changes - Bricolage Changes
+
+=head1 VERSION
+
+$Revision$
+
+=head1 DATE
+
+$Date$
+
+=head1 DESCRIPTION
+
+This document lists the Changes to Bricolage introduced with each release.
+
+=head1 VERSION 1.0.2
+
+=over 4
+
+=item *
+
+Added "File Name" and "File Extension" properties to OutputChannels. These
+properties will now be used to name files burned to the file system on
+preview and publish. [David]
+
+=item *
+
+Added DEFAULT_FILENAME and DEFAULT_FILE_EXT configuration directives to set
+default values on the "File Name" and "File Extenstion" Output Channel
+properties. [David]
+
+=item *
+
+Changed Bric::Util::Burner->display_element() so that it doesn't paginate. All
+paginated pages are now treated instead as regular elements. This is useful for
+things like printer-freindly pages. Bric::Util::Burner->display_element()
+contines to work as before. Use this method to output a separate file for each
+paginated element. [David]
+
+=item *
+
+When errors occur while previewing stories, the leftNav is now turned off.
+[David]
+
+=back
+
+=head1 VERSION 1.0.1
+
+=over 4
+
+=item *
+
+Initial public release.
+
+=back
+
+=head1 AUTHOR
+
+David Wheeler <david@wheeler.net>
+
+=head1 SEE ALSO
+
+perl(1),
+Bric (2).
+
+=cut
