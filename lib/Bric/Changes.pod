@@ -66,6 +66,12 @@ underscores. [David]
 
 Made SOAP modules more tolerant of lack of sites in 1.6. [Scott]
 
+=item *
+
+The collection API now checks newly added members when deleting members. This
+ensures that newly added objects won't be saved to the database if they are
+deleted, first. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -138,6 +144,12 @@ to better match other F<bricolage.conf> options. [David]
 
 Aliased media documents now correctly point to the file name for the aliased
 media document. Reported by Patrick Walsh. [David]
+
+=item *
+
+Thanks to the improvements to the collection class, cloning stories and
+putting them into new output channels to ensure that they have unique URIs now
+works properly. Reported by Serge Sozonoff. [David]
 
 =back
 
