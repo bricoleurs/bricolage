@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.39.2.1 $
+$Revision: 1.39.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-15 03:59:49 $
+$Date: 2003-05-25 19:13:15 $
 
 =head1 SYNOPSIS
 
@@ -377,6 +377,17 @@ B<Side Effects:> NONE.
 
 B<Notes:> If the C<obj> or C<obj_id> & C<package> parameters are used, then
 this method must be called from a subclass.
+
+Also, the Grp subclasses aren't loaded by this class, so when using
+the Bric API outside of Bricolage, you need to require the object
+class on the fly; for example:
+
+  use Bric::Util::Grp::Grp;
+  my $supported = Bric::Util::Grp::Grp->get_supported_classes();
+  foreach my $grpclass (keys %$supported) {
+      eval "require $grpclass";
+  }
+  my $grps = Bric::Util::Grp->list();
 
 =cut
 
@@ -1310,6 +1321,15 @@ B<Notes:> This method gets a list of classes from C<get_list_classes()> and
 calls C<list()> on each, passing in the required C<grp_id> parameter. Thus
 this method will not reflect any changes made to group membership unless
 C<save()> has been called on the group object.
+
+Also, the object class isn't loaded by the group class, so when using
+the Bric API outside of Bricolage, you need to require the object
+class on the fly; for example:
+
+  foreach my $c ($grp->get_list_classes()) {
+      eval "require $c";
+  }
+  my $objs = $grp->get_objects();
 
 =cut
 

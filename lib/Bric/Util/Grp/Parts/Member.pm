@@ -9,15 +9,15 @@ with attribute with in the group
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.14.4.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.14.4.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:27 $
+$Date: 2003-05-25 19:13:15 $
 
 =head1 SYNOPSIS
 
@@ -668,7 +668,17 @@ sub get_object_package {
 Return the object that this member reflects
 
 B<Notes:>
-NONE
+
+The object class isn't loaded by the group class, so when using
+the Bric API outside of Bricolage, you need to require the object
+class on the fly; for example:
+
+  my @members = $grp->get_members();
+  foreach my $m (@members) {
+      my $pkg = $m->get_object_package();
+      eval "require $pkg";
+      my $object = $m->get_object();
+  }
 
 B<Throws:>
 NONE
