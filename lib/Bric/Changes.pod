@@ -30,6 +30,12 @@ be off by default. [David]
 Deleted Output Channels now properly don't show up in the Output Channel manager
 again. Thanks to Sara for the spot! [David]
 
+=item *
+
+All previews now preview assets in the primary Output Channel only. Previously,
+the previews were in the Output Channel whose name came first alphabetically.
+Thanks to Sara Wood for catching this bug. [David]
+
 =back
 
 =head1 VERSION 1.2.0
