@@ -22,7 +22,7 @@ if (($field eq "$widget|refresh_p0") and (not $is_clear_state->($param))) {
     # There might be many time widgets on this page.
     my $base = mk_aref($param->{$field});
 
-    foreach  my $b (@$base) {
+    foreach my $b (@$base) {
 	# Keep this widget with this base name distict from others on the page.
 	my $sub_widget = "$widget.$b";
 	my @vals;
@@ -55,7 +55,12 @@ if (($field eq "$widget|refresh_p0") and (not $is_clear_state->($param))) {
 	    #clear_state($sub_widget);
 
 	    # If some fields were set, flag it
-	    $param->{$b.'-partial'} = 1 if $has_data;
+            if ($has_data) {
+                $param->{$b.'-partial'} = 1;
+            } else {
+                # It's undefined.
+                $param->{$b} = undef;
+            }
 	} else {
 	    my $date = sprintf("%04d-%02d-%02d %02d:%02d:00", @vals);
 	    # Write the date to the parameters.

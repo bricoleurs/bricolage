@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.30 $
+$Revision: 1.31 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.30 $ )[-1];
+our $VERSION = (qw$Revision: 1.31 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-05 22:33:00 $
+$Date: 2003-01-07 01:38:26 $
 
 =head1 SYNOPSIS
 
@@ -1009,14 +1009,16 @@ NONE
 
 ################################################################################
 
-=item $story_name = $story->check_uri();
+=item $story_name = $story->check_uri;
+
+=item $story_name = $story->check_uri($user_id);
 
 Returns name of story that has clashing URI.
 
 =cut
 
 sub check_uri {
-    my ($self) = @_;
+    my ($self, $uid) = @_;
     my $msg;
     # get element type and output channel info for currnt story
     my $s_eid = $self->get_element__id() ||
@@ -1030,13 +1032,18 @@ sub check_uri {
     # then loop thru each category for this story
   OUTER: foreach my $category ($self->get_categories()) {
         # get stories in the same category
-        my %parm;
-        $parm{'category_id'} = $category->get_id;
-        $parm{'active'} = '1';
-        my @stories = $self->list(\%parm);
+        my $params = { category_id => $category->get_id,
+                       active      => 1 };
+
+        my $stories = $self->list($params);
+        # HACK: Get stories for the current user, too.
+        if (defined $uid) {
+            $params->{user__id} = $uid;
+            push @$stories, $self->list($params);
+        }
 
         # for each story that shares this category
-        foreach my $st (@stories) {
+        foreach my $st (@$stories) {
             # dont want to compare current story with itself
             next if (defined $self->get_id and $st->get_id == $self->get_id);
 

@@ -120,7 +120,7 @@ sub initialize {
 	}
 	# Create a new database.
 	print "\nCreating database '$opt_d'.\n" unless $opt_q;
-	exec_sql("create database $opt_d");
+	exec_sql("create database $opt_d WITH ENCODING = 'UNICODE'");
 	# Close the connection to template1. We'll reconnect to the proper
 	# database below.
 	$DBH->disconnect;

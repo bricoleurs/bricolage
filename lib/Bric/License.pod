@@ -52,7 +52,17 @@ Bricolage is maintained by:
 
 =item David Wheeler <david@wheeler.net>
 
+=back
+
+The current development team consists of:
+
+=over 4
+
+=item David Wheeler <david@wheeler.net>
+
 =item Sam Tregar <sam@tregar.com>
+
+=item Scott Lanning <slanning@theworld.com>
 
 =back
 
@@ -87,8 +97,6 @@ Folks who have submitted patches include:
 =item Rachel Murray
 
 =item Mark Jarosky
-
-=item Scott Lanning
 
 =item Matt Vella
 
@@ -135,6 +143,8 @@ Friends who have spotted bugs include:
 =item John Greene
 
 =item Sean Greathouse
+
+=item Shannon Brown
 
 =back
 

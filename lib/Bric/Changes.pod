@@ -421,6 +421,43 @@ now always have an appropriate value. [David]
 The URI is now properly updated in media assets when some part of the URI is
 changed in the UI. Thanks to Sean Greathouse for the spot. [David]
 
+=item *
+
+The Add More widget no longer throws an exception when "Add More" is clicked
+and only one field currently exists. This had affected Keywords entry in
+stories. Thanks to Sam for the spot. [David]
+
+=item *
+
+Fixed bug where a user could create two assets with the same URI as long as
+they were both checked out by that user. Thanks to Shannon Brown for the spot!
+[David]
+
+=item *
+
+Date fields can now be unset. That is, if each of the select fields is set to
+its label, rather than a value, it'll stay that way. This was first noticed
+with the "Expire Date" in stories. Thanks to Philip Fibiger for the spot.
+[David]
+
+=item *
+
+Modified installation C<CREATE DATABASE> command to always create the database
+with the encoding set to UTF-8 (UNICODE). [David]
+
+=item *
+
+Added instructions for installing readline library to README.MacOSX. [David]
+
+=item *
+
+Fixed some inaccurate image sizes. [Geoff Richards]
+
+=item *
+
+Added missing C<uri> parameter to the possible search options in
+C<< Bric::SOAP::Category->list_ids >>. [David]
+
 =back
 
 =head1 VERSION 1.4.5

@@ -3,13 +3,14 @@ Bricolage Mac OS X/Darwin README
 
 Bricolage works well on Mac OS X, especially on version 10.2 or later, but
 installation requires a fair bit of additional preparation. The major issue is
-that Bricolage will not run on the verion of Apache that comes with Mac OS
-X. This is because Bricolage requires the apreq library of Perl modules to
-run, and these have not yet been ported to Mac OS X.
+that, because it cannot run on a DSO mod_perl, Bricolage will not run on the
+verion of Apache that comes with Mac OS X. A further issue is that Bricolage
+requires the libapreq library of Perl modules to run, and these have not yet
+been ported to Mac OS X.
 
 The solution is to compile your own Apache with mod_perl with a special patch
-that statically compiles support for apreq into Apache. The patch can be found
-here:
+that statically compiles support for libapreq into Apache. The patch can be
+found here:
 
   http://www.apache.org/~joes/
 
@@ -30,9 +31,9 @@ sources.
 
 From http://www.modssl.org/source/ download the mod_ssl sources. Make sure
 that the second half of the version number is the same as the version of
-Apache you downloaded. For example, if you downloaded apache_1.3.26.tar.gz,
+Apache you downloaded. For example, if you downloaded apache_1.3.27.tar.gz,
 then the mod_ssl sources you want will be something like
-mod_ssl-2.x.x-1.3.26.tar.gz.
+mod_ssl-2.x.x-1.3.27.tar.gz.
 
 From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.0.tar.gz or
 perl-5.6.1.tar.gz.
@@ -40,7 +41,7 @@ perl-5.6.1.tar.gz.
 From http://perl.apache.org/dist/, download the the sources for latest 1.x
 version of mod_perl.
 
-From http://www.gnu.org/prep/ftp.html, download the sources for the latest
+From ftp://ftp.gnu.org/gnu/libiconv/, download the sources for the latest
 version of the iconv library.
 
 From http://expat.sourceforge.net/, download the sources for the latest
@@ -49,12 +50,27 @@ version of the expat libraries.
 From http://search.cpan.org/, download the latest versions of Text::Iconv
 and XML::Parser.
 
+From ftp://ftp.gnu.org/pub/gnu/readline/, download the latest readline
+sources.
+
+From http://www.ca.postgresql.org/ftpsite/latest/, download the latest
+PostgreSQL sources.
+
 Complete details for building everything you need to run Bricolage on Mac OS X
-will always be found at http://david.wheeler.net/osx.html. Below is a summary
-of the instructions on that page, for those who just need the barest of hints
-for compiling and installing software. Just be sure that you've installed the
-latest Mac OS X Developer tools, available for a free registration at
-http://developer.apple.com/.
+will always be found at http://david.wheeler.net/osx.html. More detailed instructions,
+as well as a discussion of the issues of running Apache/mod_perl/mod_ssl on
+Mac OS X, may be found in the following articles on O'Reilly's MacDevCenter.com:
+
+  "Build Your Own Apache Server with mod_perl"
+  http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html
+
+  "Build Your Own Apache Server with mod_perl and mod_ssl"
+  http://www.macdevcenter.com/pub/a/mac/2002/12/18/apache_modssl.html
+
+Below is a summary of the instructions, for those who just need the barest of
+hints for compiling and installing software. Just be sure that you've
+installed the latest Mac OS X Developer tools, available for a free
+registration at http://developer.apple.com/.
 
 INSTALLATION SUMMARY
 
@@ -79,13 +95,22 @@ tarballs into /usr/local/src, e.g., with the command
   % make install
   % cd ..
 
-3. Install Perl. For Perl 5.8.0, do this:
+3. Install readline (omit the perl line on Mac OS X 10.1):
+
+  % cd readline-4.x
+  % perl -i.bak -p -e \
+    "s/SHLIB_LIBS=.*/SHLIB_LIBS='-lSystem -lncurses -lcc_dynamic'/g" \
+    support/shobj-conf
+  % ./configure
+  % make
+  % make install
+
+4. Install Perl. For Perl 5.8.0, do this:
 
   % cd perl-5.8.0/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
-  % sh Configure -des -Uversiononly -Dprefix=/usr/local \
-    -Uinstallusrbinperl
+  % sh Configure -des -Dprefix=/usr/local -Uinstallusrbinperl
   % make
   % make test # Will be a few expected and documented failures
   % make install
@@ -97,31 +122,30 @@ Or, for Perl 5.6.1, do this:
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
   % perl -i.bak -p -e 's|Local/Library|Library|g' hints/darwin.sh
-  % sh Configure -des -Dfirstmakefile=GNUmakefile \
-    -Dldflags="-flat_namespace" -Uinstallusrbinperl
+  % sh Configure -des -Dldflags="-flat_namespace" -Uinstallusrbinperl
   % make
   % make test # will be a few errors -- should be okay.
   % make install
   % cd ..
 
-4. Patch Apache:
+5. Patch Apache:
 
   % cd apache_1.3.xx
-  % patch -p0 < /usr/local/src/apache_dbm.patch
-  % patch -p0 < /usr/local/src/apreq.patch
+  % patch -p0 < ../apache_dbm.patch
+  % patch -p0 < ../apreq.patch
   % cd ..
   
-5. Configure mod_ssl (Optional -- Required for SSL support):
+6. Configure mod_ssl (Optional -- Required for SSL support):
 
   % cd mod_ssl-VERSION/
-  % patch -p0 < /usr/local/src/mod_ssl_dylib.patch
+  % patch -p0 < ../mod_ssl_dylib.patch
   % ./configure --with-apache=/usr/local/src/apache_1.3.xx
   % cd ..
 
-6. Install mod_perl:
+7. Install mod_perl:
 
   % cd mod_perl-1.xx
-  % perl Makefile.PL \
+  % /usr/local/bin/perl Makefile.PL \
     NO_HTTPD=1 \
     USE_APACI=1 \
     PREP_HTTPD=1 \
@@ -130,7 +154,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-7. Install Apache:
+8. Install Apache:
 
   % cd apache_1.3.26/
   % SSL_BASE=/usr/local/src/openssl-VERSION/ \
@@ -146,7 +170,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-8. Install apreq:
+9. Install libapreq:
 
   % cd httpd-apreq/
   % /usr/local/bin/perl Makefile.PL
@@ -154,7 +178,7 @@ Or, for Perl 5.6.1, do this:
   % make intall
   % cd ..
 
-9. Install Text::Iconv:
+10. Install Text::Iconv:
 
   % cd Text-Iconv-VERSION/
   % perl -i.bak -p -e "s/'LIBS'\s*=>\s*\[''\]/'LIBS' => \['-liconv'\]/" \
@@ -165,7 +189,7 @@ Or, for Perl 5.6.1, do this:
   % make install
   % cd ..
 
-10. Install XML::Parser:
+11. Install XML::Parser:
 
   % cd XML-Parser-VERSION/
   % /usr/local/bin/perl Makefile.PL EXPATLIBPATH=/usr/local/lib \
@@ -174,7 +198,7 @@ Or, for Perl 5.6.1, do this:
   % make test
   % make install
   % cd ..
- 
+
 OTHER ISSUES
 
 LWP: We recommend that you install the Perl LWP library manually, and when it
@@ -194,11 +218,11 @@ DURING INSTALLATION
 
 While runing "make", you'll be prompted to answer a series of
 questions. Provided you've followed the directions here and installed and
-configured PostgreSQL, most of the defaults should be fine. There are a couple
-of things to watch for, however:
+configured Apache, most of the defaults should be fine. There are a couple of
+things to watch for, however:
 
 * When you're prompted to confirm the location of Apache, do not accept
-  "/sbin/httpd" if that's what is offered. That is the Apple Apache
+  "/usr/sbin/httpd" if that's what is offered. That is the Apple Apache
   installation, and it won't work. You'll need to enter in the path to the
   special Apache you've compiled, e.g., "/usr/local/apache/bin/httpd".
 
