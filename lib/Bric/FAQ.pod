@@ -4,11 +4,11 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 VERSION
 
-$Revision: 1.29 $
+$Revision: 1.30 $
 
 =head1 DATE
 
-$Date: 2004-02-05 16:55:31 $
+$Date: 2004-02-06 06:55:16 $
 
 =head1 DESCRIPTION
 
@@ -415,7 +415,7 @@ This will add the constraint at the very end of the load, when both the "usr"
 table and the C<login_avail()> function have been created. Now you should be
 able to load the database and get back to work!
 
-=item Why do I get the error 'Can't locate object method "" via package "HTML::Mason::Lexer"'?
+=head3 Why do I get the error 'Can't locate object method "" via package "HTML::Mason::Lexer"'?
 
 This is a bug with Perl. It is caused by the presence of Unicode in a Mason
 template, and dates from a period when Perl's regular expressions had some
@@ -445,7 +445,7 @@ Bricolage in a window with the back button, and this can potentially lead to
 problems with the state of story objects while you're editing them. However,
 if you never use the back button, it should be fine.
 
-=item Sometimes the left navigation doesn't render properly, and the interface for adding fields doesn't work at all. What gives?
+=head3 Sometimes the left navigation doesn't render properly, and the interface for adding fields doesn't work at all. What gives?
 
 Most likely you're using Safari on Mac OS X to access the Bricolage
 interface. Unfortunately, that browser seems to have some bugs related to
