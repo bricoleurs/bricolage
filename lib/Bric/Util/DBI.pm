@@ -8,18 +8,18 @@ Bric::Util::DBI - The Bricolage Database Layer
 
 =head1 VERSION
 
-$Revision: 1.32 $
+$Revision: 1.33 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.32 $ )[-1];
+our $VERSION = (qw$Revision: 1.33 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:07 $
+$Date: 2003-10-10 12:23:04 $
 
 =head1 SYNOPSIS
 
@@ -728,7 +728,7 @@ sub fetch_objects {
     my $select = prepare_ca($sql, undef);
     execute($select, @$args);
     bind_columns($select, \@d[0 .. $count]);
-    # loop through the list, looking for diferrent grp__id columns in
+    # loop through the list, looking for different grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
     my $obj_col = $pkg->OBJECT_SELECT_COLUMN_NUMBER || 0;
     my $last = -1;
