@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.60 $
+$Revision: 1.61 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.60 $ )[-1];
+our $VERSION = (qw$Revision: 1.61 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-01 21:42:20 $
+$Date: 2004-03-03 22:26:03 $
 
 =head1 SYNOPSIS
 
@@ -56,7 +56,6 @@ use Bric::Config qw(:burn);
 use Bric::Util::Burner qw(:modes);
 use Bric::Biz::AssetType;
 require XML::Writer if INCLUDE_XML_WRITER;
-
 
 #==============================================================================#
 # Inheritance                          #
