@@ -24,6 +24,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Fixed Bric::Util::FTP::FileHandle to create new revisions on PUT.  [Sam]
 
+=item *
+
+Deleting a contributor will no longer break stories with which the contributor
+is associated. Thanks to Rachel Murray for the spot. [David]
+
 =back
 
 =head1 Version 1.2.3
