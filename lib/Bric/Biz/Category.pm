@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.44.2.2 $
+$Revision: 1.44.2.3 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.44.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.44.2.3 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-06 06:18:04 $
+$Date: 2003-03-06 07:24:32 $
 
 =head1 SYNOPSIS
 
@@ -105,7 +105,8 @@ use base qw(Bric);
 # Constants                            #
 #======================================#
 use constant DEBUG => 0;
-use constant ORD => qw(name description uri directory ad_string ad_string2);
+use constant ORD => qw(name description site_id uri directory ad_string
+                       ad_string2);
 
 use constant ROOT_CATEGORY_ID   => 0;
 use constant INSTANCE_GROUP_ID => 26;
@@ -496,11 +497,31 @@ sub my_meths {
                               get_args => [],
                               set_meth => sub { shift->set_site_id(@_) },
                               set_args => [],
-                              disp     => 'Site',
+                              disp     => 'Site ID',
                               type     => 'short',
                               len      => 10,
                               req      => 1,
-                              props    => { }
+                                            # Should actually be 'select'.
+                                            # Someday...
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
+                                          }
+                             },
+              site        => {
+                              name     => 'site',
+                              get_meth => sub { my $s = Bric::Biz::Site->lookup
+                                                  ({ id => shift->get_site_id })
+                                                  or return;
+                                                $s->get_name;
+                                            },
+                              disp     => 'Site',
+                              type     => 'short',
+                              req      => 0,
+                              props    => { type       => 'text',
+                                            length     => 10,
+                                            maxlength  => 10
+                                          }
                              },
               description => {
                               get_meth => sub { shift->get_description(@_) },
