@@ -4,6 +4,7 @@ use strict;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
+use Bric::Util::DBI qw(:all);
 
 # Exit if these changes have already been made.
 exit if test_sql "SELECT 1 WHERE EXISTS (SELECT key_name FROM at_data)";
