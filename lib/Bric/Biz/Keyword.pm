@@ -7,15 +7,15 @@ Bric::Biz::Keyword - A general class to manage keywords.
 
 =head1 VERSION
 
-$Revision: 1.15.4.1 $
+$Revision: 1.15.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.15.4.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-26 02:54:31 $
+$Date: 2003-03-29 06:03:51 $
 
 =head1 SYNOPSIS
 
@@ -913,14 +913,13 @@ Notes: NONE
 
 sub _get_db_data_for_object {
     my $obj = shift;
-    my $ref = ref $obj;
     return ("story_keyword",    "story_id")
-      if UNIVERSAL::isa($ref, 'Bric::Biz::Asset::Business::Story');
+      if UNIVERSAL::isa($obj, 'Bric::Biz::Asset::Business::Story');
     return ("media_keyword",    "media_id")
-      if UNIVERSAL::isa($ref, 'Bric::Biz::Asset::Business::Media');
+      if UNIVERSAL::isa($obj, 'Bric::Biz::Asset::Business::Media');
     return ("category_keyword", "category_id")
-      if UNIVERSAL::isa($ref, 'Bric::Biz::Category');
-    die $gen->new({msg => "Unsupported object type : $ref."});
+      if UNIVERSAL::isa($obj, 'Bric::Biz::Category');
+    die $gen->new({msg => "Unsupported object type: " . ref $obj });
 }
 
 1;
