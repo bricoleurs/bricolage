@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-12-08 01:46:01 $
+$Date: 2003-12-23 02:54:21 $
 
 =head1 SYNOPSIS
 
@@ -172,7 +172,7 @@ sub test_table($) {
     my $table = shift;
     return fetch_sql(qq{
         SELECT 1
-        FROM   pg_catalog.pg_class c
+        FROM   pg_class c
         WHERE  relkind = 'r'
                AND relname = '$table'
     });
@@ -214,9 +214,9 @@ sub test_column($$;$$) {
     my ($table, $column, $size, $not_null) = @_;
     my $sql = qq{
         SELECT 1
-        FROM   pg_catalog.pg_attribute a, pg_catalog.pg_class c
+        FROM   pg_attribute a, pg_class c
         WHERE  a.attrelid = c.oid
-               and pg_catalog.pg_table_is_visible(c.oid)
+               and pg_table_is_visible(c.oid)
                AND c.relname = '$table'
                AND attnum > 0
                AND NOT attisdropped
@@ -252,7 +252,7 @@ sub test_constraint($$) {
     my ($table, $con) = @_;
     return fetch_sql(qq{
         SELECT 1
-        FROM   pg_catalog.pg_class c, pg_catalog.pg_constraint r
+        FROM   pg_class c, pg_constraint r
         WHERE  r.conrelid = c.oid
                AND c.relname = '$table'
                AND r.contype = 'c'
@@ -276,8 +276,8 @@ sub test_index($) {
     my $index = shift;
     return fetch_sql(qq{
         SELECT 1
-        FROM   pg_catalog.pg_class c,
-               pg_catalog.pg_index i
+        FROM   pg_class c,
+               pg_index i
         WHERE  i.indexrelid = c.oid
                and c.relname = '$index'
     });
