@@ -24,7 +24,7 @@ sub checkin : Callback {
 
     # Checking in assets and moving them to another desk.
     my %desks;
-    foreach my $next (@{ mk_aref($self->request_args->{"desk|next_desk"})}) {
+    foreach my $next (@{ mk_aref($self->request_args->{"desk_asset|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
 	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
