@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.2.2.1 $
+$Revision: 1.2.2.2 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2.2.1 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.2.2.2 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-10-03 09:18:08 $
+$Date: 2001-10-04 11:30:34 $
 
 =head1 SYNOPSIS
 
@@ -217,7 +217,7 @@ sub setup_user_session {
 
     # Try to tie the session variable to a session file.
     eval { tie %HTML::Mason::Commands::session,
-	     'Apache::Session::File', $cookie ? $cookie->value : undef, OPTS; };
+	     'Apache::Session::File', ($cookie ? $cookie->value : undef), OPTS; };
 
     # Test to see if the tie succeeded.
     if ($@) {
@@ -877,7 +877,11 @@ L<perl>, L<Bric>, L<Apache::Session::File>
 =head1 REVISION HISTORY
 
 $Log: Session.pm,v $
-Revision 1.2.2.1  2001-10-03 09:18:08  wheeler
+Revision 1.2.2.2  2001-10-04 11:30:34  wheeler
+Fixed bug where wrong arguments were getting passed to tie() when creating the
+session.
+
+Revision 1.2.2.1  2001/10/03 09:18:08  wheeler
 Moved session and lock files into subdirectories of a single tmp directory,
 e.g., /tmp/bricolage/.
 
