@@ -14,6 +14,19 @@ $Date$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.8.0 "Portland" ()
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The new C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive now actually works.
+[David]
+
+=back
+
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)
 
 =head2 New Features
