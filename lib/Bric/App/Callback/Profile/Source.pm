@@ -24,12 +24,12 @@ sub save : Callback {
     my $source = $self->obj;
 
     my $used;
-    my $name = "&quot;$param->{source_name}&quot;";
+    my $name = $param->{source_name};
     if ($param->{delete}) {
         # Deactivate it.
         $source->deactivate;
         log_event("${type}_deact", $source);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         $source->save;
     } else {
         my $source_id = $param->{"${type}_id"};
@@ -43,7 +43,7 @@ sub save : Callback {
 	   && $sources[0] != $source_id) {
             $used = 1;
         }
-        add_msg($self->lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
+        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
 
         # Roll in the changes.
         if ($param->{org}) {
@@ -64,7 +64,7 @@ sub save : Callback {
             $source->set_source_name($param->{source_name});
             $source->save;
             log_event($type . (defined $param->{source_id} ? '_save' : '_new'), $source);
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
         }
     }
     # Save changes and redirect back to the manager.

@@ -25,7 +25,7 @@ sub addElement : Callback {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg($self->lang->maketext("Changes not saved: permission denied."));
+        add_msg("Changes not saved: permission denied.");
         set_redirect(last_page());
     } else {
         my $value  = $self->value;
@@ -49,7 +49,7 @@ sub doRedirect : Callback {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg($self->lang->maketext("Changes not saved: permission denied."));
+        add_msg("Changes not saved: permission denied.");
         set_redirect(last_page());
     } else {
         set_redirect('/admin/profile/element/' . $param->{element_id});

@@ -41,8 +41,7 @@ sub save : Callback {
         # Save it.
         $fa->save;
         log_event('formatting_save', $fa);
-        my $arg = '&quot;' . $fa->get_name . '&quot;';
-        add_msg($self->lang->maketext("Template [_1] saved.", $arg));
+        add_msg('Template "[_1]" saved.', $fa->get_name);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -94,8 +93,7 @@ sub save_and_stay : Callback {
         # Save the template.
         $fa->save;
         log_event('formatting_save', $fa);
-        my $arg = '&quot;' . $fa->get_name . '&quot;';
-        add_msg($self->lang->maketext("Template [_1] saved.", $arg));
+        add_msg('Template "[_1]" saved.', $fa->get_name);
     }
 }
 
@@ -129,8 +127,7 @@ sub cancel : Callback {
     log_event('formatting_cancel_checkout', $fa);
     clear_state($self->class_key);
     set_redirect("/");
-    my $arg = '&quot;' . $fa->get_name . '&quot;';
-    add_msg($self->lang->maketext("Template [_1] check out canceled.", $arg));
+    add_msg('Template "[_1]" check out canceled.', $fa->get_name);
 }
 
 sub notes : Callback {
@@ -241,9 +238,7 @@ sub recall : Callback {
             log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
             log_event('formatting_checkout', $fa);
         } else {
-            my $msg = "Permission to checkout [_1] denied";
-            my $arg = '&quot;' . $fa->get_name. '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('Permission to checkout "[_1]" denied.', $fa->get_name);
         }
     }
 
@@ -270,9 +265,7 @@ sub checkout : Callback {
             $t_obj->save;
             log_event("formatting_checkout", $t_obj);
         } else {
-            my $msg = "Permission to checkout [_1] denied";
-            my $arg = '&quot;' . $t_obj->get_file_name . '&quot;';
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('Permission to checkout "[_1]" denied.', $t_obj->get_file_name);
         }
     }
 
@@ -334,8 +327,7 @@ $checkin = sub {
         log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
         log_event('formatting_checkin', $fa);
         log_event("formatting_rem_workflow", $fa);
-        my $arg = '&quot;' . $fa->get_name . '&quot;';
-        add_msg($self->lang->maketext('Template [_1] saved and shelved.', $arg));
+        add_msg('Template "[_1]" saved and shelved.', $fa->get_name);
     } elsif ($desk_id eq 'deploy') {
         # Publish the template and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -369,9 +361,7 @@ $checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname })
           unless $no_log;
-        my $msg = "Template [_1] saved and checked in to [_2].";
-        my @args = ('&quot;' . $fa->get_name . '&quot;', "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg('Template "[_1]" saved and checked in to "[_2]".', $fa->get_name, $dname);
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -397,9 +387,7 @@ $checkin = sub {
         log_event('formatting_checkin', $fa);
         my $dname = $desk->get_name;
         log_event('formatting_moved', $fa, { Desk => $dname }) unless $no_log;
-        my $msg = "Template [_1] saved and moved to [_2].";
-        my @args = ('&quot;' . $fa->get_name . '&quot;', "&quot;$dname&quot;");
-        add_msg($self->lang->maketext($msg, @args));
+        add_msg('Template "[_1]" saved and moved to "[_2]".', $fa->get_name, $dname);
     }
 
     # Deploy the template, if necessary.
@@ -431,7 +419,7 @@ $check_syntax = sub {
     # Return success if the syntax checks out.
     return 1 if $burner->chk_syntax($fa, \$err);
     # Otherwise, add a message and return false.
-    add_msg($self->lang->maketext("Template compile failed: [_1]", $err));
+    add_msg("Template compile failed: [_1]", $err);
     return 0
 };
 
@@ -448,8 +436,7 @@ $delete_fa = sub {
     $fa->deactivate;
     $fa->save;
     log_event("formatting_deact", $fa);
-    my $arg = '&quot;' . $fa->get_name . '&quot;';
-    add_msg($self->lang->maketext("Template [_1] deleted.", $arg));
+    add_msg('Template "[_1]" deleted.', $fa->get_name);
 };
 
 $create_fa = sub {
@@ -506,10 +493,7 @@ $create_fa = sub {
         unless ($err->error =~ /already exists/) {
             rethrow_exception($err);
         } else {
-            add_msg("An active template already exists for the selected output "
-                  . "channel, category, element, and burner you selected. You "
-                  . "must delete the existing template before you can add a "
-                  . "new one.");
+            add_msg("An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
             return;
         }
     }
@@ -529,8 +513,7 @@ $create_fa = sub {
     log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
     log_event('formatting_save', $fa);
-    my $arg = '&quot;' . $fa->get_name . '&quot;' ;
-    add_msg($self->lang->maketext("Template [_1] saved.", $arg));
+    add_msg('Template "[_1]" saved.', $fa->get_name);
 
     # Put the template into the session and clear the workflow ID.
     set_state_data($widget, 'fa', $fa);

@@ -92,6 +92,10 @@ Added C<output_channel_id> paramter to the C<list()> methods of Story and
 Media to enable querying for documents in output channels other than the
 primary output channel. Based on a patch from Clive Jones. [David]
 
+=item *
+
+Lots of localization string fixes. [Radu Greab]
+
 =back
 
 =head2 Bug Fixes

@@ -26,7 +26,7 @@ sub save : Callback {
     my $grp = $self->obj;
 
     $param->{'grp_type'} ||= $class;
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     # Make the changes and save them.
     $param->{'obj'} = &$save_sub($self, $type, $param, $self->trigger_key,
@@ -42,7 +42,7 @@ sub permissions : Callback {
     my $grp = $self->obj;
 
     $param->{'grp_type'} ||= $class;
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     # Make the changes and save them.
     $param->{'obj'} = &$save_sub($self, $type, $param, $self->trigger_key,
@@ -61,8 +61,7 @@ sub deactivate : Callback {
         if (chk_authz($grp, EDIT)) {
             if ($grp->get_permanent) {
                 # Disallow deletion of permanent groups.
-                my $msg = '[_1] cannot be deleted';
-                add_msg($self->lang->maketext($msg, $disp_name));
+                add_msg("$disp_name cannot be deleted.");
             } else {
                 # Deactivate it.
                 $grp->deactivate;
@@ -124,7 +123,7 @@ $save_sub = sub {
     if ($param->{delete} && !$no_log) {
         if ($grp->get_permanent) {
             # Dissallow deletion of permanent groups.
-            add_msg("$disp_name cannot be deleted");
+            add_msg("$disp_name cannot be deleted.");
         } else {
             # Deactivate it.
             $grp->deactivate;
@@ -132,7 +131,7 @@ $save_sub = sub {
 	    log_event('grp_deact', $grp);
             # Reset the cache.
             $reset_cache->($grp, $class, $self);
-            add_msg($self->lang->maketext("$disp_name profile [_1] deleted.", $name));
+            add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         }
         # Set redirection back to the manager.
         set_redirect($redir);
@@ -168,7 +167,7 @@ $save_sub = sub {
 	$grp->save;
         unless ($no_log) {
 	    log_event('grp_save', $grp);
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
         }
 	# Redirect back to the manager.
 	set_redirect($redir);

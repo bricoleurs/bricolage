@@ -8,11 +8,11 @@ publish - A widget to display publish options.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:39 $
+$Date: 2003-08-12 20:10:42 $
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ my $objs = [];
 foreach my $sid (@{ mk_aref($story_pub_ids) }) {
     my $s = $story_pkg->lookup({ id => $sid });
     if ($s->get_checked_out) {
-        add_msg($lang->maketext("Cannot publish checked-out story [_1]","&quot;".$s->get_title.".&quot;"));
+        add_msg('Cannot publish checked-out story "[_1]"', $s->get_title);
 	next;
     }
     push @$objs, $s;
@@ -57,7 +57,7 @@ foreach my $sid (@{ mk_aref($story_pub_ids) }) {
 foreach my $mid (@{ mk_aref($media_pub_ids) }) {
     my $m = $media_pkg->lookup({ id => $mid });
     if ($m->get_checked_out) {
-        add_msg($lang->maketext("Cannot publish checked-out media [_1]","&quot;".$m->get_title.".&quot;"));
+        add_msg('Cannot publish checked-out media "[_1]"', $m->get_title);
 	next;
     }
     push @$objs, $m;

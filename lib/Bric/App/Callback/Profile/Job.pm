@@ -22,21 +22,21 @@ sub save : Callback {
     my $param = $self->request_args;
     my $job = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     if ($param->{delete}) {
         # Deactivate it.
         $job->cancel;
         log_event('job_cancel', $job);
         $job->save;
-        add_msg("$disp_name profile $name deleted.");
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         $job->set_name($param->{name});
         $job->set_sched_time($param->{sched_time});
         $job->set_type($param->{type});
         $job->save;
         log_event('job_save', $job);
-        add_msg("$disp_name profile $name saved.");
+        add_msg("$disp_name profile \"[_1]\" saved.", $name);
     }
     set_redirect('/admin/manager/job');
 }
@@ -52,9 +52,7 @@ sub cancel : Callback {
         if (chk_authz($job, EDIT)) {
             if ($job->is_pending) {
                 # It's executing right now. Don't cancel it.
-                my $msg = 'Cannot cancel [_1] because it is currently executing.';
-                my $arg = '&quot;' . $job->get_name . '&quot;';
-                add_msg($self->lang->maketext($msg, $arg));
+                add_msg('Cannot cancel "[_1]" because it is currently executing.', $job->get_name);
             } else {
                 # Cancel it.
                 $job->cancel();

@@ -23,7 +23,6 @@ sub save : Callback {
     my $mt = $self->obj;
 
     my $name = $param->{name};
-    my $qname = "&quot;$name&quot;";
 
     # If 'delete' box is checked, deactivate the Media Type;
     # otherwise, save the profile.
@@ -33,7 +32,7 @@ sub save : Callback {
         $mt->deactivate;
         $mt->save;
         log_event("${type}_deact", $mt);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$qname));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         set_redirect("/admin/manager/$type");
         return;
     } else {
@@ -51,7 +50,7 @@ sub save : Callback {
             $used = 1 if (@mts > 1)
               || (@mts == 1 && !defined $mt_id)
                 || (@mts == 1 && defined $mt_id && $mts[0] != $mt_id);
-            add_msg($self->lang->maketext("The name [_1] is already used by another $disp_name.",$qname)) if $used;
+            add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
         }
 
         # Process add_more widget.
@@ -67,15 +66,15 @@ sub save : Callback {
                     my $mt_name = Bric::Util::MediaType->get_name_by_ext($extension);
                     if (defined $mt_name && $mt_name ne $name) {
                         $usedext = 1;
-                        add_msg("Extension '$extension' is already used by media type '$mt_name'.");
+                        add_msg('Extension "[_1]" is already used by media type "[_2]".', $extension, $mt_name);
                     } else {
                         my @addexts = @{[$extension]};
                         unless ($mt->add_exts(@addexts)) {
-                            add_msg($self->lang->maketext("Problem adding [_1]","'@addexts'"));
+                            add_msg('Problem adding "[_1]"', "@addexts");
                         }
                     }
                 } else {
-                    add_msg($self->lang->maketext("Extension [_1] ignored.","'$extension'"));
+                    add_msg('Extension "[_1]" ignored.', $extension);
                 }
             }
             $param->{'obj'} = $usedext;
@@ -87,7 +86,7 @@ sub save : Callback {
             if (my $ext = $mtids->[$i]) {
                 my @delexts = @{[$ext]};
                 unless ($mt->del_exts(@delexts)) {
-                    add_msg($self->lang->maketext("Problem deleting [_1]","'@delexts'"));
+                    add_msg('Problem deleting "[_1]"', "@delexts");
                 }
                 my $extension = $param->{extension}[$i];
                 $used_ext += $addext_sub->($mt, $extension, $name);
@@ -119,7 +118,7 @@ sub save : Callback {
         } else {
             $mt->activate();
             $mt->save();
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved",$qname));
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
             unless (defined $mt_id) {
                 log_event($type . '_new', $mt);
             } else {

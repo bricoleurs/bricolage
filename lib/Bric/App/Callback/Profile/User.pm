@@ -36,9 +36,7 @@ sub save : Callback {
         # the system to reload their user objects from the database.
         $self->cache->set_lmu_time;
         log_event('user_deact', $user);
-        my $name = "&quot;" . $user->get_name . "&quot;";
-        my $msg = "$disp_name profile [_1] deleted.";
-        add_msg($self->lang->maketext($msg, $name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
         get_state_name('login') eq 'ssl' ? set_redirect('/admin/manager/user')
           : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
                             $self);
@@ -66,21 +64,18 @@ sub save : Callback {
     } elsif ($login ne $cur_login) {
         if (length $login < LOGIN_LENGTH ) {
             # The login isn't long enough.
-            my $msg = 'Login must be at least [_1] characters.';
-            add_msg($self->lang->maketext($msg, LOGIN_LENGTH));
+            add_msg('Login must be at least [_1] characters.', LOGIN_LENGTH);
             $no_save = 1;
         }
         if ($login !~ /^[-\.\@\w]+$/) {
             # The login contains invalid characters
-            my $msg = 'Login [_1] contains invalid characters.';
-            add_msg($self->lang->maketex($msg, "'$login'"));
+            add_msg('Login "[_1]" contains invalid characters.', $login);
             $no_save = 1;
         }
 
         unless ($class->login_avail($login)) {
             # The new login is already used by someone.
-            my $msg = 'Login [_1] is already in use. Please try again.';
-            add_msg($self->lang->maketext($msg, "&quot;$login&quot;"));
+            add_msg('Login "[_1]" is already in use. Please try again.', $login);
             $no_save = 1;
         }
         # Okay, go ahead and set it, even though the user might have to change it.
@@ -103,15 +98,12 @@ sub save : Callback {
             }
             if ($pass =~ /^\s+/ || $pass =~ /\s+$/) {
                 # Password contains illegal preceding or trailing spaces.
-                add_msg('Password contains illegal preceding or trailing spaces.'
-                          . ' Please try again.');
+                add_msg('Password contains illegal preceding or trailing spaces. Please try again.');
                 $no_save = 1;
             }
             if (length $pass < PASSWD_LENGTH) {
                 # The password isn't long enough.
-                my $msg = 'Passwords must be at least [_1] characters!';
-                my $arg = "'" . PASSWD_LENGTH . "'";
-                add_msg($self->lang->maketext($msg, $arg));
+                add_msg('Passwords must be at least [_1] characters!', PASSWD_LENGTH);
                 $no_save = 1;
             }
             # Change the password if we're saving.
@@ -135,9 +127,7 @@ sub save : Callback {
     }
     $user->save;
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
-    my $name = "&quot;" . $user->get_name . "&quot;";
-    my $msg = "$disp_name profile [_1] saved.";
-    add_msg($self->lang->maketext($msg, $name));
+    add_msg("$disp_name profile \"[_1]\" saved.", $user->get_name);
 
     # Take care of group managment.
     my $id = $param->{user_id} || $user->get_id;

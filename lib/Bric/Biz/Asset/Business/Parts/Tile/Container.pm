@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.26 $
+$Revision: 1.27 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.26 $ )[-1];
+our $VERSION = (qw$Revision: 1.27 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-08-12 18:52:15 $
+$Date: 2003-08-12 20:10:43 $
 
 =head1 SYNOPSIS
 
@@ -843,9 +843,7 @@ sub get_data {
     # name rather than the display name.
     if ($name =~ /[^a-z0-9_]/) {
         ($name = lc($name)) =~ y/a-z0-9/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is deprecated for ".
-                  "use with element method 'get_data'.  Please use the ".
-                  "element's 'key_name' field instead";
+        my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_data'.  Please use the element's 'key_name' field instead.";
         Bric::App::Util::add_msg($msg);
         Carp::cluck($msg);
     }
@@ -875,9 +873,7 @@ sub get_container {
     # name rather than the display name.
     if ($name =~ /[^a-z]/) {
         ($name = lc($name)) =~ y/a-z/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is deprecated for ".
-                  "use with element method 'get_container'.  Please use the ".
-                  "element's 'key_name' field instead";
+        my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
         Bric::App::Util::add_msg($msg);
     }
 

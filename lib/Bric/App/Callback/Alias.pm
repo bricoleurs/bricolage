@@ -46,8 +46,7 @@ sub make_alias : Callback {
     # Make sure they're not try to create an alias to an asset in the
     # same site.
     if ($aliased->get_site_id() == $site_id) {
-        add_msg($self->lang->maketext("Cannot create an alias to a " .
-                                "$dispmap{$class_key} in the same site"));
+        add_msg("Cannot create an alias to a $dispmap{$class_key} in the same site.");
         return;
     }
 
@@ -135,8 +134,7 @@ $work_it = sub {
     log_event("$class_key\_aliased", $aliased, { 'To Site' => $site->get_name() });
 
     # Let 'em know what we've done.
-    add_msg($self->lang->maketext("Alias to [_1] created and saved.",
-                            "&quot;" . $ba->get_title() . "&quot;"));
+    add_msg('Alias to "[_1]" created and saved.', $ba->get_title());
 };
 
 $handle_asset = sub {

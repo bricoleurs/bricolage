@@ -6,15 +6,15 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 17:49:48 $
+$Date: 2003-08-12 20:10:44 $
 
 =head1 SYNOPSIS
 
@@ -67,7 +67,7 @@ our %Lexicon = (
     'All Elements' => '所有的元素',
     'All Groups' => '所有的群組',
     'Allow multiple' => '允許多選',
-    'An [_1] attribute already exists. Please try another name.' => '[_1] 屬性已然存在，請用別的名稱。',
+    'An "[_1]" attribute already exists. Please try another name.' => '[_1] 屬性已然存在，請用別的名稱。',
     'An active template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.' => '所選之輸出頻道、分類、元素、與burner已有對應之起用的模板，在增加新的模板之前，你必須先刪除目前存在的模板。',
     'An error occurred while processing your request:' => '在處理您的要求時，發生了一個錯誤；',
     'An error occurred.' => '一個錯誤突然在這裡出現，把你嚇得半死。',
@@ -81,23 +81,22 @@ our %Lexicon = (
     'By Last' => '依照最後',
     'By Source name' => '按照來源名稱',
     'CONTACTS' => '聯絡人',
-    'Cannot auto-publish related media [_1] because it is checked out' => '無法自動出版相關的媒體 [_1] ，因為它尚未送回',
-    'Cannot cancel [_1] because it is currently executing.' => '不能取消 [_1] ，因為它目前正在執行中。',
-    'Cannot move [_1] asset \'[_2]\' while it is checked out' => '不能將 [_1] 資產移動到 \'[_2]\' ，因為目前已被取出',
-    'Cannot publish [_1]  because it is checked out' => '無法出版 [_1] ，因為它尚未送回',
-    'Cannot publish checked-out media [_1]' => '尚未送回的媒體 [_1] 不能被出版',
-    'Cannot publish checked-out story [_1]' => '未送回的稿子 [_1] 不能出版',
+    'Cannot auto-publish related media "[_1]" because it is checked out.' => '無法自動出版相關的媒體 [_1] ，因為它尚未送回',
+    'Cannot cancel "[_1]" because it is currently executing.' => '不能取消 [_1] ，因為它目前正在執行中。',
+    'Cannot move [_1] asset "[_2]" while it is checked out' => '不能將 [_1] 資產移動到 \'[_2]\' ，因為目前已被取出',
+    'Cannot publish checked-out media "[_1]"' => '尚未送回的媒體 [_1] 不能被出版',
+    'Cannot publish checked-out story "[_1]"' => '未送回的稿子 [_1] 不能出版',
     'Caption' => '標題',
     'Categories' => '分類',
     'Category Assets' => '分類資產',
     'Category Manager' => '分類管理',
     'Category Permissions' => '分類權限',
-    'Category [_1] added.' => '分類 [_1] 已加入.',
-    'Category [_1] cannot be deleted.' => '分類 [_1] 不能被刪除。',
-    'Category [_1] disassociated.' => '以斷絕「[_1]」這個分類的關係',
-    'Category profile [_1] and all its categories deleted.' => '分類設定 [1] 與其所有分類皆已刪除。',
-    'Category profile [_1] deleted.' => '分類設定 [_1] 已刪除。',
-    'Category profile [_1] saved.' => '分類設定 [_1] 已儲存。',
+    'Category "[_1]" added.' => '分類 [_1] 已加入.',
+    'Category "[_1]" cannot be deleted.' => '分類 [_1] 不能被刪除。',
+    'Category "[_1]" disassociated.' => '以斷絕「[_1]」這個分類的關係',
+    'Category profile "[_1]" and all its categories deleted.' => '分類設定 [1] 與其所有分類皆已刪除。',
+    'Category profile "[_1]" deleted.' => '分類設定 [_1] 已刪除。',
+    'Category profile "[_1]" saved.' => '分類設定 [_1] 已儲存。',
     'Category tree' => '分類樹',
     'Category' => '分類',
     'Changes not saved: permission denied.' => '無法儲存：權限遭拒',
@@ -122,9 +121,9 @@ our %Lexicon = (
     'Contributor Roles' => '供稿者角色',
     'Contributor Type Manager' => '供稿者型別管理',
     'Contributor Types' => '供稿者型別',
-    'Contributor [_1] disassociated.' => '已斷絕供稿者 [_1] 的關係。',
-    'Contributor profile [_1] deleted.' => '供稿者設定 [_1] 已刪除。',
-    'Contributor profile [_1] saved.' => '供稿者設定 [_1] 已儲存。',
+    'Contributor "[_1]" disassociated.' => '已斷絕供稿者 [_1] 的關係。',
+    'Contributor profile "[_1]" deleted.' => '供稿者設定 [_1] 已刪除。',
+    'Contributor profile "[_1]" saved.' => '供稿者設定 [_1] 已儲存。',
     'Contributors disassociated.' => '已斷絕供稿者的關係',
     'Contributors' => '供稿者',
     'Cover Date incomplete.' => '封面日期不完整。',
@@ -153,16 +152,16 @@ our %Lexicon = (
     'Deployed Date' => '佈署的日期',
     'Description' => '描述',
     'Desk Permissions' => '桌面權限',
-    'Desk profile [_1] deleted from all workflows.' => '桌面設定 [_1] 已從所有的流程中刪除。',
+    'Desk profile "[_1]" deleted from all workflows.' => '桌面設定 [_1] 已從所有的流程中刪除。',
     'Desk'   => '桌面',
     'Desks'   => '桌面',
     'Destination Manager' => '目標管理',
     'Destination not specified' => '目標未指定',
-    'Destination profile [_1] deleted.' => '目標設定 [_1] 已刪除。',
-    'Destination profile [_1] saved.' => '目標設定 [_1] 已儲存。',
+    'Destination profile "[_1]" deleted.' => '目標設定 [_1] 已刪除。',
+    'Destination profile "[_1]" saved.' => '目標設定 [_1] 已儲存。',
     'Destinations' => '目標',
     'Development' => '發展',
-    'Directory name [_1] contains invalid characters. Please try a different directory name.' => '目錄名稱[_1]還有非法的字元，請調整目錄名稱。',
+    'Directory name "[_1]" contains invalid characters. Please try a different directory name.' => '目錄名稱[_1]還有非法的字元，請調整目錄名稱。',
     'Download' => '下載',
     'EXISTING CATEGORIES' => '已有的分類',
     'EXISTING DESTINATIONS' => '已有的目標',
@@ -175,11 +174,11 @@ our %Lexicon = (
     'Edit' => '編輯',
     'Element Manager' => '元素管理',
     'Element Type Manager' => '元素類別管理',
-    'Element Type profile [_1] deleted.' => '元素型別設定 [_1] 已刪除。',
-    'Element Type profile [_1] saved.' => '元素型別設定 [_1] 已儲存。',
+    'Element Type profile "[_1]" deleted.' => '元素型別設定 [_1] 已刪除。',
+    'Element Type profile "[_1]" saved.' => '元素型別設定 [_1] 已儲存。',
     'Element Types' => '元素型別',
-    'Element [_1] deleted.' => '元素 [_1] 已刪除。',
-    'Element [_1] saved.' => '元素[_1]已儲存',
+    'Element "[_1]" deleted.' => '元素 [_1] 已刪除。',
+    'Element "[_1]" saved.' => '元素[_1]已儲存',
     'Element' => '元素',
     'Elements' => '元素',
     'Error' => '錯誤',
@@ -214,21 +213,21 @@ our %Lexicon = (
     'Group Memberships' => '群組成員',
     'Group Type' => '群組型別',
     'Group cannot be deleted' => '不能刪除群組',
-    'Group profile [_1] deleted.' => '群組設定 [_1] 已刪除。',
-    'Group profile [_1] saved.' => '群組設定 [_1] 以儲存',
+    'Group profile "[_1]" deleted.' => '群組設定 [_1] 已刪除。',
+    'Group profile "[_1]" saved.' => '群組設定 [_1] 以儲存',
     'Groups' => '群組',
     'High'=> '最高',
     'Hour' => '時',
     'ID' => 'ID',
-    'Invalid date value for [_1] field.' => '日期欄位「[_1]」的值無效',
+    'Invalid date value for "[_1]" field.' => '日期欄位「[_1]」的值無效',
     'Invalid page request' => '無效的頁面要求',
     'Invalid password. Please try again.' => '密碼無校，請再試一次',
     'Invalid username or password. Please try again.' => '使用者名稱或者密碼無效，請再試一次。',
     'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec' => '一月 二月 三月 四月 五月 六月 七月 八月 九月 十月 十一月 十二月',
     'Jan' => '一月',
     'Job Manager' => '工作管理',
-    'Job profile [_1] deleted.' => '工作設定 [_1] 已刪除。',
-    'Job profile [_1] saved.' => '工作設定 [_1] 已儲存。',
+    'Job profile "[_1]" deleted.' => '工作設定 [_1] 已刪除。',
+    'Job profile "[_1]" saved.' => '工作設定 [_1] 已儲存。',
     'Jobs' => '工作',
     'Jul' => '七月',
     'Jun' => '六月',
@@ -238,8 +237,8 @@ our %Lexicon = (
     'Last' => '最後',
     'Log' => '紀錄',
     'Login ' => '登入',
-    'Login [_1] contains invalid characters.' => '登入帳號 [_1] 內含非法字元啊！',
-    'Login [_1] is already in use. Please try again.' => '登入 [_1] 已被使用，請再試一次。',
+    'Login "[_1]" contains invalid characters.' => '登入帳號 [_1] 內含非法字元啊！',
+    'Login "[_1]" is already in use. Please try again.' => '登入 [_1] 已被使用，請再試一次。',
     'Login and Password' => '登入及密碼',
     'Login cannot be blank. Please enter a login.' => '登入欄位不能留白，請務必正確輸入',
     'Login must be at least [_1] characters.' => '登入帳號至少要有 [_1] 個字元',
@@ -253,18 +252,17 @@ our %Lexicon = (
     'Maximum size' => '最大',
     'May' => '五月',
     'Media Type Manager' => '媒體型別管理',
-    'Media Type profile [_1] deleted.' => '媒體型別設定 [_1] 已經儲存。',
-    'Media Type profile [_1] saved.' => '媒體型別 [_1] 已儲存。',
+    'Media Type profile "[_1]" deleted.' => '媒體型別設定 [_1] 已經儲存。',
+    'Media Type profile "[_1]" saved.' => '媒體型別 [_1] 已儲存。',
     'Media Type' => '媒體型別',
     'Media Types' => '媒體型別',
-    'Media [_1]  published.' => '媒體 [_1] 已出版。',
-    'Media [_1] check out canceled.' => '已取消取出媒體 [_1] 。',
-    'Media [_1] deleted.' => '媒體 [_1] 已刪除。',
-    'Media [_1] published.' => 'Media [_1] 已正式公開出版。',
-    'Media [_1] reverted to V.[_2]' => '媒體 [_1] 已回復到第 [_2] 版',
-    'Media [_1] saved and checked in to [_2].' => '媒體 [_1] 已儲存，並送回到 [_2].',
-    'Media [_1] saved and moved to [_2].' => '媒體 [_1] 已儲存，並且移動到 [_2]。',
-    'Media [_1] saved.' => '媒體 [_1] 已儲存。',
+    'Media "[_1]" check out canceled.' => '已取消取出媒體 [_1] 。',
+    'Media "[_1]" deleted.' => '媒體 [_1] 已刪除。',
+    'Media "[_1]" published.' => 'Media [_1] 已正式公開出版。',
+    'Media "[_1]" reverted to V.[_2]' => '媒體 [_1] 已回復到第 [_2] 版',
+    'Media "[_1]" saved and checked in to "[_2]".' => '媒體 [_1] 已儲存，並送回到 [_2].',
+    'Media "[_1]" saved and moved to "[_2]".' => '媒體 [_1] 已儲存，並且移動到 [_2]。',
+    'Media "[_1]" saved.' => '媒體 [_1] 已儲存。',
     'Medium High' => '較高',
     'Medium Low' => '較低 ',
     'Member Type  ' => '成員型別',
@@ -322,8 +320,8 @@ our %Lexicon = (
     'Or Pick a Type' => '或選擇一個型別',
     'Order' => '順序',
     'Organization' => '組織',
-    'Output Channel profile [_1] deleted.' => '輸出頻道設定 [_1] 已刪除。',
-    'Output Channel profile [_1] saved.' => '輸出頻道 [_1] 已被儲存。',
+    'Output Channel profile "[_1]" deleted.' => '輸出頻道設定 [_1] 已刪除。',
+    'Output Channel profile "[_1]" saved.' => '輸出頻道 [_1] 已被儲存。',
     'Output Channel' => '輸出頻道',
     'Output Channels' => '輸出頻道',
     'Owner' => '所有人',
@@ -344,7 +342,7 @@ our %Lexicon = (
     'Passwords must match!' => '密碼一定要匹配',
     'Pending ' => 'Sospesa',
     'Permission Denied' => '權限慘遭拒絕',
-    'Permission to checkout [_1] denied' => '取出 [_1] 的權限慘遭拒絕',
+    'Permission to checkout "[_1]" denied.' => '取出 [_1] 的權限慘遭拒絕',
     'Permission to delete "[_1]" denied.' => '刪除 [_1] 權限慘遭拒絕',
     'Permissions saved.' => '權限已儲存',
     'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => '請仔細檢查URL並且再試一次。如果你覺得你是因為某種伺服器產生的錯誤而來到這個頁面，請儘速通知管理員，並請附上盡量詳細的資訊，包括使用的瀏覽器、作業系統、以及達到這一頁的每個步驟。',
@@ -354,15 +352,15 @@ our %Lexicon = (
     'Post' => '貼',
     'Pre' => 'Pre', # XXX 不曉得出現在什麼地方
     'Preference Manager' => '偏好設定管理',
-    'Preference [_1] updated.' => '偏好設定 [_1] 已更新。',
+    'Preference "[_1]" updated.' => '偏好設定 [_1] 已更新。',
     'Preferences' => '偏好設定',
     'Prefix' => 'Prefix',
     'Previews' => '預覽',
     'Primary Category' => '主要的分類',
     'Primary Output Channel' => '主要的輸出頻道',
     'Priority' => '優先權',
-    'Problem adding [_1]' => '增加 [_1] 時發生問題',
-    'Problem deleting [_1]' => '刪除 [_1] 時發生問題。',
+    'Problem adding "[_1]"' => '增加 [_1] 時發生問題',
+    'Problem deleting "[_1]"' => '刪除 [_1] 時發生問題。',
     'Profile' => '設定',
     'Properties' => '特性',
     'Publish Date' => '出版日期',
@@ -398,16 +396,16 @@ our %Lexicon = (
     'Sep' => '九月',
     'Separator Changed.' => '分隔字元已更動。',
     'Separator String' => '分隔字串',
-    'Server profile [_1] deleted.' => '伺服器設定 [_1] 已經儲存。',
-    'Server profile [_1] saved.' => '伺服器設定 [_1] 已儲存。',
+    'Server profile "[_1]" deleted.' => '伺服器設定 [_1] 已經儲存。',
+    'Server profile "[_1]" saved.' => '伺服器設定 [_1] 已儲存。',
     'Simple Search' => '簡易搜尋',
     'Size' => '大小',
     'Slug must conform to URI character rules.' => 'Slug 也一定要依循 URI 字元的規則',
     'Sort By' => '排序方式',
     'Source Manager' => '來源管理',
     'Source name' => '來源名稱',
-    'Source profile [_1] deleted.' => '來源設定 [_1] 已刪除。',
-    'Source profile [_1] saved.' => '來源設定 [_1] 已儲存。',
+    'Source profile "[_1]" deleted.' => '來源設定 [_1] 已刪除。',
+    'Source profile "[_1]" saved.' => '來源設定 [_1] 已儲存。',
     'Source' => '來源',
     'Sources' => '來源',
     'Start Desk' => '開始桌面',
@@ -415,13 +413,13 @@ our %Lexicon = (
     'Status' => '狀態',
     'Stories in this category' => '這個分類裡面的稿件',
     'Story Type' => '稿件型別',
-    'Story [_1] check out canceled.' => '取消取出稿件 [_1]。',
-    'Story [_1] deleted.' => '稿件 [_1] 已刪除。',
-    'Story [_1] published.' => '稿件 [_1] 已出版。',
-    'Story [_1] reverted to V.[_2].' => '稿件 [_1] 已回復到第 [_2] 版。',
-    'Story [_1] saved and moved to [_2].' => '稿件 [_1] 已儲存，移動至 [_2] 。',
-    'Story [_1] saved, checked in to [_2].' => '稿件 [_1] 已儲存，送回至 [_1] 。',
-    'Story [_1] saved.' => '稿件 [_1] 已儲存。',
+    'Story "[_1]" check out canceled.' => '取消取出稿件 [_1]。',
+    'Story "[_1]" deleted.' => '稿件 [_1] 已刪除。',
+    'Story "[_1]" published.' => '稿件 [_1] 已出版。',
+    'Story "[_1]" reverted to V.[_2].' => '稿件 [_1] 已回復到第 [_2] 版。',
+    'Story "[_1]" saved and moved to "[_2]".' => '稿件 [_1] 已儲存，移動至 [_2] 。',
+    'Story "[_1]" saved and checked in to "[_2]".' => '稿件 [_1] 已儲存，送回至 [_1] 。',
+    'Story "[_1]" saved.' => '稿件 [_1] 已儲存。',
     'Subelements' => '子元素',
     'Switch Roles' => '變換角色',
     'TEMPLATE' => '樣板',
@@ -429,10 +427,9 @@ our %Lexicon = (
     'Teaser' => '懸疑廣告',
     'Template Includes' => '模板包括了...',
     'Template Name' => '模板名稱',
-    'Template [_1] check out canceled.' => '取消取出樣板 [_1]。',
-    'Template [_1] checked in to [_2] desk.' => '模板 [_1] 送回到桌面 [_2].',
-    'Template [_1] deleted.' => '模板 [_1] 已刪除。',
-    'Template [_1] saved.' => '模板 [_1] 已儲存。',
+    'Template "[_1]" check out canceled.' => '取消取出樣板 [_1]。',
+    'Template "[_1]" deleted.' => '模板 [_1] 已刪除。',
+    'Template "[_1]" saved.' => '模板 [_1] 已儲存。',
     'Template compile failed: [_1]' => '模板編譯失敗: [_1]',
     'Text Area' => '文字區域',
     'Text box' => '文字方塊',
@@ -440,12 +437,11 @@ our %Lexicon = (
     'The URL you requested, <b>[_1]</b>, was not found on this server' => '在這台伺服器上，並沒有找到所求之 URL <b>[_1]</b> ',
     'The category was not added, as it would have caused a URI clash with story [_1].' => '分類並沒有加入，因為會造成與稿件「[_1]」相同的URI。',
     'The cover date has been reverted to [_1], as it caused this story to have a URI conflicting with that of story \'[_2].' => '封面日期已經回復到 [_1] ，因為原本這篇稿子的 URI 與 \'[_2]\' 這篇稿子相同。 ',
-    'The name [_1] is already used by another Element Type.' => '[_1] 這名稱已經被其他的元素型別使用。',
-    'The name [_1] is already used by another Media Type.' => '[_1] 這個名稱已被其他的媒體型別佔用。',
-    'The name [_1] is already used by another Output Channel.' => '[_1] 這個名字已經被其他的輸出頻道使用了',
-    'The name [_1] is already used by another Source.' => '[_1] 這個名稱已經被其他的來源採用',
-    'The name [_1] is already used by another Workflow.' => '其他流程已經使用了 [_1] 這個名字',
-    'The name [_1] is already used by another [_2].' => '[_1] 這個名字已經被 [_2] 先用去了。',
+    'The name "[_1]" is already used by another Element Type.' => '[_1] 這名稱已經被其他的元素型別使用。',
+    'The name "[_1]" is already used by another Media Type.' => '[_1] 這個名稱已被其他的媒體型別佔用。',
+    'The name "[_1]" is already used by another Output Channel.' => '[_1] 這個名字已經被其他的輸出頻道使用了',
+    'The name "[_1]" is already used by another Source.' => '[_1] 這個名稱已經被其他的來源採用',
+    'The name "[_1]" is already used by another Workflow.' => '其他流程已經使用了 [_1] 這個名字',
     'The slug can only contain alphanumeric characters (A-Z, 0-9, - or _)!' => 'Slug 裡面只能用英文字母、阿拉伯數字、短線、與底線字元！',
     'The slug has been reverted to [_1], as the slug [_2] caused this story to have a URI conflicting with that of story [_3].' => '此 Slug 已被回復到 [_1]，因為 Slug [_2] 使得這篇稿件的 URI 與「[_3]」這篇稿件的 URI 相同。',
     'The slug, category and cover date you selected would have caused this story to have a URI conflicting with that of story [_1].' => '這篇稿件所選的的 slug、分類、以及封面日期，將使其 URI 與「[_1]」這篇稿件相同',
@@ -456,13 +452,13 @@ our %Lexicon = (
     'Trail'  => '更改紀錄',
     'Triggered By' => '觸發者',
     'Type' => '型別',
-    'URI [_1] is already in use. Please try a different directory name or parent category.' => 'URI [_1] 已被使用，請調整目錄名稱或者是分類。',
+    'URI "[_1]" is already in use. Please try a different directory name or parent category.' => 'URI [_1] 已被使用，請調整目錄名稱或者是分類。',
     'URI' => 'URI',
     'URL' => 'URL',
     'Un-relate' => 'Annulla collegamento',
     'User Manager' => '使用者管理',
     'User Override' => '變身為別的使用者',
-    'User profile [_1] deleted.' => '使用者設定 [_1] 已刪除。',
+    'User profile "[_1]" deleted.' => '使用者設定 [_1] 已刪除。',
     'Username' => '使用者名稱',
     'Usernames must be at least 6 characters!' => '使用者名稱至少需要六個字元',
     'Users' => '使用者',
@@ -471,8 +467,7 @@ our %Lexicon = (
     'View' => '看看',
     'Warning! Cyclops is designed to run with JavaScript enabled.' => '警告！執行Cyclops必須同時啟動JavaScript才行！',
     'Warning! State inconsistent: Please use the buttons provided by the application rather than the \'Back\'/\'Forward\' buttons.' => '警告！狀態產生矛盾：請務必利用本程式所給的按鈕，不要用瀏覽器的「向前」「向後」按鈕。',
-    'Warning: [_1] object \'[_2]\' had no associated workflow.  It has been assigned to the \'[_3]\' workflow.' => '警告： [_1] 物件 \'[_2]\' 沒有所屬的流程，已被分配到流程 \'[_3]\' 去了。',
-    'Warning: object [_1]\' had no associated desk.  It has been assigned to the [_2]\' desk.' => '警告：[_1] 沒有所屬的桌面，它已經被移動到 [_2] 這個桌面。',
+    'Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.' => '警告：[_1] 沒有所屬的桌面，它已經被移動到 [_2] 這個桌面。',
     'Welcome to Bricolage.' => '歡迎使用 Bricolage',
     'Welcome to Cyclops.' => '歡迎來到 Cyclops.',
     'Words' => '字',
@@ -490,37 +485,70 @@ our %Lexicon = (
     'You must select an Element or check the &quot;Generic&quot; check box.' => '你必須選擇一個元素，或是核選「通用」的核選方塊',
     'You must supply a unique name for this role!' => '你必須替這個角色取個獨一無二的名字',
     'You must supply a value for ' => '您必須給定其值',
-    '[_1] Elements saved.' => '[_1] 元素已被儲存。',
+    '"[_1]" Elements saved.' => '[_1] 元素已被儲存。',
     '[_1] Field Text' => '[_1] 欄位文字',
-    '[_1] cannot be deleted' => '[_1] 不能被刪除',
     '[_1] recipients changed.' => '[_1] 個收件者已更動。',
     'all' => '全部',
     'one per line' => '一行一個',
     'to' => '到',
     'Cannot both delete and make primary a single output channel.' => '你不能夠對輸出頻道同時進行刪除與「設為主要」的動作',
-    'Media [_1] saved and shelved.' => '媒體 [_1] 已儲存且上架了。',
-  'Media [_1] saved and moved to [_2].' => '媒體 [_1] 以儲存，且移動至 [_2]。',
-  'Media [_1] created and saved.' => '媒體 [_1] 已建立，並且儲存。',
+    'Media "[_1]" saved and shelved.' => '媒體 [_1] 已儲存且上架了。',
+  'Media "[_1]" saved and moved to "[_2]".' => '媒體 [_1] 以儲存，且移動至 [_2]。',
+  'Media "[_1]" created and saved.' => '媒體 [_1] 已建立，並且儲存。',
   'Preview in' => '預覽',
   'Parent cannot choose itself or its child as its parent. Try a different parent.' => '一個節點不能把自己或其子節點設定為自己的母節點，請選擇別的節點。',
-  '[_1] stories published.' => '[_1] 篇稿件出版完成。' ,
-  '[_1] media published.'   => '[_1] 個媒體出版完成。',
+  '[quant,_1,story,stories] published.' => '[_1] 篇稿件出版完成。' ,
+  '[quant,_1,media,media] published.'   => '[_1] 個媒體出版完成。',
   'Category URI' => '分類URI',
-  'Story [_1] saved and shelved.' => '稿件 [_1] 已儲存且上架了。',
-  'Story [_1] saved and checked in to [_2].' => '稿件 [_1] 已經儲存且送回至 [_2]。',
-  'Story [_1] created and saved.' => '稿件 [_1] 已建立，並且儲存。',
-  'Template [_1] saved and shelved.' => '模板 [_1] 已建立，並且上架了',
-  'Template [_1] saved and moved to [_2].' => '模板 [_1] 已建立，並且移動至 [_2]',
+  'Story "[_1]" saved and shelved.' => '稿件 [_1] 已儲存且上架了。',
+  'Story "[_1]" saved and checked in to "[_2]".' => '稿件 [_1] 已經儲存且送回至 [_2]。',
+  'Story "[_1]" created and saved.' => '稿件 [_1] 已建立，並且儲存。',
+  'Template "[_1]" saved and shelved.' => '模板 [_1] 已建立，並且上架了',
+  'Template "[_1]" saved and moved to "[_2]".' => '模板 [_1] 已建立，並且移動至 [_2]',
    '_AUTO' => 1,
 );
 
 =begin comment
 
 To translate:
-  'Note: Container element [_1] removed in bulk edit but will not be deleted.'
-  'Note: Data element [_1] is required and cannot be completely removed.  Will delete all but one'
-  'Field [_1] appears more than once but it is not a repeatable element.  Please remove all but one.'
-  'Bad element name [_1]. Did you mean [_2]?'
+
+    'No media file is associated with asset "[_1]", so none will be distributed.'
+    'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.'
+    'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_container\'.  Please use the element\'s \'key_name\' field instead.'
+    'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_data\'.  Please use the element\'s \'key_name\' field instead.'
+    'You must be an administrator to use this function.'
+    'Template deployed.'
+    '[quant,_1,Template] deployed.'
+    'Cannot auto-publish related story "[_1]" because it is checked out.'
+    'Cannot publish media "[_1]" because it is checked out.'
+    'Cannot publish story "[_1]" because it is checked out.'
+    'Bad element name "[_1]". Did you mean "[_2]"?'
+    'Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.'
+    'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.'
+    'Note: Container element "[_1]" removed in bulk edit but will not be deleted.'
+    'Cannot create an alias to a media in the same site.'
+    'Cannot create an alias to a story in the same site.'
+    '[quant,_1,Alert] acknowledged.'
+    'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.'
+    'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow. This change also required that this object be moved to the "[_3]" desk.'
+    'Action profile "[_1]" deleted.'
+    'Action profile "[_1]" saved.'
+    'Alert Type profile "[_1]" deleted.'
+    'Alert Type profile "[_1]" saved.'
+    'The name "[_1]" is already used by another Alert Type.'
+    'The name "[_1]" is already used by another Desk.'
+    'The name "[_1]" is already used by another Destination.'
+    'You cannot remove all Sites.'
+    'The key name "[_1]" is already used by another ???.'
+    '[quant,_1,Contributor] "[_2]" associated.'
+    'Extension "[_1]" ignored.'
+    'Extension "[_1]" is already used by media type "[_2]".'
+    'The name "[_1]" is already used by another Server in this Destination.'
+    'You must select an Element.'
+    'New passwords do not match. Please try again.'
+    'User profile "[_1]" saved.'
+    'Site profile "[_1]" deleted.'
+    'Site profile "[_1]" saved.'
 
 =end comment
 

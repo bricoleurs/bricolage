@@ -20,21 +20,8 @@ use Bric::Config qw(ALLOW_WORKFLOW_TRANSFER);
 use Bric::Util::Burner;
 use Bric::Util::Time qw(strfdate);
 
-my %num = (
-    1 => 'One',
-    2 => 'Two',
-    3 => 'Three',
-    4 => 'Four',
-    5 => 'Five',
-    6 => 'Six',
-    7 => 'Seven',
-    8 => 'Eight',
-    9 => 'Nine',
-    10 => 'Ten',
-);
 my $type = 'formatting';
 my $disp_name = get_disp_name($type);
-my $pl_name = get_class_info($type)->get_plural_name;
 
 
 sub checkin : Callback {
@@ -98,8 +85,7 @@ sub move : Callback {
         my $a_obj = $pkg->lookup({'id' => $a_id});
 
         unless ($a_obj->is_current) {
-            my $msg = "Cannot move [_1] asset '[_2]' while it is checked out";
-            add_msg($self->lang->maketext($msg, $a_class, $a_obj->get_name));
+            add_msg('Cannot move [_1] asset "[_2]" while it is checked out.', $a_class, $a_obj->get_name);
             next;
         }
 
@@ -171,10 +157,8 @@ sub publish : Callback {
         $seen{$key} = 1;
 
         if ($a->get_checked_out) {
-            my $msg = "Cannot publish [_1]  because it is checked out";
-            my $arg = lc(get_disp_name($a->key_name))
-              . " '" . $a->get_name . "'";
-            add_msg($self->lang->maketext($msg, $arg));
+            my $a_disp_name = lc(get_disp_name($a->key_name));
+            add_msg("Cannot publish $a_disp_name \"[_1]\" because it is checked out.", $a->get_name);
             next;
         }
 
@@ -184,11 +168,8 @@ sub publish : Callback {
             next if not $r->needs_publish();
 
             if ($r->get_checked_out) {
-                my $msg = "Cannot auto-publish related [_1] because "
-                  . "it is checked out";
-                my $arg = lc(get_disp_name($r->key_name))
-                  . " '" . $r->get_name."'";
-                add_msg($self->lang->maketext($msg, $arg));
+                my $r_disp_name = lc(get_disp_name($r->key_name));
+                add_msg("Cannot auto-publish related $r_disp_name \"[_1]\" because it is checked out.", $r->get_name);
                 next;
             }
 
@@ -236,7 +217,6 @@ sub deploy : Callback {
 
     $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
-    my $name;
     my $c = @$a_ids;
     foreach (@$a_ids) {
         my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $_ });
@@ -258,14 +238,13 @@ sub deploy : Callback {
         $fa->set_workflow_id(undef);
         $fa->save;
         log_event("formatting_rem_workflow", $fa);
-
-        # Get the template's name, if it's just one template we're deploying.
-        $name = '&quot;' . $fa->get_name . '&quot;' if $c == 1;
     }
     # Let 'em know we've done it!
-    my $msg = '[_1] deployed.';
-    my $arg = $name ? $disp_name : ($num{$c} || $c) . " $pl_name";
-    add_msg($self->lang->maketext($msg, $arg));
+    if ($c == 1) {
+        add_msg("$disp_name deployed.");
+    } else {
+        add_msg("[quant,_1,$disp_name] deployed.", $c);
+    }
 }
 
 sub clone : Callback {

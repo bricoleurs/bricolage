@@ -46,9 +46,7 @@ sub revert : Callback {
     my $version = $self->request_args->{"$widget|version"};
     $story->revert($version);
     $story->save;
-    my $msg = "Story [_1] reverted to V.[_2].";
-    my @args = ('&quot;' . $story->get_title . '&quot;', $version);
-    add_msg($msg, @args);
+    add_msg('Story "[_1]" reverted to V.[_2].', $story->get_title, $version);
     clear_state($widget);
 }
 
@@ -68,8 +66,7 @@ sub save : Callback {
         # Save the story.
         $story->save;
         log_event('story_save', $story);
-        my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg("Story [_1] saved.", $arg);
+        add_msg('Story "[_1]" saved.', $story->get_title);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -127,8 +124,7 @@ sub checkin : Callback {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story);
         log_event("story_rem_workflow", $story);
-        my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg("Story [_1] saved and shelved.", $arg);
+        add_msg('Story "[_1]" saved and shelved.', $story->get_title);
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -163,10 +159,8 @@ sub checkin : Callback {
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
-        my $msg = "Story [_1] saved and checked in to [_2].";
-        my @args = ('&quot;' . $story->get_title . '&quot;',
-                    "&quot;$dname&quot;");
-        add_msg($msg, @args);
+        add_msg('Story "[_1]" saved and checked in to "[_2]".',
+                $story->get_title, $dname);
 
         # HACK: Commit this checkin WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -208,10 +202,8 @@ sub checkin : Callback {
         log_event('story_checkin', $story);
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-        my $msg = "Story [_1] saved and moved to [_2].";
-        my @args = ('&quot;' . $story->get_title . '&quot;',
-                    "&quot;$dname&quot;");
-        add_msg($msg, @args);
+        add_msg('Story "[_1]" saved and moved to "[_2]".',
+                $story->get_title, $dname);
     }
 
     # Clear the state out and set redirect.
@@ -239,8 +231,7 @@ sub save_and_stay : Callback {
         $story->activate;
         $story->save;
         log_event('story_save', $story);
-        my $arg = '&quot;' . $story->get_title . '&quot;';
-        add_msg("Story [_1] saved.", $arg);
+        add_msg('Story "[_1]" saved.', $story->get_title);
     }
 }
 
@@ -253,9 +244,7 @@ sub cancel : Callback {
     log_event('story_cancel_checkout', $story);
     clear_state($self->class_key);
     set_redirect("/");
-    my $msg = "Story [_1] check out canceled.";
-    my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg($msg, $arg);
+    add_msg('Story "[_1]" check out canceled.', $story->get_title);
 }
 
 sub return : Callback {
@@ -355,8 +344,7 @@ sub create : Callback {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg("Story [_1] created and saved.", $arg);
+    add_msg('Story "[_1]" created and saved.', $story->get_title);
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -396,8 +384,7 @@ sub delete_cat : Callback {
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         log_event('story_del_category', $story, { Category => $cat->get_name });
-        my $arg = '&quot;' . $cat->get_name . '&quot;';
-        add_msg("Category [_1] disassociated.", $arg);
+        add_msg('Category "[_1]" disassociated.', $cat->get_name);
     }
     set_state_data($widget, 'story', $story);
 }
@@ -424,8 +411,7 @@ sub add_category : Callback {
         $story->save;
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        my $arg = '&quot;' . $cat->get_name . '&quot;';
-        add_msg("Category [_1] added.", $arg);
+        add_msg('Category "[_1]" added.', $cat->get_name);
     }
     set_state_data($widget, 'story', $story);
 }
@@ -626,9 +612,7 @@ sub checkout : Callback {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            my $msg = "Permission to checkout [_1] denied";
-            my $arg = '&quot;' . $ba->get_name . '&quot;';
-            add_msg($msg, $arg);
+            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
         }
     }
 
@@ -673,9 +657,7 @@ sub recall : Callback {
             log_event('story_moved', $ba, { Desk => $start_desk->get_name });
             log_event('story_checkout', $ba);
         } else {
-            my $msg = "Permission to checkout [_1] denied";
-            my $arg = '&quot;' . $ba->get_name . '&quot;';
-            add_msg($msg, $arg);
+            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
         }
     }
 
@@ -718,9 +700,7 @@ $save_contrib = sub {
             delete $existing->{$contrib_id};
             log_event('story_del_contrib', $story,
                       { Name => $contrib->get_name });
-            my $msg = 'Contributor [_1] disassociated.';
-            my $arg = '&quot;' . $contrib->get_name . '&quot;';
-            add_msg($msg, $arg);
+            add_msg('Contributor "[_1]" disassociated.', $contrib->get_name);
         }
     }
 
@@ -775,8 +755,7 @@ $save_data = sub {
         my $del_oc_ids = mk_aref($param->{rem_oc});
         foreach my $delid (@$del_oc_ids) {
             if ($delid == $param->{primary_oc_id}) {
-                add_msg("Cannot both delete and make primary a single "
-                          . "output channel.");
+                add_msg("Cannot both delete and make primary a single output channel.");
                 $param->{__data_errors__} = 1;
             } else {
                 my ($oc) = $story->get_output_channels($delid);
@@ -833,8 +812,7 @@ $handle_delete = sub {
     $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);
-    my $arg = '&quot;' . $story->get_title . '&quot;';
-    add_msg("Story [_1] deleted.", $arg);
+    add_msg('Story "[_1]" deleted.', $story->get_title);
     return 1;
 };
 

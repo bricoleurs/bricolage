@@ -11,19 +11,6 @@ use Bric::Util::Alerted;
 
 my $class = get_package_name('recip');
 my $disp_name = get_disp_name(CLASS_KEY);
-my $pl_name = get_class_info(CLASS_KEY)->get_plural_name();
-my %num = (
-    1 => 'One',
-    2 => 'Two',
-    3 => 'Three',
-    4 => 'Four',
-    5 => 'Five',
-    6 => 'Six',
-    7 => 'Seven',
-    8 => 'Eight',
-    9 => 'Nine',
-    10 => 'Ten',
-);
 my $msg_redirect;
 
 sub ack : Callback {
@@ -43,9 +30,7 @@ $msg_redirect = sub {
     my $ids = shift;
     $class->ack_by_id(@$ids);
     my $c = @$ids;
-    my $disp = $c == 1 ? $disp_name : $pl_name;
-    $c = $num{$c} || $c;
-    add_msg("$c $disp acknowledged.") if $c;
+    add_msg("[quant,_1,$disp_name] acknowledged.", $c) if $c;
     set_redirect(last_page());
 };
 

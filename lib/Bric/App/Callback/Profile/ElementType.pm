@@ -24,13 +24,13 @@ sub save : Callback {
     my $param = $self->request_args;
     my $ct = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
     my $used;
     if ($param->{delete}) {
         # Deactivate it.
         $ct->deactivate;
         log_event("${type}_deact", $ct);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         # Make sure the name isn't already in use.
         my @cts = $class->list_ids({ name => $param->{name}, active => 'all' });
@@ -42,7 +42,8 @@ sub save : Callback {
                    && $cts[0] != $param->{element_type_id}) {
             $used = 1;
         }
-        add_msg($self->lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
+        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
+            if $used;
 
         # Roll in the changes.
         $ct->set_name($param->{name}) unless $used;
@@ -70,7 +71,8 @@ sub save : Callback {
             $ct->set_related_media(defined $param->{related_media} ? 1 : 0);
             $ct->set_biz_class_id($param->{biz_class_id})
               if defined $param->{biz_class_id};
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name)) unless $used;
+            add_msg("$disp_name profile \"[_1]\" saved.", $name)
+                unless $used;
             log_event($type . '_save', $ct);
         }
     }

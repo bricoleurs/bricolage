@@ -23,8 +23,7 @@ sub save : Callback {
 
     my $param = $self->request_args;
     my $wf = $self->obj;
-
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     if ($param->{delete}) {
         # Deactivate it.
@@ -33,7 +32,7 @@ sub save : Callback {
         $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
         log_event("${type}_deact", $wf);
         set_redirect('/admin/manager/workflow');
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         my $wf_id = $param->{"${type}_id"};
         my $site_id = $param->{site_id} || $wf->get_site_id;
@@ -53,7 +52,7 @@ sub save : Callback {
 	   && $wfs[0] != $wf_id) {
             $used = 1;
         }
-        add_msg($self->lang->maketext("The name [_1] is already used by another $disp_name.",$name)) if $used;
+        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
 
         # Roll in the changes.
         $wf->set_name($param->{name}) unless $used;
@@ -117,7 +116,7 @@ sub save : Callback {
                 $wf->activate;
                 $wf->save;
                 $self->cache->set("__WORKFLOWS__$site_id", 0);
-                add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+                add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 log_event($type . '_save', $wf);
                 set_redirect('/admin/manager/workflow');
             }

@@ -28,10 +28,9 @@ use Bric::App::Util qw(:all);
 #             $obj->$method;
 #             $obj->save;
 #         } else {
-#             my $msg = "Permission to delete "[_1]" denied.";
 #             my $name = defined($obj->get_name) ?
-#               '&quot;' . $obj->get_name . '&quot' : 'Object';
-#             add_msg($self->lang->maketext($msg, "$method $name"));
+#               $obj->get_name : 'Object';
+#             add_msg('Permission to delete "[_1]" denied.', "$method $name");
 #         }
 #     }
 # }

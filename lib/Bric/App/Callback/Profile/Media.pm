@@ -64,8 +64,7 @@ sub update : Callback(priority => 1) {
         my $del_oc_ids = mk_aref($param->{rem_oc});
         foreach my $delid (@$del_oc_ids) {
             if ($delid == $param->{primary_oc_id}) {
-                add_msg("Cannot both delete and make primary a single " .
-                            "output channel.");
+                add_msg("Cannot both delete and make primary a single output channel.");
                 $param->{__data_errors__} = 1;
             } else {
                 my ($oc) = $media->get_output_channels($delid);
@@ -132,9 +131,7 @@ sub revert : Callback {
     my $version = $self->request_args->{"$widget|version"};
     $media->revert($version);
     $media->save;
-    my $msg = "Media [_1] reverted to V.[_2]";
-    my $arg1 = '&quot;' . $media->get_title . '&quot;';
-    add_msg($msg, $arg1, $version);
+    add_msg('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
     clear_state($widget);
 }
 
@@ -158,8 +155,7 @@ sub save : Callback {
         $media->activate();
         $media->save;
         log_event('media_save', $media);
-        my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg("Media [_1] saved.", $arg);
+        add_msg('Media "[_1]" saved.', $media->get_title);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -221,9 +217,7 @@ sub checkin : Callback {
         log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media);
         log_event("media_rem_workflow", $media);
-        my $msg = 'Media [_1] saved and shelved.';
-        my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg($msg, $arg);
+        add_msg('Media "[_1]" saved and shelved.', $media->get_title);
     } elsif ($desk_id eq 'publish') {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -258,10 +252,8 @@ sub checkin : Callback {
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
           unless $no_log;
-        my $msg = "Media [_1] saved and checked in to [_2].";
-        my @args = ('&quot;' . $media->get_title . '&quot;',
-                    "&quot;$dname&quot;");
-        add_msg($msg, @args);
+        add_msg('Media "[_1]" saved and checked in to "[_2]".',
+                $media->get_title, $dname);
 
         # HACK: Commit this checkin WHY?? Because Postgres does NOT like
         # it when you insert and delete a record within the same
@@ -303,10 +295,8 @@ sub checkin : Callback {
         log_event('media_checkin', $media);
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
-        my $msg = "Media [_1] saved and moved to [_2].";
-        my @args = ('&quot;' . $media->get_title . '&quot;',
-                    "&quot;$dname&quot;");
-        add_msg($msg, @args);
+        add_msg('Media "[_1]" saved and moved to "[_2]".',
+                $media->get_title, $dname);
     }
 
     # Clear the state out and set redirect.
@@ -342,9 +332,7 @@ sub save_and_stay : Callback {
         $media->activate;
         $media->save;
         log_event('media_save', $media);
-        my $msg = "Media [_1] saved.";
-        my $arg = '&quot;' . $media->get_title . '&quot;';
-        add_msg($msg, $arg);
+        add_msg('Media "[_1]" saved.', $media->get_title);
     }
 
     # Set the state.
@@ -361,9 +349,7 @@ sub cancel : Callback {
     log_event('media_cancel_checkout', $media);
     clear_state($self->class_key);
     set_redirect("/");
-    my $msg = "Media [_1] check out canceled.";
-    my $arg = '&quot;' . $media->get_name . '&quot;';
-    add_msg($msg, $arg);
+    add_msg('Media "[_1]" check out canceled.', $media->get_name);
 }
 
 ################################################################################
@@ -453,9 +439,7 @@ sub create : Callback {
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     log_event('media_moved', $media, { Desk => $start_desk->get_name });
     log_event('media_save', $media);
-    my $msg = 'Media [_1] created and saved.';
-    my $arg = '&quot;' . $media->get_title . '&quot;';
-    add_msg($msg, $arg);
+    add_msg('Media "[_1]" created and saved.', $media->get_title);
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
@@ -555,28 +539,20 @@ $save_contrib = sub {
     chk_authz($media, EDIT);
     my $contrib_id = $param->{$widget . '|delete_id'};
     my $contrib_number;
-    my $contrib_string;
+    my @contrib_strings;
     if ($contrib_id) {
-        if (ref $contrib_id) {
-            $media->delete_contributors($contrib_id);
-            foreach (@$contrib_id) {
-                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
-                  ({ id => $_ });
-                $contrib_string .= '&quot;' . $contrib->get_name . '&quot;';
-                $contrib_number++;
-                delete $existing->{$_};
-            }
-        } else {
-            $media->delete_contributors([$contrib_id]);
+        my $contrib_id_list = ref $contrib_id ? $contrib_id : [ $contrib_id ];
+        $media->delete_contributors($contrib_id_list);
+        foreach (@$contrib_id_list) {
             my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
-              ({ id => $contrib_id });
-            delete $existing->{$contrib_id};
-            $contrib_string = '&quot;' . $contrib->get_name . '&quot;';
+                ({ id => $_ });
+            push @contrib_strings, $contrib->get_name;
             $contrib_number++;
+            delete $existing->{$_};
         }
     }
-    my $msg = '[quant,_1,Contributor] [_2] associated.';
-    add_msg($msg, $contrib_number, $contrib_string)
+    add_msg("[quant,_1,Contributor] \"[_2]\" associated.",
+            $contrib_number, join(", ", @contrib_strings))
       if $contrib_number;
 
     # get the remaining
@@ -667,9 +643,7 @@ sub recall : Callback {
             log_event('media_moved', $ba, { Desk => $start_desk->get_name });
             log_event('media_checkout', $ba);
         } else {
-            my $msg = 'Permission to checkout [_1] denied';
-            my $arg = '&quot;' . $ba->get_name. '&quot;';
-            add_msg($msg, $arg);
+            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
         }
     }
 
@@ -699,9 +673,7 @@ sub checkout : Callback {
             # Log Event.
             log_event('media_checkout', $ba);
         } else {
-            my $msg = 'Permission to checkout [_1] denied';
-            my $arg = '&quot;' . $ba->get_name. '&quot;';
-            add_msg($msg, $arg);
+            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
         }
     }
 
@@ -775,9 +747,7 @@ $handle_delete = sub {
     $media->deactivate;
     $media->save;
     log_event("media_deact", $media);
-    my $msg = 'Media [_1] deleted.';
-    my $arg = '&quot;' . $media->get_title . '&quot;';
-    add_msg($msg, $arg);
+    add_msg('Media "[_1]" deleted.', $media->get_title);
 };
 
 

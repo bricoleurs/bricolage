@@ -6,15 +6,15 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-08-08 17:49:48 $
+$Date: 2003-08-12 20:10:44 $
 
 =head1 SYNOPSIS
 
@@ -343,33 +343,31 @@ use constant key => 'pt_pt';
    'At least one extension is required.' =>
      'Tem de indicar pelo menos uma extensão.',
    'By Source name' => 'Por nome de Fonte',
-   'Cannot auto-publish related media [_1] because it is checked out' =>
+   'Cannot auto-publish related media "[_1]" because it is checked out.' =>
      'Não é possível fazer publicação automética de media porque este elemento está reservado.',
-   'Cannot publish [_1]  because it is checked out' =>
-     'Não é possível publicar [_1] enquanto está reservado.',
-   'Cannot publish checked-out media [_1]' =>
-     'Não é possível publicar o medium reservado [_1]',
-   'Cannot publish checked-out story [_1]' =>
-     'Não é possível publicar o artigo reservado [_1]',
+   'Cannot publish checked-out media "[_1]"' =>
+     'Não é possível publicar o medium reservado "[_1]"',
+   'Cannot publish checked-out story "[_1]"' =>
+     'Não é possível publicar o artigo reservado "[_1]"',
    'Category Permissions' => 'Permissões para categorias',
-   'Category [_1] added.' => 'Categoria [_1] adicionada.',
-   'Category [_1] disassociated.' => 'Categoria [_1] desassociada.',
-   'Category profile [_1] and all its categories deleted.' => 
-     'Perfil da categoria [1] e todas as suas categorias apagados.',
-   'Category profile [_1] deleted.' => 'Perfil da categoria [_1] apagado.',
-   'Category profile [_1] saved.' => 'Perfil de categoria [_1] guardado.',
-   'Contributor [_1] disassociated.' => 'Colaborador [_1] desassociado.',
-   'Contributor profile [_1] deleted.' => 'Perfil de colaborador [_1] apagado.',
-   'Contributor profile [_1] saved.' => 'Perfil de colaborador [_1] guardado.',
+   'Category "[_1]" added.' => 'Categoria "[_1]" adicionada.',
+   'Category "[_1]" disassociated.' => 'Categoria "[_1]" desassociada.',
+   'Category profile "[_1]" and all its categories deleted.' =>
+     'Perfil da categoria "[1]" e todas as suas categorias apagados.',
+   'Category profile "[_1]" deleted.' => 'Perfil da categoria "[_1]" apagado.',
+   'Category profile "[_1]" saved.' => 'Perfil de categoria "[_1]" guardado.',
+   'Contributor "[_1]" disassociated.' => 'Colaborador "[_1]" desassociado.',
+   'Contributor profile "[_1]" deleted.' => 'Perfil de colaborador "[_1]" apagado.',
+   'Contributor profile "[_1]" saved.' => 'Perfil de colaborador "[_1]" guardado.',
    'Contributors disassociated.' => 'Colaboradores desassociados.',
    'Cover Date incomplete.' => 'Data de Destaque incompleta.',
    'Delete this Category and All its Subcategories' =>
      'Apagar esta Categoria e Todas as suas Subcategorias',
-   'Desk profile [_1] deleted from all workflows.' =>
-     'Perfil de área [_1] apagado de todos os workflows.',
+   'Desk profile "[_1]" deleted from all workflows.' =>
+     'Perfil de área "[_1]" apagado de todos os workflows.',
    'Destination not specified' => 'Destino não especificado',
-   'Destination profile [_1] deleted.' => 'Perfil de destino [_1] apagado.',
-   'Destination profile [_1] saved.' => 'Perfil de destino [_1] guardado.',
+   'Destination profile "[_1]" deleted.' => 'Perfil de destino "[_1]" apagado.',
+   'Destination profile "[_1]" saved.' => 'Perfil de destino "[_1]" guardado.',
    'EXISTING CATEGORIES' => 'CATEGORIAS EXISTENTES',
    'EXISTING DESTINATIONS' => 'DESTINOS EXISTENTES',
    'EXISTING ELEMENT TYPES' => 'TIPOS DE ELEMENTO EXISTENTES',
@@ -378,12 +376,12 @@ use constant key => 'pt_pt';
    'EXISTING OUTPUT CHANNELS' => 'CANAIS DE DISTRIBUIÇÃO EXISTENTES',
    'EXISTING SOURCES' => 'FONTES EXISTENTES',
    'EXISTING USERS' => 'UTILIZADORES EXISTENTES',
-   'Element Type profile [_1] deleted.' =>
-     'Perfil de tipo de Elemento [_1] apagado.',
-   'Element Type profile [_1] saved.' =>
-     'Perfil de Tipo de Elemento [_1] guardado.',
-   'Element [_1] deleted.' => 'Elemento [_1] apagado.',
-   'Element [_1] saved.' => 'Elemento guardado.',
+   'Element Type profile "[_1]" deleted.' =>
+     'Perfil de tipo de Elemento "[_1]" apagado.',
+   'Element Type profile "[_1]" saved.' =>
+     'Perfil de Tipo de Elemento "[_1]" guardado.',
+   'Element "[_1]" deleted.' => 'Elemento "[_1]" apagado.',
+   'Element "[_1]" saved.' => 'Elemento "[_1]" guardado.',
    'Expire Date incomplete.' => 'Data de Fim incompleta.',
    'Grant [_1] members permission to access assets in these categories.' =>
      'Dar aos membros do grupo [_1] permissão para aceder aos materiais destas categorias.',
@@ -397,26 +395,27 @@ use constant key => 'pt_pt';
    'Grant the members of the following groups permission to access the members of the [_1] group.' =>
      'Dar aos membros dos sgeuintes grupos permissão para aceder aos membros do grupo [_1].',
 
-   'Group cannot be deleted' => 'O grupo não pode ser apagado',
-   'Group profile [_1] saved.' => 'Perfil de grupo [_1] guardado.',
+   'Group cannot be deleted.' => 'O grupo não pode ser apagado.',
+   'Group profile "[_1]" deleted.' =>
+     'O perfil de grupo "[_1]" não pode ser apagado.',
+   'Group profile "[_1]" saved.' => 'Perfil de grupo "[_1]" guardado.',
    'Group Label' => 'Designação do Grupo',
    'Group Memberships' => 'Grupos Associados',
-   'Job profile [_1] deleted.' => 'Perfil de tarefa [_1] apagado.',
-   'Job profile [_1] saved.' => 'Perfil de tarefa [_1] guardado.',
+   'Job profile "[_1]" deleted.' => 'Perfil de tarefa "[_1]" apagado.',
+   'Job profile "[_1]" saved.' => 'Perfil de tarefa "[_1]" guardado.',
    'Keywords saved.' => 'Plavras-chave guardadas.',
    '%n Found' => '%n Encontrados',
    'MEDIA FOUND' => 'MEDIA ENCONTRADOS',
-   'Media Type profile [_1] deleted.' => 'Perfil de Tipo de Media [_1] apagado.',
-   'Media Type profile [_1] saved.' => 'Perfil de Tipo de Media [_1] guardado.',
-   'Media [_1]  published.' => 'Medium [_1] publicado.',
-   'Media [_1] check out canceled.' => 'Reserva do medium [_1] cancelada.',
-   'Media [_1] deleted.' => 'Medium [_1] apagado.',
-   'Media [_1] published.' => 'Medium [_1] publicado.',
-   'Media [_1] reverted to V.[_2]' => 'Medium [_1] revertido para v. [_2]',
-   'Media [_1] saved and checked in to [_2].' =>
-     'Medium [_1] guardado e disponibilizado para [_2].',
-   'Media [_1] saved and moved to [_2].' => 'Medium [_1] guardado e movido para [_2].',
-   'Media [_1] saved.' => 'Medium [_1] guardado.',
+   'Media Type profile "[_1]" deleted.' => 'Perfil de Tipo de Media "[_1]" apagado.',
+   'Media Type profile "[_1]" saved.' => 'Perfil de Tipo de Media "[_1]" guardado.',
+   'Media "[_1]" check out canceled.' => 'Reserva do medium "[_1]" cancelada.',
+   'Media "[_1]" deleted.' => 'Medium "[_1]" apagado.',
+   'Media "[_1]" published.' => 'Medium "[_1]" publicado.',
+   'Media "[_1]" reverted to V.[_2]' => 'Medium "[_1]" revertido para v. [_2]',
+   'Media "[_1]" saved and checked in to "[_2]".' =>
+     'Medium "[_1]" guardado e disponibilizado para "[_2]".',
+   'Media "[_1]" saved and moved to "[_2]".' => 'Medium "[_1]" guardado e movido para "[_2]".',
+   'Media "[_1]" saved.' => 'Medium "[_1]" guardado.',
    'Name is required.' => 'Tem de colocar o nome.',
    'No alert types were found' => 'Não foram encontrados tipos de alerta',
    'No categories were found' => 'Não foram encontradas categorias',
@@ -440,44 +439,44 @@ use constant key => 'pt_pt';
    'No users were found' => 'Não foram encontrados utilizadores',
    'No workflows were found' => 'Não foram encontrados workflows',
    'Object Group Permissions' => 'Permissões para Tipos de Objectos',
-   'Output Channel profile [_1] deleted.' =>
-     'Perfil de Canal de Distribuição [_1] apagado.',
-   'Output Channel profile [_1] saved.' =>
-     'Perfil de Canal de Distribuição [_1] guardado.',
+   'Output Channel profile "[_1]" deleted.' =>
+     'Perfil de Canal de Distribuição "[_1]" apagado.',
+   'Output Channel profile "[_1]" saved.' =>
+     'Perfil de Canal de Distribuição "[_1]" guardado.',
    'PENDING JOBS' => 'TAREFAS PENDENTES',
    'Passwords must match!' => 'Tem de indicar a mesma password!',
    'Permissions saved.' => 'Permissões guardadas',
-   'Preference [_1] updated.' => 'Preferência [_1] actualizada.',
+   'Preference "[_1]" updated.' => 'Preferência "[_1]" actualizada.',
    'Published Version' => 'Versão Publicada',
    'Redirecting to preview.' => 'A redireccionar para previsualização.',
    'STORY INFORMATION' => 'INFORMAÇÃO SOBRE O ARTIGO',
    'Scheduled Time' => 'Data agendada',
    'Separator Changed.' => 'Separador Alterado.',
-   'Server profile [_1] deleted.' => 'Perfil de servidor [_1] apagado.',
-   'Server profile [_1] saved.' => 'Perfil de servidor [_1] guardado.',
+   'Server profile "[_1]" deleted.' => 'Perfil de servidor "[_1]" apagado.',
+   'Server profile "[_1]" saved.' => 'Perfil de servidor "[_1]" guardado.',
    'Slug must conform to URI character rules.' =>
      'O identificador do URL deve seguir as regras de caracteres dos URIs.',
-   'Source profile [_1] deleted.' => 'Perfil de fonte [_1] apagado.',
-   'Source profile [_1] saved.' => 'Perfil de fonte [_1] guardado.',
+   'Source profile "[_1]" deleted.' => 'Perfil de fonte "[_1]" apagado.',
+   'Source profile "[_1]" saved.' => 'Perfil de fonte "[_1]" guardado.',
    'Status' => 'Estado',
    'Stories' => 'Artigos',
    'Stories in this category' => 'Artigos nesta categoria',
-   'Story [_1] check out canceled.' => 'Reserva do artigo [-1] cancelada.',
-   'Story [_1] deleted.' => 'Artigo [_1] apagado.',
-   'Story [_1] published.' => 'Artigo [_1] publicado.',
-   'Story [_1] reverted to V.[_2].' => 'Artigo [_1] revertido para v. [_2].',
-   'Story [_1] saved and moved to [_2].' =>
-     'Artigo [_1] guardado e movido para [_2]',
-   'Story [_1] saved, checked in to [_2].' =>
-     'Artigo [_1] guardado e disponibilizado para [_1].',
-   'Story [_1] saved.' => 'Artigo [_1] guardado.',
+   'Story "[_1]" check out canceled.' => 'Reserva do artigo "[_1]" cancelada.',
+   'Story "[_1]" deleted.' => 'Artigo "[_1]" apagado.',
+   'Story "[_1]" published.' => 'Artigo "[_1]" publicado.',
+   'Story "[_1]" reverted to V.[_2].' => 'Artigo "[_1]" revertido para v. [_2].',
+   'Story "[_1]" saved and moved to "[_2]".' =>
+     'Artigo "[_1]" guardado e movido para "[_2]"',
+   'Story "[_1]" saved and checked in to "[_2]".' =>
+     'Artigo "[_1]" guardado e disponibilizado para "[_2]".',
+   'Story "[_1]" saved.' => 'Artigo "[_1]" guardado.',
    'Templates' => 'Modelos',
    'Template Includes' => 'Inclusão de Modelos',
-   'Template [_1] check out canceled.' => 'Reserva do modelo [_1] cancelada.',
-   'Template [_1] deleted.' => 'Modelo [_1] apagado.',
-   'Template [_1] saved and checked in to [_2].' =>
-     'Template [_1] disponibilizado para a secretária [_2].',
-   'Template [_1] saved.' => 'Modelo [_1] guardado.',
+   'Template "[_1]" check out canceled.' => 'Reserva do modelo "[_1]" cancelada.',
+   'Template "[_1]" deleted.' => 'Modelo "[_1]" apagado.',
+   'Template "[_1]" saved and checked in to "[_2]".' =>
+     'Template "[_1]" disponibilizado para a secretária "[_2]".',
+   'Template "[_1]" saved.' => 'Modelo "[_1]" guardado.',
    'Templates Found' => 'Modelos Encontrados',
 
    'The slug can only contain alphanumeric characters (A-Z, 0-9, - or _)!' =>
@@ -489,15 +488,15 @@ use constant key => 'pt_pt';
    'This day does not exist! Your day is changed to the' =>
      'Esta data não existe! A data foi alterada para',
    'Un-relate' => 'Anular relação',
-   'User profile [_1] deleted.' => 'Perfil de utilizador [_1] apagado.',
+   'User profile "[_1]" deleted.' => 'Perfil de utilizador "[_1]" apagado.',
    'Welcome to [_1]' => 'Bem-vindo ao sistema [_1]',
-   'Workflow profile [_1] deleted.' => 'Perfil de workflow [_1] apagado.',
-   'Workflow profile [_1] saved.' => 'Perfil de workflow [_1] guardado.',
+   'Workflow profile "[_1]" deleted.' => 'Perfil de workflow "[_1]" apagado.',
+   'Workflow profile "[_1]" saved.' => 'Perfil de workflow "[_1]" guardado.',
    'You have not been granted <b>[_1]</b> access to the <b>[_2]</b> [_3]' =>
      'Não tem acesso de <b>[_1]</b> a <b>[_3]</b> [_2]',
    'You must select an Element or check the &quot;Generic&quot; check box.' =>
      'Tem de seleccionar um Elemento ou assinalar a check box &quot;Genérico&quot;.',
-   '[_1] Elements saved.' => '[_1] Elements Guardados.',
+   '"[_1]" Elements saved.' => '"[_1]" Elements Guardados.',
    '[_1] recipients changed.' => '[_1] destinatários alterados.',
    '[quant,$quant,Contributors] [_1] [quant,$quant,disassociated].' =>
      'Colaboradore(s) [_1] desassociado(s).',
@@ -516,45 +515,41 @@ use constant key => 'pt_pt';
    'Please select a primary category.' =>
      'Por favor seleccione uma categoria primária.',
    'Please select a story type.' => 'Por favor seleccione um tipo de artigo.',
-   'The name [_1] is already used by another [_2].' =>
-     'O nome [_1] já está a ser usado por outro [_2].',
    'You are about to permanently delete items! Do you wish to continue?' =>
      'Irá apagar definitivamente estes itens! Quer continuar?',
    'You must supply a value for ' => 'Tem de indicar um valor para ',
 
   # Error Messages
    '404 NOT FOUND' => '404 - página não encontrada',
-   'An [_1] attribute already exists. Please try another name.' =>
-     'Já existe um atributo [_1]. Por favor tente outro nome.',
+   'An "[_1]" attribute already exists. Please try another name.' =>
+     'Já existe um atributo "[_1]". Por favor tente outro nome.',
    'An error occurred while processing your request:' =>
      'Ocorreu um erro ao processar o seu pedido:',
    'An error occurred.' => 'Ocorreu um erro.',
-   'Cannot cancel [_1] because it is currently executing.' =>
-     'Não é possível cancelar [_1] porque está neste momento a ser executado.',
-   'Cannot move [_1] asset \'[_2]\' while it is checked out' =>
+   'Cannot cancel "[_1]" because it is currently executing.' =>
+     'Não é possível cancelar "[_1]" porque está neste momento a ser executado.',
+   'Cannot move [_1] asset "[_2]" while it is checked out' =>
      'Não é possível mover o material [_1] enquanto está reservado.',
-   'Category [_1] cannot be deleted.' =>
-     'A categoria [_1] não pode ser apagada.',
+   'Category "[_1]" cannot be deleted.' =>
+     'A categoria "[_1]" não pode ser apagada.',
    'Changes not saved: permission denied.' =>
      'As alterações não foram guardadas: permissão negada.',
    'Check In to [_1]' => 'Disponibilizar para [_1]',
 
-   'Directory name [_1] contains invalid characters. Please try a different directory name.' =>
-     'O nome de directório [_1] contém caracteres inválidos. por favor tente um nome de directório diferente.',
+   'Directory name "[_1]" contains invalid characters. Please try a different directory name.' =>
+     'O nome de directório "[_1]" contém caracteres inválidos. por favor tente um nome de directório diferente.',
 
-   'Group profile [_1] deleted.' =>
-     'O perfil de grupo [_1] não pode ser apagado.',
-   'Invalid date value for [_1] field.' =>
-     'Valor inválido para a data no campo [_1].',
+   'Invalid date value for "[_1]" field.' =>
+     'Valor inválido para a data no campo "[_1]".',
    'Invalid page request' => 'Pedido de página inválido',
    'Invalid password. Please try again.' =>
      'Password inválida. Por favor volte a tentar.',
    'Invalid username or password. Please try again.' =>
      'Nome de utilizador e palavra-passe inválidos. Por favor volte a tentar.',
-   'Login [_1] contains invalid characters.' =>
-     'O login [_1] contém caracteres inválidos.',
-   'Login [_1] is already in use. Please try again.' =>
-     'O login [_1] já está a ser utilizado. POr avor volte a tentar.',
+   'Login "[_1]" contains invalid characters.' =>
+     'O login "[_1]" contém caracteres inválidos.',
+   'Login "[_1]" is already in use. Please try again.' =>
+     'O login "[_1]" já está a ser utilizado. POr avor volte a tentar.',
    'Login cannot be blank. Please enter a login.' =>
      'Os dados de login não podem estar em branco. Por favor insira o login.',
    'Login must be at least [_1] characters.' =>
@@ -571,12 +566,12 @@ use constant key => 'pt_pt';
    'Passwords must be at least [_1] characters!' =>
      'As passwords têm de ter pelo menos [_1] caracteres!',
    'Permission Denied' => 'Acesso não-permitido',
-   'Permission to checkout [_1] denied' =>
-     'Permissão para reservar [_1] negada.',
+   'Permission to checkout "[_1]" denied.' =>
+     'Permissão para reservar "[_1]" negada.',
    'Permission to delete "[_1]" denied.' =>
-     'Não está autorizado a apagar "[_1]."',
-   'Problem adding [_1]' => 'Problemas ao criar [_1].',
-   'Problem deleting [_1]' => 'Problemas ao apagar [_1].',
+     'Não está autorizado a apagar "[_1]".',
+   'Problem adding "[_1]"' => 'Problemas ao criar "[_1]".',
+   'Problem deleting "[_1]"' => 'Problemas ao apagar "[_1]".',
    'Template compile failed: [_1]' =>
      'Compilação do modelo falhou: [_1]',
 
@@ -584,21 +579,21 @@ use constant key => 'pt_pt';
      'O URL que pediu, <b>[_1]</b>, não foi encontrado no servidor',
 
 
-   'The name [_1] is already used by another Element Type.' =>
-     'O nome [_1] já está a ser usado por outro Tipo de Elemento.',
-   'The name [_1] is already used by another Media Type.' =>
-     'O nome [_1] já está a ser utilizado por outro Tipo de Media.',
-   'The name [_1] is already used by another Output Channel.' =>
-     'O nome [_1] já está a ser usado por outro Canal de Distribuição.',
-   'The name [_1] is already used by another Source.' =>
-     'O nome [_1] já está a ser usada',
-   'The name [_1] is already used by another Workflow.' =>
-     'O nome [_1] já está a ser usado por outro Workflow.',
+   'The name "[_1]" is already used by another Element Type.' =>
+     'O nome "[_1]" já está a ser usado por outro Tipo de Elemento.',
+   'The name "[_1]" is already used by another Media Type.' =>
+     'O nome "[_1]" já está a ser utilizado por outro Tipo de Media.',
+   'The name "[_1]" is already used by another Output Channel.' =>
+     'O nome "[_1]" já está a ser usado por outro Canal de Distribuição.',
+   'The name "[_1]" is already used by another Source.' =>
+     'O nome "[_1]" já está a ser usada',
+   'The name "[_1]" is already used by another Workflow.' =>
+     'O nome "[_1]" já está a ser usado por outro Workflow.',
    'This story has not been assigned to a category.' =>
      'Este artigo não foi atribuído a uma categoria.',
 
-   'URI [_1] is already in use. Please try a different directory name or parent category.' =>
-     'O URI [_1] já está a ser usado. Por favor tente um nome de categoria ou \'parent\' diferente.',
+   'URI "[_1]" is already in use. Please try a different directory name or parent category.' =>
+     'O URI "[_1]" já está a ser usado. Por favor tente um nome de categoria ou \'parent\' diferente.',
 
    'Usernames must be at least 6 characters!' =>
      'Os nomes de utilizador têm de ter pelo menos 6 caracteres!',
@@ -608,7 +603,6 @@ use constant key => 'pt_pt';
 
    'You must supply a unique name for this role!' =>
      'Tem de atribuir um nome único a esta função!',
-   '[_1] cannot be deleted' => '[_1] não pode ser apagado',
    'contains illegal characters!' => ' contém caracteres não-permitidos!',
 
 # Warnings
@@ -618,34 +612,66 @@ use constant key => 'pt_pt';
    'Warning! State inconsistent: Please use the buttons provided by the application rather than the \'Back\'/\'Forward\' buttons.' =>
      'Atenção! Situação inconsistente: Por favor utilize os botões disponíveis na aplicação e não os botões \'Back\'/\'Forward\' (\'Avançar\'/\'Retroceder\').',
 
-   'Warning: [_1] object \'[_2]\' had no associated workflow.  It has been assigned to the \'[_3]\' workflow.' =>
-     'Aviso: o objecto [_1] \'[_2]\' não tem workflow associado. Foi atribuído ao workflow \'[_3]\'.',
-
-   'Warning: object [_1]\' had no associated desk.  It has been assigned to the [_2]\' desk.' =>
-     'Aviso: o objecto [_1]\' não tem secretária associada. Foi atribuído à secretária [_2]\'.',
+   'Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.' =>
+     'Aviso: o objecto "[_1]" não tem secretária associada. Foi atribuído à secretária "[_2]".',
    '_AUTO' => 1,
   );
 
 =head2 To translate
 
           'Cannot both delete and make primary a single output channel.'
-          'Media [_1] saved and shelved.'
-          'Media [_1] saved and moved to [_2].'
-          'Media [_1] created and saved.'
+          'Media "[_1]" saved and shelved.'
+          'Media "[_1]" created and saved.'
           'Un-Associate'
           'Associate'
           'Preview in'
           'Parent cannot choose itself or its child as its parent. Try a different parent.'
-          'The name [_1] is already used by another ???? in this destinantion'
-          '[_1] stories published.'
-          '[_1] media published.'
+          '[quant,_1,story,stories] published.'
+          '[quant,_1,media,media] published.'
           'Category URI'
-          'Story [_1] saved and shelved.'
-          'Story [_1] saved and checked in to [_2].'
-          'Story [_1] created and saved.'
-          'Template [_1] saved and shelved.'
-          'Template [_1] saved and moved to [_2].'
-          '[_1] deployed.'
+          'Story "[_1]" saved and shelved.'
+          'Story "[_1]" created and saved.'
+          'Template "[_1]" saved and shelved.'
+          'Template "[_1]" saved and moved to "[_2]".'
+          'No media file is associated with asset "[_1]", so none will be distributed.'
+          'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.'
+          'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_container\'.  Please use the element\'s \'key_name\' field instead.'
+          'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_data\'.  Please use the element\'s \'key_name\' field instead.'
+          'You must be an administrator to use this function.'
+          'Template deployed.'
+          '[quant,_1,Template] deployed.'
+          'Cannot auto-publish related story "[_1]" because it is checked out.'
+          # 'Cannot publish [_1]  because it is checked out' => 'Não é possível publicar [_1] enquanto está reservado.',
+          'Cannot publish media "[_1]" because it is checked out.'
+          'Cannot publish story "[_1]" because it is checked out.'
+          'Bad element name "[_1]". Did you mean "[_2]"?'
+          'Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.'
+          'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.'
+          'Note: Container element "[_1]" removed in bulk edit but will not be deleted.'
+          'Cannot create an alias to a media in the same site.'
+          'Cannot create an alias to a story in the same site.'
+          '[quant,_1,Alert] acknowledged.'
+          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.'
+          'Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow. This change also required that this object be moved to the "[_3]" desk.'
+          'Action profile "[_1]" deleted.'
+          'Action profile "[_1]" saved.'
+          'Alert Type profile "[_1]" deleted.'
+          'Alert Type profile "[_1]" saved.'
+          'The name "[_1]" is already used by another Alert Type.'
+          'The name "[_1]" is already used by another Desk.'
+          'The name "[_1]" is already used by another Destination.'
+          'You cannot remove all Sites.'
+          'The key name "[_1]" is already used by another ???.'
+          '[quant,_1,Contributor] "[_2]" associated.'
+          'Extension "[_1]" ignored.'
+          'Extension "[_1]" is already used by media type "[_2]".'
+          'The name "[_1]" is already used by another Server in this Destination.'
+          'You must select an Element.'
+          'New passwords do not match. Please try again.'
+          'User profile "[_1]" saved.'
+          'Site profile "[_1]" deleted.'
+          'Site profile "[_1]" saved.'
+
  = (
       'Hi [_1]!' => 'Olá [_1]!',
       'The URL you requested, <b>[_1]</b>, was not found on this server' => 'O endereço <b>[_1]</b> não foi encontrado no servidor',
@@ -690,8 +716,8 @@ use constant key => 'pt_pt';
       'Deployed Version' => 'Deployed Version',
       'Needs to be Published' => 'Needs to be Published',
       'Needs to be Deployed' => 'Needs to be Deployed',
-      'Site [_1] requires a primary output channel' =>
-        'Site [_1] requires a primary output channel',
+      'Site "[_1]" requires a primary output channel.' =>
+        'Site "[_1]" requires a primary output channel.',
       'Find a story to alias' => 'Find a story to alias',
       'Select Categories' => 'Select Categories',
       "Workflow | Profile | Story | Select Alias" =>
@@ -702,9 +728,9 @@ use constant key => 'pt_pt';
       'Related Media to Alias' => 'Related Media to Alias',
       'Alias in Category' => 'Alias in Category',
       'No Alias' => 'No Alias',
-      'Alias to [_1] created and saved.' => 'Alias to [_1] created and saved.',
-      'Field profile [_1] deleted.' => 'Field profile [_1] deleted.',
-      'Field profile [_1] saved.' => 'Field profile [_1] saved.',
+      'Alias to "[_1]" created and saved.' => 'Alias to "[_1]" created and saved.',
+      'Field profile "[_1]" deleted.' => 'Field profile "[_1]" deleted.',
+      'Field profile "[_1]" saved.' => 'Field profile "[_1]" saved.',
       'The URI "[_1]" is not unique. Please change the cover date, output channels, category, or file name as necessary to make the URIs unique.'
       'The URI "[_1]" is not unique. Please change the cover date, output channels, or categories as necessary to make the URIs unique.'
   );

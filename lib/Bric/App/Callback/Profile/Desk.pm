@@ -30,15 +30,14 @@ sub save : Callback {
     my $param = $self->request_args;
     my $desk = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;" if $param->{name};
+    my $name = $param->{name} if $param->{name};
     if ($param->{delete}) {
         # Deactivate it.
         $desk->deactivate;
         $desk->save;
         $self->$expire_wf_cache($self, $param->{"${type}_id"});
         log_event("${type}_deact", $desk);
-        add_msg($self->lang->maketext
-                ("$disp_name profile [_1] deleted from all workflows.", $name));
+        add_msg("$disp_name profile \"[_1]\" deleted from all workflows.", $name);
         set_redirect(defined $param->{workflow_id} ?
                        "/admin/profile/workflow/$param->{workflow_id}"
                          : last_page());
@@ -56,9 +55,8 @@ sub save : Callback {
 	       && $desks[0] != $desk_id) {
                 $used = 1;
             }
-            add_msg($self->lang->maketext
-                    ("The name [_1] is already used by another [_2].", $name,
-                     $disp_name))
+            add_msg("The name \"[_1]\" is already used by another $disp_name.",
+                    $name)
               if $used;
         }
 

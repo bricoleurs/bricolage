@@ -21,12 +21,12 @@ sub save : Callback {
     my $param = $self->request_args;
     my $ed = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate();
         log_event("$type\_del", $ed);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         my $numregex = qr{^\s*\d+\s*$};
 
@@ -74,7 +74,7 @@ sub save : Callback {
         $f = 'cols';
         $set_meta_number->($ed, $f, $param);
 
-        add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+        add_msg("$disp_name profile \"[_1]\" saved.", $name);
         log_event("$type\_save", $ed);
     }
 

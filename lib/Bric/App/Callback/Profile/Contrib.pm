@@ -30,8 +30,7 @@ sub save : Callback {
         $contrib->deactivate;
         $contrib->save;
         log_event("${type}_deact", $contrib);
-        my $name = "&quot;" . $contrib->get_name . "&quot;";
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $contrib->get_name);
         set_redirect('/admin/manager/contrib');
         return;
     } else {                    # Roll in the changes.
@@ -42,7 +41,7 @@ sub save : Callback {
         $meths->{mname}{set_meth}->($contrib, $param->{mname});
         $meths->{prefix}{set_meth}->($contrib, $param->{prefix});
         $meths->{suffix}{set_meth}->($contrib, $param->{suffix});
-        my $name = "&quot;" . $contrib->get_name . "&quot;";
+        my $name = $contrib->get_name;
 
         if ($param->{mode} eq 'new') {
             # add person object to the selected group
@@ -102,7 +101,7 @@ sub save : Callback {
 
             if ($self->cb_key eq 'save') {
                 # Record a message and redirect if we're saving
-                add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+                add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 log_event("${type}_save", $contrib);
                 clear_state("contrib_profile");
                 set_redirect('/admin/manager/contrib');

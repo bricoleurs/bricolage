@@ -24,7 +24,7 @@ sub save : Callback {
     my $param = $self->request_args;
     my $dest = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     if ($param->{delete}) {
         # Dissociate output channels.
@@ -33,7 +33,7 @@ sub save : Callback {
         $dest->deactivate;
         $dest->save;
         log_event('dest_deact', $dest);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
         set_redirect("/admin/manager/dest");
         return;
@@ -51,8 +51,7 @@ sub save : Callback {
        && $dests[0] != $dest_id) {
         $used = 1;
     }
-    add_msg($self->lang->maketext("The name [_1] is already used by another [_2].",
-                            $name, $disp_name))
+    add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
       if $used;
 
     # If they're editing it, assume it's active.
@@ -97,7 +96,7 @@ sub save : Callback {
         if (defined $dest_id) {
             log_event('dest_' . (defined $param->{dest_id} ? 'save' : 'new'), $dest);
             # Send a message to the browser.
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
             # Set the redirection.
             set_redirect("/admin/manager/dest");
         } else {

@@ -34,14 +34,14 @@ $do_callback = sub {
     my $param = $self->request_args;
     my $oc = $self->obj;
 
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
     my $used;
 
     if ($param->{delete}) {
         # Deactivate it.
         $oc->deactivate;
         log_event('output_channel_deact', $oc);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         $oc->save;
         set_redirect('/admin/manager/output_channel');
     } else {
@@ -60,8 +60,7 @@ $do_callback = sub {
             $used = 1;
         }
 
-        add_msg($self->lang->maketext("The name [_1] is already used by another " .
-                                  "$disp_name.", $name)) if $used;
+        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
 
         # Set the basic properties.
         $oc->set_description( $param->{description} );
@@ -134,7 +133,7 @@ $do_callback = sub {
 
             $oc->save;
             log_event('output_channel_save', $oc);
-            add_msg($self->lang->maketext("$disp_name profile [_1] saved.", $name));
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
             set_redirect('/admin/manager/output_channel');
         } else {
             $oc->save;

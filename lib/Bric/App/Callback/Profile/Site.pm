@@ -33,8 +33,7 @@ sub save : Callback {
         $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
         log_event("${type}_deact", $site);
         set_redirect('/admin/manager/site');
-        add_msg("$disp_name profile &quot;[_1]&quot; deleted.",
-                $param->{name});
+        add_msg("$disp_name profile \"[_1]\" deleted.", $param->{name});
         return;
     }
 
@@ -45,7 +44,7 @@ sub save : Callback {
     $site->save;
     $self->cache->set('__SITES__', 0);
     $self->cache->set('__WORKFLOWS__' . $site->get_id, 0);
-    add_msg("$disp_name profile [_1] saved.", $param->{name});
+    add_msg("$disp_name profile \"[_1]\" saved.", $param->{name});
     log_event($type . '_save', $site);
 
     # Take care of group managment.

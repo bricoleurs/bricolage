@@ -14,7 +14,7 @@ use Bric::Util::Trans::FS;
 
 my $type = 'category';
 my $disp_name = get_disp_name($type);
-my $pl_name = get_class_info($type)->get_plural_name;
+my $pl_name = lc(get_class_info($type)->get_plural_name);
 my $class = get_package_name($type);
 
 
@@ -27,7 +27,7 @@ sub save : Callback {
     my $cat = $self->obj;
 
     my $id = $param->{"${type}_id"};
-    my $name = "&quot;$param->{name}&quot;";
+    my $name = $param->{name};
 
     # This will fail if for some bad reason site_id has not yet been set on $cat
     my $root_id = Bric::Biz::Category->site_root_category_id($param->{site_id});
@@ -35,8 +35,7 @@ sub save : Callback {
     if ($param->{delete} || $param->{delete_cascade}) {
         if ($id == $root_id) {
             # You can't deactivate the root category!
-            add_msg($self->lang->maketext("$disp_name [_1] cannot be deleted.",
-                                    $name));
+            add_msg("$disp_name \"[_1]\" cannot be deleted.", $name);
             $param->{'obj'} = $cat;
             return;
         }
@@ -44,19 +43,18 @@ sub save : Callback {
         if ($param->{delete_cascade}) {
             # We're going to delete all subcategories, too.
             $arg = { recurse => 1 };
-            $msg = $self->lang->maketext("$disp_name profile [_1] and all its " .
-                                   "$pl_name deleted.", $name);
+            $msg = "$disp_name profile \"[_1]\" and all its $pl_name deleted.";
             $key = '_deact_cascade';
         } else {
             # We'll just be deleting this category.
-        $msg = $self->lang->maketext("$disp_name profile [_1] deleted.",$name);
+            $msg = "$disp_name profile \"[_1]\" deleted.";
             $key = '_deact';
         }
         # Deactivate it.
         $cat->deactivate($arg);
         $cat->save;
         log_event($type . $key, $cat);
-        add_msg($msg);
+        add_msg($msg, $name);
     } else {
         # Roll in the changes.
         $cat->set_name($param->{name});
@@ -81,8 +79,7 @@ sub save : Callback {
 
                 if (defined($id) and $id == $p_id
                     or grep $_->get_id == $p_id, $cat->children) {
-                    add_msg("Parent cannot choose itself or its child as"
-                            . " its parent. Try a different parent.");
+                    add_msg("Parent cannot choose itself or its child as its parent. Try a different parent.");
                     $param->{'obj'} = $cat;
                     return;
                 }
@@ -92,17 +89,12 @@ sub save : Callback {
                                       parent_id => $p_id}) }) {
                     my $uri = Bric::Util::Trans::FS->cat_uri
                       ($par->get_uri, $param->{directory});
-                    add_msg($self->lang->maketext
-                            ('URI [_1] is already in use. Please ' .
-                             'try a different directory name or ' .
-                             'parent category.', $uri ));
+                    add_msg('URI "[_1]" is already in use. Please try a different directory name or parent category.', $uri);
                     $param->{'obj'} = $cat;
                     return;
                 }
                 if ($param->{directory} =~ /[^\w.-]+/) {
-                    add_msg($self->lang->maketext("Directory name [_1] contains "
-                            . "invalid characters. Please try a different "
-                            . "directory name.","'$param->{directory}'"));
+                    add_msg('Directory name "[_1]" contains invalid characters. Please try a different directory name.', $param->{directory});
                     $param->{'obj'} = $cat;
                     return;
                 } else {
@@ -174,7 +166,7 @@ sub save : Callback {
             }
         }
 
-        add_msg("$disp_name profile $name saved.");
+        add_msg("$disp_name profile \"[_1]\" saved.", $name);
     }
     # Redirect back to the manager.
 

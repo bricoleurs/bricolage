@@ -59,10 +59,7 @@ sub preview : Callback {
 
             # Make sure this media object isn't checked out.
             if ($ra->get_checked_out) {
-                my $msg = 'Cannot auto-publish related media [_1] '
-                  . 'because it is checked out';
-                my $arg = '&quot;' . $ra->get_title . '&quot';
-                add_msg($self->lang->maketext($msg, $arg));
+                add_msg('Cannot auto-publish related media "[_1]" because it is checked out.', $ra->get_title);
                 next;
             }
             $b->preview($ra, 'media', get_user_id(), $oc_id);
@@ -103,11 +100,10 @@ sub publish : Callback {
         my $s = $story_pub->{$sid} ||
           Bric::Biz::Asset::Business::Story->lookup({ id => $sid });
         $burner->publish($s, 'story', get_user_id(), $param->{pub_date});
-        my $arg = '&quot;' . $s->get_title . '&quot;';
-        add_msg($self->lang->maketext("Story [_1] published.", $arg))
+        add_msg('Story "[_1]" published.', $s->get_title)
           if $count <= 3;
     }
-    add_msg($self->lang->maketext("[_1] stories published.", $count))
+    add_msg("[quant,_1,story,stories] published.", $count)
       if $count > 3;
 
     $count = @$media;
@@ -116,11 +112,10 @@ sub publish : Callback {
         my $ma = $media_pub->{$mid} ||
           Bric::Biz::Asset::Business::Media->lookup({ id => $mid });
         $burner->publish($ma, 'media', get_user_id(), $param->{pub_date});
-        my $arg = '&quot;' . $ma->get_title . '&quot;';
-        add_msg($self->lang->maketext("Media [_1] published.", $arg))
+        add_msg('Media "[_1]" published.', $ma->get_title)
           if $count <= 3;
     }
-    add_msg($self->lang->maketext("[_1] media published.", $count))
+    add_msg("[quant,_1,media,media] published.", $count)
       if $count > 3;
 
     unless (exists($param->{'instant'}) && $param->{'instant'}) {

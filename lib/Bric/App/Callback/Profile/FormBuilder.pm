@@ -85,18 +85,17 @@ $base_handler = sub {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg($self->lang->maketext("Changes not saved: permission denied."));
+        add_msg("Changes not saved: permission denied.");
         set_redirect(last_page());
     } else {
         # Process its data
-        my $name = sprintf('&quot;%s&quot;', $param->{'name'});
+        my $name = $param->{'name'};
         my $disp_name = $conf{$key}{'disp_name'};
 
         if ($param->{'delete'}) {
             $obj->deactivate();
             $obj->save();
-            my $msg = "$disp_name profile [_1] deleted.";
-            add_msg($self->lang->maketext($msg, $name));
+            add_msg("$disp_name profile \"[_1]\" deleted.", $name);
             log_event("${key}_deact", $obj);
             set_redirect("/admin/manager/$key");
         } else {
@@ -112,11 +111,11 @@ $base_handler = sub {
 $do_contrib_type = sub {
     my ($self, $obj, $key, $class) = @_;
     my $param = $self->request_args;
-    my $name = sprintf('&quot;%s&quot;', $param->{'name'});
+    my $name = $param->{'name'};
     my $disp_name = $conf{$key}{'disp_name'};
     my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
-      ? sprintf('&quot;%s&quot;', $param->{'key_name'})
+      ? $param->{'key_name'}
       : '';
 
     $obj->activate();
@@ -147,8 +146,7 @@ $do_contrib_type = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
             # There's already an attribute by that name.
-            my $msg = 'An [_1] attribute already exists. Please try another name.';
-            add_msg($self->lang->maketext($msg, "&quot;$param->{fb_name}&quot;"));
+            add_msg('An "[_1]" attribute already exists. Please try another name.', $param->{fb_name});
             $no_save = 1;
         } else {
             my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -192,7 +190,7 @@ $do_contrib_type = sub {
 
         if ($self->cb_key eq 'save') {
             # Record a message and redirect if we're saving.
-            add_msg("$disp_name profile $name saved.");
+            add_msg("$disp_name profile \"[_1]\" saved.", $name);
             # Log it.
             my $msg = defined $param->{"$key\_id"} ? "$key\_save" : "$key\_new";
             log_event($msg, $obj);
@@ -208,11 +206,11 @@ $do_contrib_type = sub {
 $do_element = sub {
     my ($self, $obj, $key, $class) = @_;
     my $param = $self->request_args;
-    my $name = sprintf('&quot;%s&quot;', $param->{'name'});
+    my $name = $param->{'name'};
     my $disp_name = $conf{$key}{'disp_name'};
     my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
-      ? sprintf('&quot;%s&quot;', $param->{'key_name'})
+      ? $param->{'key_name'}
       : '';
     my $widget = $self->class_key;
     my $cb_key = $self->cb_key;
@@ -227,8 +225,8 @@ $do_element = sub {
     # Check if we need to inhibit a save based on some special conditions
     $no_save = $check_save_element->(\@cs, $param, $key);
 
-    my $msg = 'The key name [_1] is already used by another [_2].';
-    add_msg($self->lang->maketext($msg, $key_name, $disp_name))
+    add_msg('The key name "[_1]" is already used by another $disp_name.',
+            $key_name)
       if $no_save;
 
     # Roll in the changes.
@@ -324,7 +322,7 @@ $delete_sites = sub {
     if ($param->{'rem_site'}) {
         my $del_site_ids = mk_aref($param->{'rem_site'});
         if(@$del_site_ids >= @{$obj->get_sites}) {
-            add_msg($self->lang->maketext('You cannot remove all Sites'));
+            add_msg("You cannot remove all Sites.");
         } else {
             $obj->remove_sites($del_site_ids);
         }
@@ -444,9 +442,8 @@ $set_primary_ocs = sub {
             unless ($oc_ids{$siteid}) {
                 $$no_save = 1;
                 my $site = Bric::Biz::Site->lookup({id => $siteid});
-                my $msg = "Site [_1] requires a primary output channel";
-                my $arg = '&quot;' . $site->get_name . '&quot;';
-                add_msg($self->lang->maketext($msg, $arg));
+                add_msg('Site "[_1]" requires a primary output channel.',
+                        $site->get_name);
             }
         }
     } elsif ($cb_key eq 'add_oc_id') {
@@ -471,10 +468,7 @@ $add_new_attrs = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{$key_name}) {
             # There's already an attribute by that name.
-            my $msg = 'An [_1] attribute already exists. '
-                     . 'Please try another name.';
-            my $arg = sprintf('&quot;%s&quot;', $key_name);
-            add_msg($self->lang->maketext($msg, $arg));
+            add_msg('An "[_1]" attribute already exists. Please try another name.', $key_name);
             $$no_save = 1;
         } else {
             my $sqltype = $param->{'fb_type'} eq 'date' ? 'date'
@@ -535,7 +529,7 @@ $save_element_etc = sub {
                 my $msg = $key . (defined $param->{"$key\_id"} ? '_save' : '_new');
                 log_event($msg, $obj);
                 # Record a message and redirect if we're saving.
-                add_msg("$disp_name profile $name saved.");
+                add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 # return to profile if creating new object
                 set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
             }

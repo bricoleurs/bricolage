@@ -8,11 +8,11 @@ desk - A desk widget for displaying the contents of a desk.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =head1 DATE
 
-$Date: 2003-07-25 18:10:56 $
+$Date: 2003-08-12 20:10:42 $
 
 =head1 SYNOPSIS
 
@@ -218,9 +218,8 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                 $desk->save();
 
                 # tell the user this object was baked
-                add_msg($lang->maketext("Warning: object [_1]' had no associated desk."
-                                       ."  It has been assigned to the [_2]' desk.",
-                                        $obj->get_name, $desk->get_name));
+                add_msg('Warning: object "[_1]" had no associated desk.  It has been assigned to the "[_2]" desk.',
+                        $obj->get_name, $desk->get_name);
             }
 
 
@@ -249,24 +248,19 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
             unless ($a_wf) {
                 if ($obj->is_active) {
                     # Find a workflow to put it on.
-                    my ($msg, $name);
                     if (ref($obj) =~ /Story$/) {
                         ($a_wf) = Bric::Biz::Workflow->list({'type' => 2});
-                        $name = 'Story';
                     } elsif (ref($obj) =~ /Media/) {
                         ($a_wf) = Bric::Biz::Workflow->list({'type' => 3});
-                        $name = 'Media';
                     } elsif (ref($obj) =~ /Formatting$/) {
                         ($a_wf) = Bric::Biz::Workflow->list({'type' => 1});
-                        $name = 'Template';
                     }
 
                     $obj->set_workflow_id($a_wf->get_id);
                     $obj->save;
 
-                    $msg = $lang->maketext("Warning: [_1] object '[_2]' had no associated workflow."
-                                          ."  It has been assigned to the '[_3]' workflow.",
-                                           $name,$obj->get_name,$a_wf->get_name);
+                    my @msg_args = ('Warning: object "[_1]" had no associated workflow.  It has been assigned to the "[_2]" workflow.',
+                                 $obj->get_name, $a_wf->get_name);
 
                     if ($desk) {
                         my @ad = $a_wf->allowed_desks;
@@ -275,11 +269,11 @@ if (my $objs = &$cached_assets($class, $desk, $user_id, $class, $meths,
                             $desk->transfer({'to'    => $st,
                                              'asset' => $obj});
                             $desk->save;
-                            $msg .= "  ".$lang->maketext("This change also required that this [_1] be"
-                                                        ." moved to the '[_2]' desk",lc($name),$st->get_name);
+                            $msg_args[0] .= ' This change also required that this object be moved to the "[_3]" desk.';
+                            push(@msg_args, $st->get_name);
                         }
                     }
-                    add_msg($msg);
+                    add_msg(@msg_args);
                 } else {
                     # Remove it from the desk!
                     $desk->remove_asset($obj) if $desk;

@@ -23,7 +23,7 @@ sub save : Callback {
     $pref->set_value($param->{value});
     $pref->save;
     log_event('pref_save', $pref);
-    add_msg($self->lang->maketext("$disp_name [_1] updated.","&quot;$name&quot;"));
+    add_msg("$disp_name \"[_1]\" updated.", $name);
     set_redirect('/admin/manager/pref');
 }
 

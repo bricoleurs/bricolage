@@ -6,16 +6,16 @@ Bric::App::Auth - Does the dirty work of authentication.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-08-12 20:10:42 $
 
 =head1 SYNOPSIS
 
@@ -214,7 +214,7 @@ sub masquerade {
 
     # Do not continue unless they are already logged in as an admin.
     unless (user_is_admin()) {
-        return (undef, "You must be an administrator to use this function");
+        return (undef, "You must be an administrator to use this function.");
     }
 
     # Authentication succeeded. Set up session data and the authentication

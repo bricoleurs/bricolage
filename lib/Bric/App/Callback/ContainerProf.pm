@@ -74,7 +74,7 @@ sub bulk_edit : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $r = $self->apache_req;
-    my $field = $self->trigger_key;
+#    my $field = $self->trigger_key;
 
     my $tile = get_state_data($self->class_key, 'tile');
     my $tile_id = $param->{'edit_view_bulk_tile_id'};
@@ -321,7 +321,7 @@ sub save_and_up : Callback {
         # Save the tile we are working on.
         my $tile = get_state_data($self->class_key, 'tile');
         $tile->save();
-        add_msg('Element &quot;' . $tile->get_name . '&quot; saved.');
+        add_msg('Element "[_1]" saved.', $tile->get_name);
         $pop_and_redirect->($self, $self->class_key);
     }
 }
@@ -344,7 +344,7 @@ sub save_and_stay : Callback {
         # Save the tile we are working on
         my $tile = get_state_data($self->class_key, 'tile');
         $tile->save();
-        add_msg('Element &quot;' . $tile->get_name . '&quot; saved.');
+        add_msg('Element "[_1]" saved.', $tile->get_name);
     }
 }
 
@@ -364,8 +364,6 @@ sub resize : Callback {
     $drift_correction->($self);
     my $param = $self->request_args;
     return if $param->{'_inconsistent_state_'};
-
-    my $param = $self->request_args;
     my $widget = $self->class_key;
 
     my $splitter = get_state_name($widget) eq 'edit_bulk'
@@ -574,8 +572,7 @@ $delete_element = sub {
         set_redirect($uri);
     }
 
-    my $arg = '&quot;' . $tile->get_name . '&quot;';
-    add_msg($self->lang->maketext('Element [_1] deleted.', $arg));
+    add_msg('Element "[_1]" deleted.', $tile->get_name);
     return;
 };
 
@@ -605,8 +602,7 @@ $update_parts = sub {
         if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
                            $param->{$widget . "|delete_data$id"})) {
 
-            my $arg = '&quot;' . $t->get_name . '&quot;';
-            add_msg($self->lang->maketext("Element [_1] deleted.", $arg));
+            add_msg('Element "[_1]" deleted.', $t->get_name);
             push @delete, $t;
             next;
         }
@@ -622,9 +618,7 @@ $update_parts = sub {
                 $val = '' unless defined $val;
                 if ( $param->{$widget . "|${id}-partial"} ) {
                     # The date is only partial. Send them back to to it again.
-                    my $msg = 'Invalid date value for [_1] field.';
-                    my $arg = '&quot;' . $_->get_name. '&quot;';
-                    add_msg($self->lang->maketext($msg, $arg));
+                    add_msg('Invalid date value for "[_1]" field.', $_->get_name);
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
@@ -646,9 +640,7 @@ $update_parts = sub {
     if (@curr_tiles) {
         eval { $tile->reorder_tiles([grep(defined($_), @curr_tiles)]) };
         if ($@) {
-            add_msg("Warning! State inconsistent: Please use the buttons "
-                      . "provided by the application rather than the "
-                      . "'Back'/'Forward' buttons.");
+            add_msg("Warning! State inconsistent: Please use the buttons provided by the application rather than the 'Back'/'Forward' buttons.");
             return;
         }
     }
@@ -769,8 +761,7 @@ $handle_bulk_save = sub {
         $split_fields->($self->class_key, $param->{$self->class_key.'|text'});
         $save_data->($self->class_key);
         my $data_field = get_state_data($self->class_key, 'field');
-        my $arg = "&quot;$data_field&quot;";
-        add_msg($self->lang->maketext("[_1] Elements saved.", $arg));
+        add_msg('"[_1]" Elements saved.', $data_field);
     } else {
         $split_super_bulk->($self, $param->{$self->class_key.'|text'});
         unless (num_msg() > 0) {
@@ -841,9 +832,7 @@ $super_save_data = sub {
         next unless $p and scalar(@$p);
 
         if ($p->[0]->is_container) {
-            my $msg = 'Note: Container element [_1] removed '
-              . 'in bulk edit but will not be deleted.';
-            add_msg($self->lang->maketext($msg, "'$n'"));
+            add_msg('Note: Container element "[_1]" removed in bulk edit but will not be deleted.', $n);
             # Put these container tiles back in the list
             push @$dtiles, @$p;
             next;
@@ -852,9 +841,7 @@ $super_save_data = sub {
 
             if ($atd->get_required()) {
                 unless (grep { $_->get_key_name eq $n } @$dtiles) {
-                    my $msg = 'Note: Data element [_1] is required and cannot '
-                      . 'be completely removed.  Will delete all but one';
-                    add_msg($self->lang->maketext($msg, "'$n'"));
+                    add_msg('Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.', $n);
                     push @$dtiles, shift @$p;
                 }
             }
@@ -1036,9 +1023,7 @@ $split_super_bulk = sub {
             # If this field is not repeatable and we already have one of these
             # fields, then complain to the user
             if (not $repeatable and $seen{$type}) {
-                my $msg = 'Field [_1] appears more than once but it is not a '
-                  . 'repeatable element.  Please remove all but one.';
-                add_msg($self->lang->maketext($msg, "'$type'"));
+                add_msg('Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.', $type);
                 return;
             }
 
@@ -1047,8 +1032,7 @@ $split_super_bulk = sub {
 
             if (not exists $poss_names{$type}) {
                 my $new_type = $closest->([keys %poss_names], $type);
-                my $msg = 'Bad element name [_1]. Did you mean [_2]?';
-                add_msg($self->lang->maketext($msg, "'$type'", "'$new_type'"));
+                add_msg('Bad element name "[_1]". Did you mean "[_2]"?', $type, $new_type);
             }
 
             # If this is a container field, then reset everything
@@ -1125,8 +1109,7 @@ $drift_correction = sub {
     }
     # If we didn't find the tile, abort, and restore the tile stack
     else {
-        add_msg("Warning! State inconsistent: Please use the buttons provided "
-                ."by the application rather than the 'Back'/'Forward' buttons");
+        add_msg("Warning! State inconsistent: Please use the buttons provided by the application rather than the 'Back'/'Forward' buttons");
 
         # Set this flag so that nothing gets changed on this request.
         $param->{'_inconsistent_state_'} = 1;

@@ -27,14 +27,14 @@ sub save : Callback {
     my $param = $self->request_args;
     my $s = $self->obj;
 
-    my $name = "&quot;$param->{host_name}&quot;";
+    my $name = $param->{host_name};
 
     if ($param->{delete}) {
         # Delete it.
         $s->del;
         $s->save;
         log_event('server_del', $s);
-        add_msg($self->lang->maketext("$disp_name profile [_1] deleted.",$name));
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
         set_redirect("/admin/profile/dest/$param->{dest_id}");
         return;
@@ -53,8 +53,7 @@ sub save : Callback {
        && $dests[0] != $dest_id) {
         $used = 1;
     }
-    add_msg($self->lang->maketext("The name [_1] is already used by another $disp_name in this"
-                              . " $dest_name."),$name) if $used;
+    add_msg("The name \"[_1]\" is already used by another $disp_name in this $dest_name.", $name) if $used;
 
     # Roll in the changes.
     if (exists $param->{active}) {
@@ -80,7 +79,7 @@ sub save : Callback {
         $s->set_host_name($param->{host_name});
         $s->save;
         log_event($type . (defined $param->{server_id} ? '_save' : '_new'), $s);
-        add_msg($self->lang->maketext("$disp_name profile [_1] saved.",$name));
+        add_msg("$disp_name profile \"[_1]\" saved.", $name);
         # Set the redirection.
         set_redirect("/admin/profile/dest/$param->{dest_id}");
     }
