@@ -16,6 +16,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 1.2.2
 
+=head2 New Features
+
+=over 4
+
+=item *
+
+Added chk_syntax() methods to Bric::Util::Burner and its subclasses. This method
+will takes a tempmlate asset object and make sure that it compiles.
+Bric::Util::Burner::chk_syntax() delegates to the proper subclass.
+
+=back
+
 =head2 Bug Fixes
 
 =over 4

@@ -430,31 +430,14 @@ my $check_syntax = sub {
     my ($widget) = @_;
     my $fa   = get_state_data($widget, 'fa');
 
-    # only do this check for Mason components
-    my $file_name = $fa->get_file_name;
-    return 1 unless ($file_name =~ /.mc$/ or $file_name =~ /autohandler$/);
-
-    my $code = $fa->get_data;
-    
     # Syntax check the code.
-    my $parser = $m->parser;
-    eval {
-	my $error;
-	
-	# Add the global variables so we get no complaints about them
-	$code = "<%init>;\nmy (\$story, \$burner, \$element);\n</%init>\n$code";
-	my $c = $parser->make_component(script   => $code,
-					error    => \$error) 
-	  or die "Template compile failed: $error\n";
-    };
-
-    if ($@) {
-	add_msg($@);
-
-	return 0;
-    } else {
-	return 1;
-    }
+    my $burner = Bric::Util::Burner->new;
+    my $err;
+    # Return success if the syntax checks out.
+    return 1 if $burner->chk_syntax($fa, \$err);
+    # Otherwise, add a message and return false.
+    add_msg("Template compile failed: $err");
+    return 0
 };
 
 my $delete_fa = sub {

@@ -8,15 +8,15 @@ assets using HTML::Template formatting assets.
 
 =head1 VERSION
 
-$Revision: 1.5.2.1 $
+$Revision: 1.5.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.5.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-23 00:31:57 $
+$Date: 2002-03-09 00:13:25 $
 
 =head1 SYNOPSIS
 
@@ -252,6 +252,25 @@ sub burn_one {
 
     return wantarray ? @$ret : $ret;
 }
+
+################################################################################
+
+=item my $bool = $burner->chk_syntax($template_code, \$err)
+
+Compiles the template found in $template_data. If the compile succeeds with no
+errors, chk_syntax() returns true. Otherwise, it returns false, and the error
+will be in the $err varible passed by reference.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Not yet implemented. This is a placeholder that always returns true.
+See Bric::Util::Burner::Mason for an example of what needs to be done.
+
+=cut
+
+sub chk_syntax { 1 }
 
 =item $output = $burner->run_script($element, @args)
 
