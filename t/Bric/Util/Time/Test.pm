@@ -9,14 +9,15 @@ use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use POSIX ();
 
-my ($USE_CORE, $epoch);
+my $USE_CORE = 1;
+my $epoch = CORE::time;
+
 BEGIN {
     # Override the time function. Generally use CORE::time, but when $USE_CORE
-    # is set to a false value, always return the value of $epoch. This is to
-    # prevent those tests that test for the time *right now* from getting
-    # screwed up by the clock turning over.
-    $USE_CORE = 1;
-    $epoch = 315561600;
+    # is set to a false value, always return the value of $epoch, which will
+    # remain the same for the lifetime of the tests. This is to prevent those
+    # tests that test for the time *right now* from getting screwed up by the
+    # clock turning over.
     *CORE::GLOBAL::time = sub { $USE_CORE ? CORE::time : $epoch };
 }
 

@@ -6,16 +6,16 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-04 16:07:52 $
+$Date: 2003-03-23 18:22:02 $
 
 =head1 SYNOPSIS
 
@@ -23,15 +23,12 @@ $Date: 2003-03-04 16:07:52 $
 
   perl inst/runtests.pl t/Bric/Test/PodTest.pm
 
-  perl inst/runtests.pl t/Bric/Test/PodTest.pm | grep '***'
-
 =head1 DESCRIPTION
 
 This test class uses Pod::Checker to parse the POD in all of the modules in
 the F<lib>, F<bin>, and F<t/Bric/Test> directories to make sure that they
 contain no POD errors. It is run by C<make devtest>, but can also be run
-individually, as shown in the synopsis. To just see output of errors and
-warnings, pipe the test through C<grep>, as shown in the synopsis.
+individually, as shown in the synopsis.
 
 =cut
 
@@ -42,25 +39,10 @@ use File::Find;
 use File::Spec::Functions;
 use Test::Pod;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    # Find all the modules and scripts.
-    my $mods = $self->find_mods;
-    # Set the number of tests in the test_mods method.
-    $self->num_method_tests('test_mods', scalar @$mods);
-    # Cache the modules and scripts.
-    $self->{mods} = $mods;
-    return $self;
-}
-
-sub test_mods : Test(no_plan) {
-    my $self = shift;
-    foreach my $mod (@{ $self->{mods} }) {
-        pod_file_ok($mod);
-    }
-}
-
-sub find_mods {
+##############################################################################
+# Start by getting a list of the files we want to check.
+my $files;
+BEGIN {
     # Find the lib directory.
     die "Cannot find Bricolage lib directory"
       unless -d 'lib';
@@ -70,8 +52,7 @@ sub find_mods {
       unless -d 't';
 
     # Find all the modules.
-    my @mods;
-    find( sub { push @mods, $File::Find::name if m/\.pm$/ }, 'lib',
+    find( sub { push @$files, $File::Find::name if m/\.pm$/ }, 'lib',
           catdir('t', 'Bric', 'Test') );
 
     # Find the bin directory.
@@ -79,8 +60,21 @@ sub find_mods {
       unless -d 'bin';
 
     # Find all the scripts.
-    find( sub { push @mods, $File::Find::name if -f and -x }, 'bin' );
-    return \@mods;
+    find( sub { push @$files, $File::Find::name if -f and -x }, 'bin' );
+}
+
+##############################################################################
+# Now set up the test. We eval it in a BEGIN block so that Test::Harness can
+# be told how many tests there are at compile time.
+BEGIN {
+    my $num_files = scalar @$files;
+
+    eval qq[
+sub test_pod : Test($num_files) {
+    foreach my \$mod (\@\$files) {
+        pod_file_ok(\$mod);
+    }
+}];
 }
 
 1;
