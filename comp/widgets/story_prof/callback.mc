@@ -766,7 +766,7 @@ my $handle_unassoc_contrib = sub {
     my $cids = mk_aref($param->{$field});
     $story->delete_contributors($cids);
 
-    # Log the dissocitations.
+    # Log the dissociations.
     foreach my $cid (@$cids) {
 	my $c = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $cid });
 	log_event('story_del_contrib', $story, { Name => $c->get_name });

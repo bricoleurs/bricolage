@@ -7,11 +7,11 @@ assets
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2001-09-17 16:19:43 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 BACKGROUND
 
@@ -22,12 +22,12 @@ creation of Business Data.
 
 Elements are a definition of what the Business Data can be.   Elements define
 data fields and sub elements that they can contain.   It also defines rules 
-about the data.   The elements do not afect the layout, but provide sets
+about the data.   The elements do not affect the layout, but provide sets
 of rules that the templates and Business data conform to.
 
 =head2 Business Data
 
-When creating the story, the Busines Data is the values that relate to the
+When creating the story, the Business Data is the values that relate to the
 fields.   So if an element contains a field teaser, the Business Data might
 be "Aren't Clowns Lovely?".
 
@@ -39,7 +39,7 @@ those creating a story.    There are two types of root element, media and story,
 and there are sub elements that can be apart of other elements.   So if a 
 story element is created, it can contain page elements, which can contain
 paragraph attributes.    The Story Element is a top level element.   While the
-Page element is a sub element.   The Page element contains PAragrah 
+Page element is a sub element.   The Page element contains Paragraph 
 attributes. 
 
 =over 4
@@ -50,25 +50,25 @@ A sub element of Media types, Story types, or other elements.
 
 =item Story 
 
-An element that reperesents the top level story.    This can contain other 
+An element that represents the top level story.    This can contain other 
 elements.
 
 =item Media 
 
 An element the represents the top level media.   This can contain other media
-elemnets.
+elements.
 
 =back
 
 =head2 More Element Types 
 
-An element type is a flag that will alter the behaviour of the element.
+An element type is a flag that will alter the behavior of the element.
 
 =over 4
 
 =item Page
 
-This element will repersent a single page on final publish.
+This element will represent a single page on final publish.
 
 =item Fixed
 
@@ -112,7 +112,7 @@ set here.
 =item Required
 
 If selected this field must be present in all story or media assets.   It will
-automaticly be created when an asset is called up for editing.
+automatically be created when an asset is called up for editing.
 
 =item Repeatable
 
@@ -123,7 +123,7 @@ also be allowed to be bulk edited.
 
 =head2 Elements in Elements
 
-Elenents can also contain other non-story/media elements.   These can then 
+Elements can also contain other non-story/media elements.   These can then 
 contain other elements to what ever level of complexity is needed.
 
 
@@ -151,7 +151,7 @@ upon
 
 =item *
 
-source - the rights owner of the story.    Will be used in conjuncton with
+source - the rights owner of the story.    Will be used in conjunction with
 coverdate to set the expire date.
 
 =item *
@@ -208,22 +208,22 @@ Trail - a list of actions taken on this story
 =head1 Media Editing
 
 This is the area where files can be uploaded and properties can be set on them.
-Media elements can hold Data Elements and other Elements in te same way that
+Media elements can hold Data Elements and other Elements in the same way that
 Stories can.
 
 =head2 File Uploading
 
-The file that represnets the media object is uploaded here.
+The file that represents the media object is uploaded here.
 
 =head1 Asset Versioning
 
-Everytime an asset is checked out and then checked back in, a new version is 
-created.   It has the same id as the previous asset verion.   
+Every time an asset is checked out and then checked back in, a new version is 
+created.   It has the same id as the previous asset version.   
 
 
 =head2 Viewing Past versions
 
-The Profle screen has a section where, if there is a previous version, one can 
+The Profile screen has a section where, if there is a previous version, one can 
 go back and view them.
 
 =head2 Reverting to Past Versions
@@ -231,7 +231,7 @@ go back and view them.
 If an asset is checked out, one can revert the data to a previous versions
 data.   The revert will overwrite all the data in the current version and 
 replace it with the previous versions data.   It will keep the save version id,
-and any versions that existed inbetween the reverted versions will still be 
+and any versions that existed in between the reverted versions will still be 
 available
 
 =back

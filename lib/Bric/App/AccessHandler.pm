@@ -7,16 +7,16 @@ Apache Access phase.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:39 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,7 @@ users to Bricolage, and sets up Session handling.
 use strict;
 
 ################################################################################
-# Programmatic Dependences
+# Programmatic Dependencies
 use Apache::Constants qw(:common);
 use Apache::Log;
 use Bric::App::Session;
@@ -113,7 +113,7 @@ NONE.
 
 =item my $status = handler($r)
 
-Sets up the user session and checks authetication. If the authentication is current,
+Sets up the user session and checks authentication. If the authentication is current,
 it returns OK and the request continues. Otherwise, it caches the requested URI in
 the session and returns FORBIDDEN.
 

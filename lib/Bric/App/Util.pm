@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-10 22:32:33 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -36,7 +36,7 @@ $Date: 2001-12-10 22:32:33 $
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies
+# Programmatic Dependencies
 #use CGI::Cookie;
 #use Bric::Config qw(:qa);
 use Bric::Util::Class;
@@ -332,7 +332,7 @@ sub clear_msg {
 
 Returns an array reference. If $arg is an anonymous array, it is simply
 returned. If it's a defined scalar, it's returned as the single value in an
-anonymous array. If it's undef, an ampty anonymous array will be returned.
+anonymous array. If it's undef, an empty anonymous array will be returned.
 
 B<Throws:> NONE.
 

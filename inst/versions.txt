@@ -1,4 +1,4 @@
-# This file lists all released versions in cronological order.  It is
+# This file lists all released versions in chronological order.  It is
 # used by "make upgrade" to determine which inst/upgrade/* scripts to
 # run.  The current version must be on the last line of the file.
 1.0.1

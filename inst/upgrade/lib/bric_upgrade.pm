@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 21:03:02 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 SYNOPSIS
 
@@ -128,7 +128,7 @@ your script is about to perform have already been performed.
 
 For example, say you need to add a table C<foo_bar>. It's possible, for some
 reason or other, that the table may already have been added -- perhaps your
-script has already been run agaisnt the Bricolage installation. To determine
+script has already been run against the Bricolage installation. To determine
 whether it has, call C<test_sql> with a SQL query that will throw an exception
 if the table doesn't exist, but succeed if it does. If it does succeed, then
 simply exit your script without continuing to update the database.
@@ -149,7 +149,7 @@ sub test_sql {
 
   exit if fetch_sql($sql);
 
-Evaluates the C<SELECT> SQL expression $sql against the Bricoalge database and
+Evaluates the C<SELECT> SQL expression $sql against the Bricolage database and
 attempts to fetch a value from the query. If a value is successfully returned,
 C<fetch_sql> returns true. Otherwise, it returns false. An exception will also
 cause C<fetch_sql> to return false. Use this function to determine whether the
@@ -159,7 +159,7 @@ This function is similar in functionality to C<test_sql>, except that it doesn't
 explicitly test for an exception. In other words, it's useful for testing for
 database changes that may not trigger an exception even if they haven't been
 run. For example, say you need to add a new value to the event_type table with
-the key_name colunn value 'foo_grepped'. To determine whether this value has
+the key_name column value 'foo_grepped'. To determine whether this value has
 already been entered into the database, you simply try to select it. Use
 C<fetch_sql> to do this, as it will return true if it manages to fetch a value,
 and false otherwise.
@@ -184,13 +184,13 @@ sub fetch_sql {
   do_sql(@sql_statements);
 
 This function takes a list of SQL statements and executes each in turn. For
-each, it also sets the propper permissions for the Bricolage database user to be
+each, it also sets the proper permissions for the Bricolage database user to be
 able to access the tables and sequences it creates. Use this function to
 actually make changes to the Bricolage database.
 
 For example, say you need to add the table "soap_scum". Simply pass the proper
 SQL to create the table to this function, and the SQL will be executed, and the
-Bricolage databse user provided the proper permissions to access it.
+Bricolage database user provided the proper permissions to access it.
 
   my $sql = qq{
       CREATE TABLE soap_scum (

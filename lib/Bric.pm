@@ -10,7 +10,7 @@ Release Version: 1.3.2 -- Development Track for 1.4.0
 
 File (CVS) Version:
 
-$Revision: 1.18 $
+$Revision: 1.19 $
 
 =cut
 
@@ -18,7 +18,7 @@ our $VERSION = "1.3.2";
 
 =head1 DATE
 
-$Date: 2002-04-08 20:00:14 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,7 @@ use constant FIELD_RDWR  => FIELD_READ | FIELD_WRITE;
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies
+# Programmatic Dependencies
 use Carp;
 use Bric::Util::Fault::Exception::GEN;
 
@@ -155,7 +155,7 @@ sub new {
 
 This method is similar to the 'new' method except it is used only to retrieve a
 already existing object of this type from the database whereas 'new' creates a
-new, empty object. Since this operation is highly class dependant the code
+new, empty object. Since this operation is highly class dependent the code
 template for this function is the same as for the 'new' method.
 
 B<Throws:>

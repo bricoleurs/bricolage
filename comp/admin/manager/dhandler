@@ -45,10 +45,10 @@ if ($type eq 'grp') {
     # Set the constraint.
     $constrain = { %{ $def->{$type}{constrain} } };
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
-        # They're doing a search. Use default contraints.
+        # They're doing a search. Use default constraints.
 	$ctype = 'all';
     } elsif ($ctype) {
-        # They're limiting it to a contributor type. Add it to the contraint.
+        # They're limiting it to a contributor type. Add it to the constraint.
         $constrain->{grp_id} = $ctype unless $ctype eq 'all';
     } else {
         # It's the first time accessing. Set an empty constraint to support the
@@ -161,7 +161,7 @@ $sel_label = $type eq 'job' ? 'Cancel' : 'Delete';
 
 my $prefix = '';
 if ($type eq 'user') {
-    # We'll probbly need to redirect them to ssl if its enabled
+    # We'll probably need to redirect them to ssl if its enabled
     if (get_state_name('login') ne 'ssl') {
 	my ($http, $p) = SSL_ENABLE ? ('https://', '')
 	  : ('http://', $port);
@@ -213,7 +213,7 @@ my $sel_sub = sub {
     return undef;
 };
 
-# This codref will be used for category delete checkboxes.
+# This coderef will be used for category delete checkboxes.
 my $cat_sel_sub = sub {
     # Don't create a checkbox for the root category.
     &$sel_sub if $_[0]->get_id != Bric::Biz::Category->root_category_id;
@@ -222,7 +222,7 @@ my $cat_sel_sub = sub {
 # We'll use this coderef to make sure the user can at least READ the object.
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 
-# We'll use thes for displaying a select list of groups.
+# We'll use this for displaying a select list of groups.
 my %grp_sel = Bric::Util::Grp->href_grp_class_keys;
 $grp_sel{''} = 'All Groups';
 my $fmt;
@@ -360,11 +360,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-05-03 16:47:21 $
+$Date: 2002-05-20 03:21:56 $
 
 =head1 SYNOPSIS
 
@@ -372,7 +372,7 @@ $Date: 2002-05-03 16:47:21 $
 
 =head1 DESCRIPTION
 
-This is the generalized admin manager for handling the aministration of all
+This is the generalized admin manager for handling the administration of all
 kinds of admin objects. It uses the URL to determine what type of object it's
 administrating, and then takes care of the listing and search features.
 

@@ -4,11 +4,11 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =head1 DATE
 
-$Date: 2002-04-03 21:26:56 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -73,7 +73,7 @@ For each type of story you define for your organization, think about what
 constitutes each story of that type. There are two aspects of this level of the
 design: Elements available for each story, and data fields within each of those
 Elements. Elements are the building blocks of a story, while the fields in an
-Element constititute an Element's data points.
+Element constitute an Element's data points.
 
 =item Relationships
 
@@ -319,7 +319,7 @@ Title, Deck, Page, Paragraph, etc.), several are specific to other Bricolage
 objects. In the above examples, these are Image, Linked Story, and Byline.
 
 In addition to stories, objects that users will frequently use are Media and
-conributors, and these can be linked to from a given story -- a relationship can
+contributors, and these can be linked to from a given story -- a relationship can
 be created. So starting with the cover page, we see that it consists mainly of
 links to stories. The upshot is that while most of the fields can be created for
 a particular Element (say, "Top Story," which has the fields "Image," "Title,"
@@ -418,7 +418,7 @@ in the Element that links to them:
 
 Note that virtually all of the fields are removed from the linked stories in
 both Cover and Story, because those fields are available from the linked stories
-themselves -- that is, they've been defined in the Story story type. Similary,
+themselves -- that is, they've been defined in the Story story type. Similarly,
 I've removed the Byline Element, because all stories can have any number of
 contributors associated with them, and custom fields can be created for
 contributor types (see [documentation forthcoming]). Clearly, the relationships
@@ -440,7 +440,7 @@ Elements, so we end up with a fair number of Element Types.
 
 Here is the list of objects we'll need to create. The difference between this
 representation and that presented above is that some of the hierarchy is
-flattened out. We don't need to represent the hierarchy of Element relationhips
+flattened out. We don't need to represent the hierarchy of Element relationships
 here because all we want is a list of all the Elements. So we list them instead
 by their Bricolage object types. Element Types come first, and Elements of each
 type are subsumed under their type. Field are in turn indented under the
@@ -585,7 +585,7 @@ This checkbox indicates whether Elements of this Element Type represent pages or
 not. If an Element is a page, then if you add more than one Element of this type
 to a story, each one will trigger the generation of a new page -- that is,
 literally, a separate HTML page. Since we want our covers to have only one page,
-however, you should leave this option unchcked.
+however, you should leave this option unchecked.
 
 =item Fixed
 
@@ -625,7 +625,7 @@ depend on this property.
 
 =back
 
-Now the "Stories" Element Typs is defined similarly to the "Covers" Element
+Now the "Stories" Element Types is defined similarly to the "Covers" Element
 Type, but with a few differences in the properties. Taking a look at the default
 "Stories" Element Type -- which is configured fine for our purposes -- note the
 properties are set as follows:
@@ -671,7 +671,7 @@ Moving through the list we created above, we see that the next Element Type is
 "Columns." There is no such Element Type installed by default in Bricolage, so
 let's create one. In the navigation bar, go to ADMIN -E<gt> PUBLISHING -E<gt>
 Element Types. Click "Add a New Element Type." This will bring up the first page
-of theh Element Type Profile. Fill in the form fields as follows:
+of the Element Type Profile. Fill in the form fields as follows:
 
 =over 4
 
@@ -742,7 +742,7 @@ profile.
 Now, since a "Paragraph" field has already been included in the "Page" Element,
 all we need to do is to add a "Pull Quote" field. To do so, scroll down to the
 "Add New Field" section. Since a pull quote may be fairly long, let's create a
-text area input field. Selec the radio button next to "Text Area". The input
+text area input field. Select the radio button next to "Text Area". The input
 fields will change to the offer attributes relevant to a text area input field.
 Type the following values into their fields:
 
@@ -875,7 +875,7 @@ specifications:
 
 =item Default Value: [Your City]
 
-If the coveline is likely to often be the same, you may indeed wish to include a
+If the coverline is likely to often be the same, you may indeed wish to include a
 default value.
 
 =item Position: 2
@@ -930,7 +930,7 @@ button to continue creating the "Advertisement" Element.
 
 Now, because this is not a Story or Media Element, but just a plain Element (as
 defined in the "Ads" Element Type), there are no Output Channel associations.
-Futhermore, our specification above requires no subelements or fields for this
+Furthermore, our specification above requires no subelements or fields for this
 Element. The idea is that it just gets added as a subelement of the "Column
 Three" Element, and requires no information from the story editor. Therefore,
 there's nothing more to do with this profile, so click the "Save" button to save
@@ -952,7 +952,7 @@ or subelements. Thus they can easily be created by following these criteria:
 =head3 Current Stories and Recent Stories
 
 The "Current Stories" and "Recent Stories" Elements inherit from the "Story
-Lists" Element Type. These, too, are simple, but each contain a Subelelement.
+Lists" Element Type. These, too, are simple, but each contain a Subelement.
 Create them as follows:
 
   Name             Type         Subelements

@@ -4,11 +4,11 @@ Bric::Alert - Bricolage Alert Management Guide.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -67,7 +67,7 @@ moved to a desk where the desk is called 'Legal' and where the login of the user
 who triggered the event is 'DrEvil'."
 
 Thus you can use any combination of rules to restrict the sending of alerts to
-only those events that follow those rules. Furthmore, in specifying the subject
+only those events that follow those rules. Furthermore, in specifying the subject
 and message of the alert, you can use variables representing data from the event
 to tailor the content to be specific to the event. All these variables can be
 entered as part of the message, and are represented by simple strings. Their
@@ -120,7 +120,7 @@ name for your alert type, as well as an Owner. The currently logged in user
 Click "Next" to continue.
 
 The next screen contains the full Alert Type profile. This is also the screen
-that you will see when you select ot edit an existing Alert Type profile. Here
+that you will see when you select to edit an existing Alert Type profile. Here
 you can set rules, edit the alert contents, and designate the alert recipients.
 Note that you can also activate and deactivate the alert type from the profile
 interface (it's deactivated by default - check the "Active" checkbox to activate
@@ -205,25 +205,25 @@ Two different bits of content can be set for alert types: The B<subject> and the
 B<message>. Currently all alerts are sent via email. In the future, they may be
 sent via Instant Message, in which case the subject may be less relevant. But in
 the case of either the subject or the message, you can include certain special
-variables to custumize the alert on a per-alert basis.
+variables to customize the alert on a per-alert basis.
 
-The Alert Type UI "Conent" section features fields for the subject and message,
+The Alert Type UI "Content" section features fields for the subject and message,
 as well as two select boxes containing lists of the variables available to the
 alert type. The variables are marked by beginning with the dollar sign ("$")
 character, and are named for the same event attributes available to the rule
 configuration. (Note that to include an actual dollar sign in your alert,
-preceed it with a backslash ["\"] and it will be interpreted as a literal dollar
+precede it with a backslash ["\"] and it will be interpreted as a literal dollar
 sign rather than the beginning of a variable name.)
 
 You may enter whatever you wish for the subject and the message -- variables are
-not necessary. However, by including variables, you can custommize the message
+not necessary. However, by including variables, you can customize the message
 that is sent in the alert. For example, to identify in the alert subject who
 triggered the event for which the alert is sent, select from the first select
 box the variable "$trig_name". The variable will automatically be entered into
 the "Subject" field for you. (Of course, you can enter it manually, as well, but
 the select list is provided to help prevent typing mistakes as well as to limit
 you to only the variables that are available for a specific type of event.)
-Selecing from the second list of variables will likewise automatically insert
+Selecting from the second list of variables will likewise automatically insert
 that variable into the "Message" field.
 
 Feel free to play around with the variables, and include as many as you wish
@@ -257,22 +257,22 @@ individual users, be sure that you've entered contact values for those users.
 Users who have multiple addresses entered for the same type of contact will
 receive alerts at all the addresses specified for that type of contact. Thus if
 you have two "Primary Email" addresses specified in your user profile -- and you
-have been specified as a recipient of an alert via "Prmiary Email," you will
+have been specified as a recipient of an alert via "Primary Email," you will
 receive alerts at both addresses. The most common type of contact will likely be
 "Primary Email."
 
-You can specify that alerts be sent either to individal Bricolage users, or to
+You can specify that alerts be sent either to individual Bricolage users, or to
 groups of Bricolage users. We recommend the latter for general use, as it's
 easier to manage groups of users than individual users. The Alert Type Profile
 offers a "Recipients" section that contains a list of the various methods by
 which user can receive alerts (Primary Email, Secondary Email, etc.), and a list
 of the users and user groups that will receive alerts via those addresses. To
-change those values, click the "Edit" button for the particular type of conact.
+change those values, click the "Edit" button for the particular type of contact.
 
 Each type of contact offers two double lists for selecting recipients. The first
 allows you to select user groups to send alerts to. This is the recommended
 method for selecting alert recipients. In fact, it might be of value to create a
-User Group soleley for the purpose of selecting that group for sending alerts of
+User Group solely for the purpose of selecting that group for sending alerts of
 a particular type. Use the double list and the "Add to List" and "Remove from
 List" buttons in the normal way to add and remove user groups as recipients of
 the alerts. The second double list allows you to add and remove individual users
@@ -305,7 +305,7 @@ recipients of an alert acknowledged the alert.
 
 Many objects in Bricolage have an Event Log associated with them. To see a list
 of the events triggered on an object, simply click the "Log" link for an object
-on My Workspace, on a desk, or in any Manager. The fourtch column for each event
+on My Workspace, on a desk, or in any Manager. The fourth column for each event
 is reserved for a link to associated events. Most events will have no associated
 alerts, but for those that do, an "Alerts" link will be listed. Click that link
 to see the associated alert or alerts.

@@ -181,11 +181,11 @@ my $no_ed = { map { $_ => 1 } @$no_edit };
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-05-20 03:21:57 $
 
 =head1 SYNOPSIS
 
@@ -258,7 +258,7 @@ The Add More widget takes the following arguments:
 
 =item *
 
-objs - An anonymous array of existing objects to be diplayed. May also pass in
+objs - An anonymous array of existing objects to be displayed. May also pass in
 an array of hashrefs - but be sure to pass a true value to use_vals if you do
 and a list of methods via the meths argument. See /widgets/add_more/add_more.mc
 for an example.
@@ -267,7 +267,7 @@ for an example.
 
 fields - An anonymous array of the fields to be displayed in each row. The
 fields will be looked up for each object's my_meths() hash or the meths passed
-via th meths argument. If no values are passed via fields, add_more.mc will use
+via the meths argument. If no values are passed via fields, add_more.mc will use
 all of the fields returned by my_meths(1) (does not apply when use_vals is true).
 
 =item *
@@ -330,7 +330,7 @@ More" button. Defaults to 1.
 
 =item *
 
-num - The mininum number of rows to display. Defaults to 4.
+num - The minimum number of rows to display. Defaults to 4.
 
 =item *
 

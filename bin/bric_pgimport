@@ -103,7 +103,7 @@ sub initialize {
 	# Create the DSN for the template1 database.
 	my $dsn = "dbname=template1;host=$opt_H;port=$opt_o";
 
-	# Establish a databse connection.
+	# Establish a database connection.
 	$DBH = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
 
 	# Drop the current database, if necessary.
@@ -122,7 +122,7 @@ sub initialize {
     # Create the DSN.
     my $dsn = "dbname=$opt_d;host=$opt_H;port=$opt_o";
 
-    # Establish a databse connection.
+    # Establish a database connection.
     $DBH = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
 
     # Find all the files of each type.
@@ -151,7 +151,7 @@ Supported Options:
      defaults to localhost
   -o PostgreSQL server port number. Will use PGPORT environment variable
      and defaults to 5432.
-  -c Create the database frst.
+  -c Create the database first.
   -r Drop and recreate the exiting database (assumes -c).
   -m Make a new user. Pass in the user name and password separated by a colon.
      Permissions will be granted to this user to access the new database

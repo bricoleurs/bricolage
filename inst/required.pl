@@ -6,11 +6,11 @@ required.pl - installation script to probe for required software
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-05-10 19:44:54 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -188,7 +188,7 @@ sub find_apache {
 sub find_expat {
     print "Looking for expat...\n";
 
-    # find expat libary libexpat.so by looking in libarary paths that
+    # find expat libary libexpat.so by looking in library paths that
     # Perl knows about
     my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}), 
 					      split(' ', $Config{loclibpth}));

@@ -4,19 +4,19 @@ Bric::Security - Bricolage Security Guide.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
 This guide describes the security features of Bricolage. These features comprise
 three parts: B<authentication>, B<encryption>, and B<authorization>.
 Authentication is the process that allows users to login to Bricolage.
-Authorization is the processt that checks the permissions on individual objects
-before allowing users to access them. And encryption allows users to securly
+Authorization is the process that checks the permissions on individual objects
+before allowing users to access them. And encryption allows users to securely
 connect to Bricolage.
 
 =head1 AUTHENTICATION
@@ -79,7 +79,7 @@ AUTH_SECRET is a random string of characters that is used to encrypt a user's
 login session in a login cookie. The login session is encrypted to prevent
 malicious people from figuring out from cookie data how to login to a system. If
 such a person were to discover the the value of the data stored in AUTH_SECRET,
-that precaution would be compromized. We therefore recommend that you change
+that precaution would be compromised. We therefore recommend that you change
 this value periodically -- say every couple of days or once a week.
 
 =head1 ENCRYPTION
@@ -95,8 +95,8 @@ that any password changes are also sent via encrypted channels.
 
 All other parts of Bricolage use simple HTTP rather than SSL (HTTPS) for sending
 data to and from the browser. SSL is not preferred in the application in
-genereral because encryption encurs a significant performance overhead. A lot of
-processor time has to go into encryping and decrypting all data sent to and from
+general because encryption incurs a significant performance overhead. A lot of
+processor time has to go into encrypting and decrypting all data sent to and from
 the browser when using SSL; and in some Bricolage profiles, that can be a lot of
 data!
 
@@ -105,7 +105,7 @@ Perhaps someone is working on a sensitive story via the Internet, rather than on
 a LAN, and the story data needs to be encrypted, Or perhaps company policy
 dictates an emphasis on high-levels of security (such as may be the case with
 patient data in health care), and therefor preventing data from ever being sent
-in the clear over the Internet. Bricolage makes it a simple proces to use SSL
+in the clear over the Internet. Bricolage makes it a simple process to use SSL
 for connecting to and using Bricolage at all times.
 
 The simplest way to enable an encrypted connection is to check the "Use SSL"
@@ -116,11 +116,11 @@ connection to Bricolage, simply change the address in you browser from "http://"
 to "https://". That's all you need to do to turn on encryption. Note, however,
 that if you use this approach and then you edit a user profile, once you have
 saved the changes to the user profile, Bricolage will return you to a normal,
-unencypted connection. This is because Bric checks the status of the "Use SSL"
+unencrypted connection. This is because Bric checks the status of the "Use SSL"
 checkbox to determine whether or not a user has been using SSL before editing
 the user profile. Thus the preferred way to establish a secure connection is to
 check the "Use SSL" checkbox. To return to a normal, unencrypted connection,
-logout, and then log back in with the "User SSL" checbox unchecked.
+logout, and then log back in with the "User SSL" checkbox unchecked.
 
 =head1 AUTHORIZATION
 
@@ -129,13 +129,13 @@ and permissions management. The Bricolage authorization system is designed to be
 relatively simple to use and understand, although its emphasis on groups of
 objects rather than objects themselves can cause a little consternation until
 the idea clicks. Here we discuss the philosophy and functionality of
-aturhorization in detail, so that you can always return to this document if
+authorization in detail, so that you can always return to this document if
 you're having trouble.
 
 =head2 How Authorization Works
 
 In order to keep implementation as straight-forward as possible -- and therefore
-to also save processing time during uthorization checking, we designed Bricolage
+to also save processing time during authorization checking, we designed Bricolage
 to have only one kind of permission. That permission is best expressed by this
 sentence:
 
@@ -148,7 +148,7 @@ for authorizations. The disadvantage is that one cannot simply grant permission
 to an individual user to an individual object or group. One can, however, create
 a user group with one member, and an object group with one member, and then
 grant the permission to the single user group to access the single object group.
-So the granularity can still be acheived, but without violating the elegance of
+So the granularity can still be achieved, but without violating the elegance of
 the model.
 
 [Implementation Note: For those who want object-level permissions granularity
@@ -162,12 +162,12 @@ functionality is really in demand.]
 
 Bricolage supports four permission levels: READ, EDIT, CREATE, and DENY. B<READ>
 permission allows users to view the contents of objects, but not edit them.
-B<EDIT> permission allows uesrs to both view and edit the contents of objects
+B<EDIT> permission allows users to both view and edit the contents of objects
 and to delete objects, but not create them. B<CREATE> permission allows users to
 view, edit, delete, and create objects. Note that the B<CREATE> permission can
-only be granted for objects in the "All *" series of groupes, as an object are
-automatically members of its respective "All" group, but can't be addded to any
-other group until they've alreay been created. And finally B<DENY> permission
+only be granted for objects in the "All *" series of groups, as an object are
+automatically members of its respective "All" group, but can't be added to any
+other group until they've already been created. And finally B<DENY> permission
 prevents users from accessing objects at all.
 
 As you can see, the permissions cascade. EDIT assumes READ, CREATE assumes EDIT
@@ -177,7 +177,7 @@ Naturally, users may have more than one permission granted an object due to
 their membership in multiple groups. Likewise, a particular object may be in
 more than one object group to which a user group has been granted permission,
 and there may be different permissions assigned to the different groups. This
-crossing of permissions requires permission reconcilliation. The way multiple
+crossing of permissions requires permission reconciliation. The way multiple
 permissions are reconciled basically follows the cascading nature of the
 permissions themselves: the most permissive permission wins. Thus if a user has
 both READ and EDIT permission to an object, the user will have EDIT access to
@@ -227,7 +227,7 @@ access a particular object (here a story object), Bricolage finds out what
 groups the object is in, what user groups have been granted permissions on those
 groups, and which user groups the user in question is a member of. Then, once it
 has aggregated all of the permissions that trickle down to the user in
-questionk, it decides which one wins, following the criteria outlined above.
+question, it decides which one wins, following the criteria outlined above.
 
 So let's say that user "Theory" wants to create a new story. Bricolage sees that
 the new story is in the "All Stories" group, and that the user groups "All
@@ -238,8 +238,8 @@ of the "All Stories" group are "READ" and "CREATE," respectively. Bricolage
 determines that CREATE is the highest-value permission, and so user Theory has
 that permission, and therefore the ability to create a new story.
 
-Another expamle. Let's say that user "Mcnibblet" wishes to edit the "Dubbya
-Celebrates Birthday" story. Bricolage detemines that this story is a member in
+Another example. Let's say that user "Mcnibblet" wishes to edit the "Dubbya
+Celebrates Birthday" story. Bricolage determines that this story is a member in
 only one story group, "All Stories," to which the user groups "All Users,"
 "Story Admins," and "Evildoers" have been granted permissions. Mcnibblet, being
 the member of only one of these groups, "All Users", leaves just the one
@@ -254,7 +254,7 @@ determines that this story is a member of the "All Stories" and "Good Stories"
 story groups, and that all three user groups have been granted permissions to
 "All Stories," and "All Users" has been granted permission to "Good Stories".
 DrEvil, in turn, is a member of all three groups. Thus, the permissions for
-DrEvil to access the "Black Hole Destroys Earth" story are READ, CREATE, EDITY,
+DrEvil to access the "Black Hole Destroys Earth" story are READ, CREATE, EDIT,
 and DENY. Comparing these permissions, Bricolage would normally award the most
 permissive permission, CREATE (which encompasses READ and EDIT permissions, as
 well). However the DENY permission trumps all others. Thus, regardless of
@@ -264,7 +264,7 @@ to access the story at all!
 
 Here's a breakdown of how all the permissions will manifest for each user trying
 to access each story. Compare this table with the tables above to figure out how
-the permissions were deterimined.
+the permissions were determined.
 
   Story                        Theory  Mcnibblet  DrEvil
   ------------------------------------------------------
@@ -278,7 +278,7 @@ object in Bricolage, regardless of other group memberships and permissions --
 B<including DENY!> In fact, permissions aren't even checked for members of this
 group - CREATE permission is simply always assumed and granted. The name and
 permissions of the Global Administrators group cannot be edited, either - only
-the membership. Thus memberhip in this group should be limited to just those
+the membership. Thus membership in this group should be limited to just those
 users who are responsible for administering the whole of the Bricolage
 application. Use the other Administrator groups to parcel out the rights to
 Administer particular parts of the application.
@@ -289,7 +289,7 @@ Now that we've explained how the permissions system works, let's examine the
 interface, and how to use it to configure permissions for your users.
 
 All permissions management takes place within group profiles. As you can tell
-from the above dicussion, there are two slightly different kinds of groups, at
+from the above discussion, there are two slightly different kinds of groups, at
 least as far as permissions management is concerned. The two types are B<User
 Groups> and B<Object Groups>. All groups in the system are object groups. These
 are the groups to which user groups are granted permissions. Thus even user
@@ -303,20 +303,20 @@ Type" select list, you can see that it supports all kinds of object groups.
 (Note that the special "All *" groups are not editable.) Click "Edit" to edit
 one of the user groups, say "Alert Type Managers" (note that you must have
 permission to edit groups to do this!). The interface provides fields to edit
-the name and descriptio of the group, plus a double list manager that allows you
-to move objects (in this case users) in and out of the group. The doble list
+the name and description of the group, plus a double list manager that allows you
+to move objects (in this case users) in and out of the group. The double list
 manager allows you to assign members to the group.
 
 Since we're most interested in permissions management, however, click the
 'Permissions" button. This interface allows you to edit all of the permissions
-granted to the the members of the group, plus the permisisons granted to other
-gruops to access the members of this group. If you're looking at the "Alert Type
+granted to the the members of the group, plus the permissions granted to other
+groups to access the members of this group. If you're looking at the "Alert Type
 Managers" group, you'll be presented with four separate sections of permissions.
 
 Take a look at Number four, "User Group Permissions," first. These are the
 permissions granted to the members of user groups to access the members of the
 Alert Type Managers group. By default, none are granted, but if you were to
-click the "READ" radio button for the "Media Procucers" row and then click
+click the "READ" radio button for the "Media Producers" row and then click
 "Save," for example, then all users who are members of the "Media Producers"
 user group will then have READ access to the users who are members of the Alert
 Type Managers group. (This is probably not something you want to do!)
@@ -327,7 +327,7 @@ cluttered), so Bricolage offers an alternative. There is a preference,
 "Permissions Widget," that can be changed from its default value "Radio Buttons"
 to the alternative, "Select List." This setting will cause Bric to offer select
 lists for each row of the Permissions page, rather than radio buttons. To change
-the preferene, simply edit the "Permissions Widget" profile in the Preferences
+the preference, simply edit the "Permissions Widget" profile in the Preferences
 Manager. Be sure you have permission to edit preferences, and remember that they
 are global and will affect how I<all> users see the Permissions interface!
 
@@ -335,7 +335,7 @@ Now, scroll back up to the top of the Alert Type Managers Permissions page. The
 first section "Object Group Permissions," allows you to grant permission to the
 members of the Alert Type Manager group to access the members of other groups.
 Here you'll see all of the "All *" groups listed (the only groups for which you
-can grant CREATE access, incidentally) as well as all the other gruops in the
+can grant CREATE access, incidentally) as well as all the other groups in the
 system. You can use the radio buttons or the select list interface to grant the
 permissions. Note that by default, the Alert Type Administrators have been
 granted permission only to CREATE All Alert Types.
@@ -350,13 +350,13 @@ members of the current group (Alert Type Administrators) to access the assets on
 particular desks. This feature is useful to allow certain groups of users to
 access assets only on certain desks.
 
-These first three sectcions of permissions will likely be your most used, but
+These first three sections of permissions will likely be your most used, but
 they appear only when editing the permissions of user groups. The fourth
 section, "User Group Permissions," is the only section that appears in the
-permissions management screen for I<all> group profiles. We belive that this
+permissions management screen for I<all> group profiles. We believe that this
 section will be most useful when creating a new group, when it makes more sense
 to associated the group with user groups all at once, rather than edit the user
-group profiles invidividually to grant permissions on your new group.
+group profiles individually to grant permissions on your new group.
 
 Once you click "Save," and return to the group profile, the new permissions
 setting will have been saved. Click "Save" again to keep any changes made to the

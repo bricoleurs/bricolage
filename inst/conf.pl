@@ -6,11 +6,11 @@ conf.pl - installation script to write configuration files in conf/
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -158,7 +158,7 @@ sub create_httpd_conf {
 
 
     # take a stab at SSL settings if ssl is on.  This stuff is
-    # probably wrong and probably needs to be probed for explicitely
+    # probably wrong and probably needs to be probed for explicitly
     # in apache.pl.
     if ($AP->{ssl}) {
 	set_httpd_var(\$httpd, SSLSessionCache => "dbm:" . 

@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-05-18 14:43:15 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -113,7 +113,7 @@ exclude
 Exclude certain object instances from appearing in the list by passing this
 parameter an array ref of object IDs to exclude. You can also pass a sub ref to
 this argument. This sub ref will be called for each object to be displayed in
-the list, and be passed the object as the first arugment. If the sub ref returns
+the list, and be passed the object as the first argument. If the sub ref returns
 true, that object will be excluded from the list. If it returns false the object
 will stay in the list.
 

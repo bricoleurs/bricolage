@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-our $VERSION = (qw$Revision: 1.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.28 $ )[-1];
 
 # load em' up
 use Bric::SOAP::Handler;
@@ -20,11 +20,11 @@ Bric::SOAP - The Bricolage SOAP interface
 
 =head1 VERSION
 
-$Revision: 1.27 $
+$Revision: 1.28 $
 
 =head1 DATE
 
-$Date: 2002-04-01 21:46:12 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 SYNOPSIS
 
@@ -276,9 +276,9 @@ The Bric::SOAP system uses complete XML documents as parameters and
 return values to many methods (create() and export(), for example).
 These documents must be encoded in Base64 for performance reasons.
 See the PERFORMANCE section of the L<SOAP::Lite|SOAP::Lite>
-documentation for a full explanation of why this is neccessary.  This
+documentation for a full explanation of why this is necessary.  This
 is not a limitation of SOAP::Lite in particular but the explanation is
-particularily lucid.
+particularly lucid.
 
 For SOAP::Lite clients generating Base64 parameters is very easy:
 
@@ -367,12 +367,12 @@ The XSD source:
 	       <xs:element name="cover_date" type="xs:dateTime"/>
 	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if no expire date</xs:documentation>
+		   <xs:documentation>omitted if no expire date</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if not published</xs:documentation>
+		   <xs:documentation>omitted if not published</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="categories">
@@ -487,12 +487,12 @@ The XSD source:
 	       <xs:element name="cover_date" type="xs:dateTime"/>
 	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if no expire date</xs:documentation>
+		   <xs:documentation>omitted if no expire date</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="publish_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if not published</xs:documentation>
+		   <xs:documentation>omitted if not published</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="category" type="xs:string"/>
@@ -606,12 +606,12 @@ The XSD source:
 	       <xs:element name="output_channel" type="xs:string"/>
 	       <xs:element name="expire_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if no expire date</xs:documentation>
+		   <xs:documentation>omitted if no expire date</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="deploy_date" type="xs:dateTime" minOccurs="0">
 		 <xs:annotation>
-		   <xs:documentation>ommited if not deployed</xs:documentation>
+		   <xs:documentation>omitted if not deployed</xs:documentation>
 		 </xs:annotation>
 	       </xs:element>
 	       <xs:element name="data" type="xs:base64Binary" minOccurs="0"/>
@@ -863,7 +863,7 @@ See bric_dev_sync in bin/ for a complete implementation.
 A script that copies stories and all their dependencies (media, other
 stories) from one bricolage sever to another.
 
-This script was found to be unecessary since bric_soap provides a
+This script was found to be unnecessary since bric_soap provides a
 convenient interface for coping stories and media between server.
 
 =back

@@ -223,7 +223,7 @@ function reorder(obj) {
 	curObj     = orderObjs[i];
 
         // If we hit an empty array slot, its where the moving element is; suck
-        // the subsequent elements towards it.
+        // the subsequent elements toward it.
         if (typeof curObj == "undefined") {
             // This is the empty space left by the moving element; backshuffle
             offset = offset - 1;

@@ -8,11 +8,11 @@ container_prof - The container profile editor.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =head1 DATE
 
-$Date: 2002-03-07 01:28:19 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -62,7 +62,7 @@ $state = $action;
 #   # Don't change the state unless $action isn't 'edit'.
 #   $state = $action unless $action eq 'edit';
 # 
-# Note that the comment and the code diagree.  Also, this exception
+# Note that the comment and the code disagree.  Also, this exception
 # was causing the container_prof code to occasionally show a view
 # screen rather than an edit screen.  Maybe there was a good reason
 # for this exception and the bug is really in another place in
@@ -84,7 +84,7 @@ if ($state eq 'edit_bulk') {
 	# Load the data into an array which will be used until they finish.
 	my @data = map { $_->get_data } @dtiles;
 
-	# Intialize the state data.
+	# Initialize the state data.
 	set_state_data($widget, 'dtiles',    \@dtiles);
 	set_state_data($widget, 'data',      \@data);
 	init_state_data($widget, 'separator', "\n");

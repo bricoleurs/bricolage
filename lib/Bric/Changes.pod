@@ -143,7 +143,7 @@ All stories and media are now required to be associated with a category. For
 stories, the primary category cannot be deleted. If you want to change the
 primary category, add a new category, change it to the primary, and then
 delete the old primary category. This fix prevents previews and publishes
-from breaking on stories and media that had no categories. Thanks to Mark fo
+from breaking on stories and media that had no categories. Thanks to Mark for
 the heads-up. [David]
 
 =item *
@@ -159,6 +159,10 @@ Fixed button javascript to work correctly in Mozilla.  [Matt]
 
 Fixed bug in HTML::Template burner that prevented <tmpl_include>s from
 working in some cases.  [Sam]
+
+=item *
+
+Numerous spelling errors were fixed by Scott Lanning.  Thanks!
 
 =back
 
@@ -224,12 +228,12 @@ bric_soap, bric_dev_sync and bric_republish are all complete. [Sam]
 
 =item *
 
-Bricoalge now comes with a configure script and a Makefile for easier
+Bricolage now comes with a configure script and a Makefile for easier
 installation and configuration. [Mark Jaroski]
 
 =item *
 
-Removed MD5 Perl module requirment by requiring Apache::Session 1.54 or higher.
+Removed MD5 Perl module requirement by requiring Apache::Session 1.54 or higher.
 [David]
 
 =item *
@@ -265,7 +269,7 @@ cache. [Sam]
 =item *
 
 Fixed numerous cases where user_ids were being used as booleans.
-Since user_id 0 is the Adminstrator's user_id this can cause problems. [Sam]
+Since user_id 0 is the Administrator's user_id this can cause problems. [Sam]
 
 =item *
 
@@ -323,7 +327,7 @@ more portable. [David]
 =item *
 
 Checking in a template from a template profile now performs a syntax
-check of the temlate just as saving the template does. [Joao Pedro
+check of the template just as saving the template does. [Joao Pedro
 Goncalves]
 
 =item *
@@ -359,7 +363,7 @@ Functionally equivalent to 1.2.2, but includes required files missing from the
 =item *
 
 Added chk_syntax() methods to Bric::Util::Burner and its subclasses. This method
-will takes a tempmlate asset object and make sure that it compiles.
+will takes a template asset object and make sure that it compiles.
 Bric::Util::Burner::chk_syntax() delegates to the proper subclass.
 
 =back
@@ -379,7 +383,7 @@ Fixed broken "Return" buttons on related media and related story pages. [David]
 
 =item *
 
-Fixed bug where assets weren't activated when they were creaed and then checked
+Fixed bug where assets weren't activated when they were created and then checked
 in without clicking the "Save" button. [David]
 
 =item *
@@ -522,7 +526,7 @@ Documented PERL_LOADER directive in Bric::AdvTemplates. [David]
 
 =item *
 
-Turned off the PREVIW_MASON configuration directive in bricolage.conf. It should
+Turned off the PREVIEW_MASON configuration directive in bricolage.conf. It should
 be off by default. [David]
 
 =item *
@@ -581,7 +585,7 @@ Updated About page to mimic the layout of the help pages. [David]
 =item *
 
 Fixed a bug with local previews where a preview page could show up instead of
-the Bricoalge UI. Thanks to Sara for the spot. [David]
+the Bricolage UI. Thanks to Sara for the spot. [David]
 
 =item *
 
@@ -615,7 +619,7 @@ determine the proper directory. [David]
 
 Added the DEF_MEDIA_TYPE directive. Bricolage will use the value in this
 directive to assign a Media Type to all file resources if they Bricolage can't
-figure it out from their file extentions. This fixes a bug where Bricolage would
+figure it out from their file extensions. This fixes a bug where Bricolage would
 choke if it couldn't figure out the MediaType itself. [David]
 
 =back
@@ -635,15 +639,15 @@ preview and publish. [David]
 =item *
 
 Added DEFAULT_FILENAME and DEFAULT_FILE_EXT configuration directives to set
-default values on the "File Name" and "File Extenstion" Output Channel
+default values on the "File Name" and "File Extension" Output Channel
 properties. [David]
 
 =item *
 
 Changed Bric::Util::Burner->display_element() so that it doesn't paginate. All
 paginated pages are now treated instead as regular elements. This is useful for
-things like printer-freindly pages. Bric::Util::Burner->display_element()
-contines to work as before. Use this method to output a separate file for each
+things like printer-friendly pages. Bric::Util::Burner->display_element()
+continues to work as before. Use this method to output a separate file for each
 paginated element. [David]
 
 =item *
@@ -739,7 +743,7 @@ heads-up. [David]
 
 =item *
 
-Fixed a bug where data fields sometimes were not propery retreived from the
+Fixed a bug where data fields sometimes were not properly retrieved from the
 database in Bric::Biz::AssetType. [David]
 
 =item *

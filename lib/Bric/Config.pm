@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.40 $
+$Revision: 1.41 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.40 $ )[-1];
+our $VERSION = (qw$Revision: 1.41 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-01 21:51:03 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ use File::Spec::Functions qw(catdir tmpdir);
 use Apache::ConfigFile;
 
 #--------------------------------------#
-# Programatic Dependencies
+# Programmatic Dependencies
 
 #==============================================================================#
 # Inheritance                          #
@@ -213,7 +213,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
 	if (-e $conf_file) {
 	    open CONF, $conf_file or die "Cannot open $conf_file: $!\n";
 	    while (<CONF>) {
-		# Get each configuration line into $conifig.
+		# Get each configuration line into $config.
 		chomp;                  # no newline
 		s/#.*//;                # no comments
 		s/^\s+//;               # no leading white

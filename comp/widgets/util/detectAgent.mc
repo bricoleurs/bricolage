@@ -3,15 +3,15 @@
 
 =head1 NAME
 
-detectAgent.mc - Detects the agent's browser, it's version, and the OS.
+detectAgent.mc - Detects the agent's browser, its version, and the OS.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 

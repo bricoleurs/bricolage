@@ -4,11 +4,11 @@ Bric::Admin - Bricolage System Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.57 $
+$Revision: 1.58 $
 
 =head1 DATE
 
-$Date: 2002-05-14 15:51:23 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -437,7 +437,7 @@ to enter information for the certificate.  Here you'll enter the
 information for your certificate.  See the OpenSSL documentation for a
 description of the certificate data.
 
-You'll be prompted to enter the certificate information twice. Afterwards,
+You'll be prompted to enter the certificate information twice. Afterward,
 you'll see this prompt for each of the two new certificates:
 
   Encrypt the private key now? [Y/n]:
@@ -838,7 +838,7 @@ B<NAME_VHOST:> The IP address on which the virtual host name specified in the
 C<VHOST_SERVER_NAME> directive will respond. Note that the syntax for this
 directive is identical to the syntax for Apache's C<NameVirtualHost> directive.
 Also note that the VirtualHost record that Bricolage creates will be for
-C<NAME_VHOST . ':' . LISTEN_PORT>, so if you want to identify your own vitual
+C<NAME_VHOST . ':' . LISTEN_PORT>, so if you want to identify your own virtual
 hosts to listen for on the same IP address, you will need to include the port
 number in your C<VirtualHost> declarations. Also note that if the C<SSL_ENABLE>
 is turned on, then a C<NAME_VHOST . ':443'> VirtualHost directive will also be
@@ -1177,7 +1177,7 @@ page index number to uniquely name the file for a given story. Defaults to
 =item *
 
 B<DEFAULT_FILE_EXT:> Sets the default file extension that all new Output Channel
-will start with in their "File Name" property. Combined with DEFAULT_FILENAE and
+will start with in their "File Name" property. Combined with DEFAULT_FILENAME and
 a page index number to uniquely name the file for a given story. Defaults to
 "html" if not specified.
 
@@ -1312,7 +1312,7 @@ like this:
 
 This issue can be resolved by simply making sure that you enter different values
 for the "Organization Unite Name" for the certificate authority certificate and
-the server cirtificate.
+the server certificate.
 
 If you're facing this issue, here's how to manually build a new certificate:
 
@@ -1424,7 +1424,7 @@ logout or their login sessions expire and they attempt to log back
 in. (However, in some cases we've noticed a buildup of files in the
 lock directory.)
 
-Bricolage also uses a cross-process caching mechanism to shara data between
+Bricolage also uses a cross-process caching mechanism to share data between
 Apache processes and applications. The data for this cache is stored in
 C<TEMP_DIR/bricolage/cache>.
 

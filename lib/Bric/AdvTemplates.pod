@@ -6,11 +6,11 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2002-02-26 03:38:45 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 INTRODUCTION
 
@@ -51,7 +51,7 @@ Autohandlers usually provide wrapper HTML for normal Templates, such as a
 standard site header and footer. Unlike normal templates that display particular
 fields of a story, autohandlers will usually just have some HTML along with a
 line of code that says "put all remaining output here". This line of code is the
-'chain_next' method of the $burner object passed into all tempaltes. It is
+'chain_next' method of the $burner object passed into all templates. It is
 called like this:
 
     % $burner->chain_next;
@@ -60,10 +60,10 @@ Autohandlers do have access to the $story and $element objects as well. You
 might use these if you want to add some customization based on the story.
 
 Autohandlers run before any normal template is run, and if there is more than
-one autohandler in a diretory tree, they will each run in order from the top of
+one autohandler in a directory tree, they will each run in order from the top of
 the directory tree down.
 
-For example, lets say we publish a Column story in the News/Polictics category
+For example, lets say we publish a Column story in the News/Politics category
 and there is a Root category autohandler and a News category autohandler:
 
     /News/Politics/column.mc
@@ -72,7 +72,7 @@ and there is a Root category autohandler and a News category autohandler:
 
 When this Story is published, the system searches for any autohandlers, starting
 at '/' working its way down to the publish category '/News/Politics'. In this
-example, the tempates will run in the following order:
+example, the templates will run in the following order:
 
     /autohandler
     /News/autohandler
@@ -132,7 +132,7 @@ two paragraphs of text, the resulting published story would look like:
 
             <p>Earlier today a man was reported biting a dog</p>
 
-            <p>The dog was unavailble for comment</p>
+            <p>The dog was unavailable for comment</p>
 
         </td></tr></table>
 
@@ -145,7 +145,7 @@ two paragraphs of text, the resulting published story would look like:
 Elements in the Bricolage system can be marked as "paginated". Such Elements can
 be used to re-execute templates over successive pages, automatically outputting
 a new file each time. All templates output to a file named for the "File Name"
-and "File Extention" properties of the current Output Channel. Templates based
+and "File Extension" properties of the current Output Channel. Templates based
 on paginated Elements will simply append a number to the output file for each
 additional time they run. So a story containing 4 paginated elements will
 (assuming that the "File Name" and "File Extension" properties are set to
@@ -352,7 +352,7 @@ configuration directives that, when turned on, will add a global variable to all
 templates called $writer. This variable contains an XML::Writer object that can
 be used to output XML from your templates. Of course one can simply use Mason
 for outputting XML, but if one needs to output a B<lot> of XML, one may wish to
-take advantage of the convenience interface priveded by XML::Writer.
+take advantage of the convenience interface provided by XML::Writer.
 
 To use $writer, simply set the INCLUDE_XML_WRITER configuration to "Yes" in
 bricolage.conf. Another directive, XML_WRITER_ARGS, can be used to pass extra
@@ -376,19 +376,19 @@ For more details on how to use XML::Writer, see L<XML::Writer>.
 Since Bricolage's templates are all Perl-based, it's of course possible to load
 Perl modules and use them in your templates. You might want to use DBI to pull
 data in from another database, or use XML::RSS to burn in headlines from another
-site. This is one of the great strenghts of Bricolage's templating architecture,
+site. This is one of the great strengths of Bricolage's templating architecture,
 and we strongly urge you to exploit this strength.
 
 However, it's not efficient to load modules directly in your templates, since
-every time they're run, the'll load the template into a separate Apache process,
-and therefor use more system resouces (memory). It would be better to load all of
+every time they're run, they'll load the template into a separate Apache process,
+and therefor use more system resources (memory). It would be better to load all of
 the modules you'll need at Bricolage startup time, so that they get shared across
 processes and therefor use less memory.
 
 With the PERL_LOADER configuration directive in bricolage.conf, you can do just
 that. The PERL_LOADER directive takes, on a single line, an arbitrary line of
 Perl code, and executes it in the namespace reserved for Mason templates (sorry,
-this functionality isn't availabe for HTML::Template templates at this time). So
+this functionality isn't available for HTML::Template templates at this time). So
 you can execute a whole bunch of Perl C<use> statements here, and all the modules
 will be available to you in your templates without needing to reload them there.
 Here's an example:

@@ -4,7 +4,7 @@
 	title => 'Error',
         useSideNav => !$prev,
         no_toolbar => !$prev,
-	context => 'An error occured.',
+	context => 'An error occurred.',
   debug => (QA_MODE || TEMPLATE_QA_MODE)
  &>
 

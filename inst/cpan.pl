@@ -6,11 +6,11 @@ cpan.pl - installation script to install CPAN modules
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =head1 DATE
 
-$Date: 2002-05-10 22:38:23 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -34,7 +34,7 @@ BEGIN {
 
     # try to figure out if CPAN.pm has been configured.  This mimics
     # the logic in CPAN.pm.  If this turns out not to be reliable
-    # another possiblity would be to just `perl -MCPAN -e shell` and
+    # another possibility would be to just `perl -MCPAN -e shell` and
     # look for the "configuration required" text.
     my $found_config = 0;
     eval { require CPAN::Config };
@@ -61,7 +61,7 @@ be at a "cpan>" prompt.  Next, you should install the latest CPAN.pm:
 
 After this step you should quit the CPAN shell and run it one more
 time to be certain it works.  You may need to re-answer the CPAN.pm
-questionairre at this time.  Once you have a working CPAN.pm come back
+questionnaire at this time.  Once you have a working CPAN.pm come back
 here are re-run "make install".
 
 END
@@ -88,7 +88,7 @@ installation using the command (as root):
 
 After this step you should quit the CPAN shell and run it one more
 time to be certain it works.  You may need to re-answer the CPAN.pm
-questionairre at this time.  Once you have a working CPAN.pm come back
+questionnaire at this time.  Once you have a working CPAN.pm come back
 here are re-run "make install".
 END
 }

@@ -7,15 +7,15 @@ CE::App::Profile.pm
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:43 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ Interface for updating the fields of an object.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programattic Dependencies              
  
 # A sample use module.
 
@@ -244,7 +244,7 @@ sub set_profile {
 =cut
 
 # Add functions here that can be used only internally to the class. They should
-# not be publicly available (hence the prefernce for closures). Use the same POD
+# not be publicly available (hence the preference for closures). Use the same POD
 # comment style as above for 'new'.
 
 1;

@@ -13,7 +13,7 @@ function dumpArray($var) {
 			case 'string':
 				echo $var;
 				break;
-			case 'array':				// Arrays need to be handled special. Oooo recusrions
+			case 'array':				// Arrays need to be handled special. Oooo recursions
 				if (! count($var)) {	// Check to see if the array is empty.
 					echo 'Empty Array.<BR>';
 				} 

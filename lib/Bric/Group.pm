@@ -8,15 +8,15 @@ package Bric::Group;
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-20 03:21:59 $
 
 
 =head1 SYNOPSIS
@@ -84,7 +84,7 @@ $Date: 2002-01-06 04:40:35 $
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programmatic Dependencies              
 
 # None Yet
 
@@ -187,7 +187,7 @@ sub new {
 
 =item $group = Bric::Group->lookup( $criteria )
 
- This will lookup an existing group based on the given criteria, usualy 
+ This will lookup an existing group based on the given criteria, usually 
  $criteria = { id => $id }
 
 B<throws:>
@@ -473,7 +473,7 @@ sub get_members {
 
 =item $success = $self->delete_members([$obj||$members||{type=>$t,id=>$id}]);
 
- Takes a lsit of objects or their unique identifiers ard removes them from the
+ Takes a list of objects or their unique identifiers and removes them from the
  group
 
 B<throws:>
@@ -533,7 +533,7 @@ sub get_attr_obj {
 =item $group = $group->set_member_attrs(
 	[ { name => $name, subsys => $subsys, value => $value } ] )
 
- Set default attributes for members of the group.   These can be over rided
+ Set default attributes for members of the group.   These can be overridden
  by setting the attributes of the member.
 
 B<throws:>

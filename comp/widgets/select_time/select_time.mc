@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ default values for its time fields.
 
 def_date
 
-This accepts a date formatted as it would be comming out of the database, that 
+This accepts a date formatted as it would be coming out of the database, that 
 is 'YYYY/MM/DD hh:mm:ss' and uses it to set the default time of this widget.
 Defaults to the current time. If pass in an empty string, it'll default to no
 time.

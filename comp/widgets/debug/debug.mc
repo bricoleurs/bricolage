@@ -4,15 +4,15 @@
 
 =head1 NAME
 
-debug - Output some debuging information
+debug - Output some debugging information
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 

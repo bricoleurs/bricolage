@@ -6,15 +6,15 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 BACKGROUND
 
-Before taking about templates, lets take a moment to dicuss all the major
+Before taking about templates, lets take a moment to discuss all the major
 players in the publish process and get the terminology down. The three elements
 involved in publishing a story are:
 
@@ -203,7 +203,7 @@ Gallery
 =back
 
 Categories, (somewhat like elements) can contain other categories. This is just
-to provide futher distinction:
+to provide further distinction:
 
 =over 4
 
@@ -217,7 +217,7 @@ Music/DJ
 
 =item *
 
-Music/Clasical
+Music/Classical
 
 =item *
 
@@ -312,7 +312,7 @@ another (the co-brand site).
 =head2 Bringing It All Together
 
 So you might be asking, where do all my templates go, how does the system know
-what categories have tempates defined, and how are they used during a publish?
+what categories have templates defined, and how are they used during a publish?
 
 Now, while there should be no need to manipulate templates on the filesystem
 itself (and it could cause the Bricolage system considerable confusion) I'll
@@ -570,7 +570,7 @@ thought to be too confusing and complicated. Unfortunately that has made your
 job, the template producer, more confusing and complicated because the term
 'element' is about to become wildly overloaded.
 
-In a story, text fields AND contained elements are both refered to as
+In a story, text fields AND contained elements are both referred to as
 'elements'. So 'element' now means
 
 =over 4
@@ -596,7 +596,7 @@ definition of a particular type of story. When I speak of elements as defined by
 2) and 3) I will use a lowercase 'element'.
 
 Furthermore, since a story has two types of elements, lets establish a way of
-distiguishing between them. We'll call all text data fields of a story 'data
+distinguishing between them. We'll call all text data fields of a story 'data
 elements' and the contained fields that are based on an Element, 'container
 elements'. When we don't need to distinguish them, we'll collectively refer to
 them as 'elements'.
@@ -655,7 +655,7 @@ to access all the metadata of a story. It can be used to indirectly access the
 actual data of the story, but there is a better way to do this. We'll discuss
 how and why shortly. A full list of methods available via the story object can
 be found by reading the POD in Bric::Biz::Asset::Business::Story. However, I'll
-highlight the most important/usefull ones here:
+highlight the most important/useful ones here:
 
 =over 4
 
@@ -731,7 +731,7 @@ to programmers; $num starts at '1' not '0'.
 
 Returns an array of both container element objects and data element objects.
 Container element objects, as noted above are of the same type as $element. Data
-element objects are an object represntation the story data for a data element.
+element objects are an object representation the story data for a data element.
 This bullet list identifies the methods you can call on a container element
 object. A short list of methods available for data element objects will be given
 after this list. =item $element->get_place
@@ -740,7 +740,7 @@ Story editors have the opportunity to arrange the elements of their story in a
 particular order. This method returns a number giving this container element's
 place among all other elements (both data and container).
 
-If $element is the element object for the main story (ie the 'column' element of a 
+If $element is the element object for the main story (i.e. the 'column' element of a 
 'column' story) this will return 1.
 
 =item $element->get_object_order
@@ -750,14 +750,14 @@ this elements place among like container elements. For example a 'column' story
 might contain several 'music_blurb' container elements. If this happens to be
 the 2nd of 3 'music_blurb' container elements, this method will return 2.
 
-If $element is the element object for the main story (ie the 'column' element of
+If $element is the element object for the main story (i.e. the 'column' element of
 a 'column' story) this will return 1.
 
 =item $element->get_name
 
 Return the name of this container element.
 
-Futhermore the 'get_elements' method returns us some container element objects
+Furthermore the 'get_elements' method returns us some container element objects
 and some data element objects. Here is a list of methods you can call on a data
 element object:
 
@@ -1011,7 +1011,7 @@ An element that represents textual/simple data.
 
 =item dhandler
 
-A Mason concept. Templates behave in a similar maner to dhandlers
+A Mason concept. Templates behave in a similar manner to dhandlers
 
 =item Element
 

@@ -6,16 +6,16 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-04 09:46:50 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -164,7 +164,7 @@ my $no_trans = 0;
 # Create Mason parser object.
 my $parser = HTML::Mason::Parser->new;
 
-# Create the interpreter. Otions we may want to add for the shipping product
+# Create the interpreter. Options we may want to add for the shipping product
 # include:
 # * use_reload_file => 1 - This forces Mason to use object files only, without
 #   checking element files to see if they've changed. 'Corse, we'll need
@@ -269,7 +269,7 @@ B<Notes:> NONE.
 
 sub handle_err {
     my ($r, $err) = @_;
-    # Create an execption object unless we already have one.
+    # Create an exception object unless we already have one.
     $err = Bric::Util::Fault::Exception::AP->new(
        { msg => "Error processing Mason elements.", payload => $err })
        unless ref $err;
@@ -299,7 +299,7 @@ sub handle_err {
 
 Overrides the HTML::Mason::ApacheHandler::ARGS_METHOD method to process GET and
 POST data. By overriding it, we are able to do a couple of extra things, such as
-translat the characters to Unicode and to turn empty strings into undefs.
+translate the characters to Unicode and to turn empty strings into undefs.
 
 B<Throws:>
 
@@ -328,7 +328,7 @@ promises,
   thing instead of calling the standard ApacheHandler method for this.
 
 One thing that is commented out here is callbacks. I have not been able to get
-them to work properly here yet, so they remain in /authohandler. But they are
+them to work properly here yet, so they remain in /autohandler. But they are
 the Only thing left there!
 
 =cut

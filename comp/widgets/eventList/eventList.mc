@@ -66,11 +66,11 @@ $fmt = get_pref('List Name Format');
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:40 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ mapping is maintained in the 'class' table, where the short name is the
 
 =item *
 
-obj_id - Reuired. The ID of the object of the type represented by the "object"
+obj_id - Required. The ID of the object of the type represented by the "object"
 argument for which to look up events.
 
 =item *

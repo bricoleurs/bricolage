@@ -8,15 +8,15 @@ An asset is anything that goes through workflow
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-04-23 23:45:42 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ Actions that can be preformed are fork which prepares an object to be
 edited in a checked out state, cancel, which cancels the fork, merge which 
 takes the forked object compares it to the stored main version and creates 
 a new version and revert which is called on a forked object which returns 
-thl state of the object at a given version id.
+the state of the object at a given version id.
 
 A fork will preform a copy in the database keeping the asset id, and version 
 number the same but will associate a user with the object.   
@@ -105,7 +105,7 @@ number the same but will associate a user with the object.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programmatic Dependencies              
 
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Biz::Workflow;
@@ -361,9 +361,9 @@ sub list_priorities {
 
 =item (@meths || $meths_aref) = Bric::Biz::Asset->my_meths(TRUE)
 
-Returns an anonymous hash of instrospection data for this object. If called with
+Returns an anonymous hash of introspection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
-intrspection data. The format for each introspection item introspection is as
+introspection data. The format for each introspection item introspection is as
 follows:
 
 Each hash key is the name of a property or attribute of the object. The value
@@ -474,7 +474,7 @@ cols - The number of columns to format in a textarea field.
 
 =item *
 
-vals - An anonymous hash of key/value pairs reprsenting the values and display
+vals - An anonymous hash of key/value pairs representing the values and display
 names to use in a select list.
 
 =back
@@ -658,7 +658,7 @@ sub my_meths {
 
 =item $versions = $asset->get_versions()
 
-Returns a list ref of the previous verisons of this asset
+Returns a list ref of the previous versions of this asset
 
 B<Throws:>
 
@@ -1197,7 +1197,7 @@ sub get_current_desk {
 
 =item $id = $asset->get_id()
 
-This returns the id that uniquly identifies this asset.
+This returns the id that uniquely identifies this asset.
 
 B<Throws:>
 
@@ -1284,7 +1284,7 @@ sub get_workflow_object {
 
 =item $self = $self->cancel ();
 
-Reverts the actions of a fork with out commiting any changes.   Deletes
+Reverts the actions of a fork with out committing any changes.   Deletes
 row for the checked out asset
 
 B<Throws:>

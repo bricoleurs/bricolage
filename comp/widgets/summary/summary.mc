@@ -4,15 +4,15 @@
 
 =head1 NAME
 
-summary - Displays a summary of a asset objects.
+summary - Displays a summary of asset objects.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 

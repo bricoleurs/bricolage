@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:36 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -83,8 +83,8 @@ def_sort_field
 
 Use this only if you you don't pass sortBy and if you know that the objects will
 be returned from list (or are stored in the objs argument -- see below) in an
-order different that the default that will be returned by inspecting
-my_methds(). For example, if normally my_meths() says that the objects are
+order different than the default that will be returned by inspecting
+my_meths(). For example, if normally my_meths() says that the objects are
 sorted by name, but you're passing them via the objs argument in a different
 order, then specify which field defines that order here.
 
@@ -107,7 +107,7 @@ is:
 ['Edit', '', "id=$o_id"]
 
 Which means the label is 'Edit', with a null link and the id parameter set to 
-the current objects ID.  Only the label argurment needs to be filled in.  In 
+the current objects ID.  Only the label argument needs to be filled in.  In 
 the 'full_list' style this link is followed via a GET request.  If the value is 
 a list of lists, then multiple profile links will be displayed:
 
@@ -115,7 +115,7 @@ a list of lists, then multiple profile links will be displayed:
 
 will display two links labeled 'Edit' and 'Update'.
 
-This can also take a code reference that will return the apropriate array ref
+This can also take a code reference that will return the appropriate array ref
 when called.  It will be passed the object ref on each row.
 
 =item *
@@ -143,7 +143,7 @@ If the value is a list of lists, then multiple profile links will be displayed:
 
 will display two checkboxes labeled 'Edit' and 'Update'.
 
-This can also take a code reference that will return the appopriate array ref
+This can also take a code reference that will return the appropriate array ref
 when called.  It will be passed the object ref on each row.
 
 =item *
@@ -161,7 +161,7 @@ this link is followed via a GET request.  No extra arguments will be passed.
 You might consider making the 'addition' link and the 'profile' link be the same
 and switch on whether you are passed an 'id'.
 
-This can also take a code reference that will return the appopriate array ref
+This can also take a code reference that will return the appropriate array ref
 when called.
 
 =item *
@@ -199,7 +199,7 @@ field_titles
 
 This accepts a hash ref of field name to display name.  You can use it to change
 the name of an existing field or to create a display name for a created field
-when used with 'fields' and 'field_values'.  If you pass a non-existant field
+when used with 'fields' and 'field_values'.  If you pass a non-existent field
 name to 'fields', map that name to a display name here in 'field_titles' and
 then provide values for that field in 'field_values' you can create new fields
 that did not exist in the original object.
@@ -250,7 +250,7 @@ exclude
 Exclude certain object instances from appearing in the list by passing this 
 parameter an array ref of object IDs to exclude.  You can also pass a sub ref 
 to this argument.  This sub ref will be called for each object to be displayed 
-in the list, and be passed the object as the first arugment.  If the sub ref 
+in the list, and be passed the object as the first argument.  If the sub ref 
 returns true, that object will be excluded from the list.  If it returns false
 the object will stay in the list.
 
@@ -279,7 +279,7 @@ for that row:
 featured
 
 A list of 'featured' objects in this list.  These objects always appear in the 
-list even if the criteria do not match them.  These objects are also hilighted
+list even if the criteria do not match them.  These objects are also highlighted
 so they stand out against the other objects.
 
 =item *
@@ -317,7 +317,7 @@ the names returned by my_meths of whatever object you are listing
 
 search|generic_criteria
 
-Should be set to a '+' delimited list of form field names whos values should be
+Should be set to a '+' delimited list of form field names whose values should be
 the criteria to the fields listed in 'search|generic_fields'.
 
 =back
@@ -356,7 +356,7 @@ $field_titles   => {}
 $field_values   => undef
 $constrain      => {}           # Always constrain the search on a set of params
 $behavior       => 'narrow'     # How this list behaves.
-$exclude        => undef           # Exclude certain objects from tjhe list.
+$exclude        => undef           # Exclude certain objects from the list.
 $alter          => {}           # Alter the data for one field
 $featured       => undef        # Make one row a featured row
 $featured_color => '#cccc99'    # The color for the bkground of the featured row

@@ -1,6 +1,6 @@
 <%doc>
 
-A quick tool to cleart cache
+A quick tool to clear cache
 
 </%doc>
 

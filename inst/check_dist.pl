@@ -6,15 +6,15 @@ check_dist.pl - checks to make sure we're ready for "make dist"
 
 =head1 VERSION
 
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 =head1 DATE
 
-$Date: 2002-04-23 22:24:33 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
-This script is called by "make dist" to check that everyting is as it
+This script is called by "make dist" to check that everything is as it
 should be.
 
 =head1 AUTHOR

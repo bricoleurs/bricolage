@@ -8,22 +8,22 @@ getList.mc - generate an array of hashes to be displayed by /widgets/listManager
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-05-20 03:21:57 $
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
 Called by the list manager form.  Each checkbox is named delete_obj, and its value should be in
-the form of: type_id.  This function loops thru the ARGS, looking for delete_obj keys, and if it
+the form of: type_id.  This function loops through the ARGS, looking for delete_obj keys, and if it
 finds one, it creates an instance of the object and calls its deactivate method.
 
 When complete, this element redirects to the page specified in the mandatory $dest parameter.

@@ -5,19 +5,19 @@
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-05-20 03:21:57 $
 
 =head1 SYNOPSIS
 
-Perform text or alpha (match first letter of a field) seaching for an input type.
+Perform text or alpha (match first letter of a field) searching for an input type.
 
 =head1 DESCRIPTION
 

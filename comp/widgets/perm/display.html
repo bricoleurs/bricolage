@@ -35,7 +35,7 @@ if ($is_user) {
              caption => "$wf_disp Permissions");
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access asssets in these $wf_pl.");
+	     . "access assets in these $wf_pl.");
 
     foreach my $wf ($wf_pkg->list) {
         my $gid = $wf->get_all_desk_grp_id;
@@ -56,7 +56,7 @@ if ($is_user) {
              caption => "$dsk_disp Permissions");
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access asssets on these $dsk_pl.");
+	     . "access assets on these $dsk_pl.");
 
     foreach my $dsk ($dsk_pkg->list) {
         my $gid = $dsk->get_asset_grp;
@@ -76,7 +76,7 @@ if ($is_user) {
              caption => "$cat_disp Permissions");
 
     $m->comp($head_comp, "Grant &quot;$name&quot; members permission to "
-	     . "access asssets in these $cat_pl.");
+	     . "access assets in these $cat_pl.");
 
     foreach my $cat_grp ($cat_grp_pkg->list({ all => 1 })) {
 	my $gid = $cat_grp->get_id;

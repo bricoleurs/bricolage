@@ -78,7 +78,7 @@ my $act = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id ||= $act->get_id;
 
-# Get the server type (destination profile) ID and instantiage the destination
+# Get the server type (destination profile) ID and instantiate the destination
 # object.
 $dest_id ||= get_state_data($widget, $dest_key) || $act->get_server_type_id;
 my $dest = $dest_class->lookup({ id => $dest_id });
@@ -109,11 +109,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:37 $
+$Date: 2002-05-20 03:21:56 $
 
 =head1 DESCRIPTION
 

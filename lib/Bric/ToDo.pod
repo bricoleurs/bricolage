@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.58 $
+$Revision: 1.59 $
 
 =head1 DATE
 
-$Date: 2002-05-07 23:16:07 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 DESCRIPTION
 
@@ -140,7 +140,7 @@ new element. Elements without output channels cause Bricolage indigestion.
 
 Add ability to select an Output Channel other than the Primary Output Channel
 for a given preview. This probably ought to be some sort of select list that
-always defaults to the Primary OC, but when chnaged, causes the preview to use
+always defaults to the Primary OC, but when changed, causes the preview to use
 the selected OC. Probably we'll need to change the preview link to a button so
 that the form submit works properly with the select list. I suggest that we
 should add this feature to profiles only (edit and view), and not to desks.
@@ -296,12 +296,12 @@ Manager and/or the Contributor Profile).
 
 =item *
 
-Add preferences for listManagers to indicate whethere they should default to
+Add preferences for listManagers to indicate whether they should default to
 expand or narrow behavior.
 
 =item *
 
-Add command-line argument to bric_ftpd that will kill the currently-runnining
+Add command-line argument to bric_ftpd that will kill the currently-running
 instance.
 
 =item *
@@ -467,7 +467,7 @@ preferences. (Also add group-level prefs?)
 
 =item *
 
-Allow multiple files to be associated with a single media asseet (e.g., when
+Allow multiple files to be associated with a single media asset (e.g., when
 there's an image, a thumbnail, a high-res version, etc., all essentially for the
 same asset).
 

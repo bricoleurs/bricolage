@@ -6,16 +6,16 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.7 $ )[-1];
+our $VERSION = (qw$Revision: 1.8 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-06 04:40:35 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -32,11 +32,11 @@ $Date: 2002-01-06 04:40:35 $
 
 =head1 DESCRIPTION
 
-This package exporst the function chk_authz(), which will return true if the
+This package exports the function chk_authz(), which will return true if the
 current user has permission to perform a given activity to $obj, and redirect to
 an error page if the user does not have the permission. The permissions
 available are also exported. They are READ, EDIT, and CREATE. CREATE includes
-READ and CREATE permissions while EDIT includes READ persmision.
+READ and CREATE permissions while EDIT includes READ permission.
 
 =cut
 

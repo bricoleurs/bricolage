@@ -4,11 +4,11 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2002-01-04 00:26:38 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
@@ -19,7 +19,7 @@ the Bricolage PostgreSQL database.
 
 By default, PostgreSQL has pretty lax authentication settings, at least locally.
 Client authentication is controlled by the file pg_hba.conf in the $PGDATA
-directory, e.g., /usr/local/pgsql/data/pg_hba.conf. The defaul settings allow
+directory, e.g., /usr/local/pgsql/data/pg_hba.conf. The default settings allow
 completely trusted connections to the server by any local user using either Unix
 domain sockets or TCP/IP connections. These settings are as follows:
 
@@ -27,7 +27,7 @@ domain sockets or TCP/IP connections. These settings are as follows:
  host   all         127.0.0.1    255.255.255.255  trust
 
 These settings allow anyone connecting via B<local> Unix domain sockets to
-connect to B<all> databases in a completely B<trust>ed manor. Theye won't even
+connect to B<all> databases in a completely B<trust>ed manor. They won't even
 be prompted for a password! Similarly, B<host>s connecting from the local IP
 address, B<127.0.0.1> with Mask B<255.255.255.255>, are completely B<trust>ed to
 connect to B<all> databases.
@@ -68,7 +68,7 @@ the following configuration:
  host   bric_dbname   192.168.1.0  255.255.255.255  crypt
 
 Here the B<192.168.1.0> IP address represents the 192.168.1 subnet on which the
-mulitiple clients live.
+multiple clients live.
 
 Many other combinations of authentication settings are of course possible via
 the flexible pg_hba.con configuration syntax, but the above are our recommended
@@ -79,7 +79,7 @@ including other levels of encryption.
 =head1 BACKUP AND RESTORE
 
 PostgreSQL supports backups and restores via its pg_dump, pg_dumpall, and psql
-utilties. File system backups are also a good idea. We recommend that you use
+utilities. File system backups are also a good idea. We recommend that you use
 the pg_dumpall utility on a regular basis to backup the Bricolage database:
 
   pg_dumpall > outfile
@@ -95,7 +95,7 @@ PostgreSQL server for other databases, you may wish to place them on separate
 backup schedules. In that case, use pg_dump to backup each of the databases,
 including the Bricolage database:
 
-  pg_dump brid_dbname > outfile
+  pg_dump bric_dbname > outfile
 
 The restoration is the same as for the pg_dumpall file, except that you must be
 sure to create the database and users, first.
@@ -127,7 +127,7 @@ dumpfiles on the fly. Consult the pg_dump and pg_dumpall man pages for more
 information.
 
 File system backups are another option, and may in fact be useful as a backup
-backup methodology. Use whatever methology for file system backups that you
+backup methodology. Use whatever methodology for file system backups that you
 prefer. Here is an example using tar:
 
   tar -cf backup.tar /usr/local/pgsql/data
@@ -149,7 +149,7 @@ disk writes; and in the event of a crash, the database can be recovered using
 using the log.
 
 Please consult the PostgreSQL documentation for more information on configuring
-WAL and recovering databasees with WAL.
+WAL and recovering databases with WAL.
 
 =head1 VACUUM
 
@@ -177,7 +177,7 @@ cron job to do the task, and use the C<vacuumdb> utility. Here's an example:
 If the vacuum is successful, C<vacuumdb> will output "VACUUM". In the event of a
 failure, it will output C<vacuumdb: Vacuum failed.>
 
-Consult the PostgreSQL documetation for more information.
+Consult the PostgreSQL documentation for more information.
 
 =head1 AUTHOR
 

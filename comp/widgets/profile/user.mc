@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -109,7 +109,7 @@ if (!$no_save && (my $pass = $param->{pass_1})) {
 	}
 	if ($pass =~ /^\s+/ || $pass =~ /\s+$/) {
 	    # Password contains illegal preceding or trailing spaces.
-	    add_msg('Password contains illegal preceding or tailing spaces.'
+	    add_msg('Password contains illegal preceding or trailing spaces.'
 	            . ' Please try again.');
 	    $no_save = 1;
 	}

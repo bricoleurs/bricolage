@@ -130,7 +130,7 @@ my $update_parts = sub {
 
     my (@curr_tiles, @delete);
 
-    # Save data to tiles and put them in a useable order
+    # Save data to tiles and put them in a usable order
     foreach ($tile->get_tiles()) {
 	my $id = $_->get_id();
 
@@ -174,7 +174,7 @@ my $update_parts = sub {
     if (@curr_tiles) {
     	eval { $tile->reorder_tiles([grep(defined($_), @curr_tiles)]) };
     	if ($@) {
-	    add_msg("Warning! State inconsistant: Please use the buttons "
+	    add_msg("Warning! State inconsistent: Please use the buttons "
 		    . "provided by the application rather than the "
 		    . "'Back'/'Forward' buttons.");
 	    return;
@@ -242,7 +242,7 @@ my $split_fields = sub {
     # Split 'em up.
     @data = map { s/^\s+//;        # Strip out beginning spaces.
 		  s/\s+$//;        # Strip out ending spaces.
-		  s/[\n\t\r\f]//g; # Strip out unwanted charactes.
+		  s/[\n\t\r\f]//g; # Strip out unwanted characters.
 		  s/\s{2,}/ /g;    # Strip out double-spaces.
 	          $_;
 	      } split(/$re/, $text);
@@ -293,7 +293,7 @@ my $drift_correction = sub {
     }
     # If we didn't find the tile, abort, and restore the tile stack
     else {
-	add_msg("Warning! State inconsistant: Please use the buttons provided "
+	add_msg("Warning! State inconsistent: Please use the buttons provided "
 	        ."by the application rather than the 'Back'/'Forward' buttons");
 
 	# Set this flag so that nothing gets changed on this request.
@@ -602,7 +602,7 @@ my $handle_change_sep = sub {
     $data = get_state_data($widget, 'data');
     $sep  = get_state_data($widget, 'separator');
     $split_fields->($widget, join("\n$sep\n", @$data));
-    add_msg("Seperator Changed.");
+    add_msg("Separator Changed.");
 };
 
 my $handle_recount = sub {
@@ -740,7 +740,7 @@ my %cbs = (
 
 $drift_correction->($widget, $param);
 
-# Bail if we find that the state is inconsistant.
+# Bail if we find that the state is inconsistent.
 return if $param->{'_inconsistant_state_'};
 
 my ($cb) = substr($field, length($widget)+1);

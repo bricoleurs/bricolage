@@ -146,7 +146,7 @@ obvious:
   bric_soap story export 1024
 
 If you try to use an unqualified id parameter with a command that
-requires qualified ids you will recieve an error message.
+requires qualified ids you will receive an error message.
 
 =head1 AUTHOR
 

@@ -118,7 +118,7 @@ to localhost:
 
 Like the above, but with categories copied also:
 
-  bric_dev_sync --copy-catgeories prod localhost
+  bric_dev_sync --copy-categories prod localhost
 
 Update prod with changes to the "Article" element and all sub-elements
 and associated templates:
@@ -129,7 +129,7 @@ Update prod with changes with changes to all .pl templates:
 
   bric_dev_sync --no-elements --template '%.pl' localhost prod
 
-Distribute changes to elements and templates from locahost out to
+Distribute changes to elements and templates from localhost out to
 prod1, prod2 and prod3 machines:
 
   bric_dev_sync localhost prod1 prod2 prod3
@@ -447,7 +447,7 @@ sub get_source_elements {
 	@element_ids = call_list_ids($source, 'Element');
     }
 
-    print STDERR "Recieved element ids from source: (", 
+    print STDERR "Received element ids from source: (", 
 	join(',', @element_ids), ")\n"
 	    if $VERBOSE > 1;
 
@@ -510,7 +510,7 @@ sub get_source_templates {
 	@template_ids = call_list_ids($source, 'Template', @search);
     }
 
-    print STDERR "Recieved template_ids from source: (", 
+    print STDERR "Received template_ids from source: (", 
 	join(',', @template_ids), ")\n"
 	    if $VERBOSE > 1;
 
@@ -552,7 +552,7 @@ sub get_source_categories {
     # get all category ids
     my @category_ids = call_list_ids($source, 'Category');
 
-    print STDERR "Recieved category ids from source: (", 
+    print STDERR "Received category ids from source: (", 
 	join(',', @category_ids), ")\n"
 	    if $VERBOSE > 1;
 

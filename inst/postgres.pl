@@ -6,15 +6,15 @@ postgres.pl - installation script to probe PostgreSQL configuration
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =head1 DATE
 
-$Date: 2002-05-10 19:44:54 $
+$Date: 2002-05-20 03:21:59 $
 
 =head1 DESCRIPTION
 
-This script is called during "make" to probe the PostrgeSQL
+This script is called during "make" to probe the PostgreSQL
 configuration.  It accomplishes this by parsing the output from
 pg_config and asking the user questions.  Output collected in
 "postgres.db".

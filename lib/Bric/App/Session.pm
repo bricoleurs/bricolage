@@ -8,15 +8,15 @@ package Bric::App::Session;
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-05-03 17:50:10 $
+$Date: 2002-05-20 03:22:00 $
 
 =head1 SYNOPSIS
 
@@ -59,7 +59,7 @@ widget.
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
+# Programmatic Dependencies              
 use Bric::Util::Fault::Exception::GEN;
 use Bric::Util::Fault::Exception::AP;
 use Bric::Config qw(:sys_user :admin :temp);
@@ -138,7 +138,7 @@ use constant OPTS     => { Directory     => SESS_DIR,
 # Whether to cache the user object or not.
 #use constant CACHE_USER  => 1;
 
-# Create the session and lock directories if they do not exsist.
+# Create the session and lock directories if they do not exist.
 unless (-d SESS_DIR && -d LOCK_DIR) {
     my $tmp_dir = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage');
     mkpath($tmp_dir, 0, 0777);
@@ -155,7 +155,7 @@ unless (-d SESS_DIR && -d LOCK_DIR) {
 # Public Class Fields
 {
     package HTML::Mason::Commands;
-    # The persistant user session varaible.
+    # The persistent user session variable.
     our %session;
 }
 
@@ -170,7 +170,7 @@ my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 
 =item setup_user_session($r)
 
-This function takes an Apache request object and sets up the persistant user 
+This function takes an Apache request object and sets up the persistent user 
 session hash.  This hash is tied to an Apache::Session::File object.
 
 B<Throws:>
@@ -233,7 +233,7 @@ sub setup_user_session {
         }
     }
 
-    # Create a new cookie if one doesn't exsist.
+    # Create a new cookie if one doesn't exist.
     unless ($cookie) {
         my $cookie = Apache::Cookie->new($r,
                          -name    => COOKIE,
@@ -249,7 +249,7 @@ sub setup_user_session {
 
 =item sync_user_session()
 
-Syncronizes changes to the user session back to the file system.
+Synchronizes changes to the user session back to the file system.
 
 B<Throws:>
 
@@ -449,7 +449,7 @@ sub handle_callbacks {
     # Do error processing, if necessary.
     if (my $err = $@) {
 	die $err if ref $err;
-	# Create an execption object unless we already have one.
+	# Create an exception object unless we already have one.
 	die $ap->new({msg => "Error handling callbacks.", payload => $err});
     }
     return 1;

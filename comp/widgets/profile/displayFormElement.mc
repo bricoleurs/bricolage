@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-03-15 22:55:02 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ If you choose to override the default javascript, none of the default behavior
 string does so explicitly.  This is a feature, as it allows the onChange
 to be eliminated entirely if needed.
 
-The types of form fields suppported are:
+The types of form fields supported are:
 
 =over 4
 

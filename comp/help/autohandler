@@ -8,7 +8,7 @@ help/autohandler
 =head1 DESCRIPTION
 
 This autohandler provides a wrapper around the help documents in the help
-hierachy. It provides the header and close button as well as pulling in the CSS
+hierarchy. It provides the header and close button as well as pulling in the CSS
 styles.
 
 =head1 AUTHORS

@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-05-20 03:21:58 $
 
 =head1 SYNOPSIS
 
@@ -20,7 +20,7 @@ $Date: 2001-12-04 18:17:39 $
 =head1 DESCRIPTION
 
 This element is called by submits from the My Alerts Profile, where one or
-more alerts have been marked for acknowledgement.
+more alerts have been marked for acknowledgment.
 
 </%doc>
 

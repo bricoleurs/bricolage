@@ -9,15 +9,15 @@ $url ||= last_page();
 <%doc>
 =head1 NAME
 
-/lib/util/bac_button.mc - Adds a self-conatined back button to a page
+/lib/util/bac_button.mc - Adds a self-contained back button to a page
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:39 $
+$Date: 2002-05-20 03:21:57 $
 
 =head1 SYNOPSIS
 
