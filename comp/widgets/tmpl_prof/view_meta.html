@@ -9,7 +9,8 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
   value    => 'view',
-  image    => %{ $fa->get_notes } ? 'note_fill' : "note"
+  image    => %{ $fa->get_notes } ? 'note_fill' : "note",
+  useGlobalImage => 1,
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
