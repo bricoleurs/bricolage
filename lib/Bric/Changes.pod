@@ -46,6 +46,12 @@ Related story and media elements managed through the SOAP server can now use a
 combination of URI and site ID to identify related assets in addition to the
 existing approach of using story and media IDs. [David]
 
+=item *
+
+Emails sent by Bricolage now set the send date, since our understanding is
+that the MUA is responsible for setting the date and some SPAM filters trigger
+on missing Date: headers. [Cameron Miller]
+
 =back
 
 =head2 Bug Fixes

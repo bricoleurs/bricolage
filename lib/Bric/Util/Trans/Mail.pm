@@ -50,6 +50,7 @@ use Net::SMTP;
 use MIME::Entity;
 use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Config qw(:email);
+use Bric::Util::Time qw(strfdate);
 
 ################################################################################
 # Inheritance
@@ -840,6 +841,7 @@ sub send {
                  ($from ? (From => $from) : ()),
                  ($to ? (To => join(', ', @$to)) : ()),
                  ($cc ? (Cc => join(', ', @$cc)) : ()),
+                 Date => strfdate(time, "%a, %e %b %Y %H:%M:%S %z", 1),
                  Subject    => $sub );
     eval {
         my $top;
