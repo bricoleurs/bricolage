@@ -28,7 +28,7 @@ Easier to use wrapper for displayFormElement.mc
 
 </%doc>
 <%args>
-$widget
+$widget    => undef
 $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
@@ -39,6 +39,8 @@ $useTable  => 1
 $localize  => 1
 </%args>
 <%perl>;
+my $key = ($widget) ? "$widget|$cb" : $name;
+
 my $vals = { disp      => '',
              value     => $disp,
              props     => { type      => 'image',
@@ -49,7 +51,7 @@ my $vals = { disp      => '',
            };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-         key       => "$widget|$cb",
+         key       => $key,
          vals      => $vals,
          indent    => $indent,
          useTable  => $useTable,

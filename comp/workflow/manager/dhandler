@@ -139,7 +139,7 @@ push @fields, 'site'
 <& '/widgets/wrappers/sharky/header.mc',
    title => "Find $pl_name->{$type}",
    context => "Workflow | &quot;$wf_name&quot; | Find $pl_name->{$type}"
- &>
+&>
 
 <& '/widgets/search/search.mc',
    'object' => $type,
@@ -147,8 +147,7 @@ push @fields, 'site'
    'wf'     => $wf,
 &>
 
-
-<form method="post" action="<% $r->uri %>" name="$type\_manager">
+<form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
     sortBy    => $sort_by->{$type},
@@ -164,8 +163,12 @@ push @fields, 'site'
     cx_filter => ! $ARGS{site_id},
     field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
-<p></p>
-<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="Checkout" value="Checkout">
+<& '/widgets/profile/button.mc',
+    disp    => $lang->maketext('Checkout'),
+    name    => 'Checkout',
+    button  => 'checkout_red',
+    useTable => 0 
+&>   
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>
 <%cleanup>;
