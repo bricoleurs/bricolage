@@ -50,7 +50,7 @@ Bricolage is maintained by:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =back
 
@@ -58,11 +58,11 @@ The current development team consists of:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
-
-=item Sam Tregar <sam@tregar.com>
+=item David Wheeler <david@kineticode.com>
 
 =item Scott Lanning <slanning@theworld.com>
+
+=item Mark Jaroski <mark@geekhive.net>
 
 =back
 
@@ -70,13 +70,13 @@ The original developers were:
 
 =over 4
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =item Garth Webb <garth@perijove.com>
 
 =item Michael Soderstrom <miraso@pacbell.net>
 
-=item David Gantenbein <fretlessbass@home.com>
+=item David Gantenbein <fretlessbass@attbi.com>
 
 =back
 
@@ -86,7 +86,7 @@ The online help was written by:
 
 =item Chris Brody <chris_brody@hotmail.com>
 
-=item David Wheeler <david@wheeler.net>
+=item David Wheeler <david@kineticode.com>
 
 =item Geoff Richards <geoffr@gbdirect.co.uk>
 
@@ -96,11 +96,11 @@ Folks who have submitted patches include:
 
 =over 4
 
+=item Sam Tregar
+
 =item JoE<atilde>o Pedro GonE<ccedil>alves
 
 =item Rachel Murray
-
-=item Mark Jarosky
 
 =item Matt Vella
 
