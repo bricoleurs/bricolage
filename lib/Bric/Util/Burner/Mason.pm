@@ -7,15 +7,15 @@ Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business asse
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-23 01:15:22 $
+$Date: 2001-12-27 21:41:35 $
 
 =head1 SYNOPSIS
 
@@ -204,7 +204,7 @@ sub burn_one {
 								 $burner
 								 $writer
 								 $element)],
-					  'in_package'    => __PACKAGE__);
+					  'in_package'    => TEMPLATE_BURN_PKG);
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];

@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.22 $
+$Revision: 1.23 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.22 $ )[-1];
+our $VERSION = (qw$Revision: 1.23 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 21:28:47 $
+$Date: 2001-12-27 21:41:35 $
 
 =head1 SYNOPSIS
 
@@ -112,6 +112,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
 		    BURN_COMP_ROOT
 		    BURN_DATA_ROOT
 		    BURN_ARGS_METHOD
+                    TEMPLATE_BURN_PKG
 		    INCLUDE_XML_WRITER
 		    XML_WRITER_ARGS
 		    ISO_8601_FORMAT
@@ -159,6 +160,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 				PREVIEW_ROOT
 				BURN_COMP_ROOT
 			        BURN_DATA_ROOT
+                                TEMPLATE_BURN_PKG
                                 DEFAULT_FILENAME
                                 INCLUDE_XML_WRITER
              		        XML_WRITER_ARGS
@@ -388,6 +390,7 @@ our %EXPORT_TAGS = (all => [qw(:dbi
     use constant BURN_COMP_ROOT          => catdir(BURN_ROOT, 'comp');
     use constant BURN_DATA_ROOT          => catdir(BURN_ROOT, 'data');
     use constant BURN_ARGS_METHOD        => MASON_ARGS_METHOD;
+    use constant TEMPLATE_BURN_PKG       => 'Bric::Util::Burner::Commands';
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
     use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
       (eval "$config->{XML_WRITER_ARGS}" ) : ();
@@ -453,8 +456,8 @@ our %EXPORT_TAGS = (all => [qw(:dbi
 
     # Okay, now load the end-user's code, if any.
     if ($config->{PERL_LOADER}) {
-	package Bric::Util::Burner;
-	eval "$config->{PERL_LOADER}";
+	my $pkg = TEMPLATE_BURN_PKG;
+	eval "package $pkg; $config->{PERL_LOADER}";
     }
 }
 

@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-12-27 20:53:56 $
+$Date: 2001-12-27 21:41:35 $
 
 =head1 SYNOPSIS
 
@@ -56,58 +56,62 @@ for details.
 
 =head1 ADDING A NEW BURNER
 
-It is anticipated that new Burner sub-classes will be added to the
-system.  Here's a brief guide to adding a new Burner to Bricolage:
+It is anticipated that new Burner sub-classes will be added to the system.
+Here's a brief guide to adding a new Burner to Bricolage:
 
 =over 4
 
-=item * 
+=item *
 
 Write Bric::Util::Burner::Foo
 
-You'll need to create a new sub-class of Bric::Util::Burner that
-implements two methods - new() and burn_one().  You can use an
-existing sub-class as a model for the interface and implementation of
-these methods.
+You'll need to create a new sub-class of Bric::Util::Burner that implements two
+methods - new() and burn_one(). You can use an existing sub-class as a model for
+the interface and implementation of these methods. Make sure that when you
+execute your templates, you do it in the namespace reserved by the
+TEMPLATE_BURN_PKG directive -- get this constant by adding
 
-=item * 
+  use Bric::Config qw(:burn);
+
+To your new Burner subclass.
+
+=item *
 
 Modify Bric::Biz::AssetType
 
-To use your Burner you'll need to be able to assign elements to it.
-To do this edit Bric::Biz::AssetType and add a constant for your
-burner.  For example, Bric::Util::Burner::Template's constant is
-BURNER_TEMPLATE.  Next, edit the my_meths() entry for the "burner" type
-to include a val entry for your constant.
+To use your Burner you'll need to be able to assign elements to it. To do this
+edit Bric::Biz::AssetType and add a constant for your burner. For example,
+Bric::Util::Burner::Template's constant is BURNER_TEMPLATE. Next, edit the
+my_meths() entry for the "burner" type to include a val entry for your constant.
 
 =item *
 
 Modify Bric::Util::Burner
 
-You'll need to make a modification to Bric::Util::Burner to make it
-call your module when it sees an element assigned to your burner.  The
-code you're looking for is in the burn_one() method.  Add an "elsif"
-that assigns the appropriate class name for your burner.
+You'll need to make a modification to Bric::Util::Burner to make it call your
+module when it sees an element assigned to your burner. The code you're looking
+for is in the burn_one() method. Add an "elsif" that assigns the appropriate
+class name for your burner.
 
-=item * 
+=item *
 
 Modify Bric::Biz::Asset::Formatting
 
-Here you'll make modifications to support the template files needed by
-your burner.  Do a search for the string "tmpl" and you'll find the
-appropriate sections.  This is where you'll setup your naming
-convention and allowed filename extensions.
+Here you'll make modifications to support the template files needed by your
+burner. Do a search for the string "tmpl" and you'll find the appropriate
+sections. This is where you'll setup your naming convention and allowed filename
+extensions.
 
-=item * 
+=item *
 
 Modify comp/widgets/tmpl_prof/edit_new.html
 
-Add your template filename extensions to the file_type select entry so
-that users can create new template files for your burner.
+Add your template filename extensions to the file_type select entry so that
+users can create new template files for your burner.
 
-=item * 
+=item *
 
-Done!  Now start testing...
+Done! Now start testing...
 
 =cut
 
