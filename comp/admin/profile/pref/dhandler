@@ -30,19 +30,27 @@ my $c = scalar keys %$vals;
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	 caption => $name);
 
-# Output the select list.
-$m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
-	 readOnly => $no_edit,
-	 vals => { props => { type => $c < 4 ? 'radio' : 'select',
-			      size => $c > 15 ? 10 : 1,
-			      vals => $vals },
-		   disp => '',
-		   value => $pref->get_value } );
+if( $name eq 'URI Format' || $name eq 'Fixed URI Format' ) {
+	my $fixed = $name eq 'URI Format' ? 0 : 1;
+	$m->comp("/widgets/profile/uri_pref.mc", fixed => $fixed,
+		 pref => $pref, vals => $vals);
+} else {
+	$m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
+	 	readOnly => $no_edit,
+	 	vals => { props => { type =>  $c < 4 ? 'radio' : 'select',
+			  	     size => $c > 15 ? 10 : 1,
+			  	     vals => $vals },
+		disp => '',
+		value => $pref->get_value } );
+}
+
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
 # Output the form buttons.
 $m->out("<br />\n");
 $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
    no_del => 1, no_save => $no_edit );
+
 </%perl>
 </form>
 
@@ -70,11 +78,11 @@ $id => undef
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:38 $
+$Date: 2002-03-15 22:55:02 $
 
 =head1 DESCRIPTION
 

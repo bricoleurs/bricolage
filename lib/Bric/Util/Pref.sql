@@ -1,8 +1,8 @@
 --
 -- Project: Bricolage API
--- VERSION: $Revision: 1.4 $
+-- VERSION: $Revision: 1.5 $
 --
--- $Date: 2001-12-04 18:17:46 $
+-- $Date: 2002-03-15 22:55:02 $
 -- Author: David Wheeler <david@wheeler.net>
 
 
@@ -26,6 +26,8 @@ CREATE TABLE pref (
     description  VARCHAR(256),
     value        VARCHAR(256),
     def          VARCHAR(256),
+    manual	 NUMERIC(1,0) NOT NULL DEFAULT 0,
+    CONSTRAINT ck_pref__manual CHECK (manual IN (0,1)),
     CONSTRAINT pk_pref__id PRIMARY KEY (id)
 );
 

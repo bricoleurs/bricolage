@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:37 $
+$Date: 2002-03-15 22:55:02 $
 
 =head1 SYNOPSIS
 
@@ -174,7 +174,7 @@ if ($objref) {
 
     # Get the name, if necessary.
     $name = $vals->{disp} unless defined $name;
-    $js = $vals->{js};
+    $js = $vals->{js} || $js || '';
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $vals, $value, $js, $name, $width, $indent,

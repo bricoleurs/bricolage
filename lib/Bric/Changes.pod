@@ -41,6 +41,10 @@ Removed MD5 Perl module requirment by requiring Apache::Session 1.54 or higher.
 Added new FTP distribution move method. Now you can distribute files either via
 a file system copy or via FTP. [David]
 
+=item *
+
+Added a preference to change the way URIs are formatted. [Adam]
+
 =back
 
 =head2 Bug Fixes

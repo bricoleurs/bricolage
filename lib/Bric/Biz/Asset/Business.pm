@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-27 03:04:39 $
+$Date: 2002-03-15 22:55:02 $
 
 =head1 SYNOPSIS
 
@@ -123,6 +123,8 @@ use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Category;
 use Bric::Biz::Org::Source;
 
+use Bric::Util::Pref;
+
 #=============================================================================#
 # Inheritance                          #
 #======================================#
@@ -155,6 +157,11 @@ use constant DEBUG => 0;
 my $meths;
 my @ord;
 
+my %uri_format_hash = ( 'categories' => '',
+			'day'       => '%d',
+			'month'      => '%m',
+			'slug'       => '',
+			'year'       => '%G' );
 #--------------------------------------#
 # Instance Fields 
 
@@ -1953,15 +1960,31 @@ sub _construct_uri {
     # Add the pre value.
     my @path = ('', defined $pre ? $pre : ());
 
-    # Add on the Category URI.
-    push @path, $cat_obj->ancestry_path if $cat_obj;
+    # Get URI Format pref
+    my( $pref_value ) = ( Bric::Util::Pref->lookup_val( 
+        ( $fu ? 'Fixed ' : '' ) . 'URI Format' ) =~ /\/?(.+)\/?/ );
 
-    unless ($fu) {
-	# Add the cover date.
-	push @path, $self->get_cover_date("%G/%m/%d");
+    my @tokens = split( '/', $pref_value );
 
-	# Add the slug.
-	push @path, $self->get_slug if $self->key_name eq 'story';
+    # iterate over tokens pushing each onto @path
+    foreach my $token( @tokens ) {
+
+        if( $uri_format_hash{ $token } ne '' ) {
+
+	    # Add the cover date value.
+	    push @path, $self->get_cover_date( $uri_format_hash{ $token } );
+
+	} else {
+
+	    if( $token eq 'categories' ) {
+	        # Add Category
+	        push @path, $cat_obj->ancestry_path if $cat_obj;
+
+	    } elsif( $token eq 'slug' ) {
+		# Add the slug.
+	        push @path, $self->get_slug if $self->key_name eq 'story';
+	    }
+	}
     }
 
     # Add the post value.

@@ -1,12 +1,12 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
--- VERSION: $Revision: 1.5 $
+-- VERSION: $Revision: 1.6 $
 --
--- $Date: 2001-12-04 18:17:46 $
+-- $Date: 2002-03-15 22:55:02 $
 -- Author:  David Wheeler <david@wheeler.net>
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (1, 'Time Zone', 'Time Zone', 'America/Los_Angeles', 'America/Los_Angeles');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (1, 'Time Zone', 'Time Zone', 'America/Los_Angeles', 'America/Los_Angeles', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (401, 22, 48, 1);
@@ -1186,8 +1186,8 @@ VALUES (1, 'Africa/Harare', 'Africa - Harare');
 -- NAME FORMATTING
 --
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (2, 'List Name Format', 'How people''s names appear in lists.', '%l%, f', '%l%, f');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (2, 'List Name Format', 'How people''s names appear in lists.', '%l%, f', '%l%, f', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (402, 22, 48, 1);
@@ -1226,8 +1226,8 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (2, '%F% m% l', '"W. Jefferson Clinton"');
 
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (3, 'Name Format', 'The default format for people''s names.', '%f% l', '%f% l');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (3, 'Name Format', 'The default format for people''s names.', '%f% l', '%f% l', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (403, 22, 48, 1);
@@ -1451,8 +1451,8 @@ __END__
 * want to add this stuff back in in a future version, though.
 * --David, 15 May 2001.
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (4, 'Character Set', 'Character set to translate to and from.', 'ISO-8859-1', 'ISO-8859-1');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (4, 'Character Set', 'Character set to translate to and from.', 'ISO-8859-1', 'ISO-8859-1', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (404, 22, 48, 1);
@@ -1606,8 +1606,8 @@ VALUES (4, 'UTF-8', 'UTF-8');
 
 -- Date and time formatting.
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (5, 'Date/Time Format', 'How dates and times are displayed.', '%G-%m-%d %T', '%G-%m-%d %T');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (5, 'Date/Time Format', 'How dates and times are displayed.', '%G-%m-%d %T', '%G-%m-%d %T', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (405, 22, 48, 1);
@@ -1673,8 +1673,8 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (5, 'epoch', 'Epoch Time (Seconds since 1970-01-01 00:00:00)');
 
 
-INSERT INTO pref (id, name, description, value, def)
-VALUES (6, 'Permissions Widget', 'Permissions Widget', 'radio', 'radio');
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES (6, 'Permissions Widget', 'Permissions Widget', 'radio', 'radio', 0);
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES (156, 22, 48, 1);
@@ -1692,3 +1692,30 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES (6, 'select', 'Select List');
 
 
+-- URI Format Prefs
+
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES ('7', 'URI Format', 'Controls format of assets URIs',
+	'/categories/year/month/day/slug/', '/categories/year/month/day/slug/', 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (164, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (7, 7, 164); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (7, '/categories/year/month/day/slug/', '/categories/year/month/day/slug/');
+
+
+INSERT INTO pref (id, name, description, value, def, manual)
+VALUES ('8', 'Fixed URI Format', 'Controls URI format for assets with fixed URIs', '/categories/', '/categories/', 1);
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES (165, 22, 48, 1);
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES (8, 8, 165); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (8, '/categories/', '/categories/');

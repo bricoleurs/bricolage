@@ -6,16 +6,16 @@ Bric::Util::Pref - Interface to Bricolage preferences.
 
 =head1 VERSION
 
-$Revision: 1.8 $
+$Revision: 1.9 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.8 $ )[-1];
+our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-19 23:53:44 $
+$Date: 2002-03-15 22:55:02 $
 
 =head1 SYNOPSIS
 
@@ -100,8 +100,8 @@ use constant INSTANCE_GROUP_ID => 22;
 ################################################################################
 # Private Class Fields
 my $dp = 'Bric::Util::Fault::Exception::DP';
-my @cols = qw(p.id p.name p.description p.def p.value o.description);
-my @props = qw(id name description default value val_name);
+my @cols = qw(p.id p.name p.description p.def p.value p.manual o.description);
+my @props = qw(id name description default value manual val_name);
 my @ord = @props[1..$#props];
 my $prefkey = '__PREF__';
 my $meths;
@@ -120,6 +120,7 @@ BEGIN {
 			 description => Bric::FIELD_READ,
 			 value => Bric::FIELD_RDWR,
 			 default => Bric::FIELD_READ,
+			 manual => Bric::FIELD_READ,
 			 val_name => Bric::FIELD_READ,
 
 			 # Private Fields
@@ -1032,6 +1033,16 @@ sub save {
     });
     # Update the database.
     execute($upd, $value, $id);
+
+    if( $self->get_manual ) {
+    my $upd2 = prepare_c( qq {
+       UPDATE pref_opt
+       SET    value = ?,
+              description = ?
+       WHERE  pref__id = ?
+    } );
+    execute( $upd2, $value, $value, $id );
+  }
     # Update the cache.
     &$cache_val($name, $value);
     $self->SUPER::save;
