@@ -189,8 +189,9 @@ if ($param->{delete} &&
         $comp->delete_output_channels($del_oc_ids);
     }
 
-    # Enable output channels.
-    my %enabled = map { $_ => 1 } @{ mk_aref($param->{enabled}) };
+    # Enable output channels. The primary OC should always be enabled.
+    my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
+      $comp->get_primary_oc_id;
     foreach my $oc ($comp->get_output_channels) {
         $enabled{$oc->get_id} ? $oc->set_enabled_on : $oc->set_enabled_off;
     }
@@ -248,11 +249,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.1 $
+$Revision: 1.22.4.2 $
 
 =head1 DATE
 
-$Date: 2003-03-19 04:34:41 $
+$Date: 2003-03-28 05:07:00 $
 
 =head1 SYNOPSIS
 

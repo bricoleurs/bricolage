@@ -62,6 +62,12 @@ restored to their previous behavior. Desks no longer simply inherit the
 permission granted on any of the workflows they're in. This issue was resolved
 by creating a new secret asset group ID for each workflow. [David]
 
+=item *
+
+The primary output channel is now always enabled by default in elements. This
+is to make it much harder to create documents without output channel
+associations, an event that can lead to database exceptions. [David]
+
 =back
 
 =head1 VERSION 1.5.1

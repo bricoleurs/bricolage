@@ -55,12 +55,13 @@ if (defined $id) {
                               useTable => 0
                              );
                 } elsif ($_[1] eq 'enabled') {
-                    $m->scomp('/widgets/profile/checkbox.mc',
-                              name => 'enabled',
-                              value => $ocid,
-                              checked => $_[0]->is_enabled,
-                              useTable => 0
-                             );
+                    return $ocid == $primid ? $lang->maketext('Yes') :
+                      $m->scomp('/widgets/profile/checkbox.mc',
+                                name => 'enabled',
+                                value => $ocid,
+                                checked => $_[0]->is_enabled,
+                                useTable => 0
+                               );
                 }
             };
 
@@ -275,11 +276,11 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 VERSION
 
-$Revision: 1.14.4.2 $
+$Revision: 1.14.4.3 $
 
 =head1 DATE
 
-$Date: 2003-03-19 04:54:15 $
+$Date: 2003-03-28 05:07:00 $
 
 =head1 DESCRIPTION
 
