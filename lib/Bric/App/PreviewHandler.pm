@@ -6,16 +6,16 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-25 04:39:25 $
+$Date: 2003-09-19 17:34:15 $
 
 =head1 SYNOPSIS
 
@@ -142,6 +142,7 @@ sub uri_handler {
 	return DECLINED
 	  unless -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs);
 	# If we're here, it exits in the preview directory. Point the request to it.
+        $r->notes('burner.preview' => 1);
 	$r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
 	return DECLINED;
     };

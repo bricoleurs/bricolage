@@ -2,10 +2,14 @@
 # Clear out messages and buffer - they're likely irrelevant now.
 clear_msg();
 $m->clear_buffer;
+# Check to see if this is a preview screen.
+my $prev = $r->notes('burner.preview');
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => 'Permission Denied',
-	 context => '',
-	 debug => QA_MODE);
+	 title      => 'Permission Denied',
+	 context    => '',
+	 debug      => QA_MODE,
+         useSideNav => !$prev,
+         no_toolbar => !$prev);
 my $name = ref $obj ? $obj->get_name : '';
 my $the = '';
 if ($name) {
