@@ -1,6 +1,7 @@
 
 # Process this file with autoconf to produce a configure script.
 AC_INIT(Bricolage, 1.1.2, bugs@bricolage.sourceforge.net)
+AC_PREFIX_DEFAULT(/usr/local/bricolage)
 
 # Checks for programs
 AC_PROG_APACHE(1.3.20)
@@ -48,12 +49,12 @@ CHECK_CPAN_MODULE(MISSING_MOD, Apache::libapreq, 0.31_03)
 # Accept configuration details on the command line
 AC_ARG_VAR(APACHE_USER)
 AC_ARG_VAR(APACHE_GROUP)
-
 AC_ARG_VAR(DB_NAME)
 AC_ARG_VAR(DBI_USER)
 AC_ARG_VAR(DBI_PASS)
 AC_ARG_VAR(POSTGRES_ROOT_USER)
 AC_ARG_VAR(POSTGRES_ROOT_PASS)
 
+# write out the makefiles
 AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT
