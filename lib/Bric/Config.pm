@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.96 $
+$Revision: 1.97 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.96 $ )[-1];
+our $VERSION = (qw$Revision: 1.97 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-17 02:19:50 $
+$Date: 2004-03-18 20:00:04 $
 
 =head1 SYNOPSIS
 
@@ -484,10 +484,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant MASON_ARGS_METHOD       => 'mod_perl';  # Could also be 'CGI'
 
     # Burner settings.
-    use constant BURN_ROOT               => $config->{BURN_ROOT}
-      || catdir(MASON_DATA_ROOT, 'burn');
-    use constant STAGE_ROOT              => $ENV{BRIC_STAGE_ROOT}
-      || catdir(BURN_ROOT, 'stage');
+    use constant BURN_ROOT               => $ENV{BRIC_BURN_ROOT}
+      || $config->{BURN_ROOT} || catdir(MASON_DATA_ROOT, 'burn');
+    use constant STAGE_ROOT              => catdir(BURN_ROOT, 'stage');
     use constant PREVIEW_ROOT            => catdir(BURN_ROOT, 'preview');
     use constant BURN_COMP_ROOT          => catdir(BURN_ROOT, 'comp');
     use constant BURN_DATA_ROOT          => catdir(BURN_ROOT, 'data');

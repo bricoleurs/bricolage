@@ -20,6 +20,7 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Util::Burner;
 use Bric::Biz::Asset::Formatting;
+use Bric::Util::DBI qw(:junction);
 
 sub table {'job '}
 
@@ -38,6 +39,22 @@ my %job = (
 sub _clean_test_vals : Test(0) {
     my $self = shift;
     $self->add_del_ids([1,2]);
+}
+
+##############################################################################
+# Deploy the story and autohandler templates. During tests, they won't be
+# found because we're using a temporary directory.
+##############################################################################
+sub _run_me_first : Test(4) {
+    ok( my @tmpl = Bric::Biz::Asset::Formatting->list({
+        output_channel__id => 1,
+        file_name          => ANY('/story.mc', '/autohandler'),
+        Order              => 'file_name',
+    }), "Get story template.");
+
+    ok( my $burner = Bric::Util::Burner->new, "Get burner" );
+    ok( $burner->deploy($tmpl[0]), "Deploy autohandler template" );
+    ok( $burner->deploy($tmpl[1]), "Deploy story template" );
 }
 
 ##############################################################################
@@ -92,11 +109,12 @@ sub c_test_list : Test(45) {
     my ($oc) = Bric::Biz::OutputChannel->list();
 
     # Create a destination.
-    ok( my $dest = Bric::Dist::ServerType->new({ name => 'Bogus',
+    ok( my $dest = Bric::Dist::ServerType->new({ name        => 'Bogus',
                                                  move_method => 'File System',
                                                  site_id     => 100,
                                                }),
         "Create destination." );
+
     $dest->add_output_channels($oc);
     ok( $dest->save, "Save destination" );
     ok( my $did = $dest->get_id, "Get destination ID" );
@@ -381,7 +399,6 @@ sub g_test_execute_me : Test(10) {
         <title>$story_name</title>
     </head>
     <body>
-
 <!-- Start "Story" -->
 
 <h1>$story_name</h1>
