@@ -1,4 +1,4 @@
-'# assuming we have perl we can get the version number
+# assuming we have perl we can get the version number
 # if not, we know right off that something wrong
 VERSION=`perl -MBric -e 'print $Bric::VERSION'`
 
