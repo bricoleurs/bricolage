@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.10 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.10 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2002-03-09 00:43:02 $
+$Date: 2002-03-15 20:43:24 $
 
 =head1 SYNOPSIS
 
@@ -956,7 +956,7 @@ sub what_can {
     }
 
     # Gather up all of the group IDs.
-    push @gids, $obj->get_grp_ids if ref $obj;
+    push @gids, $obj->get_grp_ids if $obj;
 
     # Get the permission.
     my $priv = 0;

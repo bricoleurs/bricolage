@@ -7,15 +7,15 @@ Bric::Util::Burner - A class to manage deploying of formatting assets and publis
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.15 $ )[-1];
+our $VERSION = (qw$Revision: 1.16 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-10 03:48:16 $
+$Date: 2002-03-15 20:43:25 $
 
 =head1 SYNOPSIS
 
@@ -65,11 +65,11 @@ Here's a brief guide to adding a new Burner to Bricolage:
 
 Write Bric::Util::Burner::Foo
 
-You'll need to create a new sub-class of Bric::Util::Burner that implements two
-methods - new() and burn_one(). You can use an existing sub-class as a model for
-the interface and implementation of these methods. Make sure that when you
-execute your templates, you do it in the namespace reserved by the
-TEMPLATE_BURN_PKG directive -- get this constant by adding
+You'll need to create a new sub-class of Bric::Util::Burner that implements
+three methods - new(), chk_syntax(), and burn_one(). You can use an existing
+sub-class as a model for the interface and implementation of these methods. Make
+sure that when you execute your templates, you do it in the namespace reserved
+by the TEMPLATE_BURN_PKG directive -- get this constant by adding
 
   use Bric::Config qw(:burn);
 
@@ -90,8 +90,8 @@ Modify Bric::Util::Burner
 
 You'll need to make a modification to Bric::Util::Burner to make it call your
 module when it sees an element assigned to your burner. The code you're looking
-for is in the burn_one() method. Add an "elsif" that assigns the appropriate
-class name for your burner.
+for is in the _get_subclass() method. Add the approprate C<elsif>s to assigns
+the appropriate class name for your burner.
 
 =item *
 
@@ -161,8 +161,6 @@ my $mni = 'Bric::Util::Fault::Exception::MNI';
 my $ap = 'Bric::Util::Fault::Exception::AP';
 my $gen = 'Bric::Util::Fault::Exception::GEN';
 my $fs = Bric::Util::Trans::FS->new;
-my $xml_fh = INCLUDE_XML_WRITER ? Bric::Util::Burner::XMLWriterHandle->new
-  : undef;
 
 #--------------------------------------#
 # Instance Fields
@@ -453,11 +451,17 @@ B<Notes:> NONE.
 sub _get_subclass {
     my ($self, $asset) = @_;
     my $burner_class = 'Bric::Util::Burner::';
-    my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id});
-    if ($at) {
+    if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
 	# Easy to get it
 	my $b = $at->get_burner || BURNER_MASON;
-	$burner_class .= $b == BURNER_MASON ? 'Mason' : 'Template';
+	$burner_class .=
+	  $b == BURNER_MASON ? 'Mason' :
+	  $b == BURNER_TEMPLATE ? 'Template' :
+	  die $gen->new({ msg => 'Cannot determine template burner subclass.'});
+
+    # Instantiate the proper subclass.
+    return ($burner_class->new($self), $at);
+
     } else {
 	 # There is no asset type. It could be a template. Find out.
 	$asset->key_name eq 'formatting'
@@ -473,9 +477,10 @@ sub _get_subclass {
 	} else {
 	    die $gen->new({msg => 'Cannot determine template burner subclass.'});
 	}
+
+	# Instantiate the proper subclass.
+	return ($burner_class->new($self));
     }
-    # instantiate the proper subclass and call burn_one()
-    return ($burner_class->new($self), $at);
 }
 
 
