@@ -405,11 +405,12 @@ my $checkin = sub {
         $param->{'desk|formatting_pub_ids'} = $fa->get_id;
 
         # Call the deploy callback in the desk widget.
-        # XXX: boing!
-        $m->comp('/widgets/desk/callback.mc',
-                 widget => 'desk',
-                 field  => 'desk|deploy_cb',
-                 param  => $param);
+        my $cb = Bric::App::Callback::Desk->new(
+            'ah' => $self->ah,
+            'apache_req' => $self->apache_req,
+            'request_args' => $param,
+        );
+        $cb->deploy();
     }
 
     # Clear the state out, set redirect, and return.
