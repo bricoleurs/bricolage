@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.6 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added JavaScript code to validate that the username in the user profile does
+not have leading or trailing spaces. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over 4
@@ -25,6 +36,11 @@ This document lists the Changes to Bricolage introduced with each release.
 The SOAP server now properly includes the start desk when it checks CREATE
 permissions for creating stories, media, or templates. Reported by Alexandra
 Gershman. [David]
+
+=item *
+
+Form validation and group management now properly work in the user profile.
+[David]
 
 =back
 

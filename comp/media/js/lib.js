@@ -54,6 +54,10 @@ function checkLogin(obj, length, pass1, pass2, passwd_length) {
         alert(login_msg1 + length + login_msg2);
         obj.focus();
         return false;
+    } else if (what.match(/^\s+/) || what.match(/\s+$/)) {
+        alert(login_space);
+        obj.focus();
+        return false;
     }
     return checkPasswords(pass1, pass2, passwd_length);
 }
@@ -85,18 +89,17 @@ function checkPasswords(obj1, obj2, passwd_length) {
         return false;
     }
 
-    // No preceding or trailing spaces.
     // XXX: These could be combined if we can get translators to update the
     //      messages into "Passwords cannot have spaces at the beginning or
     //      end!"
-    if (pass1.test(/^\s+/)) {
+    if (pass1.match(/^\s+/)) {
         alert(passwd_start_msg);
         obj1.value = "";
         obj2.value = "";
         obj1.focus();
         return false;      
     }
-    if (pass1.test(/\s+$/)) {
+    if (pass1.match(/\s+$/)) {
         alert(passwd_end_msg);
         obj1.value = "";
         obj2.value = "";
@@ -534,8 +537,7 @@ function confirmChanges(obj) {
                 }
             }
         }
-    }  
-
+    }
 
     // examine registered special output channel fields(with slash allowed).
     if (typeof specialOCFields != "undefined") {         

@@ -3,6 +3,7 @@ var slug_chars_msg =
 var role_msg = "You must supply a unique name for this role!";
 var login_msg1 = "Usernames must be at least ";
 var login_msg2 = " characters!";
+var login_space = "Usernames cannot have spaces at the beginning or end!";
 var passwd_msg1 = "Passwords must be at least ";
 var passwd_msg2 = " characters!";
 var passwd_match_msg = "Passwords must match!";
