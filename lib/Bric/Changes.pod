@@ -142,6 +142,11 @@ colors of some of its graphics depending on the context. Also recreaed the
 "WORKFLOW" tab graphics. It looks like this has been broken for over a year,
 and I only just noticed it! [David]
 
+=item *
+
+Slightly improved handling of assets that have forgotten where they
+are. [David]
+
 =back
 
 =head1 VERSION 1.4.0
