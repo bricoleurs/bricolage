@@ -1,0 +1,3 @@
+*.gif -k 'b'
+*.jpg -k 'b'
+*.jpeg -k 'b'
