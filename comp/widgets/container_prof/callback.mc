@@ -139,7 +139,7 @@ my $update_parts = sub {
         $locate_tile = $t if $id == $locate_id;
         if ($do_delete && ($param->{"$widget|delete_cont$id"} ||
                            $param->{"$widget|delete_data$id"})) {
-            add_msg($lang->maketext("Element [_1] deleted.","&quot;" . $_->get_name . "&quot;"));
+            add_msg($lang->maketext("Element [_1] deleted.","&quot;" . $t->get_name . "&quot;"));
             push @delete, $t;
             next;
         }
@@ -292,7 +292,7 @@ my $handle_add_element = sub {
             $tile->save();
             set_state_data($widget, 'tile', $tile);
         }
-        log_event($key . '_add_element', $a_obj, { Element => $at->get_name })
+        log_event($key.'_add_element', $a_obj, {Element => $at->get_key_name})
           if $a_obj;
 #       add_msg("Element &quot;".  $at->get_name . "&quot; added.");
     }
