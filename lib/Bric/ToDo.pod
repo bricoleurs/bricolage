@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.123 $
+$Revision: 1.124 $
 
 =head1 DATE
 
-$Date: 2003-10-16 14:30:47 $
+$Date: 2003-10-16 17:43:43 $
 
 =head1 DESCRIPTION
 
@@ -140,6 +140,12 @@ it recognizes any other burners tha may be added to the system.
 
 Adjust listManager and desk interfaces so that they remember the field use to
 sort items until the end of a session.
+
+=item *
+
+Add a "preview" action to the Story and Media SOAP interfaces. It will work
+just like "publish" except, of course, that it "previews" and doesn't checkin
+the assets or remove them from desks or workflows.
 
 =back
 
