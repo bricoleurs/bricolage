@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.18 $
+$Revision: 1.13.2.19 $
 
 =head1 DATE
 
-$Date: 2001-10-05 16:05:54 $
+$Date: 2001-10-05 16:30:51 $
 
 =head1 DESCRIPTION
 
@@ -37,6 +37,10 @@ significant (including the addition of new libraries).
 
 Add name of Output Channel to list of Templates in Find Templates interface
 [Michele].
+
+=item *
+
+Add a "Save and Stay" button to the Element Profile. [David]
 
 =item *
 
