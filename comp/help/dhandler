@@ -1,1 +1,4 @@
-<h3>No help available for this topic.</h3>
+<help page="Not Found">
+<p>No help available for this topic.</p>
+
+</help>

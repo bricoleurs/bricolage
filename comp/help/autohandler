@@ -46,6 +46,7 @@ David Wheeler L<lt>david@wheeler.netL<gt>
       </table>
 
 %# Insert the table top.
+% unless ($about) {
       <table border="0" cellpadding="0" cellspacing="0" width="475">
         <tr><td height="20">&nbsp;</td></tr>
         <tr><td>
@@ -82,6 +83,12 @@ David Wheeler L<lt>david@wheeler.netL<gt>
           </tr>
         </table>
       </table>
+% } else {
+      <table border="0" cellpadding="0" cellspacing="0" width="475">
+        <tr><td height="20">&nbsp;</td></tr>
+      </table>
+         <% $m->call_next %>
+% }
 %# Close up the document.
     </td>
   </tr>
@@ -99,8 +106,9 @@ my $widget = 'help';
 </%once>
 %#-- Init --#
 <%init>;
-my ($context, $title, $page);
+my ($context, $title, $page, $about);
 if ($r->uri =~ m:/help/about\.html:) {
+    $about = 1;
     $context = 'About the Bricolage Content Management System';
     $title = "Bricolage $Bric::VERSION";
     $page = '';
