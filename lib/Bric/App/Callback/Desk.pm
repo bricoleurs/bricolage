@@ -176,7 +176,7 @@ sub publish : Callback {
         # Examine all the related objects.
         foreach my $r ($a->get_related_objects) {
             # Skip assets whose current version has already been published.
-            next if not $r->needs_publish();
+            next unless $r->needs_publish();
 
             if ($r->get_checked_out) {
                 my $r_disp_name = lc(get_disp_name($r->key_name));
@@ -195,6 +195,11 @@ sub publish : Callback {
 	}
     }
 
+    # For publishing from a desk, I added two new 'publish'
+    # state data: 'rel_story', 'rel_media'. This is to be
+    # able to distinguish between related assets and the
+    # original stories to be published.
+
     # Add these unpublished related assets to be published as well.
     push @$story, @rel_story;
     push @$media, @rel_media;
@@ -202,8 +207,10 @@ sub publish : Callback {
     set_state_data('publish', { story => $story,
                                 media => $media,
                                 story_pub => $story_pub,
-                                media_pub => $media_pub
-                              });
+                                media_pub => $media_pub,
+                                (@rel_story ? (rel_story => \@rel_story) : ()),
+                                (@rel_media ? (rel_media => \@rel_media) : ())
+                            });
 
     if (%$story_pub or %$media_pub) {
         # Instant publish!

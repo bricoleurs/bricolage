@@ -88,6 +88,25 @@ sub preview : Callback {
     }
 }
 
+# this is used by Desk.pm to let the user deselect related assets
+# published from the publish desk
+sub select_publish : Callback(priority => 1) {  # run this before 'publish'
+    my $self = shift;
+    # (this set in comp/widget/publish/publish.mc)
+    my $values = mk_aref($self->value);
+
+    my (@story, @media);
+    foreach my $val (@$values) {
+        if ($val =~ s/^story=(\d+)$//) {
+            push @story, $1;
+        } elsif ($val =~ s/^media=(\d+)$//) {
+            push @media, $1;
+        }
+    }
+    set_state_data($self->class_key, story => \@story);
+    set_state_data($self->class_key, media => \@media);
+}
+
 sub publish : Callback {
     my $self = shift;
     my $param = $self->params;

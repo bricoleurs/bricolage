@@ -6,11 +6,11 @@ listManager.mc - display a list of objects.
 
 =head1 VERSION
 
-$Revision: 1.28 $
+$Revision: 1.29 $
 
 =head1 DATE
 
-$Date: 2004-02-27 18:45:05 $
+$Date: 2004-03-01 17:32:21 $
 
 =head1 SYNOPSIS
 
@@ -124,13 +124,15 @@ select
 
 A 'select' is a generic term for any action that applies to one or many objects
 in the list.  In the 'full_list' style it is represented as a checkbox next to
-each object.  This argument takes an array ref of a label and callback.  The
-default is:
+each object.  This argument takes an array ref of a label, a callback, the
+callback's value, and a hash ref of arguments to comp/widgets/profile/checkbox.mc.
+The default is:
 
 ['Delete', '', $o_id]
 
-Which means the label is 'Delete', the callback is null and the callback value
-is the current objects ID.  Only the label argument is required.
+Which means the label is 'Delete', the callback is null, the callback value
+is the current object's ID, and no extra arguments are passed to the checkbox
+widget.  Only the label argument is required.
 
 The listManager widget has two built in callbacks that can be used as actions
 for the select.  These are 'listManager|delete_cb' and
@@ -568,12 +570,13 @@ my $output_select_controls = sub {
     $vals = ref($vals->[0]) eq 'ARRAY' ? $vals : [$vals];
 
     foreach my $v (@$vals) {
-        my ($label, $name, $value) = @$v;
+        my ($label, $name, $value, $args) = @$v;
         $value ||= $o->get_id;
 
         push @cntl, $m->scomp('/widgets/profile/checkbox.mc', name  => $name,
-                                                              value => $value).
-                    $lang->maketext($label);
+                                                              value => $value,
+                                                              %$args)
+          . $lang->maketext($label);
     }
 
     return @cntl;

@@ -8,11 +8,11 @@ publish - A widget to display publish options.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2003-08-12 20:10:42 $
+$Date: 2004-03-01 17:32:21 $
 
 =head1 SYNOPSIS
 
@@ -70,10 +70,33 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 objs => $objs,
 	 fields => [qw(id name uri cover_date)],
 	 profile => undef,
-	 select => undef,
+	 select => $select,
 	);
 </%init>
 
-%#--- Log History ---#
+<%once>
+my $select = sub {
+    my $asset = shift;
+    my $id = $asset->get_id;
+    my $key = $asset->key_name;  # 'story' or 'media'
 
+    # determine if $asset is a related asset
+    if (my $d = get_state_data('publish')) {   # $widget eq 'publish'
+        foreach my $k (qw(story media)) {
+            my %rel_ids = map { $_ => 1 } @{ mk_aref($d->{"rel_$k"}) };
+            if (exists $rel_ids{$id}) {
+                # it's a related asset
+                return ['Publish', 'publish|select_publish_cb',
+                        "$key=$id", { checked => 1 }];
+            }
+        }
+
+        # if it gets here, it must not be a related asset,
+        # so we don't show a checkbox
+        return;
+    }
+};
+</%once>
+
+%#--- Log History ---#
 
