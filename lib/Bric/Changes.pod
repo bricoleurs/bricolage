@@ -22,15 +22,13 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+C<make clone> now ignores files in the source directory that start with
+"bricolage-". This should prevent copying previous clones into the new
+clone. [David]
+
 =back
 
 =head2 Bug Fixes
-
-=over 4
-
-=item *
-
-=back
 
 =cut
 

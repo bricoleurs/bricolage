@@ -68,7 +68,7 @@ unlink("dist/conf/install.db");
 opendir(CUR, '.') or die $!;
 my %exclude = map { $_ => 1 } qw(. .. dist comp data conf bin lib);
 foreach my $d (readdir(CUR))  {
-    next if $exclude{$d} or $d =~ /.db$/;
+    next if $exclude{$d} or $d =~ /.db$/ or $d =~ /^bricolage-/;
     system("cp -pR $d dist");
 }
 close(CUR);
