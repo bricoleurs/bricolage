@@ -1,5 +1,6 @@
 package Bric::App::Callback::MediaProf;
 
+# XXX:
 # $handle_checkin had this:
 #     my ($widget, $field, $param, $WORK_ID, $media, $new) = @_;
 # how did it ever get $media or $new??
@@ -13,7 +14,16 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:all);
-
+use Bric::Biz::Asset::Business::Media;
+use Bric::Biz::AssetType;
+use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel;
+use Bric::Biz::Workflow;
+use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Util::DBI;
+use Bric::Util::Grp::Parts::Member::Contrib;
+use Bric::Util::MediaType;
+use Bric::Util::Trans::FS;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -22,8 +32,10 @@ my $DESK_URL = '/workflow/profile/desk/';
 
 sub update : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
+    my $param = $self->param;
 
     # Make sure it's active.
     $media->activate;
@@ -76,9 +88,10 @@ sub update : Callback {
 
     # Check for file
     if ($param->{"$widget|file"} ) {
-        my $upload = $r->upload;
+        my $upload = $self->apache_req->upload;
         my $fh = $upload->fh;
         my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
+          # XXX: BOING!
           $m->comp('/widgets/util/detectAgent.mc')->{os});
         $media->upload_file($fh, $filename);
         $media->set_size($upload->size);
@@ -95,7 +108,6 @@ sub update : Callback {
             $media->set_media_type_id(0);
         }
 
-
         log_event('media_upload', $media);
     }
     set_state_data($widget, 'media', $media);
@@ -105,8 +117,9 @@ sub update : Callback {
 
 sub view : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
-    my $version = $param->{"$widget|version"};
+    my $version = $self->param->{"$widget|version"};
     my $id = $media->get_id();
     set_redirect("/workflow/profile/media/$id/?version=$version");
 };
@@ -115,8 +128,9 @@ sub view : Callback {
 
 sub revert : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
-    my $version = $param->{"$widget|version"};
+    my $version = $self->param->{"$widget|version"};
     $media->revert($version);
     $media->save();
     my $msg = "Media [_1] reverted to V.[_2]";
@@ -129,6 +143,7 @@ sub revert : Callback {
 
 sub save : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
 
@@ -140,9 +155,9 @@ sub save : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $param->{__data_errors__};
+    return if delete $self->param->{__data_errors__};
 
-    if ($param->{"$widget|delete"}) {
+    if ($self->param->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media);
     } else {
@@ -181,6 +196,7 @@ sub save : Callback {
 
 sub checkin : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
 
     if (my $msg = $media->check_uri(get_user_id())) {
@@ -191,7 +207,7 @@ sub checkin : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $param->{__data_errors__};
+    return if delete $self->param->{__data_errors__};
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -208,7 +224,7 @@ sub checkin : Callback {
     $media->checkin;
 
     # Get the desk information.
-    my $desk_id = $param->{"$widget|desk"};
+    my $desk_id = $self->param->{"$widget|desk"};
     my $cur_desk = $media->get_current_desk;
 
     # See if this media asset needs to be removed from workflow or published.
@@ -217,11 +233,14 @@ sub checkin : Callback {
         $cur_desk->remove_asset($media)->save if $cur_desk;
         $media->set_workflow_id(undef);
         $media->save;
+        # XXX: $new can be taken out I think
         log_event(($new ? 'media_create' : 'media_save'), $media);
         log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media);
         log_event("media_rem_workflow", $media);
-        add_msg($self->lang->maketext('Media [_1] saved and shelved.',"&quot;" . $media->get_title . "&quot;"));
+        my $msg = 'Media [_1] saved and shelved.';
+        my $arg = '&quot;' . $media->get_title . '&quot;';
+        add_msg($self->lang->maketext($msg, $arg));
     } elsif ($desk_id eq 'publish') {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -250,12 +269,16 @@ sub checkin : Callback {
 
         $media->save;
         # Log it!
+        # XXX: no more $new!
         log_event(($new ? 'media_create' : 'media_save'), $media);
         log_event('media_checkin', $media);
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
           unless $no_log;
-        add_msg($self->lang->maketext("Media [_1] saved and checked in to [_2].","&quot;" . $media->get_title . "&quot;","&quot;$dname&quot;"));
+        my $msg = "Media [_1] saved and checked in to [_2].";
+        my @args = ('&quot;' . $media->get_title . '&quot;',
+                    "&quot;$dname&quot;");
+        add_msg($self->lang->maketext($msg, @args));
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -277,11 +300,15 @@ sub checkin : Callback {
 
         $desk->save;
         $media->save;
+        # XXX: $new who?!
         log_event(($new ? 'media_create' : 'media_save'), $media);
         log_event('media_checkin', $media);
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
-        add_msg($self->lang->maketext("Media [_1] saved and moved to [_2].","&quot;" . $media->get_title . "&quot;","&quot;$dname&quot;"));
+        my $msg = "Media [_1] saved and moved to [_2].";
+        my @args = ('&quot;' . $media->get_title . '&quot;',
+                    "&quot;$dname&quot;");
+        add_msg($self->lang->maketext($msg, @args));
     }
 
     # Publish the media asset, if necessary.
@@ -294,6 +321,7 @@ sub checkin : Callback {
         Bric::Util::DBI::begin(1);
 
         # Use the desk callback to save on code duplication.
+        # XXX: BOING!
         $m->comp('/widgets/desk/callback.mc',
                  widget => $widget,
                  field => "$widget|publish_cb",
@@ -310,6 +338,7 @@ sub checkin : Callback {
 
 sub save_stay : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
 
     chk_authz($media, EDIT);
@@ -326,9 +355,9 @@ sub save_stay : Callback {
     }
 
     # Just return if there was a problem with the update callback.
-    return if delete $param->{__data_errors__};
+    return if delete $self->param->{__data_errors__};
 
-    if ($param->{"$widget|delete"}) {
+    if ($self->param->{"$widget|delete"}) {
         # Delete the media.
         $handle_delete->($media);
         # Get out of here, since we've blown it away!
@@ -340,7 +369,9 @@ sub save_stay : Callback {
         $media->activate;
         $media->save;
         log_event('media_save', $media);
-        add_msg($self->lang->maketext("Media [_1] saved.","&quot;" . $media->get_title . "&quot;"));
+        my $msg = "Media [_1] saved.";
+        my $arg = '&quot;' . $media->get_title . '&quot;';
+        add_msg($self->lang->maketext($msg, $arg));
     }
 
     # Set the state.
@@ -351,22 +382,24 @@ sub save_stay : Callback {
 
 sub cancel : Callback {
     my $self = shift;
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     $media->cancel_checkout();
     $media->save();
     log_event('media_cancel_checkout', $media);
-    clear_state($widget);
+    clear_state(CLASS_KEY);
     set_redirect("/");
-    add_msg($self->lang->maketext("Media [_1] check out canceled.","&quot;" . $media->get_name . "&quot;"));
+    my $msg = "Media [_1] check out canceled.";
+    my $arg = '&quot;' . $media->get_name . '&quot;';
+    add_msg($self->lang->maketext($msg, $arg));
 };
 
 ################################################################################
 
 sub return : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $version_view = get_state_data($widget, 'version_view');
-
-        my $media = get_state_data($widget, 'media');
+    my $media = get_state_data($widget, 'media');
 
     if ($version_view) {
         my $media_id = $media->get_id();
@@ -399,8 +432,10 @@ sub return : Callback {
 
 sub create : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     # Get the workflow ID to use in redirects.
     my $WORK_ID = get_state_data($widget, 'work_id');
+    my $param = $self->param;
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
@@ -445,8 +480,9 @@ sub create : Callback {
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     log_event('media_moved', $media, { Desk => $start_desk->get_name });
     log_event('media_save', $media);
-    add_msg($self->lang->maketext('Media [_1] created and saved.',"&quot;" .
-                            $media->get_title . "&quot;"));
+    my $msg = 'Media [_1] created and saved.';
+    my $arg = '&quot;' . $media->get_title . '&quot;';
+    add_msg($self->lang->maketext($msg, $arg));
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
@@ -457,7 +493,7 @@ sub create : Callback {
 
     # As far as history is concerned, this page should be part of the media
     # profile stuff.
-    pop_page;
+    pop_page();
 };
 
 ################################################################################
@@ -471,9 +507,9 @@ sub contributors : Callback {
 
 sub add_oc : Callback {
     my $self = shift;
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $oc = Bric::Biz::OutputChannel->lookup({ id => $param->{$field} });
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->param_field });
     $media->add_output_channels($oc);
     log_event('media_add_oc', $media, { 'Output Channel' => $oc->get_name });
     $media->save;
@@ -483,19 +519,18 @@ sub add_oc : Callback {
 
 sub assoc_contrib : Callback {
     my $self = shift;
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $contrib_id = $param->{$field};
+    my $contrib_id = $self->param_field;
     my $contrib =
       Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
     if (scalar(@$roles)) {
-        set_state_data($widget, 'contrib', $contrib);
+        set_state_data(CLASS_KEY, 'contrib', $contrib);
         set_redirect("/workflow/profile/media/contributor_role.html");
     } else {
         $media->add_contributor($contrib);
         log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-#       add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     }
 };
 
@@ -503,14 +538,14 @@ sub assoc_contrib : Callback {
 
 sub assoc_contrib_role : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media   = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
     my $contrib = get_state_data($widget, 'contrib');
-    my $role    = $param->{$widget.'|role'};
+    my $role    = $param->{"$widget|role"};
     # Add the contributor
     $media->add_contributor($contrib, $role);
     log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; associated.");
     # Go back to the main contributor pick screen.
     set_redirect(last_page);
     # Remove this page from the stack.
@@ -522,13 +557,13 @@ sub assoc_contrib_role : Callback {
 
 sub unassoc_contrib : Callback {
     my $self = shift;
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
-    my $contrib_id = $param->{$field};
+    my $contrib_id = $self->param_field;
     $media->delete_contributors([$contrib_id]);
-    my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
+    my $contrib =
+      Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     log_event('media_del_contrib', $media, { Name => $contrib->get_name });
-#    add_msg("Contributor &quot;" . $contrib->get_name . "&quot; disassociated.");
 };
 
 ################################################################################
@@ -544,7 +579,7 @@ my $save_contrib = sub {
     }
 
     chk_authz($media, EDIT);
-    my $contrib_id = $param->{$widget.'|delete_id'};
+    my $contrib_id = $param->{$widget . '|delete_id'};
     my $contrib_number;
     my $contrib_string;
     if ($contrib_id) {
@@ -553,7 +588,7 @@ my $save_contrib = sub {
             foreach (@$contrib_id) {
                 my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
                   ({ id => $_ });
-                $contrib_string .= "&quot;" . $contrib->get_name . "&quot;";
+                $contrib_string .= '&quot;' . $contrib->get_name . '&quot;';
                 $contrib_number++;
                 delete $existing->{$_};
             }
@@ -562,11 +597,13 @@ my $save_contrib = sub {
             my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup
               ({ id => $contrib_id });
             delete $existing->{$contrib_id};
-            $contrib_string = '&quot;' . $contrib->get_name . "&quot;";
+            $contrib_string = '&quot;' . $contrib->get_name . '&quot;';
             $contrib_number++;
         }
     }
-    add_msg($self->lang->maketext('[quant,_1,Contributor] [_2] associated.',$contrib_number ,$contrib_string)) if $contrib_number;
+    my $msg = '[quant,_1,Contributor] [_2] associated.';
+    add_msg($self->lang->maketext($msg, $contrib_number, $contrib_string))
+      if $contrib_number;
 
     # get the remaining
     # and reorder
@@ -576,8 +613,7 @@ my $save_contrib = sub {
         $existing->{$_} = $place;
     }
 
-    my @no;
-    @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
+    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
     $media->reorder_contributors(@no);
 };
 
@@ -585,18 +621,18 @@ my $save_contrib = sub {
 
 sub save_contrib : Callback {
     my $self = shift;
-    $save_contrib->($widget, $param);
+    $save_contrib->(CLASS_KEY, $self->param);
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
-    pop_page;
+    pop_page();
 };
 
 ##############################################################################i
 
 sub save_and_stay_contrib : Callback {
     my $self = shift;
-    $save_contrib->($widget, $param);
+    $save_contrib->(CLASS_KEY, $self->param);
 };
 
 ###############################################################################
@@ -606,16 +642,17 @@ sub leave_contrib : Callback {
     # Set a redirect for the previous page.
     set_redirect(last_page);
     # Pop this page off the stack.
-    pop_page;
+    pop_page();
 };
 
 ################################################################################
 
 sub notes : Callback {
     my $self = shift;
+    my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     my $id    = $media->get_id();
-    my $action = $param->{$widget.'|notes_cb'};
+    my $action = $self->param->{"$widget|notes_cb"};
     set_redirect("/workflow/profile/media/${action}_notes.html?id=$id");
 };
 
@@ -623,7 +660,7 @@ sub notes : Callback {
 
 sub trail : Callback {
     my $self = shift;
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     my $id = $media->get_id();
     set_redirect("/workflow/trail/media/$id");
 };
@@ -632,7 +669,7 @@ sub trail : Callback {
 
 sub recall : Callback {
     my $self = shift;
-    my $ids = $param->{$widget.'|recall_cb'};
+    my $ids = $self->param->{CLASS_KEY . '|recall_cb'};
     $ids = ref $ids ? $ids : [$ids];
     my %wfs;
 
@@ -656,7 +693,9 @@ sub recall : Callback {
             log_event('media_moved', $ba, { Desk => $start_desk->get_name });
             log_event('media_checkout', $ba);
         } else {
-            add_msg($self->lang->maketext('Permission to checkout [_1] denied', "&quot;" . $ba->get_name. "&quot;"));
+            my $msg = 'Permission to checkout [_1] denied';
+            my $arg = '&quot;' . $ba->get_name. '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
         }
     }
 
@@ -674,7 +713,7 @@ sub recall : Callback {
 
 sub checkout : Callback {
     my $self = shift;
-    my $ids = $param->{$field};
+    my $ids = $self->param_field;
     $ids = ref $ids ? $ids : [$ids];
 
     foreach (@$ids) {
@@ -686,7 +725,9 @@ sub checkout : Callback {
             # Log Event.
             log_event('media_checkout', $ba);
         } else {
-            add_msg($self->lang->maketext('Permission to checkout [_1] denied', "&quot;" . $ba->get_name. "&quot;"));
+            my $msg = 'Permission to checkout [_1] denied';
+            my $arg = '&quot;' . $ba->get_name. '&quot;';
+            add_msg($self->lang->maketext($msg, $arg));
         }
     }
 
@@ -703,7 +744,7 @@ sub checkout : Callback {
 
 sub keywords : Callback {
     my $self = shift;
-    my $id = get_state_data($widget, 'media')->get_id;
+    my $id = get_state_data(CLASS_KEY, 'media')->get_id;
     set_redirect("/workflow/profile/media/keywords.html");
 };
 
@@ -711,9 +752,10 @@ sub keywords : Callback {
 
 sub add_kw : Callback {
     my $self = shift;
+    my $param = $self->param;
 
     # Grab the media.
-    my $media = get_state_data($widget, 'media');
+    my $media = get_state_data(CLASS_KEY, 'media');
     chk_authz($media, EDIT);
 
     # Add new keywords.
@@ -734,14 +776,14 @@ sub add_kw : Callback {
       if defined $param->{del_keyword};
 
     # Save the changes
-    set_state_data($widget, 'media', $media);
+    set_state_data(CLASS_KEY, 'media', $media);
 
     set_redirect(last_page);
 
     add_msg("Keywords saved.");
 
     # Take this page off the stack.
-    pop_page;
+    pop_page();
 };
 
 
