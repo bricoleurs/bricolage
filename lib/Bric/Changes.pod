@@ -56,8 +56,16 @@ of distributing the media file. [David]
 
 =item *
 
-Allow only one template with a given name for a given category,
-element, burner and output channel. [Sam]
+Allow only one template with a given name for a given category, element, burner
+and output channel. [Sam]
+
+=item *
+
+Added a Maintainer section to the About page. [David]
+
+=item *
+
+Updated About page to mimic the layout of the help pages. [David]
 
 =back
 
