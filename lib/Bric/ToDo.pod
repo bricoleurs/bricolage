@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.86 $
+$Revision: 1.87 $
 
 =head1 DATE
 
-$Date: 2003-02-13 21:33:39 $
+$Date: 2003-02-18 02:16:06 $
 
 =head1 DESCRIPTION
 
@@ -55,7 +55,7 @@ a template that already exists in the database as a deactivated template.
 
 =item *
 
-Add POD documentation to F<bric_dist_mon>, F<bric_ftpd>, and F<bric_pgimport>.
+Add POD documentation to F<bric_dist_mon> and F<bric_ftpd>.
 
 =item *
 
