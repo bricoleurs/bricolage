@@ -9,16 +9,16 @@ installation.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-03-12 01:41:03 $
+$Date: 2002-03-12 01:43:25 $
 
 =head1 SYNOPSIS
 
@@ -86,9 +86,9 @@ getopts('u:p:');
 $opt_u ||= 'postgres';
 $opt_p ||= 'postgres';
 
-# Grab the Bricolage version number and put it into a vstring. We can eliminate
+# Grab the Bricolage version number and put it into a v-string. We can eliminate
 # the eval if, in the future, we change the Bric version number to an actual
-# vstring.
+# v-string.
 my $old_version = eval "v$Bric::VERSION";
 
 # Connect to the database.
@@ -114,11 +114,11 @@ $Bric::Util::DBI::dbh = DBI->connect(join(':', 'DBI', DBD_TYPE,
 B<Note:> This function is experimental.
 
 This function compares the version number of the currently installed Bricolage
-against a vstring argument that represents the new version we're upgrading to.
-It does a bit of fancy work to ensure that it compares vstrings. It also tracks
-a hash that lists exceptions to the basic rules of vstring comparison. For example,
-if version 1.3.0 was released before 1.2.2, and you're "upgrading" from 1.2.2 to
-1.3.0, this function will return false when called like this:
+against a v-string argument that represents the new version we're upgrading to.
+It does a bit of fancy work to ensure that it compares v-strings. It also tracks
+a hash that lists exceptions to the basic rules of v-string comparison. For
+example, if version 1.3.0 was released before 1.2.2, and you're "upgrading" from
+1.2.2 to 1.3.0, this function will return false when called like this:
 
   exit unless is_later(1.3.0);
 
