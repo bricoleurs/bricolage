@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:41 $
+$Date: 2002-10-28 18:53:45 $
 
 =head1 SYNOPSIS
 
@@ -631,7 +631,7 @@ sub _load_template {
 	# assign catgeory_id (not category__id, for some reason...)
 	$init{category_id} = category_path_to_id($tdata->{category}[0]);
 	die __PACKAGE__ . " : no category found matching " .
-	    "(category => \"$tdata->{category}\")\n"
+	    "(category => \"$tdata->{category}[0]\")\n"
 		unless defined $init{category_id};
 
 	# setup data
