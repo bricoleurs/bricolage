@@ -35,6 +35,13 @@ a document other than the one currently being published. This is useful when a
 template for one document type needs to trigger the publish of another
 document. [David]
 
+=item *
+
+Fixed upgrade scripts to be more intelligent in their handling of
+transactions. They no longer allow SQL errors without failing the upgrade. The
+upgrade scripts have also been updated to ensure successful upgrades to
+Bricolage installations as far back as 1.4.0. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -7,11 +7,7 @@ use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
 # check if we're already upgraded.
-exit if fetch_sql
-  q{SELECT 1
-    FROM   pg_class
-    WHERE  relname = 'idx_job__comp_time__is_null'}
-  ;
+exit if test_index 'idx_job__comp_time__is_null';
 
 do_sql
   'CREATE INDEX idx_job__comp_time__is_null

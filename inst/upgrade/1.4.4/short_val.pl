@@ -7,15 +7,8 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
 # We're changing the value column from VARCHAR to TEXT. With TEXT, the value
-# of atttypmod is -1.
-exit if fetch_sql(q{
-    SELECT atttypmod
-    FROM   pg_attribute, pg_class
-    WHERE  pg_class.oid = pg_attribute.attrelid
-           AND pg_class.relname = 'story_data_tile'
-           AND pg_attribute.attname = 'short_val'
-           AND pg_attribute.atttypmod = -1;
-});
+# of atttypmod is -1, so we can just see if it's greater than that.
+exit unless test_column 'story_data_tile', 'short_val', 0;
 
 do_sql(q{ALTER TABLE story_data_tile RENAME short_val to __short_val_old__},
        q{ALTER TABLE story_data_tile ADD column short_val text},

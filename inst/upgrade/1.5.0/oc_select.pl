@@ -6,8 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql(qq{SELECT enabled FROM element__output_channel});
-
+exit if test_column 'element__output_channel', 'enabled';
 
 do_sql
   # Create the new column.

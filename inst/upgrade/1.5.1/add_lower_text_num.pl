@@ -5,11 +5,12 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-# Just bail if we get an error, because that means the the index has already
-# been dropped.
-exit unless test_sql "DROP INDEX udx_alert_type__usr__id__name";
+exit unless test_index 'udx_alert_type__usr__id__name';
 
 do_sql
+  # Drop the old index.
+  q{DROP INDEX udx_alert_type__usr__id__name},
+
   # Add the new multicolumn lower function.
   q{CREATE   FUNCTION lower_text_num(TEXT, NUMERIC(10, 0))
     RETURNS  TEXT AS 'SELECT LOWER($1) || to_char($2, ''|FM9999999999'')'

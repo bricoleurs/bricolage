@@ -7,7 +7,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
 foreach my $table (qw(story formatting media)) {
-    next if test_sql(qq{SELECT 1 WHERE EXISTS (SELECT desk__id FROM $table)});
+    next if test_column $table, 'desk__id';
     do_sql
       qq{ALTER TABLE $table ADD COLUMN desk__id NUMERIC(10,0)},
       qq{

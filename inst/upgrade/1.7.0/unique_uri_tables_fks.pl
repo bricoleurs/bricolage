@@ -5,11 +5,7 @@ use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
 # check if we're already upgraded.
-exit if fetch_sql
-  q{SELECT 1
-    FROM   pg_class
-    WHERE  relname = 'fkx_story__story_uri'}
-  ;
+exit if test_index 'fkx_story__story_uri';
 
 for my $type (qw(story media)) {
     do_sql

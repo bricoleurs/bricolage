@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 use strict;
+use File::Spec::Functions qw(catdir updir);
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
@@ -36,11 +37,6 @@ do_sql
         member__id  NUMERIC(10,0)  NOT NULL,
         CONSTRAINT pk_media_type_member__id PRIMARY KEY (id)
     )},
-
-  # Create the indexes for it.
-  q{CREATE INDEX fkx_media_type__media_type_member ON media_type_member(object_id)},
-  q{CREATE INDEX fkx_member__media_type_member ON media_type_member(member__id)},
-
   ;
 
 # Now add all existing media types to the "All Media Types" group.

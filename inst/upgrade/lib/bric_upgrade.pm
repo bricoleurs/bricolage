@@ -8,16 +8,16 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-17 01:37:05 $
+$Date: 2003-12-08 01:46:01 $
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ $Date: 2003-10-17 01:37:05 $
   use bric_upgrade qw(:all);
 
   # Check to see if we've run this before.
-  exit if test_sql('SELECT * FROM table_to_add');
+  exit if test_table('table_to_add');
 
   # Now update the database.
   my @sql = (
@@ -64,7 +64,8 @@ succeed, then the transaction will be commited when the script exits.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(do_sql test_sql fetch_sql db_version);
+our @EXPORT_OK = qw(do_sql test_column test_table test_constraint test_index
+                    fetch_sql db_version);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
@@ -120,13 +121,13 @@ END
 # does should be in a single transaction.
 begin();
 
-my ($rolled_back, $testing);
+my $rolled_back;
 
 # Catch all exceptions. We want to rollback any transactions before
 # exiting.
 $SIG{__DIE__} = sub {
-    # For some reason, this seems to get called twice
-    unless ($rolled_back or $testing) {
+    # For some reason, this seems to get called twice.
+    unless ($rolled_back) {
         rollback();
         print STDERR "\n\n", ('#') x 70, "\n",
           "ERROR: DATABASE UPDATE FAILED!\n\n",
@@ -157,36 +158,129 @@ open STDERR, "| perl -ne 'print unless /^NOTICE:  /'"
 
 =head1 EXPORTED FUNCTIONS
 
-=head2 test_sql()
+=head2 test_table
 
-  exit if test_sql($sql);
+  exit if test_table $table_to_add;
 
-Evaluates the SQL expression C<$sql> against the Bricolage database. If there
-is an error preparing or executing C<$sql>, C<test_sql()> will return
-false. If there are no errors, it will return true. Use this function to
-determine whether the upgrades your script is about to perform have already
-been performed.
-
-For example, say you need to add a table C<foo_bar>. It's possible, for some
-reason or other, that the table may already have been added -- perhaps your
-script has already been run against the Bricolage installation. To determine
-whether it has, call C<test_sql()> with an SQL query that will throw an
-exception if the table doesn't exist, but succeed if it does. If it does
-succeed, then simply exit your script without continuing to update the
-database.
-
-  exit if test_sql('SELECT * from foo_bar');
+This function returns true if a table exists in the Bricolage database, and
+false if it does not. Use C<test_table()> in an upgrade script that adds a new
+table to the database to make sure that the script has not already been run.
 
 =cut
 
-sub test_sql {
-    $testing = 1;
-    eval {
-	my $sth = prepare(shift);
-	execute($sth);
+sub test_table($) {
+    my $table = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_catalog.pg_class c
+        WHERE  relkind = 'r'
+               AND relname = '$table'
+    });
+}
+
+##############################################################################
+
+=head2 test_column
+
+  exit if test_column $table_name, $column_name;
+  exit if test_column $table_name, $column_name, $min_size;
+  exit if test_column $table_name, $column_name, undef, $not_null;
+  exit if test_column $table_name, $column_name, $min_size, $not_null;
+
+This function returns true if the specified column exists in specified table
+in the Bricolage database, and false if it does not. Use C<test_column()> in
+an upgrade script that adds a new column to the database to make sure that the
+script has not already been run.
+
+An optional third argument specifies a minimum size for the specified column
+("size" generally meaning the length of a VARCHAR column). The function will
+return true if the column exists and has at least the size specified. This is
+useful in upgrade scripts that are changing the size of a column.
+
+An optional fourth argument specifies whether the column is C<NOT NULL>. Thus
+the function will return true if the column exists I<and> is not null, and
+false if the column doesn't exist or can store NULL values. B<Note:> This
+function will return true if a column has been made C<NOT NULL> by the use of
+a constraint rather than a C<NOT NULL> in the statement that created the
+column.
+
+Of course, if both optional arguments are passed to C<test_column()>, it will
+test that the column exists, that it is at least the size specified, and that
+it is C<NOT NULL>.
+
+=cut
+
+sub test_column($$;$$) {
+    my ($table, $column, $size, $not_null) = @_;
+    my $sql = qq{
+        SELECT 1
+        FROM   pg_catalog.pg_attribute a, pg_catalog.pg_class c
+        WHERE  a.attrelid = c.oid
+               and pg_catalog.pg_table_is_visible(c.oid)
+               AND c.relname = '$table'
+               AND attnum > 0
+               AND NOT attisdropped
+               AND a.attname = '$column'
     };
-    $testing = 0;
-    return $@ ? 0 : 1;
+
+    if (defined $size) {
+        $sql .= "           AND a.atttypmod >= $size";
+    }
+
+    if (defined $not_null) {
+        $not_null = $not_null ? 't' : 'f';
+        $sql .= "           AND a.attnotnull = '$not_null'";
+    }
+
+    return fetch_sql($sql)
+}
+
+##############################################################################
+
+=head2 test_constraint
+
+  exit if test_constraint $table_name, $constraint_name;
+
+This function returns true if the specified constraint exists on the specified
+table in the Bricolage database, and false if it does not. This is useful in
+upgrade scripts that add a new constraint, and want to verify that the
+constraint has not already been created.
+
+=cut
+
+sub test_constraint($$) {
+    my ($table, $con) = @_;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_catalog.pg_class c, pg_catalog.pg_constraint r
+        WHERE  r.conrelid = c.oid
+               AND c.relname = '$table'
+               AND r.contype = 'c'
+               AND r.conname = '$con'
+    });
+}
+
+##############################################################################
+
+=head2 test_index
+
+  exit if test_index $index_name;
+
+This function returns true if the specified index exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new index, and want to verify that the index has not already been created.
+
+=cut
+
+sub test_index($) {
+    my $index = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_catalog.pg_class c,
+               pg_catalog.pg_index i
+        WHERE  i.indexrelid = c.oid
+               and c.relname = '$index'
+    });
 }
 
 ##############################################################################
@@ -202,25 +296,23 @@ exception will also cause C<fetch_sql()> to return false. Use this function to
 determine whether the upgrades your script is about to perform have already
 been performed.
 
-This function is similar in functionality to C<test_sql()>, except that it
-doesn't explicitly test for an exception. In other words, it's useful for
-testing for database changes that may not trigger an exception even if they
-haven't been run. For example, say you need to add a new value to the
-"event_type" table with the "key_name" column value 'foo_grepped'. To
-determine whether this value has already been entered into the database, you
-simply try to select it. Use C<fetch_sql()> to do this, as it will return true
-if it manages to fetch a value, and false otherwise.
+This function is useful for testing for database changes that may not trigger
+an exception even if they haven't been run. For example, say you need to add a
+new value to the "event_type" table with the "key_name" column value
+'foo_grepped'. To determine whether this value has already been entered into
+the database, you simply try to select it. Use C<fetch_sql()> to do this, as
+it will return true if it manages to fetch a value, and false otherwise.
 
   exit if fetch_sql('SELECT name FROM event_type WHERE key_name = 'foo_grepped');
 
 =cut
 
-sub fetch_sql {
+sub fetch_sql($) {
     my $val;
     eval {
-	my $sth = prepare(shift);
-	execute($sth);
-	$val = fetch($sth);
+        my $sth = prepare(shift);
+        execute($sth);
+        $val = fetch($sth);
         finish($sth);
     };
     return $val && !$@ ? 1 : 0;
@@ -304,7 +396,7 @@ the server is 7.3 or later before executing dropping a column.
 
 my $version;
 
-sub db_version {
+sub db_version() {
     return $version if $version;
     $version = col_aref("SELECT version()")->[0];
     $version =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;

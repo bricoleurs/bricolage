@@ -5,7 +5,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-exit if test_sql 'SELECT 1 FROM workflow WHERE id = 101 AND site__id = 100';
+exit if test_column 'workflow', 'site__id';
 
 do_sql
   # Add the new site__id column.

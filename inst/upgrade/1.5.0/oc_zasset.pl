@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql(qq{SELECT primary_oc__id FROM story_instance});
+exit if test_column 'story_instance', 'primary_oc__id';
 
 foreach my $at (qw(story media)) {
     do_sql

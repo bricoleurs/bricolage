@@ -5,7 +5,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-exit if test_sql "SELECT 1 WHERE EXISTS (SELECT site__id FROM formatting)";
+exit if test_column 'formatting', 'site__id';
 
 do_sql
   #formatting

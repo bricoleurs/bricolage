@@ -10,12 +10,10 @@ use Bric::Biz::Asset::Business::Media;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-# Just bail if the story_uri table exists and therefore doesn't cause an error.
-exit if test_sql "SELECT 1 FROM story_uri WHERE story__id = -1";
-
 my ($aid, $uri, $ocname, $type, $rolled_back);
 
 for $type (qw(story media)) {
+    next if test_table "$type\_uri";
 
     # Create the table, indices, and constraints.
     do_sql
@@ -34,7 +32,6 @@ for $type (qw(story media)) {
     my $ids = col_aref("SELECT id FROM $type WHERE active = 1");
     $type eq 'story' ? add_story_uris($ids) : add_media_uris($ids);
 }
-
 
 sub add_story_uris {
     my $ids = shift;

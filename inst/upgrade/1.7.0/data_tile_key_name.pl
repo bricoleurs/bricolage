@@ -7,8 +7,7 @@ use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
 # Just exit if these changes have already been made.
-exit if test_sql "SELECT 1 WHERE EXISTS (SELECT key_name FROM story_data_tile)";
-
+exit if test_column 'story_data_tile', 'key_name';
 
 do_sql
   # Add the new column.

@@ -5,7 +5,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
-exit if test_sql ("SELECT 1 FROM formatting_instance WHERE file_name = ''" );
+exit if test_column 'formatting_instance', 'file_name';
 
 do_sql
   q{ALTER TABLE formatting_instance ADD file_name TEXT},

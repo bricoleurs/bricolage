@@ -1,12 +1,15 @@
 #!/usr/bin/perl -w
 
+use Carp;
+
+
 use strict;
-use FindBin;
-use lib "$FindBin::Bin/../lib";
-use bric_upgrade qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use bric_upgrade qw(:all);
 
 exit if $Bric::Biz::Asset::Business::Parts::Tile::Data::VERSION > 1.7;
 

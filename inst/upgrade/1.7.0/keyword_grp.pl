@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 use strict;
+use File::Spec::Functions qw(catdir updir);
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
@@ -40,10 +41,6 @@ do_sql
         member__id  NUMERIC(10,0)  NOT NULL,
         CONSTRAINT pk_keyword_member__id PRIMARY KEY (id)
     )},
-
-  # Create the relevant indexes.
-  qq{CREATE INDEX fkx_keyword__keyword_member ON keyword_member(object_id)},
-  qq{CREATE INDEX fkx_member__keyword_member ON keyword_member(member__id)},
   ;
 
 # Now add all existing media types to the "All Media Types" group.
@@ -67,16 +64,5 @@ while (fetch($sel)) {
     execute($mem);
     execute($mtmem, $id);
 }
-
-# And finally, add the needed constraints.
-do_sql
-  qq{ALTER TABLE    keyword_member
-     ADD CONSTRAINT fk_keyword__keyword_member FOREIGN KEY (object_id)
-     REFERENCES     keyword(id) ON DELETE CASCADE},
-
-  qq{ALTER TABLE    keyword_member
-     ADD CONSTRAINT fk_member__keyword_member FOREIGN KEY (member__id)
-     REFERENCES     member(id) ON DELETE CASCADE},
-;
 
 __END__

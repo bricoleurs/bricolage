@@ -28,17 +28,8 @@ with the column.
 
 =cut
 
-# This is PostgreSQL-specific, but that shouldn't matter, since PostgreSQL is
-# the only supported database at this time, so no other database should need the
-# patch.
-exit if fetch_sql(qq{
-    SELECT atttypmod
-    FROM   pg_attribute, pg_class
-    WHERE  pg_class.oid = pg_attribute.attrelid
-           AND pg_class.relname = 'job'
-           AND pg_attribute.attname = 'name'
-           AND pg_attribute.atttypmod >= 256;
-});
+# Exit if the column is already at least 256 characters long.
+exit if test_column 'job', 'name', 256;
 
 do_sql(
        'DROP INDEX idx_job__name',

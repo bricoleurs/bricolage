@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql(qq{SELECT uri_format FROM output_channel});
+exit if test_column 'output_channel', 'uri_format';
 
 # Get the URI Case preference value.
 my $case = col_aref(qq{SELECT value FROM pref WHERE id = 9});
@@ -59,5 +59,6 @@ do_sql
       CHECK (use_slug IN (0,1))},
 
   # Delete old preferences.
-  q{DELETE FROM pref WHERE id IN(7,8,9)}
+  q{DELETE FROM pref WHERE id IN(7,8,9)},
+  q{DELETE FROM member WHERE id IN(164,165,166)},
   ;

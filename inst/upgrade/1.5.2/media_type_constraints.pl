@@ -6,12 +6,9 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-# If this fails, then the correct constraints are in place.
-exit unless test_sql "INSERT INTO media_type_member VALUES(-1, -1, -1)";
+exit if test_constraint 'media_type_member', 'fk_media_type__media_type_member';
 
 do_sql
-  qq{DELETE FROM media_type_member WHERE id = -1},
-
   qq{ALTER TABLE    media_type_member
      ADD CONSTRAINT fk_media_type__media_type_member FOREIGN KEY (object_id)
      REFERENCES     media_type(id) ON DELETE CASCADE},

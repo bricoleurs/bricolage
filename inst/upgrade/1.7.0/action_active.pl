@@ -7,13 +7,7 @@ use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
 # If this fails, then the correct constraints are in place.
-exit if fetch_sql(qq{
-    SELECT atttypmod
-    FROM   pg_attribute, pg_class
-    WHERE  pg_class.oid = pg_attribute.attrelid
-           AND pg_class.relname = 'action'
-           AND pg_attribute.attname = 'active'
-});
+exit if test_column 'action', 'active';
 
 do_sql
   # Add the active column.

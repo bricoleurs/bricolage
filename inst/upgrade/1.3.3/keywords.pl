@@ -6,9 +6,7 @@ use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
 # Exit if change already exist in db
-exit if fetch_sql( qq{
-        SELECT 1 FROM pg_class WHERE RELNAME = 'story_keyword'
-} );
+exit if test_table 'story_keyword';
 
 my @sql = (
            # setup new tables

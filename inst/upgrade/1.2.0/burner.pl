@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 
 # Check to see if we've run this before.
-exit if test_sql('SELECT burner FROM element');
+exit if test_column 'element', 'burner';
 
 # Now update it all.
 my @sql = (

@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql "SELECT 1 WHERE EXISTS (SELECT asset_grp_id FROM workflow)";
+exit if test_column 'workflow', 'asset_grp_id';
 
 do_sql
   # Restore missing constraints.

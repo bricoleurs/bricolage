@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-exit if test_sql(qq{SELECT tplate_type FROM formatting});
+exit if test_column 'formatting', 'tplate_type';
 
 do_sql
   # Create the new column.
