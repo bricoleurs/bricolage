@@ -112,7 +112,6 @@ use constant DEBUG => 0;
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Job';
 use constant INSTANCE_GROUP_ID => 30;
 use constant NAME_MAX_LENGTH => 246;
-use constant ERR_MAX_LENGTH => 2000;
 
 my $PKG_MAP = {
     54 => 'Bric::Util::Job',
@@ -268,9 +267,6 @@ sub new {
     # Check for a legitimate Class ID, or die.
     my $class = Bric::Util::Class->lookup({ pkg_name => $pkg });
     $self->_set({ _class_id => $class->get_id });
-
-    # truncate the name param to 256 characters 
-    $init->{name} = substr $init->{name}, 0, 256;
 
     # Set the type and the _executing and tries defaults.
     $init->{type} = $init->{type} ? 1 : 0;
@@ -777,13 +773,11 @@ sub my_meths {
                               set_args => [],
                               disp     => 'Error Message',
                               search   => 0,
-                              len      => ERR_MAX_LENGTH,
                               req      => 0,
                               type     => 'short',
                               props    => { type      => 'textarea',
                                             cols      => 60,
                                             rows      => 10,
-                                            maxlength => ERR_MAX_LENGTH,
                                           }
                              },
              };
@@ -925,10 +919,6 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
-
-=cut
-
-sub set_name { $_[0]->_set( ['name'] => [substr $_[1], 0, 256] ) }
 
 =item my $user_id = $job->get_user_id
 
@@ -1666,14 +1656,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
     return unless $self->_get__dirty;
-    my ($id, $cancel, $res, $sts, $err) =
-      $self->_get(qw(id _cancel _resources _server_types error_message));
-
-    # truncate the error message if necessary
-    if (defined $err && length $err > ERR_MAX_LENGTH) {
-        $err = substr($err, 0, ERR_MAX_LENGTH);
-        $self->_set(['error_message'], [$err])
-    }
+    my ($id, $cancel, $res, $sts) =
+      $self->_get(qw(id _cancel _resources _server_types));
 
     if (defined $id && $cancel) {
         # It has been marked for deletion. So do it!
