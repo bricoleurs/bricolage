@@ -7,15 +7,15 @@ Bric::Biz::Asset::Formatting - AN object housing the formatting Assets
 
 =head1 VERSION
 
-$Revision: 1.4.2.4 $
+$Revision: 1.4.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.4.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2001-11-29 23:54:27 $
+$Date: 2001-11-30 06:00:14 $
 
 =head1 SYNOPSIS
 
@@ -142,7 +142,7 @@ use base qw( Bric::Biz::Asset );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
+my ($build_file_name);
 # None
 
 #==============================================================================#
@@ -396,12 +396,12 @@ sub new {
 
 	# construct File Path for FA
 	(my $file = $name) =~ s/\W+/_/g;
-	
+
 	# Don't put the '.mc' extension on if this is an autohandler.
 	$file .= '.mc' unless $name eq 'autohandler';
 
 	$init->{file_name} =
-	  lc Bric::Util::Trans::FS->cat_dir('', $pre, $cat_path, $post, $file);
+	  Bric::Util::Trans::FS->cat_dir('', $pre, $cat_path, $post, $file);
 
 	@{$init}{qw(version current_version name)} = (0, 0, $name);
 	$self->SUPER::new($init);
@@ -1179,6 +1179,7 @@ sub set_category_id {
 
     if ($id != $self->get_category_id) {
 	$self->_set(['category_id','_category_obj'], [$id, undef]);
+	$self->_set(['file_name'], [&$build_file_name($self)]);
     }
 
     return $self;
@@ -2102,6 +2103,49 @@ sub _delete_instance {
 #--------------------------------------#
 
 =head2 Private Functions
+
+=over 4
+
+=item my $uri = &$build_file_name($fa, $cat, $oc);
+
+Builds the file name for a template. If either or both $cat and $oc are not
+passed, they'll be fetched from the $fa object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$build_file_name = sub {
+    my ($self, $cat, $oc) = @_;
+
+    # Get the category and Output Channel objects, if necessary.
+    $oc ||= $self->_get_output_channel_object;
+    $cat ||= $self->_get_category_object;
+
+    # Get the pre and post values.
+    my ($pre, $post) = ($oc->get_pre_path, $oc->get_post_path) if $oc;
+
+    # Add the pre value.
+    my @path = ('', defined $pre ? $pre : ());
+
+    # Add on the Category URI.
+    push @path, $cat->ancestry_path if $cat;
+
+    # Add the post value.
+    push @path, $post if $post;
+
+    # Add the name.
+    (my $file = $self->_get('name')) =~ s/\W+/_/g;
+
+    # Return the filename.
+    return Bric::Util::Trans::FS->cat_uri(@path, $file);
+};
+
+=back
 
 =cut
 
