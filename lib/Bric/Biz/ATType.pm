@@ -7,15 +7,15 @@ Bric::Biz::ATType - A class to represent AssetType types.
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.4 $, 10, -1);
 
 =head1 DATE
 
-$Date: 2001-09-27 12:09:16 $
+$Date: 2001-09-28 08:06:54 $
 
 =head1 SYNOPSIS
 
@@ -433,7 +433,7 @@ sub my_meths {
     my $sel = [];
     my $classes = Bric::Util::Class->pkg_href;
     while (my ($k, $v) = each %$classes) {
-	next unless $k =~ /^ce::bc::asset::business::/;
+	next unless $k =~ /^bric::biz::asset::business::/;
 	my $d = [ $v->get_id, $v->get_disp_name ];
 	$d->[1] = 'Other Media' if $v->get_key_name eq 'media';
 	push @$sel, $d;
@@ -870,7 +870,10 @@ L<perl>, L<Bric>, L<Bric::Biz::AssetType>
 =head1 REVISION HISTORY
 
 $Log: ATType.pm,v $
-Revision 1.3  2001-09-27 12:09:16  wheeler
+Revision 1.4  2001-09-28 08:06:54  wheeler
+Fixed bug in collecting a list of classes in my_meths().
+
+Revision 1.3  2001/09/27 12:09:16  wheeler
 Added ORDER BY clause to the SELECT statement.
 
 Revision 1.2  2001/09/06 22:30:06  samtregar
