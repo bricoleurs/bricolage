@@ -107,6 +107,11 @@ and Find Media interfaces. Also added a preference to select Simple or
 Advanced search in Find Stories/Media the default search when you go to
 those screens. [Scott]
 
+=item *
+
+Added "Check all" button to select all the select checkboxes on
+publish desks or My Workspace. [Scott]
+
 =back
 
 =head2 Bug Fixes

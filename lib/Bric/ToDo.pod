@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.108 $
+$Revision: 1.109 $
 
 =head1 DATE
 
-$Date: 2003-08-18 16:59:59 $
+$Date: 2003-08-24 14:48:53 $
 
 =head1 DESCRIPTION
 
@@ -223,12 +223,6 @@ Port installation system to use Module::Build.
 
 Add desk paging, such that the assets on a given desk (or My Workspace) can be
 viewed across a series of pages.
-
-=item *
-
-Add "Check all" button that uses JS to select all the select checkboxes on a
-publish desk and My Workspace. There's a button in My Alerts that can be copied
-for this purpose.
 
 =item *
 

@@ -3,6 +3,8 @@
     <td align="right">
       <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border=0 name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
 % if (!$desk || ($desk && $desk->can_publish)) {
+      <a href="#" onClick="checkAll('<% $checkbox_name %>');"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
+
 %#      <input type="image" src="/media/images/<% "$lang_key/$act_cb" %>_<% $mod %>_<% $color2 %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
       <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border=0 name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
 % }

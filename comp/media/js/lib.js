@@ -674,3 +674,17 @@ function cleanLeftOpt(opt) {
         }
     }
 }
+
+/*
+Check all the checkboxes whose name matches "str"
+*/
+function checkAll(str) {
+    for (var i=0; i < document.forms.length; i++) {
+        var tmp = document.forms[i];
+        for (var j=0; j < tmp.elements.length; j++) {
+            if (tmp.elements[j].type == "checkbox" && tmp.elements[j].name.indexOf(str) != -1) {
+                tmp.elements[j].checked = true
+            }
+        }
+    }
+}
