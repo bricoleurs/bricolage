@@ -7,15 +7,15 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 =head1 VERSION
 
-$Revision: 1.39.2.27 $
+$Revision: 1.39.2.28 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.39.2.27 $ )[-1];
+our $VERSION = (qw$Revision: 1.39.2.28 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-11-25 19:47:56 $
+$Date: 2004-05-03 15:25:17 $
 
 =head1 SYNOPSIS
 
@@ -327,7 +327,7 @@ use constant PARAM_WHERE_MAP =>
       cover_date_end        => 's.cover_date <= ?',
       expire_date_start     => 's.expire_date >= ?',
       expire_date_end       => 's.expire_date <= ?',
-      desk_id               => 's.desk_id = ?',
+      desk_id               => 's.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
