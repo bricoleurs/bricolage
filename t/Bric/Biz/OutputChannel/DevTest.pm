@@ -53,7 +53,7 @@ sub test_lookup : Test(14) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(71) {
+sub test_list : Test(75) {
     my $self = shift;
     # Create a new output channel group.
     ok( my $grp = Bric::Util::Grp::OutputChannel->new
@@ -177,6 +177,16 @@ sub test_list : Test(71) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $ocs[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @ocs = Bric::Biz::OutputChannel->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @ocs, 2, "Check for 2 output channels" );
+
 
     # Try include_parent_id.
     ok( @ocs = Bric::Biz::OutputChannel->list

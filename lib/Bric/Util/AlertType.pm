@@ -6,16 +6,16 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-02-28 20:22:04 $
 
 =head1 SYNOPSIS
 
@@ -2294,7 +2294,8 @@ sub save {
         $self->SUPER::save;
         unless ($self->_get('active')) {
             # Deactivate all group memberships if we've deactivated the at.
-            foreach my $grp (Bric::Util::Grp::AlertType->list({ obj => $self })) {
+            foreach my $grp (Bric::Util::Grp::AlertType->list
+                             ({ obj => $self, permanent => 0 })) {
                 foreach my $mem ($grp->has_member({ obj => $self })) {
                     next unless $mem;
                     $mem->deactivate;
@@ -2527,7 +2528,8 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my $tables = "$table a, $mem_table m, $map_table c";
-    my @wheres = ('a.id = c.object_id','c.member__id = m.id');
+    my @wheres = ('a.id = c.object_id','c.member__id = m.id',
+                  'm.active = 1');
     push @wheres, 'a.del = 0' if defined $params->{id};
     my @params;
     while (my ($k, $v) = each %$params) {
@@ -2538,7 +2540,7 @@ $get_em = sub {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
             push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
-                           'm2.grp__id = ?');
+                           'm2.active = 1', 'm2.grp__id = ?');
             push @params, $v;
         } else {
             push @wheres, "LOWER(a.$k) LIKE ?";

@@ -32,15 +32,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-14 18:08:12 $
+$Date: 2003-02-28 20:22:03 $
 
 =head1 SYNOPSIS
 
@@ -174,28 +174,31 @@ sub serialize_elements {
 
     # output element data
     $writer->startTag("elements");
-    my $element = $object->get_tile();
+    my $element = $object->get_tile;
     my $elems = $element->get_elements;
-    my $diff =  $elems->[-1]->get_place - scalar @$elems + 1;
 
-    # first serialize all data elements
-    foreach my $e (@$elems) {
-        next if $e->is_container;
-        push(@related, _serialize_tile(writer  => $writer,
-                                       element => $e,
-                                       args    => $options{args},
-                                       diff    => $diff,
-                                      ));
-    }
+    if (@$elems) {
+        my $diff =  $elems->[-1]->get_place - scalar @$elems + 1;
 
-    # then all containers
-    foreach my $e (@$elems) {
-        next unless $e->is_container;
-        push(@related, _serialize_tile(writer  => $writer,
-                                       element => $e,
-                                       args    => $options{args},
-                                       diff    => $diff,
-                                     ));
+        # first serialize all data elements
+        foreach my $e (@$elems) {
+            next if $e->is_container;
+            push(@related, _serialize_tile(writer  => $writer,
+                                           element => $e,
+                                           args    => $options{args},
+                                           diff    => $diff,
+                                          ));
+        }
+
+        # then all containers
+        foreach my $e (@$elems) {
+            next unless $e->is_container;
+            push(@related, _serialize_tile(writer  => $writer,
+                                           element => $e,
+                                           args    => $options{args},
+                                           diff    => $diff,
+                                          ));
+        }
     }
 
     $writer->endTag("elements");

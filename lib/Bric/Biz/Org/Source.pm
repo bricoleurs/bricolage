@@ -6,16 +6,16 @@ Bric::Biz::Org::Source - Manages content sources.
 
 =head1 VERSION
 
-$Revision: 1.14 $
+$Revision: 1.15 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.14 $ )[-1];
+our $VERSION = (qw$Revision: 1.15 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:25 $
+$Date: 2003-02-28 20:21:54 $
 
 =head1 SYNOPSIS
 
@@ -1106,9 +1106,10 @@ sub save {
             WHERE  id = ?
         }, undef, DEBUG);
         execute($upd, $self->_get(@PROPS, 'src_id'));
-        unless ($self->_get('active')) {
+        unless ($act) {
             # Deactivate all group memberships if we've deactivated the source.
-            foreach my $grp (Bric::Util::Grp::Source->list({ obj => $self })) {
+            foreach my $grp (Bric::Util::Grp::Source->list
+                             ({ obj => $self, permanent => 0 })) {
                 foreach my $mem ($grp->has_member({ obj => $self })) {
                     next unless $mem;
                     $mem->deactivate;
@@ -1212,7 +1213,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'source s, org o, member m, source_member c';
     my $wheres = 's.org__id = o.id AND s.id = c.object_id ' .
-      'AND m.id = c.member__id';
+      'AND m.active = 1 AND m.id = c.member__id';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'expire') {
@@ -1230,8 +1231,8 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, source_member c2";
-            $wheres .= " AND s.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.grp__id = ?";
+            $wheres .= " AND s.id = c2.object_id AND c2.member__id = m2.id " .
+              "AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # We're horked.

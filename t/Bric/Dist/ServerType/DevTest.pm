@@ -40,7 +40,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(38) {
+sub test_list : Test(42) {
     my $self = shift;
 
     # Create a new destination group.
@@ -98,7 +98,7 @@ sub test_list : Test(38) {
 
     # Try grp_id.
     ok( @dests = Bric::Dist::ServerType->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+        "Look up grp_id '$grp_id'" );
     is( scalar @dests, 3, "Check for 3 destinations" );
 
     # Make sure we've got all the Group IDs we think we should have.
@@ -108,6 +108,16 @@ sub test_list : Test(38) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $dests[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @dests = Bric::Dist::ServerType->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @dests, 2, "Check for 2 destinations" );
+
 
     # Try move_method.
     ok( @dests = Bric::Dist::ServerType->list

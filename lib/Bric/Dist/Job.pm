@@ -6,16 +6,16 @@ Bric::Dist::Job - Manages Bricolage distribution jobs.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-02-28 20:21:59 $
 
 =head1 SYNOPSIS
 
@@ -1743,7 +1743,8 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'job a, member m, job_member c';
-    my $wheres = 'a.id = c.object_id AND m.id = c.member__id';
+    my $wheres = 'a.id = c.object_id AND m.id = c.member__id AND ' .
+      'm.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -1772,7 +1773,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, job_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.grp__id = ?";
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # It's a date column.

@@ -31,7 +31,7 @@ sub test_lookup : Test(12) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(34) {
+sub test_list : Test(38) {
     my $self = shift;
 
     # Create a new job group.
@@ -63,7 +63,7 @@ sub test_list : Test(34) {
 
     # Try grp_id.
     ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+        "Look up grp_id '$grp_id'" );
     is( scalar @prefs, 4, "Check for 4 prefs" );
 
     # Make sure we've got all the Group IDs we think we should have.
@@ -73,6 +73,16 @@ sub test_list : Test(34) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $prefs[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be three using grp_id.
+    ok( @prefs = Bric::Util::Pref->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @prefs, 3, "Check for 3 prefs" );
+
 
     # Try val_name.
     ok( @prefs = Bric::Util::Pref->list

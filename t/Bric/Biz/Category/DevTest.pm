@@ -37,7 +37,7 @@ sub test_lookup : Test(7) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(24) {
+sub test_list : Test(28) {
     my $self = shift;
 
     # Create a new category group.
@@ -74,14 +74,11 @@ sub test_list : Test(24) {
     is( scalar @cats, 5, "Check for 5 categories" );
 
     # Try grp_id.
-    my $all_grp_id = Bric::Biz::Category::INSTANCE_GROUP_ID;
-    ok( @cats = Bric::Biz::Category->list
-        ({ grp_id => $grp_id,
-           uri => "/$cat{directory}%",
-           name => "$cat{name}%" }),
-        "Look up grp_id $grp_id" );
+    ok( @cats = Bric::Biz::Category->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id'" );
     is( scalar @cats, 3, "Check for 3 categories" );
     # Make sure we've got all the Group IDs we think we should have.
+    my $all_grp_id = Bric::Biz::Category::INSTANCE_GROUP_ID;
     foreach my $cat (@cats) {
         my %grp_ids = map { $_ => 1 } @{ $cat->get_grp_ids };
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
@@ -89,11 +86,21 @@ sub test_list : Test(24) {
 
     }
 
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $cats[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @cats = Bric::Biz::Category->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @cats, 2, "Check for 2 categories" );
+
     # Try parent_id. The root category shouldn't return itself, but should
     # return all of its children, of course.
     ok( @cats = Bric::Biz::Category->list({ parent_id => 0 }),
         "Look up parent_id 0" );
     is( scalar @cats, 5, "Check for 5 categories" );
+
 }
 
 1;

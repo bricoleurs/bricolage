@@ -8,18 +8,18 @@ Bric::Biz::Person::User - Interface to Bricolage User Objects
 
 =head1 VERSION
 
-$Revision: 1.19 $
+$Revision: 1.20 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.19 $ )[-1];
+our $VERSION = (qw$Revision: 1.20 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:25 $
+$Date: 2003-02-28 20:21:56 $
 
 =head1 SYNOPSIS
 
@@ -1313,7 +1313,8 @@ sub save {
         execute($upd, $self->_get(@uprops, 'id'));
         unless ($act) {
             # Deactivate all group memberships if we've deactivated the user.
-            foreach my $grp (Bric::Util::Grp::User->list({ obj => $self })) {
+            foreach my $grp (Bric::Util::Grp::User->list
+                             ({ obj => $self, permanent => 0 })) {
                 foreach my $mem ($grp->has_member({ obj => $self })) {
                     next unless $mem;
                     $mem->deactivate;
@@ -1416,7 +1417,8 @@ Bric::Biz::Person.
 $get_em = sub {
     my ($pkg, $args, $ids) = @_;
     my $tables = 'person p, usr u, member m, user_member c';
-    my $wheres = 'p.id = u.id AND u.id = c.object_id AND c.member__id = m.id';
+    my $wheres = 'p.id = u.id AND u.id = c.object_id AND ' .
+      'c.member__id = m.id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$args) {
         if ($k eq 'id') {
@@ -1428,7 +1430,7 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, user_member c2";
             $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.grp__id = ?";
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } else {
             $wheres .= " AND LOWER(p.$k) LIKE ?";

@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.35 $
+$Revision: 1.36 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.35 $ )[-1];
+our $VERSION = (qw$Revision: 1.36 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-27 20:35:38 $
+$Date: 2003-02-28 20:22:05 $
 
 =head1 SYNOPSIS
 
@@ -2746,7 +2746,8 @@ this function must be called from a subclass.
 
 sub _do_list {
     my ($class, $criteria, $ids, @params) = @_;
-    my @wheres = ('g.id = c.object_id', 'c.member__id = m.id');
+    my @wheres = ('g.id = c.object_id', 'c.member__id = m.id',
+                  'm.active = 1');
     my $tables = "grp g, member m, grp_member c";
     # If an object is passed then we have to join to the member table again.
     if (($criteria->{obj}) ||
@@ -2768,7 +2769,7 @@ sub _do_list {
         # build the query
         $tables .= ", member mm, $motable mo";
         push @wheres, ( "mo.object_id = ? ", 'mo.member__id = mm.id',
-                        'mm.grp__id = g.id');
+                        'mm.grp__id = g.id', 'mm.active = 1');
         push @params, $obj_id;
 
         # If an active param has been passed in add it here remember that
@@ -2821,7 +2822,7 @@ sub _do_list {
     if (exists $criteria->{grp_id}) {
         $tables .= ", member m2, grp_member c2";
         push @wheres, ("g.id = c2.object_id", "c2.member__id = m2.id",
-                       "m2.grp__id = ?");
+                       "m2.active = 1", "m2.grp__id = ?");
         push @params, $criteria->{grp_id};
     }
 

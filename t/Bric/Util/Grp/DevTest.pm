@@ -68,7 +68,7 @@ sub test_lookup : Test(14) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(36) {
+sub test_list : Test(40) {
     my $self = shift;
     ok( my @grps = Bric::Util::Grp->list({ name => 'All%' }),
         "get all All groups" );
@@ -123,16 +123,25 @@ sub test_list : Test(36) {
     is( scalar @grps, 5, "Check for 5 groups" );
 
     # Try grp_id.
-    my $all_grp_id = Bric::Util::Grp::INSTANCE_GROUP_ID;
     ok( @grps = Bric::Util::Grp->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+        "Look up grp_id '$grp_id'" );
     is( scalar @grps, 3, "Check for 3 groups" );
     # Make sure we've got all the Group IDs we think we should have.
+    my $all_grp_id = Bric::Util::Grp::INSTANCE_GROUP_ID;
     foreach my $grp (@grps) {
         my %grp_ids = map { $_ => 1 } $grp->get_grp_ids;
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grpgrp->has_member({ obj => $grps[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @grps = Bric::Util::Grp->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @grps, 2, "Check for 2 groups" );
 
     # Try obj + all (so that it also returns the "All Groups" secret group.
     my $gid = $grps[0]->get_id;

@@ -31,7 +31,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(32) {
+sub test_list : Test(36) {
     my $self = shift;
 
     # Create a new element group.
@@ -70,8 +70,7 @@ sub test_list : Test(32) {
 
     # Try grp_id.
     my $all_grp_id = Bric::Biz::AssetType::INSTANCE_GROUP_ID;
-    ok( @elems = Bric::Biz::AssetType->list
-        ({ grp_id => $grp_id }),
+    ok( @elems = Bric::Biz::AssetType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
     is( scalar @elems, 3, "Check for 3 elements" );
     # Make sure we've got all the Group IDs we think we should have.
@@ -80,6 +79,15 @@ sub test_list : Test(32) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $elems[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @elems = Bric::Biz::AssetType->list({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @elems, 2, "Check for 2 elements" );
 
     # Try output channel.
     ok( @elems = Bric::Biz::AssetType->list({ output_channel => 1 }),

@@ -54,7 +54,7 @@ sub test_lookup : Test(7) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(44) {
+sub test_list : Test(48) {
     my $self = shift;
 
     # Create a new job group.
@@ -114,7 +114,7 @@ sub test_list : Test(44) {
 
     # Try grp_id.
     ok( @jobs = Bric::Dist::Job->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+        "Look up grp_id '$grp_id'" );
     is( scalar @jobs, 3, "Check for 3 jobs" );
 
     # Make sure we've got all the Group IDs we think we should have.
@@ -124,6 +124,15 @@ sub test_list : Test(44) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $jobs[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @jobs = Bric::Dist::Job->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @jobs, 2, "Check for 2 jobs" );
 
     # Try user_id.
     my $uid = $self->user_id;

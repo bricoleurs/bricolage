@@ -6,16 +6,16 @@ Bric::Biz::Person - Interface to Bricolage Person Objects
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-02-28 20:21:51 $
 
 =head1 SYNOPSIS
 
@@ -1686,7 +1686,8 @@ sub save {
         execute($upd, $self->_get(@props), $id);
         unless ($self->_get('_active')) {
             # Deactivate all group memberships if we've deactivated the person.
-            foreach my $grp (Bric::Util::Grp::Person->list({ obj => $self })) {
+            foreach my $grp (Bric::Util::Grp::Person->list
+                             ({ obj => $self, permanent => 0 })) {
                 foreach my $mem ($grp->has_member({ obj => $self })) {
                     next unless $mem;
                     $mem->deactivate;
@@ -1801,7 +1802,7 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             $extra_tables = ", $mem_table m2, $map_table c2";
             $extra_wheres = "AND p.id = c2.object_id AND " .
-              "c2.member__id = m2.id";
+              "m2.active = 1 AND c2.member__id = m2.id";
             push @wheres, "m2.grp__id = ?";
             push @params, $v;
         } else {
@@ -1819,7 +1820,7 @@ $get_em = sub {
     my $sel = prepare_c(qq{
         SELECT @$qry_cols
         FROM   $table p, $mem_table m, $map_table c $extra_tables
-        WHERE  p.id = c.object_id AND c.member__id = m.id
+        WHERE  p.id = c.object_id AND c.member__id = m.id and m.active = 1
                $extra_wheres AND $where
         ORDER BY $order
     }, undef, DEBUG);

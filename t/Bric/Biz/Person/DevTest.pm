@@ -42,7 +42,7 @@ sub test_lookup : Test(5) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(26) {
+sub test_list : Test(30) {
     my $self = shift;
     my $class = $self->test_class;
     my $grp_class = $self->test_grp_class;
@@ -99,6 +99,15 @@ sub test_list : Test(26) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $ps[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @ps = $class->list({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @ps, 2, "Check for 2 persons" );
 }
 
 1;

@@ -7,15 +7,15 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 =head1 VERSION
 
-$Revision: 1.23 $
+$Revision: 1.24 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.23 $ )[-1];
+our $VERSION = (qw$Revision: 1.24 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:24 $
+$Date: 2003-02-28 20:21:48 $
 
 =head1 SYNOPSIS
 
@@ -136,7 +136,8 @@ my $dp  = 'Bric::Util::Fault::Exception::DP';
 
 my $TABLE = 'output_channel';
 my $SEL_TABLES = "$TABLE oc, member m, output_channel_member sm";
-my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id';
+my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id ' .
+  'AND m.active = 1';
 my $SEL_ORDER = 'oc.name, oc.id';
 
 my @COLS = qw(name description pre_path post_path primary_ce filename
@@ -1559,32 +1560,6 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-my %bool_map = ( active  => 'oc.active = ?',
-                 use_slug => 'oc.use_slug = ?',
-);
-
-my %txt_map = ( name            => 'LOWER(oc.name) LIKE ?',
-                description      => 'LOWER(oc.description) LIKE ?',
-                pre_path         => 'LOWER(oc.pre_path) LIKE ?',
-                post_path        => 'LOWER(oc.post_path) LIKE ?',
-                uri_format       => 'LOWER(oc.uri_format) LIKE ?',
-                fixed_uri_format => 'LOWER(oc.fixed_uri_format) LIKE ?',
-);
-my %num_map = ( primary          => 'oc.primary_ce = ?',
-                id                => 'oc.id = ?',
-                uri_case          => 'oc.uri_case = ?',
-                server_type_id    => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM server_type__output_channel '
-                                     . 'WHERE server_type__id = ?)',
-                media_instance_id => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM media__output_channel '
-                                     . 'WHERE media_instance__id = ?)',
-                story_instance_id => 'oc.id IN (SELECT output_channel__id '
-                                     . 'FROM story__output_channel '
-                                     . 'WHERE story_instance__id = ?)',
-                include_parent_id => 'inc.output_channel__id = ?'
-);
-
 =cut
 
 sub _do_list {
@@ -1609,7 +1584,7 @@ sub _do_list {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, output_channel_member c2";
             $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.grp__id = ?";
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } elsif ($k eq 'include_parent_id') {
             # Include the parent ID.

@@ -44,7 +44,7 @@ sub test_lookup : Test(10) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(28) {
+sub test_list : Test(32) {
     my $self = shift;
     # Create a new test_valsent group.
     ok( my $grp = Bric::Util::Grp::AlertType->new
@@ -91,7 +91,7 @@ sub test_list : Test(28) {
 
     # Try grp_id.
     ok( @ats = Bric::Util::AlertType->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+        "Look up grp_id '$grp_id'" );
     is( scalar @ats, 3, "Check for 3 alert types" );
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Util::AlertType::INSTANCE_GROUP_ID;
@@ -100,6 +100,15 @@ sub test_list : Test(28) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $ats[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @ats = Bric::Util::AlertType->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @ats, 2, "Check for 2 alert types" );
 
     # Try event_type_id.
     ok( @ats = Bric::Util::AlertType->list

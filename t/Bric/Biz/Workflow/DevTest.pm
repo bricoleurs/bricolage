@@ -31,7 +31,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(26) {
+sub test_list : Test(30) {
     my $self = shift;
 
     # Create a new workflow group.
@@ -71,17 +71,26 @@ sub test_list : Test(26) {
     is( scalar @wfs, 2, "Check for 2 workflows" );
 
     # Try grp_id.
-    my $all_grp_id = Bric::Biz::Workflow::INSTANCE_GROUP_ID;
-    ok( @wfs = Bric::Biz::Workflow->list
-        ({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+    ok( @wfs = Bric::Biz::Workflow->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id'" );
     is( scalar @wfs, 3, "Check for 3 workflows" );
     # Make sure we've got all the Group IDs we think we should have.
+    my $all_grp_id = Bric::Biz::Workflow::INSTANCE_GROUP_ID;
     foreach my $wf (@wfs) {
         my %grp_ids = map { $_ => 1 } $wf->get_grp_ids;
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $wfs[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @wfs = Bric::Biz::Workflow->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @wfs, 2, "Check for 2 workflows" );
+
 
     # Try type.
     ok( @wfs = Bric::Biz::Workflow->list({ type => "$wf{type}" }),

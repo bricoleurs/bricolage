@@ -7,16 +7,16 @@ distribute content.
 
 =head1 VERSION
 
-$Revision: 1.17 $
+$Revision: 1.18 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.17 $ )[-1];
+our $VERSION = (qw$Revision: 1.18 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-18 02:30:26 $
+$Date: 2003-02-28 20:22:01 $
 
 =head1 SYNOPSIS
 
@@ -2041,7 +2041,7 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'server_type s, class c, member m, dest_member sm';
     my $wheres = 's.class__id = c.id AND s.id = sm.object_id AND ' .
-      'sm.member__id = m.id';
+      'sm.member__id = m.id AND m.active = 1';
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
@@ -2072,7 +2072,7 @@ $get_em = sub {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, dest_member sm2";
             $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
-              " AND m2.grp__id = ?";
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
         } else {
             # It's just a string comparison.

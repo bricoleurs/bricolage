@@ -270,6 +270,17 @@ Fixed duplicate URI checking for media assets so that all output channels a
 media asset is in will be checked for dupliate URIs instead of just the
 primary URI. [David]
 
+=item *
+
+Fixed bug where all sources were being deactivated from their groups every
+time they were saved. [David]
+
+=item *
+
+Fixed bug where the SOAP server would throw an exception when it attempted to
+handle elements without subelements. Thanks to Sam Tregar for the report.
+[David]
+
 =back
 
 =head1 VERSION 1.5.0

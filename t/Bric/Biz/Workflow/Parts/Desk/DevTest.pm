@@ -30,7 +30,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(26) {
+sub test_list : Test(30) {
     my $self = shift;
 
     # Create a new workflow group.
@@ -68,9 +68,8 @@ sub test_list : Test(26) {
     is( scalar @desks, 2, "Check for 2 desks" );
 
     # Try grp_id.
-    ok( @desks = Bric::Biz::Workflow::Parts::Desk->list
-        ({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
+    ok( @desks = Bric::Biz::Workflow::Parts::Desk->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id'" );
     is( scalar @desks, 3, "Check for 3 desks" );
     # Make sure we've got all the Group IDs we think we should have.
     my $all_grp_id = Bric::Biz::Workflow::Parts::Desk::INSTANCE_GROUP_ID;
@@ -79,6 +78,15 @@ sub test_list : Test(26) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $desks[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @desks = Bric::Biz::Workflow::Parts::Desk->list({ grp_id => $grp_id }),
+        "Look up grp_id '$grp_id' again" );
+    is( scalar @desks, 2, "Check for 2 desks" );
 
     # Try publish.
     ok( @desks = Bric::Biz::Workflow::Parts::Desk->list({ publish => 1 }),

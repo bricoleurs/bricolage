@@ -7,15 +7,15 @@ Bric::Biz::Category - A module to group assets into categories.
 
 =head1 VERSION
 
-$Revision: 1.43 $
+$Revision: 1.44 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.43 $ )[-1];
+our $VERSION = (qw$Revision: 1.44 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-20 21:04:57 $
+$Date: 2003-02-28 20:21:43 $
 
 =head1 SYNOPSIS
 
@@ -1327,20 +1327,20 @@ Several that need documenting!
 
 sub _do_list {
     my ($pkg, $params, $ids) = @_;
-    my (@wheres, @params);
-    my $extra_tables = '';
-    my $extra_wheres = '';
+    my $tables = "$table a, $mem_table m, $map_table c";
+    my $wheres = 'a.id = c.object_id AND c.member__id = m.id AND m.active = 1';
+    my @params;
 
     # Set up the active property.
     if (exists $params->{active}) {
         if ($params->{active} eq 'all') {
             delete $params->{active};
         } else {
-            push @wheres, "a.active = ?";
+            $wheres .= " AND a.active = ?";
             push @params, $params->{active} ? 1 : 0;
         }
     } else {
-        push @wheres, "a.active = ?";
+        $wheres .= " AND a.active = ?";
         push @params, 1;
     }
 
@@ -1348,38 +1348,35 @@ sub _do_list {
     while (my ($k, $v) = each %$params) {
 	if ($k eq 'id' or $k eq 'parent_id') {
             # It's a simple numeric comparison.
-	    push @wheres, "a.$k = ?";
+            $wheres .= "and a.$k = ?";
 	    push @params, $v;
             if ($k eq 'parent_id' and $v == ROOT_CATEGORY_ID) {
                 # We want to prevent the root category from returning itself
-                push @wheres, "a.id <> ?";
+                $wheres .= " AND a.id <> ?";
                 push @params, ROOT_CATEGORY_ID;
             }
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
-            $extra_tables = ", $mem_table m2, $map_table c2";
-            $extra_wheres = "AND a.id = c2.object_id AND " .
-              "c2.member__id = m2.id";
-            push @wheres, "m2.grp__id = ?";
+            $tables .= ", $mem_table m2, $map_table c2";
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id " .
+              " AND m2.active = 1 AND m2.grp__id = ?";
             push @params, $v;
 	} else {
             # It's a simpler string comparison.
-	    push @wheres, "LOWER(a.$k) LIKE ?";
+	    $wheres .= " AND LOWER(a.$k) LIKE ?";
 	    push @params, lc $v;
 	}
     }
 
     # Create the where clause and the select and order by clauses.
-    my $where = @wheres ? join(' AND ', @wheres) : '';
     my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', '') :
       (\$sel_cols, 'ORDER BY a.uri');
 
     # Prepare the statement.
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
-        FROM   $table a, $mem_table m, $map_table c $extra_tables
-        WHERE  a.id = c.object_id AND c.member__id = m.id
-               $extra_wheres AND $where
+        FROM   $tables
+        WHERE  $wheres
         $order
     }, undef, DEBUG);
 

@@ -36,7 +36,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(38) {
+sub test_list : Test(42) {
     my $self = shift;
 
     # Create a new element type group.
@@ -94,6 +94,15 @@ sub test_list : Test(38) {
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({ obj => $ets[0] }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @ets = Bric::Biz::ATType->list({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @ets, 2, "Check for 2 element types" );
 
     # Try active. There are 7 existing already.
     ok( @ets = Bric::Biz::ATType->list({ active => 1 }),
