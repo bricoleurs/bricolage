@@ -37,15 +37,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-22 00:38:05 $
+$Date: 2002-02-22 20:19:57 $
 
 =head1 SYNOPSIS
 
@@ -429,8 +429,8 @@ The create will fail if your story element contains non-relative
 related_story_ids or related_media_ids that do not refer to existing
 stories or media in the system.
 
-Returns a list of new ids created in the order of the assets in the
-document.
+Returns a list of new story_ids and media_ids created in the order of
+the assets in the document.
 
 Available options:
 
@@ -489,8 +489,8 @@ of the format created by export().  A common use of update() is to
 export() a selected story, make changes to one or more fields and
 then submit the changes with update(). 
 
-Returns a list of new ids created in the order of the assets in the
-document.
+Returns a list of new story_ids and media_ids updated or created in
+the order of the assets in the document.
 
 Takes the following options:
 
@@ -867,11 +867,11 @@ sub _load_stories {
     }
 
     # if we have any media objects, create them
-    my %media_ids;
+    my (%media_ids, @media_ids);
     if ($data->{media}) {	
-	my @media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
-							 internal   => 1,
-							 upload_ids => []    });
+	@media_ids = Bric::SOAP::Media->_load_media({ data       => $data,
+				                      internal   => 1,
+						      upload_ids => []    });
 
 	# correlate to relative ids
 	for (0 .. $#media_ids) {
@@ -917,7 +917,10 @@ sub _load_stories {
 	$r->{container}->save;
     }
     
-    return name(ids => [ map { name(id => $_) } @story_ids ]);
+    return name(ids => [ 
+			map { name(story_id => $_) } @story_ids,
+			map { name(media_id => $_) } @media_ids 
+		       ]);
 }
 
 =item @related = $pkg->_serialize_story(writer => $writer, story_id => $story_id, args => $args)

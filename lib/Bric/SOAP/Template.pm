@@ -38,15 +38,15 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 =head1 VERSION
 
-$Revision: 1.4 $
+$Revision: 1.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-21 20:17:06 $
+$Date: 2002-02-22 20:19:57 $
 
 =head1 SYNOPSIS
 
@@ -773,7 +773,7 @@ sub _load_template {
 	push(@template_ids, $template->get_id);
     }
 
-    return name(ids => [ map { name(id => $_) } @template_ids ]);
+    return name(ids => [ map { name(template_id => $_) } @template_ids ]);
 }
 
 =item $pkg->_serialize_template(writer => $writer, template_id => $template_id, args => $args)

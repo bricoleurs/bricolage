@@ -37,15 +37,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.6 $ )[-1];
+our $VERSION = (qw$Revision: 1.7 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-02-21 20:17:06 $
+$Date: 2002-02-22 20:19:57 $
 
 =head1 SYNOPSIS
 
@@ -771,7 +771,7 @@ sub _load_media {
 
     # return a SOAP structure unless this is an internal call
     unless ($args->{internal}) {
-	return name(ids => [ map { name(id => $_) } @media_ids ]);
+	return name(ids => [ map { name(media_id => $_) } @media_ids ]);
     }
     return @media_ids;
 }
