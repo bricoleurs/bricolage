@@ -1473,8 +1473,8 @@ B<Notes:> NONE.
 
 sub next_page_file {
     my $self = shift;
-    my ($page, $isnext) = $self->_get(qw(page more_pages));
-    return unless $isnext;
+    my ($page, $isnext, $again) = $self->_get(qw(page more_pages burn_again));
+    return unless $isnext || $again;
     return $self->page_file($page + 2);
 }
 

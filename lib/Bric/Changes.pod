@@ -28,6 +28,18 @@ such as "%" to generalize the search. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The burner C<next_page_file()> and C<next_page_uri()> methods now properly
+return a value if the C<burn_again> attribute has been set to a true value in
+the Mason burner. [David]
+
+=back
+
 =head1 VERSION 1.8.1 (2004-07-08)
 
 =head2 Improvements
