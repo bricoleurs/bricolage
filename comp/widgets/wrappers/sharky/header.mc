@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.2.2.16 $
+$Revision: 1.2.2.17 $
 
 =head1 DATE
 
-$Date: 2001-10-27 01:16:13 $
+$Date: 2001-11-16 17:05:45 $
 
 =head1 SYNOPSIS
 
@@ -187,8 +187,9 @@ if ($useSideNav) {
 	$m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
     } else {
 	my $uri = $r->uri;
+	$uri .= "&debug=$debug" if $debug;
 	# create a unique uri to defeat browser caching attempts.
-	$uri .= "&debug=$debug&rnd=" . time;
+	$uri .= "&rnd=" . time;
 	chomp $uri;
 	$m->out(qq { <img src="/media/images/spacer.gif" width=150 height=1> } ) if ($agent->{browser} eq "Netscape");
 	$m->out( qq {<$layer name="sideNav" src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" $properties>} );
