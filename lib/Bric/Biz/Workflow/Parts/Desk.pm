@@ -10,16 +10,16 @@ package Bric::Biz::Workflow::Parts::Desk;
 
 =head1 VERSION
 
-$Revision: 1.2 $
+$Revision: 1.3 $
 
 =cut
 
-our $VERSION = substr(q$Revision: 1.2 $, 10, -1);
+our $VERSION = substr(q$Revision: 1.3 $, 10, -1);
 
 
 =head1 DATE
 
-$Date: 2001-09-06 22:30:06 $
+$Date: 2001-09-26 12:07:21 $
 
 
 =head1 SYNOPSIS
@@ -1095,20 +1095,37 @@ NONE
 sub save {
     my $self = shift;
     my $id    = $self->get_id;
-    my $asset = $self->_get_grp_obj(ASSET_GRP_PKG,
-				    'asset_grp', '_asset_grp_obj');
+    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
+					    'asset_grp', '_asset_grp_obj');
 
     unless ($self->_get('_remove')) {
+	# Create the asset group for this desk if one doesn't exist.
+	unless ($asset_grp_obj) {
+	    my $dirty = $self->_get__dirty;
+	    my $desc = 'A group for holding assets for Desk objects';
+	    $asset_grp_obj = Bric::Util::Grp::Asset->new(
+							 {'name' => 'Desk Assets',
+							  'description' => $desc});
+
+	    # Throw an error if we could not create the group.
+	    my $err_msg = 'Could not create a new Grp object';
+	    die Bric::Util::Fault::Exception::DP->new({'msg' => $err_msg})
+	      unless $asset_grp_obj;
+
+	    $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
+	    $self->_set__dirty($dirty);
+	}
+
 	$self->_sync_checkin;
 	$self->_sync_checkout;
 	$self->_sync_transfer;
 
 	# Save all the grouped objects.
-	$asset->save if $asset;
+	$asset_grp_obj->save;
 	
 	# Save the IDs if we have them.
-	if ($asset and ($self->get_asset_grp != $asset->get_id)) {
-	    $self->_set(['asset_grp'], [$asset->get_id]);
+	if ($self->get_asset_grp != $asset_grp_obj->get_id) {
+	    $self->_set(['asset_grp'], [$asset_grp_obj->get_id]);
 	}
 
 	if ($self->_get__dirty) {
@@ -1119,8 +1136,7 @@ sub save {
 	    }
 	}
     } else {
-	$asset->deactivate and $asset->save if $asset;
-	
+	$asset_grp_obj->deactivate and $asset_grp_obj->save if $asset_grp_obj;
 	$self->_remove_desk;
     }
 }
@@ -1395,7 +1411,13 @@ L<Bric>, L<Bric::Biz::Workflow>, L<perl>
 =head1 REVISION HISTORY
 
 $Log: Desk.pm,v $
-Revision 1.2  2001-09-06 22:30:06  samtregar
+Revision 1.3  2001-09-26 12:07:21  wheeler
+An asset group is now created for a desk if one doesn't currently exist.
+Necessary for creating new desks and allowing them to show up in the Permissions
+UI without breaking it. It's possible that this should be done differently --
+Garth, I welcome your feedback.
+
+Revision 1.2  2001/09/06 22:30:06  samtregar
 Fixed remaining BL->App, BC->Biz conversions
 
 Revision 1.1.1.1  2001/09/06 21:54:17  wheeler
