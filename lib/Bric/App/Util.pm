@@ -7,15 +7,15 @@ Bric::App::Util - A class to house general application functions.
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-09-04 00:48:23 $
+$Date: 2002-12-06 07:35:58 $
 
 =head1 SYNOPSIS
 
@@ -464,12 +464,13 @@ sub del_redirect {
     # cookies to 2nd server build hash of cookies from blessed reference into
     # Apache::Tables
     my %cookies;
-    $HTML::Mason::Commands::r->err_headers_out->do(sub {
-            my($k,$v) = @_;     # foreach key matching Set-Cookie
-            ($k,$v) = split('=',$v,2);
-            $cookies{$k} = $v;
-            1;
-        }, 'Set-Cookie');
+    my $r = Apache::Request->instance(Apache->request);
+    $r->err_headers_out->do(sub {
+        my($k,$v) = @_;     # foreach key matching Set-Cookie
+        ($k,$v) = split('=',$v,2);
+        $cookies{$k} = $v;
+        1;
+    }, 'Set-Cookie');
 
     # get the current authorization cookie
     return $rv unless $cookies{&AUTH_COOKIE};
@@ -535,10 +536,11 @@ sub redirect {
     $HTML::Mason::Commands::m->clear_buffer;
     # The next two lines are necessary to stop Apache from re-reading
     # POSTed data.
-    $HTML::Mason::Commands::r->method('GET');
-    $HTML::Mason::Commands::r->headers_in->unset('Content-length');
-    $HTML::Mason::Commands::r->content_type('text/html');
-    $HTML::Mason::Commands::r->header_out(Location => $loc);
+    my $r = Apache::Request->instance(Apache->request);
+    $r->method('GET');
+    $r->headers_in->unset('Content-length');
+    $r->content_type('text/html');
+    $r->header_out(Location => $loc);
     $HTML::Mason::Commands::m->abort(302);
 }
 
@@ -593,7 +595,8 @@ NONE
 sub log_history {
     my $history = $HTML::Mason::Commands::session{'_history'};
 
-    my $curr = $HTML::Mason::Commands::r->uri;
+    my $r = Apache::Request->instance(Apache->request);
+    my $curr = $r->uri;
 
     # Only push this URI onto the stack if it is different than the top value
     if (!$history->[0] || $curr ne $history->[0]) {
