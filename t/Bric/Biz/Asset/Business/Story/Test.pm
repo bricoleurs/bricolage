@@ -1,7 +1,7 @@
 package Bric::Biz::Asset::Business::Story::Test;
 use strict;
 use warnings;
-use base qw(Bric::Test::Base);
+use base qw(Bric::Biz::Asset::Business::Test);
 use Test::More;
 
 # Register this class for testing.
@@ -10,11 +10,13 @@ BEGIN { __PACKAGE__->test_class }
 ##############################################################################
 # Test class loading.
 ##############################################################################
-sub test_load : Test(1) {
+sub _test_load : Test(+1) {
+    my $self = shift;
+    $self->SUPER::_test_load;
     use_ok('Bric::Biz::Asset::Business::Story');
 }
 
-
+1;
 __END__
 
 # Here is the original test script for reference. If there's something usable
