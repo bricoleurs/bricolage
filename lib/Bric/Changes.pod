@@ -135,6 +135,10 @@ Added "Super Bulk Edit", which is a bulk edit interface allowing users to
 editall of the fields in an element at once using POD-like tags, rather than
 just a single repeatable field. [Garth]
 
+=item *
+
+Added help topic for new "Super Bulk Edit" feature. [David]
+
 =back
 
 =head2 Bug Fixes
