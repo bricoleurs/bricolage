@@ -7,15 +7,15 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-17 23:49:46 $
+$Date: 2002-08-18 20:44:08 $
 
 =head1 SYNOPSIS
 
@@ -1477,7 +1477,7 @@ sub has_member {
             unless ($memb_hash) {
                 # We must build it.
                 foreach my $m ($memb_coll->get_objs) {
-                    $memb_hash->{$_->get_object_package}{$_->get_obj_id} = $_;
+                    $memb_hash->{$m->get_object_package}{$m->get_obj_id} = $m;
                 }
                 $self->_set(['_memb_hash'], [$memb_hash]);
             }
@@ -1488,7 +1488,7 @@ sub has_member {
     } else {
         # Just look it up.
         my %args = $params->{obj} ? ( object => $params->{obj} ) :
-          ( object_package => $params->{package}, object_id => $params->{id}) ;
+          ( object_package => $params->{package}, object_id => $params->{id});
         $args{grp} = $self;
         ($mem) = Bric::Util::Grp::Parts::Member->list(\%args);
         return unless $mem;
