@@ -38,15 +38,15 @@ Bric::SOAP::Story - SOAP interface to Bricolage stories.
 
 =head1 VERSION
 
-$Revision: 1.28.2.5 $
+$Revision: 1.28.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.28.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.28.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:53 $
+$Date: 2002-11-09 01:30:24 $
 
 =head1 SYNOPSIS
 
@@ -735,7 +735,7 @@ sub _load_stories {
             # is this is right way to check create access for stories?
             die __PACKAGE__ . " : access denied.\n"
                 unless chk_authz($story, CREATE, 1);
-            log_event('story_create', $story);
+            log_event('story_new', $story);
 
         } else {
             # updating - first look for a checked out version

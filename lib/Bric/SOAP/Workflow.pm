@@ -30,14 +30,14 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 # We'll use this for outputting messages.
-my %types = { story      => 'Story',
+my %types = ( story      => 'Story',
               media      => 'Media',
-              formatting => 'Template' };
+              formatting => 'Template' );
 
 # We'll use this for finding workflows.
-my %wf_types = { story      => STORY_WORKFLOW,
+my %wf_types = ( story      => STORY_WORKFLOW,
                  media      => MEDIA_WORKFLOW,
-                 formatting => TEMPLATE_WORKFLOW };
+                 formatting => TEMPLATE_WORKFLOW );
 
 =head1 NAME
 
@@ -45,15 +45,15 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflow.
 
 =head1 VERSION
 
-$Revision: 1.9.2.1 $
+$Revision: 1.9.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:54 $
+$Date: 2002-11-09 01:30:24 $
 
 =head1 SYNOPSIS
 
@@ -735,7 +735,7 @@ sub move {
             # move to new workflow
             $obj->set_workflow_id($to_workflow->get_id);
             log_event("${type}_add_workflow", $obj,
-                      { Workflow => $workflow->get_name });
+                      { Workflow => $to_workflow->get_name });
         } else {
             # might need to assign a workflow here, if this item was just
             # published, for example.

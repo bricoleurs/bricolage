@@ -38,15 +38,15 @@ Bric::SOAP::Media - SOAP interface to Bricolage media.
 
 =head1 VERSION
 
-$Revision: 1.12.2.5 $
+$Revision: 1.12.2.6 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.12.2.5 $ )[-1];
+our $VERSION = (qw$Revision: 1.12.2.6 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:53 $
+$Date: 2002-11-09 01:30:24 $
 
 =head1 SYNOPSIS
 
@@ -665,7 +665,7 @@ sub _load_media {
             # is this is right way to check create access for media?
             die __PACKAGE__ . " : access denied.\n"
                 unless chk_authz($media, CREATE, 1);
-            log_event('media_create', $media);
+            log_event('media_new', $media);
 
         } else {
             # updating - first look for a checked out version

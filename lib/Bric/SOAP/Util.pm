@@ -31,15 +31,15 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 =head1 VERSION
 
-$Revision: 1.11.2.4 $
+$Revision: 1.11.2.5 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.4 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.5 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:54 $
+$Date: 2002-11-09 01:30:24 $
 
 =head1 SYNOPSIS
 
@@ -73,7 +73,9 @@ Notes: NONE
 =cut
 
 sub category_path_to_id {
-    (Bric::Biz::Category->list_ids({ uri => shift }))[0]
+    my ($cat) = Bric::Biz::Category->list({ uri => shift })
+      or return;
+    return $cat->get_id;
 }
 
 =item $db_date = xs_date_to_db_date($xs_date)
@@ -216,7 +218,7 @@ Notes:
 
 sub deserialize_elements {
     my %options = @_;
-    $options{element} = $options{$object}->get_tile;
+    $options{element} = $options{object}->get_tile;
     return _deserialize_tile(%options);
 }
 

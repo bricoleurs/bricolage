@@ -8,6 +8,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
 use Bric::App::Session  qw(get_user_id);
 use Bric::App::Authz    qw(chk_authz READ EDIT CREATE);
+use Bric::App::Event    qw(log_event);
 use IO::Scalar;
 use XML::Writer;
 
@@ -28,15 +29,15 @@ Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
 
 =head1 VERSION
 
-$Revision: 1.11.2.1 $
+$Revision: 1.11.2.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.2 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-11-08 23:12:53 $
+$Date: 2002-11-09 01:30:24 $
 
 =head1 SYNOPSIS
 
@@ -712,7 +713,7 @@ sub _load_element {
             my @deleted;
             foreach my $f (keys %old_data) {
                 next if exists $updated_data{$f};
-                push @deleted, $f
+                push @deleted, $f;
                 log_event("element_attr_del", $element, { Name => $f });
             }
 
@@ -732,6 +733,7 @@ sub _load_element {
 
         # all done
         $element->save;
+        log_event('element_' . ($update ? 'save' : 'new'), $element);
 
         # add to list of created elements
         push(@element_ids, $element->get_id);
@@ -745,14 +747,13 @@ sub _load_element {
         foreach my $sub_name (@{$fixup{$element_name}}) {
             my ($sub_id) = Bric::Biz::AssetType->list_ids({name => $sub_name});
             die __PACKAGE__ . " : no subelement found matching " .
-                "(subelement => \"$sub_name\") ". 
+                "(subelement => \"$sub_name\") ".
                     "for element \"$element_name\".\n"
                        unless defined $sub_id;
             push @sub_ids, $sub_id;
         }
         $element->add_containers(\@sub_ids);
         $element->save;
-        log_event('element_' . ($update ? 'save' : 'new'), $element);
     }
 
     return name(ids => [ map { name(element_id => $_) } @element_ids ]);
