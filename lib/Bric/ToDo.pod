@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.22 $
+$Revision: 1.13.2.23 $
 
 =head1 DATE
 
-$Date: 2001-11-06 19:37:44 $
+$Date: 2001-11-16 22:47:45 $
 
 =head1 DESCRIPTION
 
@@ -76,6 +76,10 @@ Change the term "attribute" to "field" in the UI [Michele].
 =item *
 
 Make SSL optional (and off by default) [David or Sam].
+
+=item *
+
+Add URI to all media profile views.
 
 =back
 
