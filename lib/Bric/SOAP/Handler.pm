@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-01-24 00:19:35 $
+$Date: 2002-02-13 00:50:48 $
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ use constant SOAP_CLASSES => [qw(
 				 Bric::SOAP::Auth
 				 Bric::SOAP::Story
 				 Bric::SOAP::Media
-				 Bric::SOAP::Formatting
+				 Bric::SOAP::Template
 				 Bric::SOAP::Element
 				 Bric::SOAP::Category
 				 Bric::SOAP::Workflow
@@ -104,6 +104,8 @@ sub handler {
   my ($r) = @_;  
   my $action = $r->header_in('SOAPAction') || '';
 
+  print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
+    
   # setup user session
   Bric::App::Session::setup_user_session($r);
 
