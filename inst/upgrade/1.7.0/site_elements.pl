@@ -20,11 +20,11 @@ q{CREATE TABLE element__site (
 q{CREATE UNIQUE INDEX udx_element__site on element__site(element__id, site__id)},
 
 q{ALTER TABLE element__site ADD
-    CONSTRAINT fk_element__site_site__id FOREIGN KEY (site__id)
+    CONSTRAINT fk_site__element__site__site__id FOREIGN KEY (site__id)
     REFERENCES site(id) ON DELETE CASCADE},
 
 q{ALTER TABLE element__site ADD 
-    CONSTRAINT fk_element__site_element__id  FOREIGN KEY (element__id)
+    CONSTRAINT fk_element__element__site__element__id  FOREIGN KEY (element__id)
     REFERENCES element(id) ON DELETE CASCADE},
 
 q{INSERT INTO element__site (element__id, site__id) SELECT e.id, 100 
