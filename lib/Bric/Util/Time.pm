@@ -8,18 +8,18 @@ Bric::Util::Time - Bricolage Time & Date Functions
 
 =head1 VERSION
 
-$Revision: 1.12 $
+$Revision: 1.13 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.12 $ )[-1];
+our $VERSION = (qw$Revision: 1.13 $ )[-1];
 
 =pod
 
 =head1 DATE
 
-$Date: 2003-09-10 18:39:07 $
+$Date: 2004-03-11 21:29:15 $
 
 =head1 SYNOPSIS
 
@@ -270,7 +270,7 @@ sub local_date {
 
 Takes an ISO 8601 formatted date/time string (almost, see NOTES below)
 in the local time zone, converts it to UTC, and returns it in the
-format required by the database. If $iso_date is not provided, it
+format required by the database. If $local_date is not provided, it
 returns undef, unless $now is true, in which case it provides the
 current UTC time.  If $tz is set db_date() uses the supplied time-zone
 instead of using the local time-zone.
