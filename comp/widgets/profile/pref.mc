@@ -7,11 +7,11 @@
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =head1 DATE
 
-$Date: 2003-02-12 15:53:36 $
+$Date: 2003-02-16 00:32:05 $
 
 =head1 SYNOPSIS
 
@@ -44,6 +44,6 @@ my $name = $pref->get_name;
 $pref->set_value($param->{value});
 $pref->save;
 log_event('pref_save', $pref);
-add_msg($lang->maketext"$disp_name [_1] updated.","&quot;$name&quot;"));
+add_msg($lang->maketext("$disp_name [_1] updated.","&quot;$name&quot;"));
 set_redirect('/admin/manager/pref');
 </%init>
