@@ -13,6 +13,10 @@
 
 <p class="errorMsg"><% escape_html($fault->error) %></p>
 
+% if (isa_bric_exception($fault) and my $pay = $fault->payload) {
+<p><% $pay %></p>
+% }
+
 % if (QA_MODE or (TEMPLATE_QA_MODE and $is_burner_error)) {
 <div class="debug">
 <dl>
@@ -27,9 +31,6 @@
   <dt>Package</dt>        <dd><% $fault->package || '&nbsp;' %></dd>
   <dt>Filename</dt>       <dd><% $fault->file || '&nbsp;' %></dd>
   <dt>Line</dt>           <dd><% $fault->line || '&nbsp;' %></dd>
-%     if (isa_bric_exception($fault)) {
-  <dt>Payload</dt>        <dd><% $fault->payload || '&nbsp;' %></dd>
-%     }
 </dl>
 
 <p><b>Stack:</b></p>
