@@ -137,3 +137,5 @@ AC_SUBST(VERSION)
 # 		be handled by make, this is cheating in a way
 AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT
+
+
