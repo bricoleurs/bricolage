@@ -207,7 +207,7 @@ sub test_oc_id : Test(14) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(32) {
+sub test_alias : Test(34) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -261,14 +261,8 @@ sub test_alias : Test(32) {
       "for a target to aliasable";
 
     my $element = $ba->_get_element_object();
-    $element->add_sites([$site1]);
-    $element->save;
 
-    throws_ok { $class->new({ alias_id => $ba->get_id,
-                              site_id => $site1_id }) }
-      qr /Cannot create an alias to this asset because this element has no output channels associated with this site/,
-      "Check that the element associated to alias target has any output ".
-      "channels for this site";
+    $element->add_sites([$site1]);
 
     # Add a new output channel.
     ok( my $oc = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "1",
@@ -278,9 +272,9 @@ sub test_alias : Test(32) {
     ok( my $ocid = $oc->get_id, "Get OC ID" );
     $self->add_del_ids($ocid, 'output_channel');
 
-    $element->add_output_channels([$ocid]);
-    $element->set_primary_oc_id($ocid, $site1_id);
-    $element->save;
+    ok( $element->add_output_channels([$ocid]), "Associate OC" );
+    ok( $element->set_primary_oc_id($ocid, $site1_id), "Associate primary OC" );
+    ok( $element->save, "Save element" );
 
     ok( my $alias_asset = $class->new({ alias_id => $ba->get_id,
                                         site_id  => $site1_id,

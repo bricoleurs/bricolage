@@ -282,7 +282,7 @@ sub test_oc : Test(60) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(12) {
+sub test_site : Test(22) {
     my $self = shift;
 
     #dependant on intial values
@@ -298,6 +298,13 @@ sub test_site : Test(12) {
     my $site1_id = $site1->get_id;
     $self->add_del_ids($site1_id, 'site');
 
+    ok( my $oc1 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "1",
+                                                 site_id => $site1_id }),
+        "Create OC1" );
+    ok( $oc1->save, "Save OC1" );
+    ok( my $oc1_id = $oc1->get_id, "Get OC ID1" );
+    $self->add_del_ids($oc1_id, 'output_channel');
+
     my $site2 = Bric::Biz::Site->new( { name => "Dummy 2",
                                         domain_name => 'www.dummy2.com',
                                       });
@@ -306,6 +313,13 @@ sub test_site : Test(12) {
     ok( $site2->save(), "Create second dummy site");
     my $site2_id = $site2->get_id;
     $self->add_del_ids($site2_id, 'site');
+
+    ok( my $oc2 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "2",
+                                                 site_id => $site2_id }),
+        "Create OC2" );
+    ok( $oc2->save, "Save OC2" );
+    ok( my $oc2_id = $oc2->get_id, "Get OC ID2" );
+    $self->add_del_ids($oc2_id, 'output_channel');
 
     my $top_level_element = Bric::Biz::AssetType->lookup({id => $top_level_element_id});
     my $element           = Bric::Biz::AssetType->lookup({id => $element_id});
@@ -332,9 +346,18 @@ sub test_site : Test(12) {
     } qr /Cannot remove last site from an element/,
       "Check that you can't remove the last site";
 
-    is($site1->get_id, $top_level_element->add_site($site1)->get_id, "Add a new site");
+    is($site1->get_id, $top_level_element->add_site($site1)->get_id,
+       "Add a new site");
+    ok( $top_level_element->add_output_channels([$oc1_id]),
+        "Associate OC1" );
+    ok( $top_level_element->set_primary_oc_id($oc1_id, $site1_id),
+        "Associate primary OC1" );
 
     is($site2->get_id, $top_level_element->add_site($site2_id)->get_id, "Add a new site");
+    ok( $top_level_element->add_output_channels([$oc2_id]),
+        "Associate OC2" );
+    ok( $top_level_element->set_primary_oc_id($oc2_id, $site2_id),
+        "Associate primary OC2" );
 
     #due to bug in the coll code, one must do a save between add_sites/remove_sites
 
