@@ -8,11 +8,11 @@ select_time - A widget to facilitate time input.
 
 =head1 VERSION
 
-$Revision: 1.7 $
+$Revision: 1.8 $
 
 =head1 DATE
 
-$Date: 2002-07-11 19:47:05 $
+$Date: 2002-07-11 22:21:56 $
 
 =head1 SYNOPSIS
 
@@ -159,13 +159,6 @@ my @min  = ('00'..'59');
 
 <%init>
 
-my %fields;
-$fields{'year'} = \@year unless $no_year;
-$fields{'mon'}  = \@mon  unless $no_mon;
-$fields{'day'}  = \@day  unless $no_day;
-$fields{'hour'} = \@hour unless $no_hour;
-$fields{'min'}  = \@min  unless $no_min;
-
 my @t;
 
 # Get the date parts if a db date value was passed for a default.
@@ -195,6 +188,17 @@ $s->{'mon'}  ||= $t[1] || $def_mon || '';
 $s->{'day'}  ||= $t[2] || $def_day || '';
 $s->{'hour'} ||= $t[3] || $def_hour || '';
 $s->{'min'}  ||= $t[4] || $def_min || '';
+
+my @time = localtime;
+my @year = $t[0] ? ($t[0]-10..$t[0]+10) :  ($time[5]+1890..$time[5]+1910);
+
+my %fields;
+$fields{'year'} = \@year unless $no_year;
+$fields{'mon'}  = \@mon  unless $no_mon;
+$fields{'day'}  = \@day  unless $no_day;
+$fields{'hour'} = \@hour unless $no_hour;
+$fields{'min'}  = \@min  unless $no_min;
+
 
 set_state_data($sub_widget, $s);
 

@@ -202,6 +202,10 @@ Fixed bug where previewing a story assigned to multiple categories
 would preview to a random category.  Now the primary category is
 always chosen. [Sam]
 
+=item *
+
+Fixed display and editing of dates more than one year in the past. [Matt]
+
 =back
 
 =head1 VERSION 1.3.2
