@@ -7,8 +7,7 @@ use Bric::App::Session qw(:user);
 
 
 sub change_context : Callback {
-    my $self = shift;
-    $self->cache->set_user_cx(get_user_id(), $self->value);
+    $_[0]->cache->set_user_cx(get_user_id(), $_[0]->value);
 }
 
 1;
