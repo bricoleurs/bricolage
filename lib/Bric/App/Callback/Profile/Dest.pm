@@ -44,7 +44,6 @@ sub save : Callback {
     my @dests = $class->list_ids({ name    => $param->{name},
                                    site_id => $param->{site_id}
                                               || $dest->get_site_id });
-    warn "Dests: @dests";
     if (@dests > 1) {
         $used = 1;
     } elsif (@dests == 1 && !defined $dest_id) {
