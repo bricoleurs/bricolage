@@ -969,22 +969,18 @@ $save_data = sub {
       if exists $param->{primary_oc_id};
 
 
-    if (exists $param->{cover_date}) {
-        if ($param->{'cover_date-partial'}) {
-            add_msg('Cover Date incomplete.');
-            $data_errors = 1;
-        } else {
-            $story->set_cover_date($param->{cover_date});
-        }
+    if ($param->{'cover_date-partial'}) {
+        add_msg('Cover Date incomplete.');
+        $data_errors = 1;
+    } elsif (exists $param->{cover_date}) {
+        $story->set_cover_date($param->{cover_date});
     }
 
-    if (exists $param->{expire_date}) {
-        if ($param->{'expire_date-partial'}) {
-            add_msg('Expire Date incomplete.');
-            $data_errors = 1;
-        } else {
-            $story->set_expire_date($param->{expire_date});
-        }
+    if ($param->{'expire_date-partial'}) {
+        add_msg('Expire Date incomplete.');
+        $data_errors = 1;
+    } elsif (exists $param->{expire_date}) {
+        $story->set_expire_date($param->{expire_date});
     }
 
     $story->set_primary_category($param->{"$widget|primary_cat"})

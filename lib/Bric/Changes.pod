@@ -79,6 +79,11 @@ groups to access the members an "All" group. [David]
 
 The "none" media type is no longer editable via the UI. [David]
 
+=item *
+
+Invalid story cover and expire dates now properly trigger an error message.
+[David]
+
 =back
 
 =head1 VERSION 1.7.5 "Ashland" (2004-04-11)
