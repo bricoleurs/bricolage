@@ -161,6 +161,7 @@ if ($param->{delete} &&
 	      if $param->{fb_type} eq 'checkbox';
 
 	    # Log that we've created it.
+            log_event('element_data_new', $comp, { Name => $param->{fb_name} });
 	    log_event("${type}_attr_add", $comp, { Name => $param->{fb_name} });
 	}
 
@@ -174,6 +175,7 @@ if ($param->{delete} &&
 	foreach my $attr (keys %del_attrs) {
 	    push @$del, $data_href->{lc $attr};
 	    log_event("${type}_attr_del", $comp, { Name => $attr });
+            log_event('element_data', $comp, { Name => $attr });
 	}
 	$comp->del_data($del);
     }
@@ -248,11 +250,11 @@ if ($param->{delete} &&
 
 =head1 VERSION
 
-$Revision: 1.22.4.3 $
+$Revision: 1.22.4.4 $
 
 =head1 DATE
 
-$Date: 2003-03-29 06:33:30 $
+$Date: 2003-04-25 16:33:05 $
 
 =head1 SYNOPSIS
 

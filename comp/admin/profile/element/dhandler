@@ -155,7 +155,7 @@ if (defined $id) {
         $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 
 
-        # dislay existing attributes for this asset type
+        # display existing attributes for this asset type
         if (defined $id) {
 
             $m->comp("/widgets/wrappers/sharky/table_top.mc",
@@ -167,7 +167,6 @@ if (defined $id) {
             if (@$all_data) {
                 my $attrs = [];
                 foreach my $dataObj (sort { $a->get_place <=> $b->get_place } @$all_data) {
-                    my $attr = $dataObj->get_name;
                     my $metas = $dataObj->get_meta('html_info');
                     my $tmp;
                     foreach my $meta (keys %$metas) {
@@ -175,13 +174,15 @@ if (defined $id) {
                     }
                     $tmp->{value} = $metas->{value};
                     $tmp->{name} = $dataObj->get_name;
+                    $tmp->{id} = $dataObj->get_id;
                     push @$attrs, $tmp;
                 }
 
                 $num_fields = @$attrs;
                 $m->comp("/widgets/profile/displayAttrs.mc", form_name => 'cont_profile',
                          attr     => $attrs,
-                         readOnly => $no_edit);
+                         readOnly => $no_edit,
+                         useEdit => 1);
             } else {
                 $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
                 $lang->maketext("No fields defined"));
@@ -272,18 +273,18 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 NAME
 
-/admin/profile/contrib_type/dhandler - Container profile interface
+/admin/profile/element/dhandler - Container profile interface
 
 =head1 VERSION
 
-$Revision: 1.14.4.3 $
+$Revision: 1.14.4.4 $
 
 =head1 DATE
 
-$Date: 2003-03-28 05:07:00 $
+$Date: 2003-04-25 16:32:59 $
 
 =head1 DESCRIPTION
 
-Diplays the profile for containers.
+Displays the profile for containers.
 
 </%doc>

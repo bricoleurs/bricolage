@@ -9,6 +9,7 @@ $usePosition => 1
 $form_name   => 'theForm'
 $useDelete   => 1
 $readOnly    => 0
+$useEdit     => 0
 </%args>
 
 <%once>
@@ -76,6 +77,16 @@ foreach my $attr (@$attr) {
 		 js       => qq{onChange="reorder(this, '$form_name')"}
 		);
 	$m->out("</td>");
+    }
+
+    if ($useEdit) {
+        $m->out("</td><td width=100 align=center>\n");
+
+        my $url = '/admin/profile/element_data/' . $attr->{id};
+        my $edit_url = sprintf('<a href="%s" class=redLink>%s</a>&nbsp;',
+                               $url, $lang->maketext('Edit'));
+        $m->out($edit_url);
+        $m->out("</td>");
     }
 
     if ($useDelete) {

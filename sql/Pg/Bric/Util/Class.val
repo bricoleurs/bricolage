@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
 -- Class.val
 --
--- VERSION: $Revision: 1.2.4.1 $
+-- VERSION: $Revision: 1.2.4.2 $
 --
 -- This is the SQL that will create initial value for the class table
 --
@@ -98,7 +98,7 @@ VALUES (25, 'asset_version_grp', 'Bric::Util::Grp::AssetVersion', 'Asset Version
 --VALUES (28, 'rule_grp', 'Bric::Util::Grp::Rule', 'Keyword Rule Group', 'Keyword Rule Groups', 'Keyword rule group', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES (29, 'element_data', 'Bric::Biz::AssetType::Parts::Data', 'Element Datum', 'Element Data', 'Element Data', 0);
+VALUES (29, 'element_data', 'Bric::Biz::AssetType::Parts::Data', 'Field', 'Fields', 'Fields', 0);
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES (30, 'alert_type', 'Bric::Util::AlertType', 'Alert Type', 'Alert Types', 'Alert type', 0);
