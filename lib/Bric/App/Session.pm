@@ -7,15 +7,15 @@ Bric::App::Session - A class to handle user sessions
 
 =head1 VERSION
 
-$Revision: 1.16 $
+$Revision: 1.17 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.16 $ )[-1];
+our $VERSION = (qw$Revision: 1.17 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:40:14 $
+$Date: 2002-12-06 07:43:55 $
 
 =head1 SYNOPSIS
 
@@ -67,8 +67,6 @@ use Bric::Util::Trans::FS;
 
 use File::Path qw(mkpath);
 use Apache::Cookie;
-use Apache;
-use Apache::Request;
 
 #==============================================================================#
 # Inheritance                          #

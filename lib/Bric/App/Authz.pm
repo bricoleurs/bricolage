@@ -6,16 +6,16 @@ Bric::App::Authz - Exports functions for checking user authorization.
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.11 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.11 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-12-06 07:32:18 $
+$Date: 2002-12-06 07:43:55 $
 
 =head1 SYNOPSIS
 
@@ -50,6 +50,8 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
+use Apache;
+use Apache::Request;
 
 ################################################################################
 # Inheritance
