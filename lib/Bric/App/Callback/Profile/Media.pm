@@ -27,6 +27,9 @@ my $DESK_URL = '/workflow/profile/desk/';
 
 sub update : Callback {
     my $self = shift;
+
+    return unless $self->has_perms;
+
     my $widget = CLASS_KEY;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);

@@ -1,5 +1,7 @@
 package Bric::App::Callback::Action;
 
+# XXX: move this to Profile::Action
+
 use strict;
 
 use base qw(Bric::App::Callback);

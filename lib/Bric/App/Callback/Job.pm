@@ -1,5 +1,7 @@
 package Bric::App::Callback::Job;
 
+# move to Profile::Job
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'job');
 use strict;

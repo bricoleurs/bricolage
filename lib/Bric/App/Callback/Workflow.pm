@@ -1,5 +1,7 @@
 package Bric::App::Callback::Workflow;
 
+# move to Publish::Workflow
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'workflow');
 use strict;

@@ -1,5 +1,7 @@
 package Bric::App::Callback::Dest;
 
+# XXX: move to Publish::Dest
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'dest');
 use strict;

@@ -1,5 +1,7 @@
 package Bric::App::Callback::Grp;
 
+# XXX: move to Profile::Grp
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass(class_key => 'grp');
 use strict;

@@ -258,7 +258,7 @@ sub recall : Callback {
 sub checkout : Callback {
     my $self = shift;
 
-    my $ids = $self->request_args->{$field};
+    my $ids = $self->value;
     $ids = ref $ids ? $ids : [$ids];
 
     foreach my $t_id (@$ids) {
