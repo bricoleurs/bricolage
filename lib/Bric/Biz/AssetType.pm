@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.24 $
+$Revision: 1.25 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.24 $ )[-1];
+our $VERSION = (qw$Revision: 1.25 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-18 23:30:36 $
+$Date: 2003-01-19 01:09:26 $
 
 =head1 SYNOPSIS
 
@@ -2063,7 +2063,7 @@ sub save {
     my $grp = $self->_get_asset_type_grp;
 
     # Don't do anything unless the dirty bit is set.
-    return unless $self->_get__dirty;
+    return $self unless $self->_get__dirty;
 
     unless ($self->is_active) {
 	# Check to see if this AT is reference anywhere. If not, delete it.
