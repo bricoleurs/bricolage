@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.13.2.31 $
+$Revision: 1.13.2.32 $
 
 =head1 DATE
 
-$Date: 2001-12-04 00:29:53 $
+$Date: 2001-12-10 19:50:24 $
 
 =head1 DESCRIPTION
 
@@ -199,6 +199,13 @@ Simplify associating media with stories. Users should be able to associated
 media with stories just as they do contributors and keywords. However, the new
 media objects they upload should be put into the repository as normal media
 assets. New uploads of the same media file increment the version numbers.
+
+=item *
+
+Add a method to assets to indicate whether the current version needs publishing.
+Basically, what this method will do is return false if the current version has
+been published, and true if it has not -- even if a previous version has been
+published. Suggested method name: needs_publish().
 
 =back
 
