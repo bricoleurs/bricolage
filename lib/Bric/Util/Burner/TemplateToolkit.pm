@@ -7,15 +7,15 @@ Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish bus
 
 =head1 VERSION
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.3 $ )[-1];
+our $VERSION = (qw$Revision: 1.4 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-10-01 17:22:37 $
+$Date: 2003-10-01 17:39:12 $
 
 =head1 SYNOPSIS
 
@@ -263,11 +263,11 @@ sub burn_one {
 	my $tmpl_name = _fmt_name($element->get_name) . '.tt';
         do {
 	    # if the file exists, return it
-	    print STDERR "Trying: ", join('/',@cats),"\n";
+#	    print STDERR "Trying: ", join('/',@cats),"\n";
 
 	    foreach my $troot (@$template_roots) {
 		my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-		print STDERR "\t$path\n";
+#		print STDERR "\t$path\n";
 		if(-e $path) {
 		    $template = $path;
 		    goto LABEL;
@@ -284,6 +284,7 @@ sub burn_one {
 
     while(1) {
 
+        # XXX Throw an exception. Use throw_burn_error().
 	$tt->process($template) || die $tt->error(), "; trying to burn '$template'\n";
 	my $page = $self->_get('page') + 1;
 
@@ -312,6 +313,7 @@ sub burn_one {
     $self->_set(['_res', 'page'], [[], 0]);
     return wantarray ? @$ret : $ret;
 
+    # XXX DELETE FROM HERE TO THE END OF THE METHOD?
    # XXX Perhaps we should use and check for a subclass, instead?
     my $m = HTML::TemplateToolkit::Request->instance;
     if ($m and $m->out_method) {
