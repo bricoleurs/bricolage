@@ -40,6 +40,21 @@ fails. [David]
 A successful login no longer redirects back to the login page, thus no longer
 forcing a second redirect in such cases. Reportec by Marshall Roch. [David]
 
+=item *
+
+The C<$burner> object is now available in Mason template C<< <%once> >> blocks
+during the syntax check, although C<$story> and C<$element> are not. All three
+are in the C<< <%once> >> block during previews and publishes. This means that
+they can all be used in a C<< <%once> >> block like this:
+
+  <%once>;
+  unless ($burner->get_mode == SYNTAX_MODE) {
+      # Do stuff with $story or $template.
+  }
+  </%once>
+
+Reported by Serge Sozonoff. [David]
+
 =back
 
 =head1 VERSION 1.6.13 "Tripled" (2004-04-10)
