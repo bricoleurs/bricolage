@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.15 $
+$Revision: 1.16 $
 
 =head1 DATE
 
-$Date: 2003-10-10 10:21:49 $
+$Date: 2003-10-10 17:51:59 $
 
 =head1 SYNOPSIS
 
@@ -223,7 +223,7 @@ my $len_sub = sub {
 
 my $inpt_sub = sub {
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
-        $useTable, $label, $readOnly, $agent, $id, $extra) = @_;
+        $useTable, $label, $readOnly, $agent, $extra) = @_;
     my $class = ($type eq "text" || $type eq "password")
       ? qq{ class="textInput"} : "";
     $extra ||= '';
