@@ -5,11 +5,11 @@
 
 =head1 VERSION
 
-$Revision: 1.42 $
+$Revision: 1.43 $
 
 =head1 DATE
 
-$Date: 2003-08-18 23:21:46 $
+$Date: 2003-08-18 23:26:53 $
 
 =head1 SYNOPSIS
 
@@ -40,11 +40,6 @@ for (@context){
 }
 
 $context = join ' |',@context;
-
-if ($useSideNav) {
-    # Log this page in the URI history.
-    log_history() unless $no_hist;
-}
 
 # Figure out where we are (assume workflow).
 my ($section, $mode, $type) = parse_uri($r->uri);
