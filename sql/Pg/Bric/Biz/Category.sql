@@ -1,7 +1,7 @@
 -- Project: Bricolage
--- VERSION: $Revision: 1.1.2.2 $
+-- VERSION: $Revision: 1.1.2.3 $
 --
--- $Date: 2003-03-06 06:20:18 $
+-- $Date: 2003-03-06 15:04:03 $
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -141,6 +141,7 @@ CREATE INDEX fkx_asset_grp__category ON category(asset_grp_id);
 
 CREATE INDEX fkx_category__category_member ON category_member(object_id);
 CREATE INDEX fkx_member__category_member ON category_member(member__id);
+CREATE INDEX fkx_category__site ON category(site__id);
 
 -- Unique index on subsystem/name pair
 CREATE UNIQUE INDEX udx_attr_cat__subsys__name ON attr_category(subsys, name);
