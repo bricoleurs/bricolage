@@ -7,15 +7,15 @@ Bric::Config - A class to hold configuration settings.
 
 =head1 VERSION
 
-$Revision: 1.92 $
+$Revision: 1.93 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.92 $ )[-1];
+our $VERSION = (qw$Revision: 1.93 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-02-27 05:57:20 $
+$Date: 2004-03-02 15:34:58 $
 
 =head1 SYNOPSIS
 
@@ -89,6 +89,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     TEMPLATE_QA_MODE
                     ADMIN_GRP_ID
                     PASSWD_LENGTH
+                    PUBLISH_RELATED_ASSETS
                     LOGIN_LENGTH
                     ERROR_URI
                     ENABLE_DIST
@@ -194,6 +195,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PREVIEW_ROOT
                                      MASON_COMP_ROOT
                                      PREVIEW_MASON)],
+                    pub       => [qw(PUBLISH_RELATED_ASSETS)],
                     dist      => [qw(ENABLE_DIST
                                      QUEUE_PUBLISH_JOBS
                                      FTP_UNLINK_BEFORE_MOVE
@@ -323,7 +325,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
         }
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
-                    ALLOW_SLUGLESS_NONFIXED)) {
+                    ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -450,6 +452,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
     use constant ENABLE_SFTP_MOVER => $config->{ENABLE_SFTP_MOVER};
     use constant ENABLE_SFTP_V2 => $config->{ENABLE_SFTP_V2};
     use constant ENABLE_WEBDAV_MOVER => $config->{ENABLE_WEBDAV_MOVER};
+
+    # Publishing Settings.
+    use constant PUBLISH_RELATED_ASSETS => $config->{PUBLISH_RELATED_ASSETS};
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?

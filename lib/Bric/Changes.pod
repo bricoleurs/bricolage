@@ -209,7 +209,8 @@ unlimited. [David]
 =item *
 
 When publishing from a publish desk, you can now uncheck related assets in
-order to not publish them. [Scott]
+order to not publish them. You can also unset the C<PUBLISH_RELATED_ASSETS>
+F<bricolage.conf> directive to never publish related assets. [Scott]
 
 =back
 

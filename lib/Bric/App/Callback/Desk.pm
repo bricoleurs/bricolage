@@ -16,7 +16,7 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::Config qw(ALLOW_WORKFLOW_TRANSFER);
+use Bric::Config qw(ALLOW_WORKFLOW_TRANSFER PUBLISH_RELATED_ASSETS);
 use Bric::Util::Burner;
 use Bric::Util::Time qw(strfdate);
 
@@ -153,57 +153,58 @@ sub publish : Callback {
     push @$story, keys %$story_pub;
     push @$media, keys %$media_pub;
 
-    # make sure we don't get into circular loops
-    my %seen;
+    if (PUBLISH_RELATED_ASSETS) {
+        # make sure we don't get into circular loops
+        my %seen;
 
-    # iterate through objects looking for related media
-    while (@objs) {
-        my $a = shift @objs;
-        next unless $a;
+        # iterate through objects looking for related media
+        while (@objs) {
+            my $a = shift @objs;
+            next unless $a;
 
-        # haven't I seen you someplace before?
-        my $key = ref($a) . '.' . $a->get_id;
-        next if exists $seen{$key};
-        $seen{$key} = 1;
+            # haven't I seen you someplace before?
+            my $key = ref($a) . '.' . $a->get_id;
+            next if exists $seen{$key};
+            $seen{$key} = 1;
 
-        if ($a->get_checked_out) {
-            my $a_disp_name = lc(get_disp_name($a->key_name));
-            add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
-                    . " checked out.", $a->get_name);
-            next;
-        }
-
-        # Examine all the related objects.
-        foreach my $r ($a->get_related_objects) {
-            # Skip assets whose current version has already been published.
-            next unless $r->needs_publish();
-
-            if ($r->get_checked_out) {
-                my $r_disp_name = lc(get_disp_name($r->key_name));
-                add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
-                        . " because it is checked out.", $r->get_name);
+            if ($a->get_checked_out) {
+                my $a_disp_name = lc(get_disp_name($a->key_name));
+                add_msg("Cannot publish $a_disp_name \"[_1]\" because it is"
+                          . " checked out.", $a->get_name);
                 next;
             }
 
-	    # push onto the appropriate list
-	    if (ref $r eq $spkg) {
-		push @rel_story, $r->get_id;
-		push(@objs, $r); # recurse through related stories
-	    } else {
-		push @rel_media, $r->get_id;
-	    }
-	}
+            # Examine all the related objects.
+            foreach my $r ($a->get_related_objects) {
+                # Skip assets whose current version has already been published.
+                next unless $r->needs_publish();
+
+                if ($r->get_checked_out) {
+                    my $r_disp_name = lc(get_disp_name($r->key_name));
+                    add_msg("Cannot auto-publish related $r_disp_name \"[_1]\""
+                              . " because it is checked out.", $r->get_name);
+                    next;
+                }
+
+                # push onto the appropriate list
+                if (ref $r eq $spkg) {
+                    push @rel_story, $r->get_id;
+                    push(@objs, $r); # recurse through related stories
+                } else {
+                    push @rel_media, $r->get_id;
+                }
+            }
+        }
+
+        # Add these unpublished related assets to be published as well.
+        push @$story, @rel_story;
+        push @$media, @rel_media;
     }
 
     # For publishing from a desk, I added two new 'publish'
     # state data: 'rel_story', 'rel_media'. This is to be
     # able to distinguish between related assets and the
     # original stories to be published.
-
-    # Add these unpublished related assets to be published as well.
-    push @$story, @rel_story;
-    push @$media, @rel_media;
-
     set_state_data('publish', { story => $story,
                                 media => $media,
                                 story_pub => $story_pub,
