@@ -8,11 +8,11 @@ select_object - Provide a select box listing all objects of a certain type.
 
 =head1 VERSION
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 =head1 DATE
 
-$Date: 2001-12-04 18:17:41 $
+$Date: 2002-05-18 14:43:15 $
 
 =head1 SYNOPSIS
 
@@ -187,8 +187,8 @@ my $sub_widget .= "$widget.$object";
 if ($exclude) {
     # Convert the exclude array into a HASH ref and return as a sub ref.
     if (ref $exclude eq 'ARRAY') {
-	my %h = map { $_ => '' } @$exclude;
-	$exclude = sub { exists $h{$_[0]->get_id} };
+        my %h = map { $_ => '' } @$exclude;
+        $exclude = sub { exists $h{$_[0]->get_id} };
     }
 }
 
@@ -236,8 +236,8 @@ if ($pkg) {
     foreach my $o (@objs) {
         my $id = $o->get_id;
 
-	# Do not add excluded IDs.
-	next if $exclude && $exclude->($o);
+        # Do not add excluded IDs.
+        next if $exclude && $exclude->($o);
 
         my $val = $val_get->($o, $val_arg);
         push @vals, [$id, $val];
@@ -248,18 +248,18 @@ if ($pkg) {
 }
 
 $m->comp($style.'.html', 
-	 widget   => $widget, 
-	 object   => $object, 
-	 vals     => \@vals,
-	 width    => $width,
-	 indent   => $indent,
-	 disp     => $disp,
-	 useTable => $useTable,
-	 readOnly => $readOnly,
-	 size     => $size || @vals <= 20 ? 1 : 5,
-	 req      => $req,
-	 sel_id   => $selected,
-	 js       => $js
+         widget   => $widget, 
+         object   => $object, 
+         vals     => \@vals,
+         width    => $width,
+         indent   => $indent,
+         disp     => $disp,
+         useTable => $useTable,
+         readOnly => $readOnly,
+         size     => $size || @vals <= 20 ? 1 : 5,
+         req      => $req,
+         sel_id   => $selected,
+         js       => $js
 );
 
 </%init>
