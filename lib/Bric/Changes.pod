@@ -26,6 +26,14 @@ Added note to the context-sensitive help for the story, media, and template
 search pages to search on "/" to return all records, and to use SQL wildcards
 such as "%" to generalize the search. [David]
 
+=item *
+
+C<make upgrade> no longer copies the entire installed component root to a new
+directory as a way to get rid of old UI component files. We now require that
+any deleted component files get removed from an existing installation via an
+upgrade script, instead. See F<inst/upgrade/1.7.0/delete_old_componnets.pl>
+for an example. [David]
+
 =back
 
 =head2 Bug Fixes
