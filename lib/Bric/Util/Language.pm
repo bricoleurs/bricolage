@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.12 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.12 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-03-12 04:03:38 $
+$Date: 2003-03-12 04:59:44 $
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,7 @@ constant C<key> to your new subclass and have it return the key.
 
 Copy the localization messages from Bric::Util::Language into your new
 subclass and change the Portuguese translations of the English words and
-phrases into your languages. Make sure to use the UTF-8 character set.
+phrases into your languages. Be sure to use the UTF-8 character set.
 
 =item *
 
@@ -94,8 +94,14 @@ your new language directory and sipmly edit or recreate them in your language.
 
 Create a new subdirectory in F<comp/help> named for your language key. Copy
 all of the subdirectories and files from the F<comp/help/en_us> directory to
-your new language directory and translate them. Make sure to use the UTF-8
+your new language directory and translate them. Be sure to use the UTF-8
 character set.
+
+=item *
+
+Copy F<comp/media/js/en_us_messages.js> to a a new JavaScript file named with
+your language key substituted for "en_us". Translate the JavaScript messages
+in your new JavaScript file. Be sure to use the UTF-8 character set.
 
 =back
 
