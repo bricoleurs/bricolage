@@ -7,16 +7,16 @@ Bric::Util::Grp::Person groups, that is).
 
 =head1 VERSION
 
-$Revision: 1.11 $
+$Revision: 1.11.2.1 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.11 $ )[-1];
+our $VERSION = (qw$Revision: 1.11.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2002-08-30 22:13:43 $
+$Date: 2002-12-04 19:38:42 $
 
 =head1 SYNOPSIS
 
@@ -175,9 +175,10 @@ See Bric::Util::Grp::Parts::Member. Only my_meths() is overridden here.
 
 =over 4
 
-=item $meths = Bric::Biz::Person::User->my_meths
+=item $meths = Bric::Util::Grp::Parts::Member::Contrib->my_meths
 
-=item (@meths || $meths_aref) = Bric::Biz::Person::User->my_meths(TRUE)
+=item (@meths || $meths_aref) =
+  Bric::Util::Grp::Parts::Member::Contrib->my_meths(TRUE)
 
 Returns an anonymous hash of instrospection data for this object. If called with
 a true argument, it will return an ordered list or anonymous array of
