@@ -42,7 +42,7 @@ Improved error message in Bric::Util::Trans::SFTP. [David]
 
 Its possible to create new stories again without running into errors saying
 that a URI is not unique because the cover date and slug were accidentally
-exclued from the URI. [David]
+excluded from the URI. [David]
 
 =item *
 
