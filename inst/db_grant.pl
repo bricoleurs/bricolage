@@ -18,8 +18,9 @@ die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
 $ENV{PGPASSWORD} = $PG->{root_pass};
-$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
-$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
+$ENV{PGHOST} = $PG->{host_name}
+  if $PG->{host_name} and $PG->{host_name} ne "localhost";
+$ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE }
 
@@ -30,14 +31,13 @@ sub grant_permissions {
     print "Granting privileges...\n";
 
     # get a list of all tables and sequences that don't start with pg
-    my $sql = $PG->{version} ge '7.3' ?
+    my $sql = $PG->{version} ge '7.3'
       ? qq{
         SELECT n.nspname || '.' || c.relname
         FROM   pg_catalog.pg_class c
                LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
                LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
         WHERE  c.relkind IN ('r', 'S')
-               AND u.usename = '$PG->{root_pass}'
                AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
                AND pg_catalog.pg_table_is_visible(c.oid)
       }
