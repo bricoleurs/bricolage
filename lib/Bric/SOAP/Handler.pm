@@ -7,15 +7,15 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 =head1 VERSION
 
-$Revision: 1.20 $
+$Revision: 1.21 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.20 $ )[-1];
+our $VERSION = (qw$Revision: 1.21 $ )[-1];
 
 =head1 DATE
 
-$Date: 2004-03-26 03:04:27 $
+$Date: 2004-03-26 03:11:25 $
 
 =head1 SYNOPSIS
 
@@ -78,10 +78,7 @@ use warnings;
 use constant DEBUG => 0;
 
 # turn on tracing when debugging
-use SOAP::Lite +trace => [
-    (DEBUG ? ('all') : ()),
-    fault => sub { print STDERR Bric::Util::Fault::Exception->new(@_) }
-];
+use SOAP::Lite +trace => [ (DEBUG ? ('all') : ()), fault => \&handle_soap_err ];
 use SOAP::Transport::HTTP;
 use Bric::App::Auth;
 use Bric::App::Session;
@@ -223,6 +220,14 @@ sub handle_err {
     # Send the error to the apache error log.
     my $log = Apache->server->log;
     $log->error($text . ($more_err ? "\n\n$more_err\n" : ''));
+}
+
+sub handle_soap_err {
+    my $caller = (caller(2))[3];
+    $caller = (caller(3))[3] if $caller =~ /eval/;
+    chomp(my $msg = join ' ', @_);
+    my $log = Apache->server->log;
+    $log->error(Bric::Util::Fault::Exception->new("$caller: $msg"));
 }
 
 # silence warnings from SOAP::Lite
