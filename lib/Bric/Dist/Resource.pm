@@ -6,16 +6,16 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 
 =head1 VERSION
 
-$Revision: 1.13 $
+$Revision: 1.14 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.13 $ )[-1];
+our $VERSION = (qw$Revision: 1.14 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-07-10 09:27:47 $
+$Date: 2003-08-07 00:35:11 $
 
 =head1 SYNOPSIS
 
@@ -606,7 +606,7 @@ The number of columns to format in a textarea field.
 
 =item vals
 
-An anonymous hash of key/value pairs reprsenting the values and display names
+An anonymous hash of key/value pairs representing the values and display names
 to use in a select list.
 
 =back
@@ -1165,7 +1165,7 @@ sub is_dir { return $_[0]->_get('_is_dir') ? $_[0] : undef }
 
 =item my (@story_ids || $story_ids_aref) = $res->get_story_ids
 
-Returns a list or anonymous array of story IDs reprsenting the stories with
+Returns a list or anonymous array of story IDs representing the stories with
 which this resources is associated.
 
 B<Throws:>
