@@ -8,15 +8,15 @@ rules governing them.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.26 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.25 $ )[-1];
+our $VERSION = (qw$Revision: 1.26 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-01-19 01:09:26 $
+$Date: 2003-01-19 02:15:55 $
 
 =head1 SYNOPSIS
 
@@ -2040,8 +2040,8 @@ sub remove {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->save() 
- 
+=item $element = $element->save()
+
 This will save all of the changes to the database
 
 B<Throws:>
@@ -2060,9 +2060,16 @@ NONE
 
 sub save {
     my $self = shift;
-    my $grp = $self->_get_asset_type_grp;
 
-    # Don't do anything unless the dirty bit is set.
+    my ($id, $oc_coll) = $self->_get(qw(id _oc_coll));
+
+    # Save the group information.
+    $self->_get_asset_type_grp->save;
+
+    # Save the parts and the output channels.
+    $oc_coll->save if $oc_coll;
+
+    # Don't do anything else unless the dirty bit is set.
     return $self unless $self->_get__dirty;
 
     unless ($self->is_active) {
@@ -2073,19 +2080,13 @@ sub save {
 	}
     }
 
-    my ($id, $oc_coll) = $self->_get(qw(id _oc_coll));
     # First save the main object information
     $id ? $self->_update_asset_type : $self->_insert_asset_type;
-
 
     # Save the attribute information.
     $self->_save_attr;
 
-    # Save the group information.
-    $grp->save;
-
-    # Save the parts and the output channels.
-    $oc_coll->save if $oc_coll;
+    # Save the parts.
     $self->_sync_parts;
 
     # Call our parents save method.
@@ -2362,7 +2363,7 @@ sub _get_asset_type_grp {
     my $self = shift;
     my $atg_id  = $self->get_at_grp__id;
     my $atg_obj = $self->_get('_at_grp_obj');
-    
+
     return $atg_obj if $atg_obj;
 
     if ($atg_id) {
@@ -2372,7 +2373,7 @@ sub _get_asset_type_grp {
 	$atg_obj = Bric::Util::Grp::AssetType->new({'name' => 'AssetType Group'});
 	$atg_obj->save;
 
-	$self->_set(['at_grp__id',     '_at_grp_obj'], 
+	$self->_set(['at_grp__id',     '_at_grp_obj'],
 		    [$atg_obj->get_id, $atg_obj]);
     }
 
