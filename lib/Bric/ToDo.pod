@@ -4,11 +4,11 @@ Bric::ToDo - Bricolage To Do List
 
 =head1 VERSION
 
-$Revision: 1.112 $
+$Revision: 1.113 $
 
 =head1 DATE
 
-$Date: 2003-08-28 17:47:30 $
+$Date: 2003-08-28 18:11:09 $
 
 =head1 DESCRIPTION
 
@@ -200,7 +200,7 @@ Port installation system to use Module::Build.
 =item *
 
 Add C<Limit>, C<Offset>, C<SortBy>, and C<SortDirection> parameters to
-C<list()> in all methods. C<Limit> and C<Offset> can be added by using derived
+C<list()> in all classes. C<Limit> and C<Offset> can be added by using derived
 tables (Stephan Szabo is my hero for suggesting this -- I didn't even know it
 was possible!). Here's a quick example for person objects:
 
