@@ -63,6 +63,14 @@ performance tremendously for larger numbers of categories.  [Jeff Pinyan]
 Added new --continue-on-errors option to bric_soap to prevent
 non-fatal errors from ending the process. [Sam]
 
+=item *
+
+Beautified the list paging interface. [David]
+
+=item *
+
+Added new Media Type manager. [Scott]
+
 =over 4
 
 =back
@@ -118,6 +126,12 @@ Fixed broken "Log" link on Media Search results screen. [Sam]
 
 Fixed bug where deleted output channels were showing up in list of available
 output channels in the element profile. [David]
+
+=item *
+
+Fixed conflict in list manager that prevented some lists from working
+properly. Probably never showed up before, as we only noticed it with the new
+Media Type manager. Thanks to Scott for the heads-up. [David]
 
 =back
 
