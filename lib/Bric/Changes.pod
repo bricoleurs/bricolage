@@ -134,6 +134,11 @@ to the old names, because they're gone. [David]
 Rewrote bric_apachectl to use Perl and Bric::Config instead of a shell script.
 Also changed it so that a restart is always a hard restart. [Sam]
 
+=item *
+
+Added name of Output Channel to list of Templates in Find Templates interface.
+[David]
+
 =back
 
 =head2 Bug Fixes
