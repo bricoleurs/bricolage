@@ -7,15 +7,15 @@ Bric::Util::Language - Bricolage Localization
 
 =head1 VERSION
 
-$Revision: 1.9 $
+$Revision: 1.9.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.9 $ )[-1];
+our $VERSION = (qw$Revision: 1.9.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-12 15:52:58 $
+$Date: 2003-03-07 07:42:20 $
 
 =head1 SYNOPSIS
 
@@ -47,11 +47,7 @@ use Bric::Util::Fault::Exception::MNI;
 use base qw(Locale::Maketext);
 #use Bric::Config qw(:char);
 
-#sub maketext {
-#    my $self = shift(@_);
-#    my $value = $self->SUPER::maketext(@_);
-#    return $value;
-#}
+sub maketext { shift->SUPER::maketext(ref $_[0] ? @{$_[0]} : @_) }
 
 sub key {
     my $self = shift;

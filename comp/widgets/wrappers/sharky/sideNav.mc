@@ -8,7 +8,7 @@ $debug => undef
 my $disp = { map { $_ => get_disp_name($_) }
   qw(story media formatting) };
 my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
-  qw(story media formatting pref user grp output_channel contrib contrib_type
+  qw(story media formatting pref user grp output_channel contrib contrib_type site
      workflow category element element_type media_type source dest job alert_type) };
 
 my $printLink = sub {
@@ -267,6 +267,7 @@ foreach my $wf (@$workflows) {
               <% &$printLink('/admin/manager/pref', $uri, $pl_disp->{pref}) %>
               <% &$printLink('/admin/manager/user', $uri, $pl_disp->{user}) %>
               <% &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) %>
+              <% &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) %>
               <% &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) %>
 %# Show the change users link if we are an admin.
 %             if (user_is_admin()) {
@@ -446,10 +447,10 @@ appropriate side navigation bar.
 
 =head1 VERSION
 
-$Revision: 1.25 $
+$Revision: 1.25.2.1 $
 
 =head1 DATE
 
-$Date: 2003-02-13 16:00:39 $
+$Date: 2003-03-07 07:42:20 $
 
 </%doc>

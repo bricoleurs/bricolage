@@ -11,7 +11,7 @@ Release Version: 1.5.1 -- Development Track for 1.6.0
 
 File (CVS) Version:
 
-$Revision: 1.7.2.1 $
+$Revision: 1.7.2.2 $
 
 =cut
 
@@ -19,7 +19,7 @@ our $VERSION = "1.5.1";
 
 =head1 DATE
 
-$Date: 2003-03-05 22:40:37 $
+$Date: 2003-03-07 07:42:20 $
 
 =head1 SYNOPSIS
 
@@ -699,6 +699,9 @@ Translation to Portuguese using Lang::Maketext.
       'Clone' => 'Clone',
       'Cascade into Subcategories' => 'Cascade into Subcategories',
       'All Sites' => 'All Sites',
+      'Value of [_1] cannot be empty' => 'Value of [_1] cannot be empty',
+      'A site with the [_1] '[_2]' already exists' =>
+        'A site with the [_1] '[_2]' already exists'
   );
 
 =cut

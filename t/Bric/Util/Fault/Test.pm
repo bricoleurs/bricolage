@@ -19,5 +19,16 @@ sub test_alias : Test(8) {
     is( $err2->error, $err->error, "Caught the same exception" );
 }
 
+sub test_error : Test(6) {
+    my $self = shift;
+    eval { throw_not_unique maketext => ["Error"]; };
+    ok( my $err = $@, "Catch exception" );
+    isa_ok($err, "Bric::Util::Fault::Error::NotUnique" );
+    isa_ok($err, "Bric::Util::Fault::Error" );
+    isa_ok($err, "Bric::Util::Fault" );
+    isa_ok($err, "Exception::Class::Base" );
+    ok( eq_array( $err->maketext, ["Error"]), "Test maketext" );
+}
+
 1;
 __END__

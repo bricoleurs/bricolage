@@ -133,7 +133,8 @@ sub test_lookup : Test(20) {
     # Try too many sites by name.
     eval { Bric::Biz::Site->lookup({ name => "$init{name}%" }) };
     ok( my $err = $@, "Grab exception" );
-    ok( isa_bric_exception($err, 'DA'), "Is a DA exception" );
+    ok( isa_bric_exception($err, 'Exception::DA'),
+        "Is a Exception::DA exception" );
 
     # Try domain_name.
     my $dn = "ww1.$init{domain_name}";
@@ -149,13 +150,14 @@ sub test_lookup : Test(20) {
     # Try too many sites by domain_name.
     eval { Bric::Biz::Site->lookup({ domain_name => "ww%" }) };
     ok( $err = $@, "Grab exception" );
-    ok( isa_bric_exception($err, 'DA'), "Is a DA exception" );
+    ok( isa_bric_exception($err, 'Exception::DA'),
+        "Is a Exception::DA exception" );
 
 }
 
 ##############################################################################
 # Test list().
-sub test_list : Test(28) {
+sub test_list : Test(27) {
     my $self = shift;
 
     # Try name.
@@ -239,7 +241,7 @@ sub test_list : Test(28) {
 # Test class methods.
 ##############################################################################
 # Test list().
-sub test_list_ids : Test(25) {
+sub test_list_ids : Test(24) {
     my $self = shift;
 
     # Try name.

@@ -1,8 +1,8 @@
 -- Project:      Bricolage Business API
 -- File:    EventType.val
--- VERSION: $Revision: 1.1 $
+-- VERSION: $Revision: 1.1.2.1 $
 --
--- $Date: 2003-02-02 19:46:47 $
+-- $Date: 2003-03-07 07:42:20 $
 -- Author: David Wheeler <david@wheeler.net>
 --
 
@@ -759,4 +759,19 @@
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'keyword_deact', 'Keyword Deactivated', 'Keyword was deactivated.', 41, 1);
+
+-- ********** 'site_new' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'site_new', 'Site Created', 'Site was created.', 41, 1);
+
+-- ********** 'site_save' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'site_save', 'Site Saved', 'Site profile changes were saved.', 41, 1);
+
+-- ********** 'site_deact' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'site_deact', 'Site Deactivated', 'Site was deactivated.', 41, 1);
 

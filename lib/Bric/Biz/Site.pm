@@ -10,20 +10,20 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 
 =item Version
 
-$Revision: 1.1.2.2 $
+$Revision: 1.1.2.3 $
 
 =cut
 
 # Grab the Version Number.
-our $VERSION = (qw$Revision: 1.1.2.2 $ )[-1];
+our $VERSION = (qw$Revision: 1.1.2.3 $ )[-1];
 
 =item Date
 
-$Date: 2003-03-05 21:53:12 $
+$Date: 2003-03-07 07:42:20 $
 
 =item CVS ID
 
-$Id: Site.pm,v 1.1.2.2 2003-03-05 21:53:12 wheeler Exp $
+$Id: Site.pm,v 1.1.2.3 2003-03-07 07:42:20 wheeler Exp $
 
 =back
 
@@ -73,7 +73,8 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Grp::Site;
 use Bric::Util::DBI qw(:standard col_aref);
-use Bric::Util::Fault qw(throw_da throw_dp);
+use Bric::Util::Fault qw(throw_da throw_not_unique);
+use Bric::Config qw(:qa);
 
 ##############################################################################
 # Inheritance
@@ -155,7 +156,9 @@ B<Throws:>
 
 =over
 
-=item DA
+=item Exception::DA
+
+=item Error::NotUnique
 
 =back
 
@@ -189,7 +192,7 @@ B<Throws:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 
@@ -250,7 +253,7 @@ B<Throws:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 
@@ -277,7 +280,7 @@ B<Throws:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 
@@ -515,7 +518,7 @@ B<Throws:>
 
 =over
 
-=item DP
+=item Error::NotUnique
 
 =back
 
@@ -543,7 +546,7 @@ B<Throws:>
 
 =over
 
-=item DP
+=item Error::NotUnique
 
 =back
 
@@ -581,7 +584,7 @@ B<Thows:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 
@@ -610,7 +613,7 @@ B<Thows:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 
@@ -679,13 +682,22 @@ Used by the accessors for attributes that require a globally-unique value. The
 first argument should be the name of the attribute to be set, and the
 succeeding values.
 
+B<Throws:>
+
+=over 4
+
+=item Error::NotUnique
+
+=back
+
 =cut
 
 $set_unique_attr = sub {
     my ($field, $self, $value) = @_;
 
+    my $disp = $self->my_meths->{$field}{disp};
     # Make sure we have a value.
-    throw_dp "Value of $field attribute cannot be empty"
+    throw_not_unique maketext => ["Value of cannot be empty", $disp]
       unless $value;
 
     my $old_value = $self->_get($field);
@@ -694,7 +706,8 @@ $set_unique_attr = sub {
 
     # Check the database for any existing sites with the new value.
     if ($self->list_ids({ $field => $value })) {
-        throw_dp "A site with the attribute '$value' already exists";
+        throw_not_unique error => "Not unique", maketext =>
+          ["A site with the [_1] '[_2]' already exists", $disp, $value];
     }
 
     # Success!
@@ -731,7 +744,7 @@ B<Throws:>
 
 =over 4
 
-=item DA
+=item Exception::DA
 
 =back
 

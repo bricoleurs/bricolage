@@ -7,15 +7,15 @@ Bric::Util::Fault - Bricolage Exceptions
 
 =head1 VERSION
 
-$Revision: 1.10 $
+$Revision: 1.10.2.1 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.10 $ )[-1];
+our $VERSION = (qw$Revision: 1.10.2.1 $ )[-1];
 
 =head1 DATE
 
-$Date: 2003-02-28 00:19:22 $
+$Date: 2003-03-07 07:42:20 $
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,18 @@ emulating the previous functionality, so the above synopsis
 should still be valid, but this will change as we use more
 features of Exception::Class and try to clean exception usage
 throughout the Bricolage API code.
+
+There are currently two major classes of exceptions:
+Bric::Util::Fault::Exception and its subclasses represent fatal,
+non-recoverable errors. Exceptions of this sort are unexpected, and should be
+reported to an administrator or to the Bricolage developers.
+
+Bric::Util::Fault::Error and its subclasses represent non-fatal errors
+triggered by invalid data. These can be used to let users know that the data
+they've entered is invalid. To support this usage, Bric::Util::Fault::Error
+and its subclasses offer the C<maketext> field, which can be passed an array
+reference of values suitable for passing to Bric::Util::Language's
+C<maketext()> method.
 
 =cut
 
@@ -102,12 +114,23 @@ use Exception::Class
         isa => 'Bric::Util::Fault::Exception',
         alias => 'throw_mni',
       },
+    'Bric::Util::Fault::Error' =>
+      { description => 'Invalid data error',
+        isa => 'Bric::Util::Fault::Exception',
+        fields => [qw(maketext)],
+        alias => 'throw_error',
+      },
+    'Bric::Util::Fault::Error::NotUnique' =>
+      { description => 'Not a unique value error',
+        isa => 'Bric::Util::Fault::Error',
+        alias => 'throw_not_unique',
+      },
   );
 
 require Exporter;
 *import = \&Exporter::import;
 our @EXPORT_OK = qw(isa_bric_exception rethrow_exception throw_ap throw_da
-                    throw_dp throw_gen throw_mni);
+                    throw_dp throw_gen throw_mni throw_error throw_not_unique);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#
@@ -166,6 +189,11 @@ The exception message.
 
 Extra error information, e.g., from C<$!> or C<$@>.
 
+=item makext
+
+Supported by Bric::Util::Fault::Error and its subclasses. An array reference
+suitable for passing to Bric::Util::Language's C<maketext()> method.
+
 =back
 
 B<Throws:> NONE
@@ -183,8 +211,8 @@ instead.
 
 sub new {
     my $class = shift;
+    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
 
-    my %params = ref $_[0] ? %{$_[0]} : @_;
     $params{'env'} = {%ENV};
     $params{'error'} = delete $params{'msg'} if exists $params{'msg'};
 
@@ -401,7 +429,8 @@ B<Notes:> NONE.
 =cut
 
 sub throw {
-    my ($class, %params) = @_;
+    my $class = shift;
+    my %params = ref $_[0] ? %{$_[0]} : @_ == 1 ? ( error => $_[0] ) : @_;
 
     # please only use 'error', not 'message', with Bric exceptions :)
     if (isa_bric_exception($params{error})) {
@@ -453,14 +482,14 @@ sub isa_bric_exception {
     return unless defined $err;
 
     if ($name) {
-        my $class = "Bric::Util::Fault::Exception::$name";
+        my $class = "Bric::Util::Fault::$name";
         no strict 'refs';
 
         # XXX: shouldn't an exception be thrown here instead?
         # I've copied it from HTML::Mason::Exception.
         die "no such exception class $class"
             unless defined(${"${class}::VERSION"});
-        return UNIVERSAL::isa($err, "Bric::Util::Fault::Exception::$name");
+        return UNIVERSAL::isa($err, $class);
     } else {
         return UNIVERSAL::isa($err, "Bric::Util::Fault");
     }

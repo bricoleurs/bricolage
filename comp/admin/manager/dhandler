@@ -360,6 +360,11 @@ my $def = {
 			       field_values => $usr_sub,
 			       alter => { type => sub { $_[0] ? 'Expire' : 'Deliver' } },
 			       select => $sel_sub },
+	   site           => { list_fields => [qw(name domain_name)],
+			       behavior => 'narrow',
+			       srch_field => 'name',
+			       constrain => { active => 1 },
+			       select => $sel_sub },
 	  };
 </%once>
 <%doc>
@@ -371,11 +376,11 @@ my $def = {
 
 =head1 VERSION
 
-$Revision: 1.22.2.1 $
+$Revision: 1.22.2.2 $
 
 =head1 DATE
 
-$Date: 2003-03-06 03:44:07 $
+$Date: 2003-03-07 07:42:19 $
 
 =head1 SYNOPSIS
 

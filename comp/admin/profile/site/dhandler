@@ -1,0 +1,87 @@
+%#-- Begin HTML --#
+<& '/widgets/wrappers/sharky/header.mc',
+   title => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb"
+&>
+<form method="post" action="<% $r->uri %>" name="site_profile" onSubmit="return confirmChanges(this)">
+<%perl>;
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'site_id')
+  if defined $id;
+
+# Output the key properties.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Properties",
+	 number  => 1);
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         objref => $site,
+         fieldsUsed => { active => 1 },
+         readOnly => $no_edit);
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     section => $section,
+	     no_del => $no_del,
+	     return => "/admin/manager/site",
+	     no_save => $no_edit);
+</%perl>
+<br />
+</form>
+<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
+%#-- End HTML --#
+
+
+%#-- Once Section --#
+<%once>;
+my $section = 'admin';
+my $type = 'site';
+my $disp = get_disp_name($type);
+my $class = get_package_name($type);
+my $yes_no = sub { $_[0] ? 'Yes' : 'No'};
+my ($no_edit, $no_del);
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+
+%#-- Init Section --#
+<%init>;
+$id ||= $ARGS{site_id};
+# Instantiate an object.
+my $site = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $site->get_id;
+
+# Check authorization.
+chk_authz($site, $id ? READ : CREATE);
+$no_edit = !chk_authz($site, ($id ? EDIT : CREATE), 1);
+$no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $site->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+</%init>
+
+<%doc>
+################################################################################
+
+=head1 NAME
+
+/admin/profile/workflow/dhandler - Interface for managing site profiles.
+
+=head1 VERSION
+
+$Revision: 1.1.2.1 $
+
+=head1 DATE
+
+$Date: 2003-03-07 07:42:20 $
+
+=head1 DESCRIPTION
+
+This element handles the display for editing site profiles.
+
+</%doc>
