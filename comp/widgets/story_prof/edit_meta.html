@@ -24,105 +24,49 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 );
 
 </%perl>
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('ID') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $id %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Story Type Element') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_element_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_current_version %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_published_version || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_first_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_publish_date || '' %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
+<dl class="viewmeta">
+  <dt><% $lang->maketext('ID') %>:</dt>
+  <dd><% $id %></dd>
+  <dt><% $lang->maketext('Story Type Element') %>:</dt>
+  <dd><% $story->get_element_name %></dd>
+  <dt><% $lang->maketext('Current Version') %>:</dt>
+  <dd><% $story->get_current_version %></dd>
+  <dt><% $lang->maketext('Published Version') %>:</dt>
+  <dd><% $story->get_published_version || '' %></dd>
+  <dt><% $lang->maketext('First Published') %>:</dt>
+  <dd><% $story->get_first_publish_date || '' %></dd>
+  <dt><% $lang->maketext('Last Published') %>:</dt>
+  <dd><% $story->get_publish_date || '' %></dd>
+  <dt><% $lang->maketext('URI') %>:</dt>
 % if (@ocs == 1) {
-  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+  <dd><% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
                                     title => $short_story_uri,
                                     doc   => $story,
-                                    style => 'blackUnderlinedLink') %></td>
+                                    style => 'blackUnderlinedLink') %></dd>
 % } else {
-  <td width="470">&nbsp;
+  <dd>
 % if (!($short_story_uri eq $story_uri)) {
         <span class="shortCategory" title="<% $story->get_primary_uri %>"><% $short_story_uri %></span>
 % } else {
         <% $story_uri %>
 % }
-  </td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<%
+  </dd>
+  <dt><% $lang->maketext('Preview in') %>:</dt>
+  <dd><% $oc_select %>&nbsp;<%
                            $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
                                     title => $story->get_primary_uri,
                                     doc   => $story,
                                     oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
-                                    style => 'blackUnderlinedLink') %></td>
+                                    style => 'blackUnderlinedLink') %></dd>
 % }
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Site') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% Bric::Biz::Site->lookup({id => $story->get_site_id})->
-  get_name() %></td>
-  </tr>
-  <tr>
-  <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
-  </tr>
-</table>
+  <dt><% $lang->maketext('Site') %>:</dt>
+  <dd><% Bric::Biz::Site->lookup({id => $story->get_site_id})->
+  get_name() %></dd>
+</dl>
 
-
-
+<div class="editmeta">
 <& '/widgets/select_object/select_object.mc',
   object   => 'source',
   name     => "$widget|source__id",
@@ -132,38 +76,32 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   useTable => 1,
   disp     => "Source"
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'priority',
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'title',
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'description',
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    vals => $slug_vals,
    id => 'slug',
    key => 'slug',
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'cover_date',
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $story,
    key => 'expire_date',
 &>
-
+</div> <!-- .editmeta -->
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <%perl>;

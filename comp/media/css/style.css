@@ -368,7 +368,7 @@ form .row {
 form .row .label,
 form .row .redLabel {
     float: left;
-    width: 135px;
+    width: 130px;
     text-align: right;
     line-height: 2;
 }
@@ -456,14 +456,16 @@ table td.delete { width: 100px; text-align: center; }
 .paginate {display: block;}
 /* End hide from IE-mac */
 
-.viewmeta dt,
-.viewmeta dd { font-size: 1em; line-height: 2em; height: 2em; }
-.viewmeta dt {
+
+dl.viewmeta { margin-bottom: 3px; border-bottom: solid #999966 1px;  }
+dl.viewmeta dt,
+dl.viewmeta dd { font-size: 1em; line-height: 2em; height: 2em; }
+dl.viewmeta dt {
     float: left;
     clear: both;
     width: 130px;
     padding-right: 5px;
     text-align: right;
-    background-color: #999966;
+    background-color: #E8E8CD;
 }
-.viewmeta dd { margin-left: 140px; }
+dl.viewmeta dd { margin-left: 140px; }
