@@ -8,16 +8,16 @@ tiles
 
 =head1 VERSION
 
-$Revision: 1.18.4.1 $
+$Revision: 1.18.4.2 $
 
 =cut
 
-our $VERSION = (qw$Revision: 1.18.4.1 $ )[-1];
+our $VERSION = (qw$Revision: 1.18.4.2 $ )[-1];
 
 
 =head1 DATE
 
-$Date: 2003-04-12 21:02:28 $
+$Date: 2003-08-08 21:05:06 $
 
 =head1 SYNOPSIS
 
@@ -688,7 +688,7 @@ sub get_possible_data {
     }
 
     # Add the container tiles (the only things remaining in this hash)
-    push @parts, values %at_info;
+    @parts = sort { $a->get_place <=> $b->get_place } @parts, values %at_info;
 
     return wantarray ? @parts : \@parts;
 }

@@ -277,7 +277,7 @@ if ($at->is_related_media) {
   <td width=180 class="medHeader">
 <& /widgets/profile/select.mc, name     => $widget.'|add_element',
                                options  => $elem_opts,
-                   useTable => 0,
+                               useTable => 0,
                                multiple => 0,
                                size     => 1,
 &>
@@ -417,7 +417,7 @@ my $start = get_state_data($widget, 'start');
 # the contained tiles
 my @tiles = $tile->get_tiles();
 
-my $elem_opts;
+my $elem_opts = [];
 my $repeatable_opts = [];
 
 # the possible data options
@@ -425,7 +425,7 @@ my @pos_data = $tile->get_possible_data();
 foreach (@pos_data) {
     my $key = 'data_' . $_->get_id();
     my $disp = $_->get_meta('html_info')->{disp};
-    $elem_opts->{$key} = $disp;
+    push @$elem_opts, [ $key => $disp ];
     if ($_->get_quantifier()) {
         push @$repeatable_opts, [$_->get_name(), $disp];
     }
@@ -437,7 +437,7 @@ my @pos_cont = $tile->get_possible_containers();
 foreach (@pos_cont) {
     next unless chk_authz($_, READ, 1);
     my $key = 'cont_' . $_->get_id();
-    $elem_opts->{$key} = $_->get_name();
+    push @$elem_opts, [ $key => $_->get_name ];
 }
 
 my $at_id = $tile->get_element_id;

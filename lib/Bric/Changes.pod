@@ -62,6 +62,13 @@ Documented that the C<list_ids()> methods in Bric::Biz::Asset's subclasses
 ignore the C<Order> and C<OrderDiretion> parameters and return an unordered
 list of IDs. Reported by Clive Jones. [David]
 
+=item *
+
+The "Add Element" select list in story, media profiles now lists the fields
+that can be added in the order specified in the element profile, and then the
+subelements that can be added, instead of mixing up fields and subelements in
+alphabetical order. Thanks to JoE<atilde>o Pedro for the spot! [David]
+
 =back
 
 =head1 VERSION 1.6.2 (2003-07-28)
