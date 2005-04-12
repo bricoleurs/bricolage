@@ -52,7 +52,13 @@ precaution). Reported by Paul Orrock. [David]
 
 Stories and media documents now better pay attention to the letter case
 specification of output channels when returning URIs. Thanks to JosE<eacute>
-Castro. [Marshall]
+Castro for the spot. [Marshall]
+
+=item *
+
+Stories now properly set the letter case of file names in URIs whenC
+C<STORY_URI_WITH_FILENAME> is enabled. Reported by JosE<eacute> Castro.
+[David]
 
 =back
 

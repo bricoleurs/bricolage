@@ -171,6 +171,7 @@ use Bric::Util::Grp::Story;
 use Bric::Util::Fault qw(:all);
 use Bric::Biz::Asset::Business;
 use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Site;
 
 #==============================================================================#
@@ -1239,7 +1240,11 @@ sub get_uri {
           $oc->get_filename;
         if ($fname) {
             my $ext = $oc->get_file_ext;
-            $fname .= ".$ext" if($ext ne '');
+            $fname .= ".$ext" if $ext ne '';
+            my $uri_case = $oc->get_uri_case;
+            if ($uri_case != MIXEDCASE) {
+                $fname = $uri_case == LOWERCASE ? lc $fname : uc $fname;
+            }
             $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
         }
     }
