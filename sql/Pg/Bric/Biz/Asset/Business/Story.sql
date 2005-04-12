@@ -140,7 +140,7 @@ CREATE TABLE story__output_channel (
 
 CREATE TABLE story__category (
     id                  NUMERIC(10,0)  NOT NULL
-                                       DEFAULT NEXTVAL('seq__story_category'),
+                                       DEFAULT NEXTVAL('seq_story__category'),
     story_instance__id  NUMERIC(10,0)  NOT NULL,
     category__id        NUMERIC(10,0)  NOT NULL,
     main                NUMERIC(1,0)   NOT NULL
