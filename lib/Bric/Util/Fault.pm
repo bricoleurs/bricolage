@@ -277,7 +277,7 @@ None.
 
 =item $str = $obj->error_info;
 
-Returns $obj->as_text.
+Returns $obj->as_string.
 
 B<Throws:> NONE.
 
@@ -287,7 +287,7 @@ B<Notes:> Overloads the double-quoted string operator.
 
 =cut
 
-sub error_info { $_[0]->as_text() }
+sub error_info { $_[0]->as_string() }
 
 #------------------------------------------------------------------------------#
 
@@ -473,9 +473,9 @@ sub full_message {
 
 #------------------------------------------------------------------------------#
 
-=item $str = $obj->as_text;
+=item $str = $obj->as_string;
 
-Displays the exception object as text. Includes the output of
+Displays the exception object as a text string. Includes the output of
 C<trace_as_text()>.
 
 B<Throws:> NONE.
@@ -486,7 +486,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub as_text {
+sub as_string {
     my $self = shift;
     return sprintf("%s\n%s\n", $self->full_message, $self->trace_as_text);
 }
