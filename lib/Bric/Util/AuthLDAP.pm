@@ -105,7 +105,7 @@ sub authenticate {
 
     # Create a filter to search for the user object.
     my $filter = Net::LDAP::Filter->new(
-        sprintf "(&(&(objectclass=person)(%s=%s))%s)",
+        sprintf "(&(%s=%s)%s)",
         LDAP_UID_ATTR, $user->get_login, LDAP_FILTER
     );
 

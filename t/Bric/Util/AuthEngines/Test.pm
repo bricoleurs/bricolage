@@ -57,7 +57,7 @@ sub test_ldap_auth : Test(24) {
           "Only auth password should have been passed to bind()";
     }
 
-    my $filter = sprintf "(&(&(objectclass=person)(%s=%s))%s)",
+    my $filter = sprintf "(&(%s=%s)%s)",
       LDAP_UID_ATTR, 'rupert', LDAP_FILTER;
     isa_ok $ldap->{search}[0]{filter}, 'Net::LDAP::Filter';
     is ${$ldap->{search}[0]{filter}}, $filter,
