@@ -10,20 +10,22 @@ bric_queued - Bricolage jobs queue daemon
 
 =head1 DISCRIPTION
 
-F<bric_queued> is normally run as a daemon that polls a Bricolage jobs queue
-and executes any unexecuted jobs with a current or past scheduled time.
-Normally, (see C<-s>) all of the jobs found in a given poll are executed in
-order of their scheduled times, with the distribtion and publish jobs being
-handled by seperate sub-processes, since distribution is normally an order of
-magnitude faster than publishing.
+F<bric_queued> runs as a daemon that polls a Bricolage jobs queue and executes
+any unexecuted jobs with current or past scheduled times. Normally, (see
+C<-s>) it executes all of the jobs found in a given poll in order of their
+scheduled times with distribution and publish jobs handled by seperate
+sub-processes--since distribution is normally an order of magnitude faster
+than publishing.
 
 In cases where the program finds no jobs in the queue it will wait a specified
 amount of time (defaulting to 30 seconds) and then re-poll.
 
 B<Note:>
 
-Unlike bric_dist_mon, this is a stand-alone program that does makes no HTTP
-requests to the Bricolage Apache/mod_perl server.
+Unlike L<bric_dist_mon|bric_dist_mon>, F<bric_queued> is a stand-alone program
+that makes no HTTP requests to the Bricolage Apache/mod_perl server. This
+allows it to to publish and distribute resources in its own process without
+bogging down the Apache/mod_perl server and therefore its UI.
 
 =head1 OPTIONS
 
