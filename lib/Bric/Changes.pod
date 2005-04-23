@@ -25,6 +25,18 @@ This document lists the Changes to Bricolage introduced with each release.
 Added JavaScript code to validate that the username in the user profile does
 not have leading or trailing spaces. [David]
 
+=item *
+
+When started up by the super user, F<bric_queued> now runs as the same user as
+the Bricolage Apache server. This allows it to run as a user that isn't
+otherwise available as a login on the system (such as the typical "nobody" or
+"www" user). [David]
+
+=item *
+
+Added support for starting F<bric_queued> in the linux startup script in
+F<contrib/start_scripts/>. [David]
+
 =back
 
 =head2 Bug Fixes
