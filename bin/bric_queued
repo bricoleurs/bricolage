@@ -94,6 +94,7 @@ use POSIX 'setsid';
 use File::Spec::Functions qw(catdir);
 
 BEGIN {
+    $ENV{BRIC_QUEUED} = 1;
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
     # use $BRICOLAGE_ROOT/lib if exists
@@ -104,7 +105,7 @@ BEGIN {
         unshift @INC, $lib;
     }
     # make sure Bric is found
-    eval { require Bric };
+    eval { use Bric };
     die <<"END" if $@;
 ######################################################################
 
@@ -121,7 +122,7 @@ BEGIN {
 END
 }
 
-use Bric::Config qw(:ftp);
+use Bric::Config qw(:sys_user);
 
 if ($> == 0) {
     # Switch from root to the system user (set in bricolage.conf).

@@ -614,7 +614,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
 
     # Okay, now load the end-user's code, if any.
-    if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
+    if ($config->{PERL_LOADER} and ($ENV{MOD_PERL} || $ENV{BRIC_QUEUED})) {
         my $pkg = TEMPLATE_BURN_PKG;
         eval qq{package $pkg;
                 use Bric::Util::DBI qw(:junction);
