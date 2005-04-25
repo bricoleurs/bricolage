@@ -211,7 +211,7 @@ files and/or directories on which the job's actions will be executed.
 
 =item *
 
-server_types - An anonymous array of Bric::Dist::ServerTypeBric::Dist::ServerType
+server_types - An anonymous array of Bric::Dist::ServerType
 objects representing the types of servers for which the job must be executed.
 See Bric::Dist::ServerType for an interface for creating server types.
 
