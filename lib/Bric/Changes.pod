@@ -68,9 +68,18 @@ Castro for the spot. [Marshall]
 
 =item *
 
-Stories now properly set the letter case of file names in URIs whenC
+Stories now properly set the letter case of file names in URIs when
 C<STORY_URI_WITH_FILENAME> is enabled. Reported by JosE<eacute> Castro.
 [David]
+
+=item *
+
+The F<bricolage.conf> C<PERL_LOADER> directive now works properly with
+F<bric_queued>. [David]
+
+=item *
+
+The SFTP mover now works with C<bric_queued>. [David]
 
 =back
 
@@ -113,11 +122,6 @@ Previews on non-checked out stories and media work again. [David]
 Preview and views once again preview a story or media document as it was last
 checked in, rather than as it might be currently being worked on in a current
 checkout. [David]
-
-=item *
-
-The F<bricolage.conf> C<PERL_LOADER> directive now works properl with
-F<bric_queued>. [David]
 
 =back
 

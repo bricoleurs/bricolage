@@ -141,19 +141,23 @@ sub put_res {
 	my $hn = $s->get_host_name;
 
         # Set up the SSH arguments.
-        my @ssh_args;
+        # Make sure we're never mistaken for root. This comes up with
+        # bric_queued.
+        my @ssh_args = (privileged => 0);
         if (ENABLE_SFTP_V2 || SFTP_MOVER_CIPHER) {
-            my @args;
-            push @args, protocol => '2,1' if ENABLE_SFTP_V2;
-            push @args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
-            @ssh_args = (ssh_args => \@args);
+            push @ssh_args, protocol => '2,1' if ENABLE_SFTP_V2;
+            push @ssh_args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
         }
 
 	# Instantiate a Net::SFTP object and login.
 	my $sftp = eval{
-            Net::SFTP->new($hn, debug => DEBUG, @ssh_args,
-                           user => $s->get_login,
-                           password => $s->get_password)
+            Net::SFTP->new(
+                $hn,
+                debug    => DEBUG,
+                ssh_args => \@ssh_args,
+                user     => $s->get_login,
+                password => $s->get_password
+            )
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
