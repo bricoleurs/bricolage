@@ -104,8 +104,8 @@ BEGIN {
           "$ENV{PERL5LIB}:$lib" : $lib;
         unshift @INC, $lib;
     }
-    # make sure Bric is found
-    eval { use Bric };
+    # make sure Bric is found. Use Bric::Config to prevent warnings.
+    eval { require Bric::Config };
     die <<"END" if $@;
 ######################################################################
 
