@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_index 'idx_resource__mod_time';
+exit unless test_index 'idx_resrouce__mod_time';
 
 do_sql
   "DROP INDEX idx_resrouce__mod_time",
