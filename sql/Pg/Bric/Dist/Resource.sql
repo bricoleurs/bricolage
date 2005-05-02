@@ -59,7 +59,7 @@ CREATE TABLE story__resource(
 CREATE UNIQUE INDEX udx_resource__path__uri ON resource(path, uri);
 CREATE INDEX idx_resource__path ON resource(path);
 CREATE INDEX idx_resource__uri ON resource(uri);
-CREATE INDEX idx_resrouce__mod_time ON resource(mod_time);
+CREATE INDEX idx_resource__mod_time ON resource(mod_time);
 CREATE INDEX fkx_media_type__resource ON resource(media_type__id);
 CREATE INDEX fkx_resource__resource ON resource(parent_id);
 

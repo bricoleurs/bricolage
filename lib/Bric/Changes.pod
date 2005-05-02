@@ -81,6 +81,10 @@ F<bric_queued>. [David]
 
 The SFTP mover now works with C<bric_queued>. [David]
 
+=item *
+
+Fixed misspelled database index name. Spotted by Scott. [David]
+
 =back
 
 =cut
