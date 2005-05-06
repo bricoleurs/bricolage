@@ -141,6 +141,7 @@ use Bric::Util::Job;
 use Bric::Util::Job::Dist;
 use Bric::Util::Job::Pub;
 use Bric::Dist::Action;
+use Bric::Util::Language;
 use Bric::Dist::Action::Mover;
 use Bric::Dist::Action::Email;
 use Bric::Dist::Action::DTDValidate;
@@ -451,6 +452,9 @@ sub login {
 
     # Set up the user.
     Bric::App::Session::set_user(undef, $user);
+
+    # Set up localization.
+    Bric::Util::Language->get_handle($user->get_pref('Language'));
 }
 
 __END__

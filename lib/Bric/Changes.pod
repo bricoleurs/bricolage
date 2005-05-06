@@ -91,6 +91,10 @@ The SFTP mover now works with C<bric_queued>. [David]
 
 Fixed misspelled database index name. Spotted by Scott. [David]
 
+=item *
+
+Error messages are now properly localized in C<bric_queued>. [David]
+
 =back
 
 =cut
