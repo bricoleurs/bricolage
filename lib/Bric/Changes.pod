@@ -37,6 +37,12 @@ otherwise available as a login on the system (such as the typical "nobody" or
 Added support for starting F<bric_queued> in the linux startup script in
 F<contrib/start_scripts/>. [David]
 
+=item *
+
+The C<get_related_story()> and get_related_media() methods of the element
+class now return C<undef> in a list context when there is no related asset.
+[David]
+
 =back
 
 =head2 Bug Fixes
