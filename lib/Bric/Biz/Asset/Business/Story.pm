@@ -1412,8 +1412,7 @@ sub set_primary_category {
         if ($cats->{$c_id}->{'primary'}) {
             $cats->{$c_id}->{'primary'} = 0;
             $cats->{$c_id}->{'action'} = 'update'
-              unless $cats->{$c_id}->{action}
-              and $cats->{$c_id}->{action} eq 'insert';
+              unless $cats->{$c_id}->{action};
         }
         if ($cat_id == $c_id) {
             $cats->{$c_id}->{'primary'} = 1;

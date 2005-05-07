@@ -95,6 +95,11 @@ Fixed misspelled database index name. Spotted by Scott. [David]
 
 Error messages are now properly localized in C<bric_queued>. [David]
 
+=item *
+
+Stories updated via SOAP to change categories will no longer leave the old
+categories associated with the story. [David]
+
 =back
 
 =cut
