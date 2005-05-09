@@ -136,100 +136,84 @@ sub put_res {
     local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
 
     foreach my $s ($st->get_servers) {
-	# Skip inactive servers.
-	next unless $s->is_active;
-	my $hn = $s->get_host_name;
+        # Skip inactive servers.
+        next unless $s->is_active;
 
-        # Set up the SSH arguments.
-        # Make sure we're never mistaken for root. This comes up with
-        # bric_queued.
-        my @ssh_args = (privileged => 0);
-        if (ENABLE_SFTP_V2 || SFTP_MOVER_CIPHER) {
-            push @ssh_args, protocol => '2,1' if ENABLE_SFTP_V2;
-            push @ssh_args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
-        }
-
-	# Instantiate a Net::SFTP object and login.
-	my $sftp = eval{
-            Net::SFTP->new(
-                $hn,
-                debug    => DEBUG,
-                ssh_args => \@ssh_args,
-                user     => $s->get_login,
-                password => $s->get_password
-            )
-        };
+        # Instantiate a Net::SFTP object and login.
+        my $hn = $s->get_host_name;
+        my $sftp = eval { Net::SFTP->new($sftp_args->($s)) };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
           if $@;
 
-	# Get the document root.
-	my $doc_root = $s->get_doc_root;
+        # Get the document root.
+        my $doc_root = $s->get_doc_root;
 
-	# Now, put each file on the remote server.
-	my %dirs;
-	foreach my $r (@$res) {
-	    # Get the source and destination paths for the resource.
-	    my $src = $r->get_tmp_path || $r->get_path;
-	    # Create the destination directory if it doesn't exist and we haven't
-	    # created it already.
-	    my $dest_dir = $fs->uri_dir_name($r->get_uri);
-	    my ($status, $dirhandle);
-	    unless ($dirs{$dest_dir}) {
-		$dirhandle = eval {
-		    local $SIG{__WARN__} = $no_warn;
-		    $sftp->do_opendir($fs->cat_dir($doc_root, $dest_dir));
-		};
-		unless (defined $dirhandle) {
-		    # The directory doesn't exist.
-		    # Get the list of all of the directories.
-		    my $attrs = Net::SFTP::Attributes->new();
-		    my $subdir = $doc_root;
-		    foreach my $dir ($fs->split_uri($dest_dir)) {
-			# Create each one if it doesn't exist.
-			$subdir = $fs->cat_dir($subdir, $dir);
-			# Mark that we've created it, so we don't try to do it again.
-			$dirs{$subdir} = 1;
-			$dirhandle = eval{
-			    local $SIG{__WARN__} = $no_warn;
-			    $sftp->do_opendir($subdir);
-			};
-			unless (defined $dirhandle) {
-			    $status = eval {
-				local $SIG{__WARN__} = $no_warn;
-				$sftp->do_mkdir($subdir, $attrs);
-			    };
-			    unless (defined $status && $status == SSH2_FX_OK) {
-				my $msg = "Unable to create directory '$subdir' on"
-				  . " remote server '$hn'";
-				throw_gen(error => $msg);
-			    }
-			} else {
+        # Now, put each file on the remote server.
+        my %dirs;
+        foreach my $r (@$res) {
+            # Get the source and destination paths for the resource.
+            my $src = $r->get_tmp_path || $r->get_path;
+            # Create the destination directory if it doesn't exist and we
+            # haven't created it already.
+            my $dest_dir = $fs->uri_dir_name($r->get_uri);
+            my ($status, $dirhandle);
+            unless ($dirs{$dest_dir}) {
+                $dirhandle = eval {
+                    local $SIG{__WARN__} = $no_warn;
+                    $sftp->do_opendir($fs->cat_dir($doc_root, $dest_dir));
+                };
+                unless (defined $dirhandle) {
+                    # The directory doesn't exist.
+                    # Get the list of all of the directories.
+                    my $attrs = Net::SFTP::Attributes->new();
+                    my $subdir = $doc_root;
+                    foreach my $dir ($fs->split_uri($dest_dir)) {
+                        # Create each one if it doesn't exist.
+                        $subdir = $fs->cat_dir($subdir, $dir);
+                        # Mark that we've created it, so we don't try to do it
+                        # again.
+                        $dirs{$subdir} = 1;
+                        $dirhandle = eval{
+                            local $SIG{__WARN__} = $no_warn;
+                            $sftp->do_opendir($subdir);
+                        };
+                        unless (defined $dirhandle) {
+                            $status = eval {
+                                local $SIG{__WARN__} = $no_warn;
+                                $sftp->do_mkdir($subdir, $attrs);
+                            };
+                            unless (defined $status && $status == SSH2_FX_OK) {
+                                my $msg = "Unable to create directory '$subdir'"
+                                  . " on remote server '$hn'";
+                                throw_gen(error => $msg);
+                            }
+                        } else {
                             $sftp->do_close($dirhandle);
                         }
-		    }
-		} else {
+                    }
+                } else {
                     $sftp->do_close($dirhandle);
                 }
-	    }
-	    # Now, put the file on the server.
-	    my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
+            }
+            # Now, put the file on the server.
+            my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
             my $tmp_dest = $dest_file . '.tmp';
-	    $status = eval{
-		local $SIG{__WARN__} = $no_warn;
+            $status = eval{
+                local $SIG{__WARN__} = $no_warn;
                 $sftp->do_remove($tmp_dest) if FTP_UNLINK_BEFORE_MOVE;
                 $sftp->put($src, $tmp_dest);
                 $sftp->do_remove($dest_file) if FTP_UNLINK_BEFORE_MOVE;
                 $sftp->do_rename($tmp_dest, $dest_file);
-	    };
-	    unless (defined $status && $status == SSH2_FX_OK) {
-		my $msg = "Unable to put file '$dest_file' on remote host '$hn',"
-		  . " status '" . fx2txt($status) . "'";
-		throw_gen(error => $msg);
-	    }
-	}
-	# how do you logout???
-	undef $sftp;
+            };
+            unless (defined $status && $status == SSH2_FX_OK) {
+                my $msg = "Unable to put file '$dest_file' on remote host"
+                  . " '$hn', status '" . fx2txt($status) . "'";
+                throw_gen(error => $msg);
+            }
+        }
+        # how do you logout???
+        undef $sftp;
     }
     return 1;
 }
@@ -268,39 +252,40 @@ sub del_res {
     local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
 
     foreach my $s ($st->get_servers) {
-	# Skip inactive servers.
-	next unless $s->is_active;
-	my $hn = $s->get_host_name;
-	# Instantiate a Net::SFTP object and login.
-	my $sftp = Net::SFTP->new($hn, debug => DEBUG,
-                                  ENABLE_SFTP_V2 ? (ssh_args => [ protocol => '2,1' ]) : (),
-				  user => $s->get_login,
-				  password => $s->get_password)
-	  || throw_gen(error => "Unable to login to remote server '$hn'.");
-	# Get the document root.
-	my $doc_root = $s->get_doc_root;
-	foreach my $r (@$res) {
-	    # Get the name of the file to be deleted.
-	    my $file = $fs->cat_uri($doc_root, $r->get_uri);
-	    my $status = eval{
-		local $SIG{__WARN__} = $no_warn;
-		$sftp->do_stat($file);
-	    };
-	    if (defined $status) {
-		# It exists. Delete it.
-		$status = eval{
-		    local $SIG{__WARN__} = $no_warn;
-		    $sftp->do_remove($file);
-		};
-		unless (defined $status && $status == SSH2_FX_OK) {
-		    my $msg = "Unable to delete resource '$file' from"
+        # Skip inactive servers.
+        next unless $s->is_active;
+
+        # Instantiate a Net::SFTP object and login.
+        my $hn = $s->get_host_name;
+        my $sftp = eval { Net::SFTP->new($sftp_args->($s)) };
+        throw_gen error   => "Unable to login to remote server '$hn'.",
+                  payload => $@
+          if $@;
+
+        # Get the document root.
+        my $doc_root = $s->get_doc_root;
+        foreach my $r (@$res) {
+            # Get the name of the file to be deleted.
+            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $status = eval{
+                local $SIG{__WARN__} = $no_warn;
+                $sftp->do_stat($file);
+            };
+            if (defined $status) {
+                # It exists. Delete it.
+                $status = eval{
+                    local $SIG{__WARN__} = $no_warn;
+                    $sftp->do_remove($file);
+                };
+                unless (defined $status && $status == SSH2_FX_OK) {
+                    my $msg = "Unable to delete resource '$file' from"
                       . "remote host '$hn', status '" . fx2txt($status) . "'.";
-		    throw_gen(error => $msg);
-		}
-	    }
-	}
-	# how do you logout???
-	undef $sftp;
+                    throw_gen(error => $msg);
+                }
+            }
+        }
+        # how do you logout???
+        undef $sftp;
     }
     return 1;
 }
@@ -332,6 +317,33 @@ B<Notes:> NONE.
 =cut
 
 $no_warn = sub { };
+
+=item my @args = $sftp_args->($server);
+
+Pass in a Bric::Dist::Server object to get back a list of arguments suitable
+for passing to C<< Net::SFTP->new() >>.
+
+=cut
+
+my $sftp_args = sub {
+    my $server = shift;
+
+    # Set up the SSH arguments. Make sure we're never mistaken for root.
+    # by setting privileged => 0. This comes up with bric_queued.
+    my @ssh_args = (privileged => 0);
+    if (ENABLE_SFTP_V2 || SFTP_MOVER_CIPHER) {
+        push @ssh_args, protocol => '2,1' if ENABLE_SFTP_V2;
+        push @ssh_args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
+    }
+
+    return (
+        $server->get_host_name,
+        debug    => DEBUG,
+        ssh_args => \@ssh_args,
+        user     => $server->get_login,
+        password => $server->get_password
+    );
+};
 
 1;
 __END__
