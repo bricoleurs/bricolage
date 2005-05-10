@@ -158,8 +158,8 @@ sub cancel : Callback(priority => 6) {
             obj_id => $fa->get_id
         });
         my ($desks, $cos) = (0, 0);
-        while ($events[-1]->get_key_name ne 'formatting_add_workflow') {
-            my $kn = pop(@events)->get_key_name;
+        while (@events && $events[0]->get_key_name ne 'formatting_add_workflow') {
+            my $kn = shift(@events)->get_key_name;
             if ($kn eq 'formatting_moved') {
                 $desks++;
             } elsif ($kn eq 'formatting_checkout') {

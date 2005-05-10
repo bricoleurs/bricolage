@@ -43,6 +43,11 @@ The C<get_related_story()> and get_related_media() methods of the element
 class now return C<undef> in a list context when there is no related asset.
 [David]
 
+=item *
+
+Events in the event log are now returned (and displayed) in reverse
+chronlogical order. [David]
+
 =back
 
 =head2 Bug Fixes
