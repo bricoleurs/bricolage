@@ -188,8 +188,11 @@ sub publish {
                            $env);
 
     # Instantiate the Burner object.
-    my $burner = Bric::Util::Burner->new(
-                          { out_dir => $preview ? PREVIEW_ROOT : STAGE_ROOT });
+    my $burner = Bric::Util::Burner->new({
+        $preview
+          ? (out_dir => PREVIEW_ROOT, user_id => get_user_id )
+          : (out_dir => STAGE_ROOT)
+    });
 
     # iterate through ids publishing shiznats
     my (%seen, @published, %desks);

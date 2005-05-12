@@ -48,6 +48,12 @@ class now return C<undef> in a list context when there is no related asset.
 Events in the event log are now returned (and displayed) in reverse
 chronlogical order. [David]
 
+=item *
+
+The SOAP server now uses a user's template sandbox when executing previews
+(such as with C<bric_soap --to-preview workflow publish>). Reported by
+Marshall. [David]
+
 =back
 
 =head2 Bug Fixes
