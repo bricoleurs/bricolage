@@ -186,6 +186,8 @@ Folks who have submitted patches include:
 
 =item Dharmender Yadav
 
+=item Rod Taylor
+
 =back
 
 Friends who have spotted bugs include:

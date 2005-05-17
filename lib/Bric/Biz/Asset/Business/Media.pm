@@ -1460,7 +1460,7 @@ sub upload_file {
         $self->_set(['media_type_id', '_media_type_obj'], [0, undef]);
     }
 
-    $self->set_size(defined $size ? $size : -S $path);
+    $self->set_size(defined $size ? $size : -s $path);
 
     # Get the Output Channel object.
     my $at_obj = $self->_get_element_object;

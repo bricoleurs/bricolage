@@ -111,6 +111,11 @@ Error messages are now properly localized in C<bric_queued>. [David]
 Stories updated via SOAP to change categories will no longer leave the old
 categories associated with the story. [David]
 
+=item *
+
+Fixed bug 975 where media uploads were failing with an SQL error due to a
+typo. Patch from Rod Taylor.
+
 =back
 
 =cut
