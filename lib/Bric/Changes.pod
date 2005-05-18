@@ -246,6 +246,12 @@ one line. [Marshall]
 
 URI formats now require that the categories be a part of the format. [David]
 
+=item *
+
+When using the command line tools, you can now opt to be prompted for your 
+password rather than entering it on the command line, which would store your 
+plaintext password in the history. [Marshall]
+
 =back
 
 ##############################################################################

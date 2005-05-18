@@ -90,6 +90,7 @@ use strict;
 use Getopt::Long;
 use POSIX 'setsid';
 use File::Spec::Functions qw(catdir);
+use Term::ReadPassword;
 
 BEGIN {
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
@@ -167,6 +168,13 @@ GetOptions(
     "username=s" => \my $username,
     "password=s" => \my $password,
 );
+
+if ($password eq '') {
+    {
+        $password = read_password('Password: ');
+        redo unless $password;
+    }
+}
 
 require Pod::Usage && Pod::Usage::pod2usage("Missing required --username option.")
   unless $username;
