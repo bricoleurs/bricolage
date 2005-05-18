@@ -192,6 +192,8 @@ START MODULE LIST
 
 =item DateTime::TimeZone 0.2601
 
+=item Term::ReadPassword
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)
