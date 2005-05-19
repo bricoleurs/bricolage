@@ -8,7 +8,7 @@ bric_queued - Bricolage jobs queue daemon
 
   bric_queud [options]
 
-=head1 DISCRIPTION
+=head1 DESCRIPTION
 
 F<bric_queued> runs as a daemon that polls a Bricolage jobs queue and executes
 any unexecuted jobs with current or past scheduled times. Normally, (see
