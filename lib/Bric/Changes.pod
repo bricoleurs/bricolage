@@ -116,6 +116,11 @@ categories associated with the story. [David]
 Fixed bug 975 where media uploads were failing with an SQL error due to a
 typo. Patch from Rod Taylor.
 
+=item *
+
+"All Types" now properly shows up at the top of the Types select list in the
+Advanced Search. [Marshall]
+
 =back
 
 =cut
