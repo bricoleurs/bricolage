@@ -1285,7 +1285,10 @@ sub get_pref {
 
     my $value;
 
-    my $pref = Bric::Util::Pref->lookup({ name => $pref_name });
+    my $pref;
+    unless($pref = Bric::Util::Pref->lookup({ name => $pref_name })) {
+        throw_dp(error => qq{Can't find preference "$pref_name"});
+    }
     if ($pref->get_can_be_overridden) {
         my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $pref->get_id,
                                                        user_id => $self->get_id });
