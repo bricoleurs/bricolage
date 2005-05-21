@@ -602,13 +602,12 @@ create().
 
 sub load_asset {
     my ($pkg, $args) = @_;
-    my $document = $args->{document};
     my $data     = $args->{data};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch errors
     unless ($data) {
-        eval { $data = parse_asset_document($document) };
+        # parse and catch errors
+        eval { $data = parse_asset_document($args->{document}) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
           if $@;
         throw_ap(error => __PACKAGE__ .
@@ -632,7 +631,7 @@ sub load_asset {
 
     # loop over media, filling in @media_ids and @relations.
     my (%media_ids, @media_ids, %melems, @relations);
-    foreach my $mdata (@{$data->{media}}) {
+    foreach my $mdata (@{delete $data->{media}}) {
         my $id = $mdata->{id};
 
         # are we updating?
@@ -931,14 +930,14 @@ sub load_asset {
 
     # if we have any story objects, create them
     my (%story_ids, @story_ids);
-    if ($data->{story}) {
+    if (my $stories = $data->{story}) {
         @story_ids = Bric::SOAP::Story->load_asset({ data       => $data,
                                                      internal   => 1,
                                                      upload_ids => []    });
 
         # correlate to relative ids
         for (0 .. $#story_ids) {
-            $story_ids{$data->{story}[$_]{id}} = $story_ids[$_];
+            $story_ids{$stories->[$_]{id}} = $story_ids[$_];
         }
     }
 
@@ -946,10 +945,7 @@ sub load_asset {
     resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
     # return a SOAP structure unless this is an internal call
-    unless ($args->{internal}) {
-        return name(ids => [ map { name(media_id => $_) } @media_ids ]);
-    }
-
+    return @media_ids if $args->{internal};
     return name(ids => [
                         map { name(media_id => $_) } @media_ids,
                         map { name(story_id => $_) } @story_ids,

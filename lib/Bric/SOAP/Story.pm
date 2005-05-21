@@ -734,17 +734,19 @@ create().
 
 sub load_asset {
     my ($pkg, $args) = @_;
-    my $document = $args->{document};
+    my $data = $args->{data};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch errors
-    my $data;
-    eval { $data = parse_asset_document($document) };
-    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
-      if $@;
-    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : no stories found!")
-      unless ref $data and ref $data eq 'HASH' and exists $data->{story};
-    print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    unless ($data) {
+        # parse and catch errors
+        eval { $data = parse_asset_document($args->{document}) };
+        throw_ap(error => __PACKAGE__ . ": problem parsing asset document: $@")
+          if $@;
+        throw_ap(error => __PACKAGE__ . ": problem parsing asset document: "
+                          . "no stories found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{story};
+        print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
 
     # Determine workflow and desk for stories if not default
     my ($workflow, $desk, $no_wf_or_desk_param);
@@ -761,7 +763,7 @@ sub load_asset {
 
     # loop over stories, filling in %story_ids and @relations
     my (%story_ids, @story_ids, @relations, %selems);
-    foreach my $sdata (@{$data->{story}}) {
+    foreach my $sdata (@{delete $data->{story}}) {
         my $id = $sdata->{id};
 
         # are we updating?
@@ -1070,8 +1072,9 @@ sub load_asset {
     $desk->save if defined $desk;
 
     # if we have any media objects, create them
+    # Keep a handlde on them because Media.pm will delete them from $data.
     my (%media_ids, @media_ids);
-    if ($data->{media}) {
+    if (my $media = $data->{media}) {
         @media_ids = Bric::SOAP::Media->load_asset({ data       => $data,
                                                      internal   => 1,
                                                      upload_ids => []    });
@@ -1079,12 +1082,15 @@ sub load_asset {
         # correlate to relative ids
         for (0 .. $#media_ids) {
             $media_ids{$data->{media}[$_]{id}} = $media_ids[$_];
+            $media_ids{$media->[$_]{id}} = $media_ids[$_];
         }
     }
 
     # Resolve related stories and media.
     resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
+    # return a SOAP structure unless this is an internal call
+    return @story_ids if $args->{internal};
     return name(ids => [
                         map { name(story_id => $_) } @story_ids,
                         map { name(media_id => $_) } @media_ids

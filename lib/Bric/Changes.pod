@@ -121,6 +121,17 @@ typo. Patch from Rod Taylor.
 "All Types" now properly shows up at the top of the Types select list in the
 Advanced Search. [Marshall]
 
+=item *
+
+Creating media with related stories via the SOAP interface will no longer
+cause the bizarre "Could not find httpd.xml" error. Reported by Curtis
+Poe. [David]
+
+=item *
+
+Removed possible circular processing of story and media documents when
+creating new story or media documents via SOAP. [David]
+
 =back
 
 =cut
