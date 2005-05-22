@@ -132,6 +132,11 @@ Poe. [David]
 Removed possible circular processing of story and media documents when
 creating new story or media documents via SOAP. [David]
 
+=item *
+
+Fixed bug 959 -- previewing/publishing multipage stories created through
+bric_soap wouldn't burn all the pages. [Scott]
+
 =back
 
 =cut

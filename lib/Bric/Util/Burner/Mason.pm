@@ -511,18 +511,15 @@ sub display_pages {
     my $elem = $self->_current_element;
     my $page_place = $self->_get('_page_place') || 0;
 
-    my ($next_page, $page_elem);
-    my $tiles = $elem->get_tiles;
-    foreach my $place ($page_place..$#$tiles) {
-        my $e = $tiles->[$place];
-        next unless $e->is_container;
-        foreach my $name (@$names) {
-            next unless $e->has_name($name);
-            $page_elem ? $next_page = 1 : $page_elem = $e;
-            next unless $next_page;
-            last;
-        }
-    }
+    # Get the next two containers starting with place == $page_place
+    # and having name eq one of @$names. $next_page will be undef
+    # for the last page. The map changes old-style names to key_names.
+    my $joined_names = join('|', map {y/a-z0-9/_/cs; lc $_} @$names);
+    my ($page_elem, $next_page) =
+      grep { $_->is_container
+             && $_->get_place >= $page_place
+             && $_->get_key_name =~ /^($joined_names)$/ }
+      $elem->get_tiles;
 
     # Set the 'more_pages' and '_page_place' properties.
     $self->_set([ qw(more_pages _page_place) ],
