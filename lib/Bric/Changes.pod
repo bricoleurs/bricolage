@@ -134,8 +134,15 @@ creating new story or media documents via SOAP. [David]
 
 =item *
 
-Fixed bug 959 -- previewing/publishing multipage stories created through
-bric_soap wouldn't burn all the pages. [Scott]
+Previewing and publishing multipage stories created through F<bric_soap> now
+properly burn all of the pages. [Scott]
+
+=item *
+
+Cloned stories now properly set the C<published_version> attribute to C<undef>
+rather than the value of the original story, thus preventing the clone from
+having a published version number greater than its current version number.
+Reported by Nate Perry-Thistle and Joshua Edelstein. [David]
 
 =back
 

@@ -1749,8 +1749,9 @@ sub clone {
     # object other than for desks, we'll have to find a way to clone it, too.
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
-                    _attribute_object _update_uri first_publish_date)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef]);
+                    _attribute_object _update_uri first_publish_date
+                    published_version)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
