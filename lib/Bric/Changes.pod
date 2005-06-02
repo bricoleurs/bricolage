@@ -54,6 +54,14 @@ The SOAP server now uses a user's template sandbox when executing previews
 (such as with C<bric_soap --to-preview workflow publish>). Reported by
 Marshall. [David]
 
+=item *
+
+A job no longer throws an exception when it can't get a lock on itself for
+execution. This is because the inability to get a lock may well be due to a
+race condition with another process. There's no need to throw an exception
+when it can't get a lock because another process has a lock. So it generates a
+warning now, instead. Reported by Bill Cappell. [David]
+
 =back
 
 =head2 Bug Fixes
