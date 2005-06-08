@@ -22,6 +22,14 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Fixed two bugs with C<bric_template_diff>.  C<File::Spec::Functions> now
+properly exports C<catfile()>.
+
+C<--from--site> and C<--to-site> were trying to search on output channel
+rather than site.  This is also fixed.  [Ovid]
+
+=item *
+
 Added C<MASON_INTERP_ARGS> F<bricolage.conf> directive to allow you to pass
 arguments to the Mason interpreter for the templates. [Scott]
 
