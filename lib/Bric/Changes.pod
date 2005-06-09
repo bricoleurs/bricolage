@@ -62,6 +62,12 @@ race condition with another process. There's no need to throw an exception
 when it can't get a lock because another process has a lock. So it generates a
 warning now, instead. Reported by Bill Cappell. [David]
 
+=item *
+
+Bric::Biz::Workflow now caches calls to C<allowed_desks()>. This will allow
+desks to render *much* faster, since most assets on a desk will list the same
+desks in the "Move to" select lists. [David]
+
 =back
 
 =head2 Bug Fixes
