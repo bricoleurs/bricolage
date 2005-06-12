@@ -22,120 +22,40 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 );
 </%perl>
 
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $id %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Media Type Element')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_element_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
-  <td width="470" class="fieldcontent">&nbsp;<% $media->get_title %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('URI') %>:&nbsp;</span></td>
+<dl class="viewmeta">
+  <dt><%$lang->maketext('ID')%>:</dt>
+  <dd><% $id %></dd>
+  <dt><% $lang->maketext('Element')%>:</dt>
+  <dd><% $media->get_element_name %></dd>
+  <dt><% $lang->maketext('Title') %>:</dt>
+  <dd><% $media->get_title %></dd>
+  <dt><%$lang->maketext('URI') %>:</dt>
 % if ($media->get_file_name) {
-  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
-                                    type  => 'media',
-                                    value => $media->get_primary_uri,
-                                    doc   => $media,
-                                    style => 'blackUnderlinedLink') %></td>
+  <dd><% $m->comp('/widgets/profile/preview_link.mc',
+                   type  => 'media',
+                   value => $media->get_primary_uri,
+                   doc   => $media,
+                   style => 'blackUnderlinedLink') %></dd>
 % } else {
-  <td width="470">&nbsp;</td>
+  <dd>&nbsp;</dd>
 % }
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Source') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% Bric::Biz::Org::Source->lookup({ id => $media->get_source__id })->get_source_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
-  <td width="470" class="fieldcontent">&nbsp;<% $media->get_description %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_version() %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_published_version || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_first_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Priority') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_priority() %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channels') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% join ', ', (map { $_->get_name } $media->get_output_channels) %></td>
-  </tr>
-</table>
+  <dt><% $lang->maketext('Source') %>:</dt>
+  <dd><% Bric::Biz::Org::Source->lookup({ id => $media->get_source__id })->get_source_name %></dd>
+  <dt><% $lang->maketext('Description') %>:</dt>
+  <dd><% $media->get_description || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Current Version') %>:</dt>
+  <dd><% $media->get_version() %></dd>
+  <dt><% $lang->maketext('Published Version') %>:</dt>
+  <dd><% $media->get_published_version || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('First Published') %>:</dt>
+  <dd><% $media->get_first_publish_date || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Last Published') %>:</dt>
+  <dd><% $media->get_publish_date || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Priority') %>:</dt>
+  <dd><% $media->get_priority() %></dd>
+  <dt><% $lang->maketext('Output Channels') %>:</dt>
+  <dd><% join ', ', (map { $_->get_name } $media->get_output_channels) %></dd>
+</dl>
 
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 % $m->comp('file_section.mc',

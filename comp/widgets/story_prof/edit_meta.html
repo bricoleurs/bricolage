@@ -27,16 +27,16 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <dl class="viewmeta">
   <dt><% $lang->maketext('ID') %>:</dt>
   <dd><% $id %></dd>
-  <dt><% $lang->maketext('Story Type Element') %>:</dt>
-  <dd><% $story->get_element_name %></dd>
+  <dt><% $lang->maketext('Element') %>:</dt>
+  <dd><% $story->get_element_name || '&nbsp;' %></dd>
   <dt><% $lang->maketext('Current Version') %>:</dt>
   <dd><% $story->get_current_version %></dd>
   <dt><% $lang->maketext('Published Version') %>:</dt>
-  <dd><% $story->get_published_version || '' %></dd>
+  <dd><% $story->get_published_version || '&nbsp;' %></dd>
   <dt><% $lang->maketext('First Published') %>:</dt>
-  <dd><% $story->get_first_publish_date || '' %></dd>
+  <dd><% $story->get_first_publish_date || '&nbsp;' %></dd>
   <dt><% $lang->maketext('Last Published') %>:</dt>
-  <dd><% $story->get_publish_date || '' %></dd>
+  <dd><% $story->get_publish_date || '&nbsp;' %></dd>
   <dt><% $lang->maketext('URI') %>:</dt>
 % if (@ocs == 1) {
   <dd><% $m->comp('/widgets/profile/preview_link.mc',

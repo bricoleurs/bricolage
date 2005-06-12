@@ -540,9 +540,9 @@ table td.delete { width: 100px; text-align: center; }
 }
 .associations td.edit { width: 20px; vertical-align: top; }
 
-dl.viewmeta { margin: 0 0 5px 0; }
+dl.viewmeta { margin: 0; }
 dl.viewmeta dt,
-dl.viewmeta dd { border-bottom: solid white 1px; padding: 0; line-height: 1.8em }
+dl.viewmeta dd { font-size: 11px; border-bottom: solid white 1px; padding: 2px 0; }
 dl.viewmeta dt {
     float: left;
     clear: both;
@@ -553,6 +553,7 @@ dl.viewmeta dt {
     background-color: #E8E8CD;
 }
 dl.viewmeta dd { margin-left: 140px; }
+dl.viewmeta dd a { font-size: inherit; }
 
 /******************************************************
  * HACKS                                              *
