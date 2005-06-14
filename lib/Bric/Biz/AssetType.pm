@@ -151,7 +151,7 @@ use constant ORD => qw(name key_name description type_name  burner active);
 use constant BURNER_MASON    => 1;
 use constant BURNER_TEMPLATE => 2;
 use constant BURNER_TT       => 3;
-use constant BURNER_PHP       => 4;
+use constant BURNER_PHP      => 4;
 
 #==============================================================================#
 # Fields                               #
