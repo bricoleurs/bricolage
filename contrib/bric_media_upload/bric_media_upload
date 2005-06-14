@@ -471,6 +471,7 @@ sub find_or_create_category {
     our ($timeout, $temp_dir, $make_categories);
     my $write_to_root = 0;
     my $command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$category;
+    $command .= " --search site='$site'" if $site;
 
     my $exec_result = `$command 2>&1`;
     if ( ($exec_result =~ /category_\d*/) ) {

@@ -158,6 +158,12 @@ rather than the value of the original story, thus preventing the clone from
 having a published version number greater than its current version number.
 Reported by Nate Perry-Thistle and Joshua Edelstein. [David]
 
+=item *
+
+The F<bric_media_upload> contrib script now uses the site argument (if there
+is one) to search for categories. This will prevent it from finding a category
+in one site but not the target site of the upload. [David]
+
 =back
 
 =cut
