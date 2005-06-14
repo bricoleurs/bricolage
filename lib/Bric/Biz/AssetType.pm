@@ -151,6 +151,7 @@ use constant ORD => qw(name key_name description type_name  burner active);
 use constant BURNER_MASON    => 1;
 use constant BURNER_TEMPLATE => 2;
 use constant BURNER_TT       => 3;
+use constant BURNER_PHP       => 4;
 
 #==============================================================================#
 # Fields                               #
@@ -159,7 +160,7 @@ use constant BURNER_TT       => 3;
 #--------------------------------------#
 # Public Class Fields
 our $METHS;
-our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE BURNER_TT);
+our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE BURNER_TT BURNER_PHP);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
 #--------------------------------------#
@@ -633,6 +634,8 @@ sub my_meths {
 	    if $Bric::Util::Burner::Template::VERSION;
 	push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
 	    if $Bric::Util::Burner::TemplateToolkit::VERSION;
+	push @$tmpl_archs,  [BURNER_PHP,'PHP']
+	    if $Bric::Util::Burner::PHP::VERSION;
     }
 
     # Create 'em if we haven't got 'em.
