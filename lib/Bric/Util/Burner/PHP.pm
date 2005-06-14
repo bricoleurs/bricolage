@@ -46,12 +46,10 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Template 2.14;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
-use Template::Constants qw( :debug );
 
 #==============================================================================#
 # Inheritance                          #
