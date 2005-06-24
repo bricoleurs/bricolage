@@ -179,7 +179,7 @@ sub publish {
     my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     throw_ap(error => __PACKAGE__ . "::publish : cannot publish to_preview with "
                . "PREVIEW_LOCAL set.")
-      if $preview and PREVIEW_LOCAL;
+      if PREVIEW_LOCAL and $preview;
 
     my $published_only = exists($args->{published_only}) ? $args->{published_only} : 0;
 
