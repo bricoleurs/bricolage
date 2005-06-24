@@ -9,10 +9,14 @@ use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:aref :msg :history :browser redirect_onload);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
+use Bric::Biz::OutputChannel;
+use Bric::Dist::ServerType;
 use Bric::Config qw(:prev);
 use Bric::Util::Burner;
 use Bric::Util::Job::Pub;
+use Bric::Util::Trans::FS;
 use Bric::App::Event qw(log_event);
+use Bric::Util::Fault qw(throw_error);
 
 sub preview : Callback {
     my $self = shift;
@@ -48,7 +52,38 @@ sub preview : Callback {
         }
 
         # Move out the media document and then redirect to preview.
-        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
+        my $url = do {
+            if (AUTO_PREVIEW_MEDIA && !$media->get_needs_preview) {
+                my $oc = $oc_id
+                  ? Bric::Biz::OutputChannel->lookup({ id => $oc_id })
+                  : $media->get_primary_oc;
+                if (PREVIEW_LOCAL) {
+                    Bric::Util::Trans::FS->cat_uri(
+                        '/', PREVIEW_LOCAL, $media->get_uri($oc)
+                    );
+                } else {
+                    my ($dest) = Bric::Dist::ServerType->list({
+                        can_preview       => 1,
+                        active            => 1,
+                        output_channel_id => $oc->get_id,
+                    });
+                    throw_error
+                        error => 'Cannot preview asset "' . $media->get_name
+                          . '" because there are no Preview Destinations '
+                          . 'associated with its output channels.',
+                        maketext => ['Cannot preview asset "[_1]" because there '
+                                     . 'are no Preview Destinations associated with '
+                                     . 'its output channels.', $media->get_name]
+                      unless $dest;
+                    ($oc->get_protocol || 'http://')
+                      . ($dest->get_servers)[0]->get_host_name
+                      . $media->get_uri($oc);
+                }
+            } else {
+                $b->preview($media, 'media', get_user_id(), $oc_id);
+            }
+        };
+        if ($url) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
             redirect_onload($url, $self);

@@ -44,8 +44,9 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
+use Bric::App::Session qw(get_user_id);
 use File::Temp qw( tempfile );
-use Bric::Config qw(:media :thumb MASON_COMP_ROOT);
+use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
 
@@ -362,6 +363,7 @@ BEGIN {
                          category__id    => Bric::FIELD_RDWR,
                          size            => Bric::FIELD_RDWR,
                          class_id        => Bric::FIELD_READ,
+                         needs_preview   => Bric::FIELD_READ,
 
                          # Private Fields
                          _category_obj   => Bric::FIELD_NONE,
@@ -1473,6 +1475,7 @@ sub upload_file {
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
+    $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
 
     # Set the media type and the file size.
     if ($type = defined $type
@@ -1755,7 +1758,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+    my ($id, $active, $update_uris, $preview) =
+      $self->_get(qw(id _active _update_uri needs_preview));
 
     # Start a transaction.
     begin();
@@ -1810,6 +1814,14 @@ sub save {
     if (my $err = $@) {
         rollback();
         rethrow_exception($err);
+    }
+
+    if (AUTO_PREVIEW_MEDIA && $preview) {
+        # Go ahead and distribute to the preview server(s).
+        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
+        $burner->preview($self, 'media', get_user_id, $_->get_id)
+          for $self->get_output_channels;
+        $self->_set(['needs_preview'] => [0]);
     }
 
     return $self;

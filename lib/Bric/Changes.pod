@@ -116,6 +116,13 @@ Added support for the C<ANY()> function to pass multiple possible values for a
 given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
 C<href()> methods in the following classes:
 
+=item *
+
+Added C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Enabling this
+directive allows media files uploaded to a media document to be distributed to
+all relevant preview servers as soon as the media document is saved. Sponsored
+by Alinghi. [David]
+
 =over
 
 =item Bric::Util::Grp

@@ -1010,30 +1010,29 @@ create other user accounts.
 =head2 htmlArea (Optional)
 
 To install htmlArea, an optional application that offers WYSIWYG editing in
-the Bricolage UI, simply download it from 
-L<http://www.dynarch.com/projects/htmlarea/>, decompress the files,
-and move them to the F<comp/media/wysiwyg/htmlarea> directory in your Bricolage 
-root. 
+the Bricolage UI, simply download it from
+L<http://www.dynarch.com/projects/htmlarea/>, decompress the files, and move
+them to the F<comp/media/wysiwyg/htmlarea> directory in your Bricolage root.
 
-As of 2005-03-25, there is a bug in htmlArea regarding form handling that 
-requires a patch.  After installing, apply the patch while in your Bricolage 
+As of 2005-03-25, there is a bug in htmlArea regarding form handling that
+requires a patch.  After installing, apply the patch while in your Bricolage
 root: C<patch -p0 < inst/patches/xinha.diff>
 
-You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR> 
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 =head2 Xinha (Optional)
 
-To install Xinha, an optional application that offers WYSIWYG editing in
-the Bricolage UI, simply download it from L<http://www.xinha.org/>, 
-decompress the files, and move them to the F<comp/media/wysiwyg/xinha> 
-directory in your Bricolage root.  
+To install Xinha, an optional application that offers WYSIWYG editing in the
+Bricolage UI, simply download it from L<http://www.xinha.org/>, decompress the
+files, and move them to the F<comp/media/wysiwyg/xinha> directory in your
+Bricolage root.
 
-As of 2005-03-25, there is a bug in Xinha regarding form handling that requires 
-a patch.  After installing, apply the patch while in your Bricolage root:
-C<patch -p0 < inst/patches/xinha.diff>
+As of 2005-03-25, there is a bug in Xinha regarding form handling that
+requires a patch.  After installing, apply the patch while in your Bricolage
+root: C<patch -p0 < inst/patches/xinha.diff>
 
-You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR> 
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 =head2 GNU Aspell (Optional)
@@ -1725,7 +1724,7 @@ shared desks. By default, a desk that is shared between workflows appears in
 both workflows, but any asset on that desk can only be transfered to other
 desks in the workflow from which the asset originated. To allow assets to
 optionally be able to move to desks in any of the workflows a desk is a member
-of, set this directive to "Yes", "On" or "1". Defaults to "Off" of not
+of, set this directive to "Yes", "On" or "1". Defaults to "Off" if not
 specified.
 
 =item *
@@ -1743,19 +1742,41 @@ B<ALLOW_ALL_SITES_CX:> Allow users to select "All Sites" from their site
 context menu. This will enable them to see the workflows for all sites to
 which they have at least READ access. Defaults to "Off" of not specified.
 
+=back
+
+=head2 Media Configuration
+
+=over
+
 =item *
 
-B<RELATED_MEDIA_UPLOAD:> This directive allows users to upload media files
-directly into an element profile if they have permission to create media and
-to access a media workflow. This makes it a much simpler process for editors
-to quickly associate media with story documents. The uploaded media files will
-be created based on the media type element selected from a select list, and
-given the same category, cover date, and priority as the current document.
+B<AUTO_PREVIEW_MEDIA>. This directive determines whether files uploaded to
+Media documents are automatically distributed to all relevant preview servers
+when the media document is saved, or whether they must be previewed manually
+after they're uploaded. Defaults to "Off" if not specified.
 
 =item *
 
 B<MEDIA_UPLOAD_LIMIT:> Set this to a number, so that no files larger than that
 number of kilobytes can be uploaded. Defaults to 0, which means no limit.
+
+=item *
+
+B<MEDIA_UNIQUE_FILENAME:> When this directive is enabled, Bricolage will
+generate a unique eight-character MD5 hash as the name of each new media
+file. The file name suffix will be retained as it was loaded. Disabled by
+default.
+
+=item *
+
+B<MEDIA_FILENAME_PREFIX:> When set, uses the value as a character string to
+prefix to unique media filenames. Disabled by default.
+
+=back
+
+=head2 UI Configuration
+
+=over
 
 =item *
 
@@ -1775,17 +1796,26 @@ default.
 
 =item *
 
-B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG 
-editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
-htmlArea).  After installing htmlArea or Xinha (see dependency info above), set
-C<WYSIWYG_EDITOR> appropriately.
+B<RELATED_MEDIA_UPLOAD:> This directive allows users to upload media files
+directly into an element profile if they have permission to create media and
+to access a media workflow. This makes it a much simpler process for editors
+to quickly associate media with story documents. The uploaded media files will
+be created based on the media type element selected from a select list, and
+given the same category, cover date, and priority as the current document.
 
 =item *
 
-B<HTMLAREA_TOOLBAR and XINHA_TOOLBAR:> You can specify exactly what shows up in 
-your Xinha/htmlArea toolbar and how it is displayed. This is useful for 
-ensuring that content remains separate from presentation. For example, you 
-usually won't want to include the font control buttons, as these are generally 
+B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG
+editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
+htmlArea).  After installing htmlArea or Xinha (see dependency info above),
+set C<WYSIWYG_EDITOR> appropriately.
+
+=item *
+
+B<HTMLAREA_TOOLBAR and XINHA_TOOLBAR:> You can specify exactly what shows up
+in your Xinha/htmlArea toolbar and how it is displayed. This is useful for
+ensuring that content remains separate from presentation. For example, you
+usually won't want to include the font control buttons, as these are generally
 best managed in templates. Here is a complete list of the available buttons:
 
 =over 8
@@ -1862,7 +1892,7 @@ best managed in templates. Here is a complete list of the available buttons:
 
 =back
 
-In addition to the button specifications, Xinha and htmlArea configurations 
+In addition to the button specifications, Xinha and htmlArea configurations
 support a few other toolbar configuration options:
 
 =over 8
@@ -2014,28 +2044,6 @@ B<DEFAULT_FILE_EXT:> Sets the default file extension that all new Output Channel
 will start with in their "File Name" property. Combined with DEFAULT_FILENAME and
 a page index number to uniquely name the file for a given story. Defaults to
 "html" if not specified.
-
-=back
-
-=head2 Media Filename Configuration
-
-As of Bricolage 1.8.3, the filename of media documents can be set to change on
-upload to a unique automatically generated filename. This filename can also be
-prefixed with a character string if required.
-
-=over 4
-
-=item *
-
-B<MEDIA_UNIQUE_FILENAME:> When this directive is enabled, Bricolage will
-generate a unique eight-character MD5 hash as the name of each new media
-file. The file name suffix will be retained as it was loaded. Disabled by
-default.
-
-=item *
-
-B<MEDIA_FILENAME_PREFIX:> When set, uses the value as a character string to
-prefix to unique media filenames. Disabled by default.
 
 =back
 

@@ -114,6 +114,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MEDIA_UNIQUE_FILENAME
                     MEDIA_FILENAME_PREFIX
                     MEDIA_UPLOAD_LIMIT
+                    AUTO_PREVIEW_MEDIA
                     USE_THUMBNAILS
                     THUMBNAIL_SIZE
                     SMTP_SERVER
@@ -232,6 +233,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      STAGE_ROOT
                                      PREVIEW_ROOT
                                      MASON_COMP_ROOT
+                                     AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
                     pub       => [qw(PUBLISH_RELATED_ASSETS)],
                     dist      => [qw(ENABLE_DIST
@@ -298,6 +300,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT
                                      MEDIA_UPLOAD_LIMIT
+                                     AUTO_PREVIEW_MEDIA
                                      MEDIA_UNIQUE_FILENAME
                                      MEDIA_FILENAME_PREFIX)],
                     thumb     => [qw(USE_THUMBNAILS
@@ -426,7 +429,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     USE_THUMBNAILS ENABLE_WYSIWYG AUTOGENERATE_SLUG
                     RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME
-                    LDAP_TLS))
+                    LDAP_TLS AUTO_PREVIEW_MEDIA))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -624,8 +627,9 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant MEDIA_UNIQUE_FILENAME    => $config->{MEDIA_UNIQUE_FILENAME};
     use constant MEDIA_FILENAME_PREFIX    => $config->{MEDIA_FILENAME_PREFIX} || '';
 
-    # Media upload limit.
+    # Media upload limit and auto-preview.
     use constant MEDIA_UPLOAD_LIMIT      => $config->{MEDIA_UPLOAD_LIMIT} || 0;
+    use constant AUTO_PREVIEW_MEDIA      => $config->{AUTO_PREVIEW_MEDIA} || 0;
 
     # Are we using thumbnails and how big are they ?
     use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};
@@ -634,12 +638,12 @@ require Bric; our $VERSION = Bric->VERSION;
     # Enable WYSIWYG editor?
     use constant ENABLE_WYSIWYG          => $config->{ENABLE_WYSIWYG};
     use constant WYSIWYG_EDITOR          => $config->{WYSIWYG_EDITOR};
-    
+
     # WYSIWYG editor settings
     use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
     use constant XINHA_TOOLBAR           => $config->{XINHA_TOOLBAR};
     use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
-    
+
     # The minimum login name and password lengths users can enter.
     use constant LOGIN_LENGTH            => $config->{LOGIN_LENGTH} || 5;
     use constant PASSWD_LENGTH           => $config->{PASSWD_LENGTH} || 5;
