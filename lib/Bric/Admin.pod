@@ -1437,7 +1437,7 @@ shared desks. By default, a desk that is shared between workflows appears in
 both workflows, but any asset on that desk can only be transfered to other
 desks in the workflow from which the asset originated. To allow assets to
 optionally be able to move to desks in any of the workflows a desk is a member
-of, set this directive to "Yes", "On" or "1". Defaults to "Off" of not
+of, set this directive to "Yes", "On" or "1". Defaults to "Off" if not
 specified.
 
 =item *
@@ -1453,7 +1453,7 @@ trade-off to be worth it. Defaults to "Off" if not specified.
 
 B<ALLOW_ALL_SITES_CX:> Allow users to select "All Sites" from their site
 context menu. This will enable them to see the workflows for all sites to
-which they have at least READ access. Defaults to "Off" of not specified.
+which they have at least READ access. Defaults to "Off" if not specified.
 
 =item *
 
