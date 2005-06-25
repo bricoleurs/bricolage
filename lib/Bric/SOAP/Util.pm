@@ -94,7 +94,7 @@ sub category_path_to_id {
     });
     return $cat_id if defined $cat_id;
     my $site = $args->{site} || $args->{site_id}
-      ? ', site => "' . $args->{site} || $args->{site_id} . '"'
+      ? ', site => "' . ($args->{site} || $args->{site_id}) . '"'
       : '';
     throw_ap qq{$pkg\::list_ids: no category found matching }
       . qq{(category => "$uri"$site)};
