@@ -275,7 +275,7 @@ $m->out(scalar(@cats) ? join('<br />', @cats) : $lang->maketext("No categories d
 
 % $rowColor = $rowColor eq "odd" ? "even" : "odd";
 <tr class="<% $rowColor %>">
-<th><% $lang->maketext('Keywords') %>:</th>
+<th><% $lang->maketext('Contributors') %>:</th>
 <td><%perl>
 my @contribs;
 foreach my $cntr ($story->get_contributors) {
@@ -299,7 +299,7 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 
 % $rowColor = $rowColor eq "odd" ? "even" : "odd";
 <tr class="<% $rowColor %>">
-<th><% $lang->maketext('Contributors') %>:</th>
+<th><% $lang->maketext('Keywords') %>:</th>
 <td><%perl>
 my @keywords;
 foreach my $kw ($story->get_keywords) {
