@@ -25,6 +25,9 @@ do_sql
   qq{update element__site  set id = NEXTVAL('seq_element__site')},
 
   # Make sure it can never be null.
+  qq{ALTER TABLE element__site
+     ALTER COLUMN id SET NOT NULL},
+
   qq{ALTER TABLE    element__site
      ADD CONSTRAINT ck_element__site__id__null CHECK (id IS NOT NULL)},
 

@@ -19,8 +19,10 @@ use Bric::Biz::AssetType;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Util::Burner;
+use Bric::Biz::Person::User;
 use Bric::Biz::Asset::Formatting;
 use Bric::Util::DBI qw(:junction);
+use Test::MockModule;
 
 sub table {'job '}
 
@@ -32,11 +34,24 @@ my %job = (
             sched_time => $date
           );
 
+sub test_setup : Test(setup) {
+    my $self = shift;
+    # Turn off event logging.
+    $self->{event} = Test::MockModule->new('Bric::Util::Job');
+    $self->{event}->mock(commit_events => undef);
+}
+
+sub test_teardown : Test(teardown) {
+    my $self = shift;
+    delete($self->{event})->unmock_all;
+    return $self;
+}
+
 ##############################################################################
 # Clean out possible test values from Job.tst. We can delete this if we ever
 # delete the .tst files.
 ##############################################################################
-sub _clean_test_vals : Test(0) {
+sub _clean_test_vals : Test(startup) {
     my $self = shift;
     $self->add_del_ids([1,2]);
 }
@@ -135,6 +150,7 @@ sub c_test_list : Test(45) {
     my $cat = Bric::Biz::Category->lookup({ id => 1 });
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
+    $story->set_cover_date('2005-03-22 21:07:56');
     $story->save();
     my $sid = $story->get_id;
     $self->add_del_ids($sid, 'story');
@@ -350,6 +366,7 @@ sub g_test_execute_me : Test(10) {
     my $cat = Bric::Biz::Category->lookup({ id => 1 });
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
+    $story->set_cover_date('2005-03-22 21:07:56');
     $story->save();
     my $sid = $story->get_id;
     $self->add_del_ids($sid, 'story');
@@ -488,6 +505,7 @@ sub h_test_execute_me : Test(10) {
     $story->set_primary_category($cat);
     $story->add_output_channels($oc);;
     $story->set_primary_oc_id(1);
+    $story->set_cover_date('2005-03-22 21:07:56');
     $story->save;
     $self->add_del_ids($story->get_id, 'story');
 

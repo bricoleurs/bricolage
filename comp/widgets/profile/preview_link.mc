@@ -18,10 +18,10 @@ my $uri = escape_html($doc->get_primary_uri);
 # Return a simple link unless we've been givin a JS reference to a an
 # output channel ID.
 return qq{<a href="$uri" } .
-  qq{onclick="var newWin = window.open('/workflow/profile/preview/$type/$id?checkout=$co', 'preview_} . SERVER_WINDOW_NAME . q{'); newWin.focus(true); return false;" } .
+  qq{onclick="var newWin = window.open('/workflow/profile/preview/control/$type/$id?checkout=$co', 'preview_} . SERVER_WINDOW_NAME . q{'); newWin.focus(true); return false;" } .
   qq{class="$style" title="$title">$value</a>}
   unless $oc_js;
 
 # If we got here, We need to actually load the link based on an oc ID.
-return qq{<a href="$uri" onclick="window.open('/workflow/profile/preview/$type/$id/' + $oc_js, 'preview_} . SERVER_WINDOW_NAME . qq{'); return false;" title="$uri"><img src="/media/images/$lang_key/preview_lgreen.gif" alt="Preview" title="Preview $uri" border="0" width="74" height="20"></a>};
+return qq{<a href="$uri" onclick="window.open('/workflow/profile/preview/control/$type/$id/' + $oc_js, 'preview_} . SERVER_WINDOW_NAME . qq{'); return false;" title="$uri"><img src="/media/images/$lang_key/preview_lgreen.gif" alt="Preview" title="Preview $uri" border="0" width="74" height="20"></a>};
 </%init>

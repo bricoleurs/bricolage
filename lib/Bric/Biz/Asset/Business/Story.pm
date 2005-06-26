@@ -45,10 +45,9 @@ $LastChangedDate$
  $vers_grp_id = $asset->get_version_grp__id();
  $vers_id     = $asset->get_asset_version_id();
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id  = $asset->get_workflow_id;
@@ -310,6 +309,7 @@ use constant PARAM_WHERE_MAP => {
       alias_id               => 's.alias_id = ?',
       site_id                => 's.site__id = ?',
       no_site_id             => 's.site__id <> ?',
+      version_id             => 'i.id = ?',
       workflow__id           => 's.workflow__id = ?',
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
@@ -342,11 +342,17 @@ use constant PARAM_WHERE_MAP => {
       user__id               => 'i.usr__id = ?',
       user_id                => 'i.usr__id = ?',
       _checked_in_or_out     => 'i.checked_out = '
-                             . '( SELECT checked_out '
+                              . '( SELECT checked_out '
                               . 'FROM story_instance '
                               . 'WHERE version = i.version '
                               . 'AND story__id = i.story__id '
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
+      checked_in             => 'i.checked_out = '
+                              . '( SELECT checked_out '
+                              . 'FROM story_instance '
+                              . 'WHERE version = i.version '
+                              . 'AND story__id = i.story__id '
+                              . 'ORDER BY checked_out ASC LIMIT 1 )',
       _checked_out           => 'i.checked_out = ?',
       checked_out            => 'i.checked_out = ?',
       _not_checked_out       => "i.checked_out = '0' AND s.id not in "
@@ -644,6 +650,10 @@ values.
 
 The story version number. May use C<ANY> for a list of possible values.
 
+=item version_id
+
+The ID of a version of a story. May use C<ANY> for a list of possible values.
+
 =item slug
 
 The story slug. May use C<ANY> for a list of possible values.
@@ -657,6 +667,18 @@ most recent version. May use C<ANY> for a list of possible values.
 
 A boolean value indicating whether to return only checked out or not checked
 out stories.
+
+=item checked_in
+
+If passed a true value, this parameter causes the checked in version of the
+most current version of the story to be returned. When a story is checked out,
+there are two instances of the current version: the one checked in last, and
+the one currently being edited. When the C<checked_in> parameter is a true
+value, then the instance last checked in is returned, rather than the instance
+currently checked out. This is useful for users who do not currently have a
+story checked out and wish to see the story as of the last check in, rather
+than as currently being worked on in the current checkout. If a story is not
+currently checked out, this parameter has no effect.
 
 =item published_version
 
@@ -1642,7 +1664,6 @@ sub revert {
     my $revert_obj = __PACKAGE__->lookup({
         id          => $self->_get_id,
         version     => $version,
-        checked_out => 0
     }) or throw_gen "The requested version does not exist";
 
     # Clone the basic properties of the story.
@@ -1677,7 +1698,9 @@ sub revert {
                 });
 
     $self->_set__dirty(1);
-    return $self;
+
+    # Make sure the current version is cached.
+    return $self->cache_me;
 }
 
 ################################################################################
@@ -1765,8 +1788,11 @@ sub save {
 
     # Make sure the primary uri is up to date.
     my $uri = $self->get_uri;
-    $self->_set(['primary_uri'], [$uri])
-      unless $self->get_primary_uri eq $uri;
+    {
+        no warnings;
+        $self->_set(['primary_uri'], [$uri])
+          unless $self->get_primary_uri eq $uri;
+    }
 
     my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
 

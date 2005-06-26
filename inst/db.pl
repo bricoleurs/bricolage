@@ -72,13 +72,14 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$PG->{psql} -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$PG->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
-        system($PG->{psql}, '-q', @args, '-d', $db) or return;
+        system($PG->{psql}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
+          or return;
     }
 
     # We encountered a problem.
@@ -98,7 +99,7 @@ sub create_db {
         # There was an error. Offer to drop the database if it already exists.
         if ($err =~ /database "[^"]+" already exists/) {
             if (ask_yesno("Database named \"$PG->{db_name}\" already exists.  ".
-                          "Drop database? [no] ", 0)) {
+                          "Drop database?", 0)) {
                 # Drop the database.
                 if ($err = exec_sql(qq{DROP DATABASE "$PG->{db_name}"}, 0,
                                     $PGDEFDB)) {
@@ -107,7 +108,7 @@ sub create_db {
                 }
                 return create_db();
             } else {
-                unless (ask_yesno("Create tables in existing database? [yes] ", 1)) {
+                unless (ask_yesno("Create tables in existing database?", 1)) {
                     unlink $PGCONF;
                     hard_fail("Cannot proceed. If you want to use the existing ",
                               "database, run 'make upgrade'\ninstead. To pick a ",
@@ -135,21 +136,19 @@ sub create_user {
     if ($err) {
         if ($err =~ /user( name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists. "
-                          . "Continue with this user? [yes] ", 1)) {
+                          . "Continue with this user?", 1)) {
                 # Just use the existing user.
                 return;
             } elsif (ask_yesno("Well, shall we drop and recreate user? "
                                . "Doing so may affect other database "
-                               . "permissions, so it's not recommended. "
-                                 . "[no] ", 0)) {
+                               . "permissions, so it's not recommended.", 0)) {
                 if ($err = exec_sql(qq{DROP USER "$PG->{sys_user}"}, 0, $PGDEFDB)) {
                     hard_fail("Failed to drop user. The database error was:\n\n",
                               "$err\n");
                 }
                 return create_user();
             } elsif (ask_yesno("Okay, so do you want to continue with "
-                               . "user \"$PG->{sys_user}\" after all? "
-                               . "[yes] ", 1)) {
+                               . "user \"$PG->{sys_user}\" after all?", 1)) {
                 # Just use the existing user.
                 return;
             } else {

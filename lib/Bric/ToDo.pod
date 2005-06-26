@@ -148,14 +148,6 @@ specified URL (on the assumption that that URL would process the form data).
 
 =item *
 
-Add a checkbox to the Bulk Edit page. When the box is checked, line wrapping
-will be preserved as pasted (e.g., when pasting in poetry). When it's not
-checked, the lines will be unwrapped into a single line (as happens now), so
-that they wrap inside the textarea box nicely. It will be unchecked by default
-to keep the interface basically the same as it is now.
-
-=item *
-
 Adjust listManager and desk interfaces so that they remember the field use to
 sort items until the end of a session.
 
@@ -481,6 +473,11 @@ Implement keyword synonyms. This might include support for various meanings
 among keywords and/or support for a prefered keyword among a group of
 synonymous keywords. Past versions of Bricolage (pre 1.3.2) included an
 incomplete implementation that you might use as inspiration.
+
+=item *
+
+Add a max size option to media Element profiles, for setting a per-element
+size cap on uploaded media.
 
 =back
 

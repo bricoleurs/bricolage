@@ -35,19 +35,19 @@ use strict;
 BEGIN {
     eval { require 5.006 };
     if ($@) {
-	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
+        print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
 Bricolage requires Perl version 5.6.0 or later. 5.8.0 or later is strongly
 recommended for its better Unicode support. Please upgrade your version of
 Perl before re-running make. You can find the latest versions of Perl
 at 'http://perl.com/'.
 
 END
-	exit 1;
+        exit 1;
     }
 
     eval { require 5.008 };
     if ($@) {
-	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
+        print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
 Found Bricolage 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
 better Unicode support. If you need good Unicode support, please upgrade your
 version of of Perl before re-running make. You can find the latest versions of
@@ -83,16 +83,16 @@ $RESULTS{EXPAT}   = find_expat();
 
 # print error message and fail if something not found
 unless ($RESULTS{PG} and $RESULTS{APACHE} and
-	$RESULTS{EXPAT}) {
+        $RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
-	    $RESULTS{PG}     ? "" :
-	    "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
-	    $RESULTS{APACHE} ? "" :
-	    "\tApache >= 1.3.12    (http://apache.org)\n",
-	    $RESULTS{EXPAT}  ? "" :
-	    "\texpat >= 1.95.0     (http://expat.sourceforge.net)\n",
-	    "\nSee INSTALL for details.\n"
-	   );
+            $RESULTS{PG}     ? "" :
+            "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
+            $RESULTS{APACHE} ? "" :
+            "\tApache >= 1.3.12    (http://apache.org)\n",
+            $RESULTS{EXPAT}  ? "" :
+            "\texpat >= 1.95.0     (http://expat.sourceforge.net)\n",
+            "\nSee INSTALL for details.\n"
+           );
 }
 
 # success, write out %REQ hash into required.db
@@ -108,34 +108,25 @@ exit 0;
 sub find_pg {
     print "Looking for PostgreSQL with version >= 7.3.0...\n";
 
-    # find PostgreSQL by looking for pg_config.  First search user's path
-    # then some standard locations.
-    my @paths = (path(), qw(/usr/local/pgsql/bin
-			    /usr/local/postgres/bin
-                            /usr/lib/postgresql/bin
-			    /opt/pgsql/bin
-			    /usr/local/bin
-			    /usr/local/sbin
-			    /usr/bin
-			    /usr/sbin
-			    /bin));
+    # find PostgreSQL by looking for pg_config.
+    my @paths = (path(), split(", ", get_default("PG_CONFIG_PATH")));
+    
     foreach my $path (@paths) {
-	if (-e catfile($path, "pg_config")) {
-	    $REQ{PG_CONFIG} = catfile($path, "pg_config");
-	    last;
-	}
+    if (-e catfile($path, "pg_config")) {
+        $REQ{PG_CONFIG} = catfile($path, "pg_config");
+        last;
+    }
     }
 
     # confirm or deny
     if ($REQ{PG_CONFIG}) {
         print "Found PostgreSQL's pg_config at '$REQ{PG_CONFIG}'.\n";
-        unless (ask_yesno("Is this correct? [yes] ", 1, $QUIET)) {
+        unless (ask_yesno("Is this correct?", 1, $QUIET)) {
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         }
     } else {
         print "Failed to find pg_config.\n";
-        if (ask_yesno("Do you want to provide a path to pg_config? [no] ",
-                      0, $QUIET)) {
+        if (ask_yesno("Do you want to provide a path to pg_config?", 0, $QUIET)) {
             $REQ{PG_CONFIG} = 'NONE';
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         } else {
@@ -147,16 +138,16 @@ sub find_pg {
     # check version
     my $version = `$REQ{PG_CONFIG} --version`;
     return soft_fail("Failed to find PostgreSQL version with ",
-		     "`$REQ{PG_CONFIG} --version`.") unless $version;
+                     "`$REQ{PG_CONFIG} --version`.") unless $version;
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     return soft_fail("Failed to parse PostgreSQL version from string ",
-		     "\"$version\".") 
-	unless defined $x and defined $y;
+                     "\"$version\".") 
+        unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail("Found old version of Postgres: $x.$y.$z - ",
-		     "7.3.0 or greater required.")
-	unless (($x > 7) or ($x == 7 and $y >= 3));
+                     "7.3.0 or greater required.")
+        unless (($x > 7) or ($x == 7 and $y >= 3));
     print "Found acceptable version of Postgres: $x.$y.$z.\n";
 
     $REQ{PG_VERSION} = [$x,$y,$z];
@@ -171,36 +162,30 @@ sub find_apache {
     # find Apache by looking for executables called httpd, httpsd,
     # apache-perl or apache, in that order.  First search user's
     # path then some standard locations.
-    my @paths = (path(), qw(/usr/local/apache/bin
-			    /usr/local/bin
-			    /usr/local/sbin
-			    /usr/bin
-			    /usr/sbin
-			    /bin));
-    my @exe = qw(httpd httpsd apache-perl apache);
+    my @paths = (path(), split(", ", get_default("APACHE_PATH")));
+    my @exe = (split(", ", get_default("APACHE_EXE")));
 
  FIND: 
     foreach my $exe (@exe) {
-	foreach my $path (@paths) {
-	    if (-e catfile($path, $exe)) {
-		$REQ{APACHE_EXE} = catfile($path, $exe);
-		last FIND;
-	    }
-	}
+        foreach my $path (@paths) {
+            if (-e catfile($path, $exe)) {
+                $REQ{APACHE_EXE} = catfile($path, $exe);
+                last FIND;
+            }
+        }
     }
 
     # confirm or deny
     if ($REQ{APACHE_EXE}) {
         print "Found Apache server binary at '$REQ{APACHE_EXE}'.\n";
-        unless ($QUIET or ask_yesno("Is this correct? [yes] ", 1)) {
+        unless ($QUIET or ask_yesno("Is this correct?", 1)) {
             ask_confirm("Enter path to Apache server binary", 
                         \$REQ{APACHE_EXE});
         }
     } else {
         print "Failed to find Apache server binary.\n";
         if (ask_yesno("Do you want to provide a path to the Apache server " .
-                      "binary? [no] ",
-                      0, $QUIET)) {
+                      "binary?", 0, $QUIET)) {
             $REQ{APACHE_EXE} = 'NONE';
             ask_confirm("Enter path to Apache server binary", 
                         \$REQ{APACHE_EXE});
@@ -217,18 +202,17 @@ sub find_apache {
     # check version
     my $version = `$REQ{APACHE_EXE} -v`;
     return soft_fail("Failed to find Apache version with ",
-		   "`$REQ{APACHE_EXE} -v`.") unless $version;
+                     "`$REQ{APACHE_EXE} -v`.") unless $version;
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+).(\d+)/;
     return soft_fail("Failed to parse Apache version from string ",
-		     "\"$version\".") 
-	unless defined $x and defined $y and defined $z;
+                     "\"$version\".") 
+        unless defined $x and defined $y and defined $z;
     return soft_fail("Found Apache 2. Bricolage only supports Apache 1.3.\n")
       if $x > 1;
     return soft_fail("Found old version of Apache: $x.$y.$z - ",
-		     "1.3.12 or greater required.")
-	unless (($x == 1 and $y > 3) or
-		($x == 1 and $y == 3 and $z >= 12));
+                     "1.3.12 or greater required.")
+        unless (($x == 1 and $y > 3) or ($x == 1 and $y == 3 and $z >= 12));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
 
@@ -242,12 +226,10 @@ sub find_expat {
     # find expat libary libexpat.so by looking in library paths that
     # Perl knows about
     my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}),
-					      split(' ', $Config{loclibpth}));
-    push @paths, '/sw/lib';
+                                              split(' ', $Config{loclibpth}));
+    push @paths, split(", ", get_default("EXPAT_PATH"));
 
-    my @files = ("libexpat.so", "libexpat.so.0", "libexpat.so.0.0.1",
-                 "libexpat.dylib", "libexpat.0.dylib", "libexpat.0.0.1.dylib",
-                 "libexpat.a", "libexpat.la");
+    my @files = split(", ", get_default("EXPAT_FILE"));
 
   LOOK: foreach my $path (@paths) {
         foreach my $file(@files) {
@@ -258,7 +240,7 @@ sub find_expat {
         }
     }
     return soft_fail("Failed to find libexpat.so.  Looked in:", 
-		     map { "\n\t$_" } @paths) unless $REQ{EXPAT};
+                     map { "\n\t$_" } @paths) unless $REQ{EXPAT};
     print "Found expat at $REQ{EXPAT}.\n";
 
     # I should check that expat is >= 1.95.0.  Um, how do I do that?

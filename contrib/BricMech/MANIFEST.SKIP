@@ -3,9 +3,8 @@
 ^blib
 ~$
 \.bak$
+\.orig$
 ^MANIFEST\.SKIP$
-^bric_
-^www
 \.svn
-\.sh$
 ^Bric-Mech-
+^releases

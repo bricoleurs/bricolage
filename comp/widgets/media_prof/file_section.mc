@@ -31,30 +31,37 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <td width="<% $indent %>" valign="top" align="right">
       <span class="label"><%$lang->maketext('File Path')%>:</span>
     </td>
-    <td width="<% 578 - $indent %>">
+    <td width="200">
       <input type="file" name="<% $widget %>|file" size="30">
     </td>
-  <tr>
-    <td></td>
     <td>
-    <& '/widgets/profile/imageSubmit.mc',
-       formName => "theForm",
-       callback => $widget ."|update_cb",
-       image    => "upload_red"
-     &>
+      <& '/widgets/profile/imageSubmit.mc',
+         formName => "theForm",
+         callback => $widget ."|update_cb",
+         image    => "upload_red"
+       &>
     </td>
   </tr>
   <tr>
-    <td width"=150" align="right">
+    <td align="right">
       <span class="label"><% $lang->maketext('Download') %>:</span>
     </td>
+%   if (my $uri = $media->get_local_uri()) {
     <td>
-%     if (my $uri = $media->get_local_uri()) {
       <a href="<% $uri %>" target="download_<% SERVER_WINDOW_NAME %>"><% $media->get_file_name %></a>
-%     } else {
-      <% $lang->maketext('No file has been uploaded')%>
-%     }
     </td>
+    <td>
+      <& '/widgets/profile/imageSubmit.mc',
+         formName => "theForm",
+         callback => $widget ."|delete_media_cb",
+         image    => "delete_red"
+       &>    
+    </td>
+%   } else {
+    <td colspan="2">
+      <% $lang->maketext('No file has been uploaded')%>
+    </td>
+%   }
   </tr>
 </table>
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");

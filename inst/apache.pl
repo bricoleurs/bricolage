@@ -46,13 +46,12 @@ our %AP;
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
-# setup some reasonable defaults.  these will all get overridden, but
-# better safe than sorry.
-$AP{user}       = 'nobody';
-$AP{group}      = 'nobody';
-$AP{port}       = 80;
-$AP{ssl_port}   = 443;
-chomp ($AP{server_name} = `hostname`);
+# setup some defaults.
+$AP{user}       = get_default("APACHE_USER") || 'nobody';
+$AP{group}      = get_default("APACHE_GROUP") || 'nobody';
+$AP{port}       = get_default("APACHE_PORT") || 80;
+$AP{ssl_port}   = get_default("APACHE_SSL_PORT") || 443;
+chomp ($AP{server_name} = get_default("APACHE_HOSTNAME") || `hostname`);
 
 read_conf();
 read_modules();
@@ -97,7 +96,7 @@ sub read_conf {
         $AP{conf_file} = catfile($AP{HTTPD_ROOT}, $AP{SERVER_CONFIG_FILE});
     }
 
-    # If the conf file doesn't exist, check for teh funny location that
+    # If the conf file doesn't exist, check for the funny location that
     # Debian uses.
     unless (-e $AP{conf_file}) {
         $AP{conf_file} = "/usr/share/doc/apache-perl/examples/httpd.conf"

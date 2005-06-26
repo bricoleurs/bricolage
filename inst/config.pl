@@ -61,6 +61,9 @@ print "\n\n==> Finished Gathering User Configuration <==\n\n";
 exit 0;
 
 sub choose_defaults {
+
+if (!$QUIET) {
+
     print <<END;
 ========================================================================
 
@@ -68,15 +71,16 @@ Bricolage comes with two sets of defaults.  You'll have the
 opportunity to override these defaults but choosing wisely here will
 probably save you the trouble.  Your choices are:
 
-  s - "single"   one installation for the entire system
+  s - "single"   one installation for the entire system, with modules
+                 integrated into Perl's \@INC directories
 
-  m - "multi"    an installation that lives next to other installations
-                 on the same machine
+  m - "multi"    an installation that lives entirely in a single directory,
+                 so that it can coexist with other installations on the
+                 same machine
 
 END
 
-    $CONFIG{set} = "s";
-    $CONFIG{set} = ask_choice("Your choice?", [ "s", "m" ], "s", $QUIET);
+    $CONFIG{set} = ask_choice("Your choice?", [ "s", "m" ], "m", $QUIET);
 
     # setup the default
     if ($CONFIG{set} eq 's') {
@@ -122,8 +126,20 @@ END
         $CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
         $CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
         $CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
-      }
-  }
+    }
+} else {
+    # use QUIET defaults
+    $CONFIG{BRICOLAGE_ROOT}   = get_default("BRICOLAGE_ROOT_DIR");
+    $CONFIG{TEMP_DIR}         = get_default("BRICOLAGE_TMP_DIR");
+    $CONFIG{MODULE_DIR}       = get_default("BRICOLAGE_PERL_DIR");
+    $CONFIG{BIN_DIR}          = get_default("BRICOLAGE_BIN_DIR");
+    $CONFIG{MAN_DIR}          = get_default("BRICOLAGE_MAN_DIR");
+    $CONFIG{LOG_DIR}          = get_default("BRICOLAGE_LOG_DIR");
+    $CONFIG{PID_FILE}         = get_default("BRICOLAGE_PID");
+    $CONFIG{MASON_COMP_ROOT}  = get_default("BRICOLAGE_COMP_DIR");
+    $CONFIG{MASON_DATA_ROOT}  = get_default("BRICOLAGE_DATA_DIR");
+}
+}
 
 sub confirm_settings {
   my $default_root = $CONFIG{BRICOLAGE_ROOT};
@@ -159,7 +175,7 @@ sub confirm_settings {
   ask_confirm("Executable Directory",      \$CONFIG{BIN_DIR}, $QUIET);
   ask_confirm("Man-Page Directory (! to skip)", \$CONFIG{MAN_DIR}, $QUIET);
   ask_confirm("Log Directory",             \$CONFIG{LOG_DIR}, $QUIET);
-  ask_confirm("PID File Location",         \$CONFIG{PID_FILE});
+  ask_confirm("PID File Location",         \$CONFIG{PID_FILE}, $QUIET);
   ask_confirm("Mason Component Directory", \$CONFIG{MASON_COMP_ROOT}, $QUIET);
   ask_confirm("Mason Data Directory",      \$CONFIG{MASON_DATA_ROOT}, $QUIET);
 

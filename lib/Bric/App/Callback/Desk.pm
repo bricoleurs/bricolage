@@ -33,6 +33,26 @@ my $keys = [ keys %$pkgs ];
 my $type = 'formatting';
 my $disp_name = 'Template';
 
+sub checkin : Callback {
+    my $self = shift;
+
+    my $a_id    = $self->value;
+    my $a_class = $self->params->{$self->class_key.'|asset_class'};
+    my $pkg     = get_package_name($a_class);
+    my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
+    my $d       = $a_obj->get_current_desk;
+
+    $d->checkin($a_obj);
+    $d->save;
+
+    if ($a_class eq 'formatting') {
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
+        $sb->undeploy($a_obj);
+    }
+
+    log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
+}
+
 sub checkout : Callback {
     my $self = shift;
 
@@ -138,46 +158,46 @@ sub publish : Callback {
 
     my (@sids, @mids);
 
-    if (PUBLISH_RELATED_ASSETS) {
-        my %seen;
-        for ([story => \@stories, $story_pub],
-             [media => \@media, $media_pub]) {
-            my ($key, $objs, $pub_ids) = @$_;
-            # iterate through objects looking for related and stories
-            while (@$objs) {
-                my $doc = shift @$objs or next;
+    my %seen;
+    for ([story => \@stories, $story_pub],
+         [media => \@media, $media_pub]) {
+        my ($key, $objs, $pub_ids) = @$_;
+        # iterate through objects looking for related and stories
+        while (@$objs) {
+            my $doc = shift @$objs or next;
 
-                # haven't I seen you someplace before?
-                my $id = $doc->get_id;
-                next if exists $seen{"$key$id"};
-                $seen{"$key$id"} = 1;
+            # haven't I seen you someplace before?
+            my $id = $doc->get_id;
+            next if exists $seen{"$key$id"};
+            $seen{"$key$id"} = 1;
 
-                if ($doc->get_checked_out) {
-                    # Cannot publish checked-out assets.
-                    my $doc_disp_name = lc get_disp_name($key);
-                    add_msg("Cannot publish $doc_disp_name \"[_1]\" because it is"
-                            . " checked out.", $doc->get_name);
-                    delete $pub_ids->{$id};
-                    next;
-                }
+            if ($doc->get_checked_out) {
+                # Cannot publish checked-out assets.
+                my $doc_disp_name = lc get_disp_name($key);
+                add_msg("Cannot publish $doc_disp_name \"[_1]\" because it is"
+                        . " checked out.", $doc->get_name);
+                delete $pub_ids->{$id};
+                next;
+            }
 
-                unless (chk_authz($doc, PUBLISH, 1)) {
-                    my $doc_disp_name = lc get_disp_name($key);
-                    add_msg('You do not have permission to publish '
-                            . qq{$doc_disp_name "[_1]"}, $doc->get_name);
-                    next;
-                }
+            unless (chk_authz($doc, PUBLISH, 1)) {
+                my $doc_disp_name = lc get_disp_name($key);
+                add_msg('You do not have permission to publish '
+                        . qq{$doc_disp_name "[_1]"}, $doc->get_name);
+                next;
+            }
 
-                # Hang on to your hat!
-                if ($key eq 'story') {
-                    push @sids, $id;
-                } else {
-                    push @mids, $id;
-                }
+            # Hang on to your hat!
+            if ($key eq 'story') {
+                push @sids, $id;
+            } else {
+                push @mids, $id;
+            }
 
-                my %desks;
+            my %desks;
 
-                # Examine all the related objects.
+            # Examine all the related objects.
+            if (PUBLISH_RELATED_ASSETS) {
                 foreach my $rel ($doc->get_related_objects) {
                     # Skip assets whose current version has already been published.
                     next unless $rel->needs_publish;
@@ -194,7 +214,7 @@ sub publish : Callback {
                         # Cannot publish checked-out assets.
                         my $rel_disp_name = lc get_disp_name($rel->key_name);
                         add_msg("Cannot auto-publish related $rel_disp_name "
-                                . '"[_1]" because it is checked out.',
+                                  . '"[_1]" because it is checked out.',
                                 $rel->get_name);
                         next;
                     }
@@ -207,7 +227,7 @@ sub publish : Callback {
                         unless ($desk->can_publish) {
                             my $rel_disp_name = lc get_disp_name($rel->key_name);
                             add_msg("Cannot auto-publish related $rel_disp_name "
-                                    . '"[_1]" because it is not on a publish desk.',
+                                      . '"[_1]" because it is not on a publish desk.',
                                     $rel->get_name);
                             next;
                         }
@@ -217,7 +237,7 @@ sub publish : Callback {
                         # Permission denied!
                         my $rel_disp_name = lc get_disp_name($rel->key_name);
                         add_msg('You do not have permission to auto-publish '
-                                . qq{$rel_disp_name "[_1]"}, $rel->get_name);
+                                  . qq{$rel_disp_name "[_1]"}, $rel->get_name);
                         next;
                     }
 

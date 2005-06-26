@@ -1,0 +1,16 @@
+--- comp/media/wysiwyg/htmlarea/htmlarea.js    2004-03-01 14:37:54.000000000 -0500
++++ comp/media/wysiwyg/htmlarea/htmlarea.js 2005-03-06 21:55:48.995564359 -0500
+@@ -652,11 +652,13 @@
+            editor._textArea.value = editor.getHTML();
+            var a = this.__msh_prevOnSubmit;
+            // call previous submit methods if they were there.
++           var previous_return = true;
+            if (typeof a != "undefined") {
+                for (var i in a) {
+-                   a[i]();
++                   previous_return = previous_return && a[i]();
+                }
+            }
++           return previous_return;
+        };
+    }

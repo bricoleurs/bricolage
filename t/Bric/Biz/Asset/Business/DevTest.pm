@@ -292,7 +292,7 @@ sub test_alias : Test(33) {
 
     } else {
       SKIP: {
-            skip "No slug on media assets", 1;
+            skip "No slug on media assets", 2;
         }
     }
 

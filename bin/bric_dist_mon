@@ -156,6 +156,7 @@ use Getopt::Std;
 use Unix::Syslog qw(:subs :macros);
 use POSIX qw(:sys_wait_h);
 use Apache::FakeRequest;
+use Term::ReadPassword;
 
 use constant INTERVAL => 30;
 use constant DEBUG => 0;
@@ -176,6 +177,14 @@ my $prog = Bric::Util::Trans::FS->base_name($0);
 # Print a usage statement, if necessary.
 usage() if $opt_h;
 version() if $opt_v;
+
+if ($opt_p eq '') {
+    {
+        $opt_p = read_password('Password: ');
+        redo unless $opt_p;
+    }
+}
+
 usage("User name and password are required.") unless $opt_u && $opt_p;
 
 # Make sure we have an interval and a debugging value.

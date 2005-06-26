@@ -1,0 +1,30 @@
+Index: htmlarea.js
+===================================================================
+--- comp/media/wysiwyg/xinha/htmlarea.js	(revision 52)
++++ comp/media/wysiwyg/xinha/htmlarea.js	(working copy)
+@@ -1053,16 +1053,19 @@
+       editor._textArea.value = editor.outwardHtml(editor.getHTML());
+       var a = this.__msh_prevOnSubmit;
+       // call previous submit methods if they were there.
+-      var allOK = true;
+-      for (var i = a.length; --i >= 0;)
++      if (typeof a != "undefined")
+       {
+-        if(a[i]() == false)
++        var allOK = true;
++        for (var i = a.length; --i >= 0;)
+         {
+-          allOK = false;
+-          break;
++            if(a[i]() == false)
++            {
++            allOK = false;
++            break;
++            }
+         }
++        return allOK;
+       }
+-      return allOK;
+     };
+     if (typeof f.onreset == "function") {
+       var funcref = f.onreset;

@@ -25,6 +25,9 @@ do_sql
   qq{update media_uri  set id = NEXTVAL('seq_media_uri')},
 
   # Make sure it can never be null.
+  qq{ALTER TABLE media_uri
+     ALTER COLUMN id SET NOT NULL},
+
   qq{ALTER TABLE    media_uri
      ADD CONSTRAINT ck_media_uri__id__null CHECK (id IS NOT NULL)},
 

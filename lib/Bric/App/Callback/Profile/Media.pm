@@ -16,7 +16,9 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Config qw(:media);
 use Bric::Util::DBI;
+use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
@@ -90,26 +92,38 @@ sub update : Callback(priority => 1) {
     # Check for file
     if ($param->{"$widget|file"}) {
         my $upload = $self->apache_req->upload;
+
+        # Prevent big media uploads
+        if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
+            my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
+            add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
+            return;
+        }
+
         my $fh = $upload->fh;
         my $agent = HTTP::BrowserDetect->new;
         my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
                                                         $agent->os_string);
-        $media->upload_file($fh, $filename);
-        $media->set_size($upload->size);
-
-        if (my ($mid) = Bric::Util::MediaType->list_ids({name => $upload->type})) {
-            # Apache gave us a valid type.
-            $media->set_media_type_id($mid);
-        } elsif ($mid = Bric::Util::MediaType->get_id_by_ext($filename)) {
-            # We figured out the type by the filename extension.
-            $media->set_media_type_id($mid);
-        } else {
-            # We have no idea what the type is. :-(
-            $media->set_media_type_id(0);
-        }
-
+        $media->upload_file($fh, $filename, $upload->type, $upload->size);
         log_event('media_upload', $media);
     }
+    set_state_data($widget, 'media', $media);
+}
+
+sub delete_media : Callback {
+    my $self = shift;
+
+    my $widget = $self->class_key;
+    my $media = get_state_data($widget, 'media');
+    chk_authz($media, EDIT);
+
+    # Make sure it's active.
+    $media->activate;
+
+    $media->delete_file($media);
+
+    log_event('media_del_file', $media);
+
     set_state_data($widget, 'media', $media);
 }
 

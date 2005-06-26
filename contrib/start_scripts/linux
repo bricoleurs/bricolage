@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# chkconfig: 2345 99 01
+# description: Bricolage CMS
+
+# Created by David Wheeler, 2005.
+
+# This is an example of a start/stop script for SysV-style init, such as is
+# used on Linux systems. You should these variables:
+
+BRICOLAGE_ROOT="/usr/local/bricolage"
+BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
+
+# Then just copy it to your start scripts directory (usually /etc/init.d) and
+# add it to the startup process:
+
+# % cp contrib/start_scripts/linux /etc/init.d/bricolage
+# % chmod +x /etc/init.d/bricolage
+# % /sbin/chkconfig --add bricolage
+
+##############################################################################
+
+$BRIC_APACHECTL "$@"

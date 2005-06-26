@@ -38,11 +38,16 @@ my @EXP_GRP_IDS;
 ##############################################################################
 # Constructs a new object.
 my $z;
+sub new_args {
+    my $self = shift;
+    return ($self->SUPER::new_args, slug => 'slug' . ++$z);
+}
+
 sub construct {
     my $s = shift->SUPER::construct(@_);
     $s->add_categories([1]);
     $s->set_primary_category(1);
-    $s->set_slug('slug' . ++$z);
+    $s->set_cover_date('2005-03-22 21:07:56');
     return $s;
 }
 
@@ -82,7 +87,7 @@ sub test_clone : Test(17) {
     is( $clone->get_title, $orig->get_title, "Compare titles" );
     is( $clone->get_slug, 'jarkko', "Compare slugs" );
     ok( my $ouri = $orig->get_uri, "Get original URI" );
-    $ouri =~ s/slug\d+/jarkko/;
+    $ouri =~ s/hugo/jarkko/;
     is( $clone->get_uri, $ouri, "Compare uris" );
 
     # Check that the output channels are the same.
@@ -95,7 +100,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(116) {
+sub test_select_methods: Test(132) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -209,17 +214,34 @@ sub test_select_methods: Test(116) {
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
     $story[0]->set_primary_category($OBJ->{category}->[0]);
     $story[0]->add_contributor($self->contrib, 'DEFAULT');
+    $story[0]->set_cover_date('2005-03-23 06:11:29');
     $story[0]->checkin();
     $story[0]->save();
-    $story[0]->checkout({ user__id => $self->user_id });
-    $story[0]->checkin();
-    $story[0]->save();
-    $story[0]->checkout({ user__id => $self->user_id });
-    $story[0]->checkin();
-    $story[0]->save();
-
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
+
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->checkin();
+    $story[0]->save();
+    $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->save();
+
+    # Test checked_out and checkout.
+    ok my $st = class->lookup({
+        id => $OBJ_IDS->{story}->[0]
+    }), "Look up the checked out story.";
+    is $st->get_version, 2, "Story is at version 2";
+
+    # Test checked_in => 1 to make sure that it works.
+    ok $st = class->lookup({
+        id => $OBJ_IDS->{story}->[0],
+        checked_in => 1,
+    }), "Look up the checked out story.";
+    is $st->get_version, 2, "Story is at version 2";
+
+    # Check in the story and move on.
+    $story[0]->checkin();
+    $story[0]->save();
 
     # Try doing a lookup
     $expected = $story[0];
@@ -231,7 +253,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    my $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
+    my $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -278,6 +300,7 @@ sub test_select_methods: Test(116) {
 
     $story[1]->add_categories( $OBJ->{category} );
     $story[1]->set_primary_category( $OBJ->{category}->[1] );
+    $story[1]->set_cover_date('2005-03-23 06:11:29');
     $story[1]->checkin();
     $story[1]->save();
     push @{$OBJ_IDS->{story}}, $story[1]->get_id();
@@ -293,7 +316,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[1]->get_uri . '/test';
+    $exp_uri = $OBJ->{category}->[1]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -326,7 +349,10 @@ sub test_select_methods: Test(116) {
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
     $story[2]->set_primary_category( $OBJ->{category}->[0] );
     $story[2]->add_contributor($self->contrib, 'DEFAULT');
+    $story[2]->set_cover_date('2005-03-23 06:11:29');
     $story[2]->checkin();
+    $story[2]->save();
+    $story[2]->checkout({ user__id => $self->user_id });
     $story[2]->save();
     push @{$OBJ_IDS->{story}}, $story[2]->get_id();
     $self->add_del_ids( $story[2]->get_id() );
@@ -343,7 +369,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -372,6 +398,7 @@ sub test_select_methods: Test(116) {
 
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
     $story[3]->set_primary_category( $OBJ->{category}->[0] );
+    $story[3]->set_cover_date('2005-03-23 06:11:29');
     $story[3]->checkin();
     $story[3]->save();
     push @{$OBJ_IDS->{story}}, $story[3]->get_id();
@@ -400,7 +427,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -433,6 +460,7 @@ sub test_select_methods: Test(116) {
 
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
     $story[4]->set_primary_category($OBJ->{category}->[0]);
+    $story[4]->set_cover_date('2005-03-23 06:11:29');
     $story[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $story[4]->add_contributor($self->contrib, 'DEFAULT');
     $story[4]->checkin();
@@ -451,7 +479,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -480,6 +508,7 @@ sub test_select_methods: Test(116) {
 
     $story[5]->add_categories([ $OBJ->{category}->[0] ]);
     $story[5]->set_primary_category($OBJ->{category}->[0]);
+    $story[5]->set_cover_date('2005-03-23 06:11:29');
     $story[5]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $story[5]->save;
 
@@ -503,7 +532,7 @@ sub test_select_methods: Test(116) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -723,11 +752,61 @@ sub test_select_methods: Test(116) {
     ok( $story[2]->save, 'Save future expire story');
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 5, 'Check for five stories now');
+
+    # User ID should return only assets checked out to the user.
+    ok $got = class->list({
+        title   => '_test%',
+        Order   => 'title',
+        user_id => $admin_id,
+    }), 'Get stories for user';
+    is @$got, 1, 'Should have one stories checked out to user';
+
+    # Now try the checked_out parameter. One story should be checked out.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 1,
+    }), 'Get checked out stories';
+    is @$got, 1, 'Should have one checked out story';
+
+    # With checked_out => 0, we should get the other five stories.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'title',
+        checked_out => 0,
+    }), 'Get non-checked out stories';
+    is @$got, 5, 'Should have five non-checked out stories';
+
+    # Try the checked_in parameter, which should return all six stories.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+        checked_in  => 1,
+    }), 'Get checked in stories';
+    is @$got, 6, 'Should have six checked in stories';
+
+    # And even the checked-out story should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 0, 0, 0, 0, 0],
+      "We should get the checked-in copy of the checked-out story";
+
+    # Without checked_in parameter we should get the the checked-out
+    # story.
+    ok $got = class->list({
+        title       => '_test%',
+        Order       => 'name',
+    }), 'Get all stories';
+    is @$got, 6, 'Should have six stories';
+
+    # And now the checked-out story should return us the checked-in
+    # version.
+    is_deeply [ map { $_->get_checked_out } @$got ], [0, 0, 1, 0, 0, 0],
+      "We should get the checked-out story where available";
 }
 
 
 ##############################################################################
-# PRIVATE class methods
+# Private class methods
 ##############################################################################
 sub test_add_get_categories: Test(4) {
     # make a story

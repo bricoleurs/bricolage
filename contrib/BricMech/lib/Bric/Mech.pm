@@ -1,7 +1,7 @@
 package Bric::Mech;
 
 require 5.006001;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;

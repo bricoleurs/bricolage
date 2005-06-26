@@ -2750,51 +2750,8 @@ sub _sync_attributes {
 
 =item my (@grp_ids || $grp_ids_aref) = _do_list($params, 1);
 
-Returns the results of a query for Bric::Util::Grp objects. The parameters
-supported by the C<$params> hash reference are:
-
-=over 4
-
-=item obj
-
-A Bricolage object. The groups returned will have member objects for this
-object.
-
-=item package
-
-A Bricolage class name. Use in combination with C<obj_id> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
-
-=item obj_id
-
-A Bricolage object ID. Use in combination with C<package> to have
-C<_do_list()> return group objects with member objects representing a
-particular Bricolage object.
-
-=item parent_id
-
-A group parent ID.
-
-=item inactive
-
-Inactive groups will be returned if this parameter is true. Otherwise, only
-active groups will be returned.
-
-=item all
-
-Both secret and non-secret groups will be returned if this parameter is true.
-Otherwise only non-secret groups will be returned.
-
-=item name
-
-The name of a group.
-
-=item permananent
-
-A boolean to return permanent or non-permanent groups.
-
-=back
+Returns the results of a query for Bric::Util::Grp objects. See the
+documentation for the list() method for a list of the supported parameters.
 
 B<Throws:>
 
@@ -2842,9 +2799,7 @@ sub _do_list {
     my @wheres = ('g.id = c.object_id', 'c.member__id = m.id',
                   "m.active = '1'");
     my $tables = "grp g, member m, grp_member c";
-    # If an object is passed then we have to join to the member table again.
-    if (($criteria->{obj}) ||
-        ($criteria->{package} && $criteria->{obj_id}) ) {
+    if ($criteria->{obj} || ($criteria->{package} && $criteria->{obj_id})) {
         my ($pkg, $obj_id);
         if ($criteria->{obj}) {
             $pkg = ref $criteria->{obj};
@@ -2852,12 +2807,16 @@ sub _do_list {
                 # Assume they're all of the same class.
                 $pkg = ref $criteria->{obj}[0];
                 my @ids = grep { defined } map { $_->get_id } @{$criteria->{obj}};
-                $obj_id = ANY(@ids) if @ids;
+                # If no object has an ID, they will not yet be in any groups.
+                return unless @ids;
+                $obj_id = ANY(@ids);
             } else {
                 # Figure out what table this needs to be joined to.
                 $pkg = ref $criteria->{obj};
                 # Get the object id.
                 $obj_id = $criteria->{obj}->get_id;
+                # If the object has no ID, it's not yet in any groups.
+                return unless defined $obj_id;
             }
         } else {
             $pkg = $criteria->{package};

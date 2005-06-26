@@ -176,7 +176,7 @@ import SOAP::Data 'name';
 use HTTP::Cookies;
 require Data::Dumper if $VERBOSE;
 use File::Temp qw(tempdir);
-use File::Spec::Functions qw(catdir splitdir);
+use File::Spec::Functions qw(catfile catdir splitdir);
 use File::Path qw(mkpath);
 use XML::Simple qw(XMLin);
 use MIME::Base64 qw(decode_base64);
@@ -236,7 +236,7 @@ sub fetch_templates {
     my @search;
     push @search, name(file_name      => $template_name) if $template_name;
     push @search, name(output_channel => $oc)            if $oc;
-    push @search, name(site           => $oc)            if $site;
+    push @search, name(site           => $site)          if $site;
 
     # get list of template IDs
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Template');

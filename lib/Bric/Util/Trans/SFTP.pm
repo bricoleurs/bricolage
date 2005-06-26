@@ -210,9 +210,13 @@ sub put_res {
 	    }
 	    # Now, put the file on the server.
 	    my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
+            my $tmp_dest = $dest_file . '.tmp';
 	    $status = eval{
 		local $SIG{__WARN__} = $no_warn;
-		$sftp->put($src, $dest_file);
+                $sftp->do_remove($tmp_dest) if FTP_UNLINK_BEFORE_MOVE;
+                $sftp->put($src, $tmp_dest);
+                $sftp->do_remove($dest_file) if FTP_UNLINK_BEFORE_MOVE;
+                $sftp->do_rename($tmp_dest, $dest_file);
 	    };
 	    unless (defined $status && $status == SSH2_FX_OK) {
 		my $msg = "Unable to put file '$dest_file' on remote host '$hn',"

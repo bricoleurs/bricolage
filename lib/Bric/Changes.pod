@@ -22,6 +22,14 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Fixed two bugs with C<bric_template_diff>.  C<File::Spec::Functions> now
+properly exports C<catfile()>.
+
+C<--from--site> and C<--to-site> were trying to search on output channel
+rather than site.  This is also fixed.  [Ovid]
+
+=item *
+
 Added C<MASON_INTERP_ARGS> F<bricolage.conf> directive to allow you to pass
 arguments to the Mason interpreter for the templates. [Scott]
 
@@ -59,6 +67,13 @@ cloning, falling back on the default values. [Rod Taylor & Andrea Rota]
 
 =item *
 
+Added C<$USE_DEFAULTS> makefile environment variable that, when used with
+C<$INSTALL_VERBOSITY>, will use platform-specific answers to all of the
+installation questions. This allows for completely silent, customizable
+installations, which are necessary for packagers. [Masrhall]
+
+=item *
+
 Added C<RELATED_MEDIA_UPLOAD> F<bricolage.conf> directive that allows editors
 to upload media files directly into an element profile if they have permission
 to create media and to access a media workflow. This makes it a much simpler
@@ -78,14 +93,14 @@ Added C<ENABLE_GZIP> F<bricolage.conf> directive to turns on compression of
 the UI pages through C<mod_gzip>. This results in pages as much as fifteen
 times smaller, with minimal extra server load. If C<mod_gzip> is found during
 installation, the appropriate C<LoadModule/AddModule> lines will be added to
-F<httpd.conf>. Disabled by default. [Marshall Roch; Suggested by Rod Taylor]
+F<httpd.conf>. Disabled by default. [Marshall; Suggested by Rod Taylor]
 
 =item *
 
 Added "Show Alpha Search" preference that determines whether the alpha search
 ("A | B | C | ... [All]") links should be shown. The alpha search isn't very
 useful because you can type the first letter in the textbox (or "%" for "All")
-for the same results. Alpha search is off by default. [Marshall Roch]
+for the same results. Alpha search is off by default. [Marshall]
 
 =item *
 
@@ -101,11 +116,20 @@ Added support for the C<ANY()> function to pass multiple possible values for a
 given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
 C<href()> methods in the following classes:
 
+=item *
+
+Added C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Enabling this
+directive allows media files uploaded to a media document to be distributed to
+all relevant preview servers as soon as the media document is saved. Sponsored
+by Alinghi. [David]
+
 =over
 
 =item Bric::Util::Grp
 
 =item Bric::Biz::ATType
+
+=back
 
 More classes will support it soon! [David]
 
@@ -123,6 +147,53 @@ accurate way to add a bunch of output channels to a clone at once. Users must
 have READ access to each listed output channel group. Sponsored by Alinghi.
 [David]
 
+=item *
+
+Added C<MEDIA_UPLOAD_LIMIT> F<bricolage.conf> directive for setting a size
+limit on uploaded media files. [Scott]
+
+=item *
+
+The URI formats are now more flexible. You can now use a lot more parts of the
+cover date in the URI, and in whatever format you like. So you could have a
+format of "/%{categories}/%Y-%m-%d" and end up with the URI
+"/foo/bar/2004-09-22" if you wanted. Or even "/%{categories}/%Y/%V" to get the
+week number as part of the URI. You can also include your own text, similar to
+the URI Prefix and URI Suffix fields, anywhere in the URI (e.g. foobar in
+/%{categories}/%Y/%m/foobar/%{slug}". Suggested by David Wheeler. [Marshall]
+
+=item *
+
+Added a frame on top of the preview window with a "Repreview" link. This is
+useful for previewing changes when you're developing templates. Rather than
+having to save the template, go back to the workspace, repreview, and then go
+back to the template profile, you can preview the story, then edit the
+template and click "Repreview." [Marshall]
+
+=item *
+
+Added a pluggable authentication system. New authentication engines can be
+created by simply implementing a module named C<Bric::Util::Auth*>, where "*"
+is the name of the authentication scheme. The new scheme can then be used by
+adding it to the new C<AUTH_ENGINES> F<bricolage.conf> directive. By default
+the existing authentication scheme is used. [David]
+
+=item *
+
+Added support for authentication to Bricolage against an LDAP server. The new
+C<LDAP_*> F<bricolage.conf> directives make it simple to configure Bricolage
+to authenticate against any LDAP server. Includes support for authenticating
+users only if they are members of a specific user group in the LDAP database.
+Users must still exist in Bricolage, however. [David]
+
+=item *
+
+Added support for multiple WYSIWYG editors. The C<ENABLE_HTMLAREA>
+F<bricolage.conf> directive has been replaced by the C<ENABLE_WYSIWYG> and
+C<WYSIWYG_EDITOR> directives. You can now choose between htmlArea 3 and the
+new Xinha, a more active fork of htmlArea (recommended). More editors possibly
+coming soon. See L<Bric::Admin|Bric::Admin> for details. [Marshall]
+
 =back
 
 =head2 Improvements
@@ -138,6 +209,17 @@ just giving an error message. [Scott]
 
 The "User Override" screen has been integrated into the "Users" screen
 since the two pages are mostly redundant except for a few links. [Marshall]
+
+=item *
+
+User overrides are now recorded in the event log. Suggested by David.
+[Marshall]
+
+=item *
+
+The UI now shows which user is logged in and includes a link to the user's
+profile at the top of each page, above the log out button. Suggested by Philip
+Brown. [Marshall]
 
 =item *
 
@@ -168,11 +250,205 @@ access as appropriate. For new installations of Bricolage, the default "Story
 Editors" and "User Producers" groups have READ permission to all sources.
 Suggested by Simon Wilcox. [David]
 
+=item *
+
+There is now a "Preserve Formatting" (disabled by default) option in Bulk Edit
+that retains leading spaces, trailing spaces, and line breaks. With this
+option set, you can, for example, paste in poetry without it all ending up on
+one line. [Marshall]
+
+=item *
+
+URI formats now require that the categories be a part of the format. [David]
+
+=item *
+
+When using the command line tools, you can now opt to be prompted for your 
+password rather than entering it on the command line, which would store your 
+plaintext password in the history. [Marshall]
+
 =back
 
 ##############################################################################
 
-=head1 VERSION 1.8.4 ()
+=head1 VERSION 1.8.6 ()
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added JavaScript code to validate that the username in the user profile does
+not have leading or trailing spaces. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+The SOAP server now properly includes the start desk when it checks CREATE
+permissions for creating stories, media, or templates. Reported by Alexandra
+Gershman. [David]
+
+=item *
+
+Form validation and group management now properly work in the user profile.
+[David]
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.5 (2005-03-18)
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Added the C<checked_in> parameter to the C<lookup()>, C<list()>, and
+C<list_ids()> methods of the story, media, and template classes. If passed a
+true value, this parameter causes the checked in version of the most current
+version of the story to be returned. When a story is checked out, there are
+two instances of the current version: the one checked in last, and the one
+currently being edited. When the C<checked_in> parameter is a true value, then
+the instance last checked in is returned, rather than the instance currently
+checked out. This is useful for users who do not currently have a story
+checked out and wish to see the story as of the last check in, rather than as
+currently being worked on in the current checkout. If a story is not currently
+checked out, this parameter has no effect.
+
+=back
+
+=head2 Bug Fixes
+
+=over 4
+
+=item *
+
+Previews on non-checked out stories and media work again. [David]
+
+=item *
+
+Preview and views once again preview a story or media document as it was last
+checked in, rather than as it might be currently being worked on in a current
+checkout. [David]
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.4 (2005-03-18)
+
+=head2 Improvements
+
+=over 4
+
+=item *
+
+Made story profile's subelement 'Preview In' output-channel list consistent
+with the top level one (e.g. editing a Page shows the same preview OCs as
+editing the Story at the top level). [Scott]
+
+=item *
+
+Added Linux startup script F<contrib/start_scripts/linux>. [David]
+
+=item *
+
+Added C<version_id> parameter to the C<list()> methods of the story, media,
+and template classes. Oversight reported by Kang-min Liu. [David]
+
+=item *
+
+Distribution via SFTP is now atomic and respects the C<FTP_UNLINK_BEFORE_MOVE>
+directive. Spotted by Patrick Michael Kane. [David]
+
+=item *
+
+Related story and media elements managed through the SOAP server can now use a
+combination of URI and site ID to identify related assets in addition to the
+existing approach of using story and media IDs. [David]
+
+=item *
+
+Email sent by Bricolage now set the send date, since our understanding is
+that the MUA is responsible for setting the date and some SPAM filters trigger
+on missing Date: headers. [Cameron Miller]
+
+=item *
+
+The media type manager now validates media type names to ensure that they are
+of the form "type/subtype" with no spaces. Suggested by Marshall Roch. [David]
+
+=item *
+
+When started up by the super user, the virtual FTP server now runs as the same
+user as the Bricolage Apache server. This should prevent malicious users of
+the virtual FTP server from being able to do things as the root user that they
+shouldn't. [Keith Grennan]
+
+=item *
+
+SQL errors encountered when building the database are now fatal, meaning that
+they will cause the entire installation to fail, rather than continuing to
+execute SQL statements and build an incomplete database. This prevents the
+creation broken databases when people didn't notice errors in the past.
+[David]
+
+=item *
+
+A list of subelements is now less likely to mysteriously become out of order
+and thus lead to strange action-at-a-distance errors. And even if they do
+become out of order, the error message will be more appropriate ("Warning!
+State inconsistent" instead of "Can't call method 'get_name' on an undefined
+value"). Reported by Curtis Poe. [David]
+
+=item *
+
+Updated mail list information in L<Bric::Hacker|Bric::Hacker>. Reported by
+Marshall Roch. [David]
+
+=item *
+
+The SOAP media interface now supports creating relationships between the media
+documents elements and other story and media documents, just like the SOAP
+story interface does. [David]
+
+=item *
+
+The SOAP interface now supports Related stories and media on story type and
+media type elements just as in the UI. This involved the somewhat hackish
+necessity for including the "related_story_id" and "related_media_id" (or
+"related_story_uri" and "related_media_uri") attributes in the "elements" XML
+element, but it does the trick. [David]
+
+=item *
+
+The list of elements to select from when creating a new template is now in
+alphabetical order. [David]
+
+=item *
+
+The XML representation of media documents used by the SOAP server now supports
+the media type of the file. [David]
+
+=item *
+
+The "multi" install destination is now the default, rather than the "single"
+install destination. The two styles ("multi" and "single") are now also better
+described during installation. [David]
+
+=back
 
 =head2 Bug Fixes
 
@@ -202,7 +478,216 @@ The Bricolage virtual FTP server will no longer fail to start if Template
 Toolkit is installed but its version number is less than 2.14. Reported by
 Adam Rinehart. [David]
 
+=item *
+
+Fixed a bug where nothing would ever publish if you had
+C<PUBLISH_RELATED_ASSETS> enabled in F<bricolage.conf>. [Mark]
+
+=item *
+
+Added "slug" to the list of attributes specified in the error message for a
+non-unique URI in a story. Thanks to Rachel Murray for the spot! [David]
+
+=item *
+
+Fix in the SOAP server code to adjust for changes in Exception::Class 1.20.
+[David]
+
+=item *
+
+Stories and Media created or updated via the SOAP interface will now associate
+contributors of the appropriate type, instead of "All Contributors". [Scott &
+David]
+
+=item *
+
+Deleting an element that has a template no longer causes an error. Thanks to
+Susan for the spot! [David]
+
+=item *
+
+Eliminated encoding errors when using the SOAP interface to output stories,
+media, or templates with wide characters. Reported by Scott Lanning. [David]
+
+=item *
+
+Fields with a an empty string or 0 (zero) for their values will no longer be
+displayed as "Not defined" when viewing a story. [David]
+
+=item *
+
+Reverting (stories, media, templates) no longer gives an error. Reported by
+Simon Wilcox, Rachel Murray, and others. [David]
+
+=item *
+
+Publishing a published version of a document that has a later version in
+workflow will no longer cause that later version to be mysteriously removed
+from workflow. This could be caused by passing a document looked up using the
+C<published_version> to C<list()> to C<< $burner->publish_another >> in a
+template. [David]
+
+=item *
+
+The SOAP server story and media interfaces now support elements that contain
+both related stories and media, rather than one or the other. [David]
+
+=item *
+
+Attempting to preview a story or media document currently checked out to another
+user no longer causes an error. Reported by Paul Orrock. [David]
+
+=item *
+
+Desk asset buttons are no longer broken in non-English localizations. Thanks
+to Scott Lanning for the spot! [David]
+
+=item *
+
+Subelements will be properly deleted when selecting a "Delete" checkbox and
+clicking "Save" or "Save and Stay" in the story or media profile. It always
+worked in the element profile, and now it's consistent across document profile
+interfaces. Spotted by Scott Lanning. [David]
+
+=item *
+
+Custom fields with default values now have their values included when they are
+added to stories and media. Thanks to Clare Parkinson for the spot! [David]
+
+=item *
+
+The C<get_desk_stamps()> method in the asset classes has been deprecated (it
+never worked, anyway) and will be removed in Bricolage 1.10.0. The same goes
+for the C<required_satisfied()> method in Bric::Biz::Workflow. Thanks to
+Marshall Roch for the spot! [David]
+
+=item *
+
+Subclasses of the media class no longer cause errors when distributing files
+via C<bric_queued>. Thanks to Jason Edgecombe for the spot! [David]
+
+=item *
+
+Elements created via SOAP now correctly have site IDs associated with them.
+[David]
+
+=item *
+
+The "All" alphabetical search now properly escapes the "%" wild card
+character. Thanks to Frank Holtz for the spot! [David]
+
+=item *
+
+The C<bric_queued> script now requires a username and password and will
+authenticate the user. This user will then be used for logging events. All
+events logged when a job is run via the UI are now also logged by
+C<bric_queued>. [Mark and David]
+
+=item *
+
+Jobs now get a "Job Created" event logged when they are created. Reported by
+Rachel Murray. [David and Mark]
+
+=item *
+
+Eliminated "Use of uninitialized value in pattern match (m//)" warnings when
+uploading media files. Reported by Scott Lanning. [David]
+
+=item *
+
+Preview redirections now use the protocol setting of the preview output
+channel if it's available, and falls back on using "http://" when it's not,
+instead of using the hard-coded "http://". Thanks to Martin Bacovsky for the
+spot! [David]
+
+=item *
+
+The C<has_keyword()> method in the Business class (from which the story and
+media classes inherit) now works. Thanks to Clare Parkinson for the spot!
+[David]
+
+=item *
+
+Templates that abort during calls C<preview_another()> now properly abort
+when not using C<PREVIEW_LOCAL>. [Paul Orrock]
+
+=item *
+
+Clicking a link in the left-side navigation after the session has expired now
+causes the whole window to show the login form, rather than it showing inside
+the nav frame, which was useless. [Marshall]
+
+=item *
+
+The names of media types (a.k.a. MIME types) can now be changed without
+encountering an error. Thanks to Marshall Roch for the spot! [David]
+
+=item *
+
+Media type MIME Type names are now properly required in the UI. [David]
+
+=item *
+
+Fixed typo in the virtual FTP server which was causing an error when saving
+a template. [Keith Grennan]
+
+=item *
+
+The JavaScript that validates form contents once again works with htmlArea,
+provided htmlArea itself is patched. See
+L<http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=69750&atid=525656>
+for the htmlArea patch. As of this writing, you must run the version of
+htmlArea in CVS. [David & Marshall]
+
+=item *
+
+The JavaScript that handles the double list manager has been vastly optimized.
+It should now be able to better handle large lists, such as a list of thousands
+of categories. Reported by Scott. [Marshall]
+
+=item *
+
+Logging now works properly with the virtual FTP server. [Keith Grennan]
+
+=item *
+
+Some cases in which it was impossible to add actions to a destination have
+been fixed. Reported by Marshall Roch. Thanks to Jason Edgecombe for making
+available a server that exhibits the problem. [David]
+
+=item *
+
+The virtual FTP server no longer saves a template for every line in the
+template when the FTP client uses ASCII mode. Thanks to Keith Grennan for the
+spot! [David]
+
+=item *
+
+Reverting a template to a previous version now properly updates to the
+reverted version on the user's sandbox. Also, canceling a checkout now
+properly removes a template from a user's sandbox. [David]
+
+=item *
+
+When creating a new workflow, the workflow profile no longer forgets the
+selected site when you click the "New Desk" button. [David]
+
+=item *
+
+Changing a template in such a way that it will be deployed to a new location
+(by changing the category, for example) once again deletes the previous
+version from the previous location when it is deployed. [David]
+
+=item *
+
+Uploading a new image to a media document with a different media type than the
+previous image no longer causes an Imager error. [David]
+
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.8.3 (2004-11-09)
 
@@ -361,8 +846,9 @@ The category browser works again. [David]
 
 =item *
 
-Fixed the "event" table to use the correct sequence the id column's default
-value (although the default is never used, this is a good precaution). [David]
+Fixed the "event" table to use the correct sequence the for they id column's
+default value (although the default is never used, this is a good precaution).
+[David]
 
 =item *
 
@@ -401,8 +887,9 @@ non-ISO style date preference is selected. Thanks to Susan G. for the spot!
 
 =item *
 
-Running C<make upgrade> with PostgreSQL "ident sameuser" security now works
-properly. [Keith Grennan]
+By forcing the upgrade scripts to execute as the PostgreSQL user, running
+C<make upgrade> with PostgreSQL "ident sameuser" security now works properly.
+[Keith Grennan]
 
 =item *
 

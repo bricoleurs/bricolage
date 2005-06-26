@@ -77,6 +77,18 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     SSL_CERTIFICATE_KEY_FILE
                     AUTH_TTL
                     AUTH_SECRET
+                    AUTH_ENGINES
+                    LDAP_SERVER
+                    LDAP_VERSION
+                    LDAP_USER
+                    LDAP_PASS
+                    LDAP_BASE
+                    LDAP_UID_ATTR
+                    LDAP_FILTER
+                    LDAP_GROUP
+                    LDAP_MEMBER_ATTR
+                    LDAP_TLS
+                    LDAP_SSL_VERSION
                     AUTH_COOKIE
                     COOKIE
                     LOGIN_MARKER
@@ -101,6 +113,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MEDIA_FILE_ROOT
                     MEDIA_UNIQUE_FILENAME
                     MEDIA_FILENAME_PREFIX
+                    MEDIA_UPLOAD_LIMIT
+                    AUTO_PREVIEW_MEDIA
                     USE_THUMBNAILS
                     THUMBNAIL_SIZE
                     SMTP_SERVER
@@ -155,7 +169,10 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENCODE_OK
                     LOAD_CHAR_SETS
                     LOAD_TIME_ZONES
-                    ENABLE_HTMLAREA
+                    ENABLE_WYSIWYG
+                    WYSIWYG_EDITOR
+                    XINHA_PLUGINS
+                    XINHA_TOOLBAR
                     HTMLAREA_TOOLBAR
                     ENABLE_GZIP
                    );
@@ -196,13 +213,26 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     sys_user  => [qw(SYS_USER
                                      SYS_GROUP)],
                     auth      => [qw(AUTH_TTL
+                                     AUTH_ENGINES
                                      AUTH_SECRET)],
+                    ldap      => [qw(LDAP_SERVER
+                                     LDAP_VERSION
+                                     LDAP_USER
+                                     LDAP_PASS
+                                     LDAP_BASE
+                                     LDAP_UID_ATTR
+                                     LDAP_FILTER
+                                     LDAP_GROUP
+                                     LDAP_MEMBER_ATTR
+                                     LDAP_TLS
+                                     LDAP_SSL_VERSION)],
                     auth_len  => [qw(PASSWD_LENGTH
                                      LOGIN_LENGTH)],
                     prev      => [qw(PREVIEW_LOCAL
                                      STAGE_ROOT
                                      PREVIEW_ROOT
                                      MASON_COMP_ROOT
+                                     AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
                     pub       => [qw(PUBLISH_RELATED_ASSETS)],
                     dist      => [qw(ENABLE_DIST
@@ -232,7 +262,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
-                                     ENABLE_HTMLAREA
+                                     ENABLE_WYSIWYG
+                                     WYSIWYG_EDITOR
+                                     XINHA_PLUGINS
+                                     XINHA_TOOLBAR
                                      HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
@@ -264,6 +297,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ENABLE_GZIP)],
                     media     => [qw(MEDIA_URI_ROOT
                                      MEDIA_FILE_ROOT
+                                     MEDIA_UPLOAD_LIMIT
+                                     AUTO_PREVIEW_MEDIA
                                      MEDIA_UNIQUE_FILENAME
                                      MEDIA_FILENAME_PREFIX)],
                     thumb     => [qw(USE_THUMBNAILS
@@ -333,7 +368,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
                 # Check that the line is a valid config line and exit
                 # immediately if not.
-                unless (defined $var and length $var and 
+                unless (defined $var and length $var and
                         defined $val and length $val) {
                   print STDERR "Syntax error in $conf_file at line $.: '$_'\n";
                   exit 1;
@@ -351,6 +386,22 @@ require Bric; our $VERSION = Bric->VERSION;
             ($config->{SERVER_WINDOW_NAME} =
              $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
+            # Set default plugins for Xinha
+            $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
+             
+            # Set default toolbar for Xinha
+            $config->{XINHA_TOOLBAR} ||= "[['popupeditor','separator']," . 
+                                         "['bold','italic','underline'," . 
+                                         " 'strikethrough','separator']," .
+                                         "['subscript','superscript'," .
+                                         " 'separator']," .
+                                         "(HTMLArea.is_gecko ? [] : " .
+                                         "  ['cut','copy','paste'])," .
+                                         "['space','undo','redo','separator'],".
+                                         "['createlink','separator']," .
+                                         "['killword','removeformat'," .
+                                         " 'separator','htmlmode']]";
+              
             # Set default toolbar for HtmlArea
             $config->{HTMLAREA_TOOLBAR} ||= "['bold','italic','underline'," .
               "'strikethrough','separator','subscript','superscript'," .
@@ -374,8 +425,9 @@ require Bric; our $VERSION = Bric->VERSION;
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
-                    RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME))
+                    USE_THUMBNAILS ENABLE_WYSIWYG AUTOGENERATE_SLUG
+                    RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME
+                    LDAP_TLS AUTO_PREVIEW_MEDIA))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -449,7 +501,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
     use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
     use constant VHOST_SERVER_NAME       => $config->{VHOST_SERVER_NAME};
-    
+
     use constant ENABLE_GZIP             => $config->{ENABLE_GZIP};
 
     # ssl Settings.
@@ -534,6 +586,23 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant AUTH_SECRET             => $config->{AUTH_SECRET}
       || '^eFH;5D,~3!f9o&3f_=dwePL3f:/.Oi|FG/3sd9=45oi%8GF;*)4#0gn3)34tf\`3~'
          . 'fdIf^ N;:';
+    use constant AUTH_ENGINES            => (
+        map { "Bric::Util::Auth$_"}
+        split /\s+/, $config->{AUTH_ENGINES} || 'Internal'
+    );
+
+    # LDAP settings.
+    use constant LDAP_SERVER             => $config->{LDAP_SERVER} || 'localhost';
+    use constant LDAP_VERSION            => $config->{LDAP_VERSION} || 3;
+    use constant LDAP_USER               => $config->{LDAP_USER} || '';
+    use constant LDAP_PASS               => $config->{LDAP_PASS} || '';
+    use constant LDAP_BASE               => $config->{LDAP_BASE} || '';
+    use constant LDAP_UID_ATTR           => $config->{LDAP_UID_ATTR} || 'uid';
+    use constant LDAP_FILTER             => $config->{LDAP_FILATER} || '(objectclass=*)';
+    use constant LDAP_GROUP              => $config->{LDAP_GROUP} || '';
+    use constant LDAP_MEMBER_ATTR        => $config->{LDAP_MEMBER_ATTR} || 'uniqueMember';
+    use constant LDAP_TLS                => $config->{LDAP_TLS};
+    use constant LDAP_SSL_VERSION        => $config->{LDAP_SSL_VERSION} || 3;
 
     # QA Mode settings.
     use constant QA_MODE                 => $config->{QA_MODE} || 0;
@@ -556,12 +625,21 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant MEDIA_UNIQUE_FILENAME    => $config->{MEDIA_UNIQUE_FILENAME};
     use constant MEDIA_FILENAME_PREFIX    => $config->{MEDIA_FILENAME_PREFIX} || '';
 
+    # Media upload limit and auto-preview.
+    use constant MEDIA_UPLOAD_LIMIT      => $config->{MEDIA_UPLOAD_LIMIT} || 0;
+    use constant AUTO_PREVIEW_MEDIA      => $config->{AUTO_PREVIEW_MEDIA} || 0;
+
     # Are we using thumbnails and how big are they ?
     use constant USE_THUMBNAILS          => $config->{USE_THUMBNAILS};
     use constant THUMBNAIL_SIZE          => $config->{THUMBNAIL_SIZE} || 75;
 
-    # Enable HTMLAREA WYSIWYG Editor ?
-    use constant ENABLE_HTMLAREA         => $config->{ENABLE_HTMLAREA};
+    # Enable WYSIWYG editor?
+    use constant ENABLE_WYSIWYG          => $config->{ENABLE_WYSIWYG};
+    use constant WYSIWYG_EDITOR          => $config->{WYSIWYG_EDITOR};
+
+    # WYSIWYG editor settings
+    use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
+    use constant XINHA_TOOLBAR           => $config->{XINHA_TOOLBAR};
     use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
 
     # The minimum login name and password lengths users can enter.

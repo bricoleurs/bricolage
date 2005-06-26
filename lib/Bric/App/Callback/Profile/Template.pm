@@ -136,6 +136,11 @@ sub revert : Callback(priority => 6) {
     my $version = $self->params->{"$widget|version"};
     $fa->revert($version);
     $fa->save;
+
+    # Deploy the template to the user's sandbox.
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+    $sb->deploy($fa);
+
     clear_state($widget);
 }
 
@@ -202,6 +207,11 @@ sub cancel : Callback(priority => 6) {
         add_msg('Template "[_1]" check out canceled.', $fa->get_file_name);
     }
     clear_state($self->class_key);
+
+    # Remove the template from the user's sandbox.
+    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+    $sb->undeploy($fa);
+
     $self->set_redirect("/");
 }
 
@@ -502,7 +512,7 @@ $checkin = sub {
     }
 
     my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
-       $sb->undeploy($fa);
+    $sb->undeploy($fa);
 
     # Clear the state out, set redirect, and return.
     clear_state($widget);

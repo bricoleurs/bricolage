@@ -5,9 +5,9 @@ function contribJump(obj) {
                            + obj[obj.selectedIndex].value;
 }
 </script>
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/load.mc &>
+% if (ENABLE_WYSIWYG) {
+% # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/wysiwyg/load.mc &>
 % }
 <form method="post" action="<% $r->uri %>" name="contrib_profile" onSubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
 
@@ -137,10 +137,6 @@ if ($mode eq "new") {
 }
 </%perl>
 </form>
-% if (ENABLE_HTMLAREA) {
-% # HTMLAREA code here, only used if textarea is in the page with wysiwyg on.
-<& /widgets/htmlarea/timeout.mc &>
-% }
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#

@@ -1,0 +1,27 @@
+Description:
+  Prints out elements and their subelements, custom fields, and output
+  channels using the output from `bric_soap element export`.
+
+Usage:
+  $ bric_soap element list_ids | bric_soap element export - > elements.xml
+  $ ./element-tree.pl elements.xml
+  See the comments in the script for how to control the display
+  of custom fields, output channels, and non top-level elements.
+
+  Display of elements is in the following format:
+
+    Element name (field, repeatable_field*, required_field!, ...)
+    . Child element (fields...)
+    . . Subchildren (...)
+    > Primary output channel, other output channels
+
+Todo:
+  Maybe show the description.
+  Maybe not show isolated non-top-level elements, like utility templates.
+
+Bugs:
+  Output channels are badly handled for version 1.8: the primary OC
+  isn't determined, and there is no distinction between sites.
+
+Author:
+  o  Scott Lanning, 2004-12-17

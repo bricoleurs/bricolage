@@ -84,6 +84,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Config qw(:dist :temp STAGE_ROOT);
+use Bric::App::Event qw(:all);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
@@ -1793,6 +1794,8 @@ sub execute_me {
         # Success!
         $self->_set([qw(comp_time _executing)] => [db_date(0, 1), 0]);
         $self->save;
+        log_event('job_exec', $self);
+        commit_events();
         commit(1);
     };
 

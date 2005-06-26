@@ -48,6 +48,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp('/widgets/profile/hidden.mc',
          name => "$widget|manage_grps_cb",
          value => 1) unless $no_cb;
+$m->print("\n");
 
 ##############################################################################
 # Get groups for double-list manager.
@@ -65,11 +66,13 @@ unless (defined $obj->get_id) {
 my $is_user = ref $obj eq 'Bric::Biz::Person::User';
 
 # Now get the list of current groups the group is a member of.
-foreach my $grp ( $obj->can('get_grps') ?
-                  $obj->get_grps : $grp_class->list({ obj => $obj }) ) {
+foreach my $grp ( $obj->can('get_grps')
+                  ? $obj->get_grps
+                  : defined $obj->get_id
+                    ? $grp_class->list({ obj => $obj })
+                  : ()) {
     # Skip the group if they don't have READ access to it.
     next unless chk_authz($grp, READ, 1);
-
     my $gid = $grp->get_id;
     push @$right, { value       => $gid,
                     description => $grp->get_name };

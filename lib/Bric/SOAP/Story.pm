@@ -18,6 +18,7 @@ use Bric::App::Event    qw(log_event);
 use XML::Writer;
 use IO::Scalar;
 use Bric::Util::Priv::Parts::Const qw(:all);
+use Bric::Config qw(:l10n);
 
 use Bric::SOAP::Util qw(category_path_to_id
                         output_channel_name_to_id
@@ -28,6 +29,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        resolve_relations
                         load_ocs
                        );
 use Bric::SOAP::Media;
@@ -458,6 +460,7 @@ sub export {
     $document_handle->close();
 
     # name, type and return
+    Encode::_utf8_off($document) if ENCODE_OK;
     return name(document => $document)->type('base64');
 }
 
@@ -467,8 +470,13 @@ The create method creates new objects using the data contained in an
 XML document of the format created by export().
 
 The create will fail if your story element contains non-relative
-related_story_ids or related_media_ids that do not refer to existing
-stories or media in the system.
+related_story_ids or related_media_ids that do not refer to existing stories
+or media in the system. Related stores and media can be identified by either
+an ID (set the "relative" attribute to 1 if it refers to an ID elsewhere in
+the same XML file) or by URI (primary URI for stories) and site ID. If
+C<related_story_uri> or C<related_media_uri> is specified without an
+accompanying C<related_site_id> the related document's site is assumed to be
+the same as the current story or media document.
 
 Returns a list of new story_ids and media_ids created in the order of
 the assets in the document.
@@ -566,6 +574,7 @@ publish_status set from the document setting.
 
 =cut
 
+##############################################################################
 
 =item delete
 
@@ -761,7 +770,8 @@ sub load_asset {
         # are we aliasing?
         my $aliased = exists($sdata->{alias_id}) && $sdata->{alias_id} && ! $update
           ? Bric::Biz::Asset::Business::Story->lookup({
-              id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id}  })
+              id => $story_ids{$sdata->{alias_id}} || $sdata->{alias_id}
+            })
           : undef;
 
         # setup init data for create
@@ -777,14 +787,16 @@ sub load_asset {
         if (exists $sdata->{element} and not $aliased) {
             # It's a normal story.
             unless ($selems{$sdata->{element}}) {
-                my $e = (Bric::Biz::AssetType->list
-                         ({ key_name => $sdata->{element}, media => 0 }))[0]
-                           or throw_ap(error => __PACKAGE__ . "::create : no story"
-                                         . " element found matching (element => "
-                                         . "\"$sdata->{element}\")");
-                $selems{$sdata->{element}} =
-                  [ $e->get_id,
-                    { map { $_->get_name => $_ } $e->get_output_channels } ];
+                my $e = (Bric::Biz::AssetType->list({
+                    key_name => $sdata->{element},
+                    media => 0 }))[0]
+                  or throw_ap(error => __PACKAGE__ . "::create : no story"
+                                     . " element found matching (element => "
+                                     . "\"$sdata->{element}\")");
+                $selems{$sdata->{element}} =[
+                    $e->get_id,
+                    { map { $_->get_name => $_ } $e->get_output_channels }
+                ];
             }
 
             # get element__id from story element
@@ -799,11 +811,26 @@ sub load_asset {
         }
 
         # get source__id from source
-        ($init{source__id}) = Bric::Biz::Org::Source->list_ids
-          ({ source_name => $sdata->{source} });
+        ($init{source__id}) = Bric::Biz::Org::Source->list_ids({
+            source_name => $sdata->{source}
+        });
         throw_ap(error => __PACKAGE__ . "::create : no source found matching "
                    . "(source => \"$sdata->{source}\")")
           unless defined $init{source__id};
+
+        # Get category and desk.
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
+                $workflow = (Bric::Biz::Workflow->list({
+                    type => STORY_WORKFLOW,
+                    site_id => $init{site_id}
+                }))[0];
+            }
+
+            unless (exists $args->{desk}) {  # already done above
+                $desk = $workflow->get_start_desk;
+            }
+        }
 
         # get base story object
         my $story;
@@ -817,7 +844,7 @@ sub load_asset {
 
             # is this is right way to check create access for stories?
             throw_ap(error => __PACKAGE__ . " : access denied.")
-              unless chk_authz($story, CREATE, 1);
+              unless chk_authz($story, CREATE, 1, $desk->get_asset_grp);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -942,8 +969,14 @@ sub load_asset {
 
             # add contributors, if any
             if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
+                my %grps;
                 foreach my $c (@{$sdata->{contributors}{contributor}}) {
-                    my %init = (fname => defined $c->{fname} ? $c->{fname} : "",
+                    my $grp = $grps{$c->{type}} ||=
+                      Bric::Util::Grp::Person->lookup({ name => $c->{type} })
+                      or throw_ap __PACKAGE__ . "::create: No contributor type found "
+                      . "matching (type => $c->{type})";
+                    my %init = (grp   => $grp,
+                                fname => defined $c->{fname} ? $c->{fname} : "",
                                 mname => defined $c->{mname} ? $c->{mname} : "",
                                 lname => defined $c->{lname} ? $c->{lname} : "");
                     my ($contrib) =
@@ -998,17 +1031,8 @@ sub load_asset {
         }
 
         unless ($update && $no_wf_or_desk_param) {
-            unless (exists $args->{workflow}) {  # already done above
-                $workflow = (Bric::Biz::Workflow->list({ type => STORY_WORKFLOW,
-                                                         site_id => $init{site_id} }))[0];
-            }
-
             $story->set_workflow_id($workflow->get_id);
             log_event("story_add_workflow", $story, { Workflow => $workflow->get_name });
-
-            unless (exists $args->{desk}) {  # already done above
-                $desk = $workflow->get_start_desk;
-            }
             if ($update) {
                 my $olddesk = $story->get_current_desk;
                 if (defined $olddesk) {
@@ -1058,43 +1082,8 @@ sub load_asset {
         }
     }
 
-    # resolve relations
-    foreach my $r (@relations) {
-        if ($r->{relative}) {
-            # handle relative links
-            if ($r->{story_id}) {
-                throw_ap(error => __PACKAGE__ .
-                           " : Unable to find related story by relative id " .
-                           "\"$r->{story_id}\"")
-                  unless exists $story_ids{$r->{story_id}};
-                $r->{container}->
-                    set_related_instance_id($story_ids{$r->{story_id}});
-            } else {
-                throw_ap(error => __PACKAGE__ .
-                           " : Unable to find related media by relative id " .
-                           "\"$r->{media_id}\"")
-                  unless exists $media_ids{$r->{media_id}};
-                $r->{container}->
-                    set_related_media($media_ids{$r->{media_id}});
-            }
-        } else {
-            # handle absolute links
-            if ($r->{story_id}) {
-                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
-                           . " not found.")
-                  unless Bric::Biz::Asset::Business::Story->list_ids(
-                                                  {id => $r->{story_id}});
-                $r->{container}->set_related_instance_id($r->{story_id});
-            } else {
-                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
-                           . " not found.")
-                  unless Bric::Biz::Asset::Business::Media->list_ids(
-                                                  {id => $r->{media_id}});
-                $r->{container}->set_related_media($r->{media_id});
-            }
-        }
-        $r->{container}->save;
-    }
+    # Resolve related stories and media.
+    resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
     return name(ids => [
                         map { name(story_id => $_) } @story_ids,

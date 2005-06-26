@@ -66,10 +66,9 @@ $LastChangedDate$
  $asset       = $asset->set_expire_date($date)
  $expire_date = $asset->get_expire_date()
 
- # Desk stamp information
- ($desk_stamp_list || @desk_stamps) = $asset->get_desk_stamps()
- $desk_stamp                        = $asset->get_current_desk()
- $asset                             = $asset->set_current_desk($desk_stamp)
+ # Desk information
+ $desk        = $asset->get_current_desk;
+ $asset       = $asset->set_current_desk($desk);
 
  # Workflow methods.
  $id    = $asset->get_workflow_id;
@@ -1339,7 +1338,7 @@ Unable to format date.
 
 =back
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
@@ -1855,7 +1854,7 @@ sub del_keywords {
 
 =item ($self || undef) = $ba->has_keyword($keyword)
 
-Returns true if the keyword object is associated with this asset.
+Returns a keyword if the keyword object is associated with this asset.
 
 B<Throws:> NONE.
 
@@ -1867,8 +1866,7 @@ B<Notes:> Uses C<get_keywords()> internally.
 
 sub has_keyword {
     my ($self, $kw) = @_;
-    return unless $self->get_keywords($kw->get_id);
-    return;
+    scalar($self->get_keywords($kw->get_id))->[0];
 }
 
 ###############################################################################
@@ -2225,7 +2223,7 @@ sub _init {
                [$init->{site_id}, $self->INSTANCE_GROUP_ID]
            ]);
 
-        if ($self->can('get_primary_category')) {
+        if ($self->key_name eq 'story') {
             # It's a story asset.
             delete $init->{_categories};
             foreach my $cat ($alias_target->get_primary_category,
@@ -2358,7 +2356,7 @@ NONE
 sub _construct_uri {
     my $self = shift;
     my ($cat_obj, $oc_obj) = @_;
-#   my $cat_obj = $self->get_primary_category();
+#    $cat_obj ||= $self->get_primary_category();
     my $element_obj = $self->_get_element_object or return;
     my $fu = $element_obj->get_fixed_url;
     my ($pre, $post);
@@ -2366,33 +2364,21 @@ sub _construct_uri {
     # Get the pre and post values.
     ($pre, $post) = ($oc_obj->get_pre_path, $oc_obj->get_post_path) if $oc_obj;
 
-    # Add the pre value.
-    my @path = ('', defined $pre ? $pre : ());
-
     # Get URI Format.
     my $fmt = $fu ? $oc_obj->get_fixed_uri_format : $oc_obj->get_uri_format;
 
-    my @tokens = split( '/', $fmt );
+    my ($category_uri, $slug);
+    $category_uri = $cat_obj ? $cat_obj->ancestry_path : '';
+    $slug = $self->key_name eq 'story' ? $self->get_slug : '';
 
-    # iterate over tokens pushing each onto @path
-    foreach my $token( @tokens ) {
-        next unless $token;
-        if ($uri_format_hash{$token}  ne '') {
-            # Add the cover date value.
-            push @path, $self->get_cover_date( $uri_format_hash{ $token } );
-        } else {
-            if ($token eq 'categories') {
-                # Add Category
-                push @path, $cat_obj->ancestry_path if $cat_obj;
-            } elsif ($token eq 'slug' and $self->key_name eq 'story') {
-                # Add the slug.
-                my $slug = $self->get_slug or next;
-                push @path, $slug;
-            }
-        }
-    }
+    $fmt =~ s/\/%{categories}/$category_uri/g;
+    $fmt =~ s/%{slug}/$slug/g;
 
-    # Add the post value.
+    my $path = $self->get_cover_date($fmt) or return;
+    my @path = split( '/', $path );
+
+    # Add the pre and post values.
+    unshift @path, $pre if $pre;
     push @path, $post if $post;
 
     # Return the URI with the case adjusted as necessary.
@@ -2598,7 +2584,7 @@ sub _update_uris {
           /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
         my $things = $key eq 'media'
           ? 'category, or file name'
-          : 'or categories';
+          : 'slug, or categories';
         throw_not_unique
           error    => "The URI '$uri' is not unique.",
           maketext => ['The URI "[_1]" is not unique. Please change the' .

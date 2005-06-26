@@ -98,6 +98,7 @@ L<Bric::SOAP>
 
 use Getopt::Long;
 use Pod::Usage;
+use Term::ReadPassword;
 
 BEGIN {
     # get parameters from command line.  do this during compile so
@@ -130,6 +131,13 @@ BEGIN {
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
 
+    if ($password eq '') {
+        {
+            $password = read_password('Password: ');
+            redo unless $password;
+        }
+    }
+    
     # check required options
     pod2usage("Missing required --username option ".
 	      "and BRICOLAGE_USERNAME environment variable unset.")

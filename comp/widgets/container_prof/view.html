@@ -43,7 +43,9 @@
       </td>
 %   } else {
       <td width="<% 578 - $infoIndent - 19 %>" class="fieldcontent">
-%       $m->out(escape_html($dt->get_data() || $lang->maketext("Not defined.")));
+%       my $data = $dt->get_data;
+%       $data = $lang->maketext("Not defined.") unless defined $data;
+%       $m->out(escape_html($data));
 %       $sep = 7;
       </td>
       <td width="10">&nbsp;</td>

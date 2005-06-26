@@ -131,7 +131,17 @@ BEGIN {
 END
 }
 
-use Bric::Config qw(:ftp);
+use Bric::Config qw(:ftp :sys_user);
+
+if ($> == 0) {
+    # Switch from root to the system user (set in bricolage.conf).
+    $) = SYS_GROUP;
+    die "Unable to set effective group id ". SYS_GROUP . "\n"
+      unless $) == SYS_GROUP;
+    $> = SYS_USER;
+    die "Unable to set effective user id ". SYS_USER . "\n"
+      unless $> == SYS_USER;
+}
 
 # Kill the server if -k is passed.
 if (grep { $_ eq '-k' } @ARGV) {
@@ -179,8 +189,10 @@ if (FTP_ADDRESS() ne "") {
 }
 
 # setup log and PID file.
-push(@ARGV, '-o', 'error log=' => FTP_LOG,
-            '-P', => FTP_PID_FILE);
+push @ARGV,
+  '-o', 'xfer logging=' . FTP_LOG,
+  '-o', 'error log=' . FTP_LOG,
+  '-P', FTP_PID_FILE;
 
 # set debug mode
 if (FTP_DEBUG) {

@@ -92,7 +92,7 @@ sub new {
   $self->{oc_id}       = $oc_id;
   $self->{site_id}     = $site_id;
   $self->{filename}    = $filename;
-  $self->{deploy}     = $deploy || FTP_DEPLOY_ON_UPLOAD;
+  $self->{deploy}      = $deploy || FTP_DEPLOY_ON_UPLOAD;
 
   print STDERR __PACKAGE__, "::new() : ", $template->get_file_name, "\n"
     if FTP_DEBUG;
@@ -108,14 +108,12 @@ sub new {
 
 =item open($mode)
 
-This method opens this template object for access using the provided
-mode ('r', 'w' or 'a').  The method returns an IO::Scalar object that
-will be used by Net::FTPServer to access the template text.  For
-read-only access a plain IO::Scalar object is returned.  For
-write-methods an internal tied class -
-Bric::Util::FTP::FileHandle::SCALAR - is used with IO::Scalar to
-provide write-access to the data in the database.  Returns undef on
-failure.
+This method opens this template object for access using the provided mode
+('r', 'w' or 'a'). The method returns an IO::Scalar object that will be used
+by Net::FTPServer to access the template text. For read-only access a plain
+IO::Scalar object is returned. For write-methods an instance of an internal
+subclass of IO::Scalar--Bric::Util::FTP::FileHandle::IO--is used to provide
+write access to the data in the database. Returns C<undef> on failure.
 
 =cut
 
@@ -143,15 +141,19 @@ sub open {
     $template->set_data('')
       unless $mode eq 'a';
 
-    # create a tied scalar and return an IO::Scalar attached to it
-    my $data;
-    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR',
-	$template, $self->{ftps}{user_obj}, @{$self}{qw(ftps deploy)};
-    my $handle = new IO::Scalar \$data;
+    # Create and return an instance of our subclassed IO::Scalar class.
+    my $data = $template->get_data;
+    my $handle = Bric::Util::FTP::FileHandle::IO->new(
+        \$data,
+        template => $template,
+        user     => $self->{ftps}{user_obj},
+        ftps     => $self->{ftps},
+        deploy   => $self->{deploy},
+        ftpfh    => $self,
+    );
 
     # seek if appending
-    $handle->seek(length($template->get_data))
-      if $mode eq 'a';
+    $handle->seek(length $data) if $mode eq 'a';
 
     return $handle;
   }
@@ -263,24 +265,17 @@ Deploys the template if the new name is the same as the template name followed b
 
 =cut
 sub move {
-  my $self = shift;
-  my $dirh = shift;
-  my $filename  = shift;
-  my $template = $self->{template};
-  return 0 unless $filename =~ /\.deploy$/;
-  print STDERR __PACKAGE__, "\n\n::move(", $template->get_file_name,
-    ",$filename)\n"
-    if FTP_DEBUG;
+    my $self = shift;
+    my $dirh = shift;
+    my $filename  = shift;
+    my $template = $self->{template};
+    return 0 unless $filename =~ /\.deploy$/;
+    print STDERR __PACKAGE__, "\n\n::move(", $template->get_file_name,
+      ",$filename)\n"
+      if FTP_DEBUG;
 
     $self->{deploy} = 1;
-    # create a tied scalar and return an IO::Scalar attached to it
-    my $data;
-    tie $data, 'Bric::Util::FTP::FileHandle::SCALAR',
-	$template, $self->{ftps}{user_obj}, @{$self}{qw(ftps deploy)};
-
-    $data = $template->get_data;
-#    my $handle = new IO::Scalar \$data;
-#    print $handle $template->get_data;
+    $self->_deploy($template, $self->{ftps}{user_obj});
     return 1;
 }
 
@@ -361,6 +356,96 @@ sub can_write  {
 
 *can_append = \&can_write;
 
+
+sub _deploy {
+    my ($self, $template, $user) = @_;
+
+    # checkin the template
+    $template->checkin;
+
+    # remove from desk
+    my $cur_desk = $template->get_current_desk;
+    unless ($cur_desk && $cur_desk->can_publish) {
+        # Find a desk to deploy from.
+        my $wf = Bric::Biz::Workflow->lookup({
+            id => $template->get_workflow_id
+        });
+        my $pub_desk;
+        foreach my $d ($wf->allowed_desks) {
+            $pub_desk = $d and last if $d->can_publish
+              && $user->can_do($d, READ);
+        }
+
+        unless ($pub_desk) {
+            warn "Cannot deploy ", $template->get_name,
+              ": no deploy desk\n";
+            return;
+        }
+
+        # Transfer the template to the publish desk.
+        if ($cur_desk) {
+            $cur_desk->transfer({ to    => $pub_desk,
+                                  asset => $template });
+            $cur_desk->save;
+        } else {
+            $pub_desk->accept({ asset => $template });
+        }
+
+        # Save the deploy desk and log it.
+        $pub_desk->save;
+        Bric::Util::Event->new({
+            key_name  => "formatting_moved",
+            obj       => $template,
+            user      => $user,
+            attr      => { Desk => $pub_desk->get_name },
+        });
+    }
+
+    # Make sure they have permission to deploy (publish).
+    unless ($user->can_do($template, PUBLISH)) {
+        warn "Cannot deploy ", $template->get_name, ": permission denied\n";
+        return;
+    }
+
+    # Now remove it!
+    $cur_desk->remove_asset($template);
+    $cur_desk->save;
+
+            # clear the workflow ID
+    if ($template->get_workflow_id) {
+        $template->set_workflow_id(undef);
+        Bric::Util::Event->new({
+            key_name  => "formatting_rem_workflow",
+            obj       => $template,
+            user      => $user,
+        });
+    }
+
+    $template->save;
+    # get a new burner
+    my $burner = Bric::Util::Burner->new;
+
+    # deploy and save
+    $burner->deploy($template);
+    $template->set_deploy_date(strfdate());
+    $template->set_deploy_status(1);
+    $template->set_published_version($template->get_current_version);
+    $template->save;
+
+    # Be sure to undeploy it from the user's sandbox.
+    my $sb = Bric::Util::Burner->new({user_id => $user->get_id });
+    $sb->undeploy($template);
+
+    # log the deploy
+    Bric::Util::Event->new({
+        key_name  => $template->get_deploy_status
+          ? 'formatting_redeploy'
+          : 'formatting_deploy',
+        obj       => $template,
+        user      => $user,
+    });
+}
+
 =back
 
 =head1 PRIVATE
@@ -369,166 +454,113 @@ sub can_write  {
 
 =over 4
 
-=item Bric::Util::FTP::FileHandle::SCALAR
+=item Bric::Util::FTP::FileHandle::IO
 
-This class provides a tied scalar interface to a template object's
-data.  The TIESCALAR constructor takes a template object as a single
-argument.  Writes to the tied scalar result in the template object
-being altered, saved, checked-in and deployed.
+This class subclasses IO::Scalar to encapsulate the interface to a template
+object's data. The C<new()> constructor takes a scalar variable as a first
+argument, followed by a parameter list. The supported parameters are:
+
+=over
+
+=item template
+
+=item user
+
+=item deploy
+
+=item ftps
+
+An instance of the Bric::Util::FTP::Server class.
+
+=item ftpfh
+
+An instance of the Bric::Util::FTP::FileHandle class.
+
+=back
+
+Bric::Util::FTP::FileHandle::IO objects track when data has been written to
+the underlying scalar, and, if so, write the data to the underlying template
+object when the file handle is closed. It also properly handles deploying the
+template to the user's sandbox, and deploying the template to production if
+the name of the file ends in ".deploy".
 
 =back
 
 =cut
 
-package Bric::Util::FTP::FileHandle::SCALAR;
-use strict;
-use warnings;
-
+package Bric::Util::FTP::FileHandle::IO;
 use Bric::Config qw(FTP_DEBUG);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Event;
 use Bric::Util::Priv::Parts::Const qw(:all);
+use base 'IO::Scalar';
 
-sub TIESCALAR {
-  my $pkg = shift;
-  my $template = shift;
-  my $user = shift;
-  my $ftps = shift;
-  my $deploy = shift;
-  my $self = { template => $template,
-               user     => $user,
-               ftps     => $ftps,
-               deploy   => $deploy };
-
-  print STDERR __PACKAGE__, "::TIESCALAR()\n" if FTP_DEBUG;
-  return bless $self, $pkg;
-}
-
-sub FETCH {
-  my $self = shift;
-  print STDERR __PACKAGE__, "::FETCH()\n" if FTP_DEBUG;
-  return $self->{template}->get_data();
-}
-
-# This method can only be called if the mode is "w" (writeable).
-sub STORE {
-    my $self = shift;
-    my $data = shift;
-    my $template = $self->{template};
-    my $user = $self->{user};
-    print STDERR __PACKAGE__, "::STORE()\n" if FTP_DEBUG;
-
-    # Put the template into workflow.
-    if (not $template->get_workflow_id) {
-        # Recall it into workflow, move it to a desk, and check it out.
-        $self->{ftps}->move_into_workflow($template)
-    } elsif (not $template->get_desk_id) {
-        # Move it to the start desk and check it out.
-        $self->{ftps}->move_onto_desk($template)
-    } elsif (not $template->get_checked_out) {
-        # Check it out.
-        $self->{ftps}->check_out($template)
+{
+    my %data;
+    sub new {
+        my $self = shift->SUPER::new(shift);
+        $data{$self->sref} = { @_ };
+        print STDERR __PACKAGE__, "::new()\n" if FTP_DEBUG;
+        return $self;
     }
 
-    # save the new code
-    $template->set_data($data);
-    $template->save;
+    sub DESTROY { delete $data{\shift()}}
 
-    # log the save
-    Bric::Util::Event->new({ key_name  => 'formatting_save',
-                             obj       => $template,
-                             user      => $user,
-                         });
-
-    if ($self->{deploy}) {
-        # checkin the template
-        $template->checkin;
-
-        # remove from desk
-        my $cur_desk = $template->get_current_desk;
-        unless ($cur_desk && $cur_desk->can_publish) {
-            # Find a desk to deploy from.
-            my $wf = Bric::Biz::Workflow->lookup({
-                id => $template->get_workflow_id
-            });
-            my $pub_desk;
-            foreach my $d ($wf->allowed_desks) {
-                $pub_desk = $d and last if $d->can_publish
-                  && $self->{ftps}{user_obj}->can_do($d, READ);
-            }
-
-            unless ($pub_desk) {
-                warn "Cannot deploy ", $template->get_name,
-                  ": no deploy desk\n";
-                return;
-            }
-
-            # Transfer the template to the publish desk.
-            if ($cur_desk) {
-                $cur_desk->transfer({ to    => $pub_desk,
-                                      asset => $template });
-                $cur_desk->save;
-            } else {
-                $pub_desk->accept({ asset => $template });
-            }
-
-            # Save the deploy desk and log it.
-            $pub_desk->save;
-            Bric::Util::Event->new({ key_name  => "formatting_moved",
-                                     obj       => $template,
-                                     user      => $user,
-                                     attr      => { Desk => $pub_desk->get_name },
-                                 });
-        }
-
-        # Make sure they have permission to deploy (publish).
-        unless ($self->{ftps}{user_obj}->can_do($template, PUBLISH)) {
-            warn "Cannot deploy ", $template->get_name,
-              ": permission denied\n";
-            return;
-        }
-
-        # Now remove it!
-        $cur_desk->remove_asset($template);
-        $cur_desk->save;
-
-        # clear the workflow ID
-        if ($template->get_workflow_id) {
-            $template->set_workflow_id(undef);
-              Bric::Util::Event->new({ key_name  => "formatting_rem_workflow",
-                                       obj       => $template,
-                                       user      => $user,
-                                   });
-        }
-
-        $template->save;
-        # get a new burner
-        my $burner = Bric::Util::Burner->new;
-
-        # deploy and save
-        $burner->deploy($template);
-        $template->set_deploy_date(strfdate());
-        $template->set_deploy_status(1);
-        $template->set_published_version($template->get_current_version);
-        $template->save;
-
-        # Be sure to undeploy it from the user's sandbox.
-        my $sb = Bric::Util::Burner->new({user_id => $user->get_id });
-        $sb->undeploy($template);
-
-        # log the deploy
-        Bric::Util::Event->new({ key_name  => $template->get_deploy_status
-                                              ? 'formatting_redeploy'
-                                              : 'formatting_deploy',
-                                 obj       => $template,
-                                 user      => $user,
-                             });
-    } else {
-        # Simply deploy it to the user's sandbox.
-        my $burner = Bric::Util::Burner->new({user_id => $user->get_id });
-        $burner->deploy($template);
+    sub print {
+        my $self = shift;
+        $data{$self->sref}->{mod} = 1;
+        $self->SUPER::print(@_);
     }
-  return $data;
+
+    sub syswrite {
+        my $self = shift;
+        $data{$self->sref}->{mod} = 1;
+        $self->SUPER::syswrite(@_);
+    }
+
+    sub close {
+        my $self = shift;
+        my $sref = $self->sref;
+        print STDERR __PACKAGE__, "::close()\n" if FTP_DEBUG;
+
+        my ($mod, $template, $user, $ftps) =
+          @{$data{$sref}}{qw(mod template user ftps)};
+
+        # Just return if the template has not been modified.
+        return 1 unless $mod;
+
+        # Put the template into workflow.
+        if (not $template->get_workflow_id) {
+            # Recall it into workflow, move it to a desk, and check it out.
+            $ftps->move_into_workflow($template)
+        } elsif (not $template->get_desk_id) {
+            # Move it to the start desk and check it out.
+            $ftps->move_onto_desk($template)
+        } elsif (not $template->get_checked_out) {
+            # Check it out.
+            $ftps->check_out($template)
+        }
+
+        # save the new code
+        $template->set_data($$sref);
+        $template->save;
+
+        # log the save
+        Bric::Util::Event->new({
+            key_name  => 'formatting_save',
+            obj       => $template,
+            user      => $user,
+        });
+
+        if ($data{$sref}->{deploy}) {
+            $data{$sref}->{ftpfh}->_deploy($template, $user);
+        } else {
+            # Simply deploy it to the user's sandbox.
+            my $burner = Bric::Util::Burner->new({user_id => $user->get_id });
+            $burner->deploy($template);
+        }
+        return 1;
+    }
 }
 
 1;
@@ -540,6 +572,8 @@ __END__
 =head1 AUTHOR
 
 Sam Tregar <stregar@about-inc.com>
+
+David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 

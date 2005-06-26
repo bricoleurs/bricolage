@@ -486,6 +486,12 @@ The XSD source:
                      </xs:element>
                      <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
                    </xs:sequence>
+                   <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_story_uri" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
+                   <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
+                   <xs:attribute name="relative" type="xs:boolean" use="optional"/>
                  </xs:complexType>
                </xs:element>
              </xs:sequence>
@@ -595,6 +601,13 @@ The XSD source:
                  <xs:complexType>
                    <xs:sequence>
                      <xs:element name="name">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="256"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                     <xs:element name="media_type">
                        <xs:simpleType>
                          <xs:restriction base="xs:string">
                            <xs:maxLength value="256"/>
@@ -1262,7 +1275,10 @@ The XSD source:
      <xs:attribute name="element" type="xs:string" use="required"/>
      <xs:attribute name="order" type="xs:int" use="required"/>
      <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
+     <xs:attribute name="related_story_uri" type="xs:int" use="optional"/>
      <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
+     <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
+     <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
      <xs:attribute name="relative" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>

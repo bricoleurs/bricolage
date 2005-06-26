@@ -174,7 +174,7 @@ sub add_element : Callback {
 
         } elsif ($type eq 'data_') {
             $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
-            $tile->add_data($at, '');
+            $tile->add_data($at, $at->get_meta('html_info')->{value});
             $tile->save();
             set_state_data($self->class_key, 'tile', $tile);
         }
@@ -490,6 +490,16 @@ sub change_sep : Callback {
     add_msg("Separator Changed.");
 }
 
+sub change_preserve : Callback {
+    my $self = shift;
+    $self->_drift_correction;
+    my $param = $self->params;
+    return if $param->{'_inconsistent_state_'};
+    my $widget = $self->class_key;
+
+    set_state_data($widget, 'preserve', $param->{$widget . '|preserve'});
+}
+
 sub recount : Callback {
     my $self = shift;
     $self->_drift_correction;
@@ -656,11 +666,15 @@ sub _update_parts {
     my $widget = $self->class_key;
     my $locate_id = $self->value;
     my $tile = get_state_data($widget, 'tile');
+    my $object_type = $tile->get_object_type;
 
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
-    my $do_delete = ($param->{$widget.'|delete_cb'} ||
-                     $param->{$widget.'|save_and_up_cb'} ||
-                     $param->{$widget.'|save_and_stay_cb'});
+    # in the element profile or the document profile.
+    my $do_delete = $param->{$widget.'|delete_cb'} ||
+                    $param->{$widget.'|save_and_up_cb'} ||
+                    $param->{$widget.'|save_and_stay_cb'} ||
+                    $param->{$object_type .'_prof|save_cb'} ||
+                    $param->{$object_type .'_prof|save_and_stay_cb'};
 
     # Save data to tiles and put them in a usable order
     foreach my $t ($tile->get_tiles) {
@@ -708,10 +722,12 @@ sub _update_parts {
     $tile->delete_tiles(\@delete) if $do_delete;
 
     if (@curr_tiles) {
-        eval { $tile->reorder_tiles([grep(defined($_), @curr_tiles)]) };
+        eval { $tile->reorder_tiles([ grep { defined } @curr_tiles ]) };
         if ($@) {
-            add_msg("Warning! State inconsistent: Please use the buttons provided by the application rather than the 'Back'/'Forward' buttons.");
-            return;
+            add_msg("Warning! State inconsistent: Please use the buttons "
+                    . "provided by the application rather than the 'Back'/"
+                    . "'Forward' buttons.");
+            return $locate_tile;
         }
     }
 
@@ -944,6 +960,7 @@ sub _split_fields {
     my ($self, $text) = @_;
     my $widget = $self->class_key;
     my $sep = get_state_data($widget, 'separator');
+    my $preserve = get_state_data($widget, 'preserve');
     my @data;
 
     # Change Windows newlines to Unix newlines.
@@ -953,13 +970,17 @@ sub _split_fields {
     my $re = $regex->{$sep} ||= qr/\s*\Q$sep\E\s*/;
 
     # Split 'em up.
-    @data = map { s/^\s+//;         # Strip out beginning spaces.
-                  s/\s+$//;         # Strip out ending spaces.
-                  s/[\n\t\r\f]/ /g; # Strip out unwanted characters.
-                  s/\s{2,}/ /g;     # Strip out double-spaces.
-                  $_;
-              } split(/$re/, $text);
-
+    if ($preserve) {
+        @data = split(/$re/, $text);
+    } else {  
+        @data = map { s/^\s+//;         # Strip out beginning spaces.
+                      s/\s+$//;         # Strip out ending spaces.
+                      s/[\n\t\r\f]/ /g; # Strip out unwanted characters.
+                      s/\s{2,}/ /g;     # Strip out double-spaces.
+                      $_;
+                    } split(/$re/, $text);
+    }
+                    
     # Save 'em.
     set_state_data($widget, 'data', \@data);
 }

@@ -7,6 +7,7 @@ use Bric::Dist::ServerType;
 use Bric::Dist::Server;
 use Bric::Util::Job::Pub;
 use Bric::Util::Grp::Dest;
+use Test::MockModule;
 
 sub table {'server_type'}
 
@@ -17,6 +18,19 @@ my %dest = ( name        => 'Bogus',
              site_id     => 100,
              move_method => 'File System'
            );
+
+sub test_setup : Test(setup) {
+    my $self = shift;
+    # Turn off event logging.
+    $self->{event} = Test::MockModule->new('Bric::Util::Job');
+    $self->{event}->mock(commit_events => undef);
+}
+
+sub test_teardown : Test(teardown) {
+    my $self = shift;
+    delete($self->{event})->unmock_all;
+    return $self;
+}
 
 ##############################################################################
 # Test constructors.

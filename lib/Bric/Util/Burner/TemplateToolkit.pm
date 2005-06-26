@@ -536,9 +536,9 @@ sub display_element {
         $self->_push_element($elem);
 
         my $template = $self->_load_template_element($elem);
-	$data .= $tt->context->include($template, {
-	    'element' => $elem,
-	});
+        $data .= $tt->context->include($template, {
+            'element' => $elem,
+        });
 
         # Pop the element back off again.
         $self->_pop_element();

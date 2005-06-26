@@ -25,6 +25,9 @@ do_sql
   qq{update event_attr  set id = NEXTVAL('seq_event_attr')},
 
   # Make sure it can never be null.
+  qq{ALTER TABLE event_attr
+     ALTER COLUMN id SET NOT NULL},
+
   qq{ALTER TABLE    event_attr
      ADD CONSTRAINT ck_event_attr__id__null CHECK (id IS NOT NULL)},
 

@@ -68,6 +68,7 @@ if(ref($title) eq 'ARRAY') {
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <title><% $title %></title>
@@ -90,9 +91,11 @@ window.onload = function () {
 function init() {
     <% $jsInit %>;
 }
+multiOnload.onload("init");
 
 % if ($no_toolbar) {
-if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>') {
+if (window.name == 'sideNav') { parent.location.href = location.href; }
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideNav') {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
@@ -153,6 +156,11 @@ if ($useSideNav) {
             <& "/widgets/buttons/help.mc", context => $context, page => $title &>
             <a href="/workflow/profile/alerts" title="My Alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" alt="My Alerts" /></a>
             <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
+        </div>
+% }
+% if (defined get_user_id()) {
+        <div class="userinfo">
+            Logged in as <a href="/admin/profile/user/<% get_user_id %>" title="<% $lang->maketext("User Profile") %>"><strong><% get_user_object->format_name %></strong></a>
         </div>
 % }
     </div>

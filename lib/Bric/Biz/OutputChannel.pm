@@ -119,8 +119,8 @@ use constant LOWERCASE => 2;
 use constant UPPERCASE => 3;
 
 # URI Defaults.
-use constant DEFAULT_URI_FORMAT => '/categories/year/month/day/slug/';
-use constant DEFAULT_FIXED_URI_FORMAT => '/categories/';
+use constant DEFAULT_URI_FORMAT => '/%{categories}/%Y/%m/%d/%{slug}/';
+use constant DEFAULT_FIXED_URI_FORMAT => '/%{categories}/';
 use constant DEFAULT_URI_CASE => MIXEDCASE;
 use constant DEFAULT_USE_SLUG => 0;
 
@@ -1224,6 +1224,8 @@ sub set_uri_format {
                                      $_[1])])
 }
 
+##############################################################################
+
 =item my $format = $oc->get_uri_format
 
 Returns the URI format for documents output in this Output Channel.
@@ -1263,6 +1265,8 @@ sub set_fixed_uri_format {
                 [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp},
                                      $_[1])])
 }
+
+##############################################################################
 
 =item (undef || 1 ) = $oc->can_use_slug
 
@@ -2009,32 +2013,19 @@ B<Notes:> NONE.
 
 $parse_uri_format = sub {
     my ($name, $format) = @_;
-    my %toks = map { $_ => 1 } qw(categories day month year slug);
 
     # Throw an exception for an empty or bogus format.
     throw_dp(error => "No $name value specified")
       if not $format or $format =~ /^\s*$/;
 
-    # Parse the format for invalid tokens.
-    $format =~ s#/?(.+)/?#$1#;
-    my (@tokens, @bad);
-    foreach my $token (split /\//, $format) {
-        $toks{$token} ?
-          push @tokens, $token :
-          push @bad, $token;
-    }
+    # Make sure that the URI format has %{categories}.
+    throw_dp "Missing the %{categories} token from $name"
+      unless $format =~ /%{categories}/;
 
-    # Throw an exception for a format with invalid tokens.
-    if (my $c = @bad) {
-        my $pl = $c > 1 ? 's' : '';
-        my $bad = join ', ', @bad;
-        throw_dp(error => "Invalid $name token$pl: $bad");
-    }
-
-    # Return the format.
-    return '/' . join('/', @tokens) . '/';
+    # Make sure there's a closing slash.
+    $format .= '/' unless $format =~ m|/$|;
+    return $format;
 };
-
 
 1;
 __END__
@@ -2049,7 +2040,7 @@ NONE.
 
 Michael Soderstrom <miraso@pacbell.net>
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 

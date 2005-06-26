@@ -38,9 +38,11 @@ This module exports function used by the installation system scripts.
 
 use strict;
 
+use File::Spec::Functions qw(catdir tmpdir catfile);
+
 require Exporter;
 use base 'Exporter';
-our @EXPORT_OK   = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice);
+our @EXPORT_OK   = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice get_default);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 =item soft_fail($msg)
@@ -98,6 +100,7 @@ sub ask_yesno {
     local $| = 1;
     while (1) {
         print $question;
+        print " [" . (($default == 1) ? "yes" : "no") . "] "; # Append the default
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
         print "\n" if $quiet_mode;
@@ -197,6 +200,62 @@ sub ask_choice {
         print "Please choose from: ", join(', ', @$choices), "\n";
         print "And quit screwing around.\n" if ++$tries > 3;
     }
+}
+
+
+=item get_default($key)
+
+Returns the value for $key from the defaults file (inst/defaults/<distro>)
+
+For example, get_default("APACHE_USER") might return "nobody".
+
+=cut
+
+# We'll store the settings loaded from the defaults file here.
+our $defaults;
+
+# Pretty much a copy/paste from Bric::Config
+BEGIN {
+    # Load the defaults file, if it exists.
+    my $distro = lc($ENV{USE_DEFAULTS} ? $ENV{USE_DEFAULTS} : "standard");
+    my $def_file = catdir('inst', 'defaults', $distro);
+
+    if (-e $def_file) {
+        unless (open DEFS, $def_file) {
+            require Carp;
+            Carp::croak "Cannot open $def_file: $!\n";
+        }
+
+        while (<DEFS>) {
+            # Get each configuration line into $defaults.
+            chomp;                  # no newline
+            s/#.*//;                # no comments
+            s/^\s+//;               # no leading white
+            s/\s+$//;               # no trailing white
+            next unless length;     # anything left?
+
+            # Get the variable and its value.
+            my ($var, $val) = split(/\s*=\s*/, $_, 2);
+
+            # Check that the line is a valid config line and exit
+            # immediately if not.
+            unless (defined $var and length $var and 
+                    defined $val and length $val) {
+                print STDERR "Syntax error in $def_file at line $.: '$_'\n";
+                exit 1;
+            }
+
+            # Save the configuration directive.
+            $defaults->{uc $var} = $val;
+        }
+        close DEFS;
+    }
+}
+
+sub get_default {
+    my ($key) = @_;
+
+    return $defaults->{uc $key};
 }
 
 =back

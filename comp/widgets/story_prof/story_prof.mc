@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -25,7 +23,6 @@ $LastChangedDate$
 =cut
 
 </%doc>
-
 <%once>
 my $widget = 'story_prof';
 
@@ -50,11 +47,8 @@ my $needs_reload = sub {
     # No reload is necessary
     return 0;
 };
-
 </%once>
-
 %#--- Arguments ---#
-
 <%args>
 $id       => undef
 $work_id  => undef
@@ -64,9 +58,7 @@ $param    => undef
 $return	  => undef
 $section
 </%args>
-
 %#--- Initialization ---#
-
 <%init>
 # Clear out the state data if this is our first time here.
 if ($section eq 'new' or $section eq 'find_alias' or $section eq 'clone') {
@@ -91,8 +83,8 @@ if ($id) {
     if ($needs_reload->($story, $id, $checkout, $version)) {
 	my $param = {'id' => $id};
 
-	$param->{checkout} = $checkout if defined($checkout);
-	$param->{version}  = $version  if defined($version);
+	$param->{checked_in} = 1 unless $checkout;
+	$param->{version} = $version if defined $version;
 	$story = Bric::Biz::Asset::Business::Story->lookup($param);
 
 	# Clear the story state data
@@ -126,7 +118,6 @@ if ($return) {
     set_state_data($widget, 'return', $return);
 }
 
-
 # Get the current state.
 my $state = get_state_name($widget);
 
@@ -139,6 +130,5 @@ if (my $story = get_state_data($widget, 'story')) {
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
-
 %#--- Log History ---#
 

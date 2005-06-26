@@ -65,7 +65,7 @@ sub save : Callback {
 
     # Roll in the changes. Assume it's active.
     foreach my $meth ($act->my_meths(1)) {
-        next if $meth->{name} eq 'type';
+        next if $meth->{name} eq 'type' || ! defined $param->{$meth->{name}};
         $meth->{set_meth}->($act, @{$meth->{set_args}}, $param->{$meth->{name}})
           if defined $meth->{set_meth};
     }

@@ -26,6 +26,7 @@ use Bric::SOAP::Util qw(category_path_to_id
                         parse_asset_document
                         serialize_elements
                         deserialize_elements
+                        resolve_relations
                         load_ocs
                        );
 
@@ -629,8 +630,8 @@ sub load_asset {
           || throw_ap error => "desk '" . $args->{desk} . "' not found!";
     }
 
-    # loop over media, filling in @media_ids
-    my (@media_ids, %melems);
+    # loop over media, filling in @media_ids and @relations.
+    my (%media_ids, @media_ids, %melems, @relations);
     foreach my $mdata (@{$data->{media}}) {
         my $id = $mdata->{id};
 
@@ -639,7 +640,9 @@ sub load_asset {
 
         # are we aliasing?
         my $aliased = exists($mdata->{alias_id}) && $mdata->{alias_id} && ! $update
-          ? Bric::Biz::Asset::Business::Media->lookup({ id => $mdata->{alias_id} })
+          ? Bric::Biz::Asset::Business::Media->lookup({
+              id => $media_ids{$mdata->{alias_id}} || $mdata->{alias_id}
+            })
           : undef;
 
         # setup init data for create
@@ -701,6 +704,20 @@ sub load_asset {
           category_path_to_id(__PACKAGE__, $mdata->{category}[0], \%init)
           unless defined $init{category__id};
 
+        # Determine workflow and desk.
+        unless ($update && $no_wf_or_desk_param) {
+            unless (exists $args->{workflow}) {  # already done above
+                $workflow = (Bric::Biz::Workflow->list({
+                    type => MEDIA_WORKFLOW,
+                    site_id => $init{site_id}
+                }))[0];
+            }
+
+            unless (exists $args->{desk}) {  # already done above
+                $desk = $workflow->get_start_desk;
+            }
+        }
+
         # get base media object
         my $media;
         unless ($update) {
@@ -711,9 +728,9 @@ sub load_asset {
             print STDERR __PACKAGE__ . "::create : created empty media object\n"
                 if DEBUG;
 
-            # is this is right way to check create access for media?
+            # Check permissions. The start desk group applies to the permissions.
             throw_ap(error => __PACKAGE__ . " : access denied.")
-              unless chk_authz($media, CREATE, 1);
+              unless chk_authz($media, CREATE, 1, $desk->get_asset_grp);
             if ($aliased) {
                 # Log that we've created an alias.
                 my $origin_site = Bric::Biz::Site->lookup
@@ -783,8 +800,14 @@ sub load_asset {
 
             # add contributors, if any
             if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
+                my %grps;
                 foreach my $c (@{$mdata->{contributors}{contributor}}) {
-                    my %init = (fname => $c->{fname},
+                    my $grp = $grps{$c->{type}} ||=
+                      Bric::Util::Grp::Person->lookup({ name => $c->{type} })
+                      or throw_ap __PACKAGE__ . "::create: No contributor type found "
+                      . "matching (type => $c->{type})";
+                    my %init = (grp   => $grp,
+                                fname => $c->{fname},
                                 mname => $c->{mname},
                                 lname => $c->{lname});
                     my ($contrib) =
@@ -814,17 +837,10 @@ sub load_asset {
                 # new objects must be saved to have an id
                 $media->save;
 
-                # upload the file into the media object
-                $media->upload_file($fh, $filename);
-                $media->set_size($size);
+                # Upload the file into the media object; let it figure out the
+                # media type.
+                $media->upload_file($fh, @{$mdata->{file}}{qw(name media_type size)});
                 log_event('media_upload', $media);
-
-                # lookup MediaType by extension, if we have one
-                my ($ext) = $filename =~ /\.(.*)$/;
-                my $media_type;
-                $media_type = Bric::Util::MediaType->lookup({'ext' => $ext})
-                  if $ext;
-                $media->set_media_type_id($media_type ? $media_type->get_id : 0);
             } else {
                 # clear the media object by uploading an empty file - this
                 # is functionality that isn't actually supported by
@@ -832,9 +848,7 @@ sub load_asset {
                 # some point and use it here.
                 my $data = "";
                 my $fh  = new IO::Scalar \$data;
-                $media->upload_file($fh, "empty");
-                $media->set_size(0);
-                $media->set_media_type_id(0);
+                $media->upload_file($fh, "empty", 0, 0);
             }
         }
 
@@ -877,16 +891,8 @@ sub load_asset {
         }
 
         unless ($update && $no_wf_or_desk_param) {
-            unless (exists $args->{workflow}) {  # already done above
-                $workflow = (Bric::Biz::Workflow->list({ type => MEDIA_WORKFLOW,
-                                                         site_id => $init{site_id} }))[0];
-            }
             $media->set_workflow_id($workflow->get_id);
             log_event("media_add_workflow", $media, { Workflow => $workflow->get_name });
-
-            unless (exists $args->{desk}) {  # already done above
-                $desk = $workflow->get_start_desk;
-            }
             if ($update) {
                 my $olddesk = $media->get_current_desk;
                 if (defined $olddesk) {
@@ -902,10 +908,11 @@ sub load_asset {
         }
 
         # add element data
-        deserialize_elements(object => $media,
-                             type   => 'media',
-                             data   => $mdata->{elements} || {})
-          unless $aliased;
+        push @relations, deserialize_elements(
+            object => $media,
+            type   => 'media',
+            data   => $mdata->{elements} || {}
+        ) unless $aliased;
 
         # activate if desired
         $media->activate if $mdata->{active};
@@ -917,16 +924,36 @@ sub load_asset {
         log_event('media_save', $media);
 
         # all done, setup the media_id
-        push(@media_ids, $media->get_id);
+        push(@media_ids, $media_ids{$id} = $media->get_id);
     }
 
     $desk->save if defined $desk;
+
+    # if we have any story objects, create them
+    my (%story_ids, @story_ids);
+    if ($data->{story}) {
+        @story_ids = Bric::SOAP::Story->load_asset({ data       => $data,
+                                                     internal   => 1,
+                                                     upload_ids => []    });
+
+        # correlate to relative ids
+        for (0 .. $#story_ids) {
+            $story_ids{$data->{story}[$_]{id}} = $story_ids[$_];
+        }
+    }
+
+    # Resolve related stories and media.
+    resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
     # return a SOAP structure unless this is an internal call
     unless ($args->{internal}) {
         return name(ids => [ map { name(media_id => $_) } @media_ids ]);
     }
-    return @media_ids;
+
+    return name(ids => [
+                        map { name(media_id => $_) } @media_ids,
+                        map { name(story_id => $_) } @story_ids,
+                       ]);
 }
 
 
@@ -1032,6 +1059,7 @@ sub serialize_asset {
             $writer->startTag("file");
             $writer->dataElement(name => $file_name);
             $writer->dataElement(size => $media->get_size);
+            $writer->dataElement(media_type => $media->get_media_type->get_name);
 
             # read in file data
             my $fh   = $media->get_file;

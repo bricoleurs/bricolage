@@ -9,10 +9,14 @@ use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:aref :msg :history :browser redirect_onload);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
+use Bric::Biz::OutputChannel;
+use Bric::Dist::ServerType;
 use Bric::Config qw(:prev);
 use Bric::Util::Burner;
 use Bric::Util::Job::Pub;
+use Bric::Util::Trans::FS;
 use Bric::App::Event qw(log_event);
+use Bric::Util::Fault qw(throw_error);
 
 sub preview : Callback {
     my $self = shift;
@@ -41,13 +45,45 @@ sub preview : Callback {
     if (defined $media_id) {
         my $media = get_state_data('media_prof', 'media');
         unless ($media && (defined $media_id) && ($media->get_id == $media_id)) {
-            $media = Bric::Biz::Asset::Business::Media->lookup
-              ({ id => $media_id,
-                 checkout => $param->{checkout} });
+            $media = Bric::Biz::Asset::Business::Media->lookup({
+                id => $media_id,
+                $param->{checkout} ? () : (checked_in => 1),
+            });
         }
 
-        # Move out the story and then redirect to preview.
-        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
+        # Move out the media document and then redirect to preview.
+        my $url = do {
+            if (AUTO_PREVIEW_MEDIA && !$media->get_needs_preview) {
+                my $oc = $oc_id
+                  ? Bric::Biz::OutputChannel->lookup({ id => $oc_id })
+                  : $media->get_primary_oc;
+                if (PREVIEW_LOCAL) {
+                    Bric::Util::Trans::FS->cat_uri(
+                        '/', PREVIEW_LOCAL, $media->get_uri($oc)
+                    );
+                } else {
+                    my ($dest) = Bric::Dist::ServerType->list({
+                        can_preview       => 1,
+                        active            => 1,
+                        output_channel_id => $oc->get_id,
+                    });
+                    throw_error
+                        error => 'Cannot preview asset "' . $media->get_name
+                          . '" because there are no Preview Destinations '
+                          . 'associated with its output channels.',
+                        maketext => ['Cannot preview asset "[_1]" because there '
+                                     . 'are no Preview Destinations associated with '
+                                     . 'its output channels.', $media->get_name]
+                      unless $dest;
+                    ($oc->get_protocol || 'http://')
+                      . ($dest->get_servers)[0]->get_host_name
+                      . $media->get_uri($oc);
+                }
+            } else {
+                $b->preview($media, 'media', get_user_id(), $oc_id);
+            }
+        };
+        if ($url) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
             redirect_onload($url, $self);
@@ -55,9 +91,10 @@ sub preview : Callback {
     } else {
         my $s = get_state_data('story_prof', 'story');
         unless ($s && defined $story_id && $s->get_id == $story_id) {
-            $s = Bric::Biz::Asset::Business::Story->lookup
-              ({ id => $story_id,
-                 checkout => $param->{checkout} });
+            $s = Bric::Biz::Asset::Business::Story->lookup({
+                id => $story_id,
+                $param->{checkout} ? () : (checked_in => 1),
+             });
         }
 
         # Get all the related media to be previewed as well
@@ -135,6 +172,8 @@ sub publish : Callback {
             priority      => $s->get_priority(),
         });
         $job->save();
+        log_event('job_new', $job);
+
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
@@ -145,8 +184,15 @@ sub publish : Callback {
             $d->remove_asset($s);
             $d->save;
         }
+
         # Remove it from the workflow by setting its workflow ID to undef
-        if ($s->get_workflow_id) {
+        # Yes, we have to use user__id instead of checked_out because non-current
+        # versions of documents always have checked_out set to 0, even when the
+        # current version is checked out.
+        if ($s->get_workflow_id
+            && !defined $s->get_user__id # Not checked out.
+            && $s->get_version == $s->get_current_version # Is the current version.
+        ) {
             $s->set_workflow_id(undef);
             log_event("story_rem_workflow", $s);
         }
@@ -166,6 +212,7 @@ sub publish : Callback {
             priority      => $m->get_priority,
         });
         $job->save();
+        log_event('job_new', $job);
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
         my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';

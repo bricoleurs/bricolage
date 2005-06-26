@@ -722,7 +722,6 @@ sub deploy {
     # Delete older versions, if they live elsewhere.
     my $old_version = $fa->get_published_version or return $self;
     my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                               checked_out => 0,
                                version     => $old_version })
       or return $self;
     my $old_file = $old_fa->get_file_name or return $self;
@@ -734,7 +733,6 @@ sub deploy {
     $fs->del($old_file);
 
     return $self;
-
 }
 
 #------------------------------------------------------------------------------#
@@ -898,12 +896,13 @@ sub preview {
         # We don't need to execute the job if it has already been executed.
         $job->execute_me unless $job->get_comp_time;
 
+        # Make sure there are some files to redirect to.
+        unless (@$res) {
+            status_msg("No output to preview.") if $do_status_msg;
+            return;
+        }
+
         if (PREVIEW_LOCAL) {
-            # Make sure there are some files to redirect to.
-            unless (@$res) {
-                status_msg("No output to preview.") if $do_status_msg;
-                return;
-            }
             # Copy the files for previewing locally.
             foreach my $rsrc (@$res) {
                 $fs->copy($rsrc->get_path,
@@ -915,7 +914,8 @@ sub preview {
         } else {
             # Return the redirection URL, if we have one
             if (@$bat) {
-                return 'http://' . ($bat->[0]->get_servers)[0]->get_host_name
+                return ($oc->get_protocol || 'http://')
+                  . ($bat->[0]->get_servers)[0]->get_host_name
                   . $res->[0]->get_uri;
             }
         }
@@ -1420,7 +1420,7 @@ sub chk_syntax {
 
   % # Mason syntax.
   % my $page_file = $burner->page_file($number);
-  <a href="<% $page_file %>">Page Number $number</a>
+  <a href="<% $page_file %>">Page Number <% $number %></a>
 
 Returns the file name for a page in a story as the story is being burned. The
 page number must be greater than 0.
@@ -1470,7 +1470,7 @@ sub page_file {
 
   % # Mason syntax.
   % my $page_uri = $burner->page_uri($number);
-  <a href="<% $page_uri %>">Page Number $number</a>
+  <a href="<% $page_uri %>">Page Number <% $number %></a>
 
 Returns the URI for a page in a story as the story is being burned. The
 page number must be greater than 0.

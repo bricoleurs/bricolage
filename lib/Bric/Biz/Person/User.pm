@@ -83,12 +83,13 @@ use strict;
 use Bric::App::Cache;
 use Bric::Util::DBI qw(:standard row_aref prepare_ca col_aref);
 use Bric::Util::Grp::User;
-use Bric::Config qw(:admin);
-use Digest::MD5 qw(md5_hex);
+use Bric::Config qw(:admin :auth);
 use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Util::Priv;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(db_date);
+# Load Authentication engines.
+BEGIN { eval "require $_" or die $@ for AUTH_ENGINES }
 
 ################################################################################
 # Inheritance
@@ -123,8 +124,6 @@ my @pprops = qw(prefix fname mname lname suffix _p_active);
 my $sel_cols = "u.id, u.login, u.password, u.active, " . join(', ', @pcols) .
   ", m.grp__id, 1";
 my @props = (@uprops, @pprops, qw(grp_ids _inserted));
-
-my $secret = '$8fFidf*34;,a(o};"?i8J<*/#1qE3 $*23kf3K4;-+3f#\'Qz-4feI3rfe}%:e';
 my ($meths, @ord);
 
 ################################################################################
@@ -860,7 +859,9 @@ a crypt on the system that uses all the bytes passed to it.
 =cut
 
 sub set_password {
-    $_[0]->_set( ['password'], [ md5_hex($secret . md5_hex($_[1])) ] );
+    my ($self, $pwd) = @_;
+    $_->set_password($self, $pwd) for AUTH_ENGINES;
+    return $self;
 }
 
 =item $self = $u->chk_password($password)
@@ -892,9 +893,10 @@ B<Notes:> See notes for set_password().
 
 sub chk_password {
     my ($self, $pwd) = @_;
-    my $cur = $self->_get('password');
-    return $self unless $cur;
-    return md5_hex($secret . md5_hex($pwd)) eq $cur ? $self : undef;
+    for my $engine (AUTH_ENGINES) {
+        return $self if $engine->authenticate($self, $pwd);
+    }
+    return;
 }
 
 ################################################################################
@@ -1283,7 +1285,10 @@ sub get_pref {
 
     my $value;
 
-    my $pref = Bric::Util::Pref->lookup({ name => $pref_name });
+    my $pref;
+    unless($pref = Bric::Util::Pref->lookup({ name => $pref_name })) {
+        throw_dp(error => qq{Can't find preference "$pref_name"});
+    }
     if ($pref->get_can_be_overridden) {
         my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $pref->get_id,
                                                        user_id => $self->get_id });

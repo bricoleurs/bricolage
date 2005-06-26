@@ -368,13 +368,9 @@ my %formSubs = (
             $js = $js ? " $js" : '';
             $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
                  . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
-            my $htmlareatoolbar = HTMLAREA_TOOLBAR;
             $out .= qq{
- <script language="javascript">
-   var editor = new HTMLArea("$key");
-   editor.config.toolbar = [$htmlareatoolbar];
-   editor.registerPlugin(SpellChecker);
-   editors.push(editor);
+ <script type="text/javascript">
+   editors.push("$key");
  </script>
 }
         } else {

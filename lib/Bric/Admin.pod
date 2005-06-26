@@ -158,6 +158,8 @@ START MODULE LIST
 
 =item Test::Simple
 
+=item Test::MockModule 0.04
+
 =item Text::Balanced
 
 =item XML::Parser 2.34
@@ -176,7 +178,7 @@ START MODULE LIST
 
 =item Locale::Maketext
 
-=item Test::Class
+=item Test::Class 0.04
 
 =item HTTP::BrowserDetect
 
@@ -189,6 +191,8 @@ START MODULE LIST
 =item DateTime 0.21
 
 =item DateTime::TimeZone 0.2601
+
+=item Term::ReadPassword
 
 =item HTML::Template (optional)
 
@@ -266,7 +270,11 @@ mod_gzip - Gzip page compression (optional)
 
 =item *
 
-HTMLArea 3.0 or later (optional)
+htmlArea 3.0 or later (optional)
+
+=item *
+
+Xinha WYSIWYG editor (optional)
 
 =item *
 
@@ -577,7 +585,11 @@ Finally, install Apache:
 =item *
 
 Don't forget to install the Apache::Session and Apache::Request perl modules
-now (See "Perl Modules," above).
+now (See "Perl Modules," above). If your Apache is in a non-standard loation,
+you might need to set the C<APXS> environment variable while installing it so
+that tests pass:
+
+  % export APXS=/some/nonstandard/apache/bin/apxs
 
 =back
 
@@ -995,18 +1007,37 @@ create other user accounts.
 
 =back
 
-=head2 HTMLArea (Optional)
+=head2 htmlArea (Optional)
 
-To install HTMLArea, an optional application that offers WYSIWYG editing in
+To install htmlArea, an optional application that offers WYSIWYG editing in
 the Bricolage UI, simply download it from
-L<http://www.interactivetools.com/products/htmlarea/>, decompress the files,
-and move them to the F<comp/media/htmlarea> directory in your Bricolage root.
-You will also need to enable the C<ENABLE_HTMLAREA> F<bricolage.conf> directive
-(see L<UI Configuration|/"UI Configuration">).
+L<http://www.dynarch.com/projects/htmlarea/>, decompress the files, and move
+them to the F<comp/media/wysiwyg/htmlarea> directory in your Bricolage root.
+
+As of 2005-03-25, there is a bug in htmlArea regarding form handling that
+requires a patch.  After installing, apply the patch while in your Bricolage
+root: C<patch -p0 < inst/patches/xinha.diff>
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
+
+=head2 Xinha (Optional)
+
+To install Xinha, an optional application that offers WYSIWYG editing in the
+Bricolage UI, simply download it from L<http://www.xinha.org/>, decompress the
+files, and move them to the F<comp/media/wysiwyg/xinha> directory in your
+Bricolage root.
+
+As of 2005-03-25, there is a bug in Xinha regarding form handling that
+requires a patch.  After installing, apply the patch while in your Bricolage
+root: C<patch -p0 < inst/patches/xinha.diff>
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 =head2 GNU Aspell (Optional)
 
-To use the spell-checking feature of HTMLArea, the GNU Aspell library must be
+To use the spell-checking feature of htmlArea, the GNU Aspell library must be
 installed, along with the appropriate distionaries. These must be installed
 before the Text::Aspell module is installed from CPAN. Download GNU Aspell and
 the associated dictionaries from L<http://aspell.net/>.
@@ -1382,6 +1413,39 @@ These directives set rules for Bricolage user authentication.
 
 =item *
 
+B<AUTH_ENGINES:> A space-delimited list of the authentication engines to try,
+in the order listed, when a user attemptes to login to Bricolage. The
+supported engines are "Internal", for Bricolage's default, internal
+authentication scheme, and "LDAP", for authentication against an LDAP server.
+If you include "LDAP" in your list of authentication engines, you must also
+configure the L<LDAP directives/"LDAP Configuration">. Defaults to "Internal".
+
+Note that the C<AUTH_ENGINES> directive can contain any number of supported
+authentication engines, and each will be used by the user class in turn. For
+example, if have this line in F<bricolage.conf>:
+
+  AUTH_ENGINES = Internal LDAP
+
+Then, when the C<check_password()> method is called on a user object, the user
+class will first attmpt to authenticate the user using
+L<Bric::Util::AuthInternal|Bric::Util::AuthInternal> module's
+C<authenticate()> method. If it returns true, then C<check_password()> will
+return true and the user will be considered to be authenticated. If
+C<authenticate()> returns false, the user class will then call the
+C<authenticate()> method on the L<Bric::Util::AuthLDAP|Bric::Util::AuthLDAP>
+module, and return true or false depending on whether the call to the
+C<authenticate()> method returns true or false.
+
+On the other hand, if you have this line in F<bricolage.conf>:
+
+  AUTH_ENGINES = LDAP Internal
+
+Then the user class will attempt to authenticate using the LDAP auth module
+and then fall back to the Internal auth module if the LDAP authentication
+fails.
+
+=item *
+
 B<AUTH_TTL:> The amount of time, in seconds, a user is allowed to be idle before
 he/she is automatically logged out. Defaults to 8 hours (28,800 seconds) if not
 specified.
@@ -1407,6 +1471,83 @@ B<LOGIN_LENGTH:> The minimum length of login name allowed to users. Defaults to
 
 B<PASSWD_LENGTH:> The minimum length of password allowed to users. Note that
 passwords can be of infinite length. Defaults to "5" if not specified.
+
+=back
+
+=head2 LDAP Configuration
+
+These directives only need to be configured if you intend to use LDAP
+configuration with Bricolage, and have thus included "LDAP" in the list of
+authentication engines in the C<AUTH_ENGINES> directive.
+
+Note that if you use LDAP authentication, changing your password in Bricolage
+will not change your password in the LDAP server. If you're also using
+Internal authentication, the Bricolage password will be changed. But if you're
+not using Internal authentication with LDAP authentication, then no password
+will be changed at all.
+
+Furthermore, when you use LDAP authentication, the users must already exist in
+Bricolage with the same unique username as in the LDAP database. When you
+login to Bricolage with LDAP support enabled, the user object is first
+instantiated by looking it up the username. Then the authentication is sent to
+the LDAP server. If a user exists in the LDAP server but not in Bricolage,
+she will not be able to authenticate.
+
+You can further limit who can authenticate to Bricolage by adding their user
+DNs to a single LDAP group. See the C<LDAP_GROUP> and C<LDAP_MEMBER_ATTR>
+directives below for more information.
+
+=over 4
+
+=item *
+
+B<LDAP_SERVER:> The domain name or IP address of the server running the
+LDAP service. Defaults to "localhost".
+
+=item *
+
+B<LDAP_VERSION:> The version of the LDAP standard supported by the server
+specified in the C<LDAP_SERVER> directive. Defaults to 3.
+
+=item *
+
+B<LDAP_USER and LDAP_PASS:> By default, Bricolage will bind to the LDAP server
+anonymously before attempting to authenticate a user. If your LDAP server does
+not allow anonymous bindings, set C<LDAP_USER> to the DN of a user who can
+bind to the LDAP server and search for users. Set C<LDAP_PASS> to the password
+for that user. If an anonymous bind can search for users, leave these two
+directives unspecified or set to 0 (zero). Both are unspecified by default.
+
+=item *
+
+B<LDAP_BASE:> The base DN to use when searching for user records, usually
+something like "ou=Users,dc=example,dc=com". Defaults to an empty string.
+
+=item *
+
+B<LDAP_UID_ATTR:> The attribute of user records that contains the user ID.
+Defaults to "uid".
+
+=item *
+
+B<LDAP_FILTER:> A filter to use when searching for user records. Defaults to
+"(objectclass=*)".
+
+=item *
+
+B<LDAP_GROUP and LDAP_MEMBER_ATTR:> If you'd like to allow only the members of
+a particular LDAP group to login to Bricolage, set C<LDAP_GROUP > to the DN of
+that group (Something like "cn=Bricolage,ou=Group,dc=example,dc=com"), and set
+C<LDAP_MEMBER_ATTR> to the name of the Attribute of that group that represents
+members, such as the default, "uniqueMember". If these directives are not
+specified or are set to 0 (Zero). C<LDAP_GROUP> is unspecified by default.
+
+=item *
+
+B<LDAP_TLS and LDAP_SSL_VERSION:> Enable this boolean directive if your LDAP
+server supports TLS and you'd like Bricolage to use encrypted communications
+with the LDAP server. Disabled by default. Set C<LDAP_SSL_VERSION> to the
+version of SSL supported by your LDAP server. Defaults to 3.
 
 =back
 
@@ -1583,7 +1724,7 @@ shared desks. By default, a desk that is shared between workflows appears in
 both workflows, but any asset on that desk can only be transfered to other
 desks in the workflow from which the asset originated. To allow assets to
 optionally be able to move to desks in any of the workflows a desk is a member
-of, set this directive to "Yes", "On" or "1". Defaults to "Off" of not
+of, set this directive to "Yes", "On" or "1". Defaults to "Off" if not
 specified.
 
 =item *
@@ -1601,14 +1742,41 @@ B<ALLOW_ALL_SITES_CX:> Allow users to select "All Sites" from their site
 context menu. This will enable them to see the workflows for all sites to
 which they have at least READ access. Defaults to "Off" of not specified.
 
+=back
+
+=head2 Media Configuration
+
+=over
+
 =item *
 
-B<RELATED_MEDIA_UPLOAD:> This directive allows users to upload media files
-directly into an element profile if they have permission to create media and
-to access a media workflow. This makes it a much simpler process for editors
-to quickly associate media with story documents. The uploaded media files will
-be created based on the media type element selected from a select list, and
-given the same category, cover date, and priority as the current document.
+B<AUTO_PREVIEW_MEDIA>. This directive determines whether files uploaded to
+Media documents are automatically distributed to all relevant preview servers
+when the media document is saved, or whether they must be previewed manually
+after they're uploaded. Defaults to "Off" if not specified.
+
+=item *
+
+B<MEDIA_UPLOAD_LIMIT:> Set this to a number, so that no files larger than that
+number of kilobytes can be uploaded. Defaults to 0, which means no limit.
+
+=item *
+
+B<MEDIA_UNIQUE_FILENAME:> When this directive is enabled, Bricolage will
+generate a unique eight-character MD5 hash as the name of each new media
+file. The file name suffix will be retained as it was loaded. Disabled by
+default.
+
+=item *
+
+B<MEDIA_FILENAME_PREFIX:> When set, uses the value as a character string to
+prefix to unique media filenames. Disabled by default.
+
+=back
+
+=head2 UI Configuration
+
+=over
 
 =item *
 
@@ -1628,18 +1796,27 @@ default.
 
 =item *
 
-B<ENABLE_HTMLAREA and HTMLAREA_TOOLBAR:> These directives control the HTMLArea
-WYSIWYG editor in Bricolage. HTMLArea 3.0 must be installed in
-F<comp/media/htmlarea>. Download it from
-L<http://www.interactivetools.com/products/htmlarea/> and simply rename the
-decompressed archive file to F<comp/media/htmlarea> in your Bricolage root.
+B<RELATED_MEDIA_UPLOAD:> This directive allows users to upload media files
+directly into an element profile if they have permission to create media and
+to access a media workflow. This makes it a much simpler process for editors
+to quickly associate media with story documents. The uploaded media files will
+be created based on the media type element selected from a select list, and
+given the same category, cover date, and priority as the current document.
 
-Once it's installed and C<ENABLE_HTMLAREA> has been enabled, you can specify
-exactly what shows up in your HTMLArea toolbar and how it is displayed. This
-is useful for ensuring that content remains separate from presentation. For
-example, you usually won't want to include the font control buttons, as these
-are generally best managed in templates. Here is a complete list of the
-available buttons:
+=item *
+
+B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG
+editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
+htmlArea).  After installing htmlArea or Xinha (see dependency info above),
+set C<WYSIWYG_EDITOR> appropriately.
+
+=item *
+
+B<HTMLAREA_TOOLBAR and XINHA_TOOLBAR:> You can specify exactly what shows up
+in your Xinha/htmlArea toolbar and how it is displayed. This is useful for
+ensuring that content remains separate from presentation. For example, you
+usually won't want to include the font control buttons, as these are generally
+best managed in templates. Here is a complete list of the available buttons:
 
 =over 8
 
@@ -1715,8 +1892,8 @@ available buttons:
 
 =back
 
-In addition to the button specifications, HTMLArea configuration supports a
-few other toolbar configuration options:
+In addition to the button specifications, Xinha and htmlArea configurations
+support a few other toolbar configuration options:
 
 =over 8
 
@@ -1735,13 +1912,6 @@ Starts a new line in the toolbar. Subsequent controls will be inserted on the
 new line.
 
 =back
-
-The default value for C<HTMLAREA_TOOLBAR> is:
-
-  ['bold', 'italic', 'underline', 'strikethrough', 'separator', 'subscript',
-   'superscript', 'separator', 'copy', 'cut', 'paste', 'space', 'undo',
-   'redo', 'createlink', 'htmlmode', 'separator', 'popupeditor', 'separator',
-   'showhelp', 'about']
 
 =back
 
@@ -1874,28 +2044,6 @@ B<DEFAULT_FILE_EXT:> Sets the default file extension that all new Output Channel
 will start with in their "File Name" property. Combined with DEFAULT_FILENAME and
 a page index number to uniquely name the file for a given story. Defaults to
 "html" if not specified.
-
-=back
-
-=head2 Media Filename Configuration
-
-As of Bricolage 1.8.3, the filename of media documents can be set to change on
-upload to a unique automatically generated filename. This filename can also be
-prefixed with a character string if required.
-
-=over 4
-
-=item *
-
-B<MEDIA_UNIQUE_FILENAME:> When this directive is enabled, Bricolage will
-generate a unique eight-character MD5 hash as the name of each new media
-file. The file name suffix will be retained as it was loaded. Disabled by
-default.
-
-=item *
-
-B<MEDIA_FILENAME_PREFIX:> When set, uses the value as a character string to
-prefix to unique media filenames. Disabled by default.
 
 =back
 

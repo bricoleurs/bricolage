@@ -40,9 +40,6 @@ $LastChangedDate$
   # Lists the required desks
   @desks = $flow->required_desks();
 
-  # Returns true if the asset object has been through all required desks.
-  $bool  = $flow->required_satisfied($asset_obj);
-
 =head1 DESCRIPTION
 
 A workflow is something that guides an asset through a set of desks, where an

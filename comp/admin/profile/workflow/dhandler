@@ -47,7 +47,7 @@ if ($id || $no_edit) {
              disp      => 'Site',
              constrain => { active => 1 },
              objs      => \@sites,
-             selected  => scalar $c->get_user_cx(get_user_id),
+             selected  => $ARGS{site_id} || scalar $c->get_user_cx(get_user_id),
              reset_key => $id
             );
 }
