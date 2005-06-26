@@ -488,10 +488,12 @@ table td.position,
 table td.edit,
 table td.delete { width: 100px; text-align: center; }
 
-.listManager { width: 100%; border-style: hidden; }
-.listManager th { background: #999966; color: black; padding: 3px 5px; 
-                  text-align: left; vertical-align: bottom;
-                  border: solid #cccc99 1px; }
+.listManager,
+.containerProf { width: 100%; border-style: hidden; }
+.listManager th,
+.containerProf th{ background: #999966; color: black; padding: 3px 5px; 
+                   text-align: left; vertical-align: bottom;
+                   border: solid #cccc99 1px; }
 .listManager th.sortup { 
     background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
     padding-right: 17px; /* account for arrow: 7px + 10px padding */
@@ -511,8 +513,17 @@ table td.delete { width: 100px; text-align: center; }
 .listManager th a { font-size: .85em; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { color: white; }
-.listManager td { padding: 0 5px; border: solid #cccc99 1px; height: 2.3em; }
+.listManager td,
+.containerProf td { padding: 2px 5px; border: solid #cccc99 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
+
+th.checkbox, th.radio,
+td.checkbox, td.radio { width: 10%; text-align: center; }
+
+.containerProf td { border: none; }
+.containerProf td.name { text-align: right; }
+.containerProf .position,
+.containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
 
 .addnewitem   { padding: 7px 10px; }
 .addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
@@ -554,6 +565,8 @@ dl.viewmeta dt {
 }
 dl.viewmeta dd { margin-left: 140px; }
 dl.viewmeta dd a { font-size: inherit; }
+
+div.actions { background: #999966; padding: 2px 4px; }
 
 /******************************************************
  * HACKS                                              *
