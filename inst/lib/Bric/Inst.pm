@@ -159,7 +159,7 @@ sub ask_confirm {
                 "please enter a value.\n";
             next;
         }
-        if (ask_yesno("Are you sure you want to use '$answer'? [yes] ", 1, $quiet_mode)) {
+        if (ask_yesno("Are you sure you want to use '$answer'?", 1, $quiet_mode)) {
             $$ref = $answer;
             return;
         }
