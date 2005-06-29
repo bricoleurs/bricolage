@@ -70,7 +70,13 @@ cloning, falling back on the default values. [Rod Taylor & Andrea Rota]
 Added C<$USE_DEFAULTS> makefile environment variable that, when used with
 C<$INSTALL_VERBOSITY>, will use platform-specific answers to all of the
 installation questions. This allows for completely silent, customizable
-installations, which are necessary for packagers. [Masrhall]
+installations, which are necessary for packagers. [Marshall]
+
+=item *
+
+Added C<make dev> makefile target for installing a development version straight
+out of a Subversion checkout. It performs a standard installation, then
+symlinks bin/, comp/ and lib/ back to the Subversion checkout. [Marshall]
 
 =item *
 
