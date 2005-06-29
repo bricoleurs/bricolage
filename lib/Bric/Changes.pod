@@ -156,7 +156,8 @@ properly burn all of the pages. [Scott]
 Cloned stories now properly set the C<published_version> attribute to C<undef>
 rather than the value of the original story, thus preventing the clone from
 having a published version number greater than its current version number.
-Reported by Nate Perry-Thistle and Joshua Edelstein. [David]
+Reported by Nate Perry-Thistle and Joshua Edelstein. [David and Nate
+Perry-Thistel]
 
 =item *
 
