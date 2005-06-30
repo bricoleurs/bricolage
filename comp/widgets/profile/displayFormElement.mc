@@ -425,9 +425,9 @@ my %formSubs = (
 	    my $values = $vals->{props}{vals};
 	    my $ref = ref $values;
         if ($ref eq 'HASH') {
-            foreach my $k (sort { return -1 if $a eq ''; 
+            foreach my $k (sort { return -1 if $a eq '';
                                   return 1 if $b eq '';
-                                  $values->{$a} cmp $values->{$b} 
+                                  $values->{$a} cmp $values->{$b}
                                 } keys %$values) {
 		    if (!$readOnly) {
 			$out .= &$opt_sub($k, $values->{$k}, $value);
