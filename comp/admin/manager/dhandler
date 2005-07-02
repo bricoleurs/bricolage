@@ -1,8 +1,8 @@
-<%perl>;
+﻿<%perl>;
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => $title,
-	 context => $context);
+         title => $title,
+         context => $context);
 
 # Output the search widget.
 my $obj_key = $type;
@@ -14,29 +14,29 @@ if ($type eq 'grp') {
     # Set the constraint.
     $constrain = $def->{$type}{constrain};
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
-	# It's a search. Reset the group type.
-	$ARGS{grp_type} = 'all';
+        # It's a search. Reset the group type.
+        $ARGS{grp_type} = 'all';
         set_state_data($type, 'prev_grp_type', undef);
     } elsif (exists $ARGS{grp_type} or
              $ARGS{grp_type} = get_state_data($type, 'prev_grp_type')) {
-	# It's just a query by group type. Set the default obj_key and
+        # It's just a query by group type. Set the default obj_key and
         # set the behavior to ensure that the results are listed.
-	$obj_key = $ARGS{grp_type} || 'grp';
+        $obj_key = $ARGS{grp_type} || 'grp';
         $behavior = 'narrow';
         set_state_data($type, 'prev_grp_type', $ARGS{'grp_type'});
     } else {
         # It's the first time accessing.
-	$ARGS{grp} = 'all';
+        $ARGS{grp} = 'all';
     }
 
     set_state_name($type, $obj_key);
     $groupList = $m->scomp('/widgets/profile/select.mc',
-			   disp => 'Or Pick a Type',
-			   options => \%grp_sel,
-			   indent  => 140,
-			   width   => 500,
-			   value => $ARGS{grp_type} || 'all',
-			   js => qq{onChange="location.href='} . $r->uri .
+                           disp => 'Or Pick a Type',
+                           options => \%grp_sel,
+                           indent  => 140,
+                           width   => 500,
+                           value => $ARGS{grp_type} || 'all',
+                           js => qq{onChange="location.href='} . $r->uri .
                                  "?grp_type=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -49,7 +49,7 @@ if ($type eq 'grp') {
     $constrain = { %{ $def->{$type}{constrain} } };
     if ($ARGS{'search|alpha_cb'} || exists $ARGS{'search|substr_cb'}) {
         # They're doing a search. Use default constraints.
-	$ctype = 'all';
+        $ctype = 'all';
     } elsif ($ctype) {
         # They're limiting it to a contributor type. Add it to the constraint
         # and set the behavior to ensure that the results are listed.
@@ -57,20 +57,20 @@ if ($type eq 'grp') {
         $behavior = 'narrow';
     } else {
         # It's the first time accessing.
-	$ctype = 'all';
+        $ctype = 'all';
     }
 
     $groupList = $m->scomp('/widgets/select_object/select_object.mc',
                            object => 'contrib_type',
                            field => 'name',
-			   disp => 'Or Pick a Type',
+                           disp => 'Or Pick a Type',
                            default => ['all', 'All Contributors'],
                            constrain => { all => 1},
                            exclude => [Bric::Biz::Person->INSTANCE_GROUP_ID],
-			   indent  => 140,
-			   width   => 500,
-			   selected => $ctype,
-			   js => qq{onChange="location.href='} . $r->uri .
+                           indent  => 140,
+                           width   => 500,
+                           selected => $ctype,
+                           js => qq{onChange="location.href='} . $r->uri .
                                  "?ctype=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -91,35 +91,35 @@ $m->comp('/widgets/search/search.mc',
 # Output a form tag if necessary.
 if (defined $def->{$type}{select}) {
     $m->out(qq{<form method="post" action="${ \$r->uri }" name="manager"}
-	    . qq{onSubmit="return confirmDeletions()">});
+            . qq{onSubmit="return confirmDeletions()">});
 } else {
     $m->out("<p></p>");
 }
 
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
-	 behavior => $behavior,
-	 object => $obj_key,
-	 profile => $prof_sub,
-	 title =>   $def->{$type}{title} || 'Existing %n',
-	 fields => $def->{$type}{list_fields},
-	 addition => $type eq 'pref' || $type eq 'job' ? undef : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
-	 select => $def->{$type}{select},
-	 constrain => $constrain || $def->{$type}{constrain},
-         field_titles => $def->{$type}{field_titles},
-         field_values => $def->{$type}{field_values},
-	 alter => $def->{$type}{alter},
-	 exclude => $def->{$type}{exclude} || $excl_sub,
-	 sortBy => $def->{$type}{sort_by} );
+          behavior => $behavior,
+          object => $obj_key,
+          profile => $prof_sub,
+          title =>   $def->{$type}{title} || 'Existing %n',
+          fields => $def->{$type}{list_fields},
+          addition => $type eq 'pref' || $type eq 'job' ? undef : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
+          select => $def->{$type}{select},
+          constrain => $constrain || $def->{$type}{constrain},
+          field_titles => $def->{$type}{field_titles},
+          field_values => $def->{$type}{field_values},
+          alter => $def->{$type}{alter},
+          exclude => $def->{$type}{exclude} || $excl_sub,
+          sortBy => $def->{$type}{sort_by} );
 
 # Output the form closing tag if necessary.
 if (defined $def->{$type}{select} && $can_del) {
     if ($type ne "job") {
-	$m->out(qq{<br><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border="0" name="action"}
-		. qq{value="$sel_label Checked" />\n</form>})
+        $m->out(qq{<br><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border="0" name="action"}
+                . qq{value="$sel_label Checked" />\n</form>})
     } else {
-	$m->out(qq{<br><input type="image" src="/media/images/$lang_key/cancel_checked_red.gif" border="0" name="action"}
-		. qq{value="$sel_label Checked" />\n</form>})
+        $m->out(qq{<br><input type="image" src="/media/images/$lang_key/cancel_checked_red.gif" border="0" name="action"}
+                . qq{value="$sel_label Checked" />\n</form>})
     }
 }
 
@@ -164,9 +164,9 @@ my $prefix = '';
 if ($type eq 'user') {
     # We'll probably need to redirect them to ssl if its enabled
     if (get_state_name('login') ne 'ssl') {
-	my ($http, $p) = SSL_ENABLE ? ('https://', $ssl_port)
-	  : ('http://', $port);
-	$prefix = $http . $r->hostname . $p;
+        my ($http, $p) = SSL_ENABLE ? ('https://', $ssl_port)
+                                    : ('http://', $port);
+        $prefix = $http . $r->hostname . $p;
     }
 }
 
@@ -222,9 +222,9 @@ my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
 my $sel_sub = sub {
     if (chk_authz($_[0], EDIT, 1)) {
-	# User can delete.
-	$can_del = 1;
-	return [$sel_label, $sel_widg];
+        # User can delete.
+        $can_del = 1;
+        return [$sel_label, $sel_widg];
     }
     return undef;
 };
@@ -287,143 +287,158 @@ my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 # Define the look and feel for each type of manager.
 my $def = {
-	   user           => { list_fields => [qw(lname fname login)],
-			       srch_field => 'lname',
-			       constrain => {},
-			       behavior => 'expand',
-			       exclude => sub { return if $_[0]->get_id == get_user_id;
-						!chk_authz($_[0], READ, 1);
-					    },
-			       select => $sel_sub },
-	   org            => { list_fields => [qw(name long_name description)],
-			       srch_field => 'name',
-			       constrain => {active => 1},
-			       behavior => 'expand',
-			       select => $sel_sub },
-	   grp            => { title => 'Group Manager',
-			       list_fields => [qw(name member_type)],
-			       srch_field => 'name',
-			       behavior => 'expand',
-			       sort_by => 'name',
-			       constrain => {},
-			       select => sub {
-                                   if (chk_authz($_[0], EDIT, 1)
-                                        && !$_[0]->get_permanent
-                                        && $_[0]->get_id != ADMIN_GRP_ID) {
+       user           => { list_fields => [qw(lname fname login)],
+                           srch_field => 'lname',
+                           constrain => {},
+                           behavior => 'expand',
+                           exclude => sub { return if $_[0]->get_id == get_user_id;
+                                            !chk_authz($_[0], READ, 1);
+                                          },
+                           select => $sel_sub 
+                         },
+       org            => { list_fields => [qw(name long_name description)],
+                           srch_field => 'name',
+                           constrain => {active => 1},
+                           behavior => 'expand',
+                           select => $sel_sub 
+                         },
+       grp            => { title => 'Group Manager',
+                           list_fields => [qw(name member_type)],
+                           srch_field => 'name',
+                           behavior => 'expand',
+                           sort_by => 'name',
+                           constrain => {},
+                           select => sub {
+                               if (chk_authz($_[0], EDIT, 1)
+                                   && !$_[0]->get_permanent
+                                   && $_[0]->get_id != ADMIN_GRP_ID) {
                                        $can_del = 1;
                                        return ['Delete', 'grp|deactivate_cb'];
-                                   }
-                                   return undef;
                                }
-                            },
-	   pref          => { list_fields => [qw(name description val_name can_be_overridden)],
-                              select => undef,
-                              behavior => 'narrow',
-                              title => '%n',
-                              srch_field => 'name',
-                              alter => { val_name => sub { escape_html($_[0]) },
-                                         can_be_overridden => $yes_no,
-                                       },
-                              constrain => {} },
-	   element_type =>  { alter => { biz_class_id => sub {
+                               return undef;
+                           }
+                         },
+       pref           => { list_fields => [qw(name description val_name can_be_overridden)],
+                           select => undef,
+                           behavior => 'narrow',
+                           title => '%n',
+                           srch_field => 'name',
+                           alter => { val_name => sub { escape_html($_[0]) },
+                                      can_be_overridden => $yes_no,
+                                    },
+                           constrain => {} 
+                         },
+       element_type   => { alter => { biz_class_id => sub {
                                              return 'Subelement' unless $_[1]->get_top_level;
                                              return get_disp_name($_[0]);
                                          },
-                                         paginated => $yes_no,
-                                         fixed_url => $yes_no },
-                              list_fields => [qw(name description biz_class_id paginated fixed_url)],
-                              behavior => 'narrow',
-                              srch_field => 'name',
-                              constrain => {},
-                              select => $sel_sub },
-           media_type     => { list_fields => [qw(name extension)],
-                               field_values => sub { return unless $_[1] eq 'extension';
-                                                     join(', ', $_[0]->get_exts) },
-                               field_titles => { extension => 'Extensions' },
-                               sort_by => 'name',
-			       exclude => sub { return 1 if $_[0]->get_id == 0;
-						!chk_authz($_[0], READ, 1);
-					    },
-                               behavior => 'expand',
-                               srch_field => 'name',
-                               constrain => { active => 1 },
-                               select => $sel_sub,
-                             },
-	   output_channel => { list_fields => [qw(name site description)],
-			       srch_field => 'name',
-			       behavior => 'narrow',
-	                       constrain => {active => 1},
-			       select => $sel_sub },
-	   source         => { list_fields => [qw(source_name description expire)],
-			       srch_field => 'source_name',
-			       behavior => 'narrow',
-			       constrain => {},
-			       select => $sel_sub },
-	   contrib_type   => { list_fields => [qw(name description)],
-			       srch_field => 'name',
-			       sort_by => 'name',
-			       behavior => 'narrow',
-			       constrain => {permanent => 0, all => 1},
-			       select => $sel_sub },
-	   alert_type     => { list_fields => [qw(name owner_id active)],
-			       srch_field => 'name',
-			       behavior => 'narrow',
-			       sort_by => 'name',
-			       field_titles => { owner_id => 'Owner' },
-			       field_values => $owner_sub,
-			       exclude => sub { return if $_[0]->get_owner_id == get_user_id;
-						!chk_authz($_[0], READ, 1);
-					    },
-	                       constrain => {},
-			       alter => { active => $yes_no },
-			       select => $sel_sub },
-	   contrib        => { list_fields => [qw(lname fname type)],
-			       behavior => 'expand',
-			       srch_field => 'lname',
-			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
-			       select => $sel_sub },
-	   category       => { list_fields => [qw(uri site name)],
-			       behavior => 'expand',
-			       srch_field => 'uri',
-			       constrain => {},
-			       select => $cat_sel_sub },
-	   workflow       => { list_fields => [qw(name type site)],
-			       behavior => 'narrow',
-			       srch_field => 'name',
-			       field_values => sub { return unless $_[1] eq 'type';
-						      WORKFLOW_TYPE_MAP->{$_[0]->get_type};
-
-			       },
-			       constrain => {},
-			       select => $sel_sub },
-	   dest           => { list_fields => [qw(name site description publish preview)],
-			       behavior => 'narrow',
-			       srch_field => 'name',
-			       constrain => { active => 1 },
-			       alter => { publish => $yes_no,
-					  preview => $yes_no, },
-			       select => $sel_sub },
-	   job            => { list_fields => [qw(name type user_id sched_time)],
-			       srch_field => 'name',
-			       behavior => 'narrow',
-			       title => 'Pending %n',
-	                       constrain => {comp_time => undef},
-			       field_values => $usr_sub,
-			       alter => { type => $job_type_sub,
-                                          name => $job_name_sub,
-                                        },
-			       select => $sel_sub },
-	   site           => { list_fields => [qw(name domain_name)],
-			       behavior => 'narrow',
-			       srch_field => 'name',
-			       constrain => { active => 1 },
-			       select => $sel_sub },
-           keyword        => { list_fields => [qw(sort_name name screen_name)],
-                               srch_field => 'name',
-                               behavior => 'expand',
-                               constrain => {active => 1},
-                               select => $sel_sub },
-	  };
+                                      paginated => $yes_no,
+                                      fixed_url => $yes_no 
+                                    },
+                           list_fields => [qw(name description biz_class_id paginated fixed_url)],
+                           behavior => 'narrow',
+                           srch_field => 'name',
+                           constrain => {},
+                           select => $sel_sub 
+                         },
+       media_type     => { list_fields => [qw(name extension)],
+                           field_values => sub { return unless $_[1] eq 'extension';
+                                                 join(', ', $_[0]->get_exts) 
+                                               },
+                           field_titles => { extension => 'Extensions' },
+                           sort_by => 'name',
+                           exclude => sub { return 1 if $_[0]->get_id == 0;
+                                            !chk_authz($_[0], READ, 1);
+                                          },
+                           behavior => 'expand',
+                           srch_field => 'name',
+                           constrain => { active => 1 },
+                           select => $sel_sub,
+                         },
+       output_channel => { list_fields => [qw(name site description)],
+                           srch_field => 'name',
+                           behavior => 'narrow',
+                           constrain => {active => 1},
+                           select => $sel_sub 
+                         },
+       source         => { list_fields => [qw(source_name description expire)],
+                           srch_field => 'source_name',
+                           behavior => 'narrow',
+                           constrain => {},
+                           select => $sel_sub 
+                         },
+       contrib_type   => { list_fields => [qw(name description)],
+                           srch_field => 'name',
+                           sort_by => 'name',
+                           behavior => 'narrow',
+                           constrain => {permanent => 0, all => 1},
+                           select => $sel_sub 
+                         },
+       alert_type     => { list_fields => [qw(name owner_id active)],
+                           srch_field => 'name',
+                           behavior => 'narrow',
+                           sort_by => 'name',
+                           field_titles => { owner_id => 'Owner' },
+                           field_values => $owner_sub,
+                           exclude => sub { return if $_[0]->get_owner_id == get_user_id;
+                                            !chk_authz($_[0], READ, 1);
+                                          },
+                           constrain => {},
+                           alter => { active => $yes_no },
+                           select => $sel_sub 
+                         },
+       contrib        => { list_fields => [qw(lname fname type)],
+                           behavior => 'expand',
+                           srch_field => 'lname',
+                           constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
+                           select => $sel_sub 
+                         },
+       category       => { list_fields => [qw(uri site name)],
+                           behavior => 'expand',
+                           srch_field => 'uri',
+                           constrain => {},
+                           select => $cat_sel_sub 
+                         },
+       workflow       => { list_fields => [qw(name type site)],
+                           behavior => 'narrow',
+                           srch_field => 'name',
+                           field_values => sub { return unless $_[1] eq 'type';
+                                                 WORKFLOW_TYPE_MAP->{$_[0]->get_type};
+                                               },
+                           constrain => {},
+                           select => $sel_sub 
+                         },
+       dest           => { list_fields => [qw(name site description publish preview)],
+                           behavior => 'narrow',
+                           srch_field => 'name',
+                           constrain => { active => 1 },
+                           alter => { publish => $yes_no,
+                                      preview => $yes_no, },
+                           select => $sel_sub 
+                         },
+       job            => { list_fields => [qw(name type user_id sched_time)],
+                           srch_field => 'name',
+                           behavior => 'narrow',
+                           title => 'Pending %n',
+                           constrain => {comp_time => undef},
+                           field_values => $usr_sub,
+                           alter => { type => $job_type_sub,
+                                      name => $job_name_sub,
+                                    },
+                           select => $sel_sub 
+                         },
+       site           => { list_fields => [qw(name domain_name)],
+                           behavior => 'narrow',
+                           srch_field => 'name',
+                           constrain => { active => 1 },
+                           select => $sel_sub },
+       keyword        => { list_fields => [qw(sort_name name screen_name)],
+                           srch_field => 'name',
+                           behavior => 'expand',
+                           constrain => {active => 1},
+                           select => $sel_sub 
+                         },
+      };
 
 unless (Bric::Config::ENCODE_OK) {
     # Exclude the character set preference if we can't convert character sets.
