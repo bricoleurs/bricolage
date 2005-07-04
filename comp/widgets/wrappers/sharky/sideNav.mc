@@ -7,7 +7,7 @@ $debug => undef
 my $disp = { map { $_ => get_disp_name($_) }
   qw(story media formatting) };
 my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
-  qw(story media formatting pref user grp output_channel contrib contrib_type site
+  qw(story media formatting pref user grp input_channel output_channel contrib contrib_type site
      workflow category element element_type media_type source dest job alert_type
      keyword) };
 
@@ -189,6 +189,7 @@ foreach my $wf (@$workflows) {
 % if ( $nav->{adminPublishing} ) { #open publishing submenu
             <li class="open"><a href="<% $r->uri . "?nav|adminPublishing_cb=0" %>"><% $lang->maketext('Publishing') %></a>
                 <ul class="items">
+                    <li><% &$printLink('/admin/manager/input_channel', $uri, $pl_disp->{input_channel}) %></li>
                     <li><% &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) %></li>
                     <li><% &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) %></li>
                     <li><% &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) %></li>
