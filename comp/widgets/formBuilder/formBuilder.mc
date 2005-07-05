@@ -30,7 +30,7 @@ element type are displayed beneath the radio buttons.  All properties must
 be supplied with values by the user before they are allowed to submit the
 form.
 
-Pass a value to optional fields location to provide html for any additional
+Pass a value to optional fields location to provide HTML for any additional
 fields you want to capture with the data.  This can be of any complexity,
 but must be formatted in such a way that it can become the value of a 
 javascript variable.  See /admin/profile/container/optionalFieldsJavascript.mc
@@ -101,7 +101,7 @@ if ($numFields != -1) {
 </%init>
 
 
-% # add hidden fields to recieve the values of the fbuilder
+% # add hidden fields to receive the values of the fbuilder
 <input type=hidden name=fb_name value=''>
 <input type=hidden name=fb_type value=''>
 <input type=hidden name=fb_disp value=''>
