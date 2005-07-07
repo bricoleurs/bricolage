@@ -22,16 +22,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Fixed two bugs with C<bric_template_diff>.  C<File::Spec::Functions> now
-properly exports C<catfile()>.
-
-C<--from--site> and C<--to-site> were trying to search on output channel
-rather than site.  This is also fixed.  [Ovid]
-
-=item *
-
-Added C<MASON_INTERP_ARGS> F<bricolage.conf> directive to allow you to pass
-arguments to the Mason interpreter for the templates. [Scott]
+Added C<MASON_INTERP_ARGS> F<bricolage.conf> directive to allow arguments to
+be passed to the Mason template interpreter. [Scott]
 
 =item *
 
@@ -90,44 +82,38 @@ the current document. Enabled by default. [JoE<atilde>o Pedro and David]
 
 =item *
 
-Added the element type and output_channel modules to the SOAP interface.
+Added the element type and output channel modules to the SOAP interface.
 [Scott]
 
 =item *
 
-Added C<ENABLE_GZIP> F<bricolage.conf> directive to turns on compression of
+Added the C<ENABLE_GZIP> F<bricolage.conf> directive to turn on compression of
 the UI pages through C<mod_gzip>. This results in pages as much as fifteen
 times smaller, with minimal extra server load. If C<mod_gzip> is found during
 installation, the appropriate C<LoadModule/AddModule> lines will be added to
-F<httpd.conf>. Disabled by default. [Marshall; Suggested by Rod Taylor]
+F<httpd.conf>. Disabled by default. Suggested by Rod Taylor. [Marshall]
 
 =item *
 
 Added "Show Alpha Search" preference that determines whether the alpha search
 ("A | B | C | ... [All]") links should be shown. The alpha search isn't very
 useful because you can type the first letter in the textbox (or "%" for "All")
-for the same results. Alpha search is off by default. [Marshall]
+for the same results, and it supports only the ASCII alphabet. Alpha search is
+now off by default. [Marshall]
 
 =item *
 
 Added C<MEDIA_UNIQUE_FILENAME> F<bricolage.conf> directive to allow the
 filename of media documents to be set to a unique, automatically generated
-filename on upload, (off by default). Also C<MEDIA_FILENAME_PREFIX> directive
-for setting a prefix word, such as "media", to be prepended to the filename if
-desired (off by default). [Paul Orrock / Digital Craftsmen]
+filename on upload, (off by default). Also added the C<MEDIA_FILENAME_PREFIX>
+directive for setting a prefix word, such as "media", to be prepended to the
+filename if desired (off by default). [Paul Orrock / Digital Craftsmen]
 
 =item *
 
 Added support for the C<ANY()> function to pass multiple possible values for a
 given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
 C<href()> methods in the following classes:
-
-=item *
-
-Added C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Enabling this
-directive allows media files uploaded to a media document to be distributed to
-all relevant preview servers as soon as the media document is saved. Sponsored
-by Alinghi. [David]
 
 =over
 
@@ -160,13 +146,13 @@ limit on uploaded media files. [Scott]
 
 =item *
 
-The URI formats are now more flexible. You can now use a lot more parts of the
+The URI formats are now more flexible. You can now use many more parts of the
 cover date in the URI, and in whatever format you like. So you could have a
 format of "/%{categories}/%Y-%m-%d" and end up with the URI
 "/foo/bar/2004-09-22" if you wanted. Or even "/%{categories}/%Y/%V" to get the
 week number as part of the URI. You can also include your own text, similar to
 the URI Prefix and URI Suffix fields, anywhere in the URI (e.g. foobar in
-/%{categories}/%Y/%m/foobar/%{slug}". Suggested by David Wheeler. [Marshall]
+/%{categories}/%Y/%m/foobar/%{slug}". Suggested by David. [Marshall]
 
 =item *
 
@@ -174,7 +160,7 @@ Added a frame on top of the preview window with a "Repreview" link. This is
 useful for previewing changes when you're developing templates. Rather than
 having to save the template, go back to the workspace, repreview, and then go
 back to the template profile, you can preview the story, then edit the
-template and click "Repreview." [Marshall]
+template and click "Repreview" as necessary after each save. [Marshall]
 
 =item *
 
@@ -182,7 +168,8 @@ Added a pluggable authentication system. New authentication engines can be
 created by simply implementing a module named C<Bric::Util::Auth*>, where "*"
 is the name of the authentication scheme. The new scheme can then be used by
 adding it to the new C<AUTH_ENGINES> F<bricolage.conf> directive. By default
-the existing authentication scheme is used. [David]
+only the existing authentication scheme is used. Sponsored by Kineticode.
+[David]
 
 =item *
 
@@ -190,7 +177,7 @@ Added support for authentication to Bricolage against an LDAP server. The new
 C<LDAP_*> F<bricolage.conf> directives make it simple to configure Bricolage
 to authenticate against any LDAP server. Includes support for authenticating
 users only if they are members of a specific user group in the LDAP database.
-Users must still exist in Bricolage, however. [David]
+Users must still exist in Bricolage, however. Sponsored by Kineticode. [David]
 
 =item *
 
@@ -200,6 +187,13 @@ C<WYSIWYG_EDITOR> directives. You can now choose between htmlArea 3 and the
 new Xinha, a more active fork of htmlArea (recommended). More editors possibly
 coming soon. See L<Bric::Admin|Bric::Admin> for details. [Marshall]
 
+=item *
+
+Added C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Enabling this
+directive allows media files uploaded to a media document to be distributed to
+all relevant preview servers as soon as the media document is saved. Sponsored
+by Alinghi. [David]
+
 =back
 
 =head2 Improvements
@@ -208,13 +202,13 @@ coming soon. See L<Bric::Admin|Bric::Admin> for details. [Marshall]
 
 =item *
 
-Creating a template that was deactivated now reactivates it instead of
-just giving an error message. [Scott]
+Creating a template that was deactivated now reactivates it instead of just
+giving an error message. [Scott]
 
 =item *
 
-The "User Override" screen has been integrated into the "Users" screen
-since the two pages are mostly redundant except for a few links. [Marshall]
+The "User Override" screen has been integrated into the "Users" screen since
+the two pages are mostly redundant except for a few links. [Marshall]
 
 =item *
 
