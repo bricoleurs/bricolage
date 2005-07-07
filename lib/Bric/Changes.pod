@@ -242,13 +242,13 @@ method in Bric::Biz::Workflow. Thanks to Marshall Roch for the spot! [David]
 
 =item *
 
-Users must have at least READ permission to sources to add them to stories. If
-upgrading from an earlier version of Bricolage, for purposes of backward
-compatability, members of the "All Users" group (that is to say, all users)
-will be granted READ access to all sources. Change this permission to limit
-access as appropriate. For new installations of Bricolage, the default "Story
-Editors" and "User Producers" groups have READ permission to all sources.
-Suggested by Simon Wilcox. [David]
+Users now must have at least READ permission to sources to add them to
+stories. If upgrading from an earlier version of Bricolage, for purposes of
+backward compatability, members of the "All Users" group (that is to say, all
+users) will be granted READ access to all sources. Change this permission to
+limit access as appropriate. For new installations of Bricolage, the default
+"Story Editors" and "User Producers" groups have READ permission to all
+sources. Suggested by Simon Wilcox. [David]
 
 =item *
 
@@ -263,9 +263,9 @@ URI formats now require that the categories be a part of the format. [David]
 
 =item *
 
-When using the command line tools, you can now opt to be prompted for your 
-password rather than entering it on the command line, which would store your 
-plaintext password in the history. [Marshall]
+When using the command line tools, you can now opt to be prompted for your
+password rather than entering it on the command line, which would store your
+plaintext password in the shell history. [Marshall]
 
 =back
 
