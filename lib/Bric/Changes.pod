@@ -165,6 +165,12 @@ The F<bric_media_upload> contrib script now uses the site argument (if there
 is one) to search for categories. This will prevent it from finding a category
 in one site but not the target site of the upload. [David]
 
+=item *
+
+Fixed two bugs with C<bric_template_diff>. C<File::Spec::Functions> now
+properly exports C<catfile()> and C<--from--site> and C<--to-site> now
+properly search on the site rather than the output channel. [Ovid]
+
 =back
 
 =cut
