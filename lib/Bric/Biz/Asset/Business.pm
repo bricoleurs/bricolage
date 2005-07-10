@@ -1697,7 +1697,14 @@ NONE
 
 B<Notes:>
 
-NONE
+For data fields that can return multiple values, you currently have to parse
+the data string like this:
+
+   my $str = $element->get_data('blah');
+   my @opts = split /__OPT__/, $str;
+
+This behavior might be changed so that the string is automatically split for
+you.
 
 =cut
 

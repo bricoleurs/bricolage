@@ -39,7 +39,7 @@ use File::Path qw(rmtree);
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
     print "This process must (usually) be run as root.\n";
-    exit 1 unless ask_yesno("Continue as non-root user? [yes] ", 1);
+    exit 1 unless ask_yesno("Continue as non-root user?", 1);
 }
 
 print "\n\n==> Deleting Bricolage Files <==\n\n";
@@ -57,7 +57,7 @@ exit 0;
 sub delete_files {
     my $instruction = qq{This installation is configured to allow multiple
 Bricolages to exist side-by-side. Do you want to remove everything
-under Bricolage root ($CONFIG->{BRICOLAGE_ROOT}) in one swipe? [yes] };
+under Bricolage root ($CONFIG->{BRICOLAGE_ROOT}) in one swipe?};
 
     if ($CONFIG->{set} eq 'm' && ask_yesno($instruction, 1)) {
         # For 'multiple' configurations, the default is to put
@@ -68,7 +68,7 @@ under Bricolage root ($CONFIG->{BRICOLAGE_ROOT}) in one swipe? [yes] };
         my $dir = $CONFIG->{MAN_DIR};
 
         # Remove manpages
-        if (-d $dir && ask_yesno(qq{Remove manpages ($dir/man1/bric_*, $dir/man3/Bric*)? [yes] }, 1)) {
+        if (-d $dir && ask_yesno(qq{Remove manpages ($dir/man1/bric_*, $dir/man3/Bric*)?}, 1)) {
             if ($CONFIG->{set} eq 's') {
                 rm_dirfiles(catfile($dir, 'man1'), 'bric_', 'man1 pages');
                 rm_dirfiles(catfile($dir, 'man3'), 'Bric', 'man3 pages');
@@ -79,14 +79,14 @@ under Bricolage root ($CONFIG->{BRICOLAGE_ROOT}) in one swipe? [yes] };
 
         # Remove executables
         $dir = $CONFIG->{BIN_DIR};
-        if (-d $dir && ask_yesno(qq{Remove executables ($dir/bric_*)? [yes] }, 1)) {
+        if (-d $dir && ask_yesno(qq{Remove executables ($dir/bric_*)?}, 1)) {
             rm_dirfiles($dir, 'bric_', 'Executables');
         }
 
         # Remove modules
         $dir = $CONFIG->{MODULE_DIR};
         $dir = catfile($dir, 'Bric') if $CONFIG->{set} eq 's';
-        if (-d $dir && ask_yesno(qq{Remove Perl Module directory "$dir"? [yes] }, 1)) {
+        if (-d $dir && ask_yesno(qq{Remove Perl Module directory "$dir"?}, 1)) {
             rmtree_or_die('Perl Module', $dir);
 
             # If the Bric.pm file is left after the directory is removed,
@@ -109,7 +109,7 @@ sub ask_rmtree {
     my ($text, $dir) = @_;
 
         if (-d $dir) {
-            if (ask_yesno(qq{Remove $text directory "$dir"? [yes] }, 1)) {
+            if (ask_yesno(qq{Remove $text directory "$dir"?}, 1)) {
                 rmtree_or_die($text, $dir);
             }
         } else {

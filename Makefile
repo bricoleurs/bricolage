@@ -12,6 +12,7 @@
 #   clone     - create a distribution based on an existing system
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
+#   dev       - installs directly from a Subversion checkout (for development)
 #
 # See INSTALL for details.
 #
@@ -53,6 +54,9 @@ postgres.db 	: inst/postgres.pl required.db
 config.db	: inst/config.pl required.db apache.db postgres.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
+bbin		:
+	$(PERL) inst/bin.pl
+	
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
@@ -172,9 +176,9 @@ lib 		:
 	-rm -f lib/Makefile
 	cd lib; $(PERL) Makefile.PL; $(MAKE) install
 
-bin 		:
-	-rm -f bin/Makefile
-	cd bin; $(PERL) Makefile.PL; $(MAKE) install
+bin 		: bbin
+	-rm -f bbin/Makefile
+	cd bbin; $(PERL) Makefile.PL; $(MAKE) install
 
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
@@ -189,6 +193,7 @@ done		: bconf/bricolage.conf db files bin lib cpan
 	$(PERL) inst/done.pl
 
 .PHONY 		: install is_root lib bin files db done
+
 
 
 ##########################
@@ -246,6 +251,17 @@ rm_files	:
 
 .PHONY 		: uninstall prep_uninstall db_uninstall rm_files
 
+
+##########################
+# development rules      #
+##########################
+
+dev_symlink :
+	$(PERL) inst/dev.pl
+
+dev			: inst/Pg.sql install dev_symlink clean
+	
+
 ##########################
 # test rules             #
 ##########################
@@ -265,9 +281,9 @@ clean 		:
 	-rm -rf *.db
 	-rm -rf build_done
 	-rm -rf bconf
+	-rm -rf bbin
 	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
-	cd bin ; $(PERL) Makefile.PL ; $(MAKE) clean
-	-rm -rf bin/Makefile.old
+	-rm -rf lib/auto
 
 .PHONY 		: clean

@@ -55,7 +55,7 @@ my $quiet_mode = (defined $ENV{INSTALL_VERBOSITY} and $ENV{INSTALL_VERBOSITY} eq
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
     print "This process must (usually) be run as root.\n";
-    exit 1 unless ask_yesno("Continue as non-root user? [yes] ", 1, $quiet_mode);
+    exit 1 unless ask_yesno("Continue as non-root user?", 1, $quiet_mode);
 }
 
 # setup default root
