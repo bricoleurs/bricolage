@@ -409,8 +409,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => [ 'i.id = soc.story_instance__id',
-                                'i.primary_oc__id = ?' ],
+    output_channel_id      => ['i.id = soc.story_instance__id',
+                               'soc.output_channel__id = ?'],
     category_id            => [ 'i.id = sc2.story_instance__id',
                                 'sc2.category__id = ?' ],
     primary_category_id    => [ 'i.id = sc2.story_instance__id AND sc2.main = 1',
@@ -692,6 +692,11 @@ Boolean indicating whether to return active or inactive stories.
 =item inactive
 
 Returns only inactive stories.
+
+=item alias_id
+
+Returns a list of stories aliased to the story ID passed as its value. May use
+C<ANY> for a list of possible values.
 
 =item category_id
 
@@ -1818,13 +1823,16 @@ sub save {
             }
         }
 
-        $self->_sync_categories();
-
         if ($active) {
             $self->_update_uris if $update_uris;
         } else {
             $self->_delete_uris;
         }
+
+        # Save the categories only after the story itself has been saved, so
+        # that if it throws an exception, the state of the categories doesn't
+        # get out of whack.
+        $self->_sync_categories();
 
         $self->SUPER::save();
         commit();

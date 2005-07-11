@@ -68,6 +68,19 @@ Bric::Biz::Workflow now caches calls to C<allowed_desks()>. This will allow
 desks to render *much* faster, since most assets on a desk will list the same
 desks in the "Move to" select lists. [David]
 
+=item *
+
+When the C<PUBLISH_RELATED_ASSETS> F<bricolage.conf> directive is enabled,
+aliases are now also republished. Only aliases that have previously been
+publiished will be republished, and only the last published version will be
+republished, rather than any versions created since the last publish.
+Suggested by Serge Sozonoff. [David]
+
+=item *
+
+Added the C<secret> paramter to the C<list()>, C<list_ids()>, and C<href()>
+method of Bric::Util::Grp. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -170,6 +183,41 @@ in one site but not the target site of the upload. [David]
 Fixed two bugs with C<bric_template_diff>. C<File::Spec::Functions> now
 properly exports C<catfile()> and C<--from--site> and C<--to-site> now
 properly search on the site rather than the output channel. [Ovid]
+
+=item *
+
+When a catgory is added to a story that creates a URI conflict, the new
+category is does not remain associated with the story in the story profile
+after the conflict error has been thrown. Reported by Paul Orrock. [David]
+
+=item *
+
+The C<alias_id> parameter to the C<list()> method of the story and media
+classes has been documented. [David]
+
+=item *
+
+Usernames are now SQL-escaped before being looked up when a user attempts to
+log in. The prevents errors when, for example, there are two users named
+"food" and "foo_", and "foo_" attempts to login and gets a failure. [David]
+
+=item *
+
+All calls to C<lookup()> methods by the SOAP that pass string values to look
+up (such as category URIs and site, workflow, and desk names) are SQL escaped
+so as to prevent conflicts similar to those noted above for usernames.
+Reported by Scott Lanning. [David]
+
+=item *
+
+Contributor groups created in the contributor profile are no longer missing
+from the contributor manager search interface. Reported by Rachel Murray and
+Scott. [David]
+
+=item *
+
+C<ANY()> now works properly for the output_channel_id parameter to the list()
+method of the story and media classes. Reported by Serge Sozonoff. [David]
 
 =back
 

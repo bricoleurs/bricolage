@@ -95,7 +95,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(132) {
+sub test_select_methods: Test(138) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -791,6 +791,47 @@ sub test_select_methods: Test(132) {
     # version.
     is_deeply [ map { $_->get_checked_out } @$got ], [0, 0, 1, 0, 0, 0],
       "We should get the checked-out story where available";
+
+    # Test list using output channel IDs.
+    my $oc1 = $OC_CLASS->new({ name => '_toc1', site_id => 100 });
+    $oc1->save;
+    $self->add_del_ids([$oc1->get_id], 'output_channel');
+    my $oc2 = $OC_CLASS->new({ name => '_toc2', site_id => 100 });
+    $oc2->save;
+    $self->add_del_ids([$oc2->get_id], 'output_channel');
+    my $oc3 = $OC_CLASS->new({ name => '_toc3', site_id => 100 });
+    $oc3->save;
+    $self->add_del_ids([$oc3->get_id], 'output_channel');
+
+    $story[0]->add_output_channels($oc1);
+    $story[0]->set_primary_oc_id($oc1->get_id);
+    $story[0]->save;
+
+    ok $got = class->list({
+        output_channel_id => $oc1->get_id
+    }), 'Get stories with first OC';
+    is @$got, 1, 'Should have one story';
+
+    # Add a second OC to the story.
+    $story[0]->add_output_channels($oc2);
+    $story[0]->save;
+
+    # We should still be able to find that story.
+    ok $got = class->list({
+        output_channel_id => $oc2->get_id
+    }), 'Get stories with second OC';
+    is @$got, 1, 'Should still have one story';
+
+    # Now add the thrird OC as the secondary OC of another story.
+    $story[1]->add_output_channels($oc2, $oc3);
+    $story[1]->set_primary_oc_id($oc2->get_id);
+    $story[1]->save;
+
+    # Now look for the second and thrid OC.
+    ok $got = class->list({
+        output_channel_id => ANY($oc1->get_id, $oc3->get_id)
+    }), 'Get stories with first and third OC';
+    is @$got, 2, 'Should now have two stories';
 }
 
 

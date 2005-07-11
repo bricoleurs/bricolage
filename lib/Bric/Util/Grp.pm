@@ -319,6 +319,10 @@ groups.
 
 Inactive groups will be returned if this parameter is true.
 
+=item secret
+
+Pass in a true value to return only secret groups. False by default.
+
 =item all
 
 Both secret and non-secret groups will be returned if this parameter is true.
@@ -2898,8 +2902,13 @@ sub _do_list {
     }
 
     unless ( $criteria->{all} ) {
-        push @wheres, 'g.secret = ?';
-        push @params, 0;
+        if (exists $criteria->{secret}) {
+            push @wheres, 'g.secret = ?';
+            push @params, $criteria->{secret} ? 1 : 0;
+        } else {
+            push @wheres, 'g.secret = ?';
+            push @params, 0;
+        }
     }
 
     my $cid = $class->get_class_id;

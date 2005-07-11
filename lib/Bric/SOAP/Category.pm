@@ -498,13 +498,14 @@ sub load_asset {
 
         # avoid complex code if path hasn't changed on update
         if (not $update or $category->get_uri ne $cdata->{path}) {
-            my $path = $cdata->{path};
+            (my $path = $cdata->{path}) =~ s/([_%\\])/\\$1/g;
 
             # check that the requested path doesn't already exist.
             throw_ap(error => __PACKAGE__ . " : requested path \"$cdata->{path}\""
                        . " is already in use.")
-              if $paths{$path} ||= Bric::Biz::Category->lookup({ uri => $path,
-                                                                 site_id => $site_id });
+              if $paths{$path} ||= Bric::Biz::Category->lookup({
+                  uri => $path,
+                  site_id => $site_id });
 
             # special-case root category
             if ($path eq '/') {
@@ -543,8 +544,9 @@ sub load_asset {
             # collect keyword objects
             my @kws;
             foreach (@{$cdata->{keywords}{keyword}}) {
-                my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-                $kw ||= Bric::Biz::Keyword->new({ name => $_ })->save;
+                (my $name = $_) =~ s/([_%\\])/\\$1/g;
+                my $kw = Bric::Biz::Keyword->lookup({ name => $name })
+                  || Bric::Biz::Keyword->new({ name => $_ })->save;
                 push @kws, $kw;
             }
 

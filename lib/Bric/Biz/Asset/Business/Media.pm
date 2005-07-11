@@ -44,8 +44,9 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
+use Bric::App::Session qw(get_user_id);
 use File::Temp qw( tempfile );
-use Bric::Config qw(:media :thumb MASON_COMP_ROOT);
+use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
 
@@ -249,8 +250,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'AND media_instance.checked_out = 1)',
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
-                             . '(moc.output_channel__id = ? OR '
-                             . 'i.primary_oc__id = ?))',
+                             . 'moc.output_channel__id = ?)',
       category__id          => 'i.category__id = ?',
       category_id           => 'i.category__id = ?',
       category_uri          => 'i.category__id = c.id AND '
@@ -282,8 +282,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => [ 'i.id = moc.media_instance__id',
-                                'i.primary_oc__id = ?' ],
+    output_channel_id      => ['i.id = moc.media_instance__id',
+                               'moc.output_channel__id = ?'],
     category_uri           => [ 'i.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
@@ -359,6 +359,7 @@ BEGIN {
                          category__id    => Bric::FIELD_RDWR,
                          size            => Bric::FIELD_RDWR,
                          class_id        => Bric::FIELD_READ,
+                         needs_preview   => Bric::FIELD_READ,
 
                          # Private Fields
                          _category_obj   => Bric::FIELD_NONE,
@@ -565,6 +566,11 @@ Boolean indicating whether to return active or inactive media.
 =item inactive
 
 Returns only inactive media.
+
+=item alias_id
+
+Returns a list of media aliased to the media ID passed as its value. May use
+C<ANY> for a list of possible values.
 
 =item category_id
 
@@ -1444,6 +1450,7 @@ sub upload_file {
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
+    $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
 
     # Set the media type and the file size.
     if ($type = defined $type
@@ -1717,7 +1724,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+    my ($id, $active, $update_uris, $preview) =
+      $self->_get(qw(id _active _update_uri needs_preview));
 
     # Start a transaction.
     begin();
@@ -1772,6 +1780,13 @@ sub save {
     if (my $err = $@) {
         rollback();
         rethrow_exception($err);
+    }
+    if (AUTO_PREVIEW_MEDIA && $preview) {
+        # Go ahead and distribute to the preview server(s).
+        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
+        $burner->preview($self, 'media', get_user_id, $_->get_id)
+          for $self->get_output_channels;
+        $self->_set(['needs_preview'] => [0]);
     }
 
     return $self;

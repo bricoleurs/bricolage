@@ -620,12 +620,14 @@ sub load_asset {
     my ($workflow, $desk, $no_wf_or_desk_param);
     $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
     if (exists $args->{workflow}) {
-        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+        (my $look = $args->{workflow}) =~ s/([_%\\])/\\$1/g;
+        $workflow = Bric::Biz::Workflow->lookup({ name => $look })
           || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
     }
 
     if (exists $args->{desk}) {
-        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+        (my $look = $args->{desk}) =~ s/([_%\\])/\\$1/g;
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $look })
           || throw_ap error => "desk '" . $args->{desk} . "' not found!";
     }
 
@@ -801,8 +803,9 @@ sub load_asset {
             if ($mdata->{contributors} and $mdata->{contributors}{contributor}) {
                 my %grps;
                 foreach my $c (@{$mdata->{contributors}{contributor}}) {
+                    (my $look = $c->{type}) =~ s/([_%\\])/\\$1/g;
                     my $grp = $grps{$c->{type}} ||=
-                      Bric::Util::Grp::Person->lookup({ name => $c->{type} })
+                      Bric::Util::Grp::Person->lookup({ name => $look })
                       or throw_ap __PACKAGE__ . "::create: No contributor type found "
                       . "matching (type => $c->{type})";
                     my %init = (grp   => $grp,
@@ -877,7 +880,8 @@ sub load_asset {
             # collect keyword objects
             my @kws;
             foreach (@{$mdata->{keywords}{keyword}}) {
-                my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+                (my $look = $_) =~ s/([_%\\])/\\$1/g;
+                my $kw = Bric::Biz::Keyword->lookup({ name => $look});
                 unless ($kw) {
                     $kw = Bric::Biz::Keyword->new({ name => $_})->save;
                     log_event('keyword_new', $kw);

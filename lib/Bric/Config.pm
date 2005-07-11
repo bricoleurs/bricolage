@@ -153,6 +153,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_CHAR_SETS
                     ENABLE_HTMLAREA
                     HTMLAREA_TOOLBAR
+                    AUTO_PREVIEW_MEDIA
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -197,6 +198,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      STAGE_ROOT
                                      PREVIEW_ROOT
                                      MASON_COMP_ROOT
+                                     AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
                     pub       => [qw(PUBLISH_RELATED_ASSETS)],
                     dist      => [qw(ENABLE_DIST
@@ -255,6 +257,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      PREVIEW_MASON
                                      MANUAL_APACHE)],
                     media     => [qw(MEDIA_URI_ROOT
+                                     AUTO_PREVIEW_MEDIA
                                      MEDIA_FILE_ROOT)],
                     thumb     => [qw(USE_THUMBNAILS
                                      THUMBNAIL_SIZE)],
@@ -364,7 +367,8 @@ require Bric; our $VERSION = Bric->VERSION;
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
-                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG))
+                    USE_THUMBNAILS ENABLE_HTMLAREA AUTOGENERATE_SLUG
+                    AUTO_PREVIEW_MEDIA))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -531,6 +535,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ADMIN_GRP_ID            => 6;
 
     # the base directory that will store media assets
+    use constant AUTO_PREVIEW_MEDIA      => $config->{AUTO_PREVIEW_MEDIA} || 0;
     use constant MEDIA_URI_ROOT => '/data/media';
     use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
                                            'data', 'media');

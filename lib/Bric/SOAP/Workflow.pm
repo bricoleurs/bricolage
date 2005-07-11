@@ -1262,7 +1262,8 @@ sub load_asset {
           unless chk_authz($asset, CREATE, 1);
 
         $adata->{site} = 'Default Site' unless exists $adata->{site};
-        my $site = Bric::Biz::Site->lookup({ name => $adata->{site} });
+        (my $look = $adata->{site}) =~ s/([_%\\])/\\$1/g;
+        my $site = Bric::Biz::Site->lookup({ name => $look });
         unless (defined $site) {
             throw_ap error => __PACKAGE__ . ": site \"" . $adata->{site}
               . "\" not found.";
@@ -1455,8 +1456,9 @@ Private function to add a desk to a workflow during create/update
 
 sub _add_desk {
     my ($asset, $ddata, $name) = @_;
+    (my $look = $name) =~ s/([_%\\])/\\$1/g;
 
-    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $name });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $look });
     unless (defined $desk) {
         # desk doesn't exist, so create it
         my $is_publish = (ref($$ddata) && exists($ddata->{publish})
