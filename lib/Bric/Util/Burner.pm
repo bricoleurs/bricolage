@@ -619,11 +619,12 @@ and storyconc.html.
 sub set_page_extensions {
     my $self = shift;
     my %seen;
-    if (grep { $seen{$_}++ } @_) {
+    if (my $dupes = join ', ', grep { $seen{$_}++ } @_) {
         my $oc = $self->get_oc;
         my $cat = $self->get_cat;
         my $elem = $self->get_element;
-        throw_burn_error error => "Duplicate page extensions are not allowed",
+        throw_burn_error error => "Duplicate page extensions are not allowed, "
+                                  . "already seen $dupes",
                          mode  => $self->get_mode,
                          ( $oc   ? (oc    => $oc->get_name)   : ()),
                          ( $cat  ? (cat   => $cat->get_uri)   : ()),

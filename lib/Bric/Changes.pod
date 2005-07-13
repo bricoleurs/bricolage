@@ -81,6 +81,12 @@ Suggested by Serge Sozonoff. [David]
 Added the C<secret> paramter to the C<list()>, C<list_ids()>, and C<href()>
 method of Bric::Util::Grp. [David]
 
+=item *
+
+The C<set_page_extensions()> method of the burner class now provides a list of
+duplicate extensions in the exception thrown when duplicate extensions are
+passed to it. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
