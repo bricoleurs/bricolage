@@ -864,18 +864,26 @@ sub allowed_desks {
     my $self = shift;
     my $desks = $self->_get('_allowed_desks');
     unless ($desks) {
-        my $all_grp = $self->_get_all_desk_grp;
-        return unless $all_grp;
+        my $all_grp = $self->_get_all_desk_grp or return;
 
         # Sort desks so that the start desk is first, normal desks come next
         # and the publish desk is last.
         $desks = [
+            map  { $_->{obj} }
             sort {
-                ($self->is_start_desk($b)||0) <=> ($self->is_start_desk($a)||0)
-                || ($a->can_publish || 0) <=> ($b->can_publish || 0)
-                ||  $a->get_id <=> $b->get_id
-            } grep { $_->is_active } $all_grp->get_objects
+                   $b->{start} <=> $a->{start}
+                || $a->{pub}   <=> $b->{pub}
+                || $a->{id}    <=> $b->{id}
+            }
+            map  {{
+                obj   => $_,
+                id    => $_->get_id,
+                pub   => ($_->can_publish || 0),
+                start => ($self->is_start_desk($_) || 0)
+            }}
+            grep { $_->is_active } $all_grp->get_objects
         ];
+
         $self->_set(['_allowed_desks'] => [$desks]);
     }
 
