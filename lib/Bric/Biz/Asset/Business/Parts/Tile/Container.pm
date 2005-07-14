@@ -1274,13 +1274,13 @@ sub delete_elements {
     my $order = 0;
     my $cont_order;
     my $data_order;
-    my $new_list;
+    my $new_list = [];
     foreach (@$tiles) {
         my $delete = undef;
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
                 push @$del_tiles, $_;
-                                $delete = 1;
+                $delete = 1;
             }
         } else {
             if (exists $del_data{$_->get_id}) {

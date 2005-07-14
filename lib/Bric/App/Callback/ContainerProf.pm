@@ -605,7 +605,6 @@ sub _update_parts {
         $locate_tile = $t if $id == $locate_id and $t->is_container;
         if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
                            $param->{$widget . "|delete_data$id"})) {
-
             add_msg('Element "[_1]" deleted.', $t->get_name);
             push @delete, $t;
             next;
@@ -639,7 +638,7 @@ sub _update_parts {
     }
 
     # Delete tiles as necessary.
-    $tile->delete_tiles(\@delete) if $do_delete;
+    $tile->delete_tiles(\@delete) if $do_delete && @delete;
 
     if (@curr_tiles) {
         eval { $tile->reorder_tiles([ grep { defined } @curr_tiles ]) };
@@ -979,7 +978,6 @@ sub _split_super_bulk {
 
     # Create hash of possible names from the data elements
     foreach my $p ($at->get_data) {
-#        print STDERR $p->get_key_name, "\n";
         $poss_names{$p->get_key_name} = 'd';
     }
 

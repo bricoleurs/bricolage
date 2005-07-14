@@ -1,4 +1,4 @@
-=head1 NAME
+head1 NAME
 
 Bric::Changes - Bricolage Changes
 
@@ -86,6 +86,36 @@ method of Bric::Util::Grp. [David]
 The C<set_page_extensions()> method of the burner class now provides a list of
 duplicate extensions in the exception thrown when duplicate extensions are
 passed to it. [Paul Orrock]
+
+=item *
+
+A story or media document published with an expire date earlier than the
+scheduled publish time no longer bothers with the publish but just expires the
+story or media document. [David]
+
+=item *
+
+When two events in a list have the same timestamp, they are no longer listed
+in order by ID relative to each other, but relative to ID I<descending>, to
+ensure that the one logged first will be listed after the one logged next.
+[David]
+
+=item *
+
+Media documents without an associated media file will no longer be displayed
+in the search results when attemting to relate a media document to an element.
+Reported by Adam Rinehart. [David]
+
+=item *
+
+When a template is moved to a new category, its ACL is now properly updated in
+the cached copy in the user's session, as well as in the database. [David]
+
+=item *
+
+Changed the C<published_version> parameter to the list() method
+Bric::Biz::Asset::Formatting (the template class) to C<deployed_version>, but
+kept C<published_version> as an alias.
 
 =back
 
@@ -224,6 +254,43 @@ Scott. [David]
 
 C<ANY()> now works properly for the output_channel_id parameter to the list()
 method of the story and media classes. Reported by Serge Sozonoff. [David]
+
+=item *
+
+The F<favicon.ico> works again. [David]
+
+=item *
+
+Stories are now properly expired when the C<BRIC_QUEUED> F<bricolage.conf>
+diretive is enabled. Reported by Scott. [David]
+
+=item *
+
+When a template is checked out of the library and then the checkout is
+cancelled, it is no longer left on the desk it was moed into upon the
+checkout, but properly reshelved. Reported by Marshall. [David]
+
+=item *
+
+Media created with the default "Image" and "Photograph" media type elements
+will now properly supply a "Lock val" check box for autopopulated fields.
+Reported by Marshall. [David]
+
+=item *
+
+Super Bulk Edit now works for media as well as stories. Reported by Scott.
+[David]
+
+=item *
+
+The Description attribute of stories, media, and templates is now properly
+limited to 1024 characters in the UI. Reported by Scott. [David]
+
+=item *
+
+When a template is moved to a new category, the old version of the template is
+undeployed when the new version is deployed to the new category. The versions
+in the sandbox are properly synced, as well.
 
 =back
 
@@ -373,6 +440,11 @@ the media type of the file. [David]
 The "multi" install destination is now the default, rather than the "single"
 install destination. The two styles ("multi" and "single") are now also better
 described during installation. [David]
+
+=item *
+
+When the installer prompts for database passwords, it no longer echoes them to
+the terminal. Suggested by Marshall. [David]
 
 =back
 

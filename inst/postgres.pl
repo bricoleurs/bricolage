@@ -123,7 +123,7 @@ sub get_version {
 sub get_users {
     print "\n";
     ask_confirm("Postgres Root Username", \$PG{root_user});
-    ask_confirm("Postgres Root Password (leave empty for no password)",
+    ask_password("Postgres Root Password (leave empty for no password)",
 		\$PG{root_pass});
 
     while(1) {
@@ -144,7 +144,7 @@ sub get_users {
       }
     }
 
-    ask_confirm("Bricolage Postgres Password", \$PG{sys_pass});
+    ask_password("Bricolage Postgres Password", \$PG{sys_pass});
     ask_confirm("Bricolage Database Name", \$PG{db_name});
 }
 

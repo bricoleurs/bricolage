@@ -335,7 +335,7 @@ my %formSubs = (
                 my $textstring = $lang->maketext('Characters')
 				  . qq {: <span id="textCountUp$uniquename">$upval</span> }
                   . $lang->maketext('Remaining')
-				  . qq{: <span id="textCountDown$uniquename">$dwval</span>};
+				  . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n<textarea  id="$uniquename" }
                   . qq{onKeyUp="$functioncode"\n onKeyDown="$functioncode"\n }

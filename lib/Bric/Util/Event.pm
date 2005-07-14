@@ -1399,7 +1399,7 @@ $get_em = sub {
     }
 
     my ($qry_cols, $order) = $ids ? (\'DISTINCT e.id', 'e.id') :
-      (\$SEL_COLS, 'e.timestamp DESC, e.id');
+      (\$SEL_COLS, 'e.timestamp DESC, e.id DESC');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols

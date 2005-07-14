@@ -255,7 +255,7 @@ sub publish : Callback {
 
                 # Publish all aliases, too.
                 for my $aid ($doc->list_ids({
-                    aliased_id        => $doc->get_id,
+                    alias_id          => $doc->get_id,
                     publish_status    => 1,
                     published_version => 1,
                 })) {

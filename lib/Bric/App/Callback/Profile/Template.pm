@@ -368,10 +368,16 @@ $save_meta = sub {
     $fa ||= get_state_data($widget, 'fa');
     chk_authz($fa, EDIT);
     $fa->set_priority($param->{priority}) if $param->{priority};
-    $fa->set_category_id($param->{category_id}) if exists $param->{category_id};
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
     $fa->set_data($param->{"$widget|code"});
+    if (exists $param->{category_id}) {
+        # Remove the existing version from the user's sand box.
+        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+        $sb->undeploy($fa);
+        # Set the new category.
+        $fa->set_category_id($param->{category_id});
+    }
     return set_state_data($widget, 'fa', $fa);
 };
 
