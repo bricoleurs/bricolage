@@ -319,7 +319,7 @@ if (defined $objs && @$objs > $obj_offset) {
                 if ($obj->is_active) {
                     # Hrm, we don't have a workflow object. What workflow is
                     # the current desk in?
-                    if (defined $work_id) {
+                    if ($work_id) {
                         $obj->set_workflow_id($work_id);
                         $obj->save;
                         $a_wf = $wfs{$work_id}
