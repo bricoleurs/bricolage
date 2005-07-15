@@ -22,52 +22,37 @@ $LastChangedDate: $
   use Bric::Biz::InputChannel;
 
   # Constructors.
-  $oc = Bric::Biz::InputChannel->new($init);
-  $oc = Bric::Biz::InputChannel->lookup({ id => $id});
-  my $ocs_aref = Bric::Biz::InputChannel->list($params);
-  my @ocs = Bric::Biz::InputChannel->list($params);
+  $ic = Bric::Biz::InputChannel->new($init);
+  $ic = Bric::Biz::InputChannel->lookup({ id => $id});
+  my $ics_aref = Bric::Biz::InputChannel->list($params);
+  my @ics = Bric::Biz::InputChannel->list($params);
 
   # Class Methods.
-  my $id_aref = Bric::Biz::OutputChannel->list_ids($params);
-  my @ids = Bric::Biz::OutputChannel->list_ids($params);
+  my $id_aref = Bric::Biz::InputChannel->list_ids($params);
+  my @ids = Bric::Biz::InputChannel->list_ids($params);
 
   # Instance Methods.
-  $id = $oc->get_id;
-  my $name = $oc->get_name;
-  $oc = $oc->set_name( $name );
-  my $description = $oc->get_description;
-  $oc = $oc->set_description($description);
-  if ($oc->get_primary) { # do stuff }
-  $oc = $oc->set_primary(1); # or pass undef.
-  my $site_id = $oc->get_site_id;
+  $id = $ic->get_id;
+  my $name = $ic->get_name;
+  $ic = $ic->set_name( $name );
+  my $description = $ic->get_description;
+  $ic = $ic->set_description($description);
+  my $site_id = $ic->get_site_id;
   $site = $site->set_site_id($site_id);
-  my $protocol = $oc->get_protocol;
-  $site = $site->set_protocol($protocol);
 
-  # URI Format instance methods.
-  my $uri_format = $oc->get_uri_format;
-  $oc->set_uri_format($uri_format);
-  my $fixed_uri_format = $oc->get_fixed_uri_format;
-  $oc->set_fixed_uri_format($uri_fixed_format);
-  my $uri_case = $oc->get_uri_case;
-  $oc->set_uri_case($uri_case);
-  if ($oc->can_use_slug) { # do stuff }
-  $oc->use_slug_on;
-  $oc->use_slug_off;
-
-  # Output Channel Includes instance methods.
-  my @ocs = $oc->get_includes;
-  $oc->set_includes(@ocs);
-  $oc->add_includes(@ocs);
-  $oc->del_includes(@ocs);
+  # Input Channel Includes instance methods.
+  my @ics = $ic->get_includes;
+  $ic->set_includes(@ics);
+  $ic->add_includes(@ics);
+  $ic->del_includes(@ics);
 
   # Active instance methods.
-  $oc = $oc->activate;
-  $oc = $oc->deactivate;
-  $oc = $oc->is_active;
+  $ic = $ic->activate;
+  $ic = $ic->deactivate;
+  $ic = $ic->is_active;
 
   # Persistence methods.
-  $oc = $oc->save;
+  $ic = $ic->save;
 
 =head1 DESCRIPTION
 
@@ -131,11 +116,11 @@ my $SEL_WHERES = 'ic.id = sm.object_id AND sm.member__id = m.id ' .
   "AND m.active = '1'";
 my $SEL_ORDER = 'ic.name, ic.id';
 
-my @COLS = qw(name description site__id primary_ce active);
+my @COLS = qw(name description site__id active);
 
-my @PROPS = qw(name description site_id primary _active);
+my @PROPS = qw(name description site_id _active);
 
-my $SEL_COLS = 'ic.id, ic.name, ic.description, ic.site__id, ic.primary_ce, '.
+my $SEL_COLS = 'ic.id, ic.name, ic.description, ic.site__id, '.
                'ic.active, m.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
@@ -168,10 +153,6 @@ BEGIN {
        # What site this OC is part of
        'site_id'               => Bric::FIELD_RDWR,
 
-       # the flag as to wheather this is a primary
-       # output channel
-       'primary'               => Bric::FIELD_RDWR,
-
        # The data base id
        'id'                   => Bric::FIELD_READ,
 
@@ -198,7 +179,7 @@ BEGIN {
 
 =over 4
 
-=item $oc = Bric::Biz::InputChannel->new( $initial_state )
+=item $ic = Bric::Biz::InputChannel->new( $initial_state )
 
 Instantiates a Bric::Biz::InputChannel object. An anonymous hash of initial
 values may be passed. The supported initial value keys are:
@@ -216,10 +197,6 @@ site_id
 =item *
 
 description
-
-=item *
-
-primary
 
 =item *
 
@@ -300,15 +277,15 @@ sub lookup {
     throw_gen(error => "Missing required parameter 'id' or 'name'/'site_id'")
       unless $params->{id} or ($params->{name} and $params->{site_id});
 
-    my $oc = $class->cache_lookup($params);
-    return $oc if $oc;
+    my $ic = $class->cache_lookup($params);
+    return $ic if $ic;
 
-    $oc = $class->_do_list($params);
+    $ic = $class->_do_list($params);
 
     # We want @$person to have only one value.
     throw_dp(error => 'Too many Bric::Biz::InputChannel objects found.')
-      if @$oc > 1;
-    return @$oc ? $oc->[0] : undef;
+      if @$ic > 1;
+    return @$ic ? $ic->[0] : undef;
 }
 
 =item ($ics_aref || @ics) = Bric::Biz::InputChannel->list( $criteria )
@@ -330,10 +307,6 @@ description
 =item *
 
 site_id
-
-=item *
-
-primary
 
 =item *
 
@@ -822,27 +795,6 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $ic = $ic->set_primary( undef || 1)
-
-Set the flag that indicates whether or not this is the primary Input Channel.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item (undef || 1 ) = $ic->get_primary
-
-Returns true if this is the primary Input Channel and false (undef) if it is
-not.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> Only one Input Channel can be the primary Input Channel.
-
 =item my @inc = $ic->get_includes
 
 =item my $inc_aref = $ic->get_includes
@@ -1208,10 +1160,6 @@ sub _do_list {
         if ($k eq 'id') {
             # Simple numeric comparison.
             $wheres .= " AND ic.$k = ?";
-            push @params, $v;
-        } elsif ($k eq 'primary') {
-            # Simple numeric comparison.
-            $wheres .= " AND ic.primary_ce = ?";
             push @params, $v;
         } elsif ($k eq 'active') {
             # Simple boolean comparison.

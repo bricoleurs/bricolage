@@ -20,6 +20,9 @@ CREATE SEQUENCE seq_element START 1024;
 -- Unique IDs for element__output_channel
 CREATE SEQUENCE seq_element__output_channel START 1024;
 
+-- Unique IDs for element__input_channel
+CREATE SEQUENCE seq_element__input_channel START 1024;
+
 -- Unique IDs for element__language
 --CREATE SEQUENCE seq_element__language START 1024;
 
@@ -90,6 +93,23 @@ CREATE TABLE element__output_channel (
     enabled             BOOLEAN    NOT NULL DEFAULT TRUE,
     active              BOOLEAN    NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_at__oc__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: element__input_channel
+--
+-- Description: Holds a reference to the asset type table, the input channel 
+--              table and an active flag
+--
+
+CREATE TABLE element__input_channel (
+    id                  INTEGER    NOT NULL
+                                   DEFAULT NEXTVAL('seq_element__input_channel'),
+    element__id         INTEGER    NOT NULL,
+    input_channel__id   INTEGER    NOT NULL,
+    enabled             BOOLEAN    NOT NULL DEFAULT TRUE,
+    active              BOOLEAN    NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_at__ic__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -187,6 +207,10 @@ CREATE INDEX fkx_grp__element ON element(at_grp__id);
 CREATE UNIQUE INDEX udx_at_oc_id__at__oc_id ON element__output_channel(element__id, output_channel__id);
 CREATE INDEX fkx_output_channel__at_oc ON element__output_channel(output_channel__id);
 CREATE INDEX fkx_element__at_oc ON element__output_channel(element__id);
+
+CREATE UNIQUE INDEX udx_at_ic_id__at__ic_id ON element__input_channel(element__id, input_channel__id);
+CREATE INDEX fkx_input_channel__at_ic ON element__input_channel(input_channel__id);
+CREATE INDEX fkx_element__at_ic ON element__input_channel(element__id);
 
 --CREATE UNIQUE INDEX udx_at_language__at_id__lang_id ON element__language(element__id,language__id);
 

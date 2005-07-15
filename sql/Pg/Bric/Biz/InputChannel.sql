@@ -31,7 +31,6 @@ CREATE TABLE input_channel (
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),
     site__id         INTEGER        NOT NULL,
-    primary_ce       BOOLEAN,
     active           BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_input_channel__id PRIMARY KEY (id)
 );

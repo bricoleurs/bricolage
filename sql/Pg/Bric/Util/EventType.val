@@ -853,17 +853,17 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'pub_job_failed', 'Publish job failed', 'Publish job failed due to error.', '80', '1');
 
--- ********** 'output_channel_new' ************ --
+-- ********** 'input_channel_new' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'input_channel_new', 'Input Channel Created', 'Input Channel profile was created.', '81', '1');
 
--- ********** 'output_channel_save' ************ --
+-- ********** 'input_channel_save' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'input_channel_save', 'Input Channel Changes Saved', 'Input Channel profile changes were saved.', '81', '1');
 
--- ********** 'output_channel_deact' ************ --
+-- ********** 'input_channel_deact' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'input_channel_deact', 'Input Channel Deactivated', 'Input Channel profile was deactivated.', '81', '1');

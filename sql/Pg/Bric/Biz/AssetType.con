@@ -29,6 +29,17 @@ ALTER TABLE element__output_channel ADD
 	REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
+-- Table: element__input_channel
+
+ALTER TABLE element__input_channel ADD
+	CONSTRAINT fk_element__at_ic FOREIGN KEY (element__id)
+	REFERENCES element(id) ON DELETE CASCADE;
+
+ALTER TABLE element__input_channel ADD
+	CONSTRAINT fk_input_channel__at_ic FOREIGN KEY (input_channel__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
 -- Table: element__language
 
 /*
