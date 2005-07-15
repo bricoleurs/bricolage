@@ -142,41 +142,23 @@ sub list_ids {
           unless $self->is_allowed_param($_, 'list_ids');
     }
 
-    # check for path or parent combined with other searches
-    throw_ap(error => __PACKAGE__ . "::list_ids : illegal combination of parent search "
-               . "with other search terms.")
-      if $args->{parent} and keys(%$args) > 1;
-    throw_ap(error => __PACKAGE__ . "::list_ids : illegal combination of path search "
-               . "with other search terms.")
-      if $args->{path} and keys(%$args) > 1;
-
-   # handle site => site_id conversion
+    # handle site => site_id conversion
     $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
       if exists $args->{site};
 
-    # perform emulated searches
-    if ($args->{parent} or $args->{path}) {
-        my $to_find = $args->{parent} ? $args->{parent} : $args->{path};
-        my $return_children = exists $args->{parent};
-
-        my @list = Bric::Biz::Category->list();
-        foreach my $cat (@list) {
-            if ($cat->ancestry_path eq $to_find) {
-                if ($return_children) {
-                    push(@cat_ids, map { $_->get_id } $cat->children);
-                } else {
-                    push(@cat_ids, $cat->get_id);
-                }
-            }
-        }
-
+    # Handle parent => uri and path => uri conversion.
+    if ($args->{parent}) {
+        # Prefer the parent argument.
+        $args->{parent} .= '/' unless $args->{parent} =~ m|/$|;
+        $args->{uri} = delete($args->{parent}) . '%';
+        delete $args->{path};
     } else {
-        # normal searches pass through to list
-        @cat_ids = Bric::Biz::Category->list_ids($args);
+        $args->{uri} = delete $args->{path} if $args->{path};
     }
 
     # name the results
-    my @result = map { name(category_id => $_) } @cat_ids;
+    my @result = map { name(category_id => $_) }
+      Bric::Biz::Category->list_ids($args);
 
     # name the array and return
     return name(category_ids => \@result);

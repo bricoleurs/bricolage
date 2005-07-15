@@ -468,7 +468,7 @@ sub check_connect_soap {
 
 sub find_or_create_category {
     my ($category, $targ_url) = @_;
-    our ($timeout, $temp_dir, $make_categories);
+    our ($timeout, $temp_dir, $make_categories, $site);
     my $write_to_root = 0;
     my $command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$category;
     $command .= " --search site='$site'" if $site;

@@ -658,14 +658,18 @@ sub load_asset {
 
         if (exists $mdata->{element} and not $aliased) {
             unless ($melems{$mdata->{element}}) {
-                my $e = (Bric::Biz::AssetType->list
-                         ({ key_name => $mdata->{element}, media => 1 }))[0]
-                           or throw_ap(error => __PACKAGE__ .
-                                         "::create : no media element found " .
-                                         "matching (element => \"$mdata->{element}\")");
-                $melems{$mdata->{element}} =
-                  [ $e->get_id,
-                    { map { $_->get_name => $_ } $e->get_output_channels } ];
+                my $e = (Bric::Biz::AssetType->list({
+                    key_name => $mdata->{element},
+                    media    => 1
+                }))[0] or throw_ap(
+                    error => __PACKAGE__ .
+                      "::create : no media element found " .
+                      "matching (element => \"$mdata->{element}\")"
+                );
+                $melems{$mdata->{element}} = [
+                    $e->get_id,
+                    { map { $_->get_name => $_ } $e->get_output_channels }
+                ];
             }
 
             # get element object for asset type

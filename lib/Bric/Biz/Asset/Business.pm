@@ -2203,9 +2203,9 @@ sub _init {
         $self->_set(['cover_date'], [$alias_target->_get('cover_date')]);
 
         $self->add_output_channels(
-           map { ($_->is_enabled &&
-                  $_->get_site_id == $init->{site_id}) ? $_ : () }
-                                   $at->get_output_channels);
+            grep { $_->is_enabled && $_->get_site_id == $init->{site_id} }
+              $at->get_output_channels
+        );
 
         $self->set_primary_oc_id($at->get_primary_oc_id($init->{site_id}));
 

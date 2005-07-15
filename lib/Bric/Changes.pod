@@ -117,6 +117,11 @@ Changed the C<published_version> parameter to the list() method
 Bric::Biz::Asset::Formatting (the template class) to C<deployed_version>, but
 kept C<published_version> as an alias.
 
+=item *
+
+Optimized C<path> and C<parent> searches in the Category C<list_ids> SOAP
+method. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -291,6 +296,11 @@ limited to 1024 characters in the UI. Reported by Scott. [David]
 When a template is moved to a new category, the old version of the template is
 undeployed when the new version is deployed to the new category. The versions
 in the sandbox are properly synced, as well.
+
+=item *
+
+Eliminated compile-time warnings from
+F<contrib/bric_media_upload/bric_media_upload>. [David]
 
 =back
 
