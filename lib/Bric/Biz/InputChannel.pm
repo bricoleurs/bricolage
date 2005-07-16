@@ -116,15 +116,15 @@ my $SEL_WHERES = 'ic.id = sm.object_id AND sm.member__id = m.id ' .
   "AND m.active = '1'";
 my $SEL_ORDER = 'ic.name, ic.id';
 
-my @COLS = qw(name description site__id active);
+my @COLS = qw(key_name name description site__id active);
 
-my @PROPS = qw(name description site_id _active);
+my @PROPS = qw(key_name name description site_id _active);
 
-my $SEL_COLS = 'ic.id, ic.name, ic.description, ic.site__id, '.
+my $SEL_COLS = 'ic.id, ic.key_name, ic.name, ic.description, ic.site__id, '.
                'ic.active, m.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
-my @ORD = qw(name description site_id active);
+my @ORD = qw(key_name name description site_id active);
 my $GRP_ID_IDX = $#SEL_PROPS;
 
 # These are provided for the InputChannel::Element subclass to take
@@ -144,6 +144,9 @@ BEGIN {
     Bric::register_fields(
       {
        # Public Fields
+       # The key name, usually a language ID, like "en" or "de"; used in URIs
+       'key_name'              => Bric::FIELD_RDWR,
+       
        # The human readable name field
        'name'                  => Bric::FIELD_RDWR,
 
@@ -226,10 +229,10 @@ sub new {
 
 =item $ic = Bric::Biz::InputChannel->lookup({ id => $id })
 
-=item $ic = Bric::Biz::InputChannel->lookup({ name => $name, site_id => $id})
+=item $ic = Bric::Biz::InputChannel->lookup({ key_name => $name, site_id => $id})
 
 Looks up and instantiates a new Bric::Biz::InputChannel object based on an
-Bric::Biz::InputChannel object ID or name. If no input channel object is
+Bric::Biz::InputChannel object ID or key_name. If no input channel object is
 found in the database, C<lookup()> returns C<undef>.
 
 B<Throws:>
@@ -238,7 +241,7 @@ B<Throws:>
 
 =item *
 
-Missing required parameter 'id' or 'name'/'site_id'.
+Missing required parameter 'id' or 'key_name'/'site_id'.
 
 =item *
 
@@ -274,8 +277,8 @@ B<Notes:> NONE.
 
 sub lookup {
     my ($class, $params) = @_;
-    throw_gen(error => "Missing required parameter 'id' or 'name'/'site_id'")
-      unless $params->{id} or ($params->{name} and $params->{site_id});
+    throw_gen(error => "Missing required parameter 'id' or 'key_name'/'site_id'")
+      unless $params->{id} or ($params->{key_name} and $params->{site_id});
 
     my $ic = $class->cache_lookup($params);
     return $ic if $ic;
@@ -295,6 +298,10 @@ the search parameters passed via an anonymous hash. The supported lookup keys
 are:
 
 =over 4
+
+=item *
+
+key_name
 
 =item *
 
@@ -635,6 +642,22 @@ sub my_meths {
 
     # Create 'em if we haven't got 'em.
     $METHS ||= {
+              key_name     => {
+                              name     => 'key_name',
+                              get_meth => sub { shift->get_key_name(@_) },
+                              get_args => [],
+                              set_meth => sub { shift->set_key_name(@_) },
+                              set_args => [],
+                              disp     => 'Key Name',
+                              search   => 1,
+                              len      => 64,
+                              req      => 1,
+                              type     => 'short',
+                              props    => {   type      => 'text',
+                                              length    => 32,
+                                              maxlength => 64
+                                          }
+                             },
               name        => {
                               name     => 'name',
                               get_meth => sub { shift->get_name(@_) },
@@ -728,6 +751,26 @@ sub my_meths {
 =item $id = $ic->get_id
 
 Returns the Input Channel's unique ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $ic = $ic->set_key_name( $key_name )
+
+Sets the key name of the Input Channel.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $name = $ic->get_key_name()
+
+Returns the key name of the Input Channel.
 
 B<Throws:> NONE.
 

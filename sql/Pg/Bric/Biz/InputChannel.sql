@@ -28,6 +28,7 @@ CREATE SEQUENCE seq_input_channel_member START 1024;
 CREATE TABLE input_channel (
     id	         INTEGER            NOT NULL
                                     DEFAULT NEXTVAL('seq_input_channel'),
+    key_name         VARCHAR(64)    NOT NULL,
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),
     site__id         INTEGER        NOT NULL,
@@ -65,6 +66,9 @@ CREATE TABLE input_channel_member (
 -- 
 -- INDEXES.
 --
+CREATE UNIQUE INDEX udx_input_channel__key_name_site
+ON input_channel(lower_text_num(key_name, site__id));
+
 CREATE UNIQUE INDEX udx_input_channel__name_site
 ON input_channel(lower_text_num(name, site__id));
 

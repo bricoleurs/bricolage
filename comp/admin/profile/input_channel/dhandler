@@ -32,11 +32,17 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Properties",
          number  => 1);
 
+$m->comp('/widgets/profile/displayFormElement.mc',
+         objref => $ic,
+         readOnly => $no_edit || defined $id,
+         key    => 'key_name');
+
 # Dump out the fields for display.
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
          readOnly   => $no_edit,
          objref     => $ic,
-         fieldsUsed => {active => 1});
+         fieldsUsed => {active => 1,
+                        key_name => 1});
 my @sites = site_list(EDIT);
 if ($id || $no_edit) {
     $m->comp('/widgets/profile/hidden.mc', value => $ic->get_site_id, name => 'site_id');
@@ -95,7 +101,7 @@ var selectOrderNames = new Array("include_pos")
              object => 'input_channel',
              userSort => 0,
              def_sort_field => 'order',
-             title => 'Template Includes',
+             title => 'Includes',
              objs => $inc,
              addition => undef,
              constrain => { include_parent_id => $id },
