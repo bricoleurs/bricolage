@@ -357,13 +357,13 @@ my $def = {
                          },
        input_channel  => { list_fields => [qw(name site description)],
                            srch_field => 'name',
-                           behavior => 'expand',
+                           behavior => 'narrow',
                            constrain => {active => 1},
                            select => $sel_sub 
                          },
        output_channel => { list_fields => [qw(name site description)],
                            srch_field => 'name',
-                           behavior => 'expand',
+                           behavior => 'narrow',
                            constrain => {active => 1},
                            select => $sel_sub 
                          },
