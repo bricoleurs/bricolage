@@ -116,13 +116,13 @@ my $SEL_WHERES = 'ic.id = sm.object_id AND sm.member__id = m.id ' .
   "AND m.active = '1'";
 my $SEL_ORDER = 'ic.name, ic.id';
 
-my @COLS = qw(key_name name description site__id active);
+my @COLS = qw(name description site__id active);
 
-my @PROPS = qw(key_name name description site_id _active);
+my @PROPS = qw(name description site_id _active);
 
 my $SEL_COLS = 'ic.id, ic.key_name, ic.name, ic.description, ic.site__id, '.
                'ic.active, m.grp__id';
-my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
+my @SEL_PROPS = ('id', 'key_name', @PROPS, 'grp_ids');
 
 my @ORD = qw(key_name name description site_id active);
 my $GRP_ID_IDX = $#SEL_PROPS;
@@ -317,7 +317,7 @@ site_id
 
 =item *
 
-server_type_id
+output_channel_id
 
 =item *
 
@@ -1407,12 +1407,12 @@ sub _do_insert {
     my ($self) = @_;
 
     local $" = ', ';
-    my $fields = join ', ', next_key('input_channel'), ('?') x @COLS;
+    my $fields = join ', ', next_key('input_channel'), '?', ('?') x @COLS;
     my $ins = prepare_c(qq{
-        INSERT INTO input_channel (id, @COLS)
+        INSERT INTO input_channel (id, key_name, @COLS)
         VALUES ($fields)
     }, undef);
-    execute($ins, $self->_get( @PROPS ) );
+    execute($ins, $self->_get('key_name'), $self->_get( @PROPS ) );
     $self->_set( { 'id' => last_key($TABLE) } );
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
     return $self;
