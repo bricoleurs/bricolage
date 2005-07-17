@@ -49,7 +49,7 @@ $do_callback = sub {
         $ic->set_site_id($param->{site_id})
           if $param->{site_id};
         # Make sure the name isn't already in use.
-        my @ics = $class->list_ids({ name    => $param->{name},
+        my @ics = $class->list_ids({ key_name    => $param->{key_name},
                                      site_id => $ic->get_site_id });
         if (@ics > 1) {
             $used = 1;
@@ -59,7 +59,7 @@ $do_callback = sub {
             $used = 1;
         }
 
-        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
+        add_msg("The key name \"[_1]\" is already used by another $disp_name.", $name) if $used;
 
         # Set the basic properties.
         $ic->set_description( $param->{description} );
@@ -69,6 +69,8 @@ $do_callback = sub {
             $param->{'obj'} = $ic;
             return;
         }
+        $ic->set_key_name($param->{key_name});
+        
         $ic->set_name($param->{name});
 
         if ($ic_id) {
