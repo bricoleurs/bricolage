@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.6 ()
+=head1 VERSION 1.8.6 (2005-07-19)
 
 =head2 Improvements
 
@@ -34,7 +34,7 @@ otherwise available as a login on the system (such as the typical "nobody" or
 
 =item *
 
-Added support for starting F<bric_queued> in the linux startup script in
+Added support for starting F<bric_queued> in the Linux startup script in
 F<contrib/start_scripts/>. [David]
 
 =item *
@@ -46,7 +46,7 @@ class now return C<undef> in a list context when there is no related asset.
 =item *
 
 Events in the event log are now returned (and displayed) in reverse
-chronlogical order. [David]
+chronological order. [David]
 
 =item *
 
@@ -72,13 +72,13 @@ desks in the "Move to" select lists. [David]
 
 When the C<PUBLISH_RELATED_ASSETS> F<bricolage.conf> directive is enabled,
 aliases are now also republished. Only aliases that have previously been
-publiished will be republished, and only the last published version will be
+published will be republished, and only the last published version will be
 republished, rather than any versions created since the last publish.
 Suggested by Serge Sozonoff. [David]
 
 =item *
 
-Added the C<secret> paramter to the C<list()>, C<list_ids()>, and C<href()>
+Added the C<secret> parameter to the C<list()>, C<list_ids()>, and C<href()>
 method of Bric::Util::Grp. [David]
 
 =item *
@@ -103,7 +103,7 @@ ensure that the one logged first will be listed after the one logged next.
 =item *
 
 Media documents without an associated media file will no longer be displayed
-in the search results when attemting to relate a media document to an element.
+in the search results when attempting to relate a media document to an element.
 Reported by Adam Rinehart. [David]
 
 =item *
@@ -227,7 +227,7 @@ properly search on the site rather than the output channel. [Ovid]
 
 =item *
 
-When a catgory is added to a story that creates a URI conflict, the new
+When a category is added to a story that creates a URI conflict, the new
 category is does not remain associated with the story in the story profile
 after the conflict error has been thrown. Reported by Paul Orrock. [David]
 
@@ -267,12 +267,12 @@ The F<favicon.ico> works again. [David]
 =item *
 
 Stories are now properly expired when the C<BRIC_QUEUED> F<bricolage.conf>
-diretive is enabled. Reported by Scott. [David]
+directive is enabled. Reported by Scott. [David]
 
 =item *
 
 When a template is checked out of the library and then the checkout is
-cancelled, it is no longer left on the desk it was moed into upon the
+canceled, it is no longer left on the desk it was moved into upon the
 checkout, but properly reshelved. Reported by Marshall. [David]
 
 =item *
