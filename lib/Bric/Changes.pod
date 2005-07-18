@@ -27,7 +27,7 @@ not have leading or trailing spaces. [David]
 
 =item *
 
-When started up by the super user, F<bric_queued> now runs as the same user as
+When started by the super user, F<bric_queued> now runs as the same user as
 the Bricolage Apache server. This allows it to run as a user that isn't
 otherwise available as a login on the system (such as the typical "nobody" or
 "www" user). [David]
@@ -60,12 +60,12 @@ A job no longer throws an exception when it can't get a lock on itself for
 execution. This is because the inability to get a lock may well be due to a
 race condition with another process. There's no need to throw an exception
 when it can't get a lock because another process has a lock. So it generates a
-warning now, instead. Reported by Bill Cappell. [David]
+warning, instead. Reported by Bill Cappell. [David]
 
 =item *
 
 Bric::Biz::Workflow now caches calls to C<allowed_desks()>. This will allow
-desks to render *much* faster, since most assets on a desk will list the same
+desks to render I<much> Faster, since most assets on a desk will list the same
 desks in the "Move to" select lists. [David]
 
 =item *
@@ -79,7 +79,7 @@ Suggested by Serge Sozonoff. [David]
 =item *
 
 Added the C<secret> parameter to the C<list()>, C<list_ids()>, and C<href()>
-method of Bric::Util::Grp. [David]
+methods of Bric::Util::Grp. [David]
 
 =item *
 
@@ -113,7 +113,7 @@ the cached copy in the user's session, as well as in the database. [David]
 
 =item *
 
-Changed the C<published_version> parameter to the list() method
+Changed the C<published_version> parameter to the C<list()> method of
 Bric::Biz::Asset::Formatting (the template class) to C<deployed_version>, but
 kept C<published_version> as an alias.
 
@@ -181,8 +181,7 @@ categories associated with the story. [David]
 
 =item *
 
-Fixed bug 975 where media uploads were failing with an SQL error due to a
-typo. Patch from Rod Taylor.
+Media uploads no longer sometimes fail with an SQL error. [Rod Taylor]
 
 =item *
 
@@ -192,8 +191,8 @@ Advanced Search. [Marshall]
 =item *
 
 Creating media with related stories via the SOAP interface will no longer
-cause the bizarre "Could not find httpd.xml" error. Reported by Curtis
-Poe. [David]
+cause the bizarre "Could not find httpd.xml" error. Reported by Curtis Poe.
+[David]
 
 =item *
 
@@ -217,7 +216,7 @@ Perry-Thistle]
 
 The F<bric_media_upload> contrib script now uses the site argument (if there
 is one) to search for categories. This will prevent it from finding a category
-in one site but not the target site of the upload. [David]
+in one site but not the upload target site. [David]
 
 =item *
 
@@ -228,8 +227,8 @@ properly search on the site rather than the output channel. [Ovid]
 =item *
 
 When a category is added to a story that creates a URI conflict, the new
-category is does not remain associated with the story in the story profile
-after the conflict error has been thrown. Reported by Paul Orrock. [David]
+category does not remain associated with the story in the story profile after
+the conflict error has been thrown. Reported by Paul Orrock. [David]
 
 =item *
 
@@ -244,9 +243,9 @@ log in. The prevents errors when, for example, there are two users named
 
 =item *
 
-All calls to C<lookup()> methods by the SOAP that pass string values to look
-up (such as category URIs and site, workflow, and desk names) are SQL escaped
-so as to prevent conflicts similar to those noted above for usernames.
+All calls to C<lookup()> methods by the SOAP server that pass string values to
+look up (such as category URIs and site, workflow, and desk names) are SQL
+escaped so as to prevent conflicts similar to those noted above for usernames.
 Reported by Scott Lanning. [David]
 
 =item *
@@ -257,8 +256,9 @@ Scott. [David]
 
 =item *
 
-C<ANY()> now works properly for the output_channel_id parameter to the list()
-method of the story and media classes. Reported by Serge Sozonoff. [David]
+C<ANY()> now works properly for the C<output_channel_id> parameter to the
+list() method of the story and media classes. Reported by Serge Sozonoff.
+[David]
 
 =item *
 
@@ -288,7 +288,7 @@ Super Bulk Edit now works for media as well as stories. Reported by Scott.
 
 =item *
 
-The Description attribute of stories, media, and templates is now properly
+The description attribute of stories, media, and templates is now properly
 limited to 1024 characters in the UI. Reported by Scott. [David]
 
 =item *
@@ -299,7 +299,7 @@ in the sandbox are properly synced, as well.
 
 =item *
 
-Eliminated compile-time warnings from
+Eliminated a compile-time warnings from
 F<contrib/bric_media_upload/bric_media_upload>. [David]
 
 =back
