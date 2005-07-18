@@ -52,38 +52,7 @@ sub preview : Callback {
         }
 
         # Move out the media document and then redirect to preview.
-        my $url = do {
-            if (AUTO_PREVIEW_MEDIA && !$media->get_needs_preview) {
-                my $oc = $oc_id
-                  ? Bric::Biz::OutputChannel->lookup({ id => $oc_id })
-                  : $media->get_primary_oc;
-                if (PREVIEW_LOCAL) {
-                    Bric::Util::Trans::FS->cat_uri(
-                        '/', PREVIEW_LOCAL, $media->get_uri($oc)
-                    );
-                } else {
-                    my ($dest) = Bric::Dist::ServerType->list({
-                        can_preview       => 1,
-                        active            => 1,
-                        output_channel_id => $oc->get_id,
-                    });
-                    throw_error
-                        error => 'Cannot preview asset "' . $media->get_name
-                          . '" because there are no Preview Destinations '
-                          . 'associated with its output channels.',
-                        maketext => ['Cannot preview asset "[_1]" because there '
-                                     . 'are no Preview Destinations associated with '
-                                     . 'its output channels.', $media->get_name]
-                      unless $dest;
-                    ($oc->get_protocol || 'http://')
-                      . ($dest->get_servers)[0]->get_host_name
-                      . $media->get_uri($oc);
-                }
-            } else {
-                $b->preview($media, 'media', get_user_id(), $oc_id);
-            }
-        };
-        if ($url) {
+        if (my $url = $b->preview($media, 'media', get_user_id(), $oc_id)) {
             status_msg("Redirecting to preview.");
             # redirect_onload() prevents any other callbacks from executing.
             redirect_onload($url, $self);

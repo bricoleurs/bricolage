@@ -1450,7 +1450,6 @@ sub upload_file {
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
     close FILE;
-    $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
 
     # Set the media type and the file size.
     if ($type = defined $type
@@ -1724,8 +1723,7 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris, $preview) =
-      $self->_get(qw(id _active _update_uri needs_preview));
+    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
 
     # Start a transaction.
     begin();
@@ -1780,13 +1778,6 @@ sub save {
     if (my $err = $@) {
         rollback();
         rethrow_exception($err);
-    }
-    if (AUTO_PREVIEW_MEDIA && $preview) {
-        # Go ahead and distribute to the preview server(s).
-        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
-        $burner->preview($self, 'media', get_user_id, $_->get_id)
-          for $self->get_output_channels;
-        $self->_set(['needs_preview'] => [0]);
     }
 
     return $self;
