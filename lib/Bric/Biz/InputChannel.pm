@@ -1232,6 +1232,12 @@ sub _do_list {
             $wheres .= ' AND ic.id = mic.input_channel__id ' .
               'AND mic.media_instance__id = ?';
             push @params, $v;
+        } elsif ($k eq 'output_channel_id') {
+            # Join in the output_channel__input_channel table
+            $tables .= ', output_channel__input_channel ocic';
+            $wheres .= ' AND ic.id = ocic.input_channel__id' .
+                       ' AND ocic.output_channel__id = ?';
+            push @params, $v;
         } elsif ($k eq 'site_id') {
             $wheres .= ' AND ic.site__id = ?';
             push @params, $v;

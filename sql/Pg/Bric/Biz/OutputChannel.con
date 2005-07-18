@@ -29,5 +29,10 @@ ALTER TABLE    output_channel_member
 ADD CONSTRAINT fk_member__oc_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+ALTER TABLE    output_channel__input_channel
+ADD CONSTRAINT fk_oc__ic_oc_id FOREIGN KEY (output_channel__id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
 
-
+ALTER TABLE    output_channel__input_channel
+ADD CONSTRAINT fk_oc__ic__ic_id FOREIGN KEY (input_channel__id)
+REFERENCES     input_channel(id) ON DELETE CASCADE;

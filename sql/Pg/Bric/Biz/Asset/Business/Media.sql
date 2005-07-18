@@ -87,6 +87,7 @@ CREATE TABLE media_instance (
     category__id        INTEGER   NOT NULL,
     media_type__id      INTEGER   NOT NULL,
     primary_oc__id      INTEGER   NOT NULL,
+    primary_ic__id      INTEGER   NOT NULL,
     file_size           INTEGER,
     file_name           VARCHAR(256),
     location            VARCHAR(256),
@@ -121,6 +122,20 @@ CREATE TABLE media__output_channel (
     output_channel__id  INTEGER  NOT NULL,
     CONSTRAINT pk_media_output_channel
       PRIMARY KEY (media_instance__id, output_channel__id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table media__input_channel
+-- 
+-- Description: Mapping Table between stories and input channels.
+--
+--
+
+CREATE TABLE media__input_channel (
+    media_instance__id  INTEGER  NOT NULL,
+    input_channel__id   INTEGER  NOT NULL,
+    CONSTRAINT pk_media_input_channel
+      PRIMARY KEY (media_instance__id, input_channel__id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -255,6 +270,10 @@ ON media_uri(lower_text_num(uri, site__id));
 -- media__output_channel
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);
 CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
+
+-- media__input_channel
+CREATE INDEX fkx_media__ic__media ON media__input_channel(media_instance__id);
+CREATE INDEX fkx_media__ic__ic ON media__input_channel(input_channel__id);
 
 -- media_member.
 CREATE INDEX fkx_media__media_member ON media_member(object_id);

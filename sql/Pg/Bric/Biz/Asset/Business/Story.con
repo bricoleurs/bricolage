@@ -46,6 +46,10 @@ ADD CONSTRAINT fk_usr__story_instance FOREIGN KEY (usr__id)
 ALTER TABLE story_instance
 ADD CONSTRAINT fk_primary_oc__story_instance FOREIGN KEY (primary_oc__id)
 	REFERENCES output_channel(id) ON DELETE SET NULL;
+	
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_primary_ic__story_instance FOREIGN KEY (primary_ic__id)
+	REFERENCES input_channel(id) ON DELETE SET NULL;
 
 -- Story URI constraint.
 ALTER TABLE story_uri
@@ -64,6 +68,15 @@ ADD CONSTRAINT fk_story__oc__story FOREIGN KEY (story_instance__id)
 ALTER TABLE story__output_channel 
 ADD CONSTRAINT fk_story__oc__oc FOREIGN KEY (output_channel__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- Story to input channel mapping constraints
+ALTER TABLE story__input_channel 
+ADD CONSTRAINT fk_story__ic__story FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story__input_channel 
+ADD CONSTRAINT fk_story__ic__ic FOREIGN KEY (input_channel__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
 
 -- Story to Category mapping constraints
 ALTER TABLE story__category 

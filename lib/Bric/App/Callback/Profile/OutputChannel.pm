@@ -26,6 +26,10 @@ sub include_oc_id : Callback {
     &$do_callback;
 }
 
+sub add_ic_id : Callback {
+	return unless $_[0]->has_perms && $_[0]->value ne '';
+	&$do_callback;
+}
 
 ###
 
@@ -121,7 +125,7 @@ $do_callback = sub {
                     last;
                 }
             }
-
+			
             # Now append any new includes.
             if ($self->cb_key eq 'include_oc_id' && $self->value ne '') {
                 # Add includes.
@@ -130,6 +134,27 @@ $do_callback = sub {
                 $param->{'obj'} = $oc;
                 return;
             }
+            
+            
+        
+            # Delete any ICs, if necessary
+            if($param->{ic_id_del}) {
+				my $del_ics = mk_aref($param->{ic_id_del});
+				$oc->del_input_channels(@$del_ics) if @$del_ics;
+				if (!($self->cb_key eq 'add_ic_id' && $self->value ne '')) {
+					$oc->save;
+					$param->{'obj'} = $oc;
+					return;
+                }
+            }
+            
+            # Add any new input channels
+            if ($self->cb_key eq 'add_ic_id' && $self->value ne '') {
+            	$oc->add_input_channels(Bric::Biz::InputChannel->lookup({ id => $self->value }));
+            	$oc->save;
+            	$param->{'obj'} = $oc;
+            	return;
+           	}
 
             $oc->save;
             log_event('output_channel_save', $oc);

@@ -136,6 +136,49 @@ var selectOrderNames = new Array("include_pos")
 
 }
 
+if (defined $id) {
+	my $inc = $oc->get_input_channels;
+    my $opts = [ map { [ $_ => $_ + 1 ] } (0..$#$inc) ];
+    my $i = 0;
+    $button = undef;
+    # Add the include section
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object => 'input_channel',
+	     userSort => 0,
+	     def_sort_field => 'name',
+	     title => 'Input Channels',
+	     objs => $inc,
+	     addition => undef,
+	     constrain => { output_channel_id => $id },
+	     fields => ['name', 'description', (@sites > 1 ? ('site') : ())],
+#	     field_titles => { order => 'Order' },
+#	     field_values => $ord_sub,
+	     profile => undef,
+	     select =>  ['Delete', 'ic_id_del'],
+	     number => 3
+    );
+
+
+</%perl>
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+    object => 'input_channel',
+    field  => 'name',
+    getter => @sites > 1 ? $ic_name_getter : undef,
+    exclude => [ map { $_->get_id } $oc->get_input_channels ],
+    no_persist => 1,
+    name   => 'output_channel|add_ic_id_cb',
+    default => ['' => 'Add Input Channel'],
+    constrain => { active => 1 },
+    js => "onChange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
+<br />
+<%perl>;
+
+}
+
 # Get the group's membership listed
 $m->comp("/widgets/grp_membership/grp_membership.mc",
          grp_class => 'Bric::Util::Grp::OutputChannel',
@@ -143,7 +186,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'oc_profile',
          no_edit => $no_edit,
          widget  => $type,
-         num => 3
+         num => 4
 );
 
 # Add the form buttons and other necessities.
@@ -167,6 +210,10 @@ my $disp = get_disp_name($type);
 my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
 my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
 my $oc_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
+};
+my $ic_name_getter = sub {
     my $o = shift;
     return $ng->($o) . ' (' . $sg->($o) . ')';
 };

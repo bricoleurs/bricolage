@@ -61,6 +61,11 @@ $LastChangedDate$
   $oc->add_includes(@ocs);
   $oc->del_includes(@ocs);
 
+  # Allowed input channels instance methods
+  my @ics = $oc->get_input_channels;
+  $oc->add_input_channels(@ics);
+  $oc->del_input_channels(@ics);
+
   # Active instance methods.
   $oc = $oc->activate;
   $oc = $oc->deactivate;
@@ -91,6 +96,8 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
 use Bric::Util::Coll::OCInclude;
 use Bric::Util::Fault qw(throw_gen throw_dp);
+use Bric::Biz::InputChannel;
+use Bric::Util::Coll::InputChannel;
 
 #==============================================================================
 ## Inheritance                         #
@@ -102,7 +109,7 @@ our %EXPORT_TAGS = (case_constants => \@EXPORT_OK);
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
-my ($get_inc, $parse_uri_format);
+my ($get_inc, $get_ic_coll, $parse_uri_format);
 
 #==============================================================================
 ## Constants                           #
@@ -216,13 +223,16 @@ BEGIN {
        # Group IDs.
        'grp_ids'               => Bric::FIELD_READ,
 
-       # Private Fileds
+       # Private Fields
        # The active flag
        '_active'               => Bric::FIELD_NONE,
 
        # Storage for includes list of OCs.
        '_includes'             => Bric::FIELD_NONE,
        '_include_id'           => Bric::FIELD_NONE,
+       
+       # Associated input channels
+       '_ic_coll'             => Bric::FIELD_NONE,
       });
 }
 
@@ -1515,6 +1525,205 @@ sub set_includes {
     $self->_set__dirty(1);
 }
 
+################################################################################
+
+=item my @ics = $oc->get_input_channels
+
+=item my $ics_aref = $oc->get_input_channels
+
+=item my @ics = $oc->get_input_channels(@ic_ids)
+
+=item my $ics_aref = $oc->get_input_channels(@ic_ids)
+
+Returns a list or anonymous array of the input channels the output channel
+is able to output to. If C<@oc_ids> is passed, then only the input channels with
+those IDs are returned, if they're associated with this asset.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_input_channels { $get_ic_coll->(shift)->get_objs(@_) }
+
+##############################################################################
+
+=item $oc = $oc->add_output_channels(@ics)
+
+Adds input channels to the list of input channels to which this output channel
+is allowed to publish.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_input_channels {
+    my $self = shift;
+    return unless @_;
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->add_new_objs(@_);
+}
+
+##############################################################################
+
+=item $oc = $oc->del_input_channels(@ics)
+
+=item $oc = $oc->del_input_channels(@ic_ids)
+
+Removes input channels from this output channel, so that it won't be able to 
+output these input channels.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub del_input_channels {
+    my $self = shift;
+    return unless @_;
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->del_objs(@_);
+}
+
+
 ##############################################################################
 
 =item $self = $oc->activate
@@ -1617,9 +1826,10 @@ B<Notes:> NONE.
 sub save {
     my ($self) = @_;
     return $self unless $self->_get__dirty;
-    my ($id, $inc) = $self->_get('id', '_includes');
+    my ($id, $inc, $ics) = $self->_get('id', '_includes', '_ic_coll');
     defined $id ? $self->_do_update($id) : $self->_do_insert;
     $inc->save($id) if $inc;
+    $ics->save('output_channel' => $id) if $ics;
     $self->SUPER::save();
 }
 
@@ -1917,8 +2127,8 @@ sub _do_insert {
 
 =item my $inc_coll = &$get_inc($self)
 
-Returns the collection of Output Channels that costitute the includes. The
-collection a Bric::Util::Coll::OCInclude object. See Bric::Util::Coll for
+Returns the collection of Output Channels that constitute the includes. The
+collection is a Bric::Util::Coll::OCInclude object. See Bric::Util::Coll for
 interface details.
 
 B<Throws:>
@@ -2025,6 +2235,77 @@ $parse_uri_format = sub {
     # Make sure there's a closing slash.
     $format .= '/' unless $format =~ m|/$|;
     return $format;
+};
+
+################################################################################
+
+=item my $ic_coll = $get_ic_coll->($ba)
+
+Returns the collection of output channels for this asset.
+L<Bric::Util::Coll::InputChannel|Bric::Util::Coll::InputChannel>
+object. See that class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>,
+for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_ic_coll = sub {
+    my $self = shift;
+    my ($id, $ic_coll) = $self->_get('id', '_ic_coll');
+    unless ($ic_coll) {
+	    $ic_coll = Bric::Util::Coll::InputChannel->new
+    	  (defined $id ? {'output_channel_id' => $id} : undef);
+    	
+        my $dirty = $self->_get__dirty;
+	    $self->_set(['_ic_coll'], [$ic_coll]);
+	    $self->_set__dirty(1); # Reset the dirty flag.
+    }
+    return $ic_coll;
 };
 
 1;

@@ -17,6 +17,7 @@
 CREATE SEQUENCE seq_output_channel START 1024;
 CREATE SEQUENCE seq_output_channel_include START 1024;
 CREATE SEQUENCE seq_output_channel_member START 1024;
+CREATE SEQUENCE seq_output_channel__input_channel START 1024;
 
 -- -----------------------------------------------------------------------------
 -- Table output_channel
@@ -75,6 +76,23 @@ CREATE TABLE output_channel_member (
     CONSTRAINT pk_output_channel_member__id PRIMARY KEY (id)
 );
 
+-- -----------------------------------------------------------------------------
+-- Table: output_channel__input_channel
+--
+-- Description: Holds a reference to the output channel table, the input channel 
+--              table and an active flag
+--
+
+CREATE TABLE output_channel__input_channel (
+    id                  INTEGER    NOT NULL
+                                   DEFAULT NEXTVAL('seq_output_channel__input_channel'),
+    output_channel__id  INTEGER    NOT NULL,
+    input_channel__id   INTEGER    NOT NULL,
+    enabled             BOOLEAN    NOT NULL DEFAULT TRUE,
+    active              BOOLEAN    NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_oc__ic__id PRIMARY KEY (id)
+);
+
 -- 
 -- INDEXES.
 --
@@ -91,3 +109,6 @@ CREATE UNIQUE INDEX udx_output_channel_include ON output_channel_include(output_
 CREATE INDEX fkx_output_channel__oc_member ON output_channel_member(object_id);
 CREATE INDEX fkx_member__oc_member ON output_channel_member(member__id);
 
+CREATE UNIQUE INDEX udx_output_channel__input_channel_id_id ON output_channel__input_channel(output_channel__id, input_channel__id);
+CREATE INDEX fkx_input_channel__oc_ic ON output_channel__input_channel(input_channel__id);
+CREATE INDEX fkx_output_channel__oc_ic ON output_channel__input_channel(output_channel__id);

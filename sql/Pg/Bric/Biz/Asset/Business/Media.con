@@ -57,6 +57,10 @@ ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
 
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_primary_ic__media_instance FOREIGN KEY (primary_ic__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
+
 -- Media URI constraint.
 ALTER TABLE media_uri
 ADD CONSTRAINT fk_media__media_uri FOREIGN KEY (media__id)
@@ -75,6 +79,16 @@ ADD CONSTRAINT fk_media__oc__media FOREIGN KEY (media_instance__id)
 ALTER TABLE media__output_channel 
 ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Media to input channel mapping constraints
+ALTER TABLE media__input_channel 
+ADD CONSTRAINT fk_media__ic__media FOREIGN KEY (media_instance__id)
+	REFERENCES media_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE media__input_channel 
+ADD CONSTRAINT fk_media__ic__ic FOREIGN KEY (input_channel__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: media_member
