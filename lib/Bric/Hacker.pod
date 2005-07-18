@@ -154,10 +154,13 @@ We strongly recommend that you use C<cperl-mode> while editing Bricolage
 sources in Emacs. Grab the latest version from the CPAN, install it, and then
 place the following in your C<~/.emacs> file:
 
+  (setq-default indent-tabs-mode nil)
   (custom-set-variables
    '(case-fold-search t)
-   '(cperl-indent-level 4)
+   '(cperl-close-paren-offset -4)
    '(cperl-continued-statement-offset 2)
+   '(cperl-indent-level 4)
+   '(cperl-indent-parens-as-block t)
    '(cperl-tab-always-indent t)
    '(indent-tabs-mode nil))
    ;; let hashes indent normally; I think this requires

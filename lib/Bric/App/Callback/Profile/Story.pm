@@ -258,8 +258,8 @@ sub cancel : Callback(priority => 6) {
             obj_id => $story->get_id
         });
         my ($desks, $cos) = (0, 0);
-        while ($events[-1]->get_key_name ne 'story_add_workflow') {
-            my $kn = pop(@events)->get_key_name;
+        while (@events && $events[0]->get_key_name ne 'story_add_workflow') {
+            my $kn = shift(@events)->get_key_name;
             if ($kn eq 'story_moved') {
                 $desks++;
             } elsif ($kn eq 'story_checkout') {
@@ -499,7 +499,11 @@ sub add_category : Callback {
     my $cat_id = $self->params->{"$widget|new_category_id"};
     if (defined $cat_id) {
         $story->add_categories([ $cat_id ]);
-        $story->save;
+        eval { $story->save; };
+        if (my $err = $@) {
+            $story->delete_categories([ $cat_id ]);
+            die $err;
+        }
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
         add_msg('Category "[_1]" added.',
@@ -790,6 +794,11 @@ sub assoc_category : Callback {
     my $cat_id = $self->value;
     my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
     $story->add_categories([$cat]);
+    eval { $story->save; };
+    if (my $err = $@) {
+        $story->delete_categories([ $cat_id ]);
+        die $err;
+    }
     log_event('story_add_category', $story, { Name => $cat->get_name });
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;

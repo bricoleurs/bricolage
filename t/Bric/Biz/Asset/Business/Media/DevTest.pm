@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Media::Image;
+use Bric::Util::DBI qw(:standard :junction);
 use Bric::Biz::Keyword;
 use Bric::Util::Time qw(strfdate);
 sub class { 'Bric::Biz::Asset::Business::Media' }
@@ -55,7 +56,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(101) {
+sub test_select_methods: Test(107) {
     my $self = shift;
     my $class = $self->class;
 
@@ -662,6 +663,47 @@ sub test_select_methods: Test(101) {
     # version.
     is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 1, 1, 1, 0],
       "We should get the checked-out media where available";
+
+    # Test list using output channel IDs.
+    my $oc1 = Bric::Biz::OutputChannel->new({ name => '_toc1', site_id => 100 });
+    $oc1->save;
+    $self->add_del_ids([$oc1->get_id], 'output_channel');
+    my $oc2 = Bric::Biz::OutputChannel->new({ name => '_toc2', site_id => 100 });
+    $oc2->save;
+    $self->add_del_ids([$oc2->get_id], 'output_channel');
+    my $oc3 = Bric::Biz::OutputChannel->new({ name => '_toc3', site_id => 100 });
+    $oc3->save;
+    $self->add_del_ids([$oc3->get_id], 'output_channel');
+
+    $media[0]->add_output_channels($oc1);
+    $media[0]->set_primary_oc_id($oc1->get_id);
+    $media[0]->save;
+
+    ok $got = class->list({
+        output_channel_id => $oc1->get_id
+    }), 'Get stories with first OC';
+    is @$got, 1, 'Should have one media';
+
+    # Add a second OC to the media.
+    $media[0]->add_output_channels($oc2);
+    $media[0]->save;
+
+    # We should still be able to find that media.
+    ok $got = class->list({
+        output_channel_id => $oc2->get_id
+    }), 'Get stories with second OC';
+    is @$got, 1, 'Should still have one media';
+
+    # Now add the thrird OC as the secondary OC of another media.
+    $media[1]->add_output_channels($oc2, $oc3);
+    $media[1]->set_primary_oc_id($oc2->get_id);
+    $media[1]->save;
+
+    # Now look for the second and thrid OC.
+    ok $got = class->list({
+        output_channel_id => ANY($oc1->get_id, $oc3->get_id)
+    }), 'Get stories with first and third OC';
+    is @$got, 2, 'Should now have two stories';
 }
 
 ###############################################################################

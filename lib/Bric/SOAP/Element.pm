@@ -481,7 +481,8 @@ sub load_asset {
                 # get site ID
                 my $name = ref $sitedata ? $sitedata->{content} : $sitedata;
                 unless ($sites{$name}) {
-                    my $site = Bric::Biz::Site->lookup({ name => $name });
+                    (my $look = $name) =~ s/([_%\\])/\\$1/g;
+                    my $site = Bric::Biz::Site->lookup({ name => $look });
                     throw_ap __PACKAGE__ ."::create : no site found"
                       . " matching (site => \"$name\")"
                       unless defined $site;
@@ -515,8 +516,9 @@ sub load_asset {
             foreach my $ocdata (@{$edata->{output_channels}{output_channel}}) {
                 # get OC ID
                 my $name = ref $ocdata ? $ocdata->{content} : $ocdata;
+                (my $look = $name) =~ s/([_%\\])/\\$1/g;
                 my $oc = Bric::Biz::OutputChannel->lookup
-                  ({ name => $name, site_id => $sites{$ocdata->{site}} })
+                  ({ name => $look, site_id => $sites{$ocdata->{site}} })
                   or throw_ap __PACKAGE__ ."::create : no output_channel found"
                          . " matching (output_channel => \"$name\")";
 

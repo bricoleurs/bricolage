@@ -594,10 +594,10 @@ sub my_meths {
                               set_meth => sub { shift->set_description(@_) },
                               set_args => [],
                               disp     => 'Description',
-                              len      => 1024,
                               req      => 0,
                               type     => 'short',
                               props    => {   type => 'textarea',
+                                              maxlength => 1024,
                                               cols => 40,
                                               rows => 4
                                           }

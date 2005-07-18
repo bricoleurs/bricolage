@@ -695,9 +695,10 @@ NONE
 sub checkin {
     my $self = shift;
     my ($a_obj) = @_;
-    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
-                                        '_asset_grp_obj');
     my $chkin = $self->_get('_checkin');
+
+#    my $asset_grp = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
+#                                        '_asset_grp_obj');
 #    my $vers_grp_id = $a_obj->get_version_grp__id;
 
     # Find the asset in this desk that has the same version group ID as the

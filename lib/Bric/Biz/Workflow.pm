@@ -161,6 +161,7 @@ BEGIN {
                          # Private Fields
                          '_all_desk_grp_obj'    => Bric::FIELD_NONE,
                          '_req_desk_grp_obj'    => Bric::FIELD_NONE,
+                         '_allowed_desks'       => Bric::FIELD_NONE,
                          '_head_desk_obj'       => Bric::FIELD_NONE,
                          '_active'              => Bric::FIELD_NONE,
                          '_remove'              => Bric::FIELD_NONE,
@@ -786,7 +787,7 @@ sub add_desk {
                                        : {'id'  => $_, 'package' => DESK_PKG}
                                } @req]);
 
-    return $self;
+    return $self->_set(['_allowed_desks'] => []);
 }
 
 #------------------------------------------------------------------------------#
@@ -836,7 +837,7 @@ sub del_desk {
     $all_grp->delete_members($vals);
     $req_grp->delete_members($vals);
 
-    return $self;
+    return $self->_set(['_allowed_desks'] => []);
 }
 
 #------------------------------------------------------------------------------#
@@ -861,20 +862,32 @@ NONE
 
 sub allowed_desks {
     my $self = shift;
-    my $all_grp = $self->_get_all_desk_grp;
+    my $desks = $self->_get('_allowed_desks');
+    unless ($desks) {
+        my $all_grp = $self->_get_all_desk_grp or return;
 
-    return unless $all_grp;
+        # Sort desks so that the start desk is first, normal desks come next
+        # and the publish desk is last.
+        $desks = [
+            map  { $_->{obj} }
+            sort {
+                   $b->{start} <=> $a->{start}
+                || $a->{pub}   <=> $b->{pub}
+                || $a->{id}    <=> $b->{id}
+            }
+            map  {{
+                obj   => $_,
+                id    => $_->get_id,
+                pub   => ($_->can_publish || 0),
+                start => ($self->is_start_desk($_) || 0)
+            }}
+            grep { $_->is_active } $all_grp->get_objects
+        ];
 
-    # Sort desks so that the start desk is first, normal desks come next and
-    # the publish desk is last.
-    my @mem = sort {($self->is_start_desk($b)||0) <=> ($self->is_start_desk($a)||0) ||
-                      ($a->can_publish || 0) <=> ($b->can_publish || 0) ||
-                        $a->get_id <=> $b->get_id} $all_grp->get_objects;
+        $self->_set(['_allowed_desks'] => [$desks]);
+    }
 
-    # Drop any inactive desks from the list.
-    @mem = grep($_->is_active, @mem);
-
-    return wantarray ? @mem : \@mem;
+    return wantarray ? @$desks : $desks;
 }
 
 #------------------------------------------------------------------------------#

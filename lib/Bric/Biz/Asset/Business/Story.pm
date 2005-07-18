@@ -171,6 +171,7 @@ use Bric::Util::Grp::Story;
 use Bric::Util::Fault qw(:all);
 use Bric::Biz::Asset::Business;
 use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Site;
 
 #==============================================================================#
@@ -412,8 +413,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => [ 'i.id = soc.story_instance__id',
-                                'i.primary_oc__id = ?' ],
+    output_channel_id      => ['i.id = soc.story_instance__id',
+                               'soc.output_channel__id = ?'],
     category_id            => [ 'i.id = sc2.story_instance__id',
                                 'sc2.category__id = ?' ],
     primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
@@ -698,6 +699,11 @@ Boolean indicating whether to return active or inactive stories.
 =item inactive
 
 Returns only inactive stories.
+
+=item alias_id
+
+Returns a list of stories aliased to the story ID passed as its value. May use
+C<ANY> for a list of possible values.
 
 =item category_id
 
@@ -1246,7 +1252,11 @@ sub get_uri {
           $oc->get_filename;
         if ($fname) {
             my $ext = $oc->get_file_ext;
-            $fname .= ".$ext" if($ext ne '');
+            $fname .= ".$ext" if $ext ne '';
+            my $uri_case = $oc->get_uri_case;
+            if ($uri_case != MIXEDCASE) {
+                $fname = $uri_case == LOWERCASE ? lc $fname : uc $fname;
+            }
             $uri = Bric::Util::Trans::FS->cat_uri($uri, $fname);
         }
     }
@@ -1414,8 +1424,7 @@ sub set_primary_category {
         if ($cats->{$c_id}->{'primary'}) {
             $cats->{$c_id}->{'primary'} = 0;
             $cats->{$c_id}->{'action'} = 'update'
-              unless $cats->{$c_id}->{action}
-              and $cats->{$c_id}->{action} eq 'insert';
+              unless $cats->{$c_id}->{action};
         }
         if ($cat_id == $c_id) {
             $cats->{$c_id}->{'primary'} = 1;
@@ -1755,8 +1764,9 @@ sub clone {
     # object other than for desks, we'll have to find a way to clone it, too.
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
-                    _attribute_object _update_uri first_publish_date)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef]);
+                    _attribute_object _update_uri first_publish_date
+                    published_version)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
@@ -1826,13 +1836,16 @@ sub save {
             }
         }
 
-        $self->_sync_categories();
-
         if ($active) {
             $self->_update_uris if $update_uris;
         } else {
             $self->_delete_uris;
         }
+
+        # Save the categories only after the story itself has been saved, so
+        # that if it throws an exception, the state of the categories doesn't
+        # get out of whack.
+        $self->_sync_categories();
 
         $self->SUPER::save();
         commit();

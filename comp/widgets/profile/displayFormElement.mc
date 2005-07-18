@@ -241,12 +241,12 @@ my $inpt_sub = sub {
         $out .= qq{</div>\n} if $useTable;
 
         $out .= qq{        <div class="input">} if $useTable;
-	if (!$readOnly) {
+    if (!$readOnly) {
             my $idout = $id ? qq{ id="$id"} : '';
-	    $out .= qq{<input type="$type"${idout}$class name="$key"$src$disp_value$extra$js />};
-	} else {
+        $out .= qq{<input type="$type"${idout}$class name="$key"$src$disp_value$extra$js />};
+    } else {
             $out .= qq{<p>};
-	    $out .= ($type ne "password") ? $value : "********";
+        $out .= ($type ne "password") ? $value : "********";
             $out .= qq{</p>};
         }
         $out .= qq{</div>\n} if $useTable;
@@ -340,7 +340,7 @@ my %formSubs = (
                 my $textstring = $lang->maketext('Characters')
                                   . qq {: <span id="textCountUp$uniquename">$upval</span> }
                   . $lang->maketext('Remaining')
-                                  . qq{: <span id="textCountDown$uniquename">$dwval</span>};
+                                  . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n};
                 $out .= qq{            <textarea id="$uniquename" }
@@ -424,12 +424,14 @@ my %formSubs = (
             my $values = $vals->{props}{vals};
             my $ref = ref $values;
             if ($ref eq 'HASH') {
-                foreach my $k (sort { $values->{$a} cmp $values->{$b} } keys %$values) {
-                    if (!$readOnly) {
-                        $out .= &$opt_sub($k, $values->{$k}, $value);
-                    } else {
-                        $out .= $values->{$k} . "<br />" if ($values->{$k} eq $value);
-                    }
+                foreach my $k (sort { return -1 if $a eq '';
+                                      return 1 if $b eq '';
+                                      $values->{$a} cmp $values->{$b}
+                                    } keys %$values)
+                {
+                    $out .= $readOnly
+                      ? $values->{$k} . "<br />" if ($values->{$k} eq $value)
+                      : &$opt_sub($k, $values->{$k}, $value);
                 }
             } elsif ($ref eq 'ARRAY') {
                 foreach my $k (@$values ) {
@@ -516,6 +518,4 @@ my %formSubs = (
             &$inpt_sub('radio', @_);
         }
 );
-
 </%once>
-

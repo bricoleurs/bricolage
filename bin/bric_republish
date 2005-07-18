@@ -9,44 +9,44 @@ bric_republish - republishes stories automatically
 
 bric_republish [options]
 
-  --help     - shows this screen
-
-  --man      - shows the full documentation
-
-  --verbose  - print a running description to STDERR.  Add a second
-               --verbose and you'll get debugging output too.  Without
-               this option bric_republish is silent when successful.
-
-  --server   - specifies the Bricolage server URL, defaults to
-               the BRICOLAGE_SERVER environment variable if set,
-               http://localhost otherwise.
-
-  --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
-               environment variable if set.
-
-  --password - the password for the Bricolage user.  Default to the
-               BRICOLAGE_PASSWORD environment variable if set.
-
-  --story-id - specify a single story to publish
-
-  --no-media - don't publish related media with story.  By default all
-               related media are published with each story.
-
-  --element  - only publish stories of this element (story type)
-
-  --category - only publish stories in this category, specified by path
-
-  --published-only - publish the published version rather than the
-               current version (which is different from published version
-               if the asset has been saved after publishing), and don't
-               published unpublished assets
-
-  --chunks   - publish stories in chunks of this many.  Defaults to 0,
-               which means to process them all at once.  This option can
-               be used to avoid timing out on large jobs.
-
-  --timeout  - specify the HTTP timeout for SOAP requests in seconds.
-               Defaults to 30.
+    --help     - shows this screen
+    
+    --man      - shows the full documentation
+    
+    --verbose  - print a running description to STDERR.  Add a second
+                --verbose and you'll get debugging output too.  Without
+                this option bric_republish is silent when successful.
+    
+    --server   - specifies the Bricolage server URL, defaults to
+                the BRICOLAGE_SERVER environment variable if set,
+                http://localhost otherwise.
+    
+    --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
+                environment variable if set.
+    
+    --password - the password for the Bricolage user.  Default to the
+                BRICOLAGE_PASSWORD environment variable if set.
+    
+    --story-id - specify a single story to publish
+    
+    --no-media - don't publish related media with story.  By default all
+                related media are published with each story.
+    
+    --element  - only publish stories of this element (story type)
+    
+    --category - only publish stories in this category, specified by path
+    
+    --published-only - publish the published version rather than the
+                current version (which is different from published version
+                if the asset has been saved after publishing), and don't
+                published unpublished assets
+    
+    --chunks   - publish stories in chunks of this many.  Defaults to 0,
+                which means to process them all at once.  This option can
+                be used to avoid timing out on large jobs.
+    
+    --timeout  - specify the HTTP timeout for SOAP requests in seconds.
+                Defaults to 30.
 
 =head1 DESCRIPTION
 
@@ -63,28 +63,28 @@ a Cover, for example.
 The most common use of this program will be from cron.  Setup a
 crontab like this to republish all stories hourly:
 
-  BRICOLAGE_USERNAME=admin
-  BRICOLAGE_PASSWORD=admin_pass
-  PATH=/usr/local/bricolage/bin:$PATH
-  MAILTO=your-email@your-domain.com
-  0 * * * * bric_republish
+    BRICOLAGE_USERNAME=admin
+    BRICOLAGE_PASSWORD=admin_pass
+    PATH=/usr/local/bricolage/bin:$PATH
+    MAILTO=your-email@your-domain.com
+    0 * * * * bric_republish
 
 Or to republish Covers hourly and everything else once a day at 11:30
 
-  BRICOLAGE_USERNAME=admin
-  BRICOLAGE_PASSWORD=admin_pass
-  PATH=/usr/local/bricolage/bin:$PATH
-  MAILTO=your-email@your-domain.com
-  0  *  * * * bric_republish --element Cover
-  30 11 * * * bric_republish
+    BRICOLAGE_USERNAME=admin
+    BRICOLAGE_PASSWORD=admin_pass
+    PATH=/usr/local/bricolage/bin:$PATH
+    MAILTO=your-email@your-domain.com
+    0  *  * * * bric_republish --element Cover
+    30 11 * * * bric_republish
 
 Or to republish all stories every other hour but never republish media:
 
-  BRICOLAGE_USERNAME=admin
-  BRICOLAGE_PASSWORD=admin_pass
-  PATH=/usr/local/bricolage/bin:$PATH
-  MAILTO=your-email@your-domain.com
-  0 */2 * * * bric_republish --no-media
+    BRICOLAGE_USERNAME=admin
+    BRICOLAGE_PASSWORD=admin_pass
+    PATH=/usr/local/bricolage/bin:$PATH
+    MAILTO=your-email@your-domain.com
+    0 */2 * * * bric_republish --no-media
 
 =head1 AUTHOR
 
@@ -114,19 +114,19 @@ BEGIN {
     our $chunks          = 0;
     our ($element, $story_id, $category, $help, $man);
     GetOptions("help"            => \$help,
-	       "man"             => \$man,
-	       "verbose+"        => \$VERBOSE,
-	       "username=s"      => \$username,
-	       "password=s"      => \$password,
-	       "server=s"        => \$server,
-	       "category=s"      => \$category,
-	       "element=s"       => \$element,
-	       "no-media"        => \$no_media,
+               "man"             => \$man,
+               "verbose+"        => \$VERBOSE,
+               "username=s"      => \$username,
+               "password=s"      => \$password,
+               "server=s"        => \$server,
+               "category=s"      => \$category,
+               "element=s"       => \$element,
+               "no-media"        => \$no_media,
                "story-id=s"      => \$story_id,
                "published-only"  => \$published_only,
                "timeout=s"       => \$timeout,
-	       "chunks=s"        => \$chunks,
-	      ) or  pod2usage(2);
+               "chunks=s"        => \$chunks,
+              ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
@@ -140,11 +140,11 @@ BEGIN {
     
     # check required options
     pod2usage("Missing required --username option ".
-	      "and BRICOLAGE_USERNAME environment variable unset.")
-	unless defined $username;
+              "and BRICOLAGE_USERNAME environment variable unset.")
+        unless defined $username;
     pod2usage("Missing required --password option ".
-	      "and BRICOLAGE_PASSWORD environment variable unset.")
-	unless defined $password;
+              "and BRICOLAGE_PASSWORD environment variable unset.")
+        unless defined $password;
 };
 
 our $VERBOSE;
@@ -180,8 +180,8 @@ sub get_story_ids {
 
     # quit early if the user specified a story_id
     if ($story_id) {
-	@story_ids = ($story_id);
-	return;
+        @story_ids = ($story_id);
+        return;
     }
 
     # default search
@@ -195,8 +195,8 @@ sub get_story_ids {
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
     print STDERR "Calling Bric::SOAP::Story->list_ids(",
-	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search),
-	    ")\n" if $VERBOSE;
+    join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search),
+        ")\n" if $VERBOSE;
 
     # run list_ids
     my $response = $soap->list_ids(@search);
@@ -209,8 +209,8 @@ sub get_story_ids {
     @story_ids = sort { $a <=> $b } @$list if $list;
 
     print STDERR "Bric::SOAP::Story->list_ids returned: ",
-	join(', ', @story_ids), "\n"
-	    if $VERBOSE > 1;
+    join(', ', @story_ids), "\n"
+        if $VERBOSE > 1;
 }
 
 # find related media for stories to be published
@@ -222,23 +222,23 @@ sub get_media_ids {
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
     foreach my $story_id (@story_ids) {
-	# get story document
-	print STDERR "Calling Bric::SOAP::Story->export($story_id).\n"
-	    if $VERBOSE;
+        # get story document
+        print STDERR "Calling Bric::SOAP::Story->export($story_id).\n"
+           if $VERBOSE;
 
-	my $response = $soap->export(name(story_id => $story_id));
-	_print_fault($response) if $response->fault;
+        my $response = $soap->export(name(story_id => $story_id));
+        _print_fault($response) if $response->fault;
 
-	my $doc = $response->result;
+        my $doc = $response->result;
 
-	# find related media ids and store into hash to unique
-	map { $media_ids{$_} = 1 } $doc =~ /related_media_id=['"](\d+)/g;
+        # find related media ids and store into hash to unique
+        map { $media_ids{$_} = 1 } $doc =~ /related_media_id=['"](\d+)/g;
     }
     @media_ids = sort { $a <=> $b } keys %media_ids;
 
     print STDERR "Found related media ids: ",
-	join(', ', @media_ids), "\n"
-	    if $VERBOSE > 1;
+    join(', ', @media_ids), "\n"
+        if $VERBOSE > 1;
 }
 
 # publish stories and media found
@@ -254,35 +254,35 @@ sub publish_assets {
 
     # collect ids for publish
     my @ids = ( ( map { name(story_id => $_) } @story_ids ),
-		( map { name(media_id => $_) } @media_ids ) );
+              ( map { name(media_id => $_) } @media_ids ) );
 
     push @opts, name(published_only => 1) if $published_only;
 
     if ($chunks) {
-	# step through @ids $chunks at a time
-	my ($start, $end);
-	for ($start = 0; $start <= $#ids; $start = $end + 1) {
-	    $end = $start + $chunks - 1;
-	    $end = $#ids if $end > $#ids;
-
-	    print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
-		join(",\n", map { "\t". $_->name ." => ". $_->value }
-		     @ids[$start .. $end]), "\n)\n"
-			 if $VERBOSE > 1;
-
-	    my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]), @opts);
-	    _print_fault($r) if $r->fault;
-	}
+        # step through @ids $chunks at a time
+        my ($start, $end);
+        for ($start = 0; $start <= $#ids; $start = $end + 1) {
+            $end = $start + $chunks - 1;
+            $end = $#ids if $end > $#ids;
+        
+            print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
+            join(",\n", map { "\t". $_->name ." => ". $_->value }
+                @ids[$start .. $end]), "\n)\n"
+                if $VERBOSE > 1;
+        
+            my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]), @opts);
+            _print_fault($r) if $r->fault;
+        }
     } else {
-	# publish everything at once
-
-	print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
-	    join(",\n", 
-		 map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
-		     if $VERBOSE > 1;
-
-	my $r = $soap->publish(name(publish_ids => \@ids), @opts);
-	_print_fault($r) if $r->fault;
+        # publish everything at once
+    
+        print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
+            join(",\n", 
+            map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
+                if $VERBOSE > 1;
+    
+        my $r = $soap->publish(name(publish_ids => \@ids), @opts);
+        _print_fault($r) if $r->fault;
     }
 }
 
@@ -299,17 +299,17 @@ sub soap_connect {
 
     # setup soap object to login with
     $soap = new SOAP::Lite
-	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
-	readable => $VERBOSE >= 2 ? 1 : 0;
+            uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+            readable => $VERBOSE >= 2 ? 1 : 0;
     $soap->proxy($server . '/soap',
-		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
-		 timeout => $timeout,
-		);
+                 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+                 timeout => $timeout,
+                );
 
     # login
     print STDERR "Logging in to $server as $username...\n" if $VERBOSE;
     my $response = $soap->login(name(username => $username), 
-				name(password => $password));
+                                name(password => $password));
     die "Login to $server as $username failed.\n" if $response->fault;
     print STDERR "Login to $server success.\n" if $VERBOSE;
 }
@@ -318,12 +318,12 @@ sub soap_connect {
 sub _print_fault {
     my $r = shift;
     if ($r->faultstring eq 'Application error' and
-	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
-	# this is a bric exception, the interesting stuff is in detail
-	die "Call to Bric::SOAP failed : \n" .
-	    join("\n", values %{$r->faultdetail});
+        ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+        # this is a bric exception, the interesting stuff is in detail
+        die "Call to Bric::SOAP failed : \n" .
+            join("\n", values %{$r->faultdetail});
     } else {
-	die "Call to Bric::SOAP failed : \n" .
-	    $r->faultstring;
+        die "Call to Bric::SOAP failed : \n" .
+            $r->faultstring;
     }
 }

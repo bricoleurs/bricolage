@@ -253,8 +253,7 @@ use constant PARAM_WHERE_MAP => {
                               . "AND media_instance.checked_out = '1')",
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
-                             . '(moc.output_channel__id = ? OR '
-                             . 'i.primary_oc__id = ?))',
+                             . 'moc.output_channel__id = ?)',
       category__id          => 'i.category__id = ?',
       category_id           => 'i.category__id = ?',
       category_uri          => 'i.category__id = c.id AND '
@@ -286,8 +285,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => [ 'i.id = moc.media_instance__id',
-                                'i.primary_oc__id = ?' ],
+    output_channel_id      => ['i.id = moc.media_instance__id',
+                               'moc.output_channel__id = ?'],
     category_uri           => [ 'i.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
@@ -573,6 +572,11 @@ Boolean indicating whether to return active or inactive media.
 =item inactive
 
 Returns only inactive media.
+
+=item alias_id
+
+Returns a list of media aliased to the media ID passed as its value. May use
+C<ANY> for a list of possible values.
 
 =item category_id
 
@@ -1492,7 +1496,7 @@ sub upload_file {
         $self->_set(['media_type_id', '_media_type_obj'], [0, undef]);
     }
 
-    $self->set_size(defined $size ? $size : -S $path);
+    $self->set_size(defined $size ? $size : -s $path);
 
     # Get the Output Channel object.
     my $at_obj = $self->_get_element_object;
@@ -1814,6 +1818,13 @@ sub save {
     if (my $err = $@) {
         rollback();
         rethrow_exception($err);
+    }
+    if (AUTO_PREVIEW_MEDIA && $preview) {
+        # Go ahead and distribute to the preview server(s).
+        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
+        $burner->preview($self, 'media', get_user_id, $_->get_id)
+          for $self->get_output_channels;
+        $self->_set(['needs_preview'] => [0]);
     }
 
     if (AUTO_PREVIEW_MEDIA && $preview) {

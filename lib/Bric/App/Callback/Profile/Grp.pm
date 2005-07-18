@@ -220,6 +220,8 @@ $save_sub = sub {
         $reset_cache->($grp, $class, $self);
         return;
     } else {
+        # XXX Hack! Make sure that contributor groups are not secret.
+        $grp->_set(['secret'] => [0]) if $grp->isa('Bric::Util::Grp::Person');
         # Save the group.
         $grp->save;
         log_event('grp_new', $grp);

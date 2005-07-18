@@ -624,7 +624,7 @@ sub get_related_story {
                                          '_related_instance_obj');
 
     # Return with nothing if there is no related instance ID
-    return unless $rel_id;
+    return undef unless $rel_id;
 
     # Clear the object cache if the ID has changed.
     $rel_obj = undef if $rel_obj and ($rel_obj->get_id != $rel_id);
@@ -687,7 +687,7 @@ sub get_related_media {
     my ($media_id, $media_obj) = $self->_get('related_media_id',
                                              '_related_media_obj');
 
-    return unless $media_id;
+    return undef unless $media_id;
 
     # Clear the object cache if the IDs change.
     $media_obj = undef if $media_obj and $media_obj->get_id != $media_id;
@@ -1274,13 +1274,13 @@ sub delete_elements {
     my $order = 0;
     my $cont_order;
     my $data_order;
-    my $new_list;
+    my $new_list = [];
     foreach (@$tiles) {
         my $delete = undef;
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
                 push @$del_tiles, $_;
-                                $delete = 1;
+                $delete = 1;
             }
         } else {
             if (exists $del_data{$_->get_id}) {
