@@ -48,10 +48,10 @@ of the form element, display form element html. For example:
              };
 
   $m->comp("/widgets/profile/displayFormElement.mc", 
-	   vals => $vals,
+       vals => $vals,
            key  => 'color',
-	   js   => 'optional javascript string'
-	  );
+       js   => 'optional javascript string'
+      );
 
 =item 2)
 
@@ -59,10 +59,10 @@ Pass an object and field name. The element will introspect the object and
 populate the form field with whatever it finds there. For example:
 
   $m->comp("/widgets/profile/displayFormElement.mc", 
-	   key    => "fname",
+       key    => "fname",
            objref => $obj,
-	   js     => 'optional javascript string'
-	  );
+       js     => 'optional javascript string'
+      );
 
 =back
 
@@ -157,8 +157,8 @@ if ($objref) {
 
     # Assemble javascript.
     if (! $methods->{$key}{set_meth} ) {
-	# Don't overwrite another onFocus method.
-	$js .= ' onFocus="blur();"' unless index($js, 'onFocus') != -1;
+    # Don't overwrite another onFocus method.
+    $js .= ' onFocus="blur();"' unless index($js, 'onFocus') != -1;
     }
 
     # Execute the formatting code.
@@ -167,7 +167,7 @@ if ($objref) {
       if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
-	    . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
+        . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
 } elsif ($vals) {
     my $value     = $vals->{value};
     my $formType  = $vals->{props}{type} || return;
@@ -186,7 +186,7 @@ if ($objref) {
       if $formSubs{$formType};
 
     $m->out(qq{\n<script language="javascript">requiredFields['$key'] = }
-	    . qq{"$vals->{disp}";\n</script>\n}) if $vals->{req};
+        . qq{"$vals->{disp}";\n</script>\n}) if $vals->{req};
 } else {
     # Fuhgedaboudit!
 }
@@ -233,38 +233,38 @@ my $inpt_sub = sub {
     $js = $js ? " $js" : '';
 
     if ($type ne "checkbox" && $type ne "hidden") {
-	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
-	  . qq{ width="$indent">} : '';
+    $out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
+      . qq{ width="$indent">} : '';
         $out .= $name ? qq{<span class="$label">$name:</span>}
-	  : ($useTable) ? '&nbsp;':'';
-	$out .= &$rem_sub($width, $indent) if $useTable;
+      : ($useTable) ? '&nbsp;':'';
+    $out .= &$rem_sub($width, $indent) if $useTable;
 
-	if (!$readOnly) {
+    if (!$readOnly) {
             my $idout = $id ? qq{ id="$id"} : '';
-	    $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$disp_value$extra$js />};
-	} else {
-	    $out .= ($type ne "password") ? " $value" : "********";
-	}
+        $out .= qq{<input type="$type"${idout}$class} . qq{ name="$key"$disp_value$extra$js />};
+    } else {
+        $out .= ($type ne "password") ? " $value" : "********";
+    }
 
     } else {
 
-	$out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
-	  . qq{ width="$indent">} : '';
-	$out .= qq{<span class="$label">$name:</span>}
-	  if $name && !$vals->{props}{label_after};
-	$out .= &$rem_sub($width, $indent) if $useTable;
+    $out = $useTable ?  qq{<table border="0" width="$width"><tr><td align="right"}
+      . qq{ width="$indent">} : '';
+    $out .= qq{<span class="$label">$name:</span>}
+      if $name && !$vals->{props}{label_after};
+    $out .= &$rem_sub($width, $indent) if $useTable;
 
-	if (!$readOnly) {
-	    $out .= qq{<input type="$type" name="$key"$disp_value$extra$js />};
-	} else {
-	    if ($type eq "radio" || $type eq "checkbox") {
-		$out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
-		$out .= "<br />";
-	    }
-	}
+    if (!$readOnly) {
+        $out .= qq{<input type="$type" name="$key"$disp_value$extra$js />};
+    } else {
+        if ($type eq "radio" || $type eq "checkbox") {
+        $out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
+        $out .= "<br />";
+        }
+    }
 
-	$out .= qq{ <span class="label">$name</span>&nbsp;}
-	  if $name && $vals->{props}{label_after};
+    $out .= qq{ <span class="label">$name</span>&nbsp;}
+      if $name && $vals->{props}{label_after};
     }
 
     $out .= $useTable ? "</td></tr></table>" : '';
@@ -273,69 +273,69 @@ my $inpt_sub = sub {
 };
 
 my %formSubs = (
-	text => sub { &$inpt_sub('text', @_, &$len_sub($_[1]) ) },
+    text => sub { &$inpt_sub('text', @_, &$len_sub($_[1]) ) },
         password => sub { &$inpt_sub('password', @_, &$len_sub($_[1]) ) },
         hidden => sub { &$inpt_sub('hidden', @_) },
 
         date => sub {
-	    my ($key, $vals, $value, $js, $name,$width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
+        my ($key, $vals, $value, $js, $name,$width, $indent, $useTable,
+        $label, $readOnly, $agent) = @_;
             $m->comp("/widgets/select_time/select_time.mc",
-		     base_name => $key,
-		     def_date  => $value,
-		     useTable  => $useTable,
-		     width     => $width,
-		     disp      => $name,
+             base_name => $key,
+             def_date  => $value,
+             useTable  => $useTable,
+             width     => $width,
+             disp      => $name,
                      read_only => $readOnly
                  );
         },
 
-	checkbox => sub {
-	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent, $id) = @_;
-	    my $extra = '';
-	    if (exists $vals->{props}{chk}) {
-		$extra .= ' checked="checked"' if $vals->{props}{chk}
-	    } elsif ($value) {
-		$extra .= ' checked="checked"';
-	    }
+    checkbox => sub {
+        my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
+        $label, $readOnly, $agent, $id) = @_;
+        my $extra = '';
+        if (exists $vals->{props}{chk}) {
+        $extra .= ' checked="checked"' if $vals->{props}{chk}
+        } elsif ($value) {
+        $extra .= ' checked="checked"';
+        }
             $extra .= qq{ id="$id"} if defined $id;
-	    $indent -= 5 if ($useTable && !$readOnly);
-	    &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
-		       $indent, $useTable, $label, $readOnly, $agent, $id, $extra);
-	},
+        $indent -= 5 if ($useTable && !$readOnly);
+        &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
+               $indent, $useTable, $label, $readOnly, $agent, $id, $extra);
+    },
 
-	textarea => sub {
+    textarea => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
-	    my $rows =  $vals->{props}{rows} || 5;
-	    my $cols = $vals->{props}{cols}  || 30;
+        $label, $readOnly, $agent) = @_;
+        my $rows =  $vals->{props}{rows} || 5;
+        my $cols = $vals->{props}{cols}  || 30;
 
-	    # adjust defaults by platform/browser
-	    # ns displays big boxes, usually
-	    $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
+        # adjust defaults by platform/browser
+        # ns displays big boxes, usually
+        $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
-	    my $out;
-	    $out .= qq{<table border="0" width="$width"><tr><td align="right"}
-	      . qq{ width="$indent" valign="top">} if $useTable;
-	    $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
-	    $out .= &$rem_sub($width, $indent) if $useTable;
-	    $value = defined $value ? escape_html($value) : '';
-	    $key = $key ? escape_html($key) : '';
+        my $out;
+        $out .= qq{<table border="0" width="$width"><tr><td align="right"}
+          . qq{ width="$indent" valign="top">} if $useTable;
+        $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
+        $out .= &$rem_sub($width, $indent) if $useTable;
+        $value = defined $value ? escape_html($value) : '';
+        $key = $key ? escape_html($key) : '';
 
-	    if (!$readOnly) {
+        if (!$readOnly) {
             $js = $js ? " $js" : '';
-			# if we've set a maximum length then display the textcounter
+            # if we've set a maximum length then display the textcounter
             if ($vals->{props}{maxlength}) {
                 # use a 'nice' unique name for js call, IE doesn't like | or _
                 my $uniquename = $key;
                 $uniquename =~ s/[\||_]//g;
- 				my $upval = length($value);
-				my $dwval = $vals->{props}{maxlength} - $upval;
+                my $upval = length($value);
+                my $dwval = $vals->{props}{maxlength} - $upval;
                 my $textstring = $lang->maketext('Characters')
-				  . qq {: <span id="textCountUp$uniquename">$upval</span> }
+                  . qq {: <span id="textCountUp$uniquename">$upval</span> }
                   . $lang->maketext('Remaining')
-				  . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
+                  . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n<textarea  id="$uniquename" }
                   . qq{onKeyUp="$functioncode"\n onKeyDown="$functioncode"\n }
@@ -347,33 +347,33 @@ my %formSubs = (
             }
         } else {
             $out .= $value;
-	    }
+        }
         $out .= "\n</td></tr></table>\n" if $useTable;
         $m->out($out);
     },
 
-	wysiwyg => sub {
+    wysiwyg => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent) = @_;
-	    my $rows =  $vals->{props}{rows} || 5;
-	    my $cols = $vals->{props}{cols}  || 30;
+        $label, $readOnly, $agent) = @_;
+        my $rows =  $vals->{props}{rows} || 5;
+        my $cols = $vals->{props}{cols}  || 30;
 
-	    # adjust defaults by platform/browser
-	    # ns displays big boxes, usually
-	    $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
+        # adjust defaults by platform/browser
+        # ns displays big boxes, usually
+        $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
-	    my $out;
-	    $out .= qq{<table border="0" width="$width"><tr><td align="right"}
-	      . qq{ width="$indent" valign="top">} if $useTable;
-	    $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
-	    $out .= &$rem_sub($width, $indent) if $useTable;
-	    $value = defined $value ? escape_html($value) : '';
-	    $key = $key ? escape_html($key) : '';
+        my $out;
+        $out .= qq{<table border="0" width="$width"><tr><td align="right"}
+          . qq{ width="$indent" valign="top">} if $useTable;
+        $out .= $name ? qq{<span class="$label">$name:</span><br />\n} : '';
+        $out .= &$rem_sub($width, $indent) if $useTable;
+        $value = defined $value ? escape_html($value) : '';
+        $key = $key ? escape_html($key) : '';
 
-	    if (!$readOnly) {
+        if (!$readOnly) {
             $js = $js ? " $js" : '';
             $out .= qq{<textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-	         . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+             . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
             my $htmlareatoolbar = HTMLAREA_TOOLBAR;
             $out .= qq{
  <script language="javascript">
@@ -385,141 +385,139 @@ my %formSubs = (
 }
         } else {
             $out .= $value;
-	    }
+        }
         $out .= "\n</td></tr></table>\n" if $useTable;
         $m->out($out);
     },
 
-	select => sub {
+    select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent, $id) = @_;
-	    my $out='';
+        $label, $readOnly, $agent, $id) = @_;
+        my $out='';
 
-	    $indent -= 7 if $agent->nav4;
-	    if ($useTable) {
-		$out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
-		$out .= qq{<td align="right" width="$indent" valign="middle">};
-	    }
+        $indent -= 7 if $agent->nav4;
+        if ($useTable) {
+        $out .= qq{<table border="0" width="$width" cellpadding=0 cellspacing=0><tr>};
+        $out .= qq{<td align="right" width="$indent" valign="middle">};
+        }
             $out .= $name ? qq{<span class="$label">$name:</span>} : '';
-	    $out .= "<br />" if (!$useTable && $name);
-	    $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
-	      if ($useTable);
-	    $out .= &$rem_sub($width-4, $indent) if $useTable;
-	    $key = escape_html($key) if $key;
+        $out .= "<br />" if (!$useTable && $name);
+        $out .= qq{</td>\n<td width=4><img src="/media/images/spacer.gif" width=4 height=1 />}
+          if ($useTable);
+        $out .= &$rem_sub($width-4, $indent) if $useTable;
+        $key = escape_html($key) if $key;
 
-	    if (!$readOnly) {
-		$js = $js ? " $js" : '';
-		$out .= qq{<select name="$key" };
-		$out .= 'size="' . ($vals->{props}{size} ||
-		  ($vals->{props}{multiple} ? 5 : 1)) . '"';
-		$out .= ' multiple' if $vals->{props}{multiple};
+        if (!$readOnly) {
+        $js = $js ? " $js" : '';
+        $out .= qq{<select name="$key" };
+        $out .= 'size="' . ($vals->{props}{size} ||
+          ($vals->{props}{multiple} ? 5 : 1)) . '"';
+        $out .= ' multiple' if $vals->{props}{multiple};
                 $out .= qq{ id="$id"} if defined $id;
-		$out .= "$js>\n";
-	    }
+        $out .= "$js>\n";
+        }
 
-	    # Make the values a reference if this is a multiple select list.
-	    $value = { map { $_ => 1 } split /__OPT__/, $value }
-	      if $vals->{props}{multiple};
+        # Make the values a reference if this is a multiple select list.
+        $value = { map { $_ => 1 } split /__OPT__/, $value }
+          if $vals->{props}{multiple};
 
-	    # Iterate through values to create options.
-	    my $values = $vals->{props}{vals};
-	    my $ref = ref $values;
+        # Iterate through values to create options.
+        my $values = $vals->{props}{vals};
+        my $ref = ref $values;
         if ($ref eq 'HASH') {
             foreach my $k (sort { return -1 if $a eq '';
                                   return 1 if $b eq '';
                                   $values->{$a} cmp $values->{$b}
                                 } keys %$values) {
-		    if (!$readOnly) {
-			$out .= &$opt_sub($k, $values->{$k}, $value);
-		    } else {
-			$out .= $values->{$k} . "<br />" if ($values->{$k} eq $value);
-		    }
-		}
-	    } elsif ($ref eq 'ARRAY') {
-		foreach my $k (@$values ) {
-		    my ($f, $v) = ref $k ? @$k : ($k, $k);
-		    if (!$readOnly) {
-			$out .= &$opt_sub($f, $v, $value);
-		    } else {
-			$out .= $v . "<br />" if ($f eq $value);
-		    }
-		}
-	    }
+            if (!$readOnly) {
+            $out .= &$opt_sub($k, $values->{$k}, $value);
+            } else {
+            $out .= $values->{$k} . "<br />" if ($values->{$k} eq $value);
+            }
+        }
+        } elsif ($ref eq 'ARRAY') {
+        foreach my $k (@$values ) {
+            my ($f, $v) = ref $k ? @$k : ($k, $k);
+            if (!$readOnly) {
+            $out .= &$opt_sub($f, $v, $value);
+            } else {
+            $out .= $v . "<br />" if ($f eq $value);
+            }
+        }
+        }
 
-	    $out .= "</select>" if (!$readOnly);
+        $out .= "</select>" if (!$readOnly);
 
-	    $out .= "\n</td></tr></table>\n" if $useTable;
-	    # close select
-	    $m->out("$out");
-	},
+        $out .= "\n</td></tr></table>\n" if $useTable;
+        # close select
+        $m->out("$out");
+    },
 
- 	radio => sub {
-	    my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-		$label, $readOnly, $agent, $id) = @_;
-	    my $out = '';
-	    # print caption for the group
-	    if ($useTable) {
-		$out .= ($readOnly) ? qq{<table border="0" width="$width"><tr><td width=$indent align="right"> }
-	                            : qq{<table border="0" width="$width" cellspacing=0 cellpadding=2><tr><td align="right" width=$indent> };
-	    }
-	    $out .= qq{<span class="radioLabel">$name</span>} if $name;
+    radio => sub {
+        my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
+        $label, $readOnly, $agent, $id) = @_;
+        my $out = '';
+        # print caption for the group
+        if ($useTable) {
+        $out .= ($readOnly) ? qq{<table border="0" width="$width"><tr><td width=$indent align="right"> }
+                                : qq{<table border="0" width="$width" cellspacing=0 cellpadding=2><tr><td align="right" width=$indent> };
+        }
+        $out .= qq{<span class="radioLabel">$name</span>} if $name;
 
-	    if ($readOnly) {
-		$out .= "</td><td width=" . ($width - $indent) . ">";
-		# Find the selected value
-		my $values = $vals->{props}{vals};
-		my $ref = ref $values;
-		if ($ref eq 'HASH') {
-		    foreach my $k (sort { $values->{$a} cmp $values->{$b} }
-				   keys %$values) {
-			$out .= $values->{$k} if ( $value eq $values->{$k});
-		    }
-		} elsif ($ref eq 'ARRAY') {
-		    foreach my $k (@$values ) {
-			$k = [$k, $k] unless ref $k;
-			$out .= $k->[1] if ($value eq $k->[0]);
-		    }
-		}
-	    } else {
-		$out .= "</td><td width=" . ($width - $indent) .">&nbsp;" if ($useTable);
-	    }
+        if ($readOnly) {
+        $out .= "</td><td width=" . ($width - $indent) . ">";
+        # Find the selected value
+        my $values = $vals->{props}{vals};
+        my $ref = ref $values;
+        if ($ref eq 'HASH') {
+            foreach my $k (sort { $values->{$a} cmp $values->{$b} }
+                   keys %$values) {
+            $out .= $values->{$k} if ( $value eq $values->{$k});
+            }
+        } elsif ($ref eq 'ARRAY') {
+            foreach my $k (@$values ) {
+            $k = [$k, $k] unless ref $k;
+            $out .= $k->[1] if ($value eq $k->[0]);
+            }
+        }
+        } else {
+        $out .= "</td><td width=" . ($width - $indent) .">&nbsp;" if ($useTable);
+        }
 
-	    $out .= "</td></tr></table>" if ($useTable);
-	    $m->out($out);
+        $out .= "</td></tr></table>" if ($useTable);
+        $m->out($out);
 
-	    if (!$readOnly) {
-		# Iterate through the values and draw each button:
-		my $values = $vals->{props}{vals};
-		my $ref = ref $values;
-		if ($ref eq 'HASH') {
-		    foreach my $k (sort { $values->{$a} cmp $values->{$b} }
-				   keys %$values) {
-			&$inpt_sub('radio', $key, {}, $k, $js, $values->{$k},
-				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $id, $value eq $k ? ' checked="checked"' : '');
-			$m->out("<br />\n") if (!$useTable);
-		    }
-		} elsif ($ref eq 'ARRAY') {
-		    foreach my $k (@$values ) {
-			$k = [$k, $k] unless ref $k;
-			&$inpt_sub('radio', $key, $k->[0], $k->[0], $js, $k->[1],
-				   $width, $indent, $useTable, $label, $readOnly, $agent,
-				   $id, $value eq $k->[0] ? ' checked="checked"' : '');
-			$m->out("<br />\n") if (!$useTable);
-		    }
-		}
-	    }
-	},
-	single_rad => sub {
+        if (!$readOnly) {
+        # Iterate through the values and draw each button:
+        my $values = $vals->{props}{vals};
+        my $ref = ref $values;
+        if ($ref eq 'HASH') {
+            foreach my $k (sort { $values->{$a} cmp $values->{$b} }
+                   keys %$values) {
+            &$inpt_sub('radio', $key, {}, $k, $js, $values->{$k},
+                   $width, $indent, $useTable, $label, $readOnly, $agent,
+                   $id, $value eq $k ? ' checked="checked"' : '');
+            $m->out("<br />\n") if (!$useTable);
+            }
+        } elsif ($ref eq 'ARRAY') {
+            foreach my $k (@$values ) {
+            $k = [$k, $k] unless ref $k;
+            &$inpt_sub('radio', $key, $k->[0], $k->[0], $js, $k->[1],
+                   $width, $indent, $useTable, $label, $readOnly, $agent,
+                   $id, $value eq $k->[0] ? ' checked="checked"' : '');
+            $m->out("<br />\n") if (!$useTable);
+            }
+        }
+        }
+    },
+    single_rad => sub {
             my ($key, $vals, $value, $js, $name) = @_;
-	    if (exists $vals->{props}{chk}) {
-		push @_, ' checked="checked"' if $vals->{props}{chk}
-	    } elsif ($value) {
-		push @_, ' checked="checked"';
-	    }
-	    &$inpt_sub('radio', @_);
-	}
+        if (exists $vals->{props}{chk}) {
+        push @_, ' checked="checked"' if $vals->{props}{chk}
+        } elsif ($value) {
+        push @_, ' checked="checked"';
+        }
+        &$inpt_sub('radio', @_);
+    }
 );
-
 </%once>
-
