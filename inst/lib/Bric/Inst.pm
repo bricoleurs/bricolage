@@ -133,9 +133,9 @@ sub ask_confirm {
 
 =item ask_password($description, $ref_to_setting)
 
-Asks the user to confirm a setting. If they enter a new value, they will
-be prompted to enter it a second time. The password will not be echoed to
-the shell.
+Asks the user to enter a password. If they enter a new value, they will be
+prompted to enter it a second time. The password will not be echoed to the
+shell.
 
 A default setting of "NONE" will force the user to enter a value.
 
