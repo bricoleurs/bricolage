@@ -430,7 +430,7 @@ my %formSubs = (
                                     } keys %$values)
                 {
                     $out .= $readOnly
-                      ? $values->{$k} . "<br />" if ($values->{$k} eq $value)
+                      ? $values->{$k} eq $value ? $values->{$k} . "<br />" : ''
                       : &$opt_sub($k, $values->{$k}, $value);
                 }
             } elsif ($ref eq 'ARRAY') {
