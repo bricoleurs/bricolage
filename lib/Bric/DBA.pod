@@ -269,35 +269,35 @@ shared memory buffers setting to take advantage of this shared memory:
 
   shared_buffers = 24576
 
-=head2 Sort Memory
+=head2 Work Memory
 
-Next, it's probably also a good idea to boost your sort memory to get a better
-response time to the very large queries used to look up Bricolage objects. The
-sort memory has to do with number of concurrent queries. never risk going over
+Next, it's probably also a good idea to boost your work memory (or "sort
+memory", as it was known prior to PostgreSQL 8.0) to get a better response
+time to the very large queries used to look up Bricolage objects. The work
+memory has to do with number of concurrent queries. Never risk going over
 total memory, or else PostgreSQL will go into swap and things will get
 I<really> slow. Bricolage generally uses no more than three or four concurrent
-queries, so 8 MB should be okay. Unlike C<shared_buffers>, the C<sort_mem>
-setting is in KB buffers, so setting it to 8 MB would be:
+queries, so 8 MB should be okay. Unlike C<shared_buffers>, the C<work_mem> (or
+C<sort_mem>) setting is in KB buffers, so setting it to 8 MB would be:
 
-  sort_mem = 8192
+  work_mem = 8192
 
-The difficult issue with C<sort_mem> is that more is needed for bigger
-queries, but C<sort_mem> is not shared, being allocated on a I<per-sort>
-basis. You do not, B<ever>, want to use more cumulative C<sort_mem> than your
+The difficult issue with C<work_mem> is that more is needed for bigger
+queries, but C<work_mem> is not shared, being allocated on a I<per-task>
+basis. You do not, B<ever>, want to use more cumulative C<work_mem> than your
 computer actually has, because it will go into swap and slow PostgreSQL down
 to glacial speed.
 
-Bricolage uses some complex queries that require 3 or even 4 sorts per
-query. This means that you have to be prepared to have C<3 * sort_mem>
-available for each concurrent query. Overall, this means (with fudge factors)
-that when you can calculate the maximum C<sort_mem> it is completely safe to set
-as: C<Available RAM / max_connections * 3>. But more than 12 MB C<sort_mem>
-should not be needed except on the largest Bricolage installations (5GB +
-database).
+Bricolage uses some complex queries that require 3 or even 4 sorts per query.
+This means that you have to be prepared to have C<3 * work_mem> available for
+each concurrent query. Overall, this means (with fudge factors) that when you
+can calculate the maximum C<work_mem> it is completely safe to set as:
+C<Available RAM / max_connections * 3>. But more than 12 MB C<work_mem> should
+not be needed except on the largest Bricolage installations (5GB + database).
 
 You must remember that if your Bricolage usage forces you to increase
 C<max_connections>, then you will have to think about lowering
-C<sort_mem>...or buying more RAM.
+C<work_mem>...or buying more RAM.
 
 =head2 Maximum Connections
 
@@ -313,8 +313,8 @@ even on a single-user system).
 If you're not sure what number to assign to the C<max_connections> directive,
 watch your Bricolage server to see how many connections it holds to the
 database to determine the optimum setting. Since there is an inverse relation
-between C<max_connections> and C<sort_mem>, lowering this number can also help
-you to find a middle ground between a healthy value for C<sort_mem> and
+between C<max_connections> and C<work_mem>, lowering this number can also help
+you to find a middle ground between a healthy value for C<work_mem> and
 needing to reconfigure the kernel's SHMMAX (See L</"Shared Buffers">).
 
   max_connections = 50
