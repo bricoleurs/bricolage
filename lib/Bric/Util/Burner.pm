@@ -190,10 +190,12 @@ BEGIN {
         page                  => Bric::FIELD_READ,
         encoding              => Bric::FIELD_RDWR,
         output_filename       => Bric::FIELD_RDWR,
-        output_ext            => Bric::FIELD_READ,
+        output_ext            => Bric::FIELD_RDWR,
         output_path           => Bric::FIELD_READ,
         base_path             => Bric::FIELD_READ,
         base_uri              => Bric::FIELD_READ,
+        burn_again            => Bric::FIELD_RDWR,
+
         # Private Fields
         _page_extensions      => Bric::FIELD_NONE,
         _notes                => Bric::FIELD_NONE,
@@ -1397,6 +1399,32 @@ sub chk_syntax {
     my $ret = $burner->chk_syntax(@_);
     return $ret;
 }
+
+##############################################################################
+
+=item $success = $b->set_burn_again(1)
+
+=item my $again = $b->get_burn_again
+
+This method is designed to be called from within a template. When passed a
+true value, it causes the burner to burn the current story and page again,
+creating another file. This is useful for creating multi-file output without
+extra paginated subelements. For example, if you need to create an index of
+stories, and you only want to list 10 on a page over multiple pages, you can
+use this method to force the burner to burn as many pages as you need to get
+the job done.
+
+When the burner prepares to burn the page again, it resets the C<burn_again>
+attribute. So you'll need to set it for every page for which another page
+burned.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
 
 ##############################################################################
 

@@ -18,7 +18,7 @@ sub table { 'alert_type' }
 
 my $fs = Bric::Util::Trans::FS->new;
 
-sub test_deploy : Test(28) {
+sub test_deploy : Test(31) {
     my $self = shift;
 
     my $name = 'foodoo';
@@ -34,9 +34,9 @@ sub test_deploy : Test(28) {
     $self->add_del_ids($tmpl->get_id, 'formatting');
 
     # Create a burner.
-    ok( my $burner = Bric::Util::Burner->new
-        ({ comp_dir => $fs->cat_dir(TEMP_DIR, 'comp') }),
-        "Create burner" );
+    ok( my $burner = Bric::Util::Burner->new({
+        comp_dir => $fs->cat_dir(TEMP_DIR, 'comp')
+    }), "Create burner" );
 
     # Figure out the complete file name and make sure it doesn't
     # yet exist.
@@ -98,13 +98,105 @@ sub test_deploy : Test(28) {
     ok( -f $new_fn, "Check that the new file exists" );
     ok( !-f $fn, "Check that the old file is gone" );
 
+    # Now undeploy it.
+    ok( $burner->undeploy($tmpl), "Undeploy the template" );
+    ok( !-f $new_fn, "Check that the new file is gone" );
+    ok( !-f $fn, "Check that the old file is still gone" );
+
     # Mark the published version number again, for completeness.
     ok( $tmpl->set_published_version($tmpl->get_current_version),
         "Set published version number again" );
     ok( $tmpl->save, "Save with published version number again" );
 }
 
-sub test_mason : Test(75) {
+sub test_page : Test(37) {
+    my $self = shift;
+    my $out_path = $fs->cat_dir('', 'output');
+    ok my $burner = Bric::Util::Burner->new({
+        base_uri    => '/foo/bar',
+        output_path => $out_path,
+        page        => 3,
+    }), "Create a new burner";
+    my $out_file = $fs->cat_file($out_path, 'index');
+    ok $burner->set_output_filename('index'), "Set the file name";
+    ok $burner->set_output_ext('html'), "Set the file extension";
+    is_deeply [$burner->get_page_extensions], [''],
+      "We should start with a single empty string extension";
+    is $burner->page_file(1), 'index.html',
+      "The first page should have no extension";
+    is $burner->page_file(2), 'index1.html',
+      "The second page should have an extension of '1'";
+    is $burner->page_uri(1), '/foo/bar/index.html',
+      "The first uri should have no extension";
+    is $burner->page_uri(2), '/foo/bar/index1.html',
+      "The second uri should have an extension of '1'";
+    is $burner->page_filepath(1), "$out_file.html",
+      "The first file should have no extension";
+    is $burner->page_filepath(2), "${out_file}1.html",
+      "The second file should have an extension of '1'";
+    is $burner->prev_page_file, $burner->page_file(3),
+      "Previos page should be page_file(3)";
+    is $burner->prev_page_uri, $burner->page_uri(3),
+      "Previos URI should be page_uri(3)";
+    is $burner->next_page_file, undef, "Next page should still undef";
+    is $burner->next_page_uri, undef, "Next URI should still be undef";
+    ok $burner->set_burn_again(1), "Set burn_again to true";
+    is $burner->next_page_file, $burner->page_file(3 + 2),
+      "Next page should be page_file(3 + 2)";
+    is $burner->next_page_uri, $burner->page_uri(3 + 2),
+      "Next URI should be page_uri(3 + 2)";
+    ok $burner->set_burn_again(0), "Set burn_again to false";
+
+    ok $burner->set_page_extensions('foo', 'bar'),
+      "Set a couple of extensions";
+    is_deeply [$burner->get_page_extensions], ['foo', 'bar'],
+      "We should get back the extensions";
+    is $burner->page_file(1), 'indexfoo.html',
+      "The first page should have the first extension";
+    is $burner->page_file(2), 'indexbar.html',
+      "The second page should have the second extension";
+    is $burner->page_file(3), 'index1.html',
+      "The third page should have an extension of '1'";
+    is $burner->page_uri(1), '/foo/bar/indexfoo.html',
+      "The first page should have the first extension";
+    is $burner->page_uri(2), '/foo/bar/indexbar.html',
+      "The second page should have the second extension";
+    is $burner->page_uri(3), '/foo/bar/index1.html',
+      "The third page should have an extension of '1'";
+    is $burner->page_filepath(1), "${out_file}foo.html",
+      "The first page should have the first extension";
+    is $burner->page_filepath(2), "${out_file}bar.html",
+      "The second page should have the second extension";
+    is $burner->page_filepath(3), "${out_file}1.html",
+      "The third page should have an extension of '1'";
+    is $burner->prev_page_file, $burner->page_file(3),
+      "Previos page should still be page_file(3)";
+    is $burner->prev_page_uri, $burner->page_uri(3),
+      "Previos URI should still be page_uri(3)";
+    is $burner->next_page_file, undef, "Next page should still undef";
+    is $burner->next_page_uri, undef, "Next URI should still be undef";
+    ok $burner->set_burn_again(1), "Set burn_again to true";
+    is $burner->next_page_file, $burner->page_file(3 + 2),
+      "Next page should still be page_file(3 + 2)";
+    is $burner->next_page_uri, $burner->page_uri(3 + 2),
+      "Next URI should still be page_uri(3 + 2)";
+    ok $burner->set_burn_again(0), "Set burn_again to false";
+}
+
+sub test_notes : Test(7) {
+    my $self = shift;
+    ok my $burner = Bric::Util::Burner->new, "Create a new burner";
+    is_deeply $burner->notes, {}, "Notes should start out empty";
+    ok $burner->notes(foo => 'bar'), "Set 'foo' to 'bar'";
+    is_deeply $burner->notes, {foo => 'bar'},
+      "Notes should have new value";
+    is $burner->notes('foo'), 'bar', "'foo' should return 'bar'";
+    ok $burner->clear_notes, "Clear the notes";
+    is_deeply $burner->notes, {}, "Notes should be empty again";
+
+}
+
+sub test_mason : Test(80) {
     my $self = shift;
     $self->test_burn('Mason', 'mc', Bric::Biz::AssetType::BURNER_MASON);
 }
@@ -388,14 +480,14 @@ sub test_burn {
            'Bric::Util::Language::en_us');
     $self->trap_stderr;
 
+    # Set up the component root for the preview.
+    $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
+      Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
+
     # Mock the user so that event logging works properly.
     my $event = Test::MockModule->new('Bric::App::Event');
     my $user = Bric::Biz::Person::User->lookup({ id => $self->user_id });
     $event->mock(get_user_object => $user);
-
-    # Set up the component root for the preview.
-    $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
-      Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
 
     # Make sure that the file doesn't already exist.
     $file = $fs->cat_file(TEMP_DIR, 'base',
@@ -412,6 +504,37 @@ sub test_burn {
 
     # So now let's take a look at that bad boy.
     file_contents_is($file, $self->story_output, "Check the file contents");
+
+    # Now we'll try a preview, just for the heck of it.
+    my $prev_root = $fs->cat_dir(TEMP_DIR, 'comp');
+    Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = $prev_root;
+
+    my $prev_file = $fs->cat_file(
+        $prev_root,
+        PREVIEW_LOCAL,
+        $fs->uri_to_dir($story->get_primary_uri), '',
+        $oc->get_filename . '.' . $oc->get_file_ext
+    );
+    ok !-e $prev_file, "The preview file should not yet exist";
+
+    # Set up to listen in to the status messages.
+    $self->trap_stderr;
+
+    # Make it so!
+    ok $burner->preview($story, 'story', $self->user_id, $oc->get_id),
+      "Preview story";
+
+    # The job starts a new transaction, so let's commit it so that objects can
+    # be properly deleted from the database during cleanpup.
+    Bric::Util::DBI::commit();
+
+    is $self->read_stderr,
+      'Writing files to "Test XHTML" Output Channel.Distributing files.',
+      "The status message should be correct";
+
+    ok -e $prev_file, "File should now exist" or return "Failed to create $file!";
+    file_contents_is($prev_file, $self->story_output,
+                     "Check the preview file contents");
 }
 
 sub restore_comp_root : Test(teardown) {

@@ -95,7 +95,6 @@ BEGIN {
                          #- Per burn/deploy values.
                          'job'            => Bric::FIELD_READ,
                          'more_pages'     => Bric::FIELD_READ,
-                         'burn_again'     => Bric::FIELD_RDWR,
 
                          # Private Fields
                          '_interp'         => Bric::FIELD_NONE,
@@ -589,32 +588,6 @@ sub sdisplay_element {
 
 Returns true if more pages remain to be burned, and false if not. Only
 enumerated when C<display_pages()> is being used to output pages.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-##############################################################################
-
-=item $success = $b->set_burn_again(1)
-
-=item my $again = $b->get_burn_again
-
-This method is designed to be called from within a template. When passed a
-true value, it causes the burner to burn the current story and page again,
-creating another file. This is useful for creating multi-file output without
-extra paginated subelements. For example, if you need to create an index of
-stories, and you only want to list 10 on a page over multiple pages, you can
-use this method to force the burner to burn as many pages as you need to get
-the job done.
-
-When the burner prepares to burn the page again, it resets the C<burn_again>
-attribute. So you'll need to set it for every page for which another page
-burned.
 
 B<Throws:> NONE.
 

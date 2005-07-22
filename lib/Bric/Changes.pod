@@ -278,6 +278,12 @@ Added tests for the burners. This was important for thoroughly testing the new
 PHP burner, but it will keep the other burners functioning well from here on
 in, as well. [David]
 
+=item *
+
+Moved the C<burn_again> attribute from Bric::Util::Burner::Mason to
+Bric::Util::Burner, since it could be useful to other burners, and since
+Bric::Util::Burner had knowledge of it, anyway. [David]
+
 =back
 
 ##############################################################################
