@@ -196,17 +196,55 @@ sub test_notes : Test(7) {
 
 }
 
-sub test_mason : Test(80) {
+sub test_best_uri : Test(no_plan) {
     my $self = shift;
-    $self->test_burn('Mason', 'mc', Bric::Biz::AssetType::BURNER_MASON);
+
+    # Mock stuff in burner class.
+    my $oc = Bric::Biz::OutputChannel->new({
+        site_id  => 100,
+        protocol => 'http://',
+    });
+    my $bc = Test::MockModule->new('Bric::Util::Burner');
+    $bc->mock(get_oc => $oc);
+
+    # Mock stuff in Story class.
+    my $sc = Test::MockModule->new('Bric::Biz::Asset::Business::Story');
+    $sc->mock(new => sub { my $pkg = shift; bless {@_}, $pkg; });
+    $sc->mock(get_site_id => 100);
+    $sc->mock(get_output_channels => [$oc]);
+    $sc->mock(get_primary_oc => $oc);
+    $sc->mock(get_uri => sub { shift->{uri} });
+    my $story = Bric::Biz::Asset::Business::Story->new( uri => '/foo/bar' );
+
+    # Test with a story in the same site.
+    ok my $burner = Bric::Util::Burner->new, "Create a new burner";
+    is $burner->best_uri($story), '/foo/bar',
+      "We should get a simple URI for a story in the same site";
+
+    # Now try with a story in a different site, but an alias in the current
+    # site.
+    my $alias = Bric::Biz::Asset::Business::Story->new( uri => '/my/alias' );
+    $sc->mock(lookup => $alias);
+    $sc->mock(get_site_id => 1212);
+    is $burner->best_uri($story), '/my/alias',
+      "We should get a simple URI for an alias in the same site";
+
+    # Now have no alias, so we have to use the original story with a full
+    # URL.
+    my $site = Bric::Biz::Site->new({ domain_name => 'www.example.org'});
+    my $sitec = Test::MockModule->new('Bric::Biz::Site');
+    $sitec->mock(lookup => $site);
+    $sc->mock(lookup => undef);
+    is $burner->best_uri($story), 'http://www.example.org/foo/bar',
+      "We should get a full URL";
 }
 
-sub test_burn {
+sub subclass_burn_test {
     my ($self, $dir, $suffix, $burner_type) = @_;
 
     # First, we'll need a story element type.
     ok my $story_et = Bric::Biz::ATType->new({
-        name => 'Testing',
+        name      => 'Testing',
         top_level => 1,
     }), "Create a story element type";
     ok $story_et-> save, "Save story element type";
@@ -214,11 +252,20 @@ sub test_burn {
 
     # Next, a subelement.
     ok my $sub_et = Bric::Biz::ATType->new({
-        name => 'Subby',
+        name      => 'Subby',
         top_level => 0,
     }), "Create a subelement element type";
     ok $sub_et-> save, "Save subelement element type";
     $self->add_del_ids($sub_et->get_id, 'at_type');
+
+    # And finally, a page subelement.
+    ok my $page_et = Bric::Biz::ATType->new({
+        name      => 'Pagey',
+        top_level => 0,
+        paginated => 1,
+    }), "Create a page element type";
+    ok $page_et-> save, "Save page element type";
+    $self->add_del_ids($page_et->get_id, 'at_type');
 
     # Add a couple of categories.
     ok my $cat = Bric::Biz::Category->new({
@@ -351,9 +398,33 @@ sub test_burn {
     $self->add_del_ids($by->get_id, 'at_data');
     $self->add_del_ids($date->get_id, 'at_data');
 
-    # Add the subelement.
-    ok $story_type->add_containers([$pull_quote->get_id]),
-      "Add the subelement";
+    # Create a page subelement.
+    ok my $page = Bric::Biz::AssetType->new({
+        key_name  => '_page_',
+        name      => 'Page',
+        burner    => $burner_type,
+        type__id  => $page_et->get_id,
+        reference => 0, # No idea what this is.
+    }), "Create a page subelement element";
+
+    # Give it a paragraph field.
+    ok my $page_para = $page->new_data({
+        key_name    => 'para',
+        required    => 1,
+        quantifier  => 0,
+        sql_type    => 'short',
+        place       => 1,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Save it.
+    ok $page->save, "Save the page subelement element";
+    $self->add_del_ids($page->get_id, 'element');
+
+    # Add the subelements to the story type element.
+    ok $story_type->add_containers([$pull_quote->get_id, $page->get_id]),
+      "Add the subelements";
 
     # Now let's create some templates for these bad boys! Start with the
     # story template.
@@ -387,6 +458,22 @@ sub test_burn {
     }), "Create a pull quote template";
     ok( $pq_tmpl->save, "Save pull quote template" );
     $self->add_del_ids($pq_tmpl->get_id, 'formatting');
+    close $fh;
+
+    # Page template.
+    $file = $fs->cat_file(dirname(__FILE__), $dir, "page.$suffix");
+    open $fh, '<', $file or die "Cannot open '$file': $!\n";
+    ok my $page_tmpl = Bric::Biz::Asset::Formatting->new({
+        output_channel => $oc,
+        user__id       => $self->user_id,
+        category_id    => 1,
+        site_id        => 100,
+        tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
+        element        => $page,
+        data           => join('', <$fh>),
+    }), "Create a page template";
+    ok( $page_tmpl->save, "Save page template" );
+    $self->add_del_ids($page_tmpl->get_id, 'formatting');
     close $fh;
 
     # And how about a category template?
@@ -428,7 +515,7 @@ sub test_burn {
         base_path => $fs->cat_dir(TEMP_DIR, 'base'),
     }), "Create burner";
 
-    for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $util_tmpl) {
+    for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $page_tmpl, $util_tmpl) {
         my $name = $tmpl->get_file_name;
         ok $tmpl->checkin, "Check in the $name template";
         ok $tmpl->save, "Save the $name template again";
@@ -497,7 +584,7 @@ sub test_burn {
 
     # Now burn it!
     ok my ($res) = $burner->burn_one($story, $oc, $subcat), "Burn the story";
-    is $res->get_path, $file, "Check te file location";
+    is $res->get_path, $file, "Check the file location";
 
     # Now we should have a file!
     ok -e $file, "File should now exist" or return "Failed to create $file!";
@@ -535,29 +622,50 @@ sub test_burn {
     ok -e $prev_file, "File should now exist" or return "Failed to create $file!";
     file_contents_is($prev_file, $self->story_output,
                      "Check the preview file contents");
+
+    # Okay, cool. Let's just stick to burning and try adding a couple of
+    # pages.
+    ok my $pg = $elem->add_container($page), "Add a page";
+    ok $pg->add_data($page_para, 'Wee, page one paragraph'),
+      "Add a paragraph to the page";
+    ok $pg->add_data($page_para, 'Another page one paragraph'),
+      "Add another paragraph to the page";
+    ok $pg = $elem->add_container($page), "Add a second page";
+    ok $pg->add_data($page_para, 'Wee, page two paragraph'),
+      "Add a paragraph to the second page";
+    ok $pg->add_data($page_para, 'Another page two paragraph'),
+      "Add another paragraph to the second page";
+    ok $elem->save, "Save the story element";
+
+    # Now that we've done a preview, the OC will be a part of the path,
+    # so re-create the file path variable.
+    $file = $fs->cat_file(TEMP_DIR, 'burn', 'stage', 'oc_' . $oc->get_id,
+                          $fs->uri_to_dir($story->get_primary_uri), '',
+                          $oc->get_filename . '.' . $oc->get_file_ext);
+    (my $p2_file = $file) =~ s/index/index1/;
+    ok !-e $p2_file, "Second page file should not yet exist";
+
+    # Now burn it with pages.
+    ok my @reses = $burner->burn_one($story, $oc, $subcat),
+      "Burn the paginated story";
+    is @reses, 2, "We should have two resources";
+    is $reses[0]->get_path, $file, "Check the first file location";
+    is $reses[1]->get_path, $p2_file, "Check the second file location";
+    ok -e $file, "First page file should still exist";
+    ok -e $p2_file, "Second page file should now exist, too";
+
+    # Check their contents.
+    file_contents_is($file, $self->story_page1, "Check page 1 contents");
+    file_contents_is($p2_file, $self->story_page2, "Check page 2 contents");
+
+    
+
 }
 
 sub restore_comp_root : Test(teardown) {
     my $self = shift;
     Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = delete $self->{comp_root}
       if exists $self->{comp_root};
-}
-
-sub story_output {
-    return q{<html><head>
-<title>This is a Test</title>
-</head><body>
-<h1>This is a Test</h1>
-<p>This is a paragraph</p>
-<p>Second paragraph</p>
-<p>Third paragraph</p>
-<blockquote>
-<p>Ask not what your country can do for you. Ask what you can do for your country.</p>
-<p>--John F. Kennedy, 1961.01.20</p>
-</blockquote>
-<div>Licensed under the BSD license</div>
-</body></html>
-}
 }
 
 1;

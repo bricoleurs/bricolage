@@ -10,4 +10,5 @@ for my $e ($element->get_elements(qw(header para _pull_quote_))) {
         $burner->display_element($e);
     }
 }
+$burner->display_pages('_page_');
 </%perl>
