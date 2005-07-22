@@ -224,7 +224,8 @@ sub new {
         my $atd = delete $init->{'element_data'};
 
         $init->{'element_data_id'} = $atd->get_id();
-        $init->{'name'}            = $atd->get_meta('html_info', 'disp');
+        $init->{'name'}            = $atd->get_meta('html_info', 'disp')
+          || $atd->get_key_name;
         $init->{'key_name'}        = $atd->get_key_name();
         $init->{'description'}     = $atd->get_description();
         $init->{'_element_obj'}    = $atd;

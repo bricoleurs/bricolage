@@ -141,6 +141,7 @@ use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
 require Bric::Util::Job::Pub;
+require Bric::Util::Job::Dist;
 use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
@@ -858,6 +859,7 @@ sub preview {
             user_id      => $user_id,
             name         => $name,
             server_types => $bat,
+            "$key\_id"   => $ba->get_id,
             priority     => $ba->get_priority,
         });
         my $res = [];
@@ -1150,6 +1152,7 @@ sub publish {
                 user_id      => $user_id,
                 name         => $name,
                 server_types => $bat,
+                "$key\_id"   => $ba->get_id,
                 priority     => $ba->get_priority,
             });
 
@@ -1909,6 +1912,7 @@ sub _expire {
             resources    => $res,
             type         => 1,
             priority     => $ba->get_priority,
+            $ba->key_name . "_id"   => $ba->get_id,
         });
         $exp_job->save;
         log_event('job_new', $exp_job);

@@ -85,8 +85,6 @@ our @EXPORT_OK = qw(clear_state
                     set_state_data
                     set_state_name
                     set_user
-                    get_user_login
-                    get_user_id
                     get_user_object
                     user_is_admin);
 

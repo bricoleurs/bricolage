@@ -194,6 +194,11 @@ directive allows media files uploaded to a media document to be distributed to
 all relevant preview servers as soon as the media document is saved. Sponsored
 by Alinghi. [David]
 
+=item *
+
+Added a PHP burner. Implemented by George Schlossnagle of Omni TI consulting.
+Sponsored by PT.com. [George Schlossnagle]
+
 =back
 
 =head2 Improvements
@@ -266,6 +271,12 @@ URI formats now require that the categories be a part of the format. [David]
 When using the command line tools, you can now opt to be prompted for your
 password rather than entering it on the command line, which would store your
 plaintext password in the shell history. [Marshall]
+
+=item *
+
+Added tests for the burners. This was important for thoroughly testing the new
+PHP burner, but it will keep the other burners functioning well from here on
+in, as well. [David]
 
 =back
 

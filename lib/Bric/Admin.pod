@@ -159,6 +159,8 @@ START MODULE LIST
 
 =item Test::MockModule 0.04
 
+=item Test::File::Contents 0.02
+
 =item Text::Balanced
 
 =item XML::Parser 2.34

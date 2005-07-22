@@ -217,7 +217,7 @@ sub burn_one {
 	OUTPUT       => \$outbuf,
 	INCLUDE_PATH => join(':', @$template_roots),
 # 
-	WRAPPER      => \@wrappers,
+#	WRAPPER      => \@wrappers,
 	BRIC    => {
 	    burner  => $self,
 	    story   => $story,
