@@ -5,8 +5,10 @@ for my $e ($element->get_elements(qw(header para _pull_quote_))) {
     if ($kn eq 'para') {
         $m->print('<p>', $e->get_data, "</p>\n");
     } elsif ($kn eq 'header') {
-        $m->print('<h2>', $e->get_data, "</h2>\n");
+        # Test sdisplay_element().
+        $m->print('<h2>', $burner->sdisplay_element($e), "</h2>\n");
     } else {
+        # Test display_element().
         $burner->display_element($e);
     }
 }
