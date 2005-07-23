@@ -599,7 +599,7 @@ B<Notes:> NONE.
 sub _add_resource {
     my $self = shift;
     my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story ext));
+    my ($story, $ext) = $self->_get(qw(story output_ext));
 
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
