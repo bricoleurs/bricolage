@@ -437,6 +437,7 @@ sub subclass_burn_test {
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
         element        => $story_type,
+        file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a story template";
 
@@ -454,6 +455,7 @@ sub subclass_burn_test {
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
         element        => $pull_quote,
+        file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a pull quote template";
     ok( $pq_tmpl->save, "Save pull quote template" );
@@ -471,6 +473,7 @@ sub subclass_burn_test {
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
         element        => $page,
         data           => join('', <$fh>),
+        file_type      => $suffix,
     }), "Create a page template";
     ok( $page_tmpl->save, "Save page template" );
     $self->add_del_ids($page_tmpl->get_id, 'formatting');
@@ -478,7 +481,8 @@ sub subclass_burn_test {
 
     # And how about a category template?
     my $cat_tmpl_fn = Bric::Util::Burner->cat_fn_for_ext($suffix);
-    $cat_tmpl_fn .= ".$suffix" if  Bric::Util::Burner->cat_fn_has_ext($suffix);
+    $cat_tmpl_fn .= ".$suffix"
+      if Bric::Util::Burner->cat_fn_has_ext($cat_tmpl_fn);
     $file = $fs->cat_file(dirname(__FILE__), $dir, $cat_tmpl_fn);
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
     ok my $cat_tmpl = Bric::Biz::Asset::Formatting->new({
@@ -487,6 +491,7 @@ sub subclass_burn_test {
         category_id    => 1,
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a category template";
     ok( $cat_tmpl->save, "Save category template" );
@@ -503,6 +508,7 @@ sub subclass_burn_test {
         category_id    => $subcat->get_id, # Bury it!
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE,
+        file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a utility template";
     ok( $util_tmpl->save, "Save utility template" );
@@ -591,6 +597,8 @@ sub subclass_burn_test {
 
     # So now let's take a look at that bad boy.
     file_contents_is($file, $self->story_output, "Check the file contents");
+    # Clean up our mess.
+    unlink $file;
 
     # Now we'll try a preview, just for the heck of it.
     my $prev_root = $fs->cat_dir(TEMP_DIR, 'comp');
@@ -658,8 +666,8 @@ sub subclass_burn_test {
     file_contents_is($file, $self->story_page1, "Check page 1 contents");
     file_contents_is($p2_file, $self->story_page2, "Check page 2 contents");
 
-    
-
+    # Clean up our mess.
+    unlink $file, $p2_file, $prev_file;
 }
 
 sub restore_comp_root : Test(teardown) {

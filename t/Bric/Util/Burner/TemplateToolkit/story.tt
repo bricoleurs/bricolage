@@ -1,0 +1,14 @@
+<h1>[% story.get_title %]</h1>
+[% FOREACH e = element.get_elements('header', 'para', '_pull_quote_') %]
+    [% kn = e.get_key_name %]
+    [% IF kn == 'para' %]
+<p>[% e.get_data %]</p>
+    [% ELSIF kn == 'header' %]
+        [% # Test sdisplay_element(). %]
+<h2>[% burner.sdisplay_element(e) %]</h2>
+    [% ELSE %]
+        [% # Test display_element(). %]
+        [% burner.display_element(e) %]
+    [% END %]
+[% END %]
+[% burner.display_pages('_page_') %]
