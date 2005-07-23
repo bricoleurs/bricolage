@@ -276,7 +276,6 @@ sub burn_one {
 
     while(1) {
         use utf8;
-        warn "Processing $template\n";
 	$tt->process($template, ( ENCODE_OK
                                   ? (undef, undef, binmode => ':utf8')
                                   : ()
