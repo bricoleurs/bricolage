@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-The Template Toolkit burner works again. [David]
+The Template Toolkit and HTML::Template burners work again. [David]
 
 =back
 

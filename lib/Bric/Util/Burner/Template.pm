@@ -950,7 +950,7 @@ sub _add_resource {
 
     # Set the media type.
     $res->set_media_type(
-      Bric::Util::MediaType->get_name_by_ext($self->_get('_output_ext')));
+      Bric::Util::MediaType->get_name_by_ext($self->_get('output_ext')));
     # Add our story ID.
     $res->add_story_ids($ba->get_id);
     $res->save;
