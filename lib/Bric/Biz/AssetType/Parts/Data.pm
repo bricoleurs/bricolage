@@ -303,8 +303,8 @@ sub new {
 
 =item  $field = $field->copy($at_id);
 
-Makes a copy of itself and passes back a new object.  The only argument is an
-asset type ID.  This needs to be passed since a field of one name cannot be 
+Makes a copy of itself and passes back a new object. The only argument is an
+asset type ID. This needs to be passed since a field of one name cannot be
 inserted twice into the same asset type.
 
 B<Throws:>

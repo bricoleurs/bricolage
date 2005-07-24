@@ -81,19 +81,19 @@ my $cached_assets = sub {
                 # Do a numerical sort.
                 @$curr_objs = sort {
                     $sort_get->($a, @$sort_arg) <=> $sort_get->($b, @$sort_arg)
-                } map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+                } grep { chk_authz($_, READ, 1) } @$curr_objs;
             } elsif ($type eq 'date') {
-              @$curr_objs = sort {
-                  # Date sort. Use ISO format to ensure proper ordering.
-                  $sort_get->($a, ISO_8601_FORMAT) cmp
+                @$curr_objs = sort {
+                    # Date sort. Use ISO format to ensure proper ordering.
+                    $sort_get->($a, ISO_8601_FORMAT) cmp
                     $sort_get->($b, ISO_8601_FORMAT)
-                } map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+                } grep { chk_authz($_, READ, 1) } @$curr_objs;
             } else {
                 # Do a case-insensitive sort.
-              @$curr_objs = sort {
-                  lc $sort_get->($a, @$sort_arg) cmp
-                  lc $sort_get->($b, @$sort_arg)
-              } map { chk_authz($_, READ, 1) ? $_ : () } @$curr_objs;
+                @$curr_objs = sort {
+                    lc $sort_get->($a, @$sort_arg) cmp
+                    lc $sort_get->($b, @$sort_arg)
+                } grep { chk_authz($_, READ, 1) } @$curr_objs;
             }
 
         } else {

@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -25,9 +23,6 @@ A widget to allow the creation and modification of container tiles.
 =cut
 
 </%doc>
-
-%#--- Arguments ---#
-
 <%args>
 $tile => undef
 $title => undef
@@ -52,8 +47,8 @@ set_state_data($widget, 'tile', $tile);
 set_state_data($widget, 'start', $start_count);
 my $state = get_state_name($widget);
 
-# Always set $state to $action
-$state = $action;
+# Always set $state to $action unless $action is 'view';
+$state = $action unless $action eq 'view';
 
 # The old code here read:
 #
@@ -63,8 +58,17 @@ $state = $action;
 # This exception was causing the container_prof code to occasionally show a
 # view screen rather than an edit screen.  Maybe there was a good reason
 # for this exception and the bug is really in another place in container_prof?
-
 # Set the state name if it has not been set.
+#
+# At any rate, it was changed to:
+#
+# # Always set $state to $action unless $action is 'view';
+# $state = $action unless $action eq 'view';
+#
+# But that caused problems for super bulk editing media. So I think that the
+# above may be correct now. Time will tell.
+
+
 $state = set_state_name($widget, $state || 'edit');
 
 if ($state eq 'edit_bulk') {

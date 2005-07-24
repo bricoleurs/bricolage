@@ -10,6 +10,12 @@
 
 BRICOLAGE_ROOT="/usr/local/bricolage"
 BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
+USE_BRIC_QUEUED=0
+DIST_USERNAME=
+DIST_PASSWORD=
+DIST_INTERVAL=30
+BRIC_QUEUED=$BRICOLAGE_ROOT/bin/bric_queued
+DIST_PIDFILE=$BRICOLAGE_ROOT/log/bric_queued.pid
 
 # Then just copy it to your start scripts directory (usually /etc/init.d) and
 # add it to the startup process:
@@ -21,3 +27,20 @@ BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
 ##############################################################################
 
 $BRIC_APACHECTL "$@"
+
+if [ $USE_BRIC_QUEUED ]; then
+    case "$1" in
+        start)
+            "$BRIC_QUEUED" --username "$DIST_USERNAME" \
+                --password "$DIST_PASSWORD" \
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+            echo bric_queued: started
+            ;;
+        stop)
+            if [ -f "$DIST_PIDFILE" ]; then
+                kill `cat "$DIST_PIDFILE"`
+                echo bric_queued: stopped
+            fi
+            ;;
+    esac;
+fi

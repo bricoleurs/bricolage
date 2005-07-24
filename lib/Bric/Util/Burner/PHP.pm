@@ -212,29 +212,11 @@ sub burn_one {
     # Save an existing PHP request object and Bricolage objects.
     my (%bric_objs);
 
-#    my @wrappers;
-#
-#    {
-#	# search up category hierarchy for wrappers
-#	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-#
-#	do {
-#	    # if the file exists, return it
-#	    foreach my $troot (@$template_roots) {
-#		my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
-#		if(-e $path) {
-#		    push @wrappers, $path;
-#		    last;
-#		}
-#	    }
-#	} while(pop(@cats));
-#	@wrappers = reverse @wrappers;
-#    }
-
     my $php = PHP::Interpreter->new({
 	#questionable layout things, but we got the time to sort it out
 	OUTPUT       => \$outbuf,
 	INCLUDE_PATH => join(':', @$template_roots),
+# 
 #	WRAPPER      => \@wrappers,
 	BRIC    => {
 	    burner  => $self,
@@ -242,7 +224,6 @@ sub burn_one {
 	    element => $element,
 	},
     });
-
 
     my $template;
     {
@@ -510,7 +491,27 @@ B<Notes:> NONE.
 =cut
 
 sub display_element {
-    return 'display_element';
+    my $self = shift;
+    my $elem = shift or return;
+    my $buf = $self->_get('_buf');
+    my $data = '';
+    # Call another element if this is a container otherwise output the data.
+
+    my $php = $self->_get('_php');
+    if ($elem->is_container) {
+        # Set the elem global to the current element.
+        # Push this element on to the stack
+        $self->_push_element($elem);
+        my $template = $self->_load_template_element($elem);
+        $php->eval(q/function setBric($key, $var) { global $BRIC; $BRIC[$key] = $var; }/);
+        $php->setBric('element', $elem);
+        $php->include($template);
+        $self->_pop_element();
+        # Set the elem global to the previous element
+    } else {
+        $data .= $elem->get_data();
+    }
+    return 1;
 }
 
 ##############################################################################

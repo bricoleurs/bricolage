@@ -217,55 +217,54 @@ sub burn_one {
     my @wrappers;
 
     {
-	# search up category hierarchy for wrappers
-	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+        # search up category hierarchy for wrappers
+        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
 
-	do {
-	    # if the file exists, return it
-	    foreach my $troot (@$template_roots) {
-		my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
-		if(-e $path) {
-		    push @wrappers, $path;
-		    last;
-		}
-	    }
-	} while(pop(@cats));
-	@wrappers = reverse @wrappers;
+        do {
+            # if the file exists, return it
+            foreach my $troot (@$template_roots) {
+                my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
+                if(-e $path) {
+                    push @wrappers, $path;
+                    last;
+                }
+            }
+        } while(pop(@cats));
+        @wrappers = reverse @wrappers;
     }
 
     my $tt = Template->new({
-	#questionable layout things, but we got the time to sort it out
-	PRE_CHOMP  => 1,
-	POST_CHOMP => 1,
-	TRIM       => 1,
-
-	# now for the real stuff
-	OUTPUT       => \$outbuf,
-	INCLUDE_PATH => $template_roots,
-	WRAPPER      => \@wrappers,
-	EVAL_PERL    => 1,
-	ABSOLUTE     => 1,
-	VARIABLES    => {
-	    burner  => $self,
-	    story   => $story,
-	    element => $element,
-	},
+        #questionable layout things, but we got the time to sort it out
+        PRE_CHOMP  => 1,
+        POST_CHOMP => 1,
+        TRIM       => 1,
+        # now for the real stuff
+        OUTPUT       => \$outbuf,
+        INCLUDE_PATH => $template_roots,
+        WRAPPER      => \@wrappers,
+        EVAL_PERL    => 1,
+        ABSOLUTE     => 1,
+        VARIABLES    => {
+            burner  => $self,
+            story   => $story,
+            element => $element,
+        },
     });
 
 
     my $template;
     {
-	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-	my $tmpl_name = $element->get_key_name . '.tt';
+        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+        my $tmpl_name = $element->get_key_name . '.tt';
         do {
-	    foreach my $troot (@$template_roots) {
-		my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-		if(-e $path) {
-		    $template = $path;
-		    goto LABEL;
-		}
-	    }
-	} while(pop(@cats));
+            foreach my $troot (@$template_roots) {
+                my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
+                if(-e $path) {
+                    $template = $path;
+                    goto LABEL;
+                }
+            }
+        } while(pop(@cats));
       LABEL:
     }
 
@@ -276,38 +275,37 @@ sub burn_one {
 
     while(1) {
         use utf8;
-        warn "Processing $template\n";
-	$tt->process($template, ( ENCODE_OK
-                                  ? (undef, undef, binmode => ':utf8')
-                                  : ()
-                                 ))
-          or throw_burn_error
-          error   => "Error executing '$template'",
-          payload => $tt->error,
-          mode    => $self->get_mode,
-          oc      => $self->get_oc->get_name,
-          cat     => $self->get_cat->get_uri,
-          elem    => $element->get_name;
+        $tt->process($template, (
+            ENCODE_OK
+              ? (undef, undef, binmode => ':utf8')
+              : ()
+          )) or throw_burn_error
+            error   => "Error executing '$template'",
+            payload => $tt->error,
+            mode    => $self->get_mode,
+            oc      => $self->get_oc->get_name,
+            cat     => $self->get_cat->get_uri,
+            elem    => $element->get_name;
 
-	my $page = $self->_get('page') + 1;
+        my $page = $self->_get('page') + 1;
 
-	if($outbuf !~ /^\s*$/) {
-	    my $file = $self->page_filepath($page);
-	    my $uri  = $self->page_uri($page);
+        if ($outbuf !~ /^\s*$/) {
+            my $file = $self->page_filepath($page);
+            my $uri  = $self->page_uri($page);
 
-	    # Save the page we've created so far.
-	    open(OUT, ">$file")
-              or throw_gen error => "Unable to open '$file' for writing",
+            # Save the page we've created so far.
+            open(OUT, ">$file")
+              or throw_gen error   => "Unable to open '$file' for writing",
                            payload => $!;
             binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
-	    print OUT $outbuf;
-	    close(OUT);
-	    $outbuf = '';
-	    # Add a resource to the job object.
-	    $self->_add_resource($file, $uri);
-	}
-	$self->_set([qw(page)],[$page]);
-	last unless $self->_get('more_pages');
+            print OUT $outbuf;
+            close(OUT);
+            $outbuf = '';
+            # Add a resource to the job object.
+            $self->_add_resource($file, $uri);
+        }
+        $self->_set([qw(page)],[$page]);
+        last unless $self->_get('more_pages');
     }
     $self->_pop_element;
 
@@ -599,7 +597,7 @@ B<Notes:> NONE.
 sub _add_resource {
     my $self = shift;
     my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story ext));
+    my ($story, $ext) = $self->_get(qw(story output_ext));
 
     # Create a resource for the distribution stuff.
     my $res = Bric::Dist::Resource->lookup({ path => $file }) ||

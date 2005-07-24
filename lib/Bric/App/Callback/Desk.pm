@@ -251,6 +251,19 @@ sub publish : Callback {
                         push @mids, $relid if $pub_ids->{$id};
                     }
                 }
+
+                # Publish all aliases, too.
+                for my $aid ($doc->list_ids({
+                    alias_id          => $doc->get_id,
+                    publish_status    => 1,
+                    published_version => 1,
+                })) {
+                    if ($key eq 'story') {
+                        push @sids, $aid;
+                    } else {
+                        push @mids, $aid;
+                    }
+                }
             }
         }
     }

@@ -1,0 +1,5 @@
+<div class="page">
+[% FOREACH e = element.get_elements() %]
+<p>[% e.get_data %]</p>
+[% END %]
+</div>

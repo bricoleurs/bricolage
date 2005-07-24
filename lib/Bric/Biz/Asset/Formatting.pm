@@ -272,6 +272,7 @@ use constant PARAM_WHERE_MAP => {
     description           => 'LOWER(f.description) LIKE LOWER(?)',
     version               => 'i.version = ?',
     published_version     => 'f.published_version = i.version AND i.checked_out = 0',
+    deployed_version      => 'f.published_version = i.version AND i.checked_out = 0',
     user__id              => 'i.usr__id = ?',
     user_id               => 'i.usr__id = ?',
     _checked_in_or_out    => 'i.checked_out = '
@@ -721,11 +722,15 @@ for a list of possible values.
 Returns a list of templates in the category represented by a category ID. May
 use C<ANY> for a list of possible values.
 
-=item published_version
+=item deployed_version
 
 Returns the versions of the templates as they were last deployed. The
 C<checked_out> parameter will be ignored if this parameter is passed a true
 value.
+
+=item published_version
+
+An alias for C<deployed_version>.
 
 =item category_uri
 
@@ -1548,18 +1553,16 @@ NONE
 
 sub set_category_id {
     my ($self, $id) = @_;
-    my @grp_ids;
-    if ($id != $self->get_category_id) {
-        my $cat = Bric::Biz::Category->lookup({ id => $id });
-        $self->_set([qw(category_id _category_obj)] => [$id, $cat]);
-        $self->_set(['file_name'], [$self->_build_file_name]);
-        foreach ($self->get_grp_ids()) {
-            next if $_ == $self->get_category->get_asset_grp_id();
-            push @grp_ids, $_;
-        }
-        push @grp_ids, $cat->get_asset_grp_id;
-    }
-    return $self;
+    return $self unless $id != $self->get_category_id;
+    my $old_agrp_id = $self->get_category->get_asset_grp_id;
+    my $cat = Bric::Biz::Category->lookup({ id => $id });
+    my @grp_ids = (
+        grep({ $_ != $old_agrp_id} $self->get_grp_ids),
+        $cat->get_asset_grp_id
+    );
+    $self->_set([qw(category_id _category_obj grp_ids)] =>
+                [$id, $cat, \@grp_ids]);
+    $self->_set(['file_name'] => [ $self->_build_file_name ]);
 }
 
 ################################################################################
@@ -2336,23 +2339,22 @@ sub _build_file_name {
     my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),
                                             $file);
     # Make sure that the filename isn't already in use for this output channel.
-    my @existing;
-    push @existing, $self->list_ids(
-        {
-            file_name => $fn,
-            checked_out => 'all',
+    my @existing = (
+        $self->list_ids({
+            file_name          => $fn,
+            checked_out        => 'all',
             output_channel__id => $oc_id
-        });
-    push @existing, $self->list_ids(
-        {
-            file_name => $fn,
-            checked_out => 'all',
+        }),
+        $self->list_ids({
+            file_name          => $fn,
+            checked_out        => 'all',
             output_channel__id => $oc_id,
-            active => 0,
-        });
+            active             => 0,
+        })
+    );
     throw_dp(error => "The template '$fn' already exists in output " .
              "channel '" . $self->get_output_channel_name . "'")
-      if @existing != 0;
+      if @existing;
 
     # If we get here, just return the file name.
     return $fn;

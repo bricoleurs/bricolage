@@ -396,8 +396,9 @@ sub lookup {
 
 =item my (@events || $events_aref) = Bric::Util::Event->list($params)
 
-Returns a list of Bric::Util::Event objects based on the search parameters
-passed via an anonymous hash. The supported lookup keys are:
+Returns a list of Bric::Util::Event objects in reverse chronological order
+based on the search parameters passed via an anonymous hash. The supported
+lookup keys are:
 
 =over 4
 
@@ -483,8 +484,7 @@ Unable to fetch row from statement handle.
 
 =back
 
-B<Side Effects:> Populates each Bric::Util::Event object with data from the
-database before returning them all.
+B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
@@ -1399,7 +1399,7 @@ $get_em = sub {
     }
 
     my ($qry_cols, $order) = $ids ? (\'DISTINCT e.id', 'e.id') :
-      (\$SEL_COLS, 'e.timestamp, e.id');
+      (\$SEL_COLS, 'e.timestamp DESC, e.id DESC');
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols

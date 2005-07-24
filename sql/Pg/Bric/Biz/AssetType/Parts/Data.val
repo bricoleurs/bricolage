@@ -613,8 +613,8 @@ VALUES ('140', '14', 'type', 'textarea', '1');
 -- Add a 'Height' field to Photograph.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
-VALUES ('15', '4', 'height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short');
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
+VALUES ('15', '4', 'height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('15', 'id_15', 'html_info', 'short', '1');
@@ -641,8 +641,8 @@ VALUES ('145', '15', 'type', 'text', '1');
 -- Add a 'Width' field to Photograph.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
-VALUES ('16', '4', 'width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short');
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
+VALUES ('16', '4', 'width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('16', 'id_16', 'html_info', 'short', '1');
@@ -668,9 +668,9 @@ VALUES ('150', '16', 'type', 'text', '1');
 -- Add a 'Resolution' field to Photograph.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('17', '4', 'resolution', 'Autopopulated Resolution field.', '3', '1', '0', '1',
-        '0', '0', 'short');
+        '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('17', 'id_17', 'html_info', 'short', '1');
@@ -696,9 +696,9 @@ VALUES ('155', '17', 'type', 'text', '1');
 -- Add a 'Compression' field to Photograph.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('18', '4', 'compression', 'Autopopulated Compression field.', '4', '1', '0',
-        '1', '0', '0', 'short');
+        '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('18', 'id_18', 'html_info', 'short', '1');
@@ -724,9 +724,9 @@ VALUES ('160', '18', 'type', 'text', '1');
 -- Add a 'Color Type' field to Photograph.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('19', '4', 'color_type', 'Autopopulated Color Type field.', '5', '1', '0', '1',
-        '0', '0', 'short');
+        '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('19', 'id_19', 'html_info', 'short', '1');
@@ -753,8 +753,8 @@ VALUES ('165', '19', 'type', 'text', '1');
 -- Add a 'Height' field to Illustration.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
-VALUES ('20', '5', 'height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short');
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
+VALUES ('20', '5', 'height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('20', 'id_20', 'html_info', 'short', '1');
@@ -781,8 +781,8 @@ VALUES ('170', '20', 'type', 'text', '1');
 -- Add a 'Width' field to Illustration.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
-VALUES ('21', '5', 'width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short');
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
+VALUES ('21', '5', 'width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('21', 'id_21', 'html_info', 'short', '1');
@@ -808,9 +808,9 @@ VALUES ('175', '21', 'type', 'text', '1');
 -- Add a 'Resolution' field to Illustration.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('22', '5', 'resolution', 'Autopopulated Resolution field.', '3', '1', '0', '1',
-        '0', '0', 'short');
+        '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('22', 'id_22', 'html_info', 'short', '1');
@@ -836,9 +836,9 @@ VALUES ('180', '22', 'type', 'text', '1');
 -- Add a 'Compression' field to Illustration.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('23', '5', 'compression', 'Autopopulated Compression field.', '4', '1', '0',
-        '1', '0', '0', 'short');
+        '1', '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('23', 'id_23', 'html_info', 'short', '1');
@@ -864,9 +864,9 @@ VALUES ('185', '23', 'type', 'text', '1');
 -- Add a 'Color Type' field to Illustration.
 
 INSERT INTO at_data (id, element__id, key_name, description, place, required,
-                     quantifier, active, publishable, max_length, sql_type)
+                     quantifier, active, publishable, max_length, sql_type, autopopulated)
 VALUES ('24', '5', 'color_type', 'Autopopulated Color Type field.', '5', '1', '0', '1',
-        '0', '0', 'short');
+        '0', '0', 'short', '1');
 
 INSERT INTO attr_at_data (id, subsys, name, sql_type, active)
 VALUES ('24', 'id_24', 'html_info', 'short', '1');

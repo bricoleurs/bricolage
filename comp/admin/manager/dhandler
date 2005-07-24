@@ -379,7 +379,7 @@ my $def = {
 			       srch_field => 'name',
 			       sort_by => 'name',
 			       behavior => 'narrow',
-			       constrain => {permanent => 0, all => 1},
+			       constrain => {permanent => 0, secret => 1},
 			       select => $sel_sub },
 	   alert_type     => { list_fields => [qw(name owner_id active)],
 			       srch_field => 'name',

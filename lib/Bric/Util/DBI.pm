@@ -913,7 +913,9 @@ sub where_clause {
                 $sql = $any->[1];
             }
             $where .= ' AND (' . join(' OR ', ($sql) x @$v) . ')';
-            push @args, (@$v) x  $sql =~ s/\?//g;
+            my $count = $sql =~ s/\?//g;
+            push @args, ($_) x $count for @$v;
+
         } else {
             $where .= " AND $sql";
             push @args, ($v) x $sql =~ s/\?//g;

@@ -1,4 +1,4 @@
-=head1 NAME
+head1 NAME
 
 Bric::Changes - Bricolage Changes
 
@@ -194,6 +194,11 @@ directive allows media files uploaded to a media document to be distributed to
 all relevant preview servers as soon as the media document is saved. Sponsored
 by Alinghi. [David]
 
+=item *
+
+Added a PHP burner. Implemented by George Schlossnagle of Omni TI consulting.
+Sponsored by PT.com. [George Schlossnagle]
+
 =back
 
 =head2 Improvements
@@ -267,6 +272,18 @@ When using the command line tools, you can now opt to be prompted for your
 password rather than entering it on the command line, which would store your
 plaintext password in the shell history. [Marshall]
 
+=item *
+
+Added tests for the burners. This was important for thoroughly testing the new
+PHP burner, but it will keep the other burners functioning well from here on
+in, as well. [David]
+
+=item *
+
+Moved the C<burn_again> attribute from Bric::Util::Burner::Mason to
+Bric::Util::Burner, since it could be useful to other burners, and since
+Bric::Util::Burner had knowledge of it, anyway. [David]
+
 =back
 
 ##############################################################################
@@ -281,6 +298,103 @@ plaintext password in the shell history. [Marshall]
 
 Added JavaScript code to validate that the username in the user profile does
 not have leading or trailing spaces. [David]
+
+=item *
+
+When started up by the super user, F<bric_queued> now runs as the same user as
+the Bricolage Apache server. This allows it to run as a user that isn't
+otherwise available as a login on the system (such as the typical "nobody" or
+"www" user). [David]
+
+=item *
+
+Added support for starting F<bric_queued> in the linux startup script in
+F<contrib/start_scripts/>. [David]
+
+=item *
+
+The C<get_related_story()> and get_related_media() methods of the element
+class now return C<undef> in a list context when there is no related asset.
+[David]
+
+=item *
+
+Events in the event log are now returned (and displayed) in reverse
+chronlogical order. [David]
+
+=item *
+
+The SOAP server now uses a user's template sandbox when executing previews
+(such as with C<bric_soap --to-preview workflow publish>). Reported by
+Marshall. [David]
+
+=item *
+
+A job no longer throws an exception when it can't get a lock on itself for
+execution. This is because the inability to get a lock may well be due to a
+race condition with another process. There's no need to throw an exception
+when it can't get a lock because another process has a lock. So it generates a
+warning now, instead. Reported by Bill Cappell. [David]
+
+=item *
+
+Bric::Biz::Workflow now caches calls to C<allowed_desks()>. This will allow
+desks to render *much* faster, since most assets on a desk will list the same
+desks in the "Move to" select lists. [David]
+
+=item *
+
+When the C<PUBLISH_RELATED_ASSETS> F<bricolage.conf> directive is enabled,
+aliases are now also republished. Only aliases that have previously been
+publiished will be republished, and only the last published version will be
+republished, rather than any versions created since the last publish.
+Suggested by Serge Sozonoff. [David]
+
+=item *
+
+Added the C<secret> paramter to the C<list()>, C<list_ids()>, and C<href()>
+method of Bric::Util::Grp. [David]
+
+=item *
+
+The C<set_page_extensions()> method of the burner class now provides a list of
+duplicate extensions in the exception thrown when duplicate extensions are
+passed to it. [Paul Orrock]
+
+=item *
+
+A story or media document published with an expire date earlier than the
+scheduled publish time no longer bothers with the publish but just expires the
+story or media document. [David]
+
+=item *
+
+When two events in a list have the same timestamp, they are no longer listed
+in order by ID relative to each other, but relative to ID I<descending>, to
+ensure that the one logged first will be listed after the one logged next.
+[David]
+
+=item *
+
+Media documents without an associated media file will no longer be displayed
+in the search results when attemting to relate a media document to an element.
+Reported by Adam Rinehart. [David]
+
+=item *
+
+When a template is moved to a new category, its ACL is now properly updated in
+the cached copy in the user's session, as well as in the database. [David]
+
+=item *
+
+Changed the C<published_version> parameter to the list() method
+Bric::Biz::Asset::Formatting (the template class) to C<deployed_version>, but
+kept C<published_version> as an alias.
+
+=item *
+
+Optimized C<path> and C<parent> searches in the Category C<list_ids> SOAP
+method. [David]
 
 =back
 
@@ -298,6 +412,169 @@ Gershman. [David]
 
 Form validation and group management now properly work in the user profile.
 [David]
+
+=item *
+
+Fixed the "story__category" table to use the correct sequence for the id
+column's default value (although the default is never used, this is a good
+precaution). Reported by Paul Orrock. [David]
+
+=item *
+
+Stories and media documents now better pay attention to the letter case
+specification of output channels when returning URIs. Thanks to JosE<eacute>
+Castro for the spot. [Marshall]
+
+=item *
+
+Stories now properly set the letter case of file names in URIs when
+C<STORY_URI_WITH_FILENAME> is enabled. Reported by JosE<eacute> Castro.
+[David]
+
+=item *
+
+The F<bricolage.conf> C<PERL_LOADER> directive now works properly with
+F<bric_queued>. [David]
+
+=item *
+
+The SFTP mover now works with C<bric_queued>. [David]
+
+=item *
+
+Fixed misspelled database index name. Spotted by Scott. [David]
+
+=item *
+
+Error messages are now properly localized in C<bric_queued>. [David]
+
+=item *
+
+Stories updated via SOAP to change categories will no longer leave the old
+categories associated with the story. [David]
+
+=item *
+
+Fixed bug 975 where media uploads were failing with an SQL error due to a
+typo. Patch from Rod Taylor.
+
+=item *
+
+"All Types" now properly shows up at the top of the Types select list in the
+Advanced Search. [Marshall]
+
+=item *
+
+Creating media with related stories via the SOAP interface will no longer
+cause the bizarre "Could not find httpd.xml" error. Reported by Curtis
+Poe. [David]
+
+=item *
+
+Removed possible circular processing of story and media documents when
+creating new story or media documents via SOAP. [David]
+
+=item *
+
+Previewing and publishing multipage stories created through F<bric_soap> now
+properly burn all of the pages. [Scott]
+
+=item *
+
+Cloned stories now properly set the C<published_version> attribute to C<undef>
+rather than the value of the original story, thus preventing the clone from
+having a published version number greater than its current version number.
+Reported by Nate Perry-Thistle and Joshua Edelstein. [David and Nate
+Perry-Thistle]
+
+=item *
+
+The F<bric_media_upload> contrib script now uses the site argument (if there
+is one) to search for categories. This will prevent it from finding a category
+in one site but not the target site of the upload. [David]
+
+=item *
+
+Fixed two bugs with C<bric_template_diff>. C<File::Spec::Functions> now
+properly exports C<catfile()> and C<--from--site> and C<--to-site> now
+properly search on the site rather than the output channel. [Ovid]
+
+=item *
+
+When a catgory is added to a story that creates a URI conflict, the new
+category is does not remain associated with the story in the story profile
+after the conflict error has been thrown. Reported by Paul Orrock. [David]
+
+=item *
+
+The C<alias_id> parameter to the C<list()> method of the story and media
+classes has been documented. [David]
+
+=item *
+
+Usernames are now SQL-escaped before being looked up when a user attempts to
+log in. The prevents errors when, for example, there are two users named
+"food" and "foo_", and "foo_" attempts to login and gets a failure. [David]
+
+=item *
+
+All calls to C<lookup()> methods by the SOAP that pass string values to look
+up (such as category URIs and site, workflow, and desk names) are SQL escaped
+so as to prevent conflicts similar to those noted above for usernames.
+Reported by Scott Lanning. [David]
+
+=item *
+
+Contributor groups created in the contributor profile are no longer missing
+from the contributor manager search interface. Reported by Rachel Murray and
+Scott. [David]
+
+=item *
+
+C<ANY()> now works properly for the output_channel_id parameter to the list()
+method of the story and media classes. Reported by Serge Sozonoff. [David]
+
+=item *
+
+The F<favicon.ico> works again. [David]
+
+=item *
+
+Stories are now properly expired when the C<BRIC_QUEUED> F<bricolage.conf>
+diretive is enabled. Reported by Scott. [David]
+
+=item *
+
+When a template is checked out of the library and then the checkout is
+cancelled, it is no longer left on the desk it was moed into upon the
+checkout, but properly reshelved. Reported by Marshall. [David]
+
+=item *
+
+Media created with the default "Image" and "Photograph" media type elements
+will now properly supply a "Lock val" check box for autopopulated fields.
+Reported by Marshall. [David]
+
+=item *
+
+Super Bulk Edit now works for media as well as stories. Reported by Scott.
+[David]
+
+=item *
+
+The Description attribute of stories, media, and templates is now properly
+limited to 1024 characters in the UI. Reported by Scott. [David]
+
+=item *
+
+When a template is moved to a new category, the old version of the template is
+undeployed when the new version is deployed to the new category. The versions
+in the sandbox are properly synced, as well.
+
+=item *
+
+Eliminated compile-time warnings from
+F<contrib/bric_media_upload/bric_media_upload>. [David]
 
 =back
 
@@ -447,6 +724,11 @@ the media type of the file. [David]
 The "multi" install destination is now the default, rather than the "single"
 install destination. The two styles ("multi" and "single") are now also better
 described during installation. [David]
+
+=item *
+
+When the installer prompts for database passwords, it no longer echoes them to
+the terminal. Suggested by Marshall. [David]
 
 =back
 

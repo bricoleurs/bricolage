@@ -2210,9 +2210,9 @@ sub _init {
         $self->_set(['cover_date'], [$alias_target->_get('cover_date')]);
 
         $self->add_output_channels(
-           map { ($_->is_enabled &&
-                  $_->get_site_id == $init->{site_id}) ? $_ : () }
-                                   $at->get_output_channels);
+            grep { $_->is_enabled && $_->get_site_id == $init->{site_id} }
+              $at->get_output_channels
+        );
 
         $self->set_primary_oc_id($at->get_primary_oc_id($init->{site_id}));
 
@@ -2390,9 +2390,9 @@ sub _construct_uri {
 
     # Return the URI with the case adjusted as necessary.
     my $uri_case = $oc_obj->get_uri_case;
-    if( $uri_case eq LOWERCASE ) {
+    if( $uri_case == LOWERCASE ) {
         return lc Bric::Util::Trans::FS->cat_uri(@path);
-    } elsif( $uri_case eq UPPERCASE ) {
+    } elsif( $uri_case == UPPERCASE ) {
         return uc Bric::Util::Trans::FS->cat_uri(@path);
     } else {
         return Bric::Util::Trans::FS->cat_uri(@path);

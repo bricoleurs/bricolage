@@ -11,6 +11,7 @@
    sortBy   => 'name',
    select   => undef,
    profile  => $related_profile,
+   constrain => { uri => '/%' }, # Must have a file associated.
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => $excl_sub,
    fields   => [(USE_THUMBNAILS ? 'thumb' : ()), qw(id name uri cover_date)],
@@ -31,7 +32,6 @@ my $tile = get_state_data($widget, 'tile');
 my $relate_id = $tile->get_related_media_id;
 
 my $excl_sub;
-warn $tile->get_object_type, $/;
 if ($tile->get_object_type eq 'media') {
     my $asset_id = get_state_data('media_prof', 'media')->get_id;
     $excl_sub = sub {
