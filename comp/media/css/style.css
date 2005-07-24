@@ -151,9 +151,19 @@ div.debug dt:after {
     line-height: 11px;
 }
 
+.jump { float: right; padding-top: 3px; }
+.desk-top { background: #666633; color: white; padding: 3px 5px; margin: 0 200px 10px 0; }
+.desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; margin: 0; }
+.desk-top .sort { text-align: right; font-size: 1em; }
+.desk-top .sort select { font-size: 1em; }
+
 .desk .buttonbar { text-align: left; }
 
 .desk .item { margin-bottom: 10px; }
+
+.desk .item .sorted {
+	background: #99CC99 !important;
+}
 
 .desk .item .head { 
     position: relative;
@@ -170,17 +180,21 @@ div.debug dt:after {
 .desk .item .head .version { 
     float: left; 
     width: 9em; 
+    background: #cccc99;
     border-right: solid white 1px;
     text-align: right;
     padding: 0 .5em;
 }
 .desk .item .head .title {
-    float: left;
-    padding: 0 .5em;
+    /* float: left; */
+    padding: 0 .5em 0 9.5em;
     font-size: 1.1em;
 }
 .desk .item .head .pubstatus {
-    float: right;
+    /* float: right; */
+    position: absolute;
+    top: 0;
+    right: 0;
     text-align: center;
     padding: 0 .5em;
     color: white; 
@@ -245,7 +259,12 @@ div.debug dt:after {
     background-repeat: no-repeat;
     padding-left: 18px;
 }
-
+.desk .item .actions button.clone {
+    background-image: url("/media/images/copy.png");
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 18px;
+}
 
 .desk_item {
     padding-bottom: 8px;
@@ -568,6 +587,41 @@ dl.viewmeta dd { margin-left: 140px; }
 dl.viewmeta dd a { font-size: inherit; }
 
 div.actions { background: #999966; padding: 2px 4px; }
+
+.buttonBar .delete {
+	font-weight: bold;
+	text-align: center;
+	color: #993300;
+	border-bottom: solid #CCCC99 1px;
+}
+
+.buttonBar .checkin {
+	padding: 4px 0;
+	float: left;
+}
+
+.buttonBar .revert {
+	text-align: right;
+	float: right;
+	padding: 4px 0;
+}
+
+.buttonBar .buttons {
+	clear: both;
+	border-top: solid #CCCC99 1px;
+}
+
+.buttonBar .save { 
+	clear: both; float: left; 
+	width: 40%; 
+	text-align: right;
+	padding: 5px 0 10px 0;
+}
+.buttonBar .cancel { 
+	float: right;
+	width: 40%;
+	padding: 5px 0 10px 0;
+}
 
 /******************************************************
  * HACKS                                              *

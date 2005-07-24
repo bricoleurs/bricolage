@@ -31,13 +31,6 @@ $obj
 </%args>
 
 <%init>;
-# browser spacing stuff
-my $agent = detect_agent();
-
-my $ieSpacer = ($agent->user_agent !~ /(linux|freebsd|sunos)/) ?
-  qq{<tr><td colspan="3"><img src="/media/images/spacer.gif" } .
-  qq{width="5" height="5" /></td></tr>}
-  : '';
 
 my ($type, $pkg);
 if ($widget eq 'story_prof') {
@@ -91,77 +84,37 @@ if ($version) {
 
 </%init>
 
+<div class="buttonBar">
+<div class="delete">
+    <input type="checkbox" name="<% $widget %>|delete" id="<% $widget %>delete" value="Delete" /> <label for="<% $widget %>delete"><% $lang->maketext('Delete this Profile') %></label>
+</div>
+<div class="checkin">
+<& "/widgets/profile/button.mc",
+	disp      => 'Save and Check In',
+	widget    => $widget,
+	cb        => 'save_and_checkin_cb',
+	button    => 'check_in_dgreen',
+	useTable  => 0
+&> <% $deskText %>
+</div>
 
-<table width="580" border="0" cellpadding="0" cellspacing="0">
-<tr>
-  <td align="center" colspan="3" valign="middle"><input type="checkbox" name="<% $widget %>|delete" value="Delete"> <span class="burgandyLabel"><% $lang->maketext('Delete this Profile') %></span></td>
-</tr>
-<tr>
-  <td class="lightHeader" colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
-</tr>
-<% $ieSpacer %>
-<tr>
-  <td width="33%">
-  <table border="0" cellpadding="0" cellspacing="3">
-  <tr>
-    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/check_in_dgreen.gif" border="0" name="<% $widget %>|save_and_checkin_cb" value="Check In"></td>
-    <td valign="middle"><% $deskText %></td>
-  </tr>
-  </table>
-  </td>
-  <td width="34%" align="center">
-<%perl>;
-my $wf;
-my $work_id = get_state_data($widget, 'work_id');
-
-my $asset = get_state_data($widget, $type);
-if ($work_id) {
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-} else {
-
-   $work_id = $asset->get_workflow_id();
-   $wf = Bric::Biz::Workflow->lookup( { id => $work_id });
-}
-</%perl>
-<table border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-  </tr>
-  </table>
-  </td>
-  <td align="right" widht="33%">
-  <table border="0" cellpadding="0" cellspacing="0">
-  <tr>
 % if ($version) {
-    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert"></td>
-    <td valign="middle">&nbsp;<% $lang->maketext('to') %> <% $versionText %></td>
-    <td valign="middle"><input type="image" src="/media/images/<% $lang_key %>/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view"></td>
-% } else {
-  <td>&nbsp;</td>
+<div class="revert">
+	<input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert">
+	<% $lang->maketext('to') %> <% $versionText %>
+	<input type="image" src="/media/images/<% $lang_key %>/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view">
+</div>
 % }
-  </tr>
-  </table> 
-  </td>
-</tr>
-<tr>
-</tr>
-<% $ieSpacer %> 
-<tr>
-  <td class=lightHeader colspan="3"><img src="/media/images/spacer.gif" width="580" height="1"></td>
-</tr>
-<% $ieSpacer %> 
-</table>
 
-<table width="580" cellpadding="0" cellspacing="0">
-<tr>
-  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
-  <td><input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save"></td>
-  <td><input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb"></td>
-  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
-  <td><input type="image" src="/media/images/<% $lang_key %>/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk"></td>
-  <td><input type="image" src="/media/images/<% $lang_key %>/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout"></td>
-  <td width="60"><img src="/media/images/spacer.gif" width="60" height="1"></td>
-</tr>
-</table>
+<div class="buttons">
+<div class="save">
+	<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save">
+	<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb">
+</div>
+<div class="cancel">
+	<input type="image" src="/media/images/<% $lang_key %>/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk">
+	<input type="image" src="/media/images/<% $lang_key %>/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout">
+</div>
+</div>
+
+</div>

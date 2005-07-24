@@ -4,7 +4,7 @@
     <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
 % }
     <div class="version">v.<% $obj->get_version %></div>
-    <div class="title"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
+    <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
     <div class="pubstatus need" title="Needs to be Republished">P</div>
 <!--    <% $m->comp('publish_status_span.mc',
                 sorted => $highlight eq 'name' ? 'sorted' : '',
@@ -13,19 +13,19 @@
   <div class="body">
     <dl>
 % if ($class ne 'formatting') {
-      <dt name="uri" class="<% &$rowtype %>"><% $lang->maketext('Primary URI') %>:</dt>
-      <dd name="uri" class="<% &$rowtype %>"><% $uri || '&nbsp;' %></dd>
+      <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
+      <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $uri || '&nbsp;' %></dd>
 % }
-      <dt name="date" class="<% &$rowtype %>"><% $lang->maketext($date_label) %>:</dt>
-      <dd name="date" class="<% &$rowtype %>"><% $date || '&nbsp;' %></dd>
-      <dt name="type" class="<% &$rowtype %>"><% $lang->maketext($type_label) %>:</dt>
-      <dd name="type" class="<% &$rowtype %>"><% $type || '&nbsp;' %></dd>
-      <dt name="id" class="<% &$rowtype %>"><% $lang->maketext($disp) %> ID:</dt>
-      <dd name="id" class="<% &$rowtype %>"><% $id || '&nbsp;' %></dd>
-      <dt name="site" class="<% &$rowtype %>"><% $lang->maketext('Site') %>:</dt>
-      <dd name="site" class="<% &$rowtype %>"><% $site %></dd>
-      <dt name="priority" class="<% &$rowtype %>"><% $lang->maketext('Priority') %>:</dt>
-      <dd name="priority" class="<% &$rowtype %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
+      <dt name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
+      <dd name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+      <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
+      <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+      <dt name="id" class="<% &$rowtype %><% ($highlight eq 'id' ? ' sorted' : '') %>"><% $lang->maketext($disp) %> ID:</dt>
+      <dd name="id" class="<% &$rowtype %><% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id || '&nbsp;' %></dd>
+      <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
+      <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
+      <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
+      <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
     
     <div class="actions">
@@ -54,7 +54,7 @@
         <input type="radio" name="actions_<% $id %>" id="actions_delete_<% $id %>" title="<% $lang->maketext('Queue this asset for deletion') %>" /><button class="delete" name="<% $callback_widget %>|delete_cb" value="<% $aid %>" title="<% $lang->maketext('Delete this asset') %>">Delete</button></li>
 % # XXX: Why can't you clone from a workflow? -- mroch
 % if ($desk_type ne 'workflow' && $class eq 'story') {
-      <li><input type="radio" name="actions_<% $id %>" id="actions_clone_<% $id %>" /> <a href="/workflow/profile/workspace/clone/<% $aid %>" title="Clone"><img src="/media/images/copy.png" alt="Clone" /> Clone</a></li>
+      <li><input type="radio" name="actions_<% $id %>" id="actions_clone_<% $id %>" title="<% $lang->maketext('Queue this asset for cloning') %>" /><button class="clone" name="<% $callback_widget %>|clone_cb" value="<% $aid %>" title="<% $lang->maketext('Clone this asset') %>">Clone</button></li>
 % }
 % if ($can_publish) {
       <li><input type="radio" name="actions_<% $id %>" id="actions_publish_<% $id %>" /> <img src="/media/images/republish.png" alt="Publish" title="Publish" /> Publish</li>
