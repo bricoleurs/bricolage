@@ -302,7 +302,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MEDIA_UPLOAD_LIMIT
                                      AUTO_PREVIEW_MEDIA
                                      MEDIA_UNIQUE_FILENAME
-                                     MEDIA_FILENAME_PREFIX)],
+                                     MEDIA_FILENAME_PREFIX
+                                     AUTO_PREVIEW_MEDIA
+                                     MEDIA_FILE_ROOT)],
                     thumb     => [qw(USE_THUMBNAILS
                                      THUMBNAIL_SIZE)],
                     ftp       => [qw(ENABLE_FTP_SERVER
@@ -403,7 +405,7 @@ require Bric; our $VERSION = Bric->VERSION;
                                          "['createlink','separator']," .
                                          "['killword','removeformat'," .
                                          " 'separator','htmlmode']]";
-              
+
             # Set default toolbar for HtmlArea
             $config->{HTMLAREA_TOOLBAR} ||= "['bold','italic','underline'," .
               "'strikethrough','separator','subscript','superscript'," .
@@ -618,9 +620,9 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ADMIN_GRP_ID            => 6;
 
     # the base directory that will store media assets
-    use constant MEDIA_URI_ROOT => '/data/media';
-    use constant MEDIA_FILE_ROOT => catdir(MASON_COMP_ROOT->[0][1],
-                                           'data', 'media');
+    use constant MEDIA_URI_ROOT          => '/data/media';
+    use constant MEDIA_FILE_ROOT         => catdir(MASON_COMP_ROOT->[0][1],
+                                            'data', 'media');
 
     # Use Media ID as filename to ensure unique filenames across the site
     # Prefix to append to media id if required.
@@ -716,7 +718,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
 
     # Okay, now load the end-user's code, if any.
-    if ($config->{PERL_LOADER} and $ENV{MOD_PERL}) {
+    if ($config->{PERL_LOADER} and ($ENV{MOD_PERL} || $ENV{BRIC_QUEUED})) {
         my $pkg = TEMPLATE_BURN_PKG;
         eval qq{package $pkg;
                 use Bric::Util::DBI qw(:junction);

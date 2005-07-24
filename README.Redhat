@@ -22,7 +22,7 @@ RPM Notes
 
     To install parts of PostgreSQL, we recommend:
 
-      postgresql-7.4.5-1PGDG.i686.rmp
+      postgresql-7.4.5-1PGDG.i686.rpm
 
 
 Red Hat 8.0 Notes

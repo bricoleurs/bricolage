@@ -8,22 +8,24 @@ bric_queued - Bricolage jobs queue daemon
 
   bric_queud [options]
 
-=head1 DISCRIPTION
+=head1 DESCRIPTION
 
-F<bric_queued> is normally run as a daemon that polls a Bricolage jobs queue
-and executes any unexecuted jobs with a current or past scheduled time.
-Normally, (see C<-s>) all of the jobs found in a given poll are executed in
-order of their scheduled times, with the distribtion and publish jobs being
-handled by seperate sub-processes, since distribution is normally an order of
-magnitude faster than publishing.
+F<bric_queued> runs as a daemon that polls a Bricolage jobs queue and executes
+any unexecuted jobs with current or past scheduled times. Normally, (see
+C<-s>) it executes all of the jobs found in a given poll in order of their
+scheduled times with distribution and publish jobs handled by seperate
+sub-processes--since distribution is normally an order of magnitude faster
+than publishing.
 
 In cases where the program finds no jobs in the queue it will wait a specified
 amount of time (defaulting to 30 seconds) and then re-poll.
 
 B<Note:>
 
-Unlike bric_dist_mon, this is a stand-alone program that does makes no HTTP
-requests to the Bricolage Apache/mod_perl server.
+Unlike L<bric_dist_mon|bric_dist_mon>, F<bric_queued> is a stand-alone program
+that makes no HTTP requests to the Bricolage Apache/mod_perl server. This
+allows it to to publish and distribute resources in its own process without
+bogging down the Apache/mod_perl server and therefore its UI.
 
 =head1 OPTIONS
 
@@ -93,6 +95,7 @@ use File::Spec::Functions qw(catdir);
 use Term::ReadPassword;
 
 BEGIN {
+    $ENV{BRIC_QUEUED} = 1;
     # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
     $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
     # use $BRICOLAGE_ROOT/lib if exists
@@ -102,8 +105,8 @@ BEGIN {
           "$ENV{PERL5LIB}:$lib" : $lib;
         unshift @INC, $lib;
     }
-    # make sure Bric is found
-    eval { require Bric };
+    # make sure Bric is found. Use Bric::Config to prevent warnings.
+    eval { require Bric::Config };
     die <<"END" if $@;
 ######################################################################
 
@@ -120,6 +123,18 @@ BEGIN {
 END
 }
 
+use Bric::Config qw(:sys_user);
+
+if ($> == 0) {
+    # Switch from root to the system user (set in bricolage.conf).
+    $) = SYS_GROUP;
+    die "Unable to set effective group id ". SYS_GROUP . "\n"
+      unless $) == SYS_GROUP;
+    $> = SYS_USER;
+    die "Unable to set effective user id ". SYS_USER . "\n"
+      unless $> == SYS_USER;
+}
+
 use Bric::App::Event qw(commit_events);
 use Bric::Biz::Person::User;
 use Bric::Util::Time qw(:all);
@@ -127,6 +142,7 @@ use Bric::Util::Job;
 use Bric::Util::Job::Dist;
 use Bric::Util::Job::Pub;
 use Bric::Dist::Action;
+use Bric::Util::Language;
 use Bric::Dist::Action::Mover;
 use Bric::Dist::Action::Email;
 use Bric::Dist::Action::DTDValidate;
@@ -444,6 +460,9 @@ sub login {
 
     # Set up the user.
     Bric::App::Session::set_user(undef, $user);
+
+    # Set up localization.
+    Bric::Util::Language->get_handle($user->get_pref('Language'));
 }
 
 __END__

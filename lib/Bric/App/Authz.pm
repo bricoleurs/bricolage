@@ -145,18 +145,17 @@ sub chk_authz {
     my ($obj, $chk_perm, $no_redir, @gids) = @_;
     my $perm;
     if (my $ref = ref $obj) {
-	my $id = $obj->get_id;
-	$id = '' unless defined $id;
-	my $key = "_AUTHZ_:$ref:$id";
+        my $id = $obj->get_id;
+        $id = '' unless defined $id;
+        my $key = "_AUTHZ_:$ref:$id";
         my $r = Apache::Request->instance(Apache->request);
         unless (defined ($perm = $r->pnotes($key))) {
-	    $perm = get_user_object()->what_can($obj, @gids);
+            $perm = get_user_object()->what_can($obj, @gids);
             $r->pnotes($key, $perm);
-	}
+        }
     } else {
-	$perm = get_user_object()->what_can($obj, @gids);
+        $perm = get_user_object()->what_can($obj, @gids);
     }
-
     return 1 if $perm >= $chk_perm && $perm != DENY;
 
     # If we get here, then authorization has failed.

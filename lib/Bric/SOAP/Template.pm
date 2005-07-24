@@ -564,12 +564,14 @@ sub load_asset {
     my ($workflow, $desk, $no_wf_or_desk_param);
     $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
     if (exists $args->{workflow}) {
-        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+        (my $look = $args->{workflow}) =~ s/([_%\\])/\\$1/g;
+        $workflow = Bric::Biz::Workflow->lookup({ name => $look })
           || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
     }
 
     if (exists $args->{desk}) {
-        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+        (my $look = $args->{desk}) =~ s/([_%\\])/\\$1/g;
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $look })
           || throw_ap error => "desk '" . $args->{desk} . "' not found!";
     }
 
@@ -615,8 +617,9 @@ sub load_asset {
 
         # get element and name for asset type if this is an element template.
         if ($tdata->{type} eq 'Element Template') {
+            (my $look = $tdata->{element}[0]) =~ s/([_%\\])/\\$1/g;
             my $element = Bric::Biz::AssetType->lookup({
-                key_name => $tdata->{element}[0]
+                key_name => $look
             }) or throw_ap __PACKAGE__ . " : no element found matching " .
               "(element => \"$tdata->{element}[0]\")";
             $init{element__id} = $element->get_id;

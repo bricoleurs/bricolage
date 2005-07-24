@@ -158,8 +158,9 @@ sub auth {
     if ( !$u || ($c->get_lmu_time || 0) > $lul) {
         # There have been changes to the users. Reload this user from the
         # database.
+        (my $look = $val{user}) =~ s/([_%\\])/\\$1/g;
         return &$fail($r, 'User does not exist or is disabled.') unless
-          $u = Bric::Biz::Person::User->lookup({ login => $val{user} });
+          $u = Bric::Biz::Person::User->lookup({ login => $look });
 
         # Set up the user and expire the user sites from the session.
         set_user($r, $u);
@@ -189,7 +190,8 @@ B<Notes:> NONE.
 
 sub login {
     my ($r, $un, $pw) = @_;
-    my $u = Bric::Biz::Person::User->lookup({ login => $un });
+    (my $look = $un) =~ s/([_%\\])/\\$1/g;
+    my $u = Bric::Biz::Person::User->lookup({ login => $look });
 
     # Return failure if authentication fails.
     return (0, 'Invalid username or password. Please try again.')

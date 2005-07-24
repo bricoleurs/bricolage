@@ -213,11 +213,11 @@ my $class_opt;
 {
     my $classes = Bric::Util::Class->pkg_href;
     while (my ($k, $v) = each %$classes) {
-	next unless $k =~ /^bric::util::grp::/;
-	next if index($k, 'member') != -1;
-	my $pkg = $v->get_pkg_name;
-	next if $pkg->get_secret;
-	$class_opt->{$pkg} = $v->get_disp_name;
+        next unless $k =~ /^bric::util::grp::/;
+        next if index($k, 'member') != -1;
+        my $pkg = $v->get_pkg_name;
+        next if $pkg->get_secret;
+        $class_opt->{$pkg} = $v->get_disp_name;
     }
     # XXX Dual-purpose class.
     $class_opt->{'Bric::Util::Grp::Person'} = 'Contributor Group';

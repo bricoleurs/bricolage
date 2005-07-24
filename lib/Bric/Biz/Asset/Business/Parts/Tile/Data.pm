@@ -224,7 +224,8 @@ sub new {
         my $atd = delete $init->{'element_data'};
 
         $init->{'element_data_id'} = $atd->get_id();
-        $init->{'name'}            = $atd->get_meta('html_info', 'disp');
+        $init->{'name'}            = $atd->get_meta('html_info', 'disp')
+          || $atd->get_key_name;
         $init->{'key_name'}        = $atd->get_key_name();
         $init->{'description'}     = $atd->get_description();
         $init->{'_element_obj'}    = $atd;
@@ -586,7 +587,16 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:>
+
+For data fields that can return multiple values, you currently have to parse
+the data string like this:
+
+   my $str = $element->get_data('blah');
+   my @opts = split /__OPT__/, $str;
+
+This behavior might be changed so that the string is automatically split for
+you.
 
 =cut
 

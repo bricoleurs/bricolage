@@ -304,11 +304,13 @@ sub new {
 	foreach my $name ($pkg->autopopulated_fields) {
             my $key_name = lc $name;
             $key_name =~ y/a-z0-9/_/cs;
-	    my $atd = $self->new_data({key_name    => $key_name,
-				       description => "Autopopulated $name field.",
-				       required    => 1,
-				       sql_type    => 'short',
-				       autopopulated => 1 });
+	    my $atd = $self->new_data({
+            key_name    => $key_name,
+            description => "Autopopulated $name field.",
+            required    => 1,
+            sql_type    => 'short',
+            autopopulated => 1
+        });
 	    $atd->set_attr('html_info', '');
 	    $atd->set_meta('html_info', 'disp', $name);
 	    $atd->set_meta('html_info', 'type', 'text');
@@ -1877,17 +1879,17 @@ sub add_data {
         throw_gen 'Must pass AssetType field or container objects, not IDs'
           unless ref $p;
 
-	# Get the ID if we were passed an object.
-	my $p_id = $p->get_id;
+        # Get the ID if we were passed an object.
+        my $p_id = $p->get_id;
 
-	# Skip adding this part if it already exists.
-	next if exists $parts->{$p_id};
+        # Skip adding this part if it already exists.
+        next if exists $parts->{$p_id};
 
-	# Add this to the parts list.
-	$new_parts->{$p_id} = $p;
+        # Add this to the parts list.
+        $new_parts->{$p_id} = $p;
 
-	# Remove this value from the deletion list if its there.
-	delete $del_parts->{$p_id};
+        # Remove this value from the deletion list if its there.
+        delete $del_parts->{$p_id};
     }
 
     # Update $self's new and deleted parts lists.
@@ -1903,8 +1905,8 @@ sub add_data {
 
 =item $element = $element->new_data($param)
 
-Adds a new data point, creating a new Bric::Biz::AssetType::Parts::Data object.
-The keys to $param are the same as the keys for the hash ref passed to 
+Adds a new data point, creating a new Bric::Biz::AssetType::Parts::Data
+object. The keys to $param are the same as the keys for the hash ref passed to
 Bric::Biz::AssetType::Parts::Data::new.
 
 B<Throws:>

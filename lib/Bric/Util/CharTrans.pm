@@ -27,9 +27,7 @@ $LastChangedDate$
   my $charset     = $chartrans->charset;
   my $charset     = $chartrans->charset('iso-8859-1');
 
-  my $utf8_text   = $chartrans->to_utf8($target_text);
-  my $target_text = $chartrans->from_utf8($utf8_text);
-
+  # (note: this is only in-place now -- it used to also return the string)
   $chartrans->to_utf8(\$some_data);
   $chartrans->from_utf8(\$some_data);
 
@@ -175,17 +173,20 @@ Performs an in-place conversion of the data in C<$somedata> from the character
 set specified via C<charset()> to UTF-8. References to SCALARs, ARRAYs, and
 HASHes will be recursively processed and their data replaced.
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:>
+B<Throws:>
 
 =over 4
 
 =item Error converting data from [charset] to utf-8.
 
 =back
+
+B<Side Effects:> NONE.
+
+B<Notes:>
+
+This used to return the converted string, but it doesn't any more.
+Instead, it returns the Bric::Util::CharTrans object itself.
 
 =cut
 
@@ -220,7 +221,10 @@ B<Throws:>
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:>
+
+This used to return the converted string, but it doesn't any more.
+Instead, it returns the Bric::Util::CharTrans object itself.
 
 =cut
 

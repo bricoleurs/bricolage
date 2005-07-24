@@ -65,7 +65,7 @@ do {
         '  PerlAccessHandler      Bric::App::AccessHandler',
         '  PerlCleanupHandler     Bric::App::CleanupHandler',
         '  RedirectMatch          '.
-                'permanent .*\/favicon\.ico$ /media/images/favicon.ico',
+                'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
     );
 
     # Setup Apache::DB handler if debugging

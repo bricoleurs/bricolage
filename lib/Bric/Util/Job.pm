@@ -211,7 +211,7 @@ files and/or directories on which the job's actions will be executed.
 
 =item *
 
-server_types - An anonymous array of Bric::Dist::ServerTypeBric::Dist::ServerType
+server_types - An anonymous array of Bric::Dist::ServerType
 objects representing the types of servers for which the job must be executed.
 See Bric::Dist::ServerType for an interface for creating server types.
 
@@ -1784,8 +1784,9 @@ sub execute_me {
     throw_gen({ error => "Cannot execute job that has already been executed."})
       if $self->get_comp_time;
 
-    # Get a lock on the job.
-    $set_executing->($self, 1);
+    # Get a lock on the job or just return (because another process is likely
+    # executing the job).
+    $set_executing->($self, 1) or return;
 
     # Do it!
     eval {
@@ -2197,9 +2198,10 @@ $set_executing = sub {
         die $err;
     }
 
-    # Throw an exception if we couldn't get a lock.
+    # Output a warning if we couldn't get a lock.
     if ($ret eq '0E0') {
-        throw_dp error => "Can't get a lock on job No. ". $self->get_id . '.';
+        print STDERR "Can't get a lock on job No. ". $self->get_id . ".\n";
+        return;
     }
 
     # Set the new number of tries and the executing attribute and return.

@@ -179,7 +179,7 @@ sub publish {
     my $preview = (exists $args->{to_preview} and $args->{to_preview}) ? 1 : 0;
     throw_ap(error => __PACKAGE__ . "::publish : cannot publish to_preview with "
                . "PREVIEW_LOCAL set.")
-      if $preview and PREVIEW_LOCAL;
+      if PREVIEW_LOCAL and $preview;
 
     my $published_only = exists($args->{published_only}) ? $args->{published_only} : 0;
 
@@ -188,8 +188,11 @@ sub publish {
                            $env);
 
     # Instantiate the Burner object.
-    my $burner = Bric::Util::Burner->new(
-                          { out_dir => $preview ? PREVIEW_ROOT : STAGE_ROOT });
+    my $burner = Bric::Util::Burner->new({
+        $preview
+          ? (out_dir => PREVIEW_ROOT, user_id => get_user_id )
+          : (out_dir => STAGE_ROOT)
+    });
 
     # iterate through ids publishing shiznats
     my (%seen, @published, %desks);
@@ -1259,7 +1262,8 @@ sub load_asset {
           unless chk_authz($asset, CREATE, 1);
 
         $adata->{site} = 'Default Site' unless exists $adata->{site};
-        my $site = Bric::Biz::Site->lookup({ name => $adata->{site} });
+        (my $look = $adata->{site}) =~ s/([_%\\])/\\$1/g;
+        my $site = Bric::Biz::Site->lookup({ name => $look });
         unless (defined $site) {
             throw_ap error => __PACKAGE__ . ": site \"" . $adata->{site}
               . "\" not found.";
@@ -1452,8 +1456,9 @@ Private function to add a desk to a workflow during create/update
 
 sub _add_desk {
     my ($asset, $ddata, $name) = @_;
+    (my $look = $name) =~ s/([_%\\])/\\$1/g;
 
-    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $name });
+    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $look });
     unless (defined $desk) {
         # desk doesn't exist, so create it
         my $is_publish = (ref($$ddata) && exists($ddata->{publish})

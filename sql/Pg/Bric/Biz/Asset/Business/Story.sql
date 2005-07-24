@@ -147,7 +147,7 @@ CREATE TABLE story__input_channel (
 
 CREATE TABLE story__category (
     id                  INTEGER  NOT NULL
-                                       DEFAULT NEXTVAL('seq__story_category'),
+                                       DEFAULT NEXTVAL('seq_story__category'),
     story_instance__id  INTEGER  NOT NULL,
     category__id        INTEGER  NOT NULL,
     main                BOOLEAN   NOT NULL DEFAULT FALSE,

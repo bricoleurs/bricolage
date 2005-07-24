@@ -86,13 +86,13 @@ $ua->timeout(TIMEOUT);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 exec_ids => Bric::FIELD_READ,
-			 url => Bric::FIELD_RDWR,
-			 cookie => Bric::FIELD_RDWR
+             # Public Fields
+             exec_ids => Bric::FIELD_READ,
+             url => Bric::FIELD_RDWR,
+             cookie => Bric::FIELD_RDWR
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################
@@ -419,10 +419,10 @@ sub send {
     my $cookie = $self->get_cookie;
 
     eval {
-	my $req = HTTP::Request->new(GET => $self->_get('url'));
-#	$req->header(Execute => $exec);
-	$req->header(Cookie => $cookie) if $cookie;
-	my $res = $ua->request($req);
+        my $req = HTTP::Request->new(GET => $self->_get('url'));
+#        $req->header(Execute => $exec);
+        $req->header(Cookie => $cookie) if $cookie;
+        my $res = $ua->request($req);
 
         # Make sure that the URL is correct, that we actually hit a
         # Bricolage distribution server.
@@ -439,7 +439,7 @@ sub send {
         }
 
         # The request was successful, just return.
-	return $self;
+    return $self;
 
     };
 

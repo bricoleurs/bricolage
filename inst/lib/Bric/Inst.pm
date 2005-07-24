@@ -39,10 +39,12 @@ This module exports function used by the installation system scripts.
 use strict;
 
 use File::Spec::Functions qw(catdir tmpdir catfile);
-
+use Term::ReadPassword;
 require Exporter;
 use base 'Exporter';
-our @EXPORT_OK   = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice get_default);
+our @EXPORT_OK = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice
+                    get_default ask_password);
+
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 =item soft_fail($msg)
@@ -104,7 +106,6 @@ sub ask_yesno {
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
         print "\n" if $quiet_mode;
-        
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;
@@ -143,7 +144,6 @@ sub ask_confirm {
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
         print "\n" if $quiet_mode;
-        
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;
@@ -160,6 +160,45 @@ sub ask_confirm {
             next;
         }
         if (ask_yesno("Are you sure you want to use '$answer'?", 1, $quiet_mode)) {
+            $$ref = $answer;
+            return;
+        }
+    }
+}
+
+=item ask_password($description, $ref_to_setting, $quiet_mode)
+
+Asks the user to enter a password. If they enter a new value, they will be
+prompted to enter it a second time. The password will not be echoed to the
+shell.
+
+If $quiet_mode is true and the default setting is not "NONE", then the default
+answer is returned without asking for user input (useful for unattended
+execution where appropriate default values can be passed to this sub).
+
+A default setting of "NONE" will force the user to enter a value.
+
+=cut
+
+sub ask_password {
+    my ($desc, $ref, $quiet) = @_;
+    return $$ref if $quiet && $$ref ne 'NONE';
+    my $tries = 1;
+    local $| = 1;
+    while (1) {
+        my $answer = read_password("$desc: ");
+        if (not length $answer or $answer eq $$ref) {
+            return unless $$ref eq 'NONE';
+            print "No default is available for this question, ",
+                "please enter a value.\n";
+            next;
+        }
+        my $second = read_password("Confirm password: ");
+        if ($second ne $answer) {
+            print "Passwords do not match.\n";
+            next
+        }
+        if (ask_yesno("Are you sure you want to use this password? [yes] ", 1)) {
             $$ref = $answer;
             return;
         }
@@ -189,7 +228,6 @@ sub ask_choice {
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
         print "\n" if $quiet_mode;
-        
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;

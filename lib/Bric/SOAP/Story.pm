@@ -734,34 +734,38 @@ create().
 
 sub load_asset {
     my ($pkg, $args) = @_;
-    my $document = $args->{document};
+    my $data = $args->{data};
     my %to_update = map { $_ => 1 } @{$args->{update_ids}};
 
-    # parse and catch errors
-    my $data;
-    eval { $data = parse_asset_document($document) };
-    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
-      if $@;
-    throw_ap(error => __PACKAGE__ . " : problem parsing asset document : no stories found!")
-      unless ref $data and ref $data eq 'HASH' and exists $data->{story};
-    print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    unless ($data) {
+        # parse and catch errors
+        eval { $data = parse_asset_document($args->{document}) };
+        throw_ap(error => __PACKAGE__ . ": problem parsing asset document: $@")
+          if $@;
+        throw_ap(error => __PACKAGE__ . ": problem parsing asset document: "
+                          . "no stories found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{story};
+        print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
+    }
 
     # Determine workflow and desk for stories if not default
     my ($workflow, $desk, $no_wf_or_desk_param);
     $no_wf_or_desk_param = ! (exists $args->{workflow} || exists $args->{desk});
     if (exists $args->{workflow}) {
-        $workflow = Bric::Biz::Workflow->lookup({ name => $args->{workflow} })
+        (my $look = $args->{workflow}) =~ s/([_%\\])/\\$1/g;
+        $workflow = Bric::Biz::Workflow->lookup({ name => $look })
           || throw_ap error => "workflow '" . $args->{workflow} . "' not found!";
     }
 
     if (exists $args->{desk}) {
-        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $args->{desk} })
+        (my $look = $args->{desk}) =~ s/([_%\\])/\\$1/g;
+        $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ name => $look })
           || throw_ap error => "desk '" . $args->{desk} . "' not found!";
     }
 
     # loop over stories, filling in %story_ids and @relations
     my (%story_ids, @story_ids, @relations, %selems);
-    foreach my $sdata (@{$data->{story}}) {
+    foreach my $sdata (@{delete $data->{story}}) {
         my $id = $sdata->{id};
 
         # are we updating?
@@ -930,8 +934,11 @@ sub load_asset {
         foreach my $cdata (@{$sdata->{categories}{category}}) {
             # get cat id
             my $path = ref $cdata ? $cdata->{content} : $cdata;
-            my $cat = Bric::Biz::Category->lookup({ uri => $path,
-                                                    site_id => $init{site_id} });
+            (my $look = $path) =~ s/([_%\\])/\\$1/g;
+            my $cat = Bric::Biz::Category->lookup({
+                uri => $look,
+                site_id => $init{site_id}
+            });
             throw_ap(error => __PACKAGE__ . "::create : no category found matching "
                        . "(category => \"$path\")")
               unless defined $cat;
@@ -971,8 +978,9 @@ sub load_asset {
             if ($sdata->{contributors} and $sdata->{contributors}{contributor}) {
                 my %grps;
                 foreach my $c (@{$sdata->{contributors}{contributor}}) {
+                    (my $look = $c->{type}) =~ s/([_%\\])/\\$1/g;
                     my $grp = $grps{$c->{type}} ||=
-                      Bric::Util::Grp::Person->lookup({ name => $c->{type} })
+                      Bric::Util::Grp::Person->lookup({ name => $look })
                       or throw_ap __PACKAGE__ . "::create: No contributor type found "
                       . "matching (type => $c->{type})";
                     my %init = (grp   => $grp,
@@ -1018,7 +1026,8 @@ sub load_asset {
             # collect keyword objects
             my @kws;
             foreach (@{$sdata->{keywords}{keyword}}) {
-                my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+                (my $look = $_) =~ s/([_%\\])/\\$1/g;
+                my $kw = Bric::Biz::Keyword->lookup({ name => $look });
                 unless ($kw) {
                     $kw = Bric::Biz::Keyword->new({ name => $_})->save;
                     log_event('keyword_new', $kw);
@@ -1070,8 +1079,9 @@ sub load_asset {
     $desk->save if defined $desk;
 
     # if we have any media objects, create them
+    # Keep a handlde on them because Media.pm will delete them from $data.
     my (%media_ids, @media_ids);
-    if ($data->{media}) {
+    if (my $media = $data->{media}) {
         @media_ids = Bric::SOAP::Media->load_asset({ data       => $data,
                                                      internal   => 1,
                                                      upload_ids => []    });
@@ -1079,12 +1089,15 @@ sub load_asset {
         # correlate to relative ids
         for (0 .. $#media_ids) {
             $media_ids{$data->{media}[$_]{id}} = $media_ids[$_];
+            $media_ids{$media->[$_]{id}} = $media_ids[$_];
         }
     }
 
     # Resolve related stories and media.
     resolve_relations(\%story_ids, \%media_ids, @relations) if @relations;
 
+    # return a SOAP structure unless this is an internal call
+    return @story_ids if $args->{internal};
     return name(ids => [
                         map { name(story_id => $_) } @story_ids,
                         map { name(media_id => $_) } @media_ids

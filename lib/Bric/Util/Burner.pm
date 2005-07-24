@@ -141,6 +141,7 @@ use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
 require Bric::Util::Job::Pub;
+require Bric::Util::Job::Dist;
 use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
@@ -189,10 +190,12 @@ BEGIN {
         page                  => Bric::FIELD_READ,
         encoding              => Bric::FIELD_RDWR,
         output_filename       => Bric::FIELD_RDWR,
-        output_ext            => Bric::FIELD_READ,
+        output_ext            => Bric::FIELD_RDWR,
         output_path           => Bric::FIELD_READ,
         base_path             => Bric::FIELD_READ,
         base_uri              => Bric::FIELD_READ,
+        burn_again            => Bric::FIELD_RDWR,
+
         # Private Fields
         _page_extensions      => Bric::FIELD_NONE,
         _notes                => Bric::FIELD_NONE,
@@ -619,11 +622,12 @@ and storyconc.html.
 sub set_page_extensions {
     my $self = shift;
     my %seen;
-    if (grep { $seen{$_}++ } @_) {
+    if (my $dupes = join ', ', grep { $seen{$_}++ } @_) {
         my $oc = $self->get_oc;
         my $cat = $self->get_cat;
         my $elem = $self->get_element;
-        throw_burn_error error => "Duplicate page extensions are not allowed",
+        throw_burn_error error => "Duplicate page extensions are not allowed, "
+                                  . "already seen $dupes",
                          mode  => $self->get_mode,
                          ( $oc   ? (oc    => $oc->get_name)   : ()),
                          ( $cat  ? (cat   => $cat->get_uri)   : ()),
@@ -719,19 +723,16 @@ sub deploy {
     print MC $fa->get_data;
     close(MC);
 
+    # Just return if we were deploying to a sandbox.
+    return if $self->get_sandbox_dir;
+
     # Delete older versions, if they live elsewhere.
-    my $old_version = $fa->get_published_version or return $self;
-    my $old_fa = $fa->lookup({ id          => $fa->get_id,
-                               version     => $old_version })
-      or return $self;
-    my $old_file = $old_fa->get_file_name or return $self;
-
-    $old_file = $fs->cat_dir($self->get_sandbox_dir || $self->get_comp_dir,
-                             $oc_dir, $old_file);
-
-    return $self if $old_file eq $file;
-    $fs->del($old_file);
-
+    my $old_version = $fa->get_published_version;
+    return $self unless defined $old_version;
+    my ($old_fa) = $fa->list({ id      => $fa->get_id,
+                               version => $old_version });
+    return $self unless $old_fa;
+    $self->undeploy($old_fa) if $old_fa->get_file_name ne $fa->get_file_name;
     return $self;
 }
 
@@ -860,6 +861,7 @@ sub preview {
             user_id      => $user_id,
             name         => $name,
             server_types => $bat,
+            "$key\_id"   => $ba->get_id,
             priority     => $ba->get_priority,
         });
         my $res = [];
@@ -1133,105 +1135,89 @@ sub publish {
             next;
         }
 
-        # Create a job for moving this asset in this output Channel.
-        my $name = 'Distribute "' . $ba->get_name . '" to "' .
-          $oc->get_name . '"';
-        my $job = Bric::Util::Job::Dist->new({
-            sched_time   => $publish_date,
-            user_id      => $user_id,
-            name         => $name,
-            server_types => $bat,
-            priority     => $ba->get_priority,
-        });
-
-        # Burn, baby, burn!
-        if ($key eq 'story') {
-            foreach my $cat (@cats) {
-                $job->add_resources($self->burn_one($ba, $oc, $cat));
-            }
-            $published = 1;
+        if ($exp_date && $exp_date lt $publish_date) {
+            # Don't really publish it, just expire it.
+            return 1 unless $ba->get_publish_status;
+            my @stale = Bric::Dist::Resource->list({
+                "$key\_id" => $baid,
+                path       => "$base_path/%"
+            }) or next;
+            my $expname = 'Expire "' . $ba->get_name .
+              '" from "' . $oc->get_name . '"';
+            $self->_expire($exp_date, $ba, $bat, $expname, $user_id, \@stale);
         } else {
-            my $path = $ba->get_path;
-            my $uri = $ba->get_uri($oc);
-            if ($path && $uri) {
-                my $r = Bric::Dist::Resource->lookup({ path => $path,
-                                                       uri  => $uri })
-                    || Bric::Dist::Resource->new({
-                        path => $path,
-                        media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                        uri => $uri
-                    });
-
-                $r->add_media_ids($baid);
-                $r->save;
-                $job->add_resources($r);
-                $published = 1;
-            } else {
-                $published = 1;
-                add_msg('No media file is associated with asset "[_1]", ' .
-                        'so none will be distributed.', $ba->get_name);
-            }
-        }
-
-        # Save the job.
-        $job->save;
-        log_event('job_new', $job);
-
-        # Set up an expire job, if necessary.
-        if ($exp_date and my @res = $job->get_resources) {
-            # Make sure we haven't expired this asset on that date already.
-            # XXX There could potentially be some files missed because of
-            # changes between versions, but that should be extremely uncommon.
-            unless (Bric::Util::Job::Dist->list_ids({ sched_time  => $exp_date,
-                                                      resource_id => $res[0]->get_id,
-                                                      type        => 1,
-                                                  })->[0]) {
-                # We'll need to expire it.
-                my $expname = 'Expire "' . $ba->get_name .
-                  '" from "' . $oc->get_name . '"';
-                my $exp_job = Bric::Util::Job::Dist->new({
-                    sched_time   => $exp_date,
-                    user_id      => $user_id,
-                    server_types => $bat,
-                    name         => $expname,
-                    resources    => \@res,
-                    type         => 1,
-                    priority     => $ba->get_priority,
-                });
-                $exp_job->save;
-                log_event('job_new', $exp_job);
-            }
-        }
-
-        # Expire stale resources, if necessary.
-        if (my @stale = Bric::Dist::Resource->list({
-              "$key\_id" => $baid,
-              not_job_id => $job->get_id,
-              path       => "$base_path/%" }))
-        {
-            # Yep, there are old resources to expire.
-            my $stale_name = 'Expire stale "' . $ba->get_name .
-              '" from "' . $oc->get_name . '" files';
-            my $stale_job = Bric::Util::Job::Dist->new({
+            # Create a job for moving this asset in this output Channel.
+            my $name = 'Distribute "' . $ba->get_name . '" to "' .
+              $oc->get_name . '"';
+            my $job = Bric::Util::Job::Dist->new({
                 sched_time   => $publish_date,
                 user_id      => $user_id,
+                name         => $name,
                 server_types => $bat,
-                name         => $stale_name,
-                resources    => \@stale,
-                type         => 1,
+                "$key\_id"   => $ba->get_id,
                 priority     => $ba->get_priority,
             });
-            $stale_job->save;
-            log_event('job_new', $stale_job);
 
-            # Dissociate the stale resources from this asset.
+            # Burn, baby, burn!
             if ($key eq 'story') {
-                foreach my $sr (@stale) {
-                    $sr->del_story_ids($baid)->save;
+                foreach my $cat (@cats) {
+                    $job->add_resources($self->burn_one($ba, $oc, $cat));
                 }
+                $published = 1;
             } else {
-                foreach my $sr (@stale) {
-                    $sr->del_media_ids($baid)->save;
+                my $path = $ba->get_path;
+                my $uri = $ba->get_uri($oc);
+                if ($path && $uri) {
+                    my $r = Bric::Dist::Resource->lookup({ path => $path,
+                                                           uri  => $uri })
+                      || Bric::Dist::Resource->new({
+                          path => $path,
+                          media_type => Bric::Util::MediaType->get_name_by_ext($uri),
+                          uri => $uri
+                      });
+
+                    $r->add_media_ids($baid);
+                    $r->save;
+                    $job->add_resources($r);
+                    $published = 1;
+                } else {
+                    $published = 1;
+                    add_msg('No media file is associated with asset "[_1]", ' .
+                            'so none will be distributed.', $ba->get_name);
+                }
+            }
+
+            # Save the job.
+            $job->save;
+            log_event('job_new', $job);
+
+            # Set up an expire job, if necessary.
+            if ($exp_date and my @res = $job->get_resources) {
+                my $expname = 'Expire "' . $ba->get_name .
+                  '" from "' . $oc->get_name . '"';
+                $self->_expire($exp_date, $ba, $bat, $expname, $user_id, \@res);
+            }
+
+            # Expire stale resources, if necessary.
+            if (my @stale = Bric::Dist::Resource->list({
+                "$key\_id" => $baid,
+                not_job_id => $job->get_id,
+                path       => "$base_path/%"
+            })) {
+                # Yep, there are old resources to expire.
+                my $expname = 'Expire stale "' . $ba->get_name .
+                  '" from "' . $oc->get_name . '"';
+                $self->_expire($publish_date, $ba, $bat, $expname, $user_id, \@stale);
+
+                # Dissociate the stale resources from this asset.
+                if ($key eq 'story') {
+                    foreach my $sr (@stale) {
+                        $sr->del_story_ids($baid)->save;
+                    }
+                } else {
+                    foreach my $sr (@stale) {
+                        $sr->del_media_ids($baid)->save;
+                    }
                 }
             }
         }
@@ -1413,6 +1399,32 @@ sub chk_syntax {
     my $ret = $burner->chk_syntax(@_);
     return $ret;
 }
+
+##############################################################################
+
+=item $success = $b->set_burn_again(1)
+
+=item my $again = $b->get_burn_again
+
+This method is designed to be called from within a template. When passed a
+true value, it causes the burner to burn the current story and page again,
+creating another file. This is useful for creating multi-file output without
+extra paginated subelements. For example, if you need to create an index of
+stories, and you only want to list 10 on a page over multiple pages, you can
+use this method to force the burner to burn as many pages as you need to get
+the job done.
+
+When the burner prepares to burn the page again, it resets the C<burn_again>
+attribute. So you'll need to set it for every page for which another page
+burned.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
 
 ##############################################################################
 
@@ -1906,6 +1918,32 @@ sub _get_subclass {
 
         # Instantiate the proper subclass.
         return $burner_class->new($self);
+    }
+}
+
+sub _expire {
+    my ($self, $exp_date, $ba, $bat, $expname, $user_id, $res) = @_;
+    # Make sure we haven't expired this asset on that date already.
+    # XXX There could potentially be some files missed because of
+    # changes between versions, but that should be extremely uncommon.
+    unless (Bric::Util::Job::Dist->list_ids({
+        sched_time  => $exp_date,
+        resource_id => $res->[0]->get_id,
+        type        => 1,
+    })->[0]) {
+        # We'll need to expire it.
+        my $exp_job = Bric::Util::Job::Dist->new({
+            sched_time   => $exp_date,
+            user_id      => $user_id,
+            server_types => $bat,
+            name         => $expname,
+            resources    => $res,
+            type         => 1,
+            priority     => $ba->get_priority,
+            $ba->key_name . "_id"   => $ba->get_id,
+        });
+        $exp_job->save;
+        log_event('job_new', $exp_job);
     }
 }
 
