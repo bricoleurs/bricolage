@@ -484,7 +484,7 @@ END
                      mode    => $self->get_mode,
                      oc      => $self->get_oc->get_name,
                      cat     => $self->get_cat->get_uri,
-                     elem    => $element->get_name
+                     elem    => ref $element ? $element->get_name : $element
       if $@;
     return $output;
 }
