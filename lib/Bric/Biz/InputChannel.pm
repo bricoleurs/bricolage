@@ -665,7 +665,6 @@ sub my_meths {
                               set_meth => sub { shift->set_name(@_) },
                               set_args => [],
                               disp     => 'Name',
-                              search   => 1,
                               len      => 64,
                               req      => 1,
                               type     => 'short',
@@ -734,7 +733,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$METHS}{@ORD} : [@{$METHS}{@ORD}];
     } elsif ($ident) {
-        return wantarray ? $METHS->{name} : [$METHS->{name}];
+        return wantarray ? $METHS->{key_name} : [$METHS->{key_name}];
     } else {
         return $METHS;
     }
