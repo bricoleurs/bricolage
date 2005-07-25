@@ -292,6 +292,11 @@ story title. So, for example, you can now use <tmpl_var primary_uri> or
 <tmpl_var cover_date> with out creating a F<.pl> template to set them up.
 [David]
 
+=item *
+
+Refactored the separate C<_add_resource()> methods in each of the burner
+subclasses int Bric::Util::Burner itself. [David]
+
 =back
 
 ##############################################################################
