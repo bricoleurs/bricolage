@@ -156,7 +156,6 @@ sub story_page1 {
 
 
 <div class="page">
-<p>Another page one paragraph</p>
 <p>Wee, page one paragraph</p>
 <p>Another page one paragraph</p>
 
@@ -219,7 +218,6 @@ sub story_page2 {
 
 
 <div class="page">
-<p>Another page two paragraph</p>
 <p>Wee, page two paragraph</p>
 <p>Another page two paragraph</p>
 

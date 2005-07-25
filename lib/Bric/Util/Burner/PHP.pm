@@ -43,7 +43,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-use Bric::Util::Fault qw(throw_gen throw_burn_error);
+use Bric::Util::Fault qw(throw_gen throw_burn_error isa_bric_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use PHP::Interpreter;
@@ -253,23 +253,36 @@ sub burn_one {
                 [   \$outbuf, 0,   $story, $element, $template_roots, $php]);
     $self->_push_element($element);
 
-    while(1) {
+    while (1) {
         use utf8;
-        $php->include($template)
-          or throw_burn_error
-            error   => "Error executing '$template'",
-            payload => $@,
-            mode    => $self->get_mode,
-            oc      => $self->get_oc->get_name,
-            cat     => $self->get_cat->get_uri,
-            elem    => $element->get_name;
+        no warnings;
+        eval { $php->include($template) };
+        if (my $err = $@) {
+            $err->rethrow if isa_bric_exception $err;
+            throw_burn_error
+                error   => "Error executing '$template'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri,
+                elem    => $element->get_name
+              if $@;
+        }
 
         # Execute category templates.
-        if (@cat_tmpls) {
+        for my $cat_tmpl (@cat_tmpls) {
             $php->setBric(CONTENT => $outbuf);
-            $php->include($_) for @cat_tmpls;
-            $php->setBric(CONTENT => '');
+            $outbuf = '';
+            eval { $php->include($cat_tmpl) };
+            throw_burn_error
+                error   => "Error executing '$cat_tmpl'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri
+              if $@;
         }
+        $php->setBric(CONTENT => '');
 
         my $page = $self->_get('page') + 1;
 
@@ -289,12 +302,13 @@ sub burn_one {
             $self->add_resource($file, $uri);
         }
 
-        $self->_set([qw(page)] => [$page]);
+        $self->_set(['page'] => [$page]);
         last unless $self->_get('more_pages');
     }
+
     $self->_pop_element;
 
-    $self->_set(['_php','_comp_root'] => [undef, undef]);
+    $self->_set([qw(_php _comp_root page)] => [undef, undef, 0]);
     return $self->get_resources;
 }
 
@@ -505,23 +519,29 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
-    my $buf = $self->_get('_buf');
-    my $data = '';
-    # Call another element if this is a container otherwise output the data.
 
-    my $php = $self->_get('_php');
     if ($elem->is_container) {
         # Set the elem global to the current element.
         # Push this element on to the stack
         $self->_push_element($elem);
         my $template = $self->_load_template_element($elem);
-#        $php->eval(q/function setBric($key, $var) { global $BRIC; $BRIC[$key] = $var; }/);
-        $php->setBric('element', $elem);
-        $php->include($template);
-        $self->_pop_element();
+        my $php = $self->_get('_php');
+        $php->setBric(element => $elem);
+        eval { $php->include($template) };
+        throw_burn_error
+            error   => "Error executing '$template'",
+            payload => $@,
+            mode    => $self->get_mode,
+            oc      => $self->get_oc->get_name,
+            cat     => $self->get_cat->get_uri,
+            elem    => $elem->get_name
+          if $@;
+
+        $self->_pop_element;
         # Set the elem global to the previous element
     } else {
-        $data .= $elem->get_data();
+        my $buf = $self->_get('_buf');
+        $$buf .= $elem->get_data;
     }
     return 1;
 }

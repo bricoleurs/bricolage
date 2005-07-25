@@ -203,6 +203,8 @@ START MODULE LIST
 
 =item Template 2.14 (optional)
 
+=item PHP::Interpreter (optional)
+
 =item Encode (optional)
 
 =item Pod::Simple (optional)

@@ -410,7 +410,7 @@ sub subclass_burn_test {
     # Give it a paragraph field.
     ok my $page_para = $page->new_data({
         key_name    => 'para',
-        required    => 1,
+        required    => 0,
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,

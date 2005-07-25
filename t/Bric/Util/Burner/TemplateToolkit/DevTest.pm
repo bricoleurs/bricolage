@@ -36,7 +36,7 @@ sub story_page1 {
 </head><body><h1>This is a Test</h1><p>This is a paragraph</p><p>Second paragraph</p><p>Third paragraph</p><blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
-</blockquote><div class="page"><p></p><p>Wee, page one paragraph</p><p>Another page one paragraph</p></div><h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
+</blockquote><div class="page"><p>Wee, page one paragraph</p><p>Another page one paragraph</p></div><h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
 <div>Licensed under the BSD license</div></body></html>};
 }
 
@@ -46,7 +46,7 @@ sub story_page2 {
 </head><body><h1>This is a Test</h1><p>This is a paragraph</p><p>Second paragraph</p><p>Third paragraph</p><blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
-</blockquote><div class="page"><p></p><p>Wee, page two paragraph</p><p>Another page two paragraph</p></div><h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
+</blockquote><div class="page"><p>Wee, page two paragraph</p><p>Another page two paragraph</p></div><h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
 <div>Licensed under the BSD license</div></body></html>};
 }
 
