@@ -284,6 +284,19 @@ Moved the C<burn_again> attribute from Bric::Util::Burner::Mason to
 Bric::Util::Burner, since it could be useful to other burners, and since
 Bric::Util::Burner had knowledge of it, anyway. [David]
 
+=item *
+
+The HTML::Template burner now sets parameters for all attributes of a story as
+returned by the C<my_meths()> method of the story class, rather than just the
+story title. So, for example, you can now use <tmpl_var primary_uri> or
+<tmpl_var cover_date> with out creating a F<.pl> template to set them up.
+[David]
+
+=item *
+
+Refactored the separate C<_add_resource()> methods in each of the burner
+subclasses int Bric::Util::Burner itself. [David]
+
 =back
 
 ##############################################################################

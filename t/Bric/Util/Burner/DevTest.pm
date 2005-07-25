@@ -521,7 +521,16 @@ sub subclass_burn_test {
         base_path => $fs->cat_dir(TEMP_DIR, 'base'),
     }), "Create burner";
 
-    for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $page_tmpl, $util_tmpl) {
+    for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $page_tmpl, $util_tmpl,
+                  $self->extra_templates({
+                      story_type => $story_type,
+                      pull_quote => $pull_quote,
+                      oc         => $oc,
+                      suboc      => $suboc,
+                      cat        => $cat,
+                      subcat     => $subcat
+                  }))
+    {
         my $name = $tmpl->get_file_name;
         ok $tmpl->checkin, "Check in the $name template";
         ok $tmpl->save, "Save the $name template again";
@@ -675,6 +684,8 @@ sub restore_comp_root : Test(teardown) {
     Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = delete $self->{comp_root}
       if exists $self->{comp_root};
 }
+
+sub extra_templates {}
 
 1;
 __END__

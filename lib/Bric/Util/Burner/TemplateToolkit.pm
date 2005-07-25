@@ -21,11 +21,11 @@ $LastChangedDate$
 
  use Bric::Util::Burner::TemplateToolkit;
 
- # Create a new TemplateToolkit burner using the settings from $burner
- $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
+  # Create a new TemplateToolkit burner using the settings from $burner
+  my $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
 
- # Burn an asset, get back a list of resources
- @resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
+  # Burn an asset, get back a list of resources
+  my $resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -49,7 +49,6 @@ use strict;
 use Template 2.14;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
-use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
 use Template::Constants qw( :debug );
 
@@ -97,7 +96,6 @@ BEGIN {
                          '_elem'           => Bric::FIELD_NONE,
                          '_at'             => Bric::FIELD_NONE,
                          '_files'          => Bric::FIELD_NONE,
-                         '_res'            => Bric::FIELD_NONE,
                          '_page_place'     => Bric::FIELD_NONE,
                         });
 }
@@ -138,8 +136,6 @@ sub new {
     my ($class, $burner) = @_;
     my $init = { %$burner };
 
-    $init->{_res}     ||= [];
-
     # create the object using Bric's constructor and return it
     return $class->Bric::new($init);
 }
@@ -156,7 +152,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item @resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $at, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -211,11 +207,7 @@ sub burn_one {
         push @$template_roots, $fs->cat_dir($comp_dir, $inc_dir);
     }
 
-    # Save an existing TemplateToolkit request object and Bricolage objects.
-    my (%bric_objs);
-
     my @wrappers;
-
     {
         # search up category hierarchy for wrappers
         my @cats = map { $_->get_directory } $self->get_cat->ancestry;
@@ -302,17 +294,15 @@ sub burn_one {
             close(OUT);
             $outbuf = '';
             # Add a resource to the job object.
-            $self->_add_resource($file, $uri);
+            $self->add_resource($file, $uri);
         }
         $self->_set([qw(page)],[$page]);
         last unless $self->_get('more_pages');
     }
     $self->_pop_element;
 
-    $self->_set(['_tt','_comp_root'],[undef,undef]);
-    my $ret = $self->_get('_res') || return;
-    $self->_set(['_res', 'page'], [[], 0]);
-    return wantarray ? @$ret : $ret;
+    $self->_set([qw(_tt _comp_root page)] => [undef, undef, 0]);
+    return $self->get_resources;
 }
 
 ################################################################################
@@ -581,39 +571,6 @@ NONE.
 =head2 Private Instance Methods
 
 =over 4
-
-=item $success = $b->_add_resource();
-
-Adds a Bric::Dist::Resource object to this burn.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _add_resource {
-    my $self = shift;
-    my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story output_ext));
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
-    # Add our story ID.
-    $res->add_story_ids($story->get_id);
-    $res->save;
-    my $ress = $self->_get('_res');
-    push @$ress, $res;
-}
-
-#------------------------------------------------------------------------------#
 
 =item $template = $b->_load_template_element($element);
 

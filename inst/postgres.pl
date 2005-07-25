@@ -152,7 +152,7 @@ sub get_users {
     }
 
     ask_password("Bricolage Postgres Password", \$PG{sys_pass}, $QUIET);
-    ask_confirm("Bricolage Postgres Password", \$PG{sys_pass}, $QUIET);
+    ask_confirm("Bricolage Database Name", \$PG{db_name}, $QUIET);
 }
 
 # ask for host specifics

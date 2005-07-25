@@ -195,6 +195,7 @@ BEGIN {
         base_path             => Bric::FIELD_READ,
         base_uri              => Bric::FIELD_READ,
         burn_again            => Bric::FIELD_RDWR,
+        resources             => Bric::FIELD_READ,
 
         # Private Fields
         _page_extensions      => Bric::FIELD_NONE,
@@ -290,6 +291,7 @@ sub new {
     $init->{_page_extensions}  ||= [''];
     $init->{_notes} = {};
     $init->{_output_preview_msgs} ||= 1;
+    $init->{resources} = [];
 
     $init->{sandbox_dir} = $fs->cat_dir(BURN_SANDBOX_ROOT, 'user_'. $init->{user_id})
        if defined($init->{user_id});
@@ -1375,6 +1377,9 @@ sub burn_one {
     Bric::Util::Pref->use_user_prefs(0) if $use_user;
     my $ret = $burner->burn_one(@_, $at);
     Bric::Util::Pref->use_user_prefs(1) if $use_user;
+
+    # Return a list of the resources we just burned.
+    $self->_set(['resources', 'page'], [[], 0]);
     return wantarray ? @$ret : $ret;
 }
 
@@ -1946,6 +1951,44 @@ sub _expire {
         log_event('job_new', $exp_job);
     }
 }
+
+##############################################################################
+
+=item $success = $b->add_resource();
+
+  $burner->add_resource($filename, $uri);
+
+Adds a Bric::Dist::Resource object to a burn. Pass in the file name and URI of
+the resource. Called by the burner subclasess after they've written files to
+disk.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_resource {
+    my ($self, $file, $uri) = @_;
+    my ($story, $ext, $ress) = $self->_get(qw(story output_ext resources));
+
+    # Create a resource for the distribution stuff.
+    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
+      Bric::Dist::Resource->new({ path => $file,
+                                  uri  => $uri });
+
+    # Set the media type.
+    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
+    # Add our story ID.
+    $res->add_story_ids($story->get_id);
+    $res->save;
+    push @$ress, $res;
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
 
 1;
 __END__
