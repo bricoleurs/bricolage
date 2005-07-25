@@ -198,7 +198,7 @@ sub ask_password {
             print "Passwords do not match.\n";
             next
         }
-        if (ask_yesno("Are you sure you want to use this password? [yes] ", 1)) {
+        if (ask_yesno("Are you sure you want to use this password?", 1)) {
             $$ref = $answer;
             return;
         }
