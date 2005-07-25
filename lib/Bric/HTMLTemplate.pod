@@ -57,10 +57,10 @@ tweak the design by category than the code.
 
 =head1 CHOOSING A BURNER
 
-Bricolage decides which burner module to use - Mason or HTML::Template
-- by looking at the burner setting for the top-level story element
-being published.  To start using HTML::Template to publish a story
-type go to Admin -E<gt> Elements, find the story element and set its
+Bricolage decides which burner module to use -- Mason, HTML::Template,
+Template Toolkit, or PHP -- by looking at the burner setting for the top-level
+story element being published. To start using HTML::Template to publish a
+story type go to Admin -E<gt> Elements, find the story element and set its
 burner to HTML::Template.
 
 When you're creating templates you'll also see a pull-down called
@@ -122,18 +122,18 @@ and loops for the example story above.
     my $page_count = 1;
     while (my $page = $element->get_container('page', $page_count)) {
 
-	# build per-page element loop
-	my @element_loop;
-	foreach my $e ($page->get_elements()) {
-	    # push on a row for this element
-	    push(@element_loop, { $e->get_name => $e->get_data });
-	}
+        # build per-page element loop
+        my @element_loop;
+        foreach my $e ($page->get_elements()) {
+            # push on a row for this element
+            push(@element_loop, { $e->get_key_name => $e->get_data });
+        }
 
-	# push element_loop and a page_count on this loop
-	push(@page_loop, { 
-			  element_loop => \@element_loop,
-			  page_count   => $page_count++
-			 });
+        # push element_loop and a page_count on this loop
+        push(@page_loop, {
+            element_loop => \@element_loop,
+            page_count   => $page_count++
+        });
     }
 
     # finish the page_loop
@@ -210,15 +210,15 @@ Now that the loop is setup it's time to extract the page data:
         # build per-page element loop
         my @element_loop;
         foreach my $e ($page->get_elements()) {
-	    # push on a row for this element
-	    push(@element_loop, { $e->get_name => $e->get_data });
+            # push on a row for this element
+            push(@element_loop, { $e->get_key_name => $e->get_data });
         }
 
 First the code creates a new array to hold the element variables from
 this page.  Next we loop through all the elements in the page with the
 get_elements() call - these elements will be paragraphs and pull
 quotes.  Each element gets turned into a single row in the
-element_loop containing a single variable with the same name as the
+element_loop containing a single variable with the same key name as the
 element.
 
 For example, let's say we have a page with three paragraphs and a
@@ -227,7 +227,7 @@ something like:
 
     @element_loop = (
         { "paragraph"  => "text of paragraph one..."   },
-        { "pull quote" => "text of pull quote one..."  },
+        { "pull_quote" => "text of pull quote one..."  },
         { "paragraph"  => "text of paragraph two..."   },
         { "paragraph"  => "text of paragraph three..." },
     );
@@ -239,32 +239,32 @@ $page_count is also incremented here so that the next page will get
 requested for the next iteration.
 
        # push element_loop and a page_count on this loop
-       push(@page_loop, { 
-                           element_loop => \@element_loop,
-		           page_count   => $page_count++
-                        });
+       push(@page_loop, {
+           element_loop => \@element_loop,
+           page_count   => $page_count++
+       });
     }
 
 
 A completed @page_loop for a two-page story might look something like:
 
     @page_loop = (
-	{ 
-	    element_loop => [
-		{ "paragraph"  => "text of paragraph one..."   },
-		{ "pull quote" => "text of pull quote one..."  },
-		{ "paragraph"  => "text of paragraph two..."   },
-		{ "paragraph"  => "text of paragraph three..." },
-	    ],
-	    page_count => 1
-	},
-	{ 
-	    element_loop => [
-		{ "paragraph"  => "text of paragraph one..."   },
-		{ "paragraph"  => "text of paragraph two..." },
-	    ],
-	    page_count => 2
-	}
+      {
+        element_loop => [
+        { "paragraph"  => "text of paragraph one..."   },
+        { "pull quote" => "text of pull quote one..."  },
+        { "paragraph"  => "text of paragraph two..."   },
+        { "paragraph"  => "text of paragraph three..." },
+        ],
+        page_count => 1
+      },
+      {
+        element_loop => [
+        { "paragraph"  => "text of paragraph one..."   },
+        { "paragraph"  => "text of paragraph two..." },
+        ],
+        page_count => 2
+      }
     );
 
 Which, as you might know is just the array of hashes of arrays of
@@ -290,33 +290,33 @@ you can see where formatting might be added:
        <html>
 
        <head>
-	 <title><tmpl_var title></title>
+     <title><tmpl_var title></title>
        </head>
        <body>
 
-	 <tmpl_if __first__>
-	    <h1><tmpl_var title></h1>
-	    <b><tmpl_var deck></b>
-	 </tmpl_if>
+     <tmpl_if __first__>
+        <h1><tmpl_var title></h1>
+        <b><tmpl_var deck></b>
+     </tmpl_if>
 
-	 <tmpl_loop element_loop>
-	    <tmpl_if paragraph>
-	      <p><tmpl_var paragraph></p>
-	    </tmpl_if>
-	    <tmpl_if name="pull quote">
-	      <p><blockquote><i>
-                <tmpl_var name="pull quote">
+     <tmpl_loop element_loop>
+        <tmpl_if paragraph>
+          <p><tmpl_var paragraph></p>
+        </tmpl_if>
+        <tmpl_if name="pull_quote">
+          <p><blockquote><i>
+                <tmpl_var name="pull_quote">
               </i></blockquote></p>
-	    </tmpl_if>
-	 </tmpl_loop> 
+        </tmpl_if>
+     </tmpl_loop>
 
          <tmpl_unless __first__>
-	 <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
-	 </tmpl_unless>
+     <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
+     </tmpl_unless>
 
-	 <tmpl_unless __last__>
-	 <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
-	 </tmpl_unless>
+     <tmpl_unless __last__>
+     <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
+     </tmpl_unless>
 
 
        </body>
@@ -332,10 +332,10 @@ HTML::Template's "loop_context_vars" option which is on by default in
 Bricolage.  This allows the template to make decisions based on the
 automatic loop variables __first__ and __last__:
 
-	 <tmpl_if __first__>
-	    <h1><tmpl_var title></h1>
-	    <b><tmpl_var deck></b>
-	 </tmpl_if>
+     <tmpl_if __first__>
+        <h1><tmpl_var title></h1>
+        <b><tmpl_var deck></b>
+     </tmpl_if>
 
 This snippet is used to put the title line and deck on the first page
 only.  This mysterious section sets up the next and previous links:
@@ -355,19 +355,19 @@ provided to make linking between pages easier.  We could do this
 without them though - something like this would produce equivalent
 results:
 
-	 <tmpl_unless __first__>
-	    <tmpl_if expr="page_count == 2">
-	      <a href="index.html">Previous Page</a>
-	    <tmpl_else>
-	      <a href="index<tmpl_var expr="page_count - 2">.html">
+     <tmpl_unless __first__>
+        <tmpl_if expr="page_count == 2">
+          <a href="index.html">Previous Page</a>
+        <tmpl_else>
+          <a href="index<tmpl_var expr="page_count - 2">.html">
                  Previous Page
               </a>
-	    </tmpl_if>
-	 </tmpl_unless>
+        </tmpl_if>
+     </tmpl_unless>
 
-	 <tmpl_unless __last__>
-	    <a href="index<tmpl_var page_count>.html">Next Page</a>
-	 </tmpl_unless>
+     <tmpl_unless __last__>
+        <a href="index<tmpl_var page_count>.html">Next Page</a>
+     </tmpl_unless>
 
 Although that would only work if your output channel was setup to
 output files with names like "index.html" and "index1.html".  The
@@ -464,7 +464,7 @@ Several types of variables and loops are created by autofill:
 
 =item *
 
-A single variable is created for every element with the same name as
+A single variable is created for every element with the same key name as
 the element.  For attributes this contains the value of the attribute.
 For container elements this causes a call to the script and/or
 template for that element (more on this in strategy 3).
@@ -474,7 +474,7 @@ this type of variable.
 
 =item *
 
-A loop is created for every element named with the name of the element
+A loop is created for every element with the key name of the element
 followed by _loop.  The rows of the loop contain the variable
 described above and a _count variable.
 
@@ -491,12 +491,13 @@ this type of loop.
 
 =item *
 
-A variable for the total number of elements named with the element
+A variable for the total number of elements with the element key
 name and a trailing _total.
 
 =item *
 
-A variable called "title" containing $story->title.
+A variable named for each attribute of the story, including "title", "uri",
+description", and so on.
 
 =item *
 
@@ -507,10 +508,7 @@ A variable called "page_break" containing $burner->page_break.
 =head2 THE SCRIPT - story.tmpl
 
 The script for use with this strategy is almost exactly the same as
-for strategy 1 (sneaky, huh?).  There are a couple changes.  First,
-the autofill code translates spaces in element names into underscores
-to make them easier to use - I could have done that in my earlier
-script but the script was complicated enough to begin with!  Also, the
+for strategy 1 (sneaky, huh?).  The only change is that the
 autofill code provides "is_$name" variables inside the element_loops
 to make testing for the type of the row more obvious and more
 fool-proof.  In STRATEGY 1 a paragraph with the sole contents "0"
@@ -521,33 +519,33 @@ wouldn't have been printed!  The horror!
        <html>
 
        <head>
-	 <title><tmpl_var title></title>
+     <title><tmpl_var title></title>
        </head>
        <body>
 
-	 <tmpl_if __first__>
-	    <h1><tmpl_var title></h1>
-	    <b><tmpl_var deck></b>
-	 </tmpl_if>
+     <tmpl_if __first__>
+        <h1><tmpl_var title></h1>
+        <b><tmpl_var deck></b>
+     </tmpl_if>
 
-	 <tmpl_loop element_loop>
-	    <tmpl_if is_paragraph>
-	      <p><tmpl_var paragraph></p>
-	    </tmpl_if>
-	    <tmpl_if is_pull_quote>
-	      <p><blockquote><i>
+     <tmpl_loop element_loop>
+        <tmpl_if is_paragraph>
+          <p><tmpl_var paragraph></p>
+        </tmpl_if>
+        <tmpl_if is_pull_quote>
+          <p><blockquote><i>
                 <tmpl_var pull_quote>
               </i></blockquote></p>
-	    </tmpl_if>
-	 </tmpl_loop> 
+        </tmpl_if>
+     </tmpl_loop>
 
          <tmpl_unless __first__>
-	 <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
-	 </tmpl_unless>
+     <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
+     </tmpl_unless>
 
-	 <tmpl_unless __last__>
-	 <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
-	 </tmpl_unless>
+     <tmpl_unless __last__>
+     <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
+     </tmpl_unless>
 
        </body>
        </html>
@@ -620,24 +618,24 @@ script/template:
        <html>
 
        <head>
-	 <title><tmpl_var title></title>
+     <title><tmpl_var title></title>
        </head>
        <body>
 
-	 <tmpl_if __first__>
-	    <h1><tmpl_var title></h1>
-	    <b><tmpl_var deck></b>
-	 </tmpl_if>
+     <tmpl_if __first__>
+        <h1><tmpl_var title></h1>
+        <b><tmpl_var deck></b>
+     </tmpl_if>
 
          <tmpl_var page>
 
          <tmpl_unless __first__>
-	 <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
-	 </tmpl_unless>
+     <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
+     </tmpl_unless>
 
-	 <tmpl_unless __last__>
-	 <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
-	 </tmpl_unless>
+     <tmpl_unless __last__>
+     <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
+     </tmpl_unless>
 
        </body>
        </html>
@@ -658,15 +656,15 @@ earlier, if this script doesn't exist then the default script is used:
 Here's the page template that outputs the body of the page:
 
     <tmpl_loop element_loop>
-	<tmpl_if is_paragraph>
-	  <p><tmpl_var paragraph></p>
-	</tmpl_if>
-	<tmpl_if is_pull_quote>
-	  <p><blockquote><i>
+    <tmpl_if is_paragraph>
+      <p><tmpl_var paragraph></p>
+    </tmpl_if>
+    <tmpl_if is_pull_quote>
+      <p><blockquote><i>
         <tmpl_var pull_quote>
           </i></blockquote></p>
-	</tmpl_if>
-    </tmpl_loop> 
+    </tmpl_if>
+    </tmpl_loop>
 
 This should look pretty familiar - it's the exact same text that was
 in the original story.tmpl!  Autofill sets up the same loops and
@@ -740,7 +738,7 @@ Here's the desired story.tmpl:
        <html>
 
        <head>
-	 <title><tmpl_var title></title>
+     <title><tmpl_var title></title>
        </head>
        <body>
 
@@ -759,19 +757,19 @@ And the new Page template:
 
 
     <tmpl_if first>
-	<h1><tmpl_var title></h1>
-	<b><tmpl_var deck></b>
+    <h1><tmpl_var title></h1>
+    <b><tmpl_var deck></b>
     </tmpl_if>
 
     <tmpl_loop element_loop>
-	<tmpl_if is_paragraph>
-	  <p><tmpl_var paragraph></p>
-	</tmpl_if>
-	<tmpl_if is_pull_quote>
-	  <p><blockquote><i>
+    <tmpl_if is_paragraph>
+      <p><tmpl_var paragraph></p>
+    </tmpl_if>
+    <tmpl_if is_pull_quote>
+      <p><blockquote><i>
         <tmpl_var pull_quote>
           </i></blockquote></p>
-	</tmpl_if>
+    </tmpl_if>
     </tmpl_loop> 
 
     <tmpl_unless first>
@@ -797,15 +795,15 @@ first half of the solution in story.pl:
     my $template = $burner->new_template();
 
     # collect pages in @pages
-    my @pages = grep { $_->has_name('page') } $element->get_elements();
+    my @pages = $element->get_elements('page');
 
     # build @page_loop by calling run_script with page_count and
     # page_total params.
     my $page_count = 1;
     my @page_loop;
     foreach my $page (@pages) {
-      push @page_loop, { page => $burner->run_script($page, 
-                                                     $page_count, 
+      push @page_loop, { page => $burner->run_script($page,
+                                                     $page_count,
                                                      scalar @page_loop) };
       $page_count++;
     }
@@ -921,36 +919,36 @@ story in Strategy 2 with a small addition:
        <html>
 
        <head>
-	 <title><tmpl_var title></title>
+     <title><tmpl_var title></title>
        </head>
        <body>
 
-	 <tmpl_if __first__>
-	    <h1><tmpl_var title></h1>
-	    <b><tmpl_var deck></b>
-	 </tmpl_if>
+     <tmpl_if __first__>
+        <h1><tmpl_var title></h1>
+        <b><tmpl_var deck></b>
+     </tmpl_if>
 
-	 <tmpl_loop element_loop>
-	    <tmpl_if is_paragraph>
-	      <p><tmpl_var paragraph></p>
-	    </tmpl_if>
-	    <tmpl_if is_pull_quote>
-	      <p><blockquote><i>
+     <tmpl_loop element_loop>
+        <tmpl_if is_paragraph>
+          <p><tmpl_var paragraph></p>
+        </tmpl_if>
+        <tmpl_if is_pull_quote>
+          <p><blockquote><i>
                 <tmpl_var pull_quote>
               </i></blockquote></p>
-	    </tmpl_if>
+        </tmpl_if>
             <tmpl_if is_image>
               <p><tmpl_var image></p>
             </tmpl_if>
-	 </tmpl_loop> 
+     </tmpl_loop>
 
          <tmpl_unless __first__>
-	 <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
-	 </tmpl_unless>
+     <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
+     </tmpl_unless>
 
-	 <tmpl_unless __last__>
-	 <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
-	 </tmpl_unless>
+     <tmpl_unless __last__>
+     <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
+     </tmpl_unless>
 
        </body>
        </html>
@@ -1001,7 +999,7 @@ whether you like it or not!
 
 Just as elements can have scripts and templates, each category may
 have one script and one template associated with it called
-"category.pl" and "category.tmpl".  
+"category.pl" and "category.tmpl".
 
 This is the HTML::Template equivalent of Mason's autohandlers although
 there are some differences in behavior.  For one, HTML::Template's
@@ -1045,24 +1043,15 @@ where the content will be inserted for each page.
 
 =head2 THE SCRIPT - category.pl
 
-As you probably can predict autofill will fill in all the variables in
-the above template.  However, for reference here's the script:
-
-   my $template = $burner->new_template();
-   $template->param(title   => $story->get_title,
-                    content => $burner->content);
-   return $template->output();
-
-One note - the $element variable is not initialized to the story's
-element.  As a result autofill doesn't setup any of the normal vars
-and loops associated with the element tree for the story.  This
-usually a good thing - if you start trying to output story elements
-inside your category templates then you're headed the wrong way.
-However, you can always get the element from $story and pass it to
-new_template manually:
+As you probably can predict autofill will fill in all the variables in the
+above template. One note - the $element variable is not initialized to the
+story's element. As a result autofill doesn't setup any of the normal vars and
+loops associated with the element tree for the story. This usually a good
+thing - if you start trying to output story elements inside your category
+templates then you're headed the wrong way. However, you can always get the
+element from $story and pass it to new_template manually:
 
    my $template = $burner->new_template(element => $story->get_element);
-
 
 =head2 CONCLUSION
 

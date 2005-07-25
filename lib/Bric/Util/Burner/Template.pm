@@ -484,7 +484,7 @@ END
                      mode    => $self->get_mode,
                      oc      => $self->get_oc->get_name,
                      cat     => $self->get_cat->get_uri,
-                     elem    => $element->get_name
+                     elem    => ref $element ? $element->get_name : $element
       if $@;
     return $output;
 }
@@ -631,7 +631,8 @@ sub new_template {
     $args{cache} = 0             unless exists $args{cache};
 
     # setup some useful functions
-    # $args{functions}{call} => sub { $self->run_script($_[0]) };
+    #$args{functions}{call} => sub { $self->run_script($_[0]) };
+    $args{functions}{get_page} = sub { $self->get_page(@_); };
     $args{functions}{page_link} = sub { $self->page_file(@_); };
     $args{functions}{next_page_link} = sub { $self->page_file($_[0] + 1); };
     $args{functions}{prev_page_link} = sub { $self->page_file($_[0] - 1); };
@@ -646,14 +647,19 @@ sub new_template {
     if ($autofill and $element) {
         my $story = $self->get_story();
         # fill in some non-element data
-        $template->param(title => $story->get_title)
-          if $template->query(name => "title");
+        my $meths = $story->my_meths;
+        while (my ($k, $v) = each %$meths) {
+            next unless $template->query(name => $k);
+            my $get = $v->{get_meth};
+            $template->param($k => $get->($story));
+        }
         $template->param(page_break => PAGE_BREAK)
           if $template->query(name => "page_break");
-        $template->param(content => CONTENT)
-          if $template->query(name => "content") and $element eq 'category';
 
-        unless ($element eq 'category') {
+        if ($element eq 'category') {
+            $template->param(content => CONTENT)
+              if $template->query(name => "content");
+        } else {
             # setup data for template
             my $data = $self->_build_element_vars($element,
                                                   $template,
@@ -768,6 +774,7 @@ sub _build_element_vars {
     my ($thing, $link);
     if (($thing = $element->get_related_media()) or
         ($thing = $element->get_related_story())) {
+        # XXX What if it's both related story and related media?
         $link = $thing->get_primary_uri;
         $var{link} = $link;
     }
@@ -950,7 +957,7 @@ sub _add_resource {
 
     # Set the media type.
     $res->set_media_type(
-      Bric::Util::MediaType->get_name_by_ext($self->_get('_output_ext')));
+      Bric::Util::MediaType->get_name_by_ext($self->_get('output_ext')));
     # Add our story ID.
     $res->add_story_ids($ba->get_id);
     $res->save;
@@ -1026,9 +1033,9 @@ sub _write_pages {
           or throw_gen error   => "Unable to open $filename",
                        payload => $!;
         binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
-        print OUT $$header;
-        print OUT $$output;
-        print OUT $$footer;
+        for my $part ($header, $output, $footer) {
+            print OUT $$part if defined $$part;
+        }
         close(OUT);
 
         # add resource object for this file

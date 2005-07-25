@@ -189,12 +189,9 @@ A category in which to publish.
 =cut
 
 sub burn_one {
-    my $self = shift;
-    my ($story, $oc, $cat, $at) = @_;
-
+    my ($self, $story, $oc, $cat, $at) = @_;
     my $element = $story->get_tile();
 
-    my($ba);  #gone
     my ($outbuf, $retval);
 
     # Determine the component roots.
@@ -213,70 +210,69 @@ sub burn_one {
     my (%bric_objs);
 
     my $php = PHP::Interpreter->new({
-	#questionable layout things, but we got the time to sort it out
-	OUTPUT       => \$outbuf,
-	INCLUDE_PATH => join(':', @$template_roots),
-# 
-#	WRAPPER      => \@wrappers,
-	BRIC    => {
-	    burner  => $self,
-	    story   => $story,
-	    element => $element,
-	},
+        #questionable layout things, but we got the time to sort it out
+        OUTPUT       => \$outbuf,
+        INCLUDE_PATH => join(':', @$template_roots),
+        #
+        #	WRAPPER      => \@wrappers,
+        BRIC    => {
+            burner  => $self,
+            story   => $story,
+            element => $element,
+        },
     });
 
     my $template;
     {
-	my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-	my $tmpl_name = $element->get_key_name . '.php';
+        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+        my $tmpl_name = $element->get_key_name . '.php';
         do {
-	    foreach my $troot (@$template_roots) {
-		my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-		if(-e $path) {
-		    $template = $path;
-		    goto LABEL;
-		}
-	    }
-	} while(pop(@cats));
+            foreach my $troot (@$template_roots) {
+                my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
+                if(-e $path) {
+                    $template = $path;
+                    goto LABEL;
+                }
+            }
+        } while(pop(@cats));
       LABEL:
     }
 
     $self->_set([qw(_buf      page story   element   _comp_root       _php)],
-		[   \$outbuf, 0,   $story, $element, $template_roots, $php]);
+                [   \$outbuf, 0,   $story, $element, $template_roots, $php]);
 
     $self->_push_element($element);
 
     while(1) {
         use utf8;
-        warn "Processing $template\n";
-	$php->include($template)
+        $php->include($template)
           or throw_burn_error
-          error   => "Error executing '$template'",
-          payload => $@,
-          mode    => $self->get_mode,
-          oc      => $self->get_oc->get_name,
-          cat     => $self->get_cat->get_uri,
-          elem    => $element->get_name;
+            error   => "Error executing '$template'",
+            payload => $@,
+            mode    => $self->get_mode,
+            oc      => $self->get_oc->get_name,
+            cat     => $self->get_cat->get_uri,
+            elem    => $element->get_name;
 
-	my $page = $self->_get('page') + 1;
+        my $page = $self->_get('page') + 1;
 
-	if($outbuf !~ /^\s*$/) {
-	    my $file = $self->page_filepath($page);
-	    my $uri  = $self->page_uri($page);
+        if ($outbuf !~ /^\s*$/) {
+            my $file = $self->page_filepath($page);
+            my $uri  = $self->page_uri($page);
 
-	    # Save the page we've created so far.
-	    open(OUT, ">$file")
+            # Save the page we've created so far.
+            open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
             binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
-	    print OUT $outbuf;
-	    close(OUT);
-	    $outbuf = '';
-	    # Add a resource to the job object.
-	    $self->_add_resource($file, $uri);
-	}
-	$self->_set([qw(page)],[$page]);
-	last unless $self->_get('more_pages');
+            print OUT $outbuf;
+            close(OUT);
+            $outbuf = '';
+            # Add a resource to the job object.
+            $self->_add_resource($file, $uri);
+        }
+        $self->_set([qw(page)],[$page]);
+        last unless $self->_get('more_pages');
     }
     $self->_pop_element;
 
