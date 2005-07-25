@@ -99,7 +99,7 @@ function checkPasswords(obj1, obj2, passwd_length) {
         obj1.focus();
         return false;
     }
-    if (/\s+$/.tert(pass1)) {
+    if (/\s+$/.test(pass1)) {
         alert(passwd_end_msg);
         obj1.value = "";
         obj2.value = "";
