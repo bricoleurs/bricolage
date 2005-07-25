@@ -19,13 +19,13 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
- use Bric::Util::Burner::Mason;
+  use Bric::Util::Burner::Mason;
 
- # Create a new Mason burner using the settings from $burner
- $mason_burner = Bric::Util::Burner::Mason->new($burner);
+  # Create a new Mason burner using the settings from $burner
+  my $mason_burner = Bric::Util::Burner::Mason->new($burner);
 
- # burn an asset, get back a list of resources
- @resources = $mason_burner->burn_one($ba, $at, $oc, $cat);
+  # burn an asset, get back a list of resources
+  my $resources = $mason_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -51,7 +51,6 @@ use HTML::Mason::Compiler::ToObject;
 use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
                          throw_burn_error);
 use Bric::Util::Trans::FS;
-use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
 use Bric::Util::Burner qw(:modes);
 use Bric::Biz::AssetType;
@@ -104,7 +103,6 @@ BEGIN {
                          '_elem'           => Bric::FIELD_NONE,
                          '_at'             => Bric::FIELD_NONE,
                          '_files'          => Bric::FIELD_NONE,
-                         '_res'            => Bric::FIELD_NONE,
                          '_page_place'     => Bric::FIELD_NONE,
                         });
 }
@@ -142,10 +140,6 @@ has its attributes initialized by the passed object.
 sub new {
     my ($class, $burner) = @_;
     my $init = { %$burner };
-
-    # setup defaults (in addition to those provided by $burner)
-    $init->{_res}     ||= [];
-
     # create the object using Bric's constructor and return it
     return $class->Bric::new($init);
 }
@@ -162,7 +156,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item @resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $at, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -328,11 +322,7 @@ sub burn_one {
 
     # Free up the element stack.
     $self->_pop_element;
-
-    # Return a list of the resources we just burned.
-    my $ret = $self->_get('_res') || return;
-    $self->_set(['_res', 'page'], [[], 0]);
-    return wantarray ? @$ret : $ret;
+    return $self->get_resources;
 }
 
 ################################################################################
@@ -660,7 +650,7 @@ sub end_page {
     close(OUT);
 
     # Add a resource to the job object.
-    $self->_add_resource($file, $uri);
+    $self->add_resource($file, $uri);
 
     # Clear the output buffer.
     $$buf = '';
@@ -681,39 +671,6 @@ NONE.
 =head2 Private Instance Methods
 
 =over 4
-
-=item $success = $b->_add_resource();
-
-Adds a Bric::Dist::Resource object to this burn.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _add_resource {
-    my $self = shift;
-    my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story output_ext));
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
-    # Add our story ID.
-    $res->add_story_ids($story->get_id);
-    $res->save;
-    my $ress = $self->_get('_res');
-    push @$ress, $res;
-}
-
-#------------------------------------------------------------------------------#
 
 =item $template = $b->_load_template_element($element);
 

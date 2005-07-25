@@ -20,13 +20,13 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
- use Bric::Util::Burner::Template;
+  use Bric::Util::Burner::Template;
 
   # Create a new HTML::Template burner using the settings from $burner
-  $template_burner = Bric::Util::Burner::Template->new($burner);
+  my $template_burner = Bric::Util::Burner::Template->new($burner);
 
   # burn an asset, get back a list of resources
-  @resources = $template_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $template_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -53,7 +53,6 @@ use strict;
 use HTML::Template::Expr;
 use Bric::Util::Trans::FS;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
-use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
 use Digest::MD5 qw(md5 md5_hex);
 use Time::HiRes qw(time);
@@ -88,7 +87,6 @@ BEGIN {
     Bric::register_fields({
                            # Private Fields
                            _template_roots  => Bric::FIELD_NONE,
-                           _res             => Bric::FIELD_NONE,
                            _output_path     => Bric::FIELD_NONE,
                            _at              => Bric::FIELD_NONE,
                            _header          => Bric::FIELD_NONE,
@@ -147,7 +145,7 @@ sub new {
 
 =over 4
 
-=item @resources = $template_burner->burn_one($ba, $at, $oc, $cat);
+=item $resources = $template_burner->burn_one($ba, $at, $oc, $cat);
 
 Publishes an asset. Returns a list of resources burned. Parameters are:
 
@@ -200,9 +198,6 @@ sub burn_one {
     print STDERR __PACKAGE__, "::burn_one() called.\n"
         if DEBUG;
 
-    # setup empty state for this burn
-    my $res      = [];
-
     # compute template_roots for later
     my $comp_dir = $self->get_comp_dir;
     my $template_roots = [ map { $fs->cat_dir($comp_dir, "oc_" . $_->get_id) }
@@ -215,8 +210,7 @@ sub burn_one {
     }
 
     # save burn parameters
-    $self->_set([qw(_res _at _template_roots)],
-                [$res, $at, $template_roots]);
+    $self->_set([qw(_at _template_roots)] => [$at, $template_roots]);
 
     # run the category script if it exists
     if ($self->_find_file('category', '.pl') or
@@ -239,16 +233,7 @@ sub burn_one {
     $self->_write_pages(\$output);
 
     # Return a list of the resources we just burned.
-    my $ret = $self->_get('_res') || return;
-
-    throw_burn_error error => "No files burned",
-                     mode  => $self->get_mode,
-                     oc    => $oc->get_name,
-                     cat   => $cat->get_uri,
-                     elem  => $element->get_name
-      unless @$ret;
-
-    return wantarray ? @$ret : $ret;
+    return $self->get_resources
 }
 
 ################################################################################
@@ -927,49 +912,11 @@ sub _get_template_path {
 }
 
 
-=item $success = $self->_add_resource();
-
-Adds a Bric::Dist::Resource object to this burn.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _add_resource {
-    my $self = shift;
-    my ($file, $uri) = @_;
-    my $ba  = $self->get_story;
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file}) ||
-              Bric::Dist::Resource->new({ path => $file,
-                                          uri  => $uri});
-
-    # Set the media type.
-    $res->set_media_type(
-      Bric::Util::MediaType->get_name_by_ext($self->_get('output_ext')));
-    # Add our story ID.
-    $res->add_story_ids($ba->get_id);
-    $res->save;
-    my $ress = $self->_get('_res');
-    push @$ress, $res;
-}
-
 =item $self->_write_pages(\$output)
 
 Writes pages in $output (and _header and _footer) to the appropriate output
-files on disk. Also takes care of building a list of resources in _res for the
-files written.
+files on disk. Also takes care of building adding resources for the files
+written.
 
 B<Throws:>
 
@@ -1019,7 +966,7 @@ sub _write_pages {
 
             # add resource object for this file
             my $uri = $self->page_uri($page + 1);
-            $self->_add_resource($filename, $uri);
+            $self->add_resource($filename, $uri);
         }
     } else {
         # compute filename
@@ -1040,7 +987,7 @@ sub _write_pages {
 
         # add resource object for this file
         my $uri = $self->page_uri(1);
-        $self->_add_resource($filename, $uri);
+        $self->add_resource($filename, $uri);
     }
 }
 
