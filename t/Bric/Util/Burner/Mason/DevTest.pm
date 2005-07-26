@@ -19,6 +19,7 @@ sub story_output {
 <title>This is a Test</title>
 </head><body>
 <h1>This is a Test</h1>
+<h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
 <p>Third paragraph</p>
@@ -37,6 +38,7 @@ sub story_page1 {
 <title>This is a Test</title>
 </head><body>
 <h1>This is a Test</h1>
+<h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
 <p>Third paragraph</p>
@@ -59,6 +61,7 @@ sub story_page2 {
 <title>This is a Test</title>
 </head><body>
 <h1>This is a Test</h1>
+<h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
 <p>Third paragraph</p>
