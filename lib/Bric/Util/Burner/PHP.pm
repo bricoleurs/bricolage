@@ -546,9 +546,9 @@ sub sdisplay_element {
     my $elem = shift or return '';
     return $elem->get_data unless $elem->is_container;
     my ($php, $buf) = $self->_get(qw(_php _buf));
-    $php->setOutputHandler(\my $ret);
+    $php->set_output_handler(\my $ret);
     $self->_display_container($elem);
-    $php->setOutputHandler($buf);
+    $php->set_output_handler($buf);
     return $ret;
 }
 
