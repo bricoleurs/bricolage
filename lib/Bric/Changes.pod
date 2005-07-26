@@ -24,6 +24,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 The Template Toolkit and HTML::Template burners work again. [David]
 
+=item *
+
+Fixed syntax error in Bric::Util::Trans::SFTP. Reported by Kenneth Marshall.
+[David]
+
 =back
 
 =head1 VERSION 1.8.6 (2005-07-19)
