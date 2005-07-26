@@ -6,8 +6,7 @@ use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-#sub test_burn : Test(80) {
-sub test_burn : Test(119) {
+sub test_burn : Test(120) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };
@@ -80,6 +79,12 @@ sub story_output {
 
 
 
+
+<h3>And then...</h3>
+
+
+
+
 <p>Third paragraph</p>
 
 
@@ -125,6 +130,12 @@ sub story_page1 {
 
 <p>Second paragraph</p>
 
+
+
+
+
+
+<h3>And then...</h3>
 
 
 
@@ -187,6 +198,12 @@ sub story_page2 {
 
 <p>Second paragraph</p>
 
+
+
+
+
+
+<h3>And then...</h3>
 
 
 

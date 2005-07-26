@@ -261,7 +261,7 @@ sub burn_one {
     }
 
     $self->_set([qw(_buf      page story   element   _comp_root       _tt)],
-		[   \$outbuf, 0,   $story, $element, $template_roots, $tt]);
+                [   \$outbuf, 0,   $story, $element, $template_roots, $tt]);
 
     $self->_push_element($element);
 
@@ -363,11 +363,11 @@ sub find_template {
     my @cats = $fs->split_uri($uri);
     my $root = $self->_get('_comp_root');
     do {
-	# if the file exists, return it
-	foreach my $troot (@$root) {
-	    my $path = $fs->cat_dir($troot, @cats, $name);
-	    return $path if -e $path;
-	}
+    # if the file exists, return it
+    foreach my $troot (@$root) {
+        my $path = $fs->cat_dir($troot, @cats, $name);
+        return $path if -e $path;
+    }
     } while(pop(@cats));
     return;
 }
@@ -492,14 +492,15 @@ sub display_pages {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->display_element($element)
+=item $content = $b->display_element($element)
 
-=item $success = $b->display_element($element, %ARGS)
+=item $content = $b->display_element($element, %ARGS)
 
-A method to be called from template space. This method will find the mason
-element associated with the element passed in and call C<< $m->comp >>. All
-arguments after the first argument will be passed to the template executed as
-its C<%ARGS> hash.
+A method to be called from template space. This method will find the template
+associated with the element passed in and call include it in the Template
+Toolkit execution. The return value is the content to be output. Pass in a
+list of arguments to have them set up variables in the stash of the element's
+execution context.
 
 B<Throws:> NONE.
 
@@ -511,31 +512,23 @@ B<Notes:> NONE.
 
 sub display_element {
     my $self = shift;
-    my $elem = shift or return;
-    my $buf = $self->_get('_buf');
+    my $elem = shift or return '';
+    return $elem->get_data unless $elem->is_container;
+
     my $data = '';
-    # Call another element if this is a container otherwise output the data.
+    my $tt = $self->_get('_tt');
 
-    if ($elem->is_container) {
-        my $tt = $self->_get('_tt');
+    # Push this element on to the stack
+    $self->_push_element($elem);
 
-        # Set the elem global to the current element.
-        # Push this element on to the stack
-        $self->_push_element($elem);
+    my $template = $self->_load_template_element($elem);
+    $data .= $tt->context->include($template, {
+        'element' => $elem,
+        @_
+    });
 
-        my $template = $self->_load_template_element($elem);
-        $data .= $tt->context->include($template, {
-            'element' => $elem,
-        });
-
-        # Pop the element back off again.
-        $self->_pop_element();
-
-        # Set the elem global to the previous element
-
-    } else {
-	$data .= $elem->get_data();
-    }
+    # Pop the element back off again.
+    $self->_pop_element;
     return $data;
 }
 

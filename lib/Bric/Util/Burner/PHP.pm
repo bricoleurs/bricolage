@@ -519,31 +519,37 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
+    return $self->_display_container($elem) if $elem->is_container;
+    my $buf = $self->_get('_buf');
+    $$buf .= $elem->get_data;
+    return $self;
+}
 
-    if ($elem->is_container) {
-        # Set the elem global to the current element.
-        # Push this element on to the stack
-        $self->_push_element($elem);
-        my $template = $self->_load_template_element($elem);
-        my $php = $self->_get('_php');
-        $php->setBric(element => $elem);
-        eval { $php->include($template) };
-        throw_burn_error
-            error   => "Error executing '$template'",
-            payload => $@,
-            mode    => $self->get_mode,
-            oc      => $self->get_oc->get_name,
-            cat     => $self->get_cat->get_uri,
-            elem    => $elem->get_name
-          if $@;
+##############################################################################
 
-        $self->_pop_element;
-        # Set the elem global to the previous element
-    } else {
-        my $buf = $self->_get('_buf');
-        $$buf .= $elem->get_data;
-    }
-    return 1;
+=item $output = $b->sdisplay_element($element)
+
+A method to be called from template space. This is a C<sprint>-likef version
+of C<display_element()>, i.e. it returns the output as a string rather than
+outputting it it as C<display_element()> does.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub sdisplay_element {
+    my $self = shift;
+    my $elem = shift or return '';
+    return $elem->get_data unless $elem->is_container;
+    my ($php, $buf) = $self->_get(qw(_php _buf));
+    $php->setOutputHandler(\my $ret);
+    $self->_display_container($elem);
+    $php->setOutputHandler($buf);
+    return $ret;
 }
 
 ##############################################################################
@@ -678,7 +684,38 @@ sub _pop_element {
     return pop @$elem_stack;
 }
 
-#--------------------------------------#
+##############################################################################
+
+=item $burner->_display_container($element)
+
+Called by C<display_element()> and C<sidsplay_element()> this method uses the
+PHP::Interpreter object to execute the element template for a container
+element.
+
+=cut
+
+sub _display_container {
+    my ($self, $elem) = @_;
+    my $parent = $self->_current_element;
+    $self->_push_element($elem);
+    my $template = $self->_load_template_element($elem);
+    my $php = $self->_get('_php');
+    $php->setBric(element => $elem);
+    eval { $php->include($template) };
+    throw_burn_error
+        error   => "Error executing '$template'",
+        payload => $@,
+        mode    => $self->get_mode,
+        oc      => $self->get_oc->get_name,
+        cat     => $self->get_cat->get_uri,
+        elem    => $elem->get_name
+      if $@;
+
+    $self->_pop_element;
+    $php->setBric(element => $parent);
+    return $self;
+}
+
 
 =back
 

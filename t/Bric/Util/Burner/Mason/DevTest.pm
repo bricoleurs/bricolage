@@ -5,7 +5,7 @@ use warnings;
 use base qw(Bric::Util::Burner::DevTest);
 use Test::More;
 
-sub test_burn : Test(107) {
+sub test_burn : Test(108) {
     my $self = shift;
     return $self->subclass_burn_test(
         'Mason',
@@ -22,6 +22,7 @@ sub story_output {
 <h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
+<h3>And then...</h3>
 <p>Third paragraph</p>
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
@@ -41,6 +42,7 @@ sub story_page1 {
 <h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
+<h3>And then...</h3>
 <p>Third paragraph</p>
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
@@ -64,6 +66,7 @@ sub story_page2 {
 <h2>2005.03.22</h2>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
+<h3>And then...</h3>
 <p>Third paragraph</p>
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>

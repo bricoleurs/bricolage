@@ -7,7 +7,7 @@ foreach ($element->get_elements('header', 'para', '_pull_quote_') as $e) {
     $kn = $e->get_key_name();
     if ($kn == 'para') {
         echo '<p>', $e->get_data(), "</p>\n";
-    } else if ($e == 'header') {
+    } else if ($kn == 'header') {
         # Test sdisplay_element().
         echo '<h3>', $burner->sdisplay_element($e), "</h3>\n";
     } else {

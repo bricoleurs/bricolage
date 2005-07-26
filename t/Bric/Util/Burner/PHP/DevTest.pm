@@ -5,8 +5,7 @@ use warnings;
 use base qw(Bric::Util::Burner::DevTest);
 use Test::More;
 
-#sub test_burn : Test(80) {
-sub test_burn : Test(no_plan) {
+sub test_burn : Test(108) {
     my $self = shift;
     return "PHP::Interpreter not installed"
       unless eval { require PHP::Interpreter };
@@ -26,6 +25,7 @@ sub story_output {
 <h2>2005.03.22</h1>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
+<h3>And then...</h3>
 <p>Third paragraph</p>
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
@@ -45,6 +45,7 @@ sub story_page1 {
 <h2>2005.03.22</h1>
 <p>This is a paragraph</p>
 <p>Second paragraph</p>
+<h3>And then...</h3>
 <p>Third paragraph</p>
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
@@ -66,8 +67,14 @@ sub story_page2 {
 </head><body>
 <h1>This is a Test</h1>
 <h2>2005.03.22</h1>
-<p>Wee, page one paragraph</p>
-<p>Another page one paragraph</p>
+<p>This is a paragraph</p>
+<p>Second paragraph</p>
+<h3>And then...</h3>
+<p>Third paragraph</p>
+<blockquote>
+<p>Ask not what your country can do for you. Ask what you can do for your country.</p>
+<p>--John F. Kennedy, 1961.01.20</p>
+</blockquote>
 <div class="page">
 <p>Wee, page two paragraph</p>
 <p>Another page two paragraph</p>

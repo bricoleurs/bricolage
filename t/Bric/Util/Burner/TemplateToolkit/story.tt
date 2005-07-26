@@ -8,8 +8,8 @@ print "<h2>", $stash->get('story')->get_cover_date('%Y.%m.%d'), "</h2>\n";
     [% IF kn == 'para' %]
 <p>[% e.get_data %]</p>
     [% ELSIF kn == 'header' %]
-        [% # Test sdisplay_element(). %]
-<h2>[% burner.sdisplay_element(e) %]</h2>
+        [% # display_element() should just return a value. %]
+<h3>[% burner.display_element(e) %]</h3>
     [% ELSE %]
         [% # Test display_element(). %]
         [% burner.display_element(e) %]

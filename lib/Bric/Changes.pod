@@ -297,6 +297,12 @@ story title. So, for example, you can now use <tmpl_var primary_uri> or
 Refactored the separate C<_add_resource()> methods in each of the burner
 subclasses int Bric::Util::Burner itself. [David]
 
+=item *
+
+Arguments can now be passed to the C<display_element()> methof of the Template
+Toolkit burner and they will be set up as variables in the stash of the
+execution context of the element template.
+
 =back
 
 ##############################################################################

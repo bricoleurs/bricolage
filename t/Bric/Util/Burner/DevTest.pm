@@ -562,6 +562,7 @@ sub subclass_burn_test {
     ok my $elem = $story->get_element, "Get the story element";
     ok $elem->add_data($para, 'This is a paragraph'), "Add a paragraph";
     ok $elem->add_data($para, 'Second paragraph'), "Add another paragraph";
+    ok $elem->add_data($head, "And then..."), "Add a header";
     ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
 
     # Add a pull quote.
