@@ -303,6 +303,14 @@ Arguments can now be passed to the C<display_element()> methof of the Template
 Toolkit burner and they will be set up as variables in the stash of the
 execution context of the element template.
 
+=item *
+
+Category templates in the HTML::Template burner now cascade just like in all
+the other burners, rather than stopping at the first category template found
+in the category URI. Users of HTML::Template templates should take note of
+this if they have more than one category template in their category URIs.
+[David]
+
 =back
 
 ##############################################################################

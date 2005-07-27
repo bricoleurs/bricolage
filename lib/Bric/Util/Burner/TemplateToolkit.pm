@@ -217,12 +217,11 @@ sub burn_one {
             foreach my $troot (@$template_roots) {
                 my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
                 if(-e $path) {
-                    push @wrappers, $path;
+                    unshift @wrappers, $path;
                     last;
                 }
             }
-        } while(pop(@cats));
-        @wrappers = reverse @wrappers;
+        } while (pop @cats);
     }
 
     my $tt = Template->new({
@@ -256,7 +255,7 @@ sub burn_one {
                     goto LABEL;
                 }
             }
-        } while(pop(@cats));
+        } while (pop @cats);
       LABEL:
     }
 

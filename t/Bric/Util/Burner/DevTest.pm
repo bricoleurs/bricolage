@@ -499,6 +499,26 @@ sub subclass_burn_test {
     $self->add_del_ids($cat_tmpl->get_id, 'formatting');
     close $fh;
 
+    # And also a subcategory template.
+    my $subcat_tmpl_fn = Bric::Util::Burner->cat_fn_for_ext($suffix);
+    $subcat_tmpl_fn .= ".$suffix"
+      if Bric::Util::Burner->cat_fn_has_ext($subcat_tmpl_fn);
+    $subcat_tmpl_fn = 'sub_' . $subcat_tmpl_fn;
+    $file = $fs->cat_file(dirname(__FILE__), $dir, $subcat_tmpl_fn);
+    open $fh, '<', $file or die "Cannot open '$file': $!\n";
+    ok my $subcat_tmpl = Bric::Biz::Asset::Formatting->new({
+        output_channel => $suboc, # Put it in the contained OC.
+        user__id       => $self->user_id,
+        category_id    => $subcat->get_id, # This is the important bit.
+        site_id        => 100,
+        tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        file_type      => $suffix,
+        data           => join('', <$fh>),
+    }), "Create a subcategory template";
+    ok( $subcat_tmpl->save, "Save subcategory template" );
+    $self->add_del_ids($subcat_tmpl->get_id, 'formatting');
+    close $fh;
+
     # And I think a utility template might be handy.
     $file = $fs->cat_file(dirname(__FILE__), $dir, "util.$suffix");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
@@ -523,7 +543,7 @@ sub subclass_burn_test {
     }), "Create burner";
 
     for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $page_tmpl, $util_tmpl,
-                  $self->extra_templates({
+                  $subcat_tmpl, $self->extra_templates({
                       story_type => $story_type,
                       pull_quote => $pull_quote,
                       oc         => $oc,

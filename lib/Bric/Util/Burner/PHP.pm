@@ -276,7 +276,7 @@ sub burn_one {
             for my $troot (@$template_roots) {
                 my $path = $fs->cat_dir($troot, @cats, 'category');
                 next unless -e $path;
-                unshift @cat_tmpls, $path;
+                push @cat_tmpls, $path;
                 last;
             }
         } while (pop @cats);
@@ -305,7 +305,7 @@ sub burn_one {
 
         # Execute category templates.
         for my $cat_tmpl (@cat_tmpls) {
-            $php->setBric(CONTENT => $outbuf);
+            $php->setBric(content => $outbuf);
             $outbuf = '';
             eval { $php->include($cat_tmpl) };
             throw_burn_error
@@ -316,7 +316,7 @@ sub burn_one {
                 cat     => $self->get_cat->get_uri
               if $@;
         }
-        $php->setBric(CONTENT => '');
+        $php->setBric(content => '');
 
         my $page = $self->_get('page') + 1;
 

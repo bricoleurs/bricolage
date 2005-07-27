@@ -7,7 +7,7 @@ use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-sub test_burn : Test(127) {
+sub test_burn : Test(133) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };
@@ -23,19 +23,19 @@ sub test_burn : Test(127) {
 sub extra_templates {
     my ($self, $p) = @_;
 
-    my $cat_tmpl_fn = Bric::Util::Burner->cat_fn_for_ext('pl') . '.pl';
+    my $cat_tmpl_fn = 'sub_' . Bric::Util::Burner->cat_fn_for_ext('pl') . '.pl';
     my $file = Bric::Util::Trans::FS->cat_file(dirname(__FILE__), $cat_tmpl_fn);
     open my $fh, '<', $file or die "Cannot open '$file': $!\n";
     ok my $cat_tmpl = Bric::Biz::Asset::Formatting->new({
         output_channel => $p->{suboc}, # Put it in the contained OC.
         user__id       => $self->user_id,
-        category_id    => 1,
+        category_id    => $p->{subcat}->get_id,
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
         file_type      => 'pl',
         data           => join('', <$fh>),
-    }), "Create a category script template";
-    ok( $cat_tmpl->save, "Save category script template" );
+    }), "Create a subcategory script template";
+    ok( $cat_tmpl->save, "Save subcategory script template" );
     $self->add_del_ids($cat_tmpl->get_id, 'formatting');
     close $fh;
 
@@ -127,6 +127,7 @@ sub story_output {
 <p>So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself -- nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.</p>
 <p>--Franklin D. Roosevelt, 1933.03.04</p>
 </blockquote>
+
 
 
 
@@ -232,6 +233,7 @@ sub story_page1 {
 </div>
 
 
+
 <h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
 <div>Licensed under the BSD license</div>
 </body></html>
@@ -327,6 +329,7 @@ sub story_page2 {
 <p>Another page two paragraph</p>
 
 </div>
+
 
 
 <h4>My URI: /testing/sub/2005/03/22/test_burn</h4>

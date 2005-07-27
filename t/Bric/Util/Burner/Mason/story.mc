@@ -1,5 +1,3 @@
-<h1><% $story->get_title %></h1>
-<h2><% $story->get_cover_date('%Y.%m.%d') %></h2>
 <%perl>;
 for my $e ($element->get_elements(qw(header para _pull_quote_))) {
     my $kn = $e->get_key_name;
