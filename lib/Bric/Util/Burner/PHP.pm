@@ -29,7 +29,7 @@ $LastChangedDate: 2004-11-19 03:55:15 -0500 (Fri, 19 Nov 2004) $
 
 =head1 DESCRIPTION
 
-This module handles burning business story resources (files) PHP tempmlates.
+This module handles burning business story resources (files) PHP templates.
 
 =cut
 
@@ -145,6 +145,39 @@ sub new {
 
 =over 4
 
+=item my $encoding = $burner->get_encoding
+
+Returns the character set encoding to be used to write out the contents of a
+burn to a file. Defaults to "raw". Note that this is different than the
+default for the other burners because the C<utf8> flag on Perl variables is
+lost in the conversion to PHP. This should effectively be okay, however, as
+long as your PHP templates use the C<mb_*> functions and identify the encoding
+as UTF-8. For example:
+
+  $sub = mb_substr($element->get_data('deck'), 0, 255, 'utf-8');
+
+See L<http://us2.php.net/manual/en/ref.mbstring.php> for more information on
+handling multibyte characters in PHP.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $burner = $burner->set_encoding($encoding)
+
+Sets the character set encoding to be used to write out the contents of a burn
+to a file. Use this attribute if templates are converting output data from
+Bricolage's native UTF-8 encoding to another encoding. Use "raw" if your
+templates are outputting binary data. Defaults to "raw".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =cut
 
 #------------------------------------------------------------------------------#
@@ -249,8 +282,10 @@ sub burn_one {
         } while (pop @cats);
     }
 
-    $self->_set([qw(_buf      page story   element   _comp_root       _php)],
-                [   \$outbuf, 0,   $story, $element, $template_roots, $php]);
+    $self->_set(
+        [qw(_buf      page story   element   _comp_root       _php encoding)],
+        [   \$outbuf, 0,   $story, $element, $template_roots, $php, 'raw']
+    );
     $self->_push_element($element);
 
     while (1) {
@@ -293,7 +328,7 @@ sub burn_one {
             open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
-            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
+            binmode(OUT, ':' . $self->get_encoding || 'raw') if ENCODE_OK;
             print OUT $outbuf;
             close(OUT);
             $outbuf = '';
