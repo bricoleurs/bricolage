@@ -255,7 +255,6 @@ sub burn_one {
 
     while (1) {
         use utf8;
-        no warnings;
         eval { $php->include($template) };
         if (my $err = $@) {
             $err->rethrow if isa_bric_exception $err;

@@ -576,6 +576,19 @@ sub subclass_burn_test {
     ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
       "Add a date to the pull quote";
 
+    # Add another pull quote.
+    ok $pq = $elem->add_container($pull_quote), "Add another pull quote";
+    ok $pq->get_data_element('para')->set_data(
+        'So, first of all, let me assert my firm belief that the only '
+        . 'thing we have to fear is fear itself -- nameless, unreasoning, '
+        . 'unjustified terror which paralyzes needed efforts to convert '
+        . 'retreat into advance.'
+    ), "Add a paragraph to the pull quote";
+    ok $pq->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+      "Add a By to the pull quote";
+    ok $pq->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+      "Add a date to the pull quote";
+
     # Make it so!
     ok $elem->save, "Save the story element";
     # Allow localization by creating a language object.

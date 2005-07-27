@@ -6,7 +6,7 @@ use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-sub test_burn : Test(120) {
+sub test_burn : Test(124) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };
@@ -104,6 +104,17 @@ sub story_output {
 
 
 
+<blockquote>
+<p>So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself -- nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.</p>
+<p>--Franklin D. Roosevelt, 1933.03.04</p>
+</blockquote>
+
+
+
+
+
+
+
 
 <h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
 <div>Licensed under the BSD license</div>
@@ -151,6 +162,17 @@ sub story_page1 {
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
+</blockquote>
+
+
+
+
+
+
+
+<blockquote>
+<p>So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself -- nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.</p>
+<p>--Franklin D. Roosevelt, 1933.03.04</p>
 </blockquote>
 
 
@@ -219,6 +241,17 @@ sub story_page2 {
 <blockquote>
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
+</blockquote>
+
+
+
+
+
+
+
+<blockquote>
+<p>So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself -- nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.</p>
+<p>--Franklin D. Roosevelt, 1933.03.04</p>
 </blockquote>
 
 
