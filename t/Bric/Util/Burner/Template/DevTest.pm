@@ -2,11 +2,12 @@ package Bric::Util::Burner::Template::DevTest;
 
 use strict;
 use warnings;
+#use utf8; # Allow Test::File::Contents to do a binary comparison.
 use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-sub test_burn : Test(124) {
+sub test_burn : Test(127) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };
@@ -102,6 +103,24 @@ sub story_output {
 
 
 
+<p>圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年</p>
+
+
+
+
+
+<p>橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱</p>
+
+
+
+
+
+<p>뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐</p>
+
+
+
+
+
 
 
 <blockquote>
@@ -163,6 +182,24 @@ sub story_page1 {
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
 </blockquote>
+
+
+
+
+
+<p>圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年</p>
+
+
+
+
+
+<p>橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱</p>
+
+
+
+
+
+<p>뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐</p>
 
 
 
@@ -242,6 +279,24 @@ sub story_page2 {
 <p>Ask not what your country can do for you. Ask what you can do for your country.</p>
 <p>--John F. Kennedy, 1961.01.20</p>
 </blockquote>
+
+
+
+
+
+<p>圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年</p>
+
+
+
+
+
+<p>橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱</p>
+
+
+
+
+
+<p>뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐</p>
 
 
 

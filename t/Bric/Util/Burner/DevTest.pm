@@ -2,6 +2,7 @@ package Bric::Util::Burner::DevTest;
 
 use strict;
 use warnings;
+use utf8;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::Burner;
@@ -575,6 +576,20 @@ sub subclass_burn_test {
       "Add a By to the pull quote";
     ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
       "Add a date to the pull quote";
+
+    # Add some Unicode content.
+    ok $elem->add_data(
+        $para,
+        '圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年'
+    ), "Add a Chinese paragraph";
+    ok $elem->add_data(
+        $para,
+        '橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱'
+    ), "Add a Japanese paragraph";
+    ok $elem->add_data(
+        $para,
+        '뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐'
+    ), "Add a Korean paragraph";
 
     # Add another pull quote.
     ok $pq = $elem->add_container($pull_quote), "Add another pull quote";
