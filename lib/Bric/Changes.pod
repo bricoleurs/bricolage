@@ -311,6 +311,13 @@ in the category URI. Users of HTML::Template templates should take note of
 this if they have more than one category template in their category URIs.
 [David]
 
+=item *
+
+The HTML::Template burner now has access to both the related story and the
+related media URIs via the C<rel_story_uri> and C<rel_media_uri> variables.
+The old C<lin> variable has been deprecated, since it cannot handle an element
+that has both a related media and a related story. [David]
+
 =back
 
 ##############################################################################

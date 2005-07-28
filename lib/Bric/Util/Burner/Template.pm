@@ -606,13 +606,14 @@ sub _build_element_vars {
     my %loop = ( element_loop => [] );
     my %var;
 
-    # get link if related
-    my ($thing, $link);
-    if (($thing = $element->get_related_media()) or
-        ($thing = $element->get_related_story())) {
-        # XXX What if it's both related story and related media?
-        $link = $thing->get_primary_uri;
-        $var{link} = $link;
+    # Get related story URI. Keep "link" for backwards compatability.
+    if (my $thing = $element->get_related_story) {
+        $var{link} = $var{rel_story_uri} = $thing->get_primary_uri;
+    }
+
+    # Get related media URI. Backwards-compatable "link" overrides story.
+    if (my $thing = $element->get_related_media) {
+        $var{link} = $var{rel_media_uri} = $thing->get_uri;
     }
 
     # loop over elements
