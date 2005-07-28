@@ -956,8 +956,8 @@ new feature of autofill -- it corresponds to the following code:
     $template->param(rel_media_uri => $media->get_uri) if $media;
 
 The same technique works for Related Stories elements. I'll omit a full
-example except to say that a "C<rel_story_uri> variable is provided and can be
-used in much the same way, for example, in an anchor (C<< <a> >) tag.
+example except to say that a C<rel_story_uri> variable is provided and can be
+used in much the same way, for example, in an anchor (C<< <a> >>) tag.
 
 B<Compatibility note:> The C<rel_media_uri> and C<rel_story_uri> variables
 were added in Bricolage 1.10.0. Earlier versions of Bricolage had only a
