@@ -1827,6 +1827,42 @@ sub throw_error {
 
 ##############################################################################
 
+=item $success = $b->add_resource();
+
+  $burner->add_resource($filename, $uri);
+
+Adds a Bric::Dist::Resource object to a burn. Pass in the file name and URI of
+the resource. Called by the burner subclasess after they've written files to
+disk.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_resource {
+    my ($self, $file, $uri) = @_;
+    my ($story, $ext, $ress) = $self->_get(qw(story output_ext resources));
+
+    # Create a resource for the distribution stuff.
+    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
+      Bric::Dist::Resource->new({ path => $file,
+                                  uri  => $uri });
+
+    # Set the media type.
+    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
+    # Add our story ID.
+    $res->add_story_ids($story->get_id);
+    $res->save;
+    push @$ress, $res;
+    return $self;
+}
+
+##############################################################################
+
 =back
 
 =head2 Protected Class Methods
@@ -1950,42 +1986,6 @@ sub _expire {
         $exp_job->save;
         log_event('job_new', $exp_job);
     }
-}
-
-##############################################################################
-
-=item $success = $b->add_resource();
-
-  $burner->add_resource($filename, $uri);
-
-Adds a Bric::Dist::Resource object to a burn. Pass in the file name and URI of
-the resource. Called by the burner subclasess after they've written files to
-disk.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub add_resource {
-    my ($self, $file, $uri) = @_;
-    my ($story, $ext, $ress) = $self->_get(qw(story output_ext resources));
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
-    # Add our story ID.
-    $res->add_story_ids($story->get_id);
-    $res->save;
-    push @$ress, $res;
-    return $self;
 }
 
 #------------------------------------------------------------------------------#
