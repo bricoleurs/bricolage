@@ -8,6 +8,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
 use Bric::Util::Burner::Mason;
 use Bric::Util::Burner::Template;
+use Bric::Util::Burner::PHP;
 
 my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
 

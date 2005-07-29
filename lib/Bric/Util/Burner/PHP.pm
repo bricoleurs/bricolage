@@ -98,7 +98,7 @@ BEGIN {
 
 __PACKAGE__->_register_burner(
     Bric::Biz::AssetType::BURNER_PHP,
-    category_fn    => 'category',
+    category_fn    => 'cat_tmpl',
     cat_fn_has_ext => 0,
     exts           => {
         php => 'PHP (.php)',
@@ -274,7 +274,7 @@ sub burn_one {
         do {
             # if the file exists, return it
             for my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, 'category');
+                my $path = $fs->cat_dir($troot, @cats, 'cat_tmpl');
                 next unless -e $path;
                 push @cat_tmpls, $path;
                 last;

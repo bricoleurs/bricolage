@@ -75,24 +75,6 @@ a brief guide to adding a new Burner to Bricolage:
 
 =item *
 
-Write Bric::Util::Burner::Foo.
-
-You'll need to create a new subclass of Bric::Util::Burner that implements
-three methods - C<new()>, C<chk_syntax()>, and C<burn_one()>. You can use an
-existing subclasses as a model for the interface and implementation of these
-methods. Make sure that when you execute your templates, you do it in the
-namespace reserved by the C<TEMPLATE_BURN_PKG> directive -- get this constant
-by adding
-
-  use Bric::Config qw(:burn);
-
-to your new Burner subclass.
-
-Your burner class will also need to call the C<_register_burner()> method when
-it loads. Again, see the existing subclasses for some examples.
-
-=item *
-
 Modify Bric::Biz::AssetType.
 
 To use your Burner you'll need to be able to assign elements to it. To do this
@@ -103,7 +85,103 @@ constant.
 
 =item *
 
-Done! Now start testing...
+Decide on a file naming scheme for your templating architecture. The file name
+suffix or suffixes must be unique across Bricolage burners, as must the base
+file name of your category templates. See the calls to _register_subclass() in
+the other burner classes to ensure that your choices are unique. You must also
+decide whether or not your category template file names will have suffixes. We
+generally recommend that they don't, so as to prevent possible conflicts with
+the names of element templates (see the Mason and PHP burners for an example).
+
+=item *
+
+Write the burner tests by implementing F</t/Bric/Util/Burner/Foo/DevTest.pm>.
+See F</t/Bric/Util/Burner/Mason/DevTest.pm> for an example. You will need to
+use the constant defined in Bric::Biz::AssetType and the file name standards
+defined in the last step to have the base class,
+F</t/Bric/Util/Burner/DevTest.pm>, properly create and load the test
+templates.
+
+You will also have to create the test templates. The templates go into the
+same directory as the new F<DevTest.pm> file. For example, if you had elected
+to go with the file suffix "foo" and gone with "cat_me" for your category
+template name, and the category template does F<not> include the file suffix,
+the templates you would need to create would be:
+
+=over
+
+=item F<cat_me>
+
+The root-level category template. Port the Mason test's F<autohandler>
+template.
+
+=item F<sub_cat_me>
+
+A subcategory template. This template will wrap the execution of the story
+template and be wrapped by the execution of the F<cat_me> template. Port the
+Mason test's F<sub_autohandler> template.
+
+=item F<story.foo>
+
+The story element template. Port the Mason test's F<story.mc> template.
+
+=item F<page.foo>
+
+A page subelement template. Port the Mason test's F<pull_quote.mc> template.
+This template should be used from paginated content, which will result in the
+output of two separate files for the test story.
+
+=item F<pull_quote.foo>
+
+The pull quote subelement template. Port the Mason test's F<pull_quote.mc>
+template.
+
+=item F<util.foo>
+
+A utility template. Should be called from some other template, usually
+F<cat_me>. Port from the Mason test's F<util.mc> template.
+
+=back
+
+=item *
+
+Write Bric::Util::Burner::Foo.
+
+You'll need to create a new subclass of Bric::Util::Burner that implements
+three methods - C<new()>, C<chk_syntax()>, and C<burn_one()>. You can use an
+existing subclasses as a model for the interface and implementation of these
+methods. Make sure that when you execute your templates, you do it in the
+name space reserved by the C<TEMPLATE_BURN_PKG> directive -- get this constant
+by adding
+
+  use Bric::Config qw(:burn);
+
+to your new Burner subclass.
+
+Your burner class will also need to call the C<_register_burner()> method when
+it loads so as to register itself, its category base file name and its file
+name suffix or suffixes. Again, see the existing subclasses for some examples.
+
+=item *
+
+If all of your tests pass, you're done! You must have a freshly-built
+Bricolage database to successfully run the tests. To just run your new
+burner's tests, use this command:
+
+  perl inst/runtests.pl -V t/Bric/Util/Burner/Foo/DevTest.pm
+
+When that's working, make sure that I<all> tests pass by running:
+
+  make devtest TEST_VERBOSE=1
+
+=item *
+
+Create a patch using the instructions in L<Bric::Hacker|Bric::Hacker> and send
+them to the Bricolage developer's mailing list!
+
+=item *
+
+Profit.
 
 =back
 
