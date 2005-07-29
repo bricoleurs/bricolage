@@ -209,7 +209,7 @@ sub test_list : Test(42) {
 
     # Try a range of sizes.
     ok( @ress = Bric::Dist::Resource->list({ size => [$size - 1, $size] }),
-        "Look up size between " . ($size - 1) . "and '$size'" );
+        "Look up size between '" . ($size - 1) . "' and '$size'" );
     is( scalar @ress, 5, "Check for 5 resources" );
 
     # Try is_dir.
@@ -323,7 +323,7 @@ sub test_href : Test(47) {
 
     # Try a range of sizes.
     ok( $ress = Bric::Dist::Resource->href({ size => [$size - 1, $size] }),
-        "Look up size between " . ($size - 1) . "and '$size'" );
+        "Look up size between '" . ($size - 1) . "' and '$size'" );
     is( scalar keys %$ress, 5, "Check for 5 resources" );
 
     # Try is_dir.
@@ -434,7 +434,7 @@ sub test_list_ids : Test(42) {
 
     # Try a range of sizes.
     ok( @res_ids = Bric::Dist::Resource->list_ids({ size => [$size - 1, $size] }),
-        "Look up size between " . ($size - 1) . "and '$size'" );
+        "Look up size between '" . ($size - 1) . "' and '$size'" );
     is( scalar @res_ids, 5, "Check for 5 resource IDs" );
 
     # Try is_dir.
