@@ -92,7 +92,7 @@ if ($version) {
 <& "/widgets/profile/button.mc",
 	disp      => 'Save and Check In',
 	widget    => $widget,
-	cb        => 'save_and_checkin_cb',
+	cb        => 'checkin_cb',
 	button    => 'check_in_dgreen',
 	useTable  => 0
 &> <% $deskText %>

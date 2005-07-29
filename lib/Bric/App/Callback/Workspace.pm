@@ -32,6 +32,7 @@ sub checkin : Callback {
     foreach my $next (@{ mk_aref($self->params->{"desk_asset|next_desk"})}) {
 	next unless $next;
 	my ($aid, $from_id, $to_id, $key) = split /-/, $next;
+	throw_dp($key);
 	my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
 	my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
 	my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });

@@ -196,7 +196,7 @@ sub save : Callback(priority => 6) {
 
 ################################################################################
 
-sub save_and_checkin : Callback(priority => 6) {
+sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
@@ -343,20 +343,6 @@ sub save_and_stay : Callback(priority => 6) {
 
     # Set the state.
     set_state_data($widget, 'media', $media);
-}
-
-################################################################################
-
-sub checkin : Callback(priority => 6) {
-    my $self = shift;
-
-    my $media   = Bric::Biz::Asset::Business::Media->lookup({'id' => $self->value, checkout => 1});
-    my $desk    = $media->get_current_desk;
-
-    $desk->checkin($media);
-    $desk->save;
-    
-    log_event("media_checkin", $media, { Version => $media->get_version });
 }
 
 ################################################################################
@@ -814,14 +800,6 @@ sub assoc_category : Callback {
 
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
-}
-
-###############################################################################
-
-sub delete : Callback {
-    my $self = shift;
-    my $media = Bric::Biz::Asset::Business::Media->lookup({ id => $self->value });
-    $handle_delete->($media, $self) if (chk_authz($media, EDIT, 1));
 }
 
 ### end of callbacks ##########################################################

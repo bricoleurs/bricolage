@@ -3,12 +3,11 @@
 % if ($user) {
     <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
 % }
-    <div class="version">v.<% $obj->get_version %></div>
+    <div class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
     <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
-    <div class="pubstatus need" title="Needs to be Republished">P</div>
-<!--    <% $m->comp('publish_status_span.mc',
-                sorted => $highlight eq 'name' ? 'sorted' : '',
-                asset => $obj) %>-->
+    <% $m->comp('publish_status_span.mc',
+                sorted => $highlight eq 'name' ? ' sorted' : '',
+                asset => $obj) %>
   </div>
   <div class="body">
     <dl>
@@ -20,8 +19,6 @@
       <dd name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
       <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
       <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
-      <dt name="id" class="<% &$rowtype %><% ($highlight eq 'id' ? ' sorted' : '') %>"><% $lang->maketext($disp) %> ID:</dt>
-      <dd name="id" class="<% &$rowtype %><% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id || '&nbsp;' %></dd>
       <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
       <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
       <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
@@ -29,46 +26,29 @@
     </dl>
     
     <div class="actions">
-    <ul class="action">   
-% if ($checked_out) { # checked out by yourself
-%   if ($desk_type eq 'workflow') {
-      <li><input type="radio" name="actions_<% $id %>" id="actions_checkin_<% $id %>" /><button class="checkin" name="<% $callback_widget %>|checkin_cb" value="<% $aid %>">Check in</button>
-      </li>
-%   } else {
-      <li><input type="radio" name="actions_<% $id %>" id="actions_move_<% $id %>" /> 
-          <label for="move_<% $id %>"><% $lang->maketext($mover_label) %></label>
+        <p><% $elink %></p>
+        
+        <div class="mover">
+% if ($can_edit && $desk_opts) {
+          <label for="move<% $id %>"><% $lang->maketext($mover_label) %></label>
           <& '/widgets/profile/select.mc',
-              id       => "move_$id",
-              name     => "$widget|next_desk",
-              value    => $desk_val,
-              options  => $desk_opts,
-              useTable => 0 &>
-      </li>
-%   }
-% } elsif (!$user) { # and not checked out by someone else, therefore available
-      <li>
-        <input type="radio" name="actions_<% $id %>" id="actions_checkout_<% $id %>" /><button class="checkout" name="<% $callback_widget %>|checkout_cb" value="<% $aid %>">Check out</button>
-      </li>
+             name     => "$widget|next_desk",
+             value    => $desk_val,
+             options  => $desk_opts,
+             useTable => 0,
+             id       => "move$id" &>
+% } else {
+        &nbsp;
 % }
-      <li>
-        <input type="radio" name="actions_<% $id %>" id="actions_delete_<% $id %>" title="<% $lang->maketext('Queue this asset for deletion') %>" /><button class="delete" name="<% $callback_widget %>|delete_cb" value="<% $aid %>" title="<% $lang->maketext('Delete this asset') %>">Delete</button></li>
-% # XXX: Why can't you clone from a workflow? -- mroch
-% if ($desk_type ne 'workflow' && $class eq 'story') {
-      <li><input type="radio" name="actions_<% $id %>" id="actions_clone_<% $id %>" title="<% $lang->maketext('Queue this asset for cloning') %>" /><button class="clone" name="<% $callback_widget %>|clone_cb" value="<% $aid %>" title="<% $lang->maketext('Clone this asset') %>">Clone</button></li>
-% }
-% if ($can_publish) {
-      <li><input type="radio" name="actions_<% $id %>" id="actions_publish_<% $id %>" /> <img src="/media/images/republish.png" alt="Publish" title="Publish" /> Publish</li>
-% }
-    </ul>
+        </div>
+        
+        <ul class="action">
+          <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
+          <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
+          <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
+          <li><% $pub %></li>
+        </ul>
     </div>
-<!--
-    <ul class="actions">
-      <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
-      <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
-      <li><a href="<% $link %>"><% $lang->maketext($vlabel) %></a></li>
-      <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
-      <li><% $pub %></li>
-    </ul>-->
   </div>
 </div>
 <%once>;
@@ -79,7 +59,6 @@ $widget => 'desk_asset'
 $obj
 $highlight
 $can_edit
-$can_publish
 $vlabel => 'View'
 $desk_val
 $desk_opts
@@ -171,8 +150,11 @@ if ($desk_type eq 'workflow') {
         $item_url = "/workflow/profile/workspace/clone/$aid";
     }
 }
-</%init>
-<%once>
+
+my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
+  . join('&amp;', "$widget|$action=$aid", "$widget|asset_class=$class")
+  . qq{">$label</a>} : '';
+
 # Create alternating row colors
 my $count = 1;
 my $rowtype = sub {
@@ -181,7 +163,8 @@ my $rowtype = sub {
     $count = 1 if ($count > 4);
     return;
 };
-</%once>
+
+</%init>
 <%doc>
 ###############################################################################
 

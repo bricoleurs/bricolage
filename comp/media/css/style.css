@@ -157,9 +157,14 @@ div.debug dt:after {
 .desk-top .sort { text-align: right; font-size: 1em; }
 .desk-top .sort select { font-size: 1em; }
 
-.desk .buttonbar { text-align: left; }
+.desk .buttonbar { text-align: right; }
 
-.desk .item { margin-bottom: 10px; }
+.desk .item { 
+    margin-bottom: 10px;
+    border-style: solid;
+    border-color: #CCCC99;
+    border-width: 0 1px 1px 1px;  
+}
 
 .desk .item .sorted {
 	background: #99CC99 !important;
@@ -203,17 +208,19 @@ div.debug dt:after {
 .desk .item .head .need { background: #993300; }
 .desk .item .head .pub { background: #999934; }
 
+.desk .item .body { position: relative; }
+
 .desk .item dl { 
-    margin: 0; 
+    margin: 0 250px 0 0; 
     padding: 0; 
     border-style: solid;
     border-color: #CCCC99;
-    border-width: 0 1px; 
+    border-width: 0 1px 0 0; 
 }
 .desk .item dt, .desk .item dd {
     line-height: 2em;
     padding: 0 .2em;
-    border-bottom: solid #CCCC99 1px;
+    border-top: solid #CCCC99 1px;
 }
 .desk .item dt { 
     clear: both; 
@@ -224,8 +231,31 @@ div.debug dt:after {
 .desk .item dd { margin-left: 10em; }
 .desk .item .even { background: #E8E8CD; }
 
-.desk .item .actions { background: #CCCC99; }
-.desk .item .actions ul { margin: 0; padding: 0; list-style: none; }
+.desk .item .actions { 
+    width: 230px; 
+    position: absolute; 
+    top: 0; right: 0; bottom: 0;
+    background: transparent;
+    border-top: solid #CCCC99 1px;
+    padding: 0 10px;
+}
+.desk .item .actions p { margin: 10px 0; }
+.desk .item .actions .mover { 
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    padding: 0; 
+}
+.desk .item .actions .mover select {
+    vertical-align: middle;
+}
+.desk .item .actions ul { 
+    margin: 0px 0; 
+    padding: 0; 
+    list-style: none; 
+    position: absolute;
+    bottom: 5px;
+}
 .desk .item .actions ul li {
     display: block;
     float: left;
@@ -236,8 +266,8 @@ div.debug dt:after {
 .desk .item .actions ul li.inactive { color: #999; }
 .desk .item .actions ul.action { float: left; }
 .desk .item .actions ul.view { float: right; }
-.desk .item .actions ul.action li { padding: 3px 10px 1px 5px; }
-.desk .item .actions ul.view li   { padding: 3px 5px 1px 10px; }
+.desk .item .actions ul.action li { padding: 0px 15px 0px 0px; }
+.desk .item .actions ul.view li   { padding: 0px 15px 0px 0px; }
 
 .desk .item .actions li,
 .desk .item .actions img,
