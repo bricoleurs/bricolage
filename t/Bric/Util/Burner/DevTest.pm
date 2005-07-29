@@ -242,6 +242,7 @@ sub test_best_uri : Test(no_plan) {
 
 sub subclass_burn_test {
     my ($self, $dir, $suffix, $burner_type) = @_;
+    $self->{delete_resources} = 1;
 
     # First, we'll need a story element type.
     ok my $story_et = Bric::Biz::ATType->new({
@@ -635,11 +636,6 @@ sub subclass_burn_test {
     $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
       Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
 
-    # Mock the user so that event logging works properly.
-    my $event = Test::MockModule->new('Bric::App::Event');
-    my $user = Bric::Biz::Person::User->lookup({ id => $self->user_id });
-    $event->mock(get_user_object => $user);
-
     # Make sure that the file doesn't already exist.
     $file = $fs->cat_file(TEMP_DIR, 'base',
                           $fs->uri_to_dir($story->get_primary_uri), '',
@@ -728,10 +724,16 @@ sub subclass_burn_test {
     unlink $file, $p2_file, $prev_file;
 }
 
-sub restore_comp_root : Test(teardown) {
+sub burn_cleanup : Test(teardown) {
     my $self = shift;
     Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = delete $self->{comp_root}
       if exists $self->{comp_root};
+
+    # Clean up our mess.
+    Bric::Util::DBI::prepare(qq{
+        DELETE FROM resource
+        WHERE  id > 1023
+    })->execute if delete $self->{delete_resources};
 }
 
 sub extra_templates {}
