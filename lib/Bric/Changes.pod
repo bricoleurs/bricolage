@@ -318,6 +318,22 @@ related media URIs via the C<rel_story_uri> and C<rel_media_uri> variables.
 The old C<lin> variable has been deprecated, since it cannot handle an element
 that has both a related media and a related story. [David]
 
+=item *
+
+Major interface clean-up.  The UI is finally mostly valid XHTML and uses CSS for 
+all styles.  The C<USE_XHTML> directive, added in 1.7.0, is no longer used.  The 
+file sizes of some pages have been reduced by as much as 70%, offering improved
+page load times.  Also, it will now be much easier to customize colors, etc. by
+customizing the CSS stylesheet.
+
+=item *
+
+The desks/My Workspace have been slightly modified to be more usable.  Most
+notably, the "View" and "Edit" links (depending on checkout status) have been 
+moved to the asset's title, where the preview link formerly was, the "Category" 
+line has been replaced with "Primary URI", and the URI itself is the preview link.
+Also, the "Site" line now only shows up when there is more than one site.
+
 =back
 
 ##############################################################################
