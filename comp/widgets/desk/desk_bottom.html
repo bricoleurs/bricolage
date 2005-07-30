@@ -21,7 +21,7 @@
 <& /widgets/buttons/submit.mc,
    disp      => $chk_label,
    widget    => $widget,
-   cb        => $chk_cb,
+   cb        => $chk_cb . '_cb',
    button    => $chk_cb . '_assets_' . $color1,
    useTable  => 0 &>
 <& /widgets/buttons/submit.mc,
@@ -33,7 +33,7 @@
 <& /widgets/buttons/submit.mc,
    disp      => $act_label,
    widget    => $widget,
-   cb        => $act_cb,
+   cb        => $act_cb . '_cb',
    button    => $act_label,
    useTable  => 0 &>
 </div>
