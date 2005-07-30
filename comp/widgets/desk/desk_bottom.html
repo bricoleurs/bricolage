@@ -28,7 +28,7 @@
    disp      => 'Check All',
    name      => 'checkall',
    button    => 'select_all_lgreen',
-   js        => qq{onclick="checkAll('} . $checkbox_name . qq{ ');"},
+   js        => qq{onclick="checkAll('} . $checkbox_name . qq{'); return false"},
    useTable  => 0 &>
 <& /widgets/buttons/submit.mc,
    disp      => $act_label,
