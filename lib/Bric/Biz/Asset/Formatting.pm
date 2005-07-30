@@ -2333,7 +2333,7 @@ sub _build_file_name {
     $file    =~ s/\Q$file_type\E$// unless defined $kn && $kn eq $file;
     $file    =~ y/a-z0-9/_/cs;
     $file   .= $file_type if $tplate_type != CATEGORY_TEMPLATE
-      or Bric::Util::Burner->cat_fn_has_ext($name);
+      or Bric::Util::Burner->cat_fn_has_ext($file);
 
     # Create the file name.
     my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),

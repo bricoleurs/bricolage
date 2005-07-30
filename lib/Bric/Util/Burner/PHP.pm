@@ -3,7 +3,7 @@ package Bric::Util::Burner::PHP;
 
 =head1 NAME
 
-Bric::Util::Burner::PHP - Bric::Util::Burner subclass to publish business assets using PHP formatting assets.
+Bric::Util::Burner::PHP - Bric::Util::Burner subclass to publish business assets using PHP templates.
 
 =head1 VERSION
 
@@ -19,18 +19,17 @@ $LastChangedDate: 2004-11-19 03:55:15 -0500 (Fri, 19 Nov 2004) $
 
 =head1 SYNOPSIS
 
- use Bric::Util::Burner::PHP;
+  use Bric::Util::Burner::PHP;
 
- # Create a new PHP burner using the settings from $burner
- $php_burner = Bric::Util::Burner::PHP->new($burner);
+  # Create a new PHP burner using the settings from $burner
+  my $php_burner = Bric::Util::Burner::PHP->new($burner);
 
  # Burn an asset, get back a list of resources
- @resources = $php_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $php_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
 
-This module handles burning business assets using PHP formatting
-assets.
+This module handles burning business story resources (files) PHP templates.
 
 =cut
 
@@ -40,16 +39,14 @@ assets.
 
 #--------------------------------------#
 # Standard Dependencies
-
 use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-
-use Bric::Util::Fault qw(throw_gen throw_burn_error);
+use Bric::Util::Fault qw(throw_gen throw_burn_error isa_bric_exception);
 use Bric::Util::Trans::FS;
-use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
+use PHP::Interpreter;
 
 #==============================================================================#
 # Inheritance                          #
@@ -83,30 +80,30 @@ my $fs = Bric::Util::Trans::FS->new;
 
 BEGIN {
     Bric::register_fields({
-                         #- Per burn/deploy values.
-                         'job'            => Bric::FIELD_READ,
-                         'more_pages'     => Bric::FIELD_READ,
+        #- Per burn/deploy values.
+        job            => Bric::FIELD_READ,
+        more_pages     => Bric::FIELD_READ,
 
-                         # Private Fields
-                         '_php'             => Bric::FIELD_NONE,
-                         '_comp_root'      => Bric::FIELD_NONE,
-                         '_buf'            => Bric::FIELD_NONE,
-                         '_writer'         => Bric::FIELD_NONE,
-                         '_elem'           => Bric::FIELD_NONE,
-                         '_at'             => Bric::FIELD_NONE,
-                         '_files'          => Bric::FIELD_NONE,
-                         '_res'            => Bric::FIELD_NONE,
-                         '_page_place'     => Bric::FIELD_NONE,
-                        });
+        # Private Fields
+        _php            => Bric::FIELD_NONE,
+        _comp_root      => Bric::FIELD_NONE,
+        _buf            => Bric::FIELD_NONE,
+        _writee         => Bric::FIELD_NONE,
+        _elem           => Bric::FIELD_NONE,
+        _at             => Bric::FIELD_NONE,
+        _files          => Bric::FIELD_NONE,
+        _page_place     => Bric::FIELD_NONE,
+    });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_PHP,
-                               category_fn    => 'wrapper',
-                               cat_fn_has_ext => 1,
-                               exts           =>
-                                 { php   => 'PHP (.php)',
-                                 }
-                             );
+__PACKAGE__->_register_burner(
+    Bric::Biz::AssetType::BURNER_PHP,
+    category_fn    => 'cat_tmpl',
+    cat_fn_has_ext => 0,
+    exts           => {
+        php => 'PHP (.php)',
+    }
+);
 
 
 #==============================================================================#
@@ -136,8 +133,6 @@ sub new {
     my ($class, $burner) = @_;
     my $init = { %$burner };
 
-    $init->{_res}     ||= [];
-
     # create the object using Bric's constructor and return it
     return $class->Bric::new($init);
 }
@@ -150,11 +145,44 @@ sub new {
 
 =over 4
 
+=item my $encoding = $burner->get_encoding
+
+Returns the character set encoding to be used to write out the contents of a
+burn to a file. Defaults to "raw". Note that this is different than the
+default for the other burners because the C<utf8> flag on Perl variables is
+lost in the conversion to PHP. This should effectively be okay, however, as
+long as your PHP templates use the C<mb_*> functions and identify the encoding
+as UTF-8. For example:
+
+  $sub = mb_substr($element->get_data('deck'), 0, 255, 'utf-8');
+
+See L<http://us2.php.net/manual/en/ref.mbstring.php> for more information on
+handling multibyte characters in PHP.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $burner = $burner->set_encoding($encoding)
+
+Sets the character set encoding to be used to write out the contents of a burn
+to a file. Use this attribute if templates are converting output data from
+Bricolage's native UTF-8 encoding to another encoding. Use "raw" if your
+templates are outputting binary data. Defaults to "raw".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =cut
 
 #------------------------------------------------------------------------------#
 
-=item @resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $at, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -192,8 +220,6 @@ sub burn_one {
     my ($self, $story, $oc, $cat, $at) = @_;
     my $element = $story->get_tile();
 
-    my ($outbuf, $retval);
-
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $template_roots;
@@ -206,23 +232,25 @@ sub burn_one {
         push @$template_roots, $fs->cat_dir($comp_dir, $inc_dir);
     }
 
-    # Save an existing PHP request object and Bricolage objects.
-    my (%bric_objs);
-
+    # Instantiate the PHP interpreter.
     my $php = PHP::Interpreter->new({
-        #questionable layout things, but we got the time to sort it out
-        OUTPUT       => \$outbuf,
+        # XXX Questionable layout things, but we got the time to sort it out
+        OUTPUT       => \my $outbuf,
         INCLUDE_PATH => join(':', @$template_roots),
-        #
-        #	WRAPPER      => \@wrappers,
-        BRIC    => {
+        BRIC         => {
             burner  => $self,
             story   => $story,
             element => $element,
         },
     });
+    $php->eval(q/function setBric($key, $var) {
+        global $BRIC;
+        $BRIC[$key] = $var;
+    }/);
 
+    # Find the story type element template.
     my $template;
+    my @cats = map { $_->get_directory } $self->get_cat->ancestry;
     {
         my @cats = map { $_->get_directory } $self->get_cat->ancestry;
         my $tmpl_name = $element->get_key_name . '.php';
@@ -234,25 +262,61 @@ sub burn_one {
                     goto LABEL;
                 }
             }
-        } while(pop(@cats));
+        } while(pop @cats);
       LABEL:
     }
 
-    $self->_set([qw(_buf      page story   element   _comp_root       _php)],
-                [   \$outbuf, 0,   $story, $element, $template_roots, $php]);
+    my @cat_tmpls;
+    {
+        # search up category hierarchy for category templates.
+        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
 
+        do {
+            # if the file exists, return it
+            for my $troot (@$template_roots) {
+                my $path = $fs->cat_dir($troot, @cats, 'cat_tmpl');
+                next unless -e $path;
+                push @cat_tmpls, $path;
+                last;
+            }
+        } while (pop @cats);
+    }
+
+    $self->_set(
+        [qw(_buf      page story   element   _comp_root       _php encoding)],
+        [   \$outbuf, 0,   $story, $element, $template_roots, $php, 'raw']
+    );
     $self->_push_element($element);
 
-    while(1) {
+    while (1) {
         use utf8;
-        $php->include($template)
-          or throw_burn_error
-            error   => "Error executing '$template'",
-            payload => $@,
-            mode    => $self->get_mode,
-            oc      => $self->get_oc->get_name,
-            cat     => $self->get_cat->get_uri,
-            elem    => $element->get_name;
+        eval { $php->include($template) };
+        if (my $err = $@) {
+            $err->rethrow if isa_bric_exception $err;
+            throw_burn_error
+                error   => "Error executing '$template'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri,
+                elem    => $element->get_name
+              if $@;
+        }
+
+        # Execute category templates.
+        for my $cat_tmpl (@cat_tmpls) {
+            $php->setBric(content => $outbuf);
+            $outbuf = '';
+            eval { $php->include($cat_tmpl) };
+            throw_burn_error
+                error   => "Error executing '$cat_tmpl'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri
+              if $@;
+        }
+        $php->setBric(content => '');
 
         my $page = $self->_get('page') + 1;
 
@@ -264,38 +328,38 @@ sub burn_one {
             open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
-            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
+            binmode(OUT, ':' . $self->get_encoding || 'raw') if ENCODE_OK;
             print OUT $outbuf;
             close(OUT);
             $outbuf = '';
             # Add a resource to the job object.
-            $self->_add_resource($file, $uri);
+            $self->add_resource($file, $uri);
         }
-        $self->_set([qw(page)],[$page]);
+
+        $self->_set(['page'] => [$page]);
         last unless $self->_get('more_pages');
     }
+
     $self->_pop_element;
 
-    $self->_set(['_php','_comp_root'],[undef,undef]);
-    my $ret = $self->_get('_res') || return;
-    $self->_set(['_res', 'page'], [[], 0]);
-    return wantarray ? @$ret : $ret;
+    $self->_set([qw(_php _comp_root page)] => [undef, undef, 0]);
+    return $self->get_resources;
 }
 
 ################################################################################
 
 =item my $bool = $burner->chk_syntax($ba, \$err)
 
-Compiles the template found in $ba. If the compile succeeds with no
-errors, chk_syntax() returns true. Otherwise, it returns false, and the error
-will be in the $err variable passed by reference.
+Compiles the template found in $ba. If the compile succeeds with no errors,
+chk_syntax() returns true. Otherwise, it returns false, and the error will be
+in the $err variable passed by reference.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> This method has not yet been implemented for Template Toolkit
-templates. For the time being, it always returns success.
+B<Notes:> This method has not yet been implemented for PHP templates. For the
+time being, it always returns success.
 
 =cut
 
@@ -489,25 +553,37 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
+    return $self->_display_container($elem) if $elem->is_container;
     my $buf = $self->_get('_buf');
-    my $data = '';
-    # Call another element if this is a container otherwise output the data.
+    $$buf .= $elem->get_data;
+    return $self;
+}
 
-    my $php = $self->_get('_php');
-    if ($elem->is_container) {
-        # Set the elem global to the current element.
-        # Push this element on to the stack
-        $self->_push_element($elem);
-        my $template = $self->_load_template_element($elem);
-        $php->eval(q/function setBric($key, $var) { global $BRIC; $BRIC[$key] = $var; }/);
-        $php->setBric('element', $elem);
-        $php->include($template);
-        $self->_pop_element();
-        # Set the elem global to the previous element
-    } else {
-        $data .= $elem->get_data();
-    }
-    return 1;
+##############################################################################
+
+=item $output = $b->sdisplay_element($element)
+
+A method to be called from template space. This is a C<sprint>-likef version
+of C<display_element()>, i.e. it returns the output as a string rather than
+outputting it it as C<display_element()> does.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub sdisplay_element {
+    my $self = shift;
+    my $elem = shift or return '';
+    return $elem->get_data unless $elem->is_container;
+    my ($php, $buf) = $self->_get(qw(_php _buf));
+    $php->set_output_handler(\my $ret);
+    $self->_display_container($elem);
+    $php->set_output_handler($buf);
+    return $ret;
 }
 
 ##############################################################################
@@ -542,39 +618,6 @@ NONE.
 =head2 Private Instance Methods
 
 =over 4
-
-=item $success = $b->_add_resource();
-
-Adds a Bric::Dist::Resource object to this burn.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _add_resource {
-    my $self = shift;
-    my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story ext));
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
-    # Add our story ID.
-    $res->add_story_ids($story->get_id);
-    $res->save;
-    my $ress = $self->_get('_res');
-    push @$ress, $res;
-}
-
-#------------------------------------------------------------------------------#
 
 =item $template = $b->_load_template_element($element);
 
@@ -675,7 +718,38 @@ sub _pop_element {
     return pop @$elem_stack;
 }
 
-#--------------------------------------#
+##############################################################################
+
+=item $burner->_display_container($element)
+
+Called by C<display_element()> and C<sidsplay_element()> this method uses the
+PHP::Interpreter object to execute the element template for a container
+element.
+
+=cut
+
+sub _display_container {
+    my ($self, $elem) = @_;
+    my $parent = $self->_current_element;
+    $self->_push_element($elem);
+    my $template = $self->_load_template_element($elem);
+    my $php = $self->_get('_php');
+    $php->setBric(element => $elem);
+    eval { $php->include($template) };
+    throw_burn_error
+        error   => "Error executing '$template'",
+        payload => $@,
+        mode    => $self->get_mode,
+        oc      => $self->get_oc->get_name,
+        cat     => $self->get_cat->get_uri,
+        elem    => $elem->get_name
+      if $@;
+
+    $self->_pop_element;
+    $php->setBric(element => $parent);
+    return $self;
+}
+
 
 =back
 

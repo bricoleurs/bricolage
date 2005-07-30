@@ -292,6 +292,32 @@ story title. So, for example, you can now use <tmpl_var primary_uri> or
 <tmpl_var cover_date> with out creating a F<.pl> template to set them up.
 [David]
 
+=item *
+
+Refactored the separate C<_add_resource()> methods in each of the burner
+subclasses int Bric::Util::Burner itself. [David]
+
+=item *
+
+Arguments can now be passed to the C<display_element()> methof of the Template
+Toolkit burner and they will be set up as variables in the stash of the
+execution context of the element template.
+
+=item *
+
+Category templates in the HTML::Template burner now cascade just like in all
+the other burners, rather than stopping at the first category template found
+in the category URI. Users of HTML::Template templates should take note of
+this if they have more than one category template in their category URIs.
+[David]
+
+=item *
+
+The HTML::Template burner now has access to both the related story and the
+related media URIs via the C<rel_story_uri> and C<rel_media_uri> variables.
+The old C<lin> variable has been deprecated, since it cannot handle an element
+that has both a related media and a related story. [David]
+
 =back
 
 ##############################################################################

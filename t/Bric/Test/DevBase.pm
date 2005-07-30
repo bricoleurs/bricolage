@@ -48,6 +48,8 @@ classes. It uses the L<Bric::Test::Base|Bric::Test::Base> module as I<its>
 base class, and thus all of its subclasses get all of its benefits. It also
 has a number of methods of its own that are designed to be used in classes
 inherited from this class. They help keep the database cleaned up and such.
+And finally, it sets up the admin user object in the session so that event
+logging and the like works properly.
 
 =cut
 
@@ -55,6 +57,7 @@ use strict;
 use warnings;
 require 5.006;
 use base qw(Bric::Test::Base);
+use Bric::Biz::Person::User;
 
 =head1 INTERFACE
 
@@ -197,6 +200,15 @@ sub _del_sites {
     }
 }
 
+{
+    # Set up the user object so that event logging works properly.
+    my $user = Bric::Biz::Person::User->lookup({ id => __PACKAGE__->user_id });
+    $HTML::Mason::Commands::session{_bric_user} = {
+        object => $user,
+        login  => $user->get_login,
+        id     => $user->get_id,
+    };
+}
 1;
 __END__
 

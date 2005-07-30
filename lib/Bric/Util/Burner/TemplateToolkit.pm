@@ -21,11 +21,11 @@ $LastChangedDate$
 
  use Bric::Util::Burner::TemplateToolkit;
 
- # Create a new TemplateToolkit burner using the settings from $burner
- $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
+  # Create a new TemplateToolkit burner using the settings from $burner
+  my $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
 
- # Burn an asset, get back a list of resources
- @resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
+  # Burn an asset, get back a list of resources
+  my $resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -49,7 +49,6 @@ use strict;
 use Template 2.14;
 use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
-use Bric::Dist::Resource;
 use Bric::Config qw(:burn :l10n);
 use Template::Constants qw( :debug );
 
@@ -97,7 +96,6 @@ BEGIN {
                          '_elem'           => Bric::FIELD_NONE,
                          '_at'             => Bric::FIELD_NONE,
                          '_files'          => Bric::FIELD_NONE,
-                         '_res'            => Bric::FIELD_NONE,
                          '_page_place'     => Bric::FIELD_NONE,
                         });
 }
@@ -138,8 +136,6 @@ sub new {
     my ($class, $burner) = @_;
     my $init = { %$burner };
 
-    $init->{_res}     ||= [];
-
     # create the object using Bric's constructor and return it
     return $class->Bric::new($init);
 }
@@ -156,7 +152,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item @resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $at, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -211,11 +207,7 @@ sub burn_one {
         push @$template_roots, $fs->cat_dir($comp_dir, $inc_dir);
     }
 
-    # Save an existing TemplateToolkit request object and Bricolage objects.
-    my (%bric_objs);
-
     my @wrappers;
-
     {
         # search up category hierarchy for wrappers
         my @cats = map { $_->get_directory } $self->get_cat->ancestry;
@@ -225,12 +217,11 @@ sub burn_one {
             foreach my $troot (@$template_roots) {
                 my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
                 if(-e $path) {
-                    push @wrappers, $path;
+                    unshift @wrappers, $path;
                     last;
                 }
             }
-        } while(pop(@cats));
-        @wrappers = reverse @wrappers;
+        } while (pop @cats);
     }
 
     my $tt = Template->new({
@@ -264,12 +255,12 @@ sub burn_one {
                     goto LABEL;
                 }
             }
-        } while(pop(@cats));
+        } while (pop @cats);
       LABEL:
     }
 
     $self->_set([qw(_buf      page story   element   _comp_root       _tt)],
-		[   \$outbuf, 0,   $story, $element, $template_roots, $tt]);
+                [   \$outbuf, 0,   $story, $element, $template_roots, $tt]);
 
     $self->_push_element($element);
 
@@ -302,17 +293,15 @@ sub burn_one {
             close(OUT);
             $outbuf = '';
             # Add a resource to the job object.
-            $self->_add_resource($file, $uri);
+            $self->add_resource($file, $uri);
         }
         $self->_set([qw(page)],[$page]);
         last unless $self->_get('more_pages');
     }
     $self->_pop_element;
 
-    $self->_set(['_tt','_comp_root'],[undef,undef]);
-    my $ret = $self->_get('_res') || return;
-    $self->_set(['_res', 'page'], [[], 0]);
-    return wantarray ? @$ret : $ret;
+    $self->_set([qw(_tt _comp_root page)] => [undef, undef, 0]);
+    return $self->get_resources;
 }
 
 ################################################################################
@@ -373,11 +362,11 @@ sub find_template {
     my @cats = $fs->split_uri($uri);
     my $root = $self->_get('_comp_root');
     do {
-	# if the file exists, return it
-	foreach my $troot (@$root) {
-	    my $path = $fs->cat_dir($troot, @cats, $name);
-	    return $path if -e $path;
-	}
+    # if the file exists, return it
+    foreach my $troot (@$root) {
+        my $path = $fs->cat_dir($troot, @cats, $name);
+        return $path if -e $path;
+    }
     } while(pop(@cats));
     return;
 }
@@ -502,14 +491,15 @@ sub display_pages {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->display_element($element)
+=item $content = $b->display_element($element)
 
-=item $success = $b->display_element($element, %ARGS)
+=item $content = $b->display_element($element, %ARGS)
 
-A method to be called from template space. This method will find the mason
-element associated with the element passed in and call C<< $m->comp >>. All
-arguments after the first argument will be passed to the template executed as
-its C<%ARGS> hash.
+A method to be called from template space. This method will find the template
+associated with the element passed in and call include it in the Template
+Toolkit execution. The return value is the content to be output. Pass in a
+list of arguments to have them set up variables in the stash of the element's
+execution context.
 
 B<Throws:> NONE.
 
@@ -521,31 +511,23 @@ B<Notes:> NONE.
 
 sub display_element {
     my $self = shift;
-    my $elem = shift or return;
-    my $buf = $self->_get('_buf');
+    my $elem = shift or return '';
+    return $elem->get_data unless $elem->is_container;
+
     my $data = '';
-    # Call another element if this is a container otherwise output the data.
+    my $tt = $self->_get('_tt');
 
-    if ($elem->is_container) {
-        my $tt = $self->_get('_tt');
+    # Push this element on to the stack
+    $self->_push_element($elem);
 
-        # Set the elem global to the current element.
-        # Push this element on to the stack
-        $self->_push_element($elem);
+    my $template = $self->_load_template_element($elem);
+    $data .= $tt->context->include($template, {
+        'element' => $elem,
+        @_
+    });
 
-        my $template = $self->_load_template_element($elem);
-        $data .= $tt->context->include($template, {
-            'element' => $elem,
-        });
-
-        # Pop the element back off again.
-        $self->_pop_element();
-
-        # Set the elem global to the previous element
-
-    } else {
-	$data .= $elem->get_data();
-    }
+    # Pop the element back off again.
+    $self->_pop_element;
     return $data;
 }
 
@@ -581,39 +563,6 @@ NONE.
 =head2 Private Instance Methods
 
 =over 4
-
-=item $success = $b->_add_resource();
-
-Adds a Bric::Dist::Resource object to this burn.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _add_resource {
-    my $self = shift;
-    my ($file, $uri) = @_;
-    my ($story, $ext) = $self->_get(qw(story output_ext));
-
-    # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
-    # Add our story ID.
-    $res->add_story_ids($story->get_id);
-    $res->save;
-    my $ress = $self->_get('_res');
-    push @$ress, $res;
-}
-
-#------------------------------------------------------------------------------#
 
 =item $template = $b->_load_template_element($element);
 

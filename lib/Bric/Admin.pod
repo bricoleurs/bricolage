@@ -195,13 +195,13 @@ START MODULE LIST
 
 =item Term::ReadPassword
 
-=item Term::ReadPassword
-
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)
 
 =item Template 2.14 (optional)
+
+=item PHP::Interpreter (optional)
 
 =item Encode (optional)
 

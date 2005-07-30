@@ -144,12 +144,13 @@ B<Notes:> NONE.
 
 sub log_event {
     my ($key_name, $obj, $attr) = @_;
-    push @$events, { key_name  => $key_name,
-		     obj       => $obj,
-		     attr      => $attr,
-		     user      => get_user_object(),
-		     timestamp => strfdate(),
-		   };
+    push @$events, {
+        key_name  => $key_name,
+        obj       => $obj,
+        attr      => $attr,
+        user      => get_user_object,
+        timestamp => strfdate(),
+    };
 }
 
 =item my $bool = commit_events()

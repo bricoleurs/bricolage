@@ -6,27 +6,26 @@ Bric::HTMLTemplate - Writing HTML::Template scripts and templates
 
 =head1 INTRODUCTION
 
-This document describes how to use Bricolage's HTML::Template
-templating system.  To get the most out of this document you'll need
-to have some familiarity with Bricolage templating using Mason - see
+This document describes how to use Bricolage's HTML::Template templating
+system. To get the most out of this document you'll need to have some
+familiarity with Bricolage templating using Mason -- see
 L<Bric::Templates|Bric::Templates> and
-L<Bric::AdvTemplates|Bric::AdvTemplates> for details.  I'll try to
-keep the overlap between the those documents and this one to a
-minimum.  It also helps to have an idea of how HTML::Template works
-outside of Bricolage - for that you can refer to HTML::Template's
-documentation.
+L<Bric::AdvTemplates|Bric::AdvTemplates> for details. I'll try to keep the
+overlap between the those documents and this one to a minimum. It also helps
+to have an idea of how HTML::Template works outside of Bricolage -- for that
+you can refer to HTML::Template's documentation.
 
 =head1 TEMPLATES IN BRICOLAGE
 
-The Bricolage system uses templates to produce output for stories when
-they are published.  Most likely you'll be creating templates to
-format your stories as HTML pages but you can also use HTML::Template
-to output WML, XML, email and more.
+Bricolage uses templates to produce output for stories when they are previewed
+and published. Most likely you'll be creating templates to format your stories
+as XHTML pages but you can also use HTML::Template to output WML, XML, email
+and more.
 
-Templates are created in the same category tree as your stories and
-media.  When a story is published the category tree is searched for
-templates starting in the primary category for the story.  The search
-proceeds up the tree until a matching template is found.
+Templates are created in the same category tree as your stories and media.
+When a story is published the category tree is searched for templates starting
+in the primary category for the story. The search proceeds up the tree until a
+matching template is found.
 
 Bricolage allows you to create three types of templates: element templates,
 category templates, and utility templates. Element templates are assigned to a
@@ -36,24 +35,22 @@ but otherwise have no relationship to elements or categories.
 
 =head1 SCRIPTS AND TEMPLATES
 
-HTML::Template works by separating Perl code from HTML design.  In
-Bricolage this results in two types of template files - F<.pl> script
-files and F<.tmpl> template files.  The script files contain Perl code.
-The template files contain a mix of HTML tags and HTML::Template's
-C<< <TMPL_*> >> tags.
+HTML::Template works by separating Perl code from HTML design. In Bricolage
+this results in two types of template files -- F<.pl> script files and F<.tmpl>
+template files. The script files contain Perl code. The template files contain
+a mix of HTML tags and HTML::Template's C<< <TMPL_*> >> tags.
 
-This divide between programming and design allows for a division of
-labor between programmers and designers.  First, the programmer can
-setup a set of elements and scripts (F<.pl> files).  Usually the
-programmer will also create some bare-bones example templates (F<.tmpl>
-files).  Next the designers can edit the template files to match the
-desired design.
+This divide between programming and design allows for a division of labor
+between programmers and designers. First, the programmer can create a set of
+elements and scripts (F<.pl> files). Usually the programmer will also create
+some bare-bones example templates (F<.tmpl> files). Next the designers can
+edit the template files to match the desired design.
 
-As an additional benefit, if per-category design changes are required
-a designer can create template files in each category that will
-automatically be used by the existing scripts in the root category.  Of
-course, the same is true of script files but it is much more common to
-tweak the design by category than the code.
+As an additional benefit, if per-category design changes are required, a
+designer can create template files in each category that will automatically be
+used by the existing scripts in the root category. Of course, the same is true
+of script files, but it is much more common to tweak the design by category
+than the code.
 
 =head1 CHOOSING A BURNER
 
@@ -63,47 +60,46 @@ story element being published. To start using HTML::Template to publish a
 story type go to Admin -E<gt> Elements, find the story element and set its
 burner to HTML::Template.
 
-When you're creating templates you'll also see a pull-down called
-"Burner".  This determines whether you're creating a Mason F<story.mc>,
-an HTML::Template F<story.pl> script, an HTML::Template F<story.tmpl>
-or some other templating architecture template.
+When you're creating templates you'll also see a pull-down called "Burner".
+This determines whether you're creating a Mason F<story.mc>, an HTML::Template
+F<story.pl> script, an HTML::Template F<story.tmpl> or some other templating
+architecture template.
 
 =head1 AN EXAMPLE STORY TYPE
 
-We'll examine a simple example story type called "Story".  Here's the
-element tree for "Story":
+We'll examine a simple example story type called "Story". Here's the element
+tree for "Story":
 
    Story
-        - Deck             (textbox attribute)
+        - Deck             (textbox field)
         + Page             (repeatable element)
-             - Paragraph   (repeatable textbox attribute)
-             - Pull Quote  (repeatable textbox attribute)
+             - Paragraph   (repeatable textbox field)
+             - Pull Quote  (repeatable textbox field)
 
-The Story element has one attribute called Deck and can contain any
-number of Page elements.  Pages are composed of Paragraph attributes
-and Pull Quote attributes, both of which can be repeated.
+The Story element has one field called Deck and can contain any number of Page
+elements. Pages are composed of Paragraph fields and Pull Quote subelements,
+both of which can be repeated.
 
-If this doesn't immediately make sense then you should probably go
-check out L<Bric::ElementAdmin|Bric::ElementAdmin> before continuing -
-it's hard to write templates if you don't understand elements!
+If this doesn't immediately make sense then you should probably go check out
+L<Bric::ElementAdmin|Bric::ElementAdmin> before continuing -- it's hard to
+write templates if you don't understand elements!
 
 =head1 CHOOSING A STRATEGY
 
-Bricolage is an exceedingly flexible system and the HTML::Template
-burner is no exception - there are a number of different ways you can
-write scripts and templates for the Story element tree.  I'll start
-with what I think is the easiest to understand and proceed to more
-complicated approaches pointing out the advantages and drawbacks along
-the way.
+Bricolage is an exceedingly flexible system and the HTML::Template burner is
+no exception; there are a number of different ways you can write scripts and
+templates for the Story element tree. I'll start with what I think is the
+easiest to understand and proceed to more complicated approaches pointing out
+the advantages and drawbacks along the way.
 
 =head1 STRATEGY 1: ONE SCRIPT, ONE TEMPLATE
 
-For a simple element tree you can often get away with just a single
-pair of files - a script and a template for the top-level element.
-Here's an example script file that could be used to setup variables
-and loops for the example story above.
+For a simple element tree you can often get away with just a single pair of
+files -- a script and a template for the top-level element. Here's an example
+script file that could be used to setup variables and loops for the example
+story above.
 
-=head2 THE SCRIPT - story.pl
+=head2 THE SCRIPT: F<story.pl>
 
     # get our template
     my $template = $burner->new_template(autofill => 0);
@@ -119,47 +115,45 @@ and loops for the example story above.
 
     # loop through pages building up @page_loop
     my @page_loop;
-    my $page_count = 1;
-    while (my $page = $element->get_container('page', $page_count)) {
+    for my $page ($element->get_elements('page')) {
 
         # build per-page element loop
         my @element_loop;
-        foreach my $e ($page->get_elements()) {
+        foreach my $e ($page->get_elements) {
             # push on a row for this element
-            push(@element_loop, { $e->get_key_name => $e->get_data });
+            push @element_loop, { $e->get_key_name => $e->get_data };
         }
 
         # push element_loop and a page_count on this loop
-        push(@page_loop, {
+        push @page_loop, {
             element_loop => \@element_loop,
-            page_count   => $page_count++
-        });
+            page_count   => $e->get_object_order,
+        };
     }
 
     # finish the page_loop
     $template->param(page_loop => \@page_loop);
 
     # call output and return the results
-    return $template->output();
+    return $template->output;
 
-There's a lot going on in the script above so we'll take it step by
-step.  The first thing the script does is get a new $template object:
+There's a lot going on in the script above so we'll take it step by step. The
+first thing the script does is get a new $template object:
 
     # get our template
     my $template = $burner->new_template(autofill => 0);
 
-You may be wondering where $burner came from.  Every script has access
-to three global variables: $burner, $story and $element.  The $burner
-object is an instance of the Bric::Util::Burner::Template class.  The
-$story and $element variables are the same as in the Mason system -
-check out L<Bric::Templates> for details.
+You may be wondering where $burner came from. Every script has access to three
+global variables: $burner, $story and $element. The $burner object is an
+instance of the Bric::Util::Burner::Template class. The $story and $element
+variables are the same as in the Mason system -- check out
+L<Bric::Templates|Bric::Templates> for details.
 
-The new_template() call (like all the $burner method calls) is
-documented in L<Bric::Util::Burner::Template>.  I've turned off
-autofill since we're doing all the hard work ourselves here.  With
-autofill on the script would be two lines long which wouldn't teach
-you much about writing HTML::Template scripts!  More on autofill
-later.
+The new_template() method (like all the $burner method calls) is documented in
+L<Bric::Util::Burner::Template|Bric::Util::Burner::Template>. I've turned off
+autofill since we're doing all the hard work ourselves here. With autofill on,
+the script would be two lines long which wouldn't teach you much about writing
+HTML::Template scripts! More on autofill later.
 
 So, now that we have a template object we'll start by setting up some
 variables:
@@ -173,57 +167,51 @@ variables:
     # setup the page break variable
     $template->param(page_break => $burner->page_break);
 
-The title variable assignment should be fairly self-explanatory - it
-gets the $story's title and makes it available to the template.  Next
-the deck attribute is retrieved from the $element using the get_data()
-method.  Since there can only be one deck attribute - it's not marked
-as repeatable in the element tree - it's safe to assign it to a single
-variable.  Finally, a special variable is setup to paginate the story
-- $burner->page_break returns a value that can be inserted into the
-output to break pages.
+The title variable assignment should be fairly self-explanatory -- it gets the
+story's title and makes it available to the template. Next the deck field
+is retrieved from $element using the get_data() method. Since there can only
+be one deck field -- it's not marked as repeatable in the element tree --
+it's safe to assign it to a single variable. Finally, a special variable is
+setup to paginate the story; C<< $burner->page_break >> returns a value that
+can be inserted into the output to break pages.
 
-The next step should look very familiar if you've ever setup a nested
-loop in HTML::Template.  If you haven't then it probably looks
-frightening.  I'll try to ease you in slow:
+The next step should look very familiar if you've ever setup a nested loop in
+HTML::Template. If you haven't then it probably looks frightening. I'll try to
+ease you in slow:
 
     # loop through pages building up @page_loop
     my @page_loop;
-    my $page_count = 1;
-    while (my $page = $element->get_container('page', $page_count)) {
+    for my $page ($element->get_elements('page')) {
 
-These lines setup the variables we'll need to build the page_loop.  We
-need to use a loop for pages since there can be more than one inside
-the story element.  The $page_count variable is used to call
-get_container() and also to allow the template to setup "next page"
-and "previous page" links.
+These lines setup the variables we'll need to build the page_loop. We need to
+use a loop for pages since there can be more than one inside the story
+element.
 
-The get_container() call returns container elements of the 'page'
-type.  What's a container element?  Well, unfortunately Bricolage is
-a bit confused about what to call things internally - what the
-external system refers to simply as an element the guts refer to as
-containers.  To make matters worse attributes are internally referred
-to as data elements.  That said, calling elements "container elements"
-is nicely descriptive since only elements can contain other elements.
+The call to C<< $element->get_elements('page') >> returns container elements
+of the 'page' type. What's a container element? Well, unfortunately Bricolage
+is a bit confused about what to call things internally -- what the external
+system refers to simply as an "element" the guts refer to as "container
+elements." To make matters worse, fields are internally referred to as "data
+elements." That said, calling elements "container elements" is nicely
+descriptive since only container elements can I<contain> other elements.
 
 Now that the loop is setup it's time to extract the page data:
 
         # build per-page element loop
         my @element_loop;
-        foreach my $e ($page->get_elements()) {
+        foreach my $e ($page->get_elements) {
             # push on a row for this element
-            push(@element_loop, { $e->get_key_name => $e->get_data });
+            push @element_loop, { $e->get_key_name => $e->get_data };
         }
 
-First the code creates a new array to hold the element variables from
-this page.  Next we loop through all the elements in the page with the
-get_elements() call - these elements will be paragraphs and pull
-quotes.  Each element gets turned into a single row in the
-element_loop containing a single variable with the same key name as the
-element.
+First the code creates a new array to hold the element variables from this
+page. Next we loop through all the elements in the page with the
+get_elements() call -- these elements will be paragraphs and pull quotes. Each
+element gets turned into a single row in the C<element_loop> containing a
+single variable with the same key name as the element.
 
-For example, let's say we have a page with three paragraphs and a
-pull quote.  After this loop is finished @element_loop will look
-something like:
+For example, let's say we have a page with three paragraphs and a pull quote.
+After this loop is finished @element_loop will look something like:
 
     @element_loop = (
         { "paragraph"  => "text of paragraph one..."   },
@@ -232,17 +220,15 @@ something like:
         { "paragraph"  => "text of paragraph three..." },
     );
 
-As you know from your knowledge of HTML::Template this is the
-structure for a TMPL_LOOP.  Once we've got this structure we push it
-onto the outer page_loop along with the current $page_count.  The
-$page_count is also incremented here so that the next page will get
-requested for the next iteration.
+As you know from your knowledge of HTML::Template, this is the structure for a
+C<TMPL_LOOP>. Once we've got this structure, we push it onto the outer
+C<page_loop> along with the object count.
 
        # push element_loop and a page_count on this loop
-       push(@page_loop, {
+       push @page_loop, {
            element_loop => \@element_loop,
-           page_count   => $page_count++
-       });
+           page_count   => $e->get_object_order,
+       };
     }
 
 
@@ -251,39 +237,39 @@ A completed @page_loop for a two-page story might look something like:
     @page_loop = (
       {
         element_loop => [
-        { "paragraph"  => "text of paragraph one..."   },
-        { "pull quote" => "text of pull quote one..."  },
-        { "paragraph"  => "text of paragraph two..."   },
-        { "paragraph"  => "text of paragraph three..." },
+          { "paragraph"  => "text of paragraph one..."   },
+          { "pull quote" => "text of pull quote one..."  },
+          { "paragraph"  => "text of paragraph two..."   },
+          { "paragraph"  => "text of paragraph three..." },
         ],
         page_count => 1
       },
       {
         element_loop => [
-        { "paragraph"  => "text of paragraph one..."   },
-        { "paragraph"  => "text of paragraph two..." },
+          { "paragraph"  => "text of paragraph one..."   },
+          { "paragraph"  => "text of paragraph two..." },
         ],
         page_count => 2
       }
     );
 
-Which, as you might know is just the array of hashes of arrays of
-hashes structure that HTML::Template expects for nested loops.
+Which, as you might know, is just the array of hashes of arrays of hashes
+structure that HTML::Template expects for nested loops.
 
     # finish the page_loop
     $template->param(page_loop => \@page_loop);
 
     # call output and return the results
-    return $template->output();
+    return $template->output;
 
-Finally, we send the @page_loop data to the template and return the
-results of running the template.
+Finally, we send the @page_loop data to the template and return the results of
+running the template.
 
-=head2 THE TEMPLATE - story.tmpl
+=head2 THE TEMPLATE: F<story.tmpl>
 
-The template for our script matches the variables and loops setup in
-the script.  It adds a very small amount of HTML formatting just so
-you can see where formatting might be added:
+The template for our script matches the variables and loops setup in the
+script. It adds a very small amount of HTML formatting just so you can see
+where formatting might be added:
 
     <tmpl_loop page_loop>
 
@@ -304,9 +290,9 @@ you can see where formatting might be added:
           <p><tmpl_var paragraph></p>
         </tmpl_if>
         <tmpl_if name="pull_quote">
-          <p><blockquote><i>
+          <blockquote><p>
                 <tmpl_var name="pull_quote">
-              </i></blockquote></p>
+              </p></blockquote>
         </tmpl_if>
      </tmpl_loop>
 
@@ -326,19 +312,19 @@ you can see where formatting might be added:
 
     </tmpl_loop>
 
-Most of this should be pretty self-explanatory but I'll highlight some
-of the more interesting bits.  First, the template makes use of
-HTML::Template's "loop_context_vars" option which is on by default in
-Bricolage.  This allows the template to make decisions based on the
-automatic loop variables __first__ and __last__:
+Most of this should be pretty self-explanatory but I'll highlight some of the
+more interesting bits. First, the template makes use of HTML::Template's
+"loop_context_vars" option which is on by default in Bricolage. This allows
+the template to make decisions based on the automatic loop variables
+C<__first__> and C<__last__>:
 
      <tmpl_if __first__>
         <h1><tmpl_var title></h1>
         <b><tmpl_var deck></b>
      </tmpl_if>
 
-This snippet is used to put the title line and deck on the first page
-only.  This mysterious section sets up the next and previous links:
+This snippet is used to put the title line and deck on the first page only.
+This mysterious section sets up the next and previous links:
 
    <tmpl_unless __first__>
       <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
@@ -348,12 +334,11 @@ only.  This mysterious section sets up the next and previous links:
       <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
    </tmpl_unless>
 
-The use of __first__ and __last__ should be obvious enough - the first
-page doesn't get a previous page link and the last page doesn't get a
-next page link.  This section also makes use of some helper functions
-provided to make linking between pages easier.  We could do this
-without them though - something like this would produce equivalent
-results:
+The use of C<__first__> and C<__last__> should be obvious enough: the first
+page doesn't get a previous page link and the last page doesn't get a next
+page link. This section also makes use of some helper functions provided to
+make linking between pages easier. We could do this without them though;
+something like this would produce equivalent results:
 
      <tmpl_unless __first__>
         <tmpl_if expr="page_count == 2">
@@ -369,28 +354,26 @@ results:
         <a href="index<tmpl_var page_count>.html">Next Page</a>
      </tmpl_unless>
 
-Although that would only work if your output channel was setup to
-output files with names like "index.html" and "index1.html".  The
-next_page_link() and prev_page_link() functions will work with any
-output channel settings.
+Although that would only work if your output channel was setup to output files
+with names like F<index.html> and F<index1.html>. The next_page_link() and
+prev_page_link() functions will work with any output channel settings.
 
-The final bit of mystery in this template is the use of the magic
-page_break variable:
+The final bit of mystery in this template is the use of the magic page_break
+variable:
 
    <tmpl_var page_break>
 
 If you remember back in the script this was setup with a call to
-$burner->page_break.  Inserting this value in your output will tell
-Bricolage to insert a page break.  Also, Bricolage is smart enough not
-to output a trailing blank page so you don't have to worry about the
-spacing after page_break in the loop.
+C<< $burner->page_break >>. Inserting this value in your output will tell
+Bricolage to insert a page break. Also, Bricolage is smart enough not to
+output a trailing blank page so you don't have to worry about the spacing
+after C<page_break> in the loop.
 
 =head2 CONCLUSION
 
-This first example has shown how a simple story type can be formatted
-using a single script and a single template.  The script is
-responsible for setting up the variables and loops that the template
-uses to format the story.
+This first example has shown how a simple story type can be formatted using a
+single script and a single template. The script is responsible for setting up
+the variables and loops that the template uses to format the story.
 
 Here's an analysis of this approach:
 
@@ -402,16 +385,14 @@ Here's an analysis of this approach:
 
 =item *
 
-Everything is in one place.  This gives the HTML designer
-one-stop-shopping for making changes to the way a story looks.  Also,
-the programmer doesn't have to hunt around for the right place to add
-some code for a new feature.
+Everything is in one place. This gives the HTML designer one-stop-shopping for
+making changes to the way a story looks. Also, the programmer doesn't have to
+hunt around for the right place to add some code for a new feature.
 
 =item *
 
-The script is explicit about what variables and loops are being setup
-in the template.  This can aid in maintenance of the scripts and
-templates.
+The script is explicit about what variables and loops are being setup in the
+template. This can aid in maintenance of the scripts and templates.
 
 =back
 
@@ -421,20 +402,18 @@ templates.
 
 =item *
 
-The template is quite complex - loops within loops can be hard for
-less experienced designers to understand.
+The template is quite complex -- loops within loops can be difficult For less
+experienced designers to understand.
 
 =item *
 
-The script is fairly long considering how little work it is actually
-doing.
+The script is fairly long considering how little work it is actually doing.
 
 =item *
 
 The individual elements are treated directly and thus do not have any
-independent formatting associated with them.  If another top-level
-story wants to use Page elements then the same work will need to be
-duplicated.
+independent formatting associated with them. If another story type element
+wants to use Page elements then the same work will need to be duplicated.
 
 =back
 
@@ -442,21 +421,21 @@ duplicated.
 
 =head1 STRATEGY 2: NO SCRIPT, ONE TEMPLATE
 
-As I hinted at above new_template()'s autofill option can do a lot of
-work for you.  Combined with the default script creation you can often
-get away without creating any scripts at all.
+As I hinted at above, C<new_template()>'s C<autofill> parameter can do a lot
+of work for you. Combined with the default script creation you can often get
+away with creating no scripts at all.
 
 =head2 THE DEFAULT SCRIPT
 
-The default script is used if Bricolage needs to publish an element
-for which no script file (.pl) exists but for which there is a
-template file (.tmpl).  It consists of:
+The default script is used if Bricolage needs to publish an element for which
+no script file (F<.pl>) exists but for which there is a template file
+(F<.tmpl>). It consists of:
 
-   return $burner->new_template()->output;
+   return $burner->new_template->output;
 
-Since no options are specified to new_template() the autofill option
-defaults to on.  In autofill mode new_template() fills in variables
-and loops for your element tree automatically.
+Since no options are specified to new_template(), the C<autofill> parameter
+defaults to on. In autofill mode, new_template() automatically fills in
+variables and loops for your element tree.
 
 Several types of variables and loops are created by autofill:
 
@@ -464,35 +443,35 @@ Several types of variables and loops are created by autofill:
 
 =item *
 
-A single variable is created for every element with the same key name as
-the element.  For attributes this contains the value of the attribute.
-For container elements this causes a call to the script and/or
-template for that element (more on this in strategy 3).
+A single variable is created for every element with the same key name as the
+element. For fields, this variable contains the value of the field.
+For container elements, the variable contains the output of the execution of
+the script and/or template for that element (more on this in strategy 3).
 
-The <tmpl_var deck> variable in the previous example is an example of
-this type of variable.
-
-=item *
-
-A loop is created for every element with the key name of the element
-followed by _loop.  The rows of the loop contain the variable
-described above and a _count variable.
-
-The <tmpl_loop page_loop> is an example of this type of loop.
+The C<< <tmpl_var deck> >> variable in the previous example is an example of this
+type of variable.
 
 =item *
 
-A loop called "element_loop" is created with a row for every element
-contained.  The values are the same as for the loop above with the
-addition of a boolean is_ variable.
+A loop is created for every element with the key name of the element followed
+by "_loop". The rows of the loop contain instances of the variables described
+above and a "_count" variable for each.
 
-The <tmpl_loop element_loop> used within the <tmpl_loop page_loop> is
-this type of loop.
+The C<< <tmpl_loop page_loop> >> loop is an example of this type of loop.
 
 =item *
 
-A variable for the total number of elements with the element key
-name and a trailing _total.
+A loop called C<element_loop> is created with a row for every subelement. The
+values are the same as for the loop above with the addition of a boolean "is_"
+variable.
+
+The C<< <tmpl_loop element_loop> >> loop used within the
+C<< <tmpl_loop page_loop> >> loop is this type of loop.
+
+=item *
+
+A variable for the total number of elements with the element key name and a
+trailing "_total".
 
 =item *
 
@@ -501,18 +480,18 @@ description", and so on.
 
 =item *
 
-A variable called "page_break" containing $burner->page_break.
+A variable called "page_break" containing the return value of
+C<< $burner->page_break >>.
 
 =back
 
-=head2 THE SCRIPT - story.tmpl
+=head2 THE TEMPLATE: F<story.tmpl>
 
-The script for use with this strategy is almost exactly the same as
-for strategy 1 (sneaky, huh?).  The only change is that the
-autofill code provides "is_$name" variables inside the element_loops
-to make testing for the type of the row more obvious and more
-fool-proof.  In STRATEGY 1 a paragraph with the sole contents "0"
-wouldn't have been printed!  The horror!
+The template for use with this strategy is almost exactly the same as for
+strategy 1 (sneaky, huh?). The only change is that the autofill code provides
+"is_$key_name" variables inside the element_loops to make testing for the type
+of the row more obvious and more fool-proof. In STRATEGY 1 a paragraph with
+the sole contents "0" wouldn't have been printed! The horror!
 
    <tmpl_loop page_loop>
 
@@ -533,9 +512,9 @@ wouldn't have been printed!  The horror!
           <p><tmpl_var paragraph></p>
         </tmpl_if>
         <tmpl_if is_pull_quote>
-          <p><blockquote><i>
+          <blockquote><p>
                 <tmpl_var pull_quote>
-              </i></blockquote></p>
+              </p></blockquote>
         </tmpl_if>
      </tmpl_loop>
 
@@ -556,8 +535,8 @@ wouldn't have been printed!  The horror!
 
 =head2 CONCLUSION
 
-This example demonstrates the real power of Bricolage's HTML::Template
-system.  Here's a breakdown of this strategy:
+This example demonstrates the real power of Bricolage's HTML::Template system.
+Here's a breakdown of this strategy:
 
 =over 4
 
@@ -567,14 +546,14 @@ system.  Here's a breakdown of this strategy:
 
 =item *
 
-No code required!  You can take the day off if all the designer needs
-is access to the data in the elements.
+No code required! You can take the day off if all the designer needs is access
+to the data in the story and the elements.
 
 =item *
 
-Consistency.  The template designer always gets access to the
-variables and loops in the same way.  Once they've learned the setup
-they can create templates just by looking at the element tree.
+Consistency. The template designer always gets access to the variables and
+loops in the same way. Once they've learned the setup they can create
+templates just by looking at the element tree.
 
 =back
 
@@ -584,9 +563,9 @@ they can create templates just by looking at the element tree.
 
 =item *
 
-Understanding how this works requires a good understanding of
-autofill.  Hopefully this document will get you there but sometimes
-its still nice to be able to see the code that's really executing.
+Understanding how all this works requires a good understanding of autofill.
+Hopefully this document will get you there but sometimes its still nice to be
+able to see the code that's really executing.
 
 =item *
 
@@ -598,19 +577,19 @@ The template is still pretty complicated.
 
 =head1 STRATEGY THREE: NO SCRIPTS, MANY TEMPLATES
 
-Sometimes a little extra work can go a long way.  If you're building
-an element that will be used as a sub-element in a number of trees
-then it pays to split out the functionality into separate pieces.
-Bricolage supports this by allowing you to create a script (.pl) and a
-template (.tmpl) for every element.
+Sometimes a little extra work can go a long way. If you're building an element
+that will be used as a sub-element in a number of trees, then it pays to split
+out the functionality into separate pieces. Bricolage supports this by
+allowing you to create a script (F<.pl>) and a template (F<.tmpl>) for every
+element.
 
-This strategy will deal with just templates, relying on autofill to
-setup vars and loops.  The next strategy will deal with customizing
-the scripts for multiple elements.
+This strategy will deal with just templates, relying on autofill to setup
+variables and loops. The next strategy will deal with customizing the scripts
+for multiple elements.
 
-=head2 TEMPLATE - story.tmpl
+=head2 TEMPLATE: F<story.tmpl>
 
-Here's a revised story.tmpl to makes a call to the page element
+Here's a revised F<story.tmpl> to makes a call to the page element
 script/template:
 
    <tmpl_loop page_loop>
@@ -644,14 +623,14 @@ script/template:
 
     </tmpl_loop>
 
-Notice that instead of the inner element_loop there's a single
-TMPL_VAR called "page".  This tells autofill to make a call to the
-element script for the page element - page.pl.  Of course, as we saw
-earlier, if this script doesn't exist then the default script is used:
+Notice that instead of the inner C<element_loop> there's a single C<TMPL_VAR>
+called "page". This tells autofill to make a call to the element script for
+the page element -- F<page.pl>. Of course, as we saw earlier, if this script
+doesn't exist then the default script is used:
 
-    return $burner->new_template()->output;
+    return $burner->new_template->output;
 
-=head2 TEMPLATE - page.tmpl
+=head2 TEMPLATE: page.tmpl
 
 Here's the page template that outputs the body of the page:
 
@@ -660,26 +639,26 @@ Here's the page template that outputs the body of the page:
       <p><tmpl_var paragraph></p>
     </tmpl_if>
     <tmpl_if is_pull_quote>
-      <p><blockquote><i>
+      <blockquote><p>
         <tmpl_var pull_quote>
-          </i></blockquote></p>
+          </p></blockquote>
     </tmpl_if>
     </tmpl_loop>
 
-This should look pretty familiar - it's the exact same text that was
-in the original story.tmpl!  Autofill sets up the same loops and
-variables whether you're in an original template or a sub-template.
+This should look pretty familiar -- it's exactly the same markup that was in
+the original F<story.tmpl>! Autofill sets up the same loops and variables
+whether you're in an original template or a sub-template.
 
-One thing to note is that you can't just move the header and footer
-generating code into the page template.  Since the __first__ and
-__last__ variables are only valid inside the loop in story.tmpl they
-can't be used in page.tmpl.  This might be addressed in the future but
-until then see the next strategy for a solution.
+One thing to note is that you can't just move the header- and
+footer-generating code into the page template. Since the C<__first__> and
+C<__last__> variables are only valid inside the loop in F<story.tmpl>, they
+can't be used in C<page.tmpl>. This might be addressed in the future but until
+then see the next strategy for a solution.
 
 =head2 CONCLUSION
 
-This strategy is a good one when you have elements that will be shared
-between template trees.  Here's a breakdown:
+This strategy is a good one when you have elements that will be shared between
+template trees. Here's a breakdown:
 
 =over 4
 
@@ -693,8 +672,7 @@ Element templates can be reused across template trees.
 
 =item *
 
-Element template complexity is reduced - only a single loop is used in
-each.
+Element template complexity is reduced -- only a single loop is used in each.
 
 =item *
 
@@ -708,13 +686,13 @@ No code required! (just like Strategy 2)
 
 =item *
 
-The formatting for a story is spread across multiple templates which
-may make it harder for designers to make changes.
+The formatting for a story is spread across multiple templates which may make
+it harder for designers to make changes.
 
 =item *
 
-Autofill behavior may be hard for programmers to understand.  (just
-like Strategy 2)
+Autofill behavior may be hard for programmers to understand. (just like
+Strategy 2)
 
 =back
 
@@ -722,16 +700,16 @@ like Strategy 2)
 
 =head1 STRATEGY 4: SCRIPTS AND TEMPLATES
 
-The Bricolage system is all about flexibility.  In Strategy 1 you got
-an up-close look at a script that handles the entire template setup
-process.  Fortunately you don't need to do all that work just to add a
-small enhancement.  For an example, let's fix the problem I mentioned
-at the end of Strategy 3 - the header and footer for the Page element
-were stuck in story.tmpl by their reliance on __first__ and __last__.
+The Bricolage system is all about flexibility. In Strategy 1 you got an
+up-close look at a script that handles the entire template setup process.
+Fortunately you don't need to do all that work just to add a small
+enhancement. For an example, let's fix the problem I mentioned at the end of
+Strategy 3 -- the header and footer for the Page element were stuck in
+F<story.tmpl> by their reliance on C<__first__> and C<__last__>.
 
-=head2 TEMPLATE - story.tmpl
+=head2 TEMPLATE: F<story.tmpl>
 
-Here's the desired story.tmpl:
+Here's the desired F<story.tmpl>:
 
    <tmpl_loop page_loop>
 
@@ -751,7 +729,7 @@ Here's the desired story.tmpl:
 
     </tmpl_loop>
 
-=head2 TEMPLATE - page.tmpl
+=head2 TEMPLATE: F<page.tmpl>
 
 And the new Page template:
 
@@ -766,11 +744,11 @@ And the new Page template:
       <p><tmpl_var paragraph></p>
     </tmpl_if>
     <tmpl_if is_pull_quote>
-      <p><blockquote><i>
+      <blockquote><p>
         <tmpl_var pull_quote>
-          </i></blockquote></p>
+          </p></blockquote>
     </tmpl_if>
-    </tmpl_loop> 
+    </tmpl_loop>
 
     <tmpl_unless first>
        <a href=<tmpl_var expr="prev_page_link(page_count)">>Previous Page</a>
@@ -780,73 +758,70 @@ And the new Page template:
        <a href=<tmpl_var expr="next_page_link(page_count)">>Next Page</a>
     </tmpl_unless>
 
-You'll notice that the element_loop is unchanged.  The header and
-footer expressions are the same except that __first__ and __last__ are
-now just plain first and last.  This was done to emphasize that we're
-not using HTML::Template's automatic loop variables here.
+You'll notice that the element loop is unchanged. The header and footer
+expressions are the same except that C<__first__> and C<__last__> are now just
+plain C<first> and C<last>. This was done to emphasize that we're not using
+HTML::Template's automatic loop variables here.
 
-=head2 SCRIPT - story.pl
+=head2 SCRIPT: F<story.pl>
 
-The problem here is simple - we've got some variables in the Story
-that need to be made available to the Page.  Also, we'd like to do
-this without having to do all the work of Strategy 1.  Here's the
-first half of the solution in story.pl:
+The problem here is simple -- we've got some variables in the Story that need
+to be made available to the Page. Also, we'd like to do this without having to
+do all the work of Strategy 1. Here's the first half of the solution in
+F<story.pl>:
 
-    my $template = $burner->new_template();
+    my $template = $burner->new_template;
 
-    # collect pages in @pages
     my @pages = $element->get_elements('page');
+    my $total = @pages;
 
     # build @page_loop by calling run_script with page_count and
-    # page_total params.
-    my $page_count = 1;
+    # page_total arguments.
     my @page_loop;
     foreach my $page (@pages) {
-      push @page_loop, { page => $burner->run_script($page,
-                                                     $page_count,
-                                                     scalar @page_loop) };
-      $page_count++;
+      push @page_loop, { page => $burner->run_script(
+                             $page,
+                             $page->get_object_order,
+                             $total)
+      };
     }
 
     # replace autofilled page_loop with new one
     $template->param(page_loop => \@page_loop);
 
     # return the output
-    return $template->output();
+    return $template->output;
 
-Basically this script does the same thing that autofill does but only
-for a single loop - page_loop.  Additionally, instead of calling
-run_script() with just the element parameter it also supplies two
-arguments - $page_count and $page_total (computed from @page_loop).
+Basically this script does the same thing that autofill does but only for a
+single loop -- C<page_loop>. Additionally, instead of calling C<run_script()>
+with just the element parameter it also supplies two arguments, the object
+order, which corresponds to a page count, and the total number of pages
+(computed from @pages).
 
-=head2 SCRIPT - page.pl
+=head2 SCRIPT: F<page.pl>
 
-Now that we've setup story.pl to pass parameters to the Page element
-we'll need a script that does something with them.
+Now that we've setup F<story.pl> to pass parameters to the Page element, we'll
+need a script that does something with them.
 
    my ($page_count, $page_total) = @_;
-   my $template = $burner->new_template();
+   my $template = $burner->new_template;
 
    # setup params
-   if ($page_count == 0) {
-      $template->param(first => 1);
-   }
-   if ($page_count == $page_total) {
-      $template->param(last => 1);
-   }
+   $template->param(first => 1) if $page_count == 1;
+   $template->param(last => 1)  if $page_count == $page_total;
    $template->param(page_count => $page_count);
 
    # return output
-   return $template->output();
+   return $template->output;
 
-As you can see parameters are passed to scripts just as they are to
-Perl subroutines - through @_.  The script uses these parameters to
-setup the template params it needs.
+As you can see, arguments are passed to scripts just as they are to Perl
+subroutines -- through @_. The script uses these parameters to setup the
+template params it needs.
 
 =head2 CONCLUSION
 
-This Strategy uses the full set of Bricolage HTML::Template tools
-we've seen so far - scripts, templates, autofill and run_script().
+This Strategy uses the full set of Bricolage HTML::Template tools we've seen
+so far -- scripts, templates, autofill, and run_script().
 
 =over 4
 
@@ -856,18 +831,18 @@ we've seen so far - scripts, templates, autofill and run_script().
 
 =item *
 
-This style is very flexible - the programmer can add functionality to
-the autofilled content without having to re-invent the wheel.
+This style is very flexible -- the programmer can add functionality to the
+autofilled content without having to re-invent the wheel.
 
 =item *
 
-Elements that are broken out into discrete scripts and templates can
-be reused between element trees.
+Elements that are broken out into discrete scripts and templates can be reused
+between element trees.
 
 =item *
 
-In this particular case bending the rules a bit allows the page
-formatting to be more logically grouped and easier to edit.
+In this particular case, bending the rules a bit allows the page formatting to
+be more logically grouped and easier to edit.
 
 =back
 
@@ -881,9 +856,8 @@ Requires coding.
 
 =item *
 
-Requires communication between template programmer and template
-designer since the variables and loops are somewhat different from the
-normal autofill setup.
+Requires communication between template programmer and template designer since
+the variables and loops are somewhat different from the normal autofill setup.
 
 =back
 
@@ -891,28 +865,27 @@ normal autofill setup.
 
 =head1 STRATEGY 5: RELATED MEDIA
 
-So far things have been kept pretty simple - our example story type
-contains only text.  Now let's add the possibility of including images
-in our story.  The new tree will look like:
+So far things have been kept pretty simple; our example story type contains
+only text. Now let's add the possibility of including images in our story. The
+new tree will look like:
 
    Story
-        - Deck             (textbox attribute)
+        - Deck             (textbox field)
         + Page             (repeatable element)
-             - Paragraph   (repeatable textbox attribute)
-             - Pull Quote  (repeatable textbox attribute)
+             - Paragraph   (repeatable textbox field)
+             - Pull Quote  (repeatable textbox field)
              + Image       (repeatable related media element)
-                - Caption  (textbox attribute)
+                - Caption  (textbox field)
 
-The Image element is of the type "Related Media" and has one
-non-repeatable attribute called "Caption".  Since it's a related media
-element it also has the ability to point to a media object.  In this
-case the template will assume that object being pointed to is an
-image.
+The Image element is of the type "Related Media" and has one non-repeatable
+field called "Caption". Since it's a related media element it also has the
+ability to point to a media document. In this case the template will assume
+that referenced media document is an image.
 
 =head2 TEMPLATE: story.tmpl
 
-To keep things simple we'll start with the template used to format the
-story in Strategy 2 with a small addition:
+To keep things simple, we'll start with the template used to format the story
+in Strategy 2 with a small addition:
 
    <tmpl_loop page_loop>
 
@@ -933,9 +906,9 @@ story in Strategy 2 with a small addition:
           <p><tmpl_var paragraph></p>
         </tmpl_if>
         <tmpl_if is_pull_quote>
-          <p><blockquote><i>
+          <blockquote><p>
                 <tmpl_var pull_quote>
-              </i></blockquote></p>
+              </p></blockquote>
         </tmpl_if>
             <tmpl_if is_image>
               <p><tmpl_var image></p>
@@ -965,93 +938,84 @@ The addition is another conditional inside the page's element_loop:
 
 This will make a call out to the Image element's script when output.
 
-=head2 SCRIPT: image.tmpl
+=head2 SCRIPT: F<image.tmpl>
 
-For the script we'll use the autogenerated autofill script.  Here's
-the template to format the image:
+For the script we'll use the autogenerated autofill script. Here's the
+template to format the image:
 
-    <img src="<tmpl_var link>">
+    <img src="<tmpl_var rel_media_uri>">
     <tmpl_if caption>
-       <br><font size=-1><tmpl_var caption></font>
+       <br /><font size=-1><tmpl_var caption></font>
     </tmpl_if>
 
-By now we know to expect the "caption" variable - this is the Caption
-attribute that can be defined for the Image element.  The "link"
-variable is a new feature of autofill - it corresponds to the
-following code:
+By now we know to expect the "caption" variable -- this is the Caption field
+that can be defined for the Image element. The C<rel_media_uri> variable is a
+new feature of autofill -- it corresponds to the following code:
 
     my $media = $element->get_related_media;
-    $template->param(link => $media->get_primary_uri()) if $media;
+    $template->param(rel_media_uri => $media->get_uri) if $media;
 
-The same technique works for Related Stories elements.  I'll omit a
-full example but the same "link" variable is provided and can be used
-in much the same way (albeit without the <img> tag).
+The same technique works for Related Stories elements. I'll omit a full
+example except to say that a C<rel_story_uri> variable is provided and can be
+used in much the same way, for example, in an anchor (C<< <a> >>) tag.
+
+B<Compatibility note:> The C<rel_media_uri> and C<rel_story_uri> variables
+were added in Bricolage 1.10.0. Earlier versions of Bricolage had only a
+C<link> variable, and if an element had both a related story and a related
+media document, only the related media document was available. The C<link>
+variable is still available in Bricolage 1.10.0 and later for backwards
+compatibility purposes.
 
 =head2 CONCLUSION
 
-This strategy enables the use of key Bricolage features - related
-media and related stories.  Given that users tend to like multimedia
-and hyperlinks between stories I'll omit an Advantages and
-Disadvantages section - you'll probably have to use this Strategy
-whether you like it or not!
+This strategy enables the use of key Bricolage features -- related media and
+related stories. Given that users tend to like multimedia and hyperlinks
+between stories, I'll omit an Advantages and Disadvantages section -- you'll
+probably have to use this Strategy whether you like it or not!
 
 =head1 STRATEGY 6: CATEGORY SCRIPTS AND TEMPLATES
 
-Just as elements can have scripts and templates, each category may
-have one script and one template associated with it called
-"category.pl" and "category.tmpl".
+Just as elements can have scripts and templates, each category may have one
+script and one template associated with it called F<category.pl> and
+F<category.tmpl>.
 
-This is the HTML::Template equivalent of Mason's autohandlers although
-there are some differences in behavior.  For one, HTML::Template's
-category scripts don't stack like Mason autohandlers - the search ends
-when a script or template is found and only one is ever run.  A way to
-do optional stacking might be added in the future if users request
-it.  Another difference is that category scripts can't be used to
-setup variables for the element scripts - every script runs in a
-separate environment.
+Category templates are the HTML::Template equivalent of Mason's autohandlers,
+although there are some differences in behavior. For one, category templates
+are executed separately for each page of story output, once the pages have
+been split up from the output of the story template. For another, there is no
+C<< $burner->chain_next >> method. Rather, the content of the page is stored in
+the HTML::Template variable C<content>.
 
-For an example, let's imagine that we want to put a blue box around
-every page in our output.  Instead of putting this HTML into our
-templates we'll do it in a category template.
+For an example, let's imagine that we want to put a blue box around every page
+in our output. Instead of putting this HTML into our templates we'll do it in
+a category template.
 
-=head2 THE TEMPLATE - category.tmpl
+=head2 THE TEMPLATE: category.tmpl
 
   <html>
   <head><tmpl_var title></head>
   <body>
 
-  <table bgcolor=blue cellspacing=5 border=0><tr><td>
-
+  <div style="background:blue">
      <tmpl_var content>
-
-  </td></tr></table>
+  </div>
 
   </body>
   </html>
 
-Fairly simple, right?  One thing to note is that do the wrapping we
-had to move the <head> setup with the title var into the category
-template.  This is an unfortunate fact-of-life for HTML since the
-<head> section has to precede the <body> most category templates will
-have to include it.  As a result having stories setup their own <head>
-section is hard (although not impossible - clever use of run_script()
-could get you there).
+Of course, now the C<< <head> >> and C<< <body> >> tags should be removed from
+the story template, since the category template takes care of them. Aside from
+that the only new feature is the "content" variable. Every C<category.tmpl>
+must include the content variable to indicate where the content will be
+inserted for each page.
 
-Aside from that the only new feature is the magic "content" variable.
-Every category.tmpl must include the content variable to indicate
-where the content will be inserted for each page.
+=head2 THE SCRIPT: category.pl
 
-=head2 THE SCRIPT - category.pl
-
-As you probably can predict autofill will fill in all the variables in the
-above template. One note - the $element variable is not initialized to the
-story's element. As a result autofill doesn't setup any of the normal vars and
-loops associated with the element tree for the story. This usually a good
-thing - if you start trying to output story elements inside your category
-templates then you're headed the wrong way. However, you can always get the
-element from $story and pass it to new_template manually:
-
-   my $template = $burner->new_template(element => $story->get_element);
+As you probably can predict, autofill will fill in all the variables in the
+above template, including all the fields and subelements of the story element,
+just like in the story template itself. So we don't really need a
+F<category.pl> script; the default script generated by Bricolage will do the
+trick.
 
 =head2 CONCLUSION
 
@@ -1068,8 +1032,8 @@ templates.
 
 =item *
 
-Could enable more complicated category-based functionality -
-navigation, bread-crumbing, etc.
+Could enable more complicated category-based functionality - navigation,
+bread-crumbing, etc.
 
 =back
 
@@ -1079,17 +1043,13 @@ navigation, bread-crumbing, etc.
 
 =item *
 
-Categories aren't elements - you can't assign them attributes to
-modify how the category scripts and template work.
-
-=item *
-
 Requires uniformity across elements that may not be very uniform at all.
 
 =item *
 
-Hides formatting from designers - there's no way to guess that the
-header and footer are coming from "category.tmpl".
+Hides formatting from designers -- there's no way to guess that the header and
+footer are coming from F<category.tmpl> without familiarity with the concept
+of category templates.
 
 =back
 
@@ -1097,15 +1057,16 @@ header and footer are coming from "category.tmpl".
 
 =head1 THE END
 
-Certainly there are many more ways to use HTML::Template in Bricolage
-than I've covered in this document.  Your main tools - scripts,
-templates, the Bric::Util::Burner::Template API and the various
-objects available in Bricolage - are now yours for the taking.  Go
-forth and bend Bricolage whimpering to your task!
+Certainly there are many more ways to use HTML::Template in Bricolage than
+I've covered in this document. Your main tools -- scripts, templates, the
+Bric::Util::Burner::Template API, and the various objects available in
+Bricolage -- are now yours for the taking. Go forth and bend Bricolage
+whimpering to your task!
 
 =head1 AUTHOR
 
-Sam Tregar <sam@tregar.com>
+Sam Tregar <sam@tregar.com>. Updated for Bricolage 1.10 and later by David
+Wheeler <david@kineticode.com>.
 
 =head1 SEE ALSO
 

@@ -2,6 +2,7 @@ package Bric::Util::Burner::DevTest;
 
 use strict;
 use warnings;
+use utf8;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::Burner;
@@ -241,6 +242,7 @@ sub test_best_uri : Test(no_plan) {
 
 sub subclass_burn_test {
     my ($self, $dir, $suffix, $burner_type) = @_;
+    $self->{delete_resources} = 1;
 
     # First, we'll need a story element type.
     ok my $story_et = Bric::Biz::ATType->new({
@@ -410,7 +412,7 @@ sub subclass_burn_test {
     # Give it a paragraph field.
     ok my $page_para = $page->new_data({
         key_name    => 'para',
-        required    => 1,
+        required    => 0,
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
@@ -498,6 +500,26 @@ sub subclass_burn_test {
     $self->add_del_ids($cat_tmpl->get_id, 'formatting');
     close $fh;
 
+    # And also a subcategory template.
+    my $subcat_tmpl_fn = Bric::Util::Burner->cat_fn_for_ext($suffix);
+    $subcat_tmpl_fn .= ".$suffix"
+      if Bric::Util::Burner->cat_fn_has_ext($subcat_tmpl_fn);
+    $subcat_tmpl_fn = 'sub_' . $subcat_tmpl_fn;
+    $file = $fs->cat_file(dirname(__FILE__), $dir, $subcat_tmpl_fn);
+    open $fh, '<', $file or die "Cannot open '$file': $!\n";
+    ok my $subcat_tmpl = Bric::Biz::Asset::Formatting->new({
+        output_channel => $suboc, # Put it in the contained OC.
+        user__id       => $self->user_id,
+        category_id    => $subcat->get_id, # This is the important bit.
+        site_id        => 100,
+        tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        file_type      => $suffix,
+        data           => join('', <$fh>),
+    }), "Create a subcategory template";
+    ok( $subcat_tmpl->save, "Save subcategory template" );
+    $self->add_del_ids($subcat_tmpl->get_id, 'formatting');
+    close $fh;
+
     # And I think a utility template might be handy.
     $file = $fs->cat_file(dirname(__FILE__), $dir, "util.$suffix");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
@@ -522,7 +544,7 @@ sub subclass_burn_test {
     }), "Create burner";
 
     for my $tmpl ($story_tmpl, $pq_tmpl, $cat_tmpl, $page_tmpl, $util_tmpl,
-                  $self->extra_templates({
+                  $subcat_tmpl, $self->extra_templates({
                       story_type => $story_type,
                       pull_quote => $pull_quote,
                       oc         => $oc,
@@ -562,6 +584,7 @@ sub subclass_burn_test {
     ok my $elem = $story->get_element, "Get the story element";
     ok $elem->add_data($para, 'This is a paragraph'), "Add a paragraph";
     ok $elem->add_data($para, 'Second paragraph'), "Add another paragraph";
+    ok $elem->add_data($head, "And then..."), "Add a header";
     ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
 
     # Add a pull quote.
@@ -575,6 +598,33 @@ sub subclass_burn_test {
     ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
       "Add a date to the pull quote";
 
+    # Add some Unicode content.
+    ok $elem->add_data(
+        $para,
+        '圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年'
+    ), "Add a Chinese paragraph";
+    ok $elem->add_data(
+        $para,
+        '橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱'
+    ), "Add a Japanese paragraph";
+    ok $elem->add_data(
+        $para,
+        '뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐'
+    ), "Add a Korean paragraph";
+
+    # Add another pull quote.
+    ok $pq = $elem->add_container($pull_quote), "Add another pull quote";
+    ok $pq->get_data_element('para')->set_data(
+        'So, first of all, let me assert my firm belief that the only '
+        . 'thing we have to fear is fear itself -- nameless, unreasoning, '
+        . 'unjustified terror which paralyzes needed efforts to convert '
+        . 'retreat into advance.'
+    ), "Add a paragraph to the pull quote";
+    ok $pq->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+      "Add a By to the pull quote";
+    ok $pq->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+      "Add a date to the pull quote";
+
     # Make it so!
     ok $elem->save, "Save the story element";
     # Allow localization by creating a language object.
@@ -585,11 +635,6 @@ sub subclass_burn_test {
     # Set up the component root for the preview.
     $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
       Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
-
-    # Mock the user so that event logging works properly.
-    my $event = Test::MockModule->new('Bric::App::Event');
-    my $user = Bric::Biz::Person::User->lookup({ id => $self->user_id });
-    $event->mock(get_user_object => $user);
 
     # Make sure that the file doesn't already exist.
     $file = $fs->cat_file(TEMP_DIR, 'base',
@@ -679,10 +724,16 @@ sub subclass_burn_test {
     unlink $file, $p2_file, $prev_file;
 }
 
-sub restore_comp_root : Test(teardown) {
+sub burn_cleanup : Test(teardown) {
     my $self = shift;
     Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = delete $self->{comp_root}
       if exists $self->{comp_root};
+
+    # Clean up our mess.
+    Bric::Util::DBI::prepare(qq{
+        DELETE FROM resource
+        WHERE  id > 1023
+    })->execute if delete $self->{delete_resources};
 }
 
 sub extra_templates {}
