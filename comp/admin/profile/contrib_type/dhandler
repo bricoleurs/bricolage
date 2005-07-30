@@ -1,6 +1,6 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc', title => "$disp Profile",
-   jsInit => "showForm('text')",
+   jsInit => "showForm('text', true)",
    context => "Admin | Profile | $disp | $crumb"
 &>
 % if (ENABLE_WYSIWYG) {
@@ -42,7 +42,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          no_edit => $no_edit,
          no_cb   => 1,
          widget => $type,
-         num => 2 
+         num => 2
 );
 
 

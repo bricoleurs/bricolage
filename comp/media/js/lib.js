@@ -319,7 +319,8 @@ Ouput: displays new table on the page in the form builder area.  Along the way, 
 consistent from form to form, and repopulates the new form with the cached values.  Finally, the cursor focus is moved
 to the name field of the new form.
 */
-function showForm(which) {
+
+function showForm(which, noScroll) {
 
     var html = '';
     var name, caption, vals, length, maxlength;
@@ -367,7 +368,7 @@ function showForm(which) {
         : document.getElementById('fbDiv').getElementsByTagName('form')[0];
             
     // move the focus to the name field
-    if (fb_obj) fb_obj.fb_name.focus();
+    if (!noScroll && fb_obj) fb_obj.fb_name.focus();
 }
 
 /*

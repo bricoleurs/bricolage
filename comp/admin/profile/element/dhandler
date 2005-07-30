@@ -2,7 +2,7 @@
 <& '/widgets/wrappers/sharky/header.mc',
   title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb",
-  jsInit => (defined $id) ? "showForm('text')" : ""
+  jsInit => (defined $id) ? "showForm('text', true)" : ""
 &>
 % if (ENABLE_WYSIWYG) {
 % # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
@@ -88,7 +88,7 @@ if (defined $id) {
 
         };
 
-        $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
              caption => 'Sites',
              number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
@@ -103,7 +103,7 @@ if (defined $id) {
                  profile => undef,
                  select => $sel_sub,
                 );
-       
+
 my %sites = map { $_->get_id => 1 } $comp->get_sites;
 </%perl>
 <table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
@@ -145,7 +145,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             return ['Delete', 'rem_oc'];
         };
 
-        $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
              caption => 'Output Channels',
              number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
@@ -194,7 +194,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     # Output the actions.
     my $containers = $comp->get_containers;
 
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
              caption => 'Existing Subelements',
              number  => ++$num );
     $m->comp('/widgets/listManager/listManager.mc',
