@@ -104,7 +104,7 @@ my $pl_adisp = get_class_info('alert')->get_plural_name;
 $object
 $obj_id
 $constrain => undef
-$title => undef
+$title => "Events"
 $alert_uri => undef
 $def_sort_order => undef
 </%args>
