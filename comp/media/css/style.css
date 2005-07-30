@@ -50,7 +50,7 @@ textarea {
 #headerContainer .buttons a    { margin: 0 2px; }
 #headerContainer .userinfo     { position: absolute; bottom: 35px; right: 0; }
 #breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
-#breadcrumbs p                 { margin: 0; padding: 3px 6px; }
+#breadcrumbs p                 { margin: 0; padding: 5px 6px; }
 #breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }
 
 

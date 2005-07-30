@@ -19,8 +19,10 @@
       <dd name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
       <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
       <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+% if (@$sites > 1) {
       <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
       <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
+% }
       <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
       <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
@@ -83,6 +85,7 @@ my ($name, $date, $date_label, $type_label, $uri);
 my $header_class = 'lightHeader';
 
 my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 my $alias = '';
 my $title_class = 'title';
 my $idv_class = 'idv';
