@@ -89,8 +89,6 @@ sub move : Callback {
 
     # Accept one or more assets to be moved to another desk.
     my $next_desk = $self->params->{$self->class_key.'|next_desk'};
-    use Data::Dumper;
-    print Dumper($next_desk);
     my $assets    = ref $next_desk ? $next_desk : [$next_desk];
 
     my ($a_id, $a_class, $d_id, $pkg, %wfs);
