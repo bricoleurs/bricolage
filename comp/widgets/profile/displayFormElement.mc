@@ -221,11 +221,15 @@ my $inpt_sub = sub {
       ? qq{ class="textInput"} : "";
     $extra ||= '';
     my $out;
-    my $disp_value = defined $value && $type ne 'password' ? ' value="'
-      . escape_html($value) . '"' : '';
-    $disp_value = defined $value && $type eq 'image' ? ' title="'
-      . escape_html($value) . '"' : $disp_value;
-    my $src = defined $vals->{props}{src} ? ' src="' . $vals->{props}{src} . '"' : '';
+    my $disp_value = defined $value
+      ? ' value="' . escape_html($value) . '"'
+      : '';
+    $disp_value = defined $value && $type eq 'image'
+      ? ' title="' . escape_html($value) . '"'
+      : $disp_value;
+    my $src = ref $vals && defined $vals->{props}{src}
+      ? ' src="' . $vals->{props}{src} . '"'
+      : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
 
@@ -257,7 +261,7 @@ my $inpt_sub = sub {
             $out .= qq{</div>\n} if $useTable;
         } else {
             if ($type eq "radio" || $type eq "checkbox") {
-                $out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
+                $out .= " ". $lang->maketext($value ? "Yes" : "No");
                 $out .= "<br />";
             }
         }
