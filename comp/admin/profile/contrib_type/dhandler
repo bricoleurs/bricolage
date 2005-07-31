@@ -1,13 +1,13 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc', title => "$disp Profile",
-   jsInit => "showForm('text', true)",
+   jsInit => "showForm('Text', true)",
    context => "Admin | Profile | $disp | $crumb"
 &>
 % if (ENABLE_WYSIWYG) {
 % # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
 <& /widgets/wysiwyg/load.mc &>
 % }
-<form method="post" action="<% $r->uri %>" name="ct_profile">
+<form method="post" action="<% $r->uri %>" name="ct_profile" id="ct_profile">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'contrib_type_id')
   if defined $id;
@@ -76,6 +76,7 @@ $m->comp('/widgets/formBuilder/formBuilder.mc',
 	 formName => 'ct_profile',
 	 numFields => $num_fields,
 	 num => 4,
+	 stay => 1,
 	 caption => 'Add New Field'
 	);
 

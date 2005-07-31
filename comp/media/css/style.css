@@ -442,6 +442,32 @@ div.actions { background: #999966; padding: 2px 4px; }
 	padding: 5px 0 10px 0;
 }
 
+.formBuilder { position: relative; height: 200px; }
+.formBuilder .formElement {
+	position: absolute;
+	top: 0; left: 0;
+	width: 150px;
+	list-style: none; list-style-image: none;
+	margin: 0; padding: 10px;
+}
+.formBuilder #fbDiv { margin-left: 170px; }
+.formBuilder .fbForm { 
+    position: absolute;
+    top: 0; left: 170px;
+    display: none;
+}
+.formBuilder .fbForm label { font-weight: bold; }
+.formBuilder .fbForm dd { padding: 0; margin: 0 0 3px 0; }
+.formBuilder .fbForm dl { float: left; width: 170px; margin-right: 10px; }
+.formBuilder .fbForm dl.position,
+.formBuilder #fbFormSelect dl.size { margin-top: 0; clear: both; width: 340px; }
+.formBuilder .fbForm dl.position dt,
+.formBuilder #fbFormSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
+.formBuilder .fbForm dl.position dd,
+.formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
+.formBuilder #fbFormText { display: block; } /* default */
+.formBuilder .submit { position: absolute; top: 170px; left: -160px; }
+
 /******************************************************
  * HACKS                                              *
  ******************************************************/
