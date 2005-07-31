@@ -468,6 +468,8 @@ div.actions { background: #999966; padding: 2px 4px; }
 .formBuilder #fbFormText { display: block; } /* default */
 .formBuilder .submit { position: absolute; top: 170px; left: -160px; }
 
+.alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
+
 /******************************************************
  * HACKS                                              *
  ******************************************************/

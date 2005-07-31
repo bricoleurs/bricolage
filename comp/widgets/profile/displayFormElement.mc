@@ -225,7 +225,7 @@ my $inpt_sub = sub {
       ? ' value="' . escape_html($value) . '"'
       : '';
     $disp_value = defined $value && $type eq 'image'
-      ? ' title="' . escape_html($value) . '"'
+      ? ' value="' . escape_html($value) . '"'
       : $disp_value;
     my $src = ref $vals && defined $vals->{props}{src}
       ? ' src="' . $vals->{props}{src} . '"'

@@ -33,6 +33,7 @@ $cb        => 'create_cb'
 $button    => 'create_red'
 $globalImage => 0
 $name      => ''
+$value     => undef
 $js        => ''
 $indent    => ''
 $useTable  => 1
@@ -43,7 +44,7 @@ my $key = ($widget) ? "$widget|$cb" : $name;
 my $local = $globalImage ? '' : "$lang_key/";
 
 my $vals = { disp      => '',
-             value     => $disp,
+             value     => $value || $disp,
              props     => { type      => 'image',
                             src       => "/media/images/$local$button.gif"
                           },
