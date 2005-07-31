@@ -221,7 +221,7 @@ my $inpt_sub = sub {
       ? qq{ class="textInput"} : "";
     $extra ||= '';
     my $out;
-    my $disp_value = defined $value
+    my $disp_value = defined $value && $type ne 'password'
       ? ' value="' . escape_html($value) . '"'
       : '';
     $disp_value = defined $value && $type eq 'image'
