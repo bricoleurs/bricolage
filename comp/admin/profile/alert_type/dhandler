@@ -1,7 +1,7 @@
 %#-- Begin HTML --#
 <%perl>
 $m->out(qq{<form method="post" name="alert_type_profile" action="} . $r->uri
-        . qq{" onSubmit="return confirmChanges(this)">\n});
+        . qq{" onsubmit="return confirmChanges(this)">\n});
 
 if (defined $id) {
     # Output a hidden field with the ID.
@@ -53,32 +53,33 @@ if (defined $id) {
 	     caption => 'Content', number => 3);
 
     # Subject.
-</%perl>
-    <table width=578 border=0 cellpadding=0 cellspacing=0>
-    <tr>
-      <td>
-<%perl>
-    $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'subject',
-	     width => 400,
-	     readOnly => $no_edit);
-
-    $m->out("</td><td>");
-
-    # Variables to put into Subject.
-    $m->comp('/widgets/profile/select.mc',
+</%perl>    
+    <div class="row">
+      <div class="label">Subject:</div>
+      <div class="input">
+      <& '/widgets/profile/displayFormElement.mc',
+	      objref => $at,
+	      key => 'subject',
+	      useTable => 0,
+	      name => '',
+	      readOnly => $no_edit &>
+% # Variables to put into Subject.
+% unless ($no_edit) {
+      <& '/widgets/profile/select.mc',
 	     name => 'sub_sel',
-	     width => 150,
+         useTable => 0,
 	     options => $var_sel_vals,
 	     js => 'onChange="this.form.subject.value = this.form.subject.value '
 		   . '+ this.form.sub_sel[selectedIndex].text; '
 		   . 'this.form.subject.focus();"'
-	    ) unless $no_edit;
+	  &>
+% }	  
+	  </div>
+	</div>
 
-    $m->out("</td></tr></table>");
-
+<%perl>
     # Variables to put into Message.
+    $m->out(qq{<div class="alertTypeVars">});
     $m->comp('/widgets/profile/select.mc',
 	     name => 'msg_sel',
 	     width => 550,
@@ -87,7 +88,8 @@ if (defined $id) {
 		   . '+ this.form.msg_sel[selectedIndex].text; '
 		   . 'this.form.message.focus();"'
 	    ) unless $no_edit;
-
+    $m->out(qq{</div>});
+    
     # Message
     $m->comp('/widgets/profile/displayFormElement.mc',
 	     objref => $at,
@@ -101,10 +103,9 @@ if (defined $id) {
 	     caption => 'Recipients', number => 4);
 
     $m->comp('/widgets/profile/hidden.mc', name => 'ctype');
-    $m->out(qq{<table border="1" cellpadding="3" cellspacing="0" width="578"}
-            . qq{ style="border-style:solid; border-color:#cccc99;">\n});
-    $m->out(qq{<tr class="medHeader" style="border-style:solid; border-color:#cccc99;"><th style="border-style:solid; border-color:#cccc99;">Contact</th><th style="border-style:solid; border-color:#cccc99;">Groups</th>}
-            . qq{<th style="border-style:solid; border-color:#cccc99;">Users</th><th style="border-style:solid; border-color:#cccc99;">&nbsp;</td></tr>\n});
+    $m->out(qq{<table class="listManager">\n});
+    $m->out(qq{<tr><th>Contact</th><th>Groups</th>}
+            . qq{<th>Users</th><th>Edit</td></tr>\n});
     foreach my $c (Bric::Biz::Contact->list_alertable_types) {
 	$m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
     }
@@ -112,7 +113,6 @@ if (defined $id) {
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     # Output group membership.
-    $m->out("<br />\n");
     $m->comp("/widgets/grp_membership/grp_membership.mc",
              grp_class => 'Bric::Util::Grp::AlertType',
              obj => $at,
@@ -123,7 +123,6 @@ if (defined $id) {
     );
 
     # Output the form buttons.
-    $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 	     no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type",
              widget => $type );
@@ -161,7 +160,6 @@ if (defined $id) {
     }
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
     # Output the form buttons.
-    $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
              widget => $type );
@@ -252,9 +250,9 @@ $c
 $at
 $no_edit
 </%args>
-<tr valign="top">
-    <td style="border-style:solid; border-color:#cccc99;"><% $c %></td>
-    <td style="border-style:solid; border-color:#cccc99;">
+<tr>
+    <td><% $c %></td>
+    <td>
 % my $fill = '';
 % foreach my $g ($at->get_groups($c)) {
 %    $m->out($fill . $g->get_name);
@@ -262,7 +260,7 @@ $no_edit
 % } # foreach
 % $m->out("&nbsp;") unless $fill; $fill = '';
     </td>
-    <td style="border-style:solid; border-color:#cccc99;">
+    <td>
 % foreach my $u ($at->get_users($c)) {
 %    $m->out($fill . $u->format_name($fmt));
 %    $fill = "<br />\n";
@@ -270,12 +268,14 @@ $no_edit
 % $m->out("&nbsp;") unless $fill;
     </td>
 % if ($no_edit) {
-    <td style="border-style:solid; border-color:#cccc99;">&nbsp;</td>
+    <td>&nbsp;</td>
 % } else {
-    <td align="center" style="border-style:solid; border-color:#cccc99;"><& '/widgets/profile/imageSubmit.mc',
+    <td align="center">
+    <& '/widgets/profile/imageSubmit.mc',
 	     formName => "alert_type_profile",
 	     callback => "$type|recip_cb",
-	     image    => "edit_lgreen",
+	     image    => "pencil",
+	     useGlobalImage => 1,
              useHidden => $hidden,
              value    => escape_html($c),
 &>

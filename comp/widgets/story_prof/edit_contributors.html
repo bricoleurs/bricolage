@@ -23,12 +23,11 @@ my $role_sub = sub {
       $c->get_id . qq{">$role</a>)} if $role;
     $val;
 };
-
+$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Contributors');
 $m->comp('/widgets/listManager/listManager.mc',
          object    => 'contrib',
          userSort => 0,
          def_sort_field => 'order',
-         title     => 'Current Contributors',
          objs      => \@contribs,
          profile   => undef,
          alter     => { type => $role_sub },
@@ -38,11 +37,11 @@ $m->comp('/widgets/listManager/listManager.mc',
          select =>  ['Delete', "$widget|delete_id"],
          addition  => ''
         );
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>
 <script language="javascript">
 var selectOrderNames = new Array(<% join ', ', @sort_array %>);
 </script>
-<p></p>
 
 <& /widgets/search/search.mc,
    object       => 'contrib',
@@ -50,7 +49,7 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
    type         => 'dual',
    use_form_tag => 0
 &>
-<p></p>
+<& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Contributors' &>
 <& /widgets/listManager/listManager.mc,
    object    => 'contrib',
    title     => 'Choose Contributors',
@@ -62,8 +61,8 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
    addition  => '',
    behavior => 'expand',
 &>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<p></p>
 <input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_contrib_cb" value="Save" />
 <input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay" />
 <input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_contrib_cb" />

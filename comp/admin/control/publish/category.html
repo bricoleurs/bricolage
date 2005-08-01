@@ -4,10 +4,12 @@
    type         => 'singular',
    use_form_tag => 0
 &>
-<p></p>
+
+<& '/widgets/wrappers/sharky/table_top.mc',
+   caption => 'Publish a Category'
+&>
 <& '/widgets/listManager/listManager.mc',
    object    => 'category',
-   title     => 'Publish a Category',
    select    => $select,
    fields    => [qw(uri)],
    addition  => '',
@@ -16,6 +18,8 @@
    behavior  => 'expand',
    @constrain
 &>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <p>
 <input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" name="publish_button" value="Publish" />

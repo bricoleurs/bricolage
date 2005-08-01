@@ -12,11 +12,17 @@ $LastChangedRevision$
 $LastChangedDate$
 
 =head1 SYNOPSIS
-$m->comp("/widgets/profile/button.mc",
-  disp      => '',
-  widget    => '',
-  cb        => '',
-  button    => ''
+$m->comp("/widgets/buttons/back.mc",
+  disp      => 'Return',
+  widget    => $widget,
+  cb        => 'return_cb',
+  button    => 'return_dgreen'
+);
+
+$m->comp("/widgets/buttons/back.mc",
+  disp      => 'Return',
+  uri       => '/workflow/profile/workspace/',
+  button    => 'return_dgreen'
 );
 
 =head1 DESCRIPTION
@@ -31,22 +37,21 @@ $widget    => undef
 $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
-$globalImage => 0
 $name      => ''
-$value     => undef
+$uri       => undef
 $js        => ''
 $indent    => ''
 $useTable  => 1
 $localize  => 1
 </%args>
 <%perl>;
+if ($uri) { $js .= qq{ onclick="window.location.href='} . $uri . qq{'; return false;"}; }
 my $key = ($widget) ? "$widget|$cb" : $name;
-my $local = $globalImage ? '' : "$lang_key/";
 
 my $vals = { disp      => '',
-             value     => $value || $disp,
+             value     => $disp,
              props     => { type      => 'image',
-                            src       => "/media/images/$local$button.gif"
+                            src       => "/media/images/$lang_key/$button.gif"
                           },
 
              js        => $js,

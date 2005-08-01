@@ -68,6 +68,7 @@ Default is undefined, which has no effect.  Possible values are 'ascending' or
 
 </%doc>
 <%perl>
+$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => $title);
 $m->comp('/widgets/listManager/listManager.mc',
          object => 'event',
          constrain => $constrain,
@@ -75,9 +76,9 @@ $m->comp('/widgets/listManager/listManager.mc',
          alter => { attr => $attr_alter, user_id => $trig_alter },
          profile => $prof_sub,
          addition => undef,
-         title => $title,
          def_sort_order => $def_sort_order,
          select => undef);
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 (%users, $fmt) = ();
 </%perl>
 
@@ -103,7 +104,7 @@ my $pl_adisp = get_class_info('alert')->get_plural_name;
 $object
 $obj_id
 $constrain => undef
-$title => undef
+$title => "Events"
 $alert_uri => undef
 $def_sort_order => undef
 </%args>

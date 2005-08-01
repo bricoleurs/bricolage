@@ -12,7 +12,7 @@ $LastChangedRevision$
 $LastChangedDate$
 
 =head1 SYNOPSIS
-$m->comp("/widgets/profile/button.mc",
+$m->comp("/widgets/buttons/submit.mc",
   disp      => '',
   widget    => '',
   cb        => '',
@@ -31,9 +31,7 @@ $widget    => undef
 $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
-$globalImage => 0
 $name      => ''
-$value     => undef
 $js        => ''
 $indent    => ''
 $useTable  => 1
@@ -41,12 +39,11 @@ $localize  => 1
 </%args>
 <%perl>;
 my $key = ($widget) ? "$widget|$cb" : $name;
-my $local = $globalImage ? '' : "$lang_key/";
 
 my $vals = { disp      => '',
-             value     => $value || $disp,
+             value     => $disp,
              props     => { type      => 'image',
-                            src       => "/media/images/$local$button.gif"
+                            src       => "/media/images/$lang_key/$button.gif"
                           },
 
              js        => $js,

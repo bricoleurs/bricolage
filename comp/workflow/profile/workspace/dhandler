@@ -38,7 +38,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 
 # Change confirmation required for delete checkbox.
 $m->out(qq{<form method="post" action="} . $r->uri .
- qq {" name="desk" onSubmit="return confirmChanges(this)">});
+ qq {" name="desk" onsubmit="return confirmChanges(this)">});
 
 foreach my $class (qw(story media formatting)) {
     $m->comp('/widgets/desk/desk.mc',

@@ -47,7 +47,7 @@ sub checkin : Callback {
 
     if ($a_class eq 'formatting') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-        $sb->undeploy($a_obj);
+           $sb->undeploy($a_obj);
     }
 
     log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });

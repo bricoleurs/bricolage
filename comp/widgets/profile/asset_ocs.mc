@@ -14,6 +14,10 @@
                  );
     };
 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Output Channels',
+             number => $num);
+    
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'output_channel',
 	     userSort => 0,
@@ -30,10 +34,10 @@
                             },
 	     number => $num
 	    );
-
+        
 </%perl>
-<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
-<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+<div class="actions">
+<& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
     field  => 'name',
     exclude => [ map { $_->get_id } $asset->get_output_channels ],
@@ -41,10 +45,12 @@
     name   => "$widget|add_oc_cb",
     default => ['' => 'Add Output Channel'],
     objs => $at_ocs,
-    js => "onChange='submit()'",
+    js => "onchange='submit()'",
     useTable => 0,
-&></td></tr>
-</table>
+&>
+</div>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <%args>
 $widget
 $asset

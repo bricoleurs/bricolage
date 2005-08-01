@@ -319,8 +319,19 @@ Ouput: displays new table on the page in the form builder area.  Along the way, 
 consistent from form to form, and repopulates the new form with the cached values.  Finally, the cursor focus is moved
 to the name field of the new form.
 */
-function showForm(which) {
 
+function showForm(which, noScroll) {
+
+    var frm = document.getElementById('fbForm' + which);
+    var siblings = frm.parentNode.getElementsByTagName('form');
+    for(var i = 0; i < siblings.length; i++) {
+        if(siblings[i].id != 'fbForm' + which) {
+            siblings[i].style.display = "none";
+        }
+    }
+    frm.style.display = "block";
+
+/*
     var html = '';
     var name, caption, vals, length, maxlength;
 
@@ -367,7 +378,9 @@ function showForm(which) {
         : document.getElementById('fbDiv').getElementsByTagName('form')[0];
             
     // move the focus to the name field
-    if (fb_obj) fb_obj.fb_name.focus();
+    if (!noScroll && fb_obj) fb_obj.fb_name.focus();
+    
+*/    
 }
 
 /*
@@ -407,64 +420,59 @@ function confirmDeletions() {
 /*
 Submits the main form when a user hits the 'add to form' button in the form builder.  Calls confirmChanges() along the way.
 */
-function formBuilderMagicSubmit(formName, action) {
-
+var formBuilder = {};
+formBuilder.submit = function(frm, mainform, action) {
+    var main = document.getElementById(mainform);
     if (action == "add") {
-        if (confirmFormBuilder(formName)) { // verify data
-            document[formName].elements["formBuilder|add_cb"].value = 1;
-            document[formName].submit();
+        if (formBuilder.confirm(frm, main)) { // verify data
+            main.elements["formBuilder|add_cb"].value = 1;
+            main.submit();
         }
     } else {
         // get the delete button value into the main form: 
-        if (document.fb_magic_buttons.elements["delete"].checked) {
-            document[formName].elements["delete"].value = 1;
+        if(document.getElementById('fbMagicButtons').elements['delete'].checked) {
+            main.elements["delete"].value = 1;
             // Always just save when we're deleting.
-            document[formName].elements["formBuilder|save_cb"].value = 1;
+            main.elements["formBuilder|save_cb"].value = 1;
         } else {
             // It'll either save or save and stay.
-            document[formName].elements["formBuilder|" + action + "_cb"].value = 1;
+            main.elements["formBuilder|" + action + "_cb"].value = 1;
         }
-        if ( confirmChanges(document[formName]) ) document[formName].submit();  
+        if ( confirmChanges(main) ) main.submit();  
     }
+    
+    return false;
+};
 
-}
+formBuilder.confirm = function (frm, main) {
 
-function confirmFormBuilder(formName) {
-    var obj    = document[formName];
-    var fb_obj = (document.layers) ? document.layers["fbDiv"].document.fb_form : document.all ? document.all.fbDiv.all.fb_form : document.getElementById('fbDiv').getElementsByTagName('form')[0];
-
-    // look for formbuilder objects, and get their values
+    // look for formbuilder mainects, and get their values
     // assign these values to the hidden fields in the main form
 
-    for (var i=0; i < fb_obj.elements.length; i++) {
-        var curName = fb_obj.elements[i].name;
-        if (curName != "fb_position") {
-            if (fb_obj.elements[i].type == 'checkbox') {
-                if (fb_obj.elements[i].checked == true) {
-                    obj[curName].value = 1;
+    for (var i=0; i < frm.elements.length; i++) {
+        var obj = frm.elements[i];
+        if (obj.name != "fb_position") {
+            if (obj.type == 'checkbox') {
+                if (obj.checked == true) {
+                    main[obj.name].value = 1;
                 }
-            } else if (!isEmpty(fb_obj.elements[i].value) ) {
-                obj[curName].value = fb_obj.elements[i].value;
-            } else if (curName != "fb_value") {
+            } else if (!isEmpty(obj.value) ) {
+                main[obj.name].value = obj.value;
+            } else if (obj.name != "fb_value") {
                 alert(data_msg);
-                fb_obj.elements[i].focus();
+                obj.focus();
                 confirming = false // check this
                     return false;                       
             }
         } else {
-            obj[curName].value = textUnWrap( fb_obj.elements[i].options[fb_obj.elements[i].selectedIndex].value );
+            main[obj.name].value = textUnWrap( obj.options[obj.selectedIndex].value );
         }
-    }
-
-    // get the delete button value into the main form: 
-    if (fb_obj && document.fb_magic_buttons.elements["delete"] &&
-        document.fb_magic_buttons.elements["delete"].checked) {
-            obj.elements["delete"].value = 1;
     }
 
     // all good
     return true;
-}
+};
+
 
 /*
 Prompts the user if any changes have been made to form fields.  Checks for double list
@@ -719,6 +727,27 @@ function resizeframe() {
     }
 }
 
+/*
+Open popup window
+*/
+function installHelpButtons() {    
+    document.getElementById("btnAbout").onclick = openAbout;
+    document.getElementById("btnHelp").onclick = openHelp;
+}
+
+function openWindow(page) {
+    window.open('/help/' + lang_key + '/' + page + '.html', 
+                                'Help_<% SERVER_WINDOW_NAME %>', 
+                                'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'
+                                );
+    return false;
+}
+function openAbout() { return openWindow("about"); }
+function openHelp()  { 
+    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, "");
+    if (uri.length == 0) { uri = "/workflow/profile/workspace"; }
+    return openWindow(uri);
+}
 
 /*
  * Handle multiple onload events

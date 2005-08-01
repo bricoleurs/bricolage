@@ -66,10 +66,9 @@ installations, which are necessary for packagers. [Marshall]
 
 =item *
 
-Added C<make dev> makefile target for installing a development version
-straight out of a Subversion checkout. It performs a standard installation,
-then symlinks F<bin/>, F<comp/> and F<lib/> back to the Subversion checkout.
-[Marshall]
+Added C<make dev> makefile target for installing a development version straight
+out of a Subversion checkout. It performs a standard installation, then
+symlinks bin/, comp/ and lib/ back to the Subversion checkout. [Marshall]
 
 =item *
 
@@ -258,7 +257,7 @@ sources. Suggested by Simon Wilcox. [David]
 
 =item *
 
-There is now a "Preserve Formatting" option (disabled by default) in Bulk Edit
+There is now a "Preserve Formatting" (disabled by default) option in Bulk Edit
 that retains leading spaces, trailing spaces, and line breaks. With this
 option set, you can, for example, paste in poetry without it all ending up on
 one line. [Marshall]
@@ -289,20 +288,20 @@ Bric::Util::Burner had knowledge of it, anyway. [David]
 
 The HTML::Template burner now sets parameters for all attributes of a story as
 returned by the C<my_meths()> method of the story class, rather than just the
-story title. So, for example, you can now use C<< <tmpl_var uri> >> or
-C<< <tmpl_var cover_date> >> without creating a F<.pl> template to set them
-up. [David]
+story title. So, for example, you can now use <tmpl_var primary_uri> or
+<tmpl_var cover_date> with out creating a F<.pl> template to set them up.
+[David]
 
 =item *
 
 Refactored the separate C<_add_resource()> methods in each of the burner
-subclasses into Bric::Util::Burner itself as C<add_resource()>. [David]
+subclasses int Bric::Util::Burner itself. [David]
 
 =item *
 
 Arguments can now be passed to the C<display_element()> methof of the Template
 Toolkit burner and they will be set up as variables in the stash of the
-execution context of the element template. [David]
+execution context of the element template.
 
 =item *
 
@@ -316,8 +315,25 @@ this if they have more than one category template in their category URIs.
 
 The HTML::Template burner now has access to both the related story and the
 related media URIs via the C<rel_story_uri> and C<rel_media_uri> variables.
-The old C<link> variable has been deprecated, since it cannot handle an
-element that has both a related media and a related story. [David]
+The old C<lin> variable has been deprecated, since it cannot handle an element
+that has both a related media and a related story. [David]
+
+=item *
+
+Major interface clean-up. The UI is finally mostly valid XHTML and uses CSS
+for all styles. The C<USE_XHTML> directive, added in 1.7.0, is no longer used.
+The file sizes of some pages have been reduced by as much as 70%, offering
+improved page load times. Also, it will now be much easier to customize
+colors, etc. by customizing the CSS stylesheet. [Marshall]
+
+=item *
+
+The desks/My Workspace have been slightly modified to be more usable. Most
+notably, the "View" and "Edit" links (depending on checkout status) have been
+moved to the asset's title, where the preview link formerly was, the
+"Category" line has been replaced with "Primary URI", and the URI itself is
+the preview link. Also, the "Site" line now only shows up when there is more
+than one site. [Marshall]
 
 =back
 

@@ -1,26 +1,29 @@
-<a name=<% $class %>></a>
-<table width="578" cellpadding="2" cellspacing="0" border="0">
-<tr valign="middle">
-    <td class="darkHeader" width=100><span class=whiteTextTab>&nbsp;<% uc $caption %></span>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    <td align="right" class="darkHeader" width=190><span class="body"><%$lang->maketext('Sort By')%>:</span> <& '/widgets/profile/select.mc',
-                         value => $sort_by_val,
-			 useTable => 0,
-                         indent => 70,
-                         width  => 100,
-                         options => $sort_by->{$class},
-                         name => $class . '_sort_by',
-			 js => qq{onChange="location.href='} . $r->uri . "?${class}_sort_by=' + " . qq{escape(this.options[this.selectedIndex].value)"},
-			 &></td>
-    <td align="right" width=288>&nbsp;
+<a name="<% $class %>"></a>
+
+<div class="jump">
 % if ($link1) {
-<a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif" border=0 hspace=2></a>
+  <a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif" border=0 hspace=2></a>
 % } if ($link2) {
-<a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif" border=0 hspace=2></a>
+  <a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif" border=0 hspace=2></a>
 % }
-    </td>
-</tr>
-</table><br />
-<div id="desk">
+</div>
+
+<div class="desk-top">
+  <h1><% $caption %></h1>
+  <div class="sort">
+    <label for="<% $class %>_sort_by"><% $lang->maketext('Sort By') %>:</label> 
+    <& '/widgets/profile/select.mc',
+        value => $sort_by_val,
+        useTable => 0,
+        width  => 100,
+        options => $sort_by->{$class},
+        name => $class . '_sort_by',
+        js => qq{onchange="location.href='} . $r->uri . "?${class}_sort_by=' + " . qq{escape(this.options[this.selectedIndex].value)"},
+    &>
+  </div>
+</div>
+
+<div class="desk">
 <%args>
 $class => 'story'
 $caption => ''
@@ -47,16 +50,16 @@ if ($class eq 'story') {
 $sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
 </%init>
 <%once>;
-my $sort_by = { story      => [ [ cover_date => 'Cover Date' ],
-                                [ priority => 'Priority' ],
-			        [ name => 'Title' ],
-                                [ category_name => 'Category' ],
-                                [ site_id => 'Site' ],
+my $sort_by = { story      => [ [ name => 'Title' ],
+                                [ uri => 'Primary URI' ],
+                                [ cover_date => 'Cover Date' ],
                                 [ element => 'Story Type' ],
-                                [ id => 'ID' ],
+                                [ id => 'Story ID' ],
+                                [ site_id => 'Site' ],
+                                [ priority => 'Priority' ],
                               ],
                 media      => [ [ cover_date => 'Cover Date' ],
-			        [ priority => 'Priority' ],
+                                [ priority => 'Priority' ],
                                 [ name => 'Title' ],
                                 [ category_name => 'Category' ],
                                 [ site_id => 'Site' ],
@@ -64,8 +67,8 @@ my $sort_by = { story      => [ [ cover_date => 'Cover Date' ],
                                 [ id => 'ID' ],
                               ],
                 formatting => [ [ deploy_date => 'Cover Date' ],
-				[ priority => 'Priority' ],
-				[ file_name => 'File Name' ],
+                                [ priority => 'Priority' ],
+                                [ file_name => 'File Name' ],
                                 [ category_name => 'Category' ],
                                 [ site_id => 'Site' ],
                                 [ element => 'Asset Type' ],

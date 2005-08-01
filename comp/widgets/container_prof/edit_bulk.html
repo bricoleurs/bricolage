@@ -18,35 +18,8 @@ if ($show_summary) {
 <& '/widgets/profile/textarea.mc', 'name'  => $widget.'|text',
                                    'rows'  => $rows,
                                    'cols'  => $cols,
-                                   'value' => $text &>
-<table>
-<tr>
-<td>
-<img src="/media/images/spacer.gif" width=10 height=1>
-</td>
-<td>
-<& '/widgets/profile/text.mc', 'name'    => $widget.'|cols',
-	                       'value'   => "$cols",
-	                       'size'     => 3,
-                               'useTable' => 0 &>
-</td>
-<td>
-<%$lang->maketext('Columns')%>&nbsp;
-</td>
-<td>
-<& '/widgets/profile/text.mc', 'name'    => $widget.'|rows',
-	                       'value'   => "$rows",
-	                       'size'     => 3,
-                               'useTable' => 0 &>
-</td>
-<td>
-<%$lang->maketext('Rows')%>
-</td>
-<td>
-<input type="image" src="/media/images/<% $lang_key %>/resize_lgreen.gif" border=0 name="<% $widget %>|resize_cb" value="Resize">
-</td>
-</tr>
-</table>
+                                   'value' => $text,
+                                   'useTable' => 0 &>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 

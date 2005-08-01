@@ -9,14 +9,14 @@ my ($letter, $action, $alias) = $asset->key_name eq 'formatting'
 
 unless ($asset->get_publish_status) {
     $alias = '' if $sorted;
-    return qq{<span class="${alias}none$sorted">&nbsp;</span>};
+    return qq{<div class="pubstatus$sorted">&nbsp;</div>};
 }
 
 if ($asset->needs_publish) {
-    return qq{<span class="need" title="} .
-     $lang->maketext("Needs to be $action") . qq{">$letter</span>};
+    return qq{<div class="pubstatus need" title="} .
+     $lang->maketext("Needs to be $action") . qq{">$letter</div>};
 }
 
-return qq{<span class="pub" title="} .
-  $lang->maketext("$action Version") . qq{">$letter</span>};
+return qq{<div class="pubstatus" title="} .
+  $lang->maketext("$action Version") . qq{">$letter</div>};
 </%init>

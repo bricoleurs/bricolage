@@ -207,13 +207,6 @@ my $opt_sub = sub {
     return "$out>". ($localize_opts ? $lang->maketext($v) : $v) . "</option>\n";
 };
 
-my $rem_sub = sub {
-    my ($width, $indent) = @_;
-    my $remainder = $width - $indent;
-    $remainder = $remainder < 0 ? 0 : $remainder;
-    return qq{</td><td width="$remainder">};
-};
-
 my $len_sub = sub {
     my ($vals) = @_;
     my $max = $vals->{props}{maxlength};
@@ -228,9 +221,15 @@ my $inpt_sub = sub {
       ? qq{ class="textInput"} : "";
     $extra ||= '';
     my $out;
-    my $disp_value = defined $value && $type ne 'password' ? ' value="'
-      . escape_html($value) . '"' : '';
-    my $src = defined $vals->{props}{src} ? ' src="' . $vals->{props}{src} . '"' : '';
+    my $disp_value = defined $value && $type ne 'password'
+      ? ' value="' . escape_html($value) . '"'
+      : '';
+    $disp_value = defined $value && $type eq 'image'
+      ? ' value="' . escape_html($value) . '"'
+      : $disp_value;
+    my $src = ref $vals && defined $vals->{props}{src}
+      ? ' src="' . $vals->{props}{src} . '"'
+      : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
 
@@ -262,7 +261,7 @@ my $inpt_sub = sub {
             $out .= qq{</div>\n} if $useTable;
         } else {
             if ($type eq "radio" || $type eq "checkbox") {
-                $out .= " ". $lang->maketext( ($value) ? "Yes" : "No" );
+                $out .= " ". $lang->maketext($value ? "Yes" : "No");
                 $out .= "<br />";
             }
         }
@@ -317,10 +316,6 @@ my %formSubs = (
             my $rows =  $vals->{props}{rows} || 5;
             my $cols = $vals->{props}{cols}  || 30;
 
-            # adjust defaults by platform/browser
-            # ns displays big boxes, usually
-            $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
-
             my $out;
             $out .= qq{<div class="row">\n} if $useTable;
             $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
@@ -343,13 +338,13 @@ my %formSubs = (
                                   . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n};
-                $out .= qq{            <textarea id="$uniquename" }
+                $out .= qq{            <div class="textarea"><textarea id="$uniquename" }
                   . qq{onkeyup="$functioncode"\n onkeydown="$functioncode"\n }
                   . qq{name="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea>\n};
+                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea></div>\n};
             } else {
-                $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea"$js>$value</textarea>\n};
+                $out .= qq{            <div class="textarea"><textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{ wrap="soft" class="textArea"$js>$value</textarea></div>\n};
             }
         } else {
             $out .= $value;
@@ -365,10 +360,6 @@ my %formSubs = (
                 $label, $readOnly, $agent) = @_;
             my $rows =  $vals->{props}{rows} || 5;
             my $cols = $vals->{props}{cols}  || 30;
-
-            # adjust defaults by platform/browser
-            # ns displays big boxes, usually
-            $cols = ($agent->nav4 && $agent->mac) ? $cols *.8 : $cols;
 
             my $out;
             $out .= qq{<div class="row">\n} if $useTable;

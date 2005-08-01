@@ -51,7 +51,7 @@ my $pkgs = { story      => get_package_name('story'),
              media      => get_package_name('media'),
              formatting => get_package_name('formatting')
            };
-my $item_comp = USE_XHTML ? 'desk_item.html' : 'desk_item_old.html';
+my $item_comp = 'desk_item.html';
 
 my $others;
 my $cached_assets = sub {

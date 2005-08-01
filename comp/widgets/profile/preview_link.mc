@@ -1,6 +1,7 @@
 <%args>
 $doc
-$title => undef
+$value => undef
+$title => "Preview"
 $type  => 'story'
 $style => 'blackMedUnderlinedLink'
 $oc_js => undef
@@ -18,7 +19,7 @@ my $uri = escape_html($doc->get_primary_uri);
 # output channel ID.
 return qq{<a href="$uri" } .
   qq{onclick="var newWin = window.open('/workflow/profile/preview/control/$type/$id?checkout=$co', 'preview_} . SERVER_WINDOW_NAME . q{'); newWin.focus(true); return false;" } .
-  qq{class="$style" title="$uri" alt="Preview">$title</a>}
+  qq{class="$style" title="$title">$value</a>}
   unless $oc_js;
 
 # If we got here, We need to actually load the link based on an oc ID.

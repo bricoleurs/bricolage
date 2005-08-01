@@ -44,7 +44,7 @@ $m->comp('/widgets/select_object/select_object.mc',
 $m->out($ieSpacer);
 
 # Secondary categories
-$cats = Bric::Biz::Category->list({ site_id => $site_id });
+my $cats = Bric::Biz::Category->list({ site_id => $site_id });
 $m->comp('/widgets/select_object/select_object.mc',
          object     => 'category',
          disp       => 'Secondary Categories',
