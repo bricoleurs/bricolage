@@ -165,12 +165,10 @@ if ($at->is_related_media) {
         }
         $vals->{props}{vals} = $val_prop;
     }
-	my $textareatopalign;
-	$textareatopalign = qq{ valign="top"} if ($vals->{props}{type} eq 'textarea');
 </%perl>
-    <td align="right"<% $textareatopalign %>><span class="label"><% $vals->{props}{disp} %>:&nbsp;</span></td>
-    <td colspan=1>
-    <table border=0 cellpadding=0 cellspacing=0>
+    <td class="name"><% $vals->{props}{disp} %>:</td>
+    <td>
+    <table>
     <tr>
       <td>
     <& '/widgets/profile/displayFormElement.mc',
@@ -182,8 +180,8 @@ if ($at->is_related_media) {
       </td>
 
 %     if ($dt->is_autopopulated()) {
-      <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>">
-      &nbsp;Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked ? ' CHECKED' : '' %>></td>
+      <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>" />
+      &nbsp;Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked ? ' checked="checked"' : '' %> /></td>
 %     } else {
     <td>&nbsp;</td>
 %     }

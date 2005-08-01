@@ -323,6 +323,7 @@ form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; }
 table tr.odd { background: #E8E8CD; }
+table td.name { font-weight: bold; vertical-align: top; padding-top: 7px; }
 table td.position,
 table td.edit,
 table td.delete { width: 100px; text-align: center; }
