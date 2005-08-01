@@ -44,8 +44,7 @@ foreach my $attr (@$attr) {
 		 disp  => $attr->{meta}{disp}{value},
 	       };
 
-    my $align = ($vals->{props}{type} eq 'date') ? " align=right" : '';
-    $m->out(qq{<tr><td$align>\n});
+    $m->out(qq{<tr><td>\n});
                
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
@@ -57,7 +56,7 @@ foreach my $attr (@$attr) {
     $m->comp('/widgets/profile/displayFormElement.mc',
 	     key => "attr|$attr->{name}",
 	     vals => $vals,
-	     useTable => $vals->{props}{type} eq 'date' ? 0 : 1,
+	     useTable => 1,
 	     width => $width,
 	     indent => FIELD_INDENT,
 	     localize => $localize,
