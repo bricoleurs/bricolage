@@ -16,25 +16,13 @@ if ($show_summary) {
 &>
 
 % if ($at) {
-  <table border=0 cellpadding=0 cellspacing=0 width=578>
-    <tr>
-      <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td width=<% FIELD_INDENT %> align="right" class=medHeader><span class=label>Element:&nbsp;</span></td>
-      <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
-      <td width=<% 577 - FIELD_INDENT %>>
-        <% $at->get_name %>
-        <% $show_element_flags->($at) %>
-      </td>
-    </tr>
-
-    <tr><td colspan=4><img src="/media/images/spacer.gif" width=578 height=1 /></td></tr>
-
+    <dl class="viewmeta">
+        <dt>Element:</dt>
+        <dd><% $at->get_name %> <% $show_element_flags->($at) %></dd>
+        
 % if (@{$at->get_data}) {
-    <tr>
-      <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td align="right" class=medHeader><span class=label>Data Elements:&nbsp;</span></td>
-      <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
-      <td>
+        <dt>Data Elements:</dt>
+        <dd>
 % my $comma = '';
 % foreach my $d ($at->get_data) {
         <% $comma %>
@@ -42,18 +30,13 @@ if ($show_summary) {
         <% $show_data_flags->($d) %>
 %     $comma = ', ';
 % }
-      </td>
-    </tr>
-
-    <tr><td colspan=4><img src="/media/images/spacer.gif" width=578 height=1 /></td></tr>
-
+        </dd>
 % }
+
+
 % if (@{$at->get_containers}) {
-    <tr>
-      <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td align="right" class=medHeader><span class=label>Container Elements:&nbsp;</span></td>
-      <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
-      <td>
+        <dt>Container Elements:</dt>
+        <dd>
 % my $comma = '';
 % foreach my $c ($at->get_containers) {
         <% $comma %>
@@ -61,17 +44,11 @@ if ($show_summary) {
         <% $show_subelement_flags->($at, $c) %>
 %     $comma = ', ';
 % }
-      </td>
-    </tr>
+        </dd>
 % }
 
-   <tr><td colspan=4><img src="/media/images/spacer.gif" width=578 height=1 /></td></tr>
-
-    <tr>
-      <td width=1 height=20 class=medHeader><img src="/media/images/spacer.gif" width=1 height=20 /></td>
-      <td align="right" class=medHeader><span class=label>Default Element:&nbsp;</span></td>
-      <td width=5 height=20><img src="/media/images/spacer.gif" width=5 height=20 /></td>
-      <td>
+        <dt>Default Element:</dt>
+        <dd>
 % my $opts = [map { my $n = lc($_->get_key_name);
 %                   $n=~y/a-z0-9/_/cs;
 %                   [$n, $_->get_key_name]
@@ -83,46 +60,16 @@ if ($show_summary) {
         value    =>  $default_field,
         useTable => 0,
 &>
-<input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border="0"  name="<% $widget %>|change_default_field_cb" value="Change">
-      </td>
-    </tr>
-
-  <tr><td colspan=4 class=medHeader><img src="/media/images/spacer.gif" width=578 height=1 /></td></tr>
-  </table>
+        <input type="image" src="/media/images/<% $lang_key %>/change_red.gif" name="<% $widget %>|change_default_field_cb" value="Change" />
+        </dd>
+    </dl>
 % }
 
 <& '/widgets/profile/textarea.mc', 'name'  => $widget.'|text',
                                    'rows'  => $rows,
                                    'cols'  => $cols,
-                                   'value' => $text &>
-<table>
-<tr>
-<td>
-<img src="/media/images/spacer.gif" width=10 height=1>
-</td>
-<td>
-<& '/widgets/profile/text.mc', 'name'    => $widget.'|cols',
-                               'value'   => "$cols",
-                               'size'     => 3,
-                               'useTable' => 0 &>
-</td>
-<td>
-Columns&nbsp;
-</td>
-<td>
-<& '/widgets/profile/text.mc', 'name'    => $widget.'|rows',
-                               'value'   => "$rows",
-                               'size'     => 3,
-                               'useTable' => 0 &>
-</td>
-<td>
-Rows 
-</td>
-<td>
-<input type="image" src="/media/images/<% $lang_key %>/resize_lgreen.gif" border=0 name="<% $widget %>|resize_cb" value="Resize">
-</td>
-</tr>
-</table>
+                                   'value' => $text,
+                                   'useTable' => 0 &>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
