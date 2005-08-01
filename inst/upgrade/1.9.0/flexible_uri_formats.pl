@@ -34,4 +34,4 @@ while (fetch($get_uri_formats)) {
     $fixed_uri_format =~ s/day/\%d/g;
     $fixed_uri_format =~ s/slug/\%{slug}/g;
     execute($set_uri_formats, $uri_format, $fixed_uri_format, $id);
-# }
+}
