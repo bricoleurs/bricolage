@@ -51,15 +51,15 @@ qq{
 
 # Okay, this database needs upgrading.
 print "\n\n";
-my $old_file = catfile('inst', 'upgrade.dmp');
-my $new_file = catfile('inst', 'upgrade.sql');
+my $old_file = catfile('inst', 'db_tmp', 'upgrade.dmp');
+my $new_file = catfile('inst', 'db_tmp', 'upgrade.sql');
 my $sql_file = catfile('inst', 'Pg.sql');
 my $tmp_file = "$sql_file.tmp";
 
 # Dump database.
 print "Dumping database. This could take a while...";
 system(catfile($PG->{bin_dir}, 'pg_dump'), '-U', $PG->{root_user},
-       '-O', '-x', $PG->{db_name}, '-f', $old_file, '--create');
+       '-O', '-x', $PG->{db_name}, '-f', $old_file);
 print "\nParsing datbase...";
 open OLD, "<$old_file" or die "Cannot open '$old_file: $!\n";
 open NEW, ">$new_file" or die "Cannot open '$new_file: $!\n";
@@ -118,17 +118,19 @@ close NEW;
 unlink $old_file;
 
 # Move things around so that db.pl can see them.
-mv $sql_file, $tmp_file;
-mv $new_file, $sql_file;
+#mv $sql_file, $tmp_file;
+#mv $new_file, $sql_file;
 
 print "\nDropping old database...";
-system($PG->{psql}, '-d', 'template1', '-c', qq{DROP DATABASE "$PG->{db_name}"});
+$ENV{PGSQL} = $new_file;
+system($PG->{psql}, '-U', $PG->{root_user}, '-d', 'template1',
+       '-c', qq{DROP DATABASE "$PG->{db_name}"}) and die;
 my $perl = $ENV{PERL} || $^X;
 system $perl, catfile 'inst', 'db.pl';
 
 # Restore the file locations.
-mv $sql_file, $new_file;
-mv $tmp_file, $sql_file;
+#mv $sql_file, $new_file;
+#mv $tmp_file, $sql_file;
 
 ##############################################################################
 # This stuff is copied from bric_upgrade.pm so we don't load that module and
