@@ -13,6 +13,7 @@ use Bric::App::Util qw(:msg :history :aref);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
+use Bric::Biz::InputChannel;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
@@ -512,6 +513,17 @@ sub add_category : Callback {
     set_state_data($widget, 'story', $story);
 }
 
+sub add_ic : Callback {
+    my $self = shift;
+    my $story = get_state_data($self->class_key, 'story');
+    chk_authz($story, EDIT);
+    my $ic = Bric::Biz::InputChannel->lookup({ id => $self->value });
+    $story->add_input_channels($ic);
+    log_event('story_add_ic', $story, { 'Input Channel' => $ic->get_name });
+    $story->save;
+    set_state_data($self->class_key, 'story', $story);
+}
+
 sub add_oc : Callback {
     my $self = shift;
     my $story = get_state_data($self->class_key, 'story');
@@ -971,7 +983,27 @@ $save_data = sub {
       if exists $param->{"$widget|source__id"};
     $story->set_priority($param->{priority})
       if exists $param->{priority};
+      
+    # Delete input channels.
+    if ($param->{rem_ic}) {
+        my $del_ic_ids = mk_aref($param->{rem_ic});
+        foreach my $delid (@$del_ic_ids) {
+            if ($delid == $param->{primary_ic_id}) {
+                add_msg("Cannot both delete and make primary a single input channel.");
+                $param->{__data_errors__} = 1;
+            } else {
+                my $ic = Bric::Biz::InputChannel->lookup({ id => $delid });
+                $story->del_input_channels($delid);
+                log_event('story_del_ic', $story,
+                          { 'Input Channel' => $ic->get_name });
+            }
+        }
+    }
 
+    # Set primary input channel.
+    $story->set_primary_ic_id($param->{primary_ic_id})
+      if exists $param->{primary_ic_id};
+      
     # Delete output channels.
     if ($param->{rem_oc}) {
         my $del_oc_ids = mk_aref($param->{rem_oc});

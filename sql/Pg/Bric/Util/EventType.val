@@ -128,6 +128,42 @@
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Category');
 
+-- ********** 'story_add_ic' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_add_ic', 'Input Channel Added to Story',
+                    'An input channel was associated with the story.', '10', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Input Channel');
+
+-- ********** 'story_del_ic' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_del_ic', 'Input Channel Removed from Story',
+            'An input channel was dissociated from the story.', '10', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Input Channel');
+
+-- ********** 'media_add_ic' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_add_ic', 'Input Channel Added to Media',
+                    'An input channel was associated with the media.', '46', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Input Channel');
+
+-- ********** 'media_del_ic' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_del_ic', 'Input Channel Removed from Media',
+            'An input channel was dissociated from the media.', '46', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Input Channel');
+
 -- ********** 'story_add_oc' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
