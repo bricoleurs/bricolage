@@ -107,6 +107,7 @@ use constant VERSION_COLS   => qw( name
                                    version
                                    media_type__id
                                    primary_oc__id
+                                   primary_ic__id
                                    category__id
                                    file_size
                                    file_name
@@ -138,6 +139,7 @@ use constant VERSION_FIELDS => qw( name
                                    version
                                    media_type_id
                                    primary_oc_id
+                                   primary_ic_id
                                    category__id
                                    size
                                    file_name
@@ -182,6 +184,7 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
      output_channel_id    => 'media__output_channel moc',
+     input_channel_id     => 'media__input_channel mic',
      simple               => 'media_member mm, member m, at_type at, element e, '
                              . 'category c, workflow w,' . TABLE . ' mt ',
      grp_id               => 'member m2, media_member mm2',
@@ -254,6 +257,9 @@ use constant PARAM_WHERE_MAP => {
       primary_oc_id         => 'i.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_instance__id AND '
                              . 'moc.output_channel__id = ?)',
+      primary_ic_id         => 'i.primary_ic__id = ?',
+      input_channel_id      => '(i.id = mic.media_instance__id AND '
+                             . 'mic.input_channel__id = ?)',
       category__id          => 'i.category__id = ?',
       category_id           => 'i.category__id = ?',
       category_uri          => 'i.category__id = c.id AND '
@@ -287,6 +293,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
     output_channel_id      => ['i.id = moc.media_instance__id',
                                'moc.output_channel__id = ?'],
+    input_channel_id       => ['i.id = mic.media_instance__id',
+                               'mic.input_channel__id = ?'],
     category_uri           => [ 'i.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
@@ -327,6 +335,7 @@ use constant PARAM_ORDER_MAP => {
     user__id            => 'i.usr__id',
     _checked_out        => 'i.checked_out',
     primary_oc_id       => 'i.primary_oc__id',
+    primary_ic_id       => 'i.primary_ic__id',
     category_uri        => 'LOWER(i.uri)',
     keyword             => 'LOWER(k.name)',
     return_versions     => 'i.version',
@@ -631,6 +640,16 @@ C<ANY> for a list of possible values.
 =item primary_oc_id
 
 Returns a list of media associated with a given primary output channel
+ID. May use C<ANY> for a list of possible values.
+
+=item input_channel_id
+
+Returns a list of media associated with a given input channel ID. May use
+C<ANY> for a list of possible values.
+
+=item primary_ic_id
+
+Returns a list of media associated with a given primary input channel
 ID. May use C<ANY> for a list of possible values.
 
 =item priority
@@ -1189,6 +1208,22 @@ sub set_primary_oc_id {
         }
         $self->_set([qw(primary_oc_id uri   _update_uri)] =>
                     [   $id,          $uri, $update_uri]);
+    }
+    return $self;
+}
+
+sub set_primary_ic_id {
+    my ($self, $id) = @_;
+    my $oldid = $self->_get('primary_ic_id');
+    if ((defined $id && ! defined $oldid) || $id != $oldid) {
+        my ($uri, $update_uri);
+        if ($self->get_file_name) {
+            my $ic = Bric::Biz::InputChannel->lookup({ id => $id });
+            my $cat = $self->get_category_object;
+            $update_uri = 1;
+        }
+        $self->_set([qw(primary_ic_id _update_uri)] =>
+                    [   $id,          $update_uri]);
     }
     return $self;
 }

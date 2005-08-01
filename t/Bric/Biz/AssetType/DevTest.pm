@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 use Bric::Biz::AssetType;
 use Bric::Biz::OutputChannel;
+use Bric::Biz::InputChannel;
 
 my %elem = ( name          => 'Test Element',
              key_name      => 'test_element',
@@ -122,6 +123,12 @@ sub test_list : Test(36) {
     # Make sure we have a whole bunch.
     is( scalar @elems, 6, "Check for 6 elements" );
 
+    # Try input channel.
+    ok( @elems = Bric::Biz::AssetType->list({ input_channel => 1 }),
+        "Lookup input channel 1" );
+    # Make sure we have a whole bunch.
+    is( scalar @elems, 6, "Check for 6 elements" );    
+
     # Try data_name.
     ok( @elems = Bric::Biz::AssetType->list
         ({ data_name => "Deck" }),
@@ -146,7 +153,7 @@ sub test_list : Test(36) {
 
 ##############################################################################
 # Test save().
-sub test_save : Test(6) {
+sub test_save : Test(10) {
     my $self = shift;
     # Now create a new element.
     ok( my $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
@@ -159,6 +166,16 @@ sub test_save : Test(6) {
     ok( my $ocid = $oc->get_id, "Get Foober ID" );
     $self->add_del_ids($ocid, 'output_channel');
     ok( $elem->add_output_channels([$oc]), "Add Foober" );
+    
+    # Add a new input channel.
+    ok( my $ic = Bric::Biz::InputChannel->new({ key_name => 'Foober',
+                                                name     => 'Foober',
+                                                site_id  => 100 }),
+        "Create 'Foober' IC" );
+    ok( $ic->save, "Save Foober IC" );
+    ok( my $icid = $ic->get_id, "Get Foober IC ID" );
+    $self->add_del_ids($icid, 'input_channel');
+    ok( $elem->add_input_channels([$ic]), "Add Foober IC" );
 
     # Save it.
     ok( $elem->save, "Save new element" );
@@ -280,9 +297,124 @@ sub test_oc : Test(60) {
 }
 
 ##############################################################################
+# Test Input Channel methods.
+##############################################################################
+sub test_ic : Test(60) {
+    my $self = shift;
+    ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+        "Lookup story element" );
+
+    # Try get_input_channels.
+    ok( my $ices = $at->get_input_channels, "Get existing ICs" );
+    is( scalar @$ices, 1, "Check for one IC" );
+    isa_ok($ices->[0], 'Bric::Biz::InputChannel');
+    isa_ok($ices->[0], 'Bric::Biz::InputChannel::Element');
+    is( $ices->[0]->get_name, "Default", "Check name 'Default'" );
+
+    my $orig_ic_id = $ices->[0]->get_id;
+
+    # Add a new input channel.
+    ok( my $ic = Bric::Biz::InputChannel->new({name    => 'Foober',
+                                               site_id => 100}),
+        "Create 'Foober' IC" );
+    ok( $ic->save, "Save Foober" );
+    ok( my $icid = $ic->get_id, "Get Foober ID" );
+    $self->add_del_ids($icid, 'input_channel');
+
+    # Add it to the Element object and try get_input_channels again.
+    ok( $at->add_input_channels([$ic]), "Add Foober" );
+    ok( $ices = $at->get_input_channels, "Get existing ICs again" );
+    is( scalar @$ices, 2, "Check for two ICs" );
+    isa_ok($ices->[0], 'Bric::Biz::InputChannel::Element');
+    isa_ok($ices->[1], 'Bric::Biz::InputChannel::Element');
+
+    # Save the element object and try get_input_channels again.
+    ok( $at->save, "Save Story element" );
+    ok( $ices = $at->get_input_channels, "Get existing ICs 3" );
+    is( scalar @$ices, 2, "Check for two ICs again" );
+
+    # Now lookup the story element from the database and try get_ics again.
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+        "Lookup story element again" );
+    ok( $ices = $at->get_input_channels, "Get existing ICs 4" );
+    is( scalar @$ices, 2, "Check for two ICs 3" );
+    isa_ok($ices->[0], 'Bric::Biz::InputChannel::Element');
+    isa_ok($ices->[1], 'Bric::Biz::InputChannel::Element');
+
+    # Now try get_primary_ic_id() and set_primary_ic_id
+    is( $at->get_primary_ic_id(100), $orig_ic_id,
+        "Check that primary_ic_id is set to default site");
+    is( $at->get_primary_ic_id(100), $orig_ic_id,
+        "Check that primary_ic_id is second time too!");
+
+    # Set the primary IC ID to the new value.
+    $at->set_primary_ic_id($icid, 100);
+    is( $at->get_primary_ic_id(100), $icid,
+        "Check that it is reset after we set it");
+    $at->save();
+    is( $at->get_primary_ic_id(100), $icid,
+        "Check that it is reset after we save");
+
+    # Make sure the new value persists after a save and lookup.
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+        "Lookup story element again" );
+    is( $at->get_primary_ic_id(100), $icid,
+        "Check that it is reset after we save");
+
+    # Now try to delete the input channel when it is still selected
+    throws_ok {
+        $at->delete_output_channels([$ic]);
+    } qr/Cannot delete a primary input channel/,
+      "Check that you can't delete an input channel that is primary";
+
+    # Restory the original primary IC ID.
+    ok($at->set_primary_ic_id($orig_ic_id, 100), "Reset primary OC ID" );
+    ok( $at->save, "Save restored primary IC ID" );
+
+    # Now add the new input channel to the column element.
+    ok( my $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+        "Lookup column element" );
+    ok( $col->add_input_channels([$ic->get_id]), "Add Foober to column" );
+    ok( $col->save, "Save column element" );
+
+    # Look up column and make sure it has two output channels.
+    ok( $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+        "Lookup column element again" );
+    ok( $ices = $at->get_input_channels, "Get column ICs" );
+    is( scalar @$ices, 2, "Check for two column ICs" );
+
+    # Lookup the story element from the database again and try get_ocs again.
+    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+        "Lookup story element again" );
+    ok( $ices = $at->get_input_channels, "Get existing ICs 5" );
+    is( scalar @$ices, 2, "Check for two ICs 3" );
+
+    # Now delete it.
+    my $i = 5;
+    for my $e ($at, $col) {
+        ok( $e->delete_input_channels([$ic->get_id]), "Delete IC" );
+        ok( $ices = $e->get_input_channels, "Get existing ICs " . ++$i );
+        is( scalar @$ices, 1, "Check for one IC again" );
+
+        # Save the element object, then check the input channels again.
+        ok( $e->save, "Save element" );
+        ok( $ices = $e->get_input_channels, "Get existing ICs " . ++$i );
+        is( scalar @$ices, 1, "Check for one IC 3" );
+
+        # Now look it up and check it one last time.
+        ok( $e = Bric::Biz::AssetType->lookup({ id => $e->get_id }),
+            "Lookup element again" );
+        ok( $ices = $e->get_input_channels, "Get existing ICs " . ++$i );
+        is( scalar @$ices, 1, "Check for one IC 4" );
+        is( $ices->[0]->get_name, "Default", "Check name 'Default' again" );
+    }
+}
+
+
+##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(22) {
+sub test_site : Test(27) {
     my $self = shift;
 
     #dependant on intial values
@@ -297,6 +429,14 @@ sub test_site : Test(22) {
     ok( $site1->save(), "Create first dummy site");
     my $site1_id = $site1->get_id;
     $self->add_del_ids($site1_id, 'site');
+
+    ok( my $ic1 = Bric::Biz::InputChannel->new({ key_name => __PACKAGE__ . "1",
+                                                 name     => __PACKAGE__ . "1",
+                                                 site_id  => $site1_id }),
+        "Create IC1" );
+    ok( $ic1->save, "Save IC1" );
+    ok( my $ic1_id = $ic1->get_id, "Get IC ID1" );
+    $self->add_del_ids($ic1_id, 'input_channel');
 
     ok( my $oc1 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "1",
                                                  site_id => $site1_id }),
@@ -348,6 +488,10 @@ sub test_site : Test(22) {
 
     is($site1->get_id, $top_level_element->add_site($site1)->get_id,
        "Add a new site");
+    ok( $top_level_element->add_input_channels([$ic1_id]),
+        "Associate IC1" );
+    ok( $top_level_element->set_primary_ic_id($ic1_id, $site1_id),
+        "Associate primary IC1" );
     ok( $top_level_element->add_output_channels([$oc1_id]),
         "Associate OC1" );
     ok( $top_level_element->set_primary_oc_id($oc1_id, $site1_id),

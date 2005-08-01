@@ -75,6 +75,7 @@ CREATE TABLE element__site (
     site__id       INTEGER         NOT NULL,
     active         BOOLEAN         NOT NULL DEFAULT TRUE,
     primary_oc__id  INTEGER        NOT NULL,
+    primary_ic__id  INTEGER        NOT NULL,
     CONSTRAINT pk_element__site__id PRIMARY KEY (id)
 );
 
@@ -247,6 +248,7 @@ CREATE INDEX fkx_attr_at__attr_at_meta ON attr_element_meta(attr__id);
 CREATE INDEX fkx_element__element__site__element__id ON element__site(element__id);
 CREATE INDEX fkx_site__element__site__site__id ON element__site(site__id);
 CREATE INDEX fkx_output_channel__element__site ON element__site(primary_oc__id);
+CREATE INDEX fkx_input_channel__element__site ON element__site(primary_ic__id);
 
 
 

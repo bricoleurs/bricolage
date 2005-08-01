@@ -225,6 +225,7 @@ use constant VERSION_COLS => qw( name
                                  version
                                  usr__id
                                  primary_oc__id
+                                 primary_ic__id
                                  slug
                                  checked_out);
 
@@ -252,6 +253,7 @@ use constant VERSION_FIELDS => qw( name
                                    version
                                    modifier
                                    primary_oc_id
+                                   primary_ic_id
                                    slug
                                    checked_out);
 
@@ -287,6 +289,7 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
+       input_channel_id     => 'story__input_channel sic',
        simple               => 'story_member sm, member m, story__category sc, '
                                . 'category c, workflow w, ' . TABLE . ' s ',
        grp_id               => 'member m2, story_member sm2',
@@ -364,6 +367,10 @@ use constant PARAM_WHERE_MAP => {
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
                               . 'i.primary_oc__id = ?))',
+      primary_ic_id          => 'i.primary_ic__id = ?',
+      input_channel_id       => '(i.id = sic.story_instance__id AND '
+                              . '(sic.input_channel__id = ? OR '
+                              . 'i.primary_ic__id = ?))',
       category_id            => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = ?',
       primary_category_id    => 'i.id = sc2.story_instance__id AND '
@@ -415,6 +422,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
     output_channel_id      => ['i.id = soc.story_instance__id',
                                'soc.output_channel__id = ?'],
+    input_channel_id       => ['i.id = sic.story_instance__id',
+                               'sic.input_channel__id = ?'],
     category_id            => [ 'i.id = sc2.story_instance__id',
                                 'sc2.category__id = ?' ],
     primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
@@ -457,6 +466,7 @@ use constant PARAM_ORDER_MAP => {
     user__id            => 'i.usr__id',
     _checked_out        => 'i.checked_out',
     primary_oc_id       => 'i.primary_oc__id',
+    primary_ic_id       => 'i.primary_ic__id',
     category_id         => 'sc2.category_id',
     category_uri        => 'LOWER(c.uri)',
     keyword             => 'LOWER(k.name)',
@@ -768,6 +778,16 @@ C<ANY> for a list of possible values.
 =item primary_oc_id
 
 Returns a list of stories associated with a given primary output channel
+ID. May use C<ANY> for a list of possible values.
+
+=item input_channel_id
+
+Returns a list of stories associated with a given input channel ID. May use
+C<ANY> for a list of possible values.
+
+=item primary_ic_id
+
+Returns a list of stories associated with a given primary input channel
 ID. May use C<ANY> for a list of possible values.
 
 =item priority
@@ -1756,6 +1776,11 @@ sub clone {
     my @ocs = $self->get_output_channels;
     $self->del_output_channels(@ocs);
     $self->add_output_channels(@ocs);
+
+    # Clone the input channel associations.
+    my @ics = $self->get_input_channels;
+    $self->del_input_channels(@ics);
+    $self->add_input_channels(@ics);
 
     # Grab the keywords.
     my $kw = $self->get_keywords;

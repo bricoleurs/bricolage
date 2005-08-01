@@ -270,6 +270,19 @@ sub test_alias : Test(33) {
 
     ok( $element->add_output_channels([$ocid]), "Associate OC" );
     ok( $element->set_primary_oc_id($ocid, $site1_id), "Associate primary OC" );
+    
+    # Add a new input channel.
+    ok( my $ic = Bric::Biz::InputChannel->new({ key_name    => __PACKAGE__ . "1",
+    											name        => __PACKAGE__ . "1",
+                                                 site_id => $site1_id }),
+        "Create IC" );
+    ok( $ic->save, "Save IC" );
+    ok( my $icid = $ic->get_id, "Get IC ID" );
+    $self->add_del_ids($icid, 'input_channel');
+
+    ok( $element->add_input_channels([$icid]), "Associate IC" );
+    ok( $element->set_primary_ic_id($icid, $site1_id), "Associate primary IC" );
+    
     ok( $element->save, "Save element" );
 
     ok( my $alias_asset = $class->new({ alias_id => $ba->get_id,

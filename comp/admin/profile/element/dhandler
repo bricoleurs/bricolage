@@ -74,7 +74,7 @@ if (defined $id) {
     if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
         my $site_sub = sub {
             my $siteid = $_[0]->get_id;
-            if ($_[1] eq 'primary') {
+            if ($_[1] eq 'primary_oc') {
                 $m->scomp('/widgets/select_object/select_object.mc',
                           object => 'output_channel',
                           field  => 'name',
@@ -83,6 +83,16 @@ if (defined $id) {
                           name   => "primary_oc_site_$siteid",
                           useTable => 0,
                           selected => $comp->get_primary_oc_id($siteid) || '',
+                         );
+            } elsif ($_[1] eq 'primary_ic') {
+                $m->scomp('/widgets/select_object/select_object.mc',
+                          object => 'input_channel',
+                          field  => 'name',
+                          constrain => { site_id => $siteid, active => 1 },
+                          no_persist => 1,
+                          name   => "primary_ic_site_$siteid",
+                          useTable => 0,
+                          selected => $comp->get_primary_ic_id($siteid) || '',
                          );
             }
 
@@ -95,8 +105,10 @@ if (defined $id) {
                  title => 'Sites',
                  objs => scalar $comp->get_sites,
                  addition => undef,
-                 fields => [qw(name description primary)],
-                 field_titles => { primary => 'Primary Output Channel'},
+                 fields => [qw(name description primary_ic primary_oc)],
+                 field_titles => { primary_oc => 'Primary OC',
+                                   primary_ic => 'Primary IC' 
+                                 },
                  field_values => $site_sub,
                  profile => undef,
                  select => $sel_sub,
@@ -120,6 +132,68 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 <br />
 <%perl>;
         $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
+
+        # Manage Output Channels if this is a top-level container.
+
+        my $ic_sub = sub {
+            my $icid = $_[0]->get_id;
+            if ($_[1] eq 'enabled') {
+                return 'Yes'
+                  if $comp->get_primary_ic_id($_[0]->get_site_id) == $icid;
+                $m->scomp('/widgets/profile/checkbox.mc',
+                          name => 'enabled',
+                          value => $icid,
+                          checked => $_[0]->is_enabled,
+                          useTable => 0
+                         );
+        }
+        };
+        my %pic_ids = map { $comp->get_primary_ic_id($_->get_id) => 1 }
+          $comp->get_sites;
+        my $ic_sel_sub = sub {
+            return if $pic_ids{$_[0]->get_id};
+            return ['Delete', 'rem_ic'];
+        };
+
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object => 'input_channel',
+                 userSort => 0,
+                 def_sort_field => 'name',
+                 title => 'Input Channels',
+                 objs => scalar $comp->get_input_channels,
+                 addition => undef,
+                 fields => [qw(name description site enabled)],
+                 field_titles => { enabled => 'Enabled' },
+                 field_values => $ic_sub,
+                 profile => undef,
+                 select => $ic_sel_sub,
+                 number => ++$num
+                );
+        my @available_ics;
+        foreach my $site ($comp->get_sites) {
+            push @available_ics, Bric::Biz::InputChannel->list({
+                site_id => $site->get_id,
+                active  => 1
+            });
+        }
+</%perl>
+<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
+<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+    object => 'input_channel',
+    objs   => \@available_ics,
+    field  => 'name',
+    exclude => [ map { $_->get_id } $comp->get_input_channels ],
+    no_persist => 1,
+    getter => $ic_name_getter,
+    name   => 'formBuilder|add_ic_id_cb',
+    default => ['' => 'Add Input Channel'],
+    constrain => { active => 1 },
+    js => "onchange='submit()'",
+    useTable => 0,
+&></td></tr>
+</table>
+<br />
+<%perl>
 
         # Manage Output Channels if this is a top-level container.
 
@@ -298,11 +372,17 @@ my $sel_sub = sub {
     return unless chk_authz($_[0], EDIT, 1);
     return ['Delete', 'rem_site'];
 };
-my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
-my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $ing = Bric::Biz::InputChannel->my_meths->{name}{get_meth};
+my $isg = Bric::Biz::InputChannel->my_meths->{site}{get_meth};
+my $ong = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $osg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $ic_name_getter = sub {
+    my $i = shift;
+    return $ing->($i) . ' (' . $isg->($i) . ')';
+};
 my $oc_name_getter = sub {
     my $o = shift;
-    return $ng->($o) . ' (' . $sg->($o) . ')';
+    return $ong->($o) . ' (' . $osg->($o) . ')';
 };
 </%once>
 

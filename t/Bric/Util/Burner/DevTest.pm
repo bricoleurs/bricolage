@@ -304,6 +304,25 @@ sub subclass_burn_test {
     $self->add_del_ids($oc->get_id, 'output_channel');
     ok $oc->add_includes($suboc), "Add an include OC";
     ok $oc->save, "Save the new output channel with its includes";
+    
+    # Create some input channels.
+    ok my $subic = Bric::Biz::InputChannel->new({
+        key_name => 'sub_xhtml',
+        name     => 'Sub XHTML',
+        site_id  => 100,
+    }), "Create another input channel";
+    ok $subic->save, "Save the other input channel";
+    $self->add_del_ids($subic->get_id, 'input_channel');
+
+    ok my $ic = Bric::Biz::InputChannel->new({
+        key_name => 'test_xhtml',
+        name     => 'Test XHTML',
+        site_id  => 100,
+    }), "Create an input channel";
+    ok $ic->save, "Save the new input channel";
+    $self->add_del_ids($ic->get_id, 'input_channel');
+    ok $ic->add_includes($subic), "Add an include IC";
+    ok $ic->save, "Save the new input channel with its includes";
 
     # Create a story type.
     ok my $story_type = Bric::Biz::AssetType->new({
@@ -316,7 +335,10 @@ sub subclass_burn_test {
     ok $story_type->add_site(100), "Add the site ID";
     ok $story_type->add_output_channels([$oc]), "Add the output channel";
     ok $story_type->set_primary_oc_id($oc->get_id, 100),
-      "Set it as the primary OC";;
+      "Set it as the primary OC";
+    ok $story_type->add_input_channels([$ic]), "Add the input channel";
+    ok $story_type->set_primary_ic_id($ic->get_id, 100),
+      "Set it as the primary IC";
     ok $story_type->save, "Save the test story type";
     $self->add_del_ids($story_type->get_id, 'element');
 

@@ -55,6 +55,11 @@ $LastChangedDate$
   ($oc_list || @ocs) = $element->get_output_channels()
   $element        = $element->delete_output_channels([$output_channel])
 
+  # Manage input channels.
+  $element        = $element->add_input_channels([$input_channel])
+  ($ic_list || @ics) = $element->get_input_channels()
+  $element        = $element->delete_input_channels([$input_channel])
+
   # Manage sites
   $element               = $element->add_sites([$site])
   ($site_list || @sites) = $element->get_sites()
@@ -122,7 +127,9 @@ use Bric::Biz::ATType;
 use Bric::Util::Class;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
+use Bric::Biz::InputChannel::Element;
 use Bric::Util::Coll::OCElement;
+use Bric::Util::Coll::ICElement;
 use Bric::Util::Coll::Site;
 use Bric::App::Cache;
 
@@ -135,7 +142,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $get_site_coll, $remove, $make_key_name);
+my ($get_oc_coll, $get_ic_coll, $get_site_coll, $remove, $make_key_name);
 
 #==============================================================================#
 # Constants                            #
@@ -213,6 +220,9 @@ BEGIN {
 
                          # The Primary_oc/id cache
                          '_site_primary_oc_id'  => Bric::FIELD_NONE,
+                         
+                         # The Primary_ic/id cache
+                         '_site_primary_ic_id'  => Bric::FIELD_NONE,
 
 			 # Private Fields
 			 # The active flag
@@ -220,6 +230,9 @@ BEGIN {
 
 			 # Stores the collection of output channels
                          '_oc_coll'             => Bric::FIELD_NONE,
+
+			 # Stores the collection of output channels
+                         '_ic_coll'             => Bric::FIELD_NONE,
 
 			 # Stores the collection of sites
                          '_site_coll'             => Bric::FIELD_NONE,
@@ -389,6 +402,11 @@ The description of the asset type.  Matched with case-insentive LIKE.
 
 The ID of an output channel. Returned will be all AssetType objects that
 contain this output channel.
+
+=item input_channel_id
+
+The ID of an input channel. Returned will be all AssetType objects that
+contain this input channel.
 
 =item data_name
 
@@ -978,6 +996,118 @@ sub get_primary_oc_id {
     my $dirty = $self->_get__dirty();
     $oc_site->{$site} = $ret->[0];
     $self->_set(['_site_primary_oc_id'],[$oc_site]);
+    $self->_set__dirty($dirty);
+    return $ret->[0];
+}
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->set_primary_ic_id( $primary_ic_id, $site )
+
+This will set the primary input channel id field for the asset type
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+No site parameter passed to Bric::Biz::AssetType-E<gt>set_primary_ic_id
+
+=item *
+
+No input channels associated with non top-level elements.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_primary_ic_id {
+    my ( $self, $id, $site) = @_;
+
+    throw_dp "No site parameter passed to " . __PACKAGE__ .
+      "->set_primary_ic_id" unless $site;
+
+    throw_dp "No input channels associated with non top-level elements"
+      unless $self->get_top_level;
+
+    $site = $site->get_id if ref $site;
+
+    my $ic_site = $self->_get('_site_primary_ic_id');
+
+    # If it is set and it is the same then don't bother
+    return $self if ref $ic_site && defined $id && exists $ic_site->{$site}
+      && $ic_site->{$site} == $id;
+
+    $ic_site = {} unless ref $ic_site;
+    $ic_site->{$site} = $id;
+    $self->_set(['_site_primary_ic_id'], [$ic_site]);
+    $self->_set__dirty(1);
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $primary_ic_id = $element->get_primary_ic_id($site)
+
+This will return the primary input channel id field for the asset type
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+No site parameter passed to Bric::Biz::AssetType-E<gt>get_primary_ic_id.
+
+=item *
+
+No input channels associated with non top-level elements.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_primary_ic_id {
+    my ($self, $site) = @_;
+
+    throw_dp "No site parameter passed to " . __PACKAGE__ .
+      "->get_primary_ic_id" unless $site;
+
+    throw_dp "No input channels associated with non top-level elements"
+      unless $self->get_top_level;
+
+    $site = $site->get_id if ref $site;
+
+    my $ic_site = $self->_get('_site_primary_ic_id');
+    return $ic_site->{$site} if ref $ic_site && exists $ic_site->{$site};
+
+    $ic_site = {} unless ref $ic_site;
+
+    my $sel = prepare_c(qq {
+        SELECT primary_ic__id
+        FROM   element__site
+        WHERE  element__id = ? AND
+               site__id    = ?
+    }, undef, DEBUG);
+
+    execute($sel, $self->get_id, $site);
+
+    my $ret = fetch($sel);
+    finish($sel);
+    return unless $ret;
+
+    my $dirty = $self->_get__dirty();
+    $ic_site->{$site} = $ret->[0];
+    $self->_set(['_site_primary_ic_id'],[$ic_site]);
     $self->_set__dirty($dirty);
     return $ret->[0];
 }
@@ -1646,6 +1776,115 @@ sub delete_output_channels {
 
 #------------------------------------------------------------------------------#
 
+=item ($ic_list || @ic_list) = $element->get_input_channels;
+
+=item ($ic_list || @ic_list) = $element->get_input_channels(@ic_ids);
+
+This returns a list of input channels that have been associated with this
+asset type. If C<@ic_ids> is passed, then only the input channels with those
+IDs are returned, if they're associated with this asset type.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> The objects returned will be Bric::Biz::InputChannel::Element
+objects, and these objects contain extra information relevant to the
+assocation between each input channel and this element object.
+
+=cut
+
+sub get_input_channels { $get_ic_coll->(shift)->get_objs(@_) }
+
+#------------------------------------------------------------------------------#
+
+=item my $ice = $element->add_input_channel($ic)
+
+=item my $ice = $element->add_input_channel($ic_id)
+
+Adds an input channel to this element object and returns the resulting
+Bric::Biz::InputChannel::Element object. Can pass in either an input channel
+object or an input channel ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> If a Bric::Biz::InputChannel object is passed in as the
+first argument, it will be converted into a Bric::Biz::InputChannel::Element
+object.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_input_channel {
+    my ($self, $ic) = @_;
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->new_obj({ (ref $ic ? 'ic' : 'ic_id') => $ic,
+                        element_id => $self->_get('id') });
+}
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->add_input_channels([$input_channels])
+
+This accepts an array reference of input channel objects to be associated
+with this asset type.
+
+B<Throws:> NONE.
+
+B<Side Effects:> Any Bric::Biz::InputChannel objects passed in will be
+converted into Bric::Biz::InputChannel::Element objects.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_input_channels {
+    my ($self, $ics) = @_;
+    $self->add_input_channel($_) for @$ics;
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
+=item $element = $element->delete_input_channels([$input_channels])
+
+This takes an array reference of input channels and removes their association
+from the object.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Cannot delete a primary input channel.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub delete_input_channels {
+    my ($self, $ics) = @_;
+    my $ic_coll = $get_ic_coll->($self);
+    no warnings 'uninitialized';
+    foreach my $ic (@$ics) {
+        $ic = Bric::Biz::InputChannel::Element->lookup({ id => $ic })
+          unless ref $ic;
+        throw_dp "Cannot delete a primary input channel"
+          if $self->get_primary_ic_id($ic->get_site_id) == $ic->get_id;
+    }
+
+    $ic_coll->del_objs(@$ics);
+    return $self;
+}
+
+#------------------------------------------------------------------------------#
+
 =item ($site_list || @site_list) = $element->get_sites;
 
 =item ($site_list || @site_list) = $element->get_sites(@site_ids);
@@ -1781,7 +2020,9 @@ sub remove_sites {
     #for this site
 
     my $oces = $self->get_output_channels();
+    my $ices = $self->get_input_channels();
     my @delete_oc;
+    my @delete_ic;
     for my $site (@$sites) {
         my $site_id = (ref($site) ? $site->get_id : $site);
         foreach my $oce (@$oces) {
@@ -1792,8 +2033,17 @@ sub remove_sites {
 
             }
         }
+        foreach my $ice (@$ices) {
+            if ($site_id == $ice->get_site_id) {
+                push @delete_ic, $ice;
+                $self->set_primary_ic_id(undef, $ice->get_site_id)
+                  if ($self->get_primary_ic_id($site_id) == $ice->get_id);
+
+            }
+        }
     }
     $self->delete_output_channels(\@delete_oc);
+    $self->delete_input_channels(\@delete_ic);
     $site_coll->del_objs(@$sites);
 
     return $self;
@@ -2353,18 +2603,19 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll, $site_coll, $primary_oc_site) =
-      $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
+    my ($id, $oc_coll, $ic_coll, $site_coll, $primary_oc_site, $primary_ic_site) =
+      $self->_get(qw(id _oc_coll _ic_coll _site_coll _site_primary_oc_id _site_primary_ic_id));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
 
     if ($id) {
-        # Save the parts and the output channels.
+        # Save the parts and the input/output channels.
         $oc_coll->save($id) if $oc_coll;
+        $ic_coll->save($id) if $ic_coll;
 
         # Save the sites if object has an id
-        $site_coll->save($id, $primary_oc_site) if $site_coll;
+        $site_coll->save($id, $primary_oc_site, $primary_ic_site) if $site_coll;
     }
 
     # Don't do anything else unless the dirty bit is set.
@@ -2386,10 +2637,13 @@ sub save {
         $id = $self->_get('id');
 
         # Save the sites.
-        $site_coll->save($id, $primary_oc_site) if $site_coll;
+        $site_coll->save($id, $primary_oc_site, $primary_ic_site) if $site_coll;
 
         # Save the output channels.
         $oc_coll->save($id) if $oc_coll;
+        
+        # Save the input channels.
+        $ic_coll->save($id) if $ic_coll;
     }
 
     # Save the mapping of primary oc per site
@@ -2403,6 +2657,20 @@ sub save {
         foreach my $site_id (keys %$primary_oc_site) {
             my $oc_id = delete $primary_oc_site->{$site_id} or next;
             execute($update, $oc_id, $id, $site_id);
+        }
+    }
+    
+    # Save the mapping of primary ic per site
+    if ($primary_ic_site and %$primary_ic_site) {
+        my $update = prepare_c(qq{
+            UPDATE element__site
+            SET    primary_ic__id = ?
+            WHERE  element__id    = ? AND
+                   site__id       = ?
+        },undef, DEBUG);
+        foreach my $site_id (keys %$primary_ic_site) {
+            my $ic_id = delete $primary_ic_site->{$site_id} or next;
+            execute($update, $ic_id, $id, $site_id);
         }
     }
 
@@ -2503,6 +2771,11 @@ sub _do_list {
             $tables .= ', element__output_channel ao';
             push @wheres, ('ao.output_channel__id = ?',
                            'ao.element__id = a.id');
+            push @params, $v;
+        } elsif ($k eq 'input_channel_id' || $k eq 'input_channel') {
+            $tables .= ', element__input_channel ai';
+            push @wheres, ('ai.input_channel__id = ?',
+                           'ai.element__id = a.id');
             push @params, $v;
         } elsif ($k eq 'type__id' or $k eq 'id') {
             push @wheres, "a.$k = ?";
@@ -2999,6 +3272,73 @@ $get_oc_coll = sub {
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
+};
+
+=item my $ic_coll = $get_ic_coll->($self)
+
+Returns the collection of input channels for this element. The collection is
+a L<Bric::Util::Coll::ICElement|Bric::Util::Coll::ICElement> object. See that
+class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
+details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_ic_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $ic_coll) = $self->_get('id', '_ic_coll');
+    return $ic_coll if $ic_coll;
+    $ic_coll = Bric::Util::Coll::ICElement->new
+      (defined $id ? {element_id => $id} : undef);
+    $self->_set(['_ic_coll'], [$ic_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $ic_coll;
 };
 
 

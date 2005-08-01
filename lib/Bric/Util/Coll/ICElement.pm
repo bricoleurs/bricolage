@@ -1,10 +1,10 @@
-package Bric::Util::Coll::Site;
+package Bric::Util::Coll::ICElement;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Util::Coll::Site - Interface for managing collections of
-Bric::Biz::Site objects.
+Bric::Util::Coll::ICElement - Interface for managing collections of
+Bric::Biz::InputChannel::Element objects.
 
 =head1 VERSION
 
@@ -16,7 +16,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate$
+$LastChangedDate: 2004-09-13 20:48:55 -0400 (Mon, 13 Sep 2004) $
 
 =head1 SYNOPSIS
 
@@ -36,8 +36,6 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-
-use Bric::Util::DBI qw(:standard col_aref);
 
 ################################################################################
 # Inheritance
@@ -115,7 +113,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub class_name { 'Bric::Biz::Site' }
+sub class_name { 'Bric::Biz::InputChannel::Element' }
 
 ################################################################################
 
@@ -125,7 +123,7 @@ sub class_name { 'Bric::Biz::Site' }
 
 =over 4
 
-=item $self = $coll->save($element_id);
+=item $self = $coll->save
 
 Saves the changes made to all the objects in the collection
 
@@ -170,54 +168,26 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my ($self, $element_id, $oc_map, $ic_map) = @_;
+    my ($self, $id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
-    foreach my $site (values %$del_objs) {
-        if ($site->get_id) {
-            my $upd = prepare_c( qq {
-                UPDATE element__site
-                SET    active = '0'
-                WHERE  element__id = ? AND
-                       site__id    = ?
-            }, undef, DEBUG);
-            execute($upd, $element_id, $site->get_id)
+    foreach my $ice (values %$del_objs) {
+        if ($ice->get_id) {
+            $ice->remove;
+            $ice->save;
         }
     }
     %$del_objs = ();
 
-    foreach my $site (@$new_objs) {
-        my $site_id = $site->get_id;
-        #insert into element__site mapping
-        my $sel = prepare_c( qq {
-            SELECT 1
-            FROM   element__site
-            WHERE  element__id = ? AND
-                   site__id    = ?
-        }, undef, DEBUG);
-        my $state = col_aref($sel, $element_id, $site_id);
-        if (@$state) {
-            my $upd = prepare_c( qq {
-                UPDATE element__site
-                SET    active = '1',
-                       primary_oc__id = ?,
-                       primary_ic__id = ?
-                WHERE  element__id = ? AND
-                       site__id    = ?
-            }, undef, DEBUG);
-            execute($upd, delete $oc_map->{$site_id}, delete $ic_map->{$site_id}, $element_id, $site_id);
-        } else {
-            my $ins = prepare_c(qq {
-                INSERT INTO element__site (element__id, site__id, primary_oc__id, primary_ic__id)
-                VALUES (?, ?, ?, ?)
-            }, undef, DEBUG);
-            execute($ins, $element_id, $site_id, delete $oc_map->{$site_id}, delete $ic_map->{$site_id});
-        }
+    # Save the existing objects.
+    foreach my $ice (values %$objs) {
+        $ice->save;
     }
 
-    # Save the existing and new objects.
-    foreach my $site (values %$objs, @$new_objs) {
-#	$site->save;
+    # Save the new objects.
+    foreach my $ice (@$new_objs) {
+        $ice->set_element_id($id);
+        $ice->save;
     }
 
     # Add the new objects to the main list of objects.
@@ -236,10 +206,10 @@ sub save {
 
 =over 4
 
-=item Bric::Util::Coll::OutputChannel->_sort_objs($objs_href)
+=item Bric::Util::Coll::InputChannel->_sort_objs($objs_href)
 
 Sorts a list of objects into an internally-specified order. This class sorts
-output channel objects by name.
+input channel objects by name.
 
 B<Throws:> NONE.
 
@@ -276,13 +246,12 @@ NONE.
 
 =head1 AUTHOR
 
-Arthur Bergman <sky@nanisky.com>
+David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>
-L<Bric::Biz::Site|Bric::Biz::Site>
+L<Bric::Biz::InputChannel::Element|Bric::Biz::InputChannel::Element>
 
 =cut

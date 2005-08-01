@@ -80,6 +80,11 @@ $LastChangedDate$
  $asset->add_output_channels(@ocs);
  $asset->del_output_channels(@ocs);
 
+ # Input channel associations.
+ my @ics = $asset->get_input_channels;
+ $asset->add_input_channels(@ics);
+ $asset->del_input_channels(@ics);
+
  # Access note information
  $asset                 = $asset->add_note($note)
  ($note_list || @notes) = $asset->get_notes()
@@ -143,7 +148,7 @@ use base qw( Bric::Biz::Asset );
 #============================================================================+
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $get_kw_coll);
+my ($get_oc_coll, $get_ic_coll, $get_kw_coll);
 
 #=============================================================================#
 # Constants                            #
@@ -186,6 +191,7 @@ BEGIN {
               cover_date                => Bric::FIELD_RDWR,
               publish_status            => Bric::FIELD_RDWR,
               primary_oc_id             => Bric::FIELD_RDWR,
+              primary_ic_id             => Bric::FIELD_RDWR,
               alias_id                  => Bric::FIELD_READ,
 
               # Private Fields
@@ -201,6 +207,7 @@ BEGIN {
               _new_categories           => Bric::FIELD_NONE,
               _element_object           => Bric::FIELD_NONE,
               _oc_coll                  => Bric::FIELD_NONE,
+              _ic_coll                  => Bric::FIELD_NONE,
               _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
               _update_uri               => Bric::FIELD_NONE,
@@ -657,6 +664,10 @@ sub set_element__id {
     my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
     $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
                             $elem->get_output_channels );
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->del_objs($ic_coll->get_objs);
+    $ic_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
+                            $elem->get_input_channels );
     $self->_set([qw(element__id element)], [$eid, $elem]);
 }
 
@@ -708,6 +719,41 @@ B<Throws:> NONE.
 B<Side Effects:> The URIs for the asset will be changed.
 
 B<Notes:> NONE.
+
+=cut
+
+################################################################################
+
+=item my $primary_ic_id = $p->get_primary_ic_id
+
+Returns the asset's primary input channel ID.
+
+=item my $ic = $p->get_primary_ic
+
+Returns the primary input channel object.
+
+=cut
+
+sub get_primary_ic {
+    my $self = shift;
+    my $picid = $self->get_primary_ic_id;
+    my ($ic) = $self->get_input_channels($picid);
+    unless ($ic) {
+        # Must be a new media. Go through the ICs till we find the primary.
+        foreach ($self->get_input_channels) {
+            next unless $_->get_id == $picid;
+            $ic = $_;
+            last;
+        }
+    }
+    return $ic;
+}
+
+=item $self = $p->set_primary_ic_id($primary_ic_id)
+
+Sets the asset's primary input channel ID.
+
+B<Side Effects:> The URIs for the asset will be changed.
 
 =cut
 
@@ -1145,6 +1191,205 @@ sub del_output_channels {
     return unless @_;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->del_objs(@_);
+    $self->_set(['_update_uri'] => [1]);
+}
+
+################################################################################
+
+=item my @ics = $biz->get_input_channels
+
+=item my $ics_aref = $biz->get_input_channels
+
+=item my @ics = $biz->get_input_channels(@ic_ids)
+
+=item my $ics_aref = $biz->get_input_channels(@ic_ids)
+
+Returns a list or anonymous array of the input channels the business asset
+is able to be edited in. If C<@ic_ids> is passed, then only the
+input channels with those IDs are returned, if they're associated with this
+asset.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_input_channels { $get_ic_coll->(shift)->get_objs(@_) }
+
+##############################################################################
+
+=item $ba = $ba->add_input_channels(@ics)
+
+Adds input channels to the list of input channels associated with this asset
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_input_channels {
+    my $self = shift;
+    return unless @_;
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->add_new_objs(@_);
+    $self->_set(['_update_uri'] => [1]);
+}
+
+##############################################################################
+
+=item $biz = $biz->del_input_channels(@ics)
+
+=item $biz = $biz->del_input_channels(@ic_ids)
+
+Removes input channels from this asset
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub del_input_channels {
+    my $self = shift;
+    return unless @_;
+    my $ic_coll = $get_ic_coll->($self);
+    $ic_coll->del_objs(@_);
     $self->_set(['_update_uri'] => [1]);
 }
 
@@ -1986,6 +2231,12 @@ sub checkout {
     my @ocs = $oc_coll->get_objs;
     $oc_coll->del_objs(@ocs);
     $oc_coll->add_new_objs(@ocs);
+    
+    # Clone input channels
+    my $ic_coll = $get_ic_coll->($self);
+    my @ics = $ic_coll->get_objs;
+    $ic_coll->del_objs(@ics);
+    $ic_coll->add_new_objs(@ics);
 
     $self->_set([qw(user__id modifier version_id checked_out)] =>
                 [$param->{user__id}, $param->{user__id}, undef, 1]);
@@ -2015,8 +2266,8 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $tile, $oc_coll, $ci, $co, $vid, $kw_coll) =
-      $self->_get(qw(_related_grp_obj _tile _oc_coll _checkin _checkout
+    my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $kw_coll) =
+      $self->_get(qw(_related_grp_obj _tile _oc_coll _ic_coll _checkin _checkout
                      version_id _kw_coll));
 
     if ($co) {
@@ -2037,6 +2288,7 @@ sub save {
     $related_obj->save if $related_obj;
     $self->_sync_contributors;
     $oc_coll->save($self->key_name => $vid) if $oc_coll;
+    $ic_coll->save($self->key_name => $vid) if $ic_coll;
     $kw_coll->save($self) if $kw_coll;
     $self->SUPER::save;
 }
@@ -2219,6 +2471,17 @@ sub _init {
         throw_dp "Cannot create an alias to this asset because this element ".
           "has no output channels associated with this site"
           unless @{$self->get_output_channels};
+          
+        $self->add_input_channels(
+            grep { $_->is_enabled && $_->get_site_id == $init->{site_id} }
+              $at->get_input_channels
+        );
+
+        $self->set_primary_ic_id($at->get_primary_ic_id($init->{site_id}));
+
+        throw_dp "Cannot create an alias to this asset because this element ".
+          "has no input channels associated with this site"
+          unless @{$self->get_input_channels};
 
         $self->_set
           ([qw(current_version publish_status modifier
@@ -2302,7 +2565,7 @@ sub _init {
               Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
         }
 
-        # Set up the output channels.
+        # Set up the input and output channels.
         if ($init->{element}->get_top_level) {
             $self->add_output_channels(
                map { ($_->is_enabled &&
@@ -2310,6 +2573,14 @@ sub _init {
                    $init->{element}->get_output_channels);
 
             $self->set_primary_oc_id($init->{element}->get_primary_oc_id
+                                     ($init->{site_id}));
+                                     
+            $self->add_input_channels(
+               map { ($_->is_enabled &&
+                      $_->get_site_id == $init->{site_id}) ? $_ : () }
+                   $init->{element}->get_input_channels);
+
+            $self->set_primary_ic_id($init->{element}->get_primary_ic_id
                                      ($init->{site_id}));
         }
 
@@ -2344,7 +2615,7 @@ sub _init {
 
 =item $at_obj = $self->_construct_uri()
 
-Returns URI contructed from the output chanel paths, categories and the date.
+Returns URI contructed from the output channel paths, categories and the date.
 
 B<Throws:>
 
@@ -2676,6 +2947,75 @@ $get_oc_coll = sub {
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
+};
+
+##############################################################################
+
+=item my $ic_coll = $get_ic_coll->($ba)
+
+Returns the collection of input channels for this asset.
+L<Bric::Util::Coll::InputChannel|Bric::Util::Coll::InputChannel>
+object. See that class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>,
+for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_ic_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $ic_coll) = $self->_get('version_id', '_ic_coll');
+    return $ic_coll if $ic_coll;
+    $ic_coll = Bric::Util::Coll::InputChannel->new
+      (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
+    $self->_set(['_ic_coll'], [$ic_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $ic_coll;
 };
 
 ##############################################################################

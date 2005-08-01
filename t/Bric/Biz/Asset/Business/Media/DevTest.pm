@@ -46,6 +46,7 @@ sub new_args {
       file_name     => 'fun.foo' . ++$z,
       source__id    => 1,
       primary_oc_id => 1,
+      primary_ic_id => 1,
       site_id       => 100,
       category__id  => 1,
       cover_date    => '2005-03-22 21:07:56',

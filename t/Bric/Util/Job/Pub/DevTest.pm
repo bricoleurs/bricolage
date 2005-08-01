@@ -503,8 +503,11 @@ sub h_test_execute_me : Test(10) {
     my $cat = Bric::Biz::Category->lookup({ id => 1 });
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
-    $story->add_output_channels($oc);;
+    $story->add_output_channels($oc);
     $story->set_primary_oc_id(1);
+    my $ic = Bric::Biz::InputChannel->lookup({ id => 1 });
+    $story->add_input_channels($ic);
+    $story->set_primary_ic_id(1);
     $story->set_cover_date('2005-03-22 21:07:56');
     $story->save;
     $self->add_del_ids($story->get_id, 'story');
