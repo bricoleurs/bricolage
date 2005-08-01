@@ -285,5 +285,6 @@ clean 		:
 	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
 	-rm -rf lib/auto
+	-rm -rf inst/db_tmp
 
 .PHONY 		: clean
