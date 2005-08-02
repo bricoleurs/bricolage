@@ -40,11 +40,13 @@ qq{
     However, this conversion is not required to continue using
     Bricolage. The code is written in such a way that it should continue
     to work with the old data types in the database. You can therefore
-    decline this upgrade if you wish. However, only the new data types
+    decline this upgrade if you wish. That said, only the new data types
     will be supported going forward (though we will make every effort
     to ensure that databases with the older data types continue to
     work for the lifetime of Bricolage 1.x). And the new datatypes have
-    the potential to increase the performance of Bricolage.
+    the potential to increase the performance of Bricolage. We therefore
+    STRONGLY recommend that you take advantage of them by accepting this
+    upgrade.
 
     Would you like to the database data types to be upgraded now?},
   'y');
