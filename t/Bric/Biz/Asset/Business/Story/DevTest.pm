@@ -55,7 +55,7 @@ sub construct {
 # Test the clone() method.
 ##############################################################################
 
-sub test_clone : Test(17) {
+sub test_clone : Test(18) {
     my $self = shift;
     ok( my $story = $self->construct( name => 'Flubber',
                                       slug => 'hugo'),
@@ -84,6 +84,7 @@ sub test_clone : Test(17) {
 
     # Check that the story is really cloned!
     isnt( $sid, $cid, "Check for different IDs" );
+    isnt( $clone->get_uuid, $orig->get_uuid, "Check for different UUIDs" );
     is( $clone->get_title, $orig->get_title, "Compare titles" );
     is( $clone->get_slug, 'jarkko', "Compare slugs" );
     ok( my $ouri = $orig->get_uri, "Get original URI" );
