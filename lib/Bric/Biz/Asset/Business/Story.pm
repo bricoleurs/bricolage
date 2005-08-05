@@ -201,7 +201,8 @@ use constant VERSION_TABLE => 'story_instance';
 
 use constant ID_COL => 's.id';
 
-use constant COLS       => qw( priority
+use constant COLS       => qw( uuid
+                               priority
                                source__id
                                usr__id
                                element__id
@@ -228,7 +229,8 @@ use constant VERSION_COLS => qw( name
                                  slug
                                  checked_out);
 
-use constant FIELDS =>  qw( priority
+use constant FIELDS =>  qw( uuid
+                            priority
                             source__id
                             user__id
                             element__id
@@ -475,6 +477,7 @@ use constant DEFAULT_ORDER => 'cover_date';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord);
+my $ug = Data::UUID->new;
 
 #--------------------------------------#
 # Instance Fields
@@ -1765,8 +1768,10 @@ sub clone {
     $self->_set([qw(version current_version version_id id publish_date
                     publish_status _update_contributors _queried_cats
                     _attribute_object _update_uri first_publish_date
-                    published_version)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef]);
+                    published_version uuid)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef,
+                 $ug->create_str
+             ]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);

@@ -46,6 +46,7 @@ CREATE SEQUENCE seq_media_uri START 1024;
 CREATE TABLE media (
     id                INTEGER   NOT NULL
                                       DEFAULT NEXTVAL('seq_media'),
+    uuid              TEXT            NOT NULL,
     element__id       INTEGER   NOT NULL,
     priority          INT2      NOT NULL
                                       DEFAULT 3
@@ -227,6 +228,7 @@ CREATE TABLE attr_media_meta (
 --
 
 -- media
+CREATE INDEX idx_media__uuid ON media(uuid);
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media__cover_date ON media(cover_date);

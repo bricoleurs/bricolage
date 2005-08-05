@@ -23,8 +23,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 
 <dl class="viewmeta">
-  <dt><%$lang->maketext('ID')%>:</dt>
-  <dd><% $id %></dd>
+  <dt><%$lang->maketext('UUID')%>:</dt>
+  <dd><% $media->get_uuid %></dd>
   <dt><% $lang->maketext('Element')%>:</dt>
   <dd><% $media->get_element_name %></dd>
   <dt><% $lang->maketext('Title') %>:</dt>

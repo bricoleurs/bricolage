@@ -133,6 +133,7 @@ use Bric::Biz::Org::Source;
 use Bric::Util::Coll::OutputChannel;
 use Bric::Util::Coll::Keyword;
 use Bric::Util::Pref;
+use Data::UUID;
 
 #=============================================================================#
 # Inheritance                          #
@@ -164,6 +165,7 @@ use constant DEBUG => 0;
 # Private Class Fields
 my $meths;
 my @ord;
+my $ug = Data::UUID->new;
 
 my %uri_format_hash = ( 'categories' => '',
                         'day'        => '%d',
@@ -177,6 +179,7 @@ BEGIN {
         Bric::register_fields
             ({
               # Public Fields
+              uuid                      => Bric::FIELD_READ,
               source__id                => Bric::FIELD_RDWR,
               element__id               => Bric::FIELD_RDWR,
               related_grp__id           => Bric::FIELD_READ,
@@ -437,6 +440,14 @@ sub my_meths {
     }
     push @ord, qw(source_id source first_publish_date publish_date), pop @ord;
 
+    $meths->{uuid} =         {
+                              name     => 'uuid',
+                              get_meth => sub { shift->get_uuid(@_) },
+                              get_args => [],
+                              disp     => 'UUID',
+                              len      => 10,
+                              type     => 'short',
+                             };
     $meths->{source_id} =    {
                               name     => 'source_id',
                               get_meth => sub { shift->get_source__id(@_) },
@@ -505,6 +516,33 @@ sub my_meths {
 =head2 Public Instance Methods
 
 =over 4
+
+=item $uuid = $asset->get_uuid
+
+=item $uuid = $asset->get_uuid_bin
+
+=item $uuid = $asset->get_uuid_hex
+
+=item $uuid = $asset->get_uuid_base64
+
+These methods the UUID field for this document. C<get_uuid> returns the string
+representation of the UUID, such as "7713585E-0501-11DA-B4F2-BC394F2854A1".
+This is the form of the UUID stored in the database. C<get_uuid_bin()> returns
+the binary representation of the UUID. C<get_uuid_hex()> returns the UUID as a
+hex string. C<get_uuid_base64()> returns the base64-encoded representation of
+the UUID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_uuid_bin    { $ug->from_string(  shift->get_uuid     ) }
+sub get_uuid_hex    { $ug->to_hexstring( shift->get_uuid_bin ) }
+sub get_uuid_base64 { $ug->to_b64string( shift->get_uuid_bin ) }
 
 =item $title = $asset->get_title()
 
@@ -2172,6 +2210,7 @@ NONE
 sub _init {
     my ($self, $init) = @_;
     my $class = ref $self or throw_mni "Method not implemented";
+    $self->_set(['uuid'] => [$ug->create_str]);
 
     throw_dp "Cannot create an asset without an element or alias ID"
       unless $init->{element__id} || $init->{element} || $init->{alias_id};
@@ -2380,6 +2419,11 @@ sub _construct_uri {
 
     $fmt =~ s/\/%{categories}/$category_uri/g;
     $fmt =~ s/%{slug}/$slug/g;
+    unless ($fmt =~ s/%{uuid}/$self->get_uuid/ge) {
+        unless ($fmt =~ s/%{base64_uuid}/$self->get_uuid_base64/ge) {
+            $fmt =~ s/%{hex_uuid}/$self->get_uuid_hex/ge;
+        }
+    }
 
     my $path = $self->get_cover_date($fmt) or return;
     my @path = split( '/', $path );

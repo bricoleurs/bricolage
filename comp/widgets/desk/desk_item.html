@@ -3,7 +3,7 @@
 % if ($user) {
     <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
 % }
-    <div class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
+    <div "<% $uuid ? qq{title="$uuid" } : '' %>"class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
     <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
     <% $m->comp('publish_status_span.mc',
                 sorted => $highlight eq 'name' ? ' sorted' : '',
@@ -81,7 +81,7 @@ $action => undef
 my $id = $obj->get_id;
 my $user_id = $obj->get_user__id;
 
-my ($name, $date, $date_label, $type_label, $uri);
+my ($name, $date, $date_label, $type_label, $uri, $uuid);
 my $header_class = 'lightHeader';
 
 my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
@@ -100,6 +100,7 @@ if ($class eq 'formatting') {
     $date_label = 'Cover Date';
     $type_label = $disp  . ' Type';
     my $co = $vlabel eq 'Edit';
+    $uuid = $obj->get_uuid;
     $alias = 'alias' if $obj->get_alias_id;
     if ($highlight eq 'name') {
         $title_class .= "sorted";

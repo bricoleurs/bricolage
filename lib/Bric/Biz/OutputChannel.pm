@@ -1196,7 +1196,54 @@ B<Notes:> Only one Output channel can be the primary output channel.
 
 =item $oc = $oc->set_uri_format($uri_format)
 
-Sets the URI format for documents output in this Output Channel.
+Sets the URI format for documents output in this Output Channel. URI formats
+are made up of a number of possible parts, that can be arranged in any
+combination and order of any of the following parts:
+
+=over
+
+=item %{categories}
+
+The category URI. This is the only part that is required in all formats.
+
+=item %{slug}
+
+The story slug. Not used for media URIs.
+
+=item %{uuid}
+
+The document UUID.
+
+=item %{base64_uuid}
+
+The base64-encoded document UUID.
+
+=item %{hex_uuid}
+
+The hex representation of the  document UUID.
+
+=item *
+
+Arbitrary strings. You can even ignore the C<uri_prefix> and C<uri_suffix>
+attributes, if you like.
+
+=item %Y
+
+The four-digit cover date year.
+
+=item %m
+
+The two-digit cover date month.
+
+=item %d
+
+The two-digit cover date month.
+
+=item etc.
+
+Any other L<DateTime|DateTime>-supproted C<strftime> format.
+
+=back
 
 B<Throws:>
 

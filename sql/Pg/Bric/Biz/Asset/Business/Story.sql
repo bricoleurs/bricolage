@@ -48,6 +48,7 @@ CREATE SEQUENCE seq_story_uri START 1024;
 CREATE TABLE story (
     id                INTEGER         NOT NULL
                                       DEFAULT NEXTVAL('seq_story'),
+    uuid              TEXT            NOT NULL,
     priority          INT2            NOT NULL
                                       DEFAULT 3
                                       CONSTRAINT ck_story__priority
@@ -214,6 +215,7 @@ CREATE TABLE attr_story_meta (
 --
 
 -- story
+CREATE INDEX idx_story__uuid ON story(uuid);
 CREATE INDEX idx_story__primary_uri ON story(LOWER(primary_uri));
 CREATE INDEX fdx_usr__story ON story(usr__id);
 CREATE INDEX fdx_source__story ON story(source__id);

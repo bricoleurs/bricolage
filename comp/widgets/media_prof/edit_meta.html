@@ -26,8 +26,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 
 <dl class="viewmeta">
-<dt><%$lang->maketext('ID')%>:</dt>
-<dd><% $id %></dd>
+<dt><%$lang->maketext('UUID')%>:</dt>
+<dd><% $media->get_uuid %></dd>
 <dt><%$lang->maketext('Media Type Element')%>:</dt>
 <dd><% $media->get_element_name() %></dd>
 <dt><% $lang->maketext('Current Version') %>:</dt>
@@ -53,7 +53,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %     }
 % }
 <dt><% $lang->maketext('Site') %>:</dt>
-<dd><% Bric::Biz::Site->lookup({id => $media->get_site_id})->get_name() %></dd>  
+<dd><% Bric::Biz::Site->lookup({id => $media->get_site_id})->get_name() %></dd>
 </dl>
 
 <div class="editmeta">

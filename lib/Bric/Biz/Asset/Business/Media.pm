@@ -83,7 +83,8 @@ use constant VERSION_TABLE => 'media_instance';
 
 use constant ID_COL => 'mt.id';
 
-use constant COLS           => qw( element__id
+use constant COLS           => qw( uuid
+                                   element__id
                                    priority
                                    source__id
                                    current_version
@@ -114,7 +115,8 @@ use constant VERSION_COLS   => qw( name
                                    uri
                                    checked_out);
 
-use constant FIELDS         => qw( element__id
+use constant FIELDS         => qw( uuid
+                                   element__id
                                    priority
                                    source__id
                                    current_version
