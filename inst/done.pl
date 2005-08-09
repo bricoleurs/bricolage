@@ -75,9 +75,9 @@ your server:
   $url
 
 Login in as "admin" with the default password "change me now!". Your
-first action should be changing this password. Navigate into the ADMIN ->
-SYSTEM -> Users menu, search for the "admin" user, click the "Edit"
-link, and change the password.
+first action should be changing this password. Click "Logged in as
+Bricolage Administrator" in the top right corder of the browser window
+and change the password.
 
 =========================================================================
 =========================================================================
