@@ -746,8 +746,7 @@ sub last_page {
 
 =item $uri = pop_page;
 
-Grab the $n-th page visited.  Argument $n defaults to 1, or the very last page
-(A $n value of 0 is the current page).  Only MAX_HISTORY pages are saved.
+Pops the last page visited off of the page history and returns it.
 
 B<Throws:>
 

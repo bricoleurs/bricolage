@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:aref :msg redirect_onload);
+use Bric::App::Util qw(:aref :msg :history redirect_onload);
 use Bric::Biz::Person::User;
 use Bric::Config qw(:auth_len LISTEN_PORT);
 use Bric::Util::Grp;
@@ -38,8 +38,8 @@ sub save : Callback {
         log_event('user_deact', $user);
         add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
         # redirect_onload() prevents any other callbacks from executing.
-        get_state_name('login') eq 'ssl' ? $self->set_redirect('/admin/manager/user')
-          : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
+        get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
+          : redirect_onload('http://' . $r->hostname . $port . last_page,
                             $self);
         return;
     }
@@ -147,8 +147,8 @@ sub save : Callback {
 
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     # But note that because it executes right away, no more callbacks will execute!
-    get_state_name('login') eq 'ssl' ? $self->set_redirect('/admin/manager/user')
-      : redirect_onload('http://' . $r->hostname . $port . '/admin/manager/user',
+    get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
+      : redirect_onload('http://' . $r->hostname . $port . last_page,
                         $self);
 }
 

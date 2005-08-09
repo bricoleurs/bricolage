@@ -171,8 +171,8 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 }
 
 # Establish the return URI.
-my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
-      : 'http://' . $r->hostname . $port . '/admin/manager/user';
+my $return = get_state_name('login') eq 'ssl' ? last_page
+      : 'http://' . $r->hostname . $port . last_page;
 </%init>
 
 
