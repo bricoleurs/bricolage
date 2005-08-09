@@ -43,7 +43,7 @@ ul {
   color: #669999;
   text-decoration: underline;
   font-size: .9em;
-  line-height: 1.3em;
+  line-height: 1.5em;
 }
 #nav #admin ul.submenu ul.items { padding: 5px 0 5px 25px; background-color: white; }
 #nav #admin ul.submenu ul.items li a { 
@@ -54,7 +54,7 @@ ul {
   color: #CC6633;
   text-decoration: underline;
   font-size: .9em;
-  line-height: 1.3em;
+  line-height: 1.5em;
 }
 
 #nav .selected { font-weight: bold; }
