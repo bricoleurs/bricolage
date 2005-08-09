@@ -222,23 +222,24 @@ div.debug dt:after {
 .desk .item dt, .desk .item dd {
     line-height: 2em;
     padding: 0 .2em;
-    border-top: solid #CCCC99 1px;
+    border-top: solid white 1px;
 }
 .desk .item dt { 
     clear: both; 
     float: left; 
     width: 9.6em; /* plus 1em padding */ 
     text-align: right;
+    background: #999966;
 }
 .desk .item dd { margin-left: 10em; }
-.desk .item .even { background: #E8E8CD; }
+/* .desk .item .even { background: #E8E8CD; } */
 
 .desk .item .actions { 
     width: 230px; 
     position: absolute; 
     top: 0; right: 0; bottom: 0;
     background: transparent;
-    border-top: solid #CCCC99 1px;
+    border-top: solid white 1px;
     padding: 0 10px;
 }
 .desk .item .actions p { margin: 10px 0; }
