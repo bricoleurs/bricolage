@@ -168,8 +168,11 @@ div.debug dt:after {
 }
 
 .desk .item .sorted {
-	background: #99CC99 !important;
 	font-weight: bold;
+}
+
+.desk .item dd.sorted {
+	background: #99CC99 !important;
 }
 
 .desk .item .head { 
