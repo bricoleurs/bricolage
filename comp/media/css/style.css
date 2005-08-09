@@ -8,6 +8,7 @@ th         { font-size: 1.1em; }
 pre        { font-size: 1.1em; padding: 1em; margin: 0; } 
 h3         { font-size: 1.1em; }
 
+a          { color: #006666; }
 a img      { border: none; vertical-align: middle; }
 
 form       { margin: 0; padding: 0; }
