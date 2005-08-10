@@ -115,9 +115,9 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 <div id="mainContainer">
 <div id="bricLogo">
 % if ($useSideNav) {
-        <a href="#" title="About Bricolage" id="btnAbout"><img src="/media/images/<% $lang_key %>/bricolage.gif" /></a>
+        <a href="#" title="About Bricolage" id="btnAbout"><img src="/media/images/bricolage.gif" /></a>
 % } else {
-        <img src="/media/images/<% $lang_key %>/bricolage.gif" alt="Bricolage" />
+        <img src="/media/images/bricolage.gif" alt="Bricolage" />
 % }
 </div>
 <%perl>;
