@@ -171,7 +171,8 @@ div.debug dt:after {
 	font-weight: bold;
 }
 
-.desk .item dd.sorted {
+.desk .item dd.sorted,
+.desk .item div.sorted {
 	background: #99CC99 !important;
 }
 
@@ -224,15 +225,16 @@ div.debug dt:after {
 }
 .desk .item dt, .desk .item dd {
     line-height: 2em;
-    padding: 0 .2em;
+    padding: 0 .5em;
     border-top: solid white 1px;
 }
 .desk .item dt { 
     clear: both; 
     float: left; 
-    width: 9.6em; /* plus 1em padding */ 
+    width: 9em; /* plus 1em padding */ 
     text-align: right;
     background: #999966;
+    border-right: solid white 1px;
 }
 .desk .item dd { margin-left: 10em; }
 /* .desk .item .even { background: #E8E8CD; } */
