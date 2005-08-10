@@ -70,7 +70,7 @@ $LastChangedDate$
 
  # Version information
  $vers        = $asset->get_version();
- $vers_id     = $asset->get_version_id();
+ $vers_id     = $asset->get_instance_id();
  $current     = $asset->get_current_version();
  $checked_out = $asset->get_checked_out()
 
@@ -253,7 +253,7 @@ use constant PARAM_WHERE_MAP => {
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
-    version_id            => 'i.id = ?',
+    instance_id            => 'i.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
     element__id           => 'f.element__id = ?',
     element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
@@ -338,7 +338,7 @@ use constant PARAM_ORDER_MAP => {
     category_uri        => 'LOWER(i.file_name)',
     description         => 'LOWER(f.description)',
     version             => 'i.version',
-    version_id          => 'i.id',
+    instance_id          => 'i.id',
     user_id             => 'i.usr__id',
     user__id            => 'i.usr__id',
     _checked_out        => 'i.checked_out',
@@ -697,7 +697,7 @@ values.
 
 The template version number. May use C<ANY> for a list of possible values.
 
-=item version_id
+=item instance_id
 
 The ID of a version of a template. May use C<ANY> for a list of possible
 values.
@@ -1746,7 +1746,7 @@ sub checkout {
 
         $self->_set({'user__id'    => $param->{'user__id'} ,
                      'modifier'    => $param->{'user__id'},
-                     'version_id'  => undef,
+                     'instance_id'  => undef,
                      'checked_out' => 1
                     });
 
@@ -1882,7 +1882,7 @@ sub save {
 
     # Handle a cancel.
     my ($id, $vid, $cancel, $ver) =
-      $self->_get(qw(id version_id _cancel version));
+      $self->_get(qw(id instance_id _cancel version));
 
     # Only update/insert this object if some of our fields are dirty.
     if ($self->_get__dirty) {
@@ -1891,7 +1891,7 @@ sub save {
             $self->_update_formatting();
 
             # Update or insert depending on if we have an ID.
-            if ($self->get_version_id) {
+            if ($self->get_instance_id) {
                 if ($cancel) {
                     if (defined $id and defined $vid) {
                         $self->_delete_instance();
@@ -2155,7 +2155,7 @@ sub _insert_instance {
         my $sth = prepare_c($sql, undef);
         execute($sth, $self->_get(INSTANCE_FIELDS));
 
-        $self->_set(['version_id'], [last_key(INSTANCE_TABLE)]);
+        $self->_set(['instance_id'], [last_key(INSTANCE_TABLE)]);
 
         return $self;
 }
@@ -2223,7 +2223,7 @@ sub _update_instance {
 
         my $sth = prepare_c($sql, undef);
 
-        execute($sth, $self->_get(INSTANCE_FIELDS), $self->get_version_id);
+        execute($sth, $self->_get(INSTANCE_FIELDS), $self->get_instance_id);
 
         return $self;
 }
@@ -2284,7 +2284,7 @@ sub _delete_instance {
     my ($self) = @_;
     my $sql = 'DELETE FROM ' . INSTANCE_TABLE . ' WHERE id=? ';
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'));
+    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 

@@ -45,7 +45,7 @@ sub new_args {
 
     (active             => 1,
      object_type        => 'story',
-     object_instance_id => $story->get_version_id,
+     object_instance_id => $story->get_instance_id,
      parent_id          => $cont->get_id,
      element_data       => $atd,
      object_order       => 0)

@@ -811,7 +811,7 @@ sub _do_list {
             $obj_type = 'media';
         }
 
-        $param->{'object_instance_id'} = $param->{'object'}->get_version_id();
+        $param->{'object_instance_id'} = $param->{'object'}->get_instance_id();
     } else {
         $obj_type = $param->{'object_type'};
     }

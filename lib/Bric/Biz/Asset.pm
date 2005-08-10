@@ -46,7 +46,7 @@ $LastChangedDate$
 
  # Version information
  $vers        = $asset->get_version();
- $vers_id     = $asset->get_version_id();
+ $vers_id     = $asset->get_instance_id();
  $current         = $asset->get_current_version();
  $checked_out = $asset->get_checked_out()
 
@@ -167,7 +167,7 @@ BEGIN {
                         version           => Bric::FIELD_READ,
                         user__id          => Bric::FIELD_READ,
                         id                => Bric::FIELD_READ,
-                        version_id        => Bric::FIELD_READ,
+                        instance_id        => Bric::FIELD_READ,
                         current_version   => Bric::FIELD_READ,
                         published_version => Bric::FIELD_RDWR,
                         priority          => Bric::FIELD_RDWR,
@@ -240,8 +240,8 @@ NONE
 sub lookup {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    throw_gen(error => "Missing Required Parameters id or version_id")
-      unless $param->{id} || $param->{version_id}
+    throw_gen(error => "Missing Required Parameters id or instance_id")
+      unless $param->{id} || $param->{instance_id}
       || ($param->{alias_id} && $param->{site_id});
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
@@ -262,7 +262,7 @@ sub lookup {
     my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
                             . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
-    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->INSTANCE_FIELDS,
+    my $fields = [ 'id', $pkg->FIELDS, 'instance_id', $pkg->INSTANCE_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
     my @obj = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return unless $obj[0];
@@ -304,7 +304,7 @@ sub list {
     my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
                             . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
-    my $fields = [ 'id', $pkg->FIELDS, 'version_id', $pkg->INSTANCE_FIELDS,
+    my $fields = [ 'id', $pkg->FIELDS, 'instance_id', $pkg->INSTANCE_FIELDS,
                    $pkg->RO_FIELDS, 'grp_ids' ];
     my @objs = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return (wantarray ? @objs : \@objs);
@@ -950,7 +950,7 @@ NONE
 
 ################################################################################
 
-=item $version_id = $asset->get_version_id()
+=item $instance_id = $asset->get_instance_id()
 
 Returns the database id of the instance of this asset.
 

@@ -234,7 +234,7 @@ sub new {
     $self = bless {}, $self unless ref $self;
 
     if ($init->{'object'}) {
-        $init->{'object_instance_id'} = $init->{'object'}->get_version_id();
+        $init->{'object_instance_id'} = $init->{'object'}->get_instance_id();
         my $class = ref $init->{'object'};
         if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
             $init->{'object_type'} = 'media';
@@ -1539,7 +1539,7 @@ sub _do_list {
         } else {
             throw_gen(error => "Object of type $obj_class not allowed to be tiled");
         }
-        $obj_id = $param->{'object'}->get_version_id();
+        $obj_id = $param->{'object'}->get_instance_id();
 
     } else {
         if ($param->{'object_type'} eq 'story') {

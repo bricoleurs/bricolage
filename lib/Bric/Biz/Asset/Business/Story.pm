@@ -313,7 +313,7 @@ use constant PARAM_WHERE_MAP => {
       alias_id               => 's.alias_id = ?',
       site_id                => 's.site__id = ?',
       no_site_id             => 's.site__id <> ?',
-      version_id             => 'i.id = ?',
+      instance_id            => 'i.id = ?',
       workflow__id           => 's.workflow__id = ?',
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
@@ -460,7 +460,7 @@ use constant PARAM_ORDER_MAP => {
     title               => 'LOWER(i.name)',
     description         => 'LOWER(i.description)',
     version             => 'i.version',
-    version_id          => 'i.id',
+    instance_id         => 'i.id',
     slug                => 'LOWER(i.slug)',
     user_id             => 'i.usr__id',
     user__id            => 'i.usr__id',
@@ -661,7 +661,7 @@ values.
 
 The story version number. May use C<ANY> for a list of possible values.
 
-=item version_id
+=item instance_id
 
 The ID of an instance of a version of a story. May use C<ANY> for a list of 
 possible values.
@@ -1788,7 +1788,7 @@ sub clone {
 
     # Reset properties. Note that if we start to make use of the attribute
     # object other than for desks, we'll have to find a way to clone it, too.
-    $self->_set([qw(version current_version version_id id publish_date
+    $self->_set([qw(version current_version instance_id id publish_date
                     publish_status _update_contributors _queried_cats
                     _attribute_object _update_uri first_publish_date
                     published_version)],
@@ -1838,7 +1838,7 @@ sub save {
         if ($id) {
             # make any necessary updates to the Main table
             $self->_update_story();
-            if ($self->_get('version_id')) {
+            if ($self->_get('instance_id')) {
                 if ($self->_get('_cancel')) {
                     $self->_delete_instance();
                     if ($self->_get('version') == 0) {
@@ -1932,7 +1932,7 @@ sub _get_contributors {
           'WHERE story_instance__id=? ';
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('version_id'));
+        execute($sth, $self->_get('instance_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
             $contrib->{$row->[0]}->{'place'} = $row->[1];
@@ -1973,7 +1973,7 @@ sub _insert_contributor {
       " VALUES (${\next_key('story__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id, $place, $role);
+    execute($sth, $self->_get('instance_id'), $id, $place, $role);
     return $self;
 }
 
@@ -2005,7 +2005,7 @@ sub _update_contributor {
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $role, $place, $self->_get('version_id'), $id);
+    execute($sth, $role, $place, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -2036,7 +2036,7 @@ sub _delete_contributor {
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id);
+    execute($sth, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -2071,7 +2071,7 @@ sub _get_categories {
           " WHERE story_instance__id=? ";
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('version_id'));
+        execute($sth, $self->_get('instance_id'));
         while (my $row = fetch($sth)) {
             $cats->{$row->[0]}->{'primary'} = $row->[1];
         }
@@ -2157,7 +2157,7 @@ sub _insert_category {
       "VALUES (${\next_key('story__category')},?,?,?)";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $category_id, $primary);
+    execute($sth, $self->_get('instance_id'), $category_id, $primary);
     return $self;
 }
 
@@ -2187,7 +2187,7 @@ sub _delete_category {
       "WHERE story_instance__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $category_id);
+    execute($sth, $self->_get('instance_id'), $category_id);
     return $self;
 }
 
@@ -2218,7 +2218,7 @@ sub _update_category {
       "WHERE story_instance__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $primary, $self->_get('version_id'), $category_id);
+    execute($sth, $primary, $self->_get('instance_id'), $category_id);
     return $self;
 }
 
@@ -2355,7 +2355,7 @@ sub _insert_instance {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(INSTANCE_FIELDS));
-    $self->_set( { version_id => last_key(INSTANCE_TABLE) });
+    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
     return $self;
 }
 
@@ -2418,7 +2418,7 @@ sub _update_instance {
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('version_id'));
+    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
     return $self;
 }
 
@@ -2448,7 +2448,7 @@ sub _delete_instance {
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'));
+    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 

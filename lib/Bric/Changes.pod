@@ -14,6 +14,30 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.11.0 "Summer of Code"
+
+=head2 New Features
+
+=over 4
+
+=item *
+
+Input channels.  Expand me. [Marshall]
+
+=back
+
+=head2 Changes
+
+=item *
+
+The C<version_id> parameter to C<list()> and C<lookup()> has been changed to
+C<instance_id>.  C<version_id> now refers to a specific version of an asset,
+which is no longer the same as an instance (one version can have multiple
+instances -- one for each IC) [Marshall]
+
+=back
+
+
 =head1 VERSION 1.9.0 "Back to the Future" (change that if you want :)
 
 =head2 New Features

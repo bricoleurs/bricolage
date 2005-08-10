@@ -208,7 +208,7 @@ use constant PARAM_WHERE_MAP => {
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
-      version_id            => 'i.id = ?',
+      instance_id            => 'i.id = ?',
       element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
@@ -331,7 +331,7 @@ use constant PARAM_ORDER_MAP => {
     category__id        => 'i.category__id',
     description         => 'LOWER(i.description)',
     version             => 'i.version',
-    version_id          => 'i.id',
+    instance_id          => 'i.id',
     user__id            => 'i.usr__id',
     _checked_out        => 'i.checked_out',
     primary_oc_id       => 'i.primary_oc__id',
@@ -531,7 +531,7 @@ possible values.
 
 The media document version number. May use C<ANY> for a list of possible values.
 
-=item version_id
+=item instance_id
 
 The ID of a version of a media document. May use C<ANY> for a list of possible
 values.
@@ -1768,7 +1768,7 @@ sub clone {
         $contribs->{$_}->{'action'} = 'insert';
     }
 
-    $self->_set( { version_id           => undef,
+    $self->_set( { instance_id          => undef,
                    id                   => undef,
                    first_publish_date   => undef,
                    publish_date         => undef,
@@ -1807,7 +1807,7 @@ sub save {
             # we have the main id make sure there's a instance id
             $self->_update_media();
 
-            if ($self->_get('version_id')) {
+            if ($self->_get('instance_id')) {
                 if ($self->_get('_cancel')) {
                     $self->_delete_instance();
                     if ($self->_get('version') == 0) {
@@ -1900,7 +1900,7 @@ sub _get_contributors {
           'WHERE media_instance__id=? ';
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('version_id'));
+        execute($sth, $self->_get('instance_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
             $contrib->{$row->[0]}->{'place'} = $row->[1];
@@ -1936,7 +1936,7 @@ sub _insert_contributor {
         " VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id, $place, $role);
+    execute($sth, $self->_get('instance_id'), $id, $place, $role);
     return $self;
 }
 
@@ -1962,7 +1962,7 @@ sub _update_contributor {
           ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $role, $place, $self->_get('version_id'), $id);
+    execute($sth, $role, $place, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -1988,7 +1988,7 @@ sub _delete_contributor {
         ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id);
+    execute($sth, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -2136,7 +2136,7 @@ sub _insert_instance {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(INSTANCE_FIELDS));
-    $self->_set( { version_id => last_key(INSTANCE_TABLE) });
+    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
     return $self;
 }
 
@@ -2162,7 +2162,7 @@ sub _update_instance {
         ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('version_id'));
+    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
     return $self;
 }
 
@@ -2212,7 +2212,7 @@ sub _delete_instance {
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'));
+    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 

@@ -58,7 +58,7 @@ $LastChangedDate$
 
  # Version information
  $vers        = $asset->get_version();
- $vers_id     = $asset->get_version_id();
+ $vers_id     = $asset->get_instance_id();
  $current     = $asset->get_current_version();
  $checked_out = $asset->get_checked_out()
 
@@ -2238,7 +2238,7 @@ sub checkout {
     $ic_coll->del_objs(@ics);
     $ic_coll->add_new_objs(@ics);
 
-    $self->_set([qw(user__id modifier version_id checked_out)] =>
+    $self->_set([qw(user__id modifier instance_id checked_out)] =>
                 [$param->{user__id}, $param->{user__id}, undef, 1]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
@@ -2268,7 +2268,7 @@ sub save {
 
     my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $kw_coll) =
       $self->_get(qw(_related_grp_obj _tile _oc_coll _ic_coll _checkin _checkout
-                     version_id _kw_coll));
+                     instance_id _kw_coll));
 
     if ($co) {
         $tile->prepare_clone;
@@ -2733,7 +2733,7 @@ sub _sync_contributors {
     return $self unless $self->_get('_update_contributors');
 
     my $contribs = $self->_get_contributors();
-    my ($del_contribs, $vid) = $self->_get(qw(_del_contrib version_id));
+    my ($del_contribs, $vid) = $self->_get(qw(_del_contrib instance_id));
 
     foreach (keys %$del_contribs) {
         $self->_delete_contributor($_);
@@ -2940,7 +2940,7 @@ B<Notes:> NONE.
 $get_oc_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $oc_coll) = $self->_get('version_id', '_oc_coll');
+    my ($id, $oc_coll) = $self->_get('instance_id', '_oc_coll');
     return $oc_coll if $oc_coll;
     $oc_coll = Bric::Util::Coll::OutputChannel->new
       (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
@@ -3009,7 +3009,7 @@ B<Notes:> NONE.
 $get_ic_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $ic_coll) = $self->_get('version_id', '_ic_coll');
+    my ($id, $ic_coll) = $self->_get('instance_id', '_ic_coll');
     return $ic_coll if $ic_coll;
     $ic_coll = Bric::Util::Coll::InputChannel->new
       (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
