@@ -11,11 +11,11 @@ my $CLASS = 'Bric::Util::DBI::Test';
 # I'm just using the stuff from story for programming speed.
 use constant TABLE      => 'story';
 
-use constant VERSION_TABLE => 'story_instance';
+use constant INSTANCE_TABLE => 'story_instance';
 
 use constant WHERE => 's.id = i.story__id';
 
-use constant FROM => VERSION_TABLE . ' i, member m';
+use constant FROM => INSTANCE_TABLE . ' i, member m';
 use constant ID_COL => 't.id';
 
 use constant PARAM_FROM_MAP =>

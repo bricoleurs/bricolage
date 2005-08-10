@@ -79,7 +79,7 @@ use constant DEBUG => 0;
 
 use constant TABLE  => 'media';
 
-use constant VERSION_TABLE => 'media_instance';
+use constant INSTANCE_TABLE => 'media_instance';
 
 use constant ID_COL => 'mt.id';
 
@@ -100,7 +100,7 @@ use constant COLS           => qw( element__id
                                    site__id
                                    alias_id);
 
-use constant VERSION_COLS   => qw( name
+use constant INSTANCE_COLS   => qw( name
                                    description
                                    media__id
                                    usr__id
@@ -132,7 +132,7 @@ use constant FIELDS         => qw( element__id
                                    site_id
                                    alias_id);
 
-use constant VERSION_FIELDS => qw( name
+use constant INSTANCE_FIELDS => qw( name
                                    description
                                    id
                                    modifier
@@ -174,12 +174,12 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND mt.workflow__id = w.id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', '
-            . join(', i.', 'i.id', VERSION_COLS);
+            . join(', i.', 'i.id', INSTANCE_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i';
+use constant FROM => INSTANCE_TABLE . ' i';
 
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
@@ -2129,14 +2129,14 @@ B<Notes:> NONE.
 sub _insert_instance {
     my $self = shift;
 
-    my $sql = 'INSERT INTO '. VERSION_TABLE .
-      ' (id, '.join(', ', VERSION_COLS) . ')' .
-        " VALUES (${\next_key(VERSION_TABLE)}, ".
-          join(', ', ('?') x VERSION_COLS) . ')';
+    my $sql = 'INSERT INTO '. INSTANCE_TABLE .
+      ' (id, '.join(', ', INSTANCE_COLS) . ')' .
+        " VALUES (${\next_key(INSTANCE_TABLE)}, ".
+          join(', ', ('?') x INSTANCE_COLS) . ')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS));
-    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    execute($sth, $self->_get(INSTANCE_FIELDS));
+    $self->_set( { version_id => last_key(INSTANCE_TABLE) });
     return $self;
 }
 
@@ -2157,12 +2157,12 @@ B<Notes:> NONE.
 sub _update_instance {
     my $self = shift;
 
-    my $sql = 'UPDATE ' . VERSION_TABLE .
-      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+    my $sql = 'UPDATE ' . INSTANCE_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } INSTANCE_COLS) .
         ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('version_id'));
     return $self;
 }
 
@@ -2208,7 +2208,7 @@ B<Notes:> NONE.
 sub _delete_instance {
     my $self = shift;
 
-    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+    my $sql = 'DELETE FROM ' . INSTANCE_TABLE .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);

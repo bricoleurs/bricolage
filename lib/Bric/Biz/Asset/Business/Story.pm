@@ -197,7 +197,7 @@ use constant DEBUG => 0;
 
 use constant TABLE      => 'story';
 
-use constant VERSION_TABLE => 'story_instance';
+use constant INSTANCE_TABLE => 'story_instance';
 
 use constant ID_COL => 's.id';
 
@@ -219,7 +219,7 @@ use constant COLS       => qw( priority
                                site__id
                                alias_id);
 
-use constant VERSION_COLS => qw( name
+use constant INSTANCE_COLS => qw( name
                                  description
                                  story__id
                                  version
@@ -247,7 +247,7 @@ use constant FIELDS =>  qw( priority
                             site_id
                             alias_id);
 
-use constant VERSION_FIELDS => qw( name
+use constant INSTANCE_FIELDS => qw( name
                                    description
                                    id
                                    version
@@ -279,12 +279,12 @@ use constant WHERE => 's.id = i.story__id '
   . 'AND s.workflow__id = w.id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', '
-            . join(', i.', 'i.id', VERSION_COLS);
+            . join(', i.', 'i.id', INSTANCE_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i';
+use constant FROM => INSTANCE_TABLE . ' i';
 
 use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
@@ -663,7 +663,8 @@ The story version number. May use C<ANY> for a list of possible values.
 
 =item version_id
 
-The ID of a version of a story. May use C<ANY> for a list of possible values.
+The ID of an instance of a version of a story. May use C<ANY> for a list of 
+possible values.
 
 =item slug
 
@@ -2347,14 +2348,14 @@ NONE
 
 sub _insert_instance {
     my ($self) = @_;
-    my $sql = 'INSERT INTO '. VERSION_TABLE .
-      ' (id, '.join(', ', VERSION_COLS) . ')'.
-      "VALUES (${\next_key(VERSION_TABLE)}, ".
-      join(', ', ('?') x VERSION_COLS) . ')';
+    my $sql = 'INSERT INTO '. INSTANCE_TABLE .
+      ' (id, '.join(', ', INSTANCE_COLS) . ')'.
+      "VALUES (${\next_key(INSTANCE_TABLE)}, ".
+      join(', ', ('?') x INSTANCE_COLS) . ')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS));
-    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    execute($sth, $self->_get(INSTANCE_FIELDS));
+    $self->_set( { version_id => last_key(INSTANCE_TABLE) });
     return $self;
 }
 
@@ -2412,12 +2413,12 @@ NONE
 sub _update_instance {
     my ($self) = @_;
     return unless $self->_get__dirty();
-    my $sql = 'UPDATE ' . VERSION_TABLE .
-      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+    my $sql = 'UPDATE ' . INSTANCE_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } INSTANCE_COLS) .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('version_id'));
     return $self;
 }
 
@@ -2443,7 +2444,7 @@ NONE
 
 sub _delete_instance {
     my ($self) = @_;
-    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+    my $sql = 'DELETE FROM ' . INSTANCE_TABLE .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
