@@ -1781,6 +1781,7 @@ sub save {
                         $self->_delete_media();
                     }
                     $self->_set( {'_cancel' => undef });
+                    commit();
                     return $self;
                 } else {
                     $self->_update_instance();
@@ -1791,6 +1792,7 @@ sub save {
         } else {
             # insert both
             if ($self->_get('_cancel')) {
+                commit();
                 return $self;
             } else {
                 $self->_insert_media();

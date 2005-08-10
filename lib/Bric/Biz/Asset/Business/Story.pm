@@ -1834,6 +1834,7 @@ sub save {
             }
         } else {
             if ($self->_get('_cancel')) {
+                commit();
                 return $self;
             } else {
                 # This is Brand new insert both Tables
