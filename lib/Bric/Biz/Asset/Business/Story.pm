@@ -1824,6 +1824,7 @@ sub save {
                         $self->_delete_story();
                     }
                     $self->_set( {'_cancel' => undef });
+                    commit();
                     return $self;
                 } else {
                     $self->_update_instance();
