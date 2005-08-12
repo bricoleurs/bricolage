@@ -16,6 +16,19 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.7 ()
 
+=head2 Improvements
+
+=over 4
+
+=item *
+
+The installer now prefers typical installation paths over those in the
+C<$PATH> environment variable when searching for Apache and PostgreSQL
+installations. This is to favor servers installed manually over those included
+with the operating system. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over

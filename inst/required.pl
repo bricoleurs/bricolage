@@ -106,15 +106,15 @@ sub find_pg {
 
     # find PostgreSQL by looking for pg_config.  First search user's path
     # then some standard locations.
-    my @paths = (path(), qw(/usr/local/pgsql/bin
-			    /usr/local/postgres/bin
-                            /usr/lib/postgresql/bin
-			    /opt/pgsql/bin
-			    /usr/local/bin
-			    /usr/local/sbin
-			    /usr/bin
-			    /usr/sbin
-			    /bin));
+    my @paths = (qw(/usr/local/pgsql/bin
+                    /usr/local/postgres/bin
+                    /usr/lib/postgresql/bin
+                    /opt/pgsql/bin
+                    /usr/local/bin
+                    /usr/local/sbin
+                    /usr/bin
+                    /usr/sbin
+                    /bin), path);
     foreach my $path (@paths) {
 	if (-e catfile($path, "pg_config")) {
 	    $REQ{PG_CONFIG} = catfile($path, "pg_config");
@@ -135,7 +135,7 @@ sub find_pg {
             $REQ{PG_CONFIG} = 'NONE';
             ask_confirm("Enter path to pg_config", \$REQ{PG_CONFIG});
         } else {
-            return soft_fail("Failed to find pg_config.  Looked in:",
+            return soft_fail("Failed to find pg_config. Looked in:",
                              map { "\n\t$_" } @paths);
         }
     }
@@ -167,15 +167,15 @@ sub find_apache {
     # find Apache by looking for executables called httpd, httpsd,
     # apache-perl or apache, in that order.  First search user's
     # path then some standard locations.
-    my @paths = (path(), qw(/usr/local/apache/bin
-			    /usr/local/bin
-			    /usr/local/sbin
-			    /usr/bin
-			    /usr/sbin
-			    /bin));
+    my @paths = (qw(/usr/local/apache/bin
+                    /usr/local/bin
+                    /usr/local/sbin
+                    /usr/bin
+                    /usr/sbin
+                    /bin), path);
     my @exe = qw(httpd httpsd apache-perl apache);
 
- FIND: 
+ FIND:
     foreach my $exe (@exe) {
 	foreach my $path (@paths) {
 	    if (-e catfile($path, $exe)) {
@@ -189,7 +189,7 @@ sub find_apache {
     if ($REQ{APACHE_EXE}) {
         print "Found Apache server binary at '$REQ{APACHE_EXE}'.\n";
         unless (ask_yesno("Is this correct? [yes] ", 1)) {
-            ask_confirm("Enter path to Apache server binary", 
+            ask_confirm("Enter path to Apache server binary",
                         \$REQ{APACHE_EXE});
         }
     } else {
@@ -198,12 +198,12 @@ sub find_apache {
                       "binary? [no] ",
                       0)) {
             $REQ{APACHE_EXE} = 'NONE';
-            ask_confirm("Enter path to Apache server binary", 
+            ask_confirm("Enter path to Apache server binary",
                         \$REQ{APACHE_EXE});
         } else {
-            return soft_fail("Failed to find Apache executable.  Looked for ", 
-                             join(', ', @exe), 
-                             " in:", 
+            return soft_fail("Failed to find Apache executable. Looked for ",
+                             join(', ', @exe),
+                             " in:",
                              map { "\n\t$_" } @paths);
         }
     }
@@ -253,7 +253,7 @@ sub find_expat {
             }
         }
     }
-    return soft_fail("Failed to find libexpat.so.  Looked in:", 
+    return soft_fail("Failed to find libexpat.so. Looked in:",
 		     map { "\n\t$_" } @paths) unless $REQ{EXPAT};
     print "Found expat at $REQ{EXPAT}.\n";
 
