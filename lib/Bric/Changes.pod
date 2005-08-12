@@ -42,6 +42,11 @@ The Template Toolkit and HTML::Template burners work again. [David]
 Fixed syntax error in Bric::Util::Trans::SFTP. Reported by Kenneth Marshall.
 [David]
 
+=item *
+
+Eliminated "Subroutine Bric::App::Handler::rethrow_exception redefined"
+warning during startup with HTML::Mason 1.30. [David]
+
 =back
 
 =head1 VERSION 1.8.6 (2005-07-19)
