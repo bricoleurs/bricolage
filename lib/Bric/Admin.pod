@@ -1259,9 +1259,9 @@ directive will be passed to the httpd daemon.
 
 =item *
 
-B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache module 
-installed and want it to compress the the UI pages.  Pages will be as much 
-as fifteen times smaller, with minimal extra server load, resulting in faster
+B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache module
+installed and want it to compress the the UI pages.  Pages will be as much as
+fifteen times smaller, with minimal extra server load, resulting in faster
 load times and less bandwidth consumption. Disabled by default.
 
 =back
@@ -1362,6 +1362,12 @@ specified.
 B<MASON_DATA_ROOT:> Mason's data root. This where Mason stores the Bricolage UI
 elements once they've been compiled. Defaults to C<$BRICOLAGE_ROOT/data> if not
 specified. Make sure that SYS_USER has permission to write to this directory.
+
+=item *
+
+B<MASON_STATIC_SOURCE:> Set this directive to a true value (1, Yes, or On) to
+enable static source caching in the Bricolage UI. This can save many stats per
+request, and thus increase the performance of Bricolage. Disabled by default.
 
 =item *
 

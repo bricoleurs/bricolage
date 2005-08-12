@@ -342,6 +342,13 @@ moved to the asset's title, where the preview link formerly was, the
 the preview link. Also, the "Site" line now only shows up when there is more
 than one site. [Marshall]
 
+=item *
+
+Added C<MASON_STATIC_SOURCE> F<bricolage.conf> directive to enable static
+sources in the Mason-powered UI. Enabling this directive can eliminate many
+file system stats on every request, thus increasing performance. It's disabled
+by default, but you should turn it on now! [David]
+
 =back
 
 ##############################################################################

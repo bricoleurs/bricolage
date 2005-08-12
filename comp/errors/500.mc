@@ -94,7 +94,7 @@ clear_msg();
 # exception object ($fault) and $more_args are now always
 # in pnotes, not passed in %args
 my $fault = $r->pnotes('BRIC_EXCEPTION');
-warn '$fault not an exception object' unless isa_exception($fault);
+warn "'$fault' not an exception object" unless isa_exception($fault);
 
 my $more_err = $r->pnotes('BRIC_MORE_ERR');
 
