@@ -88,7 +88,6 @@ CREATE TABLE story_instance (
     name           VARCHAR(256),
     description    VARCHAR(1024),
     story_version__id      INTEGER      NOT NULL,
-    usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
@@ -105,9 +104,10 @@ CREATE TABLE story_version (
                                 DEFAULT NEXTVAL('seq_story_version'),
     story__id      INTEGER      NOT NULL,
     version        INTEGER,
-    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
+    usr__id        INTEGER      NOT NULL,
     primary_oc__id INTEGER      NOT NULL,
     primary_ic__id INTEGER      NOT NULL,
+    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_version__id PRIMARY KEY (id)
 );
 
@@ -263,10 +263,10 @@ CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story_version__story_instance ON story_instance(story_version__id);
-CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
 
 -- story_version
 CREATE INDEX fdx_story__story_version ON story_version(story__id);
+CREATE INDEX fdx_usr__story_version ON story_version(usr__id);
 
 -- story_uri
 CREATE INDEX fkx_story__story_uri ON story_uri(story__id);

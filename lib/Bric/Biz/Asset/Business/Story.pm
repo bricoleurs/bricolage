@@ -224,12 +224,12 @@ use constant COLS       => qw( priority
 use constant INSTANCE_COLS => qw( name
                                  description
                                  story_version__id
-                                 usr__id
                                  slug );
                                  
 use constant VERSION_COLS => qw( story__id
                                  version
                                  checked_out
+                                 usr__id
                                  primary_oc__id
                                  primary_ic__id );
 
@@ -254,12 +254,12 @@ use constant FIELDS =>  qw( priority
 use constant INSTANCE_FIELDS => qw( name
                                    description
                                    version_id
-                                   modifier
                                    slug );
                                    
 use constant VERSION_FIELDS => qw( id
                                    version
                                    checked_out
+                                   modifier
                                    primary_oc_id
                                    primary_ic_id );
 
@@ -352,8 +352,8 @@ use constant PARAM_WHERE_MAP => {
       version                => 'v.version = ?',
       published_version      => "s.published_version = v.version AND v.checked_out = '0'",
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
-      user__id               => 'i.usr__id = ?',
-      user_id                => 'i.usr__id = ?',
+      user__id               => 'v.usr__id = ?',
+      user_id                => 'v.usr__id = ?',
       _checked_in_or_out     => 'v.checked_out = '
                               . '( SELECT checked_out '
                               . 'FROM story_version '
@@ -473,8 +473,8 @@ use constant PARAM_ORDER_MAP => {
     version_id          => 'v.id',
     instance_id         => 'i.id',
     slug                => 'LOWER(i.slug)',
-    user_id             => 'i.usr__id',
-    user__id            => 'i.usr__id',
+    user_id             => 'v.usr__id',
+    user__id            => 'v.usr__id',
     _checked_out        => 'v.checked_out',
     primary_oc_id       => 'v.primary_oc__id',
     primary_ic_id       => 'v.primary_ic__id',

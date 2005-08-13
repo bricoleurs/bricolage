@@ -105,9 +105,6 @@ use constant COLS           => qw( element__id
 use constant INSTANCE_COLS   => qw( name
                                    description
                                    media_version__id
-                                   usr__id
-                                   media_type__id
-                                   category__id
                                    file_size
                                    file_name
                                    location
@@ -116,6 +113,9 @@ use constant INSTANCE_COLS   => qw( name
 use constant VERSION_COLS   => qw( media__id
                                    version
                                    checked_out
+                                   usr__id
+                                   media_type__id
+                                   category__id
                                    primary_oc__id
                                    primary_ic__id );
 
@@ -139,9 +139,6 @@ use constant FIELDS         => qw( element__id
 use constant INSTANCE_FIELDS => qw( name
                                    description
                                    version_id
-                                   modifier
-                                   media_type_id
-                                   category__id
                                    size
                                    file_name
                                    location
@@ -150,6 +147,9 @@ use constant INSTANCE_FIELDS => qw( name
 use constant VERSION_FIELDS => qw( id
                                    version
                                    checked_out
+                                   modifier
+                                   media_type_id
+                                   category__id
                                    primary_oc_id
                                    primary_ic_id );
 
@@ -175,7 +175,7 @@ use constant WHERE => 'mt.id = v.media__id '
   . 'AND mm.object_id = mt.id '
   . 'AND m.id = mm.member__id '
   . "AND m.active = '1' "
-  . 'AND c.id = i.category__id '
+  . 'AND c.id = v.category__id '
   . 'AND e.id = mt.element__id '
   . 'AND at.id = e.type__id '
   . 'AND mt.workflow__id = w.id';
@@ -240,8 +240,8 @@ use constant PARAM_WHERE_MAP => {
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'v.version = ?',
       published_version     => "mt.published_version = v.version AND v.checked_out = '0'",
-      user__id              => 'i.usr__id = ?',
-      user_id              => 'i.usr__id = ?',
+      user__id              => 'v.usr__id = ?',
+      user_id               => 'v.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
@@ -269,9 +269,9 @@ use constant PARAM_WHERE_MAP => {
       primary_ic_id         => 'v.primary_ic__id = ?',
       input_channel_id      => '(i.id = mic.media_instance__id AND '
                              . 'mic.input_channel__id = ?)',
-      category__id          => 'i.category__id = ?',
-      category_id           => 'i.category__id = ?',
-      category_uri          => 'i.category__id = c.id AND '
+      category__id          => 'v.category__id = ?',
+      category_id           => 'v.category__id = ?',
+      category_uri          => 'v.category__id = c.id AND '
                              . 'LOWER(c.uri) LIKE LOWER(?)',
       keyword               => 'mk.media_id = mt.id AND '
                              . 'k.id = mk.keyword_id AND '
@@ -304,7 +304,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                'moc.output_channel__id = ?'],
     input_channel_id       => ['i.id = mic.media_instance__id',
                                'mic.input_channel__id = ?'],
-    category_uri           => [ 'i.category__id = c.id',
+    category_uri           => [ 'v.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
@@ -336,13 +336,13 @@ use constant PARAM_ORDER_MAP => {
     title               => 'LOWER(i.name)',
     file_name           => 'LOWER(i.file_name)',
     location            => 'LOWER(i.location)',
-    category_id         => 'i.category__id',
-    category__id        => 'i.category__id',
+    category_id         => 'v.category__id',
+    category__id        => 'v.category__id',
     description         => 'LOWER(i.description)',
     version             => 'v.version',
     version_id          => 'v.id',
     instance_id         => 'i.id',
-    user__id            => 'i.usr__id',
+    user__id            => 'v.usr__id',
     _checked_out        => 'v.checked_out',
     primary_oc_id       => 'v.primary_oc__id',
     primary_ic_id       => 'v.primary_ic__id',
