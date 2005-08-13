@@ -208,13 +208,13 @@ sub save {
         if ($type eq 'story') {
             $del = prepare_c(qq{
                 DELETE FROM story__input_channel
-                WHERE  story_instance__id = ?
+                WHERE  story_version__id = ?
                        AND input_channel__id = ?
             }, undef);
         } elsif ($type eq 'media') {
             $del = prepare_c(qq{
                 DELETE FROM media__input_channel
-                WHERE  media_instance__id = ?
+                WHERE  media_version__id = ?
                        AND input_channel__id = ?
             }, undef);
         } elsif ($type eq 'output_channel') {
@@ -233,13 +233,13 @@ sub save {
         if ($type eq 'story') {
             $ins = prepare_c(qq{
                 INSERT INTO story__input_channel
-                            (story_instance__id, input_channel__id)
+                            (story_version__id, input_channel__id)
                 VALUES (?, ?)
             }, undef);
         } elsif ($type eq 'media') {
             $ins = prepare_c(qq{
                 INSERT INTO media__input_channel
-                            (media_instance__id, input_channel__id)
+                            (media_version__id, input_channel__id)
                 VALUES (?, ?)
             }, undef);
         } elsif ($type eq 'output_channel') {
