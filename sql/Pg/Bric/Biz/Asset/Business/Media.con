@@ -53,14 +53,6 @@ ALTER TABLE media_instance
 ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE CASCADE;
 
-ALTER TABLE media_instance
-ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
-
-ALTER TABLE media_instance
-ADD CONSTRAINT fk_primary_ic__media_instance FOREIGN KEY (primary_ic__id)
-	REFERENCES input_channel(id) ON DELETE CASCADE;
-
 -- -----------------------------------------------------------------------------
 -- Table media_version
 
@@ -68,6 +60,14 @@ ALTER TABLE media_version
 ADD CONSTRAINT fk_media__media_version FOREIGN KEY (media__id)
 	REFERENCES media(id) ON DELETE CASCADE;
 
+ALTER TABLE media_version
+ADD CONSTRAINT fk_primary_oc__media_version FOREIGN KEY (primary_oc__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE media_version
+ADD CONSTRAINT fk_primary_ic__media_version FOREIGN KEY (primary_ic__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
+	
 -- -----------------------------------------------------------------------------
 -- Table media_uri
 

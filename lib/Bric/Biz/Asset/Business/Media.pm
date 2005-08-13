@@ -107,8 +107,6 @@ use constant INSTANCE_COLS   => qw( name
                                    media_version__id
                                    usr__id
                                    media_type__id
-                                   primary_oc__id
-                                   primary_ic__id
                                    category__id
                                    file_size
                                    file_name
@@ -117,7 +115,9 @@ use constant INSTANCE_COLS   => qw( name
                                    
 use constant VERSION_COLS   => qw( media__id
                                    version
-                                   checked_out );
+                                   checked_out
+                                   primary_oc__id
+                                   primary_ic__id );
 
 use constant FIELDS         => qw( element__id
                                    priority
@@ -141,8 +141,6 @@ use constant INSTANCE_FIELDS => qw( name
                                    version_id
                                    modifier
                                    media_type_id
-                                   primary_oc_id
-                                   primary_ic_id
                                    category__id
                                    size
                                    file_name
@@ -151,7 +149,9 @@ use constant INSTANCE_FIELDS => qw( name
                                    
 use constant VERSION_FIELDS => qw( id
                                    version
-                                   checked_out );
+                                   checked_out
+                                   primary_oc_id
+                                   primary_ic_id );
 
 use constant RO_FIELDS      => qw( class_id );
 use constant RO_COLUMNS     => ', at.biz_class__id';
@@ -263,10 +263,10 @@ use constant PARAM_WHERE_MAP => {
                               . '(SELECT media__id FROM media_version '
                               . 'WHERE mt.id = media_version.media__id '
                               . "AND media_version.checked_out = '1')",
-      primary_oc_id         => 'i.primary_oc__id = ?',
+      primary_oc_id         => 'v.primary_oc__id = ?',
       output_channel_id     => '(i.id = moc.media_version__id AND '
                              . 'moc.output_channel__id = ?)',
-      primary_ic_id         => 'i.primary_ic__id = ?',
+      primary_ic_id         => 'v.primary_ic__id = ?',
       input_channel_id      => '(i.id = mic.media_instance__id AND '
                              . 'mic.input_channel__id = ?)',
       category__id          => 'i.category__id = ?',
@@ -344,8 +344,8 @@ use constant PARAM_ORDER_MAP => {
     instance_id         => 'i.id',
     user__id            => 'i.usr__id',
     _checked_out        => 'v.checked_out',
-    primary_oc_id       => 'i.primary_oc__id',
-    primary_ic_id       => 'i.primary_ic__id',
+    primary_oc_id       => 'v.primary_oc__id',
+    primary_ic_id       => 'v.primary_ic__id',
     category_uri        => 'LOWER(i.uri)',
     keyword             => 'LOWER(k.name)',
     return_versions     => 'v.version',

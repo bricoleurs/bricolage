@@ -39,18 +39,18 @@ ALTER TABLE story_instance
 ADD CONSTRAINT fk_usr__story_instance FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE SET NULL;
 
-ALTER TABLE story_instance
-ADD CONSTRAINT fk_primary_oc__story_instance FOREIGN KEY (primary_oc__id)
-	REFERENCES output_channel(id) ON DELETE SET NULL;
-	
-ALTER TABLE story_instance
-ADD CONSTRAINT fk_primary_ic__story_instance FOREIGN KEY (primary_ic__id)
-	REFERENCES input_channel(id) ON DELETE SET NULL;
-
 -- Story version constraints
 ALTER TABLE story_version
 ADD CONSTRAINT fk_story__story_version FOREIGN KEY (story__id)
 	REFERENCES story(id) ON DELETE CASCADE;
+
+ALTER TABLE story_version
+ADD CONSTRAINT fk_primary_oc__story_version FOREIGN KEY (primary_oc__id)
+	REFERENCES output_channel(id) ON DELETE SET NULL;
+	
+ALTER TABLE story_version
+ADD CONSTRAINT fk_primary_ic__story_version FOREIGN KEY (primary_ic__id)
+	REFERENCES input_channel(id) ON DELETE SET NULL;
 
 -- Story URI constraint.
 ALTER TABLE story_uri

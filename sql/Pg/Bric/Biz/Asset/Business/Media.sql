@@ -87,8 +87,6 @@ CREATE TABLE media_instance (
     usr__id             INTEGER   NOT NULL,
     category__id        INTEGER   NOT NULL,
     media_type__id      INTEGER   NOT NULL,
-    primary_oc__id      INTEGER   NOT NULL,
-    primary_ic__id      INTEGER   NOT NULL,
     file_size           INTEGER,
     file_name           VARCHAR(256),
     location            VARCHAR(256),
@@ -109,6 +107,8 @@ CREATE TABLE media_version (
     media__id           INTEGER   NOT NULL,
     version             INTEGER,
     checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
+    primary_oc__id      INTEGER   NOT NULL,
+    primary_ic__id      INTEGER   NOT NULL,
     CONSTRAINT pk_media_version__id PRIMARY KEY (id)
 );
 
@@ -275,10 +275,11 @@ CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
-CREATE INDEX fdx_primary_oc__media_instance ON media_instance(primary_oc__id);
 
 -- media_version
 CREATE INDEX fkx_media__media_version ON media_version(media__id);
+CREATE INDEX fdx_primary_oc__media_version ON media_version(primary_oc__id);
+CREATE INDEX fdx_primary_ic__media_version ON media_version(primary_ic__id);
 
 -- media_uri
 CREATE INDEX fkx_media__media_uri ON media_uri(media__id);

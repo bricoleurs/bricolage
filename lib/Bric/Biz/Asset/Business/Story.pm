@@ -225,13 +225,13 @@ use constant INSTANCE_COLS => qw( name
                                  description
                                  story_version__id
                                  usr__id
-                                 primary_oc__id
-                                 primary_ic__id
                                  slug );
                                  
 use constant VERSION_COLS => qw( story__id
                                  version
-                                 checked_out );
+                                 checked_out
+                                 primary_oc__id
+                                 primary_ic__id );
 
 use constant FIELDS =>  qw( priority
                             source__id
@@ -255,13 +255,13 @@ use constant INSTANCE_FIELDS => qw( name
                                    description
                                    version_id
                                    modifier
-                                   primary_oc_id
-                                   primary_ic_id
                                    slug );
                                    
 use constant VERSION_FIELDS => qw( id
                                    version
-                                   checked_out );
+                                   checked_out
+                                   primary_oc_id
+                                   primary_ic_id );
 
 use constant AD_PARAM => '_AD_PARAM';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Story';
@@ -372,14 +372,14 @@ use constant PARAM_WHERE_MAP => {
                               . '(SELECT story__id FROM story_version '
                               . 'WHERE s.id = story_version.story__id '
                               . "AND story_version.checked_out = '1')",
-      primary_oc_id          => 'i.primary_oc__id = ?',
+      primary_oc_id          => 'v.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
-                              . 'i.primary_oc__id = ?))',
-      primary_ic_id          => 'i.primary_ic__id = ?',
+                              . 'v.primary_oc__id = ?))',
+      primary_ic_id          => 'v.primary_ic__id = ?',
       input_channel_id       => '(i.id = sic.story_instance__id AND '
                               . '(sic.input_channel__id = ? OR '
-                              . 'i.primary_ic__id = ?))',
+                              . 'v.primary_ic__id = ?))',
       category_id            => 'i.id = sc2.story_instance__id AND '
                               . 'sc2.category__id = ?',
       primary_category_id    => 'i.id = sc2.story_instance__id AND '
@@ -476,8 +476,8 @@ use constant PARAM_ORDER_MAP => {
     user_id             => 'i.usr__id',
     user__id            => 'i.usr__id',
     _checked_out        => 'v.checked_out',
-    primary_oc_id       => 'i.primary_oc__id',
-    primary_ic_id       => 'i.primary_ic__id',
+    primary_oc_id       => 'v.primary_oc__id',
+    primary_ic_id       => 'v.primary_ic__id',
     category_id         => 'sc2.category_id',
     category_uri        => 'LOWER(c.uri)',
     keyword             => 'LOWER(k.name)',

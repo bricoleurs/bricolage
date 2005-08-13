@@ -90,8 +90,6 @@ CREATE TABLE story_instance (
     story_version__id      INTEGER      NOT NULL,
     usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
-    primary_oc__id INTEGER      NOT NULL,
-    primary_ic__id INTEGER      NOT NULL,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
 
@@ -108,6 +106,8 @@ CREATE TABLE story_version (
     story__id      INTEGER      NOT NULL,
     version        INTEGER,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
+    primary_oc__id INTEGER      NOT NULL,
+    primary_ic__id INTEGER      NOT NULL,
     CONSTRAINT pk_story_version__id PRIMARY KEY (id)
 );
 
