@@ -41,12 +41,19 @@ ALTER TABLE formatting
 -- Table: formatting_instance
 
 ALTER TABLE formatting_instance
-    ADD CONSTRAINT fk_formatting__frmt_instance FOREIGN KEY (formatting__id)
-    REFERENCES formatting(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_frmt_version__frmt_instance FOREIGN KEY (formatting_version__id)
+    REFERENCES formatting_version(id) ON DELETE CASCADE;
 
 ALTER TABLE formatting_instance
     ADD CONSTRAINT fk_usr__format_instance FOREIGN KEY (usr__id)
     REFERENCES usr(id) ON DELETE SET NULL;
+
+-- -----------------------------------------------------------------------------
+-- Table: formatting_version
+
+ALTER TABLE formatting_version
+    ADD CONSTRAINT fk_frmt_version__frmt_instance FOREIGN KEY (formatting__id)
+    REFERENCES formatting(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: formatting_member

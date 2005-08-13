@@ -154,6 +154,7 @@ use constant UTILITY_TEMPLATE => 3;
 # constants for the Database
 use constant TABLE      => 'formatting';
 use constant INSTANCE_TABLE => 'formatting_instance';
+use constant VERSION_TABLE => 'formatting_version';
 use constant ID_COL => 'f.id';
 use constant COLS       => qw( name
                                priority
@@ -174,12 +175,14 @@ use constant COLS       => qw( name
                                active
                                site__id);
 
-use constant INSTANCE_COLS => qw( formatting__id
+use constant INSTANCE_COLS => qw( formatting_version__id
+                                  usr__id
+                                  data
+                                  file_name);
+                                 
+use constant VERSION_COLS => qw( formatting__id
                                  version
-                                 usr__id
-                                 data
-                                 file_name
-                                 checked_out);
+                                 checked_out );
 
 use constant FIELDS     => qw( name
                                priority
@@ -198,14 +201,16 @@ use constant FIELDS     => qw( name
                                workflow_id
                                desk_id
                                _active
-                               site_id);
+                               site_id );
 
-use constant INSTANCE_FIELDS => qw( id
+use constant INSTANCE_FIELDS => qw( version_id
+                                    modifier
+                                    data
+                                    file_name );
+                                   
+use constant VERSION_FIELDS => qw( id
                                    version
-                                   modifier
-                                   data
-                                   file_name
-                                   checked_out);
+                                   checked_out );
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
 use constant INSTANCE_GROUP_ID => 33;
@@ -219,7 +224,8 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
                             'id_list(DISTINCT w.asset_grp_id) AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 'f.id = i.formatting__id '
+use constant WHERE => 'f.id = v.formatting__id '
+  . 'AND v.id = i.formatting_version__id '
   . 'AND fm.object_id = f.id '
   . 'AND m.id = fm.member__id '
   . "AND m.active = '1' "
@@ -227,12 +233,13 @@ use constant WHERE => 'f.id = i.formatting__id '
   . 'AND f.workflow__id = w.id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', '
-            . join(', i.', 'i.id', INSTANCE_COLS);
+                      . join(', i.', 'i.id', INSTANCE_COLS) . ', '
+                      . join(', v.', 'v.id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => INSTANCE_TABLE . ' i';
+use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v';
 
 use constant PARAM_FROM_MAP => {
     _not_simple      => 'formatting_member fm, member m, '
@@ -253,7 +260,8 @@ use constant PARAM_WHERE_MAP => {
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
-    instance_id            => 'i.id = ?',
+    instance_id           => 'i.id = ?',
+    version_id            => 'v.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
     element__id           => 'f.element__id = ?',
     element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
@@ -270,33 +278,33 @@ use constant PARAM_WHERE_MAP => {
     file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
     title                 => 'LOWER(f.name) LIKE LOWER(?)',
     description           => 'LOWER(f.description) LIKE LOWER(?)',
-    version               => 'i.version = ?',
-    published_version     => 'f.published_version = i.version AND i.checked_out = 0',
-    deployed_version      => 'f.published_version = i.version AND i.checked_out = 0',
+    version               => 'v.version = ?',
+    published_version     => 'f.published_version = v.version AND v.checked_out = 0',
+    deployed_version      => 'f.published_version = v.version AND v.checked_out = 0',
     user__id              => 'i.usr__id = ?',
     user_id               => 'i.usr__id = ?',
-    _checked_in_or_out    => 'i.checked_out = '
+    _checked_in_or_out    => 'v.checked_out = '
                            . '( SELECT checked_out '
-                           . 'FROM formatting_instance '
-                           . 'WHERE version = i.version '
-                           . 'AND formatting__id = i.formatting__id '
+                           . 'FROM formatting_version '
+                           . 'WHERE version = v.version '
+                           . 'AND formatting__id = v.formatting__id '
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
-    checked_in            => 'i.checked_out = '
+    checked_in            => 'v.checked_out = '
                            . '( SELECT checked_out '
-                           . 'FROM formatting_instance '
-                           . 'WHERE version = i.version '
-                           . 'AND formatting__id = i.formatting__id '
+                           . 'FROM formatting_version '
+                           . 'WHERE version = v.version '
+                           . 'AND formatting__id = v.formatting__id '
                            . 'ORDER BY checked_out ASC LIMIT 1 )',
-    checked_out           => 'i.checked_out = ?',
-    _checked_out          => 'i.checked_out = ?',
-    _not_checked_out      => "i.checked_out = '0' AND f.id not in "
-                           . '(SELECT formatting__id FROM formatting_instance '
-                           . 'WHERE f.id = formatting_instance.formatting__id '
-                           . "AND formatting_instance.checked_out = '1')",
+    checked_out           => 'v.checked_out = ?',
+    _checked_out          => 'v.checked_out = ?',
+    _not_checked_out      => "v.checked_out = '0' AND f.id not in "
+                           . '(SELECT formatting__id FROM formatting_version '
+                           . 'WHERE f.id = formatting_version.formatting__id '
+                           . "AND formatting_version.checked_out = '1')",
     category_id           => 'f.category__id = ?',
     category_uri          => 'f.category__id = c.id AND '
                            . 'LOWER(c.uri) LIKE LOWER(?))',
-    _no_return_versions   => 'f.current_version = i.version',
+    _no_return_versions   => 'f.current_version = v.version',
     grp_id                => "m2.active = '1' AND "
                            . 'm2.grp__id = ? AND '
                            . 'f.id = fm2.object_id AND '
@@ -337,13 +345,14 @@ use constant PARAM_ORDER_MAP => {
     file_name           => 'LOWER(i.file_name)',
     category_uri        => 'LOWER(i.file_name)',
     description         => 'LOWER(f.description)',
-    version             => 'i.version',
-    instance_id          => 'i.id',
+    version             => 'v.version',
+    version_id          => 'v.id',
+    instance_id         => 'i.id',
     user_id             => 'i.usr__id',
     user__id            => 'i.usr__id',
-    _checked_out        => 'i.checked_out',
+    _checked_out        => 'v.checked_out',
     category_id         => 'f.category__id',
-    return_versions     => 'i.version',
+    return_versions     => 'v.version',
 };
 
 use constant DEFAULT_ORDER => 'deploy_date';
@@ -1744,11 +1753,8 @@ sub checkout {
             throw_gen(error => "Must be checked out to users");
         }
 
-        $self->_set({'user__id'    => $param->{'user__id'} ,
-                     'modifier'    => $param->{'user__id'},
-                     'instance_id'  => undef,
-                     'checked_out' => 1
-                    });
+        $self->_set([qw(user__id modifier version_id instance_id checked_out)] =>
+                    [$param->{user__id}, $param->{user__id}, undef, undef, 1]);
 
         return $self;
 }
@@ -1881,33 +1887,41 @@ sub save {
     my ($self) = @_;
 
     # Handle a cancel.
-    my ($id, $vid, $cancel, $ver) =
-      $self->_get(qw(id instance_id _cancel version));
+    my ($id, $cancel, $ver) =
+      $self->_get(qw(id _cancel version));
 
     # Only update/insert this object if some of our fields are dirty.
     if ($self->_get__dirty) {
-        if ($self->get_id) {
+        if ($id) {
             # make any necessary updates to the Main table
             $self->_update_formatting();
 
-            # Update or insert depending on if we have an ID.
-            if ($self->get_instance_id) {
-                if ($cancel) {
-                    if (defined $id and defined $vid) {
-                        $self->_delete_instance();
-                        $self->_delete_formatting() if $ver == 0;
-                        $self->_set(['_cancel'], [undef]);
-                    }
+            if ($self->_get('version_id')) {
+                if ($self->_get('_cancel')) {
+                    $self->_delete_version();
+                    $self->_delete_formatting() if $ver == 0;
+                    $self->_set(['_cancel'], [undef]);
                     return $self;
+                } else {
+                    $self->_update_version();
                 }
+            } else {
+                $self->_insert_version();
+            }
+            # Update or insert depending on if we have an ID.
+            if ($self->_get('instance_id')) {
                 $self->_update_instance();
             } else {
                 $self->_insert_instance();
             }
         } else {
-            # This is Brand new insert both Tables
-            $self->_insert_formatting();
-            $self->_insert_instance();
+            if ($self->_get('_cancel')) {
+                return $self;
+            } else {
+                $self->_insert_formatting();
+                $self->_insert_version();
+                $self->_insert_instance();
+            }
         }
     }
 
@@ -2126,6 +2140,30 @@ sub _insert_formatting {
 
 ################################################################################
 
+=item $self = $self->_insert_version()
+
+Inserts a row associated with a version of a formatting asset
+
+=cut
+
+sub _insert_version {
+        my ($self) = @_;
+
+        my $sql = 'INSERT INTO '. VERSION_TABLE . 
+                                ' (id, '.join(', ', VERSION_COLS) .') '.
+                                "VALUES (${\next_key(VERSION_TABLE)}, " . 
+                                        join(',',('?') x VERSION_COLS) . ')';
+
+        my $sth = prepare_c($sql, undef);
+        execute($sth, $self->_get(VERSION_FIELDS));
+
+        $self->_set(['version_id'], [last_key(VERSION_TABLE)]);
+
+        return $self;
+}
+
+################################################################################
+
 =item $self = $self->_insert_instance()
 
 Inserts a row associated with an instance of a formatting asset
@@ -2196,6 +2234,28 @@ sub _update_formatting {
 
 ################################################################################
 
+=item $self = $self->_update_version()
+
+Updates the row related to the version of the formatting asset
+
+=cut
+
+sub _update_version {
+        my ($self) = @_;
+
+        my $sql = 'UPDATE ' . VERSION_TABLE .
+                                ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+                                ' WHERE id=? ';
+
+        my $sth = prepare_c($sql, undef);
+
+        execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+
+        return $self;
+}
+
+################################################################################
+
 =item $self = $self->_update_instance()
 
 Updates the row related to the instance of the formatting asset
@@ -2223,7 +2283,7 @@ sub _update_instance {
 
         my $sth = prepare_c($sql, undef);
 
-        execute($sth, $self->_get(INSTANCE_FIELDS), $self->get_instance_id);
+        execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
 
         return $self;
 }
@@ -2258,6 +2318,34 @@ sub _delete_formatting {
         execute($sth, $self->get_id);
 
         return $self;
+}
+
+################################################################################
+
+=item $self = $self->_delete_version()
+
+Removes the version specific row from the database
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _delete_version {
+    my ($self) = @_;
+    my $sql = 'DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ';
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get('version_id'));
+    return $self;
 }
 
 ################################################################################

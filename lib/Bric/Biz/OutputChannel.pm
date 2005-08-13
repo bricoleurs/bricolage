@@ -1919,17 +1919,17 @@ sub _do_list {
             $wheres .= ' AND oc.id = stoc.output_channel__id ' .
               'AND stoc.server_type__id = ?';
             push @params, $v;
-        } elsif ($k eq 'story_instance_id') {
+        } elsif ($k eq 'story_version_id') {
             # Join in the story__output_channel table.
             $tables .= ', story__output_channel soc';
             $wheres .= ' AND oc.id = soc.output_channel__id ' .
-              'AND soc.story_instance__id = ?';
+              'AND soc.story_version__id = ?';
             push @params, $v;
-        } elsif ($k eq 'media_instance_id') {
+        } elsif ($k eq 'media_version_id') {
             # Join in the media__output_channel table.
             $tables .= ', media__output_channel moc';
             $wheres .= ' AND oc.id = moc.output_channel__id ' .
-              'AND moc.media_instance__id = ?';
+              'AND moc.media_version__id = ?';
             push @params, $v;
         } elsif ($k eq 'site_id') {
             $wheres .= ' AND oc.site__id = ?';

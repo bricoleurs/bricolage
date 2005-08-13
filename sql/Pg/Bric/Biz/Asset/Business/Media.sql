@@ -15,6 +15,8 @@ CREATE SEQUENCE seq_media START 1024;
 
 CREATE SEQUENCE seq_media_instance START 1024;
 
+CREATE SEQUENCE seq_media_version START 1024;
+
 -- Unique ids for the media_contributor table
 CREATE SEQUENCE seq_media__contributor START 1024;
 
@@ -81,9 +83,8 @@ CREATE TABLE media_instance (
                                         DEFAULT NEXTVAL('seq_media_instance'),
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    media__id           INTEGER   NOT NULL,
+    media_version__id   INTEGER   NOT NULL,
     usr__id             INTEGER   NOT NULL,
-    version             INTEGER,
     category__id        INTEGER   NOT NULL,
     media_type__id      INTEGER   NOT NULL,
     primary_oc__id      INTEGER   NOT NULL,
@@ -92,8 +93,23 @@ CREATE TABLE media_instance (
     file_name           VARCHAR(256),
     location            VARCHAR(256),
     uri                 VARCHAR(256),
-    checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: media_version
+--
+-- Description: An version of a media object
+--
+--
+
+CREATE TABLE media_version (
+    id                  INTEGER   NOT NULL
+                                        DEFAULT NEXTVAL('seq_media_version'),
+    media__id           INTEGER   NOT NULL,
+    version             INTEGER,
+    checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
+    CONSTRAINT pk_media_version__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -118,10 +134,10 @@ CREATE TABLE media_uri (
 --
 
 CREATE TABLE media__output_channel (
-    media_instance__id  INTEGER  NOT NULL,
+    media_version__id  INTEGER  NOT NULL,
     output_channel__id  INTEGER  NOT NULL,
     CONSTRAINT pk_media_output_channel
-      PRIMARY KEY (media_instance__id, output_channel__id)
+      PRIMARY KEY (media_version__id, output_channel__id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -132,10 +148,10 @@ CREATE TABLE media__output_channel (
 --
 
 CREATE TABLE media__input_channel (
-    media_instance__id  INTEGER  NOT NULL,
+    media_version__id  INTEGER  NOT NULL,
     input_channel__id   INTEGER  NOT NULL,
     CONSTRAINT pk_media_input_channel
-      PRIMARY KEY (media_instance__id, input_channel__id)
+      PRIMARY KEY (media_version__id, input_channel__id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -256,11 +272,13 @@ CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));
 CREATE INDEX idx_media_instance__description ON media_instance(LOWER(description));
 CREATE INDEX idx_media_instance__file_name ON media_instance(LOWER(file_name));
 CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
-CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
 CREATE INDEX fdx_primary_oc__media_instance ON media_instance(primary_oc__id);
+
+-- media_version
+CREATE INDEX fkx_media__media_version ON media_version(media__id);
 
 -- media_uri
 CREATE INDEX fkx_media__media_uri ON media_uri(media__id);
@@ -268,11 +286,11 @@ CREATE UNIQUE INDEX udx_media_uri__site_id__uri
 ON media_uri(lower_text_num(uri, site__id));
 
 -- media__output_channel
-CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);
+CREATE INDEX fkx_media__oc__media ON media__output_channel(media_version__id);
 CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
 
 -- media__input_channel
-CREATE INDEX fkx_media__ic__media ON media__input_channel(media_instance__id);
+CREATE INDEX fkx_media__ic__media ON media__input_channel(media_version__id);
 CREATE INDEX fkx_media__ic__ic ON media__input_channel(input_channel__id);
 
 -- media_member.

@@ -325,11 +325,11 @@ include_parent_id
 
 =item *
 
-story_instance_id
+story_version_id
 
 =item *
 
-media_instance_id
+media_version_id
 
 =item *
 
@@ -1219,17 +1219,17 @@ sub _do_list {
             $wheres .= ' AND ic.id = inc.include_ic_id ' .
               'AND inc.input_channel__id = ?';
             push @params, $v;
-        } elsif ($k eq 'story_instance_id') {
+        } elsif ($k eq 'story_version_id') {
             # Join in the story__input_channel table.
             $tables .= ', story__input_channel sic';
             $wheres .= ' AND ic.id = sic.input_channel__id ' .
-              'AND sic.story_instance__id = ?';
+              'AND sic.story_version__id = ?';
             push @params, $v;
-        } elsif ($k eq 'media_instance_id') {
+        } elsif ($k eq 'media_version_id') {
             # Join in the media__input_channel table.
             $tables .= ', media__input_channel mic';
             $wheres .= ' AND ic.id = mic.input_channel__id ' .
-              'AND mic.media_instance__id = ?';
+              'AND mic.media_version__id = ?';
             push @params, $v;
         } elsif ($k eq 'output_channel_id') {
             # Join in the output_channel__input_channel table

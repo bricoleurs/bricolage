@@ -38,9 +38,9 @@ ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)
 -- Table media_instance
 
 ALTER TABLE media_instance
-ADD CONSTRAINT fk_media__media_instance FOREIGN KEY (media__id)
-	REFERENCES media(id) ON DELETE CASCADE;
-
+ADD CONSTRAINT fk_media_version__media_instance FOREIGN KEY (media_version__id)
+	REFERENCES media_version(id) ON DELETE CASCADE;
+	
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_category__media_instance FOREIGN KEY (category__id)
 	REFERENCES category(id) ON DELETE CASCADE;
@@ -61,7 +61,16 @@ ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_ic__media_instance FOREIGN KEY (primary_ic__id)
 	REFERENCES input_channel(id) ON DELETE CASCADE;
 
--- Media URI constraint.
+-- -----------------------------------------------------------------------------
+-- Table media_version
+
+ALTER TABLE media_version
+ADD CONSTRAINT fk_media__media_version FOREIGN KEY (media__id)
+	REFERENCES media(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table media_uri
+
 ALTER TABLE media_uri
 ADD CONSTRAINT fk_media__media_uri FOREIGN KEY (media__id)
     REFERENCES media(id) ON DELETE CASCADE;
@@ -73,8 +82,8 @@ REFERENCES site(id) ON DELETE CASCADE;
 -- -----------------------------------------------------------------------------
 -- Media to output channel mapping constraints
 ALTER TABLE media__output_channel 
-ADD CONSTRAINT fk_media__oc__media FOREIGN KEY (media_instance__id)
-	REFERENCES media_instance(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_media__oc__media FOREIGN KEY (media_version__id)
+	REFERENCES media_version(id) ON DELETE CASCADE;
 
 ALTER TABLE media__output_channel 
 ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
@@ -83,8 +92,8 @@ ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
 -- -----------------------------------------------------------------------------
 -- Media to input channel mapping constraints
 ALTER TABLE media__input_channel 
-ADD CONSTRAINT fk_media__ic__media FOREIGN KEY (media_instance__id)
-	REFERENCES media_instance(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_media__ic__media FOREIGN KEY (media_version__id)
+	REFERENCES media_version(id) ON DELETE CASCADE;
 
 ALTER TABLE media__input_channel 
 ADD CONSTRAINT fk_media__ic__ic FOREIGN KEY (input_channel__id)

@@ -2238,8 +2238,8 @@ sub checkout {
     $ic_coll->del_objs(@ics);
     $ic_coll->add_new_objs(@ics);
 
-    $self->_set([qw(user__id modifier instance_id checked_out)] =>
-                [$param->{user__id}, $param->{user__id}, undef, 1]);
+    $self->_set([qw(user__id modifier version_id instance_id checked_out)] =>
+                [$param->{user__id}, $param->{user__id}, undef, undef, 1]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
@@ -2266,9 +2266,9 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $kw_coll) =
+    my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $iid, $kw_coll) =
       $self->_get(qw(_related_grp_obj _tile _oc_coll _ic_coll _checkin _checkout
-                     instance_id _kw_coll));
+                     version_id instance_id _kw_coll));
 
     if ($co) {
         $tile->prepare_clone;
@@ -2281,7 +2281,7 @@ sub save {
     $self->_sync_attributes;
 
     if ($tile) {
-        $tile->set_object_instance_id($vid);
+        $tile->set_object_instance_id($iid);
         $tile->save;
     }
 
@@ -2940,10 +2940,10 @@ B<Notes:> NONE.
 $get_oc_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $oc_coll) = $self->_get('instance_id', '_oc_coll');
+    my ($id, $oc_coll) = $self->_get('version_id', '_oc_coll');
     return $oc_coll if $oc_coll;
     $oc_coll = Bric::Util::Coll::OutputChannel->new
-      (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
+      (defined $id ? {$self->key_name . '_version_id' => $id} : undef);
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
@@ -3009,10 +3009,10 @@ B<Notes:> NONE.
 $get_ic_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $ic_coll) = $self->_get('instance_id', '_ic_coll');
+    my ($id, $ic_coll) = $self->_get('version_id', '_ic_coll');
     return $ic_coll if $ic_coll;
     $ic_coll = Bric::Util::Coll::InputChannel->new
-      (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
+      (defined $id ? {$self->key_name . '_version_id' => $id} : undef);
     $self->_set(['_ic_coll'], [$ic_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $ic_coll;

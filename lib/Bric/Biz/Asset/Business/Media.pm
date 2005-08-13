@@ -81,6 +81,8 @@ use constant TABLE  => 'media';
 
 use constant INSTANCE_TABLE => 'media_instance';
 
+use constant VERSION_TABLE => 'media_version';
+
 use constant ID_COL => 'mt.id';
 
 use constant COLS           => qw( element__id
@@ -102,9 +104,8 @@ use constant COLS           => qw( element__id
 
 use constant INSTANCE_COLS   => qw( name
                                    description
-                                   media__id
+                                   media_version__id
                                    usr__id
-                                   version
                                    media_type__id
                                    primary_oc__id
                                    primary_ic__id
@@ -112,8 +113,11 @@ use constant INSTANCE_COLS   => qw( name
                                    file_size
                                    file_name
                                    location
-                                   uri
-                                   checked_out);
+                                   uri );
+                                   
+use constant VERSION_COLS   => qw( media__id
+                                   version
+                                   checked_out );
 
 use constant FIELDS         => qw( element__id
                                    priority
@@ -134,9 +138,8 @@ use constant FIELDS         => qw( element__id
 
 use constant INSTANCE_FIELDS => qw( name
                                    description
-                                   id
+                                   version_id
                                    modifier
-                                   version
                                    media_type_id
                                    primary_oc_id
                                    primary_ic_id
@@ -144,8 +147,11 @@ use constant INSTANCE_FIELDS => qw( name
                                    size
                                    file_name
                                    location
-                                   uri
-                                   checked_out);
+                                   uri );
+                                   
+use constant VERSION_FIELDS => qw( id
+                                   version
+                                   checked_out );
 
 use constant RO_FIELDS      => qw( class_id );
 use constant RO_COLUMNS     => ', at.biz_class__id';
@@ -164,7 +170,8 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
                             'id_list(DISTINCT w.asset_grp_id) AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 'mt.id = i.media__id '
+use constant WHERE => 'mt.id = v.media__id '
+  . 'AND v.id = i.media_version__id '
   . 'AND mm.object_id = mt.id '
   . 'AND m.id = mm.member__id '
   . "AND m.active = '1' "
@@ -174,12 +181,13 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND mt.workflow__id = w.id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', '
-            . join(', i.', 'i.id', INSTANCE_COLS);
+                      . join(', i.', 'i.id', INSTANCE_COLS) . ', '
+                      . join(', v.', 'v.id', VERSION_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => INSTANCE_TABLE . ' i';
+use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v';
 
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
@@ -208,7 +216,8 @@ use constant PARAM_WHERE_MAP => {
       _null_workflow_id     => 'mt.workflow__id IS NULL',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
-      instance_id            => 'i.id = ?',
+      instance_id           => 'i.id = ?',
+      version_id            => 'v.id = ?',
       element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
@@ -229,33 +238,33 @@ use constant PARAM_WHERE_MAP => {
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
-      version               => 'i.version = ?',
-      published_version     => "mt.published_version = i.version AND i.checked_out = '0'",
+      version               => 'v.version = ?',
+      published_version     => "mt.published_version = v.version AND v.checked_out = '0'",
       user__id              => 'i.usr__id = ?',
       user_id              => 'i.usr__id = ?',
       uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
-      _checked_in_or_out    => 'i.checked_out = '
+      _checked_in_or_out    => 'v.checked_out = '
                              . '( SELECT checked_out '
-                             . 'FROM media_instance '
-                             . 'WHERE version = i.version '
-                             . 'AND media__id = i.media__id '
+                             . 'FROM media_version '
+                             . 'WHERE version = v.version '
+                             . 'AND media__id = v.media__id '
                              . 'ORDER BY checked_out DESC LIMIT 1 )',
-      checked_in            => 'i.checked_out = '
+      checked_in            => 'v.checked_out = '
                              . '( SELECT checked_out '
-                             . 'FROM media_instance '
-                             . 'WHERE version = i.version '
-                             . 'AND media__id = i.media__id '
+                             . 'FROM media_version '
+                             . 'WHERE version = v.version '
+                             . 'AND media__id = v.media__id '
                              . 'ORDER BY checked_out ASC LIMIT 1 )',
-      _checked_out          => 'i.checked_out = ?',
-      checked_out           => 'i.checked_out = ?',
-      _not_checked_out       => "i.checked_out = '0' AND mt.id not in "
-                              . '(SELECT media__id FROM media_instance '
-                              . 'WHERE mt.id = media_instance.media__id '
-                              . "AND media_instance.checked_out = '1')",
+      _checked_out          => 'v.checked_out = ?',
+      checked_out           => 'v.checked_out = ?',
+      _not_checked_out       => "v.checked_out = '0' AND mt.id not in "
+                              . '(SELECT media__id FROM media_version '
+                              . 'WHERE mt.id = media_version.media__id '
+                              . "AND media_version.checked_out = '1')",
       primary_oc_id         => 'i.primary_oc__id = ?',
-      output_channel_id     => '(i.id = moc.media_instance__id AND '
+      output_channel_id     => '(i.id = moc.media_version__id AND '
                              . 'moc.output_channel__id = ?)',
       primary_ic_id         => 'i.primary_ic__id = ?',
       input_channel_id      => '(i.id = mic.media_instance__id AND '
@@ -267,7 +276,7 @@ use constant PARAM_WHERE_MAP => {
       keyword               => 'mk.media_id = mt.id AND '
                              . 'k.id = mk.keyword_id AND '
                              . 'LOWER(k.name) LIKE LOWER(?)',
-      _no_return_versions   => 'mt.current_version = i.version',
+      _no_return_versions   => 'mt.current_version = v.version',
       grp_id                => 'm2.grp__id = ? AND '
                              . "m2.active = '1' AND "
                              . 'mm2.member__id = m2.id AND '
@@ -291,7 +300,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => ['i.id = moc.media_instance__id',
+    output_channel_id      => ['i.id = moc.media_version__id',
                                'moc.output_channel__id = ?'],
     input_channel_id       => ['i.id = mic.media_instance__id',
                                'mic.input_channel__id = ?'],
@@ -330,15 +339,16 @@ use constant PARAM_ORDER_MAP => {
     category_id         => 'i.category__id',
     category__id        => 'i.category__id',
     description         => 'LOWER(i.description)',
-    version             => 'i.version',
-    instance_id          => 'i.id',
+    version             => 'v.version',
+    version_id          => 'v.id',
+    instance_id         => 'i.id',
     user__id            => 'i.usr__id',
-    _checked_out        => 'i.checked_out',
+    _checked_out        => 'v.checked_out',
     primary_oc_id       => 'i.primary_oc__id',
     primary_ic_id       => 'i.primary_ic__id',
     category_uri        => 'LOWER(i.uri)',
     keyword             => 'LOWER(k.name)',
-    return_versions     => 'i.version',
+    return_versions     => 'v.version',
 };
 
 use constant DEFAULT_ORDER => 'cover_date';
@@ -1807,17 +1817,22 @@ sub save {
             # we have the main id make sure there's a instance id
             $self->_update_media();
 
-            if ($self->_get('instance_id')) {
+            if ($self->_get('version_id')) {
                 if ($self->_get('_cancel')) {
-                    $self->_delete_instance();
+                    $self->_delete_version();
                     if ($self->_get('version') == 0) {
                         $self->_delete_media();
                     }
                     $self->_set( {'_cancel' => undef });
                     return $self;
                 } else {
-                    $self->_update_instance();
+                    $self->_update_version();
                 }
+            } else {
+                $self->_insert_version();
+            }
+            if ($self->_get('instance_id')) {
+               $self->_update_instance();
             } else {
                 $self->_insert_instance();
             }
@@ -1827,6 +1842,7 @@ sub save {
                 return $self;
             } else {
                 $self->_insert_media();
+                $self->_insert_version();
                 $self->_insert_instance();
             }
         }
@@ -2114,6 +2130,28 @@ sub _update_media {
 
 ################################################################################
 
+=item $self = $self->_insert_version()
+
+Preforms the sql that inserts a record into the media version table
+
+=cut
+
+sub _insert_version {
+    my $self = shift;
+
+    my $sql = 'INSERT INTO '. VERSION_TABLE .
+      ' (id, '.join(', ', VERSION_COLS) . ')' .
+        " VALUES (${\next_key(VERSION_TABLE)}, ".
+          join(', ', ('?') x VERSION_COLS) . ')';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get(VERSION_FIELDS));
+    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    return $self;
+}
+
+################################################################################
+
 =item $self = $self->_insert_instance()
 
 Preforms the sql that inserts a record into the media instance table
@@ -2137,6 +2175,26 @@ sub _insert_instance {
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(INSTANCE_FIELDS));
     $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
+    return $self;
+}
+
+################################################################################
+
+=item $self = $self->_update_version()
+
+Preforms the sql that updates the media_version table
+
+=cut
+
+sub _update_version {
+    my $self = shift;
+
+    my $sql = 'UPDATE ' . VERSION_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+        ' WHERE id=? ';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
     return $self;
 }
 
@@ -2188,6 +2246,25 @@ sub _delete_media {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('id'));
+    return $self;
+}
+
+################################################################################
+
+=item $self = $self->_delete_version()
+
+Removes the version row from the database
+
+=cut
+
+sub _delete_version {
+    my $self = shift;
+
+    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+      ' WHERE id=? ';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get('version_id'));
     return $self;
 }
 

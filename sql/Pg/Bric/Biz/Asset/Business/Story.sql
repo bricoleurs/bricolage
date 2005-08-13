@@ -18,6 +18,9 @@ CREATE SEQUENCE seq_story START  1024;
 -- Unique IDs for the story_instance table
 CREATE SEQUENCE seq_story_instance START 1024;
 
+-- Unique IDs for the story_version table
+CREATE SEQUENCE seq_story_version START 1024;
+
 -- Unique IDs for the story__category mapping table
 CREATE SEQUENCE seq_story__category START  1024;
 
@@ -84,15 +87,30 @@ CREATE TABLE story_instance (
                                 DEFAULT NEXTVAL('seq_story_instance'),
     name           VARCHAR(256),
     description    VARCHAR(1024),
-    story__id      INTEGER      NOT NULL,
-    version        INTEGER,
+    story_version__id      INTEGER      NOT NULL,
     usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
     primary_ic__id INTEGER      NOT NULL,
-    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
+
+
+-- ----------------------------------------------------------------------------
+-- Table story_version
+--
+-- Description:  An version of a story
+--
+
+CREATE TABLE story_version (
+    id             INTEGER      NOT NULL
+                                DEFAULT NEXTVAL('seq_story_version'),
+    story__id      INTEGER      NOT NULL,
+    version        INTEGER,
+    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
+    CONSTRAINT pk_story_version__id PRIMARY KEY (id)
+);
+
 
 -- -----------------------------------------------------------------------------
 -- Table story_uri
@@ -116,10 +134,10 @@ CREATE TABLE story_uri (
 --
 
 CREATE TABLE story__output_channel (
-    story_instance__id  INTEGER  NOT NULL,
+    story_version__id   INTEGER  NOT NULL,
     output_channel__id  INTEGER  NOT NULL,
     CONSTRAINT pk_story_output_channel
-      PRIMARY KEY (story_instance__id, output_channel__id)
+      PRIMARY KEY (story_version__id, output_channel__id)
 );
 
 
@@ -131,10 +149,10 @@ CREATE TABLE story__output_channel (
 --
 
 CREATE TABLE story__input_channel (
-    story_instance__id  INTEGER  NOT NULL,
+    story_version__id   INTEGER  NOT NULL,
     input_channel__id   INTEGER  NOT NULL,
     CONSTRAINT pk_story_input_channel
-      PRIMARY KEY (story_instance__id, input_channel__id)
+      PRIMARY KEY (story_version__id, input_channel__id)
 );
 
 
@@ -244,9 +262,11 @@ CREATE INDEX idx_story__cover_date ON story(cover_date);
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
-CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
+CREATE INDEX fdx_story_version__story_instance ON story_instance(story_version__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
-CREATE INDEX fdx_primary_oc__story_instance ON story_instance(primary_oc__id);
+
+-- story_version
+CREATE INDEX fdx_story__story_version ON story_version(story__id);
 
 -- story_uri
 CREATE INDEX fkx_story__story_uri ON story_uri(story__id);
@@ -259,11 +279,11 @@ CREATE INDEX fkx_story__story__category ON story__category(story_instance__id);
 CREATE INDEX fkx_category__story__category ON story__category(category__id);
 
 -- story__output_channel
-CREATE INDEX fkx_story__oc__story ON story__output_channel(story_instance__id);
+CREATE INDEX fkx_story__oc__story ON story__output_channel(story_version__id);
 CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
 
 -- story__input_channel
-CREATE INDEX fkx_story__ic__story ON story__input_channel(story_instance__id);
+CREATE INDEX fkx_story__ic__story ON story__input_channel(story_version__id);
 CREATE INDEX fkx_story__ic__ic ON story__input_channel(input_channel__id);
 
 --story__contributor

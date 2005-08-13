@@ -28,12 +28,31 @@ Input channels.  Expand me. [Marshall]
 
 =head2 Changes
 
+=over 4
+
 =item *
 
-The C<version_id> parameter to C<list()> and C<lookup()> has been changed to
-C<instance_id>.  C<version_id> now refers to a specific version of an asset,
-which is no longer the same as an instance (one version can have multiple
-instances -- one for each IC) [Marshall]
+New "formatting_version," "media_version," and "story_version" tables have been
+added, which replace some of the columns in the "(story|media|formatting)_instance"
+tables, to allow for multiple instances per version.  To this end, some references
+to the *_instance tables have been changed:
+
+=over 8
+
+=item *
+
+The C<version_id> parameter to Bric::Biz::Asset::Business::Media and
+Bric::Biz::Asset::Business::Story's C<list()> and C<lookup()> have been changed 
+to C<instance_id>.  C<version_id> now refers to a specific version of an asset,
+which is no longer the same as an instance.
+
+=item *
+
+The C<story_instance_id> and C<media_instance_id> parameters to Bric::Biz::OutputChannel
+are now C<story_version_id> and C<media_version_id>.  There is no replacement for
+instances, since ICs and OCs are only associated with versions.
+
+=back
 
 =back
 

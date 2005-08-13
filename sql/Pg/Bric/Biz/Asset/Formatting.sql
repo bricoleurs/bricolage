@@ -17,9 +17,10 @@ CREATE SEQUENCE seq_formatting START 1024;
 
 CREATE SEQUENCE seq_formatting_instance START 1024;
 
+CREATE SEQUENCE seq_formatting_version START 1024;
+
 -- Unique IDs for the story_member table
 CREATE SEQUENCE seq_formatting_member START 1024;
-
 
 -- Unique IDs for the attr_formatting table
 CREATE SEQUENCE seq_attr_formatting START 1024;
@@ -76,13 +77,27 @@ CREATE TABLE formatting (
 CREATE TABLE formatting_instance (
     id              INTEGER        NOT NULL
                                        DEFAULT NEXTVAL('seq_formatting_instance'),
-    formatting__id  INTEGER        NOT NULL,
-    version         INTEGER,
+    formatting_version__id  INTEGER        NOT NULL,
     usr__id         INTEGER        NOT NULL,
     file_name       TEXT,
     data            TEXT,
-    checked_out     BOOLEAN        NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_formatting_instance__id PRIMARY KEY (id)
+);
+
+
+-- -----------------------------------------------------------------------------
+-- Table formatting_version
+--
+-- Description:  An version of a formatting asset
+--
+
+CREATE TABLE formatting_version (
+    id              INTEGER        NOT NULL
+                                       DEFAULT NEXTVAL('seq_formatting_version'),
+    formatting__id  INTEGER        NOT NULL,
+    version         INTEGER,
+    checked_out     BOOLEAN        NOT NULL DEFAULT FALSE,
+    CONSTRAINT pk_formatting_version__id PRIMARY KEY (id)
 );
         
 
@@ -173,7 +188,10 @@ CREATE INDEX fkx_site__formatting ON formatting(site__id);
 
 -- formatting_instance.
 CREATE INDEX fkx_usr__formatting_instance ON formatting_instance(usr__id);
-CREATE INDEX fkx_formatting__frmt_instance ON formatting_instance(formatting__id);
+CREATE INDEX fkx_frmt_version__frmt_instance ON formatting_instance(formatting_version__id);
+
+-- formatting_version
+CREATE INDEX fkx_formatting__frmt_version ON formatting_version(formatting__id);
 
 -- formatting_member.
 CREATE INDEX fkx_frmt__frmt_member ON formatting_member(object_id);

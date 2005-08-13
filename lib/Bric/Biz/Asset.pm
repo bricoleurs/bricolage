@@ -262,8 +262,11 @@ sub lookup {
     my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
                             . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
-    my $fields = [ 'id', $pkg->FIELDS, 'instance_id', $pkg->INSTANCE_FIELDS,
-                   $pkg->RO_FIELDS, 'grp_ids' ];
+    my $fields = [ 'id', $pkg->FIELDS, 
+                   'instance_id', $pkg->INSTANCE_FIELDS, 
+                   'version_id', $pkg->VERSION_FIELDS,
+                   $pkg->RO_FIELDS, 'grp_ids' 
+                 ];
     my @obj = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return unless $obj[0];
     return $obj[0];
@@ -304,8 +307,11 @@ sub list {
     my $sql = build_query($pkg, $pkg->COLUMNS . $pkg->RO_COLUMNS
                             . join (', ', '', $pkg->GROUP_COLS), $grp_by,
                           $tables, $where, $order, @{$param}{qw(Limit Offset)});
-    my $fields = [ 'id', $pkg->FIELDS, 'instance_id', $pkg->INSTANCE_FIELDS,
-                   $pkg->RO_FIELDS, 'grp_ids' ];
+    my $fields = [ 'id', $pkg->FIELDS, 
+                   'instance_id', $pkg->INSTANCE_FIELDS,
+                   'version_id', $pkg->VERSION_FIELDS,
+                   $pkg->RO_FIELDS, 'grp_ids' 
+                 ];
     my @objs = fetch_objects($pkg, $sql, $fields, scalar $pkg->GROUP_COLS, $args);
     return (wantarray ? @objs : \@objs);
 }
