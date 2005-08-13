@@ -267,7 +267,7 @@ use constant PARAM_WHERE_MAP => {
       output_channel_id     => '(i.id = moc.media_version__id AND '
                              . 'moc.output_channel__id = ?)',
       primary_ic_id         => 'v.primary_ic__id = ?',
-      input_channel_id      => '(i.id = mic.media_instance__id AND '
+      input_channel_id      => '(i.id = mic.media_version__id AND '
                              . 'mic.input_channel__id = ?)',
       category__id          => 'v.category__id = ?',
       category_id           => 'v.category__id = ?',
@@ -290,7 +290,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'UNION SELECT media_id FROM media_keyword '
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
-      contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
+      contrib_id            => 'i.id = sic.media_version__id AND sic.member__id = ?',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -302,7 +302,7 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
     output_channel_id      => ['i.id = moc.media_version__id',
                                'moc.output_channel__id = ?'],
-    input_channel_id       => ['i.id = mic.media_instance__id',
+    input_channel_id       => ['i.id = mic.media_version__id',
                                'mic.input_channel__id = ?'],
     category_uri           => [ 'v.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
@@ -310,8 +310,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(k.name) LIKE LOWER(?)' ],
     grp_id                 => [ "m2.active = '1' AND mm2.member__id = m2.id AND mt.id = mm2.object_id",
                                 'm2.grp__id = ?' ],
-    contrib_id             => [ 'i.id = sic.media_instance__id',
-                                'sic.member__id = ?' ],
+    contrib_id             => [ 'i.id = mic.media_version__id',
+                                'mic.member__id = ?' ],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -1913,10 +1913,10 @@ sub _get_contributors {
     unless ($contrib) {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT member__id, place, role FROM media__contributor ' .
-          'WHERE media_instance__id=? ';
+          'WHERE media_version__id=? ';
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('instance_id'));
+        execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
             $contrib->{$row->[0]}->{'place'} = $row->[1];
@@ -1948,11 +1948,11 @@ sub _insert_contributor {
     my ($self, $id, $role, $place) = @_;
 
     my $sql = 'INSERT INTO media__contributor ' .
-      ' (id, media_instance__id, member__id, place, role) ' .
+      ' (id, media_version__id, member__id, place, role) ' .
         " VALUES (${\next_key('media__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $id, $place, $role);
+    execute($sth, $self->_get('version_id'), $id, $place, $role);
     return $self;
 }
 
@@ -1974,11 +1974,11 @@ sub _update_contributor {
     my ($self, $id, $role, $place) = @_;
     my $sql = 'UPDATE media__contributor ' .
       ' SET role=?, place=? ' .
-        ' WHERE media_instance__id=? ' .
+        ' WHERE media_version__id=? ' .
           ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $role, $place, $self->_get('instance_id'), $id);
+    execute($sth, $role, $place, $self->_get('version_id'), $id);
     return $self;
 }
 
@@ -2000,11 +2000,11 @@ sub _delete_contributor {
     my ($self, $id) = @_;
 
     my $sql = 'DELETE FROM media__contributor ' .
-      ' WHERE media_instance__id=? ' .
+      ' WHERE media_version__id=? ' .
         ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $id);
+    execute($sth, $self->_get('version_id'), $id);
     return $self;
 }
 

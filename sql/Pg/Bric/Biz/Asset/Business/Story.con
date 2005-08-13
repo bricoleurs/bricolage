@@ -86,8 +86,8 @@ ADD CONSTRAINT fk_story__ic__ic FOREIGN KEY (input_channel__id)
 
 -- Story to Category mapping constraints
 ALTER TABLE story__category 
-ADD CONSTRAINT fk_story__story__category FOREIGN KEY (story_instance__id)
-	REFERENCES story_instance(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_story__story__category FOREIGN KEY (story_version__id)
+	REFERENCES story_version(id) ON DELETE CASCADE;
 
 ALTER TABLE story__category 
 ADD CONSTRAINT fk_category__story__category FOREIGN KEY (category__id)
@@ -96,8 +96,8 @@ ADD CONSTRAINT fk_category__story__category FOREIGN KEY (category__id)
 
 -- Story to Contributor mapping constraints
 ALTER TABLE story__contributor
-ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_instance__id)
-	REFERENCES story_instance(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_version__id)
+	REFERENCES story_version(id) ON DELETE CASCADE;
 
 ALTER TABLE story__contributor
 ADD CONSTRAINT fk_member__story__contributor FOREIGN KEY (member__id)

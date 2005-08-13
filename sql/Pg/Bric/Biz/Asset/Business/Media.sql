@@ -180,7 +180,7 @@ CREATE TABLE media_fields (
 CREATE TABLE media__contributor (
     id                  INTEGER   NOT NULL
                                         DEFAULT NEXTVAL('seq_media__contributor'),
-    media_instance__id  INTEGER   NOT NULL,
+    media_version__id   INTEGER   NOT NULL,
     member__id          INTEGER   NOT NULL,
     place               INT2      NOT NULL,
     role                VARCHAR(256),

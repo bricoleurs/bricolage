@@ -281,7 +281,7 @@ use constant WHERE => 's.id = v.story__id '
   . 'AND sm.object_id = s.id '
   . 'AND m.id = sm.member__id '
   . "AND m.active = '1' "
-  . 'AND sc.story_instance__id = i.id '
+  . 'AND v.id = sc.story_version__id '
   . 'AND c.id = sc.category__id '
   . 'AND s.workflow__id = w.id';
 
@@ -373,34 +373,33 @@ use constant PARAM_WHERE_MAP => {
                               . 'WHERE s.id = story_version.story__id '
                               . "AND story_version.checked_out = '1')",
       primary_oc_id          => 'v.primary_oc__id = ?',
-      output_channel_id      => '(i.id = soc.story_instance__id AND '
+      output_channel_id      => '(i.id = soc.story_version__id AND '
                               . '(soc.output_channel__id = ? OR '
                               . 'v.primary_oc__id = ?))',
       primary_ic_id          => 'v.primary_ic__id = ?',
-      input_channel_id       => '(i.id = sic.story_instance__id AND '
+      input_channel_id       => '(i.id = sic.story_version__id AND '
                               . '(sic.input_channel__id = ? OR '
                               . 'v.primary_ic__id = ?))',
-      category_id            => 'i.id = sc2.story_instance__id AND '
+      category_id            => 'i.id = sc2.story_version__id AND '
                               . 'sc2.category__id = ?',
-      primary_category_id    => 'i.id = sc2.story_instance__id AND '
+      primary_category_id    => 'i.id = sc2.story_version__id AND '
                               . "sc2.category__id = ? AND sc2.main = '1'",
-      category_uri           => 'i.id = sc2.story_instance__id AND '
+      category_uri           => 'i.id = sc2.story_version__id AND '
                               . 'sc2.category__id = c.id AND '
                               . 'LOWER(c.uri) LIKE LOWER(?)',
       'story.category'       => 's.id <> ? '
-                              . 'AND i.id = sc2.story_instance__id AND '
+                              . 'AND i.id = sc2.story_version__id AND '
                               . 'sc2.category__id in ('
                               . 'SELECT sc3.category__id '
-                              . 'FROM   story__category sc3, story s2, story_instance i2, story_version v2 '
+                              . 'FROM   story__category sc3, story s2, story_version v2 '
                               . 'WHERE  v2.story__id = s2.id '
-                              . 'AND v2.id = i2.story_version__id '
                               . 'AND v2.version = s2.current_version '
                               . 'AND v2.checked_out =('
                              . '( SELECT checked_out '
                               . 'FROM story_version '
                               . 'WHERE version = v2.version '
                               . 'AND story__id = s2.id '
-                              . 'AND sc3.story_instance__id = i2.id '
+                              . 'AND sc3.story_version__id = i2.id '
                               . 'AND s2.id = ? '
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
       keyword                => 'sk.story_id = s.id AND '
@@ -420,7 +419,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'UNION SELECT story_id FROM story_keyword '
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
-      contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
+      contrib_id             => 'i.id = sic.story_version__id AND sic.member__id = ?',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -430,21 +429,21 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => ['i.id = soc.story_instance__id',
+    output_channel_id      => ['i.id = soc.story_version__id',
                                'soc.output_channel__id = ?'],
-    input_channel_id       => ['i.id = sic.story_instance__id',
+    input_channel_id       => ['i.id = sic.story_version__id',
                                'sic.input_channel__id = ?'],
-    category_id            => [ 'i.id = sc2.story_instance__id',
+    category_id            => [ 'i.id = sc2.story_version__id',
                                 'sc2.category__id = ?' ],
-    primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
+    primary_category_id    => [ "i.id = sc2.story_version__id AND sc2.main = '1'",
                                 'sc2.category__id = ?' ],
-    category_uri           => [ 'i.id = sc2.story_instance__id AND sc2.category__id = c.id',
+    category_uri           => [ 'i.id = sc2.story_version__id AND sc2.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
     grp_id                 => [ "m2.active = '1' AND sm2.member__id = m2.id AND s.id = sm2.object_id",
                                 'm2.grp__id = ?' ],
-    contrib_id             => [ 'i.id = sic.story_instance__id',
+    contrib_id             => [ 'i.id = sic.story_version__id',
                                 'sic.member__id = ?' ],
 };
 
@@ -1950,10 +1949,10 @@ sub _get_contributors {
     unless ($queried) {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT member__id, place, role FROM story__contributor ' .
-          'WHERE story_instance__id=? ';
+          'WHERE story_version__id=? ';
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('instance_id'));
+        execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
             $contrib->{$row->[0]}->{'place'} = $row->[1];
@@ -1990,11 +1989,11 @@ NONE
 sub _insert_contributor {
     my ($self, $id, $role, $place) = @_;
     my $sql = 'INSERT INTO story__contributor ' .
-      ' (id, story_instance__id, member__id, place, role) ' .
+      ' (id, story_version__id, member__id, place, role) ' .
       " VALUES (${\next_key('story__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $id, $place, $role);
+    execute($sth, $self->_get('version_id'), $id, $place, $role);
     return $self;
 }
 
@@ -2022,11 +2021,11 @@ sub _update_contributor {
     my ($self, $id, $role, $place) = @_;
     my $sql = 'UPDATE story__contributor ' .
       ' SET role=?, place=? ' .
-      ' WHERE story_instance__id=? ' .
+      ' WHERE story_version__id=? ' .
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $role, $place, $self->_get('instance_id'), $id);
+    execute($sth, $role, $place, $self->_get('version_id'), $id);
     return $self;
 }
 
@@ -2053,11 +2052,11 @@ NONE
 sub _delete_contributor {
     my ($self, $id) = @_;
     my $sql = 'DELETE FROM story__contributor ' .
-      ' WHERE story_instance__id=? ' .
+      ' WHERE story_version__id=? ' .
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $id);
+    execute($sth, $self->_get('version_id'), $id);
     return $self;
 }
 
@@ -2089,10 +2088,10 @@ sub _get_categories {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT category__id, main '.
           "FROM story__category ".
-          " WHERE story_instance__id=? ";
+          " WHERE story_version__id=? ";
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('instance_id'));
+        execute($sth, $self->_get('version_id'));
         while (my $row = fetch($sth)) {
             $cats->{$row->[0]}->{'primary'} = $row->[1];
         }
@@ -2174,11 +2173,11 @@ NONE
 sub _insert_category {
     my ($self, $category_id,$primary) = @_;
     my $sql = "INSERT INTO story__category ".
-      "(id, story_instance__id, category__id, main) ".
+      "(id, story_version__id, category__id, main) ".
       "VALUES (${\next_key('story__category')},?,?,?)";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $category_id, $primary);
+    execute($sth, $self->_get('version_id'), $category_id, $primary);
     return $self;
 }
 
@@ -2205,10 +2204,10 @@ NONE
 sub _delete_category {
     my ($self, $category_id) = @_;
     my $sql = "DELETE FROM story__category ".
-      "WHERE story_instance__id=? AND category__id=? ";
+      "WHERE story_version__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'), $category_id);
+    execute($sth, $self->_get('version_id'), $category_id);
     return $self;
 }
 
@@ -2236,10 +2235,10 @@ sub _update_category {
     my ($self, $category_id,$primary) = @_;
     my $sql = "UPDATE story__category ".
       "SET main=? ".
-      "WHERE story_instance__id=? AND category__id=? ";
+      "WHERE story_version__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $primary, $self->_get('instance_id'), $category_id);
+    execute($sth, $primary, $self->_get('version_id'), $category_id);
     return $self;
 }
 

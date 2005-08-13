@@ -166,7 +166,7 @@ CREATE TABLE story__input_channel (
 CREATE TABLE story__category (
     id                  INTEGER  NOT NULL
                                        DEFAULT NEXTVAL('seq_story__category'),
-    story_instance__id  INTEGER  NOT NULL,
+    story_version__id  INTEGER  NOT NULL,
     category__id        INTEGER  NOT NULL,
     main                BOOLEAN   NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_category__id PRIMARY KEY (id)
@@ -182,7 +182,7 @@ CREATE TABLE story__category (
 CREATE TABLE story__contributor (
     id                  INTEGER   NOT NULL
                                         DEFAULT NEXTVAL('seq_story__contributor'),
-    story_instance__id  INTEGER   NOT NULL,
+    story_version__id  INTEGER   NOT NULL,
     member__id          INTEGER   NOT NULL,
     place               INT2      NOT NULL,
     role                VARCHAR(256),
@@ -274,8 +274,8 @@ CREATE UNIQUE INDEX udx_story_uri__site_id__uri
 ON story_uri(lower_text_num(uri, site__id));
 
 -- story__category
-CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_instance__id, category__id);
-CREATE INDEX fkx_story__story__category ON story__category(story_instance__id);
+CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_version__id, category__id);
+CREATE INDEX fkx_story__story__category ON story__category(story_version__id);
 CREATE INDEX fkx_category__story__category ON story__category(category__id);
 
 -- story__output_channel
@@ -287,7 +287,7 @@ CREATE INDEX fkx_story__ic__story ON story__input_channel(story_version__id);
 CREATE INDEX fkx_story__ic__ic ON story__input_channel(input_channel__id);
 
 --story__contributor
-CREATE INDEX fkx_story__story__contributor ON story__contributor(story_instance__id);
+CREATE INDEX fkx_story__story__contributor ON story__contributor(story_version__id);
 CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
 
 -- Unique index on subsystem/name pair
