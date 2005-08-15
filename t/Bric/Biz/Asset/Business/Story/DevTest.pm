@@ -101,7 +101,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(138) {
+sub test_select_methods: Test(145) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -244,14 +244,20 @@ sub test_select_methods: Test(138) {
     $story[0]->checkin();
     $story[0]->save();
 
-    # Try doing a lookup
+    # Try doing a lookup by ID and UUID.
     $expected = $story[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[0] }),
-        'can we call lookup on a Story' );
-    is( $got->get_name(), $expected->get_name,
-        '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(),
-        '... does it have the right desc');
+    for my $idf (qw(id uuid)) {
+        my $meth = "get_$idf";
+        ok $got = class->lookup({ $idf => $expected->$meth }),
+          "Look up by $idf";
+        is $got->get_id, $expected->get_id, "... does it have the right ID";
+        is $got->get_uuid, $expected->get_uuid,
+          "... does it have the right UUID";
+        is $got->get_name(), $expected->get_name(),
+            '... does it have the right name';
+        is $got->get_description, $expected->get_description,
+            '... does it have the right desc';
+    }
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';

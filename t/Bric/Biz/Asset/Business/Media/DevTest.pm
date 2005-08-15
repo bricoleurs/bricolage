@@ -56,7 +56,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(107) {
+sub test_select_methods: Test(114) {
     my $self = shift;
     my $class = $self->class;
 
@@ -186,14 +186,20 @@ sub test_select_methods: Test(107) {
     push @{$OBJ_IDS->{media}}, $media[0]->get_id();
     $self->add_del_ids( $media[0]->get_id() );
 
-    # Try doing a lookup
+    # Try doing a lookup by ID and UUID.
     $expected = $media[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0] }),
-        'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(),
-        '... does it have the right name');
-    is( $got->get_description, $expected->get_description,
-        '... does it have the right desc');
+    for my $idf (qw(id uuid)) {
+        my $meth = "get_$idf";
+        ok $got = class->lookup({ $idf => $expected->$meth }),
+          "Look up by $idf";
+        is $got->get_id, $expected->get_id, "... does it have the right ID";
+        is $got->get_uuid, $expected->get_uuid,
+          "... does it have the right UUID";
+        is $got->get_name(), $expected->get_name(),
+            '... does it have the right name';
+        is $got->get_description, $expected->get_description,
+            '... does it have the right desc';
+    }
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri;

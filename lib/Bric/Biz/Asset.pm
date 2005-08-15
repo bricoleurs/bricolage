@@ -240,8 +240,8 @@ NONE
 sub lookup {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    throw_gen(error => "Missing Required Parameters id or version_id")
-      unless $param->{id} || $param->{version_id}
+    throw_gen(error => "Missing Required Parameters id or uuid or version_id")
+      unless $param->{id} || $param->{version_id} || $param->{uuid}
       || ($param->{alias_id} && $param->{site_id});
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
