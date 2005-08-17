@@ -71,11 +71,9 @@ if(ref($title) eq 'ARRAY') {
 <meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
-<title><% $title %></title>
-% if ($useSideNav) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
-% }
+<title><% $title %></title>
 <script type="text/javascript">
 
 var lang_key = "<% $lang_key %>";

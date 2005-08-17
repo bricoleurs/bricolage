@@ -30,8 +30,6 @@ $LastChangedDate$
  # Type of workflow.
  my $wf_type = Bric::Biz::Asset::Business::Story->workflow_type;
 
- ## METHODS INHERITED FROM Bric::Biz::Asset ##
-
   # General information
  $asset       = $asset->get_id()
  $asset       = $asset->set_description($description)
@@ -145,8 +143,9 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-Story contains all of the data that will result in published page(s)
-It contains the metadata and associations with Formatting assets.
+Story contains all of the data that will result in published page(s) It
+contains the metadata and associations with story documents. It inherits from
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>
 
 =cut
 

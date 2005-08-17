@@ -23,7 +23,9 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-TBD.
+Media contains all of the data that will result in published media files. It
+contains the metadata and associations with media documents. It inherits from
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>
 
 =cut
 

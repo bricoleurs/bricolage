@@ -31,8 +31,6 @@ $LastChangedDate$
  ($biz_ids || @biz_ids) = Bric::Biz::Asset::Business->list_ids( $criteria )
 
 
- ## METHODS INHERITED FROM Bric::Biz::Asset ##
-
  # Class Methods
  $key_name = Bric::Biz::Asset->key_name()
  %priorities = Bric::Biz::Asset->list_priorities()
@@ -97,8 +95,10 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This is the parent class for all the business assets ( i.e. Stories, images
-etc.)
+This is the parent class for all the documents, including
+L<stories|Bric::Biz::Asset::Business::Story> and L<media
+documents|Bric::Biz::Asset::Business::Media>. It inherits from
+Bric::Biz::Asset.
 
 Assumption here is that all Business assets have rights, publish dates
 and keywords associated with them.
