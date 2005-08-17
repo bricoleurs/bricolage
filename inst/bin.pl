@@ -32,6 +32,6 @@ use Bric::Inst qw(:all);
 use File::Path qw(mkpath);
 
 mkpath 'bbin';
-system("cp", "-R", "./bin/", "./bbin");
+system("cp", "-R", "./bin/*", "./bbin");
 
 exit 0;
