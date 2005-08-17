@@ -2472,28 +2472,34 @@ sub _do_list {
     if (exists $params->{data_name} or exists $params->{map_type__id}) {
         # Add the element_data table.
         $tables .= ', at_data d';
-	push @wheres, 'd.element__id = a.id';
-	if (exists $params->{data_name}) {
-	    push @wheres, 'LOWER(d.key_name) LIKE ?';
-	    push @params, lc delete $params->{data_name};
-	}
-	if (exists $params->{map_type__id}) {
-	    push @wheres, 'd.map_type__id = ?';
-	    push @params, delete $params->{map_type__id};
-	}
+        push @wheres, 'd.element__id = a.id';
+        if (exists $params->{data_name}) {
+            push @wheres, any_where(
+                delete $params->{data_name},
+                'LOWER(d.key_name) LIKE LOWER(?)',
+                \@params
+            );
+        }
+        if (exists $params->{map_type__id}) {
+            push @wheres, any_where(
+                delete $params->{map_type__id},
+                'd.map_type__id = ?',
+                \@params
+            );
+        }
     }
 
     # Set up parameters based on asset types.
     if (exists $params->{top_level} or exists $params->{media}) {
         $tables .= ', at_type att';
-	push @wheres, 'att.id = a.type__id';
+        push @wheres, 'att.id = a.type__id';
         if (exists $params->{top_level}) {
-	    push @wheres, 'att.top_level = ?';
-	    push @params, $top = delete $params->{top_level} ? 1 : 0;
+            push @wheres, 'att.top_level = ?';
+            push @params, $top = delete $params->{top_level} ? 1 : 0;
         }
         if (exists $params->{media}) {
-	    push @wheres, 'att.media = ?';
-	    push @params, delete $params->{media} ? 1 : 0;
+            push @wheres, 'att.media = ?';
+            push @params, delete $params->{media} ? 1 : 0;
         }
     }
 
@@ -2501,27 +2507,26 @@ sub _do_list {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'output_channel_id' || $k eq 'output_channel') {
             $tables .= ', element__output_channel ao';
-            push @wheres, ('ao.output_channel__id = ?',
-                           'ao.element__id = a.id');
-            push @params, $v;
+            push @wheres, 'ao.element__id = a.id';
+            push @wheres, any_where($v, 'ao.output_channel__id = ?', \@params);
         } elsif ($k eq 'type__id' or $k eq 'id') {
-            push @wheres, "a.$k = ?";
-            push @params, $v;
+            push @wheres, any_where($v, "a.$k = ?", \@params);
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
-            push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
-                           "m2.active = '1'", 'm2.grp__id = ?');
-            push @params, $v;
+            push @wheres, (
+                'a.id = c2.object_id',
+                'c2.member__id = m2.id',
+                "m2.active = '1'"
+            );
+            push @wheres, any_where($v, 'm2.grp__id = ?', \@params);
         } elsif ($k eq 'site_id') {
             $tables .= ", element__site es";
-            push @wheres, ('es.element__id = a.id','es.site__id = ?',
-                           "es.active = '1'");
-            push @params, $v;
+            push @wheres, 'es.element__id = a.id', "es.active = '1'";
+            push @wheres, any_where($v, 'es.site__id = ?', \@params);
         } else {
             # The "name" and "description" properties.
-            push @wheres, "LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         }
     }
 

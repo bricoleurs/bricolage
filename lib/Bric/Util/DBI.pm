@@ -942,7 +942,7 @@ For example, if called like so:
   my @params;
   my $where = any_where(ANY(1, 2, 3), "f.name = ?", \@params);
 
-Then C<@params> will contaion C<(1, 2, 3)> and the string "(f.name = ? OR
+Then C<@params> will contain C<(1, 2, 3)> and the string "(f.name = ? OR
 f.name = ? OR f.name = ?)" will be assigned to C<$where>.
 
 However, if the value is not an C<ANY> value:

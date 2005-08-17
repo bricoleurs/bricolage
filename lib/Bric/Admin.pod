@@ -113,6 +113,8 @@ START MODULE LIST
 
 =item Cache::Cache
 
+=item Cache::Mmap
+
 =item Digest::MD5
 
 =item Digest::SHA1 2.01
@@ -172,8 +174,6 @@ START MODULE LIST
 =item SOAP::Lite
 
 =item File::Temp
-
-=item Cache::Mmap
 
 =item Text::Soundex
 

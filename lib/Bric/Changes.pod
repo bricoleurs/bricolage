@@ -121,6 +121,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::ATType
 
+=item Bric::Biz::AssetType
+
 =back
 
 More classes will support it soon! [David]
