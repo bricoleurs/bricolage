@@ -61,7 +61,7 @@ my $tmp_file = "$sql_file.tmp";
 # Dump database.
 print "Dumping database. This could take a while...";
 system(catfile($PG->{bin_dir}, 'pg_dump'), '-U', $PG->{root_user},
-       '-O', '-x', $PG->{db_name}, '-f', $old_file);
+       '-O', '-x', '-f', $old_file, $PG->{db_name});
 print "\nParsing datbase...";
 open OLD, "<$old_file" or die "Cannot open '$old_file: $!\n";
 open NEW, ">$new_file" or die "Cannot open '$new_file: $!\n";
