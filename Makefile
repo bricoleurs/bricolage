@@ -54,9 +54,6 @@ postgres.db 	: inst/postgres.pl required.db
 config.db	: inst/config.pl required.db apache.db postgres.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
-bbin		:
-	$(PERL) inst/bin.pl
-	
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
@@ -176,9 +173,9 @@ lib 		:
 	-rm -f lib/Makefile
 	cd lib; $(PERL) Makefile.PL; $(MAKE) install
 
-bin 		: bbin
-	-rm -f bbin/Makefile
-	cd bbin; $(PERL) Makefile.PL; $(MAKE) install
+bin 		:
+	-rm -f bin/Makefile
+	cd bin; $(PERL) Makefile.PL; $(MAKE) install
 
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
@@ -281,7 +278,6 @@ clean 		:
 	-rm -rf *.db
 	-rm -rf build_done
 	-rm -rf bconf
-	-rm -rf bbin
 	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
 	-rm -rf lib/auto
