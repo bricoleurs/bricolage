@@ -1195,6 +1195,12 @@ B<Notes:> NONE.
 
 sub _do_list {
     my ($pkg, $params, $ids, $href) = @_;
+    
+    
+    use Data::Dumper;
+    print STDERR "\n\n\nBric::Biz::InputChannel::_do_list params: " . Dumper($params) . "\n\n\n";
+    print STDERR Bric::Util::Fault->new;
+    
     my $tables = $pkg->SEL_TABLES;
     my $wheres = $pkg->SEL_WHERES;
     my @params;
@@ -1220,16 +1226,21 @@ sub _do_list {
               'AND inc.input_channel__id = ?';
             push @params, $v;
         } elsif ($k eq 'story_version_id') {
-            # Join in the story__input_channel table.
-            $tables .= ', story__input_channel sic';
-            $wheres .= ' AND ic.id = sic.input_channel__id ' .
-              'AND sic.story_version__id = ?';
+            $tables .= ', story_instance i';
+            $wheres .= ' AND ic.id = i.input_channel__id ' .
+                       ' AND i.story_version__id = ?';
+            push @params, $v
+        } elsif ($k eq 'story_instance_id') {
+            # Find all story_instances with the right story_version__id
+            $tables .= ', story_instance i';
+            $wheres .= ' AND ic.id = i.input_channel__id ' .
+              'AND i.id = ?';
             push @params, $v;
-        } elsif ($k eq 'media_version_id') {
-            # Join in the media__input_channel table.
-            $tables .= ', media__input_channel mic';
-            $wheres .= ' AND ic.id = mic.input_channel__id ' .
-              'AND mic.media_version__id = ?';
+        } elsif ($k eq 'media_instance_id') {
+            # Find all story_instances with the right story_version__id
+            $tables .= ', media_instance i';
+            $wheres .= ' AND ic.id = i.input_channel__id ' .
+              'AND i.id = ?';
             push @params, $v;
         } elsif ($k eq 'output_channel_id') {
             # Join in the output_channel__input_channel table
@@ -1295,6 +1306,9 @@ sub _do_list {
         }
     }
     # Return the objects.
+    
+    print STDERR Dumper(\%ics) . "\n\n\n";
+    
     return $href ? \%ics : wantarray ? @ics : \@ics;
 }
 

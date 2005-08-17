@@ -39,6 +39,10 @@ ADD CONSTRAINT fk_desk__story FOREIGN KEY (desk__id)
 ALTER TABLE story_instance
 ADD CONSTRAINT fk_story_version__story_instance FOREIGN KEY (story_version__id)
 	REFERENCES story_version(id) ON DELETE CASCADE;
+	
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_story_instance__ic FOREIGN KEY (input_channel__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
 
 -- Story version constraints
 ALTER TABLE story_version
@@ -77,8 +81,8 @@ ADD CONSTRAINT fk_story__oc__oc FOREIGN KEY (output_channel__id)
 
 -- Story to input channel mapping constraints
 ALTER TABLE story__input_channel 
-ADD CONSTRAINT fk_story__ic__story FOREIGN KEY (story_version__id)
-	REFERENCES story_version(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_story__ic__story FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
 
 ALTER TABLE story__input_channel 
 ADD CONSTRAINT fk_story__ic__ic FOREIGN KEY (input_channel__id)

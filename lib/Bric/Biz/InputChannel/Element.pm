@@ -273,7 +273,6 @@ sub href {
         WHERE  $wheres
         ORDER BY $ord
     }, undef);
-
     execute($sel, $params->{element_id});
     my (@d, %ics, $grp_ids);
     my @sel_props = $pkg->SEL_PROPS;

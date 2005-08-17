@@ -208,13 +208,13 @@ sub save {
         if ($type eq 'story') {
             $del = prepare_c(qq{
                 DELETE FROM story__input_channel
-                WHERE  story_version__id = ?
+                WHERE  story_instance__id = ?
                        AND input_channel__id = ?
             }, undef);
         } elsif ($type eq 'media') {
             $del = prepare_c(qq{
                 DELETE FROM media__input_channel
-                WHERE  media_version__id = ?
+                WHERE  media_instance__id = ?
                        AND input_channel__id = ?
             }, undef);
         } elsif ($type eq 'output_channel') {
@@ -229,32 +229,32 @@ sub save {
     }
 
     if (@$new_objs) {
-        my $ins;
-        if ($type eq 'story') {
-            $ins = prepare_c(qq{
-                INSERT INTO story__input_channel
-                            (story_version__id, input_channel__id)
-                VALUES (?, ?)
-            }, undef);
-        } elsif ($type eq 'media') {
-            $ins = prepare_c(qq{
-                INSERT INTO media__input_channel
-                            (media_version__id, input_channel__id)
-                VALUES (?, ?)
-            }, undef);
-        } elsif ($type eq 'output_channel') {
-            $ins = prepare_c(qq{
-                INSERT INTO output_channel__input_channel
-                            (output_channel__id, input_channel__id)
-                VALUES (?, ?)
-            }, undef);
-        } else {
-            throw_dp(error => "Invalid key '$type'");
-        }
-
+#        my $ins;
+#        if ($type eq 'story') {
+#            $ins = prepare_c(qq{
+#                INSERT INTO story__input_channel
+#                            (story_instance__id, input_channel__id)
+#                VALUES (?, ?)
+#            }, undef);
+#        } elsif ($type eq 'media') {
+#            $ins = prepare_c(qq{
+#                INSERT INTO media__input_channel
+#                            (media_instance__id, input_channel__id)
+#                VALUES (?, ?)
+#            }, undef);
+#        } elsif ($type eq 'output_channel') {
+#            $ins = prepare_c(qq{
+#                INSERT INTO output_channel__input_channel
+#                            (output_channel__id, input_channel__id)
+#                VALUES (?, ?)
+#            }, undef);
+#        } else {
+#            throw_dp(error => "Invalid key '$type'");
+#        }
+#
         foreach my $ic (@$new_objs) {
             $ic->save;
-            execute($ins, $id, $ic->get_id);
+#            execute($ins, $id, $ic->get_id);
         }
         $self->add_objs(@$new_objs);
         @$new_objs = ();

@@ -297,7 +297,7 @@ use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v';
 use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
-       input_channel_id     => 'story__input_channel sic',
+       input_channel_id     => 'story__input_channel ic',
        simple               => 'story_member sm, member m, story__category sc, '
                                . 'category c, workflow w, ' . TABLE . ' s ',
        grp_id               => 'member m2, story_member sm2',
@@ -373,13 +373,14 @@ use constant PARAM_WHERE_MAP => {
                               . 'WHERE s.id = story_version.story__id '
                               . "AND story_version.checked_out = '1')",
       primary_oc_id          => 'v.primary_oc__id = ?',
-      output_channel_id      => '(i.id = soc.story_version__id AND '
+      output_channel_id      => '(v.id = soc.story_version__id AND '
                               . '(soc.output_channel__id = ? OR '
                               . 'v.primary_oc__id = ?))',
       primary_ic_id          => 'v.primary_ic__id = ?',
-      input_channel_id       => '(i.id = sic.story_version__id AND '
-                              . '(sic.input_channel__id = ? OR '
-                              . 'v.primary_ic__id = ?))',
+      input_channel_id       => '(i.id = ic.story_instance__id AND '
+                              . '(ic.input_channel__id = ? OR '
+                              . ' v.primary_ic__id = ?))',
+      primary_ic             => 'v.primary_ic__id = i.input_channel__id',
       category_id            => 'i.id = sc2.story_version__id AND '
                               . 'sc2.category__id = ?',
       primary_category_id    => 'i.id = sc2.story_version__id AND '
@@ -429,10 +430,10 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => ['i.id = soc.story_version__id',
-                               'soc.output_channel__id = ?'],
-    input_channel_id       => ['i.id = sic.story_version__id',
-                               'sic.input_channel__id = ?'],
+    output_channel_id      => [ 'v.id = soc.story_version__id',
+                                'soc.output_channel__id = ?'],
+    input_channel_id       => [ 'i.id = ic.story_instance__id',
+                                'ic.input_channel__id = ?'],
     category_id            => [ 'i.id = sc2.story_version__id',
                                 'sc2.category__id = ?' ],
     primary_category_id    => [ "i.id = sc2.story_version__id AND sc2.main = '1'",
@@ -1866,19 +1867,32 @@ sub save {
             } else {
                 $self->_insert_version();
             }
+            
             if ($self->_get('instance_id')) {
+                # If we're on a specific instance, save it
                 $self->_update_instance();
             } else {
-                $self->_insert_instance();
+                # otherwise, create instances for any new ICs   
+                
+                use Data::Dumper;
+                print STDERR "\n\n\n_new_ics: " . Dumper($self->_get('_new_ics')) . "\n\n\n";
+                    
+                foreach my $ic ($self->_get('_new_ics')) {
+                    $self->_insert_instance($ic);
+                }
+                $self->_set( {'_new_ics' => undef } );
             }
+            
         } else {
             if ($self->_get('_cancel')) {
                 return $self;
             } else {
-                # This is brand new; insert story, version, and instance
+                # This is brand new; insert story, version, and instances for each IC
                 $self->_insert_story();
                 $self->_insert_version();
-                $self->_insert_instance();
+                foreach my $ic ($self->get_input_channels) {
+                    $self->_insert_instance($ic->get_id);
+                }
             }
         }
 
@@ -2385,30 +2399,22 @@ sub _insert_version {
 
 Inserts an instance record into the database
 
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
 =cut
 
 sub _insert_instance {
-    my ($self) = @_;
+    my ($self, $ic_id) = @_;
+        
     my $sql = 'INSERT INTO '. INSTANCE_TABLE .
-      ' (id, '.join(', ', INSTANCE_COLS) . ')'.
-      "VALUES (${\next_key(INSTANCE_TABLE)}, ".
+      ' (id, input_channel__id, '.join(', ', INSTANCE_COLS) . ')'.
+      "VALUES (${\next_key(INSTANCE_TABLE)}, ?, ".
       join(', ', ('?') x INSTANCE_COLS) . ')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS));
-    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
+    execute($sth, $ic_id, $self->_get(INSTANCE_FIELDS));
+    
+    $self->_set( { instance_id => last_key(INSTANCE_TABLE) }) 
+        if $ic_id == $self->get_primary_ic_id;
+    
     return $self;
 }
 

@@ -85,9 +85,10 @@ CREATE TABLE story (
 CREATE TABLE story_instance (
     id             INTEGER      NOT NULL
                                 DEFAULT NEXTVAL('seq_story_instance'),
+    story_version__id INTEGER   NOT NULL,
+    input_channel__id INTEGER  NOT NULL,
     name           VARCHAR(256),
     description    VARCHAR(1024),
-    story_version__id      INTEGER      NOT NULL,
     slug           VARCHAR(64),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
@@ -149,10 +150,10 @@ CREATE TABLE story__output_channel (
 --
 
 CREATE TABLE story__input_channel (
-    story_version__id   INTEGER  NOT NULL,
+    story_instance__id  INTEGER  NOT NULL,
     input_channel__id   INTEGER  NOT NULL,
     CONSTRAINT pk_story_input_channel
-      PRIMARY KEY (story_version__id, input_channel__id)
+      PRIMARY KEY (story_instance__id, input_channel__id)
 );
 
 
@@ -263,6 +264,7 @@ CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story_version__story_instance ON story_instance(story_version__id);
+CREATE INDEX fkx_story_instance__ic ON story_instance(input_channel__id);
 
 -- story_version
 CREATE INDEX fdx_story__story_version ON story_version(story__id);
@@ -283,7 +285,7 @@ CREATE INDEX fkx_story__oc__story ON story__output_channel(story_version__id);
 CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
 
 -- story__input_channel
-CREATE INDEX fkx_story__ic__story ON story__input_channel(story_version__id);
+CREATE INDEX fkx_story__ic__story ON story__input_channel(story_instance__id);
 CREATE INDEX fkx_story__ic__ic ON story__input_channel(input_channel__id);
 
 --story__contributor
