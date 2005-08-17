@@ -195,6 +195,8 @@ START MODULE LIST
 
 =item Term::ReadPassword
 
+=item Data::UUID
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)
