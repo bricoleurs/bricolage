@@ -52,7 +52,6 @@ if (my $err = $@) {
 }
 chown $PG->{system_user_uid}, -1, $tmpdir
   or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
-END { rmtree $tmpdir }
 
 # Switch to postgres system user
 print "Becoming $PG->{system_user}...\n";
