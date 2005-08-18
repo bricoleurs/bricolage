@@ -379,29 +379,34 @@ Supported Keys:
 
 =item name
 
-The name of the asset type.  Matched with case-insentive LIKE.
+The name of the asset type. Matched with case-insentive LIKE. May use C<ANY>
+for a list of possible values.
 
 =item key_name
 
-The unique key name of the asset type.  Matched with case insensitive LIKE
+The unique key name of the asset type. Matched with case insensitive LIKE. May
+use C<ANY> for a list of possible values.
 
 =item description
 
-The description of the asset type.  Matched with case-insentive LIKE.
+The description of the asset type. Matched with case-insentive LIKE. May use
+C<ANY> for a list of possible values.
 
 =item output_channel_id
 
 The ID of an output channel. Returned will be all AssetType objects that
-contain this output channel.
+contain this output channel. May use C<ANY> for a list of possible values.
 
 =item data_name
 
 The name of an AssetType::Data object. Returned will be all AssetType objects
-that reference this particular AssetType::Data object.
+that reference this particular AssetType::Data object. May use C<ANY> for a
+list of possible values.
 
 =item map_type_id
 
-The map_type_id of an AssetType::Data object.
+The map_type_id of an AssetType::Data object. May use C<ANY> for a list of
+possible values.
 
 =item active
 
@@ -410,7 +415,8 @@ only active asset types.
 
 =item type_id
 
-match elements of a particular attype
+match elements of a particular attype. May use C<ANY> for a list of possible
+values.
 
 =item top_level
 
@@ -418,11 +424,12 @@ set to 1 to return only top-level elements
 
 =item media
 
-match against a particular media asset type (att.media)
+match against a particular media asset type (att.media). May use C<ANY> for a
+list of possible values.
 
 =item site_id
 
-match against the given site_id
+match against the given site_id. May use C<ANY> for a list of possible values.
 
 =back
 
