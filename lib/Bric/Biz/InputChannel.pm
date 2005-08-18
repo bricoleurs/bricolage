@@ -1195,12 +1195,6 @@ B<Notes:> NONE.
 
 sub _do_list {
     my ($pkg, $params, $ids, $href) = @_;
-    
-    
-    use Data::Dumper;
-    print STDERR "\n\n\nBric::Biz::InputChannel::_do_list params: " . Dumper($params) . "\n\n\n";
-    print STDERR Bric::Util::Fault->new;
-    
     my $tables = $pkg->SEL_TABLES;
     my $wheres = $pkg->SEL_WHERES;
     my @params;
@@ -1306,9 +1300,6 @@ sub _do_list {
         }
     }
     # Return the objects.
-    
-    print STDERR Dumper(\%ics) . "\n\n\n";
-    
     return $href ? \%ics : wantarray ? @ics : \@ics;
 }
 

@@ -747,11 +747,7 @@ sub _populate {
     my $self = shift;
     my ($objs, $params, $pop) = $self->_get(qw(objs params _pop));
     return $self if $pop;
-    
     my $class = $self->class_name;
-    
-    print STDERR "CLASS NAME: " . $class . "\n\n";
-    
     %$objs = (%$objs, %{ $class->href($params) });
     $self->_set(['objs', '_pop'], [$objs, 1]);
 };

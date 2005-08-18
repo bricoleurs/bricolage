@@ -1872,27 +1872,26 @@ sub save {
                 # If we're on a specific instance, save it
                 $self->_update_instance();
             } else {
-                # otherwise, create instances for any new ICs   
-                
-                use Data::Dumper;
-                print STDERR "\n\n\n_new_ics: " . Dumper($self->_get('_new_ics')) . "\n\n\n";
-                    
-                foreach my $ic ($self->_get('_new_ics')) {
-                    $self->_insert_instance($ic);
-                }
-                $self->_set( {'_new_ics' => undef } );
+                # otherwise, create a new instance
+#                my $new_ics = $self->_get('_new_ics');
+#                foreach my $ic (@$new_ics) {
+                    $self->_insert_instance($self->_get('input_channel_id'));
+#                }
+#                $self->_set( {'_new_ics' => undef } );
             }
             
         } else {
             if ($self->_get('_cancel')) {
                 return $self;
             } else {
-                # This is brand new; insert story, version, and instances for each IC
+                # This is brand new; insert story, version, and instance
+                # for the primary IC
                 $self->_insert_story();
                 $self->_insert_version();
-                foreach my $ic ($self->get_input_channels) {
-                    $self->_insert_instance($ic->get_id);
-                }
+                $self->_insert_instance($self->get_primary_ic_id);
+#                foreach my $ic ($self->get_input_channels) {
+#                    $self->_insert_instance($ic->get_id);
+#                }
             }
         }
 
@@ -2412,8 +2411,7 @@ sub _insert_instance {
     my $sth = prepare_c($sql, undef);
     execute($sth, $ic_id, $self->_get(INSTANCE_FIELDS));
     
-    $self->_set( { instance_id => last_key(INSTANCE_TABLE) }) 
-        if $ic_id == $self->get_primary_ic_id;
+    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
     
     return $self;
 }

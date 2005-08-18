@@ -1323,7 +1323,7 @@ sub add_input_channels {
     return unless @objs;
     my $ic_coll = $get_ic_coll->($self);
     $ic_coll->add_new_objs(@objs);
-    $self->_set(['_new_ics'] => [@objs]);
+    $self->_set(['_new_ics'] => [\@objs]);
     $self->_set(['_update_uri'] => [1]);
 }
 
@@ -2236,16 +2236,12 @@ sub checkout {
     
     # Clone input channels
     my $ic_coll = $get_ic_coll->($self);
-    
-    use Data::Dumper;
-    print STDERR "\n\n\nIC Coll during checkout: " . Dumper($ic_coll) . "\n\n\n";
-    
     my @ics = $ic_coll->get_objs;
     $ic_coll->del_objs(@ics);
     $ic_coll->add_new_objs(@ics);
 
-    $self->_set([qw(user__id modifier version_id instance_id checked_out)] =>
-                [$param->{user__id}, $param->{user__id}, undef, undef, 1]);
+    $self->_set([qw(user__id modifier version_id instance_id checked_out input_channel_id)] =>
+                [$param->{user__id}, $param->{user__id}, undef, undef, 1, $self->get_primary_ic_id]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
@@ -3015,20 +3011,10 @@ B<Notes:> NONE.
 $get_ic_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $ic_coll) = $self->_get('version_id', '_ic_coll');
-    
-    use Data::Dumper;
-    
-    print STDERR "Self passed to get_ic_coll: " . Dumper($self) . "\n";
-    
-    print STDERR "Got ic_coll: " . Dumper($ic_coll) . "\n";
-    
+    my ($id, $ic_coll) = $self->_get('version_id', '_ic_coll');    
     return $ic_coll if $ic_coll;
     $ic_coll = Bric::Util::Coll::InputChannel->new
       (defined $id ? {$self->key_name . '_version_id' => $id} : undef);
-    
-    print STDERR "New ic_coll: " . Dumper($ic_coll) . "\n";
-    
     $self->_set(['_ic_coll'], [$ic_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $ic_coll;

@@ -54,6 +54,7 @@ $id       => undef
 $work_id  => undef
 $checkout => undef
 $version  => undef
+$ic       => undef
 $param    => undef
 $return	  => undef
 $section
@@ -85,6 +86,7 @@ if ($id) {
 
 	$param->{checked_in} = 1 unless $checkout;
 	$param->{version} = $version if defined $version;
+	$param->{input_channel_id} = $ic if defined $ic;
 	$story = Bric::Biz::Asset::Business::Story->lookup($param);
 
 	# Clear the story state data
