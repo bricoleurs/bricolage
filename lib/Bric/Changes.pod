@@ -125,6 +125,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::AssetType::Parts::Data
 
+=item Bric::Biz::Category
+
 =item Bric::Biz::Contact
 
 =back

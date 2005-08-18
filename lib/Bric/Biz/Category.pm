@@ -1560,29 +1560,29 @@ sub _do_list {
 
     # Set up the other query properties.
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' or $k eq 'parent_id') {
+        if ($k eq 'id' or $k eq 'parent_id') {
             # It's a simple numeric comparison.
-            $wheres .= " AND a.$k = ?";
-	    push @params, $v;
+            $wheres .= ' AND ' . any_where($v, "a.$k = ?", \@params);
             # Keep us from returning the super root category
-            if ($k eq 'parent_id' and $v == 0) {
+            if ($k eq 'parent_id'
+                and ((ref $v && grep { $_ == 0 } @$v) || $v == 0))
+            {
                 $wheres .= " AND a.id <> ?";
                 push @params, 0;
             }
         } elsif ($k eq 'site_id') {
-            $wheres .= " AND a.site__id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where($v, "a.site__id = ?", \@params);
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id " .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
-	} else {
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id "
+              . " AND m2.active = '1' AND "
+              . any_where($v, "m2.grp__id = ?", \@params);
+        } else {
             # It's a simpler string comparison.
-	    $wheres .= " AND LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+            $wheres .= ' AND '
+              . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
+        }
     }
 
     # Create the where clause and the select and order by clauses.
