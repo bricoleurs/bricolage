@@ -117,8 +117,6 @@ C<href()> methods in the following classes:
 
 =over
 
-=item Bric::Util::Grp
-
 =item Bric::Biz::ATType
 
 =item Bric::Biz::AssetType
@@ -128,6 +126,10 @@ C<href()> methods in the following classes:
 =item Bric::Biz::Category
 
 =item Bric::Biz::Contact
+
+=item Bric::Biz::Keyword
+
+=item Bric::Util::Grp
 
 =back
 
