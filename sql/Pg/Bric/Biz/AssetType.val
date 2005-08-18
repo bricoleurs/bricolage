@@ -98,6 +98,10 @@ INSERT INTO element__output_channel (id, element__id, output_channel__id,
                                      enabled, active)
 VALUES ('1', '1', '1', '1', '1');
 
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
+                                     enabled, active)
+VALUES ('1', '1', '1', '1', '1');
+
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, active)
 VALUES ('2', 'Column', 'column', 'A weekly column element', '1', '331', '1');
 
@@ -111,6 +115,10 @@ INSERT INTO element_member (id, object_id, member__id)
 VALUES ('12', '2', '411'); 
 
 INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES ('4', '2', '1', '1', '1');
+
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
                                      enabled, active)
 VALUES ('4', '2', '1', '1', '1');
 
@@ -130,6 +138,9 @@ INSERT INTO element__output_channel (id, element__id, output_channel__id,
                                      enabled, active)
 VALUES ('7', '3', '1', '1', '1');
 
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
+                                     enabled, active)
+VALUES ('7', '3', '1', '1', '1');
 
 -- Create some media asset types.
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, active)
@@ -148,6 +159,9 @@ INSERT INTO element__output_channel (id, element__id, output_channel__id,
                                      enabled, active)
 VALUES ('10', '4', '1', '1', '1');
 
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
+                                     enabled, active)
+VALUES ('10', '4', '1', '1', '1');
 
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, active)
 VALUES ('5', 'Illustration', 'illustration', 'An illustration element', '2', '334', '1');
@@ -165,6 +179,9 @@ INSERT INTO element__output_channel (id, element__id, output_channel__id,
                                      enabled, active)
 VALUES ('13', '5', '1', '1', '1');
 
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
+                                     enabled, active)
+VALUES ('13', '5', '1', '1', '1');
 
 -- Create some sub-elements.
 INSERT INTO element (id, name, key_name, description, type__id, at_grp__id, active)
@@ -245,6 +262,10 @@ INSERT INTO element_member (id, object_id, member__id)
 VALUES ('23', '13', '438'); 
 
 INSERT INTO element__output_channel (id, element__id, output_channel__id,
+                                     enabled, active)
+VALUES ('14', '13', '1', '1', '1');
+
+INSERT INTO element__input_channel (id, element__id, input_channel__id,
                                      enabled, active)
 VALUES ('14', '13', '1', '1', '1');
 
