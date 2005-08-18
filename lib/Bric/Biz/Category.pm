@@ -282,19 +282,36 @@ Criteria keys:
 
 =item name
 
+The name of the category. May use C<ANY> for a list of possible values.
+
 =item directory
 
+The category directory name. May use C<ANY> for a list of possible values.
+
 =item uri
+
+The category URI. May use C<ANY> for a list of possible values.
 
 =item active
 
 =item description
 
+The category description. May use C<ANY> for a list of possible values.
+
 =item parent_id
+
+The ID category of a parent category. May use C<ANY> for a list of possible
+values.
 
 =item grp_id
 
+The ID of a Bric::Util::Grp object to which the category belongs. May use
+C<ANY> for a list of possible values.
+
 =item site_id
+
+The ID of a Bric::Biz::Site object with which the category is associated. May
+use C<ANY> for a list of possible values.
 
 =back
 
