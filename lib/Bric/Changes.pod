@@ -125,6 +125,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::AssetType::Parts::Data
 
+=item Bric::Biz::Contact
+
 =back
 
 More classes will support it soon! [David]
@@ -362,8 +364,10 @@ backwards compatibility, but are no longer required. [David]
 
 =item *
 
-Updated search documentation for Bric::Biz::AssetType::Parts::Data and
-wrote tests for the class. [David]
+Updated search documentation and wrote tests for
+L<Bric::Biz::Contact|Bric::Biz::Contact> and
+L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>.
+[David]
 
 =back
 

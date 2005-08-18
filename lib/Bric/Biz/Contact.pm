@@ -259,17 +259,30 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-type
+Contact ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item type
 
-value
+Contact type. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-description
+Contact description. May use C<ANY> for a list of possible values.
+
+=item value
+
+Contact value. May use C<ANY> for a list of possible values.
+
+=item person_id
+
+ID of person object associated with contacts. May use C<ANY> for a list of
+possible values.
+
+=item alertable
+
+Boolean indicating whether or not alerts can be sent to contacts of this type.
 
 =back
 
@@ -1373,20 +1386,20 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
+    my $tables = "contact c, contact_value v";
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
-            push @wheres, "v.$k = ?";
-            push @params, $v;
+            push @wheres, any_where($v, 'v.id = ?', \@params);
         } elsif ($k eq 'value') {
-            push @wheres, "LOWER(v.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where($v, "LOWER(v.$k) LIKE LOWER(?)", \@params);
         } elsif ($k eq 'person_id') {
-            push @wheres, "v.id in (SELECT contact_value__id from "
-              . "person__contact_value where person__id = ?)";
-            push @params, $v;
+            $tables .= ', person__contact_value pcv';
+            push @wheres, 'v.id = pcv.contact_value__id',
+              any_where($v, 'pcv.person__id = ?', \@params);
+        } elsif ($k eq 'alertable') {
+            push @wheres, any_where($v ? 1 : 0, "c.$k = ?", \@params);
         } else {
-            push @wheres, "LOWER(c.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where($v,"LOWER(c.$k) LIKE LOWER(?)", \@params);
         }
     }
 
@@ -1398,7 +1411,7 @@ $get_em = sub {
     my @qry_cols = $ids ? ('v.id') : @cols;
     my $sel = prepare_ca(qq{
         SELECT @qry_cols
-        FROM   contact c, contact_value v
+        FROM   $tables
         WHERE  c.id = v.contact__id
                $where
         ORDER BY c.id
