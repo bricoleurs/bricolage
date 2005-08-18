@@ -123,6 +123,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::AssetType
 
+=item Bric::Biz::AssetType::Parts::Data
+
 =back
 
 More classes will support it soon! [David]
@@ -350,6 +352,18 @@ Added C<MASON_STATIC_SOURCE> F<bricolage.conf> directive to enable static
 sources in the Mason-powered UI. Enabling this directive can eliminate many
 file system stats on every request, thus increasing performance. It's disabled
 by default, but you should turn it on now! [David]
+
+=item *
+
+Changed the names of the attributes in Bric::Biz::AssetType and
+Bric::Biz::AssetType::Parts::Data that have double underscores to have only
+single underscores. The double underscores are still supported for the sake of
+backwards compatibility, but are no longer required. [David]
+
+=item *
+
+Updated search documentation for Bric::Biz::AssetType::Parts::Data and
+wrote tests for the class. [David]
 
 =back
 

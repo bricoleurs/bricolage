@@ -11,7 +11,7 @@ my %elem = ( name          => 'Test Element',
              key_name      => 'test_element',
              description   => 'Testing Element API',
              burner        => Bric::Biz::AssetType::BURNER_MASON,
-             type__id      => 1,
+             type_id       => 1,
              reference     => 0,
              primary_oc_id => 1);
 
@@ -27,11 +27,13 @@ sub table { 'element' };
 sub test_const : Test(8) {
     my $self = shift;
 
-    my %elem = ( name => 'Test Element',
-                 description => 'Testing Element API',
-                 burner => Bric::Biz::AssetType->BURNER_MASON,
-                 type__id => 1,
-                 reference => 0);
+    my %elem = (
+        name        => 'Test Element',
+        description => 'Testing Element API',
+        burner      => Bric::Biz::AssetType->BURNER_MASON,
+        type_id     => 1,
+        reference   => 0
+    );
 
     ok( my $elem = Bric::Biz::AssetType->new, "Create empty element" );
     isa_ok($elem, 'Bric::Biz::AssetType');
@@ -42,7 +44,7 @@ sub test_const : Test(8) {
     is( $elem->get_name, $elem{name}, "Check name" );
     is( $elem->get_description, $elem{description}, "Check description" );
     is( $elem->get_burner, $elem{burner}, "Check burner" );
-    is( $elem->get_type__id, $elem{type__id}, "Check type__id" );
+    is( $elem->get_type_id, $elem{type_id}, "Check type_id" );
 }
 
 ##############################################################################
@@ -76,7 +78,7 @@ sub test_list : Test(36) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_at_grp__id], 'grp');
+        $self->add_del_ids([$elem->get_at_grp_id], 'grp');
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -128,9 +130,9 @@ sub test_list : Test(36) {
         "Look up data_name 'Deck'" );
     is( scalar @elems, 3, "Check for 3 elements" );
 
-    # Try type__id.
-    ok( @elems = Bric::Biz::AssetType->list({ type__id => 2 }),
-        "Look up type__id 2" );
+    # Try type_id.
+    ok( @elems = Bric::Biz::AssetType->list({ type_id => 2 }),
+        "Look up type_id 2" );
     is( scalar @elems, 2, "Check for 2 elements" );
 
     # Try top_level

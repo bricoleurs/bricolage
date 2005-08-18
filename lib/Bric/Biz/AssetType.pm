@@ -170,7 +170,7 @@ my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 my @cols = qw(name key_name description burner reference type__id at_grp__id
               active);
-my @props = qw(name key_name description burner reference type__id at_grp__id
+my @props = qw(name key_name description burner reference type_id at_grp_id
                _active);
 my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
   "a.type__id, a.at_grp__id, a.active, m.grp__id";
@@ -188,10 +188,10 @@ BEGIN {
 			 'id'		        => Bric::FIELD_READ,
 
 			 # A group for holding AssetTypes that are children.
-			 'at_grp__id'           => Bric::FIELD_READ,
+			 'at_grp_id'           => Bric::FIELD_READ,
 
-                         # A unique name for the story type
-                         'key_name'             => Bric::FIELD_RDWR,
+             # A unique name for the story type
+             'key_name'             => Bric::FIELD_RDWR,
 
 			 # The human readable name for the story type
 			 'name'		        => Bric::FIELD_RDWR,
@@ -206,7 +206,7 @@ BEGIN {
 			 'reference'            => Bric::FIELD_READ,
 
                          # The type of this asset type.
-                         'type__id'             => Bric::FIELD_READ,
+             'type_id'             => Bric::FIELD_READ,
 
 			 # The IDs of the groups this asset type is in.
 			 'grp_ids'             => Bric::FIELD_READ,
@@ -290,6 +290,10 @@ sub new {
 
     # Set reference unless explicitly set.
     $init->{reference} = $init->{reference} ? 1 : 0;
+    $init->{type_id} = delete $init->{type__id}
+      if exists $init->{type__id};
+    $init->{at_grp_id} = delete $init->{at_grp__id}
+      if exists $init->{at_grp__id};
 
     # Set the instance group ID.
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
@@ -395,16 +399,16 @@ contain this output channel.
 The name of an AssetType::Data object. Returned will be all AssetType objects
 that reference this particular AssetType::Data object.
 
-=item map_type__id
+=item map_type_id
 
-The map_type__id of an AssetType::Data object.
+The map_type_id of an AssetType::Data object.
 
 =item active
 
 Set to 0 to return active and inactive asset types. 1, the default, returns
 only active asset types.
 
-=item type__id
+=item type_id
 
 match elements of a particular attype
 
@@ -1287,6 +1291,11 @@ sub get_biz_class_id {
     my $att_obj = $self->_get_at_type_obj or return;
     return $att_obj->get_biz_class_id;
 }
+
+sub get_type__id   { shift->get_type_id       }
+sub set_type__id   { shift->set_type_id(@_)   }
+sub get_at_grp__id { shift->get_at_grp_id     }
+sub set_at_grp__id { shift->set_at_grp_id(@_) }
 
 #------------------------------------------------------------------------------#
 
@@ -2469,7 +2478,9 @@ sub _do_list {
     }
 
     # Set up paramters based on an AssetType::Data name or a map type ID.
-    if (exists $params->{data_name} or exists $params->{map_type__id}) {
+    if (exists $params->{data_name} or exists $params->{map_type_id}
+          or exists $params->{map_type__id})
+    {
         # Add the element_data table.
         $tables .= ', at_data d';
         push @wheres, 'd.element__id = a.id';
@@ -2480,9 +2491,10 @@ sub _do_list {
                 \@params
             );
         }
-        if (exists $params->{map_type__id}) {
+        if (exists $params->{map_type_id} or exists $params->{map_type__id}) {
             push @wheres, any_where(
-                delete $params->{map_type__id},
+                ( delete $params->{map_type_id}
+                  || delete $params->{map_type__id} ),
                 'd.map_type__id = ?',
                 \@params
             );
@@ -2509,7 +2521,9 @@ sub _do_list {
             $tables .= ', element__output_channel ao';
             push @wheres, 'ao.element__id = a.id';
             push @wheres, any_where($v, 'ao.output_channel__id = ?', \@params);
-        } elsif ($k eq 'type__id' or $k eq 'id') {
+        } elsif ($k eq 'type_id' || $k eq 'type__id') {
+            push @wheres, any_where($v, "a.type__id = ?", \@params);
+        } elsif ($k eq 'id') {
             push @wheres, any_where($v, "a.$k = ?", \@params);
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
@@ -2698,7 +2712,7 @@ sub _get_attr_obj {
 
 sub _get_at_type_obj {
     my $self = shift;
-    my $att_id  = $self->get_type__id;
+    my $att_id  = $self->get_type_id;
     my $att_obj = $self->_get('_att_obj');
 
     return $att_obj if $att_obj;
@@ -2749,7 +2763,7 @@ sub _save_attr {
 
 sub _get_asset_type_grp {
     my $self = shift;
-    my $atg_id  = $self->get_at_grp__id;
+    my $atg_id  = $self->get_at_grp_id;
     my $atg_obj = $self->_get('_at_grp_obj');
 
     return $atg_obj if $atg_obj;
@@ -2761,7 +2775,7 @@ sub _get_asset_type_grp {
 	$atg_obj = Bric::Util::Grp::AssetType->new({'name' => 'AssetType Group'});
 	$atg_obj->save;
 
-	$self->_set(['at_grp__id',     '_at_grp_obj'],
+	$self->_set(['at_grp_id',     '_at_grp_obj'],
 		    [$atg_obj->get_id, $atg_obj]);
     }
 
@@ -2783,7 +2797,7 @@ sub _sync_parts {
 
     # Now that we know we have an ID for $self, set element ID for
     foreach my $p_obj (@$created) {
-	$p_obj->set_element__id($id);
+	$p_obj->set_element_id($id);
 
 	# Save the parts object.
 	$p_obj->save;
