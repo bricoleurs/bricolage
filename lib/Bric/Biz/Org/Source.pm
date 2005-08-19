@@ -272,33 +272,37 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item name
 
-name
+The source's organization name. May use C<ANY> for a list of possible values.
 
-=item *
+=item long_name
 
-long_name
+The source organization's long name. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item source_name
 
-source_name
+The name of the source. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-description
+A description of the source May use C<ANY> for a list of possible values.
 
-=item *
+=item expire
 
-expire
+The number of days until documents from the source should be expired. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item org_id
 
-org_id
+The ID for a Bric::Biz::Org object with which sources may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item grp_id
 
-grp_id
+A Bric::Util::Grp::Keyword object ID. May use C<ANY> for a list of possible
+values.
 
 =back
 
@@ -1212,28 +1216,26 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'source s, org o, member m, source_member c';
-    my $wheres = 's.org__id = o.id AND s.id = c.object_id ' .
-      "AND m.active = '1' AND m.id = c.member__id";
+    my $wheres = 's.org__id = o.id AND s.id = c.object_id '
+      . "AND m.active = '1' AND m.id = c.member__id";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'expire') {
             # Simple numeric comparison.
-            $wheres .= " AND s.$k = ?";
-            push @params, $v;
+            $wheres .= " AND " . any_where $v, "s.$k = ?", \@params;
         } elsif ($k eq 'org_id') {
             # Simple numeric comparison.
-            $wheres .= " AND o.id = ?";
-            push @params, $v;
+            $wheres .= " AND " . any_where $v, "o.id = ?", \@params;
         } elsif ($TXT_MAP{$k}) {
             # Simple string comparison.
-            $wheres .= " AND LOWER($TXT_MAP{$k}) LIKE ?";
-            push @params, lc $v;
+            $wheres .= " AND "
+              . any_where $v, "LOWER($TXT_MAP{$k}) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, source_member c2";
-            $wheres .= " AND s.id = c2.object_id AND c2.member__id = m2.id " .
-              "AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND s.id = c2.object_id AND c2.member__id = m2.id "
+              . "AND m2.active = '1' AND "
+              . any_where $v, "m2.grp__id = ?", \@params;
         } else {
             # We're horked.
             throw_dp(error => "Invalid property '$k'.")

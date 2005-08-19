@@ -129,6 +129,14 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::Keyword
 
+=item Bric::Biz::Org
+
+=item Bric::Biz::Org::Parts::Addr
+
+=item Bric::Biz::Org::Person
+
+=item Bric::Biz::Org::Source
+
 =item Bric::Util::Grp
 
 =back
@@ -369,9 +377,9 @@ backwards compatibility, but are no longer required. [David]
 =item *
 
 Updated search documentation and wrote tests for
-L<Bric::Biz::Contact|Bric::Biz::Contact> and
-L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>.
-[David]
+L<Bric::Biz::Contact|Bric::Biz::Contact>,
+L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>, and
+L<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>. [David]
 
 =back
 

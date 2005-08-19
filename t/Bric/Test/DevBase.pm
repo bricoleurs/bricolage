@@ -151,8 +151,9 @@ sub del_ids : Test(teardown => 0) {
         _do_deletes($table, $ids);
     }
 
-    # Finally, delete any events.
+    # Finally, delete any events and orgs.
     Bric::Util::DBI::prepare(qq{DELETE FROM event})->execute;
+    Bric::Util::DBI::prepare(qq{DELETE FROM org WHERE id > 1})->execute;
 }
 
 =begin comment

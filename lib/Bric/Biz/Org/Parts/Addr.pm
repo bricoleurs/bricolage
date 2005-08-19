@@ -104,7 +104,8 @@ use constant DEBUG => 0;
 ################################################################################
 # Private Class Fields
 my @cols = qw(a.id a.org__id a.type a.active p.id t.name p.value);
-my @props = qw(id org__id type active);
+my @props = qw(id org_id type active);
+my @ins_cols = qw(id org__id type active);
 my @part_cols = qw(id name value);
 
 ################################################################################
@@ -115,7 +116,7 @@ BEGIN {
     Bric::register_fields({
                          # Public Fields
                          id =>  Bric::FIELD_READ,
-                         org__id => Bric::FIELD_READ,
+                         org_id => Bric::FIELD_READ,
                          type => Bric::FIELD_RDWR,
                          active => Bric::FIELD_NONE,
                          parts => Bric::FIELD_READ,
@@ -200,17 +201,18 @@ B<Notes:> To be called from Bric::Biz::Org only.
 sub new {
     my ($pkg, $args) = @_;
     # Grab the org_id and type.
-    my $init = { org__id => $args->{org_id}, type => $args->{type} };
+    my $init = { org_id => $args->{org_id}, type => $args->{type} };
     # Grab lines.
     if ($args->{lines}) {
         $init->{_flags}{__lines__} = 1;
-        $init->{_lines}{_add} = ref $args->{lines} ? $args->{lines} : [$args->{lines}];
+        $init->{_lines}{_add} = ref $args->{lines} ? $args->{lines}
+                                                   : [$args->{lines}];
     }
 
-    # Delete the keys we've fetched already.
-    delete @{$args}{'org_id', 'type', 'lines'};
+    my %ignore = map { $_ => undef } qw(org_id type lines);
     # The remaining keys are parts, and need to be stored in proper case.
     foreach my $part (keys %$args) {
+        next if exists $ignore{$part};
         my $p = ucfirst $part;
         $init->{parts}{$p} = $args->{$part};
         push @{ $init->{_flags}{__parts__} }, $p;
@@ -301,33 +303,35 @@ lookup parameter keys are:
 
 =over
 
-=item *
+=item type
 
-type
+The type of address. May use C<ANY> for a list of possible values.
 
-=item *
+=item city
 
-city
+The address city. May use C<ANY> for a list of possible values.
 
-=item *
+=item state
 
-state
+The address state. May use C<ANY> for a list of possible values.
 
-=item *
+=item code
 
-code
+The address postal code. May use C<ANY> for a list of possible values.
 
-=item *
+=item country
 
-country
+The address country. May use C<ANY> for a list of possible values.
 
-=item *
+=item org_id
 
-org_id
+The ID for a Bric::Biz::Org object with which addresses may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item person_id
 
-person_id
+The ID of a Bric::Biz::Person object with which addresses may be associated.
+May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1476,68 +1480,61 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $args, $ids, $href) = @_;
-    my (@txt_wheres, @num_wheres, @params, @subsel, $po_where);
+    my $tables = "addr a, addr_part_type t, addr_part p";
+    my (@wheres, @params);
     while (my ($k, $v) = each %$args) {
         if ($k eq 'id') {
             # We're looking for a specific ID.
-            push @num_wheres, "a.$k";
-            push @params, $v;
+            push @wheres, any_where $v, "a.id = ?", \@params;
         } elsif ($k eq 'org_id') {
             # We're looking for a Bric::Biz::Org object ID.
-            push @num_wheres, "a.org__id";
-            push @params, $v;
+            push @wheres, any_where $v, "a.org__id = ?", \@params;
         } elsif ($k eq 'type') {
             # We're looking for a specific type of address.
-            push @txt_wheres, "LOWER(a.$k)";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'po_id') {
             # We're looking for addresses associated with a Org::Person object.
-            $po_where = qq{a.id in (SELECT addr__id
-                                         FROM person_org__addr
-                                         WHERE person_org__id = ?)
-            };
-            push @params, $v;
+            $tables .= ", person_org__addr poa";
+            push @wheres, "a.id = poa.addr__id",
+              any_where $v, "poa.person_org__id = ?", \@params;
+        } elsif ($k eq 'person_id') {
+            # We're looking for addresses associated with a Org::Person object.
+            $tables .= ', person_org po';
+            push @wheres, "a.org__id = po.org__id",
+              any_where $v, "po.person__id = ?", \@params;
         } else {
-            # We're interested in some other part of the addres.
-            push @subsel, "(LOWER(ap.value) LIKE ? AND LOWER(pt.name) LIKE ?)";
-            push @params, lc($v), lc($k);
+            # We're interested in some other part of the address.
+            $tables .= ', addr_part ap, addr_part_type pt';
+            push @params, $k;
+            push @wheres, 'a.id = ap.addr__id',
+                          'pt.id = ap.addr_part_type__id',
+                          '(LOWER(pt.name) LIKE LOWER(?) AND '
+                            . any_where(
+                                $v,
+                                'LOWER(ap.value) LIKE LOWER(?)',
+                                \@params
+                            )
+                            . ')';
         }
     }
 
     # Make sure the records are active unless an ID is specified.
-    my $where = defined $args->{id} ? '' : "a.active = '1' ";
+    unshift @wheres, "a.active = '1'" unless defined $args->{id};
 
     # Put together the where statement.
-    local $" = ' = ? AND ';
-    $where .= $where ? " AND @num_wheres = ?" : "@num_wheres = ?" if @num_wheres;
-    local $" = ' LIKE ? AND ';
-    $where .= $where ? " AND @txt_wheres LIKE ?" : "@txt_wheres LIKE ?"
-      if @txt_wheres;
-    $where .= $where ? " AND $po_where" : $po_where if $po_where;
-
-    # Put together the subselect statement, if we need to query against address
-    # parts.
-    my $subsel = '';
-    if (@subsel) {
-        local $" = ' OR ';
-        $subsel = qq{               AND a.id in (
-                   SELECT ap.addr__id
-                   FROM   addr_part ap, addr_part_type pt
-                   WHERE  pt.id = ap.addr_part_type__id
-                          AND @subsel
-                   )};
-    }
+    my $where = join ' AND ', @wheres;
 
     # Assemble the final query!
-    local $" = ', ';
-    my @here_cols = $ids ? ('id') : @cols;
+    my ($here_cols, $order_by) = $ids
+        ? ('DISTINCT a.id', 'a.id')
+        : (join(', ', @cols), 'a.id, p.id');
     my $sel = prepare_c(qq{
-        SELECT @here_cols
-        FROM   addr a, addr_part_type t, addr_part p
+        SELECT $here_cols
+        FROM   $tables
         WHERE  a.id = p.addr__id
                AND t.id = p.addr_part_type__id
-               AND $where $subsel
-        ORDER BY a.id, p.id
+               AND $where
+        ORDER BY $order_by
     }, undef);
 
     # Just return the IDs, if they're what's wanted.
@@ -1723,7 +1720,7 @@ $save_main = sub {
         local $" = ' = ?, '; # Simple way to create placeholders.
         my $upd = prepare_c(qq{
             UPDATE addr
-            SET    @props = ?
+            SET    @ins_cols = ?
             WHERE  id = ?
         }, undef);
         execute($upd, $self->_get(@props, 'id'));
@@ -1732,7 +1729,7 @@ $save_main = sub {
         local $" = ', ';
         my $fields = join ', ', next_key('addr'), ('?') x $#props;
         my $ins = prepare_c(qq{
-            INSERT INTO addr (@props)
+            INSERT INTO addr (@ins_cols)
             VALUES ($fields)
         }, undef);
         # Don't try to set ID - it will fail!
