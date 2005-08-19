@@ -257,10 +257,6 @@ description
 
 =item *
 
-primary
-
-=item *
-
 active (default is active, pass undef to make a new inactive Output Channel)
 
 =back
@@ -376,57 +372,67 @@ are:
 
 =over 4
 
-=item *
+=item name
 
-name
+The name of the output channel. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-description
+Description of the output channel. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item site_id
 
-site_id
+The ID of the Bric::Biz::Site object with which the output channel is
+associated. May use C<ANY> for a list of possible values.
 
-=item *
+=item protocol
 
-protocol
+The protocol or scheme for files published to an output channel, such as
+"http://". May use C<ANY> for a list of possible values.
 
-=item *
+=item server_type_id
 
-primary
+The ID of a Bric::Dest::ServerType (destination) with which output channels
+may be associated. May use C<ANY> for a list of possible values.
 
-=item *
+=item include_parent_id
 
-server_type_id
+The ID of an output channel that includes other output channels, to get a
+list of those includes. May use C<ANY> for a list of possible values.
 
-=item *
+=item story_instance_id
 
-include_parent_id
+The ID of a story with which output channels may be associated. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item media_instance_id
 
-story_instance_id
+The ID of a media document with which output channels may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item uri_format
 
-media_instance_id
+The URI format of an output channel. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item fixed_uri_format
 
-uri_format
+The fixed URI format of an output channel. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item uri_case
 
-uri_case
+The URI case of an output channel. May use C<ANY> for a list of possible values.
 
-=item *
+=item use_slug
 
-use_slug
+A boolean indicating whether story slugs should be used for file names in an
+output channel.
 
-=item *
+=item active
 
-active
+A boolean indicating whether or not an output channel is active.
 
 =back
 
@@ -1728,12 +1734,11 @@ sub _do_list {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'uri_case') {
             # Simple numeric comparison.
-            $wheres .= " AND oc.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "oc.$k = ?", \@params;
         } elsif ($k eq 'primary') {
-            # Simple numeric comparison.
+            # Simple boolean comparison.
             $wheres .= " AND oc.primary_ce = ?";
-            push @params, $v;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'active' or $k eq 'use_slug') {
             # Simple boolean comparison.
             $wheres .= " AND oc.$k = ?";
@@ -1741,40 +1746,35 @@ sub _do_list {
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, output_channel_member c2";
-            $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'include_parent_id') {
             # Include the parent ID.
             $tables .= ', output_channel_include inc';
-            $wheres .= ' AND oc.id = inc.include_oc_id ' .
-              'AND inc.output_channel__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = inc.include_oc_id AND '
+              . any_where $v, 'inc.output_channel__id = ?', \@params;
         } elsif ($k eq 'server_type_id') {
             # Join in the server_type__output_channel table.
             $tables .= ', server_type__output_channel stoc';
-            $wheres .= ' AND oc.id = stoc.output_channel__id ' .
-              'AND stoc.server_type__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = stoc.output_channel__id AND '
+              . any_where $v, 'stoc.server_type__id = ?', \@params;
         } elsif ($k eq 'story_instance_id') {
             # Join in the story__output_channel table.
             $tables .= ', story__output_channel soc';
-            $wheres .= ' AND oc.id = soc.output_channel__id ' .
-              'AND soc.story_instance__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = soc.output_channel__id AND '
+              . any_where $v, 'soc.story_instance__id = ?', \@params;
         } elsif ($k eq 'media_instance_id') {
             # Join in the media__output_channel table.
             $tables .= ', media__output_channel moc';
-            $wheres .= ' AND oc.id = moc.output_channel__id ' .
-              'AND moc.media_instance__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = moc.output_channel__id AND '
+              . any_where $v, 'moc.media_instance__id = ?', \@params;
         } elsif ($k eq 'site_id') {
-            $wheres .= ' AND oc.site__id = ?';
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'oc.site__id = ?', \@params;
         } else {
             # Simple string comparison!
-            $wheres .= " AND LOWER(oc.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(oc.$k) LIKE LOWER(?)", \@params;
         }
     }
 

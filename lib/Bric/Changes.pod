@@ -137,6 +137,10 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::Org::Source
 
+=item Bric::Biz::OutputChannel
+
+=item Bric::Biz::OutputChannel::Element
+
 =item Bric::Util::Grp
 
 =back

@@ -210,14 +210,14 @@ sub new {
 
 ##############################################################################
 
-=item my $oce_href =
-Bric::Biz::OutputChannel::Element->href({ element_id => $eid });
+=item my $oce_href = Bric::Biz::OutputChannel::Element->href({ element_id => $eid });
 
 Returns a hash reference of Bric::Biz::OutputChannel::Element objects. Each
 hash key is a Bric::Biz::OutputChannel::Element ID, and the values are the
 corresponding Bric::Biz::OutputChannel::Element objects. Only a single
-parameter argument is allowed, C<element_id>. All of the output channels
-associated with that element ID will be returned.
+parameter argument is allowed, C<element_id>, though C<ANY> may be used to
+specify a list of element IDs. All of the output channels associated with that
+element ID will be returned.
 
 B<Throws:>
 
@@ -256,17 +256,19 @@ B<Notes:> NONE.
 =cut
 
 sub href {
-    my ($pkg, $params) = @_;
+    my ($pkg, $p) = @_;
     my $class = ref $pkg || $pkg;
 
-    # HACK: Really there's too much going on here getting information from
+    # XXX Really there's too much going on here getting information from
     # the parent class. Perhaps one day we'll have a SQL factory class to
     # handle all this stuff, but this will have to do for now.
     my $ord = $pkg->SEL_ORDER;
     my $cols = $pkg->SEL_COLS;
     my $tables = $pkg->SEL_TABLES;
-    my $wheres = $pkg->SEL_WHERES .
-      ' AND oc.id = eoc.output_channel__id AND eoc.element__id = ?';
+    my @params;
+    my $wheres = $pkg->SEL_WHERES
+               . ' AND oc.id = eoc.output_channel__id AND '
+               . any_where $p->{element_id}, 'eoc.element__id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
         FROM   $tables
@@ -274,7 +276,7 @@ sub href {
         ORDER BY $ord
     }, undef);
 
-    execute($sel, $params->{element_id});
+    execute($sel, @params);
     my (@d, %ocs, $grp_ids);
     my @sel_props = $pkg->SEL_PROPS;
     bind_columns($sel, \@d[0..$#sel_props]);
