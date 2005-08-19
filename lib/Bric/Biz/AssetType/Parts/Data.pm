@@ -408,6 +408,10 @@ in the C<$params> hash reference. Supported criteria are:
 
 =over 4
 
+=item id
+
+Field ID. May use C<ANY> for a list of possible values.
+
 =item element_id
 
 The ID of the Bric::Biz::AssetType object with which the field is associated.

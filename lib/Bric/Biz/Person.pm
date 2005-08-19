@@ -296,29 +296,34 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-prefix
+Person ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item prefix
 
-lname
+A name prefix, such as "Mr."  May use C<ANY> for a list of possible values.
 
-=item *
+=item lname
 
-fname
+Last name or surname. May use C<ANY> for a list of possible values.
 
-=item *
+=item fname
 
-mname
+First name or given name. May use C<ANY> for a list of possible values.
 
-=item *
+=item mname
 
-suffix
+Middle name or second name. May use C<ANY> for a list of possible values.
 
-=item *
+=item suffix
 
-grp_id
+Name suffix, such as "Jr." May use C<ANY> for a list of possible values.
+
+=item grp_id
+
+The ID of a Bric::Util::Grp object of which person objects may be a member.
+May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1799,17 +1804,14 @@ $get_em = sub {
     my $extra_wheres = '';
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
-            push @wheres, "p.$k = ?";
-            push @params, $v;
+            push @wheres, any_where $v, "p.$k = ?", \@params;
         } elsif ($k eq 'grp_id') {
             $extra_tables = ", $mem_table m2, $map_table c2";
             $extra_wheres = "AND p.id = c2.object_id AND " .
               "m2.active = '1' AND c2.member__id = m2.id";
-            push @wheres, "m2.grp__id = ?";
-            push @params, $v;
+            push @wheres, any_where $v, "m2.grp__id = ?", \@params;
         } else {
-            push @wheres, "LOWER(p.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(p.$k) LIKE LOWER(?)", \@params;
         }
     }
 

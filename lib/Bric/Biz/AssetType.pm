@@ -377,6 +377,10 @@ Supported Keys:
 
 =over 4
 
+=item id
+
+Element ID. May use C<ANY> for a list of possible values.
+
 =item name
 
 The name of the asset type. Matched with case-insentive LIKE. May use C<ANY>

@@ -280,6 +280,10 @@ Criteria keys:
 
 =over 4
 
+=item id
+
+Category ID. May use C<ANY> for a list of possible values.
+
 =item name
 
 The name of the category. May use C<ANY> for a list of possible values.

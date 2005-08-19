@@ -303,6 +303,10 @@ lookup parameter keys are:
 
 =over
 
+=item id
+
+Address ID. May use C<ANY> for a list of possible values.
+
 =item type
 
 The type of address. May use C<ANY> for a list of possible values.

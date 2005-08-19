@@ -372,6 +372,10 @@ are:
 
 =over 4
 
+=item id
+
+Output channel ID. May use C<ANY> for a list of possible values.
+
 =item name
 
 The name of the output channel. May use C<ANY> for a list of possible values.

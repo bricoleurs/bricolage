@@ -325,6 +325,10 @@ supported lookup keys are:
 
 =over 4
 
+=item id
+
+Person/Organization ID. May use C<ANY> for a list of possible values.
+
 =item name
 
 The organization's name. May use C<ANY> for a list of possible values.

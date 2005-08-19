@@ -247,6 +247,10 @@ The supported lookup keys that must be an exact value are:
 
 =over 4
 
+=item id
+
+Keyword ID. May use C<ANY> for a list of possible values.
+
 =item active
 
 A boolean value indicating if the keyword is active.
