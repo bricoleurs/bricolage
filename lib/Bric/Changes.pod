@@ -145,6 +145,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Biz::Person::User
 
+=item Bric::Biz::Site
+
 =item Bric::Util::Grp
 
 =back

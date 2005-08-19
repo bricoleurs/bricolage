@@ -243,9 +243,16 @@ use valid SQL wild card characters are:
 
 =back
 
+The C<ANY()> operator may be used to specify a list of values for any of these
+parameters.
+
 The supported lookup keys that must be an exact value are:
 
 =over 4
+
+=item id
+
+Site ID. May use C<ANY> for a list of possible values.
 
 =item active
 
@@ -253,16 +260,19 @@ A boolean value indicating if the site is active.
 
 =item grp_id
 
-A Bric::Util::Grp::Site object ID.
+A Bric::Util::Grp::Site object ID. May use C<ANY> for a list of possible
+values.
 
 =item element_id
 
-A Bric::Biz::AssetType (element) ID.
+A Bric::Biz::AssetType (element) ID. May use C<ANY> for a list of possible
+values.
 
 =item output_channel_id
 
 A Bric::Biz:OutputChannel ID. Pass in C<undef> to check for when it's C<NULL>,
-and "not null" to check for when it's C<NOT NULL>.
+and "not null" to check for when it's C<NOT NULL>. May use C<ANY> for a list
+of possible values.
 
 =back
 
@@ -785,42 +795,40 @@ $get_em = sub {
       "m.active = '1'";
     my @params;
 
-    foreach my $k (keys %$params) {
+    while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
             # Simple lookup by ID.
-            $wheres .= " AND a.id = ?";
-            push @params, $params->{$k};
+            $wheres .= ' AND ' . any_where $v, 'a.id = ?', \@params;
         } elsif ($k eq 'active') {
             # Simple lookup by "active" boolean.
-            $wheres .= " AND a.active = ?";
-            push @params, $params->{$k} ? 1 : 0;
+            $wheres .= ' AND a.active = ?';
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'grp_id') {
             # Look up by group membership.
             $tables .= ", member m2, site_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $params->{$k};
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
+                    . " AND m2.active = '1' "
+                    . any_where $v, 'AND m2.grp__id = ?', \@params;
         } elsif ($k eq 'element_id') {
             # Look up by element association.
             $tables .= ", element__site es";
-            $wheres .= " AND a.id = es.site__id AND es.element__id = ? AND es.active = '1'";
-            push @params, $params->{$k};
+            $wheres .= " AND a.id = es.site__id AND es.active = '1'"
+                    . any_where $v, 'AND es.element__id = ?', \@params;
         } elsif ($k eq 'output_channel_id') {
             # Look up by output channel association.
             $tables .= ", output_channel oc";
-            $wheres .= " AND a.id = oc.site__id AND oc.id ";
-            if (not defined $params->{$k}) {
-                $wheres .= "IS NULL";
-            } elsif ($params->{$k} eq 'not null') {
-                $wheres .= "IS NOT NULL";
+            $wheres .= " AND a.id = oc.site__id AND ";
+            if (not defined $v) {
+                $wheres .= "oc.id IS NULL";
+            } elsif (lc $v eq 'not null') {
+                $wheres .= "oc.id IS NOT NULL";
             } else {
-                $wheres .= "= ?";
-                push @params, $params->{$k};
+                $wheres .= any_where $v, 'oc.id = ?', \@params;
             }
         } else {
             # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $params->{$k};
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         }
     }
 
