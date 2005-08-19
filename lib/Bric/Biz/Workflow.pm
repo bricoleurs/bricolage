@@ -309,17 +309,29 @@ are:
 
 =over 4
 
+=item C<id>
+
+Workflow ID. May use C<ANY> for a list of possible values.
+
 =item C<name>
 
-Return all workflows matching a certain name.
+Return all workflows matching a certain name. May use C<ANY> for a list of
+possible values.
 
 =item C<site_id>
 
-Return all workflows matching a certain site id
+Return all workflows matching a certain site id. May use C<ANY> for a list of
+possible values.
 
 =item C<description>
 
-Return all workflows with a matching description.
+Return all workflows with a matching description. May use C<ANY> for a list of
+possible values.
+
+=item C<description>
+
+Return all workflows with a matching description. May use C<ANY> for a list of
+possible values.
 
 =item C<active>
 
@@ -329,15 +341,17 @@ Boolean; Return all in/active workflows.
 
 Return all workflows of a particular type. The types are integers accessible
 via the C<STORY_WORKFLOW>, C<MEDIA_WORKFLOW>, and C<TEMPLATE_WORKFLOW>
-constants.
+constants. May use C<ANY> for a list of possible values.
 
 =item <desk_id>
 
-Return all workflows containing a desk with this desk ID.
+Return all workflows containing a desk with this desk ID. May use C<ANY> for a
+list of possible values.
 
 =item C<grp_id>
 
-Return all workflows in the group corresponding to this group ID.
+Return all workflows in the group corresponding to this group ID. May use
+C<ANY> for a list of possible values.
 
 =back
 
@@ -1370,28 +1384,29 @@ $get_em = sub {
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'name' or $k eq 'description') {
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, workflow_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'desk_id') {
             # Yes, this is a hack. It requires too much knowledge of the Group
             # schema. This will go away once Workflow has this group stuff
             # refactored out of it.
             $tables .= ", member m3, desk_member c3";
-            $wheres .= ' AND a.all_desk_grp_id = m3.grp__id AND ' .
-              "m3.id = c3.member__id AND m3.active = '1' AND " .
-              'c3.object_id = ?';
-            push @params, $v;
-        } elsif($k eq 'site_id') {
-            $wheres .= " AND a.site__id = ?";
-            push @params, $v;
+            $wheres .= ' AND a.all_desk_grp_id = m3.grp__id AND '
+              . "m3.id = c3.member__id AND m3.active = '1' AND "
+              . any_where $v, 'c3.object_id = ?', \@params;
+        } elsif ($k eq 'site_id') {
+            $wheres .= ' AND ' . any_where $v, 'a.site__id = ?', \@params;
+        } elsif ($k eq 'active') {
+            # Simple lookup by "active" boolean.
+            $wheres .= ' AND a.active = ?';
+            push @params, $v ? 1 : 0;
         } else {
-            $wheres .= " AND a.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "a.$k = ?", \@params;
         }
     }
 
