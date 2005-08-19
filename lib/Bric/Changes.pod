@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.9.0 "Punkin" (2005-08-18)
+=head1 VERSION 1.9.0 "Punkin" (2005-08-19)
 
 =head2 New Features
 
