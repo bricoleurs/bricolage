@@ -35,7 +35,7 @@
 </dl>
 
 <p><b>Stack:</b></p>
-<pre><% isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %></pre>
+<pre><% HTML::Mason::Exceptions::isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %></pre>
 
 %     if (QA_MODE) {
 <p><b>Request args:</b></p>
@@ -75,8 +75,8 @@ Error: <% escape_html($fault->error) %>
 STACK:
 
 %     if (isa_exception($fault)) {
-<% isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %>
-%     }  
+<% HTML::Mason::Exceptions::isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %>
+%     }
 END DEBUGGING INFORMATION -->
 
 % }
