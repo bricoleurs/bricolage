@@ -14,6 +14,21 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.9.1 "Cupcake" ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Added C<related_story_id> and C<related_media_id> parameters to the C<list()>
+method of the story and media classes to search for stories and media that
+have a given story or media ID or list of IDs as relateds. Based on a patch
+from Rod Taylor. [David]
+
+=back
+
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)
 
 =head2 New Features

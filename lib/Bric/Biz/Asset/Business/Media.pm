@@ -191,6 +191,8 @@ use constant PARAM_FROM_MAP => {
      grp_id               => 'member m2, media_member mm2',
      data_text            => 'media_data_tile md',
      subelement_key_name  => 'media_container_tile mct',
+     related_story_id     => 'media_container_tile mctrs',
+     related_media_id     => 'media_container_tile mctrm',
      contrib_id           => 'media__contributor sic',
 };
 
@@ -227,6 +229,8 @@ use constant PARAM_WHERE_MAP => {
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND LOWER(mct.key_name) LIKE LOWER(?)',
+      related_story_id       => 'i.id = mctrs.object_instance_id AND mctrs.related_instance__id = ?',
+      related_media_id       => 'i.id = mctrm.object_instance_id AND mctrm.related_media__id = ?',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
@@ -287,6 +291,10 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = mct.object_instance_id',
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
+    related_story_id       => [ 'i.id = mctrs.object_instance_id',
+                                'mctrs.related_instance__id = ?' ],
+    related_media_id       => [ 'i.id = mctrm.object_instance_id',
+                                'mctrm.related_media__id = ?' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
     output_channel_id      => ['i.id = moc.media_instance__id',
@@ -702,6 +710,16 @@ values.
 
 The key name for a container element that's a subelement of a media
 document. May use C<ANY> for a list of possible values.
+
+=item related_story_id
+
+Returns a list of media that have this story ID as a related story. May use
+C<ANY> for a list of possible values.
+
+=item related_media_id
+
+Returns a list of media that have this media ID as a related media document.
+May use C<ANY> for a list of possible values.
 
 =item data_text
 
