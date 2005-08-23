@@ -27,6 +27,13 @@ C<$PATH> environment variable when searching for Apache and PostgreSQL
 installations. This is to favor servers installed manually over those included
 with the operating system. [David]
 
+=item *
+
+Added a partial index on the C<comp_time> column of the job table so as to
+speed up lookups of jobs yet to be completed. This was originally in a 1.6.7
+upgrade script, but never made it into the SQL for new installations.
+Suggested by Mark Jaroski. [David]
+
 =back
 
 =head2 Bug Fixes
