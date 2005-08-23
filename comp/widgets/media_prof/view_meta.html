@@ -9,7 +9,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
   value    => 'view',
-  image    => %{ $media->get_notes } ? 'note_fill' : "note",
+  image    => $media->has_notes ? 'note_fill' : "note",
   useGlobalImage => 1,
 );
 

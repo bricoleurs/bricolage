@@ -88,8 +88,9 @@ $LastChangedDate$
  $asset = $asset->set_workflow_id($id);
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -179,6 +180,7 @@ use constant VERSION_COLS => qw( formatting__id
                                  usr__id
                                  data
                                  file_name
+                                 note
                                  checked_out);
 
 use constant FIELDS     => qw( name
@@ -205,6 +207,7 @@ use constant VERSION_FIELDS => qw( id
                                    modifier
                                    data
                                    file_name
+                                   note
                                    checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';

@@ -53,8 +53,9 @@ $LastChangedDate$
  $id  = $asset->set_workflow_id;
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -226,6 +227,7 @@ use constant VERSION_COLS => qw( name
                                  usr__id
                                  primary_oc__id
                                  slug
+                                 note
                                  checked_out);
 
 use constant FIELDS =>  qw( uuid
@@ -254,6 +256,7 @@ use constant VERSION_FIELDS => qw( name
                                    modifier
                                    primary_oc_id
                                    slug
+                                   note
                                    checked_out);
 
 use constant AD_PARAM => '_AD_PARAM';

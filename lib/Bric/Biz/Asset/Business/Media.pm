@@ -115,6 +115,7 @@ use constant VERSION_COLS   => qw( name
                                    file_name
                                    location
                                    uri
+                                   note
                                    checked_out);
 
 use constant FIELDS         => qw( uuid
@@ -147,6 +148,7 @@ use constant VERSION_FIELDS => qw( name
                                    file_name
                                    location
                                    uri
+                                   note
                                    checked_out);
 
 use constant RO_FIELDS      => qw( class_id );

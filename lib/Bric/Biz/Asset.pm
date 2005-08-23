@@ -67,8 +67,9 @@ $LastChangedDate$
  $asset = $asset->set_workflow_id($id);
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -177,6 +178,7 @@ BEGIN {
                         workflow_id       => Bric::FIELD_RDWR,
                         desk_id           => Bric::FIELD_READ,
                         site_id           => Bric::FIELD_RDWR,
+                        note              => Bric::FIELD_RDWR,
 
                         # Private Fields
                         _checkin          => Bric::FIELD_NONE,
@@ -1421,73 +1423,92 @@ NONE
 
 ################################################################################
 
-=item  $self->set_note ( $note );
+=item  $self->set_note($note);
 
-Adds a note to the Asset Takes a note object. Flags that a new note record
-should be created come data base time
+=item  $self->add_note($note);
 
-B<Throws:>
+Sets the note for this instance of the assset.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<add_note()> is deprecated.
 
 =cut
 
-sub add_note {
-        my $self = shift;
-        my ($note) = @_;
-
-
-        my $notes = $self->_get_attr_hash({ subsys => 'notes'});
-
-        my $note_index = $self->get_version();
-
-        $self->_set_attr({
-                        subsys => 'notes',
-                        name => $note_index,
-                        sql_type => 'short',
-                        value => $note
-                });
-
-        return $self;
-}
+sub add_note { shift->set_note(@_) }
 
 ################################################################################
 
-=item  $self->get_notes ( );
+=item my $note = $asset->get_note
 
-Returns a list of Notes from the Asset
+Returns the note for this instance of the asset.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE 
+=cut
 
-B<Notes:>
+################################################################################
 
-NONE
+=item my $notes_href = $asset->get_notes;
+
+Returns a hash reference of the notes for the asset. The hash keys are asset
+version numbers, and the values are the notes.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub get_notes {
-        my $self = shift;
-
-        my $notes = $self->_get_attr_hash({ subsys => 'notes' });
-
-        return $notes;
+    my $self  = shift;
+    my $table = $self->VERSION_TABLE;
+    my $col   = $self->TABLE . '__id';
+    my $sel   = prepare_c("
+        SELECT version, note
+        FROM   $table
+        WHERE  $col = ?
+        ORDER BY id DESC"
+    );
+    execute($sel, $self->get_id);
+    bind_columns($sel, \my ($version, $note));
+    my %notes;
+    while (fetch($sel)) {
+        $notes{$version} = $note;
+    }
+    return \%notes;
 }
 
 ################################################################################
+
+=item my $bool = $asset->has_notes
+
+Returns true if the asset has notes in any of its versions, and false if it
+does not.
+
+=cut
+
+sub has_notes {
+    my $self  = shift;
+    my $table = $self->VERSION_TABLE;
+    my $col   = $self->TABLE . '__id';
+    return $self if row_array(prepare_c("
+        SELECT 1
+        FROM   $table
+        WHERE  $col = ?
+               AND note IS NOT NULL
+        LIMIT  1
+    "), $self->get_id);
+    return;
+}
 
 =item $asset = $asset->activate()
 

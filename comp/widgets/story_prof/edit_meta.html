@@ -10,7 +10,7 @@ my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
-  image    =>  %{ $story->get_notes } ? 'note_fill' : "note",
+  image    =>  $story->has_notes ? 'note_fill' : "note",
   useGlobalImage => 1,
   value    => 'edit'
 );

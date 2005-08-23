@@ -27,6 +27,19 @@ method of the story and media classes to search for stories and media that
 have a given story or media ID or list of IDs as relateds. Based on a patch
 from Rod Taylor. [David]
 
+=item *
+
+Moved story, media, and template notes into a column in the appropriate
+instance table, instead using attributes. This is a much more efficient use of
+the database and eliminates a lot of cruft. [David]
+
+=item *
+
+Added C<has_notes()> method to Bric::Biz::Asset (and therefore its story,
+media, and template subclasses) as a more efficient way of determining whether
+an asset has notes for any of its versions than calling the C<get_notes()>
+method. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

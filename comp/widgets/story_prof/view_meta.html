@@ -1,5 +1,5 @@
 <%perl>
-my $note_img = %{ $story->get_notes } ? 'note_fill' : 'note';
+my $note_img = $story->has_notes ? 'note_fill' : 'note';
 my $rightText = qq{
 <a href="/workflow/profile/story/view_notes.html?id=} . $id .
  qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>

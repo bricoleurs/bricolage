@@ -24,15 +24,6 @@ CREATE SEQUENCE seq_story__category START  1024;
 -- Unique ids for the story_contributor table
 CREATE SEQUENCE seq_story__contributor START 1024;
 
--- Unique IDs for the attr_story table
-CREATE SEQUENCE seq_attr_story START 1024;
-
--- Unique IDs for each attr_story_*_val table
-CREATE SEQUENCE seq_attr_story_val START 1024;
-
--- Unique IDs for the story_meta table
-CREATE SEQUENCE seq_attr_story_meta START 1024;
-
 -- Unique IDs for the story_uri table
 CREATE SEQUENCE seq_story_uri START 1024;
 
@@ -90,6 +81,7 @@ CREATE TABLE story_instance (
     usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
+    note           TEXT,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
@@ -157,60 +149,6 @@ CREATE TABLE story__contributor (
 );
 
 -- -----------------------------------------------------------------------------
--- Table attr_story
---
--- Description: Attributes for stories
---
-
-CREATE TABLE attr_story (
-    id         INTEGER       NOT NULL
-                             DEFAULT NEXTVAL('seq_attr_story'),
-    subsys     VARCHAR(256)  NOT NULL,
-    name       VARCHAR(256)  NOT NULL,
-    sql_type   VARCHAR(30)   NOT NULL,
-    active     BOOLEAN       NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_story__id PRIMARY KEY (id)
-);
-
--- -----------------------------------------------------------------------------
--- Table attr_story_val
---
--- Description: Values for the story attributes
--- 
---
-
-CREATE TABLE attr_story_val (
-    id           INTEGER     NOT NULL
-                                 DEFAULT NEXTVAL('seq_attr_story_val'),
-    object__id   INTEGER     NOT NULL,
-    attr__id     INTEGER     NOT NULL,
-    date_val     TIMESTAMP,
-    short_val    VARCHAR(1024),
-    blob_val     TEXT,
-    serial       BOOLEAN      DEFAULT FALSE,
-    active       BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_attr_story_val__id PRIMARY KEY (id)
-);
-
-
--- -----------------------------------------------------------------------------
--- Table attr_story_meta
---
--- Description: Meta information on story attributes
---
-
-CREATE TABLE attr_story_meta (
-    id        INTEGER     NOT NULL
-                              DEFAULT NEXTVAL('seq_attr_story_meta'),
-    attr__id  INTEGER     NOT NULL,
-    name      VARCHAR(256)    NOT NULL,
-    value     VARCHAR(2048),
-    active    BOOLEAN      NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_story_meta__id PRIMARY KEY (id)
-);
-
-
--- -----------------------------------------------------------------------------
 -- Indexes.
 --
 
@@ -233,6 +171,7 @@ CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
 CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
 CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
 CREATE INDEX fdx_primary_oc__story_instance ON story_instance(primary_oc__id);
+CREATE INDEX idx_story_instance__note ON story_instance(note) WHERE note IS NOT NULL;
 
 -- story_uri
 CREATE INDEX fkx_story__story_uri ON story_uri(story__id);
@@ -251,29 +190,6 @@ CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
 --story__contributor
 CREATE INDEX fkx_story__story__contributor ON story__contributor(story_instance__id);
 CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
-
--- Unique index on subsystem/name pair
-CREATE UNIQUE INDEX udx_attr_story__subsys__name ON attr_story(subsys, name);
-
--- Indexes on name and subsys.
-CREATE INDEX idx_attr_story__name ON attr_story(LOWER(name));
-CREATE INDEX idx_attr_story__subsys ON attr_story(LOWER(subsys));
-
--- Unique index on object__id/attr__id pair
-CREATE UNIQUE INDEX udx_attr_story_val__obj_attr ON attr_story_val (object__id,attr__id);
-
--- FK indexes on object__id and attr__id.
-CREATE INDEX fkx_story__attr_story_val ON attr_story_val(object__id);
-CREATE INDEX fkx_attr_story__attr_story_val ON attr_story_val(attr__id);
-
--- Unique index on attr__id/name pair
-CREATE UNIQUE INDEX udx_attr_story_meta__attr_name ON attr_story_meta (attr__id, name);
-
--- Index on meta name.
-CREATE INDEX idx_attr_story_meta__name ON attr_story_meta(LOWER(name));
-
--- FK index on attr__id.
-CREATE INDEX fkx_attr_story__attr_story_meta ON attr_story_meta(attr__id);
 
 CREATE INDEX fdx_story__desk__id ON story(desk__id) WHERE desk__id > 0;
 CREATE INDEX fdx_story__workflow__id ON story(workflow__id) WHERE workflow__id > 0;
