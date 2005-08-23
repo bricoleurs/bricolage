@@ -733,8 +733,6 @@ sub fetch_objects {
     # loop through the list, looking for different grp__id columns in
     # matching lines.  Note: this works for all sort orders except grp__id
     my $obj_col = $pkg->OBJECT_SELECT_COLUMN_NUMBER || 0;
-    my $last = -1;
-    my $i;
     while (fetch($select)) {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
