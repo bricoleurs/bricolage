@@ -54,6 +54,11 @@ Fixed syntax error in Bric::Util::Trans::SFTP. Reported by Kenneth Marshall.
 Eliminated "Subroutine Bric::App::Handler::rethrow_exception redefined"
 warning during startup with HTML::Mason 1.30. [David]
 
+=item *
+
+Fixed the C<no_site_id> parameter to Bric::Biz::Asset::Formatting when
+specified using the C<ANY()> function. [David]
+
 =back
 
 =head1 VERSION 1.8.6 (2005-07-19)

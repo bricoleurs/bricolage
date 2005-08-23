@@ -312,7 +312,7 @@ use constant PARAM_ANYWHERE_MAP => {
     site_id          => [ 'f.output_channel__id = oc.id',
                           'oc.site__id = ?' ],
     no_site_id       => [ 'f.output_channel__id = oc.id',
-                          'oc.site__id = <>' ],
+                          'oc.site__id <> ?' ],
 };
 
 use constant PARAM_ORDER_MAP => {
