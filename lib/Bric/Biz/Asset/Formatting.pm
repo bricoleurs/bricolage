@@ -242,6 +242,7 @@ use constant PARAM_FROM_MAP => {
     grp_id           =>  'member m2, formatting_member fm2',
     element_key_name => 'element e',
     site_id          => 'output_channel oc',
+    note             => 'formatting_instance fi2'
 };
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
@@ -305,6 +306,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'fm2.member__id = m2.id',
     simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
                            . 'LOWER(f.file_name) LIKE LOWER(?))',
+    note                  => 'fi2.formatting__id = f.id AND LOWER(fi2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -317,7 +319,9 @@ use constant PARAM_ANYWHERE_MAP => {
     site_id          => [ 'f.output_channel__id = oc.id',
                           'oc.site__id = ?' ],
     no_site_id       => [ 'f.output_channel__id = oc.id',
-                          'oc.site__id = <>' ],
+                          'oc.site__id <> ?' ],
+    note             => [ 'fi2.formatting__id = f.id',
+                          'LOWER(fi2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -772,6 +776,11 @@ for a list of possible values.
 
 Returns a list of templates associated with an element with the given key
 name. May use C<ANY> for a list of possible values.
+
+=item note
+
+Returns templates with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
 
 =item workflow_id
 

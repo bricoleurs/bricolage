@@ -195,6 +195,7 @@ use constant PARAM_FROM_MAP => {
      related_story_id     => 'media_container_tile mctrs',
      related_media_id     => 'media_container_tile mctrm',
      contrib_id           => 'media__contributor sic',
+     note                 => 'media_instance mmi2',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -285,6 +286,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_instance__id AND sic.member__id = ?',
+      note                  => 'mmi2.media__id = mt.id AND LOWER(mmi2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -308,6 +310,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.media_instance__id',
                                 'sic.member__id = ?' ],
+    note                   => [ 'mmi2.media__id = mt.id',
+                                'LOWER(mmi2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -605,6 +609,11 @@ of possible values.
 
 Returns media associated with a given keyword string (not object). May use
 C<ANY> for a list of possible values.
+
+=item note
+
+Returns media with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
 
 =item workflow_id
 

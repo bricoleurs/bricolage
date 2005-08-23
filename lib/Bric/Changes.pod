@@ -40,6 +40,12 @@ media, and template subclasses) as a more efficient way of determining whether
 an asset has notes for any of its versions than calling the C<get_notes()>
 method. [David]
 
+=item *
+
+Added C<note> parameter to the list method of the story, media, and template
+classes. Unlike most of the parameters, this one will return assets with
+C<any> of their versions having a note matching the C<note> parameter. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

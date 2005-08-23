@@ -298,6 +298,7 @@ use constant PARAM_FROM_MAP => {
        subelement_key_name  => 'story_container_tile sct',
        related_story_id     => 'story_container_tile sctrs',
        related_media_id     => 'story_container_tile sctrm',
+       note                 => 'story_instance si2',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -406,6 +407,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
+      note                   => 'si2.story__id = s.id AND LOWER(si2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -433,6 +435,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_instance__id',
                                 'sic.member__id = ?' ],
+    note                   => [ 'si2.story__id = s.id',
+                                'LOWER(si2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -726,6 +730,11 @@ of possible values.
 
 Returns stories associated with a given keyword string (not object). May use
 C<ANY> for a list of possible values.
+
+=item note
+
+Returns stories with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
 
 =item workflow_id
 
