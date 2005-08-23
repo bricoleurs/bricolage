@@ -2066,8 +2066,6 @@ sub save {
     # Is this necessary? Seems kind of pointless. [David 2002-09-19]
     $self->_set(['_checkin'], []) if $ci;
 
-    $self->_sync_attributes;
-
     if ($tile) {
         $tile->set_object_instance_id($vid);
         $tile->save;

@@ -103,11 +103,6 @@ $LastChangedDate$
  ($self || undef)   = $biz->has_keyword($keyword)
  $biz               = $biz->del_keywords([$kw, ...])
 
- # Setting extra information
- $id   = $biz->create_attr($sql_type, $length, $at_data_id, $data_param);
- $data = $biz->get_attr()
- $id   = $biz->create_map($map_class, $map_type, $data_param);
-
  # Change control
  $biz            = $biz->cancel()
  $biz            = $biz->revert($version)
