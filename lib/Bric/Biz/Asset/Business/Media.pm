@@ -41,7 +41,6 @@ use strict;
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Attribute::Media;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
@@ -2026,31 +2025,6 @@ sub _get_auto_fields {
 
 ################################################################################
 
-=item $attribute_object = $self->_get_attribute_object()
-
-Returns the attribute object from a cache or creates a new record
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_attribute_object {
-    my $self = shift;
-    my ($attr_obj, $id) = $self->_get('_attribute_object', 'id');
-    return $attr_obj if $attr_obj;
-
-    # Let's Create a new one if one does not exist
-    $attr_obj = Bric::Util::Attribute::Media->new({ id => $id });
-    $self->_set( {'_attribute_object' => $attr_obj} );
-    return $attr_obj;
-}
-
-################################################################################
-
 =item $self = $self->_insert_media()
 
 Inserts a media record into the database
@@ -2268,31 +2242,6 @@ sub _do_update {
     my $update = prepare_c($sql, undef);
     execute($update, $self->_get( FIELDS ), $self->_get('id') );
     return $self;
-}
-
-################################################################################
-
-=item $attr_object = $self->_get_attr_obj()
-
-returns the attribute object for this media
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_attr_obj {
-    my $self = shift;
-    my $attr_obj = $self->_get('_attr_obj');
-    return $attr_obj if ($attr_obj);
-
-    $attr_obj = Bric::Util::Attribute::Media->new(
-      { object_id => $self->_get('id')});
-    $self->_set( { '_attr_obj' => $attr_obj });
-    return $attr_obj;
 }
 
 1;

@@ -165,7 +165,6 @@ use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::Config qw(:uri :ui);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
-use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault qw(:all);
@@ -2221,39 +2220,6 @@ sub _update_category {
     my $sth = prepare_c($sql, undef);
     execute($sth, $primary, $self->_get('version_id'), $category_id);
     return $self;
-}
-
-###############################################################################
-
-=item $attribute_obj = $self->_get_attribute_object()
-
-Returns the attribte object for this story
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attribute_object {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty();
-    my $attr_obj = $self->_get('_attribute_object');
-    return $attr_obj if $attr_obj;
-
-    # Let's Create a new one if one does not exist
-    $attr_obj = Bric::Util::Attribute::Story->new({ id => $self->_get('id') });
-    $self->_set( {'_attribute_object' => $attr_obj} );
-    $self->_set__dirty($dirty);
-    return $attr_obj;
 }
 
 ################################################################################

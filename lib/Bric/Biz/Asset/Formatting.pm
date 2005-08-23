@@ -130,7 +130,6 @@ use Bric::Util::Grp::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
-use Bric::Util::Attribute::Formatting;
 
 #==============================================================================#
 # Inheritance                          #
@@ -2051,43 +2050,6 @@ sub _get_category_object {
     }
 
     return $cat_obj;
-}
-
-################################################################################
-
-=item $attr_obj = $self->_get_attribute_object()
-
-Returns the attribute object that is associated with this formatting object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attribute_object {
-    my ($self) = @_;
-    my $dirty    = $self->_get__dirty;
-    my $attr_obj = $self->_get('_attribute_object');
-
-    unless (defined $attr_obj) {
-        # Let's Create a new one if one does not exist
-        $attr_obj = Bric::Util::Attribute::Formatting->new({id => $self->get_id});
-        $self->_set(['_attribute_object'], [$attr_obj]);
-
-        # Restore the original dirty value.
-        $self->_set__dirty($dirty);
-    }
-
-    return $attr_obj;
 }
 
 ################################################################################
