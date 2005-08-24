@@ -16,6 +16,26 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.9.1 "Cupcake" ()
 
+=head2 New Features
+
+=over
+
+=item *
+
+Added support for the C<ANY()> function to pass multiple possible values for a
+given parameter to the C<list()>, C<list_ids()>, and, where pertinent,
+C<href()> methods in the following classes:
+
+=over
+
+=item Bric::Dist::Action
+
+=item Bric::Dist::ActionType
+
+=back
+
+=back
+
 =head2 Improvements
 
 =over
@@ -45,6 +65,11 @@ method. [David]
 Added C<note> parameter to the list method of the story, media, and template
 classes. Unlike most of the parameters, this one will return assets with
 C<any> of their versions having a note matching the C<note> parameter. [David]
+
+=item *
+
+Updated search documentation and wrote tests for
+L<Bric::Dist::ActionType|Bric::Dist::ActionType>.
 
 =back
 
@@ -146,7 +171,7 @@ file name if desired (off by default). [Paul Orrock / Digital Craftsmen]
 =item *
 
 Added support for the C<ANY()> function to pass multiple possible values for a
-given parameter to the C<list()>,C<list_ids()>, and, where pertinent,
+given parameter to the C<list()>, C<list_ids()>, and, where pertinent,
 C<href()> methods in the following classes:
 
 =over
