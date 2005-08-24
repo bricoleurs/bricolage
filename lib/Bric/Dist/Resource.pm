@@ -1857,13 +1857,14 @@ $get_em = sub {
     }
 
     # Prepare the SELECT statement.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['r.id'] : \@cols;
+    my ($qry_cols, $order) = $ids
+        ? ('DISTINCT r.id', 'r.id')
+        : (join(', ', @cols), 'path');
     my $sel = prepare_ca(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   $tables
         WHERE  $wheres
-        ORDER BY path
+        ORDER BY $order
     }, undef);
 
     # Just return the IDs, if they're what's wanted.
