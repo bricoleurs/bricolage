@@ -34,6 +34,10 @@ C<href()> methods in the following classes:
 
 =item Bric::Dist::Resource
 
+=item Bric::Dist::Server
+
+=item Bric::Dist::ServerType
+
 =back
 
 =back
