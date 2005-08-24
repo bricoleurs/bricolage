@@ -274,30 +274,37 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
+=item id
+
+Resource ID. May use C<ANY> for a list of possible values.
+
 =item path
 
 The path to the resource on the file system. Usually used in combination with
-uri.
+uri. May use C<ANY> for a list of possible values.
 
 =item uri
 
-The URI for a resource. Usually used in combination with path.
+The URI for a resource. Usually used in combination with path. May use C<ANY>
+for a list of possible values.
 
 =item media_type
 
-The resources' MEDIA type.
+The resources' MEDIA type. May use C<ANY> for a list of possible values.
 
 =item mod_time
 
 The resources' last modified time. If passed as an anonymous array of two
 values, those values will be used to retreive resources whose mod_times are
-between the two times.
+between the two times. Otherwise, may use C<ANY> for a list of possible
+values.
 
 =item size
 
 The size, in bytes, of the file. If passed as an anonymous array of two
 values, those values will be used to retreive resources whose sizes are
-between the two sizes.
+between the two sizes. Otherwise, may use C<ANY> for a list of possible
+values.
 
 =item is_dir
 
@@ -305,24 +312,33 @@ If true, return only those resources that are directories.
 
 =item story_id
 
-Resources associated with a given story ID.
+Resources associated with a given story ID. May use C<ANY> for a list of
+possible values.
 
 =item media_id
 
-Resources associated with a given media ID.
+Resources associated with a given media ID. May use C<ANY> for a list of
+possible values.
+
+=item media_id
+
+Resources associated with a given media ID. May use C<ANY> for a list of
+possible values.
 
 =item dir_id
 
-File resources that are associated with a directory Resource's ID.
+File resources that are associated with a directory Resource's ID. May use
+C<ANY> for a list of possible values.
 
 =item job_id
 
-Resources associated with a given job ID.
+Resources associated with a given job ID. May use C<ANY> for a list of
+possible values.
 
 =item not_job_id
 
 Resources not associated with a given job ID. Best used in combination with
-C<story_id> or C<media_id>.
+C<story_id> or C<media_id>. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1767,79 +1783,76 @@ B<Notes:>
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my $tables = 'resource r, media_type t';
+    my $tables = 'media_type t, resource r';
     my $wheres = 'r.media_type__id = t.id';
     my @params;
 
     while (my ($k, $v) = each %$params) {
         if ($k eq 'mod_time') {
-            if (ref $v) {
+            if (ref $v eq 'ARRAY') {
                 # It's an arrayref of times.
                 $wheres .= " AND r.$k BETWEEN ? AND ?";
                 push @params, db_date($v->[0]), db_date($v->[1]);
             } else {
                 # It's a single value.
-                $wheres .= " AND r.$k = ?";
-                push @params, db_date($v);
+                $wheres .= ' AND '
+                    . any_where db_date($v), "r.$k = ?", \@params;
             }
         } elsif ($k eq 'size') {
-            if (ref $v) {
+            if (ref $v eq 'ARRAY') {
                 # It's an arrayref of sizes.
                 $wheres .= " AND r.$k BETWEEN ? AND ?";
                 push @params, @$v;
             } else {
                 # It's a single value.
-                $wheres .= " AND r.$k = ?";
-                push @params, $v;
+                $wheres .= ' AND ' . any_where $v, "r.$k = ?", \@params;
             }
         } elsif ($k eq 'path' || $k eq 'uri') {
             # A text comparison.
-            $wheres .= " AND $k LIKE ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "$k LIKE ?", \@params;
         } elsif ($k eq 'media_type') {
             # Another text comparison.
-            $wheres .= " AND LOWER(t.name) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, 'LOWER(t.name) LIKE LOWER(?)', \@params;
         } elsif ($k eq 'story_id') {
             # We need to do a an inner join for the story_id.
-            $tables .= ", story__resource sr";
-            $wheres .= " AND r.id = sr.resource__id AND sr.story__id = ?";
-            push @params, $v;
+            $tables .= ', story__resource sr';
+            $wheres .= ' AND r.id = sr.resource__id AND '
+                    . any_where $v, 'sr.story__id = ?', \@params;
         } elsif ($k eq 'media_id') {
             # We need to do a an inner join for the media_id.
-            $tables .= ", media__resource sr";
-            $wheres .= " AND r.id = sr.resource__id AND sr.media__id = ?";
-            push @params, $v;
+            $tables .= ', media__resource sr';
+            $wheres .= ' AND r.id = sr.resource__id AND '
+                    . any_where $v, 'sr.media__id = ?', \@params;
         } elsif ($k eq 'dir_id') {
             # Simple numeric comparison.
-            $wheres .= " AND r.parent_id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'r.parent_id = ?', \@params;
         } elsif ($k eq 'job_id') {
             # if job_id is undef, just return no hits rather than toast the
             # database with the index-defeating query "WHERE job__id = NULL"
             return ($href ? {} : []) unless defined $v;
 
             # We need to do a subselect for the job_id.
-            $tables .= ", job__resource jr";
-            $wheres .= " AND r.id = jr.resource__id AND jr.job__id = ?";
-            push @params, $v;
+            $tables .= ', job__resource jr';
+            $wheres .= ' AND r.id = jr.resource__id AND '
+                    . any_where $v, 'jr.job__id = ?', \@params;
         } elsif ($k eq 'not_job_id') {
             # if job_id is undef, just return no hits rather than toast the
             # database with the index-defeating query "WHERE job__id = NULL"
             return ($href ? {} : []) unless defined $v;
 
-            # We need to do a subselect for the job_id.
-            $wheres .= " AND r.id NOT IN (SELECT resource__id FROM "
-                          . "job__resource WHERE job__id = ?)";
-            push @params, $v;
+            # Use an outer join and put the parameters there.
+            $tables .= ' LEFT OUTER JOIN job__resource jrno ON ('
+                    . 'r.id = jrno.resource__id AND '
+                    . any_where($v, 'jrno.job__id = ?', \@params) . ')';
+            $wheres .= ' AND jrno.resource__id IS NULL';
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";
             push @params, $v ? 1 : 0;
         } else {
             # It's an ID.
-            $wheres .= " AND r.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "r.$k = ?", \@params;
         }
     }
 
