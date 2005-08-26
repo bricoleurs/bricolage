@@ -335,29 +335,39 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-event_type_id
+Alert type ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item event_type_id
 
-owner_id
+Event type ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item owner_id
 
-name
+User id for user who owns alert types. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item name
 
-subject
+Alert type name. May use C<ANY> for a list of possible values.
 
-=item *
+=item subject
 
-message
+Alert type subject. May use C<ANY> for a list of possible values.
 
-=item *
+=item message
 
-active
+Alert type message. May use C<ANY> for a list of possible values.
+
+=item active
+
+Boolean value indicating whether or not an alert type is active.
+
+=item grp_id
+
+ID of a Bric::Util::Grp with which alert types may be associated. May use
+C<ANY> for a list of possible values.
 
 =back
 
@@ -2568,17 +2578,18 @@ $get_em = sub {
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($map{$k}) {
-            push @wheres, "a.$map{$k} = ?";
-            push @params, $v;
+            push @wheres, any_where $v, "a.$map{$k} = ?", \@params;
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
-            push @wheres, ('a.id = c2.object_id', 'c2.member__id = m2.id',
-                           "m2.active = '1'", 'm2.grp__id = ?');
-            push @params, $v;
+            push @wheres, (
+                'a.id = c2.object_id',
+                'c2.member__id = m2.id',
+                "m2.active = '1'",
+                any_where $v, 'm2.grp__id = ?', \@params
+            );
         } else {
-            push @wheres, "LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         }
     }
 
