@@ -58,7 +58,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(36) {
+sub test_list : Test(38) {
     my $self = shift;
 
     # Create a new element group.
@@ -315,6 +315,7 @@ sub test_ic : Test(60) {
 
     # Add a new input channel.
     ok( my $ic = Bric::Biz::InputChannel->new({name    => 'Foober',
+                                               key_name => 'foober',
                                                site_id => 100}),
         "Create 'Foober' IC" );
     ok( $ic->save, "Save Foober" );
@@ -363,7 +364,7 @@ sub test_ic : Test(60) {
 
     # Now try to delete the input channel when it is still selected
     throws_ok {
-        $at->delete_output_channels([$ic]);
+        $at->delete_input_channels([$ic]);
     } qr/Cannot delete a primary input channel/,
       "Check that you can't delete an input channel that is primary";
 
@@ -414,7 +415,7 @@ sub test_ic : Test(60) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(27) {
+sub test_site : Test(32) {
     my $self = shift;
 
     #dependant on intial values
@@ -453,6 +454,14 @@ sub test_site : Test(27) {
     ok( $site2->save(), "Create second dummy site");
     my $site2_id = $site2->get_id;
     $self->add_del_ids($site2_id, 'site');
+
+    ok( my $ic2 = Bric::Biz::InputChannel->new({ key_name => __PACKAGE__ . "2",
+                                                 name     => __PACKAGE__ . "2",
+                                                 site_id  => $site2_id }),
+        "Create IC2" );
+    ok( $ic2->save, "Save IC2" );
+    ok( my $ic2_id = $ic2->get_id, "Get IC ID2" );
+    $self->add_del_ids($ic2_id, 'input_channel');
 
     ok( my $oc2 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "2",
                                                  site_id => $site2_id }),
@@ -498,8 +507,12 @@ sub test_site : Test(27) {
         "Associate primary OC1" );
 
     is($site2->get_id, $top_level_element->add_site($site2_id)->get_id, "Add a new site");
+    ok( $top_level_element->add_input_channels([$ic2_id]),
+        "Associate IC2" );
     ok( $top_level_element->add_output_channels([$oc2_id]),
         "Associate OC2" );
+    ok( $top_level_element->set_primary_ic_id($ic2_id, $site2_id),
+        "Associate primary IC2" );
     ok( $top_level_element->set_primary_oc_id($oc2_id, $site2_id),
         "Associate primary OC2" );
 

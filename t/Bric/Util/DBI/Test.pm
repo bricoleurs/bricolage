@@ -371,7 +371,7 @@ sub test_order_by: Test(6) {
 
 }
 
-sub testclean_params: Test(8) {
+sub testclean_params: Test(10) {
     my $self = shift;
     my $exp;
     $exp = { 
@@ -379,6 +379,7 @@ sub testclean_params: Test(8) {
              _no_return_versions => 1,
              _not_simple => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, undef), $exp, 'correct base params added');
@@ -387,6 +388,7 @@ sub testclean_params: Test(8) {
              _no_return_versions => 1,
              _not_simple => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'slug',
            };
     is_deeply( clean_params($CLASS, { Order => 'slug' }), $exp, 'Order works right');
@@ -395,6 +397,7 @@ sub testclean_params: Test(8) {
              return_versions => 1,
              _not_simple => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { return_versions => 1 }), $exp, 'add return versions');
@@ -403,6 +406,7 @@ sub testclean_params: Test(8) {
              _no_return_versions => 1,
              simple => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, {simple => 1}), $exp, 'simple sets itself and not _not_simple');
@@ -413,6 +417,7 @@ sub testclean_params: Test(8) {
              _not_simple => 1,
              inactive => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { inactive => 1 }), $exp, 'inactive sets active 0');
@@ -422,6 +427,7 @@ sub testclean_params: Test(8) {
              _not_simple => 1,
              user__id => 1,
              _checked_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { user__id => 1 }), $exp, 'set _checked_out to 1 for user__id');
@@ -431,6 +437,7 @@ sub testclean_params: Test(8) {
              _not_simple => 1,
              _checked_out => 0,
              _not_checked_out => 0,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { checked_out => '' }), $exp,
@@ -441,10 +448,34 @@ sub testclean_params: Test(8) {
              _not_simple => 1,
              _null_workflow_id => 1,
              _checked_in_or_out => 1,
+             primary_ic => 1,
              Order => 'cover_date',
            };
     is_deeply( clean_params($CLASS, { workflow__id => undef }),
                $exp, 'undef workflow__id sets _null_workflow_id');
+               
+    $exp = { 
+             active => 1,
+             _no_return_versions => 1,
+             _not_simple => 1,
+             _checked_in_or_out => 1,
+             input_channel_id => 1,
+             Order => 'cover_date',
+           };
+    is_deeply( clean_params($CLASS, { input_channel_id =>1 }), $exp,
+               "don't set primary_ic when input_channel_id is set");
+
+    $exp = { 
+             active => 1,
+             _no_return_versions => 1,
+             _not_simple => 1,
+             _checked_in_or_out => 1,
+             primary_ic_id => 1,
+             Order => 'cover_date',
+           };
+    is_deeply( clean_params($CLASS, { primary_ic_id =>1 }), $exp,
+               "don't set primary_ic when primary_ic_id is set");
+
 }
 
 
