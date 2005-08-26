@@ -109,28 +109,3 @@ REFERENCES     media(id) ON DELETE CASCADE;
 ALTER TABLE    media_member
 ADD CONSTRAINT fk_member__media_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
-
--- -----------------------------------------------------------------------------
--- Table: attr_media
-
--- -----------------------------------------------------------------------------
--- Table: attr_media_val
-
-
-ALTER TABLE attr_media_val ADD 
-    CONSTRAINT fk_attr_media__attr_media_val FOREIGN KEY (attr__id)
-    REFERENCES attr_media(id) ON DELETE CASCADE;
-
-ALTER TABLE attr_media_val ADD
-    CONSTRAINT fk_media__attr_media_val FOREIGN KEY (object__id)
-    REFERENCES media(id) ON DELETE CASCADE;
-
--- -----------------------------------------------------------------------------
--- Table: attr_media_meta
-
-ALTER TABLE attr_media_meta ADD 
-    CONSTRAINT fk_attr_media__attr_media_meta FOREIGN KEY (attr__id)
-    REFERENCES attr_media(id) ON DELETE CASCADE;
-
-
-

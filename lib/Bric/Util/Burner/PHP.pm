@@ -29,7 +29,7 @@ $LastChangedDate: 2004-11-19 03:55:15 -0500 (Fri, 19 Nov 2004) $
 
 =head1 DESCRIPTION
 
-This module handles burning business story resources (files) PHP tempmlates.
+This module handles burning business story resources (files) PHP templates.
 
 =cut
 
@@ -43,7 +43,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
-use Bric::Util::Fault qw(throw_gen throw_burn_error);
+use Bric::Util::Fault qw(throw_gen throw_burn_error isa_bric_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use PHP::Interpreter;
@@ -98,7 +98,7 @@ BEGIN {
 
 __PACKAGE__->_register_burner(
     Bric::Biz::AssetType::BURNER_PHP,
-    category_fn    => 'category',
+    category_fn    => 'cat_tmpl',
     cat_fn_has_ext => 0,
     exts           => {
         php => 'PHP (.php)',
@@ -144,6 +144,39 @@ sub new {
 =head2 Public Instance Methods
 
 =over 4
+
+=item my $encoding = $burner->get_encoding
+
+Returns the character set encoding to be used to write out the contents of a
+burn to a file. Defaults to "raw". Note that this is different than the
+default for the other burners because the C<utf8> flag on Perl variables is
+lost in the conversion to PHP. This should effectively be okay, however, as
+long as your PHP templates use the C<mb_*> functions and identify the encoding
+as UTF-8. For example:
+
+  $sub = mb_substr($element->get_data('deck'), 0, 255, 'utf-8');
+
+See L<http://us2.php.net/manual/en/ref.mbstring.php> for more information on
+handling multibyte characters in PHP.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $burner = $burner->set_encoding($encoding)
+
+Sets the character set encoding to be used to write out the contents of a burn
+to a file. Use this attribute if templates are converting output data from
+Bricolage's native UTF-8 encoding to another encoding. Use "raw" if your
+templates are outputting binary data. Defaults to "raw".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
@@ -241,35 +274,49 @@ sub burn_one {
         do {
             # if the file exists, return it
             for my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, 'category');
+                my $path = $fs->cat_dir($troot, @cats, 'cat_tmpl');
                 next unless -e $path;
-                unshift @cat_tmpls, $path;
+                push @cat_tmpls, $path;
                 last;
             }
         } while (pop @cats);
     }
 
-    $self->_set([qw(_buf      page story   element   _comp_root       _php)],
-                [   \$outbuf, 0,   $story, $element, $template_roots, $php]);
+    $self->_set(
+        [qw(_buf      page story   element   _comp_root       _php encoding)],
+        [   \$outbuf, 0,   $story, $element, $template_roots, $php, 'raw']
+    );
     $self->_push_element($element);
 
-    while(1) {
+    while (1) {
         use utf8;
-        $php->include($template)
-          or throw_burn_error
-            error   => "Error executing '$template'",
-            payload => $@,
-            mode    => $self->get_mode,
-            oc      => $self->get_oc->get_name,
-            cat     => $self->get_cat->get_uri,
-            elem    => $element->get_name;
+        eval { $php->include($template) };
+        if (my $err = $@) {
+            $err->rethrow if isa_bric_exception $err;
+            throw_burn_error
+                error   => "Error executing '$template'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri,
+                elem    => $element->get_name
+              if $@;
+        }
 
         # Execute category templates.
-        if (@cat_tmpls) {
-            $php->setBric(CONTENT => $outbuf);
-            $php->include($_) for @cat_tmpls;
-            $php->setBric(CONTENT => '');
+        for my $cat_tmpl (@cat_tmpls) {
+            $php->setBric(content => $outbuf);
+            $outbuf = '';
+            eval { $php->include($cat_tmpl) };
+            throw_burn_error
+                error   => "Error executing '$cat_tmpl'",
+                payload => $@,
+                mode    => $self->get_mode,
+                oc      => $self->get_oc->get_name,
+                cat     => $self->get_cat->get_uri
+              if $@;
         }
+        $php->setBric(content => '');
 
         my $page = $self->_get('page') + 1;
 
@@ -281,7 +328,8 @@ sub burn_one {
             open(OUT, ">$file")
               or throw_gen error => "Unable to open '$file' for writing",
                            payload => $!;
-            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
+                           
+            binmode(OUT, ':' . $self->get_encoding || 'raw') if ENCODE_OK;
             print OUT $outbuf;
             close(OUT);
             $outbuf = '';
@@ -289,12 +337,13 @@ sub burn_one {
             $self->add_resource($file, $uri);
         }
 
-        $self->_set([qw(page)] => [$page]);
+        $self->_set(['page'] => [$page]);
         last unless $self->_get('more_pages');
     }
+
     $self->_pop_element;
 
-    $self->_set(['_php','_comp_root'] => [undef, undef]);
+    $self->_set([qw(_php _comp_root page)] => [undef, undef, 0]);
     return $self->get_resources;
 }
 
@@ -505,25 +554,37 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return;
+    return $self->_display_container($elem) if $elem->is_container;
     my $buf = $self->_get('_buf');
-    my $data = '';
-    # Call another element if this is a container otherwise output the data.
+    $$buf .= $elem->get_data;
+    return $self;
+}
 
-    my $php = $self->_get('_php');
-    if ($elem->is_container) {
-        # Set the elem global to the current element.
-        # Push this element on to the stack
-        $self->_push_element($elem);
-        my $template = $self->_load_template_element($elem);
-#        $php->eval(q/function setBric($key, $var) { global $BRIC; $BRIC[$key] = $var; }/);
-        $php->setBric('element', $elem);
-        $php->include($template);
-        $self->_pop_element();
-        # Set the elem global to the previous element
-    } else {
-        $data .= $elem->get_data();
-    }
-    return 1;
+##############################################################################
+
+=item $output = $b->sdisplay_element($element)
+
+A method to be called from template space. This is a C<sprint>-likef version
+of C<display_element()>, i.e. it returns the output as a string rather than
+outputting it it as C<display_element()> does.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub sdisplay_element {
+    my $self = shift;
+    my $elem = shift or return '';
+    return $elem->get_data unless $elem->is_container;
+    my ($php, $buf) = $self->_get(qw(_php _buf));
+    $php->set_output_handler(\my $ret);
+    $self->_display_container($elem);
+    $php->set_output_handler($buf);
+    return $ret;
 }
 
 ##############################################################################
@@ -658,7 +719,38 @@ sub _pop_element {
     return pop @$elem_stack;
 }
 
-#--------------------------------------#
+##############################################################################
+
+=item $burner->_display_container($element)
+
+Called by C<display_element()> and C<sidsplay_element()> this method uses the
+PHP::Interpreter object to execute the element template for a container
+element.
+
+=cut
+
+sub _display_container {
+    my ($self, $elem) = @_;
+    my $parent = $self->_current_element;
+    $self->_push_element($elem);
+    my $template = $self->_load_template_element($elem);
+    my $php = $self->_get('_php');
+    $php->setBric(element => $elem);
+    eval { $php->include($template) };
+    throw_burn_error
+        error   => "Error executing '$template'",
+        payload => $@,
+        mode    => $self->get_mode,
+        oc      => $self->get_oc->get_name,
+        cat     => $self->get_cat->get_uri,
+        elem    => $elem->get_name
+      if $@;
+
+    $self->_pop_element;
+    $php->setBric(element => $parent);
+    return $self;
+}
+
 
 =back
 

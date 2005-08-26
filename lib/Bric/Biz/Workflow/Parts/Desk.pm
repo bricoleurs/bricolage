@@ -292,13 +292,19 @@ Returns a list of desk objects based on $param.  Keys of $param are:
 
 =over 4
 
+=item C<id>
+
+Desk ID. May use C<ANY> for a list of possible values.
+
 =item C<name>
 
-Return all desks matching a certain name
+Return all desks matching a certain name. May use C<ANY> for a list of
+possible values.
 
 =item C<description>
 
-Return all desks with a matching description.
+Return all desks with a matching description. May use C<ANY> for a list of
+possible values.
 
 =item C<publish>
 
@@ -310,7 +316,8 @@ Boolean; Return all in/active desks.
 
 =item C<grp_id>
 
-Return all desks in the group corresponding to this group ID.
+Return all desks in the group corresponding to this group ID. May use C<ANY>
+for a list of possible values.
 
 =back
 
@@ -1420,16 +1427,15 @@ $get_em = sub {
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'name' or $k eq 'description') {
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, desk_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where $v, 'm2.grp__id = ?', \@params;
         } else {
-            $wheres .= " AND a.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "a.$k = ?", \@params;
         }
     }
 

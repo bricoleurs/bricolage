@@ -329,7 +329,9 @@ sub datetime {
                        nanosecond => $7 ? $7 * 1.0E9 : 0
                    );
     };
-    throw_dp "Unable to parse date: $@" if $@;
+    throw_dp error   => qq{Unable to parse date "$date" $@},
+             payload => $@
+        if $@;
     return $dt;
 }
 

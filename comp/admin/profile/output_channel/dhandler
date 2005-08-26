@@ -99,11 +99,13 @@ var selectOrderNames = new Array("include_pos")
 
     $button = undef;
     # Add the include section
+    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => 'Template Includes',
+             number => 2 );
     $m->comp('/widgets/listManager/listManager.mc',
 	     object => 'output_channel',
 	     userSort => 0,
 	     def_sort_field => 'order',
-	     title => 'Template Includes',
 	     objs => $inc,
 	     addition => undef,
 	     constrain => { include_parent_id => $id },
@@ -112,10 +114,7 @@ var selectOrderNames = new Array("include_pos")
 	     field_values => $ord_sub,
 	     profile => undef,
 	     select =>  ['Delete', 'include_oc_id_del'],
-	     number => 2
     );
-
-
 </%perl>
 <table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
 <tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
@@ -131,7 +130,7 @@ var selectOrderNames = new Array("include_pos")
     useTable => 0,
 &></td></tr>
 </table>
-<br />
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <%perl>;
 
 }

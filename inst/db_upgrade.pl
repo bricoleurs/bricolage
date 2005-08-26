@@ -35,7 +35,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
+use File::Path;
 
 our $UPGRADE;
 do "./upgrade.db" or die "Failed to read upgrade.db : $!";
@@ -43,6 +43,15 @@ our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
 our $PG;
 do './postgres.db' or die "Failed to read postgres.db : $!";
+
+# Create a directory that the PG user can, uh, use.
+my $tmpdir = catdir 'inst', 'db_tmp';
+eval { mkpath $tmpdir };
+if (my $err = $@) {
+    die "Cannot create '$tmpdir': $err\n";
+}
+chown $PG->{system_user_uid}, -1, $tmpdir
+  or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
 
 # Switch to postgres system user
 print "Becoming $PG->{system_user}...\n";

@@ -67,8 +67,9 @@ $LastChangedDate$
  $asset = $asset->set_workflow_id($id);
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -177,6 +178,7 @@ BEGIN {
                         workflow_id       => Bric::FIELD_RDWR,
                         desk_id           => Bric::FIELD_READ,
                         site_id           => Bric::FIELD_RDWR,
+                        note              => Bric::FIELD_RDWR,
 
                         # Private Fields
                         _checkin          => Bric::FIELD_NONE,
@@ -185,9 +187,6 @@ BEGIN {
                         _active           => Bric::FIELD_NONE,
                         _delete           => Bric::FIELD_NONE,
                         _notes            => Bric::FIELD_NONE,
-                        _attribute_object => Bric::FIELD_NONE,
-                        _attr_cache       => Bric::FIELD_NONE,
-                        _update_attrs     => Bric::FIELD_NONE,
                         _versions         => Bric::FIELD_NONE,
                         _desk             => Bric::FIELD_NONE,
         });
@@ -240,8 +239,8 @@ NONE
 sub lookup {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    throw_gen(error => "Missing Required Parameters id or instance_id")
-      unless $param->{id} || $param->{instance_id}
+    throw_gen(error => "Missing Required Parameters id or uuid or version_id")
+      unless $param->{id} || $param->{version_id} || $param->{uuid}
       || ($param->{alias_id} && $param->{site_id});
     throw_mni(error => 'Must call list on Story, Media, or Formatting')
       unless $pkg->CAN_DO_LOOKUP;
@@ -1427,73 +1426,92 @@ NONE
 
 ################################################################################
 
-=item  $self->set_note ( $note );
+=item  $self->set_note($note);
 
-Adds a note to the Asset Takes a note object. Flags that a new note record
-should be created come data base time
+=item  $self->add_note($note);
 
-B<Throws:>
+Sets the note for this instance of the assset.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<add_note()> is deprecated.
 
 =cut
 
-sub add_note {
-        my $self = shift;
-        my ($note) = @_;
-
-
-        my $notes = $self->_get_attr_hash({ subsys => 'notes'});
-
-        my $note_index = $self->get_version();
-
-        $self->_set_attr({
-                        subsys => 'notes',
-                        name => $note_index,
-                        sql_type => 'short',
-                        value => $note
-                });
-
-        return $self;
-}
+sub add_note { shift->set_note(@_) }
 
 ################################################################################
 
-=item  $self->get_notes ( );
+=item my $note = $asset->get_note
 
-Returns a list of Notes from the Asset
+Returns the note for this instance of the asset.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE 
+B<Side Effects:> NONE.
 
-B<Side Effects:>
+B<Notes:> NONE.
 
-NONE 
+=cut
 
-B<Notes:>
+################################################################################
 
-NONE
+=item my $notes_href = $asset->get_notes;
+
+Returns a hash reference of the notes for the asset. The hash keys are asset
+version numbers, and the values are the notes.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
 
 =cut
 
 sub get_notes {
-        my $self = shift;
-
-        my $notes = $self->_get_attr_hash({ subsys => 'notes' });
-
-        return $notes;
+    my $self  = shift;
+    my $table = $self->VERSION_TABLE;
+    my $col   = $self->TABLE . '__id';
+    my $sel   = prepare_c("
+        SELECT version, note
+        FROM   $table
+        WHERE  $col = ?
+        ORDER BY id DESC"
+    );
+    execute($sel, $self->get_id);
+    bind_columns($sel, \my ($version, $note));
+    my %notes;
+    while (fetch($sel)) {
+        $notes{$version} = $note;
+    }
+    return \%notes;
 }
 
 ################################################################################
+
+=item my $bool = $asset->has_notes
+
+Returns true if the asset has notes in any of its versions, and false if it
+does not.
+
+=cut
+
+sub has_notes {
+    my $self  = shift;
+    my $table = $self->VERSION_TABLE;
+    my $col   = $self->TABLE . '__id';
+    return $self if row_array(prepare_c("
+        SELECT 1
+        FROM   $table
+        WHERE  $col = ?
+               AND note IS NOT NULL
+        LIMIT  1
+    "), $self->get_id);
+    return;
+}
 
 =item $asset = $asset->activate()
 
@@ -1646,33 +1664,6 @@ sub checkin {
 
 ################################################################################
 
-=item $self = $self->save()
-
-Preforms save functions for the asset objects.   This will sync the attributes
-for the asset
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub save {
-    my $self = shift;
-    $self->_sync_attributes;
-    return $self->SUPER::save;
-}
-
-################################################################################
-
 =back
 
 =head1 PRIVATE
@@ -1684,205 +1675,7 @@ NONE
 
 =head2 Private Instance Methods
 
-=over 4
-
-=item attrs = $self->_get_attr_hash()
-
-Returns the attributes from the cache or the object
-
-B<Throws:>
-
 NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attr_hash {
-    my ($self, $param) = @_;
-    my $attrs;
-    if ($self->_get('id')) {
-        my $attr_obj = $self->_get_attribute_object();
-        $attrs = $attr_obj->get_attr_hash( $param);
-    } else {
-        my $attr_cache = $self->_get('_attr_cache');
-        foreach (keys %{ $attr_cache->{$param->{'subsys'}} } ) {
-            $attrs->{$_} = $attr_cache->{$param->{'subsys'}}->{$_}->{'value'};
-        }
-    }
-    return $attrs;
-}
-
-################################################################################
-
-=item $self = $self->_set_attr()
-
-Sets the attributes to the object or to a cache
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _set_attr {
-        my ($self, $param) = @_;
-
-        my $dirty = $self->_get__dirty();
-
-        # check to see if we have an id, get attr obj if we do
-        # otherwise put it into a cache
-        if ($self->_get('id') ) {
-                my $attr_obj = $self->_get_attribute_object();
-
-                # param should have been passed in an acceptable manner
-                # send it straight to the attr obj
-                $attr_obj->set_attr( $param );
-
-        } else {
-                # get the cache or create a new one if necessary
-                my $attr_cache = $self->_get('_attr_cache') || {};
-
-                # the value for this subsys/name combo
-                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'} =
-                        $param->{'value'};
-
-                # the sql type 
-                $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'type'} =
-                        $param->{'sql_type'};
-
-                # store the cache so we can access it later
-                $self->_set( { '_attr_cache' => $attr_cache });
-        }
-
-        # set the flag to update the attrs
-        $self->_set( { '_update_attrs' => 1 });
-
-        $self->_set__dirty($dirty);
-
-        return $self;
-}
-
-################################################################################
-
-=item $attr = $self->_get_attr($param)
-
-Returns the attr from either the cache or the object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attr {
-        my ($self, $param) = @_;
-
-        # check for an id to see if we need to access the cache or
-        # the attribute object
-        my $attr;
-        if ($self->_get('id') ) {
-                # we have an id so get the attribute object
-                my $attr_obj = $self->_get_attribute_object();
-
-                # param should have been passed in a valid format
-                # send directly to the attr object
-                $attr = $attr_obj->get_attr( $param );
-
-        } else {
-
-                # get the cache if it exists or create if it does not
-                my $attr_cache = $self->_get('_attr_cache') || {};
-
-                # get the data to return 
-                $attr =
-                        $attr_cache->{$param->{'subsys'}}->{$param->{'name'}}->{'value'};
-        }
-
-        return $attr;
-}
-
-################################################################################
-
-=item $self = $self->_sync_attributes()
-
-Syncs the attributes if anything is needed to be done
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _sync_attributes {
-        my ($self) = @_;
-
-        return $self unless $self->_get('_update_attrs');
-
-        my $attr_obj = $self->_get_attribute_object();
-        $attr_obj->save();
-
-        # see if we have attr in the cache to be stored...
-        my $attr_cache = $self->_get('_attr_cache');
-        if ($attr_cache) {
-                # retrieve cache and store it on the attribute object
-                foreach my $subsys (keys %$attr_cache) {
-                        foreach my $name (keys %{ $attr_cache->{$subsys} }) {
-                                # set the attribute
-                                $attr_obj->set_attr( {
-                                                subsys => $subsys,
-                                                name => $name,
-                                                sql_type => $attr_cache->{$subsys}->{$name}->{'type'},
-                                                value => $attr_cache->{$subsys}->{$name}->{'value'}
-                                        });
-                        }
-                }
-
-                # clear the attribute cache
-                $self->_set( { '_attr_cache' => undef });
-        }
-        # clear the update flag
-        $self->_set( { '_update_attrs' => undef });
-
-        # call save on the attribute object
-        $attr_obj->save();
-
-        return $self;
-}
-
-################################################################################
-
-=back
 
 =head2 Private Functions
 
@@ -1896,7 +1689,15 @@ __END__
 
 =head1 AUTHOR
 
-michael soderstrom ( miraso@pacbell.net )
+=over
+
+=item michael soderstrom <miraso@pacbell.net>
+
+=item Mark Jaroski <jaroskim@who.int>
+
+=item David Wheeler <david@kineticode.com>
+
+=back
 
 =head1 SEE ALSO
 

@@ -334,18 +334,18 @@ sub lookup {
     throw_gen(error => "Missing required Parameter 'object_type' or 'object'")
         unless $param->{'object'} || $param->{'object_type'};
 
-    if ($param->{'obj'}) {
+    if ($param->{object}) {
         # get the package to determine the object field
-        my $obj_class = ref $param->{'obj'};
+        my $obj_class = ref $param->{object};
 
         if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
             # set object type to story and add the object
             $self->_set( { object_type => 'story',
-                           _object     => $param->{'obj'} });
+                           _object     => $param->{object} });
 
         } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
             $self->_set( { object_type => 'media',
-                           _object     => $param->{'obj'} });
+                           _object     => $param->{object} });
         } else {
             throw_gen(error => 'Improper type of object passed to lookup');
         } # end the if obj block

@@ -88,8 +88,9 @@ $LastChangedDate$
  $asset = $asset->set_workflow_id($id);
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -129,7 +130,6 @@ use Bric::Util::Grp::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
-use Bric::Util::Attribute::Formatting;
 
 #==============================================================================#
 # Inheritance                          #
@@ -182,7 +182,8 @@ use constant INSTANCE_COLS => qw( formatting_version__id
                                  
 use constant VERSION_COLS => qw( formatting__id
                                  version
-                                 checked_out );
+                                 note
+                                 checked_out);
 
 use constant FIELDS     => qw( name
                                priority
@@ -210,7 +211,8 @@ use constant INSTANCE_FIELDS => qw( version_id
                                    
 use constant VERSION_FIELDS => qw( id
                                    version
-                                   checked_out );
+                                   note
+                                   checked_out);
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
 use constant INSTANCE_GROUP_ID => 33;
@@ -247,6 +249,7 @@ use constant PARAM_FROM_MAP => {
     grp_id           =>  'member m2, formatting_member fm2',
     element_key_name => 'element e',
     site_id          => 'output_channel oc',
+    note             => 'formatting_version fv2'
 };
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
@@ -311,6 +314,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'fm2.member__id = m2.id',
     simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
                            . 'LOWER(f.file_name) LIKE LOWER(?))',
+    note                  => 'fv2.formatting__id = f.id AND LOWER(fv2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -323,7 +327,9 @@ use constant PARAM_ANYWHERE_MAP => {
     site_id          => [ 'f.output_channel__id = oc.id',
                           'oc.site__id = ?' ],
     no_site_id       => [ 'f.output_channel__id = oc.id',
-                          'oc.site__id = <>' ],
+                          'oc.site__id <> ?' ],
+    note             => [ 'fv2.formatting__id = f.id',
+                          'LOWER(fv2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -779,6 +785,11 @@ for a list of possible values.
 
 Returns a list of templates associated with an element with the given key
 name. May use C<ANY> for a list of possible values.
+
+=item note
+
+Returns templates with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
 
 =item workflow_id
 
@@ -2066,43 +2077,6 @@ sub _get_category_object {
 
 ################################################################################
 
-=item $attr_obj = $self->_get_attribute_object()
-
-Returns the attribute object that is associated with this formatting object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attribute_object {
-    my ($self) = @_;
-    my $dirty    = $self->_get__dirty;
-    my $attr_obj = $self->_get('_attribute_object');
-
-    unless (defined $attr_obj) {
-        # Let's Create a new one if one does not exist
-        $attr_obj = Bric::Util::Attribute::Formatting->new({id => $self->get_id});
-        $self->_set(['_attribute_object'], [$attr_obj]);
-
-        # Restore the original dirty value.
-        $self->_set__dirty($dirty);
-    }
-
-    return $attr_obj;
-}
-
-################################################################################
-
 =item $self = $self->_insert_formatting();
 
 Inserts a row into the formatting table that represents a new formatting Asset.
@@ -2421,7 +2395,7 @@ sub _build_file_name {
     $file    =~ s/\Q$file_type\E$// unless defined $kn && $kn eq $file;
     $file    =~ y/a-z0-9/_/cs;
     $file   .= $file_type if $tplate_type != CATEGORY_TEMPLATE
-      or Bric::Util::Burner->cat_fn_has_ext($name);
+      or Bric::Util::Burner->cat_fn_has_ext($file);
 
     # Create the file name.
     my $fn = Bric::Util::Trans::FS->cat_dir(($cat ? $cat->ancestry_path : ()),

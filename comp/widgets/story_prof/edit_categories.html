@@ -1,4 +1,5 @@
 <%perl>;
+$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Categories');
 $m->comp('/widgets/listManager/listManager.mc',
          object    => 'category',
          userSort => 0,
@@ -12,8 +13,8 @@ $m->comp('/widgets/listManager/listManager.mc',
          select =>  $category_select,
          addition  => ''
         );
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>
-<p></p>
 
 <& /widgets/search/search.mc,
    object       => 'category',
@@ -21,7 +22,7 @@ $m->comp('/widgets/listManager/listManager.mc',
    type         => 'singular',
    use_form_tag => 0
 &>
-<p></p>
+<& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Categories' &>
 <& /widgets/listManager/listManager.mc,
    object    => 'category',
    title     => 'Choose Categories',
@@ -32,8 +33,8 @@ $m->comp('/widgets/listManager/listManager.mc',
    addition  => '',
    behavior => 'expand',
 &>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<p></p>
 <input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_category_cb" value="Save" />
 <input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_category_cb" value="Save and Stay" />
 <input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_category_cb" />

@@ -286,6 +286,10 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
+=item id
+
+ATType ID. May use C<ANY> for a list of possible values.
+
 =item name
 
 Lookup ATType by name. May use C<ANY> for a list of possible values.

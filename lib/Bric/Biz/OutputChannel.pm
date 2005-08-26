@@ -267,10 +267,6 @@ description
 
 =item *
 
-primary
-
-=item *
-
 active (default is active, pass undef to make a new inactive Output Channel)
 
 =back
@@ -386,57 +382,71 @@ are:
 
 =over 4
 
-=item *
+=item id
 
-name
+Output channel ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-description
+The name of the output channel. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-site_id
+Description of the output channel. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item site_id
 
-protocol
+The ID of the Bric::Biz::Site object with which the output channel is
+associated. May use C<ANY> for a list of possible values.
 
-=item *
+=item protocol
 
-primary
+The protocol or scheme for files published to an output channel, such as
+"http://". May use C<ANY> for a list of possible values.
 
-=item *
+=item server_type_id
 
-server_type_id
+The ID of a Bric::Dest::ServerType (destination) with which output channels
+may be associated. May use C<ANY> for a list of possible values.
 
-=item *
+=item include_parent_id
 
-include_parent_id
+The ID of an output channel that includes other output channels, to get a
+list of those includes. May use C<ANY> for a list of possible values.
 
-=item *
+=item story_instance_id
 
-story_instance_id
+The ID of a story with which output channels may be associated. May use C<ANY>
+for a list of possible values.
 
-=item *
+=item media_instance_id
 
-media_instance_id
+The ID of a media document with which output channels may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item uri_format
 
-uri_format
+The URI format of an output channel. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item fixed_uri_format
 
-uri_case
+The fixed URI format of an output channel. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item uri_case
 
-use_slug
+The URI case of an output channel. May use C<ANY> for a list of possible values.
 
-=item *
+=item use_slug
 
-active
+A boolean indicating whether story slugs should be used for file names in an
+output channel.
+
+=item active
+
+A boolean indicating whether or not an output channel is active.
 
 =back
 
@@ -1206,7 +1216,54 @@ B<Notes:> Only one Output channel can be the primary output channel.
 
 =item $oc = $oc->set_uri_format($uri_format)
 
-Sets the URI format for documents output in this Output Channel.
+Sets the URI format for documents output in this Output Channel. URI formats
+are made up of a number of possible parts, that can be arranged in any
+combination and order of any of the following parts:
+
+=over
+
+=item %{categories}
+
+The category URI. This is the only part that is required in all formats.
+
+=item %{slug}
+
+The story slug. Not used for media URIs.
+
+=item %{uuid}
+
+The document UUID.
+
+=item %{base64_uuid}
+
+The base64-encoded document UUID.
+
+=item %{hex_uuid}
+
+The hex representation of the  document UUID.
+
+=item *
+
+Arbitrary strings. You can even ignore the C<uri_prefix> and C<uri_suffix>
+attributes, if you like.
+
+=item %Y
+
+The four-digit cover date year.
+
+=item %m
+
+The two-digit cover date month.
+
+=item %d
+
+The two-digit cover date month.
+
+=item etc.
+
+Any other L<DateTime|DateTime>-supproted C<strftime> format.
+
+=back
 
 B<Throws:>
 
@@ -1891,12 +1948,11 @@ sub _do_list {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' or $k eq 'uri_case') {
             # Simple numeric comparison.
-            $wheres .= " AND oc.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "oc.$k = ?", \@params;
         } elsif ($k eq 'primary') {
-            # Simple numeric comparison.
+            # Simple boolean comparison.
             $wheres .= " AND oc.primary_ce = ?";
-            push @params, $v;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'active' or $k eq 'use_slug') {
             # Simple boolean comparison.
             $wheres .= " AND oc.$k = ?";
@@ -1904,40 +1960,35 @@ sub _do_list {
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, output_channel_member c2";
-            $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND oc.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'include_parent_id') {
             # Include the parent ID.
             $tables .= ', output_channel_include inc';
-            $wheres .= ' AND oc.id = inc.include_oc_id ' .
-              'AND inc.output_channel__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = inc.include_oc_id AND '
+              . any_where $v, 'inc.output_channel__id = ?', \@params;
         } elsif ($k eq 'server_type_id') {
             # Join in the server_type__output_channel table.
             $tables .= ', server_type__output_channel stoc';
-            $wheres .= ' AND oc.id = stoc.output_channel__id ' .
-              'AND stoc.server_type__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = stoc.output_channel__id AND '
+              . any_where $v, 'stoc.server_type__id = ?', \@params;
         } elsif ($k eq 'story_version_id') {
             # Join in the story__output_channel table.
             $tables .= ', story__output_channel soc';
-            $wheres .= ' AND oc.id = soc.output_channel__id ' .
-              'AND soc.story_version__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = soc.output_channel__id AND '
+              . any_where $v, 'soc.story_version__id = ?', \@params;
         } elsif ($k eq 'media_version_id') {
             # Join in the media__output_channel table.
             $tables .= ', media__output_channel moc';
-            $wheres .= ' AND oc.id = moc.output_channel__id ' .
-              'AND moc.media_version__id = ?';
-            push @params, $v;
+            $wheres .= ' AND oc.id = moc.output_channel__id AND '
+              . any_where $v, 'moc.media_version__id = ?', \@params;
         } elsif ($k eq 'site_id') {
-            $wheres .= ' AND oc.site__id = ?';
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'oc.site__id = ?', \@params;
         } else {
             # Simple string comparison!
-            $wheres .= " AND LOWER(oc.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(oc.$k) LIKE LOWER(?)", \@params;
         }
     }
 

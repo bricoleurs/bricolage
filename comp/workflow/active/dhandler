@@ -36,7 +36,7 @@ if ($type eq 'templates') {
     $previewer = sub {
         $m->comp('/widgets/profile/preview_link.mc',
                  type  => $type,
-                 title => '<span class="l10n">' . shift() . '</span>',
+                 value => '<span class="l10n">' . shift() . '</span>',
                  doc   => shift)
     };
 }
@@ -58,9 +58,12 @@ $wf = $wf->get_name;
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">
+  <& '/widgets/wrappers/sharky/table_top.mc', 
+      caption => 'Active %n',
+      object  => $obj_type
+  &>
   <& '/widgets/listManager/listManager.mc',
      object       => $obj_type,
-     title        => 'Active %n',
      fields       => $fields,
      sortBy       => 'priority',
      exclude      => $exclude->($desk_chk),
@@ -76,31 +79,21 @@ $wf = $wf->get_name;
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>
-<br />
-<table width=200 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=80>
-
-<table border=0 cellpadding=0 cellspacing=0>
-<tr>
-  <td colspan=2>
-
-  </td>
-</tr>
-<tr>
-   <td align=left>
-<input type="image" src="/media/images/<% $lang_key %>/checkout_red.gif" border="0" name="checkout" value="checkout_red" />
-   </td>
-   <td align="right">
-<a href="#" onClick="window.location.href='/workflow/profile/workspace/'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="return" value="Return" vspace=2 /></a>
-
-  </td>
-</tr>
-</table>
+  <& '/widgets/wrappers/sharky/table_bottom.mc' &>
+ 
+<& /widgets/buttons/submit.mc,
+   disp      => 'Checkout',
+   name      => 'checkout',
+   button    => 'checkout_red',
+   useTable  => 0 &>
+<& /widgets/buttons/back.mc,
+   disp      => 'Return',
+   name      => 'return',
+   uri       => '/workflow/profile/workspace/',
+   button    => 'return_dgreen',
+   useTable  => 0 &>
 
   </form>
-</tr>
-</table>
 <& /widgets/wrappers/sharky/footer.mc &>
 <%cleanup>;
 # Clear out the cache of user names.

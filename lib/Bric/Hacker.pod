@@ -555,7 +555,7 @@ So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
-  % svn list http://svn.bricolage.cc/bricolage/tags | grep rev_1_8
+  % svn list https://svn.bricolage.cc/bricolage/tags | grep rev_1_8
   rev_1_8_merge_5694/
   rev_1_8_merge_5825/
   rev_1_8_merge_5902/
@@ -565,7 +565,7 @@ If the branch has never been merged into the trunk you can get the revision
 number at the time the branch was created using C<svn log> command:
 
   % svn log --verbose --stop-on-copy \
-    http://svn.bricolage.cc/bricolage/branches/rev_1_8
+    https://svn.bricolage.cc/bricolage/branches/rev_1_8
   ------------------------------------------------------------------------
   r5525 | theory | 2004-05-10 19:16:48 -0700 (Mon, 10 May 2004) | 1 line
   Changed paths:
@@ -582,7 +582,7 @@ Now simply switch to the trunk checkout and perform the merge. Using the above
 examples, the merge would look like this:
 
   % cd bricolage-trunk
-  % svn merge -r 5995:HEAD http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  % svn merge -r 5995:HEAD https://svn.bricolage.cc/bricolage/branches/rev_1_8
   U  lib/Bric/App/ApacheConfig.pm
   C  lib/Bric/Hacker.pod
 
@@ -592,7 +592,7 @@ what files would change without changing them. Or run C<svn diff> with the
 same arguments to see what the differences are:
 
   % svn merge -r --dry-run 5995:HEAD \
-    http://svn.bricolage.cc/bricolage/branches/rev_1_8 > test.diff
+    https://svn.bricolage.cc/bricolage/branches/rev_1_8 > test.diff
 
 =item 4
 
@@ -624,15 +624,15 @@ we ran C<svn update> in step one, so it's easy to find and use:
 Tag the branch with the last revision, so that future merges can find it and
 know to merge only from that revision on.
 
-  % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    http://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
+  % svn cp https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    https://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
     -m 'Merge tag for rev_1_8 to revision 6123.'
 
 =back
 
 By following this methodology we should be able to minimize the number of
 conflicts we get between merges. See book "Version Control with Subversion,"
-chapter 4 at L<http://svnbook.red-bean.com/svnbook/ch04.html> for a more
+chapter 4 at L<https://svnbook.red-bean.com/svnbook/ch04.html> for a more
 detailed explanation of the whys and wheres of this approach to merging
 Subversion branches.
 
@@ -655,13 +655,13 @@ commit changes to a tag after it has been created.
 
 So to create a branch, make the copy from the F<trunk>:
 
-  % svn cp http://svn.bricolage.cc/bricolage/trunk \
-    http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+  % svn cp https://svn.bricolage.cc/bricolage/trunk \
+    https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
     -m 'New branch for maintenance of Bricolage 1.8.x.'
 
 Now export the branch and create the distribution tarball.
 
-  % svn export http://svn.bricolage.cc/bricolage/branches/rev_1_8
+  % svn export https://svn.bricolage.cc/bricolage/branches/rev_1_8
   % cd rev_1_8
   % make dist
 
@@ -695,8 +695,8 @@ release!
 Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:
 
-  % svn cp http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    http://svn.bricolage.cc/bricolage/tags/rel_1_8_0 \
+  % svn cp https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    https://svn.bricolage.cc/bricolage/tags/rel_1_8_0 \
     -m 'Tag for the 1.8.0 release of Bricolage.'
 
 The tag is mainly kept for the purposes of record-keeping. And since copies

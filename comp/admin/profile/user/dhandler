@@ -77,6 +77,9 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 my @prefs = Bric::Util::Pref->list({ can_be_overridden => 1 });
 
 if (@prefs) {
+    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+             caption => 'User Preferences',
+             number => 5 );
     $m->comp('/widgets/listManager/listManager.mc',
              behavior => 'narrow',
              object => 'pref',
@@ -93,8 +96,6 @@ if (@prefs) {
                      pref_id => $_[0]->get_id });
                  $up ? ['Reset', 'user_pref|delete_cb', $up->get_id] : undef;
              },
-             title => 'User Preferences',
-             number => 5,
              fields => [qw(name description val_name)],
              alter => { val_name =>
                         sub { my $up =
@@ -110,6 +111,7 @@ if (@prefs) {
                               } } },
              objs => \@prefs,
             );
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 }
 
 </%perl>
@@ -169,8 +171,8 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 }
 
 # Establish the return URI.
-my $return = get_state_name('login') eq 'ssl' ? '/admin/manager/user'
-      : 'http://' . $r->hostname . $port . '/admin/manager/user';
+my $return = get_state_name('login') eq 'ssl' ? last_page
+      : 'http://' . $r->hostname . $port . last_page;
 </%init>
 
 

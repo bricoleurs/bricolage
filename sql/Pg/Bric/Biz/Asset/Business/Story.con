@@ -106,31 +106,3 @@ ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_version__id)
 ALTER TABLE story__contributor
 ADD CONSTRAINT fk_member__story__contributor FOREIGN KEY (member__id)
 	REFERENCES member(id) ON DELETE CASCADE;
-
-
-
--- -----------------------------------------------------------------------------
--- Table: attr_person
-
--- -----------------------------------------------------------------------------
--- Table: attr_person_val
-
-
-ALTER TABLE attr_story_val ADD 
-    CONSTRAINT fk_attr_story__attr_story_val FOREIGN KEY (attr__id)
-    REFERENCES attr_story(id) ON DELETE CASCADE;
-
-ALTER TABLE attr_story_val ADD
-    CONSTRAINT fk_story__attr_story_val FOREIGN KEY (object__id)
-    REFERENCES story(id) ON DELETE CASCADE;
-
--- -----------------------------------------------------------------------------
--- Table: attr_story_meta
-
-ALTER TABLE attr_story_meta ADD 
-    CONSTRAINT fk_attr_story__attr_story_meta FOREIGN KEY (attr__id)
-    REFERENCES attr_story(id) ON DELETE CASCADE;
-
-
-
-

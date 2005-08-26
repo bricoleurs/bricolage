@@ -88,15 +88,18 @@ foreach my $mid (@{ mk_aref($media_pub_ids) }) {
     push @$objs, $m;
 }
 
+$m->comp('/widgets/wrappers/sharky/table_top.mc', 
+         caption => '%n to Publish',
+         object  => 'asset' );
 $m->comp('/widgets/listManager/listManager.mc',
 	 object => 'asset',
-	 title => '%n to Publish',
 	 addition => undef,
 	 objs => $objs,
 	 fields => [qw(id name uri cover_date)],
 	 profile => undef,
 	 select => $select,
 	);
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%init>
 
 <%once>

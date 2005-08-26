@@ -57,7 +57,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(107) {
+sub test_select_methods: Test(120) {
     my $self = shift;
     my $class = $self->class;
 
@@ -172,6 +172,7 @@ sub test_select_methods: Test(107) {
                              element     => $element,
                              checked_out => 1,
                              site_id     => 100,
+                             note        => 'Note 1',
                            });
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[0]->set_cover_date('2005-03-23 06:11:29');
@@ -187,14 +188,20 @@ sub test_select_methods: Test(107) {
     push @{$OBJ_IDS->{media}}, $media[0]->get_id();
     $self->add_del_ids( $media[0]->get_id() );
 
-    # Try doing a lookup
+    # Try doing a lookup by ID and UUID.
     $expected = $media[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0] }),
-        'can we call lookup on a Media' );
-    is( $got->get_name(), $expected->get_name(),
-        '... does it have the right name');
-    is( $got->get_description, $expected->get_description,
-        '... does it have the right desc');
+    for my $idf (qw(id uuid)) {
+        my $meth = "get_$idf";
+        ok $got = class->lookup({ $idf => $expected->$meth }),
+          "Look up by $idf";
+        is $got->get_id, $expected->get_id, "... does it have the right ID";
+        is $got->get_uuid, $expected->get_uuid,
+          "... does it have the right UUID";
+        is $got->get_name(), $expected->get_name(),
+            '... does it have the right name';
+        is $got->get_description, $expected->get_description,
+            '... does it have the right desc';
+    }
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri;
@@ -242,6 +249,7 @@ sub test_select_methods: Test(107) {
                             element     => $element,
                             checked_out => 1,
                             site_id     => 100,
+                            note        => 'Note 2',
                            });
     $media[1]->set_category__id($OBJ->{category}->[1]->get_id());
     $media[1]->set_cover_date('2005-03-23 06:11:29');
@@ -285,6 +293,7 @@ sub test_select_methods: Test(107) {
                              element     => $element,
                              checked_out => 1,
                              site_id     => 100,
+                             note        => 'Note 3',
                            });
     $media[2]->set_category__id( $OBJ->{category}->[0]->get_id() );
     $media[2]->set_cover_date('2005-03-23 06:11:29');
@@ -334,6 +343,7 @@ sub test_select_methods: Test(107) {
                              element     => $element,
                              checked_out => 1,
                              site_id     => 100,
+                             note        => 'Note 4',
                            });
     $media[3]->set_category__id( $OBJ->{category}->[0]->get_id );
     $media[3]->set_cover_date('2005-03-23 06:11:29');
@@ -396,6 +406,7 @@ sub test_select_methods: Test(107) {
                              element     => $element,
                              checked_out => 1,
                              site_id     => 100,
+                             note        => 'Note 5',
                            });
     $media[4]->add_contributor($self->contrib, 'DEFAULT');
     $media[4]->set_category__id($OBJ->{category}->[0]->get_id());
@@ -444,6 +455,7 @@ sub test_select_methods: Test(107) {
                              element     => $element,
                              checked_out => 1,
                              site_id     => 100,
+                             note        => 'Note 6',
                            });
     $media[5]->set_category__id( $OBJ->{category}->[0]->get_id );
     $media[5]->set_cover_date('2005-03-23 06:11:29');
@@ -705,6 +717,15 @@ sub test_select_methods: Test(107) {
         output_channel_id => ANY($oc1->get_id, $oc3->get_id)
     }), 'Get stories with first and third OC';
     is @$got, 2, 'Should now have two stories';
+
+    # Now search on notes.
+    ok $got = class->list({ note => 'Note 1'}), 'Search on note "Note 1"';
+    is @$got, 1, 'Should have one media';
+    ok $got = class->list({ note => 'Note %'}), 'Search on note "Note %"';
+    is @$got, 6, 'Should have six media';
+    ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
+                          'Search on note "ANY(Note 1, Note 2)"';
+    is @$got, 2, 'Should have two media';
 }
 
 ###############################################################################

@@ -114,9 +114,12 @@ foreach my $rel ($aliased->get_related_objects) {
 <%def .relateds>
 <%perl>;
 my ($key, $rels, $num) = @_;
+$m->comp('/widgets/wrappers/sharky/table_top.mc', 
+         caption => 'Related %n to Alias',
+         object  => $key,
+         number => $num );
 $m->comp('/widgets/listManager/listManager.mc',
          object       => $key,
-         title        => 'Related %n to Alias',
          addition     => undef,
          objs         => $rels,
          fields       => [qw(name uri category)],
@@ -124,8 +127,7 @@ $m->comp('/widgets/listManager/listManager.mc',
          field_values => $cat_sel,
          profile      => undef,
          select       => undef,
-         number       => $num,
         );
-$m->print('<br />');
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>
 </%def>

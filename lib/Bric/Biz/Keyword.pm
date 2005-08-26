@@ -240,9 +240,16 @@ use valid SQL wild card characters are:
 
 =back
 
+The C<ANY()> operator may be used to specify a list of values for any of these
+parameters.
+
 The supported lookup keys that must be an exact value are:
 
 =over 4
+
+=item id
+
+Keyword ID. May use C<ANY> for a list of possible values.
 
 =item active
 
@@ -250,13 +257,14 @@ A boolean value indicating if the keyword is active.
 
 =item grp_id
 
-A Bric::Util::Grp::Keyword object ID.
+A Bric::Util::Grp::Keyword object ID. May use C<ANY> for a list of possible
+values.
 
 =item object
 
 Returns all keywords for a given object - may be a Bric::Biz::Category,
 Bric::Biz::Asset::Business::Media or a Bric::Biz::Asset::Business::Story
-object.
+object. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -691,31 +699,33 @@ $get_em = sub {
       "m.active = '1'";
     my @params;
 
-    foreach my $k (keys %$params) {
+    while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
             # Simple lookup by ID.
-            $wheres .= " AND a.id = ?";
-            push @params, $params->{$k};
+            $wheres .= ' AND ' . any_where($v, "a.id = ?", \@params);
         } elsif ($k eq 'active') {
             # Simple lookup by "active" boolean.
             $wheres .= " AND a.active = ?";
-            push @params, $params->{$k} ? 1 : 0;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'grp_id') {
             # Look up by group membership.
             $tables .= ", member m2, keyword_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $params->{$k};
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where($v, "m2.grp__id = ?", \@params);
         } elsif ($k eq 'object') {
             # Look up by object association.
-            my $key = $params->{$k}->key_name;
+            my $key = $v->key_name;
             $tables .= ", $key\_keyword o";
-            $wheres .= " AND o.keyword_id = a.id AND o.$key\_id = ?";
-            push @params, $params->{$k}->get_id;
+            $v = $v->isa('Bric::Util::DBI::ANY')
+              ? ANY(map { $_->get_id } @$v)
+              : $v->get_id;
+            $wheres .= " AND o.keyword_id = a.id AND "
+              . any_where($v, "o.$key\_id = ?", \@params);
         } else {
             # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $params->{$k};
+            $wheres .= ' AND '
+              . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         }
     }
 

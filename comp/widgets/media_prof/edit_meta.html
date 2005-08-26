@@ -10,7 +10,7 @@ my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
-  image    => %{ $media->get_notes } ? 'note_fill' : "note",
+  image    => $media->has_notes ? 'note_fill' : "note",
   useGlobalImage => 1,
   value    => 'edit'
 );
@@ -25,108 +25,46 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 </%perl>
 
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $id %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('Media Type Element')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_element_name() %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_current_version() %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_published_version || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_first_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $media->get_publish_date || '' %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
+<dl class="viewmeta">
+<dt><%$lang->maketext('UUID')%>:</dt>
+<dd><% $media->get_uuid %></dd>
+<dt><%$lang->maketext('Media Type Element')%>:</dt>
+<dd><% $media->get_element_name() %></dd>
+<dt><% $lang->maketext('Current Version') %>:</dt>
+<dd><% $media->get_current_version() %></dd>
+<dt><% $lang->maketext('Published Version') %>:</dt>
+<dd><% $media->get_published_version || '&nbsp;' %></dd>
+<dt><% $lang->maketext('First Published') %>:</dt>
+<dd><% $media->get_first_publish_date || '&nbsp;' %></dd>
+<dt><% $lang->maketext('Last Published') %>:</dt>
+<dd><% $media->get_publish_date || '&nbsp;' %></dd>
+<dt><% $lang->maketext('URI') %>:</dt>
 % if (my $uri = $media->get_primary_uri) {
 %     if (@ocs == 1) {
-  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
+<dd><% $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'media',
-                                    title => $media->get_primary_uri,
+                                    value => $media->get_primary_uri,
                                     doc   => $media,
-                                    style => 'blackUnderlinedLink') %></td>
-  </tr>
-% } else {
-  <td width="470">&nbsp;<% $uri %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></td>
-  </tr>
+                                    style => 'blackUnderlinedLink') %></dd>
+%     } else {
+<dd><% $uri %></dd>
+<dt><% $lang->maketext('Preview in') %>:</dt>
+<dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
 %     }
 % }
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Site') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% Bric::Biz::Site->lookup({id => $media->get_site_id})->
-  get_name() %></td>
-  </tr>
-  <tr>
-  <td class="medHeader" colspan=3><img src="/media/images/spacer.gif" height="1" width="1" /></td>
-  </tr>
-</table>
-<% $ieSpacer %>
+<dt><% $lang->maketext('Site') %>:</dt>
+<dd><% Bric::Biz::Site->lookup({id => $media->get_site_id})->get_name() %></dd>
+</dl>
+
+<div class="editmeta">
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'title',
 &>
-
-<% $ieSpacer %>
-
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'description',
 &>
-
-<% $ieSpacer %>
-
 <& '/widgets/select_object/select_object.mc',
   object   => 'source',
   name     => "$widget|source__id",
@@ -138,7 +76,6 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 
 % unless (ENABLE_CATEGORY_BROWSER) {
-<% $ieSpacer %>
 <& '/widgets/select_object/select_object.mc',
   object        => 'category',
   constrain => { site_id => $media->get_site_id },
@@ -154,24 +91,22 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 % }  # unless ENABLE_CATEGORY_BROWSER
 
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'priority',
 &>
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'cover_date',
 &>
-<% $ieSpacer %>
 <& '/widgets/profile/displayFormElement.mc',
    objref => $media,
    key => 'expire_date',
 &>
-<% $ieSpacer %>
+</div>
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
 $m->comp('file_section.mc',
          media     => $media,
          widget    => $widget,
@@ -179,6 +114,7 @@ $m->comp('file_section.mc',
          read_only => $media->get_alias_id,
          indent    => $infoIndent
         );
+        
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         tile        => $tile,
         tile_type   => 'media',
@@ -198,40 +134,32 @@ if (ENABLE_OC_ASSET_ASSOCIATION) {
          );
 }
 
-$m->out("$ieSpacer<br />\n");
-
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Associations",
          number => $num++);
 </%perl>
 
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Category') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-<%perl>
-my $cat = $media->get_category;
-$m->out($cat->get_name);
-</%perl>
-  </td>
-  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
-             formName => "theForm",
-             callback => "$widget|category_cb",
-             image    => "edit_lgreen",
-             vspace   => 4
-&></td>
+% my $rowColor = "even";
+<table class="associations">
+% if (ENABLE_CATEGORY_BROWSER) {
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Category') %>:</th>
+<td><% $media->get_category->get_uri %></td>
+<td class="edit"><& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'category_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &></td>
 </tr>
-</table>
+% }   # if ENABLE_CATEGORY_BROWSER
 
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=120 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-<%perl>
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Keywords') %>:</th>
+<td><%perl>
 my @keywords;
 foreach my $kw ($media->get_keywords) {
     push @keywords, $kw->get_name;
@@ -239,45 +167,36 @@ foreach my $kw ($media->get_keywords) {
 
 $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
 
-</%perl>
-  </td>
-  <td width=80 align="center" valign=top><& '/widgets/profile/imageSubmit.mc',
-             formName => "theForm",
-             callback => "$widget|keywords_cb",
-             image    => "edit_lgreen",
-             vspace   => 4
-&></td>
+</%perl></td>
+<td class="edit"><& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'keywords_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &></td>
 </tr>
-</table>
 
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr>
-  <td align=right width=120 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
-  <td width=378 valign=top>
-
-<%perl>
+% $rowColor = $rowColor eq "odd" ? "even" : "odd";
+<tr class="<% $rowColor %>">
+<th><% $lang->maketext('Contributors') %>:</th>
+<td><%perl>
 my @contribs;
 foreach my $cntr ($media->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
 $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
 
-</%perl>
-  </td>
-  <td width="80" align="center" valign="top">
-% if ($media->get_alias_id) {
-<img src="/media/images/spacer.gif" height="20" />
-% } else {
-<& /widgets/profile/imageSubmit.mc,
-   formName => "theForm",
-   callback => $widget . "|contributors_cb",
-   image    => "edit_lgreen",
-   vspace   => 3
-&>
+</%perl></td>
+<td class="edit">
+% unless ($media->get_alias_id) {
+<& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Edit"),
+    widget    => $widget,
+    cb        => 'contributors_cb',
+    button    => 'pencil',
+    useTable  => 0,
+    globalImage => 1 &>
 % }
 </td>
 </tr>

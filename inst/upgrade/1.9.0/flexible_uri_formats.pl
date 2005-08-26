@@ -6,8 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
-# This is similar to an upgrade done for 1.7.0, but is designed to fix bad
-# key names created by autopopulated fields defined since that upgrade.
+exit if fetch_sql "SELECT 1 FROM output_channel WHERE uri_format ~ '^/%' LIMIT 1";
 
 my $get_uri_formats = prepare('SELECT id, uri_format, fixed_uri_format FROM output_channel');
 
@@ -34,4 +33,4 @@ while (fetch($get_uri_formats)) {
     $fixed_uri_format =~ s/day/\%d/g;
     $fixed_uri_format =~ s/slug/\%{slug}/g;
     execute($set_uri_formats, $uri_format, $fixed_uri_format, $id);
-# }
+}

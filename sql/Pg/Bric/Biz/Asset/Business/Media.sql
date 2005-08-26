@@ -25,15 +25,6 @@ CREATE SEQUENCE seq_media_member START 1024;
 
 CREATE SEQUENCE seq_media_fields START 1024;
 
--- Unique IDs for the attr_media table
-CREATE SEQUENCE seq_attr_media START  1024;
-
--- Unique IDs for each attr_media_*_val table
-CREATE SEQUENCE seq_attr_media_val START 1024;
-
--- Unique IDs for the media_meta table
-CREATE SEQUENCE seq_attr_media_meta START 1024;
-
 -- Unique IDs for the media_uri table
 CREATE SEQUENCE seq_media_uri START 1024;
 
@@ -48,6 +39,7 @@ CREATE SEQUENCE seq_media_uri START 1024;
 CREATE TABLE media (
     id                INTEGER   NOT NULL
                                       DEFAULT NEXTVAL('seq_media'),
+    uuid              TEXT            NOT NULL,
     element__id       INTEGER   NOT NULL,
     priority          INT2      NOT NULL
                                       DEFAULT 3
@@ -108,6 +100,7 @@ CREATE TABLE media_version (
     media_type__id      INTEGER   NOT NULL,
     primary_oc__id      INTEGER   NOT NULL,
     primary_ic__id      INTEGER   NOT NULL,
+    note                TEXT,
     checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_version__id PRIMARY KEY (id)
 );
@@ -203,61 +196,12 @@ CREATE TABLE media_member (
 );
 
 
--- Table: attr_media
---
--- Description: A table to represent types of attributes.  A type is defined by
---              its subsystem, its media ID and an attribute name.
-
-CREATE TABLE attr_media (
-    id         INTEGER   NOT NULL
-                             DEFAULT NEXTVAL('seq_attr_media'),
-    subsys     VARCHAR(256)  NOT NULL,
-    name       VARCHAR(256)  NOT NULL,
-    sql_type   VARCHAR(30)   NOT NULL,
-    active     BOOLEAN       NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_media__id PRIMARY KEY (id)
-);
-
-
--- ------------------------------------------------------------------------------- Table: attr_media_val
---
--- Description: A table to hold attribute values.
-
-CREATE TABLE attr_media_val (
-    id           INTEGER     NOT NULL
-                                 DEFAULT NEXTVAL('seq_attr_media_val'),
-    object__id   INTEGER     NOT NULL,
-    attr__id     INTEGER     NOT NULL,
-    date_val     TIMESTAMP,
-    short_val    VARCHAR(1024),
-    blob_val     TEXT,
-    serial       BOOLEAN      DEFAULT FALSE,
-    active       BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_attr_media_val__id PRIMARY KEY (id)
-);
-
-
--- ------------------------------------------------------------------------------- Table: attr_media_meta
---
--- Description: A table to represent metadata on types of attributes.
-
-CREATE TABLE attr_media_meta (
-    id        INTEGER     NOT NULL
-                              DEFAULT NEXTVAL('seq_attr_media_meta'),
-    attr__id  INTEGER     NOT NULL,
-    name      VARCHAR(256)    NOT NULL,
-    value     VARCHAR(2048),
-    active    BOOLEAN      NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_media_meta__id PRIMARY KEY (id)
-);
-
-
-
 --
 -- INDEXES.
 --
 
 -- media
+CREATE INDEX idx_media__uuid ON media(uuid);
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media__cover_date ON media(cover_date);
@@ -280,6 +224,7 @@ CREATE INDEX fdx_primary_ic__media_version ON media_version(primary_ic__id);
 CREATE INDEX fkx_usr__media_version ON media_version(usr__id);
 CREATE INDEX fkx_media_type__media_version ON media_version(media_type__id);
 CREATE INDEX fkx_category__media_version ON media_version(category__id);
+CREATE INDEX idx_media_version__note ON media_version(note) WHERE note IS NOT NULL;
 
 -- media_uri
 CREATE INDEX fkx_media__media_uri ON media_uri(media__id);
@@ -297,29 +242,6 @@ CREATE INDEX fkx_media__ic__ic ON media__input_channel(input_channel__id);
 -- media_member.
 CREATE INDEX fkx_media__media_member ON media_member(object_id);
 CREATE INDEX fkx_member__media_member ON media_member(member__id);
-
--- Unique index on subsystem/name pair
-CREATE UNIQUE INDEX udx_attr_media__subsys__name ON attr_media(subsys, name);
-
--- Indexes on name and subsys.
-CREATE INDEX idx_attr_media__name ON attr_media(LOWER(name));
-CREATE INDEX idx_attr_media__subsys ON attr_media(LOWER(subsys));
-
--- Unique index on object__id/attr__id pair
-CREATE UNIQUE INDEX udx_attr_media_val__obj_attr ON attr_media_val (object__id,attr__id);
-
--- FK indexes on object__id and attr__id.
-CREATE INDEX fkx_media__attr_media_val ON attr_media_val(object__id);
-CREATE INDEX fkx_attr_media__attr_media_val ON attr_media_val(attr__id);
-
--- Unique index on attr__id/name pair
-CREATE UNIQUE INDEX udx_attr_media_meta__attr_name ON attr_media_meta (attr__id, name);
-
--- Index on meta name.
-CREATE INDEX idx_attr_media_meta__name ON attr_media_meta(LOWER(name));
-
--- FK index on attr__id.
-CREATE INDEX fkx_attr_media__attr_media_meta ON attr_media_meta(attr__id);
 
 CREATE INDEX fdx_media__desk__id ON media(desk__id) WHERE desk__id > 0;
 CREATE INDEX fdx_media__workflow__id ON media(workflow__id) WHERE workflow__id > 0;

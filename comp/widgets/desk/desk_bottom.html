@@ -1,29 +1,45 @@
-</div>
-<table width="578" cellpadding="2" cellspacing="0" border="0">
 % # Do paging
 % if ($num_pages) {
+<table width="578" cellpadding="2" cellspacing="0" border="0">
   <tr class="lightHeader">
-    <td align="left" <% $style %> <% $colspan %>>
+    <td align="left" <% $colspan %>>
       <% $prev_link %>
 %     foreach my $page (0 .. $num_pages) {
 %         my $off = $page * $limit;
-      <a href="<% $url %>?offset=<% $off %>" class="redLinkLarge"><span class="subHeader"><% $page + 1 %></span></a>
+      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>
 %     }
       <% $next_link %>
     </td>
 %     unless ($show_all) {
-    <td align="right" <% $style %>><a href="<% $url %>?show_all=1" class="redLinkLarge">Show All</a></td>
+    <td align="right"><a href="<% $url %>?show_all=1" class="next">Show All</a></td>
 %     }
   </tr>
-% }  # if $num_pages
-  <tr>
-    <td align="right" colspan="2">
-      <input type="image" src="/media/images/<% "$lang_key/$chk_cb" %>_assets_<% $color1 %>.gif" border="0" name="<% "$widget|$chk_cb" %>_cb" value="<% $chk_label %>">
-      <a href="#" onclick="checkAll('<% $checkbox_name %>'); return false;"><img src="/media/images/<% $lang_key %>/select_all_lgreen.gif" border="0"></a>
-      <input type="image" src="/media/images/<% "$lang_key/$act_label" %>.gif" border="0" name="<% "$widget|$act_cb" %>_cb" value="<% $act_label %>">
-    </td>
-  </tr>
 </table>
+% }  # if $num_pages
+
+<div class="buttonbar">
+<& /widgets/buttons/submit.mc,
+   disp      => $chk_label,
+   widget    => $widget,
+   cb        => $chk_cb . '_cb',
+   button    => $chk_cb . '_assets_' . $color1,
+   useTable  => 0 &>
+<& /widgets/buttons/submit.mc,
+   disp      => 'Check All',
+   name      => 'checkall',
+   button    => 'select_all_lgreen',
+   js        => qq{onclick="checkAll('} . $checkbox_name . qq{'); return false"},
+   useTable  => 0 &>
+<& /widgets/buttons/submit.mc,
+   disp      => $act_label,
+   widget    => $widget,
+   cb        => $act_cb . '_cb',
+   button    => $act_label,
+   useTable  => 0 &>
+</div>
+
+</div><!-- end .desk -->
+
 <%args>
 $widget
 $wf   => undef
@@ -84,9 +100,9 @@ my $next_offset = $offset + $limit;
 $next_offset = $num_pages * $limit if $next_offset > $num_objs;
 my ($prev_link, $next_link) = ('', '');
 if ($offset) {
-    $prev_link = qq{<a href="$url?offset=$prev_offset" class="redLinkLarge"><span class="subHeader">&laquo;</span></a>};
+    $prev_link = qq{<a href="$url?offset=$prev_offset">&laquo;</a>};
 }
 unless ($offset == $num_pages * $limit) {
-    $next_link = qq{<a href="$url?offset=$next_offset" class="redLinkLarge"><span class="subHeader">&raquo;</span></a>};
+    $next_link = qq{<a href="$url?offset=$next_offset">&raquo;</a>};
 }
 </%init>

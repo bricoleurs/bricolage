@@ -1230,6 +1230,11 @@ sub _do_list {
             $wheres .= ' AND ic.id = i.input_channel__id ' .
               'AND i.id = ?';
             push @params, $v;
+        } elsif ($k eq 'media_version_id') {
+            $tables .= ', media_instance i';
+            $wheres .= ' AND ic.id = i.input_channel__id ' .
+                       ' AND i.media_version__id = ?';
+            push @params, $v;
         } elsif ($k eq 'media_instance_id') {
             # Find all story_instances with the right story_version__id
             $tables .= ', media_instance i';

@@ -1,8 +1,8 @@
 ﻿<%perl>;
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
-         title => $title,
-         context => $context);
+          title => $title,
+          context => $context);
 
 # Output the search widget.
 my $obj_key = $type;
@@ -31,12 +31,12 @@ if ($type eq 'grp') {
 
     set_state_name($type, $obj_key);
     $groupList = $m->scomp('/widgets/profile/select.mc',
-                           disp => 'Or Pick a Type',
-                           options => \%grp_sel,
-                           indent  => 140,
-                           width   => 500,
-                           value => $ARGS{grp_type} || 'all',
-                           js => qq{onChange="location.href='} . $r->uri .
+                            disp => 'Or Pick a Type',
+                            options => \%grp_sel,
+                            indent  => 140,
+                            width   => 500,
+                            value => $ARGS{grp_type} || 'all',
+                            js => qq{onChange="location.href='} . $r->uri .
                                  "?grp_type=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -61,16 +61,16 @@ if ($type eq 'grp') {
     }
 
     $groupList = $m->scomp('/widgets/select_object/select_object.mc',
-                           object => 'contrib_type',
-                           field => 'name',
-                           disp => 'Or Pick a Type',
-                           default => ['all', 'All Contributors'],
-                           constrain => { all => 1},
-                           exclude => [Bric::Biz::Person->INSTANCE_GROUP_ID],
-                           indent  => 140,
-                           width   => 500,
-                           selected => $ctype,
-                           js => qq{onChange="location.href='} . $r->uri .
+                            object => 'contrib_type',
+                            field => 'name',
+                            disp => 'Or Pick a Type',
+                            default => ['all', 'All Contributors'],
+                            constrain => { all => 1},
+                            exclude => [Bric::Biz::Person->INSTANCE_GROUP_ID],
+                            indent  => 140,
+                            width   => 500,
+                            selected => $ctype,
+                            js => qq{onChange="location.href='} . $r->uri .
                                  "?ctype=' + " .
                                  qq{escape(this.options[this.selectedIndex].value)"}
                            );
@@ -91,35 +91,51 @@ $m->comp('/widgets/search/search.mc',
 # Output a form tag if necessary.
 if (defined $def->{$type}{select}) {
     $m->out(qq{<form method="post" action="${ \$r->uri }" name="manager"}
-            . qq{onSubmit="return confirmDeletions()">});
-} else {
-    $m->out("<p></p>");
+          . qq{onsubmit="return confirmDeletions()">});
 }
+
+$m->comp('/widgets/wrappers/sharky/table_top.mc',
+          caption => $def->{$type}{title} || 'Existing %n',
+          object  => $obj_key
+);
 
 # Output the list of found objects.
 $m->comp('/widgets/listManager/listManager.mc',
-          behavior => $behavior,
-          object => $obj_key,
-          profile => $prof_sub,
-          title =>   $def->{$type}{title} || 'Existing %n',
-          fields => $def->{$type}{list_fields},
-          addition => $type eq 'pref' || $type eq 'job' ? undef : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
-          select => $def->{$type}{select},
-          constrain => $constrain || $def->{$type}{constrain},
-          field_titles => $def->{$type}{field_titles},
-          field_values => $def->{$type}{field_values},
-          alter => $def->{$type}{alter},
-          exclude => $def->{$type}{exclude} || $excl_sub,
-          sortBy => $def->{$type}{sort_by} );
+    behavior => $behavior,
+    object => $obj_key,
+    profile => $prof_sub,
+    fields => $def->{$type}{list_fields},
+    addition => $type eq 'pref' || $type eq 'job' 
+                ? undef 
+                : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
+    select => $def->{$type}{select},
+    constrain => $constrain || $def->{$type}{constrain},
+      field_titles => $def->{$type}{field_titles},
+      field_values => $def->{$type}{field_values},
+    alter => $def->{$type}{alter},
+    exclude => $def->{$type}{exclude} || $excl_sub,
+    sortBy => $def->{$type}{sort_by} );
 
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    
 # Output the form closing tag if necessary.
 if (defined $def->{$type}{select} && $can_del) {
     if ($type ne "job") {
-        $m->out(qq{<br><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border="0" name="action"}
-                . qq{value="$sel_label Checked" />\n</form>})
+        $m->comp("/widgets/buttons/submit.mc",
+                  disp      => 'Delete Checked',
+                  name      => 'action',
+                  button    => 'delete_checked_red',
+                  useTable  => 0
+                );
+        $m->out(qq{\n</form>\n});
     } else {
-        $m->out(qq{<br><input type="image" src="/media/images/$lang_key/cancel_checked_red.gif" border="0" name="action"}
-                . qq{value="$sel_label Checked" />\n</form>})
+        $m->comp("/widgets/buttons/submit.mc",
+                  disp      => "$sel_label Checked",
+                  name      => 'action',
+                  button    => 'cancel_checked_red',
+                  useTable  => 0
+                );
+        $m->out(qq{\n</form>\n});
     }
 }
 

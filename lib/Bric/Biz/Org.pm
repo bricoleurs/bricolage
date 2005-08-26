@@ -258,21 +258,27 @@ supported lookup parameter keys are:
 
 =over 4
 
-=item *
+=item id
 
-name
+Organization ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-long_name
+The organization's name. May use C<ANY> for a list of possible values.
 
-=item *
+=item long_name
 
-personal
+The long name of the organization. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item personal
 
-grp_id
+A boolean indicating whether or not the oganization is a person.
+
+=item grp_id
+
+A Bric::Util::Grp::Keyword object ID. May use C<ANY> for a list of possible
+values.
 
 =back
 
@@ -970,9 +976,10 @@ sub get_addr { &$get_addr_coll(shift)->get_objs(@_) }
 
 =item my $address = $org->new_addr
 
-Adds and returns a new Bric::Biz::Org::Parts::Address object associated with the
-Bric::Biz::Org object. Returns undef on failure. See the Bric::Biz::Org::Parts::Address
-documentation for its API.
+Adds and returns a new Bric::Biz::Org::Parts::Address object associated with
+the Bric::Biz::Org object. Pass in an optional list of parameters for
+attributes to be assigned to the object. Returns C<undef> on failure. See
+L<Bric::Biz::Org::Parts::Address|Bric::Biz::Org::Parts::Address> for its API.
 
 B<Throws:>
 
@@ -1025,8 +1032,9 @@ save() method.
 =cut
 
 sub new_addr {
-    my $self = shift;
-    &$get_addr_coll($self)->new_obj({ org_id => $self->_get('id') });
+    my ($self, $params) = @_;
+    $params->{org_id} = $self->_get('id');
+    $get_addr_coll->($self)->new_obj($params);
 }
 
 =item my $self = $org->del_addr
@@ -1145,7 +1153,7 @@ sub save {
     my $self = shift;
     my ($id, $addr_coll) = $self->_get('id', '_addr');
     $addr_coll->save if $addr_coll;
-    return unless $self->_get__dirty;
+    return $self unless $self->_get__dirty;
 
     if (defined $id) {
         # It's an existing org. Update it.
@@ -1251,14 +1259,13 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my $tables = 'org a, member m, org_member c';
-    my $wheres = 'a.id = c.object_id AND m.id = c.member__id ' .
-      "AND m.active = '1'";
+    my $wheres = 'a.id = c.object_id AND m.id = c.member__id '
+      . "AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
             # Simple numeric comparison.
-            $wheres .= " AND a.id = ?";
-            push @params, $v;
+            $wheres .= " AND " . any_where($v, "a.id = ?", \@params);
         } elsif ($k eq 'personal') {
             # Simple boolean numeric comparison.
             $wheres .= " AND a.personal = ?";
@@ -1266,13 +1273,13 @@ $get_em = sub {
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, org_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where($v, "m2.grp__id = ?", \@params);
         } else {
             # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= " AND "
+              . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         }
     }
 

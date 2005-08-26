@@ -4,12 +4,12 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 	 context => "Workflow | Profile | $disp->{$type} | &quot;"
 	 . $obj->get_name . "&quot; | Events"
 );
-$m->out("<p></p>");
+
 $m->comp('/widgets/eventList/eventList.mc',
 	 object => $type,
          obj_id => $id,
 	 alert_uri => "/workflow/alerts");
-$m->out("<br />\n");
+
 $m->comp('/lib/util/back_button.mc');
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 </%perl>

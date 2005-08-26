@@ -91,7 +91,7 @@ my $alter = { publish_status => sub {
               title => sub {
                   $m->comp('/widgets/profile/preview_link.mc',
                            type  => $type,
-                           title => '<span class="l10n">' . shift() . '</span>',
+                           value => '<span class="l10n">' . shift() . '</span>',
                            doc   => shift)
               }
             };
@@ -148,6 +148,10 @@ push @fields, 'site'
 &>
 
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
+<& '/widgets/wrappers/sharky/table_top.mc', 
+    caption => '%n Found',
+    object  => $type
+&>
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
     sortBy    => $sort_by->{$type},
@@ -155,7 +159,6 @@ push @fields, 'site'
     alter     => $alter,
     exclude   => $exclude,
     profile   => $profile,
-    title     => $lang->maketext('%n Found'),
     addition  => $addition,
     select    => $select,
     behavior  => 'expand',
@@ -163,6 +166,8 @@ push @fields, 'site'
     cx_filter => ! $ARGS{site_id},
     field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',

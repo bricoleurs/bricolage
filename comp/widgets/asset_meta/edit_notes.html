@@ -1,33 +1,26 @@
 <& '/widgets/wrappers/sharky/table_top.mc',
     caption => "Existing Notes",
-    number  => $number++ &>
-
+    number  => $number++
+&>
 <table class="listManager">
 <tr>
     <th width="10%">Version</th>
     <th>Note</th>
 </tr>
-
-% foreach my $n (@notes) {
-%     if ($flag) {
+% if (%$notes) {
+%     for my $version (sort {$a <=> $b } keys %$notes) {
+<tr class="<% $version % 2 ? 'odd' : 'even' %>">
+    <td class="label"><% $version %></td>
+    <td><% $notes->{$version} %></td>
+%     } # for my $version
+% } # if (%$notes)
+% else {
 <tr>
-    <td colspan="2" height="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+    <td colspan="2"><% $lang->maketext('No existing notes.') %></td>
 </tr>
-%     } # if
-<tr>
-    <td class="label"><% $n->{id} %></td>
-    <td><% $n->{note} %></td>
-%     $flag = 1;
-% } # foreach
-% unless (@notes) {
-<tr>
-    <td colspan="2"><%$lang->maketext('No existing notes.')%></td>
-</tr>
-% } # unless
-
+% } # else
 </table>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
 <& '/widgets/wrappers/sharky/table_top.mc',
     caption => "Current Note",
     number  => $number &>
@@ -43,11 +36,8 @@
 			rows => 4
 		}
 	}  &>
-
 <input type="hidden" name="return_url" value="<% $return_url %>" />
-
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
 <& '/widgets/profile/button.mc',
     disp    => 'Save',
     widget  => $widget,
@@ -64,15 +54,11 @@
 $widget
 $number
 </%args>
-
 <%init>;
-my $notes = get_state_data($widget, 'notes');
-my $version = get_state_data($widget, 'version');
-my $return_url = get_state_data($widget, 'return_url');
-
-my $current = delete $notes->{$version};
-
-my @notes = map { { id => $_, note => $notes->{$_} } }
-  sort { $notes->{$a} <=> $notes->{$b} } keys %$notes;
-my $flag;
+my $notes      = get_state_data($widget => 'notes');
+my $version    = get_state_data($widget => 'version');
+my $return_url = get_state_data($widget => 'return_url');
+my $obj        = get_state_data($widget => 'obj');
+my $current = $obj->get_note;
 </%init>
+

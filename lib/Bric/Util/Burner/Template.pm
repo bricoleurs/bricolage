@@ -76,7 +76,6 @@ my $fs = Bric::Util::Trans::FS->new();
 my %SCRIPT_CACHE;
 
 use constant PAGE_BREAK => "<<<<<<<<<<<<<<<<<< PAGE BREAK >>>>>>>>>>>>>>>>>>";
-use constant CONTENT    => "<<<<<<<<<<<<<<<<<< CONTENT >>>>>>>>>>>>>>>>>>";
 use constant DEBUG      => 0;
 
 #--------------------------------------#
@@ -89,8 +88,8 @@ BEGIN {
                            _template_roots  => Bric::FIELD_NONE,
                            _output_path     => Bric::FIELD_NONE,
                            _at              => Bric::FIELD_NONE,
-                           _header          => Bric::FIELD_NONE,
-                           _footer          => Bric::FIELD_NONE,
+                           _output          => Bric::FIELD_NONE,
+                           _tmpl_file       => Bric::FIELD_NONE,
                           });
 }
 
@@ -212,17 +211,6 @@ sub burn_one {
     # save burn parameters
     $self->_set([qw(_at _template_roots)] => [$at, $template_roots]);
 
-    # run the category script if it exists
-    if ($self->_find_file('category', '.pl') or
-        $self->_find_file('category', '.tmpl')) {
-        my $category_output = $self->run_script('category', '.pl');
-        if (defined $category_output) {
-            # get header and footer and save them for _write_pages
-            my ($header, $footer) = split(/${\CONTENT}/, $category_output, 2);
-            $self->_set([qw(_header _footer)], [\$header, \$footer]);
-        }
-    }
-
     # get the element for the story
     my $element = $story->get_tile;
 
@@ -230,7 +218,7 @@ sub burn_one {
     my $output = $self->run_script($element);
 
     # write the files
-    $self->_write_pages(\$output);
+    $self->_write_pages(\$output, $element);
 
     # Return a list of the resources we just burned.
     return $self->get_resources
@@ -347,10 +335,6 @@ B<Notes:> NONE.
 
 sub run_script {
     my ($self, $element) = (shift, shift);
-    my ($story) = $self->get_story;
-    my $template_root = $fs->cat_dir($self->get_comp_dir,
-                                     ('oc_' . $self->get_oc->get_id));
-
     throw_burn_error error =>  __PACKAGE__ . "::run_script() requires an " .
                               "\$element argument.",
                      mode  => $self->get_mode,
@@ -360,118 +344,8 @@ sub run_script {
 
     print STDERR __PACKAGE__, "::run_script() called.\n" if DEBUG;
 
-    # find script element
-    my $script = $self->_find_file($element, '.pl');
-
-    # Set the element attribute.
-    $self->_set(['element'], [$element]);
-
-    # no script, perform default script action directly
-    if (not defined $script) {
-        return $self->new_template(element => $element)->output();
-    }
-
-    print STDERR __PACKAGE__, "::run_script() : found script file : $script.\n"
-      if DEBUG;
-
-    # construct package name
-
-    # escape everything into valid perl identifiers
-    my $package = $script;
-    $package =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
-
-    # second pass for slashes and words starting with a digit
-    $package =~ s{
-                  (/+)       # directory
-                  (\d?)      # package's first character
-              }[
-                "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
-               ]egx;
-
-    # prepend our root package
-    $package = "Bric::Util::Burner::Template::SANDBOX$package";
-
-    # read script contents into $sub
-    my $sub = "";
-    print STDERR __PACKAGE__, "::run_script() : reading $script.\n"
-      if DEBUG;
-    open(SCRIPT, $script)
-      or throw_burn_error error =>  "Unable to read $script : $!",
-                          mode  => $self->get_mode,
-                          oc    => $self->get_oc->get_name,
-                          cat   => $self->get_cat->get_uri,
-                          elem  => $element->get_name;
-    binmode(SCRIPT, ':utf8') if ENCODE_OK;
-    while(read(SCRIPT, $sub, 102400, length($sub))) {};
-    close(SCRIPT);
-
-    # compute md5 for script - used in caching system
-    my $md5 = md5($sub);
-
-    # check if script is cached and unchanged
-    if (exists $SCRIPT_CACHE{$package} and 
-        $SCRIPT_CACHE{$package} eq $md5) {
-        # compiled code is still good - nothing to do
-        print STDERR __PACKAGE__,
-        "::run_script() : skipping compilation - cached copy still good.\n"
-          if DEBUG;
-    } else {
-        print STDERR __PACKAGE__, "::run_script() : compiling...\n"
-          if DEBUG;
-
-        # determine filename for #line directive
-        my $line_file = substr($script, length($template_root));
-
-        # construct the code
-        my $code = <<END;
-package $package;
-use strict;
-use utf8;
-use vars ('\$burner', '\$element', '\$story');
-sub _run_script {
-#line 1 $line_file
-$sub
-}
-1;
-END
-        # compile the code
-        undef &{"$package\::_run_script"}; #avoid warnings
-        my $result = _compile($code);
-        unless ($result) {
-            throw_burn_error error   =>  "Error compiling script.",
-                             payload => $@,
-                             mode    => $self->get_mode,
-                             oc      => $self->get_oc->get_name,
-                             cat     => $self->get_cat->get_uri,
-                             elem    => $element->get_name
-              if $@;
-        }
-
-        # remember the md5
-        $SCRIPT_CACHE{$package} = $md5;
-    }
-
-    # setup globals for the script
-    {
-        no strict 'refs';
-        ${"$package\::burner"}  = $self;
-        ${"$package\::story"}   = $story;
-        ${"$package\::element"} = $element;
-    }
-
-    # call the script
-    my $cv = \&{"$package\::_run_script"};
-    my $output;
-    eval { $output = $cv->(@_) };
-
-    throw_burn_error error   =>  "Error running script.",
-                     payload => $@,
-                     mode    => $self->get_mode,
-                     oc      => $self->get_oc->get_name,
-                     cat     => $self->get_cat->get_uri,
-                     elem    => ref $element ? $element->get_name : $element
-      if $@;
-    return $output;
+    # find script element and run it.
+    return $self->_runit($element, $self->_find_file($element, '.pl'));
 }
 
 =item $template = $burner->new_template(...)
@@ -587,7 +461,7 @@ sub new_template {
     delete $args{element};
     delete $args{autofill};
 
-    if ($element and not exists $args{filename}) {
+    if ($element and not $args{filename} ||= $self->_get('_tmpl_file')) {
         # find element template file
         my $file = $self->_find_file($element, '.tmpl');
         throw_burn_error error => "Unable to find HTML::Template template"
@@ -628,6 +502,11 @@ sub new_template {
         HTML::Template::Expr->new(%args);
     };
 
+    # Add any existing content.
+    if (my $content = $self->_get('_output')) {
+        $template->param(content => $$content)
+    }
+
     # autofill with element data
     if ($autofill and $element) {
         my $story = $self->get_story();
@@ -641,14 +520,9 @@ sub new_template {
         $template->param(page_break => PAGE_BREAK)
           if $template->query(name => "page_break");
 
-        if ($element eq 'category') {
-            $template->param(content => CONTENT)
-              if $template->query(name => "content");
-        } else {
+        if ($element ne 'category') {
             # setup data for template
-            my $data = $self->_build_element_vars($element,
-                                                  $template,
-                                                  []);
+            my $data = $self->_build_element_vars($element, $template, []);
             $template->param($data);
         }
     }
@@ -677,31 +551,6 @@ NONE
 sub page_break {
     return PAGE_BREAK;
 }
-
-=item $burner->content()
-
-This routine returns the magic content marker used in category templates to
-break between the header and the footer.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub content {
-    return CONTENT;
-}
-
-#--------------------------------------#
 
 =back
 
@@ -737,7 +586,8 @@ sub _build_element_vars {
     # get list of names in this scope
     my %exists;
     if (@$path) {
-        %exists = map { $_ => 1 } $template->query(loop => [ @$path ]);
+        %exists = map { $_ => 1 } grep { defined }
+          $template->query(loop => [ @$path ]);
     } else {
         %exists = map { $_ => 1 } $template->param();
     }
@@ -745,7 +595,8 @@ sub _build_element_vars {
     # get list of names in element_loop scope
     my %element_loop_exists;
     if (@$path) {
-        %element_loop_exists = map { $_ => 1 } $template->query(loop => [ @$path, 'element_loop' ]);
+        %element_loop_exists = map { $_ => 1 }
+          grep { defined } $template->query(loop => [ @$path, 'element_loop' ]);
     } elsif ($template->param('element_loop')) {
         %element_loop_exists = map { $_ => 1 } $template->param('element_loop');
     }
@@ -755,13 +606,14 @@ sub _build_element_vars {
     my %loop = ( element_loop => [] );
     my %var;
 
-    # get link if related
-    my ($thing, $link);
-    if (($thing = $element->get_related_media()) or
-        ($thing = $element->get_related_story())) {
-        # XXX What if it's both related story and related media?
-        $link = $thing->get_primary_uri;
-        $var{link} = $link;
+    # Get related story URI. Keep "link" for backwards compatability.
+    if (my $thing = $element->get_related_story) {
+        $var{link} = $var{rel_story_uri} = $thing->get_primary_uri;
+    }
+
+    # Get related media URI. Backwards-compatable "link" overrides story.
+    if (my $thing = $element->get_related_media) {
+        $var{link} = $var{rel_media_uri} = $thing->get_uri;
     }
 
     # loop over elements
@@ -873,7 +725,7 @@ sub _find_file {
             my $path = $fs->cat_dir($troot, @cats, $filename);
             return $path if -e $path;
         }
-    } while(pop(@cats));
+    } while (pop @cats);
 
     # returns undef if we didn't find anything
     return undef;
@@ -912,11 +764,11 @@ sub _get_template_path {
 }
 
 
-=item $self->_write_pages(\$output)
+=item $self->_write_pages(\$output, $element)
 
-Writes pages in $output (and _header and _footer) to the appropriate output
-files on disk. Also takes care of building adding resources for the files
-written.
+Splits the pages in $$output in to their separate parts, executes any category
+templates for each, and writes them to the appropriate output files on disk.
+Also takes care of adding resources for the files written.
 
 B<Throws:>
 
@@ -933,64 +785,233 @@ NONE
 =cut
 
 sub _write_pages {
-    my ($self, $output) = @_;
-    my ($header, $footer) = $self->_get(qw(_header _footer));
-    $header ||= \"";
-    $footer ||= \"";
+    my ($self, $output, $element) = @_;
 
     print STDERR __PACKAGE__, "::_write_pages() called.\n"
         if DEBUG;
 
-    # multiple pages?
-    if ($$output =~ /${\PAGE_BREAK}/) {
-        my @pages = split /${\PAGE_BREAK}/, $$output;
-        for (my $page = 0; $page < @pages; $page++) {
-            # skip empty last page
-            last if $page == $#pages and $pages[$page] =~ /^\s*$/;
+    my @cat_tmpls = $self->_find_category_scripts;
 
-            # compute filename
-            my $filename = $self->page_filepath($page + 1);
+    my @pages = split /${\PAGE_BREAK}/, $$output;
+    for (my $page = 0; $page < @pages; $page++) {
+        # skip empty last page
+        last if $page == $#pages and $pages[$page] =~ /^\s*$/;
 
-            print STDERR __PACKAGE__, "::_write_pages() : opening multi page $filename\n"
-                if DEBUG;
-
-            # open new file and write to it
-            open(OUT, ">$filename")
-              or throw_gen error   => "Unable to open $filename",
-                           payload => $!;
-            binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
-            print OUT $$header;
-            print OUT $pages[$page];
-            print OUT $$footer;
-            close(OUT);
-
-            # add resource object for this file
-            my $uri = $self->page_uri($page + 1);
-            $self->add_resource($filename, $uri);
-        }
-    } else {
         # compute filename
-        my $filename = $self->page_filepath(1);
+        my $filename = $self->page_filepath($page + 1);
+        
+        print STDERR __PACKAGE__, "::_write_pages() : opening page $filename\n"
+          if DEBUG;
 
-        print STDERR __PACKAGE__,
-          "::_write_pages() : opening single page $filename\n" if DEBUG;
+        # Execute any category templates.
+        for my $catspec (@cat_tmpls) {
+            $self->_set(['_output'] => [\$pages[$page]]);
+            if ($catspec->[1] eq 'pl') {
+                $self->_set(['_tmpl_file'] => ["$catspec->[0].tmpl"]);
+                $pages[$page] = $self->_runit($element, "$catspec->[0].pl");
+            } else {
+                my $tmpl = $self->new_template(
+                    element  => $element,
+                    filename => "$catspec->[0].tmpl",
+                );
+                $pages[$page] = $tmpl->output;
+            }
+        }
+        $self->_set([qw(_output _tmpl_file)] => [undef, undef]);
 
         # open new file and write to it
         open(OUT, ">$filename")
           or throw_gen error   => "Unable to open $filename",
                        payload => $!;
         binmode(OUT, ':' . $self->get_encoding || 'utf8') if ENCODE_OK;
-        for my $part ($header, $output, $footer) {
-            print OUT $$part if defined $$part;
-        }
+        print OUT $pages[$page];
         close(OUT);
 
         # add resource object for this file
-        my $uri = $self->page_uri(1);
+        my $uri = $self->page_uri($page + 1);
         $self->add_resource($filename, $uri);
     }
 }
 
+##############################################################################
+
+=item $output = $self->_runit($element, $script)
+
+Called by C<run_script()> and, for category templates, by C<_write_pages()>,
+this method executes the script (with the full path to the F<.pl> script
+defined in $script and returns the result. If $script is undefined,
+C<_runit()> simply calls C<new_template()> and returns the output of the
+template.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _runit {
+    my ($self, $element, $script) = @_;
+    my ($story) = $self->get_story;
+    my $template_root = $fs->cat_dir(
+        $self->get_comp_dir, 'oc_' . $self->get_oc->get_id
+    );
+
+    # Set the element attribute.
+    $self->_set(['element'], [$element]);
+
+    # no script, perform default script action directly
+    if (not defined $script) {
+        return $self->new_template(element => $element)->output();
+    }
+
+    print STDERR __PACKAGE__, "::run_script() : found script file : $script.\n"
+      if DEBUG;
+
+    # escape everything into valid perl identifiers
+    my $package = $script;
+    $package =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
+
+    # second pass for slashes and words starting with a digit
+    $package =~ s{
+                  (/+)       # directory
+                  (\d?)      # package's first character
+              }[
+                "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
+               ]egx;
+
+    # prepend our root package
+    $package = "Bric::Util::Burner::Template::SANDBOX$package";
+
+    # read script contents into $sub
+    my $sub = "";
+    print STDERR __PACKAGE__, "::run_script() : reading $script.\n"
+      if DEBUG;
+    open(SCRIPT, $script)
+      or throw_burn_error error =>  "Unable to read $script : $!",
+                          mode  => $self->get_mode,
+                          oc    => $self->get_oc->get_name,
+                          cat   => $self->get_cat->get_uri,
+                          elem  => ref $element ? $element->get_name : $element;
+    binmode(SCRIPT, ':utf8') if ENCODE_OK;
+    while(read(SCRIPT, $sub, 102400, length($sub))) {};
+    close(SCRIPT);
+
+    # compute md5 for script - used in caching system
+    my $md5 = md5($sub);
+
+    # check if script is cached and unchanged
+    if (exists $SCRIPT_CACHE{$package} and $SCRIPT_CACHE{$package} eq $md5) {
+        # compiled code is still good - nothing to do
+        print STDERR __PACKAGE__,
+        "::run_script() : skipping compilation - cached copy still good.\n"
+          if DEBUG;
+    } else {
+        print STDERR __PACKAGE__, "::run_script() : compiling...\n"
+          if DEBUG;
+
+        # determine filename for #line directive
+        my $line_file = substr($script, length($template_root));
+
+        # construct the code
+        my $code = <<END;
+package $package;
+use strict;
+use utf8;
+use vars ('\$burner', '\$element', '\$story');
+sub _run_script {
+#line 1 $line_file
+$sub
+}
+1;
+END
+        # compile the code
+        undef &{"$package\::_run_script"}; #avoid warnings
+        my $result = _compile($code);
+        unless ($result) {
+            throw_burn_error error   =>  "Error compiling script.",
+                             payload => $@,
+                             mode    => $self->get_mode,
+                             oc      => $self->get_oc->get_name,
+                             cat     => $self->get_cat->get_uri,
+                             elem    => $element->get_name
+              if $@;
+        }
+
+        # remember the md5
+        $SCRIPT_CACHE{$package} = $md5;
+    }
+
+    # setup globals for the script
+    {
+        no strict 'refs';
+        ${"$package\::burner"}  = $self;
+        ${"$package\::story"}   = $story;
+        ${"$package\::element"} = $element;
+    }
+
+    # call the script
+    my $cv = \&{"$package\::_run_script"};
+    my $output;
+    eval { $output = $cv->(@_) };
+
+    throw_burn_error error   =>  "Error running script.",
+                     payload => $@,
+                     mode    => $self->get_mode,
+                     oc      => $self->get_oc->get_name,
+                     cat     => $self->get_cat->get_uri,
+                     elem    => ref $element ? $element->get_name : $element
+      if $@;
+    return $output;
+}
+
+##############################################################################
+
+=item @category_template_paths = $self->_find_category_scripts
+
+This method is called by C<_write_pages()> fo find all of the category
+templates that need executing. The templates are returned as a list of array
+refereneces. Each array reference contains two items: The full path to the
+script without the file type extension and a string indicating the template
+type, either "pl" or "tmpl". The order of the list is defined by the order of
+execution. For example, if a story was being published in the
+F</reviews/books> category, and the category templates F</category.pl> and
+F</reviews/category.tmpl> exist, then the return value will be
+
+  (
+    ['/reviews/category', 'tmpl'],
+    ['/category', 'pl'],
+  )
+
+The upshot being that F</reviews/category.tmpl> should be executed first (by
+calling C<new_template()>) and that F</category.pl> should be executed second
+(by calling C<run_script()>).
+
+=cut
+
+sub _find_category_scripts {
+    my $self = shift;
+
+    my $template_roots = $self->_get('_template_roots');
+    # Search up category hierarchy for category templates.
+    my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+    my @cat_tmpls;
+
+    do {
+        # if the file exists, return it
+        for my $troot (@$template_roots) {
+            my $path = $fs->cat_dir($troot, @cats, 'category');
+            if (-e "$path.pl") {
+                push @cat_tmpls, [$path, 'pl'];
+                next;
+            }
+            next unless -e "$path.tmpl";
+            push @cat_tmpls, [$path, "tmpl"];
+        }
+    } while (pop @cats);
+    return @cat_tmpls;
+}
 
 
 #--------------------------------------#

@@ -106,6 +106,6 @@ sub drop_user {
             hard_fail("Failed to drop user.  The error from Postgres was:\n\n",
                       $dbh->errstr, "\n");
         }
-        print "User created.\n";
+        print "User dropped.\n";
     }
 }

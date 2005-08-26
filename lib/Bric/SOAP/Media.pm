@@ -727,6 +727,7 @@ sub load_asset {
         my $media;
         unless ($update) {
             # create empty media
+            # XXX Put in supplied UUID?
             $media = Bric::Biz::Asset::Business::Media->new(\%init);
             throw_ap(error => __PACKAGE__ . "::create : failed to create empty media object.")
               unless $media;
@@ -777,6 +778,12 @@ sub load_asset {
                 $media->checkout( { user__id => get_user_id });
                 $media->save();
                 log_event('media_checkout', $media);
+            }
+
+            # Make sure that the UUID hasn't changed.
+            if (exists $mdata->{uuid}) {
+                throw_ap __PACKAGE__ . "::update: media \"$id\" has a different UUID"
+                  if $media->get_uuid ne $mdata->{uuid};
             }
 
             # update %init fields
@@ -984,7 +991,8 @@ sub serialize_asset {
     # open a media element
     my $alias_id = $media->get_alias_id;
     $writer->startTag("media",
-                      id => $media_id,
+                      id   => $media_id,
+                      uuid => $media->get_uuid,
                       ( $alias_id ? (alias_id => $alias_id) :
                         (element => $media->get_element_key_name)));
 

@@ -498,6 +498,7 @@ The XSD source:
              <xs:attribute name="element" type="xs:string" use="required"/>
              <xs:attribute name="alias_id" type="xs:string" use="required"/>
              <xs:attribute name="id" type="xs:int" use="required"/>
+             <xs:attribute name="uuid" type="xs:string" use="required"/>
            </xs:complexType>
          </xs:element>
          <xs:element name="media" minOccurs="0" maxOccurs="unbounded">
@@ -637,6 +638,7 @@ The XSD source:
              <xs:attribute name="element" type="xs:string" use="required"/>
              <xs:attribute name="alias_id" type="xs:string" use="required"/>
              <xs:attribute name="id" type="xs:int" use="required"/>
+             <xs:attribute name="uuid" type="xs:string" use="required"/>
            </xs:complexType>
          </xs:element>
          <xs:element name="template" minOccurs="0" maxOccurs="unbounded">
@@ -1292,7 +1294,7 @@ Here's a simple story with some keywords and no contributors:
   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
   <assets xmlns="http://bricolage.sourceforge.net/assets.xsd">
-   <story id="1024" element="Book Review">
+   <story id="1024" uuid="0C071854-03E7-11DA-B4F2-BC394F2854A1" element="Book Review">
     <site>Default Site</site>
     <name>Story One</name>
     <description>a description of story one</description>

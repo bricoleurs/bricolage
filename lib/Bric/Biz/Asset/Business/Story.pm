@@ -30,8 +30,6 @@ $LastChangedDate$
  # Type of workflow.
  my $wf_type = Bric::Biz::Asset::Business::Story->workflow_type;
 
- ## METHODS INHERITED FROM Bric::Biz::Asset ##
-
   # General information
  $asset       = $asset->get_id()
  $asset       = $asset->set_description($description)
@@ -55,8 +53,9 @@ $LastChangedDate$
  $id  = $asset->set_workflow_id;
 
  # Access note information
- $asset                 = $asset->add_note($note)
- ($note_list || @notes) = $asset->get_notes()
+ $asset         = $asset->set_note($note);
+ my $note       = $asset->get_note;
+ my $notes_href = $asset->get_notes()
 
  # Access active status
  $asset            = $asset->deactivate()
@@ -104,11 +103,6 @@ $LastChangedDate$
  ($self || undef)   = $biz->has_keyword($keyword)
  $biz               = $biz->del_keywords([$kw, ...])
 
- # Setting extra information
- $id   = $biz->create_attr($sql_type, $length, $at_data_id, $data_param);
- $data = $biz->get_attr()
- $id   = $biz->create_map($map_class, $map_type, $data_param);
-
  # Change control
  $biz            = $biz->cancel()
  $biz            = $biz->revert($version)
@@ -145,8 +139,9 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-Story contains all of the data that will result in published page(s)
-It contains the metadata and associations with Formatting assets.
+Story contains all of the data that will result in published page(s) It
+contains the metadata and associations with story documents. It inherits from
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>
 
 =cut
 
@@ -165,7 +160,6 @@ use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::Config qw(:uri :ui);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
-use Bric::Util::Attribute::Story;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault qw(:all);
@@ -203,7 +197,8 @@ use constant VERSION_TABLE => 'story_version';
 
 use constant ID_COL => 's.id';
 
-use constant COLS       => qw( priority
+use constant COLS       => qw( uuid
+                               priority
                                source__id
                                usr__id
                                element__id
@@ -231,9 +226,11 @@ use constant VERSION_COLS => qw( story__id
                                  checked_out
                                  usr__id
                                  primary_oc__id
-                                 primary_ic__id );
+                                 primary_ic__id
+                                 note );
 
-use constant FIELDS =>  qw( priority
+use constant FIELDS =>  qw( uuid
+                            priority
                             source__id
                             user__id
                             element__id
@@ -249,7 +246,7 @@ use constant FIELDS =>  qw( priority
                             _active
                             desk_id
                             site_id
-                            alias_id);
+                            alias_id );
 
 use constant INSTANCE_FIELDS => qw( name
                                    description
@@ -261,7 +258,8 @@ use constant VERSION_FIELDS => qw( id
                                    checked_out
                                    modifier
                                    primary_oc_id
-                                   primary_ic_id );
+                                   primary_ic_id
+                                   note );
 
 use constant AD_PARAM => '_AD_PARAM';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Story';
@@ -309,6 +307,9 @@ use constant PARAM_FROM_MAP => {
        element_key_name     => 'element e',
        'story.category'     => 'story__category sc2',
        subelement_key_name  => 'story_container_tile sct',
+       related_story_id     => 'story_container_tile sctrs',
+       related_media_id     => 'story_container_tile sctrm',
+       note                 => 'story_version sv2',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -346,6 +347,8 @@ use constant PARAM_WHERE_MAP => {
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND LOWER(sct.key_name) LIKE LOWER(?)',
+      related_story_id       => 'i.id = sctrs.object_instance_id AND sctrs.related_instance__id = ?',
+      related_media_id       => 'i.id = sctrm.object_instance_id AND sctrm.related_media__id = ?',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
@@ -421,6 +424,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_version__id AND sic.member__id = ?',
+      note                   => 'sv2.story__id = s.id AND LOWER(sv2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -428,6 +432,10 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = sct.object_instance_id',
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
+    related_story_id       => [ 'i.id = sctrs.object_instance_id',
+                                'sctrs.related_instance__id = ?' ],
+    related_media_id       => [ 'i.id = sctrm.object_instance_id',
+                                'sctrm.related_media__id = ?' ],
     data_text              => [ 'sd.object_instance_id = i.id',
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
     output_channel_id      => [ 'v.id = soc.story_version__id',
@@ -446,6 +454,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_version__id',
                                 'sic.member__id = ?' ],
+    note                   => [ 'sv2.story__id = s.id',
+                                'LOWER(sv2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -496,6 +506,7 @@ use constant DEFAULT_ORDER => 'cover_date';
 #--------------------------------------#
 # Private Class Fields
 my ($meths, @ord);
+my $ug = Data::UUID->new;
 
 #--------------------------------------#
 # Instance Fields
@@ -746,6 +757,11 @@ of possible values.
 Returns stories associated with a given keyword string (not object). May use
 C<ANY> for a list of possible values.
 
+=item note
+
+Returns stories with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
+
 =item workflow_id
 
 Return a list of stories in the workflow represented by the workflow ID. May
@@ -871,6 +887,16 @@ values.
 
 The key name for a container element that's a subelement of a story. May use
 C<ANY> for a list of possible values.
+
+=item related_story_id
+
+Returns a list of stories that have this story ID as a related story. May use
+C<ANY> for a list of possible values.
+
+=item related_media_id
+
+Returns a list of stories that have this media ID as a related media document.
+May use C<ANY> for a list of possible values.
 
 =item data_text
 
@@ -1806,8 +1832,10 @@ sub clone {
     $self->_set([qw(version current_version instance_id id publish_date
                     publish_status _update_contributors _queried_cats
                     _attribute_object _update_uri first_publish_date
-                    published_version)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef]);
+                    published_version uuid)],
+                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef,
+                 $ug->create_str
+             ]);
 
     # Prepare to be saved.
     $self->_set__dirty(1);
@@ -1860,6 +1888,7 @@ sub save {
                         $self->_delete_story();   
                     }
                     $self->_set( {'_cancel' => undef });
+                    commit();
                     return $self;
                 } else {
                     $self->_update_version();
@@ -1882,6 +1911,7 @@ sub save {
             
         } else {
             if ($self->_get('_cancel')) {
+                commit();
                 return $self;
             } else {
                 # This is brand new; insert story, version, and instance
@@ -2253,39 +2283,6 @@ sub _update_category {
     my $sth = prepare_c($sql, undef);
     execute($sth, $primary, $self->_get('version_id'), $category_id);
     return $self;
-}
-
-###############################################################################
-
-=item $attribute_obj = $self->_get_attribute_object()
-
-Returns the attribte object for this story
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_attribute_object {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty();
-    my $attr_obj = $self->_get('_attribute_object');
-    return $attr_obj if $attr_obj;
-
-    # Let's Create a new one if one does not exist
-    $attr_obj = Bric::Util::Attribute::Story->new({ id => $self->_get('id') });
-    $self->_set( {'_attribute_object' => $attr_obj} );
-    $self->_set__dirty($dirty);
-    return $attr_obj;
 }
 
 ################################################################################

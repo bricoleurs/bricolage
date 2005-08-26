@@ -165,7 +165,7 @@ sub create_user {
 
 # load schema and data into database
 sub load_db {
-    my $db_file = catfile('inst', 'Pg.sql');
+    my $db_file = $ENV{PGSQL} || catfile('inst', 'Pg.sql');
     unless (-e $db_file and -s _) {
         my $errmsg = "Missing or empty $db_file!\n\n"
           . "If you're using Subversion, you need to `make dist` first.\n"

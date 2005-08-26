@@ -309,29 +309,38 @@ are:
 
 =over 4
 
-=item *
+=item id
 
-prefix
+User ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item prefix
 
-lname
+A name prefix, such as "Mr."  May use C<ANY> for a list of possible values.
 
-=item *
+=item lname
 
-fname
+Last name or surname. May use C<ANY> for a list of possible values.
 
-=item *
+=item fname
 
-mname
+First name or given name. May use C<ANY> for a list of possible values.
 
-=item *
+=item mname
 
-suffix
+Middle name or second name. May use C<ANY> for a list of possible values.
 
-=item *
+=item suffix
 
-login
+Name suffix, such as "Jr." May use C<ANY> for a list of possible values.
+
+=item grp_id
+
+The ID of a Bric::Util::Grp object of which person objects may be a member.
+May use C<ANY> for a list of possible values.
+
+=item login
+
+The user's username. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1474,22 +1483,21 @@ $get_em = sub {
     my @params;
     while (my ($k, $v) = each %$args) {
         if ($k eq 'id') {
-            $wheres .= " AND u.$k = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "u.$k = ?", \@params;
         } elsif ($k eq 'login') {
-            $wheres .= " AND LOWER(u.login) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(u.login) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'grp_id') {
             $tables .= ", member m2, user_member c2";
-            $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND u.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' AND "
+              . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'active') {
             $wheres .= " AND u.$k = ?";
             push @params, $v ? 1 : 0;
         } else {
-            $wheres .= " AND LOWER(p.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(p.$k) LIKE LOWER(?)", \@params;
         }
     }
 

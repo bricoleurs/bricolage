@@ -62,7 +62,6 @@ use Apache::Constants qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
-use HTML::Mason::Exceptions;
 
 use Bric::App::Callback::AddMore;
 use Bric::App::Callback::Alert;
@@ -187,7 +186,6 @@ use MasonX::Interp::WithCallbacks;
 
     use Bric::SOAP;
 
-    use HTML::Mason::Exceptions;
     use HTTP::BrowserDetect;
 
     use vars qw($c $widget_dir $lang $lang_key $ct);
@@ -229,7 +227,7 @@ my ($ah);
 {
     my %args = ( comp_root            => MASON_COMP_ROOT,
                  data_dir             => MASON_DATA_ROOT,
-                 static_source        => 0,
+                 static_source        => MASON_STATIC_SOURCE,
                  autoflush            => 0,
                  error_mode           => 'fatal',
                  cb_classes           => 'ALL',

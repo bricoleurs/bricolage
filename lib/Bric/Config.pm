@@ -59,6 +59,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MASON_COMP_ROOT
                     MASON_DATA_ROOT
                     MASON_ARGS_METHOD
+                    MASON_STATIC_SOURCE
                     FIELD_INDENT
                     SYS_USER
                     SYS_GROUP
@@ -165,7 +166,6 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
-                    USE_XHTML
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
@@ -194,6 +194,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DBI_PROFILE)],
                     mason     => [qw(MASON_COMP_ROOT
                                      MASON_DATA_ROOT
+                                     MASON_STATIC_SOURCE
                                      MASON_ARGS_METHOD)],
                     burn      => [qw(BURN_ROOT
                                      STAGE_ROOT
@@ -267,8 +268,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      WYSIWYG_EDITOR
                                      XINHA_PLUGINS
                                      XINHA_TOOLBAR
-                                     HTMLAREA_TOOLBAR
-                                     USE_XHTML)],
+                                     HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
                     time      => [qw(ISO_8601_FORMAT
@@ -414,7 +414,7 @@ require Bric; our $VERSION = Bric->VERSION;
               "'separator','showhelp','about']";
         }
         # Process boolean directives here. These default to 1.
-        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR USE_XHTML
+        foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR
                     ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS
                     ENABLE_OC_ASSET_ASSOCIATION)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
@@ -431,7 +431,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     USE_THUMBNAILS ENABLE_WYSIWYG AUTOGENERATE_SLUG
                     RELATED_MEDIA_UPLOAD ENABLE_GZIP MEDIA_UNIQUE_FILENAME
-                    LDAP_TLS AUTO_PREVIEW_MEDIA))
+                    LDAP_TLS AUTO_PREVIEW_MEDIA MASON_STATIC_SOURCE))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -563,6 +563,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant MASON_DATA_ROOT         => $config->{MASON_DATA_ROOT}
       || catdir($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'data');
     use constant MASON_ARGS_METHOD       => 'mod_perl';  # Could also be 'CGI'
+    use constant MASON_STATIC_SOURCE     => $config->{MASON_STATIC_SOURCE};
 
     # Burner settings.
     use constant BURN_ROOT               => $ENV{BRIC_BURN_ROOT}
@@ -708,9 +709,6 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Category browser setting
     use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER};
-
-    # XHTML setting.
-    use constant USE_XHTML              => $config->{USE_XHTML};
 
     # L10N & Character Translation settings.
     use constant ENCODE_OK              => $] >= 5.008;

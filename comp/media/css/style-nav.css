@@ -2,10 +2,6 @@
  * Styles for navigation frame
  */
  
-.btn-workflow { border-bottom: solid white 2px; }
-.btn-workspace { border-bottom: solid white 2px; }
-.btn-workflow img { display: block; }
-
 a.selected, span.selected { font-weight: bold !important; }
 
 ul {
@@ -13,70 +9,78 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-bottom: solid white 2px;
 }
-ul.workflows li.open {
-  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 5px no-repeat;
-  font-weight: bold;
+#nav {
+  border-top: solid white 1px;
+  border-bottom: solid white 1px;
 }
-ul.workflows li.closed {
-  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 8px 4px no-repeat;
-  font-weight: normal;
+#nav #workflows,
+#nav #admin {
+  border-top: solid white 1px;
 }
-ul.workflows li a { 
+#nav li a {
   display: block;
-  width: 100%;
-  padding: 2px 0 2px 23px;
+  padding: 4px 0 4px 23px;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+#nav ul.submenu li a { 
+  display: block;
+  padding: 4px 0 4px 23px;
   color: #000000;
   text-decoration: none;
   text-transform: uppercase;
 }
-
-ul.workflows ul.submenu { background-color: white; padding: 10px 0 5px 0; }
-ul.workflows ul.submenu li { font-weight: bold; color: #666633; padding: 0 0 10px 23px; }
-ul.workflows ul.submenu ul.items li { padding: 0; }
-ul.workflows ul.submenu li a {
+#nav ul.submenu ul.sections { background-color: white; padding: 10px 0 5px 0; }
+#nav ul.submenu ul.sections li { font-weight: bold; color: #666633; padding: 0 0 10px 23px; }
+#nav ul.submenu ul.sections ul.items li { padding: 0; }
+#nav ul.submenu ul.sections ul.items li a {
   text-transform: none;
   font-weight: normal;
   padding: 0;
   display: inline;
   color: #669999;
   text-decoration: underline;
+  font-size: .9em;
+  line-height: 1.5em;
 }
-
-ul.admin li.open {
-  background: #999966 url("../images/red_arrow_open.gif") 5px 5px no-repeat;
-  font-weight: bold;
-}
-ul.admin li.closed {
-  background: #999966 url("../images/white_arrow_closed.gif") 5px 2px no-repeat;
-  font-weight: bold;
-}
-ul.admin li a { 
-  display: block;
-  width: 100%;
-  padding: 2px 0 2px 23px;
-  color: white;
-  text-decoration: none;
-  text-transform: uppercase;
-  border-bottom: solid white 2px;
-}
-
-ul.admin ul.submenu li.open {
-  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 5px no-repeat;
-}
-ul.admin ul.submenu li.closed {
-  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 8px 4px no-repeat;
-}
-ul.admin ul.submenu li.open a { color: black; border: none; font-weight: bold; }
-ul.admin ul.submenu li.closed a { color: black; border: none; font-weight: normal; }
-
-ul.admin ul.submenu ul.items { padding: 5px 0 5px 25px; background-color: white; }
-ul.admin ul.submenu ul.items li a { 
+#nav #admin ul.submenu ul.items { padding: 5px 0 5px 25px; background-color: white; }
+#nav #admin ul.submenu ul.items li a { 
   text-transform: none;
   font-weight: normal;
   padding: 0;
   display: inline;
   color: #CC6633;
   text-decoration: underline;
+  font-size: .9em;
+  line-height: 1.5em;
+}
+
+#nav .selected { font-weight: bold; }
+#nav #admin .selected { color: #CC6633; }
+
+#nav #workspace .open   { 
+  background: #CC9900 url("../images/my_workspace.gif") 4px 3px no-repeat;
+  font-weight: bold;
+}
+#nav #workspace .closed { 
+  background: #006666 url("../images/my_workspace.gif") 4px 3px no-repeat;
+  font-weight: bold;
+}
+#nav li.open {
+  background: #999966 url("../images/white_arrow_open.gif") 4px 6px no-repeat;
+  font-weight: bold;
+}
+#nav li.closed {
+  background: #999966 url("../images/white_arrow_closed.gif") 6px 3px no-repeat;
+  font-weight: bold;
+}
+#nav ul.submenu li.open {
+  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 7px no-repeat;
+  font-weight: bold;
+}
+#nav ul.submenu li.closed {
+  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 6px 5px no-repeat;
+  font-weight: normal;
 }

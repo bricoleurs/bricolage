@@ -8,6 +8,7 @@ use Bric::Dist::ActionType;
 use Bric::Dist::Action;
 use Bric::Dist::Action::Mover;
 use Bric::Dist::Action::Email;
+use Bric::Util::DBI qw(:junction);
 
 sub table {'action'}
 sub class { 'Bric::Dist::Action' }
@@ -53,7 +54,7 @@ sub test_lookup : Test(8) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(22) {
+sub test_list : Test(30) {
     my $self = shift;
     my $class = $self->class;
 
@@ -84,6 +85,26 @@ sub test_list : Test(22) {
         "Look up type 'Mo%'" );
     is( scalar @acts, 2, "Check for 2 actions" );
 
+    # Try action_type.
+    ok( @acts = $class->list({ action_type => 'Email' }),
+        "Look up action_type 'Email'" );
+    is( scalar @acts, 3, "Check for 3 actions" );
+
+    # Try action_type + wildcard.
+    ok( @acts = $class->list({ action_type => "Mo%" }),
+        "Look up action_type 'Mo%'" );
+    is( scalar @acts, 2, "Check for 2 actions" );
+
+    # Try action_type_id.
+    ok( @acts = $class->list({ action_type_id => 4 }),
+        "Look up action_type_id 4" );
+    is( scalar @acts, 3, "Check for 3 actions" );
+
+    # Try ANY(action_type_id)
+    ok( @acts = $class->list({ action_type_id => ANY(1, 4) }),
+        "Look up ANY(action_type_id)" );
+    is( scalar @acts, 5, "Check for 5 actions" );
+
     # Try description.
     my $desc = $move_at->get_description;
     ok( @acts = $class->list({ description => $desc }),
@@ -111,7 +132,7 @@ sub test_list : Test(22) {
 
 ##############################################################################
 # Test the href() method.
-sub test_href : Test(22) {
+sub test_href : Test(30) {
     my $self = shift;
     my $class = $self->class;
 
@@ -142,6 +163,26 @@ sub test_href : Test(22) {
         "Look up type 'Mo%'" );
     is( scalar keys %$acts, 2, "Check for 2 actions" );
 
+    # Try action_type.
+    ok( $acts = $class->href({ action_type => 'Email' }),
+        "Look up action_type 'Email'" );
+    is( scalar keys %$acts, 3, "Check for 3 actions" );
+
+    # Try action_type + wildcard.
+    ok( $acts = $class->href({ action_type => "Mo%" }),
+        "Look up action_type 'Mo%'" );
+    is( scalar keys %$acts, 2, "Check for 2 actions" );
+
+    # Try action_type_id.
+    ok( $acts = $class->href({ action_type_id => 4 }),
+        "Look up action_type_id 4" );
+    is( scalar keys %$acts, 3, "Check for 3 actions" );
+
+    # Try ANY(action_type_id)
+    ok( $acts = $class->href({ action_type_id => ANY(1, 4) }),
+        "Look up ANY(action_type_id)" );
+    is( scalar keys %$acts, 5, "Check for 5 actions" );
+
     # Try description.
     my $desc = $move_at->get_description;
     ok( $acts = $class->href({ description => $desc }),
@@ -170,7 +211,7 @@ sub test_href : Test(22) {
 # Test class methods.
 ##############################################################################
 # Test the list_ids() method.
-sub test_list_ids : Test(22) {
+sub test_list_ids : Test(30) {
     my $self = shift;
     my $class = $self->class;
 
@@ -200,6 +241,26 @@ sub test_list_ids : Test(22) {
     ok( @act_ids = $class->list_ids({ type => "Mo%" }),
         "Look up type 'Mo%'" );
     is( scalar @act_ids, 2, "Check for 2 action IDs" );
+
+    # Try action_type.
+    ok( @act_ids = $class->list_ids({ action_type => 'Email' }),
+        "Look up action_type 'Email'" );
+    is( scalar @act_ids, 3, "Check for 3 actions" );
+
+    # Try action_type + wildcard.
+    ok( @act_ids = $class->list_ids({ action_type => "Mo%" }),
+        "Look up action_type 'Mo%'" );
+    is( scalar @act_ids, 2, "Check for 2 actions" );
+
+    # Try action_type_id.
+    ok( @act_ids = $class->list_ids({ action_type_id => 4 }),
+        "Look up action_type_id 4" );
+    is( scalar @act_ids, 3, "Check for 3 actions" );
+
+    # Try ANY(action_type_id)
+    ok( @act_ids = $class->list_ids({ action_type_id => ANY(1, 4) }),
+        "Look up ANY(action_type_id)" );
+    is( scalar @act_ids, 5, "Check for 5 actions" );
 
     # Try description.
     my $desc = $move_at->get_description;

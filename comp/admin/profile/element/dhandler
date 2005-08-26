@@ -2,13 +2,13 @@
 <& '/widgets/wrappers/sharky/header.mc',
   title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb",
-  jsInit => (defined $id) ? "showForm('text')" : ""
+  jsInit => (defined $id) ? "showForm('Text', true)" : ""
 &>
 % if (ENABLE_WYSIWYG) {
 % # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
 <& /widgets/wysiwyg/load.mc &>
 % }
-<form method="post" action="<% $r->uri %>" name="cont_profile" id="cont_profile" onSubmit="return confirmChanges('cont_profile')">
+<form method="post" action="<% $r->uri %>" name="cont_profile" id="cont_profile" onsubmit="return confirmChanges('cont_profile')">
 <%perl>;
 if (defined $id) {
     $m->comp('/widgets/profile/hidden.mc',
@@ -98,11 +98,13 @@ if (defined $id) {
 
         };
 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Sites',
+             number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
                  object => 'site',
                  userSort => 0,
                  def_sort_field => 'name',
-                 title => 'Sites',
                  objs => scalar $comp->get_sites,
                  addition => undef,
                  fields => [qw(name description primary_ic primary_oc)],
@@ -112,12 +114,12 @@ if (defined $id) {
                  field_values => $site_sub,
                  profile => undef,
                  select => $sel_sub,
-                 number => ++$num
                 );
+
 my %sites = map { $_->get_id => 1 } $comp->get_sites;
 </%perl>
-<table border="1" cellpadding="2" cellspacing="0" width="580" bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
-<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+<div class="actions">
+<& '/widgets/select_object/select_object.mc',
     object => 'site',
     field  => 'name',
     exclude => sub { $sites{$_[0]->get_id} || ! chk_authz($_[0], EDIT, 1) },
@@ -127,11 +129,11 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     constrain => { active => 1, output_channel_id => 'not null' },
     js => "onChange='submit()'",
     useTable => 0,
-&></td></tr>
-</table>
-<br />
+&>
+</div>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <%perl>;
-        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
 
         # Manage Output Channels if this is a top-level container.
 
@@ -217,11 +219,13 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             return ['Delete', 'rem_oc'];
         };
 
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Output Channels',
+             number => ++$num );
         $m->comp('/widgets/listManager/listManager.mc',
                  object => 'output_channel',
                  userSort => 0,
                  def_sort_field => 'name',
-                 title => 'Output Channels',
                  objs => scalar $comp->get_output_channels,
                  addition => undef,
                  fields => [qw(name description site enabled)],
@@ -229,7 +233,6 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                  field_values => $oc_sub,
                  profile => undef,
                  select => $oc_sel_sub,
-                 number => ++$num
                 );
         my @available_ocs;
         foreach my $site ($comp->get_sites) {
@@ -239,8 +242,8 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             });
         }
 </%perl>
-<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
-<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
+<div class="actions">
+<& '/widgets/select_object/select_object.mc',
     object => 'output_channel',
     objs   => \@available_ocs,
     field  => 'name',
@@ -252,11 +255,11 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     constrain => { active => 1 },
     js => "onChange='submit()'",
     useTable => 0,
-&></td></tr>
-</table>
-<br />
+&>
+</div>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <%perl>;
-        $m->out(qq{<img src="/media/images/spacer.gif" width="578" height="8" />});
     }
 
     # display elements contained by this asset type
@@ -265,26 +268,36 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     # Output the actions.
     my $containers = $comp->get_containers;
 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Existing Subelements',
+             number  => ++$num );
+
+	unless($no_edit) {
+	
+        $m->print(qq{<div style="padding: 5px;">});
+	
+        $m->comp('/widgets/profile/imageSubmit.mc',
+	         formName => "cont_profile",
+	         callback => "formBuilder|addElement_cb",
+	         image    => "add_sub_element_lgreen",
+	    );
+	    
+	    $m->print(qq{</div>});
+	}
+
     $m->comp('/widgets/listManager/listManager.mc',
 	     object         => 'element',
 	     objs           => $containers,
 	     behavior       => 'expand',
-	     title          => "Existing Subelements",
 	     addition       => undef,
 	     fields         => [qw(name type_name description)],
 	     profile        => undef,
 	     select         => $no_del ? undef : ['Delete', 'element|delete_sub'],
-	     number         => ++$num,
 	    );
 
-    $m->comp('/widgets/profile/imageSubmit.mc',
-	     formName => "cont_profile",
-	     callback => "formBuilder|addElement_cb",
-	     image    => "add_sub_element_lgreen",
-	     vspace   => 5
-	    ) unless $no_edit;
+	
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
-    $m->out(qq{<img src="/media/images/spacer.gif" width=578 height=8 />});
 }
 
         # display existing attributes for this asset type
@@ -319,8 +332,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                          usePosition => !$no_edit,
                          useDelete   => !$no_edit);
             } else {
-                $m->print(qq{<img src="/media/images/spacer.gif" height="18" width="5" />},
-                $lang->maketext("No fields defined"));
+                $m->print(qq{<div style="padding: 5px;">} . $lang->maketext("No fields defined") .  "</div>");
             }
 
     # Close the table.

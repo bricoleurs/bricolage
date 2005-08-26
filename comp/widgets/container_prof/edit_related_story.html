@@ -3,11 +3,11 @@
   type         => 'story',
   field        => 'title',
   use_form_tag => 0 &>
-<p></p>
+
 <a name="results"></a>
+<& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose a Related Story' &>
 <& /widgets/listManager/listManager.mc,
    object   => 'story',
-   title    => 'Choose a Related Story',
    sortBy   => 'name',
    select   => undef,
    profile  => $related_profile,
@@ -18,7 +18,8 @@
    addition => '',
    behavior  => 'expand',
 &>
-<p></p>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|related_up_cb" value="Return">
 <%args>
 $widget

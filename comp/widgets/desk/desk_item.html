@@ -1,58 +1,62 @@
-<div class="desk_item">
+<div class="item">
   <div class="head">
-    <span class="<% $idv_class %>"><% "$id v." . $obj->get_version %></span>
-    <span class="<% $title_class %>"><% $name %></span>
+% if ($user) {
+    <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
+% }
+    <div "<% $uuid ? qq{title="$uuid" } : '' %>"class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
+    <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
     <% $m->comp('publish_status_span.mc',
-                sorted => $highlight eq 'name' ? 'sorted' : '',
+                sorted => $highlight eq 'name' ? ' sorted' : '',
                 asset => $obj) %>
   </div>
   <div class="body">
     <dl>
-      <dt><% $lang->maketext('Category') %></dt>
-      <dd<% $classes->{category_name} || $classes->{location} || '' %>>
-% if ($short_cat) {
-        <span class="shortCategory" title="<% $cat %>"><% $short_cat %></span>
-% } else {
-        <% $cat %>
+% if ($class ne 'formatting') {
+      <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
+      <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $uri || '&nbsp;' %></dd>
 % }
-      </dd>
-      <dt><% $lang->maketext('Site') %></dt>
-      <dd<% $classes->{site_id} || '' %>><% $site %></dd>
-      <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp  . ' Type')) %></dt>
-      <dd<% $classes->{element} || '' %>><% $type || '&nbsp;' %></dd>
-      <dt><% $lang->maketext($date_label) %></dt>
-      <dd<% $classes->{cover_date} || '' %>><% $date || '&nbsp;' %></dd>
-      <dt><% $lang->maketext('Priority') %></dt>
-      <dd<% $classes->{priority} || '' %>><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
+      <dt name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
+      <dd name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+      <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
+      <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+% if (@$sites > 1) {
+      <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
+      <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
+% }
+      <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
+      <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
-    <p><% $elink %></p>
-
+    
+    <div class="actions">
+        <p><% $elink %></p>
+        
+        <div class="mover">
 % if ($can_edit && $desk_opts) {
-    <div class="mover"><label for="move<% $id %>"><% $lang->maketext($mlabel) %></label>
-      <& '/widgets/profile/select.mc',
-         name     => "$widget|next_desk",
-         value    => $desk_val,
-         options  => $desk_opts,
-         useTable => 0,
-         id       => "move$id" &>
-    </div>
+          <label for="move<% $id %>"><% $lang->maketext($mover_label) %></label>
+          <& '/widgets/profile/select.mc',
+             name     => "$widget|next_desk",
+             value    => $desk_val,
+             options  => $desk_opts,
+             useTable => 0,
+             id       => "move$id" &>
 % } else {
-    <div class="mover">&nbsp;</div>
+        &nbsp;
 % }
-    <ul class="actions">
-      <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
-      <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
-      <li><a href="<% $link %>"><% $lang->maketext($vlabel) %></a></li>
-      <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
-      <li><% $pub %></li>
-    </ul>
+        </div>
+        
+        <ul class="action">
+          <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
+          <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
+          <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
+          <li><% $pub %></li>
+        </ul>
+    </div>
   </div>
 </div>
 <%once>;
 my $priors = Bric::Biz::Asset->list_priorities;
 </%once>
 <%args>
-$mlabel => 'Move to Desk'
 $widget => 'desk_asset'
 $obj
 $highlight
@@ -75,35 +79,28 @@ $action => undef
 <%init>;
 # Get the ID.
 my $id = $obj->get_id;
+my $user_id = $obj->get_user__id;
 
-my $cats = $r->pnotes("desk.cats") || {};
-my ($name, $date, $date_label, $cat);
+my ($name, $date, $date_label, $type_label, $uri, $uuid);
 my $header_class = 'lightHeader';
 
-my $site_id = $obj->get_site_id;
-my $site = Bric::Biz::Site->lookup({id => $site_id})->get_name || '&nbsp;';
+my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 my $alias = '';
 my $title_class = 'title';
 my $idv_class = 'idv';
 if ($class eq 'formatting') {
-    $date = $obj->get_deploy_date || '&nbsp';
+    $date = $obj->get_deploy_date;
     $date_label = 'Deployed Date';
+    $type_label = 'Output Channel';
     $name = $obj->get_uri;
-    my $cat_id = $obj->get_category_id;
-    if (defined $cat_id) {
-	unless ($cat = $cats->{$cat_id}) {
-	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_uri;
-	    $cats->{$cat_id} = $cat;
-	    $r->pnotes("desk.cats", $cats);
-	}
-    } else {
-	$cat = '&nbsp;';
-    }
 } else {
     $name = $obj->get_name;
     $date = $obj->get_cover_date;
     $date_label = 'Cover Date';
+    $type_label = $disp  . ' Type';
     my $co = $vlabel eq 'Edit';
+    $uuid = $obj->get_uuid;
     $alias = 'alias' if $obj->get_alias_id;
     if ($highlight eq 'name') {
         $title_class .= "sorted";
@@ -116,34 +113,28 @@ if ($class eq 'formatting') {
         $idv_class .= $alias;
     }
     if ($class eq 'media') {
-	$cat = $cats->{$obj->get_category__id} ||= $obj->get_category_object;
-	$cat = $cat->get_uri if $cat;
-        $name = $m->comp('/widgets/profile/preview_link.mc',
+        $uri = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
                          doc   => $obj,
-                         title => $name )
+                         value => $obj->get_uri )
           if $obj->get_file_name;
     } else {
-	$cat = $obj->get_primary_category;
-	$cat = $cat->get_uri if $cat;
-	$cat ||= '&nbsp;';
-        $name = $m->comp('/widgets/profile/preview_link.mc',
+        $uri = $m->comp('/widgets/profile/preview_link.mc',
                          type  => $class,
                          doc   => $obj,
-                         title => $name );
+                         value => $obj->get_uri );
     }
     $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
-$cat ||= '&nbsp;';
-# Truncate long category URLs so they fit in the desk
-my $cat_len = length($cat);
-# Each slash should count as 1/2 a char
-$cat_len -= ($cat =~ tr/\///) * .5;
-# Replace all but the first 15 and last 20 characters with an ellipsis
-my $short_cat = substr($cat, 0, 15) . "..." .  substr($cat, -25) if $cat_len > 40;
 
 my $classes = { $highlight => ' class="sorted"' };
 my $rowspan = 5;
+
+my $checked_out = defined $user_id && get_user_id() == $user_id;
+
+my $mover_label = $desk_type ne 'workflow' ? 'Check in to' : 'Move to';
+
+my $callback_widget = ($class eq 'formatting' ? 'tmpl' : $class) . '_prof';
 
 my $link = $ppage . '/' . $aid;
 my $item_label = 'Trail';
@@ -167,6 +158,16 @@ if ($desk_type eq 'workflow') {
 my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
   . join('&amp;', "$widget|$action=$aid", "$widget|asset_class=$class")
   . qq{">$label</a>} : '';
+
+# Create alternating row colors
+my $count = 1;
+my $rowtype = sub {
+    # Print "odd" for 1st and 2nd cell (odd rows), "even" for 3rd and 4th
+    $m->out(($count++ <= 2) ? 'odd' : 'even');
+    $count = 1 if ($count > 4);
+    return;
+};
+
 </%init>
 <%doc>
 ###############################################################################

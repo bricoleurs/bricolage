@@ -23,7 +23,9 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-TBD.
+Media contains all of the data that will result in published media files. It
+contains the metadata and associations with media documents. It inherits from
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>
 
 =cut
 
@@ -39,7 +41,6 @@ use strict;
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Attribute::Media;
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
@@ -85,7 +86,8 @@ use constant VERSION_TABLE => 'media_version';
 
 use constant ID_COL => 'mt.id';
 
-use constant COLS           => qw( element__id
+use constant COLS           => qw( uuid
+                                   element__id
                                    priority
                                    source__id
                                    current_version
@@ -117,9 +119,11 @@ use constant VERSION_COLS   => qw( media__id
                                    media_type__id
                                    category__id
                                    primary_oc__id
-                                   primary_ic__id );
+                                   primary_ic__id
+                                   note );
 
-use constant FIELDS         => qw( element__id
+use constant FIELDS         => qw( uuid
+                                   element__id
                                    priority
                                    source__id
                                    current_version
@@ -151,7 +155,8 @@ use constant VERSION_FIELDS => qw( id
                                    media_type_id
                                    category__id
                                    primary_oc_id
-                                   primary_ic_id );
+                                   primary_ic_id
+                                   note );
 
 use constant RO_FIELDS      => qw( class_id );
 use constant RO_COLUMNS     => ', at.biz_class__id';
@@ -198,7 +203,10 @@ use constant PARAM_FROM_MAP => {
      grp_id               => 'member m2, media_member mm2',
      data_text            => 'media_data_tile md',
      subelement_key_name  => 'media_container_tile mct',
+     related_story_id     => 'media_container_tile mctrs',
+     related_media_id     => 'media_container_tile mctrm',
      contrib_id           => 'media__contributor sic',
+     note                 => 'media_version mv2',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -235,6 +243,8 @@ use constant PARAM_WHERE_MAP => {
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND LOWER(mct.key_name) LIKE LOWER(?)',
+      related_story_id       => 'i.id = mctrs.object_instance_id AND mctrs.related_instance__id = ?',
+      related_media_id       => 'i.id = mctrm.object_instance_id AND mctrm.related_media__id = ?',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
@@ -291,6 +301,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id            => 'i.id = sic.media_version__id AND sic.member__id = ?',
+      note                  => 'mv2.media__id = mt.id AND LOWER(mv2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -298,6 +309,10 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = mct.object_instance_id',
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
+    related_story_id       => [ 'i.id = mctrs.object_instance_id',
+                                'mctrs.related_instance__id = ?' ],
+    related_media_id       => [ 'i.id = mctrm.object_instance_id',
+                                'mctrm.related_media__id = ?' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
     output_channel_id      => ['i.id = moc.media_version__id',
@@ -312,6 +327,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = mic.media_version__id',
                                 'mic.member__id = ?' ],
+    note                   => [ 'mv2.media__id = mt.id',
+                                'LOWER(mv2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -612,6 +629,11 @@ of possible values.
 Returns media associated with a given keyword string (not object). May use
 C<ANY> for a list of possible values.
 
+=item note
+
+Returns media with a note matching the value associated with any of their
+versions. May use C<ANY> for a list of possible values.
+
 =item workflow_id
 
 Return a list of media in the workflow represented by the workflow ID. May
@@ -727,6 +749,16 @@ values.
 
 The key name for a container element that's a subelement of a media
 document. May use C<ANY> for a list of possible values.
+
+=item related_story_id
+
+Returns a list of media that have this story ID as a related story. May use
+C<ANY> for a list of possible values.
+
+=item related_media_id
+
+Returns a list of media that have this media ID as a related media document.
+May use C<ANY> for a list of possible values.
 
 =item data_text
 
@@ -1824,6 +1856,7 @@ sub save {
                         $self->_delete_media();
                     }
                     $self->_set( {'_cancel' => undef });
+                    commit();
                     return $self;
                 } else {
                     $self->_update_version();
@@ -1839,6 +1872,7 @@ sub save {
         } else {
             # insert both
             if ($self->_get('_cancel')) {
+                commit();
                 return $self;
             } else {
                 $self->_insert_media();
@@ -2047,31 +2081,6 @@ sub _get_auto_fields {
 
     $self->_set( { '_auto_fields' => $auto_fields }) if ref $self;
     return $auto_fields;
-}
-
-################################################################################
-
-=item $attribute_object = $self->_get_attribute_object()
-
-Returns the attribute object from a cache or creates a new record
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_attribute_object {
-    my $self = shift;
-    my ($attr_obj, $id) = $self->_get('_attribute_object', 'id');
-    return $attr_obj if $attr_obj;
-
-    # Let's Create a new one if one does not exist
-    $attr_obj = Bric::Util::Attribute::Media->new({ id => $id });
-    $self->_set( {'_attribute_object' => $attr_obj} );
-    return $attr_obj;
 }
 
 ################################################################################
@@ -2354,31 +2363,6 @@ sub _do_update {
     my $update = prepare_c($sql, undef);
     execute($update, $self->_get( FIELDS ), $self->_get('id') );
     return $self;
-}
-
-################################################################################
-
-=item $attr_object = $self->_get_attr_obj()
-
-returns the attribute object for this media
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_attr_obj {
-    my $self = shift;
-    my $attr_obj = $self->_get('_attr_obj');
-    return $attr_obj if ($attr_obj);
-
-    $attr_obj = Bric::Util::Attribute::Media->new(
-      { object_id => $self->_get('id')});
-    $self->_set( { '_attr_obj' => $attr_obj });
-    return $attr_obj;
 }
 
 1;

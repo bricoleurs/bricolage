@@ -65,6 +65,29 @@ sub contrib {
 }
 
 ##############################################################################
+# Test basic attributes
+##############################################################################
+sub test_atts : Test(9) {
+    my $self = shift;
+    my $class = $self->class;
+    ok( my $key = $class->key_name, "Get key" );
+     return "OCs tested only by subclass" if $key eq 'biz';
+    ok( my $ba = $self->construct(name => 'Foo'), "Construct $key object" );
+    my %args = $self->new_args;
+    like $ba->get_uuid,
+      qr/[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}/,
+      "The UUID should be a UUID string";
+    is $ba->get_title, 'Foo', "The title should be set";
+    is $ba->get_source__id, $args{source__id}, "The source ID should be set";
+    is $ba->get_user__id, $args{user__id}, "The user ID should be set";
+    is $ba->get_element__id, $args{element}->get_id,
+      "The element should be set";
+    is $ba->get_primary_oc_id, $args{primary_oc_id},
+      "The primary OC ID should be set";
+    is $ba->get_site_id, $args{site_id}, "The site ID should be set";
+}
+
+##############################################################################
 # Test output channel associations.
 ##############################################################################
 sub test_oc : Test(36) {

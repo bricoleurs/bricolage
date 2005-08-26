@@ -136,6 +136,20 @@ use constant COLS  => qw(
                          sql_type
                          active);
 
+use constant ATTRS  => qw(
+                         element_id
+                         key_name
+                         description
+                         place
+                         required
+                         quantifier
+                         autopopulated
+                         map_type_id
+                         publishable
+                         max_length
+                         sql_type
+                         active);
+
 use constant ORD => qw(key_name description max_length required quantifier active);
 
 #==============================================================================#
@@ -162,10 +176,10 @@ BEGIN {
                          'id'                  => Bric::FIELD_READ,
 
                          # the asset type that this is associated with
-                         'element__id'         => Bric::FIELD_RDWR,
+                         'element_id'         => Bric::FIELD_RDWR,
 
                          # The meta object ID.
-                         'map_type__id'        => Bric::FIELD_RDWR,
+                         'map_type_id'        => Bric::FIELD_RDWR,
 
                          # The human readable name field
                          'key_name'            => Bric::FIELD_RDWR,
@@ -291,6 +305,10 @@ sub new {
 
     $init->{'active'} = exists $init->{'active'} ? $init->{'active'} : 1;
     $init->{$_} = $init->{$_} ? 1 : 0 for qw(required publishable autopopulated);
+    $init->{element_id} = delete $init->{element__id}
+      if exists $init->{element__id};
+    $init->{map_type_id} = delete $init->{map_type__id}
+      if exists $init->{map_type__id};
 
     $init->{'place'}  ||= 0;
     delete $init->{'meta_object'};
@@ -336,7 +354,7 @@ sub copy {
     # Copy the object.
     $self_copy->_set(\@k, [$self->_get(@k)]);
     # Clear out fields specific to the original.
-    $self_copy->_set(['id', 'element__id'], [undef, $at_id]);
+    $self_copy->_set(['id', 'element_id'], [undef, $at_id]);
 
     $self_copy->SUPER::new();
 
@@ -373,9 +391,10 @@ sub lookup {
 
     # Set the attribute object.
     my $id = $self->get_id;
-    my $a_obj = Bric::Util::Attribute::AssetTypeData->new
-      ({ 'object_id' => $id,
-         'subsys'    => "id_$id"});
+    my $a_obj = Bric::Util::Attribute::AssetTypeData->new({
+        'object_id' => $id,
+        'subsys'    => "id_$id"
+    });
     $self->_set(['_attr_obj'], [$a_obj]);
     return $self;
 }
@@ -384,28 +403,68 @@ sub lookup {
 
 =item ($parts || @parts) = Bric::Biz::AssetType::Parts::Data->list($params)
 
-Returns a list (or list ref) of field objects that match the criteria in the
-C<$params> hash reference. Supported criteria are:
+Returns a list or array refeference of field objects that match the criteria
+in the C<$params> hash reference. Supported criteria are:
 
 =over 4
 
-=item element__id
+=item id
 
-=item map_type__id
+Field ID. May use C<ANY> for a list of possible values.
+
+=item element_id
+
+The ID of the Bric::Biz::AssetType object with which the field is associated.
+May use C<ANY> for a list of possible values.
 
 =item key_name
 
-=item max_length
+The field key name. May use C<ANY> for a list of possible values.
 
-=item publishable
+=item description
 
-=item required
+The field description. May use C<ANY> for a list of possible values.
+
+=item place
+
+The field place relative to other fields in the same element. May use C<ANY>
+for a list of possible values.
 
 =item quantifier
 
+Boolean value indicating whether the field is single or can be multiple.
+
+=item autopopulated
+
+Boolean value indicating whether the field's value is autopopulated by a media
+document.
+
+=item map_type_id
+
+May use C<ANY> for a list of possible values.
+
+=item max_length
+
+The maximum length of the field. May use C<ANY> for a list of possible values.
+
+=item publishable
+
+Boolean value indicating whether or not the field is publishable.
+
+=item required
+
+Boolean value indicating whether or not the field is always included in an
+element.
+
 =item sql_type
 
+Indicates how the field value should be stored in the database. Possible
+values are "short", "blob", and "date". May use C<ANY> for a list of possible
+values.
+
 =item active
+
+Boolean valule indicating whether or not the field is active.
 
 =back
 
@@ -1069,6 +1128,11 @@ B<Notes:> NONE.
 
 =cut
 
+sub get_element__id  { shift->get_element_id      }
+sub set_element__id  { shift->set_element_id(@_)  }
+sub get_map_type__id { shift->get_map_type_id     }
+sub set_map_type__id { shift->set_map_type_id(@_) }
+
 #------------------------------------------------------------------------------#
 
 =item $val = $element->set_attr($name, $value);
@@ -1327,13 +1391,13 @@ NONE
 
 sub save {
     my $self = shift;
-    
-    if ($self->_get('id') ) {
-        $self->_update_data();
+
+    if ($self->_get('id')) {
+        $self->_update_data;
     } else {
-        $self->_insert_data()
+        $self->_insert_data;
     }
-    
+
     # Save the attribute information.
     $self->_save_attr;
 
@@ -1373,52 +1437,48 @@ sub _do_list {
     my $class = shift;
     my ($param, $ids, $href) = @_;
     my (@where, @bind);
+    my %ints = (
+        element__id  => 'element__id',
+        element_id   => 'element__id',
+        map_type__id => 'map_type__id',
+        map_type_id  => 'map_type__id',
+        max_length   => 'max_length',
+        place        => 'place',
+    );
 
-    my $sql = 'SELECT id,'.join(',',COLS).' FROM '.TABLE;
+    my %bools = (
+        publishable   => 'publishable',
+        required      => 'required',
+        quantifier    => 'quantifier',
+        autopopulated => 'autopopulated',
+        active        => 'active',
+    );
 
-    if (exists $param->{'element__id'} ) {
-        push @where, 'element__id=?';
-        push @bind, $param->{'element__id'};
-    }
+    my %strings = (
+        key_name    => 'key_name',
+        description => 'description',
+        sql_type    => 'sql_type',
+    );
 
-    if (exists $param->{'map_type__id'} ) {
-        push @where, 'map_type__id=?';
-        push @bind, $param->{'map_type__id'};
-    }
-
-    if (exists $param->{'key_name'} ) {
-        push @where, 'key_name=?';
-        push @bind, $param->{'key_name'};
-    }
-
-    if (exists $param->{'max_length'} ) {
-        push @where, 'max_length=?';
-        push @bind, $param->{'max_length'};
-    }
-
-    if (exists $param->{'publishable'} ) {
-        push @where, 'publishable=?';
-        push @bind, $param->{'publishable'};
-    }
-
-    if (exists $param->{'required'} ) {
-        push @where, 'required=?';
-        push @bind, $param->{'required'};
-    }
-
-    if (exists $param->{'quantifier'} ) {
-        push @where, 'quantifier=?';
-        push @bind, $param->{'quantifier'};
-    }
-
-    if (exists $param->{'sql_type'} ) {
-        push @where, 'sql_type=?';
-        push @bind, $param->{'sql_type'};
-    }
-
-    if (exists $param->{'active'} ) {
-        push @where, 'active=?';
-        push @bind, exists $param->{'active'} ? $param->{'active'} : 1;
+    my $sql = 'SELECT id, ' . join(', ', COLS) . ' FROM ' . TABLE;
+    while (my ($k, $v) = each %$param) {
+        if ($ints{$k}) {
+            push @where, any_where($v, "$ints{$k} = ?", \@bind);
+        }
+        elsif ($strings{$k}) {
+            push @where, any_where(
+                $v,
+                "LOWER($strings{$k}) LIKE LOWER(?)",
+                \@bind
+            );
+        }
+        elsif ($bools{$k}) {
+            push @where, "$bools{$k} = ?";
+            push @bind,  $v ? 1 : 0;
+        }
+        else {
+            # Fail silently.
+        }
     }
 
     # Add the where clause if there is one.
@@ -1426,12 +1486,11 @@ sub _do_list {
 
     # Add the ORDER BY clause if there is one.
     $sql .= " ORDER BY $param->{order_by}" if $param->{order_by};
-
     my $select = prepare_ca($sql, undef);
 
     if ($ids) {
         # called from list_ids give em what they want
-        my $return = col_aref($select,@bind);
+        my $return = col_aref($select, @bind);
         return wantarray ? @$return : $return;
 
     } else {
@@ -1443,7 +1502,7 @@ sub _do_list {
         while (fetch($select)) {
             my $self = bless {}, $class;
 
-            $self->_set(['id', COLS], [@d]);
+            $self->_set(['id', ATTRS], [@d]);
 
             my $id = $self->get_id;
             my $a_obj = Bric::Util::Attribute::AssetTypeData->new
@@ -1544,7 +1603,7 @@ sub _select_data {
     finish($sth);
 
     # Set the columns selected as well as the passed ID.
-    $self->_set([COLS, 'id'], [@d, $id]);
+    $self->_set([ATTRS, 'id'], [@d, $id]);
     $self->cache_me;
 }
 
@@ -1571,11 +1630,11 @@ NONE
 sub _update_data {
     my $self = shift;
     my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(',', map {"$_=?"} COLS).' WHERE id=?';
+              ' SET '.join(', ', map {"$_ = ?"} COLS).' WHERE id=?';
 
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(COLS), $self->get_id);
+    execute($sth, $self->_get(ATTRS), $self->get_id);
     return 1;
 }
 
@@ -1604,11 +1663,11 @@ sub _insert_data {
     my $nextval = next_key(TABLE);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE.' (id,'.join(',',COLS).") ".
-              "VALUES ($nextval,".join(',', ('?') x COLS).')';
+    my $sql = 'INSERT INTO '.TABLE.' (id, '.join(', ', COLS).") ".
+              "VALUES ($nextval,".join(', ', ('?') x COLS).')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(COLS));
+    execute($sth, $self->_get(ATTRS));
 
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);

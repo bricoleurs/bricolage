@@ -54,9 +54,6 @@ postgres.db 	: inst/postgres.pl required.db
 config.db	: inst/config.pl required.db apache.db postgres.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
-bbin		:
-	$(PERL) inst/bin.pl
-	
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
@@ -126,9 +123,9 @@ SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 # Update this later to be database-independent.
 inst/Pg.sql : $(SQL_FILES)
-	grep -vh '^--' `find sql/Pg -name '*.sql' | sort` >  $@;
-	grep -vh '^--' `find sql/Pg -name '*.val' | sort` >>  $@;
-	grep -vh '^--' `find sql/Pg -name '*.con' | sort` >>  $@;
+	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.sql' | sort` >  $@;
+	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.val' | sort` >>  $@;
+	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.con' | sort` >>  $@;
 
 .PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
 
@@ -176,9 +173,9 @@ lib 		:
 	-rm -f lib/Makefile
 	cd lib; $(PERL) Makefile.PL; $(MAKE) install
 
-bin 		: bbin
-	-rm -f bbin/Makefile
-	cd bbin; $(PERL) Makefile.PL; $(MAKE) install
+bin 		:
+	-rm -f bin/Makefile
+	cd bin; $(PERL) Makefile.PL; $(MAKE) install
 
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
@@ -281,9 +278,9 @@ clean 		:
 	-rm -rf *.db
 	-rm -rf build_done
 	-rm -rf bconf
-	-rm -rf bbin
 	cd lib ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf lib/Makefile.old
 	-rm -rf lib/auto
+	-rm -rf inst/db_tmp
 
 .PHONY 		: clean

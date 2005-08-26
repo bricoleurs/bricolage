@@ -32,10 +32,13 @@ $localize  => 1
 $search    => 0
 $id        => undef
 $class     => undef
+$object    => undef
 </%args>
 <%init>;
 $caption =~ s /^\s*|\s{2,}|\s*$//g;
 $caption = $lang->maketext($caption) if $localize;
+my $name = get_class_info($object)->get_plural_name if $object;
+$caption =~ s/\%n/$lang->maketext($name)/e if $object;
 
 my ($section, $mode, $type) = parse_uri($r->uri);
 

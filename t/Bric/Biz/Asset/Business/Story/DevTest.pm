@@ -55,7 +55,7 @@ sub construct {
 # Test the clone() method.
 ##############################################################################
 
-sub test_clone : Test(17) {
+sub test_clone : Test(18) {
     my $self = shift;
     ok( my $story = $self->construct( name => 'Flubber',
                                       slug => 'hugo'),
@@ -84,6 +84,7 @@ sub test_clone : Test(17) {
 
     # Check that the story is really cloned!
     isnt( $sid, $cid, "Check for different IDs" );
+    isnt( $clone->get_uuid, $orig->get_uuid, "Check for different UUIDs" );
     is( $clone->get_title, $orig->get_title, "Compare titles" );
     is( $clone->get_slug, 'jarkko', "Compare slugs" );
     ok( my $ouri = $orig->get_uri, "Get original URI" );
@@ -100,7 +101,7 @@ sub test_clone : Test(17) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(138) {
+sub test_select_methods: Test(151) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -209,6 +210,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 1',
                             });
 
     $story[0]->add_categories([ $OBJ->{category}->[0] ]);
@@ -243,14 +245,20 @@ sub test_select_methods: Test(138) {
     $story[0]->checkin();
     $story[0]->save();
 
-    # Try doing a lookup
+    # Try doing a lookup by ID and UUID.
     $expected = $story[0];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{story}->[0] }),
-        'can we call lookup on a Story' );
-    is( $got->get_name(), $expected->get_name,
-        '... does it have the right name');
-    is( $got->get_description(), $expected->get_description(),
-        '... does it have the right desc');
+    for my $idf (qw(id uuid)) {
+        my $meth = "get_$idf";
+        ok $got = class->lookup({ $idf => $expected->$meth }),
+          "Look up by $idf";
+        is $got->get_id, $expected->get_id, "... does it have the right ID";
+        is $got->get_uuid, $expected->get_uuid,
+          "... does it have the right UUID";
+        is $got->get_name(), $expected->get_name(),
+            '... does it have the right name';
+        is $got->get_description, $expected->get_description,
+            '... does it have the right desc';
+    }
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
@@ -296,6 +304,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 2',
                             });
 
     $story[1]->add_categories( $OBJ->{category} );
@@ -344,6 +353,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 3',
                             });
 
     $story[2]->add_categories([ $OBJ->{category}->[0] ]);
@@ -394,6 +404,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 4',
                             });
 
     $story[3]->add_categories([ $OBJ->{category}->[0] ]);
@@ -456,6 +467,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 4',
                             });
 
     $story[4]->add_categories([ $OBJ->{category}->[0] ]);
@@ -504,6 +516,7 @@ sub test_select_methods: Test(138) {
                               user__id    => $admin_id,
                               element     => $element,
                               site_id     => 100,
+                              note        => 'Note 6',
                             });
 
     $story[5]->add_categories([ $OBJ->{category}->[0] ]);
@@ -843,6 +856,15 @@ sub test_select_methods: Test(138) {
         output_channel_id => ANY($oc1->get_id, $oc3->get_id)
     }), 'Get stories with first and third OC';
     is @$got, 2, 'Should now have two stories';
+
+    # Now search on notes.
+    ok $got = class->list({ note => 'Note 1'}), 'Search on note "Note 1"';
+    is @$got, 1, 'Should have one story';
+    ok $got = class->list({ note => 'Note %'}), 'Search on note "Note %"';
+    is @$got, 6, 'Should have six stories';
+    ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
+                          'Search on note "ANY(Note 1, Note 2)"';
+    is @$got, 2, 'Should have two stories';
 }
 
 

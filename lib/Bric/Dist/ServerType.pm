@@ -313,45 +313,57 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-move_method
+Destination ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item move_method
 
-description
+Destination move method. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-site_id
+Destination description. May use C<ANY> for a list of possible value.s
 
-=item *
+=item site_id
 
-job_id
+ID of Bric::Biz::Site object with which destinations may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item job_id
 
-output_channel_id
+ID of Bric::Util::Job object with which destinations may be associated. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item output_channel_id
 
-can_copy
+ID of Bric::Biz::OutputChannel object with which destinations may be
+associated. May use C<ANY> for a list of possible values.
 
-=item *
+=item can_copy
 
-can_publish
+Boolean value indicating whether resources should be copied to a temporary
+location before distribution actions should be carried out on them. May use
+C<ANY> for a list of possible values.
 
-=item *
+=item can_publish
 
-can_preview
+Boolean value indicating whether or not the destination is distributed to upon
+publish events.
 
-=item *
+=item can_preview
 
-grp_id
+Boolean value indicating whether or not the destination is distributed to upon
+preview events.
 
-=item *
+=item grp_id
 
-active
+ID of Bric::Util::Grp object with which destinations may be associated. May
+use C<ANY> for a list of possible values.
+
+=item active
+
+Boolean value indicating whether the destination object is active.
 
 =back
 
@@ -2141,41 +2153,38 @@ $get_em = sub {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
             # Simple ID lookup.
-            $wheres .= " AND s.id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 's.id = ?', \@params;
         } elsif ($BOOL_MAP{$k}) {
             # Simple boolean comparison.
             $wheres .= " AND $BOOL_MAP{$k}";
             push @params, $v ? 1 : 0;
         } elsif ($k eq 'move_method') {
             # We use the class display name for the move method.
-            $wheres .= " AND LOWER(c.disp_name) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    .  any_where $v, 'LOWER(c.disp_name) LIKE LOWER(?)', \@params;
         } elsif ($k eq 'job_id') {
             # Add job__server_type to the lists of tables and join to it.
             $tables .= ', job__server_type js';
-            $wheres .= ' AND s.id = js.server_type__id AND js.job__id = ?';
-            push @params, $v;
+            $wheres .= ' AND s.id = js.server_type__id AND '
+                    .  any_where $v, 'js.job__id = ?', \@params;
         } elsif ($k eq 'output_channel_id') {
             # Add server_type__output_channel to the lists of tables and join
             # to it.
             $tables .= ', server_type__output_channel so';
-            $wheres .= ' AND s.id = so.server_type__id AND ' .
-              'so.output_channel__id = ?';
-            push @params, $v;
+            $wheres .= ' AND s.id = so.server_type__id AND '
+                    .  any_where $v, 'so.output_channel__id = ?', \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, dest_member sm2";
-            $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND s.id = sm2.object_id AND sm2.member__id = m2.id"
+                    .  " AND m2.active = '1' "
+                    .  any_where $v, 'AND m2.grp__id = ?', \@params;
         } elsif ($k eq 'site_id') {
-            $wheres .= " AND s.site__id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 's.site__id = ?', \@params;
         } else {
             # It's just a string comparison.
-            $wheres .= " AND LOWER(s.$k) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    .  any_where $v, "LOWER(s.$k) LIKE LOWER(?)", \@params;
         }
     }
 

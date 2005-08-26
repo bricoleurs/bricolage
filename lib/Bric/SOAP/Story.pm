@@ -840,6 +840,7 @@ sub load_asset {
         my $story;
         unless ($update) {
             # create empty story
+            # XXX Put in supplied UUID?
             $story = Bric::Biz::Asset::Business::Story->new(\%init);
             throw_ap(error => __PACKAGE__ . "::create : failed to create empty story object.")
               unless $story;
@@ -890,6 +891,12 @@ sub load_asset {
                 $story->checkout( { user__id => get_user_id });
                 $story->save;
                 log_event('story_checkout', $story);
+            }
+
+            # Make sure that the UUID hasn't changed.
+            if (exists $sdata->{uuid}) {
+                throw_ap __PACKAGE__ . "::update: story \"$id\" has a different UUID"
+                  if $story->get_uuid ne $sdata->{uuid};
             }
 
             # update %init fields
@@ -1130,7 +1137,8 @@ sub serialize_asset {
     # open a story element
     my $alias_id = $story->get_alias_id;
     $writer->startTag("story",
-                      id => $story_id,
+                      id   => $story_id,
+                      uuid => $story->get_uuid,
                       ( $alias_id ? (alias_id => $alias_id) :
                         (element => $story->get_element_key_name)));
 

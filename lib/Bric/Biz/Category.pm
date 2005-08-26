@@ -280,21 +280,42 @@ Criteria keys:
 
 =over 4
 
+=item id
+
+Category ID. May use C<ANY> for a list of possible values.
+
 =item name
+
+The name of the category. May use C<ANY> for a list of possible values.
 
 =item directory
 
+The category directory name. May use C<ANY> for a list of possible values.
+
 =item uri
+
+The category URI. May use C<ANY> for a list of possible values.
 
 =item active
 
 =item description
 
+The category description. May use C<ANY> for a list of possible values.
+
 =item parent_id
+
+The ID category of a parent category. May use C<ANY> for a list of possible
+values.
 
 =item grp_id
 
+The ID of a Bric::Util::Grp object to which the category belongs. May use
+C<ANY> for a list of possible values.
+
 =item site_id
+
+The ID of a Bric::Biz::Site object with which the category is associated. May
+use C<ANY> for a list of possible values.
 
 =back
 
@@ -1560,29 +1581,29 @@ sub _do_list {
 
     # Set up the other query properties.
     while (my ($k, $v) = each %$params) {
-	if ($k eq 'id' or $k eq 'parent_id') {
+        if ($k eq 'id' or $k eq 'parent_id') {
             # It's a simple numeric comparison.
-            $wheres .= " AND a.$k = ?";
-	    push @params, $v;
+            $wheres .= ' AND ' . any_where($v, "a.$k = ?", \@params);
             # Keep us from returning the super root category
-            if ($k eq 'parent_id' and $v == 0) {
+            if ($k eq 'parent_id'
+                and ((ref $v && grep { $_ == 0 } @$v) || $v == 0))
+            {
                 $wheres .= " AND a.id <> ?";
                 push @params, 0;
             }
         } elsif ($k eq 'site_id') {
-            $wheres .= " AND a.site__id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where($v, "a.site__id = ?", \@params);
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id " .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
-	} else {
+            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id "
+              . " AND m2.active = '1' AND "
+              . any_where($v, "m2.grp__id = ?", \@params);
+        } else {
             # It's a simpler string comparison.
-	    $wheres .= " AND LOWER(a.$k) LIKE ?";
-	    push @params, lc $v;
-	}
+            $wheres .= ' AND '
+              . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
+        }
     }
 
     # Create the where clause and the select and order by clauses.

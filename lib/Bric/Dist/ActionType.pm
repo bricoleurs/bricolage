@@ -189,9 +189,29 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-description
+Action type ID. May use C<ANY> for a list of possible values.
+
+=item name
+
+An action type name. May use C<ANY> for a list of possible values.
+
+=item description
+
+An action type description. May use C<ANY> for a list of possible values.
+
+=item media_type_id
+
+The ID of a Bric::Util::MediaType object that determine the types of files on
+which actions of this type will act. May use C<ANY> for a list of possible
+values.
+
+=item media_type
+
+The name of a Bric::Util::MediaType object that determine the types of files
+on which actions of this type will act. May use C<ANY> for a list of possible
+values.
 
 =back
 
@@ -722,14 +742,13 @@ $get_em = sub {
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
-            push @wheres, 'a.id = ?';
-            push @params, $v;
+            push @wheres, any_where $v, 'a.id = ?', \@params;
         } elsif ($k eq 'media_type') {
-            push @wheres, "t.name LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(t.name) LIKE LOWER(?)", \@params;
+        } elsif ($k eq 'media_type_id') {
+            push @wheres, any_where $v, "t.id = ?", \@params;
         } else {
-            push @wheres, "LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(a.$k) LIKE LOWER(?)", \@params;
         }
     }
 
@@ -738,14 +757,16 @@ $get_em = sub {
     my $where = @wheres ? "\n               AND " . join ' AND ', @wheres : '';
 
     # Assemble and prepare the query.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['a.id'] : \@cols;
+    my ($qry_cols, $order) = $ids
+        ? ('DISTINCT a.id', 'a.id')
+        : ( join(', ', @cols), 'a.name')
+        ;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   action_type a, action_type__media_type m, media_type t
         WHERE  a.id = m.action_type__id
                AND m.media_type__id = t.id $where
-        ORDER BY a.name
+        ORDER BY $order
     }, undef);
 
     # Just return the IDs, if they're what's wanted.

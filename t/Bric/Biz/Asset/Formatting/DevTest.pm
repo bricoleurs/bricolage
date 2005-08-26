@@ -6,6 +6,7 @@ use Test::More;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::AssetType;
 use Bric::Biz::ATType;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Burner::Mason;
 use Bric::Util::Burner::Template;
 
@@ -283,7 +284,7 @@ sub test_select_a_default_objs: Test(12) {
 }
 
 ##############################################################################
-sub test_select_b_new_objs: Test(76) {
+sub test_select_b_new_objs: Test(82) {
     my $self = shift;
     my $class = $self->class;
 
@@ -415,6 +416,7 @@ sub test_select_b_new_objs: Test(76) {
         output_channel__id => 1,
         category_id        => $OBJ->{category}->[0]->get_id,
         site_id            => 100,
+        note               => 'Note 1',
     });
     $formatting[0]->checkin();
     $formatting[0]->save();
@@ -485,6 +487,7 @@ sub test_select_b_new_objs: Test(76) {
          output_channel__id => 1,
          category_id        => $OBJ->{category}->[0]->get_id,
          site_id            => 100,
+         note               => 'Note 2',
        });
     $formatting[1]->save;
     push @{$OBJ_IDS->{formatting}}, $formatting[1]->get_id();
@@ -531,6 +534,7 @@ sub test_select_b_new_objs: Test(76) {
          output_channel__id => 1,
          category_id        => $OBJ->{category}->[0]->get_id,
          site_id            => 100,
+         note               => 'Note 3',
     });
 
     $formatting[2]->checkin();
@@ -597,6 +601,7 @@ sub test_select_b_new_objs: Test(76) {
          output_channel__id => 1,
          category_id        => $OBJ->{category}->[0]->get_id(),
          site_id            => 100,
+         note               => 'Note 4',
        });
     $formatting[3]->set_workflow_id( $OBJ->{workflow}->[0]->get_id() );
     $formatting[3]->save();
@@ -643,6 +648,7 @@ sub test_select_b_new_objs: Test(76) {
          output_channel__id => 1,
          category_id        => $OBJ->{category}->[0]->get_id(),
          site_id            => 100,
+         note               => 'Note 5',
        });
     $formatting[4]->set_workflow_id( $OBJ->{workflow}->[0]->get_id );
     $formatting[4]->save;
@@ -845,6 +851,16 @@ sub test_select_b_new_objs: Test(76) {
     # version.
     is_deeply [ map { $_->get_checked_out } @$got ], [0, 1, 1, 1, 0],
       "We should get the checked-out templates where available";
+
+    # Now search on notes.
+    ok $got = class->list({ note => 'Note 1'}), 'Search on note "Note 1"';
+    is @$got, 1, 'Should have one template';
+    ok $got = class->list({ note => 'Note %'}), 'Search on note "Note %"';
+    is @$got, 5, 'Should have five templates';
+    ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
+                          'Search on note "ANY(Note 1, Note 2)"';
+    is @$got, 2, 'Should have two templates';
+
 }
 
 sub test_new_grp_ids: Test(4) {

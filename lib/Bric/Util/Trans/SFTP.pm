@@ -52,7 +52,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($no_warn);
+my ($no_warn, $sftp_args);
 
 ################################################################################
 # Constants
@@ -325,7 +325,7 @@ for passing to C<< Net::SFTP->new() >>.
 
 =cut
 
-my $sftp_args = sub {
+$sftp_args = sub {
     my $server = shift;
 
     # Set up the SSH arguments. Make sure we're never mistaken for root.

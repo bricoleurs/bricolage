@@ -9,44 +9,35 @@ use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use DateTime;
 
-my $epoch = CORE::time;
-
-BEGIN {
-    # Override the time function, but just have it use CORE::time. This will
-    # allow us to hijack the function later by locally redefining
-    # CORE::GLOBAL::time. This is to prevent those tests that test for the
-    # time *right now* from getting screwed up by the clock turning over.
-    *CORE::GLOBAL::time = sub () { CORE::time() };
-}
-
 ##############################################################################
 # Set up needed variables.
 ##############################################################################
-my $format = '%m/%d/%Y at %T';
-my $pref_format = Bric::Util::Pref->lookup_val('Date/Time Format');
+my $epoch             = CORE::time;
+my $format            = '%m/%d/%Y at %T';
+my $pref_format       = Bric::Util::Pref->lookup_val('Date/Time Format');
 (my $short_iso_format = ISO_8601_FORMAT) =~ s/\.\%6N$//;
 
 my $now = DateTime->from_epoch( epoch => $epoch, time_zone => 'UTC');
-my $db_date = $now->strftime(DB_DATE_FORMAT);
-my $utc_date = $now->strftime($pref_format);
-my $utc_iso_date = $now->strftime(ISO_8601_FORMAT);
+
+my $db_date            = $now->strftime(DB_DATE_FORMAT);
+my $utc_date           = $now->strftime($pref_format);
+my $utc_iso_date       = $now->strftime(ISO_8601_FORMAT);
 my $utc_iso_short_date = $now->strftime($short_iso_format);
-my $fmt_utc = $now->strftime($format);
+my $fmt_utc            = $now->strftime($format);
 
 my $tz = Bric::Util::Pref->lookup_val('Time Zone');
 $now->set_time_zone($tz);
-my $local_date = $now->strftime($pref_format);
-my $local_iso_date = $now->strftime(ISO_8601_FORMAT);
+
+my $local_date           = $now->strftime($pref_format);
+my $local_iso_date       = $now->strftime(ISO_8601_FORMAT);
 my $local_iso_short_date = $now->strftime($short_iso_format);
-my $fmt_local = $now->strftime($format);
+my $fmt_local            = $now->strftime($format);
 
 ##############################################################################
 # Test the exported functions.
 ##############################################################################
 # Test strfdate().
-sub test_strfdate : Test(4) {
-    no warnings qw(redefine);
-    local *CORE::GLOBAL::time = sub () { $epoch };
+sub test_strfdate : Test(5) {
     is( strfdate($epoch), $local_iso_date,
         "Check strfdate is '$local_iso_date'" );
     is( strfdate($epoch, undef, 1), $utc_iso_date,
@@ -55,13 +46,17 @@ sub test_strfdate : Test(4) {
         "Check strfdate is '$fmt_local" );
     is( strfdate($epoch, $format, 1), $fmt_utc,
         "Check strfdate is '$fmt_utc" );
+
+    # Make sure that there is no disagreement with DateTime.
+    no warnings qw(redefine);
+    local *CORE::GLOBAL::time = sub () { $epoch };
+    my $dt_now = DateTime->now->strftime(ISO_8601_FORMAT);
+    is strfdate($epoch, ISO_8601_FORMAT, 1), $dt_now, 'Now should be now';
 }
 
 ##############################################################################
 # Test local_date().
 sub test_local_date : Test(6) {
-    no warnings qw(redefine);
-    local *CORE::GLOBAL::time = sub () { $epoch };
     is( local_date($utc_date), $local_date,
         "Check local date is '$local_date'" );
     is( local_date($utc_iso_short_date), $local_date,
@@ -85,8 +80,6 @@ sub test_local_date : Test(6) {
 ##############################################################################
 # Test db_date().
 sub test_db_date : Test(3) {
-    no warnings qw(redefine);
-    local *CORE::GLOBAL::time = sub () { $epoch };
     is( db_date($local_iso_date), $db_date, "Check db date is '$db_date'" );
     is( db_date($local_iso_short_date), $db_date,
         "Check short db date is '$db_date'" );

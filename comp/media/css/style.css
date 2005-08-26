@@ -1,34 +1,34 @@
-body       { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-td         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-th         { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:12px;}
-pre        { padding: 1em; margin: 0; font-size: 1.1em; } 
+body {
+    margin: 0; padding: 0;
+    background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
+    font-family: Verdana, Helvetica, Arial, sans-serif; 
+    font-size: 70%;
+}
+th         { font-size: 1.1em; }
+pre        { font-size: 1.1em; padding: 1em; margin: 0; } 
+h3         { font-size: 1.1em; }
 
-p          { font-size:11px; line-height:16px; }
-h3         { font-size:12px; line-height:17px;}
-dt         { font-size:11px; line-height:16px; font-weight:bold; }
-dd         { font-size:11px; line-height:16px; }
-li         { font-size:11px; line-height:16px; }
-
-a img      { border: none; }
+a          { color: #006666; }
+a img      { border: none; vertical-align: middle; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
-.textInput { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.textArea  { font-family:Verdana,Helvetica,Arial,sans-serif; font-size:10px;}
-.codeArea  { width: 99%; font-family: monospace; font-size: 1.1em; }
-
-body {
-    margin: 0;
-    padding: 0;
-    background: white url("/media/images/nav_background.gif") 8px 0px repeat-y;
+.textInput { font-family: Verdana, Helvetica, Arial, sans-serif; }
+textarea { 
+    width: 99%;
+    font-family: Verdana, Helvetica, Arial, sans-serif; 
+    font-size: 1em;
 }
+.editmeta .textarea textarea { width: 50%; }
+.codearea textarea { font-family: monospace; font-size: 1.1em; }
+
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
 
-#bricLogo { position: absolute; top: 0; left: 0; padding: 8px 8px 2px 8px; background: white; width: 150px; }
-#mainContainer { position: relative; margin: 0 18px 8px 8px; }
-#sideNav { position: absolute; top: 35px; left: 0; width: 150px; z-index: 200; border: 0; }
-#contentContainer { padding-left: 158px; }
+#bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
+#mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
+#sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
+#contentContainer { padding: 8px 0 0 158px; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
@@ -41,65 +41,55 @@ body {
 /***************************************************
  * PAGE HEADER
  ***************************************************/
-#headerContainer               { position: relative; width: 100%; padding-top: 35px; }
+#headerContainer               { position: relative; width: 100%; padding-top: 20px; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
 #headerContainer .helpBox,
 #headerContainer .errorsBox    { margin-bottom: 0; margin-right: 240px; }
-#headerContainer .buttons      { position: absolute; top: 35px; right: 0; width: 240px; text-align: right; }
+#headerContainer .buttons      { position: absolute; top: 20px; right: 0; width: 240px; text-align: right; }
 #headerContainer .buttons a    { margin: 0 2px; }
 #headerContainer .userinfo     { position: absolute; bottom: 35px; right: 0; }
 #breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
-#breadcrumbs p                 { margin: 0; padding: 3px 6px; }
+#breadcrumbs p                 { margin: 0; padding: 5px 6px; }
 #breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }
 
 
-.header                    { position: relative; width: 100%; }
-.header .caption           { background-color: #CCCC99; }
-.fullHeader                { position: relative; color: white; font-weight: bold; width: 100%; }
-.fullHeader a              { color: white; }
-.fullHeader .number,
-.fullHeader .rightText     { width: 8px; }
-.adminBox .fullHeader      { background-color: #CC6633; }
-.workflowBox .fullHeader   { background-color: #006666; }
-.loginBox .fullHeader      { background-color: #006666; }
-.searchBox .fullHeader     { background-color: #666633; }
-.errorsBox .fullHeader     { background-color: #CC0000; }
-.helpBox .fullHeader       { background-color: #006666; }
+.header      { position: relative; width: 100%; }
+.fullHeader  { position: relative; width: 100%; color: white; font-weight: bold; }
+.header      .caption           { background-color: #CCCC99; }
+.fullHeader  .caption a     { color: white; }
+.fullHeader  .number,
+.fullHeader  .rightText     { width: 8px; }
+.adminBox    .fullHeader    { background-color: #CC6633; }
+.workflowBox .fullHeader    { background-color: #006666; }
+.loginBox    .fullHeader    { background-color: #006666; }
+.searchBox   .fullHeader    { background-color: #666633; }
+.errorsBox   .fullHeader    { background-color: #CC0000; }
+.helpBox     .fullHeader    { background-color: #006666; }
 
 .number { 
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-image: url("/media/images/curve_left.gif");
-    background-repeat: no-repeat;
-    background-position: top left; 
-    color: white;
+    position: absolute; top: 0; left: 0;
+    background: transparent url("/media/images/curve_left.gif") top left no-repeat;
     line-height: 2em;
-    height: 2em;
     width: 2.5em;
-    text-align: center;
+    color: white;
     font-weight: bold;
+    text-align: center;
 }
 .workflowBox .header .number { background-color: #669999; }
-.adminBox .header .number    { background-color: #D7713E; }
-.caption                     { 
-    text-transform: uppercase; 
-    line-height: 2em; 
-    height: 2em; 
-    padding-left: 3em;
-}
-.fullHeader .caption         { padding-left: 14px; }
-#headerContainer .caption    { padding-left: 14px; text-transform: none; font-size: 1.2em; }
+.adminBox    .header .number { background-color: #D7713E; }
+            
+.caption { text-transform: uppercase; line-height: 2em; padding-left: 3em; }
+.fullHeader .caption { padding-left: 10px; }
+#headerContainer .caption { padding-left: 10px; text-transform: none; font-size: 1.2em; }
 .rightText { 
     position: absolute;
-    top: 0;
-    right: -1px; /* Fix strange 1px showing in IE */
+    top: 0; right: -1px; /* Fix strange 1px showing in IE */
     width: 30%;
-    height: 2em;
+    line-height: 2em;
     background: transparent url("/media/images/curve_right.gif") top right no-repeat;
-    padding: 3px 10px 0 0;
+    padding: 2px 10px 0 0;
     text-align: right;
 }
 .border              { border-style: solid; border-width: 0 1px 1px 1px; }
@@ -117,14 +107,9 @@ body {
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
-.blueLink       { font-size:10px; color:#669999;}
-.blueLinkBold   { font-size:10px; color:#669999; font-weight:bold}
 .orangeLink     { font-size:10px; color:#CC6633;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
-.darkBlueLink   { font-size:10px; color:#006666;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
-.redLinkLight   { color:#993300; }
-.redLinkLarge   { font-size:11px; color:#993300; font-weight:bold}
 .whiteLink      { font-size:10px; color:#ffffff; text-decoration:none}
 .whiteUnderlinedLink      { font-size:10px; color:#ffffff;}
 .blackLink      { font-size:10px; color:#000000; text-decoration:none}
@@ -132,23 +117,10 @@ body {
 .whiteMedUnderlinedLink { font-size:11px; color:#ffffff;}
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
-.sideNavActiveCell   {background:#999966}
-.sideNavInactiveCell {background:#cccc99}
-.sideNavAdminCell    {background:#999966}
-.sideNavHeader       { font-size:10px; color:#000000; text-decoration:none}
-.sideNavHeaderBold   { font-size:10px; font-weight:bold; color:#000000; text-decoration:none}
-.sideNavHeaderBoldWhite { font-size:10px; font-weight:bold; color:#ffffff; text-decoration:none}
 
-.workflowBold        { font-size:10px; font-weight:bold; color:#666633}
-.workflowHeader      { font-size:10px; font-weight:bold; color:#666633}
-
-.title       { font-size:12px;}
-.subHeader   { font-size:11px;}
-.label       { font-size:10px; font-weight:bold}
-.redLabel    { font-size:10px; font-weight:bold; color:red}
+.label       { font-weight: bold}
+.redLabel    { font-weight: bold; color: red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
-.whiteLabel  { font-size:10px; font-weight:bold; color:white}
-.description { font-size:10px; color:blue}
 .errorMsg    { color: red; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
                                 /* stylesheet.  If this style ever gets applied, that */
@@ -157,18 +129,9 @@ body {
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
 
-.adminTab       {background:#cc6633;  font-size:12px; color:white; font-weight:bold;}
-.workflowTab    {background:#006666;  font-size:12px; color:white; font-weight:bold;}
-.adminSubTab    {background:#cc6633;  font-size:10px; color:white; font-weight:bold;}
-.whiteTextTab   { font-size:11px; color:white; font-weight:bold;}
-.workflowSubTab {background:#006666;  font-size:10px; color:white; font-weight:bold;}
 .darkHeader     {background:#666633;  font-size:10px; color:white; font-weight:bold;}
 .medHeader      {background:#999966;}
 .lightHeader    {background-color: #cccc99;}
-.redHeader      {background:#993300;  font-size:12px; color:white; font-weight:bold;}
-.tealHeader     {background:#669999;  font-size:12px; color:white; font-weight:bold;}
-.greyHeader     {background:#cccccc;}
-.tealHighlight  {background:#669999;  font-size:10px; color:white; font-weight:bold;}
 .aliasHeader    {background:#99Cc99; font-style:italic;}
 
 div.debug dt {
@@ -183,180 +146,162 @@ div.debug dt:after {
 }
 
 /* Desk item styling. */
-#desk {
+.desk {
     position: relative;
-    width: 580px;
     font-size: 11px;
     line-height: 11px;
 }
 
-.desk_item {
-    padding-bottom: 8px;
-    clear: left;
+.jump { float: right; padding-top: 3px; }
+.desk-top { background: #666633; color: white; padding: 3px 5px; margin: 0 200px 10px 0; }
+.desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; margin: 0; }
+.desk-top .sort { text-align: right; font-size: 1em; }
+.desk-top .sort select { font-size: 1em; }
+
+.desk .buttonbar { text-align: right; }
+
+.desk .item { 
+    margin-bottom: 10px;
+    border-style: solid;
+    border-color: #CCCC99;
+    border-width: 0 1px 1px 1px;  
 }
 
-.desk_item a { 
-    text-decoration: none;
-    color: #006666;
-    background-color: transparent;
+.desk .item .sorted {
+	font-weight: bold;
 }
 
-.desk_item a:hover {
-    text-decoration:underline;
+.desk .item dd.sorted,
+.desk .item div.sorted {
+	background: #99CC99 !important;
 }
 
-.desk_item a.ref:link,
-.desk_item a.ref:visited {
-    color: #006666;
-    background-color: transparent;
-}
-
-.desk_item .head {
+.desk .item .head { 
     position: relative;
-    margin: 0px;
-    border: 0px;
-    line-height: 20px;
+    background: #cccc99; 
+    line-height: 2em;
     font-weight: bold;
 }
-
-.desk_item .head .idv,
-.desk_item .head .idvsorted,
-.desk_item .head .idvalias {
+.desk .item .head .status {
     position: absolute;
-    display: block;
     top: 0;
     left: 0;
-    width: 97px;
-    color: black;
+    padding: .3em 0 0 .3em;
+}
+.desk .item .head .version { 
+    float: left; 
+    width: 9em; 
+    background: #cccc99;
     border-right: solid white 1px;
-    padding-left: 3px;
+    text-align: right;
+    padding: 0 .5em;
 }
-.desk_item .head .idv { background:#cccc99; }
-.desk_item .head .idvsorted { background:#669999; }
-.desk_item .head .idvalias { background:#99cc99; }
-
-.desk_item .head .title,
-.desk_item .head .titlealias, 
-.desk_item .head .titlesorted {
-    position: relative;
-    display: block;
-    left: 101px;
-    top: 0px;
-    width: 456px;
-    color: black;
-    font-size: 11px;
-    padding-left: 3px;
+.desk .item .head .title {
+    /* float: left; */
+    padding: 0 .5em 0 9.5em;
+    font-size: 1.1em;
 }
-.desk_item .head .title { background:#cccc99; }
-.desk_item .head .titlealias { background:#99cc99; }
-.desk_item .head .titlesorted { background:#669999; color: white; }
-
-
-.desk_item .head .need,
-.desk_item .head .pub,
-.desk_item .head .none,
-.desk_item .head .aliasnone,
-.desk_item .head .nonesorted {
+.desk .item .head .pubstatus {
+    /* float: right; */
     position: absolute;
-    display: block;
     top: 0;
     right: 0;
-    width: 20px;
     text-align: center;
-    color: white;
+    padding: 0 .5em;
+    color: white; 
+    cursor: default;
 }
-.desk_item .head .need { background: #993300; }
-.desk_item .head .pub { background: #999934; }
-.desk_item .head .none { background:#cccc99; }
-.desk_item .head .aliasnone { background:#99cc99; }
-.desk_item .head .nonesorted { background:#669999; }
+.desk .item .head .need { background: #993300; }
+.desk .item .head .pub { background: #999934; }
 
-.desk_item .head .sorted a {
-    color: white;
-    background:#669999;
+.desk .item .body { position: relative; }
+
+.desk .item dl { 
+    margin: 0 250px 0 0; 
+    padding: 0; 
+    border-style: solid;
+    border-color: #CCCC99;
+    border-width: 0 1px 0 0; 
 }
-
-.desk_item .body {
-    border-right: solid #999966 1px;
-    border-bottom: solid #999966 1px;
-    margin: 0px;
-}
-
-.desk_item .body p, dl {
-    margin: 0px;
-    padding: 0px;
-}
-
-.desk_item .body input {
-    margin: 0px;
-}
-
-.desk_item .body label {
-    padding-left: 3px;
-}
-
-.desk_item .body p {
-    border-top: solid white 1px;
-    line-height: 20px;
-}
-
-.desk_item .body select {
-    line-height: 20px;
-}
-
-.desk_item .body .mover {
-    margin: 20px 0 21px 0;
-    height: 22px;
-}
-
-.desk_item .body ul.actions {
-    margin: 0;
+.desk .item dt, .desk .item dd {
+    line-height: 2em;
+    padding: 0 .5em;
     border-top: solid white 1px;
 }
-
-.desk_item .body ul.actions li {
-    display: inline;
-    line-height: 20px;
-    padding: 0 4px 0 0;
-}
-
-.desk_item .body dl {
-    float: left;
-    border-right: solid #999966 1px;
-    width: 360px;
-    margin-right: 3px;
-}
-
-.desk_item .body dt, dd {
-    line-height: 20px;
-    border-top: solid white 1px;
-}
-
-.desk_item .body dt {
-    font-weight: normal;
-    color: black;
-    background:#999966;
-    float: left;
-    width: 97px;
+.desk .item dt { 
+    clear: both; 
+    float: left; 
+    width: 9em; /* plus 1em padding */ 
     text-align: right;
-    padding-right: 3px;
-    margin-right: 2px; /* Make three if we can't get the 1px to work in dd. */
+    background: #999966;
     border-right: solid white 1px;
 }
+.desk .item dd { margin-left: 10em; }
+/* .desk .item .even { background: #E8E8CD; } */
 
-.desk_item .body dd {
-    margin-left: 101px;
-    padding: 0 0 0 1px;
+.desk .item .actions { 
+    width: 230px; 
+    position: absolute; 
+    top: 0; right: 0; bottom: 0;
+    background: transparent;
+    border-top: solid white 1px;
+    padding: 0 10px;
 }
-
-.desk_item .body dt:after {
-    content: ':'; /* Insert a colon. */
+.desk .item .actions p { margin: 10px 0; }
+.desk .item .actions .mover { 
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    padding: 0; 
 }
+.desk .item .actions .mover select {
+    vertical-align: middle;
+}
+.desk .item .actions ul { 
+    margin: 0px 0; 
+    padding: 0; 
+    list-style: none; 
+    position: absolute;
+    bottom: 5px;
+}
+.desk .item .actions ul li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    line-height: 2em;
+}
+.desk .item .actions ul li.inactive { color: #999; }
+.desk .item .actions ul.action { float: left; }
+.desk .item .actions ul.view { float: right; }
+.desk .item .actions ul.action li { padding: 0px 15px 0px 0px; }
+.desk .item .actions ul.view li   { padding: 0px 15px 0px 0px; }
 
-.desk_item .sorted {
-    color: white;
-    background:#669999;
-    font-weight: bold;
+.desk .item .actions li,
+.desk .item .actions img,
+.desk .item .actions input,
+.desk .item .actions select,
+.desk .item .actions button { vertical-align: top; }
+.desk .item .actions select { font-size: 1em; }
+
+.desk .item .actions button {
+    font-size: 1em;
+    border-color: transparent;
+    background-color: transparent;
+    padding: 2px;
+    cursor: pointer;
+}
+.desk .item .actions button.delete {
+    background-image: url("/media/images/delete.png");
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 18px;
+}
+.desk .item .actions button.clone {
+    background-image: url("/media/images/copy.png");
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 18px;
 }
 
 form .row {
@@ -367,14 +312,14 @@ form .row {
 form .row .label,
 form .row .redLabel {
     float: left;
-    width: 135px;
+    width: 130px;
+    padding-right: 5px;
     text-align: right;
     line-height: 2;
 }
-
 form .row .input {
-    padding-left: 140px;
-    margin-left: 0;
+    margin-left: 140px;
+    white-space: nowrap;
     line-height: 2;
 }
 form .row .input p {
@@ -384,31 +329,19 @@ form .row .input p {
 }
 form .alpha .row .input { line-height: 1.3em; }
 
-/* Clear floats without additional HTML markup
-   http://www.positioniseverything.net/easyclearing.html */
-form .row:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
-}
-form .row { display: inline-block;}
-/* Hides from IE-mac \*/
-* html form .row {height: 1%;}
-form .row {display: block;}
-/* End hide from IE-mac */
-
 table { padding: 0; border-collapse: collapse; position: relative; }
 table tr.odd { background: #E8E8CD; }
+table td.name { font-weight: bold; vertical-align: top; padding-top: 7px; }
 table td.position,
 table td.edit,
 table td.delete { width: 100px; text-align: center; }
 
-.listManager { width: 100%; border-style: hidden; }
-.listManager th { background: #999966; color: black; padding: 3px 5px; 
-                  text-align: left; vertical-align: bottom;
-                  border: solid #cccc99 1px; }
+.listManager,
+.containerProf { width: 100%; border-style: hidden; }
+.listManager th,
+.containerProf th{ background: #999966; color: black; padding: 3px 5px; 
+                   text-align: left; vertical-align: bottom;
+                   border: solid #cccc99 1px; }
 .listManager th.sortup { 
     background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
     padding-right: 17px; /* account for arrow: 7px + 10px padding */
@@ -428,8 +361,17 @@ table td.delete { width: 100px; text-align: center; }
 .listManager th a { font-size: .85em; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { color: white; }
-.listManager td { padding: 0 5px; border: solid #cccc99 1px; height: 2.3em; }
+.listManager td,
+.containerProf td { padding: 2px 5px; border: solid #cccc99 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
+
+th.checkbox, th.radio,
+td.checkbox, td.radio { width: 10%; text-align: center; }
+
+.containerProf td { border: none; }
+.containerProf td.name { text-align: right; }
+.containerProf .position,
+.containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
 
 .addnewitem   { padding: 7px 10px; }
 .addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
@@ -440,29 +382,138 @@ table td.delete { width: 100px; text-align: center; }
 .paginate .pages { float: left; width: 70%; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
+.associations { width: 100%; border-style: hidden; }
+.associations th { 
+    width: 125px; 
+    text-align: right; 
+    font-weight: bold; 
+}
+.associations th,
+.associations td { 
+    padding: 5px;
+    font-size: 1em;
+    vertical-align: top; 
+    border-style: solid; 
+    border-color: #cccc99; 
+    border-width: 1px 0; 
+}
+.associations td.edit { width: 20px; vertical-align: top; }
+
+dl.viewmeta { margin: 0; }
+dl.viewmeta dt,
+dl.viewmeta dd { font-size: 11px; border-bottom: solid white 1px; padding: 2px 0; }
+dl.viewmeta dt {
+    float: left;
+    clear: both;
+    width: 130px;
+    padding-right: 5px;
+    text-align: right;
+    font-weight: bold;
+    background-color: #E8E8CD;
+}
+dl.viewmeta dd { margin-left: 140px; }
+dl.viewmeta dd a { font-size: inherit; }
+
+div.actions { background: #999966; padding: 2px 4px; }
+
+.buttonBar .delete {
+	font-weight: bold;
+	text-align: center;
+	color: #993300;
+	border-bottom: solid #CCCC99 1px;
+}
+
+.buttonBar .checkin {
+	padding: 4px 0;
+	float: left;
+}
+
+.buttonBar .revert {
+	text-align: right;
+	float: right;
+	padding: 4px 0;
+}
+
+.buttonBar .buttons {
+	clear: both;
+	border-top: solid #CCCC99 1px;
+}
+
+.buttonBar .save { 
+	clear: both; float: left; 
+	width: 40%; 
+	text-align: right;
+	padding: 5px 0 10px 0;
+}
+.buttonBar .cancel { 
+	float: right;
+	width: 40%;
+	padding: 5px 0 10px 0;
+}
+
+.formBuilder { position: relative; height: 200px; }
+.formBuilder .formElement {
+	position: absolute;
+	top: 0; left: 0;
+	width: 150px;
+	list-style: none; list-style-image: none;
+	margin: 0; padding: 10px;
+}
+.formBuilder #fbDiv { margin-left: 170px; }
+.formBuilder .fbForm { 
+    position: absolute;
+    top: 0; left: 170px;
+    display: none;
+}
+.formBuilder .fbForm label { font-weight: bold; }
+.formBuilder .fbForm dd { padding: 0; margin: 0 0 3px 0; }
+.formBuilder .fbForm dl { float: left; width: 170px; margin-right: 10px; }
+.formBuilder .fbForm dl.position,
+.formBuilder #fbFormSelect dl.size { margin-top: 0; clear: both; width: 340px; }
+.formBuilder .fbForm dl.position dt,
+.formBuilder #fbFormSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
+.formBuilder .fbForm dl.position dd,
+.formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
+.formBuilder #fbFormText { display: block; } /* default */
+.formBuilder .submit { position: absolute; top: 170px; left: -160px; }
+
+.alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
+
+/******************************************************
+ * HACKS                                              *
+ ******************************************************/
+
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
-.paginate:after {
+.desk .item .head:after,
+.desk .item .actions:after,
+.desk_item .head:after,
+form .row:after,
+.paginate:after,
+.viewmeta:after {
     content: "."; 
     display: block; 
     height: 0; 
     clear: both; 
     visibility: hidden;
 }
-.paginate { display: inline-block;}
+.desk .item .head,
+.desk .item .actions,
+.desk_item .head,
+form .row,
+.paginate,
+.viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
-* html .paginate {height: 1%;}
-.paginate {display: block;}
+* html .desk .item .head,
+* html .desk .item .actions,
+* html .desk_item .head,
+* html form .row,
+* html .paginate,
+* html .viewmeta {height: 1%;}
+.desk .item .head,
+.desk .item .actions,
+.desk_item .head,
+form .row,
+.paginate,
+.viewmeta {display: block;}
 /* End hide from IE-mac */
-
-.viewmeta dt,
-.viewmeta dd { font-size: 1em; line-height: 2em; height: 2em; }
-.viewmeta dt {
-    float: left;
-    clear: both;
-    width: 130px;
-    padding-right: 5px;
-    text-align: right;
-    background-color: #999966;
-}
-.viewmeta dd { margin-left: 140px; }

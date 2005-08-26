@@ -285,37 +285,46 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-host_name
+Server ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item host_name
 
-os
+The server host name. May use C<ANY> for a list of possible values.
 
-=item *
+=item os
 
-doc_root
+The server operating system. May use C<ANY> for a list of possible values.
 
-=item *
+=item doc_root
 
-login
+The document root to distribute to. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item login
 
-password
+The login username for the server. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item password
 
-cookie
+The login password for the server. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item cookie
 
-server_type_id
+The cookie to use to connect to the server. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item server_type_id
 
-active
+The destination (Bric::Dist::ServerType) ID with which a server may be
+associated. May use C<ANY> for a list of possible values.
+
+=item active
+
+Boolean value indicating whether the server object is active.
 
 =back
 
@@ -1505,31 +1514,29 @@ $get_em = sub {
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id' || $k eq 'os') {
-            push @wheres, "$k = ?";
-            push @params, $v;
+            push @wheres, any_where $v, "$k = ?", \@params;
         } elsif ($k eq 'server_type_id') {
-            push @wheres, "server_type__id = ?";
-            push @params, $v;
+            push @wheres, any_where $v, 'server_type__id = ?', \@params;
         } elsif ($k eq 'active') {
             push @wheres, "active = ?";
             push @params, $v ? 1 : 0;
         } else {
-            push @wheres, "LOWER($k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER($k) LIKE LOWER(?)", \@params;
         }
     }
-
     # Assemble the WHERE statement.
-    my $where = @wheres ? "\n        WHERE " .
-      join "\n               AND ", @wheres : '';
+    my $where = @wheres
+        ? "\n        WHERE " . join "\n               AND ", @wheres
+        : '';
 
     # Assemble the query.
-    local $" = ', ';
-    my $qry_cols = $ids ? ['id'] : \@cols;
+    my ($qry_cols, $order)
+        = $ids ? ('DISTINCT id', 'id')
+               : (join(', ', @cols), 'server_type__id, host_name');
     my $sel = prepare_ca(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   server $where
-        ORDER BY server_type__id, host_name
+        ORDER BY $order
     }, undef);
 
     # Just return the IDs, if they're what's wanted.

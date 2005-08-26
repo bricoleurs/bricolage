@@ -22,16 +22,6 @@ CREATE SEQUENCE seq_formatting_version START 1024;
 -- Unique IDs for the story_member table
 CREATE SEQUENCE seq_formatting_member START 1024;
 
--- Unique IDs for the attr_formatting table
-CREATE SEQUENCE seq_attr_formatting START 1024;
-
--- Unique IDs for each attr_formatting_*_val table
-CREATE SEQUENCE seq_attr_formatting_val START 1024;
-
--- Unique IDs for the formatting_meta table
-CREATE SEQUENCE seq_attr_formatting_meta START 1024;
-
-
 -- -----------------------------------------------------------------------------
 -- Table formatting
 --
@@ -81,6 +71,7 @@ CREATE TABLE formatting_instance (
     usr__id         INTEGER        NOT NULL,
     file_name       TEXT,
     data            TEXT,
+    checked_out     BOOLEAN        NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_formatting_instance__id PRIMARY KEY (id)
 );
 
@@ -96,6 +87,7 @@ CREATE TABLE formatting_version (
                                        DEFAULT NEXTVAL('seq_formatting_version'),
     formatting__id  INTEGER        NOT NULL,
     version         INTEGER,
+    note            TEXT,
     checked_out     BOOLEAN        NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_formatting_version__id PRIMARY KEY (id)
 );
@@ -114,58 +106,6 @@ CREATE TABLE formatting_member (
     member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_formatting_member__id PRIMARY KEY (id)
 );
-
--- -------------------------------------------------------------------------------
--- Table: attr_formatting
---
--- Description: A table to represent types of attributes.  A type is defined by
---              its subsystem, its formatting ID and an attribute name.
-
-CREATE TABLE attr_formatting (
-    id         INTEGER       NOT NULL
-                             DEFAULT NEXTVAL('seq_attr_formatting'),
-    subsys     VARCHAR(256)  NOT NULL,
-    name       VARCHAR(256)  NOT NULL,
-    sql_type   VARCHAR(30)   NOT NULL,
-    active     BOOLEAN       NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_formatting__id PRIMARY KEY (id)
-);
-
-
--- -------------------------------------------------------------------------------
--- Table: attr_formatting_val
---
--- Description: A table to hold attribute values.
-
-CREATE TABLE attr_formatting_val (
-    id           INTEGER         NOT NULL
-                                 DEFAULT NEXTVAL('seq_attr_formatting_val'),
-    object__id   INTEGER         NOT NULL,
-    attr__id     INTEGER         NOT NULL,
-    date_val     TIMESTAMP,
-    short_val    VARCHAR(1024),
-    blob_val     TEXT,
-    serial       BOOLEAN         DEFAULT FALSE,
-    active       BOOLEAN         NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_attr_formatting_val__id PRIMARY KEY (id)
-);
-
-
--- -------------------------------------------------------------------------------
--- Table: attr_formatting_meta
---
--- Description: A table to represent metadata on types of attributes.
-
-CREATE TABLE attr_formatting_meta (
-    id        INTEGER         NOT NULL
-                              DEFAULT NEXTVAL('seq_attr_formatting_meta'),
-    attr__id  INTEGER         NOT NULL,
-    name      VARCHAR(256)    NOT NULL,
-    value     VARCHAR(2048),
-    active    BOOLEAN         NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_formatting_meta__id PRIMARY KEY (id)
-);
-
 
 -- -----------------------------------------------------------------------------
 -- Indexes.
@@ -192,30 +132,8 @@ CREATE INDEX fkx_frmt_version__frmt_instance ON formatting_instance(formatting_v
 
 -- formatting_version
 CREATE INDEX fkx_formatting__frmt_version ON formatting_version(formatting__id);
+CREATE INDEX idx_formatting_version__note ON formatting_version(note) WHERE note IS NOT NULL;
 
 -- formatting_member.
 CREATE INDEX fkx_frmt__frmt_member ON formatting_member(object_id);
 CREATE INDEX fkx_member__frmt_member ON formatting_member(member__id);
-
--- Unique index on subsystem/name pair.
-CREATE UNIQUE INDEX udx_attr_frmt__subsys__name ON attr_formatting(subsys, name);
-
--- Indexes on name and subsys.
-CREATE INDEX idx_attr_frmt__name ON attr_formatting(LOWER(name));
-CREATE INDEX idx_attr_frmt__subsys ON attr_formatting(LOWER(subsys));
-
--- Unique index on object__id/attr__id pair.
-CREATE UNIQUE INDEX udx_attr_frmt_val__obj_attr ON attr_formatting_val (object__id,attr__id);
-
--- FK indexes on object__id and attr__id.
-CREATE INDEX fkx_frmt__attr_frmt_val ON attr_formatting_val(object__id);
-CREATE INDEX fkx_attr_frmt__attr_frmt_val ON attr_formatting_val(attr__id);
-
--- Unique index on attr__id/name pair.
-CREATE UNIQUE INDEX udx_attr_frmt_meta__attr_name ON attr_formatting_meta (attr__id, name);
-
--- Index on meta name.
-CREATE INDEX idx_attr_frmt_meta__name ON attr_formatting_meta(LOWER(name));
-
--- FK index on attr__id.
-CREATE INDEX fkx_attr_frmt__attr_frmt_meta ON attr_formatting_meta(attr__id);

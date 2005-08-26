@@ -1,5 +1,5 @@
 <%perl>
-my $note_img = %{ $story->get_notes } ? 'note_fill' : 'note';
+my $note_img = $story->has_notes ? 'note_fill' : 'note';
 my $rightText = qq{
 <a href="/workflow/profile/story/view_notes.html?id=} . $id .
  qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>
@@ -8,267 +8,130 @@ my $rightText = qq{
 };
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Information",
-	 number  => 1,
-         id      => 'storyinfo',
-	 rightText => $rightText
-
+          caption => "Information",
+          number  => 1,
+          id      => 'storyinfo',
+          rightText => $rightText
 );
 </%perl>
-<table border="0" width="578" cellpadding="0" cellspacing="0">
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('ID')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_id %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><%$lang->maketext('Story Type Element')%>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_element_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Title') %>:&nbsp;</span></td>
-  <td width="470" class="fieldcontent">&nbsp;<% $story->get_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Description') %>:&nbsp;</span></td>
-  <td width="470" class="fieldcontent">&nbsp;<% $story->get_description %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Slug') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_slug %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
+<dl class="viewmeta">
+  <dt><%$lang->maketext('UUID')%>:</dt>
+  <dd><% $story->get_uuid %></dd>
+  <dt><%$lang->maketext('Element')%>:</dt>
+  <dd><% $story->get_element_name %></dd>
+  <dt><% $lang->maketext('Title') %>:</dt>
+  <dd><% $story->get_name %></dd>
+  <dt><% $lang->maketext('Description') %>:</dt>
+  <dd><% $story->get_description || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Slug') %>:</dt>
+  <dd><% $story->get_slug || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('URI') %>:</dt>
 % if (@ocs == 1) {
-  <td width="470">&nbsp;<% $m->comp('/widgets/profile/preview_link.mc',
-                                    type  => 'story',
-                                    title => $short_story_uri,
-                                    doc   => $story,
-                                    style => 'blackUnderlinedLink') %></td>
+  <dd><& '/widgets/profile/preview_link.mc',
+          type  => 'story',
+          value => $short_story_uri,
+          title => $story_uri,
+          doc   => $story,
+          style => 'blackUnderlinedLink' &>&nbsp;</dd>
 % } else {
-  <td width="470">&nbsp;
+  <dd>
 % if (!($short_story_uri eq $story_uri)) {
         <span class="shortCategory" title="<% $story->get_primary_uri %>"><% $short_story_uri %></span>
 % } else {
-        <% $story_uri %>
+        <% $story_uri || '&nbsp;' %>
 % }
-  </td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Preview in') %>:&nbsp;</span></td>
-  <td width="470" valign="middle">&nbsp;<% $oc_select %>&nbsp;<%
+  </dd>
+  <dt><% $lang->maketext('Preview in') %>:</dt>
+  <dd><% $oc_select %>&nbsp;<%
                            $m->comp('/widgets/profile/preview_link.mc',
                                     type  => 'story',
-                                    title => $story->get_primary_uri,
+                                    value => $story->get_primary_uri,
                                     doc   => $story,
                                     oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
-                                    style => 'blackUnderlinedLink') %></td>
+                                    style => 'blackUnderlinedLink') %></dd>
 % }
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Source') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% Bric::Biz::Org::Source->lookup({ id => $story->get_source__id })->get_source_name %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
+  <dt><% $lang->maketext('Source') %>:</dt>
+  <dd><% Bric::Biz::Org::Source->lookup({ id => $story->get_source__id })->get_source_name %></dd>
 % unless (ENABLE_CATEGORY_BROWSER) {
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" valign="top" class="medHeader"><span class="label"><% $lang->maketext('Categories') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<%perl>
+  <dt><% $lang->maketext('Categories') %>:</dt>
+  <dd><%perl>
 $m->print(join '<br />&nbsp;', sort { $a cmp $b }
           map { $_->get_uri } $story->get_categories);
-</%perl>
-  </td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
+</%perl></dd>
 % }   # unless ENABLE_CATEGORY_BROWSER
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Cover Date') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_cover_date %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Current Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_current_version %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Published Version') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_published_version || ''%></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('First Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_first_publish_date || '' %></td>
-  </tr>
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Last Published') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_publish_date || '' %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Expire Date') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% $story->get_expire_date %></td>
-  </tr>
-
-  <tr>
-  <td bgcolor="white"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <tr>
-  <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
-  <td width="<% $infoIndent %>" align="right" class="medHeader"><span class="label"><% $lang->maketext('Output Channels') %>:&nbsp;</span></td>
-  <td width="470">&nbsp;<% join ', ', (map { $_->get_name } $story->get_output_channels) %></td>
-  </tr>
-
-</table>
+  <dt><% $lang->maketext('Cover Date') %>:</dt>
+  <dd><% $story->get_cover_date %></dd>
+  <dt><% $lang->maketext('Current Version') %>:</dt>
+  <dd><% $story->get_current_version %></dd>
+  <dt><% $lang->maketext('Published Version') %>:</dt>
+  <dd><% $story->get_published_version || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('First Published') %>:</dt>
+  <dd><% $story->get_first_publish_date || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Last Published') %>:</dt>
+  <dd><% $story->get_publish_date || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Expire Date') %>:</dt>
+  <dd><% $story->get_expire_date || '&nbsp;' %></dd>
+  <dt><% $lang->maketext('Output Channels') %>:</dt>
+  <dd><% join ', ', (map { $_->get_name } $story->get_output_channels) %></dd>
+</dl>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <& '/widgets/container_prof/container_prof.mc',
-	tile   => $tile,
-	tile_type => 'story',
-	action    => 'view',
-	start_count => 4,
-        num      => 2
+    tile        => $tile,
+    tile_type   => 'story',
+    action      => 'view',
+    start_count => 4,
+    num         => 2
 &>
 
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => "Associations",
-%	 number  => 3);
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=20 class="medHeader"><img src="/media/images/spacer.gif" width="20" height="20" /></td>
-  <td width=100 class="medHeader"><span class="label"><% $lang->maketext('Type') %></span></td>
-  <td width=1><img src="/media/images/spacer.gif" width="1" height="20" /></td>
-  <td width=458 class="medHeader"><span class="label">&nbsp;<% $lang->maketext('Values') %></span></td>
-</tr>
-</table>
-
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=121 align=right valign=top><span class=label><% $lang->maketext('Categories') %>:&nbsp;</span></td>
-  <td width=457 valign=top height="25">
-<%perl>
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Associations",
+    number  => 3
+&>
+<table class="associations">
+<tr class="odd">
+  <th><% $lang->maketext('Categories') %>:</th>
+  <td><%perl>
 my @cats;
 foreach my $cat ($story->get_categories) {
     push @cats, $cat->get_name;
 }
 
 $m->out(scalar(@cats) ? join(", ", @cats) : $lang->maketext("No categories defined."));
-</%perl>
+</%perl></td>
 </tr>
-</table>
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 width=578 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=121 align=right valign=top><span class=label><% $lang->maketext('Keywords') %>:&nbsp;</span></td>
-  <td width=457 valign=top height="25">
-<%perl>
+<tr class="even">
+  <th><% $lang->maketext('Keywords') %>:</th>
+  <td><%perl>
 my @keywords;
 foreach my $kw ($story->get_keywords) {
     push @keywords, $kw->get_name;
 }
 
 $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
-</%perl>
+</%perl></td>
 </tr>
-</table>
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr><td class="medHeader"><img src="/media/images/spacer.gif" width="578" height="1" /></td></tr>
-</table>
-
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr>
-  <td align=right width=121 valign=top><span class=label><% $lang->maketext('Contributors') %>:&nbsp;</span></td>
-  <td width=457 valign=top height="25">
-
-<%perl>
+<tr class="odd">
+  <th><% $lang->maketext('Contributors') %>:</th>
+  <td><%perl>
 my @contribs;
 foreach my $cntr ($story->get_contributors) {
     push @contribs,  $cntr->get_name;
 }
 $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
 
-</%perl>
-
-  </td>
-</table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
-
-<table width=160 cellpadding=0 cellspacing=0>
-<tr>
-  <td width=80><input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|return_cb" value="Return To Desk">
-  </td>
+</%perl></td>
 </tr>
 </table>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<& '/widgets/profile/button.mc',
+    disp      => $lang->maketext("Return"),
+    widget    => $widget,
+    cb        => 'return_cb',
+    button    => 'return_dgreen',
+    useTable  => 0 &>
 
 
 <%args>

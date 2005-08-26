@@ -5,16 +5,19 @@
 &>
 
 <form method="post" action="<% $r->uri %>" name="my_alerts">
-
+<& '/widgets/wrappers/sharky/table_top.mc', 
+     caption => "Unacknowledged $pl_disp"
+&>
 <& '/widgets/listManager/listManager.mc',
 	 object => 'recip',
 	 constrain => {user_id => $u->get_id, ack_time => undef },
 	 fields => [qw(timestamp subject message)],
 	 profile => undef,
 	 addition => undef,
-	 title => "Unacknowledged $pl_disp",
 	 select => ['Acknowledge', "recip_id"]
 &>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <& '/widgets/profile/button.mc',
     disp    => 'Acknowledge Checked',
     widget  => $type,

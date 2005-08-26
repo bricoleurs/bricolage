@@ -121,10 +121,16 @@ use constant DEBUG => 0;
 my @cols = qw(a.id a.ord a.server_type__id a.active t.name t.description m.name);
 my @props = qw(id ord server_type_id _active type description medias_href);
 
-my %nmap = ( id => 'a.id = ?',
-             server_type_id => 'a.server_type__id = ?');
-my %tmap = ( type => 'LOWER(t.name) LIKE ?',
-             description => 'LOWER(t.description) LIKE ?' );
+my %nmap = (
+    id             => 'a.id = ?',
+    server_type_id => 'a.server_type__id = ?',
+    action_type_id => 't.id = ?',
+);
+my %tmap = (
+    type        => 'LOWER(t.name) LIKE LOWER(?)',
+    action_type => 'LOWER(t.name) LIKE LOWER(?)',
+    description => 'LOWER(t.description) LIKE LOWER(?)'
+);
 
 my @ord = qw(type ord description active);
 my $meths;
@@ -294,19 +300,28 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-type
+Action ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item action_type_id
 
-server_type_id
+The ID of an ation type. May use C<ANY> for a list of possible values.
 
-=item *
+=item action_type
 
-class
+=item type
 
-description
+The name of an action type. May use C<ANY> for a list of possible values.
+
+=item server_type_id
+
+The ID of a destination (server type) with which actions may be associated.
+May use C<ANY> for a list of possible values.
+
+=item description
+
+An action type description. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1578,16 +1593,14 @@ $get_em = sub {
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
         if ($nmap{$k}) {
-            push @wheres, $nmap{$k};
-            push @params, $v;
+            push @wheres, any_where $v, $nmap{$k}, \@params;
         } elsif ($tmap{$k}) {
-            push @wheres, $tmap{$k};
-            push @params, lc $v;
+            push @wheres, any_where $v, $tmap{$k}, \@params;
         } elsif ($k eq 'active') {
             push @wheres, 'a.active = ?';
             push @params, $v ? 1 : 0;
         } else {
-            throw_gen(error => "Invalid parameter '$k' passed to constructor method.");
+            throw_gen "Invalid parameter '$k' passed to constructor method.";
         }
     }
 

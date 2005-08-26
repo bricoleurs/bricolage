@@ -22,6 +22,18 @@ DIST_PIDFILE=$BRICOLAGE_ROOT/log/bric_queued.pid
 
 # % cp contrib/start_scripts/linux /etc/init.d/bricolage
 # % chmod +x /etc/init.d/bricolage
+#
+# Then, either create symlinks to the startup script:
+#
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc0.d/K02bricolage
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc1.d/K02bricolage
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc2.d/K02bricolage
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc3.d/S98bricolage
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc4.d/S98bricolage
+# % ln -s /etc/init.d/bricolage /etc/rc.d/rc5.d/S98bricolage
+#
+# Or, if you have chkconfig, simply:
+#
 # % /sbin/chkconfig --add bricolage
 
 ##############################################################################

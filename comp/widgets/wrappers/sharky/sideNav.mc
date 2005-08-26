@@ -19,28 +19,27 @@ my $printLink = sub {
     # Make sure we have something to eq to.
     for (1..5) { $uri[$_] = '' unless defined $uri[$_] }
     my $isLink = 1;
-    my $sectionColor = $href[1] eq "admin" ? "orange" : "blue";
     my $out = '';
-    my $style = "$sectionColor" . "Link";
+    my $style;
 
     if ($uri[1] eq "admin") {
-        $style .= " selected" if ($uri[1] eq $href[1] && $uri[3] eq $href[3]);
+        $style = qq{ class="selected"} if ($uri[1] eq $href[1] && $uri[3] eq $href[3]);
         # disable link in admin/manager when we have a full url match
         $isLink = ($uri[2] eq $href[2]) ? 0:1;
         $isLink = 1 if ($uri[3] eq "element" && defined $uri[4]);
     } else {
         if ($uri[3] eq "desk") {
-            $style .= " selected" if $uri[1] eq $href[1] && $uri[3] eq $href[3]
+            $style = qq{ class="selected"} if $uri[1] eq $href[1] && $uri[3] eq $href[3]
               && $uri[4] eq $href[4] && $uri[5] eq $href[5];
         } elsif ($uri[2] eq "manager" || $uri[2] eq "profile" || $uri[2] eq "active") {
-            $style .= " selected" if $uri[1] eq $href[1] && $uri[2] eq $href[2]
+            $style = qq{ class="selected"} if $uri[1] eq $href[1] && $uri[2] eq $href[2]
               && $uri[3] eq $href[3] && $uri[4] eq $href[4];
         }
     }
     if ($style =~ "selected" && !$isLink) {
-        $out .= qq {<span class="$style">$caption</span>};
+        $out .= qq {<span$style>$caption</span>};
     } else {
-        $out .= qq {<a href="$href" class="$style" target="_parent">$caption</a>};
+        $out .= qq {<a href="$href" target="_parent"$style>$caption</a>};
     }
     return $out;
 };
@@ -48,25 +47,16 @@ my $printLink = sub {
 <%perl>;
 my $site_id = $c->get_user_cx(get_user_id);
 # Make sure we always have a site ID. If the server has just been restarted,
-# then sit_context may not have been executed yet. So execute it to get the
+# then site_context may not have been executed yet. So execute it to get the
 # site ID.
 $site_id = $m->comp('/widgets/site_context/site_context.mc', display => 0)
   unless defined $site_id;
-# Figure out where we are (assume it's "My Workspace").
-my ($section, $mode, $type) = split '/', substr($ARGS{uri}, 1);
-($section, $mode, $type) = qw(workflow profile workspace) unless $section;
-
-my $workflowGraphic           = $section eq 'admin'
-  ? "/media/images/$lang_key/workflow_admin.gif"
-  : "/media/images/$lang_key/workflow_workflow.gif";
-my $workspaceGraphic          = $type eq "workspace"
-  ? "/media/images/$lang_key/my_workspace_on.gif"
-  : "/media/images/$lang_key/my_workspace_off.gif";
 
 my $workflows = $c->get('__WORKFLOWS__'. $site_id);
 
 $uri ||= $r->uri;
 $uri = '/workflow/profile/workspace' unless $uri && $uri ne '/';
+
 $nav ||= get_state_data("nav");
 unless ($workflows) {
     # The cache hasn't been loaded yet. Load it.
@@ -96,17 +86,26 @@ unless ($workflows) {
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
-  <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
-  <script type="text/javascript" src="/media/js/lib.js"></script>
+<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
+<script type="text/javascript" src="/media/js/lib.js"></script>
+  
+<script type="text/javascript">
+window.onload = function () {
+    var workspace = document.getElementById("workspace");
+    var workspaceAnchor = workspace.getElementsByTagName("a")[0];
+    workspaceAnchor.className = (parent.location.pathname.indexOf("workspace") != -1) ? "open" : "closed";
+    resizeframe();
+}
+</script>
 </head>
-<body id="navFrame" onload="resizeframe();">
-<div class="btn-workflow"><img src="<% $workflowGraphic %>" alt="Workflow" /></div>
-<div class="btn-workspace"><a href="/workflow/profile/workspace/" target="_parent"><img src="<% $workspaceGraphic %>" alt="Workspace"></a></div>
-
-% # Begin Workflows -------------------------------------
-<ul class="workflows">
-<%perl>;
+<body id="navFrame">
+<%perl>
+# Begin Workflows -------------------------------------
+$m->out(qq{<ul id="nav">});
+$m->out(qq{<li id="workspace"><a class="closed" href="/workflow/profile/workspace/" target="_parent" title="My Workspace">My Workspace</a></li>});
+$m->out(qq{<li id="workflows">});
+$m->out(qq{<ul class="submenu">});
 # iterate thru workflows
 foreach my $wf (@$workflows) {
     next if $site_id && $site_id != $wf->{site_id};
@@ -114,118 +113,116 @@ foreach my $wf (@$workflows) {
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
 
     if ( $nav->{"workflow-$wf->{id}"} ) { # show open workflow
-</%perl>
-    <li class="open"><a href="<% $r->uri %>?nav|workflow_cb=0&navwfid=<% $wf->{id} %>"><% $wf->{name} %></a>
 
-% # actions/desks/publish items for this workflow
-% my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
-% # actions
-        <ul class="submenu">
-            <li><% $lang->maketext('Actions') %>
-                <ul class="items">
-%               if ($wf->{type} == TEMPLATE_WORKFLOW) {
-%                   if ($can_create) {
-                    <li><% &$printLink("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}") %></li>
-%                   }
-                    <li><% &$printLink("/workflow/manager/templates/$wf->{id}", $uri, "Find $pl_disp->{formatting}") %></li>
-                    <li><% &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") %></li>
-%               } elsif ($wf->{type} == STORY_WORKFLOW) {
-%                   if ($can_create) {
-                    <li><% &$printLink("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}") %></li>
-%                   }
-                    <li><% &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") %></li>
-                    <li><% &$printLink("/workflow/manager/story/$wf->{id}", $uri, "Find $pl_disp->{story}") %></li>
-                    <li><% &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") %></li>
-%               } elsif ($wf->{type} == MEDIA_WORKFLOW) {
-%                   if ($can_create) {
-                    <li><% &$printLink("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}") %></li>
-%                   }
-                    <li><% &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") %></li>
-                    <li><% &$printLink("/workflow/manager/media/$wf->{id}", $uri, "Find $pl_disp->{media}") %></li>
-                    <li><% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %></li>
-%               }
-                </ul>
-            </li>
-% # desks
-            <li><% $lang->maketext('Desks') %>
-                <ul class="items">
-%               foreach my $d (@{$wf->{desks}}) {
-%                   next unless chk_authz(0, READ, 1, @{ $d->[2] });
-                    <li><% &$printLink("/workflow/profile/desk/$wf->{id}/$d->[0]/", $uri, $d->[1], 1) %></li>
-%               }
-                </ul>
-            </li>
-        </ul>
-    </li>
-%   } else { # closed state
-    <li class="closed"><a href="<% $r->uri %>?nav|workflow_cb=1&navwfid=<% $wf->{id} %>"><% $wf->{name} %></a></li>
-%   }
-% }
-</ul>
-% # End Workflows -------------------------------------
-% # Begin Admin --------------------------------------
-<ul class="admin">
-% # First, admin section top graphic
-% if ( $nav->{admin} ) {
-% # admin always get inactive bg color, but arrow varies
-    <li class="open"><a href="<% $r->uri . "?nav|admin_cb=0" %>"><% $lang->maketext('Admin') %></a>
-        <ul class="submenu">
-% # Begin system submenus
-% if ( $nav->{adminSystem} ) { # open system submenu
-            <li class="open"><a href="<% $r->uri . "?nav|adminSystem_cb=0" %>"><% $lang->maketext('System') %></a>
-                <ul class="items">
-                    <li><% &$printLink('/admin/manager/pref', $uri, $pl_disp->{pref}) %>
-                    <li><% &$printLink('/admin/manager/user', $uri, $pl_disp->{user}) %>
-                    <li><% &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) %>
-                    <li><% &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) %>
-                    <li><% &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) %>
-                </ul>
-            </li>
-% } else { # closed system submenu
-            <li class="closed"><a href="<% $r->uri . "?nav|adminSystem_cb=1" %>"><% $lang->maketext('System') %></a></li>
-% }
-% # End system submenus
-% # begin publishing submenus   
-% if ( $nav->{adminPublishing} ) { #open publishing submenu
-            <li class="open"><a href="<% $r->uri . "?nav|adminPublishing_cb=0" %>"><% $lang->maketext('Publishing') %></a>
-                <ul class="items">
-                    <li><% &$printLink('/admin/manager/input_channel', $uri, $pl_disp->{input_channel}) %></li>
-                    <li><% &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) %></li>
-                    <li><% &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) %></li>
-                    <li><% &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) %></li>
-                    <li><% &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) %></li>
-                    <li><% &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) %></li>
-                    <li><% &$printLink('/admin/manager/element', $uri, $pl_disp->{element}) %></li>
-                    <li><% &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) %></li>
-                    <li><% &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) %></li>
-                    <li><% &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) %></li>
-                    <li><% &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) %></li>
-                    <li style="padding-top: 1em;"><% &$printLink('/admin/control/publish', $uri, 'Bulk Publish') %></li>
-                </ul>
-            </li>
-% } else { # closed publishing submenu
-            <li class="closed"><a href="<% $r->uri . "?nav|adminPublishing_cb=1" %>"><% $lang->maketext('Publishing') %></a></li>
-% }
-% # End publishing submenus
-% # Begin distribution submenus
-% if ( $nav->{distSystem} ) { # open distribution submenu
-            <li class="open"><a href="<% $r->uri . "?nav|distSystem_cb=0" %>"><% $lang->maketext('Distribution') %></a>
-                <ul class="items">
-                    <li><% &$printLink('/admin/manager/dest', $uri, $pl_disp->{dest}) %></li>
-                    <li><% &$printLink('/admin/manager/job', $uri, $pl_disp->{job}) %></li>
-                </ul>
-            </li>
-% } else { # closed distribution submenu
-            <li class="closed"><a href="<% $r->uri . "?nav|distSystem_cb=1" %>"><% $lang->maketext('Distribution') %></a></li>
-% }
-% # End distribution submenus
-        </ul>
-    </li>
-% } else { # closed admin state
-    <li class="closed"><a href="<% $r->uri . "?nav|admin_cb=1" %>"><% $lang->maketext('Admin') %></a></li>
-% }
-% # End Admin --------------------------------------
-</ul>
+    $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|workflow_cb=0&navwfid=} . $wf->{id} . qq{">} . $wf->{name} . qq{</a>});
+    # actions/desks/publish items for this workflow
+    my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
+    
+    # actions
+    $m->out(qq{<ul class="sections">});
+    $m->out(qq{<li>} . $lang->maketext('Actions'));
+        $m->out(qq{<ul class="items">});
+        if ($wf->{type} == TEMPLATE_WORKFLOW) {
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}") . qq{</li>}) if ($can_create);
+            $m->out(qq{<li>} . &$printLink("/workflow/manager/templates/$wf->{id}", $uri, "Find $pl_disp->{formatting}") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") . qq{</li>});
+        } elsif ($wf->{type} == STORY_WORKFLOW) {
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}") . qq{</li>}) if ($can_create);
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/manager/story/$wf->{id}", $uri, "Find $pl_disp->{story}") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") . qq{</li>});
+        } elsif ($wf->{type} == MEDIA_WORKFLOW) {
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}") . qq{</li>}) if ($can_create);
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/manager/media/$wf->{id}", $uri, "Find $pl_disp->{media}") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") . qq{</li>});
+        }
+        $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+    # desks
+    $m->out(qq{<li>} . $lang->maketext('Desks'));
+        $m->out(qq{<ul class="items">});
+        foreach my $d (@{$wf->{desks}}) {
+            next unless chk_authz(0, READ, 1, @{ $d->[2] });
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/desk/$wf->{id}/$d->[0]/", $uri, $d->[1], 1) . qq{</li>});
+        }
+        $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+    $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+    } else { # closed state
+        $m->out(qq{<li class="closed"><a href="} . $r->uri . qq{?nav|workflow_cb=1&navwfid=} . $wf->{id} . qq{">} . $wf->{name} . qq{</a></li>});
+    }
+}
+$m->out(qq{</ul>});
+$m->out(qq{</li>});
+# End Workflows -------------------------------------
+
+# Begin Admin --------------------------------------
+# First, admin section top graphic
+if ( $nav->{admin} ) {
+# admin always get inactive bg color, but arrow varies
+$m->out(qq{<li id="admin" class="open"><a href="} . $r->uri . qq{?nav|admin_cb=0">} . $lang->maketext('Admin') . qq{</a>});
+$m->out(qq{<ul class="submenu">});
+# Begin system submenus
+if ( $nav->{adminSystem} ) { # open system submenu
+    $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|adminSystem_cb=0">} . $lang->maketext('System') . qq{</a>});
+        $m->out(qq{<ul class="items">});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/pref', $uri, $pl_disp->{pref}). qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/user', $uri, $pl_disp->{user}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) . qq{</li>});
+        $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+} else { # closed system submenu
+    $m->out(qq{<li class="closed"><a href="} . $r->uri . qq{?nav|adminSystem_cb=1">} . $lang->maketext('System') . qq{</a></li>});
+}
+# End system submenus
+
+# Begin publishing submenus   
+if ( $nav->{adminPublishing} ) { #open publishing submenu
+    $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|adminPublishing_cb=0">} . $lang->maketext('Publishing') . qq{</a>});
+        $m->out(qq{<ul class="items">});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/element', $uri, $pl_disp->{element}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) . qq{</li>});
+        $m->out(qq{<li style="padding-top: 1em;">} . &$printLink('/admin/control/publish', $uri, 'Bulk Publish') . qq{</li>});
+        $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+} else { # closed publishing submenu
+    $m->out(qq{<li class="closed"><a href="} . $r->uri . qq{?nav|adminPublishing_cb=1">} . $lang->maketext('Publishing') . qq{</a></li>});
+}
+# End publishing submenus
+
+# Begin distribution submenus
+if ( $nav->{distSystem} ) { # open distribution submenu
+    $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|distSystem_cb=0">} . $lang->maketext('Distribution') . qq{</a>});
+        $m->out(qq{<ul class="items">});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/dest', $uri, $pl_disp->{dest}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/job', $uri, $pl_disp->{job}) . qq{</li>});
+        $m->out(qq{</ul>});
+    $m->out(qq{</li>});
+} else { # closed distribution submenu
+    $m->out(qq{<li class="closed"><a href="} . $r->uri . qq{?nav|distSystem_cb=1">} . $lang->maketext('Distribution') . qq{</a></li>});
+}
+# End distribution submenus
+    
+    $m->out(qq{</ul>});
+$m->out(qq{</li>});
+} else { # closed admin state
+$m->out(qq{<li id="admin" class="closed"><a href="} . $r->uri . qq{?nav|admin_cb=1">} . $lang->maketext('Admin') . qq{</a></li>});
+}
+# End Admin --------------------------------------
+$m->out(qq{</ul>});
+</%perl>
 
 % # begin debug widget
 % if (Bric::Config::QA_MODE && $debug) {

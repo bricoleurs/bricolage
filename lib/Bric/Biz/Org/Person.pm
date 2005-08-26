@@ -325,37 +325,51 @@ supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-name
+Person/Organization ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-long_name
+The organization's name. May use C<ANY> for a list of possible values.
 
-=item *
+=item long_name
 
-org_id
+The long name of the organization. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item personal
 
-role
+A boolean indicating whether or not the oganization is a person.
 
-=item *
+=item org_id
 
-person_id
+The organization ID, which is different from this object's ID. Yes, this is a
+bad idea. May use C<ANY> for a list of possible values.
 
-=item *
+=item role
 
-title
+The role describing the relationship between the person and the organization.
 
-=item *
+=item person_id
 
-department
+The ID of the person associated with the organization. May use C<ANY> for a
+list of possible values.
 
-=item *
+=item title
 
-grp_id
+The person's title within the organization. May use C<ANY> for a list of
+possible values.
+
+=item department
+
+The department the person works in. May use C<ANY> for a list of possible
+values.
+
+=item grp_id
+
+A Bric::Util::Grp::Keyword object ID. May use C<ANY> for a list of possible
+values.
 
 =back
 
@@ -1463,17 +1477,20 @@ $get_em = sub {
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($NUM_MAP{$k}) {
-            $wheres .= " AND $NUM_MAP{$k} = ?";
-            push @params, $v;
+            $wheres .= " AND " . any_where $v, "$NUM_MAP{$k} = ?", \@params;
         } elsif ($TXT_MAP{$k}) {
-            $wheres .= " AND LOWER($TXT_MAP{$k}) LIKE ?";
-            push @params, lc $v;
+            $wheres .= " AND "
+                    . any_where $v, "LOWER($TXT_MAP{$k}) LIKE LOWER(?)", \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, org_member c2";
-            $wheres .= " AND o.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $wheres .= " AND o.id = c2.object_id AND c2.member__id = m2.id"
+              . " AND m2.active = '1' "
+              . any_where $v, "AND m2.grp__id = ?", \@params;
+        } elsif ($k eq 'personal') {
+            # Simple boolean numeric comparison.
+            $wheres .= " AND a.personal = ?";
+            push @params, $v ? 1 : 0;
         }
     }
 
