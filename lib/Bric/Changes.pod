@@ -28,21 +28,23 @@ C<href()> methods in the following classes:
 
 =over
 
-=item Bric::Dist::Action
+=item L<Bric::Dist::Action|Bric::Dist::Action>
 
-=item Bric::Dist::ActionType
+=item L<Bric::Dist::ActionType|Bric::Dist::ActionType>
 
-=item Bric::Dist::Resource
+=item L<Bric::Dist::Resource|Bric::Dist::Resource>
 
-=item Bric::Dist::Server
+=item L<Bric::Dist::Server|Bric::Dist::Server>
 
-=item Bric::Dist::ServerType
+=item L<Bric::Dist::ServerType|Bric::Dist::ServerType>
 
-=item Bric::Util::Alert
+=item L<Bric::Util::Alert|Bric::Util::Alert>
 
-=item Bric::Util::Alerted
+=item L<Bric::Util::Alerted|Bric::Util::Alerted>
 
 =back
+
+[David]
 
 =back
 
@@ -89,6 +91,8 @@ Updated search documentation and wrote tests for:
 =item L<Bric::Util::Alerted|Bric::Util::Alerted>
 
 =back
+
+[David]
 
 =back
 
@@ -195,41 +199,41 @@ C<href()> methods in the following classes:
 
 =over
 
-=item Bric::Biz::ATType
+=item L<Bric::Biz::ATType|Bric::Biz::ATType>
 
-=item Bric::Biz::AssetType
+=item L<Bric::Biz::AssetType|Bric::Biz::AssetType>
 
-=item Bric::Biz::AssetType::Parts::Data
+=item L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>
 
-=item Bric::Biz::Category
+=item L<Bric::Biz::Category|Bric::Biz::Category>
 
-=item Bric::Biz::Contact
+=item L<Bric::Biz::Contact|Bric::Biz::Contact>
 
-=item Bric::Biz::Keyword
+=item L<Bric::Biz::Keyword|Bric::Biz::Keyword>
 
-=item Bric::Biz::Org
+=item L<Bric::Biz::Org|Bric::Biz::Org>
 
-=item Bric::Biz::Org::Parts::Addr
+=item L<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>
 
-=item Bric::Biz::Org::Person
+=item L<Bric::Biz::Org::Person|Bric::Biz::Org::Person>
 
-=item Bric::Biz::Org::Source
+=item L<Bric::Biz::Org::Source|Bric::Biz::Org::Source>
 
-=item Bric::Biz::OutputChannel
+=item L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>
 
-=item Bric::Biz::OutputChannel::Element
+=item L<Bric::Biz::OutputChannel::Element|Bric::Biz::OutputChannel::Element>
 
-=item Bric::Biz::Person
+=item L<Bric::Biz::Person|Bric::Biz::Person>
 
-=item Bric::Biz::Person::User
+=item L<Bric::Biz::Person::User|Bric::Biz::Person::User>
 
-=item Bric::Biz::Site
+=item L<Bric::Biz::Site|Bric::Biz::Site>
 
-=item Bric::Biz::Workflow
+=item L<Bric::Biz::Workflow|Bric::Biz::Workflow>
 
-=item Bric::Biz::Workflow::Parts::Desk
+=item L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk>
 
-=item Bric::Util::Grp
+=item L<Bric::Util::Grp|Bric::Util::Grp>
 
 =back
 
@@ -468,10 +472,19 @@ backwards compatibility, but are no longer required. [David]
 
 =item *
 
-Updated search documentation and wrote tests for
-L<Bric::Biz::Contact|Bric::Biz::Contact>,
-L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>, and
-L<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>. [David]
+Updated search documentation and wrote tests for:
+
+=over
+
+=item L<Bric::Biz::Contact|Bric::Biz::Contact>
+
+=item L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>
+
+=itemL<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>
+
+[David]
+
+=back
 
 =back
 
