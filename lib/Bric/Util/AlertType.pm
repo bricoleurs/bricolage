@@ -2854,7 +2854,7 @@ $upd_cont = sub {
         }
 
         # Now reset the new and del caches.
-        $self->_set(["_del_$cat", "_new_$cat"], [undef, undef]);
+        $self->_set(["_del_$cat", "_new_$cat"], [{}, {}]);
     }
 };
 

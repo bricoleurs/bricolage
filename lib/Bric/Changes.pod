@@ -40,6 +40,8 @@ C<href()> methods in the following classes:
 
 =item Bric::Util::Alert
 
+=item Bric::Util::Alerted
+
 =back
 
 =back
@@ -76,8 +78,17 @@ C<any> of their versions having a note matching the C<note> parameter. [David]
 
 =item *
 
-Updated search documentation and wrote tests for
-L<Bric::Dist::ActionType|Bric::Dist::ActionType>.
+Updated search documentation and wrote tests for:
+
+=over
+
+=item L<Bric::Dist::ActionType|Bric::Dist::ActionType>
+
+=item L<Bric::Util::Alert|Bric::Util::Alert>
+
+=item L<Bric::Util::Alerted|Bric::Util::Alerted>
+
+=back
 
 =back
 

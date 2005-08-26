@@ -123,7 +123,7 @@ sub test_list : Test(53) {
     # Try subject.
     ok @alerts = Bric::Util::Alert->list({ subject => $subject . '1' }),
         "Search on subject";
-    is scalar @alerts, 2, 'Should have one alert';
+    is scalar @alerts, 2, 'Should have two alerts';
     ok @alerts = Bric::Util::Alert->list({ subject => $subject . '%' }),
         "Search on subject + wildcard";
     is scalar @alerts, 10, 'Should have ten alerts';
@@ -135,7 +135,7 @@ sub test_list : Test(53) {
     # Try name.
     ok @alerts = Bric::Util::Alert->list({ name => $subject . '1' }),
         "Search on name";
-    is scalar @alerts, 2, 'Should have one alert';
+    is scalar @alerts, 2, 'Should have two alerts';
     ok @alerts = Bric::Util::Alert->list({ name => $subject . '%' }),
         "Search on name + wildcard";
     is scalar @alerts, 10, 'Should have ten alerts';
@@ -147,7 +147,7 @@ sub test_list : Test(53) {
     # Try message.
     ok @alerts = Bric::Util::Alert->list({ message => $message . '1' }),
         "Search on message";
-    is scalar @alerts, 2, 'Should have one alert';
+    is scalar @alerts, 2, 'Should have two alerts';
     ok @alerts = Bric::Util::Alert->list({ message => $message . '%' }),
         "Search on message + wildcard";
     is scalar @alerts, 10, 'Should have ten alerts';
@@ -227,7 +227,7 @@ sub test_list_ids : Test(53) {
     # Try subject.
     ok @alert_ids = Bric::Util::Alert->list_ids({ subject => $subject . '1' }),
         "Search on subject";
-    is scalar @alert_ids, 2, 'Should have one alert';
+    is scalar @alert_ids, 2, 'Should have two alerts';
     ok @alert_ids = Bric::Util::Alert->list_ids({ subject => $subject . '%' }),
         "Search on subject + wildcard";
     is scalar @alert_ids, 10, 'Should have ten alert IDs';
@@ -239,7 +239,7 @@ sub test_list_ids : Test(53) {
     # Try name.
     ok @alert_ids = Bric::Util::Alert->list_ids({ name => $subject . '1' }),
         "Search on name";
-    is scalar @alert_ids, 2, 'Should have one alert';
+    is scalar @alert_ids, 2, 'Should have two alerts';
     ok @alert_ids = Bric::Util::Alert->list_ids({ name => $subject . '%' }),
         "Search on name + wildcard";
     is scalar @alert_ids, 10, 'Should have ten alert IDs';
@@ -251,7 +251,7 @@ sub test_list_ids : Test(53) {
     # Try message.
     ok @alert_ids = Bric::Util::Alert->list_ids({ message => $message . '1' }),
         "Search on message";
-    is scalar @alert_ids, 2, 'Should have one alert';
+    is scalar @alert_ids, 2, 'Should have two alerts';
     ok @alert_ids = Bric::Util::Alert->list_ids({ message => $message . '%' }),
         "Search on message + wildcard";
     is scalar @alert_ids, 10, 'Should have ten alert IDs';

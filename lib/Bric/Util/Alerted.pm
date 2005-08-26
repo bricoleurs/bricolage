@@ -59,7 +59,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Util::DBI qw(:standard col_aref);
+use Bric::Util::DBI qw(:all);
 use Bric::Util::Fault qw(throw_dp);
 use Bric::Biz::Person::User;
 use Bric::Util::Alert;
@@ -95,8 +95,15 @@ my @by_cols = qw(c.type v.contact_value__value v.sent_time);
 my @by_props = qw(type value sent_time);
 my @props = qw(id alert_id user_id ack_time subject message timestamp
                _meths_sent);
-my %map = (alert_id => 'a.alert__id = ?',
-           user_id => 'a.usr__id = ?');
+my %map = (
+    alert_id      => 'a.alert__id = ?',
+    user_id       => 'a.usr__id = ?',
+    event_id      => 'b.event__id = ?',
+    alert_type_id => 'b.alert_type__id = ?',
+    subject       => 'LOWER(b.subject) LIKE LOWER(?)',
+    name          => 'LOWER(b.subject) LIKE LOWER(?)',
+    message       => 'LOWER(b.message) LIKE LOWER(?)',
+);
 my $meths;
 my @ord = qw(alert_id alert user_id user ack_time subject message timestamp
              sent);
@@ -199,31 +206,50 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-alert_id
+Alerted ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item alert_id
 
-user_id
+A Bric::Util::Alert ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item user_id
 
-ack_time - May pass in as an anonymous array of two values, the first the
-minimum acknowledged time, the second the maximum acknowledged time. If the
-first array item is undefined, then the second will be considered the date that
-ack_time must be less than. If the second array item is undefined, then the
-first will be considered the date that ack_time must be greater than. If the
-value passed in is undefined, then the query will specify 'IS NULL'.
+A Bric::Biz::Person::User ID. May use C<ANY> for a list of possible values.
+
+=item timestamp
+
+=item ack_time
+
+The time at which alerts were sent or acknowledged. May use C<ANY> for a list
+of possible values. May also pass an anonymous array of two values, the first
+the minimum time, the second the maximum time. If the first array item is
+undefined, then the second will be considered the date that time must be less
+than. If the second array item is undefined, then the first will be considered
+the date that time must be greater than. If the value passed in is undefined,
+then the query will specify 'IS NULL'.
+
+=item alert_type_id
+
+A Bric::Util::AlertType ID. May use C<ANY> for a list of possible values.
+
+=item event_id
+
+A Bric::Util::Event ID. May use C<ANY> for a list of possible values.
+
+=item subject
+
+=item name
+
+An alert subject. C<name> is an alias for C<subject>. May use C<ANY> for a
+list of possible values.
+
+=item message
+
+An alert message. May use C<ANY> for a list of possible values.
 
 =back
-
-The last two lookup keys, time_start and time_end, must be used together, as
-they represent a range of dates between which to retrieve Bric::Util::Alerted
-objects.
-
-Any combination of these keys may be used, although the most common may be
-alert_id or user_id.
 
 B<Throws:>
 
@@ -1125,46 +1151,49 @@ $get_em = sub {
     my ($pkg, $params, $ids) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'ack_time') {
+        if ($k eq 'ack_time' || $k eq 'timestamp') {
+            my $table = $k eq 'ack_time' ? 'a' : 'b';
             # It's a date column.
-            if (ref $v) {
+            if (ref $v eq 'ARRAY') {
                 # It's an arrayref of dates.
                 if (!defined $v->[0]) {
                     # It's less than.
-                    push @wheres, "a.$k < ?";
+                    push @wheres, "$table.$k < ?";
                     push @params, db_date($v->[1]);
-                } elsif (!defined $v->[1]) {
+                }
+                elsif (!defined $v->[1]) {
                     # It's greater than.
-                    push @wheres, "a.$k > ?";
+                    push @wheres, "$table.$k > ?";
                     push @params, db_date($v->[0]);
-                } else {
+                }
+                else {
                     # It's between two sizes.
-                    push @wheres, "a.$k BETWEEN ? AND ?";
+                    push @wheres, "$table.$k BETWEEN ? AND ?";
                     push @params, (db_date($v->[0]), db_date($v->[1]));
                 }
-            } elsif (!defined $v) {
-                # It needs to be null.
-                push @wheres, "a.$k IS NULL";
-            } else {
-                # It's a single value.
-                push @wheres, "a.$k = ?";
-                push @params, db_date($v);
             }
-        } else {
-            push @wheres, $map{$k} || "a.$k = ?";
-            push @params, $v;
+            elsif (!defined $v) {
+                # It needs to be null.
+                push @wheres, "$table.$k IS NULL";
+            }
+            else {
+                $v = ref $v ? ANY( map { db_date($_) } @$v )
+                            : db_date($v)
+                            ;
+                # It's a single value.
+                push @wheres, any_where $v, "$table.$k = ?", \@params;
+            }
+        }
+        else {
+            push @wheres, any_where $v, ($map{$k} || "a.$k = ?"), \@params;
         }
     }
 
-    local $" = ' AND ';
-    my $where = @wheres ? "AND @wheres" : '';
+    my $where = @wheres ? 'AND ' . join (' AND ', @wheres) : '';
 
-    $" = ', ';
-    my @qry_cols = $ids ? ('DISTINCT a.id') : (@cols, @by_cols);
-#my @by_cols = qw(c.type v.contact_value__value v.sent_time);
-#my @by_props = qw(type value sent_time);
+    my $qry_cols = $ids ? 'DISTINCT a.id' : join ', ', @cols, @by_cols;
    my $sel = prepare_c(qq{
-        SELECT @qry_cols
+        SELECT $qry_cols
         FROM   alert b, alerted a LEFT JOIN alerted__contact_value v
                ON a.id = v.alerted__id LEFT JOIN contact c on v.contact__id = c.id
         WHERE  b.id = a.alert__id
@@ -1172,14 +1201,7 @@ $get_em = sub {
         ORDER BY a.id
     }, undef);
 
-warn "        SELECT @qry_cols
-        FROM   alert b, alerted a LEFT JOIN alerted__contact_value v
-               ON a.id = v.alerted__id LEFT JOIN contact c on v.contact__id = c.id
-        WHERE  b.id = a.alert__id
-               $where
-        ORDER BY a.id
-
-";    # Just return the IDs, if they're what's wanted.
+    # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
     execute($sel, @params);
