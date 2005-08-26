@@ -42,6 +42,8 @@ C<href()> methods in the following classes:
 
 =item L<Bric::Util::Alerted|Bric::Util::Alerted>
 
+=item L<Bric::Util::AlertType::Parts::Rule|Bric::Util::AlertType::Parts::Rule>
+
 =back
 
 [David]
@@ -89,6 +91,8 @@ Updated search documentation and wrote tests for:
 =item L<Bric::Util::Alert|Bric::Util::Alert>
 
 =item L<Bric::Util::Alerted|Bric::Util::Alerted>
+
+=item L<Bric::Util::AlertType::Parts::Rule|Bric::Util::AlertType::Parts::Rule>
 
 =back
 

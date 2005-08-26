@@ -239,8 +239,7 @@ sub lookup {
 
 ################################################################################
 
-=item my (@rules || $rules_aref) =
-Bric::Util::AlertType::Parts::Rule->list($params)
+=item my (@rules || $rules_aref) = Bric::Util::AlertType::Parts::Rule->list($params)
 
 Returns a list or anonymous array of Bric::Util::AlertType::Parts::Rule objects
 based on the search parameters passed via an anonymous hash. The supported
@@ -248,25 +247,28 @@ lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-alert_type_id
+AlertType Rule ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item alert_type_id
 
-attr
+A Bric::Util::AlertType ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item attr
 
-meth
+Attribute against which a rule matches. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item operator
 
-operator
+Operator used to compare attributes to values. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item value
 
-value
+Value to compare against event and object attributes. May use C<ANY> for a
+list of possible values.
 
 =back
 
@@ -1089,30 +1091,23 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my (@txt_wheres, @num_wheres, @params);
+    my (@wheres, @params);
+    my %map = (
+        id => 'id = ?',
+        alert_type_id => 'alert_type__id = ?',
+        operator      => 'operator = ?',
+        attr          => 'LOWER(attr)  LIKE LOWER(?)',
+        value         => 'LOWER(value) LIKE LOWER(?)',
+    );
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id') {
-            push @num_wheres, $k;
-            push @params, $v;
-        } elsif ($k eq 'alert_type_id') {
-            push @num_wheres, 'alert_type__id';
-            push @params, $v;
-        } else {
-            push @txt_wheres, "LOWER($k)";
-            push @params, lc $v;
-        }
+        push @wheres, any_where $v, $map{$k}, \@params
+            if $map{$k};
     }
 
-    local $" = ' = ? AND ';
-    my $where = @num_wheres ? "WHERE  @num_wheres = ?" : '';
-    local $" = ' LIKE ? AND ';
-    $where .= $where ? " AND @txt_wheres LIKE ?" : "WHERE  @txt_wheres LIKE ?"
-      if @txt_wheres;
-
-    local $" = ', ';
-    my $qry_cols = $ids ? ['id'] : \@cols;
+    my $where = @wheres ? 'WHERE  ' . join(' AND ', @wheres) : '';
+    my $qry_cols = $ids ? 'id' : join ', ', @cols;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   alert_type_rule
         $where
     }, undef);
