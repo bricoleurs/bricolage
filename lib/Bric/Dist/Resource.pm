@@ -1787,6 +1787,21 @@ $get_em = sub {
     my $wheres = 'r.media_type__id = t.id';
     my @params;
 
+    # Handle not_job_id first, so as to make sure it joins to resource and
+    # not any other table.
+    if (my $jid = delete $params->{not_job_id}) {
+        # if job_id is undef, just return no hits rather than toast the
+        # database with the index-defeating query "WHERE job__id = NULL"
+        return ($href ? {} : []) unless defined $jid;
+
+        # Use an outer join and put the parameters there.
+        $tables .= ' LEFT OUTER JOIN job__resource jrno ON ('
+                 . 'r.id = jrno.resource__id AND '
+                . any_where($jid, 'jrno.job__id = ?', \@params) . ')';
+        $wheres .= ' AND jrno.resource__id IS NULL';
+    }
+
+    # Now deal with the remaining parameters.
     while (my ($k, $v) = each %$params) {
         if ($k eq 'mod_time') {
             if (ref $v eq 'ARRAY') {
@@ -1836,16 +1851,6 @@ $get_em = sub {
             $tables .= ', job__resource jr';
             $wheres .= ' AND r.id = jr.resource__id AND '
                     . any_where $v, 'jr.job__id = ?', \@params;
-        } elsif ($k eq 'not_job_id') {
-            # if job_id is undef, just return no hits rather than toast the
-            # database with the index-defeating query "WHERE job__id = NULL"
-            return ($href ? {} : []) unless defined $v;
-
-            # Use an outer join and put the parameters there.
-            $tables .= ' LEFT OUTER JOIN job__resource jrno ON ('
-                    . 'r.id = jrno.resource__id AND '
-                    . any_where($v, 'jrno.job__id = ?', \@params) . ')';
-            $wheres .= ' AND jrno.resource__id IS NULL';
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";
