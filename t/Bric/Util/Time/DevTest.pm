@@ -13,7 +13,6 @@ use DateTime;
 # Set up needed variables.
 ##############################################################################
 my $epoch             = CORE::time;
-sleep 1; # XXXXXXXXXXXX
 my $format            = '%m/%d/%Y at %T';
 my $pref_format       = Bric::Util::Pref->lookup_val('Date/Time Format');
 (my $short_iso_format = ISO_8601_FORMAT) =~ s/\.\%6N$//;
