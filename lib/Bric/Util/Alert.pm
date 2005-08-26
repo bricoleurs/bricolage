@@ -60,7 +60,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Config qw(:alert);
-use Bric::Util::DBI qw(:standard col_aref);
+use Bric::Util::DBI qw(:all);
 use Bric::Util::AlertType;
 use Bric::Util::Alerted;
 use Bric::Util::EventType;
@@ -95,10 +95,11 @@ use constant DEBUG => 0;
 # Identifies databse columns and object keys.
 my @cols = qw(id event__id alert_type__id subject message timestamp);
 my @props = qw(id event_id alert_type_id subject message timestamp);
-my %map = (id => 'id',
-           timestamp => 'timestamp',
-           event_id => 'event__id',
-           alert_type_id => 'alert_type__id'
+my %map = (
+    id            => 'id = ?',
+    timestamp     => 'timestamp = ?',
+    event_id      => 'event__id = ?',
+    alert_type_id => 'alert_type__id = ?',
 );
 
 # How we know what libraries to use for sending alerts.
@@ -376,42 +377,41 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-alert_type_id
+Alert ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item alert_type_id
 
-event_id
+A Bric::Util::AlertType ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item event_id
 
-subject
+A Bric::Util::Event ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item subject
 
-message
+=item name
 
-=item *
+An alert subject. C<name> is an alias for C<subject>. May use C<ANY> for a
+list of possible values.
 
-timestamp
+=item message
 
-=item *
+An alert message. May use C<ANY> for a list of possible values.
 
-no_ack
+=item timestamp
 
-=item *
+An alert timestamp. May use C<ANY> for a list of possible values.
 
-time_start and time_end
+=item time_start
+
+=item time_end
+
+These two parameters, when used, must be used together to specify a range of
+dates between which to retrieve Bric::Util::Alert objects.
 
 =back
-
-The last two lookup keys, time_start and time_end, must be used together, as
-they represent a range of dates between which to retrieve Bric::Util::Alert
-objects. Set no_ack to true to have list() return only unacknowledged alerts.
-
-Any combination of these keys may be used, although the most common may be
-event_id or a combination of alert_type_id and no_ack.
 
 B<Throws:>
 
@@ -1206,37 +1206,48 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids) = @_;
-    my (@txt_wheres, @num_wheres, @params);
-    while (my ($k, $v) = each %$params) {
-        next if $k eq 'time_end';
-        if ($k eq 'time_start') {
-            push @num_wheres, 'timestamp BETWEEN ? AND ?';
-            push @params, @{$params}{qw(time_start time_end)};
-        } elsif ($k eq 'subject' || $k eq 'message') {
-            push @txt_wheres, "LOWER($k)";
-            push @params, lc $v;
+    my (@wheres, @params);
+    my $time_end = delete $params->{time_end};
+    if (exists $params->{name}) {
+        # Name is an alias for subject.
+        if (exists $params->{subject}) {
+            # Prefer subject. XXX Throw exception?
+            delete $params->{name};
         } else {
-            push @num_wheres, $map{$k};
-            push @params, $v;
+            $params->{subject} = delete $params->{name};
+        }
+    }
+
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'time_start') {
+            push @wheres, 'timestamp BETWEEN ? AND ?';
+            push @params, db_date($params->{time_start}), db_date($time_end);
+        } elsif ($k eq 'subject' || $k eq 'message') {
+            push @wheres, any_where $v, "LOWER($k) LIKE LOWER(?)", \@params;
+        } else {
+            if ($k eq 'timestamp') {
+                $v = ref $v ? ANY( map { db_date($_) } @$v )
+                            : db_date($v)
+                            ;
+            }
+            push @wheres, any_where $v, $map{$k}, \@params;
         }
     }
 
     # Assemble the WHERE clause.
-    my $where = '';
-    local $" = ' = ? AND ';
-    $where = "WHERE  @num_wheres = ?" if @num_wheres;
-    local $" = ' LIKE ? AND ';
-    $where .= $where ? "AND @txt_wheres LIKE ?" : "WHERE  @txt_wheres LIKE ?"
-      if @txt_wheres;
+    my $where = @wheres ? 'WHERE ' . join ' AND ', @wheres
+                        : ''
+                        ;
 
     # Assemble and prepare the query.
-    local $" = ', ';
-    my @qry_cols = $ids ? ('id') : @cols;
+    my ($qry_cols, $order) = $ids ? ('id', 'id')
+                                  : (join(', ', @cols), 'timestamp')
+                                  ;
     my $sel = prepare_c(qq{
-        SELECT @qry_cols
+        SELECT $qry_cols
         FROM   alert
         $where
-        ORDER BY timestamp
+        ORDER BY $order
     }, undef);
 
     # Just return the IDs, if they're what's wanted.
@@ -1409,4 +1420,3 @@ L<Bric::Util::EventType|Bric::Util::EventType>,
 L<Bric::Util::Event|Bric::Util::Event>
 
 =cut
-

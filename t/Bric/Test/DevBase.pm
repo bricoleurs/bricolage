@@ -29,10 +29,17 @@ $LastChangedDate$
   use Bric::Util::Grp::Person;
 
   sub table { 'person' }
+  my $epoch = CORE::time;
 
   # Write some tests.
   sub test_me : Test(4) {
       my $self = shift;
+
+      # Make time static for the duration of this test method.
+      no warnings qw(redefine);
+      local *CORE::GLOBAL::time = sub () { $epoch };
+
+      # Run some tests.
       ok( my $p = Bric::Biz::Person->new, "create" );
       ok( $p->save, "save" );
       $self->add_del_ids($p->get_id);
@@ -49,7 +56,9 @@ base class, and thus all of its subclasses get all of its benefits. It also
 has a number of methods of its own that are designed to be used in classes
 inherited from this class. They help keep the database cleaned up and such.
 And finally, it sets up the admin user object in the session so that event
-logging and the like works properly.
+logging and the like works properly and overrides the Perl core C<time>
+function so that individual test methods can override it on an as-needed
+basis.
 
 =cut
 
@@ -57,7 +66,21 @@ use strict;
 use warnings;
 require 5.006;
 use base qw(Bric::Test::Base);
+
+BEGIN {
+    # Override the time function, but just have it use CORE::time. This will
+    # allow us to hijack the function later by locally redefining
+    # CORE::GLOBAL::time. This is to prevent those tests that test for the
+    # time *right now* from getting screwed up by the clock turning over.
+    # NOTE: This MUST come before any Bricolage module that uses
+    # Bric::Util::Time gets loaded!
+    *CORE::GLOBAL::time = sub () { CORE::time() };
+}
+
+# Must come after the BEGIN block.
 use Bric::Biz::Person::User;
+
+##############################################################################
 
 =head1 INTERFACE
 
