@@ -220,37 +220,49 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-description
+Preference ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-default
+Preference name. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-value
+Preference description. May use C<ANY> for a list of possible values.
 
-=item *
+=item default
 
-val_name
+Preference default value. May use C<ANY> for a list of possible values.
 
-=item *
+=item value
 
-manual
+Value to which preference is set. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item val_name
 
-can_be_overridden
+Name of the value. May use C<ANY> for a list of possible values.
 
-=item *
+=item manual
 
-opt_type
+Boolean indicating whether a value can be manually entered by the user, rather
+than selected from a list. May use C<ANY> for a list of possible values.
 
-=item *
+=item can_be_overridden
 
-grp_id
+Boolean indicathe whether or not users can override the global preference
+value. May use C<ANY> for a list of possible values.
+
+=item opt_type
+
+The preference option type. May use C<ANY> for a list of possible values.
+
+=item grp_id
+
+The ID of a Bric::Util::Grp object with which prefereneces may be associated.
+May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1296,29 +1308,27 @@ $get_em = sub {
       "AND p.id = c.object_id AND m.id = c.member__id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id' or $k eq 'manual') {
+        if ($k eq 'id' or $k eq 'manual' or $k eq 'can_be_overridden') {
             $wheres .= " AND p.$k = ?";
-            push @params, $v;
+            push @params, $v ? 1 : 0;
         } elsif ($k eq 'val_name') {
-            $wheres .= " AND LOWER(o.description) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where $v, 'LOWER(o.description) LIKE LOWER(?)',
+                                \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
-            $tables .= ", member m2, pref_member c2";
-            $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'can_be_overridden') {
-            $wheres .= " AND p.can_be_overridden = ?";
-            push @params, $v ? 1 : 0;
+            $tables .= ', member m2, pref_member c2';
+            $wheres .= ' AND p.id = c2.object_id AND c2.member__id = m2.id'
+                    . " AND m2.active = '1' AND "
+                    . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'active') {
             # Preferences have no active column.
             next;
         } else {
             $k = 'def' if $k eq 'default';
-            # It's a varchar field.
-            $wheres .= " AND LOWER(p.$k) LIKE ?";
-            push @params, lc $v;
+            # It's a string attribute.
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(p.$k) LIKE LOWER(?)", \@params;
         }
     }
 
