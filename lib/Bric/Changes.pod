@@ -46,6 +46,8 @@ C<href()> methods in the following classes:
 
 =item L<Bric::Util::AlertType::Parts::Rule|Bric::Util::AlertType::Parts::Rule>
 
+=item L<Bric::Util::Event|Bric::Util::Event>
+
 =back
 
 [David]

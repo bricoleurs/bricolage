@@ -75,6 +75,7 @@ use Bric::Util::AlertType;
 #use Bric::Util::Grp::Event;
 use Bric::Biz::Person::User;
 use Bric::Util::Fault qw(throw_dp);
+use Scalar::Util qw(blessed);
 
 ##############################################################################
 # Inheritance
@@ -402,41 +403,53 @@ lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-event_type_id
+Event ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item event_type_id
 
-user_id
+Event type ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item user_id
 
-class_id
+User ID for user who may have triggered events. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item class_id
 
-class
+ID of the class of object on which events have been logged. May use C<ANY> for
+a list of possible values.
 
-=item *
+=item class
 
-key_name
+The package name of a class, the objects of which may have had events logged
+against them. May use C<ANY> for a list of possible values.
 
-=item *
+=item key_name
 
-name
+Event type key name. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-description
+Event name. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-obj_id
+Event description. May use C<ANY> for a list of possible values.
 
-=item *
+=item obj_id
 
-timestamp
+ID of a Bricolage object for which events may have been logged. May use C<ANY>
+for a list of possible values.
+
+=item timestamp
+
+Time at which events have been logged.If passed as a scalar, events that
+occurred at that exact time will be returned. If passed as an anonymous array,
+the first two values will be assumed to represent a range of dates between
+which to retrieve Bric::Util::Event objects. May also use C<ANY> for a list of
+possible values.
 
 =begin comment
 
@@ -447,12 +460,6 @@ grp_id
 =end comment
 
 =back
-
-If timestamp is passed as a scalar, events that occurred at that exact time
-will be returned. If it is passed as an anonymous hash, the first two values
-will be assumed to represent a range of dates between which to retrieve
-Bric::Util::Event objects. Any combination of the above keys may be used,
-although the most common may be a combination of class_id and obj_id.
 
 B<Throws:>
 
@@ -1369,29 +1376,33 @@ $get_em = sub {
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {
             # It's a date column.
-            if (ref $v) {
+            if (blessed $v) {
+                # It's an ANY value.
+                db_date($_) for @$v;
+                $wheres .= ' AND ' . any_where $v, "e.$k = ?", \@params;
+            }
+            elsif (ref $v && !blessed $v) {
                 # It's an arrayref of dates.
                 $wheres .= " AND e.$k BETWEEN ? AND ?";
                 push @params, (db_date($v->[0]), db_date($v->[1]));
-            } else {
-                # It's a single value.
-                $wheres .= " AND e.$k = ?";
-                push @params, db_date($v);
             }
-        } elsif ($NUM_MAP{$k}) {
+            else {
+                # It's a single value.
+                $wheres .= ' AND ' . any_where $v, "e.$k = ?", \@params;
+            }
+        }
+        elsif ($NUM_MAP{$k}) {
             # It's a numeric column.
-            $wheres .= " AND $NUM_MAP{$k} = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, "$NUM_MAP{$k} = ?", \@params;
         } elsif ($TXT_MAP{$k}) {
             # It's a text-based column.
-            $wheres .= " AND $TXT_MAP{$k} LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                . any_where $v, "LOWER($TXT_MAP{$k}) LIKE LOWER(?)", \@params;
 #        } elsif ($k eq 'grp_id') {
 #            # Add in the group tables a second time and join to them.
-#            $tables .= ", member m2, event_member em2";
-#            $wheres .= " AND e.id = em2.object_id AND em2.member__id = m2.id" .
-#              " AND m2.grp__id = ?";
-#            push @params, $v;
+#            $tables .= ', member m2, event_member em2';
+#            $wheres .= ' AND e.id = em2.object_id AND em2.member__id = m2.id'
+#                . ' AND ' any_where $v, 'm2.grp__id = ?', \@params;
         } else {
             # We're horked.
             throw_dp(error => "Invalid property '$k'.");
