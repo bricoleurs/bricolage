@@ -292,19 +292,24 @@ keys include:
 
 =over 4
 
-=item *
+=item id
 
-usr_grp_id - a Bric::Util::Grp::User object ID to which privileges have been
-granted.
+permission ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item usr_grp_id
 
-obj_grp_id - a Bric::Util::Grp object ID for which privileges have been granted.
+A Bric::Util::Grp::User object ID to which privileges have been granted. May
+use C<ANY> for a list of possible values.
 
-=item *
+=item obj_grp_id
 
-value - a privilege value. This could return a *lot* of records, so you're
-probably not going to want to do this.
+A Bric::Util::Grp object ID for which privileges have been granted. May use
+C<ANY> for a list of possible values.
+
+=item value
+
+A privilege value. This could return a *lot* of records, so you're probably
+not going to want to do this. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1384,25 +1389,24 @@ $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
+        my $search = '';
         if ($k eq 'obj_grp') {
-            push @wheres, "g.$k";
+            $search = "g.$k";
         } elsif ($k eq 'usr_grp_id') {
-            push @wheres, "p.grp__id";
+            $search = "p.grp__id";
         } elsif ($k eq 'obj_grp_id') {
-            push @wheres, "g.grp__id";
+            $search = "g.grp__id";
         } else {
-            push @wheres, "p.$k";
+            $search = "p.$k";
         }
-        push @params, $v;
+        push @wheres, any_where $v, "$search = ?", \@params;
     }
 
-    local $" = ' = ? AND ';
-    my $where = @wheres ? "AND @wheres = ?" : '';
+    my $where = @wheres ? 'AND ' . join(' AND ', @wheres) : '';
 
-    local $" = ', ';
-    my $qry_cols = $ids ? \('p.id') : \@cols;
+    my $qry_cols = $ids ? 'p.id' : join ', ', @cols;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   grp_priv p, grp_priv__grp_member g
         WHERE  p.id = g.grp_priv__id
                $where
