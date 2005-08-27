@@ -191,21 +191,31 @@ search parameters passed via a hashref. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-name
+Event type ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item key_name
 
-description
+Event type key name. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-class
+Event type name. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-class_id
+Event type description. May use C<ANY> for a list of possible values.
+
+=item class
+
+Class package name to which event types apply. May use C<ANY> for a list of
+possible values.
+
+=item class_id
+
+ID of class object to which event types apply. May use C<ANY> for a list of
+possible values.
 
 =back
 
@@ -1037,28 +1047,23 @@ $get_em = sub {
     my (@wheres, @params);
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
-            push @wheres, "t.$k = ?";
-            push @params, $v;
+            push @wheres, any_where $v, "t.$k = ?", \@params;
         } elsif ($k eq 'class_id') {
-            push @wheres, "t.class__id = ?";
-            push @params, $v;
+            push @wheres, any_where $v, 't.class__id = ?', \@params;
         } elsif ($k eq 'class') {
-            push @wheres, "LOWER(c.pkg_name) LIKE ?";
-            push @params, lc $v;
+            push @wheres,
+                any_where $v, 'LOWER(c.pkg_name) LIKE LOWER(?)', \@params;
         } else {
-            push @wheres, "LOWER(t.$k) LIKE ?";
-            push @params, lc $v;
+            push @wheres, any_where $v, "LOWER(t.$k) LIKE LOWER(?)", \@params;
         }
     }
 
     my $where = defined $params->{id} ? '' : "AND t.active = '1' ";
-    local $" = ' AND ';
-    $where .= "AND @wheres" if @wheres;
+    $where .= 'AND ' . join(' AND ', @wheres) if @wheres;
 
-    local $" = ', ';
-    my $qry_cols = $ids ? ['DISTINCT t.id'] : \@cols;
+    my $qry_cols = $ids ? 'DISTINCT t.id' : join ', ', @cols;
     my $sel = prepare_c(qq{
-        SELECT @$qry_cols
+        SELECT $qry_cols
         FROM   event_type t LEFT JOIN event_type_attr a ON t.id = a.event_type__id,
                class c
         WHERE  c.id = t.class__id

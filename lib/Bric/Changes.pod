@@ -48,6 +48,8 @@ C<href()> methods in the following classes:
 
 =item L<Bric::Util::Event|Bric::Util::Event>
 
+=item L<Bric::Util::EventType|Bric::Util::EventType>
+
 =back
 
 [David]
@@ -97,6 +99,8 @@ Updated search documentation and wrote tests for:
 =item L<Bric::Util::Alerted|Bric::Util::Alerted>
 
 =item L<Bric::Util::AlertType::Parts::Rule|Bric::Util::AlertType::Parts::Rule>
+
+=item L<Bric::Util::Event|Bric::Util::Event>
 
 =back
 
