@@ -95,6 +95,7 @@ use Bric::Util::Grp::Job;
 use Bric::Util::Burner;
 use File::Spec::Functions qw(catdir);
 use Bric::App::Event qw(log_event);
+use Scalar::Util qw(blessed);
 
 ################################################################################
 # Inheritance
@@ -354,53 +355,77 @@ parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-name - The name of the jobs. May use typical SQL wildcard '%'. Note that the
-query is case-insensitve.
+Job ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-user_id - The ID of the user who scheduled the jobs.
+The name of the jobs. May use typical SQL wildcard '%'. Note that the query is
+case-insensitve. May use C<ANY> for a list of possible values.
 
-=item *
+=item user_id
 
-sched_time - May pass in as an anonymous array of two values, the first the
-minimum scheduled time, the second the maximum scheduled time. If the first
-array item is undefined, then the second will be considered the date that
-sched_time must be less than. If the second array item is undefined, then the
-first will be considered the date that sched_time must be greater than. If the
-value passed in is undefined, then the query will specify 'IS NULL'.
+The ID of the user who scheduled the jobs. May use C<ANY> for a list of
+possible values.
 
-=item *
+=item sched_time
 
-comp_time - May pass in as an anonymous array of two values, the first the
-minimum completion time, the second the maximum completion time. If the first
-array item is undefined, then the second will be considered the date that
-sched_time must be less than. If the second array item is undefined, then the
-first will be considered the date that sched_time must be greater than. If the
-value passed in is undefined, then the query will specify 'IS NULL'.
+May pass in as an anonymous array of two values, the first the minimum
+scheduled time, the second the maximum scheduled time. If the first array item
+is undefined, then the second will be considered the date that sched_time must
+be less than. If the second array item is undefined, then the first will be
+considered the date that sched_time must be greater than. If the value passed
+in is undefined, then the query will specify 'IS NULL'. May also use C<ANY>
+for a list of possible values.
 
-=item *
+=item comp_time
 
-resource_id - A Bric::Dist::Resource object ID.
+May pass in as an anonymous array of two values, the first the minimum
+completion time, the second the maximum completion time. If the first array
+item is undefined, then the second will be considered the date that sched_time
+must be less than. If the second array item is undefined, then the first will
+be considered the date that sched_time must be greater than. If the value
+passed in is undefined, then the query will specify 'IS NULL'. May also use
+C<ANY> for a list of possible values.
 
-=item *
+=item resource_id
 
-server_type_id - A Bric::Dist::ServerType object ID.
+A Bric::Dist::Resource object ID. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item server_type_id
 
-grp_id - A Bric::Util::Grp::Job object ID.
+A Bric::Dist::ServerType object ID. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item story_id
 
-failed - A boolean indicating whether or not a job is considered a failure
+A story ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item media_id
 
-executing - A boolean indicating whether some process is running C<execute_me>
-on this job
+A media ID. May use C<ANY> for a list of possible values.
+
+=item grp_id
+
+A Bric::Util::Grp::Job object ID. May use C<ANY> for a list of possible
+values.
+
+=item failed
+
+A boolean indicating whether or not a job is considered a failure. May use
+C<ANY> for a list of possible values.
+
+=item executing
+
+A boolean indicating whether some process is running C<execute_me> on this
+job.
+
+=item type
+
+A boolean indicating the type of the job. Pass true for an expiring job and
+false for a publishing job.
 
 =back
 
@@ -1927,66 +1952,62 @@ $get_em = sub {
     my $wheres = 'a.id = c.object_id AND m.id = c.member__id AND ' .
       "m.active = '1'";
     my @params;
+    my %map = (
+        id            => 'a.id = ?',
+        _class_id     => 'a.class__id = ?',
+        media_id      => 'a.media__id = ?',
+        story_id      => 'a.story__id = ?',
+        user_id       => 'a.usr__id = ?',
+        name          => 'LOWER(a.name) LIKE LOWER(?)',
+        error_message => 'LOWER(a.error_message) LIKE LOWER(?)',
+    );
+
+    my %bool = (
+        type      => 'a.expire = ?',
+        failed    => 'a.failed = ?',
+        executing => 'a.executing = ?',
+    );
+
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id') {
-            # Simple numeric comparison.
-            $wheres .= " AND a.id = ?";
-            push @params, $v;
-        } elsif ($k eq '_class_id') {
-            # Simple numeric comparison.
-            $wheres .= " AND a.class__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'media_id') {
-            # Simple numeric comparison.
-            $wheres .= " AND a.media__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'story_id') {
-            # Simple numeric comparison.
-            $wheres .= " AND a.story__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'user_id') {
-            # Simple numeric comparison.
-            $wheres .= " AND a.usr__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'name') {
-            # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
-        } elsif ($k eq 'server_type_id') {
+        if ($map{$k}) {
+            $wheres .= ' AND ' . any_where $v, $map{$k}, \@params;
+        }
+
+        elsif ($bool{$k}) {
+            $wheres .= ' AND '
+                    . any_where( ($v ? 1 : 0), $bool{$k}, \@params );
+        }
+
+        elsif ($k eq 'server_type_id') {
             # Add job__server_type to the lists of tables and join to it.
             $tables .= ', job__server_type js';
-            $wheres .= " AND a.id = js.job__id AND js.server_type__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'resource_id') {
+            $wheres .= ' AND a.id = js.job__id AND '
+                    . any_where $v, 'js.server_type__id = ?', \@params;
+        }
+
+        elsif ($k eq 'resource_id') {
             # Add job__resource to the lists of tables and join to it.
             $tables .= ', job__resource jr';
-            $wheres .= " AND a.id = jr.job__id AND jr.resource__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'grp_id') {
+            $wheres .= ' AND a.id = jr.job__id AND '
+                    . any_where $v, 'jr.resource__id = ?', \@params;
+        }
+
+        elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
-            $tables .= ", member m2, job_member c2";
-            $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
-        } elsif ($k eq 'type') {
-            # Boolean
-            $wheres .= " AND a.expire = ?";
-            push @params, $v ? 1 : 0;
-        } elsif ($k eq 'failed') {
-            # Boolean
-            $wheres .= " AND a.$k = ?";
-            push @params, $v ? 1 : 0;
-        } elsif ($k eq 'executing') {
-            # Boolean
-            $wheres .= " AND a.$k = ?";
-            push @params, $v ? 1 : 0;
-        } elsif ($k eq 'error_message') {
-            # Simple string comparison.
-            $wheres .= " AND LOWER(a.$k) LIKE ?";
-            push @params, lc $v;
-        } else {
+            $tables .= ', member m2, job_member c2';
+            $wheres .= ' AND a.id = c2.object_id AND c2.member__id = m2.id'
+                    . " AND m2.active = '1' AND "
+                    . any_where $v, 'm2.grp__id = ?', \@params;
+        }
+
+        else {
             # It's a date column.
-            if (ref $v) {
+            if (blessed $v) {
+                db_date($_) for @$v;
+                $wheres .= ' AND ' . any_where $v, "a.$k = ?", \@params;
+            }
+
+            elsif (ref $v) {
                 # It's an arrayref of dates.
                 if (!defined $v->[0]) {
                     # It's less than.
@@ -2006,21 +2027,22 @@ $get_em = sub {
                 $wheres .= " AND a.$k IS NULL";
             } else {
                 # It's a single value.
-                $wheres .= " AND a.$k = ?";
-                push @params, db_date($v);
+                $wheres .= ' AND '
+                        . any_where db_date($v), "a.$k = ?", \@params;
             }
         }
     }
 
     # Assemble and prepare the query.
-    my $qry_cols = $ids ? \'DISTINCT a.id, a.sched_time, a.priority' :
-      \$SEL_COLS;
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', 'a.id')
+                                  : (\$SEL_COLS, 'a.priority, a.sched_time, a.id')
+                                  ;
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $wheres
-        ORDER BY a.priority, a.sched_time, a.id
+        ORDER BY $order
     }, undef, DEBUG);
 
     # Just return the IDs, if they're what's wanted.

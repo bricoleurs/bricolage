@@ -300,6 +300,8 @@ sub test_save : Test(9) {
     ok( Bric::Util::Job::Dist->lookup({ id => $jid }),
         "Look it up again" );
     is( $job->get_name, $new_name, "Check name is '$new_name'" );
+    # Commit so we can be sure all records will be deleted.
+    Bric::Util::DBI::commit();
 }
 
 ##############################################################################
