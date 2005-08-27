@@ -1308,9 +1308,8 @@ $get_em = sub {
       "AND p.id = c.object_id AND m.id = c.member__id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id' or $k eq 'manual' or $k eq 'can_be_overridden') {
-            $wheres .= " AND p.$k = ?";
-            push @params, $v ? 1 : 0;
+        if ($k eq 'id') {
+            $wheres .= ' AND ' . any_where $v, "p.$k = ?", \@params;
         } elsif ($k eq 'val_name') {
             $wheres .= ' AND '
                     . any_where $v, 'LOWER(o.description) LIKE LOWER(?)',
@@ -1321,6 +1320,9 @@ $get_em = sub {
             $wheres .= ' AND p.id = c2.object_id AND c2.member__id = m2.id'
                     . " AND m2.active = '1' AND "
                     . any_where $v, 'm2.grp__id = ?', \@params;
+        } elsif ($k eq 'can_be_overridden' or $k eq 'manual') {
+            $wheres .= ' AND '
+                    . any_where(($v ? 1 : 0), "p.$k = ?", \@params);
         } elsif ($k eq 'active') {
             # Preferences have no active column.
             next;

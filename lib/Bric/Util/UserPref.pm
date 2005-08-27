@@ -216,45 +216,53 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-id
+User preference ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item pref_id
 
-pref_id
+Prefernce ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item user_id
 
-user_id
+ID of the user for whom user preferences may be set. May use C<ANY> for a list
+of possible values.
 
-=item *
+=item name
 
-description
+Preference name. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-default
+Description of the preference. May use C<ANY> for a list of possible values.
 
-=item *
+=item default
 
-value
+Default value of the preference. May use C<ANY> for a list of possible values.
 
-=item *
+=item value
 
-val_name
+Value to which preference is set. May use C<ANY> for a list of possible
+values.
 
-=item *
+=item val_name
 
-manual
+Name of the value. May use C<ANY> for a list of possible values.
 
-=item *
+=item manual
 
-opt_type
+Boolean indicating whether a value can be manually entered by the user, rather
+than selected from a list. May use C<ANY> for a list of possible values.
 
-=item *
+=item opt_type
 
-grp_id
+The preference option type. May use C<ANY> for a list of possible values.
+
+=item grp_id
+
+The ID of a Bric::Util::Grp object with which prefereneces may be associated.
+May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1120,41 +1128,38 @@ B<Notes:> NONE.
 $get_em = sub {
     my ($pkg, $params, $href) = @_;
     my $tables = 'pref p, usr_pref up LEFT JOIN pref_opt o '
-      . 'ON up.pref__id = o.pref__id AND up.value = o.value, '
-      . 'member m, pref_member c';
+               . 'ON up.pref__id = o.pref__id AND up.value = o.value, '
+               . 'member m, pref_member c';
     my $wheres = 'p.id = up.pref__id AND p.id = c.object_id '
-      . "AND m.id = c.member__id AND m.active = '1'";
+               . "AND m.id = c.member__id AND m.active = '1'";
     my @params;
     while (my ($k, $v) = each %$params) {
         if ($k eq 'id') {
-            $wheres .= " AND up.id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'up.id = ?', \@params;
         } elsif ($k eq 'pref_id') {
-            $wheres .= " AND p.id = ?";
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'p.id = ?', \@params;
         } elsif ($k eq 'val_name') {
-            $wheres .= " AND LOWER(o.description) LIKE ?";
-            push @params, lc $v;
+            $wheres .= ' AND '
+                    . any_where 'LOWER(o.description) LIKE LOWER(?)', \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
-            $tables .= ", member m2, pref_member c2";
-            $wheres .= " AND p.id = c2.object_id AND c2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
+            $tables .= ', member m2, pref_member c2';
+            $wheres .= ' AND p.id = c2.object_id AND c2.member__id = m2.id'
+                    . " AND m2.active = '1' AND "
+                    . any_where $v, 'm2.grp__id = ?', \@params;
         } elsif ($k eq 'user_id') {
-            $wheres .= ' AND up.usr__id = ?';
-            push @params, $v;
+            $wheres .= ' AND ' . any_where $v, 'up.usr__id = ?', \@params;
         } elsif ($k eq 'can_be_overridden') {
-            $wheres .= " AND p.can_be_overridden = ?";
-            push @params, $v ? 1 : 0;
+            $wheres .= ' AND '
+                    . any_where $v, 'p.can_be_overridden = ?', \@params;
         } elsif ($k eq 'active') {
             # Preferences have no active column.
             next;
         } else {
             $k = 'def' if $k eq 'default';
-            # It's a varchar field.
-            $wheres .= " AND LOWER(p.$k) LIKE ?";
-            push @params, lc $v;
+            # It's a string attribute.
+            $wheres .= ' AND '
+                    . any_where $v, "LOWER(p.$k) LIKE LOWER(?)", \@params;
         }
     }
 
