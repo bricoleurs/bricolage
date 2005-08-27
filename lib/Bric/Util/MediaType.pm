@@ -72,9 +72,12 @@ my @mprops = qw(id name description _active);
 my @ecols = qw(id media_type__id extension);
 my @SEL_PROPS = qw(id name description _active _exts grp_ids);
 my @ord = qw(name description active);
-my %map = ( name => 'LOWER(a.name) LIKE ?',
-            description => 'LOWER(a.description) LIKE ?',
-            ext => => 'LOWER(e.extension) LIKE ?');
+my %map = (
+    id          => 'a.id = ?',
+    name        => 'LOWER(a.name) LIKE LOWER(?)',
+    description => 'LOWER(a.description) LIKE LOWER(?)',
+    ext =>      => 'LOWER(e.extension) LIKE LOWER(?)',
+);
 my $key = '__MediaType__';
 my ($meths, $cache);
 
@@ -225,21 +228,27 @@ search parameters passed via an anonymous hash. The supported lookup keys are:
 
 =over 4
 
-=item *
+=item id
 
-description
+A media type ID. May use C<ANY> for a list of possible values.
 
-=item *
+=item name
 
-name
+A media type name. May use C<ANY> for a list of possible values.
 
-=item *
+=item description
 
-ext
+A media type description. May use C<ANY> for a list of possible values.
 
-=item *
+=item ext
 
-grp_id
+A media type file name extension. May use C<ANY> for a list of possible
+values.
+
+=item grp_id
+
+The ID for a Bric::Util::Grp object of which media types may be members. May
+use C<ANY> for a list of possible values.
 
 =back
 
@@ -1213,20 +1222,24 @@ $get_em = sub {
     my @params;
 
     while (my ($k, $v) = each %$params) {
-        if ($k eq 'id' || $k eq 'active') {
+        if ($k eq 'active') {
             # Simple numeric comparison.
             $wheres .= " AND a.$k = ?";
-            push @params, $v;
-        } elsif ($k eq 'grp_id') {
+            push @params, $v ? 1 : 0;
+        }
+
+        elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
-            $tables .= ", member m2, media_type_member am2";
-            $wheres .= " AND a.id = am2.object_id AND am2.member__id = m2.id" .
-              " AND m2.active = '1' AND m2.grp__id = ?";
-            push @params, $v;
-        } else {
-            # It's a varchar field.
-            $wheres .= " AND $map{$k}";
-            push @params, lc $v;
+            $tables .= ', member m2, media_type_member am2';
+            $wheres .= ' AND a.id = am2.object_id AND am2.member__id = m2.id'
+                    . " AND m2.active = '1' AND "
+                    . any_where $v, 'm2.grp__id = ?', \@params;
+        }
+
+        else {
+            # Use the mapping.
+            $wheres .= ' AND ' . any_where $v, $map{$k}, \@params
+                if $map{$k};
         }
     }
 

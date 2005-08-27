@@ -29,12 +29,11 @@ sub test_lookup : Test(10) {
     my $self = shift;
 
     # Look up by ID.
-    ok( my $mt = $class->lookup({ id => 48 }),
-        "Look up by name 'audio/midi'");
+    ok( my $mt = $class->lookup({ id => 48 }), "Look up by id 48");
 
     # Check basic properties.
     is( $mt->get_name, 'audio/midi', "Check name is 'audio/midi''" );
-    ok( ! defined $mt->get_description, "No description" );
+    is( $mt->get_description, undef, "No description" );
 
     # Make sure we got three extensions.
     ok( my @exts = $mt->get_exts, "Get extensions" );

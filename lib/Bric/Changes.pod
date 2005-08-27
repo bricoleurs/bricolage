@@ -52,6 +52,8 @@ C<href()> methods in the following classes:
 
 =item L<Bric::Util::Job|Bric::Util::Job>
 
+=item L<Bric::Util::MediaType|Bric::Util::MediaType>
+
 =back
 
 [David]
