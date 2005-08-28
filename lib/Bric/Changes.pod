@@ -121,6 +121,16 @@ Updated search documentation and wrote tests for:
 The new "Repreview" iframe now works for the links in subelements, too.
 [David]
 
+=item *
+
+Category and story URIs now all end in a slash. This is so that they all
+behave consistently with root categories and home page URIs, and so that they
+properly indicate directories. Not that this does not apply if the
+C<STORY_URI_WITH_FILENAME> F<bricolage.conf> directive has been enabled.
+B<Note to Templaters:> You may need to modify your templates to take into
+account that stories now end in a slash, if you were appending a slash in your
+templates. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

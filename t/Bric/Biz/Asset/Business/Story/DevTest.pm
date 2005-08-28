@@ -261,7 +261,7 @@ sub test_select_methods: Test(151) {
     }
 
     # check the URI
-    my $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
+    my $exp_uri = $OBJ->{category}->[0]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -325,7 +325,7 @@ sub test_select_methods: Test(151) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[1]->get_uri . '/2005/03/23/test';
+    $exp_uri = $OBJ->{category}->[1]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -379,7 +379,7 @@ sub test_select_methods: Test(151) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -438,7 +438,7 @@ sub test_select_methods: Test(151) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -491,7 +491,7 @@ sub test_select_methods: Test(151) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 
@@ -545,7 +545,7 @@ sub test_select_methods: Test(151) {
         '... does it have the right desc');
 
     # check the URI
-    $exp_uri = $OBJ->{category}->[0]->get_uri . '/2005/03/23/test';
+    $exp_uri = $OBJ->{category}->[0]->get_uri . '2005/03/23/test';
     like( $got->get_primary_uri(), qr/^$exp_uri/,
           '...does the uri match the category and slug');
 

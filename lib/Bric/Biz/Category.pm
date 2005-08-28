@@ -1737,10 +1737,10 @@ sub _update_category {
 
     if ($self->_get('_update_uri') and not $self->is_root_category) {
         $self->_set(['_update_uri'], [0]);
-        $new_uri = Bric::Util::Trans::FS->cat_uri
-          ( $self->get_parent->get_uri,
-            $self->_get('directory')
-          );
+        $new_uri = Bric::Util::Trans::FS->cat_uri(
+            $self->get_parent->get_uri,
+            $self->_get('directory'),
+        ) . '/';
         $self->_set(['uri'], [$new_uri]);
     }
 
@@ -1793,8 +1793,10 @@ sub _insert_category {
     # created sites.  These root categories will set their own uri.
     unless ($self->is_root_category) {
         # Set the URI
-        my $uri = Bric::Util::Trans::FS->cat_uri($self->get_parent->get_uri,
-                                                 $self->_get('directory'));
+        my $uri = Bric::Util::Trans::FS->cat_uri(
+            $self->get_parent->get_uri,
+            $self->_get('directory')
+        ) . '/';
         $self->_set(['uri'], [$uri]);
     }
 

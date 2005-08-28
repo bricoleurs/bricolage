@@ -36,7 +36,7 @@ sub test_lookup : Test(17) {
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Look up on site and uri
-    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site_id => 100}),
+    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing/', site_id => 100}),
         "Look up $cat{name} on URI and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 

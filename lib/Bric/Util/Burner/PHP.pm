@@ -262,7 +262,7 @@ sub burn_one {
                     goto LABEL;
                 }
             }
-        } while(pop @cats);
+        } while ( defined pop @cats );
       LABEL:
     }
 
@@ -306,7 +306,7 @@ sub burn_one {
         # Execute category templates.
         for my $cat_tmpl (@cat_tmpls) {
             $php->setBric(content => $outbuf);
-            $outbuf = '';
+            $php->clear_output;
             eval { $php->include($cat_tmpl) };
             throw_burn_error
                 error   => "Error executing '$cat_tmpl'",
@@ -331,7 +331,7 @@ sub burn_one {
             binmode(OUT, ':' . $self->get_encoding || 'raw') if ENCODE_OK;
             print OUT $outbuf;
             close(OUT);
-            $outbuf = '';
+            $php->clear_output;
             # Add a resource to the job object.
             $self->add_resource($file, $uri);
         }

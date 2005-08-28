@@ -136,7 +136,7 @@ sub story_output {
 
 
 
-<h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
+<h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
 <div>Licensed under the BSD license</div>
 </body></html>
 
@@ -234,7 +234,7 @@ sub story_page1 {
 
 
 
-<h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
+<h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
 <div>Licensed under the BSD license</div>
 </body></html>
 
@@ -332,7 +332,7 @@ sub story_page2 {
 
 
 
-<h4>My URI: /testing/sub/2005/03/22/test_burn</h4>
+<h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
 <div>Licensed under the BSD license</div>
 </body></html>
 

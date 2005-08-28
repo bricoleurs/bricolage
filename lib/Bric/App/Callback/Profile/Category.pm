@@ -87,8 +87,10 @@ sub save : Callback {
                 if (@{ $class->list({ directory => $param->{directory},
                                       site_id   => $cat->get_site_id,
                                       parent_id => $p_id}) }) {
-                    my $uri = Bric::Util::Trans::FS->cat_uri
-                      ($par->get_uri, $param->{directory});
+                    my $uri = Bric::Util::Trans::FS->cat_uri(
+                        $par->get_uri,
+                        $param->{directory}
+                    ) . '/';
                     add_msg('URI "[_1]" is already in use. Please try a different directory name or parent category.', $uri);
                     $param->{'obj'} = $cat;
                     return;

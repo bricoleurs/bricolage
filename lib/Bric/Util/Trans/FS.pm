@@ -710,7 +710,10 @@ B<Notes:> Uses File::Spec::Unix->splitdir() internally.
 
 =cut
 
-sub split_uri { shift; return File::Spec::Unix->splitdir(@_) }
+sub split_uri {
+    (my $uri = $_[1]) =~ s|/$||;
+    return File::Spec::Unix->splitdir($uri);
+}
 
 ################################################################################
 

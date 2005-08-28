@@ -2412,9 +2412,10 @@ sub _construct_uri {
     # Get URI Format.
     my $fmt = $fu ? $oc_obj->get_fixed_uri_format : $oc_obj->get_uri_format;
 
-    my ($category_uri, $slug);
-    $category_uri = $cat_obj ? $cat_obj->ancestry_path : '';
-    $slug = $self->key_name eq 'story' ? $self->get_slug : '';
+    my $category_uri = $cat_obj ? $cat_obj->ancestry_path : '';
+    my ($slug, $slash) = $self->key_name eq 'story' ? ($self->get_slug, '/')
+                                                    : ('', '')
+                                                    ;
 
     $fmt =~ s/\/%{categories}/$category_uri/g;
     $fmt =~ s/%{slug}/$slug/g;
@@ -2434,11 +2435,11 @@ sub _construct_uri {
     # Return the URI with the case adjusted as necessary.
     my $uri_case = $oc_obj->get_uri_case;
     if( $uri_case == LOWERCASE ) {
-        return lc Bric::Util::Trans::FS->cat_uri(@path);
+        return lc Bric::Util::Trans::FS->cat_uri(@path) . $slash;
     } elsif( $uri_case == UPPERCASE ) {
-        return uc Bric::Util::Trans::FS->cat_uri(@path);
+        return uc Bric::Util::Trans::FS->cat_uri(@path) . $slash;
     } else {
-        return Bric::Util::Trans::FS->cat_uri(@path);
+        return Bric::Util::Trans::FS->cat_uri(@path) . $slash;
     }
 }
 
