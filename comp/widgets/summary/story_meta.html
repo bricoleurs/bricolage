@@ -21,7 +21,11 @@
 <dd><% $prim_uri %></dd>
 % } else {
 %     if (@ocs == 1) {
-<dd><a href="/workflow/profile/preview/story/<% $id %>" class="blackUnderlinedLink" target="preview_<% SERVER_WINDOW_NAME %>"><% $prim_uri %></a></dd>
+<dd><% $m->comp('/widgets/profile/preview_link.mc',
+                type  => 'story',
+                value => $prim_uri,
+                doc   => $story,
+                style => 'blackUnderlinedLink') %></dd>
 %     } else {
 <dd><% $prim_uri %></dd>
 <dt><% $lang->maketext('Preview in') %>:</dt>
@@ -53,8 +57,6 @@ my $is_related_story = $number != 1;
 
 my $id = $story->get_id();
 my $prim_uri = $story->get_primary_uri();
-my $agent = detect_agent();
-my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
 
 # get output channel info
 my $at = $story->get_element__id();
