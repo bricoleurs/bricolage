@@ -19,6 +19,7 @@ sub table { 'alert_type' }
 
 my $fs = Bric::Util::Trans::FS->new;
 
+##############################################################################
 sub test_deploy : Test(31) {
     my $self = shift;
 
@@ -110,6 +111,7 @@ sub test_deploy : Test(31) {
     ok( $tmpl->save, "Save with published version number again" );
 }
 
+##############################################################################
 sub test_page : Test(37) {
     my $self = shift;
     my $out_path = $fs->cat_dir('', 'output');
@@ -184,6 +186,7 @@ sub test_page : Test(37) {
     ok $burner->set_burn_again(0), "Set burn_again to false";
 }
 
+##############################################################################
 sub test_notes : Test(7) {
     my $self = shift;
     ok my $burner = Bric::Util::Burner->new, "Create a new burner";
@@ -197,6 +200,7 @@ sub test_notes : Test(7) {
 
 }
 
+##############################################################################
 sub test_best_uri : Test(no_plan) {
     my $self = shift;
 
@@ -240,6 +244,8 @@ sub test_best_uri : Test(no_plan) {
       "We should get a full URL";
 }
 
+##############################################################################
+# To be called by the subclasses to run burn tests.
 sub subclass_burn_test {
     my ($self, $dir, $suffix, $burner_type) = @_;
     $self->{delete_resources} = 1;
@@ -724,6 +730,7 @@ sub subclass_burn_test {
     unlink $file, $p2_file, $prev_file;
 }
 
+##############################################################################
 sub burn_cleanup : Test(teardown) {
     my $self = shift;
     Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = delete $self->{comp_root}
