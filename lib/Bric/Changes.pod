@@ -517,7 +517,7 @@ Updated search documentation and wrote tests for:
 
 =item L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>
 
-=itemL<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>
+=item L<Bric::Biz::Org::Parts::Addr|Bric::Biz::Org::Parts::Addr>
 
 [David]
 
