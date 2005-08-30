@@ -88,7 +88,7 @@ sub db_connect {
 sub drop_db {
     my $dbh = shift;
 
-    if (ask_yesno("Drop database \"$PG->{db_name}\"? [no] ", 0)) {
+    if (ask_yesno("Drop database \"$PG->{db_name}\"?", 0)) {
         unless ($dbh->do("DROP DATABASE $PG->{db_name}")) {
             hard_fail("Failed to drop database.  The error from Postgres was:\n\n",
                       $dbh->errstr, "\n");
@@ -101,7 +101,7 @@ sub drop_db {
 sub drop_user {
     my $dbh = shift;
 
-    if (ask_yesno("Drop user \"$PG->{sys_user}\"? [no] ", 0)) {
+    if (ask_yesno("Drop user \"$PG->{sys_user}\"?", 0)) {
         unless ($dbh->do("DROP USER $PG->{sys_user}")) {
             hard_fail("Failed to drop user.  The error from Postgres was:\n\n",
                       $dbh->errstr, "\n");

@@ -144,7 +144,7 @@ sub check_version {
 The installed version ("$VERSION") is not same as this version!  "make
 clone" is only designed to work with like versions.
 END
-        exit 1 unless ask_yesno("Continue with clone? [no] ", 0, $quiet_mode);
+        exit 1 unless ask_yesno("Continue with clone?", 0, $quiet_mode);
         @todo = ($VERSION);
 
     }

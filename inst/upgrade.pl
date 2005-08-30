@@ -115,7 +115,7 @@ another.  Please use "make install if you wish to overwrite your
 current install.
 
 END
-        exit 1 unless ask_yesno("Continue with upgrade? [no] ", 0);
+        exit 1 unless ask_yesno("Continue with upgrade?", 0);
         @todo = ($VERSION);
 
     } else {

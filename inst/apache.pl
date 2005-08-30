@@ -309,7 +309,7 @@ END
     $AP{ssl_cert} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.crt","server.crt");
 
     if ($AP{ssl} or $AP{apache_ssl}) {
-        if (ask_yesno("Do you want to use SSL? [no] ", 0, $QUIET)) {
+        if (ask_yesno("Do you want to use SSL?", 0, $QUIET)) {
             if ($AP{ssl} and $AP{apache_ssl}) {
                 $AP{ssl} = ask_choice("Which SSL module do you use? " .
                                       "(apache_ssl or mod_ssl) ",
