@@ -136,6 +136,10 @@ templates. [David]
 Now require Perl 5.8.0 or newer. Realistically it should only be 5.8.3 or
 newer. [David]
 
+=item *
+
+Added support for searching on UUIDs to the story and media classes. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

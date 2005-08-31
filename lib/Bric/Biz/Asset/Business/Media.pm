@@ -202,6 +202,7 @@ PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP => {
       id                    => 'mt.id = ?',
+      uuid                  => 'mt.uuid = ?',
       exclude_id            => 'mt.id <> ?',
       active                => 'mt.active = ?',
       inactive              => 'mt.active = ?',
@@ -315,6 +316,7 @@ use constant PARAM_ANYWHERE_MAP => {
 };
 
 use constant PARAM_ORDER_MAP => {
+    uuid                => 'mt.uuid',
     active              => 'mt.active',
     inactive            => 'mt.active',
     alias_id            => 'mt.alias_id',
@@ -529,6 +531,10 @@ Media Document description. May use C<ANY> for a list of possible values.
 =item id
 
 The media document ID. May use C<ANY> for a list of possible values.
+
+=item uuid
+
+The media document UUID. May use C<ANY> for a list of possible values.
 
 =item exclude_id
 

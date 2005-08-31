@@ -305,6 +305,7 @@ PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
 
 use constant PARAM_WHERE_MAP => {
       id                     => 's.id = ?',
+      uuid                   => 's.uuid = ?',
       exclude_id             => 's.id <> ?',
       active                 => 's.active = ?',
       inactive               => 's.active = ?',
@@ -440,6 +441,7 @@ use constant PARAM_ANYWHERE_MAP => {
 };
 
 use constant PARAM_ORDER_MAP => {
+    uuid                => 's.uuid',
     active              => 's.active',
     inactive            => 's.active',
     alias_id            => 's.alias_id',
@@ -652,6 +654,10 @@ Story description. May use C<ANY> for a list of possible values.
 =item id
 
 The story ID. May use C<ANY> for a list of possible values.
+
+=item uuid
+
+The story UUID. May use C<ANY> for a list of possible values.
 
 =item exclude_id
 
