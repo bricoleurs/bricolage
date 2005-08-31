@@ -169,7 +169,7 @@ START MODULE LIST
 
 =item File::Temp
 
-=item Text::Soundex
+=item Text::LevenshteinXS
 
 =item Locale::Maketext
 
@@ -216,8 +216,6 @@ START MODULE LIST
 =item Net::SFTP 0.08 (optional)
 
 =item HTTP::DAV (optional)
-
-=item Text::Levenshtein (optional)
 
 =item Crypt::SSLeay (optional)
 

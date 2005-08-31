@@ -633,6 +633,7 @@ sub subclass_burn_test {
 
     # Make it so!
     ok $elem->save, "Save the story element";
+
     # Allow localization by creating a language object.
     isa_ok(Bric::Util::Language->get_handle('en-us'),
            'Bric::Util::Language::en_us');

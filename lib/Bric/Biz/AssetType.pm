@@ -125,6 +125,7 @@ use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
 use Bric::Util::Coll::Site;
 use Bric::App::Cache;
+use List::Util qw(first);
 
 #==============================================================================#
 # Inheritance                          #
@@ -2151,11 +2152,9 @@ sub get_containers {
     my @at = $grp->get_objects;
 
     if ($field) {
-	my ($val) = grep($_->get_key_name eq $field, @at);
-	return unless $val;
-	return $val;
+        return first { $_->get_key_name eq $field } @at;
     } else {
-	return wantarray ? @at : \@at;
+        return wantarray ? @at : \@at;
     }
 }
 

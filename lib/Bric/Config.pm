@@ -622,8 +622,8 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # the base directory that will store media assets
     use constant MEDIA_URI_ROOT          => '/data/media';
-    use constant MEDIA_FILE_ROOT         => catdir(MASON_COMP_ROOT->[0][1],
-                                            'data', 'media');
+    use constant MEDIA_FILE_ROOT         => $ENV{MEDIA_FILE_ROOT}
+        || catdir(MASON_COMP_ROOT->[0][1], 'data', 'media');
 
     # Use Media ID as filename to ensure unique filenames across the site
     # Prefix to append to media id if required.

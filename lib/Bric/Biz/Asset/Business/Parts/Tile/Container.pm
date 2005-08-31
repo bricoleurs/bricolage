@@ -58,7 +58,9 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
-use Bric::Util::Fault qw(throw_gen);
+use Bric::Util::Fault qw(throw_gen throw_invalid);
+use Text::LevenshteinXS;
+use URI;
 
 #==============================================================================#
 # Inheritance                          #
@@ -847,12 +849,12 @@ B<Notes:> NONE.
 
 sub add_data {
     my ($self, $atd, $data, $place) = @_;
-    my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new
-      ({ active             => 1,
-         object_type        => $self->_get('object_type'),
-         object_instance_id => $self->_get('object_id'),
-         element_data       => $atd,
-       });
+    my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new({
+        active             => 1,
+        object_type        => $self->_get('object_type'),
+        object_instance_id => $self->_get('object_instance_id'),
+        element_data       => $atd,
+    });
 
     $data_tile->set_data($data);
     $self->add_tile($data_tile);
@@ -882,15 +884,16 @@ sub add_container {
     my ($self, $atc) = @_;
 
     # create a new Container Object with this one as its parent
-    my $container_tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
-      ({ active             => 1,
-         object_type        => $self->_get('object_type'),
-         object_instance_id => $self->_get('object_id'),
-         element            => $atc,
-         parent_id          => $self->_get('id') });
+    my $container = Bric::Biz::Asset::Business::Parts::Tile::Container->new({
+        active             => 1,
+        object_type        => $self->_get('object_type'),
+        object_instance_id => $self->_get('object_instance_id'),
+        element            => $atc,
+        parent_id          => $self->_get('id'),
+    });
 
-    $self->add_tile($container_tile);
-    return $container_tile;
+    $self->add_tile($container);
+    return $container;
 }
 
 ################################################################################
@@ -1498,6 +1501,165 @@ sub save {
     return $self;
 }
 
+##############################################################################
+
+=item my $pod = $container->serialize_to_pod;
+
+=item my $pod = $container->serialize_to_pod($field_key_name);
+
+Serializes the element and all of its subelements into the pseudo-pod format
+parsable by C<update_from_pod()>. Pass in a field key name and those fields
+will not have the POD tag, including in subelements that have the same field
+key name. Subelements will begin with C<=begin $key_name> and end with C<=end
+$key_name>, and will be indented four spaces relative to their parent
+elements. Related stories and media will be identified by the
+C<=related_story_uuid> and C<=related_media_uuid> tags, respectively.
+
+=cut
+
+sub serialize_to_pod {
+    my ($self, $default_field) = @_;
+    $self->_podify($default_field, '');
+}
+
+##############################################################################
+
+=item $container->update_from_pod($pod);
+
+=item $container->update_from_pod($pod, $field_key_name);
+
+Updates an element and all of its subelements from POD markup such as that
+output by C<deserialize_pod()>. Any equal signs after two newlines that do
+I<not> indicate a new field or element must be escaped with a slash. If
+C<$field_key_name> is passed, then any blocks of text that do not have a POD
+tag will be assumed to be instances of that field.
+
+Subelements are supported using C<=begin key_name> and C<=end key_name> tags,
+although the key namee in the C<=end> tag is optional. Subelements may be
+indented, although the root element must not be indented. Indentation of a
+subelement is deterimined by the amount of whitespace before the C<=begin>
+tag. That whitespace will be trimmed from the beginning of all lines in the
+subelement; any extra whitespace before lines will remain intact, enabling the
+use of whitespace for formatting.
+
+The contents of $pod will be split on C</\r?\n|\r/> to be parsed on a
+line-by-line basis. The line endings will all be replaced with C<\n> only.
+
+Any type of field may be specified in the POD. Dates, however, must be in
+ISO-8601-compliant format ("YYYY-MM-DD hh:mm:ss") to be properly parsed.
+Fields allowing only a limited number of values (such as pulldown or radio
+fields) must have content corresponding to the available values. Fields that
+allow multiple values (multiple select lists) are not supported.
+
+Related media and related stories may be identified by using one of the
+following tags as the first tags to appear in an element, either at the
+beginning of the POD or just afer a subelement's C<=begin> tag:
+
+=over
+
+=item =related_story_uuid
+
+=item =related_media_uuid
+
+=item =related_story_uri
+
+=item =related_media_uri
+
+=item =related_story_id
+
+=item =related_media_id
+
+=item =related_story_url
+
+=item =related_media_url
+
+=back
+
+For the last two options, the domain name will be extracted from the URL in
+order to determine the site to search for the path section of the URL. For
+example, specifying
+
+  =related_story_url http://www.example.com/foo/bar/
+
+will result in C<update_from_pod()> searchging for the URI "/foo/bar/"
+associated with the site with the domain name "www.example.com".
+
+B<Throws:>
+
+=over
+
+=item Bric::Util::Fault::Error::Invalid
+
+=over
+
+=item *
+
+No such field "[_1]", did you mean "[_2]"?
+
+=item *
+
+No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?
+
+=item *
+
+Non-repeatable field "[_1]" appears more than once beginning at line [_2].
+Please remove all but one.
+
+=item *
+
+Unknown tag "[_1]" at line [_2].
+
+=item *
+
+No such site "[_1]" at line [_2].
+
+=item *
+
+No such URI "[_1]" in site "[_2]" at line [_3].
+
+=item *
+
+No story document found for UUID "[_1]" at line [_2].
+
+=item *
+
+No media document found for UUID "[_1]" at line [_2].
+
+=item *
+
+No story document found for ID "[_1]" at line [_2].
+
+=item *
+
+No media document found for ID "[_1]" at line [_2].
+
+=item *
+
+No story document found for URI "[_1]" at line [_2].
+
+=item *
+
+No media document found for URI "[_1]" at line [_2].
+
+=back
+
+=back
+
+B<Side Effects:> Existing fields and subelements may be deleted or have their
+values altered. New fields and subelements may be added.
+
+B<Notes:> The values provided for fields allowing only a limited number of
+values (such as pulldown or radio fields) are not currently enforced to be one
+of those values.
+
+=cut
+
+sub update_from_pod {
+    my ($self, $pod, $def_field) = @_;
+    $self->_deserialize_pod([ split /\r?\n|\r/, $pod ], $def_field, '', 0);
+    return $self;
+}
+
 ################################################################################
 
 =back
@@ -1621,6 +1783,8 @@ sub _do_list {
 ################################################################################
 
 =back
+
+=begin private
 
 =head2 Private Instance Methods
 
@@ -1830,6 +1994,463 @@ sub _sync_elements {
     return $self;
 }
 
+##############################################################################
+
+=item my $pod = $element->_podify($default_field, $indent);
+
+This recursive method is called by C<serialize_to_pod()> and does all of the
+work of serializing an element and all of its subelements to the pseudo-pod
+format parsable by C<update_from_pod()>. The C<$default_field> argument is the
+optionaly default field, while C<$indent> contains the whitespace
+corresponding to the indentation level of the current element. C<_podify()> is
+called recursively for subelements in order to build up a complete
+representation of the element and its subelements as POD. Each subelement is
+indented another four spaces relative to its parent by incremented C<$indent>
+by that string for each recursion.
+
+=cut
+
+sub _podify {
+    my ($self, $default_field, $indent) = @_;
+    my $pod = '';
+    $default_field = '' unless defined $default_field;
+
+    # Start with related story.
+    if (my $rel_story = $self->get_related_story) {
+        $pod .= '=related_story_uuid ' . $rel_story->get_uuid . "\n\n";
+    }
+
+    # Add related media.
+    if (my $rel_media = $self->get_related_media) {
+        $pod .= '=related_media_uuid ' . $rel_media->get_uuid . "\n\n";
+    }
+
+    # Dump all of the fields and subelements.
+    for my $sub ($self->get_elements) {
+        if ($sub->is_container) {
+            my $kn = $sub->get_key_name;
+            $pod .= "$indent=begin $kn\n\n"
+                 .  $sub->_podify($default_field, $indent . ' ' x 4)
+                 .  "$indent=end $kn\n\n";
+        } else {
+            my $kn = $sub->get_key_name;
+            (my $data = $sub->get_data) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
+            $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
+            $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
+            $pod .= "$indent$data\n\n";
+        }
+    }
+    return $pod;
+}
+
+##############################################################################
+
+=item $element = $element->_deserialize_pod(\@pod, $def_field, $indent, $line_num)
+
+This recursive method is called by C<update_from_pod()> and does all the work
+of parsing lines of POD. The arguments are:
+
+=over
+
+=item 1 \@pod
+
+An array reference of lines of POD corresponding to the current element
+any subelements.
+
+=item 2 $def_field
+
+The key name of the default field, if any. If provided, any blockes of content
+lacking a POD tag will be assumed to be instances of this field.
+
+=item 3 $indent
+
+The indentation level of the current element. C<update_from_pod()> assumes
+that the top-level element begins with no indentation level. The indentation
+level of subelements is determined by the whitespace preceding their C<=begin>
+tags. This whitespace will be trimmed from the beginning of all lines of the
+element.
+
+=item 4 $line_num
+
+The file line number of the line preceeding line in C<\@pod>.
+C<update_from_pod> starts it off at line 0, and recursive calls pass it
+appropriately to keep track of all line numbers. These line numbers are used
+in exception messages.
+
+=back
+
+=cut
+
+sub _deserialize_pod {
+    my ($self, $pod, $def_field, $indent, $line_num) = @_;
+
+    # Get the element type and other basics for this element.
+    my $elem_type    = $self->get_element;
+    my $elem_type_id = $self->get_element_id;
+    my $doc_type     = $self->get_object_type;
+    my $doc_id       = $self->get_object_instance_id;
+    my $id           = $self->get_id;
+    $self->_set([qw(related_instance_id related_media_id)] => [undef, undef]);
+
+    # Identify the allowed subelements and fields.
+    my %elem_types  = map { $_->get_key_name => $_ }
+        $elem_type->get_containers;
+    my %field_types = map { $_->get_key_name => $_ }
+        $elem_type->get_data;
+
+    # Set up the default field.
+    if (defined $def_field && $def_field ne '') {
+        unless ($field_types{$def_field}) {
+            my $try = _find_closest_word($def_field, keys %field_types);
+            throw_invalid
+                error    => qq{No such field "$def_field", did you mean "$try"?},
+                maketext => [
+                    'No such field "[_1]", did you mean "[_2]"?',
+                    $def_field,
+                    $try,
+                ]
+            ;
+        }
+    } else {
+        $def_field = '';
+    }
+
+    # Gather up the existing elements and fields.
+    my (%elems_for, %fields_for);
+    for my $e ($self->get_elements) {
+        my $subelems_for = $e->is_container ? \%elems_for
+                                            : \%fields_for
+                                            ;
+
+        # Even if it's no longer a valid element, it can still be edited.
+        push @{$subelems_for->{$e->get_key_name}}, $e;
+    }
+
+    # Get ready!
+    my (@elems, %elem_ord, %field_ord);
+
+    POD:
+    while (@$pod) {
+        my $line = shift @$pod;
+        $line_num++;
+        # Each line can be either blank, contain content, contain an over tag,
+        # Or contain a field tag.
+
+        # Start with POD commands.
+        if ($line =~ /^\s*=(\S+)\s+(\S+)\s*$/) {
+            my ($tag, $kn) = ($1, $2);
+
+            if ($tag eq 'begin') {
+                unless ($elem_types{$kn} || $elems_for{$kn}) {
+                    my $try = _find_closest_word($def_field, keys %elem_types);
+                    throw_invalid
+                        error    => qq{No such subelement "$kn" at line }
+                                  . qq{$line_num. Did you mean "$try"?},
+                        maketext => [
+                            'No such subelement "[_1]" at line [_2]. Did you mean '
+                            . '"[_3]"?',
+                            $kn,
+                            $line_num,
+                            $try
+                        ]
+                    ;
+                }
+
+                shift @$pod; # Assume next line is blank.
+                $line_num++;
+
+                # Collect all of the contents of the elements and its subelements.
+                my $count = 1;
+                my @subpod;
+                SUBELEM:
+                while (@$pod) {
+                    # Don't increment line num; subelement will do so.
+                    $line = shift @$pod;
+                    if ($line =~ /^\s*=begin/) {
+                        $count++;
+                    } elsif ($line =~ /^\s*=end/) {
+                        unless (--$count) {
+                            shift @$pod; # Skip empty line.
+                            $line_num++;
+                            last SUBELEM;
+                        }
+                    }
+                    push @subpod, $line;
+                }
+
+                # Grab the element and populate its contents.
+                my $subelem = $elems_for{$kn} && @{$elems_for{$kn}}
+                    ? shift @{$elems_for{$kn}}
+                        : __PACKAGE__->new({
+                            active             => 1,
+                            object_type        => $doc_type,
+                            object_instance_id => $doc_id,
+                            element            => $elem_types{$kn},
+                            parent_id          => $id,
+                        });
+
+                $subelem->set_place(scalar @elems);
+                $subelem->set_object_order(++$elem_ord{$kn});
+                push @elems, $subelem;
+
+                (my $subindent = $subpod[0]) =~ s/^(\s*).*/$1/;
+                $line_num = $subelem->_deserialize_pod(
+                    \@subpod,
+                    $def_field,
+                    ($subindent || ''),
+                    $line_num
+                );
+                next POD;
+            }
+
+            # Try relateds.
+            elsif ($tag =~ /related_(story|media)_(id|uuid|uri|url)/) {
+                my $type = $1;
+                my $class = 'Bric::Biz::Asset::Business::'. ucfirst $type;
+                my $attr  = $2;
+                my $doc_id;
+
+                # Handle full URL first.
+                if ($attr eq 'url') {
+                    # Figure out the site.
+                    my $full_uri = URI->new($kn);
+                    my $domain_name = $full_uri->host;
+                    my $uri = $full_uri->path;
+                    my ($site_id) = Bric::Biz::Site->list_ids({
+                        domain_name => $domain_name
+                    }) or throw_invalid
+                            error    => qq{No such site "$domain_name" at }
+                                     .  "line $line_num.",
+                            maketext => [
+                                'No such site "[_1]" at line [_2].',
+                                $domain_name,
+                                $line_num,
+                            ]
+                        ;
+                    ($doc_id) = $class->list_ids({
+                        site_id => $site_id,
+                        uri     => $uri,
+                    }) or throw_invalid
+                        error => qq{No such URI "$uri" in site "$domain_name" }
+                               . "at line $line_num.",
+                        maketext => [
+                            'No such URI "[_1]" in site "[_2]" at line [_3].',
+                            $uri,
+                            $domain_name,
+                            $line_num,
+                        ]
+                    ;
+                }
+
+                # We can just look up the doc.
+                else {
+                    # XXX Restrict site when searching on URI?
+                    ($doc_id) = $class->list_ids({ $attr => $kn })
+                        or throw_invalid
+                            error     => qq{No $type document found for \U$attr\E "$kn" }
+                                      .  "at line $line_num.",
+                            maketext => [
+                                qq{No $type document found for \U$attr\E "[_1]" at line [_2].},
+                                $kn,
+                                $line_num,
+                            ]
+                        ;
+                }
+
+                # Make the association.
+                if ($type eq 'story') {
+                    $self->set_related_instance_id($doc_id);
+                } else {
+                    $self->set_related_media_id($doc_id);
+                }
+            }
+
+            # Bad tag.
+            else {
+                throw_invalid
+                    error    => qq{Unknown tag "$line" at line $line_num.},
+                    maketext => [
+                        'Unknown tag "[_1]" at line [_2].',
+                        $line,
+                        $line_num,
+                    ]
+                ;
+            }
+
+            shift @$pod; # Skip empty line.
+            $line_num++;
+            next POD;
+        }
+
+        # Otherwise, it's either a tagged field or a default field.
+        else {
+            my ($kn, $content, $field_type);
+            if ($line =~ /^\s*=(\S+)\s*$/) {
+                $kn = $1;
+                $field_type = $field_types{$kn};
+                unless ($field_type) {
+                    unless ($fields_for{$kn} && @{$fields_for{$kn}}) {
+                        my $try = _find_closest_word($def_field, keys %field_types);
+                        throw_invalid
+                            error    => qq{No such field "$kn" at line }
+                                      . qq{$line_num. Did you mean "$try"?},
+                            maketext => [
+                                'No such field "[_1]" at line [_2]. Did you mean '
+                                . '"[_3]"?',
+                                $kn,
+                                $line_num,
+                                $try
+                            ]
+                        ;
+                    }
+                    $field_type = shift @{$fields_for{$kn}};
+                }
+
+                # Make sure that it's okay if it's repeatable.
+                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                    throw_invalid
+                        error    => qq{Non-repeatable field "$kn" appears more }
+                                  . qq{than once beginning at line $line_num. }
+                                  . qq{Please remove all but one.},
+                        maketext => [
+                            'Non-repeatable field "[_1]" appears more than once '
+                          . 'beginning at line [_2]. Please remove all but one.',
+                            $kn,
+                            $line_num,
+                        ]
+                    ;
+                }
+
+                shift @$pod; # Throw out empty line.
+                $line_num++;
+
+                $content = '';
+
+                # Gather up the contents of the field.
+                FIELD:
+                while (@$pod) {
+                    $line = shift @$pod;
+                    $line_num++;
+
+                    # If the line is empty, check the next two lines.
+                    if ($line =~ /^\s*$/) {
+                        # If the next line is another tag, we have this field.
+                        last FIELD
+                            if @$pod && ($pod->[0] =~ /^\s*=/ || $def_field ne '');
+
+                        # Otherwise, just keep the line.
+                        ($content .= "$line\n") =~ s/^$indent//mg;
+                    }
+
+                    # Otherwise, the line has either content or a pod tag.
+                    else {
+                        if ($line =~ /^\s*=/) {
+                            unshift @$pod, $line;
+                            --$line_num;
+                            last FIELD;
+                        }
+                        ($content .= "$line\n") =~ s/^$indent//mg;
+                    }
+                }
+            }
+
+            else {
+                throw_gen "No context for content beginning at line $line_num"
+                    unless $def_field ne '';
+                $kn = $def_field;
+                $field_type = $field_types{$kn};
+                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                    throw_invalid
+                        error    => qq{Non-repeatable field "$kn" appears more }
+                                  . qq{than once beginning at line $line_num. }
+                                  . qq{Please remove all but one.},
+                        maketext => [
+                            'Non-repeatable field "[_1]" appears more than once '
+                          . 'beginning at line [_2]. Please remove all but one.',
+                            $kn,
+                            $line_num,
+                        ]
+                    ;
+                }
+
+                ($content .= "$line\n") =~ s/^$indent//mg;
+                DEF_FIELD:
+                while (@$pod) {
+                    $line = shift @$pod;
+                    $line_num++;
+                    last DEF_FIELD if $line =~ /^\s*$/;
+                    ($content .= "$line\n") =~ s/^$indent//mg;
+                }
+            }
+
+            # Fix up the content.
+            if ($field_types{$kn}->get_sql_type eq 'date') {
+                # Eliminate white space to set date.
+                $content =~ s/^\s+//;
+                $content =~ s/\s+$//;
+            } else {
+                # Strip off trailing newline added by the parser.
+                $content =~ s/\n$//m;
+            }
+
+            # XXX Make sure that fields with a limited number of values are
+            # set to only one of those values here. It's too much of a PITA to
+            # do that right now, while those values are defined in the
+            # "html_info" subsys of the attribute associated with $field_type.
+
+            # Add the field.
+            my $field = $fields_for{$kn} && @{$fields_for{$kn}}
+                ? shift @{$fields_for{$kn}}
+                : Bric::Biz::Asset::Business::Parts::Tile::Data->new({
+                    active             => 1,
+                    object_type        => $doc_type,
+                    object_instance_id => $doc_id,
+                    element_data       => $field_type,
+                });
+            $field->set_data($content);
+            $field->set_place(scalar @elems);
+            $field->set_object_order(++$field_ord{$kn});
+            push @elems, $field;
+            next POD;
+        }
+    }
+
+    # Delete any remaining fields and containers.
+    my $del_elems = $self->_get('_del_subelems') || [];
+    push @$del_elems, @{$fields_for{$_}} for keys %fields_for;
+    push @$del_elems, @{$elems_for{$_}}  for keys %elems_for;
+
+    # Make it so.
+    $self->_set( [qw(_subelems _del_subelems _update_subelems)],
+                 [   \@elems,  $del_elems,   1                ] );
+    return $line_num;
+}
+
+##############################################################################
+
+=back
+
+=head2 Private Functions
+
+=over
+
+=item my $closest = _find_closest_word($word, @alt_words);
+
+This function returns the word from @alt_words that is closest to $word.
+"Closeness" is determinted by C<Text::LeventshteinXS::distance()>.
+
+=cut
+
+sub _find_closest_word {
+    my ($word, $closest) = (shift, shift);
+    my $score = distance($word, $closest);
+    for my $try_word (@_) {
+        my $new_score = distance($word, $try_word);
+        ($closest, $score) = ($try_word, $new_score) if $new_score < $score;
+    }
+    return $closest;
+}
+
 ################################################################################
 
 1;
@@ -1837,14 +2458,16 @@ __END__
 
 =back
 
+=end private
+
 =head1 NOTES
 
 NONE
 
 =head1 AUTHOR
 
-"Michael Soderstrom" <miraso@pacbell.net>
-Bricolage Engineering
+Michael Soderstrom <miraso@pacbell.net>. POD serialization and parsing by
+David Wheeler <david@kineticode.com>.
 
 =head1 SEE ALSO
 
