@@ -140,6 +140,12 @@ newer. [David]
 
 Added support for searching on UUIDs to the story and media classes. [David]
 
+=item *
+
+Added suport for searching on URIs in the story class and modified the same
+parameter in the media class to search I<all> possible URIs for media, not
+just the URI associated with the primary output channel. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

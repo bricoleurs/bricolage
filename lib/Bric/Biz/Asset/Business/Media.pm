@@ -196,6 +196,7 @@ use constant PARAM_FROM_MAP => {
      related_media_id     => 'media_container_tile mctrm',
      contrib_id           => 'media__contributor sic',
      note                 => 'media_instance mmi2',
+     uri                  => 'media_uri uri',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -241,7 +242,7 @@ use constant PARAM_WHERE_MAP => {
       published_version     => "mt.published_version = i.version AND i.checked_out = '0'",
       user__id              => 'i.usr__id = ?',
       user_id              => 'i.usr__id = ?',
-      uri                   => 'LOWER(i.uri) LIKE LOWER(?)',
+      uri                   => 'mt.id = uri.media__id AND LOWER(uri.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
       _checked_in_or_out    => 'i.checked_out = '
@@ -313,6 +314,9 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'sic.member__id = ?' ],
     note                   => [ 'mmi2.media__id = mt.id',
                                 'LOWER(mmi2.note) LIKE LOWER(?)'],
+    uri                    => [ 'mt.id = uri.media__id',
+                                'LOWER(uri.uri) LIKE LOWER(?)'],
+
 };
 
 use constant PARAM_ORDER_MAP => {

@@ -299,6 +299,7 @@ use constant PARAM_FROM_MAP => {
        related_story_id     => 'story_container_tile sctrs',
        related_media_id     => 'story_container_tile sctrm',
        note                 => 'story_instance si2',
+       uri                  => 'story_uri uri',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -317,6 +318,7 @@ use constant PARAM_WHERE_MAP => {
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
+      uri                    => 's.id = uri.story__id AND LOWER(uri.uri) LIKE LOWER(?)',
       element_id             => 's.element__id = ?',
       element__id            => 's.element__id = ?',
       element_key_name       => 's.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
@@ -428,6 +430,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'sc2.category__id = ?' ],
     primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
                                 'sc2.category__id = ?' ],
+    uri                    => [ 's.id = uri.story__id',
+                                'LOWER(uri.uri) LIKE LOWER(?)' ],
     category_uri           => [ 'i.id = sc2.story_instance__id AND sc2.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
@@ -756,6 +760,11 @@ list of possible values.
 
 Returns a list of stories with a given primary URI. May use C<ANY> for a list
 of possible values.
+
+=item uri
+
+Returns a list of stories with a given URI. May use C<ANY> for a list of
+possible values.
 
 =item story.category
 
