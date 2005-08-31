@@ -48,7 +48,7 @@ END
     eval { require 5.008 };
     if ($@) {
 	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
-Found Bricolage 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
+Found Perl 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
 better Unicode support. If you need good Unicode support, please upgrade your
 version of of Perl before re-running make. You can find the latest versions of
 Perl at 'http://perl.com/'.
