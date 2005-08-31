@@ -30,53 +30,55 @@ foreach my $attr (@$attr) {
     # Assemble any select/radio values.
     my $val_prop;
     if ( my $tmp = $attr->{meta}{vals}{value} ) {
-	foreach my $line (split /\n/, $tmp) {
-	    my ($v, $l) = split /\s*,\s*/, $line;
-	    chomp $v;
-	    push @$val_prop, [$v, $l];
-	}
-	$props->{vals} = $val_prop;
+        foreach my $line (split /\n/, $tmp) {
+            my ($v, $l) = split /\s*,\s*/, $line;
+            chomp $v;
+            push @$val_prop, [$v, $l];
+        }
+        $props->{vals} = $val_prop;
     }
 
     # Assemble the vals argument.
-    my $vals = { value => $attr->{value},
-		 props => $props,
-		 disp  => $attr->{meta}{disp}{value},
-	       };
+    my $vals = {
+        value => $attr->{value},
+        props => $props,
+        disp  => $attr->{meta}{disp}{value},
+    };
 
     $m->out(qq{<tr><td>\n});
-               
+
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
-	     value => $attr->{name},
-	     name => 'attr_name'
-	    ) if (!$readOnly);
+         value => $attr->{name},
+         name => 'attr_name'
+     ) if (!$readOnly);
 
     # Spit out the attribute.
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     key => "attr|$attr->{name}",
-	     vals => $vals,
-	     useTable => 1,
-	     width => $width,
-	     indent => FIELD_INDENT,
-	     localize => $localize,
-	     readOnly => $readOnly
-	    );
-            
+         key => "attr|$attr->{name}",
+         vals => $vals,
+         useTable => 1,
+         width => $width,
+         indent => FIELD_INDENT,
+         localize => $localize,
+         readOnly => $readOnly
+     );
+
     $m->out("</td>");
 
     if ($usePosition) {
         $m->out(qq{<td class="position">\n});
-	$m->comp('/widgets/profile/select.mc',
-		 disp     => '',
-		 value    => $curField++,
-		 options  => $sel_opts,
-		 useTable => 0,
-		 name     => 'attr_pos',
-		 readOnly => $readOnly,
-		 js       => qq{onChange="reorder(this, '$form_name')"}
-		);
-	$m->out("</td>");
+        $m->comp(
+            '/widgets/profile/select.mc',
+            disp     => '',
+            value    => $curField++,
+            options  => $sel_opts,
+            useTable => 0,
+            name     => 'attr_pos',
+            readOnly => $readOnly,
+            js       => qq{onChange="reorder(this, '$form_name')"}
+        );
+        $m->out("</td>");
     }
 
     if ($useEdit) {
@@ -90,18 +92,19 @@ foreach my $attr (@$attr) {
     }
 
     if ($useDelete) {
-	# And spit out a delete checkbox.
+    # And spit out a delete checkbox.
         $m->out(qq{<td class="delete">\n});
-	$m->comp('/widgets/profile/checkbox.mc',
-		 checked => 0,
-		 label_after => 1,
-		 disp => 'Delete',
-		 value => $attr->{name},
-		 name => "delete_attr",
-		 useTable => 0,
-		 readOnly => $readOnly
-		);
-	$m->out("</td>\n");
+        $m->comp(
+            '/widgets/profile/checkbox.mc',
+            checked => 0,
+            label_after => 1,
+            disp => 'Delete',
+            value => $attr->{name},
+            name => "delete_attr",
+            useTable => 0,
+            readOnly => $readOnly
+        );
+        $m->out("</td>\n");
     }
 
     $m->out("</tr>\n");
