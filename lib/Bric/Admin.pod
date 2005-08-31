@@ -28,12 +28,7 @@ F</usr/share/doc/README.Debian> to complete the installation.
 
 =item 1
 
-Install Perl 5.6.0 or greater (5.8.0 or later strongly recommended for better
-Unicode support, and required if you're using a character set other than
-ASCII). Accented characters and other non-ASCII characters are incorrectly
-handled when using a Perl older than 5.8.0, so using a 5.8.0 or greater Perl
-is required whenever handling non-ASCII characters for the UI or in
-Bricolage stories.
+Install Perl 5.8.0 or greater.
 
 =item 2
 
@@ -82,8 +77,7 @@ them:
 
 =item *
 
-Perl 5.6.0 (5.6.1 or later recommended, 5.8.0 or later required if using
-characters beyond the ASCII set).
+Perl 5.8.0.
 
 =item *
 
@@ -196,6 +190,8 @@ START MODULE LIST
 =item Term::ReadPassword
 
 =item Data::UUID
+
+=item List::Util
 
 =item HTML::Template (optional)
 

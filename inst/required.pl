@@ -33,27 +33,15 @@ use strict;
 
 # check required Perl version first, fail immediately if too old
 BEGIN {
-    eval { require 5.006 };
-    if ($@) {
-        print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
-Bricolage requires Perl version 5.6.0 or later. 5.8.0 or later is strongly
-recommended for its better Unicode support. Please upgrade your version of
-Perl before re-running make. You can find the latest versions of Perl
-at 'http://perl.com/'.
-
-END
-        exit 1;
-    }
-
     eval { require 5.008 };
     if ($@) {
         print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
-Found Bricolage 5.6.x, but Perl 5.8.0 or later is strongly recommended for its
-better Unicode support. If you need good Unicode support, please upgrade your
-version of of Perl before re-running make. You can find the latest versions of
-Perl at 'http://perl.com/'.
+Bricolage requires Perl version 5.8.0 or later. Please upgrade your version
+of Perl before re-running make. You can find the latest versions of Perl at
+'http://perl.com/'.
 
 END
+        exit 1;
     }
 }
 

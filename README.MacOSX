@@ -99,26 +99,14 @@ You should be fine if you follow the steps outlined here.
   % make
   % make install
 
-3. Install Perl. For Perl 5.8.0, do this:
+3. Install Perl. For Perl 5.8.x, do this:
 
-  % cd perl-5.8.0/
+  % cd perl-5.8.x/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
   % sh Configure -des -Dprefix=/usr/local -Uinstallusrbinperl
   % make
   % make test # Will be a few expected and documented failures
-  % make install
-  % cd ..
-
-Or, for Perl 5.6.1, do this:
-
-  % cd perl-5.6.1/
-  % export LC_ALL=C     # or setenv LC_ALL C
-  % export LANG="en_US" # or setenv LANG en_US
-  % perl -i.bak -p -e 's|Local/Library|Library|g' hints/darwin.sh
-  % sh Configure -des -Dldflags="-flat_namespace" -Uinstallusrbinperl
-  % make
-  % make test # will be a few errors -- should be okay.
   % make install
   % cd ..
 

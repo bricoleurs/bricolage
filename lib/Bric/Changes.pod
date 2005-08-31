@@ -131,6 +131,11 @@ B<Note to Templaters:> You may need to modify your templates to take into
 account that stories now end in a slash, if you were appending a slash in your
 templates. [David]
 
+=item *
+
+Now require Perl 5.8.0 or newer. Realistically it should only be 5.8.3 or
+newer. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)
