@@ -325,14 +325,16 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
   effective_cache_size = 196608
 
-=head2 Vacuum Memory
+=head2 Maintenance Work Memory
 
-The C<vacuum_mem> directive reserves memory for C<vacuum>ing the database. If
-your PostgreSQL server has a decent amount of RAM (say 1-2 GB), increase the
-value of C<vacuum_mem> to allow C<vacuum>s to go faster. We recommend 64 MB
-(set in KB):
+The C<maintenance_work_mem> (or C<vacuum_mem>, as it was known prior to the
+release of PostgresQL 8.0) directive reserves memory for database maintenance
+work, such as C<vacuum>ing the database. If your PostgreSQL server has a
+decent amount of RAM (say 1-2 GB), increase the value of
+C<maintenance_work_mem> to allow C<vacuum>s and other mainentance work to go
+faster. We recommend 64 MB (set in KB):
 
-  vacuum_mem = 65536
+  maintenance_work_mem = 65536
 
 =head2 Random Page Cost
 
