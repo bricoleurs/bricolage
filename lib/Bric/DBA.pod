@@ -216,10 +216,6 @@ however, a very useful setup for a production database environment, since it
 severely limits the amount of shared memory that the postmaster can allocate
 for itself.
 
-The specific tuning recommendations below are for PostgreSQL versions 7.3 and
-7.4. Tuning will be slightly different for version 7.2, and very different for
-version 8.0 when it comes out. Consult the necessary documentation.
-
 To tune PostgreSQL, first determine the amount of memory you want to give to
 your running PostgreSQL server. In a production environment where PostgreSQL
 is running on a dedicated machine, this will be the entire memory minus the
