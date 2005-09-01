@@ -148,6 +148,18 @@ just the URI associated with the primary output channel. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed templates that display any elements whose template path is '/'
+(Bric::Util::Trans::FS::split_uri was broken by the URI slash improvement
+above). [Scott]
+
+=back
+
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)
 
 =head2 New Features
