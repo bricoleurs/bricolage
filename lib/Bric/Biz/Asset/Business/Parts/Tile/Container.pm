@@ -59,8 +59,8 @@ use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
 use Bric::Util::Fault qw(throw_gen throw_invalid);
+use List::Util 'reduce';
 use Text::LevenshteinXS;
-use URI;
 
 #==============================================================================#
 # Inheritance                          #
@@ -2442,13 +2442,11 @@ This function returns the word from @alt_words that is closest to $word.
 =cut
 
 sub _find_closest_word {
-    my ($word, $closest) = (shift, shift);
-    my $score = distance($word, $closest);
-    for my $try_word (@_) {
-        my $new_score = distance($word, $try_word);
-        ($closest, $score) = ($try_word, $new_score) if $new_score < $score;
-    }
-    return $closest;
+    my $word  = shift;
+    my $found = reduce {  $a->[1] < $b->[1] ? $a : $b  }
+                map    { [ $_ => distance($word, $_) ] }
+                @_;
+    return $found->[0];
 }
 
 ################################################################################
