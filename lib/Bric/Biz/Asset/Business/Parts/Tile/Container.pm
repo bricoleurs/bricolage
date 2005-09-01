@@ -59,6 +59,7 @@ use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
 use Bric::Util::Fault qw(throw_gen throw_invalid);
+use URI;
 use List::Util 'reduce';
 use Text::LevenshteinXS;
 
