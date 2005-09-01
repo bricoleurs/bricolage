@@ -46,25 +46,27 @@ $id        => undef
 </%args>
 <%perl>;
 my $vals = {
-	    disp  => $disp,
-	    value => $value,
-	    props => { size     => $size,
-                       multiple =>  $multiple,
-                       type     => 'select',
-                       vals     => $options
-                     },
-            js    => $js,
-            req   => $req,
-	   };
+    disp  => $disp,
+    value => $value,
+    js    => $js,
+    req   => $req,
+    props => {
+        size     => $size,
+        multiple =>  $multiple,
+        type     => 'select',
+        vals     => $options
+    },
+};
 
-$m->comp("/widgets/profile/displayFormElement.mc",
-	 key      => $name,
-	 vals     => $vals,
-         useTable => $useTable,
-	 readOnly => $readOnly,
-	 width    => $width,
-	 indent   => $indent,
-	 localize => $localize,
-         id       => $id,
+$m->comp(
+    "/widgets/profile/displayFormElement.mc",
+    key      => $name,
+    vals     => $vals,
+    useTable => $useTable,
+    readOnly => $readOnly,
+    width    => $width,
+    indent   => $indent,
+    localize => $localize,
+    id       => $id,
 );
 </%perl>
