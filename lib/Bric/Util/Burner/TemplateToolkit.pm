@@ -208,20 +208,19 @@ sub burn_one {
     }
 
     my @wrappers;
-    {
-        # search up category hierarchy for wrappers
-        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+    my @cats = map { $_->get_uri } $self->get_cat->ancestry;
 
-        do {
-            # if the file exists, return it
-            foreach my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, 'wrapper.tt');
-                if(-e $path) {
-                    unshift @wrappers, $path;
-                    last;
-                }
+    # Search up category hierarchy for wrappers.
+    CATEGORY:
+    for my $cat (@cats) {
+        ROOT:
+        for my $troot (@$template_roots) {
+            my $path = $fs->cat_dir($troot, $cat, 'wrapper.tt');
+            if (-e $path) {
+                push @wrappers, $path;
+                next CATEGORY;
             }
-        } while ( defined pop @cats );
+        }
     }
 
     my $tt = Template->new({
@@ -242,21 +241,16 @@ sub burn_one {
         },
     });
 
-
+    # Find the template.
     my $template;
-    {
-        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-        my $tmpl_name = $element->get_key_name . '.tt';
-        do {
-            foreach my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-                if(-e $path) {
-                    $template = $path;
-                    goto LABEL;
-                }
-            }
-        } while (pop @cats);
-      LABEL:
+    my $tmpl_name = $element->get_key_name . '.tt';
+    CATEGORY:
+    for my $cat (@cats) {
+        ROOT:
+        foreach my $troot (@$template_roots) {
+            $template = $fs->cat_dir($troot, $cat, $tmpl_name);
+            last CATEGORY if -e $template;
+        }
     }
 
     $self->_set([qw(_buf      page story   element   _comp_root       _tt)],

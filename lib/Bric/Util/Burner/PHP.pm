@@ -248,38 +248,32 @@ sub burn_one {
         $BRIC[$key] = $var;
     }/);
 
+    my @cats =  map { $_->get_uri } $self->get_cat->ancestry;
+
     # Find the story type element template.
     my $template;
-    my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-    {
-        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-        my $tmpl_name = $element->get_key_name . '.php';
-        do {
-            foreach my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, $tmpl_name);
-                if(-e $path) {
-                    $template = $path;
-                    goto LABEL;
-                }
-            }
-        } while ( defined pop @cats );
-      LABEL:
+    my $tmpl_name = $element->get_key_name . '.php';
+    CATEGORY:
+    for my $cat (@cats) {
+        ROOT:
+        foreach my $troot (@$template_roots) {
+            $template = $fs->cat_dir($troot, $cat, $tmpl_name);
+            last CATEGORY if -e $template;
+        }
     }
 
     my @cat_tmpls;
-    {
-        # search up category hierarchy for category templates.
-        my @cats = map { $_->get_directory } $self->get_cat->ancestry;
-
-        do {
-            # if the file exists, return it
-            for my $troot (@$template_roots) {
-                my $path = $fs->cat_dir($troot, @cats, 'cat_tmpl');
-                next unless -e $path;
-                push @cat_tmpls, $path;
-                last;
+    # Search up category hierarchy for category templates.
+    CATEGORY:
+    for my $cat (@cats) {
+        ROOT:
+        for my $troot (@$template_roots) {
+            my $path = $fs->cat_dir($troot, $cat, 'cat_tmpl');
+            if (-e $path) {
+                unshift @cat_tmpls, $path;
+                next CATEGORY;
             }
-        } while (pop @cats);
+        }
     }
 
     $self->_set(

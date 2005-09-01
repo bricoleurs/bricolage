@@ -993,23 +993,25 @@ calling C<new_template()>) and that F</category.pl> should be executed second
 sub _find_category_scripts {
     my $self = shift;
 
-    my $template_roots = $self->_get('_template_roots');
     # Search up category hierarchy for category templates.
-    my @cats = map { $_->get_directory } $self->get_cat->ancestry;
+    my $template_roots = $self->_get('_template_roots');
+    my @cats =  map { $_->get_uri } $self->get_cat->ancestry;
     my @cat_tmpls;
 
-    do {
-        # if the file exists, return it
+    CATEGORY:
+    for my $cat (@cats) {
+        ROOT:
         for my $troot (@$template_roots) {
-            my $path = $fs->cat_dir($troot, @cats, 'category');
+            my $path = $fs->cat_dir($troot, $cat, 'category');
             if (-e "$path.pl") {
-                push @cat_tmpls, [$path, 'pl'];
-                next;
+                unshift @cat_tmpls, [$path, 'pl'];
+                next CATEGORY;
             }
-            next unless -e "$path.tmpl";
-            push @cat_tmpls, [$path, "tmpl"];
+            next ROOT unless -e "$path.tmpl";
+            unshift @cat_tmpls, [$path, "tmpl"];
         }
-    } while (pop @cats);
+    }
+
     return @cat_tmpls;
 }
 

@@ -760,10 +760,8 @@ NONE
 
 sub ancestry {
     my $self = shift;
-    my @objs;
     my $cur = $self;
-
-    unshift @objs, $cur;
+    my @objs = ($cur);
 
     while ($cur = $cur->get_parent) {
         unshift @objs, $cur;
