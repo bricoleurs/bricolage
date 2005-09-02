@@ -69,7 +69,7 @@ sub test_new : Test(10) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(223) {
+sub test_pod : Test(229) {
     my $self = shift;
 
     # First, we'll need a story element type.
@@ -798,6 +798,33 @@ sub test_pod : Test(223) {
         '/foo/',
         1,
     ], 'Should get the correct maketext array';
+
+    # Try a related story in a non-related element.
+    eval {
+        $elem->update_from_pod("=begin _page_\n\n=related_story_id 100\n\n");
+    };
+    ok $err = $@, 'Catch non-related element exception';
+    is $err->error,
+        'Element "_page_" cannot have a related story.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Element "[_1]" cannot have a related story.',
+        '_page_',
+    ], 'Should get the correct maketext array';
+
+    # Try a related media in a non-related element.
+    eval {
+        $elem->update_from_pod("=begin _page_\n\n=related_media_id 100\n\n");
+    };
+    ok $err = $@, 'Catch non-related element exception';
+    is $err->error,
+        'Element "_page_" cannot have a related media.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Element "[_1]" cannot have a related media.',
+        '_page_',
+    ], 'Should get the correct maketext array';
+
 }
 
 sub pod_output {

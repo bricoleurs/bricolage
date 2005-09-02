@@ -2202,10 +2202,22 @@ sub _deserialize_pod {
 
             # Try relateds.
             elsif ($tag =~ /related_(story|media)_(id|uuid|uri|url)/) {
-                my $type = $1;
-                my $class = 'Bric::Biz::Asset::Business::'. ucfirst $type;
-                my $attr  = $2;
+                my $type       = $1;
+                my $class      = 'Bric::Biz::Asset::Business::'. ucfirst $type;
+                my $attr       = $2;
                 my $doc_id;
+                my $meth       = "is_related_$type";
+                my $rel_attr   = 'related_'
+                    . ($type eq 'story' ? 'instance_id' : 'media_id');
+
+                throw_invalid
+                    error => 'Element "' . $self->get_key_name
+                           . qq{" cannot have a related $type.},
+                    maketext => [
+                        qq{Element "[_1]" cannot have a related $type.},
+                        $self->get_key_name
+                    ]
+                    unless $self->get_element->$meth;
 
                 # Handle full URL first.
                 if ($attr eq 'url') {
@@ -2255,11 +2267,7 @@ sub _deserialize_pod {
                 }
 
                 # Make the association.
-                if ($type eq 'story') {
-                    $self->set_related_instance_id($doc_id);
-                } else {
-                    $self->set_related_media_id($doc_id);
-                }
+                $self->_set([$rel_attr] => [$doc_id]);
             }
 
             # Bad tag.
