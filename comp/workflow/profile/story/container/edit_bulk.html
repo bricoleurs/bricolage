@@ -47,10 +47,11 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 
 <form action="<% $r->uri %>" method="post" name="theForm">
 
-<& /widgets/container_prof/container_prof.mc, 
+<& /widgets/container_prof/container_prof.mc,
 	tile_type    => 'story',
 	action       => 'edit_bulk',
 	show_summary => 1,
+    args         => \%ARGS,
 &>
 
 </form>

@@ -114,11 +114,8 @@ if ($at->is_related_media) {
 % }
 
 </td>
-% # START BULK EDIT PULLDOWN
-% my $opts = $repeatable_elem_opts->($dt);
-% # Only show this if there is anything to add.
-% if (scalar(@{$dt->get_possible_data()}) or scalar(@{$dt->get_possible_containers()})) {
-      <td align="center" valign="middle"><span class="label"> - or - </span></td>
+% # START BULK EDIT SECTION
+      <td align="center" valign="middle"><span class="label"> </span></td>
       <td><& '/widgets/profile/imageSubmit.mc',
          formName  => 'theForm',
          callback  => 'container_prof|bulk_edit_cb',
@@ -126,15 +123,6 @@ if ($at->is_related_media) {
          value     => $dt->get_id,
          useHidden => !$no_hide++
        &></td>
-    <td>
-    <& '/widgets/profile/select.mc',
-        name     => $widget.'|bulk_edit_tile_field-'.$dt->get_id,
-        options  => $opts,
-        useTable => 0,
-    &>
-    </td>
-% }
-
     </tr>
     </table>
   </td>
@@ -270,9 +258,15 @@ if ($at->is_related_media) {
 </table>
 
 %# Begin element picker
-% if (@$elem_opts) {
 <div class="actions">
-	<div style="width: 50%; float: left;">
+    <& '/widgets/profile/imageSubmit.mc',
+        formName => "theForm",
+        callback => $widget ."|bulk_edit_this_cb",
+        image    => "bulk_edit_lgreen",
+        vspace   => 3,
+        hspace   => 4
+    &>
+% if (@$elem_opts) {
   	<& '/widgets/profile/imageSubmit.mc',
   		formName => "theForm",
 		callback => $widget ."|add_element_cb",
@@ -284,27 +278,8 @@ if ($at->is_related_media) {
             	                   multiple => 0,
                 	               size     => 1,
 	&>
-  </div>
-
-% if ($repeatable_opts) {
-  <div>
-    <& '/widgets/profile/imageSubmit.mc',
-        formName => "theForm",
-        callback => $widget ."|bulk_edit_this_cb",
-        image    => "bulk_edit_lgreen",
-        vspace   => 3,
-        hspace   => 4
-    &>
-	<& /widgets/profile/select.mc,
-       name => $widget.'|bulk_edit_field',
-       options  => $repeatable_opts,
-       useTable => 0,
-	&>
-  </div>
 % }
-
 </div>
-% }
 %# end data display
 
 
@@ -400,28 +375,19 @@ my $start = get_state_data($widget, 'start');
 # the contained tiles
 my @tiles = $tile->get_tiles();
 
-my $elem_opts = [];
-my $repeatable_opts = [];
-
-# the possible data options
-my @pos_data = $tile->get_possible_data();
-foreach (@pos_data) {
-    my $key = 'data_' . $_->get_id();
-    my $disp = $_->get_meta('html_info')->{disp};
-    push @$elem_opts, [ $key => $disp ];
-    if ($_->get_quantifier()) {
-        push @$repeatable_opts, [$_->get_key_name, $disp];
+# Get the list of fields and subelements that can be added.
+my $elem_opts = [
+    map  { $_->[1] }
+    sort { $a->[0] cmp $b->[0] }
+    map  {
+        my ($key, $disp) = $_->can('get_sites')
+            ? ('cont_', $_->get_name )
+            : ('data_', $_->get_meta('html_info')->{disp});
+        [ lc $disp => [ $key . $_->get_id => $disp ] ]
     }
-}
-push @$repeatable_opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
-
-# the container options
-my @pos_cont = $tile->get_possible_containers();
-foreach (@pos_cont) {
-    next unless chk_authz($_, READ, 1);
-    my $key = 'cont_' . $_->get_id();
-    push @$elem_opts, [ $key => $_->get_name ];
-}
+        $tile->get_possible_data,
+        grep { chk_authz($_, READ, 1) } $tile->get_possible_containers
+];
 
 my $at_id = $tile->get_element_id;
 my $at = Bric::Biz::AssetType->lookup({'id' => $at_id});
@@ -430,47 +396,24 @@ my $at = Bric::Biz::AssetType->lookup({'id' => $at_id});
 my $is_related_story = $at->is_related_story ? 1 : 0;
 my $is_related_media = $at->is_related_media ? 1 : 0;
 
-# browser spacing stuff
-my $agent = detect_agent();
-my $ieSpacer = $agent->ie
-  ? qq{<tr><td colspan=10><img src="/media/images/spacer.gif" width=5 height=5 /></td></tr>}
-  : '';
-my $shim = $agent->nav4 ? -4 : 4;
-
 # Nab the story from the story_prof widget.
 my $type  = $tile->get_object_type;
 my $asset = get_state_data($type.'_prof', $type);
 </%init>
 <%once>;
-my $repeatable_elem_opts = sub {
-    my ($t) = @_;
-    my $id = $t->get_id;
-    my @opts;
-
-    foreach ($t->get_possible_data()) {
-    if ($_->get_quantifier()) {
-        # Pass the name with the tile ID as the value
-            push @opts, [$_->get_key_name, $_->get_meta('html_info')->{disp}];
-    }
-    }
-
-    push @opts, ['_super_bulk_edit', '- Super Bulk Edit -'];
-
-    return \@opts;
-};
-
 my $related_summary = sub {
   my ($tile, $type, $widget, $asset) = @_;
 
   my $rel = $type eq 'story' ? $tile->get_related_story
                              : $tile->get_related_media;
 
-  my $button = $m->scomp( '/widgets/profile/imageSubmit.mc',
-              formName => "theForm",
-              callback => $widget  ."|pick_related_".$type."_cb",
-              image    => "edit_lgreen",
-              vspace   => 4,
-            );
+  my $button = $m->scomp(
+      '/widgets/profile/imageSubmit.mc',
+      formName => "theForm",
+      callback => $widget  ."|pick_related_".$type."_cb",
+      image    => "edit_lgreen",
+      vspace   => 4,
+  );
 
   $m->out('<table border="0" cellpadding="0" cellspacing="0" width="578">');
   if ($rel) {

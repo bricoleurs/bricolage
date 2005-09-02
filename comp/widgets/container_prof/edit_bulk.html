@@ -3,68 +3,73 @@
 if ($show_summary) {
     my $type  = $tile->get_object_type;
 
-    # Nab the story from the story_prof widget 
+    # Nab the story from the story_prof widget
     my $asset = get_state_data($type.'_prof', $type);
     $m->comp('/widgets/summary/summary.mc', asset => $asset, number => ++$i);
 }
 </%perl>
-
 <& '/widgets/wrappers/sharky/table_top.mc',
-   caption => $lang->maketext("[_1] Field Text",$field),
+   caption => $lang->maketext('Bulk Edit [_1]', $tile->get_name),
    id      => 'containerprof',
    number  => ++$i,
 &>
-
-<& '/widgets/profile/textarea.mc', 'name'  => $widget.'|text',
-                                   'rows'  => $rows,
-                                   'cols'  => $cols,
-                                   'value' => $text,
-                                   'useTable' => 0 &>
-
+    <dl class="viewmeta">
+        <dt>Element:</dt>
+        <dd><% $at->get_name %> <% $show_element_flags->($at) %></dd>
+% if (my $fields = $at->get_data) {
+        <dt>Data Elements:</dt>
+        <dd>
+%     $m->print(join ', ', map { $_->get_key_name . $show_data_flags->($_) } @$fields);
+        </dd>
+% }
+% if (my $subelems = $at->get_containers) {
+        <dt>Container Elements:</dt>
+        <dd>
+%     $m->print(join ', ', map { $_->get_key_name . $show_element_flags->($_) } @$subelems);
+        </dd>
+        <dt>Default Element:</dt>
+        <dd>
+<%perl>;
+my $opts = [
+    [ '' =>  '' ],
+    map  {   [ $_ => $_ ]   }
+    sort {     $a cmp $b    }
+    map  { $_->get_key_name } $at->get_data
+];
+</%perl>
+<& '/widgets/profile/select.mc',
+        name     => $widget.'|default_field',
+        options  => $opts,
+        value    =>  $def_field,
+        useTable => 0,
+&>
+        <input type="image" src="/media/images/<% $lang_key %>/change_red.gif" name="<% $widget %>|change_default_field_cb" value="Change" />
+        </dd>
+        <dt><% $lang->maketext('Words') %></dt>
+        <dd><input type="text" id="words" name="words" value="" /></dd>
+        <dt><% $lang->maketext('Characters') %></dt>
+        <dd><input type="text" id="chars" name="chars" value="" /></dd>
+    </dl>
+% }
+<& '/widgets/profile/textarea.mc',
+    name     => "$widget|text",
+    value    => $args->{__use_text__} ? $args->{"$widget|text"} : $tile->serialize_to_pod($def_field),
+    rows     => 40,
+    useTable => 0,
+    js       => qq{onkeyup="wordCount(document.theForm, '$widget|text', 'words', 'chars');"},
+&>
+<script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<%doc>
 
 <& '/widgets/wrappers/sharky/table_top.mc',
    caption => 'Formatting Options',
    number  => ++$i,
 &>
-
 <table>
 <tr>
 <td>
-<img src="/media/images/spacer.gif" width=10 height=1>
-  </td>
-<th style="text-align: right;">Separator String:</th>
-<td>
-<& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
-                                'value'   => "\n",
-                                'checked' => $sep eq "\n" &>
-<%$lang->maketext('One blank line')%>
-</td>
-<td>
-<& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
-                                'value'   => '<p>',
-                                'checked' => $sep eq '<p>' &>
-&lt;p>
-</td>
-<td>
-<& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
-                                'value'   => '<br>',
-                                'checked' => $sep eq '<br>' &>
-&lt;br>
-</td>
-<td>
-<& '/widgets/profile/radio.mc', 'name'    => $widget.'|separator',
-                                'value'   => 'custom',
-                                'checked' => $use_custom_sep &>
-<input type="text" name="<% $widget %>|custom_sep" value="<% $custom_sep %>" size=3>
-&nbsp;
-</td>
-<td>
-<input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border=0  name="<% $widget %>|change_sep_cb" value="Change">
-</td></tr>
-<tr>
-<td>
-<img src="/media/images/spacer.gif" width=10 height=1>
+<img src="/media/images/spacer.gif" width="10" height="1">
   </td>
 <th style="text-align: right;">Preserve formatting:</th>
 <td colspan="4"><& "/widgets/profile/checkbox.mc",
@@ -77,56 +82,50 @@ if ($show_summary) {
 </td>
 </tr>
 </table>
-
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
-<& '/widgets/wrappers/sharky/table_top.mc',
-   caption => 'Statistics',
-   number  => ++$i,
-&>
-<table>
-<tr>
-<td>
-<img src="/media/images/spacer.gif" width=10 height=1>
-</td>
-<td><%$lang->maketext('Words')%><br /><input type="text" name="words" size=5 value="<% $words %>" /></td>
-<td><%$lang->maketext('Characters')%><br /><input type="text" name="chars" size=5 value="<% $bytes %>" /></td>
-  <td><a href="#" onClick="return wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')"><img src="/media/images/<% $lang_key %>/recount_lgreen.gif" border=0></a></td>
-</tr>
-</table>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
+</%doc>
 <input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border=0 name="<% $widget %>|bulk_save_and_up_cb">
 <input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|bulk_save_cb">
 <input type="image" src="/media/images/<% $lang_key %>/cancel_red.gif" border=0 name="<% $widget %>|bulk_up_cb" value="Return without Saving">
-
 <%args>
 $widget
 $show_summary
+$args
 </%args>
-
-<%init>
+<%init>;
 # the tile object
 my $tile       = get_state_data($widget, 'tile');
-my $field      = get_state_data($widget, 'field');
-my $data       = get_state_data($widget, 'data');
-my $sep        = get_state_data($widget, 'separator');
-my $custom_sep = get_state_data($widget, 'custom_sep');
-my $preserve   = get_state_data($widget, 'preserve');
-my $cols       = get_state_data($widget, 'cols');
-my $rows       = get_state_data($widget, 'rows');
-
-# Create the text blob
-my $split = $sep eq "\n" ? '' : $sep;
-my $text = join("\n$split\n", @$data);
-
-my ($i, $words, $bytes, @tmp);
-
-foreach (@$data) {
-    $words += scalar(@tmp = /\S+/g);
-    $bytes += length;
-}
-
-my $use_custom_sep = get_state_data($widget, 'use_custom_sep') || 0;
-
+#my $preserve   = get_state_data($widget, 'preserve');
+my $i          = 0;
+my $at         = $tile->get_element;
+my $def_field  = get_state_data(
+    '_tmp_prefs',
+    'container_prof.' . $at->get_id . '.def_field'
+);
 </%init>
+<%once>;
+my $show_element_flags = sub {
+    my $at = shift;
+    my @flags;
+
+    push @flags, 'paginated'     if $at->get_paginated;
+    push @flags, 'top level'     if $at->get_top_level;
+    push @flags, 'fixed url'     if $at->get_fixed_url;
+    push @flags, 'media'         if $at->is_media;
+    push @flags, 'related media' if $at->is_related_media;
+    push @flags, 'related story' if $at->is_related_story;
+
+    return '' unless @flags;
+    return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
+};
+
+my $show_data_flags = sub {
+    my $dt = shift;
+    my @flags;
+
+    push @flags, 'required'   if $dt->get_required;
+    push @flags, 'repeatable' if $dt->get_quantifier;
+    return '' unless @flags;
+    return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
+};
+</%once>

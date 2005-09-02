@@ -2143,7 +2143,7 @@ sub _deserialize_pod {
 
             if ($tag eq 'begin') {
                 unless ($elem_types{$kn} || $elems_for{$kn}) {
-                    my $try = _find_closest_word($def_field, keys %elem_types);
+                    my $try = _find_closest_word($kn, keys %elem_types);
                     throw_invalid
                         error    => qq{No such subelement "$kn" at line }
                                   . qq{$line_num. Did you mean "$try"?},
@@ -2291,7 +2291,7 @@ sub _deserialize_pod {
                 $field_type = $field_types{$kn};
                 unless ($field_type) {
                     unless ($fields_for{$kn} && @{$fields_for{$kn}}) {
-                        my $try = _find_closest_word($def_field, keys %field_types);
+                        my $try = _find_closest_word($kn, keys %field_types);
                         throw_invalid
                             error    => qq{No such field "$kn" at line }
                                       . qq{$line_num. Did you mean "$try"?},
@@ -2389,9 +2389,12 @@ sub _deserialize_pod {
                 # Eliminate white space to set date.
                 $content =~ s/^\s+//;
                 $content =~ s/\s+$//;
-            } else {
+            } elsif (@$pod) {
                 # Strip off trailing newline added by the parser.
                 $content =~ s/\n$//m;
+            } else {
+                # Strip off trailing newlines added by the parser.
+                $content =~ s/\n{1,2}$//m;
             }
 
             # XXX Make sure that fields with a limited number of values are

@@ -69,7 +69,7 @@ sub test_new : Test(10) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(no_plan) {
+sub test_pod : Test(223) {
     my $self = shift;
 
     # First, we'll need a story element type.

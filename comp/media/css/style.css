@@ -415,6 +415,7 @@ dl.viewmeta dd { margin-left: 140px; }
 dl.viewmeta dd a { font-size: inherit; }
 
 div.actions { background: #999966; padding: 2px 4px; }
+div.addelement { text-align: right;}
 
 .buttonBar .delete {
 	font-weight: bold;

@@ -64,6 +64,19 @@ C<href()> methods in the following classes:
 
 [David]
 
+=item *
+
+Added C<serialize_to_pod()> and C<update_from_pod()> methods to the container
+element class. These support a pseudo-pod syntax that enable a complete
+hierrachy of elements to be edited, including links to related stories and
+media, in a single stream of text. [David]
+
+=item *
+
+Converted "Bulk Edit" into the UI to use the new POD syntax supported by the
+element classes and elimionated the old "Super Bulk Edit" interface since it
+became redundant. [David]
+
 =back
 
 =head2 Improvements
@@ -145,6 +158,21 @@ Added support for searching on UUIDs to the story and media classes. [David]
 Added suport for searching on URIs in the story class and modified the same
 parameter in the media class to search I<all> possible URIs for media, not
 just the URI associated with the primary output channel. [David]
+
+=item *
+
+The select list of fields and subelements that can be added to an element now
+lists all of the fields and subelements in alphabetical order. [David]
+
+=item *
+
+Improved JavaScript word and character counts in Bulk Edit so that they're
+actually accurate, including when POD tags are present. [David]
+
+=item *
+
+The word and character counts in Bulk Edit are now kept up-to-date as you
+type. [David]
 
 =back
 
