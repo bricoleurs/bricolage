@@ -8,7 +8,7 @@ use bric_upgrade qw(:all);
 
 exit if test_column 'story_container_tile', 'related_story__id';
 
-#CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_instance__id);
+CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_instance__id);
 
 do_sql
     # Handle story.
