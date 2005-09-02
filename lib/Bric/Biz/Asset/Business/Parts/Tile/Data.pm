@@ -602,10 +602,10 @@ you.
 
 sub get_data {
     my ($self, $format) = @_;
-    my $sql_type = $self->_get_sql_type or return;
-    return $sql_type eq 'date' ?
-      local_date($self->_get('_date_val'), $format) :
-      $self->_get('_'.$sql_type.'_val');
+    my $sql_type = $self->_get_sql_type or return undef;
+    return $sql_type eq 'date'
+           ? local_date(scalar $self->_get('_date_val'), $format)
+           : scalar $self->_get('_'.$sql_type.'_val');
 }
 
 ################################################################################

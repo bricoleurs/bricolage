@@ -176,21 +176,18 @@ type. [David]
 
 =item *
 
-Added $element object to exception object in throw_burn_error. Now a kind of
-breadcrumb trail will show where an error occurred in a template. (Note: this
-only works for exceptions thrown by throw_burn_error.) [Scott]
-
-=back
-
-=head2 Bug Fixes
-
-=over
+Added $element object to exception object in C<throw_burn_error>. Now a kind
+of breadcrumb trail will illustrate where in the element hierarchy of a story
+a burn error was thrown. (Note: this only works for exceptions thrown by
+C<throw_burn_error>.) [Scott]
 
 =item *
 
-Fixed templates that display any elements whose template path is '/'
-(Bric::Util::Trans::FS::split_uri was broken by the URI slash improvement
-above). [Scott]
+Fixed the C<get_data()> and C<get_container()> element objects so that, in
+list context, they return C<undef> instead of an empty list when there is no
+corresponding field or element. This will be especially useful in templates,
+where it will prevent errors such as Mason's, "Odd number of parameters passed
+to component expecting name/value pairs." [David]
 
 =back
 

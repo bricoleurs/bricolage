@@ -60,7 +60,7 @@ use Bric::Biz::AssetType;
 use Bric::App::Util;
 use Bric::Util::Fault qw(throw_gen throw_invalid);
 use URI;
-use List::Util 'reduce';
+use List::Util qw(reduce first);
 use Text::LevenshteinXS;
 
 #==============================================================================#
@@ -915,14 +915,13 @@ B<Notes:> NONE.
 =cut
 
 sub get_data_element {
-    my ($self, $name, $obj_order) = @_;
+    my ($self, $kn, $obj_order) = @_;
     $obj_order = 1 unless defined $obj_order;
-    foreach my $t ($self->get_elements) {
-        return $t if not $t->is_container
-          and $t->has_key_name($name)
-          and $t->get_object_order == $obj_order;
-    }
-    return;
+    return first {
+        !$_->is_container
+        && $_->get_key_name eq $kn
+        && $_->get_object_order == $obj_order
+    } $self->get_elements;
 }
 
 ################################################################################
@@ -996,7 +995,7 @@ sub get_data {
         Bric::App::Util::add_msg($msg);
         warn $msg;
     }
-    my $delem = $self->get_data_element($name, $obj_order) or return;
+    my $delem = $self->get_data_element($name, $obj_order) or return undef;
     return $delem->get_data($dt_fmt);
 }
 
@@ -1019,26 +1018,23 @@ B<Notes:> NONE.
 =cut
 
 sub get_container {
-    my ($self, $name, $obj_order) = @_;
+    my ($self, $kn, $obj_order) = @_;
 
     # If we find any illegal characters, warn the user to start using the key
     # name rather than the display name.
-    if ($name =~ /[^a-z0-9_]/) {
-        ($name = lc($name)) =~ y/a-z0-9/_/cs;
+    if ($kn =~ /[^a-z0-9_]/) {
+        ($kn = lc($kn)) =~ y/a-z0-9/_/cs;
         my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
         Bric::App::Util::add_msg($msg);
     }
 
     $obj_order = 1 unless defined $obj_order;
 
-    foreach my $t ($self->get_elements) {
-        return $t if $t->is_container        and
-                     $t->has_key_name($name) and
-                     $t->get_object_order == $obj_order;
-    }
-
-    # Well, I suppose that there were no matches.
-    return;
+    return first {
+        $_->is_container
+        && $_->get_key_name eq $kn
+        && $_->get_object_order == $obj_order
+    } $self->get_elements;
 }
 
 ################################################################################
