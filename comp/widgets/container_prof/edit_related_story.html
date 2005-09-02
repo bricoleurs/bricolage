@@ -28,7 +28,7 @@ $widget
 # The tile object
 my $tile = get_state_data($widget, 'tile');
 
-my $relate_id = $tile->get_related_instance_id;
+my $relate_id = $tile->get_related_story_id;
 my $excl_sub;
 if ($tile->get_object_type eq 'story') {
     my $asset_id = get_state_data('story_prof', 'story')->get_id;

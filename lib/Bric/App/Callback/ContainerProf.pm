@@ -306,7 +306,7 @@ sub relate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_instance_id($self->value);
+    $tile->set_related_story_id($self->value);
     $self->_handle_related_up;
 }
 
@@ -317,7 +317,7 @@ sub unrelate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_instance_id(undef);
+    $tile->set_related_story_id(undef);
     $self->_handle_related_up;
 }
 

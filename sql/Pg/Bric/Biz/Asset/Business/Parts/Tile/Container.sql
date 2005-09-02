@@ -35,7 +35,7 @@ CREATE TABLE story_container_tile (
     parent_id            INTEGER,
     place                INTEGER         NOT NULL,
     object_order         INTEGER         NOT NULL,
-    related_instance__id INTEGER,
+    related_story__id INTEGER,
     related_media__id    INTEGER,
     active               BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_container_tile__id PRIMARY KEY (id)
@@ -60,10 +60,7 @@ CREATE TABLE media_container_tile (
     parent_id                   INTEGER,
     place                       INTEGER         NOT NULL,
     object_order                INTEGER         NOT NULL,
-
-    -- Hack. These two columns never hold values, but keep this table in sync
-    -- with story_container_tile, since they share the same code base.
-    related_instance__id        INTEGER, 
+    related_story__id        INTEGER, 
     related_media__id           INTEGER,
     active              	    BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_media_container_tile__id PRIMARY KEY (id)
@@ -76,15 +73,13 @@ CREATE TABLE media_container_tile (
 CREATE INDEX idx_sc_tile__key_name ON story_container_tile(LOWER(key_name));
 CREATE INDEX fkx_sc_tile__sc_tile ON story_container_tile(parent_id);
 CREATE INDEX fkx_story__sc_tile ON story_container_tile(object_instance_id);
-CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_instance__id);
+CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_story__id);
 CREATE INDEX fkx_sc_tile__related_media ON story_container_tile(related_media__id);
 
 CREATE INDEX idx_mc_tile__key_name ON media_container_tile(LOWER(key_name));
 CREATE INDEX fkx_mc_tile__mc_tile ON media_container_tile(parent_id);
 CREATE INDEX fkx_media__mc_tile ON media_container_tile(object_instance_id);
--- These indexes aren't needed unless we decide to relate media to stories at
--- some point.
--- CREATE INDEX fkx_mc_tile__related_story ON media_container_tile(related_instance__id);
--- CREATE INDEX fkx_mc_tile__related_media ON media_container_tile(related_media__id);
+CREATE INDEX fkx_mc_tile__related_story ON media_container_tile(related_story__id);
+CREATE INDEX fkx_mc_tile__related_media ON media_container_tile(related_media__id);
 
 

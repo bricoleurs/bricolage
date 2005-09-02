@@ -181,6 +181,7 @@ of breadcrumb trail will illustrate where in the element hierarchy of a story
 a burn error was thrown. (Note: this only works for exceptions thrown by
 C<throw_burn_error>.) [Scott]
 
+
 =item *
 
 Fixed the C<get_data()> and C<get_container()> element objects so that, in
@@ -188,6 +189,14 @@ list context, they return C<undef> instead of an empty list when there is no
 corresponding field or element. This will be especially useful in templates,
 where it will prevent errors such as Mason's, "Odd number of parameters passed
 to component expecting name/value pairs." [David]
+
+=item *
+
+Renamed the C<related_instance_id> attribute of elements to
+C<related_story_id>, for parity with C<related_media_id> not to mention the
+C<get_related_story()> method. The C<get_related_instance_id()> and
+C<set_related_instance_id()> accessor methods remain in place for purposes of
+backwards compatibility. [David]
 
 =back
 

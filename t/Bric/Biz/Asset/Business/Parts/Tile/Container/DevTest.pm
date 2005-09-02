@@ -362,7 +362,7 @@ sub test_pod : Test(229) {
     my $rel_media_uri = $media->get_uri;
 
     # Relate the story and media.
-    ok $elem->set_related_instance_id($rel_story_id), 'Add related story';
+    ok $elem->set_related_story_id($rel_story_id), 'Add related story';
     ok $elem->set_related_media_id($rel_media_id), 'Add related media';
 
     # Okay, now down to business.
@@ -377,7 +377,7 @@ sub test_pod : Test(229) {
     is $elem->get_data('para', 2), 'Second paragraph',    'Check second para';
     is $elem->get_data('header'),  'And then...',         'Check header';
     is $elem->get_data('para', 3), 'Third paragraph',     'Check third para';
-    is $elem->get_related_instance_id, $rel_story_id,     'Check relstory id';
+    is $elem->get_related_story_id, $rel_story_id,     'Check relstory id';
 
     # Check the pull quote.
     is $elem->get_container('_pull_quote_'), $pq,
@@ -608,7 +608,7 @@ sub test_pod : Test(229) {
     # Try without a related story.
     (my $strip_rel = $self->pod_output) =~ s/^=related_story_uuid\s+\S+\n\n//;
     ok $elem->update_from_pod($strip_rel), 'Parse POD without a related story';
-    is $elem->get_related_instance_id, undef, 'Related ID should be undef';
+    is $elem->get_related_story_id, undef, 'Related ID should be undef';
 
     # Try without a related media.
     $strip_rel =~ s/^=related_media_uuid\s+\S+\n\n//;
@@ -618,7 +618,7 @@ sub test_pod : Test(229) {
     # Try with a related_story_id.
     ok $elem->update_from_pod("=related_story_id $rel_story_id\n\n$strip_rel"),
         'Parse POD with related_story_id';
-    is $elem->get_related_instance_id, $rel_story_id,
+    is $elem->get_related_story_id, $rel_story_id,
         'Related story ID should be set again';
 
     # Try with a related_media_id.
@@ -630,7 +630,7 @@ sub test_pod : Test(229) {
     # Try with related_story_uri.
     ok $elem->update_from_pod("=related_story_uri $rel_story_uri\n\n$strip_rel"),
         'Parse POD with related_story_uri';
-    is $elem->get_related_instance_id, $rel_story_id,
+    is $elem->get_related_story_id, $rel_story_id,
         'Related story ID should be correct';
 
     # Try with related_media_uri.
@@ -643,7 +643,7 @@ sub test_pod : Test(229) {
     my $rel_story_url = "http://www.example.com$rel_story_uri";
     ok $elem->update_from_pod("=related_story_url $rel_story_url\n\n$strip_rel"),
         'Parse POD with related_story_url';
-    is $elem->get_related_instance_id, $rel_story_id,
+    is $elem->get_related_story_id, $rel_story_id,
         'Related story ID should be correct';
 
     # Try with related_media_url.

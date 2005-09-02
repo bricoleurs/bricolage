@@ -94,7 +94,7 @@ use constant COLS => qw(name
                         parent_id
                         place
                         object_order
-                        related_instance__id
+                        related_story__id
                         related_media__id
                         active);
 use constant FIELDS => qw(name
@@ -105,7 +105,7 @@ use constant FIELDS => qw(name
                           parent_id
                           place
                           object_order
-                          related_instance_id
+                          related_story_id
                           related_media_id
                           _active);
 
@@ -131,7 +131,7 @@ BEGIN {
 
                         # reference to the asset type data object
                         element_id             => Bric::FIELD_RDWR,
-                        related_instance_id    => Bric::FIELD_RDWR,
+                        related_story_id    => Bric::FIELD_RDWR,
                         related_media_id       => Bric::FIELD_RDWR,
 
                         # Private Fields
@@ -535,25 +535,38 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item my $story_id = $container->get_related_story_id
+
 =item my $story_id = $container->get_related_instance_id
 
 Returns the ID of a story related to this container element.
+C<get_related_instance_id()> is provided for backwards compatability with
+versions of Bricolage prior to 1.9.1.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=item $container->set_related_story_id($story_id)
 
 =item $container->set_related_instance_id($story_id)
 
 Sets the ID of a story related to this container element.
+C<set_related_instance_id()> is provided for backwards compatability with
+versions of Bricolage prior to 1.9.1.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub get_related_instance_id { shift->get_related_story_id }
+sub set_related_instance_id { shift->set_related_story_id(@_) }
 
 =item my $media_id = $container->get_related_media_id
 
@@ -602,7 +615,7 @@ sub set_related_story {
         $story_id = $story;
     }
 
-    $self->_set(['related_instance_id'], [$story_id]);
+    $self->_set(['related_story_id'], [$story_id]);
 }
 
 ################################################################################
@@ -623,7 +636,7 @@ B<Notes:> NONE.
 sub get_related_story {
     my $self = shift;
     my $dirty = $self->_get__dirty;
-    my ($rel_id, $rel_obj) = $self->_get('related_instance_id',
+    my ($rel_id, $rel_obj) = $self->_get('related_story_id',
                                          '_related_instance_obj');
 
     # Return with nothing if there is no related instance ID
@@ -2087,7 +2100,7 @@ sub _deserialize_pod {
     my $doc_type     = $self->get_object_type;
     my $doc_id       = $self->get_object_instance_id;
     my $id           = $self->get_id;
-    $self->_set([qw(related_instance_id related_media_id)] => [undef, undef]);
+    $self->_set([qw(related_story_id related_media_id)] => [undef, undef]);
 
     # Identify the allowed subelements and fields.
     my %elem_types  = map { $_->get_key_name => $_ }
@@ -2207,8 +2220,7 @@ sub _deserialize_pod {
                 my $attr       = $2;
                 my $doc_id;
                 my $meth       = "is_related_$type";
-                my $rel_attr   = 'related_'
-                    . ($type eq 'story' ? 'instance_id' : 'media_id');
+                my $rel_attr   = "related_$type\_id";
 
                 throw_invalid
                     error => 'Element "' . $self->get_key_name

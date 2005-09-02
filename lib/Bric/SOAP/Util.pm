@@ -664,7 +664,7 @@ sub resolve_relations {
                            "\"$r->{story_id}\"")
                   unless exists $story_ids->{$r->{story_id}};
                 $r->{container}->
-                    set_related_instance_id($story_ids->{$r->{story_id}});
+                    set_related_story_id($story_ids->{$r->{story_id}});
             }
             if ($r->{media_id}) {
                 throw_ap(error => __PACKAGE__ .
@@ -682,7 +682,7 @@ sub resolve_relations {
                   unless Bric::Biz::Asset::Business::Story->list_ids({
                       id => $r->{story_id}
                   });
-                $r->{container}->set_related_instance_id($r->{story_id});
+                $r->{container}->set_related_story_id($r->{story_id});
             } elsif ($r->{story_uri}) {
                 my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
                     primary_uri => $r->{story_uri},
@@ -690,7 +690,7 @@ sub resolve_relations {
                 });
                 throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
                            . qq{ not found in site "$r->{site_id}"}) unless $sid;
-                $r->{container}->set_related_instance_id($sid);
+                $r->{container}->set_related_story_id($sid);
             }
             if ($r->{media_id}) {
                 throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
