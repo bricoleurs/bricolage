@@ -712,6 +712,7 @@ sub set_page_extensions {
                          ( $oc   ? (oc    => $oc->get_name)   : ()),
                          ( $cat  ? (cat   => $cat->get_uri)   : ()),
                          ( $elem ? (elem  => $elem->get_name) : ()),
+                         ( $elem ? (element => $elem)         : ()),
     }
 
     $self->_set(['_page_extensions'] => [\@_]);
@@ -1209,7 +1210,8 @@ sub publish {
             throw_burn_error error => $errstr,
                              mode  => $self->get_mode,
                              oc    => $oc->get_name,
-                             elem  => $at->get_name
+                             elem  => $at->get_name,
+                             element => $at
               if $die_err;
               add_msg($errstr);
             next;
@@ -1899,7 +1901,8 @@ sub throw_error {
           mode  => $self->get_mode,
           oc    => ($oc ? $oc->get_name : ''),
           cat   => ($cat ? $cat->get_uri : ''),
-          elem  => ($elem ? $elem->get_name : ''));
+          elem  => ($elem ? $elem->get_name : ''),
+          ($elem ? (element => $elem) : ()));
     goto &throw_burn_user;
 }
 

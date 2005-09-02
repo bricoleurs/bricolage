@@ -116,7 +116,7 @@ use Exception::Class
    'Bric::Util::Fault::Exception::Burner' =>
      { description => 'Burner exception',
        isa => 'Bric::Util::Fault::Exception',
-       fields => [qw(oc cat elem mode)],
+       fields => [qw(oc cat elem mode element)],
        alias => 'throw_burn_error',
      },
    'Bric::Util::Fault::Exception::Auth' =>

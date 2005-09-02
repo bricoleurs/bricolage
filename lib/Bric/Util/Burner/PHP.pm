@@ -293,7 +293,8 @@ sub burn_one {
                 mode    => $self->get_mode,
                 oc      => $self->get_oc->get_name,
                 cat     => $self->get_cat->get_uri,
-                elem    => $element->get_name
+                elem    => $element->get_name,
+                element => $element
               if $@;
         }
 
@@ -639,7 +640,8 @@ sub _load_template_element {
                           mode  => $self->get_mode,
                           oc    => $self->get_oc->get_name,
                           cat   => $self->get_cat->get_uri,
-                          elem  => $element->get_name;
+                          elem  => $element->get_name,
+                          element => $element;
     return $tmpl;
 }
 
@@ -736,7 +738,8 @@ sub _display_container {
         mode    => $self->get_mode,
         oc      => $self->get_oc->get_name,
         cat     => $self->get_cat->get_uri,
-        elem    => $elem->get_name
+        elem    => $elem->get_name,
+        element => $elem
       if $@;
 
     $self->_pop_element;

@@ -80,6 +80,17 @@ STACK:
 END DEBUGGING INFORMATION -->
 
 % }
+
+% if ($prev && $is_burner_error) {
+%     my $element = $fault->element;
+%     my @elements = ($element);
+%     while (my $parent = $elements[0]->get_parent) {
+%         unshift @elements, $parent;
+%     }
+<p>Location of the error:<br/>
+<% shift(@elements)->get_name %> -> <% join(' -> ', map { $_->get_name . '[' . $_->get_object_order . ']' } @elements) %></p>
+% }
+
 % unless (isa_bric_exception($fault, 'Exception::Burner::User')) {
 <p>Please report this error to your administrator.</p>
 % }

@@ -470,7 +470,8 @@ sub new_template {
                          mode  => $self->get_mode,
                          oc    => $self->get_oc->get_name,
                          cat   => $self->get_cat->get_uri,
-                         elem  => $element->get_name
+                         elem  => $element->get_name,
+                         element => $element
           unless defined $file;
 
         print STDERR __PACKAGE__, "::new_template() : found template file ",
@@ -893,7 +894,8 @@ sub _runit {
                           mode  => $self->get_mode,
                           oc    => $self->get_oc->get_name,
                           cat   => $self->get_cat->get_uri,
-                          elem  => ref $element ? $element->get_name : $element;
+                          elem  => ref $element ? $element->get_name : $element,
+                          (ref($element) ? (element => $element) : ());
     binmode(SCRIPT, ':utf8') if ENCODE_OK;
     while(read(SCRIPT, $sub, 102400, length($sub))) {};
     close(SCRIPT);
@@ -935,7 +937,8 @@ END
                              mode    => $self->get_mode,
                              oc      => $self->get_oc->get_name,
                              cat     => $self->get_cat->get_uri,
-                             elem    => $element->get_name
+                             elem    => $element->get_name,
+                             element => $element
               if $@;
         }
 
@@ -961,7 +964,8 @@ END
                      mode    => $self->get_mode,
                      oc      => $self->get_oc->get_name,
                      cat     => $self->get_cat->get_uri,
-                     elem    => ref $element ? $element->get_name : $element
+                     elem    => ref $element ? $element->get_name : $element,
+                     (ref($element) ? (element => $element) : ())
       if $@;
     return $output;
 }
