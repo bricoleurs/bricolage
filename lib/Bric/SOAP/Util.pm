@@ -247,7 +247,7 @@ sub parse_asset_document {
                  keyattr       => [],
                  suppressempty => '',
                  forcearray    => [qw( contributor category output_channel
-                                       keyword element container
+                                       keyword element_type container
                                        data story media template ),
                                    @extra_force_array
                                   ]
@@ -337,10 +337,10 @@ The business asset with which to associate the output channels.
 The array reference of output channels from the SOAP data, e.g.,
 C<$data->{stories}{story}[0]{output_channels}{output_channel}.
 
-=item C<$elem_ocs>
+=item C<$elem_type_ocs>
 
-A hash reference of the output channels in the element that defines the asset
-(i.e., the story type element or the media type element). The hash keys are
+A hash reference of the output channels in the element type that define the asset
+(i.e., the story element type or the media element type). The hash keys are
 the output channel names, and the values are the corresponding output channel
 objects.
 
@@ -376,7 +376,7 @@ sub load_ocs {
         my $oc = delete $ocs{$ocname};
         unless ($oc) {
             # We have to add the new output channel to the document. Grab the
-            # OC object from the element.
+            # OC object from the element type.
             $oc = $elem_ocs->{$ocname} or
               throw_ap(error => __PACKAGE__ . "::create : output channel matching " .
                          "(name => \"$ocname\") not allowed or cannot be found");
@@ -401,7 +401,7 @@ sub load_ocs {
 =item @relations = deseralize_elements(object => $story, data => $data,
                                        type   => 'story')
 
-Loads an asset object with element data from the data hash.  Calls
+Loads an asset object with element type data from the data hash.  Calls
 _deserialize_tile recursively down through containers.
 
 Throws: NONE

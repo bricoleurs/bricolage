@@ -33,16 +33,16 @@ my %conf = (
     'contrib_type' => {
         'disp_name' => 'Contributor Type',
     },
-    'element' => {
-        'disp_name' => 'Element',
+    'element_type' => {
+        'disp_name' => 'Element Type',
     },
 );
 
-my ($base_handler, $do_contrib_type, $do_element, $clean_param,
-    $delete_ocs, $delete_sites, $check_save_element, $get_obj,
-    $set_key_name, $update_element_attrs, $get_data_href,
-    $delete_element_attrs, $set_primary_ocs, $add_new_attrs,
-    $save_element_etc);
+my ($base_handler, $do_contrib_type, $do_element_type, $clean_param,
+    $delete_ocs, $delete_sites, $check_save_element_type, $get_obj,
+    $set_key_name, $update_element_type_attrs, $get_data_href,
+    $delete_element_type_attrs, $set_primary_ocs, $add_new_attrs,
+    $save_element_type_etc);
 
 
 sub save : Callback {
@@ -57,7 +57,7 @@ sub save_n_stay : Callback {
     return unless $_[0]->value;      # already handled
     &$base_handler;
 }
-sub addElement : Callback {
+sub addElementType : Callback {
     return unless $_[0]->value;      # already handled
     &$base_handler;
 }
@@ -76,7 +76,7 @@ sub add_site_id : Callback {
 # that's so.
 my %new_params = (
     contrib_type => { secret => 1 },
-    element      => {},
+    element_type => {},
 );
 
 $base_handler = sub {
@@ -112,8 +112,8 @@ $base_handler = sub {
         } else {
             if ($key eq 'contrib_type') {
                 $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
-            } elsif ($key eq 'element') {
-                $param->{'obj'} = $do_element->($self, $obj, $key, $class);
+            } elsif ($key eq 'element_type') {
+                $param->{'obj'} = $do_element_type->($self, $obj, $key, $class);
             }
         }
     }
@@ -217,7 +217,7 @@ $do_contrib_type = sub {
     $param->{"$key\_id"} ||= $obj->get_id;
 };
 
-$do_element = sub {
+$do_element_type = sub {
     my ($self, $obj, $key, $class) = @_;
     my $param = $self->params;
     my $name = $param->{'name'};
@@ -239,7 +239,7 @@ $do_element = sub {
       : ();
 
     # Check if we need to inhibit a save based on some special conditions
-    $no_save = $check_save_element->(\@cs, $param, $key);
+    $no_save = $check_save_element_type->(\@cs, $param, $key);
 
     add_msg("The key name \"[_1]\" is already used by another $disp_name.",
             $key_name)
@@ -260,10 +260,10 @@ $do_element = sub {
 
     my $data_href = $get_data_href->($param, $key);
 
-    $update_element_attrs->(\%del_attrs, $param, $data_href);
+    $update_element_type_attrs->(\%del_attrs, $param, $data_href);
 
     $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
-    $delete_element_attrs->($obj, $param, $key, $cb_key, \%del_attrs, $data_href);
+    $delete_element_type_attrs->($obj, $param, $key, $cb_key, \%del_attrs, $data_href);
 
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
@@ -276,7 +276,7 @@ $do_element = sub {
     # Add output channels.
     $obj->add_output_channel($self->value) if $cb_key eq 'add_oc_id';
 
-    # Add sites, if it's a top-level element.
+    # Add sites, if it's a top-level element type.
     if ($cb_key eq 'add_site_id' && $obj->get_top_level) {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
@@ -292,7 +292,7 @@ $do_element = sub {
         }
     }
 
-    # delete any selected sub elements
+    # delete any selected subelement types
     if ($param->{"$key|delete_sub"}) {   # note: not a callback
         $obj->del_containers(mk_aref($param->{"$key|delete_sub"}));
     }
@@ -300,7 +300,7 @@ $do_element = sub {
     # Take care of group management.
     $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
-    $save_element_etc->($self, $obj, $key, $no_save, $disp_name, $name);
+    $save_element_type_etc->($self, $obj, $key, $no_save, $disp_name, $name);
 
     return $obj;
 };
@@ -348,25 +348,22 @@ $delete_sites = sub {
     }
 };
 
-$check_save_element = sub {
+$check_save_element_type = sub {
     my ($cs, $param, $key) = @_;
 
-    my $no_save = 0;
-
-    if    (@$cs > 1)                                   { $no_save = 1 }
-    elsif (@$cs == 1 && !defined $param->{element_id}) { $no_save = 1 }
-    elsif (@$cs == 1 && defined $param->{element_id}
-           && $cs->[0] != $param->{element_id})        { $no_save = 1 }
-
-    return $no_save;
+    return @$cs > 1
+           || (@$cs == 1 && !defined $param->{element_type_id})
+           || (@$cs == 1 && $cs->[0] != $param->{element_type_id})
+           || (@$cs == 1 && defined $param->{element_type_id}
+               && $cs->[0] != $param->{element_type_id})
+        ? 1 : 0;
 };
 
 $get_obj = sub {
     my ($class, $param, $key, $obj) = @_;
-
-    # Create a new object if we need to pass in an Element Type ID
-    $obj = $class->new({ type__id => $param->{"$key\_type_id"} })
-      if exists $param->{"$key\_type_id"} && !defined $param->{"$key\_id"};
+    # Create a new object if we need to pass in an Element Type set ID
+    $obj = $class->new({ type__id => $param->{"$key\_set_id"} })
+      if exists $param->{"$key\_set_id"} && !defined $param->{"$key\_id"};
 
     return $obj;
 };
@@ -381,7 +378,7 @@ $set_key_name = sub {
     $obj->set_key_name($kn);
 };
 
-$update_element_attrs = sub {
+$update_element_type_attrs = sub {
     my ($del_attrs, $param, $data_href) = @_;
 
     # Update existing attributes.
@@ -412,7 +409,7 @@ $get_data_href = sub {
     return $data_href;
 };
 
-$delete_element_attrs = sub {
+$delete_element_type_attrs = sub {
     my ($obj, $param, $key, $cb_key, $del_attrs, $data_href) = @_;
 
     # Delete any attributes that are no longer needed.
@@ -421,8 +418,8 @@ $delete_element_attrs = sub {
         foreach my $attr (keys %$del_attrs) {
             my $atd = $data_href->{lc $attr};
             push @$del, $atd;
-            log_event("$key\_attr_del", $obj, { Name => $attr });
-            log_event("$key\_data_del", $atd);
+            log_event("$key\_data_rem", $obj, { Name => $attr });
+            log_event("$key\_data_deact", $atd);
         }
         $obj->del_data($del);
     }
@@ -511,7 +508,7 @@ $add_new_attrs = sub {
                                        max_length  => $max,
                                       });
 
-            # create name/value field for element
+            # create name/value field for element type
             $atd->set_attr('html_info', $value);
 
             # Record the metadata so we can properly display the form element.
@@ -524,18 +521,18 @@ $add_new_attrs = sub {
               if $param->{'fb_type'} eq 'checkbox';
 
             # Log that we've created it.
-            log_event("$key\_data_new", $atd, { Name => $key_name });
-            log_event("$key\_attr_add", $obj, { Name => $key_name });
+            log_event("$key\_data_add", $obj, { Name => $key_name });
+            log_event("$key\_data_new", $atd);
         }
     }
 };
 
-$save_element_etc = sub {
+$save_element_type_etc = sub {
     my ($self, $obj, $key, $no_save, $disp_name, $name) = @_;
     my $param = $self->params;
     my $cb_key = $self->cb_key;
 
-    # Save the element.
+    # Save the element type.
     $obj->save() unless $no_save;
     $param->{"$key\_id"} = $obj->get_id;
 
@@ -545,12 +542,12 @@ $save_element_etc = sub {
             if ($param->{'isNew'}) {
                 $self->set_redirect("/admin/profile/$key/" .$param->{"$key\_id"} );
             } else {
-                # If this is a top-level element, make sure it as one site and one
-                # OC associated with it.
+                # If this is a top-level element type, make sure it as one
+                # site and one OC associated with it.
                 if ($obj->get_top_level) {
                     my $site_id = $obj->get_sites->[0];
                     unless ($site_id and $obj->get_primary_oc_id($site_id) ) {
-                        add_msg("Element must be associated with at least " .
+                        add_msg("Element type must be associated with at least " .
                                 "one site and one output channel.");
                         return;
                     }
@@ -564,7 +561,7 @@ $save_element_etc = sub {
                 # return to profile if creating new object
                 $self->set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
             }
-        } elsif ($cb_key eq 'addElement') {
+        } elsif ($cb_key eq 'addElementType') {
             # redirect, and tack object id onto path
             $self->set_redirect("/admin/manager/$key/" . $param->{"$key\_id"});
         }

@@ -6,10 +6,12 @@ $debug => undef
 <%once>;
 my $disp = { map { $_ => get_disp_name($_) }
   qw(story media formatting) };
-my $pl_disp = { map { $_ => get_class_info($_)->get_plural_name }
-  qw(story media formatting pref user grp output_channel contrib contrib_type site
-     workflow category element element_type media_type source dest job alert_type
-     keyword) };
+my $pl_disp = {
+    map { $_ => get_class_info($_)->get_plural_name }
+        qw(story media formatting pref user grp output_channel contrib
+           contrib_type site workflow category element_type element_type_set
+           media_type source dest job alert_type keyword)
+};
 
 my $printLink = sub {
     my ($href, $uri, $caption, $no_translation) = @_;
@@ -26,7 +28,7 @@ my $printLink = sub {
         $style = qq{ class="selected"} if ($uri[1] eq $href[1] && $uri[3] eq $href[3]);
         # disable link in admin/manager when we have a full url match
         $isLink = ($uri[2] eq $href[2]) ? 0:1;
-        $isLink = 1 if ($uri[3] eq "element" && defined $uri[4]);
+        $isLink = 1 if ($uri[3] eq "element_type" && defined $uri[4]);
     } else {
         if ($uri[3] eq "desk") {
             $style = qq{ class="selected"} if $uri[1] eq $href[1] && $uri[3] eq $href[3]
@@ -189,8 +191,8 @@ if ( $nav->{adminPublishing} ) { #open publishing submenu
         $m->out(qq{<li>} . &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/element', $uri, $pl_disp->{element}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/element_type_set', $uri, $pl_disp->{element_type_set}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) . qq{</li>});

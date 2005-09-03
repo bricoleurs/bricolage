@@ -76,7 +76,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('21', 'output_channel', 'Bric::Biz::OutputChannel', 'Output Channel', 'Output Channels', 'Output Channel', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('22', 'element', 'Bric::Biz::AssetType', 'Element', 'Elements', 'Element objects', '0');
+VALUES ('22', 'element_type', 'Bric::Biz::AssetType', 'Element Type', 'Element Types', 'Element type objects', '0');
 
 /*
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
@@ -98,7 +98,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('28', 'keyword_grp', 'Bric::Util::Grp::Keyword', 'Keyword Group', 'Keyword Groups', 'Keyword group', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('29', 'element_data', 'Bric::Biz::AssetType::Parts::Data', 'Field', 'Fields', 'Fields', '0');
+VALUES ('29', 'element_type_data', 'Bric::Biz::AssetType::Parts::Data', 'Field', 'Fields', 'Fields', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('30', 'alert_type', 'Bric::Util::AlertType', 'Alert Type', 'Alert Types', 'Alert type', '0');
@@ -122,7 +122,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('36', 'source_grp', 'Bric::Util::Grp::Source', 'Source Group', 'Source Groups', 'Source group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('37', 'element_type', 'Bric::Biz::ATType', 'Element Type', 'Element Types', 'Element Type objects', '0');
+VALUES ('37', 'element_type_set', 'Bric::Biz::ATType', 'Element Type Set', 'Element Type Sets', 'Element Type Set objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('38', 'grp_member', 'Bric::Util::Grp::Parts::Member', 'Group Member', 'Group Members', 'Members of a group', '0');
@@ -204,7 +204,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('63', 'job_grp', 'Bric::Util::Grp::Job', 'Job Group', 'Job Groups', 'Group of jobs', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('64', 'element_type_grp', 'Bric::Util::Grp::ElementType', 'Element Type Group', 'Element Type Groups', 'Group of element types', '0');
+VALUES ('64', 'element_type_set_grp', 'Bric::Util::Grp::ElementType', 'Element Type Set Group', 'Element Type Set Groups', 'Group of element type sets', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('65', 'story_grp', 'Bric::Util::Grp::Story', 'Story Group', 'Story Groups', 'Group of stories', '0');
@@ -222,7 +222,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('69', 'asset', 'Bric::Biz::Asset', 'Asset', 'Assets', 'Asset objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('70', 'element_grp', 'Bric::Util::Grp::Element', 'Element Group', 'Element Groups', 'Element group objects', '0');
+VALUES ('70', 'element_type_grp', 'Bric::Util::Grp::Element', 'Element Type Group', 'Element Type Groups', 'Element Type group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('71', 'perm', 'Bric::Util::Priv', 'Permission', 'Permissions', 'Permission objects', '0');
@@ -254,3 +254,5 @@ VALUES ('79', 'dist_job', 'Bric::Util::Job::Dist', 'Distribution Job', 'Distribu
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('80', 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job', 'Publication Jobs', 'Publication job objects.', '0');
 
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES ('81', 'element', 'Bric::Biz::Asset::Busines::Parts::Tile', 'Element', 'Elements', 'Element objects.', '0');

@@ -4,13 +4,13 @@
    context => "Admin | Profile | $disp | $crumb",
    jsInit => (defined $id) ? "showForm('$which', true)" : ""
 &>
-<form method="post" action="<% $r->uri %>" name="element_data_profile"
+<form method="post" action="<% $r->uri %>" name="element_type_data_profile"
       onSubmit="return confirmChanges(this)">
 <%perl>;
 my $num = 0;
 
 $m->comp('/widgets/profile/hidden.mc',
-         'name' => 'element_data_id',
+         'name' => 'element_type_data_id',
          'value' => $id)
   if defined $id;
 
@@ -47,7 +47,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 <%once>;
 my $class = 'Bric::Biz::AssetType::Parts::Data';
 my $section = 'admin';
-my $type = 'element_data';
+my $type = 'element_type_data';
 my $disp = get_disp_name($type);
 </%once>
 
@@ -69,7 +69,7 @@ $id ||= $field->get_id();
 my $meta = $field->get_meta('html_info');
 my $which = $meta->{'type'};  # text, radio, etc..
 
-# Get the element object to which the field belongs.
+# Get the element type object to which the field belongs.
 my $elem = Bric::Biz::AssetType->lookup({ id => $field->get_element__id });
 
 # Check authorization. We check the element, rather than the field, since
@@ -95,7 +95,7 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 NAME
 
-/admin/profile/element_data/dhandler - Interface for managing fields.
+/admin/profile/element_type_data/dhandler - Interface for managing fields.
 
 =head1 VERSION
 

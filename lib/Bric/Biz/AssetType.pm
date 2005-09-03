@@ -727,7 +727,7 @@ sub my_meths {
 			     get_args => [],
 			     set_meth => sub { shift->set_type_name(@_) },
 			     set_args => [],
-			     disp     => 'Type',
+			     disp     => 'Set',
 			     len      => 64,
 			     req      => 0,
 			     type     => 'short',

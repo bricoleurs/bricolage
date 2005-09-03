@@ -2,7 +2,7 @@ package Bric::App::Callback::Profile::ElementType;
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
-use constant CLASS_KEY => 'element_type';
+use constant CLASS_KEY => 'element_type_set';
 
 use strict;
 use Bric::App::Event qw(log_event);
@@ -11,7 +11,7 @@ use Bric::Biz::ATType;
 
 my $type = CLASS_KEY;
 my $class = 'Bric::Biz::ATType';
-my $disp_name = 'Element Type';
+my $disp_name = 'Element Type Set';
 
 
 sub save : Callback {
@@ -37,10 +37,10 @@ sub save : Callback {
         my @cts = $class->list_ids({ name => $param->{name}, active => 'all' });
         if (@cts > 1) {
             $used = 1;
-        } elsif (@cts == 1 && !defined $param->{element_type_id}) {
+        } elsif (@cts == 1 && !defined $param->{element_type_set_id}) {
             $used = 1;
-        } elsif (@cts == 1 && defined $param->{element_type_id}
-                   && $cts[0] != $param->{element_type_id}) {
+        } elsif (@cts == 1 && defined $param->{element_type_set_id}
+                   && $cts[0] != $param->{element_type_set_id}) {
             $used = 1;
         }
         add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
@@ -49,8 +49,8 @@ sub save : Callback {
         # Roll in the changes.
         $ct->set_name($param->{name}) unless $used;
         $ct->set_description($param->{description});
-        if (! defined $param->{element_type_id}) {
-            # It's a new element. Just set the type, save, and return.
+        if (! defined $param->{element_type_set_id}) {
+            # It's a new element type set. Just set the type, save, and return.
             $ct->set_top_level($param->{elem_type} eq 'Element' ? 0 : 1);
             if ($param->{elem_type} eq 'Media') {
                 $ct->set_media(1);
@@ -85,7 +85,7 @@ sub save : Callback {
     }
     $ct->save;
     $param->{"${type}_id"} = $ct->get_id unless defined $param->{"${type}_id"};
-    $self->set_redirect('/admin/manager/element_type');
+    $self->set_redirect('/admin/manager/element_type_set');
 }
 
 

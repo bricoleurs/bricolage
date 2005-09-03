@@ -23,7 +23,7 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::ElementType - SOAP interface to Bricolage element types
+Bric::SOAP::ElementType - SOAP interface to Bricolage element type sets
 
 =head1 VERSION
 
@@ -52,15 +52,15 @@ $LastChangedDate: 2004-06-09 05:19:39 +0200 (Wed, 09 Jun 2004) $
   $soap->login(name(username => USER),
                name(password => PASSWORD));
 
-  # set uri for ElementType module
+  # set uri for ElementType set module
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/ElementType');
 
-  # get a list of all element types
+  # get a list of all element type sets
   my $ids = $soap->list_ids()->result;
 
 =head1 DESCRIPTION
 
-This module provides a SOAP interface to manipulating Bricolage element types.
+This module provides a SOAP interface to manipulating Bricolage element type sets.
 
 =cut
 
@@ -72,8 +72,8 @@ This module provides a SOAP interface to manipulating Bricolage element types.
 
 =item list_ids
 
-This method queries the database for matching element types and returns a
-list of ids.  If no element types are found an empty list will be returned.
+This method queries the database for matching element type sets set and returns a
+list of ids.  If no element type sets are found an empty list will be returned.
 
 This method can accept the following named parameters to specify the
 search.  Some fields support matching and are marked with an (M).  The
@@ -86,39 +86,39 @@ results (via ANDs in an SQL WHERE clause).
 
 =item name (M)
 
-The element type's name.
+The element type set's name.
 
 =item description (M)
 
-The element type's description.
+The element type set's description.
 
 =item top_level
 
-Boolean; return all top level element types.
+Boolean; return all top level element type sets.
 
 =item paginated
 
-Boolean; return all paginated element types.
+Boolean; return all paginated element type sets.
 
 =item fixed_url
 
-Boolean; return all fixed URL element types.
+Boolean; return all fixed URL element type sets.
 
 =item related_story
 
-Boolean; return all related story element types.
+Boolean; return all related story element type sets.
 
 =item related_media
 
-Boolean; return all related media element types.
+Boolean; return all related media element type sets.
 
 =item media
 
-Boolean; return all media element types.
+Boolean; return all media element type sets.
 
 =item active
 
-Set false to return deleted element types.
+Set false to return deleted element type sets.
 
 =back
 
@@ -285,7 +285,7 @@ to bric_soap.
 
 =cut
 
-sub module { 'element_type' }
+sub module { 'element_type_set' }
 
 =item is_allowed_param
 
@@ -345,7 +345,7 @@ sub load_asset {
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
-    # loop over element types, filling @ids
+    # loop over element type sets, filling @ids
     my (@ids, %paths);
 
     foreach my $adata (@{ $data->{$module} }) {
@@ -357,7 +357,7 @@ sub load_asset {
         # get object
         my $asset;
         unless ($update) {
-            # create empty element type
+            # create empty element type set
             $asset = $pkg->class->new;
             throw_ap(error => __PACKAGE__ . " : failed to create empty $module object.")
               unless $asset;
@@ -411,7 +411,7 @@ sub load_asset {
                              elementtype_id  => $id,
                              args          => $args)
 
-Serializes a single element type object into an <elementtype> using
+Serializes a single element type set object into an <elementtype> using
 the given writer and args.
 
 =cut
@@ -431,7 +431,7 @@ sub serialize_asset {
                "::export : access denied for $module \"$id\".")
       unless chk_authz($asset, READ, 1);
 
-    # open element_type element
+    # open element_type_set element
     $writer->startTag($module, id => $id);
 
     # write out simple attributes in schema order
@@ -453,7 +453,7 @@ sub serialize_asset {
     # set active flag
     $writer->dataElement(active => ($asset->is_active ? 1 : 0));
 
-    # close the element_type element
+    # close the element_type_set element
     $writer->endTag($module);
 }
 

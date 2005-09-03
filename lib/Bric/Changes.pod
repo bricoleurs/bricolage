@@ -198,6 +198,14 @@ C<get_related_story()> method. The C<get_related_instance_id()> and
 C<set_related_instance_id()> accessor methods remain in place for purposes of
 backwards compatibility. [David]
 
+=item *
+
+Renamed "Element" to "Element Type" and "Element Type" to "Element Type Set".
+This is to avoid confusing element types, which define the structure of
+elements, and elements, which are contain content and are based on element
+types. These are not ideal names, but at least we now have something different
+to call them. [David]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

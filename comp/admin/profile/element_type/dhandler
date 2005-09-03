@@ -1,71 +1,321 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
-   title => "$disp Profile",
-   context => "Admin | Profile | $disp | $crumb"
+  title => "$disp Profile",
+    context => "Admin | Profile | $disp | $crumb",
+  jsInit => (defined $id) ? "showForm('Text', true)" : ""
 &>
-<form method="post" action="<% $r->uri %>" name="ct_profile" onSubmit="return confirmChanges(this)">
+% if (ENABLE_WYSIWYG) {
+% # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
+<& /widgets/wysiwyg/load.mc &>
+% }
+<form method="post" action="<% $r->uri %>" name="cont_profile" id="cont_profile" onsubmit="return confirmChanges('cont_profile')">
 <%perl>;
-$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'element_type_id')
-  if defined $id;
-
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties", number => 1);
-# Dump the basic fields.
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $ct,
-	 readOnly => $no_edit, fieldsUsed => $exclude);
-if (defined $id && $ct->get_media) {
-    $type_vals->{value} = $ct->get_biz_class_id;
-    $m->comp('/widgets/profile/displayFormElement.mc', key => 'biz_class_id',
-	     vals => $type_vals, readOnly => $no_edit);
-} elsif (!defined $id ) {
-    # Output the Element Type Select list.
-    $m->comp('/widgets/profile/select.mc', disp => 'Type', name => 'elem_type',
-	     options => [qw(Element Story Media)], value => $type,
-	     readOnly => $no_edit);
+if (defined $id) {
+    $m->comp('/widgets/profile/hidden.mc',
+             value => $id,
+             name  => 'element_type_id');
 } else {
-    $m->comp('/widgets/profile/text.mc', disp => 'Type', value => $type, readOnly => 1);
+    if (my $site_cx_id = $c->get_user_cx(get_user_id)) {
+        $m->comp('/widgets/profile/hidden.mc',
+                 value => $site_cx_id,
+                 name  => 'formBuilder|add_site_id_cb');
+    }
 }
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
-# Output group membership.
-$m->comp("/widgets/grp_membership/grp_membership.mc",
-         grp_class => 'Bric::Util::Grp::ElementType',
-         obj => $ct,
-         formName => 'ct_profile',
-         widget => $widget,
-         no_edit => $no_edit,
-         num => 2
+my ($num_fields, $meta, $all, $num);
+
+# Output the primary fields.
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  	 caption => "Properties",
+	 number  => ++$num);
+
+$m->comp('/widgets/profile/displayFormElement.mc',
+         objref => $comp,
+         readOnly => $no_edit || defined $id,
+         key    => 'key_name');
+
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+	 objref => $comp, readOnly => $no_edit,
+	 fieldsUsed => {
+                        key_name => 1,
+			active => 1,
+			type_name => 1
+		       }
+	);
+
+# Output a list of object types to choose from.
+$m->comp('/widgets/select_object/select_object.mc',
+	 readOnly  => ($no_edit || $id),
+	 object    => 'element_type_set',
+     name      => 'element_type_set_id',
+	 field     => 'name',
+	 disp      => $lang->maketext('Set'),
+	 selected  => $comp->get_type__id,
+	 reset_key => $id,
+	 localize  => 0
 );
 
-$m->comp('/widgets/profile/formButtons.mc',
-	 type => $type,
-         widget => $widget,
-	 section => $section,
-	 no_del => $no_del,
-	 val => defined $id ? undef : 'next_dkgreen',
-	 no_save => $no_edit);
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::Element',
+         obj => $comp,
+         formName => 'cont_profile',
+         no_edit  => $no_edit,
+         widget   => $type,
+         no_cb    => 1,
+         num      => ++$num
+);
+
+
+if (defined $id) {
+
+    if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
+        my $site_sub = sub {
+            my $siteid = $_[0]->get_id;
+            if ($_[1] eq 'primary') {
+                $m->scomp('/widgets/select_object/select_object.mc',
+                          object => 'output_channel',
+                          field  => 'name',
+                          constrain => { site_id => $siteid, active => 1 },
+                          no_persist => 1,
+                          name   => "primary_oc_site_$siteid",
+                          useTable => 0,
+                          selected => $comp->get_primary_oc_id($siteid) || '',
+                         );
+            }
+
+        };
+
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Sites',
+             number => ++$num );
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object => 'site',
+                 userSort => 0,
+                 def_sort_field => 'name',
+                 objs => scalar $comp->get_sites,
+                 addition => undef,
+                 fields => [qw(name description primary)],
+                 field_titles => { primary => 'Primary Output Channel'},
+                 field_values => $site_sub,
+                 profile => undef,
+                 select => $sel_sub,
+                );
+
+my %sites = map { $_->get_id => 1 } $comp->get_sites;
+</%perl>
+<div class="actions">
+<& '/widgets/select_object/select_object.mc',
+    object => 'site',
+    field  => 'name',
+    exclude => sub { $sites{$_[0]->get_id} || ! chk_authz($_[0], EDIT, 1) },
+    no_persist => 1,
+    name   => 'formBuilder|add_site_id_cb',
+    default => ['' => 'Add Site'],
+    constrain => { active => 1, output_channel_id => 'not null' },
+    js => "onChange='submit()'",
+    useTable => 0,
+&>
+</div>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<%perl>;
+
+        # Manage Output Channels if this is a top-level container.
+
+        my $oc_sub = sub {
+            my $ocid = $_[0]->get_id;
+            if ($_[1] eq 'enabled') {
+                return 'Yes'
+                  if $comp->get_primary_oc_id($_[0]->get_site_id) == $ocid;
+                $m->scomp('/widgets/profile/checkbox.mc',
+                          name => 'enabled',
+                          value => $ocid,
+                          checked => $_[0]->is_enabled,
+                          useTable => 0
+                         );
+        }
+        };
+        my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
+          $comp->get_sites;
+        my $oc_sel_sub = sub {
+            return if $poc_ids{$_[0]->get_id};
+            return ['Delete', 'rem_oc'];
+        };
+
+        $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Output Channels',
+             number => ++$num );
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object => 'output_channel',
+                 userSort => 0,
+                 def_sort_field => 'name',
+                 objs => scalar $comp->get_output_channels,
+                 addition => undef,
+                 fields => [qw(name description site enabled)],
+                 field_titles => { enabled => 'Enabled' },
+                 field_values => $oc_sub,
+                 profile => undef,
+                 select => $oc_sel_sub,
+                );
+        my @available_ocs;
+        foreach my $site ($comp->get_sites) {
+            push @available_ocs, Bric::Biz::OutputChannel->list({
+                site_id => $site->get_id,
+                active  => 1
+            });
+        }
+</%perl>
+<div class="actions">
+<& '/widgets/select_object/select_object.mc',
+    object => 'output_channel',
+    objs   => \@available_ocs,
+    field  => 'name',
+    exclude => [ map { $_->get_id } $comp->get_output_channels ],
+    no_persist => 1,
+    getter => $oc_name_getter,
+    name   => 'formBuilder|add_oc_id_cb',
+    default => ['' => 'Add Output Channel'],
+    constrain => { active => 1 },
+    js => "onChange='submit()'",
+    useTable => 0,
+&>
+</div>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<%perl>;
+    }
+
+    # display elements contained by this asset type
+    my $i;
+    my $label = $no_edit ? 'View' : 'Edit';
+    # Output the actions.
+    my $containers = $comp->get_containers;
+
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+             caption => 'Existing Subelement types',
+             number  => ++$num );
+
+	unless($no_edit) {
+	
+        $m->print(qq{<div style="padding: 5px;">});
+	
+        $m->comp('/widgets/profile/imageSubmit.mc',
+	         formName => "cont_profile",
+	         callback => "formBuilder|addElementType_cb",
+	         image    => "add_sub_element_lgreen",
+	    );
+	    
+	    $m->print(qq{</div>});
+	}
+
+    $m->comp('/widgets/listManager/listManager.mc',
+	     object         => 'element_type',
+	     objs           => $containers,
+	     behavior       => 'expand',
+	     addition       => undef,
+	     fields         => [qw(name type_name description)],
+	     profile        => undef,
+	     select         => $no_del ? undef : ['Delete', 'element_type|delete_sub'],
+	    );
+
+	
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+
+}
+
+        # display existing attributes for this asset type
+        if (defined $id) {
+
+            $m->comp("/widgets/wrappers/sharky/table_top.mc",
+                     caption => "Custom Fields",
+                     number  => ++$num);
+
+            # mangle the attrs and meta to match the existing display code.
+            my $all_data = $comp->get_data;
+            if (@$all_data) {
+                my $attrs = [];
+                foreach my $dataObj (@$all_data) {
+                    my $metas = $dataObj->get_meta('html_info');
+                    my $tmp;
+                    foreach my $meta (keys %$metas) {
+                        $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
+                    }
+                    $tmp->{value} = $metas->{value};
+                    $tmp->{name} = $dataObj->get_key_name;
+                    $tmp->{id} = $dataObj->get_id;
+                    push @$attrs, $tmp;
+                }
+
+                $num_fields = @$attrs;
+                $m->comp("/widgets/profile/displayAttrs.mc",
+                         form_name => 'cont_profile',
+                         attr     => $attrs,
+                         readOnly => $no_edit,
+                         useEdit     => !$no_edit,
+                         usePosition => !$no_edit,
+                         useDelete   => !$no_edit);
+            } else {
+                $m->print(qq{<div style="padding: 5px;">} . $lang->maketext("No fields defined") .  "</div>");
+            }
+
+    # Close the table.
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+}
+
+#########################
+
+if (!$no_edit && defined $id) {
+    # Output the formBuilder.
+    $m->comp('/widgets/formBuilder/formBuilder.mc',
+	     numFields => 0,
+	     widget    => 1,
+	     stay      => 1,
+	     formName  => 'cont_profile',
+	     numFields => $num_fields,
+	     num       => ++$num,
+	     caption   => 'Add New Field',
+	     useRequired   => 1,
+	     useQuantifier => 1
+	    );
+} else {
+    # Add the buttons.
+    $m->out( qq {<input type="hidden" name="isNew" value="1">\n});
+    $m->comp('/widgets/profile/formButtons.mc',
+	     type => $type,
+	     val => 'next_dkgreen',
+	     section => $section,
+	     no_del => 1,
+	     no_save => $no_edit,
+	     widget  => "formBuilder",
+	    );
+}
+
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+
 %#-- End HTML --#
+
 
 %#-- Once Section --#
 <%once>;
-my $class = 'Bric::Biz::ATType';
+my $class = 'Bric::Biz::AssetType';
+my $type = 'element_type';
 my $section = 'admin';
-my $widget = 'element_type';
-my $disp = get_disp_name($widget);
-my $type_vals = { %{ $class->my_meths->{biz_class_id} } };
-{
-    # HACK. There must be a better way to get rid of the Story option!
-    my $story_pkg_id = get_class_info('story')->get_id;
-    my $tmp = [];
-    foreach (@{ $type_vals->{props}{vals}}) {
-	push @$tmp, $_ unless $_->[0] == $story_pkg_id;
-    }
-    $type_vals->{props}{vals} = $tmp;
-    $type_vals->{disp} = 'Media Type';
-}
-
+my $disp = get_disp_name('element_type'); # HACK!
+my $sel_sub = sub {
+    return unless chk_authz($_[0], EDIT, 1);
+    return ['Delete', 'rem_site'];
+};
+my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $oc_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
+};
 </%once>
 
 %#-- Args Section --#
@@ -75,34 +325,23 @@ $id => undef
 
 %#-- Init Section --#
 <%init>;
+# Do any redirects first.
+do_queued_redirect();
+
+$id = $ARGS{element_type_id} unless defined $id;
 # Instantiate an object.
-my $ct = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+my $comp = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
-$id ||= $ct->get_id;
+
+$id ||= $comp->get_id;
 
 # Check authorization.
-chk_authz($ct, $id ? READ : CREATE);
-my $no_edit = !chk_authz($ct, ($id ? EDIT : CREATE), 1);
+chk_authz($comp, $id ? READ : CREATE);
+my $no_edit = !chk_authz($comp, ($id ? EDIT : CREATE), 1);
 my $no_del = !$id || $no_edit;
 
-# Figure out its type.
-my $type = 'Subelement';
-my $exclude = { active => 1, media => 1, top_level => 1, biz_class_id => 1};
-if (defined $id) {
-    if ($ct->get_top_level) {
-	$ct->get_media ? ($type, $exclude->{paginated}) = ('Media', 1)
-	  : $type = 'Story';
-    } else {
-	# Set the proper flags.
-	$exclude->{biz_class_id} = 1;
-    }
-} else {
-    @{$exclude}{qw(paginated fixed_url related_story related_media)}
-      = (1, 1, 1, 1);
-}
-
 # Get the name for the breadcrumb trail.
-my $crumb = $ct->get_name;
+my $crumb = $comp->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 </%init>
 
@@ -111,7 +350,7 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 NAME
 
-/admin/profile/source/dhandler - Interface for managing element types.
+/admin/profile/element_type/dhandler - Container profile interface
 
 =head1 VERSION
 
@@ -123,6 +362,6 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This element handles the display for editing element types.
+Displays the profile for containers.
 
 </%doc>

@@ -283,8 +283,9 @@ sub new {
     unless ($et) {
         if (defined $init->{et_id}) {
             $et = Bric::Util::EventType->lookup({ id => $init->{et_id} });
-        } elsif ($init->{key_name}) {
-            $et = Bric::Util::EventType->lookup({ key_name => $init->{key_name} });
+        } elsif (my $kn = $init->{key_name}) {
+            $et = Bric::Util::EventType->lookup({ key_name => $kn })
+                or throw_dp qq{No event type found for key_name "$kn"};
         } else {
             throw_dp(error => "No Bric::Util::EventType object, ID, or "
                      . "key_name passed to " .  __PACKAGE__ . '::new()');

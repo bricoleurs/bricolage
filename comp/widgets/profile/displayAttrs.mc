@@ -84,7 +84,7 @@ foreach my $attr (@$attr) {
     if ($useEdit) {
         $m->out(qq{<td class="edit">\n});
 
-        my $url = '/admin/profile/element_data/' . $attr->{id};
+        my $url = '/admin/profile/element_type_data/' . $attr->{id};
         my $edit_url = sprintf('<a href="%s" class=redLink>%s</a>&nbsp;',
                                $url, $lang->maketext('Edit'));
         $m->out($edit_url);

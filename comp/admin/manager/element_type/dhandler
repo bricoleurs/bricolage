@@ -1,5 +1,5 @@
 <%once>;
-my $key = 'element';
+my $key = 'element_type';
 my $pkg_name = get_package_name($key);
 my $disp = get_disp_name($key);
 # This coderef displays profile link labels.
@@ -48,8 +48,8 @@ if (defined $id) {
     $title = 'Choose Subelements';
     my $name = $pkg_name->lookup({ id => $id })->get_name;
     $context = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
-    $sel_label = 'Add to Element';
-    $sel_widg  = 'element|addElement_cb'
+    $sel_label = 'Add to Element Type';
+    $sel_widg  = 'element_type|addElementType_cb'
 } else {
     $title = "$disp Manager";
     $context = "Admin | Manager | $disp";
@@ -79,12 +79,12 @@ my $groupList;
 my $searchType = "triple";
 
 $groupList = $m->scomp('/widgets/select_object/select_object.mc',
-		       object => 'element_type',
-		       default => ['', 'All Elements'],
+		       object => 'element_type_set',
+		       default => ['', 'All Element Types'],
 		       indent  => 150,
 		       field => 'name',
 		       name => 'elem_type',
-		       disp => 'Or Pick a Type',
+		       disp => 'Or Pick a Set',
 		       reset_key => $ARGS{elem_type},
 		       selected => $ARGS{elem_type},
 		       js => qq{onChange="location.href='} . $r->uri .
@@ -107,7 +107,7 @@ if ($id) {
     $m->out(qq{onSubmit="return confirmDeletions()">});
 }
 
-$m->out(qq {<input type="hidden" name="element_id" value=$id>\n} ) if ($id);
+$m->out(qq {<input type="hidden" name="element_type_id" value=$id>\n} ) if ($id);
 
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
           caption => 'Existing %n',
@@ -130,7 +130,7 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 # Output the form closing tag if necessary.
 if ($id) {
-    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/add_elements_lgreen.gif" border=0 name="element|doRedirect_cb" value="1" />\n</form>});
+    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/add_elements_lgreen.gif" border=0 name="element_type|doRedirect_cb" value="1" />\n</form>});
 } elsif ($can_del) {
     $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border=0 name="action"}
 	    . qq{value="$sel_label Checked" />\n</form>});
@@ -159,10 +159,10 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-/admin/manager/element/index.html
+/admin/manager/element_type/index.html
 
 =head1 DESCRIPTION
 
-This manager manages element objects.
+This manager manages element type objects.
 
 </%doc>

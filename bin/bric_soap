@@ -14,7 +14,7 @@ Modules:
   story
   media
   template
-  element
+  element_type
   category
   media_type
   site
@@ -22,13 +22,13 @@ Modules:
   user
   desk
   workflow
-  element_type
+  element_type_set
   output_channel
 
 Commands:
 
-  Asset Commands (story, media, template, element, category,
-                  media_type, site, keyword, user, desk, element_type,
+  Asset Commands (story, media, template, element_type, category,
+                  media_type, site, keyword, user, desk, element_type_set,
                   output_channel):
 
     list_ids
@@ -302,6 +302,7 @@ our %jump = (
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
+              class    => 'Story',
 			 },
 	     media    => {
 			  list_ids => \&list_ids,
@@ -309,6 +310,7 @@ our %jump = (
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
+              class    => 'Media',
 			 },
 	     template => {
 			  list_ids => \&list_ids,
@@ -316,13 +318,15 @@ our %jump = (
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
+              class    => 'Template',
 			 },
-	     element => {
+	     element_type => {
 			  list_ids => \&list_ids,
 			  export   => \&export,
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
+              class    => 'Element',
 			 },
 	     category => {
 			  list_ids => \&list_ids,
@@ -330,6 +334,7 @@ our %jump = (
 			  create   => \&create,
 			  update   => \&update,
 			  delete   => \&delete,
+              class    => 'Category',
 			 },
              media_type => {
                           list_ids => \&list_ids,
@@ -337,6 +342,7 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'MediaType',
                        },
              site => {
                           list_ids => \&list_ids,
@@ -344,6 +350,7 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'Site',
                        },
              keyword => {
                           list_ids => \&list_ids,
@@ -351,6 +358,7 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'Keyword',
                        },
              user => {
                           list_ids => \&list_ids,
@@ -358,6 +366,7 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'User',
                        },
              desk => {
                           list_ids => \&list_ids,
@@ -365,6 +374,7 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'Desk',
                        },
 	     workflow => {
 			  publish  => \&publish,
@@ -377,13 +387,15 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'Workflow',
 			 },
-             element_type => {
+             element_type_set => {
                           list_ids => \&list_ids,
                           export   => \&export,
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'ElementType',
                       },
              output_channel => {
                           list_ids => \&list_ids,
@@ -391,11 +403,16 @@ our %jump = (
                           create   => \&create,
                           update   => \&update,
                           delete   => \&delete,
+                          class    => 'OutputChannel',
                       },
 	    );
 
 # get module and verify
 $module = shift @ARGV;
+
+# Just a bit of backwards compatibility.
+$module = 'element_type' if $module eq 'element';
+
 pod2usage("Missing required module and command parameters.")
     unless $module;
 pod2usage("Unknown module \"$module\".")
@@ -459,7 +476,7 @@ if (!$use_cookie) {
 }
 
 # switch to requested module
-$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . _class_name($module));
+$soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $jump{$module}->{class});
 print STDERR "$module $command: Switched to $module module.\n" if $verbose;
 
 # execute command
@@ -473,7 +490,7 @@ $jump{$module}{$command}->();
 
 sub list_ids {
     if ($verbose) {
-        my $class = _class_name($module);
+        my $class = $jump{$module}->{class};
         print STDERR "$module $command: Calling Bric::SOAP::$class->$command ",
           "with search: (", join(', ', map { "$_ => $search{$_}" } keys %search), ")\n";
     }
@@ -524,7 +541,7 @@ sub create {
 	}
 
         if ($verbose) {
-            my $class = _class_name($module);
+            my $class = $jump{$module}->{class};
             print STDERR "$module $command: Calling Bric::SOAP::$class->$command " .
               "with document:  ", length($document), " bytes\n";
         }
@@ -563,7 +580,7 @@ sub update {
             print STDERR "$module $command: Found ids for update: ",
               join(', ', @update_ids), "\n";
 
-            my $class = _class_name($module);
+            my $class = $jump{$module}->{class};
             print STDERR "$module $command: Calling Bric::SOAP::$class->$command",
               " with document:  ", length($document), " bytes\n";
         }
@@ -664,7 +681,7 @@ sub _read_ids {
       unless @ids;
 
   if ($verbose) {
-      my $class = _class_name($module);
+      my $class = $jump{$module}->{class};
       print STDERR "$module $command: Calling $class->$command with ids: ",
         join(', ', map { $_->name . " => " . $_->value } @ids) , "\n";
   }
@@ -710,7 +727,7 @@ sub _handle_fault {
 
     # print out the error as appropriate
     if (ref $r) {
-        my $class = _class_name($module);
+        my $class = $jump{$module}->{class};
         if ($r->faultstring eq 'Application error' and
             ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
             # this is a bric exception, the interesting stuff is in detail
@@ -731,10 +748,5 @@ sub _handle_fault {
 
     # return an empty object to keep things humming along
     return SOAP::SOM->new();
-}
-
-sub _class_name {
-    my $module = shift;
-    return join('', map { ucfirst } split(/_/, lc($module)));
 }
 

@@ -2,7 +2,7 @@ package Bric::App::Callback::Profile::ElementData;
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
-use constant CLASS_KEY => 'element_data';
+use constant CLASS_KEY => 'element_type_data';
 
 use strict;
 use Bric::App::Event qw(log_event);
@@ -34,7 +34,8 @@ sub save : Callback {
         # Deactivate it.
         $ed->deactivate;
         $ed->set_required(0);
-        log_event("$type\_del", $ed);
+        log_event("$type\_rem", $elem, { Name => $name });
+        log_event("$type\_deact", $ed);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         my $numregex = qr{^\s*\d+\s*$};
@@ -86,6 +87,5 @@ sub save : Callback {
     $ed->save();
     $self->set_redirect(last_page());
 }
-
 
 1;

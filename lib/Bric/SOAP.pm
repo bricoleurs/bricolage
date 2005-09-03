@@ -62,9 +62,9 @@ Clients can create new stories and media and update existing stories and media
 in the system. Clients can also export existing stories and media in the
 format accepted for creation. Finally, clients may delete stories or media.
 
-=item Elements
+=item Element Types
 
-Clients can create, update, delete and export element definitions.
+Clients can create, update, delete and export element types.
 
 =item Templates
 
@@ -174,7 +174,7 @@ Provides query, export, update, create, and delete for Templates.
 
 =item L<Bric::SOAP::Element|Bric::SOAP::Element>
 
-Provides query, export, update, create, and delete for Element definitions.
+Provides query, export, update, create, and delete for Element types.
 
 =item L<Bric::SOAP::Category|Bric::SOAP::Category>
 
@@ -208,7 +208,7 @@ And now list_ids, export, create, update, and delete.
 
 =item L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
 
-Provides query, export, update, create, and delete for ElementType objects.
+Provides query, export, update, create, and delete for Element Type Set objects.
 
 =item L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
 
@@ -706,7 +706,7 @@ The XSD source:
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
-         <xs:element name="element" minOccurs="0" maxOccurs="unbounded">
+         <xs:element name="element_type" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
                <xs:element name="key_name">
@@ -779,10 +779,10 @@ The XSD source:
                    </xs:sequence>
                  </xs:complexType>
                </xs:element>
-               <xs:element name="subelements">
+               <xs:element name="subelement_types">
                  <xs:complexType>
                    <xs:sequence>
-                     <xs:element name="subelement" minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="subelement_type" minOccurs="0" maxOccurs="unbounded">
                        <xs:simpleType>
                          <xs:restriction base="xs:string">
                            <xs:maxLength value="64"/>
@@ -1056,7 +1056,7 @@ The XSD source:
              <xs:attribute name="id" type="xs:int" use="required"/>
            </xs:complexType>
          </xs:element>
-         <xs:element name="element_type" minOccurs="0" maxOccurs="unbounded">
+         <xs:element name="element_type_set" minOccurs="0" maxOccurs="unbounded">
            <xs:complexType>
              <xs:sequence>
                <xs:element name="name">

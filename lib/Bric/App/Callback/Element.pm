@@ -2,23 +2,23 @@ package Bric::App::Callback::Element;
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;
-use constant CLASS_KEY => 'element';
+use constant CLASS_KEY => 'element_type';
 
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:msg :history);
 use Bric::Biz::AssetType;
 
-my $type = 'element';
+my $type = 'element_type';
 my $class = 'Bric::Biz::AssetType';
 
 
-sub addElement : Callback {
+sub addElementType : Callback {
     my $self = shift;
     my $param = $self->params;
 
     # Instantiate the object.
-    my $id = $param->{'element_id'};
+    my $id = $param->{element_type_id};
     my $obj = defined $id ? $class->lookup({ id => $id }) : $class->new;
 
     # Check the permissions.
@@ -29,9 +29,9 @@ sub addElement : Callback {
         $self->set_redirect(last_page());
     } else {
         my $value  = $self->value;
-        my $elements = (ref $value eq 'ARRAY') ? $value : [ $value ];
+        my $element_types = (ref $value eq 'ARRAY') ? $value : [ $value ];
         # add element to object using id(s)
-        $obj->add_containers($elements);
+        $obj->add_containers($element_types);
         $obj->save;
         $param->{obj} = $obj;
     }
@@ -42,7 +42,7 @@ sub doRedirect : Callback {
     my $param = $self->params;
 
     # Instantiate the object.
-    my $id = $param->{'element_id'};
+    my $id = $param->{element_type_id};
     my $obj = defined $id ? $class->lookup({ id => $id }) : $class->new;
 
     # Check the permissions.
@@ -52,7 +52,7 @@ sub doRedirect : Callback {
         add_msg("Changes not saved: permission denied.");
         $self->set_redirect(last_page());
     } else {
-        $self->set_redirect('/admin/profile/element/' . $param->{element_id});
+        $self->set_redirect('/admin/profile/element_type/' . $param->{element_type_id});
         $param->{obj} = $obj;
     }
 }

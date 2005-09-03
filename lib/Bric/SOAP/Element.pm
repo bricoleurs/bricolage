@@ -24,7 +24,7 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::Element - SOAP interface to Bricolage element definitions.
+Bric::SOAP::Element - SOAP interface to Bricolage element type definitions.
 
 =head1 VERSION
 
@@ -53,15 +53,15 @@ $LastChangedDate$
   $soap->login(name(username => USER),
                name(password => PASSWORD));
 
-  # set uri for Element module
+  # set uri for Element type module
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Element');
 
-  # get a list of all elements
-  my $element_ids = $soap->list_ids()->result;
+  # get a list of all element types
+  my $element_type_ids = $soap->list_ids()->result;
 
 =head1 DESCRIPTION
 
-This module provides a SOAP interface to manipulating Bricolage elements.
+This module provides a SOAP interface to manipulating Bricolage element types.
 
 =cut
 
@@ -73,8 +73,8 @@ This module provides a SOAP interface to manipulating Bricolage elements.
 
 =item list_ids
 
-This method queries the database for matching elements and returns a
-list of ids.  If no elements are found an empty list will be returned.
+This method queries the database for matching element types and returns a
+list of ids.  If no element types are found an empty list will be returned.
 
 This method can accept the following named parameters to specify the
 search.  Some fields support matching and are marked with an (M).  The
@@ -87,27 +87,27 @@ results (via ANDs in an SQL WHERE clause).
 
 =item key_name (M)
 
-The element's key name.
+The element type's key name.
 
 =item name (M)
 
-The element's name.
+The element type's name.
 
 =item description (M)
 
-The element's description.
+The element type's description.
 
 =item output_channel
 
-The output channel for the element.
+The output channel for the element type.
 
 =item type
 
-The element's type.
+The element type's type.
 
 =item top_level
 
-Set to 1 to return only top-level elements.
+Set to 1 to return only top-level element types.
 
 =item site
 
@@ -115,7 +115,7 @@ NOT YET IMPLEMENTED. COMING SOON.
 
 =item active
 
-Set to 0 to return inactive as well as active elements.
+Set to 0 to return inactive as well as active element types.
 
 =back
 
@@ -176,15 +176,15 @@ sub list_ids {
             if DEBUG;
 
     # name the results
-    my @result = map { name(element_id => $_) } @list;
+    my @result = map { name(element_type_id => $_) } @list;
 
     # name the array and return
-    return name(element_ids => \@result);
+    return name(element_type_ids => \@result);
 }
 
 =item export
 
-The export method retrieves a set of elements from the database,
+The export method retrieves a set of element types from the database,
 serializes them and returns them as a single XML document.  See
 L<Bric::SOAP|Bric::SOAP> for the schema of the returned
 document.
@@ -193,14 +193,14 @@ Accepted paramters are:
 
 =over 4
 
-=item element_id
+=item element_type_id
 
-Specifies a single element_id to be retrieved.
+Specifies a single element_type_id to be retrieved.
 
-=item element_ids
+=item element_type_ids
 
-Specifies a list of element_ids.  The value for this option should be an
-array of interger "element_id" elements.
+Specifies a list of element_type_ids.  The value for this option should be an
+array of interger "element_type_id" element types.
 
 =back
 
@@ -234,7 +234,7 @@ Available options:
 =item document (required)
 
 The XML document containing objects to be created.  The document must
-contain at least one element object.
+contain at least one element type object.
 
 =back
 
@@ -257,9 +257,9 @@ setting.
 
 =item update
 
-The update method updates element using the data in an XML document of
+The update method updates element type using the data in an XML document of
 the format created by export().  A common use of update() is to
-export() a selected element object, make changes to one or more fields
+export() a selected element type object, make changes to one or more fields
 and then submit the changes with update().
 
 Returns a list of new ids created in the order of the assets in the
@@ -272,13 +272,13 @@ Takes the following options:
 =item document (required)
 
 The XML document where the objects to be updated can be found.  The
-document must contain at least one element and may contain any number of
-related element objects.
+document must contain at least one element types and may contain any number of
+related element type objects.
 
 =item update_ids (required)
 
-A list of "element_id" integers for the assets to be updated.  These
-must match id attributes on element elements in the document.  If you
+A list of "element_type_id" integers for the assets to be updated.  These
+must match id attributes on element type elements in the document.  If you
 include objects in the document that are not listed in update_ids then
 they will be treated as in create().  For that reason an update() with
 an empty update_ids list is equivalent to a create().
@@ -304,17 +304,17 @@ setting.
 
 =item delete
 
-The delete() method deletes elements.  It takes the following options:
+The delete() method deletes element types.  It takes the following options:
 
 =over 4
 
-=item element_id
+=item element_type_id
 
-Specifies a single element_id to be deleted.
+Specifies a single element_type_id to be deleted.
 
-=item element_ids
+=item element_type_ids
 
-Specifies a list of element_ids to delete.
+Specifies a list of element_type_ids to delete.
 
 =back
 
@@ -340,7 +340,7 @@ to bric_soap.
 
 =cut
 
-sub module { 'element' }
+sub module { 'element_type' }
 
 =item is_allowed_param
 
@@ -354,6 +354,7 @@ sub is_allowed_param {
     my ($pkg, $param, $method) = @_;
     my $module = $pkg->module;
 
+    print STDERR "Checking for $method($param) in $pkg\n" if DEBUG;
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(key_name name description active
                                          output_channel type top_level) },
@@ -392,21 +393,21 @@ sub load_asset {
         eval { $data = parse_asset_document($document,
                                             'output_channel',
                                             'site',
-                                            'subelement',
+                                            'subelement_type',
                                             'field',
                                            ) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
           if $@;
         throw_ap(error => __PACKAGE__ .
-                   " : problem parsing asset document : no element found!")
-          unless ref $data and ref $data eq 'HASH' and exists $data->{element};
+                   " : problem parsing asset document : no element type found!")
+          unless ref $data and ref $data eq 'HASH' and exists $data->{element_type};
         print STDERR Data::Dumper->Dump([$data],['data']) if DEBUG;
     }
 
-    # loop over element, filling @element_ids
+    # loop over element type, filling @element_ids
     my @element_ids;
     my %fixup;
-    foreach my $edata (@{$data->{element}}) {
+    foreach my $edata (@{$data->{element_type}}) {
         my $id = $edata->{id};
 
         # handle type => type__id mapping
@@ -424,7 +425,7 @@ sub load_asset {
             $burner = Bric::Biz::AssetType::BURNER_TEMPLATE;
         } else {
             throw_ap(error => __PACKAGE__ . "::export : unknown burner"
-                       . "\"$edata->{burner}\" for element \"$id\".");
+                       . "\"$edata->{burner}\" for element type \"$id\".");
         }
 
         # are we updating?
@@ -434,7 +435,7 @@ sub load_asset {
         unless (defined $edata->{key_name}) {
             ($edata->{key_name} = lc $edata->{name}) =~ y/a-z0-9/_/cs;
             my $r = Apache::Request->instance(Apache->request);
-            $r->log->warn("No key name in element loaded via SOAP. "
+            $r->log->warn("No key name in element type loaded via SOAP. "
                           . "Converted '$edata->{name}' to "
                           . "'$edata->{key_name}'");
         }
@@ -443,10 +444,10 @@ sub load_asset {
         my @list = Bric::Biz::AssetType->list_ids({ key_name => $edata->{key_name},
                                                     active => 0 });
         if (@list) {
-            throw_ap "Unable to create element \"$id\" key named "
+            throw_ap "Unable to create element type \"$id\" key named "
               . "\"$edata->{key_name}\": that key name is already taken."
               unless $update;
-            throw_ap "Unable to update element \"$id\" to have key name " .
+            throw_ap "Unable to update element type \"$id\" to have key name " .
               "$edata->{key_name}\" : that name is already taken."
               unless $list[0] == $id;
         }
@@ -456,9 +457,9 @@ sub load_asset {
             # instantiate a new object
             $element = Bric::Biz::AssetType->new({ type__id => $type_id });
         } else {
-            # load element
+            # load element type
             $element = Bric::Biz::AssetType->lookup({ id => $id });
-            throw_ap(error => __PACKAGE__ . "::update : unable to find element \"$id\".")
+            throw_ap(error => __PACKAGE__ . "::update : unable to find element type \"$id\".")
               unless $element;
 
             # update type__id and zap cached type object (ugh)
@@ -523,7 +524,7 @@ sub load_asset {
                          . " matching (output_channel => \"$name\")";
 
                 # Add this output channel to the list of OCs we'll need to add
-                # to this element only if it wasn't already an element.
+                # to this element type only if it wasn't already an element type.
                 if (delete $ocmap{$oc->get_id}) {
                     $have_ocs = 1;
                 } else {
@@ -535,26 +536,26 @@ sub load_asset {
               unless @ocs || $have_ocs;
 
             # Delete whatever output channels are left that are no longer
-            # a part of this element.
+            # a part of this element type.
             $element->delete_output_channels([values %ocmap])
               if $update;
-            # add output_channels to element
+            # add output_channels to element type
             $element->add_output_channels(\@ocs);
         }
 
-        # remove all sub-elements if updating
+        # remove all subelement types if updating
         $element->del_containers([ $element->get_containers ])
             if $update;
 
-        # find sub-elements and stash them in the fixup array.  This
-        # is done because an Element could refer to another Element in
+        # find subelement types and stash them in the fixup array.  This
+        # is done because an Element Type could refer to another Element Type in
         # the same document.
-        $edata->{subelements} ||= {subelement => []};
-        foreach my $subdata (@{$edata->{subelements}{subelement}}) {
+        $edata->{subelement_types} ||= {subelement_type => []};
+        foreach my $subdata (@{$edata->{subelement_types}{subelement_type}}) {
             # get key_name
             my $kn = ref $subdata ? $subdata->{content} : $subdata;
 
-            # add name to fixup hash for this element
+            # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
               unless exists $fixup{$edata->{key_name}};
             push @{$fixup{$edata->{key_name}}}, $kn;
@@ -564,7 +565,7 @@ sub load_asset {
         my %old_data = map { $_->get_key_name => $_ } $element->get_data;
         my %updated_data;
 
-        # find fields and instantiate new data elements
+        # find fields and instantiate new data element types
         my $place = 0;
         $edata->{fields} ||= {field => []};
         foreach my $field (@{$edata->{fields}{field}}) {
@@ -576,7 +577,7 @@ sub load_asset {
             ($field->{key_name} = lc $field->{name}) =~ y/a-z0-9/_/cs
               unless defined $field->{key_name};
 
-            # figure out sql_type, from widgets/formBuilder/element.mc
+            # figure out sql_type.
             my $sql_type;
             if ($field->{type} eq 'date'){
                 $sql_type = 'date';
@@ -638,7 +639,8 @@ sub load_asset {
             $data->set_meta(html_info => multiple  => $field->{multiple});
             $data->set_meta(html_info => vals      => $field->{options});
             $data->set_meta(html_info => pos       => $place);
-            log_event("element_attr_add", $element, { Name => $field->{label} });
+            log_event("element_type_data_add", $element, { Name => $field->{label} });
+            log_event('element_type_data_new', $data);
 
             # (my eyes! they're on fire!  oh, sweet lord, why?  WHY
             # HAVE YOU DONE THIS TO ME?)
@@ -650,7 +652,8 @@ sub load_asset {
             foreach my $f (keys %old_data) {
                 next if exists $updated_data{$f};
                 push @deleted, $f;
-                log_event("element_attr_del", $element, { Name => $f });
+                log_event("element_type_data_rem", $element, { Name => $f });
+                log_event("element_type_data_deact", $old_data{$f});
             }
 
             if (@deleted) {
@@ -669,22 +672,22 @@ sub load_asset {
 
         # all done
         $element->save;
-        log_event('element_' . ($update ? 'save' : 'new'), $element);
+        log_event('element_type_' . ($update ? 'save' : 'new'), $element);
 
-        # add to list of created elements
+        # add to list of created element types
         push(@element_ids, $element->get_id);
     }
 
-    # run through fixup attaching sub-elements
+    # run through fixup attaching subelement types
     foreach my $element_name (keys %fixup) {
         my ($element) = Bric::Biz::AssetType->list({key_name => $element_name});
         my @sub_ids;
 
         foreach my $sub_name (@{$fixup{$element_name}}) {
             my ($sub_id) = Bric::Biz::AssetType->list_ids({key_name => $sub_name});
-            throw_ap(error => __PACKAGE__ . " : no subelement found matching "
-                       . "(subelement => \"$sub_name\") "
-                       . "for element \"$element_name\".")
+            throw_ap(error => __PACKAGE__ . " : no subelement type found matching "
+                       . "(subelement_type => \"$sub_name\") "
+                       . "for element type \"$element_name\".")
               unless defined $sub_id;
             push @sub_ids, $sub_id;
         }
@@ -692,12 +695,12 @@ sub load_asset {
         $element->save;
     }
 
-    return name(ids => [ map { name(element_id => $_) } @element_ids ]);
+    return name(ids => [ map { name(element_type_id => $_) } @element_ids ]);
 }
 
-=item $pkg->serialize_asset(writer => $writer, element_id => $element_id, args => $args)
+=item $pkg->serialize_asset(writer => $writer, element_type_id => $element_id, args => $args)
 
-Serializes a single element object into a <element> element using
+Serializes a single element type object into a C<< <element_type> >> element using
 the given writer and args.
 
 =cut
@@ -705,19 +708,19 @@ the given writer and args.
 sub serialize_asset {
     my $pkg         = shift;
     my %options     = @_;
-    my $element_id  = $options{element_id};
+    my $element_id  = $options{element_type_id};
     my $writer      = $options{writer};
 
     my $element = Bric::Biz::AssetType->lookup({id => $element_id});
-    throw_ap(error => __PACKAGE__ . "::export : element_id \"$element_id\" not found.")
+    throw_ap(error => __PACKAGE__ . "::export : element_type_id \"$element_id\" not found.")
       unless $element;
 
     throw_ap(error => __PACKAGE__ .
-        "::export : access denied for element \"$element_id\".")
+        "::export : access denied for element type \"$element_id\".")
       unless chk_authz($element, READ, 1);
 
-    # open a element element
-    $writer->startTag("element", id => $element_id);
+    # open a element_type element
+    $writer->startTag('element_type', id => $element_id);
 
     # write out simple elements in schema order
     foreach my $e (qw(key_name name description)) {
@@ -734,7 +737,7 @@ sub serialize_asset {
         $writer->dataElement(burner => "HTML::Template");
     } else {
         throw_ap(error => __PACKAGE__ . "::export : unknown burner \"$burner_id\""
-                   . " for element \"$element_id\".");
+                   . " for element type \"$element_id\".");
     }
 
     # get type name
@@ -768,11 +771,11 @@ sub serialize_asset {
     }
 
     # output subelements
-    $writer->startTag("subelements");
+    $writer->startTag("subelement_types");
     foreach ($element->get_containers) {
-        $writer->dataElement(subelement => $_->get_key_name);
+        $writer->dataElement(subelement_type => $_->get_key_name);
     }
-    $writer->endTag("subelements");
+    $writer->endTag("subelement_types");
 
     # output fields
     $writer->startTag("fields");
@@ -815,7 +818,7 @@ sub serialize_asset {
 
 
     # close the element
-    $writer->endTag("element");
+    $writer->endTag('element_type');
 }
 
 =back
