@@ -77,14 +77,12 @@ CREATE TABLE story (
 CREATE TABLE story_instance (
     id             INTEGER      NOT NULL
                                 DEFAULT NEXTVAL('seq_story_instance'),
-    story_version__id INTEGER   NOT NULL,
     input_channel__id INTEGER  NOT NULL,
     name           VARCHAR(256),
     description    VARCHAR(1024),
     slug           VARCHAR(64),
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
-
 
 -- ----------------------------------------------------------------------------
 -- Table story_version
@@ -136,17 +134,17 @@ CREATE TABLE story__output_channel (
 
 
 -- -----------------------------------------------------------------------------
--- Table story__input_channel
+-- Table story_instance__story_version
 -- 
--- Description: Mapping Table between stories and input channels.
+-- Description: Mapping Table between story versions and story instances
 --
 --
 
-CREATE TABLE story__input_channel (
+CREATE TABLE story_instance__story_version (
     story_instance__id  INTEGER  NOT NULL,
-    input_channel__id   INTEGER  NOT NULL,
-    CONSTRAINT pk_story_input_channel
-      PRIMARY KEY (story_instance__id, input_channel__id)
+    story_version__id   INTEGER  NOT NULL,
+    CONSTRAINT pk_story_instance__story_version
+      PRIMARY KEY (story_instance__id, story_version__id)
 );
 
 
@@ -203,7 +201,6 @@ CREATE INDEX idx_story__cover_date ON story(cover_date);
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
-CREATE INDEX fdx_story_version__story_instance ON story_instance(story_version__id);
 CREATE INDEX fkx_story_instance__ic ON story_instance(input_channel__id);
 
 -- story_version
@@ -225,9 +222,9 @@ CREATE INDEX fkx_category__story__category ON story__category(category__id);
 CREATE INDEX fkx_story__oc__story ON story__output_channel(story_version__id);
 CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
 
--- story__input_channel
-CREATE INDEX fkx_story__ic__story ON story__input_channel(story_instance__id);
-CREATE INDEX fkx_story__ic__ic ON story__input_channel(input_channel__id);
+-- story_instance__story_version
+CREATE INDEX fkx_story_inst__vers__inst ON story_instance__story_version (story_instance__id);
+CREATE INDEX fkx_story_inst__vers__vers ON story_instance__story_version (story_version__id);
 
 --story__contributor
 CREATE INDEX fkx_story__story__contributor ON story__contributor(story_version__id);

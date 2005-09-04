@@ -38,8 +38,8 @@ ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)
 -- Table media_instance
 
 ALTER TABLE media_instance
-ADD CONSTRAINT fk_media_version__media_instance FOREIGN KEY (media_version__id)
-	REFERENCES media_version(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_media_instance__input_channel FOREIGN KEY (input_channel__id)
+	REFERENCES input_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table media_version
@@ -90,14 +90,14 @@ ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
--- Media to input channel mapping constraints
-ALTER TABLE media__input_channel 
-ADD CONSTRAINT fk_media__ic__media FOREIGN KEY (media_version__id)
-	REFERENCES media_version(id) ON DELETE CASCADE;
+-- Media instance to media version mapping constraints
+ALTER TABLE media_instance__media_version
+ADD CONSTRAINT fk_media_inst__media_vers__inst FOREIGN KEY (media_instance__id)
+	REFERENCES media_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE media__input_channel 
-ADD CONSTRAINT fk_media__ic__ic FOREIGN KEY (input_channel__id)
-	REFERENCES input_channel(id) ON DELETE CASCADE;
+ALTER TABLE media_instance__media_version 
+ADD CONSTRAINT fk_media_inst__media_vers__vers FOREIGN KEY (media_version__id)
+	REFERENCES media_version(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: media_member

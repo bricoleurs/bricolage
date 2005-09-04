@@ -73,9 +73,9 @@ CREATE TABLE media (
 CREATE TABLE media_instance (
     id                  INTEGER   NOT NULL
                                         DEFAULT NEXTVAL('seq_media_instance'),
+    input_channel__id   INTEGER  NOT NULL,
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    media_version__id   INTEGER   NOT NULL,
     file_size           INTEGER,
     file_name           VARCHAR(256),
     location            VARCHAR(256),
@@ -134,17 +134,17 @@ CREATE TABLE media__output_channel (
 );
 
 -- -----------------------------------------------------------------------------
--- Table media__input_channel
+-- Table media_instance__media_version
 -- 
--- Description: Mapping Table between stories and input channels.
+-- Description: Mapping Table between media versions and media instances
 --
 --
 
-CREATE TABLE media__input_channel (
-    media_version__id  INTEGER  NOT NULL,
-    input_channel__id   INTEGER  NOT NULL,
-    CONSTRAINT pk_media_input_channel
-      PRIMARY KEY (media_version__id, input_channel__id)
+CREATE TABLE media_instance__media_version (
+    media_instance__id  INTEGER  NOT NULL,
+    media_version__id   INTEGER  NOT NULL,
+    CONSTRAINT pk_media_instance__media_version
+      PRIMARY KEY (media_instance__id, media_version__id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -235,9 +235,9 @@ ON media_uri(lower_text_num(uri, site__id));
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_version__id);
 CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
 
--- media__input_channel
-CREATE INDEX fkx_media__ic__media ON media__input_channel(media_version__id);
-CREATE INDEX fkx_media__ic__ic ON media__input_channel(input_channel__id);
+-- media_instance__media_version
+CREATE INDEX fkx_media_inst__vers__inst ON media_instance__media_version (media_instance__id);
+CREATE INDEX fkx_media_inst__vers__vers ON media_instance__media_version (media_version__id);
 
 -- media_member.
 CREATE INDEX fkx_media__media_member ON media_member(object_id);
