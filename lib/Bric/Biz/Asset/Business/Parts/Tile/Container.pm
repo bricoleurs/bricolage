@@ -234,15 +234,22 @@ sub new {
     $self = bless {}, $self unless ref $self;
 
     if ($init->{'object'}) {
-        $init->{'object_instance_id'} = $init->{'object'}->get_instance_id();
+        $init->{'object_instance_id'} = $init->{'object'}->get_id();
         my $class = ref $init->{'object'};
-        if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
-            $init->{'object_type'} = 'media';
-        } elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
+        if ($class eq 'Bric::Biz::Asset::Business::Parts::Instance::Story') {
             $init->{'object_type'} = 'story';
+        } elsif ($class eq 'Bric::Biz::Asset::Business::Parts::Instance::Media') {
+            $init->{'object_type'} = 'media';
         } else {
             throw_gen(error => "Object of type $class not allowed");
         }
+#        if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
+#            $init->{'object_type'} = 'media';
+#        } elsif ($class =~ /^Bric::Biz::Asset::Business::Story/) {
+#            $init->{'object_type'} = 'story';
+#        } else {
+#            throw_gen(error => "Object of type $class not allowed");
+#        }
         $init->{'_object'} = delete $init->{'object'};
     }
 
@@ -1530,16 +1537,16 @@ sub _do_list {
 
     if ($param->{'object'}) {
         my $obj_class = ref $param->{'object'};
-        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
+        if ($obj_class eq 'Bric::Biz::Asset::Business::Parts::Instance::Story') {
             $table = S_TABLE;
             $obj_type = 'story';
-        } elsif ($obj_class =~ /^Bric::Biz::Asset::Business::Media/) {
+        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Parts::Instance::Media') {
             $table = M_TABLE;
             $obj_type = 'media';
         } else {
             throw_gen(error => "Object of type $obj_class not allowed to be tiled");
         }
-        $obj_id = $param->{'object'}->get_instance_id();
+        $obj_id = $param->{'object'}->get_id();
 
     } else {
         if ($param->{'object_type'} eq 'story') {

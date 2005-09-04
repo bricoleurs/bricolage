@@ -40,6 +40,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
+use Bric::Util::Coll::Instance::Media;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;

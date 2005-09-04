@@ -158,12 +158,14 @@ use strict;
 # Programatic Dependencies
 use Bric::Biz::Workflow qw(STORY_WORKFLOW);
 use Bric::Config qw(:uri :ui);
+use Bric::Util::Coll::Instance::Story;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Story;
 use Bric::Util::Fault qw(:all);
 use Bric::Biz::Asset::Business;
+use Bric::Biz::Asset::Business::Parts::Instance::Story;
 use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Site;
@@ -218,7 +220,7 @@ use constant COLS       => qw( uuid
 
 use constant INSTANCE_COLS => qw( name
                                  description
-                                 story_version__id
+                                 input_channel__id
                                  slug );
                                  
 use constant VERSION_COLS => qw( story__id
@@ -250,7 +252,7 @@ use constant FIELDS =>  qw( uuid
 
 use constant INSTANCE_FIELDS => qw( name
                                    description
-                                   version_id
+                                   input_channel_id
                                    slug );
                                    
 use constant VERSION_FIELDS => qw( id
@@ -275,7 +277,8 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 's.id = v.story__id '
-  . 'AND v.id = i.story_version__id '
+  . 'AND v.id = sisv.story_version__id '
+  . 'AND i.id = sisv.story_instance__id '
   . 'AND sm.object_id = s.id '
   . 'AND m.id = sm.member__id '
   . "AND m.active = '1' "
@@ -290,12 +293,11 @@ use constant COLUMNS => join(', s.', 's.id', COLS) . ', '
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v';
+use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v, story_instance__story_version sisv' ;
 
 use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
        output_channel_id    => 'story__output_channel soc',
-       input_channel_id     => 'story__input_channel ic',
        simple               => 'story_member sm, member m, story__category sc, '
                                . 'category c, workflow w, ' . TABLE . ' s ',
        grp_id               => 'member m2, story_member sm2',
@@ -380,9 +382,7 @@ use constant PARAM_WHERE_MAP => {
                               . '(soc.output_channel__id = ? OR '
                               . 'v.primary_oc__id = ?))',
       primary_ic_id          => 'v.primary_ic__id = ?',
-      input_channel_id       => '(i.id = ic.story_instance__id AND '
-                              . '(ic.input_channel__id = ? OR '
-                              . ' v.primary_ic__id = ?))',
+      input_channel_id       => 'i.input_channel__id = ?',
       primary_ic             => 'v.primary_ic__id = i.input_channel__id',
       category_id            => 'i.id = sc2.story_version__id AND '
                               . 'sc2.category__id = ?',
@@ -440,19 +440,18 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
     output_channel_id      => [ 'v.id = soc.story_version__id',
                                 'soc.output_channel__id = ?'],
-    input_channel_id       => [ 'i.id = ic.story_instance__id',
-                                'ic.input_channel__id = ?'],
-    category_id            => [ 'i.id = sc2.story_version__id',
+    input_channel_id       => [ 'i.input_channel__id = ?' ],
+    category_id            => [ 'v.id = sc2.story_version__id',
                                 'sc2.category__id = ?' ],
-    primary_category_id    => [ "i.id = sc2.story_version__id AND sc2.main = '1'",
+    primary_category_id    => [ "v.id = sc2.story_version__id AND sc2.main = '1'",
                                 'sc2.category__id = ?' ],
-    category_uri           => [ 'i.id = sc2.story_version__id AND sc2.category__id = c.id',
+    category_uri           => [ 'v.id = sc2.story_version__id AND sc2.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
     grp_id                 => [ "m2.active = '1' AND sm2.member__id = m2.id AND s.id = sm2.object_id",
                                 'm2.grp__id = ?' ],
-    contrib_id             => [ 'i.id = sic.story_version__id',
+    contrib_id             => [ 'v.id = sic.story_version__id',
                                 'sic.member__id = ?' ],
     note                   => [ 'sv2.story__id = s.id',
                                 'LOWER(sv2.note) LIKE LOWER(?)'],
@@ -517,7 +516,6 @@ BEGIN {
     Bric::register_fields
         ({
           # Public Fields
-          slug            => Bric::FIELD_RDWR
           # Private Fields
         });
 }
@@ -1310,7 +1308,7 @@ sub get_uri {
 
     if (STORY_URI_WITH_FILENAME and not $no_file) {
         my $fname = $oc->can_use_slug ?
-          $self->_get('slug') || $oc->get_filename :
+          $self->get_slug || $oc->get_filename :
           $oc->get_filename;
         if ($fname) {
             my $ext = $oc->get_file_ext;
@@ -1337,54 +1335,21 @@ Sets the slug for this story
 
 B<Throws:>
 
-Slug Must conform to URL character rules.
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Slug must conform to URL character rules.
 
 =cut
 
-sub set_slug {
-    my ($self, $slug) = @_;
-    throw_invalid
-      error    => 'Slug Must conform to URL character rules',
-      maketext => ['Slug Must conform to URL character rules']
-      if defined $slug && $slug =~ m/^\w.-_/;
-
-    my $old = $self->_get('slug');
-    $self->_set([qw(slug _update_uri)] => [$slug, 1])
-      if (not defined $slug && defined $old)
-      || (defined $slug && not defined $old)
-      || ($slug ne $old);
-    # Set the primary URI.
-    $self->get_uri;
-    return $self;
-}
+sub set_slug { shift->get_instance->set_slug(@_); }
 
 ################################################################################
 
-=item $slug = $story->get_slug()
+=item $slug = $story->get_slug;
 
-returns the slug that has been set upon this story
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+Gets the slug for this story
 
 =cut
+
+sub get_slug { shift->get_instance->get_slug; }
 
 ################################################################################
 
@@ -1800,10 +1765,12 @@ sub clone {
     # the original ID.
     $self->uncache_me;
 
-    # Clone the element.
-    my $tile = $self->get_tile();
-    $tile->prepare_clone;
-
+    # Clone the instances.
+    my @instances = $self->get_instances;
+    $self->del_instances(@instances);
+    @instances = map { $_->clone } @instances;
+    $self->add_instances(@instances);
+    
     my $contribs = $self->_get_contributors;
     # clone contributors
     foreach (keys %$contribs ) {
@@ -1815,14 +1782,26 @@ sub clone {
     map { $cats->{$_}->{action} = 'insert' } keys %$cats;
 
     # Clone the output channel associations.
-    my @ocs = $self->get_output_channels;
-    $self->del_output_channels(@ocs);
-    $self->add_output_channels(@ocs);
+#    my @ocs = $self->get_output_channels;
+#    $self->del_output_channels(@ocs);
+#    $self->add_output_channels(@ocs);
 
     # Clone the input channel associations.
-    my @ics = $self->get_input_channels;
-    $self->del_input_channels(@ics);
-    $self->add_input_channels(@ics);
+#    my @ics = $self->get_input_channels;
+#    $self->del_input_channels(@ics);
+#    $self->add_input_channels(@ics);
+
+    # Clone output channels.
+    my $oc_coll = $self->_get_oc_coll->($self);
+    my @ocs = $oc_coll->get_objs;
+    $oc_coll->del_objs(@ocs);
+    $oc_coll->add_new_objs(@ocs);
+    
+    # Clone input channels
+    my $ic_coll = $self->_get_ic_coll->($self);
+    my @ics = $ic_coll->get_objs;
+    $ic_coll->del_objs(@ics);
+    $ic_coll->add_new_objs(@ics);
 
     # Grab the keywords.
     my $kw = $self->get_keywords;
@@ -1873,7 +1852,7 @@ sub save {
           unless $self->get_primary_uri eq $uri;
     }
 
-    my ($id, $active, $update_uris) = $self->_get(qw(id _active _update_uri));
+    my ($id, $active, $update_uris, $new_ics) = $self->_get(qw(id _active _update_uri _new_ics));
 
     # Start a transaction.
     begin();
@@ -1897,18 +1876,6 @@ sub save {
                 $self->_insert_version();
             }
             
-            if ($self->_get('instance_id')) {
-                # If we're on a specific instance, save it
-                $self->_update_instance();
-            } else {
-                # otherwise, create a new instance
-#                my $new_ics = $self->_get('_new_ics');
-#                foreach my $ic (@$new_ics) {
-                    $self->_insert_instance($self->_get('input_channel_id'));
-#                }
-#                $self->_set( {'_new_ics' => undef } );
-            }
-            
         } else {
             if ($self->_get('_cancel')) {
                 commit();
@@ -1918,10 +1885,6 @@ sub save {
                 # for the primary IC
                 $self->_insert_story();
                 $self->_insert_version();
-                $self->_insert_instance($self->get_primary_ic_id);
-#                foreach my $ic ($self->get_input_channels) {
-#                    $self->_insert_instance($ic->get_id);
-#                }
             }
         }
 
@@ -2386,30 +2349,6 @@ sub _insert_version {
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS));
     $self->_set( { version_id => last_key(VERSION_TABLE) });
-    return $self;
-}
-
-################################################################################
-
-=item $self = $self->_insert_instance()
-
-Inserts an instance record into the database
-
-=cut
-
-sub _insert_instance {
-    my ($self, $ic_id) = @_;
-        
-    my $sql = 'INSERT INTO '. INSTANCE_TABLE .
-      ' (id, input_channel__id, '.join(', ', INSTANCE_COLS) . ')'.
-      "VALUES (${\next_key(INSTANCE_TABLE)}, ?, ".
-      join(', ', ('?') x INSTANCE_COLS) . ')';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $ic_id, $self->_get(INSTANCE_FIELDS));
-    
-    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
-    
     return $self;
 }
 

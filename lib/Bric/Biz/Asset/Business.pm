@@ -126,13 +126,12 @@ use strict;
 # Programatic Dependencies
 
 use Bric::Config qw(:mod_perl);
+use Bric::Util::Coll::Instance;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::AssetLanguage;
-use Bric::Biz::Asset::Business::Parts::Tile::Data;
-use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Org::Source;
@@ -150,7 +149,7 @@ use base qw( Bric::Biz::Asset );
 #============================================================================+
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $get_ic_coll, $get_kw_coll);
+my ($get_oc_coll, $get_ic_coll, $get_instance_coll, $get_kw_coll);
 
 #=============================================================================#
 # Constants                            #
@@ -196,6 +195,7 @@ BEGIN {
               publish_status            => Bric::FIELD_RDWR,
               primary_oc_id             => Bric::FIELD_RDWR,
               primary_ic_id             => Bric::FIELD_RDWR,
+              input_channel_context     => Bric::FIELD_RDWR,
               alias_id                  => Bric::FIELD_READ,
 
               # Private Fields
@@ -209,9 +209,9 @@ BEGIN {
               _categories               => Bric::FIELD_NONE,
               _del_categories           => Bric::FIELD_NONE,
               _new_categories           => Bric::FIELD_NONE,
-              _element_object           => Bric::FIELD_NONE,
               _oc_coll                  => Bric::FIELD_NONE,
               _ic_coll                  => Bric::FIELD_NONE,
+              _instance_coll            => Bric::FIELD_NONE,
               _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
               _update_uri               => Bric::FIELD_NONE,
@@ -1235,6 +1235,205 @@ sub del_output_channels {
 
 ################################################################################
 
+=item my @ics = $biz->get_instances
+
+=item my $ics_aref = $biz->get_instances
+
+=item my @ics = $biz->get_instances(@instance_ids)
+
+=item my $ics_aref = $biz->get_instances(@instance_ids)
+
+Returns a list or anonymous array of the input channels the business asset
+is able to be edited in. If C<@ic_ids> is passed, then only the
+input channels with those IDs are returned, if they're associated with this
+asset.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_instances { $get_instance_coll->(shift)->get_objs(@_) }
+
+##############################################################################
+
+=item $ba = $ba->add_instances(@ics)
+
+Adds instances to the list of instances associated with this asset
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_instances {
+    my $self = shift;
+    my @objs = @_;
+    return unless @objs;
+    my $instance_coll = $get_instance_coll->($self);
+    $instance_coll->add_new_objs(@objs);
+}
+
+##############################################################################
+
+=item $biz = $biz->del_instances(@insts)
+
+=item $biz = $biz->del_instances(@inst_ids)
+
+Removes instances from this asset
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub del_instances {
+    my $self = shift;
+    return unless @_;
+    my $instance_coll = $get_instance_coll->($self);
+    $instance_coll->del_objs(@_);
+    $self->_set(['_update_uri'] => [1]);
+}
+
+################################################################################
+
 =item my @ics = $biz->get_input_channels
 
 =item my $ics_aref = $biz->get_input_channels
@@ -1362,7 +1561,9 @@ sub add_input_channels {
     return unless @objs;
     my $ic_coll = $get_ic_coll->($self);
     $ic_coll->add_new_objs(@objs);
-    $self->_set(['_new_ics'] => [\@objs]);
+    
+    map { $self->_create_instance($_) } @objs;
+    
     $self->_set(['_update_uri'] => [1]);
 }
 
@@ -1433,6 +1634,26 @@ sub del_input_channels {
     $ic_coll->del_objs(@_);
     $self->_set(['_update_uri'] => [1]);
 }
+
+################################################################################
+
+=item $story = $story->set_name($name);
+
+Sets the name for this asset
+
+=cut
+
+sub set_name { shift->get_instance->set_name(@_); }
+
+################################################################################
+
+=item $name = $story->get_name;
+
+Gets the name for this asset
+
+=cut
+
+sub get_name { shift->get_instance->get_name; }
 
 ################################################################################
 
@@ -1596,7 +1817,7 @@ sub set_cover_date {
       || (defined $cover_date && not defined $old)
       || ($cover_date ne $old);
     # Update URI.
-    $self->get_uri;
+#    $self->get_uri;
     return $self;
 }
 
@@ -1822,20 +2043,29 @@ NONE
 
 =cut
 
-sub get_element {
-    my $self = shift;
-    my $object = $self->_get_alias || $self;
-    my $tile = $self->_get('_tile');
-    unless ($tile) {
-        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list
-          ({ object    => $object,
-             parent_id => undef });
-        $object->_set(['_tile'] => [$tile]);
-    }
-    return $tile;
-}
+sub get_element { shift->get_instance->get_element(@_); }
 
 sub get_tile { goto &get_element };
+
+################################################################################
+
+=item $element = $ba->get_instance
+
+ my $element = $ba->get_instance($ic);
+
+Returns the instance for the specified IC ID for this story version
+
+=cut
+
+sub get_instance {
+    my ($self, $ic_id) = @_;
+    $ic_id = $self->get_primary_ic_id unless $ic_id;
+    foreach my $instance ($self->get_instances) {
+        if ($instance->get_input_channel_id eq $ic_id) {
+            return $instance;
+        }
+    }
+}
 
 ################################################################################
 
@@ -1882,7 +2112,7 @@ B<Notes:> NONE.
 
 sub is_fixed {
     my $self = shift;
-    my $element = $self->_get_element_object;
+    my $element = $self->get_instance->get_element_object;
     return $element->get_fixed_url;
 }
 
@@ -2258,9 +2488,6 @@ sub checkout {
     throw_gen "Must be checked out to users"
       unless defined $param->{user__id};
 
-    my $tile = $self->get_tile;
-    $tile->prepare_clone;
-
     my $contribs = $self->_get_contributors;
     # clone contributors
     foreach (keys %$contribs ) {
@@ -2279,8 +2506,18 @@ sub checkout {
     $ic_coll->del_objs(@ics);
     $ic_coll->add_new_objs(@ics);
 
-    $self->_set([qw(user__id modifier version_id instance_id checked_out input_channel_id)] =>
-                [$param->{user__id}, $param->{user__id}, undef, undef, 1, $self->get_primary_ic_id]);
+    # Clone instances
+    my $instance_coll = $get_instance_coll->($self);
+    my @insts = $instance_coll->get_objs;
+    $instance_coll->del_objs(@insts);
+    @insts = map { $_->clone } @insts;
+    $instance_coll->add_new_objs(@insts);
+
+
+    $self->_set({ user__id => $param->{user__id},
+                  modifier => $param->{user__id},
+                  version_id => undef,
+                  checked_out => 1 });
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
@@ -2307,28 +2544,26 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $iid, $kw_coll) =
+    my ($related_obj, $tile, $oc_coll, $ic_coll, $ci, $co, $vid, $instance_coll, $kw_coll) =
       $self->_get(qw(_related_grp_obj _tile _oc_coll _ic_coll _checkin _checkout
-                     version_id instance_id _kw_coll));
+                     version_id _instance_coll _kw_coll));
 
     if ($co) {
-        $tile->prepare_clone;
+        foreach my $instance ($self->get_instances) {
+            $instance->clone();
+        }
         $self->_set(['_checkout'], []);
     }
 
     # Is this necessary? Seems kind of pointless. [David 2002-09-19]
     $self->_set(['_checkin'], []) if $ci;
 
-    if ($tile) {
-        $tile->set_object_instance_id($iid);
-        $tile->save;
-    }
-
     $related_obj->save if $related_obj;
     $self->_sync_contributors;
     $oc_coll->save($self->key_name => $vid) if $oc_coll;
-    $ic_coll->save($self->key_name => $iid) if $ic_coll;
-    $kw_coll->save($self) if $kw_coll;
+    $ic_coll->save($self->key_name => $vid) if $ic_coll;
+    $instance_coll->save($self->key_name => $vid) if $instance_coll;
+    $kw_coll->save($self) if $kw_coll;   
     $self->SUPER::save;
 }
 
@@ -2398,6 +2633,29 @@ sub _check_uri_table {
         return $self->lookup({ id => $sid })->get_title;
     }
 }
+
+
+###############################################################################
+
+=item $at_obj = $self->get_element_object()
+
+Returns the asset type object that coresponds to this business object
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_element_object { shift->get_instance->get_element_object(@_); }
 
 ###############################################################################
 
@@ -2475,7 +2733,7 @@ sub _init {
 
     if ($init->{alias_id}) {
         my $alias_target = $class->lookup({ id => $init->{alias_id} });
-
+        
         throw_dp "Cannot create an alias to an alias"
           if $alias_target->get_alias_id;
 
@@ -2485,7 +2743,7 @@ sub _init {
         $self->_set([qw(alias_id _alias_obj)],
                     [$init->{alias_id}, $alias_target]);
 
-        my $at = $alias_target->_get_element_object;
+        my $at = $alias_target->get_element_object;
         my $at_exists = 0;
         foreach my $site (@{$at->get_sites}) {
             if ($site->get_id == $init->{site_id}) {
@@ -2497,6 +2755,8 @@ sub _init {
         throw_dp "Cannot create an alias to an asset based on an " .
             "element that is not associated with this site"
           unless $at_exists;
+        
+        $self->_set({ element__id => $alias_target->_get('element__id') });
 
         $self->set_source__id( $alias_target->get_source__id );
         $self->_set(['cover_date'], [$alias_target->_get('cover_date')]);
@@ -2512,16 +2772,21 @@ sub _init {
           "has no output channels associated with this site"
           unless @{$self->get_output_channels};
           
-        $self->add_input_channels(
-            grep { $_->is_enabled && $_->get_site_id == $init->{site_id} }
-              $at->get_input_channels
-        );
+          
+        my $ic_coll = $get_ic_coll->($self);
+        $ic_coll->add_new_objs(grep { $_->is_enabled && $_->get_site_id == $init->{site_id} }
+                                    $at->get_input_channels);
 
         $self->set_primary_ic_id($at->get_primary_ic_id($init->{site_id}));
 
         throw_dp "Cannot create an alias to this asset because this element ".
           "has no input channels associated with this site"
           unless @{$self->get_input_channels};
+
+        $self->add_instances($alias_target->get_instances);
+        
+use Data::Dumper;
+print STDERR "Instances: " . Dumper($alias_target->get_instances) . "\n\n";
 
         $self->_set
           ([qw(current_version publish_status modifier
@@ -2568,13 +2833,9 @@ sub _init {
             }
         }
 
-        $self->_set(['slug'], [$alias_target->_get('slug')])
-          if $alias_target->_get('slug');
-
-        $self->_set(['name'], [$alias_target->_get('name')])
-          if $alias_target->_get('name');
-
-        $self->_set(['element__id'], [$alias_target->_get('element__id')]);
+        $self->set_slug($alias_target->get_slug);
+        $self->set_name($alias_target->get_name);
+        $self->set_description($alias_target->get_description);
 
         # Copy the keywords.
         $self->add_keywords(scalar $alias_target->get_keywords);
@@ -2605,6 +2866,9 @@ sub _init {
               Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
         }
 
+        $self->_set({ element__id     => $init->{element__id},
+                      _element_object => $init->{element} });
+
         # Set up the input and output channels.
         if ($init->{element}->get_top_level) {
             $self->add_output_channels(
@@ -2622,21 +2886,21 @@ sub _init {
 
             $self->set_primary_ic_id($init->{element}->get_primary_ic_id
                                      ($init->{site_id}));
+
+            my $inst = $self->get_instance($self->get_primary_ic_id);
+            $inst->set_name($init->{name});
+            $inst->set_description($init->{description});
+            $inst->set_slug($init->{slug});
+
         }
 
-        # Let's create the new tile as well.
-        my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
-          ({ object     => $self,
-             element_id => $init->{element__id},
-             element    => $init->{element}
-           });
-
-        $self->_set([qw(version current_version checked_out _tile modifier
-                        element__id _element_object site_id grp_ids
-                        publish_status)],
-                    [0, 0, 1, $tile,
-                     @{$init}{qw(user__id element__id element site_id)},
-                     [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0]);
+        $self->_set([qw(version current_version checked_out modifier
+                        site_id grp_ids publish_status _instances 
+                        input_channel_context)],
+                    [0, 0, 1,
+                     @{$init}{qw(user__id site_id)},
+                     [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0, 
+                     {}, $self->get_primary_ic_id]);
     }
 
     $self->_set__dirty;
@@ -2675,7 +2939,7 @@ sub _construct_uri {
     my $self = shift;
     my ($cat_obj, $oc_obj) = @_;
 #    $cat_obj ||= $self->get_primary_category();
-    my $element_obj = $self->_get_element_object or return;
+    my $element_obj = $self->get_element_object or return;
     my $fu = $element_obj->get_fixed_url;
     my ($pre, $post);
 
@@ -2687,6 +2951,7 @@ sub _construct_uri {
 
     my ($category_uri, $slug);
     $category_uri = $cat_obj ? $cat_obj->ancestry_path : '';
+
     $slug = $self->key_name eq 'story' ? $self->get_slug : '';
 
     $fmt =~ s/\/%{categories}/$category_uri/g;
@@ -2713,44 +2978,6 @@ sub _construct_uri {
     } else {
         return Bric::Util::Trans::FS->cat_uri(@path);
     }
-}
-
-###############################################################################
-
-=item $at_obj = $self->_get_element_object()
-
-Returns the asset type object that coresponds to this business object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_element_object {
-    my ($self) = @_;
-
-    my $dirty = $self->_get__dirty();
-
-    my ($at_id, $at_obj) = $self->_get(qw(element__id _element_object));
-    return $at_obj if $at_obj;
-
-    if (my $alias_obj = $self->_get_alias) {
-        return $alias_obj->_get_element_object;
-    }
-
-    $at_obj = Bric::Biz::AssetType->lookup({ id => $at_id });
-    $self->_set(['_element_object'] => [$at_obj]);
-    $self->_set__dirty($dirty);
-    return $at_obj;
 }
 
 ################################################################################
@@ -2919,6 +3146,24 @@ sub _update_uris {
     $self->_set(['_update_uri'] => [0]);
 }
 
+
+sub _create_instance {
+    my ($self, $ic) = @_;
+
+    $ic = $ic->get_id if ref $ic;
+
+    my $instance = Bric::Biz::Asset::Business::Parts::Instance::Story->new
+        ({ element          => $self->_get('_element_object'),
+           element__id      => $self->_get('element__id'),
+           input_channel_id => $ic });
+    
+    $self->add_instances($instance);
+    
+use Data::Dumper;
+print STDERR "Creating instance: " . Dumper($instance) . "\n\n";
+
+}
+
 ################################################################################
 
 =back
@@ -2994,6 +3239,10 @@ $get_oc_coll = sub {
     return $oc_coll;
 };
 
+sub _get_oc_coll {
+    $get_oc_coll;
+}
+
 ##############################################################################
 
 =item my $ic_coll = $get_ic_coll->($ba)
@@ -3062,6 +3311,86 @@ $get_ic_coll = sub {
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $ic_coll;
 };
+
+sub _get_ic_coll {
+    $get_ic_coll;
+}
+
+##############################################################################
+
+=item my $instance_coll = $get_instance_coll->($ba)
+
+Returns the collection of instances for this asset.
+L<Bric::Util::Coll::Instance|Bric::Util::Coll::Instance>
+object. See that class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>,
+for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_instance_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $instance_coll) = $self->_get('version_id', '_instance_coll');    
+    return $instance_coll if $instance_coll;
+    my $class;
+    if ($self->key_name eq 'story') {
+        $class = "Bric::Util::Coll::Instance::Story";
+    } elsif ($self->key_name eq 'media') {
+        $class = "Bric::Util::Coll::Instance::Media";
+    }
+    $instance_coll = $class->new
+      (defined $id ? {$self->key_name . '_version_id' => $id} : undef);
+    $self->_set(['_instance_coll'], [$instance_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $instance_coll;
+};
+
 
 ##############################################################################
 
