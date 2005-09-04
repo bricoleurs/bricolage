@@ -111,7 +111,7 @@ sub check_version {
         print <<END;
 The installed version ("$VERSION") is the same as this version!  "make
 upgrade" is only designed to work to upgrade from one version to
-another.  Please use "make install if you wish to overwrite your
+another.  Please use "make install" if you wish to overwrite your
 current install.
 
 END
