@@ -62,7 +62,7 @@ sub test_persist : Test(10) {
     ok( $ass->save, "Save my ass again" );
 
     # Look up the asset.
-    ok( $ass = $class->lookup({ id => $aid}), "Lookup asset" );
+    ok( $ass = $class->lookup({ id => $aid}), "Lookup asset" );    
     is( $ass->get_id, $aid, "Check asset ID" );
     is( $ass->get_name, 'Foo', "Check asset name" );
 }
@@ -131,7 +131,7 @@ sub del_ids : Test(teardown => 0) {
     my $self = shift;
 
     # Get the list to ids to delete.
-    my $to_delete = $self->get_del_ids;# or return;
+    my $to_delete = $self->get_del_ids or return;
 
     # Do the main objects, first.
     $self->SUPER::del_ids(@_);

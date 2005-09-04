@@ -279,7 +279,7 @@ sub test_alias : Test(38) {
       "Check that an element needs to be associated with a site ".
       "for a target to aliasable";
 
-    my $element = $ba->_get_element_object();
+    my $element = $ba->get_element_object();
 
     $element->add_sites([$site1]);
 
@@ -314,11 +314,11 @@ sub test_alias : Test(38) {
                                       }),
         "Create an alias asset" );
 
-    isnt($alias_asset->_get_element_object, undef,
+    isnt($alias_asset->get_element_object, undef,
          "Check that we get an element object");
 
-    is($alias_asset->_get_element_object->get_id,
-       $ba->_get_element_object->get_id,
+    is($alias_asset->get_element_object->get_id,
+       $ba->get_element_object->get_id,
        "Check that alias_asset has an element object");
 
     if ($class->key_name eq 'story') {

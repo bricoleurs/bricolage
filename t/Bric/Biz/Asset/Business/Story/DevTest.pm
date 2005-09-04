@@ -23,6 +23,7 @@ sub table { 'story' }
 my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
 my $ELEMENT_CLASS = 'Bric::Biz::AssetType';
 my $OC_CLASS = 'Bric::Biz::OutputChannel';
+my $IC_CLASS = 'Bric::Biz::InputChannel::Element';
 
 # this will be filled during setup
 my $OBJ_IDS = {};
@@ -77,7 +78,7 @@ sub test_clone : Test(18) {
     # Lookup the original story.
     ok( my $orig = $self->class->lookup({ id => $sid }),
         "Lookup original story" );
-
+        
     # Lookup the cloned story.
     ok( my $clone = $self->class->lookup({ id => $cid }),
         "Lookup cloned story" );
@@ -101,7 +102,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(151) {
+sub test_select_methods: Test(159) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -865,6 +866,29 @@ sub test_select_methods: Test(151) {
     ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
                           'Search on note "ANY(Note 1, Note 2)"';
     is @$got, 2, 'Should have two stories';
+    
+    
+    ok my @ics = $story[0]->get_input_channels, "Get input channels";
+    is @ics, 1, 'Should have 1 IC';
+    
+    ok $story[0]->set_title('ic test 1'), 'Set title on story w/ one IC';
+    
+    my $ic1 = $IC_CLASS->new({ name => '_tic1', key_name => '_tic1', element_id => $element->get_id, site_id => 100 });
+    $ic1->save;
+    $self->add_del_ids([$ic1->get_id], 'input_channel');
+    
+    ok $story[0]->add_input_channels($ic1), 'Add an input channel';
+    ok $story[0]->save(), 'Save with two ICs';
+    
+    @ics = $story[0]->get_input_channels;
+    is @ics, 2, 'Should have 2 ICs now';
+
+    ok my $ic_story_test = $class->lookup({ id => $story[0]->get_id,
+                                            input_channel_id => $ic1->get_id }), 
+        'Get secondary IC instance of the story';
+        
+    isnt $ic_story_test->get_title, 'ic test 1', 'Title not the same as other IC';
+    
 }
 
 
