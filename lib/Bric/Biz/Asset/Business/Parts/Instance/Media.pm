@@ -63,6 +63,7 @@ use constant MIME_URI_ROOT => Bric::Util::Trans::FS->cat_uri('', qw(media mime))
 
 
 use constant TABLE          => 'media_instance';
+use constant MEDIA_TABLE    => 'media';
 
 use constant COLS       => qw( name
                                description
@@ -71,6 +72,8 @@ use constant COLS       => qw( name
                                file_name
                                location
                                uri );
+                               
+use constant MEDIA_COLS => qw( element__id );
 
 use constant FIELDS     => qw( name
                                description
@@ -80,18 +83,23 @@ use constant FIELDS     => qw( name
                                location
                                uri );
                                
+use constant STORY_FIELDS => qw( element__id );
+                               
 # the mapping for building up the where clause based on params
-use constant WHERE => '';
+use constant WHERE => 'i.id = mimv.media_instance__id '
+                    . 'AND mimv.media_version__id = v.id '
+                    . 'AND v.media__id = m.id';
   
-use constant COLUMNS => join(', i.', 'i.id', COLS);
+use constant COLUMNS => join(', i.', 'i.id', COLS) .
+                        join(', m.', '', MEDIA_COLS);
 use constant RO_COLUMNS => '';
 
 # param mappings for the big select statement
-use constant FROM => TABLE . ' i';
+use constant FROM => TABLE . ' i, ' . MEDIA_TABLE . ' m, '
+                   . 'media_instance__media_version mimv, '
+                   . 'media_version v';
 
 use constant PARAM_FROM_MAP => {
-       primary_ic           => 'media_version v, media_instance__media_version b',
-       primary_ic_id        => 'media_version v, story_instance__media_version b',
        data_text            => 'media_data_tile md',
        subelement_key_name  => 'media_container_tile mct',
        related_story_id     => 'media_container_tile mctrs',
@@ -111,12 +119,8 @@ use constant PARAM_WHERE_MAP => {
       file_name              => 'LOWER(i.file_name) LIKE LOWER(?)',
       location               => 'LOWER(i.location) LIKE LOWER(?)',
       input_channel_id       => 'i.input_channel__id = ?',
-      primary_ic             => 'v.primary_ic__id = i.input_channel__id '
-                              . 'AND v.id = b.story_version__id '
-                              . 'AND i.id = b.story_instance__id',
-      primary_ic_id          => 'v.primary_ic__id = ? '
-                              . 'AND v.id = b.story_version__id '
-                              . 'AND i.id = b.story_instance__id',
+      primary_ic             => 'v.primary_ic__id = i.input_channel__id ',
+      primary_ic_id          => 'v.primary_ic__id = ? ',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -821,28 +825,7 @@ B<Notes:> NONE.
 
 Clones the media object
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
 =cut
-
-sub clone {
-    my $self = shift;
-    my $tile = $self->get_tile();
-    $tile->prepare_clone();
-
-    $self->_set( { instance_id          => undef,
-                   id                   => undef,
-                   first_publish_date   => undef,
-                   publish_date         => undef,
-                   publish_status       => 0,
-                   _update_contributors => 1
-    });
-    return $self;
-}
 
 ################################################################################
 
@@ -921,18 +904,6 @@ NON
 NONE
 
 =head2 Private Instance Methods
-
-=item $self = $self->_insert_instance()
-
-Inserts an instance record into the database
-
-=cut
-
-################################################################################
-
-=item $self = $self->_update_instance()
-
-Updates the record for the story instance
 
 ################################################################################
 

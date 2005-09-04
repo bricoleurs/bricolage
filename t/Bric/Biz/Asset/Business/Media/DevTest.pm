@@ -174,6 +174,7 @@ sub test_select_methods: Test(120) {
                              site_id     => 100,
                              note        => 'Note 1',
                            });
+
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[0]->set_cover_date('2005-03-23 06:11:29');
     $media[0]->add_contributor($self->contrib, 'DEFAULT');
@@ -205,6 +206,11 @@ sub test_select_methods: Test(120) {
 
     # check the URI
     my $exp_uri = $OBJ->{category}->[0]->get_uri;
+    
+use Data::Dumper;
+print STDERR "expected: " . Dumper($expected) . "\n\n";
+print STDERR "primary uri: " . Dumper($got) . "\n\n";
+    
     like( $got->get_primary_uri, qr/^$exp_uri/,
           '...does the uri match the category');
 

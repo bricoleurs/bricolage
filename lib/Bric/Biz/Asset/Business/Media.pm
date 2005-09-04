@@ -39,6 +39,7 @@ use strict;
 
 #--------------------------------------#
 # Programatic Dependencies
+use Bric::Biz::Asset::Business::Parts::Instance::Media;
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
 use Bric::Util::Coll::Instance::Media;
 use Bric::Util::DBI qw(:all);
@@ -107,7 +108,7 @@ use constant COLS           => qw( uuid
 
 use constant INSTANCE_COLS   => qw( name
                                    description
-                                   media_version__id
+                                   input_channel__id
                                    file_size
                                    file_name
                                    location
@@ -143,7 +144,7 @@ use constant FIELDS         => qw( uuid
 
 use constant INSTANCE_FIELDS => qw( name
                                    description
-                                   version_id
+                                   input_channel_id
                                    size
                                    file_name
                                    location
@@ -177,7 +178,8 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'mt.id = v.media__id '
-  . 'AND v.id = i.media_version__id '
+  . 'AND v.id = mimv.media_version__id '
+  . 'AND i.id = mimv.media_instance__id '
   . 'AND mm.object_id = mt.id '
   . 'AND m.id = mm.member__id '
   . "AND m.active = '1' "
@@ -193,7 +195,7 @@ use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', '
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v';
+use constant FROM => INSTANCE_TABLE . ' i, ' . VERSION_TABLE . ' v, media_instance__media_version mimv';
 
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
@@ -275,11 +277,11 @@ use constant PARAM_WHERE_MAP => {
                               . 'WHERE mt.id = media_version.media__id '
                               . "AND media_version.checked_out = '1')",
       primary_oc_id         => 'v.primary_oc__id = ?',
-      output_channel_id     => '(i.id = moc.media_version__id AND '
+      output_channel_id     => '(v.id = moc.media_version__id AND '
                              . 'moc.output_channel__id = ?)',
       primary_ic_id         => 'v.primary_ic__id = ?',
-      input_channel_id      => '(i.id = mic.media_version__id AND '
-                             . 'mic.input_channel__id = ?)',
+      input_channel_id      => 'i.input_channel__id = ?',
+      primary_ic            => 'v.primary_ic__id = i.input_channel__id',
       category__id          => 'v.category__id = ?',
       category_id           => 'v.category__id = ?',
       category_uri          => 'v.category__id = c.id AND '
@@ -301,7 +303,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'UNION SELECT media_id FROM media_keyword '
                              . 'JOIN keyword kk ON (kk.id = keyword_id) '
                              . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
-      contrib_id            => 'i.id = sic.media_version__id AND sic.member__id = ?',
+      contrib_id            => 'v.id = sic.media_version__id AND sic.member__id = ?',
       note                  => 'mv2.media__id = mt.id AND LOWER(mv2.note) LIKE LOWER(?)',
 };
 
@@ -316,10 +318,9 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'mctrm.related_media__id = ?' ],
     data_text              => [ 'md.object_instance_id = i.id',
                                 'LOWER(md.short_val) LIKE LOWER(?)' ],
-    output_channel_id      => ['i.id = moc.media_version__id',
+    output_channel_id      => ['v.id = moc.media_version__id',
                                'moc.output_channel__id = ?'],
-    input_channel_id       => ['i.id = mic.media_version__id',
-                               'mic.input_channel__id = ?'],
+    input_channel_id       => [ 'i.input_channel__id = ?' ],
     category_uri           => [ 'v.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'mk.media_id = mt.id AND k.id = mk.keyword_id',
@@ -1255,24 +1256,6 @@ sub set_primary_oc_id {
     return $self;
 }
 
-sub set_primary_ic_id {
-    my ($self, $id) = @_;
-    my $oldid = $self->_get('primary_ic_id');
-    if ((defined $id && ! defined $oldid) || $id != $oldid) {
-        my ($uri, $update_uri);
-        if ($self->get_file_name) {
-            my $ic = Bric::Biz::InputChannel->lookup({ id => $id });
-            my $cat = $self->get_category_object;
-            $update_uri = 1;
-        }
-        $self->_set([qw(primary_ic_id _update_uri)] =>
-                    [   $id,          $update_uri]);
-    }
-    return $self;
-}
-
-
-
 ################################################################################
 
 =item $category_id = $media->get_category__id()
@@ -1646,13 +1629,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_file_name {
-    my $self = shift;
-    if (my $alias = $self->_get_alias) {
-        return $alias->get_file_name;
-    }
-    return $self->_get('file_name');
-}
+sub get_file_name { shift->get_instance->get_file_name(@_); }
 
 ################################################################################
 
@@ -1676,13 +1653,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_file {
-    my $self = shift;
-    my $path = $self->get_path || return;
-    my $fh;
-    open $fh, $path or throw_gen(error => "Cannot open '$path': $!");
-    return $fh;
-}
+sub get_file { shift->get_instance->get_file(@_); }
 
 ################################################################################
 
@@ -1699,13 +1670,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_location {
-    my $self = shift;
-    if (my $alias = $self->_get_alias) {
-        return $alias->get_location;
-    }
-    return $self->_get('location');
-}
+sub get_location { shift->get_instance->get_location(@_); }
 
 ################################################################################
 
@@ -1811,8 +1776,7 @@ sub clone {
         $contribs->{$_}->{'action'} = 'insert';
     }
 
-    $self->_set( { instance_id          => undef,
-                   id                   => undef,
+    $self->_set( { id                   => undef,
                    first_publish_date   => undef,
                    publish_date         => undef,
                    publish_status       => 0,
@@ -1847,7 +1811,6 @@ sub save {
     begin();
     eval {
         if ($id) {
-            # we have the main id make sure there's a instance id
             $self->_update_media();
 
             if ($self->_get('version_id')) {
@@ -1865,11 +1828,7 @@ sub save {
             } else {
                 $self->_insert_version();
             }
-            if ($self->_get('instance_id')) {
-               $self->_update_instance();
-            } else {
-                $self->_insert_instance();
-            }
+
         } else {
             # insert both
             if ($self->_get('_cancel')) {
@@ -1878,7 +1837,6 @@ sub save {
             } else {
                 $self->_insert_media();
                 $self->_insert_version();
-                $self->_insert_instance();
             }
         }
 
@@ -1905,14 +1863,6 @@ sub save {
         rollback();
         rethrow_exception($err);
     }
-    if (AUTO_PREVIEW_MEDIA && $preview) {
-        # Go ahead and distribute to the preview server(s).
-        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
-        $burner->preview($self, 'media', get_user_id, $_->get_id)
-          for $self->get_output_channels;
-        $self->_set(['needs_preview'] => [0]);
-    }
-
     if (AUTO_PREVIEW_MEDIA && $preview) {
         # Go ahead and distribute to the preview server(s).
         my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
@@ -2162,34 +2112,6 @@ sub _insert_version {
 
 ################################################################################
 
-=item $self = $self->_insert_instance()
-
-Preforms the sql that inserts a record into the media instance table
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _insert_instance {
-    my $self = shift;
-
-    my $sql = 'INSERT INTO '. INSTANCE_TABLE .
-      ' (id, '.join(', ', INSTANCE_COLS) . ')' .
-        " VALUES (${\next_key(INSTANCE_TABLE)}, ".
-          join(', ', ('?') x INSTANCE_COLS) . ')';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS));
-    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
-    return $self;
-}
-
-################################################################################
-
 =item $self = $self->_update_version()
 
 Preforms the sql that updates the media_version table
@@ -2205,32 +2127,6 @@ sub _update_version {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
-    return $self;
-}
-
-################################################################################
-
-=item $self = $self->_update_instance()
-
-Preforms the sql that updates the media_instance table
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _update_instance {
-    my $self = shift;
-
-    my $sql = 'UPDATE ' . INSTANCE_TABLE .
-      ' SET ' . join(', ', map {"$_=?" } INSTANCE_COLS) .
-        ' WHERE id=? ';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
     return $self;
 }
 
@@ -2275,31 +2171,6 @@ sub _delete_version {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
-    return $self;
-}
-
-################################################################################
-
-=item $self = $self->_delete_instance()
-
-Removes the instance row from the database
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _delete_instance {
-    my $self = shift;
-
-    my $sql = 'DELETE FROM ' . INSTANCE_TABLE .
-      ' WHERE id=? ';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 
@@ -2365,6 +2236,28 @@ sub _do_update {
     execute($update, $self->_get( FIELDS ), $self->_get('id') );
     return $self;
 }
+
+################################################################################
+
+=item $self = $self->_create_instance()
+
+Creates a new instance object
+
+=cut
+
+sub _create_instance {
+    my ($self, $ic) = @_;
+
+    $ic = $ic->get_id if ref $ic;
+
+    my $instance = Bric::Biz::Asset::Business::Parts::Instance::Media->new
+        ({ element          => $self->_get('_element_object'),
+           element__id      => $self->_get('element__id'),
+           input_channel_id => $ic });
+    
+    $self->add_instances($instance);
+}
+
 
 1;
 __END__

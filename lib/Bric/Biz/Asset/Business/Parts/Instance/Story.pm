@@ -106,7 +106,7 @@ use constant PARAM_WHERE_MAP => {
       input_channel_id       => 'i.input_channel__id = ?',
       primary_ic             => 'v.primary_ic__id = i.input_channel__id ',
       primary_ic_id          => 'v.primary_ic__id = ? ',
-      story_version_id       => 'sisv.story_version__id = ? ',
+      story_version_id       => 'v.id = ? ',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -551,30 +551,6 @@ NON
 NONE
 
 =head2 Private Instance Methods
-
-=item $self = $self->_insert_instance()
-
-Inserts an instance record into the database
-
-=cut
-
-################################################################################
-
-=item $self = $self->_update_instance()
-
-Updates the record for the story instance
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
 
 =cut
 

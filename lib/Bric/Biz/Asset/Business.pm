@@ -2784,9 +2784,6 @@ sub _init {
           unless @{$self->get_input_channels};
 
         $self->add_instances($alias_target->get_instances);
-        
-use Data::Dumper;
-print STDERR "Instances: " . Dumper($alias_target->get_instances) . "\n\n";
 
         $self->_set
           ([qw(current_version publish_status modifier
@@ -2833,7 +2830,7 @@ print STDERR "Instances: " . Dumper($alias_target->get_instances) . "\n\n";
             }
         }
 
-        $self->set_slug($alias_target->get_slug);
+        $self->set_slug($alias_target->get_slug) if $self->key_name eq 'story';
         $self->set_name($alias_target->get_name);
         $self->set_description($alias_target->get_description);
 
@@ -2871,14 +2868,6 @@ print STDERR "Instances: " . Dumper($alias_target->get_instances) . "\n\n";
 
         # Set up the input and output channels.
         if ($init->{element}->get_top_level) {
-            $self->add_output_channels(
-               map { ($_->is_enabled &&
-                      $_->get_site_id == $init->{site_id}) ? $_ : () }
-                   $init->{element}->get_output_channels);
-
-            $self->set_primary_oc_id($init->{element}->get_primary_oc_id
-                                     ($init->{site_id}));
-                                     
             $self->add_input_channels(
                map { ($_->is_enabled &&
                       $_->get_site_id == $init->{site_id}) ? $_ : () }
@@ -2887,10 +2876,18 @@ print STDERR "Instances: " . Dumper($alias_target->get_instances) . "\n\n";
             $self->set_primary_ic_id($init->{element}->get_primary_ic_id
                                      ($init->{site_id}));
 
+            $self->add_output_channels(
+               map { ($_->is_enabled &&
+                      $_->get_site_id == $init->{site_id}) ? $_ : () }
+                   $init->{element}->get_output_channels);
+
+            $self->set_primary_oc_id($init->{element}->get_primary_oc_id
+                                     ($init->{site_id}));
+
             my $inst = $self->get_instance($self->get_primary_ic_id);
             $inst->set_name($init->{name});
             $inst->set_description($init->{description});
-            $inst->set_slug($init->{slug});
+            $inst->set_slug($init->{slug}) if $self->key_name eq 'story';
 
         }
 
@@ -3144,24 +3141,6 @@ sub _update_uris {
 
     # If we succeeded, then mark it!
     $self->_set(['_update_uri'] => [0]);
-}
-
-
-sub _create_instance {
-    my ($self, $ic) = @_;
-
-    $ic = $ic->get_id if ref $ic;
-
-    my $instance = Bric::Biz::Asset::Business::Parts::Instance::Story->new
-        ({ element          => $self->_get('_element_object'),
-           element__id      => $self->_get('element__id'),
-           input_channel_id => $ic });
-    
-    $self->add_instances($instance);
-    
-use Data::Dumper;
-print STDERR "Creating instance: " . Dumper($instance) . "\n\n";
-
 }
 
 ################################################################################

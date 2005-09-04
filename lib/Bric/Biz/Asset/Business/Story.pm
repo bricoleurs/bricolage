@@ -2417,38 +2417,6 @@ sub _update_version {
 
 ################################################################################
 
-=item $self = $self->_update_instance()
-
-Updates the record for the story instance
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _update_instance {
-    my ($self) = @_;
-    return unless $self->_get__dirty();
-    my $sql = 'UPDATE ' . INSTANCE_TABLE .
-      ' SET ' . join(', ', map {"$_=?" } INSTANCE_COLS) .
-      ' WHERE id=? ';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
-    return $self;
-}
-
-################################################################################
-
 =item $self = $self->_delete_version();
 
 Deletes the version record from a canceled checkout
@@ -2462,24 +2430,6 @@ sub _delete_version {
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'));
-    return $self;
-}
-
-################################################################################
-
-=item $self = $self->_delete_instance();
-
-Deletes the instance record from a canceled checkout
-
-=cut
-
-sub _delete_instance {
-    my ($self) = @_;
-    my $sql = 'DELETE FROM ' . INSTANCE_TABLE .
-      ' WHERE id=? ';
-
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 
@@ -2511,6 +2461,27 @@ sub _delete_story {
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('id'));
     return $self;
+}
+
+
+=item $self = $self->_create_instance()
+
+Creates a new instance object
+
+=cut
+
+sub _create_instance {
+    my ($self, $ic) = @_;
+
+    $ic = $ic->get_id if ref $ic;
+
+    my $instance = Bric::Biz::Asset::Business::Parts::Instance::Story->new
+        ({ element          => $self->_get('_element_object'),
+           element__id      => $self->_get('element__id'),
+           input_channel_id => $ic });
+    
+    $self->add_instances($instance);
+
 }
 
 1;
