@@ -1487,7 +1487,7 @@ NONE
 
 sub get_element_name {
     my $self = shift;
-    my $at_obj = $self->_get_element_object or return;
+    my $at_obj = $self->get_element_object or return;
     return $at_obj->get_name;
 }
 
@@ -1514,7 +1514,7 @@ NONE
 
 sub get_element_key_name {
     my $self = shift;
-    my $at_obj = $self->_get_element_object or return;
+    my $at_obj = $self->get_element_object or return;
     return $at_obj->get_key_name;
 }
 
@@ -1540,7 +1540,7 @@ NONE
 
 sub get_element {
     my $self = shift;
-    my $at_obj = $self->_get_element_object;
+    my $at_obj = $self->get_element_object;
 
     return $at_obj;
 }
@@ -2001,7 +2001,7 @@ sub _get_output_channel_object {
 
 ################################################################################
 
-=item $at_obj = $self->_get_element_object()
+=item $at_obj = $self->get_element_object()
 
 Returns the asset type object that was associated with this formatting asset.
 
@@ -2019,7 +2019,7 @@ NONE
 
 =cut
 
-sub _get_element_object {
+sub get_element_object {
     my $self = shift;
     my $dirty = $self->_get__dirty;
     my ($at_id, $at_obj) = $self->_get('element__id', '_element_obj');

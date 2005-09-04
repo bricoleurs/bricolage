@@ -663,7 +663,7 @@ sub upload_file {
     $self->set_size(defined $size ? $size : -s $path);
 
     # Get the Output Channel object.
-    my $at_obj = $self->_get_element_object;
+    my $at_obj = $self->get_element_object;
     my $oc_obj = $self->get_primary_oc;
 
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
