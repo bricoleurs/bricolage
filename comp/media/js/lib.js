@@ -784,3 +784,20 @@ function multiOnload_addOnload(eventFn) {
     if(!this.events) { this.events = new Array(); }
     this.events[this.events.length] = eventFn;
 }
+
+
+/*
+ * Save scroll position
+ */
+
+// <body onLoad="javascript:restoreScrollXY($scrollx, $scrolly)">
+function restoreScrollXY(x, y) {
+    window.scrollTo(x, y);
+}
+
+// <form onSubmit="saveScrollXY('theForm')" ...>
+function saveScrollXY(formName) {
+    var form = document.forms[formName];
+    form.scrollx.value = (document.all) ? document.body.scrollLeft : window.pageXOffset;
+    form.scrolly.value = (document.all) ? document.body.scrollTop  : window.pageYOffset;
+}

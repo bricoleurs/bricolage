@@ -206,6 +206,10 @@ elements, and elements, which are contain content and are based on element
 types. These are not ideal names, but at least we now have something different
 to call them. [David]
 
+=item *
+
+Made the scrollbar "sticky" in the Story Profile. [Scott]
+
 =back
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)

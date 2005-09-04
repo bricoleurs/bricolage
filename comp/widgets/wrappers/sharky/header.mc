@@ -30,6 +30,8 @@ $useSideNav => 1
 $no_toolbar => NO_TOOLBAR
 $no_hist => 0
 $debug => undef
+$scrollx => 0
+$scrolly => 0
 </%args>
 <%init>;
 $context =~ s/\&quot\;/\"/g;
@@ -103,7 +105,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 </script>
 </head>
 
-<body>
+<body onLoad="restoreScrollXY(<% $scrollx %>, <% $scrolly %>)">
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>

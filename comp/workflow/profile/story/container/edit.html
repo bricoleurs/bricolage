@@ -22,6 +22,8 @@ $LastChangedDate$
 
 %#-- Args Section --#
 <%args>
+$scrollx => 0
+$scrolly => 0
 </%args>
 
 %#-- Args Section --#
@@ -39,9 +41,14 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
     title => "$disp Profile",
-    context => $context . get_state_data('container_prof', 'crumb')
+    context => $context . get_state_data('container_prof', 'crumb'),
+    scrollx => $scrollx,
+    scrolly => $scrolly,
 &>
-<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges('theForm')">
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
+<& '/widgets/profile/hidden.mc', name => 'scrollx', value => 0 &>
+<& '/widgets/profile/hidden.mc', name => 'scrolly', value => 0 &>
+
 <& /widgets/container_prof/container_prof.mc,
    tile_type    => 'story',
    num          => 2,
