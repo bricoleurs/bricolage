@@ -1,10 +1,10 @@
-package Bric::Util::Coll::InputChannel;
+package Bric::Util::Coll::Instance;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Util::Coll::InputChannel - Interface for managing collections of Input
-Channels.
+Bric::Util::Coll::Instance - Interface for managing collections of
+Bric::Biz::Asset::Business::Parts::Instance objects.
 
 =head1 VERSION
 
@@ -36,9 +36,8 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Biz::InputChannel;
 use Bric::Util::DBI qw(:standard);
-use Bric::Util::Fault qw(throw_dp);
+use Bric::Util::Fault qw(throw_dp throw_gen);
 
 ################################################################################
 # Inheritance
@@ -116,7 +115,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub class_name { 'Bric::Biz::InputChannel' }
+sub class_name { 'Bric::Biz::Asset::Business::Parts::Instance' }
 
 ################################################################################
 
@@ -126,42 +125,13 @@ sub class_name { 'Bric::Biz::InputChannel' }
 
 =over 4
 
-=item $self = $coll->save($key => $id)
+=item $self = $coll->save
 
-Saves the changes made to all the objects in the collection. The C<$key>
-argument indicates the type of object with which each input channel should be
-associated. The available keys are:
-
-=over 4
-
-=item output_channel
-
-Indicates a L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel> association.
-
-=item story
-
-Indicates a
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>
-association.
-
-=item media
-
-Indicates a
-L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>
-association.
-
-=back
-
-The C<$id> argument is the ID of the object with which each input channel
-should be associated.
+Saves the changes made to all the objects in the collection
 
 B<Throws:>
 
 =over 4
-
-=item *
-
-Invalid key.
 
 =item *
 
@@ -201,60 +171,53 @@ B<Notes:> NONE.
 
 sub save {
     my ($self, $type, $id) = @_;
-    my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
+    my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
 
     if (%$del_objs) {
         my $del;
-#        if ($type eq 'story') {
-#            $del = prepare_c(qq{
-#                DELETE FROM story__input_channel
-#                WHERE  story_instance__id = ?
-#                       AND input_channel__id = ?
-#            }, undef);
-#        } elsif ($type eq 'media') {
-#            $del = prepare_c(qq{
-#                DELETE FROM media__input_channel
-#                WHERE  media_instance__id = ?
-#                       AND input_channel__id = ?
-#            }, undef);
-#        } elsif ($type eq 'output_channel') {
-#            $del = prepare_c(qq{
-#                DELETE FROM output_channel__input_channel
-#                WHERE  output_channel__id = ?
-#                       AND input_channel__id = ?
-#            }, undef);
-#        }
-#        execute($del, $id, $_->get_id) for values %$del_objs;
+        if ($type eq 'story') {
+            $del = prepare_c(qq{
+                DELETE FROM story_instance__story_version
+                WHERE  story_version__id = ?
+                       AND story_instance__Id = ?
+            }, undef);
+        } elsif ($type eq 'media') {
+            $del = prepare_c(qq{
+                DELETE FROM media_instance__media_version
+                WHERE  media_version__id = ?
+                       AND media_instance__id = ?
+            }, undef);
+        }
+        execute($del, $id, $_->get_id) for values %$del_objs;
         %$del_objs = ();
+    }
+    
+    # Save the existing objects.
+    foreach my $inst (values %$objs) {
+        $inst->save;
     }
 
     if (@$new_objs) {
-#        my $ins;
-#        if ($type eq 'story') {
-#            $ins = prepare_c(qq{
-#                INSERT INTO story__input_channel
-#                            (story_instance__id, input_channel__id)
-#                VALUES (?, ?)
-#            }, undef);
-#        } elsif ($type eq 'media') {
-#            $ins = prepare_c(qq{
-#                INSERT INTO media__input_channel
-#                            (media_instance__id, input_channel__id)
-#                VALUES (?, ?)
-#            }, undef);
-#        } elsif ($type eq 'output_channel') {
-#            $ins = prepare_c(qq{
-#                INSERT INTO output_channel__input_channel
-#                            (output_channel__id, input_channel__id)
-#                VALUES (?, ?)
-#            }, undef);
-#        } else {
-#            throw_dp(error => "Invalid key '$type'");
-#        }
-#
-        foreach my $ic (@$new_objs) {
-            $ic->save;
-#            execute($ins, $id, $ic->get_id);
+        my $ins;
+        if ($type eq 'story') {
+            $ins = prepare_c(qq{
+                INSERT INTO story_instance__story_version
+                            (story_version__id, story_instance__id)
+                VALUES (?, ?)
+            }, undef);
+        } elsif ($type eq 'media') {
+            $ins = prepare_c(qq{
+                INSERT INTO media_instance__media_version
+                            (media_version__id, media_instance__id)
+                VALUES (?, ?)
+            }, undef);
+        } else {
+            throw_dp(error => "Invalid key '$type'");
+        }
+
+        foreach my $inst (@$new_objs) {
+            $inst->save;
+            execute($ins, $id, $inst->get_id);
         }
         $self->add_objs(@$new_objs);
         @$new_objs = ();
@@ -274,7 +237,7 @@ sub save {
 =item Bric::Util::Coll::InputChannel->_sort_objs($objs_href)
 
 Sorts a list of objects into an internally-specified order. This class sorts
-input channel objects by name.
+objects by name.
 
 B<Throws:> NONE.
 
@@ -313,12 +276,9 @@ NONE.
 
 David Wheeler <david@wheeler.net>
 
-Marshall Roch <marshall@exclupen.com>
-
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Bric::Util::Coll|Bric::Util::Coll>,
-L<Bric::Biz::InputChannel|Bric::Biz::InputChannel>
+L<Bric::Util::Coll|Bric::Util::Coll>
 
 =cut
