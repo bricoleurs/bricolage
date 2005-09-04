@@ -362,8 +362,9 @@ You can get a clean database without reinstalling Bricolage by doing
   sudo make db
   sudo make db_grant
 
-Answer yes when it asks you to drop the database. Then to get useful
-debugging output, do verbose testing with something like
+Answer yes when it asks you to drop the database. (Note: if there were any
+database changes, you'll also need to run upgrade scripts in inst/upgrade/.)
+Then to get useful debugging output, do verbose testing with something like
 
   sudo make devtest TEST_VERBOSE=1 > test.out 2>&1
 
