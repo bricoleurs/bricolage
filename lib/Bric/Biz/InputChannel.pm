@@ -1220,9 +1220,10 @@ sub _do_list {
               'AND inc.input_channel__id = ?';
             push @params, $v;
         } elsif ($k eq 'story_version_id') {
-            $tables .= ', story_instance i';
-            $wheres .= ' AND ic.id = i.input_channel__id ' .
-                       ' AND i.story_version__id = ?';
+            $tables .= ', story_instance i, story_instance__story_version sisv';
+            $wheres .= ' AND ic.id = i.input_channel__id' .
+                       ' AND i.id = sisv.story_instance__id' .
+                       ' AND sisv.story_version__id = ?';
             push @params, $v
         } elsif ($k eq 'story_instance_id') {
             # Find all story_instances with the right story_version__id
