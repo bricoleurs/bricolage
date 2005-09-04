@@ -738,8 +738,9 @@ sub fetch_objects {
     while (fetch($select)) {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
-        $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
-        $obj ->_set($fields, \@d);
+        $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]] 
+            if $grp_col_cnt > 0;
+        $obj->_set($fields, \@d);
         $obj->_set__dirty(0);
         # Cache the object before reblessing it.
         $obj->cache_me;
@@ -923,6 +924,9 @@ sub where_clause {
             push @args, ($v) x $sql =~ s/\?//g;
         }
     }
+    
+    # Remove any leading " AND "s in case WHERE is blank
+    $where =~ s/^ AND //;
     return $where, \@args;
 }
 
