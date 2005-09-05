@@ -2463,10 +2463,9 @@ This function returns the word from @alt_words that is closest to $word.
 
 sub _find_closest_word {
     my $word  = shift;
-    my $found = reduce {  $a->[1] < $b->[1] ? $a : $b  }
-                map    { [ $_ => distance($word, $_) ] }
-                @_;
-    return $found->[0];
+    my @score = map { distance( $word, $_ ) } @_;
+    my $best  = reduce { $score[ $a ] < $score[ $b ] ? $a : $b } 0 .. $#_;
+    return $_[ $best ];
 }
 
 ################################################################################
