@@ -740,19 +740,24 @@ sub recall : Callback {
         if (chk_authz($ba, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
-            # Make sure the workflow ID is valid.
+            # Make sure the workflow ID is valid. (XXX: why isn't this before the lookup?)
             unless ($w_id) {
                 throw_dp('error' => "Bad Workflow ID '$w_id'");
             }
 
-            # Put this formatting asset into the current workflow and log it.
+            # They checked 'Include deleted' and the 'Reactivate' checkbox
+            unless ($ba->is_active) {
+                $ba->activate();
+            }
+
+            # Put this story into the current workflow and log it.
             $ba->set_workflow_id($w_id);
             log_event('story_add_workflow', $ba, { Workflow => $wf->get_name });
 
             # Get the start desk for this workflow.
             my $start_desk = $wf->get_start_desk;
 
-            # Put this formatting asset on to the start desk.
+            # Put this story on the start desk.
             $start_desk->accept({'asset' => $ba});
             $start_desk->checkout($ba, get_user_id());
             $start_desk->save;

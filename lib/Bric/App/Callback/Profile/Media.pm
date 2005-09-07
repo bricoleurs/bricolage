@@ -635,16 +635,23 @@ sub recall : Callback {
         my ($o_id, $w_id) = split('\|', $id);
         my $ba = Bric::Biz::Asset::Business::Media->lookup({'id' => $o_id});
         if (chk_authz($ba, RECALL, 1)) {
+            # XXX: why don't we check if $w_id is valid?
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
-            # Put this formatting asset into the current workflow and log it.
+            # They checked 'Include deleted' and the 'Reactivate' checkbox
+            # XXX: is this sufficient?
+            unless ($ba->is_active) {
+                $ba->activate();
+            }
+
+            # Put this media into the current workflow and log it.
             $ba->set_workflow_id($w_id);
             log_event('media_add_workflow', $ba, { Workflow => $wf->get_name });
 
             # Get the start desk for this workflow.
             my $start_desk = $wf->get_start_desk;
 
-            # Put this formatting asset on to the start desk.
+            # Put this media on the start desk.
             $start_desk->accept({'asset' => $ba});
             $start_desk->checkout($ba, get_user_id());
             $start_desk->save;

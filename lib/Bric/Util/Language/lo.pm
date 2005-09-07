@@ -113,6 +113,8 @@ To translate:
       'No output to preview.'
       'Cannot preview asset "[_1]" because there are no Preview Destinations associated with its output channels.'
       'Element must be associated with at least one site and one output channel.'
+      'Include deleted' => 'Include deleted',
+      'Reactivate' => 'Reactivate',
 
   );
 

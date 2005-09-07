@@ -73,9 +73,14 @@ media, in a single stream of text. [David]
 
 =item *
 
-Converted "Bulk Edit" into the UI to use the new POD syntax supported by the
-element classes and elimionated the old "Super Bulk Edit" interface since it
+Converted "Bulk Edit" in the UI to use the new POD syntax supported by the
+element classes and eliminated the old "Super Bulk Edit" interface since it
 became redundant. [David]
+
+=item *
+
+Added the 'Include deleted' checkbox to Advanced Search in 'Find Stories' and
+'Find Media' to allow reactivating deleted Stories and Media. [Scott]
 
 =back
 

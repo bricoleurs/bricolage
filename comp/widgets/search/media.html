@@ -102,6 +102,16 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
         options => $asset_opts,
         localize => 0 &>
 
+% my $active_checked = get_state_data($widget, 'active') ? 1 : 0;
+    <& /widgets/profile/checkbox.mc,
+        disp     => $lang->maketext('Include deleted'),
+        name     => $widget . '|active',
+        value    => 'tf',    # XXX: 't' and 'f' (see Bric::App::Callback::Search)
+        checked  => $active_checked,
+        localize => 0,
+        useTable => 1,
+        &>
+
 % if (get_pref("Filter by Site Context")) {
     <& /widgets/profile/hidden.mc,
         name    => "$widget|site_id",

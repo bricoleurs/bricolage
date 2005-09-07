@@ -44,6 +44,7 @@ my $profile = sub {
 
 my $select = sub {
     my $o = shift;
+    my $text = $lang->maketext($o->is_active ? 'Checkout' : 'Reactivate');
     my $u_id = $o->get_user__id;
     if (defined $u_id) {
         # Just return the name of the user who has the asset checked out.
@@ -52,12 +53,12 @@ my $select = sub {
       })->format_name;
     } elsif ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
         # Allow checkout if they can see the desk the asset is on.
-        return ['Checkout', "$widg\_prof|checkout_cb"]
+        return [$text, "$widg\_prof|checkout_cb"]
           if $desk_chk->{$o->get_desk_id}[0];
     } else {
         # Allow checkout only if they have recall permission to the asset and
         # access to the start desk.
-        return ['Checkout', "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
+        return [$text, "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
           if $start_desk_ok && chk_authz($o, RECALL, 1);
     }
     return;

@@ -8,6 +8,7 @@ use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH);
+use Bric::Util::DBI qw(ANY);
 
 sub no_new_search {
     my $r = Apache::Request->instance(Apache->request);
@@ -57,6 +58,7 @@ sub story : Callback {
     _build_fields($self, \@field, \@crit,
                     [qw(simple title primary_uri category_uri keyword data_text)]);
     _build_id_fields($self, \@field, \@crit, [qw(element__id site_id)]);
+    _build_bool_fields($self, \@field, \@crit, [qw(active)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
@@ -75,6 +77,7 @@ sub media : Callback {
 
     _build_fields($self, \@field, \@crit, [qw(simple name uri data_text)]);
     _build_id_fields($self, \@field, \@crit, [qw(element__id site_id)]);
+    _build_bool_fields($self, \@field, \@crit, [qw(active)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
 		       [qw(cover_date publish_date expire_date)]);
 
@@ -202,6 +205,29 @@ sub _build_id_fields {
 
         # Skip it if it's blank
         next unless $v =~ /^\d+$/;
+
+        push @$field, $f;
+        push @$crit, $v;
+    }
+};
+
+sub _build_bool_fields {
+    my ($self, $field, $crit, $add) = @_;
+    my $widget = $self->class_key;
+    my $param = $self->params;
+
+    foreach my $f (@$add) {
+        my $v = $param->{$self->class_key."|$f"};
+
+        # Save the value so we can repopulate the form.
+        set_state_data($self->class_key, $f, $v);
+
+        # Skip it if it's not boolean
+        next unless $v =~ /^(t|f|tf)$/;
+
+        # The value 'tf' is a hack meaning 't' or 'f'
+        # (in particular to allow returning 'active' and 'inactive' stories/media)
+        $v = ANY('t', 'f') if $v eq 'tf';
 
         push @$field, $f;
         push @$crit, $v;
