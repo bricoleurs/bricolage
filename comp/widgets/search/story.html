@@ -24,6 +24,15 @@ my $asset_opts = $advanced_search ? {
           })
     } : undef;
 
+my $subelement_opts = $advanced_search ? {
+        '' => $lang->maketext('All Subelements'),
+        map { $_->get_key_name, $_->get_name }
+          Bric::Biz::AssetType->list({
+              top_level => 0,
+              active    => 1,
+          })
+    } : undef;
+
 my $sites = $c->get('__SITES__');
 
 unless ($sites) {
@@ -114,6 +123,13 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
         name    => $widget.'|element__id',
         value   => get_state_data($widget, 'element__id') || '',
         options => $asset_opts,
+        localize => 0 &>
+
+    <& /widgets/profile/select.mc,
+        disp    => $lang->maketext('Subelement'),
+        name    => $widget . '|subelement_key_name',
+        value   => get_state_data($widget, 'subelement_key_name') || '',
+        options => $subelement_opts,
         localize => 0 &>
 
 % my $active_checked = get_state_data($widget, 'active') ? 1 : 0;

@@ -56,7 +56,8 @@ sub story : Callback {
     my (@field, @crit);
 
     _build_fields($self, \@field, \@crit,
-                    [qw(simple title primary_uri category_uri keyword data_text)]);
+                    [qw(simple title primary_uri category_uri keyword
+                        data_text subelement_key_name)]);
     _build_id_fields($self, \@field, \@crit, [qw(element__id site_id)]);
     _build_bool_fields($self, \@field, \@crit, [qw(active)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,

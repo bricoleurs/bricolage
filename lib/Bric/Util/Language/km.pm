@@ -115,6 +115,8 @@ To translate:
       'Element must be associated with at least one site and one output channel.'
       'Include deleted' => 'Include deleted',
       'Reactivate' => 'Reactivate',
+      'Subelement' => 'Subelement',
+      'All Subelements' => 'All Subelements',
 
   );
 

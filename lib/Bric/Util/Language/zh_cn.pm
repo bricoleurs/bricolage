@@ -580,6 +580,8 @@ To translate:
 
   'Include deleted' => 'Include deleted',
   'Reactivate' => 'Reactivate',
+  'Subelement' => 'Subelement',
+  'All Subelements' => 'All Subelements',
 
 =end comment
 

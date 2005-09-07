@@ -718,6 +718,8 @@ To translate:
   'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".' => 'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".',
   'Include deleted' => 'Include deleted',
   'Reactivate' => 'Reactivate',
+  'Subelement' => 'Subelement',
+  'All Subelements' => 'All Subelements',
 
 =end comment
 

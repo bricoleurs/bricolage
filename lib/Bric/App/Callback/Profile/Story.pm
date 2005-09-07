@@ -746,6 +746,7 @@ sub recall : Callback {
             }
 
             # They checked 'Include deleted' and the 'Reactivate' checkbox
+            # XXX: is this sufficient?
             unless ($ba->is_active) {
                 $ba->activate();
             }

@@ -308,6 +308,7 @@ our %Lexicon = (
   'Story Type' => 'Tipo de Artigo',
   'Story Type Element' => 'Tipo de Artigo',
   'Subelements' => 'Subelementos',
+  'Subelement' => 'Subelemento',
   'Teaser' => 'Teaser',
   'Template Name' => 'Nome do Template',
   'Text box' => 'Caixa de texto',
@@ -726,6 +727,7 @@ To translate:
   'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".' => 'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".',
   'Include deleted' => 'Include deleted',
   'Reactivate' => 'Reactivate',
+  'All Subelements' => 'All Subelements',
 
 =end comment
 
