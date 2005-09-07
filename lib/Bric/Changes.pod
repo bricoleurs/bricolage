@@ -79,10 +79,10 @@ became redundant. [David]
 
 =item *
 
-Added two search fields to Advanced Search in 'Find Stories' and 'Find Media':
-the 'Include deleted' checkbox allows searching for and reactivating deleted
-Stories and Media, while the 'Subelement' dropdown allows searching on Stories
-by subelement. [Scott]
+Added the 'Include deleted' checkbox to Advanced Search in 'Find Stories',
+'Find Media', and 'Find Templates'; this allows searching for and reactivating
+deleted stories, media, and templates. Also added the 'Subelement' dropdown,
+which allows searching on Stories by subelement. [Scott]
 
 =back
 

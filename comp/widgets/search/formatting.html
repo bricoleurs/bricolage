@@ -117,6 +117,16 @@ $oc_name_getter = sub {
         default => ['', $lang->maketext('All Output Channels')],
         getter  => $oc_name_getter
     &>
+
+% my $active_checked = get_state_data($widget, 'active') ? 1 : 0;
+    <& /widgets/profile/checkbox.mc,
+        disp     => $lang->maketext('Include deleted'),
+        name     => $widget . '|active',
+        value    => 'tf',    # XXX: 't' and 'f' (see Bric::App::Callback::Search)
+        checked  => $active_checked,
+        localize => 0,
+        useTable => 1,
+        &>
     
     <div class="row">
         <div class="label"><% $lang->maketext('Cover Date') %>:</div>

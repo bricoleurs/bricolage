@@ -288,6 +288,11 @@ sub recall : Callback {
         if (chk_authz($fa, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
+            # They checked 'Include deleted' and the 'Reactivate' checkbox
+            unless ($fa->is_active) {
+                $fa->activate();
+            }
+
             # Put this formatting asset into the current workflow
             $fa->set_workflow_id($w_id);
             log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
