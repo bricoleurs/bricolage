@@ -25,6 +25,7 @@ Sam Tregar <stregar@about-inc.com>
 <%once>;
 my $widget = 'help';
 </%once>
-<%perl>
-  set_state_data($widget, \%ARGS);
-</%perl><a href="#" title="Help" id="btnHelp"><img src="/media/images/<% $lang_key %>/help.gif" alt="Help" /></a>
+<%perl>;
+set_state_data($widget, \%ARGS);
+</%perl>
+<a href="<% $r->uri %>" title="Help" id="btnHelp" onclick="openHelp()"><img src="/media/images/<% $lang_key %>/help.gif" alt="Help" /></a>

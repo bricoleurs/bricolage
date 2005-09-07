@@ -743,11 +743,6 @@ function resizeframe() {
 /*
 Open popup window
 */
-function installHelpButtons() {    
-    document.getElementById("btnAbout").onclick = openAbout;
-    document.getElementById("btnHelp").onclick = openHelp;
-}
-
 function openWindow(page) {
     window.open('/help/' + lang_key + '/' + page + '.html', 
                                 'Help_<% SERVER_WINDOW_NAME %>', 

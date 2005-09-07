@@ -83,9 +83,6 @@ var checkboxValues = new Array();
 
 window.onload = function () {
     init();
-% if ($useSideNav) {
-    installHelpButtons();
-% }
 }
 
 function init() {
@@ -115,7 +112,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 <div id="mainContainer">
 <div id="bricLogo">
 % if ($useSideNav) {
-        <a href="#" title="About Bricolage" id="btnAbout"><img src="/media/images/bricolage.gif" /></a>
+        <a href="#" title="About Bricolage" id="btnAbout" onclick="openAbout()"><img src="/media/images/bricolage.gif" /></a>
 % } else {
         <img src="/media/images/bricolage.gif" alt="Bricolage" />
 % }
