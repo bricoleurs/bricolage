@@ -8,10 +8,21 @@ use Bric::Util::Trans::FS;
 
 my $fs = Bric::Util::Trans::FS->new;
 
-find(\&rm_super_bulk, MASON_COMP_ROOT->[0][1]);
+find(
+    \&rm_super_bulk,
+    $fa->cat_dir(MASON_COMP_ROOT->[0][1], qw(media images))
+);
+
+my %to_delete = ( map { $_ => 1 } qw(
+    view_text_dgreen.gif
+    recount_lgreen.gif
+    view_log_teal.gif
+    view_notes_dgreen.gif
+    view_notes_teal.gif
+));
 
 sub rm_super_bulk {
-    return unless $_ eq 'edit_super_bulk.html';
+    return unless $to_delete{$_};
     print "Deleting $File::Find::name\n";
     $fs->del($File::Find::name);
 }

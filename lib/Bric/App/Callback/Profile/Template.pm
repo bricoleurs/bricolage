@@ -127,10 +127,33 @@ sub view : Callback {
     my $self = shift;
     my $widget = $self->class_key;
 
-    my $fa      = get_state_data($widget, 'fa');
+    my $id      = get_state_data($widget, 'fa')->get_id;
     my $version = $self->params->{"$widget|version"};
-    my $id      = $fa->get_id;
+    set_state_data($widget, version_view => 1);
     $self->set_redirect("/workflow/profile/templates/$id/?version=$version");
+}
+
+sub diff : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $params = $self->params;
+    my $tmpl   = get_state_data($widget, 'fa');
+    my $id     = $tmpl->get_id;
+
+    # Tell the return button to return to the edit view.
+    set_state_data($widget, version_view => 1);
+
+    # Find the from and to version numbers.
+    my $from = $params->{"$widget|from_version"}
+             || $params->{"$widget|version"};
+    my $to   = $params->{"$widget|to_version"}
+             || $tmpl->get_version;
+
+    # Send it on home.
+    $self->set_redirect(
+        "/workflow/profile/templates/$id/?diff=1"
+        . "&from_version=$from&to_version=$to"
+    );
 }
 
 sub cancel : Callback(priority => 6) {

@@ -153,6 +153,22 @@ sub test_list : Test(31) {
     ok(@events = Bric::Util::Event->list({ description => $desc }),
        "List description '$desc'" );
     is(scalar @events, 3, "Check for 3 events");
+
+    # Try Limit.
+    ok(@events = Bric::Util::Event->list({
+        obj_id => $wfid,
+        Limit  => 2,
+    }), "List obj_id '$wfid' Limit 2" );
+    is(scalar @events, 2, "Check for 2 events");
+
+    # Try Offset.
+    ok(@events = Bric::Util::Event->list({
+        obj_id => $wfid,
+        Offset  => 2,
+    }), "List obj_id '$wfid' Offset 2" );
+    is(scalar @events, 3, "Check for 3 events");
+
+    # Try Order
 }
 
 ##############################################################################

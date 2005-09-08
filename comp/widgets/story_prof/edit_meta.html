@@ -39,21 +39,31 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <dd><% $story->get_publish_date || '&nbsp;' %></dd>
   <dt><% $lang->maketext('URI') %>:</dt>
 % if (@ocs == 1) {
-  <dd><% $m->comp('/widgets/profile/preview_link.mc',
-                                    type  => 'story',
-                                    value => $story->get_primary_uri,
-                                    doc   => $story,
-                                    style => 'blackUnderlinedLink') %></dd>
+  <dd><% $m->comp(
+      '/widgets/profile/preview_link.mc',
+      doc => $story,
+  )%></dd>
 % } else {
+% my $oc_opts = [
+%     map { [ $_->get_id => $_->get_name ] }
+%         $story->get_output_channels
+% ];
   <dd><% $story->get_primary_uri %></dd>
   <dt><% $lang->maketext('Preview in') %>:</dt>
-  <dd><% $oc_select %>&nbsp;<%
-                           $m->comp('/widgets/profile/preview_link.mc',
-                                    type  => 'story',
-                                    value => $story->get_primary_uri,
-                                    doc   => $story,
-                                    oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
-                                    style => 'blackUnderlinedLink') %></dd>
+  <dd><&
+          '/widgets/profile/select.mc',
+          options => $oc_opts,
+          name    => 'ocSelect',
+          useTable => 0,
+          value   => $story->get_primary_oc_id,
+      &>
+      <% $m->comp('/widgets/profile/preview_link.mc',
+      type  => 'story',
+      value => $story->get_primary_uri,
+      doc   => $story,
+      oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
+       style => 'blackUnderlinedLink',
+) %></dd>
 % }
   <dt><% $lang->maketext('Site') %>:</dt>
   <dd><% Bric::Biz::Site->lookup({id => $story->get_site_id})->
@@ -340,15 +350,6 @@ my $at = $story->get_element__id;
 my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
 my @aocs = $asset_type->get_output_channels;
 my @ocs = $story->get_output_channels;
-my $primocid = $story->get_primary_oc_id;
-
-my $oc_select = '<select name="ocSelect">';
-foreach my $oc (@ocs) {
-    my $ocid = $oc->get_id;
-    my $selected = $ocid == $primocid ? ' selected' : '';
-    $oc_select .= qq{<option value="$ocid"$selected>} . $oc->get_name . '</option>';
-}
-$oc_select .= '</select>';
 
 # Set slug required if it is
 my $slug_req = 0;

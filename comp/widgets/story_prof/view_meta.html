@@ -1,6 +1,6 @@
 <%perl>
 my $note_img = $story->has_notes ? 'note_fill' : 'note';
-my $rightText = qq{
+my $toText = qq{
 <a href="/workflow/profile/story/view_notes.html?id=} . $id .
  qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>
     <a href="/workflow/trail/story/}. $id . qq{"><img src="/media/images/} .
@@ -9,9 +9,9 @@ my $rightText = qq{
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
           caption => "Information",
-          number  => 1,
+          number  => ++$number,
           id      => 'storyinfo',
-          rightText => $rightText
+          toText => $toText
 );
 </%perl>
 <dl class="viewmeta">
@@ -21,27 +21,35 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <dd><% $story->get_element_name %></dd>
   <dt><% $lang->maketext('Title') %>:</dt>
   <dd><% $story->get_name %></dd>
-  <dt><% $lang->maketext('Description') %>:</dt>
-  <dd><% $story->get_description || '&nbsp;' %></dd>
   <dt><% $lang->maketext('Slug') %>:</dt>
   <dd><% $story->get_slug || '&nbsp;' %></dd>
   <dt><% $lang->maketext('URI') %>:</dt>
 % if (@ocs == 1) {
-  <dd><& '/widgets/profile/preview_link.mc',
-          type  => 'story',
-          value => $story->get_primary_uri,
-          doc   => $story,
-          style => 'blackUnderlinedLink' &>&nbsp;</dd>
+  <dd><% $m->comp(
+      '/widgets/profile/preview_link.mc',
+      doc => $story,
+  )%></dd>
 % } else {
-  <dd><% $story_uri %></dd>
+% my $oc_opts = [
+%     map { [ $_->get_id => $_->get_name ] }
+%         $story->get_output_channels
+% ];
+  <dd><% $story->get_primary_uri %></dd>
   <dt><% $lang->maketext('Preview in') %>:</dt>
-  <dd><% $oc_select %>&nbsp;<%
-                           $m->comp('/widgets/profile/preview_link.mc',
-                                    type  => 'story',
-                                    value => $story->get_primary_uri,
-                                    doc   => $story,
-                                    oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
-                                    style => 'blackUnderlinedLink') %></dd>
+  <dd><&
+          '/widgets/profile/select.mc',
+          options => $oc_opts,
+          name    => 'ocSelect',
+          useTable => 0,
+          value   => $story->get_primary_oc_id,
+      &>
+      <% $m->comp('/widgets/profile/preview_link.mc',
+      type  => 'story',
+      value => $story->get_primary_uri,
+      doc   => $story,
+      oc_js => 'window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value',
+       style => 'blackUnderlinedLink',
+) %></dd>
 % }
   <dt><% $lang->maketext('Source') %>:</dt>
   <dd><% Bric::Biz::Org::Source->lookup({ id => $story->get_source__id })->get_source_name %></dd>
@@ -70,17 +78,54 @@ $m->print(join '<br />&nbsp;', sort { $a cmp $b }
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
+<%perl>;
+if ($param->{diff}) {
+    my $version  = $story->get_version;
+    my $from     = $param->{from};
+    my $to       = $param->{to};
+    my $from_ver = $param->{from_version};
+    my $to_ver   = $param->{to_version};
+
+    $m->comp(
+        '/widgets/wrappers/sharky/table_top.mc',
+        number  => ++$number,
+        caption => $lang->maketext(
+            'Diff between versions [_1] and [_2]',
+            $from_ver, $to_ver
+        ),
+    );
+
+    $m->print(
+        '<div id="worddiff">' . join( "<br />\n", split /\r?\n|\r/,
+            Text::WordDiff::word_diff(
+            \$from->get_element->serialize_to_pod,
+            \$to->get_element->serialize_to_pod, {
+                STYLE => 'HTML',
+                FILENAME_A => $from->get_uri  . " v.$from_ver",
+                FILENAME_B => $to->get_uri . " v.$to_ver",
+                MTIME_A    => $param->{from_time},
+                MTIME_B    => $param->{to_time},
+            }
+        )) . '</div>'
+    );
+
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+
+}
+
+else {
+</%perl>
 <& '/widgets/container_prof/container_prof.mc',
     tile        => $tile,
     tile_type   => 'story',
     action      => 'view',
-    start_count => 4,
+    start_count => ++$number,
     num         => 2
 &>
 
 <& '/widgets/wrappers/sharky/table_top.mc',
     caption => "Associations",
-    number  => 3
+    number  => ++$number
 &>
 <table class="associations">
 <tr class="odd">
@@ -118,33 +163,49 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 </tr>
 </table>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
+% }
 
+% if ($curr_ver > 1) {
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => 'Select Diff Version',
+    number  => ++$number,
+&>
+<& '/widgets/profile/select.mc',
+    name    => 'from_version',
+    disp    => 'From Version',
+    options => $versions,
+    value   => $param->{from_version} || $story->get_version,
+&>
+<& '/widgets/profile/select.mc',
+    name    => 'to_version',
+    disp    => 'To Version',
+    options => $versions,
+    value   => $param->{to_version},
+&>
+<& '/widgets/profile/button.mc',
+    name     => 'diff',
+    button   => 'view_diff',
+    useTable => 1,
+    value    => 1,
+&>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+% }
 <& '/widgets/profile/button.mc',
     disp      => $lang->maketext("Return"),
     widget    => $widget,
     cb        => 'return_cb',
     button    => 'return_dgreen',
     useTable  => 0 &>
-
-
 <%args>
 $widget
+$param
 </%args>
-
 <%init>
-my $story = get_state_data($widget, 'story');
-my $id = $story->get_id;
-my $tile  = $story->get_tile();
-my $agent = detect_agent();
-my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
-
-my @ocs = $story->get_output_channels;
-my $primocid = $story->get_primary_oc_id;
-my $oc_select = '<select name="ocSelect">';
-foreach my $oc (@ocs) {
-    my $ocid = $oc->get_id;
-    my $selected = $ocid == $primocid ? ' selected' : '';
-    $oc_select .= qq{<option value="$ocid"$selected>} . $oc->get_name . '</option>';
-}
-$oc_select .= '</select>';
+my $story    = get_state_data($widget, 'story');
+my $id       = $story->get_id;
+my $tile     = $story->get_tile;
+my @ocs      = $story->get_output_channels;
+my $curr_ver = $story->get_current_version;
+my $versions = [ map { [ $_ => $_] } reverse 1 .. $curr_ver ];
+my $number   = 0;
 </%init>

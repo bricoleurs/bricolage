@@ -36,13 +36,14 @@ my $needs_reload = sub {
     return 1 if $story->get_id != $id;
 
     # Reload if there is a user ID but its not the current user ID
-    return 1 if defined $story->get_user__id and ($story->get_user__id != get_user_id);
+    my $uid = $story->get_user__id;
+    return 1 if defined $uid and $uid != get_user_id;
 
     # Reload if $checkout is passed but doesn't sync w/ the story checkout.
-    return 1 if defined($checkout) and ($story->get_checked_out != $checkout);
+    return 1 if defined $checkout and !$story->get_checked_out;
 
     # Reload if $version is passed but doesn't sync w/ the story version.
-    return 1 if defined($version) and ($story->get_version != $version);
+    return 1 if defined $version and $story->get_version != $version;
 
     # No reload is necessary
     return 0;
@@ -81,32 +82,64 @@ if ($id) {
 
     # Reload the story unless $story is defined AND
     if ($needs_reload->($story, $id, $checkout, $version)) {
-	my $param = {'id' => $id};
+        my $param = {'id' => $id};
 
-	$param->{checked_in} = 1 unless $checkout;
-	$param->{version} = $version if defined $version;
-	$story = Bric::Biz::Asset::Business::Story->lookup($param);
+        $param->{checked_in} = 1 unless $checkout;
+        $param->{version} = $version if defined $version;
+        $story = Bric::Biz::Asset::Business::Story->lookup($param);
 
-	# Clear the story state data
-	clear_state($widget);
+        # Clear the story state data
+        clear_state($widget);
 
-	# Clear the container profile state data.  WARNING!  this is not
-	# a cool thing to do, but I can't think of any legitimate way of
-	# clearing state.  new.html does it the right way though...
-	clear_state('container_prof');
+        # Clear the container profile state data.  WARNING!  this is not
+        # a cool thing to do, but I can't think of any legitimate way of
+        # clearing state.  new.html does it the right way though...
+        clear_state('container_prof');
 
-	# Set the story in the state data.
-	set_state_data($widget, 'story', $story);
+        # Set the story in the state data.
+        set_state_data($widget, 'story', $story);
 
-	set_state_data($widget, 'version_view', 1) if defined($version);
+        set_state_data($widget, 'version_view', 1) if defined $version;
+    }
+
+    if ($param->{diff}) {
+        set_state_data($widget, version_view => 1);
+
+        my $version = $story ? $story->get_version : 0;
+
+        for my $pos (qw(from to)) {
+            my $pos_version = $param->{"$pos\_version"};
+
+            my ($diff_story) = $pos_version == $version
+                ? $story
+                : Bric::Biz::Asset::Business::Story->list({
+                id      => $id,
+                version => $pos_version,
+            });
+
+            # Find the relevant event.
+            my $event = Bric::Util::Event->lookup({
+                obj_id   => $id,
+                Limit    => 1,
+                (
+                    $pos_version == $version
+                        ? ( key_name => 'story_save')
+                        : ( key_name => 'story_checkin',
+                            value => $pos_version )
+                )
+            });
+            $param->{"$pos\_time"} = $event->get_timestamp('epoch') if $event;
+            $param->{$pos} = $diff_story;
+        }
     }
 
     my $state_name = 'view';
-
-    my $s_uid = $story->get_user__id;
-    if ((defined $s_uid && $s_uid == get_user_id) && chk_authz($story, EDIT, 1)) {
+    unless (defined $version || $param->{diff}) {
+        my $s_uid = $story->get_user__id;
         # Don't go into edit mode if this is a previous version.
-        $state_name = 'edit' unless defined($version);
+        $state_name = 'edit'
+            if defined $s_uid && $s_uid == get_user_id
+               && chk_authz($story, EDIT, 1);
     }
 
     # Set the state to either edit or view.
@@ -130,5 +163,3 @@ if (my $story = get_state_data($widget, 'story')) {
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
-%#--- Log History ---#
-

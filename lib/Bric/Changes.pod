@@ -84,6 +84,22 @@ Added the 'Include deleted' checkbox to Advanced Search in 'Find Stories',
 deleted stories, media, and templates. Also added the 'Subelement' dropdown,
 which allows searching on Stories by subelement. [Scott]
 
+=item *
+
+The C<Order> and C<OrderDirection> parameters to the C<list()> methods of the
+story, media, and template classes can now be specified as array references so
+as to sort on more than one attribute. [David]
+
+=item *
+
+Added C<Order>, C<OrderDirection>, C<Limit>, and C<Offset> parameters to the
+C<list()> method of Bric::Util::Event. [David]
+
+=item *
+
+Added diff support to the UI to see changes between versions of templates,
+stories, and media documents. [David]
+
 =back
 
 =head2 Improvements

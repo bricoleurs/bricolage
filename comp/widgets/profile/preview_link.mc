@@ -14,6 +14,7 @@ return $title unless $co || $doc->get_version;
 return $title if $type eq 'media' and not $doc->get_file_name;
 my $id = $doc->get_id;
 my $uri = escape_html($doc->get_primary_uri);
+$value ||= $doc->get_primary_uri;
 
 # Return a simple link unless we've been givin a JS reference to a an
 # output channel ID.

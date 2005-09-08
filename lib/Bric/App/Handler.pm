@@ -181,6 +181,8 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::Time qw(:all);
     use Bric::Util::Trans::FS;
     use Bric::Util::UserPref;
+    use Text::Diff::HTML;
+    use Text::WordDiff ();
 
     use Bric::SOAP;
 

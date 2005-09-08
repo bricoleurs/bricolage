@@ -5,7 +5,7 @@ body {
     font-size: 70%;
 }
 th         { font-size: 1.1em; }
-pre        { font-size: 1.1em; padding: 1em; margin: 0; } 
+pre        { font-size: 1.3em; padding: 1em; margin: 0; } 
 h3         { font-size: 1.1em; }
 
 a          { color: #006666; }
@@ -20,7 +20,7 @@ textarea {
     font-size: 1em;
 }
 .editmeta .textarea textarea { width: 50%; }
-.codearea textarea { font-family: monospace; font-size: 1.1em; }
+.codearea textarea { font-family: monospace; font-size: 1.2em; }
 
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
@@ -479,6 +479,20 @@ div.addelement { text-align: right;}
 .formBuilder .submit { position: absolute; top: 170px; left: -160px; }
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
+
+/******************************************************
+ * DIFFS                                              *
+ ******************************************************/
+#diff span { display: block; }
+#diff .file { overflow: auto; }
+#diff .file .fileheader, #diff .file .hunkheader {color: #888888; }
+#diff .hunk .ctx { background: #eeeeee; }
+#diff .hunk .ins { background: #ddffdd; }
+#diff .hunk .del { background: #ffdddd; }
+#worddiff { padding: 1em; }
+#worddiff .fileheader { color: #888; font-family: monospace; font-size: 1.2em; }
+#worddiff .hunk ins   { color: #060; font-weight: bold; }
+#worddiff .hunk del   { color: #b22; font-weight: bold; }
 
 /******************************************************
  * HACKS                                              *

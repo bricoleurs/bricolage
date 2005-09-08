@@ -50,6 +50,7 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
 			section  => 'meta',
 			checkout => $checkout,
 			version  => $version,
+            param    => \%ARGS,
 			return	 => $return);
 
 # Output the Header.

@@ -47,6 +47,7 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
 	section 	=> 'meta',
 	checkout	=> $checkout,
 	version 	=> $version,
+    param       => \%ARGS,
 	return		=> $return);
 </%init>
 

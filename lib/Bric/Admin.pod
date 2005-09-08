@@ -193,6 +193,14 @@ START MODULE LIST
 
 =item List::Util
 
+=item List::MoreUtils
+
+=item Text::Diff
+
+=item Text::Diff::HTML 0.02
+
+=item Text::WordDiff
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)

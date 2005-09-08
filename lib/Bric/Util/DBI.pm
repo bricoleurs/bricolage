@@ -978,6 +978,8 @@ B<Throws:>
 
 =over 4
 
+=item Bad Order parameter.
+
 =item OrderDirection parameter must either ASC or DESC.
 
 =back
@@ -1000,21 +1002,26 @@ sub order_by {
     my $map = $pkg->PARAM_ORDER_MAP;
 
     # Make sure it's legit.
-    my $ord = $map->{$param->{Order}}
-      or throw_da "Bad Order parameter '$param->{Order}'";
+    my $ords = ref $param->{Order} ? $param->{Order} : [ $param->{Order} ];
+    my $dirs = ref $param->{OrderDirection} ? $param->{OrderDirection}
+                                            : [ $param->{OrderDirection} ]
+                                            ;
 
-    # Set up the order direction.
-    my $dir = 'ASC';
-    if ($param->{OrderDirection}) {
-        # Make sure it's legit.
-        throw_da 'OrderDirection parameter must either ASC or DESC.'
-          if $param->{OrderDirection} ne 'ASC'
-            and $param->{OrderDirection} ne 'DESC';
-        # Grab it.
-        $dir = $param->{OrderDirection};
+    # Assemble the order atttributes.
+    my @ord;
+    for my $i (0..$#$ords) {
+        my $attr = $map->{$ords->[$i]}
+            or throw_da "Bad Order parameter '$ords->[$i]'";
+        if (my $dir = $dirs->[$i]) {
+            throw_da 'OrderDirection parameter must either ASC or DESC.'
+                if $dir ne 'ASC' and $dir ne 'DESC';
+            $attr .= " $dir";
+        }
+        push @ord, $attr;
     }
+
     # Return the ORDER BY clause with the ID column.
-    return "ORDER BY $ord $dir, $id_col";
+    return 'ORDER BY ' . join(', ', @ord) . ", $id_col";
 }
 
 ##############################################################################

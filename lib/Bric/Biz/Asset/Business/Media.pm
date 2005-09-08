@@ -753,12 +753,15 @@ Triggers a single OR search that hits title, description, uri and keywords.
 
 =item Order
 
-A property name to order by.
+A property name or array reference of property names to order by.
 
 =item OrderDirection
 
 The direction in which to order the records, either "ASC" for ascending (the
-default) or "DESC" for descending.
+default) or "DESC" for descending. This value is applied to the property
+specified by the C<Order> parameter, and may also be an array reference. If no
+value is supplied for any C<Order> property name, it will default to
+ascending.
 
 =item Limit
 

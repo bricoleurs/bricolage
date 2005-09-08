@@ -102,7 +102,10 @@ if ($version) {
 <div class="revert">
 	<input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert">
 	<% $lang->maketext('to') %> <% $versionText %>
-	<input type="image" src="/media/images/<% $lang_key %>/view_text_dgreen.gif" border="0" hspace="5" name="<% $widget %>|view_cb" value="view">
+    <input type="hidden" name="<% $widget %>|view_cb" value="" />
+     <a href="<% $r->uri %>" class="orangeLinkBold" title="View previous version" "onclick="return customSubmit('theForm', '<% $widget %>|view_cb', 1)"><% $lang->maketext('View') %></a>
+    <input type="hidden" name="<% $widget %>|diff_cb" value="" />
+     <a href="<% $r->uri %>" class="orangeLinkBold" title="Diff previous version" "onclick="return customSubmit('theForm', '<% $widget %>|diff_cb', 1)"><% $lang->maketext('Diff') %></a>
 </div>
 % }
 

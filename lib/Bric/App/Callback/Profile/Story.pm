@@ -40,6 +40,24 @@ sub view : Callback {
     $self->set_redirect("/workflow/profile/story/$id/?version=$version");
 }
 
+sub diff : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $params = $self->params;
+    my $story  = get_state_data($widget, 'story');
+    my $id     = $story->get_id;
+
+    # Find the from and to version numbers.
+    my $from = $params->{"$widget|from_version"} || $params->{"$widget|version"};
+    my $to   = $params->{"$widget|to_version"}   || $story->get_version;
+
+    # Send it on home.
+    $self->set_redirect(
+        "/workflow/profile/story/$id/?diff=1"
+        . "&from_version=$from&to_version=$to"
+    );
+}
+
 sub revert : Callback {
     my $self = shift;
     my $widget = $self->class_key;

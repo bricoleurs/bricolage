@@ -344,7 +344,7 @@ sub test_tables: Test(16) {
     is (@match_count, 1, '... exactly once');
 }
 
-sub test_order_by: Test(6) {
+sub test_order_by: Test(9) {
     my $self = shift;
     my ($got, $expected);
 
@@ -361,13 +361,30 @@ sub test_order_by: Test(6) {
     is( $got, 'ORDER BY t.id' ,'missing order orders by ID');
 
     $got = order_by($CLASS, { Order => 'slug' });
-    is( $got, 'ORDER BY slug ASC, t.id', 'order works');
+    is( $got, 'ORDER BY slug, t.id', 'order works');
 
     $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'ASC' });
     is( $got, 'ORDER BY slug ASC, t.id','order works with ASC');
 
     $got = order_by($CLASS, { Order => 'slug', OrderDirection => 'DESC' });
     is( $got, 'ORDER BY slug DESC, t.id', 'order works with DESC');
+
+    # Try combining attributes.
+    is order_by($CLASS, { Order => [qw(slug name) ] }),
+        'ORDER BY slug, name, t.id',
+        'order works with an array of attributes';
+
+    is order_by($CLASS, {
+        Order => [qw(slug name)],
+        OrderDirection => ['ASC', 'DESC']
+    }), 'ORDER BY slug ASC, name DESC, t.id',
+        'order works with an array of attributes and directions';
+
+    is order_by($CLASS, {
+        Order => [qw(slug name)],
+        OrderDirection => [undef, 'DESC']
+    }), 'ORDER BY slug, name DESC, t.id',
+        'order works with an array of attributes and one direction';
 
 }
 

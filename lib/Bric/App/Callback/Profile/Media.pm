@@ -138,6 +138,26 @@ sub view : Callback {
     $self->set_redirect("/workflow/profile/media/$id/?version=$version");
 }
 
+##############################################################################
+
+sub diff : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $params = $self->params;
+    my $media  = get_state_data($widget, 'media');
+    my $id     = $media->get_id;
+
+    # Find the from and to version numbers.
+    my $from = $params->{"$widget|from_version"} || $params->{"$widget|version"};
+    my $to   = $params->{"$widget|to_version"}   || $media->get_version;
+
+    # Send it on home.
+    $self->set_redirect(
+        "/workflow/profile/media/$id/?diff=1"
+        . "&from_version=$from&to_version=$to"
+    );
+}
+
 ################################################################################
 
 sub revert : Callback(priority => 6) {

@@ -50,13 +50,13 @@ my $needs_reload = sub {
 </%once>
 %#--- Arguments ---#
 <%args>
-$id		=> undef
-$work_id => undef
+$id		  => undef
+$work_id  => undef
 $checkout => undef
 $version  => undef
 $param    => undef
 $section
-$return	=> undef
+$return	  => undef
 </%args>
 %#-- Initialization --#
 <%init>
@@ -80,30 +80,63 @@ if ($id) {
 
     # Reload the media unless $media is defined AND
     if ($needs_reload->($media, $id, $checkout, $version)) {
-	my $param = {'id' => $id};
+        my $param = {'id' => $id};
 
-	$param->{checked_in} = 1 unless $checkout;
-	$param->{version} = $version if defined $version;
-	$media = Bric::Biz::Asset::Business::Media->lookup($param);
+        $param->{checked_in} = 1 unless $checkout;
+        $param->{version} = $version if defined $version;
+        $media = Bric::Biz::Asset::Business::Media->lookup($param);
 
-	# Clear the media state data
-	clear_state($widget);
+        # Clear the media state data
+        clear_state($widget);
 
-	# Clear the container profile state data.  WARNING!  this is not
-	# a cool thing to do, but I can't think of any legitimate way of
-	# clearing state.  new.html does it the right way though...
-	clear_state('container_prof');
+        # Clear the container profile state data.  WARNING!  this is not
+        # a cool thing to do, but I can't think of any legitimate way of
+        # clearing state.  new.html does it the right way though...
+        clear_state('container_prof');
 
-	# Set the media in the state data.
-	set_state_data($widget, 'media', $media);
-	set_state_data($widget, 'version_view', 1) if defined($version);
+        # Set the media in the state data.
+        set_state_data($widget, 'media', $media);
+        set_state_data($widget, 'version_view', 1) if defined($version);
+    }
+
+    if ($param->{diff}) {
+        set_state_data($widget, version_view => 1);
+
+        my $version = $media ? $media->get_version : 0;
+
+        for my $pos (qw(from to)) {
+            my $pos_version = $param->{"$pos\_version"};
+
+            my ($diff_media) = $pos_version == $version
+                ? $media
+                : Bric::Biz::Asset::Business::Media->list({
+                id      => $id,
+                version => $pos_version,
+            });
+
+            # Find the relevant event.
+            my $event = Bric::Util::Event->lookup({
+                obj_id   => $id,
+                Limit    => 1,
+                (
+                    $pos_version == $version
+                        ? ( key_name => 'media_save')
+                        : ( key_name => 'media_checkin',
+                            value => $pos_version )
+                )
+            });
+            $param->{"$pos\_time"} = $event->get_timestamp('epoch') if $event;
+            $param->{$pos} = $diff_media;
+        }
     }
 
     my $state_name = 'view';
-    my $m_uid = $media->get_user__id;
-    if ((defined $m_uid && $m_uid == get_user_id) && chk_authz($media, EDIT, 1)) {
-	# Don't go into edit mode if this is a previous version.
-	$state_name = 'edit' unless defined($version);
+    unless (defined $version || $param->{diff}) {
+        my $m_uid = $media->get_user__id;
+        # Don't go into edit mode if this is a previous version.
+        $state_name = 'edit'
+            if defined $m_uid && $m_uid == get_user_id
+               && chk_authz($media, EDIT, 1);
     }
 
     # Set the state to either edit or view.
@@ -126,6 +159,3 @@ if (my $media = get_state_data($widget, 'media')) {
 
 $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
 </%init>
-%#--- Log History ---#
-
-

@@ -114,17 +114,21 @@ my @EPROPS = qw(id event_type_id user_id obj_id timestamp);
 my @ORD = qw(name key_name description trig_id trig class timestamp);
 my $METHS;
 
-my %NUM_MAP = (id            => 'e.id',
-               event_type_id => 't.id',
-               user_id       => 'e.usr__id',
-               obj_id        => 'e.obj_id',
-               class_id      => 't.class__id');
+my %NUM_MAP = (
+    id            => 'e.id',
+    event_type_id => 't.id',
+    user_id       => 'e.usr__id',
+    obj_id        => 'e.obj_id',
+    class_id      => 't.class__id'
+);
 
-my %TXT_MAP = (key_name      => 'LOWER(t.key_name)',
-               name          => 'LOWER(t.name)',
-               description   => 'LOWER(t.description)',
-               class         => 'LOWER(c.pkg_name)'
-              );
+my %TXT_MAP = (
+    key_name      => 't.key_name',
+    name          => 't.name',
+    description   => 't.description',
+    class         => 'c.pkg_name',
+    value         => 'ea.value',
+);
 
 ##############################################################################
 # Instance Fields
@@ -451,6 +455,10 @@ occurred at that exact time will be returned. If passed as an anonymous array,
 the first two values will be assumed to represent a range of dates between
 which to retrieve Bric::Util::Event objects. May also use C<ANY> for a list of
 possible values.
+
+=item value
+
+The value of an event attribute. May use C<ANY> for a list of possible values.
 
 =begin comment
 
@@ -1374,6 +1382,26 @@ $get_em = sub {
     my $wheres = 'e.event_type__id = t.id AND t.class__id = c.id'; # .
 #      ' AND e.id = em.object_id AND m.id = em.member__id';
     my @params;
+
+    # Handle query metadata.
+    my $order_by = 'e.timestamp DESC, e.id DESC';
+    if (my $ord = delete $params->{Order}) {
+        $order_by = $ord eq 'timestamp' ? 'e.timestamp'
+                                        : $TXT_MAP{$ord} || $NUM_MAP{$ord}
+                                        ;
+        $order_by .= ' ' . delete $params->{OrderDirection}
+            if $params->{OderDirection};
+    }
+
+    my $limit     = exists $params->{Limit}
+        ? 'LIMIT ' . delete $params->{Limit}
+        : ''
+        ;
+    my $offset    = exists $params->{Offset}
+        ? 'OFFSET ' . delete $params->{Offset}
+        : ''
+        ;
+
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {
             # It's a date column.
@@ -1392,32 +1420,41 @@ $get_em = sub {
                 $wheres .= ' AND ' . any_where $v, "e.$k = ?", \@params;
             }
         }
+
         elsif ($NUM_MAP{$k}) {
             # It's a numeric column.
             $wheres .= ' AND ' . any_where $v, "$NUM_MAP{$k} = ?", \@params;
-        } elsif ($TXT_MAP{$k}) {
+        }
+
+        elsif ($TXT_MAP{$k}) {
             # It's a text-based column.
             $wheres .= ' AND '
                 . any_where $v, "LOWER($TXT_MAP{$k}) LIKE LOWER(?)", \@params;
-#        } elsif ($k eq 'grp_id') {
+        }
+
+# elsif ($k eq 'grp_id') {
 #            # Add in the group tables a second time and join to them.
 #            $tables .= ', member m2, event_member em2';
 #            $wheres .= ' AND e.id = em2.object_id AND em2.member__id = m2.id'
 #                . ' AND ' any_where $v, 'm2.grp__id = ?', \@params;
-        } else {
+#        }
+
+        else {
             # We're horked.
             throw_dp(error => "Invalid property '$k'.");
         }
     }
 
-    my ($qry_cols, $order) = $ids ? (\'DISTINCT e.id', 'e.id') :
-      (\$SEL_COLS, 'e.timestamp DESC, e.id DESC');
+    my ($qry_cols, $order) = $ids ? (\'DISTINCT e.id', 'e.id')
+                                  : (\$SEL_COLS, $order_by)
+                                  ;
 
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
+        $limit $offset;
     }, undef);
 
     # Just return the IDs, if they're what's wanted.
