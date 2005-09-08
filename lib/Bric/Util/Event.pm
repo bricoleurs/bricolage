@@ -468,6 +468,26 @@ grp_id
 
 =end comment
 
+=item Order
+
+An attribute name to order by.
+
+=item OrderDirection
+
+The direction in which to order the records, either "ASC" for ascending (the
+default) or "DESC" for descending. This value is applied to the property
+specified by the C<Order> parameter. Defaults to ascending.
+
+=item Limit
+
+A maximum number of objects to return. If not specified, all objects that
+match the query will be returned.
+
+=item Offset
+
+The number of objects to skip before listing the remaining objcts or the
+number of objects specified by C<Limit>.
+
 =back
 
 B<Throws:>
@@ -1390,7 +1410,7 @@ $get_em = sub {
                                         : $TXT_MAP{$ord} || $NUM_MAP{$ord}
                                         ;
         $order_by .= ' ' . delete $params->{OrderDirection}
-            if $params->{OderDirection};
+            if $params->{OrderDirection};
     }
 
     my $limit     = exists $params->{Limit}

@@ -76,7 +76,7 @@ sub test_lookup : Test(24) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(31) {
+sub test_list : Test(49) {
     my $self = shift;
 
     # Create some test records.
@@ -169,11 +169,36 @@ sub test_list : Test(31) {
     is(scalar @events, 3, "Check for 3 events");
 
     # Try Order
+    ok(@events = Bric::Util::Event->list({
+        user_id => $uid,
+        Order   => 'key_name',
+    }), "List user_id '$uid' Order by 'key_name'" );
+    is(scalar @events, 5, "Check for 5 events");
+    is $events[$_]->get_key_name, 'workflow_add_desk',
+        "Item $_ should be workfow_add_desk"
+        for 0..2;
+    is $events[$_]->get_key_name, 'workflow_new',
+        "Item $_ should be workfow_new"
+        for 3..4;
+
+    # Try OrderDirection
+    ok(@events = Bric::Util::Event->list({
+        user_id        => $uid,
+        Order          => 'key_name',
+        OrderDirection => 'DESC',
+    }), "List user_id '$uid' Order by 'key_name DESC'" );
+    is(scalar @events, 5, "Check for 5 events");
+    is $events[$_]->get_key_name, 'workflow_new',
+        "Item $_ should be workfow_new"
+        for 0..1;
+    is $events[$_]->get_key_name, 'workflow_add_desk',
+        "Item $_ should be workfow_add_desk"
+        for 2..4;
 }
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(30) {
+sub test_list_ids : Test(34) {
     my $self = shift;
 
     # Create some test records.
@@ -244,6 +269,20 @@ sub test_list_ids : Test(30) {
     $desc = $et2->get_description;
     ok(@event_ids = Bric::Util::Event->list_ids({ description => $desc }),
        "List IDs description '$desc'" );
+    is(scalar @event_ids, 3, "Check for 3 event IDs");
+
+    # Try Limit.
+    ok(@event_ids = Bric::Util::Event->list({
+        obj_id => $wfid,
+        Limit  => 2,
+    }), "List obj_id '$wfid' Limit 2" );
+    is(scalar @event_ids, 2, "Check for 2 event IDs");
+
+    # Try Offset.
+    ok(@event_ids = Bric::Util::Event->list({
+        obj_id => $wfid,
+        Offset  => 2,
+    }), "List obj_id '$wfid' Offset 2" );
     is(scalar @event_ids, 3, "Check for 3 event IDs");
 }
 
