@@ -516,13 +516,13 @@ B<Notes:> NONE.
 =cut
 
 sub get_element_id {
-    carp(__PACKAGE__  . '::get_element_id is deprecated. '
+    require Carp && carp(__PACKAGE__  . '::get_element_id is deprecated. '
          . 'Use get_element_type_id instead');
     return shift->get_element_type_id;
 }
 
 sub set_element_id {
-    carp(__PACKAGE__  . '::set_element_id is deprecated. '
+    require Carp && carp(__PACKAGE__  . '::set_element_id is deprecated. '
          . 'Use set_element_type_id instead');
     return shift->set_element_type_id(@_);
 }
@@ -759,7 +759,8 @@ sub get_element_type {
 }
 
 sub get_element {
-    carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
+    require Carp
+        && carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
     shift->get_element_type(@_);
 }
 

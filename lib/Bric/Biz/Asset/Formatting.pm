@@ -1548,7 +1548,8 @@ sub get_element_type {
 }
 
 sub get_element {
-    carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
+    require Carp
+        && carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
     shift->get_element_type(@_);
 }
 
