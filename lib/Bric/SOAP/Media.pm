@@ -268,15 +268,18 @@ sub list_ids {
       category_path_to_id(__PACKAGE__, delete $args->{category}, $args)
       if exists $args->{category};
 
-    # handle element => element__id conversion
-    if (exists $args->{element}) {
-        my ($element_id) = Bric::Biz::AssetType->list_ids(
-                              { key_name => $args->{element}, media => 1 });
+    # handle element => element_id conversion
+    $args->{element_type} = $args->{element} if exists $args->{element};
+    if (exists $args->{element_type}) {
+        my ($element_id) = Bric::Biz::AssetType->list_ids({
+            key_name => $args->{element_type},
+            media => 1,
+        });
         throw_ap(error => __PACKAGE__ . "::list_ids : no element found matching "
-                   . "(element => \"$args->{element}\")")
+                   . "(element => \"$args->{element_type}\")")
           unless defined $element_id;
-        $args->{element__id} = $element_id;
-        delete $args->{element};
+        $args->{element_type_id} = $element_id;
+        delete $args->{element_type};
     }
 
     # translate dates into proper format
@@ -656,24 +659,26 @@ sub load_asset {
         $mdata->{site} = 'Default Site' unless exists $mdata->{site};
         $init{site_id} = site_to_id(__PACKAGE__, $mdata->{site});
 
-        if (exists $mdata->{element} and not $aliased) {
-            unless ($melems{$mdata->{element}}) {
+        $mdata->{element_type} = delete $mdata->{element}
+            if exists $mdata->{element};
+        if (exists $mdata->{element_type} and not $aliased) {
+            unless ($melems{$mdata->{element_type}}) {
                 my $e = (Bric::Biz::AssetType->list({
-                    key_name => $mdata->{element},
-                    media    => 1
+                    key_name => $mdata->{element_type},
+                    media    => 1,
                 }))[0] or throw_ap(
                     error => __PACKAGE__ .
                       "::create : no media element found " .
-                      "matching (element => \"$mdata->{element}\")"
+                      "matching (element_type => \"$mdata->{element_type}\")"
                 );
-                $melems{$mdata->{element}} = [
+                $melems{$mdata->{element_type}} = [
                     $e->get_id,
                     { map { $_->get_name => $_ } $e->get_output_channels }
                 ];
             }
 
             # get element object for asset type
-            $init{element__id} = $melems{$mdata->{element}}->[0];
+            $init{element_type_id} = $melems{$mdata->{element_type}}->[0];
 
         } elsif ($aliased) {
             # It's an alias.
@@ -787,7 +792,7 @@ sub load_asset {
             }
 
             # update %init fields
-            delete @init{qw(element__id alias_id)};
+            delete @init{qw(element_id alias_id)};
             $media->_set([keys(%init)],[values(%init)]);
         }
 
@@ -873,7 +878,7 @@ sub load_asset {
 
         # Manage the output channels if any are included in the XML file.
         load_ocs($media, $mdata->{output_channels}{output_channel},
-                 $melems{$mdata->{element}}->[1], 'media', $update)
+                 $melems{$mdata->{element_type}}->[1], 'media', $update)
           if $mdata->{output_channels}{output_channel};
 
         # sanity checks
@@ -994,7 +999,7 @@ sub serialize_asset {
                       id   => $media_id,
                       uuid => $media->get_uuid,
                       ( $alias_id ? (alias_id => $alias_id) :
-                        (element => $media->get_element_key_name)));
+                        (element_type => $media->get_element_key_name)));
 
     # Write out the name of the site.
     my $site = Bric::Biz::Site->lookup({ id => $media->get_site_id });

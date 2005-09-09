@@ -182,7 +182,7 @@ BEGIN {
               # Public Fields
               uuid                      => Bric::FIELD_READ,
               source__id                => Bric::FIELD_RDWR,
-              element__id               => Bric::FIELD_RDWR,
+              element_type_id           => Bric::FIELD_RDWR,
               related_grp__id           => Bric::FIELD_READ,
               primary_uri               => Bric::FIELD_READ,
               publish_date              => Bric::FIELD_RDWR,
@@ -203,7 +203,7 @@ BEGIN {
               _categories               => Bric::FIELD_NONE,
               _del_categories           => Bric::FIELD_NONE,
               _new_categories           => Bric::FIELD_NONE,
-              _element_object           => Bric::FIELD_NONE,
+              _element_type_object      => Bric::FIELD_NONE,
               _oc_coll                  => Bric::FIELD_NONE,
               _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
@@ -649,9 +649,9 @@ NONE
 
 ################################################################################
 
-=item $at_id = $biz->get_element__id()
+=item $at_id = $biz->get_element_type_id()
 
-Returns the asset type id that this story is associated with
+Returns the element type id that this story is associated with
 
 B<Throws:>
 
@@ -669,9 +669,9 @@ NONE
 
 ################################################################################
 
-=item $biz = $biz->set_element__id($at_id)
+=item $biz = $biz->set_element_type_id($at_id)
 
-Sets the asset type id that this story is associated with.
+Sets the element type id that this story is associated with.
 
 B<Throws:>
 
@@ -687,17 +687,20 @@ NONE
 
 =cut
 
-sub set_element__id {
+sub set_element_type_id {
     my ($self, $eid) = @_;
-    my $old_eid = $self->_get('element__id');
+    my $old_eid = $self->_get('element_id');
     return $self if $eid == $old_eid;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->del_objs($oc_coll->get_objs);
     my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
     $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
                             $elem->get_output_channels );
-    $self->_set([qw(element__id element)], [$eid, $elem]);
+    $self->_set([qw(element_id element)], [$eid, $elem]);
 }
+
+sub get_element__id { shift->get_element_type_id     }
+sub set_element__id { shift->set_element_type_id(@_) }
 
 ##############################################################################
 
@@ -1580,15 +1583,49 @@ sub get_element {
     my $object = $self->_get_alias || $self;
     my $tile = $self->_get('_tile');
     unless ($tile) {
-        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list
-          ({ object    => $object,
-             parent_id => undef });
+        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list({
+            object    => $object,
+            parent_id => undef,
+        });
         $object->_set(['_tile'] => [$tile]);
     }
     return $tile;
 }
 
 sub get_tile { goto &get_element };
+
+##############################################################################
+
+=item $elem_type = $self->get_element_type
+
+Returns the element object that coresponds defines the structure of the
+elements of the document.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_element_type {
+    my $self = shift;
+
+    my ($at_id, $at_obj) = $self->_get(qw(element_type_id _element_type_object));
+    return $at_obj if $at_obj;
+
+    if (my $alias_obj = $self->_get_alias) {
+        return $alias_obj->get_element_type;
+    }
+
+    return unless $at_id;
+    my $dirty = $self->_get__dirty;
+    $at_obj = Bric::Biz::AssetType->lookup({ id => $at_id });
+    $self->_set(['_element_type_object'] => [$at_obj]);
+    $self->_set__dirty($dirty);
+    return $at_obj;
+}
 
 ################################################################################
 
@@ -1635,7 +1672,7 @@ B<Notes:> NONE.
 
 sub is_fixed {
     my $self = shift;
-    my $element = $self->_get_element_object;
+    my $element = $self->get_element_type;
     return $element->get_fixed_url;
 }
 
@@ -2171,11 +2208,11 @@ B<Throws:>
 
 =item *
 
-Cannot create an asset without an element or alias ID.
+Cannot create an asset without an element type or alias ID.
 
 =item *
 
-Cannot create an asset with both an element and an alias ID.
+Cannot create an asset with both an element type and an alias ID.
 
 =item *
 
@@ -2191,8 +2228,8 @@ Cannot create an alias to an alias.
 
 =item *
 
-Cannot create an alias to an asset based on an element that is not associated
-with this site.
+Cannot create an alias to an asset based on an element type that is not
+associated with this site.
 
 =back
 
@@ -2210,12 +2247,20 @@ sub _init {
     my ($self, $init) = @_;
     my $class = ref $self or throw_mni "Method not implemented";
     $self->_set(['uuid'] => [$ug->create_str]);
+    for my $old (qw(element_id element__id)) {
+        $init->{element_type_id} = delete $init->{$old}
+            if exists $init->{$old};
+    }
+    $init->{element_type} = delete $init->{element} if exists $init->{element};
 
-    throw_dp "Cannot create an asset without an element or alias ID"
-      unless $init->{element__id} || $init->{element} || $init->{alias_id};
+    throw_dp "Cannot create an asset without an element type or alias ID"
+        unless $init->{element_type_id}
+            || $init->{element_type}
+            || $init->{alias_id};
 
-    throw_dp "Cannot create an asset with both an element and an alias ID"
-      if ($init->{element__id} || $init->{element}) && $init->{alias_id};
+    throw_dp "Cannot create an asset with both an element type and an alias ID"
+      if ($init->{element_type_id} || $init->{element_type})
+         && $init->{alias_id};
 
     throw_dp "Cannot create an asset without a site" unless $init->{site_id};
 
@@ -2231,7 +2276,7 @@ sub _init {
         $self->_set([qw(alias_id _alias_obj)],
                     [$init->{alias_id}, $alias_target]);
 
-        my $at = $alias_target->_get_element_object;
+        my $at = $alias_target->get_element_type;
         my $at_exists = 0;
         foreach my $site (@{$at->get_sites}) {
             if ($site->get_id == $init->{site_id}) {
@@ -2241,7 +2286,7 @@ sub _init {
         }
 
         throw_dp "Cannot create an alias to an asset based on an " .
-            "element that is not associated with this site"
+            "element type that is not associated with this site"
           unless $at_exists;
 
         $self->set_source__id( $alias_target->get_source__id );
@@ -2255,7 +2300,7 @@ sub _init {
         $self->set_primary_oc_id($at->get_primary_oc_id($init->{site_id}));
 
         throw_dp "Cannot create an alias to this asset because this element ".
-          "has no output channels associated with this site"
+            "type has no output channels associated with this site"
           unless @{$self->get_output_channels};
 
         $self->_set
@@ -2309,7 +2354,7 @@ sub _init {
         $self->_set(['name'], [$alias_target->_get('name')])
           if $alias_target->_get('name');
 
-        $self->_set(['element__id'], [$alias_target->_get('element__id')]);
+        $self->_set(['element_type_id'], [$alias_target->_get('element_type_id')]);
 
         # Copy the keywords.
         $self->add_keywords(scalar $alias_target->get_keywords);
@@ -2332,37 +2377,37 @@ sub _init {
             }
         }
 
-        # Get the element object.
-        if ($init->{element}) {
-            $init->{element__id} = $init->{element}->get_id;
+        # Get the element type object.
+        if ($init->{element_type}) {
+            $init->{element_type_id} = $init->{element_type}->get_id;
         } else {
-            $init->{element} =
-              Bric::Biz::AssetType->lookup({ id => $init->{element__id}});
+            $init->{element_type} =
+              Bric::Biz::AssetType->lookup({ id => $init->{element_type_id}});
         }
 
         # Set up the output channels.
-        if ($init->{element}->get_top_level) {
+        if ($init->{element_type}->get_top_level) {
             $self->add_output_channels(
                map { ($_->is_enabled &&
                       $_->get_site_id == $init->{site_id}) ? $_ : () }
-                   $init->{element}->get_output_channels);
+                   $init->{element_type}->get_output_channels);
 
-            $self->set_primary_oc_id($init->{element}->get_primary_oc_id
+            $self->set_primary_oc_id($init->{element_type}->get_primary_oc_id
                                      ($init->{site_id}));
         }
 
         # Let's create the new tile as well.
-        my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new
-          ({ object     => $self,
-             element_id => $init->{element__id},
-             element    => $init->{element}
-           });
+        my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new ({
+            object          => $self,
+            element_type_id => $init->{element_type_id},
+            element_type    => $init->{element_type}
+        });
 
         $self->_set([qw(version current_version checked_out _tile modifier
-                        element__id _element_object site_id grp_ids
+                        element_type_id _element_type_object site_id grp_ids
                         publish_status)],
                     [0, 0, 1, $tile,
-                     @{$init}{qw(user__id element__id element site_id)},
+                     @{$init}{qw(user__id element_type_id element_type site_id)},
                      [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0]);
     }
 
@@ -2402,7 +2447,7 @@ sub _construct_uri {
     my $self = shift;
     my ($cat_obj, $oc_obj) = @_;
 #    $cat_obj ||= $self->get_primary_category();
-    my $element_obj = $self->_get_element_object or return;
+    my $element_obj = $self->get_element_type or return;
     my $fu = $element_obj->get_fixed_url;
     my ($pre, $post);
 
@@ -2444,44 +2489,6 @@ sub _construct_uri {
 }
 
 ###############################################################################
-
-=item $at_obj = $self->_get_element_object()
-
-Returns the asset type object that coresponds to this business object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_element_object {
-    my ($self) = @_;
-
-    my $dirty = $self->_get__dirty();
-
-    my ($at_id, $at_obj) = $self->_get(qw(element__id _element_object));
-    return $at_obj if $at_obj;
-
-    if (my $alias_obj = $self->_get_alias) {
-        return $alias_obj->_get_element_object;
-    }
-
-    $at_obj = Bric::Biz::AssetType->lookup({ id => $at_id });
-    $self->_set(['_element_object'] => [$at_obj]);
-    $self->_set__dirty($dirty);
-    return $at_obj;
-}
-
-################################################################################
 
 =item $self = $self->_sync_contributors()
 

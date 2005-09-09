@@ -41,7 +41,7 @@ sub get_elem {
 my $z;
 sub new_args {
     my $self = shift;
-    ( element       => $self->get_elem,
+    ( element_type  => $self->get_elem,
       user__id      => $self->user_id,
       file_name     => 'fun.foo' . ++$z,
       source__id    => 1,

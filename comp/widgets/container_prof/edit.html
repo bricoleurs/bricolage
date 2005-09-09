@@ -69,7 +69,7 @@ foreach my $tile ($dt->get_tiles) {
 % } # if ($value_buf)
     <tr>
       <td>
-% my $at = $dt->get_element;
+% my $at = $dt->get_element_type;
 % if ($at->is_related_media || $at->is_related_story) {
       <table border=0 cellpadding=0 cellspacing=1>
       <tr>
@@ -389,7 +389,7 @@ my $elem_opts = [
         grep { chk_authz($_, READ, 1) } $tile->get_possible_containers
 ];
 
-my $at_id = $tile->get_element_id;
+my $at_id = $tile->get_element_type_id;
 my $at = Bric::Biz::AssetType->lookup({'id' => $at_id});
 
 # Uncomment this when the related_tile flag is in at_type.

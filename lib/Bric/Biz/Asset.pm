@@ -651,9 +651,9 @@ sub my_meths {
                              },
               element_id => {
                               name     => 'element_id',
-                              get_meth => sub { shift->get_element__id(@_) },
+                              get_meth => sub { shift->get_element_id(@_) },
                               get_args => [],
-                              set_meth => sub { shift->set_element__id(@_) },
+                              set_meth => sub { shift->set_element_id(@_) },
                               set_args => [],
                               disp     => 'Element ID',
                               len      => 10,
@@ -663,7 +663,7 @@ sub my_meths {
               element  => {
                               name     => 'element',
                               get_meth => sub {
-                                  my $a_id = shift->get_element__id(@_);
+                                  my $a_id = shift->get_element_id(@_);
                                   my $a = Bric::Biz::AssetType->lookup({ id => $a_id }) or return;
                                   $a->get_name(); },
                               get_args => [],

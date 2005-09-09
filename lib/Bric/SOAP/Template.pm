@@ -598,7 +598,7 @@ sub load_asset {
         ($init{output_channel__id}) = Bric::Biz::OutputChannel->list_ids
           ({ name => $tdata->{output_channel}[0] });
         throw_ap(error => __PACKAGE__ . " : no output_channel found matching "
-                   . "(output_channel => \"$tdata->{output_channel}\")")
+                   . "(output_channel => \"$tdata->{output_channel}[0]\")")
           unless defined $init{output_channel__id};
 
         # figure out file_type
@@ -617,12 +617,15 @@ sub load_asset {
 
         # get element and name for asset type if this is an element template.
         if ($tdata->{type} eq 'Element Template') {
-            (my $look = $tdata->{element}[0]) =~ s/([_%\\])/\\$1/g;
+            my $elem_type = $tdata->{element_type} ? $tdata->{element_type}[0]
+                                                   : $tdata->{element}[0]
+                                                   ;
+            (my $look = $elem_type) =~ s/([_%\\])/\\$1/g;
             my $element = Bric::Biz::AssetType->lookup({
                 key_name => $look
             }) or throw_ap __PACKAGE__ . " : no element found matching " .
-              "(element => \"$tdata->{element}[0]\")";
-            $init{element__id} = $element->get_id;
+              "(element => \"$elem_type\")";
+            $init{element_type} = $element;
             $init{name}        = $element->get_name;
         } elsif ($tdata->{type} eq 'Utility Template') {
             $init{name}        = basename($tdata->{file_name});
@@ -826,7 +829,7 @@ sub serialize_asset {
     $writer->dataElement(site => $site->get_name);
 
     # write out element, known to bric as "name" and save it for later
-    $writer->dataElement(element =>
+    $writer->dataElement(element_type =>
                          ($template->get_tplate_type ==
                           Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE
                           ? $template->get_element_key_name

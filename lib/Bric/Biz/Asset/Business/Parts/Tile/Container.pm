@@ -100,7 +100,7 @@ use constant COLS => qw(name
 use constant FIELDS => qw(name
                           key_name
                           description
-                          element_id
+                          element_type_id
                           object_instance_id
                           parent_id
                           place
@@ -130,9 +130,9 @@ BEGIN {
                         # Public Fields
 
                         # reference to the asset type data object
-                        element_id             => Bric::FIELD_RDWR,
-                        related_story_id    => Bric::FIELD_RDWR,
-                        related_media_id       => Bric::FIELD_RDWR,
+                        element_type_id       => Bric::FIELD_RDWR,
+                        related_story_id      => Bric::FIELD_RDWR,
+                        related_media_id      => Bric::FIELD_RDWR,
 
                         # Private Fields
                         _del_subelems         => Bric::FIELD_NONE,
@@ -200,7 +200,7 @@ element.
 A Bric::Biz::AssetType object that defines the structure of this container
 element.
 
-=item element_id
+=item element_type_id
 
 An ID for the Bric::Biz::AssetType object that defines the structure of this
 container element.
@@ -249,14 +249,14 @@ sub new {
         $init->{'_object'} = delete $init->{'object'};
     }
 
-    if ($init->{'element'} ) {
-        $init->{'element_id'} = $init->{'element'}->get_id();
-        $init->{'_element_obj'} = delete $init->{'element'};
+    if ( $init->{element_type} || $init->{element} ) {
+        $init->{_element_obj} = delete $init->{element_type}
+                             || delete $init->{element};
+        $init->{element_type_id} = $init->{_element_obj}->get_id;
     } else {
-        # not sure why this needs to be here
-        delete $init->{'element'};
-        $init->{'_element_obj'} = Bric::Biz::AssetType->lookup({
-          'id' => $init->{'element_id'} });
+        $init->{_element_obj} = Bric::Biz::AssetType->lookup({
+            'id' => $init->{element_type_id} ||= delete $init->{element_id}
+        });
     }
 
     $init->{'name'}        = $init->{'_element_obj'}->get_name();
@@ -405,7 +405,7 @@ The ID of the container element that is the parent element of the container
 elements. Pass C<undef> to this parameter to specify that the C<parent_id>
 must be C<NULL>.
 
-=item element_id
+=item element_type_id
 
 The ID of the Bric::Biz::AssetType object that specifies the structure of the
 container elements.
@@ -491,7 +491,7 @@ from which Bric::Biz::Asset::Business::Parts::Tile::Container inherits.
 
 =over 4
 
-=item my $element_id = $container->get_element_id
+=item my $element_type_id = $container->get_element_type_id
 
 Returns the ID of the Bric::Biz::AssetType object that defines the structure
 of this element.
@@ -502,7 +502,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $container->set_element_id($element_id)
+=item $container->set_element_type_id($element_type_id)
 
 Sets the ID of the Bric::Biz::AssetType object that defines the structure
 of this element.
@@ -512,6 +512,20 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub get_element_id {
+    carp(__PACKAGE__  . '::get_element_id is deprecated. '
+         . 'Use get_element_type_id instead');
+    return shift->get_element_type_id;
+}
+
+sub set_element_id {
+    carp(__PACKAGE__  . '::set_element_id is deprecated. '
+         . 'Use set_element_type_id instead');
+    return shift->set_element_type_id(@_);
+}
 
 =item my $object_order = $container->get_object_order
 
@@ -718,7 +732,7 @@ sub get_related_media {
 
 ################################################################################
 
-=item $obj = $container->get_element
+=item $obj = $container->get_element_type
 
 Returns the Bric::Biz::AssetType object that defines the structure of this
 container element.
@@ -727,14 +741,14 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_element()> has been deprecated in favor of this method.
 
 =cut
 
-sub get_element {
+sub get_element_type {
     my $self = shift;
     my $dirty = $self->_get__dirty;
-    my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_id');
+    my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_type_id');
 
     unless ($at_obj) {
         $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
@@ -742,6 +756,11 @@ sub get_element {
         $self->_set__dirty($dirty);
     }
     return $at_obj;
+}
+
+sub get_element {
+    carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
+    shift->get_element_type(@_);
 }
 
 ################################################################################
@@ -797,7 +816,7 @@ B<Notes:> NONE.
 sub get_possible_data {
     my ($self) = @_;
     my $current = $self->get_elements();
-    my $at      = $self->get_element();
+    my $at      = $self->get_element_type;
     my %at_info = map { $_->get_id => $_ } $at->get_data;
     my @parts;
 
@@ -827,7 +846,7 @@ sub get_possible_data {
 Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
 objects that define the types of data elements that can be subelements of this
 container element. This is synonymous with
-C<< $container->get_element->get_containers >>, since containers do not
+C<< $container->get_element_type->get_containers >>, since containers do not
 support occurence constraints.
 
 B<Throws:> NONE.
@@ -840,7 +859,7 @@ B<Notes:> NONE.
 
 sub get_possible_containers {
     my $self = shift;
-    my $at = $self->get_element or return;
+    my $at = $self->get_element_type or return;
     $at->get_containers;
 }
 
@@ -1186,7 +1205,7 @@ sub add_element {
     # Determine if this tile is a container.
     my $is_cont = $tile->is_container;
     # Get the apporopriate asset type ID.
-    my $at_id = $is_cont ? $tile->get_element_id()
+    my $at_id = $is_cont ? $tile->get_element_type_id()
                          : $tile->get_element_data_id();
 
     # Figure out how many tiles of the same type as the tile we're adding exist.
@@ -1194,7 +1213,7 @@ sub add_element {
     foreach (@$tiles) {
         # Do an XOR test to make sure we deal with objects of the same type.
         if ($_->is_container() && $is_cont) {
-            $object_order++ if $_->get_element_id      == $at_id;
+            $object_order++ if $_->get_element_type_id      == $at_id;
         } elsif (not $_->is_container && not $is_cont) {
             $object_order++ if $_->get_element_data_id == $at_id;
         }
@@ -1306,11 +1325,11 @@ sub delete_elements {
             my $count;
             $_->set_place($order);
             if ($_->is_container()) {
-                if (exists $cont_order->{$_->get_element_id }) {
-                    $count = scalar @{ $cont_order->{$_->get_element_id } };
+                if (exists $cont_order->{$_->get_element_type_id }) {
+                    $count = scalar @{ $cont_order->{$_->get_element_type_id } };
                 } else {
                     $count = 0;
-                    $cont_order->{$_->get_element_id } = [];
+                    $cont_order->{$_->get_element_type_id } = [];
                 }
                 $_->set_object_order($count);
             } else {
@@ -1407,7 +1426,7 @@ sub reorder_elements {
         # Get the appropriate asset type ID and 'seen' hash.
         my ($at_id, $seen);
         if ($obj->is_container()) {
-            $at_id = $obj->get_element_id;
+            $at_id = $obj->get_element_type_id;
             $seen  = $at_count;
         } else {
             $at_id = $obj->get_element_data_id;
@@ -1743,9 +1762,10 @@ sub _do_list {
             push @where, 'parent_id IS NULL';
         }
     }
-    if ($param->{'element_id'} ) {
+    if ($param->{'element_type_id'} || $param->{'element_id'}) {
         push @where, ' element__id=? ';
-        push @where_param, $param->{'element_id'};
+        push @where_param, $param->{'element_type_id'}
+                           || $param->{'element_id'};
     }
     if ($param->{'name'}) {
         push @where, ' name=? ';
@@ -2095,8 +2115,8 @@ sub _deserialize_pod {
     my ($self, $pod, $def_field, $indent, $line_num) = @_;
 
     # Get the element type and other basics for this element.
-    my $elem_type    = $self->get_element;
-    my $elem_type_id = $self->get_element_id;
+    my $elem_type    = $self->get_element_type;
+    my $elem_type_id = $self->get_element_type_id;
     my $doc_type     = $self->get_object_type;
     my $doc_id       = $self->get_object_instance_id;
     my $id           = $self->get_id;
@@ -2229,7 +2249,7 @@ sub _deserialize_pod {
                         qq{Element "[_1]" cannot have a related $type.},
                         $self->get_key_name
                     ]
-                    unless $self->get_element->$meth;
+                    unless $self->get_element_type->$meth;
 
                 # Handle full URL first.
                 if ($attr eq 'url') {

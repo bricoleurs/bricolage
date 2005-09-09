@@ -28,9 +28,9 @@ my $rel_media_uuid = '4162F713-1DD3-11B3-B17F-C09EFE1DC404';
 sub new_args {
     my $self = shift;
 
-    (object  => $self->get_story,
-     element => $self->get_elem,
-     site_id => 100,
+    (object       => $self->get_story,
+     element_type => $self->get_elem,
+     site_id      => 100,
     )
 }
 
@@ -47,12 +47,12 @@ sub construct {
 sub test_new : Test(10) {
     my $self = shift;
 
-    ok (my $cont = $self->construct,    'Construct Container');
-    ok (my $at  = $cont->get_element,   'Get Element Object');
-    ok (my $atd = ($at->get_data)[0],   'Get Data Element Object');
-    ok ($cont->add_data($atd, 'Chomp'), 'Add Data');
-    ok ($cont->save,                    'Save Container');
-    ok (my $c_id = $cont->get_id,       'Get Container ID');
+    ok (my $cont = $self->construct,       'Construct Container');
+    ok (my $at  = $cont->get_element_type, 'Get Element Type Object');
+    ok (my $atd = ($at->get_data)[0],      'Get Data Element Object');
+    ok ($cont->add_data($atd, 'Chomp'),    'Add Data');
+    ok ($cont->save,                       'Save Container');
+    ok (my $c_id = $cont->get_id,          'Get Container ID');
 
     $self->add_del_ids([$c_id], $cont->S_TABLE);
 
@@ -248,12 +248,12 @@ sub test_pod : Test(229) {
 
     # Now it's time to create a story!
     ok my $story = Bric::Biz::Asset::Business::Story->new({
-        user__id    => $self->user_id,
-        site_id     => 100,
-        element__id => $story_type->get_id,
-        source__id  => 1,
-        title       => 'This is a Test',
-        slug        => 'test_pod',
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => 'This is a Test',
+        slug            => 'test_pod',
     }), "Create test story";
 
     ok $story->add_categories([1]), "Add it to the root category";
@@ -318,12 +318,12 @@ sub test_pod : Test(229) {
 
     # Create a story that can be a related story.
     ok my $rel_story = Bric::Biz::Asset::Business::Story->new({
-        user__id    => $self->user_id,
-        site_id     => 100,
-        element__id => $story_type->get_id,
-        source__id  => 1,
-        title       => 'Test Related Story',
-        slug        => 'test_related',
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => 'Test Related Story',
+        slug            => 'test_related',
     }), "Create test story";
     $mock_uuid->unmock('create_str');
 
@@ -340,12 +340,12 @@ sub test_pod : Test(229) {
     # Create a media document.
     $mock_uuid->mock(create_str => $rel_media_uuid);
     ok my $media = Bric::Biz::Asset::Business::Media->new({
-        user__id    => $self->user_id,
-        site_id     => 100,
-        element__id => $media_type->get_id,
-        source__id  => 1,
-        title       => 'This is a Test',
-        slug        => 'test_pod',
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $media_type->get_id,
+        source__id      => 1,
+        title           => 'This is a Test',
+        slug            => 'test_pod',
     }), "Create test media";
     $mock_uuid->unmock('create_str');
 
@@ -571,7 +571,7 @@ sub test_pod : Test(229) {
     ], 'Should get the correct maketext array';
 
     # Try repeating a default field not allowed to be repeated.
-    $para = $elem->get_element->get_data('para');
+    $para = $elem->get_element_type->get_data('para');
     ok $para->set_quantifier(0), 'Disallow repeating for paragarphs';
     ok $para->save, 'Save paragraph field type';
     eval { $elem->update_from_pod("=para\n\nfoo\n\n=para\n\n", 'para') };

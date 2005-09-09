@@ -136,7 +136,7 @@ sub add_element : Callback {
     my $key = $tile->get_object_type();
     # Get this tile's asset object if it's a top-level asset.
     my $a_obj;
-    if (Bric::Biz::AssetType->lookup({id => $tile->get_element_id()})->get_top_level()) {
+    if (Bric::Biz::AssetType->lookup({id => $tile->get_element_type_id})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $tile->get_object_instance_id()});
     }
     my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
@@ -422,7 +422,7 @@ sub change_default_field : Callback {
 
     my $def  = $self->params->{$self->class_key.'|default_field'};
     my $tile = get_state_data($self->class_key, 'tile');
-    my $at   = $tile->get_element();
+    my $at   = $tile->get_element_type();
 
     my $key = 'container_prof.' . $at->get_id . '.def_field';
     set_state_data('_tmp_prefs', $key, $def);

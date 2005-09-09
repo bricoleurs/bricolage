@@ -118,7 +118,7 @@ use constant VERSION_COLS   => qw( name
                                    checked_out);
 
 use constant FIELDS         => qw( uuid
-                                   element__id
+                                   element_type_id
                                    priority
                                    source__id
                                    current_version
@@ -213,6 +213,7 @@ use constant PARAM_WHERE_MAP => {
       workflow__id          => 'mt.workflow__id = ?',
       workflow_id           => 'mt.workflow__id = ?',
       _null_workflow_id     => 'mt.workflow__id IS NULL',
+      element_type_id       => 'mt.element__id = ?',
       element__id           => 'mt.element__id = ?',
       element_id            => 'mt.element__id = ?',
       version_id            => 'i.id = ?',
@@ -328,6 +329,7 @@ use constant PARAM_ORDER_MAP => {
     workflow__id        => 'mt.workflow__id',
     workflow_id         => 'mt.workflow__id',
     uri                 => 'LOWER(i.uri)',
+    element_type_id     => 'mt.element__id',
     element__id         => 'mt.element__id',
     element_id          => 'mt.element__id',
     source__id          => 'mt.source__id',
@@ -449,11 +451,11 @@ workflow_id
 
 =item *
 
-element__id - Required unless asset type object passed
+element_type_id - Required unless asset type object passed
 
 =item *
 
-element - the object required unless id is passed
+element_type - the object required unless id is passed
 
 =item *
 
@@ -645,10 +647,10 @@ possible values.
 Returns a list of media associated with a given site ID. May use C<ANY>
 for a list of possible values.
 
-=item element_id
+=item element_type_id
 
-Returns a list of media associated with a given element ID. May use C<ANY>
-for a list of possible values.
+Returns a list of media associated with a given element type ID. May use
+C<ANY> for a list of possible values.
 
 =item source_id
 
@@ -1544,7 +1546,7 @@ sub upload_file {
     $self->set_size(defined $size ? $size : -s $path);
 
     # Get the Output Channel object.
-    my $at_obj = $self->_get_element_object;
+    my $at_obj = $self->get_element_type;
     my $oc_obj = $self->get_primary_oc;
 
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);

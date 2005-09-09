@@ -478,13 +478,13 @@ The XSD source:
                        <xs:complexType>
                          <xs:simpleContent>
                            <xs:extension base="xs:string">
-                             <xs:attribute name="element" type="xs:string" use="required"/>
+                             <xs:attribute name="field_type" type="xs:string" use="required"/>
                              <xs:attribute name="order" type="xs:int" use="required"/>
                            </xs:extension>
                          </xs:simpleContent>
                        </xs:complexType>
                      </xs:element>
-                     <xs:element name="container" type="container_type" minOccurs="0" maxOccurs="unbounded"/>
+                     <xs:element name="container" type="element_type" minOccurs="0" maxOccurs="unbounded"/>
                    </xs:sequence>
                    <xs:attribute name="related_story_id" type="xs:int" use="optional"/>
                    <xs:attribute name="related_story_uri" type="xs:int" use="optional"/>
@@ -495,7 +495,7 @@ The XSD source:
                  </xs:complexType>
                </xs:element>
              </xs:sequence>
-             <xs:attribute name="element" type="xs:string" use="required"/>
+             <xs:attribute name="element_type" type="xs:string" use="required"/>
              <xs:attribute name="alias_id" type="xs:string" use="required"/>
              <xs:attribute name="id" type="xs:int" use="required"/>
              <xs:attribute name="uuid" type="xs:string" use="required"/>
@@ -635,7 +635,7 @@ The XSD source:
                  </xs:complexType>
                </xs:element>
              </xs:sequence>
-             <xs:attribute name="element" type="xs:string" use="required"/>
+             <xs:attribute name="element_type" type="xs:string" use="required"/>
              <xs:attribute name="alias_id" type="xs:string" use="required"/>
              <xs:attribute name="id" type="xs:int" use="required"/>
              <xs:attribute name="uuid" type="xs:string" use="required"/>
@@ -651,7 +651,7 @@ The XSD source:
                    </xs:restriction>
                  </xs:simpleType>
                </xs:element>
-               <xs:element name="element">
+               <xs:element name="element_type">
                  <xs:simpleType>
                    <xs:restriction base="xs:string">
                      <xs:maxLength value="64"/>

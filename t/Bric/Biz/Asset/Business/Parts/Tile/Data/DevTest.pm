@@ -26,8 +26,8 @@ sub get_container {
 
     unless ($cont) {
         my $story = $self->get_story;
-        $cont = $cont_pkg->new({object  => $story,
-                                element => $self->get_elem});
+        $cont = $cont_pkg->new({object       => $story,
+                                element_type => $self->get_elem});
         $cont->save;
     }
 
@@ -41,7 +41,7 @@ sub new_args {
     my $self = shift;
     my $story = $self->get_story;
     my $cont  = $story->get_tile; #$self->get_container;
-    my $atd   = ($cont->get_element->get_data)[0];
+    my $atd   = ($cont->get_element_type->get_data)[0];
 
     (active             => 1,
      object_type        => 'story',

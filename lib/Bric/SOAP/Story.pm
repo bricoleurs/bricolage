@@ -303,15 +303,18 @@ sub list_ids {
         delete $args->{no_workflow};
     }
 
-    # handle element => element__id conversion
-    if (exists $args->{element}) {
-        my ($element_id) = Bric::Biz::AssetType->list_ids(
-                              { key_name => $args->{element}, media => 0 });
-        throw_ap(error => __PACKAGE__ . "::list_ids : no story element found matching "
-                   . "(element => \"$args->{element}\")")
+    # handle element => element_id conversion
+    $args->{element_type} = $args->{element} if exists $args->{element};
+    if (exists $args->{element_type}) {
+        my ($element_id) = Bric::Biz::AssetType->list_ids({
+            key_name => $args->{element_type},
+            media => 0
+        });
+        throw_ap(error => __PACKAGE__ . "::list_ids : no story element type found matching "
+                   . "(element => \"$args->{element_type}\")")
           unless defined $element_id;
-        $args->{element__id} = $element_id;
-        delete $args->{element};
+        $args->{element_type_id} = $element_id;
+        delete $args->{element_type};
     }
 
     # translate dates into proper format
@@ -788,30 +791,32 @@ sub load_asset {
         $sdata->{site} = 'Default Site' unless exists $sdata->{site};
         $init{site_id} = site_to_id(__PACKAGE__, $sdata->{site});
 
-        if (exists $sdata->{element} and not $aliased) {
+        $sdata->{element_type} = delete $sdata->{element}
+            if exists $sdata->{element};
+        if (exists $sdata->{element_type} and not $aliased) {
             # It's a normal story.
-            unless ($selems{$sdata->{element}}) {
+            unless ($selems{$sdata->{element_type}}) {
                 my $e = (Bric::Biz::AssetType->list({
-                    key_name => $sdata->{element},
+                    key_name => $sdata->{element_type},
                     media => 0 }))[0]
                   or throw_ap(error => __PACKAGE__ . "::create : no story"
-                                     . " element found matching (element => "
-                                     . "\"$sdata->{element}\")");
-                $selems{$sdata->{element}} =[
+                                     . " element type found matching (element => "
+                                     . "\"$sdata->{element_type}\")");
+                $selems{$sdata->{element_type}} =[
                     $e->get_id,
                     { map { $_->get_name => $_ } $e->get_output_channels }
                 ];
             }
 
-            # get element__id from story element
-            $init{element__id} = $selems{$sdata->{element}}->[0];
+            # get element_type_id from story element
+            $init{element_type_id} = $selems{$sdata->{element_type}}->[0];
 
         } elsif ($aliased) {
             # It's an alias.
             $init{alias_id} = $sdata->{alias_id};
         } else {
             # It's bogus.
-            throw_ap(error => __PACKAGE__ . "::create: No story element or alias ID found");
+            throw_ap(error => __PACKAGE__ . "::create: No story element type or alias ID found");
         }
 
         # get source__id from source
@@ -900,7 +905,7 @@ sub load_asset {
             }
 
             # update %init fields
-#            $story->set_element__id($init{element__id});
+#            $story->set_element_type_id($init{element_type_id});
 #            $story->set_alias_id($init{alias_id});
             $story->set_source__id($init{source__id});
         }
@@ -1015,7 +1020,7 @@ sub load_asset {
 
         # Manage the output channels if any are included in the XML file.
         load_ocs($story, $sdata->{output_channels}{output_channel},
-                 $selems{$sdata->{element}}->[1], 'story', $update)
+                 $selems{$sdata->{element_type}}->[1], 'story', $update)
           if $sdata->{output_channels}{output_channel};
 
         # sanity checks
@@ -1140,7 +1145,7 @@ sub serialize_asset {
                       id   => $story_id,
                       uuid => $story->get_uuid,
                       ( $alias_id ? (alias_id => $alias_id) :
-                        (element => $story->get_element_key_name)));
+                        (element_type => $story->get_element_key_name)));
 
     # Write out the name of the site.
     my $site = Bric::Biz::Site->lookup({ id => $story->get_site_id });

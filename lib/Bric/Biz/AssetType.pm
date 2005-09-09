@@ -3024,7 +3024,7 @@ $get_oc_coll = sub {
     my ($id, $oc_coll) = $self->_get('id', '_oc_coll');
     return $oc_coll if $oc_coll;
     $oc_coll = Bric::Util::Coll::OCElement->new
-      (defined $id ? {element_id => $id} : undef);
+      (defined $id ? {element_type_id => $id} : undef);
     $self->_set(['_oc_coll'], [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;

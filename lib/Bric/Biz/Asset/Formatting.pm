@@ -40,7 +40,7 @@ $LastChangedDate$
  $output_channel_id = $fa->get_output_channel__id()
 
  # get the asset type that this is associated with
- $element__id = $fa->get_element__id()
+ $element_type_id = $fa->get_element_type_id()
 
  # get the category that this is associated with
  $category_id = $fa->get_category_id()
@@ -188,7 +188,7 @@ use constant FIELDS     => qw( name
                                user__id
                                output_channel__id
                                tplate_type
-                               element__id
+                               element_type_id
                                category_id
                                file_name
                                current_version
@@ -259,6 +259,7 @@ use constant PARAM_WHERE_MAP => {
     version_id            => 'i.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
     element__id           => 'f.element__id = ?',
+    element_type_id       => 'f.element__id = ?',
     element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
     output_channel_id     => 'f.output_channel__id = ?',
     output_channel__id    => 'f.output_channel__id = ?',
@@ -332,6 +333,7 @@ use constant PARAM_ORDER_MAP => {
     workflow__id        => 'f.workflow__id',
     element_id          => 'f.element__id',
     element__id         => 'f.element__id',
+    element_type_id     => 'f.element__id',
     output_channel_id   => 'f.output_channel__id',
     output_channel__id  => 'f.output_channel__id',
     priority            => 'f.priority',
@@ -367,9 +369,9 @@ use constant DEFAULT_ORDER => 'deploy_date';
 # Private Class Fields
 my ($meths, @ord, $set_elem, $set_util);
 
-my %tplate_type_strings = ( &ELEMENT_TEMPLATE => 'Element Template',
+my %tplate_type_strings = ( &ELEMENT_TEMPLATE  => 'Element Template',
                             &CATEGORY_TEMPLATE => 'Category Template',
-                            &UTILITY_TEMPLATE => 'Utility Template'
+                            &UTILITY_TEMPLATE  => 'Utility Template'
                           );
 
 my %string_tplate_types = map { $tplate_type_strings{$_} => $_ }
@@ -391,7 +393,7 @@ BEGIN {
               tplate_type         => Bric::FIELD_READ,
 
               # the asset type that this formats
-              element__id         => Bric::FIELD_READ,
+              element_type_id     => Bric::FIELD_READ,
 
               # the category that this is associated with
               category_id         => Bric::FIELD_READ,
@@ -479,11 +481,11 @@ UTILITY_TEMPLATE.
 
 =item *
 
-element - the at object
+element_type - the at object
 
 =item *
 
-element__id - the id of the asset type
+element_type_id - the id of the asset type
 
 =item *
 
@@ -512,7 +514,7 @@ Missing required output channel parameter.
 
 =item *
 
-Missing required parameter 'element' or 'element__id'.
+Missing required parameter 'element_type' or 'element_type_id'.
 
 =item *
 
@@ -585,7 +587,9 @@ sub new {
         }
     } else {
         # No tplate_type name argument. So figure it out based on context.
-        if ($init->{element} or defined $init->{element__id}) {
+        if ($init->{element_type} or defined $init->{element_type_id}
+            or $init->{element} or $init->{element__id}
+        ) {
             # It's an element template. Get the element info.
             $init->{tplate_type} = ELEMENT_TEMPLATE;
             $name = $set_elem->($init);
@@ -767,10 +771,10 @@ effect.
 
 Will return all the versions of the given templates
 
-=item element_id
+=item element_type_id
 
-Returns a list of templates associated with a given element ID. May use C<ANY>
-for a list of possible values.
+Returns a list of templates associated with a given element type ID. May use
+C<ANY> for a list of possible values.
 
 =item element_key_name
 
@@ -1481,7 +1485,7 @@ NONE
 
 sub get_element_name {
     my $self = shift;
-    my $at_obj = $self->_get_element_object or return;
+    my $at_obj = $self->get_element_type or return;
     return $at_obj->get_name;
 }
 
@@ -1508,35 +1512,44 @@ NONE
 
 sub get_element_key_name {
     my $self = shift;
-    my $at_obj = $self->_get_element_object or return;
+    my $at_obj = $self->get_element_type or return;
     return $at_obj->get_key_name;
 }
 
 ################################################################################
 
-=item $at_obj = $template->get_element
+=item $at_obj = $template->get_element_type
 
-Return the AssetType object for this formatting asset.
+Return the element type object for this formatting asset.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<get_element()> has been deprecated in favor of this method.
 
 =cut
 
-sub get_element {
+sub get_element_type {
     my $self = shift;
-    my $at_obj = $self->_get_element_object;
+    my ($at_id, $at_obj) = $self->_get('element_type_id', '_element_obj');
+
+    unless ($at_obj) {
+        return unless $at_id;
+        $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
+        my $dirty = $self->_get__dirty;
+        $self->_set(['_element_obj'] => [$at_obj]);
+
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
+    }
 
     return $at_obj;
+}
+
+sub get_element {
+    carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
+    shift->get_element_type(@_);
 }
 
 ################################################################################
@@ -1990,44 +2003,6 @@ sub _get_output_channel_object {
 
 ################################################################################
 
-=item $at_obj = $self->_get_element_object()
-
-Returns the asset type object that was associated with this formatting asset.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_element_object {
-    my $self = shift;
-    my $dirty = $self->_get__dirty;
-    my ($at_id, $at_obj) = $self->_get('element__id', '_element_obj');
-
-    return unless $at_id;
-
-    unless ($at_obj) {
-        $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
-        $self->_set(['_element_obj'], [$at_obj]);
-
-        # Restore the original dirty value.
-        $self->_set__dirty($dirty);
-    }
-
-    return $at_obj;
-}
-
-################################################################################
-
 =item $cat_obj = $self->_get_category_object()
 
 Returns the category object that this is associated with
@@ -2366,17 +2341,23 @@ B<Notes:> NONE.
 $set_elem = sub {
     my $init = shift;
 
-    if ($init->{element}) {
-        $init->{element__id} = $init->{element}->get_id;
-    } elsif (defined $init->{element__id}) {
-        $init->{element} =
-          Bric::Biz::AssetType->lookup({ id => $init->{element__id} });
+    if (my $et = $init->{element_type} ||= delete $init->{element}) {
+        $init->{element_type_id} = $et->get_id;
+    } elsif (defined $init->{element_type_id}
+             || defined $init->{element_id}
+             || defined $init->{element__id}
+    ) {
+        $init->{element_type} = Bric::Biz::AssetType->lookup({
+            id => $init->{element_type_id}
+                  ||= delete $init->{element_id}
+                  || delete $init->{element__id}
+        });
     } else {
-        throw_dp(error => "Missing required parameter 'element' or " .
-                 "'element__id'");
+        throw_dp(error => "Missing required parameter 'element_type' or " .
+                 "'element_type_id'");
     }
 
-    return $init->{element}->get_key_name;
+    return $init->{element_type}->get_key_name;
 };
 
 =item my $name = $set_util->($init)

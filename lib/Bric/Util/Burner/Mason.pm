@@ -761,7 +761,7 @@ sub _push_element {
     my ($elem_stack, $at_stack) = $self->_get('_elem', '_at');
 
     push @$elem_stack, $element;
-    push @$at_stack, $element->get_element;
+    push @$at_stack, $element->get_element_type;
 
     $self->_set(['_elem', '_at'], [$elem_stack, $at_stack]);
 }

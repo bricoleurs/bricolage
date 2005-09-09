@@ -3,7 +3,7 @@ package Bric::Biz::OutputChannel::Element;
 
 =head1 NAME
 
-Bric::Biz::OutputChannel::Element - Maps Output Channels to Elements.
+Bric::Biz::OutputChannel::Element - Maps Output Channels to Element Types.
 
 =head1 VERSION
 
@@ -26,8 +26,8 @@ $LastChangedDate$
   my $oces_href = Bric::Biz::OutputChannel->href($params);
 
   # Instance methods.
-  my $element_id = $oce->get_element_id;
-  $oce->set_element_id($element_id);
+  my $element_type_id = $oce->get_element_type_id;
+  $oce->set_element_type_id($element_type_id);
   $oce->set_enabled_on;
   $oce->set_enabled_off;
   if ($oce->is_enabled) { } # do stuff.
@@ -77,7 +77,7 @@ use constant DEBUG => 0;
 my $SEL_COLS = Bric::Biz::OutputChannel::SEL_COLS() .
   ', eoc.id, eoc.element__id, eoc.enabled';
 my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
-                 qw(_map_id element_id _enabled));
+                 qw(_map_id element_type_id _enabled));
 
 # Grabbed knowledge from parent, but the outer join depends on it. :-(
 my $SEL_TABLES = 'output_channel oc LEFT OUTER JOIN ' .
@@ -91,10 +91,11 @@ sub SEL_TABLES { $SEL_TABLES }
 ##############################################################################
 # Instance Fields
 BEGIN {
-    Bric::register_fields({ element_id => Bric::FIELD_RDWR,
-                            _enabled => Bric::FIELD_NONE,
-                            _map_id => Bric::FIELD_NONE });
-
+    Bric::register_fields({
+        element_type_id => Bric::FIELD_RDWR,
+        _enabled        => Bric::FIELD_NONE,
+        _map_id         => Bric::FIELD_NONE,
+    });
 }
 
 ##############################################################################
@@ -137,7 +138,7 @@ will be based. Note that all of the C<$init> parameters documented in
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel> will be ignored if this
 parameter is passed.
 
-=item C<element_id>
+=item C<element_type_id>
 
 The ID of the Bric::Biz::AssetType object to which this output channel is
 mapped.
@@ -190,7 +191,8 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     my $en = ! exists $init->{enabled} ? 1 : delete $init->{enabled} ? 1 : 0;
-    my ($eid, $oc, $ocid) = delete @{$init}{qw(element_id oc oc_id)};
+    my $eid = delete $init->{element_type_id} || delete $init->{element_id};
+    my ($oc, $ocid) = delete @{$init}{qw(oc oc_id)};
     my $self;
     if ($oc) {
         # Rebless the existing output channel object.
@@ -203,21 +205,21 @@ sub new {
         $self = $pkg->SUPER::new($init);
     }
     # Set the necessary properties and return.
-    $self->_set([qw(_enabled element_id _map_id)], [$en, $eid, undef]);
+    $self->_set([qw(_enabled element_type_id _map_id)], [$en, $eid, undef]);
     # New relationships should always trigger a save.
     $self->_set__dirty(1);
 }
 
 ##############################################################################
 
-=item my $oce_href = Bric::Biz::OutputChannel::Element->href({ element_id => $eid });
+=item my $oce_href = Bric::Biz::OutputChannel::Element->href({ element_type_id => $eid });
 
 Returns a hash reference of Bric::Biz::OutputChannel::Element objects. Each
 hash key is a Bric::Biz::OutputChannel::Element ID, and the values are the
 corresponding Bric::Biz::OutputChannel::Element objects. Only a single
-parameter argument is allowed, C<element_id>, though C<ANY> may be used to
-specify a list of element IDs. All of the output channels associated with that
-element ID will be returned.
+parameter argument is allowed, C<element_type_id>, though C<ANY> may be used
+to specify a list of element type IDs. All of the output channels associated
+with that element type ID will be returned.
 
 B<Throws:>
 
@@ -257,6 +259,7 @@ B<Notes:> NONE.
 
 sub href {
     my ($pkg, $p) = @_;
+    $p->{element_type_id} = delete $p->{element_id} if exists $p->{element_id};
     my $class = ref $pkg || $pkg;
 
     # XXX Really there's too much going on here getting information from
@@ -268,7 +271,7 @@ sub href {
     my @params;
     my $wheres = $pkg->SEL_WHERES
                . ' AND oc.id = eoc.output_channel__id AND '
-               . any_where $p->{element_id}, 'eoc.element__id = ?', \@params;
+               . any_where $p->{element_type_id}, 'eoc.element__id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
         FROM   $tables
@@ -309,10 +312,10 @@ sub href {
 
 =over 4
 
-=item my $eid = $oce->get_element_id
+=item my $eid = $oce->get_element_type_id
 
-Returns the ID of the Element definition with which this output channel is
-associated.
+Returns the ID of the Element Type definition with which this output channel
+is associated.
 
 B<Throws:> NONE.
 
@@ -320,9 +323,9 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $oce = $oce->set_element_id($eid)
+=item $oce = $oce->set_element_type_id($eid)
 
-Sets the ID of the Element definition with which this output channel is
+Sets the ID of the Element type definition with which this output channel is
 associated.
 
 B<Throws:> NONE.
@@ -332,6 +335,9 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+sub get_element_id { shift->get_element_type_id     }
+sub set_element_id { shift->set_element_type_id(@_) }
 
 ##############################################################################
 
@@ -386,7 +392,7 @@ sub is_enabled { $_[0]->_get('_enabled') ? $_[0] : undef }
 
 =item $oce = $oce->remove
 
-Marks this output channel-element association to be removed. Call the
+Marks this output channel-element type association to be removed. Call the
 C<save()> method to remove the mapping from the database.
 
 B<Throws:> NONE.
@@ -452,7 +458,7 @@ sub save {
     $self->SUPER::save;
     # Save the enabled property.
     my ($ocid, $eid, $map_id, $en, $del) =
-      $self->_get(qw(id element_id _map_id _enabled _del));
+      $self->_get(qw(id element_type_id _map_id _enabled _del));
     if ($del and $map_id) {
         # Delete it.
         my $del = prepare_c(qq{

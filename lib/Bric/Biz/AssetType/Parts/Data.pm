@@ -137,7 +137,7 @@ use constant COLS  => qw(
                          active);
 
 use constant ATTRS  => qw(
-                         element_id
+                         element_type_id
                          key_name
                          description
                          place
@@ -175,8 +175,8 @@ BEGIN {
                          # The database id field
                          'id'                  => Bric::FIELD_READ,
 
-                         # the asset type that this is associated with
-                         'element_id'         => Bric::FIELD_RDWR,
+                         # the element type that this is associated with
+                         'element_type_id'    => Bric::FIELD_RDWR,
 
                          # The meta object ID.
                          'map_type_id'        => Bric::FIELD_RDWR,
@@ -239,7 +239,7 @@ BEGIN {
 
 =item  $field = Bric::Biz::AssetType::Parts::Data->new( $initial_state )
 
-creates a new element Field Part with the values associated with the
+Creates a new element type Field Part with the values associated with the
 initial state
 
 Supported Keys:
@@ -248,7 +248,7 @@ Supported Keys:
 
 =item *
 
-element_id (required)
+element_type_id (required)
 
 =item *
 
@@ -305,8 +305,11 @@ sub new {
 
     $init->{'active'} = exists $init->{'active'} ? $init->{'active'} : 1;
     $init->{$_} = $init->{$_} ? 1 : 0 for qw(required publishable autopopulated);
-    $init->{element_id} = delete $init->{element__id}
-      if exists $init->{element__id};
+    $init->{element_type_id} ||=
+          exists $init->{element_id}  ? delete $init->{element_id}
+        : exists $init->{element__id} ? delete $init->{element__id}
+                                      : $init->{element_type_id}
+        ;
     $init->{map_type_id} = delete $init->{map_type__id}
       if exists $init->{map_type__id};
 
@@ -354,7 +357,7 @@ sub copy {
     # Copy the object.
     $self_copy->_set(\@k, [$self->_get(@k)]);
     # Clear out fields specific to the original.
-    $self_copy->_set(['id', 'element_id'], [undef, $at_id]);
+    $self_copy->_set(['id', 'element_type_id'], [undef, $at_id]);
 
     $self_copy->SUPER::new();
 
@@ -412,7 +415,7 @@ in the C<$params> hash reference. Supported criteria are:
 
 Field ID. May use C<ANY> for a list of possible values.
 
-=item element_id
+=item element_type_id
 
 The ID of the Bric::Biz::AssetType object with which the field is associated.
 May use C<ANY> for a list of possible values.
@@ -427,8 +430,8 @@ The field description. May use C<ANY> for a list of possible values.
 
 =item place
 
-The field place relative to other fields in the same element. May use C<ANY>
-for a list of possible values.
+The field place relative to other fields in the same element type. May use
+C<ANY> for a list of possible values.
 
 =item quantifier
 
@@ -1128,16 +1131,18 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_element__id  { shift->get_element_id      }
-sub set_element__id  { shift->set_element_id(@_)  }
-sub get_map_type__id { shift->get_map_type_id     }
-sub set_map_type__id { shift->set_map_type_id(@_) }
+sub get_element__id  { shift->get_element_type_id      }
+sub set_element__id  { shift->set_element_type_id(@_)  }
+sub get_element_id   { shift->get_element_type_id      }
+sub set_element_id   { shift->set_element_type_id(@_)  }
+sub get_map_type__id { shift->get_map_type_id          }
+sub set_map_type__id { shift->set_map_type_id(@_)      }
 
 #------------------------------------------------------------------------------#
 
-=item $val = $element->set_attr($name, $value);
+=item $val = $data->set_attr($name, $value);
 
-=item $val = $element->get_attr($name);
+=item $val = $data->get_attr($name);
 
 Get/Set attributes on this asset type.
 
@@ -1202,11 +1207,11 @@ sub all_attr {
 
 #------------------------------------------------------------------------------#
 
-=item $val = $element->set_meta($name, $field, $value);
+=item $val = $data->set_meta($name, $field, $value);
 
-=item $val = $element->get_meta($name, $field);
+=item $val = $data->get_meta($name, $field);
 
-=item $val = $element->get_meta($name);
+=item $val = $data->get_meta($name);
 
 Get/Set attribute metadata on this asset type.  Calling the 'get_meta' method
 without '$field' returns all metadata names and values as a hash.
@@ -1438,12 +1443,13 @@ sub _do_list {
     my ($param, $ids, $href) = @_;
     my (@where, @bind);
     my %ints = (
-        element__id  => 'element__id',
-        element_id   => 'element__id',
-        map_type__id => 'map_type__id',
-        map_type_id  => 'map_type__id',
-        max_length   => 'max_length',
-        place        => 'place',
+        element_type_id => 'element__id',
+        element_id      => 'element__id',
+        element__id     => 'element__id',
+        map_type__id    => 'map_type__id',
+        map_type_id     => 'map_type__id',
+        max_length      => 'max_length',
+        place           => 'place',
     );
 
     my %bools = (

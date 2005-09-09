@@ -12,7 +12,7 @@ use Bric::Biz::OutputChannel::Element;
 sub test_href : Test(12) {
     my $self = shift;
     ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs" );
+        ({ element_type_id => 1 }), "Get Story OCs" );
     is( scalar keys %$href, 1, "Check for one OC" );
     ok( my $oce = $href->{1}, "Grab OC ID 1" );
     is( $oce->get_name, 'Web', "Check OC name 'Web'" );
@@ -25,9 +25,9 @@ sub test_href : Test(12) {
     ok( $oce->is_enabled, "Check is_enabled on" );
 
     # Check the element_id attribute.
-    is( $oce->get_element_id, 1, "Check element_id eq 1" );
-    ok( $oce->set_element_id(2), "Set element_id to 2" );
-    is( $oce->get_element_id, 2, "Check element_id eq 2" );
+    is( $oce->get_element_type_id, 1, "Check element_type_id eq 1" );
+    ok( $oce->set_element_type_id(2), "Set element_type_id to 2" );
+    is( $oce->get_element_type_id, 2, "Check element_type_id eq 2" );
 }
 
 ##############################################################################
@@ -82,7 +82,7 @@ sub test_update : Test(13) {
     my $self = shift;
     # Grab an existing OCE from the database.
     ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs" );
+        ({ element_type_id => 1 }), "Get Story OCs" );
     ok( my $oce = $href->{1}, "Grab OC ID 1" );
 
     # Set enable to false.
@@ -92,7 +92,7 @@ sub test_update : Test(13) {
 
     # Look it up again.
     ok( $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs again" );
+        ({ element_type_id => 1 }), "Get Story OCs again" );
     ok( $oce = $href->{1}, "Grab OC ID 1 again" );
 
     # Enable should be false, now.
@@ -112,11 +112,11 @@ sub test_update : Test(13) {
 sub test_insert : Test(11) {
     my $self = shift;
     # Create a new output channel.
-    ok(my $oce = Bric::Biz::OutputChannel::Element->new({name       => "Foober",
-                                                         element_id => 1,
-                                                         site_id    => 100,
-                                                        }),
-      "Create a brand new OCE" );
+    ok(my $oce = Bric::Biz::OutputChannel::Element->new({
+        name       => "Foober",
+        element_type_id => 1,
+        site_id    => 100,
+    }), "Create a brand new OCE" );
 
     # Now save it. It should be inserted as both an OC and as an OCE.
     ok( $oce->save, "Save new OCE" );
@@ -125,7 +125,7 @@ sub test_insert : Test(11) {
 
     # Now retreive it.
     ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs" );
+        ({ element_type_id => 1 }), "Get Story OCs" );
     ok( $oce = $href->{$ocid}, "Grab OC ID $ocid" );
 
     # Check its attributes.
@@ -138,7 +138,7 @@ sub test_insert : Test(11) {
 
     # Now try to retreive it.
     ok( $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs" );
+        ({ element_type_id => 1 }), "Get Story OCs" );
     ok( ! exists $href->{$ocid}, "ID $ocid gone" );
 }
 
@@ -151,9 +151,9 @@ sub test_delete : Test(24) {
     # Create some OCE objects
     foreach my $name (qw(Gar GarGar GarGarGar Bar BarBar BarBarBar)) {
         ok( my $oce = Bric::Biz::OutputChannel::Element->new({
-            name       => $name,
-            element_id => 1,
-            site_id    => 100,
+            name            => $name,
+            element_type_id => 1,
+            site_id         => 100,
         }), "Create OC '$name'" );
 
         # Now save it. It should be inserted as both an OC and as an OCE.
@@ -176,7 +176,7 @@ sub test_delete : Test(24) {
     # Now get the hash ref of all output channels associated with element
     # ID 1.
     ok( my $href = Bric::Biz::OutputChannel::Element->href({
-        element_id => 1
+        element_type_id => 1
     }), "Get OC href" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );
@@ -189,7 +189,7 @@ sub test_delete : Test(24) {
     # Get the hash ref of all output channels associated with element ID 1
     # again.
     ok( $href = Bric::Biz::OutputChannel::Element->href({
-        element_id => 1
+        element_type_id => 1
     }), "Get OC href again" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );

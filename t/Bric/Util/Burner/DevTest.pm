@@ -444,7 +444,7 @@ sub subclass_burn_test {
         category_id    => 1,
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
-        element        => $story_type,
+        element_type   => $story_type,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a story template";
@@ -462,7 +462,7 @@ sub subclass_burn_test {
         category_id    => $cat->get_id, # Put it in a subcategory
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
-        element        => $pull_quote,
+        element_type   => $pull_quote,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a pull quote template";
@@ -479,7 +479,7 @@ sub subclass_burn_test {
         category_id    => 1,
         site_id        => 100,
         tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
-        element        => $page,
+        element_type   => $page,
         data           => join('', <$fh>),
         file_type      => $suffix,
     }), "Create a page template";
@@ -570,12 +570,12 @@ sub subclass_burn_test {
 
     # Now it's time to create a story!
     ok my $story = Bric::Biz::Asset::Business::Story->new({
-        user__id    => $self->user_id,
-        site_id     => 100,
-        element__id => $story_type->get_id,
-        source__id  => 1,
-        title       => 'This is a Test',
-        slug        => 'test_burn',
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => 'This is a Test',
+        slug            => 'test_burn',
     }), "Create test story";
 
     ok $story->add_categories([$subcat->get_id]), "Add it to the subcategory";

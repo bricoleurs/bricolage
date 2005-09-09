@@ -20,7 +20,7 @@ sub class { 'Bric::Biz::Asset::Business' }
 # necessary in subclasses.
 sub new_args {
     my $self = shift;
-    ( element       => $self->get_elem,
+    ( element_type  => $self->get_elem,
       user__id      => $self->user_id,
       source__id    => 1,
       primary_oc_id => 1,
@@ -80,8 +80,8 @@ sub test_atts : Test(9) {
     is $ba->get_title, 'Foo', "The title should be set";
     is $ba->get_source__id, $args{source__id}, "The source ID should be set";
     is $ba->get_user__id, $args{user__id}, "The user ID should be set";
-    is $ba->get_element__id, $args{element}->get_id,
-      "The element should be set";
+    is $ba->get_element_type_id, $args{element_type}->get_id,
+      "The element type should be set";
     is $ba->get_primary_oc_id, $args{primary_oc_id},
       "The primary OC ID should be set";
     is $ba->get_site_id, $args{site_id}, "The site ID should be set";
@@ -96,10 +96,10 @@ sub test_oc : Test(36) {
     ok( my $key = $class->key_name, "Get key" );
      return "OCs tested only by subclass" if $key eq 'biz';
     ok( my $ba = $self->construct, "Construct $key object" );
-    ok( my $elem = $self->get_elem, "Get element object" );
+    ok( my $elem = $self->get_elem, "Get element type object" );
 
-    # Make sure there are the same of OCs yet as in the element.
-    ok( my @eocs = $elem->get_output_channels, "Get Element OCs" );
+    # Make sure there are the same of OCs yet as in the element type.
+    ok( my @eocs = $elem->get_output_channels, "Get Element type OCs" );
     ok( my @ocs = $ba->get_output_channels, "Get $key OCs" );
     is( scalar @ocs, 1, "Check for 1 OC" );
     is( scalar @eocs, scalar @ocs, "Check for same number of OCs" );
@@ -110,7 +110,7 @@ sub test_oc : Test(36) {
     ok( my $baid = $ba->get_id, "Get ST ID" );
     $self->add_del_ids($baid, $key);
 
-    # Grab the element's first OC.
+    # Grab the element type's first OC.
     ok( my $oc = $eocs[0], "Grab the first OC" );
     ok( my $ocname = $oc->get_name, "Get the OC's name" );
 
@@ -237,17 +237,17 @@ sub test_alias : Test(33) {
      return "Aliases tested only by subclass" if $key eq 'biz';
 
     throws_ok { $class->new }
-      qr/Cannot create an asset without an element or alias ID/,
+      qr/Cannot create an asset without an element type or alias ID/,
       "Check that you cannot create empty stories";
 
-    throws_ok { $class->new({ alias_id => 1, element__id => 1}) }
-      qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a asset with both element__id and an ".
+    throws_ok { $class->new({ alias_id => 1, element_type_id => 1}) }
+      qr/Cannot create an asset with both an element type and an alias ID/,
+      "Check that you cannot create a asset with both element_type_id and an ".
       "alias";
 
-    throws_ok { $class->new({ alias_id => 1, element => 1}) }
-      qr/Cannot create an asset with both an element and an alias ID/,
-      "Check that you cannot create a asset with both element and an ".
+    throws_ok { $class->new({ alias_id => 1, element_type => 1}) }
+      qr/Cannot create an asset with both an element type and an alias ID/,
+      "Check that you cannot create a asset with both element type and an ".
       "alias";
 
     ok( my $ba = $self->construct( name => 'Victor',
@@ -275,11 +275,11 @@ sub test_alias : Test(33) {
 
     throws_ok { $class->new({ alias_id => $ba->get_id,
                               site_id => $site1_id }) }
-      qr/Cannot create an alias to an asset based on an element that is not associated with this site/,
-      "Check that an element needs to be associated with a site ".
+      qr/Cannot create an alias to an asset based on an element type that is not associated with this site/,
+      "Check that an element type needs to be associated with a site ".
       "for a target to aliasable";
 
-    my $element = $ba->_get_element_object();
+    my $element = $ba->get_element_type();
 
     $element->add_sites([$site1]);
 
@@ -301,12 +301,12 @@ sub test_alias : Test(33) {
                                       }),
         "Create an alias asset" );
 
-    isnt($alias_asset->_get_element_object, undef,
-         "Check that we get an element object");
+    isnt($alias_asset->get_element_type, undef,
+         "Check that we get an element type object");
 
-    is($alias_asset->_get_element_object->get_id,
-       $ba->_get_element_object->get_id,
-       "Check that alias_asset has an element object");
+    is($alias_asset->get_element_type->get_id,
+       $ba->get_element_type->get_id,
+       "Check that alias_asset has an element type object");
 
     if ($class->key_name eq 'story') {
         is($alias_asset->get_slug, $ba->get_slug, "Check slug");
@@ -349,7 +349,7 @@ sub test_alias : Test(33) {
               "Check get_contributors");
 
     ok( $element->remove_sites([$site1]), "Remove site" );
-    ok( $element->save, "Save element" );
+    ok( $element->save, "Save element type" );
 }
 
 1;

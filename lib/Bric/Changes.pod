@@ -227,7 +227,9 @@ Renamed "Element" to "Element Type" and "Element Type" to "Element Type Set".
 This is to avoid confusing element types, which define the structure of
 elements, and elements, which are contain content and are based on element
 types. These are not ideal names, but at least we now have something different
-to call them. [David]
+to call them. The old C<get_element()> method and the accessors that get and
+set C<element_id> or C<element__id> have also been renamed to
+C<get_element_type()> and to access C<element_type_id>. [David]
 
 =item *
 

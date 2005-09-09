@@ -893,7 +893,7 @@ sub preview {
       : ();
 
     # Grab the asset type and output channel.
-    my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
+    my $at = $ats->{$ba->get_element_type_id} ||= $ba->get_element_type;
     my $oc = Bric::Biz::OutputChannel->lookup
                 ({ id => $oc_id ? $oc_id : $ba->get_primary_oc_id($site_id) });
 
@@ -1188,7 +1188,7 @@ sub publish {
     # Get a list of the relevant categories.
     my @cats = $key eq 'story' ? $ba->get_categories : ();
     # Grab the asset type.
-    my $at = $ats->{$ba->get_element__id} ||= $ba->_get_element_object;
+    my $at = $ats->{$ba->get_element_type_id} ||= $ba->get_element_type;
     my $ocs = $ba->get_output_channels;
 
     foreach my $oc (@$ocs) {
@@ -2016,7 +2016,7 @@ B<Notes:> NONE.
 
 sub _get_subclass {
     my ($self, $asset) = @_;
-    if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element__id})) {
+    if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element_type_id})) {
         # Easy to get it
         my $b = $at->get_burner || BURNER_MASON;
         my $burner_class = $classes->{$b}

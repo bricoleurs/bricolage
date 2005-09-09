@@ -107,7 +107,7 @@ sub test_new_elem : Test(17) {
     };
     ok( $err = $@, "Catch exception" );
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
-    $msg = "Missing required parameter 'element' or 'element__id'";
+    $msg = "Missing required parameter 'element_type' or 'element_type_id'";
     is( $err->get_msg, $msg, "Check another message" );
 
     # Create an HTML::Template template.

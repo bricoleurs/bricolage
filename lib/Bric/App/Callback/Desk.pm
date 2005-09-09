@@ -510,7 +510,7 @@ sub _merge_properties {
         # Add any secondary output channels from an associated OC group.
         if (my $grp_id = $param->{"$widget|oc_grp_id"}) {
             my %allowed = map { $_->get_id => 1 }
-              $story->_get_element_object->get_output_channels;
+              $story->get_element_type->get_output_channels;
             push @add,
               map { $_->[1] }
               grep {

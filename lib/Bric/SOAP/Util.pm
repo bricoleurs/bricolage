@@ -247,7 +247,7 @@ sub parse_asset_document {
                  keyattr       => [],
                  suppressempty => '',
                  forcearray    => [qw( contributor category output_channel
-                                       keyword element_type container
+                                       keyword element_type element container
                                        data story media template ),
                                    @extra_force_array
                                   ]
@@ -296,21 +296,23 @@ sub serialize_elements {
         # first serialize all data elements
         foreach my $e (@$elems) {
             next if $e->is_container;
-            push(@related, _serialize_tile(writer  => $writer,
-                                           element => $e,
-                                           args    => $options{args},
-                                           diff    => $diff,
-                                          ));
+            push(@related, _serialize_tile(
+                writer       => $writer,
+                element_type => $e,
+                args         => $options{args},
+                diff         => $diff,
+            ));
         }
 
         # then all containers
         foreach my $e (@$elems) {
             next unless $e->is_container;
-            push(@related, _serialize_tile(writer  => $writer,
-                                           element => $e,
-                                           args    => $options{args},
-                                           diff    => $diff,
-                                          ));
+            push(@related, _serialize_tile(
+                writer       => $writer,
+                element_type => $e,
+                args         => $options{args},
+                diff         => $diff,
+            ));
         }
     }
 
@@ -414,7 +416,7 @@ Notes:
 
 sub deserialize_elements {
     my %options = @_;
-    $options{element} = $options{object}->get_tile;
+    $options{element} = $options{object}->get_element;
     $options{site_id} = $options{object}->get_site_id;
     return _load_relateds(@options{qw(element data site_id)}),
       _deserialize_tile(%options);
@@ -468,10 +470,11 @@ sub _deserialize_tile {
     # load data elements
     if ($data->{data}) {
         foreach my $d (@{$data->{data}}) {
-            my $at = $valid_data{$d->{element}};
+            my $key_name = $d->{field_type} || $d->{element};
+            my $at = $valid_data{$key_name};
             throw_ap(error => "Error loading data element for " .
                        $element->get_key_name .
-                       " cannot add data element $d->{element} here.")
+                       " cannot add field $key_name here.")
               unless $at;
 
             if ($at->get_sql_type eq 'date') {
@@ -495,10 +498,11 @@ sub _deserialize_tile {
     # load containers
     if ($data->{container}) {
         foreach my $c (@{$data->{container}}) {
-            my $at = $valid_container{$c->{element}};
+            my $key_name = $c->{element_type} || $c->{element};
+            my $at = $valid_container{$key_name};
             throw_ap(error => "Error loading container element for " .
                        $element->get_key_name .
-                       " cannot add data element $c->{element} here.")
+                       " cannot add field $key_name here.")
               unless $at;
 
             # setup container object
@@ -573,14 +577,17 @@ $id ].  These are the related objects serialized.
 
 sub _serialize_tile {
     my %options  = @_;
-    my $element  = $options{element};
+    my $element  = $options{element_type};
     my $writer   = $options{writer};
     my $diff     = $options{diff} || 0;
     my @related;
 
     if ($element->is_container) {
-        my %attr  = (element => $element->get_key_name,
-                     order   => $element->get_place - $diff);
+        my %attr = (
+            element_type => $element->get_key_name,
+            order   => $element->get_place - $diff
+        );
+
         my @e = $element->get_elements();
 
         # look for related stuff and tag relative if we'll include in
@@ -608,19 +615,21 @@ sub _serialize_tile {
             # first serialize all data elements
             foreach my $e (@e) {
                 next if $e->is_container;
-                push(@related, _serialize_tile(writer  => $writer,
-                                               element => $e,
-                                               args    => $options{args},
-                                              ));
+                push(@related, _serialize_tile(
+                    writer  => $writer,
+                    element_type => $e,
+                    args    => $options{args},
+                ));
             }
 
             # then all containers
             foreach my $e (@e) {
                 next unless $e->is_container;
-                push(@related, _serialize_tile(writer  => $writer,
-                                               element => $e,
-                                               args    => $options{args},
-                                              ));
+                push(@related, _serialize_tile(
+                    writer       => $writer,
+                    element_type => $e,
+                    args         => $options{args},
+                ));
             }
 
             $writer->endTag("container");
@@ -640,13 +649,17 @@ sub _serialize_tile {
         }
 
         if (defined $data and length $data) {
-            $writer->dataElement("data", $data,
-                                 element => $element->get_key_name,
-                                 order   => $element->get_place - $diff);
+            $writer->dataElement(
+                data       => $data,
+                field_type => $element->get_key_name,
+                order      => $element->get_place - $diff,
+            );
         } else {
-            $writer->emptyTag("data",
-                              element => $element->get_key_name,
-                              order   => $element->get_place - $diff);
+            $writer->emptyTag(
+                'data',
+                field_type => $element->get_key_name,
+                order      => $element->get_place - $diff,
+            );
         }
     }
 
