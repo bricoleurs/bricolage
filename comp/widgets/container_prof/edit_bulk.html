@@ -8,6 +8,10 @@ if ($show_summary) {
     $m->comp('/widgets/summary/summary.mc', asset => $asset, number => ++$i);
 }
 </%perl>
+<& /widgets/dialog_box/find.mc,
+    field_id  => "$widget|text",
+    dialog_id => 'finddialog',
+&>
 <& '/widgets/wrappers/sharky/table_top.mc',
    caption => $lang->maketext('Bulk Edit [_1]', $tile->get_name),
    id      => 'containerprof',
@@ -48,7 +52,7 @@ my $opts = [
         <dt><% $lang->maketext('Words') %></dt>
         <dd><input type="text" id="words" name="words" value="" /></dd>
         <dt><% $lang->maketext('Characters') %></dt>
-        <dd><input type="text" id="chars" name="chars" value="" /></dd>
+        <dd><input type="text" id="chars" name="chars" value="" /><button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f"onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button></dd>
     </dl>
 % }
 <& '/widgets/profile/textarea.mc',

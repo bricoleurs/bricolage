@@ -100,6 +100,15 @@ C<list()> method of Bric::Util::Event. [David]
 Added diff support to the UI to see changes between versions of templates,
 stories, and media documents. [David]
 
+=item *
+
+Added JavaScript-powered Find/Replace dialog box to Bulk Edit in the element
+profile and to the template profile. The "Replace All" function should work
+very well everywhere, while the "Find" function relies on IE- and
+Mozilla-specific features to properly highlight found text in the textarea box
+searched. Other browsers will get an alert indicating at what character the
+match was found. [David]
+
 =back
 
 =head2 Improvements
@@ -234,6 +243,14 @@ C<get_element_type()> and to access C<element_type_id>. [David]
 =item *
 
 Made the scrollbar "sticky" in the Story Profile. [Scott]
+
+=item *
+
+Added a "dialog box" widget for generating JavaScript-driven dialog boxes. The
+buttons are nicely styled to match the Bricolage UI, and can be configured to
+trigger JavaScript functions. Dialog boxes can also be dragged around the
+browser window by grabbing their title bars. Used by the new Find/Replace
+feature, but will likely be used in other contexts in the future. [David]
 
 =back
 

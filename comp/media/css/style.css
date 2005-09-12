@@ -495,6 +495,60 @@ div.addelement { text-align: right;}
 #worddiff .hunk del   { color: #b22; font-weight: bold; }
 
 /******************************************************
+ * FIND/REPLACE                                       *
+ ******************************************************/
+
+.dialog { display: none; position: absolute; left: 0; top:0; z-index: 300; background: #e8e8cd; padding: 0; border-color: #996; border-style: solid; border-width: 0 5px 5px 5px; }
+.dragger { line-height: 2.2em; background: #996; font-weight: bold;}
+.dragger:hover { cursor: pointer; }
+.dialogcontent { margin: 1em; }
+
+.dialog dl { margin: 0; }
+.dialog dl dt {
+    float: left;
+    width: 60px;
+    text-align: right;
+    font-weight: bold;
+}
+.dialog dl dd { margin-left: 70px; padding: 0 0 5px 0; }
+
+.buttons {
+    margin: 0;
+    text-align: right;
+    list-style: none;
+    margin-top: 5px;
+}
+
+.buttons li {
+    display: inline;
+    margin-left: 1px;
+ }
+
+button:hover { cursor: pointer; }
+button {
+    font-weight: bold;
+    font-size: 12px;
+    color: black;
+    background: #cc9;
+    padding: 3px 7px;
+    margin: 0;
+    border-style: solid;
+    border-width: 2px;
+    border-top-color: #e8e8cd;
+    border-left-color: #e8e8cd;
+    border-right-color: #663;
+    border-bottom-color: #663;
+    vertical-align: bottom; /* Needed to prevent extra space from showing up! */
+}
+
+button:active {
+    border-top-color: #663;
+    border-left-color: #663;
+    border-right-color: #e8e8cd;
+    border-bottom-color: #e8e8cd;
+}
+
+/******************************************************
  * HACKS                                              *
  ******************************************************/
 

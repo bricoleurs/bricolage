@@ -718,6 +718,23 @@ function textCount(which, maxLength) {
     writeDiv("textCountDown" + which,maxLength-myObj.value.length);
 }
 
+/* Simple browser detection */
+function Browser () {
+    this.is_major = parseInt(navigator.appVersion);
+    if (window.opera) {
+        this.is_opera = true;
+    } else {
+        var agt = navigator.userAgent.toLowerCase();
+        if (agt.indexOf('msie') != -1) {
+            this.is_ie = true;
+            if (this.is_major == 4) {
+                if      (agt.indexOf('msie 5.0') !=-1) this.is_ie5 = true;
+                else if (agt.indexOf('msie 5.5') !=-1) this.is_ie5_5 = true;
+            }
+        }
+    }
+    this.is_mac = agt.indexOf('mac') !=-1;
+}
 
 
 /*
@@ -725,18 +742,15 @@ Resize navigation iframe
 */
 function resizeframe() {
     var ifrm = parent.document.getElementById("sideNav");
-    var agt = navigator.userAgent.toLowerCase();
-    var is_major = parseInt(navigator.appVersion);
-    var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
-    var is_ie5   = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.0") !=-1));
-    var is_ie5_5 = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.5") !=-1));
-    var is_mac = (agt.indexOf("mac")!=-1);
-    if (window.opera || ((is_ie5 || is_ie5_5) && !is_mac)) {
-      // Opera and IE5/Win only
-      ifrm.style.height = document.body.scrollHeight + "px";
+    var browser = new Browser();
+    if ((browser.is_opera || browser.is_ie5 || browser.is_ie5_5)
+        && !browser.is_mac
+    ) {
+        // Opera and IE5/Win only
+        ifrm.style.height = document.body.scrollHeight + "px";
     } else {
-      // Everyone else
-      ifrm.style.height = document.body.offsetHeight + "px";
+        // Everyone else
+        ifrm.style.height = document.body.offsetHeight + "px";
     }
 }
 
@@ -795,4 +809,209 @@ function saveScrollXY(formName) {
     var form = document.forms[formName];
     form.scrollx.value = (document.all) ? document.body.scrollLeft : window.pageXOffset;
     form.scrolly.value = (document.all) ? document.body.scrollTop  : window.pageYOffset;
+}
+
+/*
+ * Dialog box functions.
+ */
+function openDialog (dialog, event) {
+    var style = dialog.style;
+    // var position = getPosition(event);
+    style.left    = '200px';
+    style.top     = '150px';
+    style.display = 'block';
+    return false;
+}
+
+function closeDialog (dialog, event) {
+    dialog.style.display = 'none';
+    return false;
+}
+
+var dragState = {
+    zIndex:      0
+};
+
+function getPosition (event) {
+    var x, y;
+    var browser = new Browser();
+
+    // Get the existing position.
+    if (browser.is_ie) {
+        x = window.event.clientX + document.documentElement.scrollLeft
+            + document.body.scrollLeft;
+        y = window.event.clientY + document.documentElement.scrollTop
+            + document.body.scrollTop;
+    }
+
+    else {
+        x = event.clientX + window.scrollX;
+        y = event.clientY + window.scrollY;
+    }
+    return {x: x, y: y};
+}
+
+function beginDrag(event, elem) {
+    dragState.elem = elem;
+    var browser    = new Browser();
+    var position   = getPosition(event);
+    var style      = elem.style;
+
+    // Save starting positions of cursor and element.
+    dragState.cursorStartX = position.x;
+    dragState.cursorStartY = position.y;
+    dragState.elStartLeft  = parseInt(style.left, 10) || 0;
+    dragState.elStartTop   = parseInt(style.top,  10) || 0;
+
+    // Update element's z-index.
+    style.zIndex = ++dragState.zIndex;
+
+    // Capture mousemove and mouseup events on the page.
+    if (browser.is_ie) {
+        document.attachEvent('onmousemove', dragger);
+        document.attachEvent('onmouseup',   endDrag);
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+    }
+    else {
+        document.addEventListener('mousemove', dragger, true);
+        document.addEventListener('mouseup',   endDrag, true);
+        event.preventDefault();
+    }
+    dragState.browser = browser;
+}
+
+function dragger (event) {
+    var position = getPosition(event);
+    var style    = dragState.elem.style;
+
+    style.left
+        = (dragState.elStartLeft + position.x - dragState.cursorStartX) + 'px';
+    style.top
+        = (dragState.elStartTop  + position.y - dragState.cursorStartY) + 'px';
+
+    if (dragState.browser.is_ie) {
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+    }
+    else {
+        event.preventDefault();
+    }
+}
+
+function endDrag(event) {
+    if (dragState.browser.is_ie) {
+        document.detachEvent('onmousemove', dragger);
+        document.detachEvent('onmouseup',   endDrag);
+    }
+
+    else {
+        document.removeEventListener('mousemove', dragger, true);
+        document.removeEventListener('mouseup',   endDrag,  true);
+    }
+}
+
+/*
+ * Search and replace functions.
+ */
+
+function openFindDialog(dialog, event) {
+    openDialog(dialog, event);
+    var find = document.getElementById('searchfind');
+    find.focus();
+    find.select();
+    return false;
+}
+
+function closeFindDialog (dialog, event) {
+    closeDialog(dialog, event);
+}
+
+
+function getSearchString () {
+    var find = document.getElementById('searchfind');
+    if (!find.value) {
+        alert('No search string specified');
+        return false;
+    }
+    return find.value;
+}
+
+function searchField (field) {
+    var find  = getSearchString();
+    if (!find) return false;
+    var regex = document.getElementById('searchregex');
+    var found = field.value.match(new RegExp(find, 'g'));
+    if (!found || !found.length) {
+        alert('None found');
+        return false;
+    }
+    field.found = found;
+    field.lastFoundIndex = 0;
+    findNext(field);
+    return false;
+}
+
+function selectText (field, start, length) {
+    if (field.createTextRange) {
+        // Selection in IE.
+        var range = field.createTextRange();
+        range.moveStart('character', start);
+        range.moveEnd(  'character', start + length);
+        range.select();
+    }
+
+    else if (field.setSelectionRange) {
+        // Selection in Mozilla.
+        field.setSelectionRange(start, length + 1);
+    }
+
+    else {
+        // Everything else.
+        alert('Found from character ' + start + ' to character ' + (start + length));
+    }
+}
+
+function findNext (field) {
+    if (!field.found) {
+        searchField(field);
+        return false;
+    }
+
+    var string = field.found.shift();
+    var start = field.value.indexOf(string, field.lastFoundIndex);
+    
+    if (start == -1) {
+        alert('No more instances found');
+        delete field.lastFoundIndex;
+        delete field.found;
+        return false;
+    }
+
+    field.lastFoundIndex = start + string.length;
+    selectText(field, start, string.length);
+    return false;
+}
+
+function replaceAll (field) {
+    var find  = getSearchString();
+    if (!find) return false;
+    var regex = document.getElementById('searchregex');
+    if (regex.checked) find = new RegExp(find);
+
+    var replace = document.getElementById('searchreplace');
+    replace = replace.value == null ? '' : replace.value;
+
+    var chunks = field.value.split(find);
+    if (chunks.length == 1) {
+        closeDialog(document.getElementById('finddialog'));
+        alert('Replaced 0 occurrences');
+    }
+
+    else {
+        field.value = chunks.join(replace);
+        closeDialog(document.getElementById('finddialog'));
+        alert('Replaced ' + (chunks.length - 1) + ' occurrences');
+    }
+    return false;
 }
