@@ -259,7 +259,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my $can_edit = chk_authz($obj, EDIT, 1);
         my $aid = $obj->get_id;
         # Grab the type name.
-        my $atid = $obj->get_element__id;
+        my $atid = $obj->get_element_type_id;
         my $type = $class eq 'formatting'
           ? $obj->get_output_channel_name
           : defined $atid
