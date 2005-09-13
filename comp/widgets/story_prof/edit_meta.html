@@ -119,31 +119,6 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
         start_count     => 4
 );
 </%perl>
-<%doc>
-
-We might want to actually put the categories in using listManager instead.
-The only issue is having the addition argument put up a button instead of a
-link. Here is a starter:
-
-<%perl>;$repeatable_opts
-my $cats = $story->get_categories;
-    $m->comp('/widgets/listManager/listManager.mc',
-             object => 'category',
-             userSort => 0,
-             objs => $cats,
-             title => '%n',
-#            addition => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
-#            constrain => { server_type_id => $id },
-             fields => [qw(name)],
-             profile => undef,
-             select =>  ['Delete', "$widget|delete_cat"],
-             number => $num
-            );
-</%perl>
-<br />
-
-</%doc>
-
 % unless (ENABLE_CATEGORY_BROWSER) {
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %        caption => "Categories",
