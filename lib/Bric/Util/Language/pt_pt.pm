@@ -728,6 +728,9 @@ To translate:
   'Include deleted' => 'Include deleted',
   'Reactivate' => 'Reactivate',
   'All Subelements' => 'All Subelements',
+      'Code' => 'Code',
+      'Code Select' => 'Code Select',
+      'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
 
 =end comment
 

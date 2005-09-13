@@ -13,6 +13,8 @@ $localize    => 0
 $useEdit     => 0
 </%args>
 <%once>;
+use Bric::App::Util qw(:msg :redir :history);
+
 my @meta_props = qw(type length maxlength rows cols multiple size precision);
 </%once>
 <%perl>;
@@ -28,12 +30,33 @@ foreach my $attr (@$attr) {
     my $props = { map { $_ => $attr->{meta}{$_}{value} } @meta_props };
 
     # Assemble any select/radio values.
-    my $val_prop;
-    if ( my $tmp = $attr->{meta}{vals}{value} ) {
-        foreach my $line (split /\n/, $tmp) {
-            my ($v, $l) = split /\s*,\s*/, $line;
-            chomp $v;
-            push @$val_prop, [$v, $l];
+    if (my $tmp = $attr->{meta}{vals}{value}) {
+        my $val_prop;
+        if ($attr->{meta}{type}{value} eq 'codeselect') {
+            # For a `codeselect', evaluate the perl code,
+            # which must return a list of hashrefs,
+            # to put it in the form that `select' normally expects.
+            # XXX: This is very unsafe, but they need to be able
+            # to do things like DBI queries; would that work with Safe?
+            my $items = eval "$tmp";
+            if (ref $items eq 'ARRAY' and !(@$items % 2)) {
+                for (my $i = 0; $i < @$items; $i += 2) {
+                    push @$val_prop, [$items->[$i], $items->[$i+1]];
+                }
+            } else {
+                add_msg("Invalid codeselect code (didn't return an array ref of even size)");
+                redirect(last_page());
+            }
+        } else {
+            foreach my $line (split /\n/, $tmp) {
+                # Commas are escaped with a backslash
+                # XXX: this should probably check that two items are returned
+                # XXX: comp/widgets/container_prof/edit.html contains
+                # duplicate code in the DATA TILE DISPLAY section
+                my ($v, $l) = split /\s*(?<!\\),\s*/, $line;
+                for ($v, $l) { s/\\,/,/g }
+                push @$val_prop, [$v, $l];
+            }
         }
         $props->{vals} = $val_prop;
     }

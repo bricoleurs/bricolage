@@ -90,6 +90,10 @@ select
 
 =item *
 
+codeselect - select list obtained from perl code
+
+=item *
+
 hidden
 
 =item *
@@ -509,4 +513,6 @@ my %formSubs = (
             &$inpt_sub('radio', @_);
         }
 );
+# same as select, but values are evaluated perl
+$formSubs{'codeselect'} = $formSubs{'select'};
 </%once>

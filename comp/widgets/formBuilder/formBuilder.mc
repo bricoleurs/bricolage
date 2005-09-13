@@ -162,6 +162,9 @@ var cancelValidation = false
 <li><input type="radio" name="formElement" id="formElementSelect" value="select" onclick="showForm('Select')" />
     <label for="formElementSelect"><% $lang->maketext('Select') %></label>
 </li>
+<li><input type="radio" name="formElement" id="formElementCodeSelect" value="codeselect" onclick="showForm('CodeSelect')" />
+    <label for="formElementCodeSelect"><% $lang->maketext('Code Select') %></label>
+</li>
 <li><input type="radio" name="formElement" id="formElementTextarea" value="textarea" onclick="showForm('Textarea')" />
     <label for="formElementTextarea"><% $lang->maketext('Text Area') %></label>
 </li>
@@ -380,6 +383,55 @@ var cancelValidation = false
 %if ($useQuantifier){
       <dt><label for="fbSelectRep"><% $lang->maketext('Repeatable') %>:</label></dt>
       <dd><input type="checkbox" name="fb_quant" id="fbSelectRep" /></dd>
+%}
+    </dl>
+    
+    <div class="submit">
+        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
+    </div>
+    
+</form>
+
+<form name="fb_form" target="<% $target %>" id="fbFormCodeSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+    <input type="hidden" name="fb_type" value="codeselect" />
+    
+    <dl class="meta">
+      <dt><label for="fbCodeSelectName"><% $lang->maketext('Key Name') %>:</label></dt>
+      <dd><input type="text" name="fb_name" id="fbCodeSelectName" /></dd>
+      
+      <dt><label for="fbCodeSelectDisp"><% $lang->maketext('Label') %>:</label></dt>
+      <dd><input type=text name=fb_disp id="fbCodeSelectDisp" /></dd>
+      
+      <dt><label for="fbCodeSelectDef"><% $lang->maketext('Default Value') %>:</label></dt>
+      <dd><input type="text" name="fb_value" id="fbCodeSelectDef" /></dd>
+    </dl>
+    
+    <dl class="opts"> <!-- class="code" ? -->
+      <dt><label for="fbCodeSelectCode"><% $lang->maketext('Code') %>:</label><dt/>
+      <dd><textarea rows="<% $textareaRows %>" cols="<% $textareaCols %>" name="fb_vals" id="fbCodeSelectCode"></textarea></dd>
+    </dl>
+    
+    <dl class="size">
+      <dt><label for="fbCodeSelectSize"><% $lang->maketext('Size') %>:</label></dt>
+      <dd><input type="text" name="fb_size" id="fbCodeSelectSize" value="5" size="3" /></dd>
+      
+      <dt><label for="fbCodeSelectMulti"><% $lang->maketext('Allow multiple') %>?</label></dt>
+      <dd><input type="checkbox" name="fb_allowMultiple" id="fbCodeSelectMulti" /></dd>
+    </dl>
+
+    <dl class="position">
+      <dt><label for="fbCodeSelectPosition"><% $lang->maketext('Position') %>:</label></dt>
+      <dd><select name="fb_position" id="fbCodeSelectPosition">
+          <% $numFieldsOpts %>
+          </select>
+      </dd>
+%if ($useRequired){
+      <dt><label for="fbCodeSelectReq"><% $lang->maketext('Required') %>:</label></dt>
+      <dd><input type="checkbox" name="fb_req" id="fbCodeSelectReq" /></dd>
+%}
+%if ($useQuantifier){
+      <dt><label for="fbCodeSelectRep"><% $lang->maketext('Repeatable') %>:</label></dt>
+      <dd><input type="checkbox" name="fb_quant" id="fbCodeSelectRep" /></dd>
 %}
     </dl>
     

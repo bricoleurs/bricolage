@@ -471,10 +471,13 @@ div.addelement { text-align: right;}
 .formBuilder .fbForm dl { float: left; width: 170px; margin-right: 10px; }
 .formBuilder .fbForm dl.position,
 .formBuilder #fbFormSelect dl.size { margin-top: 0; clear: both; width: 340px; }
+.formBuilder #fbFormCodeSelect dl.size { margin-top: 0; clear: both; width: 340px; }
 .formBuilder .fbForm dl.position dt,
 .formBuilder #fbFormSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
+.formBuilder #fbFormCodeSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
 .formBuilder .fbForm dl.position dd,
 .formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
+.formBuilder #fbFormCodeSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
 .formBuilder #fbFormText { display: block; } /* default */
 .formBuilder .submit { position: absolute; top: 170px; left: -160px; }
 

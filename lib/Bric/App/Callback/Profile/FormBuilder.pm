@@ -309,8 +309,8 @@ $do_element_type = sub {
 $clean_param = sub {
     my $param = shift;
 
-    # Clean any select/radio values.
-    if ($param->{fb_vals}) {
+    # Clean any select/radio values (but not codeselect)
+    if ($param->{fb_vals} and !($param->{fb_type} eq 'codeselect')) {
         $param->{fb_vals} =~ s/\r/\n/g;
         $param->{fb_vals} =~ s/\n{2,}/\n/g;
         $param->{fb_vals} =~ s/\s*,\s*/,/;
@@ -488,6 +488,17 @@ $add_new_attrs = sub {
                     $key_name);
             $$no_save = 1;
         } else {
+            if ($param->{fb_type} eq 'codeselect') {
+                # XXX: change if comp/widgets/profile/displayAttrs.mc changes..
+                my $code = $param->{fb_vals};
+                my $items = eval "$code";
+                unless (ref $items eq 'ARRAY' and !(@$items % 2)) {
+                    add_msg("Invalid codeselect code (didn't return an array ref of even size)");
+                    $$no_save = 1;
+                    return;
+                }
+            }
+
             my $sqltype = $param->{'fb_type'} eq 'date' ? 'date'
               : $param->{'fb_type'} eq 'textarea'
               && (!$param->{'fb_maxlength'} || $param->{'fb_maxlength'} > 1024)

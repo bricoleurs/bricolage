@@ -147,8 +147,9 @@ if ($at->is_related_media) {
     if ( my $tmp = $vals->{props}{vals} ) {
         my $val_prop;
         foreach my $line (split /\n/, $tmp) {
-            my ($v, $l) = split /\s*,\s*/, $line;
-            chomp $v;
+            # (c.f. comp/widgets/profile/displayAttrs.mc)
+            my ($v, $l) = split /\s*(?<!\\),\s*/, $line;
+            for ($v, $l) { s/\\,/,/g }
             push @$val_prop, [$v, $l];
         }
         $vals->{props}{vals} = $val_prop;

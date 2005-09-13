@@ -109,6 +109,11 @@ Mozilla-specific features to properly highlight found text in the textarea box
 searched. Other browsers will get an alert indicating at what character the
 match was found. [David]
 
+=item *
+
+New 'Code Select' custom field allows you to add arbitrary Perl code to
+generate the items in a select list. [Scott]
+
 =back
 
 =head2 Improvements
@@ -251,6 +256,13 @@ buttons are nicely styled to match the Bricolage UI, and can be configured to
 trigger JavaScript functions. Dialog boxes can also be dragged around the
 browser window by grabbing their title bars. Used by the new Find/Replace
 feature, but will likely be used in other contexts in the future. [David]
+
+=item *
+
+In the Element Type (new name) Profile, when adding a new Radio Buttons,
+Pulldown, or Select custom field, you can now escape commas (that otherwise
+separates the Options from their Label) with a backslash so that it will
+appear literally in either the value or label. [Scott]
 
 =back
 

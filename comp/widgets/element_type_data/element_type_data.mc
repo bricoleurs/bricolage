@@ -78,6 +78,13 @@ my %conf = (
         ['vals' => 'Options, Label', '.textarea'],
         ['multiple' => 'Allow multiple', '.check'],
     ],
+    'codeselect' => [
+        ['disp' => 'Label', '.text'],
+        ['value' => 'Default Value', '.text'],
+        ['size' => 'Size', '.number'],
+        ['vals' => 'Code', '.textarea'],
+        ['multiple' => 'Allow multiple', '.check'],
+    ],
     'textarea' => [
         ['disp' => 'Label', '.text'],
         ['value' => 'Default Value', '.textarea'],
