@@ -59,6 +59,11 @@ warning during startup with HTML::Mason 1.30. [David]
 Fixed the C<no_site_id> parameter to Bric::Biz::Asset::Formatting when
 specified using the C<ANY()> function. [David]
 
+=item *
+
+Having a custom field beginning with a leading underscore was causing
+an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
+
 =back
 
 =head1 VERSION 1.8.6 (2005-07-19)
