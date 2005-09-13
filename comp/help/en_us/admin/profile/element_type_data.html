@@ -43,14 +43,26 @@ will be enforced. <i>(textbox, textarea)</i></dd>
 <dd>A list of rows consisting of values and labels.
 Note that 'Options, Label' indicates the format of each row.
 "Options" is the "value" attribute of an &lt;option&gt; element
-within a &lt;select&lt; list, for example, with "Label" being
-what's displayed to the user. <i>(radio, pulldown, select)</i></dd>
+within a &lt;select&gt; list, for example, with "Label" being
+what's displayed to the user. In order to include a comma within
+either the "Options" or "Label" string, precede the comma by
+a backslash (\). <i>(radio, pulldown, select)</i></dd>
+
+<dt>Code</dt>
+<dd>A 'Code Select' field allows adding arbitrary Perl code to generate
+the items in a &lt;select&gt; list. The last statement of the code must
+return an array reference whose elements are alternately the values and
+labels in the list (the array must therefore have an even number of items).
+For example, if you returned <i>[1=>'One',2=>'Two']</i>, the user would see
+a list with items One and Two, whose values (in a template) would be
+respectively 1 and 2 (works just like a Select field). <i>(codeselect)</i></dd>
 
 <dt>Rows</dt>
 <dd>Number of rows in a textarea. <i>(textarea)</i></dd>
 
 <dt>Size</dt>
 <dd>The size of this Field. <i>(textbox, select)</i></dd>
+
 </dl>
 </dl>
 </p>
