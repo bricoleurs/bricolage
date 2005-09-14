@@ -718,7 +718,7 @@ sub my_meths {
 			      req      => 1,
 			      type     => 'short',
 			      props    => { type => 'select',
-					    vals => $tmpl_archs,,
+					    vals => $tmpl_archs,
 					  }
 			     },
 	      type_name      => {
