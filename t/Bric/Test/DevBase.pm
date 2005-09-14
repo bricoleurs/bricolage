@@ -2,7 +2,7 @@ package Bric::Test::DevBase;
 
 =head1 NAME
 
-Bric::Test::Base - Bricolage Development Testing Base Class
+Bric::Test::DevBase - Bricolage Development Testing Base Class
 
 =head1 VERSION
 
@@ -84,7 +84,7 @@ use Bric::Biz::Person::User;
 
 =head1 INTERFACE
 
-Bric::Test::Base inherits from L<Bric::Test::Base|Bric::Test::Base>, and
+Bric::Test::DevBase inherits from L<Bric::Test::Base|Bric::Test::Base>, and
 therefore the entire interface of that class is available to
 Bric::Test::DevBase and its subclasses. The following additional methods have
 been added to its interface.
