@@ -65,22 +65,6 @@ workflow, and at least EDIT permission to the assets on the start desk.
 
 Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
 Workspace.
->>>>>>> .merge-right.r6084
-
-=item *
-
-Add "Checkout" button to the "View" screens for stories, media, and
-templats. It must be careful about permissions in the same way that
-F<comp/workflow/manager/dhandler> currently is. That is to say, in order for
-the button to be displayed, the user must have EDIT permission to the
-asset. If the asset isn't currently in workflow, the user must have RECALL
-permission to the asset or to the assets on the start desk in the current
-workflow, and at least EDIT permission to the assets on the start desk.
-
-=item *
-
-Add Checkin & Shelve (And Checkin & Publish?) to the dropdown menu on My
-Workspace.
 
 =item *
 
@@ -360,16 +344,7 @@ in and exploit such a field.
 
 =item *
 
-Add optional code field to custom fields. This feature will allow a select
-list to offer as options the values returned from C<eval>ed perl expression,
-such as a DBI qeury to another database. Yes, this could be a security issue
-(a serious one!), but we put the onus on the Bricolage administrator to ensure
-that the people with access can't bollocks things up. We just have to make it
-difficult for people to hack in and exploit such a field.
-
-=item *
-
-Add a Relational custom field option. This field would allow a a link to be
+Add a Relational custom field option. This field would allow a link to be
 made to another arbitrary object in Bricolage. The custom field form would
 have a select list of Bricolage object names (e.g., Story, User, Output
 Channel, Event, etc.). When the user wishes to make the link, she's presented
