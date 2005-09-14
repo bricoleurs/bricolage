@@ -294,118 +294,60 @@ import SOAP::Data 'name';
 use HTTP::Cookies;
 
 # jump table for module commands
-# XXX: factor this out
 our %jump = (
-	     story    => {
-			  list_ids => \&list_ids,
-			  export   => \&export,
-			  create   => \&create,
-			  update   => \&update,
-			  delete   => \&delete,
-              class    => 'Story',
-			 },
-	     media    => {
-			  list_ids => \&list_ids,
-			  export   => \&export,
-			  create   => \&create,
-			  update   => \&update,
-			  delete   => \&delete,
-              class    => 'Media',
-			 },
-	     template => {
-			  list_ids => \&list_ids,
-			  export   => \&export,
-			  create   => \&create,
-			  update   => \&update,
-			  delete   => \&delete,
-              class    => 'Template',
-			 },
-	     element_type => {
-			  list_ids => \&list_ids,
-			  export   => \&export,
-			  create   => \&create,
-			  update   => \&update,
-			  delete   => \&delete,
-              class    => 'Element',
-			 },
-	     category => {
-			  list_ids => \&list_ids,
-			  export   => \&export,
-			  create   => \&create,
-			  update   => \&update,
-			  delete   => \&delete,
-              class    => 'Category',
-			 },
-             media_type => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'MediaType',
-                       },
-             site => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'Site',
-                       },
-             keyword => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'Keyword',
-                       },
-             user => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'User',
-                       },
-             desk => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'Desk',
-                       },
-	     workflow => {
-			  publish  => \&publish,
-			  deploy   => \&deploy,
-			  checkin  => \&checkin,
-			  checkout => \&checkout,
-			  move     => \&move,
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'Workflow',
-			 },
-             element_type_set => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'ElementType',
-                      },
-             output_channel => {
-                          list_ids => \&list_ids,
-                          export   => \&export,
-                          create   => \&create,
-                          update   => \&update,
-                          delete   => \&delete,
-                          class    => 'OutputChannel',
-                      },
-	    );
+    story => {
+        class => 'Story',
+    },
+    media => {
+        class => 'Media',
+    },
+    template => {
+        class => 'Template',
+    },
+    element_type => {
+        class => 'Element',
+    },
+    category => {
+        class => 'Category',
+    },
+    media_type => {
+        class => 'MediaType',
+    },
+    site => {
+        class => 'Site',
+    },
+    keyword => {
+        class => 'Keyword',
+    },
+    user => {
+        class => 'User',
+    },
+    desk => {
+        class => 'Desk',
+    },
+    workflow => {
+        publish  => \&publish,
+        deploy   => \&deploy,
+        checkin  => \&checkin,
+        checkout => \&checkout,
+        move     => \&move,
+        class    => 'Workflow',
+    },
+    element_type_set => {
+        class => 'ElementType',
+    },
+    output_channel => {
+        class => 'OutputChannel',
+    },
+);
+foreach my $mod (keys %jump) {
+    # Every module has "asset commands"
+    $jump{$mod}{list_ids} = \&list_ids;
+    $jump{$mod}{export}   = \&export;
+    $jump{$mod}{create}   = \&create;
+    $jump{$mod}{update}   = \&update;
+    $jump{$mod}{delete}   = \&delete;
+}
 
 # get module and verify
 $module = shift @ARGV;
