@@ -11,7 +11,7 @@ use Bric::Biz::Site;
 use Bric::App::Session qw(get_user_id);
 use Bric::App::Authz   qw(chk_authz READ);
 use Bric::App::Event   qw(log_event);
-use Bric::Util::Fault  qw(throw_ap);
+use Bric::Util::Fault  qw(throw_ap throw_dp);
 use Bric::SOAP::Util   qw(parse_asset_document);
 
 use SOAP::Lite;
@@ -417,13 +417,13 @@ sub load_asset {
           unless defined $type;
         my $type_id = $type->get_id;
 
-        # handler burner mapping
-        my $burner;
-        if ($edata->{burner} eq "Mason") {
-            $burner = Bric::Biz::AssetType::BURNER_MASON;
-        } elsif ($edata->{burner} eq "HTML::Template") {
-            $burner = Bric::Biz::AssetType::BURNER_TEMPLATE;
-        } else {
+        # handle burner mapping
+        my $burner = 0;
+        my $tmpl_archs = Bric::Biz::AssetType->my_meths->{burner}{props}{vals};
+        foreach my $arch (@$tmpl_archs) {
+            $burner = $arch->[0] if $edata->{burner} eq $arch->[1];
+        }
+        unless ($burner) {
             throw_ap(error => __PACKAGE__ . "::export : unknown burner"
                        . "\"$edata->{burner}\" for element type \"$id\".");
         }
@@ -588,6 +588,17 @@ sub load_asset {
                 $sql_type = 'blob';
             } else {
                 $sql_type = 'short';
+            }
+
+            # Verify the code if it's a codeselect
+            # XXX: triplicated now... (cf. comp/widgets/profile/displayAttrs.mc
+            # and lib/Bric/App/Callback/Profile/FormBuilder.pm)
+            if ($field->{type} eq 'codeselect') {
+                my $code = $field->{options};
+                my $items = eval "$code";
+                unless (ref $items eq 'ARRAY' and !(@$items % 2)) {
+                    throw_dp "Invalid codeselect code (didn't return an array ref of even size)";
+                }
             }
 
             # get a data object
