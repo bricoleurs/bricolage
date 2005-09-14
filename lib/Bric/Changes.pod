@@ -66,6 +66,10 @@ an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.8.6 (2005-07-19)
 
 =head2 Improvements
