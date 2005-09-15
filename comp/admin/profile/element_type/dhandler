@@ -199,15 +199,12 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
              number  => ++$num );
 
 	unless($no_edit) {
-	
         $m->print(qq{<div style="padding: 5px;">});
-	
         $m->comp('/widgets/profile/imageSubmit.mc',
 	         formName => "cont_profile",
 	         callback => "formBuilder|addElementType_cb",
 	         image    => "add_sub_element_lgreen",
 	    );
-	    
 	    $m->print(qq{</div>});
 	}
 
@@ -221,7 +218,6 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 	     select         => $no_del ? undef : ['Delete', 'element_type|delete_sub'],
 	    );
 
-	
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 }
@@ -236,29 +232,44 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
             # mangle the attrs and meta to match the existing display code.
             my $all_data = $comp->get_data;
             if (@$all_data) {
-                my $attrs = [];
-                foreach my $dataObj (@$all_data) {
-                    my $metas = $dataObj->get_meta('html_info');
-                    my $tmp;
-                    foreach my $meta (keys %$metas) {
-                        $tmp->{meta}{$meta} =  { value => $metas->{$meta} };
-                    }
-                    $tmp->{value} = $metas->{value};
-                    $tmp->{name} = $dataObj->get_key_name;
-                    $tmp->{id} = $dataObj->get_id;
-                    push @$attrs, $tmp;
+                my @attrs;
+                for my $field_type (@$all_data) {
+                    my $attr = {
+                        value => $field_type->get_default_val,
+                        id    => $field_type->get_id,
+                        name  => $field_type->get_key_name,
+                        meta  => {
+                            disp => { value => $field_type->get_name },
+                            map {
+                                $_->{name} => {
+                                    value => $_->{get_meth}->($field_type),
+                                }
+                            } grep { $_->{get_meth} }  $field_type->my_meths(1)
+                        },
+                    };
+
+                    # Set up the widget to be used.
+                    $attr->{meta}{type}{value}
+                        = $attr->{meta}{field_type}{value} eq 'pulldown'
+                            ? 'select' : $attr->{meta}{field_type}{value};
+                    push @attrs, $attr;
                 }
 
-                $num_fields = @$attrs;
+                $num_fields = @attrs;
                 $m->comp("/widgets/profile/displayAttrs.mc",
-                         form_name => 'cont_profile',
-                         attr     => $attrs,
-                         readOnly => $no_edit,
+                         form_name   => 'cont_profile',
+                         attr        => \@attrs,
+                         readOnly    => $no_edit,
                          useEdit     => !$no_edit,
                          usePosition => !$no_edit,
-                         useDelete   => !$no_edit);
+                         useDelete   => !$no_edit
+                );
             } else {
-                $m->print(qq{<div style="padding: 5px;">} . $lang->maketext("No fields defined") .  "</div>");
+                $m->print(
+                    qq{<div style="padding: 5px;">},
+                    $lang->maketext("No fields defined"),
+                    "</div>"
+                );
             }
 
     # Close the table.

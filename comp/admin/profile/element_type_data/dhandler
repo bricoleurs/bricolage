@@ -29,7 +29,7 @@ $m->comp('/widgets/profile/hidden.mc', 'name' => 'type', 'value' => $which);
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
          'caption' => 'Display Attributes',
          'number' => ++$num);
-$m->comp("/widgets/$type/$type.mc", 'field' => $field);
+$m->comp("/widgets/$type/$type.mc", field => $field);
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 $m->comp('/widgets/profile/formButtons.mc',
@@ -66,8 +66,7 @@ my $field = $ARGS{obj}
       : $class->new();
 $id ||= $field->get_id();
 
-my $meta = $field->get_meta('html_info');
-my $which = $meta->{'type'};  # text, radio, etc..
+my $which = $field->get_field_type;  # text, radio, etc..
 
 # Get the element type object to which the field belongs.
 my $elem = Bric::Biz::AssetType->lookup({ id => $field->get_element__id });
@@ -80,10 +79,20 @@ chk_authz($elem, READ);
 my $no_edit = !chk_authz($elem, EDIT, 1);
 my $no_del = !$id || $no_edit;
 
-my $exclude = {
-    'name'   => 1,
-    'active' => 1,
-};
+my $exclude = { map { $_ => 1 } qw(
+    key_name
+    name
+    max_length
+    active
+    field_type
+    default_val
+    length
+    cols
+    rows
+    vals
+    multiple
+    precision
+)};
 
 # Get the name for the breadcrumb trail
 my $crumb = $field->get_key_name();

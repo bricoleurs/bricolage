@@ -51,12 +51,10 @@ if (@tiles || @$elem_opts ) {
 <%perl>
 # Find a suitable tile to display
 my($disp_buf, $value_buf);
-foreach my $tile ($dt->get_tiles) {
-    next if $tile->is_container;
-    my $props = $tile->get_element_data_obj->get_meta('html_info');
-    if (my $data = $dt->get_data($tile->get_key_name)) {
-        next unless $props->{type} =~ /^text/;
-        $disp_buf  =  $props->{disp};
+foreach my $field ($dt->get_data_elements) {
+    next if $field->get_field_type_widget !~ /^text/;
+    if (my $data = $dt->get_data($field->get_key_name)) {
+        $disp_buf  =  $field->get_name;
         $value_buf =  substr($data, 0, 64);
         last;
     }
@@ -131,13 +129,24 @@ if ($at->is_related_media) {
     # START ELSE ( DATA TILE DISPLAY )
     my $at_obj = $dt->get_element_data_obj();
     $no_del = $at_obj->get_required && $dt->get_object_order == 1;
-    my $meta = $at_obj->get_meta('html_info');
-    my $vals = { props => { %$meta } };
+    my $vals = { props => {
+        type      => $at_obj->get_field_type,
+        disp      => $at_obj->get_name,
+        length    => $at_obj->get_length,
+        size      => $at_obj->get_length,
+        cols      => $at_obj->get_cols,
+        rows      => $at_obj->get_rows,
+        maxlength => $at_obj->get_max_length,
+        precision => $at_obj->get_precision,
+        vals      => $at_obj->get_vals,
+        multiple  => $at_obj->get_multiple,
+    }};
+
     my $key =  $widget . '|' . $dt->get_id;
 
     # Get the value.
     $vals->{value} = $dt->get_data(ISO_8601_FORMAT);
-    $vals->{value} = $vals->{props}{value} unless defined $vals->{value};
+    $vals->{value} = $at_obj->get_default_val unless defined $vals->{value};
     if ($vals->{props}{type} eq 'checkbox') {
         $vals->{props}{chk} = $vals->{value};
         $vals->{value} = 1;
@@ -381,10 +390,8 @@ my $elem_opts = [
     map  { $_->[1] }
     sort { $a->[0] cmp $b->[0] }
     map  {
-        my ($key, $disp) = $_->can('get_sites')
-            ? ('cont_', $_->get_name )
-            : ('data_', $_->get_meta('html_info')->{disp});
-        [ lc $disp => [ $key . $_->get_id => $disp ] ]
+        my $key = $_->can('get_sites') ? 'cont_' : 'data_';
+        [ lc $_->get_name => [ $key . $_->get_id => $_->get_name ] ]
     }
         $tile->get_possible_data,
         grep { chk_authz($_, READ, 1) } $tile->get_possible_containers

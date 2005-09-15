@@ -161,7 +161,7 @@ sub add_element : Callback {
 
         } elsif ($type eq 'data_') {
             $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
-            $tile->add_data($at, $at->get_meta('html_info')->{value});
+            $tile->add_data($at);
             $tile->save();
             set_state_data($self->class_key, 'tile', $tile);
         }
@@ -625,9 +625,8 @@ sub _update_parts {
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
-                    my $info = $t->get_element_data_obj->get_meta('html_info');
-                    $val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
-                    my $max = $info->{maxlength};
+                    $val = join('__OPT__', @$val) if $t->is_multiple;
+                    my $max = $t->get_max_length;
                     $val = substr($val, 0, $max) if $max && length $val > $max;
                     $t->set_data($val);
                 }

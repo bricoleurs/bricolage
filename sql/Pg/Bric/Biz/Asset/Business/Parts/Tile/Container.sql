@@ -26,10 +26,7 @@ CREATE SEQUENCE seq_media_container_tile START  1024;
 
 CREATE TABLE story_container_tile (
     id                   INTEGER         NOT NULL
-                                         DEFAULT NEXTVAL('seq_container_tile'),
-    name                 VARCHAR(64)     NOT NULL,
-    key_name             VARCHAR(64)     NOT NULL,
-    description          VARCHAR(256),
+                                         DEFAULT NEXTVAL('seq_story_container_tile'),
     element__id          INTEGER         NOT NULL,
     object_instance_id   INTEGER         NOT NULL,
     parent_id            INTEGER,
@@ -52,9 +49,6 @@ CREATE TABLE story_container_tile (
 CREATE TABLE media_container_tile (
     id                          INTEGER         NOT NULL
                                                 DEFAULT NEXTVAL('seq_media_container_tile'),
-    name                        VARCHAR(64)     NOT NULL,
-    key_name                    VARCHAR(64)     NOT NULL,
-    description                 VARCHAR(256),
     element__id      	        INTEGER         NOT NULL,
     object_instance_id          INTEGER         NOT NULL,
     parent_id                   INTEGER,
@@ -70,13 +64,11 @@ CREATE TABLE media_container_tile (
 --
 -- INDEXES.
 --
-CREATE INDEX idx_sc_tile__key_name ON story_container_tile(LOWER(key_name));
 CREATE INDEX fkx_sc_tile__sc_tile ON story_container_tile(parent_id);
 CREATE INDEX fkx_story__sc_tile ON story_container_tile(object_instance_id);
 CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_story__id);
 CREATE INDEX fkx_sc_tile__related_media ON story_container_tile(related_media__id);
 
-CREATE INDEX idx_mc_tile__key_name ON media_container_tile(LOWER(key_name));
 CREATE INDEX fkx_mc_tile__mc_tile ON media_container_tile(parent_id);
 CREATE INDEX fkx_media__mc_tile ON media_container_tile(object_instance_id);
 CREATE INDEX fkx_mc_tile__related_story ON media_container_tile(related_story__id);

@@ -1594,10 +1594,8 @@ sub upload_file {
 
 sub delete_file {
     my ($self) = @_;
-    
     $self->_set([qw(file_name location  uri _update_uri)] =>
                 [   undef, undef, undef, 1]);
-                
     return $self;
 }
 

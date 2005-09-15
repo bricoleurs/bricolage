@@ -10,6 +10,7 @@ use Bric::Util::DBI qw(:junction);
 
 my %field = (
     key_name      => 'test_paragraph',
+    name          => 'Test Paragraph',
     description   => 'Foo description',
     place         => 1,
     required      => 1,
@@ -17,6 +18,7 @@ my %field = (
     autopopulated => 0,
     publishable   => 1,
     max_length    => 0,
+    default_val  => '',
     sql_type      => 'short',
 );
 
@@ -45,7 +47,7 @@ sub element_type {
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_const : Test(30) {
+sub test_const : Test(44) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -85,7 +87,7 @@ sub test_const : Test(30) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(60) {
+sub test_list : Test(90) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -96,6 +98,7 @@ sub test_list : Test(60) {
         my %args = %field;
         # Make sure the name is unique.
         $args{key_name}     .= $n;
+        $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
         $args{quantifier}    = 0 if $n % 2;
@@ -103,7 +106,12 @@ sub test_list : Test(60) {
         $args{autopopulated} = 1 if $n % 2;
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
-        $args{sql_type}      = 'blob' if $n % 2;
+        $args{sql_type}      = 'blob'     if $n % 2;
+        $args{field_type}    = 'textarea' if $n % 2;
+        $args{cols}          = $n;
+        $args{rows}          = $n;
+        $args{length}        = $n;
+        $args{default_val}   = "foo$n";
         ok( my $field = Bric::Biz::AssetType::Parts::Data->new(\%args),
             "Create $args{key_name}" );
         ok( $field->save, "Save $args{key_name}" );
@@ -122,6 +130,20 @@ sub test_list : Test(60) {
     ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
         key_name => ANY("$field{key_name}1", "$field{key_name}2"),
     }), qq{Look up key_name ANY("$field{key_name}1", "$field{key_name}2")} );
+    is( scalar @fields, 2, "Check for 2 fields" );
+
+    # Try name.
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        name => "$field{name}1"
+    }), "Look up name $field{name}1" );
+    is( scalar @fields, 1, "Check for 1 field" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        name => "$field{name}%"
+    }), "Look up name $field{name}%" );
+    is( scalar @fields, 5, "Check for 5 fields" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        name => ANY("$field{name}1", "$field{name}2"),
+    }), qq{Look up name ANY("$field{name}1", "$field{name}2")} );
     is( scalar @fields, 2, "Check for 2 fields" );
 
     # Try description.
@@ -227,6 +249,54 @@ sub test_list : Test(60) {
     }), "Lookup sql_type ANY('short', 'blob')" );
     is( scalar @fields, 5, "Check for 5 fields" );
 
+    # Try field_type.
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text',
+    }), "Lookup field_type text" );
+    is( scalar @fields, 2, "Check for 2 fields" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        field_type   => ANY('text', 'textarea'),
+    }), "Lookup field_type ANY('text', 'textarea')" );
+    is( scalar @fields, 5, "Check for 5 fields" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text%',
+    }), 'Lookup field_type text%' );
+    is( scalar @fields, 5, "Check for 5 fields" );
+
+    # Try cols, rows, length.
+    for my $attr (qw(cols rows length)) {
+        ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+            element_type_id => $field{element_type_id},
+            $attr           => 1
+        }), "Lookup $attr 1" );
+        is( scalar @fields, 1, "Check for 1 field" );
+        ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+            element_type_id => $field{element_type_id},
+            $attr           => ANY(1, 2, 4)
+        }), "Lookup $attr ANY(1, 2, 4)" );
+        is( scalar @fields, 3, "Check for 3 fields" );
+    }
+
+    # Try default_val.
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo1',
+    }), "Lookup default_val foo" );
+    is( scalar @fields, 1, "Check for 1 field" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        default_val   => ANY('foo1', 'foo3'),
+    }), "Lookup default_val ANY('foo1', 'foo3')" );
+    is( scalar @fields, 2, "Check for 2 fields" );
+    ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo%',
+    }), 'Lookup default_val foo%' );
+    is( scalar @fields, 5, "Check for 5 fields" );
+
     # Try active.
     ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
         element_type_id => $field{element_type_id},
@@ -242,7 +312,7 @@ sub test_list : Test(60) {
 
 ##############################################################################
 # Test the list_id() method.
-sub test_list_ids : Test(60) {
+sub test_list_ids : Test(90) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -253,6 +323,7 @@ sub test_list_ids : Test(60) {
         my %args = %field;
         # Make sure the name is unique.
         $args{key_name}     .= $n;
+        $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
         $args{quantifier}    = 0 if $n % 2;
@@ -260,7 +331,12 @@ sub test_list_ids : Test(60) {
         $args{autopopulated} = 1 if $n % 2;
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
-        $args{sql_type}      = 'blob' if $n % 2;
+        $args{sql_type}      = 'blob'     if $n % 2;
+        $args{field_type}    = 'textarea' if $n % 2;
+        $args{cols}          = $n;
+        $args{rows}          = $n;
+        $args{length}        = $n;
+        $args{default_val}   = "foo$n";
         ok( my $field = Bric::Biz::AssetType::Parts::Data->new(\%args),
             "Create $args{key_name}" );
         ok( $field->save, "Save $args{key_name}" );
@@ -280,6 +356,20 @@ sub test_list_ids : Test(60) {
         key_name => ANY("$field{key_name}1", "$field{key_name}2"),
     }), qq{Look up key_name ANY("$field{key_name}1", "$field{key_name}2")} );
     is( scalar @field_ids, 2, "Check for 2 field IDs" );
+
+    # Try name.
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        name => "$field{name}1"
+    }), "Look up name $field{name}1" );
+    is( scalar @field_ids, 1, "Check for 1 field ID" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        name => "$field{name}%"
+    }), "Look up name $field{name}%" );
+    is( scalar @field_ids, 5, "Check for 5 field IDs" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        name => ANY("$field{name}1", "$field{name}2"),
+    }), qq{Look up name ANY("$field{name}1", "$field{name}2")} );
+    is( scalar @field_ids, 2, "Check for 2 field Ids" );
 
     # Try description.
     ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
@@ -384,6 +474,54 @@ sub test_list_ids : Test(60) {
     }), "Lookup sql_type ANY('short', 'blob')" );
     is( scalar @field_ids, 5, "Check for 5 field IDs" );
 
+    # Try field_type.
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text',
+    }), "Lookup field_type text" );
+    is( scalar @field_ids, 2, "Check for 2 field IDs" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        field_type   => ANY('text', 'textarea'),
+    }), "Lookup field_type ANY('text', 'textarea')" );
+    is( scalar @field_ids, 5, "Check for 5 field IDs" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text%',
+    }), 'Lookup field_type text%' );
+    is( scalar @field_ids, 5, "Check for 5 field IDs" );
+
+    # Try cols, rows, length.
+    for my $attr (qw(cols rows length)) {
+        ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+            element_type_id => $field{element_type_id},
+            $attr           => 1
+        }), "Lookup $attr 1" );
+        is( scalar @field_ids, 1, "Check for 1 field ID" );
+        ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+            element_type_id => $field{element_type_id},
+            $attr           => ANY(1, 2, 4)
+        }), "Lookup $attr ANY(1, 2, 4)" );
+        is( scalar @field_ids, 3, "Check for 3 field IDs" );
+    }
+
+    # Try default_val.
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo1',
+    }), "Lookup default_val foo" );
+    is( scalar @field_ids, 1, "Check for 1 field ID" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        default_val   => ANY('foo1', 'foo3'),
+    }), "Lookup default_val ANY('foo1', 'foo3')" );
+    is( scalar @field_ids, 2, "Check for 2 field IDs" );
+    ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo%',
+    }), 'Lookup default_val foo%' );
+    is( scalar @field_ids, 5, "Check for 5 field IDs" );
+
     # Try active.
     ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
         element_type_id => $field{element_type_id},
@@ -399,7 +537,7 @@ sub test_list_ids : Test(60) {
 
 ##############################################################################
 # Test the href() method.
-sub href : Test(65) {
+sub href : Test(95) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -410,6 +548,7 @@ sub href : Test(65) {
         my %args = %field;
         # Make sure the name is unique.
         $args{key_name}     .= $n;
+        $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
         $args{quantifier}    = 0 if $n % 2;
@@ -417,7 +556,12 @@ sub href : Test(65) {
         $args{autopopulated} = 1 if $n % 2;
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
-        $args{sql_type}      = 'blob' if $n % 2;
+        $args{sql_type}      = 'blob'     if $n % 2;
+        $args{field_type}    = 'textarea' if $n % 2;
+        $args{cols}          = $n;
+        $args{rows}          = $n;
+        $args{length}        = $n;
+        $args{default_val}   = "foo$n";
         ok( my $field = Bric::Biz::AssetType::Parts::Data->new(\%args),
             "Create $args{key_name}" );
         ok( $field->save, "Save $args{key_name}" );
@@ -437,6 +581,20 @@ sub href : Test(65) {
     ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
         key_name => ANY("$field{key_name}1", "$field{key_name}2"),
     }), qq{Look up key_name ANY("$field{key_name}1", "$field{key_name}2")} );
+    is( scalar keys %$fields, 2, "Check for 2 fields" );
+
+    # Try name.
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        name => "$field{name}1"
+    }), "Look up name $field{name}1" );
+    is( scalar keys %$fields, 1, "Check for 1 field" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        name => "$field{name}%"
+    }), "Look up name $field{name}%" );
+    is( scalar keys %$fields, 5, "Check for 5 fields" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        name => ANY("$field{name}1", "$field{name}2"),
+    }), qq{Look up name ANY("$field{name}1", "$field{name}2")} );
     is( scalar keys %$fields, 2, "Check for 2 fields" );
 
     # Try description.
@@ -540,6 +698,54 @@ sub href : Test(65) {
         element_type_id => $field{element_type_id},
         sql_type   => ANY('short', 'blob'),
     }), "Lookup sql_type ANY('short', 'blob')" );
+    is( scalar keys %$fields, 5, "Check for 5 fields" );
+
+    # Try field_type.
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text',
+    }), "Lookup field_type text" );
+    is( scalar keys %$fields, 2, "Check for 2 fields" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        field_type   => ANY('text', 'textarea'),
+    }), "Lookup field_type ANY('text', 'textarea')" );
+    is( scalar keys %$fields, 5, "Check for 5 fields" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        field_type   => 'text%',
+    }), 'Lookup field_type text%' );
+    is( scalar keys %$fields, 5, "Check for 5 fields" );
+
+    # Try cols, rows, length.
+    for my $attr (qw(cols rows length)) {
+        ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+            element_type_id => $field{element_type_id},
+            $attr           => 1
+        }), "Lookup $attr 1" );
+        is( scalar keys %$fields, 1, "Check for 1 field" );
+        ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+            element_type_id => $field{element_type_id},
+            $attr           => ANY(1, 2, 4)
+        }), "Lookup $attr ANY(1, 2, 4)" );
+        is( scalar keys %$fields, 3, "Check for 3 fields" );
+    }
+
+    # Try default_val.
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo1',
+    }), "Lookup default_val foo" );
+    is( scalar keys %$fields, 1, "Check for 1 field" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        default_val   => ANY('foo1', 'foo3'),
+    }), "Lookup default_val ANY('foo1', 'foo3')" );
+    is( scalar keys %$fields, 2, "Check for 2 fields" );
+    ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
+        element_type_id => $field{element_type_id},
+        default_val   => 'foo%',
+    }), 'Lookup default_val foo%' );
     is( scalar keys %$fields, 5, "Check for 5 fields" );
 
     # Try active.

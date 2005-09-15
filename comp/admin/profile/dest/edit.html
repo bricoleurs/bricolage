@@ -12,8 +12,8 @@ if (defined $id) {
 # Output the key properties.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Properties",
-	 number  => 1);
-$m->comp('/widgets/profile/dumpRemainingFields.mc', 
+         number  => 1);
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
          objref     => $dest,
          fieldsUsed => { active => 1, site_id => 1 },
          readOnly   => $no_edit);
@@ -72,7 +72,7 @@ if (defined $id) {
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
     # Output the actions.
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
               caption => '%n',
               object  => 'action',
               number  => 4 );

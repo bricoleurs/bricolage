@@ -1213,7 +1213,7 @@ NONE
 
 sub get_element_name {
     my $self = shift;
-    $self->get_tile->get_name;
+    $self->get_element->get_name;
 }
 
 ################################################################################
@@ -1239,7 +1239,7 @@ NONE
 
 sub get_element_key_name {
     my $self = shift;
-    $self->get_tile->get_key_name;
+    $self->get_element->get_key_name;
 }
 
 ################################################################################
@@ -1264,13 +1264,9 @@ NONE
 =cut
 
 sub get_possible_data {
-        my ($self) = @_;
-
-        my $tile = $self->get_tile();
-
-        my $parts = $tile->get_possible_data();
-
-        return wantarray ? @$parts : $parts;
+    my $self = shift;
+    my $tile = $self->get_element;
+    return $tile->get_possible_data;
 }
 
 ################################################################################
@@ -1296,9 +1292,8 @@ NONE
 
 sub get_possible_containers {
     my ($self) = @_;
-    my $tile = $self->get_tile();
-    my $cont = $tile->get_possible_containers();
-    return wantarray ? @$cont : $cont;
+    my $tile = $self->get_element;
+    return $tile->get_possible_containers;
 }
 
 ################################################################################
@@ -1532,8 +1527,7 @@ NONE
 
 sub get_related_objects {
     my $self = shift;
-
-    return $self->_find_related($self->get_tile);
+    return $self->_find_related($self->get_element);
 }
 
 sub _find_related {
@@ -1583,7 +1577,7 @@ sub get_element {
     my $object = $self->_get_alias || $self;
     my $tile = $self->_get('_tile');
     unless ($tile) {
-        ($tile) = Bric::Biz::Asset::Business::Parts::Tile::Container->list({
+        $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
             object    => $object,
             parent_id => undef,
         });
@@ -1592,7 +1586,7 @@ sub get_element {
     return $tile;
 }
 
-sub get_tile { goto &get_element };
+sub get_tile { shift->get_element };
 
 ##############################################################################
 
@@ -1678,10 +1672,21 @@ sub is_fixed {
 
 ################################################################################
 
-=item ($tiles || @tiles) = $biz->get_tiles()
+=item get_elements
+
+  my $elements = $ba->get_elements;
+  my @elements = $ba->get_elements;
+  $elements    = $ba->get_elements(@key_names);
+  @elements    = $ba->get_elements(@key_names);
+
+  # Deprecated forms:
+  $elements = $ba->get_tiles;
+  @elements = $ba->get_tiles;
+  $elements = $ba->get_tiles(@key_names);
+  @elements = $ba->get_tiles(@key_names);
 
 Returns the tiles that are held with in the top level tile of this business
-asset. Convenience shortcut to C<< $ba->get_tile->get_tiles >>.
+asset. Convenience shortcut to C<< $ba->get_element->get_elements >>.
 
 B<Throws:>
 
@@ -1697,17 +1702,19 @@ NONE
 
 =cut
 
-sub get_tiles {
+sub get_elements {
     my $self = shift;
-    $self->get_tile->get_tiles;
+    $self->get_element->get_elements(@_);
 }
+
+sub get_tiles { shift->get_elements(@_); }
 
 ###############################################################################
 
 =item $ba = $ba->add_data( $atd_obj, $data )
 
 This will create a tile and add it to the container. Convenience shortcut to
-C<< $ba->get_tile->add_data >>.
+C<< $ba->get_element->add_data >>.
 
 B<Throws:>
 
@@ -1725,7 +1732,7 @@ NONE
 
 sub add_data {
     my $self = shift;
-    $self->get_tile->add_data(@_);
+    $self->get_element->add_data(@_);
 }
 
 ###############################################################################
@@ -1733,7 +1740,7 @@ sub add_data {
 =item $new_container = $ba->add_container( $atc_obj )
 
 This will create and return a new container tile that is added to the current
-container. Convenience shortcut to C<< $ba->get_tile->add_container >>.
+container. Convenience shortcut to C<< $ba->get_element->add_container >>.
 
 B<Throws:>
 
@@ -1751,7 +1758,7 @@ NONE
 
 sub add_container {
     my $self = shift;
-    $self->get_tile->add_container(@_);
+    $self->get_element->add_container(@_);
 }
 
 ###############################################################################
@@ -1761,7 +1768,7 @@ sub add_container {
 =item $data = $ba->get_data( $name, $obj_order, $format )
 
 Returns the data of a given name and object order. Convenience shortcut to
-C<< $ba->get_tile->get_data >>.
+C<< $ba->get_element->get_data >>.
 
 B<Throws:>
 
@@ -1786,7 +1793,7 @@ you.
 
 sub get_data {
     my $self = shift;
-    $self->get_tile->get_data(@_);
+    $self->get_element->get_data(@_);
 }
 
 ###############################################################################
@@ -1794,7 +1801,7 @@ sub get_data {
 =item $container = $ba->get_container( $name, $obj_order )
 
 Returns a container object of the given name that falls at the given object
-order position. Convenience shortcut to C<< $ba->get_tile->get_container >>.
+order position. Convenience shortcut to C<< $ba->get_element->get_container >>.
 
 B<Throws:>
 
@@ -1812,7 +1819,7 @@ NONE
 
 sub get_container {
     my $self = shift;
-    $self->get_tile->get_container(@_);
+    $self->get_element->get_container(@_);
 }
 
 ###############################################################################
@@ -2048,7 +2055,7 @@ sub checkout {
     throw_gen "Must be checked out to users"
       unless defined $param->{user__id};
 
-    my $tile = $self->get_tile;
+    my $tile = $self->get_element;
     $tile->prepare_clone;
 
     my $contribs = $self->_get_contributors;

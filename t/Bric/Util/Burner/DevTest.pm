@@ -331,6 +331,7 @@ sub subclass_burn_test {
     # Give it a header field.
     ok my $head = $story_type->new_data({
         key_name    => 'header',
+        name        => 'Header',
         required    => 0,
         quantifier  => 1,
         sql_type    => 'short',
@@ -342,6 +343,7 @@ sub subclass_burn_test {
     # Give it a paragraph field.
     ok my $para = $story_type->new_data({
         key_name    => 'para',
+        name        => 'Paragraph',
         required    => 0,
         quantifier  => 1,
         sql_type    => 'short',
@@ -370,6 +372,7 @@ sub subclass_burn_test {
     # Give it a paragraph field.
     ok my $pq_para = $pull_quote->new_data({
         key_name    => 'para',
+        name        => 'Paragraph',
         required    => 1,
         quantifier  => 0,
         sql_type    => 'short',
@@ -381,6 +384,7 @@ sub subclass_burn_test {
     # Give it a by field.
     ok my $by = $pull_quote->new_data({
         key_name    => 'by',
+        name        => 'By',
         required    => 1,
         quantifier  => 0,
         sql_type    => 'short',
@@ -392,6 +396,7 @@ sub subclass_burn_test {
     # Give it a date field.
     ok my $date = $pull_quote->new_data({
         key_name    => 'date',
+        name        => 'Date',
         required    => 1,
         quantifier  => 0,
         sql_type    => 'date',
@@ -418,6 +423,7 @@ sub subclass_burn_test {
     # Give it a paragraph field.
     ok my $page_para = $page->new_data({
         key_name    => 'para',
+        name        => 'Paragraph',
         required    => 0,
         quantifier  => 0,
         sql_type    => 'short',

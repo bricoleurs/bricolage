@@ -28,10 +28,11 @@ my $rel_media_uuid = '4162F713-1DD3-11B3-B17F-C09EFE1DC404';
 sub new_args {
     my $self = shift;
 
-    (object       => $self->get_story,
-     element_type => $self->get_elem,
-     site_id      => 100,
-    )
+    return (
+        object       => $self->get_story,
+        element_type => $self->get_elem,
+        site_id      => 100,
+    );
 }
 
 ##############################################################################
@@ -44,7 +45,7 @@ sub construct {
 ################################################################################
 # Test the constructors
 
-sub test_new : Test(10) {
+sub test_new : Test(11) {
     my $self = shift;
 
     ok (my $cont = $self->construct,       'Construct Container');
@@ -56,9 +57,11 @@ sub test_new : Test(10) {
 
     $self->add_del_ids([$c_id], $cont->S_TABLE);
 
-    ok (my $lkup = $self->class->lookup({object_type => 'story',
-                                         id          => $c_id}),
-        'Lookup Container');
+    ok (my $lkup = $self->class->lookup({
+        object_type => 'story',
+        id          => $c_id
+    }), 'Lookup Container');
+    isa_ok $lkup, $self->class;
 
     is ($lkup->get_data('deck', 2), 'Chomp',   'Compare Data');
 
@@ -68,183 +71,191 @@ sub test_new : Test(10) {
 }
 
 ##############################################################################
+# Test lookup.
+sub test_lookup : Test(44) {
+    my $self       = shift->create_element_types;
+    my $class      = $self->class;
+    my $story_type = $self->{story_type};
+
+    # Create a story.
+    ok my $story = Bric::Biz::Asset::Business::Story->new({
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => 'This is a Test',
+        slug            => 'test_lookup',
+    }), "Create test story";
+
+    ok $story->add_categories([1]), "Add it to the root category";
+    ok $story->set_primary_category(1),
+      "Make the root category the primary category";
+    ok $story->set_cover_date('2005-03-22 21:07:56'), "Set the cover date";
+    ok $story->checkin, "Check in the story";
+    ok $story->save, "Save the story";
+    $self->add_del_ids($story->get_id, 'story');
+
+    # Now look it up by the story object.
+    ok my $elem = $class->lookup({
+        object => $story,
+    }), 'Look up element by story object';
+    isa_ok $elem, $class;
+    ok my $elem_id = $elem->get_id, 'Grab the element id';
+
+    # Now look it up by its ID.
+    ok $elem = $class->lookup({
+        object_type => 'story',
+        id          => $elem_id,
+    }), 'Look up by ID';
+    is $elem->get_id, $elem_id, 'It should have the same id';
+}
+
+##############################################################################
+# Test list.
+sub test_list : Test(166) {
+    my $self       = shift->create_element_types;
+    my $class      = $self->class;
+    my $story_type = $self->{story_type};
+    my $para       = $self->{para};
+    my $pull_quote = $self->{pull_quote};
+    my $head       = $self->{head};
+    my @story_ids;
+
+    for my $i (1..5) {
+        # Create a story.
+        ok my $story = Bric::Biz::Asset::Business::Story->new({
+            user__id        => $self->user_id,
+            site_id         => 100,
+            element_type_id => $story_type->get_id,
+            source__id      => 1,
+            title           => "This is Test $i",
+            slug            => "test_list$i"
+        }), "Create test story $i";
+
+        ok $story->add_categories([1]), "Add it to the root category";
+        ok $story->set_primary_category(1),
+            "Make the root category the primary category";
+        ok $story->set_cover_date('2005-03-22 21:07:56'), "Set the cover date";
+        ok $story->checkin, "Check in the story";
+        ok $story->save, "Save the story";
+        $self->add_del_ids($story->get_id, 'story');
+        push @story_ids, $story->get_id;
+
+        # Add some content to it.
+        ok my $elem = $story->get_element, "Get the story element";
+        ok $elem->add_data($para, 'This is a paragraph'), "Add a paragraph";
+        ok $elem->add_data($para, 'Second paragraph'), "Add another paragraph";
+        ok $elem->add_data($head, "And then..."), "Add a header";
+        ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
+
+        # Add a pull quote.
+        ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
+        ok $pq->get_data_element('para')->set_data(
+            "Ask not what your country can do for you.\n="
+                . 'Ask what you can do for your country.'
+            ), "Add a paragraph with an apparent POD tag";
+        ok $pq->get_data_element('by')->set_data("John F. Kennedy"),
+            "Add a By to the pull quote";
+        ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+            "Add a date to the pull quote";
+
+        # Add another pull quote.
+        ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
+        ok $pq2->get_data_element('para')->set_data(
+            "So, first of all, let me assert my firm belief that the only\n\n"
+            . '=thing we have to fear is fear itself -- nameless, unreasoning, '
+            . 'unjustified terror which paralyzes needed efforts to convert '
+            . 'retreat into advance.'
+        ), "Add a paragraph with a near POD tag to the pull quote";
+        ok $pq2->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+            "Add a By to the pull quote";
+        ok $pq2->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+            "Add a date to the pull quote";
+
+        # Make it so!
+        ok $elem->save, "Save the story element";
+    }
+
+    # Now list top-level story elements.
+    ok my @elems = $class->list({
+        object_type => 'story',
+        parent_id   => undef
+    }), 'List story elements by object type';
+    is scalar @elems, 5, 'There should be five top-level story elements';
+    isa_ok $_, $class for @elems;
+    my $top = $elems[0];
+
+    # List by parent ID.
+    ok @elems = $class->list({
+        object_type => 'story',
+        parent_id   => $top->get_id,
+    }), 'List subelements of a single element';
+    is scalar @elems, 2, 'There should be two subelements';
+
+    # Try the elements() method.
+    ok @elems = $top->get_elements, 'Get subelements';
+    is scalar @elems, 6, 'Should be six subelements';
+    for my $e ($top->get_containers) {
+        ok @elems = $e->get_elements, 'Get subelement subelements';
+        is scalar @elems, 3, 'Should have three subelements';
+        isa_ok $_, 'Bric::Biz::Asset::Business::Parts::Tile::Data',
+            for @elems;
+    }
+
+    # List all story elements.
+    ok @elems = $class->list({
+        object_type => 'story',
+    }), 'List elements by object type';
+    is scalar @elems, 15, 'There should be fifteen story elements';
+
+    # List by element_type_id.
+    ok @elems = $class->list({
+        object_type     => 'story',
+        element_type_id => $pull_quote->get_id,
+    }), 'List elements by element_type_id';
+    is scalar @elems, 10, 'There should be ten elements';
+
+    # List by key_name.
+    ok @elems = $class->list({
+        object_type => 'story',
+        key_name    => $pull_quote->get_key_name,
+    }), 'List elements by key_name';
+    is scalar @elems, 10, 'There should be ten elements';
+
+    # List by name.
+    ok @elems = $class->list({
+        object_type => 'story',
+        name    => $pull_quote->get_name,
+    }), 'List elements by name';
+    is scalar @elems, 10, 'There should be ten elements';
+
+    # Try by active.
+    $elems[0]->deactivate->save;
+    $elems[1]->deactivate->save;
+    ok @elems = $class->list({
+        object_type => 'story',
+        active      => 1,
+    }), 'List active elements';
+    is scalar @elems, 13, 'There should be thirteen active elements';
+
+    # List by inactive.
+    ok @elems = $class->list({
+        object_type => 'story',
+        active      => 0,
+    }), 'List inactive elements';
+    is scalar @elems, 2, 'There should be two inactive elements';
+}
+
+
+##############################################################################
 # Test pod.
 sub test_pod : Test(229) {
-    my $self = shift;
-
-    # First, we'll need a story element type.
-    ok my $story_et = Bric::Biz::ATType->new({
-        name          => 'Testing',
-        top_level     => 1,
-        related_story => 1,
-        related_media => 1,
-    }), "Create a story element type";
-    ok $story_et-> save, "Save story element type";
-    $self->add_del_ids($story_et->get_id, 'at_type');
-
-    # Next, a subelement.
-    ok my $sub_et = Bric::Biz::ATType->new({
-        name      => 'Subby',
-        top_level => 0,
-    }), "Create a subelement element type";
-    ok $sub_et-> save, "Save subelement element type";
-    $self->add_del_ids($sub_et->get_id, 'at_type');
-
-    # And finally, a page subelement.
-    ok my $page_et = Bric::Biz::ATType->new({
-        name      => 'Pagey',
-        top_level => 0,
-        paginated => 1,
-    }), "Create a page element type";
-    ok $page_et-> save, "Save page element type";
-    $self->add_del_ids($page_et->get_id, 'at_type');
-
-    # We also need a media element type type.
-    ok my $media_et = Bric::Biz::ATType->new({
-        name          => 'Media',
-        top_level     => 1,
-        media         => 1,
-    }), "Create a media element type type";
-    ok $media_et-> save, "Save media element type type";
-    $self->add_del_ids($media_et->get_id, 'at_type');
-
-    # Create a media type.
-    ok my $media_type = Bric::Biz::AssetType->new({
-        key_name  => '_media_',
-        name      => 'Media Testing',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
-        type__id  => $media_et->get_id,
-        reference => 0, # No idea what this is.
-    }), "Create media type";
-    ok $media_type->add_site(100), "Add the site ID";
-    ok $media_type->add_output_channels([1]), "Add the output channel";
-    ok $media_type->set_primary_oc_id(1, 100),
-      "Set it as the primary OC";;
-    ok $media_type->save, "Save the test media type";
-    $self->add_del_ids($media_type->get_id, 'element');
-
-    # Create a story type.
-    ok my $story_type = Bric::Biz::AssetType->new({
-        key_name  => '_testing_',
-        name      => 'Testing',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
-        type__id  => $story_et->get_id,
-        reference => 0, # No idea what this is.
-    }), "Create story type";
-    ok $story_type->add_site(100), "Add the site ID";
-    ok $story_type->add_output_channels([1]), "Add the output channel";
-    ok $story_type->set_primary_oc_id(1, 100),
-      "Set it as the primary OC";;
-    ok $story_type->save, "Save the test story type";
-    $self->add_del_ids($story_type->get_id, 'element');
-
-    # Give it a header field.
-    ok my $head = $story_type->new_data({
-        key_name    => 'header',
-        required    => 0,
-        quantifier  => 1,
-        sql_type    => 'short',
-        place       => 1,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Give it a paragraph field.
-    ok my $para = $story_type->new_data({
-        key_name    => 'para',
-        required    => 0,
-        quantifier  => 1,
-        sql_type    => 'short',
-        place       => 2,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Save the story type with its fields.
-    ok $story_type->save, "Save element with the fields";
-    $self->add_del_ids($head->get_id, 'at_data');
-    $self->add_del_ids($para->get_id, 'at_data');
-
-    # Create a subelement.
-    ok my $pull_quote = Bric::Biz::AssetType->new({
-        key_name  => '_pull_quote_',
-        name      => 'Pull Quote',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
-        type__id  => $sub_et->get_id,
-        reference => 0, # No idea what this is.
-    }), "Create a subelement element";
-
-    ok $pull_quote->save, "Save the subelement element";
-    $self->add_del_ids($pull_quote->get_id, 'element');
-
-    # Give it a paragraph field.
-    ok my $pq_para = $pull_quote->new_data({
-        key_name    => 'para',
-        required    => 1,
-        quantifier  => 1,
-        sql_type    => 'short',
-        place       => 1,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Give it a by field.
-    ok my $by = $pull_quote->new_data({
-        key_name    => 'by',
-        required    => 1,
-        quantifier  => 0,
-        sql_type    => 'short',
-        place       => 2,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Give it a date field.
-    ok my $date = $pull_quote->new_data({
-        key_name    => 'date',
-        required    => 1,
-        quantifier  => 0,
-        sql_type    => 'date',
-        place       => 3,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Save the pull quote with its fields.
-    ok $pull_quote->save, "Save subelement with the fields";
-    $self->add_del_ids($pq_para->get_id, 'at_data');
-    $self->add_del_ids($by->get_id, 'at_data');
-    $self->add_del_ids($date->get_id, 'at_data');
-
-    # Create a page subelement.
-    ok my $page = Bric::Biz::AssetType->new({
-        key_name  => '_page_',
-        name      => 'Page',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
-        type__id  => $page_et->get_id,
-        reference => 0, # No idea what this is.
-    }), "Create a page subelement element";
-
-    # Give it a paragraph field.
-    ok my $page_para = $page->new_data({
-        key_name    => 'para',
-        required    => 0,
-        quantifier  => 0,
-        sql_type    => 'short',
-        place       => 1,
-        publishable => 1, # Huh?
-        max_length  => 0, # Unlimited
-    }), "Add a field";
-
-    # Save it.
-    ok $page->add_containers([$pull_quote->get_id]), 'Add pull quote to page';
-    ok $page->save, "Save the page subelement element";
-    $self->add_del_ids($page->get_id, 'element');
-
-    # Add the subelements to the story type element.
-    ok $story_type->add_containers([$pull_quote->get_id, $page->get_id]),
-        "Add the subelements";
-    ok $story_type->save, 'Save the story type with the subelements';
+    my $self       = shift->create_element_types;
+    my $story_type = $self->{story_type};
+    my $para       = $self->{para};
+    my $pull_quote = $self->{pull_quote};
+    my $head       = $self->{head};
+    my $media_type = $self->{media_type};
 
     # Now it's time to create a story!
     ok my $story = Bric::Biz::Asset::Business::Story->new({

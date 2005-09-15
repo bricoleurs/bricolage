@@ -301,7 +301,7 @@ var cancelValidation = false
 </form>
 
 <form name="fb_form" target="<% $target %>" id="fbFormPulldown" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="select" />
+    <input type="hidden" name="fb_type" value="pulldown" />
 
     <dl class="meta">
       <dt><label for="fbPulldownName"><% $lang->maketext('Key Name') %>:</label></dt>

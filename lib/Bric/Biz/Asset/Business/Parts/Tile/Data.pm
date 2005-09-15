@@ -52,7 +52,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
-use Bric::Util::Fault qw(throw_gen);
+use Bric::Util::Fault qw(throw_gen throw_da);
 use Bric::Biz::AssetType::Parts::Data;
 
 #==============================================================================#
@@ -78,33 +78,75 @@ use constant DEBUG => 0;
 use constant S_TABLE => 'story_data_tile';
 use constant M_TABLE => 'media_data_tile';
 
-use constant COLS   => qw(name
-                          key_name
-                          description
-                          element_data__id
-                          object_instance_id
-                          parent_id
-                          place
-                          object_order
-                          hold_val
-                          date_val
-                          short_val
-                          blob_val
-                          active);
+my @SEL_COLS = qw(
+    f.id
+    ft.name
+    ft.key_name
+    ft.description
+    ft.autopopulated
+    ft.multiple
+    ft.max_length
+    ft.sql_type
+    ft.field_type
+    f.element_data__id
+    f.object_instance_id
+    f.parent_id
+    f.place
+    f.object_order
+    f.hold_val
+    f.date_val
+    f.short_val
+    f.blob_val
+    f.active
+);
 
-use constant FIELDS => qw(name
-                          key_name
-                          description
-                          element_data_id
-                          object_instance_id
-                          parent_id
-                          place
-                          object_order
-                          _hold_val
-                          _date_val
-                          _short_val
-                          _blob_val
-                          _active);
+my @SEL_FIELDS = qw(
+    id
+    name
+    key_name
+    description
+    _autopopulated
+    _multiple
+    max_length
+    sql_type
+    field_type_widget
+    element_data_id
+    object_instance_id
+    parent_id
+    place
+    object_order
+    _hold_val
+    _date_val
+    _short_val
+    _blob_val
+    _active
+);
+
+my @COLS = qw(
+    element_data__id
+    object_instance_id
+    parent_id
+    place
+    object_order
+    hold_val
+    date_val
+    short_val
+    blob_val
+    active
+);
+
+my @FIELDS = qw(
+    element_data_id
+    object_instance_id
+    parent_id
+    place
+    object_order
+    _hold_val
+    _date_val
+    _short_val
+    _blob_val
+    _active
+);
 
 #==============================================================================#
 # Fields                               #
@@ -123,22 +165,20 @@ use constant FIELDS => qw(name
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-    Bric::register_fields(
-          {
-           # Public Fields
-
-           # reference to the asset type data object
-           element_data_id    => Bric::FIELD_RDWR,
-
-           # Private Fields
-           _hold_val          => Bric::FIELD_NONE,
-           _active            => Bric::FIELD_NONE,
-           _date_val          => Bric::FIELD_NONE,
-           _short_val         => Bric::FIELD_NONE,
-           _blob_val          => Bric::FIELD_NONE,
-           _element_obj       => Bric::FIELD_NONE,
-           _sql_type          => Bric::FIELD_NONE,
-          });
+    Bric::register_fields({
+        element_data_id   => Bric::FIELD_RDWR,
+        sql_type          => Bric::FIELD_READ,
+        field_type_widget => Bric::FIELD_READ,
+        max_length        => Bric::FIELD_READ,
+        _autopopulated    => Bric::FIELD_NONE,
+        _multiple         => Bric::FIELD_NONE,
+        _hold_val         => Bric::FIELD_NONE,
+        _active           => Bric::FIELD_NONE,
+        _date_val         => Bric::FIELD_NONE,
+        _short_val        => Bric::FIELD_NONE,
+        _blob_val         => Bric::FIELD_NONE,
+        _element_obj      => Bric::FIELD_NONE,
+    });
 }
 
 #==============================================================================#
@@ -196,51 +236,38 @@ B<Notes:> NONE.
 =cut
 
 sub new {
-    my ($self, $init) = @_;
+    my ($class, $init) = @_;
 
     # check active and object
     $init->{_active} = !exists $init->{active} ? 1
       : delete $init->{active} ? 1 : 0;
     $init->{_hold_val} = delete $init->{hold_val} ? 1 : 0;
+    $init->{place} ||= 0;
 
-    $init->{'place'} ||= 0;
-
-    my $obj = delete $init->{'object'};
-    if ($obj) {
-        $init->{'object_instance_id'} = $obj->get_id();
-        my $class = ref $obj;
-
-        if ($class eq 'Bric::Biz::Asset::Business::Media') {
-            $init->{'object_type'} = 'media';
-        } elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
-            $init->{'object_type'} = 'story';
-        } else {
-            my $err_msg = 'Object of type $class not allowed';
-            throw_gen(error => $err_msg);
-        }
+    if (my $doc = delete $init->{object}) {
+        $init->{object_instance_id} = $doc->get_version_id;
+        $init->{object_type}        = $doc->key_name;
+    } else {
+        throw_gen 'Cannot create without object type.'
+            unless $init->{object_type}
     }
 
-    if ($init->{'element_data'}) {
-        my $atd = delete $init->{'element_data'};
-
-        $init->{'element_data_id'} = $atd->get_id();
-        $init->{'name'}            = $atd->get_meta('html_info', 'disp')
-          || $atd->get_key_name;
-        $init->{'key_name'}        = $atd->get_key_name();
-        $init->{'description'}     = $atd->get_description();
-        $init->{'_element_obj'}    = $atd;
+    my $atd = delete $init->{element_data};
+    if ($atd) {
+        $init->{element_data_id}   = $atd->get_id;
+        $init->{name}              = $atd->get_name;
+        $init->{key_name}          = $atd->get_key_name;
+        $init->{description}       = $atd->get_description;
+        $init->{sql_type}          = $atd->get_sql_type;
+        $init->{field_type_widget} = $atd->get_field_type;
+        $init->{is_autopopulated}  = $atd->get_autopopulated;
+        $init->{is_multiple}       = $atd->get_multiple;
+        $init->{max_length}        = $atd->get_max_length;
+        $init->{_element_obj}      = $atd;
     }
 
-    unless ($init->{'object_type'}) {
-        my $err_msg = "Required parameter 'object_type' missing";
-        throw_gen(error => $err_msg);
-    }
-
-    $self = bless {}, $self unless ref $self;
-    $self->SUPER::new($init);
-
-    $self->_set__dirty(1);
-
+    my $self = $class->SUPER::new($init);
+    $self->set_value($atd->get_default_val) if $atd;
     return $self;
 }
 
@@ -293,49 +320,15 @@ sub lookup {
     return $self if $self;
 
     # Check for the proper args
-    throw_gen "Missing required Parameter 'id'"
-        unless defined $param->{'id'};
-    throw_gen "Missing required Parameter 'object_type' or 'object'"
-        unless $param->{'object'} || $param->{obj} || $param->{'object_type'};
+    throw_gen 'Missing required parameter "object" or "id" and "object_type"'
+        unless $param->{object} || $param->{obj}
+            || ($param->{id} || $param->{object_type});
 
-    # Determine the short name for this object.
-    my $short;
-    if (my $obj = $param->{'obj'} || $param->{object}) {
-        my $obj_class = ref $obj;
+    my $elems = _do_list($class, $param, undef);
 
-        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-            $short = 'story';
-        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
-            $short = 'media';
-        } else {
-            throw_gen 'Improper type of object passed to lookup';
-        }
-    } else {
-        $short = $param->{'object_type'};
-    }
-
-    # Determine the table name given the short name for this object.
-    my $table = _get_table_name($short);
-
-    my @d;
-    my $sql    = 'SELECT '.join(', ', 'id', COLS)." FROM $table WHERE id=?";
-    my $select = prepare_ca($sql, undef);
-
-    execute($select, $param->{'id'});
-    bind_columns($select, \@d[0 .. (scalar COLS)]);
-    fetch($select);
-
-    $self = bless {}, $class;
-
-    $self->_set(['id', FIELDS], [@d]);
-    $self->SUPER::new;
-
-    # Make sure the object type is set.
-    $self->_set(['object_type'], [$short]);
-
-    $self->_set__dirty(0);
-
-    return $self->cache_me;
+    # Throw an exception if we looked up more than one site.
+    throw_da "Too many $class objects found" if @$elems > 1;
+    return $elems->[0];
 }
 
 ################################################################################
@@ -361,27 +354,29 @@ unless C<object> is specified.
 
 The ID of a story or data object with wich the data elements are associated.
 Can only be used if C<object_type> is also specified and C<object> is not
-specified.
+specified. May use C<ANY> for a list of possible values.
 
 =item name
 
 The name of the data elements. Since the SQL C<LIKE> operator is used with
-this search parameter, SQL wildcards can be used.
+this search parameter, SQL wildcards can be used. May use C<ANY> for a list of
+possible values.
 
 =item key_name
 
 The key name of the data elements. Since the SQL C<LIKE> operator is used with
-this search parameter, SQL wildcards can be used.
+this search parameter, SQL wildcards can be used. May use C<ANY> for a list of
+possible values.
 
 =item parent_id
 
 The ID of the container element that is the parent element of the data
-elements.
+elements. May use C<ANY> for a list of possible values.
 
 =item element_data_id
 
 The ID of the Bric::Biz::AssetType::Parts::Data object that specifies the
-structure of the data elements.
+structure of the data elements. May use C<ANY> for a list of possible values.
 
 =item active
 
@@ -422,7 +417,7 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -482,34 +477,35 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $atd = $data->get_element_data_obj
+=item $field_type = $data->get_field_type
+
+=item $field_type = $data->get_field_type
 
 Returns the Bric::Biz::AssetType::Parts::Data object that defines the
-structure of this data element.
+structure of this field.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_element_data_obj> is the deprecated form.
 
 =cut
 
-sub get_element_data_obj {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty;
+sub get_field_type {
+    my $self = shift;
     my $atd   = $self->_get('_element_obj');
+    return $atd if $atd;
 
-    unless ($atd) {
-        my $atd_id = $self->_get('element_data_id');
-        $atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
-
-        $self->_set(['_element_obj'], [$atd]);
-        $self->_set__dirty($dirty);
-    }
-
+    my $dirty = $self->_get__dirty;
+    my $atd_id = $self->_get('element_data_id');
+    $atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
+    $self->_set(['_element_obj'], [$atd]);
+    $self->_set__dirty($dirty);
     return $atd;
 }
+
+sub get_element_data_obj { shift->get_field_type }
 
 ################################################################################
 
@@ -545,9 +541,11 @@ sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 
+=item $data->set_value($value)
+
 =item $data->set_data($value)
 
-Sets the value of the data element.
+Sets the value of the field.
 
 B<Throws:> NONE.
 
@@ -557,23 +555,30 @@ B<Notes:> NONE.
 
 =cut
 
-sub set_data {
+sub set_value {
     my ($self, $value) = @_;
-    my $element  = $self->get_element_data_obj;
+
+    # XXX Add code to validate values against options?
 
     # OK this is just an attribute
-    my $sql_type  = $self->_get_sql_type;
+    my $sql_type  = $self->get_sql_type;
     $value = db_date($value) if $sql_type eq 'date';
 
-    my $old_val = $self->_get('_'.$sql_type.'_val');
+    my $old_val = $self->_get("_$sql_type\_val");
     return $self unless (defined $value && not defined $old_val)
-      || (not defined $value && defined $old_val)
-      || ($value ne $old_val);
+                     || (not defined $value && defined $old_val)
+                     || ($value ne $old_val);
 
-    $self->_set(['_'.$sql_type.'_val'] => [$value]);
+    return $self->_set(["_$sql_type\_val"] => [$value]);
 }
 
+sub set_data { shift->set_value(@_) }
+
 ################################################################################
+
+=item my $value = $value->get_value
+
+=item my $value = $value->get_value($format)
 
 =item my $value = $data->get_data
 
@@ -600,13 +605,108 @@ you.
 
 =cut
 
-sub get_data {
+sub get_value {
     my ($self, $format) = @_;
-    my $sql_type = $self->_get_sql_type or return undef;
+    my $sql_type = $self->get_sql_type or return undef;
     return $sql_type eq 'date'
            ? local_date(scalar $self->_get('_date_val'), $format)
-           : scalar $self->_get('_'.$sql_type.'_val');
+           : scalar $self->_get("_$sql_type\_val");
 }
+
+sub get_data { shift->get_value(@_) }
+
+##############################################################################
+
+=item my $is_autopopulated = $data->is_autopopulated
+
+Returns true if the field's value is autopopulate, and false if it is not.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub is_autopopulated {
+    my $self = shift;
+    return $self if $self->_get('_autopopulated');
+    return;
+}
+
+##############################################################################
+
+=item my $is_multiple = $data->is_multiple
+
+Returns true if the field is allowed to have multiple values and false if it
+is not.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub is_multiple {
+    my $self = shift;
+    return $self if $self->_get('_multiple');
+    return;
+}
+
+##############################################################################
+
+=item my $get_max_length = $data->get_max_length
+
+Returns the maximum allowed length of the field's value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_max_length {
+    my $self = shift;
+    return $self if $self->_get('max_length');
+    return;
+}
+
+##############################################################################
+
+=item my $sql_type = $data->get_sql_type
+
+Returns the SQL type of the field. This value corresponds to the C<sql_type>
+attribute of the Bric::Biz::AssetType::Parts::Data object on which the field
+is based.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+##############################################################################
+
+=item my $field_type_widgetr = $data->get_field_type_widget
+
+Returns the string indicating the widget to use to display the field. This
+value corresponds to the C<field_type> attribute of the
+Bric::Biz::AssetType::Parts::Data object on which the field is based.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
 
 ################################################################################
 
@@ -624,9 +724,7 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_clone {
-    my ($self) = @_;
-    $self->_set(['id'], [undef]);
-    return $self;
+    shift->_set(['id'], [undef]);
 }
 
 ################################################################################
@@ -659,12 +757,6 @@ B<Notes:> NONE.
 
 =cut
 
-sub is_autopopulated {
-    my ($self) = @_;
-    my $at = $self->get_element_data_obj;
-    return $self if $at->get_autopopulated;
-}
-
 ###############################################################################
 
 =item $data->lock_val
@@ -681,8 +773,7 @@ B<Notes:> NONE.
 =cut
 
 sub lock_val {
-    my ($self) = @_;
-    $self->_set(['_hold_val'], [1]);
+    shift->_set(['_hold_val'], [1]);
 }
 
 ###############################################################################
@@ -700,8 +791,7 @@ B<Notes:> NONE.
 =cut
 
 sub unlock_val {
-    my ($self) = @_;
-    $self->_set(['_hold_val'], [0]);
+    shift->_set(['_hold_val'], [0]);
 }
 
 ###############################################################################
@@ -719,7 +809,7 @@ B<Notes:> NONE.
 =cut
 
 sub is_locked {
-    my ($self) = @_;
+    my $self = shift;
     return unless $self->_get('_hold_val');
     return $self;
 }
@@ -744,12 +834,12 @@ sub save {
     return unless $self->_get__dirty;
 
     if ($self->_get('id')) {
-        $self->_do_update();
+        $self->_do_update;
     } else {
-        $self->_do_insert();
+        $self->_do_insert;
     }
 
-    $self->_set__dirty(0);
+    return $self->_set__dirty(0);
 }
 
 ################################################################################
@@ -792,78 +882,83 @@ B<Notes:> NONE.
 =cut
 
 sub _do_list {
-    my ($class, $param, $ids) = @_;
+    my ($class, $params, $ids_only) = @_;
 
-    unless ($param->{'object'} || $param->{'object_type'}) {
-        my $err_msg = "Improper arguments for method 'list'";
-        throw_gen(error => $err_msg);
-    }
+    my ($obj_type, @params);
+    my @wheres = ('f.element_data__id = ft.id');
 
-    # Get the object type and object ID.
-    my ($obj_type,$obj_id);
-    if ($param->{'object'}) {
-        my $obj_class = ref $param->{'object'};
-
-        # Get the object type.
-        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-            $obj_type = 'story';
-        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
-            $obj_type = 'media';
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'object') {
+            $obj_type = $v->key_name;
+            push @wheres,
+                any_where $v->get_version_id, 'f.object_instance_id = ?', \@params;
         }
 
-        $param->{'object_instance_id'} = $param->{'object'}->get_version_id();
-    } else {
-        $obj_type = $param->{'object_type'};
-    }
-
-    # Get the table name
-    my $table = _get_table_name($obj_type);
-
-    # Build up a where clause if necessary.
-    my (@where, @bind);
-    foreach my $f (qw(object_instance_id active name parent_id)) {
-        next unless exists $param->{$f};
-        push @where, "$f = ?";
-        push @bind, $param->{$f};
-    }
-
-    foreach my $f (qw(name key_name)) {
-        next unless exists $param->{$f};
-        push @where, "$f LIKE ?";
-        push @bind, lc $param->{$f};
-    }
-
-    if (exists $param->{element_data_id}) {
-        push @where, "element_data__id = ?";
-        push @bind, $param->{element_data_id};
-    }
-
-    my $sql = 'SELECT id';
-
-    # Add the rest of the columns unless we just want IDs
-    $sql .= ','.join(',', COLS) unless $ids;
-
-    $sql .= " FROM $table";
-    $sql .= ' WHERE '.join(' AND ', @where) if @where;
-
-    ## PREPARE AND EXECUTE THE SQL ##
-    my $select = prepare_ca($sql, undef);
-    if ($ids) {
-        my $return = col_aref($select, @bind);
-        return wantarray ? @{ $return } : $return;
-    } else {
-        my @objs;
-        execute($select, @bind);
-        my @d;
-        bind_columns($select,\@d[0 .. scalar(COLS)]);
-        while (fetch($select)) {
-            my $self = bless {}, $class;
-            $self->_set(['id', FIELDS, 'object_type'], [@d, $obj_type]);
-            $self->_set__dirty(0);
-            push @objs, $self->cache_me;
+        elsif ($k eq 'object_type') {
+            $obj_type = $v;
         }
-        return wantarray ? @objs : \@objs;
+
+        elsif ($k eq 'object_instance_id') {
+            push @wheres, any_where $v, 'f.object_instance_id = ?', \@params;
+        }
+
+        elsif ($k eq 'id') {
+            push @wheres, any_where $v, 'f.id = ?', \@params;
+        }
+
+        elsif ($k eq 'active') {
+            push @wheres, 'f.active = ?';
+            push @params, $v ? 1 : 0;
+        }
+
+        elsif ($k eq 'parent_id') {
+            push @wheres,  any_where($v, 'f.parent_id = ?', \@params);
+        }
+
+        elsif ($k eq 'element_data_id') {
+            push @wheres, any_where $v, 'f.element_data__id = ?', \@params;
+        }
+
+        elsif ($k eq 'key_name' || $k eq 'name' || $k eq 'description') {
+            push @wheres, any_where $v, "LOWER(ft.$k) LIKE LOWER(?)", \@params;
+        }
     }
+
+    throw_gen 'Missing required parameter "object" or "object_type"'
+        unless $obj_type;
+
+    my $tables = "$obj_type\_data_tile f, at_data ft";
+
+    my ($qry_cols, $order) = $ids_only
+        ? ('DISTINCT f.id', 'f.id')
+        : (join(', ', @SEL_COLS), 'f.object_instance_id, f.place');
+    my $wheres = @wheres ? 'WHERE  ' . join(' AND ', @wheres) : '';
+
+
+    my $sel = prepare_c(qq{
+        SELECT $qry_cols
+        FROM   $tables
+        $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    if ($ids_only) {
+        my $ids = col_aref($sel, @params);
+        return wantarray ? @$ids : $ids;
+    }
+
+    my @objs;
+    execute($sel, @params);
+    my @d;
+    bind_columns( $sel, \@d[ 0..$#SEL_COLS ] );
+    while ( fetch($sel) ) {
+        my $self = $class->SUPER::new;
+        $self->_set( [ 'object_type', @SEL_FIELDS ] => [$obj_type, @d] );
+        $self->_set__dirty(0);
+        push @objs, $self->cache_me;
+    }
+    return wantarray ? @objs : \@objs;
 }
 
 ################################################################################
@@ -896,18 +991,19 @@ B<Notes:> NONE.
 
 sub _do_insert {
     my $self = shift;
-    my $table        = $self->_get_table_name;
-    my $next_key_sql = next_key($table);
 
-    my $sql = "INSERT INTO $table (id,".join(',', COLS) . ') '.
-              "VALUES ($next_key_sql,".join(',', ('?') x COLS).')';
+    my $table = $self->get_object_type . '_data_tile';
 
-    my $insert = prepare_c($sql, undef);
-    execute($insert, ($self->_get(FIELDS)));
+    my $value_cols = join ', ', ('?') x @COLS;
+    my $ins_cols   = join ', ', @COLS;
 
-    $self->_set(['id'], [last_key($table)]);
+    my $ins = prepare_c(qq{
+        INSERT INTO $table ($ins_cols)
+        VALUES ($value_cols)
+    }, undef);
+    execute($ins, $self->_get(@FIELDS) );
 
-    return $self;
+    return $self->_set( ['id'] => [last_key($table)] );
 }
 
 ################################################################################
@@ -933,76 +1029,19 @@ B<Notes:> NONE.
 =cut
 
 sub _do_update {
-    my ($self) = @_;
-    my $table = $self->_get_table_name;
+    my $self = shift;
 
-    my $sql = "UPDATE $table SET ".join(',', map {"$_=?"} COLS).' WHERE id=?';
-    my $update = prepare_c($sql, undef);
+    my $table    = $self->get_object_type . '_data_tile';
+    my $set_cols = join ' = ?, ', @COLS;
 
-    execute($update, ($self->_get( FIELDS )), $self->_get('id') );
+    my $upd = prepare_c(qq{
+        UPDATE $table
+        SET    $set_cols = ?
+        WHERE  id = ?
+    }, undef);
 
+    execute($upd, $self->_get(@FIELDS, 'id'));
     return $self;
-}
-
-################################################################################
-
-=item $attr_obj = $self->_get_sql_type
-
-Returns the sql type for the value of this data element.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_sql_type {
-    my $self = shift;
-    my $dirty    = $self->_get__dirty;
-    my $sql_type = $self->_get('_sql_type');
-
-    unless ($sql_type) {
-        my $at    = $self->get_element_data_obj();
-        $sql_type = $at->get_sql_type();
-
-        $self->_set(['_sql_type'], [$sql_type]);
-        $self->_set__dirty($dirty);
-    }
-
-    return $sql_type;
-}
-
-################################################################################
-
-=item $name = $self->_get_table_name()
-
-=item $name = _get_table_name($object_type);
-
-Returns the name of the table this data element uses. This method can act as a
-class or instance method depending on how it's called.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _get_table_name {
-    my $self = shift;
-    my $type = ref $self ? $self->get_object_type : $self;
-
-    if ($type eq 'story') {
-        return S_TABLE;
-    } elsif ($type eq 'media') {
-        return M_TABLE;
-    } else {
-        my $err_msg = "Object of type '$type' not allowed";
-        throw_gen(error => $err_msg);
-    }
 }
 
 ################################################################################
@@ -1016,9 +1055,11 @@ __END__
 
 NONE
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Michael Soderstrom <miraso@pacbell.net>
+
+Refactored by David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 

@@ -798,18 +798,22 @@ The XSD source:
                      <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
                        <xs:complexType>
                          <xs:sequence>
-                           <xs:element name="type" type="xs:string"/>
                            <xs:element name="key_name" type="xs:string"/>
-                           <xs:element name="label" type="xs:string"/>
+                           <xs:element name="name" type="xs:string"/>
+                           <xs:element name="description" type="xs:string"/>
                            <xs:element name="required" type="xs:boolean"/>
                            <xs:element name="repeatable" type="xs:boolean"/>
-                           <xs:element name="default" type="xs:string" minOccurs="0"/>
-                           <xs:element name="options" type="xs:string" minOccurs="0"/>
+                           <xs:element name="autopopulated" type="xs:boolean"/>
                            <xs:element name="multiple" type="xs:boolean" minOccurs="0"/>
-                           <xs:element name="size" type="xs:int" minOccurs="0"/>
                            <xs:element name="max_size" type="xs:int" minOccurs="0"/>
+                           <xs:element name="field_type" type="xs:string"/>
+                           <xs:element name="default_val" type="xs:string"/>
+                           <xs:element name="options" type="xs:string" minOccurs="0"/>
+                           <xs:element name="length" type="xs:int" minOccurs="0"/>
                            <xs:element name="rows" type="xs:int" minOccurs="0"/>
                            <xs:element name="cols" type="xs:int" minOccurs="0"/>
+                           <xs:element name="precision" type="xs:int" minOccurs="0"/>
+                          <xs:element name="active" type="xs:boolean"/>
                          </xs:sequence>
                        </xs:complexType>
                      </xs:element>

@@ -304,24 +304,23 @@ sub new {
     my $pkg = $self->get_biz_class;
 
     # If a package was passed in then find the autopopulated field names.
-    if ($pkg && UNIVERSAL::isa($pkg, 'Bric::Biz::Asset::Business::Media')) {
 	my $i = 0;
-	foreach my $name ($pkg->autopopulated_fields) {
+    if ($pkg && UNIVERSAL::isa($pkg, 'Bric::Biz::Asset::Business::Media')) {
+        foreach my $name ($pkg->autopopulated_fields) {
             my $key_name = lc $name;
             $key_name =~ y/a-z0-9/_/cs;
-	    my $atd = $self->new_data({
-            key_name    => $key_name,
-            description => "Autopopulated $name field.",
-            required    => 1,
-            sql_type    => 'short',
-            autopopulated => 1
-        });
-	    $atd->set_attr('html_info', '');
-	    $atd->set_meta('html_info', 'disp', $name);
-	    $atd->set_meta('html_info', 'type', 'text');
-	    $atd->set_meta('html_info', 'length', 32);
-	    $atd->set_meta('html_info', 'pos', ++$i);
-	}
+            my $atd = $self->new_data({
+                key_name      => $key_name,
+                name          => $name,
+                description   => "Autopopulated $name field.",
+                required      => 1,
+                sql_type      => 'short',
+                autopopulated => 1,
+                field_type    => 'text',
+                length        => 32,
+                place         => ++$i,
+            });
+        }
     }
 
     # Set the dirty bit for this new object.

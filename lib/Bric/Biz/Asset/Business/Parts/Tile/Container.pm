@@ -58,7 +58,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::AssetType;
 use Bric::App::Util;
-use Bric::Util::Fault qw(throw_gen throw_invalid);
+use Bric::Util::Fault qw(throw_gen throw_invalid throw_da);
 use URI;
 use List::Util qw(reduce first);
 use Text::LevenshteinXS;
@@ -83,31 +83,59 @@ use base qw( Bric::Biz::Asset::Business::Parts::Tile );
 use constant DEBUG => 0;
 
 use constant S_TABLE => 'story_container_tile';
-
 use constant M_TABLE => 'media_container_tile';
 
-use constant COLS => qw(name
-                        key_name
-                        description
-                        element__id
-                        object_instance_id
-                        parent_id
-                        place
-                        object_order
-                        related_story__id
-                        related_media__id
-                        active);
-use constant FIELDS => qw(name
-                          key_name
-                          description
-                          element_type_id
-                          object_instance_id
-                          parent_id
-                          place
-                          object_order
-                          related_story_id
-                          related_media_id
-                          _active);
+my @COLS = qw(
+    element__id
+    object_instance_id
+    parent_id
+    place
+    object_order
+    related_story__id
+    related_media__id
+    active
+);
+
+my @FIELDS = qw(
+    element_type_id
+    object_instance_id
+    parent_id
+    place
+    object_order
+    related_story_id
+    related_media_id
+    _active
+);
+
+my @SEL_COLS = qw(
+    e.id
+    e.element__id
+    et.name
+    et.key_name
+    et.description
+    e.object_instance_id
+    e.parent_id
+    e.place
+    e.object_order
+    e.related_story__id
+    e.related_media__id
+    e.active
+);
+
+my @SEL_FIELDS = qw(
+    id
+    element_type_id
+    name
+    key_name
+    description
+    object_instance_id
+    parent_id
+    place
+    object_order
+    related_story_id
+    related_media_id
+    _active
+);
 
 #==============================================================================#
 # Fields                               #
@@ -126,31 +154,24 @@ use constant FIELDS => qw(name
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
-        Bric::register_fields({
-                        # Public Fields
+    Bric::register_fields({
+        # Public Fields
+        element_type_id    => Bric::FIELD_RDWR,
+        related_story_id   => Bric::FIELD_RDWR,
+        related_media_id   => Bric::FIELD_RDWR,
 
-                        # reference to the asset type data object
-                        element_type_id       => Bric::FIELD_RDWR,
-                        related_story_id      => Bric::FIELD_RDWR,
-                        related_media_id      => Bric::FIELD_RDWR,
-
-                        # Private Fields
-                        _del_subelems         => Bric::FIELD_NONE,
-                        _subelems             => Bric::FIELD_NONE,
-                        _update_subelems      => Bric::FIELD_NONE,
-
-                        _update_contained     => Bric::FIELD_NONE,
-
-                        _active               => Bric::FIELD_NONE,
-                        _object               => Bric::FIELD_NONE,
-                        _element_obj          => Bric::FIELD_NONE,
-                        _related_instance_obj => Bric::FIELD_NONE,
-                        _related_media_obj    => Bric::FIELD_NONE,
-                        _prepare_clone        => Bric::FIELD_NONE,
-                        _delete               => Bric::FIELD_NONE
-
-
-        });
+        # Private Fields
+        _del_subelems      => Bric::FIELD_NONE,
+        _subelems          => Bric::FIELD_NONE,
+        _update_contained  => Bric::FIELD_NONE,
+        _active            => Bric::FIELD_NONE,
+        _object            => Bric::FIELD_NONE,
+        _element_obj       => Bric::FIELD_NONE,
+        _related_story_obj => Bric::FIELD_NONE,
+        _related_media_obj => Bric::FIELD_NONE,
+        _prepare_clone     => Bric::FIELD_NONE,
+        _delete            => Bric::FIELD_NONE,
+    });
 }
 
 #==============================================================================#
@@ -227,53 +248,47 @@ B<Notes:> NONE.
 =cut
 
 sub new {
-    my ($self, $init) = @_;
+    my ($class, $init) = @_;
 
     # check active and object
-    $init->{'_active'} = (exists $init->{'active'}) ? $init->{'active'} : 1;
-    delete $init->{'active'};
-    $init->{'place'}  ||= 0;
-    $init->{'object_order'} ||=1;
-    $self = bless {}, $self unless ref $self;
+    $init->{_active} = (exists $init->{active}) ? delete $init->{active} : 1;
+    $init->{place}        ||= 0;
+    $init->{object_order} ||=1;
 
-    if ($init->{'object'}) {
-        $init->{'object_instance_id'} = $init->{'object'}->get_version_id();
-        my $class = ref $init->{'object'};
-        if ($class =~ /^Bric::Biz::Asset::Business::Media/) {
-            $init->{'object_type'} = 'media';
-        } elsif ($class eq 'Bric::Biz::Asset::Business::Story') {
-            $init->{'object_type'} = 'story';
-        } else {
-            throw_gen(error => "Object of type $class not allowed");
-        }
-        $init->{'_object'} = delete $init->{'object'};
+    # Find the document or document type.
+    if (my $doc = delete $init->{object}) {
+        $init->{object_instance_id} = $doc->get_version_id;
+        $init->{object_type}        = $doc->key_name;
+        $init->{_object}            = $doc;
+    } else {
+        throw_gen 'Cannot create without object type.'
+            unless $init->{object_type}
     }
 
-    if ( $init->{element_type} || $init->{element} ) {
-        $init->{_element_obj} = delete $init->{element_type}
-                             || delete $init->{element};
-        $init->{element_type_id} = $init->{_element_obj}->get_id;
+    # Check the document type.
+    throw_gen "Object of type $class not allowed"
+        unless $init->{object_type} eq 'story'
+            || $init->{object_type} eq 'media';
+
+    # Set up the element type.
+    if (my $type = delete $init->{element_type} || delete $init->{element} ) {
+        $init->{_element_obj} = $type;
+        $init->{element_type_id} = $type->get_id;
     } else {
         $init->{_element_obj} = Bric::Biz::AssetType->lookup({
             'id' => $init->{element_type_id} ||= delete $init->{element_id}
         });
     }
 
-    $init->{'name'}        = $init->{'_element_obj'}->get_name();
-    $init->{'key_name'}    = $init->{'_element_obj'}->get_key_name();
-    $init->{'description'} = $init->{'_element_obj'}->get_description();
-    $self->SUPER::new($init);
+    # Alias element type attributes and make it so..
+    $init->{name}        = $init->{_element_obj}->get_name;
+    $init->{key_name}    = $init->{_element_obj}->get_key_name;
+    $init->{description} = $init->{_element_obj}->get_description;
+    my $self = $class->SUPER::new($init);
 
-    # prepopulate from the asset type object
-    my $parts = $init->{'_element_obj'}->get_data();
-    unless ($init->{'object_type'}) {
-        throw_gen(error => "Cannot create with out object type.");
-    }
-
-    foreach (@$parts) {
-        if ($_->get_required()) {
-            $self->add_data($_);
-        }
+    # Prepopulate from the asset type object
+    foreach my $data ($init->{_element_obj}->get_data) {
+        $self->add_data($data) if $data->get_required;
     }
 
     $self->_set__dirty(1);
@@ -328,40 +343,15 @@ sub lookup {
     my $self = $class->cache_lookup($param);
     return $self if $self;
 
-    # bless the new object
-    $self = bless {}, $class;
-
     # Check for the proper args
-    throw_gen(error => "Missing required Parameter 'id'")
-        unless defined $param->{'id'};
-    throw_gen(error => "Missing required Parameter 'object_type' or 'object'")
-        unless $param->{'object'} || $param->{'object_type'};
+    throw_gen 'Missing required parameter "object" or "id" and "object_type"'
+        unless $param->{object} || ($param->{id} || $param->{object_type});
 
-    if ($param->{object}) {
-        # get the package to determine the object field
-        my $obj_class = ref $param->{object};
+    my $elems = _do_list($class, $param, undef);
 
-        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-            # set object type to story and add the object
-            $self->_set( { object_type => 'story',
-                           _object     => $param->{object} });
-
-        } elsif ($obj_class eq 'Bric::Biz::Asset::Business::Media') {
-            $self->_set( { object_type => 'media',
-                           _object     => $param->{object} });
-        } else {
-            throw_gen(error => 'Improper type of object passed to lookup');
-        } # end the if obj block
-    } else {
-        $self->_set( { 'object_type' => $param->{'object_type'} } );
-    }
-
-    # Call private method to populate the object; return undef if it fails
-    return unless $self->_select_container('id=?', $param->{'id'});
-
-    $self->SUPER::new;
-    $self->_set__dirty(0);
-    return $self;
+    # Throw an exception if we looked up more than one site.
+    throw_da "Too many $class objects found" if @$elems > 1;
+    return $elems->[0];
 }
 
 ################################################################################
@@ -386,29 +376,37 @@ Required unless C<object> is specified.
 =item object_instance_id
 
 The ID of a story or container object with wich the container elements are
-associated. Can only be used if C<object_type> is also specified and
-C<object> is not specified.
+associated. Can only be used if C<object_type> is also specified and C<object>
+is not specified. May use C<ANY> for a list of possible values.
 
 =item name
 
-The name of the container elements. Since the SQL C<LIKE> operator is used with
-this search parameter, SQL wildcards can be used.
+The name of the container elements. Since the SQL C<LIKE> operator is used
+with this search parameter, SQL wildcards can be used. May use C<ANY> for a
+list of possible values.
 
 =item key_name
 
-The key name of the container elements. Since the SQL C<LIKE> operator is used with
-this search parameter, SQL wildcards can be used.
+The key name of the container elements. Since the SQL C<LIKE> operator is used
+with this search parameter, SQL wildcards can be used. May use C<ANY> for a
+list of possible values.
+
+=item description
+
+The description of the container elements. Since the SQL C<LIKE> operator is
+used with this search parameter, SQL wildcards can be used. May use C<ANY> for
+a list of possible values.
 
 =item parent_id
 
 The ID of the container element that is the parent element of the container
 elements. Pass C<undef> to this parameter to specify that the C<parent_id>
-must be C<NULL>.
+must be C<NULL>. May use C<ANY> for a list of possible values.
 
 =item element_type_id
 
 The ID of the Bric::Biz::AssetType object that specifies the structure of the
-container elements.
+container elements. May use C<ANY> for a list of possible values.
 
 =item active
 
@@ -427,7 +425,7 @@ B<Notes:> NONE
 
 sub list {
     my ($class, $param) = @_;
-    _do_list($class,$param,undef);
+    _do_list($class, $param, undef);
 }
 
 ################################################################################
@@ -620,16 +618,15 @@ B<Notes:> NONE.
 
 sub set_related_story {
     my ($self, $story) = @_;
-    my $story_id;
 
     if (ref $story) {
-        $story_id = $story->get_id;
-        $self->_set(['_related_intance_obj'], [$story]);
-    } else {
-        $story_id = $story;
+        return $self->_set(
+            [ qw(related_story_obj related_story_id) ],
+            [ $story,              $story->get_id    ]
+        );
     }
 
-    $self->_set(['related_story_id'], [$story_id]);
+    return $self->_set(['related_story_id'] => [$story]);
 }
 
 ################################################################################
@@ -649,19 +646,19 @@ B<Notes:> NONE.
 
 sub get_related_story {
     my $self = shift;
-    my $dirty = $self->_get__dirty;
-    my ($rel_id, $rel_obj) = $self->_get('related_story_id',
-                                         '_related_instance_obj');
+    my ($rel_id, $rel_obj) = $self->_get(qw(
+        related_story_id
+        _related_story_obj
+    ));
 
     # Return with nothing if there is no related instance ID
     return undef unless $rel_id;
 
-    # Clear the object cache if the ID has changed.
-    $rel_obj = undef if $rel_obj and ($rel_obj->get_id != $rel_id);
-
-    unless ($rel_obj) {
-        $rel_obj = Bric::Biz::Asset::Business::Story->lookup({'id' => $rel_id});
-        $self->_set(['_related_instance_obj'], [$rel_obj]) if $rel_obj;
+    # Retrieve the story if it isn't cached or the related ID has changed.
+    unless ($rel_obj && $rel_obj->get_id == $rel_id) {
+        my $dirty = $self->_get__dirty;
+        $rel_obj = Bric::Biz::Asset::Business::Story->lookup({ id => $rel_id });
+        $self->_set(['_related_story_obj'] => [$rel_obj]);
         $self->_set__dirty($dirty);
     }
 
@@ -684,16 +681,15 @@ B<Notes:> NONE.
 
 sub set_related_media {
     my ($self, $media) = @_;
-    my $media_id;
 
     if (ref $media) {
-        $media_id = $media->get_id;
-        $self->_set(['_related_media_obj'], [$media]);
-    } else {
-        $media_id = $media;
+        return $self->_set(
+            [ qw(related_media_obj related_media_id) ],
+            [ $media,              $media->get_id    ]
+        );
     }
 
-    $self->_set(['related_media_id'], [$media_id]);
+    return $self->_set(['related_media_id'] => [$media]);
 }
 
 ################################################################################
@@ -712,22 +708,24 @@ B<Notes:> NONE.
 =cut
 
 sub get_related_media {
-    my ($self) = @_;
-    my $dirty = $self->_get__dirty;
-    my ($media_id, $media_obj) = $self->_get('related_media_id',
-                                             '_related_media_obj');
+    my $self = shift;
+    my ($rel_id, $rel_obj) = $self->_get(qw(
+        related_media_id
+        _related_media_obj
+    ));
 
-    return undef unless $media_id;
+    # Return with nothing if there is no related instance ID
+    return undef unless $rel_id;
 
-    # Clear the object cache if the IDs change.
-    $media_obj = undef if $media_obj and $media_obj->get_id != $media_id;
-
-    unless ($media_obj) {
-        $media_obj = Bric::Biz::Asset::Business::Media->lookup({id => $media_id});
-        $self->_set({'_related_media_obj' => $media_obj});
+    # Retrieve the media if it isn't cached or the related ID has changed.
+    unless ($rel_obj && $rel_obj->get_id == $rel_id) {
+        my $dirty = $self->_get__dirty;
+        $rel_obj = Bric::Biz::Asset::Business::Media->lookup({ id => $rel_id });
+        $self->_set(['_related_media_obj'] => [$rel_obj]);
         $self->_set__dirty($dirty);
     }
-    return $media_obj;
+
+    return $rel_obj;
 }
 
 ################################################################################
@@ -747,10 +745,10 @@ B<Notes:> C<get_element()> has been deprecated in favor of this method.
 
 sub get_element_type {
     my $self = shift;
-    my $dirty = $self->_get__dirty;
     my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_type_id');
 
     unless ($at_obj) {
+        my $dirty = $self->_get__dirty;
         $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
         $self->_set(['_element_obj'], [$at_obj]);
         $self->_set__dirty($dirty);
@@ -760,7 +758,10 @@ sub get_element_type {
 
 sub get_element {
     require Carp
-        && carp(__PACKAGE__ . '::get_element is deprecated. Use get_element_type() instead');
+        && carp(
+            __PACKAGE__, '::get_element is deprecated. ',
+            'Use get_element_type() instead'
+        );
     shift->get_element_type(@_);
 }
 
@@ -816,22 +817,15 @@ B<Notes:> NONE.
 
 sub get_possible_data {
     my ($self) = @_;
-    my $current = $self->get_elements();
+    my $current = $self->get_data_elements();
     my $at      = $self->get_element_type;
     my %at_info = map { $_->get_id => $_ } $at->get_data;
     my @parts;
 
-    foreach (@$current) {
-        # Skip container tiles
-        next if $_->is_container();
-
-        my $id  = $_->get_element_data_id();
-        my $atd = delete $at_info{$id};
-
-        next unless $atd;
-
+    for my $data (@$current) {
+        my $atd = delete $at_info{$data->get_element_data_id};
         # Add if this tile is repeatable.
-        push @parts, $atd if $atd->get_quantifier;
+        push @parts, $atd if $atd && $atd->get_quantifier;
     }
 
     # Add the container tiles (the only things remaining in this hash)
@@ -890,7 +884,7 @@ sub add_data {
         element_data       => $atd,
     });
 
-    $data_tile->set_data($data);
+    $data_tile->set_data($data) if defined $data;
     $self->add_tile($data_tile);
 
     # have to do this after add_tile() since add_tile() modifies place
@@ -1137,20 +1131,21 @@ sub get_elements {
     return wantarray ? () : [] unless $subelems || $self->get_id;
 
     unless ($subelems) {
+        my $type = $self->_get('object_type');
         my $cont = Bric::Biz::Asset::Business::Parts::Tile::Container->list({
             parent_id   => $self->get_id,
             active      => 1,
-            object_type => $self->_get('object_type')
+            object_type => $type,
         });
 
         my $data = Bric::Biz::Asset::Business::Parts::Tile::Data->list({
             parent_id   => $self->get_id,
             active      => 1,
-            object_type => $self->_get('object_type')
+            object_type => $type,
         });
 
         $subelems = [sort { $a->get_place <=> $b->get_place } (@$cont, @$data)];
-        $self->_set(['_subelems', '_update_subelems'], [$subelems, 0]);
+        $self->_set(['_subelems'] => [$subelems]);
         $self->_set__dirty($dirty);
     }
 
@@ -1195,38 +1190,35 @@ sub add_element {
     my $tiles = $self->get_elements() || [];
 
     # Die if an ID is passed rather than an object.
-    unless (ref $tile) {
-        my $msg = 'Must pass objects, not IDs';
-        throw_gen(error => $msg);
-    }
+    throw_gen 'Must pass element objects, not IDs'
+        unless ref $tile;
 
-    # Set the place for this part.  This will be updated when its added.
-    $tile->set_place(scalar (@$tiles));
+    # Set the place for this part. This will be updated when its added.
+    $tile->set_place(scalar @$tiles);
 
-    # Determine if this tile is a container.
-    my $is_cont = $tile->is_container;
-    # Get the apporopriate asset type ID.
-    my $at_id = $is_cont ? $tile->get_element_type_id()
-                         : $tile->get_element_data_id();
-
-    # Figure out how many tiles of the same type as the tile we're adding exist.
+    # Figure out how many existing tiles are the same type as we're adding.
     my $object_order = 1;
-    foreach (@$tiles) {
-        # Do an XOR test to make sure we deal with objects of the same type.
-        if ($_->is_container() && $is_cont) {
-            $object_order++ if $_->get_element_type_id      == $at_id;
-        } elsif (not $_->is_container && not $is_cont) {
-            $object_order++ if $_->get_element_data_id == $at_id;
+    if ($tile->is_container) {
+        my $et_id = $tile->get_element_type_id;
+        for my $sub (grep { $_->is_container } @$tiles) {
+            $object_order++ if $sub->get_element_type_id == $et_id;
         }
     }
 
-    # Start numbering at one.
+    else {
+        my $ft_id = $tile->get_element_data_id;
+        for my $sub (grep { !$_->is_container } @$tiles) {
+            $object_order++ if $sub->get_element_data_id == $ft_id;
+        }
+    }
+
+    # Set the object order.
     $tile->set_object_order($object_order);
 
     push @$tiles, $tile;
 
     # Update $self's new and deleted tiles lists.
-    $self->_set(['_subelems', '_update_subelems'], [$tiles, 1]);
+    $self->_set(['_subelems'] => [$tiles]);
 
     # We do not need to update the container object itself.
     $self->_set__dirty($dirty);
@@ -1280,22 +1272,24 @@ sub delete_elements {
 
     my $err_msg = 'Improper args to delete tiles';
 
-    foreach (@$tiles_arg) {
-        if (ref $_ eq 'HASH') {
+    for my $elem (@$tiles_arg) {
+        if (ref $elem eq 'HASH') {
             throw_gen(error => $err_msg)
-              unless (exists $_->{'id'} && exists $_->{'type'});
+              unless exists $elem->{id} && exists $elem->{type};
 
-            if ($_->{'type'} eq 'data') {
-                $del_data{$_->{'id'}} = undef;
-            } elsif ($_->{'type'} eq 'container') {
-                $del_cont{$_->{'id'}} = undef;
+            if ($elem->{'type'} eq 'data') {
+                $del_data{$elem->{'id'}} = undef;
+            } elsif ($elem->{'type'} eq 'container') {
+                $del_cont{$elem->{'id'}} = undef;
             } else {
                 throw_gen(error => $err_msg);
             }
-        } elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Data') {
-            $del_data{$_->get_id()} = undef;
-        } elsif (ref $_ eq 'Bric::Biz::Asset::Business::Parts::Tile::Container') {
-            $del_cont{$_->get_id()} = undef;
+        } elsif (ref $elem) {
+            if ($elem->is_container) {
+                $del_cont{$elem->get_id} = undef;
+            } else {
+                $del_data{$elem->get_id} = undef;
+            }
         } else {
             throw_gen(error => $err_msg);
         }
@@ -1350,9 +1344,10 @@ sub delete_elements {
         }
     }
 
-    $self->_set(['_subelems',  '_del_subelems', '_update_subelems'],
-                [$new_list, $del_tiles,   1]);
-    return $self;
+    return $self->_set(
+        ['_subelems',  '_del_subelems'],
+        [ $new_list,    $del_tiles ]
+    );
 }
 
 =item $container->delete_tiles(\@subelements)
@@ -1384,8 +1379,7 @@ sub prepare_clone {
         $e->prepare_clone;
     }
 
-    $self->_set(['id',  '_update_subelems'],
-                [undef, 1]);
+    return $self->_set(['id'] => [undef]);
 }
 
 ################################################################################
@@ -1442,7 +1436,7 @@ sub reorder_elements {
         $seen->{$at_id} = $n;
     }
 
-    $self->_set(['_subelems', '_update_subelems'], [\@new_list, 1]);
+    $self->_set(['_subelems'] => [\@new_list]);
     $self->_set__dirty($dirty);
     return $self;
 }
@@ -1507,28 +1501,19 @@ B<Notes:> NONE.
 sub save {
     my ($self) = @_;
 
-    if ($self->_get__dirty) {
-        if ($self->_get('id') ) {
-            if ($self->_get('_delete')) {
-                $self->_do_delete();
-                return $self;
-            }
-            # call private update method
+    my ($dirty, $id, $del) = $self->_get(qw(_dirty id _delete));
+    if ($dirty) {
+        if ($id) {
+            return $self->_do_delete if $del;
             $self->_do_update;
         } else {
-            # call private insert method
             $self->_do_insert;
         }
     }
 
-    $self->_sync_elements();
+    $self->_sync_elements;
 
-    # call the parents save method
-    $self->SUPER::save();
-
-    $self->_set__dirty(0);
-
-    return $self;
+    return $self->SUPER::save;
 }
 
 ##############################################################################
@@ -1714,101 +1699,80 @@ B<Notes:> NONE.
 =cut
 
 sub _do_list {
-    my ($class, $param, $ids) = @_;
-    throw_gen(error => "improper args for list")
-      unless ($param->{'object'} || $param->{'object_type'});
+    my ($class, $params, $ids_only) = @_;
 
-    my ($obj_type, $obj_id, $table);
+    my ($obj_type, @params);
+    my @wheres = ('e.element__id = et.id');
 
-    if ($param->{'object'}) {
-        my $obj_class = ref $param->{'object'};
-        if ($obj_class eq 'Bric::Biz::Asset::Business::Story') {
-            $table = S_TABLE;
-            $obj_type = 'story';
-        } elsif ($obj_class =~ /^Bric::Biz::Asset::Business::Media/) {
-            $table = M_TABLE;
-            $obj_type = 'media';
-        } else {
-            throw_gen(error => "Object of type $obj_class not allowed to be tiled");
+    while (my ($k, $v) = each %$params) {
+        if ($k eq 'object') {
+            $obj_type = $v->key_name;
+            push @wheres,
+                any_where $v->get_version_id, 'e.object_instance_id = ?', \@params;
         }
-        $obj_id = $param->{'object'}->get_version_id();
 
-    } else {
-        if ($param->{'object_type'} eq 'story') {
-            $table = S_TABLE;
-        } elsif ($param->{'object_type'} eq 'media') {
-            $table = M_TABLE;
-        } else {
-            my $msg = "Object of type $param->{'object_type'} not allowed ".
-              "to be tiled";
-            throw_gen(error => $msg);
+        elsif ($k eq 'object_type') {
+            $obj_type = $v;
         }
-    }
 
-    my (@where, @where_param);
+        elsif ($k eq 'id') {
+            push @wheres, any_where $v, 'e.id = ?', \@params;
+        }
 
-    if ($obj_id) {
-        push @where, " object_instance_id=? ";
-        push @where_param, $obj_id;
-    }
-    if (exists $param->{'active'} ) {
-        push @where, ' active=? ';
-        push @where_param, $param->{'active'};
-    }
-    if (exists $param->{'parent_id'}) {
-        if (defined $param->{'parent_id'}) {
-            push @where, 'parent_id=?';
-            push @where_param, $param->{'parent_id'};
-        } else {
-            push @where, 'parent_id IS NULL';
+        elsif ($k eq 'active') {
+            push @wheres, 'e.active = ?';
+            push @params, $v ? 1 : 0;
+        }
+
+        elsif ($k eq 'parent_id') {
+            push @wheres, defined $v
+                ? any_where($v, 'e.parent_id = ?', \@params)
+                : 'e.parent_id IS NULL';
+        }
+
+        elsif ($k eq 'element_type_id' || $k eq 'element_id') {
+            push @wheres, any_where $v, 'e.element__id = ?', \@params;
+        }
+
+        elsif ($k eq 'key_name' || $k eq 'name' || $k eq 'description') {
+            push @wheres, any_where $v, "LOWER(et.$k) LIKE LOWER(?)", \@params;
         }
     }
-    if ($param->{'element_type_id'} || $param->{'element_id'}) {
-        push @where, ' element__id=? ';
-        push @where_param, $param->{'element_type_id'}
-                           || $param->{'element_id'};
-    }
-    if ($param->{'name'}) {
-        push @where, ' name=? ';
-        push @where_param, $param->{'name'};
-    }
-    if ($param->{'key_name'}) {
-        push @where, ' key_name=? ';
-        push @where_param, $param->{'key_name'};
+
+    throw_gen 'Missing required parameter "object" or "object_type"'
+        unless $obj_type;
+
+    my $tables = "$obj_type\_container_tile e, element et";
+
+    my ($qry_cols, $order) = $ids_only
+        ? ('DISTINCT e.id', 'e.id')
+        : (join(', ', @SEL_COLS), 'e.object_instance_id, e.place');
+    my $wheres = @wheres ? 'WHERE  ' . join(' AND ', @wheres) : '';
+
+    my $sel = prepare_c(qq{
+        SELECT $qry_cols
+        FROM   $tables
+        $wheres
+        ORDER BY $order
+    }, undef, DEBUG);
+
+    # Just return the IDs, if they're what's wanted.
+    if ($ids_only) {
+        my $ids = col_aref($sel, @params);
+        return wantarray ? @$ids : $ids;
     }
 
-    my $sql;
-    if ($ids) {
-        $sql = "SELECT id FROM $table ";
-    } else {
-        $sql = 'SELECT id, ' . join(', ', COLS) . " FROM $table ";
+    my @objs;
+    execute($sel, @params);
+    my @d;
+    bind_columns( $sel, \@d[ 0..$#SEL_COLS ] );
+    while ( fetch($sel) ) {
+        my $self = $class->SUPER::new;
+        $self->_set( [ 'object_type', @SEL_FIELDS ] => [$obj_type, @d] );
+        $self->_set__dirty(0);
+        push @objs, $self->cache_me;
     }
-
-    if (@where) {
-        $sql .= ' WHERE ';
-        $sql .= join ' AND ', @where;
-    }
-    my $select = prepare_ca( $sql, undef);
-
-    if ($ids) {
-        my $return = col_aref($select,@where_param);
-        return wantarray ? @{ $return } : $return;
-    } else {
-        my @objs;
-        execute($select, @where_param);
-        my @cols;
-        bind_columns($select, \@cols[0 .. scalar COLS]);
-        while (fetch($select) ) {
-            my $self = bless {}, $class;
-            $self->_set( [ 'id', FIELDS ], [@cols] );
-            # FIX THIS SHIT
-            my $ot = $obj_type || $param->{'object_type'};
-            $self->_set( { 'object_type' => $ot });
-            $self->_set__dirty(0);
-            push @objs, $self->cache_me;
-        }
-        return wantarray ? @objs : \@objs;
-    }
+    return wantarray ? @objs : \@objs;
 }
 
 ################################################################################
@@ -1834,61 +1798,17 @@ B<Notes:> NONE.
 =cut
 
 sub _do_delete {
-    my ($self) = @_;
+    my $self = shift;
 
-    my $sql = ' DELETE FROM ';
-    $sql .= ($self->_get('object_type') eq 'media') ? M_TABLE : S_TABLE;
-    $sql .= ' WHERE id=? ';
+    my ($id, $type) = $self->_get(qw(id object_type));
+    my $table = "$type\_container_tile";
+    my $sth = prepare_c(qq{
+        DELETE FROM $table
+        WHERE  id = ?
+    }, undef);
 
-    my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('id'));
+    execute($sth, $id);
     return $self;
-}
-
-##############################################################################
-
-=item $container->_select_container($param)
-
-Called by C<lookup()>, this method actually looks a container element up in
-the database.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _select_container {
-    my ($self, $where, @bind) = @_;
-    my @d;
-
-    my $sql = 'SELECT id,'. join(', ', COLS);
-    if ($self->_get('object_type') eq 'story' ) {
-        $sql .= " FROM " . S_TABLE;
-
-    } elsif ($self->_get('object_type') eq 'media') {
-        $sql .= " FROM " . M_TABLE;
-
-    } else {
-        # this is here just in case
-        throw_gen(error => "Improper Object type has been defined");
-    }
-
-    $sql .= " WHERE $where";
-
-    my $sth = prepare_ca($sql, undef, 1);
-    execute($sth, @bind);
-    bind_columns($sth, \@d[0 .. (scalar COLS)]);
-    fetch($sth);
-
-    # Return undef unless the ID column is defined.
-    return unless $d[0];
-
-    # set the values retrieved
-    $self->_set(['id', FIELDS], [@d]);
-    return $self->cache_me;
 }
 
 ################################################################################
@@ -1907,28 +1827,20 @@ B<Notes:> NONE.
 =cut
 
 sub _do_insert {
-    my ($self) = @_;
+    my $self = shift;
 
-    # get the short name
-    my $type = $self->_get('object_type');
-    my $table;
-    if ($type eq 'story') {
-        $table = S_TABLE;
-    } elsif ($type eq 'media') {
-        $table =  M_TABLE
-    } else {
-        throw_gen(error => 'Object must be a media or story to add tiles');
-    }
+    my $table = $self->get_object_type . '_container_tile';
 
-    my $sql = "INSERT INTO $table " .
-      "(id, " . join(', ', COLS) . ") " .
-      "VALUES (${\next_key($table)}, " .
-      join(',', ('?') x COLS) . ") ";
+    my $value_cols = join ', ', ('?') x @COLS;
+    my $ins_cols   = join ', ', @COLS;
 
-    my $insert = prepare_c($sql, undef);
-    execute($insert, ($self->_get( FIELDS )) ); 
-    $self->_set( { 'id' => last_key($table) });
-    return $self;
+    my $ins = prepare_c(qq{
+        INSERT INTO $table ($ins_cols)
+        VALUES ($value_cols)
+    }, undef);
+    execute($ins, $self->_get(@FIELDS) );
+
+    return $self->_set( ['id'] => [last_key($table)] );
 }
 
 ################################################################################
@@ -1947,25 +1859,18 @@ B<Notes:> NONE.
 =cut
 
 sub _do_update {
-    my ($self) = @_;
+    my $self = shift;
 
-    my $short = $self->_get('object_type');
+    my $table    = $self->get_object_type . '_container_tile';
+    my $set_cols = join ' = ?, ', @COLS;
 
-    my $table;
-    if ($short eq 'story') {
-        $table = S_TABLE;
-    } elsif ($short eq 'media') {
-        $table = M_TABLE;
-    } else {
-        throw_gen(error => 'only story and media objects may have tiles');
-    }
+    my $upd = prepare_c(qq{
+        UPDATE $table
+        SET    $set_cols = ?
+        WHERE  id = ?
+    }, undef);
 
-    my $sql = "UPDATE $table " .
-      " SET " . join(', ', map { "$_=?" } COLS) .
-      ' WHERE id=? ';
-
-    my $update = prepare_c($sql, undef);
-    execute($update, ($self->_get( FIELDS )), $self->_get('id') );
+    execute($upd, $self->_get(@FIELDS, 'id'));
     return $self;
 }
 
@@ -1984,44 +1889,26 @@ B<Notes:> NONE.
 =cut
 
 sub _sync_elements {
-    my ($self) = @_;
-    my ($tiles,$del_tiles) = $self->_get('_subelems', '_del_subelems');
+    my $self = shift;
+    my ($id, $inst_id, $tiles, $del_tiles)
+        = $self->_get(qw(id object_instance_id _subelems _del_subelems));
 
-    # HACK. I don't think that this was really necessary, because each tile
-    # will only be saved and trigger a change to the database if it was
-    # actually changed in some way. This is similar to how collections work.
-    # So I'm commenting this out and just saving all the tiles every time.
-    # -DW 2003-04-12.
-#    return unless $self->_get('_update_subelems');
-
-    foreach (@$tiles) {
-#               if ($prep_clone) {
-#                       $_->prepare_clone;
-#                       $self->_set( { '_prepare_clone' => undef });
-#               }
-
-        # just in case this is an insert but only if its changed.
-        my $id = $self->get_id;
-        my $pid = $_->get_parent_id;
-        $_->set_parent_id($id) unless defined $pid && $pid == $id;
-
-        # same here
-        my $inst_id = $self->get_object_instance_id;
-        my $old_iid = $_->get_object_instance_id;
-        $_->set_object_instance_id($inst_id) 
-          unless defined $old_iid && $old_iid == $inst_id;
-
-        $_->save();
+    for my $elem (@$tiles) {
+        # Set the parent ID and object instance ID and save.
+        my $pid = $elem->get_parent_id;
+        $elem->set_parent_id($id) unless defined $pid && $pid == $id;
+        my $old_iid = $elem->get_object_instance_id;
+        $elem->set_object_instance_id($inst_id)
+            unless defined $old_iid && $old_iid == $inst_id;
+        $elem->save;
     }
 
     while (my $t = shift @$del_tiles) {
         $t->set_object_order(0);
         $t->set_place(0);
-        $t->deactivate();
-        $t->save()
+        $t->deactivate->save;
     }
 
-    $self->_set(['_update_subelems'], [0]);
     return $self;
 }
 
@@ -2434,11 +2321,6 @@ sub _deserialize_pod {
                 $content =~ s/\n{1,2}$//m;
             }
 
-            # XXX Make sure that fields with a limited number of values are
-            # set to only one of those values here. It's too much of a PITA to
-            # do that right now, while those values are defined in the
-            # "html_info" subsys of the attribute associated with $field_type.
-
             # Add the field.
             my $field = $fields_for{$kn} && @{$fields_for{$kn}}
                 ? shift @{$fields_for{$kn}}
@@ -2448,7 +2330,7 @@ sub _deserialize_pod {
                     object_instance_id => $doc_id,
                     element_data       => $field_type,
                 });
-            $field->set_data($content);
+            $field->set_data($content) if defined $content;
             $field->set_place(scalar @elems);
             $field->set_object_order(++$field_ord{$kn});
             push @elems, $field;
@@ -2462,8 +2344,11 @@ sub _deserialize_pod {
     push @$del_elems, @{$elems_for{$_}}  for keys %elems_for;
 
     # Make it so.
-    $self->_set( [qw(_subelems _del_subelems _update_subelems)],
-                 [   \@elems,  $del_elems,   1                ] );
+    $self->_set(
+        [qw(_subelems _del_subelems)],
+        [   \@elems,  $del_elems    ]
+    );
+
     return $line_num;
 }
 
@@ -2502,10 +2387,12 @@ __END__
 
 NONE
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Michael Soderstrom <miraso@pacbell.net>. POD serialization and parsing by
-David Wheeler <david@kineticode.com>.
+Michael Soderstrom <miraso@pacbell.net>
+
+Refactoring and POD serialization and parsing by David Wheeler
+<david@kineticode.com>
 
 =head1 SEE ALSO
 

@@ -39,45 +39,47 @@ sub save : Callback {
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
     } else {
         my $numregex = qr{^\s*\d+\s*$};
-
-        # Roll in the changes.
-        $ed->set_description($param->{'description'});
-        $ed->set_max_length($param->{'max_length'})
-          if defined $param->{'max_length'} && $param->{'max_length'} =~ $numregex;
-        $ed->set_required(defined $param->{'required'} ? 1 : 0);
-        # Note: here's another place I assume quantifier is boolean
-        $ed->set_quantifier(defined $param->{'quantifier'} ? 1 : 0);
+        my $meths = $ed->my_meths;
 
         # Save metadata/display attributes
         my $set_meta_string = sub {
             my ($ed, $f, $param) = @_;
-            $ed->set_meta('html_info', $f, $param->{$f}) if defined $param->{$f};
+            my $set = $meths->{$f}->{set_meth};
+            $set->($ed, $param->{$f}) if exists $param->{$f};
         };
         my $set_meta_number = sub {
             my ($ed, $f, $param) = @_;
-            $ed->set_meta('html_info', $f, $param->{$f})
-              if defined($param->{$f}) && $param->{$f} =~ $numregex;
+            my $set = $meths->{$f}->{set_meth};
+            $set->($ed, $param->{$f})
+                if defined $param->{$f} && $param->{$f} =~ $numregex;
         };
         my $set_meta_boolean = sub {
             my ($ed, $f, $param) = @_;
-            if (defined $param->{$f}) {
-                $ed->set_meta('html_info', $f, 1);
-            } else {
-                $ed->set_meta('html_info', $f, 0);
-            }
+            my $set = $meths->{$f}->{set_meth};
+            $set->($ed, defined $param->{$f} ? 1 : 0);
         };
 
-        # HACK: Size goes in twice. Don't ask me why!
-        $param->{length} = $param->{size};
-        for my $f (qw(size maxlength rows cols length)) {
+        for my $f (qw(max_length rows cols length precision)) {
             $set_meta_number->($ed, $f, $param);
         }
 
-        for my $f (qw(disp value vals precision)) {
+        for my $f (qw(vals name description)) {
             $set_meta_string->($ed, $f, $param);
         }
 
-        $set_meta_boolean->($ed, 'multiple', $param);
+        # The default value for checkboxes is boolean.
+        if ($ed->get_field_type eq 'checkbox') {
+            $set_meta_boolean->($ed, 'default_val', $param);
+        }
+
+        # All other default vals are strings.
+        else {
+            $set_meta_string->($ed, 'default_val', $param);
+        }
+
+        for my $f (qw(multiple required quantifier)) {
+            $set_meta_boolean->($ed, $f, $param);
+        }
 
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
         log_event("$type\_save", $ed);

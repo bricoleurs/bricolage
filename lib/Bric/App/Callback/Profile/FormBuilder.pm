@@ -219,23 +219,23 @@ $do_contrib_type = sub {
 
 $do_element_type = sub {
     my ($self, $obj, $key, $class) = @_;
-    my $param = $self->params;
-    my $name = $param->{'name'};
-    my $disp_name = $conf{$key}{'disp_name'};
-    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
-    my $key_name = exists($param->{'key_name'})
-      ? $param->{'key_name'}
-      : undef;
-    my $widget = $self->class_key;
-    my $cb_key = $self->cb_key;
+    my $param      = $self->params;
+    my $name       = $param->{name};
+    my $disp_name  = $conf{$key}{disp_name};
+    my %del_attrs  = map {$_ => 1} @{ mk_aref($param->{delete_attr}) };
+    my $key_name   = exists $param->{key_name} ? $param->{key_name} : undef;
+    my $widget     = $self->class_key;
+    my $cb_key     = $self->cb_key;
 
     # Make sure the name isn't already in use.
     my $no_save;
     # AssetType has been updated to take an existing but undefined 'active'
     # flag as meaning, "list both active and inactive"
     my @cs = defined $key_name
-      ? $class->list_ids({key_name => $param->{key_name},
-                          active   => undef})
+      ? $class->list_ids({
+          key_name => $param->{key_name},
+          active   => undef
+      })
       : ();
 
     # Check if we need to inhibit a save based on some special conditions
@@ -247,11 +247,11 @@ $do_element_type = sub {
 
     # Roll in the changes.
     $obj = $get_obj->($class, $param, $key, $obj);
-    $obj->activate();
-    $obj->set_name($param->{'name'});   # must come after $get_obj !
+    $obj->activate;
+    $obj->set_name($param->{name});   # must come after $get_obj !
 
     $set_key_name->($obj, $param) if defined $key_name and not $no_save;
-    $obj->set_description($param->{'description'});
+    $obj->set_description($param->{description});
     $obj->set_burner($param->{burner}) if defined $param->{burner};
 
     # side-effect: returns enabled-OCs hashref.
@@ -310,17 +310,17 @@ $clean_param = sub {
     my $param = shift;
 
     # Clean any select/radio values (but not codeselect)
-    if ($param->{fb_vals} and !($param->{fb_type} eq 'codeselect')) {
-        $param->{fb_vals} =~ s/\r/\n/g;
-        $param->{fb_vals} =~ s/\n{2,}/\n/g;
-        $param->{fb_vals} =~ s/\s*,\s*/,/;
-        my $tmp;
-        foreach my $line (split /\n/, $param->{fb_vals}) {
-            $tmp .= $line =~ /,/ ? "$line\n" : "$line,$line\n";
-        }
-        $param->{fb_vals} = $tmp;
+    return $param
+        unless $param->{fb_vals} && $param->{fb_type} ne 'codeselect';
+    my $tmp;
+    for my $line (split /\s*(?:\r?\n|\r)\s*/, $param->{fb_vals}) {
+        my ($val, $label) = split /\s*(?<!\\),\s*/, $line, 2;
+        $tmp .= "$val,"
+             . (defined $label && $label ne '' ? $label : $val)
+             . "\n"
+             ;
     }
-
+    $param->{fb_vals} = $tmp;
     return $param;
 };
 
@@ -380,19 +380,15 @@ $set_key_name = sub {
 
 $update_element_type_attrs = sub {
     my ($del_attrs, $param, $data_href) = @_;
-
-    # Update existing attributes.
-    my $pos = mk_aref($param->{'attr_pos'});
+    # Update existing field types.
+    my $pos = mk_aref($param->{attr_pos});
     my $i = 0;
-    foreach my $aname (@{ mk_aref($param->{'attr_name'}) }) {
+    foreach my $aname (@{ mk_aref($param->{attr_name}) }) {
         unless ($del_attrs->{$aname}) {
-            my $field = lc $aname;
-            $data_href->{$field}->set_place($pos->[$i]);
-            $data_href->{$field}->set_meta('html_info', 'pos', $pos->[$i]);
-            $data_href->{$field}->set_meta('html_info', 'value',
-                                           $param->{"attr|$aname"});
-            $data_href->{$field}->save;
-            $i++;
+            my $field = $data_href->{$aname};
+            $field->set_place($pos->[$i++]);
+            $field->set_default_val($param->{"attr|$aname"});
+            $field->save;
         }
     }
 };
@@ -403,10 +399,10 @@ $get_data_href = sub {
     # Get existing attrs from the Parts::Data class rather than from
     # $obj->get_data so that we can be sure to check for both active
     # and inactive data fields.
-    my $all_data = Bric::Biz::AssetType::Parts::Data->list(
-      { element__id => $param->{"$key\_id"} });
-    my $data_href = { map { lc ($_->get_key_name) => $_ } @$all_data };
-    return $data_href;
+    my $all_data = Bric::Biz::AssetType::Parts::Data->list({
+        element__id => $param->{"$key\_id"}
+    });
+    return { map { $_->get_key_name => $_ } @$all_data };
 };
 
 $delete_element_type_attrs = sub {
@@ -499,37 +495,38 @@ $add_new_attrs = sub {
                 }
             }
 
-            my $sqltype = $param->{'fb_type'} eq 'date' ? 'date'
-              : $param->{'fb_type'} eq 'textarea'
-              && (!$param->{'fb_maxlength'} || $param->{'fb_maxlength'} > 1024)
-              ? 'blob' : 'short';
+            my $sqltype = $param->{fb_type} eq 'date'
+                ? 'date'
+                : $param->{fb_type} eq 'textarea'
+                  && (!$param->{fb_maxlength} || $param->{fb_maxlength} > 1023)
+                ? 'blob'
+                : 'short';
 
-            my $value = $sqltype eq 'date' ? undef : $param->{'fb_value'};
+            my $value = $sqltype eq 'date' ? undef : $param->{fb_value};
 
+            # XXX Check this.
             $param = $clean_param->($param);
             my $max = $param->{'fb_maxlength'} ? $param->{'fb_maxlength'}
               : ($param->{'fb_maxlength'} eq '0') ? 0 : undef;
 
-            my $atd = $obj->new_data({ key_name    => $key_name,
-                                       required    => $param->{fb_req} ? 1 : 0,
-                                       quantifier  => $param->{fb_quant} ? 1 : 0,
-                                       sql_type    => $sqltype,
-                                       place       => $param->{fb_position},
-                                       publishable => 1,
-                                       max_length  => $max,
-                                      });
-
-            # create name/value field for element type
-            $atd->set_attr('html_info', $value);
-
-            # Record the metadata so we can properly display the form element.
-            while (my ($k, $v) = each %meta_props) {
-                $atd->set_meta('html_info', $k, $param->{$v});
-            }
-
-            # Checkboxes need a default value.
-            $atd->set_meta('html_info', 'value', 1)
-              if $param->{'fb_type'} eq 'checkbox';
+            my $atd = $obj->new_data({
+                key_name    => $key_name,
+                name        => $param->{fb_disp},
+                required    => $param->{fb_req}   ? 1 : 0,
+                quantifier  => $param->{fb_quant} ? 1 : 0,
+                sql_type    => $sqltype,
+                place       => $param->{fb_position},
+                publishable => 1,
+                max_length  => $max,
+                field_type  => $param->{fb_type},
+                length      => $param->{length},
+                rows        => $param->{fb_rows},
+                cols        => $param->{fb_cols},
+                multiple    => $param->{multiple} ? 1 : 0,
+                vals        => $param->{fb_vals},
+                precision   => $param->{fb_precision} || undef,
+                default_val => $param->{fb_type} eq 'checkbox' ? 1 : $param->{fb_value},
+            });
 
             # Log that we've created it.
             log_event("$key\_data_add", $obj, { Name => $key_name });

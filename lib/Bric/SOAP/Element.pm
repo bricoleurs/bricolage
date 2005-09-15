@@ -606,16 +606,26 @@ sub load_asset {
             if ($old_data{$field->{key_name}}) {
                 print STDERR __PACKAGE__ . "::update : ".
                     "Found old data object for $edata->{key_name} => ",
-                        "$field->{key_name}.\n"
-                            if DEBUG;
+                     "$field->{key_name}.\n"
+                     if DEBUG;
                 $data = $old_data{$field->{key_name}};
-                $data->set_key_name($field->{key_name});
-                $data->set_required($field->{required});
-                $data->set_quantifier($field->{repeatable});
-                $data->set_sql_type($sql_type);
-                $data->set_place($place);
-                $data->set_publishable(1);
-                $data->set_max_length($field->{max_size});
+                $data->set_key_name(    $field->{key_name});
+                $data->set_name(        $field->{name}        || $field->{label});
+                $data->set_description( $field->{description});
+                $data->set_required(    $field->{required});
+                $data->set_quantifier(  $field->{repeatable});
+                $data->set_sql_type(    $sql_type);
+                $data->set_place(       $place);
+                $data->set_publishable( 1 );
+                $data->set_max_length(  $field->{max_size});
+                $data->set_field_type(  $field->{field_type}  || $field->{type});
+                $data->set_default_val( $field->{default_val} || $field->{val});
+                $data->set_length(      $field->{length}      || $field->{size} || 0);
+                $data->set_rows(        $field->{rows});
+                $data->set_cols(        $field->{cols});
+                $data->set_multiple(    $field->{multiple}    || 0);
+                $data->set_vals(        $field->{options});
+                $field->{active} ? $data->activate : $data->deactivate;
                 $updated_data{$field->{key_name}} = 1;
             } else {
                 # get a new data object
@@ -624,37 +634,25 @@ sub load_asset {
                         "$field->{key_name}.\n"
                             if DEBUG;
                 $data = $element->new_data({
-                    key_name    => $field->{key_name},
-                    required    => $field->{required},
-                    quantifier  => $field->{repeatable},
-                    sql_type    => $sql_type,
-                    place       => $place,
-                    publishable => 1,
-                    max_length  => $field->{max_size},
+                    key_name      => $field->{key_name},
+                    name          => $field->{name}       || $field->{label},
+                    description   => $field->{description},
+                    required      => $field->{required},
+                    quantifier    => $field->{repeatable},
+                    sql_type      => $sql_type,
+                    place         => $place,
+                    publishable   => 1,
+                    max_length    => $field->{max_size},
+                    field_type    => $field->{field_type} || $field->{type},
+                    default_val   => $field->{defaul_val} || $field->{value},
+                    length        => $field->{length}     || $field->{size} || 0,
+                    rows          => $field->{rows}       || 0,
+                    cols          => $field->{cols}       || 0,
+                    multiple      => $field->{multiple}   || 0,
+                    vals          => $field->{options},
+                    active        => $field->{active},
                 });
             }
-
-            # add default value attribute.
-            # (strange, my eyes are itching...)
-            $data->set_attr(html_info => $field->{default});
-
-            # add meta data to value attribute.
-            # (oh, god they burn!)
-            $data->set_meta(html_info => disp      => $field->{label});
-            $data->set_meta(html_info => value     => $field->{default});
-            $data->set_meta(html_info => type      => $field->{type});
-            $data->set_meta(html_info => length    => $field->{size});
-            $data->set_meta(html_info => maxlength => $field->{max_size});
-            $data->set_meta(html_info => rows      => $field->{rows});
-            $data->set_meta(html_info => cols      => $field->{cols});
-            $data->set_meta(html_info => multiple  => $field->{multiple});
-            $data->set_meta(html_info => vals      => $field->{options});
-            $data->set_meta(html_info => pos       => $place);
-            log_event("element_type_data_add", $element, { Name => $field->{label} });
-            log_event('element_type_data_new', $data);
-
-            # (my eyes! they're on fire!  oh, sweet lord, why?  WHY
-            # HAVE YOU DONE THIS TO ME?)
         }
 
         # if updating then data fields might need deleting
@@ -791,35 +789,28 @@ sub serialize_asset {
     # output fields
     $writer->startTag("fields");
     foreach my $data ($element->get_data) {
-        my $meta = $data->get_meta('html_info');
-        # print STDERR Data::Dumper->Dump([$meta, $data], [qw(meta data)])
-        #    if DEBUG;
-
         # start <field>
         $writer->startTag("field");
 
         # required elements
-        $writer->dataElement(type       => $meta->{type});
-        $writer->dataElement(key_name   => $data->get_key_name);
-        $writer->dataElement(label      => $meta->{disp});
-        $writer->dataElement(required   => $data->get_required   ? 1 : 0);
-        $writer->dataElement(repeatable => $data->get_quantifier ? 1 : 0);
-
-        # optional elements
-        $writer->dataElement(default  => $meta->{value})
-            if defined $meta->{value}    and length $meta->{value};
-        $writer->dataElement(options  => $meta->{vals})
-            if defined $meta->{vals}     and length $meta->{vals};
-        $writer->dataElement(multiple => $meta->{multiple} ? 1 : 0)
-            if defined $meta->{multiple} and length $meta->{multiple};
-        $writer->dataElement(size     => $meta->{length})
-            if defined $meta->{length}   and length $meta->{length};
-        $writer->dataElement(max_size => $data->get_max_length)
-            if $data->get_max_length;
-        $writer->dataElement(rows     => $meta->{rows})
-            if defined $meta->{rows}     and length $meta->{rows};
-        $writer->dataElement(cols     => $meta->{cols})
-            if defined $meta->{cols}     and length $meta->{cols};
+        my $auto = 'autopopulated';
+        $writer->dataElement( key_name    => $data->get_key_name           );
+        $writer->dataElement( name        => $data->get_name               );
+        $writer->dataElement( description => $data->get_description        );
+        $writer->dataElement( required    => $data->get_required   ? 1 : 0 );
+        $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
+        $writer->dataElement( $auto       => $data->get_autopopulated ? 1 : 0 );
+        $writer->dataElement( place       => $data->get_place              );
+        $writer->dataElement( field_type  => $data->get_field_type         );
+        $writer->dataElement( default_val => $data->get_default_val        );
+        $writer->dataElement( options     => $data->get_vals               );
+        $writer->dataElement( multiple    => $data->get_multiple   ? 1 : 0 );
+        $writer->dataElement( length      => $data->get_length             );
+        $writer->dataElement( max_size    => $data->get_max_length         );
+        $writer->dataElement( rows        => $data->get_rows               );
+        $writer->dataElement( cols        => $data->get_cols               );
+        $writer->dataElement( precision   => $data->get_precision          );
+        $writer->dataElement( active      => $data->get_active     ? 1 : 0 );
 
         # end <field>
         $writer->endTag("field");

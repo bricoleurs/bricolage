@@ -43,17 +43,26 @@ CREATE TABLE at_data (
     id               INTEGER         NOT NULL
                                      DEFAULT NEXTVAL('seq_element'),
     element__id      INTEGER         NOT NULL,
-    key_name         VARCHAR(32),
+    name             VARCHAR(32)     NOT NULL,
+    key_name         VARCHAR(32)     NOT NULL,
     description      VARCHAR(256),
     place            INTEGER         NOT NULL,
     required         BOOLEAN         NOT NULL DEFAULT FALSE,
-    quantifier       VARCHAR(2),
+    quantifier       VARCHAR(2)      NOT NULL,
     autopopulated    BOOLEAN         NOT NULL DEFAULT FALSE,
-    active           BOOLEAN         NOT NULL DEFAULT TRUE,
     map_type__id     INTEGER,
     publishable      BOOLEAN         NOT NULL DEFAULT FALSE,
-    max_length       INTEGER,
-    sql_type         VARCHAR(30),
+    max_length       INTEGER         NOT NULL DEFAULT 0,
+    sql_type         VARCHAR(30)     NOT NULL DEFAULT 'short',
+    field_type       VARCHAR(30)     NOT NULL DEFAULT 'text',
+    precision        SMALLINT,
+    cols             INTEGER         NOT NULL,
+    rows             INTEGER         NOT NULL,
+    length           INTEGER         NOT NULL,
+    vals             TEXT,
+    multiple         BOOLEAN         NOT NULL DEFAULT FALSE,
+    default_val      TEXT,
+    active           BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_at_data__id PRIMARY KEY (id)
 );
 
@@ -111,6 +120,7 @@ CREATE TABLE attr_at_data_meta (
 --
 
 CREATE UNIQUE INDEX udx_atd__key_name__at_id ON at_data(lower_text_num(key_name, element__id));
+CREATE INDEX udx_atd__name__at_id ON at_data(LOWER(name));
 CREATE INDEX fkx_map_type__atd on at_data(map_type__id);
 CREATE INDEX fkx_element__atd on at_data(element__id);
 

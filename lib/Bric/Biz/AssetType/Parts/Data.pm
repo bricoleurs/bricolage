@@ -99,7 +99,9 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Attribute::AssetTypeData;
-use Bric::Util::Fault qw(throw_gen);
+use Bric::Config qw(ENABLE_WYSIWYG);
+use Bric::Util::Time;
+use Bric::Util::Fault qw(throw_gen throw_da throw_dp);
 
 #==============================================================================#
 # Inheritance                          #
@@ -122,35 +124,71 @@ use base qw(Bric);
 use constant DEBUG => 0;
 
 use constant TABLE => 'at_data';
-use constant COLS  => qw(
-                         element__id
-                         key_name
-                         description
-                         place
-                         required
-                         quantifier
-                         autopopulated
-                         map_type__id
-                         publishable
-                         max_length
-                         sql_type
-                         active);
+my @COLS = qw(
+    element__id
+    key_name
+    name
+    description
+    place
+    required
+    quantifier
+    autopopulated
+    map_type__id
+    publishable
+    max_length
+    sql_type
+    field_type
+    precision
+    cols
+    rows
+    length
+    vals
+    multiple
+    default_val
+    active
+);
 
-use constant ATTRS  => qw(
-                         element_type_id
-                         key_name
-                         description
-                         place
-                         required
-                         quantifier
-                         autopopulated
-                         map_type_id
-                         publishable
-                         max_length
-                         sql_type
-                         active);
+my @ATTRS = qw(
+    element_type_id
+    key_name
+    name
+    description
+    place
+    required
+    quantifier
+    autopopulated
+    map_type_id
+    publishable
+    max_length
+    sql_type
+    field_type
+    precision
+    cols
+    rows
+    length
+    vals
+    multiple
+    default_val
+    active
+);
 
-use constant ORD => qw(key_name description max_length required quantifier active);
+use constant ORD => qw(
+    key_name
+    name
+    description
+    max_length
+    required
+    quantifier
+    field_type
+    precision
+    default_val
+    length
+    cols
+    rows
+    vals
+    multiple
+    active
+);
 
 #==============================================================================#
 # Fields                               #
@@ -170,55 +208,32 @@ our $METHS;
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-                         # Public Fields
-
-                         # The database id field
-                         'id'                  => Bric::FIELD_READ,
-
-                         # the element type that this is associated with
-                         'element_type_id'    => Bric::FIELD_RDWR,
-
-                         # The meta object ID.
-                         'map_type_id'        => Bric::FIELD_RDWR,
-
-                         # The human readable name field
-                         'key_name'            => Bric::FIELD_RDWR,
-
-                         # The human readable description Field
-                         'description'         => Bric::FIELD_RDWR,
-
-                         # the order in which this will be in the container
-                         'place'               => Bric::FIELD_RDWR,
-
-                         # The max length in chars
-                         'max_length'          => Bric::FIELD_RDWR,
-
-                         # The required flag
-                         'required'            => Bric::FIELD_RDWR,
-
-                         # The type of repeatability for this field
-                         'quantifier'          => Bric::FIELD_RDWR,
-
-                         # The type in the data base
-                         'sql_type'            => Bric::FIELD_RDWR,
-
-                         # If this field is publishable
-                         'publishable'         => Bric::FIELD_RDWR,
-
-                         autopopulated         => Bric::FIELD_READ,
-
-                         # The active flag
-                         'active'              => Bric::FIELD_READ,
-
-                         # Private Fields
-
-                         # Hold attribute info until this object is saved.
-                         '_attr'                => Bric::FIELD_NONE,
-                         '_meta'                => Bric::FIELD_NONE,
-
-                         # Holds the attribute object for this object.
-                         '_attr_obj'            => Bric::FIELD_NONE,
-                        });
+        id              => Bric::FIELD_READ,
+        element_type_id => Bric::FIELD_RDWR,
+        map_type_id     => Bric::FIELD_RDWR,
+        name            => Bric::FIELD_RDWR,
+        key_name        => Bric::FIELD_RDWR,
+        description     => Bric::FIELD_RDWR,
+        place           => Bric::FIELD_RDWR,
+        max_length      => Bric::FIELD_RDWR,
+        required        => Bric::FIELD_RDWR,
+        quantifier      => Bric::FIELD_RDWR,
+        sql_type        => Bric::FIELD_RDWR,
+        field_type      => Bric::FIELD_RDWR,
+        precision       => Bric::FIELD_RDWR,
+        cols            => Bric::FIELD_RDWR,
+        rows            => Bric::FIELD_RDWR,
+        length          => Bric::FIELD_RDWR,
+        vals            => Bric::FIELD_RDWR,
+        multiple        => Bric::FIELD_RDWR,
+        default_val     => Bric::FIELD_RDWR,
+        publishable     => Bric::FIELD_RDWR,
+        autopopulated   => Bric::FIELD_READ,
+        active          => Bric::FIELD_READ,
+        _attr           => Bric::FIELD_NONE,
+        _meta           => Bric::FIELD_NONE,
+        _attr_obj       => Bric::FIELD_NONE,
+    });
 }
 
 #==============================================================================#
@@ -303,8 +318,9 @@ sub new {
     my $class = shift;
     my ($init) = @_;
 
-    $init->{'active'} = exists $init->{'active'} ? $init->{'active'} : 1;
-    $init->{$_} = $init->{$_} ? 1 : 0 for qw(required publishable autopopulated);
+    $init->{active} = exists $init->{active} ? $init->{active} : 1;
+    $init->{$_} = $init->{$_} ? 1 : 0
+        for qw(required publishable autopopulated multiple);
     $init->{element_type_id} ||=
           exists $init->{element_id}  ? delete $init->{element_id}
         : exists $init->{element__id} ? delete $init->{element__id}
@@ -313,11 +329,12 @@ sub new {
     $init->{map_type_id} = delete $init->{map_type__id}
       if exists $init->{map_type__id};
 
-    $init->{'place'}  ||= 0;
-    delete $init->{'meta_object'};
-    my $self = bless {}, $class;
-    $self->SUPER::new($init);
-    return $self;
+    $init->{$_} ||= 0 for qw(max_length length place cols rows length place);
+    $init->{field_type} ||= 'text';
+    $init->{sql_type}   ||= 'short';
+
+    delete $init->{meta_object};
+    return $class->SUPER::new($init);
 }
 
 #------------------------------------------------------------------------------#
@@ -343,30 +360,15 @@ NONE
 =cut
 
 sub copy {
-    my $self = shift;
-    my ($at_id) = @_;
-    my $self_copy;
-
-    return unless $at_id;
-    return unless $self;
-
-    $self_copy = bless {}, ref $self;
-
-    my @k = keys %$self;
-
-    # Copy the object.
-    $self_copy->_set(\@k, [$self->_get(@k)]);
-    # Clear out fields specific to the original.
-    $self_copy->_set(['id', 'element_type_id'], [undef, $at_id]);
-
-    $self_copy->SUPER::new();
-
-    return $self_copy;
+    my ($self, $at_id) = @_;
+    return unless $at_id && $self;
+    my $copy = ref($self)->SUPER::new($self);
+    return $copy->_set([qw(id element_type_id)] => [undef, $at_id]);
 }
 
 #------------------------------------------------------------------------------#
 
-=item $field = Bric::Biz::AssetType::Parts::Data->lookup( { id => $id } )
+=item $field = Bric::Biz::AssetType::Parts::Data->lookup({ id => $id })
 
 Returns an existing Asset type field object that has the id that was given
 as an argument
@@ -387,19 +389,10 @@ sub lookup {
     my $self = $class->cache_lookup($param);
     return $self if $self;
 
-    $self = bless {}, $class;
-    return unless $param->{'id'};
-    $self->SUPER::new();
-    $self->_select_data($param->{'id'});
-
-    # Set the attribute object.
-    my $id = $self->get_id;
-    my $a_obj = Bric::Util::Attribute::AssetTypeData->new({
-        'object_id' => $id,
-        'subsys'    => "id_$id"
-    });
-    $self->_set(['_attr_obj'], [$a_obj]);
-    return $self;
+    my $fields = _do_list($class, $param) or return;
+    # Throw an exception if we looked up more than one site.
+    throw_da "Too many $class objects found" if @$fields > 1;
+    return $fields->[0];
 }
 
 #------------------------------------------------------------------------------#
@@ -423,6 +416,10 @@ May use C<ANY> for a list of possible values.
 =item key_name
 
 The field key name. May use C<ANY> for a list of possible values.
+
+=item name
+
+The field name. May use C<ANY> for a list of possible values.
 
 =item description
 
@@ -465,6 +462,44 @@ Indicates how the field value should be stored in the database. Possible
 values are "short", "blob", and "date". May use C<ANY> for a list of possible
 values.
 
+=item field_type
+
+A string indicating how the field should be displayed in user interfaces. May
+use C<ANY> for a list of possible values.
+
+=item precision
+
+An inteteger indicating the precision of the field's value. Should be set only
+when the C<field_type> is set to "date". May use C<ANY> for a list of possible
+values.
+
+=item cols
+
+The number of columns to use to display the field. Should only be set when the
+C<field_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
+possible values.
+
+=item rows
+
+The number of rows to use to display the field. Should only be set when the
+C<field_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
+possible values.
+
+=item length
+
+The length to use in the display of the field. Should only be set when the
+C<field_type> is set to "text". May use C<ANY> for a list of possible values.
+
+=item multiple
+
+A boolean value indicating whether or not the field may store multiple values.
+Should only be set to a true value when the C<field_type> is set to "select".
+
+=item default_val
+
+A string indicating the default value for the field. May use C<ANY> for a list
+of possible values.
+
 =item active
 
 Boolean valule indicating whether or not the field is active.
@@ -482,7 +517,7 @@ B<Notes:> NONE.
 sub list {
     my $class = shift;
     my ($param) = @_;
-    _do_list($class,$param);
+    _do_list($class, $param);
 }
 
 ##############################################################################
@@ -673,8 +708,8 @@ sub my_meths {
 
     # Create 'em if we haven't got 'em.
     $METHS ||= {
-              name        => {
-                  name     => 'name',
+              key_name    => {
+                  name     => 'key_name',
                   get_meth => sub { shift->get_key_name() },
                   get_args => [],
                   set_meth => sub { shift->set_key_name(@_) },
@@ -687,7 +722,24 @@ sub my_meths {
                   props    => {
                       type      => 'text',
                       length    => 32,
-                      maxlength => 64,
+                      maxlength => 32,
+                  },
+              },
+              name        => {
+                  name     => 'name',
+                  get_meth => sub { shift->get_name() },
+                  get_args => [],
+                  set_meth => sub { shift->set_name(@_) },
+                  set_args => [],
+                  disp     => 'Name',
+                  search   => 1,
+                  len      => 64,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 32,
+                      maxlength => 32,
                   },
               },
               description => {
@@ -758,6 +810,144 @@ sub my_meths {
                       type      => 'checkbox',
                   },
               },
+              field_type  => {
+			      get_meth => sub { shift->get_field_type(@_) },
+			      get_args => [],
+			      set_meth => sub { shift->set_field_type(@_) },
+			      set_args => [],
+			      name     => 'field_type',
+			      disp     => 'Field Type',
+			      len      => 80,
+			      req      => 1,
+			      type     => 'short',
+			      props    => {
+                      type => 'select',
+                      vals => {
+                          text       => 'Text',
+                          textarea   => 'Textarea',
+                          select     => 'Select',
+                          pulldown   => 'Pulldown',
+                          radio      => 'Radio',
+                          checkbox   => 'Checkbox',
+                          codeselect => 'Code Select',
+                          date       => 'Date',
+                          ( ENABLE_WYSIWYG 
+                            ? ( wysiwyg    => 'WYSIWYG' )
+                            : ()
+                          ),
+                      }
+                  }
+              },
+              precision  => {
+			      get_meth => sub { shift->get_precision(@_) },
+			      get_args => [],
+			      set_meth => sub { shift->set_precision(@_) },
+			      set_args => [],
+			      name     => 'precision',
+			      disp     => 'Precision',
+			      len      => 80,
+			      req      => 1,
+			      type     => 'short',
+			      props    => {
+                      type => 'select',
+                      vals => Bric::Util::Time::PRECISIONS,
+                  }
+              },
+              length => {
+                  name     => 'length',
+                  get_meth => sub { shift->get_length() },
+                  get_args => [],
+                  set_meth => sub { shift->set_length(@_) },
+                  set_args => [],
+                  disp     => 'Field Length',
+                  len      => 8,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              cols => {
+                  name     => 'cols',
+                  get_meth => sub { shift->get_cols() },
+                  get_args => [],
+                  set_meth => sub { shift->set_cols(@_) },
+                  set_args => [],
+                  disp     => 'Columns',
+                  len      => 8,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              rows => {
+                  name     => 'rows',
+                  get_meth => sub { shift->get_rows() },
+                  get_args => [],
+                  set_meth => sub { shift->set_rows(@_) },
+                  set_args => [],
+                  disp     => 'Rows',
+                  len      => 8,
+                  type     => 'short',
+                  props    => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              multiple => {
+                  name     => 'multiple',
+                  get_meth => sub { shift->get_multiple() },
+                  get_args => [],
+                  set_meth => sub {
+                      my ($self, $req) = @_;
+                      $req = (defined $req && $req) ? 1 : 0;
+                      $self->set_multiple($req);
+                  },
+                  set_args => [],
+                  disp     => 'Multiple',
+                  search   => 1,
+                  len      => 1,
+                  type     => 'short',
+                  props    => {
+                      type      => 'checkbox',
+                  },
+              },
+              default_val => {
+                  get_meth => sub { shift->get_default_val() },
+                  get_args => [],
+                  set_meth => sub { shift->set_default_val(@_) },
+                  set_args => [],
+                  name     => 'default_val',
+                  disp     => 'Default Value',
+                  len      => 256,
+                  req      => 0,
+                  type     => 'short',
+                  props    => {
+                      type => 'textarea',
+                      cols => 40,
+                      rows => 4,
+                  },
+              },
+              vals => {
+                  get_meth => sub { shift->get_vals() },
+                  get_args => [],
+                  set_meth => sub { shift->set_vals(@_) },
+                  set_args => [],
+                  name     => 'vals',
+                  disp     => 'Value Options',
+                  len      => 0,
+                  req      => 0,
+                  type     => 'short',
+                  props    => {
+                      type => 'textarea',
+                      cols => 40,
+                      rows => 6,
+                  },
+              },
               active     => {
                   name     => 'active',
                   get_meth => sub { shift->is_active(@_) ? 1 : 0 },
@@ -813,312 +1003,6 @@ sub list_ids {
 
 =over 4
 
-=item $field = $field->set_publishable( 1 || undef)
-
-Sets the flag for if this is a publishable field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item (undef || 1) = $field->get_publishable()
-
-Returns if this is a publishable field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item set_name
-
-B<Notes:> This method no longer exists. Use set_key_name instead.
-
-=cut
-
-sub set_name {
-    my ($pkg,$file,$line) = caller;
-    my $msg = "ERROR: [$file:$line] called the removed method 'set_name'";
-    throw_gen(error => $msg);
-}
-
-=item get_name
-
-B<Notes:> This method no longer exists. Use get_key_name instead.
-
-=cut
-
-sub get_name {
-    my ($pkg,$file,$line) = caller;
-    my $msg = "ERROR: [$file:$line] called the removed method 'get_name'";
-    throw_gen(error => $msg);
-}
-
-=item $field = $field->set_key_name( $name )
-
-Sets the key name for this field.  The display name is stored in the 'disp'
-attribute.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $name = $field->get_key_name()
-
-Returns the key name.  The display name is stored in the 'disp' attribute
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $field = $field->set_description($description)
-
-Sets the human readable descripton for this field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $description = $field->get_description()
-
-Return the human readable description field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $field = $field->set_max_length( $max_length)
-
-Set the max length in chars for this field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $max_length $field->get_max_length()
-
-Return the max length that has been registered
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $field = $field->set_required(1 || undef)
-
-Set the flag to make this field required ( default is not)
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item (1 || undef) = $field->get_required()
-
-Return the required flag for this field
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $field = $field->set_quantifier( $reperatable )
-
-Set the repeatability of this field options are (*, +, (0 || 1), 1).  Might 
-want to make this more friendly
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $quantifier = $field->get_quantifier()
-
-Return the repeatablity flag
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $field = $field->set_data_type()
-
-Returns the database datatype
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $data_type = $field->set_data_type()
-
-Returns the database datatype
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
 =item $id = $field->get_id()
 
 Returns the database id of the field object.
@@ -1129,14 +1013,382 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item $publishable = $field->get_publishable()
+
+Returns if this is a publishable field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_publishable($publishable)
+
+Sets the flag for if this is a publishable field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $name = $field->get_name()
+
+Gets the name of the field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_name($name)
+
+Sets the name of the field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $key_name = $field->get_key_name()
+
+Returns the key name.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_key_name($key_name)
+
+Sets the key name for this field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $description = $field->get_description()
+
+Return the human readable description field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_description($description)
+
+Sets the human readable descripton for this field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $max_length $field->get_max_length()
+
+Return the max length that has been registered
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_max_length($max_length)
+
+Set the max length in chars for this field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $required = $field->get_required()
+
+Return the required flag for this field
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_required($required)
+
+Set the flag to make this field required ( default is not)
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $repeatable = $field->get_quantifier()
+
+Return the repeatablity flag
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_quantifier($repeatable)
+
+Sets the boolean attribute that indicates whether or not the field is
+repeatable within the element.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $data_type = $field->get_data_type()
+
+Returns the database datatype
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_data_type($data_type)
+
+Returns the database datatype
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field_type = $field->get_field_type()
+
+Returns a string indicating how to display the field in a UI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_field_type($field_type)
+
+Sets the attribute indicating how to display the field in a UI. Possible
+values are:
+
+=over
+
+=item text
+
+=item textarea
+
+=item select
+
+=item pulldown
+
+=item radio
+
+=item checkbox
+
+=item codeselect
+
+=item wysiwyg
+
+=item date
+
+=back
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $precision = $field->get_precision()
+
+Returns an inteteger indicating the precision of the field's value. Should be
+set only when the C<field_type> is set to "date".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_precision($precision)
+
+Sets the precision for C<field_type> "date". See
+L<Bric::Util::Time|Bric::Util::Time> for documentation of the available
+precisions.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_cols($cols)
+
+Sets the number of columns to use in displaying the field in a UI. Should only
+be set to a non-zero value if the C<field_type> attribute is set to "textarea"
+or "wysiwyg".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $cols = $field->set_cols()
+
+Returns the number of columns to use in display the field in a UI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_rows($rows)
+
+Sets the number of rows to use in displaying the field in a UI. Should only be
+set to a non-zero value if the C<field_type> attribute is set to "textarea" or
+"wysiwyg".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $rows = $field->set_rows()
+
+Returns the number of rows to use in display the field in a UI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_length($length)
+
+Sets the length to use in displaying the field in a UI. Should only be set to
+a non-zero value if the C<field_type> attribute is set to "text".
+
+B<Thlength:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $length = $field->set_length()
+
+Returns the number of length to use in display the field in a UI.
+
+B<Thlength:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $multiple = $field->get_multiple()
+
+Returns boolean value indicating whether the field can have multiple values.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_multiple($multiple)
+
+Sets boolean value indicating whether the field can have multiple values.
+Should only be set to a true value if the C<field_type> is "select".
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $default_val = $field->get_default_val()
+
+Returns the default value for the field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_default_val($default_val)
+
+Sets the default value for the field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $vals = $field->get_vals()
+
+Returns a string representing the possible values for the field.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_vals($vals)
+
+Sets a list of values that can be used for the field. Each potential value
+should be listed on a single line, with a label following the value, separated
+by a comma and optional whitespace. Commas in the value or the label should be
+escaped. For example:
+
+  larry,  Wall\, Larry
+  damian, Conway\, Damian
+  chip,   Salzenberg\, Chip
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
 =cut
 
+# Backwards Compatible accessors.
 sub get_element__id  { shift->get_element_type_id      }
 sub set_element__id  { shift->set_element_type_id(@_)  }
 sub get_element_id   { shift->get_element_type_id      }
 sub set_element_id   { shift->set_element_type_id(@_)  }
 sub get_map_type__id { shift->get_map_type_id          }
 sub set_map_type__id { shift->set_map_type_id(@_)      }
+
+# Boolean accessors.
+sub set_quantifier    { shift->_set(['quantifier']    => [shift() ? 1 : 0] ) }
+sub set_required      { shift->_set(['required']      => [shift() ? 1 : 0] ) }
+sub set_autopopulated { shift->_set(['autopopulated'] => [shift() ? 1 : 0] ) }
+sub set_publishable   { shift->_set(['publishable']   => [shift() ? 1 : 0] ) }
+sub set_multiple      { shift->_set(['multiple']      => [shift() ? 1 : 0] ) }
 
 #------------------------------------------------------------------------------#
 
@@ -1161,48 +1413,43 @@ NONE
 =cut
 
 sub set_attr {
-    my $self = shift;
-    my ($name, $val) = @_;
-    my $attr_obj = $self->_get_attr_obj;
-    my $attr     = $self->_get('_attr', '_attr_obj');
+    my ($self, $name, $val) = @_;
 
-    if ($attr_obj) {
-        $attr_obj->set_attr({'name'     => $name,
-                             'sql_type' => 'short',
-                             'value'    => $val});
+    if (my $attr_obj = $self->_get_attr_obj) {
+        $attr_obj->set_attr({
+            name     => $name,
+            sql_type => 'short',
+            value    => $val
+        });
     } else {
+        my $attr = $self->_get('_attr');
+        $self->_set(['_attr'], [$attr = {}])
+            unless $attr;
         $attr->{$name} = $val;
-
-        $self->_set(['_attr'], [$attr]);
     }
 
     return $val;
 }
 
 sub get_attr {
-    my $self = shift;
-    my ($name) = @_;
-    my $attr_obj = $self->_get_attr_obj;
-    my $attr     = $self->_get('_attr', '_attr_obj');
+    my ($self, $name) = @_;
 
-    # If we aren't saved yet, return anything we have cached.
-    unless ($attr_obj) {
-        return $attr->{$name};
+    if (my $attr_obj = $self->_get_attr_obj) {
+        return $attr_obj->get_attr({name => $name});
     }
 
-    return $attr_obj->get_attr({'name' => $name});
+    my $attr = $self->_get('_attr') or return;
+    return $attr->{$name};
 }
 
 sub all_attr {
     my $self = shift;
-    my $attr_obj = $self->_get_attr_obj;
-    my $attr     = $self->_get('_attr');
 
-    unless ($attr_obj) {
-        return $attr;
+    if (my $attr_obj = $self->_get_attr_obj) {
+        return $attr_obj->get_attr_hash;
     }
 
-    return $attr_obj->get_attr_hash();
+    return $self->_get('_attr');
 }
 
 #------------------------------------------------------------------------------#
@@ -1231,53 +1478,45 @@ NONE
 =cut
 
 sub set_meta {
-    my $self = shift;
-    my ($name, $field, $val) = @_;
-    my $attr_obj = $self->_get_attr_obj;
-    my $meta     = $self->_get('_meta');
-
-    if ($attr_obj) {
-        $attr_obj->add_meta({'name'  => $name,
-                             'field' => $field,
-                             'value' => $val});
+    my ($self, $name, $field, $val) = @_;
+    if (my $attr_obj = $self->_get_attr_obj) {
+        $attr_obj->add_meta({
+            name  => $name,
+            field => $field,
+            value => $val,
+        });
     } else {
+        my $meta = $self->_get('_meta');
+        $self->_set(['_meta'], [$meta = {}])
+            unless $meta;
         $meta->{$name}->{$field} = $val;
-
-        $self->_set(['_meta'], [$meta]);
     }
 
     return $val;
 }
 
 sub get_meta {
-    my $self = shift;
-    my ($name, $field) = @_;
-    my $attr_obj = $self->_get_attr_obj;
+    my ($self, $name, $field) = @_;
 
-    unless ($attr_obj) {
-        my $meta = $self->_get('_meta');
-        if (defined $field) {
-            return $meta->{$name}->{$field};
-        } else {
-            return $meta->{$name};
-        }
+    if (my $attr_obj = $self->_get_attr_obj) {
+        return $attr_obj->get_meta({
+            name  => $name,
+            field => $field
+        }) if defined $field;
+        my $meta = $attr_obj->get_meta({name => $name});
+        return { map { $_ => $meta->{$_}->{value} } keys %$meta };
     }
 
-    if (defined $field) {
-        return $attr_obj->get_meta({'name'  => $name,
-                                    'field' => $field});
-    } else {
-        my $meta = $attr_obj->get_meta({'name' => $name});
-
-        return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
-    }
+    my $meta = $self->_get('_meta') || return;
+    return $meta->{$name}->{$field} if $field;
+    return $meta->{$name};
 }
 
 #------------------------------------------------------------------------------#
 
 =item $field = $field->activate()
 
-Makes the field object active
+Activates the field type object.
 
 B<Throws:>
 
@@ -1298,8 +1537,8 @@ sub activate { $_[0]->_set(['active'], [1]) }
 #------------------------------------------------------------------------------#
 
 =item $field = $field->deactivate()
- 
-Makes the object inactive
+
+Deactivates the field type object.
 
 B<Throws:>
 
@@ -1343,8 +1582,8 @@ sub is_active { return $_[0]->_get('active') ? $_[0] : undef }
 
 =item (undef || $self) = $field->remove()
 
-Removes this object completely from the DB.  Returns 1 if active or undef 
-otherwise
+Removes this object completely from the DB. Returns true if active or false
+otherwise.
 
 B<Throws:>
 
@@ -1443,6 +1682,7 @@ sub _do_list {
     my ($param, $ids, $href) = @_;
     my (@where, @bind);
     my %ints = (
+        id              => 'id',
         element_type_id => 'element__id',
         element_id      => 'element__id',
         element__id     => 'element__id',
@@ -1450,6 +1690,9 @@ sub _do_list {
         map_type_id     => 'map_type__id',
         max_length      => 'max_length',
         place           => 'place',
+        cols            => 'cols',
+        rows            => 'cols',
+        length          => 'length',
     );
 
     my %bools = (
@@ -1458,15 +1701,20 @@ sub _do_list {
         quantifier    => 'quantifier',
         autopopulated => 'autopopulated',
         active        => 'active',
+        multiple      => 'multiple',
     );
 
     my %strings = (
         key_name    => 'key_name',
+        name        => 'name',
         description => 'description',
         sql_type    => 'sql_type',
+        vals        => 'vals',
+        default_val => 'default_val',
+        field_type  => 'field_type',
     );
 
-    my $sql = 'SELECT id, ' . join(', ', COLS) . ' FROM ' . TABLE;
+    my $sql = 'SELECT id, ' . join(', ', @COLS) . ' FROM ' . TABLE;
     while (my ($k, $v) = each %$param) {
         if ($ints{$k}) {
             push @where, any_where($v, "$ints{$k} = ?", \@bind);
@@ -1503,12 +1751,12 @@ sub _do_list {
         # this must have been called from list so give objects
         my (@d, @objs, %objs);
         execute($select, @bind);
-        bind_columns($select, \@d[0..(scalar COLS)]);
+        bind_columns($select, \@d[0..(scalar @COLS)]);
 
         while (fetch($select)) {
             my $self = bless {}, $class;
 
-            $self->_set(['id', ATTRS], [@d]);
+            $self->_set(['id', @ATTRS], [@d]);
 
             my $id = $self->get_id;
             my $a_obj = Bric::Util::Attribute::AssetTypeData->new
@@ -1539,14 +1787,14 @@ Needing to be documented.
 
 sub _get_attr_obj {
     my $self = shift;
-    my $attr_obj = $self->_get('_attr_obj');
-    my $id = $self->get_id;
+    my ($id, $attr_obj) = $self->_get(qw(id _attr_obj));
 
-    unless ($attr_obj || not defined($id)) {
-        $attr_obj = Bric::Util::Attribute::AssetTypeData->new(
-                                     {'object_id' => $id,
-                                      'subsys'    => "id_$id"});
-        $self->_set(['_attr_obj'], [$attr_obj]);
+    unless ($attr_obj || not defined $id) {
+        $attr_obj = Bric::Util::Attribute::AssetTypeData->new({
+            object_id => $id,
+            subsys    => "id_$id"
+        });
+        $self->_set(['_attr_obj'] => [$attr_obj]);
     }
 
     return $attr_obj;
@@ -1554,63 +1802,32 @@ sub _get_attr_obj {
 
 sub _save_attr {
     my $self = shift;
-    my $a_obj = $self->_get_attr_obj;
-    my ($attr, $meta) = $self->_get('_attr', '_meta');
-    my $id   = $self->get_id;
+    my ($id, $attr_obj, $attr, $meta) = $self->_get(qw(id _attr_obj _attr _meta));
+    return unless $attr_obj || $attr;
 
-    while (my ($k,$v) = each %$attr) {
-        $a_obj->set_attr({'name'     => $k,
-                          'sql_type' => 'short',
-                          'value'    => $v});
-    }
-
-    foreach my $k (keys %$meta) {
-        while (my ($f, $v) = each %{$meta->{$k}}) {
-            $a_obj->add_meta({'name'  => $k,
-                              'field' => $f,
-                              'value' => $v});
+    if ($attr) {
+        while (my ($k,$v) = each %$attr) {
+            $attr_obj->set_attr({
+                name     => $k,
+                sql_type => 'short',
+                value    => $v
+            });
         }
     }
 
-    $a_obj->save;
-}
+    if ($meta) {
+        foreach my $k (keys %$meta) {
+            while (my ($f, $v) = each %{$meta->{$k}}) {
+                $attr_obj->add_meta({
+                    name  => $k,
+                    field => $f,
+                    value => $v
+                });
+            }
+        }
+    }
 
-#------------------------------------------------------------------------------#
-
-=item _select_data
-
-Select rows from the element_data table.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _select_data {
-    my $self = shift;
-    my ($id) = @_;
-    my @d;
-    my $sql = 'SELECT '.join(',',COLS).' FROM '.TABLE.
-              ' WHERE id = ?';
-
-    my $sth = prepare_ca($sql, undef);
-    execute($sth, $id);
-    bind_columns($sth, \@d[0..(scalar COLS - 1)]);
-    fetch($sth);
-    finish($sth);
-
-    # Set the columns selected as well as the passed ID.
-    $self->_set([ATTRS, 'id'], [@d, $id]);
-    $self->cache_me;
+    $attr_obj->save;
 }
 
 #------------------------------------------------------------------------------#
@@ -1636,11 +1853,10 @@ NONE
 sub _update_data {
     my $self = shift;
     my $sql = 'UPDATE '.TABLE.
-              ' SET '.join(', ', map {"$_ = ?"} COLS).' WHERE id=?';
-
+              ' SET '.join(', ', map {"$_ = ?"} @COLS).' WHERE id=?';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(ATTRS), $self->get_id);
+    execute($sth, $self->_get(@ATTRS), $self->get_id);
     return 1;
 }
 
@@ -1669,11 +1885,11 @@ sub _insert_data {
     my $nextval = next_key(TABLE);
 
     # Create the insert statement.
-    my $sql = 'INSERT INTO '.TABLE.' (id, '.join(', ', COLS).") ".
-              "VALUES ($nextval,".join(', ', ('?') x COLS).')';
+    my $sql = 'INSERT INTO '.TABLE.' (id, '.join(', ', @COLS).") ".
+              "VALUES ($nextval, ".join(', ', ('?') x @COLS).')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(ATTRS));
+    execute($sth, $self->_get(@ATTRS));
 
     # Set the ID of this object.
     $self->_set(['id'],[last_key(TABLE)]);

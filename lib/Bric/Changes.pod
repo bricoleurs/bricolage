@@ -111,7 +111,7 @@ match was found. [David]
 
 =item *
 
-New 'Code Select' custom field allows you to add arbitrary Perl code to
+New "Code Select" custom field allows you to add arbitrary Perl code to
 generate the items in a select list. [Scott]
 
 =back
@@ -259,12 +259,31 @@ feature, but will likely be used in other contexts in the future. [David]
 
 =item *
 
-In the Element Type (new name) Profile, when adding a new Radio Buttons,
-Pulldown, or Select custom field, you can now escape commas (that otherwise
-separates the Options from their Label) with a backslash so that it will
-appear literally in either the value or label. [Scott]
+Normalized story and media elements and fields so that they no longer store
+copies of their names, key names, and descriptions, and, in the case of
+fields, the autopopulated and sql_type attributes, since these are actually
+element type and field type attributes and are easily referenced in the
+element type and field type tables. This change significantly reduces the size
+of the database and has the potential to increase performance when getting and
+setting field values, especially in templates. [David]
+
+=item *
+
+Major refactoring of the field types class, Bric::Biz::AssetType::Parts::Data.
+Attributes that describe how fields should be displayed are no longer stored
+in a separate attribute object, but as true attributes of field type objects.
+This makes them much more efficient in terms of database access. [David]
+
+=item *
+
+Added much more fine-graine field type management to the Element Type SOAP
+interface. More field attributes can now be updated via SOAP. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.9.0 "Punkin" (2005-08-19)
 
@@ -658,6 +677,8 @@ Updated search documentation and wrote tests for:
 
 =back
 
+=cut
+
 ##############################################################################
 
 =head1 VERSION 1.8.7 ()
@@ -694,6 +715,10 @@ Eliminated "Subroutine Bric::App::Handler::rethrow_exception redefined"
 warning during startup with HTML::Mason 1.30. [David]
 
 =back
+
+=cut
+
+##############################################################################
 
 =head1 VERSION 1.8.6 (2005-07-19)
 
