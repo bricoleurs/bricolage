@@ -62,7 +62,7 @@ $LastChangedDate$
 
   # Manage the parts of an asset type.
   $element            = $element->add_data($field);
-  $element_data       = $element->new_data($param);
+  $field_type         = $element->new_data($param);
   $element            = $element->copy_data($at, $field);
   ($part_list || @parts) = $element->get_data($field);
   $element            = $element->del_data($field);
@@ -316,7 +316,7 @@ sub new {
                 required      => 1,
                 sql_type      => 'short',
                 autopopulated => 1,
-                field_type    => 'text',
+                widget_type   => 'text',
                 length        => 32,
                 place         => ++$i,
             });
@@ -2490,7 +2490,7 @@ sub _do_list {
     if (exists $params->{data_name} or exists $params->{map_type_id}
           or exists $params->{map_type__id})
     {
-        # Add the element_data table.
+        # Add the at_data table.
         $tables .= ', at_data d';
         push @wheres, 'd.element__id = a.id';
         if (exists $params->{data_name}) {

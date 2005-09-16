@@ -31,7 +31,7 @@ sub element_type {
     my $self = shift;
     my $elem = Bric::Biz::AssetType->new({
         name          => 'Test Element Data',
-        key_name      =>'test_element_data',
+        key_name      =>'test_field_type',
         description   => 'Testing Element Data API',
         burner        => Bric::Biz::AssetType::BURNER_MASON,
         type__id      => 1,
@@ -107,7 +107,7 @@ sub test_list : Test(90) {
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
-        $args{field_type}    = 'textarea' if $n % 2;
+        $args{widget_type}   = 'textarea' if $n % 2;
         $args{cols}          = $n;
         $args{rows}          = $n;
         $args{length}        = $n;
@@ -249,21 +249,21 @@ sub test_list : Test(90) {
     }), "Lookup sql_type ANY('short', 'blob')" );
     is( scalar @fields, 5, "Check for 5 fields" );
 
-    # Try field_type.
+    # Try widget_type.
     ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
         element_type_id => $field{element_type_id},
-        field_type   => 'text',
-    }), "Lookup field_type text" );
+        widget_type   => 'text',
+    }), "Lookup widget_type text" );
     is( scalar @fields, 2, "Check for 2 fields" );
     ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
         element_type_id => $field{element_type_id},
-        field_type   => ANY('text', 'textarea'),
-    }), "Lookup field_type ANY('text', 'textarea')" );
+        widget_type   => ANY('text', 'textarea'),
+    }), "Lookup widget_type ANY('text', 'textarea')" );
     is( scalar @fields, 5, "Check for 5 fields" );
     ok( @fields = Bric::Biz::AssetType::Parts::Data->list({
         element_type_id => $field{element_type_id},
-        field_type   => 'text%',
-    }), 'Lookup field_type text%' );
+        widget_type   => 'text%',
+    }), 'Lookup widget_type text%' );
     is( scalar @fields, 5, "Check for 5 fields" );
 
     # Try cols, rows, length.
@@ -332,7 +332,7 @@ sub test_list_ids : Test(90) {
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
-        $args{field_type}    = 'textarea' if $n % 2;
+        $args{widget_type}   = 'textarea' if $n % 2;
         $args{cols}          = $n;
         $args{rows}          = $n;
         $args{length}        = $n;
@@ -474,21 +474,21 @@ sub test_list_ids : Test(90) {
     }), "Lookup sql_type ANY('short', 'blob')" );
     is( scalar @field_ids, 5, "Check for 5 field IDs" );
 
-    # Try field_type.
+    # Try widget_type.
     ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
         element_type_id => $field{element_type_id},
-        field_type   => 'text',
-    }), "Lookup field_type text" );
+        widget_type   => 'text',
+    }), "Lookup widget_type text" );
     is( scalar @field_ids, 2, "Check for 2 field IDs" );
     ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
         element_type_id => $field{element_type_id},
-        field_type   => ANY('text', 'textarea'),
-    }), "Lookup field_type ANY('text', 'textarea')" );
+        widget_type   => ANY('text', 'textarea'),
+    }), "Lookup widget_type ANY('text', 'textarea')" );
     is( scalar @field_ids, 5, "Check for 5 field IDs" );
     ok( @field_ids = Bric::Biz::AssetType::Parts::Data->list_ids({
         element_type_id => $field{element_type_id},
-        field_type   => 'text%',
-    }), 'Lookup field_type text%' );
+        widget_type   => 'text%',
+    }), 'Lookup widget_type text%' );
     is( scalar @field_ids, 5, "Check for 5 field IDs" );
 
     # Try cols, rows, length.
@@ -557,7 +557,7 @@ sub href : Test(95) {
         $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
-        $args{field_type}    = 'textarea' if $n % 2;
+        $args{widget_type}   = 'textarea' if $n % 2;
         $args{cols}          = $n;
         $args{rows}          = $n;
         $args{length}        = $n;
@@ -700,21 +700,21 @@ sub href : Test(95) {
     }), "Lookup sql_type ANY('short', 'blob')" );
     is( scalar keys %$fields, 5, "Check for 5 fields" );
 
-    # Try field_type.
+    # Try widget_type.
     ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
         element_type_id => $field{element_type_id},
-        field_type   => 'text',
-    }), "Lookup field_type text" );
+        widget_type   => 'text',
+    }), "Lookup widget_type text" );
     is( scalar keys %$fields, 2, "Check for 2 fields" );
     ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
         element_type_id => $field{element_type_id},
-        field_type   => ANY('text', 'textarea'),
-    }), "Lookup field_type ANY('text', 'textarea')" );
+        widget_type   => ANY('text', 'textarea'),
+    }), "Lookup widget_type ANY('text', 'textarea')" );
     is( scalar keys %$fields, 5, "Check for 5 fields" );
     ok( $fields = Bric::Biz::AssetType::Parts::Data->href({
         element_type_id => $field{element_type_id},
-        field_type   => 'text%',
-    }), 'Lookup field_type text%' );
+        widget_type   => 'text%',
+    }), 'Lookup widget_type text%' );
     is( scalar keys %$fields, 5, "Check for 5 fields" );
 
     # Try cols, rows, length.

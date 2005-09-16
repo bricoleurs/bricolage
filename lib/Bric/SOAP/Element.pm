@@ -618,7 +618,7 @@ sub load_asset {
                 $data->set_place(       $place);
                 $data->set_publishable( 1 );
                 $data->set_max_length(  $field->{max_size});
-                $data->set_field_type(  $field->{field_type}  || $field->{type});
+                $data->set_widget_type( $field->{widget_type} || $field->{type});
                 $data->set_default_val( $field->{default_val} || $field->{val});
                 $data->set_length(      $field->{length}      || $field->{size} || 0);
                 $data->set_rows(        $field->{rows});
@@ -635,7 +635,7 @@ sub load_asset {
                             if DEBUG;
                 $data = $element->new_data({
                     key_name      => $field->{key_name},
-                    name          => $field->{name}       || $field->{label},
+                    name          => $field->{name}        || $field->{label},
                     description   => $field->{description},
                     required      => $field->{required},
                     quantifier    => $field->{repeatable},
@@ -643,12 +643,12 @@ sub load_asset {
                     place         => $place,
                     publishable   => 1,
                     max_length    => $field->{max_size},
-                    field_type    => $field->{field_type} || $field->{type},
-                    default_val   => $field->{defaul_val} || $field->{value},
-                    length        => $field->{length}     || $field->{size} || 0,
-                    rows          => $field->{rows}       || 0,
-                    cols          => $field->{cols}       || 0,
-                    multiple      => $field->{multiple}   || 0,
+                    widget_type   => $field->{widget_type} || $field->{type},
+                    default_val   => $field->{defaul_val}  || $field->{value},
+                    length        => $field->{length}      || $field->{size} || 0,
+                    rows          => $field->{rows}        || 0,
+                    cols          => $field->{cols}        || 0,
+                    multiple      => $field->{multiple}    || 0,
                     vals          => $field->{options},
                     active        => $field->{active},
                 });
@@ -801,7 +801,7 @@ sub serialize_asset {
         $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
         $writer->dataElement( $auto       => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
-        $writer->dataElement( field_type  => $data->get_field_type         );
+        $writer->dataElement( widget_type => $data->get_widget_type        );
         $writer->dataElement( default_val => $data->get_default_val        );
         $writer->dataElement( options     => $data->get_vals               );
         $writer->dataElement( multiple    => $data->get_multiple   ? 1 : 0 );

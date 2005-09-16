@@ -68,7 +68,7 @@ sub save : Callback {
         }
 
         # The default value for checkboxes is boolean.
-        if ($ed->get_field_type eq 'checkbox') {
+        if ($ed->get_widget_type eq 'checkbox') {
             $set_meta_boolean->($ed, 'default_val', $param);
         }
 

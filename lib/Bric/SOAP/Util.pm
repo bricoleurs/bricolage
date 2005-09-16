@@ -470,7 +470,7 @@ sub _deserialize_tile {
     # load data elements
     if ($data->{data}) {
         foreach my $d (@{$data->{data}}) {
-            my $key_name = $d->{field_type} || $d->{element};
+            my $key_name = $d->{widget_type} || $d->{element};
             my $at = $valid_data{$key_name};
             throw_ap(error => "Error loading data element for " .
                        $element->get_key_name .
@@ -640,7 +640,7 @@ sub _serialize_tile {
     } else {
         my $data;
 
-        if ($element->get_element_data_obj->get_sql_type eq 'date') {
+        if ($element->get_field_type->get_sql_type eq 'date') {
             # get date data and format for output
             $data = $element->get_data(ISO_8601_FORMAT);
             $data = db_date_to_xs_date($data) if $data;
@@ -650,15 +650,15 @@ sub _serialize_tile {
 
         if (defined $data and length $data) {
             $writer->dataElement(
-                data       => $data,
-                field_type => $element->get_key_name,
-                order      => $element->get_place - $diff,
+                data        => $data,
+                widget_type => $element->get_key_name,
+                order       => $element->get_place - $diff,
             );
         } else {
             $writer->emptyTag(
                 'data',
-                field_type => $element->get_key_name,
-                order      => $element->get_place - $diff,
+                widget_type => $element->get_key_name,
+                order       => $element->get_place - $diff,
             );
         }
     }

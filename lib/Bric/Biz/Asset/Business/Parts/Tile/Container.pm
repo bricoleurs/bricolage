@@ -823,7 +823,7 @@ sub get_possible_data {
     my @parts;
 
     for my $data (@$current) {
-        my $atd = delete $at_info{$data->get_element_data_id};
+        my $atd = delete $at_info{$data->get_field_type_id};
         # Add if this tile is repeatable.
         push @parts, $atd if $atd && $atd->get_quantifier;
     }
@@ -881,7 +881,7 @@ sub add_data {
         active             => 1,
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_instance_id'),
-        element_data       => $atd,
+        field_type         => $atd,
     });
 
     $data_tile->set_data($data) if defined $data;
@@ -1206,9 +1206,9 @@ sub add_element {
     }
 
     else {
-        my $ft_id = $tile->get_element_data_id;
+        my $ft_id = $tile->get_field_type_id;
         for my $sub (grep { !$_->is_container } @$tiles) {
-            $object_order++ if $sub->get_element_data_id == $ft_id;
+            $object_order++ if $sub->get_field_type_id == $ft_id;
         }
     }
 
@@ -1328,15 +1328,15 @@ sub delete_elements {
                 }
                 $_->set_object_order($count);
             } else {
-                if (exists $data_order->{ $_->get_element_data_id }) {
+                if (exists $data_order->{ $_->get_field_type_id }) {
                     $count = scalar
-                      @{ $data_order->{$_->get_element_data_id } };
+                      @{ $data_order->{$_->get_field_type_id } };
                 } else {
                     $count = 0;
-                    $data_order->{$_->get_element_data_id } = [];
+                    $data_order->{$_->get_field_type_id } = [];
                 }
                 $_->set_object_order($count);
-                push @{ $data_order->{$_->get_element_data_id} },
+                push @{ $data_order->{$_->get_field_type_id} },
                   $_->get_id;
             }
             push @$new_list, $_;
@@ -1424,7 +1424,7 @@ sub reorder_elements {
             $at_id = $obj->get_element_type_id;
             $seen  = $at_count;
         } else {
-            $at_id = $obj->get_element_data_id;
+            $at_id = $obj->get_field_type_id;
             $seen  = $data_count;
         }
 
@@ -2328,7 +2328,7 @@ sub _deserialize_pod {
                     active             => 1,
                     object_type        => $doc_type,
                     object_instance_id => $doc_id,
-                    element_data       => $field_type,
+                    field_type         => $field_type,
                 });
             $field->set_data($content) if defined $content;
             $field->set_place(scalar @elems);

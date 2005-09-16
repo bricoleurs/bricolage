@@ -52,7 +52,7 @@ if (@tiles || @$elem_opts ) {
 # Find a suitable tile to display
 my($disp_buf, $value_buf);
 foreach my $field ($dt->get_data_elements) {
-    next if $field->get_field_type_widget !~ /^text/;
+    next if $field->get_widget_type !~ /^text/;
     if (my $data = $dt->get_data($field->get_key_name)) {
         $disp_buf  =  $field->get_name;
         $value_buf =  substr($data, 0, 64);
@@ -127,10 +127,10 @@ if ($at->is_related_media) {
 <%perl>;
 } else {
     # START ELSE ( DATA TILE DISPLAY )
-    my $at_obj = $dt->get_element_data_obj();
+    my $at_obj = $dt->get_field_type;
     $no_del = $at_obj->get_required && $dt->get_object_order == 1;
     my $vals = { props => {
-        type      => $at_obj->get_field_type,
+        type      => $at_obj->get_widget_type,
         disp      => $at_obj->get_name,
         length    => $at_obj->get_length,
         size      => $at_obj->get_length,

@@ -54,7 +54,7 @@ CREATE TABLE at_data (
     publishable      BOOLEAN         NOT NULL DEFAULT FALSE,
     max_length       INTEGER         NOT NULL DEFAULT 0,
     sql_type         VARCHAR(30)     NOT NULL DEFAULT 'short',
-    field_type       VARCHAR(30)     NOT NULL DEFAULT 'text',
+    widget_type      VARCHAR(30)     NOT NULL DEFAULT 'text',
     precision        SMALLINT,
     cols             INTEGER         NOT NULL,
     rows             INTEGER         NOT NULL,

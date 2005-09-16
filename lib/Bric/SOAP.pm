@@ -806,7 +806,7 @@ The XSD source:
                            <xs:element name="autopopulated" type="xs:boolean"/>
                            <xs:element name="multiple" type="xs:boolean" minOccurs="0"/>
                            <xs:element name="max_size" type="xs:int" minOccurs="0"/>
-                           <xs:element name="field_type" type="xs:string"/>
+                           <xs:element name="widget_type" type="xs:string"/>
                            <xs:element name="default_val" type="xs:string"/>
                            <xs:element name="options" type="xs:string" minOccurs="0"/>
                            <xs:element name="length" type="xs:int" minOccurs="0"/>

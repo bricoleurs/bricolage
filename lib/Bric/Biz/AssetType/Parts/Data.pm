@@ -137,7 +137,7 @@ my @COLS = qw(
     publishable
     max_length
     sql_type
-    field_type
+    widget_type
     precision
     cols
     rows
@@ -161,7 +161,7 @@ my @ATTRS = qw(
     publishable
     max_length
     sql_type
-    field_type
+    widget_type
     precision
     cols
     rows
@@ -179,7 +179,7 @@ use constant ORD => qw(
     max_length
     required
     quantifier
-    field_type
+    widget_type
     precision
     default_val
     length
@@ -219,7 +219,7 @@ BEGIN {
         required        => Bric::FIELD_RDWR,
         quantifier      => Bric::FIELD_RDWR,
         sql_type        => Bric::FIELD_RDWR,
-        field_type      => Bric::FIELD_RDWR,
+        widget_type     => Bric::FIELD_RDWR,
         precision       => Bric::FIELD_RDWR,
         cols            => Bric::FIELD_RDWR,
         rows            => Bric::FIELD_RDWR,
@@ -330,8 +330,8 @@ sub new {
       if exists $init->{map_type__id};
 
     $init->{$_} ||= 0 for qw(max_length length place cols rows length place);
-    $init->{field_type} ||= 'text';
-    $init->{sql_type}   ||= 'short';
+    $init->{widget_type} ||= 'text';
+    $init->{sql_type}    ||= 'short';
 
     delete $init->{meta_object};
     return $class->SUPER::new($init);
@@ -462,38 +462,38 @@ Indicates how the field value should be stored in the database. Possible
 values are "short", "blob", and "date". May use C<ANY> for a list of possible
 values.
 
-=item field_type
+=item widget_type
 
-A string indicating how the field should be displayed in user interfaces. May
-use C<ANY> for a list of possible values.
+A string indicating what widget should be used to display the field in user
+interfaces. May use C<ANY> for a list of possible values.
 
 =item precision
 
 An inteteger indicating the precision of the field's value. Should be set only
-when the C<field_type> is set to "date". May use C<ANY> for a list of possible
-values.
+when the C<widget_type> is set to "date". May use C<ANY> for a list of
+possible values.
 
 =item cols
 
 The number of columns to use to display the field. Should only be set when the
-C<field_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
+C<widget_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
 possible values.
 
 =item rows
 
 The number of rows to use to display the field. Should only be set when the
-C<field_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
+C<widget_type> is set to "textarea" or "wysiwyg". May use C<ANY> for a list of
 possible values.
 
 =item length
 
 The length to use in the display of the field. Should only be set when the
-C<field_type> is set to "text". May use C<ANY> for a list of possible values.
+C<widget_type> is set to "text". May use C<ANY> for a list of possible values.
 
 =item multiple
 
 A boolean value indicating whether or not the field may store multiple values.
-Should only be set to a true value when the C<field_type> is set to "select".
+Should only be set to a true value when the C<widget_type> is set to "select".
 
 =item default_val
 
@@ -810,13 +810,13 @@ sub my_meths {
                       type      => 'checkbox',
                   },
               },
-              field_type  => {
-			      get_meth => sub { shift->get_field_type(@_) },
+              widget_type  => {
+			      get_meth => sub { shift->get_widget_type(@_) },
 			      get_args => [],
-			      set_meth => sub { shift->set_field_type(@_) },
+			      set_meth => sub { shift->set_widget_type(@_) },
 			      set_args => [],
-			      name     => 'field_type',
-			      disp     => 'Field Type',
+			      name     => 'widget_type',
+			      disp     => 'Widget Type',
 			      len      => 80,
 			      req      => 1,
 			      type     => 'short',
@@ -1174,7 +1174,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $field_type = $field->get_field_type()
+=item $widget_type = $field->get_widget_type()
 
 Returns a string indicating how to display the field in a UI.
 
@@ -1184,7 +1184,7 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $field = $field->set_field_type($field_type)
+=item $field = $field->set_widget_type($widget_type)
 
 Sets the attribute indicating how to display the field in a UI. Possible
 values are:
@@ -1220,7 +1220,7 @@ B<Notes:> NONE.
 =item $precision = $field->get_precision()
 
 Returns an inteteger indicating the precision of the field's value. Should be
-set only when the C<field_type> is set to "date".
+set only when the C<widget_type> is set to "date".
 
 B<Throws:> NONE.
 
@@ -1230,7 +1230,7 @@ B<Notes:> NONE.
 
 =item $field = $field->set_precision($precision)
 
-Sets the precision for C<field_type> "date". See
+Sets the precision for C<widget_type> "date". See
 L<Bric::Util::Time|Bric::Util::Time> for documentation of the available
 precisions.
 
@@ -1243,8 +1243,8 @@ B<Notes:> NONE.
 =item $field = $field->set_cols($cols)
 
 Sets the number of columns to use in displaying the field in a UI. Should only
-be set to a non-zero value if the C<field_type> attribute is set to "textarea"
-or "wysiwyg".
+be set to a non-zero value if the C<widget_type> attribute is set to
+"textarea" or "wysiwyg".
 
 B<Throws:> NONE.
 
@@ -1265,8 +1265,8 @@ B<Notes:> NONE.
 =item $field = $field->set_rows($rows)
 
 Sets the number of rows to use in displaying the field in a UI. Should only be
-set to a non-zero value if the C<field_type> attribute is set to "textarea" or
-"wysiwyg".
+set to a non-zero value if the C<widget_type> attribute is set to "textarea"
+or "wysiwyg".
 
 B<Throws:> NONE.
 
@@ -1287,7 +1287,7 @@ B<Notes:> NONE.
 =item $field = $field->set_length($length)
 
 Sets the length to use in displaying the field in a UI. Should only be set to
-a non-zero value if the C<field_type> attribute is set to "text".
+a non-zero value if the C<widget_type> attribute is set to "text".
 
 B<Thlength:> NONE.
 
@@ -1318,7 +1318,7 @@ B<Notes:> NONE.
 =item $field = $field->set_multiple($multiple)
 
 Sets boolean value indicating whether the field can have multiple values.
-Should only be set to a true value if the C<field_type> is "select".
+Should only be set to a true value if the C<widget_type> is "select".
 
 B<Throws:> NONE.
 
@@ -1711,7 +1711,7 @@ sub _do_list {
         sql_type    => 'sql_type',
         vals        => 'vals',
         default_val => 'default_val',
-        field_type  => 'field_type',
+        widget_type => 'widget_type',
     );
 
     my $sql = 'SELECT id, ' . join(', ', @COLS) . ' FROM ' . TABLE;
@@ -1834,7 +1834,7 @@ sub _save_attr {
 
 =item _update_data
 
-Update the element_data table.
+Update the at_data table.
 
 B<Throws:>
 
@@ -1864,7 +1864,7 @@ sub _update_data {
 
 =item _insert_data
 
-Insert rows into the element_data table.
+Insert rows into the at_data table.
 
 B<Throws:>
 

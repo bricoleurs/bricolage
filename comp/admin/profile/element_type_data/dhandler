@@ -66,7 +66,7 @@ my $field = $ARGS{obj}
       : $class->new();
 $id ||= $field->get_id();
 
-my $which = $field->get_field_type;  # text, radio, etc..
+my $which = $field->get_widget_type;  # text, radio, etc..
 
 # Get the element type object to which the field belongs.
 my $elem = Bric::Biz::AssetType->lookup({ id => $field->get_element__id });
@@ -84,7 +84,7 @@ my $exclude = { map { $_ => 1 } qw(
     name
     max_length
     active
-    field_type
+    wiget_type
     default_val
     length
     cols

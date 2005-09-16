@@ -247,6 +247,13 @@ C<get_element_type()> and to access C<element_type_id>. [David]
 
 =item *
 
+Changed the attributes and objects that refer to the
+Bric::Biz::AssetType::Data object in Bric::Biz::Asset::Parts::Tile::Data from
+C<element_data_id> and C<get_element_data()> to C<field_type_id> and
+C<get_field_type()>. [David]
+
+=item *
+
 Made the scrollbar "sticky" in the Story Profile. [Scott]
 
 =item *

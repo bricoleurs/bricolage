@@ -60,7 +60,7 @@ sub new_args {
      object_type        => 'story',
      object_instance_id => $story->get_version_id,
      parent_id          => $cont->get_id,
-     element_data       => $atd,
+     field_type         => $atd,
      object_order       => 0)
 }
 
@@ -89,7 +89,7 @@ sub test_new : Test(9) {
     }), 'Lookup Data Tile');
     is ($lkup->get_data, 'Macaroon',  'Compare Data');
 
-    ok (my $atd = $dtile->get_element_data_obj, 'Get Element Data Object');
+    ok (my $atd = $dtile->get_field_type, 'Get Element Data Object');
     ok (my $list = $self->class->list({object_type => 'story'}),
        'List Data Tiles');
     ok (grep($_->get_id == $dtile->get_id, @$list), 'Data Tile is Listed');
@@ -229,16 +229,16 @@ sub test_list : Test(97) {
     }), 'List fields by object';
     is scalar @fields, 9, 'There should be nine story fields';
 
-    # List by element_data_id.
+    # List by field_type_id.
     ok @fields = $class->list({
-        object_type     => 'story',
-        element_data_id => $para->get_id,
-    }), 'List dataents by element_data_id';
+        object_type   => 'story',
+        field_type_id => $para->get_id,
+    }), 'List dataents by field_type_id';
     is scalar @fields, 4, 'There should be four fields';
     ok @fields = $class->list({
-        object_type     => 'story',
-        element_data_id => ANY( $para->get_id, $head->get_id ),
-    }), 'List dataents by ANY(element_data_id)';
+        object_type   => 'story',
+        field_type_id => ANY( $para->get_id, $head->get_id ),
+    }), 'List dataents by ANY(field_type_id)';
     is scalar @fields, 6, 'There should be six fields';
 
     # Try by active.
@@ -392,16 +392,16 @@ sub test_list_ids : Test(98) {
     }), 'List IDs field ids by object';
     is scalar @field_ids, 9, 'There should be nine story field ids';
 
-    # List IDs by element_data_id.
+    # List IDs by field_type_id.
     ok @field_ids = $class->list_ids({
-        object_type     => 'story',
-        element_data_id => $para->get_id,
-    }), 'List IDs dataents by element_data_id';
+        object_type   => 'story',
+        field_type_id => $para->get_id,
+    }), 'List IDs dataents by field_type_id';
     is scalar @field_ids, 4, 'There should be four field ids';
     ok @field_ids = $class->list_ids({
-        object_type     => 'story',
-        element_data_id => ANY( $para->get_id, $head->get_id ),
-    }), 'List IDs dataents by ANY(element_data_id)';
+        object_type   => 'story',
+        field_type_id => ANY( $para->get_id, $head->get_id ),
+    }), 'List IDs dataents by ANY(field_type_id)';
     is scalar @field_ids, 6, 'There should be six field ids';
 
     # Try by active.

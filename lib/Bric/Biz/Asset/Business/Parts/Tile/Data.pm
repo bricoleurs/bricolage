@@ -87,7 +87,7 @@ my @SEL_COLS = qw(
     ft.multiple
     ft.max_length
     ft.sql_type
-    ft.field_type
+    ft.widget_type
     f.element_data__id
     f.object_instance_id
     f.parent_id
@@ -109,8 +109,8 @@ my @SEL_FIELDS = qw(
     _multiple
     max_length
     sql_type
-    field_type_widget
-    element_data_id
+    widget_type
+    field_type_id
     object_instance_id
     parent_id
     place
@@ -136,7 +136,7 @@ my @COLS = qw(
 );
 
 my @FIELDS = qw(
-    element_data_id
+    field_type_id
     object_instance_id
     parent_id
     place
@@ -166,18 +166,18 @@ my @FIELDS = qw(
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-        element_data_id   => Bric::FIELD_RDWR,
-        sql_type          => Bric::FIELD_READ,
-        field_type_widget => Bric::FIELD_READ,
-        max_length        => Bric::FIELD_READ,
-        _autopopulated    => Bric::FIELD_NONE,
-        _multiple         => Bric::FIELD_NONE,
-        _hold_val         => Bric::FIELD_NONE,
-        _active           => Bric::FIELD_NONE,
-        _date_val         => Bric::FIELD_NONE,
-        _short_val        => Bric::FIELD_NONE,
-        _blob_val         => Bric::FIELD_NONE,
-        _element_obj      => Bric::FIELD_NONE,
+        field_type_id   => Bric::FIELD_RDWR,
+        sql_type        => Bric::FIELD_READ,
+        widget_type     => Bric::FIELD_READ,
+        max_length      => Bric::FIELD_READ,
+        _autopopulated  => Bric::FIELD_NONE,
+        _multiple       => Bric::FIELD_NONE,
+        _hold_val       => Bric::FIELD_NONE,
+        _active         => Bric::FIELD_NONE,
+        _date_val       => Bric::FIELD_NONE,
+        _short_val      => Bric::FIELD_NONE,
+        _blob_val       => Bric::FIELD_NONE,
+        _field_type    => Bric::FIELD_NONE,
     });
 }
 
@@ -210,6 +210,15 @@ The ID of the story or media document the new data element is associated with.
 
 The order of this element relative to the other subelements of the parent
 element.
+
+=item field_type
+
+=item element_data
+
+The Bric::Biz::AssetType::Parts::Data object that defines the structure of the
+new data element.
+
+=item field_type_id
 
 =item element_data_id
 
@@ -252,18 +261,24 @@ sub new {
             unless $init->{object_type}
     }
 
-    my $atd = delete $init->{element_data};
+    my $atd = delete $init->{field_type} || delete $init->{element_data};
+    if (!$atd && $init->{field_type_id} || $init->{element_data_id}) {
+        $atd = Bric::Biz::AssetType::Parts::Data->lookup({
+            id => $init->{field_type} ||= delete $init->{element_data}
+        });
+    }
+
     if ($atd) {
-        $init->{element_data_id}   = $atd->get_id;
+        $init->{field_type_id}   = $atd->get_id;
         $init->{name}              = $atd->get_name;
         $init->{key_name}          = $atd->get_key_name;
         $init->{description}       = $atd->get_description;
         $init->{sql_type}          = $atd->get_sql_type;
-        $init->{field_type_widget} = $atd->get_field_type;
+        $init->{widget_type}       = $atd->get_widget_type;
         $init->{is_autopopulated}  = $atd->get_autopopulated;
         $init->{is_multiple}       = $atd->get_multiple;
         $init->{max_length}        = $atd->get_max_length;
-        $init->{_element_obj}      = $atd;
+        $init->{_field_type}      = $atd;
     }
 
     my $self = $class->SUPER::new($init);
@@ -373,6 +388,8 @@ possible values.
 The ID of the container element that is the parent element of the data
 elements. May use C<ANY> for a list of possible values.
 
+=item field_type_id
+
 =item element_data_id
 
 The ID of the Bric::Biz::AssetType::Parts::Data object that specifies the
@@ -455,7 +472,9 @@ from which Bric::Biz::Asset::Business::Parts::Tile::Data inherits.
 
 =over 4
 
-=item my $element_data_id = $data->get_element_data_id
+=item my $field_type_id = $data->get_field_type_id
+
+=item my $field_type_id = $data->get_element_data_id
 
 Returns the ID of the Bric::Biz::AssetType::Parts::Data object that describes
 this element.
@@ -466,7 +485,9 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $data->set_element_data_id($element_data_id)
+=item $data->set_field_type_id($field_type_id)
+
+=item $data->set_element_data_id($field_type_id)
 
 Sets the ID of the Bric::Biz::AssetType::Parts::Data object that describes
 this element.
@@ -476,6 +497,12 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+# Compatibility accessors.
+sub get_element_data_id { shift->get_field_type_id     }
+sub set_element_data_id { shift->set_field_type_id(@_) }
 
 =item $field_type = $data->get_field_type
 
@@ -494,13 +521,13 @@ B<Notes:> C<get_element_data_obj> is the deprecated form.
 
 sub get_field_type {
     my $self = shift;
-    my $atd   = $self->_get('_element_obj');
+    my $atd   = $self->_get('_field_type');
     return $atd if $atd;
 
     my $dirty = $self->_get__dirty;
-    my $atd_id = $self->_get('element_data_id');
+    my $atd_id = $self->_get('field_type_id');
     $atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
-    $self->_set(['_element_obj'], [$atd]);
+    $self->_set(['_field_type'], [$atd]);
     $self->_set__dirty($dirty);
     return $atd;
 }
@@ -694,10 +721,10 @@ B<Notes:> NONE.
 
 ##############################################################################
 
-=item my $field_type_widgetr = $data->get_field_type_widget
+=item my $widget_type = $data->get_widget_type
 
 Returns the string indicating the widget to use to display the field. This
-value corresponds to the C<field_type> attribute of the
+value corresponds to the C<widget_type> attribute of the
 Bric::Biz::AssetType::Parts::Data object on which the field is based.
 
 B<Throws:> NONE.
@@ -915,7 +942,7 @@ sub _do_list {
             push @wheres,  any_where($v, 'f.parent_id = ?', \@params);
         }
 
-        elsif ($k eq 'element_data_id') {
+        elsif ($k eq 'field_type_id' || $k eq 'element_data_id') {
             push @wheres, any_where $v, 'f.element_data__id = ?', \@params;
         }
 

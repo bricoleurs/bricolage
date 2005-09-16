@@ -14,7 +14,7 @@ do_sql
     q{
         ALTER TABLE at_data
         ADD COLUMN  name        VARCHAR(32),
-        ADD COLUMN  field_type  VARCHAR(30) DEFAULT 'text'
+        ADD COLUMN  widget_type VARCHAR(30) DEFAULT 'text'
         ADD COLUMN  precision   SMALLINT,
         ADD COLUMN  cols        INTEGER,
         ADD COLUMN  rows        INTEGER,
@@ -46,7 +46,7 @@ my $update = prepare(q{
            multiple    = ?,
            default_val = ?,
            precision   = ?,
-           field_type  = ?
+           widget_type = ?
     WHERE  id          = ?
 });
 
@@ -72,13 +72,13 @@ execute($update, @attrs{@attr_names}, $last);
 
 # Delete old attrs, populate missing attrs, and add NOT NULL constraints.
 do_sql
-    q{  DELETE FROM attr_at_data               WHERE name = 'html_info'     },
-    q{  UPDATE at_data SET multiple = '0'      WHERE multiple   IS NULL     },
-    q{  UPDATE at_data SET cols     = 0        WHERE cols       IS NULL     },
-    q{  UPDATE at_data SET rows     = 0        WHERE rows       IS NULL     },
-    q{  UPDATE at_data SET length   = 0        WHERE length     IS NULL     },
-    q{  UPDATE at_data SET name     = key_name WHERE name       IS NULL     },
-    q{  UPDATE at_data SET field_type = 'text' WHERE field_type IS NULL     },
+    q{  DELETE FROM attr_at_data                WHERE name = 'html_info'    },
+    q{  UPDATE at_data SET multiple = '0'       WHERE multiple    IS NULL   },
+    q{  UPDATE at_data SET cols     = 0         WHERE cols        IS NULL   },
+    q{  UPDATE at_data SET rows     = 0         WHERE rows        IS NULL   },
+    q{  UPDATE at_data SET length   = 0         WHERE length      IS NULL   },
+    q{  UPDATE at_data SET name     = key_name  WHERE name        IS NULL   },
+    q{  UPDATE at_data SET widget_type = 'text' WHERE widget_type IS NULL   },
     q{
         ALTER TABLE  at_data
         ALTER COLUMN key_name    SET NOT NULL,
@@ -88,7 +88,7 @@ do_sql
         ALTER COLUMN cols        SET NOT NULL,
         ALTER COLUMN rows        SET NOT NULL,
         ALTER COLUMN length      SET NOT NULL,
-        ALTER COLUMN field_type  SET NOT NULL
+        ALTER COLUMN widget_type SET NOT NULL
     },
 
     q{CREATE INDEX udx_atd__name__at_id ON at_data(LOWER(name))},
