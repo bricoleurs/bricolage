@@ -53,12 +53,6 @@ if (my $err = $@) {
 chown $PG->{system_user_uid}, -1, $tmpdir
   or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
 
-# Switch to postgres system user
-print "Becoming $PG->{system_user}...\n";
-$> = $PG->{system_user_uid};
-die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
-    unless $> == $PG->{system_user_uid};
-
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
 $ENV{PGPASSWORD} = $PG->{root_pass};
@@ -83,9 +77,15 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     closedir DIR;
 
     foreach my $script (@scripts) {
-	print "Running '$perl $script'.\n";
-	my $ret = system("$perl", $script, '-u', $PG->{root_user},
-                         '-p', $PG->{root_pass});
+        print "Running '$perl $script'.\n";
+        my $ret = system(
+            "$perl", $script,
+            '-u', $PG->{root_user},
+            '-p', $PG->{root_pass},
+            '-i', $PG->{system_user_uid},
+            '-s', $PG->{system_user},
+        );
+
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;
     }
