@@ -267,12 +267,12 @@ feature, but will likely be used in other contexts in the future. [David]
 =item *
 
 Normalized story and media elements and fields so that they no longer store
-copies of their names, key names, and descriptions, and, in the case of
-fields, the autopopulated and sql_type attributes, since these are actually
-element type and field type attributes and are easily referenced in the
-element type and field type tables. This change significantly reduces the size
-of the database and has the potential to increase performance when getting and
-setting field values, especially in templates. [David]
+copies of their names, key names, and descriptions--and, in the case of
+fields, the autopopulated and sql_type attributes--since these are actually
+element type and field type attributes easily referenced in the element type
+and field type tables. This change significantly reduces the size of the
+database and has the potential to increase performance when getting and
+setting field values, especially during publishes. [David]
 
 =item *
 
@@ -283,8 +283,24 @@ This makes them much more efficient in terms of database access. [David]
 
 =item *
 
-Added much more fine-graine field type management to the Element Type SOAP
-interface. More field attributes can now be updated via SOAP. [David]
+Added fuller management of field types in the Element Type Manager, such as
+supporting the setting of a default value in a checkbox field in the field
+profile. [David]
+
+=item *
+
+Added much more fine-grained field type management to the Element Type SOAP
+interface. More field attributes can now be updated via SOAP. For example, one
+can now change the widget type from "text" to "textarea". These improvments
+are thanks to the normalization of the element type and field type classes.
+Note that there are a number of new XML elements, and some of the existing
+ones have changed names, but we have tried to preserve backwards compatibility
+as much as possible. [David]
+
+=item *
+
+Added many new tests for the element type, field type, and element classes.
+[David]
 
 =back
 
