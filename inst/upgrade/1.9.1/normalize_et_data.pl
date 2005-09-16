@@ -14,14 +14,14 @@ do_sql
     q{
         ALTER TABLE at_data
         ADD COLUMN  name        VARCHAR(32),
-        ADD COLUMN  widget_type VARCHAR(30) DEFAULT 'text'
+        ADD COLUMN  widget_type VARCHAR(30) DEFAULT 'text',
         ADD COLUMN  precision   SMALLINT,
         ADD COLUMN  cols        INTEGER,
         ADD COLUMN  rows        INTEGER,
         ADD COLUMN  length      INTEGER,
         ADD COLUMN  vals        TEXT,
         ADD COLUMN  multiple    BOOLEAN DEFAULT FALSE,
-        ADD COLUMN  default_val TEXT,
+        ADD COLUMN  default_val TEXT
     }
 ;
 
@@ -46,11 +46,12 @@ my $update = prepare(q{
            multiple    = ?,
            default_val = ?,
            precision   = ?,
-           widget_type = ?
+           widget_type = ?,
+           quantifier  = coalesce(quantifier, '0')
     WHERE  id          = ?
 });
 
-my @attr_names = qw(disp cols rows length vals multiple def type precision);
+my @attr_names = qw(disp cols rows length vals multiple def precision type);
 
 execute($sel);
 bind_columns($sel, \my ($aid, $attr_name, $val));
