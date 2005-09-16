@@ -10,7 +10,7 @@ my $fs = Bric::Util::Trans::FS->new;
 
 find(
     \&rm_super_bulk,
-    $fa->cat_dir(MASON_COMP_ROOT->[0][1], qw(media images))
+    $fs->cat_dir(MASON_COMP_ROOT->[0][1], qw(media images))
 );
 
 my %to_delete = ( map { $_ => 1 } qw(
