@@ -640,7 +640,7 @@ sub _serialize_tile {
     } else {
         my $data;
 
-        if ($element->get_field_type->get_sql_type eq 'date') {
+        if ($element->get_sql_type eq 'date') {
             # get date data and format for output
             $data = $element->get_data(ISO_8601_FORMAT);
             $data = db_date_to_xs_date($data) if $data;
