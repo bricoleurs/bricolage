@@ -11,7 +11,7 @@
 INSERT INTO at_data (id, element__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
-VALUES ('1', '10', 'paragraph', 'Paragraph', 'A Paragraph of text.', '1', '0', '1', '1', '1', '0', 'blob', 'textarea', 0, 8, 50, NULL, '', '');
+VALUES ('1', '10', 'paragraph', 'Paragraph', 'A Paragraph of text.', '1', '0', '1', '1', '1', '0', 'blob', 'textarea', 0, 8, 50, NULL, true, '');
 
 -- Add a 'Previous' text field to page.
 INSERT INTO at_data (id, element__id, key_name, name, description, place, required,
@@ -141,8 +141,8 @@ VALUES ('20', '5', 'height', 'Height', 'Autopopulated Height field.', '1', '1', 
 INSERT INTO at_data (id, element__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
-                     default_val, position)
-VALUES ('21', '5', 'width', 'Width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '', 2);
+                     default_val)
+VALUES ('21', '5', 'width', 'Width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Resolution' field to Illustration.
 INSERT INTO at_data (id, element__id, key_name, name, description, place, required,
