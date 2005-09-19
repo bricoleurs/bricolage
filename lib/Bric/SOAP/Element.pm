@@ -661,8 +661,8 @@ sub load_asset {
             foreach my $f (keys %old_data) {
                 next if exists $updated_data{$f};
                 push @deleted, $f;
-                log_event("element_type_data_rem", $element, { Name => $f });
-                log_event("element_type_data_deact", $old_data{$f});
+                log_event("field_type_rem", $element, { Name => $f });
+                log_event("field_type_deact", $old_data{$f});
             }
 
             if (@deleted) {

@@ -98,7 +98,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('28', 'keyword_grp', 'Bric::Util::Grp::Keyword', 'Keyword Group', 'Keyword Groups', 'Keyword group', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('29', 'element_type_data', 'Bric::Biz::AssetType::Parts::Data', 'Field', 'Fields', 'Fields', '0');
+VALUES ('29', 'field_type', 'Bric::Biz::AssetType::Parts::Data', 'Field Type', 'Field Types', 'Field Types', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('30', 'alert_type', 'Bric::Util::AlertType', 'Alert Type', 'Alert Types', 'Alert type', '0');

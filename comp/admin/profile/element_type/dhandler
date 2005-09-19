@@ -250,8 +250,8 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 
                     # Set up the widget to be used.
                     $attr->{meta}{type}{value}
-                        = $attr->{meta}{field_type}{value} eq 'pulldown'
-                            ? 'select' : $attr->{meta}{field_type}{value};
+                        = $attr->{meta}{widget_type}{value} eq 'pulldown'
+                            ? 'select' : $attr->{meta}{widget_type}{value};
                     push @attrs, $attr;
                 }
 

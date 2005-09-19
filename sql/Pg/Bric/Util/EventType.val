@@ -638,31 +638,31 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'element_type_deact', 'Element Type Deactivated', 'Element type profile was deactivated.', '22', '1');
 
--- ********** 'element_type_data_add' ************ --
+-- ********** 'field_type_add' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_type_data_add', 'Field Added to Element Type', 'A field was added to the element type profile.', '22', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'field_type_add', 'Field Type Added to Element Type', 'A field type was added to the element type profile.', '22', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
 
--- ********** 'element_type_data_rem' ************ --
+-- ********** 'field_type_rem' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_type_data_rem', 'Field Removed from Element Type', 'A field was removed from the element type profile.', '22', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'field_type_rem', 'Field Type Removed from Element Type', 'A field type was removed from the element type profile.', '22', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
 
--- ********** 'element_type_data_new' ************ --
+-- ********** 'field_type_new' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_type_data_new', 'Element Type Field Created', 'Element Type Field was created.', 29, '1');
+    VALUES (NEXTVAL('seq_event_type'), 'field_type_new', 'Field Type Created', 'Field Type was created.', 29, '1');
 
--- ********** 'element_type_data_save' ************ --
+-- ********** 'field_type_save' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_type_data_save', 'Element Type Field Saved', 'Element Type Field was saved.', 29, '1');
+    VALUES (NEXTVAL('seq_event_type'), 'field_type_save', 'Field Type Saved', 'Field Type was saved.', 29, '1');
 
--- ********** 'element_type_data_deact' ************ --
+-- ********** 'field_type_deact' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'element_type_data_deact', 'Element Type Field Deactivated', 'Element Type Field was deactivated.', 29, '1');
+    VALUES (NEXTVAL('seq_event_type'), 'field_type_deact', 'Field Type Deactivated', 'Field Type was deactivated.', 29, '1');
 
 -- ********** 'element_type_set_new' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)

@@ -414,8 +414,8 @@ $delete_element_type_attrs = sub {
         foreach my $attr (keys %$del_attrs) {
             my $atd = $data_href->{lc $attr};
             push @$del, $atd;
-            log_event("$key\_data_rem", $obj, { Name => $attr });
-            log_event("$key\_data_deact", $atd);
+            log_event('field_type_rem', $obj, { Name => $attr });
+            log_event('field_type_deact', $atd);
         }
         $obj->del_data($del);
     }
@@ -529,8 +529,8 @@ $add_new_attrs = sub {
             });
 
             # Log that we've created it.
-            log_event("$key\_data_add", $obj, { Name => $key_name });
-            log_event("$key\_data_new", $atd);
+            log_event('field_type_add', $obj, { Name => $key_name });
+            log_event('field_type_new', $atd);
         }
     }
 };

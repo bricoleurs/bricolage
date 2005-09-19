@@ -4,13 +4,13 @@
    context => "Admin | Profile | $disp | $crumb",
    jsInit => (defined $id) ? "showForm('$which', true)" : ""
 &>
-<form method="post" action="<% $r->uri %>" name="element_type_data_profile"
+<form method="post" action="<% $r->uri %>" name="field_type_profile"
       onSubmit="return confirmChanges(this)">
 <%perl>;
 my $num = 0;
 
 $m->comp('/widgets/profile/hidden.mc',
-         'name' => 'element_type_data_id',
+         'name' => 'field_type_id',
          'value' => $id)
   if defined $id;
 
@@ -47,7 +47,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 <%once>;
 my $class = 'Bric::Biz::AssetType::Parts::Data';
 my $section = 'admin';
-my $type = 'element_type_data';
+my $type = 'field_type';
 my $disp = get_disp_name($type);
 </%once>
 
@@ -104,7 +104,7 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 =head1 NAME
 
-/admin/profile/element_type_data/dhandler - Interface for managing fields.
+/admin/profile/field_type/dhandler - Interface for managing field types.
 
 =head1 VERSION
 

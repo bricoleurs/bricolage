@@ -80,7 +80,7 @@ $field
 </%args>
 <%init>;
 my $meta = $field->my_meths;
-my $field_type = $meta->{field_type}->{get_meth}->($field);
+my $field_type = $meta->{widget_type}->{get_meth}->($field);
 
 
 # Note: don't confuse $meta->{'disp'} with a row in %conf

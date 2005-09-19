@@ -302,6 +302,10 @@ as much as possible. [David]
 Added many new tests for the element type, field type, and element classes.
 [David]
 
+=item *
+
+Renamed "Element Data" to "Field Type". [David]
+
 =back
 
 =cut

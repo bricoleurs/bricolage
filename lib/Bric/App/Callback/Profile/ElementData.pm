@@ -2,7 +2,7 @@ package Bric::App::Callback::Profile::ElementData;
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
-use constant CLASS_KEY => 'element_type_data';
+use constant CLASS_KEY => 'field_type';
 
 use strict;
 use Bric::App::Event qw(log_event);

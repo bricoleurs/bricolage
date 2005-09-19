@@ -28,10 +28,10 @@ use Bric::App::Util qw(:aref :msg :history :pkg :browser);
 use Bric::App::Session qw(:user);
 
 my $excl = {
-    desk              => 1,
-    action            => 1,
-    server            => 1,
-    element_type_data => 1
+    desk       => 1,
+    action     => 1,
+    server     => 1,
+    field_type => 1,
 };
 
 my ($get_class, $chk_grp_perms);

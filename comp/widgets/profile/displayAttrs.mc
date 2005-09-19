@@ -13,8 +13,6 @@ $localize    => 0
 $useEdit     => 0
 </%args>
 <%once>;
-use Bric::App::Util qw(:msg :redir :history);
-
 my @meta_props = qw(type length maxlength rows cols multiple size precision);
 </%once>
 <%perl>;
@@ -107,7 +105,7 @@ foreach my $attr (@$attr) {
     if ($useEdit) {
         $m->out(qq{<td class="edit">\n});
 
-        my $url = '/admin/profile/element_type_data/' . $attr->{id};
+        my $url = '/admin/profile/field_type/' . $attr->{id};
         my $edit_url = sprintf('<a href="%s" class=redLink>%s</a>&nbsp;',
                                $url, $lang->maketext('Edit'));
         $m->out($edit_url);
