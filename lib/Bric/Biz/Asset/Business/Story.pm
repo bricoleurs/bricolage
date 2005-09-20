@@ -75,8 +75,8 @@ $LastChangedDate$
  # Element Type information
  $elem_type   = $biz->get_element_type;
  $name        = $biz->get_element_name()
- $at_id       = $biz->get_element__id()
- $biz         = $biz->set_element__id($at_id)
+ $at_id       = $biz->get_element_type_id()
+ $biz         = $biz->set_element_type_id($at_id)
 
  # Tile methods
  $container_tile  = $biz->get_tile()

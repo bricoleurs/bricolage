@@ -400,7 +400,7 @@ $get_data_href = sub {
     # $obj->get_data so that we can be sure to check for both active
     # and inactive data fields.
     my $all_data = Bric::Biz::AssetType::Parts::Data->list({
-        element__id => $param->{"$key\_id"}
+        field_type_id => $param->{"$key\_id"}
     });
     return { map { $_->get_key_name => $_ } @$all_data };
 };

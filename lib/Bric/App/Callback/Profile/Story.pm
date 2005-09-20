@@ -393,10 +393,12 @@ sub create : Callback {
     return if $ret;
 
     # Create a new story with the initial values given.
-    my $init = { element__id => $param->{"$widget|at_id"},
-                 source__id  => $param->{"$widget|source__id"},
-                 site_id     => $wf->get_site_id,
-                 user__id    => get_user_id() };
+    my $init = {
+        element_type_id => $param->{"$widget|at_id"},
+        source__id      => $param->{"$widget|source__id"},
+        site_id         => $wf->get_site_id,
+        user__id        => get_user_id,
+    };
 
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
@@ -969,7 +971,7 @@ $save_data = sub {
 
     unless (ALLOW_SLUGLESS_NONFIXED) {
         # Make sure a non-Cover has a slug
-        my $at_id = $story->get_element__id;
+        my $at_id = $story->get_element_type_id;
         my $element = Bric::Biz::AssetType->lookup({id => $at_id});
         unless ($element->get_fixed_url) {
             unless (defined $param->{slug} && $param->{slug} =~ /\S/) {

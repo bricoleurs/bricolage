@@ -2329,7 +2329,7 @@ B<Throws:>
 
 =item *
 
-Missing required parameter 'element' or 'element__id'.
+Missing required parameter 'element' or 'element_type_id'.
 
 =back
 

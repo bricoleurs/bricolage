@@ -126,7 +126,7 @@ sub add_story {
     $wid = $wf->get_id();
     $storyconf->{'workflow_id'} = $wid;
     ($eid) = Bric::Biz::AssetType->list_ids({name => $storyconf->{'type'}});
-    $storyconf->{'element__id'} = $eid;
+    $storyconf->{'element_type_id'} = $eid;
     ($sid) = Bric::Biz::Org::Source->list_ids({name => 'Internal'});
     $storyconf->{'source__id'} = $sid;
     ($storyconf->{'user__id'}) = Bric::Biz::Person::User->list_ids({ login => 'admin' });

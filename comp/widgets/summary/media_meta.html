@@ -59,7 +59,7 @@ my $id = $media->get_id();
 my $prim_uri = $media->get_uri();
 
 # get output channel info
-my $at = $media->get_element__id();
+my $at = $media->get_element_type_id;
 my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
 
 my @ocs = $media->get_output_channels();

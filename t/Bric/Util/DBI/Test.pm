@@ -43,7 +43,7 @@ use constant PARAM_WHERE_MAP =>
       workflow__id        => 's.workflow__id = ?',
       _null_workflow__id  => 's.workflow__id IS NULL',
       primary_uri         => 'LOWER(s.primary_uri) LIKE LOWER(?)',
-      element__id         => 's.element__id = ?',
+      element_type_id     => 's.element_type_id = ?',
       source__id          => 's.source__id = ?',
       priority            => 's.priority = ?',
       publish_status      => 's.publish_status = ?',
@@ -81,7 +81,7 @@ use constant PARAM_ORDER_MAP =>
       inactive            => 'active',
       workflow__id        => 'workflow__id',
       primary_uri         => 'primary_uri',
-      element__id         => 'element__id',
+      element_type_id     => 'element_type_id',
       source__id          => 'source__id',
       priority            => 'priority',
       publish_status      => 'publish_status',
@@ -157,9 +157,9 @@ sub test_where: Test(72) {
     ($cols, $args) = where_clause($CLASS, { primary_uri => 1 });
     is( $cols, $base . ' AND LOWER(s.primary_uri) LIKE LOWER(?)', 'check primary_uri param');
     is_deeply( $args, [1], ' ... and the arg');
-    # element__id
-    ($cols, $args) = where_clause($CLASS, { element__id => 1 });
-    is( $cols, $base . ' AND s.element__id = ?', 'check element__id param');
+    # element_type_id
+    ($cols, $args) = where_clause($CLASS, { element_type_id => 1 });
+    is( $cols, $base . ' AND s.element_type_id = ?', 'check element_type_id param');
     is_deeply( $args, [1], ' ... and the arg');
     # source__id
     ($cols, $args) = where_clause($CLASS, { source__id => 1 });
@@ -197,9 +197,9 @@ sub test_where: Test(72) {
     ($cols, $args) = where_clause($CLASS, { cover_date_end => 1 });
     is( $cols, $base . ' AND s.cover_date <= ?', 'check cover_date_end param');
     is_deeply( $args, [1], ' ... and the arg');
-    # element__id
-    ($cols, $args) = where_clause($CLASS, { element__id => 1 });
-    is( $cols, $base . ' AND s.element__id = ?', 'check element__id param');
+    # element_type_id
+    ($cols, $args) = where_clause($CLASS, { element_type_id => 1 });
+    is( $cols, $base . ' AND s.element_type_id = ?', 'check element_type_id param');
     is_deeply( $args, [1], ' ... and the arg');
     # name
     ($cols, $args) = where_clause($CLASS, { name => 1 });
@@ -268,7 +268,7 @@ sub test_where: Test(72) {
                     active              => 2,
                     workflow__id        => 3,
                     primary_uri         => 4,
-                    element__id         => 5,
+                    element_type_id     => 5,
                     source__id          => 6,
                     priority            => 7,
                     publish_status      => 8,

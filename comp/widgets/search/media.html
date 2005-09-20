@@ -97,8 +97,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Type'),
-        name    => $widget.'|element__id',
-        value   => get_state_data($widget, 'element__id') || '',
+        name    => $widget.'|element_type_id',
+        value   => get_state_data($widget, 'element_type_id') || '',
         options => $asset_opts,
         localize => 0 &>
 

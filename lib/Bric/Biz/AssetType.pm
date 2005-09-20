@@ -2944,10 +2944,11 @@ sub _get_parts {
     return unless $id;
 
     unless ($parts) {
-        $parts = Bric::Biz::AssetType::Parts::Data->href
-          ({ element__id => $self->get_id,
-             order_by    => 'place',
-             active      => 1 });
+        $parts = Bric::Biz::AssetType::Parts::Data->href({
+            element_type_id => $self->get_id,
+            order_by        => 'place',
+            active          => 1,
+        });
         $self->_set(['_parts'], [$parts]);
     }
 

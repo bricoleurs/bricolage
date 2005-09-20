@@ -187,7 +187,7 @@ my @queries = (
 	       [ { }, { } ],
 	       [ { publish_status => 1 }, { publish_status => 1 } ],
 	       [ { element => 'Story' },
-		 { element__id => $story_element_id } ],
+		 { element_type_id => $story_element_id } ],
 	       [ { category => '/', },
 		 { category_id => 0 }, ],
 	       [ { workflow => 'Story' },

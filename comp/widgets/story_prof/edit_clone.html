@@ -161,7 +161,7 @@ $smeth->{value} = $story->get_slug;
 $cmeth->{value} = $story->get_cover_date(ISO_8601_FORMAT);
 my $cat_id = $story->get_primary_category->get_id;
 my $oc_id = $story->get_primary_oc_id;
-my $elem = Bric::Biz::AssetType->lookup({id => $story->get_element__id});
+my $elem = Bric::Biz::AssetType->lookup({id => $story->get_element_type_id});
 
 my $agent = detect_agent();
 my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';

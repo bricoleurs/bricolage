@@ -244,7 +244,7 @@ my $ieSpacer = $agent->ie ?
   : '';
 
 # get output channel info
-my $at = $media->get_element__id;
+my $at = $media->get_element_id;
 my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
 my @aocs = $asset_type->get_output_channels;
 my @ocs = $media->get_output_channels;
