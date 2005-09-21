@@ -78,7 +78,7 @@ $LastChangedDate$
  $at_id       = $biz->get_element_type_id()
  $biz         = $biz->set_element_type_id($at_id)
 
- # Tile methods
+ # Element methods
  $element  = $biz->get_element_type()
  @elements = $biz->get_elements()
  $biz      = $biz->add_data($field_type_obj, $data)
@@ -1726,11 +1726,11 @@ sub revert {
     my @attrs = qw(name description slug);
     $self->_set(\@attrs, [$revert_obj->_get(@attrs)]);
 
-    # clone the tiles
-    # get rid of current tiles
-    my $tile = $self->get_tile;
-    $tile->do_delete;
-    my $new_tile = $revert_obj->get_tile;
+    # clone the elements
+    # get rid of current elements
+    my $element = $self->get_element;
+    $element->do_delete;
+    my $new_element = $revert_obj->get_element;
 
     # Delete existing contributors.
     if (my $contrib = $self->_get_contributors) {
@@ -1745,12 +1745,12 @@ sub revert {
         $contrib->{$cid} = $c;
     }
 
-    $new_tile->prepare_clone;
-    $self->_set({ _delete_tile         => $tile,
+    $new_element->prepare_clone;
+    $self->_set({ _delete_element         => $element,
                   _contributors        => $contrib,
                   _update_contributors => 1,
                   _queried_contrib     => 1,
-                  _tile                => $new_tile
+                  _element                => $new_element
                 });
 
     $self->_set__dirty(1);
@@ -1786,8 +1786,8 @@ sub clone {
     $self->uncache_me;
 
     # Clone the element.
-    my $tile = $self->get_tile();
-    $tile->prepare_clone;
+    my $element = $self->get_element();
+    $element->prepare_clone;
 
     my $contribs = $self->_get_contributors;
     # clone contributors

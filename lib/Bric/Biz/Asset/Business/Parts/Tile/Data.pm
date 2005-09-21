@@ -825,7 +825,7 @@ sub unlock_val {
 
 =item my $is_locked = $data->is_locked
 
-Returns true if the tile has been locked.
+Returns true if the element has been locked.
 
 B<Throws:> NONE.
 
@@ -894,7 +894,7 @@ B<Throws:>
 
 =item *
 
-Object of type $obj_class not allowed to be tiled.
+Object of type $obj_class not allowed to have elements.
 
 =item *
 
@@ -1006,7 +1006,7 @@ B<Throws:>
 
 =item *
 
-Object must be a media or story to add tiles.
+Object must be a media or story to add elements.
 
 =back
 
@@ -1045,7 +1045,7 @@ B<Throws:>
 
 =item *
 
-Object must be a media or story to add tiles.
+Object must be a media or story to add elements.
 
 =back
 

@@ -20,7 +20,7 @@
   </tr>
   <input type="hidden" name="<% $widget %>|view_cb" value="" />
 
-% foreach my $dt (@tiles) {
+% foreach my $dt (@elements) {
 % my $sep = 1;
     <tr valign="top">
       <td>
@@ -57,7 +57,7 @@
 % }
 
 
-% if (!scalar(@tiles)) {
+% if (!scalar(@elements)) {
     <tr>
       <td>
 	<img src="/media/images/spacer.gif" height="18" width="1" />
@@ -77,11 +77,11 @@ $widget
 $num => 1
 </%args>
 <%init>
-  # the tile object
-  my $tile = get_state_data($widget, 'tile');
+  # the element object
+  my $element = get_state_data($widget, 'element');
 
-  # the contained tiles
-  my @tiles = $tile->get_tiles();
+  # the contained elements
+  my @elements = $element->get_elements();
 
 my $agent = detect_agent();
 my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;

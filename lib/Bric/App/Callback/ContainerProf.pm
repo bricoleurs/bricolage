@@ -44,16 +44,16 @@ sub edit : Callback {
 
     my $r = $self->apache_req;
 
-    my $tile = get_state_data($self->class_key, 'tile');
+    my $element = get_state_data($self->class_key, 'element');
 
-    # Update the existing fields and get the child tile matching ID
-    my $edit_tile = $self->_update_parts($param);
+    # Update the existing fields and get the child element matching ID
+    my $edit_element = $self->_update_parts($param);
 
-    # Push this child tile on top of the stack
-    $self->_push_tile_stack($edit_tile);
+    # Push this child element on top of the stack
+    $self->_push_element_stack($edit_element);
 
     # Don't redirect if we're already on the right page.
-    if ($tile->get_object_type eq 'media') {
+    if ($element->get_object_type eq 'media') {
         unless ($r->uri eq "$MEDIA_CONT/edit.html") {
             $self->set_redirect("$MEDIA_CONT/edit.html");
         }
@@ -72,14 +72,14 @@ sub bulk_edit : Callback {
 
     my $r = $self->apache_req;
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $edit_tile = $self->_update_parts($param);
+    my $element = get_state_data($self->class_key, 'element');
+    my $edit_element = $self->_update_parts($param);
 
-    # Push the current tile onto the stack.
-    $self->_push_tile_stack($edit_tile);
+    # Push the current element onto the stack.
+    $self->_push_element_stack($edit_element);
     set_state_data($self->class_key, 'view_flip', 0);
 
-    my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     $self->set_redirect("$uri/edit_bulk.html");
 }
 
@@ -92,14 +92,14 @@ sub view : Callback {
     my $r = $self->apache_req;
     my $field = $self->trigger_key;
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $tile_id = $self->value;
-    my ($view_tile) = grep(($_->get_id == $tile_id), $tile->get_containers);
+    my $element = get_state_data($self->class_key, 'element');
+    my $element_id = $self->value;
+    my ($view_element) = grep(($_->get_id == $element_id), $element->get_containers);
 
-    # Push this child tile on top of the stack
-    $self->_push_tile_stack($view_tile);
+    # Push this child element on top of the stack
+    $self->_push_element_stack($view_element);
 
-    if ($tile->get_object_type eq 'media') {
+    if ($element->get_object_type eq 'media') {
         $self->set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
     } else {
         $self->set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
@@ -131,13 +131,13 @@ sub add_element : Callback {
 
     my $r = $self->apache_req;
 
-    # get the tile
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $key = $tile->get_object_type();
-    # Get this tile's asset object if it's a top-level asset.
+    # get the element
+    my $element = get_state_data($self->class_key, 'element');
+    my $key = $element->get_object_type();
+    # Get this element's asset object if it's a top-level asset.
     my $a_obj;
-    if (Bric::Biz::AssetType->lookup({id => $tile->get_element_type_id})->get_top_level()) {
-        $a_obj = $pkgs{$key}->lookup({id => $tile->get_object_instance_id()});
+    if (Bric::Biz::AssetType->lookup({id => $element->get_element_type_id})->get_top_level()) {
+        $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
     my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
 
@@ -146,9 +146,9 @@ sub add_element : Callback {
         my $at;
         if ($type eq 'cont_') {
             $at = Bric::Biz::AssetType->lookup({id=>$id});
-            my $cont = $tile->add_container($at);
-            $tile->save();
-            $self->_push_tile_stack($cont);
+            my $cont = $element->add_container($at);
+            $element->save();
+            $self->_push_element_stack($cont);
 
             if ($key eq 'story') {
                 # Don't redirect if we're already at the edit page.
@@ -161,9 +161,9 @@ sub add_element : Callback {
 
         } elsif ($type eq 'data_') {
             $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
-            $tile->add_data($at);
-            $tile->save();
-            set_state_data($self->class_key, 'tile', $tile);
+            $element->add_data($at);
+            $element->save();
+            set_state_data($self->class_key, 'element', $element);
         }
         log_event($key.'_add_element', $a_obj, {Element => $at->get_key_name})
           if $a_obj;
@@ -182,8 +182,8 @@ sub update : Callback(priority => 1) {
     # Don't save the element; that's handled by the callback for the button
     # that was actually clicked (e.g., "Save")--or not (e.g., "Cancel"), as
     # the case may be.
-#    my $tile = get_state_data($self->class_key, 'tile');
-#    $tile->save;
+#    my $element = get_state_data($self->class_key, 'element');
+#    $element->save;
 }
 
 sub pick_related_media : Callback {
@@ -192,8 +192,8 @@ sub pick_related_media : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $object_type = $tile->get_object_type();
+    my $element = get_state_data($self->class_key, 'element');
+    my $object_type = $element->get_object_type();
     my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     $self->set_redirect("$uri/edit_related_media.html");
 }
@@ -203,8 +203,8 @@ sub create_related_media : Callback {
     $self->_drift_correction;
     my $widget = $self->class_key;
 
-    my $tile =  get_state_data($self->class_key, 'tile');
-    my $type  = $tile->get_object_type;
+    my $element =  get_state_data($self->class_key, 'element');
+    my $type  = $element->get_object_type;
     my $asset = get_state_data($type.'_prof', $type);
 
     my $param = $self->params;
@@ -260,7 +260,7 @@ sub create_related_media : Callback {
     # Stay where we are! This cancels any redirects set up by the Media
     # callback object.
     $self->set_redirect($self->apache_req->uri);
-    $tile->set_related_media($media->get_id);
+    $element->set_related_media($media->get_id);
     # Restore the state.
     set_state($widget, @$state);
 }
@@ -271,8 +271,8 @@ sub relate_media : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_media($self->value);
+    my $element = get_state_data($self->class_key, 'element');
+    $element->set_related_media($self->value);
     $self->_handle_related_up;
 }
 
@@ -282,8 +282,8 @@ sub unrelate_media : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_media(undef);
+    my $element = get_state_data($self->class_key, 'element');
+    $element->set_related_media(undef);
     $self->_handle_related_up;
 }
 
@@ -293,8 +293,8 @@ sub pick_related_story : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $object_type = $tile->get_object_type();
+    my $element = get_state_data($self->class_key, 'element');
+    my $object_type = $element->get_object_type();
     my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
     $self->set_redirect("$uri/edit_related_story.html");
 }
@@ -305,8 +305,8 @@ sub relate_story : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_story_id($self->value);
+    my $element = get_state_data($self->class_key, 'element');
+    $element->set_related_story_id($self->value);
     $self->_handle_related_up;
 }
 
@@ -316,8 +316,8 @@ sub unrelate_story : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    $tile->set_related_story_id(undef);
+    my $element = get_state_data($self->class_key, 'element');
+    $element->set_related_story_id(undef);
     $self->_handle_related_up;
 }
 
@@ -338,17 +338,17 @@ sub lock_val : Callback {
 
     my $value = $self->value;
     my $autopop = ref $self->value ? $self->value : [$self->value];
-    my $tile    = get_state_data($self->class_key, 'tile');
+    my $element    = get_state_data($self->class_key, 'element');
 
-    # Map all the data tiles into a hash keyed by Tile::Data ID.
+    # Map all the data elements into a hash keyed by Element::Data ID.
     my $data = { map { $_->get_id() => $_ } 
-                 grep(not($_->is_container()), $tile->get_tiles()) };
+                 grep(not($_->is_container()), $element->get_elements()) };
 
     foreach my $id (@$autopop) {
         my $lock_set = $self->params->{$self->class_key.'|lock_val_'.$id} || 0;
         my $dt = $data->{$id};
 
-        # Skip if there is no data tile here.
+        # Skip if there is no data element here.
         next unless $dt;
         if ($lock_set) {
             $dt->lock_val();
@@ -373,10 +373,10 @@ sub save_and_up : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the tile we are working on.
-        my $tile = get_state_data($self->class_key, 'tile');
-        $tile->save();
-        add_msg('Element "[_1]" saved.', $tile->get_name);
+        # Save the element we are working on.
+        my $element = get_state_data($self->class_key, 'element');
+        $element->save();
+        add_msg('Element "[_1]" saved.', $element->get_name);
         $self->_pop_and_redirect;
     }
 }
@@ -396,10 +396,10 @@ sub save_and_stay : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the tile we are working on
-        my $tile = get_state_data($self->class_key, 'tile');
-        $tile->save();
-        add_msg('Element "[_1]" saved.', $tile->get_name);
+        # Save the element we are working on
+        my $element = get_state_data($self->class_key, 'element');
+        $element->save();
+        add_msg('Element "[_1]" saved.', $element->get_name);
     }
 }
 
@@ -421,8 +421,8 @@ sub change_default_field : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $def  = $self->params->{$self->class_key.'|default_field'};
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $at   = $tile->get_element_type();
+    my $element = get_state_data($self->class_key, 'element');
+    my $at   = $element->get_element_type();
 
     my $key = 'container_prof.' . $at->get_id . '.def_field';
     set_state_data('_tmp_prefs', $key, $def);
@@ -445,13 +445,13 @@ sub bulk_edit_this : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    # Note that we are just 'flipping' the current view of this tile.  That is,
-    # it's the same tile, same data, but different view of it.
+    # Note that we are just 'flipping' the current view of this element.  That is,
+    # it's the same element, same data, but different view of it.
     set_state_data($self->class_key, 'view_flip', 1);
     set_state_name($self->class_key, 'edit_bulk');
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $uri  = $tile->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $element = get_state_data($self->class_key, 'element');
+    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
 
     $self->set_redirect("$uri/edit_bulk.html");
 }
@@ -485,42 +485,42 @@ sub bulk_save_and_up : Callback {
 ####################
 ## Misc Functions ##
 
-sub _push_tile_stack {
-    my ($self, $new_tile) = @_;
+sub _push_element_stack {
+    my ($self, $new_element) = @_;
     my $widget = $self->class_key;
 
-    # Push the current tile onto the stack.
-    my $tiles    = get_state_data($widget, 'tiles');
-    my $cur_tile = get_state_data($widget, 'tile');
-    push @$tiles, $cur_tile;
+    # Push the current element onto the stack.
+    my $elements    = get_state_data($widget, 'elements');
+    my $cur_element = get_state_data($widget, 'element');
+    push @$elements, $cur_element;
 
     my $crumb = '';
-    foreach my $t (@$tiles[1..$#$tiles]) {
+    foreach my $t (@$elements[1..$#$elements]) {
         $crumb .= ' &quot;' . $t->get_name . '&quot;' . ' |';
     }
-    $crumb .= ' &quot;' . $new_tile->get_name . '&quot;';
+    $crumb .= ' &quot;' . $new_element->get_name . '&quot;';
 
     set_state_data($widget, 'crumb', $crumb);
-    set_state_data($widget, 'tiles', $tiles);
-    set_state_data($widget, 'tile', $new_tile);
+    set_state_data($widget, 'elements', $elements);
+    set_state_data($widget, 'element', $new_element);
 }
 
-sub _pop_tile_stack {
+sub _pop_element_stack {
     my ($widget) = @_;
 
-    my $tiles = get_state_data($widget, 'tiles');
-    my $parent_tile = pop @$tiles;
+    my $elements = get_state_data($widget, 'elements');
+    my $parent_element = pop @$elements;
 
     my $crumb = '';
-    foreach my $t (@$tiles[1..$#$tiles]) {
+    foreach my $t (@$elements[1..$#$elements]) {
         $crumb .= ' &quot;' . $t->get_name . '&quot;' . ' |';
     }
-    $crumb .= ' &quot;' . $parent_tile->get_name . '&quot;';
+    $crumb .= ' &quot;' . $parent_element->get_name . '&quot;';
 
     set_state_data($widget, 'crumb', $crumb);
-    set_state_data($widget, 'tile', $parent_tile);
-    set_state_data($widget, 'tiles', $tiles);
-    return $parent_tile;
+    set_state_data($widget, 'element', $parent_element);
+    set_state_data($widget, 'elements', $elements);
+    return $parent_element;
 }
 
 sub _pop_and_redirect {
@@ -528,21 +528,21 @@ sub _pop_and_redirect {
     my $widget = $self->class_key;
     my $r = $self->apache_req;
 
-    # Get the tile stack and pop off the current tile.
-    my $tile = $flip ? get_state_data($widget, 'tile')
-                     : _pop_tile_stack($widget);
+    # Get the element stack and pop off the current element.
+    my $element = $flip ? get_state_data($widget, 'element')
+                     : _pop_element_stack($widget);
 
-    my $object_type = $tile->get_object_type;
+    my $object_type = $element->get_object_type;
 
-    # If our tile has parents, show the regular edit screen.
-    if ($tile->get_parent_id) {
+    # If our element has parents, show the regular edit screen.
+    if ($element->get_parent_id) {
         my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
         $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
-    # If our tile doesn't have parents go to the main story edit screen.
+    # If our element doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
         $self->set_redirect($uri);
@@ -554,13 +554,13 @@ sub _delete_element {
     my $r = $self->apache_req;
     my $widget = $self->class_key;
 
-    my $tile = get_state_data($widget, 'tile');
-    my $parent = _pop_tile_stack($widget);
-    $parent->delete_tiles( [ $tile ]);
+    my $element = get_state_data($widget, 'element');
+    my $parent = _pop_element_stack($widget);
+    $parent->delete_elements( [ $element ]);
     $parent->save();
     my $object_type = $parent->get_object_type;
 
-    # if our tile has parents, show the regular edit screen.
+    # if our element has parents, show the regular edit screen.
     if ($parent->get_parent_id) {
         my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
@@ -568,25 +568,25 @@ sub _delete_element {
         #  Don't redirect if we're already at the right URI
         $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
-    # If our tile doesn't have parents go to the main story edit screen.
+    # If our element doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
         $self->set_redirect($uri);
     }
 
-    add_msg('Element "[_1]" deleted.', $tile->get_name);
+    add_msg('Element "[_1]" deleted.', $element->get_name);
     return;
 }
 
 
 sub _update_parts {
     my ($self, $param) = @_;
-    my (@curr_tiles, @delete, $locate_tile);
+    my (@curr_elements, @delete, $locate_element);
 
     my $widget = $self->class_key;
     my $locate_id = $self->value;
-    my $tile = get_state_data($widget, 'tile');
-    my $object_type = $tile->get_object_type;
+    my $element = get_state_data($widget, 'element');
+    my $object_type = $element->get_object_type;
 
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
     # in the element profile or the document profile.
@@ -596,13 +596,13 @@ sub _update_parts {
                     $param->{$object_type .'_prof|save_cb'} ||
                     $param->{$object_type .'_prof|save_and_stay_cb'};
 
-    # Save data to tiles and put them in a usable order
-    foreach my $t ($tile->get_tiles) {
+    # Save data to elements and put them in a usable order
+    foreach my $t ($element->get_elements) {
         my $id = $t->get_id();
 
-        # Grab the tile we're looking for
+        # Grab the element we're looking for
         local $^W = undef;
-        $locate_tile = $t if $id == $locate_id and $t->is_container;
+        $locate_element = $t if $id == $locate_id and $t->is_container;
         if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
                            $param->{$widget . "|delete_data$id"})) {
             add_msg('Element "[_1]" deleted.', $t->get_name);
@@ -633,42 +633,42 @@ sub _update_parts {
             }
         }
 
-        $curr_tiles[$order] = $t;
+        $curr_elements[$order] = $t;
     }
 
-    # Delete tiles as necessary.
-    $tile->delete_tiles(\@delete) if $do_delete && @delete;
+    # Delete elements as necessary.
+    $element->delete_elements(\@delete) if $do_delete && @delete;
 
-    if (@curr_tiles) {
-        eval { $tile->reorder_tiles([ grep { defined } @curr_tiles ]) };
+    if (@curr_elements) {
+        eval { $element->reorder_elements([ grep { defined } @curr_elements ]) };
         if ($@) {
             add_msg("Warning! State inconsistent: Please use the buttons "
                     . "provided by the application rather than the 'Back'/"
                     . "'Forward' buttons.");
-            return $locate_tile;
+            return $locate_element;
         }
     }
 
-    set_state_data($widget, 'tile', $tile);
-    return $locate_tile;
+    set_state_data($widget, 'element', $element);
+    return $locate_element;
 }
 
 sub _handle_related_up {
     my ($self) = @_;
     my $r = $self->apache_req;
 
-    my $tile = get_state_data($self->class_key, 'tile');
-    my $object_type = $tile->get_object_type();
+    my $element = get_state_data($self->class_key, 'element');
+    my $object_type = $element->get_object_type();
 
-    # If our tile has parents, show the regular edit screen.
-    if ($tile->get_parent_id()) {
+    # If our element has parents, show the regular edit screen.
+    if ($element->get_parent_id()) {
         my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
         my $page = get_state_name($self->class_key) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
         $self->set_redirect("$uri/$page") unless $r->uri eq "$uri/$page";
     }
-    # If our tile doesn't have parents go to the main story edit screen.
+    # If our element doesn't have parents go to the main story edit screen.
     else {
         my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
         $self->set_redirect($uri);
@@ -701,12 +701,12 @@ sub _handle_bulk_save {
     my $self   = shift;
     my $params = $self->params;
     my $widget = $self->class_key;
-    my $tile   = get_state_data($widget => 'tile');
+    my $element   = get_state_data($widget => 'element');
 
     my $def_field = $params->{"$widget|default_field"};
     eval {
-        $tile->update_from_pod($params->{"$widget|text"}, $def_field);
-        $tile->save;
+        $element->update_from_pod($params->{"$widget|text"}, $def_field);
+        $element->save;
     };
     if (my $err = $@) {
         # Let the UI know that it should use the content entered by the user.
@@ -727,39 +727,39 @@ sub _drift_correction {
     # Update the state name
     set_state_name($self->class_key, $param->{$self->class_key.'|state_name'});
 
-    # Get the tile ID this page thinks its displaying.
-    my $tile_id = $param->{$self->class_key.'|top_stack_tile_id'};
+    # Get the element ID this page thinks its displaying.
+    my $element_id = $param->{$self->class_key.'|top_stack_element_id'};
 
-    # Return if the page doesn't send us a tile_id
-    return unless $tile_id;
+    # Return if the page doesn't send us a element_id
+    return unless $element_id;
 
-    my $tile  = get_state_data($self->class_key, 'tile');
+    my $element  = get_state_data($self->class_key, 'element');
     # Return immediately if everything is already in sync.
-    if ($tile->get_id == $tile_id) {
+    if ($element->get_id == $element_id) {
         $param->{'_drift_corrected_'} = 1;
         return;
     }
 
-    my $stack = get_state_data($self->class_key, 'tiles');
+    my $stack = get_state_data($self->class_key, 'elements');
     my @tmp_stack;
 
     while (@$stack > 0) {
-        # Get the next tile on the stack.
-        $tile = pop @$stack;
-        # Finish this loop if we find our tile.
-        last if $tile->get_id == $tile_id;
-        # Push this tile on our temp stack just in case we can't find our ID.
-        unshift @tmp_stack, $tile;
-        # Undef the tile since its not the one we're looking for.
-        $tile = undef;
+        # Get the next element on the stack.
+        $element = pop @$stack;
+        # Finish this loop if we find our element.
+        last if $element->get_id == $element_id;
+        # Push this element on our temp stack just in case we can't find our ID.
+        unshift @tmp_stack, $element;
+        # Undef the element since its not the one we're looking for.
+        $element = undef;
     }
 
-    # If we found the tile, make it the head tile and save the remaining stack.
-    if ($tile) {
-        set_state_data($self->class_key, 'tile', $tile);
-        set_state_data($self->class_key, 'tiles', $stack);
+    # If we found the element, make it the head element and save the remaining stack.
+    if ($element) {
+        set_state_data($self->class_key, 'element', $element);
+        set_state_data($self->class_key, 'elements', $stack);
     }
-    # If we didn't find the tile, abort, and restore the tile stack
+    # If we didn't find the element, abort, and restore the element stack
     else {
         add_msg("Warning! State inconsistent: Please use the buttons "
                 . "provided by the application rather than the 'Back'/"
@@ -768,7 +768,7 @@ sub _drift_correction {
         # Set this flag so that nothing gets changed on this request.
         $param->{'_inconsistent_state_'} = 1;
 
-        set_state_data($self->class_key, 'tiles', \@tmp_stack);
+        set_state_data($self->class_key, 'elements', \@tmp_stack);
     }
 
     # Drift has now been corrected.

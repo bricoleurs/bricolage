@@ -3,7 +3,7 @@
 
 =head1 NAME
 
-edit_related.html - Edit related data for a container tile.
+edit_related.html - Edit related data for a container element.
 
 =head1 VERSION
 
@@ -48,7 +48,7 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 <form action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc, 
-	tile_type => 'media',
+	element_type => 'media',
 	action    => 'edit_related_story'
 &>
 

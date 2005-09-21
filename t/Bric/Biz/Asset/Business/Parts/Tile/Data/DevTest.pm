@@ -76,23 +76,23 @@ sub construct {
 sub test_new : Test(9) {
     my $self = shift;
 
-    ok (my $dtile = $self->construct, 'Construct Data Tile');
-    ok ($dtile->set_data('Macaroon'), 'Add Data to Data Tile');
-    ok ($dtile->save,                 'Save Data Tile');
-    ok (my $d_id = $dtile->get_id,    'Get Data Tile ID');
+    ok (my $delement = $self->construct, 'Construct Data Element');
+    ok ($delement->set_data('Macaroon'), 'Add Data to Data Element');
+    ok ($delement->save,                 'Save Data Element');
+    ok (my $d_id = $delement->get_id,    'Get Data Element ID');
 
-    $self->add_del_ids([$d_id], $dtile->S_TABLE);
+    $self->add_del_ids([$d_id], $delement->S_TABLE);
 
     ok (my $lkup = $self->class->lookup({
         id          => $d_id,
         object_type => 'story'
-    }), 'Lookup Data Tile');
+    }), 'Lookup Data Element');
     is ($lkup->get_data, 'Macaroon',  'Compare Data');
 
-    ok (my $atd = $dtile->get_field_type, 'Get Element Data Object');
+    ok (my $atd = $delement->get_field_type, 'Get Element Data Object');
     ok (my $list = $self->class->list({object_type => 'story'}),
-       'List Data Tiles');
-    ok (grep($_->get_id == $dtile->get_id, @$list), 'Data Tile is Listed');
+       'List Data Elements');
+    ok (grep($_->get_id == $delement->get_id, @$list), 'Data Element is Listed');
 }
 
 ##############################################################################

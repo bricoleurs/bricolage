@@ -270,7 +270,7 @@ sub serialize_elements {
     my @related;
 
     # output element data
-    my $element = $object->get_tile;
+    my $element = $object->get_element;
     my %attr;
     if (my $related_story = $element->get_related_story) {
         $attr{related_story_id} = $related_story->get_id;
@@ -296,7 +296,7 @@ sub serialize_elements {
         # first serialize all data elements
         foreach my $e (@$elems) {
             next if $e->is_container;
-            push(@related, _serialize_tile(
+            push(@related, _serialize_element(
                 writer       => $writer,
                 element_type => $e,
                 args         => $options{args},
@@ -307,7 +307,7 @@ sub serialize_elements {
         # then all containers
         foreach my $e (@$elems) {
             next unless $e->is_container;
-            push(@related, _serialize_tile(
+            push(@related, _serialize_element(
                 writer       => $writer,
                 element_type => $e,
                 args         => $options{args},
@@ -404,7 +404,7 @@ sub load_ocs {
                                        type   => 'story')
 
 Loads an asset object with element type data from the data hash.  Calls
-_deserialize_tile recursively down through containers.
+_deserialize_element recursively down through containers.
 
 Throws: NONE
 
@@ -419,7 +419,7 @@ sub deserialize_elements {
     $options{element} = $options{object}->get_element;
     $options{site_id} = $options{object}->get_site_id;
     return _load_relateds(@options{qw(element data site_id)}),
-      _deserialize_tile(%options);
+      _deserialize_element(%options);
 }
 
 =back
@@ -428,9 +428,9 @@ sub deserialize_elements {
 
 =over 4
 
-=item @related = _deserialize_tile(element => $element, data => $data)
+=item @related = _deserialize_element(element => $element, data => $data)
 
-Deserializes a single tile from <elements> data into $element.  Calls
+Deserializes a single element from <elements> data into $element.  Calls
 recursively down through containers building up fixup data from
 related objects in @related.
 
@@ -444,7 +444,7 @@ contain the kung-fu necessary for this task.
 
 =cut
 
-sub _deserialize_tile {
+sub _deserialize_element {
     my %options   = @_;
     my $element   = $options{element};
     my $data      = $options{data};
@@ -456,7 +456,7 @@ sub _deserialize_tile {
     # make sure we have an empty element - Story->new() helpfully (?)
     # creates empty data elements for required elements.
     if (my @e = $element->get_elements) {
-        $element->delete_tiles(\@e);
+        $element->delete_elements(\@e);
         $element->save; # required for delete to "take"
     }
 
@@ -515,7 +515,7 @@ sub _deserialize_tile {
             push @relations, _load_relateds($container, $c, $site_id);
 
             # recurse
-            push @relations, _deserialize_tile(element   => $container,
+            push @relations, _deserialize_element(element   => $container,
                                                site_id   => $site_id,
                                                data      => $c);
             # Log it.
@@ -566,16 +566,16 @@ sub _load_relateds {
 }
 
 
-=item @related = _serialize_tile(writer => $writer, element => $element, args => $args)
+=item @related = _serialize_element(writer => $writer, element => $element, args => $args)
 
-Serializes a single tile into the contents of an <elements> tag in the
+Serializes a single element into the contents of an <elements> tag in the
 media and story elements. It calls itself recursively on containers.
 Returns a list of two-element arrays - [ "media", $id ] or [ "story",
 $id ].  These are the related objects serialized.
 
 =cut
 
-sub _serialize_tile {
+sub _serialize_element {
     my %options  = @_;
     my $element  = $options{element_type};
     my $writer   = $options{writer};
@@ -615,7 +615,7 @@ sub _serialize_tile {
             # first serialize all data elements
             foreach my $e (@e) {
                 next if $e->is_container;
-                push(@related, _serialize_tile(
+                push(@related, _serialize_element(
                     writer  => $writer,
                     element_type => $e,
                     args    => $options{args},
@@ -625,7 +625,7 @@ sub _serialize_tile {
             # then all containers
             foreach my $e (@e) {
                 next unless $e->is_container;
-                push(@related, _serialize_tile(
+                push(@related, _serialize_element(
                     writer       => $writer,
                     element_type => $e,
                     args         => $options{args},

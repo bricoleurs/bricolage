@@ -5,7 +5,7 @@
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
--- This is the sql that will create the container and data tiles
+-- This is the sql that will create the container elements
 --
 
 -- -----------------------------------------------------------------------------
@@ -14,14 +14,15 @@
 -- Unique IDs for the story element table
 CREATE SEQUENCE seq_story_element START  1024;
 
--- Unique IDs for the media container tile table
+-- Unique IDs for the media element table
 CREATE SEQUENCE seq_media_element START  1024;
 
 -- -----------------------------------------------------------------------------
 -- Table story_element
 -- 
--- Description: Holds the properties of a container tile.   Note that tiles
---              can hold either other tiles or data, not both.
+-- Description: Holds the properties of a container element. Note that
+--              elements can hold either other container elements or field
+--              elements, not both.
 --
 
 CREATE TABLE story_element (
@@ -42,7 +43,7 @@ CREATE TABLE story_element (
 -- -----------------------------------------------------------------------------
 -- Table media_element
 --
--- Description: Holds the properties of a media container tile
+-- Description: Holds the properties of a media container element.
 --
 --
 

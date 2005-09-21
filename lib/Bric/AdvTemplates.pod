@@ -303,7 +303,7 @@ the methods:
 
 The $rel_story object will have all the methods that the exported $story object
 has since they are the same object. To get the top element of the story you can
-use the method 'get_tile':
+use the method 'get_element':
 
     % my $rel_element = $rel_story->get_element;
 

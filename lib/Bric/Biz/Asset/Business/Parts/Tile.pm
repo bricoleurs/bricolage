@@ -91,32 +91,32 @@ BEGIN {
                {
                 # Public Fields
 
-                # A name for this tile that can be displayed
+                # A name for this element that can be displayed
                 'name'                          => Bric::FIELD_READ,
 
-                # A unique name for this tile to be used internal
+                # A unique name for this element to be used internal
                 'key_name'                      => Bric::FIELD_READ,
 
-                # A short description of this tile
+                # A short description of this element
                 'description'                   => Bric::FIELD_READ,
 
-                # the parent id of this tile
+                # the parent id of this element
                 'parent_id'                     => Bric::FIELD_RDWR,
 
-                # the order in which this tile should be returned
+                # the order in which this element should be returned
                 'place'                         => Bric::FIELD_RDWR,
 
-                # The data base id of the Tile
+                # The data base id of the Element
                 'id'                            => Bric::FIELD_READ,
 
-                # The type of object that this tile is associated with
+                # The type of object that this element is associated with
                 # will also be used to determine what table to put the data into
                 # ( story || media )
                 'object_type'                   => Bric::FIELD_RDWR,
 
                 'object_order'                  => Bric::FIELD_RDWR,
 
-                # the id of the object that this is a tile for
+                # the id of the object that this is a element for
                 object_instance_id              => Bric::FIELD_RDWR,
 
                 # Private Fields

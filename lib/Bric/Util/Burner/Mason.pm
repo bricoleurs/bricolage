@@ -222,7 +222,7 @@ sub burn_one {
     }
 
     # Find the inheritance path and the template name.
-    my $element   = $ba->get_tile;
+    my $element   = $ba->get_element;
     my $tmpl_path = $cat->ancestry_path;
     my $tmpl_name = $element->get_key_name . '.mc';
 
@@ -512,7 +512,7 @@ sub display_pages {
       grep { $_->is_container
              && $_->get_place >= $page_place
              && $_->get_key_name =~ /^($joined_names)$/ }
-      $elem->get_tiles;
+      $elem->get_elements;
 
     # Set the 'more_pages' and '_page_place' properties.
     $self->_set([ qw(more_pages _page_place) ],
@@ -675,8 +675,8 @@ NONE.
 
 =item $template = $b->_load_template_element($element);
 
-Given an element (a business asset/data tile) return the template element that
-formats it.
+Given an element (a business asset/data element) return the template element
+that formats it.
 
 B<Throws:> NONE.
 

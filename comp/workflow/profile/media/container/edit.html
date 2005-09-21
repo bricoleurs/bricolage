@@ -43,7 +43,7 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
  	&>
 <form method="post" action="<% $r->uri %>" name="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges(this)">
 <& /widgets/container_prof/container_prof.mc,
-	tile_type    => 'media',
+	element_type    => 'media',
         num          => 2,
 	action       => 'edit',
 	show_summary => 1

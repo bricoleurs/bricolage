@@ -18,13 +18,13 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-A widget to allow the creation and modification of container tiles.
+A widget to allow the creation and modification of container elements.
 
 =cut
 
 </%doc>
 <%args>
-$tile => undef
+$element => undef
 $title => undef
 $num => undef
 $action
@@ -40,11 +40,11 @@ my $widget = 'container_prof';
 </%once>
 
 <%init>;
-# Default to using the tile passed in followed by the tile in state.
-$tile ||= get_state_data($widget, 'tile');
+# Default to using the element passed in followed by the element in state.
+$element ||= get_state_data($widget, 'element');
 
-# Set the tile that we will be editing into state.
-set_state_data($widget, 'tile', $tile);
+# Set the element that we will be editing into state.
+set_state_data($widget, 'element', $element);
 set_state_data($widget, 'start', $start_count);
 my $state = get_state_name($widget);
 
@@ -54,7 +54,7 @@ $state = set_state_name($widget, $state || 'edit');
 $action = 'edit_bulk' if $state eq 'edit_bulk';
 
 # Add a bit of error correction when users try to use the back buttons.
-$m->out("<input type='hidden' name='$widget|top_stack_tile_id' value='".$tile->get_id."' />\n");
+$m->out("<input type='hidden' name='$widget|top_stack_element_id' value='".$element->get_id."' />\n");
 $m->out("<input type='hidden' name='$widget|state_name' value='".$state."' />\n");
 
 return $m->comp(

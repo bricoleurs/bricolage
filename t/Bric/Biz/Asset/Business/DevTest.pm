@@ -333,8 +333,8 @@ sub test_alias : Test(33) {
     is($alias_asset->get_alias_id, $ba->get_id,
        "Does it still point to the correct asset");
 
-    is_deeply($ba->get_tile, $alias_asset->get_tile,
-              "Should get identical tiles");
+    is_deeply($ba->get_element, $alias_asset->get_element,
+              "Should get identical elements");
 
     is_deeply([$alias_asset->get_all_keywords],
               [$ba->get_all_keywords],

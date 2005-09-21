@@ -995,12 +995,12 @@ to any category.
 
     Object Type         Associated Perl Class
     -----------         ---------------------
-    Element             Bric::Biz::AssetType
+    Element Type        Bric::Biz::AssetType
     Template            Bric::Biz::Asset::Formatting
     Story               Bric::Biz::Asset::Business::Story
-    element             Bric::Biz::Asset::Business::Parts::Tile
-    Data element        Bric::Biz::Asset::Business::Parts::Tile::Data
-    Container element   Bric::Biz::Asset::Business::Parts::Tile::Container
+    Element             Bric::Biz::Asset::Business::Parts::Tile
+    Field Element       Bric::Biz::Asset::Business::Parts::Tile::Data
+    Container Element   Bric::Biz::Asset::Business::Parts::Tile::Container
     Burn System         Bric::Util::Burner
 
 =head2 Glossary

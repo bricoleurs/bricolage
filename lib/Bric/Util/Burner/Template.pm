@@ -212,7 +212,7 @@ sub burn_one {
     $self->_set([qw(_at _template_roots)] => [$at, $template_roots]);
 
     # get the element for the story
-    my $element = $story->get_tile;
+    my $element = $story->get_element;
 
     # run the script for the element
     my $output = $self->run_script($element);
@@ -618,7 +618,7 @@ sub _build_element_vars {
     }
 
     # loop over elements
-    foreach my $e ($element->get_tiles()) {
+    foreach my $e ($element->get_elements()) {
         # get a proper name
         my $name = lc $e->get_key_name;
 

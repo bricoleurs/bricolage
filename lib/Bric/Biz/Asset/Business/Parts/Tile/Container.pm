@@ -824,11 +824,11 @@ sub get_possible_data {
 
     for my $data (@$current) {
         my $atd = delete $at_info{$data->get_field_type_id};
-        # Add if this tile is repeatable.
+        # Add if this element is repeatable.
         push @parts, $atd if $atd && $atd->get_quantifier;
     }
 
-    # Add the container tiles (the only things remaining in this hash)
+    # Add the container elements (the only things remaining in this hash)
     push @parts, values %at_info;
 
     return wantarray ? @parts : \@parts;
@@ -885,9 +885,9 @@ sub add_data {
     });
 
     $field->set_data($data) if defined $data;
-    $self->add_tile($field);
+    $self->add_element($field);
 
-    # have to do this after add_tile() since add_tile() modifies place
+    # have to do this after add_element() since add_element() modifies place
     $field->set_place($place) if defined $place;
     return $self;
 }
@@ -920,7 +920,7 @@ sub add_container {
         parent_id          => $self->_get('id'),
     });
 
-    $self->add_tile($container);
+    $self->add_element($container);
     return $container;
 }
 
@@ -1127,7 +1127,7 @@ sub get_elements {
     my $dirty = $self->_get__dirty;
     my $subelems = $self->_get('_subelems');
 
-    # Do not attempt to get the AssetType tiles if we don't yet have an ID.
+    # Do not attempt to get the AssetType elements if we don't yet have an ID.
     return wantarray ? () : [] unless $subelems || $self->get_id;
 
     unless ($subelems) {
@@ -1183,42 +1183,42 @@ B<Notes:> NONE.
 =cut
 
 sub add_element {
-    my ($self, $tile) = @_;
+    my ($self, $element) = @_;
     my $dirty = $self->_get__dirty;
 
     # Get the children of this object
-    my $tiles = $self->get_elements() || [];
+    my $elements = $self->get_elements() || [];
 
     # Die if an ID is passed rather than an object.
     throw_gen 'Must pass element objects, not IDs'
-        unless ref $tile;
+        unless ref $element;
 
     # Set the place for this part. This will be updated when its added.
-    $tile->set_place(scalar @$tiles);
+    $element->set_place(scalar @$elements);
 
-    # Figure out how many existing tiles are the same type as we're adding.
+    # Figure out how many existing elements are the same type as we're adding.
     my $object_order = 1;
-    if ($tile->is_container) {
-        my $et_id = $tile->get_element_type_id;
-        for my $sub (grep { $_->is_container } @$tiles) {
+    if ($element->is_container) {
+        my $et_id = $element->get_element_type_id;
+        for my $sub (grep { $_->is_container } @$elements) {
             $object_order++ if $sub->get_element_type_id == $et_id;
         }
     }
 
     else {
-        my $ft_id = $tile->get_field_type_id;
-        for my $sub (grep { !$_->is_container } @$tiles) {
+        my $ft_id = $element->get_field_type_id;
+        for my $sub (grep { !$_->is_container } @$elements) {
             $object_order++ if $sub->get_field_type_id == $ft_id;
         }
     }
 
     # Set the object order.
-    $tile->set_object_order($object_order);
+    $element->set_object_order($object_order);
 
-    push @$tiles, $tile;
+    push @$elements, $element;
 
-    # Update $self's new and deleted tiles lists.
-    $self->_set(['_subelems'] => [$tiles]);
+    # Update $self's new and deleted elements lists.
+    $self->_set(['_subelems'] => [$elements]);
 
     # We do not need to update the container object itself.
     $self->_set__dirty($dirty);
@@ -1236,7 +1236,7 @@ sub add_tile { shift->add_element(@_) }
 
 ################################################################################
 
-=item $container->delete_tiles(\@subelements)
+=item $container->delete_element(\@subelements)
 
 Removes the specified subelements from the current element. The arguments that
 can be passed via the array reference can be either container or data element
@@ -1259,7 +1259,7 @@ B<Throws:> NONE.
 
 B<Side Effects:> Will shift and reorder the remaining subelements to fit. So
 if telements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
-removed the new list of tiles will be 2, 7, and 10
+removed the new list of elements will be 2, 7, and 10
 
 B<Notes:> Doesn't actually do any deletions, just schedules them. Call
 C<save()> to complete the deletion.
@@ -1267,12 +1267,12 @@ C<save()> to complete the deletion.
 =cut
 
 sub delete_elements {
-    my ($self, $tiles_arg) = @_;
+    my ($self, $elements_arg) = @_;
     my (%del_data, %del_cont, $error);
 
-    my $err_msg = 'Improper args to delete tiles';
+    my $err_msg = 'Improper args to delete elements';
 
-    for my $elem (@$tiles_arg) {
+    for my $elem (@$elements_arg) {
         if (ref $elem eq 'HASH') {
             throw_gen(error => $err_msg)
               unless exists $elem->{id} && exists $elem->{type};
@@ -1295,23 +1295,23 @@ sub delete_elements {
         }
     }
 
-    my $tiles = $self->_get('_subelems');
-    my $del_tiles = $self->_get('_del_subelems') || [];
+    my $elements = $self->_get('_subelems');
+    my $del_elements = $self->_get('_del_subelems') || [];
 
     my $order = 0;
     my $cont_order;
     my $data_order;
     my $new_list = [];
-    foreach (@$tiles) {
+    foreach (@$elements) {
         my $delete = undef;
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
-                push @$del_tiles, $_;
+                push @$del_elements, $_;
                 $delete = 1;
             }
         } else {
             if (exists $del_data{$_->get_id}) {
-                push @$del_tiles, $_;
+                push @$del_elements, $_;
                 $delete = 1;
             }
         }
@@ -1346,7 +1346,7 @@ sub delete_elements {
 
     return $self->_set(
         ['_subelems',  '_del_subelems'],
-        [ $new_list,    $del_tiles ]
+        [ $new_list,    $del_elements ]
     );
 }
 
@@ -1400,19 +1400,19 @@ B<Notes:> NONE.
 sub reorder_elements {
     my ($self, $new_order) = @_;
     my $dirty = $self->_get__dirty;
-    my $tiles = $self->get_elements();
+    my $elements = $self->get_elements();
     my ($at_count, $data_count) = ({},{});
     my @new_list;
 
     # make sure then number of elements passed is the same as what we have
-    if (scalar @$tiles != scalar @$new_order ) {
-        throw_gen(error => 'Improper number of args to reorder_tiles().');
+    if (scalar @$elements != scalar @$new_order ) {
+        throw_gen(error => 'Improper number of args to reorder_elements().');
     }
 
-    # Order the tiles in the order they are listed in $new_order
+    # Order the elements in the order they are listed in $new_order
     foreach my $obj (@$new_order) {
 
-        # Set this tiles place among other tiles.
+        # Set this elements place among other elements.
         my $new_place = scalar @new_list;
         $obj->set_place($new_place)
           unless $obj->get_place == $new_place;
@@ -1428,7 +1428,7 @@ sub reorder_elements {
             $seen  = $data_count;
         }
 
-        # Set this tiles place among other tiles of its type.
+        # Set this elements place among other elements of its type.
         my $n = $seen->{$at_id} || 1;
         my $new_obj_order = $n++;
         $obj->set_object_order($new_obj_order)
@@ -1891,10 +1891,10 @@ B<Notes:> NONE.
 
 sub _sync_elements {
     my $self = shift;
-    my ($id, $inst_id, $tiles, $del_tiles)
+    my ($id, $inst_id, $elements, $del_elements)
         = $self->_get(qw(id object_instance_id _subelems _del_subelems));
 
-    for my $elem (@$tiles) {
+    for my $elem (@$elements) {
         # Set the parent ID and object instance ID and save.
         my $pid = $elem->get_parent_id;
         $elem->set_parent_id($id) unless defined $pid && $pid == $id;
@@ -1904,7 +1904,7 @@ sub _sync_elements {
         $elem->save;
     }
 
-    while (my $t = shift @$del_tiles) {
+    while (my $t = shift @$del_elements) {
         $t->set_object_order(0);
         $t->set_place(0);
         $t->deactivate->save;

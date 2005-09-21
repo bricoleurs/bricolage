@@ -1568,18 +1568,18 @@ sub upload_file {
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
         # construct a MediaFunc object.
-        my $tile = $self->get_tile;
+        my $element = $self->get_element;
         my $path = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $new_loc);
         my $media_func = Bric::App::MediaFunc->new({ file_path => $path });
 
         # Iterate through all the elements.
-        foreach my $dt ($tile->get_tiles) {
+        foreach my $dt ($element->get_elements) {
             # Skip container elements.
             next if $dt->is_container;
             # See if this is an auto populated field.
             my $name = $dt->get_name;
             if ($auto_fields->{$name} ) {
-                # Check the tile to see if we can override it.
+                # Check the element to see if we can override it.
                 next if $dt->is_locked;
                 # Get and set the value
                 my $method = $auto_fields->{$name};
@@ -1740,14 +1740,14 @@ sub revert {
     $self->_set([@attrs, qw(_contributors _update_contributors _queried_contrib)],
                 [$revert_obj->_get(@attrs), $contrib, 1, 1]);
 
-    # clone the tiles
-    # get rid of current tiles
-    my $tile = $self->get_tile;
-    $tile->do_delete;
-    my $new_tile = $revert_obj->get_tile;
-    $new_tile->prepare_clone;
-    $self->_set({ _delete_tile => $tile,
-                  _tile        => $new_tile});
+    # clone the elements
+    # get rid of current elements
+    my $element = $self->get_element;
+    $element->do_delete;
+    my $new_element = $revert_obj->get_element;
+    $new_element->prepare_clone;
+    $self->_set({ _delete_element => $element,
+                  _element        => $new_element});
 
     # Make sure the current version is cached.
     return $self->cache_me;
@@ -1769,8 +1769,8 @@ B<Notes:> NONE.
 
 sub clone {
     my $self = shift;
-    my $tile = $self->get_tile();
-    $tile->prepare_clone();
+    my $element = $self->get_element();
+    $element->prepare_clone();
 
     my $contribs = $self->_get_contributors();
     # clone contributors

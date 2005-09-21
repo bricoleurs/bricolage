@@ -218,7 +218,7 @@ A category in which to publish.
 
 sub burn_one {
     my ($self, $story, $oc, $cat, $at) = @_;
-    my $element = $story->get_tile();
+    my $element = $story->get_element();
 
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
@@ -506,9 +506,9 @@ sub display_pages {
     my $page_place = $self->_get('_page_place') || 0;
 
     my ($next_page, $page_elem);
-    my $tiles = $elem->get_tiles;
-    foreach my $place ($page_place..$#$tiles) {
-        my $e = $tiles->[$place];
+    my $elements = $elem->get_elements;
+    foreach my $place ($page_place..$#$elements) {
+        my $e = $elements->[$place];
         next unless $e->is_container;
         foreach my $name (@$names) {
             next unless $e->has_name($name);
@@ -616,7 +616,7 @@ NONE.
 
 =item $template = $b->_load_template_element($element);
 
-Given an element (a business asset/data tile) return the template element that
+Given an element (a business asset/data element) return the template element that
 formats it.
 
 B<Throws:> NONE.

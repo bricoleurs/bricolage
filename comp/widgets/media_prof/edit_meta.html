@@ -116,8 +116,8 @@ $m->comp('file_section.mc',
         );
         
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
-        tile        => $tile,
-        tile_type   => 'media',
+        element        => $element,
+        element_type   => 'media',
         action      => $media->get_alias_id ? 'view' : 'edit',
         num         => $num,
         title       => 'Content',
@@ -222,9 +222,9 @@ $widget
 <%init>
 
 my $media = get_state_data($widget, 'media');
-my $tile = $media->get_tile();
+my $element = $media->get_element();
 
-set_state_data('container_prof', 'tile', $tile);
+set_state_data('container_prof', 'element', $element);
 
 my $wf_id = get_state_data($widget, 'work_id');
 $wf_id = $media->get_workflow_id() unless $wf_id;

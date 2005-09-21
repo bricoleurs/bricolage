@@ -27,12 +27,12 @@
 $widget
 </%args>
 <%init>;
-# The tile object.
-my $tile = get_state_data($widget, 'tile');
-my $relate_id = $tile->get_related_media_id;
+# The element object.
+my $element = get_state_data($widget, 'element');
+my $relate_id = $element->get_related_media_id;
 
 my $excl_sub;
-if ($tile->get_object_type eq 'media') {
+if ($element->get_object_type eq 'media') {
     my $asset_id = get_state_data('media_prof', 'media')->get_id;
     $excl_sub = sub {
         return 1 if $_[0]->get_id == $asset_id;

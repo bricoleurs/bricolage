@@ -198,7 +198,7 @@ BEGIN {
               _del_contrib              => Bric::FIELD_NONE,
               _update_contributors      => Bric::FIELD_NONE,
               _related_grp_obj          => Bric::FIELD_NONE,
-              _tile                     => Bric::FIELD_NONE,
+              _element                     => Bric::FIELD_NONE,
               _queried_cats             => Bric::FIELD_NONE,
               _categories               => Bric::FIELD_NONE,
               _del_categories           => Bric::FIELD_NONE,
@@ -1195,7 +1195,7 @@ sub del_output_channels {
 =item get_element_name()
 
 Returns the name of the asset type that this is based on. This is the same as
-the name of the top level tile.
+the name of the top level element.
 
 B<Throws:>
 
@@ -1221,7 +1221,7 @@ sub get_element_name {
 =item get_element_key_name()
 
 Returns the key name of the asset type that this is based on. This is the same
-as the key name of the top level tile.
+as the key name of the top level element.
 
 B<Throws:>
 
@@ -1246,7 +1246,7 @@ sub get_element_key_name {
 
 =item (@parts || $parts) = $biz->get_possible_data()
 
-Returns the possible data that can be added to the top level tile of this
+Returns the possible data that can be added to the top level element of this
 business asset based upon rules defined in asset type
 
 B<Throws:>
@@ -1265,8 +1265,8 @@ NONE
 
 sub get_possible_data {
     my $self = shift;
-    my $tile = $self->get_element;
-    return $tile->get_possible_data;
+    my $element = $self->get_element;
+    return $element->get_possible_data;
 }
 
 ################################################################################
@@ -1292,8 +1292,8 @@ NONE
 
 sub get_possible_containers {
     my ($self) = @_;
-    my $tile = $self->get_element;
-    return $tile->get_possible_containers;
+    my $element = $self->get_element;
+    return $element->get_possible_containers;
 }
 
 ################################################################################
@@ -1531,17 +1531,17 @@ sub get_related_objects {
 }
 
 sub _find_related {
-    my ($self, $tile) = @_;
+    my ($self, $element) = @_;
     my @related;
 
-    # Add this tile's related assets
-    my $rmedia = $tile->get_related_media;
-    my $rstory = $tile->get_related_story;
+    # Add this element's related assets
+    my $rmedia = $element->get_related_media;
+    my $rstory = $element->get_related_story;
     push @related, $rmedia if $rmedia;
     push @related, $rstory if $rstory;
 
     # Check all the children for related assets.
-    foreach my $c ($tile->get_containers) {
+    foreach my $c ($element->get_containers) {
         push @related, $self->_find_related($c);
     }
 
@@ -1554,7 +1554,7 @@ sub _find_related {
 =item $element = $ba->get_element
 
  my $element = $ba->get_element;
- $element = $ba->get_tile; # Deprecated form.
+ $element = $ba->get_element; # Deprecated form.
 
 Returns the top level element that contains content for this document.
 
@@ -1575,15 +1575,15 @@ NONE
 sub get_element {
     my $self = shift;
     my $object = $self->_get_alias || $self;
-    my $tile = $self->_get('_tile');
-    unless ($tile) {
-        $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
+    my $element = $self->_get('_element');
+    unless ($element) {
+        $element = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
             object    => $object,
             parent_id => undef,
         });
-        $object->_set(['_tile'] => [$tile]);
+        $object->_set(['_element'] => [$element]);
     }
-    return $tile;
+    return $element;
 }
 
 sub get_tile { shift->get_element };
@@ -1685,7 +1685,7 @@ sub is_fixed {
   $elements = $ba->get_tiles(@key_names);
   @elements = $ba->get_tiles(@key_names);
 
-Returns the tiles that are held with in the top level tile of this business
+Returns the elements that are held with in the top level element of this business
 asset. Convenience shortcut to C<< $ba->get_element->get_elements >>.
 
 B<Throws:>
@@ -1713,7 +1713,7 @@ sub get_tiles { shift->get_elements(@_); }
 
 =item $ba = $ba->add_data( $atd_obj, $data )
 
-This will create a tile and add it to the container. Convenience shortcut to
+This will create a element and add it to the container. Convenience shortcut to
 C<< $ba->get_element->add_data >>.
 
 B<Throws:>
@@ -1739,7 +1739,7 @@ sub add_data {
 
 =item $new_container = $ba->add_container( $atc_obj )
 
-This will create and return a new container tile that is added to the current
+This will create and return a new container element that is added to the current
 container. Convenience shortcut to C<< $ba->get_element->add_container >>.
 
 B<Throws:>
@@ -2055,8 +2055,8 @@ sub checkout {
     throw_gen "Must be checked out to users"
       unless defined $param->{user__id};
 
-    my $tile = $self->get_element;
-    $tile->prepare_clone;
+    my $element = $self->get_element;
+    $element->prepare_clone;
 
     my $contribs = $self->_get_contributors;
     # clone contributors
@@ -2098,21 +2098,21 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $tile, $oc_coll, $ci, $co, $vid, $kw_coll) =
-      $self->_get(qw(_related_grp_obj _tile _oc_coll _checkin _checkout
+    my ($related_obj, $element, $oc_coll, $ci, $co, $vid, $kw_coll) =
+      $self->_get(qw(_related_grp_obj _element _oc_coll _checkin _checkout
                      version_id _kw_coll));
 
     if ($co) {
-        $tile->prepare_clone;
+        $element->prepare_clone;
         $self->_set(['_checkout'], []);
     }
 
     # Is this necessary? Seems kind of pointless. [David 2002-09-19]
     $self->_set(['_checkin'], []) if $ci;
 
-    if ($tile) {
-        $tile->set_object_instance_id($vid);
-        $tile->save;
+    if ($element) {
+        $element->set_object_instance_id($vid);
+        $element->save;
     }
 
     $related_obj->save if $related_obj;
@@ -2403,17 +2403,17 @@ sub _init {
                                      ($init->{site_id}));
         }
 
-        # Let's create the new tile as well.
-        my $tile = Bric::Biz::Asset::Business::Parts::Tile::Container->new ({
+        # Let's create the new element as well.
+        my $element = Bric::Biz::Asset::Business::Parts::Tile::Container->new ({
             object          => $self,
             element_type_id => $init->{element_type_id},
             element_type    => $init->{element_type}
         });
 
-        $self->_set([qw(version current_version checked_out _tile modifier
+        $self->_set([qw(version current_version checked_out _element modifier
                         element_type_id _element_type_object site_id grp_ids
                         publish_status)],
-                    [0, 0, 1, $tile,
+                    [0, 0, 1, $element,
                      @{$init}{qw(user__id element_type_id element_type site_id)},
                      [$init->{site_id}, $self->INSTANCE_GROUP_ID], 0]);
     }

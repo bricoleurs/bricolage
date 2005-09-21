@@ -147,12 +147,12 @@ do_sql
     # Recreate indexes.
     q{CREATE INDEX fkx_story_instance__story_field ON story_field(object_instance_id)},
     q{CREATE INDEX fkx_field_type__story_field ON story_field(field_type__id)},
-    q{CREATE INDEX fkx_sc_tile__story_field ON story_field(parent_id)},
+    q{CREATE INDEX fkx_story_field__story_field ON story_field(parent_id)},
 
 
     q{CREATE INDEX fkx_media_instance__media_field ON media_field(object_instance_id)},
     q{CREATE INDEX fkx_field_type__media_field ON media_field(field_type__id)},
-    q{CREATE INDEX fkx_sc_tile__media_field ON media_field(parent_id)},
+    q{CREATE INDEX fkx_media_field__media_field ON media_field(parent_id)},
 
     q{CREATE INDEX fkx_story_element__story_element ON story_element(parent_id)},
     q{CREATE INDEX fkx_story__story_element ON story_element(object_instance_id)},

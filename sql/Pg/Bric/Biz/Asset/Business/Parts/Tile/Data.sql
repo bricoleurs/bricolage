@@ -9,18 +9,18 @@
 -- -----------------------------------------------------------------------------
 -- Sequences
 
--- Unique IDs for the story data tiles
+-- Unique IDs for the story field elements.
 CREATE SEQUENCE seq_story_field START 1024;
 
--- Unique IDs for the media data tile table
+-- Unique IDs for the media field elements.
 CREATE SEQUENCE seq_media_field START 1024;
 
 -- -----------------------------------------------------------------------------
 -- Table story_field
 --
--- Description: Story Data tiles are story specific mappings to the 
+-- Description: Story Data elements are story specific mappings to the 
 --              Bric::Asset::Business::Parts::Tile::Data class.
---              They link to the story that this tile is a part of,
+--              They link to the story that this element is a part of,
 --              the attribute id of the data that is contained with in,
 --              and it's parent's id ( a story_element row ).
 --              Place is it's order and active is it's active state.
@@ -47,9 +47,9 @@ CREATE TABLE story_field (
 -- -----------------------------------------------------------------------------
 -- Table media_field
 --
--- Description: Media Data tiles are media specific mappings to the 
+-- Description: Media Data elements are media specific mappings to the 
 --              Bric::Asset::Business::Parts::Tile::Data class.
---              They link to the media that this tile is a part of,
+--              They link to the media that this element is a part of,
 --              the attribute id of the data that is contained with in,
 --              and it's parent's id ( a story_element row ).
 --              Place is it's order and active is it's active state.
@@ -77,8 +77,8 @@ CREATE TABLE media_field (
 --
 CREATE INDEX fkx_story_instance__story_field ON story_field(object_instance_id);
 CREATE INDEX fkx_field_type__story_field ON story_field(field_type__id);
-CREATE INDEX fkx_sc_tile__story_field ON story_field(parent_id);
+CREATE INDEX fkx_story_field__story_field ON story_field(parent_id);
 
 CREATE INDEX fkx_media_instance__media_field ON media_field(object_instance_id);
 CREATE INDEX fkx_field_type__media_field ON media_field(field_type__id);
-CREATE INDEX fkx_sc_tile__media_field ON media_field(parent_id);
+CREATE INDEX fkx_media_field__media_field ON media_field(parent_id);

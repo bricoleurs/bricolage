@@ -111,8 +111,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 
 <%perl>;
 $num = $m->comp('/widgets/container_prof/container_prof.mc',
-        tile            => $tile,
-        tile_type       => 'story',
+        element            => $element,
+        element_type       => 'story',
         action          => $story->get_alias_id ? 'view' : 'edit',
         title           => 'Content',
         num             => $num,
@@ -309,7 +309,7 @@ $widget
 </%args>
 <%init>
 my $story   = get_state_data($widget, 'story');
-my $tile    = $story->get_tile();
+my $element    = $story->get_element();
 my $id = $story->get_id;
 my $wf_id = get_state_data($widget, 'work_id');
 $wf_id = $story->get_workflow_id() unless $wf_id;

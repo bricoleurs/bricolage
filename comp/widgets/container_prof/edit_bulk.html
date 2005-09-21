@@ -1,7 +1,7 @@
 <%perl>
 # Show the story summary if needed.
 if ($show_summary) {
-    my $type  = $tile->get_object_type;
+    my $type  = $element->get_object_type;
 
     # Nab the story from the story_prof widget
     my $asset = get_state_data($type.'_prof', $type);
@@ -13,7 +13,7 @@ if ($show_summary) {
     dialog_id => 'finddialog',
 &>
 <& '/widgets/wrappers/sharky/table_top.mc',
-   caption => $lang->maketext('Bulk Edit [_1]', $tile->get_name),
+   caption => $lang->maketext('Bulk Edit [_1]', $element->get_name),
    id      => 'containerprof',
    number  => ++$i,
 &>
@@ -57,7 +57,7 @@ my $opts = [
 % }
 <& '/widgets/profile/textarea.mc',
     name     => "$widget|text",
-    value    => $args->{__use_text__} ? $args->{"$widget|text"} : $tile->serialize_to_pod($def_field),
+    value    => $args->{__use_text__} ? $args->{"$widget|text"} : $element->serialize_to_pod($def_field),
     rows     => 40,
     useTable => 0,
     js       => qq{onkeyup="wordCount(document.theForm, '$widget|text', 'words', 'chars');"},
@@ -97,11 +97,11 @@ $show_summary
 $args
 </%args>
 <%init>;
-# the tile object
-my $tile       = get_state_data($widget, 'tile');
+# the element object
+my $element       = get_state_data($widget, 'element');
 #my $preserve   = get_state_data($widget, 'preserve');
 my $i          = 0;
-my $at         = $tile->get_element_type;
+my $at         = $element->get_element_type;
 my $def_field  = get_state_data(
     '_tmp_prefs',
     'container_prof.' . $at->get_id . '.def_field'

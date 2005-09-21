@@ -99,8 +99,8 @@ if ($param->{diff}) {
 else {
 </%perl>
 <& '/widgets/container_prof/container_prof.mc',
-  tile        => $tile,
-  tile_type   => 'media',
+  element        => $element,
+  element_type   => 'media',
   action      => 'view',
   num         => ++$number,
   title       => 'Content',
@@ -183,10 +183,10 @@ $param
 <%init>;
 my $media    = get_state_data($widget, 'media');
 my $id       = $media->get_id;
-my $tile     = $media->get_tile;
+my $element     = $media->get_element;
 my @ocs      = $media->get_output_channels;
 my $curr_ver = $media->get_current_version;
 my $versions = [ map { [ $_ => $_] } reverse 1 .. $curr_ver ];
 my $number   = 0;
-#set_state_data('container_prof', 'tile', $tile);
+#set_state_data('container_prof', 'element', $element);
 </%init>
