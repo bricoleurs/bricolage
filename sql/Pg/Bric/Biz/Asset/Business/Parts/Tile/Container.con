@@ -5,50 +5,48 @@
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
--- This is the sql that will constrain the container tiles
---
 
 
--- Story Container Constraints
+-- Story Element Constraints
 
-ALTER TABLE story_container_tile
-ADD CONSTRAINT fk_sc_tile__sc_tile FOREIGN KEY (parent_id)
-    REFERENCES story_container_tile(id) ON DELETE CASCADE;
+ALTER TABLE story_element
+ADD CONSTRAINT fk_story_element__story_element FOREIGN KEY (parent_id)
+REFERENCES story_element(id) ON DELETE CASCADE;
 
-ALTER TABLE story_container_tile
-ADD CONSTRAINT fk_story__sc_tile FOREIGN KEY (object_instance_id)   
-    REFERENCES story_instance(id) ON DELETE CASCADE;
+ALTER TABLE story_element
+ADD CONSTRAINT fk_story__story_element FOREIGN KEY (object_instance_id)
+REFERENCES story_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE story_container_tile
-ADD CONSTRAINT fk_sc_tile__related_story FOREIGN KEY (related_story__id)    
-    REFERENCES story(id) ON DELETE CASCADE;
+ALTER TABLE story_element
+ADD CONSTRAINT fk_story_element__related_story FOREIGN KEY (related_story__id)
+REFERENCES story(id) ON DELETE CASCADE;
 
-ALTER TABLE story_container_tile
-ADD CONSTRAINT fk_sc_tile__related_media FOREIGN KEY (related_media__id)
-    REFERENCES media(id) ON DELETE CASCADE;
+ALTER TABLE story_element
+ADD CONSTRAINT fk_story_element__related_media FOREIGN KEY (related_media__id)
+REFERENCES media(id) ON DELETE CASCADE;
 
-ALTER TABLE story_container_tile
-ADD CONSTRAINT fk_sc_tile__element_type FOREIGN KEY (element_type__id)
-    REFERENCES element_type(id) ON DELETE CASCADE;
+ALTER TABLE story_element
+ADD CONSTRAINT fk_story_element__element_type FOREIGN KEY (element_type__id)
+REFERENCES element_type(id) ON DELETE RESTRICT;
 
--- Media Container Constraints
+-- Media Element Constraints
 
-ALTER TABLE media_container_tile
-ADD CONSTRAINT fk_mc_tile__mc_tile FOREIGN KEY (parent_id)
-    REFERENCES media_container_tile(id) ON DELETE CASCADE;
+ALTER TABLE media_element
+ADD CONSTRAINT fk_media_element__media_element FOREIGN KEY (parent_id)
+REFERENCES media_element(id) ON DELETE CASCADE;
 
-ALTER TABLE media_container_tile
-ADD CONSTRAINT fk_media__mc_tile FOREIGN KEY (object_instance_id)
-    REFERENCES media_instance(id) ON DELETE CASCADE;
+ALTER TABLE media_element
+ADD CONSTRAINT fk_media__media_element FOREIGN KEY (object_instance_id)
+REFERENCES media_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE media_container_tile
-ADD CONSTRAINT fk_mc_tile__related_story FOREIGN KEY (related_story__id)
-    REFERENCES story(id) ON DELETE CASCADE;
+ALTER TABLE media_element
+ADD CONSTRAINT fk_media_element__related_story FOREIGN KEY (related_story__id)
+REFERENCES story(id) ON DELETE CASCADE;
 
-ALTER TABLE media_container_tile
-ADD CONSTRAINT fk_mc_tile__related_media FOREIGN KEY (related_media__id)
-    REFERENCES media(id) ON DELETE CASCADE;
+ALTER TABLE media_element
+ADD CONSTRAINT fk_media_element__related_media FOREIGN KEY (related_media__id)
+REFERENCES media(id) ON DELETE CASCADE;
 
-ALTER TABLE media_container_tile
-ADD CONSTRAINT fk_mc_tile__element_type FOREIGN KEY (element_type__id)
-    REFERENCES element_type(id) ON DELETE CASCADE;
+ALTER TABLE media_element
+ADD CONSTRAINT fk_media_element__element_type FOREIGN KEY (element_type__id)
+REFERENCES element_type(id) ON DELETE RESTRICT;

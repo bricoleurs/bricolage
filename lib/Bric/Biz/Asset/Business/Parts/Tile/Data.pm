@@ -75,8 +75,8 @@ use base qw(Bric::Biz::Asset::Business::Parts::Tile);
 
 use constant DEBUG => 0;
 
-use constant S_TABLE => 'story_data_tile';
-use constant M_TABLE => 'media_data_tile';
+use constant S_TABLE => 'story_field';
+use constant M_TABLE => 'media_field';
 
 my @SEL_COLS = qw(
     f.id
@@ -954,7 +954,7 @@ sub _do_list {
     throw_gen 'Missing required parameter "object" or "object_type"'
         unless $obj_type;
 
-    my $tables = "$obj_type\_data_tile f, field_type ft";
+    my $tables = "$obj_type\_field f, field_type ft";
 
     my ($qry_cols, $order) = $ids_only
         ? ('DISTINCT f.id', 'f.id')
@@ -1019,7 +1019,7 @@ B<Notes:> NONE.
 sub _do_insert {
     my $self = shift;
 
-    my $table = $self->get_object_type . '_data_tile';
+    my $table = $self->get_object_type . '_field';
 
     my $value_cols = join ', ', ('?') x @COLS;
     my $ins_cols   = join ', ', @COLS;
@@ -1058,7 +1058,7 @@ B<Notes:> NONE.
 sub _do_update {
     my $self = shift;
 
-    my $table    = $self->get_object_type . '_data_tile';
+    my $table    = $self->get_object_type . '_field';
     my $set_cols = join ' = ?, ', @COLS;
 
     my $upd = prepare_c(qq{

@@ -79,11 +79,11 @@ $LastChangedDate$
  $biz         = $biz->set_element_type_id($at_id)
 
  # Tile methods
- $container_tile  = $biz->get_tile()
- @container_tiles = $biz->get_tiles()
- $biz             = $biz->add_data($field_type_obj, $data)
- $data            = $biz->get_data($name, $obj_order)
- $parts           = $biz->get_possible_data()
+ $element  = $biz->get_element_type()
+ @elements = $biz->get_elements()
+ $biz      = $biz->add_data($field_type_obj, $data)
+ $data     = $biz->get_data($name, $obj_order)
+ $parts    = $biz->get_possible_data()
 
  # Container methods
  $new_container = $biz->add_container($at_contaier_obj)
@@ -292,13 +292,13 @@ use constant PARAM_FROM_MAP => {
        category_id          => 'story__category sc2',
        primary_category_id  => 'story__category sc2',
        category_uri         => 'story__category sc2',
-       data_text            => 'story_data_tile sd',
+       data_text            => 'story_field sd',
        contrib_id           => 'story__contributor sic',
        element_key_name     => 'element_type e',
        'story.category'     => 'story__category sc2',
-       subelement_key_name  => 'story_container_tile sct',
-       related_story_id     => 'story_container_tile sctrs',
-       related_media_id     => 'story_container_tile sctrm',
+       subelement_key_name  => 'story_element sct',
+       related_story_id     => 'story_element sctrs',
+       related_media_id     => 'story_element sctrm',
        note                 => 'story_instance si2',
        uri                  => 'story_uri uri',
 };

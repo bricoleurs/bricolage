@@ -82,8 +82,8 @@ use base qw( Bric::Biz::Asset::Business::Parts::Tile );
 
 use constant DEBUG => 0;
 
-use constant S_TABLE => 'story_container_tile';
-use constant M_TABLE => 'media_container_tile';
+use constant S_TABLE => 'story_element';
+use constant M_TABLE => 'media_element';
 
 my @COLS = qw(
     element_type__id
@@ -877,18 +877,18 @@ B<Notes:> NONE.
 
 sub add_data {
     my ($self, $atd, $data, $place) = @_;
-    my $data_tile = Bric::Biz::Asset::Business::Parts::Tile::Data->new({
+    my $field = Bric::Biz::Asset::Business::Parts::Tile::Data->new({
         active             => 1,
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_instance_id'),
         field_type         => $atd,
     });
 
-    $data_tile->set_data($data) if defined $data;
-    $self->add_tile($data_tile);
+    $field->set_data($data) if defined $data;
+    $self->add_tile($field);
 
     # have to do this after add_tile() since add_tile() modifies place
-    $data_tile->set_place($place) if defined $place;
+    $field->set_place($place) if defined $place;
     return $self;
 }
 
@@ -1742,7 +1742,7 @@ sub _do_list {
     throw_gen 'Missing required parameter "object" or "object_type"'
         unless $obj_type;
 
-    my $tables = "$obj_type\_container_tile e, element_type et";
+    my $tables = "$obj_type\_element e, element_type et";
 
     my ($qry_cols, $order) = $ids_only
         ? ('DISTINCT e.id', 'e.id')
@@ -1802,7 +1802,7 @@ sub _do_delete {
     my $self = shift;
 
     my ($id, $type) = $self->_get(qw(id object_type));
-    my $table = "$type\_container_tile";
+    my $table = "$type\_element";
     my $sth = prepare_c(qq{
         DELETE FROM $table
         WHERE  id = ?
@@ -1830,7 +1830,7 @@ B<Notes:> NONE.
 sub _do_insert {
     my $self = shift;
 
-    my $table = $self->get_object_type . '_container_tile';
+    my $table = $self->get_object_type . '_element';
 
     my $value_cols = join ', ', ('?') x @COLS;
     my $ins_cols   = join ', ', @COLS;
@@ -1862,7 +1862,7 @@ B<Notes:> NONE.
 sub _do_update {
     my $self = shift;
 
-    my $table    = $self->get_object_type . '_container_tile';
+    my $table    = $self->get_object_type . '_element';
     my $set_cols = join ' = ?, ', @COLS;
 
     my $upd = prepare_c(qq{

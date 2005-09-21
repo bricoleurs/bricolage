@@ -7,28 +7,28 @@
 --
 
 -- Alter Table Commands for the story data tiles
-ALTER TABLE story_data_tile
-ADD CONSTRAINT fk_story_instance__sd_tile FOREIGN KEY (object_instance_id)
+ALTER TABLE story_field
+ADD CONSTRAINT fk_story_instance__story_field FOREIGN KEY (object_instance_id)
     REFERENCES story_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE story_data_tile
-ADD CONSTRAINT fk_sc_tile__sd_tile FOREIGN KEY (parent_id)
-    REFERENCES story_container_tile(id) ON DELETE CASCADE;
+ALTER TABLE story_field
+ADD CONSTRAINT fk_story_element__story_field FOREIGN KEY (parent_id)
+REFERENCES story_element(id) ON DELETE CASCADE;
 
-ALTER TABLE story_data_tile
+ALTER TABLE story_field
 ADD CONSTRAINT fk_field_type__story_field FOREIGN KEY (field_type__id)
 REFERENCES field_type(id) ON DELETE RESTRICT;
 
 
 -- Alter Table Commands for the media data tiles
-ALTER TABLE media_data_tile
-ADD CONSTRAINT fk_media_instance__md_tile FOREIGN KEY (object_instance_id)
+ALTER TABLE media_field
+ADD CONSTRAINT fk_media_instance__media_field FOREIGN KEY (object_instance_id)
     REFERENCES media_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE media_data_tile
-ADD CONSTRAINT fk_mc_tile__md_tile FOREIGN KEY (parent_id)
-    REFERENCES media_container_tile(id) ON DELETE CASCADE;
+ALTER TABLE media_field
+ADD CONSTRAINT fk_media_element__media_field FOREIGN KEY (parent_id)
+REFERENCES media_element(id) ON DELETE CASCADE;
 
-ALTER TABLE media_data_tile
+ALTER TABLE media_field
 ADD CONSTRAINT fk_field_type__media_field FOREIGN KEY (field_type__id)
 REFERENCES field_type(id) ON DELETE RESTRICT;

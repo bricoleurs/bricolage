@@ -318,6 +318,14 @@ in general. The tables renamed are:
 
 =item at_type to field_type
 
+=item story_container_tile to story_element
+
+=item story_data_tile to story_field
+
+=item media_container_tile to media_element
+
+=item media_data_tile to media_field
+
 =back
 
 [David]
