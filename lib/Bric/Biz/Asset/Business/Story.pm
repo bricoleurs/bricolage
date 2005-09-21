@@ -81,7 +81,7 @@ $LastChangedDate$
  # Tile methods
  $container_tile  = $biz->get_tile()
  @container_tiles = $biz->get_tiles()
- $biz             = $biz->add_data($at_data_obj, $data)
+ $biz             = $biz->add_data($field_type_obj, $data)
  $data            = $biz->get_data($name, $obj_order)
  $parts           = $biz->get_possible_data()
 

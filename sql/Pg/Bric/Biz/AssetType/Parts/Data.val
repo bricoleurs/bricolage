@@ -8,106 +8,106 @@
 
 
 -- Add a paragraph element to page.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('1', '10', 'paragraph', 'Paragraph', 'A Paragraph of text.', '1', '0', '1', '1', '1', '0', 'blob', 'textarea', 0, 8, 50, NULL, true, '');
 
 -- Add a 'Previous' text field to page.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('2', '10', 'previous', 'Previous', 'Describes previous page.', '2', '0', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Next' text field to page.
 
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('3', '10', 'next', 'Next', 'Describes next page.', '3', '0', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Create a 'Quote' textarea field for the 'Pull Quote' element.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('4', '7', 'quote', 'Quote', 'The pull quote quotation.', '1', '1', '0', '1', '1', '1024', 'short', 'textarea', 0, 4, 40, '', true, '');
 
 -- Create a 'Copy' textarea field for the 'Inset' element.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('5', '6', 'copy', 'Copy', 'The inset copy text.', '1', '1', '0', '1', '1', '1024', 'short', 'textarea', 0, 8, 50, '', true, '');
 
 -- Add an 'Alternate Title' text field for the 'Related Story' element.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('6', '9', 'alternate_title', 'Alternate Title', 'Alternate title to the story''s own', '1', '0', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Create an 'Alternate Teaser' textarea field for the 'Related Story' element.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('7', '9', 'alternate_teaser', 'Alternate Teaser', 'Alternate teaser to the story''s own', '2', '0', '0', '1', '1', '512', 'short', 'textarea', 0, 4, 40, '', false, '');
 
 -- Add a 'Title' text field to the Book Profile.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('8', '11', 'title', 'Title', 'The book''s title.', '1', '1', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Add an 'Author' text field to the Book Profile.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('9', '11', 'author', 'Author', 'The author''s name.', '2', '1', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Publisher' text field to the Book Profile.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('10', '11', 'publisher', 'Publisher', 'The book''s publisher.', '3', '1', '0', '1', '1', '256', 'short', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Date' field to the Book Profile.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('11', '11', 'date', 'Date', 'The date of publication.', '4', '1', '0', '1', '1', '0', 'date', 'date', 0, 0, 0, '', false, '');
 
 -- Add a 'Deck' field to Story.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('12', '1', 'deck', 'Deck', 'A one-sentence teaser or subhead.', '1', '1', '0', '1', '1', '256', 'short', 'textarea', 0, 4, 40, '', false, '');
 
 -- Add a 'Deck' field to Column.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('13', '2', 'deck', 'Deck', 'A one-sentence teaser or subhead.', '1', '1', '0', '1', '1', '256', 'short', 'textarea', 0, 4, 40, '', false, '');
 
 -- Add a 'Deck' field to Book Review.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      widget_type, length, rows, cols, vals, multiple, default_val)
 VALUES ('14', '3', 'deck', 'Deck', 'A one-sentence teaser or subhead.', '1', '1', '0', '1', '1', '256', 'short', 'textarea', 0, 4, 40, '', false, '');
 
 -- Add a 'Height' field to Photograph.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
 VALUES ('15', '4', 'height', 'Height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Width' field to Photograph.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
 VALUES ('16', '4', 'width', 'Width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Resolution' field to Photograph.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
@@ -115,7 +115,7 @@ VALUES ('17', '4', 'resolution', 'Resolution', 'Autopopulated Resolution field.'
         '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Compression' field to Photograph.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
@@ -123,7 +123,7 @@ VALUES ('18', '4', 'compression', 'Compression', 'Autopopulated Compression fiel
         '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Color Type' field to Photograph.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
@@ -131,21 +131,21 @@ VALUES ('19', '4', 'color_type', 'Color Type','Autopopulated Color Type field.',
         '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Height' field to Illustration.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
 VALUES ('20', '5', 'height', 'Height', 'Autopopulated Height field.', '1', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Width' field to Illustration.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
 VALUES ('21', '5', 'width', 'Width', 'Autopopulated Width field.', '2', '1', '0', '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Resolution' field to Illustration.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
@@ -153,7 +153,7 @@ VALUES ('22', '5', 'resolution', 'Resolution', 'Autopopulated Resolution field.'
         '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Compression' field to Illustration.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)
@@ -161,7 +161,7 @@ VALUES ('23', '5', 'compression', 'Compression', 'Autopopulated Compression fiel
         '1', '0', '0', 'short', '1', 'text', 32, 0, 0, '', false, '');
 
 -- Add a 'Color Type' field to Illustration.
-INSERT INTO at_data (id, element_type__id, key_name, name, description, place, required,
+INSERT INTO field_type (id, element_type__id, key_name, name, description, place, required,
                      quantifier, active, publishable, max_length, sql_type,
                      autopopulated, widget_type, length, rows, cols, vals, multiple,
                      default_val)

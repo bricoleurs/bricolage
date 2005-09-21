@@ -96,7 +96,7 @@ Bric::Util::Grp.
 
 =cut
 
-sub short_object_type { return 'at_data' }
+sub short_object_type { return 'field_type' }
 
 #--------------------------------------#
 

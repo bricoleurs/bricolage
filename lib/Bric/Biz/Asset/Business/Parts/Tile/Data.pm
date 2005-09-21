@@ -88,7 +88,7 @@ my @SEL_COLS = qw(
     ft.max_length
     ft.sql_type
     ft.widget_type
-    f.element_data__id
+    f.field_type__id
     f.object_instance_id
     f.parent_id
     f.place
@@ -123,7 +123,7 @@ my @SEL_FIELDS = qw(
 );
 
 my @COLS = qw(
-    element_data__id
+    field_type__id
     object_instance_id
     parent_id
     place
@@ -912,7 +912,7 @@ sub _do_list {
     my ($class, $params, $ids_only) = @_;
 
     my ($obj_type, @params);
-    my @wheres = ('f.element_data__id = ft.id');
+    my @wheres = ('f.field_type__id = ft.id');
 
     while (my ($k, $v) = each %$params) {
         if ($k eq 'object') {
@@ -943,7 +943,7 @@ sub _do_list {
         }
 
         elsif ($k eq 'field_type_id' || $k eq 'element_data_id') {
-            push @wheres, any_where $v, 'f.element_data__id = ?', \@params;
+            push @wheres, any_where $v, 'f.field_type__id = ?', \@params;
         }
 
         elsif ($k eq 'key_name' || $k eq 'name' || $k eq 'description') {
@@ -954,7 +954,7 @@ sub _do_list {
     throw_gen 'Missing required parameter "object" or "object_type"'
         unless $obj_type;
 
-    my $tables = "$obj_type\_data_tile f, at_data ft";
+    my $tables = "$obj_type\_data_tile f, field_type ft";
 
     my ($qry_cols, $order) = $ids_only
         ? ('DISTINCT f.id', 'f.id')

@@ -25,7 +25,7 @@ my %field = (
 my $para_id = 1;
 my $column_elem_id = 2;
 
-sub table { 'at_data' };
+sub table { 'field_type' };
 
 sub element_type {
     my $self = shift;

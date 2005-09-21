@@ -308,8 +308,19 @@ Renamed "Element Data" to "Field Type". [David]
 
 =item *
 
-Renamed the "element" table in the database to "element_type". This better
-reflects what it actually contains. [David]
+Renamed a number of tables and appropriate foreign key columns, indexes,
+constraints, and the like, to better reflect the names used for these things
+in general. The tables renamed are:
+
+=over
+
+=item element to element_field
+
+=item at_type to field_type
+
+=back
+
+[David]
 
 =item *
 

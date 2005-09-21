@@ -123,7 +123,7 @@ use base qw(Bric);
 
 use constant DEBUG => 0;
 
-use constant TABLE => 'at_data';
+use constant TABLE => 'field_type';
 my @COLS = qw(
     element_type__id
     key_name
@@ -1834,7 +1834,7 @@ sub _save_attr {
 
 =item _update_data
 
-Update the at_data table.
+Update the field_type table.
 
 B<Throws:>
 
@@ -1864,7 +1864,7 @@ sub _update_data {
 
 =item _insert_data
 
-Insert rows into the at_data table.
+Insert rows into the field_type table.
 
 B<Throws:>
 

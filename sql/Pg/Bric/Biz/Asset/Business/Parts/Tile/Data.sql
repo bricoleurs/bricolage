@@ -30,7 +30,7 @@ CREATE SEQUENCE seq_media_data_tile START 1024;
 CREATE TABLE story_data_tile (
     id                   INTEGER        NOT NULL
                                         DEFAULT NEXTVAL('seq_story_data_tile'),
-    element_data__id     INTEGER        NOT NULL,
+    field_type__id       INTEGER        NOT NULL,
     object_instance_id   INTEGER        NOT NULL,
     parent_id            INTEGER        NOT NULL,
     hold_val             BOOLEAN        NOT NULL DEFAULT FALSE,
@@ -59,7 +59,7 @@ CREATE TABLE story_data_tile (
 CREATE TABLE media_data_tile (
     id                   INTEGER        NOT NULL
                                         DEFAULT NEXTVAL('seq_media_data_tile'),
-    element_data__id     INTEGER        NOT NULL,
+    field_type__id       INTEGER        NOT NULL,
     object_instance_id   INTEGER        NOT NULL,
     parent_id            INTEGER        NOT NULL,
     place                INTEGER        NOT NULL,
@@ -76,11 +76,9 @@ CREATE TABLE media_data_tile (
 -- INDEXES.
 --
 CREATE INDEX fkx_story_instance__sd_tile ON story_data_tile(object_instance_id);
-CREATE INDEX fkx_element__sd_tile ON story_data_tile(element_data__id);
+CREATE INDEX fkx_field_type__story_field ON story_data_tile(field_type__id);
 CREATE INDEX fkx_sc_tile__sd_tile ON story_data_tile(parent_id);
 
 CREATE INDEX fkx_media_instance__md_tile ON media_data_tile(object_instance_id);
-CREATE INDEX fkx_element__md_tile ON media_data_tile(element_data__id);
+CREATE INDEX fkx_field_type__media_field ON media_data_tile(field_type__id);
 CREATE INDEX fkx_sc_tile__md_tile ON media_data_tile(parent_id);
-
-

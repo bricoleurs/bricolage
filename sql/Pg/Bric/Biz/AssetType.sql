@@ -43,7 +43,7 @@ CREATE SEQUENCE seq_element_type__site START 1024;
 --
 -- Description: The table that holds the information for a given asset type.  
 --              Holds name and description information and is references by 
---              element_contaner and element_data rows.
+--              element_contaner and field_type rows.
 --
 
 CREATE TABLE element_type  (

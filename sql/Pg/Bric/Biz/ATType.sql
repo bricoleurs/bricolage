@@ -7,7 +7,6 @@
 --
 -- This is the SQL that will create the element table.
 -- It is related to the Bric::AssetType class.
--- Related tables are element_container and element_data
 --
 --
 
@@ -23,7 +22,7 @@ CREATE SEQUENCE seq_at_type_member START 1024;
 --
 -- Description:	The table that holds the information for a given asset type.  
 -- 		Holds name and description information and is references by 
---		element_contaner and element_data rows.
+--		element_type rows.
 --
 
 CREATE TABLE at_type (

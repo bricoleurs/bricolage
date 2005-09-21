@@ -148,8 +148,8 @@ sub create_element_types {
 
     # Save the story type with its fields.
     ok $story_type->save, "Save element with the fields";
-    $self->add_del_ids($head->get_id, 'at_data');
-    $self->add_del_ids($para->get_id, 'at_data');
+    $self->add_del_ids($head->get_id, 'field_type');
+    $self->add_del_ids($para->get_id, 'field_type');
 
     # Create a subelement.
     ok my $pull_quote = Bric::Biz::AssetType->new({
@@ -205,9 +205,9 @@ sub create_element_types {
 
     # Save the pull quote with its fields.
     ok $pull_quote->save, "Save subelement with the fields";
-    $self->add_del_ids($pq_para->get_id, 'at_data');
-    $self->add_del_ids($by->get_id, 'at_data');
-    $self->add_del_ids($date->get_id, 'at_data');
+    $self->add_del_ids($pq_para->get_id, 'field_type');
+    $self->add_del_ids($by->get_id, 'field_type');
+    $self->add_del_ids($date->get_id, 'field_type');
 
     # Create a page subelement.
     ok my $page = Bric::Biz::AssetType->new({

@@ -2490,8 +2490,8 @@ sub _do_list {
     if (exists $params->{data_name} or exists $params->{map_type_id}
           or exists $params->{map_type__id})
     {
-        # Add the at_data table.
-        $tables .= ', at_data d';
+        # Add the field_type table.
+        $tables .= ', field_type d';
         push @wheres, 'd.element_type__id = a.id';
         if (exists $params->{data_name}) {
             push @wheres, any_where(
