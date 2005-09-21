@@ -161,7 +161,7 @@ use constant COLS       => qw( name
                                usr__id
                                output_channel__id
                                tplate_type
-                               element__id
+                               element_type__id
                                category__id
                                file_name
                                current_version
@@ -240,7 +240,7 @@ use constant PARAM_FROM_MAP => {
     _not_simple      => 'formatting_member fm, member m, '
                       . 'category c, workflow w, ' . TABLE . ' f ',
     grp_id           =>  'member m2, formatting_member fm2',
-    element_key_name => 'element e',
+    element_key_name => 'element_type e',
     site_id          => 'output_channel oc',
     note             => 'formatting_instance fi2'
 };
@@ -258,9 +258,9 @@ use constant PARAM_WHERE_MAP => {
     workflow_id           => 'f.workflow__id = ?',
     version_id            => 'i.id = ?',
     _null_workflow_id     => 'f.workflow__id IS NULL',
-    element__id           => 'f.element__id = ?',
-    element_type_id       => 'f.element__id = ?',
-    element_key_name      => 'f.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
+    element__id           => 'f.element_type__id = ?',
+    element_type_id       => 'f.element_type__id = ?',
+    element_key_name      => 'f.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
     output_channel_id     => 'f.output_channel__id = ?',
     output_channel__id    => 'f.output_channel__id = ?',
     priority              => 'f.priority = ?',
@@ -311,7 +311,7 @@ use constant PARAM_WHERE_MAP => {
 };
 
 use constant PARAM_ANYWHERE_MAP => {
-    element_key_name => [ 'f.element__id = e.id',
+    element_key_name => [ 'f.element_type__id = e.id',
                           'LOWER(e.key_name) LIKE LOWER(?)' ],
     category_uri     => [ 'f.category__id = c.id',
                           'LOWER(c.uri) LIKE LOWER(?))' ],
@@ -331,9 +331,9 @@ use constant PARAM_ORDER_MAP => {
     site_id             => 'oc.site__id',
     workflow_id         => 'f.workflow__id',
     workflow__id        => 'f.workflow__id',
-    element_id          => 'f.element__id',
-    element__id         => 'f.element__id',
-    element_type_id     => 'f.element__id',
+    element_id          => 'f.element_type__id',
+    element__id         => 'f.element_type__id',
+    element_type_id     => 'f.element_type__id',
     output_channel_id   => 'f.output_channel__id',
     output_channel__id  => 'f.output_channel__id',
     priority            => 'f.priority',
@@ -412,7 +412,7 @@ BEGIN {
               # Private Fields
               _active             => Bric::FIELD_NONE,
               _output_channel_obj => Bric::FIELD_NONE,
-              _element_obj        => Bric::FIELD_NONE,
+              _element_type_obj   => Bric::FIELD_NONE,
               _category_obj       => Bric::FIELD_NONE,
               _revert_obj         => Bric::FIELD_NONE
              });
@@ -1532,13 +1532,13 @@ B<Notes:> C<get_element()> has been deprecated in favor of this method.
 
 sub get_element_type {
     my $self = shift;
-    my ($at_id, $at_obj) = $self->_get('element_type_id', '_element_obj');
+    my ($at_id, $at_obj) = $self->_get('element_type_id', '_element_type_obj');
 
     unless ($at_obj) {
         return unless $at_id;
         $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
         my $dirty = $self->_get__dirty;
-        $self->_set(['_element_obj'] => [$at_obj]);
+        $self->_set(['_element_type_obj'] => [$at_obj]);
 
         # Restore the original dirty value.
         $self->_set__dirty($dirty);

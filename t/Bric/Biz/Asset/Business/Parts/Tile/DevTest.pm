@@ -101,7 +101,7 @@ sub create_element_types {
     ok $media_type->set_primary_oc_id(1, 100),
       "Set it as the primary OC";;
     ok $media_type->save, "Save the test media type";
-    $self->add_del_ids($media_type->get_id, 'element');
+    $self->add_del_ids($media_type->get_id, 'element_type');
     $self->{media_type} = $media_type;
 
     # Create a story type.
@@ -117,7 +117,7 @@ sub create_element_types {
     ok $story_type->set_primary_oc_id(1, 100),
       "Set it as the primary OC";;
     ok $story_type->save, "Save the test story type";
-    $self->add_del_ids($story_type->get_id, 'element');
+    $self->add_del_ids($story_type->get_id, 'element_type');
     $self->{story_type} = $story_type;
 
     # Give it a header field.
@@ -162,7 +162,7 @@ sub create_element_types {
     $self->{pull_quote} = $pull_quote;
 
     ok $pull_quote->save, "Save the subelement element";
-    $self->add_del_ids($pull_quote->get_id, 'element');
+    $self->add_del_ids($pull_quote->get_id, 'element_type');
 
     # Give it a paragraph field.
     ok my $pq_para = $pull_quote->new_data({
@@ -235,7 +235,7 @@ sub create_element_types {
     # Save it.
     ok $page->add_containers([$pull_quote->get_id]), 'Add pull quote to page';
     ok $page->save, "Save the page subelement element";
-    $self->add_del_ids($page->get_id, 'element');
+    $self->add_del_ids($page->get_id, 'element_type');
 
     # Add the subelements to the story type element.
     ok $story_type->add_containers([$pull_quote->get_id, $page->get_id]),

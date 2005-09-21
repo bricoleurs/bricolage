@@ -16,7 +16,7 @@
 
 -- Unique IDs for the element table
 CREATE SEQUENCE seq_at_type START 1024;
-CREATE SEQUENCE seq_element_type_member START 1024;
+CREATE SEQUENCE seq_at_type_member START 1024;
 
 -- -----------------------------------------------------------------------------
 -- Table: element
@@ -46,12 +46,12 @@ CREATE TABLE at_type (
 -- TABLE: element_type_member
 --
 
-CREATE TABLE element_type_member (
+CREATE TABLE at_type_member (
     id          INTEGER  NOT NULL
-                         DEFAULT NEXTVAL('seq_element_type_member'),
+                         DEFAULT NEXTVAL('seq_at_type_member'),
     object_id   INTEGER  NOT NULL,
     member__id  INTEGER  NOT NULL,
-    CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
+    CONSTRAINT pk_at_type_member__id PRIMARY KEY (id)
 );
 
 
@@ -60,7 +60,7 @@ CREATE TABLE element_type_member (
 --
 CREATE UNIQUE INDEX udx_at_type__name ON at_type(LOWER(name));
 CREATE INDEX fdx_class__at_type ON at_type(biz_class__id);
-CREATE INDEX fkx_comp_type__comp_type_member ON element_type_member(object_id);
-CREATE INDEX fkx_member__comp_type_member ON element_type_member(member__id);
+CREATE INDEX fkx_at_type__at_type_member ON at_type_member(object_id);
+CREATE INDEX fkx_member__at_type_member ON at_type_member(member__id);
 
 

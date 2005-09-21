@@ -57,7 +57,7 @@ use base qw( Bric::Util::Grp );
 #======================================#
 
 use constant PACKAGE      => 'Bric::Biz::AssetType';
-use constant TABLE        => 'element';
+use constant TABLE        => 'element_type';
 use constant CLASS_ID => 24;
 use constant OBJECT_CLASS_ID => 22;
 

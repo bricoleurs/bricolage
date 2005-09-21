@@ -42,7 +42,7 @@ CREATE TABLE formatting (
                                        DEFAULT 1
                                        CONSTRAINT ck_formatting___tplate_type
                                          CHECK (tplate_type IN (1, 2, 3)),
-    element__id         INTEGER,
+    element_type__id    INTEGER,
     category__id        INTEGER,
     file_name           TEXT,
     current_version     INTEGER        NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE formatting_instance (
 -- -----------------------------------------------------------------------------
 -- Table: formatting_member
 -- 
--- Description: The link between element objects and member objects
+-- Description: The link between template objects and member objects
 --
 
 CREATE TABLE formatting_member (
@@ -104,7 +104,7 @@ CREATE INDEX idx_formatting__description ON formatting(LOWER(description));
 CREATE INDEX idx_formatting__deploy_date ON formatting(deploy_date);
 CREATE INDEX fkx_usr__formatting ON formatting(usr__id);
 CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
-CREATE INDEX fkx_element__formatting ON formatting(element__id);
+CREATE INDEX fkx_element_type__formatting ON formatting(element_type__id);
 CREATE INDEX fkx_category__formatting ON formatting(category__id);
 CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id) WHERE desk__id > 0;
 CREATE INDEX fdx_formatting__workflow__id ON formatting(workflow__id) WHERE workflow__id > 0;

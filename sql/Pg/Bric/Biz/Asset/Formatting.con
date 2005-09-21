@@ -18,8 +18,8 @@ ALTER TABLE formatting
     REFERENCES output_channel(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
-    ADD CONSTRAINT fk_element__formatting FOREIGN KEY (element__id)
-    REFERENCES element(id) ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_element_type__formatting FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE RESTRICT;
 
 ALTER TABLE formatting
     ADD CONSTRAINT fk_category__formatting FOREIGN KEY (category__id)

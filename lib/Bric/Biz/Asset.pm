@@ -152,7 +152,7 @@ use constant HAS_MULTISITE => 1;
 #--------------------------------------#
 # Private Class Fields
 my $meths;
-my @ord = qw(id name description priority uri cover_date version element
+my @ord = qw(id name description priority uri cover_date version element_type
              needs_publish publish_status expire_date active site_id site);
 
 #--------------------------------------#
@@ -649,25 +649,25 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              },
-              element_id => {
-                              name     => 'element_id',
-                              get_meth => sub { shift->get_element_id(@_) },
+              element_type_id => {
+                              name     => 'element_type_id',
+                              get_meth => sub { shift->get_element_type_id(@_) },
                               get_args => [],
-                              set_meth => sub { shift->set_element_id(@_) },
+                              set_meth => sub { shift->set_element_type_id(@_) },
                               set_args => [],
-                              disp     => 'Element ID',
+                              disp     => 'Element Type ID',
                               len      => 10,
                               req      => 0,
                               type     => 'short',
                              },
-              element  => {
-                              name     => 'element',
+              element_type  => {
+                              name     => 'element_type',
                               get_meth => sub {
-                                  my $a_id = shift->get_element_id(@_);
+                                  my $a_id = shift->get_element_type_id(@_);
                                   my $a = Bric::Biz::AssetType->lookup({ id => $a_id }) or return;
                                   $a->get_name(); },
                               get_args => [],
-                              disp     => 'Element',
+                              disp     => 'Element Type',
                               len      => 256,
                               type     => 'short',
                              },

@@ -200,7 +200,7 @@ use constant COLS       => qw( uuid
                                priority
                                source__id
                                usr__id
-                               element__id
+                               element_type__id
                                first_publish_date
                                publish_date
                                expire_date
@@ -294,7 +294,7 @@ use constant PARAM_FROM_MAP => {
        category_uri         => 'story__category sc2',
        data_text            => 'story_data_tile sd',
        contrib_id           => 'story__contributor sic',
-       element_key_name     => 'element e',
+       element_key_name     => 'element_type e',
        'story.category'     => 'story__category sc2',
        subelement_key_name  => 'story_container_tile sct',
        related_story_id     => 'story_container_tile sctrs',
@@ -320,10 +320,10 @@ use constant PARAM_WHERE_MAP => {
       _null_workflow_id      => 's.workflow__id IS NULL',
       primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
       uri                    => 's.id = uri.story__id AND LOWER(uri.uri) LIKE LOWER(?)',
-      element_type_id        => 's.element__id = ?',
-      element_id             => 's.element__id = ?',
-      element__id            => 's.element__id = ?',
-      element_key_name       => 's.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
+      element_type_id        => 's.element_type__id = ?',
+      element_id             => 's.element_type__id = ?',
+      element__id            => 's.element_type__id = ?',
+      element_key_name       => 's.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source_id              => 's.source__id = ?',
       source__id             => 's.source__id = ?',
       priority               => 's.priority = ?',
@@ -416,7 +416,7 @@ use constant PARAM_WHERE_MAP => {
 };
 
 use constant PARAM_ANYWHERE_MAP => {
-    element_key_name       => [ 's.element__id = e.id',
+    element_key_name       => [ 's.element_type__id = e.id',
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = sct.object_instance_id',
                                 'LOWER(sct.key_name) LIKE LOWER(?)' ],
@@ -455,9 +455,9 @@ use constant PARAM_ORDER_MAP => {
     workflow__id        => 's.workflow__id',
     workflow_id         => 's.workflow__id',
     primary_uri         => 'LOWER(s.primary_uri)',
-    element_type_id     => 's.element__id',
-    element_id          => 's.element__id',
-    element__id         => 's.element__id',
+    element_type_id     => 's.element_type__id',
+    element_id          => 's.element_type__id',
+    element__id         => 's.element_type__id',
     source_id           => 's.source__id',
     source__id          => 's.source__id',
     priority            => 's.priority',
@@ -1203,9 +1203,9 @@ sub my_meths {
                           type     => 'short',
                          };
 
-    # Rename element, too.
-    $meths->{element} = { %{ $meths->{element} } };
-    $meths->{element}{disp} = 'Story Type';
+    # Rename element type, too.
+    $meths->{element_type} = { %{ $meths->{element_type} } };
+    $meths->{element_type}{disp} = 'Story Type';
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }

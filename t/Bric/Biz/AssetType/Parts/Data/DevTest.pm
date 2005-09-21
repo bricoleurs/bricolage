@@ -38,7 +38,7 @@ sub element_type {
         reference     => 0,
         primary_oc_id => 1
     })->save;
-    $self->add_del_ids([$elem->get_id], 'element');
+    $self->add_del_ids([$elem->get_id], 'element_type');
     $self->add_del_ids([$elem->get_at_grp__id], 'grp');
     return $elem;
 }

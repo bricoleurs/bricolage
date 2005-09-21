@@ -689,14 +689,14 @@ NONE
 
 sub set_element_type_id {
     my ($self, $eid) = @_;
-    my $old_eid = $self->_get('element_id');
+    my $old_eid = $self->_get('element_type_id');
     return $self if $eid == $old_eid;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->del_objs($oc_coll->get_objs);
     my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
     $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
                             $elem->get_output_channels );
-    $self->_set([qw(element_id element)], [$eid, $elem]);
+    $self->_set([qw(element_type_id _element_type_object)], [$eid, $elem]);
 }
 
 sub get_element__id { shift->get_element_type_id     }

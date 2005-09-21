@@ -86,7 +86,7 @@ use constant S_TABLE => 'story_container_tile';
 use constant M_TABLE => 'media_container_tile';
 
 my @COLS = qw(
-    element__id
+    element_type__id
     object_instance_id
     parent_id
     place
@@ -109,7 +109,7 @@ my @FIELDS = qw(
 
 my @SEL_COLS = qw(
     e.id
-    e.element__id
+    e.element_type__id
     et.name
     et.key_name
     et.description
@@ -166,7 +166,7 @@ BEGIN {
         _update_contained  => Bric::FIELD_NONE,
         _active            => Bric::FIELD_NONE,
         _object            => Bric::FIELD_NONE,
-        _element_obj       => Bric::FIELD_NONE,
+        _element_type_obj  => Bric::FIELD_NONE,
         _related_story_obj => Bric::FIELD_NONE,
         _related_media_obj => Bric::FIELD_NONE,
         _prepare_clone     => Bric::FIELD_NONE,
@@ -272,22 +272,22 @@ sub new {
 
     # Set up the element type.
     if (my $type = delete $init->{element_type} || delete $init->{element} ) {
-        $init->{_element_obj} = $type;
+        $init->{_element_type_obj} = $type;
         $init->{element_type_id} = $type->get_id;
     } else {
-        $init->{_element_obj} = Bric::Biz::AssetType->lookup({
+        $init->{_element_type_obj} = Bric::Biz::AssetType->lookup({
             'id' => $init->{element_type_id} ||= delete $init->{element_id}
         });
     }
 
     # Alias element type attributes and make it so..
-    $init->{name}        = $init->{_element_obj}->get_name;
-    $init->{key_name}    = $init->{_element_obj}->get_key_name;
-    $init->{description} = $init->{_element_obj}->get_description;
+    $init->{name}        = $init->{_element_type_obj}->get_name;
+    $init->{key_name}    = $init->{_element_type_obj}->get_key_name;
+    $init->{description} = $init->{_element_type_obj}->get_description;
     my $self = $class->SUPER::new($init);
 
     # Prepopulate from the asset type object
-    foreach my $data ($init->{_element_obj}->get_data) {
+    foreach my $data ($init->{_element_type_obj}->get_data) {
         $self->add_data($data) if $data->get_required;
     }
 
@@ -745,12 +745,12 @@ B<Notes:> C<get_element()> has been deprecated in favor of this method.
 
 sub get_element_type {
     my $self = shift;
-    my ($at_obj, $at_id) = $self->_get('_element_obj', 'element_type_id');
+    my ($at_obj, $at_id) = $self->_get('_element_type_obj', 'element_type_id');
 
     unless ($at_obj) {
         my $dirty = $self->_get__dirty;
         $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
-        $self->_set(['_element_obj'], [$at_obj]);
+        $self->_set(['_element_type_obj'], [$at_obj]);
         $self->_set__dirty($dirty);
     }
     return $at_obj;
@@ -916,7 +916,7 @@ sub add_container {
         active             => 1,
         object_type        => $self->_get('object_type'),
         object_instance_id => $self->_get('object_instance_id'),
-        element            => $atc,
+        element_type       => $atc,
         parent_id          => $self->_get('id'),
     });
 
@@ -1702,7 +1702,7 @@ sub _do_list {
     my ($class, $params, $ids_only) = @_;
 
     my ($obj_type, @params);
-    my @wheres = ('e.element__id = et.id');
+    my @wheres = ('e.element_type__id = et.id');
 
     while (my ($k, $v) = each %$params) {
         if ($k eq 'object') {
@@ -1731,7 +1731,7 @@ sub _do_list {
         }
 
         elsif ($k eq 'element_type_id' || $k eq 'element_id') {
-            push @wheres, any_where $v, 'e.element__id = ?', \@params;
+            push @wheres, any_where $v, 'e.element_type__id = ?', \@params;
         }
 
         elsif ($k eq 'key_name' || $k eq 'name' || $k eq 'description') {
@@ -1742,7 +1742,7 @@ sub _do_list {
     throw_gen 'Missing required parameter "object" or "object_type"'
         unless $obj_type;
 
-    my $tables = "$obj_type\_container_tile e, element et";
+    my $tables = "$obj_type\_container_tile e, element_type et";
 
     my ($qry_cols, $order) = $ids_only
         ? ('DISTINCT e.id', 'e.id')
@@ -1787,7 +1787,8 @@ sub _do_list {
 
 =item $container->_do_delete
 
-Called by C<save()>, this method deletes the container element from the database.
+Called by C<save()>, this method deletes the container element from the
+database.
 
 B<Throws:> NONE.
 
@@ -2103,7 +2104,7 @@ sub _deserialize_pod {
                             active             => 1,
                             object_type        => $doc_type,
                             object_instance_id => $doc_id,
-                            element            => $elem_types{$kn},
+                            element_type       => $elem_types{$kn},
                             parent_id          => $id,
                         });
 

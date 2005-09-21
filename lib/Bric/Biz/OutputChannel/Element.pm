@@ -75,13 +75,13 @@ use constant DEBUG => 0;
 ##############################################################################
 # Private Class Fields
 my $SEL_COLS = Bric::Biz::OutputChannel::SEL_COLS() .
-  ', eoc.id, eoc.element__id, eoc.enabled';
+  ', eoc.id, eoc.element_type__id, eoc.enabled';
 my @SEL_PROPS = (Bric::Biz::OutputChannel::SEL_PROPS(),
                  qw(_map_id element_type_id _enabled));
 
 # Grabbed knowledge from parent, but the outer join depends on it. :-(
 my $SEL_TABLES = 'output_channel oc LEFT OUTER JOIN ' .
-  'element__output_channel eoc ON (oc.id = eoc.output_channel__id), ' .
+  'element_type__output_channel eoc ON (oc.id = eoc.output_channel__id), ' .
   'member m, output_channel_member sm';
 
 sub SEL_PROPS { @SEL_PROPS }
@@ -271,7 +271,7 @@ sub href {
     my @params;
     my $wheres = $pkg->SEL_WHERES
                . ' AND oc.id = eoc.output_channel__id AND '
-               . any_where $p->{element_type_id}, 'eoc.element__id = ?', \@params;
+               . any_where $p->{element_type_id}, 'eoc.element_type__id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
         FROM   $tables
@@ -462,7 +462,7 @@ sub save {
     if ($del and $map_id) {
         # Delete it.
         my $del = prepare_c(qq{
-            DELETE FROM element__output_channel
+            DELETE FROM element_type__output_channel
             WHERE  id = ?
         }, undef);
         execute($del, $map_id);
@@ -471,9 +471,9 @@ sub save {
     } elsif ($map_id) {
         # Update the existing value.
         my $upd = prepare_c(qq{
-            UPDATE element__output_channel
+            UPDATE element_type__output_channel
             SET    output_channel__id = ?,
-                   element__id = ?,
+                   element_type__id = ?,
                    enabled = ?,
                    active = '1'
             WHERE  id = ?
@@ -482,14 +482,14 @@ sub save {
 
     } else {
         # Insert a new record.
-        my $nextval = next_key('element__output_channel');
+        my $nextval = next_key('element_type__output_channel');
         my $ins = prepare_c(qq{
-            INSERT INTO element__output_channel
-                        (id, element__id, output_channel__id, enabled, active)
+            INSERT INTO element_type__output_channel
+                        (id, element_type__id, output_channel__id, enabled, active)
             VALUES ($nextval, ?, ?, ?, '1')
         }, undef);
         execute($ins, $eid, $ocid, $en);
-        $self->_set(['_map_id'], [last_key('element__output_channel')]);
+        $self->_set(['_map_id'], [last_key('element_type__output_channel')]);
     }
     return $self;
 }

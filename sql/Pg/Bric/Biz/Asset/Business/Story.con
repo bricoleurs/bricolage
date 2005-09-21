@@ -15,8 +15,8 @@ ADD CONSTRAINT fk_usr__story FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE RESTRICT;
 
 ALTER TABLE story
-ADD CONSTRAINT fk_element__story FOREIGN KEY (element__id)
-	REFERENCES element(id) ON DELETE RESTRICT;
+ADD CONSTRAINT fk_element_type__story FOREIGN KEY (element_type__id)
+	REFERENCES element_type(id) ON DELETE RESTRICT;
 
 ALTER TABLE story
 ADD CONSTRAINT fk_workflow__story FOREIGN KEY (workflow__id)

@@ -106,7 +106,7 @@ VALUES ('10', '9', '121');
 /*
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES ('10', NULL, '8', 'Element Admins', 'Users who administer elements and element types.', '0', '0');
+VALUES ('10', NULL, '8', 'Element Type Admins', 'Users who administer element types and element type sets.', '0', '0');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('122', '35', '6', '1');
@@ -262,7 +262,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('27', '26', '138'); 
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES ('27', NULL, '70', 'All Elements', 'All elements in the system.', '0', '1');
+VALUES ('27', NULL, '70', 'All Element Types', 'All element types in the system.', '0', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('139', '35', '6', '1');
@@ -271,7 +271,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('28', '27', '139'); 
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES ('28', NULL, '64', 'All Element Types', 'All element types in the system.', '0', '1');
+VALUES ('28', NULL, '64', 'All Element Type Sets', 'All element type sets in the system.', '0', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('140', '35', '6', '1');
@@ -390,7 +390,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('38', '37', '149'); 
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
-VALUES ('38', NULL, '8', 'Element Type Admins', 'Users who administer contributor types.', '0', '0');
+VALUES ('38', NULL, '8', 'Contributor Type Admins', 'Users who administer contributor types.', '0', '0');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('150', '35', '6', '1');

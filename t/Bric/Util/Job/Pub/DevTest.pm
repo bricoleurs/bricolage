@@ -450,7 +450,7 @@ sub h_test_execute_me : Test(10) {
         primary_oc_id => 1
     });
     $elem->save;
-    $self->add_del_ids($elem->get_id, 'element');
+    $self->add_del_ids($elem->get_id, 'element_type');
 
     my $tmpl = Bric::Biz::Asset::Formatting->new({
         output_channel__id => 1,

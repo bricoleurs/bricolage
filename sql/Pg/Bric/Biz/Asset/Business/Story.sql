@@ -46,7 +46,7 @@ CREATE TABLE story (
                                         CHECK (priority BETWEEN 1 AND 5),
     source__id        INTEGER         NOT NULL, 
     usr__id           INTEGER,
-    element__id       INTEGER         NOT NULL,
+    element_type__id  INTEGER         NOT NULL,
     primary_uri       VARCHAR(128),
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
@@ -157,7 +157,7 @@ CREATE INDEX idx_story__uuid ON story(uuid);
 CREATE INDEX idx_story__primary_uri ON story(LOWER(primary_uri));
 CREATE INDEX fdx_usr__story ON story(usr__id);
 CREATE INDEX fdx_source__story ON story(source__id);
-CREATE INDEX fdx_element__story ON story(element__id);
+CREATE INDEX fkx_element_type__story ON story(element_type__id);
 CREATE INDEX fdx_site_id__story ON story(site__id);
 CREATE INDEX fdx_alias_id__story ON story(alias_id);
 CREATE INDEX idx_story__first_publish_date ON story(first_publish_date);

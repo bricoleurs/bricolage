@@ -14,15 +14,15 @@ ALTER TABLE at_type ADD
 	REFERENCES class(id) ON DELETE CASCADE;
 
 -- 
--- TABLE: element_type_member
+-- TABLE: at_type_member
 --
 
-ALTER TABLE    element_type_member
-ADD CONSTRAINT fk_comp_type__comp_type_member FOREIGN KEY (object_id)
+ALTER TABLE    at_type_member
+ADD CONSTRAINT fk_at_type__at_type_member FOREIGN KEY (object_id)
 REFERENCES     at_type(id) ON DELETE CASCADE;
 
-ALTER TABLE    element_type_member
-ADD CONSTRAINT fk_member__comp_type_member FOREIGN KEY (member__id)
+ALTER TABLE    at_type_member
+ADD CONSTRAINT fk_member__at_type_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
 

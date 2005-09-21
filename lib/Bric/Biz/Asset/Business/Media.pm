@@ -85,7 +85,7 @@ use constant VERSION_TABLE => 'media_instance';
 use constant ID_COL => 'mt.id';
 
 use constant COLS           => qw( uuid
-                                   element__id
+                                   element_type__id
                                    priority
                                    source__id
                                    current_version
@@ -172,7 +172,7 @@ use constant WHERE => 'mt.id = i.media__id '
   . 'AND m.id = mm.member__id '
   . "AND m.active = '1' "
   . 'AND c.id = i.category__id '
-  . 'AND e.id = mt.element__id '
+  . 'AND e.id = mt.element_type__id '
   . 'AND at.id = e.type__id '
   . 'AND mt.workflow__id = w.id';
 
@@ -187,7 +187,7 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
      output_channel_id    => 'media__output_channel moc',
-     simple               => 'media_member mm, member m, at_type at, element e, '
+     simple               => 'media_member mm, member m, at_type at, element_type e, '
                              . 'category c, workflow w,' . TABLE . ' mt ',
      grp_id               => 'member m2, media_member mm2',
      data_text            => 'media_data_tile md',
@@ -213,11 +213,11 @@ use constant PARAM_WHERE_MAP => {
       workflow__id          => 'mt.workflow__id = ?',
       workflow_id           => 'mt.workflow__id = ?',
       _null_workflow_id     => 'mt.workflow__id IS NULL',
-      element_type_id       => 'mt.element__id = ?',
-      element__id           => 'mt.element__id = ?',
-      element_id            => 'mt.element__id = ?',
+      element_type_id       => 'mt.element_type__id = ?',
+      element__id           => 'mt.element_type__id = ?',
+      element_id            => 'mt.element_type__id = ?',
       version_id            => 'i.id = ?',
-      element_key_name      => 'mt.element__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
+      element_key_name      => 'mt.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
       source__id            => 'mt.source__id = ?',
       source_id             => 'mt.source__id = ?',
       priority              => 'mt.priority = ?',
@@ -293,7 +293,7 @@ use constant PARAM_WHERE_MAP => {
 };
 
 use constant PARAM_ANYWHERE_MAP => {
-    element_key_name       => [ 'mt.element__id = e.id',
+    element_key_name       => [ 'mt.element_type__id = e.id',
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = mct.object_instance_id',
                                 'LOWER(mct.key_name) LIKE LOWER(?)' ],
@@ -329,9 +329,9 @@ use constant PARAM_ORDER_MAP => {
     workflow__id        => 'mt.workflow__id',
     workflow_id         => 'mt.workflow__id',
     uri                 => 'LOWER(i.uri)',
-    element_type_id     => 'mt.element__id',
-    element__id         => 'mt.element__id',
-    element_id          => 'mt.element__id',
+    element_type_id     => 'mt.element_type__id',
+    element__id         => 'mt.element_type__id',
+    element_id          => 'mt.element_type__id',
     source__id          => 'mt.source__id',
     source_id           => 'mt.source__id',
     priority            => 'mt.priority',
@@ -1132,9 +1132,9 @@ sub my_meths {
     $meths->{title}{name} = 'title';
     $meths->{title}{disp} = 'Title';
 
-    # Rename element.
-    $meths->{element} = { %{ $meths->{element} } };
-    $meths->{element}{disp} = 'Media Type';
+    # Rename element type.
+    $meths->{element_type} = { %{ $meths->{element_type} } };
+    $meths->{element_type}{disp} = 'Media Type';
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 

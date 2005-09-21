@@ -20,14 +20,14 @@ CREATE SEQUENCE seq_media_container_tile START  1024;
 -- -----------------------------------------------------------------------------
 -- Table story_container_tile
 -- 
--- Description:	Holds the properties of a container tile.   Note that tiles
---				can hold either other tiles or data, not both.
+-- Description: Holds the properties of a container tile.   Note that tiles
+--              can hold either other tiles or data, not both.
 --
 
 CREATE TABLE story_container_tile (
     id                   INTEGER         NOT NULL
                                          DEFAULT NEXTVAL('seq_story_container_tile'),
-    element__id          INTEGER         NOT NULL,
+    element_type__id     INTEGER         NOT NULL,
     object_instance_id   INTEGER         NOT NULL,
     parent_id            INTEGER,
     place                INTEGER         NOT NULL,
@@ -49,14 +49,14 @@ CREATE TABLE story_container_tile (
 CREATE TABLE media_container_tile (
     id                          INTEGER         NOT NULL
                                                 DEFAULT NEXTVAL('seq_media_container_tile'),
-    element__id      	        INTEGER         NOT NULL,
+    element_type__id            INTEGER         NOT NULL,
     object_instance_id          INTEGER         NOT NULL,
     parent_id                   INTEGER,
     place                       INTEGER         NOT NULL,
     object_order                INTEGER         NOT NULL,
     related_story__id        INTEGER, 
     related_media__id           INTEGER,
-    active              	    BOOLEAN         NOT NULL DEFAULT TRUE,
+    active                      BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_media_container_tile__id PRIMARY KEY (id)
 );
 
@@ -68,10 +68,10 @@ CREATE INDEX fkx_sc_tile__sc_tile ON story_container_tile(parent_id);
 CREATE INDEX fkx_story__sc_tile ON story_container_tile(object_instance_id);
 CREATE INDEX fkx_sc_tile__related_story ON story_container_tile(related_story__id);
 CREATE INDEX fkx_sc_tile__related_media ON story_container_tile(related_media__id);
+CREATE INDEX fkx_sc_tile__element_type ON story_container_tile(element_type__id);
 
 CREATE INDEX fkx_mc_tile__mc_tile ON media_container_tile(parent_id);
 CREATE INDEX fkx_media__mc_tile ON media_container_tile(object_instance_id);
 CREATE INDEX fkx_mc_tile__related_story ON media_container_tile(related_story__id);
 CREATE INDEX fkx_mc_tile__related_media ON media_container_tile(related_media__id);
-
-
+CREATE INDEX fkx_mc_tile__element_type ON media_container_tile(element_type__id);

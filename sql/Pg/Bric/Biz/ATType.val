@@ -16,7 +16,7 @@ VALUES ('1', 'Stories', 'Story Types', '1', '0', '0', '10', '0', '0', '0', '1');
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('421', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('1', '1', '421'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -26,7 +26,7 @@ VALUES ('2', 'Image', 'Images', '1', '0', '1', '50', '0', '0', '0', '1');
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('422', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('2', '2', '422'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -36,7 +36,7 @@ VALUES ('3', 'Insets', 'Inset Elements', '0', '0', '0', '10', '0', '0', '0', '1'
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('423', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('3', '3', '423'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -46,7 +46,7 @@ VALUES ('4', 'Related Stories', 'Related Story Elements', '0', '0', '0', '10', '
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('424', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('4', '4', '424'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -56,7 +56,7 @@ VALUES ('5', 'Pages', 'Page Elements', '0', '1', '0', '10', '0', '0', '0', '1');
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('425', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('5', '5', '425'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -66,7 +66,7 @@ VALUES ('6', 'Related Media', 'Related Media Elements', '0', '0', '0', '10', '0'
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('426', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('6', '6', '426'); 
 
 INSERT INTO at_type (id,name,description,top_level,paginated,media, biz_class__id,
@@ -76,6 +76,6 @@ VALUES ('7', 'Covers', 'Cover Story Types', '1', '0', '0', '10', '0', '0', '1', 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('427', '28', '37', '1');
 
-INSERT INTO element_type_member (id, object_id, member__id)
+INSERT INTO at_type_member (id, object_id, member__id)
 VALUES ('7', '7', '427'); 
 

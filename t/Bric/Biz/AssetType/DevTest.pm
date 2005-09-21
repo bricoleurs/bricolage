@@ -18,7 +18,7 @@ my %elem = ( name          => 'Test Element',
 my $story_elem_id = 1;
 my $column_elem_id = 2;
 
-sub table { 'element' };
+sub table { 'element_type' };
 
 ##############################################################################
 # Test constructors.
@@ -78,7 +78,7 @@ sub test_list : Test(36) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_at_grp_id], 'grp');
+        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -330,12 +330,12 @@ sub test_site : Test(22) {
 
     throws_ok {
         $element->add_site($site1_id);
-    } qr /Cannot add sites to non top-level elements/,
+    } qr /Cannot add sites to non top-level element types/,
       "Check that only top_level objects can add a site";
 
     throws_ok {
         $element->add_site($site1);
-    } qr /Cannot add sites to non top-level elements/,
+    } qr /Cannot add sites to non top-level element types/,
       "Check that only top_level objects can add a site";
 
     throws_ok {

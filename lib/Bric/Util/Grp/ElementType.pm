@@ -120,7 +120,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_supported_classes { { 'Bric::Biz::ATType' => 'element_type' } }
+sub get_supported_classes { { 'Bric::Biz::ATType' => 'at_type' } }
 
 ##############################################################################
 

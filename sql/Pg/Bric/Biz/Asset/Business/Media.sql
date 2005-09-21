@@ -38,7 +38,7 @@ CREATE TABLE media (
     id                INTEGER   NOT NULL
                                       DEFAULT NEXTVAL('seq_media'),
     uuid              TEXT            NOT NULL,
-    element__id       INTEGER   NOT NULL,
+    element_type__id  INTEGER   NOT NULL,
     priority          INT2      NOT NULL
                                       DEFAULT 3
                                       CONSTRAINT ck_media__priority
@@ -176,9 +176,9 @@ CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media__cover_date ON media(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
-CREATE INDEX fkx_element__media ON media(element__id);
+CREATE INDEX fkx_element_type__media ON media(element_type__id);
 CREATE INDEX fkx_site_id__media ON media(site__id);
-CREATE INDEX fdx_alias_id__media ON media(alias_id);
+CREATE INDEX fkx_alias_id__media ON media(alias_id);
 
 -- media_instance
 CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));

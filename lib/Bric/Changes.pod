@@ -306,6 +306,11 @@ Added many new tests for the element type, field type, and element classes.
 
 Renamed "Element Data" to "Field Type". [David]
 
+=item *
+
+Renamed the "element" table in the database to "element_type". This better
+reflects what it actually contains. [David]
+
 =back
 
 =cut

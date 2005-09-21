@@ -1041,7 +1041,7 @@ sub test_new_grp_ids: Test(5) {
          type__id    => $att->get_id,
        });
     $element->save;
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     my $cat = Bric::Biz::Category->new({ name => "_test_$time.new",
                                          description => 'foo',
                                          directory => "_test_$time.new",

@@ -9,86 +9,70 @@
 -- -----------------------------------------------------------------------------
 -- Table: element
 
-ALTER TABLE element ADD 
-	CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
-	REFERENCES at_type(id) ON DELETE CASCADE;
+ALTER TABLE element_type ADD 
+    CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
+    REFERENCES at_type(id) ON DELETE CASCADE;
 
-ALTER TABLE element ADD 
-	CONSTRAINT fk_grp__element FOREIGN KEY (at_grp__id)
-	REFERENCES grp(id) ON DELETE CASCADE;
-
--- -----------------------------------------------------------------------------
--- Table: element__output_channel
-
-ALTER TABLE element__output_channel ADD
-	CONSTRAINT fk_element__at_oc FOREIGN KEY (element__id)
-	REFERENCES element(id) ON DELETE CASCADE;
-
-ALTER TABLE element__output_channel ADD
-	CONSTRAINT fk_output_channel__at_oc FOREIGN KEY (output_channel__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
+ALTER TABLE element_type ADD 
+    CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
+    REFERENCES grp(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
--- Table: element__language
+-- Table: element_type__output_channel
 
-/*
+ALTER TABLE element_type__output_channel ADD
+    CONSTRAINT fk_element_type__et_oc FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
 
-ALTER TABLE element__language ADD
-	CONSTRAINT fk_at__at__lang FOREIGN KEY (element__id)
-	REFERENCES element(id) ON DELETE CASCADE;
-	
-ALTER TABLE element__language ADD
-	CONSTRAINT fk_lang__at__lang FOREIGN KEY (language__id)
-	REFERENCES language(id) ON DELETE CASCADE;
-
-*/
+ALTER TABLE element_type__output_channel ADD
+    CONSTRAINT fk_output_channel__et_oc FOREIGN KEY (output_channel__id)
+    REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
--- Table: element_member
+-- Table: element_type_member
 
-ALTER TABLE element_member ADD
-	CONSTRAINT fk_element__at_member FOREIGN KEY (object_id)
-	REFERENCES element(id) ON DELETE CASCADE;
+ALTER TABLE element_type_member ADD
+    CONSTRAINT fk_element__et_member FOREIGN KEY (object_id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
 
-ALTER TABLE category_member ADD
-	CONSTRAINT fk_member__at_member FOREIGN KEY (member__id)
-	REFERENCES member(id) ON DELETE CASCADE;
+ALTER TABLE element_type_member ADD
+    CONSTRAINT fk_member__et_member FOREIGN KEY (member__id)
+    REFERENCES member(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: attr_element
 
 -- -----------------------------------------------------------------------------
--- Table: attr_element_val
+-- Table: attr_element_type_val
 
 
-ALTER TABLE attr_element_val ADD 
-    CONSTRAINT fk_attr_at__attr_at_val FOREIGN KEY (attr__id)
-    REFERENCES attr_element(id) ON DELETE CASCADE;
+ALTER TABLE attr_element_type_val ADD
+    CONSTRAINT fk_attr_et__attr_et_val FOREIGN KEY (attr__id)
+    REFERENCES attr_element_type(id) ON DELETE CASCADE;
 
-ALTER TABLE attr_element_val ADD
-    CONSTRAINT fk_at__attr_at_val FOREIGN KEY (object__id)
-    REFERENCES element(id) ON DELETE CASCADE;
-
--- -----------------------------------------------------------------------------
--- Table: attr_element_meta
-
-ALTER TABLE attr_element_meta ADD 
-    CONSTRAINT fk_attr_at__attr_at_meta FOREIGN KEY (attr__id)
-    REFERENCES attr_element(id) ON DELETE CASCADE;
-
+ALTER TABLE attr_element_type_val ADD
+    CONSTRAINT fk_et__attr_et_val FOREIGN KEY (object__id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
--- Table: element__site
+-- Table: attr_element_type_meta
 
-ALTER TABLE element__site ADD 
-    CONSTRAINT fk_site__element__site__site__id FOREIGN KEY (site__id)
+ALTER TABLE attr_element_type_meta ADD
+    CONSTRAINT fk_attr_et__attr_et_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_element_type(id) ON DELETE CASCADE;
+
+
+-- -----------------------------------------------------------------------------
+-- Table: element_type__site
+
+ALTER TABLE element_type__site ADD
+    CONSTRAINT fk_site__et__site__site__id FOREIGN KEY (site__id)
     REFERENCES site(id) ON DELETE CASCADE;
 
-ALTER TABLE element__site ADD 
-    CONSTRAINT fk_element__element__site__element__id  FOREIGN KEY (element__id)
-    REFERENCES element(id) ON DELETE CASCADE;
+ALTER TABLE element_type__site ADD
+   CONSTRAINT fk_element_type__et__site__et__id FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
 
-ALTER TABLE element__site ADD 
-	CONSTRAINT fk_output_channel__element__site FOREIGN KEY (primary_oc__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
-
+ALTER TABLE element_type__site ADD
+    CONSTRAINT fk_output_channel__et__site FOREIGN KEY (primary_oc__id)
+    REFERENCES output_channel(id) ON DELETE CASCADE;

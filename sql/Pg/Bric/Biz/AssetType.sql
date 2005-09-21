@@ -5,9 +5,9 @@
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
--- This is the SQL that will create the element table.
+-- This is the SQL that will create the element_type table.
 -- It is related to the Bric::AssetType class.
--- Related tables are element_container and element_data
+-- Related tables are element and field
 --
 --
 
@@ -15,49 +15,49 @@
 -- Sequences
 
 -- Unique IDs for the element table
-CREATE SEQUENCE seq_element START 1024;
+CREATE SEQUENCE seq_element_type START 1024;
 
 -- Unique IDs for element__output_channel
-CREATE SEQUENCE seq_element__output_channel START 1024;
+CREATE SEQUENCE seq_element_type__output_channel START 1024;
 
 -- Unique IDs for element__language
 --CREATE SEQUENCE seq_element__language START 1024;
 
 -- Unique IDs for element_member
-CREATE SEQUENCE seq_element_member START 1024;
+CREATE SEQUENCE seq_element_type_member START 1024;
 
 -- Unique IDs for the attr_element table
-CREATE SEQUENCE seq_attr_element START 1024;
+CREATE SEQUENCE seq_attr_element_type START 1024;
 
 -- Unique IDs for each attr_element_*_val table
-CREATE SEQUENCE seq_attr_element_val START 1024;
+CREATE SEQUENCE seq_attr_element_type_val START 1024;
 
 -- Unique IDs for the element_meta table
-CREATE SEQUENCE seq_attr_element_meta START 1024;
+CREATE SEQUENCE seq_attr_element_type_meta START 1024;
 
 -- Unique IDs for the element__site table.
-CREATE SEQUENCE seq_element__site START 1024;
+CREATE SEQUENCE seq_element_type__site START 1024;
 
 -- -----------------------------------------------------------------------------
--- Table: element
+-- Table: element_type
 --
 -- Description: The table that holds the information for a given asset type.  
 --              Holds name and description information and is references by 
 --              element_contaner and element_data rows.
 --
 
-CREATE TABLE element  (
+CREATE TABLE element_type  (
     id              INTEGER        NOT NULL
-                                   DEFAULT NEXTVAL('seq_element'),
+                                   DEFAULT NEXTVAL('seq_element_type'),
     name            VARCHAR(64)    NOT NULL,
     key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
     burner          INT2           NOT NULL DEFAULT 1,
     reference       BOOLEAN        NOT NULL DEFAULT FALSE,
     type__id        INTEGER        NOT NULL,
-    at_grp__id      INTEGER,
+    et_grp__id      INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_element__id PRIMARY KEY (id)
+    CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -65,14 +65,14 @@ CREATE TABLE element  (
 --
 -- Description: A table that maps 
 
-CREATE TABLE element__site (
-    id              INTEGER        NOT NULL
-                                   DEFAULT NEXTVAL('seq_element__site'),
-    element__id    INTEGER         NOT NULL,
-    site__id       INTEGER         NOT NULL,
-    active         BOOLEAN         NOT NULL DEFAULT TRUE,
-    primary_oc__id  INTEGER        NOT NULL,
-    CONSTRAINT pk_element__site__id PRIMARY KEY (id)
+CREATE TABLE element_type__site (
+    id               INTEGER NOT NULL
+                             DEFAULT NEXTVAL('seq_element_type__site'),
+    element_type__id INTEGER NOT NULL,
+    site__id         INTEGER NOT NULL,
+    active           BOOLEAN NOT NULL DEFAULT TRUE,
+    primary_oc__id   INTEGER NOT NULL,
+    CONSTRAINT pk_element_type__site__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -82,35 +82,15 @@ CREATE TABLE element__site (
 --              table and an active flag
 --
 
-CREATE TABLE element__output_channel (
+CREATE TABLE element_type__output_channel (
     id                  INTEGER    NOT NULL
-                                   DEFAULT NEXTVAL('seq_element__output_channel'),
-    element__id         INTEGER    NOT NULL,
+                                   DEFAULT NEXTVAL('seq_element_type__output_channel'),
+    element_type__id    INTEGER    NOT NULL,
     output_channel__id  INTEGER    NOT NULL,
     enabled             BOOLEAN    NOT NULL DEFAULT TRUE,
     active              BOOLEAN    NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_at__oc__id PRIMARY KEY (id)
+    CONSTRAINT pk_element_type__output_channel__id PRIMARY KEY (id)
 );
-
--- -----------------------------------------------------------------------------
--- Table: element__language
---
--- Description: Holds a reference to the asset type table, the language 
---              table and an active flag
---
-
-/*
-
-CREATE TABLE element__language (
-    id               INTEGER  NOT NULL
-                              DEFAULT NEXTVAL('seq_element__language'),
-    element__id      INTEGER  NOT NULL,
-    language__id     INTEGER  NOT NULL,
-    active           BOOLEAN  NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_element__language__id PRIMARY KEY (id)
-);
-
-*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element_member
@@ -118,12 +98,12 @@ CREATE TABLE element__language (
 -- Description: The link between element objects and member objects
 --
 
-CREATE TABLE element_member (
+CREATE TABLE element_type_member (
     id          INTEGER  NOT NULL
-                         DEFAULT NEXTVAL('seq_element_member'),
+                         DEFAULT NEXTVAL('seq_element_type_member'),
     object_id   INTEGER  NOT NULL,
     member__id  INTEGER  NOT NULL,
-    CONSTRAINT pk_element_member__id PRIMARY KEY (id)
+    CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -132,14 +112,14 @@ CREATE TABLE element_member (
 -- Description: A table to represent types of attributes.  A type is defined by
 --              its subsystem, its element ID and an attribute name.
 
-CREATE TABLE attr_element (
+CREATE TABLE attr_element_type (
     id         INTEGER       NOT NULL
-                             DEFAULT NEXTVAL('seq_attr_element'),
+                             DEFAULT NEXTVAL('seq_attr_element_type'),
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
     active     BOOLEAN       NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_element__id PRIMARY KEY (id)
+   CONSTRAINT pk_attr_element_type__id PRIMARY KEY (id)
 );
 
 
@@ -148,9 +128,9 @@ CREATE TABLE attr_element (
 --
 -- Description: A table to hold attribute values.
 
-CREATE TABLE attr_element_val (
+CREATE TABLE attr_element_type_val (
     id           INTEGER      NOT NULL
-                              DEFAULT NEXTVAL('seq_attr_element_val'),
+                              DEFAULT NEXTVAL('seq_attr_element_type_val'),
     object__id   INTEGER      NOT NULL,
     attr__id     INTEGER      NOT NULL,
     date_val     TIMESTAMP,
@@ -158,7 +138,7 @@ CREATE TABLE attr_element_val (
     blob_val     TEXT,
     serial       BOOLEAN      DEFAULT FALSE,
     active       BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT pk_attr_element_val__id PRIMARY KEY (id)
+    CONSTRAINT pk_attr_element_type_val__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -166,63 +146,61 @@ CREATE TABLE attr_element_val (
 --
 -- Description: A table to represent metadata on types of attributes.
 
-CREATE TABLE attr_element_meta (
+CREATE TABLE attr_element_type_meta (
     id        INTEGER         NOT NULL
-                              DEFAULT NEXTVAL('seq_attr_element_meta'),
+                              DEFAULT NEXTVAL('seq_attr_element_type_meta'),
     attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
     active    BOOLEAN         NOT NULL DEFAULT TRUE,
-   CONSTRAINT pk_attr_element_meta__id PRIMARY KEY (id)
+   CONSTRAINT pk_attr_element_type_meta__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
 -- Indexes.
 --
-CREATE UNIQUE INDEX udx_element__key_name ON element(LOWER(key_name));
-CREATE INDEX fkx_at_type__element ON element(type__id);
-CREATE INDEX fkx_grp__element ON element(at_grp__id);
+CREATE UNIQUE INDEX udx_element_type__key_name ON element_type(LOWER(key_name));
+CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
+CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
 
 
-CREATE UNIQUE INDEX udx_at_oc_id__at__oc_id ON element__output_channel(element__id, output_channel__id);
-CREATE INDEX fkx_output_channel__at_oc ON element__output_channel(output_channel__id);
-CREATE INDEX fkx_element__at_oc ON element__output_channel(element__id);
+CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(element_type__id, output_channel__id);
+CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
+CREATE INDEX fkx_element__et_oc ON element_type__output_channel(element_type__id);
 
---CREATE UNIQUE INDEX udx_at_language__at_id__lang_id ON element__language(element__id,language__id);
+CREATE INDEX fkx_element_type__et_member ON element_type_member(object_id);
+CREATE INDEX fkx_member__et_member ON element_type_member(member__id);
 
-CREATE INDEX fkx_element__at_member ON element_member(object_id);
-CREATE INDEX fkx_member__at_member ON element_member(member__id);
-
-CREATE UNIQUE INDEX udx_element__site on element__site(element__id, site__id);
+CREATE UNIQUE INDEX udx_element_type__site on element_type__site(element_type__id, site__id);
 
 
 -- Unique index on subsystem/name pair
-CREATE UNIQUE INDEX udx_attr_at__subsys__name ON attr_element(subsys, name);
+CREATE UNIQUE INDEX udx_attr_et__subsys__name ON attr_element_type(subsys, name);
 
 -- Indexes on name and subsys.
-CREATE INDEX idx_attr_at__name ON attr_element(LOWER(name));
-CREATE INDEX idx_attr_at__subsys ON attr_element(LOWER(subsys));
+CREATE INDEX idx_attr_et__name ON attr_element_type(LOWER(name));
+CREATE INDEX idx_attr_et__subsys ON attr_element_type(LOWER(subsys));
 
 -- Unique index on object__id/attr__id pair
-CREATE UNIQUE INDEX udx_attr_at_val__obj_attr ON attr_element_val (object__id,attr__id);
+CREATE UNIQUE INDEX udx_attr_et_val__obj_attr ON attr_element_type_val (object__id, attr__id);
 
 -- FK indexes on object__id and attr__id.
-CREATE INDEX fkx_at__attr_at_val ON attr_element_val(object__id);
-CREATE INDEX fkx_attr_at__attr_at_val ON attr_element_val(attr__id);
+CREATE INDEX fkx_et__attr_et_val ON attr_element_type_val(object__id);
+CREATE INDEX fkx_attr_et__attr_et_val ON attr_element_type_val(attr__id);
 
 -- Unique index on attr__id/name pair
-CREATE UNIQUE INDEX udx_attr_at_meta__attr_name ON attr_element_meta (attr__id, name);
+CREATE UNIQUE INDEX udx_attr_et_meta__attr_name ON attr_element_type_meta (attr__id, name);
 
 -- Index on meta name.
-CREATE INDEX idx_attr_at_meta__name ON attr_element_meta(LOWER(name));
+CREATE INDEX idx_attr_et_meta__name ON attr_element_type_meta(LOWER(name));
 
 -- FK index on attr__id.
-CREATE INDEX fkx_attr_at__attr_at_meta ON attr_element_meta(attr__id);
+CREATE INDEX fkx_attr_et__attr_et_meta ON attr_element_type_meta(attr__id);
 
 -- FK index on element__site.
-CREATE INDEX fkx_element__element__site__element__id ON element__site(element__id);
-CREATE INDEX fkx_site__element__site__site__id ON element__site(site__id);
-CREATE INDEX fkx_output_channel__element__site ON element__site(primary_oc__id);
+CREATE INDEX fkx_et__et__site__element_type__id ON element_type__site(element_type__id);
+CREATE INDEX fkx_site__et__site__site__id ON element_type__site(site__id);
+CREATE INDEX fkx_output_channel__et__site ON element_type__site(primary_oc__id);
 
 
 

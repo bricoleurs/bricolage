@@ -9,9 +9,9 @@
 -- -----------------------------------------------------------------------------
 -- Table: element_data
 
-ALTER TABLE at_data ADD 
-	CONSTRAINT fk_element__at_data FOREIGN KEY (element__id)
-	REFERENCES element(id) ON DELETE CASCADE;
+ALTER TABLE at_data ADD
+    CONSTRAINT fk_element_type__at_data FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
 
 
 -- -----------------------------------------------------------------------------
@@ -35,6 +35,3 @@ ALTER TABLE attr_at_data_val ADD
 ALTER TABLE attr_at_data_meta ADD 
     CONSTRAINT fk_attr_atd__attr_atd_meta FOREIGN KEY (attr__id)
     REFERENCES attr_at_data(id) ON DELETE CASCADE;
-
-
-

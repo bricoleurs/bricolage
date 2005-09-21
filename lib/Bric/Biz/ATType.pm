@@ -1123,7 +1123,7 @@ B<Notes:> NONE.
 
 $get_em = sub {
     my ($pkg, $params, $ids, $href) = @_;
-    my $tables = "$TABLE a, member m, element_type_member c";
+    my $tables = "$TABLE a, member m, at_type_member c";
     my $wheres = 'a.id = c.object_id AND c.member__id = m.id ' .
       "AND m.active = '1'";
     my @params;
@@ -1150,7 +1150,7 @@ $get_em = sub {
             $wheres .= " AND " . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
-            $tables .= ", member m2, element_type_member c2";
+            $tables .= ", member m2, at_type_member c2";
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id" .
               " AND m2.active = '1'";
             $wheres .= ' AND ' . any_where($v, "m2.grp__id = ?", \@params);

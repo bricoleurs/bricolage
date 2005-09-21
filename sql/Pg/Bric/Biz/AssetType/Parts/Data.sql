@@ -42,7 +42,7 @@ CREATE SEQUENCE seq_attr_at_data_meta START 1024;
 CREATE TABLE at_data (
     id               INTEGER         NOT NULL
                                      DEFAULT NEXTVAL('seq_element'),
-    element__id      INTEGER         NOT NULL,
+    element_type__id INTEGER         NOT NULL,
     name             VARCHAR(32)     NOT NULL,
     key_name         VARCHAR(32)     NOT NULL,
     description      VARCHAR(256),
@@ -119,10 +119,10 @@ CREATE TABLE attr_at_data_meta (
 -- Indexes.
 --
 
-CREATE UNIQUE INDEX udx_atd__key_name__at_id ON at_data(lower_text_num(key_name, element__id));
+CREATE UNIQUE INDEX udx_atd__key_name__et_id ON at_data(lower_text_num(key_name, element_type__id));
 CREATE INDEX udx_atd__name__at_id ON at_data(LOWER(name));
 CREATE INDEX fkx_map_type__atd on at_data(map_type__id);
-CREATE INDEX fkx_element__atd on at_data(element__id);
+CREATE INDEX fkx_element_type__atd on at_data(element_type__id);
 
 -- Unique index on subsystem/name pair
 CREATE UNIQUE INDEX udx_attr_atd__subsys__name ON attr_at_data(subsys, name);

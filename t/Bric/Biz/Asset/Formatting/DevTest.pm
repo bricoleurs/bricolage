@@ -406,7 +406,7 @@ sub test_select_b_new_objs: Test(82) {
                                            type__id    => $att->get_id(),
                                          });
     $element->save();
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     $formatting[0] = class->new({
         priority           => 1,
         user__id           => $admin_id,
@@ -478,7 +478,7 @@ sub test_select_b_new_objs: Test(82) {
          type__id    => $att->get_id(),
        });
     $element->save();
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     $formatting[1] = class->new
       ({ priority           => 1,
          user__id           => $admin_id,
@@ -524,7 +524,7 @@ sub test_select_b_new_objs: Test(82) {
                                            type__id    => $att->get_id,
                                          });
     $element->save;
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
 
     $formatting[2] = class->new({
         priority           => 1,
@@ -592,7 +592,7 @@ sub test_select_b_new_objs: Test(82) {
                                            type__id    => $att->get_id(),
                                          });
     $element->save();
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     $formatting[3] = class->new
       ({ priority           => 1,
          user__id           => $admin_id,
@@ -639,7 +639,7 @@ sub test_select_b_new_objs: Test(82) {
                                            type__id    => $att->get_id(),
                                          });
     $element->save();
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     $formatting[4] = class->new
       ({ priority           => 1,
          user__id           => $admin_id,
@@ -876,7 +876,7 @@ sub test_new_grp_ids: Test(4) {
                                               type__id    => $att->get_id(),
                                             });
     $element->save();
-    $self->add_del_ids($element->get_id, 'element');
+    $self->add_del_ids($element->get_id, 'element_type');
     my $cat = Bric::Biz::Category->new
       ({ name        => "_test_$time.new",
          description => 'foo',

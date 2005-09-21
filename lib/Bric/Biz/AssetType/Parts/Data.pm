@@ -125,7 +125,7 @@ use constant DEBUG => 0;
 
 use constant TABLE => 'at_data';
 my @COLS = qw(
-    element__id
+    element_type__id
     key_name
     name
     description
@@ -1683,9 +1683,9 @@ sub _do_list {
     my (@where, @bind);
     my %ints = (
         id              => 'id',
-        element_type_id => 'element__id',
-        element_id      => 'element__id',
-        element__id     => 'element__id',
+        element_type_id => 'element_type__id',
+        element_id      => 'element_type__id',
+        element__id     => 'element_type__id',
         map_type__id    => 'map_type__id',
         map_type_id     => 'map_type__id',
         max_length      => 'max_length',

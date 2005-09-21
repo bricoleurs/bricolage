@@ -15,8 +15,8 @@ ADD CONSTRAINT fk_usr__media FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
-ADD CONSTRAINT fk_element__media FOREIGN KEY (element__id)
-	REFERENCES element(id) ON DELETE RESTRICT;
+ADD CONSTRAINT fk_element_type__media FOREIGN KEY (element_type__id)
+	REFERENCES element_type(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
 ADD CONSTRAINT fk_workflow__media FOREIGN KEY (workflow__id)

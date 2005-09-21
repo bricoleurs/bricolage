@@ -125,7 +125,7 @@ sub class_name { 'Bric::Biz::Site' }
 
 =over 4
 
-=item $self = $coll->save($element_id);
+=item $self = $coll->save($element_type_id);
 
 Saves the changes made to all the objects in the collection
 
@@ -170,47 +170,47 @@ B<Notes:> NONE.
 =cut
 
 sub save {
-    my ($self, $element_id, $oc_map) = @_;
+    my ($self, $element_type_id, $oc_map) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     # Save the deleted objects.
     foreach my $site (values %$del_objs) {
         if ($site->get_id) {
             my $upd = prepare_c( qq {
-                UPDATE element__site
+                UPDATE element_type__site
                 SET    active = '0'
-                WHERE  element__id = ? AND
+                WHERE  element_type__id = ? AND
                        site__id    = ?
             }, undef, DEBUG);
-            execute($upd, $element_id, $site->get_id)
+            execute($upd, $element_type_id, $site->get_id)
         }
     }
     %$del_objs = ();
 
     foreach my $site (@$new_objs) {
         my $site_id = $site->get_id;
-        #insert into element__site mapping
+        #insert into element_type__site mapping
         my $sel = prepare_c( qq {
             SELECT 1
-            FROM   element__site
-            WHERE  element__id = ? AND
+            FROM   element_type__site
+            WHERE  element_type__id = ? AND
                    site__id    = ?
         }, undef, DEBUG);
-        my $state = col_aref($sel, $element_id, $site_id);
+        my $state = col_aref($sel, $element_type_id, $site_id);
         if (@$state) {
             my $upd = prepare_c( qq {
-                UPDATE element__site
+                UPDATE element_type__site
                 SET    active = '1',
                        primary_oc__id = ?
-                WHERE  element__id = ? AND
+                WHERE  element_type__id = ? AND
                        site__id    = ?
             }, undef, DEBUG);
-            execute($upd, delete $oc_map->{$site_id}, $element_id, $site_id);
+            execute($upd, delete $oc_map->{$site_id}, $element_type_id, $site_id);
         } else {
             my $ins = prepare_c(qq {
-                INSERT INTO element__site (element__id, site__id, primary_oc__id)
+                INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
                 VALUES (?, ?, ?)
             }, undef, DEBUG);
-            execute($ins, $element_id, $site_id, delete $oc_map->{$site_id});
+            execute($ins, $element_type_id, $site_id, delete $oc_map->{$site_id});
         }
     }
 

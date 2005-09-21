@@ -10,7 +10,7 @@
 ***************************************************************************/
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -21,7 +21,7 @@ VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -32,7 +32,7 @@ VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -43,7 +43,7 @@ VALUES ('504', 'Column', 'A default column', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -54,7 +54,7 @@ VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -65,7 +65,7 @@ VALUES ( '507', 'Page', 'A generic page', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -76,7 +76,7 @@ VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -87,7 +87,7 @@ VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NUL
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -98,7 +98,7 @@ VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -109,7 +109,7 @@ VALUES ('512', 'Story', 'A generic story template', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -120,7 +120,7 @@ VALUES ('513', 'autohandler', 'A generic root level category template', '3', NUL
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)
@@ -131,7 +131,7 @@ VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
         '1', '100');
 
 INSERT INTO formatting (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element__id,
+                        output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
                         active, site__id)

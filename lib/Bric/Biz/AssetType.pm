@@ -166,15 +166,15 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 
 #--------------------------------------#
 # Private Class Fields
-my $table = 'element';
+my $table = 'element_type';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
-my @cols = qw(name key_name description burner reference type__id at_grp__id
+my @cols = qw(name key_name description burner reference type__id et_grp__id
               active);
-my @props = qw(name key_name description burner reference type_id at_grp_id
+my @props = qw(name key_name description burner reference type_id et_grp_id
                _active);
 my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
-  "a.type__id, a.at_grp__id, a.active, m.grp__id";
+  "a.type__id, a.et_grp__id, a.active, m.grp__id";
 my @sel_props = ('id', @props, 'grp_ids');
 
 #--------------------------------------#
@@ -184,68 +184,68 @@ my @sel_props = ('id', @props, 'grp_ids');
 # permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 # The database id of the Asset Type
-			 'id'		        => Bric::FIELD_READ,
+             # Public Fields
+             # The database id of the Asset Type
+             'id'               => Bric::FIELD_READ,
 
-			 # A group for holding AssetTypes that are children.
-			 'at_grp_id'           => Bric::FIELD_READ,
+             # A group for holding AssetTypes that are children.
+             'et_grp_id'           => Bric::FIELD_READ,
 
              # A unique name for the story type
              'key_name'             => Bric::FIELD_RDWR,
 
-			 # The human readable name for the story type
-			 'name'		        => Bric::FIELD_RDWR,
+             # The human readable name for the story type
+             'name'             => Bric::FIELD_RDWR,
 
-			 # The human readable name for the description
-			 'description'	        => Bric::FIELD_RDWR,
+             # The human readable name for the description
+             'description'          => Bric::FIELD_RDWR,
 
-			 # The burner to use to publish this element
-                         'burner'               => Bric::FIELD_RDWR,
+             # The burner to use to publish this element
+             'burner'               => Bric::FIELD_RDWR,
 
-			 # Whether this asset type reference other data or not.
-			 'reference'            => Bric::FIELD_READ,
+             # Whether this asset type reference other data or not.
+             'reference'            => Bric::FIELD_READ,
 
                          # The type of this asset type.
              'type_id'             => Bric::FIELD_READ,
 
-			 # The IDs of the groups this asset type is in.
-			 'grp_ids'             => Bric::FIELD_READ,
+             # The IDs of the groups this asset type is in.
+             'grp_ids'             => Bric::FIELD_READ,
 
                          # The Primary_oc/id cache
                          '_site_primary_oc_id'  => Bric::FIELD_NONE,
 
-			 # Private Fields
-			 # The active flag
-			 '_active'	        => Bric::FIELD_NONE,
+             # Private Fields
+             # The active flag
+             '_active'          => Bric::FIELD_NONE,
 
-			 # Stores the collection of output channels
+             # Stores the collection of output channels
                          '_oc_coll'             => Bric::FIELD_NONE,
 
-			 # Stores the collection of sites
+             # Stores the collection of sites
                          '_site_coll'             => Bric::FIELD_NONE,
 
-			 # A list of contained parts
-			 '_parts'	        => Bric::FIELD_NONE,
+             # A list of contained parts
+             '_parts'           => Bric::FIELD_NONE,
 
-			 # A holding pen for new parts to be added.
-			 '_new_parts'           => Bric::FIELD_NONE,
+             # A holding pen for new parts to be added.
+             '_new_parts'           => Bric::FIELD_NONE,
 
-			 # A holding pen for parts to be deleted.
-			 '_del_parts'           => Bric::FIELD_NONE,
+             # A holding pen for parts to be deleted.
+             '_del_parts'           => Bric::FIELD_NONE,
 
-			 # A group for holding AssetType IDs that are children.
-			 '_at_grp_obj'          => Bric::FIELD_NONE,
+             # A group for holding AssetType IDs that are children.
+             '_et_grp_obj'          => Bric::FIELD_NONE,
 
-			 '_attr'                => Bric::FIELD_NONE,
-			 '_meta'                => Bric::FIELD_NONE,
+             '_attr'                => Bric::FIELD_NONE,
+             '_meta'                => Bric::FIELD_NONE,
 
-			 # Holds the attribute object for this object.
-			 '_attr_obj'            => Bric::FIELD_NONE,
+             # Holds the attribute object for this object.
+             '_attr_obj'            => Bric::FIELD_NONE,
 
-			 # Hold the at object.
-			 '_att_obj'             => Bric::FIELD_NONE,
-			});
+             # Hold the at object.
+             '_att_obj'             => Bric::FIELD_NONE,
+            });
 }
 
 #==============================================================================#
@@ -293,8 +293,8 @@ sub new {
     $init->{reference} = $init->{reference} ? 1 : 0;
     $init->{type_id} = delete $init->{type__id}
       if exists $init->{type__id};
-    $init->{at_grp_id} = delete $init->{at_grp__id}
-      if exists $init->{at_grp__id};
+    $init->{et_grp_id} = delete $init->{et_grp__id}
+      if exists $init->{et_grp__id};
 
     # Set the instance group ID.
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
@@ -304,7 +304,7 @@ sub new {
     my $pkg = $self->get_biz_class;
 
     # If a package was passed in then find the autopopulated field names.
-	my $i = 0;
+    my $i = 0;
     if ($pkg && UNIVERSAL::isa($pkg, 'Bric::Biz::Asset::Business::Media')) {
         foreach my $name ($pkg->autopopulated_fields) {
             my $key_name = lc $name;
@@ -646,109 +646,109 @@ sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
     unless ($tmpl_archs) {
-	$tmpl_archs = [[BURNER_MASON, 'Mason']];
-	push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
-	    if $Bric::Util::Burner::Template::VERSION;
-	push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
-	    if $Bric::Util::Burner::TemplateToolkit::VERSION;
-	push @$tmpl_archs,  [BURNER_PHP,'PHP']
-	    if $Bric::Util::Burner::PHP::VERSION;
+    $tmpl_archs = [[BURNER_MASON, 'Mason']];
+    push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
+        if $Bric::Util::Burner::Template::VERSION;
+    push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
+        if $Bric::Util::Burner::TemplateToolkit::VERSION;
+    push @$tmpl_archs,  [BURNER_PHP,'PHP']
+        if $Bric::Util::Burner::PHP::VERSION;
     }
 
     # Create 'em if we haven't got 'em.
     $METHS ||= {
-	      name        => {
-			      name     => 'name',
-			      get_meth => sub { shift->get_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_name(@_) },
-			      set_args => [],
-			      disp     => 'Name',
-			      search   => 1,
-			      len      => 64,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type      => 'text',
-					    length    => 32,
-					    maxlength => 64
-					  }
-			     },
+          name        => {
+                  name     => 'name',
+                  get_meth => sub { shift->get_name(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_name(@_) },
+                  set_args => [],
+                  disp     => 'Name',
+                  search   => 1,
+                  len      => 64,
+                  req      => 1,
+                  type     => 'short',
+                  props    => { type      => 'text',
+                        length    => 32,
+                        maxlength => 64
+                      }
+                 },
 
               key_name    => {
                               name     => 'key_name',
-			      get_meth => sub { shift->get_key_name(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_key_name(@_) },
-			      set_args => [],
-			      disp     => 'Key Name',
-			      search   => 1,
-			      len      => 64,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {type      => 'text',
+                  get_meth => sub { shift->get_key_name(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_key_name(@_) },
+                  set_args => [],
+                  disp     => 'Key Name',
+                  search   => 1,
+                  len      => 64,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {type      => 'text',
                                            length    => 32,
                                            maxlength => 64
-					  }
+                      }
                              },
 
-	      description => {
-			      get_meth => sub { shift->get_description(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_description(@_) },
-			      set_args => [],
-			      name     => 'description',
-			      disp     => 'Description',
-			      len      => 256,
-			      req      => 0,
-			      type     => 'short',
-			      props    => { type => 'textarea',
-					    cols => 40,
-					    rows => 4
-					  }
-			     },
-	      burner      => {
-			      get_meth => sub { shift->get_burner(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_burner(@_) },
-			      set_args => [],
-			      name     => 'burner',
-			      disp     => 'Burner',
-			      len      => 80,
-			      req      => 1,
-			      type     => 'short',
-			      props    => { type => 'select',
-					    vals => $tmpl_archs,
-					  }
-			     },
-	      type_name      => {
-			     name     => 'type_name',
-			     get_meth => sub { shift->get_type_name(@_) },
-			     get_args => [],
-			     set_meth => sub { shift->set_type_name(@_) },
-			     set_args => [],
-			     disp     => 'Set',
-			     len      => 64,
-			     req      => 0,
-			     type     => 'short',
-			     props    => {   type       => 'text',
-					     length     => 32,
-					     maxlength => 64
-					 }
-			    },
-	      active     => {
-			     name     => 'active',
-			     get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-			     get_args => [],
-			     set_meth => sub { $_[1] ? shift->activate(@_)
-						 : shift->deactivate(@_) },
-			     set_args => [],
-			     disp     => 'Active',
-			     len      => 1,
-			     req      => 1,
-			     type     => 'short',
-			     props    => { type => 'checkbox' }
-			    },
-	     };
+          description => {
+                  get_meth => sub { shift->get_description(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_description(@_) },
+                  set_args => [],
+                  name     => 'description',
+                  disp     => 'Description',
+                  len      => 256,
+                  req      => 0,
+                  type     => 'short',
+                  props    => { type => 'textarea',
+                        cols => 40,
+                        rows => 4
+                      }
+                 },
+          burner      => {
+                  get_meth => sub { shift->get_burner(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_burner(@_) },
+                  set_args => [],
+                  name     => 'burner',
+                  disp     => 'Burner',
+                  len      => 80,
+                  req      => 1,
+                  type     => 'short',
+                  props    => { type => 'select',
+                        vals => $tmpl_archs,
+                      }
+                 },
+          type_name      => {
+                 name     => 'type_name',
+                 get_meth => sub { shift->get_type_name(@_) },
+                 get_args => [],
+                 set_meth => sub { shift->set_type_name(@_) },
+                 set_args => [],
+                 disp     => 'Set',
+                 len      => 64,
+                 req      => 0,
+                 type     => 'short',
+                 props    => {   type       => 'text',
+                         length     => 32,
+                         maxlength => 64
+                     }
+                },
+          active     => {
+                 name     => 'active',
+                 get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+                 get_args => [],
+                 set_meth => sub { $_[1] ? shift->activate(@_)
+                         : shift->deactivate(@_) },
+                 set_args => [],
+                 disp     => 'Active',
+                 len      => 1,
+                 req      => 1,
+                 type     => 'short',
+                 props    => { type => 'checkbox' }
+                },
+         };
 
     if ($ord) {
         return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
@@ -768,7 +768,7 @@ sub my_meths {
 
 =over 4
 
-=item $id = $element->get_id()
+=item $id = $element_type->get_id()
 
 This will return the id for the database
 
@@ -785,7 +785,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->set_name( $name )
+=item $element_type = $element_type->set_name( $name )
 
 This will set the name field for the asset type
 
@@ -802,7 +802,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $name = $element->get_name()
+=item $name = $element_type->get_name()
 
 This will return the name field for the asset type
 
@@ -819,7 +819,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->set_key_name($key_name)
+=item $element_type = $element_type->set_key_name($key_name)
 
 This will set the unique key name field for the asset type
 
@@ -836,7 +836,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $name = $element->get_key_name()
+=item $name = $element_type->get_key_name()
 
 This will return the unique key name field for the asset type
 
@@ -853,7 +853,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->set_description($description)
+=item $element_type = $element_type->set_description($description)
 
 this sets the description field
 
@@ -870,7 +870,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $description = $element->get_description()
+=item $description = $element_type->get_description()
 
 This returns the description field
 
@@ -887,7 +887,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->set_primary_oc_id( $primary_oc_id, $site )
+=item $element_type = $element_type->set_primary_oc_id( $primary_oc_id, $site )
 
 This will set the primary output channel id field for the asset type
 
@@ -901,7 +901,7 @@ No site parameter passed to Bric::Biz::AssetType-E<gt>set_primary_oc_id
 
 =item *
 
-No output channels associated with non top-level elements.
+No output channels associated with non top-level element types.
 
 =back
 
@@ -917,7 +917,7 @@ sub set_primary_oc_id {
     throw_dp "No site parameter passed to " . __PACKAGE__ .
       "->set_primary_oc_id" unless $site;
 
-    throw_dp "No output channels associated with non top-level elements"
+    throw_dp "No output channels associated with non top-level element types"
       unless $self->get_top_level;
 
     $site = $site->get_id if ref $site;
@@ -937,7 +937,7 @@ sub set_primary_oc_id {
 
 #------------------------------------------------------------------------------#
 
-=item $primary_oc_id = $element->get_primary_oc_id($site)
+=item $primary_oc_id = $element_type->get_primary_oc_id($site)
 
 This will return the primary output channel id field for the asset type
 
@@ -951,7 +951,7 @@ No site parameter passed to Bric::Biz::AssetType-E<gt>get_primary_oc_id.
 
 =item *
 
-No output channels associated with non top-level elements.
+No output channels associated with non top-level element types.
 
 =back
 
@@ -967,7 +967,7 @@ sub get_primary_oc_id {
     throw_dp "No site parameter passed to " . __PACKAGE__ .
       "->get_primary_oc_id" unless $site;
 
-    throw_dp "No output channels associated with non top-level elements"
+    throw_dp "No output channels associated with non top-level element types"
       unless $self->get_top_level;
 
     $site = $site->get_id if ref $site;
@@ -979,8 +979,8 @@ sub get_primary_oc_id {
 
     my $sel = prepare_c(qq {
         SELECT primary_oc__id
-        FROM   element__site
-        WHERE  element__id = ? AND
+        FROM   element_type__site
+        WHERE  element_type__id = ? AND
                site__id    = ?
     }, undef, DEBUG);
 
@@ -1305,8 +1305,8 @@ sub get_biz_class_id {
 
 sub get_type__id   { shift->get_type_id       }
 sub set_type__id   { shift->set_type_id(@_)   }
-sub get_at_grp__id { shift->get_at_grp_id     }
-sub set_at_grp__id { shift->set_at_grp_id(@_) }
+sub get_at_grp__id { shift->get_et_grp_id     }
+sub set_at_grp__id { shift->set_et_grp_id(@_) }
 
 #------------------------------------------------------------------------------#
 
@@ -1374,7 +1374,7 @@ sub get_fixed_url {
 
 =item $at_type = $at->get_at_type
 
-Return the at_type object associated with this element.
+Return the at_type object associated with this element type.
 
 B<Throws:>
 NONE
@@ -1396,11 +1396,11 @@ sub get_at_type {
 
 #------------------------------------------------------------------------------#
 
-=item $val = $element->set_attr($name, $value);
+=item $val = $element_type->set_attr($name, $value);
 
-=item $val = $element->get_attr($name);
+=item $val = $element_type->get_attr($name);
 
-=item $val = $element->del_attr($name);
+=item $val = $element_type->del_attr($name);
 
 Get/Set/Delete attributes on this asset type.
 
@@ -1427,14 +1427,14 @@ sub set_attr {
 
     # If we have an attr object, then populate it
     if ($attr_obj) {
-	$attr_obj->set_attr({'name'     => $name,
-			     'sql_type' => 'short',
-			     'value'    => $val});
+    $attr_obj->set_attr({'name'     => $name,
+                 'sql_type' => 'short',
+                 'value'    => $val});
     }
     # Otherwise,cache this value until save.
     else {
-	$attr->{$name} = $val;
-	$self->_set(['_attr'], [$attr]);
+    $attr->{$name} = $val;
+    $self->_set(['_attr'], [$attr]);
     }
 
     $self->_set__dirty(1);
@@ -1487,11 +1487,11 @@ sub all_attr {
 
 #------------------------------------------------------------------------------#
 
-=item $val = $element->set_meta($name, $field, $value);
+=item $val = $element_type->set_meta($name, $field, $value);
 
-=item $val = $element->get_meta($name, $field);
+=item $val = $element_type->get_meta($name, $field);
 
-=item $val = $element->get_meta($name);
+=item $val = $element_type->get_meta($name);
 
 Get/Set attribute metadata on this asset type.  Calling the 'get_meta' method
 without '$field' returns all metadata names and values as a hash.
@@ -1517,13 +1517,13 @@ sub set_meta {
     my $meta     = $self->_get('_meta');
 
     if ($attr_obj) {
-	$attr_obj->add_meta({'name'  => $name,
-			     'field' => $field,
-			     'value' => $val});
+    $attr_obj->add_meta({'name'  => $name,
+                 'field' => $field,
+                 'value' => $val});
     } else {
-	$meta->{$name}->{$field} = $val;
-	
-	$self->_set(['_meta'], [$meta]);
+    $meta->{$name}->{$field} = $val;
+    
+    $self->_set(['_meta'], [$meta]);
     }
 
     $self->_set__dirty(1);
@@ -1538,28 +1538,28 @@ sub get_meta {
     my $meta     = $self->_get('_meta');
 
     unless ($attr_obj) {
-	if (defined $field) {
-	    return $meta->{$name}->{$field};
-	} else {
-	    return $meta->{$name};
-	}
+    if (defined $field) {
+        return $meta->{$name}->{$field};
+    } else {
+        return $meta->{$name};
+    }
     }
 
     if (defined $field) {
-	return $attr_obj->get_meta({'name'  => $name,
-				    'field' => $field});
+    return $attr_obj->get_meta({'name'  => $name,
+                    'field' => $field});
     } else {
-	my $meta = $attr_obj->get_meta({'name'  => $name});
+    my $meta = $attr_obj->get_meta({'name'  => $name});
 
-	return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
+    return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
     }
 }
 
 #------------------------------------------------------------------------------#
 
-=item ($oc_list || @oc_list) = $element->get_output_channels;
+=item ($oc_list || @oc_list) = $element_type->get_output_channels;
 
-=item ($oc_list || @oc_list) = $element->get_output_channels(@oc_ids);
+=item ($oc_list || @oc_list) = $element_type->get_output_channels(@oc_ids);
 
 This returns a list of output channels that have been associated with this
 asset type. If C<@oc_ids> is passed, then only the output channels with those
@@ -1579,9 +1579,9 @@ sub get_output_channels { $get_oc_coll->(shift)->get_objs(@_) }
 
 #------------------------------------------------------------------------------#
 
-=item my $oce = $element->add_output_channel($oc)
+=item my $oce = $element_type->add_output_channel($oc)
 
-=item my $oce = $element->add_output_channel($oc_id)
+=item my $oce = $element_type->add_output_channel($oc_id)
 
 Adds an output channel to this element object and returns the resulting
 Bric::Biz::OutputChannel::Element object. Can pass in either an output channel
@@ -1601,12 +1601,12 @@ sub add_output_channel {
     my ($self, $oc) = @_;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->new_obj({ (ref $oc ? 'oc' : 'oc_id') => $oc,
-                        element_id => $self->_get('id') });
+                        element_type_id => $self->_get('id') });
 }
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->add_output_channels([$output_channels])
+=item $element_type = $element_type->add_output_channels([$output_channels])
 
 This accepts an array reference of output channel objects to be associated
 with this asset type.
@@ -1628,7 +1628,7 @@ sub add_output_channels {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->delete_output_channels([$output_channels])
+=item $element_type = $element_type->delete_output_channels([$output_channels])
 
 This takes an array reference of output channels and removes their association
 from the object.
@@ -1666,9 +1666,9 @@ sub delete_output_channels {
 
 #------------------------------------------------------------------------------#
 
-=item ($site_list || @site_list) = $element->get_sites;
+=item ($site_list || @site_list) = $element_type->get_sites;
 
-=item ($site_list || @site_list) = $element->get_sites(@site_ids);
+=item ($site_list || @site_list) = $element_type->get_sites(@site_ids);
 
 This returns a list of sites that have been associated with this
 asset type. If C<@site_ids> is passed, then only the sites with those
@@ -1688,9 +1688,9 @@ sub get_sites { $get_site_coll->(shift)->get_objs(@_) }
 
 #------------------------------------------------------------------------------#
 
-=item my $site = $element->add_site($site)
+=item my $site = $element_type->add_site($site)
 
-=item my $site = $element->add_site($site_id)
+=item my $site = $element_type->add_site($site_id)
 
 Adds a site to this element object and returns the resulting
 Bric::Biz::Site object. Can pass in either an site object or a site ID.
@@ -1705,7 +1705,7 @@ You can only add sites to top level objects
 
 =item *
 
-Cannot add sites to non top-level elements.
+Cannot add sites to non top-level element types.
 
 =item *
 
@@ -1722,7 +1722,7 @@ B<Notes:> NONE.
 sub add_site {
     my ($self, $site) = @_;
 
-    throw_dp "Cannot add sites to non top-level elements"
+    throw_dp "Cannot add sites to non top-level element types"
       unless $self->get_top_level;
 
     my $site_coll = $get_site_coll->($self);
@@ -1735,9 +1735,9 @@ sub add_site {
 }
 #------------------------------------------------------------------------------#
 
-=item my $site = $element->add_sites([$site])
+=item my $site = $element_type->add_sites([$site])
 
-=item my $site = $element->add_sites([$site_id])
+=item my $site = $element_type->add_sites([$site_id])
 
 Adds a site to this element object and returns the Bric::Biz::AssetType
 object. Can pass in multiple site objects or site IDs.
@@ -1769,7 +1769,7 @@ sub add_sites {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->remove_sites([$sites])
+=item $element_type = $element_type->remove_sites([$sites])
 
 This takes an array reference of sites and removes their association from the
 object.
@@ -1780,7 +1780,7 @@ B<Throws:>
 
 =item *
 
-Cannot remove last site from an element.
+Cannot remove last site from an element type.
 
 =back
 
@@ -1794,7 +1794,7 @@ B<Notes:> NONE.
 sub remove_sites {
     my ($self, $sites) = @_;
     my $site_coll = $get_site_coll->($self);
-    throw_dp "Cannot remove last site from an element"
+    throw_dp "Cannot remove last site from an element type"
       if @{$site_coll->get_objs} < 2;
 
     #here we need to remove all corresponding output channels
@@ -1821,7 +1821,7 @@ sub remove_sites {
 
 #------------------------------------------------------------------------------#
 
-=item ($part_list || @part_list) = $element->get_data()
+=item ($part_list || @part_list) = $element_type->get_data()
 
 This will return a list of the fields and containers that make up
 this asset type
@@ -1856,22 +1856,22 @@ sub get_data {
     push @all, values %$parts;
 
     if ($field) {
-	# Return just the field they asked for.
-	$field = $make_key_name->($field);
+    # Return just the field they asked for.
+    $field = $make_key_name->($field);
         for my $d (@all) {
             return $d if $d->get_key_name eq $field;
         }
-	return;
+    return;
     } else {
-	# Return all the fields.
-	return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
-	  [ sort { $a->get_place <=> $b->get_place } @all ];
+    # Return all the fields.
+    return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
+      [ sort { $a->get_place <=> $b->get_place } @all ];
     }
 }
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->add_data([$field])
+=item $element_type = $element_type->add_data([$field])
 
 This takes a list of fields and associates them with the element object
 
@@ -1923,7 +1923,7 @@ sub add_data {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->new_data($param)
+=item $element_type = $element_type->new_data($param)
 
 Adds a new data point, creating a new Bric::Biz::AssetType::Parts::Data
 object. The keys to $param are the same as the keys for the hash ref passed to
@@ -1966,7 +1966,7 @@ sub new_data {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->copy_data($param)
+=item $element_type = $element_type->copy_data($param)
 
 Copy the definition for a data field from another asset type. Keys for $param
 are:
@@ -2015,12 +2015,12 @@ sub copy_data {
     my ($at, $f) = @$param{'at','field_name'};
 
     unless ($f_obj) {
-	unless ($at) {
-	    my $msg = 'Insufficient argurments';
-	    throw_gen(error => $msg);
-	}
+    unless ($at) {
+        my $msg = 'Insufficient argurments';
+        throw_gen(error => $msg);
+    }
 
-	$f_obj = $at->get_data($f);
+    $f_obj = $at->get_data($f);
     }
 
     my $part = $f_obj->copy($at->get_id);
@@ -2040,7 +2040,7 @@ sub copy_data {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->del_data( [ $field || $container ])
+=item $element_type = $element_type->del_data( [ $field || $container ])
 
 This will take a list of parts and will disassociate them from the story type.
 
@@ -2060,31 +2060,31 @@ sub del_data {
     my ($parts_arg) = @_; 
     my $parts = $self->_get_parts();
     my ($new_parts, $del_parts) = $self->_get('_new_parts',
-					      '_del_parts');
+                          '_del_parts');
 
     foreach my $p (@$parts_arg) {
-	unless (ref $p) {
-	    my $msg = 'Must pass AssetType field or container objects, not IDs';
-	    throw_gen(error => $msg);
-	}
+    unless (ref $p) {
+        my $msg = 'Must pass AssetType field or container objects, not IDs';
+        throw_gen(error => $msg);
+    }
 
-	# Get the ID if we were passed an object.
-	my $p_id = $p->get_id();
+    # Get the ID if we were passed an object.
+    my $p_id = $p->get_id();
 
-	# Delete this part from the list and put it on the deletion list.
-	if (exists $parts->{$p_id}) {
-	    delete $parts->{$p_id};
-	    # Add the object as a value.
-	    $del_parts->{$p_id} = $p;
-	}
+    # Delete this part from the list and put it on the deletion list.
+    if (exists $parts->{$p_id}) {
+        delete $parts->{$p_id};
+        # Add the object as a value.
+        $del_parts->{$p_id} = $p;
+    }
 
-	# Remove this value from the addition list if it's there.
-	delete $new_parts->{$p_id};
+    # Remove this value from the addition list if it's there.
+    delete $new_parts->{$p_id};
     }
 
     # Update $self's new and deleted parts lists.
     $self->_set(['_parts', '_new_parts', '_del_parts'],
-		[$parts  , $new_parts  , $del_parts]);
+        [$parts  , $new_parts  , $del_parts]);
 
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
@@ -2093,7 +2093,7 @@ sub del_data {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->add_containers([$at]);
+=item $element_type = $element_type->add_containers([$at]);
 
 Add AssetTypes to be contained by this AssetType.
 
@@ -2118,7 +2118,7 @@ sub add_containers {
 
     # Construct the proper array to pass to 'add_members'
     my @mem = map {ref $_ ? {obj => $_} :
-		            {id  => $_, package => __PACKAGE__}} @$at;
+                    {id  => $_, package => __PACKAGE__}} @$at;
 
     return unless $grp->add_members(\@mem);
     return $self;
@@ -2126,7 +2126,7 @@ sub add_containers {
 
 #------------------------------------------------------------------------------#
 
-=item (@at_list || $at_list) = $element->get_containers();
+=item (@at_list || $at_list) = $element_type->get_containers();
 
 Return all contained AssetTypes.
 
@@ -2159,7 +2159,7 @@ sub get_containers {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->del_containers([$at]);
+=item $element_type = $element_type->del_containers([$at]);
 
 Release an AssetType from its servitude to this AssetType.  The AssetType itself
 will not be deleted.  It will simply not be associated with this AssetType any
@@ -2195,11 +2195,11 @@ sub del_containers {
 
 #------------------------------------------------------------------------------#
 
-=item ($element || 0) = $element->is_repeatable($at_container);
+=item ($element_type || 0) = $element_type->is_repeatable($at_container);
 
-=item $element        = $element->make_repeatable($at_container);
+=item $element_type        = $element_type->make_repeatable($at_container);
 
-=item $element        = $element->make_nonrepeatable($at_container);
+=item $element_type        = $element_type->make_nonrepeatable($at_container);
 
 Get/Set the repeatable flag for a contained AssetType. Note that this
 repeatability only applies to this AssetTypes relation to the contained
@@ -2247,7 +2247,7 @@ sub make_nonrepeatable {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->is_active()
+=item $element_type = $element_type->is_active()
 
 Return the active flag.
 
@@ -2273,7 +2273,7 @@ sub is_active {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->activate()
+=item $element_type = $element_type->activate()
 
 This will set the active flag to one for the object
 
@@ -2301,7 +2301,7 @@ sub activate {
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->deactivate()
+=item $element_type = $element_type->deactivate()
 
 This will set the active flag to undef for the asset type
 
@@ -2329,7 +2329,7 @@ sub deactivate {
 
 #------------------------------------------------------------------------------#
 
-=item (undef || 1) $element->get_active()
+=item (undef || 1) $element_type->get_active()
 
 This will return undef if the element has been deactivated and
 one otherwise 
@@ -2350,7 +2350,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item $element = $element->save()
+=item $element_type = $element_type->save()
 
 This will save all of the changes to the database
 
@@ -2389,11 +2389,11 @@ sub save {
     return $self unless $self->_get__dirty;
 
     unless ($self->is_active) {
-	# Check to see if this AT is reference anywhere. If not, delete it.
-	unless ($self->_is_referenced) {
-	    $self->$remove;
-	    return $self;
-	}
+    # Check to see if this AT is reference anywhere. If not, delete it.
+    unless ($self->_is_referenced) {
+        $self->$remove;
+        return $self;
+    }
     }
 
     # First save the main object information
@@ -2413,10 +2413,10 @@ sub save {
     # Save the mapping of primary oc per site
     if ($primary_oc_site and %$primary_oc_site) {
         my $update = prepare_c(qq{
-            UPDATE element__site
-            SET    primary_oc__id = ?
-            WHERE  element__id    = ? AND
-                   site__id       = ?
+            UPDATE element_type__site
+            SET    primary_oc__id   = ?
+            WHERE  element_type__id = ? AND
+                   site__id         = ?
         },undef, DEBUG);
         foreach my $site_id (keys %$primary_oc_site) {
             my $oc_id = delete $primary_oc_site->{$site_id} or next;
@@ -2483,7 +2483,7 @@ sub _do_list {
         push @wheres, "a.active = ?";
         push @params, 1;
     } else {
-        # Do nothing -- let ID return even deactivated elements.
+        # Do nothing -- let ID return even deactivated element types.
     }
 
     # Set up paramters based on an AssetType::Data name or a map type ID.
@@ -2492,7 +2492,7 @@ sub _do_list {
     {
         # Add the at_data table.
         $tables .= ', at_data d';
-        push @wheres, 'd.element__id = a.id';
+        push @wheres, 'd.element_type__id = a.id';
         if (exists $params->{data_name}) {
             push @wheres, any_where(
                 delete $params->{data_name},
@@ -2527,8 +2527,8 @@ sub _do_list {
     # Set up the rest of the parameters.
     while (my ($k, $v) = each %$params) {
         if ($k eq 'output_channel_id' || $k eq 'output_channel') {
-            $tables .= ', element__output_channel ao';
-            push @wheres, 'ao.element__id = a.id';
+            $tables .= ', element_type__output_channel ao';
+            push @wheres, 'ao.element_type__id = a.id';
             push @wheres, any_where($v, 'ao.output_channel__id = ?', \@params);
         } elsif ($k eq 'type_id' || $k eq 'type__id') {
             push @wheres, any_where($v, "a.type__id = ?", \@params);
@@ -2544,8 +2544,8 @@ sub _do_list {
             );
             push @wheres, any_where($v, 'm2.grp__id = ?', \@params);
         } elsif ($k eq 'site_id') {
-            $tables .= ", element__site es";
-            push @wheres, 'es.element__id = a.id', "es.active = '1'";
+            $tables .= ", element_type__site es";
+            push @wheres, 'es.element_type__id = a.id', "es.active = '1'";
             push @wheres, any_where($v, 'es.site__id = ?', \@params);
         } else {
             # The "name" and "description" properties.
@@ -2576,7 +2576,7 @@ sub _do_list {
     while (fetch($sel)) {
         if ($d[0] != $last) {
             $last = $d[0];
-            # Create a new element object.
+            # Create a new element type object.
             my $self = bless {}, $pkg;
             $self->SUPER::new;
             $grp_ids = $d[$#d] = [$d[$#d]];
@@ -2597,8 +2597,8 @@ sub _do_list {
         }
     }
 
-    # Multisite elements are all the top-level for the site,
-    # plus all non top-level elements.
+    # Multisite element types are all the top-level for the site,
+    # plus all non top-level element types.
     if($params->{site_id} && ! $top) {
         delete $params->{site_id};
         $params->{top_level} = 0;
@@ -2629,7 +2629,7 @@ sub _is_referenced {
 
     # Make sure this isn't referenced from an asset.
     my $table = $self->is_media ? 'media' : 'story';
-    my $sql  = "SELECT COUNT(*) FROM $table WHERE element__id = ?";
+    my $sql  = "SELECT COUNT(*) FROM $table WHERE element_type__id = ?";
     my $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
@@ -2640,10 +2640,10 @@ sub _is_referenced {
 
     # Make sure this isn't used by another asset type.
     $sql = 'SELECT COUNT(*) '.
-           'FROM element_member atm, member m, element at '.
-	   'WHERE atm.object_id = ? AND '.
+           'FROM element_type_member atm, member m, element_type at '.
+       'WHERE atm.object_id = ? AND '.
                   'm.id         = atm.member__id AND '.
-                  'm.grp__id    = at.at_grp__id';
+                  'm.grp__id    = at.et_grp__id';
 
     $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
@@ -2654,7 +2654,7 @@ sub _is_referenced {
     return 1 if $rows;
 
     # Make sure this isn't referenced from a template.
-    $sql  = "SELECT COUNT(*) FROM formatting WHERE element__id = ?";
+    $sql  = "SELECT COUNT(*) FROM formatting WHERE element_type__id = ?";
     $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);
@@ -2706,10 +2706,10 @@ sub _get_attr_obj {
     my $id = $self->get_id;
 
     unless ($attr_obj || not defined($id)) {
-	$attr_obj = Bric::Util::Attribute::AssetType->new(
-				     {'object_id' => $id,
-				      'subsys'    => "id_$id"});
-	$self->_set(['_attr_obj'], [$attr_obj]);
+    $attr_obj = Bric::Util::Attribute::AssetType->new(
+                     {'object_id' => $id,
+                      'subsys'    => "id_$id"});
+    $self->_set(['_attr_obj'], [$attr_obj]);
     }
 
     return $attr_obj;
@@ -2727,8 +2727,8 @@ sub _get_at_type_obj {
     return $att_obj if $att_obj;
 
     if ($att_id) {
-	$att_obj = Bric::Biz::ATType->lookup({'id' => $att_id});
-	$self->_set(['_att_obj'], [$att_obj]);
+    $att_obj = Bric::Biz::ATType->lookup({'id' => $att_id});
+    $self->_set(['_att_obj'], [$att_obj]);
     }
 
     return $att_obj;
@@ -2744,23 +2744,23 @@ sub _save_attr {
     my $id   = $self->get_id;
 
     unless ($a_obj) {
-	$a_obj = Bric::Util::Attribute::AssetType->new({'object_id' => $id,
-						      'subsys'    => "id_$id"});
-	$self->_set(['_attr_obj'], [$a_obj]);
+    $a_obj = Bric::Util::Attribute::AssetType->new({'object_id' => $id,
+                              'subsys'    => "id_$id"});
+    $self->_set(['_attr_obj'], [$a_obj]);
 
-	while (my ($k,$v) = each %$attr) {
-	    $a_obj->set_attr({'name'     => $k,
-			      'sql_type' => 'short',
-			      'value'    => $v});
-	}
-	
-	foreach my $k (keys %$meta) {
-	    while (my ($f, $v) = each %{$meta->{$k}}) {
-		$a_obj->add_meta({'name'  => $k,
-				  'field' => $f,
-				  'value' => $v});
-	    }
-	}
+    while (my ($k,$v) = each %$attr) {
+        $a_obj->set_attr({'name'     => $k,
+                  'sql_type' => 'short',
+                  'value'    => $v});
+    }
+    
+    foreach my $k (keys %$meta) {
+        while (my ($f, $v) = each %{$meta->{$k}}) {
+        $a_obj->add_meta({'name'  => $k,
+                  'field' => $f,
+                  'value' => $v});
+        }
+    }
     }
 
     $a_obj->save;
@@ -2772,20 +2772,20 @@ sub _save_attr {
 
 sub _get_asset_type_grp {
     my $self = shift;
-    my $atg_id  = $self->get_at_grp_id;
-    my $atg_obj = $self->_get('_at_grp_obj');
+    my $atg_id  = $self->get_et_grp_id;
+    my $atg_obj = $self->_get('_et_grp_obj');
 
     return $atg_obj if $atg_obj;
 
     if ($atg_id) {
-	$atg_obj = Bric::Util::Grp::AssetType->lookup({'id' => $atg_id});
-	$self->_set(['_at_grp_obj'], [$atg_obj]);
+    $atg_obj = Bric::Util::Grp::AssetType->lookup({'id' => $atg_id});
+    $self->_set(['_et_grp_obj'], [$atg_obj]);
     } else {
-	$atg_obj = Bric::Util::Grp::AssetType->new({'name' => 'AssetType Group'});
-	$atg_obj->save;
+    $atg_obj = Bric::Util::Grp::AssetType->new({'name' => 'AssetType Group'});
+    $atg_obj->save;
 
-	$self->_set(['at_grp_id',     '_at_grp_obj'],
-		    [$atg_obj->get_id, $atg_obj]);
+    $self->_set(['et_grp_id',     '_et_grp_obj'],
+            [$atg_obj->get_id, $atg_obj]);
     }
 
     return $atg_obj;
@@ -2804,39 +2804,39 @@ sub _sync_parts {
     # Pull off the newly created parts.
     my $created = delete $new_parts->{-1};
 
-    # Now that we know we have an ID for $self, set element ID for
+    # Now that we know we have an ID for $self, set element type ID for
     foreach my $p_obj (@$created) {
-	$p_obj->set_element_id($id);
+    $p_obj->set_element_type_id($id);
 
-	# Save the parts object.
-	$p_obj->save;
+    # Save the parts object.
+    $p_obj->save;
 
-	# Add it to the current parts list.
-	$parts->{$p_obj->get_id} = $p_obj;
+    # Add it to the current parts list.
+    $parts->{$p_obj->get_id} = $p_obj;
     }
 
     # Add parts that already existed when they were added.
     foreach my $p_id (keys %$new_parts) {
-	# Delete this from the new list and grab the object.
-	my $p_obj = delete $new_parts->{$p_id};
+    # Delete this from the new list and grab the object.
+    my $p_obj = delete $new_parts->{$p_id};
 
-	# Save the parts object.
-	$p_obj->save;
+    # Save the parts object.
+    $p_obj->save;
 
-	# Add it to the current parts list.
-	$parts->{$p_id} = $p_obj;
+    # Add it to the current parts list.
+    $parts->{$p_id} = $p_obj;
     }
 
     # Deactivate removed parts.
     foreach my $p_id (keys %$del_parts) {
-	# Delete this from the deletion list and grab the object.
+    # Delete this from the deletion list and grab the object.
 
-	my $p_obj = delete $del_parts->{$p_id};
+    my $p_obj = delete $del_parts->{$p_id};
 
-	# This needs to happen for deleted parts.
-	$p_obj->deactivate;
+    # This needs to happen for deleted parts.
+    $p_obj->deactivate;
         $p_obj->set_required(0);
-	$p_obj->save;
+    $p_obj->save;
     }
     return $self;
 }
@@ -2845,7 +2845,7 @@ sub _sync_parts {
 
 =item $self = $self->_update_asset_type();
 
-Update values in the element table.
+Update values in the element_type table.
 
 B<Throws:>
 
@@ -2878,7 +2878,7 @@ sub _update_asset_type {
 
 =item $self = $self->_insert_asset_type
 
-Insert new values into the element table.
+Insert new values into the element_type table.
 
 B<Throws:>
 
@@ -2908,7 +2908,7 @@ sub _insert_asset_type {
     # Set the ID of this object.
     $self->_set(['id'],[last_key($table)]);
 
-    # And finally, register this person in the "All Elements" group.
+    # And finally, register this person in the "All Element Types" group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     return $self;
@@ -3092,7 +3092,7 @@ $get_site_coll = sub {
     my ($id, $site_coll) = $self->_get('id', '_site_coll');
     return $site_coll if $site_coll;
     $site_coll = Bric::Util::Coll::Site->new
-      (defined $id ? {element_id => $id} : undef);
+      (defined $id ? {element_type_id => $id} : undef);
     $self->_set(['_site_coll'], [$site_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $site_coll;

@@ -263,10 +263,12 @@ A boolean value indicating if the site is active.
 A Bric::Util::Grp::Site object ID. May use C<ANY> for a list of possible
 values.
 
+=item element_type_id
+
 =item element_id
 
-A Bric::Biz::AssetType (element) ID. May use C<ANY> for a list of possible
-values.
+A Bric::Biz::AssetType (element type) ID. May use C<ANY> for a list of
+possible values.
 
 =item output_channel_id
 
@@ -809,11 +811,11 @@ $get_em = sub {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id"
                     . " AND m2.active = '1' "
                     . any_where $v, 'AND m2.grp__id = ?', \@params;
-        } elsif ($k eq 'element_id') {
+        } elsif ($k eq 'element_type_id' || $k eq 'element_id') {
             # Look up by element association.
-            $tables .= ", element__site es";
+            $tables .= ", element_type__site es";
             $wheres .= " AND a.id = es.site__id AND es.active = '1'"
-                    . any_where $v, 'AND es.element__id = ?', \@params;
+                    . any_where $v, 'AND es.element_type__id = ?', \@params;
         } elsif ($k eq 'output_channel_id') {
             # Look up by output channel association.
             $tables .= ", output_channel oc";

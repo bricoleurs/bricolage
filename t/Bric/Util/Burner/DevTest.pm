@@ -326,7 +326,7 @@ sub subclass_burn_test {
     ok $story_type->set_primary_oc_id($oc->get_id, 100),
       "Set it as the primary OC";;
     ok $story_type->save, "Save the test story type";
-    $self->add_del_ids($story_type->get_id, 'element');
+    $self->add_del_ids($story_type->get_id, 'element_type');
 
     # Give it a header field.
     ok my $head = $story_type->new_data({
@@ -367,7 +367,7 @@ sub subclass_burn_test {
     }), "Create a subelement element";
 
     ok $pull_quote->save, "Save the subelement element";
-    $self->add_del_ids($pull_quote->get_id, 'element');
+    $self->add_del_ids($pull_quote->get_id, 'element_type');
 
     # Give it a paragraph field.
     ok my $pq_para = $pull_quote->new_data({
@@ -434,7 +434,7 @@ sub subclass_burn_test {
 
     # Save it.
     ok $page->save, "Save the page subelement element";
-    $self->add_del_ids($page->get_id, 'element');
+    $self->add_del_ids($page->get_id, 'element_type');
 
     # Add the subelements to the story type element.
     ok $story_type->add_containers([$pull_quote->get_id, $page->get_id]),
