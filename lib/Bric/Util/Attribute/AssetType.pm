@@ -97,7 +97,7 @@ Bric::Util::Grp.
 
 =cut
 
-sub short_object_type { return 'element' }
+sub short_object_type { return 'element_type' }
 
 #--------------------------------------#
 
