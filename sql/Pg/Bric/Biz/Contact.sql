@@ -51,7 +51,7 @@ CREATE TABLE person__contact_value (
 
 CREATE UNIQUE INDEX udx_contact__type ON contact(LOWER(type));
 CREATE INDEX idx_contact_value_value ON contact_value(LOWER(value));
-CREATE INDEX fdx_contact__contact_value on contact_value(contact__id);
+CREATE INDEX fkx_contact__contact_value on contact_value(contact__id);
 
 CREATE INDEX fkx_person__p_c_val ON person__contact_value(person__id);
 CREATE INDEX fkx_contact_value__p_c_val ON person__contact_value(contact_value__id);

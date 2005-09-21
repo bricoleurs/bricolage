@@ -155,11 +155,11 @@ CREATE TABLE story__contributor (
 -- story
 CREATE INDEX idx_story__uuid ON story(uuid);
 CREATE INDEX idx_story__primary_uri ON story(LOWER(primary_uri));
-CREATE INDEX fdx_usr__story ON story(usr__id);
-CREATE INDEX fdx_source__story ON story(source__id);
+CREATE INDEX fkx_usr__story ON story(usr__id);
+CREATE INDEX fkx_source__story ON story(source__id);
 CREATE INDEX fkx_element_type__story ON story(element_type__id);
-CREATE INDEX fdx_site_id__story ON story(site__id);
-CREATE INDEX fdx_alias_id__story ON story(alias_id);
+CREATE INDEX fkx_site_id__story ON story(site__id);
+CREATE INDEX fkx_alias_id__story ON story(alias_id);
 CREATE INDEX idx_story__first_publish_date ON story(first_publish_date);
 CREATE INDEX idx_story__publish_date ON story(publish_date);
 CREATE INDEX idx_story__cover_date ON story(cover_date);
@@ -168,9 +168,9 @@ CREATE INDEX idx_story__cover_date ON story(cover_date);
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
-CREATE INDEX fdx_story__story_instance ON story_instance(story__id);
-CREATE INDEX fdx_usr__story_instance ON story_instance(usr__id);
-CREATE INDEX fdx_primary_oc__story_instance ON story_instance(primary_oc__id);
+CREATE INDEX fkx_story__story_instance ON story_instance(story__id);
+CREATE INDEX fkx_usr__story_instance ON story_instance(usr__id);
+CREATE INDEX fkx_primary_oc__story_instance ON story_instance(primary_oc__id);
 CREATE INDEX idx_story_instance__note ON story_instance(note) WHERE note IS NOT NULL;
 
 -- story_uri
@@ -191,5 +191,5 @@ CREATE INDEX fkx_story__oc__oc ON story__output_channel(output_channel__id);
 CREATE INDEX fkx_story__story__contributor ON story__contributor(story_instance__id);
 CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
 
-CREATE INDEX fdx_story__desk__id ON story(desk__id) WHERE desk__id > 0;
-CREATE INDEX fdx_story__workflow__id ON story(workflow__id) WHERE workflow__id > 0;
+CREATE INDEX fkx_story__desk__id ON story(desk__id) WHERE desk__id > 0;
+CREATE INDEX fkx_story__workflow__id ON story(workflow__id) WHERE workflow__id > 0;

@@ -28,8 +28,8 @@ CREATE TABLE person_org(
 --
 CREATE UNIQUE INDEX udx_person_org__person__org ON person_org(person__id, org__id, role);
 CREATE INDEX idx_person_org__department ON person_org(LOWER(department));
-CREATE INDEX fdx_person__person_org ON person_org(person__id);
-CREATE INDEX fdx_org__person_org ON person_org(org__id);
+CREATE INDEX fkx_person__person_org ON person_org(person__id);
+CREATE INDEX fkx_org__person_org ON person_org(org__id);
 
 -- 
 -- SEQUENCES.

@@ -59,7 +59,7 @@ CREATE TABLE at_type_member (
 -- Indexes.
 --
 CREATE UNIQUE INDEX udx_at_type__name ON at_type(LOWER(name));
-CREATE INDEX fdx_class__at_type ON at_type(biz_class__id);
+CREATE INDEX fkx_class__at_type ON at_type(biz_class__id);
 CREATE INDEX fkx_at_type__at_type_member ON at_type_member(object_id);
 CREATE INDEX fkx_member__at_type_member ON at_type_member(member__id);
 

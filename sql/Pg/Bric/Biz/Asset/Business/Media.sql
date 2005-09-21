@@ -189,7 +189,7 @@ CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
-CREATE INDEX fdx_primary_oc__media_instance ON media_instance(primary_oc__id);
+CREATE INDEX fkx_primary_oc__media_instance ON media_instance(primary_oc__id);
 CREATE INDEX idx_media_instance__note ON media_instance(note) WHERE note IS NOT NULL;
 
 -- media_uri
@@ -205,5 +205,5 @@ CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
 CREATE INDEX fkx_media__media_member ON media_member(object_id);
 CREATE INDEX fkx_member__media_member ON media_member(member__id);
 
-CREATE INDEX fdx_media__desk__id ON media(desk__id) WHERE desk__id > 0;
-CREATE INDEX fdx_media__workflow__id ON media(workflow__id) WHERE workflow__id > 0;
+CREATE INDEX fkx_media__desk__id ON media(desk__id) WHERE desk__id > 0;
+CREATE INDEX fkx_media__workflow__id ON media(workflow__id) WHERE workflow__id > 0;

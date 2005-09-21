@@ -106,8 +106,8 @@ CREATE INDEX fkx_usr__formatting ON formatting(usr__id);
 CREATE INDEX fkx_output_channel__formatting ON formatting(output_channel__id);
 CREATE INDEX fkx_element_type__formatting ON formatting(element_type__id);
 CREATE INDEX fkx_category__formatting ON formatting(category__id);
-CREATE INDEX fdx_formatting__desk__id ON formatting(desk__id) WHERE desk__id > 0;
-CREATE INDEX fdx_formatting__workflow__id ON formatting(workflow__id) WHERE workflow__id > 0;
+CREATE INDEX fkx_formatting__desk__id ON formatting(desk__id) WHERE desk__id > 0;
+CREATE INDEX fkx_formatting__workflow__id ON formatting(workflow__id) WHERE workflow__id > 0;
 CREATE INDEX fkx_site__formatting ON formatting(site__id);
 
 -- formatting_instance.

@@ -311,6 +311,10 @@ Renamed "Element Data" to "Field Type". [David]
 Renamed the "element" table in the database to "element_type". This better
 reflects what it actually contains. [David]
 
+=item *
+
+Fixed a bunch of inconsistently named foreign key indexes. [David]
+
 =back
 
 =cut
