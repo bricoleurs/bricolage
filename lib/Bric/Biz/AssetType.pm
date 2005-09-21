@@ -3,8 +3,7 @@ package Bric::Biz::AssetType;
 
 =head1 NAME
 
-Bric::Biz::AssetType - Registers new types of assets with their fields and the
-rules governing them.
+Bric::Biz::AssetType - Bricolage element types
 
 =head1 VERSION
 
