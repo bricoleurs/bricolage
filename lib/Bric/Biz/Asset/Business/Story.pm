@@ -81,9 +81,9 @@ $LastChangedDate$
  # Element methods
  $element  = $biz->get_element_type()
  @elements = $biz->get_elements()
- $biz      = $biz->add_data($field_type_obj, $data)
- $data     = $biz->get_data($name, $obj_order)
- $parts    = $biz->get_possible_data()
+ $biz      = $biz->add_field($field_type_obj, $data)
+ $value    = $biz->get_value($name, $obj_order)
+ $parts    = $biz->get_possible_field_types()
 
  # Container methods
  $new_container = $biz->add_container($at_contaier_obj)

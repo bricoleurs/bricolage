@@ -1532,7 +1532,7 @@ NONE
 
 =cut
 
-sub activate { $_[0]->_set(['active'], [1]) }
+sub activate { return shift->_set(['active'] => [1]) }
 
 #------------------------------------------------------------------------------#
 
@@ -1554,7 +1554,7 @@ NONE
 
 =cut
 
-sub deactivate { $_[0]->_set(['active'], [0]) }
+sub deactivate { return shift->_set(['active'] => [0]) }
 
 #------------------------------------------------------------------------------#
 

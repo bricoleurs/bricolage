@@ -474,7 +474,7 @@ The XSD source:
                <xs:element name="elements">
                  <xs:complexType>
                    <xs:sequence>
-                     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
                        <xs:complexType>
                          <xs:simpleContent>
                            <xs:extension base="xs:string">
@@ -584,7 +584,7 @@ The XSD source:
                <xs:element name="elements">
                  <xs:complexType>
                    <xs:sequence>
-                     <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
                        <xs:complexType>
                          <xs:simpleContent>
                            <xs:extension base="xs:string">
@@ -792,10 +792,10 @@ The XSD source:
                    </xs:sequence>
                  </xs:complexType>
                </xs:element>
-               <xs:element name="fields">
+               <xs:element name="field_types">
                  <xs:complexType>
                    <xs:sequence>
-                     <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="field_type" minOccurs="0" maxOccurs="unbounded">
                        <xs:complexType>
                          <xs:sequence>
                            <xs:element name="key_name" type="xs:string"/>
@@ -1260,7 +1260,7 @@ The XSD source:
        <xs:documentation>An element data container - a recursive type.</xs:documentation>
      </xs:annotation>
      <xs:sequence>
-       <xs:element name="data" minOccurs="0" maxOccurs="unbounded">
+       <xs:element name="field_type" minOccurs="0" maxOccurs="unbounded">
          <xs:complexType>
            <xs:simpleContent>
              <xs:extension base="xs:string">

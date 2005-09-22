@@ -108,7 +108,7 @@ story above.
     $template->param(title => $story->get_title);
 
     # get deck and assign it to a var
-    $template->param(deck => $element->get_data('deck'));
+    $template->param(deck => $element->get_value('deck'));
 
     # setup the page break variable
     $template->param(page_break => $burner->page_break);
@@ -121,7 +121,7 @@ story above.
         my @element_loop;
         foreach my $e ($page->get_elements) {
             # push on a row for this element
-            push @element_loop, { $e->get_key_name => $e->get_data };
+            push @element_loop, { $e->get_key_name => $e->get_value };
         }
 
         # push element_loop and a page_count on this loop
@@ -162,14 +162,14 @@ variables:
     $template->param(title => $story->get_title);
 
     # get deck and assign it to a var
-    $template->param(deck => $element->get_data('deck'));
+    $template->param(deck => $element->get_value('deck'));
 
     # setup the page break variable
     $template->param(page_break => $burner->page_break);
 
 The title variable assignment should be fairly self-explanatory -- it gets the
 story's title and makes it available to the template. Next the deck field
-is retrieved from $element using the get_data() method. Since there can only
+is retrieved from $element using the get_value() method. Since there can only
 be one deck field -- it's not marked as repeatable in the element tree --
 it's safe to assign it to a single variable. Finally, a special variable is
 setup to paginate the story; C<< $burner->page_break >> returns a value that
@@ -191,7 +191,7 @@ The call to C<< $element->get_elements('page') >> returns container elements
 of the 'page' type. What's a container element? Well, unfortunately Bricolage
 is a bit confused about what to call things internally -- what the external
 system refers to simply as an "element" the guts refer to as "container
-elements." To make matters worse, fields are internally referred to as "data
+elements." To make matters worse, fields are internally referred to as "field
 elements." That said, calling elements "container elements" is nicely
 descriptive since only container elements can I<contain> other elements.
 
@@ -201,7 +201,7 @@ Now that the loop is setup it's time to extract the page data:
         my @element_loop;
         foreach my $e ($page->get_elements) {
             # push on a row for this element
-            push @element_loop, { $e->get_key_name => $e->get_data };
+            push @element_loop, { $e->get_key_name => $e->get_value };
         }
 
 First the code creates a new array to hold the element variables from this

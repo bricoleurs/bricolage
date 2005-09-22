@@ -51,11 +51,11 @@ if (@elements || @$elem_opts ) {
 <%perl>
 # Find a suitable element to display
 my($disp_buf, $value_buf);
-foreach my $field ($dt->get_data_elements) {
+foreach my $field ($dt->get_fields) {
     next if $field->get_widget_type !~ /^text/;
-    if (my $data = $dt->get_data($field->get_key_name)) {
-        $disp_buf  =  $field->get_name;
-        $value_buf =  substr($data, 0, 64);
+    if (my $value = $field->get_value) {
+        $disp_buf  = $field->get_name;
+        $value_buf = substr($value, 0, 64);
         last;
     }
 }
@@ -145,7 +145,7 @@ if ($at->is_related_media) {
     my $key =  $widget . '|' . $dt->get_id;
 
     # Get the value.
-    $vals->{value} = $dt->get_data(ISO_8601_FORMAT);
+    $vals->{value} = $dt->get_value(ISO_8601_FORMAT);
     $vals->{value} = $at_obj->get_default_val unless defined $vals->{value};
     if ($vals->{props}{type} eq 'checkbox') {
         $vals->{props}{chk} = $vals->{value};
@@ -393,7 +393,7 @@ my $elem_opts = [
         my $key = $_->can('get_sites') ? 'cont_' : 'data_';
         [ lc $_->get_name => [ $key . $_->get_id => $_->get_name ] ]
     }
-        $element->get_possible_data,
+        $element->get_possible_field_types,
         grep { chk_authz($_, READ, 1) } $element->get_possible_containers
 ];
 

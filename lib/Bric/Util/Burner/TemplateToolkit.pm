@@ -507,7 +507,7 @@ B<Notes:> NONE.
 sub display_element {
     my $self = shift;
     my $elem = shift or return '';
-    return $elem->get_data unless $elem->is_container;
+    return $elem->get_value unless $elem->is_container;
 
     my $data = '';
     my $tt = $self->_get('_tt');

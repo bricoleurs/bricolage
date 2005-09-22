@@ -230,7 +230,7 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
                      number  => ++$num);
 
             # mangle the attrs and meta to match the existing display code.
-            my $all_data = $comp->get_data;
+            my $all_data = $comp->get_field_types;
             if (@$all_data) {
                 my @attrs;
                 for my $field_type (@$all_data) {

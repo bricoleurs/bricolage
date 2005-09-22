@@ -54,7 +54,7 @@ sub new_args {
     my $self = shift;
     my $story = $self->get_story;
     my $cont  = $story->get_element;
-    my $atd   = ($cont->get_element_type->get_data)[0];
+    my $atd   = ($cont->get_element_type->get_field_types)[0];
 
     (active             => 1,
      object_type        => 'story',
@@ -76,23 +76,24 @@ sub construct {
 sub test_new : Test(9) {
     my $self = shift;
 
-    ok (my $delement = $self->construct, 'Construct Data Element');
-    ok ($delement->set_data('Macaroon'), 'Add Data to Data Element');
-    ok ($delement->save,                 'Save Data Element');
-    ok (my $d_id = $delement->get_id,    'Get Data Element ID');
+    ok (my $delement = $self->construct,  'Construct Field Element');
+    ok ($delement->set_value('Macaroon'), 'Add value to Field Element');
+    ok ($delement->save,                  'Save Field Element');
+    ok (my $d_id = $delement->get_id,     'Get Field Element ID');
 
     $self->add_del_ids([$d_id], $delement->S_TABLE);
 
     ok (my $lkup = $self->class->lookup({
         id          => $d_id,
         object_type => 'story'
-    }), 'Lookup Data Element');
-    is ($lkup->get_data, 'Macaroon',  'Compare Data');
+    }), 'Lookup Field Element');
+    is ($lkup->get_value, 'Macaroon',  'Compare value');
 
-    ok (my $atd = $delement->get_field_type, 'Get Element Data Object');
+    ok (my $atd = $delement->get_field_type, 'Get Field Element Object');
     ok (my $list = $self->class->list({object_type => 'story'}),
-       'List Data Elements');
-    ok (grep($_->get_id == $delement->get_id, @$list), 'Data Element is Listed');
+       'List Field Elements');
+    ok (grep($_->get_id == $delement->get_id, @$list),
+        'Field Element is Listed');
 }
 
 ##############################################################################
@@ -126,22 +127,22 @@ sub test_list : Test(97) {
 
     # Add some content to it.
     ok my $elem = $story->get_element, 'Get the story element';
-    ok $elem->add_data($para, 'This is a paragraph'), 'Add a paragraph';
-    ok $elem->add_data($para, 'Second paragraph'), 'Add another paragraph';
-    ok $elem->add_data($head, 'And then...'), 'Add a header';
-    ok $elem->add_data($para, 'Third paragraph'), 'Add a third paragraph';
-    ok $elem->add_data($para, 'Fourth paragraph'), 'Add a fourth paragraph';
-    ok $elem->add_data($head, 'What next?'), 'Add another header';
+    ok $elem->add_field($para, 'This is a paragraph'), 'Add a paragraph';
+    ok $elem->add_field($para, 'Second paragraph'), 'Add another paragraph';
+    ok $elem->add_field($head, 'And then...'), 'Add a header';
+    ok $elem->add_field($para, 'Third paragraph'), 'Add a third paragraph';
+    ok $elem->add_field($para, 'Fourth paragraph'), 'Add a fourth paragraph';
+    ok $elem->add_field($head, 'What next?'), 'Add another header';
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), 'Add a pull quote';
-    ok $pq->get_data_element('para')->set_data(
+    ok $pq->get_field('para')->set_value(
         'Ask not what your country can do for you.\n='
         . 'Ask what you can do for your country.'
         ), 'Add a paragraph with an apparent POD tag';
-    ok $pq->get_data_element('by')->set_data('John F. Kennedy'),
+    ok $pq->get_field('by')->set_value('John F. Kennedy'),
         'Add a By to the pull quote';
-    ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+    ok $pq->get_field('date')->set_value('1961-01-20 00:00:00'),
         'Add a date to the pull quote';
 
     # Make it so!
@@ -233,12 +234,12 @@ sub test_list : Test(97) {
     ok @fields = $class->list({
         object_type   => 'story',
         field_type_id => $para->get_id,
-    }), 'List dataents by field_type_id';
+    }), 'List fields by field_type_id';
     is scalar @fields, 4, 'There should be four fields';
     ok @fields = $class->list({
         object_type   => 'story',
         field_type_id => ANY( $para->get_id, $head->get_id ),
-    }), 'List dataents by ANY(field_type_id)';
+    }), 'List fields by ANY(field_type_id)';
     is scalar @fields, 6, 'There should be six fields';
 
     # Try by active.
@@ -289,22 +290,22 @@ sub test_list_ids : Test(98) {
 
     # Add some content to it.
     ok my $elem = $story->get_element, 'Get the story element';
-    ok $elem->add_data($para, 'This is a paragraph'), 'Add a paragraph';
-    ok $elem->add_data($para, 'Second paragraph'), 'Add another paragraph';
-    ok $elem->add_data($head, 'And then...'), 'Add a header';
-    ok $elem->add_data($para, 'Third paragraph'), 'Add a third paragraph';
-    ok $elem->add_data($para, 'Fourth paragraph'), 'Add a fourth paragraph';
-    ok $elem->add_data($head, 'What next?'), 'Add another header';
+    ok $elem->add_field($para, 'This is a paragraph'), 'Add a paragraph';
+    ok $elem->add_field($para, 'Second paragraph'), 'Add another paragraph';
+    ok $elem->add_field($head, 'And then...'), 'Add a header';
+    ok $elem->add_field($para, 'Third paragraph'), 'Add a third paragraph';
+    ok $elem->add_field($para, 'Fourth paragraph'), 'Add a fourth paragraph';
+    ok $elem->add_field($head, 'What next?'), 'Add another header';
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), 'Add a pull quote';
-    ok $pq->get_data_element('para')->set_data(
+    ok $pq->get_field('para')->set_value(
         'Ask not what your country can do for you.\n='
         . 'Ask what you can do for your country.'
         ), 'Add a paragraph with an apparent POD tag';
-    ok $pq->get_data_element('by')->set_data('John F. Kennedy'),
+    ok $pq->get_field('by')->set_value('John F. Kennedy'),
         'Add a By to the pull quote';
-    ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+    ok $pq->get_field('date')->set_value('1961-01-20 00:00:00'),
         'Add a date to the pull quote';
 
     # Make it so!
@@ -396,12 +397,12 @@ sub test_list_ids : Test(98) {
     ok @field_ids = $class->list_ids({
         object_type   => 'story',
         field_type_id => $para->get_id,
-    }), 'List IDs dataents by field_type_id';
+    }), 'List IDs fields by field_type_id';
     is scalar @field_ids, 4, 'There should be four field ids';
     ok @field_ids = $class->list_ids({
         object_type   => 'story',
         field_type_id => ANY( $para->get_id, $head->get_id ),
-    }), 'List IDs dataents by ANY(field_type_id)';
+    }), 'List IDs fields by ANY(field_type_id)';
     is scalar @field_ids, 6, 'There should be six field ids';
 
     # Try by active.

@@ -630,7 +630,7 @@ sub _build_element_vars {
 
         # simple data elements
         unless ($e->is_container) {
-            $var{$name} = $e->get_data();
+            $var{$name} = $e->get_value();
             $loop{"$name\_loop"} = [] unless exists $loop{"$name\_loop"};
 
             # push a row for this value

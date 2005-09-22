@@ -825,9 +825,9 @@ sub _render_element {
         return $html;
     } else {
         if ($display) {
-            HTML::Mason::Request->instance->out($elem->get_data);
+            HTML::Mason::Request->instance->out($elem->get_value);
         } else {
-            return $elem->get_data();
+            return $elem->get_value();
         }
     }
 }

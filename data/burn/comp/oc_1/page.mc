@@ -3,7 +3,7 @@
 foreach my $e ($element->get_elements) {
     my $key_name = $e->get_key_name;
     if ($key_name eq 'paragraph') {
-        $m->out('<p>'.$e->get_data.'</p>');
+        $m->print('<p>', $e->get_value, '</p>');
 
     } elsif ($key_name eq 'pull_quote') {
         $burner->display_element($e);
@@ -21,7 +21,7 @@ foreach my $e ($element->get_elements) {
 % my $pnum = $burner->get_page + 1;
 
 %# Show 'previous' link
-% my $prev = $element->get_data('previous');
+% my $prev = $element->get_value('previous');
 % if ($prev) {
 <a href="index<% $pnum-2 != 0 ? $pnum-2 : '' %>.html">
 &lt;&lt;&lt; Page <% $pnum - 1 %> : </a>
@@ -31,7 +31,7 @@ foreach my $e ($element->get_elements) {
 &nbsp;&nbsp;&nbsp;
 
 %# Show 'next' link
-% my $next = $element->get_data('next');
+% my $next = $element->get_value('next');
 % if ($next) {
 <% $next %>
 <a href="index<% $pnum %>.html">

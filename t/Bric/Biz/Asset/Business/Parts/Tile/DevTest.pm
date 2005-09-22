@@ -121,7 +121,7 @@ sub create_element_types {
     $self->{story_type} = $story_type;
 
     # Give it a header field.
-    ok my $head = $story_type->new_data({
+    ok my $head = $story_type->new_field_type({
         key_name    => 'header',
         name        => 'Header',
         required    => 0,
@@ -134,7 +134,7 @@ sub create_element_types {
     $self->{head} = $head;
 
     # Give it a paragraph field.
-    ok my $para = $story_type->new_data({
+    ok my $para = $story_type->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 0,
@@ -165,7 +165,7 @@ sub create_element_types {
     $self->add_del_ids($pull_quote->get_id, 'element_type');
 
     # Give it a paragraph field.
-    ok my $pq_para = $pull_quote->new_data({
+    ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 1,
@@ -178,7 +178,7 @@ sub create_element_types {
     $self->{pq_para} = $pq_para;
 
     # Give it a by field.
-    ok my $by = $pull_quote->new_data({
+    ok my $by = $pull_quote->new_field_type({
         key_name    => 'by',
         name        => 'By',
         required    => 1,
@@ -191,7 +191,7 @@ sub create_element_types {
     $self->{by} = $by;
 
     # Give it a date field.
-    ok my $date = $pull_quote->new_data({
+    ok my $date = $pull_quote->new_field_type({
         key_name    => 'date',
         name        => 'Date',
         required    => 1,
@@ -220,7 +220,7 @@ sub create_element_types {
     $self->{page} = $page;
 
     # Give it a paragraph field.
-    ok my $page_para = $page->new_data({
+    ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 0,

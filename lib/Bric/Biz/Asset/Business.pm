@@ -1244,54 +1244,46 @@ sub get_element_key_name {
 
 ################################################################################
 
-=item (@parts || $parts) = $biz->get_possible_data()
+=item $ba->get_possible_field_types()
 
-Returns the possible data that can be added to the top level element of this
-business asset based upon rules defined in asset type
+=item $ba->get_possible_data()
 
-B<Throws:>
+Returns a list or array reference of the field types that define the structure
+of fields that can be added to the business document's element.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<get_possible_data()> is the deprecated form of this method.
 
 =cut
 
-sub get_possible_data {
+sub get_possible_field_types {
     my $self = shift;
     my $element = $self->get_element;
-    return $element->get_possible_data;
+    return $element->get_possible_field_types;
 }
+
+sub get_possible_data { shift->get_possible_field_types(@_) }
 
 ################################################################################
 
-=item (@containers || $containers) = $biz->get_possible_containers()
+=item $ba->get_possible_containers()
 
-Returns the containers that are possible to add to the top level container
-of this businesss asset
+Returns a list or array reference of the element types that define the
+structure of elements that can be added to the business document's element.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_possible_containers {
-    my ($self) = @_;
+    my $self = shift;
     my $element = $self->get_element;
     return $element->get_possible_containers;
 }
@@ -1688,52 +1680,36 @@ sub is_fixed {
 Returns the elements that are held with in the top level element of this business
 asset. Convenience shortcut to C<< $ba->get_element->get_elements >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<get_tiles()> is the deprecated form of this method.
 
 =cut
 
-sub get_elements {
-    my $self = shift;
-    $self->get_element->get_elements(@_);
-}
-
-sub get_tiles { shift->get_elements(@_); }
+sub get_elements { shift->get_element->get_elements(@_) }
+sub get_tiles    { shift->get_element->get_elements(@_) }
 
 ###############################################################################
 
-=item $ba = $ba->add_data( $atd_obj, $data )
+=item $ba->add_field($field_type, $value)
 
-This will create a element and add it to the container. Convenience shortcut to
-C<< $ba->get_element->add_data >>.
+=item $ba->add_data($field_type, $value)
 
-B<Throws:>
+Creates a new field and adds it to the business document's element. Convenience
+shortcut to C<< $ba->get_element->add_field >>.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<add_data()> is the deprecated form of this method.
 
 =cut
 
-sub add_data {
-    my $self = shift;
-    $self->get_element->add_data(@_);
-}
+sub add_field { shift->get_element->add_field(@_) }
+sub add_data  { shift->get_element->add_field(@_) }
 
 ###############################################################################
 
@@ -1756,71 +1732,52 @@ NONE
 
 =cut
 
-sub add_container {
-    my $self = shift;
-    $self->get_element->add_container(@_);
-}
+sub add_container { shift->get_element->add_container(@_) }
 
 ###############################################################################
 
-=item $data = $ba->get_data( $name, $obj_order )
+=item $value = $ba->get_value( $key_name, $obj_order )
 
-=item $data = $ba->get_data( $name, $obj_order, $format )
+=item $value = $ba->get_value( $key_name, $obj_order, $format )
 
-Returns the data of a given name and object order. Convenience shortcut to
-C<< $ba->get_element->get_data >>.
+=item $value = $ba->get_data( $key_name, $obj_order )
 
-B<Throws:>
+=item $value = $ba->get_data( $key_name, $obj_order, $format )
 
-NONE
+Returns the value for a field with the given key name and object order.
+Convenience shortcut to C<< $ba->get_element->get_value >>.
 
-B<Side Effects:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
 B<Notes:>
 
-For data fields that can return multiple values, you currently have to parse
-the data string like this:
-
-   my $str = $element->get_data('blah');
-   my @opts = split /__OPT__/, $str;
-
-This behavior might be changed so that the string is automatically split for
-you.
+C<get_data()> is the deprecated form of this method. For fields that can
+contain multiple values, call C<get_values()>, instead.
 
 =cut
 
-sub get_data {
-    my $self = shift;
-    $self->get_element->get_data(@_);
-}
+sub get_value { shift->get_element->get_value(@_) }
+sub get_data  { shift->get_element->get_value(@_) }
 
 ###############################################################################
 
-=item $container = $ba->get_container( $name, $obj_order )
+=item $container = $ba->get_container( $key_name, $obj_order )
 
-Returns a container object of the given name that falls at the given object
-order position. Convenience shortcut to C<< $ba->get_element->get_container >>.
+Returns a container element object with the given key name and the given
+object order position. Convenience shortcut to
+C<< $ba->get_element->get_container >>.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub get_container {
-    my $self = shift;
-    $self->get_element->get_container(@_);
-}
+sub get_container { shift->get_element->get_container(@_) }
 
 ###############################################################################
 
@@ -2016,10 +1973,9 @@ NONE
 =cut
 
 sub is_current {
-        my ($self) = @_;
-
-        return ($self->_get('current_version') == $self->_get('version'))
-                ? $self : undef;
+    my $self = shift;
+    return $self->_get('current_version') == $self->_get('version')
+        ? $self : undef;
 }
 
 ################################################################################

@@ -28,8 +28,8 @@ $LastChangedDate$
   @ids = = Bric::Biz::Asset::Business::Parts::Tile::Data->list_ids($params);
 
   # Manipulation of Data Field
-  $data = $data->set_data( $data_value );
-  $data_value = $data->get_data;
+  $data = $data->set_value( $data_value );
+  $data_value = $data->get_value;
 
 =head1 DESCRIPTION
 
@@ -572,13 +572,14 @@ sub get_element_key_name { $_[0]->get_key_name }
 
 =item $data->set_data($value)
 
-Sets the value of the field.
+Sets the value of the field. Use C<set_values()> if multiple values are
+allowed on the field (because the field type's C<multiple> attribute is true).
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<set_data()> is the deprecated form of this method.
 
 =cut
 
@@ -601,6 +602,23 @@ sub set_value {
 
 sub set_data { shift->set_value(@_) }
 
+##############################################################################
+
+=item $data->set_values(@values)
+
+Sets multiple values for the field. Useful for setting the values for
+"multiple" fields such as multiple select lists.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_values { shift->set_value(join '__OPT__', @_) }
+
 ################################################################################
 
 =item my $value = $value->get_value
@@ -621,14 +639,8 @@ B<Side Effects:> NONE.
 
 B<Notes:>
 
-For data fields that can return multiple values, you currently have to parse
-the data string like this:
-
-   my $str = $element->get_data('blah');
-   my @opts = split /__OPT__/, $str;
-
-This behavior might be changed so that the string is automatically split for
-you.
+C<set_data()> is the deprecated form of this method. For fields that can
+contain multiple values, call C<get_values()>, instead.
 
 =cut
 
@@ -641,6 +653,34 @@ sub get_value {
 }
 
 sub get_data { shift->get_value(@_) }
+
+################################################################################
+
+=item $field->get_values()
+
+  my @values      = $field->get_values;
+     @values      = $field->get_values($format);
+  my $fields_aref = $field->get_values;
+     $fields_aref = $field->get_values($format);
+
+Returns a list or array reference of all of the values associated with a
+field. This method should be called in preference to C<get_value()> for fields
+that can contain multiple values (i.e., C<is_multiple()> returns a true value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_values {
+    my $vals = shift->get_value(@_);
+    return wantarray ?   split /__OPT__/, $vals
+                     : [ split /__OPT__/, $vals ]
+                     ;
+}
 
 ##############################################################################
 

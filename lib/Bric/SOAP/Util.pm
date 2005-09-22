@@ -248,7 +248,7 @@ sub parse_asset_document {
                  suppressempty => '',
                  forcearray    => [qw( contributor category output_channel
                                        keyword element_type element container
-                                       data story media template ),
+                                       data field story media template ),
                                    @extra_force_array
                                   ]
                 );
@@ -462,15 +462,16 @@ sub _deserialize_element {
 
     # get lists of possible data types and possible containers that
     # can be added to this element.  Hash on names for quick lookups.
-    my %valid_data      = map { ($_->get_key_name, $_) }
-        $element->get_possible_data();
-    my %valid_container = map { ($_->get_key_name, $_) }
+    my %valid_data      = map { $_->get_key_name => $_ }
+        $element->get_possible_field_types();
+    my %valid_container = map { $_->get_key_name, $_  }
         $element->get_possible_containers();
 
     # load data elements
-    if ($data->{data}) {
-        foreach my $d (@{$data->{data}}) {
-            my $key_name = $d->{widget_type} || $d->{element};
+    $data->{field} ||= $data->{data};
+    if ($data->{field}) {
+        foreach my $d (@{$data->{field}}) {
+            my $key_name = $d->{type} || $d->{element};
             my $at = $valid_data{$key_name};
             throw_ap(error => "Error loading data element for " .
                        $element->get_key_name .
@@ -479,15 +480,19 @@ sub _deserialize_element {
 
             if ($at->get_sql_type eq 'date') {
                 # add date data to container
-                $element->add_data($at,
-                                   exists $d->{content} ?
-                                   xs_date_to_db_date($d->{content}) : '',
-                                   $d->{order});
+                $element->add_field(
+                    $at,
+                    exists $d->{content} ?
+                        xs_date_to_db_date($d->{content}) : '',
+                    $d->{order}
+                );
             } else {
                 # add data to container
-                $element->add_data($at,
-                                   exists $d->{content} ? $d->{content} : '',
-                                   $d->{order});
+                $element->add_field(
+                    $at,
+                    exists $d->{content} ? $d->{content} : '',
+                    $d->{order}
+                );
             }
 
             $element->save; # I'm not sure why this is necessary after
@@ -515,9 +520,11 @@ sub _deserialize_element {
             push @relations, _load_relateds($container, $c, $site_id);
 
             # recurse
-            push @relations, _deserialize_element(element   => $container,
-                                               site_id   => $site_id,
-                                               data      => $c);
+            push @relations, _deserialize_element(
+                element   => $container,
+                site_id   => $site_id,
+                data      => $c
+            );
             # Log it.
             log_event("${type}_add_element", $object,
                       { Element => $container->get_key_name })
@@ -642,22 +649,22 @@ sub _serialize_element {
 
         if ($element->get_sql_type eq 'date') {
             # get date data and format for output
-            $data = $element->get_data(ISO_8601_FORMAT);
+            $data = $element->get_value(ISO_8601_FORMAT);
             $data = db_date_to_xs_date($data) if $data;
         } else {
-            $data = $element->get_data();
+            $data = $element->get_value();
         }
 
         if (defined $data and length $data) {
             $writer->dataElement(
-                data        => $data,
-                widget_type => $element->get_key_name,
+                field       => $data,
+                type => $element->get_key_name,
                 order       => $element->get_place - $diff,
             );
         } else {
             $writer->emptyTag(
-                'data',
-                widget_type => $element->get_key_name,
+                'field',
+                type => $element->get_key_name,
                 order       => $element->get_place - $diff,
             );
         }

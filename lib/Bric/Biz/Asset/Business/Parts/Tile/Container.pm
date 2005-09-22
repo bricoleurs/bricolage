@@ -13,7 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-
 =head1 DATE
 
 $LastChangedDate$
@@ -287,8 +286,8 @@ sub new {
     my $self = $class->SUPER::new($init);
 
     # Prepopulate from the asset type object
-    foreach my $data ($init->{_element_type_obj}->get_data) {
-        $self->add_data($data) if $data->get_required;
+    foreach my $ft ($init->{_element_type_obj}->get_field_types) {
+        $self->add_field($ft) if $ft->get_required;
     }
 
     $self->_set__dirty(1);
@@ -799,7 +798,12 @@ sub get_element_key_name { $_[0]->get_key_name }
 
 ################################################################################
 
-=item my @data = $container->get_possible_data
+=item $container->get_possible_field_types()
+
+=item $container->get_possible_data()
+
+  my @field_types = $container->get_possible_field_types();
+     @field_types = $container->get_possible_data();
 
 Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
 objects that define the types of data elements that can be subelements of this
@@ -811,15 +815,15 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_possible_data()> is the deprecated form of this method.
 
 =cut
 
-sub get_possible_data {
+sub get_possible_field_types {
     my ($self) = @_;
-    my $current = $self->get_data_elements();
+    my $current = $self->get_fields();
     my $at      = $self->get_element_type;
-    my %at_info = map { $_->get_id => $_ } $at->get_data;
+    my %at_info = map { $_->get_id => $_ } $at->get_field_types;
     my @parts;
 
     for my $data (@$current) {
@@ -833,6 +837,8 @@ sub get_possible_data {
 
     return wantarray ? @parts : \@parts;
 }
+
+sub get_possible_data { shift->get_possible_field_types(@_) }
 
 ################################################################################
 
@@ -860,12 +866,14 @@ sub get_possible_containers {
 
 ################################################################################
 
-=item $container = $container->add_data($atd, $value, $place);
+=item $container->add_field($field_type, $value, $place);
 
-Pass a Bric::Biz::AssetType::Parts::Data object and a value for a new data
-element, and that new data element will be added as a subelement of the
-container element. An optional third argument specifies the C<place> for that
-data element in the order of subelements of this container element.
+=item $container->add_data($field_type, $value, $place);
+
+Pass a Bric::Biz::AssetType::Parts::Data object and a value for a new field
+element, and that new field element will be created and added as a subelement
+of the container element. An optional third argument specifies the C<place>
+for that field element in the order of subelements of this container element.
 
 B<Throws:> NONE.
 
@@ -875,7 +883,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub add_data {
+sub add_field {
     my ($self, $atd, $data, $place) = @_;
     my $field = Bric::Biz::Asset::Business::Parts::Tile::Data->new({
         active             => 1,
@@ -884,7 +892,7 @@ sub add_data {
         field_type         => $atd,
     });
 
-    $field->set_data($data) if defined $data;
+    $field->set_value($data) if defined $data;
     $self->add_element($field);
 
     # have to do this after add_element() since add_element() modifies place
@@ -892,13 +900,15 @@ sub add_data {
     return $self;
 }
 
+sub add_data { shift->add_field(@_) }
+
 ################################################################################
 
 =item $new_container = $container->add_container($element)
 
 Adds a new container subelement to this container element. Pass in the
-required Bric::Biz::AssetType object specifying the structure of the new
-container subelement.
+required element type (Bric::Biz::AssetType) object specifying the structure
+of the new container subelement.
 
 B<Throws:> NONE.
 
@@ -926,105 +936,113 @@ sub add_container {
 
 ################################################################################
 
-=item my $data = $element->get_data_element($key_name, $obj_order)
+=item my $field = $element->get_field($key_name, $obj_order)
 
-Returns a specific data subelement of this container element. Pass in the key
-name of the data element to be retreived. By default, the first data element
-with that key name will be returned. Pass in an optional second argument to
-specify the C<object_order> of the data element to be retrieved.
+=item my $field = $element->get_data_element($key_name, $obj_order)
+
+Returns a specific field subelement of this container element. Pass in the key
+name of the field to be retreived. By default, the first field with that key
+name will be returned. Pass in an optional second argument to specify the
+C<object_order> of the field to be retrieved.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_data_element()> is the deprecated form of this method.
 
 =cut
 
-sub get_data_element {
+sub get_field {
     my ($self, $kn, $obj_order) = @_;
     $obj_order = 1 unless defined $obj_order;
     return first {
         !$_->is_container
-        && $_->get_key_name eq $kn
         && $_->get_object_order == $obj_order
+        && $_->get_key_name     eq $kn
     } $self->get_elements;
 }
 
+sub get_data_element { shift->get_field(@_) }
+
 ################################################################################
 
-=item my @data = $container->get_data_elements
+=item my @fields = $container->get_fields
 
-  my @data = $element->get_data_elements;
-  @data = $element->get_data_elements(@key_names);
+=item my @fields = $container->get_data_elements
 
-Returns a list or anonymous array of the data subelements of this element. If
-called with no arguments, it returns all of the data subelements. If passed a
-list of key names, the only the data subelements with those key names will be
-returned.
+  my @data = $element->get_fields;
+     @data = $element->get_fields(@key_names);
+     @data = $element->get_data_elements;
+     @data = $element->get_data_elements(@key_names);
+
+Returns a list or anonymous array of the field subelements of this element. If
+called with no arguments, it returns all of the field subelements. If passed a
+list of key names, the only the field subelements with those key names will be
+returned, in the order specified by their C<place> attributes.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_data_elements()> is the deprecated form of this method.
 
 =cut
 
-sub get_data_elements {
+sub get_fields {
     my $self = shift;
 
     # Just return them all if no key names are passed.
     return wantarray
-      ? (grep { ! $_->is_container } @{ $self->get_elements })
-      : [grep { ! $_->is_container } @{ $self->get_elements }]
-      unless @_;
+        ? ( grep { ! $_->is_container } @{ $self->get_elements } )
+        : [ grep { ! $_->is_container } @{ $self->get_elements } ]
+        unless @_;
 
     # Return only those with the specified key names.
-    my %knames = map { $_ => 1} @_;
+    my %knames = map { $_ => undef } @_;
     return wantarray
-      ? (grep { ! $_->is_container && $knames{$_->get_key_name} }
+      ? (grep { ! $_->is_container && exists $knames{$_->get_key_name} }
            @{ $self->get_elements })
-      : [grep { ! $_->is_container && $knames{$_->get_key_name} }
+      : [grep { ! $_->is_container && exists $knames{$_->get_key_name} }
            @{ $self->get_elements }];
 }
 
+sub get_data_elements { shift->get_fields(@_) }
+
 ################################################################################
 
-=item $string = $element->get_data($key_name, $obj_order)
+=item $value = $element->get_value($key_name, $obj_order)
 
-=item $string = $element->get_data($key_name, $obj_order, $date_format)
+=item $value = $element->get_value($key_name, $obj_order, $date_format)
 
-Returns the value of a specific data subelement of this container element.
-Pass in the key name of the data element to be retreived. By default, the
-first data element with that key name will be returned. Pass in an optional
-second argument to specify the C<object_order> of the data element to be
+=item $value = $element->get_data($key_name, $obj_order)
+
+=item $value = $element->get_data($key_name, $obj_order, $date_format)
+
+Returns the value of a specific field subelement of this container element.
+Pass in the key name of the field element to be retreived. By default, the
+first field element with that key name will be returned. Pass in an optional
+second argument to specify the C<object_order> of the field element to be
 retrieved. Pass in the optional C<$date_format> argument if you expect the
-data returned from C<$key_name> to be of the date type, and you'd like a
+value returned from C<$key_name> to be of the date type, and you'd like a
 format other than that set in the "Date Format" preference.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:> C<get_data()> is the deprecated form of this method.
 
 =cut
 
-sub get_data {
-    my ($self, $name, $obj_order, $dt_fmt) = @_;
-
-    # If we find any illegal characters, warn the user to start using the key
-    # name rather than the display name.
-    if ($name =~ /[^a-z0-9_]/) {
-        ($name = lc($name)) =~ y/a-z0-9/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_data'.  Please use the element's 'key_name' field instead.";
-        Bric::App::Util::add_msg($msg);
-        warn $msg;
-    }
-    my $delem = $self->get_data_element($name, $obj_order) or return undef;
-    return $delem->get_data($dt_fmt);
+sub get_value {
+    my ($self, $key_name, $obj_order, $dt_fmt) = @_;
+    # Be sure to always return a scalar value!
+    my $delem = $self->get_field($key_name, $obj_order) or return undef;
+    return $delem->get_value($dt_fmt);
 }
+
+sub get_data { shift->get_value(@_) }
 
 ################################################################################
 
@@ -1046,21 +1064,12 @@ B<Notes:> NONE.
 
 sub get_container {
     my ($self, $kn, $obj_order) = @_;
-
-    # If we find any illegal characters, warn the user to start using the key
-    # name rather than the display name.
-    if ($kn =~ /[^a-z0-9_]/) {
-        ($kn = lc($kn)) =~ y/a-z0-9/_/cs;
-        my $msg = "Warning:  Use of element's 'name' field is deprecated for use with element method 'get_container'.  Please use the element's 'key_name' field instead.";
-        Bric::App::Util::add_msg($msg);
-    }
-
     $obj_order = 1 unless defined $obj_order;
 
     return first {
         $_->is_container
-        && $_->get_key_name eq $kn
         && $_->get_object_order == $obj_order
+        && $_->get_key_name     eq $kn
     } $self->get_elements;
 }
 
@@ -1953,7 +1962,7 @@ sub _podify {
                  .  "$indent=end $kn\n\n";
         } else {
             my $kn = $sub->get_key_name;
-            (my $data = $sub->get_data) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
+            (my $data = $sub->get_value) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
             $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
             $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
             $pod .= "$indent$data\n\n";
@@ -2015,7 +2024,7 @@ sub _deserialize_pod {
     my %elem_types  = map { $_->get_key_name => $_ }
         $elem_type->get_containers;
     my %field_types = map { $_->get_key_name => $_ }
-        $elem_type->get_data;
+        $elem_type->get_field_types;
 
     # Set up the default field.
     if (defined $def_field && $def_field ne '') {
@@ -2331,7 +2340,7 @@ sub _deserialize_pod {
                     object_instance_id => $doc_id,
                     field_type         => $field_type,
                 });
-            $field->set_data($content) if defined $content;
+            $field->set_value($content) if defined $content;
             $field->set_place(scalar @elems);
             $field->set_object_order(++$field_ord{$kn});
             push @elems, $field;

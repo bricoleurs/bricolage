@@ -20,8 +20,8 @@ if ($show_summary) {
     <dl class="viewmeta">
         <dt>Element:</dt>
         <dd><% $at->get_name %> <% $show_element_flags->($at) %></dd>
-% if (my $fields = $at->get_data) {
-        <dt>Data Elements:</dt>
+% if (my $fields = $at->get_field_types) {
+        <dt>Field Elements:</dt>
         <dd>
 %     $m->print(join ', ', map { $_->get_key_name . $show_data_flags->($_) } @$fields);
         </dd>
@@ -38,7 +38,7 @@ my $opts = [
     [ '' =>  '' ],
     map  {   [ $_ => $_ ]   }
     sort {     $a cmp $b    }
-    map  { $_->get_key_name } $at->get_data
+    map  { $_->get_key_name } $at->get_field_types
 ];
 </%perl>
 <& '/widgets/profile/select.mc',

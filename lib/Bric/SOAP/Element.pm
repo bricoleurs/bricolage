@@ -395,6 +395,7 @@ sub load_asset {
                                             'site',
                                             'subelement_type',
                                             'field',
+                                            'field_type',
                                            ) };
         throw_ap(error => __PACKAGE__ . " : problem parsing asset document : $@")
           if $@;
@@ -562,13 +563,22 @@ sub load_asset {
         }
 
         # build hash of existing fields.
-        my %old_data = map { $_->get_key_name => $_ } $element->get_data;
+        my %old_data = map { $_->get_key_name => $_ } $element->get_field_types;
         my %updated_data;
 
         # find fields and instantiate new data element types
         my $place = 0;
-        $edata->{fields} ||= {field => []};
-        foreach my $field (@{$edata->{fields}{field}}) {
+        unless ($edata->{field_types}) {
+            if ($edata->{fields}) {
+                $edata->{field_types} = delete $edata->{fields};
+                $edata->{field_types}{field_type}
+                    = delete $edata->{field_types}{field};
+            } else {
+                $edata->{field_types} = {field_type => []};
+            }
+        }
+
+        foreach my $field (@{$edata->{field_types}{field_type}}) {
             $place++; # next!
 
             # Make sure we have a key name. It should be fine, since we
@@ -579,9 +589,9 @@ sub load_asset {
 
             # figure out sql_type.
             my $sql_type;
-            if ($field->{type} eq 'date'){
+            if ($field->{widget_type} eq 'date'){
                 $sql_type = 'date';
-            } elsif ($field->{type} eq 'textarea' or
+            } elsif ($field->{widget_type} eq 'textarea' or
                      (defined $field->{max_size} and
                       ($field->{max_size} == 0 or
                        $field->{max_size} > 1024))) {
@@ -593,7 +603,7 @@ sub load_asset {
             # Verify the code if it's a codeselect
             # XXX: triplicated now... (cf. comp/widgets/profile/displayAttrs.mc
             # and lib/Bric/App/Callback/Profile/FormBuilder.pm)
-            if ($field->{type} eq 'codeselect') {
+            if ($field->{widget_type} eq 'codeselect') {
                 my $code = $field->{options};
                 my $items = eval "$code";
                 unless (ref $items eq 'ARRAY' and !(@$items % 2)) {
@@ -603,12 +613,11 @@ sub load_asset {
 
             # get a data object
             my $data;
-            if ($old_data{$field->{key_name}}) {
+            if ($data = $old_data{$field->{key_name}}) {
                 print STDERR __PACKAGE__ . "::update : ".
                     "Found old data object for $edata->{key_name} => ",
                      "$field->{key_name}.\n"
                      if DEBUG;
-                $data = $old_data{$field->{key_name}};
                 $data->set_key_name(    $field->{key_name});
                 $data->set_name(        $field->{name}        || $field->{label});
                 $data->set_description( $field->{description});
@@ -633,7 +642,7 @@ sub load_asset {
                     "Creating new data object for $edata->{key_name} => ",
                         "$field->{key_name}.\n"
                             if DEBUG;
-                $data = $element->new_data({
+                $data = $element->new_field_type({
                     key_name      => $field->{key_name},
                     name          => $field->{name}        || $field->{label},
                     description   => $field->{description},
@@ -670,7 +679,7 @@ sub load_asset {
                     "Deleting data fields $edata->{key_name} => ",
                         join(', ', @deleted), "\n"
                             if DEBUG;
-                $element->del_data([ (map { $old_data{$_} } @deleted) ]);
+                $element->del_field_types([ (map { $old_data{$_} } @deleted) ]);
             }
 
             $_->save for (map { $old_data{$_} } keys %updated_data);
@@ -787,10 +796,10 @@ sub serialize_asset {
     $writer->endTag("subelement_types");
 
     # output fields
-    $writer->startTag("fields");
-    foreach my $data ($element->get_data) {
+    $writer->startTag("field_types");
+    foreach my $data ($element->get_field_types) {
         # start <field>
-        $writer->startTag("field");
+        $writer->startTag("field_type");
 
         # required elements
         my $auto = 'autopopulated';
@@ -813,10 +822,10 @@ sub serialize_asset {
         $writer->dataElement( active      => $data->get_active     ? 1 : 0 );
 
         # end <field>
-        $writer->endTag("field");
+        $writer->endTag("field_type");
     }
 
-    $writer->endTag("fields");
+    $writer->endTag("field_types");
 
 
     # close the element

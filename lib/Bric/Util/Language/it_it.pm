@@ -131,7 +131,7 @@ our %Lexicon = (
     'Check In' => 'Check In',
     'Recipients' => 'Destinatari',
     'Note saved.' => 'Nota salvata.',
-    'Data Elements' => 'Data Elements',
+    'Field Elements' => 'Field Elements',
     'View' => 'Vista',
     'Contributor Types' => 'Tipi di Collaboratori',
     'Media "[_1]" check out canceled.' => 'check out del Media "[_1]" cancellato.',
@@ -492,7 +492,7 @@ To translate:
   'No media file is associated with asset "[_1]", so none will be distributed.'
   'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.'
   'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_container\'.  Please use the element\'s \'key_name\' field instead.'
-  'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_data\'.  Please use the element\'s \'key_name\' field instead.'
+  'Warning:  Use of element\'s \'name\' field is deprecated for use with element method \'get_value\'.  Please use the element\'s \'key_name\' field instead.'
   'You must be an administrator to use this function.'
   'Template deployed.'
   '[quant,_1,Template] deployed.'
@@ -501,7 +501,7 @@ To translate:
   'Cannot publish story "[_1]" because it is checked out.'
   'Bad element name "[_1]". Did you mean "[_2]"?'
   'Field "[_1]" appears more than once but it is not a repeatable element.  Please remove all but one.'
-  'Note: Data element "[_1]" is required and cannot be completely removed.  Will delete all but one.'
+  'Note: Field element "[_1]" is required and cannot be completely removed.  Will delete all but one.'
   'Note: Container element "[_1]" removed in bulk edit but will not be deleted.'
   'Cannot create an alias to a media in the same site.'
   'Cannot create an alias to a story in the same site.'

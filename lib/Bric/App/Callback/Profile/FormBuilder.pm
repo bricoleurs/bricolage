@@ -417,7 +417,7 @@ $delete_element_type_attrs = sub {
             log_event('field_type_rem', $obj, { Name => $attr });
             log_event('field_type_deact', $atd);
         }
-        $obj->del_data($del);
+        $obj->del_field_type($del);
     }
 };
 
@@ -509,7 +509,7 @@ $add_new_attrs = sub {
             my $max = $param->{'fb_maxlength'} ? $param->{'fb_maxlength'}
               : ($param->{'fb_maxlength'} eq '0') ? 0 : undef;
 
-            my $atd = $obj->new_data({
+            my $atd = $obj->new_field_type({
                 key_name    => $key_name,
                 name        => $param->{fb_disp},
                 required    => $param->{fb_req}   ? 1 : 0,

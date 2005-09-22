@@ -59,22 +59,17 @@ $LastChangedDate$
   ($site_list || @sites) = $element->get_sites()
   $element               = $element->remove_sites([$site])
 
-  # Manage the parts of an asset type.
-  $element            = $element->add_data($field);
-  $field_type         = $element->new_data($param);
-  $element            = $element->copy_data($at, $field);
-  ($part_list || @parts) = $element->get_data($field);
-  $element            = $element->del_data($field);
+  # Manage the parts of an element type.
+  $element            = $element->add_field_types($field);
+  $field_type         = $element->new_field_type($param);
+  $element            = $element->copy_field_type($at, $field);
+  ($part_list || @parts) = $element->get_field_types($field);
+  $element            = $element->del_field_types($field);
 
   # Add, retrieve and delete containers from this asset type.
   $element            = $element->add_containers($at || [$at]);
   (@at_list || $at_list) = $element->get_containers();
   $element            = $element->del_containers($at || [$at]);
-
-  # Set the repeatability of a field.
-  ($element || 0) = $element->is_repeatable($at_container);
-  $element        = $element->make_repeatable($at_container);
-  $element        = $element->make_nonrepeatable($at_container);
 
   # Get/set the active flag.
   $element  = $element->activate()
@@ -86,16 +81,11 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-The asset type class registers new type of assets that will go through work
-flow. The individual parts will describe how the fields of the story will be
-laid out.
-
-The AssetType object is composed of AssetType Parts Data objects and AssetType
-Parts Container objects. These hold the fields that will become Assets when
-they enter workflow. Rules can be set upon these.
-
-The AssetType object also holds what output channels this asset will be
-allowed to go through.
+The element type class registers new type of elements that define the
+structures of story and media documents. Element type objects are composed of
+subelement types and fields, and top-level (story and media type) element
+types are associated with sites and output channels to define how documents
+based on them will be output and in what sites they can be created.
 
 =cut
 
@@ -141,10 +131,11 @@ my ($get_oc_coll, $get_site_coll, $remove, $make_key_name);
 # Constants                            #
 #======================================#
 
-use constant DEBUG => 0;
-use constant HAS_MULTISITE => 1;
-use constant GROUP_PACKAGE => 'Bric::Util::Grp::Element';
+use constant DEBUG             => 0;
+use constant HAS_MULTISITE     => 1;
+use constant GROUP_PACKAGE     => 'Bric::Util::Grp::Element';
 use constant INSTANCE_GROUP_ID => 27;
+
 use constant ORD => qw(name key_name description type_name  burner active);
 
 # possible values for burner
@@ -172,79 +163,38 @@ my @cols = qw(name key_name description burner reference type__id et_grp__id
               active);
 my @props = qw(name key_name description burner reference type_id et_grp_id
                _active);
-my $sel_cols = "a.id, a.name, a.key_name, a.description, a.burner, a.reference, " .
-  "a.type__id, a.et_grp__id, a.active, m.grp__id";
+my $sel_cols = 'a.id, a.name, a.key_name, a.description, a.burner, '
+    . 'a.reference, a.type__id, a.et_grp__id, a.active, m.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
 
 #--------------------------------------#
 # Instance Fields
 
-# This method of Bricolage will call 'use fields' for you and set some
-# permissions.
 BEGIN {
     Bric::register_fields({
-             # Public Fields
-             # The database id of the Asset Type
-             'id'               => Bric::FIELD_READ,
+        id                  => Bric::FIELD_READ,
+        et_grp_id           => Bric::FIELD_READ,
+        key_name            => Bric::FIELD_RDWR,
+        name                => Bric::FIELD_RDWR,
+        description         => Bric::FIELD_RDWR,
+        burner              => Bric::FIELD_RDWR,
+        reference           => Bric::FIELD_READ,
+        type_id             => Bric::FIELD_READ,
+        grp_ids             => Bric::FIELD_READ,
 
-             # A group for holding AssetTypes that are children.
-             'et_grp_id'           => Bric::FIELD_READ,
-
-             # A unique name for the story type
-             'key_name'             => Bric::FIELD_RDWR,
-
-             # The human readable name for the story type
-             'name'             => Bric::FIELD_RDWR,
-
-             # The human readable name for the description
-             'description'          => Bric::FIELD_RDWR,
-
-             # The burner to use to publish this element
-             'burner'               => Bric::FIELD_RDWR,
-
-             # Whether this asset type reference other data or not.
-             'reference'            => Bric::FIELD_READ,
-
-                         # The type of this asset type.
-             'type_id'             => Bric::FIELD_READ,
-
-             # The IDs of the groups this asset type is in.
-             'grp_ids'             => Bric::FIELD_READ,
-
-                         # The Primary_oc/id cache
-                         '_site_primary_oc_id'  => Bric::FIELD_NONE,
-
-             # Private Fields
-             # The active flag
-             '_active'          => Bric::FIELD_NONE,
-
-             # Stores the collection of output channels
-                         '_oc_coll'             => Bric::FIELD_NONE,
-
-             # Stores the collection of sites
-                         '_site_coll'             => Bric::FIELD_NONE,
-
-             # A list of contained parts
-             '_parts'           => Bric::FIELD_NONE,
-
-             # A holding pen for new parts to be added.
-             '_new_parts'           => Bric::FIELD_NONE,
-
-             # A holding pen for parts to be deleted.
-             '_del_parts'           => Bric::FIELD_NONE,
-
-             # A group for holding AssetType IDs that are children.
-             '_et_grp_obj'          => Bric::FIELD_NONE,
-
-             '_attr'                => Bric::FIELD_NONE,
-             '_meta'                => Bric::FIELD_NONE,
-
-             # Holds the attribute object for this object.
-             '_attr_obj'            => Bric::FIELD_NONE,
-
-             # Hold the at object.
-             '_att_obj'             => Bric::FIELD_NONE,
-            });
+        _site_primary_oc_id => Bric::FIELD_NONE,
+        _active             => Bric::FIELD_NONE,
+        _oc_coll            => Bric::FIELD_NONE,
+        _site_coll          => Bric::FIELD_NONE,
+        _parts              => Bric::FIELD_NONE,
+        _new_parts          => Bric::FIELD_NONE,
+        _del_parts          => Bric::FIELD_NONE,
+        _et_grp_obj         => Bric::FIELD_NONE,
+        _attr               => Bric::FIELD_NONE,
+        _meta               => Bric::FIELD_NONE,
+        _attr_obj           => Bric::FIELD_NONE,
+        _att_obj            => Bric::FIELD_NONE,
+    });
 }
 
 #==============================================================================#
@@ -308,7 +258,7 @@ sub new {
         foreach my $name ($pkg->autopopulated_fields) {
             my $key_name = lc $name;
             $key_name =~ y/a-z0-9/_/cs;
-            my $atd = $self->new_data({
+            my $atd = $self->new_field_type({
                 key_name      => $key_name,
                 name          => $name,
                 description   => "Autopopulated $name field.",
@@ -400,16 +350,18 @@ C<ANY> for a list of possible values.
 The ID of an output channel. Returned will be all AssetType objects that
 contain this output channel. May use C<ANY> for a list of possible values.
 
+=item field_name
+
 =item data_name
 
-The name of an AssetType::Data object. Returned will be all AssetType objects
-that reference this particular AssetType::Data object. May use C<ANY> for a
-list of possible values.
+The name of an AssetType::Parts::Data (field type) object. Returned will be
+all AssetType objects that reference this particular field type object. May
+use C<ANY> for a list of possible values.
 
 =item map_type_id
 
-The map_type_id of an AssetType::Data object. May use C<ANY> for a list of
-possible values.
+The map_type_id of a field type object. May use C<ANY> for a list of possible
+values.
 
 =item active
 
@@ -1820,82 +1772,77 @@ sub remove_sites {
 
 #------------------------------------------------------------------------------#
 
-=item ($part_list || @part_list) = $element_type->get_data()
+=item get_field_types()
 
-This will return a list of the fields and containers that make up
-this asset type
+=item get_data()
 
-B<Throws:>
+  my @field_types = $element_type->get_field_types;
+  my $field_type  = $element_type->get_field_types($key_name);
+     @field_types = $element_type->get_data;
+     $field_type  = $element_type->get_data($key_name);
 
-NONE
+Returns a list or array reference of the field types that the element type
+contains. Pass in a key name to get back a single field type.
 
-B<Side Effects:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-
-The parts returned here may not have their parent IDs or order set if this
-object has not been saved yet.
+B<Notes:> C<get_data()> is the deprecated form of this method.
 
 =cut
 
-sub get_data {
-    my $self = shift;
-    my ($field) = @_;
+sub get_field_types {
+    my ($self, $key_name) = @_;
     my $parts     = $self->_get_parts();
     my $new_parts = $self->_get('_new_parts');
-    my @all;
+    my @all = values %$parts;
 
     # Include the yet to be added parts.
     while (my ($id, $obj) = each %$new_parts) {
         push @all, $id == -1 ? @$obj : $obj;
     }
 
-    push @all, values %$parts;
+    return first { $_->get_key_name eq $key_name } @all
+        if $key_name;
 
-    if ($field) {
-    # Return just the field they asked for.
-    $field = $make_key_name->($field);
-        for my $d (@all) {
-            return $d if $d->get_key_name eq $field;
-        }
-    return;
-    } else {
-    # Return all the fields.
-    return wantarray ?  sort { $a->get_place <=> $b->get_place } @all :
-      [ sort { $a->get_place <=> $b->get_place } @all ];
-    }
+    @all = map  {         $_->[1]         }
+           sort {   $a->[0] <=> $b->[0]   }
+           map  { [ $_->get_place => $_ ] }
+           @all;
+    return wantarray ? @all : \@all;
 }
+
+sub get_data { shift->get_field_types(@_) }
 
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->add_data([$field])
+=item $element_type->add_field_type(@field_types);
 
-This takes a list of fields and associates them with the element object
+  $element_type->add_field_types(@field_types);
+  $element_type->add_field_types(\@field_types);
+  $element_type->add_data(@field_types);
+  $element_type->add_data(\@field_types);
 
-B<Throws:>
+This takes a list of field typess and associates them with the element type
+object.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<add_data()> is the deprecated form of this method.
 
 =cut
 
-sub add_data {
+sub add_field_types {
     my $self = shift;
-    my ($parts_arg) = @_;
+    my $field_types = ref $_[0] eq 'ARRAY' ? shift : \@_;
     my $parts = $self->_get_parts;
     my ($new_parts, $del_parts) = $self->_get(qw(_new_parts _del_parts));
 
-    foreach my $p (@$parts_arg) {
-        throw_gen 'Must pass AssetType field or container objects, not IDs'
+    foreach my $p (@$field_types) {
+        throw_gen 'Must pass field type object to add_field_types()'
           unless ref $p;
 
         # Get the ID if we were passed an object.
@@ -1912,7 +1859,7 @@ sub add_data {
     }
 
     # Update $self's new and deleted parts lists.
-    $self->_set(['_del_parts'], [$del_parts]);
+    $self->_set(['_del_parts'] => [$del_parts]);
 
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
@@ -1920,42 +1867,42 @@ sub add_data {
     return $self;
 }
 
+sub add_data { shift->add_field_types(@_) }
+
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->new_data($param)
+=item $element_type->new_field_type()
 
-Adds a new data point, creating a new Bric::Biz::AssetType::Parts::Data
-object. The keys to $param are the same as the keys for the hash ref passed to
-Bric::Biz::AssetType::Parts::Data::new.
+  my $field_type = $element_type->new_field_type(\%params);
+     $field_type = $element_type->new_data(\%params);
 
-B<Throws:>
+Adds a new field type to the element type, creating a new
+Bric::Biz::AssetType::Parts::Data object. See
+L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data> for a
+list of the parameters to its C<new()> method for the parameters that can be
+specified in the parameters hash reference passsed to C<new_field_type()>.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub new_data {
-    my $self = shift;
-    my ($param) = @_;
+sub new_field_type {
+    my ($self, $param) = @_;
     my ($new_parts) = $self->_get('_new_parts');
 
-    # Create the new part.
+    # Create the new field type.
     my $part = Bric::Biz::AssetType::Parts::Data->new($param);
 
     # Add all new values to a special array of new parts until they can be
     # saved and given an ID.
     push @{$new_parts->{-1}}, $part;
 
-    # Update $self's new and deleted parts lists.
-    $self->_set(['_new_parts'], [$new_parts]);
+    # Update $self's new parts lists.
+    $self->_set(['_new_parts'] => [$new_parts]);
 
     # Set the dirty bit since something has changed.
     $self->_set__dirty(1);
@@ -1963,161 +1910,152 @@ sub new_data {
     return $part;
 }
 
+sub new_data { shift->new_field_type(@_) }
+
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->copy_data($param)
+=item $element_type->copy_field_type()
 
-Copy the definition for a data field from another asset type. Keys for $param
-are:
+  my $field_type = $element_type->copy_field_type(\%params);
+     $field_type = $element_type->copy_data(\%params);
+
+Copies the definition for a field type from another eelement type. The
+parameters expected in the hash reference argument are:
 
 =over 4
 
-=item *
+=item field_type
 
-at
+=item field_obj
 
-An existing asset type object
+The field type object to copy into this element type. Required unless
+C<element_type> and C<field_key_name> have been specified.
 
-=item *
+=item element_type
 
-field_name
+=item at
 
-A field name defined within the object passed with 'at'
+An existing element type object from which to extract a field to copy.
+Required unless C<field_type> has been specified.
 
-=item *
+=item field_key_name
 
-field_obj
+=item field_name
 
-A field object.  Can be given in lieu of 'at' and 'field_name'.
+The key name of a field associated with the element type passed via the
+C<element_type> parameter. Required unless C<field_type> has been specified.
 
 =back
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> C<copy_data()> is the deprecated form of this method.
 
 =cut
 
-sub copy_data {
-    my $self = shift;
-    my ($param) = @_;
-    my ($new_parts) = $self->_get('_new_parts');
-    my $f_obj = $param->{'field_obj'};
-    my ($at, $f) = @$param{'at','field_name'};
+sub copy_field_type {
+    my ($self, $param)   = @_;
+    my $new_parts        = $self->_get('_new_parts');
+    my $field_type       = $param->{field_type} || $param->{field_obj};
 
-    unless ($f_obj) {
-    unless ($at) {
-        my $msg = 'Insufficient argurments';
-        throw_gen(error => $msg);
+    unless ($field_type) {
+        my $element_type = $param->{element_type} || $param->{at};
+        throw_gen 'No field_type or element_type parameter'
+            unless $element_type;
+        my $key_name = $param->{field_key_name} || $param->{field_name};
+        throw_gen 'No field_key_name parameter' unless defined $key_name;
+        $field_type = $element_type->get_field_types($key_name);
     }
 
-    $f_obj = $at->get_data($f);
-    }
-
-    my $part = $f_obj->copy($at->get_id);
-
-    # Add all new values to a special array of new parts until they can be
-    # saved and given an ID.
-    push @{$new_parts->{-1}}, $part;
-
-    # Update $self's new and deleted parts lists.
-    $self->_set(['_new_parts'], [$new_parts]);
-
-    # Set the dirty bit since something has changed.
-    $self->_set__dirty(1);
-
-    return $self;
+    return $self->add_field_types($field_type->copy($self->get_id));
 }
+
+sub copy_data { shift->copy_field_type(@_) }
 
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->del_data( [ $field || $container ])
+=item $element_type->del_field_types()
 
-This will take a list of parts and will disassociate them from the story type.
+  $element_type->del_field_types(@field_types);
+  $element_type->del_field_types(\@field_types);
+  $element_type->del_data(@field_types);
+  $element_type->del_data(\@field_types);
 
-B<Throws:>
-NONE
+Removes the specified field types from the element type.
 
-B<Side Effects:>
-NONE
+B<Throws:> NONE.
 
-B<Notes:>
-NONE
+B<Side Effects:> NONE.
+
+B<Notes:> C<del_data()> is the deprecated form of this method.
 
 =cut
 
-sub del_data {
-    my $self = shift;
-    my ($parts_arg) = @_; 
-    my $parts = $self->_get_parts();
-    my ($new_parts, $del_parts) = $self->_get('_new_parts',
-                          '_del_parts');
+sub del_field_types {
+    my $self        = shift;
+    my $field_types = ref $_[0] eq 'ARRAY' ? shift : \@_;
+    my $parts       = $self->_get_parts;
 
-    foreach my $p (@$parts_arg) {
-    unless (ref $p) {
-        my $msg = 'Must pass AssetType field or container objects, not IDs';
-        throw_gen(error => $msg);
-    }
+    my ($new_parts, $del_parts) = $self->_get(qw(_new_parts _del_parts));
 
-    # Get the ID if we were passed an object.
-    my $p_id = $p->get_id();
+    for my $p (@$field_types) {
+        throw_gen 'Must pass field type objects to del_field_types()'
+            unless ref $p;
 
-    # Delete this part from the list and put it on the deletion list.
-    if (exists $parts->{$p_id}) {
-        delete $parts->{$p_id};
-        # Add the object as a value.
-        $del_parts->{$p_id} = $p;
-    }
+        # Get the ID if we were passed an object.
+        my $p_id = $p->get_id;
 
-    # Remove this value from the addition list if it's there.
-    delete $new_parts->{$p_id};
+        # Delete this part from the list and put it on the deletion list.
+        if (delete $parts->{$p_id}) {
+            # Add the object as a value.
+            $del_parts->{$p_id} = $p;
+        }
+
+        # Remove this value from the addition list if it's there.
+        delete $new_parts->{$p_id};
     }
 
     # Update $self's new and deleted parts lists.
-    $self->_set(['_parts', '_new_parts', '_del_parts'],
-        [$parts  , $new_parts  , $del_parts]);
+    $self->_set(
+        [qw(_parts _new_parts _del_parts)]
+        => [$parts, $new_parts, $del_parts]
+    );
 
     # Set the dirty bit since something has changed.
-    $self->_set__dirty(1);
-    return $self;
+    return $self->_set__dirty(1);
 }
+
+sub del_data { shift->del_field_types(@_) }
 
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->add_containers([$at]);
+=item $element_type->add_containers()
 
-Add AssetTypes to be contained by this AssetType.
+  $element_type->add_containers(@element_types);
+  $element_type->add_containers(\@element_types);
 
-B<Throws:>
+Add element types to the element type as subelement types.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub add_containers {
     my $self = shift;
-    my ($at) = @_;
+    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
     my $grp = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? {obj => $_} :
-                    {id  => $_, package => __PACKAGE__}} @$at;
+    my @mem = map {
+        ref $_ ? {obj => $_ }
+               : {id  => $_, package => __PACKAGE__ }
+    } @$ets;
 
     return unless $grp->add_members(\@mem);
     return $self;
@@ -2125,44 +2063,41 @@ sub add_containers {
 
 #------------------------------------------------------------------------------#
 
-=item (@at_list || $at_list) = $element_type->get_containers();
+=item $element_type->get_containers()
 
-Return all contained AssetTypes.
+  my @element_types      = $element_type->get_containers;
+  my $element_types_aref = $element_type->get_containers;
+  my $element_type       = $element_type->get_containers($key_name);
 
-B<Throws:>
+Returns all subelement element types.
 
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
+B<Side Effects:> NONE.
 
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
 sub get_containers {
-    my $self = shift;
-    my ($field) = @_;
-    my $grp = $self->_get_asset_type_grp;
-    my @at = $grp->get_objects;
+    my ($self, $key_name) = @_;
 
-    if ($field) {
-        return first { $_->get_key_name eq $field } @at;
-    } else {
-        return wantarray ? @at : \@at;
-    }
+    my $grp = $self->_get_asset_type_grp;
+    return $grp->get_objects unless defined $key_name;
+
+    return first { $_->get_key_name eq $key_name } $grp->get_objects;
 }
 
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->del_containers([$at]);
+=item $element_type->del_containers()
 
-Release an AssetType from its servitude to this AssetType.  The AssetType itself
-will not be deleted.  It will simply not be associated with this AssetType any
-more.
+  $element_type->del_containers(@element_types);
+  $element_type->del_containers(\@element_types);
+
+Remove subelement element types from the element type. The subelement element
+types will not be deactivated, just disassociated with the parent element
+type.
 
 B<Throws:>
 
@@ -2180,13 +2115,14 @@ NONE
 
 sub del_containers {
     my $self = shift;
-    my ($at) = @_;
-    my $grp = $self->_get_asset_type_grp;
+    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
+    my $grp  = $self->_get_asset_type_grp;
 
     # Construct the proper array to pass to 'add_members'
-    my @mem = map {ref $_ ? { obj => $_ }
-                     : { id  => $_, package => __PACKAGE__ } }
-      @$at;
+    my @mem = map {
+        ref $_ ? { obj => $_ }
+               : { id  => $_, package => __PACKAGE__ }
+    } @$ets;
 
     return unless $grp->delete_members(\@mem);
     return $self;
@@ -2194,79 +2130,20 @@ sub del_containers {
 
 #------------------------------------------------------------------------------#
 
-=item ($element_type || 0) = $element_type->is_repeatable($at_container);
+=item $element_type->is_active()
 
-=item $element_type        = $element_type->make_repeatable($at_container);
+Return true if the element type is active, and false if it is not.
 
-=item $element_type        = $element_type->make_nonrepeatable($at_container);
+B<Throws:> NONE.
 
-Get/Set the repeatable flag for a contained AssetType. Note that this
-repeatability only applies to this AssetTypes relation to the contained
-AssetType.
+B<Side Effects:> NONE.
 
-B<Throws:> NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub is_repeatable {
-    my $self = shift @_;
-    my ($at) = @_;
-    my $c_id = $at->get_id;
-
-    $self->get_attr("_child_${c_id}_repeatable");
-}
-
-sub make_repeatable {
-    my $self = shift @_;
-    my ($at) = @_;
-    my $c_id = $at->get_id;
-
-    $self->set_attr("_child_${c_id}_repeatable", 1);
-
-    return $self;
-}
-
-sub make_nonrepeatable {
-    my $self = shift @_;
-    my ($at) = @_;
-    my $c_id = $at->get_id;
-
-    $self->set_attr("_child_${c_id}_repeatable", 0);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $element_type = $element_type->is_active()
-
-Return the active flag.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut 
-
 sub is_active {
     my $self = shift;
-
     return $self->_get('_active') ? $self : undef;
 }
 
@@ -2274,84 +2151,40 @@ sub is_active {
 
 =item $element_type = $element_type->activate()
 
-This will set the active flag to one for the object
+Activates the element type.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut 
-
-sub activate {
-    my $self = shift;
-
-    $self->_set(['_active'], [1]);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $element_type = $element_type->deactivate()
-
-This will set the active flag to undef for the asset type
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut 
-
-sub deactivate {
-    my $self = shift;
-
-    $self->_set(['_active'], [0]);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item (undef || 1) $element_type->get_active()
-
-This will return undef if the element has been deactivated and
-one otherwise 
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
+sub activate { shift->_set(['_active'] => [1]) }
+
 #------------------------------------------------------------------------------#
 
-=item $element_type = $element_type->save()
+=item $element_type->deactivate()
 
-This will save all of the changes to the database
+Deactivates the element type.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub deactivate { shift->_set(['_active'] => [0]) }
+
+#------------------------------------------------------------------------------#
+
+=item $element_type->save()
+
+Saves changes to the element type, including its subelement element type and
+field type associatesions, to the database.
 
 B<Throws:>
 
@@ -2370,8 +2203,8 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll, $site_coll, $primary_oc_site) =
-      $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
+    my ($id, $oc_coll, $site_coll, $primary_oc_site)
+        = $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
 
     # Save the group information.
     $self->_get_asset_type_grp->save;
@@ -2388,11 +2221,11 @@ sub save {
     return $self unless $self->_get__dirty;
 
     unless ($self->is_active) {
-    # Check to see if this AT is reference anywhere. If not, delete it.
-    unless ($self->_is_referenced) {
-        $self->$remove;
-        return $self;
-    }
+        # Check to see if this AT is reference anywhere. If not, delete it.
+        unless ($self->_is_referenced) {
+            $self->$remove;
+            return $self;
+        }
     }
 
     # First save the main object information
@@ -2431,9 +2264,7 @@ sub save {
 
 
     # Call our parents save method.
-    $self->SUPER::save;
-
-    return $self;
+    return $self->SUPER::save;
 }
 
 #==============================================================================#
@@ -2452,14 +2283,11 @@ sub save {
 called from list and list ids this will query the db and return either
 ids or objects
 
-B<Throws:>
-NONE
+B<Throws:> NONE.
 
-B<Side Effects:>
-NONE
+B<Side Effects:> NONE.
 
-B<Notes:>
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2667,7 +2495,7 @@ sub _is_referenced {
 
 #------------------------------------------------------------------------------#
 
-=item (undef || $self) = $field->$remove
+=item $element_type->$remove
 
 Removes this object completely from the DB. Returns 1 if active or undef
 otherwise
@@ -2743,23 +2571,29 @@ sub _save_attr {
     my $id   = $self->get_id;
 
     unless ($a_obj) {
-    $a_obj = Bric::Util::Attribute::AssetType->new({'object_id' => $id,
-                              'subsys'    => "id_$id"});
-    $self->_set(['_attr_obj'], [$a_obj]);
+        $a_obj = Bric::Util::Attribute::AssetType->new({
+            object_id => $id,
+            subsys    => "id_$id"
+        });
+        $self->_set(['_attr_obj'], [$a_obj]);
 
-    while (my ($k,$v) = each %$attr) {
-        $a_obj->set_attr({'name'     => $k,
-                  'sql_type' => 'short',
-                  'value'    => $v});
-    }
-    
-    foreach my $k (keys %$meta) {
-        while (my ($f, $v) = each %{$meta->{$k}}) {
-        $a_obj->add_meta({'name'  => $k,
-                  'field' => $f,
-                  'value' => $v});
+        while (my ($k,$v) = each %$attr) {
+            $a_obj->set_attr({
+                name     => $k,
+                sql_type => 'short',
+                value    => $v
+            });
         }
-    }
+
+        foreach my $k (keys %$meta) {
+            while (my ($f, $v) = each %{$meta->{$k}}) {
+                $a_obj->add_meta({
+                    name  => $k,
+                    field => $f,
+                    value => $v
+                });
+            }
+        }
     }
 
     $a_obj->save;
@@ -2777,14 +2611,16 @@ sub _get_asset_type_grp {
     return $atg_obj if $atg_obj;
 
     if ($atg_id) {
-    $atg_obj = Bric::Util::Grp::AssetType->lookup({'id' => $atg_id});
-    $self->_set(['_et_grp_obj'], [$atg_obj]);
+        $atg_obj = Bric::Util::Grp::AssetType->lookup({'id' => $atg_id});
+        $self->_set(['_et_grp_obj'], [$atg_obj]);
     } else {
-    $atg_obj = Bric::Util::Grp::AssetType->new({'name' => 'AssetType Group'});
-    $atg_obj->save;
+        $atg_obj = Bric::Util::Grp::AssetType->new({
+            name => 'AssetType Group'
+        });
+        $atg_obj->save;
 
-    $self->_set(['et_grp_id',     '_et_grp_obj'],
-            [$atg_obj->get_id, $atg_obj]);
+        $self->_set(['et_grp_id',     '_et_grp_obj'],
+                    [$atg_obj->get_id, $atg_obj]);
     }
 
     return $atg_obj;
@@ -2797,66 +2633,59 @@ sub _get_asset_type_grp {
 sub _sync_parts {
     my $self = shift;
     my $parts = $self->_get_parts();
-    my ($id, $new_parts, $del_parts) =
-      $self->_get(qw(id _new_parts _del_parts));
+    my ($id, $new_parts, $del_parts)
+        = $self->_get(qw(id _new_parts _del_parts));
 
     # Pull off the newly created parts.
     my $created = delete $new_parts->{-1};
 
     # Now that we know we have an ID for $self, set element type ID for
-    foreach my $p_obj (@$created) {
-    $p_obj->set_element_type_id($id);
+    for my $p_obj (@$created) {
+        $p_obj->set_element_type_id($id);
 
-    # Save the parts object.
-    $p_obj->save;
+        # Save the parts object.
+        $p_obj->save;
 
-    # Add it to the current parts list.
-    $parts->{$p_obj->get_id} = $p_obj;
+        # Add it to the current parts list.
+        $parts->{$p_obj->get_id} = $p_obj;
     }
 
     # Add parts that already existed when they were added.
     foreach my $p_id (keys %$new_parts) {
-    # Delete this from the new list and grab the object.
-    my $p_obj = delete $new_parts->{$p_id};
+        # Delete this from the new list and grab the object.
+        my $p_obj = delete $new_parts->{$p_id};
 
-    # Save the parts object.
-    $p_obj->save;
+        # Save the parts object.
+        $p_obj->save;
 
-    # Add it to the current parts list.
-    $parts->{$p_id} = $p_obj;
+        # Add it to the current parts list.
+        $parts->{$p_id} = $p_obj;
     }
 
     # Deactivate removed parts.
-    foreach my $p_id (keys %$del_parts) {
-    # Delete this from the deletion list and grab the object.
+    for my $p_id (keys %$del_parts) {
+        # Delete this from the deletion list and grab the object.
+        my $p_obj = delete $del_parts->{$p_id};
 
-    my $p_obj = delete $del_parts->{$p_id};
-
-    # This needs to happen for deleted parts.
-    $p_obj->deactivate;
+        # This needs to happen for deleted parts.
+        $p_obj->deactivate;
         $p_obj->set_required(0);
-    $p_obj->save;
+        $p_obj->save;
     }
     return $self;
 }
 
 #------------------------------------------------------------------------------#
 
-=item $self = $self->_update_asset_type();
+=item $element_type->_update_asset_type()
 
 Update values in the element_type table.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2875,21 +2704,15 @@ sub _update_asset_type {
 
 #------------------------------------------------------------------------------#
 
-=item $self = $self->_insert_asset_type
+=item $element_type->_insert_asset_type()
 
 Insert new values into the element_type table.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2915,23 +2738,17 @@ sub _insert_asset_type {
 
 #------------------------------------------------------------------------------#
 
-=item $self = $self->_get_parts
+=item $element_type->_get_parts()
 
 Call the list function of Bric::Biz::AssetType::Parts::Container to return a
 list of conainer parts of this AssetType object, or return the existing parts
 if weve already loaded them.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
@@ -2962,12 +2779,12 @@ sub _get_parts {
 
 =over 4
 
-=item my $oc_coll = $get_oc_coll->($self)
+=item my $oc_coll = $get_oc_coll->($element_type)
 
-Returns the collection of output channels for this element. The collection is
-a L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement> object. See that
-class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
-details.
+Returns the collection of output channels for this element type. The
+collection is a L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>
+object. See that class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>,
+for interface details.
 
 B<Throws:>
 
@@ -3022,20 +2839,20 @@ $get_oc_coll = sub {
     my $dirt = $self->_get__dirty;
     my ($id, $oc_coll) = $self->_get('id', '_oc_coll');
     return $oc_coll if $oc_coll;
-    $oc_coll = Bric::Util::Coll::OCElement->new
-      (defined $id ? {element_type_id => $id} : undef);
-    $self->_set(['_oc_coll'], [$oc_coll]);
+    $oc_coll = Bric::Util::Coll::OCElement->new(
+        defined $id ? {element_type_id => $id} : undef
+    );
+    $self->_set(['_oc_coll'] => [$oc_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $oc_coll;
 };
 
 
-=item my $site_coll = $get_site_coll->($self)
+=item my $site_coll = $get_site_coll->($element_type)
 
-Returns the collection of sites for this element. The collection is
-a L<Bric::Util::Coll::Site|Bric::Util::Coll::Site> object. See that
-class and its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface
-details.
+Returns the collection of sites for this element type. The collection is a
+L<Bric::Util::Coll::Site|Bric::Util::Coll::Site> object. See that class and
+its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface details.
 
 B<Throws:>
 
@@ -3090,17 +2907,18 @@ $get_site_coll = sub {
     my $dirt = $self->_get__dirty;
     my ($id, $site_coll) = $self->_get('id', '_site_coll');
     return $site_coll if $site_coll;
-    $site_coll = Bric::Util::Coll::Site->new
-      (defined $id ? {element_type_id => $id} : undef);
-    $self->_set(['_site_coll'], [$site_coll]);
+    $site_coll = Bric::Util::Coll::Site->new(
+        defined $id ? {element_type_id => $id} : undef
+    );
+    $self->_set(['_site_coll'] => [$site_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.
     return $site_coll;
 };
 
 =item my $key_name = $make_key_name->($name)
 
-Takes an element name and turns it into the key name. This is the name that
-will be used in templates and in the super bulk edit interface.
+Takes an element type name and turns it into the key name. This is the name
+that will be used in templates and in the super bulk edit interface.
 
 B<Throws:> NONE.
 

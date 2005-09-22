@@ -1,7 +1,7 @@
 [% FOREACH e = element.get_elements('header', 'para', '_pull_quote_') %]
     [% kn = e.get_key_name %]
     [% IF kn == 'para' %]
-<p>[% e.get_data %]</p>
+<p>[% e.get_value %]</p>
     [% ELSIF kn == 'header' %]
         [% # display_element() should just return a value. %]
 <h3>[% burner.display_element(e) %]</h3>

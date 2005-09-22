@@ -154,7 +154,7 @@ lost in the conversion to PHP. This should effectively be okay, however, as
 long as your PHP templates use the C<mb_*> functions and identify the encoding
 as UTF-8. For example:
 
-  $sub = mb_substr($element->get_data('deck'), 0, 255, 'utf-8');
+  $sub = mb_substr($element->get_value('deck'), 0, 255, 'utf-8');
 
 See L<http://us2.php.net/manual/en/ref.mbstring.php> for more information on
 handling multibyte characters in PHP.
@@ -550,7 +550,7 @@ sub display_element {
     my $elem = shift or return;
     return $self->_display_container($elem) if $elem->is_container;
     my $buf = $self->_get('_buf');
-    $$buf .= $elem->get_data;
+    $$buf .= $elem->get_value;
     return $self;
 }
 
@@ -573,7 +573,7 @@ B<Notes:> NONE.
 sub sdisplay_element {
     my $self = shift;
     my $elem = shift or return '';
-    return $elem->get_data unless $elem->is_container;
+    return $elem->get_value unless $elem->is_container;
     my ($php, $buf) = $self->_get(qw(_php _buf));
     $php->set_output_handler(\my $ret);
     $self->_display_container($elem);

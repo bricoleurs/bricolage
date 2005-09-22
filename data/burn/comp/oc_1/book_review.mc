@@ -3,7 +3,7 @@
 %# Only show this if we are on the first page
 % unless ($burner->get_page) {
 <h1><% $story->get_title %></h1>
-<% $element->get_data('deck') %>
+<% $element->get_value('deck') %>
 <hr />
 % }
 

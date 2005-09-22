@@ -412,6 +412,8 @@ my %formSubs = (
             }
 
             # Make the values a reference if this is a multiple select list.
+            # XXX It would be better if the calling code could call
+            # get_values(), instead.
             $value = { map { $_ => 1 } split /__OPT__/, $value }
               if $vals->{props}{multiple};
 

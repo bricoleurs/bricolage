@@ -6,7 +6,7 @@ $burner  = $BRIC['burner'];
 foreach ($element->get_elements('header', 'para', '_pull_quote_') as $e) {
     $kn = $e->get_key_name();
     if ($kn == 'para') {
-        echo '<p>', $e->get_data(), "</p>\n";
+        echo '<p>', $e->get_value(), "</p>\n";
     } else if ($kn == 'header') {
         # Test sdisplay_element() on a field.
         echo '<h3>', $burner->sdisplay_element($e), "</h3>\n";

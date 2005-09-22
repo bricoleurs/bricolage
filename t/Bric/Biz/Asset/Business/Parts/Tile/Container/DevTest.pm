@@ -48,12 +48,12 @@ sub construct {
 sub test_new : Test(11) {
     my $self = shift;
 
-    ok (my $cont = $self->construct,       'Construct Container');
-    ok (my $at  = $cont->get_element_type, 'Get Element Type Object');
-    ok (my $atd = ($at->get_data)[0],      'Get Data Element Object');
-    ok ($cont->add_data($atd, 'Chomp'),    'Add Data');
-    ok ($cont->save,                       'Save Container');
-    ok (my $c_id = $cont->get_id,          'Get Container ID');
+    ok (my $cont = $self->construct,          'Construct Container');
+    ok (my $at  = $cont->get_element_type,    'Get Element Type Object');
+    ok (my $atd = ($at->get_field_types)[0],  'Get Field Type Object');
+    ok ($cont->add_field($atd, 'Chomp'),      'Add Field Type');
+    ok ($cont->save,                          'Save Container');
+    ok (my $c_id = $cont->get_id,             'Get Container ID');
 
     $self->add_del_ids([$c_id], $cont->S_TABLE);
 
@@ -63,7 +63,7 @@ sub test_new : Test(11) {
     }), 'Lookup Container');
     isa_ok $lkup, $self->class;
 
-    is ($lkup->get_data('deck', 2), 'Chomp',   'Compare Data');
+    is ($lkup->get_value('deck', 2), 'Chomp',   'Compare Value');
 
     ok (my $list = $self->class->list({object_type => 'story'}),
         'List Story Containers');
@@ -143,33 +143,33 @@ sub test_list : Test(166) {
 
         # Add some content to it.
         ok my $elem = $story->get_element, "Get the story element";
-        ok $elem->add_data($para, 'This is a paragraph'), "Add a paragraph";
-        ok $elem->add_data($para, 'Second paragraph'), "Add another paragraph";
-        ok $elem->add_data($head, "And then..."), "Add a header";
-        ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
+        ok $elem->add_field($para, 'This is a paragraph'), "Add a paragraph";
+        ok $elem->add_field($para, 'Second paragraph'), "Add another paragraph";
+        ok $elem->add_field($head, "And then..."), "Add a header";
+        ok $elem->add_field($para, 'Third paragraph'), "Add a third paragraph";
 
         # Add a pull quote.
         ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-        ok $pq->get_data_element('para')->set_data(
+        ok $pq->get_field('para')->set_value(
             "Ask not what your country can do for you.\n="
                 . 'Ask what you can do for your country.'
             ), "Add a paragraph with an apparent POD tag";
-        ok $pq->get_data_element('by')->set_data("John F. Kennedy"),
+        ok $pq->get_field('by')->set_value("John F. Kennedy"),
             "Add a By to the pull quote";
-        ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+        ok $pq->get_field('date')->set_value('1961-01-20 00:00:00'),
             "Add a date to the pull quote";
 
         # Add another pull quote.
         ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
-        ok $pq2->get_data_element('para')->set_data(
+        ok $pq2->get_field('para')->set_value(
             "So, first of all, let me assert my firm belief that the only\n\n"
             . '=thing we have to fear is fear itself -- nameless, unreasoning, '
             . 'unjustified terror which paralyzes needed efforts to convert '
             . 'retreat into advance.'
         ), "Add a paragraph with a near POD tag to the pull quote";
-        ok $pq2->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+        ok $pq2->get_field('by')->set_value("Franklin D. Roosevelt"),
             "Add a By to the pull quote";
-        ok $pq2->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+        ok $pq2->get_field('date')->set_value('1933-03-04 00:00:00'),
             "Add a date to the pull quote";
 
         # Make it so!
@@ -277,47 +277,47 @@ sub test_pod : Test(229) {
 
     # Add some content to it.
     ok my $elem = $story->get_element, "Get the story element";
-    ok $elem->add_data($para, 'This is a paragraph'), "Add a paragraph";
-    ok $elem->add_data($para, 'Second paragraph'), "Add another paragraph";
-    ok $elem->add_data($head, "And then..."), "Add a header";
-    ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
+    ok $elem->add_field($para, 'This is a paragraph'), "Add a paragraph";
+    ok $elem->add_field($para, 'Second paragraph'), "Add another paragraph";
+    ok $elem->add_field($head, "And then..."), "Add a header";
+    ok $elem->add_field($para, 'Third paragraph'), "Add a third paragraph";
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-    ok $pq->get_data_element('para')->set_data(
+    ok $pq->get_field('para')->set_value(
         "Ask not what your country can do for you.\n="
           . 'Ask what you can do for your country.'
     ), "Add a paragraph with an apparent POD tag";
-    ok $pq->get_data_element('by')->set_data("John F. Kennedy"),
+    ok $pq->get_field('by')->set_value("John F. Kennedy"),
       "Add a By to the pull quote";
-    ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+    ok $pq->get_field('date')->set_value('1961-01-20 00:00:00'),
       "Add a date to the pull quote";
 
     # Add some Unicode content.
-    ok $elem->add_data(
+    ok $elem->add_field(
         $para,
         '圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年'
     ), "Add a Chinese paragraph";
-    ok $elem->add_data(
+    ok $elem->add_field(
         $para,
         '橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱'
     ), "Add a Japanese paragraph";
-    ok $elem->add_data(
+    ok $elem->add_field(
         $para,
         '뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐'
     ), "Add a Korean paragraph";
 
     # Add another pull quote.
     ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
-    ok $pq2->get_data_element('para')->set_data(
+    ok $pq2->get_field('para')->set_value(
         "So, first of all, let me assert my firm belief that the only\n\n"
         . '=thing we have to fear is fear itself -- nameless, unreasoning, '
         . 'unjustified terror which paralyzes needed efforts to convert '
         . 'retreat into advance.'
     ), "Add a paragraph with a near POD tag to the pull quote";
-    ok $pq2->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+    ok $pq2->get_field('by')->set_value("Franklin D. Roosevelt"),
       "Add a By to the pull quote";
-    ok $pq2->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+    ok $pq2->get_field('date')->set_value('1933-03-04 00:00:00'),
       "Add a date to the pull quote";
 
     # Make it so!
@@ -384,21 +384,21 @@ sub test_pod : Test(229) {
     ok $elem->update_from_pod($self->pod_output), 'Update from POD';
 
     # Check the contents.
-    is $elem->get_data('para'),    'This is a paragraph', 'Check first para';
-    is $elem->get_data('para', 2), 'Second paragraph',    'Check second para';
-    is $elem->get_data('header'),  'And then...',         'Check header';
-    is $elem->get_data('para', 3), 'Third paragraph',     'Check third para';
+    is $elem->get_value('para'),    'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph',    'Check second para';
+    is $elem->get_value('header'),  'And then...',         'Check header';
+    is $elem->get_value('para', 3), 'Third paragraph',     'Check third para';
     is $elem->get_related_story_id, $rel_story_id,     'Check relstory id';
 
     # Check the pull quote.
     is $elem->get_container('_pull_quote_'), $pq,
         'The pull quote object should be the same';
-    is $pq->get_data('para'),
+    is $pq->get_value('para'),
         "Ask not what your country can do for you.\n"
         . '\=Ask what you can do for your country.',
         'Check pull quote paragraph';
-    is $pq->get_data('by'), 'John F. Kennedy', 'Check pull quote by';
-    is $pq->get_data('date'), '1961-01-20 00:00:00', 'Check pull quote date';
+    is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
+    is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
 
     # Try deserializeing with a default field.
     (my $stripped_pod = $self->pod_output) =~ s/(?:    )?=para\n\n//g;
@@ -406,22 +406,22 @@ sub test_pod : Test(229) {
         "Update from POD with a default field";
 
     # Check the contents.
-    is $elem->get_data('para'), 'This is a paragraph', 'Check first para';
-    is $elem->get_data('para', 2), 'Second paragraph', 'Check second para';
-    is $elem->get_data('header'), 'And then...', 'Check header';
-    is $elem->get_data('para', 3), 'Third paragraph', 'Check third para';
-    ok my $header = $elem->get_data_element('header'), 'Grab the header';
+    is $elem->get_value('para'), 'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph', 'Check second para';
+    is $elem->get_value('header'), 'And then...', 'Check header';
+    is $elem->get_value('para', 3), 'Third paragraph', 'Check third para';
+    ok my $header = $elem->get_field('header'), 'Grab the header';
 
     # Check the pull quote.
     is $elem->get_container('_pull_quote_'), $pq,
         'The pull quote object should be the same';
-    is $pq->get_data('para'),
+    is $pq->get_value('para'),
         "Ask not what your country can do for you.\n"
         . '\=Ask what you can do for your country.',
         'Check pull quote paragraph';
-    is $pq->get_data('by'), 'John F. Kennedy', 'Check pull quote by';
-    is $pq->get_data('date'), '1961-01-20 00:00:00', 'Check pull quote date';
-    ok my $pq_para_field = $pq->get_data_element('para'),
+    is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
+    is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
+    ok my $pq_para_field = $pq->get_field('para'),
         'Grab the pull quote para';
 
     # Add a new field.
@@ -430,14 +430,14 @@ sub test_pod : Test(229) {
         "Update from POD with a default field";
 
     # Check the contents.
-    is $elem->get_data_element('header'), $header,
+    is $elem->get_field('header'), $header,
         'First header should still be first';
-    is $elem->get_data('header'), 'In the beginning...',
+    is $elem->get_value('header'), 'In the beginning...',
         'But its content should be different';
-    is $elem->get_data('para'), 'This is a paragraph', 'Check first para';
-    is $elem->get_data('para', 2), 'Second paragraph', 'Check second para';
-    is $elem->get_data('header', 2), 'And then...', 'Check second header';
-    is $elem->get_data('para', 3), 'Third paragraph', 'Check third para';
+    is $elem->get_value('para'), 'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph', 'Check second para';
+    is $elem->get_value('header', 2), 'And then...', 'Check second header';
+    is $elem->get_value('para', 3), 'Third paragraph', 'Check third para';
 
     # Now add another paragraph to the pull quote.
     $stripped_pod =~ s/Ask not/My fellow Americans,\n\n    Ask not/;
@@ -445,90 +445,90 @@ sub test_pod : Test(229) {
         "Update from POD with a default field";
 
     # Check the contents.
-    is $elem->get_data_element('header'), $header,
+    is $elem->get_field('header'), $header,
         'First header should still be first';
-    is $elem->get_data('header'), 'In the beginning...',
+    is $elem->get_value('header'), 'In the beginning...',
         '... And its content should still be different';
-    is $elem->get_data('para'), 'This is a paragraph', 'Check first para';
-    is $elem->get_data('para', 2), 'Second paragraph', 'Check second para';
-    is $elem->get_data('header', 2), 'And then...', 'Check second header';
-    is $elem->get_data('para', 3), 'Third paragraph', 'Check third para';
+    is $elem->get_value('para'), 'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph', 'Check second para';
+    is $elem->get_value('header', 2), 'And then...', 'Check second header';
+    is $elem->get_value('para', 3), 'Third paragraph', 'Check third para';
 
     # Check the pull quote.
     is $elem->get_container('_pull_quote_'), $pq,
         'The pull quote object should be the same';
-    is $pq->get_data_element('para'), $pq_para_field,
+    is $pq->get_field('para'), $pq_para_field,
         '... And its first para should be the same object';
-    is $pq->get_data('para'), 'My fellow Americans,',
+    is $pq->get_value('para'), 'My fellow Americans,',
         'But its contents should be different';
-    is $pq->get_data('para', 2),
+    is $pq->get_value('para', 2),
         "Ask not what your country can do for you.\n"
         . '\=Ask what you can do for your country.',
         '... While the second paragraph is the original';
-    is $pq->get_data('by'), 'John F. Kennedy', 'Check pull quote by';
-    is $pq->get_data('date'), '1961-01-20 00:00:00', 'Check pull quote date';
+    is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
+    is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
 
     # Add another pull quote.
     ok $elem->update_from_pod($self->pod_output_plus_pq),
         'Update from POD with extra pull quote';
     ok my @pqs = $elem->get_elements('_pull_quote_'), 'Get pull quotes';
     is scalar @pqs, 3, 'Should have three pull quotes';
-    is $pqs[0]->get_data('by'),   'John F. Kennedy',       'Check first PQ by';
-    is $pqs[0]->get_data('date'), '1961-01-20 00:00:00',   'Check first PQ date';
-    is $pqs[1]->get_data('by'),   'Franklin D. Roosevelt', 'Check second PQ by';
-    is $pqs[1]->get_data('date'), '1933-03-04 00:00:00',   'Check second PQ date';
-    is $pqs[2]->get_data('by'),   'Neil Armstrong',        'Check second PQ by';
-    is $pqs[2]->get_data('date'), '1970-07-20 00:00:00',   'Check second PQ date';
+    is $pqs[0]->get_value('by'),   'John F. Kennedy',       'Check first PQ by';
+    is $pqs[0]->get_value('date'), '1961-01-20 00:00:00',   'Check first PQ date';
+    is $pqs[1]->get_value('by'),   'Franklin D. Roosevelt', 'Check second PQ by';
+    is $pqs[1]->get_value('date'), '1933-03-04 00:00:00',   'Check second PQ date';
+    is $pqs[2]->get_value('by'),   'Neil Armstrong',        'Check second PQ by';
+    is $pqs[2]->get_value('date'), '1970-07-20 00:00:00',   'Check second PQ date';
 
     # Now update it with the original POD to ensure one pq is removed.
     ok $elem->update_from_pod($self->pod_output),
         'Update from POD without extra pull quote';
     ok @pqs = $elem->get_elements('_pull_quote_'), 'Get pull quotes';
     is scalar @pqs, 2, 'Should have two pull quotes';
-    is $pqs[0]->get_data('by'),   'John F. Kennedy',       'Check first PQ by';
-    is $pqs[0]->get_data('date'), '1961-01-20 00:00:00',   'Check first PQ date';
-    is $pqs[1]->get_data('by'),   'Franklin D. Roosevelt', 'Check second PQ by';
-    is $pqs[1]->get_data('date'), '1933-03-04 00:00:00',   'Check second PQ date';
+    is $pqs[0]->get_value('by'),   'John F. Kennedy',       'Check first PQ by';
+    is $pqs[0]->get_value('date'), '1961-01-20 00:00:00',   'Check first PQ date';
+    is $pqs[1]->get_value('by'),   'Franklin D. Roosevelt', 'Check second PQ by';
+    is $pqs[1]->get_value('date'), '1933-03-04 00:00:00',   'Check second PQ date';
 
     # Try adding a page with its own pull quote subelement.
     ok $elem->update_from_pod($self->pod_output_plus_page),
         'Update from POD with page and different indent';
 
     # Check the contents.
-    is $elem->get_data('para'), 'This is a paragraph', 'Check first para';
-    is $elem->get_data('para', 2), 'Second paragraph', 'Check second para';
-    is $elem->get_data('header'), 'And then...', 'Check header';
-    is $elem->get_data('para', 3), 'Third paragraph', 'Check third para';
+    is $elem->get_value('para'), 'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph', 'Check second para';
+    is $elem->get_value('header'), 'And then...', 'Check header';
+    is $elem->get_value('para', 3), 'Third paragraph', 'Check third para';
 
     # Check the pull quote.
     is $elem->get_container('_pull_quote_'), $pq,
         'The pull quote object should be the same';
-    is $pq->get_data('para'),
+    is $pq->get_value('para'),
         "Ask not what your country can do for you.\n"
         . '\=Ask what you can do for your country.',
         'Check pull quote paragraph';
-    is $pq->get_data('by'), 'John F. Kennedy', 'Check pull quote by';
-    is $pq->get_data('date'), '1961-01-20 00:00:00', 'Check pull quote date';
+    is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
+    is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
 
     # Check the page.
     ok my $page_elem = $elem->get_container('_page_');
-    is $page_elem->get_data('para'),
+    is $page_elem->get_value('para'),
         "This is the first paragraph from page one.\nIt isn't a long "
         . "paragraph.\nBut it'll do.",
         'Check the page paragraph';
-    ok my $ppara = $page_elem->get_data_element('para'), 'Get page para';
+    ok my $ppara = $page_elem->get_field('para'), 'Get page para';
     is $ppara->get_place, 0, q{Check page paragraph's place};
     is $ppara->get_object_order, 1, q{Check page paragraph's obj order};
     ok my $subpq = $page_elem->get_container('_pull_quote_'),
         q{Get page's pull quote};
     is $subpq->get_place, 1, q{Check the pull quote's place};
     is $ppara->get_object_order, 1, q{Check pull quote's obj order};
-    is $subpq->get_data('para'),
+    is $subpq->get_value('para'),
         q{Granted, Opera has been available for a while, but it remains the }
         . q{province of a devoted few -- the Amiga of Web browsers.},
         q{Check the page pull quote's paragraph};
-    is $subpq->get_data('by'), 'Chad Dickerson', q{... And its by};
-    is $subpq->get_data('date'), '2004-12-03 00:00:00', q{... And its date};
+    is $subpq->get_value('by'), 'Chad Dickerson', q{... And its by};
+    is $subpq->get_value('date'), '2004-12-03 00:00:00', q{... And its date};
 
     # Test a bad default field.
     eval { $elem->update_from_pod('', 'par') };
@@ -582,7 +582,7 @@ sub test_pod : Test(229) {
     ], 'Should get the correct maketext array';
 
     # Try repeating a default field not allowed to be repeated.
-    $para = $elem->get_element_type->get_data('para');
+    $para = $elem->get_element_type->get_field_types('para');
     ok $para->set_quantifier(0), 'Disallow repeating for paragarphs';
     ok $para->save, 'Save paragraph field type';
     eval { $elem->update_from_pod("=para\n\nfoo\n\n=para\n\n", 'para') };

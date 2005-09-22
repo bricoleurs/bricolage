@@ -1578,13 +1578,13 @@ sub upload_file {
             next if $dt->is_container;
             # See if this is an auto populated field.
             my $name = $dt->get_name;
-            if ($auto_fields->{$name} ) {
+            if ($auto_fields->{$name}) {
                 # Check the element to see if we can override it.
                 next if $dt->is_locked;
                 # Get and set the value
                 my $method = $auto_fields->{$name};
                 my $val = $media_func->$method();
-                $dt->set_data(defined $val ? $val : '');
+                $dt->set_value(defined $val ? $val : '');
                 $dt->save;
             }
         }
@@ -1593,10 +1593,10 @@ sub upload_file {
 }
 
 sub delete_file {
-    my ($self) = @_;
-    $self->_set([qw(file_name location  uri _update_uri)] =>
-                [   undef, undef, undef, 1]);
-    return $self;
+    my $self = shift;
+    return $self->_set(
+        [qw(file_name location  uri _update_uri)]
+        => [   undef, undef, undef, 1]);
 }
 
 ################################################################################

@@ -161,7 +161,7 @@ sub add_element : Callback {
 
         } elsif ($type eq 'data_') {
             $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
-            $element->add_data($at);
+            $element->add_field($at);
             $element->save();
             set_state_data($self->class_key, 'element', $element);
         }
@@ -341,8 +341,10 @@ sub lock_val : Callback {
     my $element    = get_state_data($self->class_key, 'element');
 
     # Map all the data elements into a hash keyed by Element::Data ID.
-    my $data = { map { $_->get_id() => $_ } 
-                 grep(not($_->is_container()), $element->get_elements()) };
+    my $data = {
+        map  { $_->get_id => $_ }
+        grep { !$_->is_container } $element->get_elements
+    };
 
     foreach my $id (@$autopop) {
         my $lock_set = $self->params->{$self->class_key.'|lock_val_'.$id} || 0;
@@ -530,7 +532,7 @@ sub _pop_and_redirect {
 
     # Get the element stack and pop off the current element.
     my $element = $flip ? get_state_data($widget, 'element')
-                     : _pop_element_stack($widget);
+                        : _pop_element_stack($widget);
 
     my $object_type = $element->get_object_type;
 
@@ -625,10 +627,18 @@ sub _update_parts {
                     set_state_data($widget, '__NO_SAVE__', 1);
                 } else {
                     # Truncate the value, if necessary, then set it.
-                    $val = join('__OPT__', @$val) if $t->is_multiple;
                     my $max = $t->get_max_length;
-                    $val = substr($val, 0, $max) if $max && length $val > $max;
-                    $t->set_data($val);
+                    if ($t->is_multiple) {
+                        if ($max) {
+                            $_ = substr($_, 0, $max)
+                                for grep { length $_ > $max } @$val
+                            }
+                        $t->set_values(@$val);
+                    } else {
+                        $val = substr($val, 0, $max)
+                            if $max && length $val > $max;
+                        $t->set_value($val);
+                    }
                 }
             }
         }

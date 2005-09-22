@@ -334,6 +334,23 @@ in general. The tables renamed are:
 
 Fixed a bunch of inconsistently named foreign key indexes. [David]
 
+=item *
+
+Changed various C<get_data()>, C<set_data()> C<del_data()> and such methods to
+C<get_field_types()>, C<get_value()>, C<set_value()>, C<add_field_types()>,
+etc., to disambiguate fields from field types more consistently. These changes
+are to the interfaces of L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
+L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>, and
+L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>.
+The old methods are of course left in place for purposes of backwards
+compatibility. [David]
+
+=item *
+
+Added C<get_values()> and C<set_values()> methods to the field class
+(Bric::Biz::Asset::Business::Parts::Tile::Data) to make getting and
+setting multivalue fields easier and more centralized. [David]
+
 =back
 
 =cut

@@ -707,7 +707,7 @@ to an example soon enough.
 
 =over 4
 
-=item $element->get_data($name, $num)
+=item $element->get_value($key_name, $num)
 
 This returns the data associated with the data element given by $name. For our
 example in our story, $name is one of 'author', 'topic' or 'paragraph'.
@@ -717,13 +717,13 @@ than once, such as 'paragraph's. If $num is not given the text for the first
 $name data element will be returned. Note to programmers; $num starts at '1' not
 '0'.
 
-=item $element->get_container($name, $num)
+=item $element->get_container($key_name, $num)
 
 This returns a container element object. This object is of the same type as
 $element. Usually you will just pass this object to a method that will call the
 correct template for you.
 
-The $num argument is optional. Like the $num argument in 'get_data', it is
+The $num argument is optional. Like the $num argument in 'get_value', it is
 used to retrieve container elements that occur more than once in a given story.
 
 If $num is not given, the first container element object will be returned. Note
@@ -757,9 +757,9 @@ the 2nd of 3 'music_blurb' container elements, this method will return 2.
 If $element is the element object for the main story (i.e. the 'column' element of
 a 'column' story) this will return 1.
 
-=item $element->get_name
+=item $element->get_key_name
 
-Return the name of this container element.
+Return the key name of this container element.
 
 =back
 
@@ -769,7 +769,7 @@ element object:
 
 =over 4
 
-=item $delem->get_data
+=item $delem->get_value
 
 Returns the data associated with this data element.
 
@@ -781,7 +781,7 @@ Same concept as the container element 'get_place' method.
 
 Same concept as the container element 'get_object_order' method.
 
-=item $delem->get_name
+=item $delem->get_key_name
 
 Returns the name of this data element.
 
@@ -941,8 +941,8 @@ Next let's look at some example code for the 'page' element:
             }
         }
 
-        my $next_txt = $element->get_data('next');
-        my $prev_txt = $element->get_data('previous');
+        my $next_txt = $element->get_value('next');
+        my $prev_txt = $element->get_value('previous');
         my $next = $burner->next_page_file;
         my $prev = $burner->prev_page_file;
     </%perl>
@@ -967,7 +967,7 @@ of the column, followed by the data for this story. After the data is output the
 iterating over all elements the method 'display_element' is used to display both
 data and container elements. For the data elements we could have used:
 
-    $m->out($e->get_data);
+    $m->out($e->get_value);
 
 to return the data. Also, it is important to realize that there are no
 restrictions against having a container and a data element with the same name.
@@ -979,7 +979,7 @@ Finally here is the template code for the 'inset' container element:
     <!-- The inset element -->
     <table width="570" border="2">
         <tr><td>
-    % $element->get_data('copy');
+    % $element->get_value('copy');
         </td></tr>
     </table>
 

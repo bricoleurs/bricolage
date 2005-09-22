@@ -329,7 +329,7 @@ sub subclass_burn_test {
     $self->add_del_ids($story_type->get_id, 'element_type');
 
     # Give it a header field.
-    ok my $head = $story_type->new_data({
+    ok my $head = $story_type->new_field_type({
         key_name    => 'header',
         name        => 'Header',
         required    => 0,
@@ -341,7 +341,7 @@ sub subclass_burn_test {
     }), "Add a field";
 
     # Give it a paragraph field.
-    ok my $para = $story_type->new_data({
+    ok my $para = $story_type->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 0,
@@ -370,7 +370,7 @@ sub subclass_burn_test {
     $self->add_del_ids($pull_quote->get_id, 'element_type');
 
     # Give it a paragraph field.
-    ok my $pq_para = $pull_quote->new_data({
+    ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 1,
@@ -382,7 +382,7 @@ sub subclass_burn_test {
     }), "Add a field";
 
     # Give it a by field.
-    ok my $by = $pull_quote->new_data({
+    ok my $by = $pull_quote->new_field_type({
         key_name    => 'by',
         name        => 'By',
         required    => 1,
@@ -394,7 +394,7 @@ sub subclass_burn_test {
     }), "Add a field";
 
     # Give it a date field.
-    ok my $date = $pull_quote->new_data({
+    ok my $date = $pull_quote->new_field_type({
         key_name    => 'date',
         name        => 'Date',
         required    => 1,
@@ -421,7 +421,7 @@ sub subclass_burn_test {
     }), "Create a page subelement element";
 
     # Give it a paragraph field.
-    ok my $page_para = $page->new_data({
+    ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         required    => 0,
@@ -601,13 +601,13 @@ sub subclass_burn_test {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-    ok $pq->get_data_element('para')->set_data(
+    ok $pq->get_field('para')->set_data(
         'Ask not what your country can do for you. '
           . 'Ask what you can do for your country.'
     ), "Add a paragraph to the pull quote";
-    ok $pq->get_data_element('by')->set_data("John F. Kennedy"),
+    ok $pq->get_field('by')->set_data("John F. Kennedy"),
       "Add a By to the pull quote";
-    ok $pq->get_data_element('date')->set_data('1961-01-20 00:00:00'),
+    ok $pq->get_field('date')->set_data('1961-01-20 00:00:00'),
       "Add a date to the pull quote";
 
     # Add some Unicode content.
@@ -626,15 +626,15 @@ sub subclass_burn_test {
 
     # Add another pull quote.
     ok $pq = $elem->add_container($pull_quote), "Add another pull quote";
-    ok $pq->get_data_element('para')->set_data(
+    ok $pq->get_field('para')->set_data(
         'So, first of all, let me assert my firm belief that the only '
         . 'thing we have to fear is fear itself -- nameless, unreasoning, '
         . 'unjustified terror which paralyzes needed efforts to convert '
         . 'retreat into advance.'
     ), "Add a paragraph to the pull quote";
-    ok $pq->get_data_element('by')->set_data("Franklin D. Roosevelt"),
+    ok $pq->get_field('by')->set_data("Franklin D. Roosevelt"),
       "Add a By to the pull quote";
-    ok $pq->get_data_element('date')->set_data('1933-03-04 00:00:00'),
+    ok $pq->get_field('date')->set_data('1933-03-04 00:00:00'),
       "Add a date to the pull quote";
 
     # Make it so!

@@ -1,4 +1,3 @@
-
 <!-- Start "Related Stories" -->
 % my @rel = $element->get_elements;
 

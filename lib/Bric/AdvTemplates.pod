@@ -85,10 +85,9 @@ Here is some code for the 'Column' template:
     <!-- Code for /News/Politics/column.mc -->
     <b><% $story->get_title %></b>
 
-    % my $n = 1;
-    % while (my $p = $element->get_data('paragraph', $n++)) {
+    % for my $p ($element->get_elements('paragraph')) {
 
-    <p><% $p %></p>
+    <p><% $p->get_value %></p>
 
     % }
 
@@ -158,9 +157,8 @@ For example, say we have a 'Column' story that contains 'Page' elements. These
 (assume page contains just paragraphs):
 
     <!-- Code for 'page.mc' -->
-    % my $n = 1;
-    % while (my $p = $element->get_data('paragraph', $n++)) {
-        <p><% $p %></p>
+    % for my $p ($element->get_elements('paragraph')) {
+        <p><% $p->get_value %></p>
     % }
 
 Here is some template code for 'Column':
@@ -238,9 +236,8 @@ output we want:
 The code for the 'Page' template:
 
         <!-- Code for 'page.mc' -->
-    % my $n = 1;
-    % while (my $p = $element->get_data('paragraph', $n++)) {
-        <p><% $p %></p>
+    % for my $p ($element->get_elements('paragraph')) {
+        <p><% $p->get_value %></p>
     % }
 
 This approach will output the following files:
