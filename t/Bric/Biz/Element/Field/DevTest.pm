@@ -1,23 +1,23 @@
-package Bric::Biz::Asset::Business::Parts::Tile::Data::DevTest;
+package Bric::Biz::Element::Field::DevTest;
 ################################################################################
 
 use strict;
 use warnings;
 
-use base qw(Bric::Biz::Asset::Business::Parts::Tile::DevTest);
+use base qw(Bric::Biz::Element::DevTest);
 use Test::More;
 use Bric::Util::DBI qw(:junction);
 
-use Bric::Biz::Asset::Business::Parts::Tile::Container;
-use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Biz::Element::Container;
+use Bric::Biz::Element::Field;
 
 ##############################################################################
 # Utility methods
 ##############################################################################
 # The class we're testing. Override this method in subclasses.
-sub class { 'Bric::Biz::Asset::Business::Parts::Tile::Data' }
+sub class { 'Bric::Biz::Element::Field' }
 
-my $cont_pkg = 'Bric::Biz::Asset::Business::Parts::Tile::Container';
+my $cont_pkg = 'Bric::Biz::Element::Container';
 
 ################################################################################
 

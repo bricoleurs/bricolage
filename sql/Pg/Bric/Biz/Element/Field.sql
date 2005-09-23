@@ -18,12 +18,11 @@ CREATE SEQUENCE seq_media_field START 1024;
 -- -----------------------------------------------------------------------------
 -- Table story_field
 --
--- Description: Story Data elements are story specific mappings to the 
---              Bric::Asset::Business::Parts::Tile::Data class.
---              They link to the story that this element is a part of,
---              the attribute id of the data that is contained with in,
---              and it's parent's id ( a story_element row ).
---              Place is it's order and active is it's active state.
+-- Description: Story Field elements are story specific mappings to the
+--              Bric::Biz::Element::Field class. They link to the story that
+--              this element is a part of, the attribute id of the data that
+--              is contained with in, and it's parent's id (a story_element
+--              row). Place is it's order and active is it's active state.
 --
 --
 
@@ -47,12 +46,11 @@ CREATE TABLE story_field (
 -- -----------------------------------------------------------------------------
 -- Table media_field
 --
--- Description: Media Data elements are media specific mappings to the 
---              Bric::Asset::Business::Parts::Tile::Data class.
---              They link to the media that this element is a part of,
---              the attribute id of the data that is contained with in,
---              and it's parent's id ( a story_element row ).
---              Place is it's order and active is it's active state.
+-- Description: Media Field elements are media specific mappings to the
+--              Bric::Biz::Element::Field class. They link to the media that
+--              this element is a part of, the attribute id of the data that
+--              is contained with in, and it's parent's id (a media_element
+--              row). Place is it's order and active is it's active state.
 --
 --
 

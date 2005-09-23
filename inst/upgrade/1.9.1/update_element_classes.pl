@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if fetch_sql q{SELECT 1 FROM class where pkg_name = 'Bric::Biz::ElementType'};
+exit if fetch_sql q{SELECT 1 FROM class where pkg_name = 'Bric::Biz::Element'};
 
 do_sql
 
@@ -45,5 +45,13 @@ do_sql
            description = 'Subelement Type Group'
     WHERE  key_name    = 'asset_type_grp'
   },
+
+  q{
+    UPDATE class
+    SET    pkg_name    = 'Bric::Biz::Element'
+    WHERE  key_name    = 'element'
+  },
+
+
 
 ;

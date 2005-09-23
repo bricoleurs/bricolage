@@ -14,8 +14,8 @@ use Bric::App::Callback::Desk;
 use Bric::App::Callback::Profile::Media;
 use Bric::Biz::ElementType;
 use Bric::Biz::ElementType::Parts::FieldType;
-use Bric::Biz::Asset::Business::Parts::Tile::Container;
-use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Biz::Element::Container;
+use Bric::Biz::Element::Field;
 use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
@@ -340,7 +340,7 @@ sub lock_val : Callback {
     my $autopop = ref $self->value ? $self->value : [$self->value];
     my $element    = get_state_data($self->class_key, 'element');
 
-    # Map all the data elements into a hash keyed by Element::Data ID.
+    # Map all the data elements into a hash keyed by Element::Field ID.
     my $data = {
         map  { $_->get_id => $_ }
         grep { !$_->is_container } $element->get_elements

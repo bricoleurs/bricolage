@@ -1,15 +1,15 @@
-package Bric::Biz::Asset::Business::Parts::Tile::Container::DevTest;
+package Bric::Biz::Element::Container::DevTest;
 ################################################################################
 
 use strict;
 use warnings;
 
-use base qw(Bric::Biz::Asset::Business::Parts::Tile::DevTest);
+use base qw(Bric::Biz::Element::DevTest);
 
 use Test::More;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::Asset::Business::Parts::Tile::Container;
+use Bric::Biz::Element::Container;
 use Bric::Biz::ATType;
 use Bric::Biz::ElementType;
 use Test::MockModule;
@@ -18,7 +18,7 @@ use Test::MockModule;
 # Utility methods
 ##############################################################################
 # The class we're testing. Override this method in subclasses.
-sub class { 'Bric::Biz::Asset::Business::Parts::Tile::Container' }
+sub class { 'Bric::Biz::Element::Container' }
 my $rel_story_uuid = '4162F712-1DD2-11B2-B17E-C09EFE1DC403';
 my $rel_media_uuid = '4162F713-1DD3-11B3-B17F-C09EFE1DC404';
 
@@ -198,7 +198,7 @@ sub test_list : Test(166) {
     for my $e ($top->get_containers) {
         ok @elems = $e->get_elements, 'Get subelement subelements';
         is scalar @elems, 3, 'Should have three subelements';
-        isa_ok $_, 'Bric::Biz::Asset::Business::Parts::Tile::Data',
+        isa_ok $_, 'Bric::Biz::Element::Field',
             for @elems;
     }
 

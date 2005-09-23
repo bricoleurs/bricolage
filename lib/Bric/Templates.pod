@@ -998,9 +998,9 @@ to any category.
     Element Type        Bric::Biz::ElementType
     Template            Bric::Biz::Asset::Formatting
     Story               Bric::Biz::Asset::Business::Story
-    Element             Bric::Biz::Asset::Business::Parts::Tile
-    Field Element       Bric::Biz::Asset::Business::Parts::Tile::Data
-    Container Element   Bric::Biz::Asset::Business::Parts::Tile::Container
+    Element             Bric::Biz::Element
+    Field Element       Bric::Biz::Element::Field
+    Container Element   Bric::Biz::Element::Container
     Burn System         Bric::Util::Burner
 
 =head2 Glossary
@@ -1070,9 +1070,9 @@ L<Bric::AdvTemplates|Bric::AdvTemplates>,
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
 L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>,
 L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
-L<Bric::Biz::Asset::Business::Parts::Tile|Bric::Biz::Asset::Business::Parts::Tile>,
-L<Bric::Biz::Asset::Business::Parts::Tile::Data|Bric::Biz::Asset::Business::Parts::Tile::Data>,
-L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>,
+L<Bric::Biz::Element|Bric::Biz::Element>,
+L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>,
+L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>,
 L<Bric::Util::Burner|Bric::Util::Burner>
 
 =cut

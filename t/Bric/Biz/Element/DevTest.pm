@@ -1,4 +1,4 @@
-package Bric::Biz::Asset::Business::Parts::Tile::DevTest;
+package Bric::Biz::Element::DevTest;
 ################################################################################
 
 use strict;
@@ -11,7 +11,7 @@ use Bric::Biz::Asset::Business::Story;
 # Utility methods
 ##############################################################################
 # The class we're testing. Override this method in subclasses.
-sub class { 'Bric::Biz::Asset::Business::Parts::Tile' }
+sub class { 'Bric::Biz::Element' }
 
 ################################################################################
 # A sample story to use

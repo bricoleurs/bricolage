@@ -122,25 +122,6 @@ generate the items in a select list. [Scott]
 
 =head2 Improvements
 
-=item *
-
-Renamed the Element and Element Type classes as follows:
-
-=over
-
-=item *
-
-Bric::Biz::AssetType is now L<Bric::Biz::ElementType|Bric::Biz::ElementType>.
-
-=item *
-
-Bric::Biz::AssetType::Parts::Data is now
-L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
-
-=back
-
-[David]
-
 =over
 
 =item *
@@ -360,21 +341,56 @@ Fixed a bunch of inconsistently named foreign key indexes. [David]
 
 =item *
 
+Renamed the Element and Element Type classes as follows:
+
+=over
+
+=item *
+
+Bric::Biz::AssetType is now L<Bric::Biz::ElementType|Bric::Biz::ElementType>.
+
+=item *
+
+Bric::Biz::AssetType::Parts::Data is now
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
+
+=item *
+
+Bric::Biz::Asset::Busines::Parts::Tile is now
+L<Bric::Biz::Element|Bric::Biz::Element>.
+
+=item *
+
+Bric::Biz::Asset::Busines::Parts::Tile::Container is now
+L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>.
+
+=item *
+
+Bric::Biz::Asset::Busines::Parts::Tile::Data is now
+L<Bric::Biz::Element::Container|Bric::Biz::Element::Field>.
+
+=back
+
+They now properly reflect what they're called in the UI, in SOAP, and in the
+database. The old classes have been changed to simply inherit from the new
+classes, so as to maintain backwards compatibility. [David]
+
+=item *
+
 Changed various C<get_data()>, C<set_data()> C<del_data()> and such methods to
 C<get_field_types()>, C<get_value()>, C<set_value()>, C<add_field_types()>,
 etc., to disambiguate fields from field types more consistently. These changes
 are to the interfaces of L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
 L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>,
-and
-L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>.
-The old methods are of course left in place for purposes of backwards
-compatibility. [David]
+and L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>. The old
+methods are of course left in place for purposes of backwards compatibility.
+[David]
 
 =item *
 
 Added C<get_values()> and C<set_values()> methods to the field class
-(Bric::Biz::Asset::Business::Parts::Tile::Data) to make getting and
-setting multivalue fields easier and more centralized. [David]
+(Bric::Biz::Element::Field) to make getting and setting multivalue fields
+easier and more centralized. [David]
 
 =back
 
@@ -386,7 +402,7 @@ setting multivalue fields easier and more centralized. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -610,7 +626,7 @@ L<Data::UUID|Data::UUID>.
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -782,7 +798,7 @@ Updated search documentation and wrote tests for:
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -821,7 +837,7 @@ warning during startup with HTML::Mason 1.30. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -929,7 +945,7 @@ method. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -1115,7 +1131,7 @@ F<contrib/bric_media_upload/bric_media_upload>. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -1135,7 +1151,7 @@ checked out, this parameter has no effect.
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -1157,7 +1173,7 @@ checkout. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -1504,7 +1520,7 @@ previous image no longer causes an Imager error. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -1629,7 +1645,7 @@ objects for the current page. Thanks to Marshall for the spot! [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -1812,7 +1828,7 @@ members of the "Global Admins" group. Thanks to Marshall Roch for the spot!
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -1986,7 +2002,7 @@ out" message. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -2280,7 +2296,7 @@ Windows. [Marshall]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -2422,7 +2438,7 @@ documents to be published. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -2574,7 +2590,7 @@ site context if the "Filter by Site Context" preference is checked. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -2638,7 +2654,7 @@ Roch. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -2731,7 +2747,7 @@ desk or via Bulk Publish. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -2747,7 +2763,7 @@ Added C<SFTP_MOVER_CIPHER> F<bricolage.conf> directive to tune the SFTP mover
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -2814,7 +2830,7 @@ the cloned package. Suggested by Marshall Roch. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -2923,7 +2939,7 @@ to deleted groups in the permissions interface. So it has been removed.
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -2982,7 +2998,7 @@ installation and configuration details. [Eric Sellers]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -3161,7 +3177,7 @@ upgrading to this version of Bricolage. Suggested by Josh Berkus. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -3261,7 +3277,7 @@ from server while idle", and occaisionally a frozen server. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -3307,7 +3323,7 @@ for more information. [Paul Orrock/ Digital Craftsmen]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -3457,7 +3473,7 @@ F<bricolage.conf> directive to never publish related assets. [Scott]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -3623,7 +3639,7 @@ longer causes an error. Reported by Marshall Bloch. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -3709,7 +3725,7 @@ Added zh-cn localization, with translation based on zh-tw. [Kang-min Liu]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -3808,7 +3824,7 @@ figuring out the query syntax. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -3925,7 +3941,7 @@ sites) that the user does not have at least READ permission to access. [David]
 
 =head2 Improvements
 
-=over 4
+=over
 
 =item *
 
@@ -3937,7 +3953,7 @@ been preventing it. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4096,7 +4112,7 @@ was also changed. [Dave Rolsky]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -4413,7 +4429,7 @@ upgrading. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4460,7 +4476,7 @@ Reported by Serge Sozonoff. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4477,7 +4493,7 @@ a bug report from Serge Sozonoff. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4504,7 +4520,7 @@ them. Reported by Patrick Walsh. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4543,7 +4559,7 @@ cases. Incidentally, this change also allows dynamic configuration of mod_perl
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4641,7 +4657,7 @@ Changed the name of the event logged when templates are checked out from
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4755,7 +4771,7 @@ Updated Chinese Traditional localization. [Kang-min Liu]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4831,7 +4847,7 @@ preview. Reported by Simon Wilcox. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -4900,7 +4916,7 @@ Eldar Kononov. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -4910,7 +4926,7 @@ Added F<README.Solaris>, with thanks to Oscar Sodani and Thorsten Biel.
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5003,7 +5019,7 @@ directories as files. [Arthur]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5102,7 +5118,7 @@ type no longer causes an SQL error. Thanks to Gary Gilchrist for the spot.
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5118,7 +5134,7 @@ Preview works again. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5246,7 +5262,7 @@ class in the database. Noticed by Radu Greab. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -5261,7 +5277,7 @@ Richards]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5519,7 +5535,7 @@ the contents of F<conf/>. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -5535,7 +5551,7 @@ Added Traditional Chinese localization. [Kang-min Liu]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5696,7 +5712,7 @@ Made unlocalized JavaScript message localized. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -5742,7 +5758,7 @@ recreated if users wanted to change them. [Scott]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5894,7 +5910,7 @@ C<make distclean> now properly deletes F<inst/Pg.sql>. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -5919,7 +5935,7 @@ New "Tuning" sections have been added to L<Bric::DBA>. [Mark]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -5997,7 +6013,7 @@ workflows, and on desks. [Mark]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -6035,7 +6051,7 @@ Refactored and optimized the code used in the C<lookup()>, C<list()>,
 C<list_ids()>, and, where pertinent, C<href()> methods in the following
 classes:
 
-=over 4
+=over
 
 =item Bric::Biz::Asset
 
@@ -6371,7 +6387,7 @@ so that users can administer media types. Previously, only members of the
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -6697,7 +6713,7 @@ collections, such as desks, should be more responsive. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -6833,7 +6849,7 @@ C<< Bric::SOAP::Category->list_ids >>. [David]
 
 =head2 Changes
 
-=over 4
+=over
 
 =item *
 
@@ -6857,7 +6873,7 @@ back in the event of an error. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7005,7 +7021,7 @@ Added missing C<list_ids()> method to Bric::Biz::Category. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7147,7 +7163,7 @@ Geoff Richards for the spot. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7174,7 +7190,7 @@ again. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7214,7 +7230,7 @@ altogether. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7410,7 +7426,7 @@ both. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -7439,7 +7455,7 @@ preference. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7539,7 +7555,7 @@ The F<bric_dist_mon> program works again. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -7697,7 +7713,7 @@ L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -7897,7 +7913,7 @@ reverted. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -7962,7 +7978,7 @@ two-level cache with Cache:Mmap and Cache::Cache.  This results in a
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8139,7 +8155,7 @@ Fixed section numbering in the Contributor Type profile. [Scott Lanning]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8184,7 +8200,7 @@ cache. [Sam]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8278,7 +8294,7 @@ Implemented the chk_syntax() method in Bric::Util::Burner::Template.
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8290,7 +8306,7 @@ bric_soap - is complete. [Sam]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8335,7 +8351,7 @@ Functionally equivalent to 1.2.2, but includes required files missing from the
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8347,7 +8363,7 @@ Bric::Util::Burner::chk_syntax() delegates to the proper subclass.
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8466,7 +8482,7 @@ The CREATE permission works properly now. Thanks to Rachel Murray for the spot.
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8503,7 +8519,7 @@ Documented PERL_LOADER directive in Bric::AdvTemplates. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8655,7 +8671,7 @@ category. [Matt Vella]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8708,7 +8724,7 @@ Updated About page to mimic the layout of the help pages. [David]
 
 =head2 Bug Fixes
 
-=over 4
+=over
 
 =item *
 
@@ -8760,7 +8776,7 @@ choke if it couldn't figure out the MediaType itself. [David]
 
 =head2 New Features
 
-=over 4
+=over
 
 =item *
 
@@ -8905,7 +8921,7 @@ heads-up.
 
 =head1 VERSION 1.0.1 (2001-09-28)
 
-=over 4
+=over
 
 =item *
 

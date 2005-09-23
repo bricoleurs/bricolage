@@ -125,7 +125,7 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Biz::Asset::Business::Media::Audio;
     use Bric::Biz::Asset::Business::Media::Image;
     use Bric::Biz::Asset::Business::Media::Video;
-    use Bric::Biz::Asset::Business::Parts::Tile::Container;
+    use Bric::Biz::Element::Container;
     use Bric::Biz::Asset::Business::Story;
     use Bric::Biz::Asset::Formatting;
     use Bric::Biz::Site;

@@ -256,4 +256,4 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('80', 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job', 'Publication Jobs', 'Publication job objects.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('81', 'element', 'Bric::Biz::Asset::Busines::Parts::Tile', 'Element', 'Elements', 'Element objects.', '0');
+VALUES ('81', 'element', 'Bric::Biz::Element', 'Element', 'Elements', 'Element objects.', '0');

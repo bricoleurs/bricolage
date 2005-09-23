@@ -126,8 +126,8 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::AssetLanguage;
-use Bric::Biz::Asset::Business::Parts::Tile::Data;
-use Bric::Biz::Asset::Business::Parts::Tile::Container;
+use Bric::Biz::Element::Field;
+use Bric::Biz::Element::Container;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Biz::Org::Source;
@@ -1569,7 +1569,7 @@ sub get_element {
     my $object = $self->_get_alias || $self;
     my $element = $self->_get('_element');
     unless ($element) {
-        $element = Bric::Biz::Asset::Business::Parts::Tile::Container->lookup({
+        $element = Bric::Biz::Element::Container->lookup({
             object    => $object,
             parent_id => undef,
         });
@@ -2360,7 +2360,7 @@ sub _init {
         }
 
         # Let's create the new element as well.
-        my $element = Bric::Biz::Asset::Business::Parts::Tile::Container->new ({
+        my $element = Bric::Biz::Element::Container->new ({
             object          => $self,
             element_type_id => $init->{element_type_id},
             element_type    => $init->{element_type}
