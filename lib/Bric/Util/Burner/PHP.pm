@@ -97,7 +97,7 @@ BEGIN {
 }
 
 __PACKAGE__->_register_burner(
-    Bric::Biz::AssetType::BURNER_PHP,
+    Bric::Biz::ElementType::BURNER_PHP,
     category_fn    => 'cat_tmpl',
     cat_fn_has_ext => 0,
     exts           => {

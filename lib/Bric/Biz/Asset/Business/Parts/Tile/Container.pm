@@ -55,7 +55,7 @@ use strict;
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::App::Util;
 use Bric::Util::Fault qw(throw_gen throw_invalid throw_da);
 use URI;
@@ -217,12 +217,12 @@ element.
 
 =item element
 
-A Bric::Biz::AssetType object that defines the structure of this container
+A Bric::Biz::ElementType object that defines the structure of this container
 element.
 
 =item element_type_id
 
-An ID for the Bric::Biz::AssetType object that defines the structure of this
+An ID for the Bric::Biz::ElementType object that defines the structure of this
 container element.
 
 =item active
@@ -274,7 +274,7 @@ sub new {
         $init->{_element_type_obj} = $type;
         $init->{element_type_id} = $type->get_id;
     } else {
-        $init->{_element_type_obj} = Bric::Biz::AssetType->lookup({
+        $init->{_element_type_obj} = Bric::Biz::ElementType->lookup({
             'id' => $init->{element_type_id} ||= delete $init->{element_id}
         });
     }
@@ -404,7 +404,7 @@ must be C<NULL>. May use C<ANY> for a list of possible values.
 
 =item element_type_id
 
-The ID of the Bric::Biz::AssetType object that specifies the structure of the
+The ID of the Bric::Biz::ElementType object that specifies the structure of the
 container elements. May use C<ANY> for a list of possible values.
 
 =item active
@@ -490,7 +490,7 @@ from which Bric::Biz::Asset::Business::Parts::Tile::Container inherits.
 
 =item my $element_type_id = $container->get_element_type_id
 
-Returns the ID of the Bric::Biz::AssetType object that defines the structure
+Returns the ID of the Bric::Biz::ElementType object that defines the structure
 of this element.
 
 B<Throws:> NONE.
@@ -501,7 +501,7 @@ B<Notes:> NONE.
 
 =item $container->set_element_type_id($element_type_id)
 
-Sets the ID of the Bric::Biz::AssetType object that defines the structure
+Sets the ID of the Bric::Biz::ElementType object that defines the structure
 of this element.
 
 B<Throws:> NONE.
@@ -527,7 +527,7 @@ sub set_element_id {
 =item my $object_order = $container->get_object_order
 
 Returns the order number for this object relative to other container elements
-based on the same Bric::Biz::AssetType object.
+based on the same Bric::Biz::ElementType object.
 
 B<Throws:> NONE.
 
@@ -538,7 +538,7 @@ B<Notes:> NONE.
 =item $container->set_object_order($object_order)
 
 Sets the order number for this object relative to other container elements
-based on the same Bric::Biz::AssetType object.
+based on the same Bric::Biz::ElementType object.
 
 B<Throws:> NONE.
 
@@ -731,7 +731,7 @@ sub get_related_media {
 
 =item $obj = $container->get_element_type
 
-Returns the Bric::Biz::AssetType object that defines the structure of this
+Returns the Bric::Biz::ElementType object that defines the structure of this
 container element.
 
 B<Throws:> NONE.
@@ -748,7 +748,7 @@ sub get_element_type {
 
     unless ($at_obj) {
         my $dirty = $self->_get__dirty;
-        $at_obj = Bric::Biz::AssetType->lookup({id => $at_id});
+        $at_obj = Bric::Biz::ElementType->lookup({id => $at_id});
         $self->_set(['_element_type_obj'], [$at_obj]);
         $self->_set__dirty($dirty);
     }
@@ -805,7 +805,7 @@ sub get_element_key_name { $_[0]->get_key_name }
   my @field_types = $container->get_possible_field_types();
      @field_types = $container->get_possible_data();
 
-Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
+Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
 objects that define the types of data elements that can be subelements of this
 container element. This list would exclude any data elements that can only be
 added as subelements to this container element once, and have already been
@@ -844,7 +844,7 @@ sub get_possible_data { shift->get_possible_field_types(@_) }
 
 =item my @elements = $container->get_possible_containers
 
-Returns a list or anonymous array of the Bric::Biz::AssetType::Parts::Data
+Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
 objects that define the types of data elements that can be subelements of this
 container element. This is synonymous with
 C<< $container->get_element_type->get_containers >>, since containers do not
@@ -870,7 +870,7 @@ sub get_possible_containers {
 
 =item $container->add_data($field_type, $value, $place);
 
-Pass a Bric::Biz::AssetType::Parts::Data object and a value for a new field
+Pass a Bric::Biz::ElementType::Parts::FieldType object and a value for a new field
 element, and that new field element will be created and added as a subelement
 of the container element. An optional third argument specifies the C<place>
 for that field element in the order of subelements of this container element.
@@ -907,7 +907,7 @@ sub add_data { shift->add_field(@_) }
 =item $new_container = $container->add_container($element)
 
 Adds a new container subelement to this container element. Pass in the
-required element type (Bric::Biz::AssetType) object specifying the structure
+required element type (Bric::Biz::ElementType) object specifying the structure
 of the new container subelement.
 
 B<Throws:> NONE.
@@ -1136,7 +1136,7 @@ sub get_elements {
     my $dirty = $self->_get__dirty;
     my $subelems = $self->_get('_subelems');
 
-    # Do not attempt to get the AssetType elements if we don't yet have an ID.
+    # Do not attempt to get the ElementType elements if we don't yet have an ID.
     return wantarray ? () : [] unless $subelems || $self->get_id;
 
     unless ($subelems) {

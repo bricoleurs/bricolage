@@ -36,7 +36,7 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This subclass of Bric::Biz::OutputChannel manages the relationship between
-output channels and elements (Bric::Biz::AssetType objects). It does so by
+output channels and elements (Bric::Biz::ElementType objects). It does so by
 providing accessors to properties relevant to the relationship, as well as an
 C<href()> method to help along the use of a Bric::Util::Coll object.
 
@@ -140,7 +140,7 @@ parameter is passed.
 
 =item C<element_type_id>
 
-The ID of the Bric::Biz::AssetType object to which this output channel is
+The ID of the Bric::Biz::ElementType object to which this output channel is
 mapped.
 
 =item C<enabled>
@@ -510,6 +510,6 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>,
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
 
 =cut

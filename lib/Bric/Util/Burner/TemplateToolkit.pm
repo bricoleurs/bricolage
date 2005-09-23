@@ -100,7 +100,7 @@ BEGIN {
                         });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TT,
+__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TT,
                                category_fn    => 'wrapper',
                                cat_fn_has_ext => 1,
                                exts           =>

@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Util::Grp::Parts::Member::Contrib;
@@ -271,7 +271,7 @@ sub list_ids {
     # handle element => element_id conversion
     $args->{element_type} = $args->{element} if exists $args->{element};
     if (exists $args->{element_type}) {
-        my ($element_id) = Bric::Biz::AssetType->list_ids({
+        my ($element_id) = Bric::Biz::ElementType->list_ids({
             key_name => $args->{element_type},
             media => 1,
         });
@@ -663,7 +663,7 @@ sub load_asset {
             if exists $mdata->{element};
         if (exists $mdata->{element_type} and not $aliased) {
             unless ($melems{$mdata->{element_type}}) {
-                my $e = (Bric::Biz::AssetType->list({
+                my $e = (Bric::Biz::ElementType->list({
                     key_name => $mdata->{element_type},
                     media    => 1,
                 }))[0] or throw_ap(

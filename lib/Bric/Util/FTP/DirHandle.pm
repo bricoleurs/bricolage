@@ -49,7 +49,7 @@ use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Asset::Formatting;
 use Bric::Config qw(:ftp);
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Net::FTPServer::DirHandle;
 use Bric::Util::Burner::Mason;
 require Bric::Util::Burner::Template if eval { require HTML::Template };
@@ -300,7 +300,7 @@ sub open {
           . "category template\n" if FTP_DEBUG;
     } else {
         # Look for an element to associate it with.
-        if ($at = Bric::Biz::AssetType->lookup({ key_name => $name })) {
+        if ($at = Bric::Biz::ElementType->lookup({ key_name => $name })) {
             # It's an element template!
             $tplate_type = Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE;
             print STDERR __PACKAGE__, "::open($filename, $mode): creating for",

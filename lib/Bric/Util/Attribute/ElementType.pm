@@ -1,9 +1,9 @@
-package Bric::Util::Attribute::AssetTypeData;
+package Bric::Util::Attribute::ElementType;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Util::Attribute::AssetTypeData - Groups of Bric::Biz::AssetType::Parts::Data objects.
+Bric::Util::Attribute::ElementType - Groups of Bric::Biz::ElementType objects.
 
 =head1 VERSION
 
@@ -23,7 +23,7 @@ This module is used internally only;
 
 =head1 DESCRIPTION
 
-The implimentations of asset type data attributes.
+The implimentations of asset type attributes.
 
 =cut
 
@@ -41,6 +41,7 @@ use strict;
 #==============================================================================#
 # Inheritance                          #
 #======================================#
+
 use base qw( Bric::Util::Attribute );
 
 #=============================================================================#
@@ -96,7 +97,7 @@ Bric::Util::Grp.
 
 =cut
 
-sub short_object_type { return 'field_type' }
+sub short_object_type { return 'element_type' }
 
 #--------------------------------------#
 
@@ -153,6 +154,6 @@ Garth Webb <garth@perijove.com>
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::AssetType>
+L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::ElementType>
 
 =cut

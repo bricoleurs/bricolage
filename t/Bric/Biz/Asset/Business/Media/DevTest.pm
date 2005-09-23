@@ -31,7 +31,7 @@ my @EXP_GRP_IDS;
 # The element object we'll use throughout.
 my $elem;
 sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 4 });
+    $elem ||= Bric::Biz::ElementType->lookup({ id => 4 });
     $elem;
 }
 

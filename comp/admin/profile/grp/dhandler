@@ -82,7 +82,7 @@ if (defined $id) {
             my $lobjs = $memb_pkg->list({ active => 1 });
 
             my $has_site;
-            $has_site = 1 if $class_name ne 'Bric::Util::Grp::Element'
+            $has_site = 1 if $class_name ne 'Bric::Util::Grp::ElementType'
               && ($lobjs->[0] && $lobjs->[0]->HAS_MULTISITE
                   || $robjs->[0] && $robjs->[0]->HAS_MULTISITE);
 

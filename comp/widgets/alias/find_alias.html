@@ -34,7 +34,7 @@ $wf_id
 <%init>;
 $link_key = $class_key;
 my $site_id = Bric::Biz::Workflow->lookup({ id => $wf_id })->get_site_id;
-my %elems = map { $_ => 1 } Bric::Biz::AssetType->list_ids
+my %elems = map { $_ => 1 } Bric::Biz::ElementType->list_ids
   ({ site_id => $site_id });
 # Hack: It'd be good to be able to exclude these in the SQL query, but the
 # query building interface can't currently handle that sort of thing. So'

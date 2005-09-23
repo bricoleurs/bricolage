@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Bric::Biz::Asset::Business::Story;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel;
@@ -306,7 +306,7 @@ sub list_ids {
     # handle element => element_id conversion
     $args->{element_type} = $args->{element} if exists $args->{element};
     if (exists $args->{element_type}) {
-        my ($element_id) = Bric::Biz::AssetType->list_ids({
+        my ($element_id) = Bric::Biz::ElementType->list_ids({
             key_name => $args->{element_type},
             media => 0
         });
@@ -796,7 +796,7 @@ sub load_asset {
         if (exists $sdata->{element_type} and not $aliased) {
             # It's a normal story.
             unless ($selems{$sdata->{element_type}}) {
-                my $e = (Bric::Biz::AssetType->list({
+                my $e = (Bric::Biz::ElementType->list({
                     key_name => $sdata->{element_type},
                     media => 0 }))[0]
                   or throw_ap(error => __PACKAGE__ . "::create : no story"

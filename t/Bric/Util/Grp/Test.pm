@@ -14,9 +14,9 @@ sub _load_test : Test(26) {
     # it out if it is.
     use_ok('Bric::Util::Grp');
     use_ok('Bric::Util::Pref');
-    for (qw(Person User AlertType Asset AssetType AssetVersion CategorySet
-            ContribType Desk Dest Element ElementType Event Formatting Grp Job
-            Media Org OutputChannel Person Pref Source Story Workflow)) {
+    for (qw(Person User AlertType Asset ElementType AssetVersion CategorySet
+            ContribType Desk Dest ATType SubelementType Event Formatting Grp
+            Job Media Org OutputChannel Person Pref Source Story Workflow)) {
         use_ok("Bric::Util::Grp::$_");
     }
 }

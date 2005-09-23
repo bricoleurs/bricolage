@@ -1,16 +1,16 @@
-package Bric::Biz::AssetType::DevTest;
+package Bric::Biz::ElementType::DevTest;
 use strict;
 use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Test::Exception;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::OutputChannel;
 
 my %elem = ( name          => 'Test Element',
              key_name      => 'test_element',
              description   => 'Testing Element API',
-             burner        => Bric::Biz::AssetType::BURNER_MASON,
+             burner        => Bric::Biz::ElementType::BURNER_MASON,
              type_id       => 1,
              reference     => 0,
              primary_oc_id => 1);
@@ -30,16 +30,16 @@ sub test_const : Test(8) {
     my %elem = (
         name        => 'Test Element',
         description => 'Testing Element API',
-        burner      => Bric::Biz::AssetType->BURNER_MASON,
+        burner      => Bric::Biz::ElementType->BURNER_MASON,
         type_id     => 1,
         reference   => 0
     );
 
-    ok( my $elem = Bric::Biz::AssetType->new, "Create empty element" );
-    isa_ok($elem, 'Bric::Biz::AssetType');
+    ok( my $elem = Bric::Biz::ElementType->new, "Create empty element" );
+    isa_ok($elem, 'Bric::Biz::ElementType');
     isa_ok($elem, 'Bric');
 
-    ok( $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
+    ok( $elem = Bric::Biz::ElementType->new(\%elem), "Create a new element");
     # Check a few of the attributes.
     is( $elem->get_name, $elem{name}, "Check name" );
     is( $elem->get_description, $elem{description}, "Check description" );
@@ -52,7 +52,7 @@ sub test_const : Test(8) {
 sub test_lookup : Test(2) {
     my $self = shift;
     # Look up the ID in the delemabase.
-    ok( my $elem = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+    ok( my $elem = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
         "Look up story element" );
     is( $elem->get_id, $story_elem_id, "Check the elem ID is the same" );
 }
@@ -63,7 +63,7 @@ sub test_list : Test(36) {
     my $self = shift;
 
     # Create a new element group.
-    ok( my $grp = Bric::Util::Grp::AssetType->new
+    ok( my $grp = Bric::Util::Grp::ElementType->new
         ({ name => 'Test ElementGrp' }),
         "Create group" );
 
@@ -74,7 +74,7 @@ sub test_list : Test(36) {
         $args{name}        .= $n;
         $args{key_name}    .= $n;
         $args{description} .= $n if $n % 2;
-        ok( my $elem = Bric::Biz::AssetType->new(\%args), "Create $args{name}" );
+        ok( my $elem = Bric::Biz::ElementType->new(\%args), "Create $args{name}" );
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
@@ -87,19 +87,19 @@ sub test_list : Test(36) {
     $self->add_del_ids([$grp_id], 'grp');
 
     # Try name + wildcard.
-    ok( my @elems = Bric::Biz::AssetType->list({ name => "$elem{name}%" }),
+    ok( my @elems = Bric::Biz::ElementType->list({ name => "$elem{name}%" }),
         "Look up name $elem{name}%" );
     is( scalar @elems, 5, "Check for 5 elements" );
 
     # Try description.
-    ok( @elems = Bric::Biz::AssetType->list
+    ok( @elems = Bric::Biz::ElementType->list
         ({ description => "$elem{description}" }),
         "Look up description '$elem{description}'" );
     is( scalar @elems, 2, "Check for 2 elements" );
 
     # Try grp_id.
-    my $all_grp_id = Bric::Biz::AssetType::INSTANCE_GROUP_ID;
-    ok( @elems = Bric::Biz::AssetType->list({ grp_id => $grp_id }),
+    my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
+    ok( @elems = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
     is( scalar @elems, 3, "Check for 3 elements" );
     # Make sure we've got all the Group IDs we think we should have.
@@ -114,34 +114,34 @@ sub test_list : Test(36) {
     ok( $mem->deactivate->save, "Deactivate and save member" );
 
     # Now there should only be two using grp_id.
-    ok( @elems = Bric::Biz::AssetType->list({ grp_id => $grp_id }),
+    ok( @elems = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
     is( scalar @elems, 2, "Check for 2 elements" );
 
     # Try output channel.
-    ok( @elems = Bric::Biz::AssetType->list({ output_channel => 1 }),
+    ok( @elems = Bric::Biz::ElementType->list({ output_channel => 1 }),
         "Lookup output channel 1" );
     # Make sure we have a whole bunch.
     is( scalar @elems, 6, "Check for 6 elements" );
 
     # Try data_name.
-    ok( @elems = Bric::Biz::AssetType->list
+    ok( @elems = Bric::Biz::ElementType->list
         ({ data_name => "Deck" }),
         "Look up data_name 'Deck'" );
     is( scalar @elems, 3, "Check for 3 elements" );
 
     # Try type_id.
-    ok( @elems = Bric::Biz::AssetType->list({ type_id => 2 }),
+    ok( @elems = Bric::Biz::ElementType->list({ type_id => 2 }),
         "Look up type_id 2" );
     is( scalar @elems, 2, "Check for 2 elements" );
 
     # Try top_level
-    ok( @elems = Bric::Biz::AssetType->list({ top_level => 1 }),
+    ok( @elems = Bric::Biz::ElementType->list({ top_level => 1 }),
         "Look up top_level => 1" );
     is( scalar @elems, 11, "Check for 11 elements" );
 
     # Try media
-    ok( @elems = Bric::Biz::AssetType->list({ media => 1 }),
+    ok( @elems = Bric::Biz::ElementType->list({ media => 1 }),
         "Look up media => 1" );
     is( scalar @elems, 2, "Check for 2 elements" );
 }
@@ -151,7 +151,7 @@ sub test_list : Test(36) {
 sub test_save : Test(6) {
     my $self = shift;
     # Now create a new element.
-    ok( my $elem = Bric::Biz::AssetType->new(\%elem), "Create a new element");
+    ok( my $elem = Bric::Biz::ElementType->new(\%elem), "Create a new element");
 
     # Add a new output channel.
     ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'Foober',
@@ -172,7 +172,7 @@ sub test_save : Test(6) {
 ##############################################################################
 sub test_oc : Test(60) {
     my $self = shift;
-    ok( my $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+    ok( my $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
         "Lookup story element" );
 
     # Try get_ocs.
@@ -205,7 +205,7 @@ sub test_oc : Test(60) {
     is( scalar @$oces, 2, "Check for two OCs again" );
 
     # Now lookup the story element from the database and try get_ocs again.
-    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 4" );
     is( scalar @$oces, 2, "Check for two OCs 3" );
@@ -227,7 +227,7 @@ sub test_oc : Test(60) {
         "Check that it is reset after we save");
 
     # Make sure the new value persists after a save and lookup.
-    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
     is( $at->get_primary_oc_id(100), $ocid,
         "Check that it is reset after we save");
@@ -243,19 +243,19 @@ sub test_oc : Test(60) {
     ok( $at->save, "Save restored primary OC ID" );
 
     # Now add the new output channel to the column element.
-    ok( my $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+    ok( my $col = Bric::Biz::ElementType->lookup({ id => $column_elem_id }),
         "Lookup column element" );
     ok( $col->add_output_channels([$oc->get_id]), "Add Foober to column" );
     ok( $col->save, "Save column element" );
 
     # Look up column and make sure it has two output channels.
-    ok( $col = Bric::Biz::AssetType->lookup({ id => $column_elem_id }),
+    ok( $col = Bric::Biz::ElementType->lookup({ id => $column_elem_id }),
         "Lookup column element again" );
     ok( $oces = $at->get_output_channels, "Get column OCs" );
     is( scalar @$oces, 2, "Check for two column OCs" );
 
     # Lookup the story element from the database again and try get_ocs again.
-    ok( $at = Bric::Biz::AssetType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 5" );
     is( scalar @$oces, 2, "Check for two OCs 3" );
@@ -273,7 +273,7 @@ sub test_oc : Test(60) {
         is( scalar @$oces, 1, "Check for one OC 3" );
 
         # Now look it up and check it one last time.
-        ok( $e = Bric::Biz::AssetType->lookup({ id => $e->get_id }),
+        ok( $e = Bric::Biz::ElementType->lookup({ id => $e->get_id }),
             "Lookup element again" );
         ok( $oces = $e->get_output_channels, "Get existing OCs " . ++$i );
         is( scalar @$oces, 1, "Check for one OC 4" );
@@ -323,8 +323,8 @@ sub test_site : Test(22) {
     ok( my $oc2_id = $oc2->get_id, "Get OC ID2" );
     $self->add_del_ids($oc2_id, 'output_channel');
 
-    my $top_level_element = Bric::Biz::AssetType->lookup({id => $top_level_element_id});
-    my $element           = Bric::Biz::AssetType->lookup({id => $element_id});
+    my $top_level_element = Bric::Biz::ElementType->lookup({id => $top_level_element_id});
+    my $element           = Bric::Biz::ElementType->lookup({id => $element_id});
 
     #First of all test all exceptions
 
@@ -370,7 +370,7 @@ sub test_site : Test(22) {
 
     # Try to list elements based on site
 
-    is(scalar @{Bric::Biz::AssetType->list({site_id => $site1_id,
+    is(scalar @{Bric::Biz::ElementType->list({site_id => $site1_id,
                                             top_level => 1 })}, 1,
        "Check that list works with site_id as argument");
 
@@ -378,7 +378,7 @@ sub test_site : Test(22) {
 
     $top_level_element->save();
 
-    is(scalar @{Bric::Biz::AssetType->list({site_id => $site1_id,
+    is(scalar @{Bric::Biz::ElementType->list({site_id => $site1_id,
                                             top_level => 1})}, 0,
        "Check that list works with site_id as argument");
 

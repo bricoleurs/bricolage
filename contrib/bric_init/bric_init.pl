@@ -7,7 +7,7 @@ use strict;
 
 use Bric::App::Event qw(log_event);
 use Bric::Biz::Asset::Business::Story;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Person::User;
@@ -125,7 +125,7 @@ sub add_story {
     ($wf) = Bric::Biz::Workflow->list({name => 'Story'});
     $wid = $wf->get_id();
     $storyconf->{'workflow_id'} = $wid;
-    ($eid) = Bric::Biz::AssetType->list_ids({name => $storyconf->{'type'}});
+    ($eid) = Bric::Biz::ElementType->list_ids({name => $storyconf->{'type'}});
     $storyconf->{'element_type_id'} = $eid;
     ($sid) = Bric::Biz::Org::Source->list_ids({name => 'Internal'});
     $storyconf->{'source__id'} = $sid;

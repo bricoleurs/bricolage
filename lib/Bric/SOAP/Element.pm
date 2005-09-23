@@ -4,7 +4,7 @@ package Bric::SOAP::Element;
 use strict;
 use warnings;
 
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Site;
@@ -169,7 +169,7 @@ sub list_ids {
         $args->{output_channel_id} = $output_channel_id;
     }
 
-    my @list = Bric::Biz::AssetType->list_ids($args);
+    my @list = Bric::Biz::ElementType->list_ids($args);
 
     print STDERR "Bric::Biz::Asset::Formatting->list_ids() called : ",
         "returned : ", Data::Dumper->Dump([\@list],['list'])
@@ -420,7 +420,7 @@ sub load_asset {
 
         # handle burner mapping
         my $burner = 0;
-        my $tmpl_archs = Bric::Biz::AssetType->my_meths->{burner}{props}{vals};
+        my $tmpl_archs = Bric::Biz::ElementType->my_meths->{burner}{props}{vals};
         foreach my $arch (@$tmpl_archs) {
             $burner = $arch->[0] if $edata->{burner} eq $arch->[1];
         }
@@ -442,7 +442,7 @@ sub load_asset {
         }
 
         # make sure this key name isn't already taken
-        my @list = Bric::Biz::AssetType->list_ids({ key_name => $edata->{key_name},
+        my @list = Bric::Biz::ElementType->list_ids({ key_name => $edata->{key_name},
                                                     active => 0 });
         if (@list) {
             throw_ap "Unable to create element type \"$id\" key named "
@@ -456,10 +456,10 @@ sub load_asset {
         my $element;
         unless ($update) {
             # instantiate a new object
-            $element = Bric::Biz::AssetType->new({ type__id => $type_id });
+            $element = Bric::Biz::ElementType->new({ type__id => $type_id });
         } else {
             # load element type
-            $element = Bric::Biz::AssetType->lookup({ id => $id });
+            $element = Bric::Biz::ElementType->lookup({ id => $id });
             throw_ap(error => __PACKAGE__ . "::update : unable to find element type \"$id\".")
               unless $element;
 
@@ -698,11 +698,11 @@ sub load_asset {
 
     # run through fixup attaching subelement types
     foreach my $element_name (keys %fixup) {
-        my ($element) = Bric::Biz::AssetType->list({key_name => $element_name});
+        my ($element) = Bric::Biz::ElementType->list({key_name => $element_name});
         my @sub_ids;
 
         foreach my $sub_name (@{$fixup{$element_name}}) {
-            my ($sub_id) = Bric::Biz::AssetType->list_ids({key_name => $sub_name});
+            my ($sub_id) = Bric::Biz::ElementType->list_ids({key_name => $sub_name});
             throw_ap(error => __PACKAGE__ . " : no subelement type found matching "
                        . "(subelement_type => \"$sub_name\") "
                        . "for element type \"$element_name\".")
@@ -729,7 +729,7 @@ sub serialize_asset {
     my $element_id  = $options{element_type_id};
     my $writer      = $options{writer};
 
-    my $element = Bric::Biz::AssetType->lookup({id => $element_id});
+    my $element = Bric::Biz::ElementType->lookup({id => $element_id});
     throw_ap(error => __PACKAGE__ . "::export : element_type_id \"$element_id\" not found.")
       unless $element;
 
@@ -749,9 +749,9 @@ sub serialize_asset {
     # is another piece of code that would need to be modified to add a
     # new burner...
     my $burner_id = $element->get_burner();
-    if ($burner_id == Bric::Biz::AssetType::BURNER_MASON) {
+    if ($burner_id == Bric::Biz::ElementType::BURNER_MASON) {
         $writer->dataElement(burner => "Mason");
-    } elsif ($burner_id == Bric::Biz::AssetType::BURNER_TEMPLATE) {
+    } elsif ($burner_id == Bric::Biz::ElementType::BURNER_TEMPLATE) {
         $writer->dataElement(burner => "HTML::Template");
     } else {
         throw_ap(error => __PACKAGE__ . "::export : unknown burner \"$burner_id\""

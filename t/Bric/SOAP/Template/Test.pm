@@ -117,7 +117,7 @@ use XML::Simple;
 use File::Temp qw(tempfile);
 
 use Bric::Biz::Asset::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::OutputChannel;
 use HTTP::Cookies;
@@ -171,7 +171,7 @@ is(@$template_ids2, 0, 'list_ids() returned 0 template_ids');
 # SOAP interface and Bric::Biz::Asset::Business::Template
 
 # get element_id for 'Template' element for use in tests
-my ($template_element_id) = Bric::Biz::AssetType->list_ids({name => 'Story'});
+my ($template_element_id) = Bric::Biz::ElementType->list_ids({name => 'Story'});
 ok($template_element_id, "Got element id for template");
 
 # get workflow_id for use in tests

@@ -108,7 +108,7 @@ use XML::Simple;
 use File::Temp qw(tempfile);
 
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use HTTP::Cookies;
 
@@ -161,7 +161,7 @@ is(@$media_ids2, 0, 'list_ids() returned 0 media_ids');
 # SOAP interface and Bric::Biz::Asset::Business::Media
 
 # get element_id for 'Media' element for use in tests
-my ($media_element_id) = Bric::Biz::AssetType->list_ids({name => 'Photograph'});
+my ($media_element_id) = Bric::Biz::ElementType->list_ids({name => 'Photograph'});
 ok($media_element_id, "Got element id for media");
 
 # get workflow_id for use in tests

@@ -267,7 +267,7 @@ values.
 
 =item element_id
 
-A Bric::Biz::AssetType (element type) ID. May use C<ANY> for a list of
+A Bric::Biz::ElementType (element type) ID. May use C<ANY> for a list of
 possible values.
 
 =item output_channel_id
@@ -933,7 +933,7 @@ Each category object is associated with a site.
 
 Each output channel object is associated with a site.
 
-=item L<Bric::Biz::AssetType|Bric::Biz::AssetType>
+=item L<Bric::Biz::ElementType|Bric::Biz::ElementType>
 
 Each top-level element object is associated with one or more site.
 

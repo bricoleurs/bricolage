@@ -41,7 +41,7 @@ sub get_story {
 # The element object we'll use throughout. Override in subclass if necessary.
 my $elem;
 sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
+    $elem ||= Bric::Biz::ElementType->lookup({ id => 1 });
     $elem;
 }
 
@@ -89,10 +89,10 @@ sub create_element_types {
     $self->{media_et} = $media_et;
 
     # Create a media type.
-    ok my $media_type = Bric::Biz::AssetType->new({
+    ok my $media_type = Bric::Biz::ElementType->new({
         key_name  => '_media_',
         name      => 'Media Testing',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
         type__id  => $media_et->get_id,
         reference => 0, # No idea what this is.
     }), "Create media type";
@@ -105,10 +105,10 @@ sub create_element_types {
     $self->{media_type} = $media_type;
 
     # Create a story type.
-    ok my $story_type = Bric::Biz::AssetType->new({
+    ok my $story_type = Bric::Biz::ElementType->new({
         key_name  => '_testing_',
         name      => 'Testing',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
         type__id  => $story_et->get_id,
         reference => 0, # No idea what this is.
     }), "Create story type";
@@ -152,10 +152,10 @@ sub create_element_types {
     $self->add_del_ids($para->get_id, 'field_type');
 
     # Create a subelement.
-    ok my $pull_quote = Bric::Biz::AssetType->new({
+    ok my $pull_quote = Bric::Biz::ElementType->new({
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
         type__id  => $sub_et->get_id,
         reference => 0, # No idea what this is.
     }), "Create a subelement element";
@@ -210,10 +210,10 @@ sub create_element_types {
     $self->add_del_ids($date->get_id, 'field_type');
 
     # Create a page subelement.
-    ok my $page = Bric::Biz::AssetType->new({
+    ok my $page = Bric::Biz::ElementType->new({
         key_name  => '_page_',
         name      => 'Page',
-        burner    => Bric::Biz::AssetType::BURNER_MASON,
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
         type__id  => $page_et->get_id,
         reference => 0, # No idea what this is.
     }), "Create a page subelement element";

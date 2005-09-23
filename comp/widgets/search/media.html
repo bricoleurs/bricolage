@@ -19,7 +19,7 @@ $advanced_search = get_pref('Default Search')
 my $asset_opts = $advanced_search ? {
         '' => $lang->maketext('All Types'),
         map { $_->get_id, $_->get_name }
-          Bric::Biz::AssetType->list({
+          Bric::Biz::ElementType->list({
               top_level => 1,
               media     => 1,
               active    => 1,

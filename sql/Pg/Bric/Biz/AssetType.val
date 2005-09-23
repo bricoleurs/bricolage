@@ -9,7 +9,7 @@
 -- Create groups
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('330','24','AssetType Group', 'Grouped containers');
+VALUES ('330','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('630', '35', '6', '1');
@@ -18,7 +18,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('630', '330', '630');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('331','24','AssetType Group', 'Grouped containers');
+VALUES ('331','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('631', '35', '6', '1');
@@ -27,7 +27,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('631', '331', '631');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('332','24','AssetType Group', 'Grouped containers');
+VALUES ('332','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('632', '35', '6', '1');
@@ -36,7 +36,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('632', '332', '632');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('333','24','AssetType Group', 'Grouped containers');
+VALUES ('333','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('633', '35', '6', '1');
@@ -45,7 +45,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('633', '333', '633');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('334','24','AssetType Group', 'Grouped containers');
+VALUES ('334','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('634', '35', '6', '1');
@@ -54,7 +54,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('634', '334', '634');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('335','24','AssetType Group', 'Grouped containers');
+VALUES ('335','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('635', '35', '6', '1');
@@ -63,7 +63,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('635', '335', '635');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('340','24','AssetType Group', 'Grouped containers');
+VALUES ('340','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('640', '35', '6', '1');
@@ -72,7 +72,7 @@ INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('640', '340', '640');
 
 INSERT INTO grp (id,class__id,name,description)
-VALUES ('341','24','AssetType Group', 'Grouped containers');
+VALUES ('341','24','ElementType Group', 'Grouped containers');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('641', '35', '6', '1');

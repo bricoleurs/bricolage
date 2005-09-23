@@ -693,7 +693,7 @@ sub set_element_type_id {
     return $self if $eid == $old_eid;
     my $oc_coll = $get_oc_coll->($self);
     $oc_coll->del_objs($oc_coll->get_objs);
-    my $elem = Bric::Biz::AssetType->lookup({ id => $eid });
+    my $elem = Bric::Biz::ElementType->lookup({ id => $eid });
     $oc_coll->add_new_objs( map { $_->is_enabled ? $_ : () }
                             $elem->get_output_channels );
     $self->_set([qw(element_type_id _element_type_object)], [$eid, $elem]);
@@ -1607,7 +1607,7 @@ sub get_element_type {
 
     return unless $at_id;
     my $dirty = $self->_get__dirty;
-    $at_obj = Bric::Biz::AssetType->lookup({ id => $at_id });
+    $at_obj = Bric::Biz::ElementType->lookup({ id => $at_id });
     $self->_set(['_element_type_object'] => [$at_obj]);
     $self->_set__dirty($dirty);
     return $at_obj;
@@ -2345,7 +2345,7 @@ sub _init {
             $init->{element_type_id} = $init->{element_type}->get_id;
         } else {
             $init->{element_type} =
-              Bric::Biz::AssetType->lookup({ id => $init->{element_type_id}});
+              Bric::Biz::ElementType->lookup({ id => $init->{element_type_id}});
         }
 
         # Set up the output channels.

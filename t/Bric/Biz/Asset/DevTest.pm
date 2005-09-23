@@ -25,7 +25,7 @@ sub new_args {
 # The element object we'll use throughout. Override in subclass if necessary.
 my $elem;
 sub get_elem {
-    $elem ||= Bric::Biz::AssetType->lookup({ id => 1 });
+    $elem ||= Bric::Biz::ElementType->lookup({ id => 1 });
     $elem;
 }
 

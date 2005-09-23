@@ -75,10 +75,10 @@ a brief guide to adding a new Burner to Bricolage:
 
 =item *
 
-Modify Bric::Biz::AssetType.
+Modify Bric::Biz::ElementType.
 
 To use your Burner you'll need to be able to assign elements to it. To do this
-edit Bric::Biz::AssetType and add a constant for your burner. For example,
+edit Bric::Biz::ElementType and add a constant for your burner. For example,
 Bric::Util::Burner::Template's constant is C<BURNER_TEMPLATE>. Next, edit the
 C<my_meths()> entry for the "burner" type to include an entry for your
 constant.
@@ -97,7 +97,7 @@ the names of element templates (see the Mason and PHP burners for an example).
 
 Write the burner tests by implementing F</t/Bric/Util/Burner/Foo/DevTest.pm>.
 See F</t/Bric/Util/Burner/Mason/DevTest.pm> for an example. You will need to
-use the constant defined in Bric::Biz::AssetType and the file name standards
+use the constant defined in Bric::Biz::ElementType and the file name standards
 defined in the last step to have the base class,
 F</t/Bric/Util/Burner/DevTest.pm>, properly create and load the test
 templates.
@@ -213,7 +213,7 @@ use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev :l10n);
-use Bric::Biz::AssetType qw(:all);
+use Bric::Biz::ElementType qw(:all);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
@@ -1952,7 +1952,7 @@ sub add_resource {
 
 =item __PACKAGE__->_register_burner(@args)
 
-  __PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
+  __PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TEMPLATE,
                                  category_fn => 'category',
                                  exts        =>
                                    { 'pl'   => 'HTML::Template Script (.pl)',
@@ -1961,7 +1961,7 @@ sub add_resource {
                                );
 
 Protected method only called by Burner subclasses when they're loaded. This
-method registers the subclasses, along with their Bric::Biz::AssetType
+method registers the subclasses, along with their Bric::Biz::ElementType
 constants, file names, and file extenstions. Note that the C<category_fn> and
 must be unique among all burners, as must the file extensions passed via the
 C<exts> directive.
@@ -2016,7 +2016,7 @@ B<Notes:> NONE.
 
 sub _get_subclass {
     my ($self, $asset) = @_;
-    if (my $at = Bric::Biz::AssetType->lookup({id => $asset->get_element_type_id})) {
+    if (my $at = Bric::Biz::ElementType->lookup({id => $asset->get_element_type_id})) {
         # Easy to get it
         my $b = $at->get_burner || BURNER_MASON;
         my $burner_class = $classes->{$b}

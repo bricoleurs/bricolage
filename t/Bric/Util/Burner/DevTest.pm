@@ -314,7 +314,7 @@ sub subclass_burn_test {
     ok $oc->save, "Save the new output channel with its includes";
 
     # Create a story type.
-    ok my $story_type = Bric::Biz::AssetType->new({
+    ok my $story_type = Bric::Biz::ElementType->new({
         key_name  => '_testing_',
         name      => 'Testing',
         burner    => $burner_type,
@@ -358,7 +358,7 @@ sub subclass_burn_test {
     $self->add_del_ids($para->get_id, 'field_type');
 
     # Create a subelement.
-    ok my $pull_quote = Bric::Biz::AssetType->new({
+    ok my $pull_quote = Bric::Biz::ElementType->new({
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
         burner    => $burner_type,
@@ -412,7 +412,7 @@ sub subclass_burn_test {
     $self->add_del_ids($date->get_id, 'field_type');
 
     # Create a page subelement.
-    ok my $page = Bric::Biz::AssetType->new({
+    ok my $page = Bric::Biz::ElementType->new({
         key_name  => '_page_',
         name      => 'Page',
         burner    => $burner_type,

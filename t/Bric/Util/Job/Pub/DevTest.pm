@@ -15,7 +15,7 @@ use Bric::Dist::Resource;
 use Bric::Config qw(:time TEMP_DIR QUEUE_PUBLISH_JOBS);
 use Bric::Util::Trans::FS;
 use Bric::Util::MediaType;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Util::Burner;
@@ -119,7 +119,7 @@ sub c_test_list : Test(45) {
     ok( my $grp = Bric::Util::Grp::Job->new({ name => 'Test JobGrp' }),
         "Create group" );
 
-    my ($element) = Bric::Biz::AssetType->list({ name => 'Story' });
+    my ($element) = Bric::Biz::ElementType->list({ name => 'Story' });
     # And the default OutputChannel.
     my ($oc) = Bric::Biz::OutputChannel->list();
 
@@ -337,7 +337,7 @@ sub g_test_execute_me : Test(10) {
     my $self = shift;
     my %args = %job;
     # Get the story element
-    my ($element) = Bric::Biz::AssetType->list({ name => 'Story' });
+    my ($element) = Bric::Biz::ElementType->list({ name => 'Story' });
     # And the default OutputChannel.
     my ($oc) = Bric::Biz::OutputChannel->list();
     # and a user
@@ -440,11 +440,11 @@ Page 1
 sub h_test_execute_me : Test(10) {
     my $self = shift;
 
-    my $elem = Bric::Biz::AssetType->new({
+    my $elem = Bric::Biz::ElementType->new({
         name          => 'Test Element',
         key_name      => 'test_element',
         description   => 'Testing Publish Job error handling',
-        burner        => Bric::Biz::AssetType::BURNER_MASON,
+        burner        => Bric::Biz::ElementType::BURNER_MASON,
         type__id      => 1,
         reference     => 0,
         primary_oc_id => 1

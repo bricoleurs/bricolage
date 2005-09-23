@@ -313,7 +313,7 @@ sub get_list_classes { ( STORY_PKG, MEDIA_PKG, FORMAT_PKG) }
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::ElementType->my_class()
+=item my $class = Bric::Util::Grp::Asset->my_class()
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -332,7 +332,7 @@ sub my_class {
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::ElementType->member_class()
+=item my $class = Bric::Util::Grp::Asset->member_class()
 
 Returns a Bric::Util::Class object describing the members of this group.
 

@@ -10,7 +10,7 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history);
 use Bric::Biz::Asset::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Priv::Parts::Const qw(:all);
@@ -583,7 +583,7 @@ $create_fa = sub {
                 return;
             }
             # Associate it with an Element.
-            $at    = Bric::Biz::AssetType->lookup({'id' => $at_id});
+            $at    = Bric::Biz::ElementType->lookup({'id' => $at_id});
             $name  = $at->get_key_name;
         }
     } elsif ($tplate_type == Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {

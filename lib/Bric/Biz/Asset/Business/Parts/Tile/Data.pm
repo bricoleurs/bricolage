@@ -53,7 +53,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(throw_gen throw_da);
-use Bric::Biz::AssetType::Parts::Data;
+use Bric::Biz::ElementType::Parts::FieldType;
 
 #==============================================================================#
 # Inheritance                          #
@@ -215,14 +215,14 @@ element.
 
 =item element_data
 
-The Bric::Biz::AssetType::Parts::Data object that defines the structure of the
+The Bric::Biz::ElementType::Parts::FieldType object that defines the structure of the
 new data element.
 
 =item field_type_id
 
 =item element_data_id
 
-The ID of the Bric::Biz::AssetType::Parts::Data object that defines the
+The ID of the Bric::Biz::ElementType::Parts::FieldType object that defines the
 structure of the new data element.
 
 =item parent_id
@@ -263,7 +263,7 @@ sub new {
 
     my $atd = delete $init->{field_type} || delete $init->{element_data};
     if (!$atd && $init->{field_type_id} || $init->{element_data_id}) {
-        $atd = Bric::Biz::AssetType::Parts::Data->lookup({
+        $atd = Bric::Biz::ElementType::Parts::FieldType->lookup({
             id => $init->{field_type} ||= delete $init->{element_data}
         });
     }
@@ -392,7 +392,7 @@ elements. May use C<ANY> for a list of possible values.
 
 =item element_data_id
 
-The ID of the Bric::Biz::AssetType::Parts::Data object that specifies the
+The ID of the Bric::Biz::ElementType::Parts::FieldType object that specifies the
 structure of the data elements. May use C<ANY> for a list of possible values.
 
 =item active
@@ -476,7 +476,7 @@ from which Bric::Biz::Asset::Business::Parts::Tile::Data inherits.
 
 =item my $field_type_id = $data->get_element_data_id
 
-Returns the ID of the Bric::Biz::AssetType::Parts::Data object that describes
+Returns the ID of the Bric::Biz::ElementType::Parts::FieldType object that describes
 this element.
 
 B<Throws:> NONE.
@@ -489,7 +489,7 @@ B<Notes:> NONE.
 
 =item $data->set_element_data_id($field_type_id)
 
-Sets the ID of the Bric::Biz::AssetType::Parts::Data object that describes
+Sets the ID of the Bric::Biz::ElementType::Parts::FieldType object that describes
 this element.
 
 B<Throws:> NONE.
@@ -508,7 +508,7 @@ sub set_element_data_id { shift->set_field_type_id(@_) }
 
 =item $field_type = $data->get_field_type
 
-Returns the Bric::Biz::AssetType::Parts::Data object that defines the
+Returns the Bric::Biz::ElementType::Parts::FieldType object that defines the
 structure of this field.
 
 B<Throws:> NONE.
@@ -526,7 +526,7 @@ sub get_field_type {
 
     my $dirty = $self->_get__dirty;
     my $atd_id = $self->_get('field_type_id');
-    $atd = Bric::Biz::AssetType::Parts::Data->lookup({id => $atd_id});
+    $atd = Bric::Biz::ElementType::Parts::FieldType->lookup({id => $atd_id});
     $self->_set(['_field_type'], [$atd]);
     $self->_set__dirty($dirty);
     return $atd;
@@ -748,7 +748,7 @@ sub get_max_length {
 =item my $sql_type = $data->get_sql_type
 
 Returns the SQL type of the field. This value corresponds to the C<sql_type>
-attribute of the Bric::Biz::AssetType::Parts::Data object on which the field
+attribute of the Bric::Biz::ElementType::Parts::FieldType object on which the field
 is based.
 
 B<Throws:> NONE.
@@ -765,7 +765,7 @@ B<Notes:> NONE.
 
 Returns the string indicating the widget to use to display the field. This
 value corresponds to the C<widget_type> attribute of the
-Bric::Biz::AssetType::Parts::Data object on which the field is based.
+Bric::Biz::ElementType::Parts::FieldType object on which the field is based.
 
 B<Throws:> NONE.
 

@@ -53,7 +53,7 @@ use Bric::Util::Fault qw(throw_gen rethrow_exception isa_exception
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use Bric::Util::Burner qw(:modes);
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 require XML::Writer if INCLUDE_XML_WRITER;
 
 #==============================================================================#
@@ -107,7 +107,7 @@ BEGIN {
                         });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_MASON,
+__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_MASON,
                                category_fn    => 'autohandler',
                                cat_fn_has_ext => 0,
                                exts           =>

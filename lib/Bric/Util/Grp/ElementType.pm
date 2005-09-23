@@ -2,7 +2,7 @@ package Bric::Util::Grp::ElementType;
 
 =head1 NAME
 
-Bric::Util::Grp::ElementType - Interface to Bric::Biz::ATType Groups
+Bric::Util::Grp::ElementType - Interface to Element Groups
 
 =head1 VERSION
 
@@ -32,6 +32,7 @@ See Bric::Util::Grp.
 ################################################################################
 # Standard Dependencies
 use strict;
+use Bric::Util::Grp;
 
 ################################################################################
 # Programmatic Dependences
@@ -39,7 +40,7 @@ use strict;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::Util::Grp);
+use base qw(Bric::Util::Grp::SubelementType);
 
 ################################################################################
 # Function Prototypes
@@ -49,9 +50,8 @@ use base qw(Bric::Util::Grp);
 ################################################################################
 # Constants
 ################################################################################
-use constant DEBUG => 0;
-use constant CLASS_ID => 64;
-use constant OBJECT_CLASS_ID => 37;
+use constant DEBUG    => 0;
+use constant CLASS_ID => 70;
 
 ################################################################################
 # Fields
@@ -60,15 +60,13 @@ use constant OBJECT_CLASS_ID => 37;
 
 ################################################################################
 # Private Class Fields
-my ($class, $mem_class);
+my ($class);
 
 ################################################################################
 
 ################################################################################
 # Instance Fields
-BEGIN {
-    Bric::register_fields();
-}
+BEGIN { Bric::register_fields() }
 
 ################################################################################
 # Class Methods
@@ -105,61 +103,6 @@ sub DESTROY {}
 =head2 Public Class Methods
 
 =over
-
-=item $supported_classes = Bric::Util::Grp::ElementType->get_supported_classes()
-
-This will return an anonymous hash of the supported classes in the group as keys
-with the short name as a value. The short name is used to construct the member
-table names and the foreign key in the table.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_supported_classes { { 'Bric::Biz::ATType' => 'at_type' } }
-
-##############################################################################
-
-=item my @list_classes = Bric::Util::Grp::ElementType->get_list_classes
-
-Returns a list or anonymous array of the supported classes in the group that
-can have their C<list()> methods called in succession to assemble a list of
-member objects. This data varies from that stored in the keys in the hash
-reference returned by C<get_supported_classes> in that some classes' C<list()>
-methods may inherit from others, and we don't want the same C<list()> method
-executed more than once.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_list_classes { ('Bric::Biz::ATType') }
-
-################################################################################
-
-=item $class_id = Bric::Util::Grp::ElementType->get_object_class_id
-
-Forces all Objects to be considered as this class.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_object_class_id { OBJECT_CLASS_ID }
-
-################################################################################
 
 =item $class_id = Bric::Util::Grp::ElementType->get_class_id()
 
@@ -213,25 +156,6 @@ sub my_class {
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::ElementType->member_class()
-
-Returns a Bric::Util::Class object describing the members of this group.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> Uses Bric::Util::Class->lookup() internally.
-
-=cut
-
-sub member_class {
-    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
-    return $mem_class;
-}
-
-################################################################################
-
 =back
 
 =head2 Public Instance Methods
@@ -271,9 +195,8 @@ David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::ATType|Bric::Biz::ATType>, 
+L<Bric|Bric>,
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut
-

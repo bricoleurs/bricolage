@@ -11,7 +11,7 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history :aref);
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
@@ -475,7 +475,7 @@ sub create : Callback {
 
     # get the asset type
     my $at_id = $param->{"$widget|at_id"};
-    my $element = Bric::Biz::AssetType->lookup({ id => $at_id });
+    my $element = Bric::Biz::ElementType->lookup({ id => $at_id });
 
     # determine the package to which this belongs
     my $pkg = $element->get_biz_class;

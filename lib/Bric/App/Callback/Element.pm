@@ -7,10 +7,10 @@ use constant CLASS_KEY => 'element_type';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Util qw(:msg :history);
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 
 my $type = 'element_type';
-my $class = 'Bric::Biz::AssetType';
+my $class = 'Bric::Biz::ElementType';
 
 
 sub addElementType : Callback {

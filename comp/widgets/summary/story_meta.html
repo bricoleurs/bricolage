@@ -60,7 +60,7 @@ my $prim_uri = $story->get_primary_uri();
 
 # get output channel info
 my $at = $story->get_element_type_id;
-my $asset_type = Bric::Biz::AssetType->lookup({id => $at});
+my $asset_type = Bric::Biz::ElementType->lookup({id => $at});
 
 my @ocs = $story->get_output_channels();
 my $primocid = $story->get_primary_oc_id;

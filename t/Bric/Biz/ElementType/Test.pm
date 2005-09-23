@@ -1,4 +1,4 @@
-package Bric::Biz::AssetType::Test;
+package Bric::Biz::ElementType::Test;
 use strict;
 use warnings;
 use base qw(Bric::Test::Base);
@@ -8,8 +8,8 @@ use Test::More;
 # Test class loading.
 ##############################################################################
 sub _test_load : Test(2) {
-    use_ok('Bric::Biz::AssetType::Parts::Data');
-    use_ok('Bric::Biz::AssetType');
+    use_ok('Bric::Biz::ElementType::Parts::FieldType');
+    use_ok('Bric::Biz::ElementType');
 }
 
 ##############################################################################
@@ -17,15 +17,15 @@ sub _test_load : Test(2) {
 ##############################################################################
 # Test my_meths().
 sub test_my_meths : Test(11) {
-    ok( my $meths = Bric::Biz::AssetType->my_meths, "Get my_meths" );
+    ok( my $meths = Bric::Biz::ElementType->my_meths, "Get my_meths" );
     isa_ok($meths, 'HASH', "my_meths is a hash" );
     is( $meths->{name}{type}, 'short', "Check name type" );
-    ok( $meths = Bric::Biz::AssetType->my_meths(1), "Get my_meths array ref" );
+    ok( $meths = Bric::Biz::ElementType->my_meths(1), "Get my_meths array ref" );
     isa_ok( $meths, 'ARRAY', "my_meths(1) is an array" );
     (is $meths->[0]->{name}, 'name', "Check first meth name" );
 
     # Try the identifier methods.
-    ok( my $elem = Bric::Biz::AssetType->new({ key_name => 'new_at' }),
+    ok( my $elem = Bric::Biz::ElementType->new({ key_name => 'new_at' }),
         "Create Element" );
     ok( my @meths = $elem->my_meths(0, 1), "Get ident meths" );
     is( scalar @meths, 1, "Check for 1 meth" );

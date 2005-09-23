@@ -3,7 +3,7 @@ package Bric::Biz::ATType;
 
 =head1 NAME
 
-Bric::Biz::ATType - A class to represent AssetType types.
+Bric::Biz::ATType - A class to represent ElementType types.
 
 =head1 VERSION
 
@@ -24,7 +24,7 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This class sets up properties that are common to all elements
-(Bric::Biz::AssetType) objects of a type.
+(Bric::Biz::ElementType) objects of a type.
 
 =cut
 
@@ -39,7 +39,7 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 use Bric::Util::DBI qw(:all);
-use Bric::Util::Grp::ElementType;
+use Bric::Util::Grp::ATType;
 use Bric::Util::Fault qw(throw_dp);
 
 #==============================================================================#
@@ -57,7 +57,7 @@ my $get_em;
 # Constants                            #
 #======================================#
 use constant DEBUG => 0;
-use constant GROUP_PACKAGE => 'Bric::Util::Grp::ElementType';
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::ATType';
 use constant INSTANCE_GROUP_ID => 28;
 use constant STORY_CLASS_ID => 10;
 
@@ -134,33 +134,33 @@ A short description of this ATType.
 
 =item top_level
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 represent top level elements (story type elements or media type elements) or
 subelements. Defaults to false.
 
 =item paginated
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 represent pages. Defaults to false.
 
 =item fixed_url
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 are fixed URL elements. Defaults to false.
 
 =item related_story
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 are rleated story elements. Defaults to false.
 
 =item related_media
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 are rleated media elements. Defaults to false.
 
 =item media
 
-A boolean value flagging whether elements (AssetTypes) of this this ATType
+A boolean value flagging whether elements (ElementTypes) of this this ATType
 are media elements. Defaults to false.
 
 =item biz_class_id
@@ -333,8 +333,8 @@ list of business asset classes. May use C<ANY> for a list of possible values.
 
 =item grp_id
 
-Return all ATTypes in the Bric::Util::Grp::ElementType group corresponding to
-this ID. May use C<ANY> for a list of possible values.
+Return all ATTypes in the Bric::Util::Grp::ATType group corresponding to this
+ID. May use C<ANY> for a list of possible values.
 
 =back
 
@@ -1216,6 +1216,6 @@ Refactored by David Wheeler <david@wheeler.net>
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Biz::AssetType>
+L<perl>, L<Bric>, L<Bric::Biz::ElementType>
 
 =cut

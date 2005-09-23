@@ -9,7 +9,7 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:aref :msg :history :pkg :browser);
-use Bric::Biz::AssetType::Parts::Data;
+use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Biz::Site;
@@ -229,7 +229,7 @@ $do_element_type = sub {
 
     # Make sure the name isn't already in use.
     my $no_save;
-    # AssetType has been updated to take an existing but undefined 'active'
+    # ElementType has been updated to take an existing but undefined 'active'
     # flag as meaning, "list both active and inactive"
     my @cs = defined $key_name
       ? $class->list_ids({
@@ -399,7 +399,7 @@ $get_data_href = sub {
     # Get existing attrs from the Parts::Data class rather than from
     # $obj->get_data so that we can be sure to check for both active
     # and inactive data fields.
-    my $all_data = Bric::Biz::AssetType::Parts::Data->list({
+    my $all_data = Bric::Biz::ElementType::Parts::FieldType->list({
         field_type_id => $param->{"$key\_id"}
     });
     return { map { $_->get_key_name => $_ } @$all_data };

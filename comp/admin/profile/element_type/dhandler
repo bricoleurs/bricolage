@@ -59,7 +59,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Get the group's membership listed
 $m->comp("/widgets/grp_membership/grp_membership.mc",
-         grp_class => 'Bric::Util::Grp::Element',
+         grp_class => 'Bric::Util::Grp::ElementType',
          obj => $comp,
          formName => 'cont_profile',
          no_edit  => $no_edit,
@@ -313,7 +313,7 @@ if (!$no_edit && defined $id) {
 
 %#-- Once Section --#
 <%once>;
-my $class = 'Bric::Biz::AssetType';
+my $class = 'Bric::Biz::ElementType';
 my $type = 'element_type';
 my $section = 'admin';
 my $disp = get_disp_name('element_type'); # HACK!

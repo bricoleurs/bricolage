@@ -4,7 +4,7 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::ATType;
-use Bric::Util::Grp::ElementType;
+use Bric::Util::Grp::ATType;
 use Bric::Util::DBI ':junction';
 
 sub table {'at_type '}
@@ -42,7 +42,7 @@ sub test_list : Test(60) {
     my $self = shift;
 
     # Create a new element type group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new({
+    ok( my $grp = Bric::Util::Grp::ATType->new({
         name => 'Test ElementTypeGrp'
     }), "Create group" );
 
@@ -202,7 +202,7 @@ sub test_list_ids : Test(21) {
     my $self = shift;
 
     # Create a new element type group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new
+    ok( my $grp = Bric::Util::Grp::ATType->new
         ({ name => 'Test ElementTypeGrp' }),
         "Create group" );
 

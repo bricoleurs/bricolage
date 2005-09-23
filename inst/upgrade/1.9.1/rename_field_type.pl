@@ -5,7 +5,6 @@ use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Util::DBI qw(row_array);
 use Bric::Config qw(MASON_COMP_ROOT);
 use Bric::Util::Trans::FS;
 

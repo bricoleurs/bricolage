@@ -93,7 +93,7 @@ BEGIN {
                           });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::AssetType::BURNER_TEMPLATE,
+__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TEMPLATE,
                                category_fn    => 'category',
                                cat_fn_has_ext => 1,
                                exts           =>

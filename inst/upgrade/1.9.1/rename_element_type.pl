@@ -5,7 +5,6 @@ use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Util::DBI qw(row_array);
 
 exit if fetch_sql q{SELECT 1 FROM class where disp_name = 'Element Type Set'};
 

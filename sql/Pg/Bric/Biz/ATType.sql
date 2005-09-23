@@ -6,7 +6,7 @@
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- This is the SQL that will create the element table.
--- It is related to the Bric::AssetType class.
+-- It is related to the Bric::ElementType class.
 --
 --
 

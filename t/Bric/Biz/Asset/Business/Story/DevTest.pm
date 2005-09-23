@@ -7,7 +7,7 @@ use Test::Exception;
 use Bric::Util::DBI qw(:standard :junction);
 use Bric::Util::Time qw(strfdate);
 use Bric::Biz::ATType;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Biz::Workflow;
@@ -21,7 +21,7 @@ sub class { 'Bric::Biz::Asset::Business::Story' }
 sub table { 'story' }
 
 my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
-my $ELEMENT_CLASS = 'Bric::Biz::AssetType';
+my $ELEMENT_CLASS = 'Bric::Biz::ElementType';
 my $OC_CLASS = 'Bric::Biz::OutputChannel';
 
 # this will be filled during setup
@@ -192,7 +192,7 @@ sub test_select_methods: Test(151) {
     }
 
     # look up a story element
-    my ($element) = Bric::Biz::AssetType->list({ name => 'Story' });
+    my ($element) = Bric::Biz::ElementType->list({ name => 'Story' });
 
     # and a user
     my $admin_id = $self->user_id;
@@ -1033,7 +1033,7 @@ sub test_new_grp_ids: Test(5) {
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
     my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
-    my $element = Bric::Biz::AssetType->new
+    my $element = Bric::Biz::ElementType->new
       ({ name        => "_test_$time.new",
          key_name    => "_test_$time.new",
          burner      => 1,

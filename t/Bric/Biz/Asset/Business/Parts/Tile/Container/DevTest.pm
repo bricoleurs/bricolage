@@ -11,7 +11,7 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::ATType;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Test::MockModule;
 
 ##############################################################################

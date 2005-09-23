@@ -5,7 +5,7 @@ use base qw(Bric::Biz::Asset::DevTest);
 use Test::More;
 use Test::Exception;
 use Bric::Biz::Asset::Business;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Person;
 use Bric::Util::Grp::Parts::Member::Contrib;
 
@@ -31,7 +31,7 @@ sub new_args {
 sub pe {
     my $self = shift;
     diag @_;
-    my $at = Bric::Biz::AssetType->lookup({ id => 1 });
+    my $at = Bric::Biz::ElementType->lookup({ id => 1 });
     foreach my $oc ($at->get_output_channels) {
         diag $oc->get_name;
     }

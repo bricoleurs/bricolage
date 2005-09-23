@@ -398,7 +398,7 @@ my $elem_opts = [
 ];
 
 my $at_id = $element->get_element_type_id;
-my $at = Bric::Biz::AssetType->lookup({'id' => $at_id});
+my $at = Bric::Biz::ElementType->lookup({'id' => $at_id});
 
 # Uncomment this when the related_element flag is in at_type.
 my $is_related_story = $at->is_related_story ? 1 : 0;

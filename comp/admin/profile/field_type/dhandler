@@ -45,7 +45,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 %#-- End HTML --#
 
 <%once>;
-my $class = 'Bric::Biz::AssetType::Parts::Data';
+my $class = 'Bric::Biz::ElementType::Parts::FieldType';
 my $section = 'admin';
 my $type = 'field_type';
 my $disp = get_disp_name($type);
@@ -69,7 +69,7 @@ $id ||= $field->get_id();
 my $which = $field->get_widget_type;  # text, radio, etc..
 
 # Get the element type object to which the field belongs.
-my $elem = Bric::Biz::AssetType->lookup({ id => $field->get_element_type_id });
+my $elem = Bric::Biz::ElementType->lookup({ id => $field->get_element_type_id });
 
 # Check authorization. We check the element, rather than the field, since
 # field permissions are not (currently) supported.

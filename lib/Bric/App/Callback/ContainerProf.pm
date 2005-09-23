@@ -12,8 +12,8 @@ use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
 use Bric::App::Callback::Desk;
 use Bric::App::Callback::Profile::Media;
-use Bric::Biz::AssetType;
-use Bric::Biz::AssetType::Parts::Data;
+use Bric::Biz::ElementType;
+use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
 use Bric::Biz::Workflow qw(:wf_const);
@@ -136,7 +136,7 @@ sub add_element : Callback {
     my $key = $element->get_object_type();
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
-    if (Bric::Biz::AssetType->lookup({id => $element->get_element_type_id})->get_top_level()) {
+    if (Bric::Biz::ElementType->lookup({id => $element->get_element_type_id})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
     my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
@@ -145,7 +145,7 @@ sub add_element : Callback {
         my ($type,$id) = unpack('A5 A*', $f);
         my $at;
         if ($type eq 'cont_') {
-            $at = Bric::Biz::AssetType->lookup({id=>$id});
+            $at = Bric::Biz::ElementType->lookup({id=>$id});
             my $cont = $element->add_container($at);
             $element->save();
             $self->_push_element_stack($cont);
@@ -160,7 +160,7 @@ sub add_element : Callback {
             }
 
         } elsif ($type eq 'data_') {
-            $at = Bric::Biz::AssetType::Parts::Data->lookup({id=>$id});
+            $at = Bric::Biz::ElementType::Parts::FieldType->lookup({id=>$id});
             $element->add_field($at);
             $element->save();
             set_state_data($self->class_key, 'element', $element);

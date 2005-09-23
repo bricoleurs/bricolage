@@ -1,8 +1,8 @@
-package Bric::Util::Grp::Element;
+package Bric::Util::Grp::ATType;
 
 =head1 NAME
 
-Bric::Util::Grp::Element - Interface to Element Groups
+Bric::Util::Grp::ATType - Interface to Bric::Biz::ATType Groups
 
 =head1 VERSION
 
@@ -15,7 +15,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate$
+$LastChangedDate: 2005-09-20 17:48:20 -0700 (Tue, 20 Sep 2005) $
 
 =head1 SYNOPSIS
 
@@ -32,7 +32,6 @@ See Bric::Util::Grp.
 ################################################################################
 # Standard Dependencies
 use strict;
-use Bric::Util::Grp;
 
 ################################################################################
 # Programmatic Dependences
@@ -40,7 +39,7 @@ use Bric::Util::Grp;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric::Util::Grp::AssetType);
+use base qw(Bric::Util::Grp);
 
 ################################################################################
 # Function Prototypes
@@ -50,8 +49,9 @@ use base qw(Bric::Util::Grp::AssetType);
 ################################################################################
 # Constants
 ################################################################################
-use constant DEBUG => 0;
-use constant CLASS_ID => 70;
+use constant DEBUG           => 0;
+use constant CLASS_ID        => 64;
+use constant OBJECT_CLASS_ID => 37;
 
 ################################################################################
 # Fields
@@ -60,13 +60,15 @@ use constant CLASS_ID => 70;
 
 ################################################################################
 # Private Class Fields
-my ($class);
+my ($class, $mem_class);
 
 ################################################################################
 
 ################################################################################
 # Instance Fields
-BEGIN { Bric::register_fields() }
+BEGIN {
+    Bric::register_fields();
+}
 
 ################################################################################
 # Class Methods
@@ -104,7 +106,62 @@ sub DESTROY {}
 
 =over
 
-=item $class_id = Bric::Util::Grp::Element->get_class_id()
+=item $supported_classes = Bric::Util::Grp::ATType->get_supported_classes()
+
+This will return an anonymous hash of the supported classes in the group as keys
+with the short name as a value. The short name is used to construct the member
+table names and the foreign key in the table.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_supported_classes { { 'Bric::Biz::ATType' => 'at_type' } }
+
+##############################################################################
+
+=item my @list_classes = Bric::Util::Grp::ATType->get_list_classes
+
+Returns a list or anonymous array of the supported classes in the group that
+can have their C<list()> methods called in succession to assemble a list of
+member objects. This data varies from that stored in the keys in the hash
+reference returned by C<get_supported_classes> in that some classes' C<list()>
+methods may inherit from others, and we don't want the same C<list()> method
+executed more than once.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_list_classes { ('Bric::Biz::ATType') }
+
+################################################################################
+
+=item $class_id = Bric::Util::Grp::ATType->get_object_class_id
+
+Forces all Objects to be considered as this class.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_object_class_id { OBJECT_CLASS_ID }
+
+################################################################################
+
+=item $class_id = Bric::Util::Grp::ATType->get_class_id()
 
 This will return the class ID that this group is associated with.
 
@@ -120,7 +177,7 @@ sub get_class_id { CLASS_ID }
 
 ################################################################################
 
-=item my $secret = Bric::Util::Grp::Element->get_secret()
+=item my $secret = Bric::Util::Grp::ATType->get_secret()
 
 Returns false, because this is not a secret type of group, but one that can be
 used by users.
@@ -137,7 +194,7 @@ sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::Element->my_class()
+=item my $class = Bric::Util::Grp::ATType->my_class()
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -152,6 +209,25 @@ B<Notes:> Uses Bric::Util::Class->lookup() internally.
 sub my_class {
     $class ||= Bric::Util::Class->lookup({ id => CLASS_ID });
     return $class;
+}
+
+################################################################################
+
+=item my $class = Bric::Util::Grp::ATType->member_class()
+
+Returns a Bric::Util::Class object describing the members of this group.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> Uses Bric::Util::Class->lookup() internally.
+
+=cut
+
+sub member_class {
+    $mem_class ||= Bric::Util::Class->lookup({ id => OBJECT_CLASS_ID });
+    return $mem_class;
 }
 
 ################################################################################
@@ -196,7 +272,8 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>,
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
+L<Bric::Biz::ATType|Bric::Biz::ATType>,
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut
+

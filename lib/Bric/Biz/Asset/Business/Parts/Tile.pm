@@ -736,7 +736,7 @@ michael soderstrom <miraso@pacbell.net>
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset::Business::Story>,
-L<Bric::Biz::Asset::Business::Media>, L<Bric::Biz::AssetType>,
+L<Bric::Biz::Asset::Business::Media>, L<Bric::Biz::ElementType>,
 L<Bric::Biz::Asset::Business::Parts::Tile::Container>,
 L<Bric::Biz::Asset::Business::Parts::Tile::Tile>
 

@@ -11,14 +11,14 @@ use Bric::Util::Grp::Person;
 use Bric::Util::Grp::User;
 use Bric::Util::Grp::AlertType;
 use Bric::Util::Grp::Asset;
-use Bric::Util::Grp::AssetType;
+use Bric::Util::Grp::ElementType;
 use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Grp::ContribType;
 use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Dest;
-use Bric::Util::Grp::Element;
-use Bric::Util::Grp::ElementType;
+use Bric::Util::Grp::SubElementType;
+use Bric::Util::Grp::ATType;
 use Bric::Util::Grp::Event;
 use Bric::Util::Grp::Formatting;
 use Bric::Util::Grp::Grp;
@@ -34,7 +34,7 @@ use Bric::Util::Grp::Site;
 use Bric::Util::Grp::Source;
 use Bric::Util::Grp::Story;
 use Bric::Util::Grp::Workflow;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 
 sub table { 'grp' }
 
@@ -299,10 +299,10 @@ sub test_members : Test(33) {
     my $story_elem_grp_id = 330;
     my $pull_quote_id = 7;
     ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group" );
-    isa_ok($grp, "Bric::Util::Grp::AssetType");
-    ok( @mems = $grp->get_members, "Get story element members" );
-    is( scalar @mems, 2, "Check number of story element mems" );
+        "Look up story subelement type group" );
+    isa_ok($grp, "Bric::Util::Grp::SubelementType");
+    ok( @mems = $grp->get_members, "Get story subelement type grp members" );
+    is( scalar @mems, 2, "Check number of story subelement type grp mems" );
 
     # Grab the "Pull Quote" element member and remove it.
     ok( ($mem) = (grep { $_->get_obj_id == $pull_quote_id  } @mems),
@@ -320,7 +320,7 @@ sub test_members : Test(33) {
 
     # Now restore it.
     ok( $grp->add_member({ id      => $pull_quote_id,
-                           package => 'Bric::Biz::AssetType',}),
+                           package => 'Bric::Biz::ElementType',}),
         "Add pull quote element back in" );
     ok( $grp->save, "Save element group again" );
 
@@ -349,7 +349,7 @@ sub test_get_objects : Test(8) {
         "Look up story element group" );
     ok( my @ats = $grp->get_objects, "Get story element objects" );
     is( scalar @ats, 2, "Check number of story elements" );
-    isa_ok( $ats[0], 'Bric::Biz::AssetType');
+    isa_ok( $ats[0], 'Bric::Biz::ElementType');
 }
 
 ##############################################################################

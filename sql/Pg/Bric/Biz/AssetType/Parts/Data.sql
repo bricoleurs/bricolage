@@ -6,7 +6,7 @@
 -- Author: Garth Webb <garth@perijove.com>
 --
 -- The sql to create the field_type table.
--- This maps to the Bric::AssetType::Parts::Data class.
+-- This maps to the Bric::ElementType::Parts::FieldType class.
 --
 
 -- -----------------------------------------------------------------------------

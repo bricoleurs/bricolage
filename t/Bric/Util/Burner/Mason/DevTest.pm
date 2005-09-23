@@ -11,7 +11,7 @@ sub test_burn : Test(121) {
     return $self->subclass_burn_test(
         'Mason',
         'mc',
-        Bric::Biz::AssetType::BURNER_MASON,
+        Bric::Biz::ElementType::BURNER_MASON,
     );
 }
 

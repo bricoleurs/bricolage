@@ -4,7 +4,7 @@ use warnings;
 use base qw(Bric::Biz::Asset::DevTest);
 use Test::More;
 use Bric::Biz::Asset::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Util::DBI qw(:junction);
 use Bric::Util::Burner::Mason;
@@ -399,7 +399,7 @@ sub test_select_b_new_objs: Test(82) {
 
     # A formatting with one category (admin user)
     $time = time;
-    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time",
+    $element = Bric::Biz::ElementType->new({ key_name    => "_test_$time",
                                            name        => "_test_$time",
                                            burner      => 1,
                                            description => 'this is a test',
@@ -470,7 +470,7 @@ sub test_select_b_new_objs: Test(82) {
 
     # ... as a grp member
     $time = time;
-    $element = Bric::Biz::AssetType->new
+    $element = Bric::Biz::ElementType->new
       ({ key_name    => "_test_$time.1",
          name        => "_test_$time.1",
          burner      => 1,
@@ -517,7 +517,7 @@ sub test_select_b_new_objs: Test(82) {
 
     # ... a bunch of grps
     $time = time;
-    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.2",
+    $element = Bric::Biz::ElementType->new({ key_name    => "_test_$time.2",
                                            name        => "_test_$time.2",
                                            burner      => 1,
                                            description => 'this is a test',
@@ -585,7 +585,7 @@ sub test_select_b_new_objs: Test(82) {
 
     # ... now try a workflow
     $time = time;
-    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.3",
+    $element = Bric::Biz::ElementType->new({ key_name    => "_test_$time.3",
                                            name        => "_test_$time.3",
                                            burner      => 1,
                                            description => 'this is a test',
@@ -632,7 +632,7 @@ sub test_select_b_new_objs: Test(82) {
 
     # ... desk
     $time = time;
-    $element = Bric::Biz::AssetType->new({ key_name    => "_test_$time.4",
+    $element = Bric::Biz::ElementType->new({ key_name    => "_test_$time.4",
                                            name        => "_test_$time.4",
                                            burner      => 1,
                                            description => 'this is a test',
@@ -869,7 +869,7 @@ sub test_new_grp_ids: Test(4) {
     my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
     my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
-    my $element = Bric::Biz::AssetType->new({ name        => "_test_$time.new",
+    my $element = Bric::Biz::ElementType->new({ name        => "_test_$time.new",
                                               key_name    => "_test_$time.new",
                                               burner      => 1,
                                               description => 'this is a test',

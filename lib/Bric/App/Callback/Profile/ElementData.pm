@@ -18,7 +18,7 @@ sub save : Callback {
 
     my $param = $self->params;
     my $ed = $self->obj;
-    my $elem = Bric::Biz::AssetType->lookup({ id => $ed->get_element_type_id });
+    my $elem = Bric::Biz::ElementType->lookup({ id => $ed->get_element_type_id });
 
     unless (chk_authz($elem, EDIT, 1)) {
         # If we're in here, the user doesn't have permission to do what

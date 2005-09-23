@@ -81,8 +81,12 @@ became redundant. [David]
 
 Added the 'Include deleted' checkbox to Advanced Search in 'Find Stories',
 'Find Media', and 'Find Templates'; this allows searching for and reactivating
-deleted stories, media, and templates. Also added the 'Subelement' dropdown,
-which allows searching on Stories by subelement. [Scott]
+deleted stories, media, and templates. [Scott]
+
+=item *
+
+Added the 'Subelement' dropdown, to allow searching on Stories by the
+subelements they contain. [Scott]
 
 =item *
 
@@ -117,6 +121,25 @@ generate the items in a select list. [Scott]
 =back
 
 =head2 Improvements
+
+=item *
+
+Renamed the Element and Element Type classes as follows:
+
+=over
+
+=item *
+
+Bric::Biz::AssetType is now L<Bric::Biz::ElementType|Bric::Biz::ElementType>.
+
+=item *
+
+Bric::Biz::AssetType::Parts::Data is now
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
+
+=back
+
+[David]
 
 =over
 
@@ -248,9 +271,9 @@ C<get_element_type()> and to access C<element_type_id>. [David]
 =item *
 
 Changed the attributes and objects that refer to the
-Bric::Biz::AssetType::Data object in Bric::Biz::Asset::Parts::Tile::Data from
-C<element_data_id> and C<get_element_data()> to C<field_type_id> and
-C<get_field_type()>. [David]
+Bric::Biz::ElementType::Parts::FieldType object in
+Bric::Biz::Asset::Parts::Tile::Data from C<element_data_id> and
+C<get_element_data()> to C<field_type_id> and C<get_field_type()>. [David]
 
 =item *
 
@@ -276,10 +299,11 @@ setting field values, especially during publishes. [David]
 
 =item *
 
-Major refactoring of the field types class, Bric::Biz::AssetType::Parts::Data.
-Attributes that describe how fields should be displayed are no longer stored
-in a separate attribute object, but as true attributes of field type objects.
-This makes them much more efficient in terms of database access. [David]
+Major refactoring of the field types class,
+Bric::Biz::ElementType::Parts::FieldType. Attributes that describe how fields
+should be displayed are no longer stored in a separate attribute object, but
+as true attributes of field type objects. This makes them much more efficient
+in terms of database access. [David]
 
 =item *
 
@@ -339,8 +363,9 @@ Fixed a bunch of inconsistently named foreign key indexes. [David]
 Changed various C<get_data()>, C<set_data()> C<del_data()> and such methods to
 C<get_field_types()>, C<get_value()>, C<set_value()>, C<add_field_types()>,
 etc., to disambiguate fields from field types more consistently. These changes
-are to the interfaces of L<Bric::Biz::AssetType|Bric::Biz::AssetType>,
-L<Bric::Biz::AssetType::Parts::Data|Bric::Biz::AssetType::Parts::Data>, and
+are to the interfaces of L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>,
+and
 L<Bric::Biz::Asset::Business::Parts::Tile::Container|Bric::Biz::Asset::Business::Parts::Tile::Container>.
 The old methods are of course left in place for purposes of backwards
 compatibility. [David]

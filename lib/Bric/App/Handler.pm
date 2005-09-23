@@ -129,7 +129,7 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Biz::Asset::Business::Story;
     use Bric::Biz::Asset::Formatting;
     use Bric::Biz::Site;
-    use Bric::Biz::AssetType;
+    use Bric::Biz::ElementType;
     use Bric::Biz::Category;
     use Bric::Biz::Contact;
     use Bric::Biz::Keyword;

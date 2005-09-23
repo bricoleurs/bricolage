@@ -104,7 +104,7 @@ use XML::Simple;
 use File::Temp qw(tempfile);
 
 use Bric::Biz::Asset::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::OutputChannel;
 use HTTP::Cookies;

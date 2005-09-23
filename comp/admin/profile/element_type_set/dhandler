@@ -28,7 +28,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output group membership.
 $m->comp("/widgets/grp_membership/grp_membership.mc",
-         grp_class => 'Bric::Util::Grp::ElementType',
+         grp_class => 'Bric::Util::Grp::ATType',
          obj => $ct,
          formName => 'ct_profile',
          widget => $widget,

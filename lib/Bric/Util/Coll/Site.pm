@@ -281,7 +281,7 @@ Arthur Bergman <sky@nanisky.com>
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,
-L<Bric::Biz::AssetType|Bric::Biz::AssetType>
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>
 L<Bric::Biz::Site|Bric::Biz::Site>
 
 =cut

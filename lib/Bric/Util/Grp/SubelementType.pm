@@ -1,9 +1,9 @@
-package Bric::Util::Grp::AssetType;
+package Bric::Util::Grp::SubelementType;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Util::Grp::AssetType - A group of AssetTypes.
+Bric::Util::Grp::SubelementType - A group of ElementTypes.
 
 =head1 VERSION
 
@@ -19,12 +19,12 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
- use Bric::Util::Grp::AssetType;
+ use Bric::Util::Grp::SubelementType;
 
 
 =head1 DESCRIPTION
 
-This is for holding groups of AssetTypes.
+This is for holding groups of ElementTypes.
 
 =cut
 
@@ -33,17 +33,15 @@ This is for holding groups of AssetTypes.
 #======================================#
 
 #--------------------------------------#
-# Standard Dependencies                 
-
+# Standard Dependencies
 use strict;
 
 #--------------------------------------#
-# Programatic Dependencies              
- 
+# Programatic Dependencies
+
 #==============================================================================#
 # Inheritance                          #
 #======================================#
-
 use base qw( Bric::Util::Grp );
 
 #=============================================================================#
@@ -51,14 +49,13 @@ use base qw( Bric::Util::Grp );
 #======================================#
 
 
-
 #==============================================================================#
 # Constants                            #
 #======================================#
 
-use constant PACKAGE      => 'Bric::Biz::AssetType';
-use constant TABLE        => 'element_type';
-use constant CLASS_ID => 24;
+use constant PACKAGE         => 'Bric::Biz::ElementType';
+use constant TABLE           => 'element_type';
+use constant CLASS_ID        => 24;
 use constant OBJECT_CLASS_ID => 22;
 
 #==============================================================================#
@@ -66,26 +63,20 @@ use constant OBJECT_CLASS_ID => 22;
 #======================================#
 
 #--------------------------------------#
-# Public Class Fields                   
-
-
+# Public Class Fields
 
 #--------------------------------------#
-# Private Class Fields                  
+# Private Class Fields
 my ($class, $mem_class);
 
 
 #--------------------------------------#
-# Instance Fields                       
+# Instance Fields
 
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-
-			 # Private Fields
-			 
-			});
+    });
 }
 
 #==============================================================================#
@@ -96,7 +87,7 @@ BEGIN {
 
 =over 4
 
-=item $obj = new Bric::Util::Grp::AssetType->new($init);
+=item $obj = new Bric::Util::Grp::SubelementType->new($init);
 
 Creates a new assettype group.  Uses inherited 'new' method.
 
@@ -116,7 +107,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = lookup Bric::Util::Grp::AssetType->lookup($param);
+=item @objs = lookup Bric::Util::Grp::SubelementType->lookup($param);
 
 Uses inherited 'lookup' method.
 
@@ -136,7 +127,7 @@ NONE
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Util::Grp::AssetType->list($param);
+=item @objs = list Bric::Util::Grp::SubelementType->list($param);
 
 Uses inherited 'list' method.
 
@@ -229,7 +220,7 @@ sub get_supported_classes {
 
 ##############################################################################
 
-=item my @list_classes = Bric::Util::Grp::AssetType->get_list_classes
+=item my @list_classes = Bric::Util::Grp::SubelementType->get_list_classes
 
 Returns a list or anonymous array of the supported classes in the group that
 can have their C<list()> methods called in succession to assemble a list of
@@ -250,7 +241,7 @@ sub get_list_classes { (PACKAGE) }
 
 ################################################################################
 
-=item $class_id = Bric::Util::Grp::AssetType->get_object_class_id
+=item $class_id = Bric::Util::Grp::SubelementType->get_object_class_id
 
 Forces all Objects to be considered as this class.
 
@@ -266,7 +257,7 @@ sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::AssetType->my_class()
+=item my $class = Bric::Util::Grp::SubelementType->my_class()
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -285,7 +276,7 @@ sub my_class {
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::AssetType->member_class()
+=item my $class = Bric::Util::Grp::SubelementType->member_class()
 
 Returns a Bric::Util::Class object describing the members of this group.
 
@@ -328,19 +319,12 @@ NONE
 1;
 __END__
 
-=head1 NOTES
-
-This module is the group implimentation of assettyps.  All functionality
-needed for assettypes is implimented here and used by Bric::Biz::AssetType which 
-represents the front end interface.
-
 =head1 AUTHOR
 
-"Garth Webb" <garth@perijove.com>
-Bricolage Engineering
+"Garth Webb" <garth@perijove.com> Bricolage Engineering
 
 =head1 SEE ALSO
 
-L<perl>, L<Bric>, L<Bric::Biz::AssetType>
+L<perl>, L<Bric>, L<Bric::Biz::ElementType>
 
 =cut

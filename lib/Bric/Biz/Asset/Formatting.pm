@@ -127,7 +127,7 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
 
@@ -1536,7 +1536,7 @@ sub get_element_type {
 
     unless ($at_obj) {
         return unless $at_id;
-        $at_obj = Bric::Biz::AssetType->lookup({'id' => $at_id});
+        $at_obj = Bric::Biz::ElementType->lookup({'id' => $at_id});
         my $dirty = $self->_get__dirty;
         $self->_set(['_element_type_obj'] => [$at_obj]);
 
@@ -2348,7 +2348,7 @@ $set_elem = sub {
              || defined $init->{element_id}
              || defined $init->{element__id}
     ) {
-        $init->{element_type} = Bric::Biz::AssetType->lookup({
+        $init->{element_type} = Bric::Biz::ElementType->lookup({
             id => $init->{element_type_id}
                   ||= delete $init->{element_id}
                   || delete $init->{element__id}

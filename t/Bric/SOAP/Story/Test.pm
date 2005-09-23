@@ -119,7 +119,7 @@ use Carp::Heavy; # for some reason if I remove this I can't get syntax
                  # errors, I just get Carp errors.
 
 use Bric::Biz::Asset::Business::Story;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use HTTP::Cookies;
 
@@ -174,7 +174,7 @@ is(@$story_ids2, 0, 'list_ids() returned 0 story_ids');
 # SOAP interface and Bric::Biz::Asset::Business::Story
 
 # get element_id for 'Story' element for use in tests
-my ($story_element_id) = Bric::Biz::AssetType->list_ids({name => 'Story'});
+my ($story_element_id) = Bric::Biz::ElementType->list_ids({name => 'Story'});
 ok($story_element_id, "Got element id for story");
 
 # get workflow_id for use in tests

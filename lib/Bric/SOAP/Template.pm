@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Bric::Biz::Asset::Formatting;
-use Bric::Biz::AssetType;
+use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
 use Bric::Biz::Workflow qw(TEMPLATE_WORKFLOW);
@@ -621,7 +621,7 @@ sub load_asset {
                                                    : $tdata->{element}[0]
                                                    ;
             (my $look = $elem_type) =~ s/([_%\\])/\\$1/g;
-            my $element = Bric::Biz::AssetType->lookup({
+            my $element = Bric::Biz::ElementType->lookup({
                 key_name => $look
             }) or throw_ap __PACKAGE__ . " : no element found matching " .
               "(element => \"$elem_type\")";
