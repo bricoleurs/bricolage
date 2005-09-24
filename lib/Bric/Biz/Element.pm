@@ -224,9 +224,9 @@ sub DESTROY {
 
 =item $meths = Bric::Biz::Element->my_meths
 
-=item my @meths = Bric::Biz::Asset::BusinessParts::Tile->my_meths(TRUE)
+=item my @meths = Bric::Biz::Element->my_meths(TRUE)
 
-=item my @meths = Bric::Biz:::Asset::BusinessParts::Tile->my_meths(0, TRUE)
+=item my @meths = Bric::Biz::Element->my_meths(0, TRUE)
 
 Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of

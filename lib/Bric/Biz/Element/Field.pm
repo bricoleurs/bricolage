@@ -348,7 +348,7 @@ sub lookup {
 
 ################################################################################
 
-=item my @data = Bric::Biz::Assets::Business::Parts::Tile::Data->list($params)
+=item my @data = Bric::Biz::Element::Field->list($params)
 
 Searches for and returns a list or anonymous array of data element objects. The
 supported parameters that can be searched are:
@@ -442,7 +442,7 @@ sub DESTROY {
 
 =over 4
 
-=item my @ids = Bric::Biz::Assets::Business::Parts::Tile::Data->list_ids($params)
+=item my @ids = Bric::Biz::Element::Field->list_ids($params)
 
 Returns a list or anonymous array of data element IDs. The search parameters
 are the same as for C<list()>.

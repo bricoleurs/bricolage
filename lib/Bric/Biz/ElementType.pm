@@ -19,7 +19,7 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-  # Create new types of assets.
+  # Create new types of elements.
   $element = Bric::Biz::ElementType->new($init)
   $element = Bric::Biz::ElementType->lookup({id => $id})
   ($at_list || @ats) = Bric::Biz::ElementType->list($param)
@@ -28,15 +28,15 @@ $LastChangedDate$
   # Return the ID of this object.
   $id = $element->get_id()
 
-  # Get/set this asset type's name.
+  # Get/set this element type's name.
   $element = $element->set_name( $name )
   $name       = $element->get_name()
 
-  # Get/set the description for this asset type
+  # Get/set the description for this element type
   $element  = $element->set_description($description)
   $description = $element->get_description()
 
-  # Get/set the primary output channel ID for this asset type.
+  # Get/set the primary output channel ID for this element type.
   $element = $element->set_primary_oc_id($oc_id, $site_id);
   $oc_id = $element->get_primary_oc_id($site_id);
 
@@ -66,7 +66,7 @@ $LastChangedDate$
   ($part_list || @parts) = $element->get_field_types($field);
   $element            = $element->del_field_types($field);
 
-  # Add, retrieve and delete containers from this asset type.
+  # Add, retrieve and delete containers from this element type.
   $element            = $element->add_containers($at || [$at]);
   (@at_list || $at_list) = $element->get_containers();
   $element            = $element->del_containers($at || [$at]);
@@ -76,7 +76,7 @@ $LastChangedDate$
   $element  = $element->deactivate()
   (undef || 1) = $element->is_active()
 
-  # Save this asset type.
+  # Save this element type.
   $element = $element->save()
 
 =head1 DESCRIPTION
@@ -209,7 +209,7 @@ BEGIN {
 
 =item $element = Bric::Biz::ElementType->new($init)
 
-Will return a new asset type object with the optional initial state
+Will return a new element type object with the optional initial state
 
 Supported Keys:
 
@@ -332,17 +332,17 @@ Element ID. May use C<ANY> for a list of possible values.
 
 =item name
 
-The name of the asset type. Matched with case-insentive LIKE. May use C<ANY>
+The name of the element type. Matched with case-insentive LIKE. May use C<ANY>
 for a list of possible values.
 
 =item key_name
 
-The unique key name of the asset type. Matched with case insensitive LIKE. May
+The unique key name of the element type. Matched with case insensitive LIKE. May
 use C<ANY> for a list of possible values.
 
 =item description
 
-The description of the asset type. Matched with case-insentive LIKE. May use
+The description of the element type. Matched with case-insentive LIKE. May use
 C<ANY> for a list of possible values.
 
 =item output_channel_id
@@ -365,8 +365,8 @@ values.
 
 =item active
 
-Set to 0 to return active and inactive asset types. 1, the default, returns
-only active asset types.
+Set to 0 to return active and inactive element types. 1, the default, returns
+only active element types.
 
 =item type_id
 
@@ -379,7 +379,7 @@ set to 1 to return only top-level elements
 
 =item media
 
-match against a particular media asset type (att.media). May use C<ANY> for a
+match against a particular media element type (att.media). May use C<ANY> for a
 list of possible values.
 
 =item site_id
@@ -738,7 +738,7 @@ NONE
 
 =item $element_type = $element_type->set_name( $name )
 
-This will set the name field for the asset type
+This will set the name field for the element type
 
 B<Throws:>
 NONE
@@ -755,7 +755,7 @@ NONE
 
 =item $name = $element_type->get_name()
 
-This will return the name field for the asset type
+This will return the name field for the element type
 
 B<Throws:>
 NONE
@@ -772,7 +772,7 @@ NONE
 
 =item $element_type = $element_type->set_key_name($key_name)
 
-This will set the unique key name field for the asset type
+This will set the unique key name field for the element type
 
 B<Throws:>
 NONE
@@ -789,7 +789,7 @@ NONE
 
 =item $name = $element_type->get_key_name()
 
-This will return the unique key name field for the asset type
+This will return the unique key name field for the element type
 
 B<Throws:>
 NONE
@@ -840,7 +840,7 @@ NONE
 
 =item $element_type = $element_type->set_primary_oc_id( $primary_oc_id, $site )
 
-This will set the primary output channel id field for the asset type
+This will set the primary output channel id field for the element type
 
 B<Throws:>
 
@@ -890,7 +890,7 @@ sub set_primary_oc_id {
 
 =item $primary_oc_id = $element_type->get_primary_oc_id($site)
 
-This will return the primary output channel id field for the asset type
+This will return the primary output channel id field for the element type
 
 B<Throws:>
 
@@ -952,7 +952,7 @@ sub get_primary_oc_id {
 
 =item $name = $at->get_type_name
 
-Get the type name of the asset type.
+Get the type name of the element type.
 
 B<Throws:>
 NONE
@@ -969,7 +969,7 @@ NONE
 
 =item $burner = $at->get_burner
 
-Get the burner associated with the asset type.  Possible values are
+Get the burner associated with the element type.  Possible values are
 the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
 
 B<Throws:>
@@ -987,7 +987,7 @@ NONE
 
 =item $at->set_burner(Bric::Biz::ElementType::BURNER_MASON);
 
-Get the burner associated with the asset type.  Possible values are
+Get the burner associated with the element type.  Possible values are
 the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
 
 B<Throws:>
@@ -1015,7 +1015,7 @@ sub get_type_name {
 
 =item $desc = $at->get_type_description
 
-Get the type description of the asset type.
+Get the type description of the element type.
 
 B<Throws:>
 NONE
@@ -1067,7 +1067,7 @@ sub get_top_level {
 
 =item ($at || undef) = $at->get_paginated
 
-Return whether this asset type should produce a paginated asset or not.
+Return whether this element type should produce a paginated element or not.
 
 B<Throws:>
 NONE
@@ -1093,7 +1093,7 @@ sub get_paginated {
 
 =item ($at || undef) = $at->is_related_media
 
-Return whether this asset type can have related media objects.
+Return whether this element type can have related media objects.
 
 B<Throws:>
 NONE
@@ -1117,7 +1117,7 @@ sub is_related_media {
 
 =item ($at || undef) = $at->is_related_story
 
-Return whether this asset type can have related story objects.
+Return whether this element type can have related story objects.
 
 B<Throws:>
 NONE
@@ -1147,7 +1147,7 @@ sub is_related_story {
 
 =item $at = $at->clear_media()
 
-Mark this Asset Type as representing a media object or a story object.  Media
+Mark this Element Type as representing a media object or a story object.  Media
 objects do not support all the options that story objects to like nested 
 containers or references, but they include options that story doesnt like 
 autopopulated fields.
@@ -1217,10 +1217,10 @@ sub clear_media {
 The methods 'get_biz_class' and 'get_biz_class_id' get the business class name
 or the business class ID respectively from the class table.
 
-The 'set_biz_class' method sets the business class for this asset type given
+The 'set_biz_class' method sets the business class for this element type given
 either a class name or an ID from the class table.
 
-This value represents the kind of bussiness object this asset type will
+This value represents the kind of business object this element type will
 represent. There are just two main kinds, story and media objects. However
 media objects have many subclasses, one for each type of supported media
 (image, audio, video, etc) increasing the number of package names this value
@@ -1265,7 +1265,7 @@ sub set_at_grp__id { shift->set_et_grp_id(@_) }
 
 =item $at = $at->set_reference(1 || 0)
 
-Return whether this asset type references other data.
+Return whether this element type references other data.
 
 B<Throws:>
 NONE
@@ -1299,7 +1299,7 @@ sub set_reference {
 
 =item ($at || undef) = $at->get_fixed_url
 
-Return whether this asset type should produce a fixed url asset or not.
+Return whether this element type should produce a fixed url element or not.
 
 B<Throws:>
 NONE
@@ -1353,7 +1353,7 @@ sub get_at_type {
 
 =item $val = $element_type->del_attr($name);
 
-Get/Set/Delete attributes on this asset type.
+Get/Set/Delete attributes on this element type.
 
 B<Throws:>
 
@@ -1444,7 +1444,7 @@ sub all_attr {
 
 =item $val = $element_type->get_meta($name);
 
-Get/Set attribute metadata on this asset type.  Calling the 'get_meta' method
+Get/Set attribute metadata on this element type.  Calling the 'get_meta' method
 without '$field' returns all metadata names and values as a hash.
 
 B<Throws:>
@@ -1513,8 +1513,8 @@ sub get_meta {
 =item ($oc_list || @oc_list) = $element_type->get_output_channels(@oc_ids);
 
 This returns a list of output channels that have been associated with this
-asset type. If C<@oc_ids> is passed, then only the output channels with those
-IDs are returned, if they're associated with this asset type.
+element type. If C<@oc_ids> is passed, then only the output channels with those
+IDs are returned, if they're associated with this element type.
 
 B<Throws:> NONE.
 
@@ -1560,7 +1560,7 @@ sub add_output_channel {
 =item $element_type = $element_type->add_output_channels([$output_channels])
 
 This accepts an array reference of output channel objects to be associated
-with this asset type.
+with this element type.
 
 B<Throws:> NONE.
 
@@ -1622,8 +1622,8 @@ sub delete_output_channels {
 =item ($site_list || @site_list) = $element_type->get_sites(@site_ids);
 
 This returns a list of sites that have been associated with this
-asset type. If C<@site_ids> is passed, then only the sites with those
-IDs are returned, if they're associated with this asset type.
+element type. If C<@site_ids> is passed, then only the sites with those
+IDs are returned, if they're associated with this element type.
 
 B<Throws:> NONE.
 
@@ -2049,7 +2049,7 @@ B<Notes:> NONE.
 sub add_containers {
     my $self = shift;
     my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-    my $grp = $self->_get_asset_type_grp;
+    my $grp = $self->_get_element_type_grp;
 
     # Construct the proper array to pass to 'add_members'
     my @mem = map {
@@ -2082,7 +2082,7 @@ B<Notes:> NONE.
 sub get_containers {
     my ($self, $key_name) = @_;
 
-    my $grp = $self->_get_asset_type_grp;
+    my $grp = $self->_get_element_type_grp;
     return $grp->get_objects unless defined $key_name;
 
     return first { $_->get_key_name eq $key_name } $grp->get_objects;
@@ -2116,7 +2116,7 @@ NONE
 sub del_containers {
     my $self = shift;
     my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-    my $grp  = $self->_get_asset_type_grp;
+    my $grp  = $self->_get_element_type_grp;
 
     # Construct the proper array to pass to 'add_members'
     my @mem = map {
@@ -2207,7 +2207,7 @@ sub save {
         = $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
 
     # Save the group information.
-    $self->_get_asset_type_grp->save;
+    $self->_get_element_type_grp->save;
 
     if ($id) {
         # Save the parts and the output channels.
@@ -2230,9 +2230,9 @@ sub save {
 
     # First save the main object information
     if ($id) {
-        $self->_update_asset_type;
+        $self->_update_element_type;
     } else {
-        $self->_insert_asset_type;
+        $self->_insert_element_type;
         $id = $self->_get('id');
 
         # Save the sites.
@@ -2337,7 +2337,7 @@ sub _do_list {
         }
     }
 
-    # Set up parameters based on asset types.
+    # Set up parameters based on element types.
     if (exists $params->{top_level} or exists $params->{media}) {
         $tables .= ', at_type att';
         push @wheres, 'att.id = a.type__id';
@@ -2454,7 +2454,7 @@ sub _is_referenced {
     my $self = shift;
     my $rows;
 
-    # Make sure this isn't referenced from an asset.
+    # Make sure this isn't referenced from an element.
     my $table = $self->is_media ? 'media' : 'story';
     my $sql  = "SELECT COUNT(*) FROM $table WHERE element_type__id = ?";
     my $sth  = prepare_c($sql, undef);
@@ -2465,7 +2465,7 @@ sub _is_referenced {
 
     return 1 if $rows;
 
-    # Make sure this isn't used by another asset type.
+    # Make sure this isn't used by another element type.
     $sql = 'SELECT COUNT(*) '.
            'FROM element_type_member atm, member m, element_type at '.
        'WHERE atm.object_id = ? AND '.
@@ -2599,11 +2599,11 @@ sub _save_attr {
     $a_obj->save;
 }
 
-=item _get_asset_type_grp
+=item _get_element_type_grp
 
 =cut
 
-sub _get_asset_type_grp {
+sub _get_element_type_grp {
     my $self = shift;
     my $atg_id  = $self->get_et_grp_id;
     my $atg_obj = $self->_get('_et_grp_obj');
@@ -2677,7 +2677,7 @@ sub _sync_parts {
 
 #------------------------------------------------------------------------------#
 
-=item $element_type->_update_asset_type()
+=item $element_type->_update_element_type()
 
 Update values in the element_type table.
 
@@ -2689,7 +2689,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub _update_asset_type {
+sub _update_element_type {
     my $self = shift;
 
     my $sql = "UPDATE $table".
@@ -2704,7 +2704,7 @@ sub _update_asset_type {
 
 #------------------------------------------------------------------------------#
 
-=item $element_type->_insert_asset_type()
+=item $element_type->_insert_element_type()
 
 Insert new values into the element_type table.
 
@@ -2716,7 +2716,7 @@ B<Notes:> NONE.
 
 =cut
 
-sub _insert_asset_type {
+sub _insert_element_type {
     my $self = shift;
     my $nextval = next_key($table);
 
@@ -2950,7 +2950,7 @@ michael soderstrom <miraso@pacbell.net>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, L<Bric::Biz::Asset|Bric::Biz::Asset>,
+L<Bric|Bric>, L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.
 
 =cut

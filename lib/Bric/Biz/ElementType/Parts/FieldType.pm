@@ -342,8 +342,8 @@ sub new {
 =item  $field = $field->copy($at_id);
 
 Makes a copy of itself and passes back a new object. The only argument is an
-asset type ID. This needs to be passed since a field of one name cannot be
-inserted twice into the same asset type.
+element type ID. This needs to be passed since a field of one name cannot be
+inserted twice into the same element type.
 
 B<Throws:>
 
@@ -370,7 +370,7 @@ sub copy {
 
 =item $field = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id })
 
-Returns an existing Asset type field object that has the id that was given
+Returns an existing element type field object that has the id that was given
 as an argument
 
 B<Throws:>
@@ -1396,7 +1396,7 @@ sub set_multiple      { shift->_set(['multiple']      => [shift() ? 1 : 0] ) }
 
 =item $val = $data->get_attr($name);
 
-Get/Set attributes on this asset type.
+Get/Set attributes on this element type.
 
 B<Throws:>
 
@@ -1460,7 +1460,7 @@ sub all_attr {
 
 =item $val = $data->get_meta($name);
 
-Get/Set attribute metadata on this asset type.  Calling the 'get_meta' method
+Get/Set attribute metadata on this element type.  Calling the 'get_meta' method
 without '$field' returns all metadata names and values as a hash.
 
 B<Throws:>

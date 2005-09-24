@@ -285,7 +285,7 @@ sub new {
     $init->{description} = $init->{_element_type_obj}->get_description;
     my $self = $class->SUPER::new($init);
 
-    # Prepopulate from the asset type object
+    # Prepopulate from the element type object
     foreach my $ft ($init->{_element_type_obj}->get_field_types) {
         $self->add_field($ft) if $ft->get_required;
     }
@@ -355,7 +355,7 @@ sub lookup {
 
 ################################################################################
 
-=item my @containers = Bric::Biz::Assets::Parts::Tile::Container->list($param)
+=item my @containers = Bric::Biz::Element::Container->list($param)
 
 Searches for and returns a list or anonymous array of container element
 objects. The supported parameters that can be searched are:
@@ -458,7 +458,7 @@ sub DESTROY {
 
 =over 4
 
-=item my @ids = Bric::Biz::Assets::Parts::Tile::Container->list_ids($param)
+=item my @ids = Bric::Biz::Element::Container->list_ids($param)
 
 Returns a list or anonymous array of container element IDs. The search
 parameters are the same as for C<list()>.
@@ -1432,7 +1432,7 @@ sub reorder_elements {
           unless $obj->get_place == $new_place;
         push @new_list, $obj;
 
-        # Get the appropriate asset type ID and 'seen' hash.
+        # Get the appropriate element type ID and 'seen' hash.
         my ($at_id, $seen);
         if ($obj->is_container()) {
             $at_id = $obj->get_element_type_id;
