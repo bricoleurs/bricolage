@@ -63,6 +63,12 @@ CREATE TABLE element_type  (
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 );
 
+/*
+-- -----------------------------------------------------------------------------
+-- Table: subelement_type
+--
+-- Description: A table that manages element type parent/child relationships.
+-- Here for future reference.
 CREATE TABLE subelement_type  (
     id              INTEGER        NOT NULL
                                    DEFAULT NEXTVAL('seq_subelement_type'),
@@ -74,12 +80,12 @@ CREATE TABLE subelement_type  (
     CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
 );
 
-/*
+*/
+
 -- -----------------------------------------------------------------------------
--- Table: subelement_type
+-- Table: element__site
 --
--- Description: A table that manages element type parent/child relationships.
--- Here for future reference.
+-- Description: A table that maps 
 
 CREATE TABLE element_type__site (
     id               INTEGER NOT NULL
@@ -90,8 +96,6 @@ CREATE TABLE element_type__site (
     primary_oc__id   INTEGER NOT NULL,
     CONSTRAINT pk_element_type__site__id PRIMARY KEY (id)
 );
-
-*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element__output_channel
@@ -225,6 +229,3 @@ CREATE INDEX fkx_attr_et__attr_et_meta ON attr_element_type_meta(attr__id);
 CREATE INDEX fkx_et__et__site__element_type__id ON element_type__site(element_type__id);
 CREATE INDEX fkx_site__et__site__site__id ON element_type__site(site__id);
 CREATE INDEX fkx_output_channel__et__site ON element_type__site(primary_oc__id);
-
-
-
