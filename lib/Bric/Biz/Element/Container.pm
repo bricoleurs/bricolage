@@ -1153,7 +1153,12 @@ sub get_elements {
             object_type => $type,
         });
 
-        $subelems = [sort { $a->get_place <=> $b->get_place } (@$cont, @$data)];
+        $subelems = [
+            map  {         $_->[1]         }
+            sort {   $a->[0] <=> $b->[0]   }
+            map  { [ $_->get_place => $_ ] }
+            @$cont, @$data
+        ];
         $self->_set(['_subelems'] => [$subelems]);
         $self->_set__dirty($dirty);
     }

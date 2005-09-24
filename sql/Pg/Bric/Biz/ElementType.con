@@ -9,13 +9,28 @@
 -- -----------------------------------------------------------------------------
 -- Table: element
 
-ALTER TABLE element_type ADD 
+ALTER TABLE element_type ADD
     CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
     REFERENCES at_type(id) ON DELETE CASCADE;
 
-ALTER TABLE element_type ADD 
+ALTER TABLE element_type ADD
     CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
     REFERENCES grp(id) ON DELETE CASCADE;
+
+
+/* For future reference.
+-- -----------------------------------------------------------------------------
+-- Table: subelement_type
+
+ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__parent_id FOREIGN KEY (parent_id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
+
+ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__child_id FOREIGN KEY (child_id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
+
+*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element_type__output_channel
@@ -76,3 +91,77 @@ ALTER TABLE element_type__site ADD
 ALTER TABLE element_type__site ADD
     CONSTRAINT fk_output_channel__et__site FOREIGN KEY (primary_oc__id)
     REFERENCES output_channel(id) ON DELETE CASCADE;
+
+/*
+
+Here's an upgrade script to use to populate the subelement_type table, for if
+and when we decide to add it:
+
+#!/usr/bin/perl -w
+
+use strict;
+use File::Spec::Functions qw(catdir updir);
+use FindBin;
+use lib catdir $FindBin::Bin, updir, 'lib';
+use bric_upgrade qw(:all);
+use Bric::Util::DBI qw(:all);
+
+exit if test_column 'element_type', 'parent_id';
+
+do_sql
+  q{CREATE SEQUENCE seq_subelement_type START 1024},
+
+  q{
+    CREATE TABLE subelement_type  (
+        id              INTEGER        NOT NULL
+                                       DEFAULT NEXTVAL('seq_subelement_type'),
+        parent_id       INTEGER        NOT NULL,
+        child_id        INTEGER        NOT NULL,
+        place           INTEGER        NOT NULL DEFAULT 1,
+        min             INTEGER        NOT NULL DEFAULT 0,
+        max             INTEGER        NOT NULL DEFAULT 0,
+        CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
+    )
+  },
+
+  q{ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__parent_id FOREIGN KEY (parent_id)
+    REFERENCES element_type(id) ON DELETE CASCADE},
+
+  q{ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__child_id FOREIGN KEY (child_id)
+    REFERENCES element_type(id) ON DELETE CASCADE},
+
+  q{CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id)},
+  q{CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id)},
+  q{CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id)},
+
+# Nice approach, but it doesn't increment place. :-(
+#  q{INSERT INTO subelement_type (parent_id, child_id, place)
+#    SELECT et.id AS parent_id, etm.object_id AS child_id, 0
+#    FROM   element_type et, member m, element_type_member etm
+#    WHERE  et.et_grp__id = m.grp__id
+#            AND m.id = etm.member__id},
+;
+
+my $sel = prepare(q{
+    SELECT et.id AS parent_id, etm.object_id AS child_id
+    FROM   element_type et, member m, element_type_member etm
+    WHERE  et.et_grp__id = m.grp__id
+            AND m.id = etm.member__id
+    ORDER BY parent_id, child_id
+});
+
+my $ins = prepare(q{
+    INSERT INTO subelement_type (parent_id, child_id, place)
+    VALUES (?, ?, ?)
+});
+
+execute($sel);
+bind_columns($sel, \my ($parent_id, $child_id));
+my %seen;
+while (fetch($sel)) {
+    execute($ins, $parent_id, $child_id, ++$seen{$parent_id});
+}
+
+*/

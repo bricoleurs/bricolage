@@ -221,8 +221,10 @@ B<Notes:> NONE.
 
 sub _sort_objs {
     my ($pkg, $objs) = @_;
-    return sort { lc $a->get_name cmp lc $b->get_name }
-      values %$objs;
+    return map  {          $_->[1]          }
+           sort {    $a->[0] cmp $b->[0]    }
+           map  { [ lc $_->get_name => $_ ] }
+           values %$objs;
 }
 
 =back

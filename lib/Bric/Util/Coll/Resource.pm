@@ -178,27 +178,27 @@ sub save {
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
     if (@$new_objs) {
-	my $ins = prepare_c(qq{
+        my $ins = prepare_c(qq{
             INSERT INTO job__resource (job__id, resource__id)
             VALUES (?, ?)
         }, undef);
 
-	foreach my $r (@$new_objs) {
-	    $r->save;
-	    execute($ins, $job_id, $r->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+        foreach my $r (@$new_objs) {
+            $r->save;
+            execute($ins, $job_id, $r->get_id);
+        }
+        $self->add_objs(@$new_objs);
+        @$new_objs = ();
     }
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+        my $del = prepare_c(qq{
             DELETE FROM job__resource
             WHERE  job__id = ?
                    AND resource__id = ?
         }, undef);
-	execute($del, $job_id, $_->get_id) for values %$del_objs;
-	%$del_objs = ();
+        execute($del, $job_id, $_->get_id) for values %$del_objs;
+        %$del_objs = ();
     }
     return $self;
 }

@@ -386,5 +386,208 @@ sub test_site : Test(22) {
        "We should have one site now");
 }
 
+##############################################################################
+# Make sure that subelement types and fields work properly.
+sub test_subelement_types : Test(45) {
+    my $self = shift;
+
+    # Create an output channel.
+    ok my $oc = Bric::Biz::OutputChannel->new({
+        name    => 'Test XHTML',
+        site_id => 100,
+    }), "Create an output channel";
+    ok $oc->save, "Save the new output channel";
+    $self->add_del_ids($oc->get_id, 'output_channel');
+    ok $oc->save, "Save the new output channel with its includes";
+
+    # First, we'll need a story element type set.
+    ok my $story_et = Bric::Biz::ATType->new({
+        name      => 'Testing',
+        top_level => 1,
+    }), "Create a story element type";
+    ok $story_et-> save, "Save story element type";
+    $self->add_del_ids($story_et->get_id, 'at_type');
+
+    # Next, a subelement set.
+    ok my $sub_et = Bric::Biz::ATType->new({
+        name      => 'Subby',
+        top_level => 0,
+    }), "Create a subelement element type";
+    ok $sub_et-> save, "Save subelement element type";
+    $self->add_del_ids($sub_et->get_id, 'at_type');
+
+    # And finally, a page subelement set.
+    ok my $page_et = Bric::Biz::ATType->new({
+        name      => 'Pagey',
+        top_level => 0,
+        paginated => 1,
+    }), "Create a page element type";
+    ok $page_et-> save, "Save page element type";
+    $self->add_del_ids($page_et->get_id, 'at_type');
+
+    # Create a story type.
+    ok my $story_type = Bric::Biz::ElementType->new({
+        key_name  => '_testing_',
+        name      => 'Testing',
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
+        type__id  => $story_et->get_id,
+        reference => 0, # No idea what this is.
+    }), "Create story type";
+    ok $story_type->add_site(100), "Add the site ID";
+    ok $story_type->add_output_channels([$oc]), "Add the output channel";
+    ok $story_type->set_primary_oc_id($oc->get_id, 100),
+      "Set it as the primary OC";;
+    ok $story_type->save, "Save the test story type";
+    $self->add_del_ids($story_type->get_id, 'element_type');
+
+    # Give it a header field.
+    ok my $head = $story_type->new_field_type({
+        key_name    => 'header',
+        name        => 'Header',
+        required    => 0,
+        quantifier  => 1,
+        sql_type    => 'short',
+        place       => 1,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Give it a paragraph field.
+    ok my $para = $story_type->new_field_type({
+        key_name    => 'para',
+        name        => 'Paragraph',
+        required    => 0,
+        quantifier  => 1,
+        sql_type    => 'short',
+        place       => 2,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Save the story type with its fields.
+    ok $story_type->save, "Save element with the fields";
+    $self->add_del_ids($head->get_id, 'field_type');
+    $self->add_del_ids($para->get_id, 'field_type');
+
+    # Create a subelement.
+    ok my $pull_quote = Bric::Biz::ElementType->new({
+        key_name  => '_pull_quote_',
+        name      => 'Pull Quote',
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
+        type__id  => $sub_et->get_id,
+        reference => 0, # No idea what this is.
+    }), "Create a subelement element";
+
+    ok $pull_quote->save, "Save the subelement element";
+    $self->add_del_ids($pull_quote->get_id, 'element_type');
+
+    # Give it a paragraph field.
+    ok my $pq_para = $pull_quote->new_field_type({
+        key_name    => 'para',
+        name        => 'Paragraph',
+        required    => 1,
+        quantifier  => 0,
+        sql_type    => 'short',
+        place       => 1,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Give it a by field.
+    ok my $by = $pull_quote->new_field_type({
+        key_name    => 'by',
+        name        => 'By',
+        required    => 1,
+        quantifier  => 0,
+        sql_type    => 'short',
+        place       => 2,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Give it a date field.
+    ok my $date = $pull_quote->new_field_type({
+        key_name    => 'date',
+        name        => 'Date',
+        required    => 1,
+        quantifier  => 0,
+        sql_type    => 'date',
+        place       => 3,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Save the pull quote with its fields.
+    ok $pull_quote->save, "Save subelement with the fields";
+    $self->add_del_ids($pq_para->get_id, 'field_type');
+    $self->add_del_ids($by->get_id, 'field_type');
+    $self->add_del_ids($date->get_id, 'field_type');
+
+    # Create a page subelement.
+    ok my $page = Bric::Biz::ElementType->new({
+        key_name  => '_page_',
+        name      => 'Page',
+        burner    => Bric::Biz::ElementType::BURNER_MASON,
+        type__id  => $page_et->get_id,
+        reference => 0, # No idea what this is.
+    }), "Create a page subelement element";
+
+    # Give it a paragraph field.
+    ok my $page_para = $page->new_field_type({
+        key_name    => 'para',
+        name        => 'Paragraph',
+        required    => 0,
+        quantifier  => 0,
+        sql_type    => 'short',
+        place       => 1,
+        publishable => 1, # Huh?
+        max_length  => 0, # Unlimited
+    }), "Add a field";
+
+    # Save it.
+    ok $page->save, "Save the page subelement element";
+    $self->add_del_ids($page->get_id, 'element_type');
+
+    # Add the subelements to the story type element.
+    ok $story_type->add_containers([$pull_quote->get_id, $page->get_id]),
+      "Add the subelements";
+    ok $story_type->save, 'Save the story type with its subelements';
+
+    # Now let's look it up again.
+    ok $story_type = Bric::Biz::ElementType->lookup({
+        id => $story_type->get_id
+    }), 'Look up the story type';
+
+    # Get its subelement field types.
+    ok my @fts = $story_type->get_field_types,
+        'Get the storye type\'s field types';
+    is scalar @fts, 2, 'There should be two field types';
+    is $fts[0]->get_key_name, 'header', '... The first should be header';
+    is $fts[1]->get_key_name, 'para', '... The second should be paragraph';
+
+    # Get its subelement container types.
+    # XXX Eventually we should be able to order these.
+    ok my @conts = $story_type->get_containers,
+        'Get the storye type\'s containers';
+    is scalar @conts, 2, 'There should be two containers';
+    my %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Try the subelements' subelements.
+    ok my @subs = $subs{_pull_quote_}->get_field_types,
+        'Get the pull quote field types';
+    is scalar @subs, 3, 'There should be three field types';
+    my %pq_subs = map { $_->get_key_name => $_} @subs;
+    ok $pq_subs{para}, '... One should be a paragraph';
+    ok $pq_subs{by}, '... Another should be a by line';
+    ok $pq_subs{date}, '... The third should be a date';
+
+    ok @subs = $subs{_page_}->get_field_types,
+        'Get the page field types';
+    is scalar @subs, 1, 'There should be one field type';
+    is $subs[0]->get_key_name, 'para', '... And it should be a paragraph';
+}
+
 1;
 __END__
