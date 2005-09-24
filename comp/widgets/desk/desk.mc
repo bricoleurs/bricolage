@@ -27,7 +27,7 @@ upon each item.
 
 </%doc>
 
-%#--- Arguments ---#
+%#--- Arguments ---#b
 
 <%args>
 $class   => 'story'
@@ -51,7 +51,6 @@ my $pkgs = { story      => get_package_name('story'),
              media      => get_package_name('media'),
              formatting => get_package_name('formatting')
            };
-my $item_comp = 'desk_item.html';
 
 my $others;
 my $cached_assets = sub {
@@ -260,11 +259,8 @@ if (defined $objs && @$objs > $obj_offset) {
         my $aid = $obj->get_id;
         # Grab the type name.
         my $atid = $obj->get_element_type_id;
-        my $type = $class eq 'formatting'
-          ? $obj->get_output_channel_name
-          : defined $atid
-          ? $types{$atid} ||= $obj->get_element_name
-          : '';
+        my $oc   = ($class eq 'formatting') ? $obj->get_output_channel_name : '';
+        my $type = defined $atid ? $types{$atid} ||= $obj->get_element_name : '';
 
         # Grab the User ID.
         my $user_id = $obj->get_user__id;
@@ -405,7 +401,7 @@ if (defined $objs && @$objs > $obj_offset) {
         }
 
         # Now display it!
-        $m->comp($item_comp,
+        $m->comp('desk_item.html',
                  widget    => $widget,
                  highlight => $highlight,
                  obj       => $obj,
@@ -419,6 +415,7 @@ if (defined $objs && @$objs > $obj_offset) {
                  pub       => $pub,
                  disp      => $disp,
                  type      => $type,
+                 oc        => $oc,
                  class     => $class,
                  desk      => $desk,
                  did       => $desk_id,
@@ -431,8 +428,6 @@ if (defined $objs && @$objs > $obj_offset) {
         last if $limit && $num_displayed == $limit;
     }
     $r->pnotes('num_displayed', $num_displayed);
-
-    $m->out("<br />\n");
 }
 </%init>
 

@@ -190,7 +190,7 @@ div.debug dt:after {
 }
 .desk .item .head .version { 
     float: left; 
-    width: 9em; 
+    width: 10em; 
     background: #cccc99;
     border-right: solid white 1px;
     text-align: right;
@@ -198,7 +198,7 @@ div.debug dt:after {
 }
 .desk .item .head .title {
     /* float: left; */
-    padding: 0 .5em 0 9.5em;
+    padding: 0 .5em 0 10.5em;
     font-size: 1.1em;
 }
 .desk .item .head .pubstatus {
@@ -231,12 +231,12 @@ div.debug dt:after {
 .desk .item dt { 
     clear: both; 
     float: left; 
-    width: 9em; /* plus 1em padding */ 
+    width: 10em; /* plus 1em padding */ 
     text-align: right;
     background: #999966;
     border-right: solid white 1px;
 }
-.desk .item dd { margin-left: 10em; }
+.desk .item dd { margin-left: 11em; }
 /* .desk .item .even { background: #E8E8CD; } */
 
 .desk .item .actions { 
@@ -247,7 +247,7 @@ div.debug dt:after {
     border-top: solid white 1px;
     padding: 0 10px;
 }
-.desk .item .actions p { margin: 10px 0; }
+.desk .item .actions p { margin: 5px 0; }
 .desk .item .actions .mover { 
     position: absolute;
     top: 50%;
@@ -262,7 +262,7 @@ div.debug dt:after {
     padding: 0; 
     list-style: none; 
     position: absolute;
-    bottom: 5px;
+    bottom: 2px;
 }
 .desk .item .actions ul li {
     display: block;

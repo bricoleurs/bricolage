@@ -50,33 +50,34 @@ if ($class eq 'story') {
 $sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
 </%init>
 <%once>;
-my $sort_by = { story      => [ [ name => 'Title' ],
-                                [ uri => 'Primary URI' ],
-                                [ cover_date => 'Cover Date' ],
-                                [ element => 'Story Type' ],
-                                [ id => 'Story ID' ],
-                                [ site_id => 'Site' ],
-                                [ priority => 'Priority' ],
+my $sort_by = { story      => [ [ name          => 'Title' ],
+                                [ uri           => 'Primary URI' ],
+                                [ cover_date    => 'Cover Date' ],
+                                [ element       => 'Story Type' ],
+                                [ id            => 'Story ID' ],
+                                [ priority      => 'Priority' ],
+                                [ site_id       => 'Site' ],
                               ],
-                media      => [ [ cover_date => 'Cover Date' ],
-                                [ priority => 'Priority' ],
-                                [ name => 'Title' ],
-                                [ category_name => 'Category' ],
-                                [ site_id => 'Site' ],
-                                [ element => 'Media Type' ],
-                                [ id => 'ID' ],
+                media      => [ [ name          => 'Title' ],
+                                [ uri           => 'Primary URI' ],
+                                [ cover_date    => 'Cover Date' ],
+                                [ element       => 'Media Type' ],
+                                [ id            => 'ID' ],
+                                [ priority      => 'Priority' ],
+                                [ site_id       => 'Site' ],
                               ],
-                formatting => [ [ deploy_date => 'Cover Date' ],
-                                [ priority => 'Priority' ],
-                                [ file_name => 'File Name' ],
-                                [ category_name => 'Category' ],
-                                [ site_id => 'Site' ],
-                                [ element => 'Asset Type' ],
-                                [ id => 'ID' ],
+                formatting => [ [ name          => 'File Name' ],
+                                [ deploy_date   => 'Deployed Date' ],
+                                [ output_channel => 'Output Channel' ],
+                                [ priority      => 'Priority' ],
+                                [ element_type  => 'Asset Type' ],
+                                [ id            => 'ID' ],
+                                [ site_id       => 'Site' ],
                               ]
               };
+
 my $pl_names = { story => get_class_info('story')->get_plural_name,
                  media => get_class_info('media')->get_plural_name,
-                 formatting => 'templates' #get_class_info('formatting')->get_plural_name
+                 formatting => get_class_info('formatting')->get_plural_name
                };
 </%once>

@@ -15,10 +15,15 @@
       <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
       <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $uri || '&nbsp;' %></dd>
 % }
-      <dt name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
-      <dd name="date" class="<% &$rowtype %><% ($highlight eq 'cover_date' ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+      <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
+      <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+% if ($class eq 'formatting') {
+      <dt name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
+      <dd name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $oc || '&nbsp;' %></dd>
+% } else {
       <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
       <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+% }
 % if (@$sites > 1) {
       <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
       <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
@@ -66,8 +71,9 @@ $desk_val
 $desk_opts
 $ppage
 $disp
-$type
-$pub => ''
+$oc     => ''
+$type   => ''
+$pub    => ''
 $aid
 $class  => 'story'
 $did
@@ -92,7 +98,6 @@ my $idv_class = 'idv';
 if ($class eq 'formatting') {
     $date = $obj->get_deploy_date;
     $date_label = 'Deployed Date';
-    $type_label = 'Output Channel';
     $name = $obj->get_uri;
 } else {
     $name = $obj->get_name;
