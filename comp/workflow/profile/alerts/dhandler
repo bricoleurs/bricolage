@@ -9,12 +9,12 @@
      caption => "Unacknowledged $pl_disp"
 &>
 <& '/widgets/listManager/listManager.mc',
-	 object => 'recip',
-	 constrain => {user_id => $u->get_id, ack_time => undef },
-	 fields => [qw(timestamp subject message)],
-	 profile => undef,
-	 addition => undef,
-	 select => ['Acknowledge', "recip_id"]
+    object => 'recip',
+    constrain => {user_id => $u->get_id, ack_time => undef },
+    fields => [qw(timestamp subject message)],
+    profile => undef,
+    addition => undef,
+    select => ['Acknowledge', "recip_id"]
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 

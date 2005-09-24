@@ -6,11 +6,11 @@
 <input type="hidden" name="id" value="<% $id %>">
 
 <& '/widgets/asset_meta/asset_meta.mc', 
-	id => $id,
-	action => 'edit',
-	type => 'template',
-	section => 'notes',
-	return_url => $return_url &>
+    id         => $id,
+    action     => 'edit',
+    type       => 'template',
+    section    => 'notes',
+    return_url => $return_url &>
 
 <& /widgets/wrappers/sharky/footer.mc &>
 </form>

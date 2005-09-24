@@ -33,8 +33,8 @@ my $id = get_user_id();
 %#-- Begin HTML --#
 <%perl>;
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 'title' => ['Workspace for [_1]', get_user_object->format_name],
-	  context => 'My Workspace');
+         'title' => ['Workspace for [_1]', get_user_object->format_name],
+          context => 'My Workspace');
 
 # Change confirmation required for delete checkbox.
 $m->out(qq{<form method="post" action="} . $r->uri .
@@ -51,7 +51,7 @@ foreach my $class (qw(story media formatting)) {
 }
 
 $m->comp('/widgets/desk/desk_bottom.html',
-	 widget => $widget,
+         widget => $widget,
          offset   => $ARGS{offset} || 0,
          show_all => $ARGS{show_all},
 );

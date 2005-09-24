@@ -42,9 +42,9 @@ chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
 %#-- Begin HTML --#
 
 <& "/widgets/wrappers/sharky/header.mc",
-  	title => "New Template",
-	context => $context,
- &>
+    title => "New Template",
+    context => $context,
+&>
 
 <form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
 <& /widgets/tmpl_prof/tmpl_prof.mc, section => 'new',

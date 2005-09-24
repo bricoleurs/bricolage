@@ -38,16 +38,16 @@ $id => undef
 do_queued_redirect();
 
 my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
-			id      => $id,
-			section => 'keyword',
-			param => \%ARGS);
+                        id      => $id,
+                        section => 'keyword',
+                        param => \%ARGS);
 </%init>
 
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc, 
-	title => 'Edit Keywords',
-	context => $context . $r->pnotes('media_prof|title') . ' | Keywords'
+        title => 'Edit Keywords',
+        context => $context . $r->pnotes('media_prof|title') . ' | Keywords'
 &>
 <form action="<% $r->uri %>" method="post" name="theForm">
 <% $content %>

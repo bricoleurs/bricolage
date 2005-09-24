@@ -39,15 +39,15 @@ do_queued_redirect();
 
 # Grab the content.
 my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
-			section => 'contributors',
-			param   => \%ARGS);
+                        section => 'contributors',
+                        param   => \%ARGS);
 </%init>
 
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc, 
-	title => 'Contributor Association',
-	context => $context . $r->pnotes('story_prof|title') . ' | Contributors'
+    title => 'Contributor Association',
+    context => $context . $r->pnotes('story_prof|title') . ' | Contributors'
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm">

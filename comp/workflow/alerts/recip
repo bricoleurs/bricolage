@@ -1,17 +1,17 @@
 <%perl>;
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => $disp,
-	 context => "Admin | $disp | $aname | Recipients",
-	 no_hist => 1);
+         title => $disp,
+         context => "Admin | $disp | $aname | Recipients",
+         no_hist => 1);
 $m->out("<p></p>");
 $m->comp('/widgets/alertList/alertList.mc',
          mode => 'recip',
-	 alert => $a,
+         alert => $a,
          alert_id => $id,
         );
 $m->out("<br />\n");
 $m->comp('/lib/util/back_button.mc',
-	 url => "/workflow/alerts/$eid");
+         url => "/workflow/alerts/$eid");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 </%perl>
 

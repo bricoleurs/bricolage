@@ -43,12 +43,12 @@ my $id = $1;
 
 # Grab the content.
 my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
-	id      	=> $id,
-	section 	=> 'meta',
-	checkout	=> $checkout,
-	version 	=> $version,
-    param       => \%ARGS,
-	return		=> $return);
+                        id       => $id,
+                        section  => 'meta',
+                        checkout => $checkout,
+                        version  => $version,
+                        param    => \%ARGS,
+                        return   => $return);
 </%init>
 
 %#-- Begin HTML --#

@@ -41,15 +41,15 @@ $crumb .= ' |' if $crumb;
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc, 
-	title => "Select Related $sdisp",
-	context => "$context $crumb Related $sdisp"
+    title => "Select Related $sdisp",
+    context => "$context $crumb Related $sdisp"
 &>
 
 <form action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc, 
-	element_type => 'story',
-	action    => 'edit_related_story'
+    element_type => 'story',
+    action    => 'edit_related_story'
 &>
 
 </form>

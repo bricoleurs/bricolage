@@ -1,14 +1,14 @@
 <%perl>
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => "$disp->{$type} Events",
-	 context => "Workflow | Profile | $disp->{$type} | &quot;"
-	 . $obj->get_name . "&quot; | Events"
+         title => "$disp->{$type} Events",
+         context => "Workflow | Profile | $disp->{$type} | &quot;"
+         . $obj->get_name . "&quot; | Events"
 );
 
 $m->comp('/widgets/eventList/eventList.mc',
-	 object => $type,
+         object => $type,
          obj_id => $id,
-	 alert_uri => "/workflow/alerts");
+         alert_uri => "/workflow/alerts");
 
 $m->comp('/lib/util/back_button.mc');
 $m->comp('/widgets/wrappers/sharky/footer.mc');
@@ -33,10 +33,10 @@ chk_authz($obj, READ);
 <%once>;
 my $disp = { media => get_disp_name('media'),
              story => get_disp_name('story'),
-	     formatting => => get_disp_name('formatting')
+             formatting => get_disp_name('formatting')
            };
 my $pkg =  { media => get_package_name('media'),
              story => get_package_name('story'),
-	     formatting => => get_package_name('formatting')
+             formatting => get_package_name('formatting')
            };
 </%once>

@@ -41,9 +41,9 @@ chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 %#-- Begin HTML --#
 
 <& "/widgets/wrappers/sharky/header.mc",
-  	title => "new story",
-	context => $context,
-  	jsInit => 'document.theForm["title"].focus();'
+    title   => "new story",
+    context => $context,
+    jsInit  => 'document.theForm["title"].focus();'
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">

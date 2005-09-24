@@ -16,15 +16,15 @@ $id => undef
 do_queued_redirect();
 
 my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
-			id      => $id,
-			action  => 'view',
-			type    => 'media',
-			section => 'notes');
+                        id      => $id,
+                        action  => 'view',
+                        type    => 'media',
+                        section => 'notes');
 </%init>
 
 <& "/widgets/wrappers/sharky/header.mc",
   title => "Notes",
-	context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
+        context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
 &>
 
 <form action="<% $r->uri %>" method="post">

@@ -34,7 +34,7 @@ $m->out(qq{<form method="post" action="} . $r->uri .
 
 $m->out("$content<p></p>\n");
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => "Schedule Publication");
+         caption => "Schedule Publication");
 </%perl>
 <table border=0 cellpadding=0 cellspacing=0 width=578>
 <tr>
@@ -44,7 +44,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp('/widgets/select_time/select_time.mc',
          base_name => "pub_date",
 #         indent => 60,
-	 disp      => "Publish At");
+         disp      => "Publish At");
 </%perl>
   </td>
 </tr>
@@ -53,8 +53,8 @@ $m->comp('/widgets/select_time/select_time.mc',
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
          type => 'asset',
-	 widget => 'publish',
-	 cb => 'publish_cb',
+         widget => 'publish',
+         cb => 'publish_cb',
          section => 'workflow',
          val => 'publish_assets_red',
          no_del => 1);

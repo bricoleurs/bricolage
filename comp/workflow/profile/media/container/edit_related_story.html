@@ -40,16 +40,16 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc, 
-	title => "Select Related $sdisp",
-	context => $context . get_state_data('container_prof', 'crumb') .
+        title => "Select Related $sdisp",
+        context => $context . get_state_data('container_prof', 'crumb') .
                    " | Related $sdisp"
 &>
 
 <form action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc, 
-	element_type => 'media',
-	action    => 'edit_related_story'
+        element_type => 'media',
+        action    => 'edit_related_story'
 &>
 
 </form>

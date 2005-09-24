@@ -1,4 +1,4 @@
-<%doc>
+        <%doc>
 ###############################################################################
 
 =head1 NAME
@@ -40,16 +40,16 @@ $id => undef
 do_queued_redirect();
 
 my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
-			id      => $id,
-			section => 'category',
-			param => \%ARGS);
+                        id      => $id,
+                        section => 'category',
+                        param => \%ARGS);
 </%init>
 
 %#-- Begin HTML --#
 
 <& /widgets/wrappers/sharky/header.mc,
-	title => 'Edit Category',
-	context => $context . $r->pnotes('media_prof|title') . ' | Category'
+        title => 'Edit Category',
+        context => $context . $r->pnotes('media_prof|title') . ' | Category'
 &>
 <form action="<% $r->uri %>" method="post" name="theForm">
 <% $content %>

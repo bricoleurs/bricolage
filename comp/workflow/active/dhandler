@@ -101,7 +101,7 @@ $wf = $wf->get_name;
 </%cleanup>
 <%once>
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
-		qw(story media formatting) };
+                qw(story media formatting) };
 
 my @pri = ('High', 'Medium High', 'Normal', 'Medium Low', 'Low');
 my %users;
@@ -111,14 +111,14 @@ my $profile = sub {
 
     # Return an anonymous sub with closure on $type
     return sub {
-	my $o = shift;
-	my $u = $o->get_user__id;
-	my $id = $o->get_id;
-	if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
-	    return ['Edit', "/workflow/profile/$type/$id?checkout=1&return=active", ''];
-	} else {
-	    return ['View', "/workflow/profile/$type/$id?return=active", ''];
-	}
+        my $o = shift;
+        my $u = $o->get_user__id;
+        my $id = $o->get_id;
+        if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
+            return ['Edit', "/workflow/profile/$type/$id?checkout=1&return=active", ''];
+        } else {
+            return ['View', "/workflow/profile/$type/$id?return=active", ''];
+        }
     }
 };
 

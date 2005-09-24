@@ -52,8 +52,8 @@ chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 <form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
 
 <& /widgets/media_prof/media_prof.mc, 
-	section => 'new',
-	work_id => $w_id &>
+    section => 'new',
+    work_id => $w_id &>
 
 </form>
 

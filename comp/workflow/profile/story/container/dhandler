@@ -28,15 +28,15 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </%once>
 %#-- Begin HTML --#
 <& "/widgets/wrappers/sharky/header.mc",
-  	title => "view container",
-	context => $context . get_state_data('container_prof', 'crumb')
- &>
+    title => "view container",
+    context => $context . get_state_data('container_prof', 'crumb')
+&>
 <form name="theForm" action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc,
-	action       => 'view',
-	show_summary => 1,
-  &>
+    action       => 'view',
+    show_summary => 1,
+&>
 
 <input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="container_prof|up_cb" value="Go Up a Level">
 </form>

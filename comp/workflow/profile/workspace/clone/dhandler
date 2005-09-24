@@ -21,17 +21,17 @@ Display the page after you click 'Clone' in 'My Workspace'.
 </%doc>
 
 <& '/widgets/wrappers/sharky/header.mc',
-  title => 'clone story',
-  context => $context,
-  jsInit => 'document.theForm["title"].focus();'
+    title   => 'clone story',
+    context => $context,
+    jsInit  => 'document.theForm["title"].focus();'
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm"
  onSubmit="return confirmChanges(this)">
 
 <& '/widgets/story_prof/story_prof.mc',
-  section  => 'clone',
-  work_id  => $w_id
+    section  => 'clone',
+    work_id  => $w_id
 &>
 
 </form>

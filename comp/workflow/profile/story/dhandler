@@ -30,7 +30,7 @@ my $disp = get_disp_name('story');
 <%args>
 $checkout => undef
 $version  => undef
-$return	  => undef
+$return   => undef
 $scrollx  => 0
 $scrolly  => 0
 </%args>
@@ -46,17 +46,17 @@ my $id = $1;
 
 # Get the content to shove in later.
 my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
-			id       => $id,
-			section  => 'meta',
-			checkout => $checkout,
-			version  => $version,
-            param    => \%ARGS,
-			return	 => $return);
+                        id       => $id,
+                        section  => 'meta',
+                        checkout => $checkout,
+                        version  => $version,
+                        param    => \%ARGS,
+                        return   => $return);
 
 # Output the Header.
 $m->comp("/widgets/wrappers/sharky/header.mc",
-	 title => "$disp Profile",
-	 context => "Workflow | Profile | $disp | " . $r->pnotes('story_prof|title'),
+         title => "$disp Profile",
+         context => "Workflow | Profile | $disp | " . $r->pnotes('story_prof|title'),
          scrollx => $scrollx,
          scrolly => $scrolly);
 

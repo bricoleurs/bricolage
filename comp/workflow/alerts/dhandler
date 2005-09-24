@@ -1,18 +1,18 @@
 <%perl>;
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => $disp,
-	 context => "Admin | $edisp | $ename | $disp",
-	 no_hist => 1);
+         title => $disp,
+         context => "Admin | $edisp | $ename | $disp",
+         no_hist => 1);
 $m->out("<p></p>");
 $m->comp('/widgets/alertList/alertList.mc',
          mode => 'alert',
-	 event => $e,
+         event => $e,
          event_id => $id,
-	 recip_url => "/workflow/alerts/recip"
+         recip_url => "/workflow/alerts/recip"
         );
 $m->out("<br />\n");
 $m->comp('/lib/util/back_button.mc',
-	 url => "/workflow/events/$type/$oid");
+         url => "/workflow/events/$type/$oid");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 </%perl>
 
