@@ -1,12 +1,10 @@
 % $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => "Content",
-%        id      => 'containerprof',
-%        number  => $num++
-%	 );
+%           caption => "Content",
+%           id      => 'containerprof',
+%           number  => $num++
+% );
 
   <table width=578 border=0 cellpadding=0 cellspacing=0>
-  <tr>
-
 
   <tr>
       <td class="medHeader" width=20><img src="/media/images/spacer.gif" height="18" width="20" /></td>
@@ -44,7 +42,7 @@
 %   } else {
       <td width="<% 578 - $infoIndent - 19 %>" class="fieldcontent">
 %       my $value = $dt->get_value;
-%       $data = $lang->maketext("Not defined.") unless defined $value;
+%       $value = $lang->maketext("Not defined.") unless defined $value;
 %       $m->out(escape_html($value));
 %       $sep = 7;
       </td>
