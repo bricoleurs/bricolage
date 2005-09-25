@@ -4,32 +4,20 @@
 %           number  => $num++
 % );
 
-  <table width=578 border=0 cellpadding=0 cellspacing=0>
+<input type="hidden" name="<% $widget %>|view_cb" value="" />
+
+<table class="containerProf">
 
   <tr>
-      <td class="medHeader" width=20><img src="/media/images/spacer.gif" height="18" width="20" /></td>
-      <td width=<% $infoIndent - 20 %> class=medHeader><span class=label>&nbsp;<% $lang->maketext('Fields') %></span> </td>
-      <td><img src="/media/images/spacer.gif" width=1 height=1></td>
-      <td colspan="2" class=medHeader width=<% 595 - $infoIndent  %>>&nbsp;<span class=label><% $lang->maketext('Values') %></span></td>
+      <th><% $lang->maketext('Fields') %></th>
+      <th><% $lang->maketext('Values') %></th>
   </tr>
-
-  <tr>
-  <td bgcolor="white" colspan=4><img src="/media/images/spacer.gif" width="1" height="1" /></td>
-  </tr>
-  <input type="hidden" name="<% $widget %>|view_cb" value="" />
 
 % foreach my $dt (@elements) {
-% my $sep = 1;
-    <tr valign="top">
-      <td>
-	<img src="/media/images/spacer.gif" height="18" width="1" />
-      </td>
-      <td width="<% $infoIndent - 18 %>" align="right">
-	<span class="label"><% $dt->get_name %>:</span>
-      </td>
-      <td width=1></td>
+  <tr>
+    <td class="name"><% $dt->get_name %>:</td>
 %   if ($dt->is_container) {
-      <td width="<% 578 - $infoIndent - 24 %>" colspan="2">
+    <td>
 <&
     '/widgets/profile/imageSubmit.mc',
       formName  => 'theForm',
@@ -38,30 +26,22 @@
       value     => $dt->get_id,
       useHidden => 0,
 &>
-      </td>
+    </td>
 %   } else {
-      <td width="<% 578 - $infoIndent - 19 %>" class="fieldcontent">
-%       my $value = $dt->get_value;
-%       $value = $lang->maketext("Not defined.") unless defined $value;
-%       $m->out(escape_html($value));
-%       $sep = 7;
-      </td>
-      <td width="10">&nbsp;</td>
+    <td class="fieldcontent">
+%     my $value = $dt->get_value;
+%     $value = $lang->maketext("Not defined.") unless defined $value;
+%     $m->out(escape_html($value));
+    </td>
 %   }
-    </tr>
-    <tr>
-      <td bgcolor="white" colspan=3><img src="/media/images/spacer.gif" width="1" height="<% $sep %>" /></td>
-    </tr>
+  </tr>
 % }
 
 
 % if (!scalar(@elements)) {
-    <tr>
-      <td>
-	<img src="/media/images/spacer.gif" height="18" width="1" />
-      </td>
-      <td bgcolor="white" colspan=3><%$lang->maketext('No elements are present.')%></td>
-    </tr>
+  <tr>
+    <td colspan=2><%$lang->maketext('No elements are present.')%></td>
+  </tr>
 % }
 
 </table>
@@ -75,12 +55,9 @@ $widget
 $num => 1
 </%args>
 <%init>
-  # the element object
-  my $element = get_state_data($widget, 'element');
+# the element object
+my $element = get_state_data($widget, 'element');
 
-  # the contained elements
-  my @elements = $element->get_elements();
-
-my $agent = detect_agent();
-my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+# the contained elements
+my @elements = $element->get_elements();
 </%init>

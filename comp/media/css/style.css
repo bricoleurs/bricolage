@@ -369,7 +369,7 @@ th.checkbox, th.radio,
 td.checkbox, td.radio { width: 10%; text-align: center; }
 
 .containerProf td { border: none; }
-.containerProf td.name { text-align: right; }
+.containerProf .name { width: 15%; text-align: right; }
 .containerProf .position,
 .containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
 
