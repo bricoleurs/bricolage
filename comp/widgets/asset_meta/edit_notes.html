@@ -26,18 +26,22 @@
     number  => $number &>
 % my $key = $widget . '|note';
 <& '/widgets/profile/displayFormElement.mc',
-	key => $key,
-	vals => {
-		disp => 'Note',
-		value => $current,
-		props => {
-			type => 'textarea',
-			cols => 45,
-			rows => 4
-		}
-	}  &>
-<input type="hidden" name="return_url" value="<% $return_url %>" />
+    key => $key,
+    vals => { disp => 'Note',
+              value => $current,
+              props => { type => 'textarea',
+                         cols => 45,
+                         rows => 4
+                       }
+            }  
+&>
+<& '/widgets/profile/hidden.mc',
+    name    => 'return_url',
+    value   => $return_url,
+&>
+
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
 <& '/widgets/profile/button.mc',
     disp    => 'Save',
     widget  => $widget,

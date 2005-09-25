@@ -1,20 +1,22 @@
-<%perl>;
-$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Categories');
-$m->comp('/widgets/listManager/listManager.mc',
-         object    => 'category',
-         userSort => 0,
-         def_sort_field => 'uri',
-         title     => 'Current Categories',
-         objs      => \@categories,
-         profile   => undef,
-         fields    => [qw(uri site name primary)],
-         field_titles => { primary => 'Primary' },
-         field_values => $primary_sub,
-         select =>  $category_select,
-         addition  => ''
-        );
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
-</%perl>
+<& '/widgets/wrappers/sharky/table_top.mc', 
+    caption => 'Current Categories',
+&>
+
+<& '/widgets/listManager/listManager.mc',
+    object          => 'category',
+    userSort        => 0,
+    def_sort_field  => 'uri',
+    title           => 'Current Categories',
+    objs            => \@categories,
+    profile         => undef,
+    fields          => [qw(uri site name primary)],
+    field_titles    => { primary => 'Primary' },
+    field_values    => $primary_sub,
+    select          =>  $category_select,
+    addition        => ''
+&>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <& /widgets/search/search.mc,
    object       => 'category',
@@ -22,7 +24,11 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    type         => 'singular',
    use_form_tag => 0
 &>
-<& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Categories' &>
+
+<& '/widgets/wrappers/sharky/table_top.mc', 
+    caption => 'Choose Categories',
+&>
+
 <& /widgets/listManager/listManager.mc,
    object    => 'category',
    title     => 'Choose Categories',
@@ -33,11 +39,30 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    addition  => '',
    behavior => 'expand',
 &>
+
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_category_cb" value="Save" />
-<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_category_cb" value="Save and Stay" />
-<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_category_cb" />
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save',
+    widget  => $widget,
+    cb      => 'save_category_cb',
+    button  => 'save_red',
+    value   => 'Save',
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save and Stay',
+    widget  => $widget,
+    cb      => 'save_and_stay_category_cb',
+    button  => 'save_and_stay_lgreen',
+    value   => 'Save and Stay',
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Return',
+    widget  => $widget,
+    cb      => 'leave_category_cb',
+    button  => 'return_dgreen',
+    value   => 'Return',
+&>
 
 <%args>
 $widget

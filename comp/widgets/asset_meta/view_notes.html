@@ -1,37 +1,38 @@
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%  	 caption => "Notes",
-%	 number  => $number);
-<table border="0" cellpadding="0" cellspacing="0" width="578" bordercolor="#cccc99">
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Notes",
+    number  => $number,
+&>
+<table class="containerProf">
 <tr>
-    <th class="medHeader" width="68">Version</th>
-    <td width="1" height="25"><img src="/media/images/spacer.gif" width="1" height="1" /></td>   
-    <th width="509" class="medHeader">Note</th>
+    <th class="name">Version</th>
+    <th>Note</th>
 </tr>
 
+% my $count = 1;
 % foreach my $n (@notes) {
-%     if ($flag) {
-<tr>
-    <td colspan="3" height="1" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>
+<tr class="<% ($count++ % 2 == 0) ? 'even' : 'odd' %>">
+    <td class="name"><% $n->{id} %></td>
+    <td><% $n->{note} %></td>
 </tr>
-%     } # if
-<tr valign="top">
-    <td align="right" class="label"><% $n->{id} %>&nbsp;</td>
-    <td width="1" height="25" class="medHeader"><img src="/media/images/spacer.gif" width="1" height="1" /></td>   
-    <td>&nbsp;<% $n->{note} %></td>
-%     $flag = 1;
-% } # foreach
+% }
+
 % unless (@notes) {
 <tr>
-    <td colspan="2">&nbsp;<% $lang->maketext('No existing notes.')%></td>
-    <td width="1" height="25"><img src="/media/images/spacer.gif" width="1" height="1" /></td>   
+    <td colspan="2"><% $lang->maketext('No existing notes.') %></td>
 </tr>
-% } # unless
+% }
 </table>
 
 % $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 <form>
-<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|return_cb">
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Return',
+    widget  => $widget,
+    cb      => 'return_cb',
+    button  => 'return_dgreen',
+    useTable    => 0,
+&>
 </form>
 
 <%args>
@@ -40,9 +41,7 @@ $number
 </%args>
 
 <%init>
-
 my $notes = get_state_data($widget, 'notes');
 my @notes = map { { id => $_, note => $notes->{$_} } }
-  sort { $notes->{$a} <=> $notes->{$b} } keys %$notes;
-my $flag;
+            sort { $b <=> $a } keys %$notes;
 </%init>

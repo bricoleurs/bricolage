@@ -3,7 +3,7 @@
     title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb"
 &>
-<form method="post" action="<% $r->uri %>" name="cat_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="cat_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 my $reset;
 if (defined $id) {
@@ -16,13 +16,16 @@ if (defined $id) {
 
 # Output the crucial fields.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Properties", number  => 1);
+           caption => "Properties", number  => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
-	 readOnly => $no_edit,
-	 fieldsUsed => { uri => 1, ad_string => 1, site_id => 1,
-			 ad_string2 => 1, directory => 1 });
+         readOnly => $no_edit,
+         fieldsUsed => { uri => 1, ad_string => 1, site_id => 1,
+                         ad_string2 => 1, directory => 1 });
 
-$m->out('<input type=hidden name="site_id" value="'.$cat->get_site_id.'">');
+$m->comp('/widgets/profile/hidden.mc',
+          name  => 'site_id',
+          value => $cat->get_site_id,
+);
 $m->comp('/widgets/profile/displayFormElement.mc',
          objref   => $cat,
          key      => 'site',
@@ -33,14 +36,14 @@ if (defined $id) {
 
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref => $cat,
-	     key => 'uri',
+             key => 'uri',
              readOnly => 1);
 
 } else {
     # Output a field for the directory.
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref => $cat,
-	     key    => 'directory');
+             key    => 'directory');
 
     # Output a list of parent categories to choose from.
     # Remove any that are children of the category itself.
@@ -49,12 +52,12 @@ if (defined $id) {
 
     $m->comp('/widgets/select_object/select_object.mc',
              object     => 'category',
-	     name       => 'parent_id',
+             name       => 'parent_id',
              field      => 'uri',
              disp       => $lang->maketext('Parent Category'),
-	     selected   => (defined($p_id) ? $p_id :
+             selected   => (defined($p_id) ? $p_id :
                             exists $ARGS{parent_id} ? $ARGS{parent_id} : undef),
-	     sort_field => 'uri',
+             sort_field => 'uri',
              reset_key  => $reset,
              constrain  => { site_id => $cat->get_site_id },
              req        => 1,
@@ -66,22 +69,22 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output the keywords.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Keywords", number  => 2);
+           caption => "Keywords", number  => 2);
 my $kws = $cat->get_keywords;
 $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
-	 fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
-	 reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
-	 num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit,
-	 formName => 'cat_profile');
+         fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
+         reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
+         num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit,
+         formName => 'cat_profile');
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output the ad strings.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Ad Strings", number  => 3);
+           caption => "Ad Strings", number  => 3);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
-	 readOnly => $no_edit,
-	 fieldsUsed => { uri => 1, name => 1, description => 1,
-			 directory => 1, site_id => 1 });
+         readOnly => $no_edit,
+         fieldsUsed => { uri => 1, name => 1, description => 1,
+                         directory => 1, site_id => 1 });
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 
@@ -108,13 +111,13 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 # Add a checkbox to cascade delete.
 unless ($no_edit || $no_del) {
     $m->comp('/widgets/profile/checkbox.mc', name => 'delete_cascade',
-	     label_after => 1, value => 1,
+             label_after => 1, value => 1,
              disp => "<span class=burgandyLabel>".$lang->maketext('Delete this Category and All its Subcategories')."</span>");
     $m->out("<br />\n");
 }
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
-	 no_del => $no_del, no_save => $no_edit, widget => $type);
+         no_del => $no_del, no_save => $no_edit, widget => $type);
 
 </%perl>
 </form>
@@ -157,8 +160,8 @@ my $no_del  = ! defined $id || $no_edit || $id == $root_id;
 # Roll in any changes to the category object if we're just adding keywords.
 if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'keyword') {
     foreach my $meth ($cat->my_meths(1)) {
-	$meth->{set_meth}->($cat, @{$meth->{set_args}}, $ARGS{$meth->{name}})
-	  if defined $meth->{set_meth} and exists $ARGS{$meth->{name}};
+        $meth->{set_meth}->($cat, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+          if defined $meth->{set_meth} and exists $ARGS{$meth->{name}};
     }
 }
 

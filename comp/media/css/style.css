@@ -421,12 +421,12 @@ div.addelement { text-align: right;}
 	font-weight: bold;
 	text-align: center;
 	color: #993300;
-	border-bottom: solid #CCCC99 1px;
 }
 
 .buttonBar .checkin {
 	padding: 4px 0;
 	float: left;
+	border-top: solid #CCCC99 1px;
 }
 
 .buttonBar .revert {

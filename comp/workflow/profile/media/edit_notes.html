@@ -7,7 +7,7 @@ my $context = "Workflow | Profile | $disp | ";
 
 %#-- Args Section --#
 <%args>
-$id
+$id => undef
 </%args>
 
 %#-- Init Section --#
@@ -22,16 +22,19 @@ my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
                         section => 'notes');
 </%init>
 
-<& "/widgets/wrappers/sharky/header.mc",
-    title => "Edit Notes",
+<& '/widgets/wrappers/sharky/header.mc', 
+    'title' => 'Notes',
     context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
- &>
+&>
 
-<form>
-<input type="hidden" name="id" value="<% $id %>" />
+<form action="<% $r->uri %>" method="post">
+
+<& "/widgets/profile/hidden.mc",
+    name    => 'id',
+    value   => $id
+&>
+
 <% $content %>
-<& /widgets/wrappers/sharky/footer.mc &>
+
 </form>
-
-
-
+<& /widgets/wrappers/sharky/footer.mc &>

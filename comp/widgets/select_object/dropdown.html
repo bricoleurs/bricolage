@@ -1,4 +1,7 @@
-<input type="hidden" name="<% "$widget|save_selected_id_cb" %>" value="<% $object %>" />
+<& '/widgets/profile/hidden.mc',
+    name    => "$widget|save_selected_id_cb",
+    value   => $object,
+&>
 <& /widgets/profile/select.mc,
   name     => $name,
   value    => $sel_id,

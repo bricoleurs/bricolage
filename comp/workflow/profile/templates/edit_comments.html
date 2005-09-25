@@ -1,19 +1,24 @@
 <& "/widgets/wrappers/sharky/header.mc",
-  title => "Edit Notes"
- &>
+    title => "Edit Notes"
+&>
 
-<form>
-<input type="hidden" name="id" value="<% $id %>">
+<form action="<% $r->uri %>" method="post">
+
+<& "/widgets/profile/hidden.mc",
+    name    => 'id',
+    value   => $id
+&>
 
 <& '/widgets/asset_meta/asset_meta.mc', 
     id         => $id,
     action     => 'edit',
     type       => 'template',
     section    => 'notes',
-    return_url => $return_url &>
+    return_url => $return_url,
+&>
 
-<& /widgets/wrappers/sharky/footer.mc &>
 </form>
+<& /widgets/wrappers/sharky/footer.mc &>
 
 <%args>
 $id

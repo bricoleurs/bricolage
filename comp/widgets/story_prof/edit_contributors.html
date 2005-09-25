@@ -63,9 +63,27 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_contrib_cb" value="Save" />
-<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_contrib_cb" value="Save and Stay" />
-<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border="0" name="<% $widget %>|leave_contrib_cb" />
+<& "/widgets/buttons/submit.mc",
+    disp      => 'Save',
+    widget    => $widget,
+    cb        => 'save_contrib_cb',
+    button    => 'save_red',
+    useTable  => 0
+&>
+<& "/widgets/buttons/submit.mc",
+    disp      => 'Save and Stay',
+    widget    => $widget,
+    cb        => 'save_and_stay_contrib_cb',
+    button    => 'save_and_stay_lgreen',
+    useTable  => 0
+&>
+<& "/widgets/buttons/submit.mc",
+    disp      => 'Return',
+    widget    => $widget,
+    cb        => 'leave_contrib_cb',
+    button    => 'return_dgreen',
+    useTable  => 0
+&>
 
 <%args>
 $widget

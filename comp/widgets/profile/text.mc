@@ -34,6 +34,7 @@ Easier to use wrapper for displayFormElement.mc
 $disp      => ''
 $value     => ''
 $name      => ''
+$id        => undef
 $length    => ''
 $size      => ''
 $maxlength => ''
@@ -57,12 +58,13 @@ my $vals = { disp      => $disp,
            };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-	 key       => $name,
-	 vals      => $vals,
-	 width     => $width,
-	 indent    => $indent,
-	 useTable  => $useTable,
-	 localize  => $localize,
-	 readOnly  => $readOnly
+         key       => $name,
+         vals      => $vals,
+         width     => $width,
+         indent    => $indent,
+         useTable  => $useTable,
+         localize  => $localize,
+         readOnly  => $readOnly,
+         id        => $id
 );
 </%perl>

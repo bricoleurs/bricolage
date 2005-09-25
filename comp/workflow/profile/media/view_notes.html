@@ -23,13 +23,18 @@ my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
 </%init>
 
 <& "/widgets/wrappers/sharky/header.mc",
-  title => "Notes",
-        context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
+    title => "Notes",
+    context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
 &>
 
 <form action="<% $r->uri %>" method="post">
-<input type="hidden" name="id" value="<% $id %>">
+
+<& "/widgets/profile/hidden.mc",
+    name    => 'id',
+    value   => $id
+&>
+
 <% $content %>
+
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>
-</form>

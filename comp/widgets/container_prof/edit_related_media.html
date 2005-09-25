@@ -22,7 +22,15 @@
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="<% $widget %>|related_up_cb" value="Return">
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Return',
+    widget  => $widget,
+    cb      => 'related_up_cb',
+    button  => 'return_dgreen',
+    value   => 'Return',
+    useTable    => 0,
+&>
+
 <%args>
 $widget
 </%args>

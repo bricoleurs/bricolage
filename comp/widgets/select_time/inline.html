@@ -9,7 +9,10 @@ if ($disp && !$compact) {
 if (!$useTable) {$compact = 1};
 
 $m->out(qq{        <div class="input">\n}) if $useTable;
-$m->out(qq{            <input type="hidden" name="select_time|refresh_cb" value="$base_name" />\n});
+$m->comp('/widgets/profile/hidden.mc',
+          name  => 'select_time|refresh_cb',
+          value => $base_name
+);
 
 #-- Month Select
 if ($mon) {

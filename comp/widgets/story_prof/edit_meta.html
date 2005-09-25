@@ -1,4 +1,7 @@
-<input type="hidden" name="<% $widget %>|update_cb" value="1">
+<& '/widgets/profile/hidden.mc',
+    name    => "$widget|update_cb",
+    value   => 1,
+&>
 
 <%perl>
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -144,7 +147,15 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
   <tr>
     <td><% $_->get_name %></td>
     <td><% $_->get_uri %></td>
-    <td class="radio"><input type="radio" name="<% $widget %>|primary_cat" value="<% $_->get_id %>" <% $cat_id == $p_id ? 'CHECKED' : '' %> /></td>
+    <td class="radio">
+<& "/widgets/profile/radio.mc",
+    disp        => '',
+    value       => $_->get_id,
+    name        => "$widget|primary_cat",
+    js          => '', 
+    req         => 0,
+    checked     => ($cat_id == $p_id),
+&>
     <td class="checkbox">
 % if ($cat_id != $p_id) {
 <& '/widgets/profile/checkbox.mc',

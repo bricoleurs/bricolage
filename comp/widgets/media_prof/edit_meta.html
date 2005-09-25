@@ -1,4 +1,7 @@
-<input type="hidden" name="<% $widget %>|update_cb" value="1">
+<& '/widgets/profile/hidden.mc',
+    name    => "$widget|update_cb",
+    value   => 1,
+&>
 
 <%perl>
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',

@@ -38,14 +38,14 @@ $js    => undef
 
 <%perl>;
 $m->comp("/widgets/profile/displayFormElement.mc",
-	 key  => $name,
-	 vals => { value => $value,
-	           js    => $js,
-	 	   props => { type => 'hidden',
-                              length => $length,
-                              maxlength => $maxlength
+          key  => $name,
+          vals => { value => $value,
+                    js    => $js,
+                    props => { type => 'hidden',
+                               length => $length,
+                               maxlength => $maxlength
                              }
-		 },
+                  },
          useTable => 0
 );
 </%perl>

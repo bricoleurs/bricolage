@@ -41,18 +41,40 @@ my $opts = [
     map  { $_->get_key_name } $at->get_field_types
 ];
 </%perl>
-<& '/widgets/profile/select.mc',
-        name     => $widget.'|default_field',
-        options  => $opts,
-        value    =>  $def_field,
-        useTable => 0,
-&>
-        <input type="image" src="/media/images/<% $lang_key %>/change_red.gif" name="<% $widget %>|change_default_field_cb" value="Change" />
+            <& '/widgets/profile/select.mc',
+                    name     => $widget.'|default_field',
+                    options  => $opts,
+                    value    =>  $def_field,
+                    useTable => 0,
+            &>
+            <& '/widgets/buttons/submit.mc',
+                disp    => "Change",
+                widget  => $widget,
+                cb      => "change_default_field_cb",
+                button  => "change_red",
+                value   => "Change",
+                useTable => 0,
+            &>
         </dd>
         <dt><% $lang->maketext('Words') %></dt>
-        <dd><input type="text" id="words" name="words" value="" /></dd>
+        <dd>
+            <& '/widgets/profile/text.mc',
+                id      => 'words',
+                name    => 'words',
+                value   => '',
+                useTable    => 0,
+            &>
+        </dd>
         <dt><% $lang->maketext('Characters') %></dt>
-        <dd><input type="text" id="chars" name="chars" value="" /><button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f"onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button></dd>
+        <dd>
+            <& '/widgets/profile/text.mc',
+                id      => 'chars',
+                name    => 'chars',
+                value   => '',
+                useTable    => 0,
+            &>        
+            <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
+        </dd>
     </dl>
 % }
 <& '/widgets/profile/textarea.mc',
@@ -72,25 +94,47 @@ my $opts = [
 &>
 <table>
 <tr>
-<td>
-<img src="/media/images/spacer.gif" width="10" height="1">
-  </td>
 <th style="text-align: right;">Preserve formatting:</th>
-<td colspan="4"><& "/widgets/profile/checkbox.mc",
+<td><& "/widgets/profile/checkbox.mc",
          checked     => $preserve,
          value       => 1,
          name        => $widget.'|preserve' &>
 </td>
 <td>
-<input type="image" src="/media/images/<% $lang_key %>/change_red.gif" border=0  name="<% $widget %>|change_preserve_cb" value="Change">
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Change',
+    widget  => $widget,
+    cb      => 'change_preserve_cb',
+    button  => 'change_red',
+    useTable    => 0,
+&>
 </td>
 </tr>
 </table>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 </%doc>
-<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border=0 name="<% $widget %>|bulk_save_and_up_cb">
-<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|bulk_save_cb">
-<input type="image" src="/media/images/<% $lang_key %>/cancel_red.gif" border=0 name="<% $widget %>|bulk_up_cb" value="Return without Saving">
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save',
+    widget  => $widget,
+    cb      => 'bulk_save_and_up_cb',
+    button  => 'save_red',
+    useTable    => 0,
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save and Stay',
+    widget  => $widget,
+    cb      => 'bulk_save_cb',
+    button  => 'save_and_stay_lgreen',
+    useTable    => 0,
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Return without Saving',
+    widget  => $widget,
+    cb      => 'bulk_up_cb',
+    button  => 'cancel_red',
+    useTable    => 0,
+&>
+
 <%args>
 $widget
 $show_summary

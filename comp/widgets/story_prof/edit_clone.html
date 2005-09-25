@@ -6,27 +6,23 @@ through story_prof.mc.
 It lets you modify the category, slug, and cover date of the
 cloned story, using the current values by default.
 </%doc>
+
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => 'Properties',
+    number  => 1,
+&>
+
+<& '/widgets/profile/displayFormElement.mc',
+    key     => 'title',
+    vals    => $tmeth
+&>
+
+<& '/widgets/profile/displayFormElement.mc',
+    key     => 'slug',
+    vals    => $smeth
+&>
+
 <%perl>;
-# Display the properties
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-         caption => "Properties",
-         number  => 1);
-$m->out($ieSpacer, '<br />');
-
-# Title
-$m->comp('/widgets/profile/displayFormElement.mc',
-         key => 'title',
-         vals => $tmeth
-     );
-$m->out($ieSpacer);
-
-# Slug
-$m->comp('/widgets/profile/displayFormElement.mc',
-         key => 'slug',
-         vals => $smeth
-     );
-$m->out($ieSpacer);
-
 # Category
 my $cats = Bric::Biz::Category->list({ site_id => $site_id });
 $m->comp('/widgets/select_object/select_object.mc',
@@ -41,7 +37,6 @@ $m->comp('/widgets/select_object/select_object.mc',
          localize   => 0,
          useTable   => 1
      );
-$m->out($ieSpacer);
 
 # Secondary categories
 my $cats = Bric::Biz::Category->list({ site_id => $site_id });
@@ -59,7 +54,6 @@ $m->comp('/widgets/select_object/select_object.mc',
          useTable   => 1,
          multiple   => 1,
      );
-$m->out($ieSpacer);
 
 my $ocs = [grep { $_->get_site_id == $site_id } $elem->get_output_channels];
 # Output Channel
@@ -74,7 +68,6 @@ $m->comp('/widgets/select_object/select_object.mc',
          localize   => 0,
          useTable   => 1
      );
-$m->out($ieSpacer);
 
 if (@$ocs > 1) {
     # Secondary Output Channels
@@ -91,7 +84,6 @@ if (@$ocs > 1) {
              multiple   => 1,
              size       => @$ocs >= 5 ? 5 : scalar @$ocs,
          );
-    $m->out($ieSpacer);
 
     # Output Channel groups
     if (my @grps = grep { chk_authz($_, READ, 1) }
@@ -111,28 +103,25 @@ if (@$ocs > 1) {
                  field      => 'name',
                  useTable   => 1,
              );
-        $m->out($ieSpacer);
     }
 }
-
-# Cover date
-$m->comp('/widgets/profile/displayFormElement.mc',
-         key => 'cover_date',
-         vals => $cmeth,
-     );
-$m->out($ieSpacer, '<br />');
-
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
-
-# Have to use a separate hidden field as IE only sent desk_asset|clone_cb.x
-# and .y, but not desk_asset|clone_cb with value=$sid
-$m->comp('/widgets/profile/hidden.mc',
-         name => 'desk_asset|clone_cb',
-         value => $sid);
-$m->comp('/widgets/profile/create_button.html',
-         widget => '', cb => '');
-
 </%perl>
+
+<& '/widgets/profile/displayFormElement.mc',
+    key     => 'cover_date',
+    vals    => $cmeth,
+&>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<& '/widgets/profile/hidden.mc',
+    name    => 'desk_asset|clone_cb',
+    value   => $sid,
+&>
+<& '/widgets/buttons/submit.mc',
+    name    => "",
+&>
+
 <%args>
 $widget
 </%args>
@@ -162,7 +151,4 @@ $cmeth->{value} = $story->get_cover_date(ISO_8601_FORMAT);
 my $cat_id = $story->get_primary_category->get_id;
 my $oc_id = $story->get_primary_oc_id;
 my $elem = Bric::Biz::ElementType->lookup({id => $story->get_element_type_id});
-
-my $agent = detect_agent();
-my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
 </%init>

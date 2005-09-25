@@ -1,35 +1,29 @@
-<%doc>
-###############################################################################
+<& "/widgets/wrappers/sharky/header.mc",
+    title   => "New Story",
+    context => $context,
+&>
 
-=head1 NAME
+<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
 
-<name> -- <description>
+<& "/widgets/profile/hidden.mc",
+    name    => 'container_prof|clear_cb',
+    value   => '',
+&>
 
-=head1 VERSION
+<& /widgets/story_prof/story_prof.mc, 
+    section  => 'new',
+    work_id  => $w_id,
+&>
 
-$LastChangedRevision$
+</form>
 
-=head1 DATE
-
-$LastChangedDate$
-
-=head1 DESCRIPTION
-
-<description>
-
-=cut
-</%doc>
+<& /widgets/wrappers/sharky/footer.mc &>
 
 <%once>;
 my $disp = get_disp_name('story');
 my $context = "Workflow | Profile | $disp | New";
 </%once>
 
-%#-- Args Section --#
-<%args>
-</%args>
-
-%#-- Init Section --#
 <%init>
 $r->uri =~ m!/([^/]+)/?$!;
 my $w_id = $1;
@@ -37,25 +31,3 @@ my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
 my $gid =  $wf->get_start_desk->get_asset_grp;
 chk_authz('Bric::Biz::Asset::Business::Story', CREATE, 0, $gid);
 </%init>
-
-%#-- Begin HTML --#
-
-<& "/widgets/wrappers/sharky/header.mc",
-    title   => "new story",
-    context => $context,
-    jsInit  => 'document.theForm["title"].focus();'
-&>
-
-<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
-<input type="hidden" name="container_prof|clear_cb" value="">
-
-<& /widgets/story_prof/story_prof.mc, section  => 'new',
-                                      work_id  => $w_id &>
-
-</form>
-
-<& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
-
-

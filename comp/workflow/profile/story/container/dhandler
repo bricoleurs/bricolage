@@ -1,36 +1,8 @@
-<%doc>
-###############################################################################
-
-=head1 NAME
-
-dhandler -- the container profile app.
-
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$LastChangedDate$
-
-=head1 DESCRIPTION
-
-<description>
-
-=cut
-</%doc>
-
-%#-- Once Section --#
-<%once>;
-my $disp = get_disp_name('element');
-my $sdisp = get_disp_name('story');
-my $context = "Workflow | Profile | $sdisp | $disp |";
-</%once>
-%#-- Begin HTML --#
 <& "/widgets/wrappers/sharky/header.mc",
-    title => "view container",
+    title => "View Container",
     context => $context . get_state_data('container_prof', 'crumb')
 &>
+
 <form name="theForm" action="<% $r->uri %>" method="post">
 
 <& /widgets/container_prof/container_prof.mc,
@@ -38,9 +10,21 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
     show_summary => 1,
 &>
 
-<input type="image" src="/media/images/<% $lang_key %>/return_dgreen.gif" border=0 name="container_prof|up_cb" value="Go Up a Level">
+<& '/widgets/buttons/submit.mc',
+    disp    => "Up a Level",
+    widget  => "container_prof",
+    cb      => "up_cb",
+    button  => "return_dgreen",
+    useTable => 0
+&>
+
 </form>
 
 <& /widgets/wrappers/sharky/footer.mc &>
 
 
+<%once>;
+my $disp = get_disp_name('element');
+my $sdisp = get_disp_name('story');
+my $context = "Workflow | Profile | $sdisp | $disp |";
+</%once>

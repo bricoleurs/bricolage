@@ -1,4 +1,7 @@
-<input type="hidden" name="container_prof|update_cb" value="1">
+<& '/widgets/profile/hidden.mc',
+    name    => 'container_prof|update_cb',
+    value   => 1,
+&>
 % if (ENABLE_WYSIWYG) {
 <& /widgets/wysiwyg/load.mc &>
 %}
@@ -22,7 +25,10 @@ if (@elements || @$elem_opts ) {
 </%perl>
 
 % if (scalar(@elements)) {
-<input type="hidden" name="<% $widget %>|edit_cb" value="" />
+    <& '/widgets/profile/hidden.mc',
+        name    => "$widget|edit_cb",
+        value   => "",
+    &>
 % }
 
 <table class="containerProf">
@@ -178,8 +184,17 @@ if ($at->is_related_media) {
       </td>
 
 %     if ($dt->is_autopopulated()) {
-      <td><input type="hidden" name="<% $widget %>|lock_val_cb" value="<% $dt->get_id %>" />
-      &nbsp;Lock Val: <input type="checkbox" name="<% $widget %>|lock_val_<% $dt->get_id %>"<% $dt->is_locked ? ' checked="checked"' : '' %> /></td>
+      <td>
+        <& '/widgets/profile/hidden.mc',
+            name    => "$widget|lock_val_cb",
+            value   => $dt->get_id,
+        &>
+        &nbsp;Lock Val: 
+        <& '/widgets/profile/checkbox.mc',
+            name    => "$widget|lock_val_" . $dt->get_id,
+            checked => ($dt->is_locked ? 1 : 0),
+        &>
+        </td>
 %     } else {
     <td>&nbsp;</td>
 %     }
@@ -329,24 +344,45 @@ if ($at->is_related_media) {
 %### End Related Media Section ###
 
 % if ($show_summary) {
-<table border=0 width=580>
-<tr>
-  <td align="center" colspan=2 valign="middle"><input type="checkbox" name="container_prof|delete_element" value="Delete"> <span class="burgandyLabel"><%$lang->maketext('Delete this Element')%></span></td>
-</tr>
-<tr>
-  <td>
-    <input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border=0 name="<% $widget %>|save_and_up_cb" value="Save">
-    <input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border=0 name="<% $widget %>|save_and_stay_cb" value="Save and Stay">
-  </td>
-  <td align="right">
-<& '/widgets/profile/imageSubmit.mc',
-  formName => "theForm",
-  callback => $widget ."|up_cb",
-  image    => "cancel_red",
-&>
-  </td>
-</tr>
-</table>
+<div class="buttonBar">
+    <div class="delete">
+        <& '/widgets/profile/checkbox.mc',
+            name    => "$widget|delete",
+            id      => $widget . "delete",
+            value   => "Delete",
+            disp    => $lang->maketext('Delete this Profile'),
+            label_after => 1,
+            useTable    => 0,
+        &>
+    </div>
+    <div class="buttons">
+        <div class="save">
+            <& "/widgets/buttons/submit.mc",
+                disp      => 'Save',
+                widget    => $widget,
+                cb        => 'save_and_up_cb',
+                button    => 'save_red',
+                useTable  => 0
+            &>
+            <& "/widgets/buttons/submit.mc",
+                disp      => 'Save and Stay',
+                widget    => $widget,
+                cb        => 'save_and_stay_cb',
+                button    => 'save_and_stay_lgreen',
+                useTable  => 0
+            &>
+        </div>
+        <div class="cancel">
+            <& "/widgets/buttons/submit.mc",
+                disp      => 'Cancel',
+                widget    => $widget,
+                cb        => 'up_cb',
+                button    => 'cancel_red',
+                useTable  => 0
+            &>
+        </div>
+    </div>
+</div>
 % }
 %# this script creates an array with the names
 %# of select boxes that need ordering

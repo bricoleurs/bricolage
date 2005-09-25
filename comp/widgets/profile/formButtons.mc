@@ -16,38 +16,42 @@ $ret_val   => 'cancel_red'
 
 % $return ||= last_page();
 
-<table border=0 cellpadding=0 cellspacing=0>
+<table>
 <tr>
   <td colspan=2>
 <%perl>;
 $m->comp('/widgets/profile/displayFormElement.mc',
-	 key => 'delete',
-	 vals => { 
-		   props => { type => 'checkbox' }
-		 },
-	useTable => 0
-	) unless $no_del;
+          key => 'delete',
+          vals => { props => { type => 'checkbox' } },
+          useTable => 0
+        ) unless $no_del;
 
-$m->out('&nbsp;<span class=burgandyLabel>' . $lang->maketext($chk_label) . '</span>') unless $no_del;
+$m->out('&nbsp;<span class="burgandyLabel">' . $lang->maketext($chk_label) . '</span>') unless $no_del;
 </%perl>
   </td>
 </tr>
 <tr>
-   <td align=left>
+   <td>
 <%perl>;
-$stay = qq{&nbsp;<input type="image" src="/media/images/$lang_key/save_and_stay_lgreen.gif" border="0" name="$widget|$stay" value="save_and_stay" vspace="2" />} if $stay;
-if (!$val) {
-    $val = '';
-    $m->out(qq{<input type="image" src="/media/images/$lang_key/save_red.gif" border="0" name="$widget|$cb" value="$val" vspace="2" />$stay})
-      unless $no_save;
-} else {
-    $m->out(qq{<input type="image" src="/media/images/$lang_key/${val}.gif" border=0 name="$widget|$cb" value="$val" />$stay}) unless $no_save;
+unless ($no_save) {
+    if (!$val) {
+        $val = '';
+        $m->out(qq{<input type="image" src="/media/images/$lang_key/save_red.gif" name="$widget|$cb" value="$val" vspace="2" />});
+    } else {
+        $m->out(qq{<input type="image" src="/media/images/$lang_key/${val}.gif" name="$widget|$cb" value="$val" />});
+    }
+    $m->comp('/widgets/buttons/submit.mc',
+              disp      => 'Save and Stay',
+              widget    => $widget,
+              cb        => $stay,
+              button    => 'save_and_stay_lgreen',
+    ) if $stay;
 }
 </%perl>
    </td>
    <td align="right">
 <%perl>;
-$m->out(qq{<a href="#" onClick="window.location.href='$return'; return false;"><img src="/media/images/$lang_key/$ret_val.gif" border=0 name="return" value="Return" vspace=2 /></a>}) unless $no_ret;
+$m->out(qq{<a href="#" onclick="window.location.href='$return'; return false;"><img src="/media/images/$lang_key/$ret_val.gif" border=0 name="return" value="Return" vspace=2 /></a>}) unless $no_ret;
 </%perl>
 
   </td>

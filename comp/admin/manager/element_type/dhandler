@@ -60,9 +60,9 @@ if (defined $id) {
 # This coderef determines whether the user can delete objects.
 my $sel_sub = sub {
     if (chk_authz($_[0], EDIT, 1)) {
-	# User can delete.
-	$can_del = 1;
-	return [$sel_label, $sel_widg];
+        # User can delete.
+        $can_del = 1;
+        return [$sel_label, $sel_widg];
     }
     return undef;
 };
@@ -71,26 +71,26 @@ my $sel_sub = sub {
 <%perl>;
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 title => $title,
-	 context => $context);
+         title => $title,
+         context => $context);
 # Output the search widget.
 
 my $groupList;
 my $searchType = "triple";
 
 $groupList = $m->scomp('/widgets/select_object/select_object.mc',
-		       object => 'element_type_set',
-		       default => ['', 'All Element Types'],
-		       indent  => 150,
-		       field => 'name',
-		       name => 'elem_type',
-		       disp => 'Or Pick a Set',
-		       reset_key => $ARGS{elem_type},
-		       selected => $ARGS{elem_type},
-		       js => qq{onChange="location.href='} . $r->uri .
-                             "?elem_type=' + " .
-                             qq{escape(this.options[this.selectedIndex].value)"}
-		      );
+                       object       => 'element_type_set',
+                       default      => ['', 'All Element Types'],
+                       indent       => 150,
+                       field        => 'name',
+                       name         => 'elem_type',
+                       disp         => 'Or Pick a Set',
+                       reset_key    => $ARGS{elem_type},
+                       selected     => $ARGS{elem_type},
+                       js           => qq{onchange="location.href='} . $r->uri .
+                                       "?elem_type=' + " .
+                                       qq{escape(this.options[this.selectedIndex].value)"}
+                     );
 
 $m->comp('/widgets/search/search.mc',
    object    => $key,
@@ -104,10 +104,13 @@ $m->out(qq{<form method="post" action="${ \$r->uri }" name="manager"});
 if ($id) {
     $m->out(">\n");
 } else {
-    $m->out(qq{onSubmit="return confirmDeletions()">});
+    $m->out(qq{onsubmit="return confirmDeletions()">});
 }
 
-$m->out(qq {<input type="hidden" name="element_type_id" value=$id>\n} ) if ($id);
+$m->comp('/widgets/profile/hidden.mc',
+          name  => 'element_type_id',
+          value => $id
+) if ($id);
 
 $m->comp('/widgets/wrappers/sharky/table_top.mc',
           caption => 'Existing %n',
@@ -130,13 +133,25 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 # Output the form closing tag if necessary.
 if ($id) {
-    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/add_elements_lgreen.gif" border=0 name="element_type|doRedirect_cb" value="1" />\n</form>});
+    $m->comp('/widgets/buttons/submit.mc',
+              disp      => 'Add Elements',
+              widget    => 'element_type',
+              cb        => 'doRedirect_cb',
+              button    => 'add_elements_lgreen',
+              value     => 1,
+              useTable  => 0,
+    );
 } elsif ($can_del) {
-    $m->out(qq{<br /><input type="image" src="/media/images/$lang_key/delete_checked_red.gif" border=0 name="action"}
-	    . qq{value="$sel_label Checked" />\n</form>});
-} else  {
-    $m->out('</form>');
+    $m->comp('/widgets/buttons/submit.mc',
+              disp      => 'Delete Checked',
+              name      => 'action',
+              button    => 'delete_checked_red',
+              value     => "$sel_label Checked",
+              useTable  => 0,
+    );
 }
+
+$m->out('</form>');
 
 # Output the footer.
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);

@@ -86,37 +86,80 @@ if ($version) {
 
 <div class="buttonBar">
 <div class="delete">
-    <input type="checkbox" name="<% $widget %>|delete" id="<% $widget %>delete" value="Delete" /> <label for="<% $widget %>delete"><% $lang->maketext('Delete this Profile') %></label>
+    <& '/widgets/profile/checkbox.mc',
+        name    => "$widget|delete",
+        id      => $widget . "delete",
+        value   => "Delete",
+        disp    => $lang->maketext('Delete this Profile'),
+        label_after => 1,
+        useTable    => 0,
+    &>
 </div>
 <div class="checkin">
 <& "/widgets/profile/button.mc",
-	disp      => 'Save and Check In',
-	widget    => $widget,
-	cb        => 'checkin_cb',
-	button    => 'check_in_dgreen',
-	useTable  => 0
+    disp      => 'Save and Check In',
+    widget    => $widget,
+    cb        => 'checkin_cb',
+    button    => 'check_in_dgreen',
+    useTable  => 0
 &> <% $deskText %>
 </div>
 
 % if ($version) {
 <div class="revert">
-	<input type="image" src="/media/images/<% $lang_key %>/revert_dgreen.gif" border="0" name="<% $widget %>|revert_cb" value="revert">
-	<% $lang->maketext('to') %> <% $versionText %>
-    <input type="hidden" name="<% $widget %>|view_cb" value="" />
-     <a href="<% $r->uri %>" class="orangeLinkBold" title="View previous version" "onclick="return customSubmit('theForm', '<% $widget %>|view_cb', 1)"><% $lang->maketext('View') %></a>
-    <input type="hidden" name="<% $widget %>|diff_cb" value="" />
-     <a href="<% $r->uri %>" class="orangeLinkBold" title="Diff previous version" "onclick="return customSubmit('theForm', '<% $widget %>|diff_cb', 1)"><% $lang->maketext('Diff') %></a>
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Revert',
+        widget    => $widget,
+        cb        => 'revert_cb',
+        button    => 'revert_dgreen',
+        useTable  => 0
+    &>
+    <% $lang->maketext('to') %> <% $versionText %>
+    <& "/widgets/profile/hidden.mc",
+        name    => "$widget|view_cb",
+        value   => "",
+    &>
+    <a href="<% $r->uri %>" class="orangeLinkBold" title="View previous version" onclick="return customSubmit('theForm', '<% $widget %>|view_cb', 1)"><% $lang->maketext('View') %></a>
+    <& "/widgets/profile/hidden.mc",
+        name    => "$widget|diff_cb",
+        value   => "",
+    &>
+    <a href="<% $r->uri %>" class="orangeLinkBold" title="Diff previous version" onclick="return customSubmit('theForm', '<% $widget %>|diff_cb', 1)"><% $lang->maketext('Diff') %></a>
 </div>
 % }
 
 <div class="buttons">
 <div class="save">
-	<input type="image" src="/media/images/<% $lang_key %>/save_red.gif" border="0" name="<% $widget %>|save_cb" value="Save">
-	<input type="image" src="/media/images/<% $lang_key %>/save_and_stay_lgreen.gif" border="0" name="<% $widget %>|save_and_stay_cb">
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Save',
+        widget    => $widget,
+        cb        => 'save_cb',
+        button    => 'save_red',
+        useTable  => 0
+    &>
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Save and Stay',
+        widget    => $widget,
+        cb        => 'save_and_stay_cb',
+        button    => 'save_and_stay_lgreen',
+        useTable  => 0
+    &>
 </div>
 <div class="cancel">
-	<input type="image" src="/media/images/<% $lang_key %>/cancel_lgreen.gif" border="0" name="<% $widget %>|return_cb" value="Return To Desk">
-	<input type="image" src="/media/images/<% $lang_key %>/cancel_check_out_lgreen.gif" border="0" name="<% $widget %>|cancel_cb" value="Cancel Checkout">
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Return',
+        widget    => $widget,
+        cb        => 'return_cb',
+        button    => 'cancel_lgreen',
+        useTable  => 0
+    &>
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Cancel Checkout',
+        widget    => $widget,
+        cb        => 'cancel_cb',
+        button    => 'cancel_check_out_lgreen',
+        useTable  => 0
+    &>
 </div>
 </div>
 

@@ -1,10 +1,13 @@
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
-%           caption => "Content",
-%           id      => 'containerprof',
-%           number  => $num++
-% );
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Content",
+    id      => 'containerprof',
+    number  => $num++
+&>
 
-<input type="hidden" name="<% $widget %>|view_cb" value="" />
+<& '/widgets/profile/hidden.mc',
+    name    => "$widget|view_cb",
+    value   => '',
+&>
 
 <table class="containerProf">
 

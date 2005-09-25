@@ -22,7 +22,12 @@
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <p>
-<input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" name="publish_button" value="Publish" />
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Publish Checked',
+    name    => 'publish_button',
+    button  => 'publish_checked_red',
+    useTable    => 0,
+&>
 </p>
 
 <%init>;

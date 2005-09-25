@@ -42,20 +42,20 @@ $id          => undef
 </%args>
 <%perl>;
 my $vals = { disp  => $disp,
-	     value => $value,
-	     js    => $js,
-	     props => { type => 'checkbox',
-			chk  => $checked,
-			label_after => $label_after,
-		      } };
+             value => $value,
+             js    => $js,
+             props => { type => 'checkbox',
+                        chk  => $checked,
+                        label_after => $label_after,
+                      } };
 
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-	 key  => $name,
-	 vals => $vals,
-	 readOnly => $readOnly,
-	 localize => $localize,
-	 useTable => $useTable,
+         key  => $name,
+         vals => $vals,
+         readOnly => $readOnly,
+         localize => $localize,
+         useTable => $useTable,
          id       => $id
 );
 </%perl>

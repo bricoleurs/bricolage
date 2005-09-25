@@ -20,6 +20,11 @@ $m->comp('.relateds', 'story', \@rel_story, ++$i) if @rel_story;
 $m->comp('.relateds', 'media', \@rel_media, ++$i) if @rel_media;
 
 # Send 'em on up!
+$m->comp('/widgets/buttons/submit.mc',
+          widget    => $widget,
+          cb        => 'pick_cats_cb',
+          useTable  => 0,
+);
 $m->comp('/widgets/profile/create_button.html',
          widget => $widget,
          cb     => 'pick_cats_cb');

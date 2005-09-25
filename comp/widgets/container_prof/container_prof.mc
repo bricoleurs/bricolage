@@ -24,16 +24,14 @@ A widget to allow the creation and modification of container elements.
 
 </%doc>
 <%args>
-$element => undef
-$title => undef
-$num => undef
+$element        => undef
+$title          => undef
+$num            => undef
 $action
-$start_count => undef
-$show_summary => undef
-$args         => \%ARGS
+$start_count    => undef
+$show_summary   => undef
+$args           => \%ARGS
 </%args>
-
-%#--- Initialization ---#
 
 <%once>
 my $widget = 'container_prof';
@@ -54,8 +52,14 @@ $state = set_state_name($widget, $state || 'edit');
 $action = 'edit_bulk' if $state eq 'edit_bulk';
 
 # Add a bit of error correction when users try to use the back buttons.
-$m->out("<input type='hidden' name='$widget|top_stack_element_id' value='".$element->get_id."' />\n");
-$m->out("<input type='hidden' name='$widget|state_name' value='".$state."' />\n");
+$m->comp('/widgets/profile/hidden.mc',
+          name  => "$widget|top_stack_element_id",
+          value => $element->get_id,
+);
+$m->comp('/widgets/profile/hidden.mc',
+          name  => "$widget|state_name",
+          value => $state,
+);
 
 return $m->comp(
     "$action.html",
@@ -67,7 +71,3 @@ return $m->comp(
 );
 
 </%init>
-
-%#--- Log History ---#
-
-

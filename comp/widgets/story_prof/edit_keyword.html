@@ -1,39 +1,48 @@
-<%perl>;
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption =>  "Category Keywords", number  => 1);
-$m->out("<table border=0 cellpadding=2 cellspacing=0 width=550>");
-foreach my $cat ($story->get_categories) {
-    $m->out(qq{<tr><td width=} . FIELD_INDENT  . qq{ align="right"><span class="label">}.$lang->maketext('Category').':</span></td><td width=405>'
-	    . $cat->get_name
-	    . "</td></tr>\n");
-    my $flag = '<span class="label">'.$lang->maketext('Keywords').':</span>';
-    foreach my $kw ($cat->get_keywords) {
-        $m->out(qq{<tr><td width=} . FIELD_INDENT  . qq{ align="right">$flag</td><td width=405>}
-		. $kw->get_name . "</td></tr>\n");
-        $flag = '&nbsp;';
-    }
-}
-$m->out("</table>");
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Category Keywords", 
+    number  => 1,
+&>
 
-# Output the keywords.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Story Keywords", number  => 2);
-$m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => $param,
-	 fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
-	 reset_key => $story->get_id, objs => $keywords, incr => 4,
-	 no_edit => [qw(keyword)], num => @$keywords >= 4 ? @$keywords + 2 : 4);
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+<dl class="viewmeta">
+% foreach my $cat ($story->get_categories) {
+    <dt><% $lang->maketext('Category') %></dt>
+    <dd><% $cat->get_name %></dd>
+    
+    <dt><% $lang->maketext('Keywords') %></dt>
+    <dd><% join(', ', map { $_->get_name } $cat->get_keywords) %></dd>
+% }
+</dl>
 
-# Output the save buttons.
-$m->comp('/widgets/profile/formButtons.mc',
-         type => 'story',
-         section => 'workflow',
-	 no_del => 1,
-         return => '/workflow/profile/story',
-         widget => $widget,
-         cb => 'add_kw_cb');
-</%perl>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Story Keywords", 
+    number  => 2
+&>
+
+<& '/widgets/add_more/add_more.mc',
+    type    => 'keyword',
+    param => $param,
+    fields => [qw(keyword)], 
+    name => 'keyword', 
+    deleteLabelOnly => 1,
+    reset_key => $story->get_id, 
+    objs => $keywords, 
+    incr => 4,
+    no_edit => [qw(keyword)], 
+    num => @$keywords >= 4 ? @$keywords + 2 : 4
+&>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<& '/widgets/profile/formButtons.mc',
+    type    => 'story',
+    section => 'workflow',
+    no_del  => 1,
+    return  => '/workflow/profile/story',
+    widget  => $widget,
+    cb      => 'add_kw_cb',
+&>
 
 <%args>
 $widget

@@ -9,38 +9,51 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'workflow_id')
   if defined $id;
 
 # Output the key properties.
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties",
-	 number => 1);
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $wf,
-	 readOnly => $no_edit, fieldsUsed => { active => 1, type => 1, site => 1 });
+$m->comp("/widgets/wrappers/sharky/table_top.mc", 
+          caption => "Properties",
+          number  => 1,
+);
+$m->comp('/widgets/profile/dumpRemainingFields.mc', 
+          objref => $wf,
+          readOnly => $no_edit, 
+          fieldsUsed => { active => 1, type => 1, site => 1 },
+);
 # Output the Workflow type.
 if (defined $id) {
     $m->comp('/widgets/profile/displayFormElement.mc', readOnly => 1,
-	     vals => { disp => 'Type',
-		       value => WORKFLOW_TYPE_MAP->{$wf->get_type},
-		       props => { type => 'text' }
-		     }
-	    );
+              vals  => { disp => 'Type',
+                         value => WORKFLOW_TYPE_MAP->{$wf->get_type},
+                         props => { type => 'text' }
+                       }
+    );
 } else {
     # It's a new workflow. Output a list of parent categories to choose from.
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $wf,
-	     key => 'type');
+    $m->comp('/widgets/profile/displayFormElement.mc', 
+              objref => $wf,
+              key => 'type',
+    );
     $blabel = 'next_dkgreen';
 }
 
 my @sites = site_list(EDIT);
 if ($id || $no_edit) {
-    $m->out('<input type=hidden name="site_id" value="'.$wf->get_site_id.'">');
+    $m->comp('/widgets/profile/hidden.mc',
+              name  => 'site_id',
+              value => $wf->get_site_id,
+    );
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref   => $wf,
              key      => 'site',
              readOnly => 1) if @sites > 1;
 } elsif ((my $site_id = $wf->get_site_id) || @sites == 1) {
-    $m->out('<input type=hidden name="site_id" value="'.($site_id || $sites[0]->get_id).'">');
+    $m->comp('/widgets/profile/hidden.mc',
+              name    => 'site_id',
+              value   => ($site_id || $sites[0]->get_id),
+    );
 } else {
     # Output a list of object types to choose from.
     $m->comp('/widgets/select_object/select_object.mc',
-	     readOnly  => ($no_edit || $id),
+             readOnly  => ($no_edit || $id),
              object    => 'site',
              name      => 'site_id',
              field     => 'name',
@@ -65,51 +78,51 @@ if (defined $id) {
     $m->comp('/widgets/wrappers/sharky/table_top.mc', 
              caption => '%n',
              object  => 'desk',
-             number => 2 );
+             number  => 2 );
     $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'desk',
-	     userSort => 0,
-	     addition => $no_edit ? undef : ['Add', "/admin/profile/desk"],
-	     objs => $desks,
-	     fields => [qw(name description publish start)],
-	     field_titles => { start => 'Start Desk' },
-	     field_values => $start_sub,
-	     alter => { publish => $yes_no },
-	     profile => $prof_sub,
-	     select =>  $no_del || @$desks < 2 ? undef : ['Remove', 'remove_desk'],
-	    );
+             object         => 'desk',
+             userSort       => 0,
+             addition       => $no_edit ? undef : ['Add', "/admin/profile/desk"],
+             objs           => $desks,
+             fields         => [qw(name description publish start)],
+             field_titles   => { start => 'Start Desk' },
+             field_values   => $start_sub,
+             alter          => { publish => $yes_no },
+             profile        => $prof_sub,
+             select         =>  $no_del || @$desks < 2 ? undef : ['Remove', 'remove_desk'],
+    );
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 } elsif ($new_desk) {
     # Allow 'em to create a brand new desk.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Start Desk",
-	     number => 2);
+             caption => "Start Desk",
+             number => 2);
     $m->comp('/widgets/profile/text.mc',
-	     name => 'new_desk_name',
-	     disp => 'Start Desk',
-	     req  => 1
-	    );
+             name => 'new_desk_name',
+             disp => 'Start Desk',
+             req  => 1
+    );
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 } else {
     # Output a select list to choose a start desk from.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => "Start Desk",
-	     number => 2);
+             caption => "Start Desk",
+             number => 2);
     $m->comp('/widgets/select_object/select_object.mc',
-	     object => 'desk',
-	     no_persist => 1,
-             name => 'first_desk',
-	     field => 'name',
-	     disp => 'Start Desk',
-	     useTable => 1);
+             object     => 'desk',
+             no_persist => 1,
+             name       => 'first_desk',
+             field      => 'name',
+             disp       => 'Start Desk',
+             useTable   => 1);
     $m->out(qq {<table width=578 cellpadding=2 cellspacing=0 border=0><tr><td width=140>&nbsp;</td><td width=438>});
 
     $m->comp('/widgets/profile/imageSubmit.mc',
-	     formName => "wf_profile",
-	     callback => "new_desk",
-	     image    => "new_desk_red",
-	     js       => qq{onClick="requiredFields='';return customSubmit('wf_profile', 'new_desk', 1)"}
-	   );
+             formName => "wf_profile",
+             callback => "new_desk",
+             image    => "new_desk_red",
+             js       => qq{onClick="requiredFields='';return customSubmit('wf_profile', 'new_desk', 1)"}
+    );
 
     $m->out( qq{</td></tr></table>\n});
 
@@ -131,14 +144,14 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 
 $m->out("<br />\n");
 $m->comp('/widgets/profile/formButtons.mc',
-	 type    => $type,
-	 section => $section,
-	 no_del  => $no_del,
-	 no_save => $no_edit,
-	 val     => $blabel,
-	 formName => 'wf_profile',
+         type    => $type,
+         section => $section,
+         no_del  => $no_del,
+         no_save => $no_edit,
+         val     => $blabel,
+         formName => 'wf_profile',
          widget  => $type,
-	);
+);
 ($no_edit, $no_del) = ();
 </%perl>
 </form>
@@ -154,7 +167,7 @@ my $section = 'admin';
 my $type = 'workflow';
 my $disp = get_disp_name($type);
 my $rad = [{ key => 'start_desk', disp => 'Start Desk', props => { type => 'single_rad'} },
-	   { key => 'publish', disp => 'Publish Desk', props => { type => 'checkbox' } } ];
+           { key => 'publish', disp => 'Publish Desk', props => { type => 'checkbox' } } ];
 my ($no_edit, $no_del);
 
 my $prof_sub = sub {
@@ -173,10 +186,10 @@ my $start_sub = sub {
     return unless $_[1] eq 'start';
     my $did = $_[0]->get_id;
     $m->scomp('/widgets/profile/radio.mc',
-	      name => 'start',
-	      value => $did,
-	      checked => $did == $start_id
-	      );
+              name => 'start',
+              value => $did,
+              checked => $did == $start_id
+    );
 };
 
 </%once>

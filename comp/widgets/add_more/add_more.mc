@@ -7,16 +7,16 @@ unless ($no_labels) {
     $m->out("<tr>\n");
     $m->out("<td>$spacer</td>");
     if (!$deleteLabelOnly) {
-	$m->out(qq{    <td><span class="label">&nbsp;$meths->{$_}->{disp}</td>\n})
-	  for @$fields;
+        $m->out(qq{    <td><span class="label">&nbsp;$meths->{$_}->{disp}</td>\n})
+          for @$fields;
     } else {
-	$m->out("<td></td>");
+        $m->out("<td></td>");
     }
     if (!$deleteLabelOnly) {
-	$m->out(qq{    <td><span class="label">&nbsp;$_</td>\n})
-	  for map { $_->{disp} } @$extras;
+        $m->out(qq{    <td><span class="label">&nbsp;$_</td>\n})
+          for map { $_->{disp} } @$extras;
     } else {
-	$m->out("<td></td>");
+        $m->out("<td></td>");
     }
     $m->out(qq{    <td><span class="label">&nbsp;}.$lang->maketext('Delete')."</td>\n")
       unless $read_only || !@$objs;
@@ -28,60 +28,60 @@ for my $i (0..$num) {
     $m->out("<td>$spacer</td>");
     if (my $obj = $objs->[$i]) {
         # There's an existing row. Output a hidden field with the ID.
-	my $id = $use_vals ? $obj->{id} : $obj->get_id;
-	$m->comp('/widgets/profile/hidden.mc', name => "${type}_id",
-	         value => $id) if defined $id && !$read_only;
-	# Go through all the fields.
-	foreach my $f (@$fields) {
-	    # Grab the value.
-	    my $value = $use_vals ? $obj->{$f}
-	      : $meths->{$f}{get_meth}->($obj,@{ $meths->{$f}{get_args} });
-	    $m->out('    <td>');
-	    # Output the field.
-	    if ($no_ed->{$f}) {
-		# Just output uneditable text.
-		$m->out(qq{<span class="label">&nbsp;&nbsp;$value</span>});
-	    } else {
-		# We can output a full form element.
-    		my @args = (key => $f, name => '', useTable => 0,
-			    readOnly => $read_only);
-		if ($use_vals) {
-		    # Use vals passed explicitly.
-    		    $meths->{$f}{value} = $value;
-		    push @args, vals => $meths->{$f};
-		} else {
-		    # Use objects.
-    		    push @args, objref => $obj;
-		}
-		$m->comp('/widgets/profile/displayFormElement.mc', @args);
-	    }
-	    $m->out("</td>\n");
-	}
-	# Output any extra fields.
-	&$mk_extras($extras, $id, $obj) if $extras;
-	if (defined $id && !$read_only) {
-	    # Output a delete checkbox.
-	    $m->out("<td>&nbsp;&nbsp;&nbsp;");
-	    $m->comp('/widgets/profile/checkbox.mc', checked => 0, label_after => 1,
-		     value => $id, name => "del_$type");
-	    $m->out("</td>\n");
-	}
+        my $id = $use_vals ? $obj->{id} : $obj->get_id;
+        $m->comp('/widgets/profile/hidden.mc', name => "${type}_id",
+                 value => $id) if defined $id && !$read_only;
+        # Go through all the fields.
+        foreach my $f (@$fields) {
+            # Grab the value.
+            my $value = $use_vals ? $obj->{$f}
+              : $meths->{$f}{get_meth}->($obj,@{ $meths->{$f}{get_args} });
+            $m->out('    <td>');
+            # Output the field.
+            if ($no_ed->{$f}) {
+                # Just output uneditable text.
+                $m->out(qq{<span class="label">&nbsp;&nbsp;$value</span>});
+            } else {
+                # We can output a full form element.
+                my @args = (key => $f, name => '', useTable => 0,
+                            readOnly => $read_only);
+                if ($use_vals) {
+                    # Use vals passed explicitly.
+                    $meths->{$f}{value} = $value;
+                    push @args, vals => $meths->{$f};
+                } else {
+                    # Use objects.
+                    push @args, objref => $obj;
+                }
+                $m->comp('/widgets/profile/displayFormElement.mc', @args);
+            }
+            $m->out("</td>\n");
+        }
+        # Output any extra fields.
+        &$mk_extras($extras, $id, $obj) if $extras;
+        if (defined $id && !$read_only) {
+            # Output a delete checkbox.
+            $m->out("<td>&nbsp;&nbsp;&nbsp;");
+            $m->comp('/widgets/profile/checkbox.mc', checked => 0, label_after => 1,
+                     value => $id, name => "del_$type");
+            $m->out("</td>\n");
+        }
     } elsif (!$read_only) {
         # There is no existing row. Output empty fields.
         foreach my $f (@$fields) {
-	    $m->out('    <td>');
-	    # Grab any existing value from when the 'Add More' button was
-	    # clicked.
+            $m->out('    <td>');
+            # Grab any existing value from when the 'Add More' button was
+            # clicked.
             $param->{$f} = [ $param->{$f} ] unless ref $param->{$f};
-	    $meths->{$f}{value} =
+            $meths->{$f}{value} =
               $param->{$f}[ $no_ed->{$f} ? $i - $#$objs - 1 : $i];
-	    $m->comp('/widgets/profile/displayFormElement.mc', key => $f,
-	             vals => $meths->{$f}, name => '', useTable => 0);
-	    $m->out("</td>\n");
-	}
-	# Make any extra fields.
-	&$mk_extras($extras) if $extras;
-	$m->out("<td>&nbsp;</td>\n");
+            $m->comp('/widgets/profile/displayFormElement.mc', key => $f,
+                     vals => $meths->{$f}, name => '', useTable => 0);
+            $m->out("</td>\n");
+        }
+        # Make any extra fields.
+        &$mk_extras($extras) if $extras;
+        $m->out("<td>&nbsp;</td>\n");
     }
     $m->out("</tr>\n");
 }
@@ -124,13 +124,13 @@ my $widget = 'add_more';
 my $mk_extras = sub {
     my ($extras, $id, $obj) = @_;
     foreach (@$extras) {
-	# Execute the coderef, if there is one.
-	$_->{sub}->($_, $id, $obj) if $_->{sub};
-	# Output the field.
-	$m->out("<td>&nbsp;");
-	$m->comp('/widgets/profile/displayFormElement.mc', vals => $_,
-		 key => $_->{key}, useTable => 0, name => '');
-	$m->out("</td>\n");
+        # Execute the coderef, if there is one.
+        $_->{sub}->($_, $id, $obj) if $_->{sub};
+        # Output the field.
+        $m->out("<td>&nbsp;");
+        $m->comp('/widgets/profile/displayFormElement.mc', vals => $_,
+                 key => $_->{key}, useTable => 0, name => '');
+        $m->out("</td>\n");
     }
 };
 </%once>
@@ -145,11 +145,11 @@ my $data = get_state_data($widget);
 my $add;
 if ($data->{uri} && $uri eq $data->{uri}) {
     if (defined $data->{$type}{reset_key}
-	&& $reset_key == $data->{$type}{reset_key}) {
-	# The context is the same. Retain the current state.
-	$num = $data->{$type}{num};
-	$add = $data->{"add_$type"};
-	set_state_data($widget, "add_$type");
+        && $reset_key == $data->{$type}{reset_key}) {
+        # The context is the same. Retain the current state.
+        $num = $data->{$type}{num};
+        $add = $data->{"add_$type"};
+        set_state_data($widget, "add_$type");
     }
 } else {
     # Clear out the session state.
