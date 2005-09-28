@@ -6,6 +6,7 @@ body {
 }
 th         { font-size: 1.1em; }
 pre        { font-size: 1.3em; padding: 1em; margin: 0; } 
+code       { font-size: 1.3em; }
 h3         { font-size: 1.1em; }
 
 a          { color: #006666; }

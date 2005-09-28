@@ -1,0 +1,183 @@
+<help page="Bulk Edit">
+
+<p>Use the Bulk Edit interface to edit all of the elements and subelements of
+a given element at once. Different fields and elements are demarcated by lines
+with special tags that start with an equals sign (<code>=</code>) and have an
+empty line separating them from content; anything else is considered
+content.</p>
+
+<p>Field elements are demarcated by <code>=key_name</code> and an empty line,
+where <code>key_name</code> is the the key name of the field. For example, a
+field with the key name <q>paragraph</q> may be rendered as so:</p>
+
+% # Be sure that the length of the lines will fit into the small help window
+% # here and in the Roosevelt quote below.
+
+<pre>=paragraph
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed
+diam nonummy nibh eusmod tincidunt ut laoreet dolore magna
+aliquam erat volputate. Ut wisi enim ad minim veniam, quis
+nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+aliquip ex ea commodo consequat.
+</pre>
+
+<p>Container elements are demarcated by <code>=begin key_name</code> and an empty
+line, and then an <code>=end key_name</code> tag at the end of the element.
+The key name after the <code>=end</code> tag is optional. Fields within
+container elements go between these tags, like so:</p>
+
+<pre>
+=begin pull_quote
+
+    =paragraph
+
+    Ask not what your country can do for you.
+    Ask what you can do for your country.
+
+    =by
+
+    John F. Kennedy
+
+    =date
+
+    1961-01-20 00:00:00
+
+=end pull_quote
+</pre>
+
+<p>Indentation of subelements is optional, although Bricolage will generate
+four-space indents for existing elements. If for some reason you must have a
+content line that starts with an equal sign, escape it with a backslash, like
+so:</p>
+
+<pre>
+=header
+
+\= Lorem ipsum dolor sit amet
+</pre>
+
+<p>Related stories and related media are indiciated by one of the following
+tags:</p>
+
+<ul>
+  <li><code>=related_story_uri</code></li>
+  <li><code>=related_media_uri</code></li>
+  <li><code>=related_story_url</code></li>
+  <li><code>=related_media_url</code></li>
+  <li><code>=related_story_uuid</code></li>
+  <li><code>=related_media_uuid</code></li>
+  <li><code>=related_story_id</code></li>
+  <li><code>=related_media_id</code></li>
+</ul>
+
+<p> The URI, URL, UUID, or ID is then put on the same line as the tag.
+Bricolage itself uses <code>_uuid</code> tags for related documents. The
+<code>_uri</code> tags are probably simplest to use, but should not be used if
+you manage multiple sites in Bricolage and different sites can use the same
+URIs. The <code>_url</code> tags avoid this problem by using a full URL for a
+related document; the domain name from the URL will be used to look up the
+appropriate site. Some examples:</p>
+
+<pre>
+=related_story_url http://www.example.com/reviews/books/
+
+=related_media_uri /reviews/movies/2005/12/14/king_kong.png
+</pre>
+
+<p>These tags will create a relationship with the story with the URI
+<q>/reviews/books/</q> and associated with the site with the domain
+<q>www.example.com</q>, and with the media document with the URI
+<q>/reviews/movies/2005/12/14/king_kong.png</q> without regard to the site
+to which it belongs.</p>
+
+<p>Use the <q>Default Field</q> select list to assign any untagged blocks of
+content to a particular field. For example, if you selected <q>paragraph</q>
+as the default field, the above pull quote element can be written as:</p>
+
+<pre>
+=begin pull_quote
+
+    Ask not what your country can do for you.
+    Ask what you can do for your country.
+
+    =by
+
+    John F. Kennedy
+
+    =date
+
+    1961-01-20 00:00:00
+
+=end pull_quote
+</pre>
+
+<p>Of course, all of these tags can be used to edit an entire hierarchy of an
+element and its subelements, and this is where the default field becomes
+especially useful. For example, to edit an entire story's worth of elements,
+you might have something like this (again, with <q>paragraph</q> selected as
+the default field):</p>
+
+<pre>
+=related_media_uuid 4162F713-1DD3-11B3-B17F-C09EFE1DC404
+
+=teaser
+
+This is where we teas you. Ha ha!
+
+=begin page
+
+    This is a paragraph
+
+    Second paragraph
+
+    =header
+
+    And then...
+
+    Third paragraph
+
+    =begin pull_quote
+
+        Ask not what your country can do for you.
+        Ask what you can do for your country.
+
+        =by
+
+        John F. Kennedy
+
+        =date
+
+        1961-01-20 00:00:00
+
+    =end pull_quote
+
+    圳地在圭圬圯圩夙多夷夸妄奸妃好她如妁字存宇守宅安寺尖屹州帆并年
+
+    橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱
+
+    뼈뼉뼘뼙뼛뼜뼝뽀뽁뽄뽈뽐뽑뽕뾔뾰뿅뿌뿍뿐뿔뿜뿟뿡쀼쁑쁘쁜쁠쁨쁩삐
+
+    =begin pull_quote
+
+        So, first of all, let me assert my firm belief that
+        the only thing we have to fear is fear
+        itself&#x2014;nameless, unreasoning, unjustified
+        terror which paralyzes needed efforts to convert
+        retreat into advance.
+
+        =by
+
+        Franklin D. Roosevelt
+
+        =date
+
+        1933-03-04 00:00:00
+
+    =end pull_quote
+
+   Final paragraph.
+
+=end page
+</pre>
+</help>

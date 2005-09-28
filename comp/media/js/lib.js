@@ -758,16 +758,21 @@ function resizeframe() {
 Open popup window
 */
 function openWindow(page) {
-    window.open('/help/' + lang_key + '/' + page + '.html', 
-                                'Help_<% SERVER_WINDOW_NAME %>', 
-                                'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,height=600,width=505'
-                                );
+    if (!/^\//.test(page)) page = '/' + page;
+    if (!/\.html$/.test(page)) page += '.html';
+    window.open(
+        '/help/' + lang_key + page,
+        'Bricolage Help',
+        'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,'
+        + 'height=600,width=505'
+    );
     return false;
 }
 function openAbout() { return openWindow("about"); }
 function openHelp()  { 
-    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, "");
-    if (uri.length == 0) { uri = "/workflow/profile/workspace"; }
+    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, '');
+    if (uri.length == 0) uri = "/workflow/profile/workspace";
+    else uri = uri.replace(/profile\/[^/]+\/container/, 'profile/container');
     return openWindow(uri);
 }
 
