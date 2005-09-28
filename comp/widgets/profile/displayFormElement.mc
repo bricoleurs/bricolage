@@ -395,6 +395,12 @@ my %formSubs = (
                 $label, $readOnly, $agent, $id) = @_;
             my $out = '';
 
+            # If there is only one option, force readonly and show that option
+            if (scalar @{$vals->{props}{vals}} == 1) { 
+                $readOnly = 1; 
+                $value = $vals->{props}{vals}[0][0];
+            }
+
             $out .= qq{<div class="row">\n} if $useTable;
             $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
             $out .= "<br />" if (!$useTable && $name);
@@ -436,7 +442,7 @@ my %formSubs = (
                     if (!$readOnly) {
                         $out .= &$opt_sub($f, $v, $value);
                     } else {
-                        $out .= $v . "<br />" if ($f eq $value);
+                        $out .= $v . "<br />" if ($f ne undef && $f eq $value);
                     }
                 }
             }
