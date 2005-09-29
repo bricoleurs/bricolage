@@ -11,7 +11,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $ctype, name => 'ctype');
 
 # Output the groups.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => $ctype . ' Group Recipients', number => 1);
+         caption => $ctype . ' Group Recipients', number => 1);
 
 # These will hold the values for the left and right lists.
 my ($right, $left) = ([], []);
@@ -32,21 +32,21 @@ my $pl_disp = get_class_info('grp')->get_plural_name;
 # Load up the double-list manager.
 $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           rightSort => 1,
-	  leftOpts => $left,
+          leftOpts => $left,
           rightOpts => $right,
           formName => 'alert_type_recip',
-	  leftName => 'del_groups',
-	  rightName => 'add_groups',
-	  readOnly => $no_edit,
-	  leftCaption => $no_edit ? undef : "Available $pl_disp",
-	  showLeftList => !$no_edit || 0,
-	  rightCaption => "Current $pl_disp" );
+          leftName => 'del_groups',
+          rightName => 'add_groups',
+          readOnly => $no_edit,
+          leftCaption => $no_edit ? undef : "Available $pl_disp",
+          showLeftList => !$no_edit || 0,
+          rightCaption => "Current $pl_disp" );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output the users.
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	 caption => $ctype . ' User Recipients', number => 2);
+         caption => $ctype . ' User Recipients', number => 2);
 
 # These will hold the values for the left and right lists.
 ($right, $left) = ([], []);
@@ -69,15 +69,15 @@ $pl_disp = get_class_info('user')->get_plural_name;
 # Load up the double-list manager.
 $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           rightSort => 1,
-	  leftOpts => $left,
+          leftOpts => $left,
           rightOpts => $right,
           formName => 'alert_type_recip',
-	  leftName => 'del_users',
-	  rightName => 'add_users',
-	  readOnly => $no_edit,
-	  leftCaption => $no_edit ? undef : "Available $pl_disp",
-	  showLeftList => !$no_edit || 0,
-	  rightCaption => "Current $pl_disp" );
+          leftName => 'del_users',
+          rightName => 'add_users',
+          readOnly => $no_edit,
+          leftCaption => $no_edit ? undef : "Available $pl_disp",
+          showLeftList => !$no_edit || 0,
+          rightCaption => "Current $pl_disp" );
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -88,8 +88,8 @@ $m->comp("/widgets/profile/formButtons.mc",
          section => $widget,
          widget => $type,
          no_del => 1,
-	 return => "/admin/profile/$type/$id",
-	 cb => 'edit_recip_cb',
+         return => "/admin/profile/$type/$id",
+         cb => 'edit_recip_cb',
          no_save => $no_edit );
 
 </%perl>
@@ -123,7 +123,7 @@ $id = $at->get_id unless defined $id;
 my $atname = $at->get_name;
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
-	 context => "Admin | Profile | $disp | &quot;" . $atname . "&quot; | Recipients",
+         context => "Admin | Profile | $disp | &quot;" . $atname . "&quot; | Recipients",
          title => "$atname Recipients");
 
 # Redirect if we haven't got the contact type.

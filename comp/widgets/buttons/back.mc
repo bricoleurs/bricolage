@@ -35,8 +35,8 @@ Easier to use wrapper for displayFormElement.mc
 <%args>
 $widget    => undef
 $disp      => ''
-$cb        => 'create_cb'
-$button    => 'create_red'
+$cb        => ''
+$button    => 'return_dgreen'
 $name      => ''
 $uri       => undef
 $js        => ''
@@ -45,7 +45,9 @@ $useTable  => 1
 $localize  => 1
 </%args>
 <%perl>;
-if ($uri) { $js .= qq{ onclick="window.location.href='} . $uri . qq{'; return false;"}; }
+$url ||= last_page();
+$js .= qq{ onclick="window.location.href='} . $uri . qq{'; return false;"};
+
 my $key = ($widget) ? "$widget|$cb" : $name;
 
 my $vals = { disp      => '',

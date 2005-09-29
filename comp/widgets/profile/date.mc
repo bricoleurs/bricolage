@@ -49,22 +49,22 @@ $precision => MINUTE
 </%args>
 <%perl>;
 my $vals = {
-	    disp      => $disp,
-	    value     => $value,
-	    props     => { type      => 'date',
+            disp      => $disp,
+            value     => $value,
+            props     => { type      => 'date',
                            precision => $precision,
                          },
             js        => $js,
-	    req       => $req,
-	   };
+            req       => $req,
+           };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-	 key       => $name,
-	 vals      => $vals,
-	 width     => $width,
-	 indent    => $indent,
-	 useTable  => $useTable,
-	 localize  => $localize,
-	 readOnly  => $readOnly
+         key       => $name,
+         vals      => $vals,
+         width     => $width,
+         indent    => $indent,
+         useTable  => $useTable,
+         localize  => $localize,
+         readOnly  => $readOnly
 );
 </%perl>

@@ -1,10 +1,10 @@
 % # Check to see if this is a preview screen.
 % my $prev = $r->notes('burner.preview');
 <& /widgets/wrappers/sharky/header.mc,
-	title      => 'Error',
+        title      => 'Error',
         useSideNav => !$prev,
         no_toolbar => !$prev,
-	context    => 'An error occurred.',
+        context    => 'An error occurred.',
         debug      => QA_MODE || TEMPLATE_QA_MODE
  &>
 
