@@ -432,17 +432,27 @@ my %formSubs = (
                                       $values->{$a} cmp $values->{$b}
                                     } keys %$values)
                 {
-                    $out .= $readOnly
-                      ? $values->{$k} eq $value ? $values->{$k} . "<br />" : ''
-                      : &$opt_sub($k, $values->{$k}, $value);
+                    if ($readOnly && $values->{$k} eq $value) {
+                        $out .= $values->{$k};
+                        $out .= $m->scomp('/widgets/profile/hidden.mc',
+                                           name => $key,
+                                           value => $values->{$k});
+                        $out .= "<br />";
+                    } else {
+                        $out .= &$opt_sub($k, $values->{$k}, $value);
+                    }
                 }
             } elsif ($ref eq 'ARRAY') {
                 foreach my $k (@$values ) {
                     my ($f, $v) = ref $k ? @$k : ($k, $k);
-                    if (!$readOnly) {
-                        $out .= &$opt_sub($f, $v, $value);
+                    if ($readOnly && $f ne undef && $f eq $value) {
+                        $out .= $v;
+                        $out .= $m->scomp('/widgets/profile/hidden.mc',
+                                           name => $key,
+                                           value => $f);
+                        $out .= "<br />";
                     } else {
-                        $out .= $v . "<br />" if ($f ne undef && $f eq $value);
+                        $out .= &$opt_sub($f, $v, $value);
                     }
                 }
             }
