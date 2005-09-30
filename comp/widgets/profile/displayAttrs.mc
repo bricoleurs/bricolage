@@ -17,7 +17,7 @@ my @meta_props = qw(type length maxlength rows cols multiple size precision);
 </%once>
 <%perl>;
 my $num_fields = @$attr;
-my $sel_opts = [(1..$num_fields)];
+my $sel_opts = [ map { [ $_ => $_] } 1..$num_fields ];
 my $curField = 1;
 my $width = 578 - 100 * $useDelete - 100 * $usePosition;
 

@@ -2,8 +2,6 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Target DBMS: PostgreSQL 7.1.2
--- Author: Garth Webb <garth@perijove.com>
 --
 -- This is the SQL that will create the element_type table.
 -- It is related to the Bric::ElementType class.
@@ -56,9 +54,15 @@ CREATE TABLE element_type  (
     key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
     burner          INT2           NOT NULL DEFAULT 1,
-    reference       BOOLEAN        NOT NULL DEFAULT FALSE,
-    type__id        INTEGER        NOT NULL,
+    top_level       BOOLEAN        NOT NULL DEFAULT FALSE,
+    paginated       BOOLEAN        NOT NULL DEFAULT FALSE,
+    fixed_uri       BOOLEAN        NOT NULL DEFAULT FALSE,
+    related_story   BOOLEAN        NOT NULL DEFAULT FALSE,
+    related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
+    media           BOOLEAN        NOT NULL DEFAULT FALSE,
+    biz_class__id   INTEGER        NOT NULL,
     et_grp__id      INTEGER,
+    type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 );
@@ -184,6 +188,7 @@ CREATE TABLE attr_element_type_meta (
 CREATE UNIQUE INDEX udx_element_type__key_name ON element_type(LOWER(key_name));
 CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
 CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
+CREATE INDEX fkx_class__element_type ON element_type(biz_class__id);
 
 /* Subelement_type indexes for future reference.
 CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id);

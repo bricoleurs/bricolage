@@ -9,7 +9,7 @@ my $disp = { map { $_ => get_disp_name($_) }
 my $pl_disp = {
     map { $_ => get_class_info($_)->get_plural_name }
         qw(story media formatting pref user grp output_channel contrib
-           contrib_type site workflow category element_type element_type_set
+           contrib_type site workflow category element_type
            media_type source dest job alert_type keyword)
 };
 
@@ -182,7 +182,7 @@ if ( $nav->{adminSystem} ) { # open system submenu
 }
 # End system submenus
 
-# Begin publishing submenus   
+# Begin publishing submenus
 if ( $nav->{adminPublishing} ) { #open publishing submenu
     $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|adminPublishing_cb=0">} . $lang->maketext('Publishing') . qq{</a>});
         $m->out(qq{<ul class="items">});
@@ -192,7 +192,6 @@ if ( $nav->{adminPublishing} ) { #open publishing submenu
         $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/element_type_set', $uri, $pl_disp->{element_type_set}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) . qq{</li>});

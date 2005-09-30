@@ -50,7 +50,6 @@ CREATE TABLE field_type (
     quantifier       VARCHAR(2)      NOT NULL,
     autopopulated    BOOLEAN         NOT NULL DEFAULT FALSE,
     map_type__id     INTEGER,
-    publishable      BOOLEAN         NOT NULL DEFAULT FALSE,
     max_length       INTEGER         NOT NULL DEFAULT 0,
     sql_type         VARCHAR(30)     NOT NULL DEFAULT 'short',
     widget_type      VARCHAR(30)     NOT NULL DEFAULT 'text',

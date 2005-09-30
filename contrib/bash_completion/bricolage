@@ -114,7 +114,7 @@ _bric_soap()
                 ;;
             element_type)
                 COMPREPLY=( $( compgen -W 'name description top_level paginated \
-                                           fixed_url related_story related_media \
+                                           fixed_uri related_story related_media \
                                            media active' -- $cur ) )
                 ;;
             output_channel)

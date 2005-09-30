@@ -31,7 +31,7 @@ if ($show_summary) {
         <dd>
 %     $m->print(join ', ', map { $_->get_key_name . $show_element_flags->($_) } @$subelems);
         </dd>
-        <dt>Default Element:</dt>
+        <dt>Default Field:</dt>
         <dd>
 <%perl>;
 my $opts = [
@@ -155,10 +155,9 @@ my $def_field  = get_state_data(
 my $show_element_flags = sub {
     my $at = shift;
     my @flags;
-
-    push @flags, 'paginated'     if $at->get_paginated;
-    push @flags, 'top level'     if $at->get_top_level;
-    push @flags, 'fixed url'     if $at->get_fixed_url;
+    push @flags, 'paginated'     if $at->is_paginated;
+    push @flags, 'top level'     if $at->is_top_level;
+    push @flags, 'fixed uri'     if $at->is_fixed_uri;
     push @flags, 'media'         if $at->is_media;
     push @flags, 'related media' if $at->is_related_media;
     push @flags, 'related story' if $at->is_related_story;

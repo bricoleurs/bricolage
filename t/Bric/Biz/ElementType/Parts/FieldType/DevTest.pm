@@ -16,7 +16,6 @@ my %field = (
     required      => 1,
     quantifier    => 1,
     autopopulated => 0,
-    publishable   => 1,
     max_length    => 0,
     default_val  => '',
     sql_type      => 'short',
@@ -34,7 +33,7 @@ sub element_type {
         key_name      =>'test_field_type',
         description   => 'Testing Element Data API',
         burner        => Bric::Biz::ElementType::BURNER_MASON,
-        type__id      => 1,
+        top_level     => 1,
         reference     => 0,
         primary_oc_id => 1
     })->save;
@@ -87,7 +86,7 @@ sub test_const : Test(44) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(90) {
+sub test_list : Test(86) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -104,7 +103,6 @@ sub test_list : Test(90) {
         $args{quantifier}    = 0 if $n % 2;
         $args{required}      = 0 if $n % 2;
         $args{autopopulated} = 1 if $n % 2;
-        $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
         $args{widget_type}   = 'textarea' if $n % 2;
@@ -213,18 +211,6 @@ sub test_list : Test(90) {
     }), "Lookup autopopulated 0" );
     is( scalar @fields, 2, "Check for 2 fields" );
 
-    # Try publishable.
-    ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
-        element_type_id    => $field{element_type_id},
-        publishable => 1
-    }), "Lookup publishable 1" );
-    is( scalar @fields, 3, "Check for 3 fields" );
-    ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
-        element_type_id    => $field{element_type_id},
-        publishable => 0
-    }), "Lookup publishable 0" );
-    is( scalar @fields, 2, "Check for 2 fields" );
-
     # Try max_length.
     ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
         element_type_id => $field{element_type_id},
@@ -312,7 +298,7 @@ sub test_list : Test(90) {
 
 ##############################################################################
 # Test the list_id() method.
-sub test_list_ids : Test(90) {
+sub test_list_ids : Test(86) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -329,7 +315,6 @@ sub test_list_ids : Test(90) {
         $args{quantifier}    = 0 if $n % 2;
         $args{required}      = 0 if $n % 2;
         $args{autopopulated} = 1 if $n % 2;
-        $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
         $args{widget_type}   = 'textarea' if $n % 2;
@@ -438,18 +423,6 @@ sub test_list_ids : Test(90) {
     }), "Lookup autopopulated 0" );
     is( scalar @field_ids, 2, "Check for 2 field IDs" );
 
-    # Try publishable.
-    ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
-        element_type_id    => $field{element_type_id},
-        publishable => 1
-    }), "Lookup publishable 1" );
-    is( scalar @field_ids, 3, "Check for 3 field IDs" );
-    ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
-        element_type_id    => $field{element_type_id},
-        publishable => 0
-    }), "Lookup publishable 0" );
-    is( scalar @field_ids, 2, "Check for 2 field IDs" );
-
     # Try max_length.
     ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
         element_type_id => $field{element_type_id},
@@ -537,7 +510,7 @@ sub test_list_ids : Test(90) {
 
 ##############################################################################
 # Test the href() method.
-sub href : Test(95) {
+sub href : Test(91) {
     my $self = shift;
 
     ok my $elem = $self->element_type, "Get new element type object";
@@ -554,7 +527,6 @@ sub href : Test(95) {
         $args{quantifier}    = 0 if $n % 2;
         $args{required}      = 0 if $n % 2;
         $args{autopopulated} = 1 if $n % 2;
-        $args{publishable}   = 0 unless $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
         $args{widget_type}   = 'textarea' if $n % 2;
@@ -662,18 +634,6 @@ sub href : Test(95) {
         element_type_id    => $field{element_type_id},
         autopopulated => 0
     }), "Lookup autopopulated 0" );
-    is( scalar keys %$fields, 2, "Check for 2 fields" );
-
-    # Try publishable.
-    ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
-        element_type_id    => $field{element_type_id},
-        publishable => 1
-    }), "Lookup publishable 1" );
-    is( scalar keys %$fields, 3, "Check for 3 fields" );
-    ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
-        element_type_id    => $field{element_type_id},
-        publishable => 0
-    }), "Lookup publishable 0" );
     is( scalar keys %$fields, 2, "Check for 2 fields" );
 
     # Try max_length.

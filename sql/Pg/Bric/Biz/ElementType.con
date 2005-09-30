@@ -2,12 +2,10 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Target DBMS: PostgreSQL 7.1.2
--- Author: Garth Webb <garth@perijove.com>
 
 
 -- -----------------------------------------------------------------------------
--- Table: element
+-- Table: element_type
 
 ALTER TABLE element_type ADD
     CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
@@ -17,6 +15,9 @@ ALTER TABLE element_type ADD
     CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
     REFERENCES grp(id) ON DELETE CASCADE;
 
+ALTER TABLE element_type ADD
+	CONSTRAINT fk_class__element_type FOREIGN KEY (biz_class__id)
+	REFERENCES class(id) ON DELETE CASCADE;
 
 /* For future reference.
 -- -----------------------------------------------------------------------------

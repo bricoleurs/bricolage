@@ -10,7 +10,6 @@ use Test::More;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Element::Container;
-use Bric::Biz::ATType;
 use Bric::Biz::ElementType;
 use Test::MockModule;
 
@@ -72,7 +71,7 @@ sub test_new : Test(11) {
 
 ##############################################################################
 # Test lookup.
-sub test_lookup : Test(44) {
+sub test_lookup : Test(36) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -112,7 +111,7 @@ sub test_lookup : Test(44) {
 
 ##############################################################################
 # Test list.
-sub test_list : Test(166) {
+sub test_list : Test(158) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -249,7 +248,7 @@ sub test_list : Test(166) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(229) {
+sub test_pod : Test(221) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};

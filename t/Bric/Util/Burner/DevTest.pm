@@ -250,31 +250,6 @@ sub subclass_burn_test {
     my ($self, $dir, $suffix, $burner_type) = @_;
     $self->{delete_resources} = 1;
 
-    # First, we'll need a story element type.
-    ok my $story_et = Bric::Biz::ATType->new({
-        name      => 'Testing',
-        top_level => 1,
-    }), "Create a story element type";
-    ok $story_et-> save, "Save story element type";
-    $self->add_del_ids($story_et->get_id, 'at_type');
-
-    # Next, a subelement.
-    ok my $sub_et = Bric::Biz::ATType->new({
-        name      => 'Subby',
-        top_level => 0,
-    }), "Create a subelement element type";
-    ok $sub_et-> save, "Save subelement element type";
-    $self->add_del_ids($sub_et->get_id, 'at_type');
-
-    # And finally, a page subelement.
-    ok my $page_et = Bric::Biz::ATType->new({
-        name      => 'Pagey',
-        top_level => 0,
-        paginated => 1,
-    }), "Create a page element type";
-    ok $page_et-> save, "Save page element type";
-    $self->add_del_ids($page_et->get_id, 'at_type');
-
     # Add a couple of categories.
     ok my $cat = Bric::Biz::Category->new({
         name        => 'Testing',
@@ -318,7 +293,7 @@ sub subclass_burn_test {
         key_name  => '_testing_',
         name      => 'Testing',
         burner    => $burner_type,
-        type__id  => $story_et->get_id,
+        top_level => 1,
         reference => 0, # No idea what this is.
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
@@ -336,7 +311,6 @@ sub subclass_burn_test {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -348,7 +322,6 @@ sub subclass_burn_test {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -362,7 +335,6 @@ sub subclass_burn_test {
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
         burner    => $burner_type,
-        type__id  => $sub_et->get_id,
         reference => 0, # No idea what this is.
     }), "Create a subelement element";
 
@@ -377,7 +349,6 @@ sub subclass_burn_test {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -389,7 +360,6 @@ sub subclass_burn_test {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -401,7 +371,6 @@ sub subclass_burn_test {
         quantifier  => 0,
         sql_type    => 'date',
         place       => 3,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -416,7 +385,7 @@ sub subclass_burn_test {
         key_name  => '_page_',
         name      => 'Page',
         burner    => $burner_type,
-        type__id  => $page_et->get_id,
+        paginated => 1,
         reference => 0, # No idea what this is.
     }), "Create a page subelement element";
 
@@ -428,7 +397,6 @@ sub subclass_burn_test {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 

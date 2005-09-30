@@ -3,7 +3,7 @@ package Bric::Biz::ElementType::Parts::FieldType;
 
 =head1 NAME
 
-Bric::Biz::ElementType::Parts::FieldType - The place where fields with in an element are registered with rules to their usage
+Bric::Biz::ElementType::Parts::FieldType - Bricolage Field Type management
 
 =head1 VERSION
 
@@ -37,10 +37,6 @@ $LastChangedDate$
  # Get/set the description for this field.
  $field = $field->set_description($description)
  $desc  = $field->get_description()
-
- # Get/Set the publishable status of this field.
- $field       = $field->set_publishable(undef || 1)
- (undef || 1) = $field->is_publishable()
 
  # Get/Set the maximum length for the data in this field.
  $field = $field->set_max_length($max_length)
@@ -134,7 +130,6 @@ my @COLS = qw(
     quantifier
     autopopulated
     map_type__id
-    publishable
     max_length
     sql_type
     widget_type
@@ -158,7 +153,6 @@ my @ATTRS = qw(
     quantifier
     autopopulated
     map_type_id
-    publishable
     max_length
     sql_type
     widget_type
@@ -227,7 +221,6 @@ BEGIN {
         vals            => Bric::FIELD_RDWR,
         multiple        => Bric::FIELD_RDWR,
         default_val     => Bric::FIELD_RDWR,
-        publishable     => Bric::FIELD_RDWR,
         autopopulated   => Bric::FIELD_READ,
         active          => Bric::FIELD_READ,
         _attr           => Bric::FIELD_NONE,
@@ -295,10 +288,6 @@ sql_type
 
 =item *
 
-publishable
-
-=item *
-
 active
 
 =back
@@ -319,8 +308,7 @@ sub new {
     my ($init) = @_;
 
     $init->{active} = exists $init->{active} ? $init->{active} : 1;
-    $init->{$_} = $init->{$_} ? 1 : 0
-        for qw(required publishable autopopulated multiple);
+    $init->{$_} = $init->{$_} ? 1 : 0 for qw(required autopopulated multiple);
     $init->{element_type_id} ||=
           exists $init->{element_id}  ? delete $init->{element_id}
         : exists $init->{element__id} ? delete $init->{element__id}
@@ -446,10 +434,6 @@ May use C<ANY> for a list of possible values.
 =item max_length
 
 The maximum length of the field. May use C<ANY> for a list of possible values.
-
-=item publishable
-
-Boolean value indicating whether or not the field is publishable.
 
 =item required
 
@@ -1013,26 +997,6 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item $publishable = $field->get_publishable()
-
-Returns if this is a publishable field
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $field = $field->set_publishable($publishable)
-
-Sets the flag for if this is a publishable field
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
 =item $name = $field->get_name()
 
 Gets the name of the field.
@@ -1382,12 +1346,13 @@ sub get_element_id   { shift->get_element_type_id      }
 sub set_element_id   { shift->set_element_type_id(@_)  }
 sub get_map_type__id { shift->get_map_type_id          }
 sub set_map_type__id { shift->set_map_type_id(@_)      }
+sub set_publishable  { shift }
+sub get_publishable  { 0 }
 
 # Boolean accessors.
 sub set_quantifier    { shift->_set(['quantifier']    => [shift() ? 1 : 0] ) }
 sub set_required      { shift->_set(['required']      => [shift() ? 1 : 0] ) }
 sub set_autopopulated { shift->_set(['autopopulated'] => [shift() ? 1 : 0] ) }
-sub set_publishable   { shift->_set(['publishable']   => [shift() ? 1 : 0] ) }
 sub set_multiple      { shift->_set(['multiple']      => [shift() ? 1 : 0] ) }
 
 #------------------------------------------------------------------------------#
@@ -1696,7 +1661,6 @@ sub _do_list {
     );
 
     my %bools = (
-        publishable   => 'publishable',
         required      => 'required',
         quantifier    => 'quantifier',
         autopopulated => 'autopopulated',

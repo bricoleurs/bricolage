@@ -6,7 +6,6 @@ use Test::More;
 use Test::Exception;
 use Bric::Util::DBI qw(:standard :junction);
 use Bric::Util::Time qw(strfdate);
-use Bric::Biz::ATType;
 use Bric::Biz::ElementType;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Workflow::Parts::Desk;
@@ -1032,13 +1031,11 @@ sub test_new_grp_ids: Test(5) {
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
-    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = Bric::Biz::ElementType->new
       ({ name        => "_test_$time.new",
          key_name    => "_test_$time.new",
          burner      => 1,
          description => 'this is a test',
-         type__id    => $att->get_id,
        });
     $element->save;
     $self->add_del_ids($element->get_id, 'element_type');

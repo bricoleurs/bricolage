@@ -101,21 +101,70 @@ The element type's description.
 
 The output channel for the element type.
 
+=item output_channel_id
+
+The ID of an output channel. Returned will be all ElementType objects that
+contain this output channel. May use C<ANY> for a list of possible values.
+
+=item field_name (M)
+
+=item data_name (M)
+
+The name of an ElementType::Parts::FieldType (field type) object. Returned will be
+all ElementType objects that reference this particular field type object.
+
+=item map_type_id
+
+The map_type_id of a field type object. May use C<ANY> for a list of possible
+values.
+
 =item type
 
 The element type's type.
 
-=item top_level
+=item type_id
 
-Set to 1 to return only top-level element types.
-
-=item site
-
-NOT YET IMPLEMENTED. COMING SOON.
+Match elements of a particular attype.
 
 =item active
 
 Set to 0 to return inactive as well as active element types.
+
+=item site_id
+
+Match against the given site_id. May use C<ANY> for a list of possible values.
+
+=item top_level
+
+Boolean value for top-level (story type and media type) element types.
+
+=item media
+
+Boolean value for media element types.
+
+=item paginated
+
+Boolean value for paginated element types.
+
+=item fixed_uri
+
+Boolean value for fixed URI element types.
+
+=item related_story
+
+Boolean value for related story element types.
+
+=item related_media
+
+Boolean value for related media element types.
+
+=item biz_class_id
+
+The ID of a Bric::Util::Class object representing a business class. The ID
+must be for a class object representing one of
+L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
+L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+of its subclasses.
 
 =back
 
@@ -357,7 +406,11 @@ sub is_allowed_param {
     print STDERR "Checking for $method($param) in $pkg\n" if DEBUG;
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(key_name name description active
-                                         output_channel type top_level) },
+                                         output_channel output_channel_id
+                                         type type_id field_name data_name
+                                         map_type_id site_id top_level media
+                                         paginated fixed_uri related_story
+                                         related_media biz_class_id) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
         update   => { map { $_ => 1 } qw(document update_ids) },
@@ -408,15 +461,18 @@ sub load_asset {
     # loop over element type, filling @element_ids
     my @element_ids;
     my %fixup;
-    foreach my $edata (@{$data->{element_type}}) {
+   foreach my $edata (@{$data->{element_type}}) {
         my $id = $edata->{id};
 
         # handle type => type__id mapping
-        my ($type) = Bric::Biz::ATType->list({ name => $edata->{type} });
-        throw_ap(error => __PACKAGE__ . " : no type found matching " .
-                   "(type => \"$edata->{type}\")")
-          unless defined $type;
-        my $type_id = $type->get_id;
+        my $type_id = undef;
+        if ($edata->{type}) {
+            my ($type) = Bric::Biz::ATType->list({ name => $edata->{type} });
+            throw_ap(error => __PACKAGE__ . " : no type found matching " .
+                         "(type => \"$edata->{type}\")")
+                unless defined $type;
+            $type_id = $type->get_id;
+        }
 
         # handle burner mapping
         my $burner = 0;
@@ -456,7 +512,7 @@ sub load_asset {
         my $element;
         unless ($update) {
             # instantiate a new object
-            $element = Bric::Biz::ElementType->new({ type__id => $type_id });
+            $element = Bric::Biz::ElementType->new({ type_id => $type_id });
         } else {
             # load element type
             $element = Bric::Biz::ElementType->lookup({ id => $id });
@@ -464,8 +520,8 @@ sub load_asset {
               unless $element;
 
             # update type__id and zap cached type object (ugh)
-            $element->_set(['type__id', '_att_obj'], [$type_id, undef]);
-
+            $element->_set(['type_id', '_att_obj'], [$type_id, undef])
+                if defined $element->get_type_id;
         }
 
         # set simple data
@@ -474,7 +530,19 @@ sub load_asset {
         $element->set_description($edata->{description});
         $element->set_burner($burner);
 
-        if ($type->get_top_level) {
+        # set boolean fields
+        $element->set_top_level($edata->{top_level} ? 1 : 0);
+        $element->set_paginated($edata->{paginated} ? 1 : 0);
+        $element->set_fixed_uri($edata->{fixed_uri} ? 1 : 0);
+        $element->set_related_story($edata->{related_story} ? 1 : 0);
+        $element->set_related_media($edata->{related_media} ? 1 : 0);
+        $element->set_media($edata->{is_media} ? 1 : 0);
+
+        # change business class to ID
+        my $class = Bric::Util::Class->lookup({pkg_name => $edata->{biz_class}});
+        $element->set_biz_class_id($class->get_id);
+
+        if ($element->get_top_level) {
             my (%sites, @ocs, $have_ocs);
             my %ocmap = map { $_->get_id => $_ } $element->get_output_channels;
 
@@ -625,7 +693,6 @@ sub load_asset {
                 $data->set_quantifier(  $field->{repeatable});
                 $data->set_sql_type(    $sql_type);
                 $data->set_place(       $place);
-                $data->set_publishable( 1 );
                 $data->set_max_length(  $field->{max_size});
                 $data->set_widget_type( $field->{widget_type} || $field->{type});
                 $data->set_default_val( $field->{default_val} || $field->{val});
@@ -650,7 +717,6 @@ sub load_asset {
                     quantifier    => $field->{repeatable},
                     sql_type      => $sql_type,
                     place         => $place,
-                    publishable   => 1,
                     max_length    => $field->{max_size},
                     widget_type   => $field->{widget_type} || $field->{type},
                     default_val   => $field->{defaul_val}  || $field->{value},
@@ -745,6 +811,18 @@ sub serialize_asset {
         $writer->dataElement($e => $element->_get($e));
     }
 
+    # Output boolean attributes.
+    $writer->dataElement(top_level     => ($element->get_top_level ? 1 : 0));
+    $writer->dataElement(paginated     => ($element->get_paginated ? 1 : 0));
+    $writer->dataElement(fixed_uri     => ($element->get_fixed_uri ? 1 : 0));
+    $writer->dataElement(related_story => ($element->get_related_story ? 1 : 0));
+    $writer->dataElement(related_media => ($element->get_related_media ? 1 : 0));
+    $writer->dataElement(is_media      => ($element->get_media ? 1 : 0));
+
+    # change business class to ID
+    my $class = Bric::Util::Class->lookup({id => $element->get_biz_class_id});
+    $writer->dataElement(biz_class     => $class->get_pkg_name);
+
     # output burner.  It's unfortunate that this isn't a string.  This
     # is another piece of code that would need to be modified to add a
     # new burner...
@@ -757,9 +835,6 @@ sub serialize_asset {
         throw_ap(error => __PACKAGE__ . "::export : unknown burner \"$burner_id\""
                    . " for element type \"$element_id\".");
     }
-
-    # get type name
-    $writer->dataElement(type => $element->get_type_name);
 
     # set active flag
     $writer->dataElement(active => ($element->is_active ? 1 : 0));

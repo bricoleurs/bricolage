@@ -48,53 +48,13 @@ sub get_elem {
 sub create_element_types {
     my $self = shift;
 
-    # First, we'll need a story element type.
-    ok my $story_et = Bric::Biz::ATType->new({
-        name          => 'Testing',
-        top_level     => 1,
-        related_story => 1,
-        related_media => 1,
-    }), "Create a story element type";
-    ok $story_et-> save, "Save story element type";
-    $self->add_del_ids($story_et->get_id, 'at_type');
-    $self->{story_et} = $story_et;
-
-    # Next, a subelement.
-    ok my $sub_et = Bric::Biz::ATType->new({
-        name      => 'Subby',
-        top_level => 0,
-    }), "Create a subelement element type";
-    ok $sub_et-> save, "Save subelement element type";
-    $self->add_del_ids($sub_et->get_id, 'at_type');
-    $self->{sub_et} = $sub_et;
-
-    # And finally, a page subelement.
-    ok my $page_et = Bric::Biz::ATType->new({
-        name      => 'Pagey',
-        top_level => 0,
-        paginated => 1,
-    }), "Create a page element type";
-    ok $page_et-> save, "Save page element type";
-    $self->add_del_ids($page_et->get_id, 'at_type');
-    $self->{page_et} = $page_et;
-
-    # We also need a media element type type.
-    ok my $media_et = Bric::Biz::ATType->new({
-        name          => 'Media',
-        top_level     => 1,
-        media         => 1,
-    }), "Create a media element type type";
-    ok $media_et-> save, "Save media element type type";
-    $self->add_del_ids($media_et->get_id, 'at_type');
-    $self->{media_et} = $media_et;
-
     # Create a media type.
     ok my $media_type = Bric::Biz::ElementType->new({
         key_name  => '_media_',
         name      => 'Media Testing',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $media_et->get_id,
-        reference => 0, # No idea what this is.
+        top_level => 1,
+        media     => 1,
     }), "Create media type";
     ok $media_type->add_site(100), "Add the site ID";
     ok $media_type->add_output_channels([1]), "Add the output channel";
@@ -106,11 +66,12 @@ sub create_element_types {
 
     # Create a story type.
     ok my $story_type = Bric::Biz::ElementType->new({
-        key_name  => '_testing_',
-        name      => 'Testing',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $story_et->get_id,
-        reference => 0, # No idea what this is.
+        key_name      => '_testing_',
+        name          => 'Testing',
+        burner        => Bric::Biz::ElementType::BURNER_MASON,
+        top_level     => 1,
+        related_story => 1,
+        related_media => 1,
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
     ok $story_type->add_output_channels([1]), "Add the output channel";
@@ -128,7 +89,6 @@ sub create_element_types {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{head} = $head;
@@ -141,7 +101,6 @@ sub create_element_types {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{para} = $para;
@@ -156,8 +115,6 @@ sub create_element_types {
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $sub_et->get_id,
-        reference => 0, # No idea what this is.
     }), "Create a subelement element";
     $self->{pull_quote} = $pull_quote;
 
@@ -172,7 +129,6 @@ sub create_element_types {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{pq_para} = $pq_para;
@@ -185,7 +141,6 @@ sub create_element_types {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{by} = $by;
@@ -198,7 +153,6 @@ sub create_element_types {
         quantifier  => 0,
         sql_type    => 'date',
         place       => 3,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{date} = $date;
@@ -214,8 +168,7 @@ sub create_element_types {
         key_name  => '_page_',
         name      => 'Page',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $page_et->get_id,
-        reference => 0, # No idea what this is.
+        paginated => 1,
     }), "Create a page subelement element";
     $self->{page} = $page;
 
@@ -227,7 +180,6 @@ sub create_element_types {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
     $self->{page_para} = $page_para;

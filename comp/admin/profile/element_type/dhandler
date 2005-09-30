@@ -1,191 +1,227 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
-  title => "$disp Profile",
-    context => "Admin | Profile | $disp | $crumb",
-  jsInit => (defined $id) ? "showForm('Text', true)" : ""
+   title   => "$disp Profile",
+   context => "Admin | Profile | $disp | $crumb",
+   jsInit  => defined $id ? q{showForm('Text', true)} : q{}
 &>
 % if (ENABLE_WYSIWYG) {
-% # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
+%     # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
 <& /widgets/wysiwyg/load.mc &>
 % }
 <form method="post" action="<% $r->uri %>" name="cont_profile" id="cont_profile" onsubmit="return confirmChanges('cont_profile')">
 <%perl>;
+my ($num_fields, $meta, $all, $num);
+
+# Output the primary fields.
+$m->comp(
+    '/widgets/wrappers/sharky/table_top.mc',
+    caption => "Properties",
+    number  => ++$num
+);
+
+$m->comp(
+    '/widgets/profile/displayFormElement.mc',
+    objref   => $comp,
+    readOnly => $no_edit || defined $id,
+    key      => 'key_name'
+);
+
+$m->comp(
+    '/widgets/profile/dumpRemainingFields.mc',
+    objref     => $comp,
+    readOnly   => $no_edit,
+    fieldsUsed => $exclude
+);
+
 if (defined $id) {
     $m->comp('/widgets/profile/hidden.mc',
              value => $id,
              name  => 'element_type_id');
+    if ($comp->is_media) {
+        $type_vals->{value} = $comp->get_biz_class_id;
+        $m->comp(
+            '/widgets/profile/displayFormElement.mc',
+            key      => 'biz_class_id',
+            vals     => $type_vals,
+            readOnly => $no_edit
+        );
+    }
+
+    else {
+        $m->comp(
+            '/widgets/profile/text.mc',
+            disp => 'Type',
+            value => $type,
+            readOnly => 1
+        );
+    }
 } else {
+    # Output the Element Type Select list.
+    $m->comp('/widgets/profile/select.mc',
+             disp     => 'Type',
+             name     => 'elem_type',
+             options  => [qw(Subelement Story Media)],
+             value    => $type,
+             readOnly => $no_edit
+         );
     if (my $site_cx_id = $c->get_user_cx(get_user_id)) {
-        $m->comp('/widgets/profile/hidden.mc',
-                 value => $site_cx_id,
-                 name  => 'formBuilder|add_site_id_cb');
+        $m->comp(
+            '/widgets/profile/hidden.mc',
+            value => $site_cx_id,
+            name  => 'formBuilder|add_site_id_cb'
+        );
     }
 }
 
-my ($num_fields, $meta, $all, $num);
-
-# Output the primary fields.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-          caption => "Properties",
-          number  => ++$num);
-
-$m->comp('/widgets/profile/displayFormElement.mc',
-         objref => $comp,
-         readOnly => $no_edit || defined $id,
-         key    => 'key_name');
-
-$m->comp('/widgets/profile/dumpRemainingFields.mc',
-         objref => $comp, readOnly => $no_edit,
-         fieldsUsed => {
-                        key_name => 1,
-                        active => 1,
-                        type_name => 1
-                       }
-        );
-
-# Output a list of object types to choose from.
-$m->comp('/widgets/select_object/select_object.mc',
-         readOnly  => ($no_edit || $id),
-         object    => 'element_type_set',
-         name      => 'element_type_set_id',
-         field     => 'name',
-         disp      => $lang->maketext('Set'),
-         selected  => $comp->get_type__id,
-         reset_key => $id,
-         localize  => 0
-);
-
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
 # Get the group's membership listed
-$m->comp("/widgets/grp_membership/grp_membership.mc",
-         grp_class => 'Bric::Util::Grp::ElementType',
-         obj => $comp,
-         formName => 'cont_profile',
-         no_edit  => $no_edit,
-         widget   => $type,
-         no_cb    => 1,
-         num      => ++$num
+$m->comp(
+    '/widgets/grp_membership/grp_membership.mc',
+    grp_class => 'Bric::Util::Grp::ElementType',
+    obj       => $comp,
+    formName  => 'cont_profile',
+    no_edit   => $no_edit,
+    widget    => $key_name,
+    no_cb     => 1,
+    num       => ++$num
 );
 
-
 if (defined $id) {
+    if ($comp->is_top_level) {
+        if (!@$sites || @$sites > 1) {
+            my $site_sub = sub {
+                my $siteid = $_[0]->get_id;
+                if ($_[1] eq 'primary') {
+                    $m->scomp(
+                        '/widgets/select_object/select_object.mc',
+                        object     => 'output_channel',
+                        field      => 'name',
+                        constrain  => { site_id => $siteid, active => 1 },
+                        no_persist => 1,
+                        name       => "primary_oc_site_$siteid",
+                        useTable   => 0,
+                        selected   => $comp->get_primary_oc_id($siteid) || '',
+                    );
+                }
+            };
 
-    if (Bric::Biz::ATType->lookup({ id => $comp->get_type__id })->get_top_level) {
-        my $site_sub = sub {
-            my $siteid = $_[0]->get_id;
-            if ($_[1] eq 'primary') {
-                $m->scomp('/widgets/select_object/select_object.mc',
-                          object => 'output_channel',
-                          field  => 'name',
-                          constrain => { site_id => $siteid, active => 1 },
-                          no_persist => 1,
-                          name   => "primary_oc_site_$siteid",
-                          useTable => 0,
-                          selected => $comp->get_primary_oc_id($siteid) || '',
-                         );
+            $m->comp(
+                '/widgets/wrappers/sharky/table_top.mc',
+                caption => 'Sites',
+                number => ++$num,
+            );
+            $m->comp(
+                '/widgets/listManager/listManager.mc',
+                object         => 'site',
+                userSort       => 0,
+                def_sort_field => 'name',
+                objs           => scalar $comp->get_sites,
+                addition       => undef,
+                fields         => [qw(name description primary)],
+                field_titles   => { primary => 'Primary Output Channel'},
+                field_values   => $site_sub,
+                profile        => undef,
+                select         => $sel_sub,
+            );
+
+            my %sites = map { $_->get_id => 1 } $comp->get_sites;
+            my @available_sites = grep { !$sites{$_->get_id} && chk_authz($_[0], EDIT, 1) }
+                Bric::Biz::Site->list({
+                    active => 1,
+                    output_channel_id => 'not null',
+                });
+
+            if (@available_sites) {
+                $m->print(qq{<div class="actions">\n});
+                $m->comp(
+                    '/widgets/select_object/select_object.mc',
+                    object     => 'site',
+                    field      => 'name',
+                    objs       => \@available_sites,
+                    no_persist => 1,
+                    name       => 'formBuilder|add_site_id_cb',
+                    default    => ['' => 'Add Site'],
+                    js         => "onChange='submit()'",
+                    useTable   => 0,
+                );
+                $m->print("</div>\n");
             }
-
-        };
-
-        $m->comp('/widgets/wrappers/sharky/table_top.mc',
-             caption => 'Sites',
-             number => ++$num );
-        $m->comp('/widgets/listManager/listManager.mc',
-                 object => 'site',
-                 userSort => 0,
-                 def_sort_field => 'name',
-                 objs => scalar $comp->get_sites,
-                 addition => undef,
-                 fields => [qw(name description primary)],
-                 field_titles => { primary => 'Primary Output Channel'},
-                 field_values => $site_sub,
-                 profile => undef,
-                 select => $sel_sub,
-                );
-
-my %sites = map { $_->get_id => 1 } $comp->get_sites;
-</%perl>
-<div class="actions">
-<& '/widgets/select_object/select_object.mc',
-    object => 'site',
-    field  => 'name',
-    exclude => sub { $sites{$_[0]->get_id} || ! chk_authz($_[0], EDIT, 1) },
-    no_persist => 1,
-    name   => 'formBuilder|add_site_id_cb',
-    default => ['' => 'Add Site'],
-    constrain => { active => 1, output_channel_id => 'not null' },
-    js => "onChange='submit()'",
-    useTable => 0,
-&>
-</div>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
-<%perl>;
-
-        # Manage Output Channels if this is a top-level container.
-
-        my $oc_sub = sub {
-            my $ocid = $_[0]->get_id;
-            if ($_[1] eq 'enabled') {
-                return 'Yes'
-                  if $comp->get_primary_oc_id($_[0]->get_site_id) == $ocid;
-                $m->scomp('/widgets/profile/checkbox.mc',
-                          name => 'enabled',
-                          value => $ocid,
-                          checked => $_[0]->is_enabled,
-                          useTable => 0
-                         );
+            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
         }
-        };
-        my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
-          $comp->get_sites;
-        my $oc_sel_sub = sub {
-            return if $poc_ids{$_[0]->get_id};
-            return ['Delete', 'rem_oc'];
-        };
 
-        $m->comp('/widgets/wrappers/sharky/table_top.mc',
-             caption => 'Output Channels',
-             number => ++$num );
-        $m->comp('/widgets/listManager/listManager.mc',
-                 object => 'output_channel',
-                 userSort => 0,
-                 def_sort_field => 'name',
-                 objs => scalar $comp->get_output_channels,
-                 addition => undef,
-                 fields => [qw(name description site enabled)],
-                 field_titles => { enabled => 'Enabled' },
-                 field_values => $oc_sub,
-                 profile => undef,
-                 select => $oc_sel_sub,
-                );
+        # Manage Output Channels.
+        my %got_ocs = map { $_->get_id => 1 } $comp->get_output_channels;
         my @available_ocs;
         foreach my $site ($comp->get_sites) {
-            push @available_ocs, Bric::Biz::OutputChannel->list({
-                site_id => $site->get_id,
-                active  => 1
-            });
+            push @available_ocs, grep {!$got_ocs{$_->get_id}}
+                Bric::Biz::OutputChannel->list({
+                    site_id => $site->get_id,
+                    active  => 1
+                });
         }
-</%perl>
-<div class="actions">
-<& '/widgets/select_object/select_object.mc',
-    object => 'output_channel',
-    objs   => \@available_ocs,
-    field  => 'name',
-    exclude => [ map { $_->get_id } $comp->get_output_channels ],
-    no_persist => 1,
-    getter => $oc_name_getter,
-    name   => 'formBuilder|add_oc_id_cb',
-    default => ['' => 'Add Output Channel'],
-    constrain => { active => 1 },
-    js => "onChange='submit()'",
-    useTable => 0,
-&>
-</div>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
-<%perl>;
+        if (scalar keys %got_ocs > 1 || @available_ocs) {
+            my $oc_sub = sub {
+                my $ocid = $_[0]->get_id;
+                if ($_[1] eq 'enabled') {
+                    return 'Yes'
+                        if $comp->get_primary_oc_id($_[0]->get_site_id) == $ocid;
+                    $m->scomp(
+                        '/widgets/profile/checkbox.mc',
+                        name     => 'enabled',
+                        value    => $ocid,
+                        checked  => $_[0]->is_enabled,
+                        useTable => 0
+                    );
+                }
+            };
+
+            my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
+                $comp->get_sites;
+
+            my $oc_sel_sub = sub {
+                return if $poc_ids{$_[0]->get_id};
+                return ['Delete', 'rem_oc'];
+            };
+
+            $m->comp(
+                '/widgets/wrappers/sharky/table_top.mc',
+                caption => 'Output Channels',
+                number  => ++$num,
+            );
+            $m->comp(
+                '/widgets/listManager/listManager.mc',
+                object         => 'output_channel',
+                userSort       => 0,
+                def_sort_field => 'name',
+                objs           => scalar $comp->get_output_channels,
+                addition       => undef,
+                fields         => [qw(name description site enabled)],
+                field_titles   => { enabled => 'Enabled' },
+                field_values   => $oc_sub,
+                profile        => undef,
+                select         => $oc_sel_sub,
+            );
+
+            if (@available_ocs) {
+                $m->print(qq{<div class="actions">\n});
+                $m->comp(
+                    '/widgets/select_object/select_object.mc',
+                    object     => 'output_channel',
+                    objs       => \@available_ocs,
+                    field      => 'name',
+                    no_persist => 1,
+                    getter     => $oc_name_getter,
+                    name       => 'formBuilder|add_oc_id_cb',
+                    default    => ['' => 'Add Output Channel'],
+                    js         => "onChange='submit()'",
+                    useTable   => 0,
+                );
+                $m->print("</div>\n");
+            }
+            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+        }
     }
 
     # display elements contained by this asset type
@@ -194,40 +230,49 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
     # Output the actions.
     my $containers = $comp->get_containers;
 
-    $m->comp('/widgets/wrappers/sharky/table_top.mc',
-             caption => 'Existing Subelement types',
-             number  => ++$num );
+    $m->comp(
+        '/widgets/wrappers/sharky/table_top.mc',
+        caption => 'Existing Subelement types',
+        number  => ++$num,
+    );
 
     unless($no_edit) {
         $m->print(qq{<div style="padding: 5px;">});
-        $m->comp('/widgets/profile/imageSubmit.mc',
-                 formName => "cont_profile",
-                 callback => "formBuilder|addElementType_cb",
-                 image    => "add_sub_element_lgreen",
+        $m->comp(
+            '/widgets/profile/imageSubmit.mc',
+            formName => "cont_profile",
+            callback => "formBuilder|addElementType_cb",
+            image    => "add_sub_element_lgreen",
         );
         $m->print(qq{</div>});
     }
 
-    $m->comp('/widgets/listManager/listManager.mc',
-             object         => 'element_type',
-             objs           => $containers,
-             behavior       => 'expand',
-             addition       => undef,
-             fields         => [qw(name type_name description)],
-             profile        => undef,
-             select         => $no_del ? undef : ['Delete', 'element_type|delete_sub'],
+    $m->comp(
+        '/widgets/listManager/listManager.mc',
+        object         => 'element_type',
+        objs           => $containers,
+        addition       => undef,
+        fields         => [qw(name biz_class_id description)],
+        profile        => undef,
+        select         => $no_del ? undef : ['Delete', 'element_type|delete_sub'],
+        alter     => {
+            biz_class_id => sub {
+                return 'Subelement' unless $_[1]->get_top_level;
+                return get_disp_name($_[0]);
+            },
+        },
     );
 
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
-
 }
 
         # display existing attributes for this asset type
         if (defined $id) {
-
-            $m->comp("/widgets/wrappers/sharky/table_top.mc",
-                     caption => "Custom Fields",
-                     number  => ++$num);
+            $m->comp(
+                '/widgets/wrappers/sharky/table_top.mc',
+                caption => "Custom Fields",
+                number  => ++$num,
+            );
 
             # mangle the attrs and meta to match the existing display code.
             my $all_data = $comp->get_field_types;
@@ -280,64 +325,73 @@ my %sites = map { $_->get_id => 1 } $comp->get_sites;
 
 if (!$no_edit && defined $id) {
     # Output the formBuilder.
-    $m->comp('/widgets/formBuilder/formBuilder.mc',
-             numFields => 0,
-             widget    => 1,
-             stay      => 1,
-             formName  => 'cont_profile',
-             numFields => $num_fields,
-             num       => ++$num,
-             caption   => 'Add New Field',
-             useRequired   => 1,
-             useQuantifier => 1
+    $m->comp(
+        '/widgets/formBuilder/formBuilder.mc',
+        numFields     => 0,
+        widget        => 1,
+        stay          => 1,
+        formName      => 'cont_profile',
+        numFields     => $num_fields,
+        num           => ++$num,
+        caption       => 'Add New Field',
+        useRequired   => 1,
+        useQuantifier => 1
     );
 } else {
     # Add the buttons.
-    $m->comp('/widgets/profile/hidden.mc',
-              name  => 'isNew',
-              value => 1,
+    $m->comp(
+        '/widgets/profile/hidden.mc',
+        name  => 'isNew',
+        value => 1,
     );
-    $m->comp('/widgets/profile/formButtons.mc',
-             type => $type,
-             val => 'next_dkgreen',
-             section => $section,
-             no_del => 1,
-             no_save => $no_edit,
-             widget  => "formBuilder",
+    $m->comp(
+        '/widgets/profile/formButtons.mc',
+        type => $key_name,
+        val => 'next_dkgreen',
+        section => $section,
+        no_del => 1,
+        no_save => $no_edit,
+        widget  => "formBuilder",
     );
 }
-
 </%perl>
 </form>
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
-
-%#-- End HTML --#
-
-
-%#-- Once Section --#
 <%once>;
-my $class = 'Bric::Biz::ElementType';
-my $type = 'element_type';
-my $section = 'admin';
-my $disp = get_disp_name('element_type'); # HACK!
-my $sel_sub = sub {
+my $class    = 'Bric::Biz::ElementType';
+my $key_name = 'element_type';
+my $section  = 'admin';
+my $disp     = get_disp_name('element_type'); # HACK!
+
+my $sel_sub  = sub {
     return unless chk_authz($_[0], EDIT, 1);
     return ['Delete', 'rem_site'];
 };
+
 my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
 my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+
 my $oc_name_getter = sub {
     my $o = shift;
     return $ng->($o) . ' (' . $sg->($o) . ')';
 };
-</%once>
 
-%#-- Args Section --#
+my $type_vals = { %{ $class->my_meths->{biz_class_id} } };
+
+{
+    # HACK. There must be a better way to get rid of the Story option!
+    my $story_pkg_id = get_class_info('story')->get_id;
+    my $tmp = [];
+    foreach (@{ $type_vals->{props}{vals}}) {
+        push @$tmp, $_ unless $_->[0] == $story_pkg_id;
+    }
+    $type_vals->{props}{vals} = $tmp;
+    $type_vals->{disp} = 'Media Type';
+}
+</%once>
 <%args>
 $id => undef
 </%args>
-
-%#-- Init Section --#
 <%init>;
 # Do any redirects first.
 do_queued_redirect();
@@ -357,8 +411,37 @@ my $no_del = !$id || $no_edit;
 # Get the name for the breadcrumb trail.
 my $crumb = $comp->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
-</%init>
 
+# Figure out its type.
+my $exclude = { map { $_ => 1 } qw(
+    active
+    media
+    top_level
+    biz_class_id
+    key_name
+) };
+my $type = 'Subelement';
+if (defined $id) {
+    if ($comp->is_top_level) {
+        $exclude->{paginated} = 1;
+        $type = get_disp_name($comp->get_biz_class_id);
+    } else {
+        $exclude->{fixed_uri} = 1;
+    }
+} else {
+    @{$exclude}{qw(paginated fixed_uri related_story related_media)}
+        = (1, 1, 1, 1);
+}
+
+my $sites = $c->get('__SITES__');
+
+unless ($sites) {
+    $sites = Bric::Biz::Site->list({ active => 1 });
+    $c->set('__SITES__', $sites);
+}
+
+$sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
+</%init>
 <%doc>
 ###############################################################################
 

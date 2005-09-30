@@ -94,7 +94,6 @@ use Bric::App::Callback::Profile::Contrib;
 use Bric::App::Callback::Profile::Desk;
 use Bric::App::Callback::Profile::Dest;
 use Bric::App::Callback::Profile::ElementData;
-use Bric::App::Callback::Profile::ElementType;
 use Bric::App::Callback::Profile::FormBuilder;
 use Bric::App::Callback::Profile::Grp;
 use Bric::App::Callback::Profile::Job;

@@ -392,6 +392,33 @@ Added C<get_values()> and C<set_values()> methods to the field class
 (Bric::Biz::Element::Field) to make getting and setting multivalue fields
 easier and more centralized. [David]
 
+=item *
+
+Removed the unused and meaningless C<referenced> attribute from
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>. [David]
+
+=item *
+
+Removed the mostly unused and meaningless C<publishable> attribute from
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
+[David]
+
+=item *
+
+Turned Bric::Biz::ATType into an appendix: something that's there, and may
+have served a purpose in the past, but isn't needed now. All of its attributes
+have been moved to L<Bric::Biz::ElementType|Bric::Biz::ElementType>, and you
+should still be able to get the ATType object from existing elements, but new
+elements won't need it anymore. It has been removed from the UI, but the SOAP
+interface and the class itself remain for now. ATType will be completely
+removed in a future version of Bricolage. [David]
+
+=item *
+
+The Element Type profile no longer displays the "Sites" section if there is
+only one site, and no longer displays the output channel section if there is
+only one output channel. [David]
+
 =back
 
 =cut

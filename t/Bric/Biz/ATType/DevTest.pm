@@ -8,32 +8,41 @@ use Bric::Util::Grp::ATType;
 use Bric::Util::DBI ':junction';
 
 sub table {'at_type '}
-my $story_att_id = 1;
 my $story_class_id = Bric::Biz::ATType::STORY_CLASS_ID;
 my $media_class_id = 46;
 my $image_class_id = 50;
 
-my %et = ( name => 'Bogus',
-           description => 'Bogus ATType',
-         );
+my %et = (
+    name => 'Bogus',
+    description => 'Bogus ATType',
+);
 
 ##############################################################################
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(9) {
+sub test_lookup : Test(11) {
     my $self = shift;
-    ok( my $et = Bric::Biz::ATType->lookup({ id => $story_att_id }),
-        "Look up story ATType" );
-    is( $et->get_id, $story_att_id, "Check that the ID is the same" );
+
+    ok my $att = Bric::Biz::ATType->new({
+        name => 'foo',
+        top_level => 1,
+    }), 'Create a new ATType';
+    ok $att->save, 'Save it';
+    my $id = $att->get_id;
+    $self->add_del_ids($id);
+
+    ok( $att = Bric::Biz::ATType->lookup({ id => $id }),
+        "Look up the ATType" );
+    is( $att->get_id, $id, 'Check that the ID is the same' );
     # Check a few attributes.
-    ok( $et->is_active, "Check that it's activated" );
-    ok( !$et->get_fixed_url, "Check not fixed URL" );
-    ok( $et->get_top_level, "Check is top level" );
-    ok( !$et->get_media, "Check not media" );
-    ok( !$et->get_related_story, "Check not related story" );
-    ok( !$et->get_related_media, "Check not related media" );
-    is( $et->get_biz_class_id, $story_class_id, "Check no biz class ID" );
+    ok( $att->is_active, 'Check that it is activated' );
+    ok( !$att->get_fixed_url, 'Check not fixed URL' );
+    ok( $att->get_top_level, 'Check is top level' );
+    ok( !$att->get_media, 'Check not media' );
+    ok( !$att->get_related_story, 'Check not related story' );
+    ok( !$att->get_related_media, 'Check not related media' );
+    is( $att->get_biz_class_id, $story_class_id, 'Check no biz class ID' );
 }
 
 ##############################################################################
@@ -82,13 +91,13 @@ sub test_list : Test(60) {
     ok( @ets = Bric::Biz::ATType->list({
         name => ANY("$et{name}1", 'Insets')
     }), "Look up name ANY('$et{name}1', 'Insets')" );
-    is( scalar @ets, 2, "Check for 2 element types" );
+    is( scalar @ets, 1, "Check for 1 element type" );
 
     # Try ANY(name + wildcard).
     ok( @ets = Bric::Biz::ATType->list({
         name => ANY("$et{name}%", 'Related%')
     }), "Look up name ANY('$et{name}%', 'Related%')" );
-    is( scalar @ets, 7, "Check for 7 element types" );
+    is( scalar @ets, 5, "Check for 5 element types" );
 
     # Try ANY(ID).
     ok @ets = Bric::Biz::ATType->list({
@@ -118,7 +127,7 @@ sub test_list : Test(60) {
     ok( @ets = Bric::Biz::ATType->list({
         description => ANY("$et{description}%", "Related%")
     }), "Look up description ANY('$et{description}%', 'Related%'" );
-    is( scalar @ets, 7, "Check for 7 element types" );
+    is( scalar @ets, 5, "Check for 5 element types" );
 
     # Try grp_id.
     ok( @ets = Bric::Biz::ATType->list({ grp_id => $grp_id }),
@@ -150,31 +159,31 @@ sub test_list : Test(60) {
     # Try active. There are 7 existing already.
     ok( @ets = Bric::Biz::ATType->list({ active => 1 }),
         "Look up active => 1" );
-    is( scalar @ets, 12, "Check for 12 element types" );
+    is( scalar @ets, 5, "Check for 5 element types" );
 
     # Try fixed_uri, related_story, and related_media. There's one of each
     # already.
     foreach my $prop (qw(fixed_url related_media related_story)) {
         ok( @ets = Bric::Biz::ATType->list({ $prop => 1 }),
             "Look up $prop => 1" );
-        is( scalar @ets, 4, "Check for 4 element types" );
+        is( scalar @ets, 3, "Check for 3 element types" );
 
     }
 
     # Try top_level. There are three already.
     ok( @ets = Bric::Biz::ATType->list({ top_level => 1 }),
         "Look up top_level => 1" );
-    is( scalar @ets, 5, "Check for 5 element types" );
+    is( scalar @ets, 2, "Check for 2 element types" );
 
     # Try media. There is one already.
     ok( @ets = Bric::Biz::ATType->list({ media => 1 }),
         "Look up media => 1" );
-    is( scalar @ets, 3, "Check for 3 element types" );
+    is( scalar @ets, 2, "Check for 2 element types" );
 
     # Try story class type. There are six already.
     ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $story_class_id }),
         "Look up biz_class_id $story_class_id" );
-    is( scalar @ets, 9, "Check for 9 element types" );
+    is( scalar @ets, 3, "Check for 3 element types" );
 
     # Try media class type. There is one already.
     ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $media_class_id }),
@@ -182,15 +191,15 @@ sub test_list : Test(60) {
     is( scalar @ets, 2, "Check for 1 element types" );
 
     # Try image class type.
-    ok( @ets = Bric::Biz::ATType->list({ biz_class_id => $image_class_id }),
+    ok( !(@ets = Bric::Biz::ATType->list({ biz_class_id => $image_class_id })),
         "Look up biz_class_id $image_class_id" );
-    is( scalar @ets, 1, "Check for 1 element type" );
+    is( scalar @ets, 0, "Check for 0 element types" );
 
     # Try story and media class types.
     ok( @ets = Bric::Biz::ATType->list({
         biz_class_id => ANY($story_class_id, $media_class_id),
     }), "Look up biz_class_id ANY($story_class_id, $media_class_id)" );
-    is( scalar @ets, 11, "Check for 11 element types" );
+    is( scalar @ets, 5, "Check for 5 element types" );
 
 }
 
@@ -252,7 +261,7 @@ sub test_list_ids : Test(21) {
     # Try active. There are 7 existing already.
     ok( @et_ids = Bric::Biz::ATType->list_ids({ active => 1 }),
         "Look up active => 1" );
-    is( scalar @et_ids, 12, "Check for 12 element types" );
+    is( scalar @et_ids, 5, "Check for 5 element types" );
 }
 
 ##############################################################################

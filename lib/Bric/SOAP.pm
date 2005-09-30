@@ -735,13 +735,20 @@ The XSD source:
                    <xs:restriction base="xs:string"/>
                  </xs:simpleType>
                </xs:element>
-               <xs:element name="type">
+               <xs:element name="top_level" type="xs:boolean"/>
+               <xs:element name="paginated" type="xs:boolean"/>
+               <xs:element name="fixed_uri" type="xs:boolean"/>
+               <xs:element name="related_story" type="xs:boolean"/>
+               <xs:element name="related_media" type="xs:boolean"/>
+               <xs:element name="is_media" type="xs:boolean"/>
+               <xs:element name="biz_class">
                  <xs:simpleType>
-                   <xs:restriction base="xs:string"/>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="128"/>
+                   </xs:restriction>
                  </xs:simpleType>
                </xs:element>
                <xs:element name="active" type="xs:boolean"/>
-               <xs:element name="top_level" type="xs:boolean"/>
                <xs:element name="sites" minOccurs="0">
                  <xs:complexType>
                    <xs:sequence>

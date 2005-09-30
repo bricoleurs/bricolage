@@ -370,7 +370,7 @@ sub create : Callback {
             # Make sure a non-Cover uses a slug
             my $at_id = $param->{"$widget|at_id"};
             my $element = Bric::Biz::ElementType->lookup({id => $at_id});
-            unless ($element->get_fixed_url) {
+            unless ($element->is_fixed_uri) {
                 unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
                     add_msg('Slug required for non-fixed (non-cover) story type.');
                     $ret = 1;
@@ -973,7 +973,7 @@ $save_data = sub {
         # Make sure a non-Cover has a slug
         my $at_id = $story->get_element_type_id;
         my $element = Bric::Biz::ElementType->lookup({id => $at_id});
-        unless ($element->get_fixed_url) {
+        unless ($element->is_fixed_uri) {
             unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
                 add_msg('Slug required for non-fixed (non-cover) story type.');
                 $data_errors = 1;

@@ -157,7 +157,7 @@ $do_contrib_type = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
             # There's already an attribute by that name.
-            add_msg("An \"[_1]\" attribute already exists. Please try another name.", $param->{fb_name});
+            add_msg('The "[_1]" field type already exists. Please try another key name.', $param->{fb_name});
             $no_save = 1;
         } else {
             my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -241,18 +241,45 @@ $do_element_type = sub {
     # Check if we need to inhibit a save based on some special conditions
     $no_save = $check_save_element_type->(\@cs, $param, $key);
 
-    add_msg("The key name \"[_1]\" is already used by another $disp_name.",
+    add_msg(qq{The key name "[_1]" is already used by another $disp_name.},
             $key_name)
       if $no_save;
 
+    my $story_pkg_id = get_class_info('story')->get_id;
+    my $media_pkg_id = get_class_info('media')->get_id;
+
     # Roll in the changes.
     $obj = $get_obj->($class, $param, $key, $obj);
+
+    # All this stuff must come after $get_obj->() !
     $obj->activate;
-    $obj->set_name($param->{name});   # must come after $get_obj !
+    $obj->set_name($param->{name});
 
     $set_key_name->($obj, $param) if defined $key_name and not $no_save;
     $obj->set_description($param->{description});
     $obj->set_burner($param->{burner}) if defined $param->{burner};
+
+    if ($param->{element_type_id}) {
+        # It's an existing type.
+        $obj->set_paginated(     defined $param->{paginated}     ? 1 : 0 );
+        $obj->set_fixed_uri(     defined $param->{fixed_uri}     ? 1 : 0 );
+        $obj->set_related_story( defined $param->{related_story} ? 1 : 0 );
+        $obj->set_related_media( defined $param->{related_media} ? 1 : 0 );
+        $obj->set_biz_class_id( $param->{biz_class_id} )
+            if defined $param->{biz_class_id};
+    }
+
+    else {
+        # It's a new element. Just set the type.
+        $obj->set_top_level($param->{elem_type} eq 'Subelement' ? 0 : 1);
+        if ($param->{elem_type} eq 'Media') {
+            $obj->set_media(1);
+            $obj->set_biz_class_id($media_pkg_id);
+        } else {
+            $obj->set_media(0);
+            $obj->set_biz_class_id($story_pkg_id);
+        }
+    }
 
     # side-effect: returns enabled-OCs hashref.
     # pass in ref to $no_save...
@@ -277,7 +304,7 @@ $do_element_type = sub {
     $obj->add_output_channel($self->value) if $cb_key eq 'add_oc_id';
 
     # Add sites, if it's a top-level element type.
-    if ($cb_key eq 'add_site_id' && $obj->get_top_level) {
+    if ($cb_key eq 'add_site_id' && $obj->is_top_level) {
         my $site_id = $self->value;
         # Only add the site if it has associated output channels.
         if (my $oc_id =
@@ -285,6 +312,7 @@ $do_element_type = sub {
         {
             $obj->add_site($site_id);
             $obj->set_primary_oc_id($oc_id, $site_id);
+            $obj->add_output_channels($oc_id);
         } else {
             add_msg 'Site "[_1]" cannot be associated because it has no ' .
               'output channels',
@@ -431,9 +459,13 @@ $set_primary_ocs = sub {
       map { $obj->get_primary_oc_id($_) } $obj->get_sites;
 
     # Set the primary output channel ID per site
-    if (($cb_key eq 'save' || $cb_key eq 'save_n_stay') && $obj->get_top_level) {
-        my %oc_ids;
-        @oc_ids{map { $_->get_id } $obj->get_sites} = ();
+    if (($cb_key eq 'save' || $cb_key eq 'save_n_stay') && $obj->is_top_level) {
+        # Load up the existing sites and output channels.
+        my %oc_ids = (
+            map { $_ => $obj->get_primary_oc_id($_) }
+            map { $_->get_id }
+            $obj->get_sites
+        );
 
         foreach my $field (keys %$param) {
             next unless $field =~ /^primary_oc_site_(\d+)$/;
@@ -480,8 +512,8 @@ $add_new_attrs = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{$key_name}) {
             # There's already an attribute by that name.
-            add_msg('An "[_1]" attribute already exists. Please try another name.',
-                    $key_name);
+            add_msg('The "[_1]" field type already exists. Please try '
+                    . 'another key name.', $key_name);
             $$no_save = 1;
         } else {
             if ($param->{fb_type} eq 'codeselect') {
@@ -516,7 +548,6 @@ $add_new_attrs = sub {
                 quantifier  => $param->{fb_quant} ? 1 : 0,
                 sql_type    => $sqltype,
                 place       => $param->{fb_position},
-                publishable => 1,
                 max_length  => $max,
                 widget_type => $param->{fb_type},
                 length      => $param->{length},
@@ -552,7 +583,7 @@ $save_element_type_etc = sub {
             } else {
                 # If this is a top-level element type, make sure it as one
                 # site and one OC associated with it.
-                if ($obj->get_top_level) {
+                if ($obj->is_top_level) {
                     my $site_id = $obj->get_sites->[0];
                     unless ($site_id and $obj->get_primary_oc_id($site_id) ) {
                         add_msg("Element type must be associated with at least " .

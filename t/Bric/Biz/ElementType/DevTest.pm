@@ -5,18 +5,24 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Test::Exception;
 use Bric::Biz::ElementType;
+use Bric::Biz::ATType;
 use Bric::Biz::OutputChannel;
+use Bric::Util::DBI qw(:junction);
 
-my %elem = ( name          => 'Test Element',
-             key_name      => 'test_element',
-             description   => 'Testing Element API',
-             burner        => Bric::Biz::ElementType::BURNER_MASON,
-             type_id       => 1,
-             reference     => 0,
-             primary_oc_id => 1);
+my %elem = (
+    name          => 'Test Element',
+    key_name      => 'test_element',
+    description   => 'Testing Element API',
+    burner        => Bric::Biz::ElementType::BURNER_MASON,
+    primary_oc_id => 1,
+    top_level     => 1,
+);
 
-my $story_elem_id = 1;
-my $column_elem_id = 2;
+my $story_et_id    = 1;
+my $column_et_id   = 2;
+my $story_class_id = Bric::Biz::ElementType::STORY_CLASS_ID;
+my $media_class_id = 46;
+my $image_class_id = 50;
 
 sub table { 'element_type' };
 
@@ -24,27 +30,59 @@ sub table { 'element_type' };
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_const : Test(8) {
+sub test_new : Test(25) {
     my $self = shift;
 
-    my %elem = (
-        name        => 'Test Element',
-        description => 'Testing Element API',
+    my %et = (
+        name        => 'Test ElementType',
+        key_name    => 'test_element_type',
+        description => 'Testing Element Type API',
         burner      => Bric::Biz::ElementType->BURNER_MASON,
-        type_id     => 1,
-        reference   => 0
     );
 
-    ok( my $elem = Bric::Biz::ElementType->new, "Create empty element" );
-    isa_ok($elem, 'Bric::Biz::ElementType');
-    isa_ok($elem, 'Bric');
+    ok( my $et = Bric::Biz::ElementType->new, 'Create empty element' );
+    isa_ok($et, 'Bric::Biz::ElementType');
+    isa_ok($et, 'Bric');
 
-    ok( $elem = Bric::Biz::ElementType->new(\%elem), "Create a new element");
+    ok( $et = Bric::Biz::ElementType->new(\%et), 'Create a new element');
     # Check a few of the attributes.
-    is( $elem->get_name, $elem{name}, "Check name" );
-    is( $elem->get_description, $elem{description}, "Check description" );
-    is( $elem->get_burner, $elem{burner}, "Check burner" );
-    is( $elem->get_type_id, $elem{type_id}, "Check type_id" );
+    is( $et->get_name, $et{name},               'Check name' );
+    is( $et->get_key_name, $et{key_name},       'Check key_name' );
+    is( $et->get_description, $et{description}, 'Check description' );
+    is( $et->get_burner, $et{burner},           'Check burner' );
+
+    # Test backwards compatibility with an ATType object.
+    ok my $att = Bric::Biz::ATType->new({
+        name      => 'Testing',
+        top_level => 1,
+        fixed_url => 1,
+    }), 'Create a story element type';
+    ok $att->save, 'Save story element type';
+    $self->add_del_ids($att->get_id, 'at_type');
+
+    ok $et = Bric::Biz::ElementType->new({
+        %et,
+        key_name => $et{key_name} . '+',
+        type_id => $att->get_id,
+    }), 'Create an element type with an ATType object';
+    isa_ok($et, 'Bric::Biz::ElementType');
+    isa_ok($et, 'Bric');
+    is $et->get_type_id, $att->get_id, 'Should have the type ID';
+
+    ok $et->save, 'Save the new element type';
+    ok $et = Bric::Biz::ElementType->lookup({ id => $et->get_id }),
+        'Look up the new element type';
+
+    isa_ok($et, 'Bric::Biz::ElementType');
+    isa_ok($et, 'Bric');
+    is $et->get_type_id, $att->get_id, 'Should have the type ID';
+
+    ok $et->is_fixed_uri,      'Should be fixed_uri';
+    ok $et->is_top_level,      'Should be top level';
+    ok !$et->is_related_story, 'Should not be related story';
+    ok !$et->is_related_media, 'Should not be related media';
+    ok !$et->is_paginated,     'Should not be paginated';
+    ok !$et->is_media,         'Should not be media';
 }
 
 ##############################################################################
@@ -52,20 +90,20 @@ sub test_const : Test(8) {
 sub test_lookup : Test(2) {
     my $self = shift;
     # Look up the ID in the delemabase.
-    ok( my $elem = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
+    ok( my $et = Bric::Biz::ElementType->lookup({ id => $story_et_id }),
         "Look up story element" );
-    is( $elem->get_id, $story_elem_id, "Check the elem ID is the same" );
+    is( $et->get_id, $story_et_id, "Check the elem ID is the same" );
 }
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(36) {
+sub test_list : Test(65) {
     my $self = shift;
 
     # Create a new element group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new
-        ({ name => 'Test ElementGrp' }),
-        "Create group" );
+    ok( my $grp = Bric::Util::Grp::ElementType->new({
+        name => 'Test ElementGrp'
+    }), "Create group" );
 
     # Create some test records.
     for my $n (1..5) {
@@ -73,7 +111,14 @@ sub test_list : Test(36) {
         # Make sure the name is unique.
         $args{name}        .= $n;
         $args{key_name}    .= $n;
-        $args{description} .= $n if $n % 2;
+        if ($n % 2) {
+            # There'll be three of these.
+            $args{description} .= $n;
+            @args{qw(fixed_uri related_media related_story)} = (1,1,1);
+        } else {
+            # There'll be two of these.
+            @args{qw(top_level media biz_class_id)} = (1,1,$media_class_id);
+        }
         ok( my $elem = Bric::Biz::ElementType->new(\%args), "Create $args{name}" );
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
@@ -87,63 +132,276 @@ sub test_list : Test(36) {
     $self->add_del_ids([$grp_id], 'grp');
 
     # Try name + wildcard.
-    ok( my @elems = Bric::Biz::ElementType->list({ name => "$elem{name}%" }),
+    ok( my @ets = Bric::Biz::ElementType->list({ name => "$elem{name}%" }),
         "Look up name $elem{name}%" );
-    is( scalar @elems, 5, "Check for 5 elements" );
+    is( scalar @ets, 5, "Check for 5 elements" );
+    isa_ok $_, 'Bric::Biz::ElementType' for @ets;
+
+    # Try ANY(name).
+    ok( @ets = Bric::Biz::ElementType->list({
+        name => ANY("$elem{name}1", 'Inset')
+    }), "Look up name ANY('$elem{name}1', 'Inset')" );
+    is( scalar @ets, 2, "Check for 2 element types" );
+
+    # Try ANY(ID).
+    ok @ets = Bric::Biz::ElementType->list({
+        id => ANY($ets[0]->get_id, $ets[1]->get_id )
+    }), "Look up ANY(\@ids)";
+    is( scalar @ets, 2, "Check for 2 element types" );
 
     # Try description.
-    ok( @elems = Bric::Biz::ElementType->list
+    ok( @ets = Bric::Biz::ElementType->list
         ({ description => "$elem{description}" }),
         "Look up description '$elem{description}'" );
-    is( scalar @elems, 2, "Check for 2 elements" );
+    is( scalar @ets, 2, "Check for 2 elements" );
+
+    # Try description + wild card.
+    ok( @ets = Bric::Biz::ElementType->list({
+        description => "$elem{description}%"
+    }), "Look up description '$elem{description}%'" );
+    is( scalar @ets, 5, "Check for 5 element types" );
+
+    # Try ANY(description).
+    ok( @ets = Bric::Biz::ElementType->list({
+        description => ANY($elem{description}, "$elem{description}1")
+    }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
+    is( scalar @ets, 3, "Check for 3 element types" );
 
     # Try grp_id.
     my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
-    ok( @elems = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
+    ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
-    is( scalar @elems, 3, "Check for 3 elements" );
+    is( scalar @ets, 3, "Check for 3 elements" );
     # Make sure we've got all the Group IDs we think we should have.
-    foreach my $elem (@elems) {
+    foreach my $elem (@ets) {
         my %grp_ids = map { $_ => 1 } @{ $elem->get_grp_ids };
         ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
           "Check for both IDs" );
     }
 
+    # Try ANY(grp_id).
+    ok( @ets = Bric::Biz::ElementType->list({ grp_id => ANY ($grp_id) }),
+        "Look up grp_id ANY($grp_id)" );
+    is( scalar @ets, 3, "Check for 3 element types" );
+
     # Try deactivating one group membership.
-    ok( my $mem = $grp->has_member({ obj => $elems[0] }), "Get member" );
+    ok( my $mem = $grp->has_member({ obj => $ets[0] }), "Get member" );
     ok( $mem->deactivate->save, "Deactivate and save member" );
 
     # Now there should only be two using grp_id.
-    ok( @elems = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
+    ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
-    is( scalar @elems, 2, "Check for 2 elements" );
+    is( scalar @ets, 2, "Check for 2 element types" );
+
+    # Try active. There are 13 existing already.
+    ok( @ets = Bric::Biz::ElementType->list({ active => 1 }),
+        "Look up active => 1" );
+    is( scalar @ets, 18, "Check for 18 element types" );
 
     # Try output channel.
-    ok( @elems = Bric::Biz::ElementType->list({ output_channel => 1 }),
+    ok( @ets = Bric::Biz::ElementType->list({ output_channel => 1 }),
         "Lookup output channel 1" );
     # Make sure we have a whole bunch.
-    is( scalar @elems, 6, "Check for 6 elements" );
+    is( scalar @ets, 6, "Check for 6 element types" );
 
     # Try data_name.
-    ok( @elems = Bric::Biz::ElementType->list
-        ({ data_name => "Deck" }),
-        "Look up data_name 'Deck'" );
-    is( scalar @elems, 3, "Check for 3 elements" );
+    ok( @ets = Bric::Biz::ElementType->list({
+        data_name => "Deck"
+    }), "Look up data_name 'Deck'" );
+    is( scalar @ets, 3, "Check for 3 element types" );
 
-    # Try type_id.
-    ok( @elems = Bric::Biz::ElementType->list({ type_id => 2 }),
-        "Look up type_id 2" );
-    is( scalar @elems, 2, "Check for 2 elements" );
+    # Try ANY(data_name).
+    ok( @ets = Bric::Biz::ElementType->list({
+        data_name => ANY(qw(Deck Paragraph))
+    }), 'Look up data_name ANY(qw(Deck Paragraph))');
+    is( scalar @ets, 4, 'Check for 4 element types' );
+
+    # Try fixed_uri, related_story, and related_media. There's one of each
+    # already.
+    foreach my $prop (qw(fixed_uri related_media related_story)) {
+        ok( @ets = Bric::Biz::ElementType->list({ $prop => 1 }),
+            "Look up $prop => 1" );
+        is( scalar @ets, 4, "Check for 4 element types" );
+    }
 
     # Try top_level
-    ok( @elems = Bric::Biz::ElementType->list({ top_level => 1 }),
+    ok( @ets = Bric::Biz::ElementType->list({ top_level => 1 }),
         "Look up top_level => 1" );
-    is( scalar @elems, 11, "Check for 11 elements" );
+    is( scalar @ets, 11, "Check for 11 element types" );
 
     # Try media
-    ok( @elems = Bric::Biz::ElementType->list({ media => 1 }),
+    ok( @ets = Bric::Biz::ElementType->list({ media => 1 }),
         "Look up media => 1" );
-    is( scalar @elems, 2, "Check for 2 elements" );
+    is( scalar @ets, 4, 'Check for 4 element types' );
+
+    # Try media class type. There i one already.
+    ok( @ets = Bric::Biz::ElementType->list({ biz_class_id => $media_class_id }),
+        "Look up biz_class_id $media_class_id" );
+    is( scalar @ets, 2, "Check for 1 element types" );
+
+    # Try image class type.
+    ok( @ets = Bric::Biz::ElementType->list({ biz_class_id => $image_class_id }),
+        "Look up biz_class_id $image_class_id" );
+    is( scalar @ets, 2, "Check for 2 element type" );
+
+    # Try story and media class types.
+    ok( @ets = Bric::Biz::ElementType->list({
+        biz_class_id => ANY($story_class_id, $media_class_id),
+    }), "Look up biz_class_id ANY($story_class_id, $media_class_id)" );
+    is( scalar @ets, 16, "Check for 16 element types" );
+}
+
+##############################################################################
+# Test list_ids().
+sub test_list_ids : Test(62) {
+    my $self = shift;
+
+    # Create a new element group.
+    ok( my $grp = Bric::Util::Grp::ElementType->new({
+        name => 'Test ElementGrp'
+    }), "Create group" );
+
+    # Create some test records.
+    for my $n (1..5) {
+        my %args = %elem;
+        # Make sure the name is unique.
+        $args{name}        .= $n;
+        $args{key_name}    .= $n;
+        if ($n % 2) {
+            # There'll be three of these.
+            $args{description} .= $n;
+            @args{qw(fixed_uri related_media related_story)} = (1,1,1);
+        } else {
+            # There'll be two of these.
+            @args{qw(top_level media biz_class_id)} = (1,1,$media_class_id);
+        }
+        ok( my $elem = Bric::Biz::ElementType->new(\%args), "Create $args{name}" );
+        ok( $elem->save, "Save $args{name}" );
+        # Save the ID for deleting.
+        $self->add_del_ids([$elem->get_id]);
+        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
+        $grp->add_member({ obj => $elem }) if $n % 2;
+    }
+
+    ok( $grp->save, "Save group" );
+    ok( my $grp_id = $grp->get_id, "Get group ID" );
+    $self->add_del_ids([$grp_id], 'grp');
+
+    # Try name + wildcard.
+    ok( my @et_ids = Bric::Biz::ElementType->list_ids({ name => "$elem{name}%" }),
+        "Look up name $elem{name}%" );
+    is( scalar @et_ids, 5, "Check for 5 elements" );
+    like $_, qr/^\d+$/, "$_ should be an ID" for @et_ids;
+
+    # Try ANY(name).
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        name => ANY("$elem{name}1", 'Inset')
+    }), "Look up name ANY('$elem{name}1', 'Inset')" );
+    is( scalar @et_ids, 2, "Check for 2 element type IDs" );
+
+    # Try ANY(ID).
+    ok @et_ids = Bric::Biz::ElementType->list_ids({
+        id => ANY(@et_ids[0..1])
+    }), "Look up ANY(\@ids)";
+    is( scalar @et_ids, 2, "Check for 2 element type IDs" );
+
+    # Try description.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids
+        ({ description => "$elem{description}" }),
+        "Look up description '$elem{description}'" );
+    is( scalar @et_ids, 2, "Check for 2 elements" );
+
+    # Try description + wild card.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        description => "$elem{description}%"
+    }), "Look up description '$elem{description}%'" );
+    is( scalar @et_ids, 5, "Check for 5 element type IDs" );
+
+    # Try ANY(description).
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        description => ANY($elem{description}, "$elem{description}1")
+    }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
+    is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+
+    # Try grp_id.
+    my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @et_ids, 3, "Check for 3 elements" );
+
+    # Try ANY(grp_id).
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => ANY ($grp_id) }),
+        "Look up grp_id ANY($grp_id)" );
+    is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+
+    # Try deactivating one group membership.
+    ok( my $mem = $grp->has_member({
+        id => $et_ids[0],
+        package => 'Bric::Biz::ElementType'
+    }), "Get member" );
+    ok( $mem->deactivate->save, "Deactivate and save member" );
+
+    # Now there should only be two using grp_id.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
+        "Look up grp_id $grp_id" );
+    is( scalar @et_ids, 2, "Check for 2 element type IDs" );
+
+    # Try active. There are 13 existing already.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ active => 1 }),
+        "Look up active => 1" );
+    is( scalar @et_ids, 18, "Check for 18 element type IDs" );
+
+    # Try output channel.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ output_channel => 1 }),
+        "Lookup output channel 1" );
+    # Make sure we have a whole bunch.
+    is( scalar @et_ids, 6, "Check for 6 element type IDs" );
+
+    # Try data_name.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        data_name => "Deck"
+    }), "Look up data_name 'Deck'" );
+    is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+
+    # Try ANY(data_name).
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        data_name => ANY(qw(Deck Paragraph))
+    }), 'Look up data_name ANY(qw(Deck Paragraph))');
+    is( scalar @et_ids, 4, 'Check for 4 element type IDs' );
+
+    # Try fixed_uri, related_story, and related_media. There's one of each
+    # already.
+    foreach my $prop (qw(fixed_uri related_media related_story)) {
+        ok( @et_ids = Bric::Biz::ElementType->list_ids({ $prop => 1 }),
+            "Look up $prop => 1" );
+        is( scalar @et_ids, 4, "Check for 4 element type IDs" );
+    }
+
+    # Try top_level
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ top_level => 1 }),
+        "Look up top_level => 1" );
+    is( scalar @et_ids, 11, "Check for 11 element type IDs" );
+
+    # Try media
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ media => 1 }),
+        "Look up media => 1" );
+    is( scalar @et_ids, 4, 'Check for 4 element type IDs' );
+
+    # Try media class type. There i one already.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ biz_class_id => $media_class_id }),
+        "Look up biz_class_id $media_class_id" );
+    is( scalar @et_ids, 2, "Check for 1 element type IDs" );
+
+    # Try image class type.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ biz_class_id => $image_class_id }),
+        "Look up biz_class_id $image_class_id" );
+    is( scalar @et_ids, 2, "Check for 2 element type ID" );
+
+    # Try story and media class types.
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({
+        biz_class_id => ANY($story_class_id, $media_class_id),
+    }), "Look up biz_class_id ANY($story_class_id, $media_class_id)" );
+    is( scalar @et_ids, 16, "Check for 16 element type IDs" );
 }
 
 ##############################################################################
@@ -172,7 +430,7 @@ sub test_save : Test(6) {
 ##############################################################################
 sub test_oc : Test(60) {
     my $self = shift;
-    ok( my $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
+    ok( my $at = Bric::Biz::ElementType->lookup({ id => $story_et_id }),
         "Lookup story element" );
 
     # Try get_ocs.
@@ -205,7 +463,7 @@ sub test_oc : Test(60) {
     is( scalar @$oces, 2, "Check for two OCs again" );
 
     # Now lookup the story element from the database and try get_ocs again.
-    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_et_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 4" );
     is( scalar @$oces, 2, "Check for two OCs 3" );
@@ -227,7 +485,7 @@ sub test_oc : Test(60) {
         "Check that it is reset after we save");
 
     # Make sure the new value persists after a save and lookup.
-    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_et_id }),
         "Lookup story element again" );
     is( $at->get_primary_oc_id(100), $ocid,
         "Check that it is reset after we save");
@@ -243,19 +501,19 @@ sub test_oc : Test(60) {
     ok( $at->save, "Save restored primary OC ID" );
 
     # Now add the new output channel to the column element.
-    ok( my $col = Bric::Biz::ElementType->lookup({ id => $column_elem_id }),
+    ok( my $col = Bric::Biz::ElementType->lookup({ id => $column_et_id }),
         "Lookup column element" );
     ok( $col->add_output_channels([$oc->get_id]), "Add Foober to column" );
     ok( $col->save, "Save column element" );
 
     # Look up column and make sure it has two output channels.
-    ok( $col = Bric::Biz::ElementType->lookup({ id => $column_elem_id }),
+    ok( $col = Bric::Biz::ElementType->lookup({ id => $column_et_id }),
         "Lookup column element again" );
     ok( $oces = $at->get_output_channels, "Get column OCs" );
     is( scalar @$oces, 2, "Check for two column OCs" );
 
     # Lookup the story element from the database again and try get_ocs again.
-    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_elem_id }),
+    ok( $at = Bric::Biz::ElementType->lookup({ id => $story_et_id }),
         "Lookup story element again" );
     ok( $oces = $at->get_output_channels, "Get existing OCs 5" );
     is( scalar @$oces, 2, "Check for two OCs 3" );
@@ -284,50 +542,54 @@ sub test_oc : Test(60) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(22) {
+sub test_site : Test(26) {
     my $self = shift;
 
     #dependant on intial values
     my ($top_level_element_id, $element_id) = (1,6);
 
     #create two dummy sites
+    ok my $site1 = Bric::Biz::Site->new({
+        name => "Dummy 1",
+        domain_name => 'www.dummy1.com',
+    }), 'create first dummy site';
 
-    my $site1 = Bric::Biz::Site->new( { name => "Dummy 1",
-                                        domain_name => 'www.dummy1.com',
-                                      });
-
-    ok( $site1->save(), "Create first dummy site");
+    ok $site1->save, "Save first dummy site";
     my $site1_id = $site1->get_id;
     $self->add_del_ids($site1_id, 'site');
 
-    ok( my $oc1 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "1",
-                                                 site_id => $site1_id }),
-        "Create OC1" );
-    ok( $oc1->save, "Save OC1" );
-    ok( my $oc1_id = $oc1->get_id, "Get OC ID1" );
+    ok my $oc1 = Bric::Biz::OutputChannel->new({
+        name    => __PACKAGE__ . "1",
+        site_id => $site1_id 
+    }), 'Create OC';
+    ok $oc1->save, 'Save OC1';
+    ok my $oc1_id = $oc1->get_id, "Get OC ID1";
     $self->add_del_ids($oc1_id, 'output_channel');
 
-    my $site2 = Bric::Biz::Site->new( { name => "Dummy 2",
-                                        domain_name => 'www.dummy2.com',
-                                      });
+    ok my $site2 = Bric::Biz::Site->new({
+        name => "Dummy 2",
+        domain_name => 'www.dummy2.com',
+    }), 'Create second dummy site';
 
 
-    ok( $site2->save(), "Create second dummy site");
+    ok $site2->save(), "Save second dummy site";
     my $site2_id = $site2->get_id;
     $self->add_del_ids($site2_id, 'site');
 
-    ok( my $oc2 = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "2",
-                                                 site_id => $site2_id }),
-        "Create OC2" );
-    ok( $oc2->save, "Save OC2" );
-    ok( my $oc2_id = $oc2->get_id, "Get OC ID2" );
+    ok my $oc2 = Bric::Biz::OutputChannel->new({
+        name    => __PACKAGE__ . "2",
+        site_id => $site2_id
+    }), 'Create OC2';
+    ok $oc2->save, 'Save OC2';
+    ok my $oc2_id = $oc2->get_id, 'Get OC ID2';
     $self->add_del_ids($oc2_id, 'output_channel');
 
-    my $top_level_element = Bric::Biz::ElementType->lookup({id => $top_level_element_id});
-    my $element           = Bric::Biz::ElementType->lookup({id => $element_id});
+    my $top_level_element = Bric::Biz::ElementType->lookup({
+        id => $top_level_element_id
+    });
+    my $element = Bric::Biz::ElementType->lookup({id => $element_id});
 
     #First of all test all exceptions
-
     throws_ok {
         $element->add_site($site1_id);
     } qr /Cannot add sites to non top-level element types/,
@@ -336,59 +598,61 @@ sub test_site : Test(22) {
     throws_ok {
         $element->add_site($site1);
     } qr /Cannot add sites to non top-level element types/,
-      "Check that only top_level objects can add a site";
+      'Check that only top_level objects can add a site';
 
     throws_ok {
-        $top_level_element->add_site(999999999); #Large ID that doesn't exist
-    } qr /No such site/,  # ' trick
-      "Check if site is a real site";
+        $top_level_element->add_site(-1); # Negative ID that doesn't exist
+    } qr /No such site/,
+      'Check if site is a real site';
 
     throws_ok {
         $top_level_element->remove_sites([$site1]);
     } qr /Cannot remove last site from an element/,
-      "Check that you can't remove the last site";
+      'Check that you cannot remove the last site';
 
-    is($site1->get_id, $top_level_element->add_site($site1)->get_id,
-       "Add a new site");
-    ok( $top_level_element->add_output_channels([$oc1_id]),
-        "Associate OC1" );
-    ok( $top_level_element->set_primary_oc_id($oc1_id, $site1_id),
-        "Associate primary OC1" );
+    is $site1->get_id, $top_level_element->add_site($site1)->get_id,
+        'Add a new site';
+    ok $top_level_element->add_output_channels([$oc1_id]),
+        'Associate OC1';
+    ok $top_level_element->set_primary_oc_id($oc1_id, $site1_id),
+        'Associate primary OC1';
 
-    is($site2->get_id, $top_level_element->add_site($site2_id)->get_id, "Add a new site");
-    ok( $top_level_element->add_output_channels([$oc2_id]),
-        "Associate OC2" );
-    ok( $top_level_element->set_primary_oc_id($oc2_id, $site2_id),
-        "Associate primary OC2" );
+    is $site2->get_id, $top_level_element->add_site($site2_id)->get_id,
+        'Add a new site';
+    ok $top_level_element->add_output_channels([$oc2_id]),
+        'Associate OC2';
+    ok $top_level_element->set_primary_oc_id($oc2_id, $site2_id),
+        'Associate primary OC2';
 
     #due to bug in the coll code, one must do a save between add_sites/remove_sites
-
     $top_level_element->save();
 
-    is(scalar @{$top_level_element->get_sites()}, 3,
-       "We should have three sites now");
+    is scalar @{$top_level_element->get_sites()}, 3,
+        'We should have three sites now';
 
     # Try to list elements based on site
+    is scalar @{Bric::Biz::ElementType->list({
+        site_id   => $site1_id,
+        top_level => 1
+    })}, 1, 'Check that list works with site_id as argument';
 
-    is(scalar @{Bric::Biz::ElementType->list({site_id => $site1_id,
-                                            top_level => 1 })}, 1,
-       "Check that list works with site_id as argument");
+    ok $top_level_element->remove_sites([$site1, $site2_id]),
+        'Remove two sites from the top level element';
 
-    $top_level_element->remove_sites([$site1, $site2_id]);
+    ok $top_level_element->save, 'Save the top level element';
 
-    $top_level_element->save();
+    is scalar @{Bric::Biz::ElementType->list({
+        site_id => $site1_id,
+        top_level => 1
+    })}, 0, 'Check that list works with site_id as argument';
 
-    is(scalar @{Bric::Biz::ElementType->list({site_id => $site1_id,
-                                            top_level => 1})}, 0,
-       "Check that list works with site_id as argument");
-
-    is(scalar @{$top_level_element->get_sites()}, 1,
-       "We should have one site now");
+    is scalar @{$top_level_element->get_sites()}, 1,
+        'We should have one site now';
 }
 
 ##############################################################################
 # Make sure that subelement types and fields work properly.
-sub test_subelement_types : Test(45) {
+sub test_subelement_types : Test(39) {
     my $self = shift;
 
     # Create an output channel.
@@ -400,38 +664,12 @@ sub test_subelement_types : Test(45) {
     $self->add_del_ids($oc->get_id, 'output_channel');
     ok $oc->save, "Save the new output channel with its includes";
 
-    # First, we'll need a story element type set.
-    ok my $story_et = Bric::Biz::ATType->new({
-        name      => 'Testing',
-        top_level => 1,
-    }), "Create a story element type";
-    ok $story_et-> save, "Save story element type";
-    $self->add_del_ids($story_et->get_id, 'at_type');
-
-    # Next, a subelement set.
-    ok my $sub_et = Bric::Biz::ATType->new({
-        name      => 'Subby',
-        top_level => 0,
-    }), "Create a subelement element type";
-    ok $sub_et-> save, "Save subelement element type";
-    $self->add_del_ids($sub_et->get_id, 'at_type');
-
-    # And finally, a page subelement set.
-    ok my $page_et = Bric::Biz::ATType->new({
-        name      => 'Pagey',
-        top_level => 0,
-        paginated => 1,
-    }), "Create a page element type";
-    ok $page_et-> save, "Save page element type";
-    $self->add_del_ids($page_et->get_id, 'at_type');
-
     # Create a story type.
     ok my $story_type = Bric::Biz::ElementType->new({
         key_name  => '_testing_',
         name      => 'Testing',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $story_et->get_id,
-        reference => 0, # No idea what this is.
+        top_level => 1,
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
     ok $story_type->add_output_channels([$oc]), "Add the output channel";
@@ -448,7 +686,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -460,7 +697,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 1,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -474,8 +710,6 @@ sub test_subelement_types : Test(45) {
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $sub_et->get_id,
-        reference => 0, # No idea what this is.
     }), "Create a subelement element";
 
     ok $pull_quote->save, "Save the subelement element";
@@ -489,7 +723,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -501,7 +734,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 2,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -513,7 +745,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 0,
         sql_type    => 'date',
         place       => 3,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 
@@ -528,8 +759,8 @@ sub test_subelement_types : Test(45) {
         key_name  => '_page_',
         name      => 'Page',
         burner    => Bric::Biz::ElementType::BURNER_MASON,
-        type__id  => $page_et->get_id,
-        reference => 0, # No idea what this is.
+        top_level => 0,
+        paginated => 1,
     }), "Create a page subelement element";
 
     # Give it a paragraph field.
@@ -540,7 +771,6 @@ sub test_subelement_types : Test(45) {
         quantifier  => 0,
         sql_type    => 'short',
         place       => 1,
-        publishable => 1, # Huh?
         max_length  => 0, # Unlimited
     }), "Add a field";
 

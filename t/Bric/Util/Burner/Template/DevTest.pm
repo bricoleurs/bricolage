@@ -7,7 +7,7 @@ use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-sub test_burn : Test(133) {
+sub test_burn : Test(127) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };

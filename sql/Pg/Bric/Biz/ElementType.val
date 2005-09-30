@@ -2,8 +2,6 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Target DBMS: PostgreSQL 7.1.2
--- Author: David Wheeler <david@wheeler.net>
 --
 
 -- Create groups
@@ -80,10 +78,13 @@ VALUES ('641', '35', '6', '1');
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('641', '341', '641');
 
--- Create elements
+-- Create element types
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('1', 'Story', 'story', 'A story element', '1', '330', '1');
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('1', 'Story', 'story', 'A story docuument type', '1', true, false,
+        false, false, false, false, '10', 330, true);
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('1', '100', '1');
@@ -98,8 +99,13 @@ INSERT INTO element_type__output_channel (id, element_type__id, output_channel__
                                      enabled, active)
 VALUES ('1', '1', '1', '1', '1');
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('2', 'Column', 'column', 'A weekly column element', '1', '331', '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('2', 'Column', 'column', 'A weekly column story type', '1', true,
+        false, false, false, false, false, 10, '331', '1');
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('2', '100', '1');
@@ -114,8 +120,13 @@ INSERT INTO element_type__output_channel (id, element_type__id, output_channel__
                                      enabled, active)
 VALUES ('4', '2', '1', '1', '1');
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('3', 'Book Review', 'book_review', 'A book review element', '1', '332', '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('3', 'Book Review', 'book_review', 'A book review story type', '1',
+        true, false, false, false, false, false, 10, '332', '1');
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('3', '100', '1');
@@ -130,10 +141,14 @@ INSERT INTO element_type__output_channel (id, element_type__id, output_channel__
                                      enabled, active)
 VALUES ('7', '3', '1', '1', '1');
 
-
+/****************************************************************************/
 -- Create some media asset types.
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('4', 'Photograph', 'photograph', 'A photograph element', '2', '333', '1');
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('4', 'Photograph', 'photograph', 'A photograph media type', '1', true,
+        false, false, false, false, true, 50, '333', '1');
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('4', '100', '1');
@@ -148,9 +163,13 @@ INSERT INTO element_type__output_channel (id, element_type__id, output_channel__
                                      enabled, active)
 VALUES ('10', '4', '1', '1', '1');
 
+/****************************************************************************/
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('5', 'Illustration', 'illustration', 'An illustration element', '2', '334', '1');
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('5', 'Illustration', 'illustration', 'An illustration media type', '1',
+        true, false, false, false, false, true, 50, '334', '1');
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('5', '100', '1');
@@ -166,9 +185,14 @@ INSERT INTO element_type__output_channel (id, element_type__id, output_channel__
 VALUES ('13', '5', '1', '1', '1');
 
 
+/****************************************************************************/
 -- Create some sub-elements.
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('6', 'Inset', 'inset', 'An inset element', '3', NULL, '1');
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('6', 'Inset', 'inset', 'An inset element type', '1', false, false,
+        false, false, false, false, 10, NULL, '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('415', '27', '22', '1');
@@ -176,8 +200,13 @@ VALUES ('415', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('16', '6', '415'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('7', 'Pull Quote', 'pull_quote', 'A pull quote element', '3', NULL, '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('7', 'Pull Quote', 'pull_quote', 'A pull quote element type', '1',      
+        false, false, false, false, false, false, 10, NULL, '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('416', '27', '22', '1');
@@ -185,8 +214,13 @@ VALUES ('416', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('17', '7', '416'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('8', 'Related Stories', 'related_stories', 'A related stories element.', '3', '341', '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('8', 'Related Stories', 'related_stories', 'A related stories element type.',
+        '1', false, false, false, false, false, false, 10, '341', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('417', '27', '22', '1');
@@ -194,8 +228,13 @@ VALUES ('417', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('18', '8', '417'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('9', 'Related Story', 'related_story', 'A related story element.', '4', NULL, '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('9', 'Related Story', 'related_story', 'A related story element type.',
+        '1', false, false, false, true, false, false, 10, NULL, '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('418', '27', '22', '1');
@@ -203,8 +242,13 @@ VALUES ('418', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('19', '9', '418'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('10', 'Page', 'page',  'A page element.', '5', '340', '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('10', 'Page', 'page',  'A page element type.', '1', false, true,
+        false, false, false, false, 10, '340', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('419', '27', '22', '1');
@@ -212,8 +256,13 @@ VALUES ('419', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('20', '10', '419'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('11', 'Book Profile', 'book_profile', 'A book profile inset element.', '3', NULL, '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('11', 'Book Profile', 'book_profile', 'A book profile inset element type.',
+        '1', false, false, false, false, false, false, 10, NULL, '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('420', '27', '22', '1');
@@ -221,8 +270,13 @@ VALUES ('420', '27', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('21', '11', '420'); 
 
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('12', 'Related Media', 'related_media', 'A related media element.', '6', NULL, '1');
+/****************************************************************************/
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('12', 'Related Media', 'related_media', 'A related media element type.',
+        '1', false, false, false, false, true, false, 10, NULL, '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('437', '27', '22', '1');
@@ -231,9 +285,14 @@ INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('22', '12', '437'); 
 
 
+/****************************************************************************/
 -- A Cover Element
-INSERT INTO element_type (id, name, key_name, description, type__id, et_grp__id, active)
-VALUES ('13', 'Cover', 'cover', 'A cover element.', '7', '335', '1');
+
+INSERT INTO element_type (id, name, key_name, description, burner, top_level,
+                          paginated, fixed_uri, related_story, related_media,
+                          media, biz_class__id, et_grp__id, active)
+VALUES ('13', 'Cover', 'cover', 'A cover element type.', '1', true, false,
+        true, false, false, false, 10, '335', '1');
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
 VALUES ('13', '100', '1');

@@ -1659,7 +1659,7 @@ B<Notes:> NONE.
 sub is_fixed {
     my $self = shift;
     my $element = $self->get_element_type;
-    return $element->get_fixed_url;
+    return $element->is_fixed_uri;
 }
 
 ################################################################################

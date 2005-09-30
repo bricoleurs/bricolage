@@ -830,7 +830,6 @@ sub test_new_grp_ids: Test(4) {
     my $class = $self->class;
     my $all_media_grp_id = $class->INSTANCE_GROUP_ID;
 
-    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = get_elem();
     my $cat = Bric::Biz::Category->new({ name        => "_test_$time.new",
                                          description => 'foo',

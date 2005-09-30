@@ -107,7 +107,6 @@ use Bric::Util::Grp::ElementType;
 use Bric::Util::Grp::SubelementType;
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Util::Attribute::ElementType;
-use Bric::Biz::ATType;
 use Bric::Util::Class;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
@@ -135,8 +134,22 @@ use constant DEBUG             => 0;
 use constant HAS_MULTISITE     => 1;
 use constant GROUP_PACKAGE     => 'Bric::Util::Grp::ElementType';
 use constant INSTANCE_GROUP_ID => 27;
+use constant STORY_CLASS_ID    => 10;
 
-use constant ORD => qw(name key_name description type_name  burner active);
+use constant ORD => qw(
+    name
+    key_name
+    description
+    burner
+    top_level
+    paginated
+    fixed_uri
+    related_story
+    related_media
+    media
+    biz_class_id
+    active
+);
 
 # possible values for burner
 use constant BURNER_MASON    => 1;
@@ -159,13 +172,53 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK);
 my $table = 'element_type';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
-my @cols = qw(name key_name description burner reference type__id et_grp__id
-              active);
-my @props = qw(name key_name description burner reference type_id et_grp_id
-               _active);
-my $sel_cols = 'a.id, a.name, a.key_name, a.description, a.burner, '
-    . 'a.reference, a.type__id, a.et_grp__id, a.active, m.grp__id';
+
+my @cols = qw(
+    name
+    key_name
+    description
+    burner
+    top_level
+    paginated
+    fixed_uri
+    related_story
+    related_media
+    media
+    biz_class__id
+    type__id
+    et_grp__id
+    active
+);
+
+my @props = qw(
+    name
+    key_name
+    description
+    burner
+    top_level
+    paginated
+    fixed_uri
+    related_story
+    related_media
+    media
+    biz_class_id
+    type_id
+    et_grp_id
+    _active
+);
+
+my $sel_cols = join ', ', 'a.id', map({ "a.$_" } @cols), 'm.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
+
+my %bool_attrs = map { $_ => undef } qw(
+    top_level
+    paginated
+    fixed_uri
+    related_story
+    related_media
+    media
+    active
+);
 
 #--------------------------------------#
 # Instance Fields
@@ -178,7 +231,13 @@ BEGIN {
         name                => Bric::FIELD_RDWR,
         description         => Bric::FIELD_RDWR,
         burner              => Bric::FIELD_RDWR,
-        reference           => Bric::FIELD_READ,
+        top_level           => Bric::FIELD_NONE,
+        paginated           => Bric::FIELD_NONE,
+        fixed_uri           => Bric::FIELD_NONE,
+        related_story       => Bric::FIELD_NONE,
+        related_media       => Bric::FIELD_NONE,
+        media               => Bric::FIELD_NONE,
+        biz_class_id        => Bric::FIELD_RDWR,
         type_id             => Bric::FIELD_READ,
         grp_ids             => Bric::FIELD_READ,
 
@@ -221,7 +280,37 @@ Supported Keys:
 
 =item description
 
-=item reference
+=item burner
+
+Defaults to the value of C<BURNER_MASON>.
+
+=item top_level
+
+Defaults to false.
+
+=item paginated
+
+Defaults to false.
+
+=item fixed_uri
+
+Defaults to false.
+
+=item related_story
+
+Defaults to false.
+
+=item related_media
+
+Defaults to false.
+
+=item media
+
+Defaults to false.
+
+=item biz_class_id
+
+Defaults to the ID for Bric::Biz::Asset::Business::Story.
 
 =back
 
@@ -235,21 +324,31 @@ B<Notes:> NONE.
 
 sub new {
     my ($class, $init) = @_;
-    my $self = bless {}, ref $class || $class;
     $init->{_active} = 1;
 
-    # Set reference unless explicitly set.
-    $init->{reference} = $init->{reference} ? 1 : 0;
-    $init->{type_id} = delete $init->{type__id}
-      if exists $init->{type__id};
-    $init->{et_grp_id} = delete $init->{et_grp__id}
-      if exists $init->{et_grp__id};
+    # Backwards compatibility for Bric::Biz::ATType.
+    if (my $type_id = $init->{type_id} ||= delete $init->{type__id}) {
+        my @bool_attrs = keys %bool_attrs;
+        if (my $type = Bric::Biz::ATType->lookup({ id => $type_id })) {
+            @{$init}{@bool_attrs, 'biz_class_id', 'fixed_uri'}
+                = $type->_get(@bool_attrs, 'biz_class_id', 'fixed_url');
+        } else {
+            delete $init->{type_id};
+        }
+    } else {
+        # Set up boolean defaults.
+        for my $attr (keys %bool_attrs) {
+            $init->{$attr} = $init->{$attr} ? 1 : 0;
+        }
+
+        # Set up default business class ID.
+        $init->{biz_class_id} ||= STORY_CLASS_ID;
+    }
 
     # Set the instance group ID.
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
-    $self->SUPER::new($init);
-
+    my $self = $class->SUPER::new($init);
     my $pkg = $self->get_biz_class;
 
     # If a package was passed in then find the autopopulated field names.
@@ -278,7 +377,7 @@ sub new {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $element = Bric::Biz::ElementType->lookup({id => $id})
 
@@ -316,7 +415,7 @@ sub lookup {
     return @$elem ? $elem->[0] : undef;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item ($at_list || @at_list) = Bric::Biz::ElementType->list($param);
 
@@ -365,46 +464,64 @@ values.
 
 =item active
 
-Set to 0 to return active and inactive element types. 1, the default, returns
-only active element types.
+Boolean value for active or inactive element types.
 
 =item type_id
 
-match elements of a particular attype. May use C<ANY> for a list of possible
+Match elements of a particular attype. May use C<ANY> for a list of possible
 values.
-
-=item top_level
-
-set to 1 to return only top-level elements
-
-=item media
-
-match against a particular media element type (att.media). May use C<ANY> for a
-list of possible values.
 
 =item site_id
 
-match against the given site_id. May use C<ANY> for a list of possible values.
+Match against the given site_id. May use C<ANY> for a list of possible values.
+
+=item top_level
+
+Boolean value for top-level (story type and media type) element types.
+
+=item media
+
+Boolean value for media element types.
+
+=item paginated
+
+Boolean value for paginated element types.
+
+=item fixed_uri
+
+Boolean value for fixed URI element types.
+
+=item related_story
+
+Boolean value for related story element types.
+
+=item related_media
+
+Boolean value for related media element types.
+
+=item biz_class_id
+
+The ID of a Bric::Util::Class object representing a business class. The ID
+must be for a class object representing one of
+L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
+L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+of its subclasses. May use C<ANY> for a list of possible values.
 
 =back
 
 B<Throws:>
 
-NONE
+=over 4
 
-B<Side Effects:>
+=item Exception::DA
 
-NONE
-
-B<Notes:>
-
-NONE
+=back
 
 =cut
 
 sub list { _do_list(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item ($at_list || @ats) = Bric::Biz::ElementType->list_ids($param)
 
@@ -427,7 +544,7 @@ NONE
 
 sub list_ids { _do_list(@_, 1) }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -446,7 +563,7 @@ sub DESTROY {
     # making Bricolage's autoload method try to find it.
 }
 
-#--------------------------------------#
+##############################################################################
 
 =back
 
@@ -591,115 +708,219 @@ B<Notes:> NONE.
 
 =cut
 
-my $tmpl_archs;
+my ($tmpl_archs, $sel);
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
     unless ($tmpl_archs) {
-    $tmpl_archs = [[BURNER_MASON, 'Mason']];
-    push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
-        if $Bric::Util::Burner::Template::VERSION;
-    push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
-        if $Bric::Util::Burner::TemplateToolkit::VERSION;
-    push @$tmpl_archs,  [BURNER_PHP,'PHP']
-        if $Bric::Util::Burner::PHP::VERSION;
+        $tmpl_archs = [[BURNER_MASON, 'Mason']];
+        push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
+            if $Bric::Util::Burner::Template::VERSION;
+        push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
+            if $Bric::Util::Burner::TemplateToolkit::VERSION;
+        push @$tmpl_archs,  [BURNER_PHP,'PHP']
+            if $Bric::Util::Burner::PHP::VERSION;
+    }
+
+    unless ($sel) {
+        my $classes = Bric::Util::Class->pkg_href;
+        while (my ($k, $v) = each %$classes) {
+            next unless $k =~ /^bric::biz::asset::business::/;
+            my $d = [ $v->get_id, $v->get_disp_name ];
+            $d->[1] = 'Other Media' if $v->get_key_name eq 'media';
+            push @$sel, $d;
+        }
     }
 
     # Create 'em if we haven't got 'em.
     $METHS ||= {
-          name        => {
-                  name     => 'name',
-                  get_meth => sub { shift->get_name(@_) },
-                  get_args => [],
-                  set_meth => sub { shift->set_name(@_) },
-                  set_args => [],
-                  disp     => 'Name',
-                  search   => 1,
-                  len      => 64,
-                  req      => 1,
-                  type     => 'short',
-                  props    => { type      => 'text',
-                        length    => 32,
-                        maxlength => 64
-                      }
-                 },
+        name => {
+            name     => 'name',
+            get_meth => sub { shift->get_name(@_) },
+            get_args => [],
+            set_meth => sub { shift->set_name(@_) },
+            set_args => [],
+            disp     => 'Name',
+            search   => 1,
+            len      => 64,
+            req      => 1,
+            type     => 'short',
+            props    => {
+                type      => 'text',
+                length    => 32,
+                maxlength => 64
+            }
+        },
 
-              key_name    => {
-                              name     => 'key_name',
-                  get_meth => sub { shift->get_key_name(@_) },
-                  get_args => [],
-                  set_meth => sub { shift->set_key_name(@_) },
-                  set_args => [],
-                  disp     => 'Key Name',
-                  search   => 1,
-                  len      => 64,
-                  req      => 1,
-                  type     => 'short',
-                  props    => {type      => 'text',
-                                           length    => 32,
-                                           maxlength => 64
-                      }
-                             },
+        key_name => {
+            name     => 'key_name',
+            get_meth => sub { shift->get_key_name(@_) },
+            get_args => [],
+            set_meth => sub { shift->set_key_name(@_) },
+            set_args => [],
+            disp     => 'Key Name',
+            search   => 1,
+            len      => 64,
+            req      => 1,
+            type     => 'short',
+            props    => {
+                type      => 'text',
+                length    => 32,
+                maxlength => 64
+            }
+        },
 
-          description => {
-                  get_meth => sub { shift->get_description(@_) },
-                  get_args => [],
-                  set_meth => sub { shift->set_description(@_) },
-                  set_args => [],
-                  name     => 'description',
-                  disp     => 'Description',
-                  len      => 256,
-                  req      => 0,
-                  type     => 'short',
-                  props    => { type => 'textarea',
-                        cols => 40,
-                        rows => 4
-                      }
-                 },
-          burner      => {
-                  get_meth => sub { shift->get_burner(@_) },
-                  get_args => [],
-                  set_meth => sub { shift->set_burner(@_) },
-                  set_args => [],
-                  name     => 'burner',
-                  disp     => 'Burner',
-                  len      => 80,
-                  req      => 1,
-                  type     => 'short',
-                  props    => { type => 'select',
-                        vals => $tmpl_archs,
-                      }
-                 },
-          type_name      => {
-                 name     => 'type_name',
-                 get_meth => sub { shift->get_type_name(@_) },
-                 get_args => [],
-                 set_meth => sub { shift->set_type_name(@_) },
-                 set_args => [],
-                 disp     => 'Set',
-                 len      => 64,
-                 req      => 0,
-                 type     => 'short',
-                 props    => {   type       => 'text',
-                         length     => 32,
-                         maxlength => 64
-                     }
-                },
-          active     => {
-                 name     => 'active',
-                 get_meth => sub { shift->is_active(@_) ? 1 : 0 },
-                 get_args => [],
-                 set_meth => sub { $_[1] ? shift->activate(@_)
-                         : shift->deactivate(@_) },
-                 set_args => [],
-                 disp     => 'Active',
-                 len      => 1,
-                 req      => 1,
-                 type     => 'short',
-                 props    => { type => 'checkbox' }
-                },
-         };
+        description => {
+            get_meth => sub { shift->get_description(@_) },
+            get_args => [],
+            set_meth => sub { shift->set_description(@_) },
+            set_args => [],
+            name     => 'description',
+            disp     => 'Description',
+            len      => 256,
+            req      => 0,
+            type     => 'short',
+            props    => {
+                type => 'textarea',
+                cols => 40,
+                rows => 4
+            }
+        },
+
+        burner => {
+            get_meth => sub { shift->get_burner(@_) },
+            get_args => [],
+            set_meth => sub { shift->set_burner(@_) },
+            set_args => [],
+            name     => 'burner',
+            disp     => 'Burner',
+            len      => 80,
+            req      => 1,
+            type     => 'short',
+            props    => {
+                type => 'select',
+                vals => $tmpl_archs,
+            }
+        },
+
+        top_level => {
+            name     => 'top_level',
+            get_meth => sub {shift->is_top_level(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_top_level(@_)},
+            set_args => [],
+            disp     => 'Type',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => {
+                type => 'radio',
+                vals => [ [0, 'Element'], [1, 'Asset']]
+            }
+        },
+
+        paginated => {
+            name     => 'paginated',
+            get_meth => sub {shift->is_paginated(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_paginated(@_)},
+            set_args => [],
+            disp     => 'Page',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => { type => 'checkbox'}
+        },
+
+        fixed_uri    => {
+            name     => 'fixed_uri',
+            get_meth => sub {shift->is_fixed_uri(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_fixed_uri(@_)},
+            set_args => [],
+            disp     => 'Fixed',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => { type => 'checkbox'}
+        },
+
+        related_story => {
+            name     => 'related_story',
+            get_meth => sub {shift->is_related_story(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_related_story(@_)},
+            set_args => [],
+            disp     => 'Related Story',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => { type => 'checkbox'}
+        },
+
+        related_media => {
+            name     => 'related_media',
+            get_meth => sub {shift->is_related_media(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_related_media(@_)},
+            set_args => [],
+            disp     => 'Related Media',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => { type => 'checkbox'}
+        },
+
+        media => {
+            name     => 'media',
+            get_meth => sub {shift->get_media(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_media(@_)},
+            set_args => [],
+            disp     => 'Content',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => {
+                type => 'radio',
+                vals => [ [ 0, 'Story'], [ 1, 'Media'] ]
+            }
+
+        },
+
+        biz_class_id => {
+            name     => 'biz_class_id',
+            get_meth => sub {shift->get_biz_class_id(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_biz_class_id(@_)},
+            set_args => [],
+            disp     => 'Content Type',
+            len      => 3,
+            req      => 0,
+            type     => 'short',
+            props    => {
+                type => 'select',
+                vals => $sel
+            }
+        },
+
+        active => {
+            name     => 'active',
+            get_meth => sub { shift->is_active(@_) ? 1 : 0 },
+            get_args => [],
+            set_meth => sub {
+                $_[1] ? shift->activate(@_)
+                      : shift->deactivate(@_)
+            },
+            set_args => [],
+            disp     => 'Active',
+            len      => 1,
+            req      => 1,
+            type     => 'short',
+            props    => { type => 'checkbox' }
+        },
+    };
 
     if ($ord) {
         return wantarray ? @{$METHS}{&ORD} : [@{$METHS}{&ORD}];
@@ -710,137 +931,182 @@ sub my_meths {
     }
 }
 
-
-#--------------------------------------#
+##############################################################################
 
 =back
 
-=head2 Public Instance Methods
+=head2 Accessors
 
-=over 4
+=head3 id
 
-=item $id = $element_type->get_id()
+  my $id = $element_type->get_id;
 
-This will return the id for the database
+Returns the element type object's unique database ID.
 
-B<Throws:>
-NONE
+=head3 name
 
-B<Side Effects:>
-NONE
+  my $name = $element_type->get_name;
+  $element_type = $element_type->set_name($name);
 
-B<Notes:>
-NONE
+Get and set the element type object's unique name.
 
-=cut
+=head3 description
 
-#------------------------------------------------------------------------------#
+  my $description = $element_type->get_description;
+  $element_type = $element_type->set_description($description);
 
-=item $element_type = $element_type->set_name( $name )
+Get and set the element type object's description.
 
-This will set the name field for the element type
+=head3 key_name
 
-B<Throws:>
-NONE
+  my $key_name = $element_type->get_key_name;
+  $element_type = $element_type->set_key_name($key_name);
 
-B<Side Effects:>
-NONE
+Get and set the element type object's unique key name.
 
-B<Notes:>
-NONE
+=head3 burner
 
-=cut
+  my $burner = $element_type->get_burner;
+  $element_type = $element_type->set_burner($burner);
 
-#------------------------------------------------------------------------------#
+Get and set the element type object's burner association. The value must
+correspond to one of the burner constants exportable by this class:
 
-=item $name = $element_type->get_name()
+=over
 
-This will return the name field for the element type
+=item BURNER_MASON
 
-B<Throws:>
-NONE
+=item BURNER_TEMPLATE
 
-B<Side Effects:>
-NONE
+=item BURNER_TT
 
-B<Notes:>
-NONE
+=item BURNER_PHP
 
-=cut
+=back
 
-#------------------------------------------------------------------------------#
+=head3 top_level
 
-=item $element_type = $element_type->set_key_name($key_name)
+  my $is_top_level = $element_type->is_top_level;
+  $element_type = $element_type->set_top_level($is_top_level);
 
-This will set the unique key name field for the element type
+The C<top_level> attribute is a boolean that indicates whether the element
+type is a story type or a media type, and therefore a top-level element. In
+other words, elements based on it cannot be subelements of any other elements.
 
-B<Throws:>
-NONE
+=head3 biz_type_id
 
-B<Side Effects:>
-NONE
+  my $biz_type_id = $element_type->get_biz_type_id;
+  $element_type = $element_type->set_biz_type_id($biz_type_id);
 
-B<Notes:>
-NONE
+The C<biz_type_id> attribute is contains the ID for a
+C<Bric::Util::Class|Bric::Util::Class> indicating the class of object with
+whic the elements based on the type can be associated. The values allowed are
+only those for
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, and
+the latter's subclasses.
 
-=cut
+=head3 paginated
 
-#------------------------------------------------------------------------------#
+  my $is_paginated = $element_type->is_paginated;
+  $element_type = $element_type->set_paginated($is_paginated);
 
-=item $name = $element_type->get_key_name()
+The C<paginated> attribute is a boolean that indicates whether the elements
+based on the element type represent pages. Paginated elements generally
+trigger the output of multiple files, one for each paginated element in a
+document, by the burner. This attribute is ignored for top level elements.
 
-This will return the unique key name field for the element type
+=head3 fixed_uri
 
-B<Throws:>
-NONE
+  my $is_fixed_uri = $element_type->is_fixed_uri;
+  $element_type = $element_type->set_fixed_uri($is_fixed_uri);
 
-B<Side Effects:>
-NONE
+The C<fixed_uri> attribute is a boolean that indicates whether documents based
+on the element type will use the "URI Format" or "Fixed URI Format" of an
+output channel through which the document is published. This attribute is
+ignored for non-top level elements.
 
-B<Notes:>
-NONE
+=head3 related_story
 
-=cut
+  my $is_related_story = $element_type->is_related_story;
+  $element_type = $element_type->set_related_story($is_related_story);
 
-#------------------------------------------------------------------------------#
+The C<related_story> attribute is a boolean that indicates whether elements
+based on the element type can have another story related to them.
 
-=item $element_type = $element_type->set_description($description)
+=head3 related_media
 
-this sets the description field
+  my $is_related_media = $element_type->is_related_media;
+  $element_type = $element_type->set_related_media($is_related_media);
 
-B<Throws:>
-NONE
+The C<related_media> attribute is a boolean that indicates whether elements
+based on the element type can have another media related to them.
 
-B<Side Effects:>
-NONE
+=head3 media
 
-B<Notes:>
-NONE
+  my $is_media = $element_type->is_media;
+  $element_type = $element_type->set_media($is_media);
 
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $description = $element_type->get_description()
-
-This returns the description field
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
+The C<media> attribute is a boolean that indicates whether elements based on
+the element type are media documents. This attribute is a redundant
+combination fo the C<biz_type_id> and C<top_level> attributes.
 
 =cut
 
-#------------------------------------------------------------------------------#
+# Reference is just for backwards compatibility.
+for my $attr (qw(
+    top_level
+    paginated
+    fixed_uri
+    related_story
+    related_media
+    media
+    reference
+)) {
+    no strict 'refs';
+    my $iser = sub { $_[0]->_get($attr) ? shift : undef };
+    *{"is_$attr"}  = $iser;
+    *{"get_$attr"} = $iser;
+    *{"set_$attr"} = sub { shift->_set([$attr] => [shift() ? 1 : 0]) };
+}
 
-=item $element_type = $element_type->set_primary_oc_id( $primary_oc_id, $site )
+##############################################################################
 
-This will set the primary output channel id field for the element type
+=head3 biz_class_id
+
+  my $biz_class_id   = $element_type->get_biz_class_id;
+  my $biz_class_name = $element_type->get_biz_class;
+  $element_type->set_biz_class_id($biz_class_id);
+
+Get and set the ID of the Bric::Util::Class object that represents the class
+for which elements of this type can be created. Must be the ID for either
+L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
+L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+of its subclasses. C<get_biz_class()> actually returns the package name of the
+business class represented by the C<biz_class_id> attribute.
+
+=cut
+
+sub get_biz_class {
+    my $self = shift;
+    my $class = Bric::Util::Class->lookup({'id' => $self->get_biz_class_id})
+        or return;
+    return $class->get_pkg_name;
+}
+
+##############################################################################
+
+=head3 primary_oc_id
+
+  my $primary_oc_id = $element_type->get_primary_oc_id($site_id);
+     $primary_oc_id = $element_type->get_primary_oc_id($site);
+
+  $element_type->set_primary_oc_id($primary_oc_id, $site_id);
+  $element_type->set_primary_oc_id($primary_oc_id, $site);
+
+Gets and sets the primary output channel within the given site for the element
+type. Either a site object or ID can be used. Only top-level element types
+have site and output channel associations.
 
 B<Throws:>
 
@@ -886,31 +1152,7 @@ sub set_primary_oc_id {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
-
-=item $primary_oc_id = $element_type->get_primary_oc_id($site)
-
-This will return the primary output channel id field for the element type
-
-B<Throws:>
-
-=over 4
-
-=item *
-
-No site parameter passed to Bric::Biz::ElementType-E<gt>get_primary_oc_id.
-
-=item *
-
-No output channels associated with non top-level element types.
-
-=back
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
+##############################################################################
 
 sub get_primary_oc_id {
     my ($self, $site) = @_;
@@ -928,7 +1170,7 @@ sub get_primary_oc_id {
 
     $oc_site = {} unless ref $oc_site;
 
-    my $sel = prepare_c(qq {
+    my $sel = prepare_c(qq{
         SELECT primary_oc__id
         FROM   element_type__site
         WHERE  element_type__id = ? AND
@@ -948,573 +1190,64 @@ sub get_primary_oc_id {
     return $ret->[0];
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $name = $at->get_type_name
+=head3 active
 
-Get the type name of the element type.
+  my $is_active = $element_type->is_active;
+  $element_type->activate;
+  $element_type->deactivate;
 
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
+This boolean attribute indicates whether the element type is active.
 
 =cut
 
-#------------------------------------------------------------------------------#
+sub is_active  { $_[0]->_get('_active') ? shift : undef }
+sub activate   { shift->_set(['_active'] => [1]) }
+sub deactivate { shift->_set(['_active'] => [0]) }
 
-=item $burner = $at->get_burner
-
-Get the burner associated with the element type.  Possible values are
-the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-#------------------------------------------------------------------------------#
-
-=item $at->set_burner(Bric::Biz::ElementType::BURNER_MASON);
-
-Get the burner associated with the element type.  Possible values are
-the constants BURNER_MASON and BURNER_TEMPLATE defined in this package.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
+##############################################################################
+# Compatibility methods.
 
 sub get_type_name {
     my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
+    my $att_obj = $self->_get_at_type_obj or return;
     return $att_obj->get_name;
 }
 
-#------------------------------------------------------------------------------#
-
-=item $desc = $at->get_type_description
-
-Get the type description of the element type.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
 sub get_type_description {
     my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
+    my $att_obj = $self->_get_at_type_obj or return;
     return $att_obj->get_description;
 }
 
-#------------------------------------------------------------------------------#
-
-=item ($at || undef) = $at->get_top_level
-
-Return whether this is a top level story or not.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub get_top_level {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_top_level;
-}
-
-#------------------------------------------------------------------------------#
-
-=item ($at || undef) = $at->get_paginated
-
-Return whether this element type should produce a paginated element or not.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub get_paginated {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_paginated;
-}
-
-#------------------------------------------------------------------------------#
-
-=item ($at || undef) = $at->is_related_media
-
-Return whether this element type can have related media objects.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub is_related_media {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_related_media;
-}
-
-=item ($at || undef) = $at->is_related_story
-
-Return whether this element type can have related story objects.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub is_related_story {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_related_story;
-}
-
-#------------------------------------------------------------------------------#
-
-=item ($at || undef) = $at->is_media()
-
-=item $at = $at->set_media()
-
-=item $at = $at->clear_media()
-
-Mark this Element Type as representing a media object or a story object.  Media
-objects do not support all the options that story objects to like nested 
-containers or references, but they include options that story doesnt like 
-autopopulated fields.
-
-The 'is_media' method returns true if this is a media object and false 
-otherwise. The 'set_media' method marks this as a media object.  It does not
-take any arguments, and always sets the media flag to true, so you cant do this:
-
-$at->set_media(0)
-
-and expect to set the media flag to false.  To unset the media flag (set it to
-false) use the 'clear_media' method.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub is_media {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_media ? $self : undef;
-}
-
-sub set_media {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    $att_obj->set_media(1);
-
-    return $self;
-}
-
-sub clear_media {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    $att_obj->set_media(0);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $at->get_biz_class()
-
-=item $at->get_biz_class_id()
-
-=item $at->set_biz_class('class' => '' || 'id' => '');
-
-The methods 'get_biz_class' and 'get_biz_class_id' get the business class name
-or the business class ID respectively from the class table.
-
-The 'set_biz_class' method sets the business class for this element type given
-either a class name or an ID from the class table.
-
-This value represents the kind of business object this element type will
-represent. There are just two main kinds, story and media objects. However
-media objects have many subclasses, one for each type of supported media
-(image, audio, video, etc) increasing the number of package names this value
-could be set to.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub get_biz_class {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj or return;
-    my $class = Bric::Util::Class->lookup({'id' => $att_obj->get_biz_class_id})
-      or return;
-    return $class->get_pkg_name;
-}
-
-sub get_biz_class_id {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj or return;
-    return $att_obj->get_biz_class_id;
-}
+sub clear_media { shift->_set(['media'] => [0] ) }
 
 sub get_type__id   { shift->get_type_id       }
 sub set_type__id   { shift->set_type_id(@_)   }
 sub get_at_grp__id { shift->get_et_grp_id     }
 sub set_at_grp__id { shift->set_et_grp_id(@_) }
+sub get_at_type    { shift->_get_at_type_obj  }
+sub get_fixed_url  { shift->is_fixed_uri      }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item ($at || undef) = $at->get_reference
+=head2 Instance Methods
 
-=item $at = $at->set_reference(1 || 0)
+=head3 Output Channels
 
-Return whether this element type references other data.
+=over
 
-B<Throws:>
-NONE
+=item get_output_channels
 
-B<Side Effects:>
-NONE
+  my @ocs = $element_type->get_output_channels;
+     @ocs = $element_type->get_output_channels(@oc_ids);
+  my $ocs_aref = $element_type->get_output_channels;
+     $ocs_aref = $element_type->get_output_channels(@oc_ids);
 
-B<Notes:>
-NONE
-
-=cut
-
-sub get_reference {
-    my $self = shift;
-
-    return $self->_get('reference') ? $self : undef;
-}
-
-sub set_reference {
-    my $self = shift;
-    my ($bool) = @_;
-
-    $self->_set(['reference'], [$bool ? 1 : 0]);
-
-    $self->_set__dirty(1);
-
-    return $self;
-}
-
-#------------------------------------------------------------------------------#
-
-=item ($at || undef) = $at->get_fixed_url
-
-Return whether this element type should produce a fixed url element or not.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub get_fixed_url {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return unless $att_obj;
-
-    return $att_obj->get_fixed_url;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $at_type = $at->get_at_type
-
-Return the at_type object associated with this element type.
-
-B<Throws:>
-NONE
-
-B<Side Effects:>
-NONE
-
-B<Notes:>
-NONE
-
-=cut
-
-sub get_at_type {
-    my $self = shift;
-    my $att_obj = $self->_get_at_type_obj;
-
-    return $att_obj;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $val = $element_type->set_attr($name, $value);
-
-=item $val = $element_type->get_attr($name);
-
-=item $val = $element_type->del_attr($name);
-
-Get/Set/Delete attributes on this element type.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-
-sub set_attr {
-    my $self = shift;
-    my ($name, $val) = @_;
-    my $attr     = $self->_get('_attr');
-    my $attr_obj = $self->_get_attr_obj;
-
-    # If we have an attr object, then populate it
-    if ($attr_obj) {
-    $attr_obj->set_attr({'name'     => $name,
-                 'sql_type' => 'short',
-                 'value'    => $val});
-    }
-    # Otherwise,cache this value until save.
-    else {
-    $attr->{$name} = $val;
-    $self->_set(['_attr'], [$attr]);
-    }
-
-    $self->_set__dirty(1);
-
-    return $val;
-}
-
-sub get_attr {
-    my $self = shift;
-    my ($name) = @_;
-    my $attr     = $self->_get('_attr');
-    my $attr_obj = $self->_get_attr_obj;
-
-    # If we aren't saved yet, return anything we have cached.
-    return $attr->{$name} unless $self->get_id;
-
-    return $attr_obj->get_attr({'name' => $name});
-}
-
-sub del_attr {
-    my $self = shift;
-    my ($name) = @_;
-    my $attr     = $self->_get('_attr');
-    my $attr_obj = $self->_get_attr_obj;
-
-    # If we aren't saved yet, delete from the cache.
-    delete $attr->{$name} unless $self->get_id;
-
-    return $attr_obj->delete_attr({'name' => $name});
-}
-
-sub all_attr {
-    my $self = shift;
-    my $attr     = $self->_get('_attr');
-    my $attr_obj = $self->_get_attr_obj;
-
-    # If we aren't saved yet, return the cache
-    return $attr unless $self->get_id;
-
-    # HACK: This identifies attr names begining with a '_' as private and will 
-    # not return them.  This is being done instead of using subsystems because
-    # we are using subsystems to keep ElementTypes unique from each other.
-    my $ah = $attr_obj->get_attr_hash();
-
-    # Evil delete on a hash slice based on values returned by grep...
-    delete(@{$ah}{ grep(substr($_,0,1) eq '_', keys %$ah) });
-
-    return $ah
-}
-
-#------------------------------------------------------------------------------#
-
-=item $val = $element_type->set_meta($name, $field, $value);
-
-=item $val = $element_type->get_meta($name, $field);
-
-=item $val = $element_type->get_meta($name);
-
-Get/Set attribute metadata on this element type.  Calling the 'get_meta' method
-without '$field' returns all metadata names and values as a hash.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub set_meta {
-    my $self = shift;
-    my ($name, $field, $val) = @_;
-    my $attr_obj = $self->_get_attr_obj;
-    my $meta     = $self->_get('_meta');
-
-    if ($attr_obj) {
-    $attr_obj->add_meta({'name'  => $name,
-                 'field' => $field,
-                 'value' => $val});
-    } else {
-    $meta->{$name}->{$field} = $val;
-    
-    $self->_set(['_meta'], [$meta]);
-    }
-
-    $self->_set__dirty(1);
-
-    return $val;
-}
-
-sub get_meta {
-    my $self = shift;
-    my ($name, $field) = @_;
-    my $attr_obj = $self->_get_attr_obj;
-    my $meta     = $self->_get('_meta');
-
-    unless ($attr_obj) {
-    if (defined $field) {
-        return $meta->{$name}->{$field};
-    } else {
-        return $meta->{$name};
-    }
-    }
-
-    if (defined $field) {
-    return $attr_obj->get_meta({'name'  => $name,
-                    'field' => $field});
-    } else {
-    my $meta = $attr_obj->get_meta({'name'  => $name});
-
-    return { map { $_ => $meta->{$_}->{'value'} } keys %$meta };
-    }
-}
-
-#------------------------------------------------------------------------------#
-
-=item ($oc_list || @oc_list) = $element_type->get_output_channels;
-
-=item ($oc_list || @oc_list) = $element_type->get_output_channels(@oc_ids);
-
-This returns a list of output channels that have been associated with this
-element type. If C<@oc_ids> is passed, then only the output channels with those
-IDs are returned, if they're associated with this element type.
+Returns a list or array reference of output channels that have been associated
+with this element type. If C<@oc_ids> is passed, then only the output channels
+with those IDs are returned, if they're associated with this element type.
 
 B<Throws:> NONE.
 
@@ -1526,13 +1259,14 @@ assocation between each output channel and this element object.
 
 =cut
 
+##############################################################################
+
 sub get_output_channels { $get_oc_coll->(shift)->get_objs(@_) }
 
-#------------------------------------------------------------------------------#
+=item add_output_channel
 
-=item my $oce = $element_type->add_output_channel($oc)
-
-=item my $oce = $element_type->add_output_channel($oc_id)
+  $element_type->add_output_channel($oc);
+  $element_type->add_output_channel($oc_id);
 
 Adds an output channel to this element object and returns the resulting
 Bric::Biz::OutputChannel::Element object. Can pass in either an output channel
@@ -1555,12 +1289,17 @@ sub add_output_channel {
                         element_type_id => $self->_get('id') });
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type = $element_type->add_output_channels([$output_channels])
+=item add_output_channels
 
-This accepts an array reference of output channel objects to be associated
-with this element type.
+  $element_type->add_output_channels(@ocs);
+  $element_type->add_output_channels(\@ocs);
+  $element_type->add_output_channels(@oc_ids);
+  $element_type->add_output_channels(\@oc_ids);
+
+This accepts a list or array reference of output channel objects or IDs to be
+associated with this element type.
 
 B<Throws:> NONE.
 
@@ -1572,17 +1311,21 @@ B<Notes:> NONE.
 =cut
 
 sub add_output_channels {
-    my ($self, $ocs) = @_;
+    my $self = shift;
+    my $ocs = ref $_[0] eq 'ARRAY' ? shift : \@_;
     $self->add_output_channel($_) for @$ocs;
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type = $element_type->delete_output_channels([$output_channels])
+=item delete_output_channels
 
-This takes an array reference of output channels and removes their association
-from the object.
+  $element_type->delete_output_channels(@output_channels);
+  $element_type->delete_output_channels(\@output_channels);
+
+This accepts a list or array reference of output channels and removes their
+association from the object.
 
 B<Throws:>
 
@@ -1601,7 +1344,8 @@ B<Notes:> NONE.
 =cut
 
 sub delete_output_channels {
-    my ($self, $ocs) = @_;
+    my $self = shift;
+    my $ocs = ref $_[0] eq 'ARRAY' ? shift : \@_;
     my $oc_coll = $get_oc_coll->($self);
     no warnings 'uninitialized';
     foreach my $oc (@$ocs) {
@@ -1615,36 +1359,46 @@ sub delete_output_channels {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item ($site_list || @site_list) = $element_type->get_sites;
+=back
 
-=item ($site_list || @site_list) = $element_type->get_sites(@site_ids);
+=head3 Sites
 
-This returns a list of sites that have been associated with this
-element type. If C<@site_ids> is passed, then only the sites with those
+=over
+
+=item get_sites
+
+  my @sites = $element_type->get_sites;
+     @sites = $element_type->get_sites(@site_ids);
+  my $sites_aref = $element_type->get_sites;
+     $sites_aref = $element_type->get_sites(@site_ids);
+
+Returns a list or array reference of sites that have been asssociated with
+this element type. If C<@site_ids> is passed, then only the sites with those
 IDs are returned, if they're associated with this element type.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> The objects returned will be Bric::Biz::Site
-objects, and these objects contain extra information relevant to the
-assocation between each output channel and this element object.
+B<Notes:> The objects returned will be Bric::Biz::Site objects, and these
+objects contain extra information relevant to the assocation between each
+output channel and this element object.
 
 =cut
 
 sub get_sites { $get_site_coll->(shift)->get_objs(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item my $site = $element_type->add_site($site)
+=item add_site
 
-=item my $site = $element_type->add_site($site_id)
+  $element_type->add_site($site);
+  $element_type->add_site($site_id);
 
-Adds a site to this element object and returns the resulting
-Bric::Biz::Site object. Can pass in either an site object or a site ID.
+Adds a site to this element object and returns the resulting Bric::Biz::Site
+object. Can pass in either an site object or a site ID.
 
 B<Throws:>
 
@@ -1684,14 +1438,18 @@ sub add_site {
     $site_coll->add_new_objs( $site );
     return $site;
 }
-#------------------------------------------------------------------------------#
 
-=item my $site = $element_type->add_sites([$site])
+##############################################################################
 
-=item my $site = $element_type->add_sites([$site_id])
+=item add_sites
 
-Adds a site to this element object and returns the Bric::Biz::ElementType
-object. Can pass in multiple site objects or site IDs.
+  $element_type->add_sites(@sites);
+  $element_type->add_sites(\@sites);
+  $element_type->add_sites(@site_ids);
+  $element_type->add_sites(\@site_ids);
+
+This accepts a list or array reference of site objects or IDs to be associated
+with this element type.
 
 B<Throws:>
 
@@ -1714,16 +1472,20 @@ B<Notes:> NONE.
 =cut
 
 sub add_sites {
-    my ($self, $sites) = @_;
+    my $self = shift;
+    my $sites = ref $_[0] eq 'ARRAY' ? shift : \@_;
     $self->add_site($_) for @$sites;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type = $element_type->remove_sites([$sites])
+=item remove_sites
 
-This takes an array reference of sites and removes their association from the
-object.
+  $element_type->remove_sites(@sites);
+  $element_type->remove_sites(\@sites);
+
+Removes a list or array reference of sites from association with the element
+type.
 
 B<Throws:>
 
@@ -1770,11 +1532,17 @@ sub remove_sites {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item get_field_types()
+=back
 
-=item get_data()
+=head3 Field Types
+
+=over
+
+=item get_field_types
+
+=item get_data
 
   my @field_types = $element_type->get_field_types;
   my $field_type  = $element_type->get_field_types($key_name);
@@ -1784,11 +1552,7 @@ sub remove_sites {
 Returns a list or array reference of the field types that the element type
 contains. Pass in a key name to get back a single field type.
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> C<get_data()> is the deprecated form of this method.
+B<Note:> C<get_data()> is the deprecated form of this method.
 
 =cut
 
@@ -1815,9 +1579,11 @@ sub get_field_types {
 
 sub get_data { shift->get_field_types(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->add_field_type(@field_types);
+=item add_field_types
+
+=item add_data
 
   $element_type->add_field_types(@field_types);
   $element_type->add_field_types(\@field_types);
@@ -1827,11 +1593,7 @@ sub get_data { shift->get_field_types(@_) }
 This takes a list of field typess and associates them with the element type
 object.
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> C<add_data()> is the deprecated form of this method.
+B<Note:> C<add_data()> is the deprecated form of this method.
 
 =cut
 
@@ -1869,24 +1631,23 @@ sub add_field_types {
 
 sub add_data { shift->add_field_types(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->new_field_type()
+=item new_field_type
+
+=item new_data
 
   my $field_type = $element_type->new_field_type(\%params);
      $field_type = $element_type->new_data(\%params);
 
 Adds a new field type to the element type, creating a new
 Bric::Biz::ElementType::Parts::FieldType object. See
-L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType> for a
-list of the parameters to its C<new()> method for the parameters that can be
-specified in the parameters hash reference passsed to C<new_field_type()>.
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>
+for a list of the parameters to its C<new()> method for the parameters that
+can be specified in the parameters hash reference passsed to
+C<new_field_type()>.
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
+B<Note:> C<new_data()> is the deprecated form of this method.
 
 =cut
 
@@ -1912,9 +1673,11 @@ sub new_field_type {
 
 sub new_data { shift->new_field_type(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->copy_field_type()
+=item copy_field_type
+
+=item copy_data
 
   my $field_type = $element_type->copy_field_type(\%params);
      $field_type = $element_type->copy_data(\%params);
@@ -1947,11 +1710,7 @@ C<element_type> parameter. Required unless C<field_type> has been specified.
 
 =back
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> C<copy_data()> is the deprecated form of this method.
+B<Note:> C<copy_data()> is the deprecated form of this method.
 
 =cut
 
@@ -1974,9 +1733,11 @@ sub copy_field_type {
 
 sub copy_data { shift->copy_field_type(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->del_field_types()
+=item del_field_types
+
+=item del_data
 
   $element_type->del_field_types(@field_types);
   $element_type->del_field_types(\@field_types);
@@ -1985,11 +1746,7 @@ sub copy_data { shift->copy_field_type(@_) }
 
 Removes the specified field types from the element type.
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> C<del_data()> is the deprecated form of this method.
+B<Note:> C<del_data()> is the deprecated form of this method.
 
 =cut
 
@@ -2029,20 +1786,20 @@ sub del_field_types {
 
 sub del_data { shift->del_field_types(@_) }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->add_containers()
+=back
+
+=head3 Containers
+
+=over
+
+=item add_containers
 
   $element_type->add_containers(@element_types);
   $element_type->add_containers(\@element_types);
 
 Add element types to the element type as subelement types.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
 
 =cut
 
@@ -2061,21 +1818,15 @@ sub add_containers {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->get_containers()
+=item get_containers
 
   my @element_types      = $element_type->get_containers;
   my $element_types_aref = $element_type->get_containers;
   my $element_type       = $element_type->get_containers($key_name);
 
 Returns all subelement element types.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
 
 =cut
 
@@ -2088,9 +1839,9 @@ sub get_containers {
     return first { $_->get_key_name eq $key_name } $grp->get_objects;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->del_containers()
+=item del_containers
 
   $element_type->del_containers(@element_types);
   $element_type->del_containers(\@element_types);
@@ -2098,18 +1849,6 @@ sub get_containers {
 Remove subelement element types from the element type. The subelement element
 types will not be deactivated, just disassociated with the parent element
 type.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
 
 =cut
 
@@ -2128,75 +1867,16 @@ sub del_containers {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
-=item $element_type->is_active()
+=back
 
-Return true if the element type is active, and false if it is not.
+=head3 save
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub is_active {
-    my $self = shift;
-    return $self->_get('_active') ? $self : undef;
-}
-
-#------------------------------------------------------------------------------#
-
-=item $element_type = $element_type->activate()
-
-Activates the element type.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub activate { shift->_set(['_active'] => [1]) }
-
-#------------------------------------------------------------------------------#
-
-=item $element_type->deactivate()
-
-Deactivates the element type.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub deactivate { shift->_set(['_active'] => [0]) }
-
-#------------------------------------------------------------------------------#
-
-=item $element_type->save()
+  $element_type->save;
 
 Saves changes to the element type, including its subelement element type and
 field type associatesions, to the database.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
 
 =cut
 
@@ -2267,12 +1947,133 @@ sub save {
     return $self->SUPER::save;
 }
 
-#==============================================================================#
+##############################################################################
 
-=back
+=head3 Arbitrary Attribute Management
+
+  $val = $element_type->set_attr($name => $value);
+  $val = $element_type->get_attr($name);
+  $val = $element_type->del_attr($name);
+
+Get/Set/Delete attributes on this element type.
+
+=cut
+
+sub set_attr {
+    my ($self, $name, $val) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+
+    # If we have an attr object, then populate it
+    if ($attr_obj) {
+        $attr_obj->set_attr({
+            name     => $name,
+            sql_type => 'short',
+            value    => $val
+        });
+    }
+
+    # Otherwise,cache this value until save.
+    else {
+        my $attr     = $self->_get('_attr');
+        $attr->{$name} = $val;
+        $self->_set(['_attr'], [$attr]);
+    }
+
+    $self->_set__dirty(1);
+    return $val;
+}
+
+sub get_attr {
+    my ($self, $name) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+    return $attr_obj->get_attr({name => $name}) if $self->get_id;
+    my $attr = $self->_get('_attr');
+    return $attr->{$name};
+}
+
+sub del_attr {
+    my ($self, $name) = @_;
+    my $attr_obj = $self->_get_attr_obj;
+    return $attr_obj->delete_attr({name => $name}) if $self->get_id;
+    my $attr = $self->_get('_attr');
+    delete $attr->{$name} unless $self->get_id;
+}
+
+sub all_attr {
+    my $self = shift;
+
+    # If we aren't saved yet, return the cache
+    return $self->_get('_attr') unless $self->get_id;
+
+    my $attr_obj = $self->_get_attr_obj;
+
+    # HACK: This identifies attr names begining with a '_' as private and will
+    # not return them.  This is being done instead of using subsystems because
+    # we are using subsystems to keep ElementTypes unique from each other.
+    my $ah = $attr_obj->get_attr_hash;
+
+    # Evil delete on a hash slice based on values returned by grep...
+    delete @{$ah}{ grep { substr $_, 0, 1 eq '_' } keys %$ah };
+    return $ah
+}
+
+##############################################################################
+
+=head3 Arbitrary Attribute Metadata Management
+
+  $val = $element_type->set_meta($name, $field => $value);
+  $val = $element_type->get_meta($name => $field);
+  $val = $element_type->get_meta($name);
+
+Get/Set attribute metadata on this element type. Calling the C<get_meta()>
+method without $field returns all metadata names and values as a hash.
+
+=cut
+
+sub set_meta {
+    my ($self, $name, $field, $val) = @_;
+
+    if (my $attr_obj = $self->_get_attr_obj) {
+        $attr_obj->add_meta({
+            name  => $name,
+            field => $field,
+            value => $val
+        });
+    } else {
+        my $meta = $self->_get('_meta');
+        $meta->{$name}->{$field} = $val;
+        $self->_set(['_meta'], [$meta]);
+    }
+    $self->_set__dirty(1);
+    return $val;
+}
+
+##############################################################################
+
+sub get_meta {
+    my ($self, $name, $field) = @_;
+
+    if (my $attr_obj = $self->_get_attr_obj) {
+        if (defined $field) {
+            return $attr_obj->get_meta({
+                name  => $name,
+                field => $field
+            });
+        } else {
+            my $meta = $attr_obj->get_meta({name  => $name});
+            return { map { $_ => $meta->{$_}->{value} } keys %$meta };
+        }
+    }
+
+    my $meta = $self->_get('_meta');
+    return defined $field ? $meta->{$name}{$field}
+                          : $meta->{$name}
+                          ;
+}
+
+##############################################################################
 
 =head1 PRIVATE
-
 
 =head2 Private Class Methods
 
@@ -2283,12 +2084,6 @@ sub save {
 called from list and list ids this will query the db and return either
 ids or objects
 
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
 =cut
 
 sub _do_list {
@@ -2296,7 +2091,7 @@ sub _do_list {
     my $tables = "$table a, $mem_table m, $map_table c";
     my @wheres = ('a.id = c.object_id', 'c.member__id = m.id',
                   "m.active = '1'");
-    my ($top, @params);
+    my @params;
 
     # Set up the active parameter.
     if (exists $params->{active}) {
@@ -2313,7 +2108,7 @@ sub _do_list {
         # Do nothing -- let ID return even deactivated element types.
     }
 
-    # Set up paramters based on an ElementType::Data name or a map type ID.
+    # Set up paramters based on an ElementType::FieldType name or a map type ID.
     if (exists $params->{data_name} or exists $params->{map_type_id}
           or exists $params->{map_type__id})
     {
@@ -2337,20 +2132,6 @@ sub _do_list {
         }
     }
 
-    # Set up parameters based on element types.
-    if (exists $params->{top_level} or exists $params->{media}) {
-        $tables .= ', at_type att';
-        push @wheres, 'att.id = a.type__id';
-        if (exists $params->{top_level}) {
-            push @wheres, 'att.top_level = ?';
-            push @params, $top = delete $params->{top_level} ? 1 : 0;
-        }
-        if (exists $params->{media}) {
-            push @wheres, 'att.media = ?';
-            push @params, delete $params->{media} ? 1 : 0;
-        }
-    }
-
     # Set up the rest of the parameters.
     while (my ($k, $v) = each %$params) {
         if ($k eq 'output_channel_id' || $k eq 'output_channel') {
@@ -2361,6 +2142,8 @@ sub _do_list {
             push @wheres, any_where($v, "a.type__id = ?", \@params);
         } elsif ($k eq 'id') {
             push @wheres, any_where($v, "a.$k = ?", \@params);
+        } elsif ($k eq 'biz_class_id') {
+            push @wheres, any_where($v, 'a.biz_class__id = ?', \@params);
         } elsif ($k eq 'grp_id') {
             # Fancy-schmancy second join.
             $tables .= ", $mem_table m2, $map_table c2";
@@ -2374,6 +2157,9 @@ sub _do_list {
             $tables .= ", element_type__site es";
             push @wheres, 'es.element_type__id = a.id', "es.active = '1'";
             push @wheres, any_where($v, 'es.site__id = ?', \@params);
+        } elsif (exists $bool_attrs{$k}) {
+            push @wheres, "a.$k = ?";
+            push @params, $v ? 1 : 0;
         } else {
             # The "name" and "description" properties.
             push @wheres, any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
@@ -2404,18 +2190,9 @@ sub _do_list {
         if ($d[0] != $last) {
             $last = $d[0];
             # Create a new element type object.
-            my $self = bless {}, $pkg;
-            $self->SUPER::new;
+            my $self = $pkg->SUPER::new;
             $grp_ids = $d[$#d] = [$d[$#d]];
             $self->_set(\@sel_props, \@d);
-            # Add the attribute object.
-            # HACK: Get rid of this object!
-            $self->_set( ['_attr_obj'],
-                         [ Bric::Util::Attribute::ElementType->new
-                           ({ object_id => $d[0],
-                              subsys => "id_$d[0]" })
-                         ]
-                       );
             $self->_set__dirty; # Disable the dirty flag.
             push @elems, $self->cache_me;
         } else {
@@ -2426,7 +2203,7 @@ sub _do_list {
 
     # Multisite element types are all the top-level for the site,
     # plus all non top-level element types.
-    if($params->{site_id} && ! $top) {
+    if ($params->{site_id} && !$params->{top_level}) {
         delete $params->{site_id};
         $params->{top_level} = 0;
         push @elems, _do_list($pkg, $params);
@@ -2493,24 +2270,12 @@ sub _is_referenced {
     return 0;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $element_type->$remove
 
 Removes this object completely from the DB. Returns 1 if active or undef
 otherwise
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
 
 =cut
 
@@ -2530,17 +2295,18 @@ $remove = sub {
 sub _get_attr_obj {
     my $self = shift;
     my $attr_obj = $self->_get('_attr_obj');
+
+    return $attr_obj if $attr_obj;
     my $id = $self->get_id;
-
-    unless ($attr_obj || not defined($id)) {
-    $attr_obj = Bric::Util::Attribute::ElementType->new(
-                     {'object_id' => $id,
-                      'subsys'    => "id_$id"});
+    $attr_obj = Bric::Util::Attribute::ElementType->new({
+        object_id => $id,
+        subsys    => "id_$id"
+    });
     $self->_set(['_attr_obj'], [$attr_obj]);
-    }
-
     return $attr_obj;
 }
+
+##############################################################################
 
 =item _get_at_type_obj
 
@@ -2548,18 +2314,19 @@ sub _get_attr_obj {
 
 sub _get_at_type_obj {
     my $self = shift;
-    my $att_id  = $self->get_type_id;
     my $att_obj = $self->_get('_att_obj');
 
     return $att_obj if $att_obj;
 
-    if ($att_id) {
-    $att_obj = Bric::Biz::ATType->lookup({'id' => $att_id});
-    $self->_set(['_att_obj'], [$att_obj]);
+    if (my $att_id = $self->get_type_id) {
+        $att_obj = Bric::Biz::ATType->lookup({'id' => $att_id});
+        $self->_set(['_att_obj'], [$att_obj]);
     }
 
     return $att_obj;
 }
+
+##############################################################################
 
 =item _save_attr
 
@@ -2599,6 +2366,8 @@ sub _save_attr {
     $a_obj->save;
 }
 
+##############################################################################
+
 =item _get_element_type_grp
 
 =cut
@@ -2625,6 +2394,8 @@ sub _get_element_type_grp {
 
     return $atg_obj;
 }
+
+##############################################################################
 
 =item _sync_parts
 
@@ -2675,7 +2446,7 @@ sub _sync_parts {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $element_type->_update_element_type()
 
@@ -2695,14 +2466,13 @@ sub _update_element_type {
     my $sql = "UPDATE $table".
               ' SET '.join(',', map {"$_=?"} @cols).' WHERE id=?';
 
-
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(@props), $self->get_id);
 
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $element_type->_insert_element_type()
 
@@ -2736,7 +2506,7 @@ sub _insert_element_type {
     return $self;
 }
 
-#------------------------------------------------------------------------------#
+##############################################################################
 
 =item $element_type->_get_parts()
 
@@ -2847,6 +2617,7 @@ $get_oc_coll = sub {
     return $oc_coll;
 };
 
+##############################################################################
 
 =item my $site_coll = $get_site_coll->($element_type)
 
@@ -2915,6 +2686,8 @@ $get_site_coll = sub {
     return $site_coll;
 };
 
+##############################################################################
+
 =item my $key_name = $make_key_name->($name)
 
 Takes an element type name and turns it into the key name. This is the name
@@ -2934,7 +2707,6 @@ $make_key_name = sub {
     return $n;
 };
 
-
 1;
 __END__
 
@@ -2946,11 +2718,13 @@ NONE.
 
 =head1 AUTHOR
 
-michael soderstrom <miraso@pacbell.net>
+Michael Soderstrom <miraso@pacbell.net>
+
+Refactored by David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, L<Bric::Biz::Element|Bric::Biz::Element>,
+L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.
 
 =cut

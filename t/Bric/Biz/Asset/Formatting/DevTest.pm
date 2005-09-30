@@ -5,7 +5,6 @@ use base qw(Bric::Biz::Asset::DevTest);
 use Test::More;
 use Bric::Biz::Asset::Formatting;
 use Bric::Biz::ElementType;
-use Bric::Biz::ATType;
 use Bric::Util::DBI qw(:junction);
 use Bric::Util::Burner::Mason;
 use Bric::Util::Burner::Template;
@@ -394,16 +393,12 @@ sub test_select_b_new_objs: Test(82) {
     # create some formatting objects and test them
     my (@formatting, $time, $got, $expected);
 
-    # grab and ATT
-    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
-
     # A formatting with one category (admin user)
     $time = time;
     $element = Bric::Biz::ElementType->new({ key_name    => "_test_$time",
                                            name        => "_test_$time",
                                            burner      => 1,
                                            description => 'this is a test',
-                                           type__id    => $att->get_id(),
                                          });
     $element->save();
     $self->add_del_ids($element->get_id, 'element_type');
@@ -475,7 +470,6 @@ sub test_select_b_new_objs: Test(82) {
          name        => "_test_$time.1",
          burner      => 1,
          description => 'this is a test',
-         type__id    => $att->get_id(),
        });
     $element->save();
     $self->add_del_ids($element->get_id, 'element_type');
@@ -521,7 +515,6 @@ sub test_select_b_new_objs: Test(82) {
                                            name        => "_test_$time.2",
                                            burner      => 1,
                                            description => 'this is a test',
-                                           type__id    => $att->get_id,
                                          });
     $element->save;
     $self->add_del_ids($element->get_id, 'element_type');
@@ -589,7 +582,6 @@ sub test_select_b_new_objs: Test(82) {
                                            name        => "_test_$time.3",
                                            burner      => 1,
                                            description => 'this is a test',
-                                           type__id    => $att->get_id(),
                                          });
     $element->save();
     $self->add_del_ids($element->get_id, 'element_type');
@@ -636,7 +628,6 @@ sub test_select_b_new_objs: Test(82) {
                                            name        => "_test_$time.4",
                                            burner      => 1,
                                            description => 'this is a test',
-                                           type__id    => $att->get_id(),
                                          });
     $element->save();
     $self->add_del_ids($element->get_id, 'element_type');
@@ -868,12 +859,10 @@ sub test_new_grp_ids: Test(4) {
     my $class = $self->class;
     my $all_formatting_grp_id = $class->INSTANCE_GROUP_ID;
     my $time = time;
-    my ($att) = Bric::Biz::ATType->list({ name => 'Insets' });
     my $element = Bric::Biz::ElementType->new({ name        => "_test_$time.new",
                                               key_name    => "_test_$time.new",
                                               burner      => 1,
                                               description => 'this is a test',
-                                              type__id    => $att->get_id(),
                                             });
     $element->save();
     $self->add_del_ids($element->get_id, 'element_type');

@@ -151,7 +151,7 @@ use constant VERSION_FIELDS => qw( name
                                    checked_out);
 
 use constant RO_FIELDS      => qw( class_id );
-use constant RO_COLUMNS     => ', at.biz_class__id';
+use constant RO_COLUMNS     => ', e.biz_class__id';
 
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Media';
 use constant INSTANCE_GROUP_ID => 32;
@@ -173,7 +173,6 @@ use constant WHERE => 'mt.id = i.media__id '
   . "AND m.active = '1' "
   . 'AND c.id = i.category__id '
   . 'AND e.id = mt.element_type__id '
-  . 'AND at.id = e.type__id '
   . 'AND mt.workflow__id = w.id';
 
 use constant COLUMNS => join(', mt.', 'mt.id', COLS) . ', '
@@ -187,7 +186,7 @@ use constant FROM => VERSION_TABLE . ' i';
 use constant PARAM_FROM_MAP => {
      keyword              => 'media_keyword mk, keyword k',
      output_channel_id    => 'media__output_channel moc',
-     simple               => 'media_member mm, member m, at_type at, element_type e, '
+     simple               => 'media_member mm, member m, element_type e, '
                              . 'category c, workflow w,' . TABLE . ' mt ',
      grp_id               => 'member m2, media_member mm2',
      data_text            => 'media_field md',

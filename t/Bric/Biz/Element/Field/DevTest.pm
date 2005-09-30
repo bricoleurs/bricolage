@@ -98,7 +98,7 @@ sub test_new : Test(9) {
 
 ##############################################################################
 # Test list().
-sub test_list : Test(97) {
+sub test_list : Test(89) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -261,7 +261,7 @@ sub test_list : Test(97) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(98) {
+sub test_list_ids : Test(90) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
