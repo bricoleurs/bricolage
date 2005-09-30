@@ -394,11 +394,15 @@ my %formSubs = (
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $agent, $id) = @_;
             my $out = '';
+            $key = escape_html($key) if $key;
 
             # If there is only one option, force readonly and show that option
-            if (scalar @{$vals->{props}{vals}} == 1) { 
-                $readOnly = 1; 
+            if (scalar @{$vals->{props}{vals}} == 1) {
                 $value = $vals->{props}{vals}[0][0];
+                my $outval = escape_html($value);
+                $m->print(qq{<input type="hidden" name="$key" value="$outval" />\n})
+                    unless $readOnly;
+                $readOnly = 1;
             }
 
             $out .= qq{<div class="row">\n} if $useTable;
@@ -406,7 +410,6 @@ my %formSubs = (
             $out .= "<br />" if (!$useTable && $name);
             $out .= qq{        <div class="input">\n} if $useTable;
 
-            $key = escape_html($key) if $key;
             if (!$readOnly) {
                 $js = $js ? " $js" : '';
                 $out .= qq{            <select name="$key" };
