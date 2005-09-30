@@ -15,7 +15,7 @@ use Bric::SOAP::Site;
 use Bric::SOAP::Keyword;
 use Bric::SOAP::User;
 use Bric::SOAP::Desk;
-use Bric::SOAP::Element;
+use Bric::SOAP::ElementType;
 use Bric::SOAP::OutputChannel;
 
 1;

@@ -421,7 +421,8 @@ only one output channel. [David]
 
 =item *
 
-Renamed Bric::SOAP::ElementType to Bric::SOAP::ATType. [David]
+Renamed Bric::SOAP::ElementType to Bric::SOAP::ATType and Bric::SOAP::Element
+to L<Bric:SOAP::ElementType|Bric:SOAP::ElementType>. [David]
 
 =back
 

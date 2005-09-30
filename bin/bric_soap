@@ -305,7 +305,7 @@ our %jump = (
         class => 'Template',
     },
     element_type => {
-        class => 'Element',
+        class => 'ElementType',
     },
     category => {
         class => 'Category',

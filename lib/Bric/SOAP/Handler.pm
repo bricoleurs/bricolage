@@ -99,7 +99,7 @@ use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::Story
                                  Bric::SOAP::Media
                                  Bric::SOAP::Template
-                                 Bric::SOAP::Element
+                                 Bric::SOAP::ElementType
                                  Bric::SOAP::Category
                                  Bric::SOAP::MediaType
                                  Bric::SOAP::Site

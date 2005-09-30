@@ -1,4 +1,4 @@
-package Bric::SOAP::Element;
+package Bric::SOAP::ElementType;
 ###############################################################################
 
 use strict;
@@ -24,7 +24,7 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::Element - SOAP interface to Bricolage element type definitions.
+Bric::SOAP::ElementType - SOAP interface to Bricolage element type definitions.
 
 =head1 VERSION
 
@@ -54,7 +54,7 @@ $LastChangedDate$
                name(password => PASSWORD));
 
   # set uri for Element type module
-  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Element');
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/ElementType');
 
   # get a list of all element types
   my $element_type_ids = $soap->list_ids()->result;

@@ -23,7 +23,7 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::ElementType - SOAP interface to Bricolage element type sets
+Bric::SOAP::ATType - SOAP interface to Bricolage element type sets
 
 =head1 VERSION
 
@@ -52,8 +52,8 @@ $LastChangedDate: 2004-06-09 05:19:39 +0200 (Wed, 09 Jun 2004) $
   $soap->login(name(username => USER),
                name(password => PASSWORD));
 
-  # set uri for ElementType set module
-  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/ElementType');
+  # set uri for ATType set module
+  $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/ATType');
 
   # get a list of all element type sets
   my $ids = $soap->list_ids()->result;
