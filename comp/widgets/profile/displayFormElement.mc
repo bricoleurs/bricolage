@@ -400,9 +400,11 @@ my %formSubs = (
             if (scalar @{$vals->{props}{vals}} == 1) {
                 $value = $vals->{props}{vals}[0][0];
                 my $outval = escape_html($value);
-                $m->print(qq{<input type="hidden" name="$key" value="$outval" />\n})
-                    unless $readOnly;
-                $readOnly = 1;
+                $m->comp(
+                    'hidden.mc',
+                    name  => $key,
+                    value => $value,
+                ) unless $readOnly++;
             }
 
             $out .= qq{<div class="row">\n} if $useTable;
@@ -435,27 +437,17 @@ my %formSubs = (
                                       $values->{$a} cmp $values->{$b}
                                     } keys %$values)
                 {
-                    if ($readOnly && $values->{$k} eq $value) {
-                        $out .= $values->{$k};
-                        $out .= $m->scomp('/widgets/profile/hidden.mc',
-                                           name => $key,
-                                           value => $values->{$k});
-                        $out .= "<br />";
-                    } else {
-                        $out .= &$opt_sub($k, $values->{$k}, $value);
-                    }
+                    $out .= $readOnly
+                        ? $values->{$k} eq $value ? $values->{$k} . '' : ''
+                        : &$opt_sub($k, $values->{$k}, $value);
                 }
             } elsif ($ref eq 'ARRAY') {
                 foreach my $k (@$values ) {
                     my ($f, $v) = ref $k ? @$k : ($k, $k);
-                    if ($readOnly && $f ne undef && $f eq $value) {
-                        $out .= $v;
-                        $out .= $m->scomp('/widgets/profile/hidden.mc',
-                                           name => $key,
-                                           value => $f);
-                        $out .= "<br />";
-                    } else {
+                    if (!$readOnly) {
                         $out .= &$opt_sub($f, $v, $value);
+                    } else {
+                        $out .= $v . '' if ($f ne undef && $f eq $value);
                     }
                 }
             }
