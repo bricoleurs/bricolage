@@ -396,14 +396,16 @@ my %formSubs = (
             my $out = '';
             $key = escape_html($key) if $key;
 
+            my $values = $vals->{props}{vals};
+            my $ref    = ref $values;
+
             # If there is only one option, force readonly and show that option
-            if (scalar @{$vals->{props}{vals}} == 1) {
-                $value = $vals->{props}{vals}[0][0];
-                my $outval = escape_html($value);
+            my $count = $ref eq 'ARRAY' ? @$values : keys %$values;
+            if ($count == 1) {
                 $m->comp(
                     'hidden.mc',
                     name  => $key,
-                    value => $value,
+                    value => $ref eq 'ARRAY' ? $values->[0][0] : values %$values,
                 ) unless $readOnly++;
             }
 
@@ -429,8 +431,6 @@ my %formSubs = (
               if $vals->{props}{multiple};
 
             # Iterate through values to create options.
-            my $values = $vals->{props}{vals};
-            my $ref = ref $values;
             if ($ref eq 'HASH') {
                 foreach my $k (sort { return -1 if $a eq '';
                                       return 1 if $b eq '';
