@@ -1,4 +1,4 @@
-package Bric::SOAP::ElementType;
+package Bric::SOAP::ATType;
 ###############################################################################
 
 use strict;

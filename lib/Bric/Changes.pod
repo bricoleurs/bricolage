@@ -419,6 +419,10 @@ The Element Type profile no longer displays the "Sites" section if there is
 only one site, and no longer displays the output channel section if there is
 only one output channel. [David]
 
+=item *
+
+Renamed Bric::SOAP::ElementType to Bric::SOAP::ATType. [David]
+
 =back
 
 =cut

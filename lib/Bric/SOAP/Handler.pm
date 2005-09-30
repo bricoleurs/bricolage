@@ -107,7 +107,7 @@ use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::User
                                  Bric::SOAP::Desk
                                  Bric::SOAP::Workflow
-                                 Bric::SOAP::ElementType
+                                 Bric::SOAP::ATType
                                  Bric::SOAP::OutputChannel
                                 )];
 

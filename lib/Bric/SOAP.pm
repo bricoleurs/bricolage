@@ -8,14 +8,14 @@ use Bric::SOAP::Story;
 use Bric::SOAP::Media;
 use Bric::SOAP::Template;
 use Bric::SOAP::Workflow;
-use Bric::SOAP::Element;
+use Bric::SOAP::ATType;
 use Bric::SOAP::Category;
 use Bric::SOAP::MediaType;
 use Bric::SOAP::Site;
 use Bric::SOAP::Keyword;
 use Bric::SOAP::User;
 use Bric::SOAP::Desk;
-use Bric::SOAP::ElementType;
+use Bric::SOAP::Element;
 use Bric::SOAP::OutputChannel;
 
 1;
@@ -172,7 +172,7 @@ Provides query, export, update, create, and delete for Media objects.
 
 Provides query, export, update, create, and delete for Templates.
 
-=item L<Bric::SOAP::Element|Bric::SOAP::Element>
+=item L<Bric::SOAP::ElementType|Bric::SOAP::Element>
 
 Provides query, export, update, create, and delete for Element types.
 
@@ -206,7 +206,7 @@ Provides the ability to move Story, Media and Formatting objects between
 desks. Also provides checkin, checkout, publish, and deploy.
 And now list_ids, export, create, update, and delete.
 
-=item L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
+=item L<Bric::SOAP::ATType|Bric::SOAP::ATType>
 
 Provides query, export, update, create, and delete for Element Type Set objects.
 
@@ -1401,7 +1401,7 @@ L<Bric::SOAP::User|Bric::SOAP::User>
 
 L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 
-L<Bric::SOAP::ElementType|Bric::SOAP::ElementType>
+L<Bric::SOAP::ATType|Bric::SOAP::ATType>
 
 L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
 

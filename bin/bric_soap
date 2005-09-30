@@ -334,7 +334,7 @@ our %jump = (
         class    => 'Workflow',
     },
     element_type_set => {
-        class => 'ElementType',
+        class => 'ATType',
     },
     output_channel => {
         class => 'OutputChannel',
