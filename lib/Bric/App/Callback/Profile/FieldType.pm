@@ -1,4 +1,4 @@
-package Bric::App::Callback::Profile::ElementData;
+package Bric::App::Callback::Profile::FieldType;
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;

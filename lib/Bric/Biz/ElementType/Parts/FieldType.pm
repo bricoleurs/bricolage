@@ -815,7 +815,7 @@ sub my_meths {
                           checkbox   => 'Checkbox',
                           codeselect => 'Code Select',
                           date       => 'Date',
-                          ( ENABLE_WYSIWYG 
+                          ( ENABLE_WYSIWYG
                             ? ( wysiwyg    => 'WYSIWYG' )
                             : ()
                           ),
