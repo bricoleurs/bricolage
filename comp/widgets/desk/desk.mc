@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -26,9 +24,6 @@ upon each item.
 =cut
 
 </%doc>
-
-%#--- Arguments ---#b
-
 <%args>
 $class   => 'story'
 $desk_id => undef
@@ -42,9 +37,6 @@ $sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $offset  => 0
 $show_all => undef
 </%args>
-
-%#--- Initialization ---#
-
 <%once>;
 my $widget = 'desk_asset';
 my $pkgs = { story      => get_package_name('story'),
@@ -193,7 +185,6 @@ my $put_onto_desk = sub {
     return $desk;
 };
 </%once>
-
 <%init>;
 my $pkg   = get_package_name($class);
 my $meths = $pkg->my_meths;
@@ -430,7 +421,3 @@ if (defined $objs && @$objs > $obj_offset) {
     $r->pnotes('num_displayed', $num_displayed);
 }
 </%init>
-
-%#--- Log History ---#
-
-
