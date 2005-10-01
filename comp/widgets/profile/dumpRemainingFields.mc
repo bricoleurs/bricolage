@@ -28,7 +28,6 @@ fields not explicitly displayed by profile element.
 =cut
 </%doc>
 <%args>
-
 %fieldsUsed => ()
 $objref
 $useTable => 1
@@ -36,19 +35,17 @@ $readOnly => 0
 $localize => 1
 </%args>
 <%perl>
-
 my $methods = $objref->my_meths(1);
-
 foreach my $meth ( @{$methods} ) {
-    if ( !$fieldsUsed{$meth->{name}} ) {
-	$m->comp("/widgets/profile/displayFormElement.mc",
-		 key      => $meth->{name},
-		 objref   => $objref,
-		 useTable => $useTable,
-		 localize => $localize,
-		 readOnly => $readOnly
+    unless ( $fieldsUsed{$meth->{name}} ) {
+        $m->comp(
+            '/widgets/profile/displayFormElement.mc',
+            key      => $meth->{name},
+            objref   => $objref,
+            useTable => $useTable,
+            localize => $localize,
+            readOnly => $readOnly
 		);
     }
 }
-
 </%perl>
