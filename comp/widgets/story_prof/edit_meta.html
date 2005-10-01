@@ -331,8 +331,7 @@ $cd = $wf->get_start_desk() unless $cd;
 my $num = 1;
 
 # get output channel info
-my $at = $story->get_element_type_id;
-my $asset_type = Bric::Biz::ElementType->lookup({id => $at});
+my $asset_type = $story->get_element_type;
 my @aocs = $asset_type->get_output_channels;
 my @ocs = $story->get_output_channels;
 
