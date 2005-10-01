@@ -2,9 +2,9 @@
 
 <div class="jump">
 % if ($link1) {
-  <a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif" border=0 hspace=2></a>
+  <a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif"></a>
 % } if ($link2) {
-  <a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif" border=0 hspace=2></a>
+  <a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif"></a>
 % }
 </div>
 
@@ -44,40 +44,50 @@ if ($class eq 'story') {
 } else {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
     ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
-
 }
 
 $sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
+
+my $sites = $c->get('__SITES__');
+
+unless ($sites) {
+    $sites = Bric::Biz::Site->list({ active => 1 });
+    $c->set('__SITES__', $sites);
+}
+
+if (@$sites > 1) {
+    $sort_by->{$_}[5] ||= [ site_id => 'Site'] for qw(story media formatting);
+} else {
+   delete $sort_by->{$_}[5] for qw(story media formatting);
+}
 </%init>
 <%once>;
-my $sort_by = { story      => [ [ name          => 'Title' ],
-                                [ uri           => 'Primary URI' ],
-                                [ cover_date    => 'Cover Date' ],
-                                [ element       => 'Story Type' ],
-                                [ id            => 'Story ID' ],
-                                [ priority      => 'Priority' ],
-                                [ site_id       => 'Site' ],
+my $sort_by = { story      => [ [ name           => 'Title' ],
+                                [ uri            => 'Primary URI' ],
+                                [ cover_date     => 'Cover Date' ],
+                                [ element        => 'Story Type' ],
+                                [ priority       => 'Priority' ],
+                                [ site_id        => 'Site' ],
                               ],
-                media      => [ [ name          => 'Title' ],
-                                [ uri           => 'Primary URI' ],
-                                [ cover_date    => 'Cover Date' ],
-                                [ element       => 'Media Type' ],
-                                [ id            => 'ID' ],
-                                [ priority      => 'Priority' ],
-                                [ site_id       => 'Site' ],
+                media      => [ [ name           => 'Title' ],
+                                [ uri            => 'Primary URI' ],
+                                [ cover_date     => 'Cover Date' ],
+                                [ element        => 'Media Type' ],
+                                [ priority       => 'Priority' ],
+                                [ site_id        => 'Site' ],
                               ],
-                formatting => [ [ name          => 'File Name' ],
-                                [ deploy_date   => 'Deployed Date' ],
+                formatting => [ [ name           => 'File Name' ],
+                                [ deploy_date    => 'Deployed Date' ],
                                 [ output_channel => 'Output Channel' ],
-                                [ priority      => 'Priority' ],
-                                [ element_type  => 'Asset Type' ],
-                                [ id            => 'ID' ],
-                                [ site_id       => 'Site' ],
+                                [ priority       => 'Priority' ],
+                                [ element_type   => 'Asset Type' ],
+                                [ site_id        => 'Site' ],
                               ]
               };
 
-my $pl_names = { story => get_class_info('story')->get_plural_name,
-                 media => get_class_info('media')->get_plural_name,
-                 formatting => get_class_info('formatting')->get_plural_name
-               };
+my $pl_names = {
+   story      => get_class_info('story')->get_plural_name,
+   media      => get_class_info('media')->get_plural_name,
+   formatting => get_class_info('formatting')->get_plural_name
+};
 </%once>
