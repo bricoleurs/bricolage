@@ -129,7 +129,6 @@ my @COLS = qw(
     required
     quantifier
     autopopulated
-    map_type__id
     max_length
     sql_type
     widget_type
@@ -152,7 +151,6 @@ my @ATTRS = qw(
     required
     quantifier
     autopopulated
-    map_type_id
     max_length
     sql_type
     widget_type
@@ -204,7 +202,6 @@ BEGIN {
     Bric::register_fields({
         id              => Bric::FIELD_READ,
         element_type_id => Bric::FIELD_RDWR,
-        map_type_id     => Bric::FIELD_RDWR,
         name            => Bric::FIELD_RDWR,
         key_name        => Bric::FIELD_RDWR,
         description     => Bric::FIELD_RDWR,
@@ -314,9 +311,6 @@ sub new {
         : exists $init->{element__id} ? delete $init->{element__id}
                                       : $init->{element_type_id}
         ;
-    $init->{map_type_id} = delete $init->{map_type__id}
-      if exists $init->{map_type__id};
-
     $init->{$_} ||= 0 for qw(max_length length place cols rows length place);
     $init->{widget_type} ||= 'text';
     $init->{sql_type}    ||= 'short';
@@ -426,10 +420,6 @@ Boolean value indicating whether the field is single or can be multiple.
 
 Boolean value indicating whether the field's value is autopopulated by a media
 document.
-
-=item map_type_id
-
-May use C<ANY> for a list of possible values.
 
 =item max_length
 
@@ -1344,8 +1334,9 @@ sub get_element__id  { shift->get_element_type_id      }
 sub set_element__id  { shift->set_element_type_id(@_)  }
 sub get_element_id   { shift->get_element_type_id      }
 sub set_element_id   { shift->set_element_type_id(@_)  }
-sub get_map_type__id { shift->get_map_type_id          }
-sub set_map_type__id { shift->set_map_type_id(@_)      }
+
+sub set_map_type__id { shift }
+sub get_map_type__id { 0 }
 sub set_publishable  { shift }
 sub get_publishable  { 0 }
 
@@ -1651,8 +1642,6 @@ sub _do_list {
         element_type_id => 'element_type__id',
         element_id      => 'element_type__id',
         element__id     => 'element_type__id',
-        map_type__id    => 'map_type__id',
-        map_type_id     => 'map_type__id',
         max_length      => 'max_length',
         place           => 'place',
         cols            => 'cols',

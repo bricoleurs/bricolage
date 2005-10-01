@@ -49,7 +49,6 @@ CREATE TABLE field_type (
     required         BOOLEAN         NOT NULL DEFAULT FALSE,
     quantifier       VARCHAR(2)      NOT NULL,
     autopopulated    BOOLEAN         NOT NULL DEFAULT FALSE,
-    map_type__id     INTEGER,
     max_length       INTEGER         NOT NULL DEFAULT 0,
     sql_type         VARCHAR(30)     NOT NULL DEFAULT 'short',
     widget_type      VARCHAR(30)     NOT NULL DEFAULT 'text',
@@ -119,7 +118,6 @@ CREATE TABLE attr_field_type_meta (
 
 CREATE UNIQUE INDEX udx_field_type__key_name__et_id ON field_type(lower_text_num(key_name, element_type__id));
 CREATE INDEX idx_field_type__name__at_id ON field_type(LOWER(name));
-CREATE INDEX fkx_map_type__field_type on field_type(map_type__id);
 CREATE INDEX fkx_element_type__field_type on field_type(element_type__id);
 
 -- Unique index on subsystem/name pair

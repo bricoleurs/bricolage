@@ -457,11 +457,6 @@ The name of an ElementType::Parts::FieldType (field type) object. Returned will 
 all ElementType objects that reference this particular field type object. May
 use C<ANY> for a list of possible values.
 
-=item map_type_id
-
-The map_type_id of a field type object. May use C<ANY> for a list of possible
-values.
-
 =item active
 
 Boolean value for active or inactive element types.
@@ -2109,27 +2104,17 @@ sub _do_list {
     }
 
     # Set up paramters based on an ElementType::FieldType name or a map type ID.
-    if (exists $params->{data_name} or exists $params->{map_type_id}
-          or exists $params->{map_type__id})
-    {
+    if (exists $params->{field_name} || exists $params->{data_name}) {
         # Add the field_type table.
         $tables .= ', field_type d';
-        push @wheres, 'd.element_type__id = a.id';
-        if (exists $params->{data_name}) {
-            push @wheres, any_where(
-                delete $params->{data_name},
-                'LOWER(d.key_name) LIKE LOWER(?)',
-                \@params
-            );
-        }
-        if (exists $params->{map_type_id} or exists $params->{map_type__id}) {
-            push @wheres, any_where(
-                ( delete $params->{map_type_id}
-                  || delete $params->{map_type__id} ),
-                'd.map_type__id = ?',
-                \@params
-            );
-        }
+        my $val = exists $params->{field_name} ? delete $params->{field_name}
+                                               : delete $params->{data_name}
+                                               ;
+        push @wheres, 'd.element_type__id = a.id', any_where(
+            $val,
+            'LOWER(d.key_name) LIKE LOWER(?)',
+            \@params
+        );
     }
 
     # Set up the rest of the parameters.

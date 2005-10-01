@@ -399,7 +399,8 @@ L<Bric::Biz::ElementType|Bric::Biz::ElementType>. [David]
 
 =item *
 
-Removed the mostly unused and meaningless C<publishable> attribute from
+Removed the unused and meaningless C<publishable> and C<map_type_id>
+attributes from
 L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
 [David]
 

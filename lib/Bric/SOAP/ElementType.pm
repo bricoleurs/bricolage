@@ -113,11 +113,6 @@ contain this output channel. May use C<ANY> for a list of possible values.
 The name of an ElementType::Parts::FieldType (field type) object. Returned will be
 all ElementType objects that reference this particular field type object.
 
-=item map_type_id
-
-The map_type_id of a field type object. May use C<ANY> for a list of possible
-values.
-
 =item type
 
 The element type's type.
@@ -408,7 +403,7 @@ sub is_allowed_param {
         list_ids => { map { $_ => 1 } qw(key_name name description active
                                          output_channel output_channel_id
                                          type type_id field_name data_name
-                                         map_type_id site_id top_level media
+                                         site_id top_level media
                                          paginated fixed_uri related_story
                                          related_media biz_class_id) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
