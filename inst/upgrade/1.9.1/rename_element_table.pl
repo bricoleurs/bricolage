@@ -109,9 +109,9 @@ do_sql
       ADD CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
       REFERENCES grp(id) ON DELETE CASCADE},
 
-    q{ALTER TABLE ONLY element_type__site
+    q{ALTER TABLE ONLY element__site
       DROP CONSTRAINT fk_site__element__site__site__id},
-    q{ALTER TABLE ONLY element_type__site
+    q{ALTER TABLE ONLY element__site
       ADD CONSTRAINT fk_site__et__site__site__id FOREIGN KEY (site__id)
       REFERENCES site(id) ON DELETE CASCADE},
 
@@ -122,7 +122,7 @@ do_sql
     q{ALTER TABLE element_type__site RENAME COLUMN element__id TO element_type__id},
     q{ALTER TABLE element_type__site ALTER COLUMN id
       SET DEFAULT NEXTVAL('seq_element_type__site')},
-    q{ALTER TABLE element_type__site DROP CONSTRAINT pk_element__site__id},
+    q{ALTER TABLE element_type__site DROP CONSTRAINT element__site_pkey},
     q{ALTER TABLE element_type__site ADD CONSTRAINT pk_element_type__site__id
       PRIMARY KEY (id)},
     # Restore FK dropped above.
@@ -157,11 +157,16 @@ do_sql
     q{ALTER TABLE element_type_member DROP CONSTRAINT pk_element_member__id},
     q{ALTER TABLE element_type_member ADD CONSTRAINT pk_element_type_member__id
       PRIMARY KEY (id)},
+
     # Restore FK dropped above.
     q{ALTER TABLE element_type_member ADD
       CONSTRAINT fk_element__et_member FOREIGN KEY (object_id)
       REFERENCES element_type(id) ON DELETE CASCADE},
+
     # Add constraint that never existed before (see pasto below).
+    q{DELETE FROM element_type_member WHERE NOT EXISTS (
+         SELECT id FROM member WHERE id = member__id limit 1
+      )},
     q{ALTER TABLE element_type_member ADD
       CONSTRAINT fk_member__et_member FOREIGN KEY (member__id)
       REFERENCES member(id) ON DELETE CASCADE},
@@ -188,6 +193,7 @@ do_sql
     q{ALTER TABLE attr_element_type_val DROP CONSTRAINT pk_attr_element_val__id},
     q{ALTER TABLE attr_element_type_val ADD CONSTRAINT pk_attr_element_type_val__id
       PRIMARY KEY (id)},
+
     # Restore FKs dropped above.
     q{ALTER TABLE attr_element_type_val ADD
       CONSTRAINT fk_et__attr_et_val FOREIGN KEY (object__id)
@@ -203,6 +209,7 @@ do_sql
     q{ALTER TABLE attr_element_type_meta DROP CONSTRAINT pk_attr_element_meta__id},
     q{ALTER TABLE attr_element_type_meta ADD CONSTRAINT pk_attr_element_type_meta__id
       PRIMARY KEY (id)},
+
     # Restore FK dropped above.
     q{ALTER TABLE attr_element_type_meta ADD
     CONSTRAINT fk_attr_et__attr_et_meta FOREIGN KEY (attr__id)
@@ -210,6 +217,9 @@ do_sql
 
     # Fix up element tables, which never had the FKs!
     q{ALTER TABLE story_container_tile RENAME COLUMN element__id TO element_type__id},
+    q{DELETE FROM story_container_tile WHERE NOT EXISTS (
+         SELECT id FROM element_type WHERE id = element_type__id limit 1
+    )},
     q{CREATE INDEX fkx_sc_tile__element_type ON story_container_tile(element_type__id)},
     q{ALTER TABLE story_container_tile
       ADD CONSTRAINT fk_sc_tile__element_type FOREIGN KEY (element_type__id)
@@ -217,6 +227,9 @@ do_sql
 
     q{ALTER TABLE media_container_tile RENAME COLUMN element__id TO element_type__id},
     q{CREATE INDEX fkx_mc_tile__element_type ON media_container_tile(element_type__id)},
+    q{DELETE FROM media_container_tile WHERE NOT EXISTS (
+         SELECT id FROM element_type WHERE id = element_type__id limit 1
+    )},
     q{ALTER TABLE media_container_tile
       ADD CONSTRAINT fk_mc_tile__element_type FOREIGN KEY (element_type__id)
       REFERENCES element_type(id) ON DELETE CASCADE},
