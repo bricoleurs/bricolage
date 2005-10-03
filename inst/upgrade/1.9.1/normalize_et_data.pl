@@ -7,6 +7,7 @@ use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 
+exit unless test_table 'at_data';
 exit if test_column 'at_data', 'cols';
 
 # Create new columns
