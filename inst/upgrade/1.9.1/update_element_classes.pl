@@ -10,8 +10,6 @@ exit if fetch_sql q{SELECT 1 FROM class where pkg_name = 'Bric::Biz::Element'};
 
 do_sql
 
-  q{DELETE FROM class WHERE id = 24},
-
   q{
     UPDATE class
     SET    pkg_name    = 'Bric::Biz::ElementType'
