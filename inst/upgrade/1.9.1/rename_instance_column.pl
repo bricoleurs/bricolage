@@ -6,6 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
+exit unless test_table 'story_container_tile';
 exit if test_column 'story_container_tile', 'related_story__id';
 
 do_sql
