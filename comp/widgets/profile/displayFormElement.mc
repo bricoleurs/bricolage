@@ -393,36 +393,16 @@ my %formSubs = (
         select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $agent, $id) = @_;
-            my $out = '';
             $key = escape_html($key) if $key;
 
             my $values = $vals->{props}{vals};
             my $ref    = ref $values;
 
-            # If there is only one option, force readonly and show that option
-            my $count = $ref eq 'ARRAY' ? @$values : keys %$values;
-            if ($count == 1) {
-                $m->comp(
-                    'hidden.mc',
-                    name  => $key,
-                    value => $ref eq 'ARRAY' ? $values->[0][0] : values %$values,
-                ) unless $readOnly++;
-            }
+# If it's read-only, output value.
+# If it's an array, do one thing
+# If it's a hash, do another.
 
-            $out .= qq{<div class="row">\n} if $useTable;
-            $out .= $name ? qq{        <div class="$label">$name:</div>\n} : '';
-            $out .= "<br />" if (!$useTable && $name);
-            $out .= qq{        <div class="input">\n} if $useTable;
-
-            if (!$readOnly) {
-                $js = $js ? " $js" : '';
-                $out .= qq{            <select name="$key" };
-                $out .= 'size="' . ($vals->{props}{size} ||
-                  ($vals->{props}{multiple} ? 5 : 1)) . '"';
-                $out .= ' multiple="multiple"' if $vals->{props}{multiple};
-                $out .= qq{ id="$id"} if defined $id;
-                $out .= "$js>\n";
-            }
+            my $only_one = $ref eq 'ARRAY' ? @$values == 1 : keys %$values == 1;
 
             # Make the values a reference if this is a multiple select list.
             # XXX It would be better if the calling code could call
@@ -430,33 +410,60 @@ my %formSubs = (
             $value = { map { $_ => 1 } split /__OPT__/, $value }
               if $vals->{props}{multiple};
 
-            # Iterate through values to create options.
-            if ($ref eq 'HASH') {
-                foreach my $k (sort { return -1 if $a eq '';
-                                      return 1 if $b eq '';
-                                      $values->{$a} cmp $values->{$b}
-                                    } keys %$values)
-                {
-                    $out .= $readOnly
-                        ? $values->{$k} eq $value ? $values->{$k} . '' : ''
-                        : &$opt_sub($k, $values->{$k}, $value);
-                }
-            } elsif ($ref eq 'ARRAY') {
-                foreach my $k (@$values ) {
-                    my ($f, $v) = ref $k ? @$k : ($k, $k);
-                    if (!$readOnly) {
-                        $out .= &$opt_sub($f, $v, $value);
-                    } else {
-                        $out .= $v . '' if ($f ne undef && $f eq $value);
-                    }
-                }
+            $m->print(qq{<div class="row">\n}) if $useTable;
+            $m->print($name ? qq{        <div class="$label">$name:</div>\n} : '');
+            $m->print('<br />') if !$useTable && $name;
+            $m->print(qq{        <div class="input">\n}) if $useTable;
+
+            if ($readOnly) {
+                # Just output the value.
+                $m->print(escape_html($value));
             }
 
-            $out .= "            </select>\n" if (!$readOnly);
+            elsif ($only_one) {
+                # Output the value and a hidden field.
+                my ($val, $lab) = $ref eq 'ARRAY'
+                    ? (@{$values->[0]})
+                    : ((keys %$values)[0], (values %$values)[0]);
+                $m->print(escape_html($lab));
+                $m->comp(
+                    'hidden.mc',
+                    name  => $key,
+                    value => $val,
+                );
+            }
 
-            $out .= "        </div>\n    </div>\n" if $useTable;
-            # close select
-            $m->out("$out");
+            else {
+                # Output the select list.
+                $js = $js ? " $js" : '';
+                $m->print(
+                    qq{            <select name="$key" size="},
+                    $vals->{props}{size} || ($vals->{props}{multiple} ? 5 : 1),
+                    '"'
+                );
+                $m->print(' multiple="multiple"') if $vals->{props}{multiple};
+                $m->print(qq{ id="$id"}) if defined $id;
+                $m->print("$js>\n");
+
+                # Iterate through values to create options.
+                if ($ref eq 'HASH') {
+                    # Might need to make sure that the key '' sorts first. See
+                    # how it was done in rev_1_8.
+                    for my $k (sort values %$values) {
+                        $m->print($opt_sub->($k, $values->{$k}, $value));
+                    }
+                }
+
+                elsif ($ref eq 'ARRAY') {
+                    for my $k (@$values) {
+                        $m->print($opt_sub->((ref $k ? @$k : ($k, $k)), $value));
+                    }
+                }
+
+                $m->print("</select>\n") unless $readOnly;
+            }
+
+            $m->print("        </div>\n    </div>\n") if $useTable;
         },
 
         radio => sub {
