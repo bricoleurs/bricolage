@@ -428,6 +428,12 @@ Bric::App::Callback::Profile::ElementData to
 L<Bric::App::Callback::Profile::FieldType|Bric::App::Callback::Profile::FieldType>.
 [David]
 
+=item *
+
+Added support for typical Windows character encodings. This means that users
+can select "Windows Western (CP1252)" as their encoding in order to fix
+gremlin characters pasted from Microsoft Word. [David]
+
 =back
 
 =cut

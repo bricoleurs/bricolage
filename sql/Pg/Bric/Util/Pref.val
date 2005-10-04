@@ -1556,6 +1556,30 @@ VALUES ('14', 'koi8-r', 'KOI8-R');
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('14', 'koi8-u', 'KOI8-U');
 
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1250', 'Windows Central European (CP1250)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1251', 'Windows Cyrillic (CP1251)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1252', 'Windows Western (CP1252)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1253', 'Windows Greek (CP1253)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1254', 'Windows Turkish (CP1254)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1255', 'Windows Hebrew (CP1255)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1256', 'Windows Arabic (CP1256)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1258', 'Windows Vietnamese (CP1258)');
+
 -- Language
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
