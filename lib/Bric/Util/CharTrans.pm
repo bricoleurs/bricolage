@@ -54,19 +54,17 @@ use Encode::Alias;
 ################################################################################
 # Inheritance
 ################################################################################
-use base qw(Bric);
 
 ################################################################################
 # Function Prototypes
 ################################################################################
 sub _convert;
-sub _utf8_on;
 
 ##############################################################################
 # Constants
 ##############################################################################
 # Map some useful aliases.
-define_alias JIS           => 'ISO-2022-JP';
+define_alias 'JIS'         => 'ISO-2022-JP';
 define_alias 'X-EUC-JP'    => 'ISO-2022-JP';
 define_alias 'SHIFT-JIS'   => 'SJIS';
 define_alias 'X-SHIFT-JIS' => 'SJIS';
@@ -75,15 +73,6 @@ define_alias 'X-SJIS'      => 'SJIS';
 ################################################################################
 # Fields
 ################################################################################
-# Instance Fields
-BEGIN {
-    Bric::register_fields({
-			 # Public Fields
-
-			 # Private Fields
-			 _charset => Bric::FIELD_NONE,
-			});
-}
 
 ################################################################################
 # Class Methods
@@ -193,13 +182,7 @@ Instead, it returns the Bric::Util::CharTrans object itself.
 sub to_utf8 {
     my $self = shift;
     return $self unless defined $_[0];
-    my $encoding = $self->charset;
-    if ($encoding eq 'UTF-8') {
-        _utf8_on shift;
-    } else {
-        # Just use this line and not the conditional if there are problems.
-        _convert \&Encode::decode, $encoding, shift;
-    }
+    _convert \&Encode::decode, $self->charset, shift;
     return $self;
 }
 
@@ -275,7 +258,7 @@ sub _convert {
                 return;
             }
         } else {
-            $_[0] = $code->($encoding, $_[0]);
+            $_[0] = $code->($encoding, $_[0], 1);
         }
     };
 
@@ -283,53 +266,6 @@ sub _convert {
     throw_gen error   => "Error converting data from $encoding to UTF-8",
               payload => $@;
 }
-
-##############################################################################
-
-=item _utf8_on
-
-  _utf8_on $data;
-
-Sets the Perl C<utf8> flag on the data structure in C<$data> to ensure that
-Perl knows that it's UTF-8. Called by C<to_utf8()> when the data to be
-converted is already UTF-8.
-
-=cut
-
-# XXX If there are problems, we might have to dump the Encode::_utf8_on cheat
-# and just use _convert, instead.
-
-sub _utf8_on {
-    eval {
-        if (my $ref = ref $_[0]) {
-            my $in = shift;
-            if ($ref eq 'SCALAR') {
-                return Encode::_utf8_on($$in);
-            } elsif ($ref eq 'ARRAY') {
-                # Recurse through the array elements.
-                _utf8_on($_, @_) for @$in;
-                return;
-            } elsif ($ref eq 'HASH') {
-                # Recurse through the hash values.
-                _utf8_on($_, @_) for values %$in;
-                return;
-            } else {
-                return;
-            }
-        } else {
-            return Encode::_utf8_on(shift);
-        }
-    };
-
-    my $err = $@ or return;
-    throw_gen error   => "Error decoding UTF-8 data",
-              payload => $@;
-
-}
-
-=end private
-
-=cut
 
 1;
 __END__

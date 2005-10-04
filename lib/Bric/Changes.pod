@@ -434,6 +434,15 @@ Added support for typical Windows character encodings. This means that users
 can select "Windows Western (CP1252)" as their encoding in order to fix
 gremlin characters pasted from Microsoft Word. [David]
 
+=item *
+
+It is now fatal to submit characters in an invalid encoding. For example, if a
+user is using UTF-8 (the defult) but pastes the contents of a Word document
+with an m-dash (a CP1252 character), Bricolage will now throw an exception. It
+probably threw an exception from the database in the past, but now we're
+throwing one earlier. The solution for such a user is to of course select the
+proper encoding in their "Character Set" preference. [David]
+
 =back
 
 =cut

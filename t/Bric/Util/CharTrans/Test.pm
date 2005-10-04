@@ -62,9 +62,11 @@ sub test_strings : Test(1612) {
     }
 }
 
-sub utf8_on : Test(20) {
+sub raw_utf8 : Test(26) {
     my $self = shift;
     return "Encode not installed" unless HAVE_ENCODE;
+    ok my $utf8_ct = Bric::Util::CharTrans->new('utf-8'), 'Create UTF-8 CT';
+    isa_ok($utf8_ct, 'Bric::Util::CharTrans');
     while (my ($charset, $files) = each %test_files) {
         ok( my $ct = Bric::Util::CharTrans->new($charset),
             "Create new CT for '$charset' charset" );
@@ -74,7 +76,9 @@ sub utf8_on : Test(20) {
         # Just need to test one line, really.
         my $utf_line = <UTF>;
         ok( !Encode::is_utf8($utf_line), "utf8 not on yet.");
-        ok( $ct->to_utf8($utf_line), "Turn on utf8" );
+        eval{ $ct->to_utf8($utf_line) };
+        ok $@, "Should get an error treating $charset as UTF-8";
+        ok( $utf8_ct->to_utf8($utf_line), "Turn on utf8" );
         ok( Encode::is_utf8($utf_line), "utf8 is on.");
     }
 }
