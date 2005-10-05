@@ -398,10 +398,6 @@ my %formSubs = (
             my $values = $vals->{props}{vals};
             my $ref    = ref $values;
 
-# If it's read-only, output value.
-# If it's an array, do one thing
-# If it's a hash, do another.
-
             my $only_one = $ref eq 'ARRAY' ? @$values == 1 : keys %$values == 1;
 
             # Make the values a reference if this is a multiple select list.
@@ -449,8 +445,12 @@ my %formSubs = (
                 if ($ref eq 'HASH') {
                     # Might need to make sure that the key '' sorts first. See
                     # how it was done in rev_1_8.
-                    for my $k (sort values %$values) {
-                        $m->print($opt_sub->($k, $values->{$k}, $value));
+                    for my $opt (
+                        sort { $a->[2] cmp $b->[2] }
+                        map  { [ $_ => $values->{$_}, lc $values->{$_} ] }
+                        keys %$values
+                    ) {
+                        $m->print($opt_sub->(@{$opt}[0, 1], $value));
                     }
                 }
 
