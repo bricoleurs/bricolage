@@ -297,13 +297,13 @@ sub new {
     my $sth = prepare_c(qq{
         INSERT INTO alert (@cols)
         VALUES ($fields)
-        }, undef);
+    }, undef);
     execute($sth, @{$init}{@props[1..$#props]});
     # Grab its new ID.
     $init->{id} = last_key('alert');
 
     # Now send all the individual alerts.
-    &$send_em($init, $at, $event);
+    $send_em->($init, $at, $event, $user);
     $self->SUPER::new($init);
 }
 
@@ -1311,10 +1311,10 @@ $replace = sub {
     return $prop;
 };
 
-=item my $bool = &$send_em($self, $at, $event)
+=item my $bool = $send_em->($self, $at, $event, $user)
 
-Sends individual alerts to their recipients, and creates new Bric::Util::Alerted
-objects for each one of them.
+Sends individual alerts to their recipients, and creates new
+Bric::Util::Alerted objects for each one of them.
 
 B<Throws:> NONE.
 
@@ -1330,7 +1330,7 @@ $send_em = sub {
     # database, but that seems like a waste of overhead, since this function
     # is only called internally, and therefore doesn't need access to
     # individual Bric::Util::Alerted objects. So I just do it all here.
-    my ($self, $at, $event) = @_;
+    my ($self, $at, $event, $user) = @_;
 
     # Use this sth to insert users into alerted.
     my $ins_alerted = prepare_c(qq{
@@ -1344,6 +1344,19 @@ $send_em = sub {
                (alerted__id, contact__id, contact_value__value, sent_time)
         VALUES (?, ?, ?, ?)
     }, undef);
+
+    my $from = ALERT_FROM;
+    # Try to find an address for the trigger user.
+    if (my @contacts = Bric::Biz::Contact->list({
+        person_id => $user->get_id,
+        type      => ANY(Bric::Biz::Contact->list_alertable_types)
+    })) {
+        my %contacts = map { $_->get_type => $_->get_value } @contacts;
+        $from = $contacts{'Primary Email'}
+             || $contacts{'Secondary Email'}
+             || $contacts{'Pager Email'}
+             || $from;
+    }
 
     my (%alerted, %missed);
     my %ctypes = Bric::Biz::Contact->href_alertable_type_ids;
@@ -1368,11 +1381,12 @@ $send_em = sub {
         next unless %email;
 
         # Now send the email.
-        my $m = Bric::Util::Trans::Mail->new({ from => ALERT_FROM,
-                                             &ALERT_TO_METH => [ keys %email ],
-                                             subject => $self->{subject},
-                                             message => $self->{message}
-                                           });
+        my $m = Bric::Util::Trans::Mail->new({
+            from           => $from,
+            &ALERT_TO_METH => [ keys %email ],
+            subject        => $self->{subject},
+            message        => $self->{message}
+        });
         eval { $m->send; };
         my $time = $@ ? (warn "Alert Emailing failed: $@\n", undef)[1]
           : db_date(undef, 1);

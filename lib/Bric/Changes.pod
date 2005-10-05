@@ -472,6 +472,12 @@ preference to display the whole names for users and contributors. This allows
 users to easily see whatever name parts they need by simply changing their
 List Name Format preferences. [David]
 
+=item *
+
+Alert emails now use an email address, it it can find one, for the user who
+triggered the alert event for the From header in the alert email. The
+C<ALERT_FROM> F<bricolage.conf> directive is used as the fallback. [David]
+
 =back
 
 =cut
