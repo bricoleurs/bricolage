@@ -12,18 +12,19 @@ $LastChangedRevision$
 $LastChangedDate$
 
 =head1 SYNOPSIS
-$m->comp("/widgets/buttons/back.mc",
-  disp      => 'Return',
-  widget    => $widget,
-  cb        => 'return_cb',
-  button    => 'return_dgreen'
-);
 
-$m->comp("/widgets/buttons/back.mc",
-  disp      => 'Return',
-  uri       => '/workflow/profile/workspace/',
-  button    => 'return_dgreen'
-);
+  $m->comp("/widgets/buttons/back.mc",
+    disp      => 'Return',
+    widget    => $widget,
+    cb        => 'return_cb',
+    button    => 'return_dgreen'
+  );
+
+  $m->comp("/widgets/buttons/back.mc",
+    disp      => 'Return',
+    uri       => '/workflow/profile/workspace/',
+    button    => 'return_dgreen'
+  );
 
 =head1 DESCRIPTION
 
@@ -45,7 +46,7 @@ $useTable  => 1
 $localize  => 1
 </%args>
 <%perl>;
-$url ||= last_page();
+$uri ||= last_page();
 $js .= qq{ onclick="window.location.href='} . $uri . qq{'; return false;"};
 
 my $key = ($widget) ? "$widget|$cb" : $name;
