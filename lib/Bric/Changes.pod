@@ -447,6 +447,17 @@ probably threw an exception from the database in the past, but now we're
 throwing one earlier. The solution for such a user is to of course select the
 proper encoding in their "Character Set" preference. [David]
 
+=item *
+
+New categories now inherit all group memberships and permissions granted to
+access assets in the category from their parent categories. This makes it far
+easier for users with CREATE permission to categories to create new categories
+without having to then edit group memberships and user group permissions to
+make them the same as the parent's permission, which is what is usually
+wanted. Of course, existing categories are unaffected, and if user needs
+different group memberships or permissions than the parent, she will still
+have to edit them. [David]
+
 =back
 
 =cut

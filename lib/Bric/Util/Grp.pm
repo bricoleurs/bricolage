@@ -1359,10 +1359,7 @@ class on the fly; for example:
 sub get_objects {
     my $self = shift;
     my $id = $self->_get('id') or return;
-    my @objs;
-    foreach my $class ($self->get_list_classes) {
-        push @objs, $class->list({ grp_id => $id });
-    }
+    my @objs = map { $_->list({ grp_id => $id }) } $self->get_list_classes;
     return wantarray ? @objs : \@objs;
 }
 

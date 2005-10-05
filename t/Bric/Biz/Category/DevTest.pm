@@ -5,6 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::Category;
 use Bric::Util::Grp::CategorySet;
+use Bric::Util::Priv::Parts::Const qw(:all);
 
 my %cat = ( name        => 'Testing',
             site_id     => 100,
@@ -22,10 +23,10 @@ sub table { 'category' }
 sub test_lookup : Test(17) {
     my $self = shift;
 
-    ok (my $cat = Bric::Biz::Category->new(\%cat), "Create $cat{name}");
-    ok ($cat->set_ad_string('foo'),                'Set the ad string');
-    ok ($cat->save,                                "Save $cat{name}");
-    ok (my $id = $cat->get_id,                     "Check for ID" );
+    ok (my $cat = Bric::Biz::Category->new({%cat}), "Create $cat{name}");
+    ok ($cat->set_ad_string('foo'),                 'Set the ad string');
+    ok ($cat->save,                                 "Save $cat{name}");
+    ok (my $id = $cat->get_id,                      "Check for ID" );
 
     # Save the ID for deleting.
     $self->add_del_ids([$id]);
@@ -161,6 +162,94 @@ sub test_root_changes : Test(7) {
     is($cat->site_root_category_id, 1, "Check this category knows its root");
     is(Bric::Biz::Category->site_root_category_id(100), 1,
        "Check class method for default category of a site");
+}
+
+sub test_permission_inheritance : Test(30) {
+    my $self = shift;
+    ok my $cat = Bric::Biz::Category->new({%cat}), "Create $cat{name}";
+    ok $cat->save,                                 "Save $cat{name}";
+    ok my $id = $cat->get_id,                      'Get ID';
+    ok my $asset_grp_id = $cat->get_asset_grp_id, 'Get asset group id';
+
+    # Save the ID for deleting.
+    $self->add_del_ids([$id]);
+    $self->add_del_ids([$asset_grp_id], 'grp');
+
+    # Create a new category group and add the category to it.
+    ok my $grp = Bric::Util::Grp::CategorySet->new({ name => 'Test CatSet' }),
+        'Create category group';
+    ok $grp->add_member({ obj => $cat }), 'Add category to group';
+    ok $grp->save, 'Save category group';
+    ok my $grp_id = $grp->get_id, 'Get group ID';
+    $self->add_del_ids([$grp_id] => 'grp');
+
+    # Grant the Story Editors group permission to edit assets in the new
+    # category.
+    ok my $editors = Bric::Util::Grp->lookup({ name => 'Story Editors' }),
+        'Look up the Story Editors group';
+    ok my $perm = Bric::Util::Priv->new({
+        usr_grp => $editors->get_id,
+        obj_grp => $asset_grp_id,
+        value   => EDIT,
+    }), 'Create a new permission';
+    ok $perm->save, 'Save the new permission';
+    $self->add_del_ids($perm->get_id => 'grp_priv');
+
+    # Look up the category to get grp_ids updated.
+    ok $cat = Bric::Biz::Category->lookup({ id => $id }),
+        'Look up the new category';
+
+    # So the membership should all be as expected.
+    my @grp_ids = (Bric::Biz::Category::INSTANCE_GROUP_ID, $grp_id);
+    is_deeply [sort { $a <=> $b } @{ $cat->get_grp_ids }], \@grp_ids,
+        'The category should be associated with both grp ids';
+
+    is_deeply [$id], [map { $_->get_id } $grp->get_objects ],
+        'And the group should know it has the category member';
+
+    # And the permission should be as expected.
+    ok my @privs = Bric::Util::Priv->list({ obj_grp_id => $asset_grp_id }),
+        'Get list of permissions';
+    is scalar @privs, 1, 'There should be one permission object';
+    is $privs[0]->get_usr_grp_id, $editors->get_id,
+        'It should be granted to Story Editors';
+    is $privs[0]->get_value, EDIT, 'And it should be EDIT';
+
+    # Create a new category with the last category as its parent.
+    ok my $cat2 = Bric::Biz::Category->new({
+        %cat,
+        name      => 'Testing2',
+        parent_id => $id,
+    }), 'Create subcategory';
+    ok $cat2->save,                                    'Save subcategory';
+    ok my $sub_id = $cat2->get_id,                     'Get ID';
+    ok my $sub_asset_grp_id = $cat2->get_asset_grp_id, 'Get asset grp ID';
+
+    # Save the ID for deleting.
+    $self->add_del_ids([$sub_id]);
+    $self->add_del_ids([$sub_asset_grp_id], 'grp');
+
+    # Look up the category to get grp_ids updated.
+    ok $cat2 = Bric::Biz::Category->lookup({ id => $sub_id }),
+        'Look up the subcategory';
+
+    # It should be in the same groups as the parent.
+    is_deeply [sort { $a <=> $b } @{ $cat2->get_grp_ids }], \@grp_ids,
+        'The subcategory should be in the same groups as the parent';
+
+    # And the group should know it.
+    ok $grp = Bric::Util::Grp->lookup({ id => $grp_id }),
+        'Look up the group again';
+    is_deeply [$id, $sub_id], [map { $_->get_id } $grp->get_objects ],
+        'And the group should know it now has two category members';
+
+    # And the permission should be the same as for the parent.
+    ok @privs = Bric::Util::Priv->list({ obj_grp_id => $sub_asset_grp_id }),
+        'Get list of permissions for subcategory';
+    is scalar @privs, 1, 'There should be one permission object';
+    is $privs[0]->get_usr_grp_id, $editors->get_id,
+        'It should be granted to Story Editors';
+    is $privs[0]->get_value, EDIT, 'And it should be EDIT';
 }
 
 1;

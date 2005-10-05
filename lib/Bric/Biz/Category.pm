@@ -88,7 +88,7 @@ use Bric::Util::Grp::CategorySet;
 use Bric::Util::Attribute::Category;
 use Bric::Util::Trans::FS;
 use Bric::Util::Fault qw(throw_gen throw_dp);
-use Bric::Util::DBI qw(:standard col_aref);
+use Bric::Util::DBI qw(:standard :junction col_aref);
 use Bric::Util::Grp::Asset;
 use Bric::Util::Coll::Keyword;
 
@@ -127,7 +127,9 @@ my $table = 'category';
 my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 my $sel_cols = 'a.id, a.site__id, a.directory, a.asset_grp_id, a.active, '.
-               'a.uri, a.parent_id, a.name, a.description, m.grp__id';
+               'a.uri, a.parent_id, a.name, a.description, id_list(DISTINCT m.grp__id)';
+my $grp_cols = 'a.id, a.site__id, a.directory, a.asset_grp_id, a.active, '.
+               'a.uri, a.parent_id, a.name, a.description';
 my @sel_props = qw(id site_id directory asset_grp_id _active uri parent_id name
                    description grp_ids);
 my @cols = qw(site__id directory asset_grp_id active uri parent_id
@@ -1605,14 +1607,16 @@ sub _do_list {
     }
 
     # Create the where clause and the select and order by clauses.
-    my ($qry_cols, $order) = $ids ? (\'DISTINCT a.id', '') :
-      (\$sel_cols, 'ORDER BY a.uri');
+    my ($qry_cols, $order, $group_by) = $ids
+        ? (\'DISTINCT a.id', '', '')
+        : (\$sel_cols, 'ORDER BY a.uri', "GROUP BY $grp_cols");
 
     # Prepare the statement.
     my $sel = prepare_c(qq{
         SELECT $$qry_cols
         FROM   $tables
         WHERE  $wheres
+        $group_by
         $order
     }, undef);
 
@@ -1621,32 +1625,18 @@ sub _do_list {
       if $ids;
 
     execute($sel, @params);
-    my (@d, @cats, $grp_ids);
+    my (@d, @cats);
     bind_columns($sel, \@d[0..$#sel_props]);
     $pkg = ref $pkg || $pkg;
-    my $last = -1;
     while (fetch($sel)) {
-        if ($d[0] != $last) {
-            $last = $d[0];
-            # Create a new Category object.
-            my $self = bless {}, $pkg;
-            $self->SUPER::new;
-            $grp_ids = $d[$#d] = [$d[$#d]];
-            $self->_set(\@sel_props, \@d);
-            # Add the attribute object.
-            # HACK: Get rid of this object!
-            $self->_set( ['_attr_obj'],
-                         [ Bric::Util::Attribute::Category->new
-                           ({ object_id => $d[0],
-                              subsys => $d[0] })
-                         ]
-                       );
-            $self->_set__dirty; # Disable the dirty flag.
-            push @cats, $self->cache_me;
-        } else {
-            # Append the ID.
-            push @$grp_ids, $d[$#d];
-        }
+        # Create a new Category object.
+        my $self = bless {}, $pkg;
+        $self->SUPER::new;
+        # Parse the group IDs.
+        $d[-1] = [ map { split } $d[-1] ];
+        $self->_set(\@sel_props, \@d);
+        $self->_set__dirty; # Disable the dirty flag.
+        push @cats, $self->cache_me;
     }
     return wantarray ? @cats : \@cats;
 }
@@ -1802,7 +1792,7 @@ sub _insert_category {
     # to have a way to get a group ID from a category to track assets and
     # permissions. The assets will pretend they're in the group, even though
     # they're really not. See Bric::Biz::Asset->get_grp_ids to see it at work.
-    # XXX Yes, it's ugly that we're abusing name this way, but it does the
+    # XXX Yes, it's ugly that we're abusing the name this way, but it does the
     # trick.
     my $ag_obj = Bric::Util::Grp::Asset->new({
         name        => "Site $site_id Category Assets",
@@ -1810,16 +1800,40 @@ sub _insert_category {
     });
 
     $ag_obj->save;
-    $self->_set(['asset_grp_id'], [$ag_obj->get_id]);
+    my $ag_id = $ag_obj->get_id;
+    $self->_set(['asset_grp_id'], [$ag_id]);
 
     # Insert the new category.
     execute($sth, $self->_get(@props));
 
     # Set the ID of this object.
-    $self->_set(['id'],[last_key($table)]);
+    $self->_set(['id'] => [last_key($table)]);
 
-    # Add the category to the 'All Categories' group and return.
+    # Add the category to the 'All Categories' group.
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
+
+    # Add it to all of the same groups as the parent category.
+    my $parent = $self->get_parent;
+    if (my @gids = grep { $_ != INSTANCE_GROUP_ID } $parent->get_grp_ids) {
+        for my $grp (Bric::Util::Grp->list({ id => ANY(@gids) })) {
+            $grp->add_member({ obj => $self, no_check => 1 });
+            $grp->save;
+        }
+    }
+
+    # Give its asset group the same permission associations as the parent.
+    for my $perm (Bric::Util::Priv->list({
+        obj_grp_id => $parent->get_asset_grp_id
+    })) {
+        # Create a matching permission for the new category.
+        $perm = Bric::Util::Priv->new({
+            obj_grp => $ag_id,
+            usr_grp => $perm->get_usr_grp_id,
+            value   => $perm->get_value,
+        });
+        $perm->save;
+    }
+
     return $self;
 }
 
