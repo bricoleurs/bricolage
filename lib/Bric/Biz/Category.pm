@@ -180,7 +180,10 @@ BEGIN {
 
 =item $obj = new Bric::Biz::Category($init);
 
-Create a new object of type Bric::Biz::Category
+Create a new object of type Bric::Biz::Category. Once C<save()>d, the new
+category will have the same group memberships as the parent, and have the same
+permissions granted to its asset group as are granted to the parent's asset
+group.
 
 Keys for $init are:
 
