@@ -115,8 +115,12 @@ match was found. [David]
 
 =item *
 
-New "Code Select" custom field allows you to add arbitrary Perl code to
+Added new "Code Select" custom field allows you to add arbitrary Perl code to
 generate the items in a select list. [Scott]
+
+=item *
+
+Added ability to shelve a story from a desk or My Workspace. [David]
 
 =back
 

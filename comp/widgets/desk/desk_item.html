@@ -137,7 +137,7 @@ my $rowspan = 5;
 
 my $checked_out = defined $user_id && get_user_id() == $user_id;
 
-my $mover_label = $desk_type ne 'workflow' ? 'Check in to' : 'Move to';
+my $mover_label = $desk_type ne 'workflow' ? 'Check in' : 'Move';
 
 my $callback_widget = ($class eq 'formatting' ? 'tmpl' : $class) . '_prof';
 

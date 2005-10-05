@@ -97,7 +97,7 @@ sub move : Callback {
 
         # Do not move assets where the user has not chosen a next desk.
         # And where the desk ID is the same.
-        next unless $to_id and $to_id != $from_id;
+        next unless ($to_id and $to_id != $from_id) || $from_id eq 'shelve';
 
         my $pkg   = get_package_name($a_class);
         my $a_obj = $pkg->lookup({'id' => $a_id});
@@ -105,6 +105,24 @@ sub move : Callback {
         unless ($a_obj->is_current) {
             add_msg('Cannot move [_1] asset "[_2]" while it is checked out.',
                     $a_class, $a_obj->get_name);
+            next;
+        }
+
+        if ($to_id eq 'shelve') {
+            # Remove from the current desk and from the workflow.
+            log_event("$a_class\_save", $a_obj);
+            my $cur_desk = $a_obj->get_current_desk;
+            if ($a_obj->get_checked_out) {
+                print STDERR "Checkin\n";
+                $cur_desk->checkin($a_obj);
+                log_event("$a_class\_checkin", $a_obj, {
+                    Version => $a_obj->get_version
+                });
+            }
+            $cur_desk->remove_asset($a_obj)->save;
+            $a_obj->set_workflow_id(undef);
+            $a_obj->save;
+            log_event("$a_class\_rem_workflow", $a_obj);
             next;
         }
 

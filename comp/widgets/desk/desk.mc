@@ -359,6 +359,7 @@ if (defined $objs && @$objs > $obj_offset) {
 
         # Assemble the list of desks we can move this to.
         my $value = '';
+        my $to = $lang->maketext('to') . ' ';
         if ($desk_opts) {
             my %seen;
             my $a_wfid = $a_wf->get_id;
@@ -368,7 +369,7 @@ if (defined $objs && @$objs > $obj_offset) {
                 next if $did == $desk_id and $desk_type eq 'workflow';
                 push @$desk_opts, [join('-', $aid, $desk_id, $did, $class,
                                         $a_wfid),
-                                   $d->get_name];
+                                   $to . $d->get_name];
                 $seen{$did} = 1;
             }
 
@@ -384,11 +385,15 @@ if (defined $objs && @$objs > $obj_offset) {
                         next if $did == $desk_id and $desk_type eq 'workflow';
                         push @$desk_opts, [join('-', $aid, $desk_id, $did,
                                                 $class, $wid),
-                                           $_->get_name];
+                                           $to . $_->get_name];
                         $seen{$did} = 1;
                     }
                 }
             }
+            push @$desk_opts, [
+                join('-', $aid, $desk_id, 'shelve', $class),
+                $lang->maketext('and Shelve')
+            ];
         }
 
         # Now display it!

@@ -32,19 +32,28 @@ sub checkin : Callback {
     foreach my $next (@{ mk_aref($self->params->{"desk_asset|next_desk"})}) {
         next unless $next;
         my ($aid, $from_id, $to_id, $key) = split /-/, $next;
-        my $a = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
+        my $asset = $pkgs->{$key}->lookup({ id => $aid, checkout => 1 });
         my $curr = $desks{$from_id} ||= $dskpkg->lookup({ id => $from_id });
-        my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
-        $curr->checkin($a);
-        log_event("${key}_checkin", $a, { Version => $a->get_version });
+        $curr->checkin($asset);
+        log_event("${key}_checkin", $asset, { Version => $asset->get_version });
 
-        if ($curr->get_id != $next->get_id) {
-            $curr->transfer({ to    => $next,
-                              asset => $a });
-            log_event("${key}_moved", $a, { Desk => $next->get_name });
+        if ($to_id eq 'shelve') {
+            $curr->remove_asset($asset)->save;
+            $asset->set_workflow_id(undef);
+            $asset->save;
+            log_event("$key\_rem_workflow", $asset);
         }
-        $curr->save;
-        $next->save;
+
+        else {
+            my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
+            if ($curr->get_id != $next->get_id) {
+                $curr->transfer({ to    => $next,
+                                  asset => $a });
+                log_event("${key}_moved", $a, { Desk => $next->get_name });
+            }
+            $curr->save;
+            $next->save;
+        }
     }
 }
 
