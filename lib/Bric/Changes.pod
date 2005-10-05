@@ -465,6 +465,13 @@ republish the last version of a story to be published. This means that even if
 a story is checked out, it can be republished without interfering with the
 checkout.
 
+=item *
+
+The User and Contributor managers in the UI now use the List Name Format
+preference to display the whole names for users and contributors. This allows
+users to easily see whatever name parts they need by simply changing their
+List Name Format preferences. [David]
+
 =back
 
 =cut

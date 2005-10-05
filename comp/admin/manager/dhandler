@@ -303,8 +303,14 @@ my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 # Define the look and feel for each type of manager.
 my $def = {
-	   user           => { list_fields => [qw(lname fname login)],
+	   user           => {
+                   list_fields => [qw(name login)],
 			       srch_field => 'lname',
+                   sort_by => 'name',
+                   field_values => sub {
+                       return unless $_[1] eq 'name';
+                       return shift->get_name(get_pref('List Name Format'))
+                   },
 			       constrain => {},
 			       behavior => 'expand',
 			       exclude => sub { return if $_[0]->get_id == get_user_id;
@@ -382,9 +388,15 @@ my $def = {
 	                       constrain => {},
 			       alter => { active => $yes_no },
 			       select => $sel_sub },
-	   contrib        => { list_fields => [qw(lname fname type)],
+	   contrib        => {
+                   list_fields => [qw(name type)],
 			       behavior => 'expand',
+                   sort_by => 'name',
 			       srch_field => 'lname',
+                   field_values => sub {
+                       return unless $_[1] eq 'name';
+                       shift->get_name(get_pref('List Name Format'))
+                   },
 			       constrain => {no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID},
 			       select => $sel_sub },
 	   category       => { list_fields => [qw(uri site name)],
