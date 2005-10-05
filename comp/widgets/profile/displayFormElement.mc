@@ -419,7 +419,7 @@ my %formSubs = (
             elsif ($only_one) {
                 # Output the value and a hidden field.
                 my ($val, $lab) = $ref eq 'ARRAY'
-                    ? (@{$values->[0]})
+                    ? ref $values->[0] ? @{$values->[0]} : ($values->[0]) x 2
                     : ((keys %$values)[0], (values %$values)[0]);
                 $m->print(escape_html($lab));
                 $m->comp(
