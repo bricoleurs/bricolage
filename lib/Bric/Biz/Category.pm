@@ -1814,7 +1814,7 @@ sub _insert_category {
     $self->register_instance(INSTANCE_GROUP_ID, GROUP_PACKAGE);
 
     # Add it to all of the same groups as the parent category.
-    my $parent = $self->get_parent;
+    my $parent = $self->get_parent or return $self;
     if (my @gids = grep { $_ != INSTANCE_GROUP_ID } $parent->get_grp_ids) {
         for my $grp (Bric::Util::Grp->list({ id => ANY(@gids) })) {
             $grp->add_member({ obj => $self, no_check => 1 });
