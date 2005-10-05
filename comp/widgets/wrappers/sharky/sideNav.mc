@@ -119,7 +119,7 @@ foreach my $wf (@$workflows) {
     $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|workflow_cb=0&navwfid=} . $wf->{id} . qq{">} . $wf->{name} . qq{</a>});
     # actions/desks/publish items for this workflow
     my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
-    
+
     # actions
     $m->out(qq{<ul class="sections">});
     $m->out(qq{<li>} . $lang->maketext('Actions'));
@@ -170,11 +170,11 @@ $m->out(qq{<ul class="submenu">});
 if ( $nav->{adminSystem} ) { # open system submenu
     $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|adminSystem_cb=0">} . $lang->maketext('System') . qq{</a>});
         $m->out(qq{<ul class="items">});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/pref', $uri, $pl_disp->{pref}). qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/user', $uri, $pl_disp->{user}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/alert_type', $uri, $pl_disp->{alert_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/grp', $uri, $pl_disp->{grp}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/pref', $uri, $pl_disp->{pref}). qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/site', $uri, $pl_disp->{site}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/user', $uri, $pl_disp->{user}) . qq{</li>});
         $m->out(qq{</ul>});
     $m->out(qq{</li>});
 } else { # closed system submenu
@@ -186,15 +186,15 @@ if ( $nav->{adminSystem} ) { # open system submenu
 if ( $nav->{adminPublishing} ) { #open publishing submenu
     $m->out(qq{<li class="open"><a href="} . $r->uri . qq{?nav|adminPublishing_cb=0">} . $lang->maketext('Publishing') . qq{</a>});
         $m->out(qq{<ul class="items">});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/element_type', $uri, $pl_disp->{element_type}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
-        $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/category', $uri, $pl_disp->{category}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib_type', $uri, $pl_disp->{contrib_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});
         $m->out(qq{<li style="padding-top: 1em;">} . &$printLink('/admin/control/publish', $uri, 'Bulk Publish') . qq{</li>});
         $m->out(qq{</ul>});
     $m->out(qq{</li>});

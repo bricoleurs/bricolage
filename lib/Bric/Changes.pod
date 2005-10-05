@@ -483,6 +483,11 @@ C<ALERT_FROM> F<bricolage.conf> directive is used as the fallback. [David]
 The C<pre_path> and C<post_path> attributes of output channels have been
 eliminated, since they can now be used directly in the URI formats. [David]
 
+=item *
+
+The admin tools are now listed in alphabetical order in the side navigation of
+the UI. [David]
+
 =back
 
 =cut
