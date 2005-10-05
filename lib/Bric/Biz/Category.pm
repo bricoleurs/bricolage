@@ -70,7 +70,9 @@ $LastChangedDate$
 
 Allows assets to be grouped into categories. In addition to assets a category
 can contain other categories, allowing a hierarchical layout of categories and
-assets.
+assets. New categories will inherit group memberships and asset group
+permissions from their parents, but those relationships will thereafter be
+independent of the parent's.
 
 =cut
 
@@ -1487,17 +1489,13 @@ sub deactivate {
 
 Save this category
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> A new category will automatically be added to the same category
+groups as its parent, and permissions will be granted to its asset group
+exactly as they are granted to the parent.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
