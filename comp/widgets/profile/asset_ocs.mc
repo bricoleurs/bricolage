@@ -1,6 +1,7 @@
 <%perl>
     my $sid = $asset->get_site_id;
-    $at_ocs = [ grep { $_->get_site_id == $sid } @$at_ocs ];
+    my %curr_ocs = map { $_->get_id => undef } $asset->get_output_channels;
+    $at_ocs = [ grep { $_->get_site_id == $sid && !exists $curr_ocs{$_->get_id} } @$at_ocs ];
     my $primid = $asset->get_primary_oc_id;
     my $oc_sub = sub {
         return unless $_[1] eq 'primary';
@@ -14,42 +15,45 @@
                  );
     };
 
-    $m->comp('/widgets/wrappers/sharky/table_top.mc',
-             caption => 'Output Channels',
-             number => $num);
-    
-    $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'output_channel',
-	     userSort => 0,
-	     def_sort_field => 'name',
-	     title => 'Output Channels',
-	     objs => scalar $asset->get_output_channels,
-	     addition => undef,
-	     fields => [qw(name description primary)],
-	     field_titles => { primary => 'Primary' },
-	     field_values => $oc_sub,
-	     profile => undef,
-	     select =>  sub { return if $_[0]->get_id == $primid;
-                              return ['Delete', 'rem_oc']
-                            },
-	     number => $num
-	    );
-        
+    $m->comp(
+        '/widgets/wrappers/sharky/table_top.mc',
+        caption => 'Output Channels',
+        number => $num
+    );
+
+    $m->comp(
+        '/widgets/listManager/listManager.mc',
+        object         => 'output_channel',
+        userSort       => 0,
+        def_sort_field => 'name',
+        title          => 'Output Channels',
+        number         => $num,
+        objs           => scalar $asset->get_output_channels,
+        addition       => undef,
+        fields         => [qw(name description primary)],
+        field_titles   => { primary => 'Primary' },
+        field_values   => $oc_sub,
+        profile        => undef,
+        select         => sub {
+            return if $_[0]->get_id == $primid;
+            return ['Delete', 'rem_oc']
+        },
+    );
 </%perl>
+% if (@$at_ocs) {
 <div class="actions">
 <& '/widgets/select_object/select_object.mc',
-    object => 'output_channel',
-    field  => 'name',
-    exclude => [ map { $_->get_id } $asset->get_output_channels ],
+    object     => 'output_channel',
+    field      => 'name',
     no_persist => 1,
-    name   => "$widget|add_oc_cb",
-    default => ['' => 'Add Output Channel'],
-    objs => $at_ocs,
-    js => "onchange='submit()'",
-    useTable => 0,
+    name       => "$widget|add_oc_cb",
+    default    => ['' => 'Add Output Channel'],
+    objs       => $at_ocs,
+    js         => "onchange='submit()'",
+    useTable   => 0,
 &>
 </div>
-
+% }
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <%args>
 $widget
