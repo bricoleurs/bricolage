@@ -458,6 +458,13 @@ wanted. Of course, existing categories are unaffected, and if user needs
 different group memberships or permissions than the parent, she will still
 have to edit them. [David]
 
+=item *
+
+F<bric_republish> now uses the C<published_version> search parameter to always
+republish the last version of a story to be published. This means that even if
+a story is checked out, it can be republished without interfering with the
+checkout.
+
 =back
 
 =cut

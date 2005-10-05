@@ -36,10 +36,8 @@ bric_republish [options]
     
     --category - only publish stories in this category, specified by path
     
-    --published-only - publish the published version rather than the
-                current version (which is different from published version
-                if the asset has been saved after publishing), and don't
-                published unpublished assets
+    --published-only - Deprecated; kept for backwards compatibility; Only
+                the published version of all stories will be published.
     
     --chunks   - publish stories in chunks of this many.  Defaults to 0,
                 which means to process them all at once.  This option can
@@ -50,13 +48,12 @@ bric_republish [options]
 
 =head1 DESCRIPTION
 
-This program publishes stories with no user interaction required.  In
-its default mode it finds all stories that have been been published at
-least once (publish_status is 1) and are not on any desks.  This is
-useful to automatically update stories after element and template
-changes.  Also, some elements may have automated functionality that
-benefits from being republished periodically - a "new stories" box on
-a Cover, for example.
+This program publishes stories with no user interaction required. It looks up
+and publishes the last published version of published stories (publish_status
+is 1). This is useful to automatically update stories after element and
+template changes. Also, some elements may have automated functionality that
+benefits from being republished periodically - a "new stories" box on a Cover,
+for example.
 
 =head1 EXAMPLES
 
@@ -109,7 +106,6 @@ BEGIN {
     our $server          = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $VERBOSE         = 0;
     our $no_media        = 0;
-    our $published_only  = 0;
     our $timeout         = 30;
     our $chunks          = 0;
     our ($element, $story_id, $category, $help, $man);
@@ -123,7 +119,7 @@ BEGIN {
                "element=s"       => \$element,
                "no-media"        => \$no_media,
                "story-id=s"      => \$story_id,
-               "published-only"  => \$published_only,
+               "published-only"  => \my $published_only,
                "timeout=s"       => \$timeout,
                "chunks=s"        => \$chunks,
               ) or  pod2usage(2);
@@ -175,7 +171,7 @@ sub main {
 
 # gets a list of story ids, modified by options
 sub get_story_ids {
-    our ($soap, $element, $story_id, $category, $help, $man, $published_only);
+    our ($soap, $element, $story_id, $category, $help, $man);
     our @story_ids;
 
     # quit early if the user specified a story_id
@@ -185,8 +181,10 @@ sub get_story_ids {
     }
 
     # default search
-    my @search = (name(publish_status => 1));
-    push @search, name(no_workflow    => 1) unless $published_only;
+    my @search = (
+        name(publish_status    => 1),
+        name(published_version => 1),
+    );
 
     push(@search, name(element  => $element))  if $element;
     push(@search, name(category => $category)) if $category;
@@ -243,8 +241,7 @@ sub get_media_ids {
 
 # publish stories and media found
 sub publish_assets {
-    our ($soap, @story_ids, @media_ids, $chunks, $published_only);
-    my @opts;
+    our ($soap, @story_ids, @media_ids, $chunks);
 
     # do nothing if we've got nothing
     return unless @story_ids;
@@ -255,8 +252,6 @@ sub publish_assets {
     # collect ids for publish
     my @ids = ( ( map { name(story_id => $_) } @story_ids ),
               ( map { name(media_id => $_) } @media_ids ) );
-
-    push @opts, name(published_only => 1) if $published_only;
 
     if ($chunks) {
         # step through @ids $chunks at a time
@@ -270,7 +265,7 @@ sub publish_assets {
                 @ids[$start .. $end]), "\n)\n"
                 if $VERBOSE > 1;
         
-            my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]), @opts);
+            my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]));
             _print_fault($r) if $r->fault;
         }
     } else {
@@ -281,7 +276,7 @@ sub publish_assets {
             map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
                 if $VERBOSE > 1;
     
-        my $r = $soap->publish(name(publish_ids => \@ids), @opts);
+        my $r = $soap->publish(name(publish_ids => \@ids));
         _print_fault($r) if $r->fault;
     }
 }
