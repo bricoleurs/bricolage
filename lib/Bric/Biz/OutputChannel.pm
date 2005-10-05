@@ -142,32 +142,29 @@ my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id ' .
   "AND m.active = '1'";
 my $SEL_ORDER = 'oc.name, oc.id';
 
-my @COLS = qw(name description protocol site__id pre_path post_path primary_ce
-              filename file_ext uri_format fixed_uri_format uri_case use_slug
-              active);
+my @COLS = qw(name description protocol site__id primary_ce filename file_ext
+              uri_format fixed_uri_format uri_case use_slug active);
 
-my @PROPS = qw(name description protocol site_id pre_path post_path primary
-               filename file_ext uri_format fixed_uri_format uri_case _use_slug
-               _active);
+my @PROPS = qw(name description protocol site_id primary filename file_ext
+               uri_format fixed_uri_format uri_case _use_slug _active);
 
 my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.protocol, oc.site__id, '.
-               'oc.pre_path, oc.post_path, oc.primary_ce, oc.filename, '.
-               'oc.file_ext, oc.uri_format, oc.fixed_uri_format, oc.uri_case, '.
-               'oc.use_slug, oc.active, m.grp__id';
+               'oc.primary_ce, oc.filename, oc.file_ext, oc.uri_format, ' .
+               'oc.fixed_uri_format, oc.uri_case, oc.use_slug, oc.active, ' .
+               'm.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
-my @ORD = qw(name description site_id protocol pre_path post_path filename
-             file_ext  uri_format
+my @ORD = qw(name description site_id protocol filename file_ext uri_format
              fixed_uri_format uri_case use_slug active);
 my $GRP_ID_IDX = $#SEL_PROPS;
 
 # These are provided for the OutputChannel::Element subclass to take
 # advantage of.
-sub SEL_PROPS { @SEL_PROPS }
-sub SEL_COLS { $SEL_COLS }
+sub SEL_PROPS  { @SEL_PROPS }
+sub SEL_COLS   { $SEL_COLS }
 sub SEL_TABLES { $SEL_TABLES }
 sub SEL_WHERES { $SEL_WHERES }
-sub SEL_ORDER { $SEL_ORDER }
+sub SEL_ORDER  { $SEL_ORDER }
 sub GRP_ID_IDX { $GRP_ID_IDX }
 
 #--------------------------------------#
@@ -189,10 +186,10 @@ BEGIN {
        # What protocol to use for URLs (ie, http://, https://, ftp://)
        'protocol'              => Bric::FIELD_RDWR,
 
-       # Path to insert at the beginning of URIs.
+       # Path to insert at the beginning of URIs. Deprecated.
        'pre_path'              => Bric::FIELD_RDWR,
 
-       # Path to insert at the end of URIs.
+       # Path to insert at the end of URIs. Deprecated.
        'post_path'             => Bric::FIELD_RDWR,
 
        # These will be used to construct file names
@@ -818,36 +815,6 @@ sub my_meths {
                                            maxlength => 16}
                              },
 
-              pre_path      => {
-                             name     => 'pre_path',
-                             get_meth => sub { shift->get_pre_path(@_) },
-                             get_args => [],
-                             set_meth => sub { shift->set_pre_path(@_) },
-                             set_args => [],
-                             disp     => 'URI Prefix',
-                             len      => 64,
-                             req      => 0,
-                             type     => 'short',
-                             props    => {   type       => 'text',
-                                             length     => 32,
-                                             maxlength => 64
-                                         }
-                            },
-              post_path      => {
-                             name     => 'post_path',
-                             get_meth => sub { shift->get_post_path(@_) },
-                             get_args => [],
-                             set_meth => sub { shift->set_post_path(@_) },
-                             set_args => [],
-                             disp     => 'URI Suffix',
-                             len      => 64,
-                             req      => 0,
-                             type     => 'short',
-                             props    => {   type       => 'text',
-                                             length     => 32,
-                                             maxlength => 64
-                                         }
-                            },
               filename      => {
                              name     => 'filename',
                              get_meth => sub { shift->get_filename(@_) },
@@ -1053,50 +1020,6 @@ B<Notes:> NONE.
 =item $proto = $oc->set_protocol($proto)
 
 Set the protocol for this OC
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $oc = $oc->set_pre_path($pre_path)
-
-Sets the string that will be used at the beginning of the URIs for assets in
-this Output Channel.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $pre_path = $oc->get_pre_path
-
-Gets the string that will be used at the beginning of the URIs for assets in
-this Output Channel.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $oc = $oc->set_post_path($post_path)
-
-Sets the string that will be used at the end of the URIs for assets in this
-Output Channel.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=item $post_path = $oc->get_post_path
-
-Gets the string that will be used at the end of the URIs for assets in
-this Output Channel.
 
 B<Throws:> NONE.
 

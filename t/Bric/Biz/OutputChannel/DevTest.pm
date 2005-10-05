@@ -28,7 +28,7 @@ sub _clean_test_vals : Test(startup) {
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(16) {
+sub test_lookup : Test(14) {
     ok( my $oc = Bric::Biz::OutputChannel->lookup({ id => $web_oc_id}),
         "Lookup Web OC" );
 
@@ -41,8 +41,6 @@ sub test_lookup : Test(16) {
     is ($oc->get_description, 'Output to the web', "Check description" );
     is ($oc->get_site_id,     100,                 'Check site ID');
     is ($oc->get_protocol,    undef,               'Check protocol');
-    is ($oc->get_pre_path,    '',                  "Check pre_path" );
-    is ($oc->get_post_path,   '',                  "Check post_path" );
     is ($oc->get_filename,    'index',             "Check filename" );
     is ($oc->get_file_ext,    'html',              "Check file_ext" );
     is ($oc->get_uri_format,  '/%{categories}/%Y/%m/%d/%{slug}/',
@@ -57,7 +55,7 @@ sub test_lookup : Test(16) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(79) {
+sub test_list : Test(75) {
     my $self = shift;
     # Create a new output channel group.
     ok( my $grp = Bric::Util::Grp::OutputChannel->new
@@ -87,7 +85,6 @@ sub test_list : Test(79) {
             $args{uri_case}     = UPPERCASE;
             $args{uri_format}   = $alt_format;
             $args{use_slug}     = 1;
-            $args{pre_path}     = 'foo';
             $args{primary}      = 1;
         } else {
             # And two of these.
@@ -166,16 +163,6 @@ sub test_list : Test(79) {
     ok (@ocs = Bric::Biz::OutputChannel->list({protocol => $oc{protocol}.'%'}),
         "Look up site '$oc{protocol}%'");
     is (scalar @ocs, 3, "Check for 3 output channels" );
-
-    # Try pre_path.
-    ok( @ocs = Bric::Biz::OutputChannel->list({ pre_path => 'foo'}),
-        "Look up pre_path 'foo'" );
-    is( scalar @ocs, 3, "Check for 3 output channels" );
-
-    # Try post_path.
-    ok( @ocs = Bric::Biz::OutputChannel->list({ post_path => 'bar'}),
-        "Look up post_path 'bar'" );
-    is( scalar @ocs, 2, "Check for 2 output channels" );
 
     # Try "primary".
     ok( @ocs = Bric::Biz::OutputChannel->list({ primary => 1 }),

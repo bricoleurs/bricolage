@@ -6,10 +6,10 @@
 -- Create Output Channels.
 --
 
-INSERT INTO output_channel (id, name, description, pre_path, post_path,
+INSERT INTO output_channel (id, name, description,
 	                    filename, file_ext, uri_format, fixed_uri_format,
                             uri_case, use_slug, primary_ce, site__id)
-VALUES ('1', 'Web', 'Output to the web', '', '', 'index', 'html',
+VALUES ('1', 'Web', 'Output to the web', 'index', 'html',
         '/%{categories}/%Y/%m/%d/%{slug}/', '/%{categories}/', '1', '0', '1', '100');
 
 

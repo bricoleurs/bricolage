@@ -65,8 +65,6 @@ $do_callback = sub {
         # Set the basic properties.
         $oc->set_description( $param->{description} );
         $oc->set_protocol($param->{protocol});
-        $oc->set_pre_path( $param->{pre_path} );
-        $oc->set_post_path( $param->{post_path});
         $oc->set_filename( $param->{filename});
         $oc->set_file_ext( $param->{file_ext});
         $oc->set_uri_case($param->{uri_case});

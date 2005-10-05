@@ -35,7 +35,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 # Dump out the fields for display.
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
          readOnly   => $no_edit,
-	 objref     => $oc,
+         objref     => $oc,
          fieldsUsed => {active => 1});
 my @sites = site_list(EDIT);
 if ($id || $no_edit) {
@@ -64,13 +64,6 @@ if ($id || $no_edit) {
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
-$m->out(q{
-<script type="text/javascript">
-specialOCFields["pre_path"]  = "URI Prefix";
-specialOCFields["post_path"] = "URI Sufix";
-</script>
-});
-
 if (defined $id) {
     $m->out('<script type="text/javascript">
 var selectOrderNames = new Array("include_pos")

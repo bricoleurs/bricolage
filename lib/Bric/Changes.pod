@@ -478,6 +478,11 @@ Alert emails now use an email address, it it can find one, for the user who
 triggered the alert event for the From header in the alert email. The
 C<ALERT_FROM> F<bricolage.conf> directive is used as the fallback. [David]
 
+=item *
+
+The C<pre_path> and C<post_path> attributes of output channels have been
+eliminated, since they can now be used directly in the URI formats. [David]
+
 =back
 
 =cut

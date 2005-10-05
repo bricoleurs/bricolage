@@ -100,14 +100,6 @@ The output channel's site.
 
 The output channel's protocol.
 
-=item pre_path
-
-The output channel's URI prefix.
-
-=item post_path
-
-The output channel's URI suffix.
-
 =item filename
 
 The output channel's filename.
@@ -336,7 +328,7 @@ sub is_allowed_param {
 
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(name description site protocol
-                                         pre_path post_path filename file_ext
+                                         filename file_ext
                                          use_slug active) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
@@ -411,8 +403,6 @@ sub load_asset {
         $asset->set_name($adata->{name});
         $asset->set_description($adata->{description});
         $asset->set_protocol($adata->{protocol});
-        $asset->set_pre_path($adata->{pre_path});
-        $asset->set_post_path($adata->{post_path});
         $asset->set_filename($adata->{filename});
         $asset->set_file_ext($adata->{file_ext});
         $asset->set_uri_format($adata->{uri_format});
@@ -520,8 +510,6 @@ sub serialize_asset {
     $writer->dataElement(name             => $asset->get_name);
     $writer->dataElement(description      => $asset->get_description);
     $writer->dataElement(protocol         => $asset->get_protocol);
-    $writer->dataElement(pre_path         => $asset->get_pre_path);
-    $writer->dataElement(post_path        => $asset->get_post_path);
     $writer->dataElement(filename         => $asset->get_filename);
     $writer->dataElement(file_ext         => $asset->get_file_ext);
     $writer->dataElement(uri_format       => $asset->get_uri_format);

@@ -33,8 +33,6 @@ CREATE TABLE output_channel (
     description      VARCHAR(256),
     site__id         INTEGER        NOT NULL,
     protocol         VARCHAR(16),
-    pre_path         VARCHAR(64),
-    post_path        VARCHAR(64),
     filename         VARCHAR(32)    NOT NULL,
     file_ext         VARCHAR(32),
     primary_ce       BOOLEAN,

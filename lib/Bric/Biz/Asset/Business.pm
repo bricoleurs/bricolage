@@ -2414,9 +2414,6 @@ sub _construct_uri {
     my $fu = $element_obj->get_fixed_url;
     my ($pre, $post);
 
-    # Get the pre and post values.
-    ($pre, $post) = ($oc_obj->get_pre_path, $oc_obj->get_post_path) if $oc_obj;
-
     # Get URI Format.
     my $fmt = $fu ? $oc_obj->get_fixed_uri_format : $oc_obj->get_uri_format;
 
@@ -2435,10 +2432,6 @@ sub _construct_uri {
 
     my $path = $self->get_cover_date($fmt) or return;
     my @path = split( '/', $path );
-
-    # Add the pre and post values.
-    unshift @path, $pre if $pre;
-    push @path, $post if $post;
 
     # Return the URI with the case adjusted as necessary.
     my $uri_case = $oc_obj->get_uri_case;
