@@ -204,7 +204,6 @@ use constant COLS       => qw( uuid
                                first_publish_date
                                publish_date
                                expire_date
-                               cover_date
                                current_version
                                published_version
                                workflow__id
@@ -222,6 +221,7 @@ use constant VERSION_COLS => qw( name
                                  usr__id
                                  primary_oc__id
                                  slug
+                                 cover_date
                                  note
                                  checked_out);
 
@@ -233,7 +233,6 @@ use constant FIELDS =>  qw( uuid
                             first_publish_date
                             publish_date
                             expire_date
-                            cover_date
                             current_version
                             published_version
                             workflow_id
@@ -251,6 +250,7 @@ use constant VERSION_FIELDS => qw( name
                                    modifier
                                    primary_oc_id
                                    slug
+                                   cover_date
                                    note
                                    checked_out);
 
@@ -332,8 +332,8 @@ use constant PARAM_WHERE_MAP => {
       first_publish_date_end   => 's.first_publish_date <= ?',
       publish_date_start     => 's.publish_date >= ?',
       publish_date_end       => 's.publish_date <= ?',
-      cover_date_start       => 's.cover_date >= ?',
-      cover_date_end         => 's.cover_date <= ?',
+      cover_date_start       => 'i.cover_date >= ?',
+      cover_date_end         => 'i.cover_date <= ?',
       expire_date_start      => 's.expire_date >= ?',
       expire_date_end        => 's.expire_date <= ?',
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
@@ -464,7 +464,7 @@ use constant PARAM_ORDER_MAP => {
     publish_status      => 's.publish_status',
     first_publish_date  => 's.first_publish_date',
     publish_date        => 's.publish_date',
-    cover_date          => 's.cover_date',
+    cover_date          => 'i.cover_date',
     expire_date         => 's.expire_date',
     name                => 'LOWER(i.name)',
     title               => 'LOWER(i.name)',

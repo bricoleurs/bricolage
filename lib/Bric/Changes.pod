@@ -503,6 +503,10 @@ directive is enabled. This is useful when editors what to be able to edit the
 newly uploaded media document and then return directly to the related media
 element from which they created it. [David]
 
+=item *
+
+Story and media cover dates are now versioned. [David]
+
 =back
 
 =cut

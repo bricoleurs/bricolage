@@ -51,7 +51,6 @@ CREATE TABLE story (
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
-    cover_date        TIMESTAMP,
     current_version   INTEGER         NOT NULL,
     published_version INTEGER,
     workflow__id      INTEGER         NOT NULL,
@@ -81,6 +80,7 @@ CREATE TABLE story_instance (
     usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
+    cover_date     TIMESTAMP,
     note           TEXT,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
@@ -162,7 +162,7 @@ CREATE INDEX fkx_site_id__story ON story(site__id);
 CREATE INDEX fkx_alias_id__story ON story(alias_id);
 CREATE INDEX idx_story__first_publish_date ON story(first_publish_date);
 CREATE INDEX idx_story__publish_date ON story(publish_date);
-CREATE INDEX idx_story__cover_date ON story(cover_date);
+CREATE INDEX idx_story_instance__cover_date ON story_instance(cover_date);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));

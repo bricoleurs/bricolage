@@ -50,7 +50,6 @@ CREATE TABLE media (
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
-    cover_date        TIMESTAMP,
     workflow__id      INTEGER   NOT NULL,
     desk__id          INTEGER   NOT NULL,
     publish_status    BOOLEAN    NOT NULL DEFAULT FALSE,
@@ -83,6 +82,7 @@ CREATE TABLE media_instance (
     file_name           VARCHAR(256),
     location            VARCHAR(256),
     uri                 VARCHAR(256),
+    cover_date          TIMESTAMP,
     note                TEXT,
     checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
@@ -173,7 +173,7 @@ CREATE TABLE media_member (
 CREATE INDEX idx_media__uuid ON media(uuid);
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
-CREATE INDEX idx_media__cover_date ON media(cover_date);
+CREATE INDEX idx_media_instance__cover_date ON media_instance(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
 CREATE INDEX fkx_element_type__media ON media(element_type__id);
