@@ -10,8 +10,8 @@ $oc_js => undef
 my $uid = $doc->get_user__id;
 my $co = defined $uid && $uid == get_user_id;
 $title = $doc->get_title unless defined $title;
-return $title unless $co || $doc->get_version;
-return $title if $type eq 'media' and not $doc->get_file_name;
+return $value unless $co || $doc->get_version;
+return $value if $type eq 'media' and not $doc->get_file_name;
 my $id = $doc->get_id;
 my $uri = escape_html($doc->get_primary_uri);
 $value ||= $doc->get_primary_uri;

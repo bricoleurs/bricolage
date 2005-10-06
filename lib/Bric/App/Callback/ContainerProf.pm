@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'container_prof';
 
 use strict;
-use Bric::Config qw(:time);
+use Bric::Config qw(:time RELATED_MEDIA_PROFILE);
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
@@ -203,13 +203,17 @@ sub create_related_media : Callback {
     $self->_drift_correction;
     my $widget = $self->class_key;
 
-    my $element =  get_state_data($self->class_key, 'element');
-    my $type  = $element->get_object_type;
-    my $asset = get_state_data($type.'_prof', $type);
+    # Get a handle on things to restore later.
+    my $element =  get_state_data($widget, 'element');
+    my $type    = $element->get_object_type;
+    my $asset   = get_state_data($type.'_prof', $type);
+    my $state   = get_state($widget);
+    my $type_state = get_state_name($type.'_prof');
+    clear_state($widget) if RELATED_MEDIA_PROFILE;
 
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-    return unless $param->{"media_prof|file"};
+    return if $param->{_inconsistent_state_};
+    return unless $param->{"$widget|file"};
 
     # Get the workflow for media files.
     my $media_wf = find_workflow($asset->get_site_id, MEDIA_WORKFLOW, READ);
@@ -223,13 +227,14 @@ sub create_related_media : Callback {
 
     # Set up the parameters to create a new media document.
     my $m_param = {
-        "title"                   => $param->{"media_prof|file"},
-        "cover_date"              => $asset->get_cover_date(ISO_8601_FORMAT),
-        "priority"                => $asset->get_priority,
-        "media_prof|category__id" => $asset->get_primary_category->get_id,
-        "media_prof|source__id"   => $asset->get_source__id,
-        "media_prof|at_id"        => $param->{"media_prof|at_id"},
-        "media_prof|file"         => $param->{"media_prof|file"},
+        'title'                   => $param->{"$widget|file"},
+        'cover_date'              => $asset->get_cover_date(ISO_8601_FORMAT),
+        'priority'                => $asset->get_priority,
+        'media_prof|category__id' => $asset->get_primary_category->get_id,
+        'media_prof|source__id'   => $asset->get_source__id,
+        'media_prof|at_id'        => $param->{'media_prof|at_id'},
+        'media_prof|file'         => $param->{"$widget|file"},
+        'file_field_name'         => "$widget|file",
     };
 
     my $media_cb = Bric::App::Callback::Profile::Media->new(
@@ -239,30 +244,41 @@ sub create_related_media : Callback {
         params     => $m_param
     );
 
-    # Cache the container prof state.
-    my $state = get_state($widget);
-
     $media_cb->create;
     $media_cb->update;
     my $media = get_state_data('media_prof', 'media');
-    $media_cb->save;
+    my $mid = $media->get_id;
+    $element->set_related_media($mid);
 
-    # Now check the media document in to a desk.
-    my $desk_cb = Bric::App::Callback::Desk->new(
-        cb_request => $self->cb_request,
-        pkg_key    => 'desk_asset',
-        apache_req => $self->apache_req,
-        value      => $media->get_id,
-        params     => { "desk_asset|asset_class" => $media->key_name },
-    );
-    $desk_cb->checkin;
+    if (RELATED_MEDIA_PROFILE) {
+        # Set up the original state for returning from the media profile.
+        $media_cb->save_and_stay(1);
+        set_state_data(_profile_return => {
+            state      => $state,
+            type_state => $type_state,
+            prof       => $asset,
+            type       => $type,
+            uri        => $self->apache_req->uri,
+        });
+        # Edit the new media document.
+        $self->set_redirect("/workflow/profile/media/$mid/");
+    } else {
+        # Now check the media document in to a desk.
+        my $desk_cb = Bric::App::Callback::Desk->new(
+            cb_request => $self->cb_request,
+            pkg_key    => 'desk_asset',
+            apache_req => $self->apache_req,
+            value      => $media->get_id,
+            params     => { 'desk_asset|asset_class' => $media->key_name },
+        );
+        $desk_cb->checkin;
 
-    # Stay where we are! This cancels any redirects set up by the Media
-    # callback object.
-    $self->set_redirect($self->apache_req->uri);
-    $element->set_related_media($media->get_id);
-    # Restore the state.
-    set_state($widget, @$state);
+        # Stay where we are! This cancels any redirects set up by the Media
+        # callback object.
+        # Restore the state.
+        set_state($widget, @$state);
+        $self->set_redirect($self->apache_req->uri);
+    }
 }
 
 sub relate_media : Callback {

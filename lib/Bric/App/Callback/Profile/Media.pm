@@ -91,7 +91,9 @@ sub update : Callback(priority => 1) {
 
     # Check for file
     if ($param->{"$widget|file"}) {
-        my $upload = $self->apache_req->upload;
+        my $upload = $self->apache_req->upload(
+            $param->{file_field_name} || "$widget|file"
+        );
 
         # Prevent big media uploads
         if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
@@ -199,19 +201,24 @@ sub save : Callback(priority => 6) {
     # Clear the state and send 'em home.
     $self->clear_my_state;
 
-    if ($return eq 'search') {
-        my $url = $SEARCH_URL . $workflow_id . '/';
-        $self->set_redirect($url);
-    } elsif ($return eq 'active') {
-        my $url = $ACTIVE_URL . $workflow_id;
-        $self->set_redirect($url);
-    } elsif ($return =~ /\d+/) {
-        my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-        $self->set_redirect($url);
-    } else {
-        $self->set_redirect("/");
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
     }
 
+    else {
+        if ($return eq 'search') {
+            my $url = $SEARCH_URL . $workflow_id . '/';
+            $self->set_redirect($url);
+        } elsif ($return eq 'active') {
+            my $url = $ACTIVE_URL . $workflow_id;
+            $self->set_redirect($url);
+        } elsif ($return =~ /\d+/) {
+            my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+            $self->set_redirect($url);
+        } else {
+            $self->set_redirect("/");
+        }
+    }
 }
 
 ################################################################################
@@ -330,13 +337,17 @@ sub checkin : Callback(priority => 6) {
 
     # Clear the state out and set redirect.
     $self->clear_my_state;
-    $self->set_redirect("/");
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
+    } else {
+        $self->set_redirect("/");
+    }
 }
 
 ################################################################################
 
 sub save_and_stay : Callback(priority => 6) {
-    my $self = shift;
+    my ($self, $no_log) = @_; # $no_log passed by Callback::ContainerProf.
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
 
@@ -358,7 +369,7 @@ sub save_and_stay : Callback(priority => 6) {
         $media->activate;
         $media->save;
         log_event('media_save', $media);
-        add_msg('Media "[_1]" saved.', $media->get_title);
+        add_msg('Media "[_1]" saved.', $media->get_title) unless $no_log;
     }
 
     # Set the state.
@@ -418,7 +429,11 @@ sub cancel : Callback(priority => 6) {
         add_msg('Media "[_1]" check out canceled.', $media->get_title);
     }
     $self->clear_my_state;
-    $self->set_redirect("/");
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
+    } else {
+        $self->set_redirect("/");
+    }
 }
 
 ################################################################################
@@ -452,7 +467,11 @@ sub return : Callback(priority => 6) {
 
         # Clear the state and send 'em home.
         $self->clear_my_state;
-        $self->set_redirect($url);
+        if (my $prev = get_state_data('_profile_return')) {
+            $self->return_to_other($prev);
+        } else {
+            $self->set_redirect($url);
+        }
     }
 }
 
@@ -835,6 +854,17 @@ sub clear_my_state {
     my $self = shift;
     clear_state($self->class_key);
     clear_state('container_prof');
+}
+
+sub return_to_other {
+    my ($self, $prev) = @_;
+    # $prev has state information for a story or media profile that created
+    # the media profile we've just finished with. So restore that state.
+    clear_state('_profile_return');
+    set_state(container_prof => @{$prev->{state}});
+    set_state("$prev->{type}\_prof", $prev->{type_state},
+              { $prev->{type} => $prev->{prof} });
+    $self->set_redirect($prev->{uri});
 }
 
 ##############################################################################

@@ -1811,11 +1811,26 @@ default.
 =item *
 
 B<RELATED_MEDIA_UPLOAD:> This directive allows users to upload media files
-directly into an element profile if they have permission to create media and
-to access a media workflow. This makes it a much simpler process for editors
-to quickly associate media with story documents. The uploaded media files will
-be created based on the media type element selected from a select list, and
-given the same category, cover date, and priority as the current document.
+directly into a related media element profile if they have permission to
+create media and to access a media workflow. This makes it a much simpler
+process for editors to quickly associate media with story documents. The
+uploaded media files will be created based on the media type element selected
+from a select list, and given the same category, cover date, and priority as
+the current document. Enabled by default.
+
+=item *
+
+B<RELATED_MEDIA_PFOFILE:> This directive is used only when the
+C<RELATED_MEDIA_UPLOAD> directive is enabled. When they're both enabled, a new
+media document uploaded via a related media element will immediately be
+displayed in its profile, allowing the editor to change the category, cover
+date, etc. When the editor is done with the media profile, she will be
+restored to the original related media element profile. When this directive is
+not enabled (the default), a new media document created in a related media
+element is simply added to the same category and with the same cover date as
+the originating document profile and checked in to the start desk. If the
+editor wants to make changes to it, she'll need to check it out separately.
+This is the default behavior.
 
 =item *
 

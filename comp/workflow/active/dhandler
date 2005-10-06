@@ -34,10 +34,11 @@ if ($type eq 'templates') {
     }
     $obj_type = $type;
     $previewer = sub {
+        my ($title, $media) = @_;
         $m->comp('/widgets/profile/preview_link.mc',
                  type  => $type,
-                 value => '<span class="l10n">' . shift() . '</span>',
-                 doc   => shift)
+                 value => qq{<span class="l10n">$title</span>},
+                 doc   => $media)
     };
 }
 
@@ -58,7 +59,7 @@ $wf = $wf->get_name;
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">
-  <& '/widgets/wrappers/sharky/table_top.mc', 
+  <& '/widgets/wrappers/sharky/table_top.mc',
       caption => 'Active %n',
       object  => $obj_type
   &>

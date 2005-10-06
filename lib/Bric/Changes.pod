@@ -488,6 +488,21 @@ eliminated, since they can now be used directly in the URI formats. [David]
 The admin tools are now listed in alphabetical order in the side navigation of
 the UI. [David]
 
+=item *
+
+Added C<get_primary_category()> alias for C<get_category()> in the media
+document class so as to make it more like the story class, thus making
+dispatch simpler. [David]
+
+=item *
+
+Added the C<RELATED_MEDIA_PROFILE> F<bricolage.conf> directive to redirect
+users into the new media profile when creating a new media document from a
+related media element, which is only allowed when the C<RELATED_MEDIA_UPLOAD>
+directive is enabled. This is useful when editors what to be able to edit the
+newly uploaded media document and then return directly to the related media
+element from which they created it. [David]
+
 =back
 
 =cut

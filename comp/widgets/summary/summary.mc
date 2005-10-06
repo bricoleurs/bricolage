@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -25,9 +23,6 @@ $LastChangedDate$
 =cut
 
 </%doc>
-
-%#--- Arguments ---#
-
 <%args>
 $asset
 $type   => 'story'
@@ -37,24 +32,22 @@ $number => undef
 $frame  => 1
 $button => undef
 </%args>
-
-%#--- Initialization ---#
-
-<%once>
+<%once>;
 my $widget = 'summary';
 
-my %types = ('Bric::Biz::Asset::Formatting' => 'formatting',
-	     'Bric::Biz::Asset::Business::Story' => 'story',
-	     'Bric::Biz::Asset::Business::Media' => 'media');
+my %types = (
+    'Bric::Biz::Asset::Formatting'      => 'formatting',
+    'Bric::Biz::Asset::Business::Story' => 'story',
+    'Bric::Biz::Asset::Business::Media' => 'media'
+);
 </%once>
-
-<%init>
+<%init>;
   my ($asset_id, $asset_obj);
   my $pkg = ref $asset;
 
   # Truncate any of the subpackage stuff on media
-  $pkg = 'Bric::Biz::Asset::Business::Media' 
-	if $pkg =~ /Bric::Biz::Asset::Business::Media/;
+  $pkg = 'Bric::Biz::Asset::Business::Media'
+    if $pkg =~ /Bric::Biz::Asset::Business::Media/;
 
   if ($pkg) {
       $asset_id  = $asset->get_id;
@@ -62,7 +55,6 @@ my %types = ('Bric::Biz::Asset::Formatting' => 'formatting',
       $type      = $types{$pkg} || 'story';
   } else {
       $asset_id  = $asset;
-
       my $pkg = get_package_name($type);
       $asset_obj = $pkg->lookup({'id' => $asset_id});
   }
@@ -71,13 +63,9 @@ my %types = ('Bric::Biz::Asset::Formatting' => 'formatting',
   set_state_data($sub_widget, 'asset', $asset_obj);
 
   $m->comp($type.'_'.$style.'.html',
-	   widget => $sub_widget,
-	   header => $header,
-	   number => $number,
-	   frame  => $frame,
-	   button => $button);
+       widget => $sub_widget,
+       header => $header,
+       number => $number,
+       frame  => $frame,
+       button => $button);
 </%init>
-
-%#--- Log History ---#
-
-

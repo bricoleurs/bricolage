@@ -10,7 +10,7 @@
     objs       => \@elems,
     useTable   => 0
 &></td>
-    <td><input type="file" name="media_prof|file" /></td>
+    <td><input type="file" name="<% $file_widget %>|file" /></td>
     <td align="right">
      <& /widgets/profile/imageSubmit.mc,
         formName => $formName,
@@ -23,6 +23,7 @@
 <%args>
 $widget   => 'container_prof'
 $formName => 'theForm'
+$file_widget => 'media_prof'
 $site_id
 </%args>
 <%init>;

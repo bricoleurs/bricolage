@@ -1327,6 +1327,8 @@ sub set_cover_date {
 
 =item $category = $media->get_category()
 
+=item $category = $media->get_primary_category()
+
 Returns the object of the category that this is a member of
 
 B<Throws:> NONE.
@@ -1348,6 +1350,7 @@ sub get_category_object {
 
 { no warnings;
   *get_category = \&get_category_object;
+  *get_primary_category = \&get_category_object;
 }
 
 ##############################################################################

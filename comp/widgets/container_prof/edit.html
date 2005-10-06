@@ -490,13 +490,14 @@ my $related_summary = sub {
       $m->out(qq{</td><td align="right" width="100%">$button&nbsp;</td></tr>});
       if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
           # Give 'em an upload form.
-          if (my $uploader = $m->scomp( '/widgets/profile/media_upload.mc',
-                                       widget   => $widget,
-                                       formName => "theForm",
-                                       site_id  => $asset->get_site_id,
-                                      )) {
-              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n})
-                if $uploader;
+          if (my $uploader = $m->scomp(
+                  '/widgets/profile/media_upload.mc',
+                  widget      => $widget,
+                  file_widget => 'container_prof',
+                  formName    => "theForm",
+                  site_id     => $asset->get_site_id,
+          )) {
+              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n});
           }
       }
   }
