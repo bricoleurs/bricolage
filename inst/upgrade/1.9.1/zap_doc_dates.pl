@@ -29,7 +29,6 @@ for my $table (qw(story media)) {
         },
     ;
 }
-;
 
 1;
 __END__
