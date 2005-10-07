@@ -407,7 +407,7 @@ sub g_test_execute_me : Test(10) {
     # test: get the resource path
     ok( my $path = $resource->get_path, 'get the path to the resource');
     open IN, $path;
-    undef $/;
+    local $/;
     my $got = <IN>;
     close IN;
     my $expect = qq{<!-- Start "autohandler" -->
