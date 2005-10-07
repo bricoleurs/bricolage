@@ -13,6 +13,7 @@ use Bric::Biz::AssetType;
 use Bric::Biz::AssetType::Parts::Data;
 use Bric::Biz::Asset::Business::Parts::Tile::Container;
 use Bric::Biz::Asset::Business::Parts::Tile::Data;
+use Bric::Util::Fault qw(:all);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
@@ -629,7 +630,18 @@ sub _update_parts {
                     $val = join('__OPT__', @$val) if $info->{multiple} && ref $val;
                     my $max = $info->{maxlength};
                     $val = substr($val, 0, $max) if $max && length $val > $max;
-                    $t->set_data($val);
+                    eval { $t->set_data($val) };
+                    if (my $err = $@) {
+                        if (isa_bric_exception($err, 'Error')) {
+                            $err->rethrow;
+                        }
+                        elsif (ref $err) {
+                            throw_invalid $err->error;
+                        }
+                        else {
+                            throw_invalid $err
+                        }
+                    }
                 }
             }
         }

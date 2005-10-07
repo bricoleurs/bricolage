@@ -64,6 +64,12 @@ specified using the C<ANY()> function. [David]
 Having a custom field beginning with a leading underscore was causing
 an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
 
+=item *
+
+Errors thrown when setting element field values will not be displayed as error
+messages within the context of the element profile, rather than throwing a
+fatal exception. This is useful for invalid dates, foe example. [David]
+
 =back
 
 =cut
