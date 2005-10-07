@@ -16,6 +16,7 @@ use Bric::Biz::ElementType;
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::Element::Container;
 use Bric::Biz::Element::Field;
+use Bric::Util::Fault qw(:all);
 use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
@@ -644,16 +645,29 @@ sub _update_parts {
                 } else {
                     # Truncate the value, if necessary, then set it.
                     my $max = $t->get_max_length;
-                    if ($t->is_multiple) {
-                        if ($max) {
-                            $_ = substr($_, 0, $max)
-                                for grep { length $_ > $max } @$val
-                            }
-                        $t->set_values(@$val);
-                    } else {
-                        $val = substr($val, 0, $max)
-                            if $max && length $val > $max;
-                        $t->set_value($val);
+                    eval {
+                        if ($t->is_multiple) {
+                            if ($max) {
+                                $_ = substr($_, 0, $max)
+                                    for grep { length $_ > $max } @$val
+                                }
+                            $t->set_values(@$val);
+                        } else {
+                            $val = substr($val, 0, $max)
+                                if $max && length $val > $max;
+                            $t->set_value($val);
+                        }
+                    };
+                    if (my $err = $@) {
+                        if (isa_bric_exception($err, 'Error')) {
+                            $err->rethrow;
+                        }
+                        elsif (ref $err) {
+                            throw_invalid $err->error;
+                        }
+                        else {
+                            throw_invalid $err
+                        }
                     }
                 }
             }
