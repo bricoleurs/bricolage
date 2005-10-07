@@ -68,6 +68,7 @@ $do_callback = sub {
         $oc->set_filename( $param->{filename});
         $oc->set_file_ext( $param->{file_ext});
         $oc->set_uri_case($param->{uri_case});
+        $oc->set_burner($param->{burner}) if defined $param->{burner};
         exists $param->{use_slug} ? $oc->use_slug_on : $oc->use_slug_off;
         $oc->activate;
 

@@ -1,16 +1,16 @@
 package Bric::SOAP::OutputChannel;
-###############################################################################
 
 use strict;
 use warnings;
 
-use Bric::Biz::OutputChannel qw(:case_constants);
+use Bric::Biz::OutputChannel qw(:all);
 use Bric::Biz::Site;
 
 use Bric::App::Authz    qw(chk_authz READ CREATE);
 use Bric::App::Event    qw(log_event);
 use Bric::SOAP::Util    qw(parse_asset_document site_to_id);
 use Bric::Util::Fault   qw(throw_ap);
+use List::Util          qw(first);
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -328,7 +328,7 @@ sub is_allowed_param {
 
     my $allowed = {
         list_ids => { map { $_ => 1 } qw(name description site protocol
-                                         filename file_ext
+                                         filename file_ext burner
                                          use_slug active) },
         export   => { map { $_ => 1 } ("$module\_id", "$module\_ids") },
         create   => { map { $_ => 1 } qw(document) },
@@ -423,6 +423,14 @@ sub load_asset {
         } else {
             $asset->use_slug_off();
         }
+
+        # Set burner.
+        my $burners = Bric::Biz::OutputChannel->my_meths->{burner}->{props}{vals};
+        my $burner  = first { $_->[1] eq $adata->{burner} } @$burners;
+        throw_ap __PACKAGE__ . qq{:update : No such burner "$adata->{burner}" }
+            . q{--Maybe it hasn't been installed?}
+            unless $burner;
+        $asset->set_burner($burner->[0]);
 
         # change site to ID
         my $site_ids = Bric::Biz::Site->list_ids({name => $adata->{site}});
@@ -521,8 +529,10 @@ sub serialize_asset {
         UPPERCASE() => 'Uppercase',
     );
     $writer->dataElement(uri_case => $cases{$asset->get_uri_case});
-
     $writer->dataElement(use_slug => ($asset->can_use_slug ? 1 : 0));
+
+    my $burn_get = Bric::Biz::OutputChannel->my_meths->{burner_name}{get_meth};
+    $writer->dataElement(burner => $burn_get->($asset));
 
     my $site = Bric::Biz::Site->lookup({id => $asset->get_site_id});
     $writer->dataElement(site => $site->get_name);

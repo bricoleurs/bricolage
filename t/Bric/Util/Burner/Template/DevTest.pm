@@ -16,7 +16,7 @@ sub test_burn : Test(127) {
     return $self->subclass_burn_test(
         'Template',
         'tmpl',
-        Bric::Biz::ElementType::BURNER_TEMPLATE,
+        Bric::Biz::OutputChannel::BURNER_TEMPLATE,
     );
 }
 

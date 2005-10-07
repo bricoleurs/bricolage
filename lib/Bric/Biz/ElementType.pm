@@ -140,7 +140,6 @@ use constant ORD => qw(
     name
     key_name
     description
-    burner
     top_level
     paginated
     fixed_uri
@@ -151,12 +150,6 @@ use constant ORD => qw(
     active
 );
 
-# possible values for burner
-use constant BURNER_MASON    => 1;
-use constant BURNER_TEMPLATE => 2;
-use constant BURNER_TT       => 3;
-use constant BURNER_PHP      => 4;
-
 #==============================================================================#
 # Fields                               #
 #======================================#
@@ -164,8 +157,8 @@ use constant BURNER_PHP      => 4;
 #--------------------------------------#
 # Public Class Fields
 our $METHS;
-our @EXPORT_OK = qw(BURNER_MASON BURNER_TEMPLATE BURNER_TT BURNER_PHP);
-our %EXPORT_TAGS = ( all => \@EXPORT_OK);
+our @EXPORT_OK   = @Bric::Biz::OutputChannel::EXPORT_OK;
+our %EXPORT_TAGS = %Bric::Biz::OutputChannel::EXPORT_TAGS;
 
 #--------------------------------------#
 # Private Class Fields
@@ -177,7 +170,6 @@ my @cols = qw(
     name
     key_name
     description
-    burner
     top_level
     paginated
     fixed_uri
@@ -194,7 +186,6 @@ my @props = qw(
     name
     key_name
     description
-    burner
     top_level
     paginated
     fixed_uri
@@ -230,7 +221,7 @@ BEGIN {
         key_name            => Bric::FIELD_RDWR,
         name                => Bric::FIELD_RDWR,
         description         => Bric::FIELD_RDWR,
-        burner              => Bric::FIELD_RDWR,
+        burner              => Bric::FIELD_RDWR, # Deprecated
         top_level           => Bric::FIELD_NONE,
         paginated           => Bric::FIELD_NONE,
         fixed_uri           => Bric::FIELD_NONE,
@@ -279,10 +270,6 @@ Supported Keys:
 =item key_name
 
 =item description
-
-=item burner
-
-Defaults to the value of C<BURNER_MASON>.
 
 =item top_level
 
@@ -708,16 +695,6 @@ my ($tmpl_archs, $sel);
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
-    unless ($tmpl_archs) {
-        $tmpl_archs = [[BURNER_MASON, 'Mason']];
-        push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
-            if $Bric::Util::Burner::Template::VERSION;
-        push @$tmpl_archs,  [BURNER_TT,'Template::Toolkit']
-            if $Bric::Util::Burner::TemplateToolkit::VERSION;
-        push @$tmpl_archs,  [BURNER_PHP,'PHP']
-            if $Bric::Util::Burner::PHP::VERSION;
-    }
-
     unless ($sel) {
         my $classes = Bric::Util::Class->pkg_href;
         while (my ($k, $v) = each %$classes) {
@@ -780,22 +757,6 @@ sub my_meths {
                 type => 'textarea',
                 cols => 40,
                 rows => 4
-            }
-        },
-
-        burner => {
-            get_meth => sub { shift->get_burner(@_) },
-            get_args => [],
-            set_meth => sub { shift->set_burner(@_) },
-            set_args => [],
-            name     => 'burner',
-            disp     => 'Burner',
-            len      => 80,
-            req      => 1,
-            type     => 'short',
-            props    => {
-                type => 'select',
-                vals => $tmpl_archs,
             }
         },
 
@@ -958,26 +919,6 @@ Get and set the element type object's description.
   $element_type = $element_type->set_key_name($key_name);
 
 Get and set the element type object's unique key name.
-
-=head3 burner
-
-  my $burner = $element_type->get_burner;
-  $element_type = $element_type->set_burner($burner);
-
-Get and set the element type object's burner association. The value must
-correspond to one of the burner constants exportable by this class:
-
-=over
-
-=item BURNER_MASON
-
-=item BURNER_TEMPLATE
-
-=item BURNER_TT
-
-=item BURNER_PHP
-
-=back
 
 =head3 top_level
 

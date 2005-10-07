@@ -507,6 +507,12 @@ element from which they created it. [David]
 
 Story and media cover dates are now versioned. [David]
 
+=item *
+
+Output channels are now associated with burners and can only include other
+output channels associated with the same burners. Element types are no longer
+associated with burners at all. [David]
+
 =back
 
 =cut

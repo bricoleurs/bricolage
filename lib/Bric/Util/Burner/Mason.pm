@@ -25,7 +25,7 @@ $LastChangedDate$
   my $mason_burner = Bric::Util::Burner::Mason->new($burner);
 
   # burn an asset, get back a list of resources
-  my $resources = $mason_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $mason_burner->burn_one($ba, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -107,7 +107,7 @@ BEGIN {
                         });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_MASON,
+__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_MASON,
                                category_fn    => 'autohandler',
                                cat_fn_has_ext => 0,
                                exts           =>
@@ -156,7 +156,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -167,12 +167,6 @@ Publishes an asset.  Returns a list of resources burned.  Parameters are:
 $ba
 
 A business asset object to publish.
-
-=item *
-
-$at
-
-A asset type object for $ba
 
 =item *
 

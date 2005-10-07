@@ -25,7 +25,7 @@ $LastChangedDate$
   my $tt_burner = Bric::Util::Burner::TemplateToolkit->new($burner);
 
   # Burn an asset, get back a list of resources
-  my $resources = $tt_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $tt_burner->burn_one($ba, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -100,7 +100,7 @@ BEGIN {
                         });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TT,
+__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_TT,
                                category_fn    => 'wrapper',
                                cat_fn_has_ext => 1,
                                exts           =>
@@ -152,7 +152,7 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -163,12 +163,6 @@ Publishes an asset.  Returns a list of resources burned.  Parameters are:
 $ba
 
 A business asset object to publish.
-
-=item *
-
-$at
-
-A asset type object for $ba
 
 =item *
 
@@ -188,7 +182,7 @@ A category in which to publish.
 
 sub burn_one {
     my $self = shift;
-    my ($story, $oc, $cat, $at) = @_;
+    my ($story, $oc, $cat) = @_;
 
     my $element = $story->get_element();
 

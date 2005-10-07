@@ -14,7 +14,7 @@ sub test_burn : Test(115) {
     return $self->subclass_burn_test(
         'PHP',
         'php',
-        Bric::Biz::ElementType::BURNER_PHP,
+        Bric::Biz::OutputChannel::BURNER_PHP,
     );
 }
 

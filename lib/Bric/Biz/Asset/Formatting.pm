@@ -146,10 +146,10 @@ use base qw( Bric::Biz::Asset );
 # Constants                            #
 #======================================#
 
-use constant DEBUG => 0;
-use constant ELEMENT_TEMPLATE => 1;
+use constant DEBUG             => 0;
+use constant ELEMENT_TEMPLATE  => 1;
 use constant CATEGORY_TEMPLATE => 2;
-use constant UTILITY_TEMPLATE => 3;
+use constant UTILITY_TEMPLATE  => 3;
 
 # constants for the Database
 use constant TABLE      => 'formatting';
@@ -1410,7 +1410,7 @@ NONE
 
 sub get_output_channel_name {
     my $self = shift;
-    my $oc_obj = $self->_get_output_channel_object;
+    my $oc_obj = $self->get_output_channel;
 
     return unless $oc_obj;
 
@@ -1419,9 +1419,12 @@ sub get_output_channel_name {
 
 ################################################################################
 
-=item $name = $template->get_output_channel;
+=item $oc = $template->get_output_channel;
 
-Return the output channel associated with this Formatting asset.
+=item $oc = $template->get_primary_oc;
+
+Return the output channel associated with this Formatting asset. The
+C<get_primary_oc()> alias is provided to be compatible with business assets.
 
 B<Throws:>
 
@@ -1439,9 +1442,25 @@ NONE
 
 sub get_output_channel {
     my $self = shift;
-    my $oc_obj = $self->_get_output_channel_object;
+    my $dirty = $self->_get__dirty;
+    my ($oc_id, $oc_obj) = $self->_get('output_channel__id',
+                                       '_output_channel_obj');
+
+    return unless $oc_id;
+
+    unless ($oc_obj) {
+        $oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
+        $self->_set(['_output_channel_obj'], [$oc_obj]);
+
+        # Restore the original dirty value.
+        $self->_set__dirty($dirty);
+    }
 
     return $oc_obj;
+}
+{
+    no strict 'refs';
+    *get_primary_oc = \&get_output_channel;
 }
 
 ##############################################################################
@@ -1964,45 +1983,6 @@ sub save {
 =head2 Private Instance Methods
 
 =over 4
-
-=item $oc_obj = $self->_get_output_channel_object()
-
-Returns the output channel object associated with this formatting object
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
-
-=cut
-
-sub _get_output_channel_object {
-    my $self = shift;
-    my $dirty = $self->_get__dirty;
-    my ($oc_id, $oc_obj) = $self->_get('output_channel__id',
-                                       '_output_channel_obj');
-
-    return unless $oc_id;
-
-    unless ($oc_obj) {
-        $oc_obj = Bric::Biz::OutputChannel->lookup({'id' => $oc_id});
-        $self->_set(['_output_channel_obj'], [$oc_obj]);
-
-        # Restore the original dirty value.
-        $self->_set__dirty($dirty);
-    }
-
-    return $oc_obj;
-}
-
-################################################################################
 
 =item $cat_obj = $self->_get_category_object()
 

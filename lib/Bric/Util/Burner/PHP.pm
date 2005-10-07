@@ -25,7 +25,7 @@ $LastChangedDate: 2004-11-19 03:55:15 -0500 (Fri, 19 Nov 2004) $
   my $php_burner = Bric::Util::Burner::PHP->new($burner);
 
  # Burn an asset, get back a list of resources
-  my $resources = $php_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $php_burner->burn_one($ba, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -97,7 +97,7 @@ BEGIN {
 }
 
 __PACKAGE__->_register_burner(
-    Bric::Biz::ElementType::BURNER_PHP,
+    Bric::Biz::OutputChannel::BURNER_PHP,
     category_fn    => 'cat_tmpl',
     cat_fn_has_ext => 0,
     exts           => {
@@ -182,7 +182,7 @@ B<Notes:> NONE.
 
 #------------------------------------------------------------------------------#
 
-=item $resources = $b->burn_one($ba, $at, $oc, $cat);
+=item $resources = $b->burn_one($ba, $oc, $cat);
 
 Publishes an asset.  Returns a list of resources burned.  Parameters are:
 
@@ -193,12 +193,6 @@ Publishes an asset.  Returns a list of resources burned.  Parameters are:
 $ba
 
 A business asset object to publish.
-
-=item *
-
-$at
-
-A asset type object for $ba
 
 =item *
 
@@ -217,7 +211,7 @@ A category in which to publish.
 =cut
 
 sub burn_one {
-    my ($self, $story, $oc, $cat, $at) = @_;
+    my ($self, $story, $oc, $cat) = @_;
     my $element = $story->get_element();
 
     # Determine the component roots.

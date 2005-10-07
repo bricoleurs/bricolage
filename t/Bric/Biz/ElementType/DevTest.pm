@@ -13,7 +13,6 @@ my %elem = (
     name          => 'Test Element',
     key_name      => 'test_element',
     description   => 'Testing Element API',
-    burner        => Bric::Biz::ElementType::BURNER_MASON,
     primary_oc_id => 1,
     top_level     => 1,
 );
@@ -30,14 +29,13 @@ sub table { 'element_type' };
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_new : Test(25) {
+sub test_new : Test(24) {
     my $self = shift;
 
     my %et = (
         name        => 'Test ElementType',
         key_name    => 'test_element_type',
         description => 'Testing Element Type API',
-        burner      => Bric::Biz::ElementType->BURNER_MASON,
     );
 
     ok( my $et = Bric::Biz::ElementType->new, 'Create empty element' );
@@ -49,7 +47,6 @@ sub test_new : Test(25) {
     is( $et->get_name, $et{name},               'Check name' );
     is( $et->get_key_name, $et{key_name},       'Check key_name' );
     is( $et->get_description, $et{description}, 'Check description' );
-    is( $et->get_burner, $et{burner},           'Check burner' );
 
     # Test backwards compatibility with an ATType object.
     ok my $att = Bric::Biz::ATType->new({
@@ -668,7 +665,6 @@ sub test_subelement_types : Test(39) {
     ok my $story_type = Bric::Biz::ElementType->new({
         key_name  => '_testing_',
         name      => 'Testing',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
         top_level => 1,
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
@@ -709,7 +705,6 @@ sub test_subelement_types : Test(39) {
     ok my $pull_quote = Bric::Biz::ElementType->new({
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
     }), "Create a subelement element";
 
     ok $pull_quote->save, "Save the subelement element";
@@ -758,7 +753,6 @@ sub test_subelement_types : Test(39) {
     ok my $page = Bric::Biz::ElementType->new({
         key_name  => '_page_',
         name      => 'Page',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
         top_level => 0,
         paginated => 1,
     }), "Create a page subelement element";

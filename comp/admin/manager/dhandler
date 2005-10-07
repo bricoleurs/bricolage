@@ -360,7 +360,7 @@ my $def = {
                                constrain => { active => 1 },
                                select => $sel_sub,
                              },
-	   output_channel => { list_fields => [qw(name site description)],
+	   output_channel => { list_fields => [qw(name burner_name site description)],
 			       srch_field => 'name',
 			       behavior => 'narrow',
 	                       constrain => {active => 1},

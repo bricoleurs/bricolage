@@ -52,7 +52,6 @@ sub create_element_types {
     ok my $media_type = Bric::Biz::ElementType->new({
         key_name  => '_media_',
         name      => 'Media Testing',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
         top_level => 1,
         media     => 1,
     }), "Create media type";
@@ -68,7 +67,6 @@ sub create_element_types {
     ok my $story_type = Bric::Biz::ElementType->new({
         key_name      => '_testing_',
         name          => 'Testing',
-        burner        => Bric::Biz::ElementType::BURNER_MASON,
         top_level     => 1,
         related_story => 1,
         related_media => 1,
@@ -114,7 +112,6 @@ sub create_element_types {
     ok my $pull_quote = Bric::Biz::ElementType->new({
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
     }), "Create a subelement element";
     $self->{pull_quote} = $pull_quote;
 
@@ -167,7 +164,6 @@ sub create_element_types {
     ok my $page = Bric::Biz::ElementType->new({
         key_name  => '_page_',
         name      => 'Page',
-        burner    => Bric::Biz::ElementType::BURNER_MASON,
         paginated => 1,
     }), "Create a page subelement element";
     $self->{page} = $page;

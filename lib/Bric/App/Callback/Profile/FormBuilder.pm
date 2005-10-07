@@ -257,7 +257,6 @@ $do_element_type = sub {
 
     $set_key_name->($obj, $param) if defined $key_name and not $no_save;
     $obj->set_description($param->{description});
-    $obj->set_burner($param->{burner}) if defined $param->{burner};
 
     if ($param->{element_type_id}) {
         # It's an existing type.

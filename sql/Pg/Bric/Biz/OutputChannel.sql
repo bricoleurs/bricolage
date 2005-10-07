@@ -42,6 +42,7 @@ CREATE TABLE output_channel (
                                      CONSTRAINT ck_output_channel__uri_case
                                      CHECK (uri_case IN (1,2,3)),
     use_slug         BOOLEAN        NOT NULL DEFAULT FALSE,
+    burner           INT2           NOT NULL DEFAULT 1,
     active           BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_output_channel__id PRIMARY KEY (id)
 );

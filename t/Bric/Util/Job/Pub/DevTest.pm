@@ -444,7 +444,6 @@ sub h_test_execute_me : Test(10) {
         name          => 'Test Element',
         key_name      => 'test_element',
         description   => 'Testing Publish Job error handling',
-        burner        => Bric::Biz::ElementType::BURNER_MASON,
         top_level     => 1,
         reference     => 0,
         primary_oc_id => 1

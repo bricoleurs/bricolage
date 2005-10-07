@@ -32,7 +32,6 @@ sub element_type {
         name          => 'Test Element Data',
         key_name      =>'test_field_type',
         description   => 'Testing Element Data API',
-        burner        => Bric::Biz::ElementType::BURNER_MASON,
         top_level     => 1,
         reference     => 0,
         primary_oc_id => 1

@@ -91,18 +91,24 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Grp::OutputChannel;
 use Bric::Util::Coll::OCInclude;
 use Bric::Util::Fault qw(throw_gen throw_dp);
+use List::Util 'first';
 
 #==============================================================================
 ## Inheritance                         #
 #======================================#
 use base qw(Bric Exporter);
-our @EXPORT_OK = qw(MIXEDCASE LOWERCASE UPPERCASE);
-our %EXPORT_TAGS = (case_constants => \@EXPORT_OK);
+our %EXPORT_TAGS = (
+    case_constants => [qw(MIXEDCASE LOWERCASE UPPERCASE)],
+    burners        => [qw(BURNER_MASON BURNER_TEMPLATE BURNER_TT BURNER_PHP)],
+);
+our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
+$EXPORT_TAGS{all} = \@EXPORT_OK;
 
 #=============================================================================
 ## Function Prototypes                 #
 #======================================#
 my ($get_inc, $parse_uri_format);
+my $tmpl_archs = [];
 
 #==============================================================================
 ## Constants                           #
@@ -119,10 +125,16 @@ use constant LOWERCASE => 2;
 use constant UPPERCASE => 3;
 
 # URI Defaults.
-use constant DEFAULT_URI_FORMAT => '/%{categories}/%Y/%m/%d/%{slug}/';
+use constant DEFAULT_URI_FORMAT       => '/%{categories}/%Y/%m/%d/%{slug}/';
 use constant DEFAULT_FIXED_URI_FORMAT => '/%{categories}/';
-use constant DEFAULT_URI_CASE => MIXEDCASE;
-use constant DEFAULT_USE_SLUG => 0;
+use constant DEFAULT_URI_CASE         => MIXEDCASE;
+use constant DEFAULT_USE_SLUG         => 0;
+
+# Possible values for burner.
+use constant BURNER_MASON    => 1;
+use constant BURNER_TEMPLATE => 2;
+use constant BURNER_TT       => 3;
+use constant BURNER_PHP      => 4;
 
 #==============================================================================
 ## Fields                              #
@@ -143,19 +155,19 @@ my $SEL_WHERES = 'oc.id = sm.object_id AND sm.member__id = m.id ' .
 my $SEL_ORDER = 'oc.name, oc.id';
 
 my @COLS = qw(name description protocol site__id primary_ce filename file_ext
-              uri_format fixed_uri_format uri_case use_slug active);
+              uri_format fixed_uri_format uri_case use_slug burner active);
 
 my @PROPS = qw(name description protocol site_id primary filename file_ext
-               uri_format fixed_uri_format uri_case _use_slug _active);
+               uri_format fixed_uri_format uri_case _use_slug burner _active);
 
 my $SEL_COLS = 'oc.id, oc.name, oc.description, oc.protocol, oc.site__id, '.
                'oc.primary_ce, oc.filename, oc.file_ext, oc.uri_format, ' .
-               'oc.fixed_uri_format, oc.uri_case, oc.use_slug, oc.active, ' .
-               'm.grp__id';
+               'oc.fixed_uri_format, oc.uri_case, oc.use_slug, oc.burner, ' .
+               'oc.active, m.grp__id';
 my @SEL_PROPS = ('id', @PROPS, 'grp_ids');
 
 my @ORD = qw(name description site_id protocol filename file_ext uri_format
-             fixed_uri_format uri_case use_slug active);
+             fixed_uri_format uri_case use_slug burner active);
 my $GRP_ID_IDX = $#SEL_PROPS;
 
 # These are provided for the OutputChannel::Element subclass to take
@@ -201,6 +213,10 @@ BEGIN {
        uri_format              => Bric::FIELD_RDWR,
        fixed_uri_format        => Bric::FIELD_RDWR,
        uri_case                => Bric::FIELD_RDWR,
+
+       # What burner to use.
+       burner                  => Bric::FIELD_RDWR,
+
        _use_slug               => Bric::FIELD_NONE,
 
        # the flag as to wheather this is a primary
@@ -289,6 +305,9 @@ sub new {
     # Set URI case and use slug attributes.
     $init->{uri_case} ||= DEFAULT_URI_CASE;
     $init->{_use_slug} = exists $init->{use_slug} && $init->{use_slug} ? 1 : 0;
+
+    # Set default burner.
+    $init->{burner} ||= BURNER_MASON;
 
     # Construct this puppy!
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
@@ -430,6 +449,11 @@ The URI case of an output channel. May use C<ANY> for a list of possible values.
 
 A boolean indicating whether story slugs should be used for file names in an
 output channel.
+
+=item burner
+
+A burner constant as exported by this class. May use C<ANY> for a list of
+possible values.
 
 =item active
 
@@ -740,6 +764,16 @@ B<Notes:> NONE.
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
 
+    unless (@$tmpl_archs) {
+        push @$tmpl_archs, [BURNER_MASON, 'Mason'];
+        push @$tmpl_archs, [BURNER_TEMPLATE, 'HTML::Template']
+            if $Bric::Util::Burner::Template::VERSION;
+        push @$tmpl_archs, [BURNER_TT,'Template::Toolkit']
+            if $Bric::Util::Burner::TemplateToolkit::VERSION;
+        push @$tmpl_archs, [BURNER_PHP,'PHP']
+            if $Bric::Util::Burner::PHP::VERSION;
+    }
+
     # Create 'em if we haven't got 'em.
     $METHS ||= {
               name        => {
@@ -905,6 +939,34 @@ sub my_meths {
                              type     => 'short',
                              props    => { type => 'checkbox' }
                             },
+              burner => {
+                             get_meth => sub { shift->get_burner(@_) },
+                             get_args => [],
+                             set_meth => sub { shift->set_burner(@_) },
+                             set_args => [],
+                             name     => 'burner',
+                             disp     => 'Burner',
+                             len      => 80,
+                             req      => 1,
+                             type     => 'short',
+                             props    => {
+                                 type => 'select',
+                                 vals => $tmpl_archs,
+                             }
+                         },
+
+              burner_name => {
+                             get_meth => sub {
+                                 my $burner = shift->get_burner;
+                                 my $map = first { $_->[0] == $burner } @$tmpl_archs;
+                                 return $map->[1];
+                             },
+                             get_args => [],
+                             name     => 'burner_name',
+                             disp     => 'Burner',
+                             props    => { type      => 'text' },
+                         },
+
               active     => {
                              name     => 'active',
                              get_meth => sub { shift->is_active(@_) ? 1 : 0 },
@@ -1294,6 +1356,34 @@ B<Notes:> NONE.
 =cut
 
 sub use_slug_off { $_[0]->_set(['_use_slug'], [0]) }
+
+=item $burner = $oc->get_burner
+
+Returns the burner with which the output channel is associated.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $oc = $oc->set_burner($burner)
+
+Sets the value corresponding to the burner with which this output channel is
+associated. The value must correspond to one of the burner constants
+exportable by this class:
+
+=over
+
+=item BURNER_MASON
+
+=item BURNER_TEMPLATE
+
+=item BURNER_TT
+
+=item BURNER_PHP
+
+=back
 
 ##############################################################################
 
@@ -1698,6 +1788,8 @@ sub _do_list {
               . any_where $v, 'moc.media_instance__id = ?', \@params;
         } elsif ($k eq 'site_id') {
             $wheres .= ' AND ' . any_where $v, 'oc.site__id = ?', \@params;
+        } elsif ($k eq 'burner') {
+            $wheres .= ' AND ' . any_where $v, 'oc.burner = ?', \@params;
         } else {
             # Simple string comparison!
             $wheres .= ' AND '

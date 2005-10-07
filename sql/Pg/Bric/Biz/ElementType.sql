@@ -53,7 +53,6 @@ CREATE TABLE element_type  (
     name            VARCHAR(64)    NOT NULL,
     key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
-    burner          INT2           NOT NULL DEFAULT 1,
     top_level       BOOLEAN        NOT NULL DEFAULT FALSE,
     paginated       BOOLEAN        NOT NULL DEFAULT FALSE,
     fixed_uri       BOOLEAN        NOT NULL DEFAULT FALSE,

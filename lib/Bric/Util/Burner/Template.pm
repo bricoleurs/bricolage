@@ -26,7 +26,7 @@ $LastChangedDate$
   my $template_burner = Bric::Util::Burner::Template->new($burner);
 
   # burn an asset, get back a list of resources
-  my $resources = $template_burner->burn_one($ba, $at, $oc, $cat);
+  my $resources = $template_burner->burn_one($ba, $oc, $cat);
 
 =head1 DESCRIPTION
 
@@ -93,7 +93,7 @@ BEGIN {
                           });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TEMPLATE,
+__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_TEMPLATE,
                                category_fn    => 'category',
                                cat_fn_has_ext => 1,
                                exts           =>
@@ -144,7 +144,7 @@ sub new {
 
 =over 4
 
-=item $resources = $template_burner->burn_one($ba, $at, $oc, $cat);
+=item $resources = $template_burner->burn_one($ba, $oc, $cat);
 
 Publishes an asset. Returns a list of resources burned. Parameters are:
 
@@ -155,12 +155,6 @@ Publishes an asset. Returns a list of resources burned. Parameters are:
 $ba
 
 A business asset object to publish.
-
-=item *
-
-$at
-
-A asset type object for $ba
 
 =item *
 
@@ -192,7 +186,7 @@ NONE
 
 sub burn_one {
     my $self = shift;
-    my ($story, $oc, $cat, $at) = @_;
+    my ($story, $oc, $cat) = @_;
 
     print STDERR __PACKAGE__, "::burn_one() called.\n"
         if DEBUG;
@@ -208,6 +202,7 @@ sub burn_one {
                            ($oc, $oc->get_includes);
     }
 
+    my $at = $story->get_element_type;
     # save burn parameters
     $self->_set([qw(_at _template_roots)] => [$at, $template_roots]);
 

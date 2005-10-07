@@ -75,13 +75,13 @@ a brief guide to adding a new Burner to Bricolage:
 
 =item *
 
-Modify Bric::Biz::ElementType.
+Modify Bric::Biz::OutputChannel.
 
-To use your Burner you'll need to be able to assign elements to it. To do this
-edit Bric::Biz::ElementType and add a constant for your burner. For example,
-Bric::Util::Burner::Template's constant is C<BURNER_TEMPLATE>. Next, edit the
-C<my_meths()> entry for the "burner" type to include an entry for your
-constant.
+To use your Burner you'll need to be able to assign output channels to it. To
+do this edit Bric::Biz::OutputChannel and add a constant for your burner. For
+example, Bric::Util::Burner::Template's constant is C<BURNER_TEMPLATE>. Next,
+edit the C<my_meths()> entry for the "burner" type to include an entry for
+your constant.
 
 =item *
 
@@ -97,8 +97,8 @@ the names of element templates (see the Mason and PHP burners for an example).
 
 Write the burner tests by implementing F</t/Bric/Util/Burner/Foo/DevTest.pm>.
 See F</t/Bric/Util/Burner/Mason/DevTest.pm> for an example. You will need to
-use the constant defined in Bric::Biz::ElementType and the file name standards
-defined in the last step to have the base class,
+use the constant defined in Bric::Biz::OutputChannel and the file name
+standards defined in the last step to have the base class,
 F</t/Bric/Util/Burner/DevTest.pm>, properly create and load the test
 templates.
 
@@ -213,7 +213,7 @@ use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev :l10n);
-use Bric::Biz::ElementType qw(:all);
+use Bric::Biz::OutputChannel qw(:burners);
 use Bric::App::Util qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
@@ -1450,12 +1450,12 @@ sub burn_one {
                  $base_uri, 0, 'utf8']);
 
     # Construct the burner and do it!
-    my ($burner, $at) = $self->_get_subclass($story);
+    my $burner = $self->_get_subclass($story, $oc);
 
     # Never use the local user's preferences during a burn.
     my $use_user = Bric::Util::Pref->use_user_prefs;
     Bric::Util::Pref->use_user_prefs(0) if $use_user;
-    my $ret = $burner->burn_one(@_, $at);
+    my $ret = $burner->burn_one(@_);
     Bric::Util::Pref->use_user_prefs(1) if $use_user;
 
     # Return a list of the resources we just burned.
@@ -1463,11 +1463,11 @@ sub burn_one {
     return wantarray ? @$ret : $ret;
 }
 
-=item my $bool = $burner->chk_syntax($ba, \$err)
+=item my $bool = $burner->chk_syntax($template, \$err)
 
-Compiles the template found in $ba. If the compile succeeds with no errors,
-chk_syntax() returns true. Otherwise, it returns false, and the error will be in
-the $err varible passed by reference.
+Compiles the template. If the compile succeeds with no errors, chk_syntax()
+returns true. Otherwise, it returns false, and the error will be in the $err
+varible passed by reference.
 
 B<Throws:> NONE.
 
@@ -1952,7 +1952,7 @@ sub add_resource {
 
 =item __PACKAGE__->_register_burner(@args)
 
-  __PACKAGE__->_register_burner( Bric::Biz::ElementType::BURNER_TEMPLATE,
+  __PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_TEMPLATE,
                                  category_fn => 'category',
                                  exts        =>
                                    { 'pl'   => 'HTML::Template Script (.pl)',
@@ -1961,7 +1961,7 @@ sub add_resource {
                                );
 
 Protected method only called by Burner subclasses when they're loaded. This
-method registers the subclasses, along with their Bric::Biz::ElementType
+method registers the subclasses, along with their Bric::Biz::OutputChannel
 constants, file names, and file extenstions. Note that the C<category_fn> and
 must be unique among all burners, as must the file extensions passed via the
 C<exts> directive.
@@ -2001,7 +2001,7 @@ sub _register_burner {
 
 =over 4
 
-=item $burner->_get_subclass($ba)
+=item $burner->_get_subclass($ba, $oc)
 
 Returns the subclass of Bric::Util::Burner appropriate for handling the $ba
 template object.
@@ -2015,32 +2015,13 @@ B<Notes:> NONE.
 =cut
 
 sub _get_subclass {
-    my ($self, $asset) = @_;
-    if (my $at = Bric::Biz::ElementType->lookup({id => $asset->get_element_type_id})) {
-        # Easy to get it
-        my $b = $at->get_burner || BURNER_MASON;
-        my $burner_class = $classes->{$b}
-          or throw_gen 'Cannot determine template burner subclass.';
-
-        # Instantiate the proper subclass.
-        return ($burner_class->new($self), $at);
-
-    } else {
-        # There is no asset type. It could be a template. Find out.
-        $asset->key_name eq 'formatting'
-          || throw_gen 'No element associated with asset.';
-        # Okay, it's a template. Figure out the proper burner from the file name.
-        my $file_name = $asset->get_file_name;
-        my ($fn, $dir, $ext) = fileparse($file_name, qr/\..*$/);
-        # Remove the dot.
-        $ext =~ s/^\.//;
-        my $burner_class = $self->class_for_ext($ext)
-          || $self->class_for_cat_fn($fn)
-          or throw_gen 'Cannot determine template burner subclass.';
-
-        # Instantiate the proper subclass.
-        return $burner_class->new($self);
-    }
+    my ($self, $asset, $oc) = @_;
+    $oc ||= $asset->get_primary_oc;
+    my $b = $oc->get_burner || BURNER_MASON;
+    my $burner_class = $classes->{$b}
+        or throw_gen 'Cannot determine template burner subclass.';
+    # Instantiate the proper subclass.
+    return $burner_class->new($self);
 }
 
 sub _expire {

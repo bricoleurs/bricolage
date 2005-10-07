@@ -6,7 +6,6 @@ use warnings;
 
 use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
-use Bric::Biz::OutputChannel;
 use Bric::Biz::Site;
 use Bric::App::Session qw(get_user_id);
 use Bric::App::Authz   qw(chk_authz READ);
@@ -469,17 +468,6 @@ sub load_asset {
             $type_id = $type->get_id;
         }
 
-        # handle burner mapping
-        my $burner = 0;
-        my $tmpl_archs = Bric::Biz::ElementType->my_meths->{burner}{props}{vals};
-        foreach my $arch (@$tmpl_archs) {
-            $burner = $arch->[0] if $edata->{burner} eq $arch->[1];
-        }
-        unless ($burner) {
-            throw_ap(error => __PACKAGE__ . "::export : unknown burner"
-                       . "\"$edata->{burner}\" for element type \"$id\".");
-        }
-
         # are we updating?
         my $update = exists $to_update{$id};
 
@@ -523,7 +511,6 @@ sub load_asset {
         $element->set_key_name($edata->{key_name});
         $element->set_name($edata->{name});
         $element->set_description($edata->{description});
-        $element->set_burner($burner);
 
         # set boolean fields
         $element->set_top_level($edata->{top_level} ? 1 : 0);
@@ -817,19 +804,6 @@ sub serialize_asset {
     # change business class to ID
     my $class = Bric::Util::Class->lookup({id => $element->get_biz_class_id});
     $writer->dataElement(biz_class     => $class->get_pkg_name);
-
-    # output burner.  It's unfortunate that this isn't a string.  This
-    # is another piece of code that would need to be modified to add a
-    # new burner...
-    my $burner_id = $element->get_burner();
-    if ($burner_id == Bric::Biz::ElementType::BURNER_MASON) {
-        $writer->dataElement(burner => "Mason");
-    } elsif ($burner_id == Bric::Biz::ElementType::BURNER_TEMPLATE) {
-        $writer->dataElement(burner => "HTML::Template");
-    } else {
-        throw_ap(error => __PACKAGE__ . "::export : unknown burner \"$burner_id\""
-                   . " for element type \"$element_id\".");
-    }
 
     # set active flag
     $writer->dataElement(active => ($element->is_active ? 1 : 0));

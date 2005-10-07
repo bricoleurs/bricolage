@@ -11,6 +11,7 @@ use Bric::Util::Trans::FS;
 use Bric::Biz::Category;
 use Bric::Biz::Asset::Formatting::DevTest;
 use Bric::Config qw(:temp :prev);
+use Bric::Biz::OutputChannel;
 use File::Basename;
 use Test::MockModule;
 use Test::File::Contents;
@@ -201,7 +202,7 @@ sub test_notes : Test(7) {
 }
 
 ##############################################################################
-sub test_best_uri : Test(no_plan) {
+sub test_best_uri : Test(4) {
     my $self = shift;
 
     # Mock stuff in burner class.
@@ -274,6 +275,7 @@ sub subclass_burn_test {
     # Create some output channels.
     ok my $suboc = Bric::Biz::OutputChannel->new({
         name    => 'Sub XHTML',
+        burner  => $burner_type,
         site_id => 100,
     }), "Create another output channel";
     ok $suboc->save, "Save the other output channel";
@@ -281,6 +283,7 @@ sub subclass_burn_test {
 
     ok my $oc = Bric::Biz::OutputChannel->new({
         name    => 'Test XHTML',
+        burner  => $burner_type,
         site_id => 100,
     }), "Create an output channel";
     ok $oc->save, "Save the new output channel";
@@ -292,7 +295,6 @@ sub subclass_burn_test {
     ok my $story_type = Bric::Biz::ElementType->new({
         key_name  => '_testing_',
         name      => 'Testing',
-        burner    => $burner_type,
         top_level => 1,
         reference => 0, # No idea what this is.
     }), "Create story type";
@@ -334,7 +336,6 @@ sub subclass_burn_test {
     ok my $pull_quote = Bric::Biz::ElementType->new({
         key_name  => '_pull_quote_',
         name      => 'Pull Quote',
-        burner    => $burner_type,
         reference => 0, # No idea what this is.
     }), "Create a subelement element";
 
@@ -384,7 +385,6 @@ sub subclass_burn_test {
     ok my $page = Bric::Biz::ElementType->new({
         key_name  => '_page_',
         name      => 'Page',
-        burner    => $burner_type,
         paginated => 1,
         reference => 0, # No idea what this is.
     }), "Create a page subelement element";

@@ -36,7 +36,23 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
          readOnly   => $no_edit,
          objref     => $oc,
-         fieldsUsed => {active => 1});
+         fieldsUsed => {active => 1, burner => 1 }
+);
+if (defined $id || $no_edit) {
+    $m->comp(
+        '/widgets/profile/displayFormElement.mc',
+        objref   => $oc,
+        key      => 'burner_name',
+        readOnly => 1,
+    );
+} else {
+    $m->comp(
+        '/widgets/profile/displayFormElement.mc',
+        objref   => $oc,
+        key      => 'burner',
+        readOnly => 0,
+    );
+}
 my @sites = site_list(EDIT);
 if ($id || $no_edit) {
     $m->comp('/widgets/profile/hidden.mc', value => $oc->get_site_id, name => 'site_id');
@@ -71,61 +87,73 @@ var selectOrderNames = new Array("include_pos")
     ');
     my $inc = $oc->get_includes;
     my $opts = [ map { [ $_ => $_ + 1 ] } (0..$#$inc) ];
-    my $i = 0;
-    my $ord_sub = sub {
-        return unless $_[1] eq 'order';
-	# Output a hidden field for this included OC.
-	$m->scomp('/widgets/profile/hidden.mc',
-                            name => 'include_id',
+    my %exclude = ( map { $_->get_id => 1 } @$inc, $oc );
+    my @avail_ocs = grep { !$exclude{$_->get_id} } Bric::Biz::OutputChannel->list({
+        active => 1,
+        burner => $oc->get_burner,
+    });
+
+    if (@$inc || @avail_ocs) {
+        my $i = 0;
+        my $ord_sub = sub {
+            return unless $_[1] eq 'order';
+            # Output a hidden field for this included OC.
+            $m->scomp(
+                '/widgets/profile/hidden.mc',
+                name => 'include_id',
 			    value => $_[0]->get_id
-        )
-	# And ouput the position number.
-	. $m->scomp('/widgets/profile/select.mc',
-	         name => 'include_pos',
-                 disp => '',
-		 value => $i++,
-		 options => $opts,
-		 useTable => 0,
-		 js => qq{onChange="reorder(this, 'oc_profile')"}
+            )
+            # And ouput the position number.
+            . $m->scomp(
+                '/widgets/profile/select.mc',
+                name => 'include_pos',
+                disp => '',
+                value => $i++,
+                options => $opts,
+                useTable => 0,
+                js => qq{onChange="reorder(this, 'oc_profile')"}
+            );
+        };
+
+        $button = undef;
+        # Add the include section
+        $m->comp(
+            '/widgets/wrappers/sharky/table_top.mc',
+            caption => 'Template Includes',
+            number => 2,
         );
-    };
-
-    $button = undef;
-    # Add the include section
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
-             caption => 'Template Includes',
-             number => 2 );
-    $m->comp('/widgets/listManager/listManager.mc',
-	     object => 'output_channel',
-	     userSort => 0,
-	     def_sort_field => 'order',
-	     objs => $inc,
-	     addition => undef,
-	     constrain => { include_parent_id => $id },
-	     fields => ['name', (@sites > 1 ? ('site') : ()), qw(description order)],
-	     field_titles => { order => 'Order' },
-	     field_values => $ord_sub,
-	     profile => undef,
-	     select =>  ['Delete', 'include_oc_id_del'],
-    );
-</%perl>
-<table border=1 cellpadding=2 cellspacing=0 width=580 bordercolor="#cccc99" style="border-style:solid; border-color:#cccc99;">
-<tr><td class="medHeader" style="border-style:solid; border-color:#cccc99;"><& '/widgets/select_object/select_object.mc',
-    object => 'output_channel',
-    field  => 'name',
-    getter => @sites > 1 ? $oc_name_getter : undef,
-    exclude => [ $id, map { $_->get_id } $oc->get_includes ],
-    no_persist => 1,
-    name   => 'output_channel|include_oc_id_cb',
-    default => ['' => 'Add to Include'],
-    constrain => { active => 1 },
-    js => "onChange='submit()'",
-    useTable => 0,
-&></td></tr>
-</table>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-<%perl>;
-
+        $m->comp('/widgets/listManager/listManager.mc',
+                 object         => 'output_channel',
+                 userSort       => 0,
+                 def_sort_field => 'order',
+                 objs           => $inc,
+                 addition       => undef,
+                 constrain      => { include_parent_id => $id },
+                 field_titles   => { order => 'Order' },
+                 field_values   => $ord_sub,
+                 profile        => undef,
+                 select         =>  ['Delete', 'include_oc_id_del'],
+                 fields         => [
+                     'name', (@sites > 1 ? ('site') : ()), qw(description order)
+                 ],
+             );
+        if (@avail_ocs) {
+            $m->print(qq{<div class="actions">\n});
+            $m->comp(
+                '/widgets/select_object/select_object.mc',
+                object     => 'output_channel',
+                field      => 'name',
+                objs       => \@avail_ocs,
+                no_persist => 1,
+                name       => 'output_channel|include_oc_id_cb',
+                default    => ['' => 'Add to Include'],
+                js         => "onChange='submit()'",
+                useTable   => 0,
+            );
+            $m->print("</div>\n");
+        }
+        $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    }
 }
 
 # Get the group's membership listed
