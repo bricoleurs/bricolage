@@ -1,19 +1,19 @@
-[% FOREACH e = element.get_elements('header', 'para', '_pull_quote_') %]
-    [% kn = e.get_key_name %]
-    [% IF kn == 'para' %]
+[%- FOREACH e = element.get_elements('header', 'para', '_pull_quote_') -%]
+    [%- kn = e.get_key_name %]
+    [%- IF kn == 'para' %]
 <p>[% e.get_value %]</p>
-    [% ELSIF kn == 'header' %]
-        [% # display_element() should just return a value. %]
+    [%- ELSIF kn == 'header' %]
+        [%- # display_element() should just return a value. %]
 <h3>[% burner.display_element(e) %]</h3>
-    [% ELSIF kn == '_pull_quote_' && e.get_object_order > 1 %]
-        [% PERL %]
+    [%- ELSIF kn == '_pull_quote_' && e.get_object_order > 1 -%]
+        [%- PERL -%]
           # There is no sdisplay_element() in the TT burner, but we'll just
           # Play with it, anyway.
           print $stash->get('burner')->display_element($stash->get('e'));
-        [% END %]
-    [% ELSE %]
-        [% # Test display_element(). %]
-        [% burner.display_element(e) %]
-    [% END %]
-[% END %]
-[% burner.display_pages('_page_') %]
+        [%- END -%]
+    [%- ELSE -%]
+        [%- # Test display_element(). -%]
+        [%- burner.display_element(e) -%]
+    [%- END -%]
+[%- END -%]
+[%- burner.display_pages('_page_') -%]

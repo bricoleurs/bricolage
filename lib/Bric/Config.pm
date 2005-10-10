@@ -132,6 +132,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     INCLUDE_XML_WRITER
                     XML_WRITER_ARGS
                     MASON_INTERP_ARGS
+                    TT_OPTIONS
                     ISO_8601_FORMAT
                     PREVIEW_LOCAL
                     PREVIEW_MASON
@@ -208,6 +209,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      INCLUDE_XML_WRITER
                                      XML_WRITER_ARGS
                                      MASON_INTERP_ARGS
+                                     TT_OPTIONS
                                      DEFAULT_FILE_EXT
                                      BURN_ARGS_METHOD)],
                     oc        => [qw(DEFAULT_FILENAME
@@ -579,12 +581,14 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant TEMPLATE_BURN_PKG       => 'Bric::Util::Burner::Commands';
     use constant INCLUDE_XML_WRITER      => $config->{INCLUDE_XML_WRITER};
     use constant XML_WRITER_ARGS         => $config->{XML_WRITER_ARGS} ?
-      (eval "$config->{XML_WRITER_ARGS}" ) : ();
+      ( eval "$config->{XML_WRITER_ARGS}" ) : ();
     use constant MASON_INTERP_ARGS       => $config->{MASON_INTERP_ARGS} ?
-      (eval "$config->{MASON_INTERP_ARGS}" ) : ();
+      ( eval "$config->{MASON_INTERP_ARGS}" ) : ();
+    use constant TT_OPTIONS       => $config->{TT_OPTIONS} ?
+      ( eval "$config->{TT_OPTIONS}" ) : ();
 
     # System User (The user and group under which the server children run). use
-    use constant SYS_USER => scalar getpwnam($config->{SYS_USER} or "nobody");
+    use constant SYS_USER  => scalar getpwnam($config->{SYS_USER} or "nobody");
     use constant SYS_GROUP => scalar getgrnam($config->{SYS_GROUP} or "nobody");
 
     # Cookie/Session Settings.

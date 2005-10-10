@@ -520,6 +520,12 @@ associated with burners at all. [David]
 Renamed Bric::Biz::Asset::Template to
 L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Template>. [David]
 
+=item *
+
+Added the C<TT_OPTIONS> F<bricolage.conf> directive to allow Bricolage
+administrators to pass template toolkit directive options to the Template
+object when it is instantiated by the Template Toolkit burner. [David]
+
 =back
 
 =cut

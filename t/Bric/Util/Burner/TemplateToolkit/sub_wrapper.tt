@@ -1,6 +1,6 @@
 <h1>[% story.get_title %]</h1>
-[% PERL %]
+[% PERL -%]
 # Make sure that we can do stuff in PERL blocks.
-print "<h2>", $stash->get('story')->get_cover_date('%Y.%m.%d'), "</h2>\n";
-[% END %]
-[% content %]
+print "<h2>", $stash->get('story')->get_cover_date('%Y.%m.%d'), "</h2>";
+[% END -%]
+[% content -%]

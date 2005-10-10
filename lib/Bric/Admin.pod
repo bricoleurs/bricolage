@@ -1373,6 +1373,12 @@ B<MASON_STATIC_SOURCE:> Set this directive to a true value (1, Yes, or On) to
 enable static source caching in the Bricolage UI. This can save many stats per
 request, and thus increase the performance of Bricolage. Disabled by default.
 
+=back
+
+=head2 Burner Configuration
+
+=over 4
+
 =item *
 
 B<BURN_ROOT:> The staging area directory where the burn system places content
@@ -1409,12 +1415,22 @@ B<Note>: Only the Mason burner supports XML::Writer.
 
 B<MASON_INTERP_ARGS:> This directive passes arguments to the
 L<HTML::Mason::Interp|HTML::Mason::Interp> constructor in
-L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>'s C<burn_one>
-method, which means it affects the Mason interpreter for your templates.
-See L<HTML::Mason::Interp> for the list of parameters you can pass
-to the C<new> method. Defaults to no arguments if not specified.
+L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>'s C<burn_one> method,
+which means it affects the Mason interpreter for your templates. See
+L<HTML::Mason::Interp|HTML::Mason::Interp> for the list of parameters you can
+pass to the C<new> method. Defaults to no arguments if not specified.
 
-B<Note>: Only the Mason burner supports HTML::Mason::Interp. :)
+B<Note>: Only the Mason burner supports the HTML::Mason::Interp arguments.
+
+B<TT_OPTIONS:> This directive passes arguments to the L<Template|Template>
+constructor in
+L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>'s
+C<burn_one> method, which means it affects the Template Toolkit object for
+your templates. See L<Template|Template> for the list of parameters you can
+pass to the C<new> method. Defaults to no arguments if not specified.
+
+B<Note>: Only the Template Tooolkit burner supports the Template Toolkit
+options.
 
 =back
 
@@ -2104,7 +2120,8 @@ start! And be warned that this code is executed at server startup time, so
 beware loading any variables that don't survive forks very well (such as
 database handles). Defaults to load nothing if not specified.
 
-B<Note>: Only the Mason burner supports PERL_LOADER.
+B<Note>: Only the Mason burner can directly use any symbols exported by code
+executed in the C<PERL_LOADER> directive.
 
 =back
 

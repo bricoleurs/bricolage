@@ -1,6 +1,6 @@
 <html><head>
 <title>[% story.get_title %]</title>
 </head><body>
-[% content %]
-[% INCLUDE testing/sub/util.tt license = 'BSD' %]
+[% content -%]
+[% INCLUDE testing/sub/util.tt license = 'BSD' -%]
 </body></html>

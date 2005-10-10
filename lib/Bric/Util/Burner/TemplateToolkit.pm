@@ -217,11 +217,9 @@ sub burn_one {
     }
 
     my $tt = Template->new({
-        #questionable layout things, but we got the time to sort it out
-        PRE_CHOMP  => 1,
-        POST_CHOMP => 1,
-        TRIM       => 1,
-        # now for the real stuff
+        TT_OPTIONS   => 1,
+        COMPILE_EXT  => 1,
+        RECURSION    => 1,
         OUTPUT       => \$outbuf,
         INCLUDE_PATH => $template_roots,
         WRAPPER      => \@wrappers,
