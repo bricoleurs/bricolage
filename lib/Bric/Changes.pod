@@ -526,6 +526,14 @@ Added the C<TT_OPTIONS> F<bricolage.conf> directive to allow Bricolage
 administrators to pass template toolkit directive options to the Template
 object when it is instantiated by the Template Toolkit burner. [David]
 
+=item *
+
+Added the C<COMPILE_EXT> option to the instantiation of the Template Toolkit
+object in the Template Toolkit burner. This will cache compiled versions of
+the templates so that they do not have to be parsed and compiled every time a
+story is published. This should make the TT burner substantially faster.
+[David]
+
 =back
 
 =cut

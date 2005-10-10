@@ -218,7 +218,7 @@ sub burn_one {
 
     my $tt = Template->new({
         TT_OPTIONS   => 1,
-        COMPILE_EXT  => 1,
+        COMPILE_EXT  => 'ttc',
         RECURSION    => 1,
         OUTPUT       => \$outbuf,
         INCLUDE_PATH => $template_roots,
