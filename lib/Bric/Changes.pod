@@ -335,6 +335,8 @@ in general. The tables renamed are:
 
 =item media_data_tile to media_field
 
+=item formatting to template
+
 =back
 
 [David]
@@ -512,6 +514,11 @@ Story and media cover dates are now versioned. [David]
 Output channels are now associated with burners and can only include other
 output channels associated with the same burners. Element types are no longer
 associated with burners at all. [David]
+
+=item *
+
+Renamed Bric::Biz::Asset::Template to
+L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Template>. [David]
 
 =back
 
@@ -801,7 +808,7 @@ sources. Suggested by Simon Wilcox. [David]
 
 =item *
 
-There is now a "Preserve Formatting" (disabled by default) option in Bulk Edit
+There is now a "Preserve Template" (disabled by default) option in Bulk Edit
 that retains leading spaces, trailing spaces, and line breaks. With this
 option set, you can, for example, paste in poetry without it all ending up on
 one line. [Marshall]
@@ -1054,7 +1061,7 @@ the cached copy in the user's session, as well as in the database. [David]
 =item *
 
 Changed the C<published_version> parameter to the C<list()> method of
-Bric::Biz::Asset::Formatting (the template class) to C<deployed_version>, but
+Bric::Biz::Asset::Template (the template class) to C<deployed_version>, but
 kept C<published_version> as an alias.
 
 =item *
@@ -2054,7 +2061,7 @@ Scott Lanning. [David]
 =item *
 
 Updated documentation of parameters to the C<list()> method of
-Bric::Biz::Asset::Formatting (the template class). Also documented a few
+Bric::Biz::Asset::Template (the template class). Also documented a few
 parameters to the story and media class C<list()> methods that were supported
 but previously undocumented. [David]
 
@@ -2236,7 +2243,7 @@ Users can now set their own values for overrideable preferences. [David]
 =item *
 
 The C<list()> and C<list_ids()> methods of the Story, Media, and Template
-(F<Formatting.pm>) classes no longer have the side effect of changing values
+(F<Template.pm>) classes no longer have the side effect of changing values
 in the hash references passed to them. This had caused problems for date/time
 parameters. Reported by Paul Orrock. [David]
 
@@ -6182,7 +6189,7 @@ classes:
 
 =item Bric::Biz::Asset::Business::Media
 
-=item Bric::Biz::Asset::Formatting
+=item Bric::Biz::Asset::Template
 
 =item Bric::Biz::AssetType
 
@@ -7505,7 +7512,7 @@ duplicate listings of assets on desks. [David]
 
 =item *
 
-Removed the C<checkin()> method from Bric::Biz::Asset::Formatting and
+Removed the C<checkin()> method from Bric::Biz::Asset::Template and
 Bric::Biz::Asset::Business and put it into Bric::Biz::Asset, instead, since
 it's exactly the same for all assets. [David]
 

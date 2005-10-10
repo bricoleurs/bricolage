@@ -89,7 +89,7 @@ sub media : Callback {
     set_state_data($self->class_key, 'field', \@field);
 }
 
-sub formatting : Callback {
+sub template : Callback {
     my $self = shift;
     $self->_init_state;
 

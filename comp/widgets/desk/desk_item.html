@@ -11,13 +11,13 @@
   </div>
   <div class="body">
     <dl>
-% if ($class ne 'formatting') {
+% if ($class ne 'template') {
       <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
       <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $uri || '&nbsp;' %></dd>
 % }
       <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
       <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
-% if ($class eq 'formatting') {
+% if ($class eq 'template') {
       <dt name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
       <dd name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $oc || '&nbsp;' %></dd>
 % } else {
@@ -95,7 +95,7 @@ my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 my $alias = '';
 my $title_class = 'title';
 my $idv_class = 'idv';
-if ($class eq 'formatting') {
+if ($class eq 'template') {
     $date = $obj->get_deploy_date;
     $date_label = 'Deployed Date';
     $name = $obj->get_uri;
@@ -139,7 +139,7 @@ my $checked_out = defined $user_id && get_user_id() == $user_id;
 
 my $mover_label = $desk_type ne 'workflow' ? 'Check in' : 'Move';
 
-my $callback_widget = ($class eq 'formatting' ? 'tmpl' : $class) . '_prof';
+my $callback_widget = ($class eq 'template' ? 'tmpl' : $class) . '_prof';
 
 my $link = $ppage . '/' . $aid;
 my $item_label = 'Trail';

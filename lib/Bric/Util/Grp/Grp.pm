@@ -132,7 +132,7 @@ sub get_supported_classes {
       'Bric::Util::Grp::ElementType'    => 'grp',
       'Bric::Util::Grp::ATType'         => 'grp',
       'Bric::Util::Grp::Event'          => 'grp',
-      'Bric::Util::Grp::Formatting'     => 'grp',
+      'Bric::Util::Grp::Template'     => 'grp',
       'Bric::Util::Grp::Grp'            => 'grp',
       'Bric::Util::Grp::Job'            => 'grp',
       'Bric::Util::Grp::Media'          => 'grp',

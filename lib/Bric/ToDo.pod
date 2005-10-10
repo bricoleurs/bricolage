@@ -220,7 +220,7 @@ object id column must I<always> be the last sorted. Existing C<Order> and
 C<OrderDirection> parameters should be considered aliases to be deprecated.
 C<Limit> and C<Offset> can be added by using aggregates to ensure that all
 objects are selected as single rows instead of multiple rows. See how Story,
-Media, and Formatting do this now for examples. If this isn't possible, it can
+Media, and Template do this now for examples. If this isn't possible, it can
 be done using derived tables (Stephan Szabo is my hero for suggesting this --
 I didn't even know it was possible!). Here's a quick example for person
 objects:

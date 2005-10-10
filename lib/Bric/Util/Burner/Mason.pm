@@ -3,7 +3,7 @@ package Bric::Util::Burner::Mason;
 
 =head1 NAME
 
-Bric::Util::Burner::Mason - Bric::Util::Burner subclass to publish business assets using Mason formatting assets.
+Bric::Util::Burner::Mason Publish sturies using Mason templates
 
 =head1 VERSION
 
@@ -29,8 +29,7 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This module handles burning business assets using Mason formatting
-assets.
+This module handles burning business assets using Mason templates.
 
 =cut
 

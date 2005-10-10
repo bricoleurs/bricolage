@@ -3,7 +3,7 @@ package Bric::Util::Burner::PHP;
 
 =head1 NAME
 
-Bric::Util::Burner::PHP - Bric::Util::Burner subclass to publish business assets using PHP templates.
+Bric::Util::Burner::PHP - Publish stories using PHP templates
 
 =head1 VERSION
 

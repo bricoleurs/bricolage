@@ -26,33 +26,33 @@ sub extra_templates {
     my $cat_tmpl_fn = 'sub_' . Bric::Util::Burner->cat_fn_for_ext('pl') . '.pl';
     my $file = Bric::Util::Trans::FS->cat_file(dirname(__FILE__), $cat_tmpl_fn);
     open my $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $cat_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $cat_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $p->{suboc}, # Put it in the contained OC.
         user__id       => $self->user_id,
         category_id    => $p->{subcat}->get_id,
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::CATEGORY_TEMPLATE,
         file_type      => 'pl',
         data           => join('', <$fh>),
     }), "Create a subcategory script template";
     ok( $cat_tmpl->save, "Save subcategory script template" );
-    $self->add_del_ids($cat_tmpl->get_id, 'formatting');
+    $self->add_del_ids($cat_tmpl->get_id, 'template');
     close $fh;
 
     $file = Bric::Util::Trans::FS->cat_file(dirname(__FILE__), "pull_quote.pl");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $pq_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $pq_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $p->{suboc}, # Put it in the contained OC.
         user__id       => $self->user_id,
         category_id    => $p->{cat}->get_id, # Put it in a subcategory
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::ELEMENT_TEMPLATE,
         element        => $p->{pull_quote},
         file_type      => 'pl',
         data           => join('', <$fh>),
     }), "Create a pull quote script template";
     ok( $pq_tmpl->save, "Save pull quote script template" );
-    $self->add_del_ids($pq_tmpl->get_id, 'formatting');
+    $self->add_del_ids($pq_tmpl->get_id, 'template');
     close $fh;
 
     return $cat_tmpl, $pq_tmpl;

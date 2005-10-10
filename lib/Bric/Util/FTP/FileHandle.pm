@@ -45,7 +45,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::App::Authz qw(:all);
 use Bric::Util::Burner;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::FTP::DirHandle;
 use Net::FTPServer::FileHandle;
@@ -66,7 +66,7 @@ our @ISA = qw(Net::FTPServer::FileHandle);
 =item new($ftps, $template, $site_id, $oc_id, $category_id)
 
 Creates a new Bric::Util::FTP::FileHandle object. Requires three arguments:
-the Bric::Util::FTP::Server object, the Bric::Biz::Asset::Formatting object
+the Bric::Util::FTP::Server object, the Bric::Biz::Asset::Template object
 that this filehandle represents (aka the template object), and the category_id
 for the category that thetemplate is in.
 
@@ -306,7 +306,7 @@ sub delete {
   }
 
   # log the removal
-  Bric::Util::Event->new({ key_name  => 'formatting_rem_workflow',
+  Bric::Util::Event->new({ key_name  => 'template_rem_workflow',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
                          });
@@ -318,7 +318,7 @@ sub delete {
   $template->save;
 
   # log the deactivation
-  Bric::Util::Event->new({ key_name  => 'formatting_deact',
+  Bric::Util::Event->new({ key_name  => 'template_deact',
                            obj       => $template,
                            user      => $self->{ftps}{user_obj},
                          });
@@ -394,7 +394,7 @@ sub _deploy {
         # Save the deploy desk and log it.
         $pub_desk->save;
         Bric::Util::Event->new({
-            key_name  => "formatting_moved",
+            key_name  => "template_moved",
             obj       => $template,
             user      => $user,
             attr      => { Desk => $pub_desk->get_name },
@@ -415,7 +415,7 @@ sub _deploy {
     if ($template->get_workflow_id) {
         $template->set_workflow_id(undef);
         Bric::Util::Event->new({
-            key_name  => "formatting_rem_workflow",
+            key_name  => "template_rem_workflow",
             obj       => $template,
             user      => $user,
         });
@@ -439,8 +439,8 @@ sub _deploy {
     # log the deploy
     Bric::Util::Event->new({
         key_name  => $template->get_deploy_status
-          ? 'formatting_redeploy'
-          : 'formatting_deploy',
+          ? 'template_redeploy'
+          : 'template_deploy',
         obj       => $template,
         user      => $user,
     });
@@ -547,7 +547,7 @@ use base 'IO::Scalar';
 
         # log the save
         Bric::Util::Event->new({
-            key_name  => 'formatting_save',
+            key_name  => 'template_save',
             obj       => $template,
             user      => $user,
         });

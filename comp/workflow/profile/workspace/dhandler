@@ -40,7 +40,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 $m->out(qq{<form method="post" action="} . $r->uri .
  qq {" name="desk" onsubmit="return confirmChanges(this)">});
 
-foreach my $class (qw(story media formatting)) {
+foreach my $class (qw(story media template)) {
     $m->comp('/widgets/desk/desk.mc',
              user_id => $id,
              class   => $class,

@@ -29,19 +29,14 @@ $cd
 $desks
 $obj
 </%args>
-
 <%init>;
-
-my ($type, $pkg);
+my $pkg;
 if ($widget eq 'story_prof') {
-    $type = 'story';
-    $pkg = get_package_name($type);
+    $pkg = get_package_name('story');
 } elsif ($widget eq 'media_prof') {
-    $type = 'media';
-    $pkg = get_package_name($type);
+    $pkg = get_package_name('media');
 } else {
-    $type = 'fa';
-    $pkg = get_package_name('formatting');
+    $pkg = get_package_name('template');
 }
 
 my $deskText = qq{<select name="$widget|desk">};
@@ -81,9 +76,7 @@ if ($version) {
     }
     $versionText .= "</select>";
 }
-
 </%init>
-
 <div class="buttonBar">
 <div class="delete">
     <& '/widgets/profile/checkbox.mc',

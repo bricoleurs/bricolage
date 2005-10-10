@@ -17,9 +17,11 @@ $section
 <%once>
 my $widget = 'asset_meta';
 
-my %types = ('Bric::Biz::Asset::Formatting' => 'formatting',
-	     'Bric::Biz::Asset::Business::Story' => 'story',
-	     'Bric::Biz::Asset::Business::Media' => 'media');
+my %types = (
+    'Bric::Biz::Asset::Template'        => 'template',
+    'Bric::Biz::Asset::Business::Story' => 'story',
+    'Bric::Biz::Asset::Business::Media' => 'media'
+);
 </%once>
 
 <%init>
@@ -34,9 +36,9 @@ if ($object) {
 	    $object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
 	}
     } elsif ($type eq 'template') {
-	$object = get_state_data('tmpl_prof', 'fa');
+	$object = get_state_data('tmpl_prof', 'template');
 	unless ($object && $object->get_id != $id) {
-	    $object = Bric::Biz::Asset::Formatting->lookup({ 'id' => $id });
+	    $object = Bric::Biz::Asset::Template->lookup({ 'id' => $id });
 	}
 
     } elsif ($type eq 'media') {

@@ -163,7 +163,7 @@ sub del_ids : Test(teardown => 0) {
     _del_sites($to_delete) if $to_delete->{site};
 
     # Delete assets, first.
-    foreach my $table (qw(story media formatting)) {
+    foreach my $table (qw(story media template)) {
         if (my $ids = delete $to_delete->{$table}) {
             _do_deletes($table, $ids);
         }

@@ -20,10 +20,10 @@ sub test_lookup : Test(8) {
     is( $c->get_key_name, 'org', "Key name is 'org'" );
 
     # Lookup by package name.
-    my $pkg = 'Bric::Biz::Asset::Formatting';
+    my $pkg = 'Bric::Biz::Asset::Template';
     ok( $c = $test_class->lookup({ pkg_name => $pkg}),
-        "Lookup formatting by pkg_name" );
-    is( $c->get_key_name, 'formatting', "Key name is 'formatting'" );
+        "Lookup template by pkg_name" );
+    is( $c->get_key_name, 'template', "Key name is 'template'" );
 
     # Lookup by key name.
     ok( $c = $test_class->lookup({ key_name => 'Bric::Biz::Person'}),
@@ -34,7 +34,7 @@ sub test_lookup : Test(8) {
     ok( $c = $test_class->lookup({ id => $pkg, key_name => $pkg,
                                    pkg_name => $pkg }),
         "Looup by all three" );
-    is( $c->get_key_name, 'formatting', "Key name is 'formatting'" );
+    is( $c->get_key_name, 'template', "Key name is 'template'" );
 }
 
 1;

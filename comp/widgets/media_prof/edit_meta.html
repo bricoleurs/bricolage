@@ -238,13 +238,8 @@ $cd = $wf->get_start_desk() unless $cd;
 my $id = $media->get_id;
 
 # Set up a formatting variable
-my $agent = detect_agent();
-my $infoIndent = $agent->nav4 ? FIELD_INDENT - 5 : FIELD_INDENT + 8;
+my $infoIndent = FIELD_INDENT + 8;
 my $num = 1;
-my $ieSpacer = $agent->ie ?
-  qq{<table><tr><td><img src="/media/images/spacer.gif" width="578" } .
-  qq{height="5" /></td></tr></table>}
-  : '';
 
 # get output channel info
 my $asset_type = $media->get_element_type;

@@ -202,7 +202,7 @@ Provides query, export, update, create, and delete for Desk objects.
 
 =item L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>
 
-Provides the ability to move Story, Media and Formatting objects between
+Provides the ability to move Story, Media and Template objects between
 desks. Also provides checkin, checkout, publish, and deploy.
 And now list_ids, export, create, update, and delete.
 

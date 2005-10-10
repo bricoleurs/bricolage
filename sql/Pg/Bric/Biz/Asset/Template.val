@@ -2,14 +2,14 @@
 --
 -- Data for TOC Entry ID 10 (OID '391692')
 --
--- Name: formatting Type: TABLE DATA Owner: castellan
+-- Name: template Type: TABLE DATA Owner: castellan
 --
 
 /***************************************************************************
 * Don't forget to update the event log in Bric/Util/EventType.val!
 ***************************************************************************/
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -20,7 +20,7 @@ VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
         '1', '1', '2001-07-30 13:34:21-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -31,7 +31,7 @@ VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
         '1', '1','2001-07-30 13:34:22-07',NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -42,7 +42,7 @@ VALUES ('504', 'Column', 'A default column', '3', NULL,
         '1', '1', '2001-07-30 13:34:22-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -53,7 +53,7 @@ VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
         '1', '1', '2001-07-30 13:34:23-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -64,7 +64,7 @@ VALUES ( '507', 'Page', 'A generic page', '3', NULL,
        '1', '1', '2001-07-30 13:34:20-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -75,7 +75,7 @@ VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
        '1', '1', '2001-07-30 13:34:20-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -86,7 +86,7 @@ VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NUL
         '1', '1', '2001-07-30 13:34:21-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -97,7 +97,7 @@ VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
         '1', '1', '2001-07-30 13:34:21-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -108,7 +108,7 @@ VALUES ('512', 'Story', 'A generic story template', '3', NULL,
         '1', '1', '2001-07-30 13:34:22-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -119,7 +119,7 @@ VALUES ('513', 'autohandler', 'A generic root level category template', '3', NUL
         '1', '1', '2001-07-30 13:34:22-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -130,7 +130,7 @@ VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
         '1', '1', '2001-08-01 14:51:34-07', NULL,
         '1', '100');
 
-INSERT INTO formatting (id, name, description, priority, usr__id,
+INSERT INTO template (id, name, description, priority, usr__id,
                         output_channel__id, tplate_type, element_type__id,
                         category__id, file_name, current_version, workflow__id, desk__id,
                         published_version, deploy_status, deploy_date, expire_date,
@@ -144,67 +144,67 @@ VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
 --
 -- Data for TOC Entry ID 5 (OID '391725')
 --
--- Name: formatting_instance Type: TABLE DATA Owner: castellan
+-- Name: template_instance Type: TABLE DATA Owner: castellan
 --
--- id,formatting__id,version,usr__id,data,checked_out
+-- id,template__id,version,usr__id,data,checked_out
 --
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('501','502','1','0', '/book_profile.mc','0',
         '<!-- Start "Book Profile" -->\015\012<table>\015\012<tr>\015\012<td>Title</td>\015\012<td><% $element->get_value(''title'') %></td>\015\012</tr>\015\012<tr>\015\012<td>Author</td>\015\012<td><% $element->get_value(''author'') %></td>\015\012</tr>\015\012<tr>\015\012<td>Publisher</td>\015\012<td><% $element->get_value(''date'') %></td>\015\012</tr>\015\012</table>\015\012<!-- End "Book Profile" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('502','503','1','0','/book_review.mc','0',
         '<!-- Start "Book Review" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Book Review" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('503','504','1','0','/column.mc', '0',
         '<!-- Start "Column" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Column" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('505','506','1','0','/inset.mc', '0',
         '\015\012<!-- Start ''Inset'' -->\015\012<table>\015\012<tr><td>\015\012<% $element->get_value(''copy'') %>\015\012</td></tr>\015\012</table>\015\012<!-- End ''Inset'' -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('506','507','1','0','/page.mc', '0',
         '<!-- Start "Page" -->\015\012<%perl>\015\012foreach my $e ($element->get_elements) {\015\012    if ($e->has_name(''paragraph'')) {\015\012        $m->out(''<p>''.$e->get_value.''</p>'');\015\012\015\012    } elsif ($e->has_name(''pull_quote'')) {\015\012        $burner->display_element($e);\015\012\015\012    } elsif ($e->has_name(''inset'')) {\015\012        $burner->display_element($e);\015\012\015\012    }\015\012}\015\012</%perl>\015\012\015\012<hr />\015\012\015\012%# $burner numbers pages from ''0'' not ''1''.\015\012% my $pnum = $burner->get_page + 1;\015\012\015\012%# Show ''previous'' link\015\012% my $prev = $element->get_value(''previous'');\015\012% if ($prev) {\015\012<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">\015\012&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>\015\012<% $prev %>\015\012% }\015\012\015\012&nbsp;&nbsp;&nbsp;\015\012\015\012%# Show ''next'' link\015\012% my $next = $element->get_value(''next'');\015\012% if ($next) {\015\012<% $next %>\015\012<a href="index<% $pnum %>.html">\015\012 : Page <% $pnum + 1 %> &gt;&gt;&gt;\015\012</a>\015\012% }\015\012\015\012<!-- End "Page" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('508','509','1','0','/pull_quote.mc', '0',
         '<!-- Start "Pull Quote" -->\015\012&quot;<% $element->get_value(''quote'') %>&quot;\015\012<!-- End "Pull Quote" -->');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('509','510','1','0','/related_stories.mc', '0',
         '<!-- Start "Related Stories" -->\015\012% my @rel = $element->get_elements;\015\012\015\012% if (@rel > 0) {\015\012<table>\015\012\015\012% foreach my $rs (@rel) {\015\012<tr><td>\015\012% $burner->display_element($rs);\015\012</td></tr>\015\012% }\015\012\015\012</table>\015\012% }\015\012<!-- End "Related Stories" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('510','511','1','0','/related_story.mc', '0',
         '<!-- Start "Related Story" -->\015\012% my $rel_story = $element->get_related_story;\015\012<b>Title:</b>&nbsp;\015\012<% $element->get_value(''alternate_title'') || $rel_story->get_title %><br />\015\012<b>Teaser:</b>&nbsp;\015\012<% $element->get_value(''alternate_teaser'') ||\015\012$rel_story->get_description %><br />\015\012<!-- End "Related Story" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('511','512','1','0','/story.mc', '0',
         '<!-- Start "Story" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page     ) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Story" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('512','513','1','0','/autohandler', '0',
        '<!-- Start "autohandler" -->\015\012<html>\015\012    <head>\015\012        <title><% $story->get_title %></title>\015\012    </head>\015\012    <body>\015\012% $burner->chain_next;\015\012    </body>\015\012</html>\015\012<!-- End "autohandler" -->\015\012');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('513','514','1','0','/related_media.mc', '0',
         '<!-- Start "Related Media" -->\015\012% my $rel_media = $element->get_related_media;\015\012\015\012%# This template only handles images.\015\012% if (substr($rel_media->get_media_type->get_name, 0, 5) eq ''image'') {\015\012<img src="<% $rel_media->get_uri %>">\015\012% }\015\012<!-- End "Related Media" -->');
 
-INSERT INTO formatting_instance (id, formatting__id, version, usr__id, file_name,
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('514','515','1','0','/cover.mc', '0',
         '<!-- Start "Cover" -->\015\012%# Lets make this a 3 column cover.\015\012% my @elem = $element->get_elements;\015\012%# Find the elements per column\015\012% my $per_col = int((scalar @elem)/3)+1;\015\012\015\012<table>\015\012<tr>\015\012<%perl>\015\012# Lay these elements out over three columns.\015\012while (scalar @elem) {\015\012    foreach (1..$per_col) {\015\012        my $e = shift @elem || last;\015\012        $burner->display_element($e);\015\012        $m->out(''<br />'');\015\012    }\015\012}\015\012</%perl>\015\012</tr>\015\012</table>\015\012<!-- End "Cover" -->\015\012');
@@ -236,20 +236,20 @@ INSERT INTO member VALUES ('546','33','19','1');
 --
 -- Data for TOC Entry ID 5 (OID '391761')
 --
--- Name: formatting_member Type: TABLE DATA Owner: castellan
+-- Name: template_member Type: TABLE DATA Owner: castellan
 --
 -- id,object_id,member__id
 --
 
-INSERT INTO formatting_member VALUES ('501','502','515');
-INSERT INTO formatting_member VALUES ('503','503','519');
-INSERT INTO formatting_member VALUES ('505','504','521');
-INSERT INTO formatting_member VALUES ('509','506','525');
-INSERT INTO formatting_member VALUES ('511','507','528');
-INSERT INTO formatting_member VALUES ('515','509','532');
-INSERT INTO formatting_member VALUES ('517','510','535');
-INSERT INTO formatting_member VALUES ('519','511','537');
-INSERT INTO formatting_member VALUES ('521','512','540');
-INSERT INTO formatting_member VALUES ('523','513','542');
-INSERT INTO formatting_member VALUES ('525','514','544');
-INSERT INTO formatting_member VALUES ('526','515','546');
+INSERT INTO template_member VALUES ('501','502','515');
+INSERT INTO template_member VALUES ('503','503','519');
+INSERT INTO template_member VALUES ('505','504','521');
+INSERT INTO template_member VALUES ('509','506','525');
+INSERT INTO template_member VALUES ('511','507','528');
+INSERT INTO template_member VALUES ('515','509','532');
+INSERT INTO template_member VALUES ('517','510','535');
+INSERT INTO template_member VALUES ('519','511','537');
+INSERT INTO template_member VALUES ('521','512','540');
+INSERT INTO template_member VALUES ('523','513','542');
+INSERT INTO template_member VALUES ('525','514','544');
+INSERT INTO template_member VALUES ('526','515','546');

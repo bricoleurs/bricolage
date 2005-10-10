@@ -91,11 +91,11 @@ upon either a story or media element type. Associate the output channels that
 the element will be sent through. Templates will need to be created for each
 of the output channels.
 
-An Output Channel is a group of formatting assets that can deliver the same
-content in a different format. Examples might be a WAP version or an email
-version of stories.
+An Output Channel is a group of templates that can deliver the same content in
+a different format. Examples might be a WAP version or an email version of
+stories.
 
-See Templates.pod for more formatting info.
+See L<Bric::Templates|Bric::Templates> for more templating info.
 
 =head2 Data Elements on Elements
 

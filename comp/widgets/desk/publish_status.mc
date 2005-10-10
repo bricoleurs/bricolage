@@ -3,7 +3,7 @@ $asset
 </%args>
 <%init>;
 return unless $asset->get_publish_status;
-my ($letter, $action) = $asset->key_name eq 'formatting'
+my ($letter, $action) = $asset->key_name eq 'template'
   ? ('D', 'Deployed')
   : ('P', 'Published');
 if ($asset->needs_publish) {

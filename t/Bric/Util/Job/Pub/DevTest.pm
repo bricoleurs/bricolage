@@ -20,7 +20,7 @@ use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Util::Burner;
 use Bric::Biz::Person::User;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Util::DBI qw(:junction);
 use Test::MockModule;
 
@@ -61,7 +61,7 @@ sub _clean_test_vals : Test(startup) {
 # found because we're using a temporary directory.
 ##############################################################################
 sub _run_me_first : Test(4) {
-    ok( my @tmpl = Bric::Biz::Asset::Formatting->list({
+    ok( my @tmpl = Bric::Biz::Asset::Template->list({
         output_channel__id => 1,
         file_name          => ANY('/story.mc', '/autohandler'),
         Order              => 'file_name',
@@ -451,7 +451,7 @@ sub h_test_execute_me : Test(10) {
     $elem->save;
     $self->add_del_ids($elem->get_id, 'element_type');
 
-    my $tmpl = Bric::Biz::Asset::Formatting->new({
+    my $tmpl = Bric::Biz::Asset::Template->new({
         output_channel__id => 1,
         user__id           => $self->user_id,
         category_id        => 1,
@@ -460,7 +460,7 @@ sub h_test_execute_me : Test(10) {
         data               => '% die "Goodbye cruel world !";',
     });
     $tmpl->save;
-    $self->add_del_ids($tmpl->get_id, 'formatting');
+    $self->add_del_ids($tmpl->get_id, 'template');
 
     # Create a burner.
     my $fs = Bric::Util::Trans::FS->new;

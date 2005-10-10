@@ -36,7 +36,7 @@ $button => undef
 my $widget = 'summary';
 
 my %types = (
-    'Bric::Biz::Asset::Formatting'      => 'formatting',
+    'Bric::Biz::Asset::Template'        => 'template',
     'Bric::Biz::Asset::Business::Story' => 'story',
     'Bric::Biz::Asset::Business::Media' => 'media'
 );

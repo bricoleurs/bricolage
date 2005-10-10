@@ -3,7 +3,7 @@ package Bric::Util::Burner;
 
 =head1 NAME
 
-Bric::Util::Burner - Publishes Business Assets and Deploys Templates
+Bric::Util::Burner - Publishes stories and deploys templates
 
 =head1 VERSION
 
@@ -24,11 +24,11 @@ $LastChangedDate$
  # Create a new publish object.
  $burner = new Bric::Util::Burner;
 
- # Deploy a formatting asset.
- $burner = $burner->deploy($formatting_asset);
+ # Deploy a template.
+ $burner = $burner->deploy($template_asset);
 
- # Undeploy a formatting asset.
- $burner = $burner->undeploy($formatting_asset);
+ # Undeploy a template.
+ $burner = $burner->undeploy($template_asset);
 
  # Burn an asset given an output chanels and category
  $burner->burn_one($asset, $output_channel, $category);
@@ -53,8 +53,8 @@ This module accomplishes two tasks:
 
 =item 1
 
-Manages the process of deploying and undeploying of formatting assets
-through C<deploy()> and C<undeploy()>.
+Manages the process of deploying and undeploying of templates through
+C<deploy()> and C<undeploy()>.
 
 =item 2
 

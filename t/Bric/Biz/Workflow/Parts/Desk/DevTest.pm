@@ -6,7 +6,7 @@ use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Grp::Desk;
 use Bric::Biz::Asset::Business::Story::DevTest;
 use Bric::Biz::Asset::Business::Media::DevTest;
-use Bric::Biz::Asset::Formatting::DevTest;
+use Bric::Biz::Asset::Template::DevTest;
 use Test::More;
 
 sub table { 'desk' };

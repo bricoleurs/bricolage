@@ -1,9 +1,9 @@
-package Bric::Biz::Asset::Formatting;
+package Bric::Biz::Asset::Template;
 ###############################################################################
 
 =head1 NAME
 
-Bric::Biz::Asset::Formatting - Template assets
+Bric::Biz::Asset::Template - Template assets
 
 =head1 VERSION
 
@@ -20,10 +20,10 @@ $LastChangedDate$
 =head1 SYNOPSIS
 
  # Creation of Objects
- $fa = Bric::Biz::Asset::Formatting->new( $init )
- $fa = Bric::Biz::Asset::Formatting->lookup( { id => $id })
- ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $param )
- ($faid_list || @fa_ids) = Bric::Biz::Asset::Formatting->list_ids( $param )
+ $fa = Bric::Biz::Asset::Template->new( $init )
+ $fa = Bric::Biz::Asset::Template->lookup( { id => $id })
+ ($fa_list || @fas) = Bric::Biz::Asset::Template->list( $param )
+ ($faid_list || @fa_ids) = Bric::Biz::Asset::Template->list_ids( $param )
 
  # get / set the data that is contained with in
  $fa = $fa->set_data()
@@ -126,7 +126,7 @@ use Bric::Util::Grp::AssetVersion;
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Trans::FS;
-use Bric::Util::Grp::Formatting;
+use Bric::Util::Grp::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
@@ -152,8 +152,8 @@ use constant CATEGORY_TEMPLATE => 2;
 use constant UTILITY_TEMPLATE  => 3;
 
 # constants for the Database
-use constant TABLE      => 'formatting';
-use constant VERSION_TABLE => 'formatting_instance';
+use constant TABLE      => 'template';
+use constant VERSION_TABLE => 'template_instance';
 use constant ID_COL => 'f.id';
 use constant COLS       => qw( name
                                priority
@@ -174,7 +174,7 @@ use constant COLS       => qw( name
                                active
                                site__id);
 
-use constant VERSION_COLS => qw( formatting__id
+use constant VERSION_COLS => qw( template__id
                                  version
                                  usr__id
                                  data
@@ -209,7 +209,7 @@ use constant VERSION_FIELDS => qw( id
                                    note
                                    checked_out);
 
-use constant GROUP_PACKAGE => 'Bric::Util::Grp::Formatting';
+use constant GROUP_PACKAGE => 'Bric::Util::Grp::Template';
 use constant INSTANCE_GROUP_ID => 33;
 
 use constant CAN_DO_LIST_IDS => 1;
@@ -221,7 +221,7 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
                             'id_list(DISTINCT w.asset_grp_id) AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 'f.id = i.formatting__id '
+use constant WHERE => 'f.id = i.template__id '
   . 'AND fm.object_id = f.id '
   . 'AND m.id = fm.member__id '
   . "AND m.active = '1' "
@@ -237,12 +237,12 @@ use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 use constant FROM => VERSION_TABLE . ' i';
 
 use constant PARAM_FROM_MAP => {
-    _not_simple      => 'formatting_member fm, member m, '
+    _not_simple      => 'template_member fm, member m, '
                       . 'category c, workflow w, ' . TABLE . ' f ',
-    grp_id           =>  'member m2, formatting_member fm2',
+    grp_id           =>  'member m2, template_member fm2',
     element_key_name => 'element_type e',
     site_id          => 'output_channel oc',
-    note             => 'formatting_instance fi2'
+    note             => 'template_instance fi2'
 };
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
@@ -281,22 +281,22 @@ use constant PARAM_WHERE_MAP => {
     user_id               => 'i.usr__id = ?',
     _checked_in_or_out    => 'i.checked_out = '
                            . '( SELECT checked_out '
-                           . 'FROM formatting_instance '
+                           . 'FROM template_instance '
                            . 'WHERE version = i.version '
-                           . 'AND formatting__id = i.formatting__id '
+                           . 'AND template__id = i.template__id '
                            . 'ORDER BY checked_out DESC LIMIT 1 )',
     checked_in            => 'i.checked_out = '
                            . '( SELECT checked_out '
-                           . 'FROM formatting_instance '
+                           . 'FROM template_instance '
                            . 'WHERE version = i.version '
-                           . 'AND formatting__id = i.formatting__id '
+                           . 'AND template__id = i.template__id '
                            . 'ORDER BY checked_out ASC LIMIT 1 )',
     checked_out           => 'i.checked_out = ?',
     _checked_out          => 'i.checked_out = ?',
     _not_checked_out      => "i.checked_out = '0' AND f.id not in "
-                           . '(SELECT formatting__id FROM formatting_instance '
-                           . 'WHERE f.id = formatting_instance.formatting__id '
-                           . "AND formatting_instance.checked_out = '1')",
+                           . '(SELECT template__id FROM template_instance '
+                           . 'WHERE f.id = template_instance.template__id '
+                           . "AND template_instance.checked_out = '1')",
     category_id           => 'f.category__id = ?',
     category_uri          => 'f.category__id = c.id AND '
                            . 'LOWER(c.uri) LIKE LOWER(?))',
@@ -307,7 +307,7 @@ use constant PARAM_WHERE_MAP => {
                            . 'fm2.member__id = m2.id',
     simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
                            . 'LOWER(f.file_name) LIKE LOWER(?))',
-    note                  => 'fi2.formatting__id = f.id AND LOWER(fi2.note) LIKE LOWER(?)',
+    note                  => 'fi2.template__id = f.id AND LOWER(fi2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -321,7 +321,7 @@ use constant PARAM_ANYWHERE_MAP => {
                           'oc.site__id = ?' ],
     no_site_id       => [ 'f.output_channel__id = oc.id',
                           'oc.site__id <> ?' ],
-    note             => [ 'fi2.formatting__id = f.id',
+    note             => [ 'fi2.template__id = f.id',
                           'LOWER(fi2.note) LIKE LOWER(?)'],
 };
 
@@ -434,7 +434,7 @@ BEGIN {
 
 #------------------------------------------------------------------------------#
 
-=item $fa = Bric::Biz::Asset::Formatting->new( $initial_state )
+=item $fa = Bric::Biz::Asset::Template->new( $initial_state )
 
 Constructs a new template.
 
@@ -635,7 +635,7 @@ sub new {
 
 ################################################################################
 
-=item $formatting = Bric::Biz::Formatting->lookup( $param )
+=item $template = Bric::Biz::Template->lookup( $param )
 
 Returns an object that matches the parameters
 
@@ -645,7 +645,7 @@ Supported Keys
 
 =item id
 
-A formatting asset ID.
+A template asset ID.
 
 =item version
 
@@ -670,9 +670,9 @@ Inherited from Bric::Biz::Asset.
 
 ################################################################################
 
-=item ($fa_list || @fas) = Bric::Biz::Asset::Formatting->list( $criteria )
+=item ($fa_list || @fas) = Bric::Biz::Asset::Template->list( $criteria )
 
-Returns a list or anonymous array of Bric::Biz::Asset::Formatting objects
+Returns a list or anonymous array of Bric::Biz::Asset::Template objects
 based on the search parameters passed via an anonymous hash. The supported
 lookup keys are:
 
@@ -900,7 +900,7 @@ sub DESTROY {
 
 =over 4
 
-=item ($ids || @ids) = Bric::Biz::Asset::Formatting->list_ids($param)
+=item ($ids || @ids) = Bric::Biz::Asset::Template->list_ids($param)
 
 Returns an unordered list or array reference of template object IDs that match
 the criteria defined. The criteria are the same as those for the C<list()>
@@ -923,7 +923,7 @@ Inherited from Bric::Biz::Asset.
 
 ################################################################################
 
-=item my $key_name = Bric::Biz::Asset::Formatting->key_name()
+=item my $key_name = Bric::Biz::Asset::Template->key_name()
 
 Returns the key name of this class.
 
@@ -941,15 +941,15 @@ NONE
 
 =cut
 
-sub key_name { 'formatting' }
+sub key_name { 'template' }
 
 ################################################################################
 
-=item $meths = Bric::Biz::Asset::Formatting->my_meths
+=item $meths = Bric::Biz::Asset::Template->my_meths
 
 =item (@meths || $meths_aref) = Bric::Biz::Asset::Formattiong->my_meths(TRUE)
 
-=item my (@meths || $meths_aref) = Bric::Biz:::Asset::Formatting->my_meths(0, TRUE)
+=item my (@meths || $meths_aref) = Bric::Biz:::Asset::Template->my_meths(0, TRUE)
 
 Returns an anonymous hash of introspection data for this object. If called
 with a true argument, it will return an ordered list or anonymous array of
@@ -1193,7 +1193,7 @@ sub my_meths {
 
 ################################################################################
 
-=item my $tplate_type = Bric::Biz::Asset::Formatting->get_tplate_type_code($str)
+=item my $tplate_type = Bric::Biz::Asset::Template->get_tplate_type_code($str)
 
 Returns the template type number for a string value as returned by
 C<get_tplate_type_string()>.
@@ -1212,7 +1212,7 @@ sub get_tplate_type_code {
 
 ################################################################################
 
-=item my $wf_type = Bric::Biz::Asset::Formatting->workflow_type
+=item my $wf_type = Bric::Biz::Asset::Template->workflow_type
 
 Returns the value of the Bric::Biz::Workflow C<TEMPLATE_WORKFLOW> constant.
 
@@ -1294,7 +1294,7 @@ sub get_deploy_date { local_date($_[0]->_get('deploy_date'), $_[1]) }
 
 =item $template = $template->get_publish_status()
 
-Returns the deploy status of the formatting asset
+Returns the deploy status of the template asset
 
 B<Throws:>
 
@@ -1423,7 +1423,7 @@ sub get_output_channel_name {
 
 =item $oc = $template->get_primary_oc;
 
-Return the output channel associated with this Formatting asset. The
+Return the output channel associated with this Template asset. The
 C<get_primary_oc()> alias is provided to be compatible with business assets.
 
 B<Throws:>
@@ -1539,7 +1539,7 @@ sub get_element_key_name {
 
 =item $at_obj = $template->get_element_type
 
-Return the element type object for this formatting asset.
+Return the element type object for this template asset.
 
 B<Throws:> NONE.
 
@@ -1576,7 +1576,7 @@ sub get_element {
 
 =item $fa = $fa->set_category_id($id)
 
-Sets the category id for this formatting asset
+Sets the category id for this template asset
 
 B<Throws:>
 
@@ -1616,7 +1616,7 @@ sub set_category_id {
 
 =item $fa = $fa->get_cagetory_id
 
-Get the category ID for this formatting asset.
+Get the category ID for this template asset.
 
 B<Throws:>
 
@@ -1636,7 +1636,7 @@ NONE
 
 =item $fa = $fa->get_category
 
-Returns the category object that has been associated with this formatting asset.
+Returns the category object that has been associated with this template asset.
 
 B<Throws:>
 
@@ -1691,7 +1691,7 @@ sub get_category_path {
 =item $fa = $fa->get_cagetory_name
 
 Get the category name of the category object associated with this
-formatting asset.
+template asset.
 
 B<Throws:>
 
@@ -1719,7 +1719,7 @@ sub get_category_name {
 
 =item $template = $template->set_data( $data )
 
-Set the main data for the formatting asset.   In future incarnations 
+Set the main data for the template asset.   In future incarnations 
 there might be more data points that surround this, but not for now.
 
 B<Throws:>
@@ -1935,14 +1935,14 @@ sub save {
     if ($self->_get__dirty) {
         if ($self->get_id) {
             # make any necessary updates to the Main table
-            $self->_update_formatting();
+            $self->_update_template();
 
             # Update or insert depending on if we have an ID.
             if ($self->get_version_id) {
                 if ($cancel) {
                     if (defined $id and defined $vid) {
                         $self->_delete_instance();
-                        $self->_delete_formatting() if $ver == 0;
+                        $self->_delete_template() if $ver == 0;
                         $self->_set(['_cancel'], [undef]);
                     }
                     return $self;
@@ -1953,7 +1953,7 @@ sub save {
             }
         } else {
             # This is Brand new insert both Tables
-            $self->_insert_formatting();
+            $self->_insert_template();
             $self->_insert_instance();
         }
     }
@@ -2022,9 +2022,9 @@ sub _get_category_object {
 
 ################################################################################
 
-=item $self = $self->_insert_formatting();
+=item $self = $self->_insert_template();
 
-Inserts a row into the formatting table that represents a new formatting Asset.
+Inserts a row into the template table that represents a new template Asset.
 
 B<Throws:>
 
@@ -2040,7 +2040,7 @@ NONE
 
 =cut
 
-sub _insert_formatting {
+sub _insert_template {
         my ($self) = @_;
 
         my $sql = 'INSERT INTO '. TABLE .' (id,'.join(',', COLS).') '.
@@ -2061,7 +2061,7 @@ sub _insert_formatting {
 
 =item $self = $self->_insert_instance()
 
-Inserts a row associated with an instance of a formatting asset
+Inserts a row associated with an instance of a template asset
 
 B<Throws:>
 
@@ -2095,9 +2095,9 @@ sub _insert_instance {
 
 ################################################################################
 
-=item $self = $self->_update_formatting()
+=item $self = $self->_update_template()
 
-Updates the formatting table
+Updates the template table
 
 B<Throws:>
 
@@ -2113,7 +2113,7 @@ NONE
 
 =cut
 
-sub _update_formatting {
+sub _update_template {
         my ($self) = @_;
 
         my $sql = 'UPDATE ' . TABLE .
@@ -2131,7 +2131,7 @@ sub _update_formatting {
 
 =item $self = $self->_update_instance()
 
-Updates the row related to the instance of the formatting asset
+Updates the row related to the instance of the template asset
 
 B<Throws:>
 
@@ -2163,9 +2163,9 @@ sub _update_instance {
 
 ################################################################################
 
-=item $self = $self->_delete_formatting()
+=item $self = $self->_delete_template()
 
-Removes the row associated with this formatting asset from the database
+Removes the row associated with this template asset from the database
 
 B<Throws:>
 
@@ -2181,7 +2181,7 @@ NONE
 
 =cut
 
-sub _delete_formatting {
+sub _delete_template {
         my ($self) = @_;
 
         my $sql = 'DELETE FROM ' . TABLE . ' WHERE id=?';

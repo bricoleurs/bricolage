@@ -4,7 +4,7 @@ package Bric::SOAP::Template;
 use strict;
 use warnings;
 
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
@@ -176,7 +176,7 @@ Side Effects: NONE
 
 Notes: In addition to the parameters listed above, you can use most of the
 parameters listed in the documentation for the list method in
-Bric::Biz::Asset::Formatting.
+Bric::Biz::Asset::Template.
 
 =cut
 
@@ -230,9 +230,9 @@ sub list_ids {
     # We're done with the site now.
     delete $args->{site};
 
-    my @list = Bric::Biz::Asset::Formatting->list_ids($args);
+    my @list = Bric::Biz::Asset::Template->list_ids($args);
 
-    print STDERR "Bric::Biz::Asset::Formatting->list_ids() called : ",
+    print STDERR "Bric::Biz::Asset::Template->list_ids() called : ",
         "returned : ", Data::Dumper->Dump([\@list],['list'])
             if DEBUG;
 
@@ -372,7 +372,7 @@ Throws:
 
 Side Effects: NONE
 
-Notes: Due to the way Bric::Biz::Asset::Formatting->new() works it
+Notes: Due to the way Bric::Biz::Asset::Template->new() works it
 isn't possible to fully update file_name.  To change it you need to
 update it indirectly by changing category, element and the file_name
 extension.  This should be fixed.
@@ -442,12 +442,12 @@ sub delete {
             if DEBUG;
 
         # first look for a checked out version
-        my $template = Bric::Biz::Asset::Formatting->lookup
+        my $template = Bric::Biz::Asset::Template->lookup
           ({ id => $template_id, checkout => 1 });
 
         unless ($template) {
             # settle for a non-checked-out version and check it out
-            $template = Bric::Biz::Asset::Formatting->lookup
+            $template = Bric::Biz::Asset::Template->lookup
               ({ id => $template_id });
             throw_ap(error => __PACKAGE__ .
                        "::delete : no template found for id \"$template_id\"")
@@ -456,7 +456,7 @@ sub delete {
                        "::delete : access denied for template \"$template_id\".")
                 unless chk_authz($template, EDIT, 1);
             $template->checkout({ user__id => get_user_id });
-            log_event("formatting_checkout", $template);
+            log_event("template_checkout", $template);
         }
 
         # Remove the template from any desk it's on.
@@ -469,13 +469,13 @@ sub delete {
         # Remove the template from workflow.
         if ($template->get_workflow_id) {
             $template->set_workflow_id(undef);
-            log_event("formatting_rem_workflow", $template);
+            log_event("template_rem_workflow", $template);
         }
 
         # Deactivate the template and save it.
         $template->deactivate;
         $template->save;
-        log_event("formatting_deact", $template);
+        log_event("template_deact", $template);
     }
 
     return name(result => 1);
@@ -496,7 +496,7 @@ Returns the class name used for 'lookup' (used in the delete method).
 
 =cut
 
-sub class { 'Bric::Biz::Asset::Formatting' }
+sub class { 'Bric::Biz::Asset::Template' }
 
 
 =item is_allowed_param
@@ -514,7 +514,7 @@ my $allowed = {
                                      expire_date_start expire_date_end site
                                      Order OrderDirection Offset Limit),
                   grep { /^[^_]/}
-                    keys %{ Bric::Biz::Asset::Formatting->PARAM_WHERE_MAP }
+                    keys %{ Bric::Biz::Asset::Template->PARAM_WHERE_MAP }
                 },
     export   => { map { $_ => 1 } map { module() . "_$_" }  qw(id ids) },
     create   => { map { $_ => 1 } qw(document workflow desk) },
@@ -675,9 +675,9 @@ sub load_asset {
             # Set the template type. It shouldn't be updated for an existing
             # template, only set for a new template.
             $init{tplate_type} =
-              Bric::Biz::Asset::Formatting->get_tplate_type_code($tdata->{type});
+              Bric::Biz::Asset::Template->get_tplate_type_code($tdata->{type});
             # create empty template
-            $template = Bric::Biz::Asset::Formatting->new(\%init);
+            $template = Bric::Biz::Asset::Template->new(\%init);
             throw_ap(error => __PACKAGE__ .
                        "::create : failed to create empty template object.")
               unless $template;
@@ -694,19 +694,19 @@ sub load_asset {
             # file_type and element name).
             my $found_dup = 0;
             my $file_name  = $template->get_file_name;
-            my @list = Bric::Biz::Asset::Formatting->list_ids(
+            my @list = Bric::Biz::Asset::Template->list_ids(
                               { output_channel__id => $init{output_channel__id},
                                 file_name => $file_name      });
             if (@list) {
                 $found_dup = 1;
             } else {
                 # Arrgh.  This is the only way to search all checked out
-                # formatting assets.  According to Garth this isn't a
+                # template assets.  According to Garth this isn't a
                 # problem...  I'd like to show him this code sometime and see
                 # if he still thinks so!
                 my @user_ids = Bric::Biz::Person::User->list_ids({});
                 foreach my $user_id (@user_ids) {
-                    @list = Bric::Biz::Asset::Formatting->list_ids(
+                    @list = Bric::Biz::Asset::Template->list_ids(
                            { output_channel__id => $init{output_channel__id},
                              file_name          => $file_name,
                              user__id           => $user_id   });
@@ -722,10 +722,10 @@ sub load_asset {
                        . "output channel \"$tdata->{output_channel}\".")
               if $found_dup and not ALLOW_DUPLICATE_TEMPLATES;
 
-            log_event('formatting_new', $template);
+            log_event('template_new', $template);
         } else {
             # updating - first look for a checked out version
-            $template = Bric::Biz::Asset::Formatting->lookup({ id => $id,
+            $template = Bric::Biz::Asset::Template->lookup({ id => $id,
                                                                checkout => 1
                                                              });
             if ($template) {
@@ -739,7 +739,7 @@ sub load_asset {
                     unless chk_authz($template, EDIT, 1);
             } else {
                 # try a non-checked out version
-                $template = Bric::Biz::Asset::Formatting->lookup({id => $id});
+                $template = Bric::Biz::Asset::Template->lookup({id => $id});
                 throw_ap(error => __PACKAGE__ . "::update : no template found for \"$id\"")
                     unless $template;
                 throw_ap(error => __PACKAGE__ . " : access denied.")
@@ -751,7 +751,7 @@ sub load_asset {
                 # check it out
                 $template->checkout( { user__id => get_user_id });
                 $template->save();
-                log_event('formatting_checkout', $template);
+                log_event('template_checkout', $template);
             }
 
             # update %init fields
@@ -764,7 +764,7 @@ sub load_asset {
 
         unless ($update && $no_wf_or_desk_param) {
             $template->set_workflow_id($workflow->get_id);
-            log_event("formatting_add_workflow", $template,
+            log_event("template_add_workflow", $template,
                       { Workflow => $workflow->get_name });
             if ($update) {
                 my $olddesk = $template->get_current_desk;
@@ -777,7 +777,7 @@ sub load_asset {
             } else {
                 $desk->accept({ asset => $template });
             }
-            log_event('formatting_moved', $template, { Desk => $desk->get_name });
+            log_event('template_moved', $template, { Desk => $desk->get_name });
         }
 
         # activate if desired
@@ -785,10 +785,10 @@ sub load_asset {
 
         # checkin and save
         $template->checkin();
-        log_event('formatting_checkin', $template,
+        log_event('template_checkin', $template,
                   { Version => $template->get_version });
         $template->save();
-        log_event('formatting_save', $template);
+        log_event('template_save', $template);
 
         # all done, setup the template_id
         push(@template_ids, $template->get_id);
@@ -812,7 +812,7 @@ sub serialize_asset {
     my $template_id = $options{template_id};
     my $writer      = $options{writer};
 
-    my $template = Bric::Biz::Asset::Formatting->lookup({id => $template_id});
+    my $template = Bric::Biz::Asset::Template->lookup({id => $template_id});
     throw_ap(error => __PACKAGE__ . "::export : template_id \"$template_id\" not found.")
         unless $template;
 
@@ -831,7 +831,7 @@ sub serialize_asset {
     # write out element, known to bric as "name" and save it for later
     $writer->dataElement(element_type =>
                          ($template->get_tplate_type ==
-                          Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE
+                          Bric::Biz::Asset::Template::ELEMENT_TEMPLATE
                           ? $template->get_element_key_name
                           : ()));
 

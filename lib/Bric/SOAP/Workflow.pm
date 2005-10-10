@@ -6,7 +6,7 @@ use warnings;
 
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Site;
 use Bric::Biz::Workflow qw(:wf_const);
@@ -34,15 +34,18 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 # We'll use this for outputting messages.
-my %types = ( story      => 'Story',
-              media      => 'Media',
-              formatting => 'Template' );
+my %types = (
+    story      => 'Story',
+    media      => 'Media',
+    template => 'Template',
+);
 
 # We'll use this for finding workflows.
-my %wf_types = ( story      => STORY_WORKFLOW,
-                 media      => MEDIA_WORKFLOW,
-                 formatting => TEMPLATE_WORKFLOW,
-                 template   => TEMPLATE_WORKFLOW );
+my %wf_types = (
+    story      => STORY_WORKFLOW,
+    media      => MEDIA_WORKFLOW,
+    template   => TEMPLATE_WORKFLOW,
+);
 
 =head1 NAME
 
@@ -350,7 +353,7 @@ sub deploy {
     my $burner = Bric::Util::Burner->new;
 
     foreach my $id (map { $_->value } @ids) {
-        my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $id });
+        my $fa = Bric::Biz::Asset::Template->lookup({ id => $id });
         throw_ap(error => "Unable to find template for template_id \"$id\".")
             unless $fa;
 
@@ -363,7 +366,7 @@ sub deploy {
 
         $burner->deploy($fa);
         log_event($fa->get_deploy_status ?
-                  'formatting_redeploy' : 'formatting_deploy',
+                  'template_redeploy' : 'template_deploy',
                   $fa);
         $fa->set_deploy_date(strfdate());
         $fa->set_deploy_status(1);
@@ -377,7 +380,7 @@ sub deploy {
         # Clear the workflow ID.
         if ($fa->get_workflow_id) {
             $fa->set_workflow_id(undef);
-            log_event("formatting_rem_workflow", $fa);
+            log_event("template_rem_workflow", $fa);
         }
 
         $fa->save;
@@ -475,8 +478,8 @@ sub checkout {
             throw_ap(error => "Unable to find media object for media_id \"".$id->value."\".")
                 unless $obj;
         } elsif ($id->name eq 'template_id') {
-            $type = 'formatting';
-            $obj  = Bric::Biz::Asset::Formatting->lookup(
+            $type = 'template';
+            $obj  = Bric::Biz::Asset::Template->lookup(
                                          { id => $id->value });
             throw_ap(error => "Unable to find template object for template_id \"".$id->value."\".")
                 unless $obj;
@@ -616,8 +619,8 @@ sub checkin {
             throw_ap(error => "Unable to find media object for media_id \"".$id->value."\".")
                 unless $obj;
         } elsif ($id->name eq 'template_id') {
-            $type = 'formatting';
-            $obj  = Bric::Biz::Asset::Formatting->lookup(
+            $type = 'template';
+            $obj  = Bric::Biz::Asset::Template->lookup(
                                          { id => $id->value });
             throw_ap(error => "Unable to find template object for template_id \"".$id->value."\".")
                 unless $obj;
@@ -767,8 +770,8 @@ sub move {
             throw_ap(error => "Unable to find media object for media_id \"".$id->value."\".")
                 unless $obj;
         } elsif ($id->name eq 'template_id') {
-            $type = 'formatting';
-            $obj  = Bric::Biz::Asset::Formatting->lookup(
+            $type = 'template';
+            $obj  = Bric::Biz::Asset::Template->lookup(
                                          { id => $id->value });
             throw_ap(error => "Unable to find template object for template_id \"".$id->value."\".")
                 unless $obj;

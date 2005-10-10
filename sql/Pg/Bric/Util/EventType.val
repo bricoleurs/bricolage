@@ -6,15 +6,15 @@
 -- Author: David Wheeler <david@wheeler.net>
 --
 
--- ********** 'formatting_deploy' ************ --
+-- ********** 'template_deploy' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_deploy', 'Template Deployed', 'Template was deployed.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_deploy', 'Template Deployed', 'Template was deployed.', '19', '1');
 
--- ********** 'formatting_redeploy' ************ --
+-- ********** 'template_redeploy' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_redeploy', 'Template Redeployed', 'Template was Redeployed.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_redeploy', 'Template Redeployed', 'Template was Redeployed.', '19', '1');
 
 -- ********** 'story_publish' ************ --
 
@@ -46,10 +46,10 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_republish', 'Media Republished', 'Media was republished.', '46', '1');
 
--- ********** 'formatting_checkin' ************ --
+-- ********** 'template_checkin' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkin', 'Template Checked In', 'Template was checked in.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_checkin', 'Template Checked In', 'Template was checked in.', '19', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Version');
@@ -180,10 +180,10 @@
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Desk');
 
--- ********** 'formatting_moved' ************ --
+-- ********** 'template_moved' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_moved', 'Template Moved to Desk', 'Template moved onto a desk.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_moved', 'Template Moved to Desk', 'Template moved onto a desk.', '19', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Desk');
@@ -204,10 +204,10 @@
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Workflow');
 
--- ********** 'formatting_add_workflow' ************ --
+-- ********** 'template_add_workflow' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_add_workflow', 'Template Moved into Workflow', 'Template moved into a workflow.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_add_workflow', 'Template Moved into Workflow', 'Template moved into a workflow.', '19', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Workflow');
@@ -222,10 +222,10 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_rem_workflow', 'Media Removed from Workflow', 'Media removed from a workflow.', '46', '1');
 
--- ********** 'formatting_rem_workflow' ************ --
+-- ********** 'template_rem_workflow' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_rem_workflow', 'Template Removed from Workflow', 'Template removed from a workflow.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_rem_workflow', 'Template Removed from Workflow', 'Template removed from a workflow.', '19', '1');
 
 -- ********** 'story_checkout' ************ --
 
@@ -237,10 +237,10 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_checkout', 'Media Checked Out', 'Media was checked out.', '46', '1');
 
--- ********** 'formatting_checkout' ************ --
+-- ********** 'template_checkout' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_checkout', 'Template Checked Out', 'Template was checked out.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_checkout', 'Template Checked Out', 'Template was checked out.', '19', '1');
 
 -- ********** 'story_cancel_checkout' ************ --
 
@@ -252,10 +252,10 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_cancel_checkout', 'Media Check Out Canceled', 'Media check out was canceled.', '46', '1');
 
--- ********** 'formatting_cancel_checkout' ************ --
+-- ********** 'template_cancel_checkout' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_cancel_checkout', 'Template Check Out Canceled', 'Template check out was caneled.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_cancel_checkout', 'Template Check Out Canceled', 'Template check out was caneled.', '19', '1');
 
 -- ********** 'story_new' ************ --
 
@@ -287,25 +287,25 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_deact', 'Media Deactivated', 'Media profile was deactivated.', '46', '1');
 
--- ********** 'formatting_new' ************ --
+-- ********** 'template_new' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_new', 'Template Created', 'Template profile was created.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_new', 'Template Created', 'Template profile was created.', '19', '1');
 
--- ********** 'formatting_save' ************ --
-
-    INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_save', 'Template Changes Saved', 'Template profile changes were saved.', '19', '1');
-
--- ********** 'formatting_deact' ************ --
+-- ********** 'template_save' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_deact', 'Template Deactivated', 'Template profile was deactivated.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_save', 'Template Changes Saved', 'Template profile changes were saved.', '19', '1');
 
--- ********** 'formatting_edit_code' ************ --
+-- ********** 'template_deact' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
-    VALUES (NEXTVAL('seq_event_type'), 'formatting_edit_code', 'Template Code Edited', 'Template profile code was edited.', '19', '1');
+    VALUES (NEXTVAL('seq_event_type'), 'template_deact', 'Template Deactivated', 'Template profile was deactivated.', '19', '1');
+
+-- ********** 'template_edit_code' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'template_edit_code', 'Template Code Edited', 'Template profile code was edited.', '19', '1');
 
 -- ********** 'story_add_element' ************ --
 
@@ -861,51 +861,51 @@
 -- Create creation events for all default templates.
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('502', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('502', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '502', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('503', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('503', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '503', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('504', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('504', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '504', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('506', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('506', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '506', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('507', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('507', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '507', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('509', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('509', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '509', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('510', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('510', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '510', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('511', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('511', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '511', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('512', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('512', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '512', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('513', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('513', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '513', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('514', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('514', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '514', CURRENT_TIMESTAMP);
 
 INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
-VALUES ('515', (SELECT id FROM event_type WHERE key_name = 'formatting_new'),
+VALUES ('515', (SELECT id FROM event_type WHERE key_name = 'template_new'),
         '0', '515', CURRENT_TIMESTAMP);
 
 

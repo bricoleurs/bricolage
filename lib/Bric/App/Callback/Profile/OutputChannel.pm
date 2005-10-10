@@ -72,7 +72,7 @@ $do_callback = sub {
         exists $param->{use_slug} ? $oc->use_slug_on : $oc->use_slug_off;
         $oc->activate;
 
-        # Set the URI Formatting properties, catching all exceptions.
+        # Set the URI Template properties, catching all exceptions.
         my $bad_uri;
         eval { $oc->set_uri_format($param->{uri_format}) };
         $bad_uri = 1 && add_msg($@->get_msg) if $@;

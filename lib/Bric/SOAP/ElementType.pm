@@ -214,7 +214,7 @@ sub list_ids {
 
     my @list = Bric::Biz::ElementType->list_ids($args);
 
-    print STDERR "Bric::Biz::Asset::Formatting->list_ids() called : ",
+    print STDERR "Bric::Biz::Asset::Template->list_ids() called : ",
         "returned : ", Data::Dumper->Dump([\@list],['list'])
             if DEBUG;
 

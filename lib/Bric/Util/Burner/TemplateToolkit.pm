@@ -3,7 +3,7 @@ package Bric::Util::Burner::TemplateToolkit;
 
 =head1 NAME
 
-Bric::Util::Burner::TemplateToolkit - Bric::Util::Burner subclass to publish business assets using TemplateToolkit formatting assets.
+Bric::Util::Burner::TemplateToolkit - Publish stories using Template Toolkit templates
 
 =head1 VERSION
 
@@ -29,8 +29,7 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This module handles burning business assets using TemplateToolkit formatting
-assets.
+This module handles burning business assets using TemplateToolkit templates.
 
 =cut
 

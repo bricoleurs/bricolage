@@ -67,7 +67,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('18', 'alert_type_grp', 'Bric::Util::Grp::AlertType', 'Alert Type Group', 'Alert Type Groups', 'Alert Type Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('19', 'formatting', 'Bric::Biz::Asset::Formatting', 'Template', 'Templates', 'Templates', '0');
+VALUES ('19', 'template', 'Bric::Biz::Asset::Template', 'Template', 'Templates', 'Templates', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor) 
 VALUES ('20', 'category', 'Bric::Biz::Category', 'Category', 'Categories', 'Categories', '0');
@@ -214,7 +214,7 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('66', 'media_grp', 'Bric::Util::Grp::Media', 'Media Group', 'Media Groups', 'Group of media', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('67', 'formatting_grp', 'Bric::Util::Grp::Formatting', 'Template Group', 'Template Groups', 'Group of templates', '0');
+VALUES ('67', 'template_grp', 'Bric::Util::Grp::Template', 'Template Group', 'Template Groups', 'Group of templates', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('68', 'grp_grp', 'Bric::Util::Grp::Grp', 'Group Group', 'Group Groups', 'Group of groups', '0');

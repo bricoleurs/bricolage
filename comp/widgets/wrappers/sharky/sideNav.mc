@@ -5,10 +5,10 @@ $debug => undef
 </%args>
 <%once>;
 my $disp = { map { $_ => get_disp_name($_) }
-  qw(story media formatting) };
+  qw(story media template) };
 my $pl_disp = {
     map { $_ => get_class_info($_)->get_plural_name }
-        qw(story media formatting pref user grp output_channel contrib
+        qw(story media template pref user grp output_channel contrib
            contrib_type site workflow category element_type
            media_type source dest job alert_type keyword)
 };
@@ -125,9 +125,9 @@ foreach my $wf (@$workflows) {
     $m->out(qq{<li>} . $lang->maketext('Actions'));
         $m->out(qq{<ul class="items">});
         if ($wf->{type} == TEMPLATE_WORKFLOW) {
-            $m->out(qq{<li>} . &$printLink("/workflow/profile/templates/new/$wf->{id}", $uri, "New $disp->{formatting}") . qq{</li>}) if ($can_create);
-            $m->out(qq{<li>} . &$printLink("/workflow/manager/templates/$wf->{id}", $uri, "Find $pl_disp->{formatting}") . qq{</li>});
-            $m->out(qq{<li>} . &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/profile/template/new/$wf->{id}", $uri, "New $disp->{template}") . qq{</li>}) if ($can_create);
+            $m->out(qq{<li>} . &$printLink("/workflow/manager/template/$wf->{id}", $uri, "Find $pl_disp->{template}") . qq{</li>});
+            $m->out(qq{<li>} . &$printLink("/workflow/active/template/$wf->{id}", $uri, "Active $pl_disp->{template}") . qq{</li>});
         } elsif ($wf->{type} == STORY_WORKFLOW) {
             $m->out(qq{<li>} . &$printLink("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}") . qq{</li>}) if ($can_create);
             $m->out(qq{<li>} . &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") . qq{</li>});

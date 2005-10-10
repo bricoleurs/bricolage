@@ -22,7 +22,7 @@ $LastChangedDate$
 
 %#-- Once Section --#
 <%once>;
-my $disp = get_disp_name('formatting');
+my $disp = get_disp_name('template');
 my $context = "Workflow | Profile | $disp | New";
 </%once>
 
@@ -36,7 +36,7 @@ $r->uri =~ m!/([^/]+)/?$!;
 my $w_id = $1;
 my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
 my $gid =  $wf->get_start_desk->get_asset_grp;
-chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
+chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
 </%init>
 
 %#-- Begin HTML --#

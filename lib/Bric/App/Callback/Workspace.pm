@@ -11,14 +11,14 @@ use Bric::App::Util qw(:aref :msg);
 use Bric::App::Session qw(:user);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Burner;
 
 my $pkgs = {
-    story => 'Bric::Biz::Asset::Business::Story',
-    media => 'Bric::Biz::Asset::Business::Media',
-    formatting => 'Bric::Biz::Asset::Formatting',
+    story    => 'Bric::Biz::Asset::Business::Story',
+    media    => 'Bric::Biz::Asset::Business::Media',
+    template => 'Bric::Biz::Asset::Template',
 };
 my $keys = [ keys %$pkgs ];
 my $dskpkg = 'Bric::Biz::Workflow::Parts::Desk';
@@ -75,7 +75,7 @@ sub delete : Callback {
                 $a->deactivate;
                 $a->save;
 
-                if($key eq 'formatting') {
+                if($key eq 'template') {
                     $burn->undeploy($a);
                     my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
                     $sb->undeploy($a);

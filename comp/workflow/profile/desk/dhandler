@@ -30,7 +30,7 @@ my $widget = 'desk_asset';
 <%args>
 $story_sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $media_sort_by => get_pref('Default Asset Sort') || 'cover_date'
-$formatting_sort_by => get_pref('Default Asset Sort') || 'cover_date'
+$template_sort_by => get_pref('Default Asset Sort') || 'cover_date'
 $offset => 0
 $show_all => undef
 </%args>
@@ -80,10 +80,10 @@ if ($d) {
     $m->comp('/widgets/desk/desk.mc',
              desk     => $d,
              wf       => $wf,
-             sort_by  => $formatting_sort_by,
+             sort_by  => $template_sort_by,
              desk_id  => $d_id,
              work_id  => $w_id,
-             class    => 'formatting',
+             class    => 'template',
              offset   => $offset,
              show_all => $show_all,
             );

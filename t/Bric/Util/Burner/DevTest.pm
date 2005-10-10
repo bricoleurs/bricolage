@@ -6,10 +6,10 @@ use utf8;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Util::Burner;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Util::Trans::FS;
 use Bric::Biz::Category;
-use Bric::Biz::Asset::Formatting::DevTest;
+use Bric::Biz::Asset::Template::DevTest;
 use Bric::Config qw(:temp :prev);
 use Bric::Biz::OutputChannel;
 use File::Basename;
@@ -28,13 +28,13 @@ sub test_deploy : Test(31) {
     my $oc_id = 1;
     my $oc_dir  = 'oc_' . $oc_id;
     # Create a template to deploy.
-    ok( my $tmpl = Bric::Biz::Asset::Formatting::DevTest->construct
+    ok( my $tmpl = Bric::Biz::Asset::Template::DevTest->construct
         (  data => '% print "hello world\n"',
            name => $name ),
         "Create template" );
 
     ok( $tmpl->save, "Save template" );
-    $self->add_del_ids($tmpl->get_id, 'formatting');
+    $self->add_del_ids($tmpl->get_id, 'template');
 
     # Create a burner.
     ok( my $burner = Bric::Util::Burner->new({
@@ -412,53 +412,53 @@ sub subclass_burn_test {
     # story template.
     my $file = $fs->cat_file(dirname(__FILE__), $dir, "story.$suffix");
     open my $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $story_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $story_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $oc,
         user__id       => $self->user_id,
         category_id    => 1,
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::ELEMENT_TEMPLATE,
         element_type   => $story_type,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a story template";
 
     ok( $story_tmpl->save, "Save template" );
-    $self->add_del_ids($story_tmpl->get_id, 'formatting');
+    $self->add_del_ids($story_tmpl->get_id, 'template');
     close $fh;
 
     # Now the subelement template.
     $file = $fs->cat_file(dirname(__FILE__), $dir, "pull_quote.$suffix");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $pq_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $pq_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $suboc, # Put it in the contained OC.
         user__id       => $self->user_id,
         category_id    => $cat->get_id, # Put it in a subcategory
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::ELEMENT_TEMPLATE,
         element_type   => $pull_quote,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a pull quote template";
     ok( $pq_tmpl->save, "Save pull quote template" );
-    $self->add_del_ids($pq_tmpl->get_id, 'formatting');
+    $self->add_del_ids($pq_tmpl->get_id, 'template');
     close $fh;
 
     # Page template.
     $file = $fs->cat_file(dirname(__FILE__), $dir, "page.$suffix");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $page_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $page_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $oc,
         user__id       => $self->user_id,
         category_id    => 1,
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::ELEMENT_TEMPLATE,
         element_type   => $page,
         data           => join('', <$fh>),
         file_type      => $suffix,
     }), "Create a page template";
     ok( $page_tmpl->save, "Save page template" );
-    $self->add_del_ids($page_tmpl->get_id, 'formatting');
+    $self->add_del_ids($page_tmpl->get_id, 'template');
     close $fh;
 
     # And how about a category template?
@@ -467,17 +467,17 @@ sub subclass_burn_test {
       if Bric::Util::Burner->cat_fn_has_ext($cat_tmpl_fn);
     $file = $fs->cat_file(dirname(__FILE__), $dir, $cat_tmpl_fn);
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $cat_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $cat_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $suboc, # Put it in the contained OC.
         user__id       => $self->user_id,
         category_id    => 1,
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::CATEGORY_TEMPLATE,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a category template";
     ok( $cat_tmpl->save, "Save category template" );
-    $self->add_del_ids($cat_tmpl->get_id, 'formatting');
+    $self->add_del_ids($cat_tmpl->get_id, 'template');
     close $fh;
 
     # And also a subcategory template.
@@ -487,34 +487,34 @@ sub subclass_burn_test {
     $subcat_tmpl_fn = 'sub_' . $subcat_tmpl_fn;
     $file = $fs->cat_file(dirname(__FILE__), $dir, $subcat_tmpl_fn);
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $subcat_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $subcat_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $suboc, # Put it in the contained OC.
         user__id       => $self->user_id,
         category_id    => $subcat->get_id, # This is the important bit.
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::CATEGORY_TEMPLATE,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a subcategory template";
     ok( $subcat_tmpl->save, "Save subcategory template" );
-    $self->add_del_ids($subcat_tmpl->get_id, 'formatting');
+    $self->add_del_ids($subcat_tmpl->get_id, 'template');
     close $fh;
 
     # And I think a utility template might be handy.
     $file = $fs->cat_file(dirname(__FILE__), $dir, "util.$suffix");
     open $fh, '<', $file or die "Cannot open '$file': $!\n";
-    ok my $util_tmpl = Bric::Biz::Asset::Formatting->new({
+    ok my $util_tmpl = Bric::Biz::Asset::Template->new({
         output_channel => $suboc, # Put it in the contained OC.
         user__id       => $self->user_id,
         name           => "util.$suffix",
         category_id    => $subcat->get_id, # Bury it!
         site_id        => 100,
-        tplate_type    => Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE,
+        tplate_type    => Bric::Biz::Asset::Template::UTILITY_TEMPLATE,
         file_type      => $suffix,
         data           => join('', <$fh>),
     }), "Create a utility template";
     ok( $util_tmpl->save, "Save utility template" );
-    $self->add_del_ids($util_tmpl->get_id, 'formatting');
+    $self->add_del_ids($util_tmpl->get_id, 'template');
     close $fh;
 
     # Now, create a burner, check the syntax, and deploy these templates.

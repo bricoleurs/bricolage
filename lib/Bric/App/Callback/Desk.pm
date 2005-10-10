@@ -15,7 +15,7 @@ use Bric::App::Callback::Publish;
 use Bric::App::Callback::Workspace;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui :pub);
@@ -24,13 +24,13 @@ use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(strfdate);
 
 my $pkgs = {
-    story => 'Bric::Biz::Asset::Business::Story',
-    media => 'Bric::Biz::Asset::Business::Media',
-    formatting => 'Bric::Biz::Asset::Formatting',
+    story    => 'Bric::Biz::Asset::Business::Story',
+    media    => 'Bric::Biz::Asset::Business::Media',
+    template => 'Bric::Biz::Asset::Template',
 };
 my $keys = [ keys %$pkgs ];
 
-my $type = 'formatting';
+my $type      = 'template';
 my $disp_name = 'Template';
 
 sub checkin : Callback {
@@ -45,7 +45,7 @@ sub checkin : Callback {
     $d->checkin($a_obj);
     $d->save;
 
-    if ($a_class eq 'formatting') {
+    if ($a_class eq 'template') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
            $sb->undeploy($a_obj);
     }
@@ -70,11 +70,11 @@ sub checkout : Callback {
     $a_id = $a_obj->get_id;
 
     my $profile;
-    if ($a_class eq 'formatting') {
+    if ($a_class eq 'template') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
         $sb->deploy($a_obj);
 
-        $profile = '/workflow/profile/templates';
+        $profile = '/workflow/profile/template';
     } elsif ($a_class eq 'media') {
         $profile = '/workflow/profile/media';
     } else {
@@ -294,24 +294,25 @@ sub publish : Callback {
     # state data: 'rel_story', 'rel_media'. This is to be
     # able to distinguish between related assets and the
     # original stories to be published.
-    set_state_data('publish', { story => \@sids,
-                                media => \@mids,
-                                story_pub => $story_pub,
-                                media_pub => $media_pub,
-                                (@rel_story ? (rel_story => \@rel_story) : ()),
-                                (@rel_media ? (rel_media => \@rel_media) : ())
-                            });
+    set_state_data('publish', {
+        story => \@sids,
+        media => \@mids,
+        story_pub => $story_pub,
+        media_pub => $media_pub,
+        (@rel_story ? (rel_story => \@rel_story) : ()),
+        (@rel_media ? (rel_media => \@rel_media) : ())
+    });
 
     if (%$story_pub or %$media_pub) {
         # Instant publish!
-        my $pub = Bric::App::Callback::Publish->new
-          ( cb_request   => $self->cb_request,
+        my $pub = Bric::App::Callback::Publish->new(
+            cb_request   => $self->cb_request,
             pkg_key      => 'publish',
             apache_req   => $self->apache_req,
             params       => { instant => 1,
                               pub_date => strfdate(),
-                            },
-          );
+                          },
+        );
         $pub->publish();
     } else {
         $self->set_redirect('/workflow/profile/publish');
@@ -321,16 +322,16 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
 
-    if (my $a_ids = $self->params->{$self->class_key.'|formatting_pub_ids'}) {
+    if (my $a_ids = $self->params->{$self->class_key.'|template_pub_ids'}) {
         my $b = Bric::Util::Burner->new;
 
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
         my $c = @$a_ids;
         foreach (@$a_ids) {
-            my $fa = Bric::Biz::Asset::Formatting->lookup({ id => $_ });
-            my $action = $fa->get_deploy_status ? 'formatting_redeploy'
-              : 'formatting_deploy';
+            my $fa = Bric::Biz::Asset::Template->lookup({ id => $_ });
+            my $action = $fa->get_deploy_status ? 'template_redeploy'
+              : 'template_deploy';
             $b->deploy($fa);
             $fa->set_deploy_date(strfdate());
             $fa->set_deploy_status(1);
@@ -346,7 +347,7 @@ sub deploy : Callback {
             # Clear the workflow ID.
             $fa->set_workflow_id(undef);
             $fa->save;
-            log_event("formatting_rem_workflow", $fa);
+            log_event("template_rem_workflow", $fa);
         }
         # Let 'em know we've done it!
         if ($c == 1) {
@@ -411,26 +412,26 @@ sub delete : Callback {
     # Deleting assets.
     foreach my $key (@$keys) {
         foreach my $aid (@{ mk_aref($self->params->{"${key}_delete_ids"}) }) {
-	    my $a = $pkgs->{$key}->lookup({ id => $aid });
-	    if (chk_authz($a, EDIT, 1)) {
-		my $d = $a->get_current_desk;
-		$d->remove_asset($a);
-		$d->save;
-		log_event("${key}_rem_workflow", $a);
+            my $a = $pkgs->{$key}->lookup({ id => $aid });
+            if (chk_authz($a, EDIT, 1)) {
+                my $d = $a->get_current_desk;
+                $d->remove_asset($a);
+                $d->save;
+                log_event("${key}_rem_workflow", $a);
                 $a->set_workflow_id(undef);
-		$a->deactivate;
-		$a->save;
+                $a->deactivate;
+                $a->save;
 
-                if($key eq 'formatting') {
+                if ($key eq 'template') {
                     $burn->undeploy($a);
                     my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
                     $sb->undeploy($a);
                 }
-		log_event("${key}_deact", $a);
-	    } else {
+                log_event("${key}_deact", $a);
+            } else {
                 add_msg('Permission to delete "[_1]" denied.', $a->get_name);
-	    }
-	}
+            }
+        }
     }
 }
 
@@ -449,11 +450,11 @@ sub _merge_properties {
 
     # Slug - account for sluglessness
     $param->{slug} = '' unless exists($param->{slug}) && defined($param->{slug});
-    unless (ALLOW_SLUGLESS_NONFIXED || $story->is_fixed || $param->{slug} =~ /\S/) {
+    if (ALLOW_SLUGLESS_NONFIXED || $story->is_fixed || $param->{slug} =~ /\S/) {
+        $story->set_slug($param->{slug});
+    } else {
         add_msg('Slug required for non-fixed (non-cover) story type.');
         $err++;
-    } else {
-        $story->set_slug($param->{slug});
     }
 
     # Category

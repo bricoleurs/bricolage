@@ -35,12 +35,12 @@ $caption ||= $pl_names->{$class};
 my ($link1, $link2, $lab1, $lab2, $img1, $img2);
 if ($class eq 'story') {
     ($link1, $lab1, $img1) = ('media', $pl_names->{media}, 'media') if $others->{media};
-    ($link2, $lab2, $img2) = ('formatting', $pl_names->{formatting}, 'templates')
-      if $others->{formatting};
+    ($link2, $lab2, $img2) = ('template', $pl_names->{template}, 'templates')
+      if $others->{template};
 } elsif ($class eq 'media') {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
-    ($link2, $lab2, $img2) = ('formatting', $pl_names->{formatting}, 'templates')
-      if $others->{formatting};
+    ($link2, $lab2, $img2) = ('template', $pl_names->{template}, 'templates')
+      if $others->{template};
 } else {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
     ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
@@ -56,9 +56,9 @@ unless ($sites) {
 }
 
 if (@$sites > 1) {
-    $sort_by->{$_}[5] ||= [ site_id => 'Site'] for qw(story media formatting);
+    $sort_by->{$_}[5] ||= [ site_id => 'Site'] for qw(story media template);
 } else {
-   delete $sort_by->{$_}[5] for qw(story media formatting);
+   delete $sort_by->{$_}[5] for qw(story media template);
 }
 </%init>
 <%once>;
@@ -76,7 +76,7 @@ my $sort_by = { story      => [ [ name           => 'Title' ],
                                 [ priority       => 'Priority' ],
                                 [ site_id        => 'Site' ],
                               ],
-                formatting => [ [ name           => 'File Name' ],
+                template   => [ [ name           => 'File Name' ],
                                 [ deploy_date    => 'Deployed Date' ],
                                 [ output_channel => 'Output Channel' ],
                                 [ priority       => 'Priority' ],
@@ -86,8 +86,8 @@ my $sort_by = { story      => [ [ name           => 'Title' ],
               };
 
 my $pl_names = {
-   story      => get_class_info('story')->get_plural_name,
-   media      => get_class_info('media')->get_plural_name,
-   formatting => get_class_info('formatting')->get_plural_name
+   story    => get_class_info('story')->get_plural_name,
+   media    => get_class_info('media')->get_plural_name,
+   template => get_class_info('template')->get_plural_name
 };
 </%once>

@@ -39,10 +39,11 @@ $show_all => undef
 </%args>
 <%once>;
 my $widget = 'desk_asset';
-my $pkgs = { story      => get_package_name('story'),
-             media      => get_package_name('media'),
-             formatting => get_package_name('formatting')
-           };
+my $pkgs = {
+    story    => get_package_name('story'),
+    media    => get_package_name('media'),
+    template => get_package_name('template')
+};
 
 my $others;
 my $cached_assets = sub {
@@ -220,11 +221,11 @@ if (!$limit || ($limit && $num_displayed < $limit)) {
 # Paging offset
 my $obj_offset = $offset;
 my $d = $r->pnotes('desk_asset.objs');
-if ($class =~ /^(media|formatting)$/) {
+if ($class =~ /^(media|template)$/) {
     my $num_stories = defined($d->{story}) ? @{$d->{story}} : 0;
     $obj_offset -= $num_stories if $offset;
 }
-if ($class eq 'formatting') {
+if ($class eq 'template') {
     my $num_media = defined($d->{media}) ? @{$d->{media}} : 0;
     $obj_offset -= $num_media if $offset;
 }
@@ -237,8 +238,7 @@ if (defined $objs && @$objs > $obj_offset) {
 
     my $disp = get_disp_name($class);
     my (%types, %users, %wfs);
-    my $profile_page = '/workflow/profile/' .
-      ($class eq 'formatting' ? 'templates' : $class);
+    my $profile_page = "/workflow/profile/$class";
 
     for (my $i = 0; $i < @$objs; $i++) {
         if ($limit) {
@@ -250,7 +250,7 @@ if (defined $objs && @$objs > $obj_offset) {
         my $aid = $obj->get_id;
         # Grab the type name.
         my $atid = $obj->get_element_type_id;
-        my $oc   = ($class eq 'formatting') ? $obj->get_output_channel_name : '';
+        my $oc   = ($class eq 'template') ? $obj->get_output_channel_name : '';
         my $type = defined $atid ? $types{$atid} ||= $obj->get_element_name : '';
 
         # Grab the User ID.
@@ -287,7 +287,7 @@ if (defined $objs && @$objs > $obj_offset) {
                 my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
                 if ($can_pub and ! $obj->get_checked_out) {
                     $checkname = "$widget|${class}_pub_ids";
-                    $checklabel = $lang->maketext($class eq 'formatting'
+                    $checklabel = $lang->maketext($class eq 'template'
                                                   ? 'Deploy' : 'Publish');
                 }
 

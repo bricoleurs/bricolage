@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-media_prof.mc - Profile for templates
+media_prof.mc - Profile for media documents
 
 =head1 VERSION
 

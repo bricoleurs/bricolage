@@ -2184,7 +2184,7 @@ sub _is_referenced {
     return 1 if $rows;
 
     # Make sure this isn't referenced from a template.
-    $sql  = "SELECT COUNT(*) FROM formatting WHERE element_type__id = ?";
+    $sql  = "SELECT COUNT(*) FROM template WHERE element_type__id = ?";
     $sth  = prepare_c($sql, undef);
     execute($sth, $self->get_id);
     bind_columns($sth, \$rows);

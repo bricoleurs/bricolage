@@ -3,7 +3,7 @@ $asset
 $sorted
 </%args>
 <%init>;
-my ($letter, $action, $alias) = $asset->key_name eq 'formatting'
+my ($letter, $action, $alias) = $asset->key_name eq 'template'
   ? ('D', 'Deployed', '')
   : ('P', 'Published', ($asset->get_alias_id ? 'alias' : ''));
 

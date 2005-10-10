@@ -244,12 +244,12 @@ my $grp_pl = lc get_class_info($grp_key)->get_plural_name;
 my $asset_grp_pkg = get_package_name('asset_grp');
 my $asset_grp_keys = { story_grp      => 1,
                        media_grp      => 1,
-                       formatting_grp => 1 };
+                       template_grp => 1 };
 # Check to see if it's an asset group.
 my $chk_asset_grp = sub {
     my $classes = shift->get_supported_classes;
     return 1 if $classes->{'Bric::Biz::Asset'}
-      || $classes->{'Bric::Biz::Asset::Formatting'}
+      || $classes->{'Bric::Biz::Asset::Template'}
       || $classes->{'Bric::Biz::Asset::Business'}
       || $classes->{'Bric::Biz::Asset::Business::Story'}
       || $classes->{'Bric::Biz::Asset::Business::Media'}

@@ -20,7 +20,7 @@ use Bric::Util::Grp::Dest;
 use Bric::Util::Grp::SubElementType;
 use Bric::Util::Grp::ATType;
 use Bric::Util::Grp::Event;
-use Bric::Util::Grp::Formatting;
+use Bric::Util::Grp::Template;
 use Bric::Util::Grp::Grp;
 use Bric::Util::Grp::Job;
 use Bric::Util::Grp::Keyword;

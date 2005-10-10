@@ -441,7 +441,7 @@ Garth Webb <garth@perijove.com>
 L<Bric|Bric>,
 L<Bric::AdvTemplates|Bric::AdvTemplates>,
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>,
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>,
 L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
 L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>,

@@ -22,7 +22,7 @@ CREATE SEQUENCE seq_output_channel_member START 1024;
 -- Table output_channel
 --
 -- Description: Holds info on the various output channels and is referenced
--- 				by the formatting assets and elements
+-- 				by templates and elements
 --
 --
 

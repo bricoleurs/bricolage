@@ -58,13 +58,13 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %   # This hidden field is required to make the form submit when the user hits
 %   # the "enter" key.
     <& '/widgets/profile/hidden.mc', 
-        name    => $widget.'|formatting_cb',
+        name    => $widget.'|template_cb',
         value   => 'Search' &>
 
     <& '/widgets/profile/button.mc', 
         disp    => $lang->maketext('Search'),
         widget  => $widget,
-        cb      => 'formatting_cb',
+        cb      => 'template_cb',
         button  => 'search_red',
         useTable => 0 &>
         
@@ -208,7 +208,7 @@ $oc_name_getter = sub {
     <& /widgets/profile/button.mc,
         disp    => $lang->maketext('Search'),
         widget  => $widget,
-        cb      => 'formatting_cb',
+        cb      => 'template_cb',
         button  => 'search_red',
         useTable => 0 &>
     <& /widgets/profile/button.mc,

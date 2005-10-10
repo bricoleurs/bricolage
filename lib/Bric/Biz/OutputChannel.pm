@@ -2111,6 +2111,6 @@ David Wheeler <david@kineticode.com>
 =head1 SEE ALSO
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset::Business>, L<Bric::Biz::ElementType>,
-L<Bric::Biz::Asset::Formatting>.
+L<Bric::Biz::Asset::Template>.
 
 =cut

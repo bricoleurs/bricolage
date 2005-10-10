@@ -103,7 +103,7 @@ use Data::Dumper;
 use XML::Simple;
 use File::Temp qw(tempfile);
 
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::OutputChannel;

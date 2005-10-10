@@ -3,8 +3,7 @@ package Bric::Util::Burner::Template;
 
 =head1 NAME
 
-Bric::Util::Burner::Template - Bric::Util::Burner subclass to publish business
-assets using HTML::Template formatting assets.
+Bric::Util::Burner::Template - Publish stories using HTML::Template templates
 
 =head1 VERSION
 
@@ -30,8 +29,7 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This module handles burning business assets using HTML::Template formatting
-assets.
+This module handles burning business assets using HTML::Template templates.
 
 =cut
 

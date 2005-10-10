@@ -93,7 +93,7 @@ use base qw( Bric::Util::Grp );
 
 use constant STORY_PKG  => 'Bric::Biz::Asset::Business::Story';
 use constant MEDIA_PKG  => 'Bric::Biz::Asset::Business::Media';
-use constant FORMAT_PKG => 'Bric::Biz::Asset::Formatting';
+use constant FORMAT_PKG => 'Bric::Biz::Asset::Template';
 use constant AUDIO_PKG => 'Bric::Biz::Asset::Business::Media::Audio';
 use constant IMAGE_PKG => 'Bric::Biz::Asset::Business::Media::Image';
 use constant VIDEO_PKG => 'Bric::Biz::Asset::Business::Media::Video';
@@ -283,7 +283,7 @@ NONE
 sub get_supported_classes {
     return { &STORY_PKG  => 'story',
 	     &MEDIA_PKG  => 'media',
-	     &FORMAT_PKG => 'formatting',
+	     &FORMAT_PKG => 'template',
 	     &AUDIO_PKG  => 'media',
 	     &IMAGE_PKG  => 'media',
 	     &VIDEO_PKG  => 'media'
@@ -432,9 +432,9 @@ sub add_media_id {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $grp->add_tmpl_id([$media_id]);
+=item $success = $grp->add_template_id([$media_id]);
 
-Add a formatting asset ID.
+Add a template ID.
 
 B<Throws:>
 
@@ -450,7 +450,7 @@ NONE
 
 =cut
 
-sub add_format_id {
+sub add_template_id {
     my $self = shift;
     my ($t_id) = @_;
 

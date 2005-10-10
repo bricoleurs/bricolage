@@ -7,12 +7,12 @@ use constant CLASS_KEY => 'asset_meta';
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :history);
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 
 my %types = (
-    'Bric::Biz::Asset::Formatting' => ['tmpl_prof', 'fa'],
+    'Bric::Biz::Asset::Template'        => ['tmpl_prof', 'template'],
     'Bric::Biz::Asset::Business::Story' => ['story_prof', 'story'],
     'Bric::Biz::Asset::Business::Media' => ['media_prof', 'media'],
 );

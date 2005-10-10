@@ -9,7 +9,7 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history);
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
@@ -17,9 +17,9 @@ use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Burner;
 use Bric::Util::Fault qw(rethrow_exception);
 
-my $DESK_URL = '/workflow/profile/desk/';
-my $SEARCH_URL = '/workflow/manager/templates/';
-my $ACTIVE_URL = '/workflow/active/templates/';
+my $DESK_URL   = '/workflow/profile/desk/';
+my $SEARCH_URL = '/workflow/manager/template/';
+my $ACTIVE_URL = '/workflow/active/template/';
 
 my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
     $delete_fa, $create_fa);
@@ -30,7 +30,7 @@ sub save : Callback(priority => 6) {
     my $widget = $self->class_key;
 
     $save_object->($widget, $self->params);
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
 
     my $workflow_id = $fa->get_workflow_id;
     if ($self->params->{"$widget|delete"}) {
@@ -45,7 +45,7 @@ sub save : Callback(priority => 6) {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
         $sb->deploy($fa);
 
-        log_event('formatting_save', $fa);
+        log_event('template_save', $fa);
         add_msg('Template "[_1]" saved.', $fa->get_file_name);
     }
 
@@ -72,7 +72,7 @@ sub checkin : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
     $save_meta->($self->params, $widget, $fa);
     return unless $check_syntax->($self, $widget, $fa);
     $checkin->($self, $widget, $self->params, $fa);
@@ -83,7 +83,7 @@ sub save_and_stay : Callback(priority => 6) {
     my $widget = $self->class_key;
 
     $save_object->($widget, $self->params);
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
 
     if ($self->params->{"$widget|delete"}) {
         # Delete the template.
@@ -102,7 +102,7 @@ sub save_and_stay : Callback(priority => 6) {
 
         # Save the template.
         $fa->save;
-        log_event('formatting_save', $fa);
+        log_event('template_save', $fa);
         add_msg('Template "[_1]" saved.', $fa->get_file_name);
     }
 }
@@ -111,7 +111,7 @@ sub revert : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
-    my $fa      = get_state_data($widget, 'fa');
+    my $fa      = get_state_data($widget, 'template');
     my $version = $self->params->{"$widget|version"};
     $fa->revert($version);
     $fa->save;
@@ -127,17 +127,17 @@ sub view : Callback {
     my $self = shift;
     my $widget = $self->class_key;
 
-    my $id      = get_state_data($widget, 'fa')->get_id;
+    my $id      = get_state_data($widget, 'template')->get_id;
     my $version = $self->params->{"$widget|version"};
     set_state_data($widget, version_view => 1);
-    $self->set_redirect("/workflow/profile/templates/$id/?version=$version");
+    $self->set_redirect("/workflow/profile/template/$id/?version=$version");
 }
 
 sub diff : Callback {
     my $self   = shift;
     my $widget = $self->class_key;
     my $params = $self->params;
-    my $tmpl   = get_state_data($widget, 'fa');
+    my $tmpl   = get_state_data($widget, 'template');
     my $id     = $tmpl->get_id;
 
     # Tell the return button to return to the edit view.
@@ -151,7 +151,7 @@ sub diff : Callback {
 
     # Send it on home.
     $self->set_redirect(
-        "/workflow/profile/templates/$id/?diff=1"
+        "/workflow/profile/template/$id/?diff=1"
         . "&from_version=$from&to_version=$to"
     );
 }
@@ -159,7 +159,7 @@ sub diff : Callback {
 sub cancel : Callback(priority => 6) {
     my $self = shift;
 
-    my $fa = get_state_data($self->class_key, 'fa');
+    my $fa = get_state_data($self->class_key, 'template');
     if ($fa->get_version == 0) {
         # If the version number is 0, the template was never checked in to a
         # desk. So just delete it.
@@ -168,24 +168,24 @@ sub cancel : Callback(priority => 6) {
         # Cancel the checkout and undeploy the template from the user's
         # sand box.
         $fa->cancel_checkout;
-        log_event('formatting_cancel_checkout', $fa);
+        log_event('template_cancel_checkout', $fa);
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
         $sb->undeploy($fa);
 
         # If the template was last recalled from the library, then remove it
         # from the desk and workflow. We can tell this because there will
-        # only be one formatting_moved event and one formatting_checkout event
-        # since the last formatting_add_workflow event.
+        # only be one template_moved event and one template_checkout event
+        # since the last template_add_workflow event.
         my @events = Bric::Util::Event->list({
             class => ref $fa,
             obj_id => $fa->get_id
         });
         my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'formatting_add_workflow') {
+        while (@events && $events[0]->get_key_name ne 'template_add_workflow') {
             my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'formatting_moved') {
+            if ($kn eq 'template_moved') {
                 $desks++;
-            } elsif ($kn eq 'formatting_checkout') {
+            } elsif ($kn eq 'template_checkout') {
                 $cos++
             }
         }
@@ -200,7 +200,7 @@ sub cancel : Callback(priority => 6) {
             $fa->set_workflow_id(undef);
             $desk->save;
             $fa->save;
-            log_event("formatting_rem_workflow", $fa);
+            log_event("template_rem_workflow", $fa);
         } else {
             # Just save the cancelled checkout. It will be left in workflow for
             # others to find.
@@ -224,26 +224,26 @@ sub notes : Callback {
     my $action = $self->params->{$widget.'|notes_cb'};
 
     # Save the metadata we've collected on this request.
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
     my $id = $fa->get_id;
 
     # Save the data if we are in edit mode.
     &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
 
     # Set a redirection to the code page to be enacted later.
-    $self->set_redirect("/workflow/profile/templates/${action}_notes.html?id=$id");
+    $self->set_redirect("/workflow/profile/template/${action}_notes.html?id=$id");
 }
 
 sub trail : Callback {
     my $self = shift;
 
     # Save the metadata we've collected on this request.
-    my $fa  = get_state_data($self->class_key, 'fa');
+    my $fa  = get_state_data($self->class_key, 'template');
     &$save_meta($self->params, $self->class_key, $fa);
     my $id = $fa->get_id;
 
     # Set a redirection to the code page to be enacted later.
-    $self->set_redirect("/workflow/trail/formatting/$id");
+    $self->set_redirect("/workflow/trail/template/$id");
 }
 
 sub create_next : Callback {
@@ -253,7 +253,7 @@ sub create_next : Callback {
 
     # Just create it if CATEGORY template was selected.
     $create_fa->($self, $self->class_key, $self->params)
-      if $ttype == Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
+      if $ttype == Bric::Biz::Asset::Template::CATEGORY_TEMPLATE;
 }
 
 sub create : Callback {
@@ -267,12 +267,12 @@ sub return : Callback(priority => 6) {
 
     my $state        = get_state_name($widget);
     my $version_view = get_state_data($widget, 'version_view');
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
 
     if ($version_view) {
         my $fa_id = $fa->get_id;
         clear_state($widget);
-        $self->set_redirect("/workflow/profile/templates/$fa_id/?checkout=1");
+        $self->set_redirect("/workflow/profile/template/$fa_id/?checkout=1");
     } else {
         my $url;
         my $return = get_state_data($widget, 'return') || '';
@@ -307,7 +307,7 @@ sub recall : Callback {
 
     foreach (@$ids) {
         my ($o_id, $w_id) = split('\|', $_);
-        my $fa = Bric::Biz::Asset::Formatting->lookup({'id' => $o_id});
+        my $fa = Bric::Biz::Asset::Template->lookup({'id' => $o_id});
         if (chk_authz($fa, RECALL, 1)) {
             my $wf = $wfs{$w_id} ||= Bric::Biz::Workflow->lookup({'id' => $w_id});
 
@@ -316,19 +316,19 @@ sub recall : Callback {
                 $fa->activate();
             }
 
-            # Put this formatting asset into the current workflow
+            # Put this template asset into the current workflow
             $fa->set_workflow_id($w_id);
-            log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
+            log_event('template_add_workflow', $fa, { Workflow => $wf->get_name });
 
             # Get the start desk for this workflow.
             my $start_desk = $wf->get_start_desk;
 
-            # Put this formatting asset on to the start desk.
+            # Put this template asset on to the start desk.
             $start_desk->accept({'asset' => $fa});
             $start_desk->checkout($fa, get_user_id());
             $start_desk->save;
-            log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
-            log_event('formatting_checkout', $fa);
+            log_event('template_moved', $fa, { Desk => $start_desk->get_name });
+            log_event('template_checkout', $fa);
             $co++;
 
             # Deploy the template to the user's sandbox.
@@ -349,7 +349,7 @@ sub recall : Callback {
     } else {
         # Go to the profile screen
         my ($o_id, $w_id) = split('\|', $ids->[0]);
-        $self->set_redirect('/workflow/profile/templates/'.$o_id.'?checkout=1');
+        $self->set_redirect('/workflow/profile/template/'.$o_id.'?checkout=1');
     }
 }
 
@@ -361,11 +361,11 @@ sub checkout : Callback {
     my $co;
 
     foreach my $t_id (@$ids) {
-        my $t_obj = Bric::Biz::Asset::Formatting->lookup({'id' => $t_id});
+        my $t_obj = Bric::Biz::Asset::Template->lookup({'id' => $t_id});
         if (chk_authz($t_obj, EDIT, 1)) {
             $t_obj->checkout({ user__id => get_user_id() });
             $t_obj->save;
-            log_event("formatting_checkout", $t_obj);
+            log_event("template_checkout", $t_obj);
             $co++;
 
             # Deploy the template to the user's sandbox.
@@ -384,7 +384,7 @@ sub checkout : Callback {
         $self->set_redirect("/");
     } else {
         # Go to the profile screen
-        $self->set_redirect('/workflow/profile/templates/' . $ids->[0] . '?checkout=1');
+        $self->set_redirect('/workflow/profile/template/' . $ids->[0] . '?checkout=1');
     }
 }
 
@@ -393,7 +393,7 @@ sub checkout : Callback {
 
 $save_meta = sub {
     my ($param, $widget, $fa) = @_;
-    $fa ||= get_state_data($widget, 'fa');
+    $fa ||= get_state_data($widget, 'template');
     chk_authz($fa, EDIT);
     $fa->set_priority($param->{priority}) if $param->{priority};
     $fa->set_description($param->{description}) if $param->{description};
@@ -406,20 +406,20 @@ $save_meta = sub {
         # Set the new category.
         $fa->set_category_id($param->{category_id});
     }
-    return set_state_data($widget, 'fa', $fa);
+    return set_state_data($widget, 'template', $fa);
 };
 
 $save_code = sub {
     my ($param, $widget, $fa) = @_;
-    $fa ||= get_state_data($widget, 'fa');
+    $fa ||= get_state_data($widget, 'template');
     chk_authz($fa, EDIT);
     $fa->set_data($param->{"$widget|code"});
-    return set_state_data($widget, 'fa', $fa);
+    return set_state_data($widget, 'template', $fa);
 };
 
 $save_object = sub{
     my ($widget, $param) = @_;
-    my $fa = get_state_data($widget, 'fa');
+    my $fa = get_state_data($widget, 'template');
     $save_meta->($param, $widget, $fa);
 };
 
@@ -440,9 +440,9 @@ $checkin = sub {
         $cur_desk->remove_asset($fa)->save if $cur_desk;
         $fa->set_workflow_id(undef);
         $fa->save;
-        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
-        log_event("formatting_rem_workflow", $fa);
+        log_event(($new ? 'template_create' : 'template_save'), $fa);
+        log_event('template_checkin', $fa, { Version => $fa->get_version });
+        log_event("template_rem_workflow", $fa);
         add_msg('Template "[_1]" saved and shelved.', $fa->get_file_name);
     } elsif ($desk_id eq 'deploy') {
         # Publish the template and remove it from workflow.
@@ -472,10 +472,10 @@ $checkin = sub {
 
         $fa->save;
         # Log it!
-        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
+        log_event(($new ? 'template_create' : 'template_save'), $fa);
+        log_event('template_checkin', $fa, { Version => $fa->get_version });
         my $dname = $pub_desk->get_name;
-        log_event('formatting_moved', $fa, { Desk => $dname })
+        log_event('template_moved', $fa, { Desk => $dname })
           unless $no_log;
         add_msg('Template "[_1]" saved and checked in to "[_2]".',
                 $fa->get_file_name, $dname);
@@ -500,10 +500,10 @@ $checkin = sub {
 
         $desk->save;
         $fa->save;
-        log_event(($new ? 'formatting_create' : 'formatting_save'), $fa);
-        log_event('formatting_checkin', $fa, { Version => $fa->get_version });
+        log_event(($new ? 'template_create' : 'template_save'), $fa);
+        log_event('template_checkin', $fa, { Version => $fa->get_version });
         my $dname = $desk->get_name;
-        log_event('formatting_moved', $fa, { Desk => $dname }) unless $no_log;
+        log_event('template_moved', $fa, { Desk => $dname }) unless $no_log;
         add_msg('Template "[_1]" saved and moved to "[_2]".',
                 $fa->get_file_name, $dname);
     }
@@ -512,7 +512,7 @@ $checkin = sub {
     if ($desk_id eq 'deploy') {
         my $class_key = 'desk_asset';
 
-        $param->{"$class_key|formatting_pub_ids"} = $fa->get_id;
+        $param->{"$class_key|template_pub_ids"} = $fa->get_id;
 
         # Call the deploy callback in the desk widget.
         my $cb = Bric::App::Callback::Desk->new
@@ -550,7 +550,7 @@ $delete_fa = sub {
     $desk->checkin($fa);
     $desk->remove_asset($fa);
     $desk->save;
-    log_event("formatting_rem_workflow", $fa);
+    log_event("template_rem_workflow", $fa);
     my $burn = Bric::Util::Burner->new;
     $burn->undeploy($fa);
     my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
@@ -558,7 +558,7 @@ $delete_fa = sub {
     $fa->set_workflow_id(undef);
     $fa->deactivate;
     $fa->save;
-    log_event("formatting_deact", $fa);
+    log_event("template_deact", $fa);
     add_msg('Template "[_1]" deleted.', $fa->get_file_name);
 };
 
@@ -575,7 +575,7 @@ $create_fa = sub {
         get_site_id;
 
     my ($at, $name);
-    if ($tplate_type == Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE) {
+    if ($tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
         unless ($param->{$widget.'|no_at'}) {
             unless (defined $at_id && $at_id ne '') {
                 # It's no good.
@@ -586,7 +586,7 @@ $create_fa = sub {
             $at    = Bric::Biz::ElementType->lookup({'id' => $at_id});
             $name  = $at->get_key_name;
         }
-    } elsif ($tplate_type == Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE) {
+    } elsif ($tplate_type == Bric::Biz::Asset::Template::UTILITY_TEMPLATE) {
         $name = $param->{"$widget|name"};
     } # Otherwise, it'll default to a category template.
 
@@ -595,12 +595,12 @@ $create_fa = sub {
     my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
     my $start_desk = $wf->get_start_desk;
     my $gid = $start_desk->get_asset_grp;
-    chk_authz('Bric::Biz::Asset::Formatting', CREATE, 0, $gid);
+    chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
 
-    # Create a new formatting asset.
+    # Create a new template asset.
     my $fa;
     eval {
-        $fa = Bric::Biz::Asset::Formatting->new({
+        $fa = Bric::Biz::Asset::Template->new({
             'element'            => $at,
             'file_type'          => $file_type,
             'output_channel__id' => $oc_id,
@@ -618,7 +618,7 @@ $create_fa = sub {
             rethrow_exception($err);
         } else {
             # XXX: it should never return more than one asset, right?
-            ($fa) = Bric::Biz::Asset::Formatting->list({
+            ($fa) = Bric::Biz::Asset::Template->list({
                 active => 0,
                 output_channel_id => $oc_id,
                 category_id => $cat_id,
@@ -651,25 +651,25 @@ $create_fa = sub {
     if ($was_reactivated) {
         # Check it out.
         $start_desk->checkout($fa, get_user_id());
-        log_event("formatting_checkout", $fa);
+        log_event("template_checkout", $fa);
     } else {
-        log_event('formatting_new', $fa);
+        log_event('template_new', $fa);
     }
 
     $start_desk->save;
 
     # Log that a new template has been created.
-    log_event('formatting_add_workflow', $fa, { Workflow => $wf->get_name });
-    log_event('formatting_moved', $fa, { Desk => $start_desk->get_name });
-    log_event('formatting_save', $fa);
+    log_event('template_add_workflow', $fa, { Workflow => $wf->get_name });
+    log_event('template_moved', $fa, { Desk => $start_desk->get_name });
+    log_event('template_save', $fa);
     add_msg('Template "[_1]" saved.', $fa->get_file_name);
 
     # Put the template into the session and clear the workflow ID.
-    set_state_data($widget, 'fa', $fa);
+    set_state_data($widget, 'template', $fa);
     set_state_data($widget, 'work_id', '');
 
     # Head for the main edit screen.
-    $self->set_redirect("/workflow/profile/templates/?checkout=1");
+    $self->set_redirect("/workflow/profile/template/?checkout=1");
 
     # As far as history is concerned, this page should be part of the template
     # profile stuff.

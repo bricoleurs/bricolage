@@ -190,7 +190,7 @@ sub move_into_workflow {
     $template->save unless $template->get_id;
 
     # Log it.
-    Bric::Util::Event->new({ key_name => 'formatting_add_workflow',
+    Bric::Util::Event->new({ key_name => 'template_add_workflow',
                              obj      => $template,
                              user     => $user
                            });
@@ -213,7 +213,7 @@ sub move_onto_desk {
 
     # Put this template on the start desk.
     $desk->accept({ asset => $template});
-    Bric::Util::Event->new({ key_name => 'formatting_moved',
+    Bric::Util::Event->new({ key_name => 'template_moved',
                              obj      => $template,
                              user     => $user,
                              attr     => { Desk => $desk->get_name }
@@ -233,7 +233,7 @@ sub check_out {
     my $user = $self->{user_obj};
     $desk->checkout($template, $user->get_id);
     $desk->save;
-    Bric::Util::Event->new({ key_name => 'formatting_checkout',
+    Bric::Util::Event->new({ key_name => 'template_checkout',
                              obj      => $template,
                              user     => $user
                          });

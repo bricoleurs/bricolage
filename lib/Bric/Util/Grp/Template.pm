@@ -1,8 +1,8 @@
-package Bric::Util::Grp::Formatting;
+package Bric::Util::Grp::Template;
 
 =head1 NAME
 
-Bric::Util::Grp::Formatting - Interface to Bric::Biz::Asset::Formatting Groups.
+Bric::Util::Grp::Template - Interface to Bric::Biz::Asset::Template Groups.
 
 =head1 VERSION
 
@@ -106,7 +106,7 @@ sub DESTROY {}
 
 =over
 
-=item $supported_classes = Bric::Util::Grp::Formatting->get_supported_classes()
+=item $supported_classes = Bric::Util::Grp::Template->get_supported_classes()
 
 This will return an anonymous hash of the supported classes in the group as keys
 with the short name as a value. The short name is used to construct the member
@@ -120,11 +120,11 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_supported_classes { { 'Bric::Biz::Asset::Formatting' => 'formatting' } }
+sub get_supported_classes { { 'Bric::Biz::Asset::Template' => 'template' } }
 
 ##############################################################################
 
-=item my @list_classes = Bric::Util::Grp::Formatting->get_list_classes
+=item my @list_classes = Bric::Util::Grp::Template->get_list_classes
 
 Returns a list or anonymous array of the supported classes in the group that
 can have their C<list()> methods called in succession to assemble a list of
@@ -141,11 +141,11 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_list_classes { ('Bric::Biz::Asset::Formatting') }
+sub get_list_classes { ('Bric::Biz::Asset::Template') }
 
 ################################################################################
 
-=item $class_id = Bric::Util::Grp::Formatting->get_object_class_id
+=item $class_id = Bric::Util::Grp::Template->get_object_class_id
 
 Forces all Objects to be considered as this class.
 
@@ -161,7 +161,7 @@ sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
-=item $class_id = Bric::Util::Grp::Formatting->get_class_id()
+=item $class_id = Bric::Util::Grp::Template->get_class_id()
 
 This will return the class ID that this group is associated with.
 
@@ -177,7 +177,7 @@ sub get_class_id { CLASS_ID }
 
 ################################################################################
 
-=item my $secret = Bric::Util::Grp::Formatting->get_secret()
+=item my $secret = Bric::Util::Grp::Template->get_secret()
 
 Returns false, because this is not a secret type of group, but one that can be
 used by users.
@@ -194,7 +194,7 @@ sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::Formatting->my_class()
+=item my $class = Bric::Util::Grp::Template->my_class()
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -213,7 +213,7 @@ sub my_class {
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::Formatting->member_class()
+=item my $class = Bric::Util::Grp::Template->member_class()
 
 Returns a Bric::Util::Class object describing the members of this group.
 
@@ -272,7 +272,7 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>, 
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Formatting>, 
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>, 
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut

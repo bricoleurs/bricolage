@@ -22,7 +22,7 @@ $LastChangedDate$
 
 %#-- Once Section --#
 <%once>;
-my $disp = get_disp_name('formatting');
+my $disp = get_disp_name('template');
 </%once>
 
 %#-- Args Section --#

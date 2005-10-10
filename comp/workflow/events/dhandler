@@ -31,12 +31,14 @@ chk_authz($obj, READ);
 </%init>
 
 <%once>;
-my $disp = { media => get_disp_name('media'),
-             story => get_disp_name('story'),
-             formatting => get_disp_name('formatting')
-           };
-my $pkg =  { media => get_package_name('media'),
-             story => get_package_name('story'),
-             formatting => get_package_name('formatting')
-           };
+my $disp = {
+    media    => get_disp_name('media'),
+    story    => get_disp_name('story'),
+    template => get_disp_name('template')
+};
+my $pkg =  {
+    media    => get_package_name('media'),
+    story    => get_package_name('story'),
+    template => get_package_name('template')
+};
 </%once>

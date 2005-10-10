@@ -218,7 +218,7 @@ sub new {
 
 =item $asset = Bric::Biz::Asset::Business::Media->lookup({ id => $id })
 
-=item $asset = Bric::Biz::Asset::Formatting->lookup({ id => $id })
+=item $asset = Bric::Biz::Asset::Template->lookup({ id => $id })
 
 This will return an asset that matches the ID provided.
 
@@ -242,7 +242,7 @@ sub lookup {
     throw_gen(error => "Missing Required Parameters id or uuid or version_id")
       unless $param->{id} || $param->{version_id} || $param->{uuid}
       || ($param->{alias_id} && $param->{site_id});
-    throw_mni(error => 'Must call list on Story, Media, or Formatting')
+    throw_mni(error => 'Must call list on Story, Media, or Template')
       unless $pkg->CAN_DO_LOOKUP;
     # Check the cache.
     my $obj = $pkg->cache_lookup($param);
@@ -274,7 +274,7 @@ sub lookup {
 
 =item (@media_objs || $media) = Bric::Biz::Asset::Business::Media->list($params)
 
-=item (@template_objs || $templates) = Bric::Biz::Asset::Business::Formatting->list($params)
+=item (@template_objs || $templates) = Bric::Biz::Asset::Business::Template->list($params)
 
 B<See Also:>
 
@@ -284,7 +284,7 @@ B<See Also:>
 
 =item Bric::Biz::Asset::Business::Media->list()
 
-=item Bric::Biz::Asset::Business::Formatting->list()
+=item Bric::Biz::Asset::Business::Template->list()
 
 =back
 
@@ -293,7 +293,7 @@ B<See Also:>
 sub list {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    throw_mni(error => 'Must call list on Story, Media, or Formatting')
+    throw_mni(error => 'Must call list on Story, Media, or Template')
       unless $pkg->CAN_DO_LIST;
     $param = clean_params($pkg, $param);
     my $tables = tables($pkg, $param);
@@ -313,7 +313,7 @@ sub list {
 
 =item (@ids||$ids) = Bric::Biz::Asset::Business::Media->list_ids($params)
 
-=item (@ids||$ids) = Bric::Biz::Asset::Business::Formatting->list_ids($params)
+=item (@ids||$ids) = Bric::Biz::Asset::Business::Template->list_ids($params)
 
 B<See Also:>
 
@@ -323,7 +323,7 @@ B<See Also:>
 
 =item Bric::Biz::Asset::Business::Media->list_ids()
 
-=item Bric::Biz::Asset::Business::Formatting->list_ids()
+=item Bric::Biz::Asset::Business::Template->list_ids()
 
 =back
 
@@ -332,7 +332,7 @@ B<See Also:>
 sub list_ids {
     my ($pkg, $param) = @_;
     $pkg = ref $pkg || $pkg;
-    throw_mni(error => 'Must call list on Story, Media, or Formatting')
+    throw_mni(error => 'Must call list on Story, Media, or Template')
       unless $pkg->CAN_DO_LIST_IDS;
     # clean the params
     $param = clean_params($pkg, $param);

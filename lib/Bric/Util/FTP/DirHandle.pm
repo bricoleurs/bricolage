@@ -47,7 +47,7 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Config qw(:ftp);
 use Bric::Biz::ElementType;
 use Net::FTPServer::DirHandle;
@@ -126,7 +126,7 @@ sub get {
   my $deploy = $filename =~ s/\.deploy$//i;
 
   # look for a template by that name
-  my $list = Bric::Biz::Asset::Formatting->list({
+  my $list = Bric::Biz::Asset::Template->list({
       site_id            => $site_id,
       output_channel__id => $oc_id,
       category_id        => $category_id,
@@ -243,7 +243,7 @@ sub open {
     my $deploy = $filename =~ s/\.deploy$//i;
 
     # find filename
-    my $list = Bric::Biz::Asset::Formatting->list({
+    my $list = Bric::Biz::Asset::Template->list({
         site_id            => $site_id,
         output_channel__id => $oc_id,
         category_id        => $category_id,
@@ -283,26 +283,26 @@ sub open {
     my $start_desk = $wf->get_start_desk;
     my $gid = $start_desk->get_asset_grp;
     return undef
-      unless $self->{ftps}{user_obj}->can_do('Bric::Biz::Asset::Formatting',
+      unless $self->{ftps}{user_obj}->can_do('Bric::Biz::Asset::Template',
                                              CREATE, 0, $gid);
     # create the new template
     my ($name, $dir, $file_type) = fileparse($filename, qr/\..*$/);
     # Remove the dot.
     $file_type =~ s/^\.//;
-    my $tplate_type = Bric::Biz::Asset::Formatting::UTILITY_TEMPLATE;
+    my $tplate_type = Bric::Biz::Asset::Template::UTILITY_TEMPLATE;
 
     # don't look for an element for category templates
     my $at;
     if ( Bric::Util::Burner->class_for_cat_fn($name)) {
         # It's a category template.
-        $tplate_type = Bric::Biz::Asset::Formatting::CATEGORY_TEMPLATE;
+        $tplate_type = Bric::Biz::Asset::Template::CATEGORY_TEMPLATE;
         print STDERR __PACKAGE__, "::open($filename, $mode): will create a "
           . "category template\n" if FTP_DEBUG;
     } else {
         # Look for an element to associate it with.
         if ($at = Bric::Biz::ElementType->lookup({ key_name => $name })) {
             # It's an element template!
-            $tplate_type = Bric::Biz::Asset::Formatting::ELEMENT_TEMPLATE;
+            $tplate_type = Bric::Biz::Asset::Template::ELEMENT_TEMPLATE;
             print STDERR __PACKAGE__, "::open($filename, $mode): creating for",
               " asset type: ", $at->get_name, "\n" if FTP_DEBUG;
         } else {
@@ -313,7 +313,7 @@ sub open {
     }
 
     ## create the new template object
-    my $template = Bric::Biz::Asset::Formatting->new({
+    my $template = Bric::Biz::Asset::Template->new({
         'element'            => $at,
         'site_id'            => $site_id,
         'file_type'          => $file_type,
@@ -446,14 +446,14 @@ sub list {
   # get templates
   my $list;
   if ($like) {
-      $list = Bric::Biz::Asset::Formatting->list({
+      $list = Bric::Biz::Asset::Template->list({
           site_id            => $site_id,
           output_channel__id => $oc_id,
           category_id        => $category_id,
           file_name          => "%/" . ($like || '%')
       });
   } else {
-      $list = Bric::Biz::Asset::Formatting->list({ 
+      $list = Bric::Biz::Asset::Template->list({ 
           site_id            => $site_id,
           output_channel__id => $oc_id,
           category_id        => $category_id,

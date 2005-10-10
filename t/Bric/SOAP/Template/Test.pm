@@ -116,7 +116,7 @@ use Data::Dumper;
 use XML::Simple;
 use File::Temp qw(tempfile);
 
-use Bric::Biz::Asset::Formatting;
+use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::OutputChannel;
@@ -208,7 +208,7 @@ foreach my $queries (@queries) {
   isa_ok($soap_template_ids, 'ARRAY');
 
   # try Bric::Biz::Asset::Business::Template
-  my @bric_template_ids = Bric::Biz::Asset::Formatting->list_ids($query);
+  my @bric_template_ids = Bric::Biz::Asset::Template->list_ids($query);
 
   # compare the lists, truely, madly, deeply.
   @$soap_template_ids = sort @$soap_template_ids;

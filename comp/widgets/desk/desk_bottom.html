@@ -52,8 +52,8 @@ $show_all => undef
 <%init>
 # desk_asset matches Callback/Desk.pm class_key
 my $d = $r->pnotes('desk_asset.objs');    # from desk.mc
-$d->{story} ||= [];  $d->{media} ||= [];  $d->{formatting} ||= [];
-my $num_objs = @{$d->{story}} + @{$d->{media}} + @{$d->{formatting}};
+$d->{story} ||= [];  $d->{media} ||= [];  $d->{template} ||= [];
+my $num_objs = @{$d->{story}} + @{$d->{media}} + @{$d->{template}};
 return unless $num_objs;
 $wf ||= Bric::Biz::Workflow->lookup({ id => $w_id }) if defined $w_id;
 $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $d_id }) if defined $d_id;
