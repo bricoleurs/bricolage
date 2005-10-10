@@ -423,11 +423,11 @@ $update_element_type_attrs = sub {
 $get_data_href = sub {
     my ($param, $key) = @_;
 
-    # Get existing attrs from the Parts::Data class rather than from
+    # Get existing attrs from the FieldType class rather than from
     # $obj->get_data so that we can be sure to check for both active
     # and inactive data fields.
     my $all_data = Bric::Biz::ElementType::Parts::FieldType->list({
-        field_type_id => $param->{"$key\_id"}
+        element_type_id => $param->{"$key\_id"}
     });
     return { map { $_->get_key_name => $_ } @$all_data };
 };
