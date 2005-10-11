@@ -138,8 +138,8 @@ $id       => undef
 </%args>
 <%perl>;
 my $agent = detect_agent();
-$vals->{props}{cols} = $cols if ($cols);
-$vals->{props}{rows} = $rows if ($rows);
+$vals->{props}{cols} = $cols if $cols;
+$vals->{props}{rows} = $rows if $rows;
 $localize_opts = $localize;
 
 if ($objref) {
@@ -176,9 +176,9 @@ if ($objref) {
 } elsif ($vals) {
     my $value     = $vals->{value};
     my $formType  = $vals->{props}{type} || return;;
-    $width   ||= $vals->{width}  ? $vals->{width}  : 578;
-    $indent  ||= $vals->{indent} ? $vals->{indent} : FIELD_INDENT;
-    my $label     =  ($vals->{req}) ? "redLabel" : "label";
+    $width        ||= $vals->{width}  ? $vals->{width}  : 578;
+    $indent       ||= $vals->{indent} ? $vals->{indent} : FIELD_INDENT;
+    my $label     =  $vals->{req} ? "redLabel" : "label";
 
     # Get the name and localize it, if necessary.
     $name = $vals->{disp} unless defined $name;
@@ -394,7 +394,6 @@ my %formSubs = (
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $agent, $id) = @_;
             $key = escape_html($key) if $key;
-
             my $values = $vals->{props}{vals};
             my $ref    = ref $values;
 
@@ -533,6 +532,7 @@ my %formSubs = (
             &$inpt_sub('radio', @_);
         }
 );
-# same as select, but values are evaluated perl
-$formSubs{'codeselect'} = $formSubs{'select'};
+# pulldown is the esame as select.
+# codeselect is the same as select, but values are evaluated perl.
+$formSubs{codeselect} = $formSubs{pulldown} = $formSubs{select};
 </%once>
