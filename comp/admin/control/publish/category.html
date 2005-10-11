@@ -21,6 +21,12 @@
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
+<& /widgets/select_time/select_time.mc,
+  base_name       => 'pub_time',
+  default_current => 1,
+  disp            => 'Publish Time',
+&>
+
 <p>
 <& '/widgets/buttons/submit.mc',
     disp    => 'Publish Checked',
