@@ -6,13 +6,14 @@ use constant CLASS_KEY => 'bulk_publish';
 
 use strict;
 use Bric::App::Authz qw(:all);
-use Bric::App::Callback::Desk;
-use Bric::App::Session qw(set_state_data);
-use Bric::App::Util qw(mk_aref);
+use Bric::App::Event qw(:all);
+use Bric::App::Session qw(:user);
+use Bric::App::Util qw(mk_aref add_msg);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Util::DBI qw(ANY);
 use Bric::Util::Priv::Parts::Const qw(:all);
+use Bric::Util::Time qw(:all);
 
 sub publish_categories : Callback {
     my $self = shift;
@@ -31,41 +32,42 @@ sub publish_categories : Callback {
         }
     }
 
-    # Get story/media IDs from categories
-    # XXX This permission checking doesn't allow them to publish even if the
-    # document is in a workflow with a publish desk for which the user has
-    # PUBLISH permission to its assets. But this is a 99% solution, and much
-    # more efficient than lots of extra code to check for such a desk would be
-    # (not to mention moving documents to that desk).
-    my (@story_ids, @media_ids);
-    @story_ids = grep { chk_authz($_, PUBLISH, 1) }
-      Bric::Biz::Asset::Business::Story->list_ids({
-          category_id => ANY(@story_cat_ids)
-      }) if @story_cat_ids;
-
-    @media_ids = grep { chk_authz($_, PUBLISH, 1) }
-      Bric::Biz::Asset::Business::Media->list_ids({
-          category_id => ANY(@media_cat_ids)
-      }) if @media_cat_ids;
-
-    # This state data is needed for comp/widgets/publish/publish.mc
-    set_state_data('publish', story => \@story_ids);
-    set_state_data('publish', media => \@media_ids);
-
-    # Use the desk callback to avoid code duplication
-    my $pub = Bric::App::Callback::Desk->new(
-        cb_request   => $self->cb_request,
-        apache_req   => $self->apache_req,
-        # for some reason pkg_key is necessary, he says hours later
-        pkg_key      => 'desk_asset',
-        params       => {
-            'desk_asset|story_pub_ids' => \@story_ids,
-            'desk_asset|media_pub_ids' => \@media_ids,
-            story_sort_by              => 'cover_date',
-            media_sort_by              => 'cover_date',
-        },
-    );
-    $pub->publish;
+    my $pub_time = $self->params->{pub_time};
+    my %counts;
+    for my $spec ([\@story_cat_ids, 'Story'],
+                  [\@media_cat_ids, 'Media']
+    ) {
+        my $cat_ids = shift @$spec;
+        next unless @$cat_ids;
+        my $key = lc $spec->[0];
+        my $pkg = 'Bric::Biz::Asset::Business::' . shift @$spec;
+        for my $doc (grep { chk_authz($_, PUBLISH, 1) } $pkg->list({
+            published_version => 1,
+            unexpired         => 1,
+            category_id       => ANY(@$cat_ids)
+        })) {
+            my $job = Bric::Util::Job::Pub->new({
+                sched_time => $pub_time,
+                user_id    => get_user_id(),
+                name       => 'Publish "' . $doc->get_name . '"',
+                "$key\_id" => $doc->get_id,
+                priority   => $doc->get_priority,
+            });
+            $job->save;
+            log_event('job_new', $job);
+            $counts{$key}++;
+        }
+    }
+    if (%counts) {
+        if (my $c = $counts{story}) {
+            add_msg('[quant,_1,story,stories] published.', $c);
+        }
+        if (my $c = $counts{media}) {
+            add_msg('[quant,_1,media,media] published.', $c);
+        }
+    } else {
+        add_msg('Nothing republished') unless %counts;
+    }
 }
 
 1;

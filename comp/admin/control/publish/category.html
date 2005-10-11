@@ -4,7 +4,7 @@
    type         => 'singular',
    use_form_tag => 0
 &>
-<p></p>
+<br />
 <& '/widgets/listManager/listManager.mc',
    object    => 'category',
    title     => 'Publish a Category',
@@ -16,7 +16,12 @@
    behavior  => 'expand',
    @constrain
 &>
-
+<br />
+<& /widgets/select_time/select_time.mc,
+  base_name       => 'pub_time',
+  default_current => 1,
+  disp            => 'Publish Time',
+&>
 <p>
 <input type="image" src="/media/images/<% $lang_key %>/publish_checked_red.gif" name="publish_button" value="Publish" />
 </p>

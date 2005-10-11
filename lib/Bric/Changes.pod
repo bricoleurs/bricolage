@@ -34,6 +34,12 @@ speed up lookups of jobs yet to be completed. This was originally in a 1.6.7
 upgrade script, but never made it into the SQL for new installations.
 Suggested by Mark Jaroski. [David]
 
+=item *
+
+The Bulk Publish feature in the UI now only publishes the previously published
+versions of unexpired stories and media, rather than the latest version of
+expired and unexpired stories and media. [David]
+
 =back
 
 =head2 Bug Fixes
