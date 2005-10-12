@@ -165,11 +165,11 @@ sub publish : Callback {
         my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
         my $name = 'Publish "' . $s->get_name . '"';
         my $job = Bric::Util::Job::Pub->new({
-            sched_time    => $param->{pub_date},
-            user_id       => get_user_id(),
-            name          => $name,
-            story_id      => $sid,
-            priority      => $s->get_priority(),
+            sched_time             => $param->{pub_date},
+            user_id                => get_user_id(),
+            name                   => $name,
+            story_instance_id      => $sid,
+            priority               => $s->get_priority(),
         });
         $job->save();
         log_event('job_new', $job);
@@ -205,11 +205,11 @@ sub publish : Callback {
         my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
         my $name = 'Publish "' . $m->get_name . '"';
         my $job = Bric::Util::Job::Pub->new({
-            sched_time    => $param->{pub_date},
-            user_id       => get_user_id(),
-            name          => $name,
-            media_id      => $mid,
-            priority      => $m->get_priority,
+            sched_time             => $param->{pub_date},
+            user_id                => get_user_id(),
+            name                   => $name,
+            media_instance_id      => $mid,
+            priority               => $m->get_priority,
         });
         $job->save();
         log_event('job_new', $job);

@@ -938,12 +938,12 @@ sub preview {
           $oc->get_name . '"';
 
         my $job = Bric::Util::Job::Dist->new({
-            sched_time   => '',
-            user_id      => $user_id,
-            name         => $name,
-            server_types => $bat,
-            "$key\_id"   => $ba->get_id,
-            priority     => $ba->get_priority,
+            sched_time          => '',
+            user_id             => $user_id,
+            name                => $name,
+            server_types        => $bat,
+            "$key\_instance_id" => $ba->get_version_id,
+            priority            => $ba->get_priority,
         });
         my $res = [];
         # Burn, baby, burn!
@@ -1232,12 +1232,12 @@ sub publish {
             my $name = 'Distribute "' . $ba->get_name . '" to "' .
               $oc->get_name . '"';
             my $job = Bric::Util::Job::Dist->new({
-                sched_time   => $publish_date,
-                user_id      => $user_id,
-                name         => $name,
-                server_types => $bat,
-                "$key\_id"   => $ba->get_id,
-                priority     => $ba->get_priority,
+                sched_time          => $publish_date,
+                user_id             => $user_id,
+                name                => $name,
+                server_types        => $bat,
+                "$key\_instance_id" => $ba->get_version_id,
+                priority            => $ba->get_priority,
             });
 
             # Burn, baby, burn!
@@ -1387,11 +1387,11 @@ sub publish_another {
     if ($pub_time gt strfdate) {
         # Schedule it to be published later.
         Bric::Util::Job::Pub->new({
-            sched_time    => $pub_time,
-            user_id       => Bric::App::Session::get_user_id(),
-            name          => 'Publish "' . $ba->get_name . '"',
-            "$key\_id"    => $ba->get_id,
-            priority      => $ba->get_priority,
+            sched_time          => $pub_time,
+            user_id             => Bric::App::Session::get_user_id(),
+            name                => 'Publish "' . $ba->get_name . '"',
+            "$key\_instance_id" => $ba->get_version_id,
+            priority            => $ba->get_priority,
         })->save;
         return $self;
     }

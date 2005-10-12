@@ -129,14 +129,16 @@ my $PKG_MAP = {
 ################################################################################
 # Private Class Fields
 my @COLS = qw(id name expire usr__id sched_time priority comp_time tries
-              error_message executing story__id media__id class__id failed);
+              error_message executing story_instance__id media_instance__id
+              class__id failed);
 my @PROPS = qw(id name type user_id sched_time priority comp_time tries
-               error_message _executing story_id media_id _class_id _failed);
+               error_message _executing story_instance_id media_instance_id
+               _class_id _failed);
 my @ORD = @PROPS[1..$#PROPS - 6];
 
 my $SEL_COLS = 'a.id, a.name, a.expire, a.usr__id, a.sched_time, a.priority, '
-  . 'a.comp_time, a.tries, a.error_message, a.executing, a.story__id, '
-  . 'a.media__id, a.class__id, a.failed, m.grp__id';
+  . 'a.comp_time, a.tries, a.error_message, a.executing, a.story_instance__id, '
+  . 'a.media_instance__id, a.class__id, a.failed, m.grp__id';
 my @SEL_PROPS = (@PROPS, 'grp_ids');
 
 my @SCOL_ARGS = ('Bric::Util::Coll::ServerType', '_server_types');
@@ -150,28 +152,28 @@ my $meths;
 BEGIN {
     Bric::register_fields({
                          # Public Fields
-                         id => Bric::FIELD_READ,
-                         name => Bric::FIELD_RDWR,
-                         user_id => Bric::FIELD_RDWR,
-                         sched_time => Bric::FIELD_READ,
-                         priority => Bric::FIELD_RDWR,
-                         comp_time => Bric::FIELD_READ,
-                         type => Bric::FIELD_RDWR,
-                         tries => Bric::FIELD_READ,
-                         grp_ids => Bric::FIELD_READ,
-                         story_id => Bric::FIELD_RDWR,
-                         media_id => Bric::FIELD_RDWR,
-                         error_message => Bric::FIELD_READ,
+                         id                => Bric::FIELD_READ,
+                         name              => Bric::FIELD_RDWR,
+                         user_id           => Bric::FIELD_RDWR,
+                         sched_time        => Bric::FIELD_READ,
+                         priority          => Bric::FIELD_RDWR,
+                         comp_time         => Bric::FIELD_READ,
+                         type              => Bric::FIELD_RDWR,
+                         tries             => Bric::FIELD_READ,
+                         grp_ids           => Bric::FIELD_READ,
+                         story_instance_id => Bric::FIELD_RDWR,
+                         media_instance_id => Bric::FIELD_RDWR,
+                         error_message     => Bric::FIELD_READ,
 
                          # Private Fields
-                         _resources => Bric::FIELD_NONE,
-                         _resource_ids => Bric::FIELD_NONE,
-                         _server_types => Bric::FIELD_NONE,
-                         _server_type_ids => Bric::FIELD_NONE,
-                         _cancel => Bric::FIELD_NONE,
-                         _executing => Bric::FIELD_NONE,
-                         _class_id => Bric::FIELD_NONE,
-                         _failed => Bric::FIELD_NONE,
+                         _resources        => Bric::FIELD_NONE,
+                         _resource_ids     => Bric::FIELD_NONE,
+                         _server_types     => Bric::FIELD_NONE,
+                         _server_type_ids  => Bric::FIELD_NONE,
+                         _cancel           => Bric::FIELD_NONE,
+                         _executing        => Bric::FIELD_NONE,
+                         _class_id         => Bric::FIELD_NONE,
+                         _failed           => Bric::FIELD_NONE,
                         });
 }
 
@@ -279,6 +281,17 @@ sub new {
         &$check_priority($init->{priority});
     } else {
         $init->{priority} = 3;
+    }
+
+    # Check for the old story_id and media_id parameters.
+    for my $doc_type (qw(story media)) {
+        my $doc_id = delete $init->{"$doc_type\_id"} or next;
+        next if $init->{"$doc_type\_instance_id"};
+        # Bah, we'll have to look up the latest instance ID.
+        my $pkg = 'Bric::Biz::Asset::Business::' . ucfirst $doc_type;
+        my $doc = $pkg->lookup({ id => $doc_id })
+            or throw_dp "No $doc_type object with the ID $doc_id";
+        $init->{"$doc_type\_instance_id"} = $doc->get_version_id;
     }
 
     # Default schedule time to now.
@@ -403,9 +416,17 @@ values.
 
 A story ID. May use C<ANY> for a list of possible values.
 
+=item story_instance_id
+
+A story instance ID. May use C<ANY> for a list of possible values.
+
 =item media_id
 
 A media ID. May use C<ANY> for a list of possible values.
+
+=item media_instance_id
+
+A media instance ID. May use C<ANY> for a list of possible values.
 
 =item grp_id
 
@@ -1953,13 +1974,13 @@ $get_em = sub {
       "m.active = '1'";
     my @params;
     my %map = (
-        id            => 'a.id = ?',
-        _class_id     => 'a.class__id = ?',
-        media_id      => 'a.media__id = ?',
-        story_id      => 'a.story__id = ?',
-        user_id       => 'a.usr__id = ?',
-        name          => 'LOWER(a.name) LIKE LOWER(?)',
-        error_message => 'LOWER(a.error_message) LIKE LOWER(?)',
+        id                => 'a.id = ?',
+        _class_id         => 'a.class__id = ?',
+        media_instance_id => 'a.media_instance__id = ?',
+        story_instance_id => 'a.story_instance__id = ?',
+        user_id           => 'a.usr__id = ?',
+        name              => 'LOWER(a.name) LIKE LOWER(?)',
+        error_message     => 'LOWER(a.error_message) LIKE LOWER(?)',
     );
 
     my %bool = (
@@ -1983,6 +2004,20 @@ $get_em = sub {
             $tables .= ', job__server_type js';
             $wheres .= ' AND a.id = js.job__id AND '
                     . any_where $v, 'js.server_type__id = ?', \@params;
+        }
+
+        elsif ($k eq 'story_id') {
+            # Add story_instance to the lists of tables and join to it.
+            $tables .= ', story_instance si';
+            $wheres .= ' AND a.story_instance__id = si.id AND '
+                    . any_where $v, 'si.story__id = ?', \@params;
+        }
+
+        elsif ($k eq 'media_id') {
+            # Add media_instance to the lists of tables and join to it.
+            $tables .= ', media_instance mi';
+            $wheres .= ' AND a.media_instance__id = mi.id AND '
+                    . any_where $v, 'mi.media__id = ?', \@params;
         }
 
         elsif ($k eq 'resource_id') {

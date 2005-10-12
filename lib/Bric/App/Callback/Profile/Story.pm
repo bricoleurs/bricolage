@@ -191,7 +191,7 @@ sub checkin : Callback(priority => 6) {
         my $pub = Bric::App::Callback::Desk->new
           ( cb_request   => $self->cb_request,
             apache_req   => $self->apache_req,
-            params       => { story_pub => { $story->get_id => $story } },
+            params       => { story_pub => { $story->get_version_id => $story } },
           );
         $pub->publish;
 

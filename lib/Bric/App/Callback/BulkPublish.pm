@@ -47,11 +47,11 @@ sub publish_categories : Callback {
             category_id       => ANY(@$cat_ids)
         })) {
             my $job = Bric::Util::Job::Pub->new({
-                sched_time => $pub_time,
-                user_id    => get_user_id(),
-                name       => 'Publish "' . $doc->get_name . '"',
-                "$key\_id" => $doc->get_id,
-                priority   => $doc->get_priority,
+                sched_time          => $pub_time,
+                user_id             => get_user_id(),
+                name                => 'Publish "' . $doc->get_name . '"',
+                "$key\_instance_id" => $doc->get_version_id,
+                priority            => $doc->get_priority,
             });
             $job->save;
             log_event('job_new', $job);

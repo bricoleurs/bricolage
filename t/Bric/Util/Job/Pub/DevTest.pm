@@ -152,7 +152,7 @@ sub c_test_list : Test(45) {
     $story->set_primary_category($cat);
     $story->set_cover_date('2005-03-22 21:07:56');
     $story->save();
-    my $sid = $story->get_id;
+    my $sid = $story->get_version_id;
     $self->add_del_ids($sid, 'story');
 
     # XXX Check media too !!!
@@ -166,7 +166,7 @@ sub c_test_list : Test(45) {
             $args{server_types} = [$dest];
         } else {
             # Add story ID. Will be two of these.
-            $args{story_id} = $sid;
+            $args{story_instance_id} = $sid;
         }
 
         ok( my $job = Bric::Util::Job::Pub->new(\%args), "Create $args{name}" );
@@ -373,7 +373,7 @@ sub g_test_execute_me : Test(10) {
     # create a job
     my $job = Bric::Util::Job::Pub->new(\%args);
     # add the story to the job
-    $job->set_story_id($story->get_id);
+    $job->set_story_instance_id($story->get_version_id);
     # set the job execution time to now
     $job->set_sched_time(local_date(0, ISO_8601_FORMAT, 1));
     # test: Save the job.  With the default config file this will have the
@@ -508,6 +508,7 @@ sub h_test_execute_me : Test(10) {
     $story->save;
     $self->add_del_ids($story->get_id, 'story');
 
+    # Make sure that the old story_id parameter still works.
     my $job = Bric::Util::Job::Pub->new({
         name        => 'Test Job',
         user_id     => $self->user_id,

@@ -534,6 +534,15 @@ the templates so that they do not have to be parsed and compiled every time a
 story is published. This should make the TT burner substantially faster.
 [David]
 
+=item *
+
+Publish and distribution jobs are now tied to a specific version of a story or
+media document, rather than the media document itself. This will allow a whole
+series of publishes for versions of a document to be scheuled for execution
+over time, as well as help to protect currently checked-out documents from
+being mysteriously removed from workflow by scheduled publishes being
+executed. Sponsored by Freerun Technologies. [David]
+
 =back
 
 =cut

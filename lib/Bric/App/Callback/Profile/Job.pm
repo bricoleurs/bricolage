@@ -13,7 +13,6 @@ my $type = CLASS_KEY;
 my $disp_name = 'Job';
 my $class = 'Bric::Util::Job';
 
-
 sub save : Callback {
     my $self = shift;
 
@@ -48,11 +47,12 @@ sub cancel : Callback {
     my $self = shift;
 
     foreach my $id (@{ mk_aref($self->value) }) {
-        my $job = $class->lookup({'id' => $id}) || next;
+        my $job = $class->lookup({ id => $id }) || next;
         if (chk_authz($job, EDIT)) {
             if ($job->is_executing) {
                 # It's executing right now. Don't cancel it.
-                add_msg('Cannot cancel "[_1]" because it is currently executing.', $job->get_name);
+                add_msg('Cannot cancel "[_1]" because it is currently executing.',
+                        $job->get_name);
             } else {
                 # Cancel it.
                 $job->cancel();

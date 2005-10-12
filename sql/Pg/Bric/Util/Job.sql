@@ -17,26 +17,26 @@ CREATE SEQUENCE seq_job_member START 1024;
 --
 
 CREATE TABLE job (
-    id            INTEGER           NOT NULL
-                                    DEFAULT NEXTVAL('seq_job'),
-    name          TEXT              NOT NULL,
-    usr__id       INTEGER           NOT NULL,
-    sched_time    TIMESTAMP	    NOT NULL
-				    DEFAULT CURRENT_TIMESTAMP,
-    priority      INT2              NOT NULL 
-                                    DEFAULT 3
-                                    CONSTRAINT ck_job__priority 
-                                      CHECK (priority BETWEEN 1 AND 5),
-    comp_time     TIMESTAMP,
-    expire        BOOLEAN           NOT NULL DEFAULT FALSE,
-    failed        BOOLEAN           NOT NULL DEFAULT FALSE,
-    tries	      INT2              NOT NULL DEFAULT 0
-                                    CONSTRAINT ck_job__tries
-				      CHECK (tries BETWEEN 0 AND 10),
-    executing     BOOLEAN           NOT NULL DEFAULT FALSE,
-    class__id     INTEGER           NOT NULL,
-    story__id     INTEGER,
-    media__id     INTEGER,
+    id                 INTEGER           NOT NULL
+                                         DEFAULT NEXTVAL('seq_job'),
+    name               TEXT              NOT NULL,
+    usr__id            INTEGER           NOT NULL,
+    sched_time         TIMESTAMP         NOT NULL
+                                         DEFAULT CURRENT_TIMESTAMP,
+    priority           INT2              NOT NULL 
+                                         DEFAULT 3
+                                         CONSTRAINT ck_job__priority 
+                                           CHECK (priority BETWEEN 1 AND 5),
+    comp_time          TIMESTAMP,
+    expire             BOOLEAN           NOT NULL DEFAULT FALSE,
+    failed             BOOLEAN           NOT NULL DEFAULT FALSE,
+    tries              INT2              NOT NULL DEFAULT 0
+                                         CONSTRAINT ck_job__tries
+                                           CHECK (tries BETWEEN 0 AND 10),
+    executing          BOOLEAN           NOT NULL DEFAULT FALSE,
+    class__id          INTEGER           NOT NULL,
+    story_instance__id INTEGER,
+    media_instance__id INTEGER,
     error_message TEXT,
     CONSTRAINT pk_job__id PRIMARY KEY (id)
 );
@@ -83,6 +83,11 @@ CREATE INDEX idx_job__name ON job(LOWER(name));
 CREATE INDEX idx_job__sched_time ON job(sched_time);
 CREATE INDEX idx_job__comp_time ON job(comp_time);
 CREATE INDEX idx_job__executing ON job(executing);
+
+CREATE INDEX fkx_story_instance__job ON job(story_instance__id)
+WHERE story_instance__id IS NOT NULL;
+CREATE INDEX fkx_media_instance__job ON job(media_instance__id)
+WHERE media_instance__id IS NOT NULL;
 
 CREATE INDEX fkx_job__job__resource ON job__resource(job__id);
 CREATE INDEX fkx_usr__job ON job (usr__id);

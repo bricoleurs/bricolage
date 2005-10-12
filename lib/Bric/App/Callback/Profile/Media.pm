@@ -302,7 +302,7 @@ sub checkin : Callback(priority => 6) {
         my $pub = Bric::App::Callback::Desk->new
           ( cb_request => $self->cb_request,
             apache_req => $self->apache_req,
-            params     => { media_pub => { $media->get_id => $media } },
+            params     => { media_pub => { $media->get_version_id => $media } },
           );
         $pub->publish;
 

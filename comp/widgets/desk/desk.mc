@@ -248,6 +248,8 @@ if (defined $objs && @$objs > $obj_offset) {
 
         my $can_edit = chk_authz($obj, EDIT, 1);
         my $aid = $obj->get_id;
+        my $vid = $obj->get_version_id;
+
         # Grab the type name.
         my $atid = $obj->get_element_type_id;
         my $oc   = ($class eq 'template') ? $obj->get_output_channel_name : '';
@@ -295,9 +297,9 @@ if (defined $objs && @$objs > $obj_offset) {
                 unless ($desk->can_publish && $checkname =~ /_delete_ids$/) {
                     $pub = $m->scomp('/widgets/profile/checkbox.mc',
                                      name  => $checkname,
-                                     id    => "$widget\_$aid",
-                                     value => $aid)
-                      . qq{<label for="$widget\_$aid">$checklabel</label>};
+                                     id    => "$widget\_$vid",
+                                     value => $vid)
+                      . qq{<label for="$widget\_$vid">$checklabel</label>};
                 }
             }
 
