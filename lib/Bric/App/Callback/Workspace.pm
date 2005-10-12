@@ -47,9 +47,11 @@ sub checkin : Callback {
         else {
             my $next = $desks{$to_id} ||= $dskpkg->lookup({ id => $to_id });
             if ($curr->get_id != $next->get_id) {
-                $curr->transfer({ to    => $next,
-                                  asset => $a });
-                log_event("${key}_moved", $a, { Desk => $next->get_name });
+                $curr->transfer({
+                    to    => $next,
+                    asset => $asset
+                });
+                log_event("${key}_moved", $asset, { Desk => $next->get_name });
             }
             $curr->save;
             $next->save;

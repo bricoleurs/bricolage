@@ -783,22 +783,23 @@ NONE
 =cut
 
 sub transfer {
-    my $self = shift;
-    my ($param) = @_;
-    my $desk          = $param->{'to'};
+    my ($self, $param) = @_;
+    my $desk = $param->{to};
     return $self if $desk->get_id == $self->get_id;
 
-    my $asset         = $param->{'asset'};
-    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp',
-                                            '_asset_grp_obj');
+    my $asset         = $param->{asset};
+    my $asset_grp_obj
+        = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp', '_asset_grp_obj');
 
     # If we don't have an asset_grp_obj there shouldn't be anything to
     # transfer!
     return unless $asset_grp_obj;
 
     # Do the pre-desk rule checks
-    return unless $desk->accept({'asset' => $asset,
-                                 'from'  => $self});
+    return unless $desk->accept({
+        asset => $asset,
+        from  => $self
+    });
 
     # If the asset was accepted and we get here, remove this asset from the
     # desk
@@ -845,16 +846,15 @@ NONE
 =cut
 
 sub accept {
-    my $self = shift;
-    my ($param) = @_;
-    my $dirty = $self->_get__dirty;
-    my $desk          = $param->{'from'};
+    my ($self, $param) = @_;
+    my $desk  = $param->{from};
     return $self if $desk and $desk->get_id == $self->get_id;
 
-    my $asset         = $param->{'asset'};
-    my $asset_grp_obj = $self->_get_grp_obj(ASSET_GRP_PKG,
-                                            'asset_grp', '_asset_grp_obj');
-    my $xfer = $self->_get('_transfer');
+    my $dirty         = $self->_get__dirty;
+    my $asset         = $param->{asset};
+    my $xfer          = $self->_get('_transfer');
+    my $asset_grp_obj
+        = $self->_get_grp_obj(ASSET_GRP_PKG, 'asset_grp', '_asset_grp_obj');
 
     # Create the asset group for this desk if one doesn't exist.
     unless ($asset_grp_obj) {

@@ -370,10 +370,9 @@ NONE
 =cut
 
 sub add_asset {
-    my $self = shift;
-    my ($asset) = @_;
-
-    $self->add_members([map {{'obj'=>$_}} @$asset]);
+    my ($self, $asset) = @_;
+    $self->add_members([ map { { obj => $_ } } @$asset ]) if @$asset;
+    return $self;
 }
 
 #------------------------------------------------------------------------------#
