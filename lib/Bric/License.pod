@@ -306,6 +306,8 @@ Friends who have spotted bugs include:
 
 =item Alexandra Gershman
 
+=item Phillip Smith
+
 =back
 
 Bricolage's translation team:

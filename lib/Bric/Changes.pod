@@ -80,7 +80,7 @@ fatal exception. This is useful for invalid dates, foe example. [David]
 
 The SOAP interface for categories now properly checks for and sets as
 appropriate the C<active> attribute on categories being created or updated.
-Reported by Paul Orrock. [David]
+Reported by Phillip Smith. [David]
 
 
 =back
