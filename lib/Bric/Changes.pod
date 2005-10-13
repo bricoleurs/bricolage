@@ -76,6 +76,13 @@ Errors thrown when setting element field values will not be displayed as error
 messages within the context of the element profile, rather than throwing a
 fatal exception. This is useful for invalid dates, foe example. [David]
 
+=item *
+
+The SOAP interface for categories now properly checks for and sets as
+appropriate the C<active> attribute on categories being created or updated.
+Reported by Paul Orrock. [David]
+
+
 =back
 
 =cut
