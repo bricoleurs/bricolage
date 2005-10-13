@@ -592,7 +592,7 @@ you're updating at this point), you can use the C<--dry-run> option to see
 what files would change without changing them. Or run C<svn diff> with the
 same arguments to see what the differences are:
 
-  % svn merge -r --dry-run 5995:HEAD \
+  % svn merge -r 5995:HEAD --dry-run \
     http://svn.bricolage.cc/bricolage/branches/rev_1_8 > test.diff
 
 =item 4
