@@ -53,7 +53,7 @@ $ENV{PGPASSWORD} = $PG->{root_pass};
 $ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
 $ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
 $ERR_FILE = catfile tmpdir, '.db.stderr';
-END { unlink $ERR_FILE }
+END { unlink $ERR_FILE if $ERR_FILE }
 
 $PGDEFDB = 'template1';
 create_db();
