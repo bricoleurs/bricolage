@@ -477,6 +477,13 @@ sub load_asset {
         $category->set_description($cdata->{description});
         $category->set_ad_string($cdata->{adstring});
         $category->set_ad_string2($cdata->{adstring2});
+        if (exists $cdata->{active}) {
+            if ($cdata->{active}) {
+                $category->activate;
+            } else {
+                $category->deactivate;
+            }
+        }
 
         # avoid complex code if path hasn't changed on update
         if (not $update or $category->get_uri ne $cdata->{path}) {

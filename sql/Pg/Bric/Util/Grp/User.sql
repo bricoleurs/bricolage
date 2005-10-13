@@ -7,6 +7,12 @@
 --
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_user_member START 1024;
+
+-- 
 -- TABLE: user_member 
 --
 
@@ -17,12 +23,6 @@ CREATE TABLE user_member (
     member__id  INTEGER        NOT NULL,
     CONSTRAINT pk_user_member__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_user_member START 1024;
 
 --
 -- INDEXES.

@@ -9,6 +9,15 @@
 -- This DDL creates the table structure for Bric::Org::Parts::Address objects.
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_addr START 1024;
+CREATE SEQUENCE seq_addr_part START 1024;
+CREATE SEQUENCE seq_addr_part_type START 1024;
+
+
+-- 
 -- TABLE: addr 
 --
 
@@ -71,13 +80,3 @@ CREATE INDEX fkx_addr__addr_part ON addr_part(addr__id);
 CREATE INDEX fkx_addr_part_type__addr_part ON addr_part(addr_part_type__id);
 CREATE INDEX fkx_addr__person_org_addr ON person_org__addr(addr__id);
 CREATE INDEX fk_person_org__pers_org_addr ON person_org__addr(person_org__id);
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_addr START 1024;
-CREATE SEQUENCE seq_addr_part START 1024;
-CREATE SEQUENCE seq_addr_part_type START 1024;
-
-

@@ -1374,7 +1374,7 @@ sub _table_info {
 
 =item $self = $self->_get_meta($param)
 
-Sets an attribute metadata value.  Keys to $param are:
+Returns an attribute metadata value.  Keys to $param are:
 
 =over 4
 

@@ -376,7 +376,7 @@ sub expire_session {
 
 =item $key_val  = reset_state($widget, $reset_key);
 
-If a widget has not yet been called and this function is called, it will set 
+If a widget has not yet been called and this function is called, it will set
 some default values for that widgets state name and state data.
 
 B<Throws:>

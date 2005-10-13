@@ -5,6 +5,12 @@
 -- $LastChangedDate$
 -- Author: David Wheeler <david@wheeler.net>
 
+--
+-- SEQUENCES
+--
+-- Use in both grp_priv and usr_priv (if we ever implement the latter).
+CREATE SEQUENCE seq_priv START 1024;
+
 
 -- 
 -- TABLE: grp_priv 
@@ -33,13 +39,6 @@ CREATE TABLE grp_priv__grp_member (
     grp__id         INTEGER           NOT NULL,
     CONSTRAINT pk_grp_priv__grp_member PRIMARY KEY (grp_priv__id,grp__id)
 );
-
---
--- SEQUENCES
---
--- Use in both grp_priv and usr_priv (if we ever implement the latter).
-CREATE SEQUENCE seq_priv START 1024;
-
 
 --
 -- INDEXES.

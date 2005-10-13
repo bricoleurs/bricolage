@@ -6,6 +6,12 @@
 -- Author: David Wheeler <david@wheeler.net>
 --
 
+-- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_alert START 1024;
+
 
 -- 
 -- TABLE: alert 
@@ -22,12 +28,6 @@ CREATE TABLE alert(
                                         DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_alert__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_alert START 1024;
 
 -- 
 -- INDEXES.

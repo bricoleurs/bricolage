@@ -958,6 +958,19 @@ C<$PATH> environment variable when searching for Apache and PostgreSQL
 installations. This is to favor servers installed manually over those included
 with the operating system. [David]
 
+=item *
+
+Added a partial index on the C<comp_time> column of the job table so as to
+speed up lookups of jobs yet to be completed. This was originally in a 1.6.7
+upgrade script, but never made it into the SQL for new installations.
+Suggested by Mark Jaroski. [David]
+
+=item *
+
+The Bulk Publish feature in the UI now only publishes the previously published
+versions of unexpired stories and media, rather than the latest version of
+expired and unexpired stories and media. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -977,6 +990,32 @@ Fixed syntax error in Bric::Util::Trans::SFTP. Reported by Kenneth Marshall.
 
 Eliminated "Subroutine Bric::App::Handler::rethrow_exception redefined"
 warning during startup with HTML::Mason 1.30. [David]
+
+=item *
+
+Fixed the C<no_site_id> parameter to Bric::Biz::Asset::Formatting when
+specified using the C<ANY()> function. [David]
+
+=item *
+
+Having a custom field beginning with a leading underscore was causing
+an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
+
+=item *
+
+Errors thrown when setting element field values will not be displayed as error
+messages within the context of the element profile, rather than throwing a
+fatal exception. This is useful for invalid dates, foe example. [David]
+
+=item *
+
+The SOAP interface for categories now properly checks for and sets as
+appropriate the C<active> attribute on categories being created or updated.
+Reported by Phillip Smith. [David]
+
+=item *
+
+Fixed database DDLs to work with PostgreSQL 8.1. [David]
 
 =back
 

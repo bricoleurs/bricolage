@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit unless y_n # __ # Hack to get cperl-mode to work properly.
+exit unless y_n
 q{
     This upgrade makes changes to the distribution jobs table in the
     database that can take a long time and be very resource intensive
@@ -21,23 +21,20 @@ q{
     Would you like to delete all existing completed distribution jobs?},
   'y';
 
-do_sql "
-  DELETE FROM member
-  WHERE  class__id IN (54, 79, 80)
-         AND id NOT IN (
-           SELECT member__id
-           FROM   job_member, job
-           WHERE  job.id = job_member.object_id
-                  AND (
-                     executing = 1
-                     OR comp_time IS NULL
-                  )
-           )",
 
- "DELETE FROM job
-  WHERE  executing = 0
-         AND (
-           comp_time IS NOT NULL
-           OR failed = 1
-         )"
+do_sql
+  "DELETE FROM job
+   WHERE  executing = 0
+          AND (
+            comp_time IS NOT NULL
+            OR failed = 1
+          )",
+
+  "DELETE FROM member
+   WHERE class__id IN (54, 79, 80)
+         AND id IN (
+             SELECT member__id
+             FROM  job_member j LEFT JOIN member m ON (j.member__id = m.id)
+             WHERE m.id IS NULL
+       )",
   ;

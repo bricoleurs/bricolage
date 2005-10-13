@@ -9,6 +9,13 @@
 -- This DDL creates the basic tables for all Bric::BC::Contact objects.
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_contact START 1024;
+CREATE SEQUENCE seq_contact_value START 1024;
+
+-- 
 -- TABLE: contact 
 --
 
@@ -55,12 +62,3 @@ CREATE INDEX fkx_contact__contact_value on contact_value(contact__id);
 
 CREATE INDEX fkx_person__p_c_val ON person__contact_value(person__id);
 CREATE INDEX fkx_contact_value__p_c_val ON person__contact_value(contact_value__id);
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_contact START 1024;
-CREATE SEQUENCE seq_contact_value START 1024;
-
-

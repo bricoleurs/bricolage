@@ -9,6 +9,13 @@
 -- suggestions.
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_site_member START 1024;
+
+
+-- 
 -- TABLE: site 
 --
 
@@ -44,10 +51,3 @@ CREATE UNIQUE INDEX udx_site__name ON site(LOWER(name));
 CREATE UNIQUE INDEX udx_site__domain_name ON site(LOWER(domain_name));
 CREATE INDEX fkx_site__site_member ON site_member(object_id);
 CREATE INDEX fkx_member__site_member ON site_member(member__id);
-
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_site_member START 1024;

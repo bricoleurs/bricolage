@@ -7,6 +7,12 @@
 --
 
 -- 
+-- Sequences.
+--
+CREATE SEQUENCE seq_server_type START 1024;
+CREATE SEQUENCE seq_dest_member START 1024;
+
+-- 
 -- TABLE: server_type 
 --
 
@@ -49,12 +55,6 @@ CREATE TABLE dest_member (
     CONSTRAINT pk_dest_member__id PRIMARY KEY (id)
 );
 
-
--- 
--- Sequences.
---
-CREATE SEQUENCE seq_server_type START 1024;
-CREATE SEQUENCE seq_dest_member START 1024;
 
 -- 
 -- Indexes.

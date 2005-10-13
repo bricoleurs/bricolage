@@ -6,6 +6,11 @@
 -- Author: David Wheeler <david@wheeler.net>
 --
 
+-- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_alert_type_rule START  1024;
 
 -- 
 -- TABLE: alert_type_rule
@@ -20,12 +25,6 @@ CREATE TABLE alert_type_rule(
     value             VARCHAR(256)    NOT NULL,
     CONSTRAINT pk_alert_type_rule__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_alert_type_rule START  1024;
 
 -- 
 -- INDEXS.

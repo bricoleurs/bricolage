@@ -6,6 +6,12 @@
 -- Author: David Wheeler <david@wheeler.net>
 --
 
+-- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_alert_type START 1024;
+
 
 -- 
 -- TABLE: alert_type 
@@ -47,13 +53,6 @@ CREATE TABLE alert_type__usr__contact(
     usr__id           INTEGER           NOT NULL,
     CONSTRAINT pk_alert_type__usr__contact PRIMARY KEY (alert_type__id, usr__id, contact__id)
 );
-
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_alert_type START 1024;
 
 
 -- 
