@@ -9,6 +9,12 @@
 -- This DDL creates the table structure for Bric::Org objects.
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_org START 1024;
+
+-- 
 -- TABLE: org 
 --
 CREATE TABLE org (
@@ -33,11 +39,3 @@ CREATE TABLE org (
 -- INDEXES.
 --
 CREATE INDEX idx_org__name ON org (LOWER(name));
-
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_org START 1024;
-

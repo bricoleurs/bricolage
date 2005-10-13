@@ -7,6 +7,12 @@
 --
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_alert_type_member START 1024;
+
+-- 
 -- TABLE: alert_type_member 
 --
 
@@ -17,12 +23,6 @@ CREATE TABLE alert_type_member (
     member__id  NUMERIC(10,0)  NOT NULL,
     CONSTRAINT pk_alert_type_member__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_alert_type_member START 1024;
 
 --
 -- INDEXES.

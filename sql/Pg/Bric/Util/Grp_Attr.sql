@@ -73,7 +73,7 @@ CREATE TABLE attr_grp_val (
 
 CREATE TABLE attr_grp_meta (
     id        NUMERIC(10)     NOT NULL
-                              DEFAULT NEXTVAL('seq_grp_meta'),
+                              DEFAULT NEXTVAL('seq_attr_grp_meta'),
     attr__id  NUMERIC(10)     NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),

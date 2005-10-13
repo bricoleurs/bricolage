@@ -9,6 +9,13 @@
 -- suggestions.
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_person START 1024;
+CREATE SEQUENCE seq_person_member START 1024;
+
+-- 
 -- TABLE: person 
 --
 
@@ -52,13 +59,3 @@ CREATE INDEX idx_person__mname ON person(LOWER(mname));
 
 CREATE INDEX fkx_person__person_member ON person_member(object_id);
 CREATE INDEX fkx_member__person_member ON person_member(member__id);
-
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_person START 1024;
-CREATE SEQUENCE seq_person_member START 1024;
-
-

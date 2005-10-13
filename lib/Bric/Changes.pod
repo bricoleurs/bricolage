@@ -82,6 +82,9 @@ The SOAP interface for categories now properly checks for and sets as
 appropriate the C<active> attribute on categories being created or updated.
 Reported by Phillip Smith. [David]
 
+=item *
+
+Fixed database DDLs to work with PostgreSQL 8.1. [David]
 
 =back
 

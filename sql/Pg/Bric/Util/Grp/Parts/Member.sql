@@ -21,10 +21,12 @@
 --
 
 -- -----------------------------------------------------------------------------
--- Sequences
 
--- Unigue IDs for the member table
+-- 
+-- SEQUENCES.
+--
 CREATE SEQUENCE seq_member START  1024;
+CREATE SEQUENCE seq_story_member START 1024;
 
 -- -----------------------------------------------------------------------------
 -- Table: member
@@ -67,12 +69,6 @@ CREATE TABLE story_member (
     member__id  NUMERIC(10,0)  NOT NULL,
     CONSTRAINT pk_story_member__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_story_member START 1024;
 
 --
 -- INDEXES.

@@ -7,6 +7,11 @@
 --
 
 -- 
+-- Sequences.
+--
+CREATE SEQUENCE seq_server START 1024;
+
+-- 
 -- TABLE: server 
 --
 CREATE TABLE server(
@@ -26,11 +31,6 @@ CREATE TABLE server(
     CONSTRAINT pk_server__id PRIMARY KEY (id)
 );
 
-
--- 
--- Sequences.
---
-CREATE SEQUENCE seq_server START 1024;
 
 -- 
 -- Indexes.

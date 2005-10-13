@@ -26,7 +26,7 @@ CREATE SEQUENCE seq_media_container_tile START  1024;
 
 CREATE TABLE story_container_tile (
     id                   NUMERIC(10,0)   NOT NULL
-                                         DEFAULT NEXTVAL('seq_container_tile'),
+                                         DEFAULT NEXTVAL('seq_story_container_tile'),
     name                 VARCHAR(64)     NOT NULL,
     key_name             VARCHAR(64)     NOT NULL,
     description          VARCHAR(256),

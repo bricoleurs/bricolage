@@ -7,6 +7,12 @@
 --
 
 -- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_org_member START 1024;
+
+-- 
 -- TABLE: org_member 
 --
 
@@ -17,12 +23,6 @@ CREATE TABLE org_member (
     member__id  NUMERIC(10,0)  NOT NULL,
     CONSTRAINT pk_org_member__id PRIMARY KEY (id)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_org_member START 1024;
 
 --
 -- INDEXES.

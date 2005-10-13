@@ -6,6 +6,11 @@
 -- Author: David Wheeler <david@wheeler.net>
 --
 
+-- 
+-- SEQUENCES.
+--
+
+CREATE SEQUENCE seq_alerted START  1024;
 
 -- 
 -- TABLE: alerted 
@@ -32,12 +37,6 @@ CREATE TABLE alerted__contact_value(
     sent_time               TIMESTAMP,
     CONSTRAINT pk_alerted__contact_value PRIMARY KEY (alerted__id, contact__id, contact_value__value)
 );
-
--- 
--- SEQUENCES.
---
-
-CREATE SEQUENCE seq_alerted START  1024;
 
 -- 
 -- INDEXES.
