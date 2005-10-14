@@ -40,6 +40,14 @@ The Bulk Publish feature in the UI now only publishes the previously published
 versions of unexpired stories and media, rather than the latest version of
 expired and unexpired stories and media. [David]
 
+=item *
+
+If a story is passed to the C<burn_another()> or C<preview_another()> burner
+methods that is the same as the story currently being burned, it will no
+longer be published or previewed again by C<burn_another()> or
+C<preview_another()>, thus mitigating the possibility of infinite loops.
+[David]
+
 =back
 
 =head2 Bug Fixes
