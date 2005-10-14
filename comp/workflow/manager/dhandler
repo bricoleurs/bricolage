@@ -142,19 +142,20 @@ push @fields, 'site'
    context => "Workflow | &quot;$wf_name&quot; | Find $pl_name->{$type}"
 &>
 
-<& '/widgets/search/search.mc',
-   'object' => $type,
-   'type'   => $type,
-   'wf'     => $wf,
+<& /widgets/search/search.mc,
+   object    => $type,
+   type      => $type,
+   wf        => $wf,
+   state_key => $type . $work_id,
 &>
-
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
-<& '/widgets/wrappers/sharky/table_top.mc', 
+<& '/widgets/wrappers/sharky/table_top.mc',
     caption => '%n Found',
     object  => $type
 &>
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
+    state_key => $type . $work_id,
     sortBy    => $sort_by->{$type},
     fields    => \@fields,
     alter     => $alter,

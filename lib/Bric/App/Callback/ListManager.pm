@@ -8,14 +8,14 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:msg :aref);
+use Bric::App::Util qw(:msg :aref :pkg);
 
 sub delete : Callback {
     my $self = shift;
 
-    my $ids = mk_aref($self->value);
-    my $pkg = get_state_data($self->class_key, 'pkg_name');
-    my $obj_key = get_state_data($self->class_key, 'object');
+    my $ids     = mk_aref($self->value);
+    my $obj_key = get_state_name($self->class_key);
+    my $pkg     = get_package_name($obj_key);
 
     foreach my $id (@$ids) {
         my $obj = $pkg->lookup({'id' => $id});
@@ -35,8 +35,8 @@ sub deactivate : Callback {
     my $self = shift;
 
     my $ids = mk_aref($self->value);
-    my $pkg = get_state_data($self->class_key, 'pkg_name');
-    my $obj_key = get_state_data($self->class_key, 'object');
+    my $obj_key = get_state_name($self->class_key);
+    my $pkg     = get_package_name($obj_key);
 
     foreach my $id (@$ids) {
         my $obj = $pkg->lookup({'id' => $id});
@@ -53,30 +53,41 @@ sub deactivate : Callback {
 }
 
 sub sortBy : Callback {
-    my $self = shift;
-    my $value = $self->value;
+    my $self    = shift;
+    my $value   = $self->value;
+    my $widget  = $self->class_key;
+    my $obj_key = get_state_name($widget);
+    my $state   = get_state_data($widget, $obj_key);
 
     # Leading '-' means reverse the sort
-    if ($value =~ s/^-//) {
-        set_state_data('listManager', 'sortOrder', 'descending');
-    } else {
-        set_state_data('listManager', 'sortOrder', 'ascending');
-    }
-    set_state_data('listManager', 'sortBy', $value);
+    $state->{sort_order} = $value =~ s/^-// ? 'descending' : 'ascending';
+    $state->{sort_by}    = $value;
+
+    set_state_data($widget, $obj_key, $state);
 }
 
 # set offset from beginning record in @sort_objs at which array slice begins
 sub set_offset : Callback {
-    my $self = shift;
-    set_state_data($self->class_key, 'pagination', 1);
-    set_state_data($self->class_key, 'offset', $self->value);
+    my $self    = shift;
+    my $widget  = $self->class_key;
+    my $obj_key = get_state_name($widget);
+    my $state   = get_state_data($widget, $obj_key);
+
+    $state->{offset} = $self->value;
+    $state->{pagination} = 1;
+    set_state_data($$widget, $obj_key, $state);
 }
 
 # call back to display all results
 sub show_all_records : Callback {
-    my $self = shift;
-    set_state_data($self->class_key, 'pagination', 0);
-    set_state_data($self->class_key, 'show_all', 1);
+    my $self    = shift;
+    my $widget  = $self->class_key;
+    my $obj_key = get_state_name($widget);
+    my $state   = get_state_data($widget, $obj_key);
+
+    $state->{show_all}   = 1;
+    $state->{pagination} = 0;
+    set_state_data($$widget, $obj_key, $state);
 }
 
 

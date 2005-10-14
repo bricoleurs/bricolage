@@ -1,4 +1,3 @@
-%#-- Begin HTML --#
 <%perl>
 # Make sure we've got an ID.
 redirect('/admin/manager/pref') unless defined $id;
@@ -82,19 +81,13 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 
 </%perl>
 </form>
-
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
-%#-- End HTML --#
-
-%#-- Once Section --#
 <%once>;
 my $class = 'Bric::Util::Pref';
 my $widget = 'profile';
 my $type = 'pref';
 my $disp = get_disp_name($type);
 </%once>
-
-%#-- Args Section --#
 <%args>
 $id => undef
 </%args>

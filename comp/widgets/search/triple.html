@@ -1,32 +1,28 @@
-%#--- Arguments ---#
-
 <%args>
 $widget
 $object
 $disp_field
 $groupList
+$state
 </%args>
-
 <form action="<% $r->uri %>" method="post">
-
 <& '/widgets/wrappers/sharky/table_top.mc',
               caption => $lang->maketext('Search'),
-              search  => 1 
+              search  => 1,
 &>
-
-<& 'substr.html',
-        widget      => $widget,
-        object      => $object,
-        disp_field  => $disp_field
+<& substr.html,
+   widget     => $widget,
+   object     => $object,
+   disp_field => $disp_field,
+   state      => $state,
 &>
-<& 'alpha.html',
-        widget      => $widget,
-        object      => $object,
-        disp_field  => $disp_field
+<& alpha.html,
+   widget     => $widget,
+   object     => $object,
+   disp_field => $disp_field,
+   state      => $state,
 &>
-
 % $m->out($groupList);
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-%#--- Log History ---#
+<& /widgets/wrappers/sharky/table_bottom.mc &>
 </form>
 

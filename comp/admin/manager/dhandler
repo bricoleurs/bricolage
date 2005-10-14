@@ -8,7 +8,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 my $obj_key = $type;
 my ($groupList, $constrain);
 my $behavior = $def->{$type}{behavior};
-my $searchType = "dual";
+my $searchType = 'dual';
 # Offer a list of groups to choose from, if this is a group manager.
 if ($type eq 'grp') {
     # Set the constraint.

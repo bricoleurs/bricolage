@@ -1,19 +1,16 @@
-%#--- Arguments ---#
-
 <%args>
 $widget
 $object
 $disp_field
 $use_form_tag
 $wf
+$state
 </%args>
-
-%#--- Initialization ---#
 <%init>
 my $agent = detect_agent();
 my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
 
-my $advanced_search = get_state_data($widget, 'advanced_search');
+my $advanced_search = $state->{advanced_search};
 $advanced_search = get_pref('Default Search')
   unless defined $advanced_search;
 my $asset_opts = $advanced_search ? {
@@ -60,18 +57,18 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 % unless ($advanced_search) {
 
-    <& '/widgets/profile/text.mc', 
+    <& '/widgets/profile/text.mc',
         name    => $widget.'|simple',
-        value   => get_state_data($widget, 'simple') || '',
+        value   => $state->{simple} || '',
         useTable => 0 &>
 
 %   # This hidden field is required to make the form submit when the user hits
 %   # the "enter" key.
-    <& '/widgets/profile/hidden.mc', 
+    <& '/widgets/profile/hidden.mc',
         name    => $widget.'|media_cb',
         value   => 'Search' &>
 
-    <& '/widgets/profile/button.mc', 
+    <& '/widgets/profile/button.mc',
         disp    => $lang->maketext('Search'),
         widget  => $widget,
         cb      => 'media_cb',
@@ -83,26 +80,26 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <& /widgets/profile/text.mc,
         disp    => $lang->maketext('Title'),
         name    => $widget.'|name',
-        value   => get_state_data($widget, 'name') || '' &>
+        value   => $state->{name} || '' &>
     
     <& /widgets/profile/text.mc,
         disp    => $lang->maketext('URI'),
         name    => $widget.'|uri',
-        value   => get_state_data($widget, 'uri') || '' &>
+        value   => $state->{uri} || '' &>
         
-    <& /widgets/profile/text.mc, 
+    <& /widgets/profile/text.mc,
         disp    => $lang->maketext('Text to search'),
         name    => $widget.'|data_text',
-        value   => get_state_data($widget, 'data_text') || '' &>
+        value   => $state->{data_text} || '' &>
 
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Type'),
         name    => $widget.'|element_type_id',
-        value   => get_state_data($widget, 'element_type_id') || '',
+        value   => $state->{element_type_id} || '',
         options => $asset_opts,
         localize => 0 &>
 
-% my $active_checked = get_state_data($widget, 'active') ? 1 : 0;
+% my $active_checked = $state->{active} ? 1 : 0;
     <& /widgets/profile/checkbox.mc,
         disp     => $lang->maketext('Include deleted'),
         name     => $widget . '|active',
@@ -120,7 +117,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Site'),
         name    => $widget.'|site_id',
-        value   => get_state_data($widget, 'site_id') || '',
+        value   => $state->{site_id} || '',
         options => [ [ '' => $lang->maketext('All Sites') ],
                      map { [$_->get_id => $_->get_name] } @$sites ],
         localize => 0 &>
@@ -129,23 +126,23 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <div class="row">
         <div class="label"><% $lang->maketext('Cover Date') %>:</div>
         <div class="input">
-                  <& '/widgets/select_time/select_time.mc', 
+                  <& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|cover_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'cover_date_start')||'',
+                     def_date   => $state->{cover_date_start} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  &mdash;<& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|cover_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'cover_date_end')||'',
+                     def_date   => $state->{cover_date_end} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
@@ -154,23 +151,23 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <div class="row">
         <div class="label"><% $lang->maketext('Publish Date') %>:</div>
         <div class="input">
-                  <& '/widgets/select_time/select_time.mc', 
+                  <& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|publish_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'publish_date_start')||'',
+                     def_date   => $state->{publish_date_start} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  &mdash;<& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|publish_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'publish_date_end')||'',
+                     def_date   => $state->{publish_date_end} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
@@ -179,23 +176,23 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
     <div class="row">
         <div class="label"><% $lang->maketext('Expire Date') %>:</div>
         <div class="input">
-                  <& '/widgets/select_time/select_time.mc', 
+                  <& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|expire_date_start",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'expire_date_start')||'',
+                     def_date   => $state->{expire_date_start} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>
-                  &mdash;<& '/widgets/select_time/select_time.mc', 
+                  &mdash;<& '/widgets/select_time/select_time.mc',
                      base_name  => "$widget|expire_date_end",
                      indent     => 1,
                      no_hour    => 1,
                      no_min     => 1,
                      repopulate => 0,
-                     def_date   => get_state_data($widget, 'expire_date_end')||'',
+                     def_date   => $state->{expire_date_end} ||'',
                      compact    => 1,
                      style      => 'inline',
                   &>

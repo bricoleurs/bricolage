@@ -19,39 +19,43 @@ sub substr : Callback( priority => 7 ) {
     my $self = shift;
     return if $self->apache_req->pnotes(CLASS_KEY . '.no_new_search');
 
-    $self->_init_state;
-    my $param = $self->params;
-
+    my $widget  = $self->class_key;
+    my $param   = $self->params;
     my $val_fld = $self->class_key.'|value';
-    my $crit = $param->{$val_fld} ? (FULL_SEARCH ? '%' : '')
-      . $param->{$val_fld} . '%' : '%';
+    my $crit    = $param->{$val_fld}
+        ? (FULL_SEARCH ? '%' : '') . $param->{$val_fld} . '%'
+        : '%';
+
+    my $object  = get_state_name($widget);
+    my $state   = get_state_data($widget => $object);
 
     # Set the search criterion and append a '%' to do a prefix search.
-    set_state_data($self->class_key, 'criterion', $crit);
+    $state->{criterion} = $crit;
 
     # Set the value that will repopulate the search box and clear the alpha
-    set_state_data($self->class_key, 'crit_field', $param->{$val_fld});
-    set_state_data($self->class_key, 'crit_letter', '');
-
+    $state->{crit_field}  = $param->{$val_fld};
+    $state->{crit_letter} = '';
+    set_state_data($widget, $object => $state);
 }
 
 sub alpha : Callback {
-    my $self = shift;
-    $self->_init_state;
-
-    my $crit = $self->value ? $self->value.'%' : '';
+    my $self    = shift;
+    my $widget  = $self->class_key;
+    my $crit    = $self->value ? $self->value . '%' : '';
+    my $object  = get_state_name($widget);
+    my $state   = get_state_data($widget => $object);
 
     # Add a '%' to create a prefix search by first letter.
-    set_state_data($self->class_key, 'criterion', $crit);
+    $state->{criterion} = $crit;
 
     # Clear the substr search box and set the letter selector
-    set_state_data($self->class_key, 'crit_letter', $self->value);
-    set_state_data($self->class_key, 'crit_field', '');
+    $state->{crit_letter} = $self->value;
+    $state->{crit_field}  = '';
+    set_state_data($widget, $object => $state);
 }
 
 sub story : Callback {
     my $self = shift;
-    $self->_init_state;
 
     my (@field, @crit);
 
@@ -66,13 +70,16 @@ sub story : Callback {
     # Display no results for an empty search.
     return unless @field;
 
-    set_state_data($self->class_key, 'criterion', \@crit);
-    set_state_data($self->class_key, 'field', \@field);
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+    $state->{criterion} = \@crit;
+    $state->{field}     = \@field;
+    set_state_data($widget, $object => $state);
 }
 
 sub media : Callback {
     my $self = shift;
-    $self->_init_state;
 
     my (@field, @crit);
 
@@ -85,13 +92,16 @@ sub media : Callback {
     # Display no results for an empty search.
     return unless @field;
 
-    set_state_data($self->class_key, 'criterion', \@crit);
-    set_state_data($self->class_key, 'field', \@field);
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+    $state->{criterion} = \@crit;
+    $state->{field}     = \@field;
+    set_state_data($widget, $object => $state);
 }
 
 sub template : Callback {
     my $self = shift;
-    $self->_init_state;
 
     my (@field, @crit);
 
@@ -104,13 +114,16 @@ sub template : Callback {
     # Display no results for an empty search.
     return unless @field;
 
-    set_state_data($self->class_key, 'criterion', \@crit);
-    set_state_data($self->class_key, 'field', \@field);
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+    $state->{criterion} = \@crit;
+    $state->{field}     = \@field;
+    set_state_data($widget, $object => $state);
 }
 
 sub generic : Callback {
     my $self = shift;
-    $self->_init_state;
     my $param = $self->params;
 
     # Callback in 'leech' mode.  Any old page can send search criteria here
@@ -147,84 +160,99 @@ sub generic : Callback {
         $i--;
     }
 
-    set_state_data($self->class_key, 'criterion', $crit);
-    set_state_data($self->class_key, 'field', $fields);
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+    $state->{criterion} = $crit;
+    $state->{field}     = $fields;
+    set_state_data($widget, $object => $state);
 }
 
 sub clear : Callback {
     my $self = shift;
-    $self->_init_state;
-
-    clear_state($self->class_key);
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    set_state_data($widget, $object => {});
 }
 
 sub set_advanced : Callback {
-    my $self = shift;
-    $self->_init_state;
-
-    set_state_data($self->class_key, 'advanced_search', 1);
+    shift->_set_advanced(1);
 }
 
 sub unset_advanced : Callback {
-    my $self = shift;
-    $self->_init_state;
-
-    set_state_data($self->class_key, 'advanced_search', 0);
+    shift->_set_advanced(0);
 }
 
 ###
 
+sub _set_advanced {
+    my ($self, $val) = @_;
+    my $widget = $self->class_key;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+    $state->{advanced_search} = $val;
+    set_state_data($widget, $object => $state);
+}
+
 sub _build_fields {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
-    my $param = $self->params;
+    my $param  = $self->params;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
 
     foreach my $f (@$add) {
-	my $v = $param->{$self->class_key."|$f"};
+        my $v = $param->{$self->class_key."|$f"};
 
-	# Save the value so we can repopulate the form.
-	set_state_data($self->class_key, $f, $v);
+        # Save the value so we can repopulate the form.
+        $state->{$f} = $v;
 
-	# Skip it if it's blank
-	next unless $v;
+        # Skip it if it's blank
+        next unless defined $v && $v ne '';
 
-	push @$field, $f;
-	push @$crit, (FULL_SEARCH ? '%' : '') . $v . '%';
+        push @$field, $f;
+        push @$crit, (FULL_SEARCH ? '%' : '') . $v . '%';
     }
+    set_state_data($widget, $object => $state);
 };
 
 sub _build_id_fields {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
-    my $param = $self->params;
+    my $param  = $self->params;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
 
     foreach my $f (@$add) {
         my $v = $param->{$self->class_key."|$f"};
 
         # Save the value so we can repopulate the form.
-        set_state_data($self->class_key, $f, $v);
+        $state->{$f} = $v;
 
         # Skip it if it's blank
-        next unless $v =~ /^\d+$/;
+        next unless defined $v && $v =~ /^\d+$/;
 
         push @$field, $f;
         push @$crit, $v;
     }
+    set_state_data($widget, $object => $state);
 };
 
 sub _build_bool_fields {
     my ($self, $field, $crit, $add) = @_;
     my $widget = $self->class_key;
-    my $param = $self->params;
+    my $param  = $self->params;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
 
     foreach my $f (@$add) {
         my $v = $param->{$self->class_key."|$f"};
 
         # Save the value so we can repopulate the form.
-        set_state_data($self->class_key, $f, $v);
+        $state->{$f} = $v;
 
         # Skip it if it's not boolean
-        next unless $v =~ /^(t|f|tf)$/;
+        next unless defined $v && $v =~ /^(?:t|f|tf)$/;
 
         # The value 'tf' is a hack meaning 't' or 'f'
         # (in particular to allow returning 'active' and 'inactive' stories/media)
@@ -233,44 +261,37 @@ sub _build_bool_fields {
         push @$field, $f;
         push @$crit, $v;
     }
+    set_state_data($widget, $object => $state);
 };
 
 sub _build_date_fields {
     my ($widget, $param, $field, $crit, $add) = @_;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
 
     foreach my $f (@$add) {
-	my $v_start = $param->{$widget."|${f}_start"};
-	my $v_end   = $param->{$widget."|${f}_end"};
+        my $v_start = $param->{$widget."|${f}_start"};
+        my $v_end   = $param->{$widget."|${f}_end"};
 
         # HACK. Adjust the end date to be inclusive by bumping it up
         # to 23:59:59.
         $v_end =~ s/00:00:00$/23:59:59/ if $v_end;
 
-	# Save the value so we can repopulate the form.
-	set_state_data($widget, $f.'_start', $v_start);
-	set_state_data($widget, $f.'_end', $v_end);
+        # Save the value so we can repopulate the form.
+        $state->{"$f\_start"} = $v_start;
+        $state->{"$f\_end"}   = $v_end;
 
-	if ($v_start) {
-	    push @$field, $f.'_start';
-	    push @$crit,  $v_start;
-	}
+        if ($v_start) {
+            push @$field, "$f\_start";
+            push @$crit,  $v_start;
+        }
 
-	if ($v_end) {
-	    push @$field, $f.'_end';
-	    push @$crit,  $v_end;
-	}
+        if ($v_end) {
+            push @$field, "$f\_end";
+            push @$crit,  $v_end;
+        }
     }
-};
-
-sub _init_state {
-    my $self = shift;
-    my $r = $self->apache_req;
-
-    # Set the uri for use in expiring the search criteria.
-    set_state_data($self->class_key, 'crit_set_uri', $r->uri);
-
-    # reset search paging offset to start at the first record
-    set_state_data('listManager', 'offset', undef);
+    set_state_data($widget, $object => $state);
 };
 
 1;

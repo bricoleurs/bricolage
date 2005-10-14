@@ -5,12 +5,10 @@
     </a>
 </div>
 % }
-
-
 <!-- table header display -->
 <table class="listManager">
   <tr>
-<%perl>
+<%perl>;
   my $field_disp = shift @$data;
   # Output the table header.
   foreach my $i (0..$#{$fields}) {
@@ -23,7 +21,7 @@
           $sort_col = $i;
           $sort_sign = '-' if ($userSort && $sortOrder !~ /^descending$/);
       }
-      
+
       $m->out(qq{    <th$class>});
 
       # Only make a link if user sorting is enabled.
@@ -32,7 +30,7 @@
       } else {
           $m->out($disp);
       }
-      
+
       $m->out("</th>\n");
   }
 
@@ -42,7 +40,6 @@
   }
 </%perl>
   </tr>
-
 %# Output the rows of data
 % my $first;
 % # here's where the rows diplayed are limited
@@ -50,9 +47,9 @@
 % foreach my $r (0..$#{$data}) {
 % my $o_id = shift @{$data->[$r]};
 % my $class = qq{ class="} . ($i % 2 ? "odd" : "even") . qq{"};
-% $i++; 
+% $i++;
   <tr<% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
-<%perl>
+<%perl>;
   # Output for each field.
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
@@ -69,7 +66,6 @@
 %# End foreach my $o (@$objs)
   </tr>
 % }
-
 % # If there were no results (and thus none of the above is output) tell the user
 % if ($rows == 1) {
 %   my $message;
@@ -77,12 +73,8 @@
     <tr><td colspan="<% scalar @$fields %>"><% $message %>&nbsp;</td></tr>
 % }
 </table>
-
 % $m->comp('.footer', pagination => $pagination, cols => $cols)
 %    if $pagination->{pages} > 1;
-
-%#--- END HTML ---#
-
 <%once>;
 # Returns a link to the page specified with the given label. Used by .footer.
 my $page_link = sub {
@@ -93,12 +85,11 @@ my $page_link = sub {
       $lang->maketext($label) . q{</a> };
 };
 </%once>
-
-%#--- Arguments ---#
-
 <%args>
 $widget
+$object
 $fields
+$state
 $data
 $rows
 $cols
@@ -110,22 +101,16 @@ $empty_search
 $pkg => undef
 $pagination => {}
 </%args>
-
-%#--- Initialization ---#
-
 <%init>;
 my $url       = $r->uri;
-my $object    = get_state_data($widget, 'object');
-my $sortBy    = get_state_data($widget, 'sortBy')
-  || get_state_data($widget, 'defaultSort');
-my $sortOrder = get_state_data($widget, 'sortOrder') || '';
+my $sortBy    = $state->{sort_by} || $state->{default_sort};
+my $sortOrder = $state->{sort_order};
 my $sort_col  = 0;
 
 # Get the real values if these are code refs.  Handle profile and select
 # on a row by row basis.
 $addition = &$addition($pkg) if ref $addition eq 'CODE';
 </%init>
-
 <%def .footer>
 <%args>
 $pagination
@@ -165,8 +150,8 @@ unless ($pagination->{pagination}) {
                                         $pagination->{limit}, $url, 'Next Page'));
     }
     $m->out(qq{</div>});
-
-    $m->out(qq{<div class="all"><a href="$url?listManager|show_all_records_cb=1">Show All</a></div>});
+    $m->print(qq{<div class="all"><a href="$url?listManager|show_all_records_cb=1">},
+            $lang->maketext('Show All'), '</a></div>');
 }
 $m->out(qq{</div>});
 </%init>

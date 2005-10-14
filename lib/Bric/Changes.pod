@@ -543,6 +543,13 @@ over time, as well as help to protect currently checked-out documents from
 being mysteriously removed from workflow by scheduled publishes being
 executed. Sponsored by Freerun Technologies. [David]
 
+=item *
+
+Searches now are remembered for each manager in the UI for as long as a
+session lasts. So if you performa a search for element types, and then do a
+search for stories or output channels, the last results you saw in the element
+type manager will be there again when you return to it. [David]
+
 =back
 
 =cut

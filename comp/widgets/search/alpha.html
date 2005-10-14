@@ -12,33 +12,20 @@
 %   }
 % }
 % if ($let eq '%') {
-[<span title="Show all"><%$lang->maketext('All')%></span>]
+[<span title="<% $lang->maketext('Show all') %>"><%$lang->maketext('All')%></span>]
 % } else {
 [<a href="<% $url %>?search|alpha_cb=<% '%25' %>" title="Show all"><%$lang->maketext('All')%></a>]
 % }
     </div>
 </div>
 </div>
-%#--- END HTML ---#
-
-%#--- Arguments ---#
-
 <%args>
 $widget
+$state
 </%args>
-
-%#--- Initialization ---#
-
 <%init>
-
-if (Bric::Util::Pref->lookup_val( "Show Alpha Search" ) == 0) { return };
-
+return unless Bric::Util::Pref->lookup_val( 'Show Alpha Search' );
 my $url = $r->uri;
-
-my $let = get_state_data($widget, 'crit_letter') || '';
-
+my $let = $state->{crit_letter} || '';
 </%init>
-
-%#--- Log History ---#
-
 

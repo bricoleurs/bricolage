@@ -14,7 +14,10 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-<& '/widgets/listManager/listManager.mc' object => $object, sortBy => $sortBy &>
+  <& /widgets/listManager/listManager.mc
+     object => $object,
+     sortBy => $sortBy
+  &>
 
 =head1 DESCRIPTION
 
@@ -24,14 +27,21 @@ Required arguments to this widget:
 
 =over 4
 
-=item *
+=item object
 
-object
-
-A short name for the object type to display,  eg 'Person' translates to the
-package name 'Bric::Biz::Person'.   This mapping is maintained in the 'class'
-table, where the short name is the 'disp_name' column and the package name is 
+A short name for the object type to display, eg 'Person' translates to the
+package name 'Bric::Biz::Person'. This mapping is maintained in the 'class'
+table, where the short name is the 'disp_name' column and the package name is
 in the 'pkg_name' column.
+
+=item state_key
+
+The short name used to look in the session data for search and pagination data
+in the search and listManager widgets. It defaults to the same value as the
+C<object> parameter, so it should usually be the right thing. But sometimes
+you need something different, such as when two story workflows both search for
+and list story objects, but should store their search data separately from
+each other.
 
 =back
 
@@ -39,232 +49,199 @@ Optional arguments to this widget:
 
 =over 4
 
-=item *
+=item objs
 
-objs
+An anonymous array of objects. If you pass these in, listManager won't bother
+to call list() to look them up.
 
-An anonymous array of objects. If you pass these in, listManager won't bother to
-call list() to look them up.
+=item style
 
-=item *
-
-style
-
-As with other widgets the 'style' argument provides the ability to display 
-itself in a variety of ways.  Currently the only style available is 'full_list'
-which produces a non-scrolling list of all the elements.  Possible styles that
-could be developed are paged_list, scrolled_list, etc.  This widget will 
+As with other widgets the 'style' argument provides the ability to display
+itself in a variety of ways. Currently the only style available is 'full_list'
+which produces a non-scrolling list of all the elements. Possible styles that
+could be developed are paged_list, scrolled_list, etc. This widget will
 default to 'full_list'.
 
-=item *
+=item sortBy
 
-sortBy
-
-Provide the a default column by which to sort all the elements of the list.  If
+Provide the a default column by which to sort all the elements of the list. If
 this argument is not passed the listManager will display the elements in the
 order they were returned by the objects 'list' function.
 
-=item *
+=item def_sort_field
 
-def_sort_field
-
-Use this only if you you don't pass sortBy and if you know that the objects will
-be returned from list (or are stored in the objs argument -- see below) in an
-order different than the default that will be returned by inspecting
+Use this only if you you don't pass sortBy and if you know that the objects
+will be returned from list (or are stored in the objs argument -- see below)
+in an order different than the default that will be returned by inspecting
 my_meths(). For example, if normally my_meths() says that the objects are
 sorted by name, but you're passing them via the objs argument in a different
 order, then specify which field defines that order here.
 
-=item *
+=item def_sort_order
 
-def_sort_order
+Use this when results should be sorted either ascending or descending by
+default. Default is undefined, which has no effect. Possible values are
+'ascending' or 'decending'.
 
-Use this when results should be sorted either ascending or descending by default.
-Default is undefined, which has no effect.  Possible values are 'ascending' or
-'decending'.
+=item userSort
 
-=item *
+A flag controlling whether the user is allowed to resort the list based on the
+column headings. The default is 1 (true) or that the user can resort the list.
 
-userSort
-
-A flag controlling whether the user is allowed to resort the list based on the 
-column headings.  The default is 1 (true) or that the user can resort the list.
-
-=item *
-
-profile
+=item profile
 
 A 'profile' is a generic term for any action that applies to one and only on
-object in the list.  It is a labeled link that typically points to an edit page.
-This argument takes an array ref of a label, URL and query value.  The default 
-is:
+object in the list. It is a labeled link that typically points to an edit
+page. This argument takes an array ref of a label, URL and query value. The
+default is:
 
-['Edit', '', "id=$o_id"]
+  ['Edit', '', "id=$o_id"]
 
-Which means the label is 'Edit', with a null link and the id parameter set to 
-the current objects ID.  Only the label argument needs to be filled in.  In 
-the 'full_list' style this link is followed via a GET request.  If the value is 
-a list of lists, then multiple profile links will be displayed:
+Which means the label is 'Edit', with a null link and the id parameter set to
+the current objects ID. Only the label argument needs to be filled in. In the
+'full_list' style this link is followed via a GET request. If the value is a
+list of lists, then multiple profile links will be displayed:
 
-[['Edit', ''], ['Update', '']]
+  [['Edit', ''], ['Update', '']]
 
 will display two links labeled 'Edit' and 'Update'.
 
 This can also take a code reference that will return the appropriate array ref
-when called.  It will be passed the object ref on each row.
+when called. It will be passed the object ref on each row.
 
-=item *
+=item select
 
-select
+A 'select' is a generic term for any action that applies to one or many
+objects in the list. In the 'full_list' style it is represented as a checkbox
+next to each object. This argument takes an array ref of a label, a callback,
+the callback's value, and a hash ref of arguments to
+comp/widgets/profile/checkbox.mc. The default is:
 
-A 'select' is a generic term for any action that applies to one or many objects
-in the list.  In the 'full_list' style it is represented as a checkbox next to
-each object.  This argument takes an array ref of a label, a callback, the
-callback's value, and a hash ref of arguments to comp/widgets/profile/checkbox.mc.
-The default is:
+  ['Delete', '', $o_id]
 
-['Delete', '', $o_id]
-
-Which means the label is 'Delete', the callback is null, the callback value
-is the current object's ID, and no extra arguments are passed to the checkbox
-widget.  Only the label argument is required.
+Which means the label is 'Delete', the callback is null, the callback value is
+the current object's ID, and no extra arguments are passed to the checkbox
+widget. Only the label argument is required.
 
 The listManager widget has two built in callbacks that can be used as actions
-for the select.  These are 'listManager|delete_cb' and
-'listManager|deactivate_cb'.  These will automatically call the delete or
-deactivate method, respectively, on the object they represent. 
+for the select. These are 'listManager|delete_cb' and
+'listManager|deactivate_cb'. These will automatically call the delete or
+deactivate method, respectively, on the object they represent.
 
-If the value is a list of lists, then multiple profile links will be displayed:
+If the value is a list of lists, then multiple profile links will be
+displayed:
 
-[['Edit', ''], ['Update', '']]
+  [['Edit', ''], ['Update', '']]
 
 will display two checkboxes labeled 'Edit' and 'Update'.
 
 This can also take a code reference that will return the appropriate array ref
-when called.  It will be passed the object ref on each row.
+when called. It will be passed the object ref on each row.
 
-=item *
+=item addition
 
-addition
+An 'addition' is a generic term for adding a new object to the list manager.
+This will usually happen by creating a new object of the appropriate type.
+This argument takes an array ref of a label, a URL, and an optional object
+display name. The default is:
 
-An 'addition' is a generic term for adding a new object to the list manager.  
-This will usually happen by creating a new object of the appropriate type.  This
-argument takes an array ref of a label, a URL, and an optional object display
-name. The default is:
+  ['Add', '']
 
-['Add', '']
-
-Which means the label is 'Add', with a null link.  In the 'full_list' style,
-this link is followed via a GET request.  No extra arguments will be passed.  
-You might consider making the 'addition' link and the 'profile' link be the same
-and switch on whether you are passed an 'id'.
+Which means the label is 'Add', with a null link. In the 'full_list' style,
+this link is followed via a GET request. No extra arguments will be passed.
+You might consider making the 'addition' link and the 'profile' link be the
+same and switch on whether you are passed an 'id'.
 
 This can also take a code reference that will return the appropriate array ref
 when called.
 
-=item *
-
-search_widget
+=item search_widget
 
 Pass a widget name to this argument to tell the listManager in which widget's
-session data to look for its list criterion.  By default it will look in the
-session data belonging to the 'search' widget.   The widget given here
-must populate the 'field' and 'criterion' keys of its session data.  
+session data to look for its list criterion. By default it will look in the
+session data belonging to the 'search' widget. The widget given here must
+populate the 'field' and 'criterion' keys of its session data.
 
-The 'field' key can either be a scalar naming the field to search or an array 
+The 'field' key can either be a scalar naming the field to search or an array
 ref containing a list of field names.
 
 The 'criterion' key can either be a scalar giving the search criteria for the
-field given in key 'field' or an array ref containing a list of criteria that 
+field given in key 'field' or an array ref containing a list of criteria that
 should match, in order, the fields listed in key 'field'
 
-See the notes section for an alternative to this that does not require another 
+See the notes section for an alternative to this that does not require another
 widget.
 
-=item *
+=item fields
 
-fields
-
-Pass this argument a list of field names.  These field names should be a subset
-of the field names returned by the listed objects my_meths method.  If this
+Pass this argument a list of field names. These field names should be a subset
+of the field names returned by the listed objects my_meths method. If this
 argument is given, then only these fields will be displayed from each object
-and they will be displayed in the order that they are passed.  If this argument
+and they will be displayed in the order that they are passed. If this argument
 is not given then all the fields returned by my_meths will be displayed.
 
-=item *
+=item field_titles
 
-field_titles
+This accepts a hash ref of field name to display name. You can use it to
+change the name of an existing field or to create a display name for a created
+field when used with 'fields' and 'field_values'. If you pass a non-existent
+field name to 'fields', map that name to a display name here in 'field_titles'
+and then provide values for that field in 'field_values' you can create new
+fields that did not exist in the original object.
 
-This accepts a hash ref of field name to display name.  You can use it to change
-the name of an existing field or to create a display name for a created field
-when used with 'fields' and 'field_values'.  If you pass a non-existent field
-name to 'fields', map that name to a display name here in 'field_titles' and
-then provide values for that field in 'field_values' you can create new fields
-that did not exist in the original object.
+See C<field_values> and C<fields>
 
-See 'field_values' and 'fields'
+=item field_values
 
-=item *
-
-field_values
-
-Set this to a sub ref.  This sub ref should accept an object and a field name
-and return the value appropriate for that field and object.  Use this argument
-to create completely new fields that do not exist in the original object.  If 
+Set this to a sub ref. This sub ref should accept an object and a field name
+and return the value appropriate for that field and object. Use this argument
+to create completely new fields that do not exist in the original object. If
 the sub ref returns undef, the 'my_meths' method of the object will be used
 instead to find the value.
 
-See 'field_titles' and 'fields'
+See <field_titles> and C<fields>
 
-=item *
+=item constrain
 
-constrain
+A hash ref of constraints that are applied to the list before any sorting or
+searching is done. This is useful when you only want to show a subset of all
+objects of a certain type to the user. This hash ref will be passed to the
+'list' function of the object so make sure that the list function supports the
+parameters you pass!
 
-A hash ref of constraints that are applied to the list before any sorting or 
-searching is done.  This is useful when you only want to show a subset of all
-objects of a certain type to the user.  This hash ref will be passed to the
-'list' function of the object so make sure that the list function supports
-the parameters you pass!
+=item behavior
 
-=item *
+Dictates generally how this listManager behaves. Currently this is limited to
+whether this list shows all existing objects and a search will narrow this
+list, or whether this list begins empty and searches expand the objects
+listed. The first behavior is default but can be explicitly set as:
 
-behavior
-
-Dictates generally how this listManager behaves.  Currently this is limited to
-whether this list shows all existing objects and a search will narrow this list,
-or whether this list begins empty and searches expand the objects listed.  
-The first behavior is default but can be explicitly set as:
-
-behavior => 'narrow'
+  behavior => 'narrow'
 
 The second behavior can be set by passing 'expand' to this argument:
 
-behavior => 'expand'
+  behavior => 'expand'
 
-=item *
+=item exclude
 
-exclude
-
-Exclude certain object instances from appearing in the list by passing this 
-parameter an array ref of object IDs to exclude.  You can also pass a sub ref 
-to this argument.  This sub ref will be called for each object to be displayed 
-in the list, and be passed the object as the first argument.  If the sub ref 
-returns true, that object will be excluded from the list.  If it returns false
+Exclude certain object instances from appearing in the list by passing this
+parameter an array ref of object IDs to exclude. You can also pass a sub ref
+to this argument. This sub ref will be called for each object to be displayed
+in the list, and be passed the object as the first argument. If the sub ref
+returns true, that object will be excluded from the list. If it returns false
 the object will stay in the list.
 
-=item *
+=item alter
 
-alter
-
-Alter the values of a particular column via a sub ref.  The 'alter' argument 
-takes a hash ref of field key name and sub ref.  That sub ref will be called
+Alter the values of a particular column via a sub ref. The 'alter' argument
+takes a hash ref of field key name and sub ref. That sub ref will be called
 for every value in the column named by the field key and will be passed the
-value of that column for that row.  For example, to make a column displaying
+value of that column for that row. For example, to make a column displaying
 boolean values display yes/no rather than 1/0:
 
-alter => {'active' => sub { $_[0] ? 'Yes' : 'No'}}
+  alter => { active => sub { $_[0] ? 'Yes' : 'No'} }
 
-The alter code ref is passed the row value for a given column and the object 
+The alter code ref is passed the row value for a given column and the object
 for that row:
 
  $alter = sub {
@@ -272,75 +249,67 @@ for that row:
      ...
  }
 
-=item *
+=item featured
 
-featured
+A list of 'featured' objects in this list. These objects always appear in the
+list even if the criteria do not match them. These objects are also
+highlighted so they stand out against the other objects.
 
-A list of 'featured' objects in this list.  These objects always appear in the 
-list even if the criteria do not match them.  These objects are also highlighted
-so they stand out against the other objects.
+=item featured_color
 
-=item *
-
-featured_color
-
-The background color for the featured rows.  This can be any string that you
-would normally pass to the 'bgcolor' attribute of the <tr> element.   This 
-will default to a standard color if not passed.
+The background color for the featured rows. This can be any string that you
+would normally pass to the 'bgcolor' attribute of the <tr> element. This will
+default to a standard color if not passed.
 
 =back
 
 =head1 NOTES
 
-There is one other way to pass search criteria to the listManager.  By setting
+There is one other way to pass search criteria to the listManager. By setting
 a certain set of hidden fields, you can act as a parasite on the search widget
-and force it to do your bidding.  The fields are:
+and force it to do your bidding. The fields are:
 
 =over 4
 
-=item *
-
-search|generic_cb
+=item search|generic_cb
 
 Should be set to a true value
 
-=item *
+=item search|generic_fields
 
-search|generic_fields
-
-Should be set to a '+' delimited list of field names.  These names should match
+Should be set to a '+' delimited list of field names. These names should match
 the names returned by my_meths of whatever object you are listing
 
-=item *
+=item search|generic_criteria
 
-search|generic_criteria
-
-Should be set to a '+' delimited list of form field names whose values should be
-the criteria to the fields listed in 'search|generic_fields'.
+Should be set to a '+' delimited list of form field names whose values should
+be the criteria to the fields listed in 'search|generic_fields'.
 
 =back
 
 So a simple example using two search parameters would be:
 
-<input type='hidden' name='search|generic_cb' value='1'>
-<input type='hidden' name='search|generic_fields' value='name+description'>
-<input type='hidden' name='search|generic_criteria' value='name_field+desc_field'>
-<input type='text' name='name_field'>
-<input type='text' name='desc_field'>
+  <input type="hidden" name="search|generic_cb" value="1" />
+  <input type="hidden" name="search|generic_fields" value="name+description" />
+  <input type="hidden" name="search|generic_criteria" value="name_field+desc_field" />
+  <input type="text" name="name_field" />
+  <input type="text" name="desc_field" />
 
 When this form is submitted (and presumably takes the user to a page that has
 the listManager widget on it), the list function for whatever object it being
 listed will be called like:
 
-$pkg->list({'name'        => $param->{'name_field'},
-            'description' => $param->{'desc_field'}});
-
+  $pkg->list({
+      name        => $param->{name_field},
+      description => $param->{desc_field},
+  });
 
 =cut
-</%doc>
 
+</%doc>
 <%args>
-$object                        # The object type to display
+$object                         # The object type to display
+$state_key      => $object      # Where to look for session data.
 $style          => 'full_list'  # The list style (full or paginated)
 $sortBy         => ''           # Default to sorting by ID
 $userSort       => 1            # A flag for whether the user can resort the list
@@ -362,21 +331,13 @@ $def_sort_field => undef
 $def_sort_order => undef        # Whether to sort in descending order by default
 $cx_filter      => 1            # Make false to override Filter by Site Context.
 </%args>
-
-<%init>
+<%init>;
 
 #--------------------------------------#
 # Initialize some values.
 
-# Reset the state of this widget if the object name changes.
-reset_state($widget, $object);
-
-# Get the package name given the short name
-my $pkg = get_package_name($object);
-
-# Save the object type.
-set_state_data($widget, 'object',   $object);
-set_state_data($widget, 'pkg_name', $pkg);
+my $state = get_state_data($widget, $state_key) || {};
+my $pkg   = get_package_name($object);
 
 # Get the master instance of this class.
 my $meth = $get_my_meths->($pkg, $field_titles, $field_values);
@@ -398,12 +359,10 @@ $site_cx = $c->get_user_cx(get_user_id)
 #--------------------------------------#
 # Set up pagination data.
 
-my $pagination = get_state_data($widget, 'pagination');
-$pagination = $limit ? 1 : 0 unless defined $pagination;
-my $offset = $limit ? get_state_data( $widget, 'offset' ) : undef;
-set_state_data($widget, 'offset', undef);
-my $show_all = get_state_data($widget, 'show_all');
-set_state_data($widget, 'show_all', undef);
+my $pagination = $state->{pagination};
+$pagination    = $limit ? 1 : 0 unless defined $pagination;
+my $offset     = $limit ? $state->{offset} : undef;
+my $show_all   = $state->{show_all};
 
 #--------------------------------------#
 # Find constraint and list objects.
@@ -411,18 +370,17 @@ set_state_data($widget, 'show_all', undef);
 my ($param, $do_list);
 if ($show_all || ($pagination && defined $offset)) {
     # We're processing pages. Just return the last query parameters.
-    $param = get_state_data($widget, 'list_params');
+    $param = $state->{list_params};
     $do_list = 1;
 } else {
     # Construct the parameters and then save them for future pages, if necessary.
-    my $list_arg = $build_constraints->($search_widget, $constrain, $meth, $sortBy,
+    my $list_arg = $build_constraints->($state, $state_key, $search_widget,
+                                        $constrain, $meth, $sortBy,
                                         $def_sort_field);
-
     $param = {%$list_arg, %$constrain};
 
     $param->{site_id} = $site_cx if $site_cx;
-
-    set_state_data($widget, 'list_params', $param) if $pagination;
+    $state->{list_params} = $param if $pagination;
     $do_list = 1 if %$list_arg;
 }
 
@@ -444,10 +402,8 @@ $load_featured_objs->(\@objects, $pkg, \%featured_lookup) if scalar(@$featured);
 
 #--------------------------------------#
 # Sort the objects.
-my $sortOrder = get_state_data($widget, 'sortOrder') || $def_sort_order;
-set_state_data($widget, 'sortOrder', $sortOrder);
-
-my $sort_objs = $sort_objects->(\@objects, $meth, $exclude);
+$state->{sort_order} ||= $def_sort_order;
+my $sort_objs  = $sort_objects->($state, \@objects, $meth, $exclude);
 
 # Make sure we have some results.
 my $no_results = @$sort_objs == 0 && $do_list;
@@ -469,9 +425,6 @@ if ($limit) {
       int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
 }
 
-# save persistent values
-set_state_data($widget, 'pagination', $pagination);
-
 my ($rows, $cols, $data) = $build_table_data->($sort_objs,
                                                $meth,
                                                $fields,
@@ -487,10 +440,12 @@ my ($rows, $cols, $data) = $build_table_data->($sort_objs,
 # Call the element to show this list
 $m->comp("$style.mc",
          widget          => $widget,
+         object          => $object,
          fields          => $fields,
          data            => $data,
          rows            => $rows,
          pkg             => $pkg,
+         state           => $state,
          cols            => $cols,
          userSort        => $userSort,
          addition        => $addition,
@@ -503,8 +458,8 @@ $m->comp("$style.mc",
                               pagination => $pagination
                             }
         );
+set_state_data($widget, $state_key => $state);
 </%init>
-
 <%once>
 my $widget = 'listManager';
 
@@ -594,14 +549,16 @@ my $output_profile_controls = sub {
             $value = "?$value" unless substr($value, 0, 1) eq '?';
         }
 
-        push @cntl, "<a href='$url$value' class=redLink>".$lang->maketext($label)."</a>&nbsp;";
+        push @cntl, qq{<a href="$url$value" class="redLink">}
+            . $lang->maketext($label) . '</a>&nbsp;';
     }
 
     return @cntl;
 };
 
 my $build_table_data = sub {
-    my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured, $count, $limit, $offset, $pagination) = @_;
+    my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured,
+        $count, $limit, $offset, $pagination) = @_;
     my $data = [[map { $meth->{$_}->{'disp'} } @$fields]];
     my $cols = scalar @$fields;
     my $rows = 1 + scalar @$sort_objs;
@@ -670,32 +627,25 @@ my $build_table_data = sub {
 };
 
 my $build_constraints = sub {
-    my ($search_widget, $constrain, $meth, $sortBy, $def_sort_field) = @_;
-
-    # Only get the criterion if we are still on the same page where it was set.
-    my $prev = get_state_data($search_widget, 'crit_set_uri') || '';
-    my $cur  = $r->uri || '';
-
-    # Remove trailing slashes if they exsist.  Fixes a problem
-    # not realizing that '/foo/bar' and '/foo/bar/' are the same URL.
-    substr($prev, -1, 1) = '' unless substr($prev, -1) ne '/';
-    substr($cur, -1, 1)  = '' unless substr($cur, -1) ne '/';
+    my ($state, $state_key, $search_widget, $constrain, $meth, $sortBy,
+        $def_sort_field) = @_;
 
     # Find the default search field.
     unless ($def_sort_field) {
         foreach my $f (keys %$meth) {
             # Break out of the loop if we find the searchable field.
-            $def_sort_field = $f and last if $meth->{$f}->{'search'};
+            $def_sort_field = $f and last if $meth->{$f}->{search};
         }
     }
 
     # Initialize the sort column with the default search field.
-    init_state_data($widget, 'sortBy', $sortBy);
-    set_state_data($widget, 'defaultSort', $def_sort_field);
+    $state->{sort_by}      = $sortBy;
+    $state->{default_sort} = $def_sort_field;
 
-    my $crit = $cur eq $prev ? get_state_data($search_widget, 'criterion')
-                             : undef;
-    my $crit_field = get_state_data($search_widget, 'field');
+    my $search_state = get_state_data($search_widget => $state_key);
+
+    my $crit       = $search_state->{criterion};
+    my $crit_field = $search_state->{field};
     my $list_arg = {};
 
     # If any criteria were passed then we need to constrain our list.
@@ -759,11 +709,11 @@ my $multisort = sub {
 $recursivesort = $multisort;
 
 my $sort_objects = sub {
-    my ($objs, $meth, $exclude) = @_;
+    my ($state, $objs, $meth, $exclude) = @_;
     my @sort_objs;
 
     # Find which column to sort on.
-    my $sort_by = get_state_data($widget, 'sortBy');
+    my $sort_by = $state->{sort_by};
 
     # Only sort if the sort by was set in the state data.
     if ($sort_by) {
@@ -784,11 +734,7 @@ my $sort_objects = sub {
         @sort_objs = grep(not($exclude->($_)), @sort_objs);
     }
 
-    my $sortOrder = get_state_data($widget, 'sortOrder') || '';
-    return defined $sortOrder && $sortOrder eq 'ascending'
-      ? [ reverse @sort_objs ]
-      : \@sort_objs;
+    my $sort_order = $state->{sort_order} || '';
+    return $sort_order eq 'ascending' ? [ reverse @sort_objs ] : \@sort_objs;
 };
 </%once>
-
-

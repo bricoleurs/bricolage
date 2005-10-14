@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -28,59 +26,40 @@ passed here must be known to exist for the given object.
 =cut
 
 </%doc>
-
-%#--- Arguments ---#
-
 <%args>
 $type
 $object
+$state_key    => $object
 $field        => '_default'
 $groupList    => undef
 $use_form_tag => 1
 $wf           => undef
 </%args>
-
-%#--- Initialization ---#
-
 <%once>
 my $widget = 'search';
 </%once>
-
 <%init>
 
-# Clear out the state information if the object changes.
-my $obj_state = get_state_data($widget, 'object') || '';
-if ($object ne $obj_state) {
-    set_state_data($widget, {'object' => $object});
-}
-
-# Get paths and remove trailing slash
-my ($prev, $cur) = (get_state_data($widget, 'crit_set_uri'), $r->uri);
-$prev ? ($prev =~ s!/$!!) : ($prev = '');
-$cur ? ($cur =~ s!/$!!) : ($cur = '');
-
-# Clear state if the URI changes
-unless ($prev eq $cur) {
-    set_state_data($widget, {'object' => $object});
-}
-
-my $pkg = get_package_name($object);
+my $state = get_state_data($widget, $state_key) || {};
+my $pkg   = get_package_name($object);
 
 # Get the master instance of this class.
 my $meth = $pkg->my_meths();
 
-unless (get_state_data($widget, 'field')) {
+unless ($state->{field}) {
     # Find a real field name if we were given '_default'
-    if ($field eq '_default') { 
+    if ($field eq '_default') {
         foreach my $f (keys %$meth)     {
             # Break out of the loop if we find the searchable field.
-            $field = $f and last if $meth->{$f}->{'search'};
+            $field = $f and last if $meth->{$f}->{search};
         }
     }
 
-    # Set the field on which to search.
-    set_state_data($widget, 'field',  $field);
+    $state->{field} = $field;
 }
+
+set_state_data($widget, $state_key => $state);
+set_state_name($widget => $state_key);
 
 # Display the correct search box.
 $m->comp("$type.html", widget       => $widget,
@@ -89,6 +68,6 @@ $m->comp("$type.html", widget       => $widget,
                        groupList    => $groupList,
                        use_form_tag => $use_form_tag,
                        wf           => $wf,
+                       state        => $state,
         );
-
 </%init>

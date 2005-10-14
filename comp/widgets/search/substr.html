@@ -8,39 +8,27 @@
         maxlength   => 100,
         useTable    => 0
     &>
-    
 %   # This hidden field is required to make the form submit when the user hits
 %   # the "enter" key.
-    <& '/widgets/profile/hidden.mc', 
+    <& '/widgets/profile/hidden.mc',
         name    => 'search|substr_cb',
-        value   => 'Search' &>
-
-    <& '/widgets/profile/button.mc', 
+        value   => 'Search',
+    &>
+    <& '/widgets/profile/button.mc',
         disp    => $lang->maketext('Search'),
         widget  => 'search',
         cb      => 'substr_cb',
         button  => 'search_red',
-        useTable => 0 &>
-
+        useTable => 0,
+    &>
     </div>
 </div>
-        
-%#--- END HTML ---#
-
-%#--- Arguments ---#
-
 <%args>
 $widget
 $object
 $disp_field
 </%args>
-
-%#--- Initialization ---#
-
 <%init>
 my $crit_field = get_state_data($widget, 'crit_field');
 </%init>
-
-%#--- Log History ---#
-
 
