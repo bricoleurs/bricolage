@@ -312,6 +312,8 @@ Friends who have spotted bugs include:
 
 =item Phillip Smith
 
+=item Guido Bülskämper
+
 =back
 
 Bricolage's translation team:

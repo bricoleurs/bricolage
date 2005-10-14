@@ -6,22 +6,18 @@ through story_prof.mc.
 It lets you modify the category, slug, and cover date of the
 cloned story, using the current values by default.
 </%doc>
-
 <& '/widgets/wrappers/sharky/table_top.mc',
     caption => 'Properties',
     number  => 1,
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
     key     => 'title',
     vals    => $tmeth
 &>
-
 <& '/widgets/profile/displayFormElement.mc',
     key     => 'slug',
     vals    => $smeth
 &>
-
 <%perl>;
 # Category
 my $cats = Bric::Biz::Category->list({ site_id => $site_id });
@@ -39,7 +35,7 @@ $m->comp('/widgets/select_object/select_object.mc',
      );
 
 # Secondary categories
-my $cats = Bric::Biz::Category->list({ site_id => $site_id });
+$cats = Bric::Biz::Category->list({ site_id => $site_id });
 $m->comp('/widgets/select_object/select_object.mc',
          object     => 'category',
          disp       => 'Secondary Categories',
