@@ -585,6 +585,8 @@ To translate:
       'Code' => 'Code',
       'Code Select' => 'Code Select',
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
+  'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' => 'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.',
+  'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
 
 =end comment
 

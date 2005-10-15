@@ -1646,11 +1646,60 @@ B<Notes:> NONE.
 
 sub cancel {
     my $self = shift;
-    throw_gen({ error => "Cannot cancel completed job." })
-      if $self->_get('_comp_time');
-    throw_gen({ error => "Cannot cancel executing job." })
-      if $self->_get('_executing');
-    $self->_set({_cancel => 1 });
+    throw_gen 'Cannot cancel completed job.' if $self->_get('_comp_time');
+    throw_gen 'Cannot cancel executing job.' if $self->_get('_executing');
+    $self->_set( ['_cancel'] => [1] );
+}
+
+################################################################################
+
+=item $self = $job->reset
+
+Resets the job. If it had failed, the error message will be reset to C<undef>
+and the C<has_failed()> method will return false. Whether or not it has
+failed, the number of tries will be reset to 0.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Cannot reset completed job.
+
+=item *
+
+Cannot reset executing job.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub reset {
+    my $self = shift;
+    throw_gen 'Cannot reset completed job.'  if $self->_get('_comp_time');
+    throw_gen 'Cannot cancel executing job.' if $self->_get('_executing');
+    $self->_set( [qw(tries error_message _failed)], [0, undef, 0] );
 }
 
 ################################################################################
@@ -1740,7 +1789,7 @@ sub save {
         execute($ins, @ps);
 
         # Now grab the ID.
-        my $id = last_key('job');
+        $id = last_key('job');
         $self->_set(['id'] => [$id]);
 
         # Register this job in the "All Jobs" group and save any associated

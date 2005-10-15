@@ -38,6 +38,7 @@ textarea {
 .searchBox,
 .errorsBox,
 .helpBox                       { margin-bottom: 10px; }
+.padding { padding: 10px; }
 
 /***************************************************
  * PAGE HEADER

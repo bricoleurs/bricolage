@@ -10,37 +10,60 @@ $m->out(qq{<form method="post" name="job_profile" action="} . $r->uri
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'job_id')
   if defined $id;
 
-if ($job->has_failed) { 
-    $m->out('<span class="redLabel"><b>' 
+if ($job->has_failed) {
+    $m->comp(
+        '/widgets/wrappers/sharky/table_top.mc',
+        caption => 'Job Failure',
+        number  => ++$i,
+    );
+    $m->print(qq{<div class="padding">\n});
+    $m->out('<span class="redLabel"><b>'
       . $lang->maketext('This job has failed')
       . '</b></span><p>'
-      .  $lang->maketext(q{ The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.})
+      . $lang->maketext(
+          'The error message is available below. No further execution '
+          . 'attempts will be made on this job unless you check the "Reset '
+          . 'this Job" checkbox below.'
+      )
       . '</p>'
       . '<pre>'
       .  $job->get_error_message
       . '</pre>');
+    $m->comp(
+        '/widgets/profile/checkbox.mc',
+        name  => 'reset',
+        id    => 'reset',
+        value => '1',
+    );
+    $m->print(' <label for="reset" class="burgandyLabel">Reset this Job</label>');
+    $m->print("</div>\n");
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 }
 
 # Display the Basics.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Properties",
-	 number  => 1);
+$m->comp(
+    '/widgets/wrappers/sharky/table_top.mc',
+    caption => 'Properties',
+    number  => ++$i
+);
 
 # Dump out the fields for display.
-$m->comp('/widgets/profile/dumpRemainingFields.mc',
-	 readOnly => $no_edit,
-	 objref => $job,
-	 fieldsUsed => { comp_time => 1,
-		         sched_time => 1,
-                         type => 1,
-		       }
-	);
+$m->comp(
+    '/widgets/profile/dumpRemainingFields.mc',
+    readOnly   => $no_edit,
+    objref     => $job,
+    fieldsUsed => {
+        comp_time  => 1,
+        sched_time => 1,
+        type       => 1,
+    }
+);
 
 # Type should really be read-only
 $m->comp("/widgets/profile/displayFormElement.mc",
          key      => 'type',
          objref   => $job,
-         readOnly => 1 
+         readOnly => 1,
         );
 
 $m->comp("/widgets/select_time/select_time.mc",
@@ -77,7 +100,6 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 
-
 # Add the form buttons and other necessities.
 $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 	 no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
@@ -85,20 +107,15 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
 </%perl>
-
-%#-- Once Section --#
 <%once>;
 my $class = "Bric::Util::Job";
 my $widget = 'profile';
 my $type = 'job';
 my $disp = get_disp_name($type);
 </%once>
-
-%#-- Args Section --#
 <%args>
 $id => undef
 </%args>
-
 <%init>;
 # Do any redirects first.
 do_queued_redirect();
@@ -112,6 +129,7 @@ $id ||= $job->get_id;
 chk_authz($job, $id ? READ : CREATE);
 my $no_edit = !chk_authz($job, ($id ? EDIT : CREATE), 1);
 my $no_del = !$id || $no_edit;
+my $i = 0;
 </%init>
 
 <%doc>

@@ -706,7 +706,7 @@ To translate:
   'Permission to manage "[_1]" group membership denied'
   'Permission to grant permission "[_1]" to group "[_2]" denied'
   'This job has failed'
-  'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.'
+  'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' => 'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.',
   'First Published' => 'First Published',
   'You do not have permission to add "[_1]" objects'
   'Remaining' => 'Remaining',
@@ -731,6 +731,7 @@ To translate:
       'Code' => 'Code',
       'Code Select' => 'Code Select',
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
+  'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
 
 =end comment
 

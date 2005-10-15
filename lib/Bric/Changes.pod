@@ -122,6 +122,11 @@ generate the items in a select list. [Scott]
 
 Added ability to shelve a story from a desk or My Workspace. [David]
 
+=item *
+
+Added C<reset()> method to Bric::Util::Job and a "Reset" checkbox in the job
+profile in the UI so that failed jobs can easily be re-attempted. [David]
+
 =back
 
 =head2 Improvements

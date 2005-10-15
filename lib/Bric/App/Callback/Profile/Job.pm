@@ -23,7 +23,7 @@ sub save : Callback {
 
     my $name = $param->{name};
 
-    if ($param->{delete}) {
+    if ($param->{delete} && !$job->has_failed) {
         # Deactivate it.
         $job->cancel;
         log_event('job_cancel', $job);
@@ -33,6 +33,13 @@ sub save : Callback {
         $job->set_name($param->{name});
         $job->set_sched_time($param->{sched_time});
         $job->set_priority($param->{priority});
+        if ($param->{reset}) {
+            # Reset the job. The "delete" checkbox has been perverted for this
+            # purpose.
+            $job->reset;
+            log_event(job_reset => $job);
+            add_msg(qq{$disp_name "[_1]" has been reset.}, $name);
+        }
         $job->save;
         log_event('job_save', $job);
         add_msg("$disp_name profile \"[_1]\" saved.", $name);

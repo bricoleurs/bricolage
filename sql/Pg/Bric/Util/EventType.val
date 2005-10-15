@@ -698,6 +698,11 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'job_exec', 'Job Executed', 'Job was executed.', '54', '1');
 
+-- ********** 'job_reset' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'job_reset', 'Job Reset', 'Job was reset.', '54', '1');
+
 -- ********** 'resource_action' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)

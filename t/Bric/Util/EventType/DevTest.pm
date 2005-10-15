@@ -41,7 +41,7 @@ sub test_lookup : Test(12) {
     # And so is name.
     ok $et = Bric::Util::EventType->lookup({ name => 'Site Created' }),
         'Look up by name';
-    is $et->get_id,       1163,              'Check id';
+    is $et->get_id,       1164,              'Check id';
     is $et->get_key_name, 'site_new',        'Check key name';
 }
 

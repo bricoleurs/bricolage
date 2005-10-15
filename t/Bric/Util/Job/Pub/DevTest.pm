@@ -437,7 +437,7 @@ Page 1
 
 ##############################################################################
 # Test execute_me error_handling.
-sub h_test_execute_me : Test(10) {
+sub h_test_execute_me : Test(16) {
     my $self = shift;
 
     my $elem = Bric::Biz::ElementType->new({
@@ -537,6 +537,16 @@ sub h_test_execute_me : Test(10) {
     dies_ok {$job->execute_me} "Try again.";
     is($job->get_tries, 3, "... should have three tries now.");
     is($job->has_failed, 1, "... has_failed should now return true.");
+
+    # Try resetting the job.
+    ok($job->reset, 'Reset the job');
+    ok($job->save, 'Save the reset job');
+    ok($job = Bric::Util::Job::Pub->lookup({ id => $job->get_id}),
+       'Look up the job again for good measure');
+    is($job->get_error_message, undef,
+       'The error message should be undefined again');
+    is($job->get_tries, 0, 'Tries should be reset');
+    is($job->has_failed, 0, 'The job should no loner be marked as failed');
 }
 
 1;

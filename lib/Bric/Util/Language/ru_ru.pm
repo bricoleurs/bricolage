@@ -697,7 +697,7 @@ our %Lexicon = (
   'Permission to manage "[_1]" group membership denied' => 'Нет разрешения для управления членством в группе "[_1]"',
   'Permission to grant permission "[_1]" to group "[_2]" denied' => 'Нет разрешения для предоставления прав "[_1]" для группы "[_2]"',
   'This job has failed' => 'Эта задача завершилась аварийно',
-  'The error message is available below.  No further execution attempts will be made on this job.  Please leave it in the queue until your administrator has seen the error message.' => 'Сообщение об ошибке помещено ниже. Дальнейших попыток продолжить выполнение данной задачи предпринято не будет. Оставьте ее в очереди до тех пор, пока ваш администратор не увидит сообщения об ошибке.',
+  'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' =>'Сообщение об ошибке помещено ниже. Дальнейших попыток продолжить выполнение данной задачи предпринято не будет. Оставьте ее в очереди до тех пор, пока ваш администратор не увидит сообщения об ошибке.',
   'First Published' => 'Впервые опубликовано',
   'You do not have permission to add "[_1]" objects' => 'У вас нет прав добавлять "[_1]" объектов',
   'Remaining' => 'Осталось',
@@ -723,6 +723,7 @@ To translate:
       'Code' => 'Code',
       'Code Select' => 'Code Select',
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
+  'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
 
 =end comment
 
