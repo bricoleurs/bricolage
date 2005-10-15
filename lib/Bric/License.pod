@@ -312,7 +312,7 @@ Friends who have spotted bugs include:
 
 =item Phillip Smith
 
-=item Guido Bülskämper
+=item Guido BE<uuml>lskE<auml>mper
 
 =back
 
