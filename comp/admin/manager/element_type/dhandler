@@ -23,36 +23,26 @@ my $add_sub = sub {
         ['Add', "/admin/profile/$key"] : undef;
 };
 </%once>
-
 <%init>;
 # Figure out where we are.
 my ($section, $mode, undef, $id) = parse_uri($r->uri);
 undef $id if $id && $id eq '';
-my ($can_del, $sel_label, $sel_widg, $title, $context);
+my ($can_del, $sel_label, $sel_widg, $title, $context, $state_key);
 my ($constrain, $behavior) = ({}, 'expand');
-
-if (exists $ARGS{elem_type}) {
-    if ($ARGS{'search|substr_cb'}) {
-        # Delete elem_type if we're showing search results.
-        delete $ARGS{elem_type};
-    } elsif ($ARGS{elem_type}) {
-        # Determine list contraint.
-        $constrain = { type__id => $ARGS{elem_type} };
-        $behavior = 'narrow';
-    }
-}
 
 # Set the title, selection label, and widget.
 if (defined $id) {
     $constrain->{top_level} = 0;
-    $title = 'Choose Subelements';
-    my $name = $pkg_name->lookup({ id => $id })->get_name;
-    $context = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
+    $state_key = 'subelement_type';
+    $title     = 'Choose Subelements';
+    my $name   = $pkg_name->lookup({ id => $id })->get_name;
+    $context   = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
     $sel_label = 'Add to Element Type';
     $sel_widg  = 'element_type|addElementType_cb'
 } else {
-    $title = "$disp Manager";
-    $context = "Admin | Manager | $disp";
+    $state_key = 'element_type';
+    $title     = "$disp Manager";
+    $context   = "Admin | Manager | $disp";
     $sel_label = 'Delete';
     $sel_widg  = 'listManager|deactivate_cb';
 }
@@ -77,9 +67,11 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 
 my $searchType = "triple";
 
-$m->comp('/widgets/search/search.mc',
+$m->comp(
+    '/widgets/search/search.mc',
    object    => $key,
    field     => 'name',
+   state_key => $state_key,
    type      => $searchType,
 );
 
@@ -105,6 +97,7 @@ $m->comp('/widgets/wrappers/sharky/table_top.mc',
 $m->comp('/widgets/listManager/listManager.mc',
          behavior  => $behavior,
          object    => $key,
+         state_key => $state_key,
          constrain => $constrain,
          profile   => ($id) ? undef : $prof_sub,
          fields    => [qw(name biz_class_id description)],
