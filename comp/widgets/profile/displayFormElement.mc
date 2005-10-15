@@ -137,7 +137,6 @@ $rows     => undef
 $id       => undef
 </%args>
 <%perl>;
-my $agent = detect_agent();
 $vals->{props}{cols} = $cols if $cols;
 $vals->{props}{rows} = $rows if $rows;
 $localize_opts = $localize;
@@ -168,7 +167,7 @@ if ($objref) {
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $methods->{$key}, $value, $js, $name, $width,
-                           $indent, $useTable, $label, $readOnly, $agent, $id)
+                           $indent, $useTable, $label, $readOnly, $id)
       if $formSubs{$formType};
 
     $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
@@ -187,7 +186,7 @@ if ($objref) {
 
     # Execute the formatting code.
     $formSubs{$formType}->($key, $vals, $value, $js, $name, $width, $indent,
-                           $useTable, $label, $readOnly, $agent, $id)
+                           $useTable, $label, $readOnly, $id)
       if $formSubs{$formType};
 
     $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
@@ -220,7 +219,7 @@ my $len_sub = sub {
 
 my $inpt_sub = sub {
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
-        $useTable, $label, $readOnly, $agent, $id, $extra) = @_;
+        $useTable, $label, $readOnly, $id, $extra) = @_;
     my $class = ($type eq "text" || $type eq "password")
       ? qq{ class="textInput"} : "";
     $extra ||= '';
@@ -287,7 +286,7 @@ my %formSubs = (
 
         date => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent) = @_;
+                $label, $readOnly) = @_;
             $m->comp("/widgets/select_time/select_time.mc",
                      base_name => $key,
                      def_date  => $value,
@@ -301,7 +300,7 @@ my %formSubs = (
 
         checkbox => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent, $id) = @_;
+                $label, $readOnly, $id) = @_;
             my $extra = '';
             if (exists $vals->{props}{chk}) {
                 $extra .= ' checked="checked"' if $vals->{props}{chk}
@@ -311,12 +310,12 @@ my %formSubs = (
             $extra .= qq{ id="$id"} if defined $id;
             $indent -= 5 if ($useTable && !$readOnly);
             &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
-                       $indent, $useTable, $label, $readOnly, $agent, $id, $extra);
+                       $indent, $useTable, $label, $readOnly, $id, $extra);
         },
 
         textarea => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent) = @_;
+                $label, $readOnly) = @_;
             my $rows =  $vals->{props}{rows} || 5;
             my $cols = $vals->{props}{cols}  || 30;
 
@@ -353,7 +352,7 @@ my %formSubs = (
         } else {
             $out .= $value;
         }
-        
+
         $out .= qq{        </div>\n} if $useTable;
         $out .= qq{    </div>\n} if $useTable;
         $m->out($out);
@@ -361,7 +360,7 @@ my %formSubs = (
 
         wysiwyg => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent) = @_;
+                $label, $readOnly) = @_;
             my $rows =  $vals->{props}{rows} || 5;
             my $cols = $vals->{props}{cols}  || 30;
 
@@ -392,7 +391,7 @@ my %formSubs = (
 
         select => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent, $id) = @_;
+                $label, $readOnly, $id) = @_;
             $key = escape_html($key) if $key;
             my $values = $vals->{props}{vals};
             my $ref    = ref $values;
@@ -467,7 +466,7 @@ my %formSubs = (
 
         radio => sub {
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
-                $label, $readOnly, $agent, $id) = @_;
+                $label, $readOnly, $id) = @_;
             my $out = '';
             # print caption for the group
             if ($useTable) {
@@ -507,7 +506,7 @@ my %formSubs = (
                     foreach my $k (sort { $values->{$a} cmp $values->{$b} }
                                    keys %$values) {
                         &$inpt_sub('radio', $key, {}, $k, $js, $values->{$k},
-                                   $width, $indent, $useTable, $label, $readOnly, $agent,
+                                   $width, $indent, $useTable, $label, $readOnly,
                                    $id, $value eq $k ? ' checked="checked"' : '');
                         $m->out("<br />\n") if (!$useTable);
                     }
@@ -515,7 +514,7 @@ my %formSubs = (
                     foreach my $k (@$values ) {
                         $k = [$k, $k] unless ref $k;
                         &$inpt_sub('radio', $key, $k->[0], $k->[0], $js, $k->[1],
-                                   $width, $indent, $useTable, $label, $readOnly, $agent,
+                                   $width, $indent, $useTable, $label, $readOnly,
                                    $id, $value eq $k->[0] ? ' checked="checked"' : '');
                         $m->out("<br />\n") if (!$useTable);
                     }

@@ -1,4 +1,4 @@
-<%perl>
+<%perl>;
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
   	 caption => "Properties",
 	 number  => 1);
@@ -18,7 +18,6 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	 vals => $nmeth
 	);
 </%perl>
-
 <& '/widgets/select_object/select_object.mc',
 	disp => 'Media Type',
 	name => "$widget|at_id",
@@ -32,7 +31,6 @@ $m->comp('/widgets/profile/displayFormElement.mc',
         exclude  => $excl_sub,
 	useTable   => 1
 &>
-
 <& '/widgets/select_object/select_object.mc',
 	disp => 'Source',
 	object => 'source',
@@ -40,7 +38,6 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	field => 'source_name',
 	useTable => 1
 &>
-
 <& '/widgets/select_object/select_object.mc',
 	object		=> 'category',
 	disp		=> 'Category',
@@ -52,20 +49,15 @@ $m->comp('/widgets/profile/displayFormElement.mc',
         exclude         => $excl_sub,
 	useTable	=> 1
 &>
-		
-
 <&'/widgets/profile/displayFormElement.mc',
 	 key => "priority",
 	 vals => $pmeth,
 &>
-
 <&'/widgets/profile/displayFormElement.mc',
 	 key => "cover_date",
 	 vals => $cdate,
 &>
-
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-
 <& '/widgets/profile/button.mc',
          disp   => $lang->maketext('Create'),
          widget => $widget,
@@ -73,8 +65,6 @@ $m->comp('/widgets/profile/displayFormElement.mc',
          button => 'create_red',
          useTable => 0
 &>
-
-%#-- Once --#
 <%once>;
 my $pmeth = { %{ Bric::Biz::Asset::Business::Media->my_meths->{priority} } };
 $pmeth->{value} = 3;
@@ -82,17 +72,9 @@ my $cdate = { %{ Bric::Biz::Asset::Business::Media->my_meths->{cover_date} } };
 my $nmeth = Bric::Biz::Asset::Business::Media->my_meths->{title};
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
-
-%#-- Args --#
 <%args>
 $widget
 </%args>
-
-
-%#-- Init --#%#-- Begin HTML --#
 <%init>;
 $cdate->{value} = strfdate();
-# browser spacing stuff
-my $agent = detect_agent();
-my $ieSpacer = $agent->ie ? qq{<table><tr><td><img src="/media/images/spacer.gif" width=570 height=5 /></td></tr></table>} : '';
 </%init>

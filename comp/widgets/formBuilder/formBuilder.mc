@@ -66,18 +66,14 @@ $stay                   => undef
 </%args>
 <%init>;
 my ($section, $mode, $type) = parse_uri($r->uri);
-my $agent        = detect_agent();
 my $div          = 'div';
 my $name         = "id";
 my $closeDiv     = "div";
 my $numFieldsTxt = '<input type="hidden" name="fieldNum" value="1">';
 my $textareaRows = 5;
 my $textareaCols = 20;
-
-unless ($agent->nav4) {
-    $textareaRows = 5;
-    $textareaCols = 25;
-}
+$textareaRows    = 5;
+$textareaCols    = 25;
 
 # Put together the precision select list with localized options.
 my $precision_select = join('', map { sprintf '<option value="%s"%s>%s</option>',

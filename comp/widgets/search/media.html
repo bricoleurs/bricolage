@@ -7,9 +7,6 @@ $wf
 $state
 </%args>
 <%init>
-my $agent = detect_agent();
-my $spacerRow = $agent->ie ? '<img src="/media/images/spacer.gif" width=550 height=3>' : "";
-
 my $advanced_search = $state->{advanced_search};
 $advanced_search = get_pref('Default Search')
   unless defined $advanced_search;

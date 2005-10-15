@@ -144,13 +144,11 @@ my $mk_time_field = sub {
 </%once>
 <%init>;
 my $js;
-my $agent = detect_agent();
 my $cw = '80';
 my $cellWidth = "width=$cw";
 my $cellsDisplayed = 0;
 $useTable = 0 if $compact;
 $indent = $useTable ? FIELD_INDENT + 3 : 0 unless defined $indent;
-$indent -= 7 if $agent->nav4;
 
 my @month = map { [$_,$lang->maketext($mon_names[$_-1])] } ('01'..'12');
 
