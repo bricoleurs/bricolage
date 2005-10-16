@@ -555,6 +555,11 @@ session lasts. So if you performa a search for element types, and then do a
 search for stories or output channels, the last results you saw in the element
 type manager will be there again when you return to it. [David]
 
+=item *
+
+Elminated need for HTTP::BrowserDetect, since the UI is now completely
+browser-neutral. [David]
+
 =back
 
 =cut

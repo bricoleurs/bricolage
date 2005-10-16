@@ -175,8 +175,6 @@ START MODULE LIST
 
 =item Test::Class 0.04
 
-=item HTTP::BrowserDetect
-
 =item Params::CallbackRequest 1.10
 
 =item MasonX::Interp::WithCallbacks 1.10

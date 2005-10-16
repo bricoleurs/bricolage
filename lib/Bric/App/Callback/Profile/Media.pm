@@ -23,12 +23,11 @@ use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
-use HTTP::BrowserDetect;
 use Bric::App::Callback::Search;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
-my $DESK_URL = '/workflow/profile/desk/';
+my $DESK_URL   = '/workflow/profile/desk/';
 
 my ($save_contrib, $save_category, $handle_delete);
 
@@ -103,9 +102,9 @@ sub update : Callback(priority => 1) {
         }
 
         my $fh = $upload->fh;
-        my $agent = HTTP::BrowserDetect->new;
-        my $filename = Bric::Util::Trans::FS->base_name($upload->filename,
-                                                        $agent->os_string);
+        my $filename = $ENV{HTTP_USER_AGENT} =~ /win/
+            ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
+            : $upload->filename;
         $media->upload_file($fh, $filename, $upload->type, $upload->size);
         log_event('media_upload', $media);
     }

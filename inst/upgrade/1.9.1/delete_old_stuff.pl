@@ -137,6 +137,7 @@ media/images/red_curve_left.gif
 media/images/red_curve_right.gif
 media/images/yellow_star.gif
 widgets/container_prof/edit_super_bulk.html
+widgets/debug/agent.mc
 widgets/desk/desk_item_old.html
 widgets/element_data
 widgets/help/help.mc

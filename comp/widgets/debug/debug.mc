@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -25,18 +23,11 @@ Output the session data as well as the environment.
 =cut
 
 </%doc>
-
 <%once>;
 my $keys_meth = $Cache::Cache::VERSION > 0.9 ? 'get_keys' : 'get_identifiers';
 </%once>
-
-%#--- Arguments ---#
-
 <%args>
 </%args>
-
-%#--- Initialization ---#
-
 <%init>
 my $old_indent = $Data::Dumper::Indent;
 
@@ -51,16 +42,10 @@ foreach my $id ($Bric::App::Cache::STORE->$keys_meth) {
 $cache = Data::Dumper::Dumper($cache);
 my $rcache = Data::Dumper::Dumper($r->pnotes());
 
-$m->comp('/widgets/debug/agent.mc');
 $m->comp('/widgets/debug/dump.mc', sess => $s, env => $e,
 	 cache => $cache, rcache => $rcache);
 $m->comp('/widgets/debug/data.mc', %ARGS);
 
 # Reset the old indent value.
 $Data::Dumper::Indent = $old_indent;
-
 </%init>
-
-%#--- Log History ---#
-
-

@@ -185,8 +185,6 @@ use MasonX::Interp::WithCallbacks;
 
     use Bric::SOAP;
 
-    use HTTP::BrowserDetect;
-
     use vars qw($c $widget_dir $lang $lang_key $ct);
 
     # Where our widgets live under the element root.

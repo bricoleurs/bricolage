@@ -49,7 +49,6 @@ use Apache::Request;
 use HTML::Mason::Request;
 use Apache::Constants qw(HTTP_OK);
 use Apache::Util qw(escape_html);
-use HTTP::BrowserDetect;
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
@@ -119,8 +118,7 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                                    get_class_description
                                    get_class_info)],
                     aref    => ['mk_aref'],
-                    browser => [qw(detect_agent
-                                   parse_uri
+                    browser => [qw(parse_uri
                                    status_msg
                                    severe_status_msg)],
                     wf      => [qw(find_workflow
@@ -795,38 +793,6 @@ Was comp/lib/util/parseUri.mc.
 sub parse_uri {
     my $uri = shift;
     return split /\//, substr($uri, 1);
-}
-
-#--------------------------------------#
-
-=item $href = detect_agent;
-
-Returns an HTTP::BrowserDetect object. The object is cached
-for efficiency.
-
-B<Throws:>
-
-NONE
-
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-Was comp/widgets/util/detectAgent.mc
-
-=cut
-
-sub detect_agent {
-    my $ua = get_state_data('util', 'user-agent');
-    if ($ua) {
-        return $ua;
-    } else {
-        $ua = HTTP::BrowserDetect->new;
-        set_state_data('util', 'user-agent', $ua);
-        return $ua;
-    }
 }
 
 #--------------------------------------#
