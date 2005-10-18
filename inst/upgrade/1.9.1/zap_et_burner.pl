@@ -29,17 +29,22 @@ my %burner_id_for = (
 
 my $sel = prepare(q{
     SELECT oc.id, oc.name, f.file_name
-    FROM   formatting f, output_channel oc
-    WHERE  f.output_channel__id = oc.id
-           AND f.active = '1'
+    FROM   formatting f RIGHT JOIN output_channel oc ON f.output_channel__id = oc.id
 });
 
-my %oc_burner_map;
+my (%oc_burner_map, %burner_for);
 
 do {
 execute($sel);
 bind_columns($sel, \my($oc_id, $oc_name, $file_name));
 while (fetch($sel)) {
+    if (! defined $file_name) {
+        # If the output channel has no template, default to Mason.
+        $burner_for{$oc_id} ||= 1;
+        next;
+    }
+
+    # Otherwise, figure out what burner is used for the template.
     my ($suffix) = $file_name =~ /\.([^.]+)$/;
     my $base_name = basename($file_name);
     if ($suffix && $burner_name_for{$suffix}) {
@@ -74,7 +79,7 @@ while (fetch($sel)) {
     }
 }
 };
-my %burner_for;
+
 # Okay, let's see what we've got.
 while (my ($oc_id, $burner_fns) = each %oc_burner_map) {
     my $oc_name = delete $burner_fns->{name};

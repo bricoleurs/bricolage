@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_constraint 'element_type', 'fk_class__element_type';
+exit unless test_column 'element_type', 'reference';
 
 do_sql
     q{ UPDATE element_type

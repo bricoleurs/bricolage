@@ -20,375 +20,351 @@ involved in publishing a story are:
 
 =over 4
 
-=item *
+=item * Element Types
 
-Elements
+=item * Elements
 
-=item *
+=item * Templates
 
-Templates
-
-=item *
-
-Business Data
+=item * Fields
 
 =back
 
 A quick word about each of these elements.
 
-=head2 Elements
+=head2 Element Types
 
 These are data definitions. They describe what kind of data a particular story
-will have. For instance, an 'Editorial' element might define that an Editorial
-contains "An author name, a title, and one or more paragraphs". Elements cannot
-affect the formatting or look of a story, just the data fields available.
+will have. For instance, an "Editorial" element type might define that an
+Editorial contains "An author name, a title, and one or more paragraphs".
+Element types cannot affect the formatting or look of a story, just the
+content available.
+
+=head2 Elements
+
+Elements are instances of element types, and contain the content of stories.
+The structure of Elements adheres to that defined by their types.
 
 =head2 Templates
 
-For a given element, a template will give a format for the display of the data
-fields available in that element. This is where the HTML will come from.
+For a given element, a template will give a format for the display of the
+content available in that element. The formatted content will then be saved in
+one or more files by the Bricolage burner.
 
-=head2 Business Data
+=head2 Fields
 
-This is the data itself. Given an element to constrain the type of data, an
-author then enters business data. This data is then run through a template to
-produce an HTML page.
+Fields contain the content itself. Given an element type to constrain the
+types of content, an author then enters the content into fields. This content
+is then run through a template to produce one ore more output files.
 
 =head1 TEMPLATE OVERVIEW
 
 =head2 More About Elements
 
 The first place one starts when making a new story is with an Element. An
-element defines the structure of a story. It lists the data fields available to
-those creating a story. So for example, a 'Column' element might define a column
-as having:
+element is based on an element type, which defines the structure of a story.
+For example, a "Column" element type might define a column as having:
 
 =over 4
 
-=item *
+=item * An author field
 
-An author field
+=item * A column topic field
 
-=item *
-
-A column topic field
-
-=item *
-
-1 or more paragraph fields
+=item * One or more paragraph fields
 
 =back
 
-So given this definition someone creating a new element of type 'column' will
-have these three types of fields available to them.
+Given this definition, a content author creating a new column element will
+have these three types of fields available to her.
 
-Elements can also contain other elements as part of their definition. For
-example, maybe the 'column' element above will be used for a column reviewing
-music. A music column might want to have a short blurb about the albums they
-review. Additionally, say somewhere else on the site, there is another type of
-story, "Top Music Picks", that lists blurbs about albums. So we create another
-another element called 'music_blurb' with these fields:
+Elements may also contain other elements as part of their definition. For
+example, the "Column" element type above might be used for a column reviewing
+music. A music column might want to have a short blurb about the albums that
+it reviews. So we create another another element type called "Music Blurb"
+with these fields:
 
 =over 4
 
-=item *
+=item * Artist name
 
-Artist name
+=item * Album name
 
-=item *
+=item * Label name
 
-Album name
-
-=item *
-
-Label name
-
-=item *
-
-Summary
+=item * Summary
 
 =back
 
-Now in our 'column' element we can add the 'music_blurb' element:
+Now in our "Column" element type we can add the "Music Blurb" element type as
+a I<Subelement>. So now the structure looks like this:
 
 =over 4
 
-=item *
+=item * An author field
 
-An author field
+=item * A column topic field
 
-=item *
+=item * One or more paragraph fields
 
-A column topic field
-
-=item *
-
-1 or more paragraph fields
-
-=item *
-
-1 or more Music Blurbs
+=item * Any number of Music Blurb subelements
 
 =back
 
-(The + is just to mark the recursive relationship of these contained elements.)
+Now a content author editing a Column story has the ability to add an author
+field, a topic for the column, a few paragraphs, and a blurb about the album
+she is reviewing. Elements can be nested as deeply as needed. So an element
+can contain an subelement, that contains another subelement, etc.
 
-So, now someone editing this story has the ability to add an author field, a
-topic for the column, a few paragraphs, and a blurb about the album they are
-reviewing. Elements can be nested as deeply as needed. So an element can contain
-an element, that contains another element, etc.
-
-The most important thing to understand about elements is that they simply define
-the set of data that the author will be asked for when creating/editing a story.
-The element has no bearing on the actual data itself, or the formatting of that
-data!
-
+The most important thing to understand about element types is that they simply
+define the structure of the content that the author is allowd to use when
+creating or editing a story. The element type has no bearing on the actual
+content itself, or the formatting of that data!
 
 =head2  Template Basics
 
-Templates are the things that actually format data. A template is associated 1
-to 1 with an element. Said a different way, a template knows how to format the
-data for one element. So let's say we create a new template and associate it with
-the 'column' element we defined above. Maybe we want to format a column like
-this:
+Templates are the objects that actually format content. There are three basic
+types of templates: element templates, category templates, and utility templates.
+We'll start with the most common, element templates.
 
+An element template is associated with a single element type and knows how to
+format content for elements of that type. For example, for our hypothetical
+"Column" element type, we might create a template like this:
 
-    <html>
-        <head><title>$column_topic</title></head>
-        <body>
-            By $author<br />
-            <br />
+  <html>
+    <head><title>$column_topic</title></head>
+    <body>
+      <h1>$column_topic</h1>
+      <h2>By $author</h2>
 
-            <p>$para1</p>
-            <p>$para2</p>
-            ...
-            display_element(music_blurb)
-            ...
-        </body>
-    </html>
+      <p>$para1</p>
+      <p>$para2</p>
+      ...
+      display_element(music_blurb)
+      ...
+    </body>
+  </html>
 
+=back
 
-The above doesn't represent the actual syntax for inserting values, but is just
-meant to convey a template's relationship to an element.  We'll get into the nuts
-and bolts later.
+This example doesn't represent the actual syntax for inserting values, but is
+meant to convey a template's relationship to an element. We'll get into the
+nuts and bolts later.
 
-Note that the 'music_blurb' element is simply passed to a display function.
-Remember, templates represent the data for only a single element; there is
-another template that formats a music_blurb element.
-
+Note that the Music Blurb element element is referenced by its "key name",
+which is defined by the element type, and is simply passed to a display
+function. Remember, templates represent the content for only a single element;
+another template formats a the Music Blurb element.
 
 =head2 Templates And Categories
 
-While a template formats the data of a single element, there may be many
-templates that all format the same element. Why? Templates also belong to a
-single category. Imagine that the site for which we've created the current
-element and template examples is an arts and media site. There might be
-different sections of the site: one for music, one for theater, and one for
+While a template formats the contents of a single element, there may be many
+templates that all format the same element. Why? Well, templates also belong
+to a single category. Imagine that the site for which we've created the
+current element and template examples is an arts and media site. There might
+be different sections of the site: one for music, one for theater, and one for
 gallery art. This site might therefore define the following categories:
 
 =over 4
 
-=item *
+=item * Music
 
-Music
+=item * Theater
 
-=item *
-
-Theater
-
-=item *
-
-Gallery
+=item * Gallery
 
 =back
 
-Categories (somewhat like elements) can contain other categories. This is just
-to provide further distinction:
+Categories may contain other categories. This is just to provide further
+distinction:
 
 =over 4
 
-=item *
+=item * Music
 
-Music
+=item * Music/DJ
 
-=item *
+=item * Music/Classical
 
-Music/DJ
+=item * Music/Rock
 
-=item *
+=item * Theater
 
-Music/Classical
+=item * Theater/Broadway
 
-=item *
+=item * Theater/Community
 
-Music/Rock
+=item * Gallery
 
-=item *
+=item * Gallery/Painting
 
-Theater
-
-=item *
-
-Theater/Broadway
-
-=item *
-
-Theater/Community
-
-=item *
-
-Gallery
-
-=item *
-
-Gallery/Painting
-
-=item *
-
-Gallery/Sculpture
+=item * Gallery/Sculpture
 
 =back
 
-In addition to these categories, the Bricolage system always provides a 'root'
-category by default. This is assumed to always be the top category. If you don't
-want something to be specific to a particular category, you can assign it to the
-root category. Root is usually shown as a '/' in the publishing tool:
+In addition to these categories, the Bricolage system always provides a "root"
+category for each site. If you don't want something to be specific to a
+particular category, you can assign it to the root category. Root is usually
+shown as "/" in Bricolage:
 
 =over 4
 
-=item *
+=item * /
 
-/
+=item * /Music/
 
-=item *
+=item * /Music/DJ/
 
-/Music
+=item * /Music/Clasical/
 
-=item *
+=item * /Music/Rock/
 
-/Music/DJ
-
-=item *
-
-/Music/Clasical
-
-=item *
-
-/Music/Rock
-
-=item *
-
-...
+=item * ...
 
 =back
 
 So, what does this all mean for templates? By allowing many templates, each
-associated with a different category, to format the same element, we can have a
-custom look for our data in each section of our site. Say we want to have a
-column run in all the major categories of our site. That is, we want a Music
-column, a Theater column, and a Gallery column. We want to collect the same data
-for each of these columns, but we want the data to look different when published
-to each of these columns.
+associated with a different category, to format the same element, we can have
+a custom format for the content in each section of the site. Say we want to
+have a column run in all the major categories of our site. That is, we want a
+Music column, a Theater column, and a Gallery column. We want to collect the
+same data for each of these columns, but we want the data to look different
+when published to each of these categories.
 
-Note that a new template for every single category is not necessary. The 'DJ',
-'Classical' and 'Rock' subcategories will all inherit from the template
-associated with the 'Music' category. If there is no need to change how the data
-is displayed between any category, you can simply create a template associated
-with the root category. All the categories will inherit from it.
-
+But note that a new template for every single category is not necessary. The
+"DJ", "Classical" and "Rock" subcategories will all inherit from the template
+associated with the "Music" category. If there is no need to change how the
+data is displayed between any category, you can simply create a template
+associated with the root category, and columns in any category will inherit
+from it. In fact, the vast majority of Bricolage installations have all
+element templates defined in the root category, with only the occaisional
+element template defined in a subcategory on an as-needed basis.
 
 =head2 Templates And Output Channels
 
-There is one final parameter that a template has called an 'Output Channel'. For
-this discussion output channels can be thought of as hidden categories.
-Basically an output channel is used mostly during distribution. A single story
-might be published to the web site and a co-brand site at the same time. Both
-of these would be considered an output channel, with the web site considered the
-primary output channel.
+There is one final parameter that a template has called an "Output Channel."
+An output channel is a collection of templates designed to format stories of
+different types in a common format. So it's not unsual to have several
+output channels fora given story, such as XHTML, RSS, or WML, each of which
+outputs the contents of stories in a specific format.
 
-Again, this just gives the template producer the opportunity to tweak the
-presentation of the data for display on one output channel (the web site) versus
-another (the co-brand site).
-
+Furthermore, output channels can I<include> templates from other output
+channels. For example, the Email output channel might include templates from
+the XHTML output channel. Thus, when a story is published to the Email output
+channel, if the burner cannot find its element templates in the Email output
+channel, it will look for them in the XHTML output channel. This approach to
+template sharing can be extremely useful for maintaining the consistency of
+formatting across output channels, as well as to facilitate code reuse.
 
 =head2 Bringing It All Together
 
-So you might be asking, where do all my templates go, how does the system know
-what categories have templates defined, and how are they used during a publish?
+By now you might be asking, I<Where do all my templates go, how does the
+system know what categories have templates in them, and how are they used
+during a publish?>
 
 Now, while there should be no need to manipulate templates on the filesystem
-itself (and it could cause the Bricolage system considerable confusion), I'll
-detail how the files are laid out. This will hopefully make clear a few things
-about templates and publishing.
+itself (and it could cause the Bricolage system considerable confusion), let's
+brieflyl exampine how the files are laid out. Hopefully, this excercise will
+make clear a few things about templates and publishing.
 
-Let's start with names. Elements are given names when they are created. In our
-examples above, we created a 'column'. When you create a template, and choose an
-element that it should format, it automatically assumes the name of that
-element. So, if our element is named 'column', our template is named 'column' as
-well.
+Let's start with names. Element Types are given key names when they are
+created, and the key names uniquely identify elements throughout Bricolage. In
+our examples above, we created a "Column" element type. When you create an
+element template and choose its associated element type, it automatically
+assumes the key name of that element type. So, if our element type is named
+"Column" and its key name is "column" our template is will also be named
+"Column" and its base file name will be "column".
 
-The code defined in a template is Mason code. That is, HTML along with some
-special Perl tags thrown in. So when saving the code of a template to the
-file-system, we take the template name and append '.mc' or "Mason element" and
-use that as the filename. For our 'column' template, the filename would be
-'column.mc'.
+The template code may be written in one of four templating languages: Mason,
+Template Toolkit, PHP, or HTML::Template. Each output channel is associated
+with a templating language, so all templates in a single output channel (or
+any output channel it includes) will be written in the same templating
+language. The template file suffix varies depending on the templating
+language: ".mc" for Mason, ".tt" for Template Toolkit, ".php" for PHP, or
+".pl" or ".tmpl" for HTML::Mason. (The examples in this tutorial will be in
+Mason, Template Toolkit, and Mason; See
+L<Bric::HTMLTemplate|Bric::HTMLTemplate> for a tutorial on HTML::Template
+templates, which are a bit different from the others.) So the filenmame for
+our Column element template would be wither F<column.mc>, F<column.tt>,
+F<column.php>, or F<column.pl> or F<column.tmpl>.
 
-The category associated with a template is used as part of the path to the
-template file. So for a template in the '/Music/Rock' category, the path
-fragment would be 'music/rock/column.mc'.
+The category associated with a template determines the path of the template
+file. So for a template in the F</Music/Rock/> category, the path to the
+template would be F</music/rock/column.mc>.
 
-Finally the output channel is also used as a part of the path. Rather than take
-the output channel's name, its ID is used. Let's just say that the ID for the
-primary output channel is 1. So, our column template would live in
-'oc_1/music/rock/column.mc'.
+Finally, the output channel is also used as a part of the path on the file
+system. Rather than take the output channel's name, its ID is used. Let's just
+say that the ID for primary channel output containing our Column element
+template is 1. So, our column template would live in
+F<oc_1/music/rock/column.mc>.
 
-If we assume that our element root is $COMP_ROOT, the full path to our template
-is '$COMP_ROOT/oc_1/music/rock/column.mc'.
-
+If we assume that our element root is $COMP_ROOT, the full path to our
+template is F<$COMP_ROOT/oc_1/music/rock/column.mc>. In template code, you
+don't need to worry about the full path, however, just the relative path,
+F</music/rock/column.mc> or even just F<music/rock/column.mc>. The individual
+templating architectures handle the searching for templates in the proper
+output channel directories using their own path searching algorithms.
 
 =head2 Publish Examples
 
-So, let's assume that we have three column templates: one associated with the root
-category, one associated with the music category, and one associated with the
-sculpture gallery category. We would have these three files on the filesystem:
+So, let's assume that we have three Column templates in a single Mason output
+channel: one associated with the root category, one associated with the Music
+category, and one associated with the Sculpture Gallery category. Their
+full path names would be:
 
-    $COMP_ROOT/oc_1/column.mc
-    $COMP_ROOT/oc_1/music/column.mc
-    $COMP_ROOT/oc_1/gallery/sculpture/column.mc
+  /column.mc
+  /music/column.mc
+  /gallery/sculpture/column.mc
 
-Now, somebody creates a new column. When creating new business data, the author
-has the opportunity to associate it with one or more categories. The table
-below shows the 'column.mc' template used for a publish in a particular
-category. Assume that all publishes are done to the same output channel with an
-ID of 1:
-
+Now, say that somebody creates a new column. When creating a new story, the
+author has the opportunity to associate it with one or more categories. The
+table below illustrates which F<column.mc> template would be used for a
+publish in a particular category.
 
     Category Story is Published      Template element Used
     ---------------------------      -------------------------
-    Music/Rock                       $COMP_ROOT/oc_1/music/column.mc
-    Theater/Broadway                 $COMP_ROOT/oc_1/column.mc
-    Gallery                          $COMP_ROOT/oc_1/column.mc
-    Gallery/Art                      $COMP_ROOT/oc_1/column.mc
-    Gallery/Sculpture                $COMP_ROOT/oc_1/gallery/sculpture/column.mc
+    Music/Rock                       /music/column.mc
+    Theater/Broadway                 /column.mc
+    Gallery                          /column.mc
+    Gallery/Art                      /column.mc
+    Gallery/Sculpture                /gallery/sculpture/column.mc
 
-As you can see a story published in a particular category will lookup 'up' the
-category tree to find a template to format it, if it can't find it in the
-starting category.
+As you can see, a story published in a particular category will look I<up> the
+category tree to find an element template to format it if it can't find it in
+the the story's own category.
 
-Note that in the case of the story published in 'Music/Rock' and in
-'Gallery/Sculpture' there were templates found before the root template at
-'$COMP_ROOT/oc_1/column.mc'. It's important to realize that templates do not
-*chain*. That is, the story published to 'Music/Rock' will *not* get formatted
-by both '$COMP_ROOT/oc_1/music/column.mc' AND '$COMP_ROOT/oc_1/column.mc'. Once
-a template is found, the search stops.
-
+Note that in the case of the stories published in "Music/Rock" and in
+"Gallery/Sculpture", templates were found before the root template at
+F</column.mc>. It's important to realize that element templates do not
+I<chain>. That is, the story published to "Music/Rock" will I<not> be
+formatted by both F</music/column.mc> I<and> F</column.mc>. Once an element
+template is found, the search stops. Thus element templates in subcategories
+I<override> element templates in parent categories.
 
 =head2 One Final Trick
 
-As said above, templates do not chain. However, sometimes you might want
-formatting code to be inherited rather than overridden. Those of you familiar
-with mason might see the similarity between how templates are handled and the
-mason concept of 'dhandler's. While not exactly analogous, it's pretty close.
+Although element templates do not chain, sometimes you might want formatting
+code to be inherited rather than overridden. If you're familiar with Mason you
+may have noticed the similarity between how element templates are handled and
+the mason concept of "dhandlers". In fact in Mason output channels, story
+element templates I<are> dhandlers. Subelement templates of course are not,
+but they do enjoy the same category lookup algorithm when the burner searches
+for them. The other category architectures use the same algorithm for all
+element templates.
+
+But there's another type of template that's useful for inheriting formatting
+behavior from parent categories. These templates are known as "category
+templates." A category template resdies in a categoyr, and wraps the execution
+of story element templates. In fact, in Mason output channels, category
+templates are implemented as Mason "autohandlers", while in Template Toolkit
+output channels, they're implemented as "wrappers". The PHP and HTML::Template
+burners emulate autohandlers and wrappers, as well. In any case, in Bricolage,
+these templates are all known as "category templates," regardless of the
+templating language in which they're implemented.
+
+Category templates enjoy a different lookup algorithm. Like Mason's
+autohandlers, category templates are executed from the root category C<down>
+the category path. Furthermore 
 
 With a small change to how we create templates, we can get them to
 behave like Mason 'autohandler's. In Mason an 'autohandler' is an element that
