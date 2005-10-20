@@ -32,11 +32,9 @@ $start_count    => undef
 $show_summary   => undef
 $args           => \%ARGS
 </%args>
-
 <%once>
 my $widget = 'container_prof';
 </%once>
-
 <%init>;
 # Default to using the element passed in followed by the element in state.
 $element ||= get_state_data($widget, 'element');
@@ -47,7 +45,7 @@ set_state_data($widget, 'start', $start_count);
 my $state = get_state_name($widget);
 
 # Always set $state to $action unless $action is 'view';
-$state = $action unless $action eq 'view';
+$state = $action unless $state && $action eq 'view';
 $state = set_state_name($widget, $state || 'edit');
 $action = 'edit_bulk' if $state eq 'edit_bulk';
 
