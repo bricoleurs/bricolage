@@ -122,6 +122,11 @@ New elements and fields will now have any leading or trailing whitespace
 removed, rather than converted to underscores. Reported by Scott Lanning.
 [David]
 
+=item *
+
+Multiple select list custom fields no longer throw an exception when you
+select more than one value for the default value. Reported by Scott. [David]
+
 =back
 
 =cut
