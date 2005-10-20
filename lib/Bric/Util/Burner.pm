@@ -1845,6 +1845,7 @@ sub _expire {
             resources    => $res,
             type         => 1,
             priority     => $ba->get_priority,
+            $ba->key_name . '_id' => $ba->get_id,
         });
         $exp_job->save;
         log_event('job_new', $exp_job);

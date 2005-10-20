@@ -48,6 +48,11 @@ longer be published or previewed again by C<burn_another()> or
 C<preview_another()>, thus mitigating the possibility of infinite loops.
 [David]
 
+=item *
+
+Added an "Expired" event for when stories and media are expired. Suggested by
+Joshua Edelstein. [David]
+
 =back
 
 =head2 Bug Fixes
