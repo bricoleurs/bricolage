@@ -1442,7 +1442,8 @@ sub upload_file {
 
     my ($id, $v, $old_fn, $loc, $uri) =
       $self->_get(qw(id version file_name location uri));
-    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
+    my @id_dirs = $id =~ /(\d\d?)/g;
+    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
@@ -1474,7 +1475,7 @@ sub upload_file {
     my $at_obj = $self->_get_element_object;
     my $oc_obj = $self->get_primary_oc;
 
-    my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
+    my $new_loc = Bric::Util::Trans::FS->cat_dir('/', @id_dirs, "v.$v", $name);
 
     # Set the location, name, and URI.
     if (not defined $old_fn
