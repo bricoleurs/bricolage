@@ -784,20 +784,19 @@ function openHelp()  {
  * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')".
  */
 var multiOnload = new Object();
-multiOnload.onload = multiOnload_addOnload;
-window.onload = multiOnload_onload;
+multiOnload.onload = function(eventFn) {
+    if(!this.events) { this.events = new Array(); }
+    this.events[this.events.length] = eventFn;
+};
 
-function multiOnload_onload() {
+window.onload =function() {
     if (multiOnload.events) {
         for (var i=0; i < multiOnload.events.length; i++) {
             eval(multiOnload.events[i] + "()");
         }
     }
-}
-function multiOnload_addOnload(eventFn) {
-    if(!this.events) { this.events = new Array(); }
-    this.events[this.events.length] = eventFn;
-}
+};
+
 
 
 /*

@@ -177,7 +177,7 @@ var cancelValidation = false
 
 <div id="fbDiv">
 
-<form name="fb_form" target="<% $target %>" id="fbFormText" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormText" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="text" />
 
     <dl>
@@ -221,7 +221,7 @@ var cancelValidation = false
 
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormRadio" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormRadio" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="radio" />
     
     <dl class="meta">
@@ -263,7 +263,7 @@ var cancelValidation = false
 
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormCheckbox" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormCheckbox" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="checkbox" />
     
     <dl class="meta">
@@ -296,7 +296,7 @@ var cancelValidation = false
 
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormPulldown" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormPulldown" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="pulldown" />
 
     <dl class="meta">
@@ -338,7 +338,7 @@ var cancelValidation = false
 
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="select" />
     
     <dl class="meta">
@@ -388,7 +388,7 @@ var cancelValidation = false
     
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormCodeSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormCodeSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="codeselect" />
     
     <dl class="meta">
@@ -437,7 +437,7 @@ var cancelValidation = false
     
 </form>
 
-<form name="fb_form" target="<% $target %>" id="fbFormTextarea" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormTextarea" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="textarea" />
     
     <dl>
@@ -485,7 +485,7 @@ var cancelValidation = false
 </form>
 
 % if (ENABLE_WYSIWYG) {
-<form name="fb_form" target="<% $target %>" id="fbFormWYSIWYG" class="fbForm">
+<form name="fb_form" action="<% $target %>" id="fbFormWYSIWYG" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="wysiwyg" />
     <input type="hidden" name="fb_allowMultiple" value="1" />
     
@@ -531,7 +531,7 @@ var cancelValidation = false
 </form>
 % }
 
-<form name="fb_form" target="<% $target %>" id="fbFormDate" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
+<form name="fb_form" action="<% $target %>" id="fbFormDate" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
     <input type="hidden" name="fb_type" value="date" />
 
     <dl>

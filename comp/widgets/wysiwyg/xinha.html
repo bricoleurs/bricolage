@@ -23,7 +23,7 @@
 %     my $xinha_toolbar = XINHA_TOOLBAR;
       xinha_config = xinha_config ? xinha_config : new HTMLArea.Config();
       xinha_config.toolbar = <% $xinha_toolbar %>;
-       
+      
       editors   = HTMLArea.makeEditors(editors, xinha_config, xinha_plugins);
 
       HTMLArea.startEditors(editors);

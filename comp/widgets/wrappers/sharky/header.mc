@@ -82,14 +82,15 @@ if(ref($title) eq 'ARRAY') {
 var lang_key = "<% $lang_key %>";
 var checkboxValues = new Array();
 
-window.onload = function () {
-    init();
-}
-
 function init() {
     <% $jsInit %>;
 }
 multiOnload.onload("init");
+
+function restoreScroll() {
+    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
+}
+multiOnload.onload("restoreScroll");
 
 % if ($no_toolbar) {
 if (window.name == 'sideNav') { parent.location.href = location.href; }
@@ -103,7 +104,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 </script>
 </head>
 
-<body onLoad="restoreScrollXY(<% $scrollx %>, <% $scrolly %>)">
+<body>
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>
