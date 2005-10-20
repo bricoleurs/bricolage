@@ -110,6 +110,12 @@ Clicking the "Return" button when viewing a subelement in a story or media
 document not checked out by the user no longer drops into edit view. Reported
 by John Greene. [David]
 
+=item *
+
+Attempting to create a category with the same URI as an existing but
+deactivated category once again fails with a useful error message rather than
+a database exception. Reported by Marshall. [David]
+
 =back
 
 =cut
