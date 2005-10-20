@@ -116,6 +116,12 @@ Attempting to create a category with the same URI as an existing but
 deactivated category once again fails with a useful error message rather than
 a database exception. Reported by Marshall. [David]
 
+=item *
+
+New elements and fields will now have any leading or trailing whitespace
+removed, rather than converted to underscores. Reported by Scott Lanning.
+[David]
+
 =back
 
 =cut
