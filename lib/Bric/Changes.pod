@@ -94,6 +94,11 @@ Reported by Phillip Smith. [David]
 
 Fixed database DDLs to work with PostgreSQL 8.1. [David]
 
+=item *
+
+Defunct media files are now properly removed from the delivery server whenever
+a media document's file name has changed. Reported by Brad Fox. [David]
+
 =back
 
 =cut

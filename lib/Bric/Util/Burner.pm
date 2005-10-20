@@ -1066,7 +1066,7 @@ sub publish {
             return 1 unless $ba->get_publish_status;
             my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
-                path       => "$base_path/%"
+                $key eq 'story' ? (path => "$base_path/%") : ()
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
@@ -1127,7 +1127,7 @@ sub publish {
             if (my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
                 not_job_id => $job->get_id,
-                path       => "$base_path/%"
+                $key eq 'story' ? (path => "$base_path/%") : ()
             })) {
                 # Yep, there are old resources to expire.
                 my $expname = 'Expire stale "' . $ba->get_name .
