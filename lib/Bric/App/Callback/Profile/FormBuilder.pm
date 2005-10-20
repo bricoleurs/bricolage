@@ -393,7 +393,7 @@ $update_element_attrs = sub {
             $data_href->{$field}->set_place($pos->[$i]);
             $data_href->{$field}->set_meta('html_info', 'pos', $pos->[$i]);
             my $val = $param->{"attr|$aname"};
-            $val = join '__OPT__', @$val if ref $val
+            $val = join '__OPT__', @$val if ref $val;
             $data_href->{$field}->set_meta('html_info', 'value', $val);
             $data_href->{$field}->save;
             $i++;
