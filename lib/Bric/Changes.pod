@@ -99,6 +99,12 @@ Fixed database DDLs to work with PostgreSQL 8.1. [David]
 Defunct media files are now properly removed from the delivery server whenever
 a media document's file name has changed. Reported by Brad Fox. [David]
 
+=item *
+
+Clicking the "Return" button when viewing a subelement in a story or media
+document not checked out by the user no longer drops into edit view. Reported
+by John Greene. [David]
+
 =back
 
 =cut

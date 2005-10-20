@@ -48,7 +48,7 @@ set_state_data($widget, 'start', $start_count);
 my $state = get_state_name($widget);
 
 # Always set $state to $action unless $action is 'view';
-$state = $action unless $action eq 'view';
+$state = $action unless $state && $action eq 'view';
 
 # The old code here read:
 #
