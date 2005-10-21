@@ -1834,20 +1834,6 @@ the current document. Enabled by default.
 
 =item *
 
-B<RELATED_MEDIA_PFOFILE:> This directive is used only when the
-C<RELATED_MEDIA_UPLOAD> directive is enabled. When they're both enabled, a new
-media document uploaded via a related media element will immediately be
-displayed in its profile, allowing the editor to change the category, cover
-date, etc. When the editor is done with the media profile, she will be
-restored to the original related media element profile. When this directive is
-not enabled (the default), a new media document created in a related media
-element is simply added to the same category and with the same cover date as
-the originating document profile and checked in to the start desk. If the
-editor wants to make changes to it, she'll need to check it out separately.
-This is the default behavior.
-
-=item *
-
 B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG
 editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
 htmlArea).  After installing htmlArea or Xinha (see dependency info above),

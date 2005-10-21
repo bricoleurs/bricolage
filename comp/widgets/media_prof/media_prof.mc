@@ -48,7 +48,6 @@ my $needs_reload = sub {
     return 0;
 };
 </%once>
-%#--- Arguments ---#
 <%args>
 $id		  => undef
 $work_id  => undef
@@ -58,10 +57,9 @@ $param    => undef
 $section
 $return	  => undef
 </%args>
-%#-- Initialization --#
 <%init>
 # clear state if this is new
-if ($section eq 'new') {
+if ($section eq 'new' && !$id) {
     # A hacky fix for the 'sidenav query string breakin shit' problem.
     # Get an existing workflow ID if we weren't passed one.
     $work_id ||= get_state_data($widget, 'work_id');
@@ -75,8 +73,9 @@ if ($section eq 'new') {
 	init_state_name($widget, 'view');
 }
 
+my $media;
 if ($id) {
-    my $media = get_state_data($widget, 'media');
+    $media = get_state_data($widget, 'media');
 
     # Reload the media unless $media is defined AND
     if ($needs_reload->($media, $id, $checkout, $version)) {
@@ -157,5 +156,5 @@ if (my $media = get_state_data($widget, 'media')) {
     $r->pnotes("$widget|title", '&quot;' . $media->get_title . '&quot;');
 }
 
-$m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
+$m->comp($state.'_'.$section.'.html', widget => $widget, param => $param, media => $media);
 </%init>

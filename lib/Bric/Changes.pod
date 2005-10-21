@@ -503,12 +503,11 @@ dispatch simpler. [David]
 
 =item *
 
-Added the C<RELATED_MEDIA_PROFILE> F<bricolage.conf> directive to redirect
-users into the new media profile when creating a new media document from a
-related media element, which is only allowed when the C<RELATED_MEDIA_UPLOAD>
-directive is enabled. This is useful when editors what to be able to edit the
-newly uploaded media document and then return directly to the related media
-element from which they created it. [David]
+Users creating media documents from within a related media element (becuase
+the C<RELATED_MEDIA_UPLOAD> F<bricolage.conf> directive has been enabled and
+they have the proper permissions) are now redirected to the "New Media"
+profile when the new file has been uploaded, so that the element type,
+category, cover date, priority, etc. can be changed. [David]
 
 =item *
 

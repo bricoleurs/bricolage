@@ -160,7 +160,6 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MOD_PERL
                     ALLOW_ALL_SITES_CX
                     RELATED_MEDIA_UPLOAD
-                    RELATED_MEDIA_PROFILE
                     ALLOW_SLUGLESS_NONFIXED
                     AUTOGENERATE_SLUG
                     YEAR_SPAN_BEFORE
@@ -260,7 +259,6 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
                                      RELATED_MEDIA_UPLOAD
-                                     RELATED_MEDIA_PROFILE
                                      ALLOW_SLUGLESS_NONFIXED
                                      AUTOGENERATE_SLUG
                                      SERVER_WINDOW_NAME
@@ -396,10 +394,10 @@ require Bric; our $VERSION = Bric->VERSION;
 
             # Set default plugins for Xinha
             $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
-             
+
             # Set default toolbar for Xinha
-            $config->{XINHA_TOOLBAR} ||= "[['popupeditor','separator']," . 
-                                         "['bold','italic','underline'," . 
+            $config->{XINHA_TOOLBAR} ||= "[['popupeditor','separator']," .
+                                         "['bold','italic','underline'," .
                                          " 'strikethrough','separator']," .
                                          "['subscript','superscript'," .
                                          " 'separator']," .
@@ -434,8 +432,8 @@ require Bric; our $VERSION = Bric->VERSION;
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE USE_THUMBNAILS
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
-                    MEDIA_UNIQUE_FILENAME RELATED_MEDIA_PROFILE LDAP_TLS
-                    AUTO_PREVIEW_MEDIA MASON_STATIC_SOURCE))
+                    MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
+                    MASON_STATIC_SOURCE))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -674,7 +672,6 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ALLOW_WORKFLOW_TRANSFER => $config->{ALLOW_WORKFLOW_TRANSFER};
     use constant ALLOW_ALL_SITES_CX      => $config->{ALLOW_ALL_SITES_CX};
     use constant RELATED_MEDIA_UPLOAD    => $config->{RELATED_MEDIA_UPLOAD};
-    use constant RELATED_MEDIA_PROFILE   => $config->{RELATED_MEDIA_PROFILE};
     use constant ALLOW_SLUGLESS_NONFIXED => $config->{ALLOW_SLUGLESS_NONFIXED};
     use constant AUTOGENERATE_SLUG       => $config->{AUTOGENERATE_SLUG};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};

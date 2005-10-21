@@ -725,7 +725,7 @@ sub my_meths {
                   name     => 'site',
                   disp     => 'Site',
                   type     => 'short',
-                  props    => {}
+                  props    => { type => 'text' }
               },
 
              };

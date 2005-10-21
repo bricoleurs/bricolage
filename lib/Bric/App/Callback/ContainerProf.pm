@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'container_prof';
 
 use strict;
-use Bric::Config qw(:time RELATED_MEDIA_PROFILE);
+use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
@@ -21,9 +21,9 @@ use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
-my $STORY_URL = '/workflow/profile/story';
-my $CONT_URL  = '/workflow/profile/story/container';
-my $MEDIA_URL = '/workflow/profile/media';
+my $STORY_URL  = '/workflow/profile/story';
+my $CONT_URL   = '/workflow/profile/story/container';
+my $MEDIA_URL  = '/workflow/profile/media';
 my $MEDIA_CONT = '/workflow/profile/media/container';
 
 my $regex = {
@@ -210,7 +210,6 @@ sub create_related_media : Callback {
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
-    clear_state($widget) if RELATED_MEDIA_PROFILE;
 
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
@@ -224,7 +223,8 @@ sub create_related_media : Callback {
         return;
     }
 
-    set_state_data('media_prof', 'work_id', $media_wf->get_id);
+    my $wf_id = $media_wf->get_id;
+    set_state_data('media_prof', 'work_id', $wf_id);
 
     # Set up the parameters to create a new media document.
     my $m_param = {
@@ -251,35 +251,17 @@ sub create_related_media : Callback {
     my $mid = $media->get_id;
     $element->set_related_media($mid);
 
-    if (RELATED_MEDIA_PROFILE) {
-        # Set up the original state for returning from the media profile.
-        $media_cb->save_and_stay(1);
-        set_state_data(_profile_return => {
-            state      => $state,
-            type_state => $type_state,
-            prof       => $asset,
-            type       => $type,
-            uri        => $self->apache_req->uri,
+    # Set up the original state for returning from the media profile.
+    $media_cb->save_and_stay(1);
+    set_state_data(_profile_return => {
+        state      => $state,
+        type_state => $type_state,
+        prof       => $asset,
+        type       => $type,
+        uri        => $self->apache_req->uri,
         });
-        # Edit the new media document.
-        $self->set_redirect("/workflow/profile/media/$mid/");
-    } else {
-        # Now check the media document in to a desk.
-        my $desk_cb = Bric::App::Callback::Desk->new(
-            cb_request => $self->cb_request,
-            pkg_key    => 'desk_asset',
-            apache_req => $self->apache_req,
-            value      => $media->get_id,
-            params     => { 'desk_asset|asset_class' => $media->key_name },
-        );
-        $desk_cb->checkin;
-
-        # Stay where we are! This cancels any redirects set up by the Media
-        # callback object.
-        # Restore the state.
-        set_state($widget, @$state);
-        $self->set_redirect($self->apache_req->uri);
-    }
+    # Edit the new media document.
+    $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }
 
 sub relate_media : Callback {
