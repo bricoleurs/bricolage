@@ -343,7 +343,7 @@ if (!$no_edit && defined $id) {
         '/widgets/profile/hidden.mc',
         name  => 'isNew',
         value => 1,
-    );
+    ) unless defined $id;
     $m->comp(
         '/widgets/profile/formButtons.mc',
         type => $key_name,

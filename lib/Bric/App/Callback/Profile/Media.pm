@@ -89,25 +89,7 @@ sub update : Callback(priority => 1) {
       if exists $param->{expire_date};
 
     # Check for file
-    if ($param->{"$widget|file"}) {
-        my $upload = $self->apache_req->upload(
-            $param->{file_field_name} || "$widget|file"
-        );
-
-        # Prevent big media uploads
-        if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
-            my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
-            add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
-            return;
-        }
-
-        my $fh = $upload->fh;
-        my $filename = $ENV{HTTP_USER_AGENT} =~ /win/
-            ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
-            : $upload->filename;
-        $media->upload_file($fh, $filename, $upload->type, $upload->size);
-        log_event('media_upload', $media);
-    }
+    $self->handle_upload($media) if $param->{"$widget|file"};
     set_state_data($widget, 'media', $media);
 }
 
@@ -521,6 +503,9 @@ sub create : Callback {
     $start_desk->accept({ asset => $media });
     $start_desk->save;
 
+    # Handle a file upload.
+    $self->handle_upload($media) if $param->{"$widget|file"};
+
     # Log that a new media has been created and generally handled.
     log_event('media_new', $media);
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
@@ -864,6 +849,30 @@ sub return_to_other {
     set_state("$prev->{type}\_prof", $prev->{type_state},
               { $prev->{type} => $prev->{prof} });
     $self->set_redirect($prev->{uri});
+}
+
+sub handle_upload {
+    my ($self, $media) = @_;
+    my $param  = $self->params;
+    my $widget = $self->class_key;
+    my $upload = $self->apache_req->upload(
+        $param->{file_field_name} || "$widget|file"
+    );
+
+    # Prevent big media uploads
+    if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
+        my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
+        add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
+        return;
+    }
+
+    my $fh = $upload->fh;
+    my $filename = $ENV{HTTP_USER_AGENT} =~ /win/
+        ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
+            : $upload->filename;
+    $media->upload_file($fh, $filename, $upload->type, $upload->size);
+    log_event('media_upload', $media);
+    return $self;
 }
 
 ##############################################################################

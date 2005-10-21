@@ -560,6 +560,10 @@ type manager will be there again when you return to it. [David]
 Elminated need for HTTP::BrowserDetect, since the UI is now completely
 browser-neutral. [David]
 
+=item *
+
+Media files can now be uploaded in the New Media profile. [David]
+
 =back
 
 =cut

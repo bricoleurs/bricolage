@@ -19,20 +19,14 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Once Section --#
 <%once>;
 my $disp = get_disp_name('media');
 </%once>
-
-%#-- Args Section --#
 <%args>
 $checkout => undef
 $version => undef
 $return => undef
 </%args>
-
-%#-- Init Section --#
 <%init>;
 # Do any redirects first.
 do_queued_redirect();
@@ -50,20 +44,13 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
                         param    => \%ARGS,
                         return   => $return);
 </%init>
-
-%#-- Begin HTML --#
-
 <& "/widgets/wrappers/sharky/header.mc",
     title => "$disp Profile",
     context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title')
 &>
-
 <form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onSubmit="return confirmChanges('theForm')">
 <% $content %>
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
 
 

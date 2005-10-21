@@ -1511,11 +1511,15 @@ sub upload_file {
             my $idexists = 1;
             while ($idexists) {
                 # generate new random 8 character filename
-                $prefix = substr(Digest::MD5::md5_hex(Digest::MD5::md5_hex(time.{}.$id.rand)), 0, 8);
+                $prefix = substr(Digest::MD5::md5_hex(
+                    Digest::MD5::md5_hex(time.{}.$id.rand)), 0, 8
+                );
                 # add any required filename prefix if we need to 
                 $prefix = MEDIA_FILENAME_PREFIX . $prefix if (MEDIA_FILENAME_PREFIX);
                 # does this filename exist in DB regardless of extension ?
-                ($idexists) = Bric::Biz::Asset::Business::Media->list_ids( {file_name => "$prefix%" } );
+                ($idexists) = Bric::Biz::Asset::Business::Media->list_ids({
+                    file_name => "$prefix%",
+                });
             }
         }
         # construct the new filename

@@ -57,6 +57,12 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	 key => "cover_date",
 	 vals => $cdate,
 &>
+
+    <div class="row">
+      <div class="label">File:</div>
+      <div class="input"><input type="file" name="<% $widget %>|file" /></div>
+    </div>
+
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <& '/widgets/profile/button.mc',
          disp   => $lang->maketext('Create'),
@@ -74,6 +80,7 @@ my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%args>
 $widget
+$media
 </%args>
 <%init>;
 $cdate->{value} = strfdate();

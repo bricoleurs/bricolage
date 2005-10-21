@@ -803,7 +803,7 @@ window.onload =function() {
  * Save scroll position
  */
 
-// <body onLoad="javascript:restoreScrollXY($scrollx, $scrolly)">
+// <body onload="restoreScrollXY($scrollx, $scrolly)">
 function restoreScrollXY(x, y) {
     window.scrollTo(x, y);
 }
