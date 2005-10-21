@@ -127,6 +127,11 @@ removed, rather than converted to underscores. Reported by Scott Lanning.
 Multiple select list custom fields no longer throw an exception when you
 select more than one value for the default value. Reported by Scott. [David]
 
+=item *
+
+In a story or media profile, eleting a subelement with the same ID as a field
+(or vice versa) will no longer delete both. Reported by Scott Lanning. [David]
+
 =back
 
 =cut
