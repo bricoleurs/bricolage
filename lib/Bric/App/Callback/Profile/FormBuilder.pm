@@ -13,6 +13,7 @@ use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Biz::Site;
+use Bric::Util::DBI qw(:junction);
 
 my %meta_props = (
     'disp'      => 'fb_disp',
@@ -320,8 +321,19 @@ $do_element_type = sub {
     }
 
     # delete any selected subelement types
-    if ($param->{"$key|delete_sub"}) {   # note: not a callback
-        $obj->del_containers(mk_aref($param->{"$key|delete_sub"}));
+    if (my $del = $param->{"$key|delete_sub"}) {
+        my %existing  = map { $_->get_id => undef } $obj->get_containers;
+        my $ids       = [
+            grep { exists $existing{$_} } ref $del ? @$del : $del
+        ];
+
+        if (@$ids) {
+            # Remove them and log it.
+            my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$ids) });
+            $obj->del_containers($element_types);
+            log_event('element_type_rem', $obj, { Name => $_->get_name })
+                for @$element_types;
+        }
     }
 
     # Take care of group management.
@@ -605,6 +617,5 @@ $save_element_type_etc = sub {
         }
     }
 };
-
 
 1;

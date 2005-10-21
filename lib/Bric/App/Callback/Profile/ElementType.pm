@@ -1,4 +1,4 @@
-package Bric::App::Callback::Element;
+package Bric::App::Callback::Profile::ElementType;
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;
@@ -6,12 +6,13 @@ use constant CLASS_KEY => 'element_type';
 
 use strict;
 use Bric::App::Authz qw(:all);
+use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:msg :history);
 use Bric::Biz::ElementType;
+use Bric::Util::DBI qw(:junction);
 
-my $type = 'element_type';
+my $type  = 'element_type';
 my $class = 'Bric::Biz::ElementType';
-
 
 sub addElementType : Callback {
     my $self = shift;
@@ -28,12 +29,22 @@ sub addElementType : Callback {
         add_msg("Changes not saved: permission denied.");
         $self->set_redirect(last_page());
     } else {
-        my $value  = $self->value;
-        my $element_types = (ref $value eq 'ARRAY') ? $value : [ $value ];
-        # add element to object using id(s)
+        $param->{obj} = $obj;
+        my $value     = $self->value or return;
+        my %existing  = map { $_->get_id => undef } $obj->get_containers;
+        my $ids       = [
+            grep { !exists $existing{$_} } ref $value ? @$value : $value
+        ];
+        return unless @$ids;
+
+        # Get a list of subelement types to add, excluding existing ones.
+        my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$ids) });
+
+        # Add 'em all and log 'em.
         $obj->add_containers($element_types);
         $obj->save;
-        $param->{obj} = $obj;
+        log_event('element_type_add', $obj, { Name => $_->get_name })
+            for @$element_types;
     }
 }
 

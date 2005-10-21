@@ -563,6 +563,10 @@ browser-neutral. [David]
 
 Media files can now be uploaded in the New Media profile. [David]
 
+=item *
+
+Added events for adding subelement element types to element types. [David]
+
 =back
 
 =cut
