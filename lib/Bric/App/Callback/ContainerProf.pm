@@ -366,7 +366,7 @@ sub save_and_up : Callback {
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $self->_delete_element;;
+        $self->_delete_element;
         return;
     }
 
@@ -389,7 +389,7 @@ sub save_and_stay : Callback {
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $self->_delete_element;;
+        $self->_delete_element;
         return;
     }
 
@@ -599,13 +599,18 @@ sub _update_parts {
 
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
-        my $id = $t->get_id();
+        my $id      = $t->get_id;
+        my $is_cont = $t->is_container;
 
         # Grab the element we're looking for
-        local $^W = undef;
-        $locate_element = $t if $id == $locate_id and $t->is_container;
-        if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
-                           $param->{$widget . "|delete_data$id"})) {
+        {
+            local $^W = undef;
+            $locate_element = $t if $id == $locate_id and $is_cont;
+        }
+        if ($do_delete
+            && (($is_cont && $param->{$widget . "|delete_cont$id"})
+                || (!$is_cont && $param->{$widget . "|delete_data$id"}))
+        ) {
             add_msg('Element "[_1]" deleted.', $t->get_name);
             push @delete, $t;
             next;
