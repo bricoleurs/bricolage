@@ -719,16 +719,11 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LOAD_LANGUAGES         => $config->{LOAD_LANGUAGES};
     use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
 
-    # Okay, now load the end-user's code, if any.
-    if ($config->{PERL_LOADER} and ($ENV{MOD_PERL} || $ENV{BRIC_QUEUED})) {
-        my $pkg = TEMPLATE_BURN_PKG;
-        eval qq{package $pkg;
-                use Bric::Util::DBI qw(:junction);
-                $config->{PERL_LOADER};
-        };
-        # Just die if there was an error.
-        die $@ if $@;
-    }
+    # XXX Shove the PERL_LOADER code into our INC array. Bric::Util::Burner
+    # will pull it out and execute it. Yes, this is a nasty hack, but it works
+    # nicely, allows the code to execute after Bric::Config is completely
+    # loaded, and it doesn't leave the string of perl code hanging around in
+    $Bric::Config::INC{PERL_LOADER} = $config->{PERL_LOADER};
 
     # Set the MOD_PERL constant.
     use constant MOD_PERL => $ENV{MOD_PERL};

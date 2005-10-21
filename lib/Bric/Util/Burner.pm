@@ -2052,6 +2052,19 @@ sub _expire {
 
 #------------------------------------------------------------------------------#
 
+# XXX Grab the PERL_LOADER code from Bric::Config, where it has been sneakily
+# stached in its %INC hash, and execute it.
+if (my $code = delete $Bric::Config::INC{PERL_LOADER}) {
+    my $pkg = TEMPLATE_BURN_PKG;
+    eval qq{
+        package $pkg;
+        use Bric::Util::DBI qw(:junction);
+        $code;
+    };
+    # Just die if there was an error.
+    die $@ if $@;
+}
+
 1;
 __END__
 
