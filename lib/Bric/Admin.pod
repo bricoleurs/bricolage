@@ -2095,17 +2095,20 @@ unique. Off by default.
 
 =item *
 
-B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
-time in the same package spaces as your templates run in. This is so that you
-only have to load stuff that you might often use once, such as CGI.pm or
-Apache::DBI. This should be a complete Perl statement that can simply be loaded,
-and won't pause and wait for anything else, as otherwise your server will never
-start! And be warned that this code is executed at server startup time, so
-beware loading any variables that don't survive forks very well (such as
-database handles). Defaults to load nothing if not specified.
+B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at
+startup time in the same namespace as your templates run in. This is so that
+you only have to load stuff that you might often use once, such as
+L<CGI.pm|CGI.pm> or L<Apache::DBI|Apache::DBI>. This should be a complete Perl
+statement that can simply be loaded, and won't pause and wait for anything
+else, as otherwise your server will never start! And be warned that this code
+is executed at server startup time, so avoid loading any variables that don't
+survive forks very well (such as database handles). Defaults to load nothing
+if not specified.
 
-B<Note>: Only the Mason burner can directly use any symbols exported by code
-executed in the C<PERL_LOADER> directive.
+B<Note>: Only the Mason and Template Toolkit burners can directly use any
+symbols exported by code executed in the C<PERL_LOADER> directive, and TT can
+only use unique symbols (that is, if the code that runs exports a hash and a
+scalar with the same names, only the hash will be available in TT templates).
 
 =back
 

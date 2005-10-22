@@ -567,6 +567,17 @@ Media files can now be uploaded in the New Media profile. [David]
 
 Added events for adding subelement element types to element types. [David]
 
+=item *
+
+Any symbols exported by C<PERL_LOADER> code, plus those exported by
+C<Bric::Util::DBI qw(:junction)>, are now imported into the Template Toolkit
+stash for direct use in Template Toolkit templates. For example, the C<ANY>
+function can now be used directly in TT templates, as can the burner constants
+C<PUBLISH_MODE> and C<PREVIEW_MODE> if the default C<PERL_LOADER> in
+F<bricolage.conf> is left in place. But TT can't have multiple symbols with
+the same names, so for each symbol exported, it adds to the stash the first
+one it finds in this order: CODE HASH ARRAY IO GLOB FORMAT, an SCALAR. [David]
+
 =back
 
 =cut
