@@ -139,7 +139,7 @@ var cancelValidation = false
    height  => 230
 &>
 
-<div class="formBuilder">
+<div class="formBuilder clearboth">
 
 <form name="fb_switch">
 <ul class="formElement">

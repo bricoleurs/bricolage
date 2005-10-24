@@ -454,18 +454,16 @@ div.addelement { text-align: right;}
 	padding: 5px 0 10px 0;
 }
 
-.formBuilder { position: relative; height: 200px; }
+.formBuilder { position: relative; padding-bottom: 10px; }
 .formBuilder .formElement {
-	position: absolute;
-	top: 0; left: 0;
+    float: left;
 	width: 150px;
 	list-style: none; list-style-image: none;
 	margin: 0; padding: 10px;
 }
 .formBuilder #fbDiv { margin-left: 170px; }
 .formBuilder .fbForm { 
-    position: absolute;
-    top: 0; left: 170px;
+    float: left;
     display: none;
 }
 .formBuilder .fbForm label { font-weight: bold; }
@@ -481,7 +479,7 @@ div.addelement { text-align: right;}
 .formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
 .formBuilder #fbFormCodeSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
 .formBuilder #fbFormText { display: block; } /* default */
-.formBuilder .submit { position: absolute; top: 170px; left: -160px; }
+.formBuilder .submit { float: left; }
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
@@ -559,6 +557,7 @@ button:active {
 
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
+.clearboth:after,
 .desk .item .head:after,
 .desk .item .actions:after,
 .desk_item .head:after,
@@ -571,6 +570,7 @@ form .row:after,
     clear: both; 
     visibility: hidden;
 }
+.clearboth,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,
@@ -578,12 +578,14 @@ form .row,
 .paginate,
 .viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
+* html .clearboth,
 * html .desk .item .head,
 * html .desk .item .actions,
 * html .desk_item .head,
 * html form .row,
 * html .paginate,
 * html .viewmeta {height: 1%;}
+.clearboth,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,
