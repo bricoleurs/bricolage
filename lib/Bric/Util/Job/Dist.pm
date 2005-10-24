@@ -203,7 +203,7 @@ sub _do_it {
             log_event(story_expire => $doc);
         }
 
-        elsif (my $id = $self->get_media_id) {
+        elsif ($id = $self->get_media_id) {
             my $doc = Bric::Biz::Asset::Business::Media->lookup({ id => $id });
             log_event(media_expire => $doc);
         }
