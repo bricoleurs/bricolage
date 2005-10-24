@@ -1919,6 +1919,7 @@ sub _sync_elements {
     }
 
     while (my $t = shift @$del_elements) {
+        next unless $t->get_id;
         $t->set_object_order(0);
         $t->set_place(0);
         $t->deactivate->save;
