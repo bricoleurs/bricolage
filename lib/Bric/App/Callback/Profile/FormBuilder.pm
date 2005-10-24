@@ -456,7 +456,7 @@ $delete_element_type_attrs = sub {
             log_event('field_type_rem', $obj, { Name => $attr });
             log_event('field_type_deact', $atd);
         }
-        $obj->del_field_type($del);
+        $obj->del_field_types($del);
     }
 };
 
