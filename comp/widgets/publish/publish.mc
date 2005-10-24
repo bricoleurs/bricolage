@@ -40,7 +40,8 @@ my $media_pkg = get_package_name($media_key_name);
 my ($story_pub_ids, $media_pub_ids);
 if (my $d = get_state_data($widget)) {
     # Get the original assets
-    ($story_pub_ids, $media_pub_ids) = @{$d}{qw(story media)};
+    $story_pub_ids = mk_aref($d->{story});
+    $media_pub_ids = mk_aref($d->{media});
     # Get related assets, too
     my ($rel_story_ids, $rel_media_ids) = @{$d}{qw(rel_story rel_media)};
 
@@ -69,26 +70,32 @@ if (my $d = get_state_data($widget)) {
 
 my $objs = [];
 # Get the stories together.
-foreach my $sid (@{ mk_aref($story_pub_ids) }) {
-    my $s = $story_pkg->lookup({ id => $sid });
-    if ($s->get_checked_out) {
-        add_msg('Cannot publish checked-out story "[_1]"', $s->get_title);
-	next;
+if (@$story_pub_ids) {
+    for my $s ( $story_pkg->list({
+        version_id => ANY(@{ mk_aref($story_pub_ids) })
+    }) ) {
+        if ($s->get_checked_out) {
+            add_msg('Cannot publish checked-out story "[_1]"', $s->get_title);
+            next;
+        }
+        push @$objs, $s;
     }
-    push @$objs, $s;
 }
 
 # Get the media together.
-foreach my $mid (@{ mk_aref($media_pub_ids) }) {
-    my $m = $media_pkg->lookup({ id => $mid });
-    if ($m->get_checked_out) {
-        add_msg('Cannot publish checked-out media "[_1]"', $m->get_title);
-	next;
+if (@$media_pub_ids) {
+    for my $m ( $media_pkg->list({
+        version_id => ANY(@{ mk_aref($media_pub_ids) })
+    }) ) {
+        if ($m->get_checked_out) {
+            add_msg('Cannot publish checked-out media "[_1]"', $m->get_title);
+            next;
+        }
+        push @$objs, $m;
     }
-    push @$objs, $m;
 }
 
-$m->comp('/widgets/wrappers/sharky/table_top.mc', 
+$m->comp('/widgets/wrappers/sharky/table_top.mc',
          caption => '%n to Publish',
          object  => 'asset' );
 $m->comp('/widgets/listManager/listManager.mc',

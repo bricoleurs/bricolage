@@ -20,6 +20,7 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui :pub);
 use Bric::Util::Burner;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(strfdate);
 
@@ -160,8 +161,8 @@ sub move : Callback {
 sub publish : Callback {
     my $self = shift;
     my $param = $self->params;
-    my $story_pub = $param->{'story_pub'};
-    my $media_pub = $param->{'media_pub'};
+    my $story_pub = $param->{story_pub} || {};
+    my $media_pub = $param->{media_pub} || {};
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
     my $story = mk_aref($param->{$self->class_key.'|story_pub_ids'});
@@ -169,10 +170,10 @@ sub publish : Callback {
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
-    my @stories = ((map { $spkg->lookup({id => $_}) } @$story),
-                   values %$story_pub);
-    my @media = ((map { $mpkg->lookup({id => $_}) } @$media),
-                   values %$media_pub);
+    my @stories = values %$story_pub;
+    my @media   = values %$media_pub;
+    push @stories, $spkg->list({ version_id => ANY(@$story) }) if @$story;
+    push @media,   $mpkg->list({ version_id => ANY(@$media) }) if @$media;
 
     my (@sids, @mids);
 
@@ -185,7 +186,7 @@ sub publish : Callback {
             my $doc = shift @$objs or next;
 
             # haven't I seen you someplace before?
-            my $id = $doc->get_id;
+            my $id = $doc->get_version_id;
             next if exists $seen{"$key$id"};
             $seen{"$key$id"} = 1;
 
@@ -223,7 +224,7 @@ sub publish : Callback {
                     next unless $rel->is_active;
 
                     # haven't I seen you someplace before?
-                    my $relid = $rel->get_id;
+                    my $relid = $rel->get_version_id;
                     my $relkey = $rel->key_name;
                     next if exists $seen{"$relkey$relid"};
                     $seen{"$relkey$relid"} = 1;
@@ -261,25 +262,25 @@ sub publish : Callback {
 
                     # push onto the appropriate list
                     if ($relkey eq 'story') {
-                        push @rel_story, $rel->get_id;
+                        push @rel_story, $relid;
                         push @sids, $relid if $pub_ids->{$id};
                         push(@stories, $rel); # recurse through related stories
                     } else {
-                        push @rel_media, $rel->get_id;
+                        push @rel_media, $relid;
                         push @mids, $relid if $pub_ids->{$id};
                     }
                 }
 
                 # Publish all aliases, too.
-                for my $aid ($doc->list_ids({
+                for my $alias ($doc->list({
                     alias_id          => $doc->get_id,
                     publish_status    => 1,
                     published_version => 1,
                 })) {
                     if ($key eq 'story') {
-                        push @sids, $aid;
+                        push @sids, $alias->get_version_id;
                     } else {
-                        push @mids, $aid;
+                        push @mids, $alias->get_version_id;
                     }
                 }
             }

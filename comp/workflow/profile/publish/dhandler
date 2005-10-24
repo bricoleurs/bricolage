@@ -18,9 +18,8 @@ $LastChangedDate$
 <description>
 
 =cut
-</%doc>
 
-%#-- Begin HTML --#
+</%doc>
 <%perl>;
 do_queued_redirect();
 # Get the content first, as it may generate messages that'll go into the header,
@@ -43,7 +42,6 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <%perl>
 $m->comp('/widgets/select_time/select_time.mc',
          base_name => "pub_date",
-#         indent => 60,
          disp      => "Publish At");
 </%perl>
   </td>
@@ -59,11 +57,6 @@ $m->comp('/widgets/profile/formButtons.mc',
          val => 'publish_assets_red',
          no_del => 1);
 </%perl>
-
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
-
 
