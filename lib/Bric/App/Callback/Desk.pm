@@ -327,9 +327,9 @@ sub deploy : Callback {
 
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
-        my $c = @$a_ids;
-        foreach (@$a_ids) {
-            my $fa = Bric::Biz::Asset::Template->lookup({ id => $_ });
+        my $count = @$a_ids;
+        foreach my $id (@$a_ids) {
+            my $fa = Bric::Biz::Asset::Template->lookup({ version_id => $id });
             my $action = $fa->get_deploy_status ? 'template_redeploy'
               : 'template_deploy';
             $b->deploy($fa);
@@ -350,10 +350,10 @@ sub deploy : Callback {
             log_event("template_rem_workflow", $fa);
         }
         # Let 'em know we've done it!
-        if ($c == 1) {
+        if ($count == 1) {
             add_msg('Template "[_1]" deployed.', $disp_name);
         } else {
-            add_msg("[quant,_1,$disp_name] deployed.", $c);
+            add_msg("[quant,_1,$disp_name] deployed.", $count);
         }
     }
 
