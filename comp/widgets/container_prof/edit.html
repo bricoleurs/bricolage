@@ -230,15 +230,15 @@ if ($at->is_related_media) {
          &nbsp;
 % } elsif ($dt->is_container) {
 % # START IF CONTAINER
-	<& '/widgets/profile/checkbox.mc',
-			name => 'container_prof|delete_cont' . $dt->get_id,
-			value => 1
-	&>
+    <& '/widgets/profile/checkbox.mc',
+        name => 'container_prof|delete_cont' . $dt->get_id,
+        value => 1
+    &>
 % } else {
-	<& '/widgets/profile/checkbox.mc',
-			name => 'container_prof|delete_data' . $dt->get_id,
-			value => 1
-	&>
+    <& '/widgets/profile/checkbox.mc',
+        name => 'container_prof|delete_data' . $dt->get_id,
+        value => 1
+    &>
 % }
    </td>
 </tr>
@@ -264,7 +264,7 @@ if ($at->is_related_media) {
         cb        => 'delete_cb',
         button    => 'delete_red',
         useTable  => 0 &>
-	</td>
+    </td>
 % } else {
     &nbsp;</td><td>&nbsp;</td>
 %}
@@ -292,17 +292,17 @@ if ($at->is_related_media) {
         hspace   => 4
     &>
 % if (@$elem_opts) {
-  	<& '/widgets/profile/imageSubmit.mc',
-  		formName => "theForm",
-		callback => $widget ."|add_element_cb",
-		image    => "add_element_lgreen",
-	&>
-	<& /widgets/profile/select.mc, name     => $widget.'|add_element',
-    	                           options  => $elem_opts,
-        	                       useTable => 0,
-            	                   multiple => 0,
-                	               size     => 1,
-	&>
+    <& '/widgets/profile/imageSubmit.mc',
+        formName => "theForm",
+        callback => $widget ."|add_element_cb",
+        image    => "add_element_lgreen",
+    &>
+    <& /widgets/profile/select.mc, name     => $widget.'|add_element',
+                                   options  => $elem_opts,
+                                   useTable => 0,
+                                   multiple => 0,
+                                   size     => 1,
+    &>
 % }
 </div>
 %# end data display
