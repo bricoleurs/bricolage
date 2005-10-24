@@ -97,7 +97,7 @@ Reported by Phillip Smith. [David]
 
 =item *
 
-Fixed database DDLs to work with PostgreSQL 8.1. [David]
+Updated for compatibility with PostgreSQL 8.1. [David]
 
 =item *
 
