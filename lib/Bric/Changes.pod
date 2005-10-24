@@ -38,15 +38,15 @@ Suggested by Mark Jaroski. [David]
 
 The Bulk Publish feature in the UI now only publishes the previously published
 versions of unexpired stories and media, rather than the latest version of
-expired and unexpired stories and media. [David]
+expired and unexpired stories and media, thus avoiding errors when documents
+are checked out. [David]
 
 =item *
 
-If a story is passed to the C<burn_another()> or C<preview_another()> burner
-methods that is the same as the story currently being burned, it will no
-longer be published or previewed again by C<burn_another()> or
-C<preview_another()>, thus mitigating the possibility of infinite loops.
-[David]
+If a story passed to the C<burn_another()> or C<preview_another()> burner
+methods is the same as the story currently being burned, it will no longer be
+published or previewed again by C<burn_another()> or C<preview_another()>,
+thus mitigating the possibility of infinite loops. [David]
 
 =item *
 
@@ -80,14 +80,14 @@ specified using the C<ANY()> function. [David]
 
 =item *
 
-Having a custom field beginning with a leading underscore was causing
-an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
+Fixed an error in F<comp/widgets/wrappers/sharky/header.mc> caused by having a
+custom field beginning with a leading underscore. [Scott]
 
 =item *
 
-Errors thrown when setting element field values will not be displayed as error
+Errors thrown when setting element field values will now be displayed as error
 messages within the context of the element profile, rather than throwing a
-fatal exception. This is useful for invalid dates, foe example. [David]
+fatal exception. This is useful for invalid dates, for example. [David]
 
 =item *
 
@@ -119,7 +119,7 @@ a database exception. Reported by Marshall. [David]
 =item *
 
 New elements and fields will now have any leading or trailing white space
-removed, rather than converted to underscores. Reported by Scott Lanning.
+trimmed, rather than converted to underscores. Reported by Scott Lanning.
 [David]
 
 =item *
