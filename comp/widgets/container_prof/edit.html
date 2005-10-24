@@ -246,9 +246,9 @@ if ($at->is_related_media) {
 % }
 % # END FOREACH ELEMENTS
 
+% if (scalar @elements) {
 <tr>
   <td colspan=2></td>
-% if (scalar @elements) {
     <td class="position">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Reorder"),
@@ -265,19 +265,15 @@ if ($at->is_related_media) {
         button    => 'delete_red',
         useTable  => 0 &>
     </td>
-% } else {
-    &nbsp;</td><td>&nbsp;</td>
-%}
 </tr>
+% }
 
 % # DISPLAY IF NO ELEMENTS
 % if (!$total)  {
 <tr>
   <td colspan="4"><%$lang->maketext('No elements have been added.')%></td>
 </tr>
-
 % }
-
 
 % # END ELEMENT DISPLAY
 </table>
@@ -452,14 +448,13 @@ my $related_summary = sub {
                              : $element->get_related_media;
 
   my $button = $m->scomp(
-      '/widgets/profile/imageSubmit.mc',
-      formName => "theForm",
-      callback => $widget  ."|pick_related_".$type."_cb",
-      image    => "edit_lgreen",
-      vspace   => 4,
+      '/widgets/profile/button.mc',
+      widget   => $widget,
+      cb       => "pick_related_".$type."_cb",
+      button   => "edit_lgreen",
+      useTable => 0
   );
 
-  $m->out('<table border="0" cellpadding="0" cellspacing="0" width="578">');
   if ($rel) {
       add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
               $type, $rel->get_title)
@@ -472,22 +467,21 @@ my $related_summary = sub {
       my $thumb = '';
       if (USE_THUMBNAILS && $type ne 'story') {
           if ($thumb =  $rel->thumbnail_uri) {
-              $thumb = qq{<img src="$thumb" />&nbsp;};
+              $thumb = qq{<img src="$thumb" alt="Thumbnail" />&nbsp;};
           }
       }
       # The summary info
-      $m->out('<tr><td>');
       $m->comp('/widgets/summary/summary.mc',
                 asset  => $rel,
                 type   => $type,
                 header => 'Currently Related '.ucfirst($type),
                 frame  => 0,
                 button => $thumb . $button );
-      $m->out('</td></tr>');
   } else {
-      $m->out('<tr><td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-              $lang->maketext('No related [_1]'. ucfirst($type)));
-      $m->out(qq{</td><td align="right" width="100%">$button&nbsp;</td></tr>});
+      $m->out('<div class="noneFound">',
+              $lang->maketext('No related [_1]'. ucfirst($type)), 
+              qq{<div class="button">$button</div>},
+              '</div>');
       if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
           # Give 'em an upload form.
           if (my $uploader = $m->scomp(
@@ -497,10 +491,9 @@ my $related_summary = sub {
                   formName    => "theForm",
                   site_id     => $asset->get_site_id,
           )) {
-              $m->out(qq{<tr><td colspan="2">\n$uploader\n</td></tr>\n});
+              $m->out(qq{<div class="uploader">$uploader</div>\n});
           }
       }
   }
-  $m->out('</table>');
 };
 </%once>
