@@ -321,15 +321,16 @@ sub publish : Callback {
 
 sub deploy : Callback {
     my $self = shift;
-
-    if (my $a_ids = $self->params->{$self->class_key.'|template_pub_ids'}) {
+    my $widget = $self->class_key;
+    if (my $a_ids = $self->params->{"$widget|template_pub_ids"}) {
         my $b = Bric::Util::Burner->new;
 
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
         if (my $count = @$a_ids) {
             my $disp_name;
-            for my $fa (Bric::Biz::Asset::Template->lookup({
+            print STDERR "IDS: @$a_ids\n";
+            for my $fa (Bric::Biz::Asset::Template->list({
                 version_id => ANY(@$a_ids)
             })) {
                 my $action = $fa->get_deploy_status ? 'template_redeploy'
@@ -342,6 +343,7 @@ sub deploy : Callback {
                 log_event($action, $fa);
 
                 # Get the current desk and remove the asset from it.
+                print STDERR "Template: ", $fa->get_uri, $/;
                 my $d = $fa->get_current_desk;
                 $d->remove_asset($fa);
                 $d->save;
@@ -362,8 +364,8 @@ sub deploy : Callback {
     }
 
     # If there are stories or media to be published, publish them!
-    if ($self->params->{$self->class_key.'|story_pub_ids'}
-          || $self->params->{$self->class_key.'|media_pub_ids'}) {
+    if ($self->params->{"$widget|story_pub_ids"}
+          || $self->params->{"$widget|media_pub_ids"}) {
         $self->publish;
     }
 
