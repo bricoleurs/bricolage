@@ -170,12 +170,12 @@ div.debug dt:after {
 }
 
 .desk .item .sorted {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .desk .item dd.sorted,
 .desk .item div.sorted {
-	background: #99CC99 !important;
+    background: #99CC99 !important;
 }
 
 .desk .item .head { 
@@ -420,46 +420,46 @@ div.actions { background: #999966; padding: 2px 4px; }
 div.addelement { text-align: right;}
 
 .buttonBar .delete {
-	font-weight: bold;
-	text-align: center;
-	color: #993300;
+    font-weight: bold;
+    text-align: center;
+    color: #993300;
 }
 
 .buttonBar .checkin {
-	padding: 4px 0;
-	float: left;
-	border-top: solid #CCCC99 1px;
+    padding: 4px 0;
+    float: left;
+    border-top: solid #CCCC99 1px;
 }
 
 .buttonBar .revert {
-	text-align: right;
-	float: right;
-	padding: 4px 0;
+    text-align: right;
+    float: right;
+    padding: 4px 0;
 }
 
 .buttonBar .buttons {
-	clear: both;
-	border-top: solid #CCCC99 1px;
+    clear: both;
+    border-top: solid #CCCC99 1px;
 }
 
 .buttonBar .save { 
-	clear: both; float: left; 
-	width: 40%; 
-	text-align: right;
-	padding: 5px 0 10px 0;
+    clear: both; float: left; 
+    width: 40%; 
+    text-align: right;
+    padding: 5px 0 10px 0;
 }
 .buttonBar .cancel { 
-	float: right;
-	width: 40%;
-	padding: 5px 0 10px 0;
+    float: right;
+    width: 40%;
+    padding: 5px 0 10px 0;
 }
 
 .formBuilder { position: relative; padding-bottom: 10px; }
 .formBuilder .formElement {
     float: left;
-	width: 150px;
-	list-style: none; list-style-image: none;
-	margin: 0; padding: 10px;
+    width: 150px;
+    list-style: none; list-style-image: none;
+    margin: 0; padding: 10px;
 }
 .formBuilder #fbDiv { margin-left: 170px; }
 .formBuilder .fbForm { 
