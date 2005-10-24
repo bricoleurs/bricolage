@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.7 ()
+=head1 VERSION 1.8.7 (2005-10-24)
 
 =head2 Improvements
 
@@ -118,7 +118,7 @@ a database exception. Reported by Marshall. [David]
 
 =item *
 
-New elements and fields will now have any leading or trailing whitespace
+New elements and fields will now have any leading or trailing white space
 removed, rather than converted to underscores. Reported by Scott Lanning.
 [David]
 
@@ -129,8 +129,8 @@ select more than one value for the default value. Reported by Scott. [David]
 
 =item *
 
-In a story or media profile, eleting a subelement with the same ID as a field
-(or vice versa) will no longer delete both. Reported by Scott Lanning. [David]
+In a story or media profile, deleting a subelement with the same ID as a field
+(or vice-versa) will no longer delete both. Reported by Scott Lanning. [David]
 
 =back
 
