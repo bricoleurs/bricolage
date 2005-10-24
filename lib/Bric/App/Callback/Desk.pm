@@ -113,7 +113,6 @@ sub move : Callback {
             log_event("$a_class\_save", $a_obj);
             my $cur_desk = $a_obj->get_current_desk;
             if ($a_obj->get_checked_out) {
-                print STDERR "Checkin\n";
                 $cur_desk->checkin($a_obj);
                 log_event("$a_class\_checkin", $a_obj, {
                     Version => $a_obj->get_version
@@ -329,7 +328,6 @@ sub deploy : Callback {
 
         if (my $count = @$a_ids) {
             my $disp_name;
-            print STDERR "IDS: @$a_ids\n";
             for my $fa (Bric::Biz::Asset::Template->list({
                 version_id => ANY(@$a_ids)
             })) {
@@ -343,7 +341,6 @@ sub deploy : Callback {
                 log_event($action, $fa);
 
                 # Get the current desk and remove the asset from it.
-                print STDERR "Template: ", $fa->get_uri, $/;
                 my $d = $fa->get_current_desk;
                 $d->remove_asset($fa);
                 $d->save;
