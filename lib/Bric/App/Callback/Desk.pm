@@ -32,7 +32,6 @@ my $pkgs = {
 my $keys = [ keys %$pkgs ];
 
 my $type      = 'template';
-my $disp_name = 'Template';
 
 sub checkin : Callback {
     my $self = shift;
@@ -328,33 +327,37 @@ sub deploy : Callback {
 
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
-        my $count = @$a_ids;
-        foreach my $id (@$a_ids) {
-            my $fa = Bric::Biz::Asset::Template->lookup({ version_id => $id });
-            my $action = $fa->get_deploy_status ? 'template_redeploy'
-              : 'template_deploy';
-            $b->deploy($fa);
-            $fa->set_deploy_date(strfdate());
-            $fa->set_deploy_status(1);
-            $fa->set_published_version($fa->get_current_version);
-            $fa->save;
-            log_event($action, $fa);
+        if (my $count = @$a_ids) {
+            my $disp_name;
+            for my $fa (Bric::Biz::Asset::Template->lookup({
+                version_id => ANY(@$a_ids)
+            })) {
+                my $action = $fa->get_deploy_status ? 'template_redeploy'
+                    : 'template_deploy';
+                $b->deploy($fa);
+                $fa->set_deploy_date(strfdate());
+                $fa->set_deploy_status(1);
+                $fa->set_published_version($fa->get_current_version);
+                $fa->save;
+                log_event($action, $fa);
 
-            # Get the current desk and remove the asset from it.
-            my $d = $fa->get_current_desk;
-            $d->remove_asset($fa);
-            $d->save;
+                # Get the current desk and remove the asset from it.
+                my $d = $fa->get_current_desk;
+                $d->remove_asset($fa);
+                $d->save;
 
-            # Clear the workflow ID.
-            $fa->set_workflow_id(undef);
-            $fa->save;
-            log_event("template_rem_workflow", $fa);
-        }
-        # Let 'em know we've done it!
-        if ($count == 1) {
-            add_msg('Template "[_1]" deployed.', $disp_name);
-        } else {
-            add_msg("[quant,_1,$disp_name] deployed.", $count);
+                # Clear the workflow ID.
+                $fa->set_workflow_id(undef);
+                $fa->save;
+                log_event("template_rem_workflow", $fa);
+                $disp_name ||= $fa->get_uri;
+            }
+            # Let 'em know we've done it!
+            if ($count == 1) {
+                add_msg('Template "[_1]" deployed.', $disp_name);
+            } else {
+                add_msg("[quant,_1,$disp_name] deployed.", $count);
+            }
         }
     }
 
