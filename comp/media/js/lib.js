@@ -327,24 +327,6 @@ function setDays (year, month, days, obj) {
 }
 
 /*
-Generic function to write html to div or layer on a page.
-*/
-function writeDiv(which, html) {
-
-    if (document.layers) {
-        document.layers[which].document.open();
-        document.layers[which].document.write(html);
-        document.layers[which].document.close();
-    } else if (document.all) {
-        var tmp = eval("document.all." + which);
-        tmp.innerHTML = html;
-    } else {
-        var tmp = document.getElementById(which);
-        tmp.innerHTML = html;
-    }
-}
-
-/*
 Input: a string.
 Output: Returns false if there is non whitespace text in the string, true if it is blank.
 */
@@ -682,8 +664,8 @@ Real time character counter for text areas
 function textCount(which, maxLength) {
     var myObj= document.getElementById(which);
     if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
-    writeDiv("textCountUp" + which,myObj.value.length);
-    writeDiv("textCountDown" + which,maxLength-myObj.value.length);
+    document.getElementById("textCountUp" + which).innerHTML = myObj.value.length;
+    document.getElementById("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
 
 /* Simple browser detection */
