@@ -1951,12 +1951,12 @@ sub _podify {
 
     # Start with related story.
     if (my $rel_story = $self->get_related_story) {
-        $pod .= '=related_story_uuid ' . $rel_story->get_uuid . "\n\n";
+        $pod .= "$indent=related_story_uuid " . $rel_story->get_uuid . "\n\n";
     }
 
     # Add related media.
     if (my $rel_media = $self->get_related_media) {
-        $pod .= '=related_media_uuid ' . $rel_media->get_uuid . "\n\n";
+        $pod .= "$indent=related_media_uuid " . $rel_media->get_uuid . "\n\n";
     }
 
     # Dump all of the fields and subelements.
