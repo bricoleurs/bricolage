@@ -1080,12 +1080,8 @@ B<Notes:> NONE.
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
-    return if $ident;
 
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
-
+    unless ($meths) {
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
         $meths->{$meth->{name}} = $meth;
@@ -1134,7 +1130,15 @@ sub my_meths {
     # Rename element type.
     $meths->{element_type} = { %{ $meths->{element_type} } };
     $meths->{element_type}{disp} = 'Media Type';
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    }
+
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+    } else {
+        return $meths;
+    }
 }
 
 ################################################################################

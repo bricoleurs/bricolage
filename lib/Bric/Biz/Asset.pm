@@ -152,8 +152,9 @@ use constant HAS_MULTISITE => 1;
 #--------------------------------------#
 # Private Class Fields
 my $meths;
-my @ord = qw(id name description priority uri cover_date version element_type
-             needs_publish publish_status expire_date active site_id site);
+my @ord = qw(id version_id name description priority uri cover_date version
+             element_type needs_publish publish_status expire_date active
+             site_id site);
 
 #--------------------------------------#
 # Instance Fields
@@ -549,19 +550,22 @@ B<Notes:> NONE.
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
-    return if $ident;
-
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
 
     # We don't got 'em. So get 'em!
-    $meths = {
+    $meths ||= {
               id         => {
                               name     => 'id',
                               get_meth => sub { shift->get_id(@_) },
                               get_args => [],
                               disp     => 'ID',
+                              len      => 10,
+                              type     => 'short',
+                             },
+              version_id => {
+                              name     => 'version_id',
+                              get_meth => sub { shift->get_version_id(@_) },
+                              get_args => [],
+                              disp     => 'Version ID',
                               len      => 10,
                               type     => 'short',
                              },
@@ -729,7 +733,14 @@ sub my_meths {
               },
 
              };
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+    } else {
+        return $meths;
+    }
 }
 
 #--------------------------------------#
