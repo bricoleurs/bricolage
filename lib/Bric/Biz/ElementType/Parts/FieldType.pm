@@ -785,16 +785,16 @@ sub my_meths {
                   },
               },
               widget_type  => {
-			      get_meth => sub { shift->get_widget_type(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_widget_type(@_) },
-			      set_args => [],
-			      name     => 'widget_type',
-			      disp     => 'Widget Type',
-			      len      => 80,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {
+                  get_meth => sub { shift->get_widget_type(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_widget_type(@_) },
+                  set_args => [],
+                  name     => 'widget_type',
+                  disp     => 'Widget Type',
+                  len      => 80,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {
                       type => 'select',
                       vals => {
                           text       => 'Text',
@@ -813,16 +813,16 @@ sub my_meths {
                   }
               },
               precision  => {
-			      get_meth => sub { shift->get_precision(@_) },
-			      get_args => [],
-			      set_meth => sub { shift->set_precision(@_) },
-			      set_args => [],
-			      name     => 'precision',
-			      disp     => 'Precision',
-			      len      => 80,
-			      req      => 1,
-			      type     => 'short',
-			      props    => {
+                  get_meth => sub { shift->get_precision(@_) },
+                  get_args => [],
+                  set_meth => sub { shift->set_precision(@_) },
+                  set_args => [],
+                  name     => 'precision',
+                  disp     => 'Precision',
+                  len      => 80,
+                  req      => 1,
+                  type     => 'short',
+                  props    => {
                       type => 'select',
                       vals => Bric::Util::Time::PRECISIONS,
                   }
