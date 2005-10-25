@@ -2380,8 +2380,6 @@ sub _update_story {
     my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map { "$_ = ?" } COLS) .
       ' WHERE id=? ';
 
-    print STDERR "$$: $self:", $/, Bric::Util::Fault->new('test');
-    print STDERR $/, $/;
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get(FIELDS), $self->_get('id'));
     return $self;
