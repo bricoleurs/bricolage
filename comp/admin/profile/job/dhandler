@@ -2,7 +2,7 @@
 # Output the header and other necessities.
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
-	 context => "Admin | Profile | $disp | &quot;" . $job->get_name . "&quot;"
+         context => "Admin | Profile | $disp | &quot;" . $job->get_name . "&quot;"
 );
 $m->out(qq{<form method="post" name="job_profile" action="} . $r->uri
         . qq{" onSubmit="return confirmChanges(this)">\n});
@@ -17,7 +17,7 @@ if ($job->has_failed) {
         number  => ++$i,
     );
     $m->print(qq{<div class="padding">\n});
-    $m->out('<span class="redLabel"><b>'
+    $m->out('<span class="errorMsg"><b>'
       . $lang->maketext('This job has failed')
       . '</b></span><p>'
       . $lang->maketext(
@@ -67,11 +67,11 @@ $m->comp("/widgets/profile/displayFormElement.mc",
         );
 
 $m->comp("/widgets/select_time/select_time.mc",
-	 base_name => 'sched_time' ,
-	 def_date  => $job->get_sched_time(ISO_8601_FORMAT),
-	 useTable  => 1,
-	 disp      => "Scheduled Time"
-	);
+          base_name => 'sched_time' ,
+          def_date  => $job->get_sched_time(ISO_8601_FORMAT),
+          useTable  => 1,
+          disp      => "Scheduled Time"
+);
 
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
@@ -80,11 +80,11 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
              caption => "Destinations",
              number => 2);
-    $m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
+    $m->out(qq{<ol style="margin: 0; padding: 10px 10px 10px 30px;">});
     foreach my $st ($job->get_server_types) {
-        $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_name . "</td></tr>\n");
+        $m->out(qq{<li>} . $st->get_name . "</li>\n");
     }
-    $m->out("</table>\n");
+    $m->out("</ol>\n");
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     # Show a list of the Resources.
@@ -92,18 +92,18 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
              caption => "Resources",
              number => 3
             );
-    $m->out("<table border=0 cellpadding=0 cellspacing=0 width=575>");
+    $m->out(qq{<ol style="margin: 0; padding: 10px 10px 10px 30px;">});
     foreach my $st ($job->get_resources) {
-        $m->out(qq{<tr><td width="20" height="25"></td><td width="555">&nbsp;} . $st->get_uri . "</td></tr>\n");
+        $m->out(qq{<li>} . $st->get_uri . "</li>\n");
     }
-    $m->out("</table>\n");
+    $m->out("</ol>\n");
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 
 # Add the form buttons and other necessities.
 $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	 no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
-	 ret_val => 'return_dgreen', widget => $type);
+          no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
+          ret_val => 'return_dgreen', widget => $type);
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
 </%perl>
