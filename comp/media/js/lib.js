@@ -437,14 +437,14 @@ var formBuilder = {};
 formBuilder.submit = function(frm, mainform, action) {
     var main = document.getElementById(mainform);
     if (action == "add") {
-        if (formBuilder.confirm(frm, main)) { // verify data
+        if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
+            
             main.submit();
         }
     } else {
-        // get the delete button value into the main form: 
-        if(document.getElementById('fbMagicButtons').elements['delete'].checked) {
-            main.elements["delete"].value = 1;
+        // get the delete button value into the main form
+        if(main.elements['delete'].checked) {
             // Always just save when we're deleting.
             main.elements["formBuilder|save_cb"].value = 1;
         } else {
@@ -457,34 +457,72 @@ formBuilder.submit = function(frm, mainform, action) {
     return false;
 };
 
-formBuilder.confirm = function (frm, main) {
+formBuilder.confirm = function (frm) {
 
     // look for formbuilder mainects, and get their values
     // assign these values to the hidden fields in the main form
 
-    for (var i=0; i < frm.elements.length; i++) {
+    for (var i = 0; i < frm.elements.length; i++) {
         var obj = frm.elements[i];
-        if (obj.name != "fb_position") {
-            if (obj.type == 'checkbox') {
-                if (obj.checked == true) {
-                    main[obj.name].value = 1;
+        if (obj.name.substring(0,1) == "fb") {
+            if (obj.name != "fb_position") {
+                if (obj.type == 'checkbox') {
+                    if (obj.checked == true) {
+                        obj.value = 1;
+                    }
+                } else if (obj.style.display == "none") {
+                    obj.value = '';
+                } else if (obj.name != "fb_value" && obj.style.display != "none") {
+                    alert(data_msg);
+                    obj.focus();
+                    confirming = false // check this
+                        return false;                       
                 }
-            } else if (!isEmpty(obj.value) ) {
-                main[obj.name].value = obj.value;
-            } else if (obj.name != "fb_value") {
-                alert(data_msg);
-                obj.focus();
-                confirming = false // check this
-                    return false;                       
             }
-        } else {
-            main[obj.name].value = textUnWrap( obj.options[obj.selectedIndex].value );
         }
     }
 
     // all good
     return true;
 };
+
+formBuilder.switchType = function(type) {
+    var fb = document.getElementById("fbDiv");
+    fb.className = type;
+    document.getElementById("fb_type").value = type;
+    var labels = fb.getElementsByTagName("label");
+    for (var i = 0; i < labels.length; i++) {
+        var target = document.getElementById(labels[i].htmlFor);
+        if (typeof this.labels[type] != "undefined" 
+            && typeof this.labels[type][target.name] != "undefined") {
+            
+            // Save the default label before changing it
+            if (typeof this.defaultLabels[target.name] == "undefined")
+                this.defaultLabels[target.name] = labels[i].innerHTML;
+            
+            labels[i].innerHTML = this.labels[type][target.name] + ":";
+
+        // Use the default if it exists and a new value doesn't
+        } else if (typeof this.defaultLabels[target.name] != "undefined") {
+            labels[i].innerHTML = this.defaultLabels[target.name];        
+        }
+        
+        if (typeof this.values[type] != "undefined" 
+            && typeof this.values[type][target.name] != "undefined") {
+            
+            // Save the default value before changing it
+            if (typeof this.defaultValues[target.name] == "undefined")
+                this.defaultValues[target.name] = target.value;
+            
+            target.value = this.values[type][target.name];
+        } else if (typeof this.defaultValues[target.name] != "undefined") {
+            target.value = this.defaultValues[target.name];
+        }
+    }
+};
+
+formBuilder.defaultLabels = new Array();
+formBuilder.defaultValues = new Array();
 
 
 /*

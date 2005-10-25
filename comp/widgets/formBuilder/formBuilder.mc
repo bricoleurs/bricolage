@@ -66,14 +66,7 @@ $stay                   => undef
 </%args>
 <%init>;
 my ($section, $mode, $type) = parse_uri($r->uri);
-my $div          = 'div';
-my $name         = "id";
-my $closeDiv     = "div";
-my $numFieldsTxt = '<input type="hidden" name="fieldNum" value="1">';
-my $textareaRows = 5;
-my $textareaCols = 20;
-$textareaRows    = 5;
-$textareaCols    = 25;
+my $numFieldsTxt = '<input type="hidden" name="fieldNum" value="1" />';
 
 # Put together the precision select list with localized options.
 my $precision_select = join('', map { sprintf '<option value="%s"%s>%s</option>',
@@ -95,32 +88,38 @@ if ($numFields != -1) {
         }
         $numFieldsTxt .= '</select>';
 }
+
 </%init>
 
+<script type="text/javascript">
+
+// Label overrides
+formBuilder.labels = new Array();
+formBuilder.labels['radio'] = new Array();
+formBuilder.labels['radio']['fb_disp']  = '<% $lang->maketext('Group Label') %>';
+formBuilder.labels['codeselect'] = new Array();
+formBuilder.labels['codeselect']['fb_vals']  = '<% $lang->maketext('Code') %>';
+
+// Value overrides
+formBuilder.values = new Array();
+formBuilder.values['select'] = new Array();
+formBuilder.values['select']['fb_size'] = 5;
+formBuilder.values['codeselect'] = new Array();
+formBuilder.values['codeselect']['fb_size'] = 5;
+formBuilder.values['wysiwyg'] = new Array();
+formBuilder.values['wysiwyg']['fb_rows'] = 8;
+formBuilder.values['wysiwyg']['fb_cols'] = 67;
+
+</script>
+
 % # add hidden fields to receive the values of the fbuilder
-<input type="hidden" name="fb_name" value="">
-<input type="hidden" name="fb_type" value="">
-<input type="hidden" name="fb_disp" value="">
-<input type="hidden" name="fb_vals" value="">
-<input type="hidden" name="fb_value" value="">
-<input type="hidden" name="fb_rows" value="">
-<input type="hidden" name="fb_cols" value="">
-<input type="hidden" name="fb_size" value="">
-<input type="hidden" name="fb_position" value="">
-<input type="hidden" name="fb_maxlength" value="">
-<input type="hidden" name="fb_req" value="">
-<input type="hidden" name="fb_quant" value="">
-<input type="hidden" name="fb_allowMultiple" value="">
-<input type="hidden" name="fb_precision" value="">
-<input type="hidden" name="<% $addCallback %>" value="0">
-<input type="hidden" name="<% $saveCallback %>" value="0">
-<input type="hidden" name="<% $stayCallback %>" value="0">
+<input type="hidden" name="<% $addCallback %>" value="0" />
+<input type="hidden" name="<% $saveCallback %>" value="0" />
+<input type="hidden" name="<% $stayCallback %>" value="0" />
 <input type="hidden" name="delete" value="0">
 % # close the current form context
-</form>
 
 <script language="javascript">
-var curSub = 'text'
 var cancelValidation = false
 
 <%perl>
@@ -135,442 +134,106 @@ var cancelValidation = false
 
 <& "/widgets/wrappers/sharky/table_top.mc",
    caption => $caption,
-   number  => $num,
-   height  => 230
+   number  => $num
 &>
 
-<div class="formBuilder clearboth">
+<div id="formBuilder" class="clearboth">
 
-<form name="fb_switch">
-<ul class="formElement">
-<li><input type="radio" name="formElement" id="formElementText" value="text" onclick="showForm('Text')" checked="checked" />
+<ul class="types">
+<li><input type="radio" name="fbSwitcher" id="formElementText" value="text" onclick="formBuilder.switchType('text')" checked="checked" />
     <label for="formElementText"><% $lang->maketext('Text Box') %></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementRadio" value="radio" onclick="showForm('Radio')" />
+<li><input type="radio" name="fbSwitcher" id="formElementRadio" value="radio" onclick="formBuilder.switchType('radio')" />
     <label for="formElementRadio"><% $lang->maketext('Radio Buttons')%></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementCheckbox" value="checkbox" onclick="showForm('Checkbox')" />
+<li><input type="radio" name="fbSwitcher" id="formElementCheckbox" value="checkbox" onclick="formBuilder.switchType('checkbox')" />
     <label for="formElementCheckbox"><% $lang->maketext('Checkbox') %></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementPulldown" value="pulldown" onclick="showForm('Pulldown')" />
+<li><input type="radio" name="fbSwitcher" id="formElementPulldown" value="pulldown" onclick="formBuilder.switchType('pulldown')" />
     <label for="formElementPulldown"><% $lang->maketext('Pulldown') %></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementSelect" value="select" onclick="showForm('Select')" />
+<li><input type="radio" name="fbSwitcher" id="formElementSelect" value="select" onclick="formBuilder.switchType('select')" />
     <label for="formElementSelect"><% $lang->maketext('Select') %></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementCodeSelect" value="codeselect" onclick="showForm('CodeSelect')" />
+<li><input type="radio" name="fbSwitcher" id="formElementCodeSelect" value="codeselect" onclick="formBuilder.switchType('codeselect')" />
     <label for="formElementCodeSelect"><% $lang->maketext('Code Select') %></label>
 </li>
-<li><input type="radio" name="formElement" id="formElementTextarea" value="textarea" onclick="showForm('Textarea')" />
+<li><input type="radio" name="fbSwitcher" id="formElementTextarea" value="textarea" onclick="formBuilder.switchType('textarea')" />
     <label for="formElementTextarea"><% $lang->maketext('Text Area') %></label>
 </li>
 % if (ENABLE_WYSIWYG){
-<li><input type="radio" name="formElement" id="formElementWYSIWYG" value="wysiwyg" onclick="showForm('WYSIWYG')" />
+<li><input type="radio" name="fbSwitcher" id="formElementWYSIWYG" value="wysiwyg" onclick="formBuilder.switchType('wysiwyg')" />
     <label for="formElementWYSIWYG"><% $lang->maketext('WYSIWYG') %></label>
 </li>
 % }
-<li><input type="radio" name="formElement" id="formElementDate" value="date" onclick="showForm('Date')" />
+<li><input type="radio" name="fbSwitcher" id="formElementDate" value="date" onclick="formBuilder.switchType('date')" />
     <label for="formElementDate"><% $lang->maketext('Date') %></label>
 </li>
 </ul>
-</form>
 
-<div id="fbDiv">
 
-<form name="fb_form" action="<% $target %>" id="fbFormText" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="text" />
+<div id="fbDiv" class="fbDiv">
 
-    <dl>
-      <dt><label for="fbTextName"><%$lang->maketext('Key Name')%>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbTextName" /></dd>
-      
-      <dt><label for="fbTextDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type="text" name="fb_disp" id="fbTextDisp" /></dd>
-      
-      <dt><label for="fbTextDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbTextDef" /></dd>
-    </dl>
-    
-    <dl>
-      <dt><label for="fbTextSize"><%$lang->maketext('Size')%>:</label></dt>
-      <dd><input type="text" name="fb_size" id="fbTextSize" value="32" size="3" /></dd>
-      
-      <dt><label for="fbTextMax"><% $lang->maketext('Max size') %>:</label></dt>
-      <dd><input type="text" name="fb_maxlength" id="fbTextMax" value="0" size="4" /></dd>
-    </dl>
+    <input type="hidden" name="fb_type" id="fb_type" value="text" />
 
-    <dl class="position">
-      <dt><label for="fbTextPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbTextPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbTextReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbTextReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbTextRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbTextRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormRadio" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="radio" />
-    
     <dl class="meta">
-      <dt><label for="fbRadioName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbRadioName" /></dd>
+      <dt><label for="fb_name"><% $lang->maketext('Key Name') %>:</label></dt>
+      <dd><input type="text" name="fb_name" id="fb_name" /></dd>
       
-      <dt><label for="fbRadioDisp"><% $lang->maketext('Group Label') %>:</label></dt>
-      <dd><input type=text name=fb_disp id="fbRadioDisp" /></dd>
+      <dt><label for="fb_disp"><% $lang->maketext('Label') %>:</label></dt>
+      <dd><input type="text" name="fb_disp" id="fb_disp" /></dd>
       
-      <dt><label for="fbRadioDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbRadioDef" /></dd>
+      <dt class="fb_value"><label for="fb_value"><% $lang->maketext('Default Value') %>:</label></dt>
+      <dd class="fb_value"><input type="text" name="fb_value" id="fb_value"/></dd>
     </dl>
-    
+
     <dl class="opts">
-      <dt><label for="fbRadioOpts"><% $lang->maketext('Options, Label') %></label><br />
-          (<% $lang->maketext('one per line')%>):</dt>
-      <dd><textarea rows="<% $textareaRows %>" cols="<% $textareaCols %>" name="fb_vals" id="fbRadioOpts"></textarea></dd>
-    </dl>
+      <dt><label for="fb_vals"><% $lang->maketext('Options, Label') %><br /><span class="small">(<% $lang->maketext('one per line')%>):</span></label></dt>
+      <dd><textarea rows="5" cols="25" name="fb_vals" id="fb_vals"></textarea></dd>
+    </dl>    
 
-    <dl class="position">
-      <dt><label for="fbRadioPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbRadioPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbRadioReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbRadioReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbRadioRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbRadioRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormCheckbox" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="checkbox" />
-    
-    <dl class="meta">
-      <dt><label for="fbCheckboxName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbCheckboxName" /></dd>
-      
-      <dt><label for="fbCheckboxDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type=text name=fb_disp id="fbCheckboxDisp" /></dd>
-    </dl>
-    
-    <dl class="position">
-      <dt><label for="fbCheckboxPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbCheckboxPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbCheckboxReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbCheckboxReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbCheckboxRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbCheckboxRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormPulldown" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="pulldown" />
-
-    <dl class="meta">
-      <dt><label for="fbPulldownName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbPulldownName" /></dd>
-      
-      <dt><label for="fbPulldownDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type=text name=fb_disp id="fbPulldownDisp" /></dd>
-      
-      <dt><label for="fbPulldownDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbPulldownDef" /></dd>
-    </dl>
-    
-    <dl class="opts">
-      <dt><label for="fbPulldownOpts"><% $lang->maketext('Options, Label') %></label><br />
-          (<% $lang->maketext('one per line')%>):</dt>
-      <dd><textarea rows="<% $textareaRows %>" cols="<% $textareaCols %>" name="fb_vals" id="fbPulldownOpts"></textarea></dd>
-    </dl>
-    
-    <dl class="position">
-      <dt><label for="fbPulldownPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbPulldownPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbPulldownReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbPulldownReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbPulldownRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbPulldownRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="select" />
-    
-    <dl class="meta">
-      <dt><label for="fbSelectName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbSelectName" /></dd>
-      
-      <dt><label for="fbSelectDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type=text name=fb_disp id="fbSelectDisp" /></dd>
-      
-      <dt><label for="fbSelectDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbSelectDef" /></dd>
-    </dl>
-    
-    <dl class="opts">
-      <dt><label for="fbSelectOpts"><% $lang->maketext('Options, Label') %></label><br />
-          (<% $lang->maketext('one per line')%>):</dt>
-      <dd><textarea rows="<% $textareaRows %>" cols="<% $textareaCols %>" name="fb_vals" id="fbSelectOpts"></textarea></dd>
-    </dl>
-    
     <dl class="size">
-      <dt><label for="fbSelectSize"><% $lang->maketext('Size') %>:</label></dt>
-      <dd><input type="text" name="fb_size" id="fbSelectSize" value="5" size="3" /></dd>
-      
-      <dt><label for="fbSelectMulti"><% $lang->maketext('Allow multiple') %>?</label></dt>
-      <dd><input type="checkbox" name="fb_allowMultiple" id="fbSelectMulti" /></dd>
-    </dl>
-
-    <dl class="position">
-      <dt><label for="fbSelectPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbSelectPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbSelectReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbSelectReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbSelectRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbSelectRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-    
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormCodeSelect" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="codeselect" />
-    
-    <dl class="meta">
-      <dt><label for="fbCodeSelectName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbCodeSelectName" /></dd>
-      
-      <dt><label for="fbCodeSelectDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type=text name=fb_disp id="fbCodeSelectDisp" /></dd>
-      
-      <dt><label for="fbCodeSelectDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbCodeSelectDef" /></dd>
-    </dl>
-    
-    <dl class="opts"> <!-- class="code" ? -->
-      <dt><label for="fbCodeSelectCode"><% $lang->maketext('Code') %>:</label><dt/>
-      <dd><textarea rows="<% $textareaRows %>" cols="<% $textareaCols %>" name="fb_vals" id="fbCodeSelectCode"></textarea></dd>
-    </dl>
-    
-    <dl class="size">
-      <dt><label for="fbCodeSelectSize"><% $lang->maketext('Size') %>:</label></dt>
-      <dd><input type="text" name="fb_size" id="fbCodeSelectSize" value="5" size="3" /></dd>
-      
-      <dt><label for="fbCodeSelectMulti"><% $lang->maketext('Allow multiple') %>?</label></dt>
-      <dd><input type="checkbox" name="fb_allowMultiple" id="fbCodeSelectMulti" /></dd>
-    </dl>
-
-    <dl class="position">
-      <dt><label for="fbCodeSelectPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbCodeSelectPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbCodeSelectReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbCodeSelectReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbCodeSelectRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbCodeSelectRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-    
-</form>
-
-<form name="fb_form" action="<% $target %>" id="fbFormTextarea" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="textarea" />
-    
-    <dl>
-      <dt><label for="fbTextareaName"><%$lang->maketext('Key Name')%>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbTextareaName" /></dd>
-      
-      <dt><label for="fbTextareaDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type="text" name="fb_disp" id="fbTextareaDisp" /></dd>
-      
-      <dt><label for="fbTextareaDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbTextareaDef" /></dd>
-    </dl>
-    
-    <dl>
-      <dt><label for="fbTextareaRows"><%$lang->maketext('Rows')%>:</label></dt>
-      <dd><input type="text" name="fb_rows" id="fbTextareaRows" value="4" size="3" /></dd>
-      
-      <dt><label for="fbTextareaCols"><% $lang->maketext('Columns') %>:</label></dt>
-      <dd><input type="text" name="fb_cols" id="fbTextareaCols" value="40" size="3" /></dd>
-      
-      <dt><label for="fbTextareaMax"><% $lang->maketext('Max size') %>:</label></dt>
-      <dd><input type="text" name="fb_maxlength" id="fbTextareaMax" value="0" size="4" /></dd>
-    </dl>
-    
-    <dl class="position">
-      <dt><label for="fbTextareaPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbTextareaPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbTextareaReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbTextareaReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbTextareaRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbTextareaRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-
-% if (ENABLE_WYSIWYG) {
-<form name="fb_form" action="<% $target %>" id="fbFormWYSIWYG" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="wysiwyg" />
-    <input type="hidden" name="fb_allowMultiple" value="1" />
-    
-    <dl>
-      <dt><label for="fbWYSIWYGName"><%$lang->maketext('Key Name')%>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbWYSIWYGName" /></dd>
-      
-      <dt><label for="fbWYSIWYGDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type="text" name="fb_disp" id="fbWYSIWYGDisp" /></dd>
-      
-      <dt><label for="fbWYSIWYGDef"><% $lang->maketext('Default Value') %>:</label></dt>
-      <dd><input type="text" name="fb_value" id="fbWYSIWYGDef" /></dd>
-    </dl>
-    
-    <dl>
-      <dt><label for="fbWYSIWYGRows"><%$lang->maketext('Rows')%>:</label></dt>
-      <dd><input type="text" name="fb_rows" value="8" size="3" onchange="if (this.value < 8) {this.value=8;}" /></dd>
-      
-      <dt><label for="fbWYSIWYGCols"><% $lang->maketext('Columns') %>:</label></dt>
-      <dd><input type="text" name="fb_cols" value="67" size="3" onchange="if (this.value < 67) {this.value=67;}" /></dd>
-    </dl>
-    
-    <dl class="position">
-      <dt><label for="fbWYSIWYGPosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbWYSIWYGPosition">
-          <% $numFieldsOpts %>
-          </select>
-      </dd>
-%if ($useRequired){
-      <dt><label for="fbWYSIWYGReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbWYSIWYGReq" /></dd>
-%}
-%if ($useQuantifier){
-      <dt><label for="fbWYSIWYGRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbWYSIWYGRep" /></dd>
-%}
-    </dl>
-    
-    <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
-    </div>
-
-</form>
-% }
-
-<form name="fb_form" action="<% $target %>" id="fbFormDate" class="fbForm" onsubmit="return formBuilder.submit(this, '<% $formName %>', 'add');">
-    <input type="hidden" name="fb_type" value="date" />
-
-    <dl>
-      <dt><label for="fbDateName"><% $lang->maketext('Key Name') %>:</label></dt>
-      <dd><input type="text" name="fb_name" id="fbDateName" /></dd>
-
-      <dt><label for="fbDateDisp"><% $lang->maketext('Label') %>:</label></dt>
-      <dd><input type="text" name="fb_disp" id="fbDateDisp" /></dd>
-    </dl>
-    
-    <dl>
-      <dt><label for="fbDatePrecision"><% $lang->maketext('Precision') %>:</label></dt>
-      <dd><select name="fb_precision" for="fbDatePrecision">
+      <dt class="fb_precision"><label for="fb_precision"><% $lang->maketext('Precision') %>:</label></dt>
+      <dd class="fb_precision"><select name="fb_precision" id="fb_precision">
           <% $precision_select %>
           </select>
       </dd>
-    </dl>
     
+      <dt class="fb_rows"><label for="fb_rows"><%$lang->maketext('Rows')%>:</label></dt>
+      <dd class="fb_rows"><input type="text" name="fb_rows" id="fb_rows" value="4" size="3" /></dd>
+      
+      <dt class="fb_cols"><label for="fb_cols"><% $lang->maketext('Columns') %>:</label></dt>
+      <dd class="fb_cols"><input type="text" name="fb_cols" id="fb_cols" value="40" size="3" /></dd>
+      
+      <dt class="fb_size"><label for="fb_size"><%$lang->maketext('Size')%>:</label></dt>
+      <dd class="fb_size"><input type="text" name="fb_size" id="fb_size" size="3" value="32" /></dd>
+      
+      <dt class="fb_maxlength"><label for="fb_maxlength"><% $lang->maketext('Max size') %>:</label></dt>
+      <dd class="fb_maxlength"><input type="text" name="fb_maxlength" id="fb_maxlength" value="0" size="4" /></dd>
+      
+      <dt class="fb_allowMultiple"><label for="fb_allowMultiple"><% $lang->maketext('Allow multiple') %>?</label></dt>
+      <dd class="fb_allowMultiple"><input type="checkbox" name="fb_allowMultiple" id="fb_allowMultiple" /></dd>
+    </dl>
+
     <dl class="position">
-      <dt><label for="fbDatePosition"><% $lang->maketext('Position') %>:</label></dt>
-      <dd><select name="fb_position" id="fbDatePosition">
+      <dt><label for="fb_position"><% $lang->maketext('Position') %>:</label></dt>
+      <dd><select name="fb_position" id="fb_position">
           <% $numFieldsOpts %>
           </select>
       </dd>
 %if ($useRequired){
-      <dt><label for="fbDateReq"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fbDateReq" /></dd>
+      <dt><label for="fb_req"><% $lang->maketext('Required') %>:</label></dt>
+      <dd><input type="checkbox" name="fb_req" id="fb_req" /></dd>
 %}
 %if ($useQuantifier){
-      <dt><label for="fbDateRep"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fbDateRep" /></dd>
+      <dt><label for="fb_quant"><% $lang->maketext('Repeatable') %>:</label></dt>
+      <dd><input type="checkbox" name="fb_quant" id="fb_quant" /></dd>
 %}
     </dl>
-
+    
     <div class="submit">
-        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" />
+        <input type="image" src="/media/images/<% $lang_key %>/add_to_form_lgreen.gif" title="Add to Form" onclick="formBuilder.submit('', '<% $formName %>', 'add')" />
     </div>
-
-</form>
 
 </div>
 
@@ -578,7 +241,7 @@ var cancelValidation = false
 
 <& "/widgets/wrappers/sharky/table_bottom.mc" &>
 
-<form method="post" action="#" name="fb_magic_buttons" id="fbMagicButtons">
+<div id="fbMagicButtons">
 <div class="delete">
 <& '/widgets/profile/displayFormElement.mc',
          key => 'delete',
@@ -597,4 +260,4 @@ var cancelValidation = false
 %    $m->out(qq{<input type="image" src="/media/images/$lang_key/save_and_stay_lgreen.gif" onclick="formBuilder.submit(null, '$formName', 'save_n_stay'); return false;" alt="Save and Stay" />\n}) if $stay;
     <a href="#" onclick="window.location.href='<% "/$section/manager/$type/" %>'; return false;"><img src="/media/images/<% $lang_key %>/return_dgreen.gif" alt="Return" /></a>
 </div>
-</form>
+</div>

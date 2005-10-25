@@ -458,32 +458,74 @@ div.addelement { text-align: right;}
     padding: 5px 0 10px 0;
 }
 
-.formBuilder { position: relative; padding-bottom: 10px; }
-.formBuilder .formElement {
+#formBuilder { position: relative; padding-bottom: 10px; }
+#formBuilder .types {
     float: left;
     width: 150px;
     list-style: none; list-style-image: none;
     margin: 0; padding: 10px;
 }
-.formBuilder #fbDiv { margin-left: 170px; }
-.formBuilder .fbForm { 
+
+/* Keep most things off by default */
+#formBuilder .opts,
+#formBuilder .fb_allowMultiple,
+#formBuilder .fb_rows,
+#formBuilder .fb_cols,
+#formBuilder .fb_precision                  { display: none; }
+
+/* Turn specific things on and off */
+#formBuilder .radio      .opts,
+#formBuilder .pulldown   .opts,
+#formBuilder .select     .opts,
+#formBuilder .codeselect .opts,
+
+#formBuilder .select     .fb_allowMultiple,
+#formBuilder .codeselect .fb_allowMultiple,
+
+#formBuilder .textarea   .fb_rows,
+#formBuilder .wysiwyg    .fb_rows,
+
+#formBuilder .textarea   .fb_cols,
+#formBuilder .wysiwyg    .fb_cols,
+
+#formBuilder .date       .fb_precision    { display: block; }
+
+#formBuilder .checkbox   .fb_value,
+#formBuilder .date       .fb_value,
+
+#formBuilder .checkbox   .size,
+#formBuilder .radio      .size,
+#formBuilder .pulldown   .size,
+
+#formBuilder .select     .fb_maxlength,
+#formBuilder .codeselect .fb_maxlength,
+#formBuilder .wysiwyg    .fb_maxlength,
+#formBuilder .date       .fb_maxlength,
+
+#formBuilder .textarea   .fb_size,
+#formBuilder .wysiwyg    .fb_size,
+#formBuilder .date       .fb_size       { display: none; }
+
+#formBuilder #fbDiv { float: left; }
+#formBuilder .fbForm { 
     float: left;
     display: none;
 }
-.formBuilder .fbForm label { font-weight: bold; }
-.formBuilder .fbForm dd { padding: 0; margin: 0 0 3px 0; }
-.formBuilder .fbForm dl { float: left; width: 170px; margin-right: 10px; }
-.formBuilder .fbForm dl.position,
-.formBuilder #fbFormSelect dl.size { margin-top: 0; clear: both; width: 340px; }
-.formBuilder #fbFormCodeSelect dl.size { margin-top: 0; clear: both; width: 340px; }
-.formBuilder .fbForm dl.position dt,
-.formBuilder #fbFormSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
-.formBuilder #fbFormCodeSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
-.formBuilder .fbForm dl.position dd,
-.formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
-.formBuilder #fbFormCodeSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
-.formBuilder #fbFormText { display: block; } /* default */
-.formBuilder .submit { float: left; }
+#formBuilder label { font-weight: bold; }
+#formBuilder label .small { font-weight: normal; }
+#formBuilder dd { padding: 0; margin: 0 0 3px 0; }
+#formBuilder dl { float: left; width: 170px; margin-right: 10px; }
+#formBuilder dl.position,
+#formBuilder .select dl.size,
+#formBuilder .codeselect dl.size { margin-top: 0; clear: both; width: 340px; }
+#formBuilder dl.position dt,
+#formBuilder .select dl.size dt,
+#formBuilder .codeselect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
+#formBuilder dl.position dd,
+#formBuilder .select dl.size dd,
+#formBuilder .codeselect dl.size dd { float: left; margin-right: 10px; height: 20px; }
+#formBuilder #fbFormText { display: block; } /* default */
+#formBuilder .submit { float: left; clear: both; }
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
