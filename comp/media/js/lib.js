@@ -722,7 +722,7 @@ function openAbout() { return openWindow("about"); }
 function openHelp()  { 
     var uri = window.location.pathname.replace(/\/?\d*\/?$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
-    else uri = uri.replace(/profile\/[^/]+\/container/, 'profile/container');
+    else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
     return openWindow(uri);
 }
 
@@ -731,23 +731,21 @@ function openHelp()  {
  * By Marshall Roch, 2005-03-25
  *
  * To use, instead of writing "window.onload = someFunction" or 
- * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')".
+ * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')"
+ * or multiOnload.onload(someFunction)" if someFunction is a function.
  */
-var multiOnload = new Object();
+var multiOnload = {
+    events: []
+};
 multiOnload.onload = function(eventFn) {
-    if(!this.events) { this.events = new Array(); }
     this.events[this.events.length] = eventFn;
 };
 
-window.onload =function() {
-    if (multiOnload.events) {
-        for (var i=0; i < multiOnload.events.length; i++) {
-            eval(multiOnload.events[i] + "()");
-        }
+window.onload = function() {
+    for (var i = 0; i < multiOnload.events.length; i++) {
+         multiOnload.events[i]();
     }
 };
-
-
 
 /*
  * Save scroll position
