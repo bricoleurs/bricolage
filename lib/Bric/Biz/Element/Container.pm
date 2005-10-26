@@ -2020,30 +2020,6 @@ in exception messages.
 
 =cut
 
-sub _bad_def_field {
-    my ($field_types, $key_name, $line_num) = @_;
-
-    # Throw an exception if there is no default field key name.
-    throw_invalid
-        error    => "No context for content beginning at line $line_num.",
-        maketext => [
-            'No context for content beginning at line [_1].',
-            $line_num,
-        ] unless defined $key_name && $key_name ne '';
-
-    # Suggest an alternative default field.
-    my $try =_find_closest_word($key_name, keys %$field_types);
-    throw_invalid
-        error    => qq{No such field "$key_name" at line $line_num. }
-                  . qq{Did you mean "$try"?},
-        maketext => [
-            'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
-            $key_name,
-            $line_num,
-            $try,
-        ];
-}
-
 sub _deserialize_pod {
     my ($self, $pod, $def_field, $indent, $line_num) = @_;
 
@@ -2242,7 +2218,7 @@ sub _deserialize_pod {
                 $kn = $1;
                 $field_type = $field_types{$kn};
                 unless ($field_type) {
-                    _bad_def_field(\%field_types, $kn, $line_num)
+                    _bad_field(\%field_types, $kn, $line_num)
                         unless $fields_for{$kn} && @{$fields_for{$kn}};
                     $field_type = shift @{$fields_for{$kn}};
                 }
@@ -2298,7 +2274,7 @@ sub _deserialize_pod {
             else {
                 $kn = $def_field;
                 $field_type = $field_types{$kn}
-                    || _bad_def_field(\%field_types, $kn, $line_num);
+                    || _bad_field(\%field_types, $kn, $line_num);
                 if ($field_ord{$kn} && !$field_type->get_quantifier) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears more }
@@ -2387,6 +2363,41 @@ sub _find_closest_word {
     my @score = map { distance( $word, $_ ) } @_;
     my $best  = reduce { $score[ $a ] < $score[ $b ] ? $a : $b } 0 .. $#_;
     return $_[ $best ];
+}
+
+=over
+
+=item _bad_field($field_types, $key_name, $line_num)
+
+This function is called by _deserialize_pod() whenever it encounters an
+invalid field key name, or a missing key name, or the default key name is
+invalid. It throws the appropriate exception and makes suggestions as
+necessary.
+
+=cut
+
+sub _bad_field {
+    my ($field_types, $key_name, $line_num) = @_;
+
+    # Throw an exception if there is no default field key name.
+    throw_invalid
+        error    => "No context for content beginning at line $line_num.",
+        maketext => [
+            'No context for content beginning at line [_1].',
+            $line_num,
+        ] unless defined $key_name && $key_name ne '';
+
+    # Suggest an alternative default field.
+    my $try =_find_closest_word($key_name, keys %$field_types);
+    throw_invalid
+        error    => qq{No such field "$key_name" at line $line_num. }
+                  . qq{Did you mean "$try"?},
+        maketext => [
+            'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
+            $key_name,
+            $line_num,
+            $try,
+        ];
 }
 
 ################################################################################
