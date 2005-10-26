@@ -283,6 +283,10 @@ uri.
 
 The URI for a resource. Usually used in combination with path.
 
+=item not_uri
+
+Search for resources with URIs I<not> like the specified URI.
+
 =item media_type
 
 The resources' MEDIA type.
@@ -1795,6 +1799,10 @@ $get_em = sub {
         } elsif ($k eq 'path' || $k eq 'uri') {
             # A text comparison.
             $wheres .= " AND $k LIKE ?";
+            push @params, $v;
+        } elsif ($k eq 'not_uri') {
+            # A text comparison.
+            $wheres .= " AND uri NOT LIKE ?";
             push @params, $v;
         } elsif ($k eq 'media_type') {
             # Another text comparison.

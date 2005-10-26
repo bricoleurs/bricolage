@@ -489,7 +489,7 @@ C<undef> if the image has no location.
 sub _thumb_location {
     my $self = shift;
     my $loc = $self->get_location or return;
-    $loc =~ s/(\..+)$/_thumb$1/g or $loc .= '_thumb';
+    $loc =~ s/(\.[^.]+)$/_thumb$1/g or $loc .= '_thumb';
     return $loc;
 }
 
