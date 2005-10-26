@@ -723,6 +723,20 @@ To translate:
   'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' => 'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.',
   'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
 
+  'No context for content beginning at line [_1].' => 'No context for content beginning at line [_1].',
+  'No such field "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
+  'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?',
+  'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.' => 'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.',
+  'Unknown tag "[_1]" at line [_2].' => 'Unknown tag "[_1]" at line [_2].',
+  'No such site "[_1]" at line [_2].'=> 'No such site "[_1]" at line [_2].',
+  'No such URI "[_1]" in site "[_2]" at line [_3].' => 'No such URI "[_1]" in site "[_2]" at line [_3].',
+  'No story document found for UUID "[_1]" at line [_2].' => 'No story document found for UUID "[_1]" at line [_2].',
+  'No media document found for UUID "[_1]" at line [_2].' => 'No media document found for UUID "[_1]" at line [_2].',
+  'No story document found for ID "[_1]" at line [_2].' => 'No story document found for ID "[_1]" at line [_2].',
+  'No media document found for ID "[_1]" at line [_2].' => 'No media document found for ID "[_1]" at line [_2].',
+  'No story document found for URI "[_1]" at line [_2].' => 'No story document found for URI "[_1]" at line [_2].',
+  'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
+
 Notice:
 
   Story 請一律譯成「稿件」「稿子」或著「稿」，不要譯成「故事」
