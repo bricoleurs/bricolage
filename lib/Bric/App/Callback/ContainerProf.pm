@@ -420,13 +420,15 @@ sub change_default_field : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-    $self->_handle_bulk_save;
 
-    my $def  = $self->params->{$self->class_key.'|default_field'};
+    my $def     = $self->params->{$self->class_key.'|default_field'};
     my $element = get_state_data($self->class_key, 'element');
-    my $at   = $element->get_element_type();
+    my $at      = $element->get_element_type();
+    my $key     = 'container_prof.' . $at->get_id . '.def_field';
 
-    my $key = 'container_prof.' . $at->get_id . '.def_field';
+    # Handle whatever changes have been made with the old def field.
+    $self->_handle_bulk_save(get_state_data(_tmp_prefs => $key));
+    # Set the new default field.
     set_state_data('_tmp_prefs', $key, $def);
 }
 
@@ -715,12 +717,14 @@ sub _handle_bulk_up {
 }
 
 sub _handle_bulk_save {
-    my $self   = shift;
-    my $params = $self->params;
-    my $widget = $self->class_key;
-    my $element   = get_state_data($widget => 'element');
+    my ($self, $def_field) = @_;
+    my $self    = shift;
+    my $params  = $self->params;
+    my $widget  = $self->class_key;
+    my $element = get_state_data($widget => 'element');
+    $def_field  = $params->{"$widget|default_field"}
+        unless defined $def_field;
 
-    my $def_field = $params->{"$widget|default_field"};
     eval {
         $element->update_from_pod($params->{"$widget|text"}, $def_field);
         $element->save;

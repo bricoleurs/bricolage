@@ -34,11 +34,10 @@ if ($show_summary) {
         <dt>Default Field:</dt>
         <dd>
 <%perl>;
+my %seen;
 my $opts = [
     [ '' =>  '' ],
-    map  {   [ $_ => $_ ]   }
-    sort {     $a cmp $b    }
-    map  { $_->get_key_name } $at->get_field_types
+    map  {   [ $_ => $_ ]   } $list_fields->($at)
 ];
 </%perl>
             <& '/widgets/profile/select.mc',
@@ -72,7 +71,7 @@ my $opts = [
                 name    => 'chars',
                 value   => '',
                 useTable    => 0,
-            &>        
+            &>
             <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
         </dd>
     </dl>
@@ -147,5 +146,18 @@ my $show_data_flags = sub {
     push @flags, 'repeatable' if $dt->get_quantifier;
     return '' unless @flags;
     return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
+};
+
+my $_list_fields;
+$_list_fields = sub {
+    my $seen = shift;
+    return map {
+        $_list_fields->($seen, $_->get_containers),
+        grep { !$seen->{$_}++ } map { $_->get_key_name } $_->get_field_types
+    } @_;
+};
+
+my $list_fields = sub {
+    return sort { $a cmp $b } $_list_fields->({}, shift);
 };
 </%once>
