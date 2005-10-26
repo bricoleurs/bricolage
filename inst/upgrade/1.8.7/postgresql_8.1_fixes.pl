@@ -6,8 +6,6 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-
-
 do_sql q{
     ALTER TABLE attr_grp_meta
     ALTER COLUMN id SET DEFAULT NEXTVAL('seq_attr_grp_meta')

@@ -86,6 +86,7 @@ sub save : Callback {
 
                 if (@{ $class->list({ directory => $param->{directory},
                                       site_id   => $cat->get_site_id,
+                                      active    => 'all',
                                       parent_id => $p_id}) }) {
                     my $uri = Bric::Util::Trans::FS->cat_uri(
                         $par->get_uri,

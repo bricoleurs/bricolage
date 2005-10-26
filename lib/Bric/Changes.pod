@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.9.1 "Cupcake" ()
+=head1 VERSION 1.9.1 "Peeves" ()
 
 =head2 New Features
 
@@ -68,7 +68,7 @@ C<href()> methods in the following classes:
 
 Added C<serialize_to_pod()> and C<update_from_pod()> methods to the container
 element class. These support a pseudo-pod syntax that enable a complete
-hierrachy of elements to be edited, including links to related stories and
+hierarchy of elements to be edited, including links to related stories and
 media, in a single stream of text. [David]
 
 =item *
@@ -126,6 +126,12 @@ Added ability to shelve a story from a desk or My Workspace. [David]
 
 Added C<reset()> method to Bric::Util::Job and a "Reset" checkbox in the job
 profile in the UI so that failed jobs can easily be re-attempted. [David]
+
+=item *
+
+Added "Cheat Sheet" dialog box to Bulk Edit that displays the entire hierarchy
+of available subelements and fields as the pseudo-pod "tags" available for use
+in bulk editing content. [David]
 
 =back
 
@@ -205,7 +211,7 @@ Added support for searching on UUIDs to the story and media classes. [David]
 
 =item *
 
-Added suport for searching on URIs in the story class and modified the same
+Added support for searching on URIs in the story class and modified the same
 parameter in the media class to search I<all> possible URIs for media, not
 just the URI associated with the primary output channel. [David]
 
@@ -267,7 +273,7 @@ C<get_element_data()> to C<field_type_id> and C<get_field_type()>. [David]
 
 =item *
 
-Made the scrollbar "sticky" in the Story Profile. [Scott]
+Made the scroll bar "sticky" in the Story Profile. [Scott]
 
 =item *
 
@@ -305,7 +311,7 @@ profile. [David]
 
 Added much more fine-grained field type management to the Element Type SOAP
 interface. More field attributes can now be updated via SOAP. For example, one
-can now change the widget type from "text" to "textarea". These improvments
+can now change the widget type from "text" to "textarea". These improvements
 are thanks to the normalization of the element type and field type classes.
 Note that there are a number of new XML elements, and some of the existing
 ones have changed names, but we have tried to preserve backwards compatibility
@@ -448,7 +454,7 @@ gremlin characters pasted from Microsoft Word. [David]
 =item *
 
 It is now fatal to submit characters in an invalid encoding. For example, if a
-user is using UTF-8 (the defult) but pastes the contents of a Word document
+user is using UTF-8 (the default) but pastes the contents of a Word document
 with an m-dash (a CP1252 character), Bricolage will now throw an exception. It
 probably threw an exception from the database in the past, but now we're
 throwing one earlier. The solution for such a user is to of course select the
@@ -503,7 +509,7 @@ dispatch simpler. [David]
 
 =item *
 
-Users creating media documents from within a related media element (becuase
+Users creating media documents from within a related media element (because
 the C<RELATED_MEDIA_UPLOAD> F<bricolage.conf> directive has been enabled and
 they have the proper permissions) are now redirected to the "New Media"
 profile when the new file has been uploaded, so that the element type,
@@ -542,7 +548,7 @@ story is published. This should make the TT burner substantially faster.
 
 Publish and distribution jobs are now tied to a specific version of a story or
 media document, rather than the media document itself. This will allow a whole
-series of publishes for versions of a document to be scheuled for execution
+series of publishes for versions of a document to be scheduled for execution
 over time, as well as help to protect currently checked-out documents from
 being mysteriously removed from workflow by scheduled publishes being
 executed. Sponsored by Freerun Technologies. [David]
@@ -550,13 +556,13 @@ executed. Sponsored by Freerun Technologies. [David]
 =item *
 
 Searches now are remembered for each manager in the UI for as long as a
-session lasts. So if you performa a search for element types, and then do a
+session lasts. So if you perform a search for element types, and then do a
 search for stories or output channels, the last results you saw in the element
 type manager will be there again when you return to it. [David]
 
 =item *
 
-Elminated need for HTTP::BrowserDetect, since the UI is now completely
+Eliminated need for HTTP::BrowserDetect, since the UI is now completely
 browser-neutral. [David]
 
 =item *
@@ -980,7 +986,7 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
-=head1 VERSION 1.8.7 ()
+=head1 VERSION 1.8.7 (2005-10-24)
 
 =head2 Improvements
 
@@ -1004,7 +1010,20 @@ Suggested by Mark Jaroski. [David]
 
 The Bulk Publish feature in the UI now only publishes the previously published
 versions of unexpired stories and media, rather than the latest version of
-expired and unexpired stories and media. [David]
+expired and unexpired stories and media, thus avoiding errors when documents
+are checked out. [David]
+
+=item *
+
+If a story passed to the C<burn_another()> or C<preview_another()> burner
+methods is the same as the story currently being burned, it will no longer be
+published or previewed again by C<burn_another()> or C<preview_another()>,
+thus mitigating the possibility of infinite loops. [David]
+
+=item *
+
+Added an "Expired" event for when stories and media are expired. Suggested by
+Joshua Edelstein. [David]
 
 =back
 
@@ -1033,14 +1052,14 @@ specified using the C<ANY()> function. [David]
 
 =item *
 
-Having a custom field beginning with a leading underscore was causing
-an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
+Fixed an error in F<comp/widgets/wrappers/sharky/header.mc> caused by having a
+custom field beginning with a leading underscore. [Scott]
 
 =item *
 
-Errors thrown when setting element field values will not be displayed as error
+Errors thrown when setting element field values will now be displayed as error
 messages within the context of the element profile, rather than throwing a
-fatal exception. This is useful for invalid dates, foe example. [David]
+fatal exception. This is useful for invalid dates, for example. [David]
 
 =item *
 
@@ -1050,7 +1069,40 @@ Reported by Phillip Smith. [David]
 
 =item *
 
-Fixed database DDLs to work with PostgreSQL 8.1. [David]
+Updated for compatibility with PostgreSQL 8.1. [David]
+
+=item *
+
+Defunct media files are now properly removed from the delivery server whenever
+a media document's file name has changed. Reported by Brad Fox. [David]
+
+=item *
+
+Clicking the "Return" button when viewing a subelement in a story or media
+document not checked out by the user no longer drops into edit view. Reported
+by John Greene. [David]
+
+=item *
+
+Attempting to create a category with the same URI as an existing but
+deactivated category once again fails with a useful error message rather than
+a database exception. Reported by Marshall. [David]
+
+=item *
+
+New elements and fields will now have any leading or trailing white space
+trimmed, rather than converted to underscores. Reported by Scott Lanning.
+[David]
+
+=item *
+
+Multiple select list custom fields no longer throw an exception when you
+select more than one value for the default value. Reported by Scott. [David]
+
+=item *
+
+In a story or media profile, deleting a subelement with the same ID as a field
+(or vice-versa) will no longer delete both. Reported by Scott Lanning. [David]
 
 =back
 

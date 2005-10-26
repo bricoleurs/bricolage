@@ -411,7 +411,8 @@ $set_key_name = sub {
     my ($obj, $param) = @_;
 
     # Normalize the key name
-    my $kn = lc($param->{key_name});
+    (my $kn = lc $param->{key_name}) =~ s/^\s+//;
+    $kn =~ s/\s+$//;
     $kn =~ y/a-z0-9/_/cs;
 
     $obj->set_key_name($kn);
@@ -426,7 +427,9 @@ $update_element_type_attrs = sub {
         unless ($del_attrs->{$aname}) {
             my $field = $data_href->{$aname};
             $field->set_place($pos->[$i++]);
-            $field->set_default_val($param->{"attr|$aname"});
+            my $val = $param->{"attr|$aname"};
+            $val = join '__OPT__', @$val if ref $val;
+            $field->set_default_val($val);
             $field->save;
         }
     }
@@ -519,7 +522,11 @@ $add_new_attrs = sub {
 
     # Add in any new attributes.
     if ($param->{fb_name}) {
-        (my $key_name = lc $param->{fb_name}) =~ y/a-z0-9/_/cs;
+        # Create the key name with leading and trailing whitespace removed.
+        (my $key_name = lc $param->{fb_name}) =~ s/^\s+//;
+        $key_name =~ s/\s+$//;
+        # Then change all other non-alphanumeric characters to underscores.
+        $key_name =~ y/a-z0-9/_/cs;
         # There's a new attribute. Decide what type it is.
         if ($data_href->{$key_name}) {
             # There's already an attribute by that name.

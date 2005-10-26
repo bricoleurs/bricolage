@@ -1015,13 +1015,13 @@ sub preview {
 
 =item $url = $b->preview_another($ba, $oc_id);
 
-Designed to be called from a template, C<preview_another()> burns a story or
-media document, distributes it to the preview server and returns the URL. It
-complements C<publish_another()>, and can be used in templates during previews
-to burn and distribute related documents so that they'll be readily available
-on the preview server within the context of previewing another document. In
-any mode other than PREVIEW_MODE, C<preview_another()> is a no-op. The
-supported arguments are:
+Burns a story or media document, distributes it to the preview server and
+returns the URL. It is designed to be the complement of C<publish_another()>,
+to be used in templates during previews to burn and distribute related
+documents so that they'll be readily available on the preview server within
+the context of previewing another document. Like C<publish_another()>, it will
+not bother to preview the document if it's the same story as the currently
+burning story. The supported arguments are:
 
 =over 4
 
@@ -1055,6 +1055,11 @@ sub preview_another {
     my $key = ref $ba eq 'Bric::Biz::Asset::Business::Story'
       ? 'story'
       : 'media';
+
+    # Don't bother if it's the same as the current story.
+    if ($key eq 'story' and my $story = $self->get_story) {
+        return if $ba->get_id == $story->get_id;
+    }
 
     # Create a new burner, copy the notes, and do the preview.
     my $b2 = __PACKAGE__->new({ user_id => $self->get_user_id,
@@ -1222,7 +1227,7 @@ sub publish {
             return 1 unless $ba->get_publish_status;
             my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
-                path       => "$base_path/%"
+                $key eq 'story' ? (path => "$base_path/%") : ()
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
@@ -1284,7 +1289,7 @@ sub publish {
             if (my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
                 not_job_id => $job->get_id,
-                path       => "$base_path/%"
+                $key eq 'story' ? (path => "$base_path/%") : ()
             })) {
                 # Yep, there are old resources to expire.
                 my $expname = 'Expire stale "' . $ba->get_name .
@@ -1349,7 +1354,8 @@ for one document type needs to trigger the publish of another document. Look
 up that document via the Bricolage API and then pass it to this method to have
 it published at the same time as the story currently being published.
 
-If the mode isn't C<PUBLISH_MODE>, the publish will not actually be
+If the mode isn't C<PUBLISH_MODE> or if the document passed in is the same
+story as the currently burning story, the publish will not actually be
 executed. Pass in a DateTime string to specify a different date and time to
 publish the document. If that date is in the future, a publish job will be
 schedule at that time. Pass in a true value as the third argument to trigger
@@ -1379,6 +1385,11 @@ sub publish_another {
     my $key = ref $ba eq 'Bric::Biz::Asset::Business::Story'
       ? 'story'
       : 'media';
+
+    # Don't bother if it's the same as the current story.
+    if ($key eq 'story' and my $story = $self->get_story) {
+        return if $ba->get_id == $story->get_id;
+    }
 
     # Figure out the publish time. Default to the same time as the story
     # that's currently being burned.
@@ -2043,7 +2054,7 @@ sub _expire {
             resources    => $res,
             type         => 1,
             priority     => $ba->get_priority,
-            $ba->key_name . "_id"   => $ba->get_id,
+            $ba->key_name . '_id' => $ba->get_id,
         });
         $exp_job->save;
         log_event('job_new', $exp_job);

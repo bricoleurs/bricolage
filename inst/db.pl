@@ -134,7 +134,7 @@ sub create_user {
                        "NOCREATEDB NOCREATEUSER", 0, $PGDEFDB);
 
     if ($err) {
-        if ($err =~ /user( name)? "[^"]+" already exists/) {
+        if ($err =~ /(?:user|role)(?: name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$PG->{sys_user}\" already exists. "
                           . "Continue with this user?", 1)) {
                 # Just use the existing user.
