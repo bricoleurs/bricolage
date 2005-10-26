@@ -490,7 +490,7 @@ sub test_pod : Test(221) {
     is $pqs[1]->get_value('date'), '1933-03-04 00:00:00',   'Check second PQ date';
 
     # Try adding a page with its own pull quote subelement.
-    ok $elem->update_from_pod($self->pod_output_plus_page),
+    ok $elem->update_from_pod($self->pod_output_plus_page, 'para'),
         'Update from POD with page and different indent';
 
     # Check the contents.
@@ -511,11 +511,11 @@ sub test_pod : Test(221) {
 
     # Check the page.
     ok my $page_elem = $elem->get_container('_page_');
-    is $page_elem->get_value('para'),
+    is $page_elem->get_value('paragraph'),
         "This is the first paragraph from page one.\nIt isn't a long "
         . "paragraph.\nBut it'll do.",
         'Check the page paragraph';
-    ok my $ppara = $page_elem->get_field('para'), 'Get page para';
+    ok my $ppara = $page_elem->get_field('paragraph'), 'Get page paragraph';
     is $ppara->get_place, 0, q{Check page paragraph's place};
     is $ppara->get_object_order, 1, q{Check page paragraph's obj order};
     ok my $subpq = $page_elem->get_container('_pull_quote_'),
@@ -530,14 +530,17 @@ sub test_pod : Test(221) {
     is $subpq->get_value('date'), '2004-12-03 00:00:00', q{... And its date};
 
     # Test a bad default field.
-    eval { $elem->update_from_pod('', 'par') };
+    eval { $elem->update_from_pod('foo', 'par') };
     ok my $err = $@, 'Catch invalid default field excetpion';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
-    is $err->error, 'No such field "par", did you mean "para"?',
+    is $err->error, 'No such field "par" at line 1. Did you mean "para"?',
         'Should get the correct exception message';
-    is_deeply $err->maketext,
-        ['No such field "[_1]", did you mean "[_2]"?', 'par', 'para' ],
-        'Should get the correct maketext array';
+    is_deeply $err->maketext, [
+        'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
+        'par',
+        1,
+        'para'
+    ], 'Should get the correct maketext array';
 
     # Try a bad field.
     eval { $elem->update_from_pod("=para\n\nfoo\n\n=par\n\n") };
@@ -931,15 +934,13 @@ sub pod_output_plus_pq {
 sub pod_output_plus_page {
     return shift->pod_output . q{=begin _page_
 
-    =para
+    =paragraph
 
     This is the first paragraph from page one.
     It isn't a long paragraph.
     But it'll do.
 
     =begin _pull_quote_
-  
-          =para
   
           Granted, Opera has been available for a while, but it remains the province of a devoted few -- the Amiga of Web browsers.
   
