@@ -544,6 +544,12 @@ div.addelement { text-align: right;}
 #worddiff .hunk del   { color: #b22; font-weight: bold; }
 
 /******************************************************
+ * CHEAT SHEET
+ ******************************************************/
+.cheat_sheet { font-size: 1.2em; line-height: 1.5em; }
+.cheat_sheet ul { margin: 0; margin-left: 1em; padding: 0; list-style-type: none; }
+
+/******************************************************
  * FIND/REPLACE                                       *
  ******************************************************/
 
