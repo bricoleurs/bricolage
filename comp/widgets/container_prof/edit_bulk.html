@@ -34,7 +34,6 @@ if ($show_summary) {
         <dt>Default Field:</dt>
         <dd>
 <%perl>;
-my %seen;
 my $opts = [
     [ '' =>  '' ],
     map  {   [ $_ => $_ ]   } $list_fields->($at)
