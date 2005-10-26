@@ -420,6 +420,7 @@ sub change_default_field : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
+    $self->_handle_bulk_save;
 
     my $def  = $self->params->{$self->class_key.'|default_field'};
     my $element = get_state_data($self->class_key, 'element');
@@ -427,17 +428,6 @@ sub change_default_field : Callback {
 
     my $key = 'container_prof.' . $at->get_id . '.def_field';
     set_state_data('_tmp_prefs', $key, $def);
-}
-
-# XXX Remove?
-sub change_preserve : Callback {
-    my $self = shift;
-    $self->_drift_correction;
-    my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-    my $widget = $self->class_key;
-
-    set_state_data($widget, 'preserve', $param->{$widget . '|preserve'});
 }
 
 sub bulk_edit_this : Callback {

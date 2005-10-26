@@ -632,6 +632,7 @@ sub subclass_burn_test {
 
     # So now let's take a look at that bad boy.
     file_contents_is($file, $self->story_output, "Check the file contents");
+    diag `cat $file`;
     # Clean up our mess.
     unlink $file;
 

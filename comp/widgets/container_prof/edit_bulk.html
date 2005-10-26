@@ -86,33 +86,6 @@ my $opts = [
 &>
 <script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-<%doc>
-
-<& '/widgets/wrappers/sharky/table_top.mc',
-   caption => 'Template Options',
-   number  => ++$i,
-&>
-<table>
-<tr>
-<th style="text-align: right;">Preserve formatting:</th>
-<td><& "/widgets/profile/checkbox.mc",
-         checked     => $preserve,
-         value       => 1,
-         name        => $widget.'|preserve' &>
-</td>
-<td>
-<& '/widgets/buttons/submit.mc',
-    disp    => 'Change',
-    widget  => $widget,
-    cb      => 'change_preserve_cb',
-    button  => 'change_red',
-    useTable    => 0,
-&>
-</td>
-</tr>
-</table>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-</%doc>
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
     widget  => $widget,

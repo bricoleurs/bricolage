@@ -47,6 +47,7 @@ use Bric::Util::Fault qw(throw_gen throw_burn_error isa_bric_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use PHP::Interpreter;
+use List::Util qw(first);
 
 #==============================================================================#
 # Inheritance                          #
@@ -56,7 +57,6 @@ use base qw(Bric::Util::Burner);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
 
 
 #==============================================================================#
@@ -74,6 +74,23 @@ use base qw(Bric::Util::Burner);
 #--------------------------------------#
 # Private Class Fields
 my $fs = Bric::Util::Trans::FS->new;
+my %vars;
+do {
+    no strict 'refs';
+    while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
+        if (my $type = first { defined *{$v}{$_} }
+            qw(CODE HASH ARRAY IO GLOB FORMAT)
+        ) {
+            # Use the reference to the variable. IOs can be used directly.
+            $vars{$k} = *{$v}{$type};
+        } else {
+            # Dereference any scalar value. SCALAR is always true, so we
+            # evaluate it last (with the "if" in for future-proofing).
+            # See _Programming Perl 3ed_ p 250.
+            $vars{$k} = ${*{$v}{SCALAR}} if *{$v}{SCALAR};
+        };
+    }
+};
 
 #--------------------------------------#
 # Instance Fields
@@ -228,7 +245,7 @@ sub burn_one {
 
     # Instantiate the PHP interpreter.
     my $php = PHP::Interpreter->new({
-        # XXX Questionable layout things, but we got the time to sort it out
+        %vars,
         OUTPUT       => \my $outbuf,
         INCLUDE_PATH => join(':', @$template_roots),
         BRIC         => {

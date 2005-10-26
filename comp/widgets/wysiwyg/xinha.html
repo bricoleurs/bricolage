@@ -2,9 +2,7 @@
     _editor_url  = "/media/wysiwyg/xinha/"
     _editor_lang = "en";
 </script>
-
 <script type="text/javascript" src="/media/wysiwyg/xinha/htmlarea.js"></script>
-
 <script type="text/javascript">
     editors = new Array();
     xinha_init    = null;
@@ -12,22 +10,19 @@
     xinha_plugins = null;
 
     // This contains the names of textareas we will make into Xinha editors
-    xinha_init = xinha_init ? xinha_init : function()
-    {
-%     my $xinha_plugins = XINHA_PLUGINS;
-      xinha_plugins = xinha_plugins ? xinha_plugins : <% $xinha_plugins %>;
+    xinha_init = xinha_init ? xinha_init : function() {
+      xinha_plugins = xinha_plugins ? xinha_plugins : <% XINHA_PLUGINS %>;
              
       // THIS BIT OF JAVASCRIPT LOADS THE PLUGINS, NO TOUCHING  :)
       if(!HTMLArea.loadPlugins(xinha_plugins, xinha_init)) return;
 
-%     my $xinha_toolbar = XINHA_TOOLBAR;
       xinha_config = xinha_config ? xinha_config : new HTMLArea.Config();
-      xinha_config.toolbar = <% $xinha_toolbar %>;
+      xinha_config.toolbar = <% XINHA_TOOLBAR %>;
       
       editors   = HTMLArea.makeEditors(editors, xinha_config, xinha_plugins);
 
       HTMLArea.startEditors(editors);
     }
 
-    multiOnload.onload("xinha_init");
+    multiOnload.onload(xinha_init);
 </script>
