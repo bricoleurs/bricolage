@@ -19,7 +19,7 @@ use Bric::Util::Time    qw(strfdate local_date);
 use Bric::Util::MediaType;
 use Bric::Util::Fault   qw(throw_ap);
 use Bric::Util::Priv::Parts::Const qw(:all);
-use Bric::Util::Job;
+use Bric::Util::Job::Pub;
 use Bric::Dist::ServerType;
 use Bric::Dist::Resource;
 use Bric::Biz::Workflow::Parts::Desk;
@@ -284,11 +284,23 @@ sub publish {
             }
         }
 
-        my $published = $preview ? $burner->preview($obj, $type, get_user_id)
-          : $burner->publish($obj, $type, get_user_id, $args->{publish_date}, 1);
-
-        # record the publish
-        push(@published, name("${type}_id", $id)) if $published;
+        if ($preview) {
+            # Just preview it.
+            push @published, name( "$type\_id" => $id )
+                if $burner->preview($obj, $type, get_user_id);
+        } else {
+            # Schedule the publish.
+            my $name = 'Publish "' . $obj->get_name . '"';
+            my $job = Bric::Util::Job::Pub->new({
+                sched_time           => $args->{publish_date},
+                user_id              => get_user_id,
+                name                 => $name,
+                "$type\_instance_id" => $obj->get_version_id,
+                priority             => $obj->get_priority,
+            })->save;
+            log_event('job_new', $job);
+            push @published, name( "$type\_id" => $id );
+        }
     }
 
     print STDERR __PACKAGE__ . "->publish() finished : ",
