@@ -997,7 +997,7 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
-=head1 VERSION 1.8.8 ()
+=head1 VERSION 1.8.8 (2005-10-27)
 
 =head2 Bug Fixes
 
@@ -1015,6 +1015,12 @@ Fixed the "media expire" event. [David]
 
 Media documents with more than one file version are no longer expired as soon
 as they're published. Reported by Wayne Slavin. [David]
+
+=item *
+
+Added upgrade script to adjust the file names of media files in the resource
+table in the database to be in sync with the new names on the file system
+introduced in 1.8.7. [David]
 
 =back
 
