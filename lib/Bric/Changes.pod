@@ -577,12 +577,23 @@ Added events for adding subelement element types to element types. [David]
 
 Any symbols exported by C<PERL_LOADER> code, plus those exported by
 C<Bric::Util::DBI qw(:junction)>, are now imported into the Template Toolkit
-stash for direct use in Template Toolkit templates. For example, the C<ANY>
-function can now be used directly in TT templates, as can the burner constants
-C<PUBLISH_MODE> and C<PREVIEW_MODE> if the default C<PERL_LOADER> in
-F<bricolage.conf> is left in place. But TT can't have multiple symbols with
-the same names, so for each symbol exported, it adds to the stash the first
-one it finds in this order: CODE HASH ARRAY IO GLOB FORMAT, an SCALAR. [David]
+stash for direct use in Template Toolkit templates, and into the PHP global
+context for direct use in PHP templates. For example, the C<ANY> function can
+now be used directly in TT templates and as C<$ANY() in PHP templates. The
+burner constants C<PUBLISH_MODE> and C<PREVIEW_MODE> can also be used
+C<$PUBLISH_MODE()> and C<$PREVIEW_MODE()> in PHP) if the default
+C<PERL_LOADER> in F<bricolage.conf> is left in place. But TT can't have
+multiple symbols with the same names, so for each symbol exported, it adds to
+the stash the first one it finds in this order: CODE HASH ARRAY IO GLOB
+FORMAT, an SCALAR. Use of imported functions in PHP templates requires
+PHP::Interpreter 1.1.0 or later. [David]
+
+=item *
+
+The story, burner, element, and content variables are now globals in PHP
+templates, rather than each being stored in a global $BRIC associative array,
+which is now gone. This brings the style of PHP templates more in line with
+that of Mason and Template Toolkit templates. [David]
 
 =back
 

@@ -2105,10 +2105,12 @@ is executed at server startup time, so avoid loading any variables that don't
 survive forks very well (such as database handles). Defaults to load nothing
 if not specified.
 
-B<Note>: Only the Mason and Template Toolkit burners can directly use any
-symbols exported by code executed in the C<PERL_LOADER> directive, and TT can
+B<Note>: Only the Mason, Template Toolkit, and PHP burners can directly use
+any symbols exported by code executed in the C<PERL_LOADER> directive. TT can
 only use unique symbols (that is, if the code that runs exports a hash and a
-scalar with the same names, only the hash will be available in TT templates).
+scalar with the same names, only the hash will be available in TT templates),
+while PHP can use imported functions only with PHP::Interpreter 1.1.0 or
+later.
 
 =back
 

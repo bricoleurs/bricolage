@@ -248,15 +248,14 @@ sub burn_one {
         %vars,
         OUTPUT       => \my $outbuf,
         INCLUDE_PATH => join(':', @$template_roots),
-        BRIC         => {
-            burner  => $self,
-            story   => $story,
-            element => $element,
-        },
+        burner  => $self,
+        story   => $story,
+        element => $element,
     });
-    $php->eval(q/function setBric($key, $var) {
-        global $BRIC;
-        $BRIC[$key] = $var;
+
+    $php->eval(q/function setGlobal($key, $var) {
+        global $$key;
+        $$key = $var;
     }/);
 
     my @cats =  map { $_->get_uri } $self->get_cat->ancestry;
@@ -311,7 +310,7 @@ sub burn_one {
 
         # Execute category templates.
         for my $cat_tmpl (@cat_tmpls) {
-            $php->setBric(content => $outbuf);
+            $php->setGlobal(content => $outbuf);
             $php->clear_output;
             eval { $php->include($cat_tmpl) };
             throw_burn_error
@@ -322,7 +321,7 @@ sub burn_one {
                 cat     => $self->get_cat->get_uri
               if $@;
         }
-        $php->setBric(content => '');
+        $php->setGlobal(content => '');
 
         my $page = $self->_get('page') + 1;
 
@@ -741,7 +740,7 @@ sub _display_container {
     $self->_push_element($elem);
     my $template = $self->_load_template_element($elem);
     my $php = $self->_get('_php');
-    $php->setBric(element => $elem);
+    $php->setGlobal(element => $elem);
     eval { $php->include($template) };
     throw_burn_error
         error   => "Error executing '$template'",
@@ -754,10 +753,9 @@ sub _display_container {
       if $@;
 
     $self->_pop_element;
-    $php->setBric(element => $parent);
+    $php->setGlobal(element => $parent);
     return $self;
 }
-
 
 =back
 

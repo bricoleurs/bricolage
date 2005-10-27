@@ -1,8 +1,5 @@
 <?php
 # Convenience variables.
-$story   = $BRIC['story'];
-$element = $BRIC['element'];
-$burner  = $BRIC['burner'];
 foreach ($element->get_elements('header', 'para', '_pull_quote_') as $e) {
     $kn = $e->get_key_name();
     if ($kn == 'para') {
