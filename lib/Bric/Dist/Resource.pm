@@ -288,6 +288,11 @@ uri. May use C<ANY> for a list of possible values.
 The URI for a resource. Usually used in combination with path. May use C<ANY>
 for a list of possible values.
 
+=item not_uri
+
+Search for resources with URIs I<not> like the specified URI. May use C<ANY>
+for a list of possible values.
+
 =item media_type
 
 The resources' MEDIA type. May use C<ANY> for a list of possible values.
@@ -1825,6 +1830,9 @@ $get_em = sub {
         } elsif ($k eq 'path' || $k eq 'uri') {
             # A text comparison.
             $wheres .= ' AND ' . any_where $v, "$k LIKE ?", \@params;
+        } elsif ($k eq 'not_uri') {
+            # A text comparison.
+            $wheres .= ' AND ' . any_where $v, "uri NOT LIKE ?", \@params;
         } elsif ($k eq 'media_type') {
             # Another text comparison.
             $wheres .= ' AND '

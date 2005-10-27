@@ -986,6 +986,29 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
+=head1 VERSION 1.8.8 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed thumbnail URIs broken in 1.8.7. [David]
+
+=item *
+
+Fixed the "media expire" event. [David]
+
+=item *
+
+Media documents with more than one file version are no longer expired as soon
+as they're published. Reported by Wayne Slavin. [David]
+
+=back
+
+##############################################################################
+
 =head1 VERSION 1.8.7 (2005-10-24)
 
 =head2 Improvements
@@ -2681,7 +2704,7 @@ administrative profiles for those objects. This change makes it possible to
 give users permission to administer subsets of objects. The new groupable
 objects are:
 
-=over 8
+=over
 
 =item Preferences
 
@@ -4026,7 +4049,7 @@ in their site context. [David]
 
 A number of improvements for the F<bric_media_upload> contrib script:
 
-=over 8
+=over
 
 =item Creates intermediate categories if needed.
 
@@ -4287,7 +4310,7 @@ Find Stories and Find Media. Suggested by Arthur. [David]
 
 A number of fixes for the F<bric_media_upload> contrib script:
 
-=over 8
+=over
 
 =item Made it work with the 1.7.0 XML Schema.
 

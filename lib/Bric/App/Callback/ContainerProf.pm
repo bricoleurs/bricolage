@@ -718,7 +718,6 @@ sub _handle_bulk_up {
 
 sub _handle_bulk_save {
     my ($self, $def_field) = @_;
-    my $self    = shift;
     my $params  = $self->params;
     my $widget  = $self->class_key;
     my $element = get_state_data($widget => 'element');

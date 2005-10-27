@@ -17,7 +17,7 @@ use Bric::Util::Grp::CategorySet;
 use Bric::Util::Grp::ContribType;
 use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Dest;
-use Bric::Util::Grp::SubElementType;
+use Bric::Util::Grp::SubelementType;
 use Bric::Util::Grp::ATType;
 use Bric::Util::Grp::Event;
 use Bric::Util::Grp::Template;
