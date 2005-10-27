@@ -17,7 +17,7 @@ use Bric::Config        qw(STAGE_ROOT PREVIEW_ROOT PREVIEW_LOCAL ISO_8601_FORMAT
 use Bric::App::Event    qw(log_event);
 use Bric::Util::Time    qw(strfdate local_date);
 use Bric::Util::MediaType;
-use Bric::Util::Fault qw(throw_ap);
+use Bric::Util::Fault   qw(throw_ap);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Job;
 use Bric::Dist::ServerType;

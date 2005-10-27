@@ -133,7 +133,7 @@ BEGIN {
             redo unless $password;
         }
     }
-    
+
     # check required options
     pod2usage("Missing required --username option ".
               "and BRICOLAGE_USERNAME environment variable unset.")
@@ -183,7 +183,6 @@ sub get_story_ids {
     # default search
     my @search = (
         name(publish_status    => 1),
-        name(published_version => 1),
     );
 
     push(@search, name(element  => $element))  if $element;
@@ -251,7 +250,7 @@ sub publish_assets {
 
     # collect ids for publish
     my @ids = ( ( map { name(story_id => $_) } @story_ids ),
-              ( map { name(media_id => $_) } @media_ids ) );
+              (   map { name(media_id => $_) } @media_ids ) );
 
     if ($chunks) {
         # step through @ids $chunks at a time
@@ -259,24 +258,29 @@ sub publish_assets {
         for ($start = 0; $start <= $#ids; $start = $end + 1) {
             $end = $start + $chunks - 1;
             $end = $#ids if $end > $#ids;
-        
+
             print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
             join(",\n", map { "\t". $_->name ." => ". $_->value }
                 @ids[$start .. $end]), "\n)\n"
                 if $VERBOSE > 1;
-        
-            my $r = $soap->publish(name(publish_ids =>[@ids[$start .. $end]]));
+
+            my $r = $soap->publish(
+                name( publish_ids    => [ @ids[$start .. $end] ] ),
+                name( published_only => 1 ), # Always published_version only.
+            );
             _print_fault($r) if $r->fault;
         }
     } else {
         # publish everything at once
-    
         print STDERR "Calling Bric::SOAP::Workflow->publish(\n",
-            join(",\n", 
+            join(",\n",
             map { "\t". $_->name ." => ". $_->value } @ids), "\n)\n"
                 if $VERBOSE > 1;
-    
-        my $r = $soap->publish(name(publish_ids => \@ids));
+
+        my $r = $soap->publish(
+            name( publish_ids    => \@ids ),
+            name( published_only => 1 ), # Always published_version only.
+        );
         _print_fault($r) if $r->fault;
     }
 }
