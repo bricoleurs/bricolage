@@ -18,7 +18,7 @@ if ($show_summary) {
    close_label => 'Close',
 &>
 <div class="cheat_sheet">
-% $gen_cheat_sheet->($m, $et);
+% $gen_cheat_sheet->($m, $et, \%seen_fields, {});
 </div>
 </&>
 <& '/widgets/wrappers/sharky/table_top.mc',
@@ -34,7 +34,7 @@ if ($show_summary) {
 <%perl>;
 my $opts = [
     [ '' =>  '' ],
-    map  {   [ $_ => $_ ]   } $list_fields->($et)
+    map  {   [ $_ => $_ ]   } sort { $a cmp $b } keys %seen_fields
 ];
 </%perl>
             <& '/widgets/profile/select.mc',
@@ -119,6 +119,7 @@ my $def_field  = get_state_data(
     '_tmp_prefs',
     'container_prof.' . $et->get_id . '.def_field'
 );
+my %seen_fields;
 </%init>
 <%once>;
 my $show_element_flags = sub {
@@ -147,46 +148,29 @@ my $show_data_flags = sub {
 
 my $gen_cheat_sheet;
 $gen_cheat_sheet = sub {
-    my ($m, $et) = @_;
+    my ($m, $et, $seen_fields, $seen_elems) = @_;
     my $fields = $et->get_field_types;
     my $subs   = $et->get_containers;
-    return unless $fields || $subs;
+    return unless @$fields || @$subs;
     $m->print("<ul>\n");
-    if ($fields) {
+    for my $field (@$fields) {
+        my $kn = $field->get_key_name;
+        $seen_fields->{$kn} ||= 1;
+        $m->print("<li>=$kn", $show_data_flags->($field), "</li>\n");
+    }
+
+    for my $cont (@$subs) {
+        my $kn = $cont->get_key_name;
+        next if $seen_elems->{$kn} > 1;
+        ++$seen_elems->{$kn};
         $m->print(
-            '<li>=',
-            join("</li>\n<li>=",
-                 map { $_->get_key_name . $show_data_flags->($_) }
-                 @$fields
-             ),
-            "</li>\n"
+            qq{<li class="elem"><strong>=begin $kn</strong>},
+            $show_element_flags->($cont),
         );
+        $gen_cheat_sheet->($m, $cont, $seen_fields, $seen_elems);
+        $m->print("<strong>=end $kn</strong></li>\n");
+        $seen_elems->{$kn}--;
     }
 
-    if ($subs) {
-        for my $cont (@$subs) {
-            my $kn = $cont->get_key_name;
-            $m->print(
-                qq{<li class="elem"><strong>=begin $kn</strong>},
-                $show_element_flags->($cont),
-            );
-            $gen_cheat_sheet->($m, $cont);
-            $m->print("<strong>=end $kn</strong></li>\n");
-        }
-    }
     $m->print("</ul>\n");
-};
-
-my $_list_fields;
-$_list_fields = sub {
-    my $seen = shift;
-    return map {
-        $_list_fields->($seen, $_->get_containers),
-        grep { !$seen->{$_}++ } map { $_->get_key_name } $_->get_field_types
-    } @_;
-};
-
-my $list_fields = sub {
-    return sort { $a cmp $b } $_list_fields->({}, shift);
-};
-</%once>
+};</%once>
