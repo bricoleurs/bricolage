@@ -170,12 +170,12 @@ div.debug dt:after {
 }
 
 .desk .item .sorted {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .desk .item dd.sorted,
 .desk .item div.sorted {
-	background: #99CC99 !important;
+    background: #99CC99 !important;
 }
 
 .desk .item .head { 
@@ -375,8 +375,12 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .containerProf .position,
 .containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
 
-.addnewitem   { padding: 7px 10px; }
+.addnewitem,
+.noneFound { padding: 8px 10px; }
 .addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
+
+.noneFound { position: relative; }
+.noneFound .button { position: absolute; top: 0; right: 4px; }
 
 .paginate { position: relative; background: #cccc99; padding: 7px 10px;
             font-size: 1.1em; font-weight: bold; }
@@ -406,7 +410,7 @@ dl.viewmeta dt,
 dl.viewmeta dd { font-size: 11px; border-bottom: solid white 1px; padding: 2px 0; }
 dl.viewmeta dt {
     float: left;
-    clear: both;
+    clear: left;
     width: 130px;
     padding-right: 5px;
     text-align: right;
@@ -420,68 +424,108 @@ div.actions { background: #999966; padding: 2px 4px; }
 div.addelement { text-align: right;}
 
 .buttonBar .delete {
-	font-weight: bold;
-	text-align: center;
-	color: #993300;
+    font-weight: bold;
+    text-align: center;
+    color: #993300;
 }
 
 .buttonBar .checkin {
-	padding: 4px 0;
-	float: left;
-	border-top: solid #CCCC99 1px;
+    padding: 4px 0;
+    float: left;
+    border-top: solid #CCCC99 1px;
 }
 
 .buttonBar .revert {
-	text-align: right;
-	float: right;
-	padding: 4px 0;
+    text-align: right;
+    float: right;
+    padding: 4px 0;
 }
 
 .buttonBar .buttons {
-	clear: both;
-	border-top: solid #CCCC99 1px;
+    clear: both;
+    border-top: solid #CCCC99 1px;
 }
 
 .buttonBar .save { 
-	clear: both; float: left; 
-	width: 40%; 
-	text-align: right;
-	padding: 5px 0 10px 0;
+    clear: both; float: left; 
+    width: 40%; 
+    text-align: right;
+    padding: 5px 0 10px 0;
 }
 .buttonBar .cancel { 
-	float: right;
-	width: 40%;
-	padding: 5px 0 10px 0;
+    float: right;
+    width: 40%;
+    padding: 5px 0 10px 0;
 }
 
-.formBuilder { position: relative; height: 200px; }
-.formBuilder .formElement {
-	position: absolute;
-	top: 0; left: 0;
-	width: 150px;
-	list-style: none; list-style-image: none;
-	margin: 0; padding: 10px;
+#formBuilder { position: relative; padding-bottom: 10px; }
+#formBuilder .types {
+    float: left;
+    width: 150px;
+    list-style: none; list-style-image: none;
+    margin: 0; padding: 10px;
 }
-.formBuilder #fbDiv { margin-left: 170px; }
-.formBuilder .fbForm { 
-    position: absolute;
-    top: 0; left: 170px;
+
+/* Keep most things off by default */
+#formBuilder .opts,
+#formBuilder .fb_allowMultiple,
+#formBuilder .fb_rows,
+#formBuilder .fb_cols,
+#formBuilder .fb_precision                  { display: none; }
+
+/* Turn specific things on and off */
+#formBuilder .radio      .opts,
+#formBuilder .pulldown   .opts,
+#formBuilder .select     .opts,
+#formBuilder .codeselect .opts,
+
+#formBuilder .select     .fb_allowMultiple,
+#formBuilder .codeselect .fb_allowMultiple,
+
+#formBuilder .textarea   .fb_rows,
+#formBuilder .wysiwyg    .fb_rows,
+
+#formBuilder .textarea   .fb_cols,
+#formBuilder .wysiwyg    .fb_cols,
+
+#formBuilder .date       .fb_precision    { display: block; }
+
+#formBuilder .checkbox   .fb_value,
+#formBuilder .date       .fb_value,
+
+#formBuilder .checkbox   .size,
+#formBuilder .radio      .size,
+#formBuilder .pulldown   .size,
+
+#formBuilder .select     .fb_maxlength,
+#formBuilder .codeselect .fb_maxlength,
+#formBuilder .wysiwyg    .fb_maxlength,
+#formBuilder .date       .fb_maxlength,
+
+#formBuilder .textarea   .fb_size,
+#formBuilder .wysiwyg    .fb_size,
+#formBuilder .date       .fb_size       { display: none; }
+
+#formBuilder #fbDiv { float: left; }
+#formBuilder .fbForm { 
+    float: left;
     display: none;
 }
-.formBuilder .fbForm label { font-weight: bold; }
-.formBuilder .fbForm dd { padding: 0; margin: 0 0 3px 0; }
-.formBuilder .fbForm dl { float: left; width: 170px; margin-right: 10px; }
-.formBuilder .fbForm dl.position,
-.formBuilder #fbFormSelect dl.size { margin-top: 0; clear: both; width: 340px; }
-.formBuilder #fbFormCodeSelect dl.size { margin-top: 0; clear: both; width: 340px; }
-.formBuilder .fbForm dl.position dt,
-.formBuilder #fbFormSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
-.formBuilder #fbFormCodeSelect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
-.formBuilder .fbForm dl.position dd,
-.formBuilder #fbFormSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
-.formBuilder #fbFormCodeSelect dl.size dd { float: left; margin-right: 10px; height: 20px; }
-.formBuilder #fbFormText { display: block; } /* default */
-.formBuilder .submit { position: absolute; top: 170px; left: -160px; }
+#formBuilder label { font-weight: bold; }
+#formBuilder label .small { font-weight: normal; }
+#formBuilder dd { padding: 0; margin: 0 0 3px 0; }
+#formBuilder dl { float: left; width: 170px; margin-right: 10px; }
+#formBuilder dl.position,
+#formBuilder .select dl.size,
+#formBuilder .codeselect dl.size { margin-top: 0; clear: both; width: 340px; }
+#formBuilder dl.position dt,
+#formBuilder .select dl.size dt,
+#formBuilder .codeselect dl.size dt { float: left; padding-right: 2px; line-height: 20px; }
+#formBuilder dl.position dd,
+#formBuilder .select dl.size dd,
+#formBuilder .codeselect dl.size dd { float: left; margin-right: 10px; height: 20px; }
+#formBuilder #fbFormText { display: block; } /* default */
+#formBuilder .submit { float: left; clear: both; }
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
@@ -498,6 +542,12 @@ div.addelement { text-align: right;}
 #worddiff .fileheader { color: #888; font-family: monospace; font-size: 1.2em; }
 #worddiff .hunk ins   { color: #060; font-weight: bold; }
 #worddiff .hunk del   { color: #b22; font-weight: bold; }
+
+/******************************************************
+ * CHEAT SHEET
+ ******************************************************/
+.cheat_sheet { font-size: 1.2em; line-height: 1.5em; }
+.cheat_sheet ul { margin: 0; margin-left: 1em; padding: 0; list-style-type: none; }
 
 /******************************************************
  * FIND/REPLACE                                       *
@@ -559,6 +609,7 @@ button:active {
 
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
+.clearboth:after,
 .desk .item .head:after,
 .desk .item .actions:after,
 .desk_item .head:after,
@@ -571,6 +622,7 @@ form .row:after,
     clear: both; 
     visibility: hidden;
 }
+.clearboth,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,
@@ -578,12 +630,14 @@ form .row,
 .paginate,
 .viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
+* html .clearboth,
 * html .desk .item .head,
 * html .desk .item .actions,
 * html .desk_item .head,
 * html form .row,
 * html .paginate,
 * html .viewmeta {height: 1%;}
+.clearboth,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,

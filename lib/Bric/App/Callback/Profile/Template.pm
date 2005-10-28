@@ -512,7 +512,7 @@ $checkin = sub {
     if ($desk_id eq 'deploy') {
         my $class_key = 'desk_asset';
 
-        $param->{"$class_key|template_pub_ids"} = $fa->get_id;
+        $param->{"$class_key|template_pub_ids"} = $fa->get_version_id;
 
         # Call the deploy callback in the desk widget.
         my $cb = Bric::App::Callback::Desk->new

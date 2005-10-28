@@ -37,6 +37,7 @@ sub story_output {
 <p>--Franklin D. Roosevelt, 1933.03.04</p>
 </blockquote>
 <h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
+<h3>ANY: Bric::Util::DBI::ANY</h3>
 <div>Licensed under the BSD license</div>
 </body></html>
 }
@@ -68,6 +69,7 @@ sub story_page1 {
 <p>Another page one paragraph</p>
 </div>
 <h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
+<h3>ANY: Bric::Util::DBI::ANY</h3>
 <div>Licensed under the BSD license</div>
 </body></html>
 }
@@ -99,6 +101,7 @@ sub story_page2 {
 <p>Another page two paragraph</p>
 </div>
 <h4>My URI: /testing/sub/2005/03/22/test_burn/</h4>
+<h3>ANY: Bric::Util::DBI::ANY</h3>
 <div>Licensed under the BSD license</div>
 </body></html>
 }

@@ -758,7 +758,7 @@ sub get_element_type {
 sub get_element {
     require Carp
         && carp(
-            __PACKAGE__, '::get_element is deprecated. ',
+            __PACKAGE__ . '::get_element is deprecated. ' .
             'Use get_element_type() instead'
         );
     shift->get_element_type(@_);
@@ -1623,7 +1623,11 @@ B<Throws:>
 
 =item *
 
-No such field "[_1]", did you mean "[_2]"?
+No context for content beginning at line [_1].
+
+=item *
+
+No such field "[_1]" at line [_2]. Did you mean "[_3]"?
 
 =item *
 
@@ -1685,6 +1689,7 @@ of those values.
 
 sub update_from_pod {
     my ($self, $pod, $def_field) = @_;
+    $def_field = '' unless defined $def_field;
     $self->_deserialize_pod([ split /\r?\n|\r/, $pod ], $def_field, '', 0);
     return $self;
 }
@@ -1919,6 +1924,7 @@ sub _sync_elements {
     }
 
     while (my $t = shift @$del_elements) {
+        next unless $t->get_id;
         $t->set_object_order(0);
         $t->set_place(0);
         $t->deactivate->save;
@@ -1950,12 +1956,12 @@ sub _podify {
 
     # Start with related story.
     if (my $rel_story = $self->get_related_story) {
-        $pod .= '=related_story_uuid ' . $rel_story->get_uuid . "\n\n";
+        $pod .= "$indent=related_story_uuid " . $rel_story->get_uuid . "\n\n";
     }
 
     # Add related media.
     if (my $rel_media = $self->get_related_media) {
-        $pod .= '=related_media_uuid ' . $rel_media->get_uuid . "\n\n";
+        $pod .= "$indent=related_media_uuid " . $rel_media->get_uuid . "\n\n";
     }
 
     # Dump all of the fields and subelements.
@@ -2030,23 +2036,6 @@ sub _deserialize_pod {
         $elem_type->get_containers;
     my %field_types = map { $_->get_key_name => $_ }
         $elem_type->get_field_types;
-
-    # Set up the default field.
-    if (defined $def_field && $def_field ne '') {
-        unless ($field_types{$def_field}) {
-            my $try = _find_closest_word($def_field, keys %field_types);
-            throw_invalid
-                error    => qq{No such field "$def_field", did you mean "$try"?},
-                maketext => [
-                    'No such field "[_1]", did you mean "[_2]"?',
-                    $def_field,
-                    $try,
-                ]
-            ;
-        }
-    } else {
-        $def_field = '';
-    }
 
     # Gather up the existing elements and fields.
     my (%elems_for, %fields_for);
@@ -2131,7 +2120,7 @@ sub _deserialize_pod {
                     \@subpod,
                     $def_field,
                     ($subindent || ''),
-                    $line_num
+                    $line_num,
                 );
                 next POD;
             }
@@ -2229,20 +2218,8 @@ sub _deserialize_pod {
                 $kn = $1;
                 $field_type = $field_types{$kn};
                 unless ($field_type) {
-                    unless ($fields_for{$kn} && @{$fields_for{$kn}}) {
-                        my $try = _find_closest_word($kn, keys %field_types);
-                        throw_invalid
-                            error    => qq{No such field "$kn" at line }
-                                      . qq{$line_num. Did you mean "$try"?},
-                            maketext => [
-                                'No such field "[_1]" at line [_2]. Did you mean '
-                                . '"[_3]"?',
-                                $kn,
-                                $line_num,
-                                $try
-                            ]
-                        ;
-                    }
+                    _bad_field(\%field_types, $kn, $line_num)
+                        unless $fields_for{$kn} && @{$fields_for{$kn}};
                     $field_type = shift @{$fields_for{$kn}};
                 }
 
@@ -2295,10 +2272,9 @@ sub _deserialize_pod {
             }
 
             else {
-                throw_gen "No context for content beginning at line $line_num"
-                    unless $def_field ne '';
                 $kn = $def_field;
-                $field_type = $field_types{$kn};
+                $field_type = $field_types{$kn}
+                    || _bad_field(\%field_types, $kn, $line_num);
                 if ($field_ord{$kn} && !$field_type->get_quantifier) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears more }
@@ -2387,6 +2363,41 @@ sub _find_closest_word {
     my @score = map { distance( $word, $_ ) } @_;
     my $best  = reduce { $score[ $a ] < $score[ $b ] ? $a : $b } 0 .. $#_;
     return $_[ $best ];
+}
+
+=over
+
+=item _bad_field($field_types, $key_name, $line_num)
+
+This function is called by _deserialize_pod() whenever it encounters an
+invalid field key name, or a missing key name, or the default key name is
+invalid. It throws the appropriate exception and makes suggestions as
+necessary.
+
+=cut
+
+sub _bad_field {
+    my ($field_types, $key_name, $line_num) = @_;
+
+    # Throw an exception if there is no default field key name.
+    throw_invalid
+        error    => "No context for content beginning at line $line_num.",
+        maketext => [
+            'No context for content beginning at line [_1].',
+            $line_num,
+        ] unless defined $key_name && $key_name ne '';
+
+    # Suggest an alternative default field.
+    my $try =_find_closest_word($key_name, keys %$field_types);
+    throw_invalid
+        error    => qq{No such field "$key_name" at line $line_num. }
+                  . qq{Did you mean "$try"?},
+        maketext => [
+            'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
+            $key_name,
+            $line_num,
+            $try,
+        ];
 }
 
 ################################################################################

@@ -1080,12 +1080,8 @@ B<Notes:> NONE.
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
-    return if $ident;
 
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
-
+    unless ($meths) {
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
         $meths->{$meth->{name}} = $meth;
@@ -1134,7 +1130,15 @@ sub my_meths {
     # Rename element type.
     $meths->{element_type} = { %{ $meths->{element_type} } };
     $meths->{element_type}{disp} = 'Media Type';
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    }
+
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+    } else {
+        return $meths;
+    }
 }
 
 ################################################################################
@@ -1495,7 +1499,8 @@ sub upload_file {
 
     my ($id, $v, $old_fn, $loc, $uri) =
       $self->_get(qw(id version file_name location uri));
-    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, $id, $v);
+    my @id_dirs = $id =~ /(\d\d?)/g;
+    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
@@ -1511,11 +1516,15 @@ sub upload_file {
             my $idexists = 1;
             while ($idexists) {
                 # generate new random 8 character filename
-                $prefix = substr(Digest::MD5::md5_hex(Digest::MD5::md5_hex(time.{}.$id.rand)), 0, 8);
+                $prefix = substr(Digest::MD5::md5_hex(
+                    Digest::MD5::md5_hex(time.{}.$id.rand)), 0, 8
+                );
                 # add any required filename prefix if we need to 
                 $prefix = MEDIA_FILENAME_PREFIX . $prefix if (MEDIA_FILENAME_PREFIX);
                 # does this filename exist in DB regardless of extension ?
-                ($idexists) = Bric::Biz::Asset::Business::Media->list_ids( {file_name => "$prefix%" } );
+                ($idexists) = Bric::Biz::Asset::Business::Media->list_ids({
+                    file_name => "$prefix%",
+                });
             }
         }
         # construct the new filename
@@ -1551,7 +1560,7 @@ sub upload_file {
     my $at_obj = $self->get_element_type;
     my $oc_obj = $self->get_primary_oc;
 
-    my $new_loc = Bric::Util::Trans::FS->cat_dir('/', $id, $v, $name);
+    my $new_loc = Bric::Util::Trans::FS->cat_dir('/', @id_dirs, "v.$v", $name);
 
     # Set the location, name, and URI.
     if (not defined $old_fn

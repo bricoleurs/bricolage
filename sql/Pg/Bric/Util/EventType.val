@@ -26,6 +26,11 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'story_republish', 'Story Republished', 'Story was republished.', '10', '1');
 
+-- ********** 'story_expire' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'story_expire', 'Story Expired', 'Story was expired.', 10, '1');
+
 -- ********** 'story_clone' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
@@ -45,6 +50,11 @@
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'media_republish', 'Media Republished', 'Media was republished.', '46', '1');
+
+-- ********** 'media_expire' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'media_expire', 'Media Expired', 'Media was expired.', 46, '1');
 
 -- ********** 'template_checkin' ************ --
 
@@ -648,6 +658,20 @@
 -- ********** 'field_type_rem' ************ --
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'field_type_rem', 'Field Type Removed from Element Type', 'A field type was removed from the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
+
+-- ********** 'element_type_add' ************ --
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'element_type_add', 'Element Type Subelement Added to Element Type', 'An element type subelement was added to the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr (id, event_type__id, name)
+    VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');
+
+-- ********** 'element_type_rem' ************ --
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'element_type_rem', 'Element Type Subelement Removed from Element Type', 'An element type subelement was removed from the element type profile.', '22', '1');
 
     INSERT INTO event_type_attr (id, event_type__id, name)
     VALUES (NEXTVAL('seq_event_type_attr'), CURRVAL('seq_event_type'), 'Name');

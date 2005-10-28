@@ -1,8 +1,7 @@
 %#-- Begin HTML --#
 <& '/widgets/wrappers/sharky/header.mc',
    title   => "$disp Profile",
-   context => "Admin | Profile | $disp | $crumb",
-   jsInit  => defined $id ? q{showForm('Text', true)} : q{}
+   context => "Admin | Profile | $disp | $crumb"
 &>
 % if (ENABLE_WYSIWYG) {
 %     # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
@@ -343,7 +342,7 @@ if (!$no_edit && defined $id) {
         '/widgets/profile/hidden.mc',
         name  => 'isNew',
         value => 1,
-    );
+    ) unless defined $id;
     $m->comp(
         '/widgets/profile/formButtons.mc',
         type => $key_name,

@@ -47,6 +47,7 @@ use Bric::Util::Fault qw(throw_gen throw_burn_error isa_bric_exception);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use PHP::Interpreter;
+use List::Util qw(first);
 
 #==============================================================================#
 # Inheritance                          #
@@ -56,7 +57,6 @@ use base qw(Bric::Util::Burner);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
 
 
 #==============================================================================#
@@ -74,6 +74,23 @@ use base qw(Bric::Util::Burner);
 #--------------------------------------#
 # Private Class Fields
 my $fs = Bric::Util::Trans::FS->new;
+my %vars;
+do {
+    no strict 'refs';
+    while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
+        if (my $type = first { defined *{$v}{$_} }
+            qw(CODE HASH ARRAY IO GLOB FORMAT)
+        ) {
+            # Use the reference to the variable. IOs can be used directly.
+            $vars{$k} = *{$v}{$type};
+        } else {
+            # Dereference any scalar value. SCALAR is always true, so we
+            # evaluate it last (with the "if" in for future-proofing).
+            # See _Programming Perl 3ed_ p 250.
+            $vars{$k} = ${*{$v}{SCALAR}} if *{$v}{SCALAR};
+        };
+    }
+};
 
 #--------------------------------------#
 # Instance Fields
@@ -228,18 +245,17 @@ sub burn_one {
 
     # Instantiate the PHP interpreter.
     my $php = PHP::Interpreter->new({
-        # XXX Questionable layout things, but we got the time to sort it out
+        %vars,
         OUTPUT       => \my $outbuf,
         INCLUDE_PATH => join(':', @$template_roots),
-        BRIC         => {
-            burner  => $self,
-            story   => $story,
-            element => $element,
-        },
+        burner  => $self,
+        story   => $story,
+        element => $element,
     });
-    $php->eval(q/function setBric($key, $var) {
-        global $BRIC;
-        $BRIC[$key] = $var;
+
+    $php->eval(q/function setGlobal($key, $var) {
+        global $$key;
+        $$key = $var;
     }/);
 
     my @cats =  map { $_->get_uri } $self->get_cat->ancestry;
@@ -294,7 +310,7 @@ sub burn_one {
 
         # Execute category templates.
         for my $cat_tmpl (@cat_tmpls) {
-            $php->setBric(content => $outbuf);
+            $php->setGlobal(content => $outbuf);
             $php->clear_output;
             eval { $php->include($cat_tmpl) };
             throw_burn_error
@@ -305,7 +321,7 @@ sub burn_one {
                 cat     => $self->get_cat->get_uri
               if $@;
         }
-        $php->setBric(content => '');
+        $php->setGlobal(content => '');
 
         my $page = $self->_get('page') + 1;
 
@@ -724,7 +740,7 @@ sub _display_container {
     $self->_push_element($elem);
     my $template = $self->_load_template_element($elem);
     my $php = $self->_get('_php');
-    $php->setBric(element => $elem);
+    $php->setGlobal(element => $elem);
     eval { $php->include($template) };
     throw_burn_error
         error   => "Error executing '$template'",
@@ -737,10 +753,9 @@ sub _display_container {
       if $@;
 
     $self->_pop_element;
-    $php->setBric(element => $parent);
+    $php->setGlobal(element => $parent);
     return $self;
 }
-
 
 =back
 

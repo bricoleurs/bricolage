@@ -1834,20 +1834,6 @@ the current document. Enabled by default.
 
 =item *
 
-B<RELATED_MEDIA_PFOFILE:> This directive is used only when the
-C<RELATED_MEDIA_UPLOAD> directive is enabled. When they're both enabled, a new
-media document uploaded via a related media element will immediately be
-displayed in its profile, allowing the editor to change the category, cover
-date, etc. When the editor is done with the media profile, she will be
-restored to the original related media element profile. When this directive is
-not enabled (the default), a new media document created in a related media
-element is simply added to the same category and with the same cover date as
-the originating document profile and checked in to the start desk. If the
-editor wants to make changes to it, she'll need to check it out separately.
-This is the default behavior.
-
-=item *
-
 B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG
 editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
 htmlArea).  After installing htmlArea or Xinha (see dependency info above),
@@ -2109,17 +2095,22 @@ unique. Off by default.
 
 =item *
 
-B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at startup
-time in the same package spaces as your templates run in. This is so that you
-only have to load stuff that you might often use once, such as CGI.pm or
-Apache::DBI. This should be a complete Perl statement that can simply be loaded,
-and won't pause and wait for anything else, as otherwise your server will never
-start! And be warned that this code is executed at server startup time, so
-beware loading any variables that don't survive forks very well (such as
-database handles). Defaults to load nothing if not specified.
+B<PERL_LOADER:> Pass in a line of Perl code, and it will be executed at
+startup time in the same namespace as your templates run in. This is so that
+you only have to load stuff that you might often use once, such as
+L<CGI.pm|CGI.pm> or L<Apache::DBI|Apache::DBI>. This should be a complete Perl
+statement that can simply be loaded, and won't pause and wait for anything
+else, as otherwise your server will never start! And be warned that this code
+is executed at server startup time, so avoid loading any variables that don't
+survive forks very well (such as database handles). Defaults to load nothing
+if not specified.
 
-B<Note>: Only the Mason burner can directly use any symbols exported by code
-executed in the C<PERL_LOADER> directive.
+B<Note>: Only the Mason, Template Toolkit, and PHP burners can directly use
+any symbols exported by code executed in the C<PERL_LOADER> directive. TT can
+only use unique symbols (that is, if the code that runs exports a hash and a
+scalar with the same names, only the hash will be available in TT templates),
+while PHP can use imported functions only with PHP::Interpreter 1.1.0 or
+later.
 
 =back
 

@@ -170,7 +170,7 @@ sub create_element_types {
 
     # Give it a paragraph field.
     ok my $page_para = $page->new_field_type({
-        key_name    => 'para',
+        key_name    => 'paragraph',
         name        => 'Paragraph',
         required    => 0,
         quantifier  => 0,

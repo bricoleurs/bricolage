@@ -327,94 +327,6 @@ function setDays (year, month, days, obj) {
 }
 
 /*
-Input: name of a form property table
-Ouput: displays new table on the page in the form builder area.  Along the way, it caches any values that could be 
-consistent from form to form, and repopulates the new form with the cached values.  Finally, the cursor focus is moved
-to the name field of the new form.
-*/
-
-function showForm(which, noScroll) {
-
-    var frm = document.getElementById('fbForm' + which);
-    var siblings = frm.parentNode.getElementsByTagName('form');
-    for(var i = 0; i < siblings.length; i++) {
-        if(siblings[i].id != 'fbForm' + which) {
-            siblings[i].style.display = "none";
-        }
-    }
-    frm.style.display = "block";
-
-/*
-    var html = '';
-    var name, caption, vals, length, maxlength;
-
-    // get handle to fb form object
-    var fb_obj = (document.layers) 
-        ? document.layers["fbDiv"].document.fb_form 
-        : document.all ? document.all.fbDiv.all.fb_form 
-        : document.getElementById('fbDiv').getElementsByTagName('form')[0];
-
-    // gather the current values the user may have entered in the form
-    if (fb_obj) { // prevent an error if first time (nothing could have been inputted yet)
-        name    = (fb_obj.fb_name) ? (fb_obj.fb_name.value) : '';
-        caption = (fb_obj.fb_disp) ? (fb_obj.fb_disp.value) : '';
-        vals    = (fb_obj.fb_vals) ? (fb_obj.fb_vals.value) : '';
-        length  = (fb_obj.fb_length) ? (fb_obj.fb_length.value) : '';
-        maxlength   = (fb_obj.fb_length) ? (fb_obj.fb_maxlength.value) : '';
-    }
-
-    // put the html together and write it to the div
-    // create spacer html for netscape
-    html    += eval(which + "_table");
-    html    += optionalFields;
-    writeDiv("fbDiv", html);
-
-    // repopulate the new form with any values that may have been present in the old form, where applicable.
-    if (fb_obj) { // prevent an error if first time (nothing could have been inputted yet)
-
-        fb_obj = (document.layers) 
-            ? document.layers["fbDiv"].document.fb_form 
-            : document.all ? document.all.fbDiv.all.fb_form 
-            : document.getElementById('fbDiv').getElementsByTagName('form')[0];
-
-        fb_obj.fb_name.value = name;
-        fb_obj.fb_disp.value = caption;
-        if (fb_obj.fb_vals) fb_obj.fb_vals.value = vals;
-        if (fb_obj.fb_length) fb_obj.fb_length.value = length;
-        if (fb_obj.fb_maxlength) fb_obj.fb_maxlength.value = maxlength;
-    }
-
-    // get handle to new form
-    fb_obj = (document.layers) 
-        ? document.layers["fbDiv"].document.fb_form 
-        : document.all ? document.all.fbDiv.all.fb_form 
-        : document.getElementById('fbDiv').getElementsByTagName('form')[0];
-            
-    // move the focus to the name field
-    if (!noScroll && fb_obj) fb_obj.fb_name.focus();
-    
-*/    
-}
-
-/*
-Generic function to write html to div or layer on a page.
-*/
-function writeDiv(which, html) {
-
-    if (document.layers) {
-        document.layers[which].document.open();
-        document.layers[which].document.write(html);
-        document.layers[which].document.close();
-    } else if (document.all) {
-        var tmp = eval("document.all." + which);
-        tmp.innerHTML = html;
-    } else {
-        var tmp = document.getElementById(which);
-        tmp.innerHTML = html;
-    }
-}
-
-/*
 Input: a string.
 Output: Returns false if there is non whitespace text in the string, true if it is blank.
 */
@@ -437,14 +349,14 @@ var formBuilder = {};
 formBuilder.submit = function(frm, mainform, action) {
     var main = document.getElementById(mainform);
     if (action == "add") {
-        if (formBuilder.confirm(frm, main)) { // verify data
+        if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
+            
             main.submit();
         }
     } else {
-        // get the delete button value into the main form: 
-        if(document.getElementById('fbMagicButtons').elements['delete'].checked) {
-            main.elements["delete"].value = 1;
+        // get the delete button value into the main form
+        if(main.elements['delete'].checked) {
             // Always just save when we're deleting.
             main.elements["formBuilder|save_cb"].value = 1;
         } else {
@@ -457,34 +369,72 @@ formBuilder.submit = function(frm, mainform, action) {
     return false;
 };
 
-formBuilder.confirm = function (frm, main) {
+formBuilder.confirm = function (frm) {
 
     // look for formbuilder mainects, and get their values
     // assign these values to the hidden fields in the main form
 
-    for (var i=0; i < frm.elements.length; i++) {
+    for (var i = 0; i < frm.elements.length; i++) {
         var obj = frm.elements[i];
-        if (obj.name != "fb_position") {
-            if (obj.type == 'checkbox') {
-                if (obj.checked == true) {
-                    main[obj.name].value = 1;
+        if (obj.name.substring(0,1) == "fb") {
+            if (obj.name != "fb_position") {
+                if (obj.type == 'checkbox') {
+                    if (obj.checked == true) {
+                        obj.value = 1;
+                    }
+                } else if (obj.style.display == "none") {
+                    obj.value = '';
+                } else if (obj.name != "fb_value" && obj.style.display != "none") {
+                    alert(data_msg);
+                    obj.focus();
+                    confirming = false // check this
+                        return false;                       
                 }
-            } else if (!isEmpty(obj.value) ) {
-                main[obj.name].value = obj.value;
-            } else if (obj.name != "fb_value") {
-                alert(data_msg);
-                obj.focus();
-                confirming = false // check this
-                    return false;                       
             }
-        } else {
-            main[obj.name].value = textUnWrap( obj.options[obj.selectedIndex].value );
         }
     }
 
     // all good
     return true;
 };
+
+formBuilder.switchType = function(type) {
+    var fb = document.getElementById("fbDiv");
+    fb.className = type;
+    document.getElementById("fb_type").value = type;
+    var labels = fb.getElementsByTagName("label");
+    for (var i = 0; i < labels.length; i++) {
+        var target = document.getElementById(labels[i].htmlFor);
+        if (typeof this.labels[type] != "undefined" 
+            && typeof this.labels[type][target.name] != "undefined") {
+            
+            // Save the default label before changing it
+            if (typeof this.defaultLabels[target.name] == "undefined")
+                this.defaultLabels[target.name] = labels[i].innerHTML;
+            
+            labels[i].innerHTML = this.labels[type][target.name] + ":";
+
+        // Use the default if it exists and a new value doesn't
+        } else if (typeof this.defaultLabels[target.name] != "undefined") {
+            labels[i].innerHTML = this.defaultLabels[target.name];        
+        }
+        
+        if (typeof this.values[type] != "undefined" 
+            && typeof this.values[type][target.name] != "undefined") {
+            
+            // Save the default value before changing it
+            if (typeof this.defaultValues[target.name] == "undefined")
+                this.defaultValues[target.name] = target.value;
+            
+            target.value = this.values[type][target.name];
+        } else if (typeof this.defaultValues[target.name] != "undefined") {
+            target.value = this.defaultValues[target.name];
+        }
+    }
+};
+
+formBuilder.defaultLabels = new Array();
+formBuilder.defaultValues = new Array();
 
 
 /*
@@ -714,8 +664,8 @@ Real time character counter for text areas
 function textCount(which, maxLength) {
     var myObj= document.getElementById(which);
     if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
-    writeDiv("textCountUp" + which,myObj.value.length);
-    writeDiv("textCountDown" + which,maxLength-myObj.value.length);
+    document.getElementById("textCountUp" + which).innerHTML = myObj.value.length;
+    document.getElementById("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
 
 /* Simple browser detection */
@@ -772,7 +722,7 @@ function openAbout() { return openWindow("about"); }
 function openHelp()  { 
     var uri = window.location.pathname.replace(/\/?\d*\/?$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
-    else uri = uri.replace(/profile\/[^/]+\/container/, 'profile/container');
+    else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
     return openWindow(uri);
 }
 
@@ -781,30 +731,27 @@ function openHelp()  {
  * By Marshall Roch, 2005-03-25
  *
  * To use, instead of writing "window.onload = someFunction" or 
- * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')".
+ * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')"
+ * or multiOnload.onload(someFunction)" if someFunction is a function.
  */
-var multiOnload = new Object();
-multiOnload.onload = multiOnload_addOnload;
-window.onload = multiOnload_onload;
-
-function multiOnload_onload() {
-    if (multiOnload.events) {
-        for (var i=0; i < multiOnload.events.length; i++) {
-            eval(multiOnload.events[i] + "()");
-        }
-    }
-}
-function multiOnload_addOnload(eventFn) {
-    if(!this.events) { this.events = new Array(); }
+var multiOnload = {
+    events: []
+};
+multiOnload.onload = function(eventFn) {
     this.events[this.events.length] = eventFn;
-}
+};
 
+window.onload = function() {
+    for (var i = 0; i < multiOnload.events.length; i++) {
+         multiOnload.events[i]();
+    }
+};
 
 /*
  * Save scroll position
  */
 
-// <body onLoad="javascript:restoreScrollXY($scrollx, $scrolly)">
+// <body onload="restoreScrollXY($scrollx, $scrolly)">
 function restoreScrollXY(x, y) {
     window.scrollTo(x, y);
 }

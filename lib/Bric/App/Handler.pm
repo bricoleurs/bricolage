@@ -72,7 +72,6 @@ use Bric::App::Callback::BulkPublish;
 BEGIN { require Bric::App::Callback::CharTrans if ENCODE_OK }
 use Bric::App::Callback::ContainerProf;
 use Bric::App::Callback::Desk;
-use Bric::App::Callback::Element;
 use Bric::App::Callback::Event;
 use Bric::App::Callback::ListManager;
 use Bric::App::Callback::Login;
@@ -93,6 +92,7 @@ use Bric::App::Callback::Profile::Category;
 use Bric::App::Callback::Profile::Contrib;
 use Bric::App::Callback::Profile::Desk;
 use Bric::App::Callback::Profile::Dest;
+use Bric::App::Callback::Profile::ElementType;
 use Bric::App::Callback::Profile::FieldType;
 use Bric::App::Callback::Profile::FormBuilder;
 use Bric::App::Callback::Profile::Grp;

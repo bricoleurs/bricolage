@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.9.1 "Cupcake" ()
+=head1 VERSION 1.9.1 "Peeves" (2005-10-28)
 
 =head2 New Features
 
@@ -68,7 +68,7 @@ C<href()> methods in the following classes:
 
 Added C<serialize_to_pod()> and C<update_from_pod()> methods to the container
 element class. These support a pseudo-pod syntax that enable a complete
-hierrachy of elements to be edited, including links to related stories and
+hierarchy of elements to be edited, including links to related stories and
 media, in a single stream of text. [David]
 
 =item *
@@ -79,14 +79,14 @@ became redundant. [David]
 
 =item *
 
-Added the 'Include deleted' checkbox to Advanced Search in 'Find Stories',
-'Find Media', and 'Find Templates'; this allows searching for and reactivating
-deleted stories, media, and templates. [Scott]
+Added the "Include deleted" checkbox to Advanced Search in "Find Stories,"
+"Find Media," and "Find Templates" intefaces; this allows searching for and
+reactivating deleted stories, media, and templates. [Scott]
 
 =item *
 
-Added the 'Subelement' dropdown, to allow searching on Stories by the
-subelements they contain. [Scott]
+Added the "Subelement" select list to the "Find Stories" interface, to allow
+searching on stories by the types of subelements they contain. [Scott]
 
 =item *
 
@@ -116,7 +116,9 @@ match was found. [David]
 =item *
 
 Added new "Code Select" custom field allows you to add arbitrary Perl code to
-generate the items in a select list. [Scott]
+generate the items in a select list. This is great for dynamically pulling in
+choices from another database, LDAP directory, or anything else you can get at
+from Perl code. [Scott]
 
 =item *
 
@@ -124,8 +126,20 @@ Added ability to shelve a story from a desk or My Workspace. [David]
 
 =item *
 
-Added C<reset()> method to Bric::Util::Job and a "Reset" checkbox in the job
-profile in the UI so that failed jobs can easily be re-attempted. [David]
+Added C<reset()> method to L<Bric::Util::Job|Bric::Util::Job> and a "Reset"
+checkbox in the job profile in the UI so that failed jobs can easily be
+re-attempted. [David]
+
+=item *
+
+Added "Cheat Sheet" dialog box to Bulk Edit that displays the entire hierarchy
+of available subelements and fields as the pseudo-pod "tags" available for use
+in bulk editing content. [David]
+
+=item *
+
+Moved burner association from element types to output channels. Now a single
+output channel must have all of its templates use the same burner. [David]
 
 =back
 
@@ -143,21 +157,23 @@ from Rod Taylor. [David]
 =item *
 
 Moved story, media, and template notes into a column in the appropriate
-instance table, instead using attributes. This is a much more efficient use of
-the database and eliminates a lot of cruft. [David]
+instance table, instead using attributes, and then removed the story, media,
+and template attribute objects. This is a much more efficient use of the
+database and eliminates a lot of cruft. [David]
 
 =item *
 
-Added C<has_notes()> method to Bric::Biz::Asset (and therefore its story,
-media, and template subclasses) as a more efficient way of determining whether
-an asset has notes for any of its versions than calling the C<get_notes()>
-method. [David]
+Added C<has_notes()> method to L<Bric::Biz::Asset|Bric::Biz::Asset> (and
+therefore its story, media, and template subclasses) as a more efficient way
+of determining whether an asset has notes for any of its versions than calling
+the C<get_notes()> method. [David]
 
 =item *
 
-Added C<note> parameter to the list method of the story, media, and template
-classes. Unlike most of the parameters, this one will return assets with
-C<any> of their versions having a note matching the C<note> parameter. [David]
+Added C<note> parameter to the C<list()> method of the story, media, and
+template classes. Unlike most of the parameters, this one will return assets
+with C<any> of their versions having a note matching the C<note> parameter.
+[David]
 
 =item *
 
@@ -191,8 +207,9 @@ behave consistently with root categories and home page URIs, and so that they
 properly indicate directories. Note that this does not apply if the
 C<STORY_URI_WITH_FILENAME> F<bricolage.conf> directive has been enabled.
 B<Note to Templaters:> You may need to modify your templates to take into
-account that stories now end in a slash, if you were appending a slash in your
-templates. [David]
+account that story and category URIS now end in a slash, if you were appending
+a slash in your templates or searching on category URIs for related stories.
+[David]
 
 =item *
 
@@ -205,7 +222,7 @@ Added support for searching on UUIDs to the story and media classes. [David]
 
 =item *
 
-Added suport for searching on URIs in the story class and modified the same
+Added support for searching on URIs in the story class and modified the same
 parameter in the media class to search I<all> possible URIs for media, not
 just the URI associated with the primary output channel. [David]
 
@@ -226,15 +243,16 @@ type. [David]
 
 =item *
 
-Added $element object to exception object in C<throw_burn_error>. Now a kind
-of breadcrumb trail will illustrate where in the element hierarchy of a story
-a burn error was thrown. (Note: this only works for exceptions thrown by
+Added the current element object to exception object in C<throw_burn_error>
+and, by extension the burner C<throw_error()> method. Now a kind of breadcrumb
+trail will illustrate where in the element hierarchy of a story a burn error
+was thrown. (Note: this only works for exceptions thrown by
 C<throw_burn_error>.) [Scott]
 
 
 =item *
 
-Fixed the C<get_data()> and C<get_container()> element objects so that, in
+Fixed the C<get_data()> and C<get_container()> element methods so that, in
 list context, they return C<undef> instead of an empty list when there is no
 corresponding field or element. This will be especially useful in templates,
 where it will prevent errors such as Mason's, "Odd number of parameters passed
@@ -243,7 +261,7 @@ to component expecting name/value pairs." [David]
 =item *
 
 Renamed the C<related_instance_id> attribute of elements to
-C<related_story_id>, for parity with C<related_media_id> not to mention the
+C<related_story_id>, for parity with C<related_media_id>--not to mention the
 C<get_related_story()> method. The C<get_related_instance_id()> and
 C<set_related_instance_id()> accessor methods remain in place for purposes of
 backwards compatibility. [David]
@@ -267,15 +285,18 @@ C<get_element_data()> to C<field_type_id> and C<get_field_type()>. [David]
 
 =item *
 
-Made the scrollbar "sticky" in the Story Profile. [Scott]
+Made the scroll bar "sticky" in the Story Profile, so that when you save a
+story, the reload will scroll back to the same spot in the story profile where
+you left odff. [Scott]
 
 =item *
 
 Added a "dialog box" widget for generating JavaScript-driven dialog boxes. The
 buttons are nicely styled to match the Bricolage UI, and can be configured to
 trigger JavaScript functions. Dialog boxes can also be dragged around the
-browser window by grabbing their title bars. Used by the new Find/Replace
-feature, but will likely be used in other contexts in the future. [David]
+browser window by grabbing their title bars. Used by the new Find/Replace and
+Bulk Edit Cheat Sheet features, but will likely be used in other contexts in
+the future. [David]
 
 =item *
 
@@ -290,10 +311,10 @@ setting field values, especially during publishes. [David]
 =item *
 
 Major refactoring of the field types class,
-Bric::Biz::ElementType::Parts::FieldType. Attributes that describe how fields
-should be displayed are no longer stored in a separate attribute object, but
-as true attributes of field type objects. This makes them much more efficient
-in terms of database access. [David]
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.
+Attributes that describe how fields should be displayed are no longer stored
+in a separate attribute object, but as true attributes of field type objects.
+This makes them much more efficient in terms of database access. [David]
 
 =item *
 
@@ -305,7 +326,7 @@ profile. [David]
 
 Added much more fine-grained field type management to the Element Type SOAP
 interface. More field attributes can now be updated via SOAP. For example, one
-can now change the widget type from "text" to "textarea". These improvments
+can now change the widget type from "text" to "textarea". These improvements
 are thanks to the normalization of the element type and field type classes.
 Note that there are a number of new XML elements, and some of the existing
 ones have changed names, but we have tried to preserve backwards compatibility
@@ -328,7 +349,7 @@ in general. The tables renamed are:
 
 =over
 
-=item element to element_field
+=item element to element_type
 
 =item at_type to field_type
 
@@ -400,8 +421,8 @@ methods are of course left in place for purposes of backwards compatibility.
 =item *
 
 Added C<get_values()> and C<set_values()> methods to the field class
-(Bric::Biz::Element::Field) to make getting and setting multivalue fields
-easier and more centralized. [David]
+(L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>) to make getting and
+setting multivalue fields easier and more centralized. [David]
 
 =item *
 
@@ -422,8 +443,8 @@ have served a purpose in the past, but isn't needed now. All of its attributes
 have been moved to L<Bric::Biz::ElementType|Bric::Biz::ElementType>, and you
 should still be able to get the ATType object from existing elements, but new
 elements won't need it anymore. It has been removed from the UI, but the SOAP
-interface and the class itself remain for now. ATType will be completely
-removed in a future version of Bricolage. [David]
+interface and the class itself remain for now. Bric::Biz::ATType will be
+completely removed in a future version of Bricolage. [David]
 
 =item *
 
@@ -448,7 +469,7 @@ gremlin characters pasted from Microsoft Word. [David]
 =item *
 
 It is now fatal to submit characters in an invalid encoding. For example, if a
-user is using UTF-8 (the defult) but pastes the contents of a Word document
+user is using UTF-8 (the default) but pastes the contents of a Word document
 with an m-dash (a CP1252 character), Bricolage will now throw an exception. It
 probably threw an exception from the database in the past, but now we're
 throwing one earlier. The solution for such a user is to of course select the
@@ -467,10 +488,10 @@ have to edit them. [David]
 
 =item *
 
-F<bric_republish> now uses the C<published_version> search parameter to always
-republish the last version of a story to be published. This means that even if
-a story is checked out, it can be republished without interfering with the
-checkout.
+F<bric_republish> now uses the C<published_version> Bric::SOAP::Workflow
+parameter to always republish the last version of a story to be published.
+This means that even if a story is checked out, it can be republished without
+interfering with the checkout.
 
 =item *
 
@@ -481,9 +502,10 @@ List Name Format preferences. [David]
 
 =item *
 
-Alert emails now use an email address, it it can find one, for the user who
+Alert emails now use an email address, if one can be found, for the user who
 triggered the alert event for the From header in the alert email. The
-C<ALERT_FROM> F<bricolage.conf> directive is used as the fallback. [David]
+C<ALERT_FROM> F<bricolage.conf> directive is still used as the fallback.
+[David]
 
 =item *
 
@@ -503,12 +525,11 @@ dispatch simpler. [David]
 
 =item *
 
-Added the C<RELATED_MEDIA_PROFILE> F<bricolage.conf> directive to redirect
-users into the new media profile when creating a new media document from a
-related media element, which is only allowed when the C<RELATED_MEDIA_UPLOAD>
-directive is enabled. This is useful when editors what to be able to edit the
-newly uploaded media document and then return directly to the related media
-element from which they created it. [David]
+Users creating media documents from within a related media element (because
+the C<RELATED_MEDIA_UPLOAD> F<bricolage.conf> directive has been enabled and
+they have the proper permissions) are now redirected to the "New Media"
+profile when the new file has been uploaded, so that the element type,
+category, cover date, priority, etc. can be changed. [David]
 
 =item *
 
@@ -543,7 +564,7 @@ story is published. This should make the TT burner substantially faster.
 
 Publish and distribution jobs are now tied to a specific version of a story or
 media document, rather than the media document itself. This will allow a whole
-series of publishes for versions of a document to be scheuled for execution
+series of publishes for versions of a document to be scheduled for execution
 over time, as well as help to protect currently checked-out documents from
 being mysteriously removed from workflow by scheduled publishes being
 executed. Sponsored by Freerun Technologies. [David]
@@ -551,14 +572,51 @@ executed. Sponsored by Freerun Technologies. [David]
 =item *
 
 Searches now are remembered for each manager in the UI for as long as a
-session lasts. So if you performa a search for element types, and then do a
+session lasts. So if you perform a search for element types, and then do a
 search for stories or output channels, the last results you saw in the element
 type manager will be there again when you return to it. [David]
 
 =item *
 
-Elminated need for HTTP::BrowserDetect, since the UI is now completely
+Eliminated need for HTTP::BrowserDetect, since the UI is now completely
 browser-neutral. [David]
+
+=item *
+
+Media files can now be uploaded in the New Media profile. [David]
+
+=item *
+
+Added events for adding subelement element types to element types. [David]
+
+=item *
+
+Any symbols exported by C<PERL_LOADER> code, plus those exported by
+C<Bric::Util::DBI qw(:junction)>, are now imported into the Template Toolkit
+stash for direct use in Template Toolkit templates, and into the PHP global
+context for direct use in PHP templates. For example, the C<ANY> function can
+now be used directly in TT templates and as C<$ANY()> in PHP templates. The
+burner constants C<PUBLISH_MODE> and C<PREVIEW_MODE> can also be used
+C<$PUBLISH_MODE()> and C<$PREVIEW_MODE()> in PHP) if the default
+C<PERL_LOADER> in F<bricolage.conf> is left in place. But TT can't have
+multiple symbols with the same names, so for each symbol exported, it adds to
+the stash the first one it finds in this order: CODE HASH ARRAY IO GLOB
+FORMAT, an SCALAR. Use of imported functions in PHP templates requires
+PHP::Interpreter 1.1.0 or later. [David]
+
+=item *
+
+The story, burner, element, and content variables are now globals in PHP
+templates, rather than each being stored in a global $BRIC associative array,
+which is now gone. This brings the style of PHP templates more in line with
+that of Mason and Template Toolkit templates. [David]
+
+=item *
+
+L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>'s publish method now schedules a
+publish job instead of immediately publishing, thus allowing the
+C<publish_date> parameter to actually work, and ensuring that the proper
+version is published. [David]
 
 =back
 
@@ -962,7 +1020,36 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
-=head1 VERSION 1.8.7 ()
+=head1 VERSION 1.8.8 (2005-10-27)
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed thumbnail URIs broken in 1.8.7. [David]
+
+=item *
+
+Fixed the "media expire" event. [David]
+
+=item *
+
+Media documents with more than one file version are no longer expired as soon
+as they're published. Reported by Wayne Slavin. [David]
+
+=item *
+
+Added upgrade script to adjust the file names of media files in the resource
+table in the database to be in sync with the new names on the file system
+introduced in 1.8.7. [David]
+
+=back
+
+##############################################################################
+
+=head1 VERSION 1.8.7 (2005-10-24)
 
 =head2 Improvements
 
@@ -986,7 +1073,20 @@ Suggested by Mark Jaroski. [David]
 
 The Bulk Publish feature in the UI now only publishes the previously published
 versions of unexpired stories and media, rather than the latest version of
-expired and unexpired stories and media. [David]
+expired and unexpired stories and media, thus avoiding errors when documents
+are checked out. [David]
+
+=item *
+
+If a story passed to the C<burn_another()> or C<preview_another()> burner
+methods is the same as the story currently being burned, it will no longer be
+published or previewed again by C<burn_another()> or C<preview_another()>,
+thus mitigating the possibility of infinite loops. [David]
+
+=item *
+
+Added an "Expired" event for when stories and media are expired. Suggested by
+Joshua Edelstein. [David]
 
 =back
 
@@ -1015,14 +1115,14 @@ specified using the C<ANY()> function. [David]
 
 =item *
 
-Having a custom field beginning with a leading underscore was causing
-an error in comp/widgets/wrappers/sharky/header.mc. [Scott]
+Fixed an error in F<comp/widgets/wrappers/sharky/header.mc> caused by having a
+custom field beginning with a leading underscore. [Scott]
 
 =item *
 
-Errors thrown when setting element field values will not be displayed as error
+Errors thrown when setting element field values will now be displayed as error
 messages within the context of the element profile, rather than throwing a
-fatal exception. This is useful for invalid dates, foe example. [David]
+fatal exception. This is useful for invalid dates, for example. [David]
 
 =item *
 
@@ -1032,7 +1132,40 @@ Reported by Phillip Smith. [David]
 
 =item *
 
-Fixed database DDLs to work with PostgreSQL 8.1. [David]
+Updated for compatibility with PostgreSQL 8.1. [David]
+
+=item *
+
+Defunct media files are now properly removed from the delivery server whenever
+a media document's file name has changed. Reported by Brad Fox. [David]
+
+=item *
+
+Clicking the "Return" button when viewing a subelement in a story or media
+document not checked out by the user no longer drops into edit view. Reported
+by John Greene. [David]
+
+=item *
+
+Attempting to create a category with the same URI as an existing but
+deactivated category once again fails with a useful error message rather than
+a database exception. Reported by Marshall. [David]
+
+=item *
+
+New elements and fields will now have any leading or trailing white space
+trimmed, rather than converted to underscores. Reported by Scott Lanning.
+[David]
+
+=item *
+
+Multiple select list custom fields no longer throw an exception when you
+select more than one value for the default value. Reported by Scott. [David]
+
+=item *
+
+In a story or media profile, deleting a subelement with the same ID as a field
+(or vice-versa) will no longer delete both. Reported by Scott Lanning. [David]
 
 =back
 
@@ -2611,7 +2744,7 @@ administrative profiles for those objects. This change makes it possible to
 give users permission to administer subsets of objects. The new groupable
 objects are:
 
-=over 8
+=over
 
 =item Preferences
 
@@ -3956,7 +4089,7 @@ in their site context. [David]
 
 A number of improvements for the F<bric_media_upload> contrib script:
 
-=over 8
+=over
 
 =item Creates intermediate categories if needed.
 
@@ -4217,7 +4350,7 @@ Find Stories and Find Media. Suggested by Arthur. [David]
 
 A number of fixes for the F<bric_media_upload> contrib script:
 
-=over 8
+=over
 
 =item Made it work with the 1.7.0 XML Schema.
 

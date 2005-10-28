@@ -145,8 +145,6 @@ format content for elements of that type. For example, for our hypothetical
     </body>
   </html>
 
-=back
-
 This example doesn't represent the actual syntax for inserting values, but is
 meant to convey a template's relationship to an element. We'll get into the
 nuts and bolts later.

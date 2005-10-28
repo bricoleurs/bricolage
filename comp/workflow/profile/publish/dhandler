@@ -18,9 +18,8 @@ $LastChangedDate$
 <description>
 
 =cut
-</%doc>
 
-%#-- Begin HTML --#
+</%doc>
 <%perl>;
 do_queued_redirect();
 # Get the content first, as it may generate messages that'll go into the header,
@@ -30,26 +29,17 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
          title => 'Publish Details',
          context => "Workflow | Publish");
 $m->out(qq{<form method="post" action="} . $r->uri .
-  qq{" name="desk" onSubmit="return confirmChanges(this)">\n});
+  qq{" name="desk" onsubmit="return confirmChanges(this)">\n});
 
 $m->out("$content<p></p>\n");
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Schedule Publication");
-</%perl>
-<table border=0 cellpadding=0 cellspacing=0 width=578>
-<tr>
-  <td width=20><img src="/media/images/spacer.gif" width=20 height=1></td>
-  <td width=558>
-<%perl>
+
 $m->comp('/widgets/select_time/select_time.mc',
          base_name => "pub_date",
-#         indent => 60,
-         disp      => "Publish At");
-</%perl>
-  </td>
-</tr>
-</table>
-<%perl>
+         disp      => "Publish At",
+         useTable  => 1);
+
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
          type => 'asset',
@@ -59,11 +49,6 @@ $m->comp('/widgets/profile/formButtons.mc',
          val => 'publish_assets_red',
          no_del => 1);
 </%perl>
-
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
-
 

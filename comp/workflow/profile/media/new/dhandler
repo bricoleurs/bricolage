@@ -23,43 +23,30 @@ data for the fields to be displayed.
 ################################################################################
 
 </%doc>
-
 <%once>;
 my $disp = get_disp_name('media');
 my $context = "Workflow | Profile | $disp | New";
 </%once>
-
-%#-- Args Section --#
 <%args>
 </%args>
-
-%#-- Init Section --#
 <%init>
-$r->uri =~ m!/([^/]+)/?$!;
-my $w_id = $1;
+my ($w_id, $m_id) = $r->uri =~ m{/(\d+)(?:/(\d+))?/?$};
 my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
 my $gid =  $wf->get_start_desk->get_asset_grp;
 chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 </%init>
-
-%#-- Begin HTML --#
-
 <& "/widgets/wrappers/sharky/header.mc",
    title => "New Media",
    context => $context,
    jsInit => 'document.theForm["title"].focus();'
 &>
-<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
-
-<& /widgets/media_prof/media_prof.mc, 
-    section => 'new',
-    work_id => $w_id &>
-
+<form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onSubmit="return confirmChanges('theForm')">
+<& /widgets/media_prof/media_prof.mc,
+   section => 'new',
+   work_id => $w_id,
+   id      => $m_id,
+&>
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
-
  
 

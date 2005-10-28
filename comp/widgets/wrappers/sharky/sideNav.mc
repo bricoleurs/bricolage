@@ -93,12 +93,13 @@ unless ($workflows) {
 <script type="text/javascript" src="/media/js/lib.js"></script>
   
 <script type="text/javascript">
-window.onload = function () {
-    var workspace = document.getElementById("workspace");
-    var workspaceAnchor = workspace.getElementsByTagName("a")[0];
-    workspaceAnchor.className = (parent.location.pathname.indexOf("workspace") != -1) ? "open" : "closed";
+var navLoader = function () {
+    var workspace = document.getElementById('workspace');
+    var workspaceAnchor = workspace.getElementsByTagName('a')[0];
+    workspaceAnchor.className = (parent.location.pathname.indexOf('workspace') != -1) ? 'open' : 'closed';
     resizeframe();
 }
+multiOnload.onload(navLoader);
 </script>
 </head>
 <body id="navFrame">

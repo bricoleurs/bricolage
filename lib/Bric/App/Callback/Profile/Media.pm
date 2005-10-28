@@ -89,25 +89,7 @@ sub update : Callback(priority => 1) {
       if exists $param->{expire_date};
 
     # Check for file
-    if ($param->{"$widget|file"}) {
-        my $upload = $self->apache_req->upload(
-            $param->{file_field_name} || "$widget|file"
-        );
-
-        # Prevent big media uploads
-        if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
-            my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
-            add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
-            return;
-        }
-
-        my $fh = $upload->fh;
-        my $filename = $ENV{HTTP_USER_AGENT} =~ /win/
-            ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
-            : $upload->filename;
-        $media->upload_file($fh, $filename, $upload->type, $upload->size);
-        log_event('media_upload', $media);
-    }
+    $self->handle_upload($media) if $param->{"$widget|file"};
     set_state_data($widget, 'media', $media);
 }
 
@@ -200,23 +182,17 @@ sub save : Callback(priority => 6) {
     # Clear the state and send 'em home.
     $self->clear_my_state;
 
-    if (my $prev = get_state_data('_profile_return')) {
-        $self->return_to_other($prev);
-    }
-
-    else {
-        if ($return eq 'search') {
-            my $url = $SEARCH_URL . $workflow_id . '/';
-            $self->set_redirect($url);
-        } elsif ($return eq 'active') {
-            my $url = $ACTIVE_URL . $workflow_id;
-            $self->set_redirect($url);
-        } elsif ($return =~ /\d+/) {
-            my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
-            $self->set_redirect($url);
-        } else {
-            $self->set_redirect("/");
-        }
+    if ($return eq 'search') {
+        my $url = $SEARCH_URL . $workflow_id . '/';
+        $self->set_redirect($url);
+    } elsif ($return eq 'active') {
+        my $url = $ACTIVE_URL . $workflow_id;
+        $self->set_redirect($url);
+    } elsif ($return =~ /\d+/) {
+        my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
+        $self->set_redirect($url);
+    } else {
+        $self->set_redirect("/");
     }
 }
 
@@ -336,11 +312,7 @@ sub checkin : Callback(priority => 6) {
 
     # Clear the state out and set redirect.
     $self->clear_my_state;
-    if (my $prev = get_state_data('_profile_return')) {
-        $self->return_to_other($prev);
-    } else {
-        $self->set_redirect("/");
-    }
+    $self->set_redirect("/");
 }
 
 ################################################################################
@@ -428,11 +400,7 @@ sub cancel : Callback(priority => 6) {
         add_msg('Media "[_1]" check out canceled.', $media->get_title);
     }
     $self->clear_my_state;
-    if (my $prev = get_state_data('_profile_return')) {
-        $self->return_to_other($prev);
-    } else {
-        $self->set_redirect("/");
-    }
+    $self->set_redirect("/");
 }
 
 ################################################################################
@@ -466,11 +434,7 @@ sub return : Callback(priority => 6) {
 
         # Clear the state and send 'em home.
         $self->clear_my_state;
-        if (my $prev = get_state_data('_profile_return')) {
-            $self->return_to_other($prev);
-        } else {
-            $self->set_redirect($url);
-        }
+        $self->set_redirect($url);
     }
 }
 
@@ -520,6 +484,9 @@ sub create : Callback {
     # Send this media to the first desk.
     $start_desk->accept({ asset => $media });
     $start_desk->save;
+
+    # Handle a file upload.
+    $self->handle_upload($media) if $param->{"$widget|file"};
 
     # Log that a new media has been created and generally handled.
     log_event('media_new', $media);
@@ -847,6 +814,29 @@ sub assoc_category : Callback {
     Bric::App::Callback::Search->no_new_search;
 }
 
+sub save_related : Callback {
+    my $self  = shift;
+    my $media = get_state_data($self->class_key => 'media');
+    my $desk  = $media->get_current_desk;
+
+    # Check the media document into a desk.
+    my $desk_cb = Bric::App::Callback::Desk->new(
+        cb_request => $self->cb_request,
+        pkg_key    => 'desk_asset',
+        apache_req => $self->apache_req,
+        value      => $media->get_id,
+        params     => { 'desk_asset|asset_class' => $media->key_name },
+    );
+
+    $desk_cb->checkin;
+    add_msg('Media "[_1]" saved and checked in to "[_2]".',
+            $media->get_title, $desk->get_name);
+
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
+    }
+}
+
 ### end of callbacks ##########################################################
 
 sub clear_my_state {
@@ -861,9 +851,35 @@ sub return_to_other {
     # the media profile we've just finished with. So restore that state.
     clear_state('_profile_return');
     set_state(container_prof => @{$prev->{state}});
-    set_state("$prev->{type}\_prof", $prev->{type_state},
-              { $prev->{type} => $prev->{prof} });
+    set_state(
+        "$prev->{type}\_prof", $prev->{type_state},
+        { $prev->{type} => $prev->{prof} }
+    );
     $self->set_redirect($prev->{uri});
+}
+
+sub handle_upload {
+    my ($self, $media) = @_;
+    my $param  = $self->params;
+    my $widget = $self->class_key;
+    my $upload = $self->apache_req->upload(
+        $param->{file_field_name} || "$widget|file"
+    );
+
+    # Prevent big media uploads
+    if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
+        my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
+        add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
+        return;
+    }
+
+    my $fh = $upload->fh;
+    my $filename = $ENV{HTTP_USER_AGENT} =~ /win/
+        ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
+            : $upload->filename;
+    $media->upload_file($fh, $filename, $upload->type, $upload->size);
+    log_event('media_upload', $media);
+    return $self;
 }
 
 ##############################################################################

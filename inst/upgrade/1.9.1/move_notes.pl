@@ -20,7 +20,7 @@ for my $type (qw(story media formatting)) {
              FROM   attr_$type AS type, attr_$type\_val as val
              WHERE  type.id = val.attr__id
                     AND val.object__id = $type\_instance.$type\__id
-                    AND $type\_instance.version = type.name::int4 + 1
+                    AND $type\_instance.version = type.name::text::int4 + 1
                     AND $type\_instance.checked_out = '0'
       },
 
@@ -31,7 +31,7 @@ for my $type (qw(story media formatting)) {
              FROM   attr_$type AS type, attr_$type\_val as val
              WHERE  type.id = val.attr__id
                     AND val.object__id = $type\_instance.$type\__id
-                    AND $type\_instance.version = type.name::int4
+                    AND $type\_instance.version = type.name::text::int4
                     AND $type\_instance.checked_out = '1'
        },
 

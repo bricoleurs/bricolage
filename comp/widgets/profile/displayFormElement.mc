@@ -405,7 +405,7 @@ my %formSubs = (
               if $vals->{props}{multiple};
 
             $m->print(qq{<div class="row">\n}) if $useTable;
-            $m->print($name ? qq{        <div class="$label">$name:</div>\n} : '');
+            $m->print(qq{    <div class="$label">$name:</div>\n}) if $name;
             $m->print('<br />') if !$useTable && $name;
             $m->print(qq{        <div class="input">\n}) if $useTable;
 
@@ -468,15 +468,12 @@ my %formSubs = (
             my ($key, $vals, $value, $js, $name, $width, $indent, $useTable,
                 $label, $readOnly, $id) = @_;
             my $out = '';
+            $out .= qq{<div class="row">\n} if $useTable;
+            
             # print caption for the group
-            if ($useTable) {
-                $out .= ($readOnly) ? qq{<table border="0" width="$width"><tr><td width=$indent align="right"> }
-                                    : qq{<table border="0" width="$width" cellspacing=0 cellpadding=2><tr><td align="right" width=$indent> };
-            }
-            $out .= qq{<span class="radioLabel">$name</span>} if $name;
-
+            $out .= qq{    <div class="$label">$name:</div>\n} if $name;
+            $out .= qq{    <div class="input">\n} if $useTable;
             if ($readOnly) {
-                $out .= "</td><td width=" . ($width - $indent) . ">";
                 # Find the selected value
                 my $values = $vals->{props}{vals};
                 my $ref = ref $values;
@@ -491,11 +488,8 @@ my %formSubs = (
                         $out .= $k->[1] if ($value eq $k->[0]);
                     }
                 }
-            } else {
-                $out .= "</td><td width=" . ($width - $indent) .">&nbsp;" if ($useTable);
             }
-
-            $out .= "</td></tr></table>" if ($useTable);
+            $out .= "</div></div>" if $useTable;
             $m->out($out);
 
             if (!$readOnly) {

@@ -1,80 +1,121 @@
 <%perl>;
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
-  	 caption => "Properties",
-	 number  => 1);
+$m->comp(
+    '/widgets/wrappers/sharky/table_top.mc',
+    caption => 'Properties',
+    number  => 1
+);
 
-my $wf = Bric::Biz::Workflow->lookup
-  ({ id => get_state_data($widget, 'work_id')});
-my $site_id = $wf->get_site_id;
+$m->comp(
+    '/widgets/profile/displayFormElement.mc',
+    key      => 'site',
+    readOnly => 1,
+    objref   => $media || $wf,
+);
 
-$m->comp('/widgets/profile/displayFormElement.mc',
-         key => 'site',
-         readOnly => 1,
-         objref => $wf
-        );
-
-$m->comp('/widgets/profile/displayFormElement.mc',
-	 key => 'title',
-	 vals => $nmeth
-	);
+$m->comp(
+    '/widgets/profile/displayFormElement.mc',
+    key  => 'title',
+    vals => $nmeth,
+);
 </%perl>
-<& '/widgets/select_object/select_object.mc',
-	disp => 'Media Type',
-	name => "$widget|at_id",
-	object => 'element_type',
-	field => 'name',
-        default    => ['' , ''],
-        req => 1,
-        constrain  => { top_level => 1,
-			media => 1,
-                        site_id => $site_id },
-        exclude  => $excl_sub,
-	useTable   => 1
+<& /widgets/select_object/select_object.mc,
+   disp      => 'Media Type',
+   name      => "$widget|at_id",
+   object    => 'element_type',
+   useTable  => 1,
+   field     => 'name',
+   default   => ['' , ''],
+   selected  => $sel_mtype,
+   req       => 1,
+   exclude   => $excl_sub,
+   constrain => {
+       top_level => 1,
+       media     => 1,
+       site_id   => $site_id,
+   },
 &>
-<& '/widgets/select_object/select_object.mc',
-	disp => 'Source',
-	object => 'source',
-	name => "$widget|source__id",
-	field => 'source_name',
-	useTable => 1
+<& /widgets/select_object/select_object.mc,
+   disp     => 'Source',
+   object   => 'source',
+   name     => "$widget|source__id",
+   field    => 'source_name',
+   selected => $sel_source,
+   useTable => 1,
 &>
-<& '/widgets/select_object/select_object.mc',
-	object		=> 'category',
-	disp		=> 'Category',
-	name		=> "$widget|category__id",
-	field		=> 'uri',
-        req             => 1,
-	sort_field      => 'uri',
-        constrain       => { site_id => $site_id },
-        exclude         => $excl_sub,
-	useTable	=> 1
+<& /widgets/select_object/select_object.mc,
+   object      => 'category',
+   disp        => 'Category',
+   name        => "$widget|category__id",
+   field       => 'uri',
+   req         => 1,
+   sort_field  => 'uri',
+   constrain   => { site_id => $site_id },
+   exclude     => $excl_sub,
+   selected    => $sel_cat,
+   useTable    => 1,
 &>
-<&'/widgets/profile/displayFormElement.mc',
-	 key => "priority",
-	 vals => $pmeth,
+<& /widgets/profile/displayFormElement.mc,
+   key  => 'priority',
+   vals => $pmeth,
 &>
-<&'/widgets/profile/displayFormElement.mc',
-	 key => "cover_date",
-	 vals => $cdate,
+<& /widgets/profile/displayFormElement.mc,
+   key  => 'cover_date',
+   vals => $cdate,
 &>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-<& '/widgets/profile/button.mc',
-         disp   => $lang->maketext('Create'),
-         widget => $widget,
-         cb     => 'create_cb',
-         button => 'create_red',
-         useTable => 0
+% unless ($media && $media->get_file_name) {
+    <div class="row">
+      <div class="label">File:</div>
+      <div class="input"><input type="file" name="<% $widget %>|file" /></div>
+    </div>
+% }
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+% if ($media) {
+<& /widgets/profile/button.mc,
+   disp     => $lang->maketext('Save'),
+   widget   => $widget,
+   cb       => 'save_related_cb',
+   button   => 'save_red',
+   useTable => 0,
 &>
+% } else {
+<& /widgets/profile/button.mc,
+   disp     => $lang->maketext('Create'),
+   widget   => $widget,
+   cb       => 'create_cb',
+   button   => 'create_red',
+   useTable => 0,
+&>
+% }
 <%once>;
-my $pmeth = { %{ Bric::Biz::Asset::Business::Media->my_meths->{priority} } };
-$pmeth->{value} = 3;
-my $cdate = { %{ Bric::Biz::Asset::Business::Media->my_meths->{cover_date} } };
-my $nmeth = Bric::Biz::Asset::Business::Media->my_meths->{title};
+my $pmeth    = { %{ Bric::Biz::Asset::Business::Media->my_meths->{priority} } };
+my $nmeth    = Bric::Biz::Asset::Business::Media->my_meths->{title};
+my $cdate    = { %{ Bric::Biz::Asset::Business::Media->my_meths->{cover_date} } };
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%args>
 $widget
+$media => undef
 </%args>
 <%init>;
-$cdate->{value} = strfdate();
+my ($sel_mtype, $sel_source, $sel_cat, $site_id, $wf);
+# Media is optional, and generally only used by related media elements.
+if ($media) {
+    $cdate->{value} = $media->get_cover_date(ISO_8601_FORMAT);
+    $nmeth->{value} = $media->get_title;
+    $pmeth->{value} = $media->get_priority;
+    $sel_mtype      = $media->get_element_type_id;
+    $sel_source     = $media->get_source__id;
+    $sel_cat        = $media->get_category__id;
+    $site_id        = $media->get_site_id;
+}
+
+else {
+    $cdate->{value} = strfdate();
+    $nmeth->{value} = '';
+    $pmeth->{value} = 3;
+    $wf = Bric::Biz::Workflow->lookup({
+        id => get_state_data($widget, 'work_id')
+    });
+    $site_id = $wf->get_site_id;
+}
 </%init>

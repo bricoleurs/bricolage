@@ -13,9 +13,11 @@ use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
 use Bric::Config qw(:prev);
 use Bric::Util::Burner;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Job::Pub;
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(log_event);
+use Bric::App::Util qw(:pkg);
 use Bric::Util::Fault qw(throw_error);
 
 sub preview : Callback {
@@ -143,8 +145,8 @@ sub select_publish : Callback(priority => 1) {  # run this before 'publish'
 sub publish : Callback {
     my $self = shift;
     my $param = $self->params;
-    my $story_id = $param->{'story_id'};
-    my $media_id = $param->{'media_id'};
+    my $story_id = $param->{story_id};
+    my $media_id = $param->{media_id};
 
     # Grab the story and media IDs from the session.
     my ($story_pub_ids, $media_pub_ids);
@@ -156,82 +158,55 @@ sub publish : Callback {
     }
 
     my $stories = mk_aref($story_pub_ids);
-    my $media = mk_aref($media_pub_ids);
+    my $media   = mk_aref($media_pub_ids);
 
     # Iterate through each story and media object to be published.
-    my $count = @$stories;
-    foreach my $sid (@$stories) {
-        # Schedule
-        my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
-        my $name = 'Publish "' . $s->get_name . '"';
-        my $job = Bric::Util::Job::Pub->new({
-            sched_time             => $param->{pub_date},
-            user_id                => get_user_id(),
-            name                   => $name,
-            story_instance_id      => $sid,
-            priority               => $s->get_priority(),
-        });
-        $job->save();
-        log_event('job_new', $job);
+    for my $spec ( [story => $stories], [ media => $media] ) {
+        my ($key, $doc_ids) = @$spec;
+        my $count = @$doc_ids or next;
+        my $pkg = get_package_name($key);
+        my $disp = get_disp_name($key);
+        for my $doc ($pkg->list({ version_id => ANY(@$doc_ids) })) {
+            # Schedule
+            my $name = 'Publish "' . $doc->get_name . '"';
+            my $job = Bric::Util::Job::Pub->new({
+                sched_time             => $param->{pub_date},
+                user_id                => get_user_id,
+                name                   => $name,
+                "$key\_instance_id"    => $doc->get_version_id,
+                priority               => $doc->get_priority,
+            });
+            $job->save;
+            log_event('job_new', $job);
 
-        # Report publishing if the job was executed on save, otherwise
-        # report scheduling
-        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
-        add_msg(qq{Story "[_1]" $saved.},  $s->get_title)
-           if $count <= 3;
-        # Remove it from the desk it's on.
-        if (my $d = $s->get_current_desk) {
-            $d->remove_asset($s);
-            $d->save;
-        }
+            # Report publishing if the job was executed on save, otherwise
+            # report scheduling
+            my $saved = $job->get_comp_time
+                ? 'published'
+                : 'scheduled for publication';
+            add_msg(qq{$disp "[_1]" $saved.},  $doc->get_title) if $count <= 3;
+            # Remove it from the desk it's on.
+            if (my $d = $doc->get_current_desk) {
+                $d->remove_asset($doc);
+                $d->save;
+            }
 
-        # Remove it from the workflow by setting its workflow ID to undef
-        # Yes, we have to use user__id instead of checked_out because non-current
-        # versions of documents always have checked_out set to 0, even when the
-        # current version is checked out.
-        if ($s->get_workflow_id
-            && !defined $s->get_user__id # Not checked out.
-            && $s->get_version == $s->get_current_version # Is the current version.
-        ) {
-            $s->set_workflow_id(undef);
-            log_event("story_rem_workflow", $s);
+            # Remove it from the workflow by setting its workflow ID to undef
+            # Yes, we have to use user__id instead of checked_out because
+            # non-current versions of documents always have checked_out set to
+            # 0, even when the current version is checked out.
+            if ($doc->get_workflow_id
+                    && !defined $doc->get_user__id # Not checked out.
+                        && $doc->get_version == $doc->get_current_version
+             ) {
+                $doc->set_workflow_id(undef);
+                log_event("$key\_rem_workflow", $doc);
+            }
+            $doc->save;
         }
-        $s->save();
     }
 
-    $count = @$media;
-    foreach my $mid (@$media) {
-        # Schedule
-        my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
-        my $name = 'Publish "' . $m->get_name . '"';
-        my $job = Bric::Util::Job::Pub->new({
-            sched_time             => $param->{pub_date},
-            user_id                => get_user_id(),
-            name                   => $name,
-            media_instance_id      => $mid,
-            priority               => $m->get_priority,
-        });
-        $job->save();
-        log_event('job_new', $job);
-        # Report publishing if the job was executed on save, otherwise
-        # report scheduling
-        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
-        add_msg(qq{Media "[_1]" $saved.}, $m->get_title)
-          if $count <= 3;
-        # Remove it from the desk it's on.
-        if (my $d = $m->get_current_desk) {
-            $d->remove_asset($m);
-            $d->save;
-        }
-        # Remove it from the workflow by setting its workflow ID to undef
-        if ($m->get_workflow_id) {
-            $m->set_workflow_id(undef);
-            log_event("media_rem_workflow", $m);
-        }
-        $m->save();
-    }
-
-    unless (exists($param->{'instant'}) && $param->{'instant'}) {
+    unless (exists($param->{instant}) && $param->{instant}) {
         # redirect_onload() prevents any other callbacks from executing.
         redirect_onload(last_page(), $self);
     }

@@ -12,6 +12,15 @@ if ($show_summary) {
     field_id  => "$widget|text",
     dialog_id => 'finddialog',
 &>
+<&| /widgets/dialog_box/dialog_box.mc,
+   id          => 'cheat_sheet',
+   title       => 'Cheat Sheet',
+   close_label => 'Close',
+&>
+<div class="cheat_sheet">
+% $gen_cheat_sheet->($m, $et, \%seen_fields, {});
+</div>
+</&>
 <& '/widgets/wrappers/sharky/table_top.mc',
    caption => $lang->maketext('Bulk Edit [_1]', $element->get_name),
    id      => 'containerprof',
@@ -19,26 +28,13 @@ if ($show_summary) {
 &>
     <dl class="viewmeta">
         <dt>Element:</dt>
-        <dd><% $at->get_name %> <% $show_element_flags->($at) %></dd>
-% if (my $fields = $at->get_field_types) {
-        <dt>Field Elements:</dt>
-        <dd>
-%     $m->print(join ', ', map { $_->get_key_name . $show_data_flags->($_) } @$fields);
-        </dd>
-% }
-% if (my $subelems = $at->get_containers) {
-        <dt>Container Elements:</dt>
-        <dd>
-%     $m->print(join ', ', map { $_->get_key_name . $show_element_flags->($_) } @$subelems);
-        </dd>
+        <dd><% $et->get_name %> <% $show_element_flags->($et) %></dd>
         <dt>Default Field:</dt>
         <dd>
 <%perl>;
 my $opts = [
     [ '' =>  '' ],
-    map  {   [ $_ => $_ ]   }
-    sort {     $a cmp $b    }
-    map  { $_->get_key_name } $at->get_field_types
+    map  {   [ $_ => $_ ]   } sort { $a cmp $b } keys %seen_fields
 ];
 </%perl>
             <& '/widgets/profile/select.mc',
@@ -72,11 +68,11 @@ my $opts = [
                 name    => 'chars',
                 value   => '',
                 useTable    => 0,
-            &>        
+            &>
             <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
+            <button title="<% $lang->maketext('Show cheat sheet') . ' ' . $lang->maketext('(Access Key: [_1])', 'c') %>" accesskey="c" onclick="return openDialog(document.getElementById('cheat_sheet'), event);">Cheat Sheet</button>
         </dd>
     </dl>
-% }
 <& '/widgets/profile/textarea.mc',
     name     => "$widget|text",
     value    => $args->{__use_text__} ? $args->{"$widget|text"} : $element->serialize_to_pod($def_field),
@@ -86,33 +82,6 @@ my $opts = [
 &>
 <script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
-<%doc>
-
-<& '/widgets/wrappers/sharky/table_top.mc',
-   caption => 'Template Options',
-   number  => ++$i,
-&>
-<table>
-<tr>
-<th style="text-align: right;">Preserve formatting:</th>
-<td><& "/widgets/profile/checkbox.mc",
-         checked     => $preserve,
-         value       => 1,
-         name        => $widget.'|preserve' &>
-</td>
-<td>
-<& '/widgets/buttons/submit.mc',
-    disp    => 'Change',
-    widget  => $widget,
-    cb      => 'change_preserve_cb',
-    button  => 'change_red',
-    useTable    => 0,
-&>
-</td>
-</tr>
-</table>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-</%doc>
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
     widget  => $widget,
@@ -145,22 +114,23 @@ $args
 my $element       = get_state_data($widget, 'element');
 #my $preserve   = get_state_data($widget, 'preserve');
 my $i          = 0;
-my $at         = $element->get_element_type;
+my $et         = $element->get_element_type;
 my $def_field  = get_state_data(
     '_tmp_prefs',
-    'container_prof.' . $at->get_id . '.def_field'
+    'container_prof.' . $et->get_id . '.def_field'
 );
+my %seen_fields;
 </%init>
 <%once>;
 my $show_element_flags = sub {
-    my $at = shift;
+    my $et = shift;
     my @flags;
-    push @flags, 'paginated'     if $at->is_paginated;
-    push @flags, 'top level'     if $at->is_top_level;
-    push @flags, 'fixed uri'     if $at->is_fixed_uri;
-    push @flags, 'media'         if $at->is_media;
-    push @flags, 'related media' if $at->is_related_media;
-    push @flags, 'related story' if $at->is_related_story;
+    push @flags, 'paginated'     if $et->is_paginated;
+    push @flags, 'top level'     if $et->is_top_level;
+    push @flags, 'fixed uri'     if $et->is_fixed_uri;
+    push @flags, 'media'         if $et->is_media;
+    push @flags, 'related media' if $et->is_related_media;
+    push @flags, 'related story' if $et->is_related_story;
 
     return '' unless @flags;
     return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
@@ -175,4 +145,32 @@ my $show_data_flags = sub {
     return '' unless @flags;
     return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
 };
-</%once>
+
+my $gen_cheat_sheet;
+$gen_cheat_sheet = sub {
+    my ($m, $et, $seen_fields, $seen_elems) = @_;
+    my $fields = $et->get_field_types;
+    my $subs   = $et->get_containers;
+    return unless @$fields || @$subs;
+    $m->print("<ul>\n");
+    for my $field (@$fields) {
+        my $kn = $field->get_key_name;
+        $seen_fields->{$kn} ||= 1;
+        $m->print("<li>=$kn", $show_data_flags->($field), "</li>\n");
+    }
+
+    for my $cont (@$subs) {
+        my $kn = $cont->get_key_name;
+        next if $seen_elems->{$kn} > 1;
+        ++$seen_elems->{$kn};
+        $m->print(
+            qq{<li class="elem"><strong>=begin $kn</strong>},
+            $show_element_flags->($cont),
+        );
+        $gen_cheat_sheet->($m, $cont, $seen_fields, $seen_elems);
+        $m->print("<strong>=end $kn</strong></li>\n");
+        $seen_elems->{$kn}--;
+    }
+
+    $m->print("</ul>\n");
+};</%once>

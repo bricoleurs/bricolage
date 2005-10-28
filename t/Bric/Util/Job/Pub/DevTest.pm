@@ -24,7 +24,7 @@ use Bric::Biz::Asset::Template;
 use Bric::Util::DBI qw(:junction);
 use Test::MockModule;
 
-sub table {'job '}
+sub table {'job'}
 
 my $date = '2003-01-22 14:43:23.000000';
 
@@ -112,7 +112,7 @@ sub b_test_lookup : Test(7) {
 
 ##############################################################################
 # Test the list() method.
-sub c_test_list : Test(45) {
+sub c_test_list : Test(47) {
     my $self = shift;
 
     # Create a new job group.
@@ -152,7 +152,8 @@ sub c_test_list : Test(45) {
     $story->set_primary_category($cat);
     $story->set_cover_date('2005-03-22 21:07:56');
     $story->save();
-    my $sid = $story->get_version_id;
+    my $svid = $story->get_version_id;
+    my $sid  = $story->get_id;
     $self->add_del_ids($sid, 'story');
 
     # XXX Check media too !!!
@@ -166,7 +167,7 @@ sub c_test_list : Test(45) {
             $args{server_types} = [$dest];
         } else {
             # Add story ID. Will be two of these.
-            $args{story_instance_id} = $sid;
+            $args{story_instance_id} = $svid;
         }
 
         ok( my $job = Bric::Util::Job::Pub->new(\%args), "Create $args{name}" );
@@ -252,9 +253,14 @@ sub c_test_list : Test(45) {
         "Look up server_type_id '$did'" );
     is( scalar @jobs, 3, "Check for 3 jobs" );
 
-    ## Try story_id.
+    # Try story_id.
     ok( @jobs = Bric::Util::Job::Pub->list({ story_id => $sid }),
         "Look up story_id '$sid'" );
+    is( scalar @jobs, 2, "Check for 2 jobs" );
+
+    # Try story_instance_id.
+    ok( @jobs = Bric::Util::Job::Pub->list({ story_instance_id => $svid }),
+        "Look up story_instance_id '$svid'" );
     is( scalar @jobs, 2, "Check for 2 jobs" );
 }
 

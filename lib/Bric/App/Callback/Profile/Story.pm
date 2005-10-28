@@ -25,7 +25,7 @@ use Bric::App::Callback::Search;
 
 my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
-my $DESK_URL = '/workflow/profile/desk/';
+my $DESK_URL   = '/workflow/profile/desk/';
 
 my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
 

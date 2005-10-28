@@ -20,6 +20,7 @@ use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui :pub);
 use Bric::Util::Burner;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(strfdate);
 
@@ -31,7 +32,6 @@ my $pkgs = {
 my $keys = [ keys %$pkgs ];
 
 my $type      = 'template';
-my $disp_name = 'Template';
 
 sub checkin : Callback {
     my $self = shift;
@@ -113,7 +113,6 @@ sub move : Callback {
             log_event("$a_class\_save", $a_obj);
             my $cur_desk = $a_obj->get_current_desk;
             if ($a_obj->get_checked_out) {
-                print STDERR "Checkin\n";
                 $cur_desk->checkin($a_obj);
                 log_event("$a_class\_checkin", $a_obj, {
                     Version => $a_obj->get_version
@@ -160,8 +159,8 @@ sub move : Callback {
 sub publish : Callback {
     my $self = shift;
     my $param = $self->params;
-    my $story_pub = $param->{'story_pub'};
-    my $media_pub = $param->{'media_pub'};
+    my $story_pub = $param->{story_pub} || {};
+    my $media_pub = $param->{media_pub} || {};
     my $mpkg = 'Bric::Biz::Asset::Business::Media';
     my $spkg = 'Bric::Biz::Asset::Business::Story';
     my $story = mk_aref($param->{$self->class_key.'|story_pub_ids'});
@@ -169,10 +168,10 @@ sub publish : Callback {
     my (@rel_story, @rel_media);
 
     # start with the objects checked for publish
-    my @stories = ((map { $spkg->lookup({id => $_}) } @$story),
-                   values %$story_pub);
-    my @media = ((map { $mpkg->lookup({id => $_}) } @$media),
-                   values %$media_pub);
+    my @stories = values %$story_pub;
+    my @media   = values %$media_pub;
+    push @stories, $spkg->list({ version_id => ANY(@$story) }) if @$story;
+    push @media,   $mpkg->list({ version_id => ANY(@$media) }) if @$media;
 
     my (@sids, @mids);
 
@@ -185,7 +184,7 @@ sub publish : Callback {
             my $doc = shift @$objs or next;
 
             # haven't I seen you someplace before?
-            my $id = $doc->get_id;
+            my $id = $doc->get_version_id;
             next if exists $seen{"$key$id"};
             $seen{"$key$id"} = 1;
 
@@ -223,7 +222,7 @@ sub publish : Callback {
                     next unless $rel->is_active;
 
                     # haven't I seen you someplace before?
-                    my $relid = $rel->get_id;
+                    my $relid = $rel->get_version_id;
                     my $relkey = $rel->key_name;
                     next if exists $seen{"$relkey$relid"};
                     $seen{"$relkey$relid"} = 1;
@@ -261,25 +260,25 @@ sub publish : Callback {
 
                     # push onto the appropriate list
                     if ($relkey eq 'story') {
-                        push @rel_story, $rel->get_id;
+                        push @rel_story, $relid;
                         push @sids, $relid if $pub_ids->{$id};
                         push(@stories, $rel); # recurse through related stories
                     } else {
-                        push @rel_media, $rel->get_id;
+                        push @rel_media, $relid;
                         push @mids, $relid if $pub_ids->{$id};
                     }
                 }
 
                 # Publish all aliases, too.
-                for my $aid ($doc->list_ids({
+                for my $alias ($doc->list({
                     alias_id          => $doc->get_id,
                     publish_status    => 1,
                     published_version => 1,
                 })) {
                     if ($key eq 'story') {
-                        push @sids, $aid;
+                        push @sids, $alias->get_version_id;
                     } else {
-                        push @mids, $aid;
+                        push @mids, $alias->get_version_id;
                     }
                 }
             }
@@ -321,45 +320,49 @@ sub publish : Callback {
 
 sub deploy : Callback {
     my $self = shift;
-
-    if (my $a_ids = $self->params->{$self->class_key.'|template_pub_ids'}) {
+    my $widget = $self->class_key;
+    if (my $a_ids = $self->params->{"$widget|template_pub_ids"}) {
         my $b = Bric::Util::Burner->new;
 
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
-        my $c = @$a_ids;
-        foreach (@$a_ids) {
-            my $fa = Bric::Biz::Asset::Template->lookup({ id => $_ });
-            my $action = $fa->get_deploy_status ? 'template_redeploy'
-              : 'template_deploy';
-            $b->deploy($fa);
-            $fa->set_deploy_date(strfdate());
-            $fa->set_deploy_status(1);
-            $fa->set_published_version($fa->get_current_version);
-            $fa->save;
-            log_event($action, $fa);
+        if (my $count = @$a_ids) {
+            my $disp_name;
+            for my $fa (Bric::Biz::Asset::Template->list({
+                version_id => ANY(@$a_ids)
+            })) {
+                my $action = $fa->get_deploy_status ? 'template_redeploy'
+                    : 'template_deploy';
+                $b->deploy($fa);
+                $fa->set_deploy_date(strfdate());
+                $fa->set_deploy_status(1);
+                $fa->set_published_version($fa->get_current_version);
+                $fa->save;
+                log_event($action, $fa);
 
-            # Get the current desk and remove the asset from it.
-            my $d = $fa->get_current_desk;
-            $d->remove_asset($fa);
-            $d->save;
+                # Get the current desk and remove the asset from it.
+                my $d = $fa->get_current_desk;
+                $d->remove_asset($fa);
+                $d->save;
 
-            # Clear the workflow ID.
-            $fa->set_workflow_id(undef);
-            $fa->save;
-            log_event("template_rem_workflow", $fa);
-        }
-        # Let 'em know we've done it!
-        if ($c == 1) {
-            add_msg('Template "[_1]" deployed.', $disp_name);
-        } else {
-            add_msg("[quant,_1,$disp_name] deployed.", $c);
+                # Clear the workflow ID.
+                $fa->set_workflow_id(undef);
+                $fa->save;
+                log_event("template_rem_workflow", $fa);
+                $disp_name ||= $fa->get_uri;
+            }
+            # Let 'em know we've done it!
+            if ($count == 1) {
+                add_msg('Template "[_1]" deployed.', $disp_name);
+            } else {
+                add_msg("[quant,_1,$disp_name] deployed.", $count);
+            }
         }
     }
 
     # If there are stories or media to be published, publish them!
-    if ($self->params->{$self->class_key.'|story_pub_ids'}
-          || $self->params->{$self->class_key.'|media_pub_ids'}) {
+    if ($self->params->{"$widget|story_pub_ids"}
+          || $self->params->{"$widget|media_pub_ids"}) {
         $self->publish;
     }
 

@@ -196,6 +196,22 @@ sub _do_it {
                 }
             }
         }
+
+        # Always log that the document was expired.
+        if (my $vid = $self->get_story_instance_id) {
+            my $doc = Bric::Biz::Asset::Business::Story->lookup({
+                version_id => $vid,
+            });
+            log_event(story_expire => $doc);
+        }
+
+        elsif ($vid = $self->get_media_instance_id) {
+            my $doc = Bric::Biz::Asset::Business::Media->lookup({
+                version_id => $vid,
+            });
+            log_event(media_expire => $doc);
+        }
+
     } else {
         # A Delivery job. Go through the server types one at a time.
         foreach my $st ($self->get_server_types) {

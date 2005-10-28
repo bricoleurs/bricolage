@@ -2,8 +2,7 @@
     name    => "$widget|update_cb",
     value   => 1,
 &>
-
-<%perl>
+<%perl>;
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|trail_cb",
@@ -25,9 +24,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          rightText => $rightText
 
 );
-
 </%perl>
-
 <dl class="viewmeta">
 <dt><%$lang->maketext('UUID')%>:</dt>
 <dd><% $media->get_uuid %></dd>
@@ -117,7 +114,7 @@ $m->comp('file_section.mc',
          read_only => $media->get_alias_id,
          indent    => $infoIndent
         );
-        
+
 $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         element        => $element,
         element_type   => 'media',
@@ -141,7 +138,6 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => "Associations",
          number => $num++);
 </%perl>
-
 % my $rowColor = "even";
 <table class="associations">
 % if (ENABLE_CATEGORY_BROWSER) {

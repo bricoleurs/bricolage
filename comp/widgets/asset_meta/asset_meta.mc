@@ -64,6 +64,5 @@ if ($section eq 'notes') {
 my $comp = $action . '_' . $section . '.html';
 
 $m->comp('/widgets/summary/summary.mc', asset => $object, number => 1);
-$m->comp($comp, widget => $widget, number => 2);	
-
+$m->comp($comp, widget => $widget, number => 2);
 </%init>

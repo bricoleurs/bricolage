@@ -50,6 +50,7 @@ use Bric::Util::Fault qw(throw_gen throw_burn_error);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :l10n);
 use Template::Constants qw( :debug );
+use List::Util qw(first);
 
 #==============================================================================#
 # Inheritance                          #
@@ -59,7 +60,6 @@ use base qw(Bric::Util::Burner);
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-
 
 
 #==============================================================================#
@@ -77,36 +77,53 @@ use base qw(Bric::Util::Burner);
 #--------------------------------------#
 # Private Class Fields
 my $fs = Bric::Util::Trans::FS->new;
+my %vars;
+do {
+    no strict 'refs';
+    while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
+        if (my $type = first { defined *{$v}{$_} }
+            qw(CODE HASH ARRAY IO GLOB FORMAT)
+        ) {
+            # Use the reference to the variable. IOs can be used directly.
+            $vars{$k} = *{$v}{$type};
+        } else {
+            # Dereference any scalar value. SCALAR is always true, so we
+            # evaluate it last (with the "if" in for future-proofing).
+            # See _Programming Perl 3ed_ p 250.
+            $vars{$k} = ${*{$v}{SCALAR}} if *{$v}{SCALAR};
+        };
+    }
+};
 
 #--------------------------------------#
 # Instance Fields
 
 BEGIN {
     Bric::register_fields({
-                         #- Per burn/deploy values.
-                         'job'            => Bric::FIELD_READ,
-                         'more_pages'     => Bric::FIELD_READ,
+        #- Per burn/deploy values.
+        job        => Bric::FIELD_READ,
+        more_pages => Bric::FIELD_READ,
 
-                         # Private Fields
-                         '_tt'             => Bric::FIELD_NONE,
-                         '_comp_root'      => Bric::FIELD_NONE,
-                         '_buf'            => Bric::FIELD_NONE,
-                         '_writer'         => Bric::FIELD_NONE,
-                         '_elem'           => Bric::FIELD_NONE,
-                         '_at'             => Bric::FIELD_NONE,
-                         '_files'          => Bric::FIELD_NONE,
-                         '_page_place'     => Bric::FIELD_NONE,
-                        });
+        # Private Fields
+        _tt         => Bric::FIELD_NONE,
+        _comp_root  => Bric::FIELD_NONE,
+        _buf        => Bric::FIELD_NONE,
+        _writer     => Bric::FIELD_NONE,
+        _elem       => Bric::FIELD_NONE,
+        _at         => Bric::FIELD_NONE,
+        _files      => Bric::FIELD_NONE,
+        _page_place => Bric::FIELD_NONE,
+    });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_TT,
-                               category_fn    => 'wrapper',
-                               cat_fn_has_ext => 1,
-                               exts           =>
-                                 { tt   => 'Template Toolkit (.tt)',
-                                 }
-                             );
-
+__PACKAGE__->_register_burner(
+    Bric::Biz::OutputChannel::BURNER_TT,
+    category_fn    => 'wrapper',
+    cat_fn_has_ext => 1,
+    exts           => {
+        tt   => 'Template Toolkit (.tt)',
+    }
+);
 
 #==============================================================================#
 
@@ -216,6 +233,7 @@ sub burn_one {
         }
     }
 
+    @vars{qw(burner story element)} = ($self, $story, $element);
     my $tt = Template->new({
         TT_OPTIONS   => 1,
         COMPILE_EXT  => 'ttc',
@@ -225,11 +243,7 @@ sub burn_one {
         WRAPPER      => \@wrappers,
         EVAL_PERL    => 1,
         ABSOLUTE     => 1,
-        VARIABLES    => {
-            burner  => $self,
-            story   => $story,
-            element => $element,
-        },
+        VARIABLES    => \%vars,
     });
 
     # Find the template.
@@ -508,7 +522,7 @@ sub display_element {
 
     my $template = $self->_load_template_element($elem);
     $data .= $tt->context->include($template, {
-        'element' => $elem,
+        element => $elem,
         @_
     });
 
@@ -670,11 +684,9 @@ NONE.
 
 =head1 AUTHOR
 
-Garth Webb L<gt>garth@perijove.comL<lt>
+Arther Bergman <sky@nanisky.com>
 
-Sam Tregar L<gt>stregar@about-inc.comL<lt>
-
-David Wheeler L<gt>david@wheeler.netL<lt>
+David Wheeler <david@kineticode.com>
 
 =head1 SEE ALSO
 

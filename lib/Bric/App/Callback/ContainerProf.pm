@@ -5,7 +5,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'container_prof';
 
 use strict;
-use Bric::Config qw(:time RELATED_MEDIA_PROFILE);
+use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
@@ -21,9 +21,9 @@ use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
-my $STORY_URL = '/workflow/profile/story';
-my $CONT_URL  = '/workflow/profile/story/container';
-my $MEDIA_URL = '/workflow/profile/media';
+my $STORY_URL  = '/workflow/profile/story';
+my $CONT_URL   = '/workflow/profile/story/container';
+my $MEDIA_URL  = '/workflow/profile/media';
 my $MEDIA_CONT = '/workflow/profile/media/container';
 
 my $regex = {
@@ -210,7 +210,6 @@ sub create_related_media : Callback {
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
-    clear_state($widget) if RELATED_MEDIA_PROFILE;
 
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
@@ -224,7 +223,8 @@ sub create_related_media : Callback {
         return;
     }
 
-    set_state_data('media_prof', 'work_id', $media_wf->get_id);
+    my $wf_id = $media_wf->get_id;
+    set_state_data('media_prof', 'work_id', $wf_id);
 
     # Set up the parameters to create a new media document.
     my $m_param = {
@@ -251,35 +251,17 @@ sub create_related_media : Callback {
     my $mid = $media->get_id;
     $element->set_related_media($mid);
 
-    if (RELATED_MEDIA_PROFILE) {
-        # Set up the original state for returning from the media profile.
-        $media_cb->save_and_stay(1);
-        set_state_data(_profile_return => {
-            state      => $state,
-            type_state => $type_state,
-            prof       => $asset,
-            type       => $type,
-            uri        => $self->apache_req->uri,
+    # Set up the original state for returning from the media profile.
+    $media_cb->save_and_stay(1);
+    set_state_data(_profile_return => {
+        state      => $state,
+        type_state => $type_state,
+        prof       => $asset,
+        type       => $type,
+        uri        => $self->apache_req->uri,
         });
-        # Edit the new media document.
-        $self->set_redirect("/workflow/profile/media/$mid/");
-    } else {
-        # Now check the media document in to a desk.
-        my $desk_cb = Bric::App::Callback::Desk->new(
-            cb_request => $self->cb_request,
-            pkg_key    => 'desk_asset',
-            apache_req => $self->apache_req,
-            value      => $media->get_id,
-            params     => { 'desk_asset|asset_class' => $media->key_name },
-        );
-        $desk_cb->checkin;
-
-        # Stay where we are! This cancels any redirects set up by the Media
-        # callback object.
-        # Restore the state.
-        set_state($widget, @$state);
-        $self->set_redirect($self->apache_req->uri);
-    }
+    # Edit the new media document.
+    $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }
 
 sub relate_media : Callback {
@@ -384,7 +366,7 @@ sub save_and_up : Callback {
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $self->_delete_element;;
+        $self->_delete_element;
         return;
     }
 
@@ -407,7 +389,7 @@ sub save_and_stay : Callback {
     return if $param->{'_inconsistent_state_'};
 
     if ($self->params->{$self->class_key . '|delete_element'}) {
-        $self->_delete_element;;
+        $self->_delete_element;
         return;
     }
 
@@ -439,23 +421,15 @@ sub change_default_field : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $def  = $self->params->{$self->class_key.'|default_field'};
+    my $def     = $self->params->{$self->class_key.'|default_field'};
     my $element = get_state_data($self->class_key, 'element');
-    my $at   = $element->get_element_type();
+    my $at      = $element->get_element_type();
+    my $key     = 'container_prof.' . $at->get_id . '.def_field';
 
-    my $key = 'container_prof.' . $at->get_id . '.def_field';
+    # Handle whatever changes have been made with the old def field.
+    $self->_handle_bulk_save(get_state_data(_tmp_prefs => $key));
+    # Set the new default field.
     set_state_data('_tmp_prefs', $key, $def);
-}
-
-# XXX Remove?
-sub change_preserve : Callback {
-    my $self = shift;
-    $self->_drift_correction;
-    my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-    my $widget = $self->class_key;
-
-    set_state_data($widget, 'preserve', $param->{$widget . '|preserve'});
 }
 
 sub bulk_edit_this : Callback {
@@ -617,13 +591,18 @@ sub _update_parts {
 
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
-        my $id = $t->get_id();
+        my $id      = $t->get_id;
+        my $is_cont = $t->is_container;
 
         # Grab the element we're looking for
-        local $^W = undef;
-        $locate_element = $t if $id == $locate_id and $t->is_container;
-        if ($do_delete && ($param->{$widget . "|delete_cont$id"} ||
-                           $param->{$widget . "|delete_data$id"})) {
+        {
+            local $^W = undef;
+            $locate_element = $t if $id == $locate_id and $is_cont;
+        }
+        if ($do_delete
+            && (($is_cont && $param->{$widget . "|delete_cont$id"})
+                || (!$is_cont && $param->{$widget . "|delete_data$id"}))
+        ) {
             add_msg('Element "[_1]" deleted.', $t->get_name);
             push @delete, $t;
             next;
@@ -738,12 +717,13 @@ sub _handle_bulk_up {
 }
 
 sub _handle_bulk_save {
-    my $self   = shift;
-    my $params = $self->params;
-    my $widget = $self->class_key;
-    my $element   = get_state_data($widget => 'element');
+    my ($self, $def_field) = @_;
+    my $params  = $self->params;
+    my $widget  = $self->class_key;
+    my $element = get_state_data($widget => 'element');
+    $def_field  = $params->{"$widget|default_field"}
+        unless defined $def_field;
 
-    my $def_field = $params->{"$widget|default_field"};
     eval {
         $element->update_from_pod($params->{"$widget|text"}, $def_field);
         $element->save;

@@ -1154,12 +1154,8 @@ B<Notes:> NONE.
 
 sub my_meths {
     my ($pkg, $ord, $ident) = @_;
-    return if $ident;
 
-    # Return 'em if we got em.
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}]
-      if $meths;
-
+    unless ($meths) {
     # We don't got 'em. So get 'em!
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
         $meths->{$meth->{name}} = $meth;
@@ -1206,8 +1202,15 @@ sub my_meths {
     # Rename element type, too.
     $meths->{element_type} = { %{ $meths->{element_type} } };
     $meths->{element_type}{disp} = 'Story Type';
+    }
 
-    return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    if ($ord) {
+        return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
+    } elsif ($ident) {
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+    } else {
+        return $meths;
+    }
 }
 
 ################################################################################
@@ -2374,7 +2377,7 @@ NONE
 sub _update_story {
     my ($self) = @_;
     return unless $self->_get__dirty();
-    my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map {"$_=?" } COLS) .
+    my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map { "$_ = ?" } COLS) .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
