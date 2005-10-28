@@ -41,7 +41,7 @@ sub test_lookup : Test(12) {
     # And so is name.
     ok $et = Bric::Util::EventType->lookup({ name => 'Site Created' }),
         'Look up by name';
-    is $et->get_id,       1166,              'Check id';
+    is $et->get_id,       1168,              'Check id';
     is $et->get_key_name, 'site_new',        'Check key name';
 }
 
@@ -103,7 +103,7 @@ sub test_list : Test(35) {
     is scalar @ets, 3, "Should have three event types";
     ok @ets = Bric::Util::EventType->list({ class => 'Bric::Biz::%' }),
         'Search by wildcard class';
-    is scalar @ets, 101, "Should have 101 event typees";
+    is scalar @ets, 103, "Should have 103 event typees";
     ok @ets = Bric::Util::EventType->list({
         class => ANY('Bric::Biz::Site', 'Bric::Biz::Keyword' )
     }), "Look up by ANY(class)";
@@ -179,7 +179,7 @@ sub test_list_ids : Test(35) {
     is scalar @et_ids, 3, "Should have three event type ids";
     ok @et_ids = Bric::Util::EventType->list_ids({ class => 'Bric::Biz::%' }),
         'Search by wildcard class';
-    is scalar @et_ids, 101, "Should have 101 event type ides";
+    is scalar @et_ids, 103, "Should have 103 event type ides";
     ok @et_ids = Bric::Util::EventType->list_ids({
         class => ANY('Bric::Biz::Site', 'Bric::Biz::Keyword' )
     }), "Look up by ANY(class)";
