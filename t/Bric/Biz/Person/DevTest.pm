@@ -22,6 +22,10 @@ sub munge {
     $_[1]->{lname} .= $_[2] if $_[2] % 2;
 }
 
+sub cleanup_orgs : Test(teardown) {
+    Bric::Util::DBI::prepare(qq{DELETE FROM org  WHERE id > 1023})->execute;
+}
+
 ##############################################################################
 # Test constructors.
 ##############################################################################

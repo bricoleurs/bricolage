@@ -107,11 +107,11 @@ sub test_list : Test(31) {
        "List name '$name'" );
     is(scalar @events, 3, "Check for 3 events");
 
-    # Try user_id.
+    # Try user_id. 12 events already exist.
     my $uid = $user->get_id;
     ok(@events = Bric::Util::Event->list({ user_id => $uid }),
        "List user_id '$uid'" );
-    is(scalar @events, 5, "Check for 5 events");
+    is(scalar @events, 17, "Check for 17 events");
 
     # Make sure that only three of them have attributes.
     my @with_attr = grep { $_->get_attr } @events;
@@ -187,11 +187,11 @@ sub test_list_ids : Test(30) {
        "List IDs name '$name'" );
     is(scalar @event_ids, 3, "Check for 3 event IDs");
 
-    # Try user_id.
+    # Try user_id. 12 events already exist.
     my $uid = $user->get_id;
     ok(@event_ids = Bric::Util::Event->list_ids({ user_id => $uid }),
        "List IDs user_id '$uid'" );
-    is(scalar @event_ids, 5, "Check for 5 event IDs");
+    is(scalar @event_ids, 17, "Check for 17 event IDs");
 
     # Try obj_id.
     ok(@event_ids = Bric::Util::Event->list_ids({ obj_id => $wfid }),

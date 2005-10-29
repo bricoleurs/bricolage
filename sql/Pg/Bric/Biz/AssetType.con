@@ -50,7 +50,7 @@ ALTER TABLE element_member ADD
 	CONSTRAINT fk_element__at_member FOREIGN KEY (object_id)
 	REFERENCES element(id) ON DELETE CASCADE;
 
-ALTER TABLE category_member ADD
+ALTER TABLE element_member ADD
 	CONSTRAINT fk_member__at_member FOREIGN KEY (member__id)
 	REFERENCES member(id) ON DELETE CASCADE;
 

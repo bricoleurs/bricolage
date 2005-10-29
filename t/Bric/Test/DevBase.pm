@@ -148,8 +148,10 @@ sub del_ids : Test(teardown => 0) {
         _do_deletes($table, $ids);
     }
 
-    # Finally, delete any events.
-    Bric::Util::DBI::prepare(qq{DELETE FROM event})->execute;
+    # Finally, delete any groups, members, and events.
+    Bric::Util::DBI::prepare(qq{DELETE FROM event  WHERE id > 1023})->execute;
+    Bric::Util::DBI::prepare(qq{DELETE FROM grp    WHERE id > 1023})->execute;
+    Bric::Util::DBI::prepare(qq{DELETE FROM member WHERE id > 1023})->execute;
 }
 
 =begin comment

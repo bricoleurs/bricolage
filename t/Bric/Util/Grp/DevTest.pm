@@ -192,7 +192,8 @@ sub test_href_class_keys : Test(6) {
 ##############################################################################
 # Member tests.
 ##############################################################################
-sub test_members : Test(33) {
+sub test_members : Test(36) {
+    my $self = shift;
     # First, get a well-known group to play with.
     ok( my $grp = Bric::Util::Grp->lookup({ id => 22 }), "Get Prefs grp" );
 
@@ -226,36 +227,50 @@ sub test_members : Test(33) {
 
     # Now try an element group.
     my $story_elem_grp_id = 330;
-    my $pull_quote_id = 7;
     ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
         "Look up story element group" );
     isa_ok($grp, "Bric::Util::Grp::AssetType");
     ok( @mems = $grp->get_members, "Get story element members" );
     is( scalar @mems, 2, "Check number of story element mems" );
 
-    # Grab the "Pull Quote" element member and remove it.
-    ok( ($mem) = (grep { $_->get_obj_id == $pull_quote_id  } @mems),
-        "Get pull quote member" );
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group again" );
-    ok( $grp->delete_member($mem), "Delete pull quote member" );
-    ok( $grp->save, "Save element group" );
+    # Add a new element to the group.
+    ok my $et = Bric::Biz::AssetType->new({
+        name          => 'Test Element',
+        key_name      => 'test_element',
+        description   => 'Testing Element API',
+        burner        => Bric::Biz::AssetType::BURNER_MASON,
+        type__id      => 1,
+        reference     => 0,
+        primary_oc_id => 1,
+    }), 'Create new element type';
+    ok $et->save, 'Save it';
+    ok my $et_id = $et->get_id, 'Get element type id';
+    $self->add_del_ids($et_id, 'element');
+
+    ok $grp->add_member({
+        id      => $et_id,
+        package => 'Bric::Biz::AssetType',
+    }), 'Add test element to group';
+    ok $grp->save, 'Save element group';
 
     # Look it up again and make sure all is well.
     ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
         "Look up story element group again" );
     ok( @mems = $grp->get_members, "Get story element members" );
-    is( scalar @mems, 1, "Check number of story element mems" );
+    is( scalar @mems, 3, "Check number of story element mems" );
 
-    # Now restore it.
-    ok( $grp->add_member({ id      => $pull_quote_id,
-                           package => 'Bric::Biz::AssetType',}),
-        "Add pull quote element back in" );
-    ok( $grp->save, "Save element group again" );
-
-    # Look it up yet again and make sure all is well.
+    # Now remove the new element.
     ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
         "Look up story element group again" );
+    ok( ($mem) = (grep { $_->get_obj_id == $et_id  } @mems),
+        "Get element type member" );
+    ok( $grp->delete_member($mem), "Delete element type member" );
+    diag "MEM: ", $mem->get_obj_id, $/;
+    ok( $grp->save, "Save element group again" );
+
+    # Look it up again and make sure all is well.
+    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+        "Look up story element group yet again" );
     ok( @mems = $grp->get_members, "Get story element members" );
     is( scalar @mems, 2, "Check number of story element mems" );
 }

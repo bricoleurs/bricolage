@@ -16,6 +16,19 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.9 ()
 
+=head2 Improvements
+
+=over
+
+=item *
+
+Added missing foreign key constraints and indexes on the C<category_keyword>,
+C<story_keyword>, C<media_keyword>, C<element_member>, and
+C<media_contributor> tables. This should make keyword lookups, at least, much
+faster. [David]
+
+=back
+
 =head1 VERSION 1.8.8 (2005-10-27)
 
 =head2 Bug Fixes

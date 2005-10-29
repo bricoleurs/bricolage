@@ -15,6 +15,12 @@ my %cat = ( name        => 'Testing',
 
 sub table { 'category' }
 
+sub cleanup_attrs : Test(teardown) {
+    Bric::Util::DBI::prepare(
+        qq{DELETE FROM attr_category WHERE id > 1023}
+    )->execute;
+}
+
 ##############################################################################
 # Test constructors.
 ##############################################################################
