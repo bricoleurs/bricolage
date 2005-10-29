@@ -43,7 +43,7 @@ CREATE TABLE keyword (
 CREATE TABLE story_keyword (
     story_id          NUMERIC(10,0)  NOT NULL,
     keyword_id        NUMERIC(10,0)  NOT NULL,
-    PRIMARY KEY pk_story_keyword (story_id, keyword_id)
+    CONSTRAINT pk_story_keyword PRIMARY KEY (story_id, keyword_id)
 );
 
 
@@ -56,7 +56,7 @@ CREATE TABLE story_keyword (
 CREATE TABLE media_keyword (
     media_id         NUMERIC(10,0)  NOT NULL,
     keyword_id       NUMERIC(10,0)  NOT NULL,
-    PRIMARY KEY pk_media_keyword (media_id, keyword_id)
+    CONSTRAINT pk_media_keyword PRIMARY KEY (media_id, keyword_id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ CREATE TABLE media_keyword (
 CREATE TABLE category_keyword (
     category_id       NUMERIC(10,0)  NOT NULL,
     keyword_id        NUMERIC(10,0)  NOT NULL,
-    PRIMARY KEY pk_category_keyword (category_id, keyword_id)
+    CONSTRAINT pk_category_keyword PRIMARY KEY (category_id, keyword_id)
 );
 
 --
