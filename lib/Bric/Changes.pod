@@ -29,6 +29,15 @@ faster. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=item *
+
+Fixed misnamed keywords on the C<category_keyword>, C<story_keyword>, and
+C<media_keyword> tables. [David]
+
+=back
+
 =head1 VERSION 1.8.8 (2005-10-27)
 
 =head2 Bug Fixes

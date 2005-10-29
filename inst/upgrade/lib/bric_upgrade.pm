@@ -66,7 +66,7 @@ require Exporter;
 use base qw(Exporter);
 our @EXPORT_OK = qw(prompt y_n do_sql test_column test_table test_constraint
                     test_foreign_key test_index test_function test_aggregate
-                    fetch_sql db_version);
+                    fetch_sql db_version test_primary_key);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
@@ -342,7 +342,7 @@ sub test_constraint($$;$) {
   exit if test_foreign_key $table_name, $foreign_key_name;
   exit if test_foreign_key $table_name, $foreign_key_name, $delete_code;
 
-This function returns true if the specified foreign key constrinat exists on
+This function returns true if the specified foreign key constriant exists on
 the specified table in the Bricolage database, and false if it does not. This
 is useful in upgrade scripts that add a new foreign key, and want to verify
 that the constraint has not already been created. The optional third argument
@@ -363,6 +363,32 @@ sub test_foreign_key($$;$) {
                AND r.conname = '$fk'
     };
     $sql .= "           AND r.confdeltype = '$delcode'\n" if $delcode;
+    return fetch_sql($sql);
+}
+
+##############################################################################
+
+=head2 test_primary_key
+
+  exit if test_primary_key $table_name, $primary_key_name;
+
+This function returns true if the specified primary key constriant exists on
+the specified table in the Bricolage database, and false if it does not. This
+is useful in upgrade scripts that add a new primary key, and want to verify
+that the constraint has not already been created.
+
+=cut
+
+sub test_primary_key($$;$) {
+    my ($table, $fk) = @_;
+    my $sql = qq{
+        SELECT 1
+        FROM   pg_class c, pg_constraint r
+        WHERE  r.conrelid = c.oid
+               AND c.relname = '$table'
+               AND r.contype = 'p'
+               AND r.conname = '$fk'
+    };
     return fetch_sql($sql);
 }
 
