@@ -15,6 +15,9 @@
 -- Unique IDs for the story table
 CREATE SEQUENCE seq_story START  1024;
 
+-- Unique IDs for the story_version table
+CREATE SEQUENCE seq_story_version START 1024;
+
 -- Unique IDs for the story_instance table
 CREATE SEQUENCE seq_story_instance START 1024;
 
@@ -65,6 +68,25 @@ CREATE TABLE story (
 
 
 -- ----------------------------------------------------------------------------
+-- Table story_version
+--
+-- Description:  A version of a story
+--
+
+CREATE TABLE story_version (
+    id             INTEGER      NOT NULL
+                                DEFAULT NEXTVAL('seq_story_version'),
+    story__id      INTEGER      NOT NULL,
+    version        INTEGER,
+    usr__id        INTEGER      NOT NULL,
+    cover_date     TIMESTAMP,
+    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
+    note           TEXT,
+    CONSTRAINT pk_story_version__id PRIMARY KEY (id)
+);
+
+
+-- ----------------------------------------------------------------------------
 -- Table story_instance
 --
 -- Description:  An instance of a story
@@ -75,14 +97,9 @@ CREATE TABLE story_instance (
                                 DEFAULT NEXTVAL('seq_story_instance'),
     name           VARCHAR(256),
     description    VARCHAR(1024),
-    story__id      INTEGER      NOT NULL,
-    version        INTEGER,
-    usr__id        INTEGER      NOT NULL,
+    story_version__id      INTEGER      NOT NULL,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
-    cover_date     TIMESTAMP,
-    note           TEXT,
-    checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)
 );
 
@@ -125,7 +142,7 @@ CREATE TABLE story__output_channel (
 CREATE TABLE story__category (
     id                  INTEGER  NOT NULL
                                        DEFAULT NEXTVAL('seq_story__category'),
-    story_instance__id  INTEGER  NOT NULL,
+    story_version__id   INTEGER  NOT NULL,
     category__id        INTEGER  NOT NULL,
     main                BOOLEAN   NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_category__id PRIMARY KEY (id)
@@ -162,25 +179,27 @@ CREATE INDEX fkx_site_id__story ON story(site__id);
 CREATE INDEX fkx_alias_id__story ON story(alias_id);
 CREATE INDEX idx_story__first_publish_date ON story(first_publish_date);
 CREATE INDEX idx_story__publish_date ON story(publish_date);
-CREATE INDEX idx_story_instance__cover_date ON story_instance(cover_date);
+
+-- story_version
+CREATE INDEX fkx_story__story_version ON story_version(story__id);
+CREATE INDEX fkx_usr__story_version ON story_version(usr__id);
+CREATE INDEX idx_note__story_version ON story_version(note) WHERE note IS NOT NULL;
+CREATE INDEX idx_story_version__cover_date ON story_version(cover_date);
 
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
-CREATE INDEX fkx_story__story_instance ON story_instance(story__id);
-CREATE INDEX fkx_usr__story_instance ON story_instance(usr__id);
+CREATE INDEX fkx_story_instance__story_version ON story_instance(story_version__id);
 CREATE INDEX fkx_primary_oc__story_instance ON story_instance(primary_oc__id);
-CREATE INDEX idx_story_instance__note ON story_instance(note) WHERE note IS NOT NULL;
 
 -- story_uri
 CREATE INDEX fkx_story__story_uri ON story_uri(story__id);
-CREATE UNIQUE INDEX udx_story_uri__site_id__uri
-ON story_uri(lower_text_num(uri, site__id));
+CREATE UNIQUE INDEX udx_story_uri__site_id__uri ON story_uri(lower_text_num(uri, site__id));
 
 -- story__category
-CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_instance__id, category__id);
-CREATE INDEX fkx_story__story__category ON story__category(story_instance__id);
+CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_version__id, category__id);
+CREATE INDEX fkx_story__story__category ON story__category(story_version__id);
 CREATE INDEX fkx_category__story__category ON story__category(category__id);
 
 -- story__output_channel

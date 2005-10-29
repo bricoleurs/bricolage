@@ -35,8 +35,8 @@ CREATE TABLE job (
                                            CHECK (tries BETWEEN 0 AND 10),
     executing          BOOLEAN           NOT NULL DEFAULT FALSE,
     class__id          INTEGER           NOT NULL,
-    story_instance__id INTEGER,
-    media_instance__id INTEGER,
+    story_version__id  INTEGER,
+    media_version__id  INTEGER,
     error_message TEXT,
     CONSTRAINT pk_job__id PRIMARY KEY (id)
 );
@@ -85,10 +85,10 @@ CREATE INDEX idx_job__comp_time__is_null ON job(comp_time) WHERE comp_time is NU
 CREATE INDEX idx_job__comp_time ON job(comp_time);
 CREATE INDEX idx_job__executing ON job(executing);
 
-CREATE INDEX fkx_story_instance__job ON job(story_instance__id)
-WHERE story_instance__id IS NOT NULL;
-CREATE INDEX fkx_media_instance__job ON job(media_instance__id)
-WHERE media_instance__id IS NOT NULL;
+CREATE INDEX fkx_story_version__job ON job(story_version__id)
+WHERE story_version__id IS NOT NULL;
+CREATE INDEX fkx_media_version__job ON job(media_version__id)
+WHERE media_version__id IS NOT NULL;
 
 CREATE INDEX fkx_job__job__resource ON job__resource(job__id);
 CREATE INDEX fkx_usr__job ON job (usr__id);

@@ -14,6 +14,35 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.11.0
+
+=head2 New Features
+
+=over
+
+=item *
+
+Added "Input Channels."  Changes:
+
+=over
+
+=item Versions and instances are no longer synonymous.  Each version of a story
+now contains an instance for each input channel.  API calls that used to refer
+to "instance_id" are most likely now "version_id," including but not limited to:
+
+=over
+
+=item Bric::Util::Job::list(story_instance_id => ?)
+=item Bric::Util::Job::list(media_instance_id => ?)
+
+=back
+
+[Marshall]
+
+=back
+
+=back
+
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)
 
 =head2 New Features

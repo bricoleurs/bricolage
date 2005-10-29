@@ -198,14 +198,14 @@ sub _do_it {
         }
 
         # Always log that the document was expired.
-        if (my $vid = $self->get_story_instance_id) {
+        if (my $vid = $self->get_story_version_id) {
             my $doc = Bric::Biz::Asset::Business::Story->lookup({
                 version_id => $vid,
             });
             log_event(story_expire => $doc);
         }
 
-        elsif ($vid = $self->get_media_instance_id) {
+        elsif ($vid = $self->get_media_version_id) {
             my $doc = Bric::Biz::Asset::Business::Media->lookup({
                 version_id => $vid,
             });

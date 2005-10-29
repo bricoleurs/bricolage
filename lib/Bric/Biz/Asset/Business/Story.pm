@@ -32,7 +32,7 @@ $LastChangedDate$
 
   # General information
  $asset       = $asset->get_id()
- $asset       = $asset->set_description($description)
+ $asset       = $asset->set_description($description)`
  $description = $asset->get_description()
 
  # User information
@@ -192,7 +192,9 @@ use constant DEBUG => 0;
 
 use constant TABLE      => 'story';
 
-use constant VERSION_TABLE => 'story_instance';
+use constant VERSION_TABLE  => 'story_version';
+
+use constant INSTANCE_TABLE => 'story_instance';
 
 use constant ID_COL => 's.id';
 
@@ -214,16 +216,18 @@ use constant COLS       => qw( uuid
                                site__id
                                alias_id);
 
-use constant VERSION_COLS => qw( name
+use constant VERSION_COLS  => qw( story__id
+                                  version
+                                  usr__id
+                                  note
+                                  checked_out
+                                  cover_date );
+
+use constant INSTANCE_COLS => qw( name
                                  description
-                                 story__id
-                                 version
-                                 usr__id
+                                 story_version__id
                                  primary_oc__id
-                                 slug
-                                 cover_date
-                                 note
-                                 checked_out);
+                                 slug );
 
 use constant FIELDS =>  qw( uuid
                             priority
@@ -243,16 +247,18 @@ use constant FIELDS =>  qw( uuid
                             site_id
                             alias_id);
 
-use constant VERSION_FIELDS => qw( name
+use constant VERSION_FIELDS  => qw( id
+                                    version
+                                    modifier
+                                    note
+                                    checked_out 
+                                    cover_date );
+
+use constant INSTANCE_FIELDS => qw( name
                                    description
-                                   id
-                                   version
-                                   modifier
+                                   version_id
                                    primary_oc_id
-                                   slug
-                                   cover_date
-                                   note
-                                   checked_out);
+                                   slug );
 
 use constant AD_PARAM => '_AD_PARAM';
 use constant GROUP_PACKAGE => 'Bric::Util::Grp::Story';
@@ -267,21 +273,23 @@ use constant GROUP_COLS => ('id_list(DISTINCT m.grp__id) AS grp_id',
                             'id_list(DISTINCT w.asset_grp_id) AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
-use constant WHERE => 's.id = i.story__id '
+use constant WHERE => 's.id = v.story__id '
+  . 'AND v.id = i.story_version__id '
   . 'AND sm.object_id = s.id '
   . 'AND m.id = sm.member__id '
   . "AND m.active = '1' "
-  . 'AND sc.story_instance__id = i.id '
+  . 'AND sc.story_version__id = v.id '
   . 'AND c.id = sc.category__id '
   . 'AND s.workflow__id = w.id';
 
 use constant COLUMNS => join(', s.', 's.id', COLS) . ', '
-            . join(', i.', 'i.id', VERSION_COLS);
+            . join(', v.', 'v.id', VERSION_COLS) . ', '
+            . join(', i.', 'i.id', INSTANCE_COLS);
 
 use constant OBJECT_SELECT_COLUMN_NUMBER => scalar COLS + 1;
 
 # param mappings for the big select statement
-use constant FROM => VERSION_TABLE . ' i';
+use constant FROM => VERSION_TABLE . ' v, ' . INSTANCE_TABLE . ' i';
 
 use constant PARAM_FROM_MAP => {
        keyword              => 'story_keyword sk, keyword k',
@@ -299,7 +307,7 @@ use constant PARAM_FROM_MAP => {
        subelement_key_name  => 'story_element sct',
        related_story_id     => 'story_element sctrs',
        related_media_id     => 'story_element sctrm',
-       note                 => 'story_instance si2',
+       note                 => 'story_version sv2',
        uri                  => 'story_uri uri',
 };
 
@@ -314,7 +322,8 @@ use constant PARAM_WHERE_MAP => {
       alias_id               => 's.alias_id = ?',
       site_id                => 's.site__id = ?',
       no_site_id             => 's.site__id <> ?',
-      version_id             => 'i.id = ?',
+      version_id             => 'v.id = ?',
+      instance_id            => 'i.id = ?',
       workflow__id           => 's.workflow__id = ?',
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
@@ -332,8 +341,8 @@ use constant PARAM_WHERE_MAP => {
       first_publish_date_end   => 's.first_publish_date <= ?',
       publish_date_start     => 's.publish_date >= ?',
       publish_date_end       => 's.publish_date <= ?',
-      cover_date_start       => 'i.cover_date >= ?',
-      cover_date_end         => 'i.cover_date <= ?',
+      cover_date_start       => 'v.cover_date >= ?',
+      cover_date_end         => 'v.cover_date <= ?',
       expire_date_start      => 's.expire_date >= ?',
       expire_date_end        => 's.expire_date <= ?',
       unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
@@ -345,66 +354,67 @@ use constant PARAM_WHERE_MAP => {
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
-      version                => 'i.version = ?',
-      published_version      => "s.published_version = i.version AND i.checked_out = '0'",
+      version                => 'v.version = ?',
+      published_version      => "s.published_version = v.version AND v.checked_out = '0'",
       slug                   => 'LOWER(i.slug) LIKE LOWER(?)',
-      user__id               => 'i.usr__id = ?',
-      user_id                => 'i.usr__id = ?',
-      _checked_in_or_out     => 'i.checked_out = '
+      user__id               => 'v.usr__id = ?',
+      user_id                => 'v.usr__id = ?',
+      _checked_in_or_out     => 'v.checked_out = '
                               . '( SELECT checked_out '
-                              . 'FROM story_instance '
-                              . 'WHERE version = i.version '
-                              . 'AND story__id = i.story__id '
+                              . 'FROM story_version '
+                              . 'WHERE version = v.version '
+                              . 'AND story__id = v.story__id '
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
-      checked_in             => 'i.checked_out = '
+      checked_in             => 'v.checked_out = '
                               . '( SELECT checked_out '
-                              . 'FROM story_instance '
-                              . 'WHERE version = i.version '
-                              . 'AND story__id = i.story__id '
+                              . 'FROM story_version '
+                              . 'WHERE version = v.version '
+                              . 'AND story__id = v.story__id '
                               . 'ORDER BY checked_out ASC LIMIT 1 )',
-      _checked_out           => 'i.checked_out = ?',
-      checked_out            => 'i.checked_out = ?',
-      _not_checked_out       => "i.checked_out = '0' AND s.id not in "
-                              . '(SELECT story__id FROM story_instance '
-                              . 'WHERE s.id = story_instance.story__id '
-                              . "AND story_instance.checked_out = '1')",
+      _checked_out           => 'v.checked_out = ?',
+      checked_out            => 'v.checked_out = ?',
+      _not_checked_out       => "v.checked_out = '0' AND s.id not in "
+                              . '(SELECT story__id FROM story_version '
+                              . 'WHERE s.id = story_version.story__id '
+                              . "AND story_version.checked_out = '1')",
       primary_oc_id          => 'i.primary_oc__id = ?',
       output_channel_id      => '(i.id = soc.story_instance__id AND '
                               . '(soc.output_channel__id = ? OR '
                               . 'i.primary_oc__id = ?))',
-      category_id            => 'i.id = sc2.story_instance__id AND '
+      category_id            => 'v.id = sc2.story_version__id AND '
                               . 'sc2.category__id = ?',
-      primary_category_id    => 'i.id = sc2.story_instance__id AND '
+      primary_category_id    => 'v.id = sc2.story_version__id AND '
                               . "sc2.category__id = ? AND sc2.main = '1'",
-      category_uri           => 'i.id = sc2.story_instance__id AND '
+      category_uri           => 'v.id = sc2.story_version__id AND '
                               . 'sc2.category__id = c.id AND '
                               . 'LOWER(c.uri) LIKE LOWER(?)',
       'story.category'       => 's.id <> ? '
-                              . 'AND i.id = sc2.story_instance__id AND '
+                              . 'AND v.id = sc2.story_version__id AND '
                               . 'sc2.category__id in ('
                               . 'SELECT sc3.category__id '
-                              . 'FROM   story__category sc3, story s2, story_instance i2 '
-                              . 'WHERE  i2.story__id = s2.id '
-                              . 'AND i2.version = s2.current_version '
-                              . 'AND i2.checked_out =('
+                              . 'FROM   story__category sc3, story s2, story_version v2 '
+                              . 'WHERE  v2.story__id = s2.id '
+                              . 'AND v2.version = s2.current_version '
+                              . 'AND v2.checked_out =('
                              . '( SELECT checked_out '
-                              . 'FROM story_instance '
-                              . 'WHERE version = i2.version '
+                              . 'FROM story_version '
+                              . 'WHERE version = v2.version '
                               . 'AND story__id = s2.id '
-                              . 'AND sc3.story_instance__id = i2.id '
+                              . 'AND sc3.story_version__id = v2.id '
                               . 'AND s2.id = ? '
                               . 'ORDER BY checked_out DESC LIMIT 1 )',
       keyword                => 'sk.story_id = s.id AND '
                               . 'k.id = sk.keyword_id AND '
                               . 'LOWER(k.name) LIKE LOWER(?)',
-      _no_return_versions    => 's.current_version = i.version',
+      _no_return_versions    => 's.current_version = v.version',
       grp_id                 => 'm2.grp__id = ? AND '
                               . "m2.active = '1' AND "
                               . 'sm2.member__id = m2.id AND '
                               . 's.id = sm2.object_id',
       simple                 => 's.id IN ('
                               . 'SELECT ss.id FROM story ss '
-                              . 'JOIN story_instance si2 ON story__id = ss.id '
+                              . 'JOIN story_version sv2 ON story_id = ss.id '
+                              . 'JOIN story_instance si2 ON story_version__id = sv2.id '
                               . 'WHERE LOWER(si2.name) LIKE LOWER(?) '
                               . 'OR LOWER(si2.description) LIKE LOWER(?) '
                               . 'OR LOWER(ss.primary_uri) LIKE LOWER(?) '
@@ -412,7 +422,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
       contrib_id             => 'i.id = sic.story_instance__id AND sic.member__id = ?',
-      note                   => 'si2.story__id = s.id AND LOWER(si2.note) LIKE LOWER(?)',
+      note                   => 'sv2.story__id = s.id AND LOWER(sv2.note) LIKE LOWER(?)',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -428,13 +438,13 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(sd.short_val) LIKE LOWER(?)' ],
     output_channel_id      => [ 'i.id = soc.story_instance__id',
                                 'soc.output_channel__id = ?' ],
-    category_id            => [ 'i.id = sc2.story_instance__id',
+    category_id            => [ 'v.id = sc2.story_version__id',
                                 'sc2.category__id = ?' ],
-    primary_category_id    => [ "i.id = sc2.story_instance__id AND sc2.main = '1'",
+    primary_category_id    => [ "v.id = sc2.story_version__id AND sc2.main = '1'",
                                 'sc2.category__id = ?' ],
     uri                    => [ 's.id = uri.story__id',
                                 'LOWER(uri.uri) LIKE LOWER(?)' ],
-    category_uri           => [ 'i.id = sc2.story_instance__id AND sc2.category__id = c.id',
+    category_uri           => [ 'v.id = sc2.story_version__id AND sc2.category__id = c.id',
                                 'LOWER(c.uri) LIKE LOWER(?)' ],
     keyword                => [ 'sk.story_id = s.id AND k.id = sk.keyword_id',
                                 'LOWER(k.name) LIKE LOWER(?)' ],
@@ -442,8 +452,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'm2.grp__id = ?' ],
     contrib_id             => [ 'i.id = sic.story_instance__id',
                                 'sic.member__id = ?' ],
-    note                   => [ 'si2.story__id = s.id',
-                                'LOWER(si2.note) LIKE LOWER(?)'],
+    note                   => [ 'sv2.story__id = s.id',
+                                'LOWER(sv2.note) LIKE LOWER(?)'],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -464,22 +474,23 @@ use constant PARAM_ORDER_MAP => {
     publish_status      => 's.publish_status',
     first_publish_date  => 's.first_publish_date',
     publish_date        => 's.publish_date',
-    cover_date          => 'i.cover_date',
+    cover_date          => 'v.cover_date',
     expire_date         => 's.expire_date',
     name                => 'LOWER(i.name)',
     title               => 'LOWER(i.name)',
     description         => 'LOWER(i.description)',
-    version             => 'i.version',
-    version_id          => 'i.id',
+    version             => 'v.version',
+    version_id          => 'v.id',
+    instance_id         => 'i.id',
     slug                => 'LOWER(i.slug)',
-    user_id             => 'i.usr__id',
-    user__id            => 'i.usr__id',
-    _checked_out        => 'i.checked_out',
+    user_id             => 'v.usr__id',
+    user__id            => 'v.usr__id',
+    _checked_out        => 'v.checked_out',
     primary_oc_id       => 'i.primary_oc__id',
     category_id         => 'sc2.category_id',
     category_uri        => 'LOWER(c.uri)',
     keyword             => 'LOWER(k.name)',
-    return_versions     => 'i.version',
+    return_versions     => 'v.version',
 };
 
 use constant DEFAULT_ORDER => 'cover_date';
@@ -678,6 +689,10 @@ The story version number. May use C<ANY> for a list of possible values.
 =item version_id
 
 The ID of a version of a story. May use C<ANY> for a list of possible values.
+
+=item instance_id
+
+The ID of an instance of a story. May use C<ANY> for a list of possible values.
 
 =item slug
 
@@ -1207,7 +1222,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+        return wantarray ? $meths->{instance_id} : [$meths->{instance_id}];
     } else {
         return $meths;
     }
@@ -1812,11 +1827,11 @@ sub clone {
 
     # Reset properties. Note that if we start to make use of the attribute
     # object other than for desks, we'll have to find a way to clone it, too.
-    $self->_set([qw(version current_version version_id id publish_date
+    $self->_set([qw(version current_version version_id instance_id id publish_date
                     publish_status _update_contributors _queried_cats
                     _attribute_object _update_uri first_publish_date
                     published_version uuid)],
-                [0, 0, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef,
+                [0, 0, undef, undef, undef, undef, 0, 1, 0, undef, 1, undef, undef,
                  $ug->create_str
              ]);
 
@@ -1866,7 +1881,7 @@ sub save {
             $self->_update_story();
             if ($self->_get('version_id')) {
                 if ($self->_get('_cancel')) {
-                    $self->_delete_instance();
+                    $self->_delete_version();
                     if ($self->_get('version') == 0) {
                         $self->_delete_story();
                     }
@@ -1874,9 +1889,11 @@ sub save {
                     commit();
                     return $self;
                 } else {
+                    $self->_update_version();
                     $self->_update_instance();
                 }
             } else {
+                $self->_insert_version();
                 $self->_insert_instance();
             }
         } else {
@@ -1886,6 +1903,7 @@ sub save {
             } else {
                 # This is Brand new insert both Tables
                 $self->_insert_story();
+                $self->_insert_version();
                 $self->_insert_instance();
             }
         }
@@ -1960,7 +1978,7 @@ sub _get_contributors {
           'WHERE story_instance__id=? ';
 
         my $sth = prepare_ca($sql, undef);
-        execute($sth, $self->_get('version_id'));
+        execute($sth, $self->_get('instance_id'));
         while (my $row = fetch($sth)) {
             $contrib->{$row->[0]}->{'role'} = $row->[2];
             $contrib->{$row->[0]}->{'place'} = $row->[1];
@@ -2001,7 +2019,7 @@ sub _insert_contributor {
       " VALUES (${\next_key('story__contributor')},?,?,?,?) ";
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id, $place, $role);
+    execute($sth, $self->_get('instance_id'), $id, $place, $role);
     return $self;
 }
 
@@ -2033,7 +2051,7 @@ sub _update_contributor {
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $role, $place, $self->_get('version_id'), $id);
+    execute($sth, $role, $place, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -2064,7 +2082,7 @@ sub _delete_contributor {
       ' AND member__id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'), $id);
+    execute($sth, $self->_get('instance_id'), $id);
     return $self;
 }
 
@@ -2096,7 +2114,7 @@ sub _get_categories {
         my $dirty = $self->_get__dirty();
         my $sql = 'SELECT category__id, main '.
           "FROM story__category ".
-          " WHERE story_instance__id=? ";
+          " WHERE story_version__id=? ";
 
         my $sth = prepare_ca($sql, undef);
         execute($sth, $self->_get('version_id'));
@@ -2181,7 +2199,7 @@ NONE
 sub _insert_category {
     my ($self, $category_id,$primary) = @_;
     my $sql = "INSERT INTO story__category ".
-      "(id, story_instance__id, category__id, main) ".
+      "(id, story_version__id, category__id, main) ".
       "VALUES (${\next_key('story__category')},?,?,?)";
 
     my $sth = prepare_c($sql, undef);
@@ -2212,7 +2230,7 @@ NONE
 sub _delete_category {
     my ($self, $category_id) = @_;
     my $sql = "DELETE FROM story__category ".
-      "WHERE story_instance__id=? AND category__id=? ";
+      "WHERE story_version__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $self->_get('version_id'), $category_id);
@@ -2243,7 +2261,7 @@ sub _update_category {
     my ($self, $category_id,$primary) = @_;
     my $sql = "UPDATE story__category ".
       "SET main=? ".
-      "WHERE story_instance__id=? AND category__id=? ";
+      "WHERE story_version__id=? AND category__id=? ";
 
     my $sth = prepare_c($sql, undef);
     execute($sth, $primary, $self->_get('version_id'), $category_id);
@@ -2323,6 +2341,39 @@ sub _insert_story {
 
 ################################################################################
 
+=item $self = $self->_insert_version()
+
+Inserts a version record into the database
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _insert_version {
+    my ($self) = @_;
+    my $sql = 'INSERT INTO '. VERSION_TABLE .
+      ' (id, '.join(', ', VERSION_COLS) . ')'.
+      "VALUES (${\next_key(VERSION_TABLE)}, ".
+      join(', ', ('?') x VERSION_COLS) . ')';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get(VERSION_FIELDS));
+    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    return $self;
+}
+
+################################################################################
+
 =item $self = $self->_insert_instance()
 
 Inserts an instance record into the database
@@ -2343,14 +2394,14 @@ NONE
 
 sub _insert_instance {
     my ($self) = @_;
-    my $sql = 'INSERT INTO '. VERSION_TABLE .
-      ' (id, '.join(', ', VERSION_COLS) . ')'.
-      "VALUES (${\next_key(VERSION_TABLE)}, ".
-      join(', ', ('?') x VERSION_COLS) . ')';
+    my $sql = 'INSERT INTO '. INSTANCE_TABLE .
+      ' (id, '.join(', ', INSTANCE_COLS) . ')'.
+      "VALUES (${\next_key(INSTANCE_TABLE)}, ".
+      join(', ', ('?') x INSTANCE_COLS) . ')';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS));
-    $self->_set( { version_id => last_key(VERSION_TABLE) });
+    execute($sth, $self->_get(INSTANCE_FIELDS));
+    $self->_set( { instance_id => last_key(INSTANCE_TABLE) });
     return $self;
 }
 
@@ -2387,6 +2438,38 @@ sub _update_story {
 
 ################################################################################
 
+=item $self = $self->_update_version()
+
+Updates the record for the story version
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _update_version {
+    my ($self) = @_;
+    return unless $self->_get__dirty();
+    my $sql = 'UPDATE ' . VERSION_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+      ' WHERE id=? ';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    return $self;
+}
+
+################################################################################
+
 =item $self = $self->_update_instance()
 
 Updates the record for the story instance
@@ -2408,12 +2491,42 @@ NONE
 sub _update_instance {
     my ($self) = @_;
     return unless $self->_get__dirty();
-    my $sql = 'UPDATE ' . VERSION_TABLE .
-      ' SET ' . join(', ', map {"$_=?" } VERSION_COLS) .
+    my $sql = 'UPDATE ' . INSTANCE_TABLE .
+      ' SET ' . join(', ', map {"$_=?" } INSTANCE_COLS) .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(VERSION_FIELDS), $self->_get('version_id'));
+    execute($sth, $self->_get(INSTANCE_FIELDS), $self->_get('instance_id'));
+    return $self;
+}
+
+################################################################################
+
+=item $self = $self->_delete_version();
+
+Deletes the version record from a canceled checkout
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub _delete_version {
+    my ($self) = @_;
+    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+      ' WHERE id=? ';
+
+    my $sth = prepare_c($sql, undef);
+    execute($sth, $self->_get('version_id'));
     return $self;
 }
 
@@ -2439,11 +2552,11 @@ NONE
 
 sub _delete_instance {
     my ($self) = @_;
-    my $sql = 'DELETE FROM ' . VERSION_TABLE .
+    my $sql = 'DELETE FROM ' . INSTANCE_TABLE .
       ' WHERE id=? ';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get('version_id'));
+    execute($sth, $self->_get('instance_id'));
     return $self;
 }
 

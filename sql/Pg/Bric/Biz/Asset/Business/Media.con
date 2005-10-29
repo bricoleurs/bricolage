@@ -35,23 +35,30 @@ ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)
 	REFERENCES desk(id) ON DELETE RESTRICT;
 
 -- -----------------------------------------------------------------------------
+-- Table media_version
+
+ALTER TABLE media_version
+ADD CONSTRAINT fk_media__media_version FOREIGN KEY (media__id)
+	REFERENCES media(id) ON DELETE CASCADE;
+
+ALTER TABLE media_version
+ADD CONSTRAINT fk_category__media_version FOREIGN KEY (category__id)
+	REFERENCES category(id) ON DELETE CASCADE;
+
+ALTER TABLE media_version
+ADD CONSTRAINT fk_usr__media_version FOREIGN KEY (usr__id)
+	REFERENCES usr(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
 -- Table media_instance
 
 ALTER TABLE media_instance
-ADD CONSTRAINT fk_media__media_instance FOREIGN KEY (media__id)
-	REFERENCES media(id) ON DELETE CASCADE;
-
-ALTER TABLE media_instance
-ADD CONSTRAINT fk_category__media_instance FOREIGN KEY (category__id)
-	REFERENCES category(id) ON DELETE CASCADE;
+ADD CONSTRAINT fk_media_version__media_instance FOREIGN KEY (media_version__id)
+	REFERENCES media_version(id) ON DELETE CASCADE;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_media_type__media_instance FOREIGN KEY (media_type__id)
 	REFERENCES media_type(id) ON DELETE CASCADE;
-
-ALTER TABLE media_instance
-ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
-	REFERENCES usr(id) ON DELETE CASCADE;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)

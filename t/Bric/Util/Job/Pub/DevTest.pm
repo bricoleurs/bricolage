@@ -167,7 +167,7 @@ sub c_test_list : Test(47) {
             $args{server_types} = [$dest];
         } else {
             # Add story ID. Will be two of these.
-            $args{story_instance_id} = $svid;
+            $args{story_version_id} = $svid;
         }
 
         ok( my $job = Bric::Util::Job::Pub->new(\%args), "Create $args{name}" );
@@ -258,9 +258,9 @@ sub c_test_list : Test(47) {
         "Look up story_id '$sid'" );
     is( scalar @jobs, 2, "Check for 2 jobs" );
 
-    # Try story_instance_id.
-    ok( @jobs = Bric::Util::Job::Pub->list({ story_instance_id => $svid }),
-        "Look up story_instance_id '$svid'" );
+    # Try story_version_id.
+    ok( @jobs = Bric::Util::Job::Pub->list({ story_version_id => $svid }),
+        "Look up story_version_id '$svid'" );
     is( scalar @jobs, 2, "Check for 2 jobs" );
 }
 
@@ -379,7 +379,7 @@ sub g_test_execute_me : Test(10) {
     # create a job
     my $job = Bric::Util::Job::Pub->new(\%args);
     # add the story to the job
-    $job->set_story_instance_id($story->get_version_id);
+    $job->set_story_version_id($story->get_version_id);
     # set the job execution time to now
     $job->set_sched_time(local_date(0, ISO_8601_FORMAT, 1));
     # test: Save the job.  With the default config file this will have the

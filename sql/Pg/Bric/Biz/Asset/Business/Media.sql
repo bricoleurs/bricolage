@@ -13,6 +13,10 @@
 -- Unique IDs for the media table
 CREATE SEQUENCE seq_media START 1024;
 
+-- Unique IDs for the media_version table
+CREATE SEQUENCE seq_media_version START 1024;
+
+-- Unique IDs for the media_instance table
 CREATE SEQUENCE seq_media_instance START 1024;
 
 -- Unique ids for the media_contributor table
@@ -61,6 +65,27 @@ CREATE TABLE media (
 );
 
 -- -----------------------------------------------------------------------------
+-- Table: media_version
+--
+-- Description: A version of a media object
+--
+--
+
+CREATE TABLE media_version (
+    id                  INTEGER   NOT NULL
+                                        DEFAULT NEXTVAL('seq_media_version'),
+    media__id           INTEGER   NOT NULL,
+    usr__id             INTEGER   NOT NULL,
+    version             INTEGER,
+    category__id        INTEGER   NOT NULL,
+    uri                 VARCHAR(256),
+    cover_date          TIMESTAMP,
+    note                TEXT,
+    checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
+    CONSTRAINT pk_media_version__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
 -- Table: media_instance
 --
 -- Description: An instance of a media object
@@ -70,21 +95,14 @@ CREATE TABLE media (
 CREATE TABLE media_instance (
     id                  INTEGER   NOT NULL
                                         DEFAULT NEXTVAL('seq_media_instance'),
+    media_version__id   INTEGER   NOT NULL,
     name                VARCHAR(256),
     description         VARCHAR(1024),
-    media__id           INTEGER   NOT NULL,
-    usr__id             INTEGER   NOT NULL,
-    version             INTEGER,
-    category__id        INTEGER   NOT NULL,
     media_type__id      INTEGER   NOT NULL,
     primary_oc__id      INTEGER   NOT NULL,
     file_size           INTEGER,
     file_name           VARCHAR(256),
     location            VARCHAR(256),
-    uri                 VARCHAR(256),
-    cover_date          TIMESTAMP,
-    note                TEXT,
-    checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
 );
 
@@ -173,24 +191,27 @@ CREATE TABLE media_member (
 CREATE INDEX idx_media__uuid ON media(uuid);
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
-CREATE INDEX idx_media_instance__cover_date ON media_instance(cover_date);
 CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
 CREATE INDEX fkx_element_type__media ON media(element_type__id);
 CREATE INDEX fkx_site_id__media ON media(site__id);
 CREATE INDEX fkx_alias_id__media ON media(alias_id);
 
+-- media_version
+CREATE INDEX idx_media_version__uri ON media_version(LOWER(uri));
+CREATE INDEX fkx_media__media_version ON media_version(media__id);
+CREATE INDEX fkx_usr__media_version ON media_version(usr__id);
+CREATE INDEX fkx_category__media_version ON media_version(category__id);
+CREATE INDEX idx_media_version__note ON media_version(note) WHERE note IS NOT NULL;
+CREATE INDEX idx_media_version__cover_date ON media_version(cover_date);
+
 -- media_instance
 CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));
 CREATE INDEX idx_media_instance__description ON media_instance(LOWER(description));
 CREATE INDEX idx_media_instance__file_name ON media_instance(LOWER(file_name));
-CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
-CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
-CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
+CREATE INDEX fkx_media_version__media_instance ON media_instance(media_version__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
-CREATE INDEX fkx_category__media_instance ON media_instance(category__id);
 CREATE INDEX fkx_primary_oc__media_instance ON media_instance(primary_oc__id);
-CREATE INDEX idx_media_instance__note ON media_instance(note) WHERE note IS NOT NULL;
 
 -- media_uri
 CREATE INDEX fkx_media__media_uri ON media_uri(media__id);

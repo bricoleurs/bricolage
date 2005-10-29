@@ -20,14 +20,14 @@ ALTER TABLE job ADD CONSTRAINT fk_job__class
     REFERENCES class(id) ON DELETE CASCADE
 ;
 
-ALTER TABLE job ADD CONSTRAINT fk_job__story_instance
-    FOREIGN KEY (story_instance__id)
-    REFERENCES story_instance(id) ON DELETE CASCADE
+ALTER TABLE job ADD CONSTRAINT fk_job__story_version
+    FOREIGN KEY (story_version__id)
+    REFERENCES story_version(id) ON DELETE CASCADE
 ;
 
-ALTER TABLE job ADD CONSTRAINT fk_job__media_instance
-    FOREIGN KEY (media_instance__id)
-    REFERENCES media_instance(id) ON DELETE CASCADE
+ALTER TABLE job ADD CONSTRAINT fk_job__media_version
+    FOREIGN KEY (media_version__id)
+    REFERENCES media_version(id) ON DELETE CASCADE
 ;
 
 -- 

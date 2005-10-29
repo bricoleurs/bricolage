@@ -507,7 +507,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
+        return wantarray ? $meths->{instance_id} : [$meths->{instance_id}];
     } else {
         return $meths;
     }
@@ -2029,8 +2029,8 @@ sub checkout {
     $oc_coll->del_objs(@ocs);
     $oc_coll->add_new_objs(@ocs);
 
-    $self->_set([qw(user__id modifier version_id checked_out)] =>
-                [$param->{user__id}, $param->{user__id}, undef, 1]);
+    $self->_set([qw(user__id modifier version_id instance_id checked_out)] =>
+                [$param->{user__id}, $param->{user__id}, undef, undef, 1]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
@@ -2057,9 +2057,9 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $element, $oc_coll, $ci, $co, $vid, $kw_coll) =
+    my ($related_obj, $element, $oc_coll, $ci, $co, $vid, $iid, $kw_coll) =
       $self->_get(qw(_related_grp_obj _element _oc_coll _checkin _checkout
-                     version_id _kw_coll));
+                     version_id instance_id _kw_coll));
 
     if ($co) {
         $element->prepare_clone;
@@ -2070,13 +2070,13 @@ sub save {
     $self->_set(['_checkin'], []) if $ci;
 
     if ($element) {
-        $element->set_object_instance_id($vid);
+        $element->set_object_instance_id($iid);
         $element->save;
     }
 
     $related_obj->save if $related_obj;
     $self->_sync_contributors;
-    $oc_coll->save($self->key_name => $vid) if $oc_coll;
+    $oc_coll->save($self->key_name => $iid) if $oc_coll;
     $kw_coll->save($self) if $kw_coll;
     $self->SUPER::save;
 }
@@ -2472,7 +2472,7 @@ sub _sync_contributors {
     return $self unless $self->_get('_update_contributors');
 
     my $contribs = $self->_get_contributors();
-    my ($del_contribs, $vid) = $self->_get(qw(_del_contrib version_id));
+    my ($del_contribs, $vid) = $self->_get(qw(_del_contrib instance_id));
 
     foreach (keys %$del_contribs) {
         $self->_delete_contributor($_);
@@ -2679,7 +2679,7 @@ B<Notes:> NONE.
 $get_oc_coll = sub {
     my $self = shift;
     my $dirt = $self->_get__dirty;
-    my ($id, $oc_coll) = $self->_get('version_id', '_oc_coll');
+    my ($id, $oc_coll) = $self->_get('instance_id', '_oc_coll');
     return $oc_coll if $oc_coll;
     $oc_coll = Bric::Util::Coll::OutputChannel->new
       (defined $id ? {$self->key_name . '_instance_id' => $id} : undef);
