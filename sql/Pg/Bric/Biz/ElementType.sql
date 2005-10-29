@@ -24,7 +24,7 @@ CREATE SEQUENCE seq_element_type__output_channel START 1024;
 -- Unique IDs for element__language
 --CREATE SEQUENCE seq_element__language START 1024;
 
--- Unique IDs for element_member
+-- Unique IDs for element_type_member
 CREATE SEQUENCE seq_element_type_member START 1024;
 
 -- Unique IDs for the attr_element table
@@ -118,7 +118,7 @@ CREATE TABLE element_type__output_channel (
 );
 
 -- -----------------------------------------------------------------------------
--- Table: element_member
+-- Table: element_type_member
 -- 
 -- Description: The link between element objects and member objects
 --
