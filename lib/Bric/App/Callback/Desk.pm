@@ -206,16 +206,12 @@ sub publish : Callback {
             }
 
             # Hang on to your hat!
-            if ($key eq 'story') {
-                push @sids, $vid;
-            } else {
-                push @mids, $vid;
-            }
-
-            my %desks;
+            my $ids = $key eq 'story' ? \@sids : \@mids;
+            push @$ids, $vid;
 
             # Examine all the related objects.
             if (PUBLISH_RELATED_ASSETS) {
+                my %desks;
                 foreach my $rel ($doc->get_related_objects) {
                     # Skip assets whose current version has already been published.
                     next unless $rel->needs_publish;
@@ -241,7 +237,9 @@ sub publish : Callback {
                         # It must be on a publish desk.
                         my $did = $rel->get_desk_id;
                         my $desk = $desks{$did}
-                          ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+                            ||= Bric::Biz::Workflow::Parts::Desk->lookup({
+                                id => $did,
+                            });
                         unless ($desk->can_publish) {
                             my $rel_disp_name = lc get_disp_name($rel->key_name);
                             add_msg("Cannot auto-publish related $rel_disp_name "
@@ -259,31 +257,26 @@ sub publish : Callback {
                         next;
                     }
 
-                    # push onto the appropriate list
+                    # Push onto the appropriate list
                     if ($relkey eq 'story') {
                         push @rel_story, $relvid;
-                        push @sids, $relvid if $pub_ids->{$vid};
-                        push(@stories, $rel); # recurse through related stories
+                        push @sids,      $relvid if $pub_ids->{$vid};
+                        push @stories,   $rel; # recurse through related stories
                     } else {
                         push @rel_media, $relvid;
-                        push @mids, $relvid if $pub_ids->{$vid};
+                        push @mids,      $relvid if $pub_ids->{$vid};
                     }
                 }
 
                 # Publish all aliases, too.
-                push @{ $key eq 'story' ? \@sids : \@mids },
-                    map { $_->get_version_id } $doc->list({
-                        alias_id          => $doc->get_id,
-                        publish_status    => 1,
-                        published_version => 1,
-                    });
+                push @$ids,  map { $_->get_version_id } $doc->list({
+                    alias_id          => $doc->get_id,
+                    publish_status    => 1,
+                    published_version => 1,
+                });
             }
         }
     }
-
-    # Make sure we have the IDs for any assets passed in explicitly.
-#    push @$story, keys %$story_pub;
-#    push @$media, keys %$media_pub;
 
     # For publishing from a desk, I added two new 'publish'
     # state data: 'rel_story', 'rel_media'. This is to be
