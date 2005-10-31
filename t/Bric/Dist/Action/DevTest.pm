@@ -31,6 +31,12 @@ sub setup : Test(setup) {
     $self->{dest} = $dest;
 }
 
+sub cleanup_attrs : Test(teardown) {
+    Bric::Util::DBI::prepare(
+        qq{DELETE FROM attr_action WHERE id > 1023}
+    )->execute;
+}
+
 ##############################################################################
 # Test constructors.
 ##############################################################################

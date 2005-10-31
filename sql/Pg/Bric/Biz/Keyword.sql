@@ -40,7 +40,7 @@ CREATE TABLE keyword (
 CREATE TABLE story_keyword (
     story_id          INTEGER  NOT NULL,
     keyword_id        INTEGER  NOT NULL,
-    PRIMARY KEY (story_id, keyword_id)
+    CONSTRAINT pk_story_keyword PRIMARY KEY (story_id, keyword_id)
 );
 
 
@@ -53,7 +53,7 @@ CREATE TABLE story_keyword (
 CREATE TABLE media_keyword (
     media_id         INTEGER  NOT NULL,
     keyword_id       INTEGER  NOT NULL,
-    PRIMARY KEY (media_id, keyword_id)
+    CONSTRAINT pk_media_keyword PRIMARY KEY (media_id, keyword_id)
 );
 
 -- -----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ CREATE TABLE media_keyword (
 CREATE TABLE category_keyword (
     category_id       INTEGER  NOT NULL,
     keyword_id        INTEGER  NOT NULL,
-    PRIMARY KEY (category_id, keyword_id)
+    CONSTRAINT pk_category_keyword PRIMARY KEY (category_id, keyword_id)
 );
 
 --
@@ -93,5 +93,11 @@ CREATE INDEX idx_keyword__sort_name   ON keyword(LOWER(sort_name));
 CREATE INDEX fkx_keyword__keyword_member ON keyword_member(object_id);
 CREATE INDEX fkx_member__keyword_member ON keyword_member(member__id);
 
+CREATE INDEX fkx_keyword__story_keyword ON story_keyword(keyword_id);
+CREATE INDEX fkx_story__story_keyword ON story_keyword(story_id);
 
+CREATE INDEX fkx_keyword__media_keyword ON media_keyword(keyword_id);
+CREATE INDEX fkx_media__media_keyword ON media_keyword(media_id);
 
+CREATE INDEX fkx_keyword__category_keyword ON category_keyword(keyword_id);
+CREATE INDEX fkx_category__category_keyword ON category_keyword(category_id);

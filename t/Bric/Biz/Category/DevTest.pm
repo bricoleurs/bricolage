@@ -16,6 +16,15 @@ my %cat = ( name        => 'Testing',
 
 sub table { 'category' }
 
+sub cleanup_attrs : Test(teardown) {
+    Bric::Util::DBI::prepare(
+        qq{DELETE FROM attr_category WHERE id > 1023}
+    )->execute;
+    Bric::Util::DBI::prepare(
+        qq{DELETE FROM grp_priv WHERE id > 1023}
+    )->execute;
+}
+
 ##############################################################################
 # Test constructors.
 ##############################################################################
@@ -193,7 +202,6 @@ sub test_permission_inheritance : Test(30) {
         value   => EDIT,
     }), 'Create a new permission';
     ok $perm->save, 'Save the new permission';
-    $self->add_del_ids($perm->get_id => 'grp_priv');
 
     # Look up the category to get grp_ids updated.
     ok $cat = Bric::Biz::Category->lookup({ id => $id }),

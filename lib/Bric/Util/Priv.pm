@@ -1299,6 +1299,7 @@ sub save {
         }, undef);
         execute($upd, $self->_get('value'), $time, $id);
     } else {
+        Test::More::diag(Bric::Util::Fault->new('foo'));
         # It's a new privilege. Insert it.
         local $" = ', ';
         my $fields = join ', ', next_key('priv'), ('?') x $#priv_cols;
