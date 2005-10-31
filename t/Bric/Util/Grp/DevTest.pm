@@ -265,7 +265,6 @@ sub test_members : Test(36) {
     ok( ($mem) = (grep { $_->get_obj_id == $et_id  } @mems),
         "Get element type member" );
     ok( $grp->delete_member($mem), "Delete element type member" );
-    diag "MEM: ", $mem->get_obj_id, $/;
     ok( $grp->save, "Save element group again" );
 
     # Look it up again and make sure all is well.
