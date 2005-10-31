@@ -31,6 +31,8 @@ faster. [David]
 
 =head2 Bug Fixes
 
+=over
+
 =item *
 
 Fixed misnamed keywords on the C<category_keyword>, C<story_keyword>, and
