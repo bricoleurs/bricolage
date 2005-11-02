@@ -1222,7 +1222,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? $meths->{instance_id} : [$meths->{instance_id}];
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
     } else {
         return $meths;
     }

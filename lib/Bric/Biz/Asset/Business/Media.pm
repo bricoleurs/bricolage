@@ -1151,7 +1151,7 @@ sub my_meths {
     if ($ord) {
         return wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
     } elsif ($ident) {
-        return wantarray ? $meths->{instance_id} : [$meths->{instance_id}];
+        return wantarray ? $meths->{version_id} : [$meths->{version_id}];
     } else {
         return $meths;
     }
@@ -1805,7 +1805,8 @@ sub clone {
         $contribs->{$_}->{'action'} = 'insert';
     }
 
-    $self->_set( { instance_id          => undef,
+    $self->_set( { version_id           => undef,
+                   instance_id          => undef,
                    id                   => undef,
                    first_publish_date   => undef,
                    publish_date         => undef,
