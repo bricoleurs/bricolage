@@ -907,6 +907,8 @@ sub load_asset {
         $story->set_publish_status($sdata->{publish_status}) if $update;
 
         # assign dates
+        $sdata->{publish_date} ||= $sdata->{first_publish_date}
+            if $sdata->{first_publish_date};
         for my $name qw(cover_date expire_date publish_date first_publish_date) {
             my $date = $sdata->{$name};
             next unless $date; # skip missing date
