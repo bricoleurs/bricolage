@@ -695,6 +695,8 @@ sub load_asset {
         $init{name}     = $mdata->{name};
 
         # mix in dates
+        $mdata->{publish_date} ||= $mdata->{first_publish_date}
+            if $mdata->{first_publish_date};
         for my $name qw(cover_date expire_date publish_date first_publish_date) {
             my $date = $mdata->{$name};
             next unless $date; # skip missing date
