@@ -1023,6 +1023,7 @@ sub publish {
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
     my $published = 0;
+    $publish_date ||= strfdate;
     $ba->set_publish_date($publish_date);
     my $baid = $ba->get_id;
 
@@ -1235,7 +1236,8 @@ sub publish_another {
 
     # Figure out the publish time. Default to the same time as the story
     # that's currently being burned.
-    $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT);
+    $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT)
+        || strfdate;
 
     if ($pub_time gt strfdate) {
         # Schedule it to be published later.

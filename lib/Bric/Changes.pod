@@ -38,6 +38,19 @@ faster. [David]
 Fixed misnamed keywords on the C<category_keyword>, C<story_keyword>, and
 C<media_keyword> tables. [David]
 
+=item *
+
+Documented created or updated via SOAP will now set the publish date to the
+same value as the first publish date if the latter is set and the former is
+not. [David]
+
+=item *
+
+The Burner C<publish()> method now sets the publish date to the current date
+and time if it was not specified via an argument. This will hopefully fix
+instances of stories and media in the database with the C<first_publish_date>
+set but not the C<publish_date>. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
