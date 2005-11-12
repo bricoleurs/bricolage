@@ -8,8 +8,8 @@ my $disp = { map { $_ => get_disp_name($_) }
   qw(story media template) };
 my $pl_disp = {
     map { $_ => get_class_info($_)->get_plural_name }
-        qw(story media template pref user grp output_channel contrib
-           contrib_type site workflow category element_type
+        qw(story media template pref user grp input_channel output_channel 
+           contrib contrib_type site workflow category element_type
            media_type source dest job alert_type keyword)
 };
 
@@ -193,6 +193,7 @@ if ( $nav->{adminPublishing} ) { #open publishing submenu
         $m->out(qq{<li>} . &$printLink('/admin/manager/contrib', $uri, $pl_disp->{contrib}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/keyword', $uri, $pl_disp->{keyword}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/media_type', $uri, $pl_disp->{media_type}) . qq{</li>});
+        $m->out(qq{<li>} . &$printLink('/admin/manager/input_channel', $uri, $pl_disp->{input_channel}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/output_channel', $uri, $pl_disp->{output_channel}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/workflow', $uri, $pl_disp->{workflow}) . qq{</li>});
         $m->out(qq{<li>} . &$printLink('/admin/manager/source', $uri, $pl_disp->{source}) . qq{</li>});

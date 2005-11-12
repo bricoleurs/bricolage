@@ -71,7 +71,7 @@ sub test_new : Test(11) {
 
 ##############################################################################
 # Test lookup.
-sub test_lookup : Test(36) {
+sub test_lookup : Test(40) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -111,7 +111,7 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test list.
-sub test_list : Test(158) {
+sub test_list : Test(162) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -248,7 +248,7 @@ sub test_list : Test(158) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(221) {
+sub test_pod : Test(225) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};

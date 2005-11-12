@@ -257,3 +257,9 @@ VALUES ('80', 'pub_job', 'Bric::Util::Job::Pub', 'Publication Job', 'Publication
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
 VALUES ('81', 'element', 'Bric::Biz::Element', 'Element', 'Elements', 'Element objects.', '0');
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES ('82', 'input_channel', 'Bric::Biz::InputChannel', 'Input Channel', 'Input Channels', 'Input Channel', '0');
+
+INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
+VALUES ('83', 'input_channel_grp', 'Bric::Util::Grp::InputChannel', 'Input Channel Group', 'Input Channel Groups', 'Group of input channels', '0');

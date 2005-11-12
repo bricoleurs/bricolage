@@ -149,6 +149,79 @@ if (defined $id) {
             $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
         }
 
+        # Manage Input Channels.
+        my %got_ics = map { $_->get_id => 1 } $comp->get_input_channels;
+        my @available_ics;
+        foreach my $site ($comp->get_sites) {
+            push @available_ics, grep {!$got_ics{$_->get_id}}
+                Bric::Biz::InputChannel->list({
+                    site_id => $site->get_id,
+                    active  => 1
+                });
+        }
+
+        if (scalar keys %got_ics > 1 || @available_ics) {
+            my $ic_sub = sub {
+                my $icid = $_[0]->get_id;
+                if ($_[1] eq 'enabled') {
+                    return 'Yes'
+                        if $comp->get_primary_ic_id($_[0]->get_site_id) == $icid;
+                    $m->scomp(
+                        '/widgets/profile/checkbox.mc',
+                        name     => 'enabled',
+                        value    => $icid,
+                        checked  => $_[0]->is_enabled,
+                        useTable => 0
+                    );
+                }
+            };
+
+            my %pic_ids = map { $comp->get_primary_ic_id($_->get_id) => 1 }
+                $comp->get_sites;
+
+            my $ic_sel_sub = sub {
+                return if $pic_ids{$_[0]->get_id};
+                return ['Delete', 'rem_ic'];
+            };
+
+            $m->comp(
+                '/widgets/wrappers/sharky/table_top.mc',
+                caption => 'Input Channels',
+                number  => ++$num,
+            );
+            $m->comp(
+                '/widgets/listManager/listManager.mc',
+                object         => 'input_channel',
+                userSort       => 0,
+                def_sort_field => 'name',
+                objs           => scalar $comp->get_input_channels,
+                addition       => undef,
+                fields         => [qw(name description site enabled)],
+                field_titles   => { enabled => 'Enabled' },
+                field_values   => $ic_sub,
+                profile        => undef,
+                select         => $ic_sel_sub,
+            );
+
+            if (@available_ics) {
+                $m->print(qq{<div class="actions">\n});
+                $m->comp(
+                    '/widgets/select_object/select_object.mc',
+                    object     => 'input_channel',
+                    objs       => \@available_ics,
+                    field      => 'name',
+                    no_persist => 1,
+                    getter     => $ic_name_getter,
+                    name       => 'formBuilder|add_ic_id_cb',
+                    default    => ['' => 'Add Input Channel'],
+                    js         => "onChange='submit()'",
+                    useTable   => 0,
+                );
+                $m->print("</div>\n");
+            }
+            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+        }
+
         # Manage Output Channels.
         my %got_ocs = map { $_->get_id => 1 } $comp->get_output_channels;
         my @available_ocs;
@@ -367,12 +440,20 @@ my $sel_sub  = sub {
     return ['Delete', 'rem_site'];
 };
 
-my $ng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
-my $sg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
+my $icng = Bric::Biz::InputChannel->my_meths->{name}{get_meth};
+my $icsg = Bric::Biz::InputChannel->my_meths->{site}{get_meth};
+
+my $ic_name_getter = sub {
+    my $i = shift;
+    return $icng->($i) . ' (' . $icsg->($i) . ')';
+};
+
+my $ocng = Bric::Biz::OutputChannel->my_meths->{name}{get_meth};
+my $ocsg = Bric::Biz::OutputChannel->my_meths->{site}{get_meth};
 
 my $oc_name_getter = sub {
     my $o = shift;
-    return $ng->($o) . ' (' . $sg->($o) . ')';
+    return $ocng->($o) . ' (' . $ocsg->($o) . ')';
 };
 
 my $type_vals = { %{ $class->my_meths->{biz_class_id} } };

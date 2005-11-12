@@ -272,6 +272,14 @@ sub subclass_burn_test {
     ok $subcat->save, "Save the sub-subcategory";
     $self->add_del_ids($subcat->get_id, 'category');
 
+    # Create an input channel
+    ok my $ic = Bric::Biz::InputChannel->new({
+        name    => 'English',
+        site_id => 100,
+    }), "Create an input channel";
+    ok $ic->save, "Save the new input channel";
+    $self->add_del_ids($ic->get_id, 'input_channel');
+
     # Create some output channels.
     ok my $suboc = Bric::Biz::OutputChannel->new({
         name    => 'Sub XHTML',
@@ -299,9 +307,12 @@ sub subclass_burn_test {
         reference => 0, # No idea what this is.
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
+    ok $story_type->add_input_channels([$ic]), "Add the input channel";
+    ok $story_type->set_primary_ic_id($ic->get_id, 100),
+      "Set it as the primary IC";
     ok $story_type->add_output_channels([$oc]), "Add the output channel";
     ok $story_type->set_primary_oc_id($oc->get_id, 100),
-      "Set it as the primary OC";;
+      "Set it as the primary OC";
     ok $story_type->save, "Save the test story type";
     $self->add_del_ids($story_type->get_id, 'element_type');
 

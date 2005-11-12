@@ -474,6 +474,21 @@
     INSERT INTO event_type (id, key_name, name, description, class__id, active)
     VALUES (NEXTVAL('seq_event_type'), 'action_del', 'Action Deleted', 'Action profile was deleted.', '14', '1');
 
+-- ********** 'input_channel_new' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'input_channel_new', 'Input Channel Created', 'Input Channel profile was created.', '82', '1');
+
+-- ********** 'input_channel_save' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'input_channel_save', 'Input Channel Changes Saved', 'Input Channel profile changes were saved.', '82', '1');
+
+-- ********** 'input_channel_deact' ************ --
+
+    INSERT INTO event_type (id, key_name, name, description, class__id, active)
+    VALUES (NEXTVAL('seq_event_type'), 'input_channel_deact', 'Input Channel Deactivated', 'Input Channel profile was deactivated.', '82', '1');
+
 -- ********** 'output_channel_new' ************ --
 
     INSERT INTO event_type (id, key_name, name, description, class__id, active)

@@ -1,0 +1,19 @@
+-- -----------------------------------------------------------------------------
+-- InputChannel.val
+--
+-- VERSION: $LastChangedRevision$
+--
+-- Create Input Channels.
+--
+
+INSERT INTO input_channel (id, name, description, site__id)
+VALUES ('1', 'Default', 'Default input channel', '100');
+
+
+-- Add 'em to the 'All Input Channels' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('450', '69', '21', '1');
+
+INSERT INTO input_channel_member (id, object_id, member__id)
+VALUES ('1', '1', '450');
+

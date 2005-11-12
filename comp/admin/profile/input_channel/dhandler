@@ -1,0 +1,147 @@
+<%perl>;
+# Instantiate an object.
+my $ic = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
+  : $class->new;
+$id ||= $ic->get_id;
+
+# Check authorization.
+chk_authz($ic, $id ? READ : CREATE);
+my $no_edit = !chk_authz($ic, ($id ? EDIT : CREATE), 1);
+my $no_del = !$id || $no_edit;
+
+# Get the name for the breadcrumb trail.
+my $crumb = $ic->get_name;
+$crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
+
+# Assume we're going to need a "next" button.
+my $button = 'next_dkgreen';
+
+# Output the header and other necessities.
+$m->comp('/widgets/wrappers/sharky/header.mc',
+         title => "$disp Profile",
+         context => "Admin | Profile | $disp | $crumb"
+);
+$m->out(qq{<form method="post" name="ic_profile" action="} . $r->uri
+        . qq{" onsubmit="return confirmChanges(this)">\n});
+
+# Output a hidden field with the ID, if we have one.
+$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'input_channel_id')
+  if defined $id;
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+         caption => "Properties",
+         number  => 1
+);
+
+# Dump out the fields for display.
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+         readOnly   => $no_edit,
+         objref     => $ic,
+         fieldsUsed => {active => 1, burner => 1 }
+);
+if (defined $id || $no_edit) {
+    $m->comp(
+        '/widgets/profile/displayFormElement.mc',
+        objref   => $ic,
+        key      => 'burner_name',
+        readOnly => 1,
+    );
+} else {
+    $m->comp(
+        '/widgets/profile/displayFormElement.mc',
+        objref   => $ic,
+        key      => 'burner',
+        readOnly => 0,
+    );
+}
+my @sites = site_list(EDIT);
+if ($id || $no_edit) {
+    $m->comp('/widgets/profile/hidden.mc', value => $ic->get_site_id, name => 'site_id');
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             objref   => $ic,
+             key      => 'site',
+             readOnly => 1) if @sites > 1;
+} elsif ((my $site_id = $ic->get_site_id) || @sites == 1) {
+    $m->comp('/widgets/profile/hidden.mc', value => ($site_id || $sites[0]->get_id), name => 'site_id');
+} else {
+    # Output a list of sites to choose from.
+    $m->comp('/widgets/select_object/select_object.mc',
+             readOnly  => ($no_edit || $id),
+             object    => 'site',
+             name      => 'site_id',
+             field     => 'name',
+             disp      => 'Site',
+             constrain => { active => 1 },
+             exclude   => sub { ! chk_authz($_[0], EDIT, 1) },
+             selected  => scalar $c->get_user_cx(get_user_id),
+             reset_key => $id
+    );
+}
+
+$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+# Get the group's membership listed
+$m->comp("/widgets/grp_membership/grp_membership.mc",
+         grp_class => 'Bric::Util::Grp::InputChannel',
+         obj => $ic,
+         formName => 'ic_profile',
+         no_edit => $no_edit,
+         widget  => $type,
+         num => 3
+);
+
+# Add the form buttons and other necessities.
+$m->comp("/widgets/profile/formButtons.mc",
+         type => $type,
+         section => $widget,
+         widget => $type,
+         val => $button,
+         no_del => $no_del,
+         no_save => $no_edit
+);
+$m->out("</form>\n");
+$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
+</%perl>
+
+%#-- Once Section --#
+<%once>;
+my $class = "Bric::Biz::InputChannel";
+my $widget = 'profile';
+my $type = 'input_channel';
+my $disp = get_disp_name($type);
+my $ng = Bric::Biz::InputChannel->my_meths->{name}{get_meth};
+my $sg = Bric::Biz::InputChannel->my_meths->{site}{get_meth};
+my $ic_name_getter = sub {
+    my $o = shift;
+    return $ng->($o) . ' (' . $sg->($o) . ')';
+};
+</%once>
+
+%#-- Args Section --#
+<%args>
+$id => undef
+</%args>
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+=head1 VERSION
+
+$LastChangedRevision$
+
+=head1 DATE
+
+$LastChangedDate$
+
+=head1 SYNOPSIS
+
+/admin/profile/input_channel/dhandler - display input channel object profile.
+
+=head1 DESCRIPTION
+
+This element displays input channel object profiles for editing.
+
+=cut
+
+</%doc>

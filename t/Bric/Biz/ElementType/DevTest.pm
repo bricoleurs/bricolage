@@ -560,7 +560,7 @@ sub test_oc : Test(60) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(26) {
+sub test_site : Test(32) {
     my $self = shift;
 
     #dependant on intial values
@@ -575,6 +575,14 @@ sub test_site : Test(26) {
     ok $site1->save, "Save first dummy site";
     my $site1_id = $site1->get_id;
     $self->add_del_ids($site1_id, 'site');
+
+    ok my $ic1 = Bric::Biz::InputChannel->new({
+        name    => __PACKAGE__ . "1",
+        site_id => $site1_id 
+    }), 'Create IC';
+    ok $ic1->save, 'Save IC1';
+    ok my $ic1_id = $ic1->get_id, "Get IC ID1";
+    $self->add_del_ids($ic1_id, 'input_channel');
 
     ok my $oc1 = Bric::Biz::OutputChannel->new({
         name    => __PACKAGE__ . "1",
@@ -642,6 +650,14 @@ sub test_site : Test(26) {
     ok $top_level_element->set_primary_oc_id($oc2_id, $site2_id),
         'Associate primary OC2';
 
+    ok $top_level_element->add_input_channels([$ic1_id]),
+        'Associate IC1';
+    ok $top_level_element->set_primary_ic_id($ic1_id, $site1_id),
+        'Associate primary IC1 with site 1';
+    ok $top_level_element->set_primary_ic_id($ic1_id, $site2_id),
+        'Associate primary IC1 with site 2';
+    
+
     #due to bug in the coll code, one must do a save between add_sites/remove_sites
     $top_level_element->save();
 
@@ -670,8 +686,16 @@ sub test_site : Test(26) {
 
 ##############################################################################
 # Make sure that subelement types and fields work properly.
-sub test_subelement_types : Test(39) {
+sub test_subelement_types : Test(43) {
     my $self = shift;
+
+    # Create an output channel.
+    ok my $ic = Bric::Biz::InputChannel->new({
+        name    => 'Test English',
+        site_id => 100,
+    }), "Create an input channel";
+    ok $ic->save, "Save the new input channel";
+    $self->add_del_ids($ic->get_id, 'input_channel');
 
     # Create an output channel.
     ok my $oc = Bric::Biz::OutputChannel->new({
@@ -689,9 +713,12 @@ sub test_subelement_types : Test(39) {
         top_level => 1,
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
+    ok $story_type->add_input_channels([$ic]), "Add the input channel";
+    ok $story_type->set_primary_ic_id($ic->get_id, 100),
+      "Set it as the primary IC";
     ok $story_type->add_output_channels([$oc]), "Add the output channel";
     ok $story_type->set_primary_oc_id($oc->get_id, 100),
-      "Set it as the primary OC";;
+      "Set it as the primary OC";
     ok $story_type->save, "Save the test story type";
     $self->add_del_ids($story_type->get_id, 'element_type');
 

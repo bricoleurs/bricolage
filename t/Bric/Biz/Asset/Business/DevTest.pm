@@ -230,7 +230,7 @@ sub test_oc_id : Test(14) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(33) {
+sub test_alias : Test(38) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -284,6 +284,14 @@ sub test_alias : Test(33) {
     $element->add_sites([$site1]);
 
     # Add a new output channel.
+    ok( my $ic = Bric::Biz::InputChannel->new({ name    => __PACKAGE__ . "1",
+                                                site_id => $site1_id }),
+        "Create IC" );
+    ok( $ic->save, "Save IC" );
+    ok( my $icid = $ic->get_id, "Get IC ID" );
+    $self->add_del_ids($icid, 'input_channel');
+
+    # Add a new output channel.
     ok( my $oc = Bric::Biz::OutputChannel->new({ name    => __PACKAGE__ . "1",
                                                  site_id => $site1_id }),
         "Create OC" );
@@ -291,6 +299,8 @@ sub test_alias : Test(33) {
     ok( my $ocid = $oc->get_id, "Get OC ID" );
     $self->add_del_ids($ocid, 'output_channel');
 
+    ok( $element->add_input_channels([$icid]), "Associate IC" );
+    ok( $element->set_primary_ic_id($icid, $site1_id), "Associate primary IC" );
     ok( $element->add_output_channels([$ocid]), "Associate OC" );
     ok( $element->set_primary_oc_id($ocid, $site1_id), "Associate primary OC" );
     ok( $element->save, "Save element" );

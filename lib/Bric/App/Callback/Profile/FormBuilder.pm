@@ -10,6 +10,8 @@ use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
 use Bric::App::Util qw(:aref :msg :history :pkg :browser);
 use Bric::Biz::ElementType::Parts::FieldType;
+use Bric::Biz::InputChannel;
+use Bric::Biz::InputChannel::Element;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Biz::Site;
@@ -40,10 +42,10 @@ my %conf = (
 );
 
 my ($base_handler, $do_contrib_type, $do_element_type, $clean_param,
-    $delete_ocs, $delete_sites, $check_save_element_type, $get_obj,
+    $delete_ocs, $delete_ics, $delete_sites, $check_save_element_type, $get_obj,
     $set_key_name, $update_element_type_attrs, $get_data_href,
-    $delete_element_type_attrs, $set_primary_ocs, $add_new_attrs,
-    $save_element_type_etc);
+    $delete_element_type_attrs, $set_primary_ocs, $set_primary_ics,
+    $add_new_attrs, $save_element_type_etc);
 
 
 sub save : Callback {
@@ -59,6 +61,10 @@ sub save_n_stay : Callback {
     &$base_handler;
 }
 sub addElementType : Callback {
+    return unless $_[0]->value;      # already handled
+    &$base_handler;
+}
+sub add_ic_id : Callback {
     return unless $_[0]->value;      # already handled
     &$base_handler;
 }
@@ -292,8 +298,17 @@ $do_element_type = sub {
     $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
     $delete_element_type_attrs->($obj, $param, $key, $cb_key, \%del_attrs, $data_href);
 
+    $delete_ics->($obj, $param);
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
+
+    # Enable input channels.
+    foreach my $ic ($obj->get_input_channels) {
+        $enabled->{$ic->get_id} ? $ic->set_enabled_on : $ic->set_enabled_off;
+    }
+
+    # Add input channels.
+    $obj->add_input_channel($self->value) if $cb_key eq 'add_ic_id';
 
     # Enable output channels.
     foreach my $oc ($obj->get_output_channels) {
@@ -306,16 +321,21 @@ $do_element_type = sub {
     # Add sites, if it's a top-level element type.
     if ($cb_key eq 'add_site_id' && $obj->is_top_level) {
         my $site_id = $self->value;
-        # Only add the site if it has associated output channels.
-        if (my $oc_id =
-              Bric::Biz::OutputChannel->list_ids({site_id => $site_id })->[0])
-        {
+        # Only add the site if it has associated input and output channels.
+        my $ic_id =
+              Bric::Biz::InputChannel->list_ids({site_id => $site_id })->[0];
+        my $oc_id =
+              Bric::Biz::OutputChannel->list_ids({site_id => $site_id })->[0];
+        if ($ic_id && $oc_id) {
             $obj->add_site($site_id);
             $obj->set_primary_oc_id($oc_id, $site_id);
             $obj->add_output_channels($oc_id);
+            $obj->set_primary_ic_id($ic_id, $site_id);
+            $obj->add_input_channels($ic_id);
         } else {
             add_msg 'Site "[_1]" cannot be associated because it has no ' .
-              'output channels',
+              (!$ic_id ? 'input' : '') . (!$ic_id && !$oc_id ? ' or ' : '') .
+              (!$oc_id ? 'output' : '') . ' channels',
               Bric::Biz::Site->lookup({ id => $site_id })->get_name;
         }
     }
@@ -361,6 +381,16 @@ $clean_param = sub {
     }
     $param->{fb_vals} = $tmp;
     return $param;
+};
+
+$delete_ics = sub {
+    my ($obj, $param) = @_;
+
+    # Delete output channels.
+    if ($param->{'rem_ic'}) {
+        my $del_ic_ids = mk_aref($param->{'rem_ic'});
+        $obj->delete_input_channels($del_ic_ids);
+    }
 };
 
 $delete_ocs = sub {
@@ -461,6 +491,60 @@ $delete_element_type_attrs = sub {
         }
         $obj->del_field_types($del);
     }
+};
+
+
+$set_primary_ics = sub {
+    my ($self, $obj, $no_save) = @_;    # $no_save is a scalar ref
+    my $param = $self->params;
+    my $cb_key = $self->cb_key;
+
+    # Determine the enabled input channels.
+    my %enabled = map { $_ ? ( $_ => 1) : () } @{ mk_aref($param->{enabled}) },
+      map { $obj->get_primary_ic_id($_) } $obj->get_sites;
+
+    # Set the primary input channel ID per site
+    if (($cb_key eq 'save' || $cb_key eq 'save_n_stay') && $obj->is_top_level) {
+        # Load up the existing sites and input channels.
+        my %ic_ids = (
+            map { $_ => $obj->get_primary_ic_id($_) }
+            map { $_->get_id }
+            $obj->get_sites
+        );
+
+        foreach my $field (keys %$param) {
+            next unless $field =~ /^primary_ic_site_(\d+)$/;
+            my $siteid = $1;
+            $obj->set_primary_ic_id($param->{$field}, $siteid);
+            my ($ic) = $obj->get_input_channels($param->{$field});
+            unless ($ic) {
+                $obj->add_input_channel($param->{$field});
+                $ic = Bric::Biz::InputChannel->lookup({ id => $param->{$field} });
+            }
+
+            # Associate it with the site and make sure it's enabled.
+            $ic_ids{$siteid} = $param->{$field};
+            $enabled{$ic->get_id} = 1;
+        }
+
+        foreach my $siteid (keys %ic_ids) {
+            unless ($ic_ids{$siteid}) {
+                $$no_save = 1;
+                my $site = Bric::Biz::Site->lookup({id => $siteid});
+                add_msg('Site "[_1]" requires a primary input channel.',
+                        $site->get_name);
+            }
+        }
+    } elsif ($cb_key eq 'add_ic_id') {
+        my $ic = Bric::Biz::InputChannel::Element->lookup({id => $self->value});
+        my $siteid = $ic->get_site_id;
+        unless ($obj->get_primary_ic_id($siteid)) {
+            # They're adding the first one. Make it the primary.
+            $obj->set_primary_ic_id($self->value, $siteid);
+        }
+    }
+
+    return \%enabled;
 };
 
 $set_primary_ocs = sub {

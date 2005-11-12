@@ -18,6 +18,9 @@ CREATE SEQUENCE seq_element_type START 1024;
 -- Unique IDs for the subelement table
 --CREATE SEQUENCE seq_subelement_type START 1024;
 
+-- Unique IDs for element__input_channel
+CREATE SEQUENCE seq_element_type__input_channel START 1024;
+
 -- Unique IDs for element__output_channel
 CREATE SEQUENCE seq_element_type__output_channel START 1024;
 
@@ -86,7 +89,7 @@ CREATE TABLE subelement_type  (
 */
 
 -- -----------------------------------------------------------------------------
--- Table: element__site
+-- Table: element_type__site
 --
 -- Description: A table that maps 
 
@@ -97,11 +100,29 @@ CREATE TABLE element_type__site (
     site__id         INTEGER NOT NULL,
     active           BOOLEAN NOT NULL DEFAULT TRUE,
     primary_oc__id   INTEGER NOT NULL,
+    primary_ic__id   INTEGER NOT NULL,
     CONSTRAINT pk_element_type__site__id PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------------------------------
--- Table: element__output_channel
+-- Table: element_type__input_channel
+--
+-- Description: Holds a reference to the asset type table, the input channel 
+--              table and an active flag
+--
+
+CREATE TABLE element_type__input_channel (
+    id                  INTEGER    NOT NULL
+                                   DEFAULT NEXTVAL('seq_element_type__input_channel'),
+    element_type__id    INTEGER    NOT NULL,
+    input_channel__id   INTEGER    NOT NULL,
+    enabled             BOOLEAN    NOT NULL DEFAULT TRUE,
+    active              BOOLEAN    NOT NULL DEFAULT TRUE,
+    CONSTRAINT pk_element_type__input_channel__id PRIMARY KEY (id)
+);
+
+-- -----------------------------------------------------------------------------
+-- Table: element_type__output_channel
 --
 -- Description: Holds a reference to the asset type table, the output channel 
 --              table and an active flag
@@ -118,7 +139,7 @@ CREATE TABLE element_type__output_channel (
 );
 
 -- -----------------------------------------------------------------------------
--- Table: element_member
+-- Table: element_type_member
 -- 
 -- Description: The link between element objects and member objects
 --
@@ -132,7 +153,7 @@ CREATE TABLE element_type_member (
 );
 
 -- -----------------------------------------------------------------------------
--- Table: attr_element
+-- Table: attr_element_type
 --
 -- Description: A table to represent types of attributes.  A type is defined by
 --              its subsystem, its element ID and an attribute name.
@@ -149,7 +170,7 @@ CREATE TABLE attr_element_type (
 
 
 -- -----------------------------------------------------------------------------
--- Table: attr_element_val
+-- Table: attr_element_type_val
 --
 -- Description: A table to hold attribute values.
 
@@ -167,7 +188,7 @@ CREATE TABLE attr_element_type_val (
 );
 
 -- -----------------------------------------------------------------------------
--- Table: attr_element_meta
+-- Table: attr_element_type_meta
 --
 -- Description: A table to represent metadata on types of attributes.
 
@@ -195,6 +216,10 @@ CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id)
 CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id);
 
 */
+
+CREATE UNIQUE INDEX udx_et_ic_id__et__ic_id ON element_type__input_channel(element_type__id, input_channel__id);
+CREATE INDEX fkx_input_channel__et_ic ON element_type__input_channel(input_channel__id);
+CREATE INDEX fkx_element__et_ic ON element_type__input_channel(element_type__id);
 
 CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(element_type__id, output_channel__id);
 CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
@@ -233,3 +258,4 @@ CREATE INDEX fkx_attr_et__attr_et_meta ON attr_element_type_meta(attr__id);
 CREATE INDEX fkx_et__et__site__element_type__id ON element_type__site(element_type__id);
 CREATE INDEX fkx_site__et__site__site__id ON element_type__site(site__id);
 CREATE INDEX fkx_output_channel__et__site ON element_type__site(primary_oc__id);
+CREATE INDEX fkx_input_channel__et__site ON element_type__site(primary_ic__id);

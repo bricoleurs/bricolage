@@ -8,7 +8,7 @@ use Test::More;
 ##############################################################################
 # Test class loading.
 ##############################################################################
-sub _load_test : Test(26) {
+sub _load_test : Test(27) {
     # Load Grp and all of the subclasses. AssetVersion may not be used
     # anymore, but I leave it to another day to decide if that's so and take
     # it out if it is.
@@ -16,7 +16,8 @@ sub _load_test : Test(26) {
     use_ok('Bric::Util::Pref');
     for (qw(Person User AlertType Asset ElementType AssetVersion CategorySet
             ContribType Desk Dest ATType SubelementType Event Template Grp
-            Job Media Org OutputChannel Person Pref Source Story Workflow)) {
+            Job Media Org InputChannel OutputChannel Person Pref Source Story 
+            Workflow)) {
         use_ok("Bric::Util::Grp::$_");
     }
 }

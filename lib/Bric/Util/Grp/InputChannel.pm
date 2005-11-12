@@ -1,8 +1,8 @@
-package Bric::Util::Grp::Grp;
+package Bric::Util::Grp::InputChannel;
 
 =head1 NAME
 
-Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
+Bric::Util::Grp::InputChannel - Interface to Bric::Biz::InputChannel Groups
 
 =head1 VERSION
 
@@ -15,7 +15,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate$
+$LastChangedDate: 2004-09-13 20:48:55 -0400 (Mon, 13 Sep 2004) $
 
 =head1 SYNOPSIS
 
@@ -50,8 +50,8 @@ use base qw(Bric::Util::Grp);
 # Constants
 ################################################################################
 use constant DEBUG => 0;
-use constant CLASS_ID => 68;
-use constant OBJECT_CLASS_ID => 6;
+use constant CLASS_ID => 83;
+use constant OBJECT_CLASS_ID => 82;
 
 ################################################################################
 # Fields
@@ -66,7 +66,9 @@ my ($class, $mem_class);
 
 ################################################################################
 # Instance Fields
-BEGIN { Bric::register_fields() }
+BEGIN {
+    Bric::register_fields();
+}
 
 ################################################################################
 # Class Methods
@@ -104,7 +106,7 @@ sub DESTROY {}
 
 =over
 
-=item $supported_classes = Bric::Util::Grp::Grp->get_supported_classes()
+=item $supported_classes = Bric::Util::Grp::InputChannel->get_supported_classes()
 
 This will return an anonymous hash of the supported classes in the group as keys
 with the short name as a value. The short name is used to construct the member
@@ -119,42 +121,15 @@ B<Notes:> NONE.
 =cut
 
 sub get_supported_classes {
-    { 'Bric::Util::Grp'                 => 'grp',
-      'Bric::Util::Grp::AlertType'      => 'grp',
-      'Bric::Util::Grp::Asset'          => 'grp',
-      'Bric::Util::Grp::SubelementType' => 'grp',
-      'Bric::Util::Grp::AssetVersion'   => 'grp',
-      'Bric::Util::Grp::Category'       => 'grp',
-      'Bric::Util::Grp::CategorySet'    => 'grp',
-      'Bric::Util::Grp::ContribType'    => 'grp',
-      'Bric::Util::Grp::Desk'           => 'grp',
-      'Bric::Util::Grp::Dest'           => 'grp',
-      'Bric::Util::Grp::ElementType'    => 'grp',
-      'Bric::Util::Grp::ATType'         => 'grp',
-      'Bric::Util::Grp::Event'          => 'grp',
-      'Bric::Util::Grp::Template'       => 'grp',
-      'Bric::Util::Grp::Grp'            => 'grp',
-      'Bric::Util::Grp::Job'            => 'grp',
-      'Bric::Util::Grp::Media'          => 'grp',
-      'Bric::Util::Grp::Org'            => 'grp',
-      'Bric::Util::Grp::InputChannel'   => 'grp',
-      'Bric::Util::Grp::OutputChannel'  => 'grp',
-      'Bric::Util::Grp::Person'         => 'grp',
-      'Bric::Util::Grp::Pref'           => 'grp',
-      'Bric::Util::Grp::Rule'           => 'grp',
-      'Bric::Util::Grp::Source'         => 'grp',
-      'Bric::Util::Grp::Story'          => 'grp',
-      'Bric::Util::Grp::User'           => 'grp',
-      'Bric::Util::Grp::Workflow'       => 'grp',
-      'Bric::Util::Grp::MediaType'      => 'grp',
-      'Bric::Util::Grp::Keyword'        => 'grp',
-      'Bric::Util::Grp::Site'           => 'grp',
+    { 'Bric::Biz::InputChannel' => 'input_channel',
+      'Bric::Biz::InputChannel::Element' => 'input_channel'
     }
 }
 
+
 ##############################################################################
 
-=item my @list_classes = Bric::Util::Grp::Grp->get_list_classes
+=item my @list_classes = Bric::Util::Grp->get_list_classes
 
 Returns a list or anonymous array of the supported classes in the group that
 can have their C<list()> methods called in succession to assemble a list of
@@ -171,27 +146,11 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_list_classes { ('Bric::Util::Grp') }
+sub get_list_classes { ('Bric::Biz::InputChannel') }
 
 ################################################################################
 
-=item $class_id = Bric::Util::Grp::Grp->get_class_id()
-
-This will return the class ID that this group is associated with.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub get_class_id { CLASS_ID }
-
-################################################################################
-
-=item $class_id = Bric::Util::Grp::Person->get_object_class_id()
+=item $class_id = Bric::Util::Grp::InputChannel->get_object_class_id
 
 Forces all Objects to be considered as this class.
 
@@ -207,10 +166,26 @@ sub get_object_class_id { OBJECT_CLASS_ID }
 
 ################################################################################
 
-=item my $secret = Bric::Util::Grp::Grp->get_secret()
+=item $class_id = Bric::Util::Grp::InputChannel->get_class_id()
 
-Returns false, because this is not a secret type of group, so it can be
-directly used by users.
+This will return the class ID that this group is associated with.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_class_id { CLASS_ID }
+
+################################################################################
+
+=item my $secret = Bric::Util::Grp::InputChannel->get_secret()
+
+Returns false, because this is not a secret type of group, but one that can be
+used by users.
 
 B<Throws:> NONE.
 
@@ -224,7 +199,7 @@ sub get_secret { Bric::Util::Grp::NONSECRET_GRP }
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::Grp->my_class()
+=item my $class = Bric::Util::Grp::InputChannel->my_class()
 
 Returns a Bric::Util::Class object describing this class.
 
@@ -243,7 +218,7 @@ sub my_class {
 
 ################################################################################
 
-=item my $class = Bric::Util::Grp::Grp->member_class()
+=item my $class = Bric::Util::Grp::InputChannel->member_class()
 
 Returns a Bric::Util::Class object describing the members of this group.
 
@@ -302,6 +277,8 @@ David Wheeler <david@wheeler.net>
 =head1 SEE ALSO
 
 L<Bric|Bric>, 
+L<Bric::Biz::InputChannel|Bric::Biz::InputChannel>, 
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut
+

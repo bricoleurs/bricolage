@@ -1,0 +1,23 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-08 23:19:39 -0400 (Tue, 08 Jun 2004) $
+
+-- 
+-- TABLE: input_channel_member
+--
+
+ALTER TABLE    input_channel
+ADD CONSTRAINT fk_site__input_channel FOREIGN KEY (site__id)
+REFERENCES     site(id) ON DELETE CASCADE;
+
+ALTER TABLE    input_channel_member
+ADD CONSTRAINT fk_input_channel__ic_member FOREIGN KEY (object_id)
+REFERENCES     input_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    input_channel_member
+ADD CONSTRAINT fk_member__ic_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+

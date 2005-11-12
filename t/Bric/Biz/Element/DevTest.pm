@@ -56,9 +56,12 @@ sub create_element_types {
         media     => 1,
     }), "Create media type";
     ok $media_type->add_site(100), "Add the site ID";
+    ok $media_type->add_input_channels([1]), "Add the input channel";
+    ok $media_type->set_primary_ic_id(1, 100),
+      "Set it as the primary IC";
     ok $media_type->add_output_channels([1]), "Add the output channel";
     ok $media_type->set_primary_oc_id(1, 100),
-      "Set it as the primary OC";;
+      "Set it as the primary OC";
     ok $media_type->save, "Save the test media type";
     $self->add_del_ids($media_type->get_id, 'element_type');
     $self->{media_type} = $media_type;
@@ -72,6 +75,9 @@ sub create_element_types {
         related_media => 1,
     }), "Create story type";
     ok $story_type->add_site(100), "Add the site ID";
+    ok $story_type->add_input_channels([1]), "Add the input channel";
+    ok $story_type->set_primary_ic_id(1, 100),
+      "Set it as the primary IC";
     ok $story_type->add_output_channels([1]), "Add the output channel";
     ok $story_type->set_primary_oc_id(1, 100),
       "Set it as the primary OC";;

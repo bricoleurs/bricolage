@@ -603,3 +603,12 @@ VALUES ('164', '35', '6', '1');
 INSERT INTO grp_member (id, object_id, member__id)
 VALUES ('49', '68', '164');
 
+-- All Input Channels
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('69', NULL, '83', 'All Input Channels', 'All input channels in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('300', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('65', '69', '300'); 

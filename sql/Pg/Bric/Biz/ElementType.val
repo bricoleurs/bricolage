@@ -86,14 +86,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('1', 'Story', 'story', 'A story docuument type', true, false,
         false, false, false, false, '10', 330, true);
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('1', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('1', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('410', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('11', '1', '410'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('1', '1', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)
@@ -107,14 +111,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('2', 'Column', 'column', 'A weekly column story type', true,
         false, false, false, false, false, 10, '331', '1');
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('2', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('2', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('411', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('12', '2', '411'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('4', '2', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)
@@ -128,14 +136,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('3', 'Book Review', 'book_review', 'A book review story type',
         true, false, false, false, false, false, 10, '332', '1');
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('3', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('3', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('412', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('13', '3', '412'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('7', '3', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)
@@ -150,14 +162,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('4', 'Photograph', 'photograph', 'A photograph media type', true,
         false, false, false, false, true, 50, '333', '1');
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('4', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('4', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('413', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('14', '4', '413'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('10', '4', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)
@@ -171,14 +187,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('5', 'Illustration', 'illustration', 'An illustration media type',
         true, false, false, false, false, true, 50, '334', '1');
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('5', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('5', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('414', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('15', '5', '414'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('13', '5', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)
@@ -294,14 +314,18 @@ INSERT INTO element_type (id, name, key_name, description, top_level,
 VALUES ('13', 'Cover', 'cover', 'A cover element type.', true, false,
         true, false, false, false, 10, '335', '1');
 
-INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)
-VALUES ('13', '100', '1');
+INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id, primary_ic__id)
+VALUES ('13', '100', '1', '1');
 
 INSERT INTO member (id, grp__id, class__id, active)
 VALUES ('438', '27', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id)
 VALUES ('23', '13', '438'); 
+
+INSERT INTO element_type__input_channel (id, element_type__id, input_channel__id,
+                                     enabled, active)
+VALUES ('14', '13', '1', '1', '1');
 
 INSERT INTO element_type__output_channel (id, element_type__id, output_channel__id,
                                      enabled, active)

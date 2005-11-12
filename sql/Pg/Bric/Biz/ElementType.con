@@ -34,6 +34,17 @@ ALTER TABLE subelement_type ADD
 */
 
 -- -----------------------------------------------------------------------------
+-- Table: element_type__input_channel
+
+ALTER TABLE element_type__input_channel ADD
+    CONSTRAINT fk_element_type__et_ic FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE CASCADE;
+
+ALTER TABLE element_type__input_channel ADD
+    CONSTRAINT fk_input_channel__et_ic FOREIGN KEY (input_channel__id)
+    REFERENCES input_channel(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
 -- Table: element_type__output_channel
 
 ALTER TABLE element_type__output_channel ADD
@@ -88,6 +99,10 @@ ALTER TABLE element_type__site ADD
 ALTER TABLE element_type__site ADD
    CONSTRAINT fk_element_type__et__site__et__id FOREIGN KEY (element_type__id)
     REFERENCES element_type(id) ON DELETE CASCADE;
+
+ALTER TABLE element_type__site ADD
+    CONSTRAINT fk_input_channel__et__site FOREIGN KEY (primary_ic__id)
+    REFERENCES input_channel(id) ON DELETE CASCADE;
 
 ALTER TABLE element_type__site ADD
     CONSTRAINT fk_output_channel__et__site FOREIGN KEY (primary_oc__id)
