@@ -12,18 +12,19 @@ exit if test_column 'at_data', 'cols';
 
 # Create new columns
 do_sql
-    q{
-        ALTER TABLE at_data
-        ADD COLUMN  name        VARCHAR(32),
-        ADD COLUMN  widget_type VARCHAR(30) DEFAULT 'text',
-        ADD COLUMN  precision   SMALLINT,
-        ADD COLUMN  cols        INTEGER,
-        ADD COLUMN  rows        INTEGER,
-        ADD COLUMN  length      INTEGER,
-        ADD COLUMN  vals        TEXT,
-        ADD COLUMN  multiple    BOOLEAN DEFAULT FALSE,
-        ADD COLUMN  default_val TEXT
-    }
+    map({ qq{ALTER TABLE at_data $_} }
+        q{ADD COLUMN  name        VARCHAR(32)},
+        q{ADD COLUMN  widget_type VARCHAR(30)},
+        q{ALTER COLUMN widget_type SET DEFAULT 'text'},
+        q{ADD COLUMN  precision   SMALLINT},
+        q{ADD COLUMN  cols        INTEGER},
+        q{ADD COLUMN  rows        INTEGER},
+        q{ADD COLUMN  length      INTEGER},
+        q{ADD COLUMN  vals        TEXT},
+        q{ADD COLUMN  multiple    BOOLEAN},
+        q{ALTER COLUMN multiple SET DEFAULT FALSE},
+        q{ADD COLUMN  default_val TEXT},
+    )
 ;
 
 my $sel = prepare(q{
@@ -81,17 +82,15 @@ do_sql
     q{  UPDATE at_data SET length   = 0         WHERE length      IS NULL   },
     q{  UPDATE at_data SET name     = key_name  WHERE name        IS NULL   },
     q{  UPDATE at_data SET widget_type = 'text' WHERE widget_type IS NULL   },
-    q{
-        ALTER TABLE  at_data
-        ALTER COLUMN key_name    SET NOT NULL,
-        ALTER COLUMN quantifier  SET NOT NULL,
-        ALTER COLUMN name        SET NOT NULL,
-        ALTER COLUMN multiple    SET NOT NULL,
-        ALTER COLUMN cols        SET NOT NULL,
-        ALTER COLUMN rows        SET NOT NULL,
-        ALTER COLUMN length      SET NOT NULL,
-        ALTER COLUMN widget_type SET NOT NULL
-    },
-
+    map( { qq{ALTER TABLE  at_data $_}}
+        q{ALTER COLUMN key_name    SET NOT NULL},
+        q{ALTER COLUMN quantifier  SET NOT NULL},
+        q{ALTER COLUMN name        SET NOT NULL},
+        q{ALTER COLUMN multiple    SET NOT NULL},
+        q{ALTER COLUMN cols        SET NOT NULL},
+        q{ALTER COLUMN rows        SET NOT NULL},
+        q{ALTER COLUMN length      SET NOT NULL},
+        q{ALTER COLUMN widget_type SET NOT NULL},
+    ),
     q{CREATE INDEX udx_atd__name__at_id ON at_data(LOWER(name))},
 ;

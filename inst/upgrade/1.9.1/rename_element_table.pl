@@ -122,7 +122,11 @@ do_sql
     q{ALTER TABLE element_type__site RENAME COLUMN element__id TO element_type__id},
     q{ALTER TABLE element_type__site ALTER COLUMN id
       SET DEFAULT NEXTVAL('seq_element_type__site')},
-    q{ALTER TABLE element_type__site DROP CONSTRAINT element__site_pkey},
+    q{ALTER TABLE element_type__site DROP CONSTRAINT } . (
+        test_primary_key('element__site_pkey')
+            ? 'element__site_pkey'
+            : 'pk_element__site__id'
+    ),
     q{ALTER TABLE element_type__site ADD CONSTRAINT pk_element_type__site__id
       PRIMARY KEY (id)},
     # Restore FK dropped above.

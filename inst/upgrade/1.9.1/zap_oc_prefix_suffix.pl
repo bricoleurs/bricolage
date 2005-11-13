@@ -22,7 +22,10 @@ do_sql
     },
 
     q{ALTER TABLE output_channel
-      DROP  column pre_path,
+      DROP  column pre_path
+    },
+
+    q{ALTER TABLE output_channel
       DROP  column post_path
     },
 ;

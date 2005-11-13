@@ -21,17 +21,17 @@ do_sql
        WHERE  at.id = element_type.type__id
     },
 
-    q{ ALTER TABLE element_type
-       ALTER COLUMN top_level     SET NOT NULL,
-       ALTER COLUMN paginated     SET NOT NULL,
-       ALTER COLUMN fixed_uri     SET NOT NULL,
-       ALTER COLUMN related_story SET NOT NULL,
-       ALTER COLUMN related_media SET NOT NULL,
-       ALTER COLUMN media         SET NOT NULL,
-       ALTER COLUMN biz_class__id SET NOT NULL,
-       ALTER COLUMN type__id      DROP NOT NULL,
-       DROP  COLUMN reference
-    },
+    map ({ qq{ ALTER TABLE element_type $_ } }
+       'ALTER COLUMN top_level     SET NOT NULL',
+       'ALTER COLUMN paginated     SET NOT NULL',
+       'ALTER COLUMN fixed_uri     SET NOT NULL',
+       'ALTER COLUMN related_story SET NOT NULL',
+       'ALTER COLUMN related_media SET NOT NULL',
+       'ALTER COLUMN media         SET NOT NULL',
+       'ALTER COLUMN biz_class__id SET NOT NULL',
+       'ALTER COLUMN type__id      DROP NOT NULL',
+       'DROP  COLUMN reference',
+    ),
 
     q{ ALTER TABLE field_type DROP COLUMN publishable },
 

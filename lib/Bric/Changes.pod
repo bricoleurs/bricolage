@@ -43,6 +43,8 @@ to "instance_id" are most likely now "version_id," including but not limited to:
 
 =back
 
+=head1 VERSION 1.9.2 "Gimme" ()
+
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)
 
 =head2 New Features
@@ -165,11 +167,6 @@ Added "Cheat Sheet" dialog box to Bulk Edit that displays the entire hierarchy
 of available subelements and fields as the pseudo-pod "tags" available for use
 in bulk editing content. [David]
 
-=item *
-
-Moved burner association from element types to output channels. Now a single
-output channel must have all of its templates use the same burner. [David]
-
 =back
 
 =head2 Improvements
@@ -277,7 +274,6 @@ and, by extension the burner C<throw_error()> method. Now a kind of breadcrumb
 trail will illustrate where in the element hierarchy of a story a burn error
 was thrown. (Note: this only works for exceptions thrown by
 C<throw_burn_error>.) [Scott]
-
 
 =item *
 
@@ -629,8 +625,8 @@ burner constants C<PUBLISH_MODE> and C<PREVIEW_MODE> can also be used
 C<$PUBLISH_MODE()> and C<$PREVIEW_MODE()> in PHP) if the default
 C<PERL_LOADER> in F<bricolage.conf> is left in place. But TT can't have
 multiple symbols with the same names, so for each symbol exported, it adds to
-the stash the first one it finds in this order: CODE HASH ARRAY IO GLOB
-FORMAT, an SCALAR. Use of imported functions in PHP templates requires
+the stash the first one it finds in this order: CODE, HASH, ARRAY, IO, GLOB,
+FORMAT, and SCALAR. Use of imported functions in PHP templates requires
 PHP::Interpreter 1.1.0 or later. [David]
 
 =item *
@@ -1048,6 +1044,32 @@ Updated search documentation and wrote tests for:
 =cut
 
 ##############################################################################
+
+=head1 VERSION 1.8.9 ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Added missing foreign key constraints and indexes on the C<category_keyword>,
+C<story_keyword>, C<media_keyword>, C<element_member>, and
+C<media_contributor> tables. This should make keyword lookups, at least, much
+faster. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed misnamed keywords on the C<category_keyword>, C<story_keyword>, and
+C<media_keyword> tables. [David]
+
+=back
 
 =head1 VERSION 1.8.8 (2005-10-27)
 

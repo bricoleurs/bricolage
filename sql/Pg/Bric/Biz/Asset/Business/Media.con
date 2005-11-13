@@ -83,6 +83,15 @@ ALTER TABLE media__output_channel
 ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
 
+-- Media to Contributor mapping constraints
+ALTER TABLE media__contributor
+ADD CONSTRAINT fk_media__media__contributor FOREIGN KEY (media_instance__id)
+	REFERENCES media_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE media__contributor
+ADD CONSTRAINT fk_member__media__contributor FOREIGN KEY (member__id)
+	REFERENCES member(id) ON DELETE CASCADE;
+
 -- -----------------------------------------------------------------------------
 -- Table: media_member
 

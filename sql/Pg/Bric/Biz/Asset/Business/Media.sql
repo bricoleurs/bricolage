@@ -222,6 +222,10 @@ ON media_uri(lower_text_num(uri, site__id));
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);
 CREATE INDEX fkx_media__oc__oc ON media__output_channel(output_channel__id);
 
+--media__contributor
+CREATE INDEX fkx_media__media__contributor ON media__contributor(media_instance__id);
+CREATE INDEX fkx_member__media__contributor ON media__contributor(member__id);
+
 -- media_member.
 CREATE INDEX fkx_media__media_member ON media_member(object_id);
 CREATE INDEX fkx_member__media_member ON media_member(member__id);

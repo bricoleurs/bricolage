@@ -5,7 +5,6 @@ use File::Spec::Functions qw(catdir updir);
 use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-use Bric::Util::DBI qw(:all);
 
 exit if test_column 'job', 'story_instance__id';
 

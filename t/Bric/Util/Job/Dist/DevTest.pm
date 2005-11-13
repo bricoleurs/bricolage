@@ -35,6 +35,7 @@ sub test_setup : Test(setup) {
 sub test_teardown : Test(teardown) {
     my $self = shift;
     delete($self->{event})->unmock_all;
+    Bric::Util::DBI::prepare(qq{DELETE FROM job WHERE id > 1023})->execute;
     return $self;
 }
 

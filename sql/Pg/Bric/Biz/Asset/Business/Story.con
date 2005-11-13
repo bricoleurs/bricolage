@@ -79,7 +79,6 @@ ALTER TABLE story__category
 ADD CONSTRAINT fk_category__story__category FOREIGN KEY (category__id)
 	REFERENCES category(id) ON DELETE CASCADE;
 
-
 -- Story to Contributor mapping constraints
 ALTER TABLE story__contributor
 ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_instance__id)

@@ -177,23 +177,24 @@ sub publish : Callback {
 
     my %seen;
     for ([story => \@stories, $story_pub],
-         [media => \@media, $media_pub]) {
+         [media => \@media,   $media_pub]
+     ) {
         my ($key, $objs, $pub_ids) = @$_;
         # iterate through objects looking for related and stories
         while (@$objs) {
             my $doc = shift @$objs or next;
 
             # haven't I seen you someplace before?
-            my $id = $doc->get_version_id;
-            next if exists $seen{"$key$id"};
-            $seen{"$key$id"} = 1;
+            my $vid = $doc->get_version_id;
+            my $id =  $doc->get_id;
+            next if $seen{"$key$id"}++;
 
             if ($doc->get_checked_out) {
                 # Cannot publish checked-out assets.
                 my $doc_disp_name = lc get_disp_name($key);
                 add_msg("Cannot publish $doc_disp_name \"[_1]\" because it is"
                         . " checked out.", $doc->get_name);
-                delete $pub_ids->{$id};
+                delete $pub_ids->{$vid};
                 next;
             }
 
@@ -205,16 +206,12 @@ sub publish : Callback {
             }
 
             # Hang on to your hat!
-            if ($key eq 'story') {
-                push @sids, $id;
-            } else {
-                push @mids, $id;
-            }
-
-            my %desks;
+            my $ids = $key eq 'story' ? \@sids : \@mids;
+            push @$ids, $vid;
 
             # Examine all the related objects.
             if (PUBLISH_RELATED_ASSETS) {
+                my %desks;
                 foreach my $rel ($doc->get_related_objects) {
                     # Skip assets whose current version has already been published.
                     next unless $rel->needs_publish;
@@ -222,10 +219,10 @@ sub publish : Callback {
                     next unless $rel->is_active;
 
                     # haven't I seen you someplace before?
-                    my $relid = $rel->get_version_id;
+                    my $relid  = $rel->get_id;
+                    my $relvid = $rel->get_version_id;
                     my $relkey = $rel->key_name;
-                    next if exists $seen{"$relkey$relid"};
-                    $seen{"$relkey$relid"} = 1;
+                    next if $seen{"$relkey$relid"}++;
 
                     if ($rel->get_checked_out) {
                         # Cannot publish checked-out assets.
@@ -240,7 +237,9 @@ sub publish : Callback {
                         # It must be on a publish desk.
                         my $did = $rel->get_desk_id;
                         my $desk = $desks{$did}
-                          ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $did });
+                            ||= Bric::Biz::Workflow::Parts::Desk->lookup({
+                                id => $did,
+                            });
                         unless ($desk->can_publish) {
                             my $rel_disp_name = lc get_disp_name($rel->key_name);
                             add_msg("Cannot auto-publish related $rel_disp_name "
@@ -258,36 +257,26 @@ sub publish : Callback {
                         next;
                     }
 
-                    # push onto the appropriate list
+                    # Push onto the appropriate list
                     if ($relkey eq 'story') {
-                        push @rel_story, $relid;
-                        push @sids, $relid if $pub_ids->{$id};
-                        push(@stories, $rel); # recurse through related stories
+                        push @rel_story, $relvid;
+                        push @sids,      $relvid if $pub_ids->{$vid};
+                        push @stories,   $rel; # recurse through related stories
                     } else {
-                        push @rel_media, $relid;
-                        push @mids, $relid if $pub_ids->{$id};
+                        push @rel_media, $relvid;
+                        push @mids,      $relvid if $pub_ids->{$vid};
                     }
                 }
 
                 # Publish all aliases, too.
-                for my $alias ($doc->list({
+                push @$ids,  map { $_->get_version_id } $doc->list({
                     alias_id          => $doc->get_id,
                     publish_status    => 1,
                     published_version => 1,
-                })) {
-                    if ($key eq 'story') {
-                        push @sids, $alias->get_version_id;
-                    } else {
-                        push @mids, $alias->get_version_id;
-                    }
-                }
+                });
             }
         }
     }
-
-    # Make sure we have the IDs for any assets passed in explicitly.
-#    push @$story, keys %$story_pub;
-#    push @$media, keys %$media_pub;
 
     # For publishing from a desk, I added two new 'publish'
     # state data: 'rel_story', 'rel_media'. This is to be

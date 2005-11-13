@@ -38,6 +38,10 @@ sub pe {
 }
 
 
+sub cleanup_orgs : Test(teardown) {
+    Bric::Util::DBI::prepare(qq{DELETE FROM org  WHERE id > 1023})->execute;
+}
+
 ##############################################################################
 # Constructs a new object.
 sub construct {

@@ -23,7 +23,11 @@ do_sql
     q{DROP INDEX fdx_source__story},
     q{CREATE INDEX fkx_source__story ON story(source__id)},
 
-    q{DROP INDEX fdx_site_id__story},
+    (   test_index('fkx_site__story')    ? q{DROP INDEX fkx_site__story}
+      : test_index('fdx_site_id__story') ? qq{DROP INDEX fdx_site_id__story}
+      : ()
+    ),
+
     q{CREATE INDEX fkx_site_id__story ON story(site__id)},
     q{DROP INDEX fdx_alias_id__story},
     q{CREATE INDEX fkx_alias_id__story ON story(alias_id)},

@@ -15,5 +15,5 @@ do_sql "
              SELECT member__id
              FROM  job_member j LEFT JOIN member m ON (j.member__id = m.id)
              WHERE m.id IS NULL
-       )
+         )
 ";
