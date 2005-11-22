@@ -25,9 +25,6 @@ $m->comp('/widgets/buttons/submit.mc',
           cb        => 'pick_cats_cb',
           useTable  => 0,
 );
-$m->comp('/widgets/profile/create_button.html',
-         widget => $widget,
-         cb     => 'pick_cats_cb');
 $m->print("</form>\n");
 $m->comp('/widgets/wrappers/sharky/footer.mc');
 </%perl>
