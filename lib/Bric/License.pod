@@ -192,6 +192,8 @@ Folks who have submitted patches include:
 
 =item Rod Taylor
 
+=item Benjamin Franz
+
 =back
 
 Friends who have spotted bugs include:
