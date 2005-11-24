@@ -20,6 +20,21 @@ RETURNS  TEXT AS 'SELECT LOWER($1) || to_char($2, ''|FM9999999999'')'
 LANGUAGE 'sql'
 WITH     (ISCACHABLE);
 
+/* XXX Once we require 7.4 or later (2.0?), dump the function and aggregate
+ * below in favor of this aggregate:
+
+CREATE AGGREGATE array_accum (
+    sfunc    = array_append,
+    basetype = anyelement,
+    stype    = anyarray,
+    initcond = '{}'
+);
+
+ * Then change the usage from id_list(foo) to
+ * array_to_string(array_accum(foo), ' ')
+
+*/
+
 -- This function is used to append a space followed by a number to a TEXT
 -- string. It is used primarily for the id_list aggregate (below). We omit
 -- the ID 0 because it is a hidden, secret group to which permissions do not
