@@ -386,14 +386,14 @@ use constant PARAM_WHERE_MAP => {
                               . 'FROM   story__category sc3, story s2, story_instance i2 '
                               . 'WHERE  i2.story__id = s2.id '
                               . 'AND i2.version = s2.current_version '
-                              . 'AND i2.checked_out =('
-                             . '( SELECT checked_out '
+                              . 'AND i2.checked_out ='
+                              . '( SELECT checked_out '
                               . 'FROM story_instance '
                               . 'WHERE version = i2.version '
                               . 'AND story__id = s2.id '
                               . 'AND sc3.story_instance__id = i2.id '
                               . 'AND s2.id = ? '
-                              . 'ORDER BY checked_out DESC LIMIT 1 )',
+                              . 'ORDER BY checked_out DESC LIMIT 1 ))',
       keyword                => 'sk.story_id = s.id AND '
                               . 'k.id = sk.keyword_id AND '
                               . 'LOWER(k.name) LIKE LOWER(?)',
