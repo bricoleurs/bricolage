@@ -11,7 +11,7 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
-use Bric::Config qw(:prev);
+use Bric::Config qw(:prev :time);
 use Bric::Util::Burner;
 use Bric::Util::Job::Pub;
 use Bric::Util::Trans::FS;
@@ -145,7 +145,11 @@ sub publish : Callback {
 
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
-        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
+        my $exp_date = $s->get_expire_date(ISO_8601_FORMAT);
+        my $saved = $exp_date && $exp_date lt $param->{pub_date}
+            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
+            : $job->get_comp_time ? 'published' : 'scheduled for publication';
+
         add_msg(qq{Story "[_1]" $saved.},  $s->get_title)
            if $count <= 3;
         # Remove it from the desk it's on.
@@ -184,7 +188,10 @@ sub publish : Callback {
         log_event('job_new', $job);
         # Report publishing if the job was executed on save, otherwise
         # report scheduling
-        my $saved = $job->get_comp_time() ? 'published' : 'scheduled for publication';
+        my $exp_date = $m->get_expire_date(ISO_8601_FORMAT);
+        my $saved = $exp_date && $exp_date lt $param->{pub_date}
+            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
+            : $job->get_comp_time ? 'published' : 'scheduled for publication';
         add_msg(qq{Media "[_1]" $saved.}, $m->get_title)
           if $count <= 3;
         # Remove it from the desk it's on.

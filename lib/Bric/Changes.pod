@@ -27,6 +27,13 @@ C<story_keyword>, C<media_keyword>, C<element_member>, and
 C<media_contributor> tables. This should make keyword lookups, at least, much
 faster. [David]
 
+=item *
+
+When a story or media document is published with an expiration date earlier
+than the publish date, the UI will now properly report that the document has
+been "expired", rather than "published". Thanks to Simon Wilcox for the spot.
+[David]
+
 =back
 
 =head2 Bug Fixes
