@@ -458,6 +458,7 @@ $m->comp("$style.mc",
                               pagination => $pagination
                             }
         );
+set_state_name($widget => $state_key);
 set_state_data($widget, $state_key => $state);
 </%init>
 <%once>
@@ -639,14 +640,14 @@ my $build_constraints = sub {
     }
 
     # Initialize the sort column with the default search field.
-    $state->{sort_by}      = $sortBy;
+    $state->{sort_by}    ||= $sortBy;
     $state->{default_sort} = $def_sort_field;
 
     my $search_state = get_state_data($search_widget => $state_key);
 
     my $crit       = $search_state->{criterion};
     my $crit_field = $search_state->{field};
-    my $list_arg = {};
+    my $list_arg   = {};
 
     # If any criteria were passed then we need to constrain our list.
     if ($crit && $crit_field) {
@@ -735,6 +736,6 @@ my $sort_objects = sub {
     }
 
     my $sort_order = $state->{sort_order} || '';
-    return $sort_order eq 'ascending' ? [ reverse @sort_objs ] : \@sort_objs;
+    return $sort_order eq 'descending' ? [ reverse @sort_objs ] : \@sort_objs;
 };
 </%once>

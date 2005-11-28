@@ -17,8 +17,10 @@
 
       my ($sort_sign, $class);
       if ($userSort && $sortBy eq $f) {
-          $class = qq{ class="} . (($sortOrder =~ /^descending/) ? "sortdown" : "sortup") . qq{"};
-          $sort_col = $i;
+          $class = qq{ class="}
+              . (($sortOrder =~ /^descending/) ? "sortupd" : "sortdown")
+              . qq{"};
+          $sort_col  = $i;
           $sort_sign = '-' if ($userSort && $sortOrder !~ /^descending$/);
       }
 
