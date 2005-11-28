@@ -194,6 +194,8 @@ Folks who have submitted patches include:
 
 =item Benjamin Franz
 
+=item Alexey Sheynuk
+
 =back
 
 Friends who have spotted bugs include:
