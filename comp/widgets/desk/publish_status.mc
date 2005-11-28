@@ -4,15 +4,15 @@ $asset
 <%init>;
 return unless $asset->get_publish_status;
 my ($letter, $action) = $asset->key_name eq 'template'
-  ? ('D', 'Deployed')
-  : ('P', 'Published');
+  ? ('D [for Deployed]',  'Deployed')
+  : ('P [for Published]', 'Published');
 if ($asset->needs_publish) {
-    return qq{<img src="/media/images/$lang_key/$letter\_red.gif" } .
-      qq{border="0" width="15" height="15" alt="[$letter]" title="} .
-          $lang->maketext("Needs to be $action") . q{" />};
+    return qq{<span class="need" title="}
+        . $lang->maketext("Needs to be $action")
+        . '">' . $lang->maketext($letter) . '</span>';
 } else {
-    return qq{<img src="/media/images/$lang_key/$letter\_green.gif" } .
-      qq{border="0" width="15" height="15" alt="[$letter]" title="} .
-        $lang->maketext("$action Version") . q{"  />};
+    return qq{<span class="pub" title="}
+        . $lang->maketext("$action Version")
+        . '">' . $lang->maketext($letter) . '</span>';
 }
 </%init>

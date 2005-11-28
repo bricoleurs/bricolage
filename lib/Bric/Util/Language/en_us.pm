@@ -43,6 +43,8 @@ our %Lexicon = (
   '[quant,_1,Template] deployed.' => '[quant,_1,Template,Templates] deployed.',
   '[quant,_1,media,media] published.' => '[quant,_1,media,media] published',
   '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] published',
+  'D [for Deployed]'  => 'D',
+  'P [for Published]' => 'P',
  _AUTO => 1
 );
 

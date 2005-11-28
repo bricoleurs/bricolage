@@ -736,6 +736,8 @@ To translate:
   'No media document found for ID "[_1]" at line [_2].' => 'No media document found for ID "[_1]" at line [_2].',
   'No story document found for URI "[_1]" at line [_2].' => 'No story document found for URI "[_1]" at line [_2].',
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
+  'D [for Deployed]'  => 'D',
+  'P [for Published]' => 'P',
 
 Notice:
 

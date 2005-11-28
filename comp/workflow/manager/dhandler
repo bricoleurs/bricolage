@@ -84,18 +84,20 @@ my $thumburi = sub {
 
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };
 
-my $alter = { publish_status => sub {
-                  my ($val, $obj) = @_;
-                  return unless defined $val;
-                  $m->comp('/widgets/desk/publish_status.mc', asset => $obj);
-              },
-              title => sub {
-                  $m->comp('/widgets/profile/preview_link.mc',
-                           type  => $type,
-                           value => '<span class="l10n">' . shift() . '</span>',
-                           doc   => shift)
-              }
-            };
+my $alter = {
+    publish_status => sub {
+        my ($val, $obj) = @_;
+        return unless defined $val;
+        $m->comp('/widgets/desk/publish_status.mc', asset => $obj);
+    },
+
+    title => sub {
+        $m->comp('/widgets/profile/preview_link.mc',
+                 type  => $type,
+                 value => '<span class="l10n">' . shift() . '</span>',
+                 doc   => shift)
+    }
+};
 
 my $fields = { template => [qw(file_name version output_channel_name publish_status)],
                story      => [ qw(title version cover_date publish_status) ],

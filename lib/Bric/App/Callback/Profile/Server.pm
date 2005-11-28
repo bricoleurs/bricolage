@@ -43,8 +43,10 @@ sub save : Callback {
     my $dest_id = $param->{"${type}_id"};
     # Make sure the name isn't already in use.
     my $used;
-    my @dests = $class->list_ids({ host_name => $param->{host_name},
-                                   server_type_id => $param->{dest_id} });
+    my @dests = $class->list_ids({
+        host_name      => $param->{host_name},
+        server_type_id => $param->{dest_id}
+    });
     if (@dests > 1) {
         $used = 1;
     } elsif (@dests == 1 && !defined $dest_id) {

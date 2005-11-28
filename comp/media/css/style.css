@@ -216,6 +216,9 @@ div.debug dt:after {
 .desk .item .head .need { background: #993300; }
 .desk .item .head .pub { background: #999934; }
 
+.listManager .need { font-weight: bold; color: #993300; font-size: 130% }
+.listManager .pub  { font-weight: bold; color: #999934; font-size: 130% }
+
 .desk .item .body { position: relative; }
 
 .desk .item dl { 
