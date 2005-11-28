@@ -28,4 +28,4 @@ my $widget = 'help';
 <%perl>;
 set_state_data($widget, \%ARGS);
 </%perl>
-<a href="<% $r->uri %>" title="Help" id="btnHelp" onclick="openHelp()"><img src="/media/images/<% $lang_key %>/help.gif" alt="Help" /></a>
+<a href="<% $r->uri %>" title="Help" id="btnHelp" onclick="return openHelp()"><img src="/media/images/<% $lang_key %>/help.gif" alt="Help" /></a>
