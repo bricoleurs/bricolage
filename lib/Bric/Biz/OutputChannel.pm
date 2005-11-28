@@ -1798,7 +1798,7 @@ sub _do_list {
     }
 
     my @sel_props = $pkg->SEL_PROPS;
-    my $sel_cols = $pkg->SEL_COLS;
+    my $sel_cols  = $pkg->SEL_COLS;
     my $sel_order = $pkg->SEL_ORDER;
     my ($order, $props, $qry_cols) = ($sel_order, \@sel_props, \$sel_cols);
     if ($ids) {

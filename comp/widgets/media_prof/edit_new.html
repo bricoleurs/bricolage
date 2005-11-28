@@ -18,6 +18,7 @@ $m->comp(
     vals => $nmeth,
 );
 </%perl>
+% unless ($media) {
 <& /widgets/select_object/select_object.mc,
    disp      => 'Media Type',
    name      => "$widget|at_id",
@@ -34,6 +35,13 @@ $m->comp(
        site_id   => $site_id,
    },
 &>
+% } else {
+<& /widgets/profile/displayFormElement.mc,
+    key      => 'element_type',
+    readOnly => 1,
+    objref   => $media,
+&>
+% }
 <& /widgets/select_object/select_object.mc,
    disp     => 'Source',
    object   => 'source',

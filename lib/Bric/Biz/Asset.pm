@@ -674,6 +674,7 @@ sub my_meths {
                               disp     => 'Element Type',
                               len      => 256,
                               type     => 'short',
+                              props    => { type       => 'select' },
                              },
               publish_status => {
                              name     => 'publish_status',

@@ -34,7 +34,6 @@ my ($save_contrib, $save_category, $handle_delete);
 
 sub update : Callback(priority => 1) {
     my $self = shift;
-
     my $widget = $self->class_key;
     my $media = get_state_data($widget, 'media');
     chk_authz($media, EDIT);
@@ -445,7 +444,7 @@ sub create : Callback {
     my $widget = $self->class_key;
     # Get the workflow ID to use in redirects.
     my $WORK_ID = get_state_data($widget, 'work_id');
-    my $param = $self->params;
+    my $param   = $self->params;
 
     # Check permissions.
     my $wf = Bric::Biz::Workflow->lookup({ id => $WORK_ID });
@@ -815,9 +814,19 @@ sub assoc_category : Callback {
 }
 
 sub save_related : Callback {
-    my $self  = shift;
-    my $media = get_state_data($self->class_key => 'media');
-    my $desk  = $media->get_current_desk;
+    my $self   = shift;
+    my $media  = get_state_data($self->class_key => 'media');
+    my $desk   = $media->get_current_desk;
+    my $params = $self->params;
+    my $widget = $self->class_key;
+
+    # Roll in any changes.
+    $media->set_title(        $params->{title}                  );
+    $media->set_source__id(   $params->{"$widget|source__id"}   );
+    $media->set_category__id( $params->{"$widget|category__id"} );
+    $media->set_cover_date(   $params->{cover_date}             );
+    $media->set_priority(     $params->{priority}               );
+    $media->save;
 
     # Check the media document into a desk.
     my $desk_cb = Bric::App::Callback::Desk->new(
