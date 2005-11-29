@@ -98,7 +98,7 @@ textarea {
 .adminBox .border    { border-color: #999966; }
 .workflowBox .border { border-color: #669999; }
 .helpBox .border     { border-color: #669999; padding: 1px 10px; }
-.loginBox .border    { border-color: #669999; }
+.loginBox .border    { border-color: #669999; padding: 5px; }
 .searchBox .border   { border-color: #666633; background-color: #CCCC99; padding: 5px; }
 
 /***************************************************
