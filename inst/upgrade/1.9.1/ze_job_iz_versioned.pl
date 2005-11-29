@@ -14,6 +14,32 @@ do_sql
     q{ALTER TABLE job DROP CONSTRAINT fk_job__story},
     q{ALTER TABLE job DROP CONSTRAINT fk_job__media},
 
+    # Fix issue where some stories and media may not have the published_version
+    # set, even though they've been published.
+    q{UPDATE story
+      SET    published_version = COALESCE(s.published_version, s.current_version),
+             publish_status    = '1'
+      FROM   job j, story s
+      WHERE  story.id = s.id
+             AND j.story__id = s.id
+             AND (
+                  s.published_version = null
+                  OR s.publish_status = 0
+             );
+    },
+
+    q{UPDATE media
+      SET    published_version = COALESCE(m.published_version, m.current_version),
+             publish_status    = '1'
+      FROM   job j, media m
+      WHERE  media.id = m.id
+             AND j.media__id = m.id
+             AND (
+                  m.published_version = null
+                  OR m.publish_status = 0
+             );
+    },
+
     q{UPDATE job
       SET    story_instance__id = si.id
       FROM   (
