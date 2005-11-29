@@ -24,7 +24,7 @@ do_sql
              AND j.story__id = s.id
              AND (
                   s.published_version = null
-                  OR s.publish_status = 0
+                  OR s.publish_status = '0'
              );
     },
 
@@ -36,7 +36,7 @@ do_sql
              AND j.media__id = m.id
              AND (
                   m.published_version = null
-                  OR m.publish_status = 0
+                  OR m.publish_status = '0'
              );
     },
 
