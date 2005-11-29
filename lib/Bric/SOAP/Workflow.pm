@@ -732,57 +732,65 @@ sub move {
     # find destination workflow if defined
     my $to_workflow;
     if (exists $args->{workflow}) {
-        ($to_workflow) = Bric::Biz::Workflow->list(
-                   { name => $args->{workflow} });
-      throw_ap(error => __PACKAGE__ . "::move : no workflow found matching " .
-                 "(workflow => \"$args->{workflow}\")")
-        unless defined $to_workflow;
+        ($to_workflow) = Bric::Biz::Workflow->list({
+            name => $args->{workflow},
+        });
+        throw_ap(error => __PACKAGE__ . "::move : no workflow found matching " .
+                          "(workflow => \"$args->{workflow}\")")
+            unless defined $to_workflow;
     }
 
     # find destination desk
-    my ($to_desk) = Bric::Biz::Workflow::Parts::Desk->list(
-                                 { name => $args->{desk} });
+    my ($to_desk) = Bric::Biz::Workflow::Parts::Desk->list({
+        name => $args->{desk},
+    });
     throw_ap(error => __PACKAGE__ . "::move : no desk found matching " .
-               "(desk => \"$args->{desk}\")")
+                      "(desk => \"$args->{desk}\")")
       unless $to_desk;
 
-    my @ids = _collect_ids("move_ids",
-                           [ "story_id", "media_id", "template_id" ],
-                           $env);
+    my @ids = _collect_ids(
+        "move_ids",
+        [ "story_id", "media_id", "template_id" ],
+        $env
+    );
 
     foreach my $id (@ids) {
         my $obj;
         my $type;
         if ($id->name eq 'story_id') {
             $type = 'story';
-            $obj  = Bric::Biz::Asset::Business::Story->lookup(
-                                         { id => $id->value });
+            $obj  = Bric::Biz::Asset::Business::Story->lookup({
+                id => $id->value,
+            });
             throw_ap(error => "Unable to find story for story_id \"".$id->value."\".")
                 unless $obj;
 
         } elsif ($id->name eq 'media_id') {
             $type = 'media';
-            $obj  = Bric::Biz::Asset::Business::Media->lookup(
-                                         { id => $id->value });
+            $obj  = Bric::Biz::Asset::Business::Media->lookup({
+                id => $id->value,
+            });
             throw_ap(error => "Unable to find media object for media_id \"".$id->value."\".")
                 unless $obj;
         } elsif ($id->name eq 'template_id') {
             $type = 'formatting';
-            $obj  = Bric::Biz::Asset::Formatting->lookup(
-                                         { id => $id->value });
-            throw_ap(error => "Unable to find template object for template_id \"".$id->value."\".")
+            $obj  = Bric::Biz::Asset::Formatting->lookup({
+                id => $id->value,
+            });
+            throw_ap(error => "Unable to find template object for template_id \""
+                            . $id->value."\".")
                 unless $obj;
         } else {
             throw_ap(error => "Unknown element found in move_ids list.");
         }
 
         # check check check
-        throw_ap(error => "Cannot move checked-out $types{$type}: \"".$id->value."\".")
+        throw_ap(error => "Cannot move checked-out $types{$type}: \""
+                       . $id->value."\".")
             if $obj->get_checked_out;
 
         # Check for EDIT permission
-        throw_ap(error => "Access denied.")
-          unless chk_authz($obj, EDIT, 1);
+        throw_ap(error => "Access denied.") unless chk_authz($obj, EDIT, 1);
 
         # are we moving to a new workflow?
         if ($to_workflow) {
@@ -796,49 +804,54 @@ sub move {
                 $ok = 1 if $to_workflow->get_type == TEMPLATE_WORKFLOW;
             }
             throw_ap(error => __PACKAGE__ . "::move : cannot move $types{$type} \""
-                       . $id->value . "\" to "
-                       . "workflow \"$args->{workflow}\" : type mismatch.")
+                            . $id->value . "\" to "
+                            . "workflow \"$args->{workflow}\" : type mismatch.")
               unless $ok;
 
             # move to new workflow
             $obj->set_workflow_id($to_workflow->get_id);
-            log_event("${type}_add_workflow", $obj,
-                      { Workflow => $to_workflow->get_name });
+            log_event("${type}_add_workflow", $obj, {
+                Workflow => $to_workflow->get_name
+            });
         } else {
             # might need to assign a workflow here, if this item was just
             # published, for example.
             unless ($obj->get_workflow_id) {
-                my $workflow = (Bric::Biz::Workflow->list
-                                ({ type => $wf_types{$type} }))[0];
+                my $workflow = (Bric::Biz::Workflow->list({
+                    type => $wf_types{$type},
+                }))[0];
 
                 $obj->set_workflow_id($workflow->get_id);
-                log_event("${type}_add_workflow", $obj,
-                          { Workflow => $workflow->get_name });
+                log_event("${type}_add_workflow", $obj, {
+                    Workflow => $workflow->get_name,
+                });
 
                 my $desk = $workflow->get_start_desk;
-                $desk->accept({'asset' => $obj});
+                $desk->accept({asset => $obj});
                 $desk->save;
-                log_event("${type}_moved", $obj, { Desk => $desk->get_name });
+                log_event("$type\_moved", $obj, { Desk => $desk->get_name });
             }
         }
 
         # get origin desk
         my $from_desk = $obj->get_current_desk;
         throw_ap(error => "Cannot move $types{$type} without a current desk: \""
-                   . $id->value . "\".)")
+                        . $id->value . "\".)")
             unless $from_desk;
 
         # don't move if we're already here
         unless ($from_desk->get_id == $to_desk->get_id) {
-            $from_desk->transfer({asset => $obj,
-                                  to    => $to_desk});
+            $from_desk->transfer({
+                asset => $obj,
+                to    => $to_desk,
+            });
             $from_desk->save;
             $to_desk->save;
         }
         $obj->save;
 
         # log the move
-        log_event("${type}_moved", $obj, {Desk => $to_desk->get_name});
+        log_event("$type\_moved", $obj, {  Desk => $to_desk->get_name });
     }
 
 
