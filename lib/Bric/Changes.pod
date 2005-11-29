@@ -47,7 +47,7 @@ C<media_keyword> tables. [David]
 
 =item *
 
-Documented created or updated via SOAP will now set the publish date to the
+Documents created or updated via SOAP will now set the publish date to the
 same value as the first publish date if the latter is set and the former is
 not. [David]
 
@@ -83,6 +83,13 @@ Perry-Thistle for reporting the permissions bug with the 1.8.7 upgrade script.
 
 Fixed file names for files uploaded by MSIE on Windows. Reported by Wayne
 Slavin. [David]
+
+=item *
+
+Modified the C<set_publish_status()> and C<set_published_version()> methods of
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business> so that they each
+make sure that the other is set. This will hopefully prevent only one from
+being set. [David]
 
 =back
 

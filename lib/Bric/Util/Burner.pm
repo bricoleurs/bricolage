@@ -1157,8 +1157,8 @@ sub publish {
         $ba->set_publish_status(1);
         # Set published version if we've reverted
         # (i.e. unless we're republishing published_version)
-        my $pubversion = $ba->get_published_version || 0;
-        if ($ba->get_version > $pubversion) {
+        my $pubversion = $ba->get_published_version;
+        unless (defined $pubversion && $ba->get_version <= $pubversion) {
             $ba->set_published_version($ba->get_version);
         }
         # Now log that we've published and get it out of workflow.

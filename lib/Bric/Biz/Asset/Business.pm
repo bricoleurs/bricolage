@@ -1434,6 +1434,52 @@ sub set_publish_date {
         # First publish. Set both dates.
         $self->_set([qw(publish_date first_publish_date)], [$date, $date]);
     }
+    return $self;
+}
+
+################################################################################
+
+=item $self = $story->set_publish_status($bool)
+
+Sets the publish status to a true or false value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> Also sets the first C<published_version> to the value stored
+in the C<version> attribute if it hasn't been set before.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_publish_status {
+    my ($self, $val) = @_;
+    my ($pubv, $curv) = $self->_get(qw(published_version version));
+    return $self->_set([qw(publish_status published_version)] => [$val, $curv])
+        if $val && !$pubv;
+    return $self->_set(['publish_status'] => [$val]);
+}
+
+################################################################################
+
+=item $self = $story->set_published_version($version)
+
+Sets the published version of the document.
+
+B<Throws:> NONE.
+
+B<Side Effects:> Also sets the first C<publishstatus> if it's set to a false
+value.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_published_version {
+    my ($self, $version) = @_;
+    return $self->_set([qw(publish_status published_version)] => [ 1, $version])
+        if $version;
+    return $self->_set([qw(published_version)] => [$version]);
 }
 
 ################################################################################

@@ -1310,16 +1310,7 @@ This is really the deploy date
 
 =cut
 
-sub set_publish_status {
-    my $self = shift;
-    my ($status) = @_;
-
-    if ($status ne $self->get_deploy_status) {
-        $self->set_deploy_status($status);
-    }
-
-    return $self;
-}
+sub set_publish_status { $_[0]->set_deploy_status($_[1]) }
 
 ################################################################################
 
