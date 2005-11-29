@@ -35,6 +35,7 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
+use lib './lib'; # To get local version number.
 
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
@@ -46,11 +47,6 @@ unless ($> == 0) {
 our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
                                    '/usr/local/bricolage' );
 our $INSTALL;
-
-# determine version being installed
-use lib './lib';
-require Bric;
-our $VERSION = $Bric::VERSION;
 
 print q{
 ##########################################################################
@@ -90,6 +86,7 @@ sub get_bricolage_root {
     hard_fail("The Bricolage Installation found in $UPGRADE{BRICOLAGE_ROOT}\n",
               "was installed manually and cannot be automatically upgraded.")
         unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
+    $ENV{BRICOLAGE_ROOT} = $UPGRADE{BRICOLAGE_ROOT};
 }
 
 # read the install.db file from the chosen bricolage root
@@ -105,6 +102,11 @@ sub read_install_db {
 # the versions need to upgrade to current version
 sub check_version {
     my @todo;
+
+    # determine version being installed (Only after BRICOLAGE_ROOT has been
+    # set up so that bricolage.conf is properly read-in.
+    require Bric;
+    my $VERSION = Bric->VERSION;
 
     # make sure we're not trying to install the same version twice
     if ($INSTALL->{VERSION} eq $VERSION) {

@@ -64,6 +64,12 @@ The verson 1.8.8 upgrade script that moves media files around no longer fails
 when the media directory doesn't exist (becase no media documents have been
 created). Reported by Wayne Slavin. [David]
 
+=item *
+
+Upgrades no longer fail if $BRICOLAGE_ROOT is not set and the instance of
+Bricolage to be upgraded is somewhere ohter than F</usr/local/bricolage>.
+Reported by Nate Perry-Thistle. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
