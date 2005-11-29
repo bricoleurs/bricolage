@@ -58,6 +58,12 @@ and time if it was not specified via an argument. This will hopefully fix
 instances of stories and media in the database with the C<first_publish_date>
 set but not the C<publish_date>. [David]
 
+=item *
+
+The verson 1.8.8 upgrade script that moves media files around no longer fails
+when the media directory doesn't exist (becase no media documents have been
+created). Reported by Wayne Slavin. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
