@@ -885,7 +885,7 @@ sub handle_upload {
     my $fh = $upload->fh;
     my $agent = $ENV{HTTP_USER_AGENT};
     my $filename = $agent =~ /windows/i && $agent =~ /msie/i
-        ? Bric::Util::Trans::FS->base_name($upload->filename, 'MSWin32')
+        ? Bric::Util::Trans::FS->base_name($upload->filename, 'win32')
         : $upload->filename;
     $media->upload_file($fh, $filename, $upload->type, $upload->size);
     log_event('media_upload', $media);
