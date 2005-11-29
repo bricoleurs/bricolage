@@ -48,19 +48,28 @@
 % my $i = 0;
 % foreach my $r (0..$#{$data}) {
 % my $o_id = shift @{$data->[$r]};
-% my $class = qq{ class="} . ($i % 2 ? "odd" : "even") . qq{"};
-% $i++;
+% my $class = qq{ class="} . ($r % 2 ? "odd" : "even") . qq{"};
   <tr<% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
 <%perl>;
   # Output for each field.
+  my $remainingCols = $cols;
   foreach my $c (0..$#{$data->[$r]}) {
       my $val   = $data->[$r]->[$c];
       my $class = qq{ class="selected"} if ($c eq $sort_col);
       $m->out(qq{    <td$class>$val</td>\n});
+      $remainingCols--;
+  }
+
+  if ($actions) {
+      foreach my $c (0..$#{$actions->[$r]}) {
+          my $val   = $actions->[$r]->[$c];
+          $m->out(qq{    <td class="action">$val</td>\n});
+          $remainingCols--;
+      }
   }
 
   # Fill out the rest of the columns.
-  foreach ((@{$data->[$r]}+1)..$cols) {
+  foreach (1..$remainingCols) {
       $m->out(qq{<td></td>\n});
   }
 
@@ -93,6 +102,7 @@ $object
 $fields
 $state
 $data
+$actions => undef
 $rows
 $cols
 $userSort # Whether users can resort the list.

@@ -425,17 +425,17 @@ if ($limit) {
       int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
 }
 
-my ($rows, $cols, $data) = $build_table_data->($sort_objs,
-                                               $meth,
-                                               $fields,
-                                               $select,
-                                               $profile,
-                                               $alter,
-                                               \%featured_lookup,
-                                               $count,
-                                               $limit,
-                                               $offset,
-                                               $pagination);
+my ($rows, $cols, $data, $actions) = $build_table_data->($sort_objs,
+                                                         $meth,
+                                                         $fields,
+                                                         $select,
+                                                         $profile,
+                                                         $alter,
+                                                         \%featured_lookup,
+                                                         $count,
+                                                         $limit,
+                                                         $offset,
+                                                         $pagination);
 
 # Call the element to show this list
 $m->comp("$style.mc",
@@ -443,6 +443,7 @@ $m->comp("$style.mc",
          object          => $object,
          fields          => $fields,
          data            => $data,
+         actions         => $actions,
          rows            => $rows,
          pkg             => $pkg,
          state           => $state,
@@ -551,7 +552,7 @@ my $output_profile_controls = sub {
         }
 
         push @cntl, qq{<a href="$url$value" class="redLink">}
-            . $lang->maketext($label) . '</a>&nbsp;';
+            . $lang->maketext($label) . '</a>';
     }
 
     return @cntl;
@@ -561,12 +562,12 @@ my $build_table_data = sub {
     my ($sort_objs, $meth, $fields, $select, $profile, $alter, $featured,
         $count, $limit, $offset, $pagination) = @_;
     my $data = [[map { $meth->{$_}->{'disp'} } @$fields]];
+    my $actions;
     my $cols = scalar @$fields;
     my $rows = 1 + scalar @$sort_objs;
     my $sel_cols = 0;
     my $prf_cols = 0;
-    # Start at row 1 since we already have $fields loaded in $data
-    my $r = 1;
+    my $r = 0;
 
     my $slice;
     if ($pagination) {
@@ -611,12 +612,12 @@ my $build_table_data = sub {
         # MAX function
         $prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
 
-        push @{$data->[$r]}, @prf if @prf;
+        push @{$actions->[$r]}, @prf if @prf;
 
         ## Add the select items if any
         if (@sel) {
             $sel_cols = 1;
-            push @{$data->[$r]}, join('&nbsp;', @sel);
+            push @{$actions->[$r]}, join('&nbsp;', @sel);
         }
 
         $r++;
@@ -624,7 +625,7 @@ my $build_table_data = sub {
 
     $cols += $sel_cols + $prf_cols;
 
-    return ($rows, $cols, $data);
+    return ($rows, $cols, $data, $actions);
 };
 
 my $build_constraints = sub {
