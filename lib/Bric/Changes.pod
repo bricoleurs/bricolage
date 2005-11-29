@@ -70,6 +70,15 @@ Upgrades no longer fail if $BRICOLAGE_ROOT is not set and the instance of
 Bricolage to be upgraded is somewhere ohter than F</usr/local/bricolage>.
 Reported by Nate Perry-Thistle. [David]
 
+=item *
+
+Backported database upgrade permissions changes from Bricolag 1.10 so that
+they permissions are set for the super user for upgrade scripts such as
+F<inst/upgrade/1.8.7/move_media.pl> and as the PostgreSQL user only when an
+upgrade script loads F<inst/upgrade/lib/bric_upgrade.pm>. Thanks to Nate
+Perry-Thistle for reporting the permissions bug with the 1.8.7 upgrade script.
+[David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)

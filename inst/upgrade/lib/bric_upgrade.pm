@@ -48,14 +48,47 @@ database. The idea is that all changes to the Bricolage database that are
 required by and upgrade will be performed in a single transaction via this
 module. It provides functions to test to see if an upgrade has previously been
 performed, as well as functions to update the database. Furthermore, it will
-automatically process -p and -u arguments to your upgrade script so that the
-change can be done by a database user with administrative permissions.
+automatically process arguments to your upgrade script so that the change can
+be done by a database user with administrative permissions.
 
 This module assumes that the upgrades performed by a single upgrade script
 must be carried out atomically; either all of the changes are committed, or
 none are. Thus, this module starts a database transaction as soon as it loads,
 and rolls back any changes if any exceptions are thrown. If all changes
 succeed, then the transaction will be commited when the script exits.
+
+If the C<-i> argument is specified on the command-line (as it is by
+F<inst/db_upgrade.pl>, this module will also switch the user context to the
+PostgreSQL administrative user. This is to allow trusted authentication to
+work properly. All upgrades must therefore be run the super user, so that the
+switch works.
+
+For those scripts that do not wish to run as the PostgreSQL user, such as to
+delete files from the existing Bricolage installation, just don't load this
+module and you'll be good to go.
+
+=head1 OPTIONS
+
+=over
+
+=item * -u username
+
+The PostgreSQL super user's username.
+
+=item * -p password
+
+The PostgreSQL super user's password.
+
+=item * -s username
+
+The username of the PostgreSQL system user, usually "postgres".
+
+=item * -i uid
+
+The UID of the PostgreSQL system user, used to switch to that user's context
+while scripts are running.
+
+=back
 
 =cut
 
@@ -78,10 +111,10 @@ use Cache::FileCache;
 
 # Load the options.
 use Getopt::Std;
-our ($opt_u, $opt_p);
+our ($opt_u, $opt_p, $opt_i, $opt_s);
 
 BEGIN{
-    getopts('u:p:');
+    getopts('u:p:i:s:');
     # Set the db admin user and password to some reasonable defaults.
     $ENV{BRIC_DBI_PASS} ||= $opt_p ||= 'postgres';
     $ENV{BRIC_DBI_USER} ||= $opt_u ||= 'postgres';
@@ -119,6 +152,13 @@ $@
 
 ######################################################################
 END
+}
+
+##############################################################################
+# Switch to the PostgreSQL systsem user.
+if ($opt_i) {
+    $> = $opt_i;
+    die "Failed to switch EUID to $opt_i ($opt_s).\n" unless $> == $opt_i;
 }
 
 ##############################################################################
@@ -266,14 +306,18 @@ function will return true if a column has been made C<NOT NULL> by the use of
 a constraint rather than a C<NOT NULL> in the statement that created the
 column.
 
+An optional fifth argument specifies the column type. The function will return
+true if the column exists and is of the specified type. Typical examples
+include "integer", "smallint", "boolean", "text", and "character varying(64)".
+
 Of course, if both optional arguments are passed to C<test_column()>, it will
 test that the column exists, that it is at least the size specified, and that
 it is C<NOT NULL>.
 
 =cut
 
-sub test_column($$;$$) {
-    my ($table, $column, $size, $not_null) = @_;
+sub test_column($$;$$$) {
+    my ($table, $column, $size, $not_null, $type) = @_;
     my $sql = qq{
         SELECT 1
         FROM   pg_attribute a, pg_class c
@@ -292,6 +336,11 @@ sub test_column($$;$$) {
     if (defined $not_null) {
         $not_null = $not_null ? 't' : 'f';
         $sql .= "           AND a.attnotnull = '$not_null'";
+    }
+
+    if (defined $type) {
+        $sql .= "           AND format_type(a.atttypid, a.atttypmod) = '"
+          . lc $type . "'";
     }
 
     return fetch_sql($sql)

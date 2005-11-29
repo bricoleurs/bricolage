@@ -35,7 +35,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
+use File::Path;
 
 our $UPGRADE;
 do "./upgrade.db" or die "Failed to read upgrade.db : $!";
@@ -44,11 +44,14 @@ do "./config.db" or die "Failed to read config.db : $!";
 our $PG;
 do './postgres.db' or die "Failed to read postgres.db : $!";
 
-# Switch to postgres system user
-print "Becoming $PG->{system_user}...\n";
-$> = $PG->{system_user_uid};
-die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
-    unless $> == $PG->{system_user_uid};
+# Create a directory that the PG user can, uh, use.
+my $tmpdir = catdir 'inst', 'db_tmp';
+eval { mkpath $tmpdir };
+if (my $err = $@) {
+    die "Cannot create '$tmpdir': $err\n";
+}
+chown $PG->{system_user_uid}, -1, $tmpdir
+  or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
 
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
@@ -74,9 +77,15 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     closedir DIR;
 
     foreach my $script (@scripts) {
-	print "Running '$perl $script'.\n";
-	my $ret = system("$perl", $script, '-u', $PG->{root_user},
-                         '-p', $PG->{root_pass});
+        print "Running '$perl $script'.\n";
+        my $ret = system(
+            "$perl", $script,
+            '-u', $PG->{root_user},
+            '-p', $PG->{root_pass},
+            '-i', $PG->{system_user_uid},
+            '-s', $PG->{system_user},
+        );
+
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;
     }
