@@ -41,8 +41,10 @@ our %Lexicon = (
   '[quant,_1,Alert] acknowledged.' => '[quant,_1,Alert,Alerts] acknowledged.',
   '[quant,_1,Contributor] "[_2]" associated.' => '[quant,_1,Contributor,Contributors] "[_2]" assocuated.',
   '[quant,_1,Template] deployed.' => '[quant,_1,Template,Templates] deployed.',
-  '[quant,_1,media,media] published.' => '[quant,_1,media,media] published',
-  '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] published',
+  '[quant,_1,media,media] published.' => '[quant,_1,media,media] published.',
+  '[quant,_1,media,media] expired.' => '[quant,_1,media,media] expired.',
+  '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] published.',
+  '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
  _AUTO => 1
 );
 

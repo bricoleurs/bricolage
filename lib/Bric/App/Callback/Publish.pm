@@ -129,6 +129,7 @@ sub publish : Callback {
 
     # Iterate through each story and media object to be published.
     my $count = @$stories;
+    my $exp_count = 0;
     foreach my $sid (@$stories) {
         # Schedule
         my $s = Bric::Biz::Asset::Business::Story->lookup({id => $sid});
@@ -142,16 +143,8 @@ sub publish : Callback {
         });
         $job->save();
         log_event('job_new', $job);
+        $self->record_action($s, $job, \$count, \$exp_count);
 
-        # Report publishing if the job was executed on save, otherwise
-        # report scheduling
-        my $exp_date = $s->get_expire_date(ISO_8601_FORMAT);
-        my $saved = $exp_date && $exp_date lt $param->{pub_date}
-            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
-            : $job->get_comp_time ? 'published' : 'scheduled for publication';
-
-        add_msg(qq{Story "[_1]" $saved.},  $s->get_title)
-           if $count <= 3;
         # Remove it from the desk it's on.
         if (my $d = $s->get_current_desk) {
             $d->remove_asset($s);
@@ -171,8 +164,12 @@ sub publish : Callback {
         }
         $s->save();
     }
+    add_msg('[quant,_1,story,stories] published.', $count - $exp_count)
+        if $count > 3;
+    add_msg('[quant,_1,story,stories] expired.',   $exp_count) if $exp_count;
 
     $count = @$media;
+    $exp_count = 0;
     foreach my $mid (@$media) {
         # Schedule
         my $m = Bric::Biz::Asset::Business::Media->lookup({id => $mid});
@@ -186,14 +183,8 @@ sub publish : Callback {
         });
         $job->save();
         log_event('job_new', $job);
-        # Report publishing if the job was executed on save, otherwise
-        # report scheduling
-        my $exp_date = $m->get_expire_date(ISO_8601_FORMAT);
-        my $saved = $exp_date && $exp_date lt $param->{pub_date}
-            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
-            : $job->get_comp_time ? 'published' : 'scheduled for publication';
-        add_msg(qq{Media "[_1]" $saved.}, $m->get_title)
-          if $count <= 3;
+        $self->record_action($m, $job, \$count, \$exp_count);
+
         # Remove it from the desk it's on.
         if (my $d = $m->get_current_desk) {
             $d->remove_asset($m);
@@ -206,6 +197,9 @@ sub publish : Callback {
         }
         $m->save();
     }
+    add_msg('[quant,_1,media,media] published.', $count - $exp_count)
+        if $count > 3;
+    add_msg('[quant,_1,media,media] expired.',   $exp_count) if $exp_count;
 
     unless (exists($param->{'instant'}) && $param->{'instant'}) {
         # redirect_onload() prevents any other callbacks from executing.
@@ -213,5 +207,20 @@ sub publish : Callback {
     }
 }
 
+sub record_action {
+    my ($self, $doc, $job, $count_ref, $exp_count_ref) = @_;
+    my $exp_date = $doc->get_expire_date(ISO_8601_FORMAT);
+    my $expired  = $exp_date && $exp_date lt $job->get_sched_time(ISO_8601_FORMAT);
+    if ($$count_ref <= 3) {
+        my $saved = $expired
+            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
+            : $job->get_comp_time ? 'published' : 'scheduled for publication';
+        add_msg(ucfirst($doc->key_name) . qq{ "[_1]" $saved.},  $doc->get_title);
+    } else {
+        if ($expired) {
+            $$exp_count_ref++;
+        }
+    }
+}
 
 1;
