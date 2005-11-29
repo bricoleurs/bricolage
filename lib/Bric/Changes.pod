@@ -79,6 +79,11 @@ upgrade script loads F<inst/upgrade/lib/bric_upgrade.pm>. Thanks to Nate
 Perry-Thistle for reporting the permissions bug with the 1.8.7 upgrade script.
 [David]
 
+=item *
+
+Fixed file names for files uploaded by MSIE on Windows. Reported by Wayne
+Slavin. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
