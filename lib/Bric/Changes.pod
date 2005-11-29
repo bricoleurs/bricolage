@@ -34,6 +34,12 @@ than the publish date, the UI will now properly report that the document has
 been "expired", rather than "published". Thanks to Simon Wilcox for the spot.
 [David]
 
+=item *
+
+The Bulk Publish interface in the UI now displays the name of the site
+alongside the catgory if there is more than one site, so as to disambiguate
+the list of categories. Reported by Marshall Roch. [David]
+
 =back
 
 =head2 Bug Fixes
