@@ -693,7 +693,7 @@ The current element object
 
 =item $burner
 
-The burn system object
+The burner object
 
 =back
 
@@ -879,6 +879,10 @@ element of a "column" story) C<get_object_order()> will return 1.
 
 Return the key name of the container element.
 
+=item C<< $element->get_name >>
+
+Return the name of the container element.
+
 =back
 
 =head3 Field Object Methods
@@ -892,310 +896,588 @@ methods here:
 
 =over
 
-=item $delem->get_value
+=item C<< $field->get_value($format) >>
 
-Returns the data associated with this data element.
+Returns the field's value; that is, the content. The C<strftime> $format
+argument is optional, and only used for date fields. If not provided, it will
+default to the value stored in the "Date/Time Format" global preference. See
+L<DateTime|DateTime> for full documentation of the C<strftime> format.
 
-=item $delem->get_place
+=item C<< $field->get_place >>
 
-Same concept as the container element 'get_place' method.
+Content authors have the opportunity to arrange the elements of their story in
+a particular order. This method returns a number giving the field's place
+relative to all of the other subelements of the field's parent element.
 
-=item $delem->get_object_order
 
-Same concept as the container element 'get_object_order' method.
+=item C<< $field->get_object_order >>
 
-=item $delem->get_key_name
+For a field that can occur more than once in a stor, this method returns its
+place among fields of the same type. For example a "column" story might
+contain several "paragraph" container elements. If a field happens to be the
+second of three "paragraph" field elements, C<get_object_order()> will return
+2.
 
-Returns the name of this data element.
+=item C<< $field->get_key_name >>
+
+Returns the key name of this field element.
+
+=item C<< $field->get_name >>
+
+Returns the name of this field element.
 
 =back
 
-Finally, to distinguish between data and container element objects you can call
-this method on any type of element:
+And finally, both the field and container element classes have a single method
+to help you easily disambiguate containers from fields in your template code:
 
 =over
 
-=item $element->is_container
+=item C<< $element->is_container >>
 
-Returns 1 if this is a container element object and 0 if this is a data element
-object.
+Returns 1 if $eelement is a container element object and 0 if it is a field
+element.
 
 =back
 
-I<Burn System Object Methods>
+=head3 Burner Object Methods
 
-Here are the methods available via the burn system object.
+The burner object handles the burning of a story; that is, pushing it through
+templates and writing the resulting formatted content to disk. Each templating
+architecture has its own burner subclass, so there is some variation in its
+interface depending on what templating architecture you're using. You can
+read the documentation of the complete burner interface and the interfaces of
+its subclasses in:
 
 =over
 
-=item $burner->chain_next
+=item L<Bric::Util::Burner|Bric::Util::Burner>
 
-From an autohandler template, this calls the next autohandler, or the specific
-story template.
+The burner base class, wher most methods are defined.
 
-=item $burner->display_element($element)
+=item L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>
 
-This takes either a data element object or a container element object.
+The Mason burner class.
 
-Given a container element object, this method will locate the proper template
-and output the results of burning that template.
+=item L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>
 
-Given a data element object, this method will simply output the data of that
-data element.
+The Template Toolkit burner class.
 
-=item $html = $burner->sdisplay_element($element)
+=item L<Bric::Util::Burner::PHP|Bric::Util::Burner::PHP>
 
-An sprintf version of $burner->display_element($element),
-that is it returns the HTML as a string instead of directly
-outputting it to the browser.
+The PHP burner class.
+
+=item L<Bric::Util::Burner::Template|Bric::Util::Burner::Template>
+
+The HTML::Template burner class.
+
+=back
+
+But let's cover the most important methods here (HTML::Template users are
+encouraged to read L<Bric::HTMLTemplate|Bric::HTMLTemplate>, since its
+interface is pretty different from the other templating architectures).
+
+=over
+
+=item C<< $burner->display_element($element) >>
+
+Outputs the content of the field or container element passed as its argument.
+For field elements, this is synonymous with calling C<< $field->get_value >>.
+For container elements, C<display_element() searches up the URI path of the
+category to which the story is currently being published for the relevant
+element template. If it finds it, it executes it, adds its output to the
+output buffer, and returns control to the calling template.
+
+=item C<< $burner->sdisplay_element($element) >>
+
+This method is identical to C<display_element()> except that it returns the
+output rather than adding it to the output buffer.
+
+=item C<< $burner->display_pages(\@key_names) >>
+
+This method works like C<display_element()>, only it has some magic to format
+only one element at a time, output its contents, and write a file, then start
+the burn of the next page, untilall pages specified by the array reference of
+key names have been burned to separate files to disk. All template code above
+and below the call to C<display_pages()> will be executed for each page in the
+story.
+
+=item C<< $burner->chain_next >>
+
+This is a Mason-specific method. From a category template, it executes the
+next category template or the specific story template. It should not be called
+from any other template.
+
+=item C<< $burner->get_mode >>
+
+Returns a value indicating in what mode the burner is running. The value
+returned can be compared to three constants imported into the template
+namespace: C<PUBLISH_MODE>, C<PREVIEW_MODE>, and (for completeness)
+C<SYNTAX_MODE>. Useful for when your template needs to have different
+behaviors between previews and publishes.
+
+=item C<< $burner->set_encoding($encoding) >>
+
+Sets the character encoding output by the template. Defaults to "utf-8" in the
+Mason, Template Toolkit, and HTML::Template burners, and "raw" in the PHP
+burner. With the exception of the PHP burner, you should change the encoding
+if your template is converting its output from UTF-8 (which is how all content
+is stored in the database) to some other encoding so that the content gets
+properly written to disk.
+
+=item C<< $burner->get_oc >>
+
+Returns the L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel> object
+through wich the story is being burned. Useful when using output channel
+includes, where the template executing may be in an output channel included by
+the output channel through which the story is being burned.
+
+=item C<< $burner->get_cat >>
+
+Returns the L<Bric::Biz::Category|Bric::Biz::Category> object to which the
+story is currently being burned. Useful for stories associated with multiple
+categoris, as each category association triggers a separate burn.
+
+=item C<< $burner->best_uri($doc) >>
+
+Returns a C<URI|URI> object representing the best URI for the document passed.
+Useful for multi-site Bricolage installations, where one story might wich to
+create a link to another story in a different site. In that case, it will
+provide the best URI to use, either to an alias in the same site as the current
+site, or to a fully qualified URL to the other site.
+
+=item C<< $burner->get_page >>
+
+Returns the zero-indexed page number currently being burned. For multipage
+stories, each page may be output to a separate file. The first page will
+have the value "0", the second the value "1", and so on.
+
+=item C<< $burner->publish_another($doc, $pub_time) >>
+
+If you want the publication of a story to trigger the publication of some
+other story or of an unrelated media document, you can look up the document
+and pass it to C<publish_another()>. By default, the story passed will be
+scheduled for publish at the same time as the current story is being
+published. Pass in an ISO-8601-formatted date string as the second argument to
+schedule the document for publication at a later date. During previews, this
+method simply retruns without doing anything.
+
+=item C<< $burner->preview_another($doc, $oc_id) >>
+
+Like C<publish_another()>, but triggers the preview of another document,
+rather than its publication. Useful in preview mode when you want to trigger
+another document for preview. The second argument, an output channel object
+ID, is optional. If not present, the document will be previewed in either the
+same output channel as is currently being previewed, or in its primary output
+channel. In publish mode, this method method simply retruns without doing
+anything.
+
+=item C<< $burner->blaze_another($doc) >>
+
+This method can be called instead of C<preview_another()> or
+C<publish_another()>, and will pass through to the proper method depending on
+the mode. Furthermore, in preview mode, it will burn the document to all
+associated output channels, rather than just the current or primary output
+channel as in C<preview_another()>.
 
 =back
 
 =head2 A Template Example
 
-For this template example, let's use the 'column' Element included in the
-Bricolage system as our story. This 'column' is a little different than the one
-we've been discussing. Here is the layout for this Element:
+Now let's take a look at some template code. For this example, we'll use the
+"column" element type included in a default Bricolage install for our story.
+This "Column" is a little different than the one we've been discussing; here's
+the definition for this element type:
 
 =over
 
-=item Element Column
+=item Column
+
+Fields:
 
 =over
 
-=item *
-
-Data element 'deck'
-
-=item *
-
-Container element 'page'
+=item deck
 
 =back
 
-=item Element Page
+Subelements:
+
+=item page
+
+=back
+
+=item Page
+
+Fields:
 
 =over
 
-=item *
+=item paragraph
 
-Data element 'paragraph'
+=item pull_quote
 
-=item *
+=item next
 
-Data element 'pull quote'
-
-=item *
-
-Data element 'next'
-
-=item *
-
-Data element 'previous'
-
-=item *
-
-Container element 'inset'
+=item previous
 
 =back
 
-=item Element Inset
+Subelements:
 
 =over
 
-=item *
+=item inset
 
-Data element 'copy'
+=back
+
+=item Inset
+
+Fields:
+
+=over
+
+=item copy
 
 =back
 
 =back
 
-There are few things to note here. Notice that this story structure is 3 levels
-deep rather than our two levels before. Additionally, the 'page' Element was
-created with a flag marking it as a paginated Element. This means that Mason
-will automatically start a new output file for every 'page' Element burned,
-provided it is burned with the display_pages() method.
+Note that this story structure is three levels deep rather than the two levels
+we were discussing before. Furthermore, the "page" element type was created
+with a flag marking it as a paginated element type. We'll rely on its marking
+as a page to pass the key name "page" to C<display_pages()> so as to output
+all of the "page" elements as separate files during the burn.
 
-Here is the code for the 'column' template:
+Here is the Mason code for the "column" template:
 
-    <!-- The column element -->
-    <html>
-        <head>
-            <title><% $story->get_title %></title>
-        </head>
-        <body>
+  <html>
+    <head>
+      <title><% $story->get_title %></title>
+    </head>
+    <body>
 
-    % $burner->display_pages('page');
+  % $burner->display_pages('page');
 
-        </body>
-    </html>
+    </body>
+  </html>
 
-This code simply iterates through each 'page' container element in the 'column'
-story and displays it. Remember that the page element was created with the
-'paginated' flag and will start a new output file so we'll save the real HTML
-for the 'page' element. Note that we skip the 'deck' data element. This element
-is meant for when this is used in a related story context. Using related stories
-will be discussed later in another document.
+Here is the Template Toolkit version:
 
-Next let's look at some example code for the 'page' element:
+  <html>
+    <head>
+      <title>[% story.get_title %]</title>
+    </head>
+    <body>
 
-    <!-- The page element -->
-    % my $page = $burner->get_page;
+  [% burner.display_pages('page') %]
 
-    <!-- Only display this title if we are on the first page -->
-    % unless ($page) {
-            <h1><% $story->get_title %></h1>
-    % }
+    </body>
+  </html>
 
-    <!-- Show the content for this element -->
-    <%perl>
-        foreach my $e ($element->get_elements) {
-            if ($e->has_name('paragraph')) {
-                $m->out('<p>');
-                $burner->display_element($e);
-                $m->out('</p>');
-            } elsif ($e->has_name('pull_quote')) {
-                $m->out('<p><i>');
-                $burner->display_element($e);
-                $m->out('</i></p>');
-            } elsif ($e->has_name('inset')) {
-                $burner->display_element($e);
-            }
-        }
+and the PHP:
 
-        my $next_txt = $element->get_value('next');
-        my $prev_txt = $element->get_value('previous');
-        my $next = $burner->next_page_file;
-        my $prev = $burner->prev_page_file;
-    </%perl>
+  <html>
+    <head>
+      <title><?= $story->get_title() ?></title>
+    </head>
+    <body>
 
-    <!-- Show previous page link if it exists -->
-    % if ($prev and $prev_txt) {
-            [Page <% $page %>]&lt;&lt;&lt;
-            <a href="<% $prev %>"><% $prev_txt %></a>
-    % }
+  <?php $burner->display_pages('page'); ?>
 
-            &nbsp;&nbsp;&nbsp;
+    </body>
+  </html>
 
-    <!-- Show next page link if it exists -->
-    % if ($next and $next_txt) {
-            <a href="<% $next %>"><% $next_txt %></a>
-            &gt;&gt;&gt;[Page <% $page + 2 %>]
-    % }
+Note that the code is essentially identical in all three templating
+architectures; only the templating syntax varies.
 
-This code outputs the main HTML, outputting a header if this is the first page
-of the column, followed by the data for this story. After the data is output the
-'previous' and 'next' links are displayed. Note that in the foreach loop
-iterating over all elements the method 'display_element' is used to display both
-data and container elements. For the data elements we could have used:
+The call to C<display_pages()> simply iterates through each "page" container
+element in the "column" story and displays it. Remember that the page element
+was created with the 'paginated' flag and will start a new output file for
+each page. Also, note that we haven't output the contents of the "deck" field.
+This field is meant for use as a teaser when another story creates a link to
+this story. (Formatting forrelated stories is covered in
+L<Bric::AdvTemplates|Bric::AdvTemplates>.)
 
-    $m->out($e->get_value);
+Next let's look at some example code for the "page" element template. Here's
+the Mason version:
 
-to return the data. Also, it is important to realize that there are no
-restrictions against having a container and a data element with the same name.
-While this is unlikely to happen, if it were true for the 'column' element the
-above code would run fine, but may not output what is expected.
+  % unless ($burner->get_page) {
+  %   # Only output the title on the first page.
+      <h1><% $story->get_title %></h1>
+  % }
 
-Finally here is the template code for the 'inset' container element:
+  <%perl>;
+  foreach my $e ($element->get_elements(qw(paragraph pull_quote inset))) {
+      my $key_name = $e->get_key_name;
 
-    <!-- The inset element -->
-    <table width="570" border="2">
-        <tr><td>
-    % $element->get_value('copy');
-        </td></tr>
-    </table>
+      if ($key_name eq 'paragraph') {
+          $m->print('<p>', $e->get_value, "<p>\n");
+      }
 
+      elsif ($key_name eq 'pull_quote') {
+          $m->print('<blockquote>', $e->get_value, "<blockquote>\n");
+      }
 
-That's about it. The above code for the three Elements, once used to create new
-templates and deployed, should allow you to publish 'column' stories. Make sure
-you create your templates in the root category to ensure you can publish a story
-to any category.
+      else {
+          # It's an inset, which is a container element.
+          $burner->display_element($e);
+      }
+  }
+  </%perl>
+
+  <div id="pagenav">
+  % if (my $prev_page = $burner->prev_page_file) {
+      <a href="<% $prev_page %>">&lt; <%
+          $element->get_value('previous') || 'Back'
+      %></a>
+  % }
+  % if (my $next_page = $burner->next_page_file) {
+      <a href="<% $next_page %>"><%
+          $element->get_value('next') || 'Next'
+      %> &gt;</a>
+  % }
+  </div>
+
+Here's the Template Toolkit version:
+
+  [%- UNLESS $burner.get_page %]
+      [% # Only output the title on the first page. -%]
+      <h1>[% story.get_title %]</h1>
+  [% END -%]
+
+  [% FOREACH e = element.get_elements('paragraph', 'pull_quote', 'inset') -%]
+      [% SWITCH e.get_key_name -%]
+
+      [%- CASE 'para' -%]
+          <p>[% e.get_value %]</p>
+
+      [%- CASE 'pull_quote' -%]
+          <blockquote>[% e.get_value %]</blockquote>
+
+      [%- CASE -%]
+          [%- burner.display_element(e) -%]
+      [%- END -%]
+  [% END -%]
+
+  <div id="pagenav">
+  [%- IF prev_page = burner.prev_page_file %]
+      <a href="[% prev_page %]">&lt; [%
+          element.get_value('previous') || 'Back'
+      %]</a>
+  [% END -%]
+  [%- IF next_page = burner.next_page_file %]
+      <a href="[% next_page %]">[%
+          element.get_value('next') || 'Back'
+      %] &gt;</a>
+  [% END -%]
+  </div>
+
+And finally, the PHP version:
+
+  <?php
+  if (!$burner->get_page()) {
+      # Only output the title on the first page.
+      echo '<h1>', $story->get_title(), "</h1>\n";
+  }
+
+  foreach ($element->get_elements('paragraph', 'pull_quote', 'inset') as $e) {
+      switch ($e->get_key_name()) {
+
+          case 'paragraph':
+              echo '<p>', $e->get_value(), "</p>\n";
+              break;
+
+          case 'pull_quote':
+              echo '<blockquote>', $e->get_value(), "</blockquote>\n";
+              break;
+
+          default:
+              # It's an inset, which is a container element.
+              $burner->display_element($e);
+      }
+  }
+
+  echo '<div id="pagenav">', "\n";
+
+  if ($prev_page = $burner->prev_page_file()) {
+      echo '<a href="', $prev_page, '">&lt; ',
+           ($element->get_value('previous') || 'Back'),
+           "</a>\n";
+  }
+
+  if ($next_page = $burner->next_page_file()) {
+      echo '<a href="', $next_page, '">',
+           ($element->get_value('next') || 'Back'),
+           " &gt;</a>\n";
+  }
+  echo "</div>\n";
+  ?>
+
+Again, teh various architectures use the same programming logic and output the
+same content (modulo whitespace issues). In each case, the code outputs a
+header for the first page of the column only, and then the story page content.
+Note how we've passed element key names to C<get_elements()> to retrieve only
+the elements we want to be ordered. Next, links to a previous page and a next
+page are output, but only if those pages exist. The C<next_page_file()> method
+returns a file name only if there will be a next page, and the
+C<prev_page_file()> method returns a file name for all pages but the first
+page.
+
+It is important to realize that there are no restrictions against having a
+container and a field element with the same name. While this is unlikely to
+happen (you're doing the element type design and not doing that, right?), if
+it were true you'd have to check the C<is_container()> method to tell them
+apart.
+
+And finally, We have the code for the "inset" container element template.
+Here's the Mason version:
+
+  <div class="inset">
+    <p><% $element->get_value('copy') %></p>
+  </div>
+
+Here's the Template Toolkit version:
+
+  <div class="inset">
+    <p>[% element.get_value('copy') %]</p>
+  </div>
+
+And the PHP version:
+
+  <div class="inset">
+    <p><?= $element->get_value('copy') ?></p>
+  </div>
+
+That's about it. If you create and deploy new templates for these three
+element types, and paste in the above code examples, you should then be able
+to create and preview a new "Column" story. Make sure that you create your
+templates in the root category to ensure you can publish a story to any
+category.
 
 =head1 APPENDIX
 
 =head2 Class Names
 
-    Object Type         Associated Perl Class
-    -----------         ---------------------
-    Element Type        Bric::Biz::ElementType
-    Template            Bric::Biz::Asset::Template
-    Story               Bric::Biz::Asset::Business::Story
-    Element             Bric::Biz::Element
-    Field Element       Bric::Biz::Element::Field
-    Container Element   Bric::Biz::Element::Container
-    Burn System         Bric::Util::Burner
+    Object Type             Associated Perl Class
+    ---------------------   ---------------------------------
+    Element Type            Bric::Biz::ElementType
+    Conainter Element Type  Bric::Biz::ElementType::Container
+    Field Element Type      Bric::Biz::ElementType::Field
+    Template                Bric::Biz::Asset::Template
+    Story                   Bric::Biz::Asset::Business::Story
+    Element                 Bric::Biz::Element
+    Field Element           Bric::Biz::Element::Field
+    Container Element       Bric::Biz::Element::Container
+    Burner                  Bric::Util::Burner
 
 =head2 Glossary
 
 =over
 
-=item autohandler
+=item Category Template
 
-A mason concept. As applied to Bricolage, it is a variation on a template
-that can form a line of 'chained' templates.
+A template associated with a category that wraps the execution of all story
+element type templates in that category and its subcategories. Corresponds to
+Mason's "autohandlers" and Template Toolkits "wrappers".
 
-=item Burn System
+=item Burner
 
-The element of the Bricolage system that joins story data with existing
-templates.
+The Bricolage object responsible for pushing a story through templates and
+writing the resulting output to files.
 
 =item Category
 
-A way of organizing a web site into separate sections.
+Categories are hierarchical organizing objects used to categorize Bricolage
+documents. The URI path of a category is used to form part of each document's
+URI and is used to organize templates.
 
-=item Container element
+=item Element Type
 
-An element containing structured data based on an Element.
-
-=item Data element
-
-An element that represents textual/simple data.
-
-=item dhandler
-
-A Mason concept. Templates behave in a similar manner to dhandlers.
+The definition of the structure of a document or the subelement of a document.
 
 =item Element
 
-The "form" of a story or story part.
+A part of a document, either a container element or a field element.
 
-=item element
+=item Container Element
 
-An instance of an Element in a story.
+An element containing structured content based on an Element Type.
 
-=item  Mason
+=item Field element
 
-An apache/perl templating system.
+An element that represents textual content.
+
+=item dhandler
+
+A Mason concept. In Mason output channels, story element type templates are
+implemented as dhandlers.
+
+=item Mason
+
+A popular Perl-based templating architecture.
+
+=item Template Toolkit
+
+Another popular Perl-based templating architecture.
+
+=item HTML::Template
+
+Yet another popular Perl-based templating architecture.
+
+=item PHP
+
+A popular server-based Web programming language, ideal for templating.
 
 =item Output Channel
 
-A destination for published data.
+A collection of templates based on a single templating architecture, designed
+to output content in a single format (such as XHTML, RSS, PDF, etc.).
 
 =item Story
 
-The data to be published.
+A content document.
 
 =item Template
 
-An output format for published data.
+A file containing template code to format part of a story for output.
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
+
+David Wheeler <david@kineticode.com>
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
-L<Bric|Bric>,
-L<Bric::AdvTemplates|Bric::AdvTemplates>,
-L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
-L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>,
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
-L<Bric::Biz::Element|Bric::Biz::Element>,
-L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>,
-L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>,
-L<Bric::Util::Burner|Bric::Util::Burner>
+=over
+
+=item L<Bric::AdvTemplates|Bric::AdvTemplates>
+
+=item L<Bric::Biz::ElementType|Bric::Biz::ElementType>
+
+=item L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>
+
+=item L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>
+
+=item L<Bric::Biz::Element|Bric::Biz::Element>
+
+=item L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>
+
+=item L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>
+
+=item L<Bric::Util::Burner|Bric::Util::Burner>
+
+=item L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>
+
+=item L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>
+
+=item L<Bric::Util::Burner::Template|Bric::Util::Burner::Template>
+
+=item L<Bric::Util::Burner::PHP|Bric::Util::Burner::PHP>
+
+=back
 
 =cut
