@@ -1355,7 +1355,7 @@ to create and preview a new "Column" story. Make sure that you create your
 templates in the root category to ensure you can publish a story to any
 category.
 
-=head1 APPENDIX
+=head1 Appendix
 
 =head2 Class Names
 
@@ -1444,7 +1444,7 @@ A file containing template code to format part of a story for output.
 
 =back
 
-=head1 AUTHORS
+=head1 Authors
 
 David Wheeler <david@kineticode.com>
 
