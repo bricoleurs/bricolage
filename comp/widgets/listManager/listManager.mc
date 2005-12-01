@@ -568,13 +568,14 @@ my $build_table_data = sub {
     my $sel_cols = 0;
     my $prf_cols = 0;
     # Start at row 1 since we already have $fields loaded in $data
-    my $r = 1;
+    my $row = 1;
 
     my $slice;
     if ($pagination) {
         # make sure $limit + $offset is within range
-        my $end = $limit + $offset > $count - 1 ? $count - 1 :
-          ($limit + $offset - 1);
+        my $end = $limit + $offset > $count - 1
+            ? $count - 1
+            : $limit + $offset - 1;
 
         # extract array slice
         @$slice = @$sort_objs[$offset..$end];
@@ -586,7 +587,7 @@ my $build_table_data = sub {
     foreach my $o (@$slice) {
 
         # Push the object id as the first value to be used in the listing comp.
-        push @{$data->[$r]}, $o->get_id;
+        push @{$data->[$row]}, $o->get_id;
 
         # Load a flag to tell if this object is a featured object or not.
         my %flags = ('featured' => $featured->{$o->get_id});
@@ -603,7 +604,7 @@ my $build_table_data = sub {
             }
 
             # Add this value to the return data.
-            push @{$data->[$r]}, ! defined $val || $val eq '' ? '&nbsp' : $val;
+            push @{$data->[$row]}, ! defined $val || $val eq '' ? '&nbsp' : $val;
         }
 
         my @sel = $output_select_controls->($o, $select, \%flags);
@@ -613,15 +614,15 @@ my $build_table_data = sub {
         # MAX function
         $prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
 
-        push @{$actions->[$r]}, @prf if @prf;
+        push @{$actions->[$row - 1]}, @prf if @prf;
 
         ## Add the select items if any
         if (@sel) {
             $sel_cols = 1;
-            push @{$actions->[$r]}, join('&nbsp;', @sel);
+            push @{$actions->[$row - 1]}, join('&nbsp;', @sel);
         }
 
-        $r++;
+        $row++;
     }
 
     $cols += $sel_cols + $prf_cols;
