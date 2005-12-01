@@ -81,6 +81,7 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Add pre/post fields to the specialCharacters array
 if (defined $id) {
+    $button = undef;
     $m->out('<script type="text/javascript">
 var selectOrderNames = new Array("include_pos")
 </script>
@@ -115,7 +116,6 @@ var selectOrderNames = new Array("include_pos")
             );
         };
 
-        $button = undef;
         # Add the include section
         $m->comp(
             '/widgets/wrappers/sharky/table_top.mc',
@@ -170,7 +170,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 $m->comp("/widgets/profile/formButtons.mc",
 	 type => $type,
 	 section => $widget,
-         widget => $type,
+     widget => $type,
 	 val => $button,
 	 no_del => $no_del,
 	 no_save => $no_edit);
