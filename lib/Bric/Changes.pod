@@ -67,6 +67,11 @@ more than one site or if the element type is associated with more than one
 site, the "Sites" section will be displayed and the primary output channel can
 be selected from a select list for each site. [David]
 
+=item *
+
+The Element Type Manager now displays the key name for each element, in
+addition to its name, and instead of the its description. [David]
+
 =back
 
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)
