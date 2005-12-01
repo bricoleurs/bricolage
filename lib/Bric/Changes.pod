@@ -36,9 +36,26 @@ burners. [David]
 
 =item *
 
+Completely updated L<Bric::Templates|Bric::Templates> and
+L<Bric::AdvTemplates|Bric::AdvTemplates>, with expanded API documentation and
+examples in Mason, Template Toolkit, and PHP. [David]
+
+=item *
+
 Refactored the left nav to perform better and be easier to maintain. It now
 also sorts the admin menu items in alphabetical order by the localized name of
 each. [David]
+
+=item *
+
+Updated the UI to fix Internet Explorer glitches. [Marshall]
+
+=item *
+
+Eliminated the old "P" and "D" graphics indicating the publish and deploy
+status of documents and templates in the search interface, replacing them with
+actual letters. [David]
+
 
 =back
 
