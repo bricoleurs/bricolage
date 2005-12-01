@@ -1,420 +1,490 @@
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::AdvTemplates - Template Producing: Advanced Topics
 
-=head1 VERSION
+=head1 Version
 
 $LastChangedRevision$
 
-=head1 DATE
+=head1 Date
 
 $LastChangedDate$
 
-=head1 INTRODUCTION
+=head1 Introduction
 
 This document discusses some templating techniques that require existing
-knowledge of the Bricolage publishing system. The text and examples will assume
-the reader has already read and understood the first template document,
-'Producing Templates on the Bricolage System'.
+knowledge of the Bricolage publishing system. The text and examples assume
+that you have already read and understood the
+L<Bric::Templates|Bric::Templates>.
 
-=head1 AUTOHANDLER TEMPLATES
+=head1 Utility Templates
 
-It is possible not to associate a template with an Element. Doing so creates a
-template that will be used for every type of Story in a particular category and
-output channel. These are called "Autohandler Templates" or just "Autohandlers".
+Bricolage supports three different types of templates. We've already discussed
+category templates and element templates in
+L<Bric::Templates|Bric::Templates>. Here we introduce the third: utility
+templates.
 
-Autohandlers usually provide wrapper HTML for normal Templates, such as a
-standard site header and footer. Unlike normal templates that display particular
-fields of a story, autohandlers will usually just have some HTML along with a
-line of code that says "put all remaining output here". This line of code is the
-'chain_next' method of the $burner object passed into all templates. It is
-called like this:
+Utility templates are associated with no element types, unlike element
+templates. They I<are> associated with categories, but only to manage where
+they're stored on the file system; they of course do not execute as part of a
+category template chain.
 
-    % $burner->chain_next;
+The purpose of utility templates is to create libraries of commonly reused
+code, so that you can maintain that code in one place, rather than copy and
+paste it into many different element and/or category templates. Most Bricolage
+templaters create a category structure just for utility templates. For
+example, you might have a category called F</util>, with a F</util/xhtml>
+subcategory of templates specific to XHTML output.
 
-Autohandlers do have access to the $story and $element objects as well. You
-might use these if you want to add some customization based on the story.
+Utility templates are never executed by Bricolage. Rather, you execute them
+using the standard calling syntax of your templating architecture. For
+example, say that you want to have a simple include to pull in at the end of a
+story, and you support many different types of stories. The simple thing to do
+is to create a utility template. In Mason, I might create a utility template
+named F</util/xhtml/license.mc> that looks like this:
 
-Autohandlers run before any normal template is run, and if there is more than
-one autohandler in a directory tree, they will each run in order from the top of
-the directory tree down.
+  <%args>
+  $license
+  </%args>
+  <div>Licensed under the <% $license %> license</div>\
 
-For example, let's say we publish a Column story in the News/Politics category,
-and there is a Root category autohandler and a News category autohandler:
+To call it, I just use native Mason syntax at the bottom of a story template:
 
-    /News/Politics/column.mc
-    /autohandler
-    /News/autohandler
+  <& /util/xhtml/license.mc, license => 'Creative Commons' &>
 
-When this Story is published, the system searches for any autohandlers, starting
-at '/' working its way down to the publish category '/News/Politics'. In this
-example, the templates will run in the following order:
+In Template Toolkit, the utility template would be named
+F</util/xhtml/license.tt> and looks like this:
 
-    /autohandler
-    /News/autohandler
-    /News/Politics/column.mc
+  <div>Licensed under the [% license %] license</div>
 
-Here is some very simple code to illustrate the above publish. Here is the code
-for the root level autohandler:
+To call it I just use native TT syntax at the bottom of a story template:
 
-    <!-- Code for /autohandler -->
-    <html>
-        <head><title>The Site</title></head>
-        <body bgcolor='white'>
+  [% INCLUDE util/xhtml/license.tt license = 'BSD' -%]
 
-    % $burner->chain_next;
+In PHP, the utility template would be named F</util/xhtml/license.php> and
+looks like this:
 
-        </body>
-    </html>
+  <?php
+  function license($license = "GPL") {
+      echo "<div>Licensed under the $license license</div>\n";
+  }
+  ?>
 
-Here is some code for the 'News' category autohandler:
+As you can see, it's a bit different in PHP, as the file doesn't actually
+output anything itself, but declares a function that does. We just need to
+include the template and then call the function:
 
-    <!-- Code for /News/autohandler -->
-    <h1>Weekly News</h1>
+  <?php
+     include_once("util/xhtml/license.php");
+     license('BSD');
+  ?>
 
-    <table><tr><td width=570>
+In HTML::Template templates, it's not possible to pass arguments to an
+included F<.tmpl> template; use a F<.pl> template to define functions, if
+necessary. But you can of course include another template. So if the utility
+template, named F</util/xhtml/license.tmpl>, looked something like this:
 
-    % $burner->chain_next;
+  <tmpl_if include_license>
+    <div>Licensed under the Creative Commons license</div>
+  </tmpl_if>
 
-    </td></tr></table>
+You can include it like so:
 
-Here is some code for the 'Column' template:
+  <tmpl_include name="util/xhtml/license.tmpl">
 
-    <!-- Code for /News/Politics/column.mc -->
-    <b><% $story->get_title %></b>
+Of course these are contrived examples. But hopefully the utility (no pun
+intended) of utility templates is apparent.
 
-    % for my $p ($element->get_elements('paragraph')) {
+=head1 Multipage Stories
 
-    <p><% $p->get_value %></p>
+As discussed in L<Bric::Templates|Bric::Templates>, element types in Bricolage
+can be marked as "paginated." Such element types can be used to re-execute
+their element templates over successive pages, automatically outputting a new
+file each time. All templates output to a file named for the "File Name" and
+"File Extension" properties of the current Output Channel. Templates based on
+paginated element types will simply append a number to the output file for
+each additional time they run.
 
-    % }
+For example, a story containing four paginated elements will (assuming that
+the "File Name" and "File Extension" properties are set to "index" and "html",
+respectively), upon publication, produce the files:
 
-Now, if we publish a Column story that has a title 'Man Bites Dog' and contains
-two paragraphs of text, the resulting published story would look like:
+=over
 
-    <!-- Code for /autohandler -->
-    <html>
-        <head><title>The Site</title></head>
-        <body bgcolor='white'>
+=item F<index.html>
 
-        <!-- Code for /News/autohandler -->
-        <h1>Weekly News</h1>
+=item F<index1.html>
 
-        <table><tr><td width=570>
+=item F<index2.html>
 
-            <!-- Code for /News/Politics/column.mc -->
-            <b>Man Bites Dog</b>
-
-            <p>Earlier today a man was reported biting a dog</p>
-
-            <p>The dog was unavailable for comment</p>
-
-        </td></tr></table>
-
-        </body>
-    </html>
-
-
-=head1 MULTI-PAGE STORIES
-
-Elements in the Bricolage system can be marked as "paginated". Such Elements can
-be used to re-execute templates over successive pages, automatically outputting
-a new file each time. All templates output to a file named for the "File Name"
-and "File Extension" properties of the current Output Channel. Templates based
-on paginated Elements will simply append a number to the output file for each
-additional time they run. So a story containing 4 paginated elements will
-(assuming that the "File Name" and "File Extension" properties are set to
-"index" and "html", respectively), upon publication, produce the files:
-
-=over 4
-
-=item index.html
-
-=item index1.html
-
-=item index2.html
-
-=item index3.html
+=item F<index3.html>
 
 =back
 
-There are two ways to display templates based on paginated elements. The first
-is the normal 'display_element' method that is used to display all elements. The
-second is by using the 'display_pages' method.
+Sometimes you'd rather not use the numbers, but some other identifier for
+successive page file names. In such a case, you can use the burner object's
+C<set_page_extensions()> method to set alternatives. If there are more pages
+than extensions, the burner will start using numbers again. For example, this
+statement:
 
-=head2 Using 'display_element'
+  $burner->set_page_extensions('', '_two', '_three');
 
-When displaying a paginated element using 'display_element', the output of the
-page elements will B<not> trigger output of the data to a new file. Thus
-display_element() handles paginated Elements in the same way it handled all
-other Elements. Use this approach to output all pages on a single page --
-in print versions of a story, for example.
+Would cause a four-page story to output the following file names;
 
-For example, say we have a 'Column' story that contains 'Page' elements. These
-'Page' elements are paginated elements. Here is some template code for 'Page'
-(assume page contains just paragraphs):
+=over
 
-    <!-- Code for 'page.mc' -->
-    % for my $p ($element->get_elements('paragraph')) {
-        <p><% $p->get_value %></p>
-    % }
+=item F<index.html>
 
-Here is some template code for 'Column':
+=item F<index_two.html>
 
-    <!-- Code for 'column.mc' -->
+=item F<index_three.html>
+
+=item F<index1.html>
+
+=back
+
+Now, regardless of the file names, there are two ways to execute templates
+based on paginated elements. The first is the normal C<display_element()>
+method, and the second is the C<display_pages()> method.
+
+=head2 Using C<display_element()>
+
+When formatting a paginated element using C<display_element()>, the page
+elements will B<not> trigger the output of data to a new file. Thus
+C<display_element()> handles paginated elements in the same way that it
+handles all other elements. Use this approach to output all pages on a single
+page, such as for the print version of a story.
+
+For example, say we have a "Column" story that contains paginated "Page"
+subelements. Here is some Mason template code for "Page" (assume that it
+contains only paragraphs):
+
+      <!-- page.mc -->
+  % foreach my $p ($element->get_elements('paragraph')) {
+      <p><% $p->get_value %></p>
+  % }
+
+In Template Toolkit, that's:
+
+      <!-- page.mc -->
+  [% FOREACH e = element.get_elements() -%]
+      <p>[% e.get_value %]</p>
+  [% END -%]
+
+And in PHP, it's:
+
+      <!-- page.mc -->
+  <?php
+  foreach ($element->get_elements() as $e) {
+      echo '    <p>', $e->get_value(), "</p>\n";
+  }
+  ?>
+
+And now, some simple template code for "Column." Mason first:
+
     <html>
-        <head><title><% $story->get_title %></title></head>
-        <body>
-
-    % my $n = 1;
-    % while (my $pg = $element->get_container('page', $n++)) {
-    %     $burner->display_element($pg);
-    % }
-
-        </body>
+      <head><title><% $story->get_title %></title></head>
+      <body>
+    % $burner->display_element($_) for $element->get_elements('page');
+      </body>
     </html>
 
-These templates will work exactly as you would expect: each page is output as
-any other element is output, and the results of all this output are included in
-a single page:
+Next, Template Toolkit:
 
-index.html :
-
-    <!-- Code for 'column.mc' -->
     <html>
-        <head><title>Our Column Title</title></head>
-        <body>
-
-        <!-- Code for 'page.mc' -->
-        <p>page 1 para 1 content</p>
-        <p>page 1 para 2 content</p>
-
-        <!-- Code for 'page.mc' -->
-        <p>page 2 para 1 content</p>
-        <p>page 2 para 2 content</p>
-
-        <!-- Code for 'page.mc' -->
-        <p>page 3 para 1 content</p>
-        <p>page 3 para 2 content</p>
-
-        </body>
+      <head><title>[% story.get_title() %]</title></head>
+      <body>
+  [% FOREACH e = element.get_elements('page') -%]
+      [% burner.display_element(e) %]
+  [% END -%]
+      </body>
     </html>
 
+And finally, of course, PHP:
 
-=head2 Using 'display_pages'
-
-Use the C<display_pages()> method to create new files for each page
-element. The C<display_pages()> method takes one or more names of paginated
-elements:
-  % my @pagenames = qw/page another_page/;
-  % $burner->display_pages(\@pagenames);
-
-Here, pages with key names 'page' and 'another page' are published.
-
-When a story is published, the entire template containing the call to
-C<display_pages()> is run once for every instance of the named element passed
-to C<display_pages()>. So if we have a 'Column' containing 3 'Page' elements
-and no "Another Page" elements, the 'Column' template will be run 3
-times. Each time it runs, the C<display_pages()> method will run the 'Page'
-template with each succeeding page.
-
-So we can use our earlier example with just a minor change to produce the
-output we want:
-
-    <!-- Code for 'column.mc' -->
     <html>
-        <head><title><% $story->get_title %></title></head>
-        <body>
-
-    % $burner->display_pages('page');
-
-        </body>
+      <head><title><?= $story->get_title() ?></title></head>
+      <body>
+        <?php
+        foreach ($element->get_elements('page') as $e) {
+            $burner->display_element($e);
+        }
+        ?>
+      </body>
     </html>
 
-The code for the 'Page' template:
+Now, these templates will work exactly as you would expect: each page is
+output as any other element is output, and the results of all this output are
+included in a single page. For a column story with three "Page" subelements,
+the output would look something like this:
 
-        <!-- Code for 'page.mc' -->
-    % for my $p ($element->get_elements('paragraph')) {
-        <p><% $p->get_value %></p>
-    % }
+  <html>
+    <head><title>Our Column Title</title></head>
+    <body>
 
-This approach will output the following files:
+      <!-- page.mc -->
+      <p>page 1 para 1 content</p>
+      <p>page 1 para 2 content</p>
+
+      <!-- page.mc -->
+      <p>page 2 para 1 content</p>
+      <p>page 2 para 2 content</p>
+
+      <!-- page.mc -->
+      <p>page 3 para 1 content</p>
+      <p>page 3 para 2 content</p>
+
+    </body>
+  </html>
+
+=head2 Using C<display_pages()>
+
+The C<display_pages()> method, on the other hand, creates new files for each
+page element. The C<display_pages()> method takes a single key name or an
+array reference of key names of paginated elements:
+
+  % my @page_key_names = qw/page another_page/;
+  % $burner->display_pages(\@page_key_names);
+
+Here, pages with key names "page" and "another_page" are published. The
+template with the call to C<display_pages()>, as well as any surrounding
+category templates, is run multiple times, once for every instance of a
+paginated element identified by the key names argument. So if we have a
+"Column" story containing three "Page" subelements and no "Another Page"
+elements, the "Column" template will be executed three times. Each time it
+runs, the C<display_pages()> method will execute the "Page" template with each
+succeeding page.
+
+So we can use our earlier example with just a minor change to the Column
+template to produce the output we want. The Mason template is now:
+
+    <html>
+      <head><title><% $story->get_title %></title></head>
+      <body>
+    % $burner->display_pages([ qw(page another_page) ]);
+      </body>
+    </html>
+
+Template Toolkit now looks like this:
+
+    <html>
+      <head><title>[% story.get_title() %]</title></head>
+      <body>
+  [% burner.display_pages([ 'page', 'another_page' ]) %]
+      </body>
+    </html>
+
+And PHP looks like this:
+
+    <html>
+      <head><title><?= $story->get_title() ?></title></head>
+      <body>
+        <?php
+    $burner->display_pages( 'page', 'another_page' ]);
+        ?>
+      </body>
+    </html>
+
+Note that in each case, we've removed the C<foreach> block with its call to
+C<display_element()> and substituted a call to C<display_pages()>. The output
+is now in three files that look like this:
 
 index.html:
 
-    <!-- Code for 'column.mc' -->
-    <html>
-        <head><title>Our Column Title</title></head>
-        <body>
+  <html>
+    <head><title>Our Column Title</title></head>
+    <body>
 
-        <!-- Code for 'page.mc' -->
-        <p>page 1 para 1 content</p>
-        <p>page 1 para 2 content</p>
+      <!-- page.mc -->
+      <p>page 1 para 1 content</p>
+      <p>page 1 para 2 content</p>
 
-        </body>
-    </html>
+    </body>
+  </html>
 
 index1.html:
 
-    <!-- Code for 'column.mc' -->
-    <html>
-        <head><title>Our Column Title</title></head>
-        <body>
+  <html>
+    <head><title>Our Column Title</title></head>
+    <body>
 
-        <!-- Code for 'page.mc' -->
-        <p>page 2 para 1 content</p>
-        <p>page 2 para 2 content</p>
+      <!-- page.mc -->
+      <p>page 2 para 1 content</p>
+      <p>page 2 para 2 content</p>
 
-        </body>
-    </html>
+    </body>
+  </html>
 
 index2.html:
 
-    <!-- Code for 'column.mc' -->
-    <html>
-        <head><title>Our Column Title</title></head>
-        <body>
+  <html>
+    <head><title>Our Column Title</title></head>
+    <body>
 
-        <!-- Code for 'page.mc' -->
-        <p>page 3 para 1 content</p>
-        <p>page 3 para 2 content</p>
+      <!-- page.mc -->
+      <p>page 3 para 1 content</p>
+      <p>page 3 para 2 content</p>
 
-        </body>
-    </html>
+    </body>
+  </html>
 
+=head1 Including Related Stories and Media
 
-=head1 MULTI-PAGE STORIES USING AUTOHANDLERS
-
-Autohandlers will work with multi-page templates using display_pages.
-
-=head1 INCLUDING RELATED STORIES AND MEDIA
-
-Certain types of elements can have other stories or media objects related to
-them. If an element has related stories or media you can get those objects using
-the methods:
+Certain types of container elements can have other stories or media objects
+related to them. If an element has a related story or media document (or
+both!), you can get at it using methods on the container element. In Mason:
 
     % my $rel_story = $element->get_related_story;
     % my $rel_media = $element->get_related_media;
 
-The $rel_story object will have all the methods that the exported $story object
-has since they are the same object. To get the top element of the story you can
-use the method 'get_element':
+In Template Toolkit:
 
-    % my $rel_element = $rel_story->get_element;
+    [% rel_story = element.get_related_story %]
+    [% rel_media = element.get_related_media %]
 
-The $rel_element object is the same object as the exported $element object and
-has all the same methods.
+In PHP:
 
-The $rel_media object has the same methods as $story does but adds a few more
-specific to media objects. They are:
+    $rel_story = $element->get_related_story();
+    $rel_media = $element->get_related_media();
 
-    % my $uri  = $rel_media->get_uri;
-    % my $type = $rel_media->get_media_type;
-    % my $size = $rel_media->get_size;
+The related story object is of course in the same class as the global $story
+object. To get the top element of the related story, call the C<get_element()>
+method. The returned element is in the same class as the global $element
+object: It's the top-level container element for the related story.
 
-The method 'get_uri' returns the URI of the published media object. This can be
-used like:
+Related media are
+L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media> objects.
+They inherit from the same class as the story class, namely
+L<Bric::Biz::Asset::Busines|Bric::Biz::Asset::Busines>, but has a slightly
+different interface. These methods are the most notable:
 
-    <img src="<% $rel_media->get_uri %>">
+=over
 
-in your templates. The 'get_media_type' method returns the mime type of the
-media object. These are text values of the form 'image/jpeg'.
+=item C<get_uri($oc)>
 
-The 'get_size' method will return the file size of the media file.
+Media objects are associated with only a single category, and so there is
+no distinction between a primary URI and secondary URIs. But thanks to
+their ability to be associated multiple output channels, they might have
+different output channel formats. You can therefore pass in an output
+channel object or ID to get the media document's URI for that output
+channel?
 
-=head1 Bricolage HTML::Mason Custom Tags
+As of Bricolage 1.10, there is also a C<primary_uri()> method in the media
+class to create parity with the interface of the story class. But, really, for
+creating URIs in Templates, you're best off using the C<best_uri()> method of
+the burner class:
 
-Bricolage extends HTML::Mason tags so that template developers can write blocks
-of code that only run in certain contexts.
+  my $uri = $burner->best_uri($rel_media)->as_string;
 
-There are four contexts in which a template is run and in each context, code
-can be executed:
+=item C<get_media_type()>
 
-=over 4
-
-=item Syntax checking
-
-=item Preview
-
-=item Publish
-
-=item Frontend serving the page
+Returns a <LBric::Util::MediaType|Bric::Util::MediaType> object describing the
+media type (a.k.a. the "MIME Type") of the media document.
 
 =back
 
-A template developer would like that all code will be syntax checked, have
-some special debug messages to appear to the story editor previewing the
-article; have some special code that only runs at publish time; have some
-cookie handling code that only runs in realtime, when an actual user is
-requesting the page.
+=head1 Bricolage Mason Custom Tags
 
-With HTML::Mason a developer could use C<< <%text> >> tags, but they would
-not get syntax checked by Bricolage, and could only run in the frontend
-servers.
+The Bricolage Mason burner extends HTML::Mason tags so that template
+developers can write blocks of code that only run in certain contexts.
 
-With Bricolage Custom Tags, tags are processed according to the context.
+There are four contexts in which a template is executed, and each context
+has a corresponding Mason tag:
 
-Bricolage supports the following Mason Custom tags:
-
-=over 4
+=over
 
 =item C<< <%chk_syntax> >>
 
-Only runs in syntax checking. Useful to comment out codes that you still
-want to check as valid Perl code, but not to be used in any other context.
+Only runs in syntax checking--that is, when saving a template in the
+Templating UI. This tag is useful to comment out code that you want to check
+as valid Perl code, but not to be used in any other context.
+
+  <%chk_syntax>;
+  print "This is a no-op.\n";
+  </%chk_syntax>
 
 =item C<< <%preview> >>
 
-Code inside a C<< <%preview> >> tag gets removed when published, but gets
-executed when a preview is done.
+Code inside a C<< <%preview> >> tag executes only during previews, and is
+ignored by publishes. It can be useful for sending messages to the previewer
+or carrying out some action that should only be carried out during previews:
+
+  <%preview>;
+  $burner->throw_error('What are you thinking??')
+      if $element->get_value('is_porn');
+  </%preview>
 
 =item C<< <%publish> >>
 
-This is equivalent to the default Bricolage behaviour, since the code
-is run in preview and publish mode. Can be quite useful in complex templates
-where a developer wants to explicitly tell the context.
+Code inside a C<< <%publish> >> block will only execute during a publish, and
+not during a preview. For example, you might want to create a record in a
+database only when a story is published:
+
+  <%publish>;
+  my $dbh = DBI->connect('DBI:mysql:database=mydb;host=db.example.com');
+  $dbh->do(
+      'INSERT INTO blog VALUES (?, ?)',
+      undef,
+      $story->get_title,
+      '<p>' . join(
+          '</p><p>',
+           map { $_->get_value } $element->get_elements('paragraph')
+      ) . '</p>'
+  );
+  </%publish>
+
 
 =item C<< <%realtime> >>
 
-Code kept during the publish process, runs in preview mode.
+This block is equivalent to Mason's C<< <%text> >> block. Any of its contents
+will be ignored by the burner and simply output to the file. Once distributed
+to a Mason-powered destination server, any Mason code inside the block will
+execute:
+
+  <%realtime>
+  <& /path/to/delivery_server/include.mhtml &>
+  </%realtime>
 
 =back
 
-=head1 USING XML
+=head1 Formatting XML in the Mason burner
 
-In order to simplify the template developer's life to some degree, we've created
-configuration directives that, when turned on, will add a global variable to all
-templates called $writer. This variable contains an XML::Writer object that can
-be used to output XML from your templates. Of course one can simply use Mason
-for outputting XML, but if one needs to output a B<lot> of XML, one may wish to
-take advantage of the convenience interface provided by XML::Writer.
+In order to simplify the Mason template developer's life to some degree, we've
+created F<bricolage.conf> configuration directives that, when enabled, will
+add a global variable to the Mason name space called $writer. This variable
+contains an L<XML::Writer|XML::Writer> object that can be used to output XML
+from your templates. Of course you can simply use Mason for outputting XML,
+but if you need to output a B<lot> of XML, you might want to take advantage of
+the XML::Writer object.
 
-To use $writer, simply set the INCLUDE_XML_WRITER configuration to "Yes" in
-bricolage.conf. Another directive, XML_WRITER_ARGS, can be used to pass extra
-arguments to the XML::Writer instantiator (see L<XML::Writer> for details of the
-arguments it accepts -- just don't use the OUTPUT argument, as Bricolage needs
-to set this argument in order to ensure that all XML is properly output). Then
-all you need do is use $writer inside a %perl section. Here's an example:
+To use $writer, simply set the C<INCLUDE_XML_WRITER> F<bricolage.conf>
+directive to "Yes". Another directive, C<XML_WRITER_ARGS>, can be used to pass
+extra parameters to the XML::Writer constructor (see
+L<XML::Writer|XML::Writer> for details of the arguments it accepts -- just
+don't use the C<OUTPUT> parameter, as Bricolage needs to set this argument in
+order to ensure that all XML is properly output). Then all you need do is use
+$writer inside a C<< <%perl> >> block. Here's an example:
 
-  <%perl>
-  $writer->startTag("greeting",
-                    "class" => "simple");
-  $writer->characters("Hello, world!");
-  $writer->endTag("greeting");
-  $writer->end();
+  <%perl>;
+  $writer->startTag('greeting', 'class' => 'simple');
+  $writer->characters('Hello, world!');
+  $writer->endTag('greeting');
+  $writer->end;
   </%perl>
 
-For more details on how to use XML::Writer, see L<XML::Writer>.
+See the L<XML::Writer|XML::Writer> documentation for more details on how to
+use it.
 
-=head1 USING OTHER PERL MODULES
+=head1 Using Other Perl Modules
 
-Since Bricolage's templates are all Perl-based, it's of course possible to load
-Perl modules and use them in your templates. You might want to use DBI to pull
-data in from another database, or use XML::RSS to burn in headlines from another
-site. This is one of the great strengths of Bricolage's templating architecture,
-and we strongly urge you to exploit this strength.
+Since Bricolage's templates are all Perl-based (even the PHP templates run
+inside a PHP interpreter inside a Perl interpreter), it is of course possible
+to load Perl modules and use them in your templates. You might want to use the
+L<DBI|DBI> to pull data in from another database, or use L<XML::RSS|XML::RSS>
+to burn in headlines from another site. This is one of the great strengths of
+Bricolage's templating architecture, and we strongly urge you to exploit it.
 
 However, it's not efficient to load modules directly in your templates, since
 every time they're run, they'll load the template into a separate Apache process,
@@ -422,30 +492,51 @@ and therefore use more system resources (memory). It would be better to load all
 the modules you'll need at Bricolage startup time, so that they get shared across
 processes and therefore use less memory.
 
-With the PERL_LOADER configuration directive in bricolage.conf, you can do just
-that. The PERL_LOADER directive takes, on a single line, an arbitrary line of
-Perl code, and executes it in the namespace reserved for Mason templates (sorry,
-this functionality isn't available for HTML::Template templates at this time). So
-you can execute a whole bunch of Perl C<use> statements here, and all the modules
-will be available to you in your templates without needing to reload them there.
-Here's an example:
+With the C<PERL_LOADER> F<bricolage.conf> configuration directive, you can do
+just that. The C<PERL_LOADER> directive takes, on a single line, an arbitrary
+line of Perl code, and executes it in the name space reserved for Mason,
+Template Toolkit, and PHP templates (any exports won't be available to
+HTML::Template templates, although any imported modules of course will be). So
+you can execute a whole bunch of Perl C<use> statements here, and all the
+modules will be available to you in your templates without needing to reload
+them there. Here's an example:
 
   PERL_LOADER = use XML::RSS; use CGI qw(:standard); use Apache::DBI;
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+David Wheeler <david@kineticode.com>
 
-L<Bric|Bric>,
-L<Bric::AdvTemplates|Bric::AdvTemplates>,
-L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
-L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>,
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
-L<Bric::Biz::Element|Bric::Biz::Element>,
-L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>,
-L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>,
-L<Bric::Util::Burner|Bric::Util::Burner>
+=head1 See Also
+
+=over
+
+=item L<Bric::Templates|Bric::Templates>
+
+=item L<Bric::Biz::ElementType|Bric::Biz::ElementType>
+
+=item L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>
+
+=item L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>
+
+=item L<Bric::Biz::Element|Bric::Biz::Element>
+
+=item L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>
+
+=item L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>
+
+=item L<Bric::Util::Burner|Bric::Util::Burner>
+
+=item L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>
+
+=item L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>
+
+=item L<Bric::Util::Burner::Template|Bric::Util::Burner::Template>
+
+=item L<Bric::Util::Burner::PHP|Bric::Util::Burner::PHP>
+
+=back
 
 =cut
