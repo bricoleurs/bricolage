@@ -243,25 +243,25 @@ div.debug dt:after {
     border-right: solid white 1px;
 }
 .desk .item dd { margin-left: 11em; }
-/* .desk .item .even { background: #E8E8CD; } */
 
 .desk .item .actions { 
     position: absolute;
-    top: 0; right: 5px;
+    top: 0; right: 0px;
     width: 230px;
     background: transparent;
     border-top: solid white 1px;
     padding: 0 10px;
 }
-.desk .item .actions p { margin: 5px 0; }
+.desk .item .actions p { margin: 5px 0 0 0; }
 .desk .item .actions .mover { 
-    padding: 0; 
+    margin: 0;
+    padding: 15px 0 10px 0;
 }
 .desk .item .actions .mover select {
     vertical-align: middle;
 }
 .desk .item .actions ul { 
-    margin: 0px 0; 
+    margin: 0; 
     padding: 0; 
     list-style: none; 
 }
@@ -282,7 +282,7 @@ div.debug dt:after {
 .desk .item .actions img,
 .desk .item .actions input,
 .desk .item .actions select,
-.desk .item .actions button { vertical-align: top; }
+.desk .item .actions button { vertical-align: middle; }
 .desk .item .actions select { font-size: 1em; }
 
 .desk .item .actions button {
