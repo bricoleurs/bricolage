@@ -567,7 +567,8 @@ my $build_table_data = sub {
     my $rows = 1 + scalar @$sort_objs;
     my $sel_cols = 0;
     my $prf_cols = 0;
-    my $r = 0;
+    # Start at row 1 since we already have $fields loaded in $data
+    my $r = 1;
 
     my $slice;
     if ($pagination) {
