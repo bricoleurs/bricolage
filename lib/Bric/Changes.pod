@@ -25,6 +25,15 @@ This document lists the Changes to Bricolage introduced with each release.
 Eliminated letter graphices for "Published" and "Deployed" labels in story,
 media, and template managers in favor of localizable characters. [David]
 
+=item *
+
+Moved the C<display_pages()> method from subclasses to
+L<Bric::Util::Burner|Bric::Util::Burner>. Each subclass must implement a
+C<display_element()> method for it to work; this means that it works for all
+current burners except the HTML::Template burner, which manages pages
+differently. This also fixed pagination issues in the Template Toolkit and PHP
+burners. [David]
+
 =back
 
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)

@@ -1899,6 +1899,52 @@ sub clear_notes {
 
 ##############################################################################
 
+=item $burner->display_pages(\@element_key_names);
+
+  $burner->display_pages($element_key_name)
+  $burner->display_pages($element_key_name, %ARGS)
+  $burner->display_pages(\@element_key_names, %ARGS)
+
+A method to be called from template space. Use this method to display
+paginated elements. If this method is used, the burn system will run once for
+every page element listed in C<\@paginated_element_key_names> (or just
+C<$paginated_element_key_name>) in the story; this is so that category
+templates and story element type templates will be executed when appropriate.
+All arguments after the first argument will be passed to the template executed
+as its C<%ARGS> hash.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> This method requires that the burner subclass has implemented a
+C<display_element()> method.
+
+=cut
+
+sub display_pages {
+    my ($self, $key_names) = @_;
+    $key_names = [$key_names] unless ref $key_names;
+
+    # Get the current element
+    my $elem = $self->_current_element;
+    my $page_place = $self->_get('_page_place') || 0;
+
+    # Get the page and the next page.
+    my $pages = $elem->get_containers(@$key_names);
+    my $page_elem = $pages->[$page_place];
+    my $next_page = $pages->[$page_place + 1];
+
+    # Set the 'more_pages' and '_page_place' properties.
+    $self->_set([ qw(more_pages _page_place) ],
+                [ $next_page, ++$page_place ]);
+
+    # Display it!
+    $self->display_element($page_elem, @_);
+}
+
+##############################################################################
+
 =item $burner->throw_error($message);
 
   my $media = $element->get_related_media

@@ -467,56 +467,6 @@ sub find_first_template {
 
 #------------------------------------------------------------------------------#
 
-=item $success = $b->display_pages($paginated_element_name)
-
-=item $success = $b->display_pages($paginated_element_name, %ARGS)
-
-=item $success = $b->display_pages(\@paginated_element_names, %ARGS)
-
-A method to be called from template space. Use this method to display
-paginated elements. If this method is used, the burn system will run once for
-every page element listed in C<\@paginated_element_names> (or just
-C<$paginated_element_name>) in the story; this is so that autohandlers will be
-called when appropriate. All arguments after the first argument will be passed
-to the template executed as its C<%ARGS> hash.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub display_pages {
-    my $self = shift;
-    my $names = shift;
-    $names = [$names] unless ref $names;
-
-    # Get the current element
-    my $elem = $self->_current_element;
-    my $page_place = $self->_get('_page_place') || 0;
-
-    # Get the next two containers starting with place == $page_place
-    # and having name eq one of @$names. $next_page will be undef
-    # for the last page. The map changes old-style names to key_names.
-    my $joined_names = join('|', map {y/a-z0-9/_/cs; lc $_} @$names);
-    my ($page_elem, $next_page) =
-      grep { $_->is_container
-             && $_->get_place >= $page_place
-             && $_->get_key_name =~ /^($joined_names)$/ }
-      $elem->get_elements;
-
-    # Set the 'more_pages' and '_page_place' properties.
-    $self->_set([ qw(more_pages _page_place) ],
-                [ $next_page,
-                  $page_elem ? $page_elem->get_place + 1 : $page_place + 1 ]);
-
-    $self->display_element($page_elem, @_);
-}
-
-#------------------------------------------------------------------------------#
-
 =item $success = $b->display_element($element)
 
 =item $success = $b->display_element($element, %ARGS)
