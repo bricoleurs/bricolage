@@ -88,8 +88,8 @@ $m->comp(
 
 if (defined $id) {
     if ($comp->is_top_level) {
-        # XXX Restore this if by adding prmiary OC selection to the list of
-        # OCS when there is onlyl one site.
+        # XXX Restore this 'if' by adding prmiary OC selection to the list of
+        # OCS when there is only one site.
         # if (!@$sites || @$sites > 1) {
             my $site_sub = sub {
                 my $siteid = $_[0]->get_id;
