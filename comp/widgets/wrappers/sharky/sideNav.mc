@@ -91,13 +91,16 @@ unless ($workflows) {
                         } $w->allowed_desks;
         my @gids = ($w->get_asset_grp_id, $w->get_grp_ids);
 
-        my $wf = { type    => lc Bric::Biz::Workflow::WORKFLOW_TYPE_MAP->{$w->get_type},
-                   id      => $w->get_id,
-                   name    => $w->get_name,
-                   site_id => $w->get_site_id,
-                   desks   => \@desks,
-                   gids    => \@gids
-                 };
+        my $type = $w->get_type;
+        my $wf = {
+            type    => $type,
+            key     => lc Bric::Biz::Workflow::WORKFLOW_TYPE_MAP->{$type},
+            id      => $w->get_id,
+            name    => $w->get_name,
+            site_id => $w->get_site_id,
+            desks   => \@desks,
+            gids    => \@gids
+        };
         push @$workflows, $wf;
     }
     # account for open admin links
@@ -153,7 +156,7 @@ foreach my $wf (@$workflows) {
 
     # actions
         $m->out(qq{<ul class="items">});
-        my $key = $wf->{type};
+        my $key = $wf->{key};
         $m->print(
             '<li>',
             $printLink->(
