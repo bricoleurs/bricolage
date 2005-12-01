@@ -156,8 +156,8 @@ div.debug dt:after {
 
 .jump { float: right; padding-top: 3px; }
 .desk-top { background: #666633; color: white; padding: 3px 5px; margin: 0 200px 10px 0; }
-.desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; margin: 0; }
-.desk-top .sort { text-align: right; font-size: 1em; }
+.desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; line-height: 1.4em; margin: 0; }
+.desk-top .sort { float: right; text-align: right; font-size: 1em; }
 .desk-top .sort select { font-size: 1em; }
 
 .desk .buttonbar { text-align: right; }
@@ -230,8 +230,7 @@ div.debug dt:after {
     border-width: 0 1px 0 0; 
 }
 .desk .item dt, .desk .item dd {
-    line-height: 2em;
-    padding: 0 .5em;
+    padding: 5px .5em;
     border-top: solid white 1px;
 }
 .desk .item dt { 
@@ -256,6 +255,9 @@ div.debug dt:after {
 .desk .item .actions .mover { 
     margin: 0;
     padding: 15px 0 10px 0;
+}
+.desk .short .actions .mover {
+    padding: 8px 0 0 0;
 }
 .desk .item .actions .mover select {
     vertical-align: middle;
@@ -619,6 +621,7 @@ button:active {
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
 .clearboth:after,
+.desk-top:after,
 .desk .item:after,
 .desk .item .head:after,
 .desk .item .actions:after,
@@ -633,6 +636,7 @@ form .row:after,
     visibility: hidden;
 }
 .clearboth,
+.desk-top,
 .desk .item,
 .desk .item .head,
 .desk .item .actions,
@@ -642,6 +646,7 @@ form .row,
 .viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
 * html .clearboth,
+* html .desk-top,
 * html .desk .item,
 * html .desk .item .head,
 * html .desk .item .actions,
@@ -650,6 +655,7 @@ form .row,
 * html .paginate,
 * html .viewmeta {height: 1%;}
 .clearboth,
+.desk-top,
 .desk .item,
 .desk .item .head,
 .desk .item .actions,

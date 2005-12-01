@@ -9,7 +9,7 @@
                 sorted => $highlight eq 'name' ? ' sorted' : '',
                 asset => $obj) %>
   </div>
-  <div class="body">
+  <div class="body<% (@$sites <= 1 && $class eq 'template') ? ' short' : ' tall' %>">
     <dl>
 % if ($class ne 'template') {
       <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
