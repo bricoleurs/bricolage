@@ -161,23 +161,23 @@ For example, say we have a "Column" story that contains paginated "Page"
 subelements. Here is some Mason template code for "Page" (assume that it
 contains only paragraphs):
 
-      <!-- page.mc -->
+      <!-- page -->
   % foreach my $p ($element->get_elements('paragraph')) {
       <p><% $p->get_value %></p>
   % }
 
 In Template Toolkit, that's:
 
-      <!-- page.mc -->
-  [% FOREACH e = element.get_elements() -%]
+      <!-- page -->
+  [% FOREACH e = element.get_elements('paragraph') -%]
       <p>[% e.get_value %]</p>
   [% END -%]
 
 And in PHP, it's:
 
-      <!-- page.mc -->
+      <!-- page -->
   <?php
-  foreach ($element->get_elements() as $e) {
+  foreach ($element->get_elements('paragraph') as $e) {
       echo '    <p>', $e->get_value(), "</p>\n";
   }
   ?>
@@ -224,15 +224,15 @@ the output would look something like this:
     <head><title>Our Column Title</title></head>
     <body>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 1 para 1 content</p>
       <p>page 1 para 2 content</p>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 2 para 1 content</p>
       <p>page 2 para 2 content</p>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 3 para 1 content</p>
       <p>page 3 para 2 content</p>
 
@@ -282,7 +282,7 @@ And PHP looks like this:
       <head><title><?= $story->get_title() ?></title></head>
       <body>
         <?php
-    $burner->display_pages( 'page', 'another_page' ]);
+    $burner->display_pages(array( 'page', 'another_page' ));
         ?>
       </body>
     </html>
@@ -297,7 +297,7 @@ index.html:
     <head><title>Our Column Title</title></head>
     <body>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 1 para 1 content</p>
       <p>page 1 para 2 content</p>
 
@@ -310,7 +310,7 @@ index1.html:
     <head><title>Our Column Title</title></head>
     <body>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 2 para 1 content</p>
       <p>page 2 para 2 content</p>
 
@@ -323,7 +323,7 @@ index2.html:
     <head><title>Our Column Title</title></head>
     <body>
 
-      <!-- page.mc -->
+      <!-- page -->
       <p>page 3 para 1 content</p>
       <p>page 3 para 2 content</p>
 

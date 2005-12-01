@@ -1170,7 +1170,7 @@ Here is the Template Toolkit version:
     </head>
     <body>
 
-  [% burner.display_pages('page') %]
+  [%- burner.display_pages('page') -%]
 
     </body>
   </html>
@@ -1249,7 +1249,7 @@ Here's the Template Toolkit version:
   [% FOREACH e = element.get_elements('paragraph', 'pull_quote', 'inset') -%]
       [% SWITCH e.get_key_name -%]
 
-      [%- CASE 'para' -%]
+      [%- CASE 'paragraph' -%]
           <p>[% e.get_value %]</p>
 
       [%- CASE 'pull_quote' -%]
@@ -1261,14 +1261,14 @@ Here's the Template Toolkit version:
   [% END -%]
 
   <div id="pagenav">
-  [%- IF prev_page = burner.prev_page_file %]
+  [%- IF (prev_page = burner.prev_page_file) %]
       <a href="[% prev_page %]">&lt; [%
           element.get_value('previous') || 'Back'
       %]</a>
   [% END -%]
-  [%- IF next_page = burner.next_page_file %]
+  [%- IF (next_page = burner.next_page_file) %]
       <a href="[% next_page %]">[%
-          element.get_value('next') || 'Back'
+          element.get_value('next') || 'Next'
       %] &gt;</a>
   [% END -%]
   </div>
@@ -1301,15 +1301,13 @@ And finally, the PHP version:
   echo '<div id="pagenav">', "\n";
 
   if ($prev_page = $burner->prev_page_file()) {
-      echo '<a href="', $prev_page, '">&lt; ',
-           ($element->get_value('previous') || 'Back'),
-           "</a>\n";
+      $label = $element->get_value('previous') or 'Back';
+      echo '<a href="', $prev_page, '">&lt; ', $label, "</a>\n";
   }
 
   if ($next_page = $burner->next_page_file()) {
-      echo '<a href="', $next_page, '">',
-           ($element->get_value('next') || 'Back'),
-           " &gt;</a>\n";
+      $label = $element->get_value('next') or 'Next';
+      echo '<a href="', $next_page, '">', $label, " &gt;</a>\n";
   }
   echo "</div>\n";
   ?>
