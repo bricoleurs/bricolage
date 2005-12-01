@@ -88,9 +88,8 @@ $m->comp(
 
 if (defined $id) {
     if ($comp->is_top_level) {
-        # XXX Restore this 'if' by adding prmiary OC selection to the list of
-        # OCS when there is only one site.
-        # if (!@$sites || @$sites > 1) {
+        my @elem_sites = $comp->get_sites;
+        if (!@$sites || @elem_sites > 1 || @$sites > 1) {
             my $site_sub = sub {
                 my $siteid = $_[0]->get_id;
                 if ($_[1] eq 'primary') {
@@ -126,12 +125,13 @@ if (defined $id) {
                 select         => $sel_sub,
             );
 
-            my %sites = map { $_->get_id => 1 } $comp->get_sites;
-            my @available_sites = grep { !$sites{$_->get_id} && chk_authz($_[0], EDIT, 1) }
-                Bric::Biz::Site->list({
-                    active => 1,
-                    output_channel_id => 'not null',
-                });
+            my %sites = map { $_->get_id => 1 } @elem_sites;
+            my @available_sites = grep {
+                !$sites{$_->get_id} && chk_authz($_[0], EDIT, 1)
+            } Bric::Biz::Site->list({
+                active            => 1,
+                output_channel_id => 'not null',
+            });
 
             if (@available_sites) {
                 $m->print(qq{<div class="actions">\n});
@@ -160,12 +160,12 @@ if (defined $id) {
                     site_id => $site->get_id,
                     active  => 1
                 });
-        #} XXX if (!@$sites || @$sites > 1) {
+        }
 
         if (scalar keys %got_ocs > 1 || @available_ocs) {
-            my $oc_sub = sub {
-                my $ocid = $_[0]->get_id;
-                if ($_[1] eq 'enabled') {
+            my %field_subs = (
+                enabled => sub {
+                    my $ocid = $_[0]->get_id;
                     return 'Yes'
                         if $comp->get_primary_oc_id($_[0]->get_site_id) == $ocid;
                     $m->scomp(
@@ -175,7 +175,11 @@ if (defined $id) {
                         checked  => $_[0]->is_enabled,
                         useTable => 0
                     );
-                }
+                },
+            );
+            my $oc_sub = sub {
+                my $code = $field_subs{$_[1]} or return;
+                $code->(shift);
             };
 
             my %poc_ids = map { $comp->get_primary_oc_id($_->get_id) => 1 }
@@ -191,6 +195,26 @@ if (defined $id) {
                 caption => 'Output Channels',
                 number  => ++$num,
             );
+
+            my $field_titles = { enabled => 'Enabled' };
+            my $fields       = [qw(name description site enabled)];
+            if (@elem_sites == 1 && @$sites <= 1) {
+                push @$fields, 'primary';
+                $field_titles->{primary} = 'Primary';
+                my $site_id = $elem_sites[0]->get_id;
+                my $prim_id = $comp->get_primary_oc_id($site_id);
+                $field_subs{primary} = sub {
+                    my $oc_id = shift->get_id;
+                    $m->scomp(
+                        '/widgets/profile/radio.mc',
+                        name     => "primary_oc_site_$site_id",
+                        value    => $oc_id,
+                        checked  => $oc_id == $prim_id,
+                        useTable => 0
+                    );
+                };
+            }
+
             $m->comp(
                 '/widgets/listManager/listManager.mc',
                 object         => 'output_channel',
@@ -198,8 +222,8 @@ if (defined $id) {
                 def_sort_field => 'name',
                 objs           => scalar $comp->get_output_channels,
                 addition       => undef,
-                fields         => [qw(name description site enabled)],
-                field_titles   => { enabled => 'Enabled' },
+                fields         => $fields,
+                field_titles   => $field_titles,
                 field_values   => $oc_sub,
                 profile        => undef,
                 select         => $oc_sel_sub,

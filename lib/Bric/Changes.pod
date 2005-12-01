@@ -56,6 +56,16 @@ Eliminated the old "P" and "D" graphics indicating the publish and deploy
 status of documents and templates in the search interface, replacing them with
 actual letters. [David]
 
+=item *
+
+The Element Type profile is now much smarter about displaying sites form
+association with an element type. If the user has access to only one site and
+the element type is associated with no more than one site, then the "Sites"
+section won't be displayed, but the primary output channel can be selected via
+a radio button among the list of output channels. If the user has access to
+more than one site or if the element type is associated with more than one
+site, the "Sites" section will be displayed and the primary output channel can
+be selected from a select list for each site. [David]
 
 =back
 
