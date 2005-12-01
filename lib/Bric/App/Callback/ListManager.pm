@@ -34,7 +34,7 @@ sub delete : Callback {
 sub deactivate : Callback {
     my $self = shift;
 
-    my $ids = mk_aref($self->value);
+    my $ids     = mk_aref($self->value);
     my $obj_key = get_state_name($self->class_key);
     my $pkg     = get_package_name($obj_key);
 
