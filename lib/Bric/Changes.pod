@@ -34,6 +34,12 @@ current burners except the HTML::Template burner, which manages pages
 differently. This also fixed pagination issues in the Template Toolkit and PHP
 burners. [David]
 
+=item *
+
+Refactored the left nav to perform better and be easier to maintain. It now
+also sorts the admin menu items in alphabetical order by the localized name of
+each. [David]
+
 =back
 
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)
