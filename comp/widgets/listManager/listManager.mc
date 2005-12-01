@@ -604,7 +604,7 @@ my $build_table_data = sub {
             }
 
             # Add this value to the return data.
-            push @{$data->[$row]}, ! defined $val || $val eq '' ? '&nbsp' : $val;
+            push @{$data->[$row]}, ! defined $val || $val eq '' ? '&nbsp;' : $val;
         }
 
         my @sel = $output_select_controls->($o, $select, \%flags);
