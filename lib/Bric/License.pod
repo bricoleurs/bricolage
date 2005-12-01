@@ -318,6 +318,8 @@ Friends who have spotted bugs include:
 
 =item Guido BE<uuml>lskE<auml>mper
 
+=item Wayne Slavin
+
 =back
 
 Bricolage's translation team:
