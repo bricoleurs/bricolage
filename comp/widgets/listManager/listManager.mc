@@ -425,17 +425,19 @@ if ($limit) {
       int($offset / $limit + ($offset % $limit >= 0 ? 1 : 0)) : 1;
 }
 
-my ($rows, $cols, $data, $actions) = $build_table_data->($sort_objs,
-                                                         $meth,
-                                                         $fields,
-                                                         $select,
-                                                         $profile,
-                                                         $alter,
-                                                         \%featured_lookup,
-                                                         $count,
-                                                         $limit,
-                                                         $offset,
-                                                         $pagination);
+my ($rows, $cols, $data, $actions) = $build_table_data->(
+    $sort_objs,
+    $meth,
+    $fields,
+    $select,
+    $profile,
+    $alter,
+    \%featured_lookup,
+    $count,
+    $limit,
+    $offset,
+    $pagination
+);
 
 # Call the element to show this list
 $m->comp("$style.mc",
@@ -614,6 +616,7 @@ my $build_table_data = sub {
         # MAX function
         $prf_cols = scalar @prf > $prf_cols ? scalar @prf : $prf_cols;
 
+        # XXX Actions are 0-based for some reason. Dunno why.
         push @{$actions->[$row - 1]}, @prf if @prf;
 
         ## Add the select items if any
