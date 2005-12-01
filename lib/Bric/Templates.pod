@@ -117,7 +117,7 @@ needed. So an element can contain an subelement, that contains another
 subelement, etc.
 
 The most important thing to understand about element types is that they simply
-define the structure of the content that the author is allowd to use when
+define the structure of the content that the author is allied to use when
 creating or editing a story. The element type has no bearing on the actual
 content itself, or the formatting of that data!
 
@@ -236,14 +236,14 @@ template associated with the "Music" category. If there is no need to change
 how the content is displayed between I<any> category, you can simply create a
 template associated with the root category, and column stories in any category
 will use it. In fact, the vast majority of Bricolage installations have all
-element templates defined in the root category, with only the occaisional
+element templates defined in the root category, with only the occasional
 element template defined in a subcategory on an as-needed basis.
 
 =head2 Templates And Output Channels
 
 Another attribute of a template is its association with an "Output Channel."
 An output channel is a collection of templates designed to format stories in a
-common format. So it's not unsual to have several output channels, such as
+common format. So it's not unusual to have several output channels, such as
 XHTML, RSS, or WML, each of which outputs the contents of stories in a
 specific format.
 
@@ -262,9 +262,9 @@ system know what categories have templates in them, and how are they used
 during a publish?>
 
 Now, while there should be no need to manipulate templates directly on the
-bricolage Server's filesystem (and it could cause the Bricolage system
+Bricolage Server's file system (and it could cause the Bricolage system
 considerable confusion, anyway), let's briefly examine how the files are laid
-out. Hopefully, this excercise will make clear a few things about templates
+out. Hopefully, this exercise will make clear a few things about templates
 and publishing.
 
 Let's start with names. Element types are given key names when they are
@@ -284,7 +284,7 @@ language: ".mc" for Mason, ".tt" for Template Toolkit, ".php" for PHP, or
 ".pl" or ".tmpl" for HTML::Mason. (The examples in this tutorial will be in
 Mason, Template Toolkit, and PHP; See L<Bric::HTMLTemplate|Bric::HTMLTemplate>
 for a tutorial on HTML::Template templates, which are a bit different from the
-others.) So the filenmame for our Column element template would be either
+others.) So the file name for our Column element template would be either
 F<column.mc>, F<column.tt>, F<column.php>, F<column.pl> or F<column.tmpl>.
 
 The category associated with a template determines the path of the template
@@ -453,7 +453,7 @@ category, the following templates will be used in this order:
 The content that F<column.mc> outputs after being run will wrapped by the HTML
 in the category template. Furthermore, because the story element template is
 implemented as a dhandler, and the category template is implemented as an
-autohandler, Mason's inheritance methodology will work pefectly. If you declar
+autohandler, Mason's inheritance methodology will work perfectly. If you declare
 a C<< <%method> >> or C<< <%attr> >> block in F<column.mc>, then the category
 template can call it.
 
@@ -699,7 +699,7 @@ The burner object
 
 =head3 Story Object Methods
 
-The story object repressents the story document being published. It is used to
+The story object represents the story document being published. It is used to
 access all the metadata of a story. It can be used to indirectly access the
 actual content of the story, but there is a simpler way to do so, which we'll
 get to shortly. You can read the full list of methods callable on the story
@@ -788,7 +788,7 @@ right?).
 
 This method is a convenient shortcut for
 
-  $elemnt->get_field($key_name, $num)->get_value($format);
+  $element->get_field($key_name, $num)->get_value($format);
 
 In other words, it returns the content associated with the field element given
 by $key_name. For example, if the element object was a "column" element, you
@@ -796,7 +796,7 @@ could use "author", "topic", or "paragraph" for the key name to get the value
 stored for the corresponding field.
 
 The $format argument is optional, and may contain a C<strftime> format string.
-Natually, this is useful only for date fields, and is ignored by all others.
+Naturally, this is useful only for date fields, and is ignored by all others.
 If not specified, it defaults to the value stored in the "Date/Time Format"
 global preference. See L<DateTime|DateTime> for full documentation of the
 C<strftime> format.
@@ -844,10 +844,10 @@ of the fields you're interested in.
 =item C<< $element->get_elements(@key_names >>
 
 This method is perhaps the most used method on the $element object. It returns
-a list or anonymous array anony of both container I<and> field element
-objects. Again, pass in a list of field and/or container element type key
-names to get back only elements based on those element types. For
-example, called like this:
+a list or anonymous array of both container I<and> field element objects.
+Again, pass in a list of field and/or container element type key names to get
+back only elements based on those element types. For example, called like
+this:
 
   my @elems = $element->get_fields(qw(paragraph topic music_blurb));
 
@@ -912,7 +912,7 @@ relative to all of the other subelements of the field's parent element.
 
 =item C<< $field->get_object_order >>
 
-For a field that can occur more than once in a stor, this method returns its
+For a field that can occur more than once in a story, this method returns its
 place among fields of the same type. For example a "column" story might
 contain several "paragraph" container elements. If a field happens to be the
 second of three "paragraph" field elements, C<get_object_order()> will return
@@ -935,7 +935,7 @@ to help you easily disambiguate containers from fields in your template code:
 
 =item C<< $element->is_container >>
 
-Returns 1 if $eelement is a container element object and 0 if it is a field
+Returns 1 if $element is a container element object and 0 if it is a field
 element.
 
 =back
@@ -953,7 +953,7 @@ its subclasses in:
 
 =item L<Bric::Util::Burner|Bric::Util::Burner>
 
-The burner base class, wher most methods are defined.
+The burner base class, where most methods are defined.
 
 =item L<Bric::Util::Burner::Mason|Bric::Util::Burner::Mason>
 
@@ -997,7 +997,7 @@ output rather than adding it to the output buffer.
 
 This method works like C<display_element()>, only it has some magic to format
 only one element at a time, output its contents, and write a file, then start
-the burn of the next page, untilall pages specified by the array reference of
+the burn of the next page, until all pages specified by the array reference of
 key names have been burned to separate files to disk. All template code above
 and below the call to C<display_pages()> will be executed for each page in the
 story.
@@ -1012,7 +1012,7 @@ from any other template.
 
 Returns a value indicating in what mode the burner is running. The value
 returned can be compared to three constants imported into the template
-namespace: C<PUBLISH_MODE>, C<PREVIEW_MODE>, and (for completeness)
+name space: C<PUBLISH_MODE>, C<PREVIEW_MODE>, and (for completeness)
 C<SYNTAX_MODE>. Useful for when your template needs to have different
 behaviors between previews and publishes.
 
@@ -1028,7 +1028,7 @@ properly written to disk.
 =item C<< $burner->get_oc >>
 
 Returns the L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel> object
-through wich the story is being burned. Useful when using output channel
+through which the story is being burned. Useful when using output channel
 includes, where the template executing may be in an output channel included by
 the output channel through which the story is being burned.
 
@@ -1036,12 +1036,12 @@ the output channel through which the story is being burned.
 
 Returns the L<Bric::Biz::Category|Bric::Biz::Category> object to which the
 story is currently being burned. Useful for stories associated with multiple
-categoris, as each category association triggers a separate burn.
+categories, as each category association triggers a separate burn.
 
 =item C<< $burner->best_uri($doc) >>
 
 Returns a C<URI|URI> object representing the best URI for the document passed.
-Useful for multi-site Bricolage installations, where one story might wich to
+Useful for multisite Bricolage installations, where one story might which to
 create a link to another story in a different site. In that case, it will
 provide the best URI to use, either to an alias in the same site as the current
 site, or to a fully qualified URL to the other site.
@@ -1060,7 +1060,7 @@ and pass it to C<publish_another()>. By default, the story passed will be
 scheduled for publish at the same time as the current story is being
 published. Pass in an ISO-8601-formatted date string as the second argument to
 schedule the document for publication at a later date. During previews, this
-method simply retruns without doing anything.
+method simply returns without doing anything.
 
 =item C<< $burner->preview_another($doc, $oc_id) >>
 
@@ -1069,7 +1069,7 @@ rather than its publication. Useful in preview mode when you want to trigger
 another document for preview. The second argument, an output channel object
 ID, is optional. If not present, the document will be previewed in either the
 same output channel as is currently being previewed, or in its primary output
-channel. In publish mode, this method method simply retruns without doing
+channel. In publish mode, this method method simply retrains without doing
 anything.
 
 =item C<< $burner->blaze_another($doc) >>
@@ -1196,7 +1196,7 @@ element in the "column" story and displays it. Remember that the page element
 was created with the 'paginated' flag and will start a new output file for
 each page. Also, note that we haven't output the contents of the "deck" field.
 This field is meant for use as a teaser when another story creates a link to
-this story. (Formatting forrelated stories is covered in
+this story. (Formatting of related stories is covered in
 L<Bric::AdvTemplates|Bric::AdvTemplates>.)
 
 Next let's look at some example code for the "page" element template. Here's
@@ -1314,8 +1314,8 @@ And finally, the PHP version:
   echo "</div>\n";
   ?>
 
-Again, teh various architectures use the same programming logic and output the
-same content (modulo whitespace issues). In each case, the code outputs a
+Again, the various architectures use the same programming logic and output the
+same content (modulo white space issues). In each case, the code outputs a
 header for the first page of the column only, and then the story page content.
 Note how we've passed element key names to C<get_elements()> to retrieve only
 the elements we want to be ordered. Next, links to a previous page and a next
@@ -1362,7 +1362,7 @@ category.
     Object Type             Associated Perl Class
     ---------------------   ---------------------------------
     Element Type            Bric::Biz::ElementType
-    Conainter Element Type  Bric::Biz::ElementType::Container
+    Container Element Type  Bric::Biz::ElementType::Container
     Field Element Type      Bric::Biz::ElementType::Field
     Template                Bric::Biz::Asset::Template
     Story                   Bric::Biz::Asset::Business::Story
