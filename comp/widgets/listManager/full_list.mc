@@ -46,23 +46,23 @@
 % my $first;
 % # here's where the rows diplayed are limited
 % my $i = 0;
-% foreach my $r (0..$#{$data}) {
-% my $o_id = shift @{$data->[$r]};
-% my $class = qq{ class="} . ($r % 2 ? "odd" : "even") . qq{"};
+% for my $row (0..$#{$data}) {
+% my $o_id = shift @{$data->[$row]};
+% my $class = qq{ class="} . ($row % 2 ? "odd" : "even") . qq{"};
   <tr<% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
 <%perl>;
   # Output for each field.
   my $remainingCols = $cols;
-  foreach my $c (0..$#{$data->[$r]}) {
-      my $val   = $data->[$r]->[$c];
-      my $class = qq{ class="selected"} if ($c eq $sort_col);
+  for my $class_idx (0..$#{$data->[$row]}) {
+      my $val   = $data->[$row]->[$class_idx];
+      my $class = qq{ class="selected"} if $class_idx == $sort_col;
       $m->out(qq{    <td$class>$val</td>\n});
       $remainingCols--;
   }
 
   if ($actions) {
-      foreach my $c (0..$#{$actions->[$r]}) {
-          my $val   = $actions->[$r]->[$c];
+      foreach my $class_idx (0..$#{$actions->[$row]}) {
+          my $val   = $actions->[$row]->[$class_idx];
           $m->out(qq{    <td class="action">$val</td>\n});
           $remainingCols--;
       }
