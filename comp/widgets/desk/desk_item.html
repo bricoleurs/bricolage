@@ -3,7 +3,7 @@
 % if ($user) {
     <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
 % }
-    <div "<% $uuid ? qq{title="$uuid" } : '' %>"class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
+    <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
     <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
     <% $m->comp('publish_status_span.mc',
                 sorted => $highlight eq 'name' ? ' sorted' : '',

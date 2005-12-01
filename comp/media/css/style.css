@@ -29,7 +29,7 @@ textarea {
 #bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
 #mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
 #sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
-#contentContainer { padding: 8px 0 0 158px; }
+#contentContainer { position: relative; padding: 8px 0 0 158px; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
@@ -162,7 +162,8 @@ div.debug dt:after {
 
 .desk .buttonbar { text-align: right; }
 
-.desk .item { 
+.desk .item {
+    position: relative;
     margin-bottom: 10px;
     border-style: solid;
     border-color: #CCCC99;
@@ -245,18 +246,15 @@ div.debug dt:after {
 /* .desk .item .even { background: #E8E8CD; } */
 
 .desk .item .actions { 
-    width: 230px; 
-    position: absolute; 
-    top: 0; right: 0; bottom: 0;
+    position: absolute;
+    top: 0; right: 5px;
+    width: 230px;
     background: transparent;
     border-top: solid white 1px;
     padding: 0 10px;
 }
 .desk .item .actions p { margin: 5px 0; }
 .desk .item .actions .mover { 
-    position: absolute;
-    top: 50%;
-    margin-top: -10px;
     padding: 0; 
 }
 .desk .item .actions .mover select {
@@ -266,8 +264,6 @@ div.debug dt:after {
     margin: 0px 0; 
     padding: 0; 
     list-style: none; 
-    position: absolute;
-    bottom: 2px;
 }
 .desk .item .actions ul li {
     display: block;
@@ -323,7 +319,7 @@ form .row .redLabel {
     line-height: 2;
 }
 form .row .input {
-    margin-left: 140px;
+    padding-left: 140px;
     white-space: nowrap;
     line-height: 2;
 }
@@ -336,10 +332,18 @@ form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
 table tr.odd { background: #E8E8CD; }
-table td.name { font-weight: bold; vertical-align: top; padding-top: 7px; }
+table td.name { 
+    width: 8em; 
+    padding-right: 5px;
+    text-align: right; 
+    font-weight: bold; 
+    vertical-align: top; 
+    padding-top: 12px; 
+}
+table td.value { padding-top: 7px; }
 table td.position,
-table td.edit,
-table td.delete { width: 100px; text-align: center; }
+table td.edit { width: 50px; text-align: center; }
+table td.delete { white-space: nowrap; }
 
 .listManager,
 .containerProf { width: 100%; border-style: hidden; }
@@ -615,6 +619,7 @@ button:active {
 /* Clear floats without additional HTML markup
    http://www.positioniseverything.net/easyclearing.html */
 .clearboth:after,
+.desk .item:after,
 .desk .item .head:after,
 .desk .item .actions:after,
 .desk_item .head:after,
@@ -628,6 +633,7 @@ form .row:after,
     visibility: hidden;
 }
 .clearboth,
+.desk .item,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,
@@ -636,6 +642,7 @@ form .row,
 .viewmeta { display: inline-block;}
 /* Hides from IE-mac \*/
 * html .clearboth,
+* html .desk .item,
 * html .desk .item .head,
 * html .desk .item .actions,
 * html .desk_item .head,
@@ -643,6 +650,7 @@ form .row,
 * html .paginate,
 * html .viewmeta {height: 1%;}
 .clearboth,
+.desk .item,
 .desk .item .head,
 .desk .item .actions,
 .desk_item .head,

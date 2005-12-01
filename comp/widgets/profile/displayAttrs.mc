@@ -63,10 +63,9 @@ foreach my $attr (@$attr) {
     my $vals = {
         value => $attr->{value},
         props => $props,
-        disp  => $attr->{meta}{disp}{value},
     };
 
-    $m->out(qq{<tr><td>\n});
+    $m->out(qq{<tr><td class="name">\n});
 
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
@@ -74,11 +73,13 @@ foreach my $attr (@$attr) {
          name => 'attr_name'
      ) if (!$readOnly);
 
+    $m->out($attr->{meta}{disp}{value} . qq{:</td><td class="value">});
+
     # Spit out the attribute.
     $m->comp('/widgets/profile/displayFormElement.mc',
          key => "attr|$attr->{name}",
          vals => $vals,
-         useTable => 1,
+         useTable => 0,
          width => $width,
          indent => FIELD_INDENT,
          localize => $localize,
