@@ -117,7 +117,7 @@ needed. So an element can contain an subelement, that contains another
 subelement, etc.
 
 The most important thing to understand about element types is that they simply
-define the structure of the content that the author is allied to use when
+define the structure of the content that the author is allowed to use when
 creating or editing a story. The element type has no bearing on the actual
 content itself, or the formatting of that data!
 
