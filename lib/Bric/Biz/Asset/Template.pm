@@ -130,6 +130,7 @@ use Bric::Util::Grp::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Category;
 use Bric::Biz::OutputChannel;
+use List::Util qw(first);
 
 #==============================================================================#
 # Inheritance                          #
@@ -558,10 +559,6 @@ sub new {
     $init->{deploy_status} = 0;
     $init->{priority} ||= 3;
 
-    # file type defaults to 'mc'
-    $init->{file_type} ||= 'mc';
-
-    # Set the site ID and the group IDs.
     throw_dp "Cannot create an asset without a site" unless $init->{site_id};
     $init->{grp_ids} = [$init->{site_id}, $self->INSTANCE_GROUP_ID];
 
@@ -570,6 +567,34 @@ sub new {
       unless defined $init->{'output_channel'}
         || defined $init->{'output_channel__id'};
 
+    # Lookup the output channel object.
+    my $oc;
+    if ($oc = $init->{output_channel}) {
+        $init->{output_channel__id} = $oc->get_id;
+    } else {
+        $oc = $init->{output_channel} = Bric::Biz::OutputChannel->lookup({
+            id => $init->{output_channel__id},
+        }) or throw_dp 'There is no output channel with the ID '
+            . $init->{output_channel__id};
+    }
+
+    # Get the file type and allowed file types.
+    my $file_type  = $init->{file_type};
+    my $file_types = Bric::Util::Burner->list_file_types($oc->get_burner);
+
+    # Verify or assign the file type.
+    if ($file_type) {
+        # Make sure that it's legit.
+        unless (first { $_->[0] eq $file_type } @$file_types) {
+            throw_dp qq{"$file_type" is not a valid file type in the "}
+                   . $oc->get_name . '" output channel';
+        }
+    } else {
+        # Assign the first file extension we can find.
+        $init->{file_type} = $file_types->[0][0];
+    }
+
+    # Set the site ID and the group IDs.
     my $name;
     if (my $t = $init->{tplate_type}) {
         # The tplate_type parameter has been passed. Check it out.
@@ -604,9 +629,6 @@ sub new {
               or throw_dp "Invalid file_type parameter '$init->{file_type}'";
         }
     }
-
-    $init->{output_channel__id} = $init->{output_channel}->get_id
-      if defined $init->{output_channel};
 
     if ($init->{category}) {
         $init->{category_id} = $init->{category}->get_id;

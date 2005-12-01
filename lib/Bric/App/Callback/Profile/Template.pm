@@ -567,12 +567,11 @@ $create_fa = sub {
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
     my $cat_id = $param->{$widget.'|cat_id'};
-    my $file_type = $param->{file_type};
     my $tplate_type = $param->{tplate_type};
 
-    my $site_id = Bric::Biz::Workflow->lookup
-      ({ id => get_state_data($widget, 'work_id')})->
-        get_site_id;
+    my $site_id = Bric::Biz::Workflow->lookup({
+        id => get_state_data($widget => 'work_id')
+    })->get_site_id;
 
     my ($at, $name);
     if ($tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
@@ -598,23 +597,22 @@ $create_fa = sub {
     chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
 
     # Create a new template asset.
-    my $fa;
-    eval {
-        $fa = Bric::Biz::Asset::Template->new({
-            'element'            => $at,
-            'file_type'          => $file_type,
-            'output_channel__id' => $oc_id,
-            'category_id'        => $cat_id,
-            'priority'           => $param->{priority},
-            'name'               => $name,
-            'user__id'           => get_user_id(),
-            'site_id'            => $site_id,
+    my $fa = eval {
+        Bric::Biz::Asset::Template->new({
+            element_type            => $at,
+            file_type          => $param->{file_type},
+            output_channel__id => $oc_id,
+            category_id        => $cat_id,
+            priority           => $param->{priority},
+            name               => $name,
+            user__id           => get_user_id(),
+            site_id            => $site_id,
         });
     };
 
     my $was_reactivated = 0;
     if (my $err = $@) {
-        unless ($err->error =~ /already exists/) {
+        if ($err->error !~ /already\s+exists/) {
             rethrow_exception($err);
         } else {
             # XXX: it should never return more than one asset, right?

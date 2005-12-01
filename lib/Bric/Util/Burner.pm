@@ -438,10 +438,13 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
-=item my $file_types = Bric::Util::Burner->list_file_types
+=item my $file_types = Bric::Util::Burner->list_file_types($burner_id)
 
 Returns an array reference of array references of burner file name extensions
-mapped to labels for each. Suitable for use in select widgets.
+mapped to labels for each. Suitable for use in select widgets. Pass in a
+Burner ID (such as C<BURNER_MASON>, as exported by Bric::Biz::OutputChannel)
+to get back an array reference of only the burner file name extensions
+available for that burner.
 
 B<Throws:> NONE.
 
@@ -451,12 +454,16 @@ B<Notes:> NONE.
 
 =cut
 
-my ($classes, $exts, $cat_fn_class, $cat_ext_fn, $opts, $cat_fn_has_ext);
+my ($classes, $exts, $cat_fn_class, $cat_ext_fn, $cat_fn_has_ext, $file_types);
 sub class_for_ext    { $exts->{$_[1]} }
 sub class_for_cat_fn { $cat_fn_class->{$_[1]} }
 sub cat_fn_for_ext   { $cat_ext_fn->{$_[1]} }
 sub cat_fn_has_ext   { $cat_fn_has_ext->{$_[1]} }
-sub list_file_types  { $opts }
+sub list_file_types  {
+    shift;
+    return $file_types->[shift] if @_;
+    return [ map { @$_ } grep { defined } @$file_types ];
+}
 
 =back
 
@@ -2002,7 +2009,7 @@ sub _register_burner {
     $cat_fn_has_ext->{$p{category_fn}} = $p{cat_fn_has_ext};
     while (my ($e, $label) = each %{$p{exts}}) {
         $exts->{$e} = $class;
-        push @$opts, [$e => $label];
+        push @{ $file_types->[$burner] }, [ $e => $label ];
         $cat_ext_fn->{$e} = $p{category_fn};
     }
 }

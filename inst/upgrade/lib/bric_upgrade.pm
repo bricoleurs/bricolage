@@ -59,9 +59,9 @@ succeed, then the transaction will be commited when the script exits.
 
 If the C<-i> argument is specified on the command-line (as it is by
 F<inst/db_upgrade.pl>, this module will also switch the user context to the
-PostgreSQL administrative user. This is to allow trusted authentication
-to work properly. All upgrades must therefor be run the super user, so that
-the switch works.
+PostgreSQL administrative user. This is to allow trusted authentication to
+work properly. All upgrades must therefore be run the super user, so that the
+switch works.
 
 For those scripts that do not wish to run as the PostgreSQL user, such as to
 delete files from the existing Bricolage installation, just don't load this

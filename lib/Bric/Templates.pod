@@ -548,7 +548,7 @@ the Music category directory:
 
     $COMP_ROOT/oc_1/music/autohandler
 
-The code for this category template might look like this:
+The Mason code for this category template might look like this:
 
         <h1>Music</h1>
         <div class="music">
