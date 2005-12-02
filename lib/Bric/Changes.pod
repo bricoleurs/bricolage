@@ -74,6 +74,10 @@ addition to its name, and instead of the its description. [David]
 
 =back
 
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.9.1 "Peeves" (2005-10-28)
 
 =head2 New Features
