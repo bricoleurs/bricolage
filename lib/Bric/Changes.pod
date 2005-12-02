@@ -52,12 +52,6 @@ Updated the UI to fix Internet Explorer glitches. [Marshall]
 
 =item *
 
-Eliminated the old "P" and "D" graphics indicating the publish and deploy
-status of documents and templates in the search interface, replacing them with
-actual letters. [David]
-
-=item *
-
 The Element Type profile is now much smarter about displaying sites form
 association with an element type. If the user has access to only one site and
 the element type is associated with no more than one site, then the "Sites"
