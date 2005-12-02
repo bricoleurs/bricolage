@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.9.2 "Gimme" ()
+=head1 VERSION 1.10.0 ()
 
 =head2 Improvements
 
@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Eliminated letter graphices for "Published" and "Deployed" labels in story,
+Eliminated letter graphics for "Published" and "Deployed" labels in story,
 media, and template managers in favor of localizable characters. [David]
 
 =item *
@@ -42,9 +42,9 @@ examples in Mason, Template Toolkit, and PHP. [David]
 
 =item *
 
-Refactored the left nav to perform better and be easier to maintain. It now
-also sorts the admin menu items in alphabetical order by the localized name of
-each. [David]
+Refactored the left navigation code to perform better and be easier to
+maintain. It now also sorts the admin menu items in alphabetical order by the
+localized name of each. [David]
 
 =item *
 
