@@ -177,6 +177,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     XINHA_TOOLBAR
                     HTMLAREA_TOOLBAR
                     ENABLE_GZIP
+                    RELATED_DOC_POD_TAG
                    );
 
 our %EXPORT_TAGS = (all       => \@EXPORT_OK,
@@ -328,6 +329,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     l10n      => [qw(LOAD_LANGUAGES
                                      ENCODE_OK
                                      LOAD_CHAR_SETS)],
+                    pod       => [qw(RELATED_DOC_POD_TAG)],
                    );
 
 # This has to come after the EXPORT vars so that other Bricolage modules
@@ -718,6 +720,16 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ENCODE_OK              => $] >= 5.008;
     use constant LOAD_LANGUAGES         => $config->{LOAD_LANGUAGES};
     use constant LOAD_CHAR_SETS         => $config->{LOAD_CHAR_SETS};
+
+    # POD Settings.
+    if (my $tag = $config->{RELATED_DOC_POD_TAG}) {
+        die 'RELATED_DOC_POD_TAG must be "uuid", "uri", "url", or "id"'
+            unless $tag eq 'uuid'
+                or $tag eq 'uri'
+                or $tag eq 'url'
+                or $tag eq 'id';
+    }
+    use constant RELATED_DOC_POD_TAG    => $config->{RELATED_DOC_POD_TAG} || 'uuid';
 
     # XXX Shove the PERL_LOADER code into our INC hash. Bric::Util::Burner
     # will pull it out and execute it. Yes, this is a nasty hack, but it works

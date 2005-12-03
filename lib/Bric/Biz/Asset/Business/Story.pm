@@ -1280,7 +1280,7 @@ sub get_uri {
     }
 
     throw_da "There is no category associated with story '" .
-      ($self->get_name || '') . "' (#" . ($self->get_id || '') . ")."
+      ($self->get_name || '') . "' (" . ($self->get_uuid || '') . ').'
       unless $cat;
 
     # Get the output channel object.

@@ -57,6 +57,7 @@ use Bric::Util::DBI qw(:all);
 use Bric::Biz::Element::Field;
 use Bric::Biz::ElementType;
 use Bric::App::Util;
+use Bric::Config qw(:pod);
 use Bric::Util::Fault qw(throw_gen throw_invalid throw_da);
 use URI;
 use List::Util qw(reduce first);
@@ -1541,7 +1542,8 @@ parsable by C<update_from_pod()>. Pass in a field key name and those fields
 will not have the POD tag, including in subelements that have the same field
 key name. Subelements will begin with C<=begin $key_name> and end with C<=end
 $key_name>, and will be indented four spaces relative to their parent
-elements. Related stories and media will be identified by the
+elements. Related stories and media will be identified by the tag specifed via
+the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive or default to
 C<=related_story_uuid> and C<=related_media_uuid> tags, respectively.
 
 =cut
@@ -1956,12 +1958,14 @@ sub _podify {
 
     # Start with related story.
     if (my $rel_story = $self->get_related_story) {
-        $pod .= "$indent=related_story_uuid " . $rel_story->get_uuid . "\n\n";
+        $pod .= "$indent=related_story_" . RELATED_DOC_POD_TAG . q{ }
+              . _rel_link($rel_story) . "\n\n";
     }
 
     # Add related media.
     if (my $rel_media = $self->get_related_media) {
-        $pod .= "$indent=related_media_uuid " . $rel_media->get_uuid . "\n\n";
+        $pod .= "$indent=related_media_" . RELATED_DOC_POD_TAG . q{ }
+              . _rel_link($rel_media) . "\n\n";
     }
 
     # Dump all of the fields and subelements.
@@ -2401,6 +2405,33 @@ sub _bad_field {
 }
 
 ################################################################################
+
+=item my $link = _rel_link($document)
+
+Returns a string for a related link for $document relative to the settinf of
+the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive.
+
+=cut
+
+sub _rel_link {
+    my $doc = shift;
+    return RELATED_DOC_POD_TAG eq 'uuid' ? $doc->get_uuid
+         : RELATED_DOC_POD_TAG eq 'uri'  ? $doc->get_primary_uri
+         : RELATED_DOC_POD_TAG eq 'id'   ? $doc->get_id
+         : do {
+             my $site  = Bric::Biz::Site->lookup({ id => $doc->get_site_id });
+             my $proto = 'http';
+             if (my $oc = $doc->get_primary_oc) {
+                 if ($proto = $oc->get_protocol) {
+                     $proto =~ s{[/:]+}{}g;
+                 }
+             }
+             my $uri  = URI->new($doc->get_primary_uri);
+             $uri->scheme($proto);
+             $uri->host($site->get_domain_name);
+             $uri->as_string;
+         };
+}
 
 1;
 __END__

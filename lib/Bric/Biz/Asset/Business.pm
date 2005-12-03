@@ -135,6 +135,7 @@ use Bric::Util::Coll::OutputChannel;
 use Bric::Util::Coll::Keyword;
 use Bric::Util::Pref;
 use Data::UUID;
+use List::Util qw(first);
 
 #=============================================================================#
 # Inheritance                          #
@@ -733,15 +734,8 @@ sub get_primary_oc {
     my $self = shift;
     my $pocid = $self->get_primary_oc_id;
     my ($oc) = $self->get_output_channels($pocid);
-    unless ($oc) {
-        # Must be a new media. Go through the OCs till we find the primary.
-        foreach ($self->get_output_channels) {
-            next unless $_->get_id == $pocid;
-            $oc = $_;
-            last;
-        }
-    }
-    return $oc;
+    # Must be a new document. Find the primary.
+    return $oc || first { $_->get_id == $pocid } $self->get_output_channels;
 }
 
 =item $self = $p->set_primary_oc_id($primary_oc_id)
