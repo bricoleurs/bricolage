@@ -97,6 +97,14 @@ L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business> so that they each
 make sure that the other is set. This will hopefully prevent only one from
 being set. [David]
 
+=item *
+
+A media document that has a file uploaded to it before it is ever saved will
+no longer cause it to store the media file in a directory without an ID
+mapping it to the media document. This only affected installations where media
+were created by some method other than the Bricolage UI or SOAP. Reported by
+Rod Taylor. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)

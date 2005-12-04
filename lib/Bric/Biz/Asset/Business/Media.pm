@@ -367,6 +367,7 @@ BEGIN {
                          _category_obj   => Bric::FIELD_NONE,
                          _file           => Bric::FIELD_NONE,
                          _media_type_obj => Bric::FIELD_NONE,
+                         _upload_data    => Bric::FIELD_NONE,
                         });
 }
 
@@ -1438,10 +1439,18 @@ B<Notes:> NONE.
 =cut
 
 sub upload_file {
-    my ($self, $fh, $name, $type, $size) = @_;
+    my $self = shift;
 
     my ($id, $v, $old_fn, $loc, $uri) =
       $self->_get(qw(id version file_name location uri));
+
+    unless ($id) {
+        # If there is no ID, we're not ready to create a file name, yet.
+        $self->_set(['_upload_data'] => [\@_]);
+        return $self;
+    }
+
+    my ($fh, $name, $type, $size) = @_;
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
@@ -1756,6 +1765,13 @@ sub save {
             } else {
                 $self->_insert_media();
                 $self->_insert_instance();
+                if (my $upload_data = $self->_get('_upload_data')) {
+                    # Ah, we need to handle a file upload.
+                    $self->upload_file(@$upload_data);
+                    $self->_set(['_upload_data'] => [undef]);
+                    # Update to save the file location data.
+                    $self->_update_instance;
+                }
             }
         }
 
