@@ -983,7 +983,7 @@ interface is pretty different from the other templating architectures).
 
 Outputs the content of the field or container element passed as its argument.
 For field elements, this is synonymous with calling C<< $field->get_value >>.
-For container elements, C<display_element() searches up the URI path of the
+For container elements, C<display_element()> searches up the URI path of the
 category to which the story is currently being published for the relevant
 element template. If it finds it, it executes it, adds its output to the
 output buffer, and returns control to the calling template.
@@ -1102,6 +1102,8 @@ Fields:
 =back
 
 Subelements:
+
+=over
 
 =item page
 

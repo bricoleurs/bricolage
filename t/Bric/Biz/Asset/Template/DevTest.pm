@@ -8,6 +8,7 @@ use Bric::Biz::ElementType;
 use Bric::Util::DBI qw(:junction);
 use Bric::Util::Burner::Mason;
 use Bric::Util::Burner::Template;
+use Test::MockModule;
 
 my $CATEGORY = Bric::Biz::Category->lookup({ id => 1 });
 
@@ -53,7 +54,7 @@ sub make_oc {
     $oc->save;
     my $id = $oc->get_id;
     $self->add_del_ids($id, 'output_channel');
-    return $id;
+    return $oc;
 }
 
 
@@ -75,7 +76,7 @@ sub test_new_elem : Test(17) {
     is( $err->get_msg, $msg, "Check message" );
 
     # Create a new output channel.
-    my $oc_id = $self->make_oc;
+    my $oc_id = $self->make_oc->get_id;
 
     # Create one that doesn't conflict.
     ok( my $t = $class->new({ $self->new_args,
@@ -109,6 +110,10 @@ sub test_new_elem : Test(17) {
     $msg = "Missing required parameter 'element_type' or 'element_type_id'";
     is( $err->get_msg, $msg, "Check another message" );
 
+    # Mock HTML::Template support into the output channel.
+    my $oc_class = Test::MockModule->new('Bric::Biz::OutputChannel');
+    $oc_class->mock(get_burner => Bric::Biz::OutputChannel::BURNER_TEMPLATE);
+
     # Create an HTML::Template template.
     ok( $t = $class->new({ $self->new_args,
                            element => $self->get_elem,
@@ -135,7 +140,8 @@ sub test_new_cat : Test(18) {
     is( $err->get_msg, $msg, "Check message" );
 
     # Create an OC.
-    my $oc_id = $self->make_oc;
+    my $oc = $self->make_oc;
+    my $oc_id = $oc->get_id;
 
     # Create one that doesn't conflict.
     ok( my $t = $class->new({ $self->new_args,
@@ -167,8 +173,13 @@ sub test_new_cat : Test(18) {
     };
     ok( $err = $@, "Catch exception" );
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
-    $msg = "Invalid file_type parameter 'foo'";
+    my $oc_name = $oc->get_name;
+    $msg = qq{"foo" is not a valid file type in the "$oc_name" output channel};
     is( $err->get_msg, $msg, "Check another message" );
+
+    # Mock HTML::Template support into the output channel.
+    my $oc_class = Test::MockModule->new('Bric::Biz::OutputChannel');
+    $oc_class->mock(get_burner => Bric::Biz::OutputChannel::BURNER_TEMPLATE);
 
     # Create an HTML::Template category template.
     ok( $t = $class->new({ $self->new_args,
@@ -209,7 +220,7 @@ sub test_new_util : Test(23) {
     is( $err->get_msg, $msg, "Check message" );
 
     # Grab an OC ID.
-    my $oc_id = $self->make_oc;
+    my $oc_id = $self->make_oc->get_id;
 
     # Create one that doesn't conflict.
     ok( $t = $class->new({ $self->new_args,
@@ -239,6 +250,10 @@ sub test_new_util : Test(23) {
     isa_ok($err, 'Bric::Util::Fault::Exception::DP');
     $msg = "Missing required parameter 'name'";
     is( $err->get_msg, $msg, "Check another message" );
+
+    # Mock HTML::Template support into the output channel.
+    my $oc_class = Test::MockModule->new('Bric::Biz::OutputChannel');
+    $oc_class->mock(get_burner => Bric::Biz::OutputChannel::BURNER_TEMPLATE);
 
     # Create an HTML::Template utility template.
     ok( $t = $class->new({ $self->new_args,
