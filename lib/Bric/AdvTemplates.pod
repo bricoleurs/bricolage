@@ -170,7 +170,7 @@ Here is some template code for 'column':
         <head><title><% $story->get_title %></title></head>
         <body>
 
-    % may $n = 1;
+    % my $n = 1;
     % while (my $pg = $element->get_container('page', $n++)) {
     %     $burner->display_element($pg);
     % }
