@@ -849,7 +849,7 @@ sub _set {
         # skip unless new is different from old
         COMPARE: {
             no warnings;
-            next if !( defined $new xor defined $old ) && $new eq $old;
+            next if defined $new == defined $old && $new eq $old;
         }
 
         # a change was found, mark for later
