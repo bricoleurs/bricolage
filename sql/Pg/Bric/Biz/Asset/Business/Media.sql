@@ -62,9 +62,7 @@ CREATE TABLE media (
     workflow__id      NUMERIC(10,0)   NOT NULL,
     desk__id          NUMERIC(10,0)   NOT NULL,
     publish_status    NUMERIC(1,0)    NOT NULL
-                                      DEFAULT 0
-                                      CONSTRAINT ck_media__publish_status 
-                                        CHECK (publish_status IN (0,1)),
+                                      DEFAULT 0,
     active            NUMERIC(1,0)    NOT NULL
                                       DEFAULT 1
                                       CONSTRAINT ck_media__active

@@ -65,9 +65,7 @@ CREATE TABLE story (
     workflow__id      NUMERIC(10,0)   NOT NULL,
     desk__id          NUMERIC(10,0)   NOT NULL,
     publish_status    NUMERIC(1,0)    NOT NULL
-                                      DEFAULT 0
-                                      CONSTRAINT ck_story__publish_status
-                                        CHECK (publish_status IN (0,1)),
+                                      DEFAULT 0,
     active            NUMERIC(1,0)    NOT NULL
                                       DEFAULT 1
                                       CONSTRAINT ck_story__active
@@ -77,7 +75,6 @@ CREATE TABLE story (
                                         CHECK (alias_id != id),  
     CONSTRAINT pk_story__id PRIMARY KEY (id)
 );
-
 
 -- ----------------------------------------------------------------------------
 -- Table story_instance

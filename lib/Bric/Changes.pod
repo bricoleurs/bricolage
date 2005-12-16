@@ -40,6 +40,12 @@ The Bulk Publish interface in the UI now displays the name of the site
 alongside the catgory if there is more than one site, so as to disambiguate
 the list of categories. Reported by Marshall Roch. [David]
 
+=item *
+
+Added constraints to the story and media tables in the database to prevent the
+publish status from becoming out of sync with the publish date and first
+publish date. [David]
+
 =back
 
 =head2 Bug Fixes
