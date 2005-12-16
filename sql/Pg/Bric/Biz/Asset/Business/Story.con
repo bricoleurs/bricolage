@@ -6,6 +6,21 @@
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 
+-- Add constraint to keep publish_status synched with publish_date.
+ALTER TABLE story
+ADD CONSTRAINT ck_story__publish_status CHECK (
+    (
+        publish_status = FALSE
+        AND publish_date IS NULL
+        AND first_publish_date IS NULL
+    )
+    OR (
+        publish_status = TRUE
+        AND publish_date IS NOT NULL
+        AND first_publish_date IS NOT NULL
+    )
+);
+
 ALTER TABLE story
 ADD CONSTRAINT fk_source__story FOREIGN KEY (source__id)
 	REFERENCES source(id) ON DELETE RESTRICT;
