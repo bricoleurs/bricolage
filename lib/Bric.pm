@@ -840,27 +840,28 @@ sub _set {
     # Load $k and $v differently if its a hash ref or two array refs.
     my ($k, $v) = @_ == 1 ? ([keys %{$_[0]}],[values %{$_[0]}]) : @_;
 
-    my ($key, $old_value, $new_value, $dirt);
+    my ($key, $old, $new, $dirt);
     for (0 .. $#$k) {
         $key       = $k->[$_];
-        $new_value = $v->[$_];
-        $old_value = $self->{$key};
+        $new = $v->[$_];
+        $old = $self->{$key};
 
-        # skip unless new_value is different from old_value
-        next if (not defined $new_value and not defined $old_value) or
-          (defined $new_value and defined $old_value and
-           $old_value eq $new_value);
+        # skip unless new is different from old
+        COMPARE: {
+            no warnings;
+            next if !( defined $new xor defined $old ) && $new eq $old;
+        }
 
         # a change was found, mark for later
         $dirt = 1;
 
         # fast version, no check for errors
-        $self->{$key} = $new_value unless QA_MODE;
+        $self->{$key} = $new unless QA_MODE;
 
         # in QA_MODE check for (impossible?) failures
         if (QA_MODE) {
             eval {
-                $self->{$key} = $new_value;
+                $self->{$key} = $new;
                 $dirt = 1;
             };
             throw_gen error =>  "Error setting value for '$key' in _set().",

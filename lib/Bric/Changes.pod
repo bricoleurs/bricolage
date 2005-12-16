@@ -73,6 +73,11 @@ have to be limited to seeing related stories and related media represented by
 C<=related_story_uuid> and C<=related_media_uuid>. Just set it to "uuid",
 "uri", "url", or "id" to get a different tag. [David]
 
+=item *
+
+Optimized coparison of new and old attribute values when setting attributes.
+Based on an example sent by Curtis "Ovid" Poe. [David]
+
 =back
 
 =cut
