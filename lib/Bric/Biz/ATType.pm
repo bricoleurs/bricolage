@@ -170,15 +170,15 @@ classes:
 
 =over 4
 
-=item Bric::Biz::Asset::Busines::Story
+=item Bric::Biz::Asset::Business::Story
 
-=item Bric::Biz::Asset::Busines::Media
+=item Bric::Biz::Asset::Business::Media
 
-=item Bric::Biz::Asset::Busines::Media::Image
+=item Bric::Biz::Asset::Business::Media::Image
 
-=item Bric::Biz::Asset::Busines::Media::Audio
+=item Bric::Biz::Asset::Business::Media::Audio
 
-=item Bric::Biz::Asset::Busines::Media::Video
+=item Bric::Biz::Asset::Business::Media::Video
 
 =back
 

@@ -355,7 +355,7 @@ method. The returned element is in the same class as the global $element
 object: It's the top-level container element for the related story.
 
 Related media are
-L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media> objects.
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> objects.
 They inherit from the same class as the story class, namely
 L<Bric::Biz::Asset::Busines|Bric::Biz::Asset::Busines>, but has a slightly
 different interface. These methods are the most notable:

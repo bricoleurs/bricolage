@@ -452,17 +452,17 @@ L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldT
 
 =item *
 
-Bric::Biz::Asset::Busines::Parts::Tile is now
+Bric::Biz::Asset::Business::Parts::Tile is now
 L<Bric::Biz::Element|Bric::Biz::Element>.
 
 =item *
 
-Bric::Biz::Asset::Busines::Parts::Tile::Container is now
+Bric::Biz::Asset::Business::Parts::Tile::Container is now
 L<Bric::Biz::Element::Container|Bric::Biz::Element::Container>.
 
 =item *
 
-Bric::Biz::Asset::Busines::Parts::Tile::Data is now
+Bric::Biz::Asset::Business::Parts::Tile::Data is now
 L<Bric::Biz::Element::Container|Bric::Biz::Element::Field>.
 
 =back

@@ -485,8 +485,8 @@ Boolean value for related media element types.
 
 The ID of a Bric::Util::Class object representing a business class. The ID
 must be for a class object representing one of
-L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
-L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses. May use C<ANY> for a list of possible values.
 
 =back
@@ -1016,8 +1016,8 @@ for my $attr (qw(
 
 Get and set the ID of the Bric::Util::Class object that represents the class
 for which elements of this type can be created. Must be the ID for either
-L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
-L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses. C<get_biz_class()> actually returns the package name of the
 business class represented by the C<biz_class_id> attribute.
 
