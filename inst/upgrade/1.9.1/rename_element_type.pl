@@ -64,7 +64,7 @@ do_sql
   q{
     INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name,
                        description, distributor)
-    VALUES ('81', 'element', 'Bric::Biz::Asset::Busines::Parts::Tile',
+    VALUES ('81', 'element', 'Bric::Biz::Asset::Business::Parts::Tile',
             'Element', 'Elements', 'Element objects.', '0')
   },
 
