@@ -196,6 +196,7 @@ use constant PARAM_FROM_MAP => {
      contrib_id           => 'media__contributor sic',
      note                 => 'media_instance mmi2',
      uri                  => 'media_uri uri',
+     site                 => 'site',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -209,6 +210,7 @@ use constant PARAM_WHERE_MAP => {
       alias_id              => 'mt.alias_id = ?',
       site_id               => 'mt.site__id = ?',
       no_site_id            => 'mt.site__id <> ?',
+      site                  => 'mt.site__id = site.id AND LOWER(site.name) LIKE LOWER(?)',
       workflow__id          => 'mt.workflow__id = ?',
       workflow_id           => 'mt.workflow__id = ?',
       _null_workflow_id     => 'mt.workflow__id IS NULL',
@@ -316,6 +318,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(mmi2.note) LIKE LOWER(?)'],
     uri                    => [ 'mt.id = uri.media__id',
                                 'LOWER(uri.uri) LIKE LOWER(?)'],
+    site                   => [ 'mt.site__id = site.id',
+                                'LOWER(site.name) LIKE LOWER(?)' ],
 
 };
 
@@ -645,6 +649,11 @@ possible values.
 
 Returns a list of media associated with a given site ID. May use C<ANY>
 for a list of possible values.
+
+=item site
+
+Returns a list of media associated with a given site name. May use C<ANY> for
+a list of possible values.
 
 =item element_type_id
 

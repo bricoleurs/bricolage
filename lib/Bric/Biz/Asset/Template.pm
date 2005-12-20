@@ -244,6 +244,7 @@ use constant PARAM_FROM_MAP => {
     element_key_name => 'element_type e',
     site_id          => 'output_channel oc',
     note             => 'template_instance fi2'
+    site             => 'site',
 };
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
@@ -255,6 +256,7 @@ use constant PARAM_WHERE_MAP => {
     inactive              => 'f.active = ?',
     site_id               => 'f.output_channel__id = oc.id AND oc.site__id = ?',
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
+    site                  => 'f.site__id = site.id AND LOWER(site.name) LIKE LOWER(?)',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
     version_id            => 'i.id = ?',
@@ -324,6 +326,8 @@ use constant PARAM_ANYWHERE_MAP => {
                           'oc.site__id <> ?' ],
     note             => [ 'fi2.template__id = f.id',
                           'LOWER(fi2.note) LIKE LOWER(?)'],
+    site             => [ 'f.site__id = site.id',
+                          'LOWER(site.name) LIKE LOWER(?)' ],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -747,6 +751,11 @@ current non-checked out versions.
 =item site_id
 
 Returns a list of templates associated with a given site ID. May use C<ANY>
+for a list of possible values.
+
+=item site
+
+Returns a list of templates associated with a given site name. May use C<ANY>
 for a list of possible values.
 
 =item category_id

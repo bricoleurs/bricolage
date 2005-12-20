@@ -301,6 +301,7 @@ use constant PARAM_FROM_MAP => {
        related_media_id     => 'story_element sctrm',
        note                 => 'story_instance si2',
        uri                  => 'story_uri uri',
+       site                 => 'site',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -313,6 +314,7 @@ use constant PARAM_WHERE_MAP => {
       inactive               => 's.active = ?',
       alias_id               => 's.alias_id = ?',
       site_id                => 's.site__id = ?',
+      site                   => 's.site__id = site.id AND LOWER(site.name) LIKE LOWER(?)',
       no_site_id             => 's.site__id <> ?',
       version_id             => 'i.id = ?',
       workflow__id           => 's.workflow__id = ?',
@@ -444,6 +446,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'sic.member__id = ?' ],
     note                   => [ 'si2.story__id = s.id',
                                 'LOWER(si2.note) LIKE LOWER(?)'],
+    site                   => [ 's.site__id = site.id',
+                                'LOWER(site.name) LIKE LOWER(?)' ],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -782,6 +786,11 @@ parameter!
 =item site_id
 
 Returns a list of stories associated with a given site ID. May use C<ANY>
+for a list of possible values.
+
+=item site
+
+Returns a list of stories associated with a given site name. May use C<ANY>
 for a list of possible values.
 
 =item element_type_id

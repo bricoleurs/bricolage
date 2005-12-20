@@ -78,6 +78,11 @@ C<=related_story_uuid> and C<=related_media_uuid>. Just set it to "uuid",
 Optimized coparison of new and old attribute values when setting attributes.
 Based on an example sent by Curtis "Ovid" Poe. [David]
 
+=item *
+
+Added C<site> parameter for a site name to the list() methods of the story,
+media, and template classes. [David]
+
 =back
 
 =cut
