@@ -136,11 +136,11 @@ __END__
 
 =head1 NAME
 
-import_contribs - Import contributors from a tab-delimited file
+bric_import_contribs - Import contributors from a tab-delimited file
 
 =head1 SYNOPSIS
 
-  import_contribs --username admin --password password \
+  bric_import_contribs --username admin --password password \
      --contrib-type Writers file.tab
 
 =head1 DESCRIPTION
@@ -154,7 +154,7 @@ custom fields.
 
 =head1 OPTIONS
 
-  import_contribs --username username --password password \
+  bric_import_contribs --username username --password password \
     --contrib-type contrib_type [options] import_file
 
 =head2 Arguments
