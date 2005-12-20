@@ -83,6 +83,10 @@ Based on an example sent by Curtis "Ovid" Poe. [David]
 Added C<site> parameter for a site name to the list() methods of the story,
 media, and template classes. [David]
 
+=item *
+
+Added F<republish_by_uri> contrib script. [David and Mark]
+
 =back
 
 =cut
