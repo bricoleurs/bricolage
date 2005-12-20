@@ -1,0 +1,9 @@
+bin/republish_by_uri
+Build.PL
+Changes
+Makefile.PL
+MANIFEST			This list of files
+META.yml
+README
+t/republish_by_uri.t
+t/zpod.t

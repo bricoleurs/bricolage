@@ -1,0 +1,17 @@
+---
+name: republish_by_uri
+version: 0.10
+author:
+  - David Wheeler <david@kineticode.com>
+  - Mark Jaroski <jaroskim@who.int>
+abstract: Repbulish Bricolage stories by URI
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Getopt::Long: 0
+  Pod::Usage: 0
+generated_by: Module::Build version 0.2703
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
