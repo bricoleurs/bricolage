@@ -23,7 +23,7 @@ require Data::Dumper if DEBUG;
 
 =head1 NAME
 
-Bric::SOAP::ATType - SOAP interface to Bricolage element type sets
+Bric::SOAP::ATType - SOAP interface (deprecated) to Bricolage element type sets
 
 =head1 VERSION
 
@@ -61,6 +61,7 @@ $LastChangedDate: 2004-06-09 05:19:39 +0200 (Wed, 09 Jun 2004) $
 =head1 DESCRIPTION
 
 This module provides a SOAP interface to manipulating Bricolage element type sets.
+This interface is deprecated and will be removed in version 1.12.
 
 =cut
 
