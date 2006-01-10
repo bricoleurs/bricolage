@@ -243,7 +243,7 @@ use constant PARAM_FROM_MAP => {
     grp_id           =>  'member m2, template_member fm2',
     element_key_name => 'element_type e',
     site_id          => 'output_channel oc',
-    note             => 'template_instance fi2'
+    note             => 'template_instance fi2',
     site             => 'site',
 };
 
