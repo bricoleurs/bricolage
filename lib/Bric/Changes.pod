@@ -37,7 +37,7 @@ been "expired", rather than "published". Thanks to Simon Wilcox for the spot.
 =item *
 
 The Bulk Publish interface in the UI now displays the name of the site
-alongside the catgory if there is more than one site, so as to disambiguate
+alongside the category if there is more than one site, so as to disambiguate
 the list of categories. Reported by Marshall Roch. [David]
 
 =item *
@@ -79,7 +79,7 @@ created). Reported by Wayne Slavin. [David]
 =item *
 
 Upgrades no longer fail if $BRICOLAGE_ROOT is not set and the instance of
-Bricolage to be upgraded is somewhere ohter than F</usr/local/bricolage>.
+Bricolage to be upgraded is somewhere other than F</usr/local/bricolage>.
 Reported by Nate Perry-Thistle. [David]
 
 =item *
@@ -110,6 +110,11 @@ no longer cause it to store the media file in a directory without an ID
 mapping it to the media document. This only affected installations where media
 were created by some method other than the Bricolage UI or SOAP. Reported by
 Rod Taylor. [David]
+
+=item *
+
+Story and Media on the search result page are now correctly sorted by the 
+'Default Asset Sort' preference, or title if it is not set. [Paul Orrock]
 
 =back
 
