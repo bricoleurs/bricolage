@@ -48,7 +48,7 @@ publish date. [David]
 
 =item *
 
-Changed code to show the first displayable data field of a sub-element when 
+Changed code to show the first displayable data field of a sub-element when
 viewing or editing an asset as opposed to only text fields. [Paul Orrock]
 
 =back
@@ -139,6 +139,19 @@ The burner now looks up existing resources (files) by both file system path
 and URI, instead of just the file system path, since the combination of the
 path and the URI are globally unique, not just the path. Reported by Paul
 Hyland. [David]
+
+=item *
+
+Publishing a document with a related document, where the related document is
+still at version 0 (because it has never been checked in), now properly
+display a message indicating that the related document cannot be published
+because it is checked out. [David]
+
+=item *
+
+Removed testing code from the default F<book_review.mc> template on the file
+system (not present in the template in the database) that was put in place
+before the release of 1.8.6. [David]
 
 =back
 
