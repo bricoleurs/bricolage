@@ -113,8 +113,15 @@ Rod Taylor. [David]
 
 =item *
 
-Story and Media on the search result page are now correctly sorted by the 
+Story and Media on the search result page are now correctly sorted by the
 'Default Asset Sort' preference, or title if it is not set. [Paul Orrock]
+
+=item *
+
+Removed commented-out SQL that was appearing at the end of F<inst/Pg.sql>. The
+comment style, C</* */>, caused problems with PostgreSQL 7.3 and earlier.
+Reported by Jerry Franz, with the underlying problem identified by "aander07".
+[David]
 
 =back
 
