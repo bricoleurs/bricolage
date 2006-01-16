@@ -128,6 +128,13 @@ Reported by Jerry Franz, with the underlying problem identified by "aander07".
 Media file names are now URI-escaped for inclusion in the URIs returned by
 C<get_uri()> and C<get_primary_uri()>. Reported by Alexey Sheynuk. [David]
 
+=item *
+
+The burner now looks up existing resources (files) by both file system path
+and URI, instead of just the file system path, since the combination of the
+path and the URI are globally unique, not just the path. Reported by Paul
+Hyland. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)

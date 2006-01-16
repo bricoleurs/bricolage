@@ -312,6 +312,8 @@ Friends who have spotted bugs include:
 
 =item Alexey Sheynuk
 
+=item Paul Hyland
+
 =back
 
 Bricolage's translation team:
