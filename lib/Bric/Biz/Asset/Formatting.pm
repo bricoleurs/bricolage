@@ -1164,6 +1164,16 @@ sub my_meths {
                           type     => 'short',
                          };
 
+    $meths->{category_uri} = {
+                          get_meth => sub { shift->get_category(@_)->get_uri },
+                          get_args => [],
+                          name     => 'category_uri',
+                          disp     => 'Category URI',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
+
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
 

@@ -9,11 +9,11 @@
   <div class="body">
     <dl>
       <dt><% $lang->maketext('Category') %></dt>
-      <dd<% $classes->{category_name} || $classes->{location} || '' %>><% $cat %></dd>
+      <dd<% $classes->{category_uri} || $classes->{location} || '' %>><% $cat %></dd>
       <dt><% $lang->maketext('Site') %></dt>
       <dd<% $classes->{site_id} || '' %>><% $site %></dd>
       <dt><% $lang->maketext(($class eq 'formatting' ? 'Output Channel' : $disp  . ' Type')) %></dt>
-      <dd<% $classes->{element} || '' %>><% $type || '&nbsp;' %></dd>
+      <dd<% $classes->{element} ||  $classes->{output_channel} || '' %>><% $type || '&nbsp;' %></dd>
       <dt><% $lang->maketext($date_label) %></dt>
       <dd<% $classes->{cover_date} || '' %>><% $date || '&nbsp;' %></dd>
       <dt><% $lang->maketext('Priority') %></dt>
@@ -84,14 +84,19 @@ if ($class eq 'formatting') {
     $date_label = 'Deployed Date';
     $name = $obj->get_uri;
     my $cat_id = $obj->get_category_id;
+    if ($highlight eq 'file_name') {
+        $title_class .= 'sorted';
+    } elsif ($highlight eq 'id') {
+        $idv_class .= 'sorted';
+    }
     if (defined $cat_id) {
-	unless ($cat = $cats->{$cat_id}) {
-	    $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_uri;
-	    $cats->{$cat_id} = $cat;
-	    $r->pnotes("desk.cats", $cats);
-	}
+        unless ($cat = $cats->{$cat_id}) {
+            $cat = Bric::Biz::Category->lookup({ id => $cat_id })->get_uri;
+            $cats->{$cat_id} = $cat;
+            $r->pnotes("desk.cats", $cats);
+        }
     } else {
-	$cat = '&nbsp;';
+        $cat = '&nbsp;';
     }
 } else {
     $name = $obj->get_name;

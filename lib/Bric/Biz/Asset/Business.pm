@@ -435,7 +435,8 @@ sub my_meths {
         push @ord, $meth->{name};
         push (@ord, 'title') if $meth->{name} eq 'name';
     }
-    push @ord, qw(source_id source first_publish_date publish_date), pop @ord;
+    push @ord, qw(source_id source first_publish_date publish_date category
+                  category_name), pop @ord;
 
     $meths->{source_id} =    {
                               name     => 'source_id',
@@ -490,6 +491,36 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              };
+    $meths->{category} = {
+                          get_meth => sub { shift->get_primary_category(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_primary_category(@_) },
+                          set_args => [],
+                          name     => 'category',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
+
+    $meths->{category_name} = {
+                          get_meth => sub { shift->get_primary_category(@_)->get_name },
+                          get_args => [],
+                          name     => 'category_name',
+                          disp     => 'Category Name',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
+    $meths->{category_uri} = {
+                          get_meth => sub { shift->get_primary_category(@_)->get_uri },
+                          get_args => [],
+                          name     => 'category_uri',
+                          disp     => 'Category URI',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
     $meths->{title}{name} = 'title';

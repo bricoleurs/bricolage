@@ -1044,7 +1044,7 @@ sub my_meths {
         push @ord, $meth->{name};
     }
 
-    push @ord, qw(file_name category category_name), pop @ord;
+    push @ord, qw(file_name), pop @ord;
     $meths->{file_name} = {
                            get_meth => sub { shift->get_file_name(@_) },
                            get_args => [],
@@ -1058,25 +1058,6 @@ sub my_meths {
                                          maxlength => 256
                                        }
                           };
-    $meths->{category} = {
-                          get_meth => sub { shift->get_category_object(@_) },
-                          get_args => [],
-                          name     => 'category',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
-
-    $meths->{category_name} = {
-                          get_meth => sub { shift->get_category_object(@_)->get_name },
-                          get_args => [],
-                          name     => 'category_name',
-                          disp     => 'Category Name',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
 
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
