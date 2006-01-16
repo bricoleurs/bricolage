@@ -724,9 +724,14 @@ sub _add_resource {
     my ($story, $ext) = $self->_get(qw(story output_ext));
 
     # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
+    my $res = Bric::Dist::Resource->lookup({
+        path => $file,
+        uri  => $uri,
+    }) ||
+    Bric::Dist::Resource->new({
+        path => $file,
+        uri  => $uri,
+    });
 
     # Set the media type.
     $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));

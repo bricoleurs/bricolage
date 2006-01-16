@@ -51,6 +51,7 @@ use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
+use URI::Escape ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -1366,8 +1367,10 @@ B<Notes:> NONE.
 sub get_local_uri {
     my $self = shift;
     my $loc = $self->get_location || return;
-    return Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,
-                                        Bric::Util::Trans::FS->dir_to_uri($loc) );
+    return Bric::Util::Trans::FS->cat_uri(
+        MEDIA_URI_ROOT,
+        Bric::Util::Trans::FS->dir_to_uri($loc),
+    );
 }
 
 =item $uri = $media->get_path()
@@ -1494,7 +1497,7 @@ sub upload_file {
         $self->_set(['file_name'], [$name]);
         $uri = Bric::Util::Trans::FS->cat_uri
           ($self->_construct_uri($self->get_category_object, $oc_obj),
-           $oc_obj->get_filename($self));
+           URI::Escape::uri_escape($oc_obj->get_filename($self)));
 
         $self->_set([qw(location  uri   _update_uri)] =>
                     [   $new_loc, $uri, 1]);

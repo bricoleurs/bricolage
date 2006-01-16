@@ -308,6 +308,10 @@ Friends who have spotted bugs include:
 
 =item Phillip Smith
 
+=item Jerry Franz
+
+=item Alexey Sheynuk
+
 =back
 
 Bricolage's translation team:

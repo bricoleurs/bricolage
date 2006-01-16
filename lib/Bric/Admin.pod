@@ -176,6 +176,8 @@ START MODULE LIST
 
 =item Term::ReadPassword
 
+=item URI::Escape
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)

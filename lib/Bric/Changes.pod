@@ -123,6 +123,11 @@ comment style, C</* */>, caused problems with PostgreSQL 7.3 and earlier.
 Reported by Jerry Franz, with the underlying problem identified by "aander07".
 [David]
 
+=item *
+
+Media file names are now URI-escaped for inclusion in the URIs returned by
+C<get_uri()> and C<get_primary_uri()>. Reported by Alexey Sheynuk. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
