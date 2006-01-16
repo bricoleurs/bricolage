@@ -314,6 +314,8 @@ Friends who have spotted bugs include:
 
 =item Paul Hyland
 
+=item Frank Febbraro
+
 =back
 
 Bricolage's translation team:

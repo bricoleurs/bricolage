@@ -153,6 +153,11 @@ Removed testing code from the default F<book_review.mc> template on the file
 system (not present in the template in the database) that was put in place
 before the release of 1.8.6. [David]
 
+=item *
+
+Eliminated an error in the permissions screen when a site with workflows has
+been deleted. Reported by Frank Febbraro. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
