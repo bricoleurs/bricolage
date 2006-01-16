@@ -335,26 +335,20 @@ sub lock_val : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $value = $self->value;
+    my $key     = $self->class_key;
+    my $value   = $self->value;
     my $autopop = ref $self->value ? $self->value : [$self->value];
-    my $element    = get_state_data($self->class_key, 'element');
+    my $element = get_state_data($key => 'element');
 
     # Map all the data elements into a hash keyed by Element::Field ID.
-    my $data = {
-        map  { $_->get_id => $_ }
-        grep { !$_->is_container } $element->get_elements
-    };
+    my $fields = { map  { $_->get_id => $_ } $element->get_fields };
 
     foreach my $id (@$autopop) {
-        my $lock_set = $self->params->{$self->class_key.'|lock_val_'.$id} || 0;
-        my $dt = $data->{$id};
-
-        # Skip if there is no data element here.
-        next unless $dt;
-        if ($lock_set) {
-            $dt->lock_val();
+        my $field = $fields->{$id} or next;
+        if (exists $param->{"$key|lock_val_$id"}) {
+            $field->lock_val;
         } else {
-            $dt->unlock_val();
+            $field->unlock_val;
         }
     }
 }
