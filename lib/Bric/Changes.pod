@@ -170,6 +170,12 @@ been deleted. Reported by Frank Febbraro. [David]
 Fixed the "help on event logs" link in the Trail help page. Reported by Scott.
 [David]
 
+=item *
+
+If a desk or My Workspace does not have assets of a particular type (stories,
+media, or templates) on it, it will no longer display buttons for them.
+Reported by Scott. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
