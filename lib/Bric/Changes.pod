@@ -51,6 +51,13 @@ publish date. [David]
 Changed code to show the first displayable data field of a sub-element when
 viewing or editing an asset as opposed to only text fields. [Paul Orrock]
 
+=item *
+
+L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>'s publish method now schedules a
+publish job instead of immediately publishing, thus allowing the
+C<publish_date> parameter to actually work, and ensuring that the proper
+version is published. [David]
+
 =back
 
 =head2 Bug Fixes
