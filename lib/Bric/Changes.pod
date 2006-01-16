@@ -684,13 +684,6 @@ templates, rather than each being stored in a global $BRIC associative array,
 which is now gone. This brings the style of PHP templates more in line with
 that of Mason and Template Toolkit templates. [David]
 
-=item *
-
-L<Bric::SOAP::Workflow|Bric::SOAP::Workflow>'s publish method now schedules a
-publish job instead of immediately publishing, thus allowing the
-C<publish_date> parameter to actually work, and ensuring that the proper
-version is published. [David]
-
 =back
 
 =cut
