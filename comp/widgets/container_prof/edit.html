@@ -68,7 +68,6 @@ foreach my $tile ($dt->get_tiles) {
     next if $tile->is_container;
     my $props = $tile->get_element_data_obj->get_meta('html_info');
     if (my $data = $dt->get_data($tile->get_key_name)) {
-        next unless $props->{type} =~ /^text/;
         $disp_buf  =  $props->{disp};
         $value_buf =  substr($data, 0, 64);
         last;

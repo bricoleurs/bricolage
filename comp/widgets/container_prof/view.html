@@ -32,6 +32,24 @@
       <td width=1></td>
 %   if ($dt->is_container) {
       <td width="<% 578 - $infoIndent - 24 %>" colspan="2">
+
+<%perl>
+# Find a suitable field of a tile to display
+my($disp_buf, $value_buf);
+foreach my $tile ($dt->get_tiles) {
+    next if $tile->is_container;
+    my $props = $tile->get_element_data_obj->get_meta('html_info');
+    if (my $data = $dt->get_data($tile->get_key_name)) {
+         $disp_buf  =  $props->{disp};
+         $value_buf =  substr($data, 0, 64);
+         last;
+    }
+}
+</%perl>
+% if ($value_buf) {
+<% $disp_buf %>: <% escape_html($value_buf) %><br/>
+% }
+
 <&
     '/widgets/profile/imageSubmit.mc',
       formName  => 'theForm',
