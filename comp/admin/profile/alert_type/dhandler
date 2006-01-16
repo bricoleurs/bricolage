@@ -9,48 +9,48 @@ if (defined $id) {
 
     # Output the primary properties.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Properties', number => 1);
+         caption => 'Properties', number => 1);
 
     # Event Type.
     $m->comp('/widgets/profile/text.mc',
-	     value => $et->get_name,
-	     disp  => 'Event Type',
-	     readOnly => 1);
+         value => $et->get_name,
+         disp  => 'Event Type',
+         readOnly => 1);
 
     # Name.
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'name',
-	     readOnly => $no_edit);
+         objref => $at,
+         key => 'name',
+         readOnly => $no_edit);
 
     # Owner.
     $m->comp('.owner', owner_id => $at->get_owner_id, no_edit => $no_edit);
 
     # Active.
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'active',
-	     readOnly => $no_edit);
+         objref => $at,
+         key => 'active',
+         readOnly => $no_edit);
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     # Output the rules via the Add More Widget.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Rules', number => 2);
+         caption => 'Rules', number => 2);
 
     my $rules = $at->get_rules;
 
     $m->comp('/widgets/add_more/add_more.mc', type => 'alert_type_rule',
-	     fields => [qw(attr operator value)], name => 'rule',
-	     reset_key => $id, objs => $rules, param => \%ARGS,
-	     meths => $meths, incr => 2, useTable => 0,
-	     formName => 'alert_type_profile');
+         fields => [qw(attr operator value)], name => 'rule',
+         reset_key => $id, objs => $rules, param => \%ARGS,
+         meths => $meths, incr => 2, useTable => 0,
+         formName => 'alert_type_profile');
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     # Output the content fields.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Content', number => 3);
+         caption => 'Content', number => 3);
 
     # Subject.
 </%perl>
@@ -59,46 +59,48 @@ if (defined $id) {
       <td>
 <%perl>
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'subject',
-	     width => 400,
-	     readOnly => $no_edit);
+         objref => $at,
+         key => 'subject',
+         width => 400,
+         readOnly => $no_edit);
 
     $m->out("</td><td>");
 
     # Variables to put into Subject.
     $m->comp('/widgets/profile/select.mc',
-	     name => 'sub_sel',
-	     width => 150,
-	     options => $var_sel_vals,
-	     js => 'onChange="this.form.subject.value = this.form.subject.value '
-		   . '+ this.form.sub_sel[selectedIndex].text; '
-		   . 'this.form.subject.focus();"'
-	    ) unless $no_edit;
+         name => 'sub_sel',
+         width => 150,
+         options => $var_sel_vals,
+         js => 'onChange="this.form.subject.value = this.form.subject.value '
+           . '+ this.form.sub_sel[selectedIndex].text; '
+           . 'this.form.subject.focus();"'
+        ) unless $no_edit;
 
     $m->out("</td></tr></table>");
 
     # Variables to put into Message.
+    my $len = $at->my_meths->{message}{len};
     $m->comp('/widgets/profile/select.mc',
-	     name => 'msg_sel',
-	     width => 550,
-	     options => $var_sel_vals,
-	     js => 'onChange="this.form.message.value = this.form.message.value '
-		   . '+ this.form.msg_sel[selectedIndex].text; '
-		   . 'this.form.message.focus();"'
-	    ) unless $no_edit;
+         name => 'msg_sel',
+         width => 550,
+         options => $var_sel_vals,
+         js => 'onChange="this.form.message.value += '
+             . 'this.form.msg_sel[selectedIndex].text; '
+             . "textCount('message', $len); "
+             . 'this.form.message.focus();"'
+        ) unless $no_edit;
 
     # Message
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'message',
-	     readOnly => $no_edit);
+         objref => $at,
+         key => 'message',
+         readOnly => $no_edit);
 
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
     # Output the Recipients.
     $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Recipients', number => 4);
+         caption => 'Recipients', number => 4);
 
     $m->comp('/widgets/profile/hidden.mc', name => 'ctype');
     $m->out(qq{<table border="1" cellpadding="3" cellspacing="0" width="578"}
@@ -106,7 +108,7 @@ if (defined $id) {
     $m->out(qq{<tr class="medHeader" style="border-style:solid; border-color:#cccc99;"><th style="border-style:solid; border-color:#cccc99;">Contact</th><th style="border-style:solid; border-color:#cccc99;">Groups</th>}
             . qq{<th style="border-style:solid; border-color:#cccc99;">Users</th><th style="border-style:solid; border-color:#cccc99;">&nbsp;</td></tr>\n});
     foreach my $c (Bric::Biz::Contact->list_alertable_types) {
-	$m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
+    $m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
     }
     $m->out("</table>\n");
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
@@ -125,45 +127,45 @@ if (defined $id) {
     # Output the form buttons.
     $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	     no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type",
+         no_del => $no_del, no_save => $no_edit, return => "/admin/manager/$type",
              widget => $type );
 } else {
     if (defined $class_id) {
        $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Select an Event Type');
+         caption => 'Select an Event Type');
         $m->comp('/widgets/select_object/select_object.mc',
-		 object => 'event_type',
-		 name => 'event_type_id',
-		 field => 'name',
-		 disp => 'Event Type',
-		 constrain => { class_id => $class_id },
-		 req  => 1,
-		 useTable => 1);
+         object => 'event_type',
+         name => 'event_type_id',
+         field => 'name',
+         disp => 'Event Type',
+         constrain => { class_id => $class_id },
+         req  => 1,
+         useTable => 1);
     # Name.
     $m->comp('/widgets/profile/displayFormElement.mc',
-	     objref => $at,
-	     key => 'name',
-	     readOnly => $no_edit);
+         objref => $at,
+         key => 'name',
+         readOnly => $no_edit);
 
     # Owner.
     $m->comp('.owner', no_edit => $no_edit);
 
     } else {
        $m->comp("/widgets/wrappers/sharky/table_top.mc",
-	     caption => 'Select an Object');
-	my $classes = $et_class->list_classes;
-	$m->comp('/widgets/profile/select.mc',
-		 name => 'class_id',
-		 disp => 'Object',
-		 width => 550,
-		 options => $classes
-		);
+         caption => 'Select an Object');
+    my $classes = $et_class->list_classes;
+    $m->comp('/widgets/profile/select.mc',
+         name => 'class_id',
+         disp => 'Object',
+         width => 550,
+         options => $classes
+        );
     }
     $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
     # Output the form buttons.
     $m->out("<br />\n");
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-	     no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
+         no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
              widget => $type );
 }
 </%perl>
@@ -210,7 +212,7 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 # Output the header.
 $m->comp('/widgets/wrappers/sharky/header.mc',
          title => "$disp Profile",
-	 context => "Admin | Profile | $disp | $crumb"
+     context => "Admin | Profile | $disp | $crumb"
 );
 
 # Check authorization.
@@ -221,8 +223,8 @@ my $no_del = ! defined $id || $no_edit;
 # Roll in any changes to the alert type object if we're just adding rules.
 if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'alert_type_rules') {
     foreach my $meth ($at->my_meths(1)) {
-	$meth->{set_meth}->($at, @{$meth->{set_args}}, $ARGS{$meth->{name}})
-	  if defined $meth->{set_meth};
+    $meth->{set_meth}->($at, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+      if defined $meth->{set_meth};
     }
 }
 
@@ -273,9 +275,9 @@ $no_edit
     <td style="border-style:solid; border-color:#cccc99;">&nbsp;</td>
 % } else {
     <td align="center" style="border-style:solid; border-color:#cccc99;"><& '/widgets/profile/imageSubmit.mc',
-	     formName => "alert_type_profile",
-	     callback => "$type|recip_cb",
-	     image    => "edit_lgreen",
+         formName => "alert_type_profile",
+         callback => "$type|recip_cb",
+         image    => "edit_lgreen",
              useHidden => $hidden,
              value    => escape_html($c),
 &>
@@ -293,17 +295,17 @@ $no_edit => 0
 <%perl>;
     my $fmt = get_pref('List Name Format');
     my $users = [ map { [$_->get_id => $_->format_name($fmt) ] }
-		  Bric::Biz::Person::User->list ];
+          Bric::Biz::Person::User->list ];
 
     $m->comp('/widgets/profile/select.mc',
-	     value => $owner_id,
-	     name => 'owner_id',
-	     width => 550,
-	     req  => 1,
-	     disp => "Owner",
-	     size => @$users > 15 ? 6 : undef,
-	     options => $users,
-	     readOnly => $no_edit);
+         value => $owner_id,
+         name => 'owner_id',
+         width => 550,
+         req  => 1,
+         disp => "Owner",
+         size => @$users > 15 ? 6 : undef,
+         options => $users,
+         readOnly => $no_edit);
 </%perl>
 </%def>
 

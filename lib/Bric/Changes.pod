@@ -180,7 +180,12 @@ Reported by Scott. [David]
 
 Fixed the sorting menus for templates on desks. Also fixed them for all assets
 on desks so that sorting on categories sorts by URIs (which are displayed)
-rather than names. Template sorting issues reported by Scot. [David]
+rather than names. Template sorting issues reported by Scott. [David]
+
+=item *
+
+Adding a variable to the message in an alert type now properly triggers the
+update of the message character count. Reported by Scott. [David]
 
 =back
 
