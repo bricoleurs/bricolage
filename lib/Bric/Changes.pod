@@ -193,6 +193,13 @@ Changed the media type for the files in the JavaScript directory from
 "application/x-javascript", which Safari 2.03 didn't seem to like, to
 "text/javascipt", which is what it should have been all along, anyway. [David]
 
+=item *
+
+Fixed sorting of SQL files for concatenation into F<inst/Pg.sql> so that it
+should now always be in the right order, regardless of the local system's
+locale settings. This issue only applied to those running C<make dist> or
+C<make inst/Pg.sql>, since distributions already have F<inst/Pg.sql>. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
