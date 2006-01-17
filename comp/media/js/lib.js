@@ -720,7 +720,7 @@ function openWindow(page) {
 }
 function openAbout() { return openWindow("about"); }
 function openHelp()  { 
-    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, '');
+    var uri = window.location.pathname.replace(/[\d\/]+$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
     return openWindow(uri);
