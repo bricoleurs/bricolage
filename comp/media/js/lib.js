@@ -790,9 +790,7 @@ function closeDialog (dialog, event) {
     return false;
 }
 
-var dragState = {
-    zIndex:      0
-};
+var dragState = {};
 
 function getPosition (event) {
     var x, y;
@@ -824,9 +822,6 @@ function beginDrag(event, elem) {
     dragState.cursorStartY = position.y;
     dragState.elStartLeft  = parseInt(style.left, 10) || 0;
     dragState.elStartTop   = parseInt(style.top,  10) || 0;
-
-    // Update element's z-index.
-    style.zIndex = ++dragState.zIndex;
 
     // Capture mousemove and mouseup events on the page.
     if (browser.is_ie) {
