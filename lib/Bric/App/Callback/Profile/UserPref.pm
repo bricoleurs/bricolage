@@ -24,11 +24,6 @@ sub save : Callback {
         return;
     }
 
-    warn "
-          pref_id => $param->{pref_id},
-          user_id => $param->{user_id}
-";
-
     my $user_pref = Bric::Util::UserPref->lookup({ pref_id => $param->{pref_id},
                                                    user_id => $param->{user_id} });
 
