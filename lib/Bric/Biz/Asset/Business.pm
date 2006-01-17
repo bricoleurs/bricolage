@@ -1369,11 +1369,11 @@ Unable to format date.
 
 =back
 
-B<Side Effects:> 
+B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -2454,7 +2454,9 @@ sub _construct_uri {
         next unless $token;
         if ($uri_format_hash{$token}  ne '') {
             # Add the cover date value.
+            Bric::Util::Pref->use_user_prefs(0);
             push @path, $self->get_cover_date( $uri_format_hash{ $token } );
+            Bric::Util::Pref->use_user_prefs(1);
         } else {
             if ($token eq 'categories') {
                 # Add Category

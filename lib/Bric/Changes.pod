@@ -200,6 +200,13 @@ should now always be in the right order, regardless of the local system's
 locale settings. This issue only applied to those running C<make dist> or
 C<make inst/Pg.sql>, since distributions already have F<inst/Pg.sql>. [David]
 
+=item *
+
+URIs are now always constructed with the cover date reflecting the global Time
+Zone preference, rather than the setting from a user's overriding Time Zone
+preference. This prevents URI conflicts and makes searches for URIs with dates
+in them consistent. Reported by Li Li. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
