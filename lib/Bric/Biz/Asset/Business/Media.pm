@@ -1425,8 +1425,7 @@ B<Notes:> NONE.
 sub upload_file {
     my $self = shift;
 
-    my ($id, $v, $old_fn, $loc, $uri) =
-      $self->_get(qw(id version file_name location uri));
+    my ($id, $v) = $self->_get(qw(id version));
 
     unless ($id) {
         # If there is no ID, we're not ready to create a file name, yet.
@@ -1470,22 +1469,16 @@ sub upload_file {
 
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', @id_dirs, "v.$v", $name);
     # Set the location, name, and URI.
-    if (not defined $old_fn
-        or not defined $uri
-        or $old_fn ne $name
-        or $loc ne $new_loc
-    ) {
-        $self->_set(['file_name'], [$name]);
-        $uri = Bric::Util::Trans::FS->cat_uri(
-            $self->_construct_uri($self->get_category_object, $oc_obj),
-            URI::Escape::uri_escape($oc_obj->get_filename($self))
-       );
+    $self->_set(['file_name'], [$name]);
+    my $uri = Bric::Util::Trans::FS->cat_uri(
+        $self->_construct_uri($self->get_category_object, $oc_obj),
+        URI::Escape::uri_escape($oc_obj->get_filename($self))
+    );
 
-        $self->_set(
-            [qw(location  uri   _update_uri)] =>
-            [   $new_loc, $uri, 1]
-        );
-    }
+    $self->_set(
+        [qw(location  uri   _update_uri)] =>
+        [   $new_loc, $uri, 1]
+    );
 
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
