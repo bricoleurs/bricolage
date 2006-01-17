@@ -1440,8 +1440,8 @@ sub upload_file {
     Bric::Util::Trans::FS->mk_path($dir);
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
-    open FILE, ">$path"
-      or throw_gen(error => "Unable to open '$path': $!");
+    local *FILE;
+    open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
@@ -1469,19 +1469,22 @@ sub upload_file {
     my $oc_obj = $self->get_primary_oc;
 
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', @id_dirs, "v.$v", $name);
-
     # Set the location, name, and URI.
     if (not defined $old_fn
         or not defined $uri
         or $old_fn ne $name
-        or $loc ne $new_loc) {
+        or $loc ne $new_loc
+    ) {
         $self->_set(['file_name'], [$name]);
-        $uri = Bric::Util::Trans::FS->cat_uri
-          ($self->_construct_uri($self->get_category_object, $oc_obj),
-           URI::Escape::uri_escape($oc_obj->get_filename($self)));
+        $uri = Bric::Util::Trans::FS->cat_uri(
+            $self->_construct_uri($self->get_category_object, $oc_obj),
+            URI::Escape::uri_escape($oc_obj->get_filename($self))
+       );
 
-        $self->_set([qw(location  uri   _update_uri)] =>
-                    [   $new_loc, $uri, 1]);
+        $self->_set(
+            [qw(location  uri   _update_uri)] =>
+            [   $new_loc, $uri, 1]
+        );
     }
 
     if (my $auto_fields = $self->_get_auto_fields) {
