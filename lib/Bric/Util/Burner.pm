@@ -1261,13 +1261,16 @@ sub publish_another {
 
 =item @resources = $burner->burn_one($ba, $oc, $cat);
 
-Publishes an asset. Returns a list of resources burned. Parameters are:
+Burn an asset in a given output channel and category, this is usually called by
+the preview or publish method. Returns a list of resources burned. 
+
+Parameters are:
 
 =over 4
 
 =item C<$ba>
 
-A business asset object to publish.
+A business asset object to burn.
 
 =item C<$oc>
 
