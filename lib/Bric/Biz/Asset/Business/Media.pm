@@ -1475,10 +1475,7 @@ sub upload_file {
         URI::Escape::uri_escape($oc_obj->get_filename($self))
     );
 
-    $self->_set(
-        [qw(location  uri   _update_uri)] =>
-        [   $new_loc, $uri, 1]
-    );
+    $self->_set( [qw(location uri _update_uri)] => [ $new_loc, $uri, 1 ] );
 
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
