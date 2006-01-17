@@ -88,3 +88,7 @@ if ($r->uri =~ m:/help/$lang_key/about\.html:) {
     $title = 'Bricolage Help';
 }
 </%init>
+<%cleanup>;
+# Don't keep help pages in the history.
+pop_page(); 
+</%cleanup>
