@@ -48,7 +48,7 @@ publish date. [David]
 
 =item *
 
-Changed code to show the first displayable data field of a sub-element when
+Changed code to show the first displayable data field of a subelement when
 viewing or editing an asset as opposed to only text fields. [Paul Orrock]
 
 =item *
@@ -66,8 +66,8 @@ version is published. [David]
 
 =item *
 
-Fixed misnamed keywords on the C<category_keyword>, C<story_keyword>, and
-C<media_keyword> tables. [David]
+Fixed misnamed and/or missing keyword foreign keys on the C<category_keyword>,
+C<story_keyword>, and C<media_keyword> tables. [David]
 
 =item *
 
@@ -97,7 +97,7 @@ Reported by Nate Perry-Thistle. [David]
 =item *
 
 Backported database upgrade permissions changes from Bricolage 1.10 so that
-they permissions are set for the super user for upgrade scripts such as
+the permissions are set for the super user for upgrade scripts such as
 F<inst/upgrade/1.8.7/move_media.pl> and as the PostgreSQL user only when an
 upgrade script loads F<inst/upgrade/lib/bric_upgrade.pm>. Thanks to Nate
 Perry-Thistle for reporting the permissions bug with the 1.8.7 upgrade script.
@@ -105,8 +105,8 @@ Perry-Thistle for reporting the permissions bug with the 1.8.7 upgrade script.
 
 =item *
 
-Fixed file names for files uploaded by MSIE on Windows. Reported by Wayne
-Slavin. [David]
+Fixed file names for files uploaded by MSIE on Windows. Again. Reported by
+Wayne Slavin. [David]
 
 =item *
 
@@ -126,7 +126,8 @@ Rod Taylor. [David]
 =item *
 
 Story and Media on the search result page are now correctly sorted by the
-'Default Asset Sort' preference, or title if it is not set. [Paul Orrock]
+"Default Asset Sort" preference, or title if the preference is not set. [Paul
+Orrock]
 
 =item *
 
@@ -151,7 +152,7 @@ Hyland. [David]
 
 Publishing a document with a related document, where the related document is
 still at version 0 (because it has never been checked in), now properly
-display a message indicating that the related document cannot be published
+displays a message indicating that the related document cannot be published
 because it is checked out. [David]
 
 =item *
