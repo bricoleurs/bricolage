@@ -63,7 +63,7 @@ sub save : Callback {
             $set_meta_number->($ed, $f, $param);
         }
 
-        for my $f (qw(vals name description)) {
+        for my $f (qw(vals name description widget_type)) {
             $set_meta_string->($ed, $f, $param);
         }
 

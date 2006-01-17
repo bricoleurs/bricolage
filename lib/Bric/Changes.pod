@@ -87,6 +87,11 @@ media, and template classes. [David]
 
 Added F<republish_by_uri> contrib script. [David and Mark]
 
+=item *
+
+Field types can now have their widgets changed via the UI as well as via SOAP.
+So you can change a "text" widget to "textarea", for example. [David]
+
 =back
 
 =cut
