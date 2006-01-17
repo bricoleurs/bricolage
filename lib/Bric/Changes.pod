@@ -187,6 +187,12 @@ rather than names. Template sorting issues reported by Scott. [David]
 Adding a variable to the message in an alert type now properly triggers the
 update of the message character count. Reported by Scott. [David]
 
+=item *
+
+Changed the media type for the files in the JavaScript directory from
+"application/x-javascript", which Safari 2.03 didn't seem to like, to
+"text/javascipt", which is what it should have been all along, anyway. [David]
+
 =back
 
 =head1 VERSION 1.8.8 (2005-10-27)
