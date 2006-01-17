@@ -258,9 +258,9 @@ are checked out. [David]
 
 =item *
 
-If a story passed to the C<burn_another()> or C<preview_another()> burner
+If a story passed to the C<publish_another()> or C<preview_another()> burner
 methods is the same as the story currently being burned, it will no longer be
-published or previewed again by C<burn_another()> or C<preview_another()>,
+published or previewed again by C<publish_another()> or C<preview_another()>,
 thus mitigating the possibility of infinite loops. [David]
 
 =item *
@@ -1128,7 +1128,7 @@ and makes the operation of Bric::Dist::Handler more efficient. [David]
 
 =item *
 
-A call to C<< $burner->burn_another >> in a template that passes in a
+A call to C<< $burner->publish_another >> in a template that passes in a
 date/time string in the future now causes a publish job to be scheduled for
 that time, rather than immediate burning the document and then scheduling the
 distribution to take place in the future. Reported by Ashlee Caul. [David]
