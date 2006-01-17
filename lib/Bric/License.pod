@@ -316,6 +316,8 @@ Friends who have spotted bugs include:
 
 =item Frank Febbraro
 
+=item Li Li
+
 =back
 
 Bricolage's translation team:
