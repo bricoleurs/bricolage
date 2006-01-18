@@ -625,8 +625,8 @@ associated with burners at all. [David]
 
 =item *
 
-Renamed Bric::Biz::Asset::Template to
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Template>. [David]
+Renamed Bric::Biz::Asset::Formatting to
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>. [David]
 
 =item *
 
@@ -865,11 +865,12 @@ limit on uploaded media files. [Scott]
 
 The URI formats are now more flexible. You can now use many more parts of the
 cover date in the URI, and in whatever format you like. So you could have a
-format of "/%{categories}/%Y-%m-%d" and end up with the URI
-"/foo/bar/2004-09-22" if you wanted. Or even "/%{categories}/%Y/%V" to get the
-week number as part of the URI. You can also include your own text, similar to
-the URI Prefix and URI Suffix fields, anywhere in the URI (e.g. foobar in
-/%{categories}/%Y/%m/foobar/%{slug}". Suggested by David. [Marshall]
+format of "/%{categories}/%Y-%m-%d/" and end up with the URI
+"/foo/bar/2004-09-22/" if you wanted. Or even "/%{categories}/%Y/%V/" to get
+the week number as part of the URI. You can also include your own text,
+similar to the URI Prefix and URI Suffix fields, anywhere in the URI (e.g.
+foobar in /%{categories}/%Y/%m/foobar/%{slug}/". Suggested by David.
+[Marshall]
 
 =item *
 
