@@ -50,7 +50,6 @@ use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
-use URI::Escape ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -375,7 +374,19 @@ use constant DEFAULT_ORDER => 'cover_date';
 
 #--------------------------------------#
 # Private Class Fields
-my ($meths, @ord);
+my ($meths, @ord, $ESCAPE_URI);
+
+BEGIN{
+    if ($ENV{MOD_PERL}) {
+        require Apache::Util;
+        rethrow_exception($@) if $@;
+        $ESCAPE_URI = \&Apache::Util::escape_uri;
+    } else {
+        require URI::Escape;
+        rethrow_exception($@) if $@;
+        $ESCAPE_URI = \&URI::Escape::uri_escape;
+    }
+}
 
 #--------------------------------------#
 # Instance Fields
@@ -1566,7 +1577,7 @@ sub upload_file {
     $self->_set(['file_name'], [$name]);
     my $uri = Bric::Util::Trans::FS->cat_uri(
         $self->_construct_uri($self->get_category_object, $oc_obj),
-        URI::Escape::uri_escape($oc_obj->get_filename($self))
+        $ESCAPE_URI->($oc_obj->get_filename($self))
     );
 
     $self->_set( [qw(location uri _update_uri)] => [ $new_loc, $uri, 1 ] );
