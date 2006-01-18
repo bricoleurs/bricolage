@@ -418,9 +418,8 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 
 dl.viewmeta { margin: 0; }
 dl.viewmeta dt,
-dl.viewmeta dd { font-size: 11px; border-bottom: solid white 1px; padding: 2px 0; }
+dl.viewmeta dd { font-size: 11px; border-bottom: solid white 1px; padding: 2px 0; float: left; }
 dl.viewmeta dt {
-    float: left;
     clear: left;
     width: 130px;
     padding-right: 5px;
@@ -428,7 +427,7 @@ dl.viewmeta dt {
     font-weight: bold;
     background-color: #E8E8CD;
 }
-dl.viewmeta dd { margin-left: 140px; }
+dl.viewmeta dd { margin: 0 0 0 5px; }
 dl.viewmeta dd a { font-size: inherit; }
 
 div.actions { background: #999966; padding: 2px 4px; }
