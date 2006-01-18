@@ -269,16 +269,16 @@ sub new {
     }
 
     if ($atd) {
-        $init->{field_type_id}   = $atd->get_id;
-        $init->{name}              = $atd->get_name;
-        $init->{key_name}          = $atd->get_key_name;
-        $init->{description}       = $atd->get_description;
-        $init->{sql_type}          = $atd->get_sql_type;
-        $init->{widget_type}       = $atd->get_widget_type;
-        $init->{is_autopopulated}  = $atd->get_autopopulated;
-        $init->{is_multiple}       = $atd->get_multiple;
-        $init->{max_length}        = $atd->get_max_length;
-        $init->{_field_type}      = $atd;
+        $init->{field_type_id}  = $atd->get_id;
+        $init->{name}           = $atd->get_name;
+        $init->{key_name}       = $atd->get_key_name;
+        $init->{description}    = $atd->get_description;
+        $init->{sql_type}       = $atd->get_sql_type;
+        $init->{widget_type}    = $atd->get_widget_type;
+        $init->{_autopopulated} = $atd->get_autopopulated;
+        $init->{is_multiple}    = $atd->get_multiple;
+        $init->{max_length}     = $atd->get_max_length;
+        $init->{_field_type}    = $atd;
     }
 
     my $self = $class->SUPER::new($init);
@@ -809,20 +809,6 @@ B<Notes:> NONE.
 =cut
 
 sub is_container { return }
-
-###############################################################################
-
-=item my $is_autopopulated = $data->is_autopopulated
-
-Returns true if this data element's value is autopopulated.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
 
 ###############################################################################
 
