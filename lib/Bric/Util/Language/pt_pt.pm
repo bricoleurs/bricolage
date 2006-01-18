@@ -732,7 +732,8 @@ To translate:
       'Code Select' => 'Code Select',
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
   'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
-
+  '[quant,_1,media,media] expired.' => '[quant,_1,media,media] expired.',
+  '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
   'No context for content beginning at line [_1].' => 'No context for content beginning at line [_1].',
   'No such field "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
   'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?',

@@ -21,6 +21,23 @@
     <td class="name"><% $dt->get_name %>:</td>
 %   if ($dt->is_container) {
     <td>
+
+<%perl>
+# Find a suitable field of a tile to display
+my($disp_buf, $value_buf);
+foreach my $field ($dt->get_fields) {
+#    next if $field->get_widget_type !~ /^text/;
+    if (my $value = $field->get_value) {
+        $disp_buf  = $field->get_name;
+        $value_buf = substr($value, 0, 64);
+        last;
+    }
+}
+</%perl>
+% if ($value_buf) {
+<% $disp_buf %>: <% escape_html($value_buf) %><br />
+% }
+
 <&
     '/widgets/profile/imageSubmit.mc',
       formName  => 'theForm',

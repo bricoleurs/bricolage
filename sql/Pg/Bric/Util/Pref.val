@@ -1440,7 +1440,7 @@ VALUES ('13', '13', '170');
 
 -- Note: change these if $sort_by in comp/widgets/desk/desk_top.html changes
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES ('13', 'cover_date', 'Cover Date');
+VALUES ('13', 'cover_date', 'Cover Date/Deploy Date');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('13', 'priority', 'Priority');
@@ -1449,17 +1449,10 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('13', 'name', 'Title');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES ('13', 'category_name', 'Category');
-
-INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('13', 'site_id', 'Site');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES ('13', 'element', 'Media Type');
-
-INSERT INTO pref_opt (pref__id, value, description)
-VALUES ('13', 'id', 'ID');
-
+VALUES ('13', 'element', 'Document Type/Output Channel');
 
 -- Character Set
 

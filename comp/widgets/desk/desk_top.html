@@ -32,6 +32,7 @@ $others => {}
 </%args>
 <%init>;
 $caption ||= $pl_names->{$class};
+$sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
 my ($link1, $link2, $lab1, $lab2, $img1, $img2);
 if ($class eq 'story') {
     ($link1, $lab1, $img1) = ('media', $pl_names->{media}, 'media') if $others->{media};
@@ -44,9 +45,10 @@ if ($class eq 'story') {
 } else {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
     ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
+    $sort_by_val = $sort_by_val eq 'cover_date' ? 'deploy_date'
+                 : $sort_by_val eq 'element'    ? 'output_channel'
+                                                : $sort_by_val;
 }
-
-$sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
 
 my $sites = $c->get('__SITES__');
 
@@ -62,28 +64,28 @@ if (@$sites > 1) {
 }
 </%init>
 <%once>;
-my $sort_by = { story      => [ [ name           => 'Title' ],
-                                [ uri            => 'Primary URI' ],
-                                [ cover_date     => 'Cover Date' ],
-                                [ element        => 'Story Type' ],
-                                [ priority       => 'Priority' ],
-                                [ site_id        => 'Site' ],
-                              ],
-                media      => [ [ name           => 'Title' ],
-                                [ uri            => 'Primary URI' ],
-                                [ cover_date     => 'Cover Date' ],
-                                [ element        => 'Media Type' ],
-                                [ priority       => 'Priority' ],
-                                [ site_id        => 'Site' ],
-                              ],
-                template   => [ [ name           => 'File Name' ],
-                                [ deploy_date    => 'Deployed Date' ],
-                                [ output_channel => 'Output Channel' ],
-                                [ priority       => 'Priority' ],
-                                [ element_type   => 'Asset Type' ],
-                                [ site_id        => 'Site' ],
-                              ]
-              };
+my $sort_by = {
+    story => [
+        [ name       => 'Title' ],
+        [ uri        => 'Primary URI' ],
+        [ cover_date => 'Cover Date' ],
+        [ element    => 'Story Type' ],
+        [ priority   => 'Priority' ],
+    ],
+    media => [
+        [ name       => 'Title' ],
+        [ uri        => 'Primary URI' ],
+        [ cover_date => 'Cover Date' ],
+        [ element    => 'Media Type' ],
+        [ priority   => 'Priority' ],
+    ],
+    template => [
+        [ name           => 'File Name' ],
+        [ deploy_date    => 'Deployed Date' ],
+        [ output_channel => 'Output Channel' ],
+        [ priority       => 'Priority' ],
+    ]
+};
 
 my $pl_names = {
    story    => get_class_info('story')->get_plural_name,

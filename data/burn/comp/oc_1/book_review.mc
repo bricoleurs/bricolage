@@ -13,8 +13,3 @@
 <br>
 Page <% $burner->get_page + 1 %>
 <!-- End "Book Review" -->
-<%publish>
-if (my $media = $element->get_related_media) {
-    $burner->publish_another($media);
-}
-</%publish>

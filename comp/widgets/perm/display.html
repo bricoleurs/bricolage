@@ -98,6 +98,8 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to'
              ." access assets in these workflows.", $name));
     foreach my $wf ($wf_pkg->list) {
+        # Skip workflows from deleted sites.
+        my $site = $sites{$wf->get_site_id} or next;
         my $gid = $wf->get_asset_grp_id;
         my $grp = $asset_grp_pkg->lookup({ id => $gid });
         # XXX We say it isn't an asset group because no higher than EDIT is

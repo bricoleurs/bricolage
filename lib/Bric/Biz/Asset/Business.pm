@@ -436,7 +436,8 @@ sub my_meths {
         push @ord, $meth->{name};
         push (@ord, 'title') if $meth->{name} eq 'name';
     }
-    push @ord, qw(source_id source first_publish_date publish_date), pop @ord;
+    push @ord, qw(source_id source first_publish_date publish_date category
+                  category_name), pop @ord;
 
     $meths->{uuid} =         {
                               name     => 'uuid',
@@ -499,6 +500,36 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              };
+    $meths->{category} = {
+                          get_meth => sub { shift->get_primary_category(@_) },
+                          get_args => [],
+                          set_meth => sub { shift->set_primary_category(@_) },
+                          set_args => [],
+                          name     => 'category',
+                          disp     => 'Category',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
+
+    $meths->{category_name} = {
+                          get_meth => sub { shift->get_primary_category(@_)->get_name },
+                          get_args => [],
+                          name     => 'category_name',
+                          disp     => 'Category Name',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
+    $meths->{category_uri} = {
+                          get_meth => sub { shift->get_primary_category(@_)->get_uri },
+                          get_args => [],
+                          name     => 'category_uri',
+                          disp     => 'Category URI',
+                          len      => 64,
+                          req      => 1,
+                          type     => 'short',
+                         };
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
     $meths->{title}{name} = 'title';
@@ -1368,7 +1399,7 @@ B<Side Effects:>
 
 NONE
 
-B<Notes:> 
+B<Notes:>
 
 NONE
 
@@ -1460,6 +1491,52 @@ sub set_publish_date {
         # First publish. Set both dates.
         $self->_set([qw(publish_date first_publish_date)], [$date, $date]);
     }
+    return $self;
+}
+
+################################################################################
+
+=item $self = $story->set_publish_status($bool)
+
+Sets the publish status to a true or false value.
+
+B<Throws:> NONE.
+
+B<Side Effects:> Also sets the first C<published_version> to the value stored
+in the C<version> attribute if it hasn't been set before.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_publish_status {
+    my ($self, $val) = @_;
+    my ($pubv, $curv) = $self->_get(qw(published_version version));
+    return $self->_set([qw(publish_status published_version)] => [$val, $curv])
+        if $val && !$pubv;
+    return $self->_set(['publish_status'] => [$val]);
+}
+
+################################################################################
+
+=item $self = $story->set_published_version($version)
+
+Sets the published version of the document.
+
+B<Throws:> NONE.
+
+B<Side Effects:> Also sets the first C<publishstatus> if it's set to a false
+value.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_published_version {
+    my ($self, $version) = @_;
+    return $self->_set([qw(publish_status published_version)] => [ 1, $version])
+        if $version;
+    return $self->_set([qw(published_version)] => [$version]);
 }
 
 ################################################################################
@@ -2427,7 +2504,9 @@ sub _construct_uri {
         }
     }
 
+    Bric::Util::Pref->use_user_prefs(0);
     my $path = $self->get_cover_date($fmt) or return;
+    Bric::Util::Pref->use_user_prefs(1);
     my @path = split( '/', $path );
 
     # Return the URI with the case adjusted as necessary.

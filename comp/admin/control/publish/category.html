@@ -11,7 +11,7 @@
 <& '/widgets/listManager/listManager.mc',
    object    => 'category',
    select    => $select,
-   fields    => [qw(uri)],
+   fields    => [(@$sites > 1 ? 'site' : () ), 'uri'],
    addition  => '',
    profile   => undef,
    exclude   => $exclude,
@@ -42,6 +42,12 @@ my @constrain;
 if (my $site_id = $c->get_user_cx(get_user_id)
     && get_pref("Filter by Site Context")) {
     @constrain = ( constrain => {  site_id => $site_id } );
+}
+
+my $sites = $c->get('__SITES__');
+unless ($sites) {
+    $sites = Bric::Biz::Site->list({ active => 1 });
+    $c->set('__SITES__', $sites);
 }
 </%init>
 

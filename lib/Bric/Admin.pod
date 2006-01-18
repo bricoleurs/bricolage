@@ -199,6 +199,8 @@ START MODULE LIST
 
 =item Text::WordDiff
 
+=item URI::Escape
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)

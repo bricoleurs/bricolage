@@ -1170,7 +1170,7 @@ sub my_meths {
         $meths->{$meth->{name}} = $meth;
         push @ord, $meth->{name};
     }
-    push @ord, qw(slug category category_name), pop @ord;
+    push @ord, qw(slug), pop @ord;
     $meths->{slug}    = {
                           get_meth => sub { shift->get_slug(@_) },
                           get_args => [],
@@ -1185,27 +1185,6 @@ sub my_meths {
                                           length     => 32,
                                           maxlength => 64
                                       }
-                         };
-    $meths->{category} = {
-                          get_meth => sub { shift->get_primary_category(@_) },
-                          get_args => [],
-                          set_meth => sub { shift->set_primary_category(@_) },
-                          set_args => [],
-                          name     => 'category',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
-
-    $meths->{category_name} = {
-                          get_meth => sub { shift->get_primary_category(@_)->get_name },
-                          get_args => [],
-                          name     => 'category_name',
-                          disp     => 'Category Name',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
                          };
 
     # Rename element type, too.

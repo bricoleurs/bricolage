@@ -11,7 +11,7 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
-use Bric::Config qw(:prev);
+use Bric::Config qw(:prev :time);
 use Bric::Util::Burner;
 use Bric::Util::DBI qw(:junction);
 use Bric::Util::Job::Pub;
@@ -161,9 +161,13 @@ sub publish : Callback {
     my $media   = mk_aref($media_pub_ids);
 
     # Iterate through each story and media object to be published.
-    for my $spec ( [story => $stories], [ media => $media] ) {
-        my ($key, $doc_ids) = @$spec;
+    for my $spec (
+        [ 'story', 'stories', $stories ],
+        [ 'media', 'media',   $media   ],
+    ) {
+        my ($key, $plural, $doc_ids) = @$spec;
         my $count = @$doc_ids or next;
+        my $exp_count = 0;
         my $pkg = get_package_name($key);
         my $disp = get_disp_name($key);
         for my $doc ($pkg->list({ version_id => ANY(@$doc_ids) })) {
@@ -179,12 +183,18 @@ sub publish : Callback {
             $job->save;
             log_event('job_new', $job);
 
-            # Report publishing if the job was executed on save, otherwise
-            # report scheduling
-            my $saved = $job->get_comp_time
-                ? 'published'
-                : 'scheduled for publication';
-            add_msg(qq{$disp "[_1]" $saved.},  $doc->get_title) if $count <= 3;
+            my $exp_date = $doc->get_expire_date(ISO_8601_FORMAT);
+            my $expired  = $exp_date
+                && $exp_date lt $job->get_sched_time(ISO_8601_FORMAT);
+            if ($count <= 3) {
+                my $saved = $expired
+                    ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
+                    : $job->get_comp_time ? 'published' : 'scheduled for publication';
+                add_msg(qq{$disp "[_1]" $saved.},  $doc->get_title);
+            } else {
+                $exp_count++ if $expired;
+            }
+
             # Remove it from the desk it's on.
             if (my $d = $doc->get_current_desk) {
                 $d->remove_asset($doc);
@@ -204,6 +214,10 @@ sub publish : Callback {
             }
             $doc->save;
         }
+        add_msg("[quant,_1,$key,$plural] published.", $count - $exp_count)
+            if $count > 3;
+        add_msg("[quant,_1,$key,$plural] expired.",   $exp_count)
+            if $exp_count;
     }
 
     unless (exists($param->{instant}) && $param->{instant}) {

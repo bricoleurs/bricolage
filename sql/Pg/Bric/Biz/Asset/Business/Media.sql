@@ -15,7 +15,7 @@ CREATE SEQUENCE seq_media START 1024;
 
 CREATE SEQUENCE seq_media_instance START 1024;
 
--- Unique ids for the media_contributor table
+-- Unique ids for the media__contributor table
 CREATE SEQUENCE seq_media__contributor START 1024;
 
 -- Unique IDs for the media_member table

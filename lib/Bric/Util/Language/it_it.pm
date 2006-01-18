@@ -482,8 +482,6 @@ To translate:
   'Associate'
   'Preview in'
   'Parent cannot choose itself or its child as its parent. Try a different parent.'
-  '[quant,_1,story,stories] published.'
-  '[quant,_1,media,media] published.'
   'Category URI'
   'Story "[_1]" saved and shelved.'
   'Story "[_1]" created and saved.'
@@ -558,7 +556,10 @@ To translate:
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
   'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' => 'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.',
   'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
-
+  '[quant,_1,media,media] published.' => '[quant,_1,media,media] published.',
+  '[quant,_1,media,media] expired.' => '[quant,_1,media,media] expired.',
+  '[quant,_1,story,stories] published.' => '[quant,_1,story,stories] published.',
+  '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
   'No context for content beginning at line [_1].' => 'No context for content beginning at line [_1].',
   'No such field "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
   'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?',

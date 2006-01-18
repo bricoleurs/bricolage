@@ -1083,7 +1083,9 @@ NONE
 
 sub needs_publish {
     my $self = shift;
-    return $self->get_current_version == $self->get_published_version ? 0 : 1;
+    # Version 0 is never published. Neither is undef, of course.
+    my $pub_version = $self->get_published_version or return 1;
+    return $self->get_current_version == $pub_version ? 0 : 1;
 }
 
 ################################################################################
