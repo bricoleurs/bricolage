@@ -52,8 +52,8 @@ Updated the UI to fix Internet Explorer glitches. [Marshall]
 
 =item *
 
-The Element Type profile is now much smarter about displaying sites form
-association with an element type. If the user has access to only one site and
+The Element Type profile is now much smarter about displaying site
+associations with an element type. If the user has access to only one site and
 the element type is associated with no more than one site, then the "Sites"
 section won't be displayed, but the primary output channel can be selected via
 a radio button among the list of output channels. If the user has access to
@@ -75,7 +75,7 @@ C<=related_story_uuid> and C<=related_media_uuid>. Just set it to "uuid",
 
 =item *
 
-Optimized coparison of new and old attribute values when setting attributes.
+Optimized comparison of new and old attribute values when setting attributes.
 Based on an example sent by Curtis "Ovid" Poe. [David]
 
 =item *
