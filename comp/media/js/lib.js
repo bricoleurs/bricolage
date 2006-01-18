@@ -720,7 +720,7 @@ function openWindow(page) {
 }
 function openAbout() { return openWindow("about"); }
 function openHelp()  { 
-    var uri = window.location.pathname.replace(/\/?\d*\/?$/g, '');
+    var uri = window.location.pathname.replace(/[\d\/]+$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
     return openWindow(uri);
@@ -753,14 +753,24 @@ window.onload = function() {
 
 // <body onload="restoreScrollXY($scrollx, $scrolly)">
 function restoreScrollXY(x, y) {
-    window.scrollTo(x, y);
+    if (x) window.scrollTo(x);
+    var height = document.all ? document.body.scrollTop : window.pageYOffset;
+    if (y > height) {
+        window.scrollBy(0, 10);
+        setTimeout(function () { restoreScrollXY(0, y) }, 3);
+    }
 }
 
 // <form onSubmit="saveScrollXY('theForm')" ...>
 function saveScrollXY(formName) {
     var form = document.forms[formName];
-    form.scrollx.value = (document.all) ? document.body.scrollLeft : window.pageXOffset;
-    form.scrolly.value = (document.all) ? document.body.scrollTop  : window.pageYOffset;
+    if (document.all) {
+        form.scrollx.value = document.body.scrollLeft;
+        form.scrolly.value = document.body.scrollTop;
+    } else {
+        form.scrollx.value = window.pageXOffset;
+        form.scrolly.value = window.pageYOffset;
+    }
 }
 
 /*
@@ -780,9 +790,7 @@ function closeDialog (dialog, event) {
     return false;
 }
 
-var dragState = {
-    zIndex:      0
-};
+var dragState = {};
 
 function getPosition (event) {
     var x, y;
@@ -814,9 +822,6 @@ function beginDrag(event, elem) {
     dragState.cursorStartY = position.y;
     dragState.elStartLeft  = parseInt(style.left, 10) || 0;
     dragState.elStartTop   = parseInt(style.top,  10) || 0;
-
-    // Update element's z-index.
-    style.zIndex = ++dragState.zIndex;
 
     // Capture mousemove and mouseup events on the page.
     if (browser.is_ie) {

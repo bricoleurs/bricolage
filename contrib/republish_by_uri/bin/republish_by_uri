@@ -1,0 +1,139 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use Bric::Biz::Asset::Business::Story;
+use Bric::Biz::Person::User;
+use Bric::Util::DBI qw(:junction);
+use Bric::Util::Job::Pub;
+use Bric::Util::Time qw(:all);
+
+our $VERSION = '0.10';
+
+GetOptions(
+    "username=s"     => \my $username,
+    "password=s"     => \my $password,
+    "site=s"         => \my @sites,
+);
+
+pod2usage("Missing required --username option.") unless $username;
+pod2usage("Missing required --password option.") unless $password;
+pod2usage("Missing required --uri option.")      unless $ARGV[0];
+
+# Find the user and make sure they're legit.
+my $user = Bric::Biz::Person::User->lookup({ login => $username });
+die qq{Bad username or password\n} unless $user;
+
+# Uncomment this line to be insecure.
+$user->chk_password($password) or die qq{Bad username or password\n};
+
+my $user_id = $user->get_id;
+my $now     = strfdate;
+
+for my $s (Bric::Biz::Asset::Business::Story->list({
+    uri               => ANY(@ARGV),
+    site_id           => 100,
+    published_version => 1,
+    publish_status    => 1,
+    (@sites ? (site => ANY(@sites)) : ()),
+})) {
+    # Schedule
+    print 'Scheduling ', $s->primary_uri, "\n";
+    my $job = Bric::Util::Job::Pub->new({
+        sched_time        => $now,
+        user_id           => $user_id,
+        name              => 'Publish "' . $s->get_title . '"',
+        story_instance_id => $s->get_version_id,
+        priority          => $s->get_priority,
+    });
+    $job->save;
+}
+
+1;
+__END__
+
+=head1 NAME
+
+republish_by_uri - Repbulish Bricolage stories by URI
+
+=head1 SYNOPSIS
+
+  republish_by_uri --username  admin --password password /foo/ /bar/
+
+=head1 DESCRIPTION
+
+This program republishes Bricolage stories based on URIs. Pass one or more
+URIs and all stories with those URIs will be published. SQL wild cards are
+supported in the URIs. If you have more than one site with stories with the
+same URIs, you can use the C<--site> option one or more times to specify the
+sites in which to publish stories with those URIs. Only stories that have
+previously been published will be republished.
+
+B<NOTE:> This script uses the Bricoalge API directly, rather than the SOAP
+server. It cannot, therefore, be run anywhere except on the Bricolage server
+itself.
+
+=head1 OPTIONS
+
+  republish_by_uri --username  admin --password password [options] /foo/ /bar/
+
+=head2 Arguments
+
+=over
+
+=item URI
+
+The URI for a story. Use multiple URIs for multiple stories, or use SQL
+C<LIKE> wild cards to publish stories with URIs that match. Examples:
+
+  /reviews/books/2005/12/20/princess_bride/
+
+Republishes a single story.
+
+  /reviews/books/2005/12/20/princess_bride/ /reviews/books/
+
+Republishes two stories.
+
+  /reviews/books/%
+
+Republishes all stories that have URIs matching the C<LIKE> comparison.
+
+=back
+
+=head2 Options
+
+=over 4
+
+=item C<--username>
+
+The name of the user doing the import. This will be used for logging the
+creation of all of the contributors. Required.
+
+=item C<--password>
+
+The password for the user importing the contributors. Required.
+
+=item C<--site>
+
+The name of a site in which to search for stories to republish. May be
+specified any number of times to specify a number of sites.
+
+Optional.
+
+=back
+
+=head1 AUTHORS
+
+David Wheeler <david@kineticode.com>
+
+Mark Jaroski <jaroskim@who.int>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2005 Kineticode, Inc. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut

@@ -577,6 +577,8 @@ To translate:
   'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.' => 'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.'
   'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'
   'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".' => 'Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".',
+  '[quant,_1,media,media] expired.' => '[quant,_1,media,media] expired.',
+  '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
 
   'Include deleted' => 'Include deleted',
   'Reactivate' => 'Reactivate',

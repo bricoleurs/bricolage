@@ -21,7 +21,7 @@ CREATE SEQUENCE seq_story_instance START 1024;
 -- Unique IDs for the story__category mapping table
 CREATE SEQUENCE seq_story__category START  1024;
 
--- Unique ids for the story_contributor table
+-- Unique ids for the story__contributor table
 CREATE SEQUENCE seq_story__contributor START 1024;
 
 -- Unique IDs for the story_uri table
@@ -62,7 +62,6 @@ CREATE TABLE story (
                                         CHECK (alias_id != id),  
     CONSTRAINT pk_story__id PRIMARY KEY (id)
 );
-
 
 -- ----------------------------------------------------------------------------
 -- Table story_instance

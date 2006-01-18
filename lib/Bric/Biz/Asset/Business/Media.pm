@@ -50,6 +50,7 @@ use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
+use URI::Escape ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -196,6 +197,7 @@ use constant PARAM_FROM_MAP => {
      contrib_id           => 'media__contributor sic',
      note                 => 'media_instance mmi2',
      uri                  => 'media_uri uri',
+     site                 => 'site',
 };
 
 PARAM_FROM_MAP->{_not_simple} = PARAM_FROM_MAP->{simple};
@@ -209,6 +211,7 @@ use constant PARAM_WHERE_MAP => {
       alias_id              => 'mt.alias_id = ?',
       site_id               => 'mt.site__id = ?',
       no_site_id            => 'mt.site__id <> ?',
+      site                  => 'mt.site__id = site.id AND LOWER(site.name) LIKE LOWER(?)',
       workflow__id          => 'mt.workflow__id = ?',
       workflow_id           => 'mt.workflow__id = ?',
       _null_workflow_id     => 'mt.workflow__id IS NULL',
@@ -316,6 +319,8 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(mmi2.note) LIKE LOWER(?)'],
     uri                    => [ 'mt.id = uri.media__id',
                                 'LOWER(uri.uri) LIKE LOWER(?)'],
+    site                   => [ 'mt.site__id = site.id',
+                                'LOWER(site.name) LIKE LOWER(?)' ],
 
 };
 
@@ -392,6 +397,7 @@ BEGIN {
                          _category_obj   => Bric::FIELD_NONE,
                          _file           => Bric::FIELD_NONE,
                          _media_type_obj => Bric::FIELD_NONE,
+                         _upload_data    => Bric::FIELD_NONE,
                         });
 }
 
@@ -645,6 +651,11 @@ possible values.
 
 Returns a list of media associated with a given site ID. May use C<ANY>
 for a list of possible values.
+
+=item site
+
+Returns a list of media associated with a given site name. May use C<ANY> for
+a list of possible values.
 
 =item element_type_id
 
@@ -1088,7 +1099,7 @@ sub my_meths {
         push @ord, $meth->{name};
     }
 
-    push @ord, qw(file_name category category_name), pop @ord;
+    push @ord, qw(file_name), pop @ord;
     $meths->{file_name} = {
                            get_meth => sub { shift->get_file_name(@_) },
                            get_args => [],
@@ -1102,25 +1113,6 @@ sub my_meths {
                                          maxlength => 256
                                        }
                           };
-    $meths->{category} = {
-                          get_meth => sub { shift->get_category_object(@_) },
-                          get_args => [],
-                          name     => 'category',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
-
-    $meths->{category_name} = {
-                          get_meth => sub { shift->get_category_object(@_)->get_name },
-                          get_args => [],
-                          name     => 'category_name',
-                          disp     => 'Category Name',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
 
     # Copy the data for the title from name.
     $meths->{title} = { %{ $meths->{name} } };
@@ -1422,8 +1414,10 @@ B<Notes:> NONE.
 sub get_local_uri {
     my $self = shift;
     my $loc = $self->get_location || return;
-    return Bric::Util::Trans::FS->cat_uri(MEDIA_URI_ROOT,
-                                        Bric::Util::Trans::FS->dir_to_uri($loc) );
+    return Bric::Util::Trans::FS->cat_uri(
+        MEDIA_URI_ROOT,
+        Bric::Util::Trans::FS->dir_to_uri($loc),
+    );
 }
 
 =item $uri = $media->get_path()
@@ -1495,10 +1489,17 @@ B<Notes:> NONE.
 =cut
 
 sub upload_file {
-    my ($self, $fh, $name, $type, $size) = @_;
+    my $self = shift;
 
-    my ($id, $v, $old_fn, $loc, $uri) =
-      $self->_get(qw(id version file_name location uri));
+    my ($id, $v, $old_fn) = $self->_get(qw(id version file_name));
+
+    unless ($id) {
+        # If there is no ID, we're not ready to create a file name, yet.
+        $self->_set(['_upload_data'] => [\@_]);
+        return $self;
+    }
+
+    my ($fh, $name, $type, $size) = @_;
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
@@ -1531,8 +1532,8 @@ sub upload_file {
         $name = $prefix . $ext;
     }
 
-    open FILE, ">$path"
-      or throw_gen(error => "Unable to open '$path': $!");
+    local *FILE;
+    open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
     my $buffer;
     while (read($fh, $buffer, 10240)) { print FILE $buffer }
     close $fh;
@@ -1561,20 +1562,14 @@ sub upload_file {
     my $oc_obj = $self->get_primary_oc;
 
     my $new_loc = Bric::Util::Trans::FS->cat_dir('/', @id_dirs, "v.$v", $name);
-
     # Set the location, name, and URI.
-    if (not defined $old_fn
-        or not defined $uri
-        or $old_fn ne $name
-        or $loc ne $new_loc) {
-        $self->_set(['file_name'], [$name]);
-        $uri = Bric::Util::Trans::FS->cat_uri
-          ($self->_construct_uri($self->get_category_object, $oc_obj),
-           $oc_obj->get_filename($self));
+    $self->_set(['file_name'], [$name]);
+    my $uri = Bric::Util::Trans::FS->cat_uri(
+        $self->_construct_uri($self->get_category_object, $oc_obj),
+        URI::Escape::uri_escape($oc_obj->get_filename($self))
+    );
 
-        $self->_set([qw(location  uri   _update_uri)] =>
-                    [   $new_loc, $uri, 1]);
-    }
+    $self->_set( [qw(location uri _update_uri)] => [ $new_loc, $uri, 1 ] );
 
     if (my $auto_fields = $self->_get_auto_fields) {
         # We need to autopopulate data field values. Get the top level element
@@ -1851,6 +1846,13 @@ sub save {
             } else {
                 $self->_insert_media();
                 $self->_insert_instance();
+                if (my $upload_data = $self->_get('_upload_data')) {
+                    # Ah, we need to handle a file upload.
+                    $self->upload_file(@$upload_data);
+                    $self->_set(['_upload_data'] => [undef]);
+                    # Update to save the file location data.
+                    $self->_update_instance;
+                }
             }
         }
 

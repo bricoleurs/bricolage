@@ -61,6 +61,7 @@ $section
 </%args>
 %#--- Initialization ---#
 <%init>
+print STDERR "$version\n";
 # Clear out the state data if this is our first time here.
 if ($section eq 'new' or $section eq 'find_alias' or $section eq 'clone') {
     # A hacky fix for the 'sidenav query string breakin shit' problem.
@@ -99,12 +100,9 @@ if ($id) {
         # Set the story in the state data.
         set_state_data($widget, 'story', $story);
 
-        set_state_data($widget, 'version_view', 1) if defined $version;
     }
 
     if ($param->{diff}) {
-        set_state_data($widget, version_view => 1);
-
         my $version = $story ? $story->get_version : 0;
 
         for my $pos (qw(from to)) {
@@ -134,7 +132,9 @@ if ($id) {
     }
 
     my $state_name = 'view';
-    unless (defined $version || $param->{diff}) {
+    if (defined $version || $param->{diff}) {
+        set_state_data($widget, 'version_view', 1) if defined $version;
+    } else {
         my $s_uid = $story->get_user__id;
         # Don't go into edit mode if this is a previous version.
         $state_name = 'edit'

@@ -320,6 +320,16 @@ Friends who have spotted bugs include:
 
 =item Wayne Slavin
 
+=item Jerry Franz
+
+=item Alexey Sheynuk
+
+=item Paul Hyland
+
+=item Frank Febbraro
+
+=item Li Li
+
 =back
 
 Bricolage's translation team:

@@ -102,7 +102,11 @@ my $cached_assets = sub {
 
     # Figure out what all we've got. We'll use this for displaying
     # relative links.
-    foreach (keys %$pkgs) { $others->{$_} = 1 if defined $objs->{$_} }
+    $others = {
+        map  { $_ => 1 }
+        grep { $objs->{$_} && @{ $objs->{$_} } }
+        keys %$pkgs
+    };
 
     # Return them.
     return $objs->{$ckey};

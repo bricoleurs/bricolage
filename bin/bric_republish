@@ -10,39 +10,39 @@ bric_republish - republishes stories automatically
 bric_republish [options]
 
     --help     - shows this screen
-    
+
     --man      - shows the full documentation
-    
+
     --verbose  - print a running description to STDERR.  Add a second
                 --verbose and you'll get debugging output too.  Without
                 this option bric_republish is silent when successful.
-    
+
     --server   - specifies the Bricolage server URL, defaults to
                 the BRICOLAGE_SERVER environment variable if set,
                 http://localhost otherwise.
-    
+
     --username - the Bricolage username, defaults to the BRICOLAGE_USERNAME
                 environment variable if set.
-    
+
     --password - the password for the Bricolage user.  Default to the
                 BRICOLAGE_PASSWORD environment variable if set.
-    
+
     --story-id - specify a single story to publish
-    
+
     --no-media - don't publish related media with story.  By default all
                 related media are published with each story.
-    
+
     --element  - only publish stories of this element (story type)
-    
+
     --category - only publish stories in this category, specified by path
-    
+
     --published-only - Deprecated; kept for backwards compatibility; Only
                 the published version of all stories will be published.
-    
+
     --chunks   - publish stories in chunks of this many.  Defaults to 0,
                 which means to process them all at once.  This option can
                 be used to avoid timing out on large jobs.
-    
+
     --timeout  - specify the HTTP timeout for SOAP requests in seconds.
                 Defaults to 30.
 

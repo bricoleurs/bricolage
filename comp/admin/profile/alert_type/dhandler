@@ -1,4 +1,3 @@
-%#-- Begin HTML --#
 <%perl>
 $m->out(qq{<form method="post" name="alert_type_profile" action="} . $r->uri
         . qq{" onsubmit="return confirmChanges(this)">\n});
@@ -69,27 +68,29 @@ if (defined $id) {
          name => 'sub_sel',
          useTable => 0,
          options => $var_sel_vals,
-         js => 'onChange="this.form.subject.value = this.form.subject.value '
+         js => 'onchange="this.form.subject.value = this.form.subject.value '
                . '+ this.form.sub_sel[selectedIndex].text; '
                . 'this.form.subject.focus();"'
       &>
-% }  
+% }
       </div>
     </div>
 
 <%perl>
     # Variables to put into Message.
     $m->out(qq{<div class="alertTypeVars">});
+    my $len = $at->my_meths->{message}{len};
     $m->comp('/widgets/profile/select.mc',
              name => 'msg_sel',
              width => 550,
              options => $var_sel_vals,
-             js => 'onChange="this.form.message.value = this.form.message.value '
+             js => 'onchange="this.form.message.value = this.form.message.value '
                    . '+ this.form.msg_sel[selectedIndex].text; '
+                   . "textCount('message', $len); "
                    . 'this.form.message.focus();"'
             ) unless $no_edit;
     $m->out(qq{</div>});
-    
+
     # Message
     $m->comp('/widgets/profile/displayFormElement.mc',
              objref => $at,
@@ -166,11 +167,7 @@ if (defined $id) {
 }
 </%perl>
 </form>
-
 <& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
-%#-- End HTML --#
-
-%#-- Once Section --#
 <%once>;
 my $widget = 'profile';
 my $type = 'alert_type';
@@ -185,14 +182,10 @@ my $et_class = get_package_name('event_type');
 my $fmt = get_pref('List Name Format');
 my $hidden = 1;
 </%shared>
-
-%#-- Args Section --#
 <%args>
 $id => undef
 $class_id => undef
 </%args>
-
-%#-- Init Section --#
 <%init>;
 do_queued_redirect();
 $id ||= $ARGS{alert_type_id} unless defined $id;
@@ -243,7 +236,6 @@ if (defined $id) {
     unshift @{ $meths->{attr}{props}{vals} }, ['', ''];
 }
 </%init>
-
 <%def .contact>
 <%args>
 $c
@@ -284,7 +276,6 @@ $no_edit
 </tr>
 % undef $hidden;
 </%def>
-
 <%def .owner>
 <%args>
 $owner_id => get_user_id()
@@ -307,7 +298,6 @@ $no_edit => 0
     );
 </%perl>
 </%def>
-
 <%doc>
 ###############################################################################
 

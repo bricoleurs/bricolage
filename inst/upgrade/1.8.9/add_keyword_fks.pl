@@ -13,9 +13,9 @@ for my $thing (qw(story media category)) {
         qq{ DELETE from $thing\_keyword
             WHERE  $thing\_id IN (
                 SELECT kc.$thing\_id
-               FROM   $thing\_keyword kc LEFT JOIN $thing\ c
-                      ON kc.$thing\_id = c.id
-               WHERE  c.id IS NULL
+                FROM   $thing\_keyword kc LEFT JOIN $thing c
+                       ON kc.$thing\_id = c.id
+                WHERE  c.id IS NULL
             )
         },
 

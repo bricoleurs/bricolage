@@ -428,7 +428,7 @@ that the constraint has not already been created.
 
 =cut
 
-sub test_primary_key($$;$) {
+sub test_primary_key($$) {
     my ($table, $fk) = @_;
     my $sql = qq{
         SELECT 1

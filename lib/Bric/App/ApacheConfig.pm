@@ -154,7 +154,7 @@ do {
     # Force JavaScript to the proper MIME type and always use Unicode.
     push @locs,
       "  <Location /media/js>\n" .
-      "    ForceType           \"application/x-javascript; charset=utf-8\"\n" .
+      "    ForceType           \"text/javascript; charset=utf-8\"\n" .
       "  </Location>";
 
     # Force CSS to the proper MIME type.

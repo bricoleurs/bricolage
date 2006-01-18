@@ -25,7 +25,7 @@ $LastChangedDate$
   my $mason_burner = Bric::Util::Burner::Mason->new($burner);
 
   # burn an asset, get back a list of resources
-  my $resources = $mason_burner->burn_one($ba, $oc, $cat);
+  my $resources = $mason_burner->burn_one($ba, $oc, $cat, $at);
 
 =head1 DESCRIPTION
 
@@ -155,29 +155,30 @@ sub new {
 
 #------------------------------------------------------------------------------#
 
-=item $resources = $b->burn_one($ba, $oc, $cat);
+=item $resources = $b->burn_one($ba, $oc, $cat, $at);
 
-Publishes an asset.  Returns a list of resources burned.  Parameters are:
+Burn an asset in a given output channel and category, this is usually called
+by the preview or publish method. Returns a list of resources burned.
+
+Parameters are:
 
 =over 4
 
-=item *
+=item C<$ba>
 
-$ba
+A business asset object to burn.
 
-A business asset object to publish.
+=item C<$oc>
 
-=item *
+The output channel to which to burn the asset.
 
-$oc
+=item C<$cat>
 
-An output channel object to use for the publish
+A category in which to burn the asset.
 
-=item *
+=item C<$at>
 
-cat
-
-A category in which to publish.
+A asset type object for $ba . Note that this is not currently used by Mason.
 
 =back
 

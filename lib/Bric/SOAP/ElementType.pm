@@ -156,8 +156,8 @@ Boolean value for related media element types.
 
 The ID of a Bric::Util::Class object representing a business class. The ID
 must be for a class object representing one of
-L<Bric::Biz::Asset::Busines::Story|Bric::Biz::Asset::Busines::Story>,
-L<Bric::Biz::Asset::Busines::Media|Bric::Biz::Asset::Busines::Media>, or one
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses.
 
 =back

@@ -9,6 +9,7 @@ use Bric::Biz::Asset::Business::Media::Image;
 use Bric::Util::DBI qw(:standard :junction);
 use Bric::Biz::Keyword;
 use Bric::Util::Time qw(strfdate);
+use Test::MockModule;
 sub class { 'Bric::Biz::Asset::Business::Media' }
 sub table { 'media' }
 
@@ -24,8 +25,6 @@ my @MEDIA_GRP_IDS;
 my @ALL_DESK_GRP_IDS;
 my @REQ_DESK_GRP_IDS;
 my @EXP_GRP_IDS;
-
-
 
 ##############################################################################
 # The element object we'll use throughout.
@@ -162,7 +161,7 @@ sub test_select_methods: Test(120) {
 
     # A media with one category (admin user)
     $time = time;
-    $media[0] = class->new({ name        => "_test_$time",
+    $media[0] = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -218,7 +217,7 @@ sub test_select_methods: Test(120) {
                '... does it have the right grp_ids' );
 
     # now find out if return_version get the right number of versions
-    ok( $got = class->list({ id => $OBJ_IDS->{media}->[0],
+    ok( $got = $class->list({ id => $OBJ_IDS->{media}->[0],
                              return_versions => 1,
                              Order => 'version'}),
         'does return_versions work?' );
@@ -231,14 +230,14 @@ sub test_select_methods: Test(120) {
     }
 
     # Now fetch a specific version.
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[0],
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[0],
                                version => 2 }),
         "Get version 2" );
     is( $got->get_version, 2, "Check that we got version 2" );
 
     # ... with multiple cats
     $time = time;
-    $media[1] = class->new({
+    $media[1] = $class->new({
                             name        => "_test_$time",
                             file_name   => 'test.foo' . ++$z,
                             description => 'this is a test',
@@ -259,7 +258,7 @@ sub test_select_methods: Test(120) {
 
     # Try doing a lookup 
     $expected = $media[1];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[1] }),
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[1] }),
         'can we call lookup on a Media with multiple categories' );
     is( $got->get_name, $expected->get_name,
         '... does it have the right name');
@@ -283,7 +282,7 @@ sub test_select_methods: Test(120) {
 
     # ... as a grp member
     $time = time;
-    $media[2] = class->new({ name        => "_test_$time",
+    $media[2] = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -308,7 +307,7 @@ sub test_select_methods: Test(120) {
     $OBJ->{media_grp}->[0]->save();
 
     $expected = $media[2];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[2] }),
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[2] }),
         'can we call lookup on a Media which is itself in a grp' );
     is( $got->get_name, $expected->get_name,
         '... does it have the right name');
@@ -333,7 +332,7 @@ sub test_select_methods: Test(120) {
 
     # ... a bunch of grps
     $time = time;
-    $media[3] = class->new({ name        => "_test_$time",
+    $media[3] = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -367,7 +366,7 @@ sub test_select_methods: Test(120) {
     $OBJ->{media_grp}->[4]->save();
 
     $expected = $media[3];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[3] }),
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[3] }),
         'can we call lookup on a Media which is itself in a grp' );
     is( $got->get_name, $expected->get_name,
         '... does it have the right name');
@@ -396,7 +395,7 @@ sub test_select_methods: Test(120) {
 
     # ... now try a workflow
     $time = time;
-    $media[4] = class->new({ name        => "_test_$time",
+    $media[4] = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -420,7 +419,7 @@ sub test_select_methods: Test(120) {
 
     # Try doing a lookup 
     $expected = $media[4];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[4] }),
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[4] }),
         'can we call lookup on a Media' );
     is( $got->get_name, $expected->get_name,
         '... does it have the right name');
@@ -445,7 +444,7 @@ sub test_select_methods: Test(120) {
 
     # ... desk
     $time = time;
-    $media[5] = class->new({ name        => "_test_$time",
+    $media[5] = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -472,7 +471,7 @@ sub test_select_methods: Test(120) {
 
     # Try doing a lookup 
     $expected = $media[5];
-    ok( $got = class->lookup({ id => $OBJ_IDS->{media}->[5] } ),
+    ok( $got = $class->lookup({ id => $OBJ_IDS->{media}->[5] } ),
       'can we call lookup on a Media' );
     is( $got->get_name, $expected->get_name,
       '... does it have the right name');
@@ -500,7 +499,7 @@ sub test_select_methods: Test(120) {
     my @got_ids;
     my @got_grp_ids;
 
-    ok( $got = class->list({ name    => '_test%',
+    ok( $got = $class->list({ name    => '_test%',
                              Order   => 'name' }),
         'lets do a search by name, ordered by name' );
     # check the ids
@@ -520,7 +519,7 @@ sub test_select_methods: Test(120) {
     undef @got_grp_ids;
 
     # Try a search by element_key_name.
-    ok( $got = class->list({ element_key_name => $element->get_key_name }),
+    ok( $got = $class->list({ element_key_name => $element->get_key_name }),
         'lets do a search by element_key_name' );
     # check the ids
     foreach (@$got) {
@@ -538,7 +537,7 @@ sub test_select_methods: Test(120) {
     undef @got_ids;
     undef @got_grp_ids;
 
-    ok( $got = class->list({ title   => '_test%',
+    ok( $got = $class->list({ title   => '_test%',
                              Order   => 'name' }),
         'lets do a search by title' );
     # check the ids
@@ -556,7 +555,7 @@ sub test_select_methods: Test(120) {
     undef @got_grp_ids;
 
     # finally do this by grp_ids
-    ok( $got = class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id,
+    ok( $got = $class->list({ grp_id => $OBJ->{media_grp}->[0]->get_id,
                              Order => 'name' }),
         'getting by grp_id' );
     my $number = @$got;
@@ -566,14 +565,14 @@ sub test_select_methods: Test(120) {
     is( $got->[1]->get_id, $media[3]->get_id, '... and 3' );
 
     # try listing IDs, again at least one key per table
-    ok( $got = class->list_ids({ name    => '_test%',
+    ok( $got = $class->list_ids({ name    => '_test%',
                                  Order   => 'name' }),
         'lets do an IDs search by name' );
     # check the ids
     is_deeply( $got, $OBJ_IDS->{media},
                '... did we get the right list of ids out' );
 
-    ok( $got = class->list_ids({ title   => '_test%',
+    ok( $got = $class->list_ids({ title   => '_test%',
                                  Order   => 'name' }),
         'lets do an ids search by title' );
     # check the ids
@@ -581,7 +580,7 @@ sub test_select_methods: Test(120) {
                '... did we get the right list of ids out' );
 
     # finally do this by grp_ids
-    ok( $got = class->list_ids({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
+    ok( $got = $class->list_ids({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
                                  Order   => 'name' }),
         'getting by grp_id' );
     $number = @$got;
@@ -591,20 +590,20 @@ sub test_select_methods: Test(120) {
 
 
     # now let's try a limit
-    ok( $got = class->list({ Order   => 'name',
+    ok( $got = $class->list({ Order   => 'name',
                              Limit   => 3 }),
         'try setting a limit of 3');
     is( @$got, 3, '... did we get exactly 3 media back' );
 
     # test Offset
-    ok( $got = class->list({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
+    ok( $got = $class->list({ grp_id  => $OBJ->{media_grp}->[0]->get_id,
                              Order   => 'name',
                              Offset  => 1 }),
         'try setting an offset of 2 for a search that just returned 6 objs');
     is( @$got, 1, '... Offset gives us #2 of 2' );
 
     # Test contrib_id.
-    ok( $got = class->list({ contrib_id => $self->contrib->get_id }),
+    ok( $got = $class->list({ contrib_id => $self->contrib->get_id }),
        "Try contrib_id" );
     is( @$got, 3, 'Check for three stories' );
 
@@ -627,7 +626,7 @@ sub test_select_methods: Test(120) {
     is( scalar @$got, 5, 'Check for five media now');
 
     # User ID should return only assets checked out to the user.
-    ok $got = class->list({
+    ok $got = $class->list({
         title   => '_test%',
         Order   => 'title',
         user_id => $admin_id,
@@ -635,7 +634,7 @@ sub test_select_methods: Test(120) {
     is @$got, 4, 'Should have four media checked out to user';
 
     # Now try the checked_out parameter. Four media should be checked out.
-    ok $got = class->list({
+    ok $got = $class->list({
         title       => '_test%',
         Order       => 'title',
         checked_out => 1,
@@ -643,7 +642,7 @@ sub test_select_methods: Test(120) {
     is @$got, 4, 'Should have four checked out media';
 
     # With checked_out => 0, we should get the other two media.
-    ok $got = class->list({
+    ok $got = $class->list({
         title       => '_test%',
         Order       => 'title',
         checked_out => 0,
@@ -651,7 +650,7 @@ sub test_select_methods: Test(120) {
     is @$got, 2, 'Should have two non-checked out media';
 
     # Try the checked_in parameter, which should return all six media.
-    ok $got = class->list({
+    ok $got = $class->list({
         title       => '_test%',
         Order       => 'name',
         checked_in  => 1,
@@ -665,7 +664,7 @@ sub test_select_methods: Test(120) {
 
     # Without checked_in parameter we should get the the checked-out
     # media.
-    ok $got = class->list({
+    ok $got = $class->list({
         title       => '_test%',
         Order       => 'name',
     }), 'Get all media';
@@ -691,7 +690,7 @@ sub test_select_methods: Test(120) {
     $media[0]->set_primary_oc_id($oc1->get_id);
     $media[0]->save;
 
-    ok $got = class->list({
+    ok $got = $class->list({
         output_channel_id => $oc1->get_id
     }), 'Get stories with first OC';
     is @$got, 1, 'Should have one media';
@@ -701,7 +700,7 @@ sub test_select_methods: Test(120) {
     $media[0]->save;
 
     # We should still be able to find that media.
-    ok $got = class->list({
+    ok $got = $class->list({
         output_channel_id => $oc2->get_id
     }), 'Get stories with second OC';
     is @$got, 1, 'Should still have one media';
@@ -712,7 +711,7 @@ sub test_select_methods: Test(120) {
     $media[1]->save;
 
     # Now look for the second and thrid OC.
-    ok $got = class->list({
+    ok $got = $class->list({
         output_channel_id => ANY($oc1->get_id, $oc3->get_id)
     }), 'Get stories with first and third OC';
     is @$got, 2, 'Should now have two stories';
@@ -840,7 +839,7 @@ sub test_new_grp_ids: Test(4) {
     $cat->save();
     $self->add_del_ids($cat->get_id(), 'category');
     # first we'll try it with no cats
-    my $media = class->new({ name        => "_test_$time",
+    my $media = $class->new({ name        => "_test_$time",
                              file_name   => 'test.foo' . ++$z,
                              description => 'this is a test',
                              priority    => 1,
@@ -866,7 +865,7 @@ sub test_new_grp_ids: Test(4) {
     is_deeply([sort { $a <=> $b } $media->get_grp_ids ], $expected,
               'does adding cats get the right asset_grp_ids?');
 
-    $media = class->new({ name        => "_test_$time",
+    $media = $class->new({ name        => "_test_$time",
                           file_name   => 'test.foo' . ++$z,
                           description => 'this is a test',
                           priority    => 1,
@@ -912,6 +911,42 @@ sub test_new_grp_ids: Test(4) {
     is_deeply([sort { $a <=> $b } $media->get_grp_ids], $expected,
               'setting the workflow id of a media adds the correct ' .
               'asset_grp_ids');
+}
+
+sub test_upload_before_save : Test(6) {
+    my $self    = shift;
+    my $class   = $self->class;
+
+    # Cache the cat_dir sub, and set up a path that's okay to write to.
+    my $cat_dir = \&Bric::Util::Trans::FS::cat_dir;
+    my @paths =  (undef, $cat_dir->($ENV{BRIC_TEMP_DIR}, '_media'));
+
+    my $mock_fs = Test::MockModule->new('Bric::Util::Trans::FS');
+    $mock_fs->mock(mk_path => 1);
+    $mock_fs->mock(cat_dir => sub {
+        return shift @paths if @paths;
+        goto &$cat_dir;
+    });
+
+    ok my $media = $self->construct(
+        name      => 'Flubberman',
+        file_name => 'fun.foo',
+    ), 'Create a new media object';
+
+    # Upload a file before saving the media.
+    ok open my $file, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
+    ok $media->upload_file($file, __FILE__), 'Upload a media file';
+
+    # Now save the media.
+    ok $media->save, 'Save the media document';
+    ok my $id   = $media->get_id, 'Get the new ID';
+    my $version = $media->get_version;
+    $self->add_del_ids($id);
+
+    # The path to the media document should have the ID in it.
+    my @id_dirs = $id =~ /(\d\d?)/g;
+    my $dir = Bric::Util::Trans::FS->cat_dir(@id_dirs, "v.$version");
+    like $media->get_location, qr/$dir/, 'The ID should be in the location';
 }
 
 1;

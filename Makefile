@@ -123,9 +123,9 @@ SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 
 # Update this later to be database-independent.
 inst/Pg.sql : $(SQL_FILES)
-	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.sql' | sort` >  $@;
-	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.val' | sort` >>  $@;
-	env LC_ALL=C grep -vh '^--' `find sql/Pg -name '*.con' | sort` >>  $@;
+	grep -vh '^--' `find sql/Pg -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
+	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 
 .PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
 

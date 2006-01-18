@@ -12,6 +12,9 @@ my $fs = Bric::Util::Trans::FS->new;
 my $orig_dir = $fs->cat_dir(MASON_COMP_ROOT->[0][1], qw(data media));
 my $temp_dir = $fs->cat_dir(MASON_COMP_ROOT->[0][1], qw(data temp));
 
+# Just exit if there is no media directory.
+exit unless -e $orig_dir;
+
 # Check the media directory to see if  upgrade script has already run.
 opendir my $check_dir, $orig_dir or die "Cannot open $orig_dir: $!\n";
 while (my $check_file = readdir $check_dir) {

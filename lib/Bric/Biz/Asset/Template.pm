@@ -243,7 +243,8 @@ use constant PARAM_FROM_MAP => {
     grp_id           =>  'member m2, template_member fm2',
     element_key_name => 'element_type e',
     site_id          => 'output_channel oc',
-    note             => 'template_instance fi2'
+    note             => 'template_instance fi2',
+    site             => 'site',
 };
 
 PARAM_FROM_MAP->{simple} = PARAM_FROM_MAP->{_not_simple};
@@ -255,6 +256,7 @@ use constant PARAM_WHERE_MAP => {
     inactive              => 'f.active = ?',
     site_id               => 'f.output_channel__id = oc.id AND oc.site__id = ?',
     no_site_id            => 'f.output_channel__id = oc.id AND oc.site__id <> ?',
+    site                  => 'f.site__id = site.id AND LOWER(site.name) LIKE LOWER(?)',
     workflow__id          => 'f.workflow__id = ?',
     workflow_id           => 'f.workflow__id = ?',
     version_id            => 'i.id = ?',
@@ -324,6 +326,8 @@ use constant PARAM_ANYWHERE_MAP => {
                           'oc.site__id <> ?' ],
     note             => [ 'fi2.template__id = f.id',
                           'LOWER(fi2.note) LIKE LOWER(?)'],
+    site             => [ 'f.site__id = site.id',
+                          'LOWER(site.name) LIKE LOWER(?)' ],
 };
 
 use constant PARAM_ORDER_MAP => {
@@ -749,6 +753,11 @@ current non-checked out versions.
 Returns a list of templates associated with a given site ID. May use C<ANY>
 for a list of possible values.
 
+=item site
+
+Returns a list of templates associated with a given site name. May use C<ANY>
+for a list of possible values.
+
 =item category_id
 
 Returns a list of templates in the category represented by a category ID. May
@@ -1121,94 +1130,106 @@ sub my_meths {
                   category_name), pop @ord;
 
     $meths->{file_name} = {
-                              name     => 'file_name',
-                              get_meth => sub { shift->get_file_name(@_) },
-                              get_args => [],
-                              set_meth => sub { shift->set_file_name(@_) },
-                              set_args => [],
-                              disp     => 'File Name',
-                              len      => 256,
-                              req      => 0,
-                              type     => 'short',
-                              props    => {   type       => 'text',
-                                              length     => 32,
-                                              maxlength => 256
-                                          }
-                             };
-    $meths->{deploy_date} = {
-                              name     => 'deploy_date',
-                              get_meth => sub { shift->get_deploy_date(@_) },
-                              get_args => [],
-                              set_meth => sub { shift->set_deploy_date(@_) },
-                              set_args => [],
-                              disp     => 'Deploy Date',
-                              len      => 64,
-                              req      => 0,
-                              type     => 'short',
-                              props    => { type => 'date' }
-                             };
-    $meths->{output_channel} =  {
-                              name     => 'output_channel',
-                              get_meth => sub { shift->get_output_channel(@_) },
-                              get_args => [],
-                              set_meth => sub { shift->set_output_channel(@_) },
-                              set_args => [],
-                              disp     => 'Output Channel',
-                              len      => 64,
-                              req      => 0,
-                              type     => 'short',
-                             };
+        name     => 'file_name',
+        get_meth => sub { shift->get_file_name(@_) },
+        get_args => [],
+        set_meth => sub { shift->set_file_name(@_) },
+        set_args => [],
+        disp     => 'File Name',
+        len      => 256,
+        req      => 0,
+        type     => 'short',
+        props    => {
+            type      => 'text',
+            length    => 32,
+            maxlength => 256
+        }
+    };
 
-    $meths->{tplate_type} =  {
-                            name     => 'tplate_type',
-                            get_meth => sub { shift->get_tplate_type(@_) },
-                            get_args => [],
-                            disp     => 'Template Type',
-                            len      => 1,
-                            req      => 1,
-                            type     => 'short',
-                            props    => { type => 'select',
-                                          vals => [[ &ELEMENT_TEMPLATE =>
-                                                       'Element'],
-                                                   [ &CATEGORY_TEMPLATE =>
-                                                       'Category'],
-                                                   [ &UTILITY_TEMPLATE =>
-                                                       'Utility'],
-                                                  ]
-                                        }
-                           };
+    $meths->{deploy_date} = {
+        name     => 'deploy_date',
+        get_meth => sub { shift->get_deploy_date(@_) },
+        get_args => [],
+        set_meth => sub { shift->set_deploy_date(@_) },
+        set_args => [],
+        disp     => 'Deploy Date',
+        len      => 64,
+        req      => 0,
+        type     => 'short',
+        props    => { type => 'date' }
+    };
+
+    $meths->{output_channel} = {
+        name     => 'output_channel',
+        get_meth => sub { shift->get_output_channel(@_) },
+        get_args => [],
+        set_meth => sub { shift->set_output_channel(@_) },
+        set_args => [],
+        disp     => 'Output Channel',
+        len      => 64,
+        req      => 0,
+        type     => 'short',
+    };
+
+    $meths->{tplate_type} = {
+        name     => 'tplate_type',
+        get_meth => sub { shift->get_tplate_type(@_) },
+        get_args => [],
+        disp     => 'Template Type',
+        len      => 1,
+        req      => 1,
+        type     => 'short',
+        props    => {
+            type => 'select',
+            vals => [
+                [ &ELEMENT_TEMPLATE  => 'Element'  ],
+                [ &CATEGORY_TEMPLATE => 'Category' ],
+                [ &UTILITY_TEMPLATE  => 'Utility'  ],
+            ]
+        }
+    };
 
     $meths->{output_channel_name} = {
-                          get_meth => sub { shift->get_output_channel_name(@_) },
-                          get_args => [],
-                          name     => 'output_channel_name',
-                          disp     => 'Output Channel',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
+        get_meth => sub { shift->get_output_channel_name(@_) },
+        get_args => [],
+        name => 'output_channel_name',
+        disp => 'Output Channel',
+        len  => 64,
+        req  => 1,
+        type => 'short',
+    };
 
     $meths->{category} = {
-                          get_meth => sub { shift->get_category(@_) },
-                          get_args => [],
-                          set_meth => sub { shift->set_category(@_) },
-                          set_args => [],
-                          name     => 'category',
-                          disp     => 'Category',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
+        get_meth => sub { shift->get_category(@_) },
+        get_args => [],
+        set_meth => sub { shift->set_category(@_) },
+        set_args => [],
+        name     => 'category',
+        disp     => 'Category',
+        len      => 64,
+        req      => 1,
+        type     => 'short',
+    };
 
     $meths->{category_name} = {
-                          get_meth => sub { shift->get_category(@_)->get_name },
-                          get_args => [],
-                          name     => 'category_name',
-                          disp     => 'Category Name',
-                          len      => 64,
-                          req      => 1,
-                          type     => 'short',
-                         };
+        get_meth => sub { shift->get_category(@_)->get_name },
+        get_args => [],
+        name     => 'category_name',
+        disp     => 'Category Name',
+        len      => 64,
+        req      => 1,
+        type     => 'short',
+    };
+
+    $meths->{category_uri} = {
+        get_meth => sub { shift->get_category(@_)->get_uri },
+        get_args => [],
+        name     => 'category_uri',
+        disp     => 'Category URI',
+        len      => 64,
+        req      => 1,
+        type     => 'short',
+    };
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }

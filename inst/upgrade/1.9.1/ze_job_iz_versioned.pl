@@ -21,7 +21,7 @@ do_sql
              publish_status    = '1'
       FROM   job j, story s
       WHERE  story.id = s.id
-             AND j.story__id = s.id
+             AND j.story_instance__id = s.id
              AND (
                   s.published_version = null
                   OR s.publish_status = '0'
@@ -33,7 +33,7 @@ do_sql
              publish_status    = '1'
       FROM   job j, media m
       WHERE  media.id = m.id
-             AND j.media__id = m.id
+             AND j.media_instance__id = m.id
              AND (
                   m.published_version = null
                   OR m.publish_status = '0'

@@ -29,6 +29,6 @@ $object
 $disp_field
 </%args>
 <%init>
-my $crit_field = get_state_data($widget, 'crit_field');
+my $crit_field = get_state_data($widget, $object)->{crit_field};
 </%init>
 

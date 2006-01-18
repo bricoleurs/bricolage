@@ -17,6 +17,7 @@ my @lang_dels = qw(
     media/images/%s/D_red.gif
     media/images/%s/P_green.gif
     media/images/%s/P_red.gif
+    widgets/summary/formatting_meta.html
 );
 
 # Delete defunct language-specific UI components.

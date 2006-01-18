@@ -345,7 +345,7 @@ sub test_pod : Test(221) {
     ok $rel_story->save, "Save the story";
     my $rel_story_uri  = $rel_story->get_primary_uri;
     my $rel_story_id   = $rel_story->get_id;
-    $self->add_del_ids($rel_story->get_id, 'story');
+    $self->add_del_ids($rel_story_id, 'story');
 
     # Create a media document.
     $mock_uuid->mock(create_str => $rel_media_uuid);

@@ -95,12 +95,9 @@ if ($id) {
 
         # Set the media in the state data.
         set_state_data($widget, 'media', $media);
-        set_state_data($widget, 'version_view', 1) if defined($version);
     }
 
     if ($param->{diff}) {
-        set_state_data($widget, version_view => 1);
-
         my $version = $media ? $media->get_version : 0;
 
         for my $pos (qw(from to)) {
@@ -129,8 +126,11 @@ if ($id) {
         }
     }
 
+    set_state_data($widget, 'version_view', 1) if defined $version;
     my $state_name = 'view';
-    unless (defined $version || $param->{diff}) {
+    if (defined $version || $param->{diff}) {
+        set_state_data($widget, 'version_view', 1) if defined $version;
+    } else {
         my $m_uid = $media->get_user__id;
         # Don't go into edit mode if this is a previous version.
         $state_name = 'edit'

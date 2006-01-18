@@ -105,8 +105,8 @@ my $fields = { template => [qw(file_name version output_channel_name publish_sta
              };
 
 my $sort_by = { template => 'file_name',
-                story      => 'title',
-                media      => 'title' };
+                story      => get_pref('Default Asset Sort') || 'title',
+                media      => get_pref('Default Asset Sort') || 'title'  };
 
 unshift @{$fields->{'media'}}, 'thumb' if USE_THUMBNAILS;
 

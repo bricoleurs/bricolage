@@ -1,0 +1,33 @@
+republish_by_uri 0.10
+=====================
+
+This program schedules one or more stories for republication based on the URIs
+passed to it. Only the published version of a story will be published, so
+unpublished stories will not be published. If you have multiple sites with
+stories that share URIs, you can specify one or more sites with the --site
+option.
+
+INSTALLATION
+
+To install this module, type the following:
+
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
+
+DEPENDENCIES
+
+This program requires these other modules and libraries:
+
+  Getopt::Long
+  Pod::Usage
+
+It also requires a Bricolage server and API.
+
+COPYRIGHT AND LICENCE
+
+Copyright (c) 2005 Kineticode, Inc. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.

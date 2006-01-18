@@ -32,11 +32,12 @@ my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
 sub view : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    my $story = get_state_data($widget, 'story');
+    my $params = $self->params;
+    my $story  = get_state_data($widget => 'story');
     # Abort this save if there were any errors.
-    return unless &$save_data($self, $self->params, $widget, $story);
-    my $version = $self->params->{"$widget|version"};
-    my $id = $story->get_id();
+    return unless $save_data->($self, $params, $widget, $story);
+    my $version = $params->{"$widget|version"};
+    my $id = $story->get_id;
     $self->set_redirect("/workflow/profile/story/$id/?version=$version");
 }
 
