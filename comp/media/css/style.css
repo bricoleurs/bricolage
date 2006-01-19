@@ -37,8 +37,28 @@ textarea {
 .loginBox,
 .searchBox,
 .errorsBox,
-.helpBox                       { margin-bottom: 10px; }
+.helpBox { margin-bottom: 10px; line-height: 1.4em; }
+.helpBox h3 { color: #006666; }
+.helpBox dt { font-weight: bold; }
+.helpBox dd { margin: 0; padding: 0 0 .7em 0; }
+.helpBox dl dl { margin: 0 0 0 2em; }
+
+/* Use smart quotes where possible. */
+.helpBox p>q,
+.helpBox a>q,
+.helpBox blockquote>q,
+.helpBox h2>q,
+.helpBox h3>q,
+.helpBox li>q,
+.helpBox dt>q,
+.helpBox dd>q,
+.helpBox strong>q,
+.helpBox em>q {
+    quotes: "\201c" "\201d" "\2018" "\x2019"
+}
+
 .padding { padding: 10px; }
+
 
 /***************************************************
  * PAGE HEADER

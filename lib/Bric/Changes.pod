@@ -96,6 +96,11 @@ So you can change a "text" widget to "textarea", for example. [David]
 
 Fixed the options in the "Default Asset Sort" to be more up-to-date. [David]
 
+=item *
+
+Updated the context-sensitive online help avaialable by clicking the
+"Help"button at the top of the Bricolage UI. [David]
+
 =back
 
 =cut

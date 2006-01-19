@@ -17,6 +17,8 @@ my @lang_dels = qw(
     media/images/%s/D_red.gif
     media/images/%s/P_green.gif
     media/images/%s/P_red.gif
+    help/%s/admin/profile/element_type_set.html
+    comp/help/%s/admin/manager/element_type_set.html
     widgets/summary/formatting_meta.html
 );
 
