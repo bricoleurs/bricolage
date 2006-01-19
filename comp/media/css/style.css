@@ -26,10 +26,10 @@ textarea {
 #navFrame         { background: #666633; }
 #help             { background: white; padding: 10px; }
 
-#bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
+#bricLogo { float: left; background: white; padding-top: 8px; }
 #mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
 #sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
-#contentContainer { position: relative; padding: 8px 0 0 158px; }
+#contentContainer { padding: 8px 0 0 158px; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
