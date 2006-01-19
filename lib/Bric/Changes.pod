@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.9 ()
+=head1 VERSION 1.8.9 (2006-01-23)
 
 =head2 Improvements
 

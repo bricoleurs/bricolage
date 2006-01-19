@@ -6,6 +6,9 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
+# Skip it for later versions of Bricolage.
+exit unless test_constraint 'story', 'ck_story__publish_status';
+
 for my $thing (qw(story media)) {
     do_sql
         qq{ALTER TABLE $thing DROP CONSTRAINT ck_$thing\__publish_status},

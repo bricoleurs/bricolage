@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_constraint 'media__contributor', 'fk_media__media__contributor';
+exit if test_foreign_key 'media__contributor', 'fk_media__media__contributor';
 
 do_sql
     q{ DELETE FROM media__contributor
