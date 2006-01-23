@@ -4,7 +4,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO org (id, name, long_name, active)
 VALUES (2, 'About.com', 'About.com, Inc.', 1);

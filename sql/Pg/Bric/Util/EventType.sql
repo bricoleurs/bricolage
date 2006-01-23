@@ -5,7 +5,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS : Oracle 8
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 -- This DDL creates the basic table for all Bric::Util::EventType objects. It's
 -- pretty easy - they're really just all groups.

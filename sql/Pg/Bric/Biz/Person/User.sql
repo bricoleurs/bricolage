@@ -3,7 +3,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.2
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 -- This DDL creates the basic table for Bric::Person::Usr objects, and
 -- establishes its relationship with Bric::Person. The login field must be unique,

@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author:  David Wheeler <david@wheeler.net>
+-- Author:  David Wheeler <david@justatheory.com>
 
 
 DELETE FROM alerted;
@@ -24,7 +24,7 @@ VALUES (1, 4, 'garth@perijove.com', CURRENT_TIMESTAMP);
 
 INSERT INTO alerted__contact_value
        (alerted__id, contact__id, contact_value__value, sent_time)
-VALUES (2, 1, 'david@wheeler.net', CURRENT_TIMESTAMP);
+VALUES (2, 1, 'david@justatheory.com', CURRENT_TIMESTAMP);
 
 INSERT INTO alerted__contact_value
        (alerted__id, contact__id, contact_value__value, sent_time)

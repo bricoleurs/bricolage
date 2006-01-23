@@ -3,7 +3,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.1.2
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 /* The site's ID is a FK ref to the grp ID because Bric::Biz::Site uses
  * a Bric::Util::Grp::Asset ID as its own.

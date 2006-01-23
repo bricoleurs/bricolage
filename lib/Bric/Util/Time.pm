@@ -352,7 +352,7 @@ DD, hh, mm and ss) must be separated by a single character.
 
 =head1 AUTHOR
 
-David E. Wheeler <david@wheeler.net>
+David E. Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

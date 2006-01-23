@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author:  David Wheeler <david@wheeler.net>
+-- Author:  David Wheeler <david@justatheory.com>
 
 DELETE FROM alert_type_rule;
 

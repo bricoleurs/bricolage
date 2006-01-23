@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 SELECT e.id, t.id, e.usr__id, e.obj_id, e.timestamp, t.key_name,
        g.name, g.description, c.pkg_name, g.id

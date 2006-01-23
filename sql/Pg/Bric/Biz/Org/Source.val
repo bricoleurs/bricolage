@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO source (id, org__id, name, description, expire, active)
 VALUES (1, 1, 'Internal', 'Ourselves.', 0, 1);

@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author:  David Wheeler <david@wheeler.net>
+-- Author:  David Wheeler <david@justatheory.com>
 
 --DELETE FROM map_contact_value;
 --DELETE FROM map_person;
@@ -13,7 +13,7 @@
 
 -- David Email.
 INSERT INTO contact_value (id, contact__id, value, active)
-VALUES (1, 1, 'david@wheeler.net', 1);
+VALUES (1, 1, 'david@justatheory.com', 1);
 
 INSERT INTO person__contact_value (person__id, contact_value__id)
 VALUES (3, 1);

@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author:  David Wheeler <david@wheeler.net>
+-- Author:  David Wheeler <david@justatheory.com>
 
 -- The password for all these users is "BricolageRules!".
 

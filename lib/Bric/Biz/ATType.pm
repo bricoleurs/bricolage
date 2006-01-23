@@ -1211,7 +1211,7 @@ NONE
 
 Garth Webb <garth@perijove.com>
 
-Refactored by David Wheeler <david@wheeler.net>
+Refactored by David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

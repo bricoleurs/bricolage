@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author:  David Wheeler <david@wheeler.net>
+-- Author:  David Wheeler <david@justatheory.com>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
 VALUES (1, 'Time Zone', 'Time Zone', 'America/Los_Angeles', 'America/Los_Angeles', 0, 'select');

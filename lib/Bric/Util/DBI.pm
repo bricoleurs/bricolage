@@ -1873,7 +1873,7 @@ NONE.
 
 =head1 AUTHOR
 
-David E. Wheeler <david@wheeler.net>
+David E. Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

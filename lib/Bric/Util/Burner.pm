@@ -1878,7 +1878,7 @@ Sam Tregar <stregar@about-inc.com>
 
 Matt Vella <mvella@about-inc.com>
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

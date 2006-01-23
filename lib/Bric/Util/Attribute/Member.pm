@@ -193,7 +193,7 @@ This is an early draft of this class, and therefore subject to change.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 
