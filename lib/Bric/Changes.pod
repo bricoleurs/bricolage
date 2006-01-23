@@ -14,6 +14,20 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.10.1 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed localization errors such as, "Can't use "for Published" as a method name
+in bracket group," which appeard in searches and on desks. Thanks to Guido
+Bülskämper for the spot! [David]
+
+=back
+
 =head1 VERSION 1.10.0 (2006-01-23)
 
 =head2 Improvements
@@ -874,7 +888,7 @@ format of "/%{categories}/%Y-%m-%d/" and end up with the URI
 "/foo/bar/2004-09-22/" if you wanted. Or even "/%{categories}/%Y/%V/" to get
 the week number as part of the URI. You can also include your own text,
 similar to the URI Prefix and URI Suffix fields, anywhere in the URI (e.g.
-foobar in /%{categories}/%Y/%m/foobar/%{slug}/". Suggested by David.
+foobar in "/%{categories}/%Y/%m/foobar/%{slug}/". Suggested by David.
 [Marshall]
 
 =item *
