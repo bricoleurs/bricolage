@@ -71,6 +71,11 @@ while (<OLD>) {
     last if /^-- Data/;
     # Skip the old boolean checks.
     next if /CHECK\s*\(\(\(\w+\s*=\s*\([01]\)::numeric\)\s*OR\s*\(\w+\s*=\s*\([01]\)::numeric\)\)\)/;
+    # Fix incompatible checks.
+    if (/ck_(?:story|media)__publish_status/) {
+        s/\(0\)::integer/FALSE/g;
+        s/\(1\)::integer/TRUE/g;
+    }
     # Handle functions and such.
     unless (s/numeric([),])/integer$1/g) {
         # Handle special smallint columns.
