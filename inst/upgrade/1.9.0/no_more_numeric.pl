@@ -18,7 +18,7 @@ chomp $val;
 exit if $val eq 't' || $val eq 'f';
 
 # Find out if they *really* want to do this.
-exit unless y_n( # __ # Hack to get cperl-mode to work properly.
+exit unless y_n(
 qq{
 
     ####################################################################

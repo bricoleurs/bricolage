@@ -196,6 +196,8 @@ Folks who have submitted patches include:
 
 =item Alexey Sheynuk
 
+=item Christian Niles
+
 =back
 
 Friends who have spotted bugs include:

@@ -26,6 +26,11 @@ Fixed localization errors such as, "Can't use "for Published" as a method name
 in bracket group," which appeard in searches and on desks. Thanks to Guido
 Bülskämper for the spot! [David]
 
+=item *
+
+Fixed some errors in the SOAP schema in L<Bric::SOAP|Bric::SOAP>. [Christian
+Niles]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
