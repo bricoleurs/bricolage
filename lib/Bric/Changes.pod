@@ -14,6 +14,25 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.8.10 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Eliminated errors inserting array references fetched from image infor while
+uploading and saving new image files. Also documented extra methods not
+previously documented in L<Bric::App::MediaFunc|Bric::App::MediaFunc>.
+Reported by Michael Holden. [David]
+
+=back
+
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.8.9 (2006-01-23)
 
 =head2 Improvements

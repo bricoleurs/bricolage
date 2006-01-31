@@ -318,6 +318,8 @@ Friends who have spotted bugs include:
 
 =item Li Li
 
+=item Michael Holden
+
 =back
 
 Bricolage's translation team:
