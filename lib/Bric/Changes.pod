@@ -26,6 +26,12 @@ When a story is previewed, any related media are distributed to the preview
 server only if the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
 disabled or the media documents need to be previewed. [David]
 
+=item *
+
+Removed call to removed component F<comp/widgets/qa/qa.mc> from the side
+navigation component. This was only an issue when the C<QA_MODE>
+F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -312,14 +312,6 @@ if ( $nav->{admin} ) {
 }
 # End Admin --------------------------------------
 $m->print(qq{</ul>});
-
-# begin debug widget
-if (Bric::Config::QA_MODE && $debug) {
-    $m->print('<br /><hr/>');
-    $m->comp('/widgets/qa/qa.mc');
-    $m->print('<br />');
-}
-# end debug widget
 </%perl>
 </body>
 </html>

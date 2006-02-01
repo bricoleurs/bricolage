@@ -332,6 +332,8 @@ Friends who have spotted bugs include:
 
 =item Li Li
 
+=item Derek Poon
+
 =back
 
 Bricolage's translation team:
