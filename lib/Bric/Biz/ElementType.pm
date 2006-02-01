@@ -1,4 +1,4 @@
-package Bric::Biz::ElementType;
+ackage Bric::Biz::ElementType;
 ###############################################################################
 
 =head1 NAME
@@ -997,7 +997,6 @@ for my $attr (qw(
     related_story
     related_media
     media
-    reference
 )) {
     no strict 'refs';
     my $iser = sub { $_[0]->_get($attr) ? shift : undef };
