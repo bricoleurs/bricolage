@@ -28,8 +28,8 @@ Bülskämper for the spot! [David]
 
 =item *
 
-Fixed some errors in the SOAP schema in L<Bric::SOAP|Bric::SOAP>. [Christian
-Niles]
+Fixed some errors in and rearragned the SOAP schema in
+L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
 
 =back
 
