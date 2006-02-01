@@ -32,6 +32,11 @@ Removed call to removed component F<comp/widgets/qa/qa.mc> from the side
 navigation component. This was only an issue when the C<QA_MODE>
 F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
 
+=item *
+
+Fixed the typo "Distribintion" in the side navigation. Thanks to Christian
+Niles for the spot. [David]
+
 =back
 
 =head2 Bug Fixes

@@ -286,7 +286,7 @@ if ( $nav->{admin} ) {
         # Start the open distribution menu.
         $m->print(
             qq{<li class="open"><a href="}, $nav_uri,
-            qq{?nav|distSystem_cb=0">}, $lang->maketext('Distribintion'),
+            qq{?nav|distSystem_cb=0">}, $lang->maketext('Distribution'),
             qq{</a>}, qq{<ul class="items">},
         );
 
