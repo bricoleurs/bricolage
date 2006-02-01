@@ -37,6 +37,12 @@ F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
 Fixed the typo "Distribintion" in the side navigation. Thanks to Christian
 Niles for the spot. [David]
 
+=item *
+
+Added installation defaults for FreeBSD that will be used when the
+C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
+[Rod Taylor]
+
 =back
 
 =head2 Bug Fixes
