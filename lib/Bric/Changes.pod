@@ -27,6 +27,11 @@ uploading and saving new image files. Also documented extra methods not
 previously documented in L<Bric::App::MediaFunc|Bric::App::MediaFunc>.
 Reported by Michael Holden. [David]
 
+=item *
+
+Fixed typo in the final message after an upgrade completes. Reported by Nate
+Perry-Thistle. [David]
+
 =back
 
 =cut
