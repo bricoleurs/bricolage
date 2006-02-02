@@ -43,6 +43,11 @@ Added installation defaults for FreeBSD that will be used when the
 C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
 [Rod Taylor]
 
+=item *
+
+Fixed some errors in and rearragned the SOAP schema in
+L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
+
 =back
 
 =head2 Bug Fixes
@@ -57,8 +62,8 @@ Bülskämper for the spot! [David]
 
 =item *
 
-Fixed some errors in and rearragned the SOAP schema in
-L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
+Fixed some of the 1.8.9 upgrade scripts that run I<after> the 1.9.x upgrade
+scripts to that they are properly compatible. [Nate Perry-Thistle and David]
 
 =back
 
