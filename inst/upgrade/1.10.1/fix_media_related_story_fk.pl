@@ -11,12 +11,12 @@ use bric_upgrade qw(:all);
 
 do_sql
     q{
-        ALTER TABLE media_container_tile
-        DROP CONSTRAINT fk_mc_tile__related_story
+        ALTER TABLE media_element
+        DROP CONSTRAINT fk_media_element__related_story
     },
     q{
-        ALTER TABLE media_container_tile
-        ADD CONSTRAINT fk_mc_tile__related_story
+        ALTER TABLE media_element
+        ADD CONSTRAINT fk_media_element__related_story
         FOREIGN KEY (related_story__id)
         REFERENCES story(id) ON DELETE CASCADE
     },
