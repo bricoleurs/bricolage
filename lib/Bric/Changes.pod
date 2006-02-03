@@ -32,6 +32,12 @@ Reported by Michael Holden. [David]
 Fixed typo in the final message after an upgrade completes. Reported by Nate
 Perry-Thistle. [David]
 
+=item *
+
+Fixed a 1.8.9 upgrade script that adds a foreign key constraint to the
+"element_member" table so that it properly tests for the foreign key
+constraint before it tries to add it. Reported by Wayne Slavin. [David]
+
 =back
 
 =cut
