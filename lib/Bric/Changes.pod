@@ -48,6 +48,11 @@ C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
 Fixed some errors in and rearragned the SOAP schema in
 L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
 
+=item *
+
+Fixed a foreign key constraint on "media_element.related_story__id" that was
+pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
+
 =back
 
 =head2 Bug Fixes
