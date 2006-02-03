@@ -42,6 +42,17 @@ for my $thing (qw(story media)) {
            SET    publish_status = '0'
            WHERE  publish_date IS NULL
         },
+
+        # Update the published_version.
+        qq{UPDATE $thing
+           SET    published_version = current_version,
+                  publish_status = 1
+           WHERE  published_version IS NULL
+                  AND current_version IS NOT NULL
+                  AND publish_status = 0
+                  AND publish_date IS NOT NULL
+                  AND first_publish_date IS NOT NULL
+        },
     ;
 }
 
