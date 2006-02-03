@@ -123,7 +123,7 @@ do_sql
     q{ALTER TABLE element_type__site ALTER COLUMN id
       SET DEFAULT NEXTVAL('seq_element_type__site')},
     q{ALTER TABLE element_type__site DROP CONSTRAINT } . (
-        test_primary_key('element__site_pkey', 'element_type__site')
+        test_primary_key('element_type__site', 'element__site_pkey')
             ? 'element__site_pkey'
             : 'pk_element__site__id'
     ),
