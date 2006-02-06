@@ -1,4 +1,4 @@
-ackage Bric::Biz::ElementType;
+package Bric::Biz::ElementType;
 ###############################################################################
 
 =head1 NAME

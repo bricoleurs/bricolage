@@ -71,6 +71,11 @@ Fixed some of the 1.8.9 upgrade scripts that run I<after> the 1.9.x upgrade
 scripts to that they are properly compatible. [Nate Perry-Thistle, Rod Taylor,
 and David]
 
+=item *
+
+L<Bric::Biz::ElementType|Bric::Biz::ElementType> loads again. [Nate
+Perry-Thistle]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
