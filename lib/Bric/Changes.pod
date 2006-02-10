@@ -53,6 +53,12 @@ L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
 Fixed a foreign key constraint on "media_element.related_story__id" that was
 pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
 
+=item *
+
+Added a 'make devclone' option which does the same as 'make clone' but removes 
+all of the locally previewed files, the obj files, staging and sandboxes. This 
+means a large saving in download size of cloned production systems.
+
 =back
 
 =head2 Bug Fixes

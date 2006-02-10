@@ -10,6 +10,7 @@
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
+#   devclone  - As clone above, only no pre-previewed / compiled files
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
 #   dev       - installs directly from a Subversion checkout (for development)
@@ -138,6 +139,11 @@ clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
 		  rm_svn rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
+devclone  : distclean clone.db clone_dist_dir clone_sql clone_files \
+    rm_svn rm_tmp \
+    dist/INSTALL dist/Changes dist/License \
+    clone_lightweight \
+    clone_tar 
 
 clone.db	:
 	$(PERL) inst/clone.pl
@@ -148,6 +154,9 @@ clone_dist_dir  :
 
 clone_files     :
 	$(PERL) inst/clone_files.pl
+
+clone_lightweight     :
+	$(PERL) inst/clone_lightweight.pl
 
 clone_sql       : 
 	$(PERL) inst/clone_sql.pl

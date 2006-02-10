@@ -2413,6 +2413,12 @@ the target machine and install it as usual:
 That's all there is to it!  Now your new installation will be an exact
 replica of the original.
 
+There is a make devclone option that does the same as 'make clone' but 
+removes all of the locally previewed files, the obj files, staging and 
+sandboxes. This means a large saving in download / install size of cloned 
+high usage systems. Be warned that you will need to repreview assets like 
+images, stylesheets etc as required. 
+
 =head1 Installation/Startup Problems
 
 Some of the most common problems with Bricolage installation are discussed in
