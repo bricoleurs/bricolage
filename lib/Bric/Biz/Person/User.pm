@@ -89,6 +89,7 @@ use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Util::Priv;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(db_date);
+use Bric::Util::UserPref;
 
 ################################################################################
 # Inheritance
