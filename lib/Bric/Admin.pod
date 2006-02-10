@@ -196,7 +196,7 @@ START MODULE LIST
 
 =item Net::FTPServer (optional)
 
-=item Net::SFTP 0.09 (optional)
+=item Net::SFTP 0.08 (optional)
 
 =item HTTP::DAV (optional)
 
