@@ -392,7 +392,7 @@ sub test_constraint($$;$) {
   exit if test_foreign_key $table_name, $foreign_key_name;
   exit if test_foreign_key $table_name, $foreign_key_name, $delete_code;
 
-This function returns true if the specified foreign key constriant exists on
+This function returns true if the specified foreign key constraint exists on
 the specified table in the Bricolage database, and false if it does not. This
 is useful in upgrade scripts that add a new foreign key, and want to verify
 that the constraint has not already been created. The optional third argument
@@ -422,7 +422,7 @@ sub test_foreign_key($$;$) {
 
   exit if test_primary_key $table_name, $primary_key_name;
 
-This function returns true if the specified foreign key constraint exists on
+This function returns true if the specified primary key constraint exists on
 the specified table in the Bricolage database, and false if it does not. This
 is useful in upgrade scripts that add a new primary key, and want to verify
 that the constraint has not already been created.
