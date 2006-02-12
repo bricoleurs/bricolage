@@ -117,19 +117,17 @@ do_sql
 
 
     ##########################################################################
-    # Rename element__site.
-    q{ALTER TABLE element__site RENAME TO element_type__site},
-    q{ALTER TABLE element_type__site RENAME COLUMN element__id TO element_type__id},
-    q{ALTER TABLE element_type__site ALTER COLUMN id
-      SET DEFAULT NEXTVAL('seq_element_type__site')},
-
-    # The test_primary_key function runs outside the transaction
-    # so therefore needs to query the old table name
-    q{ALTER TABLE element_type__site DROP CONSTRAINT } . (
+    # Rename element__site. Change the primary key first
+    q{ALTER TABLE element__site DROP CONSTRAINT } . (
         test_primary_key('element__site', 'element__site_pkey')
             ? 'element__site_pkey'
             : 'pk_element__site__id'
     ),
+
+    q{ALTER TABLE element__site RENAME TO element_type__site},
+    q{ALTER TABLE element_type__site RENAME COLUMN element__id TO element_type__id},
+    q{ALTER TABLE element_type__site ALTER COLUMN id
+      SET DEFAULT NEXTVAL('seq_element_type__site')},
 
     q{ALTER TABLE element_type__site ADD CONSTRAINT pk_element_type__site__id
       PRIMARY KEY (id)},
