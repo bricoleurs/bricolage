@@ -1514,7 +1514,6 @@ sub upload_file {
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
-    my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
     if (MEDIA_UNIQUE_FILENAME) {
         # split the uploaded filename into prefix and ext
@@ -1543,6 +1542,8 @@ sub upload_file {
         $name = $prefix . $ext;
     }
 
+    my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
+    
     local *FILE;
     open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
     my $buffer;

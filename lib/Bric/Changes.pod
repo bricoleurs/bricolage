@@ -82,6 +82,11 @@ and David]
 L<Bric::Biz::ElementType|Bric::Biz::ElementType> loads again. [Nate
 Perry-Thistle]
 
+=item *
+
+MEDIA_UNIQUE_FILENAME is now fixed so that the filename creation comes after
+the id generation and therefore correctly saves the renamed file.[Paul Orrock]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
