@@ -1,5 +1,6 @@
 <a name="<% $class %>"></a>
 
+% if (($link1) || ($link2)) {
 <div class="jump">
 % if ($link1) {
   <a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif"></a>
@@ -7,7 +8,7 @@
   <a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif"></a>
 % }
 </div>
-
+% }
 <div class="desk-top">
   <h1><% $caption %></h1>
   <div class="sort">
