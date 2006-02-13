@@ -75,7 +75,7 @@ sub set_offset : Callback {
 
     $state->{offset} = $self->value;
     $state->{pagination} = 1;
-    set_state_data($$widget, $obj_key, $state);
+    set_state_data($widget, $obj_key, $state);
 }
 
 # call back to display all results
@@ -87,7 +87,7 @@ sub show_all_records : Callback {
 
     $state->{show_all}   = 1;
     $state->{pagination} = 0;
-    set_state_data($$widget, $obj_key, $state);
+    set_state_data($widget, $obj_key, $state);
 }
 
 
