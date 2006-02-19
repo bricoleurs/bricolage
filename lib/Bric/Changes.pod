@@ -49,6 +49,17 @@ F<bric_queued>. [David]
 
 =back
 
+=head2 Improvements
+
+=over
+
+=item *
+
+Changed (hopefully optimized) the buffer size when reading in files on
+media upload. [Scott]
+
+=back
+
 =cut
 
 ##############################################################################
