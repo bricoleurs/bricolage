@@ -1453,7 +1453,7 @@ sub upload_file {
     local *FILE;
     open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
     my $buffer;
-    while (read($fh, $buffer, 10240)) { print FILE $buffer }
+    while (read($fh, $buffer, 4096)) { print FILE $buffer }
     close $fh;
     close FILE;
 
