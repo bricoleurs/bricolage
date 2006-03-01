@@ -45,7 +45,7 @@ C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
 
 =item *
 
-Fixed some errors in and rearragned the SOAP schema in
+Fixed some errors in and rearranged the SOAP schema in
 L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
 
 =item *
@@ -86,6 +86,19 @@ Perry-Thistle]
 
 MEDIA_UNIQUE_FILENAME is now fixed so that the filename creation comes after
 the id generation and therefore correctly saves the renamed file.[Paul Orrock]
+
+=item * 
+
+Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying 
+down the page in IE, stretching out the banner in desks, corrected side menu 
+position in IE and removed reference to broken images left in from CSS 
+reworking. [Paul Orrock]
+
+=item * 
+
+Fixed Bric::App::Util::last_page so that if the last page was a preview request
+we get the correct UI page back by jumping back another two pages. [Paul 
+Orrock]
 
 =back
 
