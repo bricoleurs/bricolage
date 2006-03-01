@@ -94,6 +94,12 @@ down the page in IE, stretching out the banner in desks, corrected side menu
 position in IE and removed reference to broken images left in from CSS 
 reworking. [Paul Orrock]
 
+=item * 
+
+Fixed control.html so that it pops the last two pages off the stack. Now we get 
+the correct UI page if we use a return button in the UI and the last page was 
+a preview request. [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
