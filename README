@@ -8,13 +8,6 @@ system with complete programming language support for flexibility, and many
 other features. It operates in an Apache/mod_perl environment, and uses the
 PostgreSQL RDBMS for its repository.
 
-This is a development release of Bricolage.
-
-Be warned that, as a development release of Bricolage, this version will have
-bugs. We welcome people testing this release, but anyone using Bricolage in a
-production environment is strongly encouraged to await the arrival of 1.10.0,
-likely in late October or early November.
-
 GETTING STARTED
 ===============
 
