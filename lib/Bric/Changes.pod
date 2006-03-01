@@ -68,7 +68,7 @@ means a large saving in download size of cloned production systems.
 =item *
 
 Fixed localization errors such as, "Can't use "for Published" as a method name
-in bracket group," which appeard in searches and on desks. Thanks to Guido
+in bracket group," which appeared in searches and on desks. Thanks to Guido
 Bülskämper for the spot! [David]
 
 =item *
@@ -93,12 +93,6 @@ Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
 down the page in IE, stretching out the banner in desks, corrected side menu 
 position in IE and removed reference to broken images left in from CSS 
 reworking. [Paul Orrock]
-
-=item * 
-
-Fixed Bric::App::Util::last_page so that if the last page was a preview request
-we get the correct UI page back by jumping back another two pages. [Paul 
-Orrock]
 
 =back
 

@@ -737,16 +737,7 @@ sub last_page {
     # Default to one page prior (index 0 contains the current page).
     $n = 1 unless defined $n;
 
-    # if the last page we visited was the control page then we last did a 
-    # preview so we need to jump back two pages # to get the correct UI page.
-    
-    my $url = Bric::App::Session->instance->{'_history'}->[$n];
-
-    if ($url =~ m/workflow\/profile\/preview\/control\/control.html/) {
-        return Bric::App::Session->instance->{'_history'}->[$n + 2];
-    } else {
-        return $url;
-    }
+    return Bric::App::Session->instance->{'_history'}->[$n];
 }
 
 #------------------------------------------------------------------------------#
