@@ -22,7 +22,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Eliminated errors inserting array references fetched from image infor while
+Eliminated errors inserting array references fetched from image info while
 uploading and saving new image files. Also documented extra methods not
 previously documented in L<Bric::App::MediaFunc|Bric::App::MediaFunc>.
 Reported by Michael Holden. [David]
@@ -57,6 +57,13 @@ F<bric_queued>. [David]
 
 Changed (hopefully optimized) the buffer size when reading in files on
 media upload. [Scott]
+
+=item *
+
+The installer no longer prompts for the PostgreSQL system username if the
+PostgreSQL server is not running on the local box. It therefore also no longer
+becomes that user in such cases. This will simplify installing Bricolage onto
+a remote PostgreSQL server. [David]
 
 =back
 

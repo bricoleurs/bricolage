@@ -42,10 +42,12 @@ $PGCONF = './postgres.db';
 do $PGCONF or die "Failed to read $PGCONF : $!";
 
 # Switch to postgres system user
-print "Becoming $PG->{system_user}...\n";
-$> = $PG->{system_user_uid};
-die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
-    unless $> == $PG->{system_user_uid};
+if (my $sys_user = $PG->{system_user}) {
+    print "Becoming $sys_user...\n";
+    $> = $PG->{system_user_uid};
+    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
+        unless $> == $PG->{system_user_uid};
+}
 
 # Set environment variables for psql.
 $ENV{PGUSER} = $PG->{root_user};
