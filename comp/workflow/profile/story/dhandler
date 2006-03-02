@@ -62,7 +62,8 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
 
 </%init>
 %# Output the content.
-<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
+% # <form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges('theForm')">
 %# XXX
 <& '/widgets/profile/hidden.mc', name => 'scrollx', value => 0 &>
 <& '/widgets/profile/hidden.mc', name => 'scrolly', value => 0 &>

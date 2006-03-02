@@ -114,6 +114,11 @@ Reverting stories and media no longer leads to occaisional errors such as,
 "Too many Bric::Biz::Element::Container objects found". Reported by Simon
 Wilcox. [David]
 
+=item *
+
+Disabled the "sticky" scrollbar in the story profile. It just didn't work too
+well. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)

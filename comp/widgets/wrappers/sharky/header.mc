@@ -82,7 +82,7 @@ var lang_key = '<% $lang_key %>';
 var checkboxValues = new Array();
 multiOnload.onload(function () {
     <% $jsInit %>;
-    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
+% #    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
 });
 
 % if ($no_toolbar) {
