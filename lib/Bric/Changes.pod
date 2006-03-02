@@ -55,8 +55,8 @@ pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
 
 =item *
 
-Added a 'make devclone' option which does the same as 'make clone' but removes 
-all of the locally previewed files, the obj files, staging and sandboxes. This 
+Added a 'make devclone' option which does the same as 'make clone' but removes
+all of the locally previewed files, the obj files, staging and sandboxes. This
 means a large saving in download size of cloned production systems.
 
 =back
@@ -84,21 +84,29 @@ Perry-Thistle]
 
 =item *
 
-MEDIA_UNIQUE_FILENAME is now fixed so that the filename creation comes after
-the id generation and therefore correctly saves the renamed file.[Paul Orrock]
+The C<MEDIA_UNIQUE_FILENAME> F<bricolage.conf> directive is now fixed so that
+the file name creation comes after the ID generation and therefore correctly
+saves the renamed file. [Paul Orrock]
 
-=item * 
+=item *
 
-Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying 
-down the page in IE, stretching out the banner in desks, corrected side menu 
-position in IE and removed reference to broken images left in from CSS 
+Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
+down the page in IE, stretching out the banner in desks, corrected side menu
+position in IE and removed reference to broken images left in from CSS
 reworking. [Paul Orrock]
 
-=item * 
+=item *
 
-Fixed control.html so that it pops the last two pages off the stack. Now we get 
-the correct UI page if we use a return button in the UI and the last page was 
-a preview request. [Paul Orrock]
+Fixed the history so that clicking the return button in the UI no longer goes
+back to the preview page when the preview page was the last page accessed.
+[Paul Orrock]
+
+=item *
+
+The XML generated when exporting element types via SOAP no longer inccludes
+the C<top_level> element twice, thus avoiding mysterious "no sites defined"
+errors when attempting to import or update element types from that XML.
+Reported by Nate Perry-Thistle. [David]
 
 =back
 
@@ -6331,7 +6339,7 @@ should be checked out via "Active Media" and moved to a new desk. [David]
 
 =item *
 
-Documented the support for passing C<%ARGS> to C<< $burner->display_element() >> 
+Documented the support for passing C<%ARGS> to C<< $burner->display_element() >>
 in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
 forgot to document it! Thanks to Mike Slattery for the spot. [David]
 

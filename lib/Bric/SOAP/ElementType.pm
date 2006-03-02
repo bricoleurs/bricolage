@@ -524,7 +524,7 @@ sub load_asset {
         my $class = Bric::Util::Class->lookup({pkg_name => $edata->{biz_class}});
         $element->set_biz_class_id($class->get_id);
 
-        if ($element->get_top_level) {
+        if ($element->is_top_level) {
             my (%sites, @ocs, $have_ocs);
             my %ocmap = map { $_->get_id => $_ } $element->get_output_channels;
 
@@ -794,7 +794,6 @@ sub serialize_asset {
     }
 
     # Output boolean attributes.
-    $writer->dataElement(top_level     => ($element->get_top_level ? 1 : 0));
     $writer->dataElement(paginated     => ($element->get_paginated ? 1 : 0));
     $writer->dataElement(fixed_uri     => ($element->get_fixed_uri ? 1 : 0));
     $writer->dataElement(related_story => ($element->get_related_story ? 1 : 0));
