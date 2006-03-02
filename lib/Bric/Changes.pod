@@ -124,6 +124,12 @@ well. [David]
 The "Allow Multiple" checkbox in the "Add New Field" section of the element
 type profile works again. Reported by Rod Taylor. [David]
 
+=item *
+
+Multiple select lists no longer break the story and element profiles, and can
+once again have their values properly changed from multiple to single to none.
+Spotted by Rod Taylor.
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
