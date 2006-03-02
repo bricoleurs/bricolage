@@ -8,6 +8,7 @@ for my $doc (qw(story media)) {
     my $sel = prepare('
         SELECT object_instance_id
         FROM   story_element
+        WHERE  parent_id IS NULL
         GROUP BY object_instance_id
         HAVING COUNT(object_instance_id) > 1
     ');
@@ -19,6 +20,7 @@ for my $doc (qw(story media)) {
         SELECT id
         FROM   story_element
         WHERE  object_instance_id = ?
+               AND    parent_id IS NULL
     ');
 
     my $del = prepare('
