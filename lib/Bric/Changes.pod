@@ -47,6 +47,12 @@ Refined a few other upgrade scripts, with thanks to Rod Taylor. [David]
 L<Bric::Biz::Person::User|Bric::Biz::Person::User> loads again under
 F<bric_queued>. [David]
 
+=item *
+
+The thumbnail-generating code now tries even harder to determine the media
+type of a file, thus more likely supporting files that it might have been able
+to support before. [Rod Taylor]
+
 =back
 
 =head2 Improvements
