@@ -5,7 +5,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
          context => $lang->maketext("Workflow | Profile | $disp | Select Alias"));
 
 $m->print('<form method="post" action="', $r->uri,
-          qq{" name="pick_cats" onSubmit="return confirmChanges(this)">\n});
+          qq{" name="pick_cats" onsubmit="return confirmChanges(this)">\n});
 $m->comp("/widgets/wrappers/sharky/table_top.mc",
          caption => $caption,
          number  => ++$i);

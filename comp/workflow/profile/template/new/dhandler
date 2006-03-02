@@ -46,7 +46,7 @@ chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
     context => $context,
 &>
 
-<form action="<% $r->uri %>" method="post" name="theForm" onSubmit="return confirmChanges(this)">
+<form action="<% $r->uri %>" method="post" name="theForm" onsubmit="return confirmChanges(this)">
 <& /widgets/tmpl_prof/tmpl_prof.mc, section => 'new',
                                     param => \%ARGS,
                                     work_id => $w_id &>

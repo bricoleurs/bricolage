@@ -2,7 +2,8 @@
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  image    => "view_trail_teal",
+  alt      => 'Trail',
 ) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -10,6 +11,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   callback => $widget . "|notes_cb",
   value    => 'view',
   image    => $media->has_notes ? 'note_fill' : "note",
+  alt      => 'Notes',
   useGlobalImage => 1,
 );
 

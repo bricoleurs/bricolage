@@ -1,19 +1,5 @@
-<%once>
-my $imageSubmit = sub {
-    my ($formName, $callback, $image, $hspace, $vspace, $js,
-        $useHidden, $useGlobalImage) = @_;
-    my $localorno = $useGlobalImage ? '' : "$lang_key/";
-
-    $m->out(qq{<a href="#" $js>});
-    $m->out(qq{<img src="/media/images/$localorno$image.gif" border="0" });
-    $m->out(qq{hspace="$hspace" }) if ($hspace);
-    $m->out(qq{vspace="$vspace" }) if ($vspace);
-    $m->out(qq{style="vertical-align: middle;" /></a>});
-    $m->out(qq{<input type="hidden" name="} . $callback . qq{" value="">}) if ($useHidden);
-};
-</%once>
 <%args>
-$formName  => "theForm"
+$formName  => 'theForm'
 $callback
 $value     => 1
 $image
@@ -22,10 +8,19 @@ $hspace    => undef
 $js        => qq{onclick="return customSubmit('$formName', '$callback', '$value')"}
 $useHidden => 1
 $useGlobalImage => 0
+$alt       => ''
 </%args>
-<%init>
-&$imageSubmit($formName, $callback, $image, $hspace, $vspace, $js,
-              $useHidden, $useGlobalImage);
+<%init>;
+my $localorno = $useGlobalImage ? '' : "$lang_key/";
+$m->print(
+    qq{<a href="#" $js>},
+    qq{<img src="/media/images/$localorno$image.gif" border="0" },
+    qq{alt="$alt" },
+    ( $hspace ? qq{hspace="$hspace" } : ()),
+    ( $vspace ? qq{vspace="$vspace" } : ()),
+    qq{style="vertical-align: middle;" /></a>},
+    ($useHidden ? qq{<input type="hidden" name="$callback" value="" />} : ()),
+);
 </%init>
 <%doc>
 The 'useGlobalImage' arg is for images that aren't language-specific --

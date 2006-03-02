@@ -283,6 +283,6 @@ $m->comp($style.'.html',
          localize => $localize,
          js       => $js,
          multiple => $multiple,
-);
+) if @vals;
 </%init>
 

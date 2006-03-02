@@ -45,6 +45,7 @@ foreach my $field ($dt->get_fields) {
       image     => 'view_dgreen',
       value     => $dt->get_id,
       useHidden => 0,
+      alt       => 'View',
 &>
     </td>
 %   } else {
@@ -60,7 +61,7 @@ foreach my $field ($dt->get_fields) {
 
 % if (!scalar(@elements)) {
   <tr>
-    <td colspan=2><%$lang->maketext('No elements are present.')%></td>
+    <td colspan="2"><%$lang->maketext('No elements are present.')%></td>
   </tr>
 % }
 

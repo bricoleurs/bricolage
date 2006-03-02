@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
-<form method="post" action="<% $r->uri %>" name="wf_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="wf_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'workflow_id')
   if defined $id;
@@ -120,6 +120,7 @@ if (defined $id) {
     $m->comp('/widgets/profile/imageSubmit.mc',
              formName => "wf_profile",
              callback => "new_desk",
+             alt      => 'New Desk',
              image    => "new_desk_red",
              js       => qq{onClick="requiredFields='';return customSubmit('wf_profile', 'new_desk', 1)"}
     );

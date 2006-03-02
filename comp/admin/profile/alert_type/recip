@@ -1,7 +1,7 @@
 %#-- Begin HTML --#
 <%perl>
 $m->out(qq{<form method="post" name="alert_type_recip" action="} . $r->uri
-        . qq{" onSubmit="return confirmChanges(this)">\n});
+        . qq{" onsubmit="return confirmChanges(this)">\n});
 
 # Output a hidden field with the ID.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');

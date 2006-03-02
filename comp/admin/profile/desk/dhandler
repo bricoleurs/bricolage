@@ -8,7 +8,7 @@
 % # Prevent the workflow profile redirect here when our cancel button is pushed
 % # and then the workflow profile's cancel button is pushed.
 % pop_page;
-<form method="post" action="<% $r->uri %>" name="desk_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="desk_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $wid, name => 'workflow_id')
   if defined $wid;
@@ -18,18 +18,19 @@ if (! defined $id && ! defined $new_desk) {
     # Adding a new desk. Give 'em a choice.
     $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Select Desk");
     $m->comp('/widgets/select_object/select_object.mc',
-	     object => 'desk',
-	     no_persist => 1,
-	     exclude => $excl,
-	     name => 'desk_id',
-	     field => 'name',
-	     disp => 'Select Desk',
-	     useTable => 1);
+         object => 'desk',
+         no_persist => 1,
+         exclude => $excl,
+         name => 'desk_id',
+         field => 'name',
+         disp => 'Select Desk',
+         useTable => 1);
     $m->out(qq {<table width=578 cellpadding=2 cellspacing=0 border=0><tr><td width=140>&nbsp;</td><td width=438>});
 
     $m->comp('/widgets/profile/imageSubmit.mc',
-	     formName => "desk_profile",
-	     callback => "new_desk",
+         formName => "desk_profile",
+         callback => "new_desk",
+         alt      => 'New Desk',
 	     image    => "new_desk_red",
 	     js       => qq{onClick="requiredFields='';return customSubmit('desk_profile', 'new_desk', 1)"}
 	   );

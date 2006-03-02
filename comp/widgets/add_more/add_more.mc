@@ -94,7 +94,8 @@ unless ($read_only) {
 <& '/widgets/profile/imageSubmit.mc',
   formName => $formName,
   callback => "$widget|add_cb",
-  image    => "add_more_lgreen"
+  image    => "add_more_lgreen",
+  alt      => 'Add More',
 &>
 <& '/widgets/profile/hidden.mc', 'name' => 'addmore_type', 'value' => $type &>
 % }

@@ -7,7 +7,6 @@ use constant CLASS_KEY => 'Callback';
 use strict;
 
 use Bric::App::Cache;
-use Bric::Config qw(:ui);
 use Bric::App::Util qw(get_pref);
 use Bric::Util::Language;
 

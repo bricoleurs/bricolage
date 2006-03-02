@@ -343,7 +343,7 @@ my %formSubs = (
                 $out .= qq{$textstring\n};
                 $out .= qq{            <div class="textarea"><textarea id="$uniquename" }
                   . qq{onkeyup="$functioncode"\n onkeydown="$functioncode"\n }
-                  . qq{name="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{name="$key" rows="$rows" cols="$cols"}
                   . qq{ wrap="soft" class="textArea" $js>\n$value</textarea></div>\n};
             } else {
                 $out .= qq{            <div class="textarea"><textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}

@@ -6,7 +6,8 @@
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  image    => "view_trail_teal",
+  alt      => 'Trail',
 ) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -14,7 +15,8 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   callback => $widget . "|notes_cb",
   image    => $media->has_notes ? 'note_fill' : "note",
   useGlobalImage => 1,
-  value    => 'edit'
+  value    => 'edit',
+  alt      => 'Notes',
 );
 
 $m->comp("/widgets/wrappers/sharky/table_top.mc",

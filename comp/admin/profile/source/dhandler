@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
-<form method="post" action="<% $r->uri %>" name="src_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="src_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'source_id')
   if defined $id;
@@ -27,6 +27,7 @@ if (defined $id) {
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "src_profile",
 	     callback => "new_org",
+         alt      => 'New Organization',
 	     image    => "new_organization_lgreen",
 	     js       => qq{onClick="requiredFields='';return customSubmit('src_profile', 'new_org', 1)"}
 	   );

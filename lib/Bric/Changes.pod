@@ -119,6 +119,11 @@ Wilcox. [David]
 Disabled the "sticky" scrollbar in the story profile. It just didn't work too
 well. [David]
 
+=item *
+
+The "Allow Multiple" checkbox in the "Add New Field" section of the element
+type profile works again. Reported by Rod Taylor. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)

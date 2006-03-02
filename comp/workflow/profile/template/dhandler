@@ -57,7 +57,7 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
      title => "$disp Profile",
      context => "Workflow | Profile | $disp | " . $r->pnotes('tmpl_prof|name'));
 </%init>
-<form method="post" action="<% $r->uri %>" name="theForm" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="theForm" onsubmit="return confirmChanges(this)">
 <% $content %>
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>

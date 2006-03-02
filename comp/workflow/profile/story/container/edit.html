@@ -45,11 +45,12 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
     scrollx => $scrollx,
     scrolly => $scrolly,
 &>
-% #<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
-<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onSubmit="return confirmChanges('theForm')">
+% #<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges('theForm')">
+<%doc>
 <& '/widgets/profile/hidden.mc', name => 'scrollx', value => 0 &>
 <& '/widgets/profile/hidden.mc', name => 'scrolly', value => 0 &>
-
+</%doc>
 <& /widgets/container_prof/container_prof.mc,
    element_type    => 'story',
    num          => 2,

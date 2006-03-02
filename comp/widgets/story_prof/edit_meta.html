@@ -7,13 +7,15 @@
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  image    => "view_trail_teal",
+  alt      => 'Trail',
 ) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|notes_cb",
   image    =>  $story->has_notes ? 'note_fill' : "note",
+  alt      => 'Notes',
   useGlobalImage => 1,
   value    => 'edit'
 );
@@ -161,10 +163,11 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
     disp        => '',
     value       => $_->get_id,
     name        => "$widget|primary_cat",
-    js          => '', 
+    js          => '',
     req         => 0,
     checked     => ($cat_id == $p_id),
 &>
+    </td>
     <td class="checkbox">
 % if ($cat_id != $p_id) {
 <& '/widgets/profile/checkbox.mc',
@@ -208,6 +211,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
              formName => "theForm",
              callback => "$widget|add_category_cb",
              image    => "add_category_lgreen",
+             alt      => 'Add Category',
              vspace   => 3,
              hspace   => 2
 &>

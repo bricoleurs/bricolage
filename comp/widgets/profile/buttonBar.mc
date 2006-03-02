@@ -47,7 +47,7 @@ if ($desks) {
         my $ag_id = $d->get_asset_grp;
         next unless chk_authz(undef, READ, 1, $ag_id);
         $deskText .= qq{<option value="$id"};
-        $deskText .= " selected" if $id == $cd->get_id;
+        $deskText .= ' selected="selected"' if $id == $cd->get_id;
         $deskText .= ">to " .  $d->get_name . "</option>";
         $can_pub = 1 if $d->can_publish and
           chk_authz(undef, PUBLISH, 1, $ag_id);

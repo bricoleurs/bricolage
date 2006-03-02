@@ -267,6 +267,7 @@ if (defined $id) {
             '/widgets/profile/imageSubmit.mc',
             formName => "cont_profile",
             callback => "formBuilder|addElementType_cb",
+            alt      => 'Add Element Type',
             image    => "add_sub_element_lgreen",
         );
         $m->print(qq{</div>});

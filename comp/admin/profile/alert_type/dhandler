@@ -267,6 +267,7 @@ $no_edit
         formName => "alert_type_profile",
         callback => "$type|recip_cb",
         image    => "pencil",
+        alt      => 'Edit',
         useGlobalImage => 1,
         useHidden => $hidden,
         value    => escape_html($c),

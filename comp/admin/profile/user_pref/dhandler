@@ -19,7 +19,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
          "&quot; | $disp | " . $pref->get_name,
 );
 $m->out(qq{<form method="post" name="user_pref_profile" action="} . $r->uri
-        . qq{" onSubmit="return confirmChanges(this)">\n});
+        . qq{" onsubmit="return confirmChanges(this)">\n});
 
 $m->comp('/widgets/profile/hidden.mc', value => $pref_id, name => 'pref_id');
 $m->comp('/widgets/profile/hidden.mc', value => $user_id, name => 'user_id');

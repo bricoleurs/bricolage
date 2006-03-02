@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
-<form method="post" action="<% $r->uri %>" name="grp_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="grp_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'grp_id')
   if defined $id;
@@ -170,9 +170,10 @@ if (defined $id) {
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "grp_profile",
 	     callback => "$type|permissions_cb",
+         alt      => 'Permissions',
 	     image    => "permissions_dgreen",
-             vspace   => 3
-	    ) if $id != ADMIN_GRP_ID && chk_authz(0, READ, 1, $id);
+         vspace   => 3
+	) if $id != ADMIN_GRP_ID && chk_authz(0, READ, 1, $id);
     # Comment on the above line: We exclude the admin group because it has no
     # permissions. We also exclude users who don't have permission to access
     # the objects of this group already so as to prevent them from giving
