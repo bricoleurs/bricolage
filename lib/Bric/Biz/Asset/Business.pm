@@ -209,6 +209,7 @@ BEGIN {
               _kw_coll                  => Bric::FIELD_NONE,
               _alias_obj                => Bric::FIELD_NONE,
               _update_uri               => Bric::FIELD_NONE,
+              _delete_element           => Bric::FIELD_NONE,
             });
     }
 
@@ -2128,9 +2129,9 @@ NONE
 sub save {
     my $self = shift;
 
-    my ($related_obj, $element, $oc_coll, $ci, $co, $vid, $kw_coll) =
-      $self->_get(qw(_related_grp_obj _element _oc_coll _checkin _checkout
-                     version_id _kw_coll));
+    my ($related_obj, $element, $oc_coll, $ci, $co, $vid, $kw_coll, $del_elem)
+        = $self->_get(qw(_related_grp_obj _element _oc_coll _checkin _checkout
+                         version_id _kw_coll _delete_element));
 
     if ($co) {
         $element->prepare_clone;
@@ -2139,6 +2140,9 @@ sub save {
 
     # Is this necessary? Seems kind of pointless. [David 2002-09-19]
     $self->_set(['_checkin'], []) if $ci;
+
+    # Revert stores the old element for deletion. So save it to delete it.
+    $del_elem->save if $del_elem;
 
     if ($element) {
         $element->set_object_instance_id($vid);

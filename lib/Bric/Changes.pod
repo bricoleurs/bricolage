@@ -108,6 +108,12 @@ the C<top_level> element twice, thus avoiding mysterious "no sites defined"
 errors when attempting to import or update element types from that XML.
 Reported by Nate Perry-Thistle. [David]
 
+=item *
+
+Reverting stories and media no longer leads to occaisional errors such as,
+"Too many Bric::Biz::Element::Container objects found". Reported by Simon
+Wilcox. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
