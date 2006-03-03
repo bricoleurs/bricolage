@@ -60,6 +60,12 @@ all of the locally previewed files, the obj files, staging and sandboxes. This
 means a large saving in download size of cloned production systems. [Paul 
 Orrock]
 
+=item *
+
+Added C<ALLOW_OC_WITH_NO_CATEGORIES> F<bricolage.conf> directive to turn off
+check for %{categories} in an Output Channel URI format. This directive should 
+be used with caution since this is not the recommended behaviour. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
