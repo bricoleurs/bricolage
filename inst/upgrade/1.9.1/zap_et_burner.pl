@@ -97,7 +97,7 @@ while (my ($oc_id, $burner_fns) = each %oc_burner_map) {
             }
         }
         my $update = y_n
-          . "It looks like there are some templates in the $oc_name\n"
+            "It looks like there are some templates in the $oc_name\n"
           . "output channel that are associated with multiple burners. This\n"
           . "is not a good idea and no longer supported (not that it ever\n"
           . "worked!). The templates appear to be mapped as follows: \n"
