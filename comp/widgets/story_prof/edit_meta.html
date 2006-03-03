@@ -31,7 +31,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 <dl class="viewmeta">
   <dt><% $lang->maketext('UUID') %>:</dt>
-  <dd><% $story->get_uuid %></dd>
+  <dd title="ID: <% $story->get_id %>"><% $story->get_uuid %></dd>
   <dt><% $lang->maketext('Story Type') %>:</dt>
   <dd><% $story->get_element_name || '&nbsp;' %></dd>
   <dt><% $lang->maketext('Current Version') %>:</dt>

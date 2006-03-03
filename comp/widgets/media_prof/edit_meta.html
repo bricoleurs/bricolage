@@ -29,7 +29,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 <dl class="viewmeta">
 <dt><%$lang->maketext('UUID')%>:</dt>
-<dd><% $media->get_uuid %></dd>
+<dd title="ID: <% $media->get_id %>"><% $media->get_uuid %></dd>
 <dt><%$lang->maketext('Media Type')%>:</dt>
 <dd><% $media->get_element_name() %></dd>
 <dt><% $lang->maketext('Current Version') %>:</dt>
