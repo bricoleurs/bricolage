@@ -62,7 +62,7 @@ Orrock]
 
 =item *
 
-Added C<ALLOW_OC_WITH_NO_CATEGORIES> F<bricolage.conf> directive to turn off
+Added C<ALLOW_URIS_WITHOUT_CATEGORIES> F<bricolage.conf> directive to turn off
 check for %{categories} in an Output Channel URI format. This directive should 
 be used with caution since this is not the recommended behaviour. [Paul Orrock]
 

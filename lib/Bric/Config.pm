@@ -140,7 +140,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
                     ENABLE_OC_ASSET_ASSOCIATION
-                    ALLOW_OC_WITH_NO_CATEGORIES
+                    ALLOW_URIS_WITHOUT_CATEGORIES
                     ENABLE_FTP_SERVER
                     FTP_DEPLOY_ON_UPLOAD
                     FTP_PORT
@@ -216,7 +216,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     oc        => [qw(DEFAULT_FILENAME
                                      DEFAULT_FILE_EXT
                                      ENABLE_OC_ASSET_ASSOCIATION
-                                     ALLOW_OC_WITH_NO_CATEGORIES )],
+                                     ALLOW_URIS_WITHOUT_CATEGORIES )],
                     sys_user  => [qw(SYS_USER
                                      SYS_GROUP)],
                     auth      => [qw(AUTH_TTL
@@ -437,7 +437,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE USE_THUMBNAILS
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
                     MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
-                    MASON_STATIC_SOURCE ALLOW_OC_WITH_NO_CATEGORIES))
+                    MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -700,7 +700,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant DEFAULT_FILENAME => $config->{DEFAULT_FILENAME} || 'index';
     use constant DEFAULT_FILE_EXT => $config->{DEFAULT_FILE_EXT} || 'html';
     use constant ENABLE_OC_ASSET_ASSOCIATION => $config->{ENABLE_OC_ASSET_ASSOCIATION};
-    use constant ALLOW_OC_WITH_NO_CATEGORIES => $config->{ALLOW_OC_WITH_NO_CATEGORIES};
+    use constant ALLOW_URIS_WITHOUT_CATEGORIES => $config->{ALLOW_URIS_WITHOUT_CATEGORIES};
 
     # Temp Dir Setting
     use constant TEMP_DIR               => $ENV{BRIC_TEMP_DIR} ||

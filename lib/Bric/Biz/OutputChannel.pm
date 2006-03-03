@@ -2085,7 +2085,7 @@ $parse_uri_format = sub {
       if not $format or $format =~ /^\s*$/;
 
     # Make sure that the URI format has %{categories} unless set otherwise
-    unless (ALLOW_OC_WITH_NO_CATEGORIES) {
+    unless (ALLOW_URIS_WITHOUT_CATEGORIES) {
         throw_dp "Missing the %{categories} token from $name"
           unless $format =~ /%{categories}/;
     }
