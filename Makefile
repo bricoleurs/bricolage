@@ -207,7 +207,7 @@ done		: bconf/bricolage.conf db files bin lib cpan
 ##########################
 
 upgrade		: upgrade.db required.db postgres.db bconf/bricolage.conf \
-	          is_root cpan stop db_upgrade lib bin  db_grant  \
+	          is_root cpan stop db_upgrade lib bin  \
 	          upgrade_files upgrade_conf upgrade_done
 
 upgrade.db	: 
