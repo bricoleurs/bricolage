@@ -57,7 +57,8 @@ pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
 
 Added a 'make devclone' option which does the same as 'make clone' but removes
 all of the locally previewed files, the obj files, staging and sandboxes. This
-means a large saving in download size of cloned production systems.
+means a large saving in download size of cloned production systems. [Paul 
+Orrock]
 
 =back
 
@@ -103,14 +104,14 @@ back to the preview page when the preview page was the last page accessed.
 
 =item *
 
-The XML generated when exporting element types via SOAP no longer inccludes
+The XML generated when exporting element types via SOAP no longer includes
 the C<top_level> element twice, thus avoiding mysterious "no sites defined"
 errors when attempting to import or update element types from that XML.
 Reported by Nate Perry-Thistle. [David]
 
 =item *
 
-Reverting stories and media no longer leads to occaisional errors such as,
+Reverting stories and media no longer leads to occasional errors such as,
 "Too many Bric::Biz::Element::Container objects found". Reported by Simon
 Wilcox. [David]
 
