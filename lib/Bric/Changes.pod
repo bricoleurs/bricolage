@@ -128,7 +128,11 @@ type profile works again. Reported by Rod Taylor. [David]
 
 Multiple select lists no longer break the story and element profiles, and can
 once again have their values properly changed from multiple to single to none.
-Spotted by Rod Taylor.
+Spotted by Rod Taylor. [David]
+
+=item *
+
+Desk pagination is now properly styled. [David]
 
 =back
 
