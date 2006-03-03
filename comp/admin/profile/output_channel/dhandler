@@ -22,7 +22,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 	 context => "Admin | Profile | $disp | $crumb"
 );
 $m->out(qq{<form method="post" name="oc_profile" action="} . $r->uri
-        . qq{" onsubmit="return confirmURIFormats(this) && confirmChanges(this)">\n});
+        . ((ALLOW_OC_WITH_NO_CATEGORIES) ? qq{">\n} : qq{" onsubmit="return confirmURIFormats(this) && confirmChanges(this)">\n}));
 
 # Output a hidden field with the ID, if we have one.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id')

@@ -2084,9 +2084,11 @@ $parse_uri_format = sub {
     throw_dp(error => "No $name value specified")
       if not $format or $format =~ /^\s*$/;
 
-    # Make sure that the URI format has %{categories}.
-    throw_dp "Missing the %{categories} token from $name"
-      unless $format =~ /%{categories}/;
+    # Make sure that the URI format has %{categories} unless set otherwise
+    unless (ALLOW_OC_WITH_NO_CATEGORIES) {
+        throw_dp "Missing the %{categories} token from $name"
+          unless $format =~ /%{categories}/;
+    }
 
     # Make sure there's a closing slash.
     $format .= '/' unless $format =~ m|/$|;

@@ -3,14 +3,9 @@
 <dl>
 <dt>Properties</dt>
 <dd>
-<p> Enter the Output Channel's name and a brief description. With the
-    &quot;URI Prefix&quot; and &quot;URI Suffix&quot; fields, you can tell the
-    output channel to associate a prefix directory or postfix directory to the
-    URI of all resources (stories and media) in the output channel. This
-    feature is useful if you're keeping different kinds of content on one
-    delivery server. Enter the file name and extension for the stories files
-    created in this output channel in the &quot;File Name&quot; and &quot;File
-    Extension&quot; fields.</p>
+<p> Enter the Output Channel's name and a brief description. Enter the file name
+    and extension for the stories files created in this output channel in the 
+    &quot;File Name&quot; and &quot;File Extension&quot; fields.</p>
 
 <p> The URI Format properties determine how the URIs of stories and media will
     be created in this output channel. In the &quot;URI Format&quot; and
@@ -54,6 +49,12 @@
     href="http://search.cpan.org/dist/DateTime/lib/DateTime.pm#strftime_Specifiers"
     onclick="window.open(this.href); return false;">DateTime documentation</a> for the
     complete list.</p>
+
+<p> You can also use the URI format fields to set a prefix or postfix directory 
+    to the URI. For example with a URI Format of 
+    <code>/foo/%{categories}/%{slug}/bar/</code> and the file example above the 
+    uri would be /foo/stories/hello/bar/index.html. This feature is useful if 
+    you're keeping different kinds of content on one delivery server.</p>
 
 <p> The &quot;URI Case&quot; select list forces URIs in this output channel to
     be formatted in a particular case, either &quot;Mixed Case&quot; (the
