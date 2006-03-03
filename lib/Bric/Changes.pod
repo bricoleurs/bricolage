@@ -121,8 +121,9 @@ well. [David]
 
 =item *
 
-The "Allow Multiple" checkbox in the "Add New Field" section of the element
-type profile works again. Reported by Rod Taylor. [David]
+The "Allow Multiple" checkbox and "Size" field in the "Add New Field" section
+of the element type profile work again. Reported by Rod Taylor and Paul
+Orrock. [David]
 
 =item *
 
