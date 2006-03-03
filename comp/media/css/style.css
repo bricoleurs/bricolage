@@ -442,8 +442,6 @@ dl.viewmeta dd {
     font-size: 11px;
     border-bottom: solid white 1px;
     padding: 2px 0;
-    voice-family: "\"}\"";
-    voice-family: inherit;
 }
 dl.viewmeta dt {
     float: left;
