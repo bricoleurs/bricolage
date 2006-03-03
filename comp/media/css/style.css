@@ -444,7 +444,6 @@ dl.viewmeta dd {
     padding: 2px 0;
     voice-family: "\"}\"";
     voice-family: inherit;
-    float: left;
 }
 dl.viewmeta dt {
     float: left;
@@ -456,6 +455,7 @@ dl.viewmeta dt {
     voice-family: "\"}\"";
     voice-family: inherit;
     clear: left;
+    margin: 0px 5px 0px 0px;
 }
 dl.viewmeta dd { margin: 0 0 0 5px; }
 dl.viewmeta dd a { font-size: inherit; }
