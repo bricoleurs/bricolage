@@ -80,6 +80,15 @@ of the scripts for each version to be upgraded, rather than after all of the
 upgrade scripts have run, thus allowing later scripts to properly access
 tables created by earlier scripts. Reported by Nate Perry-Thistle. [David]
 
+=item *
+
+Changed the database coluns for the "name", "key_name", and "description"
+attributes of
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>
+from C<VARCHAR> to C<TEXT>, since some folks will have field types with names
+and key names longer than 32 characters. Reported by Nate Perry-Thistle.
+[David]
+
 =back
 
 =head2 Bug Fixes
