@@ -106,7 +106,7 @@ saves the renamed file. [Paul Orrock]
 Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
 down the page in IE, stretching out the banner in desks, corrected side menu
 position in IE and removed reference to broken images left in from CSS
-reworking. [Paul Orrock]
+reworking. Also fixed textarea ignoring cols setting in IE. [Paul Orrock]
 
 =item *
 
