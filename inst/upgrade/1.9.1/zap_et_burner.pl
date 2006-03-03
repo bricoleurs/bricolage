@@ -103,9 +103,8 @@ while (my ($oc_id, $burner_fns) = each %oc_burner_map) {
           . "worked!). The templates appear to be mapped as follows: \n"
           . "\n"
           . "$templates\n"
-          . "It looks like most of them are in the $most output channel\n"
-          . "Shall I just assume that's the case and update the database\n"
-          . "accordingly?\n";
+          . "It looks like most of them are $most templates. Shall I just\n"
+          . "assume that's the case and update the database accordingly?\n";
 
         print "###############################################################\n"
           . "# ERROR   ERROR    ERROR    ERROR    ERROR    ERRROR   ERROR  #\n"
