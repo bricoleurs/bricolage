@@ -16,7 +16,6 @@ form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
 .textInput { font-family: Verdana, Helvetica, Arial, sans-serif; }
 textarea { 
-    width: 99%;
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 1em;
 }
@@ -442,7 +441,6 @@ dl.viewmeta dd {
     font-size: 11px;
     border-bottom: solid white 1px;
     padding: 2px 0;
-    float: left;
 }
 
 dl.viewmeta dt {
@@ -455,6 +453,7 @@ dl.viewmeta dt {
     voice-family: "\"}\"";
     voice-family: inherit;
     clear: left;
+    margin: 0px 5px 0px 0px;
 }
 dl.viewmeta dd { margin: 0 0 0 5px; }
 dl.viewmeta dd a { font-size: inherit; }
