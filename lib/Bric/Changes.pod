@@ -16,6 +16,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.10.1 ()
 
+=head2 New Features
+
+=over
+
+=item *
+
+A guide on how to profile Mason templates. See contrib/template_profiling/.
+[Scott]
+
+=back
+
 =head2 Improvements
 
 =over
