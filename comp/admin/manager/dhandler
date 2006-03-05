@@ -403,6 +403,7 @@ my $def = {
 			       behavior => 'narrow',
 			       title => 'Pending %n',
 	                       constrain => {comp_time => undef},
+                   sort_by => 'sched_time',
 			       field_values => $usr_sub,
 			       alter => { type => $job_type_sub,
                                           name => $job_name_sub,

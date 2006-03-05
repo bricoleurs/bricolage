@@ -82,6 +82,11 @@ PostgreSQL server is not running on the local box. It therefore also no longer
 becomes that user in such cases. This will simplify installing Bricolage onto
 a remote PostgreSQL server. [David]
 
+=item *
+
+The Jobs manager now sorts pending jobs by scheduled time rather than date.
+[David]
+
 =back
 
 =cut
