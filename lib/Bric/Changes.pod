@@ -53,6 +53,17 @@ The thumbnail-generating code now tries even harder to determine the media
 type of a file, thus more likely supporting files that it might have been able
 to support before. [Rod Taylor]
 
+=item *
+
+F<bric_republish> no longer reverses the meaning of the C<--published-only>
+option. [David]
+
+=item *
+
+Publishing via SOAP works again. It was broken in 1.8.9, where it would appear
+to succeed, but no story or media would ever actually be distributed to the
+content server. [David]
+
 =back
 
 =head2 Improvements
