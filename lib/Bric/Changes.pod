@@ -22,8 +22,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-A guide on how to profile Mason templates. See contrib/template_profiling/.
-[Scott]
+Added a guide on how to profile Mason templates. See
+F<contrib/template_profiling>. [Scott]
 
 =back
 
