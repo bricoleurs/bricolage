@@ -309,7 +309,8 @@ my $def = {
         sort_by     => 'name',
         constrain   => {},
         behavior    => 'expand',
-        select      => $sel_sub field_values => sub {
+        select      => $sel_sub,
+        field_values => sub {
             return unless $_[1] eq 'name';
             return shift->get_name( get_pref('List Name Format') );
         },
@@ -323,7 +324,7 @@ my $def = {
         srch_field  => 'name',
         constrain   => { active => 1 },
         behavior    => 'expand',
-        select      => $sel_sub
+        select      => $sel_sub,
     },
     grp => {
         title       => 'Group Manager',
@@ -341,7 +342,7 @@ my $def = {
                 return [ 'Delete', 'grp|deactivate_cb' ];
             }
             return undef;
-            }
+        },
     },
     pref => {
         list_fields => [qw(name description val_name can_be_overridden)],
@@ -349,7 +350,8 @@ my $def = {
         behavior    => 'narrow',
         title       => '%n',
         srch_field  => 'name',
-        constrain   => {} alter => {
+        constrain   => {},
+        alter => {
             val_name          => sub { escape_html( $_[0] ) },
             can_be_overridden => $yes_no,
         },
@@ -376,14 +378,14 @@ my $def = {
         srch_field  => 'name',
         behavior    => 'narrow',
         constrain   => { active => 1 },
-        select      => $sel_sub
+        select      => $sel_sub,
     },
     source => {
         list_fields => [qw(source_name description expire)],
         srch_field  => 'source_name',
         behavior    => 'narrow',
         constrain   => {},
-        select      => $sel_sub
+        select      => $sel_sub,
     },
     contrib_type => {
         list_fields => [qw(name description)],
@@ -391,7 +393,7 @@ my $def = {
         sort_by     => 'name',
         behavior    => 'narrow',
         constrain   => { permanent => 0, secret => 1 },
-        select      => $sel_sub
+        select      => $sel_sub,
     },
     alert_type => {
         list_fields  => [qw(name owner_id active)],
@@ -402,7 +404,8 @@ my $def = {
         field_values => $owner_sub,
         constrain    => {},
         alter        => { active => $yes_no },
-        select       => $sel_sub exclude => sub {
+        select       => $sel_sub,
+        exclude => sub {
             return if $_[0]->get_owner_id == get_user_id;
             !chk_authz( $_[0], READ, 1 );
         },
@@ -413,7 +416,8 @@ my $def = {
         sort_by     => 'name',
         srch_field  => 'lname',
         constrain   => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
-        select      => $sel_sub field_values => sub {
+        select      => $sel_sub,
+        field_values => sub {
             return unless $_[1] eq 'name';
             shift->get_name( get_pref('List Name Format') );
         },
@@ -423,17 +427,17 @@ my $def = {
         behavior    => 'expand',
         srch_field  => 'uri',
         constrain   => {},
-        select      => $cat_sel_sub
+        select      => $cat_sel_sub,
     },
     workflow => {
         list_fields => [qw(name type site)],
         behavior    => 'narrow',
         srch_field  => 'name',
         constrain   => {},
-        select      => $sel_sub field_values => sub {
+        select      => $sel_sub,
+        field_values => sub {
             return unless $_[1] eq 'type';
             WORKFLOW_TYPE_MAP->{ $_[0]->get_type };
-
         },
     },
     dest => {
@@ -441,7 +445,8 @@ my $def = {
         behavior    => 'narrow',
         srch_field  => 'name',
         constrain   => { active => 1 },
-        select      => $sel_sub alter => {
+        select      => $sel_sub,
+        alter => {
             publish => $yes_no,
             preview => $yes_no,
         },
@@ -453,7 +458,8 @@ my $def = {
         title        => 'Pending %n',
         constrain    => { comp_time => undef },
         field_values => $usr_sub,
-        select       => $sel_sub alter => {
+        select       => $sel_sub,
+        alter => {
             type => $job_type_sub,
             name => $job_name_sub,
         },
@@ -463,14 +469,14 @@ my $def = {
         behavior    => 'narrow',
         srch_field  => 'name',
         constrain   => { active => 1 },
-        select      => $sel_sub
+        select      => $sel_sub,
     },
     keyword => {
         list_fields => [qw(sort_name name screen_name)],
         srch_field  => 'name',
         behavior    => 'expand',
         constrain   => { active => 1 },
-        select      => $sel_sub
+        select      => $sel_sub,
     },
 };
 
