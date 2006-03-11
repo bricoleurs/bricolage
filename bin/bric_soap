@@ -24,12 +24,14 @@ Modules:
   workflow
   element_type_set
   output_channel
+  contrib_type
+  dest
 
 Commands:
 
   Asset Commands (story, media, template, element_type, category,
                   media_type, site, keyword, user, desk, element_type_set,
-                  output_channel):
+                  output_channel, contrib_type, dest):
 
     list_ids
     export
@@ -274,14 +276,13 @@ BEGIN {
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
     $verbose ||= 0;
-    
+
     if ($password eq '') {
         {
             $password = read_password('Password: ');
             redo unless $password;
         }
     }
-    
 }
 our ($module, $command, %search, $with_related_stories, $with_related_media,
      $to_preview, $publish_date, $published_only, $username, $password, $server,
@@ -338,6 +339,12 @@ our %jump = (
     },
     output_channel => {
         class => 'OutputChannel',
+    },
+    contrib_type => {
+        class => 'ContribType',
+    },
+    dest => {
+        class => 'Destination',
     },
 );
 foreach my $mod (keys %jump) {

@@ -838,20 +838,19 @@ sub serialize_asset {
     }
     $writer->endTag("subelement_types");
 
-    # output fields
+    # output fields (XXX: keep in sync with ContribType.pm)
     $writer->startTag("field_types");
     foreach my $data ($element->get_field_types) {
         # start <field>
         $writer->startTag("field_type");
 
         # required elements
-        my $auto = 'autopopulated';
         $writer->dataElement( key_name    => $data->get_key_name           );
         $writer->dataElement( name        => $data->get_name               );
         $writer->dataElement( description => $data->get_description        );
         $writer->dataElement( required    => $data->get_required   ? 1 : 0 );
         $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
-        $writer->dataElement( $auto       => $data->get_autopopulated ? 1 : 0 );
+        $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );
         $writer->dataElement( default_val => $data->get_default_val        );

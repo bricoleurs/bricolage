@@ -9,6 +9,7 @@ use Bric::App::Authz  qw(chk_authz CREATE);
 use Bric::Util::Fault qw(throw_ap throw_mni);
 use Bric::App::Event  qw(log_event);
 use Bric::App::Util   qw(get_package_name);
+use Bric::SOAP::Util  qw(site_to_id output_channel_name_to_id);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
 use IO::Scalar;
@@ -72,6 +73,15 @@ sub list_ids {
         throw_ap(error => __PACKAGE__ . "::$method : unknown parameter \"$_\".")
           unless $pkg->is_allowed_param($_, $method);
     }
+
+    # handle site => site_id conversion
+    $args->{site_id} = site_to_id(__PACKAGE__, delete $args->{site})
+      if exists $args->{site};             # not everything has a <site>
+
+    # handle output_channel => output_channel__id mapping
+    $args->{output_channel_id} =
+      output_channel_name_to_id(__PACKAGE__, delete $args->{output_channel}, $args)
+      if exists $args->{output_channel};   # not everything has an <output_channel>
 
     $args->{active} = 1 unless exists $args->{active};
     my @ids = $pkg->class->list_ids($args);
