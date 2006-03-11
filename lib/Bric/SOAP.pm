@@ -17,6 +17,8 @@ use Bric::SOAP::User;
 use Bric::SOAP::Desk;
 use Bric::SOAP::ElementType;
 use Bric::SOAP::OutputChannel;
+use Bric::SOAP::ContribType;
+use Bric::SOAP::Destination;
 
 1;
 __END__
@@ -213,6 +215,14 @@ Provides query, export, update, create, and delete for Element Type Set objects.
 =item L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
 
 Provides query, export, update, create, and delete for OutputChannel objects.
+
+=item L<Bric::SOAP::ContribType|Bric::SOAP::ContribType>
+
+Provides query, export, update, create, and delete for ContribType objects.
+
+=item L<Bric::SOAP::Destination|Bric::SOAP::Destination>
+
+Provides query, export, update, create, and delete for Destination objects.
 
 =back
 
@@ -1221,6 +1231,91 @@ The XSD source:
        <xs:attribute name="id" type="xs:int" use="required"/>
      </xs:complexType>
    </xs:element>
+   <xs:element name="contrib_type">
+     <xs:complexType>
+       <xs:sequence>
+         <xs:element name="name">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="64"/>    <!-- \d grp -->
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="description">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="256"/>   <!-- \d grp -->
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="active" type="xs:boolean"/>
+         <xs:element name="field_types">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="field_type" minOccurs="0" maxOccurs="unbounded">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <!-- returned by $ct->all_for_member_subsys,
+                          \d attr_grp_meta for max lengths (2048)
+                          (need to make element ref restricting to 2048, use here) -->
+                     <xs:element name="key_name" type="xs:string"/>
+                     <xs:element name="default_val" type="xs:string"/>
+                     <xs:element name="multiple" type="xs:boolean" minOccurs="0"/> <!-- minOccurs? -->
+                     <xs:element name="cols" type="xs:int" minOccurs="0"/>
+                     <xs:element name="length" type="xs:int" minOccurs="0"/>
+                     <xs:element name="max_size" type="xs:int" minOccurs="0"/>
+                     <xs:element name="name" type="xs:string"/>
+                     <xs:element name="options" type="xs:string" minOccurs="0"/>
+                     <xs:element name="place" type="xs:int"/>
+                     <xs:element name="precision" type="xs:int" minOccurs="0"/>
+                     <xs:element name="rows" type="xs:int" minOccurs="0"/>
+                     <xs:element name="widget_type" type="xs:string"/>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+           </xs:complexType>
+         </xs:element>
+       </xs:sequence>
+       <xs:attribute name="id" type="xs:int" use="required"/>
+     </xs:complexType>
+   </xs:element>
+   <xs:element name="dest">
+     <xs:complexType>
+       <xs:sequence>
+         <xs:element name="name">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="64"/>    <!-- \d server_type -->
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="description">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="256"/>
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="move_method">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+<!-- XXX: enumeration -->
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="can_copy" type="xs:boolean"/>
+         <xs:element name="can_publish" type="xs:boolean"/>
+         <xs:element name="can_preview" type="xs:boolean"/>
+         <xs:element name="name" type="xs:string" />    <!-- \d site -->
+
+<!-- XXX: FINISH ME, output_channels, actions, servers (c.f. field_types above) -->
+
+         <xs:element name="active" type="xs:boolean"/>
+       </xs:sequence>
+       <xs:attribute name="id" type="xs:int" use="required"/>
+     </xs:complexType>
+   </xs:element>
    <xs:element name="workflow">
      <xs:complexType>
        <xs:sequence>
@@ -1275,7 +1370,7 @@ The XSD source:
        <xs:attribute name="id" type="xs:int" use="required"/>
      </xs:complexType>
    </xs:element>
-   
+
    <xs:complexType name="container_type" mixed="0">
      <xs:annotation>
        <xs:documentation>An element data container - a recursive type.</xs:documentation>
@@ -1418,6 +1513,10 @@ L<Bric::SOAP::Desk|Bric::SOAP::Desk>
 L<Bric::SOAP::ATType|Bric::SOAP::ATType>
 
 L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
+
+L<Bric::SOAP::ContribType|Bric::SOAP::ContribType>
+
+L<Bric::SOAP::Destination|Bric::SOAP::Destination>
 
 L<bric_soap|bric_soap>
 
