@@ -320,6 +320,8 @@ Friends who have spotted bugs include:
 
 =item Michael Holden
 
+=item Michael Cummings
+
 =back
 
 Bricolage's translation team:

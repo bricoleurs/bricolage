@@ -64,6 +64,11 @@ Publishing via SOAP works again. It was broken in 1.8.9, where it would appear
 to succeed, but no story or media would ever actually be distributed to the
 content server. [David]
 
+=item *
+
+Updated the Bricolage users list email address and archive link in
+Bric::Admin/INSTALL. Reported by Michael Cummings [David]
+
 =back
 
 =head2 Improvements
