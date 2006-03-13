@@ -362,14 +362,15 @@ sub new {
     my ($class, $init) = @_;
 
     # setup defaults
-    $init->{data_dir} ||= BURN_DATA_ROOT;
-    $init->{comp_dir} ||= BURN_COMP_ROOT;
-    $init->{out_dir}  ||= STAGE_ROOT;
-    $init->{page_numb_start} ||= 1;
-    $init->{_page_extensions}  ||= [''];
-    $init->{_notes} = {};
-    $init->{_output_preview_msgs} ||= 1;
-    $init->{resources} = [];
+    $init->{data_dir}           ||= BURN_DATA_ROOT;
+    $init->{comp_dir}           ||= BURN_COMP_ROOT;
+    $init->{out_dir}            ||= STAGE_ROOT;
+    $init->{page_numb_start}    ||= 1;
+    $init->{_page_extensions}   ||= [''];
+    $init->{_notes}               = {};
+    $init->{resources}            = [];
+    $init->{_output_preview_msgs} = 1
+        unless defined $init->{_output_preview_msgs};
 
     $init->{sandbox_dir} = $fs->cat_dir(BURN_SANDBOX_ROOT, 'user_'. $init->{user_id})
        if defined($init->{user_id});

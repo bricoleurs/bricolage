@@ -754,9 +754,8 @@ This is the number of rows the text area field will take up.
 
 =item Max Size: 256
 
-The maximum number of characters that can be entered into the text
-area field.  Set this field to 0 (zero) to allow values of unlimited
-length.
+The maximum number of characters that can be entered into the text area field.
+Set this field to 0 (zero) to allow values of unlimited length.
 
 =item Label: Pull Quote
 

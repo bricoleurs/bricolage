@@ -1893,7 +1893,10 @@ sub save {
     }
     if (AUTO_PREVIEW_MEDIA && $preview) {
         # Go ahead and distribute to the preview server(s).
-        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
+        my $burner = Bric::Util::Burner->new({
+            out_dir              => PREVIEW_ROOT,
+            _output_preview_msgs => 0,
+        });
         $burner->preview($self, 'media', get_user_id, $_->get_id)
           for $self->get_output_channels;
         $self->_set(['needs_preview'] => [0]);
