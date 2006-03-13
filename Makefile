@@ -170,7 +170,11 @@ clone_tar	:
 # installation rules     #
 ##########################
 
-install 	: all is_root cpan lib bin files db db_grant done
+install 	: install_files install_db done
+
+install_files	: all is_root cpan lib bin files
+
+install_db		: db db_grant
 
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
