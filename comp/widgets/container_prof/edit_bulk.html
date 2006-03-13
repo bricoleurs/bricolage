@@ -77,6 +77,7 @@ my $opts = [
     name     => "$widget|text",
     value    => $args->{__use_text__} ? $args->{"$widget|text"} : $element->serialize_to_pod($def_field),
     rows     => 40,
+    cols     => 80,
     useTable => 0,
     js       => qq{onkeyup="wordCount(document.theForm, '$widget|text', 'words', 'chars');"},
 &>
