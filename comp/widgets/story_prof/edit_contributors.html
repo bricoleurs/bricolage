@@ -18,10 +18,11 @@ my $order_sub = sub {
 my $uri = $r->uri;
 my $role_sub = sub {
     my ($val, $c) = @_;
-    my $role = $story->get_contributor_role($c);
-    $val .= qq{ (Role: <a href="$uri?story_prof|assoc_contrib_cb=} .
-      $c->get_id . qq{">$role</a>)} if $role;
-    $val;
+    my @roles = $c->get_roles;
+    return $val unless @roles > 1;
+    my $role = $story->get_contributor_role($c) || 'DEFAULT';
+    return $val . qq{ (Role: <a href="$uri?story_prof|assoc_contrib_cb=} .
+      $c->get_id . qq{">$role</a>)};
 };
 
 $m->comp('/widgets/listManager/listManager.mc',

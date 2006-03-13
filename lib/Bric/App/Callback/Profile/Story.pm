@@ -581,7 +581,7 @@ sub assoc_contrib : Callback {
     my $contrib_id = $self->value;
     my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
     my $roles = $contrib->get_roles;
-    if (scalar(@$roles)) {
+    if (@$roles > 1) {
         set_state_data($self->class_key, 'contrib', $contrib);
         $self->set_redirect("/workflow/profile/story/contributor_role.html");
     } else {

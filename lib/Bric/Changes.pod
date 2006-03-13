@@ -102,6 +102,12 @@ The Jobs manager now sorts pending jobs by scheduled time rather than date.
 Desks now remember the sort order you selected when you last visited them, for
 the duration of a single login to Bricolage. [David]
 
+=item *
+
+When adding contributors based on a type that allows multiple roles, you no
+longer have to select the role if the contributor has only one role. Reported
+by Phillip Smith. [David]
+
 =back
 
 =cut
