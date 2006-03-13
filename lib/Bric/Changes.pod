@@ -69,6 +69,11 @@ content server. [David]
 Updated the Bricolage users list email address and archive link in
 Bric::Admin/INSTALL. Reported by Michael Cummings [David]
 
+=item *
+
+Sort ordering on desks is no longer forgotten over multiple pages of assets on
+a desk. Thanks to Phillip Smith for the spot! [David]
+
 =back
 
 =head2 Improvements
@@ -91,6 +96,11 @@ a remote PostgreSQL server. [David]
 
 The Jobs manager now sorts pending jobs by scheduled time rather than date.
 [David]
+
+=item *
+
+Desks now remember the sort order you selected when you last visited them, for
+the duration of a single login to Bricolage. [David]
 
 =back
 
