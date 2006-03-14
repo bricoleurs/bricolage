@@ -246,9 +246,6 @@ $do_element_type = sub {
             $key_name)
       if $no_save;
 
-    my $story_pkg_id = get_class_info('story')->get_id;
-    my $media_pkg_id = get_class_info('media')->get_id;
-
     # Roll in the changes.
     $obj = $get_obj->($class, $param, $key, $obj);
 
@@ -265,19 +262,19 @@ $do_element_type = sub {
         $obj->set_fixed_uri(     defined $param->{fixed_uri}     ? 1 : 0 );
         $obj->set_related_story( defined $param->{related_story} ? 1 : 0 );
         $obj->set_related_media( defined $param->{related_media} ? 1 : 0 );
-        $obj->set_biz_class_id( $param->{biz_class_id} )
-            if defined $param->{biz_class_id};
     }
 
     else {
         # It's a new element. Just set the type.
-        $obj->set_top_level($param->{elem_type} eq 'Subelement' ? 0 : 1);
-        if ($param->{elem_type} eq 'Media') {
+        my $type = $param->{biz_class_id};
+        my $story_pkg_id = get_class_info('story')->get_id;
+
+        if ($type && $type != $story_pkg_id) {
             $obj->set_media(1);
-            $obj->set_biz_class_id($media_pkg_id);
+            $obj->set_top_level(1);
         } else {
             $obj->set_media(0);
-            $obj->set_biz_class_id($story_pkg_id);
+            $obj->set_top_level(!!$type);
         }
     }
 
@@ -400,10 +397,11 @@ $check_save_element_type = sub {
 
 $get_obj = sub {
     my ($class, $param, $key, $obj) = @_;
-    # Create a new object if we need to pass in an Element Type set ID
-    $obj = $class->new({ type__id => $param->{"$key\_set_id"} })
-      if exists $param->{"$key\_set_id"} && !defined $param->{"$key\_id"};
-
+    # Create a new object if we need to pass in a biz class id.
+    return $obj unless exists $param->{biz_class_id};
+    my $bid = $param->{biz_class_id};
+    $obj = $class->new({ biz_class_id => $bid })
+        if $bid && $obj->get_biz_class_id != $bid;
     return $obj;
 };
 

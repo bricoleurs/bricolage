@@ -210,6 +210,16 @@ Cancelling the checkout of an media document now deletes any new file that has
 been uploaded and, if the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
 enabled, re-previews the previous version of the media file. [David]
 
+=item *
+
+The autopopulated fields for image element types are now created when a new
+image element type is created. This was made possible by moving the selection
+of media type (Image, Audio, Video, or Other Media) to the New Element Type
+screen, where it is now part of the "Content Type" select list, which also
+includes the Story and Subelement options. As a result, one can no longer
+change the media type in an existing element type (not that it ever made sense
+to do so). Reported by Paul Orrock. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)

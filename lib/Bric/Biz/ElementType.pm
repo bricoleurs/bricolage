@@ -354,6 +354,7 @@ sub new {
                 widget_type   => 'text',
                 length        => 32,
                 place         => ++$i,
+                quantifier    => 0,
             });
         }
     }

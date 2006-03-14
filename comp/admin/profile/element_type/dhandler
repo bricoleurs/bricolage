@@ -36,33 +36,23 @@ if (defined $id) {
     $m->comp('/widgets/profile/hidden.mc',
              value => $id,
              name  => 'element_type_id');
-    if ($comp->is_media) {
-        $type_vals->{value} = $comp->get_biz_class_id;
-        $m->comp(
-            '/widgets/profile/displayFormElement.mc',
-            key      => 'biz_class_id',
-            vals     => $type_vals,
-            readOnly => $no_edit
-        );
-    }
-
-    else {
-        $m->comp(
-            '/widgets/profile/text.mc',
-            disp => 'Type',
-            value => $type,
-            readOnly => 1
-        );
-    }
+    $m->comp(
+        '/widgets/profile/text.mc',
+        disp => 'Content Type',
+        value => $type,
+        readOnly => 1,
+    );
 } else {
     # Output the Element Type Select list.
-    $m->comp('/widgets/profile/select.mc',
-             disp     => 'Type',
-             name     => 'elem_type',
-             options  => [qw(Subelement Story Media)],
-             value    => $type,
-             readOnly => $no_edit
-         );
+    $m->comp(
+        '/widgets/profile/select.mc',
+        options    => $biz_class_opts,
+        disp       => 'Content Type',
+        name       => 'biz_class_id',
+        req       => 1,
+        readOnly  => $no_edit,
+        localize  => 1,
+    );
     if (my $site_cx_id = $c->get_user_cx(get_user_id)) {
         $m->comp(
             '/widgets/profile/hidden.mc',
@@ -402,18 +392,12 @@ my $oc_name_getter = sub {
     return $ng->($o) . ' (' . $sg->($o) . ')';
 };
 
-my $type_vals = { %{ $class->my_meths->{biz_class_id} } };
-
-{
-    # HACK. There must be a better way to get rid of the Story option!
-    my $story_pkg_id = get_class_info('story')->get_id;
-    my $tmp = [];
-    foreach (@{ $type_vals->{props}{vals}}) {
-        push @$tmp, $_ unless $_->[0] == $story_pkg_id;
-    }
-    $type_vals->{props}{vals} = $tmp;
-    $type_vals->{disp} = 'Media Type';
-}
+my $biz_class_opts = [
+    [ 0 => 'Subelement'],
+    map { [ get_class_info(lc $_)->get_id => $_ ] }
+    qw(Story Image Audio Video Media)
+];
+$biz_class_opts->[-1][1] = 'Other Media';
 </%once>
 <%args>
 $id => undef
@@ -451,6 +435,7 @@ if (defined $id) {
     if ($comp->is_top_level) {
         $exclude->{paginated} = 1;
         $type = get_disp_name($comp->get_biz_class_id);
+        $type = 'Other Media' if $type eq 'Media';
     } else {
         $exclude->{fixed_uri} = 1;
     }
