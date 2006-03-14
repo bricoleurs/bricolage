@@ -737,7 +737,7 @@ sub fetch_objects {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
         $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
-        $obj ->_set($fields, \@d);
+        $obj->_set($fields, \@d);
         $obj->_set__dirty(0);
         # Cache the object before reblessing it.
         $obj->cache_me;
