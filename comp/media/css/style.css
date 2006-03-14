@@ -18,6 +18,7 @@ input      { vertical-align: middle; }
 textarea { 
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 1em;
+    width: 99%;
 }
 .editmeta .textarea textarea { width: 50%; }
 .codearea textarea { font-family: monospace; font-size: 1.2em; }
