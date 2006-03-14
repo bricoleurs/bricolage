@@ -289,20 +289,23 @@ if (defined $objs && @$objs > $obj_offset) {
             # Only show Delete checkbox if user can edit the story
             # (Publish checkbox when PUBLISH permission, but PUBLISH > EDIT anyway)
             if ($can_edit) {
+                my $id = $aid;
                 my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
                 if ($can_pub and ! $obj->get_checked_out) {
+                    $id = $obj->get_version_id; # Publish uses version id.
                     $checkname = "$widget|${class}_pub_ids";
-                    $checklabel = $lang->maketext($class eq 'template'
-                                                  ? 'Deploy' : 'Publish');
+                    $checklabel = $lang->maketext(
+                        $class eq 'template' ? 'Deploy' : 'Publish'
+                    );
                 }
 
                 # We don't want both Delete and Publish on the same page
                 unless ($desk->can_publish && $checkname =~ /_delete_ids$/) {
                     $pub = $m->scomp('/widgets/profile/checkbox.mc',
                                      name  => $checkname,
-                                     id    => "$widget\_$aid",
-                                     value => $aid)
-                      . qq{<label for="$widget\_$aid">$checklabel</label>};
+                                     id    => "$widget\_$id",
+                                     value => $id)
+                      . qq{<label for="$widget\_$id">$checklabel</label>};
                 }
             }
 
