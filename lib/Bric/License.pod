@@ -334,6 +334,8 @@ Friends who have spotted bugs include:
 
 =item Derek Poon
 
+=item Ryan O'Toole
+
 =back
 
 Bricolage's translation team:

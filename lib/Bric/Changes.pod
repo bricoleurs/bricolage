@@ -78,8 +78,8 @@ Orrock]
 =item *
 
 Added C<ALLOW_URIS_WITHOUT_CATEGORIES> F<bricolage.conf> directive to turn off
-check for %{categories} in an Output Channel URI format. This directive should
-be used with caution since this is not the recommended behaviour. [Paul
+check for "%{categories}" in an output channel URI format. This directive
+should be used with caution since this is not the recommended behaviour. [Paul
 Orrock]
 
 =item *
@@ -106,10 +106,16 @@ and key names longer than 32 characters. Reported by Nate Perry-Thistle.
 
 =item *
 
-Created two new make targets, "install_files" and "install_db", to allow 
-the files to be installed without doing anything with the database.  Useful 
-for packagers who need to let the user create the database on her own.  
-"make install_files install_db" is equivalent to "make install". [Marshall]
+Created two new make targets, "install_files" and "install_db", to allow the
+files to be installed without doing anything with the database. Useful for
+packagers who need to let the user create the database on her own. "make
+install_files install_db" is equivalent to "make install". [Marshall]
+
+=item *
+
+Updated L<Bric::ElementAdmin|Bric::ElementAdmin> to be conversant in the
+merging of element type sets and elements. That is, it now makes sense in the
+contextd of Bricolage 1.10. Reported by Ryan O'Toole. [David]
 
 =back
 
