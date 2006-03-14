@@ -2244,8 +2244,9 @@ sub _delete_file {
     return $self unless -d $dir;
 
     Bric::Util::Trans::FS->del($dir);
-    $self->uncache_me;
-    if (AUTO_PREVIEW_MEDIA) {
+
+    if (AUTO_PREVIEW_MEDIA && $v) {
+        $self->uncache_me;
         my $prev = ref($self)->lookup({ id => $id });
         $prev->_preview;
     }
