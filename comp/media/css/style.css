@@ -451,7 +451,10 @@ dl.viewmeta dt {
     text-align: right;
     font-weight: bold;
     background-color: #E8E8CD;
-    voice-family: "\"}\"";
+}
+
+dl.viewmeta dt {
+    voice-family: "\"}\""; /* Hide from IE 5.x */
     voice-family: inherit;
     clear: left;
     margin: 0px 5px 0px 0px;
