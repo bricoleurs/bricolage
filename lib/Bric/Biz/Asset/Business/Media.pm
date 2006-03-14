@@ -1849,6 +1849,7 @@ sub save {
             } else {
                 if ($cancel) {
                     $self->_delete_file;
+                    commit();
                     return $self;
                 } else {
                     $self->_insert_instance();
