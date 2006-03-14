@@ -74,6 +74,12 @@ Bric::Admin/INSTALL. Reported by Michael Cummings [David]
 Sort ordering on desks is no longer forgotten over multiple pages of assets on
 a desk. Thanks to Phillip Smith for the spot! [David]
 
+=item *
+
+Silenced status messages when previewing media document under the
+C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
+[David]
+
 =back
 
 =head2 Improvements
