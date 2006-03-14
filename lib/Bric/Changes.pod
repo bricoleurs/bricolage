@@ -194,6 +194,10 @@ Spotted by Rod Taylor. [David]
 
 Desk pagination is now properly styled. [David]
 
+=item *
+
+Assets can once again be properly deleted from desks. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
