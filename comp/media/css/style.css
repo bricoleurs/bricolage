@@ -242,7 +242,7 @@ div.debug dt:after {
 .desk .item .body { position: relative; }
 
 .desk .item dl { 
-    margin: 0 225px 0 0; 
+    margin: 0 255px 0 0; 
     padding: 0; 
     border-style: solid;
     border-color: #CCCC99;
@@ -265,7 +265,7 @@ div.debug dt:after {
 .desk .item .actions { 
     position: absolute;
     top: 0; right: 0px;
-    width: 210px;
+    width: 240px;
     background: transparent;
     border-top: solid white 1px;
     padding: 0 5px;

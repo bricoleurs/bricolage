@@ -117,6 +117,12 @@ Updated L<Bric::ElementAdmin|Bric::ElementAdmin> to be conversant in the
 merging of element type sets and elements. That is, it now makes sense in the
 contextd of Bricolage 1.10. Reported by Ryan O'Toole. [David]
 
+=item *
+
+The View/Edit link has been restored to storis, media, and templates on desks,
+and the title has been returned to its status as a preview link. The URI is no
+longer a link. [David]
+
 =back
 
 =head2 Bug Fixes
