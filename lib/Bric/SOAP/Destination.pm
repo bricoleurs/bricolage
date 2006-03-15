@@ -605,7 +605,9 @@ sub serialize_asset {
                     if ($meths->{$attr}{props}{type} eq 'select') {
                         # handle_text, handle_other - get displayed values
                         my %labels = map { @$_ } @{ $meths->{$attr}{props}{vals} };
-                        $val = $labels{$val};
+                        # XXX: get_* apparently aren't defined initially...
+                        $val = (defined $val && exists $labels{$val})
+                          ? $labels{$val} : $labels{$meths->{$attr}{props}{vals}->[0][0]};
                     }
                     $writer->dataElement($attr => $val);
                 }
