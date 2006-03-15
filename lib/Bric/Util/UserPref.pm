@@ -222,7 +222,7 @@ User preference ID. May use C<ANY> for a list of possible values.
 
 =item pref_id
 
-Prefernce ID. May use C<ANY> for a list of possible values.
+Preference ID. May use C<ANY> for a list of possible values.
 
 =item user_id
 

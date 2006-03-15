@@ -321,9 +321,13 @@ Destination ID. May use C<ANY> for a list of possible values.
 
 Destination move method. May use C<ANY> for a list of possible values.
 
+=item name
+
+Destination name. May use C<ANY> for a list of possible values.
+
 =item description
 
-Destination description. May use C<ANY> for a list of possible value.s
+Destination description. May use C<ANY> for a list of possible values.
 
 =item site_id
 
