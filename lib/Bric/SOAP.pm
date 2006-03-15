@@ -19,6 +19,7 @@ use Bric::SOAP::ElementType;
 use Bric::SOAP::OutputChannel;
 use Bric::SOAP::ContribType;
 use Bric::SOAP::Destination;
+use Bric::SOAP::Preference;
 
 1;
 __END__
@@ -223,6 +224,10 @@ Provides query, export, update, create, and delete for ContribType objects.
 =item L<Bric::SOAP::Destination|Bric::SOAP::Destination>
 
 Provides query, export, update, create, and delete for Destination objects.
+
+=item L<Bric::SOAP::Preference|Bric::SOAP::Preference>
+
+Provides query, export, update, create, and delete for Preference objects.
 
 =back
 
@@ -1300,18 +1305,143 @@ The XSD source:
          <xs:element name="move_method">
            <xs:simpleType>
              <xs:restriction base="xs:string">
-<!-- XXX: enumeration -->
+               <xs:maxLength value="128"/>    <!-- \d class (disp_name) -->
              </xs:restriction>
            </xs:simpleType>
          </xs:element>
          <xs:element name="can_copy" type="xs:boolean"/>
          <xs:element name="can_publish" type="xs:boolean"/>
          <xs:element name="can_preview" type="xs:boolean"/>
-         <xs:element name="name" type="xs:string" />    <!-- \d site -->
-
-<!-- XXX: FINISH ME, output_channels, actions, servers (c.f. field_types above) -->
-
+         <xs:element name="site" type="xs:string" />    <!-- \d site -->
+         <xs:element name="output_channels">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="output_channel" minOccurs="0" maxOccurs="unbounded">
+                 <xs:simpleType>
+                   <xs:restriction base="xs:string">
+                     <xs:maxLength value="64"/>    <!-- \d output_channel -->
+                   </xs:restriction>
+                 </xs:simpleType>
+               </xs:element>
+             </xs:sequence>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="actions">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="action" minOccurs="0" maxOccurs="unbounded">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <!-- These are only when type="Email".
+                          XXX: don't know how to properly constrain this -->
+                     <xs:element name="from" type="xs:string" minOccurs="0"/>
+                     <xs:element name="to" type="xs:string" minOccurs="0"/>
+                     <xs:element name="cc" type="xs:string" minOccurs="0"/>
+                     <xs:element name="bcc" type="xs:string" minOccurs="0"/>
+                     <xs:element name="subject" type="xs:string" minOccurs="0"/>
+                     <xs:element name="content_type" type="xs:string" minOccurs="0"/>
+                     <xs:element name="handle_text" type="xs:string" minOccurs="0"/>
+                     <xs:element name="handle_other" type="xs:string" minOccurs="0"/>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="type" type="xs:string" use="required"/>  <!-- restriction? -->
+             <xs:attribute name="order" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="servers">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="server" minOccurs="0" maxOccurs="unbounded">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="host_name" type="xs:string" />
+                     <xs:element name="os" type="xs:string" />
+                     <xs:element name="doc_root" type="xs:string" />
+                     <xs:element name="login" type="xs:string" />
+                     <xs:element name="password" type="xs:string" />
+                     <xs:element name="cookie" type="xs:string" />
+                     <xs:element name="active" type="xs:boolean" />
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+             <xs:attribute name="type" type="xs:string" use="required"/>  <!-- restriction? -->
+             <xs:attribute name="order" type="xs:int" use="required"/>
+           </xs:complexType>
+         </xs:element>
          <xs:element name="active" type="xs:boolean"/>
+       </xs:sequence>
+       <xs:attribute name="id" type="xs:int" use="required"/>
+     </xs:complexType>
+   </xs:element>
+   <xs:element name="pref">
+     <xs:complexType>
+       <xs:sequence>
+         <xs:element name="name">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="64"/>    <!-- \d pref -->
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="description">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="256"/>
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="can_be_overridden" type="xs:boolean"/>
+         <xs:element name="opt_type">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="16"/>
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="manual" type="xs:boolean"/>
+         <xs:element name="default">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="256"/>
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="value">
+           <xs:simpleType>
+             <xs:restriction base="xs:string">
+               <xs:maxLength value="256"/>
+             </xs:restriction>
+           </xs:simpleType>
+         </xs:element>
+         <xs:element name="opts">
+           <xs:complexType>
+             <xs:sequence>
+               <xs:element name="opt" minOccurs="0" maxOccurs="unbounded">
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="value">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="256"/>     <!-- \d pref_opt -->
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                     <xs:element name="val_name">
+                       <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                           <xs:maxLength value="256"/>
+                         </xs:restriction>
+                       </xs:simpleType>
+                     </xs:element>
+                   </xs:sequence>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+           </xs:complexType>
+         </xs:element>
        </xs:sequence>
        <xs:attribute name="id" type="xs:int" use="required"/>
      </xs:complexType>
@@ -1517,6 +1647,8 @@ L<Bric::SOAP::OutputChannel|Bric::SOAP::OutputChannel>
 L<Bric::SOAP::ContribType|Bric::SOAP::ContribType>
 
 L<Bric::SOAP::Destination|Bric::SOAP::Destination>
+
+L<Bric::SOAP::Preference|Bric::SOAP::Preference>
 
 L<bric_soap|bric_soap>
 

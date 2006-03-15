@@ -27,7 +27,7 @@ F<contrib/template_profiling>. [Scott]
 
 =item *
 
-ContribType and Destination SOAP modules. [Scott]
+ContribType, Destination, and Preference SOAP modules. [Scott]
 
 =back
 

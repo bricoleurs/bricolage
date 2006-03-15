@@ -22,22 +22,23 @@ Modules:
   user
   desk
   workflow
-  element_type_set
+  element_type_set  (being removed)
   output_channel
   contrib_type
   dest
+  pref
 
 Commands:
 
   Asset Commands (story, media, template, element_type, category,
                   media_type, site, keyword, user, desk, element_type_set,
-                  output_channel, contrib_type, dest):
+                  output_channel, contrib_type, dest, pref):
 
     list_ids
     export
-    create
+    create  (not 'pref')
     update
-    delete
+    delete  (not 'pref')
 
   Workflow Commands:
 
@@ -345,6 +346,9 @@ our %jump = (
     },
     dest => {
         class => 'Destination',
+    },
+    pref => {
+        class => 'Preference',
     },
 );
 foreach my $mod (keys %jump) {
