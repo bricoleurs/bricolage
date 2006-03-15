@@ -29,6 +29,11 @@ F<contrib/template_profiling>. [Scott]
 
 ContribType, Destination, and Preference SOAP modules. [Scott]
 
+=item *
+
+When a page finishes loading, the first text or textarea field in the form now
+automatically gets the focus. [David]
+
 =back
 
 =head2 Improvements

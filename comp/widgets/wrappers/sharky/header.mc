@@ -81,6 +81,7 @@ if(ref($title) eq 'ARRAY') {
 var lang_key = '<% $lang_key %>';
 var checkboxValues = new Array();
 multiOnload.onload(function () {
+    findFocus();
     <% $jsInit %>;
 % #    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
 });

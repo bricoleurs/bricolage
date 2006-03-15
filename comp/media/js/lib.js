@@ -748,6 +748,28 @@ window.onload = function() {
 };
 
 /*
+ * findFocus(). called in the onload event. Finds the second form in the page
+ * and puts the focus on the first text or textarea or other relevant field
+ * that it can find.
+ */
+
+function findFocus() {
+    if (document.forms.length > 1) {
+        // Skip the site context form, which is always 0.
+        var elems = document.forms[1].elements;
+        for (i = 0; i < elems.length; i++) {
+            var elem = elems[i];
+            if (elem.type == 'text' || elem.type == 'textarea') {
+                elem.focus();
+                selectText(elem, 0, elem.value.length, true);
+                break;
+            }
+        }
+    }
+}
+
+
+/*
  * Save scroll position
  */
 
@@ -909,7 +931,7 @@ function searchField (field) {
     return false;
 }
 
-function selectText (field, start, length) {
+function selectText (field, start, length, noAlert) {
     if (field.createTextRange) {
         // Selection in IE.
         var range = field.createTextRange();
@@ -921,6 +943,10 @@ function selectText (field, start, length) {
     else if (field.setSelectionRange) {
         // Selection in Mozilla.
         field.setSelectionRange(start, length + 1);
+    }
+
+    else if (noAlert) {
+        return;
     }
 
     else {
