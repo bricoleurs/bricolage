@@ -80,6 +80,11 @@ Silenced status messages when previewing media document under the
 C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
 [David]
 
+=item *
+
+Changed the title of the Trail page from "Desk Stamps" to "Trail." Reported by
+Scott. [David]
+
 =back
 
 =head2 Improvements
