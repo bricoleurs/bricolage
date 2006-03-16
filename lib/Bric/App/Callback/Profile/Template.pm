@@ -22,14 +22,14 @@ my $SEARCH_URL = '/workflow/manager/template/';
 my $ACTIVE_URL = '/workflow/active/template/';
 
 my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
-    $delete_fa, $create_fa);
+    $delete_fa, $create_fa, $handle_upload);
 
 
 sub save : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
-    $save_object->($widget, $self->params);
+    $save_object->($self, $self->params);
     my $fa = get_state_data($widget, 'template');
 
     my $workflow_id = $fa->get_workflow_id;
@@ -73,7 +73,7 @@ sub checkin : Callback(priority => 6) {
     my $widget = $self->class_key;
 
     my $fa = get_state_data($widget, 'template');
-    $save_meta->($self->params, $widget, $fa);
+    $save_meta->($self, $widget, $fa);
     return unless $check_syntax->($self, $widget, $fa);
     $checkin->($self, $widget, $self->params, $fa);
 }
@@ -82,7 +82,7 @@ sub save_and_stay : Callback(priority => 6) {
     my $self = shift;
     my $widget = $self->class_key;
 
-    $save_object->($widget, $self->params);
+    $save_object->($self, $self->params);
     my $fa = get_state_data($widget, 'template');
 
     if ($self->params->{"$widget|delete"}) {
@@ -228,7 +228,7 @@ sub notes : Callback {
     my $id = $fa->get_id;
 
     # Save the data if we are in edit mode.
-    &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
+    &$save_meta($self, $widget, $fa) if $action eq 'edit';
 
     # Set a redirection to the code page to be enacted later.
     $self->set_redirect("/workflow/profile/template/${action}_notes.html?id=$id");
@@ -239,7 +239,7 @@ sub trail : Callback {
 
     # Save the metadata we've collected on this request.
     my $fa  = get_state_data($self->class_key, 'template');
-    &$save_meta($self->params, $self->class_key, $fa);
+    &$save_meta($self, $self->class_key, $fa);
     my $id = $fa->get_id;
 
     # Set a redirection to the code page to be enacted later.
@@ -388,17 +388,37 @@ sub checkout : Callback {
     }
 }
 
+sub download_file : Callback {
+    my $self = shift;
+    my $fa   = get_state_data($self->class_key, 'template');
+    my $req  = $self->apache_req;
+    (my $fn  = $fa->get_file_name) =~ s{.*/}{};
+
+    $req->content_type(qq{text/plain; name="$fn"; charset=utf-8});
+    $req->headers_out->set(
+        'Content-Disposition' => qq{inline; filename="$fn"}
+    );
+
+    $req->send_http_header;
+    $req->print($fa->get_data);
+    $self->abort;
+}
 
 ###
 
 $save_meta = sub {
-    my ($param, $widget, $fa) = @_;
+    my ($self, $widget, $fa) = @_;
+    my $param = $self->params;
     $fa ||= get_state_data($widget, 'template');
     chk_authz($fa, EDIT);
     $fa->set_priority($param->{priority}) if $param->{priority};
     $fa->set_description($param->{description}) if $param->{description};
     $fa->set_expire_date($param->{'expire_date'}) if $param->{'expire_date'};
-    $fa->set_data($param->{"$widget|code"});
+    if ($param->{"$widget|upload_file"}) {
+        $handle_upload->($self, $fa);
+    } else {
+        $fa->set_data($param->{"$widget|code"});
+    }
     if (exists $param->{category_id}) {
         # Remove the existing version from the user's sand box.
         my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
@@ -418,15 +438,16 @@ $save_code = sub {
 };
 
 $save_object = sub{
-    my ($widget, $param) = @_;
+    my ($self, $param) = @_;
+    my $widget = $self->class_key;
     my $fa = get_state_data($widget, 'template');
-    $save_meta->($param, $widget, $fa);
+    $save_meta->($self, $widget, $fa);
 };
 
 $checkin = sub {
     my ($self, $widget, $param, $fa) = @_;
     my $new = defined $fa->get_id ? 0 : 1;
-    $save_meta->($param, $widget, $fa);
+    $save_meta->($self, $widget, $fa);
 
     $fa->checkin;
 
@@ -674,5 +695,13 @@ $create_fa = sub {
     pop_page();
 };
 
+$handle_upload = sub {
+    my ($self, $fa) = @_;
+    my $widget = $self->class_key;
+    my $upload = $self->apache_req->upload("$widget|upload_file");
+    my $fh = $upload->fh;
+    $fa->set_data(do { local $/; <$fh>});
+    return $self;
+};
 
 1;

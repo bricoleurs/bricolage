@@ -760,7 +760,6 @@ function findFocus() {
         for (i = 0; i < elems.length; i++) {
             var elem = elems[i];
             if (elem.type == 'text' || elem.type == 'textarea') {
-                elem.focus();
                 selectText(elem, 0, elem.value.length, true);
                 break;
             }
@@ -931,28 +930,26 @@ function searchField (field) {
     return false;
 }
 
-function selectText (field, start, length, noAlert) {
-    if (field.createTextRange) {
+function selectText (field, start, end, noAlert) {
+    if (field.setSelectionRange) {
+        // Selection in Mozilla.
+        field.setSelectionRange(start, end);
+    }
+
+    else if (field.createTextRange) {
         // Selection in IE.
         var range = field.createTextRange();
         range.moveStart('character', start);
-        range.moveEnd(  'character', start + length);
+        range.moveEnd(  'character', end - field.value.length);
         range.select();
     }
 
-    else if (field.setSelectionRange) {
-        // Selection in Mozilla.
-        field.setSelectionRange(start, length + 1);
-    }
-
-    else if (noAlert) {
-        return;
-    }
-
-    else {
+    else if (!noAlert) {
         // Everything else.
-        alert('Found from character ' + start + ' to character ' + (start + length));
+        alert('Found from character ' + start + ' to character ' + end);
     }
+
+    field.focus();
 }
 
 function findNext (field) {
@@ -972,7 +969,7 @@ function findNext (field) {
     }
 
     field.lastFoundIndex = start + string.length;
-    selectText(field, start, string.length);
+    selectText(field, start, start + string.length);
     return false;
 }
 
