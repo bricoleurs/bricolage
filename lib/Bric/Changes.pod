@@ -172,7 +172,7 @@ saves the renamed file. [Paul Orrock]
 Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
 down the page in IE, stretching out the banner in desks, corrected side menu
 position in IE and removed reference to broken images left in from CSS
-reworking. Also fixed textarea which was ignoring cols setting in IE and set 
+reworking. Also fixed textarea which was ignoring cols setting in IE and set
 textarea col width for bulk edit to 80 wide, rather than 30. [Paul Orrock]
 
 =item *
