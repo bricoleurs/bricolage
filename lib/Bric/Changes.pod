@@ -34,6 +34,11 @@ ContribType, Destination, and Preference SOAP modules. [Scott]
 When a page finishes loading, the first text or textarea field in the form now
 automatically gets the focus. [David]
 
+=item *
+
+Added upload and download feature to the template interface, so that templates
+can optionaly be uploaded or downloaded. Suggested by Chris Sutton. [David]
+
 =back
 
 =head2 Improvements
@@ -224,6 +229,11 @@ screen, where it is now part of the "Content Type" select list, which also
 includes the Story and Subelement options. As a result, one can no longer
 change the media type in an existing element type (not that it ever made sense
 to do so). Reported by Paul Orrock. [David]
+
+=item *
+
+Fixed the selection of text triggered by the Find dialog box on Mozilla and IE
+(although I find IE to be a bit broken in this way). [David]
 
 =back
 
