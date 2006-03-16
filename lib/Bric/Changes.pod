@@ -244,6 +244,10 @@ Fixed the selection of text triggered by the Find dialog box on Mozilla and IE
 
 Fixed the size of the preview links on the desktop. [David]
 
+=item *
+
+Failed jobs can once again be cancelled. Reported by Rod Taylor. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
