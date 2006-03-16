@@ -396,7 +396,7 @@ sub download_file : Callback {
 
     $req->content_type(qq{text/plain; name="$fn"; charset=utf-8});
     $req->headers_out->set(
-        'Content-Disposition' => qq{inline; filename="$fn"}
+        'Content-Disposition' => qq{attachment; filename="$fn"}
     );
 
     $req->send_http_header;
