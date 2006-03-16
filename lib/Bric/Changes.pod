@@ -133,6 +133,11 @@ The View/Edit link has been restored to storis, media, and templates on desks,
 and the title has been returned to its status as a preview link. The URI is no
 longer a link. [David]
 
+=item *
+
+Made the "Upload" section of the media profile valid XHTML styled with CSS.
+[David]
+
 =back
 
 =head2 Bug Fixes
@@ -234,6 +239,10 @@ to do so). Reported by Paul Orrock. [David]
 
 Fixed the selection of text triggered by the Find dialog box on Mozilla and IE
 (although I find IE to be a bit broken in this way). [David]
+
+=item *
+
+Fixed the size of the preview links on the desktop. [David]
 
 =back
 

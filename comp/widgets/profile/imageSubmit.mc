@@ -3,8 +3,8 @@ $formName  => 'theForm'
 $callback
 $value     => 1
 $image
-$vspace    => undef
-$hspace    => undef
+$vspace    => 0
+$hspace    => 0
 $js        => qq{onclick="return customSubmit('$formName', '$callback', '$value')"}
 $useHidden => 1
 $useGlobalImage => 0
@@ -14,11 +14,9 @@ $alt       => ''
 my $localorno = $useGlobalImage ? '' : "$lang_key/";
 $m->print(
     qq{<a href="#" $js>},
-    qq{<img src="/media/images/$localorno$image.gif" border="0" },
+    qq{<img src="/media/images/$localorno$image.gif" },
     qq{alt="$alt" },
-    ( $hspace ? qq{hspace="$hspace" } : ()),
-    ( $vspace ? qq{vspace="$vspace" } : ()),
-    qq{style="vertical-align: middle;" /></a>},
+    qq{style="vertical-align: middle; margin: ${vspace}px ${hspace}px;" /></a>},
     ($useHidden ? qq{<input type="hidden" name="$callback" value="" />} : ()),
 );
 </%init>
