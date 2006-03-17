@@ -221,6 +221,12 @@ Assets can once again be properly deleted from desks. [David]
 
 =item *
 
+Silenced status messages when previewing a media document under the
+C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
+[David]
+
+=item *
+
 Cancelling the checkout of an media document now deletes any new file that has
 been uploaded and, if the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
 enabled, re-previews the previous version of the media file. [David]
