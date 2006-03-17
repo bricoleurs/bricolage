@@ -248,6 +248,12 @@ Fixed the size of the preview links on the desktop. [David]
 
 Failed jobs can once again be cancelled. Reported by Rod Taylor. [David]
 
+=item *
+
+When multiple versions of a document are published before any of the publish
+jobs for those versions is executed no longer leads to publishing errors when
+the older version is published. Thanks to Rod Taylor for the spot! [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
