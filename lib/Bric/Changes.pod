@@ -16,6 +16,40 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.8.10 (2006-03-16)
 
+=head2 Improvements
+
+=over
+
+=item *
+
+Changed (hopefully optimized) the buffer size when reading in files on
+media upload. [Scott]
+
+=item *
+
+The installer no longer prompts for the PostgreSQL system username if the
+PostgreSQL server is not running on the local box. It therefore also no longer
+becomes that user in such cases. This will simplify installing Bricolage onto
+a remote PostgreSQL server. [David]
+
+=item *
+
+The Jobs manager now sorts pending jobs by scheduled time rather than name.
+[David]
+
+=item *
+
+Desks now remember the sort order you selected when you last visited them, for
+the duration of a single login to Bricolage. [David]
+
+=item *
+
+When adding contributors based on a type that allows multiple roles, you no
+longer have to select the role if the contributor has only one role. Suggested
+by Phillip Smith. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over
@@ -23,9 +57,9 @@ This document lists the Changes to Bricolage introduced with each release.
 =item *
 
 Eliminated errors inserting array references fetched from image info while
-uploading and saving new image files. Also documented extra methods not
-previously documented in L<Bric::App::MediaFunc|Bric::App::MediaFunc>.
-Reported by Michael Holden. [David]
+uploading and saving new image files. Reported by Michael Holden. Also
+documented extra methods not previously documented in
+L<Bric::App::MediaFunc|Bric::App::MediaFunc>. [David]
 
 =item *
 
@@ -50,35 +84,28 @@ F<bric_queued>. [David]
 =item *
 
 The thumbnail-generating code now tries even harder to determine the media
-type of a file, thus more likely supporting files that it might have been able
-to support before. [Rod Taylor]
+type of a file, thus more likely supporting files that it might not have been
+able to support before. [Rod Taylor]
 
 =item *
 
-F<bric_republish> no longer reverses the meaning of the C<--published-only>
+F<bric_republish> no longer reverses the meaning of its C<--published-only>
 option. [David]
 
 =item *
 
 Publishing via SOAP works again. It was broken in 1.8.9, where it would appear
-to succeed, but no story or media would ever actually be distributed to the
-content server. [David]
+to succeed, but no story or media would ever actually be distributed. [David]
 
 =item *
 
 Updated the Bricolage users list email address and archive link in
-Bric::Admin/INSTALL. Reported by Michael Cummings [David]
+L<Bric::Admin|Bric::Admin>/F<INSTALL>. Reported by Michael Cummings [David]
 
 =item *
 
 Sort ordering on desks is no longer forgotten over multiple pages of assets on
 a desk. Thanks to Phillip Smith for the spot! [David]
-
-=item *
-
-Silenced status messages when previewing media document under the
-C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
-[David]
 
 =item *
 
@@ -89,40 +116,6 @@ Scott. [David]
 
 It is now possible to look up stories, media, and templates by version IDs
 other than the current version ID. [David]
-
-=back
-
-=head2 Improvements
-
-=over
-
-=item *
-
-Changed (hopefully optimized) the buffer size when reading in files on
-media upload. [Scott]
-
-=item *
-
-The installer no longer prompts for the PostgreSQL system username if the
-PostgreSQL server is not running on the local box. It therefore also no longer
-becomes that user in such cases. This will simplify installing Bricolage onto
-a remote PostgreSQL server. [David]
-
-=item *
-
-The Jobs manager now sorts pending jobs by scheduled time rather than date.
-[David]
-
-=item *
-
-Desks now remember the sort order you selected when you last visited them, for
-the duration of a single login to Bricolage. [David]
-
-=item *
-
-When adding contributors based on a type that allows multiple roles, you no
-longer have to select the role if the contributor has only one role. Reported
-by Phillip Smith. [David]
 
 =back
 
