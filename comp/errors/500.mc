@@ -88,7 +88,7 @@ END DEBUGGING INFORMATION -->
 %         unshift @elements, $parent;
 %     }
 <p>Location of the error:<br/>
-<% shift(@elements)->get_name %> -> <% join(' -> ', map { $_->get_name . '[' . $_->get_object_order . ']' } @elements) %></p>
+<% shift(@elements)->get_name %> -> <% join(' -> ', map { $_->get_name . '[' . ($_->get_place + 1) . ']' } @elements) %></p>
 % }
 
 % unless (isa_bric_exception($fault, 'Exception::Burner::User')) {

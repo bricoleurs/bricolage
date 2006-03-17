@@ -260,6 +260,14 @@ When multiple versions of a document are published before any of the publish
 jobs for those versions is executed no longer leads to publishing errors when
 the older version is published. Thanks to Rod Taylor for the spot! [David]
 
+=item *
+
+The element trace generated for burn errors (those created by C<<
+$burner->throw_error() >>) no use the place attribute of the element where the
+error was thrown, rather than the object order, since the place corresponds to
+the "Position" select list orderings in the UI, and therefore makes it much
+simpler to figure out where the error is. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
