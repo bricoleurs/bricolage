@@ -85,6 +85,11 @@ C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
 Changed the title of the Trail page from "Desk Stamps" to "Trail." Reported by
 Scott. [David]
 
+=item *
+
+It is now possible to look up stories, media, and templates by version IDs
+other than the current version ID. [David]
+
 =back
 
 =head2 Improvements
