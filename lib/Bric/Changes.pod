@@ -14,6 +14,22 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.8.11 ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The C<throw_error()> burner method now accepts a list of arguments for an
+error message, rather than only a single argument. It will concatenate them
+all together so that you don't have to. [David]
+
+=back
+
+=back
+
 =head1 VERSION 1.8.10 (2006-03-16)
 
 =head2 Improvements
