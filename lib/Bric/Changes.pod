@@ -28,6 +28,17 @@ all together so that you don't have to. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+My Workspace now remembers the sort order of assets as well as desks do.
+[David]
+
+=back
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)

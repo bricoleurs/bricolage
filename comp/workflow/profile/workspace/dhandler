@@ -44,7 +44,7 @@ foreach my $class (qw(story media formatting)) {
     $m->comp('/widgets/desk/desk.mc',
              user_id => $id,
              class   => $class,
-             sort_by => $ARGS{"$class\_sort_by"} || get_pref('Default Asset Sort'),
+             sort_by => $ARGS{"$class\_sort_by"},
              offset   => $ARGS{offset} || 0,
              show_all => $ARGS{show_all},
     );
