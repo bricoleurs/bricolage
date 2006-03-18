@@ -171,4 +171,3 @@ sub get_host {
         $QUIET,
     );
 }
-

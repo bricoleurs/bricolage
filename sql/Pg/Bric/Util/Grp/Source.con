@@ -2,7 +2,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 ALTER TABLE    source_member
 ADD CONSTRAINT fk_source__source_member FOREIGN KEY (object_id)

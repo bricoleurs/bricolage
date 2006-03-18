@@ -3,7 +3,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.1.2
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 ALTER TABLE    event_type
 ADD CONSTRAINT fk_class__event_type FOREIGN KEY (class__id)

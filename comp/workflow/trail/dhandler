@@ -1,8 +1,7 @@
 <& '/widgets/wrappers/sharky/header.mc',
-    title => "$disp->{$type} Desk Stamps",
+    title => "$disp->{$type} Trail",
     context => "Workflow | Profile | $disp->{$type} | &quot;"
-               . $obj->get_name . "&quot; | Desk Stamps" &>
-
+               . $obj->get_name . "&quot; | Trail" &>
 <form method="post" action="<% $r->uri %>" name="theForm">
 
 <& '/widgets/eventList/eventList.mc',

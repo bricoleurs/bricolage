@@ -391,7 +391,7 @@ sub create_thumbnail {
     my $format;
     if (my $mime = $self->get_media_type) {
         (my $mt = $mime->get_name) =~ s|.*/||;
-        $format = $Imager::FORMATGUESS->(".$mt")
+        $format = $Imager::FORMATGUESS->(".$mt") || $Imager::FORMATGUESS->($path);
     } else {
         $format = $Imager::FORMATGUESS->($path);
     }

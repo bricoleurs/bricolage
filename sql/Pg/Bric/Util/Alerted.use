@@ -3,14 +3,14 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO alerted (id, usr__id, alert__id)
 VALUES (1, 2, 1);
 
 INSERT INTO alerted__contact_value
        (alerted__id, contact_value__id, contact_value__value, sent_time)
-VALUES (1, 1, 'david@wheeler.net', SYSDATE);
+VALUES (1, 1, 'david@justatheory.com', SYSDATE);
 
 UPDATE alerted
 SET    ack_time = SYSDATE

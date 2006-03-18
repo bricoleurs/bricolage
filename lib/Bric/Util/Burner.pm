@@ -1951,14 +1951,17 @@ sub display_pages {
 
 ##############################################################################
 
-=item $burner->throw_error($message);
+=item $burner->throw_error(@message);
 
-  my $media = $element->get_related_media
-    or $burner->throw_error("Hey, you forgot to associate a media document!");
+  my $media = $element->get_related_media or $burner->throw_error(
+      'Hey, you forgot to associate a media document! ',
+      'What were you thinking?',
+  );
 
-Throws a Bric::Util::Fault::Exception::Burner::User exception. The error
-message passed as an argument will be displayed in the UI so that your user
-can see any mistakes you caught and fix them.
+Throws a Bric::Util::Fault::Exception::Burner::User exception. The arguments
+passed to the method will be joined into a single erroor message that will be
+displayed in the UI so that your user can see any mistakes you caught and fix
+them.
 
 B<Throws:> NONE.
 
@@ -1969,15 +1972,15 @@ B<Notes:> NONE.
 =cut
 
 sub throw_error {
-    my ($self, $error) = @_;
+    my $self = shift;
     my ($oc, $cat, $elem) = $self->_get(qw(oc cat element));
-    @_ = (error => $error,
-          mode  => $self->get_mode,
-          oc    => ($oc ? $oc->get_name : ''),
-          cat   => ($cat ? $cat->get_uri : ''),
-          elem  => ($elem ? $elem->get_name : ''),
-          ($elem ? (element => $elem) : ()));
-    goto &throw_burn_user;
+    throw_burn_user
+        error => join('', @_),
+        mode  => $self->get_mode,
+        oc    => ($oc   ? $oc->get_name   : ''),
+        cat   => ($cat  ? $cat->get_uri   : ''),
+        elem  => ($elem ? $elem->get_name : '')
+    ;
 }
 
 ##############################################################################
@@ -2156,7 +2159,7 @@ Sam Tregar <stregar@about-inc.com>
 
 Matt Vella <mvella@about-inc.com>
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

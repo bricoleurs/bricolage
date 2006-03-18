@@ -105,8 +105,8 @@ $m->comp('/widgets/listManager/listManager.mc',
     object => $obj_key,
     profile => $prof_sub,
     fields => $def->{$type}{list_fields},
-    addition => $type eq 'pref' || $type eq 'job' 
-                ? undef 
+    addition => $type eq 'pref' || $type eq 'job'
+                ? undef
                 : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
     select => $def->{$type}{select},
     constrain => $constrain || $def->{$type}{constrain},
@@ -117,7 +117,7 @@ $m->comp('/widgets/listManager/listManager.mc',
     sortBy => $def->{$type}{sort_by} );
 
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
-    
+
 # Output the form closing tag if necessary.
 if (defined $def->{$type}{select} && $can_del) {
     if ($type ne "job") {
@@ -199,10 +199,10 @@ my $prof_sub = sub {
       || ($type eq 'user' && $_[0]->get_id == get_user_id())
       || ($type eq 'alert_type' && $_[0]->get_owner_id == get_user_id());
     my $override = ($type eq "user" && chk_authz($_[0], EDIT, 1))
-      ? ['Log In', '/', 'login|masquerade_cb='.$_[0]->get_login] 
+      ? ['Log In', '/', 'login|masquerade_cb='.$_[0]->get_login]
       : undef;
-    return ($type ne 'contrib') 
-      ? ($override) ? [ $edit, [ 'Log', "/admin/events/$type/$id", ''], $override ] 
+    return ($type ne 'contrib')
+      ? ($override) ? [ $edit, [ 'Log', "/admin/events/$type/$id", ''], $override ]
                     : [ $edit, [ 'Log', "/admin/events/$type/$id", ''] ]
       : [ $edit, [$_[0]->all_for_subsys
                     ? ('New', "/admin/profile/contrib/extend/$id", '')
@@ -459,6 +459,7 @@ my $def = {
         constrain    => { comp_time => undef },
         field_values => $usr_sub,
         select       => $sel_sub,
+        sort_by      => 'sched_time',
         alter => {
             type => $job_type_sub,
             name => $job_name_sub,

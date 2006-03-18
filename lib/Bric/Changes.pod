@@ -1357,6 +1357,140 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
+=head1 VERSION 1.8.11 ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The C<throw_error()> burner method now accepts a list of arguments for an
+error message, rather than only a single argument. It will concatenate them
+all together so that you don't have to. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+My Workspace now remembers the sort order of assets as well as desks do.
+[David]
+
+=back
+
+=head1 VERSION 1.8.10 (2006-03-16)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Changed (hopefully optimized) the buffer size when reading in files on
+media upload. [Scott]
+
+=item *
+
+The installer no longer prompts for the PostgreSQL system username if the
+PostgreSQL server is not running on the local box. It therefore also no longer
+becomes that user in such cases. This will simplify installing Bricolage onto
+a remote PostgreSQL server. [David]
+
+=item *
+
+The Jobs manager now sorts pending jobs by scheduled time rather than name.
+[David]
+
+=item *
+
+Desks now remember the sort order you selected when you last visited them, for
+the duration of a single login to Bricolage. [David]
+
+=item *
+
+When adding contributors based on a type that allows multiple roles, you no
+longer have to select the role if the contributor has only one role. Suggested
+by Phillip Smith. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Eliminated errors inserting array references fetched from image info while
+uploading and saving new image files. Reported by Michael Holden. Also
+documented extra methods not previously documented in
+L<Bric::App::MediaFunc|Bric::App::MediaFunc>. [David]
+
+=item *
+
+Fixed typo in the final message after an upgrade completes. Reported by Nate
+Perry-Thistle. [David]
+
+=item *
+
+Fixed a 1.8.9 upgrade script that adds a foreign key constraint to the
+"element_member" table so that it properly tests for the foreign key
+constraint before it tries to add it. Reported by Wayne Slavin. [David]
+
+=item *
+
+Refined a few other upgrade scripts, with thanks to Rod Taylor. [David]
+
+=item *
+
+L<Bric::Biz::Person::User|Bric::Biz::Person::User> loads again under
+F<bric_queued>. [David]
+
+=item *
+
+The thumbnail-generating code now tries even harder to determine the media
+type of a file, thus more likely supporting files that it might not have been
+able to support before. [Rod Taylor]
+
+=item *
+
+F<bric_republish> no longer reverses the meaning of its C<--published-only>
+option. [David]
+
+=item *
+
+Publishing via SOAP works again. It was broken in 1.8.9, where it would appear
+to succeed, but no story or media would ever actually be distributed. [David]
+
+=item *
+
+Updated the Bricolage users list email address and archive link in
+L<Bric::Admin|Bric::Admin>/F<INSTALL>. Reported by Michael Cummings [David]
+
+=item *
+
+Sort ordering on desks is no longer forgotten over multiple pages of assets on
+a desk. Thanks to Phillip Smith for the spot! [David]
+
+=item *
+
+Changed the title of the Trail page from "Desk Stamps" to "Trail." Reported by
+Scott. [David]
+
+=item *
+
+It is now possible to look up stories, media, and templates by version IDs
+other than the current version ID. [David]
+
+=back
+
+=cut
+
+##############################################################################
+
 =head1 VERSION 1.8.9 (2006-01-23)
 
 =head2 Improvements
@@ -9808,7 +9942,7 @@ Initial public release.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

@@ -267,13 +267,12 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
-L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>, 
+L<Bric|Bric>,
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>,
 L<Bric::Util::Grp|Bric::Util::Grp>
 
 =cut
-

@@ -332,6 +332,10 @@ Friends who have spotted bugs include:
 
 =item Li Li
 
+=item Michael Holden
+
+=item Michael Cummings
+
 =item Derek Poon
 
 =item Ryan O'Toole

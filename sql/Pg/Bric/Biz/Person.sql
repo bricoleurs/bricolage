@@ -3,7 +3,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS: PostgreSQL 7.1.2
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 -- This DDL creates the basic table for all Bric::Person objects. The indexes are
 -- suggestions.

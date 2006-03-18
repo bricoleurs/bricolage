@@ -235,8 +235,8 @@ upgrade_done    :
 	@echo ===========================================================
 	@echo ===========================================================
 	@echo 
-	@echo Bricolage Upgrade Complete.  You may now start your
-	@echo servers to start using the new version of Bricolage.
+	@echo Bricolage Upgrade Complete. You may now start your
+	@echo server and start using the new version of Bricolage.
 	@echo 
 	@echo ===========================================================
 	@echo ===========================================================

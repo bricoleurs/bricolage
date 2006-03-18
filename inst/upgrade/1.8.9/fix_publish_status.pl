@@ -6,6 +6,8 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
+exit if test_constraint 'story', 'ck_story__publish_status';
+
 # Later versions will have booleans instead of NUMERIC.
 my ($true, $false)
     = test_column('story', 'publish_status', undef, undef, 'boolean')

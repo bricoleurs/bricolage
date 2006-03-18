@@ -7,7 +7,7 @@ use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
 exit unless test_table 'element_member';
-exit if test_constraint 'element_member', 'fk_member__at_member';
+exit if test_foreign_key 'element_member', 'fk_member__at_member';
 
 do_sql
     q{ DELETE FROM element_member

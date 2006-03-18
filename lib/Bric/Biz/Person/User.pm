@@ -88,6 +88,8 @@ use Bric::Util::Fault qw(throw_dp throw_gen);
 use Bric::Util::Priv;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(db_date);
+use Bric::Util::UserPref;
+
 # Load Authentication engines.
 BEGIN { eval "require $_" or die $@ for AUTH_ENGINES }
 
@@ -1574,7 +1576,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

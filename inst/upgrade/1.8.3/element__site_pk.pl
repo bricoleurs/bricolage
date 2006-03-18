@@ -32,5 +32,6 @@ do_sql
      ADD CONSTRAINT ck_element__site__id__null CHECK (id IS NOT NULL)},
 
   # Make it the primary key.
-  qq{ALTER TABLE element__site ADD PRIMARY KEY (id)},
+  qq{ALTER TABLE element__site
+     ADD CONSTRAINT pk_element__site__id PRIMARY KEY (id)},
   ;

@@ -841,7 +841,8 @@ sub clean_params {
     $param->{_no_return_versions} = 1
       unless $param->{return_versions}
       || defined $param->{version}
-      || $param->{published_version};
+      || $param->{published_version}
+      || $param->{version_id};
     # add default order
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id
@@ -1924,7 +1925,7 @@ NONE.
 
 =head1 AUTHOR
 
-David E. Wheeler <david@wheeler.net>
+David E. Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

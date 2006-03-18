@@ -2964,7 +2964,7 @@ their children and so on as well
 =head1 AUTHOR
 
 Michael Soderstrom <miraso@pacbell.net>. Member management and documentation
-by David Wheeler <david@wheeler.net>.
+by David Wheeler <david@justatheory.com>.
 
 =head1 SEE ALSO:
 

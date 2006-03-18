@@ -887,7 +887,7 @@ Garth Webb L<gt>garth@perijove.comL<lt>
 
 Sam Tregar L<gt>stregar@about-inc.comL<lt>
 
-David Wheeler L<gt>david@wheeler.netL<lt>
+David Wheeler L<gt>david@justatheory.comL<lt>
 
 =head1 SEE ALSO
 

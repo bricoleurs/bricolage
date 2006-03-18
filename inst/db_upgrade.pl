@@ -73,7 +73,8 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     next unless -d $dir;
 
     opendir(DIR, $dir) or die "can't opendir $dir: $!";
-    my @scripts = grep { -f $_ } map { catfile($dir, $_) } sort readdir(DIR);
+    my @scripts = grep { -f $_ and $_ =~ /\.pl$/ }
+        map { catfile($dir, $_) } sort readdir(DIR);
     closedir DIR;
 
     foreach my $script (@scripts) {

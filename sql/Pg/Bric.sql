@@ -2,7 +2,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 --
 
 -- This DDL is for the creation of universal stuff needed by other DDLs, such as

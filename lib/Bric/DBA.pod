@@ -424,7 +424,7 @@ won't be able to do this.
 
 =head1 AUTHORS
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 Mark Jaroski <jaroskim@who.int>
 

@@ -33,7 +33,7 @@ $work_id => undef
 $style   => 'standard'
 $action  => undef
 $wf      => undef
-$sort_by => get_pref('Default Asset Sort') || 'cover_date'
+$sort_by => undef
 $offset  => 0
 $show_all => undef
 </%args>
@@ -195,16 +195,26 @@ my $pkg   = get_package_name($class);
 my $meths = $pkg->my_meths;
 my $desk_type = 'workflow';
 my $mlabel = 'Move to';
+my $order_key;
 
 if (defined $desk_id) {
     # This is a workflow desk.
     $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $desk_id});
+    $order_key = "$class\_order_desk_$desk_id";
 }
 elsif (defined $user_id) {
     # This is a user workspace
     $desk_type = 'workspace';
     $mlabel = 'Check In to';
+    $order_key = "$class\_order_ws_$user_id";
 }
+# Initialize the ordering.
+$sort_by ||= get_state_data($widget, $order_key)
+         || get_pref('Default Asset Sort')
+         || 'cover_date';
+
+set_state_data($widget, $order_key => $sort_by);
+
 #-- Output each desk item  --#
 my $highlight = $sort_by;
 unless ($highlight) {

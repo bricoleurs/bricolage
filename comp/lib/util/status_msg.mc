@@ -50,6 +50,6 @@ draw in below the status messages.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 </%doc>
