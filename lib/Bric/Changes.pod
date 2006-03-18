@@ -27,17 +27,17 @@ F<contrib/template_profiling>. [Scott]
 
 =item *
 
-ContribType, Destination, and Preference SOAP modules. [Scott]
+Added ContribType, Destination, and Preference SOAP modules. [Scott]
 
 =item *
 
-When a page finishes loading, the first text or textarea field in the form now
+When a page finishes loading, the first text or textarea form field now
 automatically gets the focus. [David]
 
 =item *
 
 Added upload and download feature to the template interface, so that templates
-can optionaly be uploaded or downloaded. Suggested by Chris Sutton. [David]
+can optionally be uploaded or downloaded. Suggested by Chris Sutton. [David]
 
 =back
 
@@ -53,7 +53,7 @@ disabled or the media documents need to be previewed. [David]
 
 =item *
 
-Removed call to removed component F<comp/widgets/qa/qa.mc> from the side
+Removed call to deleted component F<comp/widgets/qa/qa.mc> from the side
 navigation component. This was only an issue when the C<QA_MODE>
 F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
 
@@ -75,28 +75,29 @@ L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
 
 =item *
 
-Fixed a foreign key constraint on "media_element.related_story__id" that was
-pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
+Fixed a foreign key constraint on C<media_element.related_story__id> that was
+pointing to C<media.id> instead of C<story.id>. Reported by Rod Taylor.
+[David]
 
 =item *
 
-Added a 'make devclone' option which does the same as 'make clone' but removes
-all of the locally previewed files, the obj files, staging and sandboxes. This
-means a large saving in download size of cloned production systems. [Paul
+Added a C<make devclone> option which does the same as C<make clone> but
+removes all of the locally previewed files, the F<data/obj> files, staging and
+sandboxes. This means a large saving in download size for cloned production
+systems. [Paul Orrock]
+
+=item *
+
+Added C<ALLOW_URIS_WITHOUT_CATEGORIES> F<bricolage.conf> directive to allow
+URI formats not to include "%{categories}", which is otherwise rquired. Use
+this directive with caution since it is not the recommended behaviour. [Paul
 Orrock]
 
 =item *
 
-Added C<ALLOW_URIS_WITHOUT_CATEGORIES> F<bricolage.conf> directive to turn off
-check for "%{categories}" in an output channel URI format. This directive
-should be used with caution since this is not the recommended behaviour. [Paul
-Orrock]
-
-=item *
-
-Added tooltip to show the underlying Bricolage database ID when the UUID is
-hovered over with the mouse. This is the partner to showing the UUID when the
-hovering over the Bricolage ID in a desk view. [Paul Orrock]
+Added a tooltip to show the underlying Bricolage database ID when hovering
+over a UUID in a story profile. This feature complements showing the UUID when
+the hovering over the Bricolage ID in a desk view. [Paul Orrock]
 
 =item *
 
@@ -107,7 +108,7 @@ tables created by earlier scripts. Reported by Nate Perry-Thistle. [David]
 
 =item *
 
-Changed the database coluns for the "name", "key_name", and "description"
+Changed the database columns for the C<name>, C<key_name>, and C<description>
 attributes of
 L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>
 from C<VARCHAR> to C<TEXT>, since some folks will have field types with names
@@ -118,18 +119,17 @@ and key names longer than 32 characters. Reported by Nate Perry-Thistle.
 
 Created two new make targets, "install_files" and "install_db", to allow the
 files to be installed without doing anything with the database. Useful for
-packagers who need to let the user create the database on her own. "make
-install_files install_db" is equivalent to "make install". [Marshall]
+packagers who need to let users manually create the database. [Marshall]
 
 =item *
 
 Updated L<Bric::ElementAdmin|Bric::ElementAdmin> to be conversant in the
 merging of element type sets and elements. That is, it now makes sense in the
-contextd of Bricolage 1.10. Reported by Ryan O'Toole. [David]
+context of Bricolage 1.10. Reported by Ryan O'Toole. [David]
 
 =item *
 
-The View/Edit link has been restored to storis, media, and templates on desks,
+The View/Edit link has been restored to stories, media, and templates on desks,
 and the title has been returned to its status as a preview link. The URI is no
 longer a link. [David]
 
@@ -169,11 +169,12 @@ saves the renamed file. [Paul Orrock]
 
 =item *
 
-Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
+Fixed the UI display in Firefox and IE. Particularly Meta Assets displaying
 down the page in IE, stretching out the banner in desks, corrected side menu
-position in IE and removed reference to broken images left in from CSS
+position in IE and removed reference to broken images left in from the CSS
 reworking. Also fixed textarea which was ignoring cols setting in IE and set
-textarea col width for bulk edit to 80 wide, rather than 30. [Paul Orrock]
+textarea col width for bulk edit to 80 wide, rather than 30 (although it
+should expand with the window size in most browsers). [Paul Orrock]
 
 =item *
 
@@ -196,8 +197,8 @@ Wilcox. [David]
 
 =item *
 
-Disabled the "sticky" scrollbar in the story profile. It just didn't work too
-well. [David]
+Disabled the "sticky" scroll bar in the story profile. It just didn't work
+very well. [David]
 
 =item *
 
@@ -248,7 +249,7 @@ Fixed the selection of text triggered by the Find dialog box on Mozilla and IE
 
 =item *
 
-Fixed the size of the preview links on the desktop. [David]
+Fixed the size of the preview links on desks/My workspace. [David]
 
 =item *
 
@@ -256,17 +257,17 @@ Failed jobs can once again be cancelled. Reported by Rod Taylor. [David]
 
 =item *
 
-When multiple versions of a document are published before any of the publish
-jobs for those versions is executed no longer leads to publishing errors when
-the older version is published. Thanks to Rod Taylor for the spot! [David]
+Publishing multiple versions of a document before any of the publish jobs for
+those versions are executed no longer leads to publishing errors when the
+older version is published. Thanks to Rod Taylor for the spot! [David]
 
 =item *
 
-The element trace generated for burn errors (those created by C<<
-$burner->throw_error() >>) no use the place attribute of the element where the
-error was thrown, rather than the object order, since the place corresponds to
-the "Position" select list orderings in the UI, and therefore makes it much
-simpler to figure out where the error is. [David]
+The element trace generated for burn errors (those created by
+C<< $burner->throw_error() >>) now use the C<place> attribute of the element
+where the error was thrown, rather than the C<object_order>, since C<place>
+corresponds to the "Position" select list orderings in the UI, and therefore
+makes it much simpler to figure out where the error is. [David]
 
 =back
 
