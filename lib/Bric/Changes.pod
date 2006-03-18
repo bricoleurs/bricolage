@@ -39,8 +39,6 @@ My Workspace now remembers the sort order of assets as well as desks do.
 
 =back
 
-=back
-
 =head1 VERSION 1.8.10 (2006-03-16)
 
 =head2 Improvements
