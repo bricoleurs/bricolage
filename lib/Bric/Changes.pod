@@ -49,31 +49,9 @@ disabled or the media documents need to be previewed. [David]
 
 =item *
 
-Removed call to deleted component F<comp/widgets/qa/qa.mc> from the side
-navigation component. This was only an issue when the C<QA_MODE>
-F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
-
-=item *
-
-Fixed the typo "Distribintion" in the side navigation. Thanks to Christian
-Niles for the spot. [David]
-
-=item *
-
 Added installation defaults for FreeBSD that will be used when the
 C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
 [Rod Taylor]
-
-=item *
-
-Fixed some errors in and rearranged the SOAP schema in
-L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
-
-=item *
-
-Fixed a foreign key constraint on C<media_element.related_story__id> that was
-pointing to C<media.id> instead of C<story.id>. Reported by Rod Taylor.
-[David]
 
 =item *
 
@@ -94,13 +72,6 @@ Orrock]
 Added a tooltip to show the underlying Bricolage database ID when hovering
 over a UUID in a story profile. This feature complements showing the UUID when
 the hovering over the Bricolage ID in a desk view. [Paul Orrock]
-
-=item *
-
-The database upgrade script now updates table permissions after executing all
-of the scripts for each version to be upgraded, rather than after all of the
-upgrade scripts have run, thus allowing later scripts to properly access
-tables created by earlier scripts. Reported by Nate Perry-Thistle. [David]
 
 =item *
 
@@ -142,9 +113,38 @@ Made the "Upload" section of the media profile valid XHTML styled with CSS.
 
 =item *
 
+Removed call to deleted component F<comp/widgets/qa/qa.mc> from the side
+navigation component. This was only an issue when the C<QA_MODE>
+F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
+
+=item *
+
+Fixed the typo "Distribintion" in the side navigation. Thanks to Christian
+Niles for the spot. [David]
+
+=item *
+
+Fixed some errors in and rearranged the SOAP schema in
+L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
+
+=item *
+
+Fixed a foreign key constraint on C<media_element.related_story__id> that was
+pointing to C<media.id> instead of C<story.id>. Reported by Rod Taylor.
+[David]
+
+=item *
+
 Fixed localization errors such as, "Can't use "for Published" as a method name
 in bracket group," which appeared in searches and on desks. Thanks to Guido
 Bülskämper for the spot! [David]
+
+=item *
+
+The database upgrade script now updates table permissions after executing all
+of the scripts for each version to be upgraded, rather than after all of the
+upgrade scripts have run, thus allowing later scripts to properly access
+tables created by earlier scripts. Reported by Nate Perry-Thistle. [David]
 
 =item *
 
