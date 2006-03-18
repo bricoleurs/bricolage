@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
+use Test::MockModule;
 
 ##############################################################################
 # Test class loading.
@@ -37,6 +38,11 @@ sub test_const : Test(13) {
     ok( $u->is_active, "Person is active" );
     is( $u->format_name("%p% f% M% l%, s"), 'Mr. David E. Wheeler, MA',
         'Check formatted name');
+
+    # Make sure that we fake out LDAP auth, in case that's how it's configured.
+    my $ldap_mock = Test::MockModule->new('Bric::Util::AuthLDAP', no_auto => 1);
+    my @retvals = (1, 0);
+    $ldap_mock->mock(authenticate => sub { shift @retvals });
 
     # Test the password.
     ok( $u->set_password($pw), "Set password" );

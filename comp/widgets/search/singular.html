@@ -6,7 +6,7 @@ $use_form_tag
 $state
 </%args>
 % if ($use_form_tag) {
-<form action="<% $r->uri %>" method="post">
+<form action="<% $r->uri %>" method="post" id="searchbox">
 % }
 <& /widgets/wrappers/sharky/table_top.mc,
    caption => $lang->maketext('Search'),

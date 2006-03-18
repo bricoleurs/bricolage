@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 SELECT o.id, o.name, o.long_name, o.active, po.id, po.person__id, po.type,
        po.department, po.title, po.active

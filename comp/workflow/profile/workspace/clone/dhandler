@@ -27,7 +27,7 @@ Display the page after you click 'Clone' in 'My Workspace'.
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm"
- onSubmit="return confirmChanges(this)">
+ onsubmit="return confirmChanges(this)">
 
 <& '/widgets/story_prof/story_prof.mc',
     section  => 'clone',

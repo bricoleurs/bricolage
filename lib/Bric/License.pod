@@ -196,6 +196,8 @@ Folks who have submitted patches include:
 
 =item Alexey Sheynuk
 
+=item Christian Niles
+
 =back
 
 Friends who have spotted bugs include:
@@ -329,6 +331,14 @@ Friends who have spotted bugs include:
 =item Frank Febbraro
 
 =item Li Li
+
+=item Michael Holden
+
+=item Michael Cummings
+
+=item Derek Poon
+
+=item Ryan O'Toole
 
 =back
 

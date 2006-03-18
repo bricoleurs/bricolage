@@ -50,7 +50,6 @@ use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::MediaType;
-use URI::Escape ();
 
 #==============================================================================#
 # Inheritance                          #
@@ -375,7 +374,19 @@ use constant DEFAULT_ORDER => 'cover_date';
 
 #--------------------------------------#
 # Private Class Fields
-my ($meths, @ord);
+my ($meths, @ord, $ESCAPE_URI);
+
+BEGIN{
+    if ($ENV{MOD_PERL}) {
+        require Apache::Util;
+        rethrow_exception($@) if $@;
+        $ESCAPE_URI = \&Apache::Util::escape_uri;
+    } else {
+        require URI::Escape;
+        rethrow_exception($@) if $@;
+        $ESCAPE_URI = \&URI::Escape::uri_escape;
+    }
+}
 
 #--------------------------------------#
 # Instance Fields
@@ -1503,7 +1514,6 @@ sub upload_file {
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
     Bric::Util::Trans::FS->mk_path($dir);
-    my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
     if (MEDIA_UNIQUE_FILENAME) {
         # split the uploaded filename into prefix and ext
@@ -1532,10 +1542,12 @@ sub upload_file {
         $name = $prefix . $ext;
     }
 
+    my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
+
     local *FILE;
     open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
     my $buffer;
-    while (read($fh, $buffer, 10240)) { print FILE $buffer }
+    while (read($fh, $buffer, 4096)) { print FILE $buffer }
     close $fh;
     close FILE;
     $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
@@ -1566,7 +1578,7 @@ sub upload_file {
     $self->_set(['file_name'], [$name]);
     my $uri = Bric::Util::Trans::FS->cat_uri(
         $self->_construct_uri($self->get_category_object, $oc_obj),
-        URI::Escape::uri_escape($oc_obj->get_filename($self))
+        $ESCAPE_URI->($oc_obj->get_filename($self))
     );
 
     $self->_set( [qw(location uri _update_uri)] => [ $new_loc, $uri, 1 ] );
@@ -1813,8 +1825,8 @@ B<Notes:> NONE.
 sub save {
     my $self = shift;
 
-    my ($id, $active, $update_uris, $preview) =
-      $self->_get(qw(id _active _update_uri needs_preview));
+    my ($id, $vid, $version, $active, $update_uris, $preview, $cancel) =
+      $self->_get(qw(id version_id version _active _update_uri needs_preview _cancel));
 
     # Start a transaction.
     begin();
@@ -1823,20 +1835,25 @@ sub save {
             # we have the main id make sure there's a instance id
             $self->_update_media();
 
-            if ($self->_get('version_id')) {
-                if ($self->_get('_cancel')) {
-                    $self->_delete_instance();
-                    if ($self->_get('version') == 0) {
-                        $self->_delete_media();
-                    }
-                    $self->_set( {'_cancel' => undef });
+            if ($vid) {
+                if ($cancel) {
+                    $self->_delete_instance;
+                    $self->_delete_media if $version == 0;
+                    $self->_delete_file;
+                    $self->_set(['_cancel'] => []);
                     commit();
                     return $self;
                 } else {
                     $self->_update_instance();
                 }
             } else {
-                $self->_insert_instance();
+                if ($cancel) {
+                    $self->_delete_file;
+                    commit();
+                    return $self;
+                } else {
+                    $self->_insert_instance();
+                }
             }
         } else {
             # insert both
@@ -1879,20 +1896,8 @@ sub save {
         rollback();
         rethrow_exception($err);
     }
-    if (AUTO_PREVIEW_MEDIA && $preview) {
-        # Go ahead and distribute to the preview server(s).
-        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
-        $burner->preview($self, 'media', get_user_id, $_->get_id)
-          for $self->get_output_channels;
-        $self->_set(['needs_preview'] => [0]);
-    }
-
-    if (AUTO_PREVIEW_MEDIA && $preview) {
-        # Go ahead and distribute to the preview server(s).
-        my $burner = Bric::Util::Burner->new({ out_dir => PREVIEW_ROOT });
-        $burner->preview($self, 'media', get_user_id, $_->get_id)
-          for $self->get_output_channels;
-        $self->_set(['needs_preview'] => [0]);
+    if (AUTO_PREVIEW_MEDIA && $preview && !$cancel) {
+        $self->_preview;
     }
 
     return $self;
@@ -2207,12 +2212,44 @@ B<Notes:> NONE.
 
 sub _delete_instance {
     my $self = shift;
-
-    my $sql = 'DELETE FROM ' . VERSION_TABLE .
-      ' WHERE id=? ';
-
-    my $sth = prepare_c($sql, undef);
+    # Delete the database record.
+    my $sth = prepare_c('DELETE FROM ' . VERSION_TABLE . ' WHERE id=? ');
     execute($sth, $self->_get('version_id'));
+    return $self;
+}
+
+################################################################################
+
+=item $self = $self->_delete_file()
+
+Deletes the version directory for the current version if it exists.
+
+B<Throws:> NONE.
+
+B<Side Effects:> If the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
+enabled, the previous version of the media document will be looked up and its
+media file previewed, so as to replace the deleted media preview.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _delete_file {
+    my $self = shift;
+
+    # Figure out where any new files would have been created.
+    my ($id, $v) = $self->_get(qw(id version file_name));
+    my @id_dirs = $id =~ /(\d\d?)/g;
+    my $dir = Bric::Util::Trans::FS->cat_dir(MEDIA_FILE_ROOT, @id_dirs, "v.$v");
+    return $self unless -d $dir;
+
+    Bric::Util::Trans::FS->del($dir);
+
+    if (AUTO_PREVIEW_MEDIA && $v) {
+        $self->uncache_me;
+        my $prev = ref($self)->lookup({ id => $id });
+        $prev->_preview;
+    }
     return $self;
 }
 
@@ -2271,12 +2308,38 @@ sub _do_update {
     my $self = shift;
 
     my $sql = 'UPDATE ' . TABLE . ' '.
-      'SET ' . join(', ', map { "$_=?" } COLS) .
-                                ' WHERE id=? ';
+        'SET ' . join(', ', map { "$_ = ?" } COLS) .
+        ' WHERE id=? ';
 
     my $update = prepare_c($sql, undef);
     execute($update, $self->_get( FIELDS ), $self->_get('id') );
     return $self;
+}
+
+################################################################################
+
+=item $self = $self->_preview()
+
+Previews the media document.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _preview {
+    my $self = shift;
+    my $burner = Bric::Util::Burner->new({
+        out_dir              => PREVIEW_ROOT,
+        _output_preview_msgs => 0,
+    });
+
+    $burner->preview($self, 'media', get_user_id, $_->get_id)
+        for $self->get_output_channels;
+    $self->_set(['needs_preview'] => [0]);
 }
 
 1;

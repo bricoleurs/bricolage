@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 --
 
 -- All default values are in EventType.val, since they depend on values

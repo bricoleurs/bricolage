@@ -5,7 +5,7 @@
 --
 -- $LastChangedDate$
 -- Target DBMS : Oracle 8
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 ALTER TABLE    event
 ADD CONSTRAINT fk_event_type__event FOREIGN KEY (event_type__id)

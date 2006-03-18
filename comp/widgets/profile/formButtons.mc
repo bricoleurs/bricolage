@@ -18,7 +18,7 @@ $ret_val   => 'cancel_red'
 
 <table>
 <tr>
-  <td colspan=2>
+  <td colspan="2">
 <%perl>;
 $m->comp('/widgets/profile/displayFormElement.mc',
           key => 'delete',

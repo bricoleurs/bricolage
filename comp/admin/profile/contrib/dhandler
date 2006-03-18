@@ -9,7 +9,7 @@ function contribJump(obj) {
 % # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
 <& /widgets/wysiwyg/load.mc &>
 % }
-<form method="post" action="<% $r->uri %>" name="contrib_profile" onSubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
+<form method="post" action="<% $r->uri %>" name="contrib_profile" onsubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
 
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc',

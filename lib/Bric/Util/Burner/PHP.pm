@@ -722,11 +722,11 @@ NONE.
 
 =head1 AUTHOR
 
-Garth Webb L<gt>garth@perijove.comL<lt>
+Garth Webb <garth@perijove.com>
 
-Sam Tregar L<gt>stregar@about-inc.comL<lt>
+Sam Tregar <stregar@about-inc.com>
 
-David Wheeler L<gt>david@wheeler.netL<lt>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

@@ -77,12 +77,13 @@ if(ref($title) eq 'ARRAY') {
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
 <title><% $title %></title>
-<script type="text/javascript">
+<script type="text/javascript"><!--
 var lang_key = '<% $lang_key %>';
 var checkboxValues = new Array();
 multiOnload.onload(function () {
+    findFocus();
     <% $jsInit %>;
-    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
+% #    restoreScrollXY(<% $scrollx %>, <% $scrolly %>);
 });
 
 % if ($no_toolbar) {
@@ -94,7 +95,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
     history.forward(1);
 }
 % } # if
-</script>
+--></script>
 </head>
 <body>
 <noscript>
@@ -105,7 +106,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 <div id="mainContainer">
 <div id="bricLogo">
 % if ($useSideNav) {
-        <a href="#" title="About Bricolage" id="btnAbout" onclick="openAbout()"><img src="/media/images/bricolage.gif" /></a>
+        <a href="#" title="About Bricolage" id="btnAbout" onclick="openAbout()"><img src="/media/images/bricolage.gif" alt="Bricolage" /></a>
 % } else {
         <img src="/media/images/bricolage.gif" alt="Bricolage" />
 % }
@@ -124,7 +125,7 @@ if ($useSideNav) {
         chomp $uri;
         $m->out( qq{<iframe name="sideNav" id="sideNav" } .
                  qq{        src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" } .
-                 qq{        scrolling="no" frameborder="no"></iframe>} );
+                 qq{        scrolling="no" frameborder="0"></iframe>} );
     }
 }
 

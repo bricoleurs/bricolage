@@ -1,0 +1,86 @@
+How to profile Bricolage templates
+  o  Scott Lanning, 2006-03-05
+
+If you use Mason templates, this is a way to time how long
+components take to execute.
+  In Bricolage version > 1.9, there's a bricolage.conf directive
+called MASON_INTERP_ARGS which you can use to pass arguments to
+the HTML::Mason Interp object that handles your Bric templates.
+If you use HTML::Mason >= 1.29, there's a "plugin architecture"
+that lets you add subroutines to be run before and after
+components and requests. If you put
+
+  MASON_INTERP_ARGS = plugins => ['Bric::Profile::Templates']
+
+in conf/bricolage.conf, where Bric::Profile::Templates is a subclass
+of HTML::Mason::Plugin, you can do template profiling.
+  You could print the profiling information to STDERR (like in the
+example in the HTML::Mason::Plugin docs), but that would be messy
+since you'd have to parse your Apache error_log. I guess you could
+print it to another file, but I didn't want to have to worry about
+locks and things like that, so I used a datbase table. Create the
+table in your bricolage database, using
+
+  $ psql $TABLENAME < create-prof-table.sql
+
+You have to grant permissions on it, so run the following from wherever
+you installed Bricolage.
+
+  # make db_grant
+
+I think enough data is recorded to recreate anything you want.
+For example, you can join profile_comp.story_element_id to
+story_element.id, story_element.object_instance_id to story_instance.id,
+story_instance.story__id to story.id. With end_time and duration,
+you can infer the start time.
+  The plugin relies on Bric::Util::DBI for the database connection.
+Note that you can get the global $story, $element, and $burner
+variables with $Bric::Util::Burner::Commands::story, etc.,
+or more properly (though uglily):
+
+  use Bric::Config qw(TEMPLATE_BURN_PKG);
+  my $element = do {
+      no strict 'refs';
+      ${TEMPLATE_BURN_PKG . '::element'};
+  };
+
+The plugin, Templates.pm, should be copied into
+$BRICOLAGE_ROOT/lib/Bric/Profile/Templates.pm .
+It's basically the same as the HTML::Mason::Plugin example
+but with extra information and the output is inserted into
+a database instead of the error_log.
+  To see how it works, I changed the default story.mc template
+to display_element its pull_quotes. Then I made a new story with
+a pull quote and two pages. The output in the database after previewing:
+
+bricprof=# select * from profile_comp;
+ id |         end_time          |    duration     | story_element_id |
+comp_path    | output_channel_id | mode
+----+---------------------------+-----------------+------------------+------
+----------+-------------------+------
+  1 | 2005-12-02 02:39:04.83907 | 00:00:00.000393 |             1026 |
+/page.mc |                 1 |    2
+  2 | 2005-12-02 02:39:04.84816 | 00:00:00.000234 |             1025 |
+/pull_quote.mc |                 1 |    2
+  3 | 2005-12-02 02:39:04.85021 | 00:00:00.017633 |             1024 |
+/story.mc |                 1 |    2
+  4 | 2005-12-02 02:39:04.85202 | 00:00:00.019694 |             1024 |
+/autohandler   |                 1 |    2
+  5 | 2005-12-02 02:39:04.87971 | 00:00:00.000228 |             1028 |
+/pull_quote.mc |                 1 |    2
+  6 | 2005-12-02 02:39:04.88181 | 00:00:00.003329 |             1027 |
+/page.mc |                 1 |    2
+  7 | 2005-12-02 02:39:04.88486 | 00:00:00.000186 |             1025 |
+/pull_quote.mc |                 1 |    2
+  8 | 2005-12-02 02:39:04.91938 | 00:00:00.042179 |             1024 |
+/story.mc |                 1 |    2
+  9 | 2005-12-02 02:39:04.92113 | 00:00:00.044101 |             1024 |
+/autohandler   |                 1 |    2
+(9 rows)
+
+I guess it seems to work, at least what little I played with it.
+The times are skewed, in that inner elements add to the duration
+of outer elements, though maybe that's reasonable.
+I imagine on a production machine, the table would quickly
+get big.
+Let me know if you have any ideas.

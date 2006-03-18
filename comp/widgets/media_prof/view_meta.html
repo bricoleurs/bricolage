@@ -2,7 +2,8 @@
 my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
   formName => "theForm",
   callback => $widget . "|trail_cb",
-  image    => "view_trail_teal"
+  image    => "view_trail_teal",
+  alt      => 'Trail',
 ) . '&nbsp;';
 
 $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -10,6 +11,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   callback => $widget . "|notes_cb",
   value    => 'view',
   image    => $media->has_notes ? 'note_fill' : "note",
+  alt      => 'Notes',
   useGlobalImage => 1,
 );
 
@@ -23,8 +25,8 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 </%perl>
 <dl class="viewmeta">
   <dt><%$lang->maketext('UUID')%>:</dt>
-  <dd><% $media->get_uuid %></dd>
-  <dt><% $lang->maketext('Element')%>:</dt>
+  <dd title="ID: <% $media->get_id %>"><% $media->get_uuid %></dd>
+  <dt><% $lang->maketext('Media Type')%>:</dt>
   <dd><% $media->get_element_name %></dd>
   <dt><% $lang->maketext('Title') %>:</dt>
   <dd><% $media->get_title %></dd>

@@ -341,13 +341,17 @@ my %formSubs = (
                                   . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n};
-                $out .= qq{            <div class="textarea"><textarea id="$uniquename" }
+                $out .= qq{            <div class="textarea">}  if $useTable;
+                $out .= qq{            <textarea id="$uniquename" }
                   . qq{onkeyup="$functioncode"\n onkeydown="$functioncode"\n }
-                  . qq{name="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea" $js>\n$value</textarea></div>\n};
+                  . qq{name="$key" rows="$rows" cols="$cols"}
+                  . qq{ wrap="soft" $js>\n$value</textarea>};
+                $out .= qq{            </div>\n}  if $useTable;
             } else {
-                $out .= qq{            <div class="textarea"><textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-                  . qq{ wrap="soft" class="textArea"$js>$value</textarea></div>\n};
+                $out .= qq{            <div class="textarea">}  if $useTable;
+                $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                  . qq{ wrap="soft" $js>$value</textarea>\n};
+                $out .= qq{            </div>\n}  if $useTable;
             }
         } else {
             $out .= $value;

@@ -18,7 +18,7 @@ chomp $val;
 exit if $val eq 't' || $val eq 'f';
 
 # Find out if they *really* want to do this.
-exit unless y_n( # __ # Hack to get cperl-mode to work properly.
+exit unless y_n(
 qq{
 
     ####################################################################
@@ -99,6 +99,12 @@ while (<OLD>) {
         }
         # Remove commas from the last line of of a statement.
         $last =~ s/,$// if $_ =~ /^\);/;
+    }
+
+    # Fix incompatible checks.
+    if (/ck_(?:story|media)__publish_status/) {
+        s/\(0\)::integer/FALSE/g;
+        s/\(1\)::integer/TRUE/g;
     }
 
     # Print the previouis line.

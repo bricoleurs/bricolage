@@ -137,7 +137,7 @@ my %conf = (
         [ 'cols'        => 'Columns',        '.number'    ],
     ],
     'date' => [
-        [ 'name'        => 'Caption',        '.text'      ],
+        [ 'name'        => 'Label',          '.text'      ],
         [ 'precision'   => 'Precision',      '.precision' ],
     ],
 );

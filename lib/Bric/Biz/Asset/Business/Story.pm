@@ -1737,11 +1737,11 @@ sub revert {
     }
 
     $new_element->prepare_clone;
-    $self->_set({ _delete_element         => $element,
+    $self->_set({ _delete_element      => $element,
                   _contributors        => $contrib,
                   _update_contributors => 1,
                   _queried_contrib     => 1,
-                  _element                => $new_element
+                  _element             => $new_element
                 });
 
     $self->_set__dirty(1);

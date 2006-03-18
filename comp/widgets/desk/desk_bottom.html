@@ -1,21 +1,22 @@
 % # Do paging
 % if ($num_pages) {
-<table width="578" cellpadding="2" cellspacing="0" border="0">
-  <tr class="lightHeader">
-    <td align="left" <% $colspan %>>
+<div class="paginate">
+<div class="pages">
       <% $prev_link %>
 %     foreach my $page (0 .. $num_pages) {
-%         my $off = $page * $limit;
-      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>
-%     }
+%         if ($page == $offset) {
+      <span class="current"><% $page + 1 %></span>&nbsp;
+%         } else {
+%             my $off = $page * $limit;
+      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>&nbsp;
+%     }}
       <% $next_link %>
-    </td>
+</div>
 %     unless ($show_all) {
-    <td align="right"><a href="<% $url %>?show_all=1" class="next">Show All</a></td>
+     <div class="all"><a href="<% $url %>?show_all=1">Show All</a></div>
 %     }
-  </tr>
-</table>
 % }  # if $num_pages
+</div><br />
 
 <div class="buttonbar">
 <& /widgets/buttons/submit.mc,
@@ -91,7 +92,6 @@ my $num_pages = ($num_objs <= $limit)
     ? int($num_objs / $limit)
     : 0;
 
-my $style = q{style="border-style:solid; border-color:#cccc99;"};
 my $colspan = $show_all ? '' : 'colspan="2"';
 my $url = $r->uri;
 
@@ -100,9 +100,9 @@ my $next_offset = $offset + $limit;
 $next_offset = $num_pages * $limit if $next_offset > $num_objs;
 my ($prev_link, $next_link) = ('', '');
 if ($offset) {
-    $prev_link = qq{<a href="$url?offset=$prev_offset">&laquo;</a>};
+    $prev_link = qq{<a href="$url?offset=$prev_offset" title="Previous Page">&laquo;</a>};
 }
 unless ($offset == $num_pages * $limit) {
-    $next_link = qq{<a href="$url?offset=$next_offset">&raquo;</a>};
+    $next_link = qq{<a href="$url?offset=$next_offset" title="Next Page">&raquo;</a>};
 }
 </%init>

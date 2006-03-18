@@ -307,7 +307,7 @@ sub soap_connect {
 
     # login
     print STDERR "Logging in to $server as $username...\n" if $VERBOSE;
-    my $response = $soap->login(name(username => $username), 
+    my $response = $soap->login(name(username => $username),
                                 name(password => $password));
     die "Login to $server as $username failed.\n" if $response->fault;
     print STDERR "Login to $server success.\n" if $VERBOSE;

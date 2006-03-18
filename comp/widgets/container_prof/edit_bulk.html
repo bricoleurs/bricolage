@@ -8,19 +8,6 @@ if ($show_summary) {
     $m->comp('/widgets/summary/summary.mc', asset => $asset, number => ++$i);
 }
 </%perl>
-<& /widgets/dialog_box/find.mc,
-    field_id  => "$widget|text",
-    dialog_id => 'finddialog',
-&>
-<&| /widgets/dialog_box/dialog_box.mc,
-   id          => 'cheat_sheet',
-   title       => 'Cheat Sheet',
-   close_label => 'Close',
-&>
-<div class="cheat_sheet">
-% $gen_cheat_sheet->($m, $et, \%seen_fields, {});
-</div>
-</&>
 <& '/widgets/wrappers/sharky/table_top.mc',
    caption => $lang->maketext('Bulk Edit [_1]', $element->get_name),
    id      => 'containerprof',
@@ -77,9 +64,23 @@ my $opts = [
     name     => "$widget|text",
     value    => $args->{__use_text__} ? $args->{"$widget|text"} : $element->serialize_to_pod($def_field),
     rows     => 40,
+    cols     => 80,
     useTable => 0,
     js       => qq{onkeyup="wordCount(document.theForm, '$widget|text', 'words', 'chars');"},
 &>
+<& /widgets/dialog_box/find.mc,
+    field_id  => "$widget|text",
+    dialog_id => 'finddialog',
+&>
+<&| /widgets/dialog_box/dialog_box.mc,
+   id          => 'cheat_sheet',
+   title       => 'Cheat Sheet',
+   close_label => 'Close',
+&>
+<div class="cheat_sheet">
+% $gen_cheat_sheet->($m, $et, \%seen_fields, {});
+</div>
+</&>
 <script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <& '/widgets/buttons/submit.mc',

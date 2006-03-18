@@ -66,15 +66,11 @@ use constant DEBUG => 0;
 # Instance Fields
 
 BEGIN {
-    Bric::register_fields(
-			  {
-			   # Public Fields
-
-			   # Private Fields
-			   _path	=> Bric::FIELD_NONE,
-			   _file_handle	=> Bric::FIELD_NONE,
-			   _image_info	=> Bric::FIELD_NONE
-			  });
+    Bric::register_fields({
+        _path	     => Bric::FIELD_NONE,
+        _file_handle => Bric::FIELD_NONE,
+        _image_info	 => Bric::FIELD_NONE
+    });
 }
 
 ################################################################################
@@ -151,123 +147,181 @@ NONE
 
 =over 4
 
-=item $height = $media_func->get_height()
+=item $height = $media_func->get_height
 
-Returns the height of the image
+Returns the height of the image.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Throws:>
-
-NONE
+B<Throws:> NONE.
 
 =cut
-
-sub get_height { $_[0]->_get_image_info->{height} }
 
 ################################################################################
 
-=item $width = $media->get_width()
+=item $width = $media->get_width
 
-Returns the width of the image
+Returns the width of the image.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
-
-sub get_width { $_[0]->_get_image_info->{width} }
 
 ################################################################################
 
-=item $color_type = $media->get_color_type()
+=item $color_type = $media->get_color_type
 
-Returns the color type of the image
+Returns the color type of the image.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
-
-sub get_color_type { $_[0]->_get_image_info->{color_type} }
 
 ################################################################################
 
 =item $resolution = $media->get_resolution()
 
-Returns the resolution
+Returns the resolution of the image.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
-
-sub get_resolution { $_[0]->_get_image_info->{resolution} }
 
 ################################################################################
 
 =item $samples_per_pixel = $media->get_samples_per_pixel()
 
-Returns the samples per pixel
+Returns the samples per pixel in the image.
 
-B<Throws:>
+B<Throws:> NONE.
 
-NONE
+B<Side Effects:> NONE.
 
-B<Side Effects:>
-
-NONE
-
-B<Notes:>
-
-NONE
+B<Notes:> NONE.
 
 =cut
 
-sub get_samples_per_pixel { $_[0]->_get_image_info->{SamplesPerPixel} }
-sub get_bits_per_sample { $_[0]->_get_image_info->{BitsPerSample} }
-sub get_comment { $_[0]->_get_image_info->{Comment} }
-sub get_interlace { $_[0]->_get_image_info->{Interlace} }
-sub get_compression { $_[0]->_get_image_info->{Compression} }
-sub get_gama { $_[0]->_get_image_info->{Gama} }
-sub get_last_modi_time { $_[0]->_get_image_info->{LastModificationTime} }
+################################################################################
+
+=item $bits_per_sample = $media->get_bits_per_sample
+
+Returns the bits per sample in the image.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
 
 ################################################################################
 
+=item $comment = $media->get_comment
+
+Returns the image comment.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
 ################################################################################
+
+=item $interlace = $media->get_interlace
+
+Returns the image interlace.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+################################################################################
+
+=item $compression = $media->get_compression
+
+Returns the image compression.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+################################################################################
+
+=item $gama = $media->get_gama
+
+Returns the image gama.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+################################################################################
+
+=item $last_modi_time = $media->get_last_modi_time
+
+Returns the last modification time of the image.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+for my $spec (
+    ['height'],
+    ['width'],
+    ['color_type'],
+    ['resolution'],
+    [ samples_per_pixel => 'SamplesPerPixel' ],
+    [ bits_per_sample   => 'BitsPerSample' ],
+    [ comment           => 'Comment' ],
+    [ interlace         => 'Interlace' ],
+    [ compression       => 'Compression' ],
+    [ gama              => 'Gama' ],
+    [ last_modi_time    => 'LastModificationTime' ],
+) {
+    my ($attr, $get) = @$spec;
+    $get ||= $attr;
+    no strict 'refs';
+    *{"get_$attr"} = sub {
+        my $ret = shift->_get_image_info->{$get};
+        return ref $ret ? $ret->[0] : $ret;
+    };
+}
+
+###############################################################################
 
 ################################################################################
 
@@ -313,7 +367,6 @@ sub _get_image_info {
     throw_dp(error => 'Error retrieving data from image.',
              payload => $info->{error})
       if $info->{error} && $info->{error} ne 'Unrecognized file format';
-    $info->{resolution} = $info->{resolution}[0] if ref $info->{resolution};
     $self->_set({ '_image_info' => $info });
     return $info;
 }
@@ -329,7 +382,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

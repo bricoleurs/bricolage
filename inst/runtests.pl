@@ -61,7 +61,7 @@ C<< File::Spec->tmpdir >> and clean up after yourself!
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

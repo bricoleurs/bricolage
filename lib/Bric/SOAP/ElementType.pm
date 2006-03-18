@@ -524,7 +524,7 @@ sub load_asset {
         my $class = Bric::Util::Class->lookup({pkg_name => $edata->{biz_class}});
         $element->set_biz_class_id($class->get_id);
 
-        if ($element->get_top_level) {
+        if ($element->is_top_level) {
             my (%sites, @ocs, $have_ocs);
             my %ocmap = map { $_->get_id => $_ } $element->get_output_channels;
 
@@ -794,7 +794,6 @@ sub serialize_asset {
     }
 
     # Output boolean attributes.
-    $writer->dataElement(top_level     => ($element->get_top_level ? 1 : 0));
     $writer->dataElement(paginated     => ($element->get_paginated ? 1 : 0));
     $writer->dataElement(fixed_uri     => ($element->get_fixed_uri ? 1 : 0));
     $writer->dataElement(related_story => ($element->get_related_story ? 1 : 0));
@@ -839,20 +838,19 @@ sub serialize_asset {
     }
     $writer->endTag("subelement_types");
 
-    # output fields
+    # output fields (XXX: keep in sync with ContribType.pm)
     $writer->startTag("field_types");
     foreach my $data ($element->get_field_types) {
         # start <field>
         $writer->startTag("field_type");
 
         # required elements
-        my $auto = 'autopopulated';
         $writer->dataElement( key_name    => $data->get_key_name           );
         $writer->dataElement( name        => $data->get_name               );
         $writer->dataElement( description => $data->get_description        );
         $writer->dataElement( required    => $data->get_required   ? 1 : 0 );
         $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
-        $writer->dataElement( $auto       => $data->get_autopopulated ? 1 : 0 );
+        $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );
         $writer->dataElement( default_val => $data->get_default_val        );

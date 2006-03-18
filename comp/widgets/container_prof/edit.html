@@ -95,7 +95,7 @@ if ($at->is_related_media) {
     </td>
       </tr>
       <tr>
-      <td colspan=2><& '/widgets/profile/imageSubmit.mc',
+      <td colspan="2"><& '/widgets/profile/imageSubmit.mc',
          formName  => 'theForm',
          callback  => 'container_prof|edit_cb',
          image     => 'edit_lgreen',
@@ -248,7 +248,7 @@ if ($at->is_related_media) {
 
 % if (scalar @elements) {
 <tr>
-  <td colspan=2></td>
+  <td colspan="2"></td>
     <td class="position">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Reorder"),
@@ -285,13 +285,15 @@ if ($at->is_related_media) {
         callback => $widget ."|bulk_edit_this_cb",
         image    => "bulk_edit_lgreen",
         vspace   => 3,
-        hspace   => 4
+        hspace   => 4,
+        alt      => 'Bulk Edit',
     &>
 % if (@$elem_opts) {
     <& '/widgets/profile/imageSubmit.mc',
         formName => "theForm",
         callback => $widget ."|add_element_cb",
         image    => "add_element_lgreen",
+        alt      => 'Add Element',
     &>
     <& /widgets/profile/select.mc, name     => $widget.'|add_element',
                                    options  => $elem_opts,

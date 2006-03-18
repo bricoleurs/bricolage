@@ -10,6 +10,7 @@
 #   clean     - delete intermediate files
 #   dist      - prepare a distrubution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
+#   devclone  - As clone above, only no pre-previewed / compiled files
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
 #   dev       - installs directly from a Subversion checkout (for development)
@@ -138,6 +139,11 @@ clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
 		  rm_svn rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
+devclone  : distclean clone.db clone_dist_dir clone_sql clone_files \
+    rm_svn rm_tmp \
+    dist/INSTALL dist/Changes dist/License \
+    clone_lightweight \
+    clone_tar 
 
 clone.db	:
 	$(PERL) inst/clone.pl
@@ -148,6 +154,9 @@ clone_dist_dir  :
 
 clone_files     :
 	$(PERL) inst/clone_files.pl
+
+clone_lightweight     :
+	$(PERL) inst/clone_lightweight.pl
 
 clone_sql       : 
 	$(PERL) inst/clone_sql.pl
@@ -161,7 +170,11 @@ clone_tar	:
 # installation rules     #
 ##########################
 
-install 	: all is_root cpan lib bin files db db_grant done
+install 	: install_files install_db done
+
+install_files	: all is_root cpan lib bin files
+
+install_db		: db db_grant
 
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
@@ -198,7 +211,7 @@ done		: bconf/bricolage.conf db files bin lib cpan
 ##########################
 
 upgrade		: upgrade.db required.db postgres.db bconf/bricolage.conf \
-	          is_root cpan stop db_upgrade lib bin  db_grant  \
+	          is_root cpan stop db_upgrade lib bin  \
 	          upgrade_files upgrade_conf upgrade_done
 
 upgrade.db	: 
@@ -222,8 +235,8 @@ upgrade_done    :
 	@echo ===========================================================
 	@echo ===========================================================
 	@echo 
-	@echo Bricolage Upgrade Complete.  You may now start your
-	@echo servers to start using the new version of Bricolage.
+	@echo Bricolage Upgrade Complete. You may now start your
+	@echo server and start using the new version of Bricolage.
 	@echo 
 	@echo ===========================================================
 	@echo ===========================================================

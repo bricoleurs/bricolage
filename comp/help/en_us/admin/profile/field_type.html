@@ -1,76 +1,86 @@
 <help page="Field Type Profile">
 
-<p>
 <dl>
 <dt>Properties</dt>
-<dd>Enter a brief description and the maximum length of the Field (if applicable).
-Check off whether the Field is required and if it's repeatable.</dd>
+<dd>Enter a brief description and select the <q>Required</q> checkbox for when
+the field must always be included in an element, and <q>Repeatable</q> if more
+than one instance of the field is allowed. You can also select a different
+display widget from the <q>Widget Type</q> select list if you'd like to change
+how the field is displayed, such as from a text input box to a textarea
+field.</dd>
 
 <dt>Display Attributes</dt>
 <dd>The attributes listed will vary depending on the type of Field, but will
 include the following:</dd>
 
 <dl>
-<dt>Allow multiple</dt>
-<dd>This applies only to select Fields, and indicates whether the
-user can select multiple items from the list, which is done for example
-by holding down the Shift key while selecting different items. (select)</dd>
+<dt>Allow multiple <em>(Select, Code Select)</em></dt>
+<dd>This attribute applies only to select fields, and indicates whether the
+    user can select multiple items from the list, rather than just one.</dd>
 
-<dt>Caption</dt>
-<dd>Same as <q>Label</q> but for date Fields. <em>(date)</em></dd>
+<dt>Checked <em>(Checkbox)</em></dt>
+<dd>A checkbox that can be used to set the default for a checkbox field:
+    either checked or unchecked.</dd>
 
-<dt>Columns</dt>
-<dd>Number of columns in a textarea. <em>(textarea)</em></dd>
+<dt>Code <em>(Code Select)</em></dt>
+<dd>A <q>Code Select</q> field allows arbitrary Perl code to generate the
+    items in a select list. The last statement of the code must return an
+    array reference whose elements are alternately the values and labels in
+    the list (the array must therefore have an even number of items). For
+    example, if you returned <code>[ 1 => 'One', 2 => 'Two' ]</code>, the user
+    would see a list with items One and Two, whose values (in a template)
+    would be respectively 1 and 2 (works just like a Select field).</dd>
 
-<dt>Default Value</dt>
-<dd>The default value for this Field. <em>(textbox, radio,
-pulldown, select, textarea)</em></dd>
+<dt>Columns <em>(Textarea)</em></dt>
+<dd>Number of columns in a textarea.</dd>
 
-<dt>Group Label</dt>
-<dd>Same as <q>Label</q> but for radio Fields. <em>(radio)</em></dd>
+<dt>Default Value <em>(Text, Radio, Pulldown, Select, Code Selectt, Textarea)</em></dt>
+<dd>The default value for this Field.</dd>
 
-<dt>Label</dt>
-<dd>The label which the Element Admin will see in the list of Fields.
-<em>(textbox, radio, checkbox, pulldown, select, textarea)</em></dd>
+<dt>Group Label <em>(radio)</em></dt>
+<dd>Same as <q>Label</q> but for radio Fields.</dd>
 
-<dt>Maximum Size</dt>
-<dd>If this field is set to zero then there is no restriction on the maximum
-number of characters entered in the textarea. If set to a value then a
-character counter will be displayed above the textarea and the maximum limit
-will be enforced. <em>(textbox, textarea)</em></dd>
+<dt>Label <em>(Text, Radio, Checkbox, Pulldown, Select, Code Select, Textarea,
+    Date)</em></dt>
+<dd>The label displayed in a document element, list of available elements,
+    etc.</dd>
 
-<dt>Options, Label</dt>
-<dd>A list of rows consisting of values and labels.
-Note that <q>Options, Label</q> indicates the format of each row.
-<q>Options</q> is the <q>value</q> attribute of an <code>&lt;option&gt;</code>
-element within a <code>&lt;select&gt;</code> list, for example,
-with <q>Label</q> being what's displayed to the user. In order to include a
-comma within either the <q>Options</q> or <q>Label</q> string, precede the
-comma by a backslash (<code>\</code>). <em>(radio, pulldown, select)</em></dd>
+<dt>Maximum Size <em>(Text, Textarea)</em></dt>
+<dd>If the maximum size is set to zero, then there is no restriction on the
+    maximum number of characters entered in the text or textarea field. If it
+    is set to a value, then the number of characters in the field will be
+    limited to that number. Textarea fields will also have a character counter
+    displayed above the them to indicate how many characters have been used
+    and how many are left.</dd>
 
-<dt>Code</dt>
-<dd>A <q>Code Select</q> field allows adding arbitrary Perl code to generate
-the items in a <code>&lt;select&gt;</code> list. The last statement of the
-code must return an array reference whose elements are alternately the values
-and labels in the list (the array must therefore have an even number of
-items). For example, if you returned <code>[ 1 => 'One', 2 => 'Two' ]</code>,
-the user would see a list with items One and Two, whose values (in a template)
-would be respectively 1 and 2 (works just like a Select
-field). <em>(codeselect)</em></dd>
+<dt>Options, Label <em>(Radio, Pulldown, Select)</em></dt>
+<dd><p>A list of rows consisting of values and labels. Note that <q>Options,
+    Label</q> indicates the format of each row: a value followed by a label.
+    for example, for a select list offer numeric values but use word labels,
+    it would look like this:</p>
 
-<dt>Rows</dt>
-<dd>Number of rows in a textarea. <em>(textarea)</em></dd>
+  <pre>1,One
+2,Two
+3,Three
+4,Four
+</pre>
 
-<dt>Size</dt>
-<dd>The size of this Field. <em>(textbox, select)</em></dd>
+    <p>In order to include a comma within either the option or label, precede
+    the comma with a backslash (<code>\</code>).</dd>
+
+<dt>Rows <em>(Textarea)</em></dt>
+<dd>Number of rows in a textarea.</dd>
+
+<dt>Size <em>(Text, Select)</em></dt>
+<dd>The size of this Field.</dd>
 
 </dl>
 </dl>
-</p>
 
-<p>If you want to delete this Field from its Element,
-check the 'Delete this Profile' checkbox.</p>
+<p>If you want to delete this field type from its element type, select the
+<em>Delete this Profile</em> checkbox.</p>
 
-<p>When finished click <em>Save</em>, or <em>Cancel</em> to ignore your changes.</p>
+<p>When finished, click <em>Save</em>, or <em>Cancel</em> to ignore your
+changes.</p>
 
 </help>

@@ -602,7 +602,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 Sam Tregar <stregar@about-inc.com>
 

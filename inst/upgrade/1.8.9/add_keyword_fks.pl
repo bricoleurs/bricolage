@@ -6,9 +6,8 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_constraint 'category_keyword', 'fk_keyword__category_keyword';
-
 for my $thing (qw(story media category)) {
+    next if test_foreign_key "$thing\_keyword", "fk_keyword__$thing\_keyword";
     do_sql
         qq{ DELETE from $thing\_keyword
             WHERE  $thing\_id IN (

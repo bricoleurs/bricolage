@@ -23,12 +23,9 @@ sub save : Callback {
 
     my $name = $param->{name};
 
-    if ($param->{delete} && !$job->has_failed) {
-        # Deactivate it.
-        $job->cancel;
-        log_event('job_cancel', $job);
-        $job->save;
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+    if (exists $param->{delete}) {
+        add_msg("$disp_name profile \"[_1]\" deleted.", $name)
+            if $self->_cancel($job);
     } else {
         $job->set_name($param->{name});
         $job->set_sched_time($param->{sched_time});
@@ -56,20 +53,27 @@ sub cancel : Callback {
     foreach my $id (@{ mk_aref($self->value) }) {
         my $job = $class->lookup({ id => $id }) || next;
         if (chk_authz($job, EDIT)) {
-            if ($job->is_executing) {
-                # It's executing right now. Don't cancel it.
-                add_msg('Cannot cancel "[_1]" because it is currently executing.',
-                        $job->get_name);
-            } else {
-                # Cancel it.
-                $job->cancel();
-                $job->save();
-                log_event('job_cancel', $job);
-            }
+            $self->_cancel($job);
         } else {
             add_msg('Permission to delete "[_1]" denied.', $job->get_name);
         }
     }
+}
+
+sub _cancel {
+    my ($self, $job) = @_;
+    if ($job->is_executing) {
+        # It's executing right now. Don't cancel it.
+        add_msg('Cannot cancel "[_1]" because it is currently executing.',
+                $job->get_name);
+        return;
+    }
+
+    # Cancel it.
+    $job->cancel;
+    $job->save;
+    log_event('job_cancel', $job);
+    return $self;
 }
 
 

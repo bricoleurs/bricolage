@@ -14,7 +14,263 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.0 ()
+=head1 VERSION 1.10.1 ()
+
+=head2 New Features
+
+=over
+
+=item *
+
+Added a guide on how to profile Mason templates. See
+F<contrib/template_profiling>. [Scott]
+
+=item *
+
+ContribType, Destination, and Preference SOAP modules. [Scott]
+
+=item *
+
+When a page finishes loading, the first text or textarea field in the form now
+automatically gets the focus. [David]
+
+=item *
+
+Added upload and download feature to the template interface, so that templates
+can optionaly be uploaded or downloaded. Suggested by Chris Sutton. [David]
+
+=back
+
+=head2 Improvements
+
+=over
+
+=item *
+
+When a story is previewed, any related media are distributed to the preview
+server only if the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
+disabled or the media documents need to be previewed. [David]
+
+=item *
+
+Removed call to removed component F<comp/widgets/qa/qa.mc> from the side
+navigation component. This was only an issue when the C<QA_MODE>
+F<bricolage.conf> directive was enabled. Reported by Derek Poon. [David]
+
+=item *
+
+Fixed the typo "Distribintion" in the side navigation. Thanks to Christian
+Niles for the spot. [David]
+
+=item *
+
+Added installation defaults for FreeBSD that will be used when the
+C<USE_DEFAULTS> environment variable is set to "freebsd" during installation.
+[Rod Taylor]
+
+=item *
+
+Fixed some errors in and rearranged the SOAP schema in
+L<Bric::SOAP|Bric::SOAP>. [Christian Niles]
+
+=item *
+
+Fixed a foreign key constraint on "media_element.related_story__id" that was
+pointing to media.id instead of story.id. Reported by Rod Taylor. [David]
+
+=item *
+
+Added a 'make devclone' option which does the same as 'make clone' but removes
+all of the locally previewed files, the obj files, staging and sandboxes. This
+means a large saving in download size of cloned production systems. [Paul
+Orrock]
+
+=item *
+
+Added C<ALLOW_URIS_WITHOUT_CATEGORIES> F<bricolage.conf> directive to turn off
+check for "%{categories}" in an output channel URI format. This directive
+should be used with caution since this is not the recommended behaviour. [Paul
+Orrock]
+
+=item *
+
+Added tooltip to show the underlying Bricolage database ID when the UUID is
+hovered over with the mouse. This is the partner to showing the UUID when the
+hovering over the Bricolage ID in a desk view. [Paul Orrock]
+
+=item *
+
+The database upgrade script now updates table permissions after executing all
+of the scripts for each version to be upgraded, rather than after all of the
+upgrade scripts have run, thus allowing later scripts to properly access
+tables created by earlier scripts. Reported by Nate Perry-Thistle. [David]
+
+=item *
+
+Changed the database coluns for the "name", "key_name", and "description"
+attributes of
+L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>
+from C<VARCHAR> to C<TEXT>, since some folks will have field types with names
+and key names longer than 32 characters. Reported by Nate Perry-Thistle.
+[David]
+
+=item *
+
+Created two new make targets, "install_files" and "install_db", to allow the
+files to be installed without doing anything with the database. Useful for
+packagers who need to let the user create the database on her own. "make
+install_files install_db" is equivalent to "make install". [Marshall]
+
+=item *
+
+Updated L<Bric::ElementAdmin|Bric::ElementAdmin> to be conversant in the
+merging of element type sets and elements. That is, it now makes sense in the
+contextd of Bricolage 1.10. Reported by Ryan O'Toole. [David]
+
+=item *
+
+The View/Edit link has been restored to storis, media, and templates on desks,
+and the title has been returned to its status as a preview link. The URI is no
+longer a link. [David]
+
+=item *
+
+Made the "Upload" section of the media profile valid XHTML styled with CSS.
+[David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed localization errors such as, "Can't use "for Published" as a method name
+in bracket group," which appeared in searches and on desks. Thanks to Guido
+Bülskämper for the spot! [David]
+
+=item *
+
+Fixed some of the 1.8.9 upgrade scripts that run I<after> the 1.9.x upgrade
+scripts to that they are properly compatible. [Nate Perry-Thistle, Rod Taylor,
+and David]
+
+=item *
+
+L<Bric::Biz::ElementType|Bric::Biz::ElementType> loads again. [Nate
+Perry-Thistle]
+
+=item *
+
+The C<MEDIA_UNIQUE_FILENAME> F<bricolage.conf> directive is now fixed so that
+the file name creation comes after the ID generation and therefore correctly
+saves the renamed file. [Paul Orrock]
+
+=item *
+
+Fixes for UI display in Firefox and IE. Particularly Meta Assets displaying
+down the page in IE, stretching out the banner in desks, corrected side menu
+position in IE and removed reference to broken images left in from CSS
+reworking. Also fixed textarea which was ignoring cols setting in IE and set
+textarea col width for bulk edit to 80 wide, rather than 30. [Paul Orrock]
+
+=item *
+
+Fixed the history so that clicking the return button in the UI no longer goes
+back to the preview page when the preview page was the last page accessed.
+[Paul Orrock]
+
+=item *
+
+The XML generated when exporting element types via SOAP no longer includes
+the C<top_level> element twice, thus avoiding mysterious "no sites defined"
+errors when attempting to import or update element types from that XML.
+Reported by Nate Perry-Thistle. [David]
+
+=item *
+
+Reverting stories and media no longer leads to occasional errors such as,
+"Too many Bric::Biz::Element::Container objects found". Reported by Simon
+Wilcox. [David]
+
+=item *
+
+Disabled the "sticky" scrollbar in the story profile. It just didn't work too
+well. [David]
+
+=item *
+
+The "Allow Multiple" checkbox and "Size" field in the "Add New Field" section
+of the element type profile work again. Reported by Rod Taylor and Paul
+Orrock. [David]
+
+=item *
+
+Multiple select lists no longer break the story and element profiles, and can
+once again have their values properly changed from multiple to single to none.
+Spotted by Rod Taylor. [David]
+
+=item *
+
+Desk pagination is now properly styled. [David]
+
+=item *
+
+Assets can once again be properly deleted from desks. [David]
+
+=item *
+
+Silenced status messages when previewing a media document under the
+C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive. Reported by Rod Taylor.
+[David]
+
+=item *
+
+Cancelling the checkout of an media document now deletes any new file that has
+been uploaded and, if the C<AUTO_PREVIEW_MEDIA> F<bricolage.conf> directive is
+enabled, re-previews the previous version of the media file. [David]
+
+=item *
+
+The autopopulated fields for image element types are now created when a new
+image element type is created. This was made possible by moving the selection
+of media type (Image, Audio, Video, or Other Media) to the New Element Type
+screen, where it is now part of the "Content Type" select list, which also
+includes the Story and Subelement options. As a result, one can no longer
+change the media type in an existing element type (not that it ever made sense
+to do so). Reported by Paul Orrock. [David]
+
+=item *
+
+Fixed the selection of text triggered by the Find dialog box on Mozilla and IE
+(although I find IE to be a bit broken in this way). [David]
+
+=item *
+
+Fixed the size of the preview links on the desktop. [David]
+
+=item *
+
+Failed jobs can once again be cancelled. Reported by Rod Taylor. [David]
+
+=item *
+
+When multiple versions of a document are published before any of the publish
+jobs for those versions is executed no longer leads to publishing errors when
+the older version is published. Thanks to Rod Taylor for the spot! [David]
+
+=item *
+
+The element trace generated for burn errors (those created by C<<
+$burner->throw_error() >>) no use the place attribute of the element where the
+error was thrown, rather than the object order, since the place corresponds to
+the "Position" select list orderings in the UI, and therefore makes it much
+simpler to figure out where the error is. [David]
+
+=back
+
+=head1 VERSION 1.10.0 (2006-01-23)
 
 =head2 Improvements
 
@@ -52,8 +308,8 @@ Updated the UI to fix Internet Explorer glitches. [Marshall]
 
 =item *
 
-The Element Type profile is now much smarter about displaying sites form
-association with an element type. If the user has access to only one site and
+The Element Type profile is now much smarter about displaying site
+associations with an element type. If the user has access to only one site and
 the element type is associated with no more than one site, then the "Sites"
 section won't be displayed, but the primary output channel can be selected via
 a radio button among the list of output channels. If the user has access to
@@ -75,7 +331,7 @@ C<=related_story_uuid> and C<=related_media_uuid>. Just set it to "uuid",
 
 =item *
 
-Optimized coparison of new and old attribute values when setting attributes.
+Optimized comparison of new and old attribute values when setting attributes.
 Based on an example sent by Curtis "Ovid" Poe. [David]
 
 =item *
@@ -95,6 +351,11 @@ So you can change a "text" widget to "textarea", for example. [David]
 =item *
 
 Fixed the options in the "Default Asset Sort" to be more up-to-date. [David]
+
+=item *
+
+Updated the context-sensitive online help avaialable by clicking the
+"Help"button at the top of the Bricolage UI. [David]
 
 =back
 
@@ -625,8 +886,8 @@ associated with burners at all. [David]
 
 =item *
 
-Renamed Bric::Biz::Asset::Template to
-L<Bric::Biz::Asset::Formatting|Bric::Biz::Asset::Template>. [David]
+Renamed Bric::Biz::Asset::Formatting to
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template>. [David]
 
 =item *
 
@@ -865,11 +1126,12 @@ limit on uploaded media files. [Scott]
 
 The URI formats are now more flexible. You can now use many more parts of the
 cover date in the URI, and in whatever format you like. So you could have a
-format of "/%{categories}/%Y-%m-%d" and end up with the URI
-"/foo/bar/2004-09-22" if you wanted. Or even "/%{categories}/%Y/%V" to get the
-week number as part of the URI. You can also include your own text, similar to
-the URI Prefix and URI Suffix fields, anywhere in the URI (e.g. foobar in
-/%{categories}/%Y/%m/foobar/%{slug}". Suggested by David. [Marshall]
+format of "/%{categories}/%Y-%m-%d/" and end up with the URI
+"/foo/bar/2004-09-22/" if you wanted. Or even "/%{categories}/%Y/%V/" to get
+the week number as part of the URI. You can also include your own text,
+similar to the URI Prefix and URI Suffix fields, anywhere in the URI (e.g.
+foobar in "/%{categories}/%Y/%m/foobar/%{slug}/". Suggested by David.
+[Marshall]
 
 =item *
 
@@ -1095,7 +1357,141 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
-=head1 VERSION 1.8.9 ()
+=head1 VERSION 1.8.11 ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The C<throw_error()> burner method now accepts a list of arguments for an
+error message, rather than only a single argument. It will concatenate them
+all together so that you don't have to. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+My Workspace now remembers the sort order of assets as well as desks do.
+[David]
+
+=back
+
+=head1 VERSION 1.8.10 (2006-03-16)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Changed (hopefully optimized) the buffer size when reading in files on
+media upload. [Scott]
+
+=item *
+
+The installer no longer prompts for the PostgreSQL system username if the
+PostgreSQL server is not running on the local box. It therefore also no longer
+becomes that user in such cases. This will simplify installing Bricolage onto
+a remote PostgreSQL server. [David]
+
+=item *
+
+The Jobs manager now sorts pending jobs by scheduled time rather than name.
+[David]
+
+=item *
+
+Desks now remember the sort order you selected when you last visited them, for
+the duration of a single login to Bricolage. [David]
+
+=item *
+
+When adding contributors based on a type that allows multiple roles, you no
+longer have to select the role if the contributor has only one role. Suggested
+by Phillip Smith. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Eliminated errors inserting array references fetched from image info while
+uploading and saving new image files. Reported by Michael Holden. Also
+documented extra methods not previously documented in
+L<Bric::App::MediaFunc|Bric::App::MediaFunc>. [David]
+
+=item *
+
+Fixed typo in the final message after an upgrade completes. Reported by Nate
+Perry-Thistle. [David]
+
+=item *
+
+Fixed a 1.8.9 upgrade script that adds a foreign key constraint to the
+"element_member" table so that it properly tests for the foreign key
+constraint before it tries to add it. Reported by Wayne Slavin. [David]
+
+=item *
+
+Refined a few other upgrade scripts, with thanks to Rod Taylor. [David]
+
+=item *
+
+L<Bric::Biz::Person::User|Bric::Biz::Person::User> loads again under
+F<bric_queued>. [David]
+
+=item *
+
+The thumbnail-generating code now tries even harder to determine the media
+type of a file, thus more likely supporting files that it might not have been
+able to support before. [Rod Taylor]
+
+=item *
+
+F<bric_republish> no longer reverses the meaning of its C<--published-only>
+option. [David]
+
+=item *
+
+Publishing via SOAP works again. It was broken in 1.8.9, where it would appear
+to succeed, but no story or media would ever actually be distributed. [David]
+
+=item *
+
+Updated the Bricolage users list email address and archive link in
+L<Bric::Admin|Bric::Admin>/F<INSTALL>. Reported by Michael Cummings [David]
+
+=item *
+
+Sort ordering on desks is no longer forgotten over multiple pages of assets on
+a desk. Thanks to Phillip Smith for the spot! [David]
+
+=item *
+
+Changed the title of the Trail page from "Desk Stamps" to "Trail." Reported by
+Scott. [David]
+
+=item *
+
+It is now possible to look up stories, media, and templates by version IDs
+other than the current version ID. [David]
+
+=back
+
+=cut
+
+##############################################################################
+
+=head1 VERSION 1.8.9 (2006-01-23)
 
 =head2 Improvements
 
@@ -6237,7 +6633,7 @@ should be checked out via "Active Media" and moved to a new desk. [David]
 
 =item *
 
-Documented the support for passing C<%ARGS> to C<< $burner->display_element() >> 
+Documented the support for passing C<%ARGS> to C<< $burner->display_element() >>
 in templates. It was added to Bric::Util::Burner::Mason a while ago, but I
 forgot to document it! Thanks to Mike Slattery for the spot. [David]
 
@@ -9546,7 +9942,7 @@ Initial public release.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

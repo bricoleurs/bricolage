@@ -13,7 +13,7 @@ $m->comp('/widgets/wrappers/sharky/header.mc',
 	 context => "Admin | Profile | $disp | &quot;" . $pref->get_name .  "&quot;"
 );
 $m->out(qq{<form method="post" name="pref_profile" action="} . $r->uri
-        . qq{" onSubmit="return confirmChanges(this)">\n});
+        . qq{" onsubmit="return confirmChanges(this)">\n});
 
 # Output a hidden field with the ID.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'pref_id');

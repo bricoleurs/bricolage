@@ -335,7 +335,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler E<lt>david@wheeler.netE<gt>
+David Wheeler E<lt>david@justatheory.comE<gt>
 
 =head1 SEE ALSO
 

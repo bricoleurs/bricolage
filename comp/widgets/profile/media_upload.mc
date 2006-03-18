@@ -17,6 +17,7 @@
         callback => "$widget|create_related_media_cb",
         image    => "create_red",
         vspace   => 4,
+        alt      => 'Create',
       &>&nbsp;</td>
   </tr>
 </table>

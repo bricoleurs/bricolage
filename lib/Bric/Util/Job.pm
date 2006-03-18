@@ -2325,7 +2325,7 @@ NONE.
 
 =head1 AUTHORS
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 Mark Jaroski <jaroskim@who.int>
 

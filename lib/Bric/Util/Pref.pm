@@ -252,7 +252,7 @@ than selected from a list. May use C<ANY> for a list of possible values.
 
 =item can_be_overridden
 
-Boolean indicathe whether or not users can override the global preference
+Boolean indicating whether or not users can override the global preference
 value. May use C<ANY> for a list of possible values.
 
 =item opt_type
@@ -1581,7 +1581,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

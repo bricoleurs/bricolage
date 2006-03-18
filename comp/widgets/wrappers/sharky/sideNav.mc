@@ -286,7 +286,7 @@ if ( $nav->{admin} ) {
         # Start the open distribution menu.
         $m->print(
             qq{<li class="open"><a href="}, $nav_uri,
-            qq{?nav|distSystem_cb=0">}, $lang->maketext('Distribintion'),
+            qq{?nav|distSystem_cb=0">}, $lang->maketext('Distribution'),
             qq{</a>}, qq{<ul class="items">},
         );
 
@@ -312,14 +312,6 @@ if ( $nav->{admin} ) {
 }
 # End Admin --------------------------------------
 $m->print(qq{</ul>});
-
-# begin debug widget
-if (Bric::Config::QA_MODE && $debug) {
-    $m->print('<br /><hr/>');
-    $m->comp('/widgets/qa/qa.mc');
-    $m->print('<br />');
-}
-# end debug widget
 </%perl>
 </body>
 </html>

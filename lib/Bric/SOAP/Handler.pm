@@ -109,6 +109,9 @@ use constant SOAP_CLASSES => [qw(
                                  Bric::SOAP::Workflow
                                  Bric::SOAP::ATType
                                  Bric::SOAP::OutputChannel
+                                 Bric::SOAP::ContribType
+                                 Bric::SOAP::Destination
+                                 Bric::SOAP::Preference
                                 )];
 
 my $SERVER = SOAP::Transport::HTTP::Apache->dispatch_to(@{SOAP_CLASSES()});

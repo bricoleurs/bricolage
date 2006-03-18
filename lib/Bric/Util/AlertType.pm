@@ -1065,7 +1065,7 @@ When the alert is sent and saved as a Bric::Util::Alert object in the database,
 these variables will be evaluated and filled in with their underlying values:
 
   A story was saved and moved to the Publish Desk by David Wheeler
-  <david@wheeler.net>.
+  <david@justatheory.com>.
 
 Feel free to use as many variables as necessary (and as are available from
 Bric::Util::EventType::get_alert_props()). Be sure to call $at->save if you have
@@ -2880,7 +2880,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

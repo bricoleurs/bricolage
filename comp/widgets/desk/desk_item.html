@@ -1,10 +1,7 @@
 <div class="item">
   <div class="head">
-% if ($user) {
-    <div class="status"><img src="/media/images/encrypted.png" alt="Checked out" title="Checked out by <% $user %>" /></div>
-% }
     <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
-    <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><a href="<% $link %>" title="<% $vlabel %>"><% $name %></a></div>
+    <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><% $uri || $name %></div>
     <% $m->comp('publish_status_span.mc',
                 sorted => $highlight eq 'name' ? ' sorted' : '',
                 asset => $obj) %>
@@ -13,7 +10,7 @@
     <dl>
 % if ($class ne 'template') {
       <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
-      <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $uri || '&nbsp;' %></dd>
+      <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $obj->get_primary_uri || '&nbsp;' %></dd>
 % }
       <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
       <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
@@ -50,6 +47,7 @@
         </div>
         
         <ul class="action">
+          <li><a href="<% $link %>" title="<% $vlabel . " &#x201c;$name&#x201d;" %>"><% $vlabel %></a></li>
           <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
           <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
           <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
@@ -118,16 +116,19 @@ if ($class eq 'template') {
         $idv_class .= $alias;
     }
     if ($class eq 'media') {
-        $uri = $m->comp('/widgets/profile/preview_link.mc',
-                         type  => $class,
-                         doc   => $obj,
-                         value => $obj->get_uri )
-          if $obj->get_file_name;
+        $uri = $m->comp(
+            '/widgets/profile/preview_link.mc',
+            type  => $class,
+            doc   => $obj,
+            value => $name,
+        ) if $obj->get_file_name;
     } else {
-        $uri = $m->comp('/widgets/profile/preview_link.mc',
-                         type  => $class,
-                         doc   => $obj,
-                         value => $obj->get_uri );
+        $uri = $m->comp(
+            '/widgets/profile/preview_link.mc',
+            type  => $class,
+            doc   => $obj,
+            value => $name,
+        );
     }
     $header_class = 'aliasHeader' if $obj->get_alias_id;
 }

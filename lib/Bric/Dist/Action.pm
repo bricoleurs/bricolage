@@ -306,7 +306,7 @@ Action ID. May use C<ANY> for a list of possible values.
 
 =item action_type_id
 
-The ID of an ation type. May use C<ANY> for a list of possible values.
+The ID of an action type. May use C<ANY> for a list of possible values.
 
 =item action_type
 
@@ -1854,7 +1854,7 @@ NONE.
 
 =head1 AUTHOR
 
-David Wheeler <david@wheeler.net>
+David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 

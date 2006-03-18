@@ -28,11 +28,11 @@ my $widget = 'desk_asset';
 
 %#-- Args Section --#
 <%args>
-$story_sort_by => get_pref('Default Asset Sort') || 'cover_date'
-$media_sort_by => get_pref('Default Asset Sort') || 'cover_date'
-$template_sort_by => get_pref('Default Asset Sort') || 'cover_date'
-$offset => 0
-$show_all => undef
+$story_sort_by    => undef
+$media_sort_by    => undef
+$template_sort_by => undef
+$offset           => 0
+$show_all         => undef
 </%args>
 
 %#-- Init Section --#
@@ -55,7 +55,7 @@ my $wfname = '&quot;' . $wf->get_name . '&quot;';
 # Don't display anything if the desk object could not be found.
 if ($d) {
     $m->out(qq{<form method="post" action="} . $r->uri
-      . qq{" name="desk" onSubmit="return confirmChanges(this)">});
+      . qq{" name="desk" onsubmit="return confirmChanges(this)">});
 
     $m->comp('/widgets/desk/desk.mc',
              desk_id  => $d_id,

@@ -82,8 +82,8 @@ if ($numFields != -1) {
                 $numFieldsTxt .= "<option value=$i";
                 $numFieldsTxt .= " selected" if ($i == $numFields+1);
                 $numFieldsTxt .= "> $i </option>";
-                $numFieldsOpts .= qq{<option value="$i"} 
-                               . (($i == $numFields+1) ? ' selected="selected"' : '') 
+                $numFieldsOpts .= qq{<option value="$i"}
+                               . (($i == $numFields+1) ? ' selected="selected"' : '')
                                . qq{>$i</option>\n};
         }
         $numFieldsTxt .= '</select>';
@@ -92,7 +92,6 @@ if ($numFields != -1) {
 </%init>
 
 <script type="text/javascript">
-
 // Label overrides
 formBuilder.labels = new Array();
 formBuilder.labels['radio'] = new Array();
@@ -109,7 +108,6 @@ formBuilder.values['codeselect']['fb_size'] = 5;
 formBuilder.values['wysiwyg'] = new Array();
 formBuilder.values['wysiwyg']['fb_rows'] = 8;
 formBuilder.values['wysiwyg']['fb_cols'] = 67;
-
 </script>
 
 % # add hidden fields to receive the values of the fbuilder

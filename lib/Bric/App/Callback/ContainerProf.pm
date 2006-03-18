@@ -619,11 +619,11 @@ sub _update_parts {
                     # Truncate the value, if necessary, then set it.
                     my $max = $t->get_max_length;
                     eval {
-                        if ($t->is_multiple) {
+                        if (ref $val && $t->is_multiple) {
                             if ($max) {
                                 $_ = substr($_, 0, $max)
-                                    for grep { length $_ > $max } @$val
-                                }
+                                    for grep { length $_ > $max } @$val;
+                            }
                             $t->set_values(@$val);
                         } else {
                             $val = substr($val, 0, $max)

@@ -140,7 +140,7 @@ sub has_more { return 1 }
   $meths_aref = Bric::Dist::Action::Email->my_meths(0, 1);
 
 Returns Bric::Dist::Action::Email attribute accessor introspection data. See
-L<Bric|Bric> for complete documtation of the format of that data. Returns
+L<Bric|Bric> for complete documentation of the format of that data. Returns
 accessor introspection data for the following attributes:
 
 =over
@@ -385,7 +385,7 @@ file it uses for the email message.
   my $handle_text = $action->get_handle_text;
   $action = $action->set_handle_text($handle_text);
 
-Get and set the contant value that deterimines how text resources are
+Get and set the constant value that determines how text resources are
 handled. All files with a media type starting with "text/" are considered text
 files. The possible values for this attribute are available via the constants
 defined for this class:

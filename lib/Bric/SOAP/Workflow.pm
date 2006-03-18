@@ -292,11 +292,11 @@ sub publish {
             # Schedule the publish.
             my $name = 'Publish "' . $obj->get_name . '"';
             my $job = Bric::Util::Job::Pub->new({
-                sched_time           => $args->{publish_date},
-                user_id              => get_user_id,
-                name                 => $name,
-                "$type\_instance_id" => $obj->get_version_id,
-                priority             => $obj->get_priority,
+                sched_time  => $args->{publish_date},
+                user_id     => get_user_id,
+                name        => $name,
+                "$type\_id" => $obj->get_id,
+                priority    => $obj->get_priority,
             })->save;
             log_event('job_new', $job);
             push @published, name( "$type\_id" => $id );

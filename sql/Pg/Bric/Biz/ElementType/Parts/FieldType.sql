@@ -42,9 +42,9 @@ CREATE TABLE field_type (
     id               INTEGER         NOT NULL
                                      DEFAULT NEXTVAL('seq_field_type'),
     element_type__id INTEGER         NOT NULL,
-    name             VARCHAR(32)     NOT NULL,
-    key_name         VARCHAR(32)     NOT NULL,
-    description      VARCHAR(256),
+    name             TEXT            NOT NULL,
+    key_name         TEXT            NOT NULL,
+    description      TEXT,
     place            INTEGER         NOT NULL,
     required         BOOLEAN         NOT NULL DEFAULT FALSE,
     quantifier       VARCHAR(2)      NOT NULL,

@@ -3,7 +3,7 @@
 -- VERSION: $LastChangedRevision$
 --
 -- $LastChangedDate$
--- Author: David Wheeler <david@wheeler.net>
+-- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO contact (id, type, description, alertable, active)
 VALUES ('1', 'Primary Email', 'Primary Electronic Mail Address', '1', '1');

@@ -501,7 +501,7 @@ sub load_asset {
                 $category->set_directory("");
             } else {
                 # get directory and parent
-                my ($parent_path, $directory) = $path =~ m!(.*)/([^/]+)$!;
+                my ($parent_path, $directory) = $path =~ m!(.*)/([^/]+)\/$!;
                 throw_ap(error => __PACKAGE__ . " : failed to extract directory from"
                            . " path \"$path\"")
                   unless defined $directory;
@@ -509,7 +509,7 @@ sub load_asset {
 
                 # make sure we've got a parent
                 my $parent = $paths{$parent_path} ||=
-                  Bric::Biz::Category->lookup({ uri => $parent_path,
+                  Bric::Biz::Category->lookup({ uri => $parent_path .'/',
                                                 site_id => $site_id });
                 throw_ap(error => __PACKAGE__ . " : couldn't find category object "
                            . "for path \"$parent_path\"")

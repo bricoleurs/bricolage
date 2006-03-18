@@ -50,10 +50,12 @@ open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
 
 # Switch to postgres system user
-print "Becoming $PG->{system_user}...\n";
-$> = $PG->{system_user_uid};
-die "Failed to switch EUID to $PG->{system_user_uid} ($PG->{system_user}).\n"
-    unless $> == $PG->{system_user_uid};
+if (my $sys_user = $PG->{system_user}) {
+    print "Becoming $sys_user...\n";
+    $> = $PG->{system_user_uid};
+    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
+        unless $> == $PG->{system_user_uid};
+}
 
 # set environment variables for dbi:Pg
 $ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );

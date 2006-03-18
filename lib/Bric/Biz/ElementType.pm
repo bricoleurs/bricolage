@@ -354,6 +354,7 @@ sub new {
                 widget_type   => 'text',
                 length        => 32,
                 place         => ++$i,
+                quantifier    => 0,
             });
         }
     }
@@ -997,7 +998,6 @@ for my $attr (qw(
     related_story
     related_media
     media
-    reference
 )) {
     no strict 'refs';
     my $iser = sub { $_[0]->_get($attr) ? shift : undef };

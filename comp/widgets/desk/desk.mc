@@ -33,7 +33,7 @@ $work_id => undef
 $style   => 'standard'
 $action  => undef
 $wf      => undef
-$sort_by => get_pref('Default Asset Sort') || 'cover_date'
+$sort_by => undef
 $offset  => 0
 $show_all => undef
 </%args>
@@ -195,16 +195,26 @@ my $pkg   = get_package_name($class);
 my $meths = $pkg->my_meths;
 my $desk_type = 'workflow';
 my $mlabel = 'Move to';
+my $order_key;
 
 if (defined $desk_id) {
     # This is a workflow desk.
     $desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $desk_id});
+    $order_key = "$class\_order_desk_$desk_id";
 }
 elsif (defined $user_id) {
     # This is a user workspace
     $desk_type = 'workspace';
     $mlabel = 'Check In to';
+    $order_key = "$class\_order_ws_$user_id";
 }
+# Initialize the ordering.
+$sort_by ||= get_state_data($widget, $order_key)
+         || get_pref('Default Asset Sort')
+         || 'cover_date';
+
+set_state_data($widget, $order_key => $sort_by);
+
 #-- Output each desk item  --#
 my $highlight = $sort_by;
 unless ($highlight) {
@@ -252,7 +262,6 @@ if (defined $objs && @$objs > $obj_offset) {
 
         my $can_edit = chk_authz($obj, EDIT, 1);
         my $aid = $obj->get_id;
-        my $vid = $obj->get_version_id;
 
         # Grab the type name.
         my $atid = $obj->get_element_type_id;
@@ -290,20 +299,23 @@ if (defined $objs && @$objs > $obj_offset) {
             # Only show Delete checkbox if user can edit the story
             # (Publish checkbox when PUBLISH permission, but PUBLISH > EDIT anyway)
             if ($can_edit) {
+                my $id = $aid;
                 my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
                 if ($can_pub and ! $obj->get_checked_out) {
+                    $id = $obj->get_version_id; # Publish uses version id.
                     $checkname = "$widget|${class}_pub_ids";
-                    $checklabel = $lang->maketext($class eq 'template'
-                                                  ? 'Deploy' : 'Publish');
+                    $checklabel = $lang->maketext(
+                        $class eq 'template' ? 'Deploy' : 'Publish'
+                    );
                 }
 
                 # We don't want both Delete and Publish on the same page
                 unless ($desk->can_publish && $checkname =~ /_delete_ids$/) {
                     $pub = $m->scomp('/widgets/profile/checkbox.mc',
                                      name  => $checkname,
-                                     id    => "$widget\_$vid",
-                                     value => $vid)
-                      . qq{<label for="$widget\_$vid">$checklabel</label>};
+                                     id    => "$widget\_$id",
+                                     value => $id)
+                      . qq{<label for="$widget\_$id">$checklabel</label>};
                 }
             }
 

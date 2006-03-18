@@ -1,75 +1,105 @@
 <help page="My Workspace">
 
-<p>This is your home base. Here you will store all the assets you create before
-checking them in to a Desk. You'll also be able to check assets out from other
-Desks to edit them at your Workspace.</p>
+<p>This is your home base. Here you will store all the documents and templates
+(collectively known as <q>assets</q>) you create before checking them in to a
+desk. You'll also be able to check assets out from other desks to edit them
+from your workspace.</p>
 
-<p>Click <i>My Workspace</i> in the upper left hand corner to return to this
+<p>Click <em>My Workspace</em> in the upper left hand corner to return to this
 screen at any time.</p>
 
-<h3>Assets</h3>
+<h3>Documents and Templates</h3>
 
-<p>You can manage three different types of assets in your Workspace: Media,
-Stories, and Templates. Newly created assets will reside in your Workspace until
-you move them -- or check them in -- to a Desk.</p>
+<p>You can manage three different types of assets in your workspace: media
+documents, story documents, and formatting templates. Newly created assets will
+reside in your workspace until you move them—or check them in—to a desk.</p>
 
-<p>By checking an asset into a Desk, you allow other permitted users to access
-it. Desks are like stations in an assembly line - an asset needs to be approved
-by each one before it is ready to ship out to consumers.</p>
+<p>By checking an asset into a desk, you allow other users to access it. Desks
+are like stations in an assembly line—an asset needs to be approved by each
+one before it is ready to ship out to consumers.</p>
 
-<p>For example, let's say you have created a new article for your Website. You
-check it in to the Edit Desk, where an editor examines its structure and
-accuracy. The editor then checks the article in to the Legal Desk, where a
-lawyer makes sure it will not get you sued. Next it goes to the Copy Desk, to be
-scrutinized for grammar and spelling. And finally, it is checked in to the
-Publish Desk, where you can push it to the site.</p>
+<p>For example, let's say you have created a new article for your Web site.
+You check it in to the <q>Edit Desk,</q> where an editor examines its
+structure and accuracy. The editor then checks the article in to the <q>Legal
+Desk,</q> where a lawyer makes sure it will not get you sued. Next it goes to
+the <q>Copy Desk</q> to be scrutinized for grammar and spelling. And finally,
+it is checked in to the <q>Publish Desk,</q> where you can push it to the
+site.</p>
 
-<p>At each of these points, the person who needs to edit the asset will check it
-out, or move it to his or her Workspace. When an asset on a Desk is checked out
-to a user, it remains listed on that Desk and other users can still view it, but
-only the person who has checked it out can edit it.</p>
+<p>At each of these points, the person who needs to edit the article will
+check it out, or move it to his or her workspace. When an document or template
+on a desk is checked out to a user, it remains listed on that Desk and other
+users can still view it, but only the person who has checked it out can edit
+it.</p>
+
+<p>Note that desks can be added and removed from a workflow by an
+administrator, so the desks you see in the left navigation column for a
+workflow may not correspond to the desk names we've used in this example.</p>
 
 <h3>Asset Properties (on Workspace)</h3>
 
-<p><dl>
+<dl>
 <dt>Title</dt>
-<dd>Click to preview the asset in another window (except for Templates). A white
-&quot;P&quot; in a red circle at the far end of the title field indicates that
-the asset has been published (or deployed, in the case of a template).</dd>
+<dd>Click to edit the asset in another window. A white
+    <q>P</q> (for documents) or <q>D</q> (for templates) at the far end of the
+    title field indicates that the asset has been published or, in the case of
+    templates, deployed. If the <q>P</q> or <q>D</q>is on a red background, it
+    means that the asset has been changed since the last time it was published
+    or deployed.</dd>
 
-<dt>Category</dt>
-<dd>Where on the site an asset is published.</dd>
+<dt>Primary URI</dt>
+<dd>The location where a document will be published. If it's a link, click it
+    to preview the document in its primary output channel. Does not apply to
+    templates.</dd>
 
-<dt>Cover Date</dt>
-<dd>The date that will be posted with the Story. (this is not necessarily the
-    publish date, but what appears to viewers to be the publish date).</dd>
+<dt>Cover Date/Deployed Date</dt>
+<dd>The document cover date or, for templates, their deploy date. For
+    templates that have not been deployed, the deployed date will be
+    empty.</dd>
+
+<dt>Story Type/Media Type</dt>
+<dd>The story type or media type element that defines the structure of the
+    document. Does not apply to templates.</dd>
+
+<dt>Site</dt>
+<dd>The site with which the asset is associated. Will not display if Bricolage
+    manages a single site.</dd>
+
+<dt>Output Channel</dt>
+<dd>The output channel with which the template is associated. Output channels
+    generally define a collection of templates that output content to a
+    particular format, such as XHTML or RSS. Does not apply to documents</dd>
 
 <dt>Priority</dt>
-<dd>Tells users how urgent the asset is.</dd>
+<dd>Tells users how urgently the asset should move through workflow.</dd>
 
-<dt>Check in to</dt>
-<dd>Moves the asset to the listed Desk.</dd>
+<dt>Check In to</dt>
+<dd>Check the asset into the named desk.</dd>
 
-<dt>Check in to</dt>
-<dd>Select the desired Desk from this select list, scroll to the bottom of the
-    page and click <i>Check In Assets.</i> You can check in more than one asset
-    at a time.</dd>
+<dt>Check in</dt>
+<dd>Select the desired desk (or <q>and shelf</q>, to remove the asset from
+    workflow) from this select list, scroll to the bottom of the page and
+    click <em>Check In Assets.</em> You can check in more than one asset at a
+    time.</dd>
 
 <dt>Notes</dt>
 <dd>View any editorial notes users have attached to the asset.</dd>
 
 <dt>Trail</dt>
-<dd>Lists what Desks the asset has been checked in to.</dd>
+<dd>Lists what Desks the asset has been checked in to. Not present for
+stories.</dd>
 
-<dt>Edit</dt>
-<dd>Modify the asset or its profile.<BR>
+<dt>Clone</dt>
+<dd>Create a duplicate of the story. Applies only to stories</dd>
 
 <dt>Log</dt>
 <dd>Displays the asset's event history.</dd>
 
 <dt>Delete</dt>
-<dd>Check the Delete box, scroll to the bottom of the page and click Delete
-    Checked. You can delete more than one asset at a time.</dd>
-</dl></p>
+<dd>Check the <q>Delete</q> box, scroll to the bottom of the page and click
+    <em>Delete Checked.</em> You can delete more than one asset at a time by
+    checking multiple <q>Delete</q> checkboxes before clicking <em>Delete
+    Checked.</em></dd>
+</dl>
 
 </help>

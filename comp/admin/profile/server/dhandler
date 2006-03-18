@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
-<form method="post" action="<% $r->uri %>" name="server_profile" onSubmit="return confirmChanges(this)" autocomplete="off">
+<form method="post" action="<% $r->uri %>" name="server_profile" onsubmit="return confirmChanges(this)" autocomplete="off">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'server_id')
   if defined $id;

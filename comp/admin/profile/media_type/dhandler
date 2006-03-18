@@ -3,7 +3,7 @@
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
-<form method="post" action="<% $r->uri %>" name="mt_profile" onSubmit="return confirmChanges(this)">
+<form method="post" action="<% $r->uri %>" name="mt_profile" onsubmit="return confirmChanges(this)">
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => "${type}_id")
   if defined $id;

@@ -73,13 +73,14 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     next unless -d $dir;
 
     opendir(DIR, $dir) or die "can't opendir $dir: $!";
-    my @scripts = grep { -f $_ } map { catfile($dir, $_) } sort readdir(DIR);
+    my @scripts = grep { -f $_ and $_ =~ /\.pl$/ }
+        map { catfile($dir, $_) } sort readdir(DIR);
     closedir DIR;
 
     foreach my $script (@scripts) {
         print "Running '$perl $script'.\n";
         my $ret = system(
-            "$perl", $script,
+            $perl, $script,
             '-u', $PG->{root_user},
             '-p', $PG->{root_pass},
             '-i', $PG->{system_user_uid},
@@ -89,6 +90,7 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;
     }
+    system $perl, catfile($FindBin::Bin, 'db_grant.pl'), @ARGV and die;
 }
 
 print "\n\n==> Finished Database Upgrade <==\n\n";

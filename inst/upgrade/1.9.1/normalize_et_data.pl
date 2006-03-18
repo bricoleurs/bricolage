@@ -13,7 +13,7 @@ exit if test_column 'at_data', 'cols';
 # Create new columns
 do_sql
     map({ qq{ALTER TABLE at_data $_} }
-        q{ADD COLUMN  name        VARCHAR(32)},
+        q{ADD COLUMN  name        TEXT},
         q{ADD COLUMN  widget_type VARCHAR(30)},
         q{ALTER COLUMN widget_type SET DEFAULT 'text'},
         q{ADD COLUMN  precision   SMALLINT},
@@ -26,6 +26,20 @@ do_sql
         q{ADD COLUMN  default_val TEXT},
     )
 ;
+
+if (db_version() ge '8.0') {
+    do_sql 'ALTER TABLE at_data ALTER COLUMN key_name TYPE TEXT';
+} else {
+    do_sql
+        q{DROP INDEX udx_atd__key_name__at_id},
+        q{ALTER TABLE at_data RENAME key_name to __key_name__},
+        q{ALTER TABLE at_data ADD COLUMN key_name TEXT},
+        q{UPDATE at_data SET key_name = __key_name__},
+        q{CREATE UNIQUE INDEX udx_atd__key_name__at_id
+          ON at_data(lower_text_num(key_name, element__id))},
+        q{ALTER TABLE at_data DROP COLUMN __key_name__},
+    ;
+}
 
 my $sel = prepare(q{
     SELECT attr.id, meta.name, meta.value

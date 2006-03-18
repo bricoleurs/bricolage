@@ -748,6 +748,27 @@ window.onload = function() {
 };
 
 /*
+ * findFocus(). called in the onload event. Finds the second form in the page
+ * and puts the focus on the first text or textarea or other relevant field
+ * that it can find.
+ */
+
+function findFocus() {
+    if (document.forms.length > 1) {
+        // Skip the site context form, which is always 0.
+        var elems = document.forms[1].elements;
+        for (i = 0; i < elems.length; i++) {
+            var elem = elems[i];
+            if (elem.type == 'text' || elem.type == 'textarea') {
+                selectText(elem, 0, elem.value.length, true);
+                break;
+            }
+        }
+    }
+}
+
+
+/*
  * Save scroll position
  */
 
@@ -909,24 +930,26 @@ function searchField (field) {
     return false;
 }
 
-function selectText (field, start, length) {
-    if (field.createTextRange) {
+function selectText (field, start, end, noAlert) {
+    if (field.setSelectionRange) {
+        // Selection in Mozilla.
+        field.setSelectionRange(start, end);
+    }
+
+    else if (field.createTextRange) {
         // Selection in IE.
         var range = field.createTextRange();
         range.moveStart('character', start);
-        range.moveEnd(  'character', start + length);
+        range.moveEnd(  'character', end - field.value.length);
         range.select();
     }
 
-    else if (field.setSelectionRange) {
-        // Selection in Mozilla.
-        field.setSelectionRange(start, length + 1);
+    else if (!noAlert) {
+        // Everything else.
+        alert('Found from character ' + start + ' to character ' + end);
     }
 
-    else {
-        // Everything else.
-        alert('Found from character ' + start + ' to character ' + (start + length));
-    }
+    field.focus();
 }
 
 function findNext (field) {
@@ -946,7 +969,7 @@ function findNext (field) {
     }
 
     field.lastFoundIndex = start + string.length;
-    selectText(field, start, string.length);
+    selectText(field, start, start + string.length);
     return false;
 }
 

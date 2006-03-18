@@ -20,6 +20,7 @@ $m->comp('/widgets/profile/imageSubmit.mc',
   formName => "perm_profile",
   callback => "$widget|save_cb",
   image    => 'save_red',
+  alt      => 'Save',
 );
 $m->out(' ');
 $m->comp('/widgets/profile/imageSubmit.mc',

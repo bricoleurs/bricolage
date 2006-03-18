@@ -4,7 +4,7 @@
    context => "Admin | Profile | $disp | $crumb"
  &>
 
-<form method="post" action="<% $r->uri %>" name="user_profile" onSubmit="if ( checkLogin(this.login, <% LOGIN_LENGTH %>, this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}" autocomplete="off">
+<form method="post" action="<% $r->uri %>" name="user_profile" onsubmit="if ( checkLogin(this.login, <% LOGIN_LENGTH %>, this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}" autocomplete="off">
 
 <%perl>;
 $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Name",

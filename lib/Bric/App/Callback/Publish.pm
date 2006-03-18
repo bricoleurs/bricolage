@@ -110,7 +110,8 @@ sub preview : Callback {
                 next;
             }
 
-            $b->preview($ra, 'media', get_user_id(), $oc_id);
+            $b->preview($ra, 'media', get_user_id(), $oc_id)
+                unless AUTO_PREVIEW_MEDIA && !$ra->get_needs_preview;
         }
         # Move out the story and then redirect to preview.
         if (my $url = $b->preview($s, 'story', get_user_id(), $oc_id)) {
