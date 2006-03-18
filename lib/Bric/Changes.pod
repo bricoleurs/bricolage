@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.1 ()
+=head1 VERSION 1.10.1 (2006-02-20)
 
 =head2 New Features
 
