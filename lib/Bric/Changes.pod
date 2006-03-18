@@ -2,10 +2,6 @@
 
 Bric::Changes - Bricolage Changes
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$
