@@ -1688,7 +1688,12 @@ sub save {
     my ($self) = @_;
     return $self unless $self->_get__dirty;
     my ($id, $inc) = $self->_get('id', '_includes');
-    defined $id ? $self->_do_update($id) : $self->_do_insert;
+    if ($id) {
+        $self->_do_update($id);
+    } else {
+        $self->_do_insert;
+        $id = $self->_get('id');
+    }
     $inc->save($id) if $inc;
     $self->SUPER::save();
 }

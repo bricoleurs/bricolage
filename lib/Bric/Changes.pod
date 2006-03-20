@@ -265,6 +265,11 @@ where the error was thrown, rather than the C<object_order>, since C<place>
 corresponds to the "Position" select list orderings in the UI, and therefore
 makes it much simpler to figure out where the error is. [David]
 
+=item *
+
+Output channels with includes can now be created via the output channel SOAP
+interface. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
