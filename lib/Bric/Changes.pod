@@ -270,6 +270,11 @@ makes it much simpler to figure out where the error is. [David]
 Output channels with includes can now be created via the output channel SOAP
 interface. [David]
 
+=item *
+
+Fixed the category SOAP interface to support post-1.10 URIs that support paths
+ending in a slash. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)

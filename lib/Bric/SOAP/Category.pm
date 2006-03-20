@@ -493,8 +493,9 @@ sub load_asset {
             throw_ap(error => __PACKAGE__ . " : requested path \"$cdata->{path}\""
                        . " is already in use.")
               if $paths{$path} ||= Bric::Biz::Category->lookup({
-                  uri => $path,
-                  site_id => $site_id });
+                  uri     => $path,
+                  site_id => $site_id,
+              });
 
             # special-case root category
             if ($path eq '/') {
@@ -505,7 +506,7 @@ sub load_asset {
                 throw_ap(error => __PACKAGE__ . " : failed to extract directory from"
                            . " path \"$path\"")
                   unless defined $directory;
-                $parent_path = '/' unless length $parent_path;
+                $parent_path = '' unless length $parent_path;
 
                 # make sure we've got a parent
                 my $parent = $paths{$parent_path} ||=
