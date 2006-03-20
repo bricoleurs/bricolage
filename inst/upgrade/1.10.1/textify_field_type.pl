@@ -24,10 +24,10 @@ if (db_version() ge '8.0') {
         );
     for my $col (@cols) {
         do_sql
-            q{ALTER TABLE field_type RENAME $_ to __$_\__},
-            q{ALTER TABLE field_type ADD COLUMN $_ TEXT},
-            q{UPDATE field_type SET key_name = __$_\__},
-            q{ALTER TABLE field_type DROP COLUMN __$_\__},
+            qq{ALTER TABLE field_type RENAME $col to __$col\__},
+            qq{ALTER TABLE field_type ADD COLUMN $col TEXT},
+            qq{UPDATE field_type SET $col = __$col\__},
+            qq{ALTER TABLE field_type DROP COLUMN __$col\__},
         ;
     }
     do_sql
