@@ -73,13 +73,19 @@ my $addition = sub {
 
 my $thumburi = sub {
     my ($selfobj, $fieldname) = @_;
-    return unless $fieldname eq 'thumb';
+    if ($fieldname eq 'thumb') {
+        # If we get a thumbnail URI, we have an image. Otherwise, simply return
+        # a space to fill the column properly because we aren't an image object
+        # but USE_THUMBNAILS is on.
+        my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
+        return qq{ <img src="$thumb_uri" />};
+    }
 
-    # If we get a thumbnail URI, we have an image. Otherwise, simply return
-    # a space to fill the column properly because we aren't an image object
-    # but USE_THUMBNAILS is on.
-    my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
-    return qq{ <img src="$thumb_uri" />};
+    elsif ($fieldname eq 'uri') {
+        return $selfobj->get_uri;
+    }
+
+    return;
 };
 
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };
@@ -99,14 +105,17 @@ my $alter = {
     }
 };
 
-my $fields = { template => [qw(file_name version output_channel_name publish_status)],
-               story      => [ qw(title version cover_date publish_status) ],
-               media      => [ qw(title version cover_date publish_status) ],
-             };
+my $fields = {
+    template => [qw(uri version output_channel_name publish_status)],
+    story    => [ qw(title version cover_date publish_status) ],
+    media    => [ qw(title version cover_date publish_status) ],
+};
 
-my $sort_by = { template => 'file_name',
-                story      => get_pref('Default Asset Sort') || 'title',
-                media      => get_pref('Default Asset Sort') || 'title'  };
+my $sort_by = {
+    template => 'uri',
+    story    => get_pref('Default Asset Sort') || 'title',
+    media    => get_pref('Default Asset Sort') || 'title',
+};
 
 unshift @{$fields->{'media'}}, 'thumb' if USE_THUMBNAILS;
 
@@ -119,11 +128,16 @@ $alt = $widg = $type;
 
 # Grab the workflow and start desk permissions.
 my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-$desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
-                                chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
-              map { [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]] }
-              $wf->allowed_desks
-            };
+$desk_chk = {
+    map {
+        $_->[0] => [
+            chk_authz(0, READ, 1, @{$_->[1]}),
+            chk_authz(0, EDIT, 1, @{$_->[1]}),
+        ]
+    } map {
+        [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]]
+    } $wf->allowed_desks
+};
 $start_desk_ok = $desk_chk->{$wf->get_head_desk_id}[0];
 my $wf_name = $wf->get_name;
 

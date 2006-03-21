@@ -281,6 +281,12 @@ Fixed the publication of multiple documents at once from a publish desk so
 that documents that are both selected and related to other documents don't get
 skipped. [David]
 
+=item *
+
+The "Find Templates" results now display the template URI rather than its file
+name, to be consistent with the template profile. Reported by Marshall.
+[David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)
