@@ -275,6 +275,12 @@ interface. [David]
 Fixed the category SOAP interface to support post-1.10 URIs that support paths
 ending in a slash. [David]
 
+=item *
+
+Fixed the publication of multiple documents at once from a publish desk so
+that documents that are both selected and related to other documents don't get
+skipped. [David]
+
 =back
 
 =head1 VERSION 1.10.0 (2006-01-23)

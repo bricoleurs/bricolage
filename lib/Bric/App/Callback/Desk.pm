@@ -173,7 +173,12 @@ sub publish : Callback {
     push @stories, $spkg->list({ version_id => ANY(@$story) }) if @$story;
     push @media,   $mpkg->list({ version_id => ANY(@$media) }) if @$media;
 
-    my (@sids, @mids);
+    my %selected = (
+        story => { map { $_->get_id => undef } @stories },
+        media => { map { $_->get_id => undef } @media   },
+    );
+
+    my (@sids, @mids, %desks);
 
     my %seen;
     for ([story => \@stories, $story_pub],
@@ -189,6 +194,13 @@ sub publish : Callback {
             my $id =  $doc->get_id;
             next if $seen{"$key$id"}++;
 
+            unless (chk_authz($doc, PUBLISH, 1)) {
+                my $doc_disp_name = lc get_disp_name($key);
+                add_msg('You do not have permission to publish '
+                        . qq{$doc_disp_name "[_1]"}, $doc->get_name);
+                next;
+            }
+
             if ($doc->get_checked_out) {
                 # Cannot publish checked-out assets.
                 my $doc_disp_name = lc get_disp_name($key);
@@ -198,20 +210,12 @@ sub publish : Callback {
                 next;
             }
 
-            unless (chk_authz($doc, PUBLISH, 1)) {
-                my $doc_disp_name = lc get_disp_name($key);
-                add_msg('You do not have permission to publish '
-                        . qq{$doc_disp_name "[_1]"}, $doc->get_name);
-                next;
-            }
-
             # Hang on to your hat!
             my $ids = $key eq 'story' ? \@sids : \@mids;
             push @$ids, $vid;
 
             # Examine all the related objects.
             if (PUBLISH_RELATED_ASSETS) {
-                my %desks;
                 foreach my $rel ($doc->get_related_objects) {
                     # Skip assets whose current version has already been published.
                     next unless $rel->needs_publish;
@@ -220,9 +224,10 @@ sub publish : Callback {
 
                     # haven't I seen you someplace before?
                     my $relid  = $rel->get_id;
-                    my $relvid = $rel->get_version_id;
                     my $relkey = $rel->key_name;
-                    next if $seen{"$relkey$relid"}++;
+                    next if exists $selected{$relkey}{$relid}
+                        || $seen{"$relkey$relid"}++;
+                    my $relvid = $rel->get_version_id;
 
                     if ($rel->get_checked_out) {
                         # Cannot publish checked-out assets.
