@@ -108,6 +108,7 @@ unless ($workflows) {
 }
 
 </%perl>
+% unless (DISABLE_NAV_LAYER) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html>
@@ -127,6 +128,7 @@ multiOnload.onload(navLoader);
 </script>
 </head>
 <body id="navFrame">
+% }   # unless (DISABLE_NAV_LAYER)
 <%perl>
 # Begin Workflows -------------------------------------
 $m->print(
@@ -313,8 +315,10 @@ if ( $nav->{admin} ) {
 # End Admin --------------------------------------
 $m->print(qq{</ul>});
 </%perl>
+% unless (DISABLE_NAV_LAYER) {
 </body>
 </html>
+% }
 <%doc>
 
 ###############################################################################

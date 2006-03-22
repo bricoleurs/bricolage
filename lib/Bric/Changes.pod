@@ -10,6 +10,18 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.10.2 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed the rarely-used DISABLE_NAV_LAYER bricolage.conf directive. [Scott]
+
+=back
+
 =head1 VERSION 1.10.1 (2006-02-20)
 
 =head2 New Features

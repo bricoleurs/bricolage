@@ -73,6 +73,9 @@ if(ref($title) eq 'ARRAY') {
 <head>
 <meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
+% if (DISABLE_NAV_LAYER) {
+<link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
+% }
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
@@ -114,15 +117,17 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 <%perl>;
 # handle the various states of the side nav
 if ($useSideNav) {
+    my $uri = $r->uri;
+    $uri .= "&amp;debug=$debug" if $debug;
+    # create a unique uri to defeat browser caching attempts.
+    $uri .= "&amp;rnd=" . time;
+    chomp $uri;
 
     if (DISABLE_NAV_LAYER) {
-        $m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
+        $m->out('<div name="sideNav" id="sideNav">');
+        $m->comp("/widgets/wrappers/sharky/sideNav.mc", uri => $uri);
+        $m->out('</div>');
     } else {
-        my $uri = $r->uri;
-        $uri .= "&amp;debug=$debug" if $debug;
-        # create a unique uri to defeat browser caching attempts.
-        $uri .= "&amp;rnd=" . time;
-        chomp $uri;
         $m->out( qq{<iframe name="sideNav" id="sideNav" } .
                  qq{        src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" } .
                  qq{        scrolling="no" frameborder="0"></iframe>} );
