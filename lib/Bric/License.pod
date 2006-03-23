@@ -4,7 +4,7 @@ Bric::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2003
+Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2006
 Kineticode, Inc. and others.
 
 All rights reserved.
@@ -13,7 +13,7 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-=over 4
+=over
 
 =item *
 
@@ -49,7 +49,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Bricolage is maintained by:
 
-=over 4
+=over
 
 =item David Wheeler <david@kineticode.com>
 
@@ -57,7 +57,7 @@ Bricolage is maintained by:
 
 The current development team consists of:
 
-=over 4
+=over
 
 =item David Wheeler <david@kineticode.com>
 
@@ -70,7 +70,7 @@ The current development team consists of:
 
 The original developers were:
 
-=over 4
+=over
 
 =item David Wheeler <david@kineticode.com>
 
@@ -100,7 +100,7 @@ Emeritus Developers:
 
 The online help was written by:
 
-=over 4
+=over
 
 =item Chris Brody <chris_brody@hotmail.com>
 
@@ -112,7 +112,7 @@ The online help was written by:
 
 Folks who have submitted patches include:
 
-=over 4
+=over
 
 =item Sam Tregar
 
@@ -202,7 +202,7 @@ Folks who have submitted patches include:
 
 Friends who have spotted bugs include:
 
-=over 4
+=over
 
 =item Michael Alan Dorman
 
@@ -340,11 +340,13 @@ Friends who have spotted bugs include:
 
 =item Ryan O'Toole
 
+=item Tom Kjeldsen
+
 =back
 
 Bricolage's translation team:
 
-=over 4
+=over
 
 =item ClE<aacute>udio Valente (Portuguese)
 
@@ -362,7 +364,7 @@ Bricolage's translation team:
 
 Others who contributed to its support and development:
 
-=over 4
+=over
 
 =item Kristee Rosendahl
 

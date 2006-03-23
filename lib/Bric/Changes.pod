@@ -26,6 +26,12 @@ Fixed warnings in deprecated methods of
 L<Bric::Biz::Element::Container|Bric::Biz::Element::Container> so that they
 are no longer fatal. Reported by Nate Perry Thistle. [David]
 
+=item *
+
+Fixed reverted media that led to the "Too many Bric::Biz::Element::Container
+objects found". It was supposed to have been fixed in 1.10.1, but that fix
+unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
