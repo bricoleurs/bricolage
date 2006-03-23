@@ -32,6 +32,16 @@ Fixed reverted media that led to the "Too many Bric::Biz::Element::Container
 objects found". It was supposed to have been fixed in 1.10.1, but that fix
 unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
 
+=item *
+
+Fixed the C<subelement_key_name> parameter to the story and media C<list()>
+methods. [David]
+
+=item *
+
+Fixe the "Search by Subelement" feature of story search. Thanks to Nate
+Perry-Thistle for the spot. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
