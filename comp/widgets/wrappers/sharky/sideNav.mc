@@ -1,7 +1,6 @@
 <%args>
 $nav   => undef
 $uri   => undef
-$debug => undef
 </%args>
 <%once>;
 my $disp = { map { $_ => get_disp_name($_) } qw(story media template) };
@@ -48,7 +47,7 @@ my $printLink = sub {
     if ($style =~ /selected/ && !$isLink) {
         $out .= "<span$style>$caption</span>";
     } else {
-        $out .= qq{<a href="$href" target="_parent"$style>$caption</a>};
+        $out .= qq{<a href="$href" $style>$caption</a>};
     }
     return $out;
 };
@@ -64,6 +63,12 @@ my $admin_links = sub {
             my $trans = $lang->maketext($pl_disp->{$_});
             [ $_ => lc $trans, $trans]
         } @_;
+};
+
+my $get_cookie = sub {
+    my ($cookie, $name) = @_;
+    my %cookies = map { split /:/ } split /\+/, $cookie;
+    return exists($cookies{$name}) ? $cookies{$name} : '';
 };
 </%once>\
 <%perl>;
@@ -107,34 +112,16 @@ unless ($workflows) {
     $c->set('__WORKFLOWS__'. $site_id, $workflows);
 }
 
+my %cookies = Apache::Cookie->fetch;
+my $cookie = $cookies{BRICOLAGE_MENUS}->value;
 </%perl>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
-<link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
-<script type="text/javascript" src="/media/js/lib.js"></script>
-  
-<script type="text/javascript">
-var navLoader = function () {
-    var workspace = document.getElementById('workspace');
-    var workspaceAnchor = workspace.getElementsByTagName('a')[0];
-    workspaceAnchor.className = (parent.location.pathname.indexOf('workspace') != -1) ? 'open' : 'closed';
-    resizeframe();
-}
-multiOnload.onload(navLoader);
-</script>
-</head>
-<body id="navFrame">
+%# Begin Workflows -------------------------------------
+<form method="post" action="<% $uri %>" name="navform">
+<ul id="nav">
+<li id="workspace"><a class="closed" href="/workflow/profile/workspace/"
+                      title="My Workspace">My Workspace</a></li>
+<li id="workflows"><ul class="submenu">
 <%perl>
-# Begin Workflows -------------------------------------
-$m->print(
-    '<ul id="nav">',
-    '<li id="workspace"><a class="closed" href="/workflow/profile/workspace/"',
-    'target="_parent" title="My Workspace">My Workspace</a></li>',
-    '<li id="workflows"><ul class="submenu">'
-);
 
 # iterate thru workflows
 foreach my $wf (@$workflows) {
@@ -142,179 +129,131 @@ foreach my $wf (@$workflows) {
     # Check permissions.
     next unless chk_authz(0, READ, 1, @{ $wf->{gids} });
 
-    if ( $nav->{"workflow-$wf->{id}"} ) { # show open workflow
+    my $wfid = $wf->{id};
+    my $wfclass = $get_cookie->($cookie, $wfid) || 'closed';
+    $m->print(
+        qq{<li class="$wfclass"><a href="#" onclick="toggleMenu(this, '$wfid')">},
+        qq{$wf->{name}</a><ul class="sections"><li>},
+        $lang->maketext('Actions')
+    );
 
-        $m->print(
-            qq{<li class="open"><a href="$nav_uri?nav|workflow_cb=0&navwfid=},
-            qq{$wf->{id}">$wf->{name}</a>},
-            '<ul class="sections"><li>',
-            $lang->maketext('Actions')
-        );
-
-        # actions/desks/publish items for this workflow
-        my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
+    # actions/desks/publish items for this workflow
+    my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
 
     # actions
-        $m->out(qq{<ul class="items">});
-        my $key = $wf->{key};
+    $m->out(qq{<ul class="items">});
+    my $key = $wf->{key};
+    $m->print(
+        '<li>',
+        $printLink->(
+            "/workflow/profile/$key/new/$wfid",
+            $uri,
+            "New $disp->{$key}"
+        ),
+        '</li>',
+    ) if $can_create;
+
+    $m->print(
+        '<li>',
+        $printLink->(
+            "/workflow/manager/$key/$wfid",
+            $uri,
+            "Find $pl_disp->{$key}"
+        ),
+        '</li><li>',
+         $printLink->(
+            "/workflow/active/$key/$wfid",
+            $uri,
+            "Active $pl_disp->{$key}"
+        ),
+        '</li>'
+    );
+
+    $m->print(
+        '<li>',
+        $printLink->(
+            "/workflow/profile/alias/$key/$wfid",
+            $uri,
+            'New Alias'
+        ),
+        '</li>',
+    ) unless $key eq 'template';
+
+    $m->print('</ul></li>');
+
+    # desks
+    $m->print('<li>', $lang->maketext('Desks'), '<ul class="items">');
+    for my $d (@{$wf->{desks}}) {
+        next unless chk_authz(0, READ, 1, @{ $d->[2] });
         $m->print(
             '<li>',
             $printLink->(
-                "/workflow/profile/$key/new/$wf->{id}",
+                "/workflow/profile/desk/$wfid/$d->[0]/",
                 $uri,
-                "New $disp->{$key}"
-            ),
-            '</li>',
-        ) if $can_create;
-
-        $m->print(
-            '<li>',
-            $printLink->(
-                "/workflow/manager/$key/$wf->{id}",
-                $uri,
-                "Find $pl_disp->{$key}"
-            ),
-            '</li><li>',
-
-            $printLink->(
-                "/workflow/active/$key/$wf->{id}",
-                $uri,
-                "Active $pl_disp->{$key}"
+                $d->[1],
+                1
             ),
             '</li>'
         );
-
-        $m->print(
-            '<li>',
-            $printLink->(
-                "/workflow/profile/alias/$key/$wf->{id}",
-                $uri,
-                'New Alias'
-            ),
-            '</li>',
-        ) unless $key eq 'template';
-
-        $m->print('</ul></li>');
-
-        # desks
-        $m->print('<li>', $lang->maketext('Desks'), '<ul class="items">');
-        for my $d (@{$wf->{desks}}) {
-            next unless chk_authz(0, READ, 1, @{ $d->[2] });
-            $m->print(
-                '<li>',
-                $printLink->(
-                    "/workflow/profile/desk/$wf->{id}/$d->[0]/",
-                    $uri,
-                    $d->[1],
-                    1
-                ),
-                '</li>'
-            );
-        }
-        $m->print('</ul></li></ul></li>');
-    } else {
-        # closed state
-        $m->print(
-            qq{<li class="closed"><a href="$nav_uri?nav|workflow_cb=1&navwfid=},
-            qq{$wf->{id}">$wf->{name}</a></li>}
-        );
     }
+    $m->print('</ul></li></ul></li>');
 }
-$m->print(qq{</ul></li>});
+$m->print('</ul></li>');
 # End Workflows -------------------------------------
 
 # Begin Admin --------------------------------------
-if ( $nav->{admin} ) {
-    # Start the open admin menu.
-    $m->print(
-        qq{<li id="admin" class="open"><a href="}, $nav_uri,
-        qq{?nav|admin_cb=0">}, $lang->maketext('Admin'), qq{</a>},
-        qq{<ul class="submenu">},
-    );
+my $adminclass = $get_cookie->($cookie, 'admin') || 'closed';
+$m->print(
+    qq{<li id="admin" class="$adminclass">},
+    qq{<a href="#" onclick="toggleMenu(this, 'admin')">},
+    $lang->maketext('Admin'), qq{</a><ul class="submenu">},
+);
 
-    # Begin system submenus
-    if ( $nav->{adminSystem} ) {
-        # open system submenu
-        $m->print(
-            qq{<li class="open"><a href="}, $nav_uri,
-            qq{?nav|adminSystem_cb=0">}, $lang->maketext('System'),
-            qq{</a>}, qq{<ul class="items">},
-        );
-        $admin_links->($uri, qw(alert_type grp pref site user));
-        $m->print(qq{</ul></li>});
-    }
+# Begin system submenus
+my $sysclass = $get_cookie->($cookie, 'adminSys') || 'closed';
+$m->print(
+    qq{<li id="adminSys" class="$sysclass">},
+    qq{<a href="#" onclick="toggleMenu(this, 'adminSys')">},
+    $lang->maketext('System'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(alert_type grp pref site user));
+$m->print('</ul></li>');
+# End system submenus
 
-    else {
-        # closed system submenu
-        $m->print(
-            qq{<li class="closed"><a href="}, $nav_uri,
-            qq{?nav|adminSystem_cb=1">}, $lang->maketext('System'), qq{</a></li>}
-        );
-    }
-    # End system submenus
+# Begin publishing submenus
+my $pubclass = $get_cookie->($cookie, 'adminPub') || 'closed';
+$m->print(
+    qq{<li id="adminPub" class="$pubclass">},
+    qq{<a href="#" onclick="toggleMenu(this, 'adminPub')">},
+    $lang->maketext('Publishing'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(category contrib_type contrib element_type keyword
+                        media_type output_channel source workflow));
 
-    # Begin publishing submenus
-    if ( $nav->{adminPublishing} ) {
-        # Start the open publishing menu.
-        $m->print(
-            qq{<li class="open"><a href="}, $nav_uri,
-            qq{?nav|adminPublishing_cb=0">}, $lang->maketext('Publishing'),
-            qq{</a>}, qq{<ul class="items">},
-        );
+$m->print(
+    qq{<li style="padding-top: 1em;">},
+    $printLink->('/admin/control/publish', $uri, 'Bulk Publish'),
+    qq{</li></ul></li>}
+);
+# End publishing submenus
 
-        $admin_links->($uri, qw(category contrib_type contrib element_type keyword
-                                media_type output_channel source workflow));
+# Begin distribution submenus
+my $distclass = $get_cookie->($cookie, 'adminDist') || 'closed';
+$m->print(
+    qq{<li id="adminDist" class="$distclass">},
+    qq{<a href="#" onclick="toggleMenu(this, 'adminDist')">},
+    $lang->maketext('Distribution'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(dest job));
 
-        $m->print(
-            qq{<li style="padding-top: 1em;">},
-            $printLink->('/admin/control/publish', $uri, 'Bulk Publish'),
-            qq{</li></ul></li>}
-        );
+$m->print('</ul></li>');
+# End distribution submenus
 
-    } else {
-        # closed publishing submenu
-        $m->print(
-            qq{<li class="closed"><a href="}, $nav_uri,
-        qq{?nav|adminPublishing_cb=1">}, $lang->maketext('Publishing'),
-            qq{</a></li>}
-        );
-    }
-    # End publishing submenus
-
-    # Begin distribution submenus
-    if ( $nav->{distSystem} ) {
-        # Start the open distribution menu.
-        $m->print(
-            qq{<li class="open"><a href="}, $nav_uri,
-            qq{?nav|distSystem_cb=0">}, $lang->maketext('Distribution'),
-            qq{</a>}, qq{<ul class="items">},
-        );
-
-        $admin_links->($uri, qw(dest job));
-
-        $m->print(qq{</ul></li>});
-    } else {
-        $m->print(
-            qq{<li class="closed"><a href="}, $nav_uri,
-        qq{?nav|distSystem_cb=1">}, $lang->maketext('Distribution'),
-            qq{</a></li>}
-        );
-    }
-    # End distribution submenus
-
-    $m->print(qq{</ul></li>});
-} else {
-# closed admin state
-    $m->print(
-        qq{<li id="admin" class="closed"><a href="}, $nav_uri,
-        qq{?nav|admin_cb=1">}, $lang->maketext('Admin'), qq{</a></li>}
-    );
-}
+$m->print('</ul></li>');
 # End Admin --------------------------------------
-$m->print(qq{</ul>});
 </%perl>
-</body>
-</html>
+</ul>
+</form>
 <%doc>
 
 ###############################################################################

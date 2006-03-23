@@ -84,3 +84,6 @@ ul {
   background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 6px 5px no-repeat;
   font-weight: normal;
 }
+/* Hide or show menus depending on the <li>'s class */
+#nav li.closed > ul { display: none; }
+#nav li.open   > ul { display: inherit; }

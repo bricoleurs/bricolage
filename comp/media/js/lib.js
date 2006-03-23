@@ -995,3 +995,39 @@ function replaceAll (field) {
     }
     return false;
 }
+
+/*
+ * Menu functions.
+ */
+
+function toggleMenu (el, id) {
+    // Toggle <li> class: closed <-> open
+    var parent = el.parentNode;
+    var newclass = parent.getAttribute('class') == 'open' ? 'closed' : 'open'
+    parent.setAttribute('class', newclass);
+
+    // Update state stored in cookie
+    // first make sure to have only the menus cookie
+    var name = 'BRICOLAGE_MENUS';
+    var regex = new RegExp(name + '=([\\w:+]+);?');
+    var val = regex.test(document.cookie) ? RegExp.$1 : '';
+    if (val == '') {
+        val = id + ':' + newclass;
+    } else {
+        regex = new RegExp('\\b' + id + ':(?:open|closed)');
+        if (regex.test(val)) {
+            // if this already contains the menu, replace with the new value
+            val = val.replace(regex, id + ':' + newclass);
+        } else {
+            // otherwise add the new menu
+            val += '+' + id + ':' + newclass;
+        }
+    }
+    document.cookie = name + '=' + val;
+
+    // XXX: if I don't do this, the link stays "clicked" (outlined)
+    el.blur();
+
+    // Don't follow the link
+    return false;
+}

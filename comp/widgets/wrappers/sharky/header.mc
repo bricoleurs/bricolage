@@ -73,6 +73,7 @@ if(ref($title) eq 'ARRAY') {
 <head>
 <meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
@@ -87,14 +88,13 @@ multiOnload.onload(function () {
 });
 
 % if ($no_toolbar) {
-if (window.name == 'sideNav') { parent.location.href = location.href; }
 if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideNav') {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
     history.forward(1);
 }
-% } # if
+% } # if ($no_toolbar)
 --></script>
 </head>
 <body>
@@ -114,19 +114,12 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 <%perl>;
 # handle the various states of the side nav
 if ($useSideNav) {
+    my $uri = $r->uri;
+    chomp $uri;
 
-    if (DISABLE_NAV_LAYER) {
-        $m->comp("/widgets/wrappers/sharky/sideNav.mc", debug => $debug);
-    } else {
-        my $uri = $r->uri;
-        $uri .= "&amp;debug=$debug" if $debug;
-        # create a unique uri to defeat browser caching attempts.
-        $uri .= "&amp;rnd=" . time;
-        chomp $uri;
-        $m->out( qq{<iframe name="sideNav" id="sideNav" } .
-                 qq{        src="/widgets/wrappers/sharky/sideNav.mc?uri=$uri" } .
-                 qq{        scrolling="no" frameborder="0"></iframe>} );
-    }
+    $m->out('<div name="sideNav" id="sideNav">');
+    $m->comp("/widgets/wrappers/sharky/sideNav.mc", uri => $uri);
+    $m->out('</div>');
 }
 
 </%perl>
