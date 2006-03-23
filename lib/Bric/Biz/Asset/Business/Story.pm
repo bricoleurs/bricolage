@@ -297,6 +297,7 @@ use constant PARAM_FROM_MAP => {
        element_key_name     => 'element_type e',
        'story.category'     => 'story__category sc2',
        subelement_key_name  => 'story_element sct, element_type subet',
+       subelement_id        => 'story_element sse',
        related_story_id     => 'story_element sctrs',
        related_media_id     => 'story_element sctrm',
        note                 => 'story_instance si2',
@@ -342,6 +343,7 @@ use constant PARAM_WHERE_MAP => {
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
+      subelement_id          => 'i.id = sse.object_instance_id AND sse.element_type__id = ?',
       related_story_id       => 'i.id = sctrs.object_instance_id AND sctrs.related_story__id = ?',
       related_media_id       => 'i.id = sctrm.object_instance_id AND sctrm.related_media__id = ?',
       data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
@@ -420,8 +422,10 @@ use constant PARAM_WHERE_MAP => {
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 's.element_type__id = e.id',
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
-    subelement_key_name    => [ 'i.id = sct.object_instance_id',
-                                'LOWER(sct.key_name) LIKE LOWER(?)' ],
+    subelement_key_name    => [ 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id',
+                                'LOWER(subet.key_name) LIKE LOWER(?)' ],
+    subelement_id          => [ 'i.id = sse.object_instance_id',
+                                'sse.element_type__id = ?' ],
     related_story_id       => [ 'i.id = sctrs.object_instance_id',
                                 'sctrs.related_story__id = ?' ],
     related_media_id       => [ 'i.id = sctrm.object_instance_id',
@@ -878,6 +882,11 @@ values.
 
 The key name for a container element that's a subelement of a story. May use
 C<ANY> for a list of possible values.
+
+=item subelement_id
+
+The ID for a container element that's a subelement of a story. May use C<ANY>
+for a list of possible values.
 
 =item related_story_id
 
