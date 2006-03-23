@@ -22,7 +22,7 @@ Fixed the rarely-used DISABLE_NAV_LAYER bricolage.conf directive. [Scott]
 
 =back
 
-=head1 VERSION 1.10.1 (2006-02-20)
+=head1 VERSION 1.10.1 (2006-03-20)
 
 =head2 New Features
 
