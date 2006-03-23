@@ -20,6 +20,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Fixed the rarely-used DISABLE_NAV_LAYER bricolage.conf directive. [Scott]
 
+=item *
+
+Fixed warnings in deprecated methods of
+L<Bric::Biz::Element::Container|Bric::Biz::Element::Container> so that they
+are no longer fatal. Reported by Nate Perry Thistle. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
