@@ -113,7 +113,9 @@ unless ($workflows) {
 }
 
 my %cookies = Apache::Cookie->fetch;
-my $cookie = $cookies{BRICOLAGE_MENUS}->value;
+my $cookie = exists($cookies{BRICOLAGE_MENUS})
+  ? $cookies{BRICOLAGE_MENUS}->value
+  : '';
 </%perl>
 %# Begin Workflows -------------------------------------
 <form method="post" action="<% $uri %>" name="navform">
