@@ -641,7 +641,7 @@ $create_fa = sub {
                 active => 0,
                 output_channel_id => $oc_id,
                 category_id => $cat_id,
-                element_id => $at_id,
+                element_type_id => $at_id,
                 site_id => $site_id,
             });
             if (defined $fa) {
