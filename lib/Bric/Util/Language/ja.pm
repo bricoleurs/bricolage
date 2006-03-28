@@ -1,4 +1,4 @@
-package Bric::Util::Language::de_de;
+package Bric::Util::Language::ja;
 
 =encoding utf8
 
@@ -33,6 +33,8 @@ use utf8;
 use base qw(Bric::Util::Language);
 
 use constant key => 'ja';
+
+=begin comment
 
 our %Lexicon = (
 
@@ -701,23 +703,7 @@ our %Lexicon = (
   '[quant,_1,story,stories] published.' => '[quant,_1,Beitrag,Beiträge] veröffentlicht',
   'contains illegal characters!' => ' enthält unzulässige Zeichen!',
    '_AUTO' => 1,
-  );
-
-=begin comment
-
-I'll gladly accept suggestions concerning some of the more obscure words,
-such as
-Alert == Benachrichtigung
-Media == Medium
-Contributor == Mitarbeiter
-Assets == Güter
-Also, I'm certain there are plenty of typos and other errors in this
-translation, which I'll gradually try to remove. I'd be very grateful for
-any error pointers.
-
-To Translate:
-
-  'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'
+  'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.',
   'You do not have permission to override user "[_1]"' => 'You do not have permission to override user "[_1]"',
   'Template "[_1]" deployed.' => 'Vorlage "[_1]" ausgebracht',
   'Story "[_1]" scheduled for publication.' => 'Beitrag "[_1]" veröffentlicht.',
@@ -726,10 +712,10 @@ To Translate:
   'Milliseconds' => 'Milliseconds',
   'Microseconds' => 'Microseconds',
   'Not defined.' => 'Not defined.',
-  "You do not have sufficient permission to create a media document for this site" => "You do not have sufficient permission to create a media document for this site"
+  'You do not have sufficient permission to create a media document for this site' => 'You do not have sufficient permission to create a media document for this site',
   'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
-  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
-  'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].'
+  'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.',
+  'Related [_1] "[_2]" is not activate. Please relate another [_1].' => 'Related [_1] "[_2]" is not activate. Please relate another [_1].',
   'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.' => 'Cannot auto-publish related $rel_disp_name "[_1]" because it is not on a publish desk.',
   'You do not have permission to publish story "[_1]"' => 'You do not have permission to publish story "[_1]"',
   'You do not have permission to publish media "[_1]"' => 'You do not have permission to publish media "[_1]"',
@@ -741,7 +727,7 @@ To Translate:
   'All Subelements' => 'All Subelements',
       'Code' => 'Code',
       'Code Select' => 'Code Select',
-      'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
+      q{Invalid codeselect code (didn't return an array ref of even size)} => q{Invalid codeselect code (didn't return an array ref of even size)},
   'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.' => 'The error message is available below. No further execution attempts will be made on this job unless you check the "Reset this Job" checkbox below.',
   'Job "[_1]" has been reset.' => 'Job "[_1]" has been reset.',
   '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
@@ -761,7 +747,7 @@ To Translate:
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
-
+  );
 
 =end comment
 
