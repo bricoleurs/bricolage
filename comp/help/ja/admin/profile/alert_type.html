@@ -1,0 +1,144 @@
+<help page="Alert Type Profile">
+
+<p>This is where you create new Alert Types and edit
+   existing ones.</p>
+
+<p>When creating a new Alert Type:</p>
+
+<p>
+<dl>
+
+<dt>Select an Object</dt>
+<dd>The object you select will be the subject of the events that will
+    trigger your alerts. After selecting an object, click the Next
+    button.</dd>
+
+<dt>Select an Event Type</dt>
+<dd>Select an event type relevant to the object you selected before.
+    It is the triggering of the type of event you choose here that will
+    in turn trigger your alert. This screen also requires you to choose
+    a name for your alert type. The name can be anything you want.
+    Finally, you must select the owner of the alert type. By default
+    this will be you, but you can choose another user. Each owner
+    can only have one alert type of the same name. Click the Next
+    button when you are ready to go on.</dd>
+
+</dl>
+</p>
+
+<p>The last screen you encounter when creating a new Alert Type
+   is also the screen you use to edit existing Alert Types.
+   Here you can set rules, edit the alert contents, and designate
+   the alert recipients.</p>
+
+<p>
+<dl>
+
+<dt>Properties</dt>
+<dd>The first three properties were discussed above. The
+Active property determines whether the alert will actually
+be sent when the corresponding event occurs. By default,
+the alert is active, but you can uncheck the checkbox to
+make it inactive.</dd>
+
+<dt>Rules</dt>
+<dd>Rules must be determined to be true for an event in order
+    for it to trigger an alert. A rule compares data related
+    to the event (the &quot;attribute&quot;) to a value that you enter.
+    (One thing to note here is that &quot;Trig&quot; is short for
+    &quot;Triggerer&quot;, that is the user who triggered the event.)
+    Comparisons are case-insensitive (it doesn't matter if you
+    enter upper or lower case letters) and use one of a number
+    of operators to compare the value:
+
+    <dl>
+
+    <dt>=</dt>
+    <dd>Equal. This will probably be the most-frequently used operator.
+        It is true if the value <strong>exactly</strong> matches the event data.</dd>
+
+    <dt>&lt;&gt;</dt>
+    <dd>Not equal. It is true if the value does not <strong>exactly</strong>
+        match the event data.</dd>
+
+    <dt>&gt;</dt>
+    <dd>Greater than.</dd>
+
+    <dt>&lt;</dt>
+    <dd>Less than.</dd>
+
+    <dt>&gt;=</dt>
+    <dd>Greater than or equal.</dd>
+
+    <dt>&lt;=</dt>
+    <dd>Less than or equal.</dd>
+
+    <dt>=~</dt>
+    <dd>Match against a Perl regular expression. Explaining regular
+        expressions is outside the scope of this documentation, but
+        here are a few examples:
+
+        <dl>
+
+        <dt>Partially match a value</dt>
+        <dd>Whereas using &quot;=&quot; above matches the value exactly, if you
+        enter something here it will match <strong>anywhere</strong> within the string.
+        For example, a value of <code>Spain</code> would match &quot;Barcelona, Spain&quot;.</dd>
+
+        <dt>Match one of several values</dt>
+        <dd>You can separate several values by '|', and this will match
+        <strong>any</strong> of those values. For example, <code>Spain|France|England</code>
+        would match any of those three countries. Note that to require
+        that <strong>all</strong> of those values match, you would use three separate
+        &quot;=&quot; rules.</dd>
+
+        <dt>A fuzzy value</dt>
+        <dd>Say you wanted to match
+        either &quot;Paris, France&quot; or &quot;Paratroopers in France&quot;. You could
+        use this value: <code>Par.*France</code>. The '.' means any character, and
+        following it by a '*' means to match any number of characters.</dd>
+
+        </dl>
+    </dd>
+
+    <dt>!~</dt>
+    <dd>Don't match a Perl regular expression. This is the opposite of &quot;=~&quot;.</dd>
+
+    </dl>
+</dd>
+
+<dt>Content</dt>
+<dd>This is the content that will be sent in the alert. The subject will
+be the subject of the email, and the message is the body of the email.
+You can enter whatever you want into the text fields, but by using the
+select menus you can add event-specific information. There is a menu
+for each field, and they are provided for convenience in inserting
+&quot;variables&quot; into the fields. Whenever you select an item from the
+menu, it automatically goes into the field. The values in the menu
+correspond to the &quot;attributes&quot; in the Rules section above. You don't
+even have to use the menus; you can just enter the variable directly
+into the field. Note that dollar signs (<code>$</code>) are special because they
+indicate variables, so to include a literal dollar sign you have to
+precede it with a backslash, like <code>Cost: \$500</code>.</dd>
+
+<dt>Recipients</dt>
+<dd>Recipients are those users who will receive this alert.
+There are three types of &quot;contact&quot; that can be sent emails:
+Primary Email, Secondary Email, and Pager Email. Note especially
+that you set these values in the User Profile, where user accounts
+are edited. If you select a recipient to receive an event, but the
+user doesn't have the contact information entered in their User Profile,
+they won't receive the event. Users with multiple addresses will
+be sent alerts to each of those addresses.</dd>
+
+</dl>
+</p>
+
+<p>When you are done, click the Save button at the bottom, or Cancel
+to discard your changes. To delete the Alert Type, check the
+&quot;Delete this Profile&quot; button and click Save.</p>
+
+<p>For more information on Alerts,
+see <a href="http://bricolage.cc/docs/current/api/Bric::Alert" onclick="var newWin = window.open(this.href); newWin.focus(true); return false;">Bric::Alert</a>.</p>
+
+</help>

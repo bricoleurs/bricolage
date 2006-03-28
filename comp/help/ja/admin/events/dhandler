@@ -1,0 +1,28 @@
+<help page="Events Log">
+
+<p>The &#8216;Log&#8217; for a Bricolage object shows a history of events
+ associated with it, such as when it was created, saved, or deleted.</p>
+
+<p>The table of events has the following columns:</p>
+
+<dl>
+ <dt>Name</dt>
+ <dd>The type of event which occurred.</dd>
+
+ <dt>Triggered By</dt>
+ <dd>The name of the user who caused the event to happen.</dd>
+
+ <dt>Timestamp</dt>
+ <dd>The date and time at which the event took place.</dd>
+
+ <dt>Attributes</dt>
+ <dd>Any other information that was recorded about the event.  For example,
+  when the event records an asset being moved to a different desk this
+  column will give the name of the desk it was moved to.</dd>
+</dl>
+
+<p>By default the events are shown in date order, starting with the oldest
+ events.  Click on the title for one of the columns in the table to change
+ the ordering.</p>
+
+</help>

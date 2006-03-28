@@ -1,0 +1,9 @@
+<help page="Events Trail">
+
+<p>The <q>Trail</q> for an asset shows which desks it has been moved to in the
+past. This is similar to the <q>Log</q> for an asset, except that only
+movements to different desks are shown.</p>
+
+<p>For more details see the <a href="../events/">help on event logs</a>.</p>
+
+</help>

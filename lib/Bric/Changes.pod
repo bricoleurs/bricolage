@@ -21,6 +21,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Added the C<subelement_id> parameter to the story and media C<list()> methods.
 [David]
 
+=item *
+
+Added placeholder for Japanese localization. Expect a translation soon!
+[David]
+
 =back
 
 =head2 Bug Fixes
