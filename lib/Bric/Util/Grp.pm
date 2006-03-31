@@ -196,7 +196,8 @@ BEGIN {
 
 # This runs after this package has compiled, but before the program runs.
 
-INIT { use Bric::Util::Grp::Grp }
+require Bric::Util::Grp::Grp;
+
 #==============================================================================#
 # Interface Methods                    #
 #======================================#
