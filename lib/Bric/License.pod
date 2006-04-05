@@ -65,7 +65,6 @@ The current development team consists of:
 
 =item Marshall Roch <marshall@exclupen.com>
 
-
 =back
 
 The original developers were:
@@ -95,6 +94,24 @@ Emeritus Developers:
 =item Sam Tregar <sam@stregar.com>
 
 =item Mark Jaroski <mark@geekhive.net>
+
+=back
+
+The user interface was designed by:
+
+=over
+
+=item Kristee Rosendahl
+
+=back
+
+With later enhancements by:
+
+=over
+
+=item David Wheeler
+
+=item Marshall Roch
 
 =back
 
@@ -365,8 +382,6 @@ Bricolage's translation team:
 Others who contributed to its support and development:
 
 =over
-
-=item Kristee Rosendahl
 
 =item Sara Plath
 
