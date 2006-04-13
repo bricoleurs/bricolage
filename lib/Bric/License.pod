@@ -4,7 +4,7 @@ Bric::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2003
+Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2006
 Kineticode, Inc. and others.
 
 All rights reserved.
@@ -187,6 +187,8 @@ Folks who have submitted patches include:
 =item Dharmender Yadav
 
 =item Rod Taylor
+
+=item Brad Fox
 
 =back
 

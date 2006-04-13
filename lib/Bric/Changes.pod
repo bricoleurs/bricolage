@@ -37,6 +37,12 @@ all together so that you don't have to. [David]
 My Workspace now remembers the sort order of assets as well as desks do.
 [David]
 
+=item *
+
+Added more code to the C<inst/upgrade/1.8.9/fix_publish_status.pl> upgrade
+script to better cover the possible variations in publish status inaccuracies.
+[Brad Fox]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
