@@ -55,8 +55,13 @@ methods. [David]
 
 =item *
 
-Fixe the "Search by Subelement" feature of story search. Thanks to Nate
+Fixed the "Search by Subelement" feature of story search. Thanks to Nate
 Perry-Thistle for the spot. [David]
+
+=item *
+
+Fixed highlighting when sorting by Element on desks (bug 1185). Patch from
+Brad Harder.
 
 =back
 

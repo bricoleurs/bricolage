@@ -215,6 +215,8 @@ Folks who have submitted patches include:
 
 =item * Christian Niles
 
+=item * Brad Harder
+
 =back
 
 Friends who have spotted bugs include:
