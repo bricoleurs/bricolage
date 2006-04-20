@@ -52,7 +52,7 @@ Apache you downloaded. For example, if you downloaded apache_1.3.27.tar.gz,
 then the mod_ssl sources you want will be something like
 mod_ssl-2.x.x-1.3.27.tar.gz.
 
-From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.0.tar.gz or
+From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.x.tar.gz or
 perl-5.6.1.tar.gz.
 
 From http://perl.apache.org/dist/, download the the sources for latest 1.x
@@ -104,9 +104,9 @@ You should be fine if you follow the steps outlined here.
   % make
   % make install
 
-3. Install Perl. For Perl 5.8.0, do this:
+3. Install Perl. For Perl 5.8.x, do this:
 
-  % cd perl-5.8.0/
+  % cd perl-5.8.x/
   % export LC_ALL=C     # or setenv LC_ALL C
   % export LANG="en_US" # or setenv LANG en_US
   % sh Configure -des -Dprefix=/usr/local -Uinstallusrbinperl
