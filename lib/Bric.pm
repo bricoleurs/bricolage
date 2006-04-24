@@ -20,7 +20,7 @@ $LastChangedRevision$
 
 # Set the Version Number.
 BEGIN {
-    our $VERSION = '1.10.1';
+    our $VERSION = '1.10.2';
 }
 
 =item Date
