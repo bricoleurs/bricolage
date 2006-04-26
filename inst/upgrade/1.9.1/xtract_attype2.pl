@@ -10,8 +10,8 @@ exit unless test_column 'element_type', 'reference';
 
 # Later versions will have booleans instead of NUMERIC.
 my $cast = test_column('at_type', 'top_level', undef, undef, 'boolean')
-    ? '::boolean'
-    : '';
+    ? ''
+    : '::boolean';
 
 do_sql
     q{ UPDATE element_type
