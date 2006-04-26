@@ -8,14 +8,19 @@ use bric_upgrade qw(:all);
 
 exit unless test_column 'element_type', 'reference';
 
+# Later versions will have booleans instead of NUMERIC.
+my $cast = test_column('at_type', 'top_level', undef, undef, 'boolean')
+    ? '::boolean'
+    : '';
+
 do_sql
     q{ UPDATE element_type
-       SET    top_level     = at.top_level,
-              paginated     = at.paginated,
-              fixed_uri     = at.fixed_url,
-              related_story = at.related_story,
-              related_media = at.related_media,
-              media         = at.media,
+       SET    top_level     = at.top_level$cast,
+              paginated     = at.paginated$cast,
+              fixed_uri     = at.fixed_url$cast,
+              related_story = at.related_story$cast,
+              related_media = at.related_media$cast,
+              media         = at.media$cast,
               biz_class__id = at.biz_class__id
        FROM   at_type as at
        WHERE  at.id = element_type.type__id

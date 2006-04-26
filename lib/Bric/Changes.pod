@@ -80,6 +80,12 @@ The "Story Type" and "Media Type" options for sorting stories and media,
 respectively, on desks and on My Workspace, works again. Reported by Brad
 Harder. [David]
 
+=item *
+
+The F<inst/upgrade/1.9.1/xtract_attype2.pl> upgrade script now detects whether
+the database has been converted to use boolean columns and casts values moved
+from numeric columns accordingly. Reported by Brad Harder. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
