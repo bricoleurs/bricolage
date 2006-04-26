@@ -43,6 +43,13 @@ Added more code to the C<inst/upgrade/1.8.9/fix_publish_status.pl> upgrade
 script to better cover the possible variations in publish status inaccuracies.
 [Brad Fox]
 
+=item *
+
+Distribution via any mover other than "File System" now correctly strips off
+port numbers from the host name. This is most useful when using FTP, SFTP, or
+WebDAV to distribute to a preview server serving content from an alternate
+port. Reported by Doug Dawson. [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)

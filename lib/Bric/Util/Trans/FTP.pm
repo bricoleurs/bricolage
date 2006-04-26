@@ -149,7 +149,7 @@ sub put_res {
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
         my $is_win = $s->get_os eq 'Win32';
         # Instantiate an FTP object, login, and change to binary mode.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
@@ -268,7 +268,7 @@ sub del_res {
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
         # Instantiate an FTP object and login.
         my $ftp = Net::FTP->new($hn, Debug => DEBUG)
           or throw_gen error   => "Unable to connect to remote server '$hn'.",
