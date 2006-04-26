@@ -63,6 +63,11 @@ Perry-Thistle for the spot. [David]
 Fixed highlighting when sorting by Element on desks (bug 1185). Patch from
 Brad Harder.
 
+=item *
+
+The "Default Field" select list in Bulk Edit works again. Thanks to Tom
+Kjeldsen for uncovering the underlying problem. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

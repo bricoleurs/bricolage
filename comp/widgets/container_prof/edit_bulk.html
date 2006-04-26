@@ -78,7 +78,7 @@ my $opts = [
    close_label => 'Close',
 &>
 <div class="cheat_sheet">
-% $gen_cheat_sheet->($m, $et, \%seen_fields, {});
+<% $cheat_sheet %>
 </div>
 </&>
 <script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
@@ -120,7 +120,7 @@ my $def_field  = get_state_data(
     '_tmp_prefs',
     'container_prof.' . $et->get_id . '.def_field'
 );
-my %seen_fields;
+my $cheat_sheet = $m->scomp('.gen_cheat_sheet', $et, \my %seen_fields, {});
 </%init>
 <%once>;
 my $show_element_flags = sub {
@@ -146,10 +146,10 @@ my $show_data_flags = sub {
     return '' unless @flags;
     return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
 };
-
-my $gen_cheat_sheet;
-$gen_cheat_sheet = sub {
-    my ($m, $et, $seen_fields, $seen_elems) = @_;
+</%once>
+<%def .gen_cheat_sheet>
+<%perl>;
+    my ($et, $seen_fields, $seen_elems) = @_;
     my $fields = $et->get_field_types;
     my $subs   = $et->get_containers;
     return unless @$fields || @$subs;
@@ -168,10 +168,11 @@ $gen_cheat_sheet = sub {
             qq{<li class="elem"><strong>=begin $kn</strong>},
             $show_element_flags->($cont),
         );
-        $gen_cheat_sheet->($m, $cont, $seen_fields, $seen_elems);
+        $m->comp('.gen_cheat_sheet', $cont, $seen_fields, $seen_elems);
         $m->print("<strong>=end $kn</strong></li>\n");
         $seen_elems->{$kn}--;
     }
 
     $m->print("</ul>\n");
-};</%once>
+</%perl>
+</%def>
