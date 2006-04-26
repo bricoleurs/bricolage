@@ -561,6 +561,14 @@ sub my_meths {
                               len      => 10,
                               type     => 'short',
                              },
+              uuid         => {
+                              name     => 'uuid',
+                              get_meth => sub { shift->get_uuid },
+                              get_args => [],
+                              disp     => 'UUID',
+                              len      => 36,
+                              type     => 'short',
+                             },
               version_id => {
                               name     => 'version_id',
                               get_meth => sub { shift->get_version_id(@_) },
