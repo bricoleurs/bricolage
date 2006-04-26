@@ -95,6 +95,8 @@ our @EXPORT_OK = qw(
                     find_workflow
                     find_desk
                     site_list
+
+                    eval_codeselect
                    );
 
 our %EXPORT_TAGS = (all     => \@EXPORT_OK,
@@ -124,6 +126,7 @@ our %EXPORT_TAGS = (all     => \@EXPORT_OK,
                     wf      => [qw(find_workflow
                                    find_desk)],
                     sites   => [qw(site_list)],
+                    elem    => [qw(eval_codeselect)],
                    );
 
 #=============================================================================#
@@ -875,6 +878,50 @@ sub site_list {
     return wantarray
       ? grep { chk_authz($_, $perm, 1) } @$sites
       : [ grep { chk_authz($_, $perm, 1) } @$sites ];
+}
+
+#--------------------------------------#
+
+=item my $select_options = eval_codeselect($code)
+
+Returns a hash reference or reference to an array of arrays as returned by the
+code in C<$code>. If the code just returns a list, it will be converted to a
+reference of array references, unless it has an odd number of items, in which
+case an error message will be displayed.
+
+=cut
+
+sub eval_codeselect {
+    # XXX: This is very unsafe, but they need to be able
+    # to do things like DBI queries; would that work with Safe?
+    local $_;
+    my $res = eval shift;
+
+    my $ref = ref $res;
+    # Return a hashref.
+    return $res if $ref eq 'HASH';
+
+    if ($ref eq 'ARRAY') {
+        # Return an array of arrays.
+        return $res if ref $res->[0] eq 'ARRAY';
+
+        unless (@{ $res } % 2) {
+            # It's just a simple array. Convert it to an array of arrays.
+            my $vals = [];
+            for (my $i = 0; $i < @{ $res }; $i += 2) {
+                push @$vals, [ $res->[$i], $res->[$i+1] ];
+            }
+            return $vals;
+        }
+    }
+
+    # If we get here, it ain't right.
+    add_msg(
+        'Invalid codeselect code: it did not return a hash reference, '
+      . 'an array reference of array references, or an array reference '
+      . 'of even size'
+    );
+    return;
 }
 
 =back

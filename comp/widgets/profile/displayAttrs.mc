@@ -31,20 +31,7 @@ foreach my $attr (@$attr) {
     if (my $tmp = $attr->{meta}{vals}{value}) {
         my $val_prop;
         if ($attr->{meta}{type}{value} eq 'codeselect') {
-            # For a `codeselect', evaluate the perl code,
-            # which must return a list of hashrefs,
-            # to put it in the form that `select' normally expects.
-            # XXX: This is very unsafe, but they need to be able
-            # to do things like DBI queries; would that work with Safe?
-            my $items = eval "$tmp";
-            if (ref $items eq 'ARRAY' and !(@$items % 2)) {
-                for (my $i = 0; $i < @$items; $i += 2) {
-                    push @$val_prop, [$items->[$i], $items->[$i+1]];
-                }
-            } else {
-                add_msg("Invalid codeselect code (didn't return an array ref of even size)");
-                redirect(last_page());
-            }
+            $val_prop = eval_codeselect($tmp);
         } else {
             foreach my $line (split /\n/, $tmp) {
                 # Commas are escaped with a backslash
