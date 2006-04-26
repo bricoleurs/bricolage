@@ -22,6 +22,8 @@ $LastChangedDate$
 </%doc>
 <%once>;
 my %users;
+my $show_republish = 0;
+
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
                 qw(story media template) };
 
@@ -46,6 +48,7 @@ my $select = sub {
     my $o = shift;
     my $text = $lang->maketext($o->is_active ? 'Checkout' : 'Reactivate');
     my $u_id = $o->get_user__id;
+    my $ret;
     if (defined $u_id) {
         # Just return the name of the user who has the asset checked out.
         return $users{$u_id} ||= Bric::Biz::Person::User->lookup({
@@ -53,15 +56,40 @@ my $select = sub {
       })->format_name;
     } elsif ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
         # Allow checkout if they can see the desk the asset is on.
-        return [$text, "$widg\_prof|checkout_cb"]
+        $ret = [[$text, "$widg\_prof|checkout_cb"]]
           if $desk_chk->{$o->get_desk_id}[0];
     } else {
         # Allow checkout only if they have recall permission to the asset and
         # access to the start desk.
-        return [$text, "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
-          if $start_desk_ok && chk_authz($o, RECALL, 1);
+        $ret = [[
+            $text, "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id,
+            {
+                id => 'desk_asset_ck_' . $o->get_id,
+                label_after => 0,
+                js => qq{onClick="document.$type\_manager.desk_asset_rp_}
+                      . $o->get_id . '.checked = false;"'
+            },
+        ]] if $start_desk_ok && chk_authz($o, RECALL, 1);
     }
-    return;
+
+        # Add a republish checkbox
+    if ($type ne 'template' && $o->get_publish_status
+        && !$o->get_workflow_id && chk_authz($o, PUBLISH, 1)
+    ) {
+        push @$ret, [
+            $lang->maketext('Republish'),
+            "desk_asset|$type\_pub_ids",
+            $o->get_version_id,
+            {
+                id          => 'desk_asset_rp_' . $o->get_id,
+                label_after => 0,
+                js          => qq{onClick="document.$type\_manager.desk_asset_ck_}
+                                . $o->get_id.'.checked = false;"'
+            }
+        ];
+        $show_republish = 1;
+    }
+    return $ret;
 };
 
 my $addition = sub {
@@ -190,8 +218,17 @@ push @fields, 'site'
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',
     button  => 'checkout_red',
-    useTable => 0 
-&>   
+    useTable => 0
+&>
+% if ($show_republish) {
+% $show_republish = 0;
+<& /widgets/buttons/submit.mc,
+   disp      => 'publish_checked_red',
+   widget    => 'desk_asset',
+   cb        => 'publish_cb',
+   button    => 'publish_checked_red',
+   useTable  => 0 &>
+% }
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>
 <%cleanup>;

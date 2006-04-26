@@ -622,7 +622,7 @@ my $build_table_data = sub {
         ## Add the select items if any
         if (@sel) {
             $sel_cols = 1;
-            push @{$actions->[$row - 1]}, join('&nbsp;', @sel);
+            push @{$actions->[$row - 1]}, join q{ }, @sel;
         }
 
         $row++;

@@ -32,6 +32,13 @@ Codeselect field Perl code can now return an array of array references or a
 hash reference, in addition to the previous support for an even-sized array
 reference. [David]
 
+=item *
+
+Added a "Republish" checkbox and corresponding "Publish Checked" button to the
+Story and Media "Find" pages for stories and media not currently in workflow
+and to which the user has PUBLISH permission. Based on a patch from Serge
+Sozonoff. [David]
+
 =back
 
 =head2 Bug Fixes
