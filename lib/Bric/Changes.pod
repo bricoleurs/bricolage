@@ -68,6 +68,12 @@ Brad Harder.
 The "Default Field" select list in Bulk Edit works again. Thanks to Tom
 Kjeldsen for uncovering the underlying problem. [David]
 
+=item *
+
+The C<throw_error()> method in L<Bric::Util::Burner|Bric::Util::Burner> works
+properly again. Thank to Paul Orrock for the spot and to Scott for revealing
+the solution. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

@@ -1979,7 +1979,8 @@ sub throw_error {
         mode  => $self->get_mode,
         oc    => ($oc   ? $oc->get_name   : ''),
         cat   => ($cat  ? $cat->get_uri   : ''),
-        elem  => ($elem ? $elem->get_name : '')
+        elem  => ($elem ? $elem->get_name : ''),
+        ($elem ? (element => $elem) : ()),
     ;
 }
 
