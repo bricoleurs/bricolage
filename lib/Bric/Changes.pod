@@ -50,6 +50,12 @@ port numbers from the host name. This is most useful when using FTP, SFTP, or
 WebDAV to distribute to a preview server serving content from an alternate
 port. Reported by Doug Dawson. [David]
 
+=item *
+
+If run as root, C<make clone> now becomes the PostgreSQL system user before
+cloning the database, so that it should work properly where PostgreSQL is
+configured to use "ident" authentication. [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
