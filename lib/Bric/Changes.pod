@@ -74,6 +74,12 @@ The C<throw_error()> method in L<Bric::Util::Burner|Bric::Util::Burner> works
 properly again. Thank to Paul Orrock for the spot and to Scott for revealing
 the solution. [David]
 
+=item *
+
+The "Story Type" and "Media Type" options for sorting stories and media,
+respectively, on desks and on My Workspace, works again. Reported by Brad
+Harder. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
