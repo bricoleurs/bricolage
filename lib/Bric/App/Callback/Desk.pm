@@ -192,7 +192,7 @@ sub publish : Callback {
             # haven't I seen you someplace before?
             my $vid = $doc->get_version_id;
             my $id =  $doc->get_id;
-            next if $seen{"$key$id"}++;
+            next if $seen{"$key$id"};
 
             unless (chk_authz($doc, PUBLISH, 1)) {
                 my $doc_disp_name = lc get_disp_name($key);
@@ -226,7 +226,7 @@ sub publish : Callback {
                     my $relid  = $rel->get_id;
                     my $relkey = $rel->key_name;
                     next if exists $selected{$relkey}{$relid}
-                        || $seen{"$relkey$relid"}++;
+                        || $seen{"$relkey$relid"};
                     my $relvid = $rel->get_version_id;
 
                     if ($rel->get_checked_out) {
@@ -280,7 +280,11 @@ sub publish : Callback {
                     published_version => 1,
                 });
             }
+
+            # We've been processed now so make sure we aren't done again
+            $seen{"$key$id"}++;
         }
+
     }
 
     # For publishing from a desk, I added two new 'publish'
