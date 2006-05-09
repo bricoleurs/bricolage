@@ -107,8 +107,14 @@ Glaesemann. [David]
 =item *
 
 Fixed autopublishing related media and stories so that multiple level relates
-now correctly pull out all the items to be published. e.g. media related to 
+now correctly pull out all the items to be published. e.g. media related to
 story related to published story (bug 1190). [Paul Orrock]
+
+=item *
+
+Updated F<inst/upgrade/1.9.0/no_more_numeric.pl> so that it properly handles
+cases where PostgreSQL's dump does not use parentheses for casts. Reported by
+George Harrison. [David]
 
 =back
 

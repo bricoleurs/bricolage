@@ -361,6 +361,8 @@ Friends who have spotted bugs include:
 
 =item * Tom Kjeldsen
 
+=item * George Harrison
+
 =back
 
 Bricolage's translation team:
