@@ -27,15 +27,11 @@ CREATE SEQUENCE seq_attr_field_type_meta START 1024;
 -- -----------------------------------------------------------------------------
 -- Table: field_type
 --
--- Description:	This is the table that contains the name and rules for 
--- 		element fields.   It contains references to the 
---		element table and to the element_container table
---		( parent_id field ).   The place field represents the order
--- 		that this is to be represented with in it's container.
+-- Description: This is the table that contains the name and rules for fields
+-- 		types. It contains references to the element_type table. The place
+-- 		column represents the order that this is to be represented with in
+-- 		its container.
 --
---If the element_meta field is set then all the properties are taken from
---	That.    Or maybe not, get feed back on this.
--- 	Define constraint on repeatable and sql_type
 
 
 CREATE TABLE field_type (
