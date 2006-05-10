@@ -101,6 +101,8 @@ sub test_uri_format : Test(12) {
         "Check empty string ex message" );
 
     # Try a format without %{categories}.
+    return 'ALLOW_URIS_WITHOUT_CATEGORIES is enabled'
+        if Bric::Config::ALLOW_URIS_WITHOUT_CATEGORIES;
     eval { $oc->set_uri_format('/foo') };
     ok( $ex = $@, "Catch bogus token exception" );
     isa_ok( $ex, 'Bric::Util::Fault::Exception::DP',
@@ -133,6 +135,8 @@ sub test_fixed_uri_format : Test(12) {
         "Check empty string ex message" );
 
     # Try a format without %{categories}.
+    return 'ALLOW_URIS_WITHOUT_CATEGORIES is enabled'
+        if Bric::Config::ALLOW_URIS_WITHOUT_CATEGORIES;
     eval { $oc->set_fixed_uri_format('/foo') };
     ok( $ex = $@, "Catch bogus token exception" );
     isa_ok( $ex, 'Bric::Util::Fault::Exception::DP',
