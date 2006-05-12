@@ -1303,9 +1303,10 @@ B<Notes:> NONE.
 =cut
 
 sub set_fixed_uri_format {
-    $_[0]->_set(['fixed_uri_format'],
-                [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp},
-                                     $_[1])])
+    $_[0]->_set(
+        ['fixed_uri_format'],
+        [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp}, $_[1])]
+    )
 }
 
 ##############################################################################
