@@ -343,8 +343,6 @@ Friends who have spotted bugs include:
 
 =item * Jerry Franz
 
-=item * Alexey Sheynuk
-
 =item * Paul Hyland
 
 =item * Frank Febbraro
