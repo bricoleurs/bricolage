@@ -190,6 +190,8 @@ Folks who have submitted patches include:
 
 =item Brad Fox
 
+=item Alexey Dvoychenkov
+
 =back
 
 Friends who have spotted bugs include:

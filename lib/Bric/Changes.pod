@@ -56,6 +56,12 @@ If run as root, C<make clone> now becomes the PostgreSQL system user before
 cloning the database, so that it should work properly where PostgreSQL is
 configured to use "ident" authentication. [David]
 
+=item *
+
+The list of desks that appear for a given workflow in the nav iframe are now
+properly updated when a new desk is added to the workflow. [Alexey
+Dvoychenkov]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)

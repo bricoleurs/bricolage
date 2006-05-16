@@ -82,7 +82,7 @@ sub save : Callback {
             my $wf = Bric::Biz::Workflow->lookup({ id => $param->{workflow_id} });
             $wf->add_desk({ allowed => [$desk->get_id] });
             $wf->save;
-            $self->cache->set('__WORKFLOWS__', 0);
+            $self->cache->set('__WORKFLOWS__' . $wf->get_site_id => 0);
             log_event('workflow_add_desk', $wf, { Desk => $desk->get_name });
             $self->set_redirect("/admin/profile/workflow/$param->{workflow_id}");
         } else {
