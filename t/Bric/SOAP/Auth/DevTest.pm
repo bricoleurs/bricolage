@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 use base qw(Bric::Test::Base);
-use Test::More;
+use Test::More skip_all => "SOAP tests are under construction";
 
 use SOAP::Lite;
 import SOAP::Data 'name';
