@@ -39,6 +39,10 @@ Story and Media "Find" pages for stories and media not currently in workflow
 and to which the user has PUBLISH permission. Based on a patch from Serge
 Sozonoff. [David]
 
+=item *
+
+Added tests for C<Bric::SOAP::Auth>. [Scott]
+
 =back
 
 =head2 Bug Fixes
