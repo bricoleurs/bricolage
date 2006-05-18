@@ -1482,7 +1482,7 @@ sub del_contacts {
 
 =item my (@gids || $gids_aref) = $p->get_grp_ids
 
-Returns a list or anonymous array of Bric::Util::Group::Person object ids
+Returns a list or anonymous array of Bric::Util::Grp::Person object ids
 representing the groups of which this Bric::Biz::Person object is a member.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
@@ -1495,12 +1495,12 @@ B<Notes:> NONE.
 
 =item my (@groups || $groups_aref) = $p->get_grps
 
-Returns a list or anonymous array of Bric::Biz::Group::Person objects representing
+Returns a list or anonymous array of Bric::Biz::Grp::Person objects representing
 the groups of which this Bric::Biz::Person object is a member.
 
-Use the Bric::Biz::Group::Person instance method calls add_members() and
+Use the Bric::Biz::Grp::Person instance method calls add_members() and
 delete_members() to associate and dissociate Bric::Biz::Person objects with any
-given Bric::Biz::Group::Person object.
+given Bric::Biz::Grp::Person object.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
 
