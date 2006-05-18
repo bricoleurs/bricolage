@@ -74,7 +74,7 @@ PostgreSQL sources.
 INSTALLATION SUMMARY
 --------------------
 
-All examples here assume that youv've unpackaged all of the above source
+All examples here assume that you've unpackaged all of the above source
 tarballs into /usr/local/src, e.g., with the command
 
   tar zxvf sources.tar.gz
@@ -210,7 +210,7 @@ a detailed description of how to install and configure PostgreSQL.
 
 DURING INSTALLATION
 
-While runing "make", you'll be prompted to answer a series of
+While running "make", you'll be prompted to answer a series of
 questions. Provided you've followed the directions here and installed and
 configured Apache, most of the defaults should be fine. There are a couple of
 things to watch for, however:
