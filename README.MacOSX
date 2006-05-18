@@ -38,8 +38,8 @@ Bricolage server, you'll need to download a couple of patches that help
 mod_ssl to find Mac OS X's OpenSSL libraries and allow the compiler to
 properly find libdbm while configuring Apache. The patches can be found here:
 
-  http://david.justatheory.com/macosx/apache_dbm.patch
-  http://david.justatheory.com/macosx/mod_ssl_dylib.patch
+  http://www.justatheory.com/computers/os/macosx/apache_dbm.patch
+  http://www.justatheory.com/computers/os/macosx/mod_ssl_dylib.patch
 
 Other files and libraries you'll need to download are as follows:
 
