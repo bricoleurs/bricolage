@@ -75,7 +75,6 @@ use Bric::App::Callback::Desk;
 use Bric::App::Callback::Event;
 use Bric::App::Callback::ListManager;
 use Bric::App::Callback::Login;
-use Bric::App::Callback::Nav;
 use Bric::App::Callback::Perm;
 use Bric::App::Callback::Profile;
 use Bric::App::Callback::Publish;
