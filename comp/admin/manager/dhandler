@@ -104,7 +104,7 @@ $m->comp('/widgets/listManager/listManager.mc',
     behavior => $behavior,
     object => $obj_key,
     profile => $prof_sub,
-    fields => $def->{$type}{list_fields},
+    fields => @$sites > 1 ? $def->{$type}{list_fields} : [ grep $_ ne 'site', @{ $def->{$type}{list_fields} } ],
     addition => $type eq 'pref' || $type eq 'job'
                 ? undef
                 : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
@@ -234,6 +234,8 @@ my $yes_no = sub { $lang->maketext( $_[0] ? 'Yes' : 'No'  ) };
 my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
                       return $s->get_name
                   };
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
+                  
 # And we'll use this coderef to determine whether the user can delete objects.
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
 my $sel_sub = sub {
