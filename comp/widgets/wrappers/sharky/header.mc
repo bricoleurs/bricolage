@@ -76,7 +76,6 @@ if(ref($title) eq 'ARRAY') {
 <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/prototype.js"></script>
-<script type="text/javascript" src="/media/js/scriptaculous.js"></script>
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/i18n/<% $lang_key %>_messages.js"></script>
 <title><% $title %></title>
