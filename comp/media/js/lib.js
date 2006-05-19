@@ -1023,7 +1023,7 @@ function toggleMenu (el, id) {
             val += '+' + id + ':' + newclass;
         }
     }
-    document.cookie = name + '=' + val;
+    document.cookie = name + '=' + val + '; path=/';
 
     // XXX: if I don't do this, the link stays "clicked" (outlined)
     el.blur();
