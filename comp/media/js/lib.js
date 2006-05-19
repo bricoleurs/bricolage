@@ -347,7 +347,7 @@ Submits the main form when a user hits the 'add to form' button in the form buil
 */
 var formBuilder = {};
 formBuilder.submit = function(frm, mainform, action) {
-    var main = document.getElementById(mainform);
+    var main = $(mainform);
     if (action == "add") {
         if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
@@ -399,12 +399,12 @@ formBuilder.confirm = function (frm) {
 };
 
 formBuilder.switchType = function(type) {
-    var fb = document.getElementById("fbDiv");
+    var fb = $("fbDiv");
     fb.className = type;
-    document.getElementById("fb_type").value = type;
+    $("fb_type").value = type;
     var labels = fb.getElementsByTagName("label");
     for (var i = 0; i < labels.length; i++) {
-        var target = document.getElementById(labels[i].htmlFor);
+        var target = $(labels[i].htmlFor);
         if (typeof this.labels[type] != "undefined" 
             && typeof this.labels[type][target.name] != "undefined") {
             
@@ -455,8 +455,7 @@ function confirmChanges(obj) {
     var confirmed = false;
 
     // Sometimes just an ID can be passed in.
-    if (typeof obj != "object")
-        obj = document.getElementById(obj);
+    obj = $(obj);
 
     // Check for slug.
     if (typeof obj["slug"] != "undefined") {
@@ -598,13 +597,13 @@ var movedItems = new Array;
 
 // Originally by Saqib Khan - http://js-x.com/ 
 // Modified (quite heavily) by Marshall Roch, 2005-03-14
-function move_item(formName, fromObj, toObj) {
+function move_item(formName, from, to) {
     var found;
 
     formObj = document.forms[formName]; // sets this globally for use by verify
 
-    var from = document.getElementById(fromObj);
-    var to = document.getElementById(toObj);
+    from = $(from);
+    to = $(to);
 
     if (!movedItems[from.id]) movedItems[from.id] = new Array();
     if (!movedItems[to.id])   movedItems[to.id]   = new Array();
@@ -662,10 +661,10 @@ function checkAll(str) {
 Real time character counter for text areas
 */
 function textCount(which, maxLength) {
-    var myObj= document.getElementById(which);
+    var myObj= $(which);
     if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
-    document.getElementById("textCountUp" + which).innerHTML = myObj.value.length;
-    document.getElementById("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
+    $("textCountUp" + which).innerHTML = myObj.value.length;
+    $("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
 
 /* Simple browser detection */
@@ -686,23 +685,6 @@ function Browser () {
     this.is_mac = agt.indexOf('mac') !=-1;
 }
 
-
-/*
-Resize navigation iframe
-*/
-function resizeframe() {
-    var ifrm = parent.document.getElementById("sideNav");
-    var browser = new Browser();
-    if ((browser.is_opera || browser.is_ie5 || browser.is_ie5_5)
-        && !browser.is_mac
-    ) {
-        // Opera and IE5/Win only
-        ifrm.style.height = document.body.scrollHeight + "px";
-    } else {
-        // Everyone else
-        ifrm.style.height = document.body.offsetHeight + "px";
-    }
-}
 
 /*
 Open popup window
@@ -726,26 +708,6 @@ function openHelp()  {
     return openWindow(uri);
 }
 
-/*
- * Handle multiple onload events
- * By Marshall Roch, 2005-03-25
- *
- * To use, instead of writing "window.onload = someFunction" or 
- * "<body onload='someFunction'>", use "multiOnload.onload('someFunction')"
- * or multiOnload.onload(someFunction)" if someFunction is a function.
- */
-var multiOnload = {
-    events: []
-};
-multiOnload.onload = function(eventFn) {
-    this.events[this.events.length] = eventFn;
-};
-
-window.onload = function() {
-    for (var i = 0; i < multiOnload.events.length; i++) {
-         multiOnload.events[i]();
-    }
-};
 
 /*
  * findFocus(). called in the onload event. Finds the second form in the page
@@ -895,7 +857,7 @@ function endDrag(event) {
 
 function openFindDialog(dialog, event) {
     openDialog(dialog, event);
-    var find = document.getElementById('searchfind');
+    var find = $('searchfind');
     find.focus();
     find.select();
     return false;
@@ -907,7 +869,7 @@ function closeFindDialog (dialog, event) {
 
 
 function getSearchString () {
-    var find = document.getElementById('searchfind');
+    var find = $('searchfind');
     if (!find.value) {
         alert('No search string specified');
         return false;
@@ -918,7 +880,7 @@ function getSearchString () {
 function searchField (field) {
     var find  = getSearchString();
     if (!find) return false;
-    var regex = document.getElementById('searchregex');
+    var regex = $('searchregex');
     var found = field.value.match(new RegExp(find, 'g'));
     if (!found || !found.length) {
         alert('None found');
@@ -976,21 +938,21 @@ function findNext (field) {
 function replaceAll (field) {
     var find  = getSearchString();
     if (!find) return false;
-    var regex = document.getElementById('searchregex');
+    var regex = $('searchregex');
     if (regex.checked) find = new RegExp(find);
 
-    var replace = document.getElementById('searchreplace');
+    var replace = $('searchreplace');
     replace = replace.value == null ? '' : replace.value;
 
     var chunks = field.value.split(find);
     if (chunks.length == 1) {
-        closeDialog(document.getElementById('finddialog'));
+        closeDialog($('finddialog'));
         alert('Replaced 0 occurrences');
     }
 
     else {
         field.value = chunks.join(replace);
-        closeDialog(document.getElementById('finddialog'));
+        closeDialog($('finddialog'));
         alert('Replaced ' + (chunks.length - 1) + ' occurrences');
     }
     return false;
