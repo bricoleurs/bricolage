@@ -595,7 +595,14 @@ div.addelement { text-align: right;}
  * FIND/REPLACE                                       *
  ******************************************************/
 
-.dialog { display: none; position: absolute; left: 0; top:0; z-index: 300; background: #e8e8cd; padding: 0; border-color: #996; border-style: solid; border-width: 0 5px 5px 5px; }
+.dialog { 
+    display: none; 
+    position: absolute; left: 0; top:0; 
+    z-index: 300; 
+    background: #e8e8cd; 
+    padding: 0; 
+    border-color: #996; border-style: solid; border-width: 0 5px 5px 5px; 
+}
 .dragger { line-height: 2.2em; background: #996; font-weight: bold;}
 .dragger:hover { cursor: move; }
 .dialogcontent { margin: 1em; }

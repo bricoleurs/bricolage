@@ -56,8 +56,8 @@ my $opts = [
                 value   => '',
                 useTable    => 0,
             &>
-            <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
-            <button title="<% $lang->maketext('Show cheat sheet') . ' ' . $lang->maketext('(Access Key: [_1])', 'c') %>" accesskey="c" onclick="return openDialog(document.getElementById('cheat_sheet'), event);">Cheat Sheet</button>
+            <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog('finddialog', event);">Search</button>
+            <button title="<% $lang->maketext('Show cheat sheet') . ' ' . $lang->maketext('(Access Key: [_1])', 'c') %>" accesskey="c" onclick="return openDialog('cheat_sheet', event);">Cheat Sheet</button>
         </dd>
     </dl>
 <& '/widgets/profile/textarea.mc',

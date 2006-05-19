@@ -15,7 +15,7 @@ for my $button (@buttons) {
     );
 }
 </%perl>
-  <li><button class="button" title="<% $lang->maketext('Close this dialog box') . ' ' . $lang->maketext('(Access Key: c)') %>" accesskey="c" onclick="return closeDialog(document.getElementById('<% $id %>'));"><% $lang->maketext($close_label) %></button></li>
+  <li><button class="button" title="<% $lang->maketext('Close this dialog box') . ' ' . $lang->maketext('(Access Key: c)') %>" accesskey="c" onclick="return closeDialog('<% $id %>');"><% $lang->maketext($close_label) %></button></li>
 </ul>
   </div>
 </div>

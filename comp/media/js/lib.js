@@ -760,15 +760,16 @@ function saveScrollXY(formName) {
  * Dialog box functions.
  */
 function openDialog (dialog, event) {
-    var style = dialog.style;
+    dialog = $(dialog);
     // var position = getPosition(event);
-    style.left    = '200px';
-    style.top     = '150px';
-    style.display = 'block';
+    dialog.style.left    = '200px';
+    dialog.style.top     = '150px';
+    dialog.style.display = "block";
     return false;
 }
 
 function closeDialog (dialog, event) {
+    dialog = $(dialog);
     dialog.style.display = 'none';
     return false;
 }
