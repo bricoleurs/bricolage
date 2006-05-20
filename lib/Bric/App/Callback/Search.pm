@@ -81,6 +81,7 @@ sub story : Callback {
     my $state  = get_state_data($widget => $object);
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 

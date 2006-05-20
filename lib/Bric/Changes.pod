@@ -161,6 +161,11 @@ Find/Replace. [Marshall]
 Pulldowns no longer improperly display as 32-items-tall in the story/media 
 profiles. (bug 1178, reported by Alex Howarth) [Marshall]
 
+=item *
+
+Fixed a bug where search results would get "stuck" when pagination is turned
+on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

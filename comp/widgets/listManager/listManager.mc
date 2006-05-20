@@ -337,7 +337,10 @@ $cx_filter      => 1            # Make false to override Filter by Site Context.
 # Initialize some values.
 
 my $state = get_state_data($widget, $state_key) || {};
+my $search_state = get_state_data($search_widget => $state_key) || {};
 my $pkg   = get_package_name($object);
+
+my $search_stale = ($state->{search_timestamp} != $search_state->{timestamp});
 
 # Get the master instance of this class.
 my $meth = $get_my_meths->($pkg, $field_titles, $field_values);
@@ -359,16 +362,22 @@ $site_cx = $c->get_user_cx(get_user_id)
 #--------------------------------------#
 # Set up pagination data.
 
-my $pagination = $state->{pagination};
-$pagination    = $limit ? 1 : 0 unless defined $pagination;
-my $offset     = $limit ? $state->{offset} : undef;
-my $show_all   = $state->{show_all};
+# defaults
+my $pagination = $limit ? 1 : 0;
+my $offset     = undef;
+my $show_all   = 0;
+
+unless ($search_stale) {
+    $pagination = $state->{pagination} if defined $state->{pagination};
+    $offset     = $state->{offset} if $limit;
+    $show_all   = $state->{show_all};
+}
 
 #--------------------------------------#
 # Find constraint and list objects.
 
 my ($param, $do_list);
-if ($show_all || ($pagination && defined $offset)) {
+if (!$search_stale && ($show_all || ($pagination && defined $offset))) {
     # We're processing pages. Just return the last query parameters.
     $param = $state->{list_params};
     $do_list = 1;
@@ -650,6 +659,7 @@ my $build_constraints = sub {
     $state->{default_sort} = $def_sort_field;
 
     my $search_state = get_state_data($search_widget => $state_key);
+    $state->{search_timestamp} = $search_state->{timestamp};
 
     my $crit       = $search_state->{criterion};
     my $crit_field = $search_state->{field};
