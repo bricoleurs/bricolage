@@ -988,8 +988,9 @@ function replaceAll (field) {
 
     else {
         field.value = chunks.join(replace);
+        field.focus(); field.blur();
         closeDialog(document.getElementById('finddialog'));
-        alert('Replaced ' + (chunks.length - 1) + ' occurrences');
+        alert('Replaced ' + (chunks.length - 1) + ' occurrence' + (chunks.length > 2 ? 's' : ''));
     }
     return false;
 }

@@ -151,6 +151,11 @@ and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
 Made word and character counts properly appear read-only, and repositioned the
 find/replace and cheat sheet buttons to the top right of the box. [Marshall]
 
+=item *
+
+Character counts in Bulk Edit are now properly updated after using 
+Find/Replace. [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

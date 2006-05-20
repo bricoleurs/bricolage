@@ -57,7 +57,7 @@ my $opts = [
     rows     => 40,
     cols     => 80,
     useTable => 0,
-    js       => qq{onkeyup="wordCount('$textarea_id', 'words', 'chars');"},
+    js       => qq{onchange="wordCount('$textarea_id', 'words', 'chars');" onkeyup="wordCount('$textarea_id', 'words', 'chars');"},
 &>
 <& /widgets/dialog_box/find.mc,
     field_id  => "$textarea_id",
