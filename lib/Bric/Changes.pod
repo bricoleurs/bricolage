@@ -141,6 +141,11 @@ Aliases no longer show up in the search results of the "New Alias" screen,
 since aliases can't be aliased.  The "New Alias" screen now also shows the site
 an asset belongs to if there are multiple sites. [Marshall]
 
+=item *
+
+Fixed appearance of template diffs.  Insertions and deletions now have color
+and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

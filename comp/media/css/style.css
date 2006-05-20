@@ -580,8 +580,8 @@ div.addelement { text-align: right;}
 #diff .file { overflow: auto; }
 #diff .file .fileheader, #diff .file .hunkheader {color: #888888; }
 #diff .hunk .ctx { background: #eeeeee; }
-#diff .hunk .ins { background: #ddffdd; }
-#diff .hunk .del { background: #ffdddd; }
+#diff .hunk ins { background: #ddffdd; text-decoration: none; }
+#diff .hunk del { background: #ffdddd; text-decoration: none; }
 #worddiff { padding: 1em; }
 #worddiff .fileheader { color: #888; font-family: monospace; font-size: 1.2em; }
 #worddiff .hunk ins   { color: #060; font-weight: bold; }
