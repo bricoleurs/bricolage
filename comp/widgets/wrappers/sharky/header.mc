@@ -76,9 +76,9 @@ if(ref($title) eq 'ARRAY') {
 % if (DISABLE_NAV_LAYER) {
 <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
 % }
-<link rel="stylesheet" type="text/css" href="/media/css/<% $lang_key %>.css" />
+<link rel="stylesheet" type="text/css" href="/media/css/i18n/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/lib.js"></script>
-<script type="text/javascript" src="/media/js/<% $lang_key %>_messages.js"></script>
+<script type="text/javascript" src="/media/js/i18n/<% $lang_key %>_messages.js"></script>
 <title><% $title %></title>
 <script type="text/javascript"><!--
 var lang_key = '<% $lang_key %>';
