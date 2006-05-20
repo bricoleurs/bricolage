@@ -120,6 +120,21 @@ Updated F<inst/upgrade/1.9.0/no_more_numeric.pl> so that it properly handles
 cases where PostgreSQL's dump does not use parentheses for casts. Reported by
 George Harrison. [David]
 
+=item *
+
+Moved translation-specific Javascript and CSS files into "i18n/" folders under
+their respective folders in comp/media/. [Marshall]
+
+=item *
+
+Slightly tweaked the background color on table rows to make them easier to 
+read. [Marshall]
+
+=item *
+
+Converted the group permissions editor to XHTML and CSS to fix some rendering
+glitches. [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
