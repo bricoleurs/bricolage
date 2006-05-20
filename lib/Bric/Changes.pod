@@ -135,6 +135,12 @@ read. [Marshall]
 Converted the group permissions editor to XHTML and CSS to fix some rendering
 glitches. [Marshall]
 
+=item *
+
+Aliases no longer show up in the search results of the "New Alias" screen, 
+since aliases can't be aliased.  The "New Alias" screen now also shows the site
+an asset belongs to if there are multiple sites. [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

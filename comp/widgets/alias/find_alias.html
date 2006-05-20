@@ -14,7 +14,7 @@
    select       => undef,
    profile      => $related_alias,
    exclude      => $excl_sub,
-   fields       => $fields,
+   fields       => @$sites > 1 ? $fields : [ grep $_ ne 'site', @{ $fields } ],
    field_values => $field_values,
    field_titles => { thumb => $lang->maketext('Thumb') },
    addition     => '',
@@ -34,6 +34,7 @@ $wf_id
 <%init>;
 $link_key = $class_key;
 my $site_id = Bric::Biz::Workflow->lookup({ id => $wf_id })->get_site_id;
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 my %elems = map { $_ => 1 } Bric::Biz::ElementType->list_ids
   ({ site_id => $site_id });
 # Hack: It'd be good to be able to exclude these in the SQL query, but the
@@ -42,10 +43,10 @@ my %elems = map { $_ => 1 } Bric::Biz::ElementType->list_ids
 # shouldn't be a big deal, as the permissions check is already done on a
 # case-by-case bassis to limit most things.
 my $excl_sub = sub {
-    not chk_authz($_[0], READ, 1)
+    not chk_authz($_[0], READ, 1) && not $_[0]->get_alias_id
 };
 
-my $fields = [qw(id title uri cover_date)];
+my $fields = [qw(id title uri site cover_date)];
 unshift @$fields, 'thumb' if USE_THUMBNAILS && $class_key ne 'story';
 </%init>
 <%once>;
