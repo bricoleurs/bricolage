@@ -529,7 +529,7 @@ my %formSubs = (
             &$inpt_sub('radio', @_);
         }
 );
-# pulldown is the esame as select.
+# pulldown is the same as select.
 # codeselect is the same as select, but values are evaluated perl.
 $formSubs{codeselect} = $formSubs{pulldown} = $formSubs{select};
 </%once>
