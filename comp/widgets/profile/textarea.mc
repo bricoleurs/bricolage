@@ -44,26 +44,26 @@ $indent    => ''
 <%perl>
 
 my $vals = {
-	    disp      => $disp,
-	    value     => $value,
-	    props     => { 
-			  type => 'textarea',
-			  rows => $rows,
-                          cols => $cols
-			 },
-            js        => $js,
-            req       => $req
-	   };
+    disp      => $disp,
+    value     => $value,
+    props     => { 
+        type => 'textarea',
+        rows => $rows,
+        cols => $cols
+    },
+    js        => $js,
+    req       => $req
+};
 
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-	 key      => $name,
-	 vals     => $vals,
-         useTable => $useTable,
-	 readOnly => $readOnly,
-	 width    => $width,
-	 localize => $localize,
-	 indent   => $indent
+     key      => $name,
+     vals     => $vals,
+     useTable => $useTable,
+     readOnly => $readOnly,
+     width    => $width,
+     localize => $localize,
+     indent   => $indent
 );
 
 </%perl>

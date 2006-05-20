@@ -13,6 +13,11 @@ if ($show_summary) {
    id      => 'containerprof',
    number  => ++$i,
 &>
+    <div style="float: right; padding: 5px;">
+        <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
+        <button title="<% $lang->maketext('Show cheat sheet') . ' ' . $lang->maketext('(Access Key: [_1])', 'c') %>" accesskey="c" onclick="return openDialog(document.getElementById('cheat_sheet'), event);">Cheat Sheet</button>
+    </div>
+    
     <dl class="viewmeta">
         <dt>Element:</dt>
         <dd><% $et->get_name %> <% $show_element_flags->($et) %></dd>
@@ -39,37 +44,23 @@ my $opts = [
                 useTable => 0,
             &>
         </dd>
-        <dt><% $lang->maketext('Words') %></dt>
-        <dd>
-            <& '/widgets/profile/text.mc',
-                id      => 'words',
-                name    => 'words',
-                value   => '',
-                useTable    => 0,
-            &>
-        </dd>
-        <dt><% $lang->maketext('Characters') %></dt>
-        <dd>
-            <& '/widgets/profile/text.mc',
-                id      => 'chars',
-                name    => 'chars',
-                value   => '',
-                useTable    => 0,
-            &>
-            <button title="<% $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') %>" accesskey="f" onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>
-            <button title="<% $lang->maketext('Show cheat sheet') . ' ' . $lang->maketext('(Access Key: [_1])', 'c') %>" accesskey="c" onclick="return openDialog(document.getElementById('cheat_sheet'), event);">Cheat Sheet</button>
-        </dd>
+        <dt><% $lang->maketext('Words') %>:</dt>
+        <dd><span id="words"></span></dd>
+        <dt><% $lang->maketext('Characters') %>:</dt>
+        <dd><span id="chars"></span></dd>
     </dl>
+% my $textarea_id = "$widget|text";
+% $textarea_id =~ s/[\||_]//g;
 <& '/widgets/profile/textarea.mc',
     name     => "$widget|text",
     value    => $args->{__use_text__} ? $args->{"$widget|text"} : $element->serialize_to_pod($def_field),
     rows     => 40,
     cols     => 80,
     useTable => 0,
-    js       => qq{onkeyup="wordCount(document.theForm, '$widget|text', 'words', 'chars');"},
+    js       => qq{onkeyup="wordCount('$textarea_id', 'words', 'chars');"},
 &>
 <& /widgets/dialog_box/find.mc,
-    field_id  => "$widget|text",
+    field_id  => "$textarea_id",
     dialog_id => 'finddialog',
 &>
 <&| /widgets/dialog_box/dialog_box.mc,
@@ -81,7 +72,7 @@ my $opts = [
 <% $cheat_sheet %>
 </div>
 </&>
-<script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
+<script>wordCount('<% $textarea_id %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
