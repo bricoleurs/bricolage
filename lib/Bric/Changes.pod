@@ -166,6 +166,11 @@ profiles. (bug 1178, reported by Alex Howarth) [Marshall]
 Fixed a bug where search results would get "stuck" when pagination is turned
 on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
 
+=item *
+
+Fixed a warning from bric_republish when run without a password.  Thanks to
+John Gillis for the spot. (bug 1188) [Marshall]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
