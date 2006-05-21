@@ -158,8 +158,8 @@ Find/Replace. [Marshall]
 
 =item *
 
-Pulldowns no longer improperly display as 32-items-tall in the story/media 
-profiles. (bug 1178, reported by Alex Howarth) [Marshall]
+Pulldowns no longer improperly display as 32-items-tall in the story/media
+profiles. (bug 1178, reported by Alex Howarth) [Scott and Marshall]
 
 =item *
 
