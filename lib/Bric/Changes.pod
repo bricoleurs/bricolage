@@ -171,6 +171,11 @@ on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
 Fixed a warning from bric_republish when run without a password.  Thanks to
 John Gillis for the spot. (bug 1188) [Marshall]
 
+=item *
+
+Fixed the "Site" dropdown in searches to only require READ permissions
+rather than EDIT. Spot and quasi-patch by Chris Sutton.
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

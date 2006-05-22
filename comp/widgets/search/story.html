@@ -37,7 +37,7 @@ unless ($sites) {
     $c->set('__SITES__', $sites);
 }
 
-$sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
+$sites = [grep { chk_authz($_, READ, 1) } @$sites];
 </%init>
 
 % if ($use_form_tag) {

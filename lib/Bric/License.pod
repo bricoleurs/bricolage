@@ -361,6 +361,10 @@ Friends who have spotted bugs include:
 
 =item * George Harrison
 
+=item * John Gillis
+
+=item * Chris Sutton
+
 =back
 
 Bricolage's translation team:
