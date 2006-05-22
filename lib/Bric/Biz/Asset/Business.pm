@@ -133,7 +133,7 @@ use Bric::Biz::Org::Source;
 use Bric::Util::Coll::OutputChannel;
 use Bric::Util::Coll::Keyword;
 use Bric::Util::Pref;
-use Scalar::Util;
+use Scalar::Util qw(blessed);
 
 #=============================================================================#
 # Inheritance                          #
