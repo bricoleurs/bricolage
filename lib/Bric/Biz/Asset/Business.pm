@@ -784,14 +784,20 @@ B<Notes:> NONE.
 
 ################################################################################
 
-=item $biz->add_contributor($contrib, $role );
+=item $biz->add_contributor($contrib, $role);
 
 Takes a contributor object or id and their role in the context of this story
 and associates them
 
 B<Throws:>
 
-NONE
+=over 4
+
+=item *
+
+$contrib argument must be a Bric::Util::Grp::Parts::Member::Contrib
+
+=back
 
 B<Side Effects:>
 
@@ -805,6 +811,12 @@ NONE
 
 sub add_contributor {
     my ($self, $contrib, $role) = @_;
+
+    if (ref $contrib) {
+        my $pkg = 'Bric::Util::Grp::Parts::Member::Contrib';
+        throw_dp "\$contrib argument must be a $pkg" unless $contrib->isa($pkg);
+    }
+
     my $dirty = $self->_get__dirty();
     my $contribs = $self->_get_contributors() || {};
 

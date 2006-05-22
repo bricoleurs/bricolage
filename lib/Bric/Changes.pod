@@ -25,6 +25,12 @@ This document lists the Changes to Bricolage introduced with each release.
 The left nav menu no longer uses an C<< <iframe> >>. Javascript and cookies
 are used instead, making the left nav faster. [Scott, Marshall, David]
 
+=item *
+
+Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
+first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
+an object (it could also be an ID number). [Scott]
+
 =back
 
 =head1 VERSION 1.10.1 ()
