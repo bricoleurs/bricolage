@@ -129,6 +129,7 @@ multiOnload.onload(navLoader);
 </head>
 <body id="navFrame">
 % }   # unless (DISABLE_NAV_LAYER)
+
 <%perl>
 # Begin Workflows -------------------------------------
 $m->print(
@@ -194,7 +195,7 @@ foreach my $wf (@$workflows) {
                 'New Alias'
             ),
             '</li>',
-        ) unless $key eq 'template';
+        ) if $can_create && $key ne 'template';
 
         $m->print('</ul></li>');
 
