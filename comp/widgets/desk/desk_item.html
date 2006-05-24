@@ -86,7 +86,6 @@ my $id = $obj->get_id;
 my $user_id = $obj->get_user__id;
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);
-my $header_class = 'lightHeader';
 
 my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
@@ -130,11 +129,9 @@ if ($class eq 'template') {
             value => $name,
         );
     }
-    $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
 
 my $classes = { $highlight => ' class="sorted"' };
-my $rowspan = 5;
 
 my $checked_out = defined $user_id && get_user_id() == $user_id;
 
