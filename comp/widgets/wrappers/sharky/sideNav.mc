@@ -170,12 +170,12 @@ foreach my $wf (@$workflows) {
                    <% &$printLink("/workflow/active/templates/$wf->{id}", $uri, "Active $pl_disp->{formatting}") %>
 %               } elsif ($wf->{type} == STORY_WORKFLOW) {
 %                     $m->print($printLink->("/workflow/profile/story/new/$wf->{id}", $uri, "New $disp->{story}")) if $can_create;
-                   <% &$printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias") %>
+%                   $m->print($printLink("/workflow/profile/alias/story/$wf->{id}", $uri, "New Alias")) if $can_create;
                    <% &$printLink("/workflow/manager/story/$wf->{id}/", $uri, "Find $pl_disp->{story}") %>
                    <% &$printLink("/workflow/active/story/$wf->{id}", $uri, "Active $pl_disp->{story}") %>
 %               } elsif ($wf->{type} == MEDIA_WORKFLOW) {
 %                     $m->print($printLink->("/workflow/profile/media/new/$wf->{id}", $uri, "New $disp->{media}")) if $can_create;
-                   <% &$printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias") %>
+%                   $m->print($printLink("/workflow/profile/alias/media/$wf->{id}", $uri, "New Alias")) if $can_create; %>
                    <% &$printLink("/workflow/manager/media/$wf->{id}/", $uri, "Find $pl_disp->{media}") %>
                    <% &$printLink("/workflow/active/media/$wf->{id}", $uri, "Active $pl_disp->{media}") %>
 %               }

@@ -68,6 +68,11 @@ The list of desks that appear for a given workflow in the nav iframe are now
 properly updated when a new desk is added to the workflow. [Alexey
 Dvoychenkov]
 
+=item *
+
+The side navigation no longer shows the "New Alias" links to users that don't
+have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
