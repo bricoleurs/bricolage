@@ -27,6 +27,17 @@ are used instead, making the left nav faster. [Scott, Marshall, David]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Moved the templates in F<comp/widgets/wrappers/sharky/> to 
+F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
+
+=back
+
 =head1 VERSION 1.10.1 ()
 
 =head2 New Features
@@ -280,11 +291,6 @@ $burner->throw_error() >>) no use the place attribute of the element where the
 error was thrown, rather than the object order, since the place corresponds to
 the "Position" select list orderings in the UI, and therefore makes it much
 simpler to figure out where the error is. [David]
-
-=item *
-
-Moved the templates in F<comp/widgets/wrappers/sharky/> to 
-F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
 
 =back
 
