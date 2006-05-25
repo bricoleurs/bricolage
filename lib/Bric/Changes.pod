@@ -73,6 +73,11 @@ Dvoychenkov]
 The side navigation no longer shows the "New Alias" links to users that don't
 have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
+=item *
+
+The code of a template no longer disappears when you click "Trail" in the 
+Template Profile. (bug 1204) [Marshall]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
