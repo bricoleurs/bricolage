@@ -1,4 +1,4 @@
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => 'Bulk Publish',
    context => 'Admin | Bulk Publish'
 &>
@@ -7,4 +7,4 @@
 <& 'category.html' &>
 </form>
 
-<& '/widgets/wrappers/sharky/footer.mc' &>
+<& '/widgets/wrappers/footer.mc' &>

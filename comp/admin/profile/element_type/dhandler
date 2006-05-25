@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title   => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
@@ -13,7 +13,7 @@ my ($num_fields, $meta, $all, $num);
 
 # Output the primary fields.
 $m->comp(
-    '/widgets/wrappers/sharky/table_top.mc',
+    '/widgets/wrappers/table_top.mc',
     caption => "Properties",
     number  => ++$num
 );
@@ -62,7 +62,7 @@ if (defined $id) {
     }
 }
 
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 
 # Get the group's membership listed
 $m->comp(
@@ -97,7 +97,7 @@ if (defined $id) {
             };
 
             $m->comp(
-                '/widgets/wrappers/sharky/table_top.mc',
+                '/widgets/wrappers/table_top.mc',
                 caption => 'Sites',
                 number => ++$num,
             );
@@ -138,7 +138,7 @@ if (defined $id) {
                 );
                 $m->print("</div>\n");
             }
-            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+            $m->comp('/widgets/wrappers/table_bottom.mc');
         }
 
         # Manage Output Channels.
@@ -181,7 +181,7 @@ if (defined $id) {
             };
 
             $m->comp(
-                '/widgets/wrappers/sharky/table_top.mc',
+                '/widgets/wrappers/table_top.mc',
                 caption => 'Output Channels',
                 number  => ++$num,
             );
@@ -235,7 +235,7 @@ if (defined $id) {
                 );
                 $m->print("</div>\n");
             }
-            $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+            $m->comp('/widgets/wrappers/table_bottom.mc');
         }
     }
 
@@ -246,7 +246,7 @@ if (defined $id) {
     my $containers = $comp->get_containers;
 
     $m->comp(
-        '/widgets/wrappers/sharky/table_top.mc',
+        '/widgets/wrappers/table_top.mc',
         caption => 'Existing Subelement types',
         number  => ++$num,
     );
@@ -279,13 +279,13 @@ if (defined $id) {
         },
     );
 
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 }
 
         # display existing attributes for this asset type
         if (defined $id) {
             $m->comp(
-                '/widgets/wrappers/sharky/table_top.mc',
+                '/widgets/wrappers/table_top.mc',
                 caption => "Custom Fields",
                 number  => ++$num,
             );
@@ -334,7 +334,7 @@ if (defined $id) {
             }
 
     # Close the table.
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 #########################
@@ -372,7 +372,7 @@ if (!$no_edit && defined $id) {
 }
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 <%once>;
 my $class    = 'Bric::Biz::ElementType';
 my $key_name = 'element_type';

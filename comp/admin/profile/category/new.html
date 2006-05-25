@@ -1,4 +1,4 @@
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb"
 &>
@@ -8,7 +8,7 @@ my $reset = $ARGS{reset} || time;
 $m->comp('/widgets/profile/hidden.mc', value => $reset, name => 'reset');
 
 # Output the crucial fields.
-$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Site',
+$m->comp('/widgets/wrappers/table_top.mc', caption => 'Choose Site',
                                                   number  => 1);
 
 $m->comp('/widgets/select_object/select_object.mc',
@@ -22,7 +22,7 @@ $m->comp('/widgets/select_object/select_object.mc',
          reset_key  => $reset,
          req        => 1);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Add the buttons.
 $m->comp('/widgets/profile/formButtons.mc', type     => $type,
@@ -35,7 +35,7 @@ $m->comp('/widgets/profile/formButtons.mc', type     => $type,
 
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 <%once>;
 my $section = 'admin';
 my $type    = 'category';

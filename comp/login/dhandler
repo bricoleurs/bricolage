@@ -1,4 +1,4 @@
-<& '/widgets/wrappers/sharky/header.mc', 
+<& '/widgets/wrappers/header.mc', 
 	useSideNav => 0,
         context => "Welcome to " . get_pref('Bricolage Instance Name') . ".",
 	jsInit     => qq (if (typeof document.bricolage_login.elements["login|username"] != "undefined") document.bricolage_login.elements["login|username"].focus();)
@@ -6,5 +6,5 @@
  &>
 %#<html><head><title>Login</title></head></body bgcolor="white">
 <& '/widgets/login/login.mc' &>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#

@@ -40,7 +40,7 @@ if ($mode eq "new") {
 
 	# show drop down of other subsys, if any
 	if (scalar(@subsys)) {
-	    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+	    $m->comp("/widgets/wrappers/table_top.mc",
 		     caption => "Switch Roles",
 		     number  => 4);
 
@@ -56,7 +56,7 @@ if ($mode eq "new") {
 		     value  => $curSubsys,
  		     js     => " onChange='contribJump(this)'");
 
-	    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+	    $m->comp("/widgets/wrappers/table_bottom.mc");
 
 	}
 
@@ -74,7 +74,7 @@ if ($mode eq "new") {
 	# show all roles for this member so the user can choose one
 	$m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
 
-	$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	$m->comp("/widgets/wrappers/table_top.mc",
 		 caption => "Roles",
 		 number  => 2);
 
@@ -88,7 +88,7 @@ if ($mode eq "new") {
 		 options => $roleOpts,
 		 name    => 'subsys');
 
-	$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+	$m->comp("/widgets/wrappers/table_bottom.mc");
 	&$stepOneOfTwo($type, $section);
     }
 
@@ -98,7 +98,7 @@ if ($mode eq "new") {
 	     value => $mode,
 	     name => 'mode');
 
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
 	     caption => "Roles",
 	     number  => 2);
 
@@ -131,13 +131,13 @@ if ($mode eq "new") {
 	     name    => 'subsys',
 	     useTable => 1);
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     &$stepOneOfTwo($type, $section);
 }
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 
@@ -194,7 +194,7 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 my $context   = "Admin | Profile | $disp | $crumb";
 
 # print standard header
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
 	 title   => "$disp Profile",
 	 context => $context);
 
@@ -215,7 +215,7 @@ my $showAttrs = sub {
     my $contacts = $contrib->get_obj->get_contacts;
 
     # Display the Contact info.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
 	     caption => "Contacts",
 	     number  => 2);
 
@@ -233,7 +233,7 @@ my $showAttrs = sub {
 	     deleteLabelOnly =>1
 	    );
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
     # end contact info
 
     # display attrs
@@ -258,7 +258,7 @@ my $showAttrs = sub {
     my $num_fields = @$attr;
     if ($num_fields) {
 	# display attrs
-	$m->comp("/widgets/wrappers/sharky/table_top.mc",
+	$m->comp("/widgets/wrappers/table_top.mc",
 		 caption => $preCaption . " Custom Fields",
 		 number  => 3);
 	$m->comp("/widgets/profile/displayAttrs.mc",
@@ -269,7 +269,7 @@ my $showAttrs = sub {
 		 useDelete   => 0);
 
 	# Close the table.
-	$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+	$m->comp("/widgets/wrappers/table_bottom.mc");
     }
 };
 
@@ -277,7 +277,7 @@ my $defaultFields = sub {
 
     my ($contrib, $ro) = @_;
     # Display the referential fields.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
 	     caption => "Properties",
 	     number  => 1);
 
@@ -288,7 +288,7 @@ my $defaultFields = sub {
 			    active => 1
 			   });
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
 };
 
@@ -302,7 +302,7 @@ my $showGroups = sub {
 	  if ($group->get_id != $instanceGrpId);
     }
 
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
 	     caption => "Contributor Type",
 	     number  => 2);
 
@@ -315,7 +315,7 @@ my $showGroups = sub {
 	    );
 
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 };
 
 my $stepOneOfTwo = sub {

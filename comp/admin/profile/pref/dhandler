@@ -8,7 +8,7 @@ chk_authz($pref, $id ? READ : CREATE);
 my $no_edit = !chk_authz($pref, EDIT, 1);
 
 # Output the header and other necessities.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => "$disp Profile",
 	 context => "Admin | Profile | $disp | &quot;" . $pref->get_name .  "&quot;"
 );
@@ -44,7 +44,7 @@ $props->{cols} = $cols if defined $cols;
 $props->{rows} = $rows if defined $rows;
 
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          number  => 1,
 	 caption => $name);
 
@@ -61,7 +61,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', key => 'can_be_overridden',
                    disp => 'Can be Overridden',
                    value => 1 } );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output group membership.
 $m->out("<br />\n");
@@ -81,7 +81,7 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 <%once>;
 my $class = 'Bric::Util::Pref';
 my $widget = 'profile';

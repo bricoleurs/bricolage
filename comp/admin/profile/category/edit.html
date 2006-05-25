@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title => "$disp Profile",
     context => "Admin | Profile | $disp | $crumb"
 &>
@@ -15,7 +15,7 @@ if (defined $id) {
 }
 
 # Output the crucial fields.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
            caption => "Properties", number  => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
          readOnly => $no_edit,
@@ -65,10 +65,10 @@ if (defined $id) {
              localize   => 0,
             );
 }
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the keywords.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
            caption => "Keywords", number  => 2);
 my $kws = $cat->get_keywords;
 $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
@@ -76,16 +76,16 @@ $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
          reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
          num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit,
          formName => 'cat_profile');
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the ad strings.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
            caption => "Ad Strings", number  => 3);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $cat,
          readOnly => $no_edit,
          fieldsUsed => { uri => 1, name => 1, description => 1,
                          directory => 1, site_id => 1 });
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 # Get the group's membership listed
@@ -121,7 +121,7 @@ $m->comp('/widgets/profile/formButtons.mc', type => $type, section => $section,
 
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#
 
 

@@ -1,5 +1,5 @@
 % #-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
@@ -10,20 +10,20 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => "${type}_id")
 
 
 ### 1. PROPERTIES
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties",
+$m->comp("/widgets/wrappers/table_top.mc", caption => "Properties",
 	 number => 1);
 
 # Output fields from 'media_type'.
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $mt,
 	 readOnly => $no_edit, fieldsUsed => { active => 1 });
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 ### 2. EXTENSIONS
 # Output the extensions.
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
 	 caption => "Extensions",
 	 number => 2);
 
@@ -54,7 +54,7 @@ $m->comp('/widgets/add_more/add_more.mc', type => 'media_type_ext',
 	 formName => 'mt_profile', param => \%ARGS,
 );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 
@@ -81,7 +81,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 ($no_edit, $no_del) = ();
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

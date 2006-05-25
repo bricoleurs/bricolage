@@ -1,6 +1,6 @@
 <%perl>;
 # Output the header and other necessities.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => "$disp Profile",
          context => "Admin | Profile | $disp | &quot;" . $job->get_name . "&quot;"
 );
@@ -12,7 +12,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'job_id')
 
 if ($job->has_failed) {
     $m->comp(
-        '/widgets/wrappers/sharky/table_top.mc',
+        '/widgets/wrappers/table_top.mc',
         caption => 'Job Failure',
         number  => ++$i,
     );
@@ -37,12 +37,12 @@ if ($job->has_failed) {
     );
     $m->print(' <label for="reset" class="burgandyLabel">Reset this Job</label>');
     $m->print("</div>\n");
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 }
 
 # Display the Basics.
 $m->comp(
-    '/widgets/wrappers/sharky/table_top.mc',
+    '/widgets/wrappers/table_top.mc',
     caption => 'Properties',
     number  => ++$i
 );
@@ -73,11 +73,11 @@ $m->comp("/widgets/select_time/select_time.mc",
           disp      => "Scheduled Time"
 );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 if (ref $job eq 'Bric::Util::Job::Dist') {
     # Show a list of the Distribution Profiles.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => "Destinations",
              number => 2);
     $m->out(qq{<ol style="margin: 0; padding: 10px 10px 10px 30px;">});
@@ -85,10 +85,10 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
         $m->out(qq{<li>} . $st->get_name . "</li>\n");
     }
     $m->out("</ol>\n");
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Show a list of the Resources.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => "Resources",
              number => 3
             );
@@ -97,7 +97,7 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
         $m->out(qq{<li>} . $st->get_uri . "</li>\n");
     }
     $m->out("</ol>\n");
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 # Add the form buttons and other necessities.
@@ -105,7 +105,7 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
           no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
           ret_val => 'return_dgreen', widget => $type);
 $m->out("</form>\n");
-$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS );
+$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS );
 </%perl>
 <%once>;
 my $class = "Bric::Util::Job";

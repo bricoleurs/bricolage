@@ -12,7 +12,7 @@ my $user_pref = $class->lookup({ pref_id => $pref_id, user_id => $user_id });
 
 my $no_edit = $user_id == get_user_id || chk_authz($user, EDIT, 1) ? 0 : 1;
 
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => "$disp Profile",
 	 context =>
          "Admin | Profile | User | &quot;" . $user->get_name .
@@ -49,7 +49,7 @@ $props->{cols} = $cols if defined $cols;
 $props->{rows} = $rows if defined $rows;
 
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
 	 caption => $name);
 
 $m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
@@ -58,7 +58,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', key => 'value',
                    disp => 'Value',
                    value => $user_pref ? $user_pref->get_value : $pref->get_value } );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the form buttons.
 $m->out("<br />\n");
@@ -68,7 +68,7 @@ $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
 </%perl>
 </form>
 
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#
 
 %#-- Once Section --#

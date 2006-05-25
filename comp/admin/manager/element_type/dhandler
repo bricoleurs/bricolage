@@ -60,7 +60,7 @@ my $sel_sub = sub {
 
 <%perl>;
 # Output the header.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => $title,
          context => $context);
 # Output the search widget.
@@ -88,7 +88,7 @@ $m->comp('/widgets/profile/hidden.mc',
           value => $id
 ) if ($id);
 
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
+$m->comp('/widgets/wrappers/table_top.mc',
           caption => 'Existing %n',
           object  => $key
 );
@@ -112,7 +112,7 @@ $m->comp('/widgets/listManager/listManager.mc',
         },
 );
 
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 
 # Output the form closing tag if necessary.
 if ($id) {
@@ -137,7 +137,7 @@ if ($id) {
 $m->out('</form>');
 
 # Output the footer.
-$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
 </%perl>
 
 <%doc>

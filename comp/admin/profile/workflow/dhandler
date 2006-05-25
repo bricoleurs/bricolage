@@ -1,5 +1,5 @@
 % #-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
@@ -9,7 +9,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'workflow_id')
   if defined $id;
 
 # Output the key properties.
-$m->comp("/widgets/wrappers/sharky/table_top.mc", 
+$m->comp("/widgets/wrappers/table_top.mc", 
           caption => "Properties",
           number  => 1,
 );
@@ -66,7 +66,7 @@ if ($id || $no_edit) {
 }
 
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 # Output the desks.
@@ -75,7 +75,7 @@ if (defined $id) {
     my $desks = $wf->allowed_desks;
     $start_id = $wf->get_head_desk_id;
     
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+    $m->comp('/widgets/wrappers/table_top.mc', 
              caption => '%n',
              object  => 'desk',
              number  => 2 );
@@ -91,10 +91,10 @@ if (defined $id) {
              profile        => $prof_sub,
              select         =>  $no_del || @$desks < 2 ? undef : ['Remove', 'remove_desk'],
     );
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 } elsif ($new_desk) {
     # Allow 'em to create a brand new desk.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => "Start Desk",
              number => 2);
     $m->comp('/widgets/profile/text.mc',
@@ -102,10 +102,10 @@ if (defined $id) {
              disp => 'Start Desk',
              req  => 1
     );
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 } else {
     # Output a select list to choose a start desk from.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => "Start Desk",
              number => 2);
     $m->comp('/widgets/select_object/select_object.mc',
@@ -127,7 +127,7 @@ if (defined $id) {
 
     $m->out( qq{</td></tr></table>\n});
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 $m->out("<br />\n");
@@ -156,7 +156,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 ($no_edit, $no_del) = ();
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

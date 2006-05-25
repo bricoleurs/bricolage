@@ -1,6 +1,6 @@
 % # Check to see if this is a preview screen.
 % my $prev = $r->notes('burner.preview');
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
         title      => 'Error',
         useSideNav => !$prev,
         no_toolbar => !$prev,
@@ -95,7 +95,7 @@ END DEBUGGING INFORMATION -->
 <p>Please report this error to your administrator.</p>
 % }
 
-<& '/widgets/wrappers/sharky/footer.mc' &>
+<& '/widgets/wrappers/footer.mc' &>
 % $r->status(Apache::Constants::HTTP_INTERNAL_SERVER_ERROR);
 % $m->abort;
 <%init>;

@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
@@ -10,7 +10,7 @@ if (defined $id) {
 }
 
 # Output the key properties.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Properties",
          number  => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
@@ -25,7 +25,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
          key      => 'site',
          readOnly => 1);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Get a list of all the Output Channels associated with this Destination
 # Profile.
@@ -41,7 +41,7 @@ foreach my $oc (Bric::Biz::OutputChannel->list({ site_id => $site_id,
     push @$left, { value =>  $oc->get_id, description => $oc->get_name };
 }
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc", number => 2,
+$m->comp("/widgets/wrappers/table_top.mc", number => 2,
 	 caption => "Output Channels");
 # Load up the double-list manager.
 $m->comp("/widgets/doubleListManager/doubleListManager.mc",
@@ -55,7 +55,7 @@ $m->comp("/widgets/doubleListManager/doubleListManager.mc",
 	 showLeftList => !$no_edit || 0,
 	 rightCaption => 'Current Output Channels'
 	);
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Get the group's membership listed
 $m->comp("/widgets/grp_membership/grp_membership.mc",
@@ -72,7 +72,7 @@ if (defined $id) {
     my $i;
     my $label = $no_edit ? 'View' : 'Edit';
     # Output the actions.
-    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+    $m->comp('/widgets/wrappers/table_top.mc',
               caption => '%n',
               object  => 'action',
               number  => 4 );
@@ -85,10 +85,10 @@ if (defined $id) {
               profile   => [ [$label, "/admin/profile/action"],
                            ['Log', "/admin/events/action"] ],
               select    => $no_del ? undef : ['Delete', 'action|delete_cb'] );
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 
     # Output the Servers.
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+    $m->comp('/widgets/wrappers/table_top.mc', 
              caption => '%n',
              object  => 'server',
              number => 5 );
@@ -102,7 +102,7 @@ if (defined $id) {
                         ['Log', "/admin/events/server"] ],
              alter => { active => $yes_no },
              select =>    $no_del ? undef : ['Delete', 'server|delete_cb'] );
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
     
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
@@ -124,7 +124,7 @@ if (defined $id) {
 </%perl>
 <br />
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $wf_disp | &quot;" . $wf->get_name . "&quot;"
               . "| $disp | $crumb"
@@ -16,7 +16,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $wid, name => 'workflow_id')
 if (! defined $id && ! defined $new_desk) {
     my $excl = [ map { $_->get_id } $wf->allowed_desks ];
     # Adding a new desk. Give 'em a choice.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Select Desk");
+    $m->comp("/widgets/wrappers/table_top.mc", caption => "Select Desk");
     $m->comp('/widgets/select_object/select_object.mc',
          object => 'desk',
          no_persist => 1,
@@ -40,13 +40,13 @@ if (! defined $id && ! defined $new_desk) {
     # Let 'em create a new desk.
     $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'desk_id')
       if defined $id;
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties");
+    $m->comp("/widgets/wrappers/table_top.mc", caption => "Properties");
 
     # Dump the basic fields.
     $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $desk,
 	     readOnly => $no_edit, fieldsUsed => { active => 1 });
 }
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 $m->comp('/widgets/profile/formButtons.mc',
 	 type => $type,
@@ -58,7 +58,7 @@ $m->comp('/widgets/profile/formButtons.mc',
          widget => $type);
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#
 
 %#-- Once Section --#

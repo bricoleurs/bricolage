@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
@@ -8,7 +8,7 @@
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'grp_id')
   if defined $id;
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
 	 caption => "Properties",
 	 number  => 1);
 
@@ -28,12 +28,12 @@ $m->comp('/widgets/profile/displayFormElement.mc',
 	 readOnly => $no_edit || $is_perm,
 	);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 if (defined $id) {
     unless ($is_perm) {
         # It's an existing group. Give no object choice.
-        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+        $m->comp("/widgets/wrappers/table_top.mc",
                  caption => "Members", number  => 2);
 
         # Store the class name.
@@ -142,7 +142,7 @@ if (defined $id) {
                   showLeftList => !$no_member_manage || 0,
                   rightCaption => "Current $pl_disp" );
 
-        $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+        $m->comp("/widgets/wrappers/table_bottom.mc");
 
         # Output group membership.
         $m->out("<br />\n");
@@ -182,7 +182,7 @@ if (defined $id) {
 
 } else {
     # It's a new object. Give 'em a choice.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
 	     caption => "Group Type",
 	     number  => 2);
 
@@ -191,7 +191,7 @@ if (defined $id) {
 	     options => $class_opt,
 	     value => get_package_name(get_state_name($type)));
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Add the buttons.
     $m->comp('/widgets/profile/formButtons.mc', type => $type,
@@ -200,7 +200,7 @@ if (defined $id) {
 }
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

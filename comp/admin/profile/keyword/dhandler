@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
@@ -8,7 +8,7 @@
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'keyword_id')
   if defined $id;
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Properties",
          number  => 1 );
 
@@ -17,7 +17,7 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc',
          fieldsUsed => { active => 1 },
          readOnly => $no_edit);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output group membership.
 $m->comp("/widgets/grp_membership/grp_membership.mc",
@@ -34,7 +34,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
    no_del => $no_del, no_save => $no_edit, widget => $type &>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

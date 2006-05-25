@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
@@ -10,7 +10,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'action_id')
 $m->comp('/widgets/profile/hidden.mc', name => 'dest_id', value => $dest_id);
 
 # Output the key properties.
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Properties");
+$m->comp("/widgets/wrappers/table_top.mc", caption => "Properties");
 my $used = { active => 1, ord => 1 };
 my $label = 'next_dkgreen';
 
@@ -51,7 +51,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', vals => $ord_vals,
 	 readOnly => $no_edit, key => 'ord');
 
 # Close 'er up!
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
          type => $type,
          no_del => $no_del,
@@ -62,7 +62,7 @@ $m->comp('/widgets/profile/formButtons.mc',
          widget => 'action');
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$grp_name Permissions",
    context => "Admin | Profile | $disp | &quot;$grp_name&quot; | Permissions"
  &>
@@ -36,7 +36,7 @@ $m->comp('/widgets/profile/imageSubmit.mc',
 );
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

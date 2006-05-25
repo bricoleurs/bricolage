@@ -4,7 +4,7 @@ clear_msg();
 $m->clear_buffer;
 # Check to see if this is a preview screen.
 my $prev = $r->notes('burner.preview');
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title      => 'Permission Denied',
          context    => '',
          debug      => QA_MODE,
@@ -30,7 +30,7 @@ $m->out('<p>',
                         'access to the <b>[_2]</b> [_3]',
                         $map->{$perm}, $name, $class),
         "</p>\n");
-$m->comp('/widgets/wrappers/sharky/footer.mc');
+$m->comp('/widgets/wrappers/footer.mc');
 $m->flush_buffer;
 $r->status(Apache::Constants::HTTP_FORBIDDEN);
 $m->abort;

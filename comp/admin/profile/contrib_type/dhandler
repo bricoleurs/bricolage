@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc', title => "$disp Profile",
+<& '/widgets/wrappers/header.mc', title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
 % if (ENABLE_WYSIWYG) {
@@ -12,11 +12,11 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'contrib_type_id')
   if defined $id;
 
 # Output the primary fields.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Properties", number  => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $grp,
 	 readOnly => $no_edit, fieldsUsed => { active => 1, parent_id => 1 });
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 my $all = $grp->all_for_member_subsys;
@@ -47,7 +47,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 
 
 # display attrs
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
 	 caption => "Custom Fields",
 	 number  => 3);
 
@@ -65,7 +65,7 @@ if ($num_fields) {
 }
 
 # Close the table.
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 if (!$no_edit) {
 # Output the formBuilder.
@@ -94,7 +94,7 @@ $m->comp('/widgets/formBuilder/formBuilder.mc',
 
 
 </%perl>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
 %#-- End HTML --#
 

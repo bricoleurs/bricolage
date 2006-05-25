@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
@@ -14,22 +14,22 @@ $m->comp('/widgets/profile/hidden.mc',
   if defined $id;
 
 # PROPERTIES
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
+$m->comp('/widgets/wrappers/table_top.mc',
          'caption' => 'Properties',
          'number' => ++$num);
 $m->comp('/widgets/profile/text.mc', 'disp' => 'Key Name',
          'value' => $field->get_key_name(), 'readOnly' => 1);
 $m->comp('/widgets/profile/dumpRemainingFields.mc', 'objref' => $field,
          'readOnly' => $no_edit, 'fieldsUsed' => $exclude);
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 
 # META DATA
 $m->comp('/widgets/profile/hidden.mc', 'name' => 'type', 'value' => $which);
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
+$m->comp('/widgets/wrappers/table_top.mc',
          'caption' => 'Display Attributes',
          'number' => ++$num);
 $m->comp("/widgets/$type/$type.mc", field => $field);
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 
 $m->comp('/widgets/profile/formButtons.mc',
 	 type => $type,
@@ -40,7 +40,7 @@ $m->comp('/widgets/profile/formButtons.mc',
 	 no_save => $no_edit);
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', 'param' => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', 'param' => \%ARGS &>
 %#-- End HTML --#
 
 <%once>;

@@ -7,7 +7,7 @@ if (defined $id) {
     $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');
 
     # Output the primary properties.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => 'Properties', number => 1);
 
     # Event Type.
@@ -31,10 +31,10 @@ if (defined $id) {
              key => 'active',
              readOnly => $no_edit);
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Output the rules via the Add More Widget.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => 'Rules', number => 2);
 
     my $rules = $at->get_rules;
@@ -45,10 +45,10 @@ if (defined $id) {
              meths => $meths, incr => 2, useTable => 0,
              formName => 'alert_type_profile');
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Output the content fields.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => 'Content', number => 3);
 
     # Subject.
@@ -97,10 +97,10 @@ if (defined $id) {
              key => 'message',
              readOnly => $no_edit);
 
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Output the Recipients.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => 'Recipients', number => 4);
 
     $m->comp('/widgets/profile/hidden.mc', name => 'ctype');
@@ -111,7 +111,7 @@ if (defined $id) {
         $m->comp(".contact", c => $c, at => $at, no_edit => $no_edit);
     }
     $m->out("</table>\n");
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Output group membership.
     $m->comp("/widgets/grp_membership/grp_membership.mc",
@@ -129,7 +129,7 @@ if (defined $id) {
              widget => $type );
 } else {
     if (defined $class_id) {
-        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+        $m->comp("/widgets/wrappers/table_top.mc",
                  caption => 'Select an Event Type');
         $m->comp('/widgets/select_object/select_object.mc',
                  object => 'event_type',
@@ -149,7 +149,7 @@ if (defined $id) {
     $m->comp('.owner', no_edit => $no_edit);
 
     } else {
-        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+        $m->comp("/widgets/wrappers/table_top.mc",
                  caption => 'Select an Object');
         my $classes = $et_class->list_classes;
         $m->comp('/widgets/profile/select.mc',
@@ -159,7 +159,7 @@ if (defined $id) {
                  options => $classes
                 );
     }
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+    $m->comp("/widgets/wrappers/table_bottom.mc");
     # Output the form buttons.
     $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
              no_del => $no_del, no_save => $no_edit, val => 'next_dkgreen',
@@ -167,7 +167,7 @@ if (defined $id) {
 }
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 <%once>;
 my $widget = 'profile';
 my $type = 'alert_type';
@@ -199,7 +199,7 @@ my $crumb = $at->get_name;
 $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 # Output the header.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => "$disp Profile",
          context => "Admin | Profile | $disp | $crumb"
 );

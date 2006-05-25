@@ -1,6 +1,6 @@
 <%perl>;
 # Output the header.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
           title => $title,
           context => $context);
 
@@ -94,7 +94,7 @@ if (defined $def->{$type}{select}) {
           . qq{onsubmit="return confirmDeletions()">});
 }
 
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
+$m->comp('/widgets/wrappers/table_top.mc',
           caption => $def->{$type}{title} || 'Existing %n',
           object  => $obj_key
 );
@@ -116,7 +116,7 @@ $m->comp('/widgets/listManager/listManager.mc',
     exclude => $def->{$type}{exclude} || $excl_sub,
     sortBy => $def->{$type}{sort_by} );
 
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 
 # Output the form closing tag if necessary.
 if (defined $def->{$type}{select} && $can_del) {
@@ -140,7 +140,7 @@ if (defined $def->{$type}{select} && $can_del) {
 }
 
 # Output the footer.
-$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
 
 # Undef $can_del and $users for the next request.
 ($can_del, $users, $ets) = ();

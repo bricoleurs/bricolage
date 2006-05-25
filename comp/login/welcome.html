@@ -1,10 +1,10 @@
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
    useSideNav => 0,
    no_toolbar => 0,
    context => "Welcome to " . get_pref('Bricolage Instance Name') . ".",
 &>
 
-<& /widgets/wrappers/sharky/table_top.mc &>
+<& /widgets/wrappers/table_top.mc &>
 <%perl>
 
 my $string   = $lang->maketext('Please click [_1]here[_2] to start.',
@@ -18,7 +18,7 @@ my $string   = $lang->maketext('Please click [_1]here[_2] to start.',
 <% $string %>
 </div>
 
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 %#-- End HTML --#

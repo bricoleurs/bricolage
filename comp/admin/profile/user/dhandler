@@ -1,5 +1,5 @@
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
  &>
@@ -7,7 +7,7 @@
 <form method="post" action="<% $r->uri %>" name="user_profile" onsubmit="if ( checkLogin(this.login, <% LOGIN_LENGTH %>, this.pass_1, this.pass_2, <% PASSWD_LENGTH %>) ){ return confirmChanges(this)} else { return false}" autocomplete="off">
 
 <%perl>;
-$m->comp("/widgets/wrappers/sharky/table_top.mc", caption => "Name",
+$m->comp("/widgets/wrappers/table_top.mc", caption => "Name",
 	 number => 1);
 # Output the ID, if there is one.
 $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'user_id')
@@ -19,10 +19,10 @@ $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $user,
 	 fieldsUsed => { active => 1, password => 1,
 			 login  => 1,  name    => 1 });
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Display the Contact info.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Contacts", number  => 2);
 my $contacts = $user->get_contacts;
 $m->comp('/widgets/add_more/add_more.mc', type => 'contact',
@@ -30,7 +30,7 @@ $m->comp('/widgets/add_more/add_more.mc', type => 'contact',
      reset_key => $id, objs => $contacts, incr => 2, useTable => 0,
      formName => 'user_profile',
      deleteLabelOnly => 1, param => \%ARGS);
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 # Get the group's membership listed
@@ -45,7 +45,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          num => 3,
 );
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc", number  => 4,
+$m->comp("/widgets/wrappers/table_top.mc", number  => 4,
 	 caption => "Login and Password");
 
 # Display the login and password info.
@@ -72,12 +72,12 @@ if (!$no_edit) {
 	     disp => 'Repeat new password', req => $req, length => $pass_len,
 	     maxlength => $pass_max);
 }
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 my @prefs = Bric::Util::Pref->list({ can_be_overridden => 1 });
 
 if (@prefs) {
-    $m->comp('/widgets/wrappers/sharky/table_top.mc', 
+    $m->comp('/widgets/wrappers/table_top.mc', 
              caption => 'User Preferences',
              number => 5 );
     $m->comp('/widgets/listManager/listManager.mc',
@@ -111,7 +111,7 @@ if (@prefs) {
                               } } },
              objs => \@prefs,
             );
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 }
 
 </%perl>
@@ -121,7 +121,7 @@ if (@prefs) {
 
 </form>
 
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#
 
 <%once>;

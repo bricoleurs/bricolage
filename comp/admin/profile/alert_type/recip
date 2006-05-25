@@ -10,7 +10,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'alert_type_id');
 $m->comp('/widgets/profile/hidden.mc', value => $ctype, name => 'ctype');
 
 # Output the groups.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => $ctype . ' Group Recipients', number => 1);
 
 # These will hold the values for the left and right lists.
@@ -42,10 +42,10 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           showLeftList => !$no_edit || 0,
           rightCaption => "Current $pl_disp" );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the users.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => $ctype . ' User Recipients', number => 2);
 
 # These will hold the values for the left and right lists.
@@ -79,7 +79,7 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           showLeftList => !$no_edit || 0,
           rightCaption => "Current $pl_disp" );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the form buttons.
 $m->out("<br />\n");
@@ -94,7 +94,7 @@ $m->comp("/widgets/profile/formButtons.mc",
 
 </%perl>
 </form>
-<& '/widgets/wrappers/sharky/footer.mc', param => \%ARGS &>
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 %#-- End HTML --#
 
 %#-- Once Section --#
@@ -122,7 +122,7 @@ my $at = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
 $id = $at->get_id unless defined $id;
 my $atname = $at->get_name;
 # Output the header.
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          context => "Admin | Profile | $disp | &quot;" . $atname . "&quot; | Recipients",
          title => "$atname Recipients");
 
