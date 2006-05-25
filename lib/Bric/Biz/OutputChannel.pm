@@ -1303,9 +1303,10 @@ B<Notes:> NONE.
 =cut
 
 sub set_fixed_uri_format {
-    $_[0]->_set(['fixed_uri_format'],
-                [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp},
-                                     $_[1])])
+    $_[0]->_set(
+        ['fixed_uri_format'],
+        [$parse_uri_format->($_[0]->my_meths->{fixed_uri_format}{disp}, $_[1])]
+    )
 }
 
 ##############################################################################
@@ -1688,7 +1689,12 @@ sub save {
     my ($self) = @_;
     return $self unless $self->_get__dirty;
     my ($id, $inc) = $self->_get('id', '_includes');
-    defined $id ? $self->_do_update($id) : $self->_do_insert;
+    if ($id) {
+        $self->_do_update($id);
+    } else {
+        $self->_do_insert;
+        $id = $self->_get('id');
+    }
     $inc->save($id) if $inc;
     $self->SUPER::save();
 }

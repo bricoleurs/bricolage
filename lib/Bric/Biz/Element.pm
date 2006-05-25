@@ -710,7 +710,7 @@ sub is_active {
 
 =head1 PRIVATE
 
-NON
+NONE
 
 =head2 Private Class Methods
 

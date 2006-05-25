@@ -344,7 +344,10 @@ $do_element_type = sub {
 
 $clean_param = sub {
     my $param = shift;
-
+    
+    # Pulldowns are always size 1
+    $param->{fb_size} = 1 if $param->{fb_type} eq 'pulldown';
+    
     # Clean any select/radio values (but not codeselect)
     return $param
         unless $param->{fb_vals} && $param->{fb_type} ne 'codeselect';

@@ -157,28 +157,28 @@ if (defined $id) {
 
     }
 </%perl>
-<table width="580" cellpadding="0" cellspacing="0">
-<tr>
-  <td width="265"><&
-    '/widgets/profile/formButtons.mc', type => $type, return => '/admin/manager/grp',
-	     section => $section, no_del => $no_del, no_save => $no_edit,
-             widget => $type
-   &></td>
-  <td width="265" align="right" valign="top">
+
+<div style="float: left;">
+<& '/widgets/profile/formButtons.mc', type => $type, return => '/admin/manager/grp',
+	    section => $section, no_del => $no_del, no_save => $no_edit,
+        widget => $type
+&>
+</div>
+   
 <%perl>;
     # Add the buttons.
+    $m->out('<div style="float: right; text-align: right;">');
     $m->comp('/widgets/profile/imageSubmit.mc',
 	     formName => "grp_profile",
 	     callback => "$type|permissions_cb",
          alt      => 'Permissions',
-	     image    => "permissions_dgreen",
-         vspace   => 3
+	     image    => "permissions_dgreen"
 	) if $id != ADMIN_GRP_ID && chk_authz(0, READ, 1, $id);
     # Comment on the above line: We exclude the admin group because it has no
     # permissions. We also exclude users who don't have permission to access
     # the objects of this group already so as to prevent them from giving
     # themselves greater permissions than they already have.
-    $m->out('</td></tr></table>');
+    $m->out('</div>');
 
 } else {
     # It's a new object. Give 'em a choice.

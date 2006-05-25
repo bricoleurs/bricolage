@@ -92,8 +92,7 @@ into your language. Be sure to use the UTF-8 character set.
 
 =item *
 
-Document your new language key in Bric::Admin. Add your name to
-F<comp/widgets/help/translators.html> for your language.
+Add your name to F<comp/widgets/help/translators.html> for your language.
 
 =item *
 
@@ -123,6 +122,17 @@ Copy F<comp/media/css/en_us.css> to a new CSS file named with your language
 key substituted for "en_us". Add any CSS that your langauge requires, such as
 special fonts, right-to-left text, font sizes, etc. Many languages will
 require no special CSS, in which case you can leave your new CSS file empty.
+
+=item *
+
+Add an C<INSERT> statement to F<sql/Pg/Bric/Util/Pref.val>.
+
+=item *
+
+Write a migration script to add the new language key to the database. It
+should go into a subdirectory of F<instup/upgrade> named for the expected next
+version of Bricolage. Model it on F<inst/upgrade/1.10.2/add_ja.pl>; all you
+need to is change all instances of "ja" to your new language key.
 
 =back
 

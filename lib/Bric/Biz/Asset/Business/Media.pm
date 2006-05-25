@@ -190,7 +190,8 @@ use constant PARAM_FROM_MAP => {
                              . 'category c, workflow w,' . TABLE . ' mt ',
      grp_id               => 'member m2, media_member mm2',
      data_text            => 'media_field md',
-     subelement_key_name  => 'media_element mct',
+     subelement_key_name  => 'media_element mct, element_type subet',
+     subelement_id        => 'media_element sme',
      related_story_id     => 'media_element mctrs',
      related_media_id     => 'media_element mctrm',
      contrib_id           => 'media__contributor sic',
@@ -234,16 +235,17 @@ use constant PARAM_WHERE_MAP => {
       unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > CURRENT_TIMESTAMP)',
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
-      subelement_key_name   => 'i.id = mct.object_instance_id AND LOWER(mct.key_name) LIKE LOWER(?)',
-      related_story_id       => 'i.id = mctrs.object_instance_id AND mctrs.related_story__id = ?',
-      related_media_id       => 'i.id = mctrm.object_instance_id AND mctrm.related_media__id = ?',
+      subelement_key_name   => 'i.id = mct.object_instance_id AND mct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
+      subelement_id         => 'i.id = sme.object_instance_id AND sme.element_type__id = ?',
+      related_story_id      => 'i.id = mctrs.object_instance_id AND mctrs.related_story__id = ?',
+      related_media_id      => 'i.id = mctrm.object_instance_id AND mctrm.related_media__id = ?',
       data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
       published_version     => "mt.published_version = i.version AND i.checked_out = '0'",
       user__id              => 'i.usr__id = ?',
-      user_id              => 'i.usr__id = ?',
+      user_id               => 'i.usr__id = ?',
       uri                   => 'mt.id = uri.media__id AND LOWER(uri.uri) LIKE LOWER(?)',
       file_name             => 'LOWER(i.file_name) LIKE LOWER(?)',
       location              => 'LOWER(i.location) LIKE LOWER(?)',
@@ -296,8 +298,10 @@ use constant PARAM_WHERE_MAP => {
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 'mt.element_type__id = e.id',
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
-    subelement_key_name    => [ 'i.id = mct.object_instance_id',
-                                'LOWER(mct.key_name) LIKE LOWER(?)' ],
+    subelement_key_name    => [ 'i.id = mct.object_instance_id AND mct.element_type__id = subet.id',
+                                'LOWER(subet.key_name) LIKE LOWER(?)' ],
+    subelement_id          => [ 'i.id = sme.object_instance_id',
+                                'sme.element_type__id = ?' ],
     related_story_id       => [ 'i.id = mctrs.object_instance_id',
                                 'mctrs.related_story__id = ?' ],
     related_media_id       => [ 'i.id = mctrm.object_instance_id',
@@ -753,6 +757,11 @@ values.
 
 The key name for a container element that's a subelement of a media
 document. May use C<ANY> for a list of possible values.
+
+=item subelement_id
+
+The ID for a container element that's a subelement of a media document. May
+use C<ANY> for a list of possible values.
 
 =item related_story_id
 

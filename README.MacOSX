@@ -33,8 +33,8 @@ Bricolage server, you'll need to download a couple of patches that help
 mod_ssl to find Mac OS X's OpenSSL libraries and allow the compiler to
 properly find libdbm while configuring Apache. The patches can be found here:
 
-  http://david.justatheory.com/macosx/apache_dbm.patch
-  http://david.justatheory.com/macosx/mod_ssl_dylib.patch
+  http://www.justatheory.com/computers/os/macosx/apache_dbm.patch
+  http://www.justatheory.com/computers/os/macosx/mod_ssl_dylib.patch
 
 Other files and libraries you'll need to download are as follows:
 
@@ -47,8 +47,7 @@ Apache you downloaded. For example, if you downloaded apache_1.3.27.tar.gz,
 then the mod_ssl sources you want will be something like
 mod_ssl-2.x.x-1.3.27.tar.gz.
 
-From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.0.tar.gz or
-perl-5.6.1.tar.gz.
+From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.x.tar.gz.
 
 From http://perl.apache.org/dist/, download the the sources for latest 1.x
 version of mod_perl.
@@ -69,7 +68,7 @@ PostgreSQL sources.
 INSTALLATION SUMMARY
 --------------------
 
-All examples here assume that youv've unpackaged all of the above source
+All examples here assume that you've unpackaged all of the above source
 tarballs into /usr/local/src, e.g., with the command
 
   tar zxvf sources.tar.gz
@@ -193,7 +192,7 @@ a detailed description of how to install and configure PostgreSQL.
 
 DURING INSTALLATION
 
-While runing "make", you'll be prompted to answer a series of
+While running "make", you'll be prompted to answer a series of
 questions. Provided you've followed the directions here and installed and
 configured Apache, most of the defaults should be fine. There are a couple of
 things to watch for, however:

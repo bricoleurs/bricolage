@@ -353,7 +353,7 @@ form .row .input p {
 form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
-table tr.odd { background: #E8E8CD; }
+table tr.odd { background: #f5f5e6; }
 table td.name { 
     width: 8em; 
     padding-right: 5px;
@@ -370,17 +370,17 @@ table td.delete { white-space: nowrap; }
 .listManager,
 .containerProf { width: 100%; border-style: hidden; }
 .listManager th,
-.containerProf th{ background: #999966; color: black; padding: 5px; 
+.containerProf th{ background: #999966; color: black; padding: 5px;
                    text-align: left; vertical-align: bottom;
                    border: solid #cccc99 1px; }
 .listManager th.sortup { 
     background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
-    padding-right: 17px; /* account for arrow: 7px + 10px padding */
+    padding: 0;
     color: white;
 }
 .listManager th.sortdown { 
     background: #669999 url("../images/listsort_down_teal.gif") center right no-repeat;
-    padding-right: 17px; /* account for arrow: 7px + 10px padding */
+    padding: 0;
     color: white;
 }
 .adminBox .listManager th.sortup { 
@@ -389,11 +389,11 @@ table td.delete { white-space: nowrap; }
 .adminBox .listManager th.sortdown { 
     background: #993300 url("../images/listsort_down_red.gif") center right no-repeat;
 }
-.listManager th a { font-size: .85em; color: black; text-decoration: none; }
+.listManager th a { display: block; font-size: .85em; color: black; text-decoration: none; }
 .listManager th.sortup a,
-.listManager th.sortdown a { color: white; }
+.listManager th.sortdown a { padding: 5px 17px 5px 5px; color: white; }
 .listManager td,
-.containerProf td { padding: 2px 5px; border-bottom: solid #cccc99 1px; height: 2.3em; }
+.containerProf td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
 th.checkbox, th.radio,
@@ -405,6 +405,8 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
 
 .listManager .action { text-align: center; }
+
+.permissions .radio { width: 60px; }
 
 .addnewitem,
 .noneFound { padding: 8px 10px; }
@@ -578,8 +580,8 @@ div.addelement { text-align: right;}
 #diff .file { overflow: auto; }
 #diff .file .fileheader, #diff .file .hunkheader {color: #888888; }
 #diff .hunk .ctx { background: #eeeeee; }
-#diff .hunk .ins { background: #ddffdd; }
-#diff .hunk .del { background: #ffdddd; }
+#diff .hunk ins { background: #ddffdd; text-decoration: none; }
+#diff .hunk del { background: #ffdddd; text-decoration: none; }
 #worddiff { padding: 1em; }
 #worddiff .fileheader { color: #888; font-family: monospace; font-size: 1.2em; }
 #worddiff .hunk ins   { color: #060; font-weight: bold; }

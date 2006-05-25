@@ -140,7 +140,7 @@ sub put_res {
         next unless $s->is_active;
 
         # Instantiate a Net::SFTP object and login.
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
         my $sftp = eval { Net::SFTP->new($sftp_args->($s)) };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
@@ -256,7 +256,7 @@ sub del_res {
         next unless $s->is_active;
 
         # Instantiate a Net::SFTP object and login.
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
         my $sftp = eval { Net::SFTP->new($sftp_args->($s)) };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@

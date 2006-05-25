@@ -92,7 +92,7 @@ L<http://www.bricolage.cc/dev/subversion/>.
 
 Bricolage has a Bugzilla server dedicated to it:
 
-   http://bugzilla.bricolage.cc/
+   http://bugs.bricolage.cc/
 
 You should use this system to report bugs in Bricolage. If you're looking for
 something to do you can also use the system to find open bugs and fix them. For

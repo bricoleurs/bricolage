@@ -201,6 +201,8 @@ START MODULE LIST
 
 =item URI::Escape
 
+=item Scalar::Util
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)
@@ -1997,13 +1999,6 @@ out. Defaults to "localhost" if not specified.
 
 B<ALERT_FROM:> The email address that appears in the 'From' header of emailed
 alerts. Defaults to SERVER_ADMIN directive if not specified.
-
-=begin comment
-
-It might be worthwhile in a future version to allow Alert Type owners to set
-this themselves.
-
-=end comment
 
 =item *
 

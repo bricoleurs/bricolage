@@ -45,6 +45,16 @@ for my $thing (qw(story media)) {
                   AND publish_date IS NOT NULL
         },
 
+       # If there's a publish date, it was published, so
+       # set status and version if they're unset
+        qq{UPDATE $thing
+           SET    publish_status = '1',
+                  published_version = current_version
+           WHERE  publish_status = '0'
+                  AND published_version IS NULL
+                  AND publish_date IS NOT NULL
+        },
+
         # Remove the publish_status when there are no publish dates.
         qq{UPDATE $thing
            SET    publish_status = $false

@@ -102,7 +102,7 @@ BEGIN {
     # $VERBOSE can effect use options and such.  also so errors get
     # detected as quick as possible - people are waiting out there!
     our $username        = $ENV{BRICOLAGE_USERNAME};
-    our $password        = $ENV{BRICOLAGE_PASSWORD};
+    our $password        = $ENV{BRICOLAGE_PASSWORD} || '';
     our $server          = $ENV{BRICOLAGE_SERVER} || 'http://localhost';
     our $VERBOSE         = 0;
     our $no_media        = 0;

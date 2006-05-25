@@ -1,0 +1,80 @@
+<help page="Destination Profile">
+
+<p>This form is for editing or creating a <dfn>destination</dfn>, and gives
+ information about how the destination can be used to publish content.<p>
+
+<p>During the first stage of creating a new destination, only the first
+ two sections of the form are visible.  Once they are filled in, press
+ &#8216;Next&#8217; to move forward and show the rest of the form.
+ The complete form is also shown when editing an existing destination.</p>
+
+
+<h3>Properties</h3>
+
+<dl>
+ <dt>Name</dt>
+ <dd>The name of the destination.  It must be unique, but is only used
+  to make it easier to distinguish different destinations.</dd>
+
+ <dt>Description</dt>
+ <dd>A fuller description of the purpose of the destination.</dd>
+
+ <dt>Move Method</dt>
+ <dd>The method used to copy the files to the destination.  The actual
+  set of options available will depend on how your Bricolage installation
+  is configured, but the following might be available:
+
+  <dl>
+   <dt>File System</dt>
+   <dd>A simple copy on the local file system.</dd>
+
+   <dt>FTP</dt>
+   <dd>Upload to a remote server using FTP.</dd>
+
+   <dt>SFTP</dt>
+   <dd>Upload to a remote server using secure FTP.</dd>
+
+   <dt>WebDAV</dt>
+   <dd>Upload to a remote server using HTTP with WebDAV.</dd>
+  </dl>
+ </dd>
+
+ <dt>Copy Resources</dt>
+ <dd>If checked, the resources being deployed on the server will be copied
+  to a temporary directory before any &#8216;actions&#8217; are applied to
+  them.</dd>
+
+ <dt>Publishes</dt>
+ <dd>If checked (which is the default and common case), this destination
+  will be used for publishing finished output.</dd>
+
+ <dt>Previews</dt>
+ <dd>If checked, this destination can be used for previewing output.</dd>
+
+ <dt>Site</dt>
+ <dd>If you haven't defined any sites, this will automatically be
+     the 'Default Site'. Otherwise, select from the list of sites.</dd>
+</dl>
+
+<h3>Output Channels</h3>
+
+<p>This section is used to set the output channels for which this
+ destination will be used.</p>
+
+<h3>Actions</h3>
+
+<p>Use this part of the form to add, edit or remove <dfn>actions</dfn>,
+ which are the types of processing that output is subjected to when it is
+ sent to the destination.</p>
+
+<p>The common case is for there to be only one action, of type
+ &#8216;Move&#8217;, which performs the actual copy or upload operation.</p>
+
+<h3>Servers</h3>
+
+<p>Use this part of the form to add, edit or remove <dfn>servers</dfn>,
+ which define how output is sent to the server when it is published.
+ For example, if the FTP method is being used to copy output, a username
+ and password must be given for the server.</p>
+
+</help>

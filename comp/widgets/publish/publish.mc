@@ -1,5 +1,3 @@
-%#--- Documentation ---#
-
 <%doc>
 
 =head1 NAME
@@ -20,24 +18,43 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-
+This component displays a list of documents to be published.
 
 =cut
 
 </%doc>
-
-%#-- Once Section --#
 <%once>;
 my $widget = 'publish';
 my $story_key_name = 'story';
 my $media_key_name = 'media';
 my $story_pkg = get_package_name($story_key_name);
 my $media_pkg = get_package_name($media_key_name);
-</%once>
+my %related;
+my $select = sub {
+    my $asset = shift;
+    my $vid = $asset->get_version_id;
+    my $key = $asset->key_name;  # 'story' or 'media'
 
-%#-- Init Section --#
+    return [
+        'Publish',
+        'publish|select_publish_cb',
+        "$key=$vid",
+        { checked => 1 },
+    ] if exists $related{$key}->{$vid};
+
+    $m->comp(
+        '/widgets/profile/hidden.mc',
+        name  => 'publish|select_publish_cb',
+        value => "$key=$vid"
+    )
+};
+</%once>
+<%cleanup>;
+%related = ();
+</%cleanup>
 <%init>;
-my ($story_pub_ids, $media_pub_ids);
+my ($story_pub_ids, $media_pub_ids) = ([], []);
+%related = ();
 if (my $d = get_state_data($widget)) {
     # Get the original assets
     $story_pub_ids = mk_aref($d->{story});
@@ -47,22 +64,13 @@ if (my $d = get_state_data($widget)) {
 
     # Check for related stories.
     if (defined $rel_story_ids && @$rel_story_ids) {
-        # Create hidden callback fields for the original stories.
-        $m->comp('/widgets/profile/hidden.mc',
-                 name => 'publish|select_publish_cb',
-                 value => "story=$_")
-          for @$story_pub_ids;
-        # Push the related stories onto the list.
+        $related{story}->{$_} = undef for @$rel_story_ids;
         push @$story_pub_ids, @$rel_story_ids
     }
 
     # Check for related media.
     if (defined $rel_media_ids && @$rel_media_ids) {
-        # Create hidden callback fields for the original media.
-        $m->comp('/widgets/profile/hidden.mc',
-                 name => 'publish|select_publish_cb',
-                 value => "media=$_")
-          for @$media_pub_ids;
+        $related{media}->{$_} = undef for @$rel_media_ids;
         # Push the related media onto the list.
         push @$media_pub_ids, @$rel_media_ids
     }
@@ -108,30 +116,4 @@ $m->comp('/widgets/listManager/listManager.mc',
 	);
 $m->comp('/widgets/wrappers/table_bottom.mc');
 </%init>
-
-<%once>
-my $select = sub {
-    my $asset = shift;
-    my $id = $asset->get_id;
-    my $key = $asset->key_name;  # 'story' or 'media'
-
-    # determine if $asset is a related asset
-    if (my $d = get_state_data('publish')) {   # $widget eq 'publish'
-        foreach my $k (qw(story media)) {
-            my %rel_ids = map { $_ => 1 } @{ mk_aref($d->{"rel_$k"}) };
-            if (exists $rel_ids{$id}) {
-                # it's a related asset
-                return ['Publish', 'publish|select_publish_cb',
-                        "$key=$id", { checked => 1 }];
-            }
-        }
-
-        # if it gets here, it must not be a related asset,
-        # so we don't show a checkbox
-        return;
-    }
-};
-</%once>
-
-%#--- Log History ---#
 

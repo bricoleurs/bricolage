@@ -1,0 +1,122 @@
+%# http://www.dictionary.com/wordoftheday/archive/2001/04/26.html
+% $m->comp(".t_top", caption => "About the Name");
+
+<p>The name <q>Bricolage</q> was not drawn directly from the common usage
+of the term in French, but rather from the first chapter of <q>The Savage
+Mind,</q> by the famed French anthropologist Claude L&eacute;vi-Strauss. In
+that famous discussion of scientific thought vs. mythical thought--of
+science vs. <q>the science of the concrete</q>--L&eacute;vi-Strauss
+declares, <q>Mythical thought is therefore a kind of intellectual
+<q>bricolage.</q></q></p>
+
+<p>Bricolage is the product of a bricoleur, a kind of handyman who assembles
+the fruits of his labors from the tools he has at hand. Similarly, mythical
+thought uses the extant concepts available to the cultural bricoleur to shape
+the world of cultural understanding. In other words, one's understanding and
+interpretation of the world and its events derives from assembling new
+interpretations based on existing cultural (L&eacute;vi-Strauss would say
+<q>structural</q>) symbols. <q>Signs allow and even require the
+interposing and incorporation of a certain amount of human culture into
+reality,</q> L&eacute;vi-Strauss writes. Thus signs (or symbols, as modern
+anthropologists are more likely to call them) are the building blocks of
+cultural comprehension.</p>
+
+<p>Similarly, content is assembled in the Bricolage content management system
+by drawing on extant elements to create a new end product. Element
+administrators function as L&eacute;vi-Straussian <q>scientists,</q> in
+that they create new symbols (elements) that document editors&mdash;as new
+media bricoleurs&mdash;draw upon to assemble and manage new structures of
+meaning (content).</p>
+
+<p>For those who may find this explanation too much a stretch, we fall back on
+the meaning of the term <q>bricolage</q> as it is commonly used in English,
+rather than French. For our French users, who might see the name and
+immediately think <q>big hack,</q> note that typical English definition,
+according to <cite>The American Heritage Dictionary of the English Language,
+Fourth Edition,</cite> is simply, <q>something made or put together using
+whatever materials happen to be available.</q> This definition nicely
+describes how Bricolage documents are built from the elements defined for
+them.</p>
+
+% $m->comp(".t_bottom");
+
+% $m->comp(".t_top", caption => "License");
+<p>Copyright &copy; 2001-2002 About.com. Changes Copyright &copy; 2001-2006
+  Kineticode, Inc. and others.</p>
+
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+
+<ul>
+    <li>Redistributions of source code must retain the above copyright notice,
+        this list of conditions and the following disclaimer.</li>
+    <li>Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the
+        distribution.</li>
+    <li>Neither the name of the About.com nor the names of its contributors may
+        be used to endorse or promote products derived from this software
+        without specific prior written permission.</li>
+</ul>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+% $m->comp(".t_bottom");
+
+% $m->comp(".t_top", caption => "Credits");
+<h3>Bricolage is maintained by:</h3>
+<& /widgets/help/maintainers.html &>
+
+<h3>The current development team consists of:</h3>
+<& /widgets/help/developers.html &>
+
+<h3>The original developers were:</h3>
+<& /widgets/help/creators.html &>
+
+<h3>Emeritus Developers:</h3>
+<& /widgets/help/emeriti.html &>
+
+<h3>The online help was written by:</h3>
+<& /widgets/help/help_writers.html &>
+
+<h3>Folks who have submitted patches include:</h3>
+<& /widgets/help/patchers.html &>
+
+<h3>Friends who have spotted bugs include:</h3>
+<& /widgets/help/debuggers.html &>
+
+<h3>Bricolage's translation team:</h3>
+<& /widgets/help/translators.html &>
+
+<h3>Others who contributed to its support and development:</h3>
+<& /widgets/help/others.html &>
+% $m->comp(".t_bottom");
+</body>
+</html>
+
+<%def .t_top>
+<%args>
+$caption => '&nbsp;'
+</%args>
+    <div class="helpBox">
+        <div class="fullHeader">
+            <div class="number">&nbsp;</div>
+            <div class="caption"><% $caption %></div>
+            <div class="rightText">&nbsp;</div>
+        </div>
+        <div class="border">
+</%def>
+
+<%def .t_bottom>
+        </div>
+    </div>
+</%def>

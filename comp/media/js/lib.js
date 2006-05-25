@@ -15,27 +15,25 @@ function validateStory(obj) {
 /*
 returns number of words in form field, based on number of spaces found
 */
-function wordCount(obj, targetName, wordResultName, charResultName) {
+function wordCount(textbox, words, chars) {
 
     // Get a handle on things.
-    var word   = obj[wordResultName]
-    var chars  = obj[charResultName];
-
+    textbox = document.getElementById(textbox);
+    words   = document.getElementById(words);
+    chars   = document.getElementById(chars);
+    
     // Remove POD tags and newlines.
-    var text = obj[targetName].value.replace(/=.*|\n+/g, ' ');
-
-    // Get an array of words.
-    var words      = text.split(/\s+/);
-    var wordcount  = 0;
-
-    // Only count words that have, er, words.
-    for (var i = 0; i < words.length; i++) {
-        if (words[i].length > 0) wordcount++;
+    var text = textbox.value.replace(/=.*|\n+/g, ' ');
+    var charCount = text.length;
+    var wordCount = 0;
+    text = text.split(/\s+/);
+    for(var i = 0; i < text.length; i++) {
+        if (text[i].length > 0) wordCount++;
     }
-
+    
     // Display the results.
-    word.value  = wordcount;
-    chars.value = text.length;
+    words.innerHTML = wordCount;
+    chars.innerHTML = charCount;
     return false;
 }
 
@@ -953,8 +951,9 @@ function replaceAll (field) {
 
     else {
         field.value = chunks.join(replace);
+        field.focus(); field.blur();
         closeDialog($('finddialog'));
-        alert('Replaced ' + (chunks.length - 1) + ' occurrences');
+        alert('Replaced ' + (chunks.length - 1) + ' occurrence' + (chunks.length > 2 ? 's' : ''));
     }
     return false;
 }

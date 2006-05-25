@@ -1,0 +1,87 @@
+<help page="Output Channel Profile">
+
+<dl>
+<dt>Properties</dt>
+<dd>
+<p> Enter the Output Channel's name and a brief description. Enter the file name
+    and extension for the stories files created in this output channel in the 
+    &quot;File Name&quot; and &quot;File Extension&quot; fields.</p>
+
+<p> The URI Format properties determine how the URIs of stories and media will
+    be created in this output channel. In the &quot;URI Format&quot; and
+    &quot;Fixed URI Format&quot; fields, enter the tokens that represent the
+    various parts out of which the URI should be made. Tokens must be
+    separated by <code>/</code>; like a URI. The currently available tokens are:</p>
+
+<ul>
+  <dl>
+    <dt><code>%{categories}</code></dt>
+    <dd><p>The category path.</p></dd>
+
+    <dt><code>%{slug}</code></dt>
+    <dd><p>The slug, applies to stories only.</p></dd>
+
+    <dt><code>%Y</code></dt>
+    <dd><p>The cover date year.</p></dd>
+
+    <dt><code>%m</code></dt>
+    <dd><p>The cover date month</p></dd>
+
+    <dt><code>%d</code></dt>
+    <dd><p>The cover date day.</p></dd>
+
+    <dt>%{uuid}</dt>
+    <dd><p>The document UUID.</p></dd>
+
+    <dt>%{base64_uuid}</dt>
+    <dd><p>The base64-encoded document UUID.</p></dd>
+
+    <dt>%{hex_uuid}</dt>
+    <dd><p>The hex representation of the document UUID.</p></dd>
+</ul>
+
+<p>For example, a story in the category <code>/stories</code>, whose slug
+    is <code>hello</code>, with a cover date of Feb. 27, 2002 and URI
+    Format <code>/%{categories}/%Y/%m/%d/%{slug}/</code> would have the
+    URI <code>/stories/2002/02/27/hello/</code>. Any other DateTime-supported
+    <code>strftime</code> format can be used for other parts of the cover
+    date, as well. See the <a
+    href="http://search.cpan.org/dist/DateTime/lib/DateTime.pm#strftime_Specifiers"
+    onclick="window.open(this.href); return false;">DateTime documentation</a> for the
+    complete list.</p>
+
+<p> You can also use the URI format fields to set a prefix or postfix directory 
+    to the URI. For example with a URI Format of 
+    <code>/foo/%{categories}/%{slug}/bar/</code> and the file example above the 
+    uri would be /foo/stories/hello/bar/index.html. This feature is useful if 
+    you're keeping different kinds of content on one delivery server.</p>
+
+<p> The &quot;URI Case&quot; select list forces URIs in this output channel to
+    be formatted in a particular case, either &quot;Mixed Case&quot; (the
+    default), &quot;Lowercase&quot;, or &quot;Uppercase&quot;.</p>
+
+<p> The &quot;Use Slug for Filename&quot; field indicates that the names of
+    the story files created in this output channel should use the slug when
+    possible. This means that non-fixed stories will use the slug to name the
+    file, if it's available. Fixed stories will instead use the name specified
+    in the Filename field, while media will use the name of the media file
+    itself.</p>
+</dd>
+
+</dl>
+
+<p>Click <i>Next</i> for the second page of the Profile.</p>
+
+<p><dl>
+<dt>Template Includes</dt>
+<dd>Select existing Output Channels in order to include the templates of those
+    Output Channels in this Output Channel. The idea here is that, when you
+    preview or publish assets via this Output Channel, if the Burn system can't
+    find a template, it'll look for it in the Output Channels selected here. The
+    template includes can be ordered, and they will be searched for templates in
+    that order.</dd>
+</dl></p>
+
+<p>When finished, click <i>Save</i>.</p>
+
+</help>

@@ -328,16 +328,16 @@ my %formSubs = (
             $out .= qq{        <div class="input">\n} if $useTable;
             if (!$readOnly) {
             $js = $js ? " $js" : '';
-                        # if we've set a maximum length then display the textcounter
+            my $uniquename = $key;
+            $uniquename =~ s/[\||_]//g;
+            # if we've set a maximum length then display the textcounter
             if ($vals->{props}{maxlength}) {
                 # use a 'nice' unique name for js call, IE doesn't like | or _
-                my $uniquename = $key;
-                $uniquename =~ s/[\||_]//g;
-                                my $upval = length($value);
-                                my $dwval = $vals->{props}{maxlength} - $upval;
+                my $upval = length($value);
+                my $dwval = $vals->{props}{maxlength} - $upval;
                 my $textstring = $lang->maketext('Characters')
                                   . qq {: <span id="textCountUp$uniquename">$upval</span> }
-                  . $lang->maketext('Remaining')
+                                  . $lang->maketext('Remaining')
                                   . qq{: <span id="textCountDown$uniquename">$dwval</span><br />};
                 my $functioncode = "textCount('$uniquename',$vals->{props}{maxlength})";
                 $out .= qq{$textstring\n};
@@ -349,7 +349,7 @@ my %formSubs = (
                 $out .= qq{            </div>\n}  if $useTable;
             } else {
                 $out .= qq{            <div class="textarea">}  if $useTable;
-                $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                $out .= qq{            <textarea name="$key" id="$uniquename" rows="$rows" cols="$cols" width="200"}
                   . qq{ wrap="soft" $js>$value</textarea>\n};
                 $out .= qq{            </div>\n}  if $useTable;
             }
@@ -529,7 +529,7 @@ my %formSubs = (
             &$inpt_sub('radio', @_);
         }
 );
-# pulldown is the esame as select.
+# pulldown is the same as select.
 # codeselect is the same as select, but values are evaluated perl.
 $formSubs{codeselect} = $formSubs{pulldown} = $formSubs{select};
 </%once>

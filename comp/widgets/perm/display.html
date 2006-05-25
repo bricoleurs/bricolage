@@ -1,4 +1,3 @@
-%#-- Begin HTML --#
 <%perl>;
 my %sites;
 # XXX Should we exclude inactive sites?
@@ -24,13 +23,15 @@ my (%perms, %start_desks);
 $num ||= 1;
 
 if ($is_user) {
+    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+       caption => $lang->maketext('Filter by Permission Type'),
+       search  => 1
+    );
     $m->comp('/widgets/profile/select.mc',
-             'disp' => 'Pick a Permissions Type',
+             'disp' => 'Permission Type',
              'options' => $perm_sel,
-             'indent'  => 140,
-             'width'   => 500,
              'value' => $perm_type,
-             'js' => qq{onChange="location.href='} . $r->uri .
+             'js' => qq{onchange="location.href='} . $r->uri .
                      "?perm_type=' + " .
                      qq{escape(this.options[this.selectedIndex].value)"},
     );
@@ -38,7 +39,8 @@ if ($is_user) {
          'name' => 'perm_type',
          'value' => $perm_type,
     );
-    $m->out('<p></p>');
+    
+    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
     # $is_user means $perm_type is one of
     # object, workflow, desk, (category)
@@ -60,7 +62,7 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
     # other groups.
     $m->comp("/widgets/wrappers/table_top.mc", number => $num++,
-             caption => "Object Group Permissions", border => 0);
+             caption => "Object Group Permissions");
 
     $m->comp($head_comp,
              $lang->maketext('Grant "[_1]" members permission to access the '
@@ -72,10 +74,12 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
         $perms{$gid} = $perm;
     }
 
+    my $odd_row = 1;
     foreach my $grp ($grp_pkg->list({ })) {
         my $gid = $grp->get_id;
         next if $gid == ADMIN_GRP_ID;
 
+        $odd_row = !$odd_row;
         $m->comp($row_comp,
                  grp => $grp,
                  gid => $gid,
@@ -83,10 +87,11 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
                  is_asset_grp => $chk_asset_grp->($grp),
                  publish => 1,
                  recall => 1,
-                 perm => $perms{$gid});
+                 perm => $perms{$gid},
+                 odd_row => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 
 if ($perm_type eq 'workflow' || $perm_type eq 'all') {
@@ -94,14 +99,16 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     # Do the workflows, first.
     $m->comp("/widgets/wrappers/table_top.mc",
              number => $num++,
-             caption => "$wf_disp Permissions", border => 0);
+             caption => "$wf_disp Permissions");
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to'
              ." access assets in these workflows.", $name));
+    my $odd_row = 1;
     foreach my $wf ($wf_pkg->list) {
         # Skip workflows from deleted sites.
         my $site = $sites{$wf->get_site_id} or next;
         my $gid = $wf->get_asset_grp_id;
         my $grp = $asset_grp_pkg->lookup({ id => $gid });
+        $odd_row = !$odd_row;
         # XXX We say it isn't an asset group because no higher than EDIT is
         # allowed for a workflow, even though it is actually an asset group.
         $m->comp($row_comp,
@@ -111,25 +118,28 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
                  is_asset_grp => 0,
                  perm => $perms{$gid},
                  name => $wf->get_name . ' ('
-                         . $sites{$wf->get_site_id}->get_name . ')'
+                         . $sites{$wf->get_site_id}->get_name . ')',
+                 odd_row => $odd_row
        );
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 
 if ($perm_type eq 'desk' || $perm_type eq 'all') {
     # Now do the desks.
     $m->comp("/widgets/wrappers/table_top.mc", number => $num++,
-             caption => "$dsk_disp Permissions", border => 0);
+             caption => "$dsk_disp Permissions");
 
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to '
                                          . "access assets on these desks.",
                                          $name));
 
+    my $odd_row = 1;
     foreach my $dsk ($dsk_pkg->list) {
         my $gid = $dsk->get_asset_grp;
         my $grp = $gid ? $asset_grp_pkg->lookup({ id => $gid }) : undef;
+        $odd_row = !$odd_row;
         $m->comp($row_comp,
                  grp => $grp,
                  gid => $gid,
@@ -139,10 +149,11 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
                  type => 'obj',
                  perm => $perms{$gid},
                  is_asset_grp => 1,
-                 name => $dsk->get_name);
+                 name => $dsk->get_name,
+                 odd_row => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 
 if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
@@ -173,8 +184,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     # Now get the permissions on this group that are granted to user groups.
     $m->comp("/widgets/wrappers/table_top.mc",
              caption => "$usr_grp_disp Permissions",
-             number => $num,
-             border => 0);
+             number => $num);
 
     $m->comp($head_comp, $lang->maketext("Grant the members of the following groups "
                                          . "permission to access the members of the "
@@ -182,6 +192,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
 
     my $is_asset_grp = $chk_asset_grp->($grp);
     my $is_perm_grp  = $grp->get_permanent ? 1 : 0;
+    my $odd_row = 1;
 
     # Get any existing permissions.
     foreach my $perm ($pkg->list({ obj_grp_id => $id }) ) {
@@ -193,6 +204,8 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     foreach my $ugrp ($usr_grp_pkg->list) {
         my $gid = $ugrp->get_id;
         next if $gid == ADMIN_GRP_ID;
+        
+        $odd_row = !$odd_row;
         $m->comp($row_comp,
                  grp          => $ugrp,
                  gid          => $gid,
@@ -200,10 +213,11 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
                  create       => $is_perm_grp || $is_asset_grp,
                  publish      => $is_asset_grp,
                  recall       => $is_asset_grp,
-                 perm         => $perms{$gid});
+                 perm         => $perms{$gid},
+                 odd_row      => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 }
 </%perl>
 
@@ -286,15 +300,13 @@ my $perm_type = $ARGS{'perm_type'} || 'usrgrp';
 my (%users, $no_edit);
 </%shared>
 <%def .radio_head>
-<table border="1" cellpadding="2" cellspacing="0" width="580" style="border-style:solid; border-color:#cccc99;">
 % if ($_[0]) {
-    <tr>
-    <td style="border-style:solid; border-color:#cccc99;" colspan="<% @$vals_aref + 1 %>"><% $_[0] %></td>
-    </tr>
+<div class="addnewitem"><% $_[0] %></div>
 % } # if
-    <tr class="medHeader">
-        <th style="border-style:solid; border-color:#cccc99;">Group</th>
-% $m->out(qq{        <th style="border-style:solid; border-color:#cccc99;">$_->[1]</th>\n}) for @$vals_aref;
+<table class="listManager permissions">
+    <tr>
+        <th>Group</th>
+% $m->out(qq{        <th class="radio">$_->[1]</th>\n}) for @$vals_aref;
     </tr>
 </%def>
 
@@ -309,6 +321,7 @@ $perm => undef
 $name => undef
 $type => 'usr'
 $is_asset_grp => undef
+$odd_row => 0
 </%args>
 <%init>;
 $name ||= $grp->get_name;
@@ -325,34 +338,34 @@ my $max_perm = get_user_object->what_can(0, $gid);
 return if $max_perm == DENY;
 
 </%init>
-<tr>
-    <td width="340" style="border-style:solid; border-color:#cccc99;"><span class="label"><% $name %></span>
+<tr<% $odd_row ? ' class="odd"' : '' %>>
+    <td><span class="label"><% $name %></span>
         <& '/widgets/profile/hidden.mc', value => $pid, name => "${type}_perm_id" &>
         <& '/widgets/profile/hidden.mc', value => $gid, name => "${type}_grp_id" &>
     </td>
 % if ($no_edit) {
 %     # It's read-only. Just show each permission.
 %     foreach my $v (@$vals_aref) {
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" height="20" width="60"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
+    <td class="radio"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
 %     } # foreach
 % } else {
 %     # They can edit it!
 %     foreach my $v (@$vals_aref) {
 %         if (!$max_perm || ($v->[0] != DENY && $v->[0] > $max_perm)) {
 %             # Well, this permission for this group is read-only.
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
+    <td class="radio"><% $v->[0] == $val ? 'Yes' : '&nbsp;' %></td>
 %         } elsif ($v->[0] == CREATE && !$create && ($type eq 'usr' || !$grp->get_permanent)) {
 %             # Create permission isn't allowed or is irrelevant.
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
+    <td class="radio">&nbsp;</td>
 %         } elsif ($v->[0] == RECALL && (!$recall || !$is_asset_grp)) {
 %             # Recall permission isn't allowed or is irrelevant.
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
+    <td class="radio">&nbsp;</td>
 %         } elsif ($v->[0] == PUBLISH && (!$publish || !$is_asset_grp)) {
 %             # Publish permission isn't allowed or is irrelevant.
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">&nbsp;</td>
+    <td class="radio">&nbsp;</td>
 %         } else {
 %             # They can set this permission.
-    <td style="border-style:solid; border-color:#cccc99;" align="middle" valign="top" height="20" width="60">
+    <td class="radio">
         <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
     </td>
 %         } # if
@@ -433,19 +446,20 @@ $perms
                  number   => $num,
                  caption  => $lang->maketext('[_1] Site [_2] Permissions',
                                              $site->get_name, $cat_disp),
-                 localize => 0,
-                 border   => 0);
+                 localize => 0);
         $m->comp($head_comp,
                  $lang->maketext('Grant "[_1]" members permission to access '
                                  . "assets in these categories.", $grp_name));
 
         my $site_id = $site->get_id;
+        my $odd_row = 1;
         foreach my $cat_grp ($cat_grp_pkg->list({
                              name   => "Site $site_id Category Assets",
                              Order  => 'description',
                              all    => 1 }))
         {
             my $gid = $cat_grp->get_id;
+            $odd_row = !$odd_row;
             $m->comp($row_comp,
                      grp => $cat_grp,
                      gid => $gid,
@@ -454,11 +468,12 @@ $perms
                      type => 'obj',
                      is_asset_grp => 1,
                      perm => $perms->{$gid},
-                     name => $cat_grp->get_description
+                     name => $cat_grp->get_description,
+                     odd_row => $odd_row
                  );
         }
         $m->out(qq{</table>\n});
-        $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
+        $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 </%perl>
 </%def>
 %#--- Log History ---#

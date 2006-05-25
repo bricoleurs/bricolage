@@ -70,7 +70,7 @@ while (<OLD>) {
     # Stop this craziness once we get to the data section.
     last if /^-- Data/;
     # Skip the old boolean checks.
-    next if /CHECK\s*\(\(\(\w+\s*=\s*\([01]\)::numeric\)\s*OR\s*\(\w+\s*=\s*\([01]\)::numeric\)\)\)/;
+    next if /CHECK\s*\(\(\(\w+\s*=\s*\(?[01]\)?::numeric\)\s*OR\s*\(\w+\s*=\s*\(?[01]\)?::numeric\)\)\)/;
     # Handle functions and such.
     unless (s/numeric([),])/integer$1/g) {
         # Handle special smallint columns.
@@ -103,8 +103,8 @@ while (<OLD>) {
 
     # Fix incompatible checks.
     if (/ck_(?:story|media)__publish_status/) {
-        s/\(0\)::integer/FALSE/g;
-        s/\(1\)::integer/TRUE/g;
+        s/\(?0\)?::integer/FALSE/g;
+        s/\(?1\)?::integer/TRUE/g;
     }
 
     # Print the previouis line.
@@ -117,7 +117,7 @@ print NEW $last, $_;
 # Fix the casts in the rest of the file.
 while (<OLD>) {
     s/::numeric/::integer/g
-      unless s/active\s*=\s*\(1\)::numeric/active = ('t')::bool/;
+      unless s/active\s*=\s*\(?1\)?::numeric/active = ('t')::bool/;
     print NEW $_;
 }
 

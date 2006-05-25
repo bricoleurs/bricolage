@@ -23,7 +23,7 @@ my $asset_opts = $advanced_search ? {
 
 my $subelement_opts = $advanced_search ? {
         '' => $lang->maketext('All Subelements'),
-        map { $_->get_key_name, $_->get_name }
+        map { $_->get_id, $_->get_name }
           Bric::Biz::ElementType->list({
               top_level => 0,
               active    => 1,
@@ -37,7 +37,7 @@ unless ($sites) {
     $c->set('__SITES__', $sites);
 }
 
-$sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
+$sites = [grep { chk_authz($_, READ, 1) } @$sites];
 </%init>
 
 % if ($use_form_tag) {
@@ -123,8 +123,8 @@ $m->comp("/widgets/wrappers/table_top.mc",
 
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Subelement'),
-        name    => $widget . '|subelement_key_name',
-        value   => $state->{subelement_key_name} || '',
+        name    => $widget . '|subelement_id',
+        value   => $state->{subelement_id} || '',
         options => $subelement_opts,
         localize => 0 &>
 

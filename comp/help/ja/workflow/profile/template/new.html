@@ -1,0 +1,57 @@
+<help page="New Template">
+
+<p>Use this tool to customize the output of yoru Bricolage documents. Here you
+will create templates generate output from your story docments, increasing
+your options and molding the publishing tool to suit your needs.</p>
+
+<p>There are three kinds of templates you can produce:</p>
+<p><dl>
+<dt>Element Templates</dt>
+<dd>Element templates are related to a specific element or subelement. They
+are called when the element is passed to a call to
+<code>$burner-&gt;display_element</code> in a template. Each template belongs
+to one output channel, so to render a story in three output channels requires
+three templates. The exception to this rule is when you make an output channel
+include the templates from another output channel.</dd>
+
+<dt>Category Templates</dt>
+<dd>Category templates are the default template handler (known as an
+autohandler to the Mason burner) for a category in an output channel. Category
+templates allow you to <q>wrap</q> text (usually HTML headers and footers)
+around the chain of elements burned in that category and its
+subcategories.</dd>
+
+<dt>Utility Templates</dt>
+<dd>Utility templates contain generic code that can be re-used in other
+templates, like validation calls, etc. they can be either output
+channel-specific be associated with an output channel specifically created to
+contain hold utility templates. In the latter case, make the utility templates
+in the utility output channel available to your other output channels by
+including the utility output channel in the other output channels.</dt>
+</dl>
+
+<h3>Properties</h3>
+<p><dl>
+<dt>Template Type</dt>
+<dd>One of the above types</dd>
+
+<dt>File Type</dt>
+<dd>You only need to change this if you are not using the default Mason burner
+to render your templates. Required.</dd>
+
+<dt>Output Channel</dt>
+<dd>The destination for the Template, once it is deployed. Required.</dd>
+
+<dt>Category</dt>
+<dd>Where on the site the Template will be deployed. This has implications for
+where your template can be called from. Required.</dd>
+
+<dt>Priority</dt>
+<dd>Tells users how urgent the Template is (with respect to its movement
+through a workflow). Required. If you're not sure the default setting is
+fine.</dd>
+</dl></p>
+
+<p>When finished, click <i>Create.</i> This will bring you to the Template
+Profile page.</p>
+</help>

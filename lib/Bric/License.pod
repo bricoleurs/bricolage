@@ -4,7 +4,7 @@ Bric::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2003
+Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2006
 Kineticode, Inc. and others.
 
 All rights reserved.
@@ -13,7 +13,7 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
 
-=over 4
+=over
 
 =item *
 
@@ -49,36 +49,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Bricolage is maintained by:
 
-=over 4
+=over
 
-=item David Wheeler <david@kineticode.com>
+=item * David Wheeler <david@kineticode.com>
 
 =back
 
 The current development team consists of:
 
-=over 4
+=over
 
-=item David Wheeler <david@kineticode.com>
+=item * David Wheeler <david@kineticode.com>
 
-=item Scott Lanning <lannings@who.int>
+=item * Scott Lanning <lannings@who.int>
 
-=item Marshall Roch <marshall@exclupen.com>
-
+=item * Marshall Roch <marshall@exclupen.com>
 
 =back
 
 The original developers were:
 
-=over 4
+=over
 
-=item David Wheeler <david@kineticode.com>
+=item * David Wheeler <david@kineticode.com>
 
-=item Garth Webb <garth@perijove.com>
+=item * Garth Webb <garth@perijove.com>
 
-=item Michael Soderstrom <miraso@pacbell.net>
+=item * Michael Soderstrom <miraso@pacbell.net>
 
-=item David Gantenbein <fretlessbass@attbi.com>
+=item * David Gantenbein <fretlessbass@attbi.com>
 
 =back
 
@@ -86,309 +85,337 @@ Emeritus Developers:
 
 =over
 
-=item Garth Webb <garth@perijove.com>
+=item * Garth Webb <garth@perijove.com>
 
-=item Michael Soderstrom <miraso@pacbell.net>
+=item * Michael Soderstrom <miraso@pacbell.net>
 
-=item David Gantenbein <fretlessbass@attbi.com>
+=item * David Gantenbein <fretlessbass@attbi.com>
 
-=item Sam Tregar <sam@stregar.com>
+=item * Sam Tregar <sam@stregar.com>
 
-=item Mark Jaroski <mark@geekhive.net>
+=item * Mark Jaroski <mark@geekhive.net>
+
+=back
+
+The user interface was designed by:
+
+=over
+
+=item * Kristee Rosendahl
+
+=back
+
+With later enhancements by:
+
+=over
+
+=item * David Wheeler
+
+=item * Marshall Roch
 
 =back
 
 The online help was written by:
 
-=over 4
+=over
 
-=item Chris Brody <chris_brody@hotmail.com>
+=item * Chris Brody <chris_brody@hotmail.com>
 
-=item David Wheeler <david@kineticode.com>
+=item * David Wheeler <david@kineticode.com>
 
-=item Geoff Richards <geoffr@gbdirect.co.uk>
+=item * Geoff Richards <geoffr@gbdirect.co.uk>
 
 =back
 
 Folks who have submitted patches include:
 
-=over 4
+=over
 
-=item Sam Tregar
+=item * Sam Tregar
 
-=item JoE<atilde>o Pedro GonE<ccedil>alves
+=item * JoE<atilde>o Pedro GonE<ccedil>alves
 
-=item Rachel Murray
+=item * Rachel Murray
 
-=item Matt Vella
+=item * Matt Vella
 
-=item Jeff "japhy" Pinyan
+=item * Jeff "japhy" Pinyan
 
-=item Adam Robinson
+=item * Adam Robinson
 
-=item Darren Graves
+=item * Darren Graves
 
-=item Mike Slattery
+=item * Mike Slattery
 
-=item Andrew Baio
+=item * Andrew Baio
 
-=item Charles Albrecht
+=item * Charles Albrecht
 
-=item Michael Robinton
+=item * Michael Robinton
 
-=item Petar Bojkov
+=item * Petar Bojkov
 
-=item Neil Conway
+=item * Neil Conway
 
-=item Geoff Richards
+=item * Geoff Richards
 
-=item ClE<aacute>udio Valente
+=item * ClE<aacute>udio Valente
 
-=item Eldar Kononov
+=item * Eldar Kononov
 
-=item Kevin White
+=item * Kevin White
 
-=item Kang-min Liu
+=item * Kang-min Liu
 
-=item Clive Jones
+=item * Clive Jones
 
-=item Cinly Ooi
+=item * Cinly Ooi
 
-=item Radu Greab
+=item * Radu Greab
 
-=item Thorsten Biel
+=item * Thorsten Biel
 
-=item Dave Rolsky
+=item * Dave Rolsky
 
-=item Simon Wilcox
+=item * Simon Wilcox
 
-=item Nate Perry-Thistle
+=item * Nate Perry-Thistle
 
-=item Josh Berkus
+=item * Josh Berkus
 
-=item Simon Myers
+=item * Simon Myers
 
-=item Serge Sozonoff
+=item * Serge Sozonoff
 
-=item Paul Orrock
+=item * Paul Orrock
 
-=item Florian Rossol
+=item * Florian Rossol
 
-=item Eric Sellers
+=item * Eric Sellers
 
-=item Rod Taylor
+=item * Rod Taylor
 
-=item Cameron Miller
+=item * Cameron Miller
 
-=item Andrea Rota
+=item * Andrea Rota
 
-=item Mark Kennedy
+=item * Mark Kennedy
 
-=item Keith Grennan
+=item * Keith Grennan
 
-=item Christian Hauser
+=item * Christian Hauser
 
-=item Dharmender Yadav
+=item * Dharmender Yadav
 
-=item Rod Taylor
+=item * Benjamin Franz
 
-=item Benjamin Franz
+=item * Alexey Sheynuk
 
-=item Alexey Sheynuk
+=item * Christian Niles
 
-=item Christian Niles
+=item * Brad Harder
+
+=item * Brad Fox
+
+=item * Alexey Dvoychenkov
 
 =back
 
 Friends who have spotted bugs include:
 
-=over 4
+=over
 
-=item Michael Alan Dorman
+=item * Michael Alan Dorman
 
-=item Josh Cox
+=item * Josh Cox
 
-=item Marlon Bermas
+=item * Marlon Bermas
 
-=item Tracey Largay
+=item * Tracey Largay
 
-=item Ask BjE<oslash>rn Hansen
+=item * Ask BjE<oslash>rn Hansen
 
-=item Daniel Fisher
+=item * Daniel Fisher
 
-=item Philip Fibiger
+=item * Philip Fibiger
 
-=item Evan Prodromou
+=item * Evan Prodromou
 
-=item John Greene
+=item * John Greene
 
-=item Sean Greathouse
+=item * Sean Greathouse
 
-=item Shannon Brown
+=item * Shannon Brown
 
-=item Bill Cappel
+=item * Bill Cappel
 
-=item Todd Tyree
+=item * Todd Tyree
 
-=item Ilia Chipitsine
+=item * Ilia Chipitsine
 
-=item Alex Epshteyn
+=item * Alex Epshteyn
 
-=item Alex Wheeler
+=item * Alex Wheeler
 
-=item Chris Jantzen
+=item * Chris Jantzen
 
-=item Paul Cory
+=item * Paul Cory
 
-=item Jeff Steele
+=item * Jeff Steele
 
-=item Lari Huttunen
+=item * Lari Huttunen
 
-=item Nathan Ollerenshaw
+=item * Nathan Ollerenshaw
 
-=item Marc Hawson
+=item * Marc Hawson
 
-=item Tobias Kremer
+=item * Tobias Kremer
 
-=item Kevin Elliott
+=item * Kevin Elliott
 
-=item Michael G. Kaiser
+=item * Michael G. Kaiser
 
-=item Radu Greab
+=item * Radu Greab
 
-=item Rudy Lippan
+=item * Rudy Lippan
 
-=item Perrin Harkins
+=item * Perrin Harkins
 
-=item Chris Riddoch
+=item * Chris Riddoch
 
-=item Gary Gilchrist
+=item * Gary Gilchrist
 
-=item Creighton Higgins
+=item * Creighton Higgins
 
-=item Earle Martin
+=item * Earle Martin
 
-=item Alexander Ling
+=item * Alexander Ling
 
-=item Adeola Awoyemi
+=item * Adeola Awoyemi
 
-=item Neal Sofge
+=item * Neal Sofge
 
-=item Patrick Walsh
+=item * Patrick Walsh
 
-=item Ben Bangert
+=item * Ben Bangert
 
-=item Ho Yin Au
+=item * Ho Yin Au
 
-=item Abdul Halim Mazahar
+=item * Abdul Halim Mazahar
 
-=item Tony Cowderoy
+=item * Tony Cowderoy
 
-=item Joshua Edelstein
+=item * Joshua Edelstein
 
-=item Will Trillich
+=item * Will Trillich
 
-=item Adam Rinehart
+=item * Adam Rinehart
 
-=item Hal Creech
+=item * Hal Creech
 
-=item Patrick Michael Kane
+=item * Patrick Michael Kane
 
-=item Kenneth Marshall
+=item * Kenneth Marshall
 
-=item Clinton Gormley
+=item * Clinton Gormley
 
-=item Ed Stevenson
+=item * Ed Stevenson
 
-=item Ashlee Caul
+=item * Ashlee Caul
 
-=item Clare Parkinson
+=item * Clare Parkinson
 
-=item Jason Edgecombe
+=item * Jason Edgecombe
 
-=item Frank Holtz
+=item * Frank Holtz
 
-=item Martin Bacovsky
+=item * Martin Bacovsky
 
-=item Curtis Poe
+=item * Curtis Poe
 
-=item JosE<eacute> Castro
+=item * JosE<eacute> Castro
 
-=item Alexandra Gershman
+=item * Alexandra Gershman
 
-=item Phillip Smith
+=item * Phillip Smith
 
-=item Guido BE<uuml>lskE<auml>mper
+=item * Guido BE<uuml>lskE<auml>mper
 
-=item Wayne Slavin
+=item * Wayne Slavin
 
-=item Jerry Franz
+=item * Jerry Franz
 
-=item Alexey Sheynuk
+=item * Paul Hyland
 
-=item Paul Hyland
+=item * Frank Febbraro
 
-=item Frank Febbraro
+=item * Li Li
 
-=item Li Li
+=item * Michael Holden
 
-=item Michael Holden
+=item * Michael Cummings
 
-=item Michael Cummings
+=item * Derek Poon
 
-=item Derek Poon
+=item * Ryan O'Toole
 
-=item Ryan O'Toole
+=item * Tom Kjeldsen
+
+=item * George Harrison
+
+=item * John Gillis
+
+=item * Chris Sutton
+
+=item * Doug Dawson
 
 =back
 
 Bricolage's translation team:
 
-=over 4
+=over
 
-=item ClE<aacute>udio Valente (Portuguese)
+=item * ClE<aacute>udio Valente (Portuguese)
 
-=item Marco Ghezzi (Italian)
+=item * Marco Ghezzi (Italian)
 
-=item Kang-min Liu (Traditional Chinese)
+=item * Kang-min Liu (Traditional Chinese)
 
-=item Gerfried Fuchs, Thorsten Biel, Florian Rossol (German)
+=item * Gerfried Fuchs, Thorsten Biel, Florian Rossol (German)
 
-=item Gang Luo (Simplified Chinese)
+=item * Gang Luo (Simplified Chinese)
 
-=item Sergey Samoilenko (Russian)
+=item * Sergey Samoilenko (Russian)
 
 =back
 
 Others who contributed to its support and development:
 
-=over 4
+=over
 
-=item Kristee Rosendahl
+=item * Sara Plath
 
-=item Sara Plath
+=item * Sara Wood
 
-=item Sara Wood
+=item * Chad Dickerson
 
-=item Chad Dickerson
+=item * Jason Merrick
 
-=item Jason Merrick
+=item * Tim Taschler
 
-=item Tim Taschler
+=item * John Allspaw
 
-=item John Allspaw
+=item * Matt Lanier
 
-=item Matt Lanier
+=item * Joseph Fajen
 
-=item Joseph Fajen
+=item * Lisa Ratner
 
-=item Lisa Ratner
+=item * Ian Kallen
 
-=item Ian Kallen
+=item * Michele Jenkins
 
-=item Michele Jenkins
-
-=item Elizabeth Kairys
+=item * Elizabeth Kairys
 
 =back
 

@@ -22,6 +22,8 @@ $LastChangedDate$
 </%doc>
 <%once>;
 my %users;
+my $show_republish = 0;
+
 my $pl_name = { map { $_ => get_class_info($_)->get_plural_name }
                 qw(story media template) };
 
@@ -46,6 +48,7 @@ my $select = sub {
     my $o = shift;
     my $text = $lang->maketext($o->is_active ? 'Checkout' : 'Reactivate');
     my $u_id = $o->get_user__id;
+    my $ret;
     if (defined $u_id) {
         # Just return the name of the user who has the asset checked out.
         return $users{$u_id} ||= Bric::Biz::Person::User->lookup({
@@ -53,15 +56,40 @@ my $select = sub {
       })->format_name;
     } elsif ($o->get_workflow_id && chk_authz($o, EDIT, 1)) {
         # Allow checkout if they can see the desk the asset is on.
-        return [$text, "$widg\_prof|checkout_cb"]
+        $ret = [[$text, "$widg\_prof|checkout_cb"]]
           if $desk_chk->{$o->get_desk_id}[0];
     } else {
         # Allow checkout only if they have recall permission to the asset and
         # access to the start desk.
-        return [$text, "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id]
-          if $start_desk_ok && chk_authz($o, RECALL, 1);
+        $ret = [[
+            $text, "$widg\_prof|recall_cb", $o->get_id.'|'.$work_id,
+            {
+                id => 'desk_asset_ck_' . $o->get_id,
+                label_after => 0,
+                js => qq{onClick="document.$type\_manager.desk_asset_rp_}
+                      . $o->get_id . '.checked = false;"'
+            },
+        ]] if $start_desk_ok && chk_authz($o, RECALL, 1);
     }
-    return;
+
+        # Add a republish checkbox
+    if ($type ne 'template' && $o->get_publish_status
+        && !$o->get_workflow_id && chk_authz($o, PUBLISH, 1)
+    ) {
+        push @$ret, [
+            $lang->maketext('Republish'),
+            "desk_asset|$type\_pub_ids",
+            $o->get_version_id,
+            {
+                id          => 'desk_asset_rp_' . $o->get_id,
+                label_after => 0,
+                js          => qq{onClick="document.$type\_manager.desk_asset_ck_}
+                                . $o->get_id.'.checked = false;"'
+            }
+        ];
+        $show_republish = 1;
+    }
+    return $ret;
 };
 
 my $addition = sub {
@@ -73,13 +101,19 @@ my $addition = sub {
 
 my $thumburi = sub {
     my ($selfobj, $fieldname) = @_;
-    return unless $fieldname eq 'thumb';
+    if ($fieldname eq 'thumb') {
+        # If we get a thumbnail URI, we have an image. Otherwise, simply return
+        # a space to fill the column properly because we aren't an image object
+        # but USE_THUMBNAILS is on.
+        my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
+        return qq{ <img src="$thumb_uri" />};
+    }
 
-    # If we get a thumbnail URI, we have an image. Otherwise, simply return
-    # a space to fill the column properly because we aren't an image object
-    # but USE_THUMBNAILS is on.
-    my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
-    return qq{ <img src="$thumb_uri" />};
+    elsif ($fieldname eq 'uri') {
+        return $selfobj->get_uri;
+    }
+
+    return;
 };
 
 my $exclude = sub { ! chk_authz($_[0], READ, 1) };
@@ -99,14 +133,17 @@ my $alter = {
     }
 };
 
-my $fields = { template => [qw(file_name version output_channel_name publish_status)],
-               story      => [ qw(title version cover_date publish_status) ],
-               media      => [ qw(title version cover_date publish_status) ],
-             };
+my $fields = {
+    template => [qw(uri version output_channel_name publish_status)],
+    story    => [ qw(title version cover_date publish_status) ],
+    media    => [ qw(title version cover_date publish_status) ],
+};
 
-my $sort_by = { template => 'file_name',
-                story      => get_pref('Default Asset Sort') || 'title',
-                media      => get_pref('Default Asset Sort') || 'title'  };
+my $sort_by = {
+    template => 'uri',
+    story    => get_pref('Default Asset Sort') || 'title',
+    media    => get_pref('Default Asset Sort') || 'title',
+};
 
 unshift @{$fields->{'media'}}, 'thumb' if USE_THUMBNAILS;
 
@@ -119,11 +156,16 @@ $alt = $widg = $type;
 
 # Grab the workflow and start desk permissions.
 my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
-$desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
-                                chk_authz(0, EDIT, 1, @{$_->[1]}) ] }
-              map { [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]] }
-              $wf->allowed_desks
-            };
+$desk_chk = {
+    map {
+        $_->[0] => [
+            chk_authz(0, READ, 1, @{$_->[1]}),
+            chk_authz(0, EDIT, 1, @{$_->[1]}),
+        ]
+    } map {
+        [$_->get_id => [$_->get_asset_grp, $_->get_grp_ids ]]
+    } $wf->allowed_desks
+};
 $start_desk_ok = $desk_chk->{$wf->get_head_desk_id}[0];
 my $wf_name = $wf->get_name;
 
@@ -176,8 +218,17 @@ push @fields, 'site'
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',
     button  => 'checkout_red',
-    useTable => 0 
-&>   
+    useTable => 0
+&>
+% if ($show_republish) {
+% $show_republish = 0;
+<& /widgets/buttons/submit.mc,
+   disp      => 'publish_checked_red',
+   widget    => 'desk_asset',
+   cb        => 'publish_cb',
+   button    => 'publish_checked_red',
+   useTable  => 0 &>
+% }
 </form>
 <& /widgets/wrappers/footer.mc &>
 <%cleanup>;
