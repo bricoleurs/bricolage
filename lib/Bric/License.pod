@@ -207,8 +207,6 @@ Folks who have submitted patches include:
 
 =item * Dharmender Yadav
 
-=item * Rod Taylor
-
 =item * Benjamin Franz
 
 =item * Alexey Sheynuk
@@ -216,6 +214,10 @@ Folks who have submitted patches include:
 =item * Christian Niles
 
 =item * Brad Harder
+
+=item * Brad Fox
+
+=item * Alexey Dvoychenkov
 
 =back
 
@@ -364,6 +366,8 @@ Friends who have spotted bugs include:
 =item * John Gillis
 
 =item * Chris Sutton
+
+=item * Doug Dawson
 
 =back
 

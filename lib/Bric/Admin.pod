@@ -201,6 +201,8 @@ START MODULE LIST
 
 =item URI::Escape
 
+=item Scalar::Util
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)

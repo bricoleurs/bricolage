@@ -157,7 +157,7 @@ foreach my $wf (@$workflows) {
         # actions/desks/publish items for this workflow
         my $can_create = chk_authz(0, CREATE, 1, @{ $wf->{desks}[0][2] });
 
-    # actions
+        # actions
         $m->out(qq{<ul class="items">});
         my $key = $wf->{key};
         $m->print(

@@ -136,6 +136,7 @@ use Bric::Util::Coll::Keyword;
 use Bric::Util::Pref;
 use Data::UUID;
 use List::Util qw(first);
+use Scalar::Util qw(blessed);
 
 #=============================================================================#
 # Inheritance                          #
@@ -805,6 +806,13 @@ NONE
 
 sub add_contributor {
     my ($self, $contrib, $role) = @_;
+
+    if (ref $contrib) {
+        my $pkg = 'Bric::Util::Grp::Parts::Member::Contrib';
+        throw_dp "\$contrib argument must be a $pkg"
+          unless blessed($contrib) and $contrib->isa($pkg);
+    }
+
     my $dirty = $self->_get__dirty();
     my $contribs = $self->_get_contributors() || {};
 

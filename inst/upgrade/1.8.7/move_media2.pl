@@ -8,10 +8,10 @@ use bric_upgrade qw(:all);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Trans::FS;
 
-exit unless fetch_sql q{
+exit if fetch_sql q{
   SELECT 1
   FROM   media_instance
-  WHERE  location LIKE '/____/0/%'
+  WHERE  location ~ '/v\\\\.1/'
   LIMIT  1
 };
 

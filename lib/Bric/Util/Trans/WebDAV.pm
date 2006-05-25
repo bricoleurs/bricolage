@@ -144,7 +144,7 @@ sub put_res {
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
 
         # Unless specified, hostname is prefixed by http://
         # this should allow a user to user DAV over SSL
@@ -269,7 +269,7 @@ sub del_res {
     foreach my $s ($st->get_servers) {
     # Skip inactive servers.
         next unless $s->is_active;
-        my $hn = $s->get_host_name;
+        (my $hn = $s->get_host_name) =~ s/:\d+$//;
 
         # Unless specified, hostname is prefixed by http://
         # this should allow a user to user DAV over SSL

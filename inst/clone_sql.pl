@@ -41,6 +41,14 @@ print "\n\n==> Cloning Bricolage Database <==\n\n";
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db: $!";
 
+# Switch to postgres system user
+if (my $sys_user = $PG->{system_user}) {
+    print "Becoming $sys_user...\n";
+    $> = $PG->{system_user_uid};
+    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
+        unless $> == $PG->{system_user_uid};
+}
+
 $ENV{PGHOST} = $PG->{host_name} if $PG->{host_name};
 $ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
 

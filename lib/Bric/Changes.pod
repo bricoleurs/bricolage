@@ -1556,6 +1556,12 @@ The C<throw_error()> burner method now accepts a list of arguments for an
 error message, rather than only a single argument. It will concatenate them
 all together so that you don't have to. [David]
 
+=item *
+
+Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
+first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
+an object (it could also be an ID number). [Scott]
+
 =back
 
 =head2 Bug Fixes
@@ -1566,6 +1572,41 @@ all together so that you don't have to. [David]
 
 My Workspace now remembers the sort order of assets as well as desks do.
 [David]
+
+=item *
+
+Added more code to the C<inst/upgrade/1.8.9/fix_publish_status.pl> upgrade
+script to better cover the possible variations in publish status inaccuracies.
+[Brad Fox]
+
+=item *
+
+Distribution via any mover other than "File System" now correctly strips off
+port numbers from the host name. This is most useful when using FTP, SFTP, or
+WebDAV to distribute to a preview server serving content from an alternate
+port. Reported by Doug Dawson. [David]
+
+=item *
+
+If run as root, C<make clone> now becomes the PostgreSQL system user before
+cloning the database, so that it should work properly where PostgreSQL is
+configured to use "ident" authentication. [David]
+
+=item *
+
+The list of desks that appear for a given workflow in the nav iframe are now
+properly updated when a new desk is added to the workflow. [Alexey
+Dvoychenkov]
+
+=item *
+
+The side navigation no longer shows the "New Alias" links to users that don't
+have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
+
+=item *
+
+The code of a template no longer disappears when you click "Trail" in the 
+Template Profile. (bug 1204) [Marshall]
 
 =back
 
