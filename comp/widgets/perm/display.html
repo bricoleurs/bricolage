@@ -59,7 +59,7 @@ if ($is_user) {
 if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
     # other groups.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+    $m->comp("/widgets/wrappers/table_top.mc", number => $num++,
              caption => "Object Group Permissions", border => 0);
 
     $m->comp($head_comp,
@@ -86,13 +86,13 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
                  perm => $perms{$gid});
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
 }
 
 if ($perm_type eq 'workflow' || $perm_type eq 'all') {
     # We need to do it for workflows, desks, and categories, too.
     # Do the workflows, first.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              number => $num++,
              caption => "$wf_disp Permissions", border => 0);
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to'
@@ -115,12 +115,12 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
        );
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
 }
 
 if ($perm_type eq 'desk' || $perm_type eq 'all') {
     # Now do the desks.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc", number => $num++,
+    $m->comp("/widgets/wrappers/table_top.mc", number => $num++,
              caption => "$dsk_disp Permissions", border => 0);
 
     $m->comp($head_comp, $lang->maketext('Grant "[_1]" members permission to '
@@ -142,7 +142,7 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
                  name => $dsk->get_name);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
 }
 
 if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
@@ -171,7 +171,7 @@ if ($perm_type =~ /^cat_site_(\d+)$/) {
 
 if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     # Now get the permissions on this group that are granted to user groups.
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => "$usr_grp_disp Permissions",
              number => $num,
              border => 0);
@@ -203,7 +203,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
                  perm         => $perms{$gid});
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+    $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
 }
 </%perl>
 
@@ -429,7 +429,7 @@ $grp_name
 $perms
 </%args>
 <%perl>;
-        $m->comp("/widgets/wrappers/sharky/table_top.mc",
+        $m->comp("/widgets/wrappers/table_top.mc",
                  number   => $num,
                  caption  => $lang->maketext('[_1] Site [_2] Permissions',
                                              $site->get_name, $cat_disp),
@@ -458,7 +458,7 @@ $perms
                  );
         }
         $m->out(qq{</table>\n});
-        $m->comp("/widgets/wrappers/sharky/table_bottom.mc", border => 0);
+        $m->comp("/widgets/wrappers/table_bottom.mc", border => 0);
 </%perl>
 </%def>
 %#--- Log History ---#

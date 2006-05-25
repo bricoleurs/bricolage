@@ -19,7 +19,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   alt      => 'Notes',
 );
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Information",
          number  => $num++,
          id        => 'mediainfo',
@@ -107,7 +107,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 &>
 </div>
 <%perl>;
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 $m->comp('file_section.mc',
          media     => $media,
@@ -136,7 +136,7 @@ if (ENABLE_OC_ASSET_ASSOCIATION) {
          );
 }
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Associations",
          number => $num++);
 </%perl>
@@ -203,7 +203,7 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 </tr>
 </table>
 <%perl>
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 $m->comp("/widgets/profile/buttonBar.mc",
          widget      => $widget,

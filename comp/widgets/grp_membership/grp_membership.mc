@@ -41,7 +41,7 @@ $no_cb      => 0
 </%args>
 <%perl>
 # Get the groups listed.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => 'Group Memberships',
          number  => $num);
 
@@ -122,5 +122,5 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
 
 $m->out($extra_code);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 </%perl>

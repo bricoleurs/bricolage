@@ -3,7 +3,7 @@ my $wf = Bric::Biz::Workflow->lookup
   ({ id => get_state_data($widget, 'work_id')});
 my $site_id = $wf->get_site_id;
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Properties",
          id      => 'storyinfo',
          number  => 1);
@@ -74,7 +74,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
          vals => $cdate,
         );
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 $m->comp("/widgets/profile/button.mc",
          disp   => $lang->maketext('Create'),

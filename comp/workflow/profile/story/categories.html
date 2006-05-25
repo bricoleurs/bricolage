@@ -47,7 +47,7 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
 
 %#-- Begin HTML --#
 
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
     title => 'Edit Categories',
     context => $context . $r->pnotes('story_prof|title') . ' | Categories'
 &>
@@ -55,7 +55,7 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
 <% $content %>
 </form>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

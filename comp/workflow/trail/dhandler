@@ -1,4 +1,4 @@
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title => "$disp->{$type} Trail",
     context => "Workflow | Profile | $disp->{$type} | &quot;"
                . $obj->get_name . "&quot; | Trail" &>
@@ -21,7 +21,7 @@
 
 </form>
 
-<& '/widgets/wrappers/sharky/footer.mc' &>
+<& '/widgets/wrappers/footer.mc' &>
 
 <%args>
 $id => undef

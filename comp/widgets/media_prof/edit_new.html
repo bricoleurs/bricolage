@@ -1,6 +1,6 @@
 <%perl>;
 $m->comp(
-    '/widgets/wrappers/sharky/table_top.mc',
+    '/widgets/wrappers/table_top.mc',
     caption => 'Properties',
     number  => 1
 );
@@ -76,7 +76,7 @@ $m->comp(
       <div class="input"><input type="file" name="<% $widget %>|file" /></div>
     </div>
 % }
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 % if ($media) {
 <& /widgets/profile/button.mc,
    disp     => $lang->maketext('Save'),

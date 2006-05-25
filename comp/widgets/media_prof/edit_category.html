@@ -1,5 +1,5 @@
 <%perl>;
-$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Category' );
+$m->comp('/widgets/wrappers/table_top.mc', caption => 'Current Category' );
 $m->comp('/widgets/listManager/listManager.mc',
          object    => 'category',
          userSort => 0,
@@ -14,7 +14,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 $m->comp('/widgets/profile/hidden.mc',
          name => 'category_id',
          value => $existing_category);
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 </%perl>
 
 <& /widgets/search/search.mc,
@@ -23,7 +23,7 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    type         => 'singular',
    use_form_tag => 0
 &>
-<& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Categories' &>
+<& '/widgets/wrappers/table_top.mc', caption => 'Choose Categories' &>
 <& /widgets/listManager/listManager.mc,
    object    => 'category',
    title     => 'Choose Categories',
@@ -34,7 +34,7 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    addition  => '',
    behavior => 'expand',
 &>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',

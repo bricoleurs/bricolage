@@ -46,7 +46,7 @@ my $wfname = '&quot;' . $wf->get_name . '&quot;';
 
 %#-- Begin HTML --#
 
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "$d_name Desk",
    context => "Workflow | $wfname | &quot;$d_name&quot;"
  &>
@@ -97,7 +97,7 @@ if ($d) {
             );
     $m->out("</form>\n");
 }
-$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
 </%perl>
 
 %#-- End HTML --#

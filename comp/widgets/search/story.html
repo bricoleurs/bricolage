@@ -58,7 +58,7 @@ unless ($advanced_search) {
                    $widget,
                    $lang->maketext('Simple Search'));
 }
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
               caption => $caption,
               search  => 1);
 </%perl>
@@ -244,7 +244,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
         </div>
     </div>
 % } # unless ($advanced_search) {
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 % if ($use_form_tag) {
 </form>
 % }

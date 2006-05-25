@@ -1,6 +1,6 @@
 % $indent = $indent ? " width: ${indent}px;" : '';
 % if ($read_only) {
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+% $m->comp("/widgets/wrappers/table_top.mc",
 %          caption => "The File",
 %          number => 2 );
 <table class="containerProf">
@@ -13,10 +13,10 @@
 %     }
   </tr>
 </table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+% $m->comp("/widgets/wrappers/table_bottom.mc");
 % } else {
 <%perl>
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Upload a file",
          number => $num
         );
@@ -43,7 +43,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   </tr>
 % }
 </table>
-% $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+% $m->comp("/widgets/wrappers/table_bottom.mc");
 % }
 <%args>
 $media

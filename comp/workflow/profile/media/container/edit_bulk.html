@@ -38,7 +38,7 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 
 %#-- Begin HTML --#
 
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
     title => "$disp Profile",
     context => $context . get_state_data('container_prof', 'crumb') || '' .
         ' | &quot;' . get_state_data('container_prof', 'field') || '' . '&quot;'
@@ -55,7 +55,7 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 
 </form>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

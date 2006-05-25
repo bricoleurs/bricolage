@@ -1,5 +1,5 @@
 <%perl>;
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
   	 caption =>  "Category Keywords", number  => 1);
 $m->out("<table border=0 cellpadding=2 cellspacing=0 width=550>");
 foreach my $cat ($media->get_category) {
@@ -14,16 +14,16 @@ foreach my $cat ($media->get_category) {
     }
 }
 $m->out("</table>");
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the keywords.
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Media Keywords", number  => 2);
 $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => $param,
 	 fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
 	 reset_key => $media->get_id, objs => $keywords, incr => 4,
 	 no_edit => [qw(keyword)], num => @$keywords >= 4 ? @$keywords + 2 : 4);
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Output the save buttons.
 $m->comp('/widgets/profile/formButtons.mc',

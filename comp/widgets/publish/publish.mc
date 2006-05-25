@@ -95,7 +95,7 @@ if (@$media_pub_ids) {
     }
 }
 
-$m->comp('/widgets/wrappers/sharky/table_top.mc',
+$m->comp('/widgets/wrappers/table_top.mc',
          caption => '%n to Publish',
          object  => 'asset' );
 $m->comp('/widgets/listManager/listManager.mc',
@@ -106,7 +106,7 @@ $m->comp('/widgets/listManager/listManager.mc',
 	 profile => undef,
 	 select => $select,
 	);
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 </%init>
 
 <%once>

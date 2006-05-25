@@ -44,13 +44,13 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
                         param    => \%ARGS,
                         return   => $return);
 </%init>
-<& "/widgets/wrappers/sharky/header.mc",
+<& "/widgets/wrappers/header.mc",
     title => "$disp Profile",
     context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title')
 &>
 <form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onsubmit="return confirmChanges('theForm')">
 <% $content %>
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 

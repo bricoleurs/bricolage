@@ -1,4 +1,4 @@
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
     caption => "Existing Notes",
     number  => $number++
 &>
@@ -20,8 +20,8 @@
 </tr>
 % } # else
 </table>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_bottom.mc' &>
+<& '/widgets/wrappers/table_top.mc',
     caption => "Current Note",
     number  => $number &>
 % my $key = $widget . '|note';
@@ -40,7 +40,7 @@
     value   => $return_url,
 &>
 
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 <& '/widgets/profile/button.mc',
     disp    => 'Save',

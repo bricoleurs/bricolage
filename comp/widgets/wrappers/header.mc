@@ -13,7 +13,7 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-<& "/widgets/wrappers/sharky/header.mc" &>
+<& "/widgets/wrappers/header.mc" &>
 
 =head1 DESCRIPTION
 
@@ -121,7 +121,7 @@ if ($useSideNav) {
     chomp $uri;
 
     $m->out('<div name="sideNav" id="sideNav">');
-    $m->comp("/widgets/wrappers/sharky/sideNav.mc", uri => $uri);
+    $m->comp("/widgets/wrappers/sideNav.mc", uri => $uri);
     $m->out('</div>');
 }
 

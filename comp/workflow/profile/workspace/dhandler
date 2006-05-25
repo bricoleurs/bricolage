@@ -32,7 +32,7 @@ my $id = get_user_id();
 
 %#-- Begin HTML --#
 <%perl>;
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          'title' => ['Workspace for [_1]', get_user_object->format_name],
           context => 'My Workspace');
 
@@ -56,7 +56,7 @@ $m->comp('/widgets/desk/desk_bottom.html',
          show_all => $ARGS{show_all},
 );
 $m->out("</form>\n");
-$m->comp('/widgets/wrappers/sharky/footer.mc', param => \%ARGS);
+$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
 </%perl>
 %#-- End HTML --#
 

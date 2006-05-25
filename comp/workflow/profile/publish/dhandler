@@ -25,14 +25,14 @@ do_queued_redirect();
 # Get the content first, as it may generate messages that'll go into the header,
 # afterward.
 my $content = $m->scomp('/widgets/publish/publish.mc', %ARGS);
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => 'Publish Details',
          context => "Workflow | Publish");
 $m->out(qq{<form method="post" action="} . $r->uri .
   qq{" name="desk" onsubmit="return confirmChanges(this)">\n});
 
 $m->out("$content<p></p>\n");
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Schedule Publication");
 
 $m->comp('/widgets/select_time/select_time.mc',
@@ -40,7 +40,7 @@ $m->comp('/widgets/select_time/select_time.mc',
          disp      => "Publish At",
          useTable  => 1);
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
          type => 'asset',
          widget => 'publish',
@@ -50,5 +50,5 @@ $m->comp('/widgets/profile/formButtons.mc',
          no_del => 1);
 </%perl>
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 

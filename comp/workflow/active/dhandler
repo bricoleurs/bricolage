@@ -52,14 +52,14 @@ my $desk_chk = { map { $_->[0] => [chk_authz(0, READ, 1, @{$_->[1]}),
 $wf = $wf->get_name;
 </%init>
 
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title => "Active $pl_name->{$obj_type}",
     no_hist => 1,
     context => "Workflow | &quot;$wf&quot; | Active $pl_name->{$obj_type}"
 &>
 
 <form method="post" action="<% $r->uri %>" name="theForm">
-  <& '/widgets/wrappers/sharky/table_top.mc',
+  <& '/widgets/wrappers/table_top.mc',
       caption => 'Active %n',
       object  => $obj_type
   &>
@@ -80,7 +80,7 @@ $wf = $wf->get_name;
      field_values => $values,
      constrain    => {'workflow__id' => $work_id},
   &>
-  <& '/widgets/wrappers/sharky/table_bottom.mc' &>
+  <& '/widgets/wrappers/table_bottom.mc' &>
  
 <& /widgets/buttons/submit.mc,
    disp      => 'Checkout',
@@ -95,7 +95,7 @@ $wf = $wf->get_name;
    useTable  => 0 &>
 
   </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 <%cleanup>;
 # Clear out the cache of user names.
 %users = ();

@@ -266,7 +266,7 @@ sideNav.mc
 
 =head1 SYNOPSIS
 
-<& "/widgets/wrappers/sharky/sideNav.mc" &>
+<& "/widgets/wrappers/sideNav.mc" &>
 
 =head1 DESCRIPTION
 

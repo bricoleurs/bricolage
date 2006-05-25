@@ -20,7 +20,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   value    => 'edit'
 );
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
          caption => "Information",
          number  => $num++,
          id      => 'storyinfo',
@@ -121,7 +121,7 @@ TZ: {
    key => 'expire_date',
 &>
 </div> <!-- .editmeta -->
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 <%perl>;
 $num = $m->comp('/widgets/container_prof/container_prof.mc',
@@ -134,7 +134,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 );
 </%perl>
 % unless (ENABLE_CATEGORY_BROWSER) {
-% $m->comp("/widgets/wrappers/sharky/table_top.mc",
+% $m->comp("/widgets/wrappers/table_top.mc",
 %        caption => "Categories",
 %        number  => $num++);
 
@@ -227,7 +227,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 </div>
 
 <%perl>;
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 }   # unless ENABLE_CATEGORY_BROWSER
 
@@ -241,7 +241,7 @@ if (ENABLE_OC_ASSET_ASSOCIATION) {
          );
 }
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
        caption => "Associations",
        number  => $num++);
 </%perl>
@@ -318,7 +318,7 @@ $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords
 </table>
 <%perl>
 
-$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 $m->comp("/widgets/profile/buttonBar.mc",
          widget      => $widget,

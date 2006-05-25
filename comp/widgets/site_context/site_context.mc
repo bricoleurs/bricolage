@@ -105,7 +105,7 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This element is called by /widgets/wrappers/sharky/header.mc to display a
+This element is called by /widgets/wrappers/header.mc to display a
 select list of sites on every page. Its callback handles a change of site
 context.
 

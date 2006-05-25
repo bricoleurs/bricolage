@@ -1,4 +1,4 @@
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
    title   => "Find $disp to Alias",
    context => $context,
    wf_id   => $wf_id
@@ -9,7 +9,7 @@
    wf_id      => $wf_id
 &>
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

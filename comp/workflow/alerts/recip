@@ -1,5 +1,5 @@
 <%perl>;
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => $disp,
          context => "Admin | $disp | $aname | Recipients",
          no_hist => 1);
@@ -12,7 +12,7 @@ $m->comp('/widgets/alertList/alertList.mc',
 $m->out("<br />\n");
 $m->comp('/lib/util/back_button.mc',
          url => "/workflow/alerts/$eid");
-$m->comp('/widgets/wrappers/sharky/footer.mc');
+$m->comp('/widgets/wrappers/footer.mc');
 </%perl>
 
 %#-- Once Section --#

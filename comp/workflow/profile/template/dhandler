@@ -53,12 +53,12 @@ my $content = $m->scomp(
 );
 
 # Output the Header.
-$m->comp("/widgets/wrappers/sharky/header.mc",
+$m->comp("/widgets/wrappers/header.mc",
      title => "$disp Profile",
      context => "Workflow | Profile | $disp | " . $r->pnotes('tmpl_prof|name'));
 </%init>
 <form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onsubmit="return confirmChanges(this)">
 <% $content %>
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 %#-- End HTML --#

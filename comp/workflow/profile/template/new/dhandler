@@ -41,7 +41,7 @@ chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
 
 %#-- Begin HTML --#
 
-<& "/widgets/wrappers/sharky/header.mc",
+<& "/widgets/wrappers/header.mc",
     title => "New Template",
     context => $context,
 &>
@@ -53,7 +53,7 @@ chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
 
 </form>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

@@ -20,7 +20,7 @@ Display the page after you click 'Clone' in 'My Workspace'.
 =cut
 </%doc>
 
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title   => 'clone story',
     context => $context,
     jsInit  => 'document.theForm["title"].focus();'
@@ -36,7 +36,7 @@ Display the page after you click 'Clone' in 'My Workspace'.
 
 </form>
 
-<& '/widgets/wrappers/sharky/footer.mc' &>
+<& '/widgets/wrappers/footer.mc' &>
 
 <%once>;
 my $disp = get_disp_name('story');

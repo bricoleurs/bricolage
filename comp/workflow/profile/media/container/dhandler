@@ -1,4 +1,4 @@
-<& "/widgets/wrappers/sharky/header.mc",
+<& "/widgets/wrappers/header.mc",
    title => "Element Profile",
    context => $context . get_state_data('container_prof', 'crumb')
  &>
@@ -20,7 +20,7 @@
 
 </form>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 <%once>;
 my $disp = get_disp_name('element');

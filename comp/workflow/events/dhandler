@@ -1,5 +1,5 @@
 <%perl>
-$m->comp('/widgets/wrappers/sharky/header.mc',
+$m->comp('/widgets/wrappers/header.mc',
          title => "$disp->{$type} Events",
          context => "Workflow | Profile | $disp->{$type} | &quot;"
          . $obj->get_name . "&quot; | Events"
@@ -11,7 +11,7 @@ $m->comp('/widgets/eventList/eventList.mc',
          alert_uri => "/workflow/alerts");
 
 $m->comp('/lib/util/back_button.mc');
-$m->comp('/widgets/wrappers/sharky/footer.mc');
+$m->comp('/widgets/wrappers/footer.mc');
 </%perl>
 
 <%args>

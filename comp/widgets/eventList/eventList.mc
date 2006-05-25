@@ -68,7 +68,7 @@ Default is undefined, which has no effect.  Possible values are 'ascending' or
 
 </%doc>
 <%perl>
-$m->comp('/widgets/wrappers/sharky/table_top.mc', caption => $title);
+$m->comp('/widgets/wrappers/table_top.mc', caption => $title);
 $m->comp('/widgets/listManager/listManager.mc',
          object => 'event',
          constrain => $constrain,
@@ -78,7 +78,7 @@ $m->comp('/widgets/listManager/listManager.mc',
          addition => undef,
          def_sort_order => $def_sort_order,
          select => undef);
-$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+$m->comp('/widgets/wrappers/table_bottom.mc');
 (%users, $fmt) = ();
 </%perl>
 

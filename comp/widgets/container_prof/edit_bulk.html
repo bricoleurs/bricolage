@@ -8,7 +8,7 @@ if ($show_summary) {
     $m->comp('/widgets/summary/summary.mc', asset => $asset, number => ++$i);
 }
 </%perl>
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
    caption => $lang->maketext('Bulk Edit [_1]', $element->get_name),
    id      => 'containerprof',
    number  => ++$i,
@@ -82,7 +82,7 @@ my $opts = [
 </div>
 </&>
 <script>wordCount(document.theForm, '<% $widget . "|text" %>', 'words', 'chars')</script>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
     widget  => $widget,

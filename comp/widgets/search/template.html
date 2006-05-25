@@ -38,7 +38,7 @@ unless ($advanced_search) {
                    $widget,
                    $lang->maketext('Simple Search'));
 }
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
               caption => $caption,
               search  => 1);
 </%perl>
@@ -214,7 +214,7 @@ $oc_name_getter = sub {
         </div>
     </div>
 % }
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 %#--- Log History ---#
 % if ($use_form_tag) {
 </form>

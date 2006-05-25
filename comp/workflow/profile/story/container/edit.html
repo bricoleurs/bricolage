@@ -39,7 +39,7 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </%init>
 
 %#-- Begin HTML --#
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
     title => "$disp Profile",
     context => $context . get_state_data('container_prof', 'crumb'),
     scrollx => $scrollx,
@@ -60,7 +60,7 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 
 </form>
 
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

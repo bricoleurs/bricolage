@@ -17,7 +17,7 @@ my $x=0;
 
 # Check if we should display elements.
 if (@elements || @$elem_opts ) {
-    $m->comp("/widgets/wrappers/sharky/table_top.mc",
+    $m->comp("/widgets/wrappers/table_top.mc",
              caption => $title,
              id      => 'containerprof',
              number  => $num++
@@ -306,20 +306,20 @@ if ($at->is_related_media) {
 %# end data display
 
 
-%$m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+%$m->comp("/widgets/wrappers/table_bottom.mc");
 %# end element display
 % }
 
 %### Start Related Story Section ###
 % if ($is_related_story) {
-<& /widgets/wrappers/sharky/table_top.mc,
+<& /widgets/wrappers/table_top.mc,
        caption => 'Related Story',
      number => $num++
 &>
 
 % $related_summary->($element, 'story', $widget, $asset);
 
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 
 % }
 
@@ -329,14 +329,14 @@ if ($at->is_related_media) {
 %### Start Related Media Section ###
 % if ($is_related_media) {
 
-<& /widgets/wrappers/sharky/table_top.mc,
+<& /widgets/wrappers/table_top.mc,
        caption => 'Related Media  ',
      number => $num++
 &>
 
 % $related_summary->($element, 'media', $widget, $asset);
 
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 
 % }
 %### End Related Media Section ###

@@ -45,12 +45,12 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
 
 %#-- Begin HTML --#
 
-<& /widgets/wrappers/sharky/header.mc,
+<& /widgets/wrappers/header.mc,
     title => 'Contributor Role',
     context => $context . $r->pnotes('story_prof|title') . ' | Contributor | Role'
 &>
 <% $content %>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 %#-- End HTML --#
 

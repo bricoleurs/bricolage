@@ -54,7 +54,7 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
                         return   => $return);
 
 # Output the Header.
-$m->comp("/widgets/wrappers/sharky/header.mc",
+$m->comp("/widgets/wrappers/header.mc",
          title => "$disp Profile",
          context => "Workflow | Profile | $disp | " . $r->pnotes('story_prof|title'),
          scrollx => $scrollx,
@@ -71,6 +71,6 @@ $m->comp("/widgets/wrappers/sharky/header.mc",
 </%doc>
 <% $content %>
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 
 

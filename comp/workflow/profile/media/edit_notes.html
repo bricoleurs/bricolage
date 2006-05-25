@@ -22,7 +22,7 @@ my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
                         section => 'notes');
 </%init>
 
-<& '/widgets/wrappers/sharky/header.mc', 
+<& '/widgets/wrappers/header.mc', 
     'title' => 'Notes',
     context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
 &>
@@ -37,4 +37,4 @@ my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
 <% $content %>
 
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>

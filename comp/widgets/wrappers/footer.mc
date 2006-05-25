@@ -13,7 +13,7 @@ $LastChangedDate$
 
 =head1 SYNOPSIS
 
-<& "/widgets/wrappers/sharky/footer.mc" &>
+<& "/widgets/wrappers/footer.mc" &>
 
 =head1 DESCRIPTION
 

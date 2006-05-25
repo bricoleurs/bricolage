@@ -130,7 +130,7 @@ var cancelValidation = false
 
 </script>
 
-<& "/widgets/wrappers/sharky/table_top.mc",
+<& "/widgets/wrappers/table_top.mc",
    caption => $caption,
    number  => $num
 &>
@@ -237,7 +237,7 @@ var cancelValidation = false
 
 </div>
 
-<& "/widgets/wrappers/sharky/table_bottom.mc" &>
+<& "/widgets/wrappers/table_bottom.mc" &>
 
 <div id="fbMagicButtons">
 <div class="delete">

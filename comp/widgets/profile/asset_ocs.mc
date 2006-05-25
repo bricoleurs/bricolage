@@ -16,7 +16,7 @@
     };
 
     $m->comp(
-        '/widgets/wrappers/sharky/table_top.mc',
+        '/widgets/wrappers/table_top.mc',
         caption => 'Output Channels',
         number => $num
     );
@@ -54,7 +54,7 @@
 &>
 </div>
 % }
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 <%args>
 $widget
 $asset

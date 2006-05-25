@@ -139,7 +139,7 @@ my @fields = @{$fields->{$type}};
 push @fields, 'site'
   unless $type eq 'template' || @$sites <= 1;
 </%init>
-<& '/widgets/wrappers/sharky/header.mc',
+<& '/widgets/wrappers/header.mc',
    title => "Find $pl_name->{$type}",
    context => "Workflow | &quot;$wf_name&quot; | Find $pl_name->{$type}"
 &>
@@ -151,7 +151,7 @@ push @fields, 'site'
    state_key => $type . $work_id,
 &>
 <form method="post" action="<% $r->uri %>" name="<% $type %>_manager">
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
     caption => '%n Found',
     object  => $type
 &>
@@ -170,7 +170,7 @@ push @fields, 'site'
     cx_filter => ! $ARGS{site_id},
     field_titles => { version => $lang->maketext('V.'), thumb => $lang->maketext('Thumb')},
 &>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
@@ -179,7 +179,7 @@ push @fields, 'site'
     useTable => 0 
 &>   
 </form>
-<& /widgets/wrappers/sharky/footer.mc &>
+<& /widgets/wrappers/footer.mc &>
 <%cleanup>;
 # Clear out the cache of user names.
 %users = ();
