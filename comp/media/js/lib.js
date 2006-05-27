@@ -993,3 +993,38 @@ function toggleMenu (el, id) {
     // Don't follow the link
     return false;
 }
+
+
+document.getParentByClassName = function(element, className) {
+    element = $(element);
+    while (element.parentNode && !Element.hasClassName(className)) {
+        element = element.parentNode;
+    }
+    return element;
+}
+document.getParentByTagName = function(element, tagName) {
+    element = $(element);
+    while (element.parentNode && (!element.tagName ||
+        (element.tagName.toUpperCase() != tagName.toUpperCase())))
+      element = element.parentNode;
+    return element;
+}
+
+
+/*
+ * Container profile
+ */
+var Container = {
+    update: function(element, list) {
+        $(element).value = Sortable.sequence(list);
+    },
+    
+    deleteElement: function(element) {
+        var list = document.getParentByTagName(element, "ul");
+        if (confirm("Are you sure you want to remove this element?\n\n" +
+                    "It will not be permanently deleted until you save your changes.")) {
+            Element.remove(element); Container.update($('container_prof_' + list.id), list);
+        }
+        return false;
+    }
+};

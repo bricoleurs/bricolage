@@ -568,13 +568,27 @@ sub _delete_element {
 
 sub _update_parts {
     my ($self, $param) = @_;
-    my (@curr_elements, @delete, $locate_element);
+    
+    my $widget = $self->class_key;    
+    my $element = get_state_data($widget, 'element');
+    
+    my $locate_element = $self->_update_subelements($element, $param);
+    
+    set_state_data($widget, 'element', $element);
+    return $locate_element;
+}
 
+sub _update_subelements {
+    my ($self, $element, $param) = @_;
+    
+    # Bail out if we get to a container that doesn't exist
+    return unless exists $param->{"container_prof|element_" . $element->get_id};
+    
+    my (@curr_elements, @delete, $locate_element);
     my $widget = $self->class_key;
     my $locate_id = $self->value;
-    my $element = get_state_data($widget, 'element');
     my $object_type = $element->get_object_type;
-
+    
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
     # in the element profile or the document profile.
     my $do_delete = $param->{$widget.'|delete_cb'} ||
@@ -582,71 +596,79 @@ sub _update_parts {
                     $param->{$widget.'|save_and_stay_cb'} ||
                     $param->{$object_type .'_prof|save_cb'} ||
                     $param->{$object_type .'_prof|save_and_stay_cb'};
-
+    
+    # Build a map from element names to their order
+    my $i = 1;
+    my %elements = map { $_ => $i++ } split ",", $param->{"container_prof|element_" . $element->get_id};
+    
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
         my $id      = $t->get_id;
         my $is_cont = $t->is_container;
-
+        my $name    = ($is_cont ? 'con' : 'dat') . $id;
+        my $deleted = !(defined $elements{$name});
+        
         # Grab the element we're looking for
         {
             local $^W = undef;
             $locate_element = $t if $id == $locate_id and $is_cont;
         }
-        if ($do_delete
-            && (($is_cont && $param->{$widget . "|delete_cont$id"})
-                || (!$is_cont && $param->{$widget . "|delete_data$id"}))
-        ) {
-            add_msg('Element "[_1]" deleted.', $t->get_name);
+        
+        # If the element isn't found, it was removed from the DOM and 
+        # should be deleted.
+        if ($do_delete && $deleted) {
             push @delete, $t;
             next;
         }
-
-        my ($order, $redir);
-        if ($t->is_container) {
-            $order = $param->{$widget . "|reorder_con$id"};
-        } else {
-            $order = $param->{$widget . "|reorder_dat$id"};
-            if (! $t->is_autopopulated or exists
-                $param->{$widget . "|lock_val_$id"}) {
-                my $val = $param->{$widget . "|$id"};
-                $val = '' unless defined $val;
-                if ( $param->{$widget . "|${id}-partial"} ) {
-                    # The date is only partial. Send them back to to it again.
-                    add_msg('Invalid date value for "[_1]" field.', $t->get_name);
-                    set_state_data($widget, '__NO_SAVE__', 1);
-                } else {
-                    # Truncate the value, if necessary, then set it.
-                    my $max = $t->get_max_length;
-                    eval {
-                        if (ref $val && $t->is_multiple) {
-                            if ($max) {
-                                $_ = substr($_, 0, $max)
-                                    for grep { length $_ > $max } @$val;
-                            }
-                            $t->set_values(@$val);
-                        } else {
-                            $val = substr($val, 0, $max)
-                                if $max && length $val > $max;
-                            $t->set_value($val);
+        
+        if (!$deleted) {
+            my $order = $elements{$name};
+            $curr_elements[$order]  = $t;
+        }
+        
+        if ($is_cont) {
+            # Recursively update this container's subelements
+            $self->_update_subelements($t, $param);
+        }
+        
+        if (!$is_cont && 
+             (!$t->is_autopopulated or exists
+              $param->{$widget . "|lock_val_$id"})) {
+            my $val = $param->{$widget . "|$id"};
+            $val = '' unless defined $val;
+            if ( $param->{$widget . "|${id}-partial"} ) {
+                # The date is only partial. Send them back to to it again.
+                add_msg('Invalid date value for "[_1]" field.', $t->get_name);
+                set_state_data($widget, '__NO_SAVE__', 1);
+            } else {
+                # Truncate the value, if necessary, then set it.
+                my $max = $t->get_max_length;
+                eval {
+                    if (ref $val && $t->is_multiple) {
+                        if ($max) {
+                            $_ = substr($_, 0, $max)
+                                for grep { length $_ > $max } @$val;
                         }
-                    };
-                    if (my $err = $@) {
-                        if (isa_bric_exception($err, 'Error')) {
-                            $err->rethrow;
-                        }
-                        elsif (ref $err) {
-                            throw_invalid $err->error;
-                        }
-                        else {
-                            throw_invalid $err
-                        }
+                        $t->set_values(@$val);
+                    } else {
+                        $val = substr($val, 0, $max)
+                            if $max && length $val > $max;
+                        $t->set_value($val);
+                    }
+                };
+                if (my $err = $@) {
+                    if (isa_bric_exception($err, 'Error')) {
+                        $err->rethrow;
+                    }
+                    elsif (ref $err) {
+                        throw_invalid $err->error;
+                    }
+                    else {
+                        throw_invalid $err
                     }
                 }
             }
         }
-
-        $curr_elements[$order] = $t;
     }
 
     # Delete elements as necessary.
@@ -661,8 +683,6 @@ sub _update_parts {
             return $locate_element;
         }
     }
-
-    set_state_data($widget, 'element', $element);
     return $locate_element;
 }
 
